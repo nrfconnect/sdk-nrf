@@ -9,7 +9,7 @@
  * Zephyr OS layer of the Wi-Fi driver.
  */
 
-#define DT_DRV_COMPAT nordic_nrf7002_qspi
+#define DT_DRV_COMPAT nordic_nrf700x_qspi
 
 #include <errno.h>
 #include <string.h>

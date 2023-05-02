@@ -1,12 +1,12 @@
 # Copyright (c) 2022 Nordic Semiconductor ASA
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 
-description: This is a representation of the nRF7002 Wi-Fi chip.
+description: This is a representation of the nRF700x Wi-Fi chip.
 
-compatible: "nordic,nrf7002-qspi"
+compatible: "nordic,nrf700x-qspi"
 
-include: "nordic,nrf7002.yaml"
+include: "nordic,nrf700x.yaml"
 
 on-bus: qspi
 
@@ -22,27 +22,24 @@ properties:
 
   quad-mode:
     type: boolean
-    required: false
     description: |
-      If specified, Use QSPI in quad mode (4 IO lines) otherwise in SPI mode (2 IO lines - MOSI & MISO).
+      If specified, Use QSPI in quad mode (4 IO lines) otherwise in
+      SPI mode (2 IO lines - MOSI & MISO).
 
   rx-delay:
     type: int
-    required: false
     description: |
       Number of clock cycles from the rising edge of the SPI clock
       until the input serial data is sampled.
 
   cpha:
     type: boolean
-    required: false
     description: |
       Set to indicate phase starts with asserted half-phase (CPHA=1).
       The driver using this property must also use `cpol`.
 
   cpol:
     type: boolean
-    required: false
     description: |
       Set to indicate that the clock leading edge is falling (CPOL=1).
       The driver using this property requires also use `cpha`.

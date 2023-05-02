@@ -24,7 +24,7 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
-#define NRF7002_NODE DT_NODELABEL(nrf7002)
+#define NRF7002_NODE DT_NODELABEL(nrf700x)
 
 static const struct gpio_dt_spec host_irq_spec =
 GPIO_DT_SPEC_GET(NRF7002_NODE, host_irq_gpios);

@@ -1,16 +1,16 @@
-/* Copyright (c) 2022 Nordic Semiconductor ASA
+/* Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <freq.h>
-#include "nrf7002_ek_coex.overlay"
+#include "nrf7002ek_nrf7002_coex.overlay"
 
 &arduino_spi {
 	status = "okay";
 	cs-gpios = <&arduino_header 16 GPIO_ACTIVE_LOW>; /* D10 */
 
-	nrf7002: nrf7002@0 {
-		compatible = "nordic,nrf7002-spi";
+	nrf700x: nrf7002@0 {
+		compatible = "nordic,nrf700x-spi";
 		status = "okay";
 		reg = <0>;
 		spi-max-frequency = <DT_FREQ_M(8)>;

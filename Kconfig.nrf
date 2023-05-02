@@ -10,6 +10,7 @@
 orsource "./$(BOARD_DIR)/Kconfig.board"
 orsource "./$(BOARD_DIR)/Kconfig"
 
+rsource "boards/shields/*/Kconfig.shield"
 rsource "subsys/net/openthread/Kconfig.defconfig"
 
 menu "Nordic nRF Connect"
