@@ -9,19 +9,67 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
+#include <modem/nrf_modem_lib.h>
 #include <net/fota_download.h>
 
 #include "fota.h"
+#include "link.h"
 #include "mosh_print.h"
 
-static void system_reboot_work(struct k_work *item)
+static void modem_update_apply(void)
 {
-	ARG_UNUSED(item);
+	int err;
 
-	sys_reboot(SYS_REBOOT_WARM);
+	link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE, true);
+
+	mosh_print("FOTA: Shutting down modem to trigger DFU update...");
+
+	err = nrf_modem_lib_shutdown();
+	if (err) {
+		mosh_warn("FOTA: Failed to shut down modem, err: %d", err);
+	}
+
+	err = nrf_modem_lib_init();
+	switch (err) {
+	case 0:
+		mosh_error("FOTA: Expected DFU result from modem library, "
+			   "but no DFU was triggered");
+		goto exit;
+	case NRF_MODEM_DFU_RESULT_OK:
+		mosh_print("FOTA: Modem firmware update successful!");
+		goto restart_modem;
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
+		mosh_error("FOTA: Modem firmware update failed, err: 0x%08x", err);
+		goto restart_modem;
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
+		mosh_error("FOTA: Fatal error, modem firmware update failed, err: 0x%08x", err);
+		__ASSERT(false, "Modem firmware update failed on fatal error");
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
+		mosh_error("FOTA: Modem firmware update cancelled due to low voltage");
+		mosh_error("FOTA: Please reboot once you have sufficient voltage for the DFU");
+		__ASSERT(false, "Modem firmware update cancelled due to low voltage");
+	default:
+		/* Modem library initialization failed. */
+		mosh_error("FOTA: Fatal error, could not initialize nrf_modem_lib, err: %d", err);
+		__ASSERT(false, "Could not initialize nrf_modem_lib");
+	}
+
+restart_modem:
+	mosh_print("FOTA: Restarting modem...");
+
+	err = nrf_modem_lib_shutdown();
+	if (err) {
+		mosh_warn("FOTA: Failed to shut down modem, err: %d", err);
+	}
+
+	err = nrf_modem_lib_init();
+	__ASSERT(!err, "FOTA: Failed to initialize modem, err: %d", err);
+
+exit:
+	link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL, true);
 }
-
-static K_WORK_DELAYABLE_DEFINE(system_reboot, system_reboot_work);
 
 static const char *get_error_cause(enum fota_download_error_cause cause)
 {
@@ -42,8 +90,8 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 		mosh_print("FOTA: Progress %d%%", evt->progress);
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		mosh_print("FOTA: Download finished, rebooting in 5 seconds...");
-		k_work_schedule(&system_reboot, K_SECONDS(5));
+		mosh_print("FOTA: Download finished");
+		modem_update_apply();
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		mosh_print("FOTA: Still erasing...");
