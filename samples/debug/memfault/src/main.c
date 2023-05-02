@@ -167,7 +167,9 @@ static void on_connect(void)
 		MEMFAULT_METRICS_KEY(Ncs_LteTimeToConnect),
 		&time_to_lte_connection);
 
-	LOG_INF("(Re-)Connected to LTE network. Time to connect: %d ms", time_to_lte_connection);
+	LOG_INF("Time to connect: %d ms", time_to_lte_connection);
+#endif /* IS_ENABLED(MEMFAULT_NCS_LTE_METRICS) */
+
 	LOG_INF("Sending already captured data to Memfault");
 
 	/* Trigger collection of heartbeat data. */

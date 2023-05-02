@@ -65,19 +65,20 @@ See `Memfault: Error Tracking with Trace Events`_ for information on how to conf
 Coredumps
 =========
 
-Coredumps can be triggered either by using the Memfault shell command ``mflt crash``, or by pressing a button:
+The sample enables Memfault shell by default.
+The shell offers multiple commands to test a wide range of functionality offered by the Memfault SDK.
+Run the command ``mflt help`` in the terminal for more information on the available commands.
 
-*  **Button 1** triggers a stack overflow
-*  **Button 2** triggers a division by zero
+Coredumps can be triggered in the following ways:
+
+*  Press **Button 1** to trigger stack overflow
+*  Press **Button 2** to trigger division by zero
+*  Use the Memfault shell to trigger a specific fault.
+   Run the command ``mflt test help`` to see the possible options.
 
 These faults cause crashes that are captured by Memfault.
 After rebooting, the crash data can be sent to the Memfault cloud for further inspection and analysis.
 See `Memfault documentation <Memfault Docs_>`_ for more information on the debugging possibilities offered by the Memfault platform.
-
-The sample enables Memfault shell by default.
-The shell offers multiple test commands to test a wide range of functionality offered by Memfault SDK.
-Run the command ``mflt help`` in the terminal for more information on the available commands.
-
 
 Configuration
 *************
@@ -92,6 +93,7 @@ Minimal setup
 =============
 
 To send data to the Memfault cloud, a project key must be configured using :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
+If you are using the nRF7002 DK and want to automatically connect to a Wi-Fi network upon boot, configure the Wi-Fi credentials using the Kconfig options :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_SSID` and :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD`.
 
 .. note::
    The Memfault SDK requires certificates required for the HTTPS transport.
@@ -165,17 +167,23 @@ Before testing, ensure that your device is configured with the project key of yo
         <inf> mflt: GNU Build ID: a09094cdf9da13f20719f87016663ab529b71267
         <inf> memfault_sample: Memfault sample has started
 
-#. The sample connects to an available LTE network, which is indicated by the following message:
+#. The sample connects to an available LTE or Wi-Fi network, which is indicated by the following message:
 
    .. code-block:: console
 
-        <inf> memfault_sample: Connecting to LTE network, this may take several minutes...
+        <inf> memfault_sample: Connecting to network
 
-#. When the connection is established, the sample displays the captured LTE time-to-connect metric (``Ncs_LteTimeToConnect``) on the terminal:
+#. When the connection is established, the following message is shown:
 
    .. code-block:: console
 
-        <inf> memfault_sample: Connected to LTE network. Time to connect: 3602 ms
+        <inf> memfault_sample: Connected to network.
+
+#. If LTE is used, the sample displays the captured LTE time-to-connect metric (``Ncs_LteTimeToConnect``) in the terminal:
+
+   .. code-block:: console
+
+        <inf> memfault_sample: Time to connect: 3602 ms
 
 #. Subsequently, all captured Memfault data will be sent to the Memfault cloud:
 
@@ -224,10 +232,16 @@ This sample uses the following |NCS| libraries and drivers:
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`lte_lc_readme`
 
-It uses the following `sdk-nrfxlib`_ library:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:nrf_modem`
+* :ref:`nrfxlib:nrf_security`
 
 In addition, it uses the following secure firmware component:
 
 * :ref:`Trusted Firmware-M <ug_tfm>`
+
+For Wi-Fi, the sample also uses modules found in the following locations in the |NCS| folder structure:
+
+* :file:`modules/lib/hostap`
+* :file:`modules/mbedtls`
