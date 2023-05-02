@@ -135,7 +135,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic @alwa-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic @alwa-nordic
 /samples/bluetooth/peripheral_fast_pair/  @MarekPieta @kapi-no @KAGA164
-/samples/bootloader/                      @hakonfam @SebastianBoe
+/samples/bootloader/                      @hakonfam @oyvindronningstad
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
@@ -193,7 +193,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
-/subsys/bootloader/                       @hakonfam @SebastianBoe
+/subsys/bootloader/                       @hakonfam @sigvartmh
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
