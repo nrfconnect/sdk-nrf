@@ -224,6 +224,8 @@ nRF Desktop
     On the firmware side, fetching the values is handled by the :ref:`nrf_desktop_dfu`.
   * Unpairing old peers right after a successful erase advertising procedure.
     This prevents blocking the bond slots until the subsequent erase advertising procedure is triggered.
+  * Support for the :ref:`nrf_desktop_dfu` for devices using the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``).
+    In this mode, the image is booted directly from the secondary slot instead of moving it to the primary slot.
 
 * Updated:
 
@@ -662,8 +664,12 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`nrf_desktop_config_channel_script`:
 
-  * Added support for the device information (``devinfo``) option fetching.
-    The option provides device's Vendor ID, Product ID and generation.
+  * Added:
+
+    * Support for the device information (``devinfo``) option fetching.
+      The option provides device's Vendor ID, Product ID and generation.
+    * Support for devices using MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``).
+      In this mode, the image is booted directly from the secondary slot without moving it to the primary slot.
 
 MCUboot
 =======
