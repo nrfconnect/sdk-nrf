@@ -71,8 +71,8 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
-Bluetooth LE
-------------
+Bluetooth® LE
+-------------
 
 |no_changes_yet_note|
 
@@ -96,6 +96,7 @@ Matter
     The feature is dedicated for the Matter over Thread solution.
   * Documentation page about :ref:`ug_matter_device_configuring_cd`.
   * Matter SDK fork :ref:`documentation pages <matter_index>` with the page about CHIP Certificate Tool.
+  * Documentation page about :ref:`ug_matter_device_adding_bt_services`.
 
 * Updated:
 
