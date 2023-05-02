@@ -217,6 +217,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       mcuboot
       ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/tfm.conf
       )
+
+    # Add fault injection protection to MCUBOOT
+    add_overlay_config(
+      mcuboot
+      ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/fih_low_enable.conf
+    )
   endif()
 
   if (CONFIG_NRF53_UPGRADE_NETWORK_CORE AND CONFIG_ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS)
