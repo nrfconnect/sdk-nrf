@@ -30,6 +30,10 @@ DEF_DFU_TARGET(mcuboot);
 #include "dfu/dfu_target_full_modem.h"
 DEF_DFU_TARGET(full_modem);
 #endif
+#ifdef CONFIG_DFU_TARGET_SMP
+#include "dfu/dfu_target_smp.h"
+DEF_DFU_TARGET(smp);
+#endif
 
 #define MIN_SIZE_IDENTIFY_BUF 32
 
@@ -62,6 +66,20 @@ enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len
 	return DFU_TARGET_IMAGE_TYPE_NONE;
 }
 
+enum dfu_target_image_type dfu_target_smp_img_type_check(const void *const buf, size_t len)
+{
+#ifdef CONFIG_DFU_TARGET_SMP
+	if (len < MIN_SIZE_IDENTIFY_BUF) {
+		return DFU_TARGET_IMAGE_TYPE_NONE;
+	}
+	if (dfu_target_smp_identify(buf)) {
+		return DFU_TARGET_IMAGE_TYPE_SMP;
+	}
+#endif
+	LOG_ERR("No supported image type found");
+	return DFU_TARGET_IMAGE_TYPE_NONE;
+}
+
 int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb)
 {
 	const struct dfu_target *new_target = NULL;
@@ -81,6 +99,12 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 		new_target = &dfu_target_full_modem;
 	}
 #endif
+#ifdef CONFIG_DFU_TARGET_SMP
+	if (img_type == DFU_TARGET_IMAGE_TYPE_SMP) {
+		new_target = &dfu_target_smp;
+	}
+#endif
+
 	if (new_target == NULL) {
 		LOG_ERR("Unknown image type");
 		return -ENOTSUP;
@@ -93,9 +117,8 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 	 * modem_delta upgrades to re-open the DFU socket that is closed on
 	 * abort and to change the image number.
 	 */
-	if (new_target == current_target
-	   && img_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA
-	   && current_img_num == img_num) {
+	if (new_target == current_target && img_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA &&
+	    img_type != DFU_TARGET_IMAGE_TYPE_SMP && current_img_num == img_num) {
 		return 0;
 	}
 

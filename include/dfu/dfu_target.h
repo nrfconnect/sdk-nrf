@@ -33,6 +33,8 @@ enum dfu_target_image_type {
 	DFU_TARGET_IMAGE_TYPE_MODEM_DELTA = 2,
 	/** Full update image for modem */
 	DFU_TARGET_IMAGE_TYPE_FULL_MODEM = 4,
+	/** SMP external MCU */
+	DFU_TARGET_IMAGE_TYPE_SMP = 8,
 	/** Any application image type */
 	DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION = DFU_TARGET_IMAGE_TYPE_MCUBOOT,
 	/** Any modem image */
@@ -74,6 +76,19 @@ struct dfu_target {
  *         image type is not recognized.
  **/
 enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len);
+
+/**
+ * @brief Find the image type for the buffer of bytes received. Used to validate type for
+ *	  DFU SMP target to initialize.
+ *
+ * @param[in] buf A buffer of bytes which are the start of a binary firmware
+ *		  image.
+ * @param[in] len The length of the provided buffer.
+ *
+ * @return DFU_TARGET_IMAGE_TYPE_SMP or DFU_TARGET_IMAGE_TYPE_NONE if
+ *         image type is not recognized.
+ **/
+enum dfu_target_image_type dfu_target_smp_img_type_check(const void *const buf, size_t len);
 
 /**
  * @brief Initialize the resources needed for the specific image type DFU
