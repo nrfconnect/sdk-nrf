@@ -18,13 +18,12 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+The sample requires an `nRF Cloud`_ account and modem firmware v1.3.x or later.
+
 .. note::
    Full modem FOTA requires development kit version 0.14.0 or higher.
 
-The sample requires an `nRF Cloud`_ account.
-
-.. note::
-   This sample requires modem firmware v1.3.x or later.
+.. include:: /includes/external_flash_nrf91.txt
 
 Overview
 ********

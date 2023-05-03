@@ -30,6 +30,9 @@ Build the sample (located under ``ncs/zephyr/samples/hello_world``) for the nrf9
 To change the routing options, enable or disable the corresponding devicetree nodes for that board as needed.
 See :ref:`zephyr:nrf9160dk_board_controller_firmware` for detailed information.
 
+To use the external flash on the nRF9160 DK v0.14.0 or later versions, program the board controller firmware (:file:`nrf9160_dk_board_controller_fw_2.0.1.hex`) v2.0.1 or higher using the `Programmer app <Programming a Development Kit_>`_ in nRF Connect for Desktop.
+Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF52**.
+
 .. _nrf9160_ug_updating_cloud_certificate:
 
 Updating the nRF Cloud certificate
