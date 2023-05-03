@@ -91,13 +91,33 @@ Configuration system overview
 
 Zephyr and the |NCS| use several configuration systems, each system with a specialized syntax and purpose.
 
-The |NCS| consists of the following configuration sources:
+The following tables summarizes information about the configuration sources in the |NCS|.
 
-* Devicetree source (DTS) files for hardware-related options.
-* Kconfig files for software-related options.
-* Partition Manager files for memory layout configuration.
-  This is an |NCS| configuration system that is not available in Zephyr.
+.. list-table:: Configuration source overview
+   :header-rows: 1
 
+   * - Source
+     - File types
+     - Usage
+     - Available editing tools
+     - Additional information
+   * - :ref:`Devicetree <zephyr:dt-guide>`
+     - :file:`.dts`, :file:`.dtsi`, :file:`.overlay`
+     - Hardware-related options
+     - `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_
+     - Devicetree Visual Editor is part of the |nRFVSC|. You still need to be familiar with the devicetree language to use it.
+   * - :ref:`Kconfig <zephyr:application-kconfig>`
+     - :file:`Kconfig`, :file:`prj.conf`, :file:`.config`
+     - Software-related options
+     - `Kconfig GUI <Configuring with nRF Kconfig_>`_, :ref:`menuconfig and guiconfig <zephyr:menuconfig>`
+     - Kconfig GUI is part of the |nRFVSC|.
+   * - :ref:`partition_manager`
+     - :file:`pm.yml`
+     - Memory layout configuration
+     - :ref:`partition_manager` script
+     - Partition Manager is an |NCS| configuration system that is not available in Zephyr.
+
+See the following sections for more information.
 To read more about Zephyr's configuration system, see :ref:`zephyr:build_overview` in the Zephyr documentation.
 
 .. _configure_application_hw:
@@ -164,12 +184,34 @@ Each child image is a separate application.
 
 For more information, see :ref:`ug_multi_image`.
 
-Changing the configuration temporarily
-======================================
+Changing the hardware configuration
+===================================
+
+To correctly edit the :file:`.dts` and :file:`.overlay` files for your project, you need to be familiar with the :ref:`Devicetree language and syntax <zephyr:dt-guide>`.
+
+.. tabs::
+
+   .. group-tab:: nRF Connect for VS Code
+
+      The |nRFVSC| offers several layers of `Devicetree integration <Devicetree support overview_>`_, ranging from summarizing devicetree settings in a menu and providing devicetree language support in the editor, to the Devicetree Visual Editor, a GUI tool for editing devicetree files.
+      Follow the steps in `How to create devicetree files`_ and use one of the following options to edit the :file:`.dts` and :file:`.overlay` files:
+
+      * `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_
+      * `Devicetree language support`_
+
+
+Changing the software configuration
+===================================
+
+You can change the software-related configuration temporarily or permanently.
+The temporary build files are deleted when you clean the build directory with the ``pristine`` target (see Zephyr's :ref:`zephyr:application_rebuild` for more information).
+
+Temporary changes
+-----------------
 
 When building your application, the different :file:`.config`, :file:`*_defconfig` files and the :file:`prj.conf` file are merged together and then processed by Kconfig.
 The resulting configuration is written to the :file:`zephyr/.config` file in your :file:`build` directory.
-This means that this file is available when building the application, but it is deleted when you clean the build directory with the ``pristine`` target (see Zephyr's :ref:`zephyr:application_rebuild` for more information).
+This means that this file is available when building the application until you clean the build directory pristinely.
 
 The documentation for each :ref:`configuration option <configuration_options>` lists the menu path where the option can be found.
 
@@ -198,10 +240,10 @@ The documentation for each :ref:`configuration option <configuration_options>` l
       To locate a specific configuration option, use the **Jump to** field.
 
 
-Changing the configuration permanently
-======================================
+Permanent changes
+-----------------
 
-To configure your application and maintain the configuration when you clean the build directory pristinely, you need to specify the configuration in one of the permanent configuration files.
+To configure your application and maintain the configuration after you clean the build directory pristinely, you need to specify the configuration in one of the permanent configuration files.
 This will be either the default :file:`prj.conf` file of the application or an extra Kconfig fragment.
 In these files, you can specify different values for configuration options that are defined by a library or board, and you can add configuration options that are specific to your application.
 

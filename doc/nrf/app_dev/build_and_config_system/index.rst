@@ -14,9 +14,9 @@ Zephyr's build and configuration system
 
 Zephyr's build and configuration system uses the following building blocks as a foundation:
 
-* CMake, the cross-platform build system generator
-* Kconfig, a powerful configuration system also used in the Linux kernel
-* Devicetree, a hardware description language that is used to describe the hardware that the |NCS| is to run on
+* CMake, the cross-platform build system generator.
+* Kconfig, a powerful configuration system also used in the Linux kernel.
+* Devicetree, a hardware description language that is used to describe the hardware that the |NCS| is meant to run on.
 
 Since the build and configuration system used by the |NCS| comes from Zephyr, references to the original Zephyr documentation are provided here in order to avoid duplication.
 See the following links for information about the different building blocks mentioned above:
@@ -54,8 +54,19 @@ You must be aware of these additions when you start writing your own application
 * The |NCS| allows you to :ref:`create custom build type files <gs_modifying_build_types>` instead of using a single :file:`prj.conf` file.
 * The |NCS| build system extends Zephyr's with support for multi-image builds.
   You can find out more about these in the :ref:`ug_multi_image` section.
-* The |NCS| adds a partition manager, responsible for partitioning the available flash memory.
+* The |NCS| adds a :ref:`partition_manager`, responsible for partitioning the available flash memory.
 * The |NCS| build system generates zip files containing binary images and a manifest for use with nRF Cloud FOTA.
+
+.. _app_build_additions_tools:
+
+|NCS| configuration tools
+=========================
+
+The |nRFVSC| provides the following configuration tools for the build system components:
+
+* For CMake, the `build configuration management <How to work with build configurations_>`_.
+* For Devicetree, the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_.
+* For Kconfig, the `Kconfig GUI <Configuring with nRF Kconfig_>`_.
 
 .. _app_build_fota:
 
