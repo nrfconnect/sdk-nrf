@@ -16,22 +16,9 @@ The sample supports the following development kit, version 0.14.0 or higher:
 
 .. table-from-sample-yaml::
 
-The control signal from the nRF52840 board controller MCU (**P0.19**) must be set to *high* to let the nRF9160 communicate with the external flash memory.
-To do this, enable the ``external_flash_pins_routing`` node in the devicetree and program the :ref:`zephyr:hello_world` sample for the ``nrf9160dk_nrf52840`` board.
-
-To enable the ``external_flash_pins_routing`` node in devicetree, add the following code in the devicetree overlay in the Hello World application:
-
-.. code-block:: none
-
-   &external_flash_pins_routing {
-           status = "okay";
-   };
-
-See :ref:`nrf9160_ug_intro` for more details.
-
-
 .. include:: /includes/tfm.txt
 
+.. include:: /includes/external_flash_nrf91.txt
 
 Overview
 ********

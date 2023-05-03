@@ -22,6 +22,8 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+.. include:: /includes/external_flash_nrf91.txt
+
 .. _nrf_cloud_mqtt_multi_service_features:
 
 Features
