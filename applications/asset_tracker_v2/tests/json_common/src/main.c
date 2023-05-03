@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/ztest.h>
+#include <unity.h>
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,6 +23,34 @@ static struct test_dummy {
 	cJSON *array_obj;
 	char *buffer;
 } dummy;
+
+/* The unity_main is not declared in any header file. It is only defined in the generated test
+ * runner because of ncs' unity configuration. It is therefore declared here to avoid a compiler
+ * warning.
+ */
+extern int unity_main(void);
+
+/* Setup and teardown functions. Used to allocate root and array objects used in test and to
+ * cleanup allocated memory afterwards.
+ */
+
+void setUp(void)
+{
+	dummy.root_obj = cJSON_CreateObject();
+	dummy.array_obj = cJSON_CreateArray();
+	TEST_ASSERT_NOT_NULL(dummy.root_obj);
+	TEST_ASSERT_NOT_NULL(dummy.array_obj);
+}
+
+void tearDown(void)
+{
+	cJSON_Delete(dummy.root_obj);
+	cJSON_Delete(dummy.array_obj);
+	if (dummy.buffer != NULL) {
+		cJSON_FreeString(dummy.buffer);
+	}
+	memset(&dummy, 0, sizeof(dummy));
+}
 
 /* Function used to check the return value from the encoding functions in JSON common API and the
  * encoded output.
@@ -53,7 +81,7 @@ static int encoded_output_check(cJSON *object, char *validation_string, int8_t q
 
 /* Battery */
 
-static void test_encode_battery_data_object(void)
+void test_encode_battery_data_object(void)
 {
 	int ret;
 	struct cloud_data_battery data = {
@@ -67,10 +95,10 @@ static void test_encode_battery_data_object(void)
 					   JSON_COMMON_ADD_DATA_TO_OBJECT,
 					   DATA_BATTERY,
 					   NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_BATTERY_JSON_SCHEMA, data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -81,7 +109,7 @@ static void test_encode_battery_data_object(void)
 					   JSON_COMMON_ADD_DATA_TO_OBJECT,
 					   "",
 					   NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 
@@ -90,17 +118,17 @@ static void test_encode_battery_data_object(void)
 					   JSON_COMMON_ADD_DATA_TO_OBJECT,
 					   "",
 					   NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = json_common_battery_data_add(dummy.root_obj,
 					   &data,
 					   JSON_COMMON_ADD_DATA_TO_OBJECT,
 					   NULL,
 					   NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-static void test_encode_battery_data_array(void)
+void test_encode_battery_data_array(void)
 {
 	int ret;
 	struct cloud_data_battery data = {
@@ -114,16 +142,16 @@ static void test_encode_battery_data_array(void)
 					   JSON_COMMON_ADD_DATA_TO_ARRAY,
 					   NULL,
 					   NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_BATTERY_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
 /* GNSS */
 
-static void test_encode_gnss_data_object(void)
+void test_encode_gnss_data_object(void)
 {
 	int ret;
 	/* Avoid using high precision floating point values to ease string comparison post
@@ -145,10 +173,10 @@ static void test_encode_gnss_data_object(void)
 				       JSON_COMMON_ADD_DATA_TO_OBJECT,
 				       DATA_GNSS,
 				       NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_GNSS_JSON_SCHEMA, data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -159,7 +187,7 @@ static void test_encode_gnss_data_object(void)
 				       JSON_COMMON_ADD_DATA_TO_OBJECT,
 				       "",
 				       NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 
@@ -168,17 +196,17 @@ static void test_encode_gnss_data_object(void)
 				       JSON_COMMON_ADD_DATA_TO_OBJECT,
 				       "",
 				       NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = json_common_gnss_data_add(dummy.root_obj,
 				       &data,
 				       JSON_COMMON_ADD_DATA_TO_OBJECT,
 				       NULL,
 				       NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-static void test_encode_gnss_data_array(void)
+void test_encode_gnss_data_array(void)
 {
 	int ret;
 	/* Avoid using high precision floating point values to ease string comparison post
@@ -200,16 +228,16 @@ static void test_encode_gnss_data_array(void)
 				       JSON_COMMON_ADD_DATA_TO_ARRAY,
 				       NULL,
 				       NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_GNSS_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
 /* Environmental */
 
-static void test_encode_environmental_data_object(void)
+void test_encode_environmental_data_object(void)
 {
 	int ret;
 	/* Avoid using high precision floating point values to ease string comparison post
@@ -231,11 +259,11 @@ static void test_encode_environmental_data_object(void)
 					JSON_COMMON_ADD_DATA_TO_OBJECT,
 					DATA_ENVIRONMENTALS,
 					NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_ENVIRONMENTAL_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -246,7 +274,7 @@ static void test_encode_environmental_data_object(void)
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
 					  "",
 					  NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 
@@ -255,17 +283,17 @@ static void test_encode_environmental_data_object(void)
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
 					  "",
 					  NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = json_common_sensor_data_add(dummy.root_obj,
 					  &data,
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
 					  NULL,
 					  NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-static void test_encode_environmental_data_object_besec_disabled(void)
+void test_encode_environmental_data_object_besec_disabled(void)
 {
 	int ret;
 	struct cloud_data_sensors data = {
@@ -282,15 +310,15 @@ static void test_encode_environmental_data_object_besec_disabled(void)
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
 					  DATA_ENVIRONMENTALS,
 					  NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj,
 				   TEST_VALIDATE_ENVIRONMENTAL_JSON_SCHEMA_AIR_QUALITY_DISABLED,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
-static void test_encode_environmental_data_array(void)
+void test_encode_environmental_data_array(void)
 {
 	int ret;
 	/* Avoid using high precision floating point values to ease string comparison post
@@ -310,16 +338,16 @@ static void test_encode_environmental_data_array(void)
 					  JSON_COMMON_ADD_DATA_TO_ARRAY,
 					  NULL,
 					  NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_ENVIRONMENTAL_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
 /* Modem dynamic */
 
-static void test_encode_modem_dynamic_data_object(void)
+void test_encode_modem_dynamic_data_object(void)
 {
 	int ret;
 	struct cloud_data_modem_dynamic data = {
@@ -339,11 +367,11 @@ static void test_encode_modem_dynamic_data_object(void)
 						 JSON_COMMON_ADD_DATA_TO_OBJECT,
 						 DATA_MODEM_DYNAMIC,
 						 NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_MODEM_DYNAMIC_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong, ret");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -354,7 +382,7 @@ static void test_encode_modem_dynamic_data_object(void)
 						 JSON_COMMON_ADD_DATA_TO_OBJECT,
 						 "",
 						 NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 
@@ -363,17 +391,17 @@ static void test_encode_modem_dynamic_data_object(void)
 						 JSON_COMMON_ADD_DATA_TO_OBJECT,
 						 "",
 						 NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = json_common_modem_dynamic_data_add(dummy.root_obj,
 						 &data,
 						 JSON_COMMON_ADD_DATA_TO_OBJECT,
 						 NULL,
 						 NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-static void test_encode_modem_dynamic_data_array(void)
+void test_encode_modem_dynamic_data_array(void)
 {
 	int ret;
 	struct cloud_data_modem_dynamic data = {
@@ -393,16 +421,16 @@ static void test_encode_modem_dynamic_data_array(void)
 						 JSON_COMMON_ADD_DATA_TO_ARRAY,
 						 NULL,
 						 NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_MODEM_DYNAMIC_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
 /* Modem static */
 
-static void test_encode_modem_static_data_object(void)
+void test_encode_modem_static_data_object(void)
 {
 	int ret;
 	struct cloud_data_modem_static data = {
@@ -420,11 +448,11 @@ static void test_encode_modem_static_data_object(void)
 						JSON_COMMON_ADD_DATA_TO_OBJECT,
 						DATA_MODEM_STATIC,
 						NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_MODEM_STATIC_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -435,7 +463,7 @@ static void test_encode_modem_static_data_object(void)
 						JSON_COMMON_ADD_DATA_TO_OBJECT,
 						"",
 						NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 
@@ -444,17 +472,17 @@ static void test_encode_modem_static_data_object(void)
 						JSON_COMMON_ADD_DATA_TO_OBJECT,
 						"",
 						NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = json_common_modem_static_data_add(dummy.root_obj,
 						&data,
 						JSON_COMMON_ADD_DATA_TO_OBJECT,
 						NULL,
 						NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-static void test_encode_modem_static_data_array(void)
+void test_encode_modem_static_data_array(void)
 {
 	int ret;
 	struct cloud_data_modem_static data = {
@@ -472,16 +500,16 @@ static void test_encode_modem_static_data_array(void)
 						JSON_COMMON_ADD_DATA_TO_ARRAY,
 						NULL,
 						NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_MODEM_STATIC_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
 /* UI */
 
-static void test_encode_ui_data_object(void)
+void test_encode_ui_data_object(void)
 {
 	int ret;
 	struct cloud_data_ui data = {
@@ -495,10 +523,10 @@ static void test_encode_ui_data_object(void)
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      DATA_BUTTON,
 				      NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_UI_JSON_SCHEMA, data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -509,7 +537,7 @@ static void test_encode_ui_data_object(void)
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      "",
 				      NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 
@@ -518,19 +546,19 @@ static void test_encode_ui_data_object(void)
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      "",
 				      NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = json_common_ui_data_add(dummy.root_obj,
 				      &data,
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      NULL,
 				      NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 /* Impact */
 
-static void test_encode_impact_data_object(void)
+void test_encode_impact_data_object(void)
 {
 	int ret;
 	struct cloud_data_impact data = {
@@ -544,10 +572,10 @@ static void test_encode_impact_data_object(void)
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      DATA_IMPACT,
 				      NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_IMPACT_JSON_SCHEMA, data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -558,7 +586,7 @@ static void test_encode_impact_data_object(void)
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      "",
 				      NULL);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 
@@ -567,19 +595,19 @@ static void test_encode_impact_data_object(void)
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      "",
 				      NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = json_common_impact_data_add(dummy.root_obj,
 				      &data,
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      NULL,
 				      NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 /* Neighbor cell */
 
-static void test_encode_neighbor_cells_data_object(void)
+void test_encode_neighbor_cells_data_object(void)
 {
 	int ret;
 	struct cloud_data_neighbor_cells data = {
@@ -607,11 +635,11 @@ static void test_encode_neighbor_cells_data_object(void)
 	ret = json_common_neighbor_cells_data_add(dummy.root_obj,
 						  &data,
 						  JSON_COMMON_ADD_DATA_TO_OBJECT);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_NEIGHBOR_CELLS_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -620,10 +648,10 @@ static void test_encode_neighbor_cells_data_object(void)
 	ret = json_common_neighbor_cells_data_add(dummy.root_obj,
 					     &data,
 					     JSON_COMMON_ADD_DATA_TO_OBJECT);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_encode_wifi_aps_data_object(void)
+void test_encode_wifi_aps_data_object(void)
 {
 	int ret;
 	struct cloud_data_wifi_access_points data = {
@@ -641,11 +669,11 @@ static void test_encode_wifi_aps_data_object(void)
 	ret = json_common_wifi_ap_data_add(dummy.root_obj,
 					   &data,
 					   JSON_COMMON_ADD_DATA_TO_OBJECT);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_WIFI_AP_JSON_DATA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -654,7 +682,7 @@ static void test_encode_wifi_aps_data_object(void)
 	ret = json_common_wifi_ap_data_add(dummy.root_obj,
 					   &data,
 					   JSON_COMMON_ADD_DATA_TO_OBJECT);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 
 	data.queued = true;
 	data.cnt = 1;
@@ -662,10 +690,10 @@ static void test_encode_wifi_aps_data_object(void)
 	ret = json_common_wifi_ap_data_add(dummy.root_obj,
 					   &data,
 					   JSON_COMMON_ADD_DATA_TO_OBJECT);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_encode_agps_request_data_object(void)
+void test_encode_agps_request_data_object(void)
 {
 	int ret;
 	struct cloud_data_agps_request data = {
@@ -688,11 +716,11 @@ static void test_encode_agps_request_data_object(void)
 	ret = json_common_agps_request_data_add(dummy.root_obj,
 						&data,
 						JSON_COMMON_ADD_DATA_TO_OBJECT);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_AGPS_REQUEST_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
@@ -701,10 +729,10 @@ static void test_encode_agps_request_data_object(void)
 	ret = json_common_agps_request_data_add(dummy.root_obj,
 						&data,
 						JSON_COMMON_ADD_DATA_TO_OBJECT);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_encode_pgps_request_data_object(void)
+void test_encode_pgps_request_data_object(void)
 {
 	int ret;
 	struct cloud_data_pgps_request data = {
@@ -716,21 +744,21 @@ static void test_encode_pgps_request_data_object(void)
 	};
 
 	ret = json_common_pgps_request_data_add(dummy.root_obj, &data);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_PGPS_REQUEST_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
 	data.queued = false;
 
 	ret = json_common_pgps_request_data_add(dummy.root_obj, &data);
-	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_encode_ui_data_array(void)
+void test_encode_ui_data_array(void)
 {
 	int ret;
 	struct cloud_data_ui data = {
@@ -744,14 +772,14 @@ static void test_encode_ui_data_array(void)
 				      JSON_COMMON_ADD_DATA_TO_ARRAY,
 				      NULL,
 				      NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_UI_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
-static void test_encode_impact_data_array(void)
+void test_encode_impact_data_array(void)
 {
 	int ret;
 	struct cloud_data_impact data = {
@@ -765,16 +793,16 @@ static void test_encode_impact_data_array(void)
 				      JSON_COMMON_ADD_DATA_TO_ARRAY,
 				      NULL,
 				      NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_IMPACT_JSON_SCHEMA,
 				   data.queued);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
 /* Configuration encode */
 
-static void test_encode_configuration_data_object(void)
+void test_encode_configuration_data_object(void)
 {
 	int ret;
 	struct cloud_data_cfg data = {
@@ -791,50 +819,49 @@ static void test_encode_configuration_data_object(void)
 	};
 
 	ret = json_common_config_add(dummy.root_obj, &data, DATA_CONFIG);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_CONFIGURATION_JSON_SCHEMA, -1);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid input. */
 
 	ret = json_common_config_add(dummy.root_obj, &data, NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 /* Configuration decode */
 
-static void test_decode_configuration_data(void)
+void test_decode_configuration_data(void)
 {
 	cJSON *root_obj = NULL;
 	cJSON *sub_group_obj = NULL;
 	struct cloud_data_cfg data = {0};
 
 	root_obj = cJSON_Parse(TEST_VALIDATE_CONFIGURATION_JSON_SCHEMA);
-	zassert_not_null(root_obj, "Root object is NULL");
-
+	TEST_ASSERT_NOT_NULL(root_obj);
 	sub_group_obj = json_object_decode(root_obj, OBJECT_CONFIG);
-	zassert_not_null(sub_group_obj, "Sub group object is NULL");
+	TEST_ASSERT_NOT_NULL(sub_group_obj);
 
 	json_common_config_get(sub_group_obj, &data);
 
-	zassert_equal(false, data.active_mode, "Configuration is wrong");
-	zassert_equal(true, data.no_data.gnss, "Configuration is wrong");
-	zassert_equal(true, data.no_data.neighbor_cell, "Configuration is wrong");
-	zassert_equal(60, data.location_timeout, "Configuration is wrong");
-	zassert_equal(120, data.active_wait_timeout, "Configuration is wrong");
-	zassert_equal(120, data.movement_resolution, "Configuration is wrong");
-	zassert_equal(3600, data.movement_timeout, "Configuration is wrong");
-	zassert_equal(10, data.accelerometer_activity_threshold, "Configuration is wrong");
-	zassert_equal(5, data.accelerometer_inactivity_threshold, "Configuration is wrong");
-	zassert_equal(80, data.accelerometer_inactivity_timeout, "Configuration is wrong");
+	TEST_ASSERT_EQUAL(false, data.active_mode);
+	TEST_ASSERT_EQUAL(true, data.no_data.gnss);
+	TEST_ASSERT_EQUAL(true, data.no_data.neighbor_cell);
+	TEST_ASSERT_EQUAL(60, data.location_timeout);
+	TEST_ASSERT_EQUAL(120, data.active_wait_timeout);
+	TEST_ASSERT_EQUAL(120, data.movement_resolution);
+	TEST_ASSERT_EQUAL(3600, data.movement_timeout);
+	TEST_ASSERT_EQUAL(10, data.accelerometer_activity_threshold);
+	TEST_ASSERT_EQUAL(5, data.accelerometer_inactivity_threshold);
+	TEST_ASSERT_EQUAL(80, data.accelerometer_inactivity_timeout);
 
 	cJSON_Delete(root_obj);
 }
 
 /* Batch data */
 
-static void test_encode_batch_data_object(void)
+void test_encode_batch_data_object(void)
 {
 	int ret;
 	struct cloud_data_battery battery[2] = {
@@ -942,60 +969,60 @@ static void test_encode_batch_data_object(void)
 					 &battery,
 					 ARRAY_SIZE(battery),
 					 DATA_BATTERY);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
 					 JSON_COMMON_UI,
 					 &ui,
 					 ARRAY_SIZE(ui),
 					 DATA_BUTTON);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
 					 JSON_COMMON_IMPACT,
 					 &impact,
 					 ARRAY_SIZE(impact),
 					 DATA_IMPACT);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
 					 JSON_COMMON_GNSS,
 					 &gnss,
 					 ARRAY_SIZE(gnss),
 					 DATA_GNSS);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
 					 JSON_COMMON_SENSOR,
 					 &environmental,
 					 ARRAY_SIZE(environmental),
 					 DATA_ENVIRONMENTALS);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
 					 JSON_COMMON_MODEM_DYNAMIC,
 					 &modem_dynamic,
 					 ARRAY_SIZE(modem_dynamic),
 					 DATA_MODEM_DYNAMIC);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
 					 JSON_COMMON_MODEM_STATIC,
 					 &modem_static,
 					 ARRAY_SIZE(modem_static),
 					 DATA_MODEM_STATIC);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_BATCH_JSON_SCHEMA, -1);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Check for invalid inputs. */
 
 	ret = json_common_batch_data_add(NULL, -1, NULL, 0, "");
-	zassert_equal(-ENOMEM, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-ENOMEM, ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj, -1, NULL, 0, NULL);
-	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 /* Test used to verify encoding and decoding of data structures that contain floating point
@@ -1003,7 +1030,7 @@ static void test_encode_batch_data_object(void)
  * with a predefined JSON string schema.
  */
 
-static void test_floating_point_encoding_gnss(void)
+void test_floating_point_encoding_gnss(void)
 {
 	int ret;
 	cJSON *decoded_root_obj;
@@ -1026,20 +1053,20 @@ static void test_floating_point_encoding_gnss(void)
 				       JSON_COMMON_ADD_DATA_TO_OBJECT,
 				       DATA_GNSS,
 				       NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-	zassert_false(data.queued, "Queued flag was not set to false by function %s", __func__);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_FALSE(data.queued);
 
 	dummy.buffer = cJSON_PrintUnformatted(dummy.root_obj);
-	zassert_not_null(dummy.buffer, "Printed JSON string is NULL");
+	TEST_ASSERT_NOT_NULL(dummy.buffer);
 
 	decoded_root_obj = cJSON_Parse(dummy.buffer);
-	zassert_not_null(decoded_root_obj, "Root object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_root_obj);
 
 	decoded_gnss_obj = json_object_decode(decoded_root_obj, DATA_GNSS);
-	zassert_not_null(decoded_gnss_obj, "Decoded GNSS object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_gnss_obj);
 
 	decoded_value_obj = json_object_decode(decoded_gnss_obj, DATA_VALUE);
-	zassert_not_null(decoded_value_obj, "Decoded value object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_value_obj);
 
 	cJSON *longitude = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_LONGITUDE);
 	cJSON *latitude = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_LATITUDE);
@@ -1048,12 +1075,12 @@ static void test_floating_point_encoding_gnss(void)
 	cJSON *speed = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_SPEED);
 	cJSON *heading = cJSON_GetObjectItem(decoded_value_obj, DATA_GNSS_HEADING);
 
-	zassert_not_null(longitude, "Longitude is NULL");
-	zassert_not_null(latitude, "Latitude is NULL");
-	zassert_not_null(accuracy, "Accuracy is NULL");
-	zassert_not_null(altitude, "Altitude is NULL");
-	zassert_not_null(speed, "Speed is NULL");
-	zassert_not_null(heading, "Heading is NULL");
+	TEST_ASSERT_NOT_NULL(longitude);
+	TEST_ASSERT_NOT_NULL(latitude);
+	TEST_ASSERT_NOT_NULL(accuracy);
+	TEST_ASSERT_NOT_NULL(altitude);
+	TEST_ASSERT_NOT_NULL(speed);
+	TEST_ASSERT_NOT_NULL(heading);
 
 	decoded_values.pvt.longi = longitude->valuedouble;
 	decoded_values.pvt.lat = latitude->valuedouble;
@@ -1062,23 +1089,17 @@ static void test_floating_point_encoding_gnss(void)
 	decoded_values.pvt.spd = speed->valuedouble;
 	decoded_values.pvt.hdg = heading->valuedouble;
 
-	zassert_within(decoded_values.pvt.longi, data.pvt.longi, 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.pvt.lat, data.pvt.lat, 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.pvt.acc, data.pvt.acc, 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.pvt.alt, data.pvt.alt, 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.pvt.spd, data.pvt.spd, 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.pvt.hdg, data.pvt.hdg, 0.1,
-		       "Decoded value is not within delta");
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.pvt.longi, decoded_values.pvt.longi);
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.pvt.lat, decoded_values.pvt.lat);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, data.pvt.acc, decoded_values.pvt.acc);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, data.pvt.alt, decoded_values.pvt.alt);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, data.pvt.spd, decoded_values.pvt.spd);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, data.pvt.hdg, decoded_values.pvt.hdg);
 
 	cJSON_Delete(decoded_root_obj);
 }
 
-static void test_floating_point_encoding_environmental(void)
+void test_floating_point_encoding_environmental(void)
 {
 	int ret;
 	cJSON *decoded_root_obj;
@@ -1098,44 +1119,41 @@ static void test_floating_point_encoding_environmental(void)
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
 					  DATA_ENVIRONMENTALS,
 					  NULL);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
-	zassert_false(data.queued, "Queued flag was not set to false by function %s", __func__);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_FALSE(data.queued);
 
 	dummy.buffer = cJSON_PrintUnformatted(dummy.root_obj);
-	zassert_not_null(dummy.buffer, "Printed JSON string is NULL");
+	TEST_ASSERT_NOT_NULL(dummy.buffer);
 
 	decoded_root_obj = cJSON_Parse(dummy.buffer);
-	zassert_not_null(decoded_root_obj, "Root object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_root_obj);
 
 	decoded_env_obj = json_object_decode(decoded_root_obj, DATA_ENVIRONMENTALS);
-	zassert_not_null(decoded_env_obj, "Decoded Environmental object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_env_obj);
 
 	decoded_value_obj = json_object_decode(decoded_env_obj, DATA_VALUE);
-	zassert_not_null(decoded_value_obj, "Decoded value object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_value_obj);
 
 	cJSON *temperature = cJSON_GetObjectItem(decoded_value_obj, DATA_TEMPERATURE);
 	cJSON *humidity = cJSON_GetObjectItem(decoded_value_obj, DATA_HUMIDITY);
 	cJSON *pressure = cJSON_GetObjectItem(decoded_value_obj, DATA_PRESSURE);
 
-	zassert_not_null(temperature, "Temperature is NULL");
-	zassert_not_null(humidity, "Humidity is NULL");
-	zassert_not_null(pressure, "Pressure is NULL");
+	TEST_ASSERT_NOT_NULL(temperature);
+	TEST_ASSERT_NOT_NULL(humidity);
+	TEST_ASSERT_NOT_NULL(pressure);
 
 	decoded_values.temperature = temperature->valuedouble;
 	decoded_values.humidity = humidity->valuedouble;
 	decoded_values.pressure = pressure->valuedouble;
 
-	zassert_within(decoded_values.temperature, data.temperature, 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.humidity, data.humidity, 0.1,
-		       "Decoded value is not within delta");
-	zassert_within(decoded_values.pressure, data.pressure, 0.1,
-		       "Decoded value is not within delta");
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.temperature, decoded_values.temperature);
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.humidity, decoded_values.humidity);
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.pressure, decoded_values.pressure);
 
 	cJSON_Delete(decoded_root_obj);
 }
 
-static void test_floating_point_encoding_configuration(void)
+void test_floating_point_encoding_configuration(void)
 {
 	int ret;
 	cJSON *decoded_root_obj;
@@ -1148,16 +1166,16 @@ static void test_floating_point_encoding_configuration(void)
 	};
 
 	ret = json_common_config_add(dummy.root_obj, &data, DATA_CONFIG);
-	zassert_equal(0, ret, "Return value %d is wrong", ret);
+	TEST_ASSERT_EQUAL(0, ret);
 	dummy.buffer = cJSON_PrintUnformatted(dummy.root_obj);
 
-	zassert_not_null(dummy.buffer, "Printed JSON string is NULL");
+	TEST_ASSERT_NOT_NULL(dummy.buffer);
 
 	decoded_root_obj = cJSON_Parse(dummy.buffer);
-	zassert_not_null(decoded_root_obj, "Root object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_root_obj);
 
 	decoded_config_obj = json_object_decode(decoded_root_obj, DATA_CONFIG);
-	zassert_not_null(decoded_config_obj, "Decoded Configruation object is NULL");
+	TEST_ASSERT_NOT_NULL(decoded_config_obj);
 
 	cJSON *accel_act_thresh =
 		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_ACT_THRESHOLD);
@@ -1166,170 +1184,30 @@ static void test_floating_point_encoding_configuration(void)
 	cJSON *accel_inact_timeout =
 		cJSON_GetObjectItem(decoded_config_obj, CONFIG_ACC_INACT_TIMEOUT);
 
-	zassert_not_null(accel_act_thresh, "Accelerometer activity threshold is NULL");
-	zassert_not_null(accel_inact_thresh, "Accelerometer inactivity threshold is NULL");
-	zassert_not_null(accel_inact_timeout, "Accelerometer inactivity timeout is NULL");
+	TEST_ASSERT_NOT_NULL(accel_act_thresh);
+	TEST_ASSERT_NOT_NULL(accel_inact_thresh);
+	TEST_ASSERT_NOT_NULL(accel_inact_timeout);
 
 	decoded_values.accelerometer_activity_threshold = accel_act_thresh->valuedouble;
 	decoded_values.accelerometer_inactivity_threshold = accel_inact_thresh->valuedouble;
 	decoded_values.accelerometer_inactivity_timeout = accel_inact_timeout->valuedouble;
 
-	zassert_within(decoded_values.accelerometer_activity_threshold,
-		       data.accelerometer_activity_threshold, 0.1,
-		       "Decoded value is not within delta");
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.accelerometer_activity_threshold,
+				decoded_values.accelerometer_activity_threshold);
 
-	zassert_within(decoded_values.accelerometer_inactivity_threshold,
-		       data.accelerometer_inactivity_threshold, 0.1,
-		       "Decoded value is not within delta");
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.accelerometer_inactivity_threshold,
+				decoded_values.accelerometer_inactivity_threshold);
 
-	zassert_within(decoded_values.accelerometer_inactivity_timeout,
-		       data.accelerometer_inactivity_timeout, 0.1,
-		       "Decoded value is not within delta");
+	TEST_ASSERT_DOUBLE_WITHIN(0.1, data.accelerometer_inactivity_timeout,
+				decoded_values.accelerometer_inactivity_timeout);
 
 	cJSON_Delete(decoded_root_obj);
 }
 
-/* Setup and teardown functions. Used to allocate root and array objects used in test and to
- * cleanup allocated memory afterwards.
- */
 
-static void test_setup_object(void)
-{
-	dummy.root_obj = cJSON_CreateObject();
-	zassert_not_null(dummy.root_obj, "Root object is NULL");
-}
-
-static void test_teardown_object(void)
-{
-	cJSON_FreeString(dummy.buffer);
-	cJSON_Delete(dummy.root_obj);
-}
-
-static void test_setup_array(void)
-{
-	dummy.array_obj = cJSON_CreateArray();
-	zassert_not_null(dummy.root_obj, "Root object is NULL");
-}
-
-static void test_teardown_array(void)
-{
-	cJSON_FreeString(dummy.buffer);
-	cJSON_Delete(dummy.array_obj);
-}
-
-void test_main(void)
+int main(void)
 {
 	cJSON_Init();
-
-	ztest_test_suite(json_common,
-
-		/* Battery */
-		ztest_unit_test_setup_teardown(test_encode_battery_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_battery_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
-		/* GNSS */
-		ztest_unit_test_setup_teardown(test_encode_gnss_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_gnss_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
-		/* Environmental */
-		ztest_unit_test_setup_teardown(test_encode_environmental_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_environmental_data_object_besec_disabled,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_environmental_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
-		/* Modem dynamic */
-		ztest_unit_test_setup_teardown(test_encode_modem_dynamic_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_modem_dynamic_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
-		/* Modem static */
-		ztest_unit_test_setup_teardown(test_encode_modem_static_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_modem_static_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
-		/* UI */
-		ztest_unit_test_setup_teardown(test_encode_ui_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_ui_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
-		/* Impact */
-		ztest_unit_test_setup_teardown(test_encode_impact_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-		ztest_unit_test_setup_teardown(test_encode_impact_data_array,
-					       test_setup_array,
-					       test_teardown_array),
-
-		/* Neighbor cell */
-		ztest_unit_test_setup_teardown(test_encode_neighbor_cells_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* Wi-Fi APs */
-		ztest_unit_test_setup_teardown(test_encode_wifi_aps_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* A-GPS request */
-		ztest_unit_test_setup_teardown(test_encode_agps_request_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* P-GPS request */
-		ztest_unit_test_setup_teardown(test_encode_pgps_request_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* Configuration encode */
-		ztest_unit_test_setup_teardown(test_encode_configuration_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* Configuration decode */
-		ztest_unit_test(test_decode_configuration_data),
-
-		/* Batch */
-		ztest_unit_test_setup_teardown(test_encode_batch_data_object,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* GNSS floating point values comparison */
-		ztest_unit_test_setup_teardown(test_floating_point_encoding_gnss,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* Environmental floating point values comparison */
-		ztest_unit_test_setup_teardown(test_floating_point_encoding_environmental,
-					       test_setup_object,
-					       test_teardown_object),
-
-		/* Configuration floating point values comparison */
-		ztest_unit_test_setup_teardown(test_floating_point_encoding_configuration,
-					       test_setup_object,
-					       test_teardown_object)
-	);
-
-	ztest_run_test_suite(json_common);
+	(void)unity_main();
+	return 0;
 }

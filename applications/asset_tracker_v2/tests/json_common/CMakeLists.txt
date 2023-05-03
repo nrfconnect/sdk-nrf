@@ -9,17 +9,20 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(json_common_test)
 
+test_runner_generate(src/main.c)
+
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
 
 target_include_directories(app PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR} ../../src/cloud/cloud_codec/
-	${CMAKE_CURRENT_SOURCE_DIR} ../../../../../nrfxlib/nrf_modem/include/)
+	${CMAKE_CURRENT_SOURCE_DIR}/src
+	${CMAKE_CURRENT_SOURCE_DIR}/../../src/cloud/cloud_codec/
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../../../nrfxlib/nrf_modem/include/)
 
 target_sources(app PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR} mock/date_time_mock.c
-	${CMAKE_CURRENT_SOURCE_DIR} ../../src/cloud/cloud_codec/json_common.c
-	${CMAKE_CURRENT_SOURCE_DIR} ../../src/cloud/cloud_codec/json_helpers.c)
+	${CMAKE_CURRENT_SOURCE_DIR}/mock/date_time_mock.c
+	${CMAKE_CURRENT_SOURCE_DIR}/../../src/cloud/cloud_codec/json_common.c
+	${CMAKE_CURRENT_SOURCE_DIR}/../../src/cloud/cloud_codec/json_helpers.c)
 
 target_compile_options(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
@@ -30,3 +33,7 @@ target_compile_options(app PRIVATE
 	-DCONFIG_LOCATION_METHOD_WIFI=y
 	-DCONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT=10
 )
+
+# The test uses double precision floating point numbers. This is not enabled by default in unity
+# unless we set the following define.
+zephyr_compile_definitions(UNITY_INCLUDE_DOUBLE)
