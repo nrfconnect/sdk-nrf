@@ -367,6 +367,9 @@ void handle_mcuboot_swap_ret(void)
 	default:
 		break;
 	}
+
+	/* Save fota status */
+	slm_setting_fota_save();
 }
 
 int start_execute(void)
