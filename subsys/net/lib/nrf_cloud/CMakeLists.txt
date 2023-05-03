@@ -33,13 +33,15 @@ zephyr_library_sources_ifdef(
 	src/nrf_cloud_agps.c
 	src/nrf_cloud_agps_utils.c
 	src/nrf_cloud_pgps.c
-	src/nrf_cloud_pgps_utils.c)
+	src/nrf_cloud_pgps_utils.c
+	src/nrf_cloud_download.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_LOCATION
 	src/nrf_cloud_location.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_FOTA
-	src/nrf_cloud_fota.c)
+	src/nrf_cloud_fota.c
+	src/nrf_cloud_download.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_REST
 	src/nrf_cloud_rest.c)

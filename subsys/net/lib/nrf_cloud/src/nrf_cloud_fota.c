@@ -8,6 +8,7 @@
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_codec_internal.h"
+#include "nrf_cloud_download.h"
 
 #include <zephyr/kernel.h>
 #include <errno.h>
@@ -682,6 +683,8 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		LOG_INF("Download complete");
+		nrf_cloud_download_end();
+
 		if (current_fota.status == NRF_CLOUD_FOTA_DOWNLOADING &&
 		    current_fota.sent_dl_progress != 100) {
 			/* Send 100% downloaded update */
@@ -701,6 +704,7 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		/* MODEM delta: update job status and reboot */
+		nrf_cloud_download_end();
 		current_fota.status = NRF_CLOUD_FOTA_IN_PROGRESS;
 		save_validate_status(current_fota.info.id,
 				     current_fota.info.type,
@@ -718,7 +722,7 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERROR:
-
+		nrf_cloud_download_end();
 		current_fota.status = NRF_CLOUD_FOTA_FAILED;
 
 		if (last_fota_dl_evt == FOTA_DOWNLOAD_EVT_ERASE_DONE ||
@@ -963,6 +967,7 @@ static void send_event(const enum nrf_cloud_fota_evt_id id,
 static int start_job(struct nrf_cloud_fota_job *const job)
 {
 	__ASSERT_NO_MSG(job != NULL);
+	static const int sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
 	int ret = 0;
 
 	enum dfu_target_image_type img_type;
@@ -994,10 +999,20 @@ static int start_job(struct nrf_cloud_fota_job *const job)
 		return ret;
 	}
 
-	ret = fota_download_start_with_image_type(job->info.host,
-		job->info.path, CONFIG_NRF_CLOUD_SEC_TAG, 0,
-		CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
-		img_type);
+	struct nrf_cloud_download_data dl = {
+		.type = NRF_CLOUD_DL_TYPE_FOTA,
+		.host = job->info.host,
+		.path = job->info.path,
+		.dl_cfg = {
+			.sec_tag_list = &sec_tag,
+			.sec_tag_count = (sec_tag < 0 ? 0 : 1),
+			.pdn_id = 0,
+			.frag_size_override = CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
+		},
+		.fota = { .expected_type = img_type }
+	};
+
+	ret = nrf_cloud_download_start(&dl);
 	if (ret) {
 		LOG_ERR("Failed to start FOTA download: %d", ret);
 		job->status = NRF_CLOUD_FOTA_FAILED;

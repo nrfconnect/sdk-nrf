@@ -525,6 +525,8 @@ Libraries for networking
     * Standardized encode and decode function names in the codec.
     * Moved the :c:func:`nrf_cloud_location_request_json_get` function from the :file:`nrf_cloud_location.h` file to :file:`nrf_cloud_codec.h`.
       The function is now renamed to :c:func:`nrf_cloud_location_request_msg_json_encode`.
+    * Allow only one file download at a time within the library.
+      MQTT-based FOTA, :kconfig:option:`CONFIG_NRF_CLOUD_FOTA`, has priority.
 
 * :ref:`lib_nrf_cloud_rest` library:
 
