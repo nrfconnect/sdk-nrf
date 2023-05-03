@@ -42,7 +42,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt update
-          sudo apt-get install -y ninja-build mscgen plantuml
+          sudo apt-get install -y ninja-build mscgen plantuml pipx python3.11-venv clang sqlite3
           sudo snap install yq
           DOXYGEN_VERSION=$(yq ".doxygen.version" ./ncs/nrf/scripts/tools-versions-linux.yml)
           wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
@@ -102,6 +102,33 @@ jobs:
           cd doc/_build/html
           zip -rq "${ARCHIVE}" .
           mv "${ARCHIVE}" ../../../
+
+      - name: Build Docsets
+        working-directory: ncs/nrf/doc/_build
+        run: |
+          mkdir docsets
+          pipx run doc2dash -d docsets/ -n kconfig html/kconfig
+          pipx run doc2dash -d docsets/ -n matter html/matter
+          pipx run doc2dash -d docsets/ -n mcuboot html/mcuboot --index-page wrapper.html
+          pipx run doc2dash -d docsets/ -n nrf html/nrf
+          pipx run doc2dash -d docsets/ -n nrfxlib html/nrfxlib --index-page README.html
+          pipx run doc2dash -d docsets/ -n nrfx html/nrfx
+          pipx run doc2dash -d docsets/ -n tfm html/tfm
+          pipx run doc2dash -d docsets/ -n zephyr html/zephyr
+
+      - name: Fix KConfig docset
+        working-directory: ncs/nrf/doc/_build/docsets/kconfig.docset/Contents/Resources/Documents
+        run: python3 ../../../../../../_scripts/rebuild_kconfig_index.py
+
+      - name: Compress Docsets
+        working-directory: ncs/nrf/doc/_build
+        run: tar czf docsets.tar.xz docsets/
+
+      - name: Upload Docsets
+        uses: actions/upload-artifact@v2
+        with:
+          name: docsets
+          path: ncs/nrf/doc/_build/docsets.tar.xz
 
       - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
