@@ -10,7 +10,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(memfault_sample)
 
 # NORDIC SDK APP START
-target_sources(app PRIVATE src/main.c)
+add_subdirectory(src)
 # NORDIC SDK APP END
 
 zephyr_include_directories(src)
