@@ -12,7 +12,7 @@ The Scan sample demonstrates how to use the Nordic Semiconductor's Wi-Fi® chips
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 

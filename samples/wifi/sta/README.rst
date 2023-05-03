@@ -12,7 +12,7 @@ The Station sample demonstrates how to connect the Wi-Fi® station to a specifie
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -32,27 +32,54 @@ LED 1:
 
    Stops blinking when the sample is disconnected from the access point.
 
+Configuration
+*************
+
+|config|
+
+You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+
+* Network name (SSID)
+* Key management
+* Password
+
+.. note::
+   You can also use ``menuconfig`` to enable ``Key management`` option.
+
+See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
+
+Configuration options
+=====================
+
+The following application-specific Kconfig option is used in this sample (located in :file:`samples/wifi/sta/Kconfig`):
+
+.. _CONFIG_NRF700X_QSPI_ENCRYPTION_KEY:
+
+CONFIG_NRF700X_QSPI_ENCRYPTION_KEY
+   This option specifies the QSPI encryption key.
+
 Quad Serial Peripheral Interface (QSPI) encryption
 **************************************************
 
 This sample demonstrates QSPI encryption API usage.
-The key can be set by the :kconfig:option:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY` Kconfig option.
+You can set the key using the :ref:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY <CONFIG_NRF700X_QSPI_ENCRYPTION_KEY>` Kconfig option.
 
-If encryption of the QSPI traffic is required for the production devices, then matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
+If encryption of the QSPI traffic is required for the production devices, matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
 The key from non-volatile storage must be set as the encryption key using the APIs.
 
 Power management
 ****************
 
-This sample also enables Zephyr's power management policy by default, which puts the nRF5340 :term:`System on Chip (SoC)` into low-power mode whenever it is idle.
+This sample also enables Zephyr's power management policy by default, which sets the nRF5340 :term:`System on Chip (SoC)` into low-power mode whenever it is idle.
 See :ref:`zephyr:pm-guide` in the Zephyr documentation for more information on power management.
 
 IP addressing
 *************
-The sample uses DHCP to obtain an IP address for the Wi-Fi interface. It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
+The sample uses DHCP to obtain an IP address for the Wi-Fi interface.
+It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
 Successful DHCP handshake will override the default static IP configuration.
 
-The following static configuration is by default and can be changed in the ``prj.conf`` file:
+You can change the following default static configuration in the :file:`prj.conf` file:
 
 .. code-block:: console
 
@@ -67,20 +94,7 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-Currently, the following board(s) are supported:
-
-* nRF7002 DK
-
-You must configure the following Wi-Fi credentials in ``prj.conf``:
-
-* Network name (SSID)
-* Key management
-* Password
-
-.. note::
-   You can also use ``menuconfig`` to enable ``Key management`` option.
-
-See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
+Currently, only the nRF7002 DK is supported.
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
 The following is an example of the CLI command:
@@ -172,7 +186,7 @@ Testing
 Power management testing
 ************************
 
-This sample can be used to measure current consumption of both the nRF5340 SoC and nRF7002 device independently by using two separate Power Profiler Kit II's (PPK2's).
+You can use this sample to measure current consumption of both the nRF5340 SoC and nRF7002 device independently by using two separate Power Profiler Kit II's (PPK2's).
 The nRF5340 SoC is connected to the first PPK2 and the nRF7002 DK is connected to the second PPK2.
 
 Hardware modifications
