@@ -961,7 +961,7 @@ static int cmd_i2s_tone_play(const struct shell *shell, size_t argc, const char 
 	if (argc != 4) {
 		shell_error(
 			shell,
-			"3 arguments (freq [Hz], dur [ms], and amplitude [0-1.0] must be provided");
+			"3 arguments (freq [Hz], dur [ms], and amplitude [0-1.0]) must be provided");
 		return -EINVAL;
 	}
 

@@ -71,6 +71,7 @@ int ble_hci_vsc_bd_addr_set(uint8_t *bd_addr)
 		LOG_ERR("Unable to allocate command buffer");
 		return -ENOMEM;
 	}
+
 	cp = net_buf_add(buf, sizeof(*cp));
 	memcpy(cp, bd_addr, sizeof(*cp));
 
@@ -90,6 +91,7 @@ int ble_hci_vsc_op_flag_set(uint32_t flag_bit, uint8_t setting)
 		LOG_ERR("Unable to allocate command buffer");
 		return -ENOMEM;
 	}
+
 	cp = net_buf_add(buf, sizeof(*cp));
 	cp->flag_bit = flag_bit;
 	cp->setting = setting;
@@ -119,6 +121,7 @@ int ble_hci_vsc_adv_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 		LOG_ERR("Unable to allocate command buffer");
 		return -ENOMEM;
 	}
+
 	cp = net_buf_add(buf, sizeof(*cp));
 	cp->tx_power = tx_power;
 
@@ -147,6 +150,7 @@ int ble_hci_vsc_conn_tx_pwr_set(uint16_t conn_handle, enum ble_hci_vs_tx_power t
 		LOG_ERR("Unable to allocate command buffer");
 		return -ENOMEM;
 	}
+
 	cp = net_buf_add(buf, sizeof(*cp));
 	cp->handle = conn_handle;
 	cp->tx_power = tx_power;
@@ -176,6 +180,7 @@ int ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(enum ble_hci_vs_tx_power tx_power)
 		LOG_ERR("Unable to allocate command buffer");
 		return -ENOMEM;
 	}
+
 	cp = net_buf_add(buf, sizeof(*cp));
 	cp->tx_power = tx_power;
 

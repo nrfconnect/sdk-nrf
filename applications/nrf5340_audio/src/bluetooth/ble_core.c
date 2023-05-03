@@ -7,6 +7,7 @@
 #include "ble_core.h"
 
 #include <zephyr/kernel.h>
+#include <zephyr/shell/shell.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/sys/byteorder.h>
@@ -23,6 +24,11 @@ LOG_MODULE_REGISTER(ble, CONFIG_BLE_LOG_LEVEL);
 
 /* Note that HCI_CMD_TIMEOUT is currently set to 10 seconds in Zephyr */
 #define NET_CORE_WATCHDOG_TIME_MS 1000
+
+struct conn_tx_pwr_set_info {
+	const struct shell *shell;
+	enum ble_hci_vs_tx_power tx_power;
+};
 
 static ble_core_ready_t m_ready_callback;
 static struct bt_le_oob _oob = { .addr = 0 };
@@ -144,7 +150,7 @@ static void on_bt_ready(int err)
 	ret = ble_hci_vsc_adv_tx_pwr_set(CONFIG_NRF_21540_MAIN_DBM);
 	ERR_CHK(ret);
 
-	LOG_DBG("TX power set to %d", CONFIG_NRF_21540_MAIN_DBM);
+	LOG_DBG("Advertisement TX power set to %d", CONFIG_NRF_21540_MAIN_DBM);
 
 	ret = ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(CONFIG_NRF_21540_PRI_ADV_DBM);
 	ERR_CHK(ret);
@@ -154,7 +160,7 @@ static void on_bt_ready(int err)
 	ret = ble_hci_vsc_adv_tx_pwr_set(CONFIG_BLE_ADV_TX_POWER_DBM);
 	ERR_CHK(ret);
 
-	LOG_DBG("TX power set to %d", CONFIG_BLE_ADV_TX_POWER_DBM);
+	LOG_DBG("Advertisement TX power set to %d", CONFIG_BLE_ADV_TX_POWER_DBM);
 
 	/* Disabled by default, only used if another TX power for primary adv channels is needed */
 	ret = ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(BLE_HCI_VSC_PRI_EXT_ADV_MAX_TX_PWR_DISABLE);
@@ -267,3 +273,238 @@ int ble_core_init(ble_core_ready_t ready_callback)
 
 	return 0;
 }
+
+static void shell_help_print(const struct shell *shell)
+{
+	shell_print(shell, "Possible TX power values:");
+	shell_print(shell, "\t0: 0 dBm");
+	shell_print(shell, "\t-1: -1 dBm");
+	shell_print(shell, "\t-2: -2 dBm");
+	shell_print(shell, "\t-3: -3 dBm");
+	shell_print(shell, "\t-4: -4 dBm");
+	shell_print(shell, "\t-5: -5 dBm");
+	shell_print(shell, "\t-6: -6 dBm");
+	shell_print(shell, "\t-7: -7 dBm");
+	shell_print(shell, "\t-8: -8 dBm");
+	shell_print(shell, "\t-12: -12 dBm");
+	shell_print(shell, "\t-16: -16 dBm");
+	shell_print(shell, "\t-20: -20 dBm");
+	shell_print(shell, "\t-40: -40 dBm");
+}
+
+static int tx_power_input_check_and_enum_return(const char *input,
+						enum ble_hci_vs_tx_power *tx_power)
+{
+	if (strcmp(input, "0") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_0dBm;
+		return 0;
+	} else if (strcmp(input, "-1") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg1dBm;
+		return 0;
+	} else if (strcmp(input, "-2") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg2dBm;
+		return 0;
+	} else if (strcmp(input, "-3") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg3dBm;
+		return 0;
+	} else if (strcmp(input, "-4") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg4dBm;
+		return 0;
+	} else if (strcmp(input, "-5") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg5dBm;
+		return 0;
+	} else if (strcmp(input, "-6") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg6dBm;
+		return 0;
+	} else if (strcmp(input, "-7") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg7dBm;
+		return 0;
+	} else if (strcmp(input, "-8") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg8dBm;
+		return 0;
+	} else if (strcmp(input, "-12") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg12dBm;
+		return 0;
+	} else if (strcmp(input, "-16") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg16dBm;
+		return 0;
+	} else if (strcmp(input, "-20") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg20dBm;
+		return 0;
+	} else if (strcmp(input, "-40") == 0) {
+		*tx_power = BLE_HCI_VSC_TX_PWR_Neg40dBm;
+		return 0;
+	} else {
+		/* TX power value invalid */
+		return -EINVAL;
+	}
+}
+
+static void conn_tx_pwr_set(struct bt_conn *conn, void *data)
+{
+	int ret;
+	struct bt_conn_info conn_info;
+	uint16_t conn_handle;
+
+	struct conn_tx_pwr_set_info info = *(struct conn_tx_pwr_set_info *)data;
+
+	ret = bt_conn_get_info(conn, &conn_info);
+	if (ret) {
+		shell_error(info.shell, "Error getting the connection info for conn %p", conn);
+		return;
+	}
+
+	if (conn_info.state != BT_CONN_STATE_CONNECTED) {
+		return;
+	}
+
+	ret = bt_hci_get_conn_handle(conn, &conn_handle);
+	if (ret) {
+		shell_error(info.shell, "Error getting the connection handle for conn %p", conn);
+		return;
+	}
+
+	ret = ble_hci_vsc_conn_tx_pwr_set(conn_handle, info.tx_power);
+	if (ret) {
+		shell_error(info.shell, "Not able to set TX power for conn handle %d", conn_handle);
+		return;
+	}
+
+	shell_print(info.shell, "%d dBm TX power set for connection handle %d", info.tx_power,
+		    conn_handle);
+}
+
+static int cmd_conn_tx_pwr_set(const struct shell *shell, size_t argc, const char **argv)
+{
+	int ret;
+	enum ble_hci_vs_tx_power tx_power;
+	struct conn_tx_pwr_set_info info;
+
+	if (IS_ENABLED(CONFIG_NRF_21540_ACTIVE)) {
+		shell_print(shell,
+			    "Cannot use TX power shell commands when using a front end module");
+		return 0;
+	}
+
+	if (argc != 2) {
+		shell_error(shell, "One argument (TX power) must be provided");
+		return -EINVAL;
+	}
+
+	if (strcmp(argv[1], "help") == 0) {
+		shell_help_print(shell);
+		return 1;
+	}
+
+	ret = tx_power_input_check_and_enum_return(argv[1], &tx_power);
+	if (ret) {
+		shell_error(shell, "Invalid TX power input");
+		shell_help_print(shell);
+		return -EINVAL;
+	}
+
+	info.shell = shell;
+	info.tx_power = tx_power;
+
+	bt_conn_foreach(BT_CONN_TYPE_LE, conn_tx_pwr_set, &info);
+
+	shell_print(
+		shell,
+		"Finished setting %d dBm TX power to all active connections, there might be none",
+		tx_power);
+
+	return 0;
+}
+
+static int cmd_adv_tx_pwr_set(const struct shell *shell, size_t argc, const char **argv)
+{
+	int ret;
+	enum ble_hci_vs_tx_power tx_power;
+
+	if (IS_ENABLED(CONFIG_NRF_21540_ACTIVE)) {
+		shell_print(shell,
+			    "Cannot use TX power shell commands when using a front end module");
+		return 0;
+	}
+
+	if (argc != 2) {
+		shell_error(shell, "One argument (TX power) must be provided");
+		return -EINVAL;
+	}
+
+	if (strcmp(argv[1], "help") == 0) {
+		shell_help_print(shell);
+		return 1;
+	}
+
+	ret = tx_power_input_check_and_enum_return(argv[1], &tx_power);
+	if (ret) {
+		shell_error(shell, "Invalid TX power input");
+		shell_help_print(shell);
+		return -EINVAL;
+	}
+
+	ret = ble_hci_vsc_adv_tx_pwr_set(tx_power);
+	if (ret) {
+		shell_error(shell, "Not able to set advertisement TX power");
+	} else {
+		shell_print(shell, "%d dBm TX power set for advertisement", tx_power);
+	}
+
+	return 0;
+}
+
+static int cmd_pri_adv_chan_max_tx_pwr_set(const struct shell *shell, size_t argc,
+					   const char **argv)
+{
+	int ret;
+	enum ble_hci_vs_tx_power tx_power;
+
+	if (IS_ENABLED(CONFIG_NRF_21540_ACTIVE)) {
+		shell_print(shell,
+			    "Cannot use TX power shell commands when using a front end module");
+		return 0;
+	}
+
+	if (argc != 2) {
+		shell_error(shell, "One argument (TX power) must be provided");
+		return -EINVAL;
+	}
+
+	if (strcmp(argv[1], "help") == 0) {
+		shell_help_print(shell);
+		return 1;
+	}
+
+	ret = tx_power_input_check_and_enum_return(argv[1], &tx_power);
+	if (ret) {
+		shell_error(shell, "Invalid TX power input");
+		shell_help_print(shell);
+		return -EINVAL;
+	}
+
+	ret = ble_hci_vsc_pri_adv_chan_max_tx_pwr_set(tx_power);
+	if (ret) {
+		shell_error(shell,
+			    "Not able to set maximum TX power for primary advertisement channels");
+	} else {
+		shell_print(shell,
+			    "Maximum of %d dBm TX power set for primary advertisement channels",
+			    tx_power);
+	}
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	ble_core_cmd,
+	SHELL_COND_CMD(CONFIG_SHELL, conn_tx_pwr_set, NULL, "Set connection TX power",
+		       cmd_conn_tx_pwr_set),
+	SHELL_COND_CMD(CONFIG_SHELL, adv_tx_pwr_set, NULL, "Set advertisement TX power",
+		       cmd_adv_tx_pwr_set),
+	SHELL_COND_CMD(CONFIG_SHELL, pri_adv_chan_max_tx_pwr_set, NULL,
+		       "Set maximum TX power for primary advertisement channels",
+		       cmd_pri_adv_chan_max_tx_pwr_set),
+	SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(ble_core, &ble_core_cmd, "BLE core commands", NULL);
