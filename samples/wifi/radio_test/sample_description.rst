@@ -20,7 +20,7 @@ The sample also shows how to program the user region of FICR parameters on the d
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 

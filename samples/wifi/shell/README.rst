@@ -12,7 +12,7 @@ This sample allows you to test Nordic Semiconductor's Wi-Fi® chipsets.
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -214,7 +214,7 @@ This sample uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_security`
 
-This sample also uses modules that can be found in the following locations in the |NCS| folder structure:
+This sample also uses modules found in the following locations in the |NCS| folder structure:
 
 * :file:`modules/lib/hostap`
 * :file:`modules/mbedtls`
