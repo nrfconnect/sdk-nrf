@@ -25,6 +25,8 @@ LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 #define SCHEMA_HTTP	"http"
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	64
+#define ERASE_WAIT_TIME 20
+#define ERASE_POLL_TIME 2
 
 /* Some features need fota_download update */
 #define FOTA_FUTURE_FEATURE	0
@@ -141,14 +143,10 @@ static int do_fota_erase_mfw(void)
 		}
 	}
 
-	/* Based on measurement, erasing takes about 10 seconds */
-	#define WAIT_TIME 10
-	#define POLL_TIME 2
-
 	int time_elapsed = 0;
 
 	do {
-		k_sleep(K_SECONDS(POLL_TIME));
+		k_sleep(K_SECONDS(ERASE_POLL_TIME));
 		err = nrf_modem_delta_dfu_offset(&offset);
 		if (err != 0 && err != NRF_MODEM_DELTA_DFU_ERASE_PENDING) {
 			LOG_ERR("failed in delta dfu offset: %d", err);
@@ -158,10 +156,10 @@ static int do_fota_erase_mfw(void)
 			LOG_INF("Erase completed");
 			break;
 		}
-		time_elapsed += POLL_TIME;
-	} while (time_elapsed < WAIT_TIME);
+		time_elapsed += ERASE_POLL_TIME;
+	} while (time_elapsed < ERASE_WAIT_TIME);
 
-	if (time_elapsed >= WAIT_TIME) {
+	if (time_elapsed >= ERASE_WAIT_TIME) {
 		LOG_WRN("Erase timeout");
 		return -ETIME;
 	}
