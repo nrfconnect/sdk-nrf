@@ -35,6 +35,32 @@ jobs:
               sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
           done
 
+      - name: Upload Zoomin documentation
+        run: |
+          for file in docs/monitor*.txt; do
+            if ! grep -q main ${file}; then
+              echo "Not targeting main, skipping Zoomin upload"
+              exit 0
+            fi
+          done
+
+          # trust server
+          mkdir -p ~/.ssh
+          ssh-keyscan upload.zoominsoftware.io >> ~/.ssh/known_hosts
+
+          # prepare key
+          echo "${{ secrets.NCS_ZOOMIN_KEY }}" | base64 -d > zoomin_key
+          chmod 600 zoomin_key
+
+          # upload files
+          for file in docs/*.zip; do
+            sftp -v -i zoomin_key nordic@upload.zoominsoftware.io <<EOF
+            cd /nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
+            put ${file}
+            quit
+            EOF
+          done
+
       - name: Add preview URL comment for PRs
         uses: carlescufi/action-doc-url@main
         with:
