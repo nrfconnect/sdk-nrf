@@ -170,10 +170,8 @@ config MEMFAULT_NCS_USE_DEFAULT_METRICS
 config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	bool "Save coredump to internal flash instead of RAM"
 	select MEMFAULT_COREDUMP_STORAGE_CUSTOM
+	depends on PARTITION_MANAGER_ENABLED
 	depends on FLASH
-	depends on IMG_MANAGER
-	depends on BOOTLOADER_MCUBOOT
-	depends on MCUBOOT_IMG_MANAGER
 	help
 	  Use internal flash to store coredump data
 
