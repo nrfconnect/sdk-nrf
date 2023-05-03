@@ -117,10 +117,11 @@ Firmware update
 
 This sample supports firmware update of both the application and TF-M, and the second stage bootloader.
 
-The firmware update process requires signature verification keys in order to sign the images used in the firmware update process.
+The firmware update process requires signature verification keys in order to sign the images used in the process.
 The nRF Secure Immutable bootloader and MCUboot will use signing keys that should not be used in production.
+For signing and verifying images, use ECDSA with secp256r1-sha256, which is supported by the |NCS| cryptographic libraries :ref:`nrf_oberon_readme` and :ref:`crypto_api_nrf_cc310_bl`.
 
-Example on how to generate and use keys:
+Below is an example of how to generate and use the keys.
 
 Generate security keys if needed:
 
