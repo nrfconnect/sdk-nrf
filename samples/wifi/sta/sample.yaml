@@ -11,7 +11,23 @@ tests:
     tags: ci_build
   sample.nrf7002_eks.sta:
     build_only: true
-    extra_args: SHIELD=nrf7002_ek
+    extra_args: SHIELD=nrf7002ek_nrf7002
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    tags: ci_build
+  sample.nrf7000_eks.sta:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    tags: ci_build
+  sample.nrf7001_eks.sta:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7001
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf52840dk_nrf52840

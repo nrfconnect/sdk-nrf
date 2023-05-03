@@ -17,7 +17,23 @@ tests:
     tags: ci_build
   sample.nrf7002_eks.shell:
     build_only: true
-    extra_args: SHIELD=nrf7002_ek
+    extra_args: SHIELD=nrf7002ek_nrf7002
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    tags: ci_build
+  sample.nrf7000_eks.shell:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    tags: ci_build
+  sample.nrf7001_eks.shell:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7001
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf52840dk_nrf52840
@@ -25,7 +41,21 @@ tests:
     tags: ci_build
   sample.nrf7002_eks_cpunet.shell:
     build_only: true
-    extra_args: SHIELD=nrf7002_ek CONFIG_BOARD_ENABLE_CPUNET=y
+    extra_args: SHIELD=nrf7002ek_nrf7002 CONFIG_BOARD_ENABLE_CPUNET=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.nrf7000_eks_cpunet.shell:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_BOARD_ENABLE_CPUNET=y CONFIG_WPA_SUPP=n
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.nrf7001_eks_cpunet.shell:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7001 CONFIG_BOARD_ENABLE_CPUNET=y
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
@@ -67,7 +97,21 @@ tests:
     tags: ci_build
   sample.nrf7002.shell.scan_only_9160:
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002_ek
+    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7002
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    tags: ci_build
+  sample.nrf7000.shell.scan_only_9160:
+    build_only: true
+    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    tags: ci_build
+  sample.nrf7001.shell.scan_only_9160:
+    build_only: true
+    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7001
     integration_platforms:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns
