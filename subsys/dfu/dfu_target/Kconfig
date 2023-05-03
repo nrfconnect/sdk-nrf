@@ -19,6 +19,26 @@ config DFU_TARGET_MCUBOOT
 	help
 	  Enable support for updates that are performed by MCUboot.
 
+config DFU_TARGET_SMP
+	bool "DFU SMP target for external update support"
+	depends on SMP_CLIENT
+	depends on MCUMGR_GRP_IMG_CLIENT
+	depends on MCUMGR_GRP_OS_CLIENT
+	select MCUMGR_GRP_OS_CLIENT_RESET
+	select MCUMGR_GRP_OS_CLIENT_ECHO
+	help
+	  Enable support for Update external MCU by SMP client.
+
+if DFU_TARGET_SMP
+
+config DFU_TARGET_SMP_IMAGE_LIST_SIZE
+	int "Supported Image list size"
+	default 2
+	help
+	  Define size for Image cache list.
+
+endif
+
 config DFU_TARGET_STREAM
 	bool "Generic DFU stream target"
 	depends on STREAM_FLASH_ERASE

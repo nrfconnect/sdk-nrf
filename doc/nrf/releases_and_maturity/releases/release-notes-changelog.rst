@@ -788,7 +788,10 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* Added:
+
+  * A new DFU SMP target for the image update to an external MCU by using the MCUmgr SMP Client.
+
 
 Scripts
 =======

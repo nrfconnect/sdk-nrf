@@ -23,3 +23,6 @@ zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_FULL_MODEM
 zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_MCUBOOT
   src/dfu_target_mcuboot.c
   )
+zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_SMP
+  src/dfu_target_smp.c
+  )
