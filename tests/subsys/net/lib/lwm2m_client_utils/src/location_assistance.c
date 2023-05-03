@@ -22,6 +22,7 @@
 #define GNSS_ASSIST_RESULT_CODE 7
 
 static lwm2m_engine_obj_create_cb_t create_obj_cb;
+static int32_t last_result_code;
 
 static void setup(void)
 {
@@ -30,6 +31,11 @@ static void setup(void)
 
 	/* reset common FFF internal structures */
 	FFF_RESET_HISTORY();
+}
+
+void result_code_cb(int32_t result_code)
+{
+	last_result_code = result_code;
 }
 
 void fake_lwm2m_register_obj(struct lwm2m_engine_obj *obj)
@@ -156,6 +162,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
 	setup();
 
 	location_assistance_init_resend_handler();
+	location_assistance_set_result_code_cb(result_code_cb);
 	zassert_not_null(create_obj_cb, "Callback was null");
 	struct lwm2m_engine_obj_inst *gnss_obj = create_obj_cb(0);
 
@@ -172,6 +179,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_temporary_failure)
 
 	rc = location_assistance_agps_request_send(&client_ctx, true);
 	zassert_equal(rc, -EALREADY, "Error %d", rc);
+	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_TEMP_ERR, "Wrong result");
 
 	result = 0;
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
@@ -189,6 +197,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_zzzpermanent_failure)
 	setup();
 
 	location_assistance_init_resend_handler();
+	location_assistance_set_result_code_cb(result_code_cb);
 	zassert_not_null(create_obj_cb, "Callback was null");
 	struct lwm2m_engine_obj_inst *gnss_obj = create_obj_cb(0);
 
@@ -204,6 +213,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_zzzpermanent_failure)
 	k_sleep(K_MSEC(100));
 	rc = location_assistance_agps_set_mask(&agps_req);
 	zassert_equal(rc, -EPIPE, "Error %d", rc);
+	zassert_equal(last_result_code, LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR, "Wrong result");
 }
 
 SYS_INIT(suite_setup, APPLICATION, 0);
