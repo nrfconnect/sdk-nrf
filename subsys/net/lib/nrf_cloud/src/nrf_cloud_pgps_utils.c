@@ -9,12 +9,13 @@
 
 #include <net/nrf_cloud_pgps.h>
 #include <zephyr/settings/settings.h>
-#include <net/download_client.h>
 #include <date_time.h>
 
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_pgps_schema_v1.h"
 #include "nrf_cloud_pgps_utils.h"
+#include "nrf_cloud_codec_internal.h"
+#include "nrf_cloud_download.h"
 
 #include <zephyr/logging/log.h>
 
@@ -467,28 +468,35 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 	}
 
 	int err;
-
-	socket_retries_left = SOCKET_RETRIES;
-
-	struct download_client_cfg config = {
-		.pdn_id = pdn_id,
-		.frag_size_override = fragment_size,
-		.set_tls_hostname = (sec_tag != -1),
+	struct nrf_cloud_download_data dl = {
+		.type = NRF_CLOUD_DL_TYPE_DL_CLIENT,
+		.host = host,
+		.path = file,
+		.dl_cfg = {
+			.sec_tag_count = 0,
+			.sec_tag_list = NULL,
+			.pdn_id = pdn_id,
+			.frag_size_override = fragment_size,
+			.set_tls_hostname = false
+		},
+		.dlc = &dlc
 	};
 
 	if (sec_tag != -1) {
 		sec_tag_list[0] = sec_tag;
-		config.sec_tag_list = sec_tag_list;
-		config.sec_tag_count = 1;
+		dl.dl_cfg.sec_tag_list = sec_tag_list;
+		dl.dl_cfg.sec_tag_count = 1;
+		dl.dl_cfg.set_tls_hostname = true;
 	}
 
-	err = download_client_get(&dlc, host, &config, file, 0);
-	if (err != 0) {
-		download_client_disconnect(&dlc);
-		return err;
+	socket_retries_left = SOCKET_RETRIES;
+
+	err = nrf_cloud_download_start(&dl);
+	if (err) {
+		LOG_ERR("Failed to start P-GPS download, error: %d", err);
 	}
 
-	return 0;
+	return err;
 }
 
 static int download_client_callback(const struct download_client_evt *event)
@@ -509,6 +517,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		break;
 	case DOWNLOAD_CLIENT_EVT_DONE:
 		LOG_INF("Download client done");
+		nrf_cloud_download_end();
 		break;
 	case DOWNLOAD_CLIENT_EVT_ERROR: {
 		/* In case of socket errors we can return 0 to retry/continue,
@@ -535,6 +544,8 @@ static int download_client_callback(const struct download_client_evt *event)
 			"download client:%d", ret);
 		err = ret;
 	}
+
+	nrf_cloud_download_end();
 
 	eot_handler(err);
 	return err;

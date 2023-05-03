@@ -284,7 +284,7 @@ static int nct_client_id_set(const char * const client_id)
 		}
 	} else {
 		if (client_id) {
-			LOG_WRN("Not configured to for runtime client ID, ignoring");
+			LOG_WRN("Not configured for runtime client ID, ignoring");
 		}
 		len = nrf_cloud_configured_client_id_length_get();
 	}
