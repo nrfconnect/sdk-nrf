@@ -529,6 +529,12 @@ Libraries for networking
 
   * Removed the old API ``lwm2m_firmware_get_update_state_cb()``.
 
+* :ref:`lib_lwm2m_location_assistance` library:
+
+  * Updated:
+
+    * :file:`lwm2m_client_utils_location.h` includes new API for location assistance to register application callback to receive result codes from location assistance.
+
 * :ref:`pdn_readme` library:
 
   * Added:
