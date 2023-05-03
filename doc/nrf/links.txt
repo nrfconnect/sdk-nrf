@@ -167,7 +167,11 @@
 
 .. _`latest release notes for nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect/release_notes/connect/2022.11.140.html
 .. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
-.. _`Configuring with nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html
+.. _`Configuring with nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_kconfig.html
+.. _`How to create devicetree files`: https://nrfconnect.github.io/vscode-nrf-connect/guides/how_to_create_dt_files.html
+.. _`How to work with Devicetree Visual Editor`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_devicetree_editor.html
+.. _`Devicetree support overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-overview
+.. _`Devicetree language support`: https://nrfconnect.github.io/vscode-nrf-connect/guides/ncs_configure_app.html#devicetree-language-support
 .. _`Installing using Visual Studio Code`:
 .. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/install.html
 .. _`How to build an application`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
