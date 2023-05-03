@@ -61,6 +61,8 @@ static bool permanent_error;
 static bool temp_error;
 static int retry_seconds;
 
+static location_assistance_result_code_cb_t result_code_cb;
+
 static int do_agps_request_send(struct lwm2m_ctx *ctx, bool confirmable);
 static int do_pgps_request_send(struct lwm2m_ctx *ctx, bool confirmable);
 static int do_ground_fix_request_send(struct lwm2m_ctx *ctx, bool confirmable);
@@ -104,6 +106,11 @@ static void location_assist_gnss_result_cb(int32_t data)
 	default:
 		LOG_ERR("Unknown error %d", data);
 	}
+
+	/* Notify the application about the result if it has requested a callback */
+	if (result_code_cb) {
+		result_code_cb(data);
+	}
 }
 
 static struct k_work_delayable location_assist_ground_fix_work;
@@ -134,6 +141,11 @@ static void location_assist_ground_fix_result_cb(int32_t data)
 		break;
 	default:
 		LOG_ERR("Unknown error %d", data);
+	}
+
+	/* Notify the application about the result if it has requested a callback */
+	if (result_code_cb) {
+		result_code_cb(data);
 	}
 }
 
@@ -351,4 +363,9 @@ int location_assistance_init_resend_handler(void)
 	}
 
 	return 0;
+}
+
+void location_assistance_set_result_code_cb(location_assistance_result_code_cb_t cb)
+{
+	result_code_cb = cb;
 }

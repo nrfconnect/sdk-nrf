@@ -34,6 +34,32 @@
 #define LOCATION_ASSIST_RESULT_CODE_TEMP_ERR		1
 
 /**
+ * @typedef location_assistance_result_code_cb_t
+ * @brief Callback for location assistance result.
+ *
+ * This callback is called whenever there is a new result in the location assistance and the
+ * location assistance resend handler has been initialized.
+ *
+ * @param result_code Contains following possible result codes:
+ *                    LOCATION_ASSIST_RESULT_CODE_OK when there are no problems
+ *                    LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR when there is a permanent error
+ *                    between LwM2M-server and the nrfCloud. Location assistance library will no
+ *                    longer send any requests. Device needs reboot for assistance library to
+ *                    resume operation.
+ *                    LOCATION_ASSIST_RESULT_CODE_TEMP_ERR when there is a temporary error between
+ *                    LwM2M-server and the nrfCloud. The library automatically uses exponential
+ *                    backoff for the retries.
+ */
+typedef void (*location_assistance_result_code_cb_t)(int32_t result_code);
+
+/**
+ * @brief Set the location assistance result code calback
+ *
+ * @param cb callback function to call when there is a new result from location assistance.
+ */
+void location_assistance_set_result_code_cb(location_assistance_result_code_cb_t cb);
+
+/**
  * @brief Set the A-GPS request mask
  *
  * @param agps_req The A-GPS request coming from the GNSS module.
