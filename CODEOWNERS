@@ -58,6 +58,7 @@ Kconfig*                                  @tejlmand
 /doc/mcuboot/                             @carlescufi
 /doc/nrfxlib/                             @gmarull
 /doc/versions.json                        @carlescufi
+/doc/custom.properties                    @gmarull
 # All subfolders
 /drivers/                                 @anangl
 /drivers/serial/                          @nordic-krch @anangl
