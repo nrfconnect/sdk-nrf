@@ -280,6 +280,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	unsigned int umac_ver = 0;
 	unsigned int lmac_ver = 0;
+	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 
 	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
 
@@ -332,6 +333,23 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 		NRF_WIFI_UMAC_VER_MIN(umac_ver),
 		NRF_WIFI_UMAC_VER_EXTRA(umac_ver));
 
+	tx_pwr_ctrl_params.ant_gain_2g = CONFIG_NRF700X_ANT_GAIN_2G;
+	tx_pwr_ctrl_params.ant_gain_5g_band1 = CONFIG_NRF700X_ANT_GAIN_5G_BAND1;
+	tx_pwr_ctrl_params.ant_gain_5g_band2 = CONFIG_NRF700X_ANT_GAIN_5G_BAND2;
+	tx_pwr_ctrl_params.ant_gain_5g_band3 = CONFIG_NRF700X_ANT_GAIN_5G_BAND3;
+	tx_pwr_ctrl_params.band_edge_2g_lo = CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_2g_hi = CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_1_lo = CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_1_hi = CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_2a_lo = CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_2a_hi = CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_2c_lo = CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_2c_hi = CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_3_lo = CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_3_hi = CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_4_lo = CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF;
+	tx_pwr_ctrl_params.band_edge_5g_unii_4_hi = CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF;
+
 	status = wifi_nrf_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
 #ifndef CONFIG_NRF700X_RADIO_TEST
 					NULL,
@@ -340,11 +358,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 					sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 					NRF_WIFI_DEF_PHY_CALIB,
-					CONFIG_NRF700X_ANT_GAIN_2G,
-					CONFIG_NRF700X_ANT_GAIN_5G_BAND1,
-					CONFIG_NRF700X_ANT_GAIN_5G_BAND2,
-					CONFIG_NRF700X_ANT_GAIN_5G_BAND3,
-					op_band);
+					op_band,
+					&tx_pwr_ctrl_params);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_dev_init failed\n", __func__);
