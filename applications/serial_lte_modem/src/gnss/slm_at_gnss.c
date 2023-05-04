@@ -249,6 +249,11 @@ static void ncell_meas_mon(const char *notify)
 {
 	int err;
 	uint32_t param_count;
+	char cid[9] = {0};
+	char plmn[6] = {0};
+	char mcc[4]  = {0};
+	char tac[9] = {0};
+	size_t size;
 
 	ncell_meas_status = -1;
 	at_params_list_clear(&at_param_list);
@@ -275,9 +280,6 @@ static void ncell_meas_mon(const char *notify)
 	}
 
 	/* parse Cell ID */
-	char cid[9] = {0};
-	size_t size;
-
 	size = sizeof(cid);
 	err = util_string_get(&at_param_list, 2, cid, &size);
 	if (err) {
@@ -289,9 +291,6 @@ static void ncell_meas_mon(const char *notify)
 	}
 
 	/* parse PLMN */
-	char plmn[6] = {0};
-	char mcc[4]  = {0};
-
 	size = sizeof(plmn);
 	err = util_string_get(&at_param_list, 3, plmn, &size);
 	if (err) {
@@ -308,8 +307,6 @@ static void ncell_meas_mon(const char *notify)
 	}
 
 	/* parse TAC */
-	char tac[9] = {0};
-
 	size = sizeof(tac);
 	err = util_string_get(&at_param_list, 4, tac, &size);
 	if (err) {

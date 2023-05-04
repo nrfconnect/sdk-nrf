@@ -254,6 +254,7 @@ static int do_tcp_server_stop(void)
 static int do_tcp_client_connect(const char *url, uint16_t port)
 {
 	int ret;
+	struct sockaddr sa;
 
 	/* Open socket */
 	if (proxy.sec_tag == INVALID_SEC_TAG) {
@@ -288,10 +289,6 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 	}
 
 	/* Connect to remote host */
-	struct sockaddr sa = {
-		.sa_family = AF_UNSPEC
-	};
-
 	ret = util_resolve_host(0, url, port, proxy.family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));

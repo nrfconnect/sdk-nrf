@@ -197,16 +197,21 @@ static int payload_cb(int sock, struct http_request *req, void *user_data)
 		k_sem_take(&http_req_sem, K_FOREVER);
 	}
 
-	if (httpc.total_sent >= 0) {
-		httpc.state = HTTPC_REQ_DONE;
-		rsp_send("\r\n#XHTTPCREQ: 0\r\n");
-	}
+	httpc.state = HTTPC_REQ_DONE;
+	rsp_send("\r\n#XHTTPCREQ: 0\r\n");
+
 	return httpc.total_sent;
 }
 
 static int do_http_connect(void)
 {
 	int ret;
+	struct sockaddr sa;
+	const uint32_t timeout_ms = HTTPC_REQ_TO_S * MSEC_PER_SEC;
+	struct timeval timeo = {
+		.tv_sec = (timeout_ms / 1000),
+		.tv_usec = (timeout_ms % 1000) * 1000,
+	};
 
 	if (httpc.fd != INVALID_SOCKET) {
 		LOG_ERR("Already connected to server.");
@@ -235,12 +240,6 @@ static int do_http_connect(void)
 	httpc.fd = ret;
 
 	/* Set socket options */
-	const uint32_t timeout_ms = HTTPC_REQ_TO_S * MSEC_PER_SEC;
-	struct timeval timeo = {
-		.tv_sec = (timeout_ms / 1000),
-		.tv_usec = (timeout_ms % 1000) * 1000,
-	};
-
 	LOG_DBG("Configuring socket timeout (%lld s)", timeo.tv_sec);
 	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
 	if (ret) {
@@ -293,10 +292,6 @@ static int do_http_connect(void)
 	}
 
 	/* Connect to HTTP server */
-	struct sockaddr sa = {
-		.sa_family = AF_UNSPEC
-	};
-
 	ret = util_resolve_host(0, httpc.host, httpc.port, httpc.family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));

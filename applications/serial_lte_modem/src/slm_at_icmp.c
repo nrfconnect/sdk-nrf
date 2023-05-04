@@ -126,6 +126,7 @@ static uint32_t send_ping_wait_reply(void)
 	int plseqnr;
 	int ret;
 	const uint16_t icmp_hdr_len = ICMP_HDR_LEN;
+	struct timeval tv;
 
 	if (si->ai_family == AF_INET) {
 		/* Generate IPv4 ICMP EchoReq */
@@ -269,10 +270,8 @@ static uint32_t send_ping_wait_reply(void)
 	/* We have a blocking socket and we do not want to block for
 	 * a long for sending. Thus, let's set the timeout:
 	 */
-	struct timeval tv = {
-		.tv_sec = (ping_argv.waitms / 1000),
-		.tv_usec = (ping_argv.waitms % 1000) * 1000,
-	};
+	tv.tv_sec = (ping_argv.waitms / 1000);
+	tv.tv_usec = (ping_argv.waitms % 1000) * 1000;
 
 	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&tv,
 		       sizeof(struct timeval)) < 0) {
