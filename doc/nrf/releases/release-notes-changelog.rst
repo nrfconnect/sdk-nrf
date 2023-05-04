@@ -256,7 +256,7 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Added :ref:`wifi_wfa_qt_app_sample` that demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance QuickTrack certification.
 
 Other samples
 -------------
