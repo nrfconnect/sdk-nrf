@@ -116,6 +116,15 @@ manifest:
           upstream-url: https://w1.fi/cgit/hostap/
           upstream-sha: e792f38db8471f35ee94f109a4093dece8f78c6a
           compare-by-default: false
+    - name: wfa-qt-control-app
+      repo-path: sdk-wi-fiquicktrack-controlappc
+      path: modules/lib/wfa-qt-control-app
+      revision: f3391efd16c909d78c36dc7f9c81901b268deecc
+      userdata:
+        ncs:
+          upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
+          upstream-sha: 1225729e8d84075f03bf9fc51eee85d84dfb0091
+          compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: v1.10.0-ncs1
