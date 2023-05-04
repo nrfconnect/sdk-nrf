@@ -199,11 +199,8 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 						  int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 						  unsigned int phy_calib,
-						  unsigned char ant_gain_2g,
-						  unsigned char ant_gain_5g_band1,
-						  unsigned char ant_gain_5g_band2,
-						  unsigned char ant_gain_5g_band3,
-						  enum op_band op_band)
+						  enum op_band op_band,
+						  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl)
 {
 	unsigned long start_time_us = 0;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -243,11 +240,8 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 			       sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 			       phy_calib,
-			       ant_gain_2g,
-			       ant_gain_5g_band1,
-			       ant_gain_5g_band2,
-			       ant_gain_5g_band3,
-			       op_band);
+			       op_band,
+			       tx_pwr_ctrl);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -393,11 +387,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 					    int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 					    unsigned int phy_calib,
-					    unsigned char ant_gain_2g,
-					    unsigned char ant_gain_5g_band1,
-					    unsigned char ant_gain_5g_band2,
-					    unsigned char ant_gain_5g_band3,
-					    enum op_band op_band)
+					    enum op_band op_band,
+					    struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 #ifndef CONFIG_NRF700X_RADIO_TEST
@@ -479,11 +470,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 				       sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 				       phy_calib,
-				       ant_gain_2g,
-				       ant_gain_5g_band1,
-				       ant_gain_5g_band2,
-				       ant_gain_5g_band3,
-				       op_band);
+				       op_band,
+				       tx_pwr_ctrl_params);
 
 	if (status == WIFI_NRF_STATUS_FAIL) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,

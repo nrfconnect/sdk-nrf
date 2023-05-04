@@ -111,6 +111,66 @@ config NRF700X_ANT_GAIN_5G_BAND3
 	default 0
 	range 0 6
 
+config NRF700X_BAND_2G_LOWER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for lower edge of 2.4 GHz frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_2G_UPPER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for upper edge of 2.4 GHz frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for lower edge of UNII-1 frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for upper edge of UNII-1 frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for lower edge of UNII-2A frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for upper edge of UNII-2A frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for lower edge of UNII-2C frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for upper edge of UNII-2C frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for lower edge of UNII-3 frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for upper edge of UNII-3 frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for lower edge of UNII-4 frequency band"
+	default 0
+	range 0 10
+
+config NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF
+	int "Transmit power backoff (in dB) for upper edge of UNII-4 frequency band"
+	default 0
+	range 0 10
+
 # Performance fine tuning options
 
 config NRF700X_RX_NUM_BUFS
