@@ -248,9 +248,10 @@ static void apply_config(struct sensor_msg_data *msg)
 
 static void battery_data_get(void)
 {
+	struct sensor_module_event *sensor_module_event;
+
 #if defined(CONFIG_ADP536X)
 	int err;
-	struct sensor_module_event *sensor_module_event;
 	uint8_t percentage;
 
 	err = adp536x_fg_soc(&percentage);
@@ -260,11 +261,20 @@ static void battery_data_get(void)
 	}
 
 	sensor_module_event = new_sensor_module_event();
+
+	__ASSERT(sensor_module_event, "Not enough heap left to allocate event");
+
 	sensor_module_event->data.bat.timestamp = k_uptime_get();
 	sensor_module_event->data.bat.battery_level = percentage;
 	sensor_module_event->type = SENSOR_EVT_FUEL_GAUGE_READY;
-	APP_EVENT_SUBMIT(sensor_module_event);
+#else
+	sensor_module_event = new_sensor_module_event();
+
+	__ASSERT(sensor_module_event, "Not enough heap left to allocate event");
+
+	sensor_module_event->type = SENSOR_EVT_FUEL_GAUGE_NOT_SUPPORTED;
 #endif
+	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
 static void environmental_data_get(void)

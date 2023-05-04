@@ -1346,6 +1346,10 @@ static void on_all_states(struct data_msg_data *msg)
 		requested_data_status_set(APP_DATA_BATTERY);
 	}
 
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_FUEL_GAUGE_NOT_SUPPORTED)) {
+		requested_data_status_set(APP_DATA_BATTERY);
+	}
+
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_ENVIRONMENTAL_DATA_READY)) {
 		struct cloud_data_sensors new_sensor_data = {
 			.temperature = msg->module.sensor.data.sensors.temperature,
