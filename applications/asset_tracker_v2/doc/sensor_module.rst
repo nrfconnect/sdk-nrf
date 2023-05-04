@@ -45,9 +45,10 @@ When the module receives an :c:enum:`APP_EVT_DATA_GET` event and the :c:enum:`AP
 When data sampling has been carried out, the :c:enum:`SENSOR_EVT_ENVIRONMENTAL_DATA_READY` event is sent from the module with the sampled environmental sensor values.
 
 .. note::
-   The nRF9160 DK does not have any external sensors.
+   The nRF9160 DK does not have any external sensors and battery fuel gauge.
    If the sensor module is queried for sensor data when building for the DK, the event :c:enum:`SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED` is sent out by the module
    upon data sampling.
+   For battery fuel gauge data, :c:enum:`SENSOR_EVT_FUEL_GAUGE_NOT_SUPPORTED` is sent.
 
 Motion activity detection
 =========================

@@ -44,13 +44,16 @@ enum sensor_module_event_type {
 	 */
 	SENSOR_EVT_ENVIRONMENTAL_DATA_READY,
 
+	/** Environmental sensors are not supported on the current board. */
+	SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED,
+
 	/** Battery fuel gauge data has been sampled.
 	 *  Payload is of type @ref sensor_module_data (bat).
 	 */
 	SENSOR_EVT_FUEL_GAUGE_READY,
 
-	/** Environmental sensors are not supported on the current board. */
-	SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED,
+	/** Battery data is not supported on the current board. */
+	SENSOR_EVT_FUEL_GAUGE_NOT_SUPPORTED,
 
 	/** The sensor module has performed all procedures to prepare for
 	 *  a shutdown of the system. The event carries the ID (id) of the module.

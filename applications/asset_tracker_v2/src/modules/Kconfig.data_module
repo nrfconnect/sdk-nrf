@@ -77,7 +77,7 @@ config DATA_DYNAMIC_MODEM_BUFFER_STORE
 	default y
 
 config DATA_BATTERY_BUFFER_STORE
-	bool "Store battery data received from the modem module"
+	bool "Store battery data received from the sensor module"
 	default y
 
 config DATA_UI_BUFFER_STORE
