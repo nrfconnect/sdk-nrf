@@ -52,28 +52,24 @@ struct counter_collection {
 	struct monotonic_counter counters[1];
 };
 
+/*
+ * BL_STORAGE is usually, but not always, in UICR. For code simplicity
+ * we read it as if it were a UICR address as it is safe (although
+ * inefficient) to do so.
+ */
 uint32_t s0_address_read(void)
 {
-	uint32_t addr = BL_STORAGE->s0_address;
-
-	__DSB(); /* Because of nRF9160 Erratum 7 */
-	return addr;
+	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->s0_address);
 }
 
 uint32_t s1_address_read(void)
 {
-	uint32_t addr = BL_STORAGE->s1_address;
-
-	__DSB(); /* Because of nRF9160 Erratum 7 */
-	return addr;
+	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->s1_address);
 }
 
 uint32_t num_public_keys_read(void)
 {
-	uint32_t num_pk = BL_STORAGE->num_public_keys;
-
-	__DSB(); /* Because of nRF9160 Erratum 7 */
-	return num_pk;
+	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->num_public_keys);
 }
 
 /* Value written to the invalidation token when invalidating an entry. */
@@ -81,10 +77,7 @@ uint32_t num_public_keys_read(void)
 
 static bool key_is_valid(uint32_t key_idx)
 {
-	bool ret = (BL_STORAGE->key_data[key_idx].valid != INVALID_VAL);
-
-	__DSB(); /* Because of nRF9160 Erratum 7 */
-	return ret;
+	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->key_data[key_idx].valid) != INVALID_VAL;
 }
 
 int verify_public_keys(void)
@@ -136,9 +129,8 @@ void invalidate_public_key(uint32_t key_idx)
 	const volatile uint32_t *invalidation_token =
 			&BL_STORAGE->key_data[key_idx].valid;
 
-	if (*invalidation_token != INVALID_VAL) {
+	if (nrfx_nvmc_uicr_word_read(invalidation_token) != INVALID_VAL) {
 		/* Write if not already written. */
-		__DSB(); /* Because of nRF9160 Erratum 7 */
 		nrfx_nvmc_word_write((uint32_t)invalidation_token, INVALID_VAL);
 	}
 }
