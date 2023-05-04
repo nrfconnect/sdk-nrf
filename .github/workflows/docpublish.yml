@@ -58,7 +58,7 @@ jobs:
             cd /nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
             put ${file}
             quit
-            EOF
+          EOF
           done
 
       - name: Add preview URL comment for PRs
