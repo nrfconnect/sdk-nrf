@@ -80,7 +80,9 @@ The modem trace flash backend has some additional configuration options:
 
 * :kconfig:option:`CONFIG_FCB` - Required for the flash circular buffer used in the backend.
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE` - Defines the space to be used for the modem trace partition.
-  The external flash size on the nRF9160 DK is 8 MB (equal to ``0x800000`` in HEX).
+  In order to improve the modem trace write performance, this partition is erased during system boot.
+  This might lead to a significant increase in the boot time on the nRF9160 DK.
+  The external flash size on the nRF9160 DK is 8 MB (equal to ``0x800000`` in HEX) and 32 MB on the nRF9161 DK (equal to ``0x2000000`` in HEX).
 
 It is also recommended to enable high drive mode and high-performance mode in devicetree.
 High drive is to ensure that the communication with the flash device is reliable at high speed.
@@ -316,3 +318,45 @@ Complete the following steps to add a custom trace backend:
 
       CONFIG_NRF_MODEM_LIB_TRACE=y
       CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_MY_TRACE_BACKEND=y
+
+.. _modem_trace_shell_command:
+
+Modem trace shell command
+*************************
+
+Shell command: ``modem_trace``
+
+You can use the modem trace commands to control the trace functionality in the modem when the :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHELL_TRACE` Kconfig option is enabled.
+A trace backend that can store modem traces is required to send modem traces to the cloud.
+The ``modem_trace dump_uart`` command is a simple demonstration of how trace data can be read out from storage using the :c:func:`nrf_modem_lib_trace_read` function.
+
+Be aware that the default trace level is :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_FULL` and starts modem traces during system boot automatically.
+In case you want to start modem tracing using shell commands instead, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OFF` Kconfig option to ``y``.
+
+Following are some examples of modem tracing:
+
+* To trace everything (LTE, IP, and GNSS):
+
+  .. code-block:: console
+
+     modem_trace start full
+     <use the modem by triggering functionality in the app or use at-commands>
+     modem_trace stop
+
+* To read out the size of stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace size
+
+* To read out stored traces and send over UART:
+
+  .. code-block:: console
+
+      modem_trace dump_uart
+
+* To delete all stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace clear

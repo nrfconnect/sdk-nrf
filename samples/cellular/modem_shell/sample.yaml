@@ -278,29 +278,7 @@ tests:
       - thingy91_nrf9160_ns
     platform_allow: thingy91_nrf9160_ns
     tags: ci_build
-  sample.cellular.modem_shell.memfault_modem_trace.nrf9160:
-    build_only: true
-    integration_platforms:
-      - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
-    extra_args: OVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf"
-                DTC_OVERLAY_FILE="nrf9160dk_ext_flash.overlay"
-    extra_configs:
-      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="0123456789abcdef0123456789abcdef"
-    tags: ci_build
-  sample.cellular.modem_shell.memfault_modem_trace.nrf91x1:
-    build_only: true
-    integration_platforms:
-      - nrf9161dk_nrf9161_ns
-    platform_allow:
-      - nrf9161dk_nrf9161_ns
-      - nrf9151dk_nrf9151_ns
-    extra_args: OVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf"
-                DTC_OVERLAY_FILE="nrf9161dk_ext_flash.overlay"
-    extra_configs:
-      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="0123456789abcdef0123456789abcdef"
-    tags: ci_build
-  sample.cellular.modem_shell.memfault_modem_trace_ram:
+  sample.cellular.modem_shell.modem_trace_shell_ext_flash:
     build_only: true
     integration_platforms:
       - nrf9160dk_nrf9160_ns
@@ -309,9 +287,20 @@ tests:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
       - nrf9151dk_nrf9151_ns
-    extra_args: OVERLAY_CONFIG="overlay-modem-trace-ram.conf;overlay-memfault.conf"
+    extra_args: SNIPPET="nrf91-modem-trace-ext-flash"
     extra_configs:
-      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="0123456789abcdef0123456789abcdef"
+      - CONFIG_NRF_MODEM_LIB_SHELL_TRACE=y
+    tags: ci_build
+  sample.cellular.modem_shell.modem_trace_ram:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
+    extra_args: OVERLAY_CONFIG="overlay-modem-trace-ram.conf"
     tags: ci_build
 
   # Configurations for different location method combinations
