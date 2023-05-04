@@ -9,6 +9,20 @@ Changelog
 
 Notable changes to this controller are documented in this file.
 
+Controller v3349
+****************
+
+The following changes have been introduced in the v3349 of the controller:
+
+Changes
+=======
+
+* Fixed the Direct Test Mode (DTM), which was broken after version 3307.
+* Fixed an issue where an update to the connection parameter could lead to a disconnection.
+* Fixed an issue where the "stream stopped" and "disconnected" events would not be triggered.
+* Fixed an issue where the controller would stop responding when a disconnection happened.
+
+
 Controller v3330
 ****************
 
