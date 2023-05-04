@@ -24,6 +24,7 @@
 #endif
 
 #include <modem/nrf_modem_lib.h>
+#include <modem/nrf_modem_lib_trace.h>
 #include <modem/at_monitor.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
@@ -146,6 +147,17 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 
 	__ASSERT(false, "Modem crash detected, halting application execution");
 }
+
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_SHELL)
+void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt)
+{
+	if (evt == NRF_MODEM_LIB_TRACE_EVT_FULL) {
+		mosh_warn("Modem trace storage is full.");
+		mosh_print("It is recommended to stop modem tracing before sending.");
+		mosh_print("Send or clear modem traces before re-starting.");
+	}
+}
+#endif
 
 static void mosh_print_version_info(void)
 {

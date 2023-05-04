@@ -333,6 +333,12 @@ Modem libraries
 
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Added:
+
+    * Moved modem_trace shell command from modem_shell sample into nrf_modem_lib to be used in any app with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` enabled.
+
 Libraries for networking
 ------------------------
 

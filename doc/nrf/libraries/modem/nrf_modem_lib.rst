@@ -329,6 +329,76 @@ Other configurations set in the devicetree, such as the current speed, are overw
 
    When one of the UART trace backends is enabled by either the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` or :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC`, it initializes the UART1 driver, regardless of its status in the devicetree.
 
+Modem trace shell command
+==========================
+
+Shell command: ``modem_trace``
+
+Use the modem trace commands to control the trace functionality in the modem when :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_SHELL` is enabled.
+
+A trace backend that can store modem traces is required to upload modem traces to the cloud.
+
+Examples
+--------
+
+* Modem trace everything (LTE, IP and GNSS):
+
+  .. code-block:: console
+
+     modem_trace start full
+     <test using gnss-, lte-, or ip-commands>
+     modem_trace stop
+
+* Read out the size of stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace size
+
+* Delete all stored modem traces:
+
+  .. code-block:: console
+
+     modem_trace clear
+
+Send to Memfault
+----------------
+
+To register an account and obtain the project key, refer to the :ref:`using_memfault` section of the :ref:`ug_memfault` guide.
+
+After a modem trace session, prepare sending the trace data to Memfault using ``modem_trace send memfault``.
+This informs the `Memfault-SDK`_ about a Custom Data Recording (CDR) that will be sent as part of the next data transfer to Memfault.
+To trigger sending immediately, it's possible to use the Memfault shell command ``mflt post_chunks``.
+
+Follow these steps to download the modem trace data:
+
+   a. In a web browser, navigate to `Memfault`_.
+   #. Log in to your account and select the project you created earlier.
+   #. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left side menu.
+   #. Select the **device** that sent a modem trace.
+   #. Navigate to the :guilabel:`Timeline` tab.
+   #. Find the CDR in the timeline and click on it.
+   #. Select :guilabel:`Download` from the pop-up window.
+
+See the following figure, which shows how to download the modem trace data in the `Memfault`_:
+
+.. figure:: /images/modem_shell_trace_download.png
+   :alt: Modem trace download
+
+   Modem trace download
+
+Example
+--------
+
+The following is an example of stored modem traces sent to Memfault.
+This will free up the stored traces as they are sent.
+
+  .. code-block:: console
+
+     modem_trace stop
+     modem_trace send memfault
+     mflt post_chunks
+
 Modem fault handling
 ********************
 If a fault occurs in the modem, the application is notified through the fault handler function that is registered with the Modem library during initialization.

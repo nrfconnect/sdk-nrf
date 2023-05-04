@@ -1,0 +1,5 @@
+config NRF_MODEM_LIB_TRACE_SHELL
+	bool "Shell commands for modem traces"
+	default y
+	depends on SHELL
+	depends on NRF_MODEM_LIB_TRACE

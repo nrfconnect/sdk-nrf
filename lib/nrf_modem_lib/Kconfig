@@ -22,5 +22,6 @@ if NRF_MODEM_LIB
 
 rsource "Kconfig.modemlib"
 rsource "lte_connectivity/Kconfig"
+rsource "shell/Kconfig"
 
 endif # NRF_MODEM_LIB

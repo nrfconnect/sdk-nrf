@@ -15,6 +15,7 @@ add_subdirectory_ifdef(CONFIG_LTE_CONNECTIVITY lte_connectivity)
 if(CONFIG_NRF_MODEM_LIB_TRACE)
   zephyr_library_sources(nrf_modem_lib_trace.c)
   add_subdirectory(trace_backends)
+  add_subdirectory(shell)
 endif()
 
 zephyr_library_sources(fault.c)
