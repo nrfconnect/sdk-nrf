@@ -44,13 +44,13 @@ bool cloud_is_disconnecting(void);
 void disconnect_cloud(void);
 
 /**
- * @brief Await a connection to an LTE carrier.
+ * @brief Await a connection to a network.
  *
  * @param timeout - The time to wait before timing out.
  * @return true if occurred.
  * @return false if timed out.
  */
-bool await_lte_connection(k_timeout_t timeout);
+bool await_network_connection(k_timeout_t timeout);
 
 /**
  * @brief Await a disconnection from nRF Cloud.
