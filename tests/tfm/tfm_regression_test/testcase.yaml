@@ -15,25 +15,31 @@ common:
 
 tests:
   tfm.regression_ipc_lvl1:
+    tags: tfm_lvl1
     extra_args: CONFIG_TFM_IPC=y CONFIG_TFM_ISOLATION_LEVEL=1
     timeout: 200
 
   tfm.regression_ipc_lvl2.mbedtls_builtin:
+    tags: tfm_lvl2
     extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=n CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
     timeout: 200
 
   tfm.regression_ipc_lvl2.cc3xx:
+    tags: tfm_lvl2
     extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
     timeout: 200
 
   tfm.regression_ipc_lvl2.oberon:
+    tags: tfm_lvl2
     extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=n CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
     timeout: 200
 
   tfm.regression_ipc_lvl2.cc3xx_oberon:
+    tags: tfm_lvl2
     extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
     timeout: 200
 
   tfm.regression_sfn_lvl1:
+    tags: tfm_lvl1
     extra_args: CONFIG_TFM_SFN=y CONFIG_TFM_ISOLATION_LEVEL=1
     timeout: 200
