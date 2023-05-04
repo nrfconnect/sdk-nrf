@@ -201,14 +201,15 @@ enum lcs {
  * time. Writes to @p dst are done a byte at a time.
  *
  * @param[out] dst destination buffer.
- * @param[in] src source buffer. Must be 4-byte-aligned.
+ * @param[in] src source buffer in OTP. Must be 4-byte-aligned.
  * @param[in] size number of *bytes* in src to copy into dst. Must be divisible by 4.
  */
 NRFX_STATIC_INLINE void otp_copy32(uint8_t *restrict dst, uint32_t volatile * restrict src,
 				   size_t size)
 {
 	for (int i = 0; i < size / 4; i++) {
-		uint32_t val = src[i];
+		/* OTP is in UICR */
+		uint32_t val = nrfx_nvmc_uicr_word_read(src + i);
 
 		for (int j = 0; j < 4; j++) {
 			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
