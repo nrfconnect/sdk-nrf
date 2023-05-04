@@ -1,0 +1,6 @@
+tests:
+  modem_battery.unit_test:
+    tags: modem_battery
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
