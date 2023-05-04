@@ -22,8 +22,10 @@ LOG_MODULE_REGISTER(connection, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 
 /* Flow control event identifiers */
 
-/* LTE either is connected or isn't */
-#define LTE_CONNECTED			(1 << 1)
+/* The NETWORK_CONNECTED event is raised when network connection is established, and cleared
+ * when network connection is lost.
+ */
+#define NETWORK_CONNECTED		(1 << 1)
 
 /* CLOUD_CONNECTED is fired when we first connect to the nRF Cloud.
  * CLOUD_READY is fired when the connection is fully associated and ready to send device messages.
@@ -41,7 +43,7 @@ LOG_MODULE_REGISTER(connection, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 #define DATE_TIME_KNOWN			(1 << 1)
 
 /* Flow control event objects for waiting for key events. */
-static K_EVENT_DEFINE(lte_connection_events);
+static K_EVENT_DEFINE(network_connection_events);
 static K_EVENT_DEFINE(cloud_connection_events);
 static K_EVENT_DEFINE(datetime_connection_events);
 
@@ -59,25 +61,25 @@ static int send_failure_count;
 
 static dev_msg_handler_cb_t general_dev_msg_handler;
 /**
- * @brief Notify that LTE connection has been established.
+ * @brief Notify that network connection has been established.
  */
-static void notify_lte_connected(void)
+static void notify_network_connected(void)
 {
-	k_event_post(&lte_connection_events, LTE_CONNECTED);
+	k_event_post(&network_connection_events, NETWORK_CONNECTED);
 }
 
 /**
- * @brief Reset the LTE connection event flag.
+ * @brief Reset the network connection event flag.
  */
-static void clear_lte_connected(void)
+static void clear_network_connected(void)
 {
-	k_event_set(&lte_connection_events, 0);
+	k_event_set(&network_connection_events, 0);
 }
 
-bool await_lte_connection(k_timeout_t timeout)
+bool await_network_connection(k_timeout_t timeout)
 {
-	LOG_DBG("Awaiting LTE Connection");
-	return k_event_wait_all(&lte_connection_events, LTE_CONNECTED, false, timeout) != 0;
+	LOG_DBG("Awaiting network connection");
+	return k_event_wait_all(&network_connection_events, NETWORK_CONNECTED, false, timeout) != 0;
 }
 
 /**
@@ -118,7 +120,7 @@ static void clear_cloud_connection_events(void)
 }
 
 /**
- * @brief Await a connection to nRF Cloud (ignoring LTE connection state and cloud readiness).
+ * @brief Await a connection to nRF Cloud (ignoring network connection state and cloud readiness).
  *
  * @param timeout - The time to wait before timing out.
  * @return true if occurred.
@@ -186,7 +188,7 @@ void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb)
 
 bool await_connection(k_timeout_t timeout)
 {
-	return await_lte_connection(timeout) && await_cloud_ready(timeout, false);
+	return await_network_connection(timeout) && await_cloud_ready(timeout, false);
 }
 
 bool cloud_is_connected(void)
@@ -360,7 +362,7 @@ static void lte_event_handler(const struct lte_lc_evt *const evt)
 		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
 		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 			/* Clear connected status. */
-			clear_lte_connected();
+			clear_network_connected();
 
 			/* Also reset the nRF Cloud connection if we were currently connected
 			 * Failing to do this will result in nrf_cloud_send stalling upon connection
@@ -375,7 +377,7 @@ static void lte_event_handler(const struct lte_lc_evt *const evt)
 			}
 		} else {
 			/* Notify we are connected to LTE. */
-			notify_lte_connected();
+			notify_network_connected();
 		}
 
 		break;
@@ -733,7 +735,10 @@ static int setup_modem(void)
 
 /**
  * @brief Set up the nRF Cloud library
- * Must be called before setup_lte, so that pending FOTA jobs can be checked before LTE init.
+ *
+ * Call this before setup_network so that any pending FOTA job is handled first.
+ * This avoids calling setup_network pointlessly right before a FOTA-initiated reboot.
+ *
  * @return int - 0 on success, otherwise negative error code.
  */
 static int setup_cloud(void)
@@ -755,14 +760,12 @@ static int setup_cloud(void)
 	return 0;
 }
 
-
 /**
- * @brief Set up LTE and start trying to connect.
+ * @brief Set up network and start trying to connect.
  *
- * Must be called AFTER setup_cloud to ensure proper operation of FOTA.
  * @return int - 0 on success, otherwise a negative error code.
  */
-static int setup_lte(void)
+static int setup_network(void)
 {
 	int err;
 
@@ -836,30 +839,29 @@ void connection_management_thread_fn(void)
 		return;
 	}
 
-	/* Set up LTE and start trying to connect.
-	 * This is done once only, since the modem handles connection persistence then after.
-	 *
-	 * (Once we request connection, the modem will automatically try to reconnect whenever
-	 *  connection is lost).
+	/* Set up network and start trying to connect.
+	 * This is done once only, since the network implementation should handle network
+	 * persistence then after. (Once we request connection, it will automatically try to
+	 * reconnect whenever connection is lost).
 	 */
-	LOG_INF("Setting up LTE...");
-	if (setup_lte()) {
-		LOG_ERR("Fatal: LTE setup failed");
+	LOG_INF("Setting up network...");
+	if (setup_network()) {
+		LOG_ERR("Fatal: Network setup failed");
 		long_led_pattern(LED_FAILURE);
 		return;
 	}
 
-	LOG_INF("Connecting to LTE network. This may take several minutes...");
+	LOG_INF("Connecting to network. This may take several minutes...");
 	while (true) {
-		/* Wait for LTE to become connected (or re-connected if connection was lost). */
-		LOG_INF("Waiting for connection to LTE network...");
+		/* Wait for network to become connected (or re-connected if connection was lost). */
+		LOG_INF("Waiting for connection to network...");
 
 		if (IS_ENABLED(CONFIG_LED_VERBOSE_INDICATION)) {
 			long_led_pattern(LED_WAITING);
 		}
 
-		(void)await_lte_connection(K_FOREVER);
-		LOG_INF("Connected to LTE network");
+		(void)await_network_connection(K_FOREVER);
+		LOG_INF("Connected to network");
 
 		/* Attempt to connect to nRF Cloud. */
 		if (!connect_cloud()) {
