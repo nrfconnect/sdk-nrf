@@ -216,6 +216,7 @@ Kconfig*                                  @tejlmand
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
+/snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
 /snippets/nrf91-modem-trace-uart/         @eivindj-nordic
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
 /snippets/nrf70-debug/                    @krish2718 @sachinthegreen

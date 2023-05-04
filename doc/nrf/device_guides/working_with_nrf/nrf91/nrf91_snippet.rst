@@ -9,10 +9,32 @@ Snippets for an nRF91 Series device
 
 
 :ref:`snippets` are tailored for tracing on the nRF91 Series devices but can work with other boards as well.
-In |NCS|, snippets are used for the following functionalities:
+On nRF91 Series devices, snippets are used for the following functionalities:
 
+* Modem tracing with the flash backend
 * Modem tracing with the UART backend
 * To activate TF-M logging while having modem traces enabled
+
+.. _nrf91_modem_trace_ext_flash_snippet:
+
+nRF91 modem traces with flash backend using snippets
+====================================================
+
+Snippet enables modem tracing, the flash backend, and external flash and configures them to store modem traces to a dedicated partition on the external flash for supported boards.
+To change the partition size, the project needs to configure the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE` Kconfig option.
+
+The following build targets have support for this snippet:
+
+* ``nrf9161dk_nrf9161_ns``
+* ``nrf9160dk_nrf9160_ns``
+* ``nrf9131ek_nrf9131_ns``
+
+To enable modem traces with the flash backend, use the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build --board *build target* -S nrf91-modem-trace-ext-flash
 
 .. _nrf91_modem_trace_uart_snippet:
 

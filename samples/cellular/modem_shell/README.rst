@@ -474,80 +474,14 @@ Modem traces
 
 MoSh command: ``modem_trace``
 
+Enable the ``modem_trace`` command using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHELL_TRACE` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig options.
+
 You can use the modem trace commands to control the trace functionality in the modem.
 See :ref:`modem_trace_module` for more information on how to configure modem tracing and the built-in trace backends available.
+See :ref:`modem_trace_shell_command` for details about the shell command.
 
-You need a trace backend that can store modem traces if you want to upload modem traces to the cloud.
-The flash backend can store modem traces to the external flash on the nRF91 Series DK and can be retrieved for uploading.
-
-To enable modem traces with the flash backend, use the :file:`overlay-modem-trace-flash.conf` configuration file.
-This also requires a devicetree overlay for the external flash (:file:`nrf9160dk_ext_flash.overlay` for the nRF9160 DK or :file:`nrf9161dk_ext_flash.overlay` for the nRF9161 DK, depending on the DK you are using).
-
-Send to Memfault
-----------------
-
-To register an account and obtain the project key, refer to the :ref:`using_memfault` section of the :ref:`ug_memfault` guide.
-The Memfault overlay config (:file:`overlay-memfault.conf`) includes the most common configuration options for using the Memfault with modem traces.
-
-After a modem trace session, prepare sending the trace data to Memfault using ``modem_trace send memfault``.
-This informs the `Memfault-SDK`_ about a Custom Data Recording (CDR) that will be sent as part of the next data transfer to Memfault.
-To trigger sending immediately, it's possible to use the Memfault shell command ``mflt post_chunks``.
-
-Follow these steps to download the modem trace data:
-
-   a. In a web browser, navigate to `Memfault`_.
-   #. Log in to your account and select the project you created earlier.
-   #. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left side menu.
-   #. Select the **device** that sent a modem trace.
-   #. Navigate to the :guilabel:`Timeline` tab.
-   #. Find the CDR in the timeline and click on it.
-   #. Select :guilabel:`Download` from the pop-up window.
-
-See the following figure, which shows how to download the modem trace data in the `Memfault`_:
-
-.. figure:: /images/modem_shell_trace_download.png
-   :alt: Modem trace download
-
-   Modem trace download
-
-.. note::
-   The conversion of modem trace file to a Wireshark-compatible format is available in the `Cellular Monitor`_ tool of the nRF Connect for Desktop.
-
-To build the MoSh sample for an nRF91 Series DK with modem trace flash backend support, see :ref:`modem_shell_trace_flash_support`.
-
-Examples
---------
-
-* Modem trace everything (LTE, IP and GNSS):
-
-  .. code-block:: console
-
-     modem_trace start full
-     <test using gnss-, lte-, or ip-commands>
-     modem_trace stop
-
-* Read out the size of stored modem traces:
-
-  .. code-block:: console
-
-     modem_trace size
-
-* Delete all stored modem traces:
-
-  .. code-block:: console
-
-     modem_trace clear
-
-* Send modem traces to Memfault:
-  (This will free up the stored traces as they are sent)
-
-  .. code-block:: console
-
-     modem_trace send memfault
-     mflt post_chunks
-
-
-----
+To enable modem traces with the flash backend, build with the ``nrf91-modem-trace-ext-flash`` snippet for an nRF91 Series DK that has external flash.
+For more information on snippets, see :ref:`zephyr:using-snippets`.
 
 GNSS
 ====
@@ -1585,7 +1519,7 @@ When connected, the ``location`` and ``gnss`` commands use the LwM2M cloud conne
 nRF91 Series DK with modem trace flash backend support
 ======================================================
 
-To build the MoSh sample for an nRF91 Series DK with modem trace flash backend support, use the devicetree overlay for external flash corresponding to your device and the ``-DOVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf"`` option.
+To build the MoSh sample for an nRF91 Series DK with modem trace flash backend support, use the snippet ``nrf91-modem-trace-ext-flash``.
 
 For example:
 
@@ -1595,13 +1529,13 @@ For example:
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf" -DDTC_OVERLAY_FILE=nrf9161dk_ext_flash.overlay
+         west build -p -b nrf9161dk_nrf9161_ns -S nrf91-modem-trace-ext-flash
 
    .. group-tab:: nRF9160 DK
 
       .. code-block:: console
 
-         west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf" -DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay
+         west build -p -b nrf9160dk_nrf9160_ns -S nrf91-modem-trace-ext-flash
 
 References
 **********

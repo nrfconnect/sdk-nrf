@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&mx25r64 {
+	status = "okay";
+	mxicy,mx25r-power-mode = "high-performance";
+};
+
+/ {
+	aliases {
+		ext-flash = &mx25r64;
+	};
+
+	/* Configure partition manager to use mx25r64 as the external flash */
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};

@@ -395,7 +395,10 @@ Cellular samples
     * Support for PDN CID 0 in the ``-I`` argument for the ``sock connect`` command.
     * Support for listing interface addresses using the ``link ifaddrs`` command.
 
-  * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
+  * Removed:
+
+    * The nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
+    * The ``modem_trace send memfault`` shell command.
 
   * Updated:
 
@@ -408,6 +411,8 @@ Cellular samples
       The ``rai_no_data`` option requires the socket to be connected and have a peer address set.
       This bug is caused by the non-secure datagram socket not being connected when using the ``connect`` subcommand.
     * The ``send`` subcommand to use the :c:func:`send` function for non-secure datagram sockets that are connected and have a peer address set.
+    * The ``modem_trace`` command has been moved to :ref:`nrf_modem_lib_readme`.
+      See :ref:`modem_trace_shell_command` for information about modem trace commands.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -799,9 +804,12 @@ Modem libraries
     * A mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
     * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT` option, allowing the user to change the behavior of the driver's :c:func:`net_if_down` implementation at build time.
 
-  * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
+  * Updated:
+
+  * The library by renaming ``lte_connectivity`` module to ``lte_net_if``.
     All related Kconfig options have been renamed accordingly.
-  * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
+  * The default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
+  * The modem trace shell command implementation is moved from :ref:`modem_shell_application` sample into :ref:`nrf_modem_lib_readme` to be used by any application with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHELL_TRACE` option enabled.
 
   * Fixed:
 
