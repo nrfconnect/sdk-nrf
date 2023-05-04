@@ -640,7 +640,7 @@ static void get_agps_data(struct k_work *item)
 		return;
 	}
 	location_assistance_agps_set_mask(&agps_request);
-	err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get(), true);
+	err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get());
 	if (err) {
 		mosh_error("GNSS: Failed to request A-GPS data, error: %d", err);
 	}
@@ -855,7 +855,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 		return;
 	}
 
-	err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get(), true);
+	err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get());
 	if (err) {
 		mosh_error("GNSS: Failed to request P-GPS data, err: %d", err);
 	} else {

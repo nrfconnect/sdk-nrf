@@ -205,14 +205,14 @@ void test_lwm2m_integration_ui_send(void)
 
 void test_lwm2m_integration_neighbor_cells_send(void)
 {
-	__cmock_location_assistance_ground_fix_request_send_ExpectAndReturn(&client, true, 0);
+	__cmock_location_assistance_ground_fix_request_send_ExpectAndReturn(&client, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_cloud_location_send(NULL, 0, true, 0));
 }
 
 void test_lwm2m_integration_agps_request_send(void)
 {
-	__cmock_location_assistance_agps_request_send_ExpectAndReturn(&client, true, 0);
+	__cmock_location_assistance_agps_request_send_ExpectAndReturn(&client, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_agps_request_send(NULL, 0, true, 0));
 }
@@ -238,7 +238,7 @@ void test_lwm2m_integration_batch_send(void)
 
 void test_lwm2m_integration_pgps_request_send(void)
 {
-	__cmock_location_assistance_pgps_request_send_ExpectAndReturn(&client, true, 0);
+	__cmock_location_assistance_pgps_request_send_ExpectAndReturn(&client, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_pgps_request_send(NULL, 0, true, 0));
 }

@@ -507,8 +507,9 @@ int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id)
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
 	ARG_UNUSED(id);
+	ARG_UNUSED(ack);
 
-	return location_assistance_ground_fix_request_send(&client, ack);
+	return location_assistance_ground_fix_request_send(&client);
 }
 
 int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
@@ -516,8 +517,9 @@ int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
 	ARG_UNUSED(id);
+	ARG_UNUSED(ack);
 
-	return location_assistance_agps_request_send(&client, ack);
+	return location_assistance_agps_request_send(&client);
 }
 
 int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
@@ -525,8 +527,9 @@ int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 	ARG_UNUSED(buf);
 	ARG_UNUSED(len);
 	ARG_UNUSED(id);
+	ARG_UNUSED(ack);
 
-	return location_assistance_pgps_request_send(&client, ack);
+	return location_assistance_pgps_request_send(&client);
 }
 
 int cloud_wrap_memfault_data_send(char *buf, size_t len, bool ack, uint32_t id)
