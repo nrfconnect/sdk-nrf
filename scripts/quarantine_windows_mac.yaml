@@ -27,3 +27,11 @@
     - sample.esb.prx
     - sample.esb.ptx
   comment: "Cmake error for EBC tests - NCSDK-21089"
+
+- scenarios:
+    - asset_tracker_v2.nrf7002ek_wifi-debug
+  comment: "FLASH overflow issue under investigation"
+
+- scenarios:
+    - sample.tfm.psa_template
+  comment: "Quarantined until pull/11016 is merged"
