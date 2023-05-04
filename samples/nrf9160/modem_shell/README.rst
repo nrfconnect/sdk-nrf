@@ -475,29 +475,13 @@ This also requires a device tree overlay for the external flash (:file:`nrf9160d
 Send to Memfault
 ----------------
 
-To register an account and obtain the project key, refer to the :ref:`using_memfault` section of the :ref:`ug_memfault` guide.
+To send data to Memfault, you must have a `Memfault account <Memfault registration page_>`_ , a project key, and :ref:`configure Memfault <ug_memfault_config>` in your application.
+Refer to the :ref:`ug_memfault` guide for more information.
 The Memfault overlay config (:file:`overlay-memfault.conf`) includes the most common configuration options for using the Memfault with modem traces.
 
-After a modem trace session, prepare sending the trace data to Memfault using ``modem_trace send memfault``.
-This informs the `Memfault-SDK`_ about a Custom Data Recording (CDR) that will be sent as part of the next data transfer to Memfault.
-To trigger sending immediately, it's possible to use the Memfault shell command ``mflt post_chunks``.
-
-Follow these steps to download the modem trace data:
-
-   a. In a web browser, navigate to `Memfault`_.
-   #. Log in to your account and select the project you created earlier.
-   #. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left side menu.
-   #. Select the **device** that sent a modem trace.
-   #. Navigate to the :guilabel:`Timeline` tab.
-   #. Find the CDR in the timeline and click on it.
-   #. Select :guilabel:`Download` from the pop-up window.
-
-See the following figure, which shows how to download the modem trace data in the `Memfault`_:
-
-.. figure:: /images/modem_shell_trace_download.png
-   :alt: Modem trace download
-
-   Modem trace download
+.. include:: /libraries/modem/nrf_modem_lib.rst
+   :start-after: modem_memfault_trace_start
+   :end-before: modem_memfault_trace_end
 
 .. note::
    The conversion of modem trace file to a Wireshark-compatible format will be available in one of the future releases of the Trace Collector tool.

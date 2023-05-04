@@ -13,20 +13,18 @@
 #include "modem_trace_memfault.h"
 #endif
 
-#include "mosh_print.h"
-
 static uint32_t trace_start_time_ms;
 static uint32_t trace_duration_ms;
 
-int modem_traces_start(enum nrf_modem_lib_trace_level trace_level)
+int modem_traces_start(const struct shell *sh, enum nrf_modem_lib_trace_level trace_level)
 {
 	int err;
 
-	mosh_print("Starting modem traces: %d", trace_level);
+	shell_print(sh, "Starting modem traces: %d", trace_level);
 
 	err = nrf_modem_lib_trace_level_set(trace_level);
 	if (err) {
-		mosh_error("Failed to enable modem traces");
+		shell_error(sh, "Failed to enable modem traces");
 		return err;
 	}
 	trace_start_time_ms = k_uptime_get_32();
@@ -35,15 +33,17 @@ int modem_traces_start(enum nrf_modem_lib_trace_level trace_level)
 	return 0;
 }
 
-int modem_traces_stop(void)
+int modem_traces_stop(const struct shell *sh, size_t argc, char **argv)
 {
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
 	int err;
 
-	mosh_print("Stopping modem traces");
+	shell_print(sh, "Stopping modem traces");
 
 	err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_OFF);
 	if (err) {
-		mosh_error("Failed to turn off modem traces");
+		shell_error(sh, "Failed to turn off modem traces");
 		return err;
 	}
 
@@ -58,57 +58,66 @@ int modem_traces_stop(void)
 	return 0;
 }
 
-void modem_traces_clear(void)
+void modem_traces_clear(const struct shell *sh, size_t argc, char **argv)
 {
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
 	int err;
 
-	mosh_print("Clearing modem traces");
+	shell_print(sh, "Clearing modem traces");
 
 	err = nrf_modem_lib_trace_clear();
-	if (err) {
-		mosh_error("Failed to clear modem traces: %d", err);
+	if (err == -ENOTSUP) {
+		shell_error(sh, "The current modem trace backend does not support this operation");
+	} else if (err) {
+		shell_error(sh, "Failed to clear modem traces: %d", err);
 	}
 }
 
-void modem_trace_size(void)
+void modem_trace_size(const struct shell *sh, size_t argc, char **argv)
 {
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
 	int ret;
 
 	ret = nrf_modem_lib_trace_data_size();
-	if (ret < 0) {
-		mosh_error("Failed to get modem traces size: %d", ret);
+	if (ret == -ENOTSUP) {
+		shell_error(sh, "The current modem trace backend does not support this operation");
+	} else if (ret < 0) {
+		shell_error(sh, "Failed to get modem traces size: %d", ret);
 	} else {
-		mosh_print("Modem trace data size: %d bytes", ret);
+		shell_print(sh, "Modem trace data size: %d bytes", ret);
 	}
 }
 
-static int modem_trace_shell_start(const struct shell *shell, size_t argc, char **argv, void *data)
+static int modem_trace_shell_start(const struct shell *sh, size_t argc, char **argv, void *data)
 {
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
 	enum nrf_modem_lib_trace_level level = (enum nrf_modem_lib_trace_level)data;
 
-	return modem_traces_start(level);
+	return modem_traces_start(sh, level);
 }
 
-void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt)
+void send_traces_to_memfault(const struct shell *sh, size_t argc, char **argv, void *data)
 {
-	int err;
-
-	mosh_print("nrf_modem_lib_trace_event: %d", evt);
-
-	if (evt == NRF_MODEM_LIB_TRACE_EVT_FULL) {
-		mosh_warn("Modem trace flash area is full. Stopping modem tracing!");
-		mosh_print("Send or clear the modem traces before re-starting.");
-		err = modem_traces_stop();
-		if (err) {
-			mosh_error("Failed to stop modem tracing: %d", err);
-		}
-	}
-}
-
-void send_traces_to_memfault(void)
-{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	ARG_UNUSED(data);
 #ifdef CONFIG_MEMFAULT
 	uint32_t duration_ms;
+	size_t size = nrf_modem_lib_trace_data_size();
+
+	if (size == -ENOTSUP) {
+		shell_error(sh, "The current modem trace backend does not support this operation");
+		return;
+	} else if (size < 0) {
+		shell_error(sh, "Failed to get modem traces size: %d", size);
+		return;
+	} else if (size == 0) {
+		shell_error(sh, "No data to send");
+		return;
+	}
 
 	if (trace_duration_ms) {
 		duration_ms = trace_duration_ms;
@@ -118,9 +127,9 @@ void send_traces_to_memfault(void)
 		duration_ms = k_uptime_get_32() - trace_start_time_ms;
 	}
 
-	modem_trace_memfault_send(duration_ms);
+	modem_trace_memfault_send(sh, size, duration_ms);
 #else
-	mosh_error("CONFIG_MEMFAULT is not enabled. Please configure memfault first.");
+	shell_error(sh, "CONFIG_MEMFAULT is not enabled. Please configure memfault first.");
 #endif /* defined(CONFIG_MEMFAULT) */
 }
 

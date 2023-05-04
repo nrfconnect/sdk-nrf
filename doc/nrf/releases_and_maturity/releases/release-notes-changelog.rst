@@ -368,9 +368,10 @@ Modem libraries
 
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
 
-* :ref:`nrf_modem_lib_readme`:
+* :ref:`nrf_modem_lib_readme` library:
 
-   * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
+  * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
+  * Moved the modem trace shell command implementation from :ref:`modem_shell_application` sample into :ref:`nrf_modem_lib_readme` to be used in any application with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` options enabled.
 
 Libraries for networking
 ------------------------

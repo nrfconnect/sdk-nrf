@@ -5,6 +5,7 @@
  */
 
 #include <stdint.h>
+#include <zephyr/shell/shell.h>
 #include <memfault/metrics/metrics.h>
 #include <memfault/ports/zephyr/http.h>
 #include <memfault/core/data_packetizer.h>
@@ -13,9 +14,9 @@
 #include <modem/nrf_modem_lib_trace.h>
 
 #include "modem_trace_memfault.h"
-#include "mosh_print.h"
 
 static const char *mimetypes[] = { MEMFAULT_CDR_BINARY };
+static const struct shell *shl;
 
 static sMemfaultCdrMetadata trace_recording_metadata = {
 	.start_time.type = kMemfaultCurrentTimeType_Unknown,
@@ -40,10 +41,14 @@ static bool has_cdr_cb(sMemfaultCdrMetadata *metadata)
 
 static bool read_data_cb(uint32_t offset, void *data, size_t data_len)
 {
+	if (shl == NULL) {
+		return -ENODEV;
+	}
+
 	int err = nrf_modem_lib_trace_read(data, data_len);
 
 	if (err < 0) {
-		mosh_error("Error reading modem traces: %d", err);
+		shell_error(shl, "Error reading modem traces: %d", err);
 		return false;
 	}
 
@@ -61,10 +66,13 @@ static sMemfaultCdrSourceImpl s_my_custom_data_recording_source = {
 	.mark_cdr_read_cb = mark_cdr_read_cb,
 };
 
-void modem_trace_memfault_send(uint32_t trace_duration_ms)
+void modem_trace_memfault_send(const struct shell *sh, size_t size, uint32_t trace_duration_ms)
 {
 	static bool memfault_cdr_source_registered;
-	size_t size = nrf_modem_lib_trace_data_size();
+
+	if (shl == NULL) {
+		shl = sh;
+	}
 
 	if (!memfault_cdr_source_registered) {
 		memfault_cdr_register_source(&s_my_custom_data_recording_source);
@@ -75,7 +83,7 @@ void modem_trace_memfault_send(uint32_t trace_duration_ms)
 	trace_recording_metadata.data_size_bytes = size;
 	has_modem_traces = true;
 
-	mosh_print("Prepared to send %d bytes of trace data to memfault during next transfer.",
+	shell_print(sh, "Prepared to send %d bytes of trace data to memfault during next transfer.",
 		size);
-	mosh_print("Trigger a transfer now with \"mflt post_chunks\".");
+	shell_print(sh, "Trigger a transfer now with \"mflt post_chunks\".");
 }

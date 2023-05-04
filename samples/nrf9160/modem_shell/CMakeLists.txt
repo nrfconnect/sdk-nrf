@@ -33,7 +33,6 @@ add_subdirectory_ifdef(CONFIG_MOSH_PPP src/ppp)
 add_subdirectory_ifdef(CONFIG_MOSH_FOTA src/fota)
 add_subdirectory_ifdef(CONFIG_MOSH_REST src/rest)
 add_subdirectory_ifdef(CONFIG_MOSH_STARTUP_CMDS src/startup_cmd)
-add_subdirectory_ifdef(CONFIG_NRF_MODEM_LIB_TRACE src/modem_trace)
 add_subdirectory(src/cloud)
 
 zephyr_include_directories_ifdef(CONFIG_MEMFAULT config)
