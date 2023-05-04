@@ -60,6 +60,7 @@ ExternalProject_Add(edge_impulse_project
     BUILD_ALWAYS True
     USES_TERMINAL_BUILD True
 )
+add_dependencies(edge_impulse_project zephyr_generated_headers)
 
 # This targets remove the `edge_impulse_project-download` stamp file, which
 # causes the Edge impulse library to be fetched on each build invocation.
