@@ -20,7 +20,7 @@
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bis_headset, CONFIG_BLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(bis_headset, 4);
 
 BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT <= 2,
 	     "A maximum of two broadcast streams are currently supported");
@@ -62,6 +62,10 @@ static struct audio_codec_info audio_codec_info[CONFIG_BT_BAP_BROADCAST_SNK_STRE
 static uint32_t bis_index_bitfields[CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT];
 
 static struct active_audio_stream active_stream;
+/*static struct active_audio_stream active_stream = { .stream = NULL,
+ *						    .codec = NULL,
+ *						    .brdcast_src_name_idx = UINT8_MAX };
+ */
 
 /* The values of sync_stream_cnt and active_stream_index must never become larger
  * than the sizes of the arrays above (audio_streams etc.)
@@ -74,9 +78,8 @@ static struct bt_codec codec_capabilities =
 	BT_CODEC_LC3_CONFIG_48_4(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
 static le_audio_receive_cb receive_cb;
-
 static bool init_routine_completed;
-static bool playing_state = true;
+static bool paused;
 
 static int bis_headset_cleanup(void);
 
@@ -209,7 +212,7 @@ static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 	    strlen(brdcast_src_names[active_stream.brdcast_src_name_idx])) {
 		if (strncmp(bis_name.name, brdcast_src_names[active_stream.brdcast_src_name_idx],
 			    strlen(brdcast_src_names[active_stream.brdcast_src_name_idx])) == 0) {
-			LOG_INF("Broadcast source %s found", bis_name.name);
+			LOG_WRN("Broadcast source %s found", bis_name.name);
 			return true;
 		}
 	}
@@ -342,8 +345,15 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, bool encrypted)
 	strncpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY, 16);
 #endif /* (CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED) */
 
-	if (!playing_state) {
-		LOG_DBG("Syncable received, but either in paused_state or already in a stream");
+	if (active_stream.stream != NULL || active_stream.stream->ep != NULL) {
+		if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+			LOG_DBG("Syncable received, but already in a stream");
+			return;
+		}
+	}
+
+	if (paused) {
+		LOG_DBG("Syncable received, but in paused_state");
 		return;
 	}
 
@@ -449,27 +459,29 @@ static int change_active_audio_stream(void)
 {
 	int ret;
 
-	if (broadcast_sink != NULL) {
-		if (playing_state) {
+	if (broadcast_sink == NULL) {
+		LOG_WRN("No streams");
+		return -ECANCELED;
+	}
+
+	if (active_stream.stream != NULL && active_stream.stream->ep != NULL) {
+		if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
 			ret = bt_bap_broadcast_sink_stop(broadcast_sink);
 			if (ret) {
 				LOG_WRN("Failed to stop sink");
 			}
 		}
-
-		/* Wrap streams */
-		if (++active_stream_index >= sync_stream_cnt) {
-			active_stream_index = 0;
-		}
-
-		active_stream.stream = &audio_streams[active_stream_index];
-		active_stream.codec = &audio_codec_info[active_stream_index];
-
-		LOG_INF("Changed to stream %d", active_stream_index);
-	} else {
-		LOG_WRN("No streams");
-		ret = -ECANCELED;
 	}
+
+	/* Wrap streams */
+	if (++active_stream_index >= sync_stream_cnt) {
+		active_stream_index = 0;
+	}
+
+	active_stream.stream = &audio_streams[active_stream_index];
+	active_stream.codec = &audio_codec_info[active_stream_index];
+
+	LOG_INF("Changed to stream %d", active_stream_index);
 
 	return 0;
 }
@@ -506,9 +518,6 @@ static int change_active_brdcast_src(void)
 		LOG_ERR("Unable to start scanning for broadcast sources");
 		return ret;
 	}
-
-	/* Always start playing new source */
-	playing_state = true;
 
 	return 0;
 }
@@ -605,16 +614,26 @@ int le_audio_play_pause(void)
 {
 	int ret;
 
-	if (playing_state) {
-		playing_state = false;
+	if (paused) {
+		paused = false;
+		return 0;
+	}
 
+	if (active_stream.stream == NULL || active_stream.stream->ep == NULL) {
+		LOG_WRN("Stream or endpoint not set");
+		return -EPERM;
+	}
+
+	if (active_stream.stream->ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+		paused = true;
 		ret = bt_bap_broadcast_sink_stop(broadcast_sink);
 		if (ret) {
-			LOG_ERR("Failed to stop broadcast sink: %d", ret);
+			LOG_WRN("Failed to stop broadcast sink: %d", ret);
 			return ret;
 		}
 	} else {
-		playing_state = true;
+		LOG_WRN("Current stream not in streaming state");
+		return 0;
 	}
 
 	return 0;
