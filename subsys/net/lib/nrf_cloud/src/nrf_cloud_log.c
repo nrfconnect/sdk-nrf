@@ -92,7 +92,7 @@ static void log_inject(int log_level, const char *fmt, va_list ap)
 
 	/* Cloud logging is enabled, so send it through the main logging system. */
 	z_log_msg_runtime_vcreate(Z_LOG_LOCAL_DOMAIN_ID, NULL, log_level,
-				  NULL, 0, Z_LOG_MSG2_CBPRINTF_FLAGS(0), fmt, ap);
+				  NULL, 0, Z_LOG_MSG_CBPRINTF_FLAGS(0), fmt, ap);
 }
 
 #else /* !CONFIG_NRF_CLOUD_LOG_BACKEND */
