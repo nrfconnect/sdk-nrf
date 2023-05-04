@@ -9,6 +9,7 @@
 #include <zephyr/zbus/zbus.h>
 #include <modem/pdn.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 #include <nrf_modem.h>
 
 #include "message_channel.h"
@@ -73,8 +74,17 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 
 static void network_task(void)
 {
+	int err;
+
+	/* Initialize the modem library. */
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("nrf_modem_lib_init failed, error: %d", err);
+		SEND_FATAL_ERROR();
+	}
+
 	/* Setup a callback for the default PDP context. */
-	int err = pdn_default_ctx_cb_reg(pdn_event_handler);
+	err = pdn_default_ctx_cb_reg(pdn_event_handler);
 
 	if (err) {
 		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", err);

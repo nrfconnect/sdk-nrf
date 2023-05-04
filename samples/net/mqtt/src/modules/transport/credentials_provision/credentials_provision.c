@@ -5,6 +5,7 @@
  */
 
 #include <modem/modem_key_mgmt.h>
+#include <modem/nrf_modem_lib.h>
 
 static const unsigned char ca_certificate[] = {
 #if __has_include("ca-cert.pem")
@@ -58,7 +59,7 @@ static const unsigned char device_certificate_2[] = {
 
 #endif /* CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG != -1 */
 
-int credentials_provision(void)
+static int credentials_provision(void)
 {
 	int err = 0;
 
@@ -129,4 +130,11 @@ int credentials_provision(void)
 #endif /* CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG != -1 */
 
 	return err;
+}
+
+NRF_MODEM_LIB_ON_INIT(mqtt_sample_init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	credentials_provision();
 }

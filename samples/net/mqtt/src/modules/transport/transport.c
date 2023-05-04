@@ -11,9 +11,6 @@
 #include <net/mqtt_helper.h>
 
 #include "client_id.h"
-#if CONFIG_MODEM_KEY_MGMT
-#include "credentials_provision.h"
-#endif /* CONFIG_MODEM_KEY_MGMT */
 #include "message_channel.h"
 
 /* Register log module */
@@ -194,6 +191,20 @@ static void connect_work_fn(struct k_work *work)
 		.device_id.size = strlen(client_id),
 	};
 
+	err = client_id_get(client_id, sizeof(client_id));
+	if (err) {
+		LOG_ERR("client_id_get, error: %d", err);
+		SEND_FATAL_ERROR();
+		return;
+	}
+
+	err = topics_prefix();
+	if (err) {
+		LOG_ERR("topics_prefix, error: %d", err);
+		SEND_FATAL_ERROR();
+		return;
+	}
+
 	err = mqtt_helper_connect(&conn_params);
 	if (err) {
 		LOG_ERR("Failed connecting to MQTT, error code: %d", err);
@@ -306,29 +317,6 @@ static void transport_task(void)
 			.on_suback = on_mqtt_suback,
 		},
 	};
-
-#if CONFIG_MODEM_KEY_MGMT
-	err = credentials_provision();
-	if (err) {
-		LOG_ERR("credentials_provision, error: %d", err);
-		SEND_FATAL_ERROR();
-		return;
-	}
-#endif /* CONFIG_MODEM_KEY_MGMT */
-
-	err = client_id_get(client_id, sizeof(client_id));
-	if (err) {
-		LOG_ERR("client_id_get, error: %d", err);
-		SEND_FATAL_ERROR();
-		return;
-	}
-
-	err = topics_prefix();
-	if (err) {
-		LOG_ERR("topics_prefix, error: %d", err);
-		SEND_FATAL_ERROR();
-		return;
-	}
 
 	/* Initialize and start application workqueue.
 	 * This workqueue can be used to offload tasks and/or as a timer when wanting to
