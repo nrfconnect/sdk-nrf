@@ -471,7 +471,7 @@
 .. _`AT+CGEREP set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/cgerep_set.html
 .. _`AT%CONEVAL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/coneval.html
 .. _`Modem trace AT command documentation`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
-
+.. _`Battery voltage low level %XVBATLOWLVL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xvbatlowlvl.html
 .. _`Debugging nRF5340 with SES`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/debug.html?cp=1_1_0_7
 
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html

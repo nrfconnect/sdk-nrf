@@ -101,6 +101,7 @@ Kconfig*                                  @tejlmand
 /lib/location/                            @trantanen @jhirsi @tokangas
 /lib/lte_link_control/                    @jtguggedal @tokangas @simensrostad @trantanen
 /lib/modem_antenna/                       @tokangas
+/lib/modem_battery/                       @MirkoCovizzi
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multithreading_lock/                 @rugeGerritsen
@@ -256,6 +257,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad @trantanen
 /tests/lib/lte_lc_api/                    @maxd-nordic @trantanen @tokangas
 /tests/lib/modem_jwt/                     @SeppoTakalo
+/tests/lib/modem_battery/                 @MirkoCovizzi
 /tests/lib/modem_info/                    @maxd-nordic
 /tests/lib/qos/                           @simensrostad
 /tests/lib/sfloat/                        @kapi-no @maje-emb
