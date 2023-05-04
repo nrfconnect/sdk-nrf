@@ -31,7 +31,7 @@ void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agps_data_frame *a
 
 	location_assistance_agps_set_mask(agps_req);
 
-	while ((err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get(), true)) ==
+	while ((err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get())) ==
 	       -EAGAIN) {
 		/* LwM2M client utils library is currently handling a P-GPS data request, need to
 		 * wait until it has been completed.
@@ -63,7 +63,7 @@ void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)
 		return;
 	}
 
-	while ((err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get(), true)) ==
+	while ((err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get())) ==
 	       -EAGAIN) {
 		/* LwM2M client utils library is currently handling an A-GPS data request, need to
 		 * wait until it has been completed.
@@ -164,7 +164,7 @@ void location_srv_ext_cellular_handle(
 		goto exit;
 	}
 
-	err = location_assistance_ground_fix_request_send(cloud_lwm2m_client_ctx_get(), true);
+	err = location_assistance_ground_fix_request_send(cloud_lwm2m_client_ctx_get());
 	if (err) {
 		mosh_error("Failed to send cellular location request, err: %d", err);
 		goto exit;

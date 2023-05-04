@@ -30,7 +30,7 @@ static bool handle_agps_request(const struct gnss_agps_request_event *event)
 	while (location_assistance_agps_set_mask(&event->agps_req) == -EAGAIN) {
 		k_sleep(REQUEST_WAIT_INTERVAL);
 	}
-	while (location_assistance_agps_request_send(client_ctx, true) == -EAGAIN) {
+	while (location_assistance_agps_request_send(client_ctx) == -EAGAIN) {
 		k_sleep(REQUEST_WAIT_INTERVAL);
 	}
 
@@ -42,7 +42,7 @@ static bool handle_agps_request(const struct gnss_agps_request_event *event)
 static bool handle_ground_fix_location_event(bool send_back)
 {
 	ground_fix_set_report_back(send_back);
-	location_assistance_ground_fix_request_send(client_ctx, true);
+	location_assistance_ground_fix_request_send(client_ctx);
 
 	return true;
 }
@@ -51,7 +51,7 @@ static bool handle_ground_fix_location_event(bool send_back)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 static bool handle_pgps_data_request_event(void)
 {
-	while (location_assistance_pgps_request_send(client_ctx, true) == -EAGAIN) {
+	while (location_assistance_pgps_request_send(client_ctx) == -EAGAIN) {
 		k_sleep(REQUEST_WAIT_INTERVAL);
 	}
 	return true;

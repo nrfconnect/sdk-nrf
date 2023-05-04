@@ -545,6 +545,7 @@ Libraries for networking
   * Updated:
 
     * :file:`lwm2m_client_utils_location.h` includes new API for location assistance to register application callback to receive result codes from location assistance.
+    * :file:`lwm2m_client_utils_location.h` by removing deprecated confirmable parameters from location assistance APIs.
 
 * :ref:`pdn_readme` library:
 
