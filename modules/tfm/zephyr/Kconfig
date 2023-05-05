@@ -7,6 +7,7 @@
 config TFM_BOARD
 	string
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/tfm/tfm/boards/nrf9160" if SOC_NRF9160_SICA
+	default "${ZEPHYR_NRF_MODULE_DIR}/modules/tfm/tfm/boards/nrf9120" if SOC_NRF9120
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/tfm/tfm/boards/nrf5340_cpuapp" if SOC_NRF5340_CPUAPP_QKAA
 	depends on TRUSTED_EXECUTION_NONSECURE
 	help
