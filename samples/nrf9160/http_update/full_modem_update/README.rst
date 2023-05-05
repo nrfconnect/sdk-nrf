@@ -34,7 +34,7 @@ The sample proceeds as follows:
 #. It prevalidates the update if the firmware supports the prevalidation process.
 #. It then programs the update to the modem, using the :ref:`lib_fmfu_fdev` library.
 
-The current version of this sample downloads two different versions of the firmware, namely 1.3.0 and 1.3.1.
+The current version of this sample downloads two different versions of the firmware, namely 1.3.3 and 1.3.4.
 The sample then selects the version which is currently not installed.
 
 Configuration

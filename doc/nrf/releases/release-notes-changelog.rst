@@ -284,6 +284,14 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* :ref:`http_full_modem_update_sample` sample:
+
+  * The sample now uses modem firmware versions 1.3.3 and 1.3.4.
+
+* :ref:`http_modem_delta_update_sample` sample:
+
+  * The sample now uses modem firmware v1.3.4 to do a delta update.
+
 * :ref:`modem_shell_application` sample:
 
   * Added:
