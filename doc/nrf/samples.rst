@@ -24,6 +24,7 @@ Those samples are a good starting point for understanding how to put together yo
 
    samples/bl
    samples/crypto
+   samples/debug
    samples/edge
    samples/gazell
    samples/matter
