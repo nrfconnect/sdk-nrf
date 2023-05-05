@@ -18,6 +18,7 @@
 #include "nrf5340_audio_common.h"
 #include "hw_codec.h"
 #include "channel_assignment.h"
+#include "codec_helper.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bis_headset, CONFIG_BLE_LOG_LEVEL);
@@ -27,18 +28,6 @@ BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT <= 2,
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
-
-struct audio_codec_info {
-	uint8_t id;
-	uint16_t cid;
-	uint16_t vid;
-	int frequency;
-	int frame_duration_us;
-	int chan_allocation;
-	int octets_per_sdu;
-	int bitrate;
-	int blocks_per_sdu;
-};
 
 struct active_audio_stream {
 	struct bt_bap_stream *stream;
@@ -89,57 +78,6 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, K_NO_WAIT);
 	ERR_CHK(ret);
-}
-
-static void print_codec(const struct audio_codec_info *codec)
-{
-	if (codec->id == BT_CODEC_LC3_ID) {
-		LOG_INF("Codec config for LC3:");
-		LOG_INF("\tFrequency: %d Hz", codec->frequency);
-		LOG_INF("\tFrame Duration: %d us", codec->frame_duration_us);
-		LOG_INF("\tOctets per frame: %d (%d kbps)", codec->octets_per_sdu, codec->bitrate);
-		LOG_INF("\tFrames per SDU: %d", codec->blocks_per_sdu);
-		if (codec->chan_allocation >= 0) {
-			LOG_INF("\tChannel allocation: 0x%x", codec->chan_allocation);
-		}
-	} else {
-		LOG_WRN("Codec is not LC3, codec_id: 0x%2hhx", codec->id);
-	}
-}
-
-static void get_codec_info(const struct bt_codec *codec, struct audio_codec_info *codec_info)
-{
-	if (codec->id == BT_CODEC_LC3_ID) {
-		/* LC3 uses the generic LTV format - other codecs might do as well */
-		LOG_DBG("Retrieve the codec configuration for LC3");
-		codec_info->id = codec->id;
-		codec_info->cid = codec->cid;
-		codec_info->vid = codec->vid;
-		codec_info->frequency = bt_codec_cfg_get_freq(codec);
-		codec_info->frame_duration_us = bt_codec_cfg_get_frame_duration_us(codec);
-		bt_codec_cfg_get_chan_allocation_val(codec, &codec_info->chan_allocation);
-		codec_info->octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
-		codec_info->bitrate =
-			(codec_info->octets_per_sdu * 8 * 1000000) / codec_info->frame_duration_us;
-		codec_info->blocks_per_sdu = bt_codec_cfg_get_frame_blocks_per_sdu(codec, true);
-	} else {
-		LOG_WRN("Codec is not LC3, codec_id: 0x%2hhx", codec->id);
-	}
-}
-
-static bool bitrate_check(const struct bt_codec *codec)
-{
-	uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
-
-	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
-		LOG_WRN("Bitrate too low");
-		return false;
-	} else if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
-		LOG_WRN("Bitrate too high");
-		return false;
-	}
-
-	return true;
 }
 
 static bool adv_data_parse(struct bt_data *data, void *user_data)
@@ -289,16 +227,17 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 
 			LOG_DBG("BIS %d   index = %hhu", j, index);
 
-			if (bitrate_check((struct bt_codec *)&base->subgroups[i].codec)) {
+			if (codec_helper_bitrate_check(
+				    (struct bt_codec *)&base->subgroups[i].codec)) {
 				suitable_stream_found = true;
 
 				bis_index_bitfields[sync_stream_cnt] = BIT(index);
 
 				audio_streams[sync_stream_cnt].codec =
 					(struct bt_codec *)&base->subgroups[i].codec;
-				get_codec_info(audio_streams[sync_stream_cnt].codec,
-					       &audio_codec_info[sync_stream_cnt]);
-				print_codec(&audio_codec_info[sync_stream_cnt]);
+				codec_helper_get_codec_info(audio_streams[sync_stream_cnt].codec,
+							    &audio_codec_info[sync_stream_cnt]);
+				codec_helper_print_codec(&audio_codec_info[sync_stream_cnt]);
 
 				LOG_DBG("Stream %d in subgroup %d from broadcast sink",
 					sync_stream_cnt, i);

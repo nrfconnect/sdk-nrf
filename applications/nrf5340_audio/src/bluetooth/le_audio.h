@@ -10,11 +10,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <audio_defines.h>
+#include "codec_helper.h"
 
 #define DEVICE_NAME_PEER CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_PEER_LEN (sizeof(DEVICE_NAME_PEER) - 1)
-
-#define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
 
 #if (CONFIG_SCAN_MODE_ACTIVE)
 #define NRF5340_AUDIO_GATEWAY_SCAN_TYPE BT_LE_SCAN_TYPE_ACTIVE

@@ -22,6 +22,7 @@
 #include "ble_hci_vsc.h"
 #include "ble_audio_services.h"
 #include "channel_assignment.h"
+#include "codec_helper.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_BLE_LOG_LEVEL);

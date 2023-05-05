@@ -23,6 +23,7 @@
 #include "ble_audio_services.h"
 #include "ble_hci_vsc.h"
 #include "channel_assignment.h"
+#include "codec_helper.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_headset, CONFIG_BLE_LOG_LEVEL);
@@ -37,6 +38,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, BT_GAP_ADV_FAST_INT_MIN_1,                      \
 			BT_GAP_ADV_FAST_INT_MAX_1, NULL)
 
+static struct audio_codec_info codec_sink;
 #if (CONFIG_BT_AUDIO_TX)
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 /* For being able to dynamically define iso_tx_pools */
@@ -51,6 +53,7 @@ static atomic_t iso_tx_pool_alloc;
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT,
 							   NET_BUF_POOL_PTR_ITERATE, (,)) };
 /* clang-format on */
+static struct audio_codec_info codec_source;
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
 #define CSIP_SET_SIZE 2
@@ -164,37 +167,6 @@ static enum audio_channel channel;
 /* Bonded address queue */
 K_MSGQ_DEFINE(bonds_queue, sizeof(bt_addr_le_t), CONFIG_BT_MAX_PAIRED, 4);
 
-static void print_codec(const struct bt_codec *codec, enum bt_audio_dir dir)
-{
-	if (codec->id == BT_CODEC_LC3_ID) {
-		/* LC3 uses the generic LTV format - other codecs might do as well */
-		uint32_t chan_allocation;
-
-		if (dir == BT_AUDIO_DIR_SINK) {
-			LOG_INF("LC3 codec config for sink:");
-		} else if (dir == BT_AUDIO_DIR_SOURCE) {
-			LOG_INF("LC3 codec config for source:");
-		} else {
-			LOG_INF("LC3 codec config for <unknown dir>:");
-		}
-
-		LOG_INF("\tFrequency: %d Hz", bt_codec_cfg_get_freq(codec));
-		LOG_INF("\tFrame Duration: %d us", bt_codec_cfg_get_frame_duration_us(codec));
-		if (bt_codec_cfg_get_chan_allocation_val(codec, &chan_allocation) == 0) {
-			LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
-		}
-
-		uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
-		uint32_t bitrate =
-			octets_per_sdu * 8 * (1000000 / bt_codec_cfg_get_frame_duration_us(codec));
-
-		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
-		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
-	} else {
-		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
-	}
-}
-
 static void advertising_process(struct k_work *work)
 {
 	int ret;
@@ -293,27 +265,21 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 
 		if (!audio_stream->conn) {
 			LOG_DBG("ASE Codec Config stream %p", (void *)audio_stream);
-
-			uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
-
-			if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
-				LOG_WRN("Too high bitrate");
-				return -EINVAL;
-			} else if (octets_per_sdu <
-				   LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
-				LOG_WRN("Too low bitrate");
+			if (!codec_helper_bitrate_check(codec)) {
 				return -EINVAL;
 			}
 
 			if (dir == BT_AUDIO_DIR_SINK) {
 				LOG_DBG("BT_AUDIO_DIR_SINK");
-				print_codec(codec, dir);
+				codec_helper_get_codec_info(codec, &codec_sink);
+				codec_helper_print_codec(&codec_sink);
 				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED);
 			}
 #if (CONFIG_BT_AUDIO_TX)
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
-				print_codec(codec, dir);
+				codec_helper_get_codec_info(codec, &codec_source);
+				codec_helper_print_codec(&codec_source);
 
 				/* CIS headset only supports one source stream for now */
 				sources[0].stream = audio_stream;
@@ -446,8 +412,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		bad_frame = true;
 	}
 
-	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel,
-		   bt_codec_cfg_get_octets_per_frame(stream->codec));
+	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel, codec_sink.octets_per_sdu);
 }
 
 static void stream_start_cb(struct bt_bap_stream *stream)
