@@ -5,7 +5,7 @@
 
 menuconfig GCF_SMS
 	bool "Custom SMS commands for GCF certification"
-	depends on SOC_NRF9160_SICA
+	depends on SOC_SERIES_NRF91X
 	select AT_CUSTOM_CMD
 	help
 	  Add implementations in the application for the following AT commands:

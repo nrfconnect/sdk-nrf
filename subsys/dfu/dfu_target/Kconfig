@@ -49,7 +49,7 @@ config DFU_TARGET_MODEM_DELTA
 	bool "Modem delta update support"
 	imply DOWNLOAD_CLIENT_RANGE_REQUESTS
 	default y
-	depends on SOC_NRF9160_SICA
+	depends on SOC_SERIES_NRF91X
 	help
 	  Enable support for updates to the modem firmware.
 
@@ -71,7 +71,7 @@ endif # DFU_TARGET_MODEM_DELTA
 
 config DFU_TARGET_FULL_MODEM
 	bool "Full Modem update support"
-	depends on SOC_NRF9160_SICA
+	depends on SOC_SERIES_NRF91X
 	depends on DFU_TARGET_STREAM
 	depends on STREAM_FLASH
 	depends on FMFU_FDEV
@@ -83,7 +83,7 @@ config DFU_TARGET_FULL_MODEM
 config DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE
 	hex
 	depends on DFU_TARGET_FULL_MODEM
-	default 0x400000 if SOC_NRF9160
+	default 0x400000 if SOC_SERIES_NRF91X
 
 config DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
 	depends on DFU_TARGET_FULL_MODEM

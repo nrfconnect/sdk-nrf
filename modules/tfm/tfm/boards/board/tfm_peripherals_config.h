@@ -175,8 +175,8 @@ extern "C" {
 
 #if defined(NRF5340_XXAA_APPLICATION)
     #include <tfm_peripherals_config_nrf5340_application.h>
-#elif defined(NRF9160_XXAA)
-    #include <tfm_peripherals_config_nrf9160.h>
+#elif defined(NRF91_SERIES)
+    #include <tfm_peripherals_config_nrf91.h>
 #else
     #error "Unknown device."
 #endif
