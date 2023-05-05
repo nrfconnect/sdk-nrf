@@ -1,7 +1,7 @@
 .. _provisioning_image_net_core:
 
-Provisioning image for network core
-###################################
+TF-M: Provisioning image for network core
+#########################################
 
 .. contents::
    :local:
