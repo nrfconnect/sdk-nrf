@@ -41,7 +41,7 @@ extern uint32_t _vector_table_pointer;
 
 void bl_boot(const struct fw_info *fw_info)
 {
-#if !(defined(CONFIG_SOC_NRF9160) \
+#if !(defined(CONFIG_SOC_SERIES_NRF91X) \
       || defined(CONFIG_SOC_NRF5340_CPUNET) \
       || defined(CONFIG_SOC_NRF5340_CPUAPP))
 	/* Protect bootloader storage data after firmware is validated so
