@@ -72,6 +72,7 @@ endif # LWM2M_INTEGRATION_PROVISION_CREDENTIALS
 config LWM2M_IPSO_PUSH_BUTTON_INSTANCE_COUNT
 	int "Number of push button object instances"
 	default 2 if BOARD_NRF9160DK_NRF9160_NS
+	default 2 if BOARD_NRF9161DK_NRF9161_NS
 	default 1
 
 # Make AVsystem the default lwM2M server.
