@@ -1185,6 +1185,7 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  * @ant_gain_5g_band1: Antenna gain value for 5 GHz band (5150 MHz - 5350 MHz).
  * @ant_gain_5g_band2: Antenna gain value for 5 GHz band (5470 MHz - 5730 MHz).
  * @ant_gain_5g_band3: Antenna gain value for 5 GHz band (5730 MHz - 5895 MHz).
+ * @op_band: Flag to notify operational band(s) to RPU.
  *
  * This function initializes the firmware of an RPU instance.
  *
@@ -1203,7 +1204,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 					    unsigned char ant_gain_2g,
 					    unsigned char ant_gain_5g_band1,
 					    unsigned char ant_gain_5g_band2,
-					    unsigned char ant_gain_5g_band3);
+					    unsigned char ant_gain_5g_band3,
+					    enum op_band op_band);
 
 
 /**

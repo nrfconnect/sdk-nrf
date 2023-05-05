@@ -39,7 +39,8 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				   unsigned char ant_gain_2g,
 				   unsigned char ant_gain_5g_band1,
 				   unsigned char ant_gain_5g_band2,
-				   unsigned char ant_gain_5g_band3);
+				   unsigned char ant_gain_5g_band3,
+				   enum op_band op_band);
 
 enum wifi_nrf_status umac_cmd_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
