@@ -6,10 +6,16 @@
 #include <string.h>
 #include <zephyr/types.h>
 #include <stdbool.h>
-#include <zephyr/ztest.h>
+#include <unity.h>
 #include <aws_fota_json.h>
 
-static void test_parse_job_execution(void)
+/* The unity_main is not declared in any header file. It is only defined in the generated test
+ * runner because of ncs' unity configuration. It is therefore declared here to avoid a compiler
+ * warning.
+ */
+extern int unity_main(void);
+
+void test_parse_job_execution(void)
 {
 	int ret;
 	int version_number;
@@ -27,14 +33,14 @@ static void test_parse_job_execution(void)
 						      job_id, hostname,
 						      file_path,
 						      &version_number);
-	zassert_equal(ret, 1, NULL);
-	zassert_true(!strcmp(job_id, expected_job_id), NULL);
-	zassert_equal(version_number, expected_version_number, NULL);
-	zassert_true(!strcmp(hostname, expected_hostname), NULL);
-	zassert_true(!strcmp(file_path, expected_file_path), NULL);
+	TEST_ASSERT_EQUAL(1, ret);
+	TEST_ASSERT_EQUAL_STRING(expected_job_id, job_id);
+	TEST_ASSERT_EQUAL(expected_version_number, version_number);
+	TEST_ASSERT_EQUAL_STRING(expected_hostname, hostname);
+	TEST_ASSERT_EQUAL_STRING(expected_file_path, file_path);
 }
 
-static void test_parse_malformed_job_execution(void)
+void test_parse_malformed_job_execution(void)
 {
 	int ret;
 	char job_id[100];
@@ -48,10 +54,10 @@ static void test_parse_malformed_job_execution(void)
 						      job_id, hostname,
 						      file_path,
 						      &version_number);
-	zassert_equal(ret, -ENODATA, NULL);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_parse_job_execution_missing_host_field(void)
+void test_parse_job_execution_missing_host_field(void)
 {
 	int ret;
 	int version_number;
@@ -66,10 +72,10 @@ static void test_parse_job_execution_missing_host_field(void)
 						      job_id, hostname,
 						      file_path,
 						      &version_number);
-	zassert_equal(ret, -ENODATA, NULL);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_parse_job_execution_missing_path_field(void)
+void test_parse_job_execution_missing_path_field(void)
 {
 	int ret;
 	int version_number;
@@ -83,10 +89,10 @@ static void test_parse_job_execution_missing_path_field(void)
 						      job_id, hostname,
 						      file_path,
 						      &version_number);
-	zassert_equal(ret, -ENODATA, NULL);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_parse_job_execution_missing_job_id_field(void)
+void test_parse_job_execution_missing_job_id_field(void)
 {
 	int ret;
 	int version_number;
@@ -100,10 +106,10 @@ static void test_parse_job_execution_missing_job_id_field(void)
 						      job_id, hostname,
 						      file_path,
 						      &version_number);
-	zassert_equal(ret, -ENODATA, NULL);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_parse_job_execution_missing_location_obj(void)
+void test_parse_job_execution_missing_location_obj(void)
 {
 	int ret;
 	int version_number;
@@ -117,10 +123,10 @@ static void test_parse_job_execution_missing_location_obj(void)
 						      job_id, hostname,
 						      file_path,
 						      &version_number);
-	zassert_equal(ret, -ENODATA, NULL);
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_update_job_longer_than_max(void)
+void test_update_job_longer_than_max(void)
 {
 	int ret;
 	char status[100];
@@ -133,11 +139,11 @@ static void test_update_job_longer_than_max(void)
 
 	ret = aws_fota_parse_UpdateJobExecution_rsp(encoded,
 			sizeof(encoded) - 1, status);
-	zassert_true(!strcmp(status, expected_status), NULL);
+	TEST_ASSERT_EQUAL_STRING(expected_status, status);
 }
 
 
-static void test_timestamp_only(void)
+void test_timestamp_only(void)
 {
 	int ret;
 	char job_id[100];
@@ -152,10 +158,10 @@ static void test_timestamp_only(void)
 						      hostname,
 						      file_path,
 						      &version_number);
-	zassert_equal(ret, 0, "Timestamp decoded correctly");
+	TEST_ASSERT_EQUAL(0, ret);
 }
 
-static void test_update_job_exec_rsp_minimal(void)
+void test_update_job_exec_rsp_minimal(void)
 {
 	char encoded[] = "{\"timestamp\":4096,\"clientToken\":\"token\"}";
 	char status[100];
@@ -165,10 +171,10 @@ static void test_update_job_exec_rsp_minimal(void)
 						    sizeof(encoded) - 1,
 						    status);
 	/* Only two last fields are set */
-	zassert_equal(ret, -ENODATA, "All fields decoded correctly");
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-static void test_update_job_exec_rsp(void)
+void test_update_job_exec_rsp(void)
 {
 	int ret;
 	char status[100];
@@ -178,24 +184,12 @@ static void test_update_job_exec_rsp(void)
 	ret = aws_fota_parse_UpdateJobExecution_rsp(encoded,
 						    sizeof(encoded) - 1,
 						    status);
-	zassert_true(!strcmp(status, expected_status), NULL);
+	TEST_ASSERT_EQUAL_STRING(expected_status, status);
 }
 
 
-void test_main(void)
+int main(void)
 {
-	ztest_test_suite(lib_json_test,
-			 ztest_unit_test(test_parse_job_execution),
-			 ztest_unit_test(test_parse_job_execution_missing_job_id_field),
-			 ztest_unit_test(test_parse_job_execution_missing_location_obj),
-			 ztest_unit_test(test_parse_job_execution_missing_path_field),
-			 ztest_unit_test(test_parse_job_execution_missing_host_field),
-			 ztest_unit_test(test_update_job_longer_than_max),
-			 ztest_unit_test(test_timestamp_only),
-			 ztest_unit_test(test_parse_malformed_job_execution),
-			 ztest_unit_test(test_update_job_exec_rsp_minimal),
-			 ztest_unit_test(test_update_job_exec_rsp)
-			 );
-
-	ztest_run_test_suite(lib_json_test);
+	(void)unity_main();
+	return 0;
 }
