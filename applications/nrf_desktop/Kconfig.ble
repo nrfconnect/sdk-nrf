@@ -303,6 +303,12 @@ config BT_SETTINGS_CCC_LAZY_LOADING
 	  descriptor to speed up reconnections and reduce delay for the
 	  first HID report.
 
+choice BT_HCI_CORE_LOG_LEVEL_CHOICE
+	default BT_HCI_CORE_LOG_LEVEL_WRN
+	help
+	  Reduce Bluetooth HCI core log level to avoid flooding logs.
+endchoice
+
 endif # DESKTOP_BT
 
 endmenu

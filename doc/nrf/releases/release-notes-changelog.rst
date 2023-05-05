@@ -232,6 +232,8 @@ nRF Desktop
   * In the Fast Pair configurations, the bond erase operation is enabled for the dongle peer, which will let you change the bonded Bluetooth Central.
   * The `Swift Pair`_ payload is, by default, included for all of the Bluetooth local identities apart from the dedicated local identity used for connection with an nRF Desktop dongle.
     If a configuration supports both Fast Pair and a dedicated dongle peer (:ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE <config_desktop_app_options>`), the `Swift Pair`_ payload is, by default, included only for the dongle peer.
+  * Set the max compiled-in log level to ``warning`` for the Bluetooth HCI core (:kconfig:option:`CONFIG_BT_HCI_CORE_LOG_LEVEL`).
+    This is done to avoid flooding logs during application boot.
 
 Samples
 =======
