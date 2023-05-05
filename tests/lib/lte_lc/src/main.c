@@ -5,14 +5,20 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/ztest.h>
+#include <unity.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "lte_lc_helpers.h"
 #include "lte_lc.h"
 
-static void test_parse_edrx(void)
+/* The unity_main is not declared in any header file. It is only defined in the generated test
+ * runner because of ncs' unity configuration. It is therefore declared here to avoid a compiler
+ * warning.
+ */
+extern int unity_main(void);
+
+void test_parse_edrx(void)
 {
 	int err;
 	struct lte_lc_edrx_cfg cfg;
@@ -24,37 +30,37 @@ static void test_parse_edrx(void)
 	char *at_response_nbiot_2 = "+CEDRXP: 5,\"1000\",\"1101\",\"0101\"";
 
 	err = parse_edrx(at_response_none, &cfg);
-	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
-	zassert_equal(cfg.edrx, 0, "Wrong eDRX value");
-	zassert_equal(cfg.ptw, 0, "Wrong PTW value");
-	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_NONE, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(0, cfg.edrx);
+	TEST_ASSERT_EQUAL(0, cfg.ptw);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, cfg.mode);
 
 	err = parse_edrx(at_response_fail, &cfg);
-	zassert_not_equal(0, err, "parse_edrx should have failed");
+	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_edrx should have failed");
 
 	err = parse_edrx(at_response_ltem, &cfg);
-	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
-	zassert_within(cfg.edrx, 81.92, 0.1, "Wrong eDRX value");
-	zassert_within(cfg.ptw, 15.36,  0.1, "Wrong PTW value");
-	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_LTEM, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 81.92, cfg.edrx);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 15.36, cfg.ptw);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, cfg.mode);
 
 	err = parse_edrx(at_response_ltem_2, &cfg);
-	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
-	zassert_within(cfg.edrx, 20.48, 0.1, "Wrong eDRX value");
-	zassert_within(cfg.ptw, 19.2, 0.1, "Wrong PTW value");
-	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_LTEM, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 20.48, cfg.edrx);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 19.2, cfg.ptw);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, cfg.mode);
 
 	err = parse_edrx(at_response_nbiot, &cfg);
-	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
-	zassert_within(cfg.edrx, 2621.44, 0.1, "Wrong eDRX value");
-	zassert_within(cfg.ptw, 20.48, 0.1, "Wrong PTW value");
-	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_NBIOT, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 2621.44, cfg.edrx);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 20.48, cfg.ptw);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, cfg.mode);
 
 	err = parse_edrx(at_response_nbiot_2, &cfg);
-	zassert_equal(0, err, "parse_edrx failed, error: %d", err);
-	zassert_within(cfg.edrx, 2621.44, 0.1, "Wrong eDRX value");
-	zassert_within(cfg.ptw, 15.36, 0.1, "Wrong PTW value");
-	zassert_equal(cfg.mode, LTE_LC_LTE_MODE_NBIOT, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 2621.44, cfg.edrx);
+	TEST_ASSERT_FLOAT_WITHIN(0.1, 15.36, cfg.ptw);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, cfg.mode);
 }
 
 void test_parse_cereg(void)
@@ -86,113 +92,97 @@ void test_parse_cereg(void)
 	 * functionality that is exposed.
 	 */
 	err = parse_cereg(at_response_0, false, &status, NULL, NULL);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_NOT_REGISTERED,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
 
 	err = parse_cereg(at_response_1, false, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_HOME,
-		      "Wrong network registation status: %d", status);
-	zassert_equal(cell.id, 0x01020304, "Wrong cell ID (0x%08x)", cell.id);
-	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
 
 	err = parse_cereg(at_response_2, false, &status, NULL, NULL);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_SEARCHING,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
 
 	err = parse_cereg(at_response_3, false, &status, NULL, NULL);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTRATION_DENIED,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
 
 	err = parse_cereg(at_response_4, false, &status, NULL, NULL);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_UNKNOWN,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
 
 	err = parse_cereg(at_response_5, false, &status, NULL, NULL);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_ROAMING,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
 
 	err = parse_cereg(at_response_8, false, &status, NULL, NULL);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_EMERGENCY,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_EMERGENCY, status);
 
 	err = parse_cereg(at_response_90, false, &status, NULL, NULL);
-	zassert_equal(0, err, "parse_cereg failed, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_UICC_FAIL,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
 
 	err = parse_cereg(at_response_wrong, false, &status, NULL, NULL);
-	zassert_not_equal(0, err, "parse_cereg should have failed");
+	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
 
 	/* For CEREG notifications, we test the parser function, which
 	 * implicitly also tests parse_nw_reg_status() for notifications.
 	 */
 	err = parse_cereg(at_notif_0, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_NOT_REGISTERED,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
 
 	err = parse_cereg(at_notif_1, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_HOME,
-		      "Wrong network registation status");
-	zassert_equal(cell.id, 0x01020304, "Wrong cell ID (0x%08x)", cell.id);
-	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
-	zassert_equal(mode, 9, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(9, mode);
 
 	err = parse_cereg(at_notif_2, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_SEARCHING,
-		      "Wrong network registation status");
-	zassert_equal(cell.id, 0x01020304, "Wrong cell ID");
-	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
-	zassert_equal(mode, 9, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(9, mode);
 
 	err = parse_cereg(at_notif_3, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTRATION_DENIED,
-		      "Wrong network registation status");
-	zassert_equal(cell.id, 0x01020304, "Wrong cell ID");
-	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
-	zassert_equal(mode, 9, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(9, mode);
 
 	err = parse_cereg(at_notif_4, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_UNKNOWN,
-		      "Wrong network registation status");
-	zassert_equal(cell.id, 0xFFFFFFFF, "Wrong cell ID");
-	zassert_equal(cell.tac, 0xFFFF, "Wrong area code");
-	zassert_equal(mode, 9, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
+	TEST_ASSERT_EQUAL(0xFFFFFFFF, cell.id);
+	TEST_ASSERT_EQUAL(0xFFFF, cell.tac);
+	TEST_ASSERT_EQUAL(9, mode);
 
 	err = parse_cereg(at_notif_5, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_ROAMING,
-		      "Wrong network registation status");
-	zassert_equal(cell.id, 0x01020304, "Wrong cell ID");
-	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
-	zassert_equal(mode, 9, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(9, mode);
 
 	err = parse_cereg(at_notif_8, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_REGISTERED_EMERGENCY,
-		      "Wrong network registation status");
-	zassert_equal(cell.id, 0x01020304, "Wrong cell ID");
-	zassert_equal(cell.tac, 0x0A0B, "Wrong area code");
-	zassert_equal(mode, 9, "Wrong LTE mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_EMERGENCY, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(9, mode);
 
 	err = parse_cereg(at_notif_90, true, &status, &cell, &mode);
-	zassert_equal(0, err, "parse_cereg failed, true, error: %d", err);
-	zassert_equal(status, LTE_LC_NW_REG_UICC_FAIL,
-		      "Wrong network registation status");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
 
 	err = parse_cereg(at_notif_wrong, true, &status, &cell, &mode);
-	zassert_not_equal(0, err, "parse_cereg should have true, failed");
+	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
 }
 
 void test_parse_xt3412(void)
@@ -206,28 +196,28 @@ void test_parse_xt3412(void)
 	char *at_response_negative = "%XT3412: -100";
 
 	err = parse_xt3412(at_response_short, &time);
-	zassert_equal(0, err, "parse_xt3412 failed, error: %d", err);
-	zassert_equal(time, 360, "Wrong time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(360, time);
 
 	err = parse_xt3412(at_response_long, &time);
-	zassert_equal(0, err, "parse_xt3412 failed, error: %d", err);
-	zassert_equal(time, 2147483647, "Wrong time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(2147483647, time);
 
 	err = parse_xt3412(at_response_t3412_max, &time);
-	zassert_equal(0, err, "parse_xt3412 failed, error: %d", err);
-	zassert_equal(time, 35712000000, "Wrong time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(35712000000, time);
 
 	err = parse_xt3412(at_response_t3412_overflow, &time);
-	zassert_equal(-EINVAL, err, "parse_xt3412 failed, error: %d", err);
+	TEST_ASSERT_EQUAL(err, -EINVAL);
 
 	err = parse_xt3412(at_response_negative, &time);
-	zassert_equal(-EINVAL, err, "parse_xt3412 failed, error: %d", err);
+	TEST_ASSERT_EQUAL(err, -EINVAL);
 
 	err = parse_xt3412(NULL, &time);
-	zassert_equal(-EINVAL, err, "parse_xt3412 failed, error: %d", err);
+	TEST_ASSERT_EQUAL(err, -EINVAL);
 
 	err = parse_xt3412(at_response_negative, NULL);
-	zassert_equal(-EINVAL, err, "parse_xt3412 failed, error: %d", err);
+	TEST_ASSERT_EQUAL(err, -EINVAL);
 }
 
 void test_parse_xmodemsleep(void)
@@ -243,53 +233,48 @@ void test_parse_xmodemsleep(void)
 	char *at_response_6 = "%XMODEMSLEEP: 7";
 
 	err = parse_xmodemsleep(at_response_0, &modem_sleep);
-	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
-	zassert_equal(modem_sleep.type, LTE_LC_MODEM_SLEEP_PSM, "Wrong modem sleep type parameter");
-	zassert_equal(modem_sleep.time, 36000, "Wrong modem sleep time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_PSM, modem_sleep.type);
+	TEST_ASSERT_EQUAL(36000, modem_sleep.time);
 
 	err = parse_xmodemsleep(at_response_1, &modem_sleep);
-	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
-	zassert_equal(modem_sleep.type, LTE_LC_MODEM_SLEEP_PSM, "Wrong modem sleep type parameter");
-	zassert_equal(modem_sleep.time, 35712000000, "Wrong modem sleep time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_PSM, modem_sleep.type);
+	TEST_ASSERT_EQUAL(35712000000, modem_sleep.time);
 
 	err = parse_xmodemsleep(at_response_2, &modem_sleep);
-	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
-	zassert_equal(modem_sleep.type, LTE_LC_MODEM_SLEEP_RF_INACTIVITY,
-		"Wrong modem sleep type parameter");
-	zassert_equal(modem_sleep.time, 100400, "Wrong modem sleep time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_RF_INACTIVITY, modem_sleep.type);
+	TEST_ASSERT_EQUAL(100400, modem_sleep.time);
 
 	err = parse_xmodemsleep(at_response_3, &modem_sleep);
-	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
-	zassert_equal(modem_sleep.type, LTE_LC_MODEM_SLEEP_LIMITED_SERVICE,
-		"Wrong modem sleep type parameter");
-	zassert_equal(modem_sleep.time, -1, "Wrong modem sleep time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_LIMITED_SERVICE, modem_sleep.type);
+	TEST_ASSERT_EQUAL(-1, modem_sleep.time);
 
 	err = parse_xmodemsleep(at_response_4, &modem_sleep);
-	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
-	zassert_equal(modem_sleep.type, LTE_LC_MODEM_SLEEP_FLIGHT_MODE,
-		"Wrong modem sleep type parameter");
-	zassert_equal(modem_sleep.time, -1, "Wrong modem sleep time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_FLIGHT_MODE, modem_sleep.type);
+	TEST_ASSERT_EQUAL(-1, modem_sleep.time);
 
 	err = parse_xmodemsleep(at_response_5, &modem_sleep);
-	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
-	zassert_equal(modem_sleep.type, LTE_LC_MODEM_SLEEP_FLIGHT_MODE,
-		"Wrong modem sleep type parameter");
-	zassert_equal(modem_sleep.time, 0, "Wrong modem sleep time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_FLIGHT_MODE, modem_sleep.type);
+	TEST_ASSERT_EQUAL(0, modem_sleep.time);
 
 	err = parse_xmodemsleep(at_response_6, &modem_sleep);
-	zassert_equal(0, err, "parse_xmodemsleep failed, error: %d", err);
-	zassert_equal(modem_sleep.type, LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM,
-		"Wrong modem sleep type parameter");
-	zassert_equal(modem_sleep.time, -1, "Wrong modem sleep time parameter");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM, modem_sleep.type);
+	TEST_ASSERT_EQUAL(-1, modem_sleep.time);
 
 	err = parse_xmodemsleep(NULL, &modem_sleep);
-	zassert_equal(-EINVAL, err, "parse_xmodemsleep failed, error: %d", err);
+	TEST_ASSERT_EQUAL(err, -EINVAL);
 
 	err = parse_xmodemsleep(at_response_0, NULL);
-	zassert_equal(-EINVAL, err, "parse_xmodemsleep failed, error: %d", err);
+	TEST_ASSERT_EQUAL(err, -EINVAL);
 }
 
-static void test_parse_rrc_mode(void)
+void test_parse_rrc_mode(void)
 {
 	int err;
 	enum lte_lc_rrc_mode mode;
@@ -297,31 +282,27 @@ static void test_parse_rrc_mode(void)
 	char *at_response_1 = "+CSCON: 1";
 
 	err = parse_rrc_mode(at_response_0, &mode, AT_CSCON_RRC_MODE_INDEX);
-	zassert_equal(0, err, "parse_rrc_mode failed, error: %d", err);
-	zassert_equal(mode, LTE_LC_RRC_MODE_IDLE, "Wrong RRC mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_RRC_MODE_IDLE, mode);
 
 	err = parse_rrc_mode(at_response_1, &mode, AT_CSCON_RRC_MODE_INDEX);
-	zassert_equal(0, err, "parse_rrc_mode failed, error: %d", err);
-	zassert_equal(mode, LTE_LC_RRC_MODE_CONNECTED, "Wrong RRC mode");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_RRC_MODE_CONNECTED, mode);
 
 }
 
-static void test_response_is_valid(void)
+void test_response_is_valid(void)
 {
 	char *cscon = "+CSCON";
 	char *xsystemmode = "+%XSYSTEMMODE";
 
-	zassert_true(response_is_valid(cscon, strlen(cscon), "+CSCON"),
-		     "response_is_valid failed");
-
-	zassert_true(response_is_valid(xsystemmode, strlen(xsystemmode), "+%XSYSTEMMODE"),
-		     "response_is_valid failed");
-
-	zassert_false(response_is_valid(cscon, strlen(cscon), "+%XSYSTEMMODE"),
+	TEST_ASSERT(response_is_valid(cscon, strlen(cscon), "+CSCON"));
+	TEST_ASSERT(response_is_valid(xsystemmode, strlen(xsystemmode), "+%XSYSTEMMODE"));
+	TEST_ASSERT_FALSE_MESSAGE(response_is_valid(cscon, strlen(cscon), "+%XSYSTEMMODE"),
 		     "response_is_valid should have failed");
 }
 
-static void test_parse_ncellmeas(void)
+void test_parse_ncellmeas(void)
 {
 	int err;
 	char *resp1 = "%NCELLMEAS: 0,\"021D140C\",\"24201\",\"0821\",65535,5300,"
@@ -337,73 +318,70 @@ static void test_parse_ncellmeas(void)
 
 	/* Valid response with two neighbors and timing advance measurement time. */
 	err = parse_ncellmeas(resp1, &cells);
-	zassert_equal(err, 0, "parse_ncellmeas failed, error: %d", err);
-	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
-	zassert_equal(cells.current_cell.mnc, 1, "Wrong MNC");
-	zassert_equal(cells.current_cell.tac, 2081, "Wrong TAC");
-	zassert_equal(cells.current_cell.id, 35460108, "Wrong cell ID");
-	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
-	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
-	zassert_equal(cells.current_cell.timing_advance_meas_time, 8061152878017748,
-		      "Wrong timing advance measurement time");
-	zassert_equal(cells.current_cell.measurement_time, 10891, "Wrong measurement time");
-	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
-	zassert_equal(cells.ncells_count, 2, "Wrong neighbor cell count");
-	zassert_equal(cells.neighbor_cells[0].earfcn, 5300, "Wrong EARFCN");
-	zassert_equal(cells.neighbor_cells[0].phys_cell_id, 194, "Wrong physical cell ID");
-	zassert_equal(cells.neighbor_cells[0].rsrp, 46, "Wrong RSRP");
-	zassert_equal(cells.neighbor_cells[0].rsrq, 8, "Wrong RSRQ");
-	zassert_equal(cells.neighbor_cells[0].time_diff, 0, "Wrong time difference");
-	zassert_equal(cells.neighbor_cells[1].earfcn, 1650, "Wrong EARFCN");
-	zassert_equal(cells.neighbor_cells[1].phys_cell_id, 292, "Wrong physical cell ID");
-	zassert_equal(cells.neighbor_cells[1].rsrp, 60, "Wrong RSRP");
-	zassert_equal(cells.neighbor_cells[1].rsrq, 27, "Wrong RSRQ");
-	zassert_equal(cells.neighbor_cells[1].time_diff, 24, "Wrong time difference");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(242, cells.current_cell.mcc);
+	TEST_ASSERT_EQUAL(1, cells.current_cell.mnc);
+	TEST_ASSERT_EQUAL(2081, cells.current_cell.tac);
+	TEST_ASSERT_EQUAL(35460108, cells.current_cell.id);
+	TEST_ASSERT_EQUAL(5300, cells.current_cell.earfcn);
+	TEST_ASSERT_EQUAL(65535, cells.current_cell.timing_advance);
+	TEST_ASSERT_EQUAL(8061152878017748, cells.current_cell.timing_advance_meas_time);
+	TEST_ASSERT_EQUAL(10891, cells.current_cell.measurement_time);
+	TEST_ASSERT_EQUAL(449, cells.current_cell.phys_cell_id);
+	TEST_ASSERT_EQUAL(2, cells.ncells_count);
+	TEST_ASSERT_EQUAL(5300, cells.neighbor_cells[0].earfcn);
+	TEST_ASSERT_EQUAL(194, cells.neighbor_cells[0].phys_cell_id);
+	TEST_ASSERT_EQUAL(46, cells.neighbor_cells[0].rsrp);
+	TEST_ASSERT_EQUAL(8, cells.neighbor_cells[0].rsrq);
+	TEST_ASSERT_EQUAL(0, cells.neighbor_cells[0].time_diff);
+	TEST_ASSERT_EQUAL(1650, cells.neighbor_cells[1].earfcn);
+	TEST_ASSERT_EQUAL(292, cells.neighbor_cells[1].phys_cell_id);
+	TEST_ASSERT_EQUAL(60, cells.neighbor_cells[1].rsrp);
+	TEST_ASSERT_EQUAL(27, cells.neighbor_cells[1].rsrq);
+	TEST_ASSERT_EQUAL(24, cells.neighbor_cells[1].time_diff);
 
 	memset(&cells, 0, sizeof(cells));
 
 	/* Valid response of failed measurement. */
 	err = parse_ncellmeas(resp2, &cells);
-	zassert_equal(err, 1, "parse_ncellmeas was expected to return 1, but returned %d", err);
-	zassert_equal(cells.current_cell.id, LTE_LC_CELL_EUTRAN_ID_INVALID, "Wrong cell ID");
-	zassert_equal(cells.ncells_count, 0, "Wrong neighbor cell count");
+	TEST_ASSERT_EQUAL(1, err);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cells.current_cell.id);
+	TEST_ASSERT_EQUAL(0, cells.ncells_count);
 
 	memset(&cells, 0, sizeof(cells));
 
 	/* Valid response with timing advance measurement time. */
 	err = parse_ncellmeas(resp3, &cells);
-	zassert_equal(err, 0, "parse_ncellmeas was expected to return 0, but returned %d", err);
-	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
-	zassert_equal(cells.current_cell.mnc, 1, "Wrong MNC");
-	zassert_equal(cells.current_cell.tac, 2081, "Wrong TAC");
-	zassert_equal(cells.current_cell.id, 119354380, "Wrong cell ID");
-	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
-	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
-	zassert_equal(cells.current_cell.timing_advance_meas_time, 655350,
-		      "Wrong timing advance measurement time");
-	zassert_equal(cells.current_cell.measurement_time, 10891, "Wrong measurement time");
-	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
-	zassert_equal(cells.ncells_count, 0, "Wrong neighbor cell count");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(242, cells.current_cell.mcc);
+	TEST_ASSERT_EQUAL(1, cells.current_cell.mnc);
+	TEST_ASSERT_EQUAL(2081, cells.current_cell.tac);
+	TEST_ASSERT_EQUAL(119354380, cells.current_cell.id);
+	TEST_ASSERT_EQUAL(5300, cells.current_cell.earfcn);
+	TEST_ASSERT_EQUAL(65535, cells.current_cell.timing_advance);
+	TEST_ASSERT_EQUAL(655350, cells.current_cell.timing_advance_meas_time);
+	TEST_ASSERT_EQUAL(10891, cells.current_cell.measurement_time);
+	TEST_ASSERT_EQUAL(449, cells.current_cell.phys_cell_id);
+	TEST_ASSERT_EQUAL(0, cells.ncells_count);
 
 	memset(&cells, 0, sizeof(cells));
 
 	/* Valid response without timing advance measurement time. */
 	err = parse_ncellmeas(resp4, &cells);
-	zassert_equal(err, 0, "parse_ncellmeas was expected to return 0, but returned %d", err);
-	zassert_equal(cells.current_cell.mcc, 242, "Wrong MCC");
-	zassert_equal(cells.current_cell.mnc, 2, "Wrong MNC");
-	zassert_equal(cells.current_cell.tac, 1890, "Wrong TAC");
-	zassert_equal(cells.current_cell.id, 119354380, "Wrong cell ID");
-	zassert_equal(cells.current_cell.earfcn, 5300, "Wrong EARFCN");
-	zassert_equal(cells.current_cell.timing_advance, 65535, "Wrong timing advance");
-	zassert_equal(cells.current_cell.timing_advance_meas_time, 0,
-		      "Wrong timing advance measurement time");
-	zassert_equal(cells.current_cell.measurement_time, 10871, "Wrong measurement time");
-	zassert_equal(cells.current_cell.phys_cell_id, 449, "Wrong physical cell ID");
-	zassert_equal(cells.ncells_count, 0, "Wrong neighbor cell count");
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(242, cells.current_cell.mcc);
+	TEST_ASSERT_EQUAL(2, cells.current_cell.mnc);
+	TEST_ASSERT_EQUAL(1890, cells.current_cell.tac);
+	TEST_ASSERT_EQUAL(119354380, cells.current_cell.id);
+	TEST_ASSERT_EQUAL(5300, cells.current_cell.earfcn);
+	TEST_ASSERT_EQUAL(65535, cells.current_cell.timing_advance);
+	TEST_ASSERT_EQUAL(0, cells.current_cell.timing_advance_meas_time);
+	TEST_ASSERT_EQUAL(10871, cells.current_cell.measurement_time);
+	TEST_ASSERT_EQUAL(449, cells.current_cell.phys_cell_id);
+	TEST_ASSERT_EQUAL(0, cells.ncells_count);
 }
 
-static void test_neighborcell_count_get(void)
+void test_neighborcell_count_get(void)
 {
 	char *resp1 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
 		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
@@ -413,14 +391,14 @@ static void test_neighborcell_count_get(void)
 	char *resp4 = "%NCELLMEAS: ";
 	char *resp5 = " ";
 
-	zassert_equal(17, neighborcell_count_get(resp1), "Wrong neighbor cell count");
-	zassert_equal(3, neighborcell_count_get(resp2), "Wrong neighbor cell count");
-	zassert_equal(0, neighborcell_count_get(resp3), "Wrong neighbor cell count");
-	zassert_equal(0, neighborcell_count_get(resp4), "Wrong neighbor cell count");
-	zassert_equal(0, neighborcell_count_get(resp5), "Wrong neighbor cell count");
+	TEST_ASSERT_EQUAL(17, neighborcell_count_get(resp1));
+	TEST_ASSERT_EQUAL(3, neighborcell_count_get(resp2));
+	TEST_ASSERT_EQUAL(0, neighborcell_count_get(resp3));
+	TEST_ASSERT_EQUAL(0, neighborcell_count_get(resp4));
+	TEST_ASSERT_EQUAL(0, neighborcell_count_get(resp5));
 }
 
-static void test_parse_psm(void)
+void test_parse_psm(void)
 {
 	int err;
 	struct lte_lc_psm_cfg psm_cfg;
@@ -461,54 +439,53 @@ static void test_parse_psm(void)
 	};
 
 	err = parse_psm(disabled.active_time, disabled.tau_ext, disabled.tau_legacy, &psm_cfg);
-	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
-	zassert_equal(psm_cfg.tau, -1, "Wrong PSM TAU (%d)", psm_cfg.tau);
-	zassert_equal(psm_cfg.active_time, -1, "Wrong PSM active time (%d)", psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
 	err = parse_psm(tau_legacy.active_time, tau_legacy.tau_ext, tau_legacy.tau_legacy,
-			&psm_cfg);
-	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
-	zassert_equal(psm_cfg.tau, 600, "Wrong PSM TAU (%d)", psm_cfg.tau);
-	zassert_equal(psm_cfg.active_time, 16, "Wrong PSM active time (%d)", psm_cfg.active_time);
+				&psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(600, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(16, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
 	err = parse_psm(no_tau_legacy.active_time, no_tau_legacy.tau_ext, NULL, &psm_cfg);
-	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
-	zassert_equal(psm_cfg.tau, -1, "Wrong PSM TAU (%d)", psm_cfg.tau);
-	zassert_equal(psm_cfg.active_time, 16, "Wrong PSM active time (%d)", psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(16, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
 	err = parse_psm(invalid_values.active_time, invalid_values.tau_ext, NULL, &psm_cfg);
-	zassert_equal(err, -EINVAL, "parse_psm was expected to return -EINVAL, but returned %d",
-		      err);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
 	err = parse_psm(valid_values_0.active_time, valid_values_0.tau_ext, NULL, &psm_cfg);
-	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
-	zassert_equal(psm_cfg.tau, 72000, "Wrong PSM TAU (%d)", psm_cfg.tau);
-	zassert_equal(psm_cfg.active_time, 360, "Wrong PSM active time (%d)", psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(72000, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(360, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
 	err = parse_psm(valid_values_1.active_time, valid_values_1.tau_ext, NULL, &psm_cfg);
-	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
-	zassert_equal(psm_cfg.tau, 4800, "Wrong PSM TAU (%d)", psm_cfg.tau);
-	zassert_equal(psm_cfg.active_time, 240, "Wrong PSM active time (%d)", psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(4800, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(240, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
 	err = parse_psm(valid_values_2.active_time, valid_values_2.tau_ext, NULL, &psm_cfg);
-	zassert_equal(err, 0, "parse_psm was expected to return 0, but returned %d", err);
-	zassert_equal(psm_cfg.tau, 1620, "Wrong PSM TAU (%d)", psm_cfg.tau);
-	zassert_equal(psm_cfg.active_time, 32, "Wrong PSM active time (%d)", psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(1620, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(32, psm_cfg.active_time);
 }
 
-static void test_parse_mdmev(void)
+void test_parse_mdmev(void)
 {
 	int err;
 	enum lte_lc_modem_evt modem_evt;
@@ -521,60 +498,44 @@ static void test_parse_mdmev(void)
 	const char *light_search_long = "%MDMEV: SEARCH STATUS 1 and then some\r\n";
 
 	err = parse_mdmev(light_search, &modem_evt);
-	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
-	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE,
-		"Wrong modem event type: %d, expected: %d", modem_evt,
-		LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE, modem_evt);
 	err = parse_mdmev(search, &modem_evt);
-	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
-	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_SEARCH_DONE,
-		"Wrong modem event type: %d, expected: %d", modem_evt,
-		LTE_LC_MODEM_EVT_SEARCH_DONE);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_SEARCH_DONE, modem_evt);
 
 	err = parse_mdmev(reset, &modem_evt);
-	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
-	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_RESET_LOOP,
-		"Wrong modem event type: %d, expected: %d", modem_evt,
-		LTE_LC_MODEM_EVT_RESET_LOOP);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_RESET_LOOP, modem_evt);
 
 	err = parse_mdmev(battery_low, &modem_evt);
-	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
-	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_BATTERY_LOW,
-		"Wrong modem event type: %d, expected: %d", modem_evt,
-		LTE_LC_MODEM_EVT_BATTERY_LOW);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_BATTERY_LOW, modem_evt);
 
 	err = parse_mdmev(overheated, &modem_evt);
-	zassert_equal(err, 0, "parse_mdmev was expected to return 0, but returned %d", err);
-	zassert_equal(modem_evt, LTE_LC_MODEM_EVT_OVERHEATED,
-		"Wrong modem event type: %d, expected: %d", modem_evt,
-		LTE_LC_MODEM_EVT_OVERHEATED);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_OVERHEATED, modem_evt);
 
 	err = parse_mdmev(status_3, &modem_evt);
-	zassert_equal(err, -ENODATA, "parse_mdmev was expected to return %d, but returned %d",
-		     -ENODATA, err);
+	TEST_ASSERT_EQUAL(-ENODATA, err);
 
 	err = parse_mdmev(search, NULL);
-	zassert_equal(err, -EINVAL, "parse_mdmev was expected to return %d, but returned %d",
-		      -EINVAL, err);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
 
 	err = parse_mdmev(light_search_long, &modem_evt);
-	zassert_equal(err, -ENODATA, "parse_mdmev was expected to return %d, but returned %d",
-		      -ENODATA, err);
+	TEST_ASSERT_EQUAL(-ENODATA, err);
 
 	err = parse_mdmev("%MDMEVE", &modem_evt);
-	zassert_equal(err, -EIO, "parse_mdmev was expected to return %d, but returned %d",
-		      -EIO, err);
+	TEST_ASSERT_EQUAL(-EIO, err);
 
 	err = parse_mdmev("%MDME", &modem_evt);
-	zassert_equal(err, -EIO, "parse_mdmev was expected to return %d, but returned %d",
-		      -EIO, err);
+	TEST_ASSERT_EQUAL(-EIO, err);
 
 	err = parse_mdmev("%MDMEV: ", &modem_evt);
-	zassert_equal(err, -ENODATA, "parse_mdmev was expected to return %d, but returned %d",
-		      -ENODATA, err);
+	TEST_ASSERT_EQUAL(-ENODATA, err);
 }
 
-static void test_periodic_search_pattern_get(void)
+void test_periodic_search_pattern_get(void)
 {
 	char buf[40] = {0};
 	struct lte_lc_periodic_search_pattern pattern_range_1 = {
@@ -646,48 +607,41 @@ static void test_periodic_search_pattern_get(void)
 		},
 	};
 
-	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_1),
-			  "Unexpected pointer returned from periodic_search_pattern_get()");
-	zassert_equal(strcmp(buf, "\"0,60,3600,300,600\""), 0, "Wrong range string");
+	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_1));
+	TEST_ASSERT_EQUAL_STRING("\"0,60,3600,300,600\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_2),
-			  "Unexpected pointer returned from periodic_search_pattern_get()");
-	zassert_equal(strcmp(buf, "\"0,60,3600,,600\""), 0, "Wrong range string");
+	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_2));
+	TEST_ASSERT_EQUAL_STRING("\"0,60,3600,,600\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_1),
-			  "Unexpected pointer returned from periodic_search_pattern_get()");
-	zassert_equal(strcmp(buf, "\"1,60\""), 0, "Wrong table string (%s)", buf);
+	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_1));
+	TEST_ASSERT_EQUAL_STRING("\"1,60\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_2),
-			  "Unexpected pointer returned from periodic_search_pattern_get()");
-	zassert_equal(strcmp(buf, "\"1,20,80\""), 0, "Wrong table string (%s)", buf);
+	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_2));
+	TEST_ASSERT_EQUAL_STRING("\"1,20,80\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_3),
-			  "Unexpected pointer returned from periodic_search_pattern_get()");
-	zassert_equal(strcmp(buf, "\"1,10,70,300\""), 0, "Wrong table string (%s)", buf);
+	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_3));
+	TEST_ASSERT_EQUAL_STRING("\"1,10,70,300\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_4),
-			  "Unexpected pointer returned from periodic_search_pattern_get()");
-	zassert_equal(strcmp(buf, "\"1,1,60,120,3600\""), 0, "Wrong table string (%s)", buf);
+	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_4));
+	TEST_ASSERT_EQUAL_STRING("\"1,1,60,120,3600\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	zassert_equal_ptr(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_5),
-			  "Unexpected pointer returned from periodic_search_pattern_get()");
-	zassert_equal(strcmp(buf, "\"1,2,30,40,900,3000\""), 0, "Wrong table string (%s)", buf);
+	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_5));
+	TEST_ASSERT_EQUAL_STRING("\"1,2,30,40,900,3000\"", buf);
 }
 
-static void test_parse_periodic_search_pattern(void)
+void test_parse_periodic_search_pattern(void)
 {
 	int err;
 	struct lte_lc_periodic_search_pattern pattern;
@@ -702,145 +656,91 @@ static void test_parse_periodic_search_pattern(void)
 	const char *pattern_table_empty = "1";
 
 	err = parse_periodic_search_pattern(pattern_range_1, &pattern);
-	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
-	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE,
-		      "Wrong pattern type (%d)", pattern.type);
-	zassert_equal(pattern.range.initial_sleep, 60,
-		      "Wrong 'initial_sleep' value (%d)", pattern.range.initial_sleep);
-	zassert_equal(pattern.range.final_sleep, 3600,
-		      "Wrong 'final_sleep' value (%d)", pattern.range.final_sleep);
-	zassert_equal(pattern.range.time_to_final_sleep, 300,
-		      "Wrong 'time_to_final_sleep' value (%d)", pattern.range.time_to_final_sleep);
-	zassert_equal(pattern.range.pattern_end_point, 600,
-		      "Wrong 'pattern_end_point' value (%d)", pattern.range.pattern_end_point);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE, pattern.type);
+	TEST_ASSERT_EQUAL(60, pattern.range.initial_sleep);
+	TEST_ASSERT_EQUAL(3600, pattern.range.final_sleep);
+	TEST_ASSERT_EQUAL(300, pattern.range.time_to_final_sleep);
+	TEST_ASSERT_EQUAL(600, pattern.range.pattern_end_point);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_range_2, &pattern);
-	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
-	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE,
-		      "Wrong pattern type (%d)", pattern.type);
-	zassert_equal(pattern.range.initial_sleep, 60,
-		      "Wrong 'initial_sleep' value (%d)", pattern.range.initial_sleep);
-	zassert_equal(pattern.range.final_sleep, 3600,
-		      "Wrong 'final_sleep' value (%d)", pattern.range.final_sleep);
-	zassert_equal(pattern.range.time_to_final_sleep, -1,
-		      "Wrong 'time_to_final_sleep' value (%d)", pattern.range.time_to_final_sleep);
-	zassert_equal(pattern.range.pattern_end_point, 600,
-		      "Wrong 'pattern_end_point' value (%d)", pattern.range.pattern_end_point);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE, pattern.type);
+	TEST_ASSERT_EQUAL(60, pattern.range.initial_sleep);
+	TEST_ASSERT_EQUAL(3600, pattern.range.final_sleep);
+	TEST_ASSERT_EQUAL(-1, pattern.range.time_to_final_sleep);
+	TEST_ASSERT_EQUAL(600, pattern.range.pattern_end_point);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_range_empty, &pattern);
-	zassert_equal(err, -EBADMSG, "Expected %d, but %d was returned", -EBADMSG, err);
+	TEST_ASSERT_EQUAL(-EBADMSG, err);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_table_1, &pattern);
-	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
-	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
-		      "Wrong pattern type (%d)", pattern.type);
-	zassert_equal(pattern.table.val_1, 10,
-		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
-	zassert_equal(pattern.table.val_2, -1,
-		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
-	zassert_equal(pattern.table.val_3, -1,
-		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
-	zassert_equal(pattern.table.val_4, -1,
-		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
-	zassert_equal(pattern.table.val_5, -1,
-		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
+	TEST_ASSERT_EQUAL(10, pattern.table.val_1);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_2);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_3);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_4);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_5);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_table_2, &pattern);
-	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
-	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
-		      "Wrong pattern type (%d)", pattern.type);
-	zassert_equal(pattern.table.val_1, 20,
-		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
-	zassert_equal(pattern.table.val_2, 30,
-		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
-	zassert_equal(pattern.table.val_3, -1,
-		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
-	zassert_equal(pattern.table.val_4, -1,
-		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
-	zassert_equal(pattern.table.val_5, -1,
-		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
+	TEST_ASSERT_EQUAL(20, pattern.table.val_1);
+	TEST_ASSERT_EQUAL(30, pattern.table.val_2);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_3);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_4);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_5);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_table_3, &pattern);
-	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
-	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
-		      "Wrong pattern type (%d)", pattern.type);
-	zassert_equal(pattern.table.val_1, 30,
-		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
-	zassert_equal(pattern.table.val_2, 40,
-		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
-	zassert_equal(pattern.table.val_3, 50,
-		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
-	zassert_equal(pattern.table.val_4, -1,
-		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
-	zassert_equal(pattern.table.val_5, -1,
-		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
+	TEST_ASSERT_EQUAL(30, pattern.table.val_1);
+	TEST_ASSERT_EQUAL(40, pattern.table.val_2);
+	TEST_ASSERT_EQUAL(50, pattern.table.val_3);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_4);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_5);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_table_4, &pattern);
-	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
-	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
-		      "Wrong pattern type (%d)", pattern.type);
-	zassert_equal(pattern.table.val_1, 40,
-		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
-	zassert_equal(pattern.table.val_2, 50,
-		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
-	zassert_equal(pattern.table.val_3, 60,
-		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
-	zassert_equal(pattern.table.val_4, 70,
-		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
-	zassert_equal(pattern.table.val_5, -1,
-		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
+	TEST_ASSERT_EQUAL(40, pattern.table.val_1);
+	TEST_ASSERT_EQUAL(50, pattern.table.val_2);
+	TEST_ASSERT_EQUAL(60, pattern.table.val_3);
+	TEST_ASSERT_EQUAL(70, pattern.table.val_4);
+	TEST_ASSERT_EQUAL(-1, pattern.table.val_5);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_table_5, &pattern);
-	zassert_equal(err, 0, "Expected 0, but %d was returned", err);
-	zassert_equal(pattern.type, LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE,
-		      "Wrong pattern type (%d)", pattern.type);
-	zassert_equal(pattern.table.val_1, 50,
-		      "Wrong 'val_1' value (%d)", pattern.table.val_1);
-	zassert_equal(pattern.table.val_2, 60,
-		      "Wrong 'val_2' value (%d)", pattern.table.val_2);
-	zassert_equal(pattern.table.val_3, 70,
-		      "Wrong 'val_3' value (%d)", pattern.table.val_3);
-	zassert_equal(pattern.table.val_4, 80,
-		      "Wrong 'val_4' value (%d)", pattern.table.val_4);
-	zassert_equal(pattern.table.val_5, 90,
-		      "Wrong 'val_5' value (%d)", pattern.table.val_5);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
+	TEST_ASSERT_EQUAL(50, pattern.table.val_1);
+	TEST_ASSERT_EQUAL(60, pattern.table.val_2);
+	TEST_ASSERT_EQUAL(70, pattern.table.val_3);
+	TEST_ASSERT_EQUAL(80, pattern.table.val_4);
+	TEST_ASSERT_EQUAL(90, pattern.table.val_5);
 
 	memset(&pattern, 0, sizeof(pattern));
 
 	err = parse_periodic_search_pattern(pattern_table_empty, &pattern);
-	zassert_equal(err, -EBADMSG, "Expected %d, but %d was returned", -EBADMSG, err);
+	TEST_ASSERT_EQUAL(-EBADMSG, err);
 }
 
-void test_main(void)
+int main(void)
 {
-	ztest_test_suite(test_lte_lc,
-		ztest_unit_test(test_parse_edrx),
-		ztest_unit_test(test_parse_cereg),
-		ztest_unit_test(test_parse_xt3412),
-		ztest_unit_test(test_parse_xmodemsleep),
-		ztest_unit_test(test_parse_rrc_mode),
-		ztest_unit_test(test_response_is_valid),
-		ztest_unit_test(test_parse_ncellmeas),
-		ztest_unit_test(test_neighborcell_count_get),
-		ztest_unit_test(test_parse_mdmev),
-		ztest_unit_test(test_parse_psm),
-		ztest_unit_test(test_periodic_search_pattern_get),
-		ztest_unit_test(test_parse_periodic_search_pattern)
-	);
-
-	ztest_run_test_suite(test_lte_lc);
+	(void)unity_main();
+	return 0;
 }
