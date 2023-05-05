@@ -49,12 +49,40 @@ tests:
       - CONFIG_TFM_PSA_TEST_CRYPTO=y
       - CONFIG_TFM_ISOLATION_LEVEL=1
     timeout: 120
+  tfm.psa_test_crypto_lvl1.cc3xx:
+    tags: tfm_lvl1
+    extra_configs:
+      - CONFIG_TFM_PSA_TEST_CRYPTO=y
+      - CONFIG_TFM_ISOLATION_LEVEL=1
+      - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+    timeout: 120
+  tfm.psa_test_crypto_lvl1.cc3xx_oberon:
+    tags: tfm_lvl1
+    extra_configs:
+      - CONFIG_TFM_PSA_TEST_CRYPTO=y
+      - CONFIG_TFM_ISOLATION_LEVEL=1
+      - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
     timeout: 120
   tfm.psa_test_crypto_lvl2:
     tags: tfm_lvl2
     extra_configs:
       - CONFIG_TFM_PSA_TEST_CRYPTO=y
     timeout: 120
+  tfm.psa_test_crypto_lvl2.cc3xx:
+    tags: tfm_lvl2
+    extra_configs:
+      - CONFIG_TFM_PSA_TEST_CRYPTO=y
+      - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+    timeout: 120
+  tfm.psa_test_crypto_lvl2.cc3xx_oberon:
+    tags: tfm_lvl2
+    extra_configs:
+      - CONFIG_TFM_PSA_TEST_CRYPTO=y
+      - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
     timeout: 120
   tfm.psa_test_initial_attestation_lvl1:
     tags: tfm_lvl1
