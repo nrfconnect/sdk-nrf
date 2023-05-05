@@ -318,7 +318,7 @@ config BT_CTLR_SDC_PAWR_ADV
 if BT_CTLR_SDC_PAWR_ADV
 config BT_CTLR_SDC_PAWR_ADV_COUNT
 	int "Periodic Advertising with Responses - Advertiser sets"
-	range 0 10
+	range 0 BT_EXT_ADV_MAX_ADV_SET
 	default 1
 	help
 	  Maximum number of concurrent Periodic Advertising with Responses
