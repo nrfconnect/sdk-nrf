@@ -52,7 +52,7 @@
 - scenarios:
     - applications.asset_tracker_v2.nrf7002ek_wifi-debug
     - applications.asset_tracker_v2.nrf7002ek_wifi-release
-    - asset_tracker_v2.lwm2m_codec
+    - net.lib.download_client
   platforms:
     - all
-  comment: "Temporary disable till the issue is fixed"
+  comment: "Temporary disable till the issue is fixed. net.lib.download_client is disabled as it started failing on native_posix because of ioctl call returning 2. This happened after https://github.com/nrfconnect/sdk-nrf/pull/10876 was merged."
