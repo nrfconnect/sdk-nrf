@@ -302,19 +302,11 @@ The ``#XSLMUART`` command manages the UART settings.
 Set command
 -----------
 
-The set command changes the UART baud rate and hardware flow control settings.
-Hardware flow control settings can be changed only if ``hw-flow-control`` is enabled in device tree.
-These settings are stored in the flash memory and applied during the application startup.
+The set command changes the UART baud rate setting.
+This setting is stored in the flash memory and applied during the application startup.
 
 Syntax
 ~~~~~~
-
-The following is the syntax when ``hw-flow-control`` is enabled in device tree.:
-::
-
-   #XSLMUART[=<baud_rate>,<hwfc>]
-
-The following is the syntax when ``hw-flow-control`` is disabled in device tree.:
 ::
 
    #XSLMUART[=<baud_rate>]
@@ -341,17 +333,6 @@ When not specified, it is set to the last value set for the variable and stored 
 If there is no value stored for the variable, it is set to its default value.
 If not specified, the previous value is used.
 
-The ``<hwfc>`` parameter accepts the following integer values:
-
-* ``0`` - Disable UART hardware flow control.
-
-* ``1`` - Enable UART hardware flow control.
-  In this mode, SLM configures both the RTS and the CTS pins according to the device-tree file.
-
-Its default value is ``1``.
-When not specified, it is set to the last value set for the variable and stored in the flash memory.
-If there is no value stored for the variable, it is set to its default value.
-
 Response syntax
 ~~~~~~~~~~~~~~~
 
@@ -362,7 +343,7 @@ Example
 
 ::
 
-   AT#XSLMUART=1000000,1
+   AT#XSLMUART=1000000
    OK
 
 Read command
@@ -382,7 +363,7 @@ Response syntax
 
 ::
 
-   #XSLMUART: <baud_rate>,<hwfc>
+   #XSLMUART: <baud_rate>
 
 Example
 ~~~~~~~
@@ -390,7 +371,7 @@ Example
 ::
 
    AT#XSLMUART?
-   #XSLMUART: 115200,1
+   #XSLMUART: 115200
    OK
 
 Test command
@@ -408,29 +389,12 @@ Syntax
 Response syntax
 ~~~~~~~~~~~~~~~
 
-The following is the syntax when ``hw-flow-control`` is enabled in device tree:
-
-::
-
-   #XSLMUART: (list of the available baud rate options),(disable or enable hwfc)
-
-The following is the syntax when ``hw-flow-control`` is disabled in device tree:
-
 ::
 
    #XSLMUART: (list of the available baud rate options)
 
 Example
 ~~~~~~~
-
-The following is an example when ``hw-flow-control`` is enabled in device tree:
-
-::
-
-   AT#XSLMUART=?
-   #XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,115200,230400,460800,921600,1000000),(0,1)
-
-The following is an example when ``hw-flow-control`` is disabled in device tree.:
 
 ::
 

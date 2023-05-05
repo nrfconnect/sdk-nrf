@@ -526,11 +526,16 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 	return err;
 }
 
-static int mqtt_datamode_callback(uint8_t op, const uint8_t *data, int len)
+static int mqtt_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = 0;
 
 	if (op == DATAMODE_SEND) {
+		if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
+			LOG_ERR("Datamode buffer overflow");
+			(void)exit_datamode_handler(-EOVERFLOW);
+			return -EOVERFLOW;
+		}
 		ret = do_mqtt_publish((uint8_t *)data, len);
 		LOG_INF("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {

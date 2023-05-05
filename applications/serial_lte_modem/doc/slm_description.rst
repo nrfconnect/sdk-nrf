@@ -180,6 +180,24 @@ CONFIG_SLM_HTTPC - HTTP client support in SLM
 CONFIG_SLM_TWI - TWI support in SLM
    This option enables additional AT commands for using the TWI service.
 
+.. _CONFIG_SLM_UART_RX_BUF_COUNT:
+
+CONFIG_SLM_UART_RX_BUF_COUNT - Receive buffers for UART.
+   This option defines the amount of buffers for receiving (RX) UART traffic.
+   The default value is 3.
+
+.. _CONFIG_SLM_UART_RX_BUF_SIZE:
+
+CONFIG_SLM_UART_RX_BUF_SIZE - Receive buffer size for UART.
+   This option defines the size of a single buffer for receiving (RX) UART traffic.
+   The default value is 256.
+
+.. _CONFIG_SLM_UART_TX_BUF_SIZE:
+
+CONFIG_SLM_UART_TX_BUF_SIZE - Send buffer size for UART.
+   This option defines the size of the buffer for sending (TX) UART traffic.
+   The default value is 256.
+
 Additional configuration
 ========================
 

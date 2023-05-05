@@ -60,7 +60,7 @@ typedef struct ftp_op_list {
 static bool ftp_verbose_on;
 static char filepath[SLM_MAX_FILEPATH];
 static int sz_filepath;
-static int (*ftp_data_mode_handler)(const uint8_t *data, int len);
+static int (*ftp_data_mode_handler)(const uint8_t *data, int len, uint8_t flags);
 
 /** forward declaration of cmd handlers **/
 static int do_ftp_close(void);
@@ -150,7 +150,7 @@ void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 			}
 			break;
 		}
-		if (ftp_data_mode_handler && exit_datamode(-EAGAIN)) {
+		if (ftp_data_mode_handler && exit_datamode_handler(-EAGAIN)) {
 			ftp_data_mode_handler = NULL;
 		}
 		return;
@@ -446,13 +446,13 @@ static int do_ftp_get(void)
 	}
 }
 
-static int ftp_datamode_callback(uint8_t op, const uint8_t *data, int len)
+static int ftp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = 0;
 
 	if (op == DATAMODE_SEND) {
 		if (ftp_data_mode_handler) {
-			ret = ftp_data_mode_handler(data, len);
+			ret = ftp_data_mode_handler(data, len, flags);
 			LOG_INF("datamode send: %d", ret);
 		} else {
 			LOG_ERR("no datamode send handler");
@@ -465,14 +465,17 @@ static int ftp_datamode_callback(uint8_t op, const uint8_t *data, int len)
 }
 
 /* FTP PUT data mode handler */
-static int ftp_put_handler(const uint8_t *data, int len)
+static int ftp_put_handler(const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = -1;
 
 	if (strlen(filepath) > 0 && data != NULL) {
 		ret = ftp_put(filepath, data, len, FTP_PUT_NORMAL);
 		if (ret != FTP_CODE_226) {
-			(void) exit_datamode(-EAGAIN);
+			(void) exit_datamode_handler(-EAGAIN);
+		} else if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
+			LOG_ERR("Datamode buffer overflow");
+			(void)exit_datamode_handler(-EOVERFLOW);
 		}
 	}
 
@@ -514,14 +517,17 @@ static int do_ftp_put(void)
 }
 
 /* FTP UPUT data mode handler */
-static int ftp_uput_handler(const uint8_t *data, int len)
+static int ftp_uput_handler(const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = -1;
 
 	if (data != NULL) {
 		ret = ftp_put(NULL, data, len, FTP_PUT_UNIQUE);
 		if (ret != FTP_CODE_226) {
-			(void) exit_datamode(-EAGAIN);
+			(void)exit_datamode_handler(-EAGAIN);
+		} else if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
+			LOG_ERR("Datamode buffer overflow");
+			(void)exit_datamode_handler(-EOVERFLOW);
 		}
 	}
 
@@ -556,10 +562,12 @@ static int do_ftp_uput(void)
 	return ret;
 }
 
-/* FTP UPUT data mode handler */
-static int ftp_mput_handler(const uint8_t *data, int len)
+/* FTP MPUT data mode handler */
+static int ftp_mput_handler(const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = -1;
+
+	ARG_UNUSED(flags);
 
 	if (strlen(filepath) > 0 && data != NULL) {
 		ret = ftp_put(filepath, data, len, FTP_PUT_APPEND);

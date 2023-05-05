@@ -72,45 +72,53 @@ To exit data mode, the MCU sends the termination command set by the :ref:`CONFIG
 The pattern string could be sent alone or as an affix to the data.
 The pattern string must be sent in full.
 
-.. note::
-   Some terminal software, like LTE Link Monitor, always appends an AT command terminator (for example ``<CR><LF>``) to uplink data.
-   This makes it unsuitable for data mode as exiting data mode can't work.
-
 If the current sending function fails, the SLM application exits data mode and returns the error code as ``#XDATAMODE: <error>``.
 The ``<error>`` value is a negative integer.
-
-The SLM application also exits data mode automatically in the following scenarios:
-
-* The TCP server is stopped.
-* The remote server disconnects the TCP client.
-* The TCP client disconnects from the remote server due to an error.
-* The UDP client disconnects from the remote server due to an error.
 
 When exiting data mode, the SLM application sends ``#XDATAMODE: 0`` as an unsolicited notification.
 
 After exiting data mode, the SLM application returns to the AT command mode.
+
+.. note::
+  Previously, the SLM application exited data mode automatically in the following scenarios:
+
+  * The TCP server is stopped.
+  * The remote server disconnects the TCP client.
+  * The TCP client disconnects from the remote server due to an error.
+  * The UDP client disconnects from the remote server due to an error.
+
+  Currently, in these scenarios, the SLM application moves to a state where the data received from UART is dropped until the MCU sends the termination command.
 
 Triggering the transmission
 ===========================
 
 The SLM application buffers all the arbitrary data received from the UART bus before initiating the transmission.
 
-The transmission of the buffered data to the LTE network is triggered by the time limit when the defined inactivity timer times out.
+The transmission of the buffered data to the LTE network is triggered in the following scenarios:
+
+* Time limit when the defined inactivity timer times out.
+* Reception of the termination string.
+* Filling of the data mode buffer.
+
 If there is no time limit configured, the minimum required value applies.
 For more information, see the `Data mode control #XDATACTRL`_  command.
 
 Flow control in data mode
 =========================
 
-When SLM fills its receiving buffer, the MCU must impose flow control to the SLM over the UART interface to avoid any buffer overflow.
-Otherwise, if SLM imposes flow control, it disables the UART reception when it runs out of space in the buffer, potentially leading to data loss.
-
-SLM reenables UART receptions after the transmission of the data previously received has freed up buffer space.
-The buffer size is set to 3884 bytes by default.
+When SLM fills its UART receive buffers, it enables the UART hardware flow control, which disables UART reception.
+SLM reenables UART reception when the data has been moved to the data mode buffer.
+If the data mode buffer fills, the data are transmitted to the LTE network.
 
 .. note::
    There is no unsolicited notification defined for this event.
    UART hardware flow control is responsible for imposing and revoking flow control.
+
+The data mode buffer size is controlled by :ref:`CONFIG_SLM_DATAMODE_BUF_SIZE <CONFIG_SLM_DATAMODE_BUF_SIZE>`.
+
+.. note::
+   The whole buffer is sent in a single operation.
+   When transmitting UDP packets, only one complete packet must reside in the data mode buffer at any time.
 
 Configuration options
 *********************
@@ -129,6 +137,12 @@ CONFIG_SLM_DATAMODE_URC - Send URC in data mode
    This option reports the result of the previous data-sending operation while the SLM application remains in data mode.
    The MCU could use this URC for application-level uplink flow control.
    It is not selected by default.
+
+.. _CONFIG_SLM_DATAMODE_BUF_SIZE:
+
+CONFIG_SLM_DATAMODE_BUF_SIZE - Buffer size for data mode
+   This option defines the buffer size for the data mode.
+   The default value is 4096.
 
 Data mode AT commands
 *********************
@@ -157,7 +171,7 @@ Syntax
 
 * The ``<time_limit>`` parameter sets the timeout value in milliseconds.
   The default value is the minimum required value, based on the configured UART baud rate.
-  This value must be long enough to allow for the transmission of one DMA block size of data (hardcoded to 256 bytes).
+  This value must be long enough to allow for a DMA transmission of an UART receive (RX) buffer (:ref:`CONFIG_SLM_UART_RX_BUF_SIZE <CONFIG_SLM_UART_RX_BUF_SIZE>`).
 
 Read command
 ------------

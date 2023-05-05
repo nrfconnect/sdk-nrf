@@ -241,14 +241,21 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 }
 
 /* Carrier App Data Send data mode handler */
-static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len)
+static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = 0;
 
 	if (op == DATAMODE_SEND) {
+		if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
+			LOG_ERR("Datamode buffer overflow");
+			(void)exit_datamode_handler(-EOVERFLOW);
+			return -EOVERFLOW;
+		}
 		ret = lwm2m_carrier_app_data_send(data, len);
 		LOG_INF("datamode send: %d", ret);
-		(void)exit_datamode(ret);
+		if (ret < 0) {
+			(void)exit_datamode_handler(ret);
+		}
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
 	}

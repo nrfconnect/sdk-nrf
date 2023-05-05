@@ -10,6 +10,11 @@
 	};
 };
 
+&uart0 {
+	status = "okay";
+	hw-flow-control;
+};
+
 &uart2 {
 	status="disabled";
 };

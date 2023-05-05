@@ -20,6 +20,9 @@
 #include <modem/at_cmd_parser.h>
 #include "slm_defines.h"
 
+#define SLM_DATAMODE_FLAGS_NONE		0
+#define SLM_DATAMODE_FLAGS_MORE_DATA	1 << 0
+
 /**@brief Operations in datamode. */
 enum slm_datamode_operation {
 	DATAMODE_SEND,  /* Send data in datamode */
@@ -32,7 +35,7 @@ enum slm_datamode_operation {
  *         Positive value means the actual size of bytes that has been sent.
  *         Negative value means error occurrs in sending.
  */
-typedef int (*slm_datamode_handler_t)(uint8_t op, const uint8_t *data, int len);
+typedef int (*slm_datamode_handler_t)(uint8_t op, const uint8_t *data, int len, uint8_t flags);
 
 /**
  * @brief Initialize AT host for serial LTE modem
@@ -58,7 +61,6 @@ void rsp_send(const char *fmt, ...);
 
 /**
  * @brief Send AT command response of OK
- *
  */
 void rsp_send_ok(void);
 
@@ -97,14 +99,14 @@ int enter_datamode(slm_datamode_handler_t handler);
 bool in_datamode(void);
 
 /**
- * @brief Request SLM AT host to exit data mode
+ * @brief Indicate that data mode handler has closed
  *
  * @param result Result of sending in data mode.
  *
- * @retval true If normal exit from data mode.
+ * @retval true If handler has closed successfully.
  *         false If not in data mode.
  */
-bool exit_datamode(int result);
+bool exit_datamode_handler(int result);
 /** @} */
 
 #endif /* SLM_AT_HOST_ */

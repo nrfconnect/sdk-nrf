@@ -20,6 +20,7 @@ target_sources(app PRIVATE src/slm_at_tcp_proxy.c)
 target_sources(app PRIVATE src/slm_at_udp_proxy.c)
 target_sources(app PRIVATE src/slm_at_icmp.c)
 target_sources(app PRIVATE src/slm_at_fota.c)
+target_sources(app PRIVATE src/slm_uart_handler.c)
 # NORDIC SDK APP END
 target_sources_ifdef(CONFIG_SLM_SMS app PRIVATE src/slm_at_sms.c)
 target_sources_ifdef(CONFIG_SLM_NATIVE_TLS app PRIVATE src/slm_native_tls.c)
