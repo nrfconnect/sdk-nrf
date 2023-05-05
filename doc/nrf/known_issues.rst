@@ -2270,6 +2270,11 @@ Crypto
 
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
+NCSDK-20688: For AES GCM, calling :c:func:`psa_aead_update_ad` multiple times will result in an incorrect tag on CryptoCell
+  It is only supported to feed the additional data for AES GCM once using the CryptoCell backend.
+
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
 NCSDK-20287: Using AES GCM with other nonce sizes than 12 bytes will produce an incorrect tag on CryptoCell
   Both PSA Crypto and legacy Mbed TLS APIs are affected.
 
