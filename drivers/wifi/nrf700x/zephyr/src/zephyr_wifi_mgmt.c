@@ -668,6 +668,8 @@ int wifi_nrf_set_twt(const struct device *dev,
 		if (twt_params->teardown.teardown_all) {
 			if (vif_ctx_zep->neg_twt_flow_id == 0xFF) {
 				LOG_ERR("Invalid negotiated TWT flow id\n");
+				twt_params->fail_reason =
+					WIFI_TWT_FAIL_INVALID_FLOW_ID;
 				goto out;
 			}
 			/* Update the negotiated flow id
