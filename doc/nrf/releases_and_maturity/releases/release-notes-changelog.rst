@@ -162,11 +162,15 @@ nRF9160: Serial LTE modem
 * Updated:
 
   * The configuration to enable support for nRF Cloud A-GPS service and nRF Cloud Location service by default.
+  * UART receive refactored to utilize hardware flow control (HWFC) instead of disabling and enabling UART receiving between commands.
+  * UART transmit has been refactored to utilize buffering.
+    Multiple responses can now be received in a single transmission.
 
 * Removed:
 
   * DFU AT commands ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` because they were not usable without a custom application in the target (nRF52 series) device.
   * Support for bootloader FOTA update because it is not needed for Serial LTE modem.
+  * Option to set or get HWFC setting from ``#XSLMUART`` AT command.
 
 nRF5340 Audio
 -------------

@@ -401,7 +401,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	} while (true);
 
 	if (in_datamode()) {
-		(void)exit_datamode(ret);
+		(void)exit_datamode_handler(ret);
 	}
 	if (proxy.sock != INVALID_SOCKET) {
 		(void)close(proxy.sock);
@@ -416,11 +416,16 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	LOG_INF("UDP thread terminated");
 }
 
-static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len)
+static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = 0;
 
 	if (op == DATAMODE_SEND) {
+		if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
+			LOG_ERR("Datamode buffer overflow");
+			(void)exit_datamode_handler(-EOVERFLOW);
+			return -EOVERFLOW;
+		}
 		ret = do_udp_send_datamode(data, len);
 		LOG_INF("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {

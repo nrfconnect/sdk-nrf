@@ -923,17 +923,23 @@ static int socket_poll(int sock_fd, int event, int timeout)
 	return 0;
 }
 
-static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len)
+static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = 0;
 
 	if (op == DATAMODE_SEND) {
-		if (strlen(udp_url) > 0) {
-			ret = do_sendto_datamode(data, len);
+		if (sock.type == SOCK_DGRAM && (flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
+			LOG_ERR("Datamode buffer overflow");
+			(void)exit_datamode_handler(-EOVERFLOW);
+			return -EOVERFLOW;
 		} else {
-			ret = do_send_datamode(data, len);
+			if (strlen(udp_url) > 0) {
+				ret = do_sendto_datamode(data, len);
+			} else {
+				ret = do_send_datamode(data, len);
+			}
+			LOG_INF("datamode send: %d", ret);
 		}
-		LOG_INF("datamode send: %d", ret);
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
 		memset(udp_url, 0x00, sizeof(udp_url));

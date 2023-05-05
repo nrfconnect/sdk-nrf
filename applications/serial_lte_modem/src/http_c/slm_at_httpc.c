@@ -167,9 +167,11 @@ int do_send_payload(const uint8_t *data, int len)
 	return offset;
 }
 
-int httpc_datamode_callback(uint8_t op, const uint8_t *data, int len)
+int httpc_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8_t flags)
 {
 	int ret = 0;
+
+	ARG_UNUSED(flags);
 
 	if (op == DATAMODE_SEND) {
 		ret = do_send_payload(data, len);
@@ -489,7 +491,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 
 	err = do_http_request();
 	if (err < 0) {
-		(void)exit_datamode(err);
+		(void)exit_datamode_handler(err);
 		LOG_ERR("do_http_request fail:%d", err);
 		/* Disconnect from server */
 		err = do_http_disconnect();
