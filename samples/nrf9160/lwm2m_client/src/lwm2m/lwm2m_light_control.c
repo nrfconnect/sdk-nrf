@@ -23,6 +23,10 @@ LOG_MODULE_DECLARE(app_lwm2m, CONFIG_APP_LOG_LEVEL);
 #define APP_TYPE	"PWM LED controller"
 #elif defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS)
 #define APP_TYPE	"GPIO LED controller"
+#elif defined(CONFIG_BOARD_NRF9161DK_NRF9161_NS) && defined(CONFIG_UI_LED_USE_PWM)
+#define APP_TYPE	"PWM LED controller"
+#elif defined(CONFIG_BOARD_NRF9161DK_NRF9161_NS)
+#define APP_TYPE	"GPIO LED controller"
 #endif
 
 #define BRIGHTNESS_MAX   100U
@@ -228,7 +232,8 @@ int lwm2m_init_light_control(void)
 			colour_str);
 		lwm2m_set_u8(&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID),
 			     BRIGHTNESS_MAX);
-	} else if (IS_ENABLED(CONFIG_BOARD_NRF9160DK_NRF9160_NS)) {
+	} else if (IS_ENABLED(CONFIG_BOARD_NRF9160DK_NRF9160_NS) ||
+		   IS_ENABLED(CONFIG_BOARD_NRF9161DK_NRF9161_NS)) {
 		struct lwm2m_obj_path lwm2m_path = LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID);
 
 		for (int i = 0; i < NUM_LEDS; ++i) {
