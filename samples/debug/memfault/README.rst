@@ -48,7 +48,7 @@ There are also some metrics, which are specific to |NCS| that are enabled by def
   * ``Ncs_ConnectionPollUnusedStack``- Stack used by the cloud libraries for :ref:`lib_nrf_cloud`, :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub`.
 
 In addition to showing the capturing of metrics provided by the Memfault SDK integration layer in |NCS|, the sample also shows how to capture an application-specific metric.
-This metric is defined in :file:`samples/nrf9160/memfault/config/memfault_metrics_heartbeat_config.h`:
+This metric is defined in :file:`samples/debug/memfault/config/memfault_metrics_heartbeat_config.h`:
 
 *  ``Switch1ToggleCount`` - The number of times **Switch 1** has been toggled on an nRF9160 DK.
 
@@ -84,7 +84,7 @@ Configuration
 *************
 
 The Memfault SDK allows the configuration of some of its options using Kconfig.
-To configure the options in the SDK that are not available for configuration using Kconfig, use :file:`samples/nrf9160/memfault/config/memfault_platform_config.h`.
+To configure the options in the SDK that are not available for configuration using Kconfig, use :file:`samples/debug/memfault/config/memfault_platform_config.h`.
 See `Memfault SDK`_ for more information.
 
 |config|
@@ -137,14 +137,14 @@ If :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabl
 Configuration files
 ===================
 
-.. include:: ../../../doc/nrf/libraries/others/memfault_ncs.rst
+.. include:: ../../../doc/nrf/libraries/debug/memfault_ncs.rst
    :start-after: memfault_config_files_start
    :end-before: memfault_config_files_end
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/memfault`
+.. |sample path| replace:: :file:`samples/debug/memfault`
 
 .. include:: /includes/build_and_run_ns.txt
 

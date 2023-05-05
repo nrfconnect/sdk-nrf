@@ -352,6 +352,7 @@ nRF9160 samples
 * :ref:`memfault_sample` sample:
 
   * Moved from :file:`nrf9160/memfault` to :file:`debug/memfault`.
+    The documentation is now found in the :ref:`debug_samples` section.
   * Added support for the nRF7002 DK.
 
 
@@ -717,3 +718,7 @@ Updated:
   * The :ref:`software_maturity` page with details about Bluetooth feature support.
   * The :ref:`ug_nrf5340_gs`, :ref:`ug_thingy53_gs`, :ref:`ug_nrf52_gs`, and :ref:`ug_ble_controller` pages with a link to the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
   * The :ref:`zigbee_weather_station_app` documentation to match the application template.
+
+Moved:
+
+ *   * The :ref:`mod_memfault` library documentation from :ref:`lib_others` to :ref:`lib_debug`.
