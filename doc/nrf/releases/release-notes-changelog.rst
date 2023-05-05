@@ -198,6 +198,7 @@ nRF5340 Audio
   Search :ref:`Kconfig Reference <kconfig-search>` for ``BLE_ACL_PER_ADV_INT_`` and ``BLE_ACL_EXT_ADV_INT_`` to list all of them.
 * Implemented :ref:`zephyr:zbus` for handling events from buttons and LE Audio.
 * Reduced supervision timeout to reduce reconnection times for CIS.
+* Updated the :ref:`nrf53_audio_app` application documentation with a note about missing support for the |nRFVSC|.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
