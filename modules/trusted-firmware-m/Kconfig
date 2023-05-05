@@ -72,6 +72,7 @@ menu "TF-M UART pins"
 config TFM_UART0_TXD_PIN
 	int "UART0 TXD pin"
 	default 29 if BOARD_NRF9160DK_NRF9160_NS
+	default 27 if BOARD_NRF9161DK_NRF9161_NS
 	default 20 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
@@ -84,6 +85,7 @@ config TFM_UART0_TXD_PIN
 config TFM_UART0_RXD_PIN
 	int "UART0 RXD pin"
 	default 28 if BOARD_NRF9160DK_NRF9160_NS
+	default 26 if BOARD_NRF9161DK_NRF9161_NS
 	default 22 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
@@ -96,6 +98,7 @@ config TFM_UART0_RXD_PIN
 config TFM_UART0_RTS_PIN
 	int "UART0 RTS pin"
 	default 27 if BOARD_NRF9160DK_NRF9160_NS
+	default 14 if BOARD_NRF9161DK_NRF9161_NS
 	default 19 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
@@ -108,6 +111,7 @@ config TFM_UART0_RTS_PIN
 config TFM_UART0_CTS_PIN
 	int "UART0 CTS pin"
 	default 26 if BOARD_NRF9160DK_NRF9160_NS
+	default 15 if BOARD_NRF9161DK_NRF9161_NS
 	default 21 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
@@ -126,6 +130,7 @@ config TFM_UART1_TXD_PIN
 	int "UART1 TXD pin"
 	depends on TFM_SECURE_UART1
 	default 1 if BOARD_NRF9160DK_NRF9160_NS
+	default 29 if BOARD_NRF9161DK_NRF9161_NS
 	default 25 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
@@ -136,6 +141,7 @@ config TFM_UART1_RXD_PIN
 	int "UART1 RXD pin"
 	depends on TFM_SECURE_UART1
 	default 0 if BOARD_NRF9160DK_NRF9160_NS
+	default 28 if BOARD_NRF9161DK_NRF9161_NS
 	default 26 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
@@ -145,6 +151,7 @@ config TFM_UART1_RXD_PIN
 config TFM_UART1_RTS_PIN
 	int "UART1 RTS pin"
 	default 14 if BOARD_NRF9160DK_NRF9160_NS
+	default 16 if BOARD_NRF9161DK_NRF9161_NS
 	default 5 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
@@ -154,6 +161,7 @@ config TFM_UART1_RTS_PIN
 config TFM_UART1_CTS_PIN
 	int "UART1 CTS pin"
 	default 15 if BOARD_NRF9160DK_NRF9160_NS
+	default 17 if BOARD_NRF9161DK_NRF9161_NS
 	default 6 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
