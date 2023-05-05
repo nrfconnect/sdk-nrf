@@ -272,7 +272,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		APP_EVENT_SUBMIT(ui_module_event);
 	}
 
-#if defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS)
+#if defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS) || defined(CONFIG_BOARD_NRF9161DK_NRF9161_NS)
 	if (has_changed & button_states & DK_BTN2_MSK) {
 
 		struct ui_module_event *ui_module_event = new_ui_module_event();
