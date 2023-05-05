@@ -27,7 +27,7 @@
 
 #ifdef NRF5340_XXAA_APPLICATION
 #define HUK_KEY_LEN_BYTES  32
-#elif defined(NRF9160_XXAA)
+#elif defined(NRF91_SERIES)
 #define HUK_KEY_LEN_BYTES  16
 #endif
 

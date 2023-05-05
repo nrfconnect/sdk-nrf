@@ -16,7 +16,7 @@
 if BUILD_WITH_TFM
 
 config TFM_ISOLATION_LEVEL
-	default 1 if SOC_NRF5340_CPUAPP || SOC_NRF9160
+	default 1 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
 
 config TFM_BL2
 	bool
@@ -318,7 +318,7 @@ config TFM_ALLOW_NON_SECURE_RESET
 
 config TFM_S_CODE_VECTOR_TABLE_SIZE
 	hex
-	default 0x144 if SOC_NRF9160
+	default 0x144 if SOC_SERIES_NRF91X
 	default 0x154 if SOC_NRF5340_CPUAPP
 	default 0xffffffff # Invalid value to discover missing SOC support.
 	help
@@ -352,8 +352,8 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	hex
 	prompt "Memory reserved for TFM_RAM" if !TFM_PROFILE_TYPE_MINIMAL
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
-	default 0x18000 if SOC_NRF9160 && TFM_REGRESSION_S
-	default 0x16000 if SOC_NRF9160
+	default 0x18000 if SOC_SERIES_NRF91X && TFM_REGRESSION_S
+	default 0x16000 if SOC_SERIES_NRF91X
 	default 0x40000 if SOC_NRF5340_CPUAPP
 	help
 	  Memory set aside for the TFM_SRAM partition.
