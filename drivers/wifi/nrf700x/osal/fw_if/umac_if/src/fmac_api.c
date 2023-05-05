@@ -170,7 +170,8 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 						  unsigned char ant_gain_2g,
 						  unsigned char ant_gain_5g_band1,
 						  unsigned char ant_gain_5g_band2,
-						  unsigned char ant_gain_5g_band3)
+						  unsigned char ant_gain_5g_band3,
+						  enum op_band op_band)
 {
 	unsigned long start_time_us = 0;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -213,7 +214,8 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 			       ant_gain_2g,
 			       ant_gain_5g_band1,
 			       ant_gain_5g_band2,
-			       ant_gain_5g_band3);
+			       ant_gain_5g_band3,
+			       op_band);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -362,7 +364,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 					    unsigned char ant_gain_2g,
 					    unsigned char ant_gain_5g_band1,
 					    unsigned char ant_gain_5g_band2,
-					    unsigned char ant_gain_5g_band3)
+					    unsigned char ant_gain_5g_band3,
+					    enum op_band op_band)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 #ifndef CONFIG_NRF700X_RADIO_TEST
@@ -447,7 +450,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 				       ant_gain_2g,
 				       ant_gain_5g_band1,
 				       ant_gain_5g_band2,
-				       ant_gain_5g_band3);
+				       ant_gain_5g_band3,
+				       op_band);
 
 	if (status == WIFI_NRF_STATUS_FAIL) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
