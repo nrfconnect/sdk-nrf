@@ -1504,6 +1504,13 @@ NCSDK-21590: :ref:`bluetooth_mesh_sensor_client` sample does not compile for nRF
 
   **Workaround:** Disable the mesh shell support in the prj.conf file for the sensor client sample.
 
+.. rst-class:: v2-3-0 v2-2-0
+
+NCSDK-18112: :ref:`bluetooth_central_dfu_smp` sample can't do discovery on :ref:`smp_svr_sample`.
+  The :ref:`bluetooth_central_dfu_smp` sample can't perform the GATT discovery on a DK with :ref:`smp_svr_sample`.
+
+  **Workaround:** Enable the legacy LLCP mechanism (:kconfig:option:`CONFIG_BT_LL_SW_LLCP_LEGACY`).
+
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 NCSDK-19942: HID samples do not work with Android 13
