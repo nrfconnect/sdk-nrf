@@ -1,0 +1,18 @@
+identifier: nrf7001dk_nrf5340_cpuapp_ns
+name: NRF7001-DK-NRF5340-application-MCU-Non-Secure
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - xtools
+  - zephyr
+ram: 192
+flash: 192
+supported:
+  - gpio
+  - i2c
+  - pwm
+  - watchdog
+  - usb_cdc
+  - usb_device
+  - netif:openthread

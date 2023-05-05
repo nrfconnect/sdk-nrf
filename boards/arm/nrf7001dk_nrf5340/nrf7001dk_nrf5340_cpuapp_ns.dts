@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/dts-v1/;
+#include <nordic/nrf5340_cpuappns_qkaa.dtsi>
+#include "nrf5340_cpuapp_common.dts"
+
+/ {
+	model = "Nordic NRF5340 DK NRF5340 Application";
+	compatible = "nordic,nrf5340-dk-nrf5340-cpuapp";
+
+	chosen {
+		zephyr,sram = &sram0_ns;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_ns_partition;
+	};
+};

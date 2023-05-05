@@ -1,0 +1,13 @@
+identifier: nrf7001dk_nrf5340_cpunet
+name: NRF7001-DK-NRF5340-network-MCU
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - xtools
+  - zephyr
+ram: 64
+flash: 256
+supported:
+  - gpio
+  - watchdog
