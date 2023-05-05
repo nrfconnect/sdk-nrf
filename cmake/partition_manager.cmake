@@ -177,8 +177,8 @@ list(APPEND header_files ${ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
 # Add subsys defined pm.yml to the input_files
 list(APPEND input_files ${PM_SUBSYS_PREPROCESSED})
 
-if (DEFINED CONFIG_SOC_NRF9160)
-  # See nRF9160 Product Specification, chapter "UICR"
+if (DEFINED CONFIG_SOC_SERIES_NRF91X)
+  # See nRF91 Product Specification, chapter "UICR"
   set(otp_start_addr "0xff8108")
   set(otp_size 756) # 189 * 4
 elseif (DEFINED CONFIG_SOC_NRF5340_CPUAPP)
@@ -197,7 +197,7 @@ add_region(
 
 math(EXPR flash_size "${CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
-if (CONFIG_SOC_NRF9160 OR CONFIG_SOC_NRF5340_CPUAPP)
+if (CONFIG_SOC_SERIES_NRF91X OR CONFIG_SOC_NRF5340_CPUAPP)
   add_region(
     NAME otp
     SIZE ${otp_size}
