@@ -436,7 +436,7 @@ The information extracted from devicetree is the alignment value for some partit
 
    provision:
      size: CONFIG_PM_PARTITION_SIZE_PROVISION
-   #if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
+   #if defined(CONFIG_SOC_SERIES_NRF91X) || defined(CONFIG_SOC_NRF5340_CPUAPP)
      region: otp
    #else
      placement:
