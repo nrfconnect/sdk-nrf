@@ -1,7 +1,7 @@
 .. _provisioning_image:
 
-Provisioning image
-##################
+TF-M: Provisioning image
+########################
 
 .. contents::
    :local:

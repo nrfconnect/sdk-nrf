@@ -129,25 +129,17 @@ There are several options to get UART output from the secure TF-M:
 Limitations
 ***********
 
-The following services are not supported:
+The following limitations apply to TF-M and its usage:
 
-* Audit Log service in IPC model
-* Firmware Update service
-* Attestation service
+* Firmware Update service is not supported.
+* The following crypto modules or ciphers are not supported:
 
-The following Crypto modules or ciphers are not supported:
+  * AES output feedback (AES-OFB) mode.
+  * AES cipher feedback (AES-CFB) mode.
 
-* OFB
-* CFB
-
-Isolation level 3 is not supported.
-
-In Isolation level 2 or higher, the number of peripherals configured as secure in Application Root of Trust (ARoT) is limited by the number of available MPU regions.
-
-Nordic platforms support only the GCC toolchain for building TF-M.
-
-Enabling Floating point support in TF-M is currently not supported.
-Enabling Floating point Hard ABI (:kconfig:option:`CONFIG_FP_HARDABI`) in the application is currently not supported.
+* Isolation level 3 is not supported.
+* In Isolation level 2 or higher, the number of peripherals configured as secure in Application Root of Trust (ARoT) is limited by the number of available MPU regions.
+* Nordic Semiconductor devices only support the GCC toolchain for building TF-M.
 
 .. _ug_tfm_partition_alignment_requirements:
 
