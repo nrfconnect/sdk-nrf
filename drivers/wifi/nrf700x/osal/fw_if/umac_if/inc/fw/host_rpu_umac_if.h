@@ -2666,7 +2666,7 @@ struct nrf_wifi_umac_config_twt_info {
 	unsigned short twt_target_wake_interval_mantissa;
 	/*unsigned char target_wake_time[8];*/
 	unsigned long long target_wake_time;
-	unsigned short nominal_min_twt_wake_duration;
+	unsigned int nominal_min_twt_wake_duration;
 	unsigned char dialog_token;
 	unsigned char twt_resp_status;
 } __NRF_WIFI_PKD;
