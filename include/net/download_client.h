@@ -48,6 +48,7 @@ enum download_client_evt_id {
 	 * - ETIMEDOUT: socket error, connection timed out
 	 * - EHOSTDOWN: host went down during download
 	 * - EBADMSG: HTTP response header not as expected
+	 * - ERANGE: HTTP response does not support range requests
 	 * - E2BIG: HTTP response header could not fit in buffer
 	 * - EPROTONOSUPPORT: Protocol is not supported
 	 * - EINVAL: Invalid configuration

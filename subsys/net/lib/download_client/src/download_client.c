@@ -656,14 +656,14 @@ static int handle_received(struct download_client *dl, ssize_t len)
 		}
 	} else {
 		/* Unknown protocol */
-		rc = -1;
+		rc = -EBADMSG;
 	}
 
 	if (rc < 0) {
 		/* Something was wrong with the packet
 		 * Restart and suspend
 		 */
-		error_evt_send(dl, EBADMSG);
+		error_evt_send(dl, -rc);
 		return -1;
 	}
 
