@@ -150,37 +150,37 @@ int coap_parse(struct download_client *client, size_t len)
 	err = coap_packet_parse(&response, client->buf, len, NULL, 0);
 	if (err) {
 		LOG_ERR("Failed to parse CoAP packet, err %d", err);
-		return -1;
+		return -EBADMSG;
 	}
 
 	err = coap_block_update(client, &response, &blk_off, &more);
 	if (err) {
-		return err;
+		return -EBADMSG;
 	}
 
 	if (coap_header_get_id(&response) != client->coap.pending.id) {
 		LOG_ERR("Response is not pending");
-		return -1;
+		return -EBADMSG;
 	}
 
 	coap_pending_clear(&client->coap.pending);
 
 	if (coap_header_get_type(&response) != COAP_TYPE_ACK) {
 		LOG_ERR("Response must be of coap type ACK");
-		return -1;
+		return -EBADMSG;
 	}
 
 	response_code = coap_header_get_code(&response);
 	if (response_code != COAP_RESPONSE_CODE_OK &&
 	    response_code != COAP_RESPONSE_CODE_CONTENT) {
 		LOG_ERR("Server responded with code 0x%x", response_code);
-		return -1;
+		return -EBADMSG;
 	}
 
 	payload = coap_packet_get_payload(&response, &payload_len);
 	if (!payload) {
 		LOG_WRN("No CoAP payload!");
-		return -1;
+		return -EBADMSG;
 	}
 
 	/* TODO: because our buffer is large enough for the whole datagram,

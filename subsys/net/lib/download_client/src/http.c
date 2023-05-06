@@ -121,7 +121,7 @@ int http_get_request_send(struct download_client *client)
 /* Returns:
  *  1 while the header is being received
  *  0 if the header has been fully received
- * -1 on error
+ * -errno on error
  */
 static int http_header_parse(struct download_client *client, size_t *hdr_len)
 {
@@ -154,14 +154,19 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 	p = strnstr(client->buf, "http/1.1 ", sizeof(client->buf));
 	if (!p) {
 		LOG_ERR("Server response missing HTTP/1.1");
-		return -1;
+		return -EBADMSG;
 	}
 	p += strlen("http/1.1 ");
 
 	http_status = strtoul(p, &q, 10);
 	if (!q) {
 		LOG_ERR("Server response malformed: status code not found");
-		return -1;
+		return -EBADMSG;
+	}
+
+	if (expected_status == 206 && http_status == 200) {
+		LOG_ERR("Server respond range not supported");
+		return -ERANGE;
 	}
 
 	if (http_status != expected_status) {
@@ -177,7 +182,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 		*q = '\0';
 
 		LOG_ERR("Unexpected HTTP response: %s", p);
-		return -1;
+		return -EBADMSG;
 	}
 
 	/* The file size is returned via "Content-Length" in case of HTTP,
@@ -189,24 +194,24 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 			if (!p) {
 				LOG_ERR("Server did not send "
 					"\"Content-Range\" in response");
-				return -1;
+				return -EBADMSG;
 			}
 			p = strnstr(p, "/", sizeof(client->buf) - (p - client->buf));
 			if (!p) {
 				LOG_ERR("No file size in response");
-				return -1;
+				return -EBADMSG;
 			}
 		} else { /* proto == PROTO_HTTP */
 			p = strnstr(client->buf, "content-length", sizeof(client->buf));
 			if (!p) {
 				LOG_WRN("Server did not send "
 					"\"Content-Length\" in response");
-					return -1;
+					return -EBADMSG;
 			}
 			p = strstr(p, ":");
 			if (!p) {
 				LOG_ERR("No file size in response");
-				return -1;
+				return -EBADMSG;
 			}
 			/* Accumulate any eventual progress (starting offset)
 			 * when reading the file size from Content-Length
@@ -232,7 +237,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 /* Returns:
  *  1 if more data is expected
  *  0 if a whole fragment has been received
- * -1 on error
+ * -errno on error
  */
 int http_parse(struct download_client *client, size_t len)
 {
@@ -250,7 +255,7 @@ int http_parse(struct download_client *client, size_t len)
 		}
 		if (rc < 0) {
 			/* Something is wrong with the header */
-			return -1;
+			return rc;
 		}
 
 		if (client->offset != hdr_len) {
