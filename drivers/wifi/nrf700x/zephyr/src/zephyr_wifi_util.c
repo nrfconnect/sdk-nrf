@@ -611,16 +611,16 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  "UMAC TX debug stats:\n"
 				  "======================\n"
 				  "tx_cmd: %u\n"
-				  "tx_non_coalescing_pkts_rcvd_from_host: %u\n"
-				  "tx_coalescing_pkts_rcvd_from_host: %u\n"
-				  "tx_max_coalescing_pkts_rcvd_from_host: %u\n"
+				  "tx_non_coalesce_pkts_rcvd_from_host: %u\n"
+				  "tx_coalesce_pkts_rcvd_from_host: %u\n"
+				  "tx_max_coalesce_pkts_rcvd_from_host: %u\n"
 				  "tx_cmds_max_used: %u\n"
 				  "tx_cmds_currently_in_use: %u\n"
 				  "tx_done_events_send_to_host: %u\n"
 				  "tx_done_success_pkts_to_host: %u\n"
 				  "tx_done_failure_pkts_to_host: %u\n"
 				  "tx_cmds_with_crypto_pkts_rcvd_from_host: %u\n"
-				  "tx_cmds_with_non_cryptot_pkts_rcvd_from_host: %u\n"
+				  "tx_cmds_with_non_crypto_pkts_rcvd_from_host: %u\n"
 				  "tx_cmds_with_broadcast_pkts_rcvd_from_host: %u\n"
 				  "tx_cmds_with_multicast_pkts_rcvd_from_host: %u\n"
 				  "tx_cmds_with_unicast_pkts_rcvd_from_host: %u\n"
@@ -645,16 +645,16 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  "tx_packet_other_mgmt_count: %u\n"
 				  "tx_packet_non_mgmt_data_count: %u\n\n",
 				  umac->tx_dbg_params.tx_cmd,
-				  umac->tx_dbg_params.tx_non_coalescing_pkts_rcvd_from_host,
-				  umac->tx_dbg_params.tx_coalescing_pkts_rcvd_from_host,
-				  umac->tx_dbg_params.tx_max_coalescing_pkts_rcvd_from_host,
+				  umac->tx_dbg_params.tx_non_coalesce_pkts_rcvd_from_host,
+				  umac->tx_dbg_params.tx_coalesce_pkts_rcvd_from_host,
+				  umac->tx_dbg_params.tx_max_coalesce_pkts_rcvd_from_host,
 				  umac->tx_dbg_params.tx_cmds_max_used,
 				  umac->tx_dbg_params.tx_cmds_currently_in_use,
 				  umac->tx_dbg_params.tx_done_events_send_to_host,
 				  umac->tx_dbg_params.tx_done_success_pkts_to_host,
 				  umac->tx_dbg_params.tx_done_failure_pkts_to_host,
 				  umac->tx_dbg_params.tx_cmds_with_crypto_pkts_rcvd_from_host,
-				  umac->tx_dbg_params.tx_cmds_with_non_cryptot_pkts_rcvd_from_host,
+				  umac->tx_dbg_params.tx_cmds_with_non_crypto_pkts_rcvd_from_host,
 				  umac->tx_dbg_params.tx_cmds_with_broadcast_pkts_rcvd_from_host,
 				  umac->tx_dbg_params.tx_cmds_with_multicast_pkts_rcvd_from_host,
 				  umac->tx_dbg_params.tx_cmds_with_unicast_pkts_rcvd_from_host,
@@ -684,12 +684,12 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  "======================\n"
 				  "lmac_events: %u\n"
 				  "rx_events: %u\n"
-				  "rx_coalised_events: %u\n"
+				  "rx_coalesce_events: %u\n"
 				  "total_rx_pkts_from_lmac: %u\n"
 				  "max_refill_gap: %u\n"
 				  "current_refill_gap: %u\n"
-				  "out_oforedr_mpdus: %u\n"
-				  "reoredr_free_mpdus: %u\n"
+				  "out_of_order_mpdus: %u\n"
+				  "reorder_free_mpdus: %u\n"
 				  "umac_consumed_pkts: %u\n"
 				  "host_consumed_pkts: %u\n"
 				  "rx_mbox_post: %u\n"
@@ -717,17 +717,17 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  "rx_packet_action_count: %u\n"
 				  "rx_packet_probe_req_count: %u\n"
 				  "rx_packet_other_mgmt_count: %u\n"
-				  "max_coalised_pkts: %d\n"
+				  "max_coalesce_pkts: %d\n"
 				  "null_skb_pointer_from_lmac: %u\n"
 				  "unexpected_mgmt_pkt: %u\n\n",
 				  umac->rx_dbg_params.lmac_events,
 				  umac->rx_dbg_params.rx_events,
-				  umac->rx_dbg_params.rx_coalised_events,
+				  umac->rx_dbg_params.rx_coalesce_events,
 				  umac->rx_dbg_params.total_rx_pkts_from_lmac,
 				  umac->rx_dbg_params.max_refill_gap,
 				  umac->rx_dbg_params.current_refill_gap,
-				  umac->rx_dbg_params.out_oforedr_mpdus,
-				  umac->rx_dbg_params.reoredr_free_mpdus,
+				  umac->rx_dbg_params.out_of_order_mpdus,
+				  umac->rx_dbg_params.reorder_free_mpdus,
 				  umac->rx_dbg_params.umac_consumed_pkts,
 				  umac->rx_dbg_params.host_consumed_pkts,
 				  umac->rx_dbg_params.rx_mbox_post,
@@ -755,7 +755,7 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  umac->rx_dbg_params.rx_packet_action_count,
 				  umac->rx_dbg_params.rx_packet_probe_req_count,
 				  umac->rx_dbg_params.rx_packet_other_mgmt_count,
-				  umac->rx_dbg_params.max_coalised_pkts,
+				  umac->rx_dbg_params.max_coalesce_pkts,
 				  umac->rx_dbg_params.null_skb_pointer_from_lmac,
 				  umac->rx_dbg_params.unexpected_mgmt_pkt);
 
