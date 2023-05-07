@@ -406,7 +406,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	/* Align to 4-byte */
 	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token &= ~0x3;
 
-	/* Alignment overhead for size based coalescing */
+	/* Alignment overhead for size based coalesce */
 	rpu_drv_priv_zep.fmac_priv->avail_ampdu_len_per_token =
 	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token -
 		(MAX_PKT_RAM_TX_ALIGN_OVERHEAD * max_tx_aggregation);

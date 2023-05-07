@@ -247,14 +247,14 @@ struct rpu_conf_rx_radio_test_params {
 struct umac_rx_dbg_params {
 	unsigned int lmac_events;
 	unsigned int rx_events;
-	unsigned int rx_coalised_events;
+	unsigned int rx_coalesce_events;
 	unsigned int total_rx_pkts_from_lmac;
 
 	unsigned int max_refill_gap;
 	unsigned int current_refill_gap;
 
-	unsigned int out_oforedr_mpdus;
-	unsigned int reoredr_free_mpdus;
+	unsigned int out_of_order_mpdus;
+	unsigned int reorder_free_mpdus;
 
 	unsigned int umac_consumed_pkts;
 	unsigned int host_consumed_pkts;
@@ -286,7 +286,7 @@ struct umac_rx_dbg_params {
 	unsigned int rx_packet_action_count;
 	unsigned int rx_packet_probe_req_count;
 	unsigned int rx_packet_other_mgmt_count;
-	signed char max_coalised_pkts;
+	signed char max_coalesce_pkts;
 	unsigned int null_skb_pointer_from_lmac;
 	unsigned int unexpected_mgmt_pkt;
 
@@ -294,16 +294,16 @@ struct umac_rx_dbg_params {
 
 struct umac_tx_dbg_params {
 	unsigned int tx_cmd;
-	unsigned int tx_non_coalescing_pkts_rcvd_from_host;
-	unsigned int tx_coalescing_pkts_rcvd_from_host;
-	unsigned int tx_max_coalescing_pkts_rcvd_from_host;
+	unsigned int tx_non_coalesce_pkts_rcvd_from_host;
+	unsigned int tx_coalesce_pkts_rcvd_from_host;
+	unsigned int tx_max_coalesce_pkts_rcvd_from_host;
 	unsigned int tx_cmds_max_used;
 	unsigned int tx_cmds_currently_in_use;
 	unsigned int tx_done_events_send_to_host;
 	unsigned int tx_done_success_pkts_to_host;
 	unsigned int tx_done_failure_pkts_to_host;
 	unsigned int tx_cmds_with_crypto_pkts_rcvd_from_host;
-	unsigned int tx_cmds_with_non_cryptot_pkts_rcvd_from_host;
+	unsigned int tx_cmds_with_non_crypto_pkts_rcvd_from_host;
 	unsigned int tx_cmds_with_broadcast_pkts_rcvd_from_host;
 	unsigned int tx_cmds_with_multicast_pkts_rcvd_from_host;
 	unsigned int tx_cmds_with_unicast_pkts_rcvd_from_host;

@@ -3563,10 +3563,10 @@ struct nrf_wifi_umac_event_cmd_status {
 	unsigned int cmd_status;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_umac_event_coalescing {
+struct nrf_wifi_umac_event_coalesce {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	unsigned char sta_addr[NRF_WIFI_ETH_ADDR_LEN];
 	unsigned short tid;
-	unsigned char coalescing; /*1 = enable coalescing 0 = disable coalescing*/
+	unsigned char coalesce; /*1 = enable coalesce 0 = disable coalesce*/
 } __NRF_WIFI_PKD;
 #endif /* __HOST_RPU_UMAC_IF_H */
