@@ -12,7 +12,7 @@
 
 #include "common_test.h"
 #include <mbedtls/md.h>
-#include <sha512.h>
+#include <mbedtls/sha512.h>
 
 /* Setting LOG_LEVEL_DBG might affect time measurements! */
 LOG_MODULE_REGISTER(test_sha_512, LOG_LEVEL_INF);

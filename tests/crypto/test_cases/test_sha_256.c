@@ -11,7 +11,7 @@
 #include <zephyr/logging/log.h>
 
 #include "common_test.h"
-#include <sha256.h>
+#include <mbedtls/sha256.h>
 #include <mbedtls/md.h>
 
 /* Setting LOG_LEVEL_DBG might affect time measurements! */
