@@ -352,6 +352,7 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	hex
 	prompt "Memory reserved for TFM_RAM" if !TFM_PROFILE_TYPE_MINIMAL
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
+	default 0x18000 if SOC_NRF9160 && TFM_REGRESSION_S
 	default 0x16000 if SOC_NRF9160
 	default 0x40000 if SOC_NRF5340_CPUAPP
 	help
