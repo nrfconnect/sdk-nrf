@@ -1,0 +1,26 @@
+/* Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+#include <freq.h>
+#include "nrf7002ek_nrf7002_eb_coex.overlay"
+
+&edge_connector_spi {
+	status = "okay";
+
+	nrf700x: nrf7002@0 {
+		compatible = "nordic,nrf700x-spi";
+		status = "okay";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+
+		bucken-gpios = <&edge_connector 9 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+
+		/* No separate pin for IOVDD, BUCKEN will handle IOVDD automatically,
+		 * but this entry is for compatibility purposes and to avoid adding a
+		 * special case in the nRF700x driver.
+		 */
+		iovdd-ctrl-gpios = <&edge_connector 9 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+		host-irq-gpios = <&edge_connector 19 GPIO_ACTIVE_HIGH>;
+	};
+};
