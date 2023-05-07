@@ -10,7 +10,10 @@ jobs:
   build:
     name: Sonar cloud analysis
     runs-on: self-hosted
-    container: nordicplayground/nrfconnect-sdk:main
+    container:
+      image: nordicplayground/nrfconnect-sdk:main
+      options: --privileged
+
     env:
       SONAR_SCANNER_VERSION: 4.7.0.2747
       BUILD_WRAPPER_DOWNLOAD_URL: https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
