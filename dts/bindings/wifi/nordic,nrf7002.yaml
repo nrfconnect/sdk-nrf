@@ -8,7 +8,7 @@ include: base.yaml
 properties:
     iovdd-ctrl-gpios:
         type: phandle-array
-        required: true
+        required: false
         description: |
             GPIO of the SOC controlling IO VDD Control pin of the nRF7002
     bucken-gpios:

@@ -1,0 +1,22 @@
+/* Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+#include <freq.h>
+#include "nrf7002_eb_coex.overlay"
+
+&edge_connector_spi {
+	status = "okay";
+	cs-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+
+	nrf7002: nrf7002@0 {
+		compatible = "nordic,nrf7002-spi";
+		status = "okay";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+
+		bucken-gpios = <&gpio0 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+		iovdd-ctrl-gpios = <&gpio0 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; /* pin duplicated intentionally */
+		host-irq-gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+	};
+};

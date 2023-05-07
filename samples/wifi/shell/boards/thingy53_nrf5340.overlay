@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Disabled because of conflicts on P0.9, P0.10, P0.11 and P0.12 
+ * which conflict with SPI MOSI, MISO, CLK pins and HOST IRQ on 7002*/
+&uart0 {
+	status = "disabled";
+};
