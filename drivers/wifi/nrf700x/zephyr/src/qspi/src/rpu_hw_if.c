@@ -198,8 +198,12 @@ int rpu_pwron(void)
 		LOG_ERR("IOVDD GPIO set failed...\n");
 		return ret;
 	}
-	/* Settling time for iovdd switch (TCK106AG): ~600us */
-	k_msleep(1);
+	/* Settling time for iovdd nRF7002 DK/EK - switch (TCK106AG): ~600us
+	 * For nRF7002 Evaluation board, we add 1ms more to ensure
+	 * that the total time after bucken assertion is more than 2.5ms
+	 * so making this 3ms (1ms + 2ms)
+	 */
+	k_msleep(2);
 	LOG_DBG("Bucken = %d, IOVDD = %d\n", gpio_pin_get_dt(&bucken_spec),
 			gpio_pin_get_dt(&iovdd_ctrl_spec));
 
