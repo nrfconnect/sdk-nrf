@@ -1314,19 +1314,28 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 		}
 	}
 
-	if (opcode != SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA) {
-#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
-		if ((opcode != SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS)
-		    ||
-		    (cmd_complete_or_status.raw_event[CMD_COMPLETE_MIN_SIZE - 1] != 0))
-#endif
-		{
-			/* SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS will only generate
-			 *  command complete if it fails.
-			 */
+	cmd_complete_or_status.occurred = true;
 
-			cmd_complete_or_status.occurred = true;
-		}
+#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
+	if (opcode == SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS
+	    &&
+	    cmd_complete_or_status.raw_event[CMD_COMPLETE_MIN_SIZE - 1] == 0) {
+		/* SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS will only generate
+		 *  command complete if it fails.
+		 */
+
+		cmd_complete_or_status.occurred = false;
+	}
+#endif
+
+	if (opcode == SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA
+		&&
+		cmd_complete_or_status.raw_event[0] == BT_HCI_EVT_CMD_COMPLETE) {
+		/* SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA
+		 * will generate command complete at a later time (unless unsupported)
+		 */
+
+		cmd_complete_or_status.occurred = false;
 	}
 
 	return 0;
