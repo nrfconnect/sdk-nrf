@@ -21,6 +21,8 @@
     - asset_tracker_v2.nrf_cloud_codec_test
     - asset_tracker_v2.nrf_cloud_codec_mocked_cjson_test
     - asset_tracker_v2.ui_module_test.tester
+    - applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure
+    - applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws
   comment: "ruby package not available in Windows toolchain"
 
 - scenarios:
@@ -29,9 +31,5 @@
   comment: "Cmake error for EBC tests - NCSDK-21089"
 
 - scenarios:
-    - asset_tracker_v2.nrf7002ek_wifi-debug
+    - applications.asset_tracker_v2.nrf7002ek_wifi-debug
   comment: "FLASH overflow issue under investigation"
-
-- scenarios:
-    - sample.tfm.psa_template
-  comment: "Quarantined until pull/11016 is merged"
