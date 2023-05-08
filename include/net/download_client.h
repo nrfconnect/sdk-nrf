@@ -43,6 +43,8 @@ enum download_client_evt_id {
 	 *
 	 * Error reason may be one of the following:
 	 * - ECONNRESET: socket error, peer closed connection
+	 * - ECONNREFUSED: socket error, connection refused by server
+	 * - ENETDOWN: socket error, network down
 	 * - ETIMEDOUT: socket error, connection timed out
 	 * - EHOSTDOWN: host went down during download
 	 * - EBADMSG: HTTP response header not as expected

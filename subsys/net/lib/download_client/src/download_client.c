@@ -488,7 +488,7 @@ static int reconnect(struct download_client *dl)
 {
 	int err;
 
-	LOG_INF("Reconnecting..");
+	LOG_INF("Reconnecting...");
 	if (dl->fd >= 0) {
 		err = close(dl->fd);
 		if (err) {
@@ -559,7 +559,7 @@ static int request_resend(struct download_client *dl)
  * @brief Handle socket errors.
  *
  * @param dl
- * @return negative value to stop the handler loop, zero to rettry the query.
+ * @return negative value to stop the handler loop, zero to retry the query.
  */
 static int handle_socket_error(struct download_client *dl, ssize_t len)
 {
@@ -642,7 +642,7 @@ static int handle_received(struct download_client *dl, ssize_t len)
 		if (rc > 0 &&
 		    (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS) || !dl->http.has_header)) {
 			/* Wait for more data (fragment/header).
-			 * Unranged reguest (normal GET) should start forwarding the data
+			 * Unranged request (normal GET) should start forwarding the data
 			 * once HTTP headers are received. Ranged-GET should receive full
 			 * buffer(fragment) before sending an event.
 			 */
