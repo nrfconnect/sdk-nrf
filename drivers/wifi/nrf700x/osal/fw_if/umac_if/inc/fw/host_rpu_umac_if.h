@@ -3212,9 +3212,10 @@ struct nrf_wifi_umac_cmd_config_extended_ps {
 #define NRF_WIFI_MAX_TWT_FLOWS 8
 #define NRF_WIFI_PS_MODE_LEGACY 0
 #define NRF_WIFI_PS_MODE_WMM 1
-/* As per hardware design for power efficiency
- * minimum listen interval period should be
- * 3 DTIM period.
+
+/**
+ * Most APs have a DTIM value of 3, so we are expecting
+ * a minimum listen interval of 3 beacon intervals.
  */
 #define NRF_WIFI_LISTEN_INTERVAL_MIN 3
 
