@@ -129,7 +129,7 @@ struct bt_filter_status {
 	/** Appearance filter info. */
 	struct bt_scan_filter_info appearance;
 
-	/** Appearance filter info. */
+	/** Manufacturer filter info. */
 	struct bt_scan_filter_info manufacturer_data;
 };
 
