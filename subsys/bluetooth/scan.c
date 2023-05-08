@@ -1318,6 +1318,7 @@ int bt_scan_filter_status_get(struct bt_filter_status *status)
 			bt_scan.scan_filters.appearance.enabled;
 	status->appearance.cnt =
 			bt_scan.scan_filters.appearance.cnt;
+	status->manufacturer_data.enabled = bt_scan.scan_filters.manufacturer_data.enabled;
 	status->manufacturer_data.cnt =
 			bt_scan.scan_filters.manufacturer_data.cnt;
 
