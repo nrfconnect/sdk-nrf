@@ -11,13 +11,13 @@
 	};
 };
 
-&mx25r64 {
+&gd25lb256 {
 	status = "okay";
 };
 
 / {
-	/* Configure partition manager to use mx25r64 as the external flash */
+	/* Configure partition manager to use gd25lb256 as the external flash */
 	chosen {
-		nordic,pm-ext-flash = &mx25r64;
+		nordic,pm-ext-flash = &gd25lb256;
 	};
 };
