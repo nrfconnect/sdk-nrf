@@ -517,6 +517,12 @@ Bluetooth libraries and services
     * Salt size in the Fast Pair not discoverable advertising from 1 byte to 2 bytes, to align with the Fast Pair specification update.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON` Kconfig option is now the default Fast Pair cryptographic backend.
 
+* :ref:`nrf_bt_scan_readme` library:
+
+  * Fixed:
+
+    * The output arguments of the :c:func:`bt_scan_filter_status_get` function.
+      The :c:member:`bt_filter_status.manufacturer_data.enabled` field is now correctly set to reflect the status of the filter when the function is called.
 
 Bootloader libraries
 --------------------
