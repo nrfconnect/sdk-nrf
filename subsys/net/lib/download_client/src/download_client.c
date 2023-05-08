@@ -713,21 +713,16 @@ static int handle_received(struct download_client *dl, ssize_t len)
 
 static int handle_disconnect(struct download_client *client)
 {
-	int err;
+	int err = 0;
 
 	k_mutex_lock(&client->mutex, K_FOREVER);
 
-	if (client->fd < 0) {
-		k_mutex_unlock(&client->mutex);
-		return -EINVAL;
-	}
-
-	err = close(client->fd);
-	if (err) {
-		err = errno;
-		k_mutex_unlock(&client->mutex);
-		LOG_ERR("Failed to close socket, errno %d", err);
-		return -err;
+	if (client->fd != -1) {
+		err = close(client->fd);
+		if (err) {
+			err = errno;
+			LOG_ERR("Failed to close socket, errno %d", err);
+		}
 	}
 
 	client->fd = -1;
@@ -742,7 +737,7 @@ static int handle_disconnect(struct download_client *client)
 
 	k_mutex_unlock(&client->mutex);
 
-	return 0;
+	return err;
 }
 
 void download_thread(void *client, void *a, void *b)
