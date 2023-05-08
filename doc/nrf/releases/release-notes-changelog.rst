@@ -752,7 +752,11 @@ cJSON
 Documentation
 =============
 
-Updated:
+* Added:
+
+  * A page on :ref:`ug_nrf70_developing_regulatory_support` in the :ref:`ug_nrf70_developing` user guide.
+
+* Updated:
 
   * The structure of sections on the :ref:`known_issues` page.
     Known issues were moved around, but no changes were made to their description.
