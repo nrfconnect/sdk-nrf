@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
-#include "ext_sensors_bsec.h"
+#if defined(CONFIG_BME68X_IAQ)
+#include <drivers/bme68x_iaq.h>
 #endif
 
 #include "ext_sensors.h"
@@ -74,6 +74,14 @@ static struct env_sensor press_sensor = {
 	.channel = SENSOR_CHAN_PRESS,
 	.dev = DEVICE_DT_GET(DT_ALIAS(pressure_sensor)),
 };
+
+#if defined(CONFIG_BME68X_IAQ)
+static struct env_sensor iaq_sensor = {
+	.channel = SENSOR_CHAN_IAQ,
+	.dev = DEVICE_DT_GET(DT_ALIAS(iaq_sensor)),
+
+};
+#endif
 
 /** Sensor struct for the low-power accelerometer */
 static struct env_sensor accel_sensor_lp = {
@@ -195,15 +203,15 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 
 	evt_handler = handler;
 
-#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
-	int err = ext_sensors_bsec_init();
-
-	if (err) {
-		LOG_ERR("ext_sensors_bsec_init, error: %d", err);
-		evt.type = EXT_SENSOR_EVT_BME680_BSEC_ERROR;
+#if defined(CONFIG_BME68X_IAQ)
+	if (!device_is_ready(iaq_sensor.dev)) {
+		LOG_ERR("Air quality sensor device is not ready");
+		evt.type = EXT_SENSOR_EVT_AIR_QUALITY_ERROR;
 		evt_handler(&evt);
 	}
-#else
+#endif /* if defined(CONFIG_BME68X_IAQ) */
+
+
 	if (!device_is_ready(temp_sensor.dev)) {
 		LOG_ERR("Temperature sensor device is not ready");
 		evt.type = EXT_SENSOR_EVT_TEMPERATURE_ERROR;
@@ -221,7 +229,6 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		evt.type = EXT_SENSOR_EVT_PRESSURE_ERROR;
 		evt_handler(&evt);
 	}
-#endif /* if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC) */
 
 	if (!device_is_ready(accel_sensor_lp.dev)) {
 		LOG_ERR("Low-power accelerometer device is not ready");
@@ -252,10 +259,6 @@ int ext_sensors_temperature_get(double *ext_temp)
 	int err;
 	struct sensor_value data = {0};
 	struct ext_sensor_evt evt = {0};
-
-#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
-	return ext_sensors_bsec_temperature_get(ext_temp);
-#endif
 
 	err = sensor_sample_fetch_chan(temp_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
@@ -288,10 +291,6 @@ int ext_sensors_humidity_get(double *ext_hum)
 	struct sensor_value data = {0};
 	struct ext_sensor_evt evt = {0};
 
-#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
-	return ext_sensors_bsec_humidity_get(ext_hum);
-#endif
-
 	err = sensor_sample_fetch_chan(humid_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
@@ -323,10 +322,6 @@ int ext_sensors_pressure_get(double *ext_press)
 	struct sensor_value data = {0};
 	struct ext_sensor_evt evt = {0};
 
-#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
-	return ext_sensors_bsec_pressure_get(ext_press);
-#endif
-
 	err = sensor_sample_fetch_chan(press_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
@@ -346,7 +341,7 @@ int ext_sensors_pressure_get(double *ext_press)
 	}
 
 	k_spinlock_key_t key = k_spin_lock(&(press_sensor.lock));
-	*ext_press = sensor_value_to_double(&data);
+	*ext_press = sensor_value_to_double(&data) / 1000.0f;
 	k_spin_unlock(&(press_sensor.lock), key);
 
 	return 0;
@@ -354,10 +349,38 @@ int ext_sensors_pressure_get(double *ext_press)
 
 int ext_sensors_air_quality_get(uint16_t *ext_bsec_air_quality)
 {
-#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
-	return ext_sensors_bsec_air_quality_get(ext_bsec_air_quality);
-#endif
+#if defined(CONFIG_BME68X_IAQ)
+
+	int err;
+	struct sensor_value data = {0};
+	struct ext_sensor_evt evt = {0};
+
+	err = sensor_sample_fetch_chan(iaq_sensor.dev, SENSOR_CHAN_ALL);
+	if (err) {
+		LOG_ERR("Failed to fetch data from %s, error: %d",
+			iaq_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_AIR_QUALITY_ERROR;
+		evt_handler(&evt);
+		return -ENODATA;
+	}
+
+	err = sensor_channel_get(iaq_sensor.dev, iaq_sensor.channel, &data);
+	if (err) {
+		LOG_ERR("Failed to fetch data from %s, error: %d",
+			iaq_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_AIR_QUALITY_ERROR;
+		evt_handler(&evt);
+		return -ENODATA;
+	}
+
+	k_spinlock_key_t key = k_spin_lock(&(iaq_sensor.lock));
+	*ext_bsec_air_quality = sensor_value_to_double(&data);
+	k_spin_unlock(&(iaq_sensor.lock), key);
+
+	return 0;
+#else
 	return -ENOTSUP;
+#endif /* defined(CONFIG_BME68X_IAQ) */
 }
 
 int ext_sensors_accelerometer_threshold_set(double threshold, bool upper)

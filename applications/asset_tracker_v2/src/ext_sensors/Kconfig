@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 Nordic Semiconductor
+# Copyright (c) 2023 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -27,66 +27,6 @@ choice ADXL372_TRIGGER_MODE
 endchoice
 
 endif # EXTERNAL_SENSORS_IMPACT_DETECTION
-
-config EXTERNAL_SENSORS_BME680_BSEC
-	bool "Use Bosch BME680 library"
-	depends on !BME680
-	help
-	  Enable the use of Bosch BSEC library. The library itself is not a part of
-	  NCS and must be downloaded from Bosch Sensortec and placed in the path referenced to by
-	  the CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH.
-	  This configuration depends on the BME680 zephyr driver being disabled.
-
-if EXTERNAL_SENSORS_BME680_BSEC
-
-config EXTERNAL_SENSORS_BSEC_THREAD_STACK_SIZE
-	int "BSEC thread stack size"
-	default 4096
-
-choice EXTERNAL_SENSORS_BSEC_SAMPLE_MODE
-	prompt "Bosch BSEC sample mode"
-	default EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_LOW_POWER
-	help
-	  Configuration that sets how often sensor data is sampled from the BSEC library.
-	  Each mode corresponds an internal preset that decides how often data is sampled from the
-	  BME680.
-
-config EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_ULTRA_LOW_POWER
-	bool "BSEC low ultra power mode"
-	help
-	  Sample data from BSEC every 0.0033333 Hz (300 second interval).
-
-config EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_LOW_POWER
-	bool "BSEC low power mode"
-	help
-	  Sample data from BSEC every 0.33333 Hz (3 second interval).
-
-config EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_CONTINUOUS
-	bool "BSEC continuous mode"
-	help
-	  Sample data from BSEC every 1 Hz (1 second interval).
-	  This is a particularly power-hungry sample mode that should only be considered for
-	  testing purposes.
-
-endchoice # EXTERNAL_SENSORS_BME680_BSEC_MODE
-
-config EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET
-	int "BSEC temperature offset in degree celsius * 100"
-	default 120 if BOARD_THINGY91_NRF9160_NS
-	default 100
-	help
-	  BSEC temperature offset. To account for external heat sources on the board.
-	  The actual value is divided by 100. This is due to the Kconfig parser
-	  not supporting floating point types.
-	  The default value 120 is translated to 1.2 degrees celsius offset.
-
-config EXTERNAL_SENSORS_BME680_BSEC_PATH
-	string "Path to Bosch BSEC library folder"
-	default "$(ZEPHYR_NRF_MODULE_DIR)/ext/BSEC_1.4.8.0_Generic_Release_updated_v3"
-	help
-	  Path to the folder where the Bosch BSEC library is placed.
-
-endif # EXTERNAL_SENSORS_BME680_BSEC
 
 module = EXTERNAL_SENSORS
 module-str = External sensors

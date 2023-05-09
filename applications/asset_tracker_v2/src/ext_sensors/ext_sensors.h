@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -42,8 +42,8 @@ enum ext_sensor_evt_type {
 	EXT_SENSOR_EVT_HUMIDITY_ERROR,
 	/** Event propagated when an error has occurred with the pressure sensor. */
 	EXT_SENSOR_EVT_PRESSURE_ERROR,
-	/** Event propagated when an error has occurred with the Bosch BSEC library. */
-	EXT_SENSOR_EVT_BME680_BSEC_ERROR
+	/** Event propagated when an error has occurred with the virtual air quality sensor. */
+	EXT_SENSOR_EVT_AIR_QUALITY_ERROR
 };
 
 /** @brief Structure containing external sensor data. */
