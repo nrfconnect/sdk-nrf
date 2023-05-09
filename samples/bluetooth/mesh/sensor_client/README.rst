@@ -8,7 +8,7 @@ Bluetooth: Mesh sensor observer
    :depth: 2
 
 The Bluetooth® mesh sensor observer sample demonstrates how to set up a basic Bluetooth mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
-Four different sensor types are used to showcase different ways for the server to publish data.
+Five different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
 .. note::
@@ -32,15 +32,22 @@ Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample
 Overview
 ********
 
-The following Bluetooth mesh sensor types are used in this sample:
+The following Bluetooth mesh sensor types, and their settings, are used in this sample:
 
-* :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period.
-* :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - Used as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type to set the range of reported temperatures.
+* :c:var:`bt_mesh_sensor_present_dev_op_temp` - Periodically requested by the client and published by the server according to its publishing period.
+
+  * :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - Used as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type to set the range of reported temperatures.
+
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
 * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period.
-* :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
 
+  * :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
+
+* :c:var:`bt_mesh_sensor_present_amb_light_level` - Periodically requested by the client and published by the server according to its publishing period.
+
+  * :c:var:`bt_mesh_sensor_gain` - Used as a setting for the :c:var:`bt_mesh_sensor_present_amb_light_level` sensor type to set the gain the ambient light sensor value is multiplied with.
+  * :c:var:`bt_mesh_sensor_present_amb_light_level` - Used as a setting for the :c:var:`bt_mesh_sensor_present_amb_light_level` sensor type to calculate sensor gain based on measured reference ambient light level. This value does only have a set command.
 
 Provisioning
 ============
@@ -99,6 +106,9 @@ Button 4:
 Terminal:
    All sensor values gathered from the server are printed over UART.
    For more details, see :ref:`gs_testing`.
+
+.. note::
+   Some sensor and setting values need to be get/set through shell commands, as there is not enough buttons on the board for all sensor and setting values.
 
 Configuration
 *************
@@ -164,6 +174,33 @@ Configure the Sensor Client model on the **Mesh Sensor Observer** node:
 
 The Sensor Client model is now configured and able to receive data from the Sensor Server.
 
+Interacting with the sample through shell
+-----------------------------------------
+
+1. Connect the development kit to the computer using a USB cable.
+   The development kit is assigned a COM port (Windows), ttyACM device (Linux) or tty.usbmodem (MacOS).
+#. |connect_terminal_specific_ANSI|
+#. Enable local echo in the terminal to see the text you are typing.
+#. Enable mesh shell by typing ``mesh init``
+
+After completing the steps above, a command can be given to the client.
+See :ref:`bt_mesh_sensor_cli_readme` and :ref:`bluetooth_mesh_shell` for information about shell commands.
+
+SensorID/SettingID used in the shell commands are:
+
+* :c:var:`bt_mesh_sensor_present_dev_op_temp` - 0x0054
+* :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - 0x0013
+* :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - 0x0064
+* :c:var:`bt_mesh_sensor_presence_detected` - 0x004D
+* :c:var:`bt_mesh_sensor_time_since_presence_detected` - 0x0069
+* :c:var:`bt_mesh_sensor_motion_threshold` - 0x0043
+* :c:var:`bt_mesh_sensor_present_amb_light_level` - 0x004E
+* :c:var:`bt_mesh_sensor_gain` - 0x0074
+
+For example, to set the sensor gain for present ambient light level to 1.1, write the following::
+
+   mesh models sensor setting-set 0x004E 0x0074 1.1
+
 Dependencies
 ************
 
@@ -187,3 +224,5 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:bluetooth_mesh`:
 
   * ``include/bluetooth/mesh.h``
+
+* :ref:`bluetooth_mesh_shell`

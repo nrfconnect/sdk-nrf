@@ -290,7 +290,11 @@ Bluetooth mesh samples
 
 * :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_sensor_client` samples:
 
-  * Added support for motion threshold as a setting for the presence detection.
+  * Added:
+
+    * Support for motion threshold as a setting for the presence detection.
+    * Support for ambient light level sensor.
+    * Shell support to :ref:`bluetooth_mesh_sensor_client`.
 
 nRF9160 samples
 ---------------

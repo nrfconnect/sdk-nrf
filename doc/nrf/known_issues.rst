@@ -1496,6 +1496,14 @@ NCSDK-18263: |NCS| samples may fail to boot on Thingy:53
 Bluetooth samples
 =================
 
+.. rst-class:: v2-4-0
+
+NCSDK-21590: :ref:`bluetooth_mesh_sensor_client` sample does not compile for nRF52832
+  Adding mesh shell support for the :ref:`bluetooth_mesh_sensor_client` sample increases the need for RAM.
+  The :ref:`bluetooth_mesh_sensor_client` sample is not able to compile because of RAM shortage.
+
+  **Workaround:** Disable the mesh shell support in the prj.conf file for the sensor client sample.
+
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 NCSDK-19942: HID samples do not work with Android 13
