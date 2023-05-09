@@ -499,6 +499,11 @@ Modem libraries
 
   * Updated the library to use ePCO mode if the Kconfig option :kconfig:option:`CONFIG_PDN_LEGACY_PCO` is not enabled.
 
+  * Fixed:
+
+    * A bug in the initialization of a new PDN context without a PDN event handler.
+    * A memory leak in the :c:func:`pdn_ctx_create` function.
+
 * :ref:`lte_lc_readme` library:
 
   * Updated:
