@@ -21,6 +21,7 @@ LOG_MODULE_REGISTER(dimmer_sample, LOG_LEVEL_INF);
 #define SHORT_PRESS_THRESHOLD_MS 300
 #define LONG_PRESS_TIMEOUT_SEC K_SECONDS(20)
 #define DELTA_MOVE_STEP 1000
+#define SCENE_COUNT 4
 
 enum dim_direction { DIM_DOWN, DIM_UP };
 
@@ -37,6 +38,16 @@ struct dimmer_ctx {
 	/* Long press work (Dimmer mode) */
 	struct k_work_delayable long_press_start_work;
 	struct k_work_delayable long_press_stop_work;
+};
+
+/** Context for a single scene button instance */
+struct scene_btn_ctx {
+	/** Scene client instance for this button */
+	struct bt_mesh_scene_cli client;
+	/** The currently recalled scene*/
+	uint16_t current_scene;
+	/** Time when button was pressed */
+	int64_t press_start_time;
 };
 
 static void dimmer_start(struct k_work *work)
@@ -140,6 +151,42 @@ static void dimmer_button_handler(struct dimmer_ctx *ctx, bool pressed)
 	}
 }
 
+static struct scene_btn_ctx scene_btn = {
+	.current_scene = 1,
+	.press_start_time = 0
+};
+
+static void scene_button_handler(struct scene_btn_ctx *ctx, bool pressed)
+{
+	if (pressed) {
+		ctx->press_start_time = k_uptime_get();
+	} else {
+		int err;
+
+		if (k_uptime_get() - ctx->press_start_time > SHORT_PRESS_THRESHOLD_MS) {
+			/* Long press, store scene */
+			LOG_INF("Storing scene %d", ctx->current_scene);
+			err = bt_mesh_scene_cli_store_unack(&ctx->client, NULL,
+							    ctx->current_scene);
+
+			if (err) {
+				LOG_ERR("Failed to send Scene Store message: %d", err);
+			}
+		} else {
+			/* Short press, recall next scene */
+			ctx->current_scene = (ctx->current_scene >= SCENE_COUNT) ?
+					     1 : ctx->current_scene + 1;
+			LOG_INF("Recalling scene %d", ctx->current_scene);
+			err = bt_mesh_scene_cli_recall_unack(&ctx->client, NULL,
+							     ctx->current_scene, NULL);
+
+			if (err) {
+				LOG_ERR("Failed to send Scene Recall message: %d", err);
+			}
+		}
+	}
+}
+
 static void button_handler_cb(uint32_t pressed, uint32_t changed)
 {
 	if (!bt_mesh_is_provisioned()) {
@@ -149,6 +196,9 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 	if (changed & BIT(0)) {
 		dimmer_button_handler(&dimmer, pressed & BIT(0));
+	}
+	if (changed & BIT(1)) {
+		scene_button_handler(&scene_btn, pressed & BIT(1));
 	}
 }
 
@@ -212,7 +262,8 @@ static struct bt_mesh_elem elements[] = {
 		     BT_MESH_MODEL_LIST(BT_MESH_MODEL_CFG_SRV,
 					BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 					BT_MESH_MODEL_ONOFF_CLI(&dimmer.onoff_client),
-					BT_MESH_MODEL_LVL_CLI(&dimmer.lvl_client)),
+					BT_MESH_MODEL_LVL_CLI(&dimmer.lvl_client),
+					BT_MESH_MODEL_SCENE_CLI(&scene_btn.client)),
 		     BT_MESH_MODEL_NONE),
 };
 
