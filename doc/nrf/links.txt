@@ -107,7 +107,7 @@
 .. _`Matter GitHub repository`: https://github.com/project-chip/connectedhomeip
 .. _`dedicated Matter fork`: https://github.com/nrfconnect/sdk-connectedhomeip
 .. _`Matter SDK version`: https://github.com/project-chip/connectedhomeip/releases
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/c9ba5705/src/controller
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/master/src/controller
 .. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/master/src/tools
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`ZCL Advanced Platform releases`: https://github.com/project-chip/zap/releases

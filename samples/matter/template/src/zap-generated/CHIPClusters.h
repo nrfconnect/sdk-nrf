@@ -31,6 +31,7 @@ namespace chip
 {
 namespace Controller
 {
+
 	class DLL_EXPORT OtaSoftwareUpdateProviderCluster : public ClusterBase {
 	public:
 		OtaSoftwareUpdateProviderCluster(Messaging::ExchangeManager &exchangeManager,
