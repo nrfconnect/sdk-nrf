@@ -265,6 +265,19 @@ int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb)
 	return 0;
 }
 
+static void pdn_ctx_free(struct pdn *pdn)
+{
+	if (!pdn) {
+		return;
+	}
+
+	k_mutex_lock(&list_mutex, K_FOREVER);
+	sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
+	k_mutex_unlock(&list_mutex);
+
+	k_free(pdn);
+}
+
 int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 {
 	int err;
@@ -282,11 +295,13 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 
 	err = nrf_modem_at_scanf("AT%XNEWCID?", "%%XNEWCID: %d", &ctx_id_tmp);
 	if (err < 0) {
+		pdn_ctx_free(pdn);
 		return err;
 	}
 
 	if (ctx_id_tmp > SCHAR_MAX || ctx_id_tmp < SCHAR_MIN) {
 		LOG_ERR("Context ID (%d) out of bounds", ctx_id_tmp);
+		pdn_ctx_free(pdn);
 		return -EFAULT;
 	}
 
@@ -294,9 +309,8 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 
 	*cid = pdn->context_id;
 
-	if (cb) {
-		pdn->callback = cb;
-	}
+	/* The callback is uninitialized, assign regardless of whether the input is NULL. */
+	pdn->callback = cb;
 
 	return 0;
 }
@@ -402,11 +416,7 @@ int pdn_ctx_destroy(uint8_t cid)
 		/* cleanup regardless */
 	}
 
-	k_mutex_lock(&list_mutex, K_FOREVER);
-	sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
-	k_mutex_unlock(&list_mutex);
-
-	k_free(pdn);
+	pdn_ctx_free(pdn);
 
 	return err;
 }
