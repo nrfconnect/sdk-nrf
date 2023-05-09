@@ -7,7 +7,7 @@ MQTT
    :local:
    :depth: 2
 
-The :term:`Message Queue Telemetry Transport (MQTT)` sample demonstrates how to connect an nRF9160 DK, Thingy:91, or nRF7002 DK to an MQTT broker to publish and receive messages.
+The :term:`Message Queue Telemetry Transport (MQTT)` sample demonstrates how to connect an nRF91 Series or nRF70 Series device to an MQTT broker to publish and receive messages.
 To know more about MQTT, see the `MQTT Getting started`_ documentation.
 
 See the subpages for detailed documentation on the sample:

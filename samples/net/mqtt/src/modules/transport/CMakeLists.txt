@@ -11,17 +11,17 @@ add_subdirectory(client_id)
 
 # Add credentials provision library if the Modem key Management API is enabled.
 # The library provisions credentials placed in the src/transport/credentials/ folder to
-# the nRF9160 modem.
+# the nRF91 modem.
 add_subdirectory_ifdef(CONFIG_MODEM_KEY_MGMT credentials_provision)
 
 # Make the folder that contains the CA certificate for "test.mosquitto.org" global so that it can
 # be located by the MQTT helper library / local credential provision library.
 #
 # The MQTT helper library provisions the certificate
-# to the Mbed TLS stack for Native Posix and nRF7002 DK builds.
+# to the Mbed TLS stack for Native Posix and nRF7 Series devices.
 #
 # The credential provision library provisions the certificate
-# to the modem's network stack for nRF9160 builds.
+# to the modem's network stack for nRF91 Series builds.
 #
 # CONFIG_MODEM_KEY_MGMT and CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES are mutually exclusive.
 #

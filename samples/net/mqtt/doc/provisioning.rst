@@ -31,8 +31,8 @@ Intermediate certificates (located further down the chain) might change over tim
 
 To turn off runtime credential provisioning, disable either of the following Kconfig options:
 
-* :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` - For native posix and nRF7002 DK builds.
-* :kconfig:option:`CONFIG_MODEM_KEY_MGMT` - For nRF9160 builds.
+* :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` - For native posix and nRF70 Series builds.
+* :kconfig:option:`CONFIG_MODEM_KEY_MGMT` - For nRF91 Series builds.
 
 The CA is provisioned to the security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option.
 

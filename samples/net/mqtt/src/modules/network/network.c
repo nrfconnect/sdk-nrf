@@ -8,6 +8,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr.h>
 
 #include "message_channel.h"
 
@@ -16,9 +17,11 @@ LOG_MODULE_REGISTER(network, CONFIG_MQTT_SAMPLE_NETWORK_LOG_LEVEL);
 
 /* This module does not subscribe to any channels */
 
+/* Macros used to subscribe to specific Zephyr NET management events. */
 #define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
-#define CONNECTIVITY_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
+#define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
+/* Zephyr NET management event callback structures. */
 static struct net_mgmt_event_callback l4_cb;
 static struct net_mgmt_event_callback conn_cb;
 
@@ -31,11 +34,11 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 
 	switch (event) {
 	case NET_EVENT_L4_CONNECTED:
-		LOG_INF("IP Up");
+		LOG_INF("Network connectivity established");
 		status = NETWORK_CONNECTED;
 		break;
 	case NET_EVENT_L4_DISCONNECTED:
-		LOG_INF("IP down");
+		LOG_INF("Network connectivity lost");
 		status = NETWORK_DISCONNECTED;
 		break;
 	default:
@@ -55,7 +58,7 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 				       struct net_if *iface)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
-		LOG_ERR("Fatal error received from the connectivity layer");
+		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
 		SEND_FATAL_ERROR();
 		return;
 	}
@@ -64,30 +67,35 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 static void network_task(void)
 {
 	int err;
-	struct net_if *net_if = net_if_get_default();
 
+	/* Setup handler for Zephyr NET Connection Manager events. */
 	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
 	net_mgmt_add_event_callback(&l4_cb);
 
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONNECTIVITY_EVENT_MASK);
+	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
+	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
 	net_mgmt_add_event_callback(&conn_cb);
 
-	LOG_INF("Bringing network interface up");
+	/* Connecting to the configured connectivity layer.
+	 * Wi-Fi or LTE depending on the board that the sample was built for.
+	 */
+	LOG_INF("Bringing network interface up and connecting to the network");
 
-	err = net_if_up(net_if);
+	err = conn_mgr_all_if_up(true);
 	if (err) {
-		LOG_ERR("net_if_up, error: %d", err);
+		LOG_ERR("conn_mgr_all_if_up, error: %d", err);
 		SEND_FATAL_ERROR();
 		return;
 	}
 
-	LOG_INF("Connecting...");
-
-	err = conn_mgr_if_connect(net_if);
-	if (err) {
-		LOG_ERR("conn_mgr_if_connect, error: %d", err);
-		SEND_FATAL_ERROR();
-		return;
+	/* Resend connection status if the sample is built for Native Posix.
+	 * This is necessary because the network interface is automatically brought up
+	 * at SYS_INIT() before main() is called.
+	 * This means that NET_EVENT_L4_CONNECTED fires before the
+	 * appropriate handler l4_event_handler() is registered.
+	 */
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
+		conn_mgr_resend_status();
 	}
 }
 
