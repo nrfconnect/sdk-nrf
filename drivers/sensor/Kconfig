@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Nordic Semiconductor
+# Copyright (c) 2023 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -16,5 +16,6 @@ rsource "sensor_sim/Kconfig"
 rsource "sensor_stub/Kconfig"
 rsource "pmw3360/Kconfig"
 rsource "paw3212/Kconfig"
+rsource "bme68x_iaq/Kconfig"
 
 endif # SENSOR

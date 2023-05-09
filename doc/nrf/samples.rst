@@ -36,6 +36,7 @@ General information about samples in the |NCS|
    samples/nfc
    samples/nrf5340
    samples/pmic
+   samples/sensor
    samples/tfm
    samples/thread
    samples/zigbee

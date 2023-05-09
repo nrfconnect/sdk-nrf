@@ -69,6 +69,7 @@ Kconfig*                                  @tejlmand
 /drivers/                                 @anangl
 /drivers/serial/                          @nordic-krch @anangl
 /drivers/sensor/bh1749/                   @gregersrygg
+/drivers/sensor/bme68x_iaq/               @maxd-nordic
 /drivers/sensor/paw3212/                  @anangl @pdunaj @MarekPieta
 /drivers/sensor/pmw3360/                  @anangl @pdunaj @MarekPieta
 /drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @rado17 @rlubos
@@ -138,6 +139,7 @@ Kconfig*                                  @tejlmand
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/mqtt/                        @simensrostad
 /samples/sensor/bh1749/                   @gregersrygg
+/samples/sensor/bme68x_iaq/               @maxd-nordic
 /samples/bluetooth/                       @alwa-nordic @jori-nordic @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @ludvigsj
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic

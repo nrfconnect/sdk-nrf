@@ -37,13 +37,15 @@ manifest:
       url-base: https://github.com/ant-nrfconnect
     - name: babblesim
       url-base: https://github.com/BabbleSim
+    - name: bosch
+      url-base: https://github.com/boschsensortec
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk]
+  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk, -bsec]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -251,6 +253,20 @@ manifest:
       revision: 384a091445c57b44ac8cbd18ebd245b47c71db94
       import:
         path-prefix: tools
+    - name: bme68x
+      repo-path: Bosch-BME68x-Library
+      remote: bosch
+      path: modules/lib/bme68x
+      revision: v1.1.40407
+      groups:
+        - bsec
+    - name: bsec
+      repo-path: Bosch-BSEC2-Library
+      remote: bosch
+      path: modules/lib/bsec
+      revision: v1.5.2400
+      groups:
+        - bsec
 
 
   # West-related configuration for the nrf repository.
