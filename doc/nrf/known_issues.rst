@@ -3033,6 +3033,14 @@ tx_buffer_length set incorrectly
 Trusted Firmware-M (TF-M)
 *************************
 
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-18321: TF-M PSA architecture tests do not build with CMake v3.25.x
+  The :ref:`tfm_psa_test` fails to build with CMake version 3.25.x with missing header files.
+  This happens because the CMake install command is executed before the build command with the affected CMake versions.
+
+  **Workaround:** Don't use the CMake version 3.25.x.
+
 .. rst-class:: v2-3-0
 
 NCSDK-20864: TF-M unaligned partitions when MCUboot padding and debug optimizations are enabled
