@@ -1,0 +1,37 @@
+sample:
+  name: BME68X Sensor Sample
+tests:
+  sample.sensor.bme68x:
+    depends_on: i2c
+    harness: sensor
+    integration_platforms:
+      - thingy91_nrf9160
+      - thingy91_nrf9160_ns
+      - thingy53_nrf5340_cpuapp
+      - thingy53_nrf5340_cpuapp_ns
+    platform_allow: >-
+      thingy91_nrf9160
+      thingy91_nrf9160_ns
+      thingy53_nrf5340_cpuapp
+      thingy53_nrf5340_cpuapp_ns
+    tags: sensors
+  sample.sensor.bme68x.polling:
+    depends_on: i2c
+    integration_platforms:
+      - thingy91_nrf9160
+      - thingy91_nrf9160_ns
+      - thingy53_nrf5340_cpuapp
+      - thingy53_nrf5340_cpuapp_ns
+    extra_args: CONFIG_APP_TRIGGER=n
+    platform_allow: >-
+      thingy91_nrf9160
+      thingy91_nrf9160_ns
+      thingy53_nrf5340_cpuapp
+      thingy53_nrf5340_cpuapp_ns
+    tags: sensors
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "(\\d+\\.\\d+); press: (\\d+\\.\\d+); humidity: (\\d+\\.\\d+); iaq: (\\d+)"
