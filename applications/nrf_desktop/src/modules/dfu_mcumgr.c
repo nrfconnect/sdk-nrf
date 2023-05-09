@@ -60,7 +60,7 @@ static int32_t mcumgr_img_mgmt_cb(uint32_t event,
 				  void *data,
 				  size_t data_size)
 {
-	LOG_INF("MCUmgr Image Management Event with the %d ID",
+	LOG_DBG("MCUmgr Image Management Event with the %d ID",
 		u32_count_trailing_zeros(MGMT_EVT_GET_ID(event)));
 
 	k_work_reschedule(&dfu_timeout, DFU_TIMEOUT);
@@ -129,6 +129,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				}
 			}
 
+			LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMAGE_VERSION);
 			k_work_init_delayable(&dfu_timeout, dfu_timeout_handler);
 
 			mgmt_callback_register(&img_mgmt_callback);
