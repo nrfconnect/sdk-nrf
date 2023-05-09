@@ -4,7 +4,7 @@ tests:
   applications.asset_tracker_v2.nrf_cloud:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -13,7 +13,7 @@ tests:
   applications.asset_tracker_v2.nrf_cloud-pgps:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -22,7 +22,7 @@ tests:
   applications.asset_tracker_v2.nrf_cloud-no-agps:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -31,7 +31,7 @@ tests:
   applications.asset_tracker_v2.aws:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -43,7 +43,7 @@ tests:
   applications.asset_tracker_v2.aws-pgps:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -54,7 +54,7 @@ tests:
   applications.asset_tracker_v2.aws-all:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -67,7 +67,7 @@ tests:
   applications.asset_tracker_v2.azure:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -80,7 +80,7 @@ tests:
   applications.asset_tracker_v2.debug:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -90,7 +90,7 @@ tests:
   applications.asset_tracker_v2.debug-memfault:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -101,7 +101,7 @@ tests:
   applications.asset_tracker_v2.memfault:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -112,7 +112,7 @@ tests:
   applications.asset_tracker_v2.low-power:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -129,7 +129,7 @@ tests:
   applications.asset_tracker_v2.lwm2m.low-power:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -138,7 +138,7 @@ tests:
   applications.asset_tracker_v2.lwm2m.debug:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -147,7 +147,7 @@ tests:
   applications.asset_tracker_v2.lwm2m.debug-modem_trace:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -158,7 +158,7 @@ tests:
   applications.asset_tracker_v2.lwm2m.memfault:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -169,7 +169,7 @@ tests:
   applications.asset_tracker_v2.memfault-low-power:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
@@ -181,7 +181,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek_nrf7002 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
     tags: ci_build
@@ -189,7 +189,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek_nrf7002
                 OVERLAY_CONFIG="overlay-nrf7002ek-wifi-scan-only.conf;overlay-debug.conf"
                 DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
