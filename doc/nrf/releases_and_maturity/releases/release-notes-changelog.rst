@@ -512,6 +512,11 @@ Gazell samples
 
 |no_changes_yet_note|
 
+Sensor samples
+--------------
+
+* Added :ref:`bme68x` sample to set up the BME68X gas sensor with the Bosch Sensor Environmental Cluster (BSEC) library.
+
 Zigbee samples
 --------------
 
@@ -547,6 +552,8 @@ Drivers
 =======
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
+
+* Added :ref:`bme68x_iaq` to run the Bosch Sensor Environmental Cluster (BSEC) library in order to get Indoor Air Quality (IAQ) readings.
 
 Wi-Fi drivers
 -------------

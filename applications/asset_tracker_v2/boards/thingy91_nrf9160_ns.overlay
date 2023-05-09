@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -9,6 +9,7 @@
 		temp-sensor = &bme680;
 		humidity-sensor = &bme680;
 		pressure-sensor = &bme680;
+		iaq-sensor = &bme680;
 		accelerometer = &adxl362;
 		impact-sensor = &adxl372;
 	};
