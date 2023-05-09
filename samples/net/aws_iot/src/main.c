@@ -388,7 +388,7 @@ int main(void)
 		return err;
 	}
 
-	/* Resend connection status if the sample is build for QEMU x86.
+	/* Resend connection status if the sample is built for QEMU x86.
 	 * This is necessary because the network interface is automatically brought up
 	 * at SYS_INIT() before main() is called.
 	 * This means that NET_EVENT_L4_CONNECTED fires before the

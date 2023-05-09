@@ -12,7 +12,7 @@ The communication between modules is handled by the :ref:`zbus` using messages t
 If a module has internal state handling, it is implemented using the :ref:`Zephyr State Machine Framework <smf>`.
 The following figure illustrates the relationship between modules, channels, and network stacks in the sample:
 
-.. figure:: /images/architecture.svg
+.. figure:: /images/mqtt_architecture.svg
     :alt: Architecture
     :name: architecture
 

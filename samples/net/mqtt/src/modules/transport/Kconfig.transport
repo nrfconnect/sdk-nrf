@@ -39,7 +39,7 @@ config MQTT_SAMPLE_TRANSPORT_CLIENT_ID
 	default ""
 	help
 	  Use a custom client ID string. If not set, the client ID will default to the
-	  modem's IMEI number for nRF9160 boards, MAC address for the nRF7002 DK,
+	  modem's IMEI number for nRF91 Series devices, MAC address for nRF7 Series devices,
 	  or a random number for Native Posix.
 
 config MQTT_SAMPLE_TRANSPORT_CLIENT_ID_BUFFER_SIZE
