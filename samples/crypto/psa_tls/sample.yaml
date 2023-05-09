@@ -1,6 +1,6 @@
 sample:
-  description: This app provides an example of performing TLS handshake as either
-    server or client
+  description: |
+    This app provides an example of performing TLS handshake as either server or client
   name: TLS Sample
 tests:
   ################################################################################

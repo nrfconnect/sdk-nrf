@@ -4,7 +4,9 @@ sample:
 tests:
   applications.machine_learning.zdebug:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 thingy53_nrf5340_cpuapp thingy53_nrf5340_cpuapp_ns nrf5340dk_nrf5340_cpuapp
+    platform_allow: >
+      nrf52840dk_nrf52840 thingy53_nrf5340_cpuapp thingy53_nrf5340_cpuapp_ns
+      nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf52840dk_nrf52840
       - thingy53_nrf5340_cpuapp

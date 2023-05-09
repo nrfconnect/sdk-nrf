@@ -29,14 +29,18 @@ tests:
     platform_allow: nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    extra_args: CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n remote_CONFIG_SERIAL=n remote_CONFIG_CONSOLE=n remote_CONFIG_UART_CONSOLE=n remote_CONFIG_LOG=n
+    extra_args: >
+      CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n remote_CONFIG_SERIAL=n
+      remote_CONFIG_CONSOLE=n remote_CONFIG_UART_CONSOLE=n remote_CONFIG_LOG=n
   sample.caf_sensor_manager.nrf5340dk_singlecore.power_consumption_test:
     build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    extra_args: OVERLAY_CONFIG=boards/nrf5340dk_nrf5340_cpuapp_singlecore.conf CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n
-                DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_singlecore.overlay
+    extra_args: >
+      OVERLAY_CONFIG=boards/nrf5340dk_nrf5340_cpuapp_singlecore.conf CONFIG_SERIAL=n
+      CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n
+      DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_singlecore.overlay
   sample.caf_sensor_manager.nrf5340dk_singlecore.correctness_test:
     build_only: false
     platform_allow: nrf5340dk_nrf5340_cpuapp
