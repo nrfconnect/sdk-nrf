@@ -558,7 +558,8 @@
 .. _`Configuring Wireshark for Zigbee`: https://infocenter.nordicsemi.com/topic/ug_sniffer_802154/UG/sniffer_802154/configuring_sniffer_802154_zigbee.html
 
 .. _`Power Profiler Kit II (PPK2)`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Intro.html
-
+.. _`Install the Power Profiler app`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/common/nrf_connect_app_installing.html
+.. _`Using the Power Profiler app`: https://infocenter.nordicsemi.com/topic/ug_ppk2/UG/ppk/PPK_user_guide_Running_the_software.html
 .. _`anomaly 19`: https://infocenter.nordicsemi.com/topic/errata_nRF5340_EngA/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
 .. _`nRF5 SDK Bootloader`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html

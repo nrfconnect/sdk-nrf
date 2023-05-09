@@ -156,6 +156,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
+/samples/nrf9160/battery/                 @MirkoCovizzi
 /samples/nrf9160/location/                @trantanen @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
 /samples/nrf9160/modem_shell/             @trantanen @jhirsi @tokangas
