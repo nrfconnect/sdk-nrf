@@ -1,5 +1,5 @@
 {
-  "featureLevel": 92,
+  "featureLevel": 96,
   "creator": "zap",
   "keyValuePairs": [
     {
@@ -18,17 +18,17 @@
   "package": [
     {
       "pathRelativity": "relativeToZap",
+      "path": "../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
+      "type": "gen-templates-json",
+      "version": "chip-v1"
+    },
+    {
+      "pathRelativity": "relativeToZap",
       "path": "../../../../modules/lib/matter/src/app/zap-templates/zcl/zcl.json",
       "type": "zcl-properties",
       "category": "matter",
       "version": 1,
       "description": "Matter SDK ZCL data"
-    },
-    {
-      "pathRelativity": "relativeToZap",
-      "path": "../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
-      "type": "gen-templates-json",
-      "version": "chip-v1"
     }
   ],
   "endpointTypes": [
@@ -1577,7 +1577,7 @@
               "code": 0,
               "mfgCode": null,
               "side": "server",
-              "type": "HourFormat",
+              "type": "HourFormatEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -1593,7 +1593,7 @@
               "code": 1,
               "mfgCode": null,
               "side": "server",
-              "type": "CalendarType",
+              "type": "CalendarTypeEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -1693,7 +1693,7 @@
               "code": 0,
               "mfgCode": null,
               "side": "server",
-              "type": "PowerSourceStatus",
+              "type": "PowerSourceStatusEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -1773,7 +1773,7 @@
               "code": 5,
               "mfgCode": null,
               "side": "server",
-              "type": "WiredCurrentType",
+              "type": "WiredCurrentTypeEnum",
               "included": 0,
               "storageOption": "RAM",
               "singleton": 0,
@@ -1917,7 +1917,7 @@
               "code": 14,
               "mfgCode": null,
               "side": "server",
-              "type": "BatChargeLevel",
+              "type": "BatChargeLevelEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -1949,7 +1949,7 @@
               "code": 16,
               "mfgCode": null,
               "side": "server",
-              "type": "BatReplaceability",
+              "type": "BatReplaceabilityEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -2013,7 +2013,7 @@
               "code": 20,
               "mfgCode": null,
               "side": "server",
-              "type": "int32u",
+              "type": "BatCommonDesignationEnum",
               "included": 0,
               "storageOption": "RAM",
               "singleton": 0,
@@ -2061,7 +2061,7 @@
               "code": 23,
               "mfgCode": null,
               "side": "server",
-              "type": "int32u",
+              "type": "BatApprovedChemistryEnum",
               "included": 0,
               "storageOption": "RAM",
               "singleton": 0,
@@ -2109,7 +2109,7 @@
               "code": 26,
               "mfgCode": null,
               "side": "server",
-              "type": "BatChargeState",
+              "type": "BatChargeStateEnum",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,

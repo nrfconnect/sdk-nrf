@@ -109,7 +109,7 @@ See `Matter samples`_ for the list of changes for the Matter samples.
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``SVE RC2`` tag.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.1.0.1`` tag.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
@@ -118,6 +118,7 @@ The following list summarizes the most important changes inherited from the upst
   Generated onboarding codes should be put on the device's package or on the device itself.
   For details, see the Generating onboarding codes section on the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
 * Introduced ``SLEEPY_ACTIVE_THRESHOLD`` parameter that makes the Matter sleepy device stay awake for a specified amount of time after network activity.
+* Updated the Basic Information cluster with device finish and device color attributes and added the related entries in factory data set.
 
 Thread
 ------

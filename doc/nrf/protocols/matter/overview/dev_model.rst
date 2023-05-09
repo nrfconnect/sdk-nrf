@@ -36,11 +36,14 @@ Supported Matter versions in the |NCS|
 
 The following table lists Matter versions supported in the |NCS|, with a brief overview of changes and the release date.
 
-+-----------------+----------------------------------------------+---------------------+
-| Matter version  | Overview of changes                          | Release date        |
-+=================+==============================================+=====================+
-| 1.0.0           | Initial version of the Matter specification. | November 2, 2022    |
-+-----------------+----------------------------------------------+---------------------+
++-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
+| Matter version  | Overview of changes                                                                                                            | Release date        |
++=================+================================================================================================================================+=====================+
+| 1.1.0           | - Improved Intermittently Connected Device (ICD) support: more :ref:`ug_matter_configuring_optional_persistent_subscriptions`. | Unreleased          |
+|                 | - Enhancements and bug fixes for Matter Specification, Certification Test Plan, and the Matter SDK.                            |                     |
++-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
+| 1.0.0           | Initial version of the Matter specification.                                                                                   | November 2, 2022    |
++-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
 
 .. _ug_matter_overview_dev_model_ecosystems:
 
