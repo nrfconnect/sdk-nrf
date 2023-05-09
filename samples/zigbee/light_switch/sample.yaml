@@ -49,7 +49,9 @@ tests:
     tags: ci_build
   sample.zigbee.light_switch.with_shell:
     build_only: true
-    extra_args: CONFIG_ZIGBEE_SHELL=y CONFIG_ZIGBEE_SHELL_DEBUG_CMD=y CONFIG_ZIGBEE_LOGGER_EP=n CONFIG_ZIGBEE_SHELL_ENDPOINT=1 CONFIG_LOG_MODE_DEFERRED=y
+    extra_args: >
+      CONFIG_ZIGBEE_SHELL=y CONFIG_ZIGBEE_SHELL_DEBUG_CMD=y CONFIG_ZIGBEE_LOGGER_EP=n
+      CONFIG_ZIGBEE_SHELL_ENDPOINT=1 CONFIG_LOG_MODE_DEFERRED=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
