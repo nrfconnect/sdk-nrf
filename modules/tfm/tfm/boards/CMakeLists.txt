@@ -1,9 +1,8 @@
-#-------------------------------------------------------------------------------
-# Copyright (c) 2021, Nordic Semiconductor ASA.
+#
+# Copyright (c) 2021 - 2023, Nordic Semiconductor ASA.
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-#-------------------------------------------------------------------------------
 
 # NOTE: All code in this folder and subfolders is run as part of the TF-M
 #       build, not in a Zephyr context.
