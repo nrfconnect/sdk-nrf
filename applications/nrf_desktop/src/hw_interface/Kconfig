@@ -6,6 +6,7 @@
 
 menu "Hardware interface modules"
 
+rsource "Kconfig.board"
 rsource "Kconfig.motion"
 rsource "Kconfig.buttons_sim"
 rsource "Kconfig.selector"
@@ -13,9 +14,5 @@ rsource "Kconfig.wheel"
 rsource "Kconfig.battery_charger"
 rsource "Kconfig.battery_meas"
 rsource "Kconfig.passkey"
-
-module = DESKTOP_BOARD
-module-str = board module
-source "subsys/logging/Kconfig.template.log_config"
 
 endmenu

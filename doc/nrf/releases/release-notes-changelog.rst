@@ -154,7 +154,13 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Added Kconfig options to enable handling of the power management events for the following nRF Desktop modules:
+
+  * :ref:`nrf_desktop_board` - The :ref:`CONFIG_DESKTOP_BOARD_PM_EVENTS <config_desktop_app_options>` Kconfig option.
+  * :ref:`nrf_desktop_motion` - The :ref:`CONFIG_DESKTOP_MOTION_PM_EVENTS <config_desktop_app_options>` Kconfig option.
+  * :ref:`nrf_desktop_ble_latency` - The :ref:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS <config_desktop_app_options>` Kconfig option.
+
+  All listed Kconfig options are enabled by default and depend on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
 
 Samples
 =======

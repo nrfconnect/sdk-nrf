@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Board configuration"
+
+config DESKTOP_BOARD_PM_EVENTS
+	bool "Power management events support"
+	depends on CAF_PM_EVENTS
+	default y
+	help
+	  React on power management events in board module.
+
+module = DESKTOP_BOARD
+module-str = board module
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu

@@ -37,6 +37,9 @@ See the following sections for more information.
 
 Depending on the selected configuration option, a different implementation file is used during the build process.
 
+You can use the :ref:`CONFIG_DESKTOP_MOTION_PM_EVENTS <config_desktop_app_options>` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
+The option is enabled by default and depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
+
 Movement data from motion sensors
 =================================
 
