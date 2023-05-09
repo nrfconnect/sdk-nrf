@@ -202,6 +202,8 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* Added the :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
+
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Added documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
