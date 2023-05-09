@@ -193,6 +193,10 @@ config OPENTHREAD_CSL_MIN_RECEIVE_ON
 	default 350 if BOARD_NRF52840DONGLE_NRF52840
 	default 300
 
+config OPENTHREAD_CSL_TIMEOUT
+	int
+	default 20
+
 endif
 
 endif
