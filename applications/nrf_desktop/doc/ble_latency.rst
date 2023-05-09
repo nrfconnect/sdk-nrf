@@ -39,6 +39,9 @@ You can set the option :ref:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK <config_desktop
 This speeds up sending the first HID report after not sending a report for some connection intervals.
 Enabling this option increases the power consumption - the connection latency is kept low unless the device is in the low power mode.
 
+You can use the :ref:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS <config_desktop_app_options>` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
+The option is enabled by default and depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
+
 Implementation details
 **********************
 

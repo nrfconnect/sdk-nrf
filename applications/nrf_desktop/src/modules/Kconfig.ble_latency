@@ -37,6 +37,13 @@ config DESKTOP_BLE_LOW_LATENCY_LOCK
 	  some connection intervals. Enabling this option increases the power
 	  consumption of the device.
 
+config DESKTOP_BLE_LATENCY_PM_EVENTS
+	bool "Power management events support"
+	depends on CAF_PM_EVENTS
+	default y
+	help
+	  React on power management events in BLE latency module.
+
 module = DESKTOP_BLE_LATENCY
 module-str = BLE latency
 source "subsys/logging/Kconfig.template.log_config"

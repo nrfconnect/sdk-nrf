@@ -115,7 +115,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_wake_up_event(aeh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_BOARD_PM_EVENTS) &&
+	    is_wake_up_event(aeh)) {
 		if (!initialized) {
 			initialized = true;
 
@@ -124,7 +125,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_power_down_event(aeh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_BOARD_PM_EVENTS) &&
+	    is_power_down_event(aeh)) {
 		const struct power_down_event *event = cast_power_down_event(aeh);
 
 		/* Do not cut off leds power on error */
@@ -147,6 +149,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	return false;
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, module_state_event);
+#if CONFIG_DESKTOP_BOARD_PM_EVENTS
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
 APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+#endif

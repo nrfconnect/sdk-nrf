@@ -201,9 +201,12 @@ static void data_ready_handler(const struct device *dev, const struct sensor_tri
 
 	case STATE_SUSPENDED:
 	case STATE_SUSPENDED_DISCONNECTED:
-		/* Wake up system - this will wake up thread */
-		APP_EVENT_SUBMIT(new_wake_up_event());
-		break;
+		if (IS_ENABLED(CONFIG_DESKTOP_MOTION_PM_EVENTS)) {
+			/* Wake up system - this will wake up thread */
+			APP_EVENT_SUBMIT(new_wake_up_event());
+			break;
+		}
+		/* Fall-through */
 
 	case STATE_FETCHING:
 	case STATE_DISABLED:
@@ -629,7 +632,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_wake_up_event(aeh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_PM_EVENTS) &&
+	    is_wake_up_event(aeh)) {
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
 		if ((state.state == STATE_SUSPENDED) ||
 		    (state.state == STATE_SUSPENDED_DISCONNECTED)) {
@@ -651,7 +655,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_power_down_event(aeh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_PM_EVENTS) &&
+	    is_power_down_event(aeh)) {
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
 
 		switch (state.state) {
@@ -710,7 +715,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
@@ -719,4 +723,7 @@ APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #if CONFIG_DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB
 APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
+#if CONFIG_DESKTOP_MOTION_PM_EVENTS
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+#endif

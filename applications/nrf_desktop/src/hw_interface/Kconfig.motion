@@ -175,6 +175,14 @@ config DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB
 	  Low power modes reduce device power consumption, but increase
 	  response time.
 
+config DESKTOP_MOTION_PM_EVENTS
+	bool "Power management events support"
+	depends on DESKTOP_MOTION_SIMULATED_ENABLE || DESKTOP_MOTION_SENSOR_ENABLE
+	depends on CAF_PM_EVENTS
+	default y
+	help
+	  React on power management events in motion module.
+
 if !DESKTOP_MOTION_NONE
 module = DESKTOP_MOTION
 module-str = motion module
