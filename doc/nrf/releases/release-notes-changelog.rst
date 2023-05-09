@@ -281,6 +281,7 @@ Bluetooth samples
 * :ref:`peripheral_fast_pair` sample:
 
   * Added the default Fast Pair provisioning data that is used when no other provisioning data is specified.
+  * Updated the documentation to align it with the new way of displaying notifications for the Fast Pair debug Model IDs.
 
 Bluetooth mesh samples
 ----------------------
