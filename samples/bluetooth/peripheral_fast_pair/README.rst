@@ -189,13 +189,21 @@ Testing
 #. On the Android device, go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`, depending on your Android device configuration) > :guilabel:`Devices`.
 #. Move the Android device close to the Fast Pair Provider that is advertising.
 #. Wait for Android device's notification about the detected Fast Pair Provider.
-   The notification is similar to the following one:
+   If you use the Model ID certified by Google, the notification is similar to the following:
 
    .. figure:: /images/bt_fast_pair_discoverable_notification.png
       :scale: 33 %
       :alt: Fast Pair discoverable advertising Android notification
 
    The device model name and displayed logo depend on the data provided during the device model registration.
+
+   If you use the debug Model ID (for example, the default is *NCS Fast Pair demo*), the notification is similar to the following:
+
+   .. figure:: /images/bt_fast_pair_discoverable_notification_debug.png
+      :scale: 50 %
+      :alt: Fast Pair discoverable advertising Android notification for debug Model ID.
+
+   The device model name is covered by asterisks and the default Fast Pair logo is displayed instead of the one specified during the device model registration.
 #. Tap the :guilabel:`Connect` button to initiate the connection and trigger the Fast Pair procedure.
    After the procedure has completed, the pop-up is updated to inform about successfully completed Fast Pair procedure.
    **LED 2** is lit to indicate that the device is connected with the Bluetooth Central.
@@ -241,11 +249,19 @@ Test not discoverable advertising by completing `Testing`_ and the following add
    #. If the device does not appear on the list, wait until the data is synced between phones.
 
 #. Move the second Android device close to the Fast Pair Provider.
-   If the device is in the show UI indication advertising mode, a notification similar to the following one appears:
+   If you use the Model ID certified by Google and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
 
    .. figure:: /images/bt_fast_pair_not_discoverable_notification.png
       :scale: 50 %
       :alt: Fast Pair not discoverable advertising Android notification
+
+   If you use the debug Model ID (for example, the default is *NCS Fast Pair demo*) and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
+
+   .. figure:: /images/bt_fast_pair_not_discoverable_notification_debug.png
+      :scale: 50 %
+      :alt: Fast Pair not discoverable advertising Android notification for debug Model ID
+
+   The *Nordic* name is replaced by your own Google account name as this is a default name created by the Fast Pair Seeker during the initial pairing.
 
    If the device is in the hide UI indication advertising mode, no notification appears.
    This is because the device advertises, but does not want to be paired with.
