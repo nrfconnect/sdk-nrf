@@ -9,6 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <zephyr/sys/__assert.h>
 #include "list.h"
 #include "queue.h"
 #include "hal_api.h"
@@ -28,6 +29,8 @@ static void set_spare_desc_q_map(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 {
 	unsigned short spare_desc_indx = 0;
 
+	__ASSERT(fmac_dev_ctx->fpriv->num_tx_tokens_per_ac != 0, "num_tx_tokens_per_ac is zero");
+
 	spare_desc_indx = (desc % (fmac_dev_ctx->fpriv->num_tx_tokens_per_ac *
 				   WIFI_NRF_FMAC_AC_MAX));
 
@@ -45,6 +48,8 @@ static void clear_spare_desc_q_map(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				   int tx_done_q)
 {
 	unsigned short spare_desc_indx = 0;
+
+	__ASSERT(fmac_dev_ctx->fpriv->num_tx_tokens_per_ac != 0, "num_tx_tokens_per_ac is zero");
 
 	spare_desc_indx = (desc % (fmac_dev_ctx->fpriv->num_tx_tokens_per_ac *
 				   WIFI_NRF_FMAC_AC_MAX));

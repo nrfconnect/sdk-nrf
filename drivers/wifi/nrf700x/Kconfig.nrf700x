@@ -183,6 +183,7 @@ config NRF700X_MAX_TX_AGGREGATION
 
 config NRF700X_MAX_TX_TOKENS
 	int "Maximum number of TX tokens"
+	range 5 12 if !NRF700X_RADIO_TEST
 	default 10
 
 config NRF700X_TX_MAX_DATA_SIZE
