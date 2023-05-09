@@ -1,14 +1,17 @@
 .. _bluetooth_mesh_light_dim:
 
-Bluetooth: Mesh light dimmer controller
-#######################################
+Bluetooth: Mesh light dimmer and scene selector
+###############################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® mesh light dimmer sample demonstrates how to set up a light dimmer application, and control a dimmable LED with Bluetooth mesh using the :ref:`bt_mesh_lvl_readme` and the :ref:`bt_mesh_onoff_readme`.
-The sample provides the controller with both the on/off and the dim up/down functionality, with a use of a single button.
+The Bluetooth® mesh light dimmer and scene selector sample demonstrates how to set up a light dimmer and scene selector application, and control dimmable LEDs with Bluetooth mesh using the :ref:`bt_mesh_lvl_readme`, the :ref:`bt_mesh_onoff_readme`, and the :ref:`bt_mesh_scene_readme`.
+The sample provides the following functionality:
+
+  * On/off and dim up/down using one button
+  * Scene recall/store of light levels with a second button
 
 Requirements
 ************
@@ -31,18 +34,19 @@ Overview
 ********
 
 This sample can be used to control the state of light sources.
-In addition to the on/off functionality, it allows changing the light level (brightness) of an LED light.
+In addition to the on/off functionality, it allows changing the light level (brightness) of an LED light, and storing and recalling scenes of light levels.
 To display any functionality, the sample must be paired with a device with the :ref:`mesh light fixture <bluetooth_mesh_light_lc>` sample running in the same mesh network.
 
 The sample instantiates the following models:
 
  * :ref:`bt_mesh_lvl_cli_readme`
  * :ref:`bt_mesh_onoff_cli_readme`
+ * :ref:`bt_mesh_scene_cli_readme`
 
 Devices are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
 This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
-After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button** 1 on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs.
+After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 1** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 2** can be used to store and restore scenes on the network nodes.
 
 Provisioning
 ============
@@ -69,6 +73,8 @@ The following table shows the composition data for the light dimmer sample:
    +-------------------------------+
    | Gen. OnOff Client             |
    +-------------------------------+
+   | Scene Client                  |
+   +-------------------------------+
 
 The models are used for the following purposes:
 
@@ -78,7 +84,8 @@ The models are used for the following purposes:
   These callbacks trigger blinking of the LEDs.
 * The third model in the first element is the Generic Level Client.
   The Generic Level Client controls the Generic Level Server in the target devices, deciding on parameters such as fade time and lighting level.
-* The last model is the Generic OnOff Client which controls the Generic OnOff Server in the target devices, setting the LED state to ON or OFF.
+* The fourth model is the Generic OnOff Client which controls the Generic OnOff Server in the target devices, setting the LED state to ON or OFF.
+* The last model is the Scene Client which controls the Scene Server in the target devices, storing or restoring scenes of the current LED states.
 
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control the buttons on the development kit.
@@ -93,6 +100,12 @@ Button 1:
    On press and release, **Button 1** will publish a Generic OnOff Set message using the configured publication parameters of its model instance, and toggle the LED on/off on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
 
    On press and hold, **Button 1** will publish a Generic Level move set message using the configured publication parameters of its model instance and will continuously dim the LED lightness state on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device. On release, the button publishes another Generic Level move set message with the ``delta`` parameter set to 0 and stops the continuous level change from the previous message.
+
+Button 2:
+   On short press and release, **Button 2** will publish a Scene Restore message using the configured publication parameters of its model instance, and restore the LED state of all the targets to the values stored under the current scene number.
+   Each press of the button will recall the next scene, meaning, the first press will recall scene 2, the next press will recall scene 3, and so on, before wrapping around back to scene 1.
+
+   On long press and release, **Button 2** will publish a Scene Store message using the configured publication parameters of its model instance, and store the current LED state of all the targets under the scene with the most recently recalled scene number.
 
 LEDs:
    Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
@@ -155,13 +168,15 @@ Configure the Generic Level Client model on the first element on the **Mesh Ligh
 
 Configure the first element on the target **Mesh Light Fixture** node:
 
-* Bind the following models to **Application Key 1**: Generic Level Server and Generic OnOff Server.
-* Subscribe both models to the same group as set for publication for the **Mesh Light Dimmer**.
+* Bind the following models to **Application Key 1**: Generic Level Server, Generic OnOff Server, Scene Server, and Scene Setup Server.
+* Subscribe all models to the same group as set for publication for the **Mesh Light Dimmer**.
 
 You should now be able to perform the following actions:
 
 * Press and release **Button 1** to see the LED on the target Mesh Light Fixture device toggle on and off.
 * Press and hold **Button 1** to see the light level of the LED on the target Mesh Light Fixture device slowly decrease or increase.
+* Short press and release **Button 2** to rotate through scenes, recalling each of them in turn.
+* Long press and release **Button 2** to store the current LED states as a scene with the current scene number.
 
 .. note::
   When controlling a Mesh Light Fixture device using the Mesh Light Dimmer device, the Light LC Server control will be temporarily disabled for the Mesh Light Fixture device.
@@ -174,6 +189,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`bt_mesh_lvl_readme`
 * :ref:`bt_mesh_onoff_readme`
+* :ref:`bt_mesh_scene_readme`
 * :ref:`bt_mesh_dk_prov`
 * :ref:`dk_buttons_and_leds_readme`
 
