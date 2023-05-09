@@ -63,7 +63,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/keys/identity_key_generate`
+.. |sample path| replace:: :file:`samples/tfm/provisioning_image`
 
 .. include:: /includes/build_and_run.txt
 
