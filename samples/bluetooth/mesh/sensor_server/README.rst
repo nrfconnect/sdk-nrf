@@ -8,7 +8,7 @@ Bluetooth: Mesh sensor
    :depth: 2
 
 The Bluetooth® mesh sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
-Four different sensor types are used to showcase different ways for the server to publish data.
+Five different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
 .. note::
@@ -38,14 +38,25 @@ The application needs to be programmed on a separate device, and configured acco
 Overview
 ********
 
-The following Bluetooth mesh sensor types are used in this sample:
+The following Bluetooth mesh sensor types, and their settings, are used in this sample:
 
-* :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
-* :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - Used as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type to set the range of reported temperatures.
+* :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`), or periodically requested by the client.
+
+  * :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - Used as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type to set the range of reported temperatures.
+
 * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
 * :c:var:`bt_mesh_sensor_presence_detected` - Published when a button is pressed on the server.
 * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
-* :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
+
+  * :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
+
+* :c:var:`bt_mesh_sensor_present_amb_light_level` - Periodically requested by the client.
+
+  * :c:var:`bt_mesh_sensor_gain` - Used as a setting for the :c:var:`bt_mesh_sensor_present_amb_light_level` sensor type to set the gain the ambient light sensor value is multiplied with.
+  * :c:var:`bt_mesh_sensor_present_amb_light_level` - Used as a setting for the :c:var:`bt_mesh_sensor_present_amb_light_level` sensor type to calculate sensor gain based on measured reference ambient light level. This value does only have a set command.
+
+.. note::
+   These values can be requested through shell commands by the :ref:`bluetooth_mesh_sensor_client`.
 
 Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used for the nRF52 series, and the ``BME680`` temperature sensor for Thingy:53.
 
@@ -102,8 +113,13 @@ Buttons:
 Once the provisioning procedure has completed, the buttons will have the following functionality:
 
 Button 1:
-   Simulates presence detected. The time the button need to be pressed, before the presence is detected, depends on the motion threshold. The motion threshold has five steps from 0% (representing 0 seconds) to 100% (representing 10 seconds) separated by 25%.
+   Simulates presence detected.
+   For how long the button has to be pressed before the presence is detected depends on the motion threshold.
+   The motion threshold has five steps from 0 % (representing 0 seconds) to 100 % (representing 10 seconds) separated by 25 %-steps.
 
+Button 2:
+   Simulates different ambient light sensor values.
+   These dummy values represent a raw values coming from an ambient light sensor.
 
 Configuration
 *************
