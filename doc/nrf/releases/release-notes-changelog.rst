@@ -273,6 +273,7 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
+* Added :ref:`bluetooth_mesh_light_dim` sample that demonstrates how to set up a light dimmer application.
 * Updated the configuration of advertising sets in all samples to match the new default values.
   See `Bluetooth mesh`_ for more information.
 * Removed the :file:`hci_rpmsg.conf` file from all samples that support nRF5340 DK or Thingy:53.
