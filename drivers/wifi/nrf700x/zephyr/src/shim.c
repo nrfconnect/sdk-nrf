@@ -482,9 +482,9 @@ static unsigned int zep_shim_llist_len(void *llist)
 	return zep_llist->len;
 }
 
-static void *zep_shim_work_alloc(void)
+static void *zep_shim_work_alloc(int type)
 {
-	return work_alloc();
+	return work_alloc(type);
 }
 
 static void zep_shim_work_free(void *item)

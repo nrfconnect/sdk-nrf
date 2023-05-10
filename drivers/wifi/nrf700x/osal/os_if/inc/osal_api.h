@@ -682,6 +682,7 @@ void *wifi_nrf_osal_nbuf_data_pull(struct wifi_nrf_osal_priv *opriv,
 /**
  * wifi_nrf_osal_tasklet_alloc() - Allocate a tasklet.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @type: Type of tasklet.
  *
  * Allocates a tasklet structure and returns a pointer to it.
  *
@@ -689,7 +690,7 @@ void *wifi_nrf_osal_nbuf_data_pull(struct wifi_nrf_osal_priv *opriv,
  *		Pass: Pointer to the tasklet instance allocated.
  *		Error: NULL.
  */
-void *wifi_nrf_osal_tasklet_alloc(struct wifi_nrf_osal_priv *opriv);
+void *wifi_nrf_osal_tasklet_alloc(struct wifi_nrf_osal_priv *opriv, int type);
 
 
 /**
