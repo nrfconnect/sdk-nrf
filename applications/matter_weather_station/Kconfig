@@ -13,6 +13,30 @@ config AVERAGE_CURRENT_CONSUMPTION
 	  The predicted average current consumption of the Matter weather station
 	  device, used to estimate the remaining battery time.
 
+# Application configuration used for Thread networking
+if NET_L2_OPENTHREAD
+
+choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
+	default OPENTHREAD_NORDIC_LIBRARY_MTD
+endchoice
+
+choice OPENTHREAD_DEVICE_TYPE
+	default OPENTHREAD_MTD
+endchoice
+
+config IEEE802154_NRF5_RX_STACK_SIZE
+	default 8192
+
+config CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT
+	default y
+
+# # Reduce Thread TX output power to 0 dBm for SED device
+# config OPENTHREAD_DEFAULT_TX_POWER
+# 	int
+# 	default 0
+
+endif # NET_L2_OPENTHREAD
+
 config CHIP_ICD_SUBSCRIPTION_HANDLING
 	default y
 
