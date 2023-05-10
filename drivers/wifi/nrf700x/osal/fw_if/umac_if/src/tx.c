@@ -1027,9 +1027,34 @@ out:
 	return status;
 }
 
+#ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
+static void tx_done_tasklet_fn(unsigned long data)
+{
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = (struct wifi_nrf_fmac_dev_ctx *)data;
 
-enum wifi_nrf_status wifi_nrf_fmac_tx_done_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-							 struct nrf_wifi_tx_buff_done *config)
+	void *tx_done_tasklet_event_q = (void *)fmac_dev_ctx->tx_config.tx_done_tasklet_event_q;
+
+	struct nrf_wifi_tx_buff_done *config = wifi_nrf_utils_q_dequeue(
+		fmac_dev_ctx->fpriv->opriv,
+		tx_done_tasklet_event_q);
+
+	if (!config) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: TX done event Q is empty\n",
+				      __func__);
+		return;
+	}
+
+	(void) wifi_nrf_fmac_tx_done_event_process(fmac_dev_ctx, config);
+
+	wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+			       config);
+}
+#endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
+
+enum wifi_nrf_status (wifi_nrf_fmac_tx_done_event_process)(
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+	struct nrf_wifi_tx_buff_done *config)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
@@ -1233,8 +1258,36 @@ enum wifi_nrf_status tx_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 
 	fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
 
-	return WIFI_NRF_STATUS_SUCCESS;
+#ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
+	fmac_dev_ctx->tx_done_tasklet = wifi_nrf_osal_tasklet_alloc(fpriv->opriv,
+								    WIFI_NRF_TASKLET_TYPE_TX_DONE);
+	if (!fmac_dev_ctx->tx_done_tasklet) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate tx_done_tasklet\n",
+				      __func__);
+		goto wakeup_client_q_free;
+	}
+	fmac_dev_ctx->tx_config.tx_done_tasklet_event_q = wifi_nrf_utils_q_alloc(fpriv->opriv);
+	if (!fmac_dev_ctx->tx_config.tx_done_tasklet_event_q) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate tx_done_tasklet_event_q\n",
+				      __func__);
+		goto tx_done_tasklet_free;
+	}
 
+	wifi_nrf_osal_tasklet_init(fmac_dev_ctx->fpriv->opriv,
+				   fmac_dev_ctx->tx_done_tasklet,
+				   tx_done_tasklet_fn,
+				   (unsigned long)fmac_dev_ctx);
+#endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
+	return WIFI_NRF_STATUS_SUCCESS;
+#ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
+tx_done_tasklet_free:
+	wifi_nrf_osal_tasklet_free(fpriv->opriv,
+				   fmac_dev_ctx->tx_done_tasklet);
+wakeup_client_q_free:
+	wifi_nrf_utils_q_free(fpriv->opriv, fmac_dev_ctx->tx_config.wakeup_client_q);
+#endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 tx_spin_lock_free:
 	wifi_nrf_osal_spinlock_free(fmac_dev_ctx->fpriv->opriv,
 					fmac_dev_ctx->tx_config.tx_lock);
@@ -1274,8 +1327,13 @@ void tx_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 
 	fpriv = fmac_dev_ctx->fpriv;
 
+#ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
 	/* TODO: Need to deinit network buffers? */
-
+	wifi_nrf_osal_tasklet_free(fpriv->opriv,
+				   fmac_dev_ctx->tx_done_tasklet);
+	wifi_nrf_utils_q_free(fpriv->opriv,
+			      fmac_dev_ctx->tx_config.tx_done_tasklet_event_q);
+#endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 	wifi_nrf_utils_q_free(fpriv->opriv,
 			      fmac_dev_ctx->tx_config.wakeup_client_q);
 

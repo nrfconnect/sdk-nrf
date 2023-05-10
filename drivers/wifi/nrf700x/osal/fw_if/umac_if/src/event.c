@@ -9,6 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include "queue.h"
 #include "host_rpu_umac_if.h"
 #include "hal_mem.h"
 #include "fmac_rx.h"
@@ -532,8 +533,38 @@ wifi_nrf_fmac_data_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		break;
 #ifdef CONFIG_NRF700X_DATA_TX
 	case NRF_WIFI_CMD_TX_BUFF_DONE:
+#ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
+		struct nrf_wifi_tx_buff_done *config = wifi_nrf_osal_mem_zalloc(
+					fmac_dev_ctx->fpriv->opriv,
+					sizeof(struct nrf_wifi_tx_buff_done));
+		if (!config) {
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+					      "%s: Failed to allocate memory\n",
+					      __func__);
+			status = WIFI_NRF_STATUS_FAIL;
+			break;
+		}
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+					config,
+					umac_head,
+					sizeof(struct nrf_wifi_tx_buff_done));
+		status = wifi_nrf_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
+			fmac_dev_ctx->tx_config.tx_done_tasklet_event_q,
+			config);
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+					      "%s: Failed to enqueue TX buffer\n",
+					      __func__);
+			wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+					       config);
+			break;
+		}
+		wifi_nrf_osal_tasklet_schedule(fmac_dev_ctx->fpriv->opriv,
+				fmac_dev_ctx->tx_done_tasklet);
+#else
 		status = wifi_nrf_fmac_tx_done_event_process(fmac_dev_ctx,
-							     umac_head);
+								umac_head);
+#endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 		break;
 	case NRF_WIFI_CMD_CARRIER_ON:
 		status = wifi_nrf_fmac_if_carr_state_event_proc(fmac_dev_ctx,

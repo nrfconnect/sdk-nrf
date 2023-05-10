@@ -381,6 +381,9 @@ struct tx_config {
 	 * Second four bits Spare desc2 queue number
 	 */
 	unsigned int spare_desc_queue_map;
+#ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
+	void *tx_done_tasklet_event_q;
+#endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 };
 
 
@@ -481,6 +484,9 @@ struct wifi_nrf_fmac_dev_ctx {
 	bool alpha2_valid;
 	unsigned char alpha2[3];
 	enum wifi_nrf_fmac_twt_state twt_sleep_status;
+#ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
+	void *tx_done_tasklet;
+#endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 };
 
 
