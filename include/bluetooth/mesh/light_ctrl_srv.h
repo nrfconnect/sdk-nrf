@@ -79,7 +79,7 @@ struct bt_mesh_light_ctrl_srv;
 
 /** @def BT_MESH_MODEL_LIGHT_CTRL_SRV
  *
- *  @brief Light Lightness model entry.
+ *  @brief Light Lightness Control Server model composition data entry.
  *
  *  @param[in] _srv Pointer to a @ref bt_mesh_light_ctrl_srv instance.
  */
