@@ -31,6 +31,8 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define FATAL_STR	"FATAL ERROR\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
 #define CRLF_STR	"\r\n"
+#define CR		'\r'
+#define LF		'\n'
 
 #define UART_RX_BUF_NUM			2
 #define UART_RX_LEN			256
@@ -778,71 +780,74 @@ static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
 	return 0;
 }
 
-static void format_final_result(char *buf)
+static char *strrstr(const char *str1, const char *str2)
+{
+	size_t len1;
+	size_t len2;
+
+	if (str1 == NULL || str2 == NULL) {
+		return NULL;
+	}
+
+	len1 = strlen(str1);
+	len2 = strlen(str2);
+
+	if (len2 > len1 || len1 == 0 || len2 == 0) {
+		return NULL;
+	}
+
+	for (int i = len1 - len2; i >= 0; i--) {
+		if (strncmp(str1 + i, str2, len2) == 0) {
+			return (char *)str1 + i;
+		}
+	}
+
+	return NULL;
+}
+
+
+static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 {
 	static const char ok_str[] = "OK\r\n";
 	static const char error_str[] = "ERROR\r\n";
 	static const char cme_error_str[] = "+CME ERROR:";
 	static const char cms_error_str[] = "+CMS ERROR:";
-	char *result = NULL, *temp;
+	char *result = NULL;
 
-	/* insert <CR><LF> before information response*/
-	memcpy((void *)buf, CRLF_STR, strlen(CRLF_STR));
+	/* insert <CR><LF> before information response */
+	buf[0] = CR;
+	buf[1] = LF;
 
-	/* find the last occurrence of final result string */
-	result = strstr(buf, ok_str);
-	if (result) {
-		temp = result;
-		while (temp != NULL) {
-			temp = strstr(result + strlen(ok_str), ok_str);
-			if (temp) {
-				result = temp;
-			}
-		}
-		goto final_result;
+	result = strrstr(buf, ok_str);
+	if (result == NULL) {
+		result = strrstr(buf, error_str);
 	}
-	result = strstr(buf, error_str);
-	if (result) {
-		temp = result;
-		while (temp != NULL) {
-			temp = strstr(result + strlen(error_str), error_str);
-			if (temp) {
-				result = temp;
-			}
-		}
-		goto final_result;
+
+	if (result == NULL) {
+		result = strrstr(buf, cme_error_str);
 	}
-	result = strstr(buf, cme_error_str);
-	if (result) {
-		temp = result;
-		while (temp != NULL) {
-			temp = strstr(result + strlen(cme_error_str), cme_error_str);
-			if (temp) {
-				result = temp;
-			}
-		}
-		goto final_result;
+
+	if (result == NULL) {
+		result = strrstr(buf, cms_error_str);
 	}
-	result = strstr(buf, cms_error_str);
-	if (result) {
-		temp = result;
-		while (temp != NULL) {
-			temp = strstr(result + strlen(cms_error_str), cms_error_str);
-			if (temp) {
-				result = temp;
-			}
-		}
-	}
+
 	if (result == NULL) {
 		LOG_WRN("Final result not found");
 		return;
 	}
 
-final_result:
 	/* insert CRLF before final result if there is information response before it */
 	if (result != buf + strlen(CRLF_STR)) {
-		memmove((void *)(result + strlen(CRLF_STR)), (void *)result, strlen(result) + 1);
-		memcpy((void *)result, CRLF_STR, strlen(CRLF_STR));
+		if (buf_len + strlen(CRLF_STR) < buf_max_len) {
+			memmove((void *)(result + strlen(CRLF_STR)), (void *)result,
+				strlen(result));
+			result[0] = CR;
+			result[1] = LF;
+			buf_len += strlen(CRLF_STR);
+			buf[buf_len] = '\0';
+		} else {
+			LOG_WRN("No room to insert CRLF");
+		}
 	}
 }
 
@@ -891,7 +896,7 @@ static void cmd_send(struct k_work *work)
 	 *  based on current return of API nrf_modem_at_cmd() and MFWv1.3.x
 	 */
 	if (strlen(at_buf) > strlen(CRLF_STR)) {
-		format_final_result(at_buf);
+		format_final_result(at_buf, strlen(at_buf), sizeof(at_buf));
 		(void)uart_send(at_buf, strlen(at_buf));
 	}
 
