@@ -24,6 +24,9 @@ struct k_work_q zep_wifi_bh_q;
 K_THREAD_STACK_DEFINE(irq_wq_stack_area, CONFIG_NRF700X_IRQ_WQ_STACK_SIZE);
 struct k_work_q zep_wifi_intr_q;
 
+K_THREAD_STACK_DEFINE(tx_done_wq_stack_area, CONFIG_NRF700X_TX_DONE_WQ_STACK_SIZE);
+struct k_work_q zep_wifi_tx_done_q;
+
 struct zep_work_item zep_work_item[CONFIG_NRF700X_WORKQ_MAX_ITEMS];
 
 int get_free_work_item_index(void)
@@ -46,7 +49,7 @@ void workqueue_callback(struct k_work *work)
 	item->callback(item->data);
 }
 
-struct zep_work_item *work_alloc(void)
+struct zep_work_item *work_alloc(enum zep_work_type type)
 {
 	int free_work_index = get_free_work_item_index();
 
@@ -56,6 +59,7 @@ struct zep_work_item *work_alloc(void)
 	}
 
 	zep_work_item[free_work_index].in_use = true;
+	zep_work_item[free_work_index].type = type;
 
 	return &zep_work_item[free_work_index];
 }
@@ -78,6 +82,14 @@ static int workqueue_init(void)
 						CONFIG_NRF700X_IRQ_WQ_PRIORITY,
 						NULL);
 
+	k_work_queue_init(&zep_wifi_tx_done_q);
+
+	k_work_queue_start(&zep_wifi_tx_done_q,
+						tx_done_wq_stack_area,
+						K_THREAD_STACK_SIZEOF(tx_done_wq_stack_area),
+						CONFIG_NRF700X_TX_DONE_WQ_PRIORITY,
+						NULL);
+
 	return 0;
 }
 
@@ -92,7 +104,12 @@ void work_init(struct zep_work_item *item, void (*callback)(unsigned long),
 
 void work_schedule(struct zep_work_item *item)
 {
-	k_work_submit_to_queue(&zep_wifi_bh_q, &item->work);
+	if (item->type == ZEP_WORK_TYPE_IRQ)
+		k_work_submit_to_queue(&zep_wifi_intr_q, &item->work);
+	else if (item->type == ZEP_WORK_TYPE_BH)
+		k_work_submit_to_queue(&zep_wifi_bh_q, &item->work);
+	else if (item->type == ZEP_WORK_TYPE_TX_DONE)
+		k_work_submit_to_queue(&zep_wifi_tx_done_q, &item->work);
 }
 
 void work_kill(struct zep_work_item *item)

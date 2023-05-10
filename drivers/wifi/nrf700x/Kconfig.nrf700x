@@ -152,12 +152,20 @@ config NRF700X_BH_WQ_PRIORITY
 	int "Priority of the workqueue for handling bottom half"
 	default 0
 
+config NRF700X_TX_DONE_WQ_PRIORITY
+	int "Priority of the workqueue for handling TX done"
+	default 0
+
 config NRF700X_IRQ_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling IRQs"
 	default 2048
 
 config NRF700X_BH_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling bottom half"
+	default 2048
+
+config NRF700X_TX_DONE_WQ_STACK_SIZE
+	int "Stack size of the workqueue for handling TX done"
 	default 2048
 
 if NRF_WIFI_LOW_POWER
