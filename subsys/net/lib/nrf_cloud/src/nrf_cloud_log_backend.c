@@ -23,14 +23,7 @@
 
 LOG_MODULE_DECLARE(nrf_cloud_log, CONFIG_NRF_CLOUD_LOG_LOG_LEVEL);
 
-#define JSON_FMT1 "{\"b64\":\""
-#define JSON_FMT2 "\"}"
-
-#if defined(CONFIG_NRF_CLOUD_LOG_DICT_JSON)
-#define RING_BUF_SIZE (((CONFIG_NRF_CLOUD_LOG_RING_BUF_SIZE * 3) / 4) - 10)
-#else
 #define RING_BUF_SIZE CONFIG_NRF_CLOUD_LOG_RING_BUF_SIZE
-#endif
 
 #define LOG_OUTPUT_RETRIES 5
 #define LOG_OUTPUT_RETRY_DELAY_MS 50
@@ -365,33 +358,6 @@ static int send_ring_buffer(void)
 	if (!output.data.len) {
 		goto cleanup;
 	}
-
-	if ((log_format_current == LOG_OUTPUT_DICT) &&
-	    IS_ENABLED(CONFIG_NRF_CLOUD_LOG_DICT_JSON)) {
-		/* Convert to base64 and wrap in JSON */
-		size_t olen;
-		size_t buflen;
-
-		/* Determine buffer size needed -- olen will include 1 byte for null terminator */
-		(void)base64_encode(NULL, 0, &olen, output.data.ptr, output.data.len);
-		buflen = strlen(JSON_FMT1) + olen + strlen(JSON_FMT2);
-
-		base64_buf = k_calloc(buflen, 1);
-		if (base64_buf == NULL) {
-			err = -ENOMEM;
-			goto cleanup;
-		}
-
-		memcpy(base64_buf, JSON_FMT1, strlen(JSON_FMT1));
-		err = base64_encode(&base64_buf[strlen(JSON_FMT1)], olen, &olen,
-				    output.data.ptr, output.data.len);
-		if (err) {
-			goto cleanup;
-		}
-		memcpy(&base64_buf[strlen(JSON_FMT1) + olen], JSON_FMT2, strlen(JSON_FMT2));
-		output.data.ptr = base64_buf;
-		output.data.len = buflen - 1;
-	} /* Else send ring buffer contents as is -- JSON or raw binary. */
 
 	uint8_t *p = (uint8_t *)output.data.ptr;
 

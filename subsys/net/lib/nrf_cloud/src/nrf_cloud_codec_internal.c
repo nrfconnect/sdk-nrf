@@ -52,6 +52,7 @@ static const char *const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_AIR_QUAL] = NRF_CLOUD_JSON_APPID_VAL_AIR_QUAL,
 	[NRF_CLOUD_LTE_LINK_RSRP] = NRF_CLOUD_JSON_APPID_VAL_RSRP,
 	[NRF_CLOUD_LOG] = NRF_CLOUD_JSON_APPID_VAL_LOG,
+	[NRF_CLOUD_DICTIONARY_LOG] = NRF_CLOUD_JSON_APPID_VAL_DICTIONARY_LOG,
 	[NRF_CLOUD_DEVICE_INFO] = NRF_CLOUD_JSON_APPID_VAL_DEVICE,
 	[NRF_CLOUD_SENSOR_LIGHT] = NRF_CLOUD_JSON_APPID_VAL_LIGHT,
 };
@@ -1061,9 +1062,14 @@ static int nrf_cloud_encode_service_info_ui(const struct nrf_cloud_svc_info_ui *
 				cJSON_CreateString(sensor_type_str[NRF_CLOUD_LTE_LINK_RSRP]));
 			++item_cnt;
 		}
-		if (ui->logs) {
+		if (ui->log) {
 			cJSON_AddItemToArray(array,
 				cJSON_CreateString(sensor_type_str[NRF_CLOUD_LOG]));
+			++item_cnt;
+		}
+		if (ui->dictionary_log) {
+			cJSON_AddItemToArray(array,
+				cJSON_CreateString(sensor_type_str[NRF_CLOUD_DICTIONARY_LOG]));
 			++item_cnt;
 		}
 
