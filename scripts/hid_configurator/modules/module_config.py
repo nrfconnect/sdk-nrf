@@ -53,6 +53,10 @@ BLE_BOND_OPTIONS = {
     'peer_search':            ConfigOption(None, 'peer_search', 'Trigger peer search', None),
 }
 
+FACTORY_RESET_OPTIONS = {
+    'fast_pair':              ConfigOption(None, 'fast_pair', 'Trigger Fast Pair factory reset', None),
+}
+
 MODULE_CONFIG = {
     'motion/paw3212' : {
         'options' : MOTION_PAW3212_OPTIONS
@@ -69,5 +73,9 @@ MODULE_CONFIG = {
 
     'ble_bond' : {
         'options' : BLE_BOND_OPTIONS
-    }
+    },
+
+    'factory_reset' : {
+        'options' : FACTORY_RESET_OPTIONS
+    },
 }
