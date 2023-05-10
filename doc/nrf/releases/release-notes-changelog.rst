@@ -156,6 +156,11 @@ nRF Desktop
 
 |no_changes_yet_note|
 
+Thingy:53: Matter weather station
+---------------------------------
+
+* Added support for the nRF7002 Wi-Fi expansion board.
+
 Samples
 =======
 

@@ -75,6 +75,8 @@ See :ref:`thingy53_app_update` for more detailed information about updating firm
 Building Wi-Fi applications on Thingy:53
 ----------------------------------------
 
+.. building_wi_fi_applications_on_thingy_53_start
+
 You can use the Nordic Thingy:53 with the nRF7002 Expansion Board (EB) for Wi-Fi development.
 Connect the nRF7002 EB to the **P9** connector on Thingy:53.
 
@@ -84,6 +86,8 @@ For example, you can use the following command when building on the command line
 .. code-block::
 
    west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb
+
+.. building_wi_fi_applications_on_thingy_53_end
 
 For the compatible Wi-Fi samples in the |NCS|, see the :ref:`wifi_samples` section.
 

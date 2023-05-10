@@ -9,7 +9,7 @@ Thingy:53: Matter weather station
 
 This Matter weather station application demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a weather station device using the Nordic Thingy:53.
 Such a device lets you remotely gather different kinds of data using the device sensors, such as temperature, air pressure, and relative humidity.
-The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
+The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread or 802.11ax (Wi-Fi 6) network.
 You can use this application as a reference for creating your own application.
 
 .. note::
@@ -23,18 +23,27 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
-To commission the weather station device and control it remotely through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
+To commission the weather station device and control it remotely through a Thread or Wi-Fi network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on your setup.
 The recommended way of getting measurement values is using the mobile Matter controller application that comes with a graphical interface, performs measurements automatically and visualizes the data.
 
 To program a Thingy:53 device where the preprogrammed MCUboot bootloader has been erased, you need the external J-Link programmer.
 If you have an nRF5340 DK that has an onboard J-Link programmer, you can also use it for this purpose.
 
-If the Thingy:53 is programmed with Thingy:53-compatible sample or application, you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth LE.
+If the Thingy:53 is programmed with Thingy:53-compatible sample or application, you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth® Low Energy (LE).
 See :ref:`thingy53_app_guide` for details.
 
 .. note::
     |matter_gn_required_note|
+
+IPv6 network support
+====================
+
+The development kits for this sample offer the following IPv6 network support for Matter:
+
+* Matter over Thread is supported for ``thingy53_nrf5340_cpuapp``.
+* Matter over Wi-Fi is supported for ``thingy53_nrf5340_cpuapp`` with the ``nrf7002`` expansion board attached, for the :file:`prj_release.conf` build type only.
+  See `Building for the nRF7002 Wi-Fi expansion board`_ for more information.
 
 Overview
 ********
@@ -48,7 +57,7 @@ The library describes data measurements within the proper clusters that correspo
 The application supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
 
 * Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
-* Simple Management Protocol (SMP) over Bluetooth® LE.
+* Simple Management Protocol (SMP) over Bluetooth LE.
   In this case, the DFU can be done either using a smartphone application or a PC command line tool.
   Note that this protocol is not part of the Matter specification.
 
@@ -60,13 +69,13 @@ For information about how to upgrade the device firmware using a PC or a mobile,
 Remote testing in a network
 ===========================
 
-By default, the Matter accessory device has Thread disabled, and it must be paired with the Matter controller over Bluetooth LE to get configuration from it if you want to use the device within a Thread network.
-To do this, the device must be made discoverable over Bluetooth LE.
+By default, the Matter accessory device has no IPv6 network configured.
+You must pair it with the Matter controller over Bluetooth LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
 
 The Bluetooth LE advertising starts automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
 If the Bluetooth LE advertising times out, you can re-enable it manually using **Button (SW3)**.
 
-Additionally, the controller must get the onboarding information from the Matter accessory device and provision the device into the network.
+Additionally, the controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.
 
 .. _matter_weather_station_app_build_types:
@@ -89,8 +98,14 @@ If a board has other configuration files, for example associated with partition 
 Before you start testing the application, you can select one of the build types supported by Matter weather station application, depending on the building method.
 This application supports the following build types:
 
-* ``debug`` - Debug version of the application. You can use this version to enable additional features for verifying the application behavior, such as logs or command-line shell.
-* ``release`` - Release version of the application. You can use this version to enable only the necessary application functionalities to optimize its performance.
+* ``debug`` - Debug version of the application.
+  You can use this version to enable additional features for verifying the application behavior, such as logs or command-line shell.
+* ``release`` - Release version of the application.
+  You can use this version to enable only the necessary application functionalities to optimize its performance.
+
+  .. note::
+      Currently, this application supports only the ``release`` build type when `Building for the nRF7002 Wi-Fi expansion board`_.
+
 * ``factory_data`` - Release version of the application that has factory data storage enabled.
   You can use this version to enable reading factory data necessary from a separate partition in the device non-volatile memory.
   This way, you can read information such as product information, keys, and certificates, useful for example for Matter certification.
@@ -100,6 +115,8 @@ This application supports the following build types:
 .. note::
     `Selecting a build type`_ is optional.
     The ``debug`` build type is used by default if no build type is explicitly selected.
+
+
 
 User interface
 **************
@@ -111,7 +128,8 @@ LED (LD1):
     * Short flash on (green color, 50 ms on/950 ms off) - The device is in the unprovisioned (unpaired) state and is not advertising over Bluetooth LE.
     * Short flash on (blue color, 50 ms on/950 ms off) - The device is in the unprovisioned (unpaired) state, but is advertising over Bluetooth LE.
     * Rapid even flashing (blue color, 100 ms on/100 ms off) - The device is in the unprovisioned state and a commissioning application is connected through Bluetooth LE.
-    * Short flash on (purple color, 50 ms on/950 ms off) - The device is fully provisioned and has Thread enabled.
+    * Short flash on (purple color, 50 ms on/950 ms off) - The device is fully provisioned and has Thread enabled or has Wi-Fi connection established.
+    * Rapid even flashing after commissioning (blue color, 100 ms on/100 ms off) - The device lost connection to Wi-Fi network (only in Wi-Fi mode).
 
     .. note::
        Thingy:53 allows to control RGB components of its single LED independently.
@@ -181,6 +199,29 @@ The ``build_thingy53_nrf5340_cpuapp`` parameter specifies the output directory f
 
       File not found: ./ncs/nrf/applications/matter_weather_station/configuration/thingy53_nrf5340_cpuapp/prj_shell.conf
 
+Building for the nRF7002 Wi-Fi expansion board
+==============================================
+
+To build this application to work with the nRF7002 Wi-Fi expansion board:
+
+1. Connect the nRF7002 EB to the **P9** connector on Thingy:53.
+#. Build the application:
+
+   .. tabs::
+
+      .. group-tab:: nRF Connect for VS Code
+
+         To build the application in the nRF Connect for VS Code IDE for Thingy:53 with the nRF7002 EB attached, add the expansion board and the build type variables in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
+         For example: ``-- -DSHIELD=nrf7002eb -DCONF_FILE=prj_release.conf``.
+
+      .. group-tab:: Command line
+
+         To build the sample from the command line for Thingy:53 with the nRF7002 EB attached, use the following command within the sample directory:
+
+         .. code-block:: console
+
+            west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb -DCONF_FILE=prj_release.conf
+
 Generating factory data
 =======================
 
@@ -218,14 +259,19 @@ After programming the application, perform the following steps to test the Matte
 1. Turn on the Thingy:53.
    The application starts in an unprovisioned state.
    The advertising over Bluetooth LE and DFU start automatically, and **LED (LD1)** starts blinking blue (short flash on).
-#. Commission the device into a Thread network by following the steps in :ref:`ug_matter_gs_testing_thread_separate_otbr_linux_macos`.
+#. Commission the device to the network of your choice:
+
+   * For Thread network, follow the steps in :ref:`ug_matter_gs_testing_thread_separate_otbr_linux_macos`.
+
+   * For Wi-Fi network, follow the steps in :ref:`ug_matter_gs_testing_wifi_pc`.
+
    During the commissioning procedure, **LED (LD1)** of the Matter device starts blinking blue (rapid even flashing).
    This indicates that the device is connected over Bluetooth LE, but does not yet have full Thread network connectivity.
 
    .. note::
         To start commissioning, the controller must get the `Onboarding information`_ from the Matter accessory device.
 
-   Once the commissioning is complete and the device has full Thread connectivity, **LED (LD1)** starts blinking purple (short flash on).
+   Once the commissioning is complete and the device has full Thread or Wi-Fi connectivity, **LED (LD1)** starts blinking purple (short flash on).
 #. Request to read sensor measurements in CHIP Tool for Linux or macOS:
 
    a. Choose one of the following measurement type and invoke the command using CHIP Tool for Linux or macOS (Fill the **Device ID** argument with the same as was used to commissioning):
