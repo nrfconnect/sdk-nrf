@@ -394,7 +394,7 @@ static int do_socketopt_get(int option)
 		if (ret) {
 			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
 		} else {
-			rsp_send("\r\n#XSOCKETOPT: \"%d sec\"\r\n", (int)tmo.tv_sec);
+			rsp_send("\r\n#XSOCKETOPT: \"%ld sec\"\r\n", (long)tmo.tv_sec);
 		}
 	} break;
 
