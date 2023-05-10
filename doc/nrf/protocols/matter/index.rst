@@ -22,7 +22,7 @@ The |NCS| allows you to develop applications with different versions of Matter, 
 +--------------------------+-----------------------------------------------------+------------------------+
 | nRF Connect SDK version  | Matter specification version                        | `Matter SDK version`_  |
 +==========================+=====================================================+========================+
-| v2.3.99 (latest)         | :ref:`1.1.0 <ug_matter_overview_dev_model_support>` | 1.1.0.1                |
+| |release|                | :ref:`1.1.0 <ug_matter_overview_dev_model_support>` | 1.1.0.1                |
 +--------------------------+-----------------------------------------------------+------------------------+
 | v2.3.0                   | :ref:`1.0.0 <ug_matter_overview_dev_model_support>` | 1.0.0.2                |
 +--------------------------+                                                     +------------------------+
