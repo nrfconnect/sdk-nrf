@@ -380,7 +380,10 @@ static void do_location_card_enable(void)
 
 	struct nrf_cloud_svc_info_ui ui = {
 		.gnss = 1,
-		.logs = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND)
+		.log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
+		       IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT),
+		.dictionary_log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
+				  IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY)
 	};
 	struct nrf_cloud_svc_info svc_inf = {
 		.fota = NULL,

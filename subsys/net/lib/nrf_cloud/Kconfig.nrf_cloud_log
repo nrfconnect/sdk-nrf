@@ -20,7 +20,6 @@ menuconfig NRF_CLOUD_LOG_BACKEND
 	depends on NRF_CLOUD_MQTT || NRF_CLOUD_REST
 	depends on LOG_MODE_DEFERRED
 	depends on !LOG_MODE_MINIMAL
-	select BASE64 if LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY
 	select RING_BUFFER
 	help
 	  If set, send Zephyr logging messages to the cloud. Log level
@@ -42,15 +41,6 @@ config NRF_CLOUD_LOG_RING_BUF_SIZE
 	help
 	  Set size in bytes for buffer for log output system to combine log
 	  messages before it uploads to nRF Cloud.
-
-config NRF_CLOUD_LOG_DICT_JSON
-	bool "Convert binary dictionary data to JSON and base64"
-	default y if LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY
-	depends on BASE64
-	help
-	  Convert dictionary log output to base64, then wrap it in simple JSON
-	  so binary-incapable network transfer can occur, at the price of a
-	  slight increase in payload size.
 
 backend = NRF_CLOUD
 backend-str = nrf_cloud

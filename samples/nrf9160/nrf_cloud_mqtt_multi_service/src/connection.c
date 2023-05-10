@@ -453,7 +453,10 @@ static void update_shadow(void)
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gnss = location_tracking_enabled(),
 		.temperature = IS_ENABLED(CONFIG_TEMP_TRACKING),
-		.logs = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND)
+		.log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
+		       IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT),
+		.dictionary_log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
+				  IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY)
 	};
 	struct nrf_cloud_svc_info service_info = {
 		.fota = &fota_info,
