@@ -568,6 +568,49 @@ struct nrf_wifi_sys_params {
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 } __NRF_WIFI_PKD;
 
+
+/**
+ * struct nrf_wifi_tx_pow_ctrl_params - Parameters which control TX power.
+ * @ant_gain_2g: Antenna gain for 2.4 GHz band.
+ * @ant_gain_5g_band1 : Antenna gain for 5 GHz band (5150 MHz - 5350 MHz).
+ * ant_gain_5g_band2 : Antenna gain for 5 GHz band (5470 MHz - 5730 MHz).
+ * ant_gain_5g_band3 : Antenna gain for 5 GHz band (5730 MHz - 5895 MHz).
+ * @band_edge_2g_lo: Transmit power backoff (in dB) for lower edge of 2.4 GHz frequency band.
+ * @band_edge_2g_hi: Transmit power backoff (in dB) for upper edge of 2.4 GHz frequency band.
+ * @band_edge_5g_unii_1_lo: Transmit power backoff (in dB) for lower edge of UNII-1 frequency band.
+ * @band_edge_5g_unii_1_hi: Transmit power backoff (in dB) for upper edge of UNII-1 frequency band.
+ * @band_edge_5g_unii_2a_lo: Transmit power backoff (in dB) for lower edge of UNII-2A frequency band
+ * @band_edge_5g_unii_2a_hi: Transmit power backoff (in dB) for upper edge of UNII-2A frequency band
+ * @band_edge_5g_unii_2c_lo: Transmit power backoff (in dB) for lower edge of UNII-2C frequency band
+ * @band_edge_5g_unii_2c_hi: Transmit power backoff (in dB) for upper edge of UNII-2C frequency band
+ * @band_edge_5g_unii_3_lo: Transmit power backoff (in dB) for lower edge of UNII-3 frequency band.
+ * @band_edge_5g_unii_3_hi: Transmit power backoff (in dB) for upper edge of UNII-3 frequency band.
+ * @band_edge_5g_unii_4_lo: Transmit power backoff (in dB) for lower edge of UNII-4 frequency band.
+ * @band_edge_5g_unii_4_hi: Transmit power backoff (in dB) for upper edge of UNII-4 frequency band.
+ *
+ * System parameters provided for controlling TX power.
+ */
+
+struct nrf_wifi_tx_pwr_ctrl_params {
+	unsigned char ant_gain_2g;
+	unsigned char ant_gain_5g_band1;
+	unsigned char ant_gain_5g_band2;
+	unsigned char ant_gain_5g_band3;
+	unsigned char band_edge_2g_lo;
+	unsigned char band_edge_2g_hi;
+	unsigned char band_edge_5g_unii_1_lo;
+	unsigned char band_edge_5g_unii_1_hi;
+	unsigned char band_edge_5g_unii_2a_lo;
+	unsigned char band_edge_5g_unii_2a_hi;
+	unsigned char band_edge_5g_unii_2c_lo;
+	unsigned char band_edge_5g_unii_2c_hi;
+	unsigned char band_edge_5g_unii_3_lo;
+	unsigned char band_edge_5g_unii_3_hi;
+	unsigned char band_edge_5g_unii_4_lo;
+	unsigned char band_edge_5g_unii_4_hi;
+} __NRF_WIFI_PKD;
+
+
 /**
  * struct nrf_wifi_cmd_sys_init - Initialize UMAC
  * @sys_head: umac header, see &nrf_wifi_sys_head
@@ -589,10 +632,8 @@ struct nrf_wifi_cmd_sys_init {
 	struct temp_vbat_config temp_vbat_config_params;
 	unsigned char tcp_ip_checksum_offload;
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN];
-	unsigned char ant_gain_2g;
-	unsigned char ant_gain_5g_band1;
-	unsigned char ant_gain_5g_band2;
-	unsigned char ant_gain_5g_band3;
+	unsigned char single_band_only;
+	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 } __NRF_WIFI_PKD;
 
 /**
