@@ -224,7 +224,7 @@ struct wifi_nrf_osal_ops {
 	void *(*nbuf_data_push)(void *nbuf, unsigned int size);
 	void *(*nbuf_data_pull)(void *nbuf, unsigned int size);
 
-	void *(*tasklet_alloc)(void);
+	void *(*tasklet_alloc)(int type);
 	void (*tasklet_free)(void *tasklet);
 	void (*tasklet_init)(void *tasklet,
 			     void (*callback)(unsigned long),

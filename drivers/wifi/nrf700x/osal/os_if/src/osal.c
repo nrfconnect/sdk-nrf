@@ -401,9 +401,9 @@ void *wifi_nrf_osal_nbuf_data_pull(struct wifi_nrf_osal_priv *opriv,
 }
 
 
-void *wifi_nrf_osal_tasklet_alloc(struct wifi_nrf_osal_priv *opriv)
+void *wifi_nrf_osal_tasklet_alloc(struct wifi_nrf_osal_priv *opriv, int type)
 {
-	return opriv->ops->tasklet_alloc();
+	return opriv->ops->tasklet_alloc(type);
 }
 
 

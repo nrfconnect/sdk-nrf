@@ -12,15 +12,24 @@
 #ifndef __WORK_H__
 #define __WORK_H__
 
+
 extern struct k_work_q zep_wifi_bh_q;
+
+enum zep_work_type {
+	ZEP_WORK_TYPE_BH,
+	ZEP_WORK_TYPE_IRQ,
+	ZEP_WORK_TYPE_TX_DONE,
+};
+
 struct zep_work_item {
 	bool in_use;
 	struct k_work work;
 	unsigned long data;
 	void (*callback)(unsigned long data);
+	enum zep_work_type type;
 };
 
-struct zep_work_item *work_alloc(void);
+struct zep_work_item *work_alloc(enum zep_work_type);
 
 void work_init(struct zep_work_item *work, void (*callback)(unsigned long callbk_data),
 		  unsigned long data);

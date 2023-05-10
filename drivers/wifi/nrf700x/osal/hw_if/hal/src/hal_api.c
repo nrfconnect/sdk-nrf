@@ -1121,7 +1121,8 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 	wifi_nrf_osal_spinlock_init(hpriv->opriv,
 				    hal_dev_ctx->lock_rx);
 
-	hal_dev_ctx->rx_tasklet = wifi_nrf_osal_tasklet_alloc(hpriv->opriv);
+	hal_dev_ctx->rx_tasklet = wifi_nrf_osal_tasklet_alloc(hpriv->opriv,
+		WIFI_NRF_TASKLET_TYPE_BH);
 
 	if (!hal_dev_ctx->rx_tasklet) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
