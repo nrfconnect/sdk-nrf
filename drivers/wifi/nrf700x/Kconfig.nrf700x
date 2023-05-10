@@ -59,8 +59,8 @@ config NRF700X_WORKQ_STACK_SIZE
 	default 4096
 
 config NRF700X_WORKQ_MAX_ITEMS
-	int "Maximum work items for workqueue"
-	default 10
+	int "Maximum work items for all workqueues"
+	default 100
 
 config NRF700X_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
