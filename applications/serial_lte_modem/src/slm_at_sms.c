@@ -33,7 +33,7 @@ static void sms_callback(struct sms_data *const data, void *context)
 	static uint8_t total_msgs;
 	static uint8_t count;
 	static char messages[MAX_CONCATENATED_MESSAGE - 1][SMS_MAX_PAYLOAD_LEN_CHARS + 1];
-	char rsp_buf[MAX_CONCATENATED_MESSAGE * SMS_MAX_PAYLOAD_LEN_CHARS + 64];
+	char rsp_buf[MAX_CONCATENATED_MESSAGE * SMS_MAX_PAYLOAD_LEN_CHARS + 64] = {0};
 
 	ARG_UNUSED(context);
 
