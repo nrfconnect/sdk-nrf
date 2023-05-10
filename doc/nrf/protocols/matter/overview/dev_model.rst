@@ -39,7 +39,7 @@ The following table lists Matter versions supported in the |NCS|, with a brief o
 +-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
 | Matter version  | Overview of changes                                                                                                            | Release date        |
 +=================+================================================================================================================================+=====================+
-| 1.1.0           | - Improved Intermittently Connected Device (ICD) support: more :ref:`ug_matter_configuring_optional_persistent_subscriptions`. | Unreleased          |
+| 1.1.0           | - Improved Intermittently Connected Device (ICD) support: more :ref:`ug_matter_configuring_optional_persistent_subscriptions`. | May 18, 2023        |
 |                 | - Enhancements and bug fixes for Matter Specification, Certification Test Plan, and the Matter SDK.                            |                     |
 +-----------------+--------------------------------------------------------------------------------------------------------------------------------+---------------------+
 | 1.0.0           | Initial version of the Matter specification.                                                                                   | November 2, 2022    |

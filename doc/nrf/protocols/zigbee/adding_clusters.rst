@@ -3,6 +3,11 @@
 Adding ZCL clusters to application
 ##################################
 
+.. note::
+   The contents of this user guide are inaccurate and will be updated in one of the upcoming releases.
+   The information about the update will be posted in the release notes.
+   For the time being, do not use this guide.
+
 .. contents::
    :local:
    :depth: 2
