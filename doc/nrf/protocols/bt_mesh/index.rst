@@ -30,6 +30,7 @@ Make also sure to check the official `Bluetooth mesh glossary`_.
    architecture
    configuring
    model_config_app
+   ble_mesh_dfu_samples
    fota
    node_removal
    vendor_model/index

@@ -1,0 +1,9 @@
+sample:
+  name: Bluetooth Mesh DFU Target
+tests:
+  sample.bluetooth.mesh_dfu_target:
+    build_only: true
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840
+    tags: bluetooth ci_build

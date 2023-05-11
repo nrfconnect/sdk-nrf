@@ -79,6 +79,7 @@ Bluetooth® LE
 Bluetooth mesh
 --------------
 
+* Updated the protocol user guide with the information about :ref:`ble_mesh_dfu_samples`.
 * Updated the default configuration of advertising sets used by the Bluetooth mesh subsystem to improve performance of the Relay, GATT and Friend features.
   This configuration is specified in the :file:`ncs/nrf/subsys/bluetooth/mesh/Kconfig` file.
 
@@ -279,6 +280,7 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
+* Added samples :ref:`ble_mesh_dfu_target` and :ref:`ble_mesh_dfu_distributor` that can be used for evaluation of the Bluetooth mesh DFU specification and subsystem.
 * Added :ref:`bluetooth_mesh_light_dim` sample that demonstrates how to set up a light dimmer and scene selector application.
 * Updated the configuration of advertising sets in all samples to match the new default values.
   See `Bluetooth mesh`_ for more information.
