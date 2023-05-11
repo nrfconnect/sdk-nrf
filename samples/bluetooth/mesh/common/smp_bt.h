@@ -4,13 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/**
- * @file
- * @brief SMP DFU support
- */
+#ifndef SMP_BT_H__
+#define SMP_BT_H__
 
-#ifndef SMP_DFU_H__
-#define SMP_DFU_H__
+#include <zephyr/bluetooth/mesh.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,4 +19,4 @@ int smp_dfu_init(void);
 }
 #endif
 
-#endif /* SMP_DFU_H__ */
+#endif /* SMP_BT_H__ */

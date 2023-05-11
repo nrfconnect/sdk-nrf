@@ -12,7 +12,7 @@
 #include <bluetooth/mesh/dk_prov.h>
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"
-#include "smp_dfu.h"
+#include "smp_bt.h"
 
 static void bt_ready(int err)
 {

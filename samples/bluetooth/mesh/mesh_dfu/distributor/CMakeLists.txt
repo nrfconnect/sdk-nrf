@@ -6,8 +6,13 @@ project(mesh_dfu_distributor)
 
 set(common_dir ${CMAKE_CURRENT_SOURCE_DIR}/../common/src)
 
-include_directories(${common_dir})
+include_directories(
+	${common_dir}
+	${NRF_DIR}/samples/bluetooth/mesh/common
+)
 
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources}
-			${common_dir}/dfu_target.c)
+	${NRF_DIR}/samples/bluetooth/mesh/common/smp_bt.c
+	${common_dir}/dfu_target.c
+)

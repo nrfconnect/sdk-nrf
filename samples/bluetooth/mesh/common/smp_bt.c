@@ -6,7 +6,7 @@
 
 #include <zephyr/init.h>
 
-/* .. include_startingpoint_light_smp_dfu_rst_1 */
+/* .. include_startingpoint_mesh_smp_dfu_rst_1 */
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 
@@ -138,11 +138,11 @@ int smp_service_adv_init(void)
 
 	return err;
 }
-/* .. include_endpoint_light_smp_dfu_rst_1 */
+/* .. include_endpoint_mesh_smp_dfu_rst_1 */
 
 int smp_dfu_init(void)
 {
-/* .. include_startingpoint_light_smp_dfu_rst_2 */
+/* .. include_startingpoint_mesh_smp_dfu_rst_2 */
 	bt_conn_cb_register(&conn_callbacks);
 
 	/**
@@ -151,5 +151,5 @@ int smp_dfu_init(void)
 	 * the SMP service.
 	 */
 	return smp_service_adv_init();
-/* .. include_endpoint_light_smp_dfu_rst_2 */
+/* .. include_endpoint_mesh_smp_dfu_rst_2 */
 }
