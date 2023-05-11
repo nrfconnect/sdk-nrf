@@ -1,16 +1,16 @@
 # This is the Jenkins ci variant of the .github/labler.yaml
 
 "CI-run-twister":
- - any:
-    - "!.github/**/*"
-    - "!.vscode/**/*"
-    - "!doc/**/*"
-    - "!test-manifests/**/*"
-    - "!CODEOWNERS"
-    - "!LICENSE"
-    - "!**/*.rst"
-    - "!VERSION"
-    - "!ncs_version.h.in"
+  - any:
+      - "!.github/**/*"
+      - "!.vscode/**/*"
+      - "!doc/**/*"
+      - "!test-manifests/**/*"
+      - "!CODEOWNERS"
+      - "!LICENSE"
+      - "!**/*.rst"
+      - "!VERSION"
+      - "!ncs_version.h.in"
 
 "CI-tool-test-linux":
   - "scripts/requirements*.txt"
@@ -159,14 +159,14 @@
 
 "CI-ble-test":
   - any:
-    - "subsys/bluetooth/**/*"
-    - "!subsys/bluetooth/mesh/**/*"
+      - "subsys/bluetooth/**/*"
+      - "!subsys/bluetooth/mesh/**/*"
   - any:
-    - "include/bluetooth/**/*"
-    - "!include/bluetooth/mesh/**/*"
+      - "include/bluetooth/**/*"
+      - "!include/bluetooth/mesh/**/*"
   - any:
-    - "samples/bluetooth/**/*"
-    - "!samples/bluetooth/mesh/**/*"
+      - "samples/bluetooth/**/*"
+      - "!samples/bluetooth/mesh/**/*"
   - "subsys/nrf_rpc/**/*"
   - "subsys/mpsl/**/*"
   - "drivers/mpsl/**/*"
@@ -191,11 +191,11 @@
   - "modules/nrfxlib/nrf_802154/**/*"
   - "applications/zigbee_weather_station/**/*"
   - any:
-    - "subsys/bluetooth/**/*"
-    - "!subsys/bluetooth/mesh/**/*"
+      - "subsys/bluetooth/**/*"
+      - "!subsys/bluetooth/mesh/**/*"
   - any:
-    - "include/bluetooth/**/*"
-    - "!include/bluetooth/mesh/**/*"
+      - "include/bluetooth/**/*"
+      - "!include/bluetooth/mesh/**/*"
 
 "CI-thingy91-test":
   - "ext/cjson/**/*"
@@ -297,11 +297,11 @@
   - "subsys/nrf_rpc/**/*"
   - "subsys/partition_manager/**/*"
   - any:
-    - "subsys/bluetooth/**/*"
-    - "!subsys/bluetooth/mesh/**/*"
+      - "subsys/bluetooth/**/*"
+      - "!subsys/bluetooth/mesh/**/*"
   - any:
-    - "include/bluetooth/**/*"
-    - "!include/bluetooth/mesh/**/*"
+      - "include/bluetooth/**/*"
+      - "!include/bluetooth/mesh/**/*"
 
 "CI-thread-test":
   - "samples/openthread/**/*"
@@ -358,11 +358,11 @@
   - "subsys/partition_manager/**/*"
   - "modules/mcuboot/**/*"
   - any:
-    - "include/bluetooth/**/*"
-    - "!include/bluetooth/mesh/**/*"
+      - "include/bluetooth/**/*"
+      - "!include/bluetooth/mesh/**/*"
   - any:
-    - "subsys/bluetooth/**/*"
-    - "!subsys/bluetooth/mesh/**/*"
+      - "subsys/bluetooth/**/*"
+      - "!subsys/bluetooth/mesh/**/*"
 
 "CI-esb-test":
   - "include/esb.h"
