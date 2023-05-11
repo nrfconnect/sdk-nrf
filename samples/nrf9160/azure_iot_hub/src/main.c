@@ -532,6 +532,14 @@ int main(void)
 {
 	int err;
 
+#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Modem library initialization failed, error: %d", err);
+		return 0;
+	}
+#endif
+
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
 	char device_id[128];
 
@@ -559,14 +567,6 @@ int main(void)
 
 	LOG_INF("Azure IoT Hub sample started");
 	LOG_INF("Device ID: %s", device_id);
-
-#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
-	err = nrf_modem_lib_init();
-	if (err) {
-		LOG_ERR("Modem library initialization failed, error: %d", err);
-		return 0;
-	}
-#endif
 
 #if IS_ENABLED(CONFIG_DK_LIBRARY)
 	dk_leds_init();
