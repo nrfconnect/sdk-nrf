@@ -27,8 +27,14 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
 #define WIFI_SHELL_MODULE "wifi"
 
-#define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_SCAN_RESULT |		\
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS_ONLY
+#define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_RAW_SCAN_RESULT |                \
 				NET_EVENT_WIFI_SCAN_DONE)
+#else
+#define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_SCAN_RESULT |		\
+				NET_EVENT_WIFI_SCAN_DONE |		\
+				NET_EVENT_WIFI_RAW_SCAN_RESULT)
+#endif
 
 static uint32_t scan_result;
 
@@ -56,6 +62,80 @@ static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 						sizeof(mac_string_buf)) : ""));
 }
 
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+static int wifi_freq_to_channel(int frequency)
+{
+	int channel = 0;
+
+	if (frequency == 2484) { /* channel 14 */
+		channel = 14;
+	} else if ((frequency <= 2472) && (frequency >= 2412)) {
+		channel = ((frequency - 2412) / 5) + 1;
+	} else if ((frequency <= 5895) && (frequency >= 5180)) {
+		channel = ((frequency - 5000) / 5);
+	} else {
+		channel = frequency;
+	}
+
+	return channel;
+}
+
+static enum wifi_frequency_bands wifi_frequency_to_band(int frequency)
+{
+	enum wifi_frequency_bands band = WIFI_FREQ_BAND_2_4_GHZ;
+
+	if ((frequency  >= 2401) && (frequency <= 2495)) {
+		band = WIFI_FREQ_BAND_2_4_GHZ;
+	} else if ((frequency  >= 5170) && (frequency <= 5895)) {
+		band = WIFI_FREQ_BAND_5_GHZ;
+	}
+
+	return band;
+}
+
+static void handle_raw_scan_result(struct net_mgmt_event_callback *cb)
+{
+	struct wifi_raw_scan_result *raw =
+		(struct wifi_raw_scan_result *)cb->info;
+	int channel;
+	int band;
+	int rssi;
+	int i = 0;
+	int raw_scan_size = raw->frame_length;
+	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
+
+	scan_result++;
+
+	if (scan_result == 1U) {
+		printk("%-4s | %-13s | %-4s |  %-15s | %-15s | %-32s\n",
+		      "Num", "Channel (Band)", "RSSI", "BSSID", "Frame length", "Frame Body");
+	}
+
+	rssi = raw->rssi;
+	channel = wifi_freq_to_channel(raw->frequency);
+	band = wifi_frequency_to_band(raw->frequency);
+
+	printk("%-4d | %-4u (%-6s) | %-4d | %s |      %-4d        ",
+	      scan_result, channel,
+	      wifi_band_txt(band),
+	      rssi,
+	      net_sprint_ll_addr_buf(raw->data + 10, WIFI_MAC_ADDR_LEN, mac_string_buf,
+				     sizeof(mac_string_buf)), raw_scan_size);
+
+	if (raw->frame_length > CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH) {
+		raw_scan_size = CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH;
+	}
+
+	if (raw_scan_size) {
+		for (i = 0; i < 32; i++) {
+			printk("%02X ", *(raw->data + i));
+		}
+	}
+
+	printk("\n");
+}
+#endif
+
 static void handle_wifi_scan_done(struct net_mgmt_event_callback *cb)
 {
 	const struct wifi_status *status =
@@ -64,7 +144,7 @@ static void handle_wifi_scan_done(struct net_mgmt_event_callback *cb)
 	if (status->status) {
 		LOG_ERR("Scan request failed (%d)", status->status);
 	} else {
-		LOG_INF("Scan request done");
+		printk("Scan request done\n");
 	}
 
 	scan_result = 0U;
@@ -77,6 +157,11 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	case NET_EVENT_WIFI_SCAN_RESULT:
 		handle_wifi_scan_result(cb);
 		break;
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+	case NET_EVENT_WIFI_RAW_SCAN_RESULT:
+		handle_raw_scan_result(cb);
+		break;
+#endif
 	case NET_EVENT_WIFI_SCAN_DONE:
 		handle_wifi_scan_done(cb);
 		break;
@@ -95,7 +180,7 @@ static int wifi_scan(void)
 		return -ENOEXEC;
 	}
 
-	LOG_INF("Scan requested");
+	printk("Scan requested\n");
 
 	return 0;
 }
@@ -116,7 +201,7 @@ int main(void)
 			       NRF_CLOCK_HFCLK_DIV_1);
 #endif
 	k_sleep(K_SECONDS(1));
-	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock / MHZ(1));
+	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock / MHZ(1));
 
 	wifi_scan();
 
