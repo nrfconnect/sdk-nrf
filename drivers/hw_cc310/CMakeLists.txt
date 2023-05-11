@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-if(CONFIG_HW_CC3XX OR CONFIG_HW_CC3XX_INTERRUPT)
+if(CONFIG_HW_CC3XX)
   zephyr_library()
   zephyr_library_sources(hw_cc310.c)
 
