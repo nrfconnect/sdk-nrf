@@ -97,8 +97,8 @@ Kconfig*                                  @tejlmand
 /lib/edge_impulse/                        @pdunaj
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
-/lib/location/                            @trantanen @hiltunent @jhirsi @tokangas
-/lib/lte_link_control/                    @jtguggedal @tokangas @simensrostad
+/lib/location/                            @trantanen @jhirsi @tokangas
+/lib/lte_link_control/                    @jtguggedal @tokangas @simensrostad @trantanen
 /lib/modem_antenna/                       @tokangas
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
@@ -155,12 +155,13 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
-/samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
+/samples/nrf9160/location/                @trantanen @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
-/samples/nrf9160/modem_shell/             @trantanen @hiltunent @jhirsi @tokangas
+/samples/nrf9160/modem_shell/             @trantanen @jhirsi @tokangas
 /samples/nrf9160/nidd/                    @stig-bjorlykke
 /samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/nrf9160/modem_trace_flash/       @gregersrygg @balaji-nordic
+/samples/nrf9160/sms/                     @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
@@ -246,9 +247,9 @@ Kconfig*                                  @tejlmand
 /tests/lib/gcf_sms/                       @eivindj-nordic
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/hw_id/                         @maxd-nordic
-/tests/lib/location/                      @trantanen @hiltunent @jhirsi @tokangas
-/tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad
-/tests/lib/lte_lc_api/                    @maxd-nordic
+/tests/lib/location/                      @trantanen @jhirsi @tokangas
+/tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad @trantanen
+/tests/lib/lte_lc_api/                    @maxd-nordic @trantanen @tokangas
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/modem_info/                    @maxd-nordic
 /tests/lib/qos/                           @simensrostad
