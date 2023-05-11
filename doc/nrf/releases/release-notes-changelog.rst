@@ -53,7 +53,7 @@ RF Front-End Modules
 Build system
 ------------
 
-|no_changes_yet_note|
+* When using :kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE` with relative paths, the relative path is now located at the application configuration directory instead of the application source directory (these are the same if the application configuration directory is not set).
 
 Working with nRF52 Series
 =========================
