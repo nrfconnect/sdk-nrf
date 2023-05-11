@@ -50,6 +50,11 @@ def header_prepare(in_file, out_file, out_wrap_file):
         r'__syscall\s+',
         re.M | re.S)
     content = syscall_decl_pattern.sub("", content)
+    
+    # remove DT_FOREACH_STATUS_OKAY_NODE
+    # specific to device.h mocking but necessary for now
+    dt_foreach_pattern = re.compile(r"DT_FOREACH_STATUS_OKAY_NODE.*", re.M)
+    content = dt_foreach_pattern.sub(r"", content)
 
     # For now it handles extern function declaration but maybe extended later
     # if other cases are found.
