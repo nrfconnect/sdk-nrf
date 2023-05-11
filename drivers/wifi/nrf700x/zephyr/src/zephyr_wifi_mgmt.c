@@ -161,6 +161,17 @@ out:
 	return status;
 }
 
+static inline enum wifi_mfp_options drv_to_wifi_mgmt_mfp(unsigned char mfp_flag)
+{
+	if (!mfp_flag)
+		return WIFI_MFP_DISABLE;
+	if (mfp_flag & NRF_WIFI_MFP_REQUIRED)
+		return WIFI_MFP_REQUIRED;
+	if (mfp_flag & NRF_WIFI_MFP_CAPABLE)
+		return WIFI_MFP_OPTIONAL;
+
+	return WIFI_MFP_UNKNOWN;
+}
 static inline enum wifi_security_type drv_to_wifi_mgmt(int drv_security_type)
 {
 	switch (drv_security_type) {
@@ -218,6 +229,8 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 		res.channel = r->nwk_channel;
 
 		res.security = drv_to_wifi_mgmt(r->security_type);
+
+		res.mfp = drv_to_wifi_mgmt_mfp(r->mfp_flag);
 
 		memcpy(res.ssid,
 		       r->ssid.nrf_wifi_ssid,
