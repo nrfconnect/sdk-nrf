@@ -2878,6 +2878,9 @@ struct nrf_wifi_umac_event_new_scan_results {
 #define NRF_WIFI_802_11AC (1 << 4)
 #define NRF_WIFI_802_11AX (1 << 5)
 
+#define NRF_WIFI_MFP_REQUIRED (1 << 0)
+#define NRF_WIFI_MFP_CAPABLE  (1 << 1)
+
 struct umac_display_results {
 	struct nrf_wifi_ssid ssid;
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
@@ -2889,7 +2892,7 @@ struct umac_display_results {
 	unsigned short capability;
 	struct nrf_wifi_signal signal;
 	unsigned char twt_support;
-	unsigned char reserved2;
+	unsigned char mfp_flag;
 	unsigned char reserved3;
 	unsigned char reserved4;
 } __NRF_WIFI_PKD;
