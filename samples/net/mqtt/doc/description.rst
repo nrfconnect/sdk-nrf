@@ -187,11 +187,12 @@ The sample output showing IPv6, following the same instructions but for a differ
 .. code-block:: console
 
       *** Booting Zephyr OS build v3.2.99-ncs2-34-gf8f113382356 ***
-      [00:00:00.492,218] <dbg> mqtt_helper: mqtt_helper_poll_loop: Waiting for connection_poll_sem
-      [00:00:00.500,518] <inf> network: Connecting to LTE...
-      [00:00:02.212,677] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_UNINIT --> MQTT_STATE_DISCONNECTED
-      [00:00:04.702,178] <inf> network: PDN connection activated
-      [00:00:09.703,033] <dbg> mqtt_helper: broker_init: Resolving IP address for test.mosquitto.org
+      [00:00:00.286,254] <inf> network: Bringing network interface up
+      [00:00:00.286,621] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_UNINIT --> MQTT_STATE_DISCONNECTED
+      [00:00:00.310,028] <dbg> mqtt_helper: mqtt_helper_poll_loop: Waiting for connection_poll_sem
+      [00:00:01.979,553] <inf> network: Connecting...
+      [00:00:04.224,426] <inf> network: IP Up
+      [00:00:09.233,612] <dbg> mqtt_helper: broker_init: Resolving IP address for test.mosquitto.org
       [00:00:10.541,839] <dbg> mqtt_helper: broker_init: IPv6 Address found 2001:41d0:1:925e::1 (AF_INET6)
       [00:00:10.541,900] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_DISCONNECTED --> MQTT_STATE_TRANSPORT_CONNECTING
       [00:00:13.747,406] <dbg> mqtt_helper: mqtt_state_set: State transition: MQTT_STATE_TRANSPORT_CONNECTING --> MQTT_STATE_TRANSPORT_CONNECTED
@@ -290,6 +291,7 @@ It uses the following libraries and secure firmware component for nRF9160 DK and
 * :ref:`lte_lc_readme`
 * :ref:`nrfxlib:nrf_modem`
 * :ref:`Trusted Firmware-M <ug_tfm>`
+* :ref:`net_if_interface`
 
 It uses the following libraries for nRF7002 DK builds:
 
