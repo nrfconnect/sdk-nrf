@@ -1164,7 +1164,7 @@
 
 .. _`Baltimore CyberTrust Root certificate`: https://cacerts.digicert.com/BaltimoreCyberTrustRoot.crt.pem
 
-.. _`DigiCert Global Root G2`: https://cacerts.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1.crt.pem
+.. _`DigiCert Global Root G2`: https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem
 
 .. _`SKY66112-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66112-11
 .. _`SKY66114-11 page`: https://www.skyworksinc.com/en/Products/Front-end-Modules/SKY66114-11
