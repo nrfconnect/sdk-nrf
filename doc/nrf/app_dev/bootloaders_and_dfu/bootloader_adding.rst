@@ -86,7 +86,7 @@ This option only accepts the private key of an ECDSA key pair, as build system s
 
 The file argument must be a string and is specified in one of the following ways:
 
-* The relative path to the file from the application directory.
+* The relative path to the file from the application configuration directory (if this is not set, then it will be the same as the application source directory).
 
   * If the :file:`prj.conf` file is external to the directory, the key's location is determined relative to the application directory, not to the configuration file.
 
