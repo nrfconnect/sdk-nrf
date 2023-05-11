@@ -1,0 +1,18 @@
+sample:
+  description: This app provides an example of EC J-PAKE
+  name: EC J-PAKE example
+tests:
+  sample.ecjpake:
+    tags: introduction psa
+    platform_allow: >
+      nrf5340dk_nrf5340_cpuapp
+      nrf9160dk_nrf9160 nrf52840dk_nrf52840
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf9160dk_nrf9160
+      - nrf52840dk_nrf52840
