@@ -507,7 +507,7 @@ int handle_at_dfu_size(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		rsp_send("\r\n#XDFUSIZE: %d,%d,%d\r\n", file_image_size, file_download_size,
+		rsp_send("\r\n#XDFUSIZE: %u,%u,%u\r\n", file_image_size, file_download_size,
 			 crc_32);
 		err = 0;
 		break;
