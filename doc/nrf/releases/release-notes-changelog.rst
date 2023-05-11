@@ -206,6 +206,11 @@ Bluetooth mesh samples
 
   * Fixed an issue with the sample not fitting into RAM size on the nrf52dk_nrf52832 board.
 
+Cryptography samples
+--------------------
+
+* Added the :ref:`crypto_ecjpake` sample demonstrating usage of EC J-PAKE.
+
 nRF9160 samples
 ---------------
 
