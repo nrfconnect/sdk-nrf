@@ -462,6 +462,7 @@
 "CI-wifi":
   - "drivers/wifi/**/*"
   - "samples/wifi/**/*"
+  - "modules/lib/hostap/**/*"
 
 "CI-cloud-test":
   - "include/net/nrf_cloud*"
