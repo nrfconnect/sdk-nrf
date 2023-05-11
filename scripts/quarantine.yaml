@@ -125,3 +125,9 @@
   platforms:
     - all
   comment: "ANT samples fail to build; need to change main()'s signature to int main(void)"
+
+- scenarios:
+    - sample.bluetooth.mesh.sensor_client
+  platforms:
+    - nrf52dk_nrf52832
+  comment: "Sensor Client sample doesn't fit to RAM"
