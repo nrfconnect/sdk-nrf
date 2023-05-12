@@ -117,6 +117,7 @@ config MOSH_PRINT_BUFFER_SIZE
 
 config MOSH_COMMON_WORKQUEUE_STACK_SIZE
 	int "Common workqueue stack size"
+	default 7168 if MOSH_CLOUD_REST || MOSH_CLOUD_MQTT
 	default 6144 if MOSH_STARTUP_CMDS && MOSH_CURL
 	default 4096
 
