@@ -1,6 +1,6 @@
 name: Sonarcloud analysis (native_posix only)
 on:
-  pull_request:
+  pull_request_target:
 
 jobs:
   build:
