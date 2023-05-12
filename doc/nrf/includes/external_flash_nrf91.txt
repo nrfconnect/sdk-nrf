@@ -1,7 +1,9 @@
 External flash
 ==============
 
-To use the external flash memory on the nRF9160 DK v0.14.0 or later versions, you must program the board controller by completing the following steps:
+To use the external flash memory on the nRF9160 DK v0.14.0 or later versions, the board controller firmware must be of version v2.0.1.
+This is the factory firmware version.
+If you need to program the board controller firmware again, complete the following steps:
 
 #. Download the nRF9160 DK board controller firmware from the `nRF9160 DK downloads`_ page.
 #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF52**.
