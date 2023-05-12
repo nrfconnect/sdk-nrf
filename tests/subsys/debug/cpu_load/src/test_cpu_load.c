@@ -36,7 +36,8 @@ ZTEST(cpu_load, test_cpu_load)
 
 #ifdef DPPI_PRESENT
 	static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(1);
-	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG;
+	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer.p_reg);
+	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 	uint8_t ch;
 	uint32_t evt = nrf_power_event_address_get(NRF_POWER,
 						NRF_POWER_EVENT_SLEEPENTER);
