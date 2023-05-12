@@ -1,0 +1,33 @@
+# Copyright (c) 2022 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    This is a representation of the nPM1300 PMIC device
+
+compatible: "nordic,npm1300-eng-b"
+
+include: i2c-device.yaml
+
+properties:
+  host-int-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      Host GPIO pin used as interrupt input.
+  pmic-int-pin:
+    type: int
+    required: true
+    description: |
+      nPM GPIO pin number used as interrupt output.
+  host-pof-gpios:
+    type: phandle-array
+    description: |
+      Host GPIO pin used as power loss warning input.
+  pmic-pof-pin:
+    type: int
+    description: |
+      nPM GPIO pin number used as power loss warning output.
+  pmic-reset-pin:
+    type: int
+    description: |
+      nPM GPIO pin number used as watchdog warning reset output.
