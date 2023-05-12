@@ -8,271 +8,10 @@ rsource "Kconfig.defaults"
 
 menu "Bluetooth"
 
-config BLE_ACL_CONN_INTERVAL
-	int "Bluetooth LE ACL Connection Interval (x*1.25ms)"
-	default 32
-	help
-	  When the LE Audio Controller Subsystem for nRF53 is used, this
-	  interval should be a multiple of the ISO interval and maximum 4x
-	  larger than the lowest interval.
+rsource "bt_management/Kconfig"
 
-config BLE_ACL_SLAVE_LATENCY
-	int "Bluetooth LE Slave Latency"
-	default 0
-
-config BLE_ACL_SUP_TIMEOUT
-	int "Bluetooth LE Supervision Timeout (x*10ms)"
-	default 100
-
-config BLE_ACL_PER_ADV_INT_MIN
-	hex "Minimum periodic advertising interval"
-	range 0x0018 0x03C0
-	default 0x0078
-	help
-	  Minimum hexadecimal value for the interval of periodic advertisements.
-	  For ms, multiply the provided value by 1.25.
-
-config BLE_ACL_PER_ADV_INT_MAX
-	hex "Maximum periodic advertising interval"
-	range 0x0018 0x03C0
-	default 0x00A0
-	help
-	  Maximum hexadecimal value for the interval of periodic advertisements.
-	  For ms, multiply the provided value by 1.25.
-
-config BLE_ACL_EXT_ADV_INT_MIN
-	hex "Minimum extended advertising interval"
-	range 0x0030 0x0780
-	default 0x30 if TRANSPORT_BIS
-	default 0x00A0
-	help
-	  Minimum hexadecimal value for the interval of extended advertisements.
-	  When the LE Audio Controller Subsystem for nRF53 is used, this interval
-	  should be a multiple of the ISO interval and maximum 4x larger than the
-	  lowest interval if using BIS.
-	  For ms, multiply the provided value by 0.625.
-
-config BLE_ACL_EXT_ADV_INT_MAX
-	hex "Maximum extended advertising interval"
-	range 0x0030 0x0780
-	default 0x40 if TRANSPORT_BIS
-	default 0x00F0
-	help
-	  Maximum hexadecimal value for the interval of extended advertisements.
-	  When the LE Audio Controller Subsystem for nRF53 is used, this interval
-	  should be a multiple of the ISO interval and maximum 4x larger than the
-	  lowest interval if using BIS.
-	  For ms, multiply the provided value by 0.625.
-
-choice NRF5340_AUDIO_GATEWAY_SCAN_MODE
-	prompt "Select Scan Mode to find Unicast Headset"
-	default SCAN_MODE_PASSIVE
-
-config SCAN_MODE_PASSIVE
-	bool "Passive Scan"
-
-config SCAN_MODE_ACTIVE
-	bool "Active Scan"
-
-endchoice
-
-config BLE_LE_POWER_CONTROL_ENABLED
-	bool "Enable Bluetooth LE power control feature"
-	default n
-	help
-	  The Bluetooth LE power control feature makes devices be able to change TX power
-	  dynamically and automatically during connection, which provides effective
-	  communication.
-
-choice	BLE_CONN_TX_POWER
-	prompt "Default TX power for Bluetooth LE connections"
-	default BLE_CONN_TX_POWER_0DBM
-	help
-	  Set the default TX power for Bluetooth LE connections.
-
-config BLE_CONN_TX_POWER_0DBM
-	bool "0dBm"
-
-config BLE_CONN_TX_POWER_NEG_1DBM
-	bool "-1dBm"
-
-config BLE_CONN_TX_POWER_NEG_2DBM
-	bool "-2dBm"
-
-config BLE_CONN_TX_POWER_NEG_3DBM
-	bool "-3dBm"
-
-config BLE_CONN_TX_POWER_NEG_4DBM
-	bool "-4dBm"
-
-config BLE_CONN_TX_POWER_NEG_5DBM
-	bool "-5dBm"
-
-config BLE_CONN_TX_POWER_NEG_6DBM
-	bool "-6dBm"
-
-config BLE_CONN_TX_POWER_NEG_7DBM
-	bool "-7dBm"
-
-config BLE_CONN_TX_POWER_NEG_8DBM
-	bool "-8dBm"
-
-config BLE_CONN_TX_POWER_NEG_12DBM
-	bool "-12dBm"
-
-config BLE_CONN_TX_POWER_NEG_16DBM
-	bool "-14dBm"
-
-config BLE_CONN_TX_POWER_NEG_20DBM
-	bool "-20dBm"
-
-config BLE_CONN_TX_POWER_NEG_40DBM
-	bool "-40dBm"
-
-endchoice
-
-config BLE_CONN_TX_POWER_DBM
-	int
-	default 0 if BLE_CONN_TX_POWER_0DBM
-	default -1 if BLE_CONN_TX_POWER_NEG_1DBM
-	default -2 if BLE_CONN_TX_POWER_NEG_2DBM
-	default -3 if BLE_CONN_TX_POWER_NEG_3DBM
-	default -4 if BLE_CONN_TX_POWER_NEG_4DBM
-	default -5 if BLE_CONN_TX_POWER_NEG_5DBM
-	default -6 if BLE_CONN_TX_POWER_NEG_6DBM
-	default -7 if BLE_CONN_TX_POWER_NEG_7DBM
-	default -8 if BLE_CONN_TX_POWER_NEG_8DBM
-	default -12 if BLE_CONN_TX_POWER_NEG_12DBM
-	default -16 if BLE_CONN_TX_POWER_NEG_16DBM
-	default -20 if BLE_CONN_TX_POWER_NEG_20DBM
-	default -40 if BLE_CONN_TX_POWER_NEG_40DBM
-
-choice	BLE_ADV_TX_POWER
-	prompt "Default TX power for Bluetooth LE advertising"
-	default BLE_ADV_TX_POWER_0DBM
-	help
-	  Set the default TX power for Bluetooth LE advertising.
-
-config BLE_ADV_TX_POWER_0DBM
-	bool "0dBm"
-
-config BLE_ADV_TX_POWER_NEG_1DBM
-	bool "-1dBm"
-
-config BLE_ADV_TX_POWER_NEG_2DBM
-	bool "-2dBm"
-
-config BLE_ADV_TX_POWER_NEG_3DBM
-	bool "-3dBm"
-
-config BLE_ADV_TX_POWER_NEG_4DBM
-	bool "-4dBm"
-
-config BLE_ADV_TX_POWER_NEG_5DBM
-	bool "-5dBm"
-
-config BLE_ADV_TX_POWER_NEG_6DBM
-	bool "-6dBm"
-
-config BLE_ADV_TX_POWER_NEG_7DBM
-	bool "-7dBm"
-
-config BLE_ADV_TX_POWER_NEG_8DBM
-	bool "-8dBm"
-
-config BLE_ADV_TX_POWER_NEG_12DBM
-	bool "-12dBm"
-
-config BLE_ADV_TX_POWER_NEG_16DBM
-	bool "-14dBm"
-
-config BLE_ADV_TX_POWER_NEG_20DBM
-	bool "-20dBm"
-
-config BLE_ADV_TX_POWER_NEG_40DBM
-	bool "-40dBm"
-
-endchoice
-
-config BLE_ADV_TX_POWER_DBM
-	int
-	default 0 if BLE_ADV_TX_POWER_0DBM
-	default -1 if BLE_ADV_TX_POWER_NEG_1DBM
-	default -2 if BLE_ADV_TX_POWER_NEG_2DBM
-	default -3 if BLE_ADV_TX_POWER_NEG_3DBM
-	default -4 if BLE_ADV_TX_POWER_NEG_4DBM
-	default -5 if BLE_ADV_TX_POWER_NEG_5DBM
-	default -6 if BLE_ADV_TX_POWER_NEG_6DBM
-	default -7 if BLE_ADV_TX_POWER_NEG_7DBM
-	default -8 if BLE_ADV_TX_POWER_NEG_8DBM
-	default -12 if BLE_ADV_TX_POWER_NEG_12DBM
-	default -16 if BLE_ADV_TX_POWER_NEG_16DBM
-	default -20 if BLE_ADV_TX_POWER_NEG_20DBM
-	default -40 if BLE_ADV_TX_POWER_NEG_40DBM
-
-config NRF_21540_ACTIVE
-	def_bool $(shields_list_contains,nrf21540ek_fwd)
-	select EXPERIMENTAL
-	help
-	  The front end module can help boost the TX power as high as 20 dBm.
-	  Usually set through buildprog, if not set there, remember to add
-	  -DSHIELD=nrf21540ek_fwd when building app core to include the shield
-	  overlay file.
-
-choice NRF_21540_MAIN_TX_POWER
-	prompt "TX power for the secondary channels"
-	default NRF_21540_MAIN_TX_POWER_10DBM
-	help
-	  Set the TX power for the secondary Bluetooth LE channels (0-36).
-	  Please check your local regulations for max output power. If the
-	  nRF21540 is used with the nRF5340 Audio DK the actual output power
-	  will be about 25% lower due to the VDD being 1.8V instead of the
-	  nominal 3.3V.
-
-config NRF_21540_MAIN_TX_POWER_0DBM
-	bool "0dBm"
-
-config NRF_21540_MAIN_TX_POWER_10DBM
-	bool "+10dBm"
-
-config NRF_21540_MAIN_TX_POWER_20DBM
-	bool "+20dBm"
-
-endchoice
-
-config NRF_21540_MAIN_DBM
-	int
-	default 0 if NRF_21540_MAIN_TX_POWER_0DBM
-	default 10 if NRF_21540_MAIN_TX_POWER_10DBM
-	default 20 if NRF_21540_MAIN_TX_POWER_20DBM
-
-choice NRF_21540_PRI_ADV_TX_POWER
-	prompt "TX power for the primary advertising channels"
-	default NRF_21540_PRI_ADV_TX_POWER_10DBM
-	help
-	  Set the TX power for the primary Bluetooth LE advertising channels
-	  (37, 38, 39).
-	  Please check your local regulations for max output power. If the
-	  nRF21540 is used with the nRF5340 Audio DK the actual output power
-	  will be about 25% lower due to the VDD being 1.8V instead of the
-	  nominal 3.3V.
-
-config NRF_21540_PRI_ADV_TX_POWER_0DBM
-	bool "0dBm"
-
-config NRF_21540_PRI_ADV_TX_POWER_10DBM
-	bool "+10dBm"
-
-config NRF_21540_PRI_ADV_TX_POWER_20DBM
-	bool "+20dBm"
-
-endchoice
-
-config NRF_21540_PRI_ADV_DBM
-	int
-	default 0 if NRF_21540_PRI_ADV_TX_POWER_0DBM
-	default 10 if NRF_21540_PRI_ADV_TX_POWER_10DBM
-	default 20 if NRF_21540_PRI_ADV_TX_POWER_20DBM
+#----------------------------------------------------------------------------#
+menu "Bluetooth audio"
 
 config CODEC_CAP_COUNT_MAX
 	int "Max storage of codec capabilities"
@@ -356,22 +95,22 @@ endchoice
 
 config BT_AUDIO_BROADCAST_NAME
 	string "Broadcast name"
-	depends on TRANSPORT_BIS
 	default "NRF5340_BROADCASTER"
+	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
 	help
 	  Name of the broadcast; not the same as BT_DEVICE_NAME.
 
 config BT_AUDIO_BROADCAST_NAME_ALT
 	string "Alternative broadcast name"
-	depends on TRANSPORT_BIS
 	default "NRF5340_BROADCASTER_ALT"
+	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
 	help
 	  Alternative name of the broadcast.
 
 config BT_AUDIO_USE_BROADCAST_NAME_ALT
 	bool "Use the alternative broadcast name"
 	default n
-	depends on TRANSPORT_BIS
+	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
 	help
 	  Use the alternative broadcast name.
 
@@ -387,8 +126,9 @@ config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
 	depends on TRANSPORT_BIS
 	default "NRF5340_BIS_DEMO"
 	help
-	  Key to use for encryption and decryption; max 16 characters.
-	  Encryption keys larger than 16 characters will be cropped to 16.
+	  Key to use for encryption and decryption; max BT_ISO_BROADCAST_CODE_SIZE characters.
+	  Encryption keys larger than BT_ISO_BROADCAST_CODE_SIZE characters will be cropped to
+	  BT_ISO_BROADCAST_CODE_SIZE.
 
 config BT_AUDIO_USE_BROADCAST_ID_RANDOM
 	bool "Use a random broadcast ID"
@@ -536,16 +276,16 @@ config BT_AUDIO_BITRATE_BROADCAST_SRC
 	  Bitrate for the broadcast source ISO stream.
 
 endmenu # QoS
+endmenu # Bluetooth audio
+
+rsource "bt_renderer/Kconfig"
+rsource "bt_content_control/Kconfig"
 
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
 module = BLE
 module-str = ble
-source "subsys/logging/Kconfig.template.log_config"
-
-module = AUDIO_SERVICES
-module-str = audio-services
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels

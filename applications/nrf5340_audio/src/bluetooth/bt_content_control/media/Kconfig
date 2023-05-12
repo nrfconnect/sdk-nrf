@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Media"
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_CONTENT_CTRL_MEDIA
+module-str = bt_content_ctrl_media
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log level
+endmenu # Media

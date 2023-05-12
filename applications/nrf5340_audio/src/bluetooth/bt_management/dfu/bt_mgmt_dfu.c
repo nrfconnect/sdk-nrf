@@ -6,7 +6,7 @@
 
 /* Override compiler definition to use size-bounded string copying and concatenation function */
 #define _BSD_SOURCE
-#include "dfu_entry.h"
+#include "bt_mgmt_dfu_internal.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -20,10 +20,10 @@
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(dfu, CONFIG_MODULE_DFU_ENTRY_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_mgmt_dfu, CONFIG_BT_MGMT_DFU_LOG_LEVEL);
 
 /* These defined name only used by DFU */
-#define DEVICE_NAME_DFU CONFIG_BT_DFU_DEVICE_NAME
+#define DEVICE_NAME_DFU	    CONFIG_BT_DFU_DEVICE_NAME
 #define DEVICE_NAME_DFU_LEN (sizeof(DEVICE_NAME_DFU) - 1)
 
 /* Advertising data for SMP_SVR UUID */
@@ -65,7 +65,7 @@ static struct bt_conn_cb dfu_conn_callbacks = {
 
 static void dfu_set_bt_name(void)
 {
-	char name[CONFIG_BT_DEVICE_NAME_MAX] = { 0 };
+	char name[CONFIG_BT_DEVICE_NAME_MAX] = {0};
 
 	strlcpy(name, CONFIG_BT_DEVICE_NAME, CONFIG_BT_DEVICE_NAME_MAX);
 	strlcat(name, "_", CONFIG_BT_DEVICE_NAME_MAX);
@@ -87,35 +87,16 @@ static void dfu_set_bt_name(void)
 	bt_set_name(name);
 }
 
-static void on_ble_core_ready_dfu_entry(void)
+void bt_mgmt_dfu_start(void)
 {
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		settings_load();
-	}
+	LOG_INF("Entering SMP server mode");
 
 	bt_conn_cb_register(&dfu_conn_callbacks);
 	adv_param = *BT_LE_ADV_CONN_NAME;
 	dfu_set_bt_name();
 	smp_adv();
-}
 
-void dfu_entry_check(ble_init_func ble_init)
-{
-	int ret;
-	bool pressed;
-
-	ret = button_pressed(BUTTON_4, &pressed);
-	if (ret) {
-		return;
-	}
-
-	if (pressed) {
-		LOG_INF("Enter SMP_SVR service only status");
-		ret = ble_init(on_ble_core_ready_dfu_entry);
-		ERR_CHK(ret);
-
-		while (1) {
-			k_sleep(K_MSEC(100));
-		}
+	while (1) {
+		k_sleep(K_MSEC(100));
 	}
 }

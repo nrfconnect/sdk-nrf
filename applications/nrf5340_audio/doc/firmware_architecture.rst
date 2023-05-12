@@ -134,6 +134,21 @@ Since the application architecture is uniform and the firmware code is shared, t
    Device Firmware Update (DFU) can only be enabled when :ref:`nrf53_audio_app_building_script`.
    See :ref:`nrf53_audio_app_configuration_configure_fota` for details.
 
+Communications between modules
+==============================
+
+Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are no dependencies between them. Each of the buses used by the application has their message structures described in :file:`nrf5340_audio_common.h`.
+
+The application uses the following buses:
+
+  * ``le_audio_chan`` - For handling LE Audio events from :file:`le_audio_cis_headset.c`, :file:`le_audio_bis_headset.c`, :file:`le_audio_cis_gateway.c`, or :file:`le_audio_bis_gateway.c`.
+  * ``button_chan`` - For handling button events from :file:`button_handler.c`.
+  * ``bt_mgmt_chan`` - For handling ACL events from :file:`bt_mmgmt.c`.
+  * ``volume_chan`` - For handling volume events from :file:`bt_rend.c`.
+  * ``cont_media_chan`` - For handling media events from :file:`content_ctrl.c`.
+
+The consumer functions for each of these buses are residing, for the most part, in :file:`streamctrl.c`. ``volume_chan`` is an exception, with its consumer residing directly in :file:`hw_codec.c`. The linking of producers and consumers is done in :file:`main.c` and will potentially be different between different user applications..
+
 .. _nrf53_audio_app_overview_architecture_usb:
 
 USB-based firmware for gateway

@@ -10,3 +10,12 @@ config BT_LL_ACS_NRF53
 	depends on (SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET)
 	help
 	  Use LE Audio Controller Subsystem Link Layer binary. Only for nRF53 NET core.
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = BLE_HCI_VSC
+module-str = ble-hci-vsc
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels

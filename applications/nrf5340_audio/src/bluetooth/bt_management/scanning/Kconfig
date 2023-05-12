@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.defaults"
+
+menu "Scanning"
+
+choice NRF5340_AUDIO_GATEWAY_SCAN_MODE
+	prompt "Select Scan Mode to find Unicast Headset"
+	default SCAN_MODE_PASSIVE
+
+config SCAN_MODE_PASSIVE
+	bool "Passive Scan"
+
+config SCAN_MODE_ACTIVE
+	bool "Active Scan"
+
+endchoice
+
+#----------------------------------------------------------------------------#
+menu "Connection"
+
+config BLE_ACL_CONN_INTERVAL
+	int "Bluetooth LE ACL Connection Interval (x*1.25ms)"
+	default 32
+	help
+	  When the LE Audio Controller Subsystem for nRF53 is used, this
+	  interval should be a multiple of the ISO interval and maximum 4x
+	  larger than the lowest interval.
+
+config BLE_ACL_SLAVE_LATENCY
+	int "Bluetooth LE Slave Latency"
+	default 0
+
+config BLE_ACL_SUP_TIMEOUT
+	int "Bluetooth LE Supervision Timeout (x*10ms)"
+	default 100
+
+endmenu # Connection
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_MGMT_SCAN
+module-str = bt-mgmt-scan
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log level
+endmenu # Scanning
