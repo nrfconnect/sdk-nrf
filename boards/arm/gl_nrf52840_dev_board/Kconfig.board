@@ -1,0 +1,3 @@
+config BOARD_GL_NRF52840_DEV_BOARD
+	bool "GL NRF52840 Dev Board"
+	depends on SOC_NRF52840_QIAA

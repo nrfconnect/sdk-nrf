@@ -1,0 +1,264 @@
+/*******************************************************************************
+ Copyright 2022 GL-iNet. https://www.gl-inet.com/
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ ******************************************************************************/
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include "gl_nrf52840_dev_board-pinctrl.dtsi"
+#include <dt-bindings/led/led.h>
+
+	
+/ {
+	model = "GL-iNet GL NRF52840 Dev Board";
+	compatible = "gl-inet,gl-nrf52840-dev-board";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+		zephyr,entropy = &rng;
+		zephyr,ieee802154 = &ieee802154;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led0: led_0 {
+			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+			label = "White LED";
+		};
+		led1: led_1 {
+			gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
+			label = "Green LED";
+		};
+
+		// led2: led_2 {
+		// 	gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+		// 	label = "Output gpio 0.15";
+		// };
+		// led3: led_3 {
+		// 	gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+		// 	label = "Output gpio 0.16";
+		// };
+		// led4: led_4 {
+		// 	gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+		// 	label = "Output gpio 0.17";
+		// };
+		// led5: led_5 {
+		// 	gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
+		// 	label = "Output gpio 0.20";
+		// };
+
+	};
+
+	glios{
+		compatible = "gpio-leds";
+		io0: io_0 {
+			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+			label = "Output gpio 0.15";
+		};
+		io1: io_1 {
+			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+			label = "Output gpio 0.16";
+		};
+		io2: io_2 {
+			gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+			label = "Output gpio 0.17";
+		};
+		io3: io_3 {
+			gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
+			label = "Output gpio 0.20";
+		};
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		button0: button_0 {
+			gpios = <&gpio0 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 0";
+		};
+		button1: button_1 {
+			gpios = <&gpio0 12 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 1";
+		};
+		button2: button_2 {
+			gpios = <&gpio0 22 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>;
+			label = "digital pyroelectric infrared sensor";
+		};
+		button3: button_3 {
+			gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "qdec key button";
+		};
+	};
+
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		led0 = &led0;
+		led1 = &led1;
+		io0 = &io0;
+		io1 = &io1;
+		io2 = &io2;
+		io3 = &io3;
+		sw0 = &button0;
+		sw1 = &button1;
+		sw2 = &button2;
+		sw3 = &button3;
+		bootloader-led0 = &led0;
+		led-strip = &led_strip;
+		mcuboot-button0 = &button0;
+		mcuboot-led0 = &led0;
+		watchdog0 = &wdt0;
+		qdec0 = &qdec;
+	};
+};
+
+&adc {
+	status = "disabled";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	status = "okay";
+	current-speed = <460800>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c0 {
+	compatible = "nordic,nrf-twi";
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	pinctrl-names = "default", "sleep";
+	shtcx@70 {
+		compatible = "sensirion,shtcx";
+		reg = <0x70>;
+		chip = "shtc3";
+		measure-mode = "normal";
+		clock-stretching;
+	};
+	hx3203@44 {
+		compatible = "tianyihexin,hx3203";
+		reg = <0x44>;
+	};
+	spl0601@77 {
+		compatible = "goertek,spl0601";
+		reg = <0x77>;
+	};
+};
+
+&spi1 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi1_default>;
+	pinctrl-1 = <&spi1_sleep>;
+	pinctrl-names = "default", "sleep";
+	led_strip: ws2812@0 {
+		compatible = "worldsemi,ws2812-spi";
+		// label = "WS2812";
+
+		/* SPI */
+		reg = <0>; /* ignored, but necessary for SPI bindings */
+		spi-max-frequency = <4000000>;
+
+		/* WS2812 */
+		chain-length = <2>; /* arbitrary; change at will */
+		color-mapping = <LED_COLOR_ID_GREEN
+					LED_COLOR_ID_RED
+					LED_COLOR_ID_BLUE>;
+		spi-one-frame = <0x70>;
+		spi-zero-frame = <0x40>;
+	};
+
+};
+
+&flash0 {
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x000000000 0x0000C000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 0x00067000>;
+		};
+		slot1_partition: partition@73000 {
+			label = "image-1";
+			reg = <0x00073000 0x00067000>;
+		};
+		scratch_partition: partition@da000 {
+			label = "image-scratch";
+			reg = <0x000da000 0x0001e000>;
+		};
+
+		/*
+		 * The flash starting at 0x000f8000 and ending at
+		 * 0x000fffff is reserved for use by the application.
+		 */
+
+		/*
+		 * Storage partition will be used by FCB/LittleFS/NVS
+		 * if enabled.
+		 */
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 0x00008000>;
+		};
+	};
+};
+
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+};
+
+&qdec {
+	compatible = "nordic,nrf-qdec";
+	status = "okay";
+	// a-pin = <35>; /* P1.03 */
+	// b-pin = <32>; /* P1.01 */
+	// enable-pin = <23> ;
+	// led-pin = <0xFFFFFFFF>;
+	led-pre = <0>;
+	steps = <60>; 
+	pinctrl-0 = <&qdec_default>;
+	pinctrl-1 = <&qdec_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&ieee802154 {
+	status = "okay";
+};

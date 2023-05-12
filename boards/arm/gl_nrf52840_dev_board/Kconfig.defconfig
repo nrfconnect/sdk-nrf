@@ -1,0 +1,9 @@
+if BOARD_GL_NRF52840_DEV_BOARD
+
+config BOARD
+	default "gl-nrf52840-dev-board"
+
+config BT_CTLR
+	default BT
+
+endif # BOARD_GL_NRF52840_DEV_BOARD

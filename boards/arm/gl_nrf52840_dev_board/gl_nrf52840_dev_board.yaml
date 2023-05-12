@@ -1,0 +1,20 @@
+identifier: gl_nrf52840_dev_board
+name: GL-NRF52840-Dev-Board
+type: mcu
+arch: arm
+ram: 256
+flash: 1024
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - adc
+  - ble
+  - gpio
+  - i2c
+  - spi
+  - usb_cdc
+  - usb_device
+  - watchdog
+  - netif:openthread
