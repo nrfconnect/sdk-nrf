@@ -1,0 +1,85 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.defaults"
+
+menu "Controller config"
+
+#----------------------------------------------------------------------------#
+menu "nRF21540"
+
+config NRF_21540_ACTIVE
+	def_bool $(shields_list_contains,nrf21540_ek_fwd)
+	select EXPERIMENTAL
+	help
+	  The front end module can help boost the TX power as high as 20 dBm.
+
+choice NRF_21540_MAIN_TX_POWER
+	prompt "TX power for the secondary channels"
+	default NRF_21540_MAIN_TX_POWER_10DBM
+	help
+	  Set the TX power for the secondary Bluetooth LE channels (0-36).
+	  Check your local regulations for max output power. If the
+	  nRF21540 is used with the nRF5340 Audio DK the actual output power
+	  will be about 25% lower due to the VDD being 1.8V instead of the
+	  nominal 3.3V.
+
+config NRF_21540_MAIN_TX_POWER_0DBM
+	bool "0dBm"
+
+config NRF_21540_MAIN_TX_POWER_10DBM
+	bool "+10dBm"
+
+config NRF_21540_MAIN_TX_POWER_20DBM
+	bool "+20dBm"
+
+endchoice
+
+config NRF_21540_MAIN_DBM
+	int
+	default 0 if NRF_21540_MAIN_TX_POWER_0DBM
+	default 10 if NRF_21540_MAIN_TX_POWER_10DBM
+	default 20 if NRF_21540_MAIN_TX_POWER_20DBM
+
+choice NRF_21540_PRI_ADV_TX_POWER
+	prompt "TX power for the primary advertising channels"
+	default NRF_21540_PRI_ADV_TX_POWER_10DBM
+	help
+	  Set the TX power for the primary Bluetooth LE advertising channels
+	  (37, 38, 39).
+	  Check your local regulations for max output power. If the
+	  nRF21540 is used with the nRF5340 Audio DK the actual output power
+	  will be about 25% lower due to the VDD being 1.8V instead of the
+	  nominal 3.3V.
+
+config NRF_21540_PRI_ADV_TX_POWER_0DBM
+	bool "0dBm"
+
+config NRF_21540_PRI_ADV_TX_POWER_10DBM
+	bool "+10dBm"
+
+config NRF_21540_PRI_ADV_TX_POWER_20DBM
+	bool "+20dBm"
+
+endchoice
+
+config NRF_21540_PRI_ADV_DBM
+	int
+	default 0 if NRF_21540_PRI_ADV_TX_POWER_0DBM
+	default 10 if NRF_21540_PRI_ADV_TX_POWER_10DBM
+	default 20 if NRF_21540_PRI_ADV_TX_POWER_20DBM
+
+endmenu # nRF21540
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_MGMT_CTLR_CFG
+module-str = bt-mgmt-ctlr-cfg
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log level
+endmenu # Controller config

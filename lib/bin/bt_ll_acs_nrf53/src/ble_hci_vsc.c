@@ -10,7 +10,7 @@
 #include <zephyr/bluetooth/hci.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(ble, CONFIG_BLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(ble_hci_vsc, CONFIG_BLE_HCI_VSC_LOG_LEVEL);
 
 int ble_hci_vsc_nrf21540_pins_set(struct ble_hci_vs_cp_nrf21540_pins *nrf21540_pins)
 {

@@ -32,7 +32,7 @@ void error_handler(unsigned int reason, const z_arch_esf_t *esf)
 	(void)gpio_pin_configure_dt(&center_led_b, GPIO_OUTPUT_INACTIVE);
 #endif /* defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) */
 	irq_lock();
-	while (true) {
+	while (1) {
 		__asm__ volatile("nop");
 	}
 #else

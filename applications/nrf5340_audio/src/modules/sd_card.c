@@ -62,7 +62,7 @@ int sd_card_list_files(char *path)
 			return ret;
 		}
 	}
-	while (true) {
+	while (1) {
 		ret = fs_readdir(&dirp, &entry);
 		if (ret) {
 			return ret;

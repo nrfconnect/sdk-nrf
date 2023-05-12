@@ -64,10 +64,6 @@ module = MODULE_BUTTON_HANDLER
 module-str = module-button-handler
 source "subsys/logging/Kconfig.template.log_config"
 
-module = MODULE_DFU_ENTRY
-module-str = module-dfu-entry
-source "subsys/logging/Kconfig.template.log_config"
-
 module = MODULE_HW_CODEC
 module-str = module-hw-codec
 source "subsys/logging/Kconfig.template.log_config"
@@ -102,6 +98,13 @@ config BUTTON_PUBLISH_THREAD_PRIO
 	  This is a preemptible thread.
 	  This thread will publish button events to zbus.
 
+config VOLUME_MSG_SUB_THREAD_PRIO
+	int "Priority for volume message subscribe thread"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will subscribe to volume events from zbus.
+
 endmenu # Thread priorities
 
 #----------------------------------------------------------------------------#
@@ -115,5 +118,17 @@ config BUTTON_PUBLISH_STACK_SIZE
 	int "Stack size for button publish thread"
 	default 300
 
+config VOLUME_MSG_SUB_STACK_SIZE
+	int "Stack size for volume message subscribe thread"
+	default 768
+
 endmenu # Stack sizes
+
+menu "Zbus"
+
+config VOLUME_MSG_SUB_QUEUE_SIZE
+	int "Queue size for volume message subscriber"
+	default 4
+
+endmenu # Zbus
 endmenu # Modules

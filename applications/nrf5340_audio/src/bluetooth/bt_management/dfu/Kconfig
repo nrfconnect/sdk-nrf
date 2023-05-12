@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "DFU"
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_MGMT_DFU
+module-str = bt-mgmt-dfu
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log level
+endmenu # DFU

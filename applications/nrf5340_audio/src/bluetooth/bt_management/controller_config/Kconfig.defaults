@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Bluetooth controller type
+if BT_LL_ACS_NRF53
+
+# Not supported on LE Audio Controller Subsystem for nRF53
+config BT_ATT_ENFORCE_FLOW
+	default n
+
+# Disable Zephyr HCI Vendor-Specific extensions
+config BT_HCI_VS_EXT
+	default n
+
+endif # BT_LL_ACS_NRF53

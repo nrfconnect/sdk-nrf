@@ -51,7 +51,7 @@ config ZBUS
 	default y
 
 config ZBUS_RUNTIME_OBSERVERS_POOL_SIZE
-	default 2
+	default 6
 
 config SENSOR
 	default y
@@ -143,4 +143,10 @@ config FS_FATFS_MAX_LFN
 	default 255
 
 config BT_LL_ACS_NRF53
+	default y
+
+config WATCHDOG
+	default y
+
+config TASK_WDT
 	default y

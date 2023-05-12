@@ -27,11 +27,11 @@ BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT <= 2,
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
-#define STANDARD_QUALITY_16KHZ	   16000
-#define STANDARD_QUALITY_24KHZ	   24000
-#define HIGH_QUALITY_48KHZ	   48000
+#define STANDARD_QUALITY_16KHZ 16000
+#define STANDARD_QUALITY_24KHZ 24000
+#define HIGH_QUALITY_48KHZ     48000
 
+#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
@@ -55,6 +55,16 @@ static bool delete_broadcast_src;
 static uint32_t seq_num[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 
 static struct bt_le_ext_adv *adv;
+static bool initialized;
+
+#if (CONFIG_AURACAST)
+NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 2);
+static struct bt_data ext_ad[4];
+#else
+static struct bt_data ext_ad[3];
+#endif /* (CONFIG_AURACAST) */
+
+static struct bt_data per_ad[1];
 
 static le_audio_timestamp_cb timestamp_cb;
 
@@ -193,36 +203,14 @@ static void public_broadcast_features_set(uint8_t *features)
 static int adv_create(void)
 {
 	int ret;
-
-	/* Broadcast Audio Streaming Endpoint advertising data */
-	NET_BUF_SIMPLE_DEFINE(ad_buf, BT_UUID_SIZE_16 + BT_AUDIO_BROADCAST_ID_SIZE);
-	/* Buffer for Public Broadcast Announcement */
-	NET_BUF_SIMPLE_DEFINE(base_buf, 128);
-
-#if (CONFIG_AURACAST)
-	NET_BUF_SIMPLE_DEFINE(pba_buf, BT_UUID_SIZE_16 + 2);
-	struct bt_data ext_ad[4];
-	uint8_t pba_features = 0;
-#else
-	struct bt_data ext_ad[3];
-#endif /* (CONFIG_AURACAST) */
-	struct bt_data per_ad;
-
 	uint32_t broadcast_id = 0;
 
-	/* Create a non-connectable non-scannable advertising set */
-	ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_NAME, NULL, &adv);
-	if (ret) {
-		LOG_ERR("Unable to create extended advertising set: %d", ret);
-		return ret;
-	}
-
-	/* Set periodic advertising parameters */
-	ret = bt_le_per_adv_set_param(adv, LE_AUDIO_PERIODIC_ADV);
-	if (ret) {
-		LOG_ERR("Failed to set periodic advertising parameters (ret %d)", ret);
-		return ret;
-	}
+	/* Broadcast Audio Streaming Endpoint advertising data */
+	NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_id_buf, BT_UUID_SIZE_16 + BT_AUDIO_BROADCAST_ID_SIZE);
+	/* Buffer for Appearance */
+	NET_BUF_SIMPLE_DEFINE_STATIC(brdcst_appearance_buf, BT_UUID_SIZE_16);
+	/* Buffer for Public Broadcast Announcement */
+	NET_BUF_SIMPLE_DEFINE_STATIC(base_buf, 128);
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_RANDOM)) {
 		ret = bt_bap_broadcast_source_get_id(broadcast_source, &broadcast_id);
@@ -238,16 +226,21 @@ static int adv_create(void)
 					    sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1);
 
 	/* Setup extended advertising data */
-	net_buf_simple_add_le16(&ad_buf, BT_UUID_BROADCAST_AUDIO_VAL);
-	net_buf_simple_add_le24(&ad_buf, broadcast_id);
+	net_buf_simple_add_le16(&brdcst_id_buf, BT_UUID_BROADCAST_AUDIO_VAL);
+	net_buf_simple_add_le24(&brdcst_id_buf, broadcast_id);
 
-	ext_ad[1] = (struct bt_data)BT_DATA(BT_DATA_SVC_DATA16, ad_buf.data, ad_buf.len);
+	ext_ad[1].data_len = brdcst_id_buf.len;
+	ext_ad[1].type = BT_DATA_SVC_DATA16;
+	ext_ad[1].data = brdcst_id_buf.data;
 
-	ext_ad[2] = (struct bt_data)BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
-						  (CONFIG_BT_DEVICE_APPEARANCE >> 0) & 0xff,
-						  (CONFIG_BT_DEVICE_APPEARANCE >> 8) & 0xff);
+	net_buf_simple_add_le16(&brdcst_appearance_buf, CONFIG_BT_DEVICE_APPEARANCE);
+
+	ext_ad[2].data_len = brdcst_appearance_buf.len;
+	ext_ad[2].type = BT_DATA_GAP_APPEARANCE;
+	ext_ad[2].data = brdcst_appearance_buf.data;
 
 #if (CONFIG_AURACAST)
+	uint8_t pba_features = 0;
 	public_broadcast_features_set(&pba_features);
 
 	net_buf_simple_add_le16(&pba_buf, 0x1856);
@@ -255,14 +248,10 @@ static int adv_create(void)
 	/* No metadata, set length to 0 */
 	net_buf_simple_add_u8(&pba_buf, 0x00);
 
-	ext_ad[3] = (struct bt_data)BT_DATA(BT_DATA_SVC_DATA16, pba_buf.data, pba_buf.len);
+	ext_ad[3].data_len = pba_buf.len;
+	ext_ad[3].type = BT_DATA_SVC_DATA16;
+	ext_ad[3].data = pba_buf.data;
 #endif /* (CONFIG_AURACAST) */
-
-	ret = bt_le_ext_adv_set_data(adv, ext_ad, ARRAY_SIZE(ext_ad), NULL, 0);
-	if (ret) {
-		LOG_ERR("Failed to set extended advertising data: %d", ret);
-		return ret;
-	}
 
 	/* Setup periodic advertising data */
 	ret = bt_bap_broadcast_source_get_base(broadcast_source, &base_buf);
@@ -271,15 +260,9 @@ static int adv_create(void)
 		return ret;
 	}
 
-	per_ad.type = BT_DATA_SVC_DATA16;
-	per_ad.data_len = base_buf.len;
-	per_ad.data = base_buf.data;
-
-	ret = bt_le_per_adv_set_data(adv, &per_ad, 1);
-	if (ret) {
-		LOG_ERR("Failed to set periodic advertising data: %d", ret);
-		return ret;
-	}
+	per_ad[0].data_len = base_buf.len;
+	per_ad[0].type = BT_DATA_SVC_DATA16;
+	per_ad[0].data = base_buf.data;
 
 	return 0;
 }
@@ -298,123 +281,101 @@ static void bt_codec_allocation_set(struct bt_codec_data *codec, enum bt_audio_l
 	codec->data.data_len = 4;
 }
 
-static int initialize(le_audio_timestamp_cb timestmp_cb)
-{
-	int ret;
-	static bool initialized;
-	struct bt_bap_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
-	struct bt_codec_data bis_codec_data[ARRAY_SIZE(stream_params)];
-	struct bt_bap_broadcast_source_subgroup_param
-		subgroup_params[CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
-	struct bt_bap_broadcast_source_create_param create_param;
-
-	if (initialized) {
-		LOG_WRN("Already initialized");
-		return -EALREADY;
-	}
-
-	if (timestmp_cb == NULL) {
-		LOG_ERR("Timestamp callback is NULL");
-		return -EINVAL;
-	}
-
-	timestamp_cb = timestmp_cb;
-
-	(void)memset(audio_streams, 0, sizeof(audio_streams));
-
-	for (size_t i = 0; i < ARRAY_SIZE(stream_params); i++) {
-		stream_params[i].stream = &audio_streams[i];
-		bt_bap_stream_cb_register(stream_params[i].stream, &stream_ops);
-		stream_params[i].data_count = 1U;
-		stream_params[i].data = &bis_codec_data[i];
-		/* The channel allocation is set incrementally */
-		bt_codec_allocation_set(stream_params[i].data, BIT(i));
-	}
-
-	for (size_t i = 0U; i < ARRAY_SIZE(subgroup_params); i++) {
-		subgroup_params[i].params_count = ARRAY_SIZE(stream_params);
-		subgroup_params[i].params = &stream_params[i];
-		subgroup_params[i].codec = &lc3_preset.codec;
-#if (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG)
-		/* Immediate rendering flag */
-		subgroup_params[i].codec->meta[0].data.type = 0x09;
-		subgroup_params[i].codec->meta[0].data.data_len = 0;
-		subgroup_params[i].codec->meta_count = 1;
-#endif /* (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG) */
-	}
-
-	create_param.params_count = ARRAY_SIZE(subgroup_params);
-	create_param.params = subgroup_params;
-	create_param.qos = &lc3_preset.qos;
-
-	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
-		create_param.packing = BT_ISO_PACKING_INTERLEAVED;
-	} else {
-		create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
-	}
-
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
-		create_param.encryption = true;
-		memset(create_param.broadcast_code, 0, sizeof(create_param.broadcast_code));
-		memcpy(create_param.broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
-		       MIN(sizeof(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
-			   sizeof(create_param.broadcast_code)));
-	} else {
-		create_param.encryption = false;
-	}
-
-	LOG_DBG("Creating broadcast source");
-
-	ret = bt_bap_broadcast_source_create(&create_param, &broadcast_source);
-
-	if (ret) {
-		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
-		return ret;
-	}
-
-	/* Create advertising set */
-	ret = adv_create();
-
-	if (ret) {
-		LOG_ERR("Failed to create advertising set");
-		return ret;
-	}
-
-	initialized = true;
-
-	return 0;
-}
-
 int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 {
-	return 0;
+	ARG_UNUSED(action);
+
+	LOG_WRN("%s not supported", __func__);
+	return -ENOTSUP;
 }
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
 {
-	LOG_WRN("Getting config from gateway is not yet supported");
+	ARG_UNUSED(bitrate);
+	ARG_UNUSED(sampling_rate);
+	ARG_UNUSED(pres_delay);
+
+	LOG_WRN("%s not supported", __func__);
 	return -ENOTSUP;
 }
 
-int le_audio_volume_up(void)
+void le_audio_conn_set(struct bt_conn *conn)
 {
-	LOG_WRN("Not possible to increase volume on/from broadcast source");
-	return -ENXIO;
+	ARG_UNUSED(conn);
+
+	LOG_WRN("%s not supported", __func__);
 }
 
-int le_audio_volume_down(void)
+int le_audio_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broadcast_id)
 {
-	LOG_WRN("Not possible to decrease volume on/from broadcast source");
-	return -ENXIO;
+	ARG_UNUSED(pa_sync);
+	ARG_UNUSED(broadcast_id);
+
+	LOG_WRN("%s not supported", __func__);
+	return -ENOTSUP;
 }
 
-int le_audio_volume_mute(void)
+void le_audio_conn_disconnected(struct bt_conn *conn)
 {
-	LOG_WRN("Not possible to mute volume on/from broadcast source");
-	return -ENXIO;
+	ARG_UNUSED(conn);
+
+	LOG_WRN("%s not supported", __func__);
 }
 
-int le_audio_play_pause(void)
+int le_audio_ext_adv_set(struct bt_le_ext_adv *ext_adv)
+{
+	int ret;
+
+	adv = ext_adv;
+	LOG_DBG("Starting broadcast source");
+
+	ret = bt_bap_broadcast_source_start(broadcast_source, adv);
+	if (ret) {
+		LOG_ERR("Failed to start broadcast source");
+		return ret;
+	}
+
+	return 0;
+}
+
+void le_audio_adv_get(const struct bt_data **adv, size_t *adv_size, bool periodic)
+{
+	if (periodic) {
+		*adv = per_ad;
+		*adv_size = ARRAY_SIZE(per_ad);
+	} else {
+		*adv = ext_ad;
+		*adv_size = ARRAY_SIZE(ext_ad);
+	}
+}
+
+int le_audio_play(void)
+{
+	int ret;
+
+	/* All streams in a broadcast source is in the same state,
+	 * so we can just check the first stream
+	 */
+	if (audio_streams[0].ep == NULL) {
+		LOG_ERR("stream->ep is NULL");
+		return -ECANCELED;
+	}
+
+	if (audio_streams[0].ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+		LOG_WRN("Already streaming");
+		return -EALREADY;
+	}
+
+	ret = bt_bap_broadcast_source_start(broadcast_source, adv);
+	if (ret) {
+		LOG_WRN("Failed to start broadcast, ret: %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
+int le_audio_pause(void)
 {
 	int ret;
 
@@ -430,15 +391,14 @@ int le_audio_play_pause(void)
 		ret = bt_bap_broadcast_source_stop(broadcast_source);
 		if (ret) {
 			LOG_WRN("Failed to stop broadcast, ret: %d", ret);
+			return ret;
 		}
 	} else {
-		ret = bt_bap_broadcast_source_start(broadcast_source, adv);
-		if (ret) {
-			LOG_WRN("Failed to start broadcast, ret: %d", ret);
-		}
+		LOG_WRN("Not in a streaming state");
+		return -EINVAL;
 	}
 
-	return ret;
+	return 0;
 }
 
 int le_audio_send(struct encoded_audio enc_audio)
@@ -522,36 +482,89 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 {
 	int ret;
 
+	struct bt_bap_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
+	struct bt_codec_data bis_codec_data[ARRAY_SIZE(stream_params)];
+	struct bt_bap_broadcast_source_subgroup_param
+		subgroup_params[CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
+	struct bt_bap_broadcast_source_create_param create_param;
+
+	if (initialized) {
+		LOG_WRN("Already initialized");
+		return -EALREADY;
+	}
+
 	ARG_UNUSED(recv_cb);
 
-	LOG_INF("Starting broadcast gateway %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
+	LOG_INF("Enabling broadcast gateway %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
 
-	ret = initialize(timestmp_cb);
+	if (timestmp_cb == NULL) {
+		LOG_ERR("Timestamp callback is NULL");
+		return -EINVAL;
+	}
+
+	timestamp_cb = timestmp_cb;
+
+	(void)memset(audio_streams, 0, sizeof(audio_streams));
+
+	for (size_t i = 0; i < ARRAY_SIZE(stream_params); i++) {
+		stream_params[i].stream = &audio_streams[i];
+		bt_bap_stream_cb_register(stream_params[i].stream, &stream_ops);
+		stream_params[i].data_count = 1U;
+		stream_params[i].data = &bis_codec_data[i];
+		/* The channel allocation is set incrementally */
+		bt_codec_allocation_set(stream_params[i].data, BIT(i));
+	}
+
+	for (size_t i = 0U; i < ARRAY_SIZE(subgroup_params); i++) {
+		subgroup_params[i].params_count = ARRAY_SIZE(stream_params);
+		subgroup_params[i].params = &stream_params[i];
+		subgroup_params[i].codec = &lc3_preset.codec;
+#if (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG)
+		/* Immediate rendering flag */
+		subgroup_params[i].codec->meta[0].data.type = 0x09;
+		subgroup_params[i].codec->meta[0].data.data_len = 0;
+		subgroup_params[i].codec->meta_count = 1;
+#endif /* (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG) */
+	}
+
+	create_param.params_count = ARRAY_SIZE(subgroup_params);
+	create_param.params = subgroup_params;
+	create_param.qos = &lc3_preset.qos;
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+		create_param.packing = BT_ISO_PACKING_INTERLEAVED;
+	} else {
+		create_param.packing = BT_ISO_PACKING_SEQUENTIAL;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+		create_param.encryption = true;
+		memset(create_param.broadcast_code, 0, sizeof(create_param.broadcast_code));
+		memcpy(create_param.broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(sizeof(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+			   sizeof(create_param.broadcast_code)));
+	} else {
+		create_param.encryption = false;
+	}
+
+	LOG_DBG("Creating broadcast source");
+
+	ret = bt_bap_broadcast_source_create(&create_param, &broadcast_source);
+
 	if (ret) {
-		LOG_ERR("Failed to initialize");
+		LOG_ERR("Failed to create broadcast source, ret: %d", ret);
 		return ret;
 	}
 
-	/* Start extended advertising */
-	ret = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
+	/* Create advertising set */
+	ret = adv_create();
+
 	if (ret) {
-		LOG_ERR("Failed to start extended advertising: %d", ret);
+		LOG_ERR("Failed to create advertising set");
 		return ret;
 	}
 
-	/* Enable Periodic Advertising */
-	ret = bt_le_per_adv_start(adv);
-	if (ret) {
-		LOG_ERR("Failed to enable periodic advertising: %d", ret);
-		return ret;
-	}
-
-	LOG_DBG("Starting broadcast source");
-
-	ret = bt_bap_broadcast_source_start(broadcast_source, adv);
-	if (ret) {
-		return ret;
-	}
+	initialized = true;
 
 	LOG_DBG("LE Audio enabled");
 
@@ -578,6 +591,8 @@ int le_audio_disable(void)
 
 		broadcast_source = NULL;
 	}
+
+	initialized = false;
 
 	LOG_DBG("LE Audio disabled");
 

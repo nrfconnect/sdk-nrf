@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Volume"
+
+config BT_AUDIO_VOL_DEFAULT
+	int "Default volume"
+	range 0 255
+	default 195
+	help
+	  The default volume when starting a volume control renderer.
+
+config BT_AUDIO_VOL_STEP_SIZE
+	int "Volume adjust step size"
+	range 6 32
+	default 16
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_REND_VOL
+module-str = bt-rend-vol
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log level
+endmenu # Volume
