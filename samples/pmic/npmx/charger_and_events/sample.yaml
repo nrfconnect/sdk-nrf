@@ -1,0 +1,25 @@
+sample:
+  description: Sample for nPM1300 PMIC Charger and events
+  name: nPM1300 PMIC Charger and events
+
+common:
+  integration_platforms:
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf52840dk_nrf52840
+  platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+  tags: pmic
+
+tests:
+  sample.pmic.charger_and_events_eng_b:
+    extra_args: CONFIG_NPMX_DEVICE_NPM1300_ENG_B=y
+    harness: console
+    harness_config:
+      fixture: nPM1300_with_battery_setup_eng_b
+      type: multi_line
+      ordered: false
+      regex:
+        - "PMIC device ok"
+        - "State: VBUS_CONNECTED_BATTERY_DISCONNECTED"
+        - "State: VBUS_CONNECTED_CHARGING_COMPLETED"
+        - "State: BATTERY_CONNECTED"
+        - "Battery:\\s+[0-9]+ mV"

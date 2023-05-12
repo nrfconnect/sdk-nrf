@@ -1,0 +1,81 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "PMIC example: Charger and events"
+
+config BATTERY_VOLTAGE_THRESHOLD_1
+	int "Battery voltage threshold 1 [mV]"
+	range 0 4500
+	default 3290
+	help
+	  Voltage threshold 1 to be detected.
+	  Threshold 1 should have a higher value than threshold 2.
+
+config BATTERY_VOLTAGE_THRESHOLD_2
+	int "Battery voltage threshold 2 [mV]"
+	range 0 4500
+	default 3240
+	help
+	  Voltage threshold 2 to be detected.
+	  Threshold 1 should have a higher value than threshold 2.
+
+config CHARGING_CURRENT
+	int "Charging current [mA]"
+	range 32 800
+	default 200
+
+choice
+	prompt "Termination voltage"
+	default TERM_3600
+
+	config TERM_3500
+		bool "3.50 V"
+	config TERM_3550
+		bool "3.55 V"
+	config TERM_3600
+		bool "3.60 V"
+	config TERM_3650
+		bool "3.65 V"
+	config TERM_4000
+		bool "4.00 V"
+	config TERM_4050
+		bool "4.05 V"
+	config TERM_4100
+		bool "4.10 V"
+	config TERM_4150
+		bool "4.15 V"
+	config TERM_4200
+		bool "4.20 V"
+	config TERM_4250
+		bool "4.25 V"
+	config TERM_4300
+		bool "4.30 V"
+	config TERM_4350
+		bool "4.35 V"
+	config TERM_4400
+		bool "4.40 V"
+	config TERM_4450
+		bool "4.45 V"
+endchoice
+
+config TERMINATION_VOLTAGE
+	int
+	default 3500 if TERM_3500
+	default 3550 if TERM_3550
+	default 3600 if TERM_3600
+	default 3650 if TERM_3650
+	default 4000 if TERM_4000
+	default 4050 if TERM_4050
+	default 4100 if TERM_4100
+	default 4150 if TERM_4150
+	default 4200 if TERM_4200
+	default 4250 if TERM_4250
+	default 4300 if TERM_4300
+	default 4350 if TERM_4350
+	default 4400 if TERM_4400
+	default 4450 if TERM_4450
+
+source "Kconfig.zephyr"
