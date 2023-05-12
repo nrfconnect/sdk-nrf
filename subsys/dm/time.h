@@ -15,9 +15,9 @@
 extern "C" {
 #endif
 
-#define TICKS_TO_US(ticks) ((uint32_t)((((uint64_t) ticks) * (1000000)) / (RTC_INPUT_FREQ)))
-#define US_TO_RTC_TICKS(time) ((uint32_t)((((uint64_t)time) * (RTC_INPUT_FREQ)) / (1000000)))
-#define RTC_COUNTER_MAX (RTC_COUNTER_COUNTER_Msk >> RTC_COUNTER_COUNTER_Pos)
+#define TICKS_TO_US(ticks) ((uint32_t)((((uint64_t) ticks) * (1000000)) / (NRF_RTC_INPUT_FREQ)))
+#define US_TO_RTC_TICKS(time) ((uint32_t)((((uint64_t)time) * (NRF_RTC_INPUT_FREQ)) / (1000000)))
+#define RTC_COUNTER_MAX (NRF_RTC_COUNTER_MAX)
 
 /** @brief Get current time tick
  *
