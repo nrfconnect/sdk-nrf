@@ -1,0 +1,65 @@
+sample:
+  description: Sample for nPM1300 PMIC BUCKs
+  name: nPM1300 PMIC BUCKs
+
+common:
+  integration_platforms:
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf52840dk_nrf52840
+  platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+  tags: pmic
+  timeout: 30
+
+tests:
+  sample.pmic.buck.set_buck_voltage_eng_b:
+    extra_args: CONFIG_TESTCASE_SET_BUCK_VOLTAGE=y
+                CONFIG_NPMX_DEVICE_NPM1300_ENG_B=y
+    harness: console
+    harness_config:
+      fixture: nPM1300_setup_eng_b
+      type: multi_line
+      ordered: true
+      regex:
+        - "PMIC device ok"
+        - "Test setting BUCK voltage"
+        - "Test setting BUCK voltage OK"
+
+  sample.pmic.buck.output_voltage_eng_b:
+    extra_args: CONFIG_TESTCASE_OUTPUT_VOLTAGE=y
+                CONFIG_NPMX_DEVICE_NPM1300_ENG_B=y
+    harness: console
+    harness_config:
+      fixture: nPM1300_setup_eng_b
+      type: multi_line
+      ordered: true
+      regex:
+        - "PMIC device ok"
+        - "Test output voltage"
+        - "Voltage BUCK1:"
+        - "Test output voltage OK"
+
+  sample.pmic.buck.retention_voltage_eng_b:
+    extra_args: CONFIG_TESTCASE_RETENTION_VOLTAGE=y
+                CONFIG_NPMX_DEVICE_NPM1300_ENG_B=y
+    harness: console
+    harness_config:
+      fixture: nPM1300_setup_eng_b
+      type: multi_line
+      ordered: true
+      regex:
+        - "PMIC device ok"
+        - "Test retention voltage"
+        - "Test retention voltage OK"
+
+  sample.pmic.buck.enable_bucks_using_pin_eng_b:
+    extra_args: CONFIG_TESTCASE_ENABLE_BUCKS_USING_PIN=y
+                CONFIG_NPMX_DEVICE_NPM1300_ENG_B=y
+    harness: console
+    harness_config:
+      fixture: nPM1300_setup_eng_b
+      type: multi_line
+      ordered: true
+      regex:
+        - "PMIC device ok"
+        - "Test enable BUCK using connected pin"
+        - "Test enable BUCK using connected pin OK"

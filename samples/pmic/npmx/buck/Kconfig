@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "PMIC example: Buck"
+
+choice
+	bool "Testcase selection"
+	default TESTCASE_SET_BUCK_VOLTAGE
+
+config TESTCASE_SET_BUCK_VOLTAGE
+	bool "Set output voltage of both bucks (simple)"
+
+config TESTCASE_OUTPUT_VOLTAGE
+	bool "Set output voltage of both bucks (advanced)"
+
+config TESTCASE_RETENTION_VOLTAGE
+	bool "Set retention voltage of buck 1 with selected external pin"
+
+config TESTCASE_ENABLE_BUCKS_USING_PIN
+	bool "Set enable mode of buck 1 with selected external pin"
+
+endchoice
+
+source "Kconfig.zephyr"

@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c1 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+
+	npm_0: npm1300@6b {
+		status = "okay";
+		compatible = "nordic,npm1300_eng_b";
+		reg = <0x6b>;
+		host-int-gpios = <&gpio1 10 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+		pmic-int-pin = <0>;
+	};
+};
+
+&i2c1_default {
+	group1 {
+		bias-pull-up;
+	};
+};
