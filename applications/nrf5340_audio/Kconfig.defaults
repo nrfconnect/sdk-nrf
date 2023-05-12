@@ -62,7 +62,7 @@ config REGULATOR
 config CONTIN_ARRAY
 	default y
 
-config NRFX_I2S
+config NRFX_I2S0
 	default y
 
 config PCM_MIX
