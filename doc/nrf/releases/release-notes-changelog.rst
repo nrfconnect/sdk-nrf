@@ -517,6 +517,8 @@ Modem libraries
       Use the :c:func:`nrf_modem_lib_bootloader_init` function to initialize the Modem library in bootloader mode.
     * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_SYS_INIT` is now deprecated.
       The application initializes the modem library using the :c:func:`nrf_modem_lib_init` function instead.
+    * The :c:func:`nrf_modem_lib_shutdown` function now checks that the modem is in minimal functional mode (``CFUN=0``) before shutting down the modem.
+      If not, a warning is given to the application, and minimal functional mode is set before calling the :c:func:`nrf_modem_shutdown` function.
 
   * Removed:
 
