@@ -269,7 +269,9 @@ See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for i
 
    .. group-tab:: Command line
 
-      |west_build_option|
+      If you work on the command line, pass the additional options to the ``west build`` command.
+      The options must be added after a ``--`` at the end of the command.
+      See :ref:`zephyr:west-building-cmake-config` for more information.
 
 The :file:`prj.conf` file is read when you open a project.
 The file will be reloaded when CMake re-runs.
@@ -283,6 +285,8 @@ Providing CMake options
 You can provide additional options for building your application to the CMake process, which can be useful, for example, to switch between different build scenarios.
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
+For information about what variables can be set and how to add these variables in your project, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
@@ -292,7 +296,9 @@ These options are specified when CMake is run, thus not during the actual build,
 
    .. group-tab:: Command line
 
-      |west_build_option|
+      If you work on the command line, pass the additional options to the ``west build`` command.
+      The options must be added after a ``--`` at the end of the command.
+      See :ref:`zephyr:west-building-cmake-args` for more information.
 
 .. _gs_modifying_build_types:
 
@@ -358,7 +364,3 @@ The Devicetree configuration is not affected by the build type.
       The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
 
       .. build_types_selection_cmd_end
-
-.. |west_build_option| replace:: If you work on the command line, pass the additional options to the ``west build`` command.
-   The options must be added after a ``--`` at the end of the command.
-   See :ref:`zephyr:west-building-cmake-args` for more information.
