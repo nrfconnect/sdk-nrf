@@ -48,8 +48,8 @@ static void uart_tx_done_simulate(const uint8_t *const data, size_t len)
 	nrfx_uarte_event_t uarte_event;
 
 	uarte_event.type = NRFX_UARTE_EVT_TX_DONE;
-	uarte_event.data.rxtx.bytes = len;
-	uarte_event.data.rxtx.p_data = (uint8_t *)data;
+	uarte_event.data.tx.bytes = len;
+	uarte_event.data.tx.p_data = (uint8_t *)data;
 
 	uarte_callback(&uarte_event, NULL);
 }
@@ -71,8 +71,8 @@ static nrfx_err_t nrfx_uarte_init_callback(nrfx_uarte_t const *p_instance,
 	TEST_ASSERT_NOT_EQUAL(NULL, p_config);
 	TEST_ASSERT_EQUAL(true, p_config->skip_gpio_cfg);
 	TEST_ASSERT_EQUAL(true, p_config->skip_psel_cfg);
-	TEST_ASSERT_EQUAL(NRF_UARTE_HWFC_DISABLED, p_config->hal_cfg.hwfc);
-	TEST_ASSERT_EQUAL(NRF_UARTE_PARITY_EXCLUDED, p_config->hal_cfg.parity);
+	TEST_ASSERT_EQUAL(NRF_UARTE_HWFC_DISABLED, p_config->config.hwfc);
+	TEST_ASSERT_EQUAL(NRF_UARTE_PARITY_EXCLUDED, p_config->config.parity);
 	TEST_ASSERT_EQUAL(NRF_UARTE_BAUDRATE_1000000, p_config->baudrate);
 	TEST_ASSERT_EQUAL(1, p_config->interrupt_priority);
 	TEST_ASSERT_EQUAL(NULL, p_config->p_context);
@@ -178,7 +178,7 @@ void test_trace_backend_write_uart(void)
 	test_trace_backend_init_uart();
 
 	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
-					     max_uart_frag_size, NRFX_SUCCESS);
+					     max_uart_frag_size, 0, NRFX_SUCCESS);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */
 	send_traces_for_processing(sample_trace_data, sizeof(sample_trace_data));
@@ -190,6 +190,7 @@ void test_trace_backend_write_uart(void)
 	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use,
 					     &sample_trace_data[max_uart_frag_size],
 					     sizeof(sample_trace_data) - max_uart_frag_size,
+						 0,
 					     NRFX_SUCCESS);
 
 	/* Let trace_test_thread run. */
@@ -221,7 +222,7 @@ void test_trace_backend_write_uart_nrfx_uarte_evt_tx_done(void)
 	test_trace_backend_init_uart();
 
 	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
-					     max_uart_frag_size, NRFX_SUCCESS);
+					     max_uart_frag_size, 0, NRFX_SUCCESS);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */
 	send_traces_for_processing(sample_trace_data, sizeof(sample_trace_data));
@@ -259,7 +260,7 @@ void test_trace_backend_write_uart_nrfx_error_no_mem(void)
 	 * abort sending the second part of the trace buffer.
 	 */
 	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
-					     max_uart_frag_size, NRFX_ERROR_NO_MEM);
+					     max_uart_frag_size, 0, NRFX_ERROR_NO_MEM);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */
 	send_traces_for_processing(sample_trace_data, sizeof(sample_trace_data));
@@ -279,7 +280,7 @@ void test_trace_backend_write_uart_nrfx_uarte_evt_error(void)
 	test_trace_backend_init_uart();
 
 	__cmock_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
-					     sizeof(sample_trace_data), NRFX_SUCCESS);
+					     sizeof(sample_trace_data), 0, NRFX_SUCCESS);
 
 	/* Simulate reception of a modem trace and let trace_test_thread run. */
 	send_traces_for_processing(sample_trace_data, sizeof(sample_trace_data));
