@@ -237,7 +237,11 @@ manifest:
       revision: 908ffde6298a937c6549dbfa843a62caab26bfc5
       import:
         path-prefix: tools
-
+    - name: npmx
+      repo-path: npmx
+      path: modules/npmx
+      revision: ae5739319628318429f89c541416f959d5a7ad30
+      remote: nordicsemi
 
   # West-related configuration for the nrf repository.
   self:
