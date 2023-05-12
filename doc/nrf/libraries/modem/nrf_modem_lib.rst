@@ -76,6 +76,7 @@ In this case, the characteristics of the allocations made by these functions dep
 
 Modem trace module
 ******************
+
 To enable the tracing functionality, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig in your project configuration.
 The module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c` and consists of a thread that initializes, deinitializes, and forwards modem traces to a backend that can be selected by enabling any one of the following Kconfig options:
 
@@ -120,6 +121,41 @@ The logging happens at an interval set by the :kconfig:option:`CONFIG_NRF_MODEM_
 If the difference in the values of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS` Kconfig option and the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS` Kconfig option is very high, you can sometimes observe high variation in measurements due to the short period over which the rolling average is calculated.
 
 To enable logging of the modem trace bitrate, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BITRATE_LOG` Kconfig.
+
+.. _modem_trace_flash_backend:
+
+Modem trace flash backend
+=========================
+
+The flash backend stores :ref:`modem traces <modem_trace_module>` to the external flash storage on the nRF9160 DK.
+
+First, set up the :ref:`external flash <nrf9160_external_flash>` for your application.
+You can then set the following configuration options for the application to decide how to handle when the flash is full:
+
+   * :kconfig:option:`CONFIG_NRF_MODEM_TRACE_FLASH_NOSPACE_SIGNAL` - To get notified with a callback when the flash is full, and the application erases or sends the data to the cloud.
+   * :kconfig:option:`CONFIG_NRF_MODEM_TRACE_FLASH_NOSPACE_ERASE_OLDEST` - To automatically erase the oldest sector in the flash circular buffer.
+     The erase operation takes some time.
+     If the operation takes too long, traces are dropped by the modem.
+
+You can also increase heap and stack sizes when using the modem trace flash backend by setting values for the following configuration options:
+
+* :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` = ``2048``
+* :kconfig:option:`CONFIG_MAIN_STACK_SIZE` = ``4096``
+* :kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` = ``4096``
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_STACK_SIZE` = ``4096``
+
+The modem trace flash backend has some additional configuration options:
+
+* :kconfig:option:`CONFIG_FCB` - required for the flash circular buffer used in the backend.
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE` -  defines the space to be used for the modem trace partition.
+  The external flash size on the nRF9160 DK is 8 MB (equal to ``0x800000`` in HEX).
+
+It is also recommended to enable high drive mode and high-performance mode in devicetree.
+High drive is to ensure that the communication with the flash device is reliable at high speed.
+High-performance mode is a feature in the flash device that allows it to write and erase faster than in low-power mode.
+See the :ref:`external flash <nrf9160_external_flash>` documentation for more details.
+The trace backend needs to handle trace data at ~1 Mbps to avoid filling up the buffer in the modem.
+If the modem buffer is full, the modem drops modem traces until the buffer has space available again.
 
 .. _adding_custom_modem_trace_backends:
 
