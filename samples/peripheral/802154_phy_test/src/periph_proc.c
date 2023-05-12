@@ -34,11 +34,6 @@
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 #include <helpers/nrfx_gppi.h>
-#if defined(DPPI_PRESENT)
-#include <nrfx_dppi.h>
-#else
-#include <nrfx_ppi.h>
-#endif
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
 #include <zephyr/logging/log.h>
@@ -63,11 +58,8 @@ static const struct device *gpio_port1_dev = DEVICE_DT_GET(DT_NODELABEL(gpio1));
 #endif
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
-#if defined(DPPI_PRESENT)
 uint8_t ppi_channel;
-#else
-nrf_ppi_channel_t ppi_channel;
-#endif
+uint8_t task_channel;
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
 static void clk_timer_handler(nrf_timer_event_t event_type, void *context)
@@ -81,7 +73,8 @@ void periph_init(void)
 	int ret;
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
-	nrfx_timer_config_t clk_timer_cfg = NRFX_TIMER_DEFAULT_CONFIG;
+	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(clk_timer.p_reg);
+	nrfx_timer_config_t clk_timer_cfg = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 
 	err_code = nrfx_timer_init(&clk_timer, &clk_timer_cfg, clk_timer_handler);
 	NRFX_ASSERT(err_code);
@@ -123,18 +116,25 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 		nrfx_timer_extended_compare(&clk_timer, (nrf_timer_cc_channel_t)0, 1,
 					    NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
 
-		nrfx_gpiote_out_config_t const out_config = {
-			.action = NRF_GPIOTE_POLARITY_TOGGLE,
-			.init_state = 0,
-			.task_pin = true,
+		err = nrfx_gpiote_channel_alloc(&task_channel);
+		if (err != NRFX_SUCCESS) {
+			LOG_ERR("nrfx_gpiote_channel_alloc error: %08x", err);
+			return false;
+		}
+
+		nrfx_gpiote_output_config_t config = NRFX_GPIOTE_DEFAULT_OUTPUT_CONFIG;
+		nrfx_gpiote_task_config_t const out_config = {
+			.task_ch = task_channel,
+			.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+			.init_val = NRF_GPIOTE_INITIAL_VALUE_LOW
 		};
 
 		/* Initialize output pin. SET task will turn the LED on,
 		 * CLR will turn it off and OUT will toggle it.
 		 */
-		err = nrfx_gpiote_out_init(pin, &out_config);
+		err = nrfx_gpiote_output_configure(pin, &config, &out_config);
 		if (err != NRFX_SUCCESS) {
-			LOG_ERR("nrfx_gpiote_out_init error: %08x", err);
+			LOG_ERR("nrfx_gpiote_output_configure error: %08x", err);
 			return false;
 		}
 
@@ -144,11 +144,8 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 		nrfx_gpiote_out_task_enable(pin);
 
 		/* Allocate a (D)PPI channel. */
-#if defined(DPPI_PRESENT)
-		err = nrfx_dppi_channel_alloc(&ppi_channel);
-#else
-		err = nrfx_ppi_channel_alloc(&ppi_channel);
-#endif
+		err = nrfx_gppi_channel_alloc(&ppi_channel);
+
 		if (err != NRFX_SUCCESS) {
 			LOG_ERR("(D)PPI channel allocation error: %08x", err);
 			return false;
@@ -159,30 +156,25 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 			nrf_gpiote_task_address_get(NRF_GPIOTE, nrfx_gpiote_in_event_get(pin)));
 
 		/* Enable (D)PPI channel. */
-#if defined(DPPI_PRESENT)
-		err = nrfx_dppi_channel_enable(ppi_channel);
-#else
-		err = nrfx_ppi_channel_enable(ppi_channel);
-#endif
-		if (err != NRFX_SUCCESS) {
-			LOG_ERR("Failed to enable (D)PPI channel, error: %08x", err);
-			return false;
-		}
+		nrfx_gppi_channels_enable(BIT(ppi_channel));
 
 		nrfx_timer_enable(&clk_timer);
 	} else {
 		nrfx_timer_disable(&clk_timer);
 		nrfx_gpiote_out_task_disable(pin);
-#if defined(DPPI_PRESENT)
-		err = nrfx_dppi_channel_free(ppi_channel);
-#else
-		err = nrfx_ppi_channel_free(ppi_channel);
-#endif
+		err = nrfx_gppi_channel_free(ppi_channel);
+
 		if (err != NRFX_SUCCESS) {
 			LOG_ERR("Failed to disable (D)PPI channel, error: %08x", err);
 			return false;
 		}
-		nrfx_gpiote_out_uninit(pin);
+		nrfx_gpiote_pin_uninit(pin);
+		err = nrfx_gpiote_channel_free(task_channel);
+
+		if (err != NRFX_SUCCESS) {
+			LOG_ERR("Failed to disable GPIOTE channel, error: %08x", err);
+			return false;
+		}
 	}
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
