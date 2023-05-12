@@ -45,7 +45,7 @@ static struct bt_mesh_sensor_column temp_range = {
 static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
-static struct sensor_value pres_mot_thres = { .val1 = 25, .val2 = 0 };
+static struct sensor_value pres_mot_thres;
 
 static int32_t pres_detect;
 static uint32_t prev_detect;
