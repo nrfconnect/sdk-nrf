@@ -61,6 +61,8 @@ int nrf_modem_lib_bootloader_init(void);
 /**
  * @brief Shutdown the Modem library and turn off the modem.
  *
+ * @note The modem must be put in minimal function mode before being shut down.
+ *
  * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_shutdown(void);
