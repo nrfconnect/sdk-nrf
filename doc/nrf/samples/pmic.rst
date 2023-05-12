@@ -9,3 +9,4 @@ PMIC samples
    :glob:
 
    ../../../samples/pmic/native/*/README
+   ../../../samples/pmic/npmx/*/README
