@@ -363,7 +363,11 @@ int main(void)
 	enum nrf_wifi_pta_wlan_op_band wlan_band;
 	bool separate_antennas = IS_ENABLED(CONFIG_COEX_SEP_ANTENNAS);
 #endif /* CONFIG_NRF700X_BT_COEX */
-#if !defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) && !defined(CONFIG_COEX_SEP_ANTENNAS)
+
+#if !defined(CONFIG_COEX_SEP_ANTENNAS) && \
+	(!(defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	   defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	   defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)))
 	BUILD_ASSERT("Shared antenna support is not available with nRF7002 shields");
 #endif
 
@@ -390,14 +394,17 @@ int main(void)
 
 	LOG_INF("test_wlan = %d and test_ble = %d\n", test_wlan, test_ble);
 
-#ifdef CONFIG_NRF700X_BT_COEX
-	/* Configure SR side (nRF5340 side) switch in nRF7002 DK */
+
+#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+	/* Configure SR side (nRF5340 side) switch for nRF700x DK */
 	ret = nrf_wifi_config_sr_switch(separate_antennas);
 	if (ret != 0) {
 		LOG_ERR("Unable to configure SR side switch: %d\n", ret);
 		goto err;
 	}
-#endif /* CONFIG_NRF700X_BT_COEX */
+#endif
 
 	if (test_wlan) {
 		/* Wi-Fi connection */
