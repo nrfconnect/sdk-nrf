@@ -30,6 +30,11 @@
 #include <host_rpu_umac_if.h>
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
+/* Use same timeout as WPA supplicant, this is high mainly to handle
+ * connected scan.
+ */
+#define WIFI_NRF_SCAN_TIMEOUT (K_SECONDS(30))
+
 struct wifi_nrf_vif_ctx_zep {
 	const struct device *zep_dev_ctx;
 	struct net_if *zep_net_if_ctx;
@@ -41,6 +46,7 @@ struct wifi_nrf_vif_ctx_zep {
 	bool scan_in_progress;
 	int scan_type;
 	unsigned int scan_res_cnt;
+	struct k_work_delayable scan_timeout_work;
 
 	struct net_eth_addr mac_addr;
 
@@ -100,4 +106,6 @@ struct wifi_nrf_drv_priv_zep {
 	/* TODO: Replace with a linked list to handle unlimited RPUs */
 	struct wifi_nrf_ctx_zep rpu_ctx_zep;
 };
+
+void wifi_nrf_scan_timeout_work(struct k_work *work);
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */

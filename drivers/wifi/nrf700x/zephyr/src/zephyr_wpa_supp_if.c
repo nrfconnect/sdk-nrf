@@ -136,6 +136,7 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 		vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
 			&event);
 	}
+	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
@@ -539,6 +540,8 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	vif_ctx_zep->scan_type = SCAN_CONNECT;
 	vif_ctx_zep->scan_in_progress = true;
+
+	k_work_schedule(&vif_ctx_zep->scan_timeout_work, WIFI_NRF_SCAN_TIMEOUT);
 
 	ret = 0;
 out:

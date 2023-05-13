@@ -436,6 +436,10 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 			__func__);
 		goto fmac_deinit;
 	}
+#ifndef CONFIG_NRF700X_RADIO_TEST
+	k_work_init_delayable(&vif_ctx_zep->scan_timeout_work,
+			      wifi_nrf_scan_timeout_work);
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 	return 0;
 fmac_deinit:
