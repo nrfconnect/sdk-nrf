@@ -23,6 +23,56 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
+void wifi_nrf_scan_timeout_work(struct k_work *work)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_scan_result res;
+	scan_result_cb_t disp_scan_cb = NULL;
+
+	vif_ctx_zep = CONTAINER_OF(work, struct wifi_nrf_vif_ctx_zep, scan_timeout_work);
+
+	disp_scan_cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
+
+	if (!vif_ctx_zep->scan_in_progress) {
+		LOG_INF("%s: Scan not in progress\n", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	if (disp_scan_cb) {
+		memset(&res, 0x0, sizeof(res));
+
+		disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, &res);
+		vif_ctx_zep->disp_scan_cb = NULL;
+	} else {
+#ifdef CONFIG_WPA_SUPP
+		/* WPA supplicant scan */
+		union wpa_event_data event;
+		struct scan_info *info = NULL;
+
+		memset(&event, 0, sizeof(event));
+
+		info = &event.scan_info;
+
+		info->aborted = 0;
+		info->external_scan = 0;
+		info->nl_scan_event = 1;
+
+		if (vif_ctx_zep->supp_drv_if_ctx &&
+			vif_ctx_zep->supp_callbk_fns.scan_done) {
+			vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
+				&event);
+		}
+#endif /* CONFIG_WPA_SUPP */
+	}
+
+	vif_ctx_zep->scan_in_progress = false;
+}
+
 int wifi_nrf_disp_scan_zep(const struct device *dev,
 			   scan_result_cb_t cb)
 {
@@ -82,6 +132,8 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	vif_ctx_zep->scan_type = SCAN_DISPLAY;
 	vif_ctx_zep->scan_in_progress = true;
 	vif_ctx_zep->scan_res_cnt = 0;
+
+	k_work_schedule(&vif_ctx_zep->scan_timeout_work, WIFI_NRF_SCAN_TIMEOUT);
 
 	ret = 0;
 out:
@@ -194,8 +246,9 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 
 	if (more_res == false) {
 		vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, 0, NULL);
-
 		vif_ctx_zep->scan_in_progress = false;
+		vif_ctx_zep->disp_scan_cb = NULL;
+		k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
 	}
 }
 
