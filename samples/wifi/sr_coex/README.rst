@@ -211,6 +211,34 @@ Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or con
 
 Use this command for concurrent Wi-Fi and Bluetooth LE throughput with coexistence enabled test.
 
+Change the build target as given below for the nRF7001 DK, nRF7002 EK and nRF7001 EK.
+
+Build target for nRF7001 DK:
+
+.. code-block:: console
+
+   nrf7001dk_nrf5340_cpuapp
+
+Build target for nRF7002 EK and nRF7001 EK:
+
+.. code-block:: console
+
+   nrf5340dk_nrf5340_cpuapp
+
+Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
+
+For nRF7002 EK:
+
+.. code-block:: console
+
+   -DSHIELD=nrf7002ek_nrf7002 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7002_coex
+
+For nRF7001 EK:
+
+.. code-block:: console
+
+   -DSHIELD=nrf7002ek_nrf7001 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
+
 The generated HEX file to be used is :file:`sr_coex/build/zephyr/merged_domains.hex`.
 
 Use the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder on the peer nRF5340 DK device.

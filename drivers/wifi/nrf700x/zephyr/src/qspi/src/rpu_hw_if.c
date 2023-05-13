@@ -35,12 +35,6 @@ GPIO_DT_SPEC_GET(NRF7002_NODE, iovdd_ctrl_gpios);
 static const struct gpio_dt_spec bucken_spec =
 GPIO_DT_SPEC_GET(NRF7002_NODE, bucken_gpios);
 
-#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
-#define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
-static const struct gpio_dt_spec btrf_switch_spec =
-GPIO_DT_SPEC_GET(NRF_RADIO_COEX_NODE, btrf_switch_gpios);
-#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
-
 char blk_name[][15] = { "SysBus",   "ExtSysBus",	   "PBus",	   "PKTRAM",
 			       "GRAM",	   "LMAC_ROM",	   "LMAC_RET_RAM", "LMAC_SRC_RAM",
 			       "UMAC_ROM", "UMAC_RET_RAM", "UMAC_SRC_RAM" };
