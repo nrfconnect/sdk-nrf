@@ -163,6 +163,39 @@ out:
 }
 
 
+#ifdef CONFIG_NRF700X_RX_WQ_ENABLED
+void wifi_nrf_fmac_rx_tasklet(void *data)
+{
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = (struct wifi_nrf_fmac_dev_ctx *)data;
+	struct nrf_wifi_rx_buff *config = NULL;
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
+	config = (struct nrf_wifi_rx_buff *)wifi_nrf_utils_q_dequeue(
+		fmac_dev_ctx->fpriv->opriv,
+		fmac_dev_ctx->rx_tasklet_event_q);
+
+	if (!config) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: No RX config available\n",
+				      __func__);
+		goto out;
+	}
+
+	status = wifi_nrf_fmac_rx_event_process(fmac_dev_ctx,
+						config);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: wifi_nrf_fmac_rx_event_process failed\n",
+				      __func__);
+		goto out;
+	}
+out:
+	wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+			       config);
+}
+#endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
+
 enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						    struct nrf_wifi_rx_buff *config)
 {
