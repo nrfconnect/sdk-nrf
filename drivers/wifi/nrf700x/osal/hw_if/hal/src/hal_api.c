@@ -979,7 +979,7 @@ out:
 }
 
 
-static void rx_tasklet_fn(unsigned long data)
+static void event_tasklet_fn(unsigned long data)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_hal_dev_ctx *hal_dev_ctx = NULL;
@@ -1121,19 +1121,19 @@ struct wifi_nrf_hal_dev_ctx *wifi_nrf_hal_dev_add(struct wifi_nrf_hal_priv *hpri
 	wifi_nrf_osal_spinlock_init(hpriv->opriv,
 				    hal_dev_ctx->lock_rx);
 
-	hal_dev_ctx->rx_tasklet = wifi_nrf_osal_tasklet_alloc(hpriv->opriv,
+	hal_dev_ctx->event_tasklet = wifi_nrf_osal_tasklet_alloc(hpriv->opriv,
 		WIFI_NRF_TASKLET_TYPE_BH);
 
-	if (!hal_dev_ctx->rx_tasklet) {
+	if (!hal_dev_ctx->event_tasklet) {
 		wifi_nrf_osal_log_err(hpriv->opriv,
-				      "%s: Unable to allocate rx_tasklet\n",
+				      "%s: Unable to allocate event_tasklet\n",
 				      __func__);
 		goto lock_rx_free;
 	}
 
 	wifi_nrf_osal_tasklet_init(hpriv->opriv,
-				   hal_dev_ctx->rx_tasklet,
-				   rx_tasklet_fn,
+				   hal_dev_ctx->event_tasklet,
+				   event_tasklet_fn,
 				   (unsigned long)hal_dev_ctx);
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -1230,7 +1230,7 @@ bal_dev_free:
 	wifi_nrf_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
 tasklet_free:
 	wifi_nrf_osal_tasklet_free(hpriv->opriv,
-					hal_dev_ctx->rx_tasklet);
+					hal_dev_ctx->event_tasklet);
 lock_rx_free:
 	wifi_nrf_osal_spinlock_free(hpriv->opriv,
 					hal_dev_ctx->lock_rx);
@@ -1270,10 +1270,10 @@ void wifi_nrf_hal_dev_rem(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx)
 	}
 
 	wifi_nrf_osal_tasklet_kill(hal_dev_ctx->hpriv->opriv,
-				   hal_dev_ctx->rx_tasklet);
+				   hal_dev_ctx->event_tasklet);
 
 	wifi_nrf_osal_tasklet_free(hal_dev_ctx->hpriv->opriv,
-				   hal_dev_ctx->rx_tasklet);
+				   hal_dev_ctx->event_tasklet);
 
 	wifi_nrf_osal_spinlock_free(hal_dev_ctx->hpriv->opriv,
 				    hal_dev_ctx->lock_hal);
@@ -1396,7 +1396,7 @@ enum wifi_nrf_status wifi_nrf_hal_irq_handler(void *data)
 	}
 
 	wifi_nrf_osal_tasklet_schedule(hal_dev_ctx->hpriv->opriv,
-				       hal_dev_ctx->rx_tasklet);
+				       hal_dev_ctx->event_tasklet);
 
 out:
 	return status;

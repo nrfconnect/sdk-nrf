@@ -169,7 +169,7 @@ struct wifi_nrf_hal_buf_map_info {
  *             the regular operation after the FW has been loaded.
  * @lock_hal: Lock to be used for atomic HAL operations.
  * @lock_rx: Lock to be used for atomic RX operations.
- * @rx_tasklet: Pointer to the bottom half handler for RX events.
+ * @event_tasklet: Pointer to the bottom half handler for RX events.
  * @rpu_ps_state: PS state of the RPU.
  * @rpu_ps_timer: Inactivity timer used to put RPU back to sleep after
  *                waking it up.
@@ -206,7 +206,7 @@ struct wifi_nrf_hal_dev_ctx {
 	enum RPU_PROC_TYPE curr_proc;
 
 	void *lock_hal;
-	void *rx_tasklet;
+	void *event_tasklet;
 	void *lock_rx;
 
 	struct wifi_nrf_hal_buf_map_info *rx_buf_info[MAX_NUM_OF_RX_QUEUES];
