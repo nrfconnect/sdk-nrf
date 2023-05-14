@@ -143,6 +143,9 @@ config NRF700X_SCAN_LIMIT
 config NRF700X_TX_DONE_WQ_ENABLED
 	bool "Enable TX done workqueue (impacts performance negatively)"
 
+config NRF700X_RX_WQ_ENABLED
+	bool "Enable RX workqueue"
+
 # Use for IRQ processing (TODO: using for BH processing causes issues)
 config NUM_METAIRQ_PRIORITIES
 	default 1
@@ -170,6 +173,16 @@ config NRF700X_TX_DONE_WQ_PRIORITY
 
 config NRF700X_TX_DONE_WQ_STACK_SIZE
 	int "Stack size of the workqueue for handling TX done"
+	default 2048
+endif
+
+if NRF700X_RX_WQ_ENABLED
+config NRF700X_RX_WQ_PRIORITY
+	int "Priority of the workqueue for handling RX"
+	default 0
+
+config NRF700X_RX_WQ_STACK_SIZE
+	int "Stack size of the workqueue for handling RX"
 	default 2048
 endif
 
