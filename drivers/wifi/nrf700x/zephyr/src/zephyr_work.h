@@ -19,6 +19,7 @@ enum zep_work_type {
 	ZEP_WORK_TYPE_BH,
 	ZEP_WORK_TYPE_IRQ,
 	ZEP_WORK_TYPE_TX_DONE,
+	ZEP_WORK_TYPE_RX,
 };
 
 struct zep_work_item {
