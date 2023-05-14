@@ -54,6 +54,8 @@ enum wifi_nrf_osal_dma_dir {
  *		from the Bus ISR, used internally by the SHIM layer.
  * @WIFI_NRF_TASKLET_TYPE_TX_DONE: The tasklet is a TX done tasklet. It is
  *		scheduled from the BH tasklet for TX done interrupts.
+ * @WIFI_NRF_TASKLET_TYPE_RX: The tasklet is an RX tasklet. It is scheduled
+ *		from the BH tasklet for RX interrupts.
  * @WIFI_NRF_TASKLET_TYPE_MAX: The maximum number of tasklet types.
  *
  * This enum lists the possible types of a tasklet.
@@ -63,6 +65,7 @@ enum wifi_nrf_tasklet_type {
 	WIFI_NRF_TASKLET_TYPE_BH,
 	WIFI_NRF_TASKLET_TYPE_IRQ,
 	WIFI_NRF_TASKLET_TYPE_TX_DONE,
+	WIFI_NRF_TASKLET_TYPE_RX,
 	WIFI_NRF_TASKLET_TYPE_MAX
 };
 

@@ -121,6 +121,31 @@ static enum wifi_nrf_status wifi_nrf_fmac_init_rx(struct wifi_nrf_fmac_dev_ctx *
 			goto out;
 		}
 	}
+#ifdef CONFIG_NRF700X_RX_WQ_ENABLED
+	fmac_dev_ctx->rx_tasklet = wifi_nrf_osal_tasklet_alloc(fmac_dev_ctx->fpriv->opriv,
+							       WIFI_NRF_TASKLET_TYPE_RX);
+	if (!fmac_dev_ctx->rx_tasklet) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: No space for RX tasklet\n",
+				      __func__);
+		status = WIFI_NRF_STATUS_FAIL;
+		goto out;
+	}
+
+	fmac_dev_ctx->rx_tasklet_event_q = wifi_nrf_utils_q_alloc(fpriv->opriv);
+	if (!fmac_dev_ctx->rx_tasklet_event_q) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: No space for RX tasklet event queue\n",
+				      __func__);
+		status = WIFI_NRF_STATUS_FAIL;
+		goto out;
+	}
+
+	wifi_nrf_osal_tasklet_init(fmac_dev_ctx->fpriv->opriv,
+				   fmac_dev_ctx->rx_tasklet,
+				   wifi_nrf_fmac_rx_tasklet,
+				   (unsigned long)fmac_dev_ctx);
+#endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
 out:
 	return status;
 }
@@ -133,6 +158,13 @@ static enum wifi_nrf_status wifi_nrf_fmac_deinit_rx(struct wifi_nrf_fmac_dev_ctx
 	unsigned int desc_id = 0;
 
 	fpriv = fmac_dev_ctx->fpriv;
+
+#ifdef CONFIG_NRF700X_RX_WQ_ENABLED
+	wifi_nrf_osal_tasklet_free(fmac_dev_ctx->fpriv->opriv,
+				     fmac_dev_ctx->rx_tasklet);
+	wifi_nrf_utils_q_free(fpriv->opriv,
+			      fmac_dev_ctx->rx_tasklet_event_q);
+#endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
 
 	for (desc_id = 0; desc_id < fpriv->num_rx_bufs; desc_id++) {
 		status = wifi_nrf_fmac_rx_cmd_send(fmac_dev_ctx,
