@@ -487,6 +487,10 @@ struct wifi_nrf_fmac_dev_ctx {
 #ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
 	void *tx_done_tasklet;
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
+#ifdef CONFIG_NRF700X_RX_WQ_ENABLED
+	void *rx_tasklet;
+	void *rx_tasklet_event_q;
+#endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
 };
 
 
