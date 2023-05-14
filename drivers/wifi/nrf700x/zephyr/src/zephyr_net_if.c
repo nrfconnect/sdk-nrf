@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+LOG_MODULE_DECLARE(nrf_wifi, CONFIG_WIFI_LOG_LEVEL);
 
 #include "net_private.h"
 
@@ -24,8 +24,8 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 #include "zephyr_net_if.h"
 
 
-extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
-static struct wifi_nrf_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+static struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
 extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
 				    char *buf, int buflen);
@@ -34,14 +34,14 @@ static struct net_mgmt_event_callback ip_maddr4_cb;
 static struct net_mgmt_event_callback ip_maddr6_cb;
 
 #ifdef CONFIG_NRF700X_DATA_TX
-void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
+void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
 	struct net_if *iface = vif_ctx_zep->zep_net_if_ctx;
 	struct net_pkt *pkt;
 	int status;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	struct rpu_host_stats *host_stats = &fmac_dev_ctx->host_stats;
 
 	host_stats->total_rx_pkts++;
@@ -62,11 +62,11 @@ void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 	}
 }
 
-enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
-						enum wifi_nrf_fmac_if_carr_state carr_state)
+enum nrf_wifi_status nrf_wifi_if_carr_state_chg(void *os_vif_ctx,
+						enum nrf_wifi_fmac_if_carr_state carr_state)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	if (!os_vif_ctx) {
 		LOG_ERR("%s: Invalid parameters\n",
@@ -79,15 +79,15 @@ enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
 	vif_ctx_zep->if_carr_state = carr_state;
 
 	if (vif_ctx_zep->zep_net_if_ctx) {
-		if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_ON) {
+		if (carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
 			net_eth_carrier_on(vif_ctx_zep->zep_net_if_ctx);
-		} else if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_OFF) {
+		} else if (carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_OFF) {
 			net_eth_carrier_off(vif_ctx_zep->zep_net_if_ctx);
 		}
 	}
 	LOG_DBG("%s: Carrier state: %d\n", __func__, carr_state);
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 
 out:
 	return status;
@@ -105,7 +105,7 @@ static bool is_eapol(struct net_pkt *pkt)
 }
 #endif /* CONFIG_NRF700X_DATA_TX */
 
-enum ethernet_hw_caps wifi_nrf_if_caps_get(const struct device *dev)
+enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev)
 {
 	enum ethernet_hw_caps caps = (ETHERNET_LINK_10BASE_T |
 			ETHERNET_LINK_100BASE_T | ETHERNET_LINK_1000BASE_T);
@@ -117,13 +117,13 @@ enum ethernet_hw_caps wifi_nrf_if_caps_get(const struct device *dev)
 	return caps;
 }
 
-int wifi_nrf_if_send(const struct device *dev,
+int nrf_wifi_if_send(const struct device *dev,
 		     struct net_pkt *pkt)
 {
 	int ret = -1;
 #ifdef CONFIG_NRF700X_DATA_TX
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
 	if (!dev || !pkt) {
 		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
@@ -139,12 +139,12 @@ int wifi_nrf_if_send(const struct device *dev,
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	if ((vif_ctx_zep->if_carr_state != WIFI_NRF_FMAC_IF_CARR_STATE_ON) ||
+	if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
 	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
 		goto out;
 	}
 
-	ret = wifi_nrf_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
+	ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
 				       vif_ctx_zep->vif_idx,
 				       net_pkt_to_nbuf(pkt));
 #else
@@ -159,11 +159,11 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 				   uint32_t mgmt_event,
 				   struct net_if *iface)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	const struct device *dev = NULL;
 	struct net_eth_addr mac_addr;
 	struct nrf_wifi_umac_mcast_cfg *mcast_info = NULL;
-	enum wifi_nrf_status status;
+	enum nrf_wifi_status status;
 	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
 
 	dev = net_if_get_device(iface);
@@ -226,11 +226,11 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	       &mac_addr,
 	       NRF_WIFI_ETH_ADDR_LEN);
 
-	status = wifi_nrf_fmac_set_mcast_addr(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_set_mcast_addr(rpu_ctx->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      mcast_info);
 
-	if (status == WIFI_NRF_STATUS_FAIL) {
+	if (status == NRF_WIFI_STATUS_FAIL) {
 		LOG_ERR("%s: nrf_wifi_fmac_set_multicast failed	for"
 			" mac addr=%s\n",
 			__func__,
@@ -242,12 +242,12 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	k_free(mcast_info);
 }
 
-void wifi_nrf_if_init_zep(struct net_if *iface)
+void nrf_wifi_if_init_zep(struct net_if *iface)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	const struct device *dev = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_umac_add_vif_info add_vif_info;
 
 	if (!iface) {
@@ -299,7 +299,7 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 	       dev->name,
 	       strlen(dev->name));
 
-	vif_ctx_zep->vif_idx = wifi_nrf_fmac_add_vif(rpu_ctx_zep->rpu_ctx,
+	vif_ctx_zep->vif_idx = nrf_wifi_fmac_add_vif(rpu_ctx_zep->rpu_ctx,
 						     vif_ctx_zep,
 						     &add_vif_info);
 
@@ -313,11 +313,11 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 		return;
 	}
 
-	status = wifi_nrf_fmac_otp_mac_addr_get(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_otp_mac_addr_get(rpu_ctx_zep->rpu_ctx,
 						vif_ctx_zep->vif_idx,
 						vif_ctx_zep->mac_addr.addr);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: Fetching of MAC address from OTP failed\n",
 			__func__);
 		return;
@@ -344,11 +344,11 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 }
 
 
-int wifi_nrf_if_start_zep(const struct device *dev)
+int nrf_wifi_if_start_zep(const struct device *dev)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_umac_chg_vif_state_info vif_info;
 	char *mac_addr = NULL;
 	unsigned int mac_addr_len = 0;
@@ -396,11 +396,11 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 		goto out;
 	}
 
-	status = wifi_nrf_fmac_set_vif_macaddr(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_set_vif_macaddr(rpu_ctx_zep->rpu_ctx,
 					       vif_ctx_zep->vif_idx,
 					       mac_addr);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: MAC address change failed\n",
 			__func__);
 		goto out;
@@ -410,50 +410,50 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 	       0,
 	       sizeof(vif_info));
 
-	vif_info.state = WIFI_NRF_FMAC_IF_OP_STATE_UP;
+	vif_info.state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
 
 	memcpy(vif_info.ifacename,
 	       dev->name,
 	       strlen(dev->name));
 
-	status = wifi_nrf_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
 					     vif_ctx_zep->vif_idx,
 					     &vif_info);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_chg_vif_state failed\n",
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed\n",
 			__func__);
 		goto out;
 	}
 
 #ifdef CONFIG_WPA_SUPP
-	wifi_nrf_wpa_supp_event_mac_chgd(vif_ctx_zep);
+	nrf_wifi_wpa_supp_event_mac_chgd(vif_ctx_zep);
 #endif /* CONFIG_WPA_SUPP */
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      NRF_WIFI_PS_ENABLED);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_set_power_save failed\n",
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_set_power_save failed\n",
 			__func__);
 		goto out;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
-	vif_ctx_zep->if_op_state = WIFI_NRF_FMAC_IF_OP_STATE_UP;
+	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
 	return 0;
 out:
 	return ret;
 }
 
 
-int wifi_nrf_if_stop_zep(const struct device *dev)
+int nrf_wifi_if_stop_zep(const struct device *dev)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_umac_chg_vif_state_info vif_info;
 	int ret = -1;
 
@@ -480,12 +480,12 @@ int wifi_nrf_if_stop_zep(const struct device *dev)
 	}
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      NRF_WIFI_PS_DISABLED);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_set_power_save failed\n",
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_set_power_save failed\n",
 			__func__);
 		goto out;
 	}
@@ -495,35 +495,35 @@ int wifi_nrf_if_stop_zep(const struct device *dev)
 	       0,
 	       sizeof(vif_info));
 
-	vif_info.state = WIFI_NRF_FMAC_IF_OP_STATE_DOWN;
+	vif_info.state = NRF_WIFI_FMAC_IF_OP_STATE_DOWN;
 
 	memcpy(vif_info.ifacename,
 	       dev->name,
 	       strlen(dev->name));
 
-	status = wifi_nrf_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
 					     vif_ctx_zep->vif_idx,
 					     &vif_info);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_chg_vif_state failed\n",
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed\n",
 			__func__);
 		goto out;
 	}
 
-	vif_ctx_zep->if_op_state = WIFI_NRF_FMAC_IF_OP_STATE_DOWN;
+	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_DOWN;
 	ret = 0;
 out:
 	return ret;
 }
 
 
-int wifi_nrf_if_set_config_zep(const struct device *dev,
+int nrf_wifi_if_set_config_zep(const struct device *dev,
 			       enum ethernet_config_type type,
 			       const struct ethernet_config *config)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	int ret = -1;
 
 	if (!dev) {
@@ -573,9 +573,9 @@ out:
 }
 
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
-struct net_stats_eth *wifi_nrf_eth_stats_get(const struct device *dev)
+struct net_stats_eth *nrf_wifi_eth_stats_get(const struct device *dev)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	if (!dev) {
 		LOG_ERR("%s Device not found\n", __func__);
@@ -596,11 +596,11 @@ out:
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
 
 #ifdef CONFIG_NET_STATISTICS_WIFI
-int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
+int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct rpu_op_stats stats;
 	int ret = -1;
 
@@ -629,10 +629,10 @@ int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	}
 
 	memset(&stats, 0, sizeof(struct rpu_op_stats));
-	status = wifi_nrf_fmac_stats_get(rpu_ctx_zep->rpu_ctx, &stats);
+	status = nrf_wifi_fmac_stats_get(rpu_ctx_zep->rpu_ctx, &stats);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_stats_get failed\n", __func__);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_stats_get failed\n", __func__);
 		goto out;
 	}
 

@@ -28,16 +28,15 @@
 
 #include <fmac_api.h>
 #include <host_rpu_umac_if.h>
-
 #define NRF700X_DRIVER_VERSION "1.2.4.0"
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 /* Use same timeout as WPA supplicant, this is high mainly to handle
  * connected scan.
  */
-#define WIFI_NRF_SCAN_TIMEOUT (K_SECONDS(30))
+#define NRF_WIFI_SCAN_TIMEOUT (K_SECONDS(30))
 
-struct wifi_nrf_vif_ctx_zep {
+struct nrf_wifi_vif_ctx_zep {
 	const struct device *zep_dev_ctx;
 	struct net_if *zep_net_if_ctx;
 	void *supp_drv_if_ctx;
@@ -53,8 +52,8 @@ struct wifi_nrf_vif_ctx_zep {
 	struct net_eth_addr mac_addr;
 
 	unsigned int assoc_freq;
-	enum wifi_nrf_fmac_if_op_state if_op_state;
-	enum wifi_nrf_fmac_if_carr_state if_carr_state;
+	enum nrf_wifi_fmac_if_op_state if_op_state;
+	enum nrf_wifi_fmac_if_carr_state if_carr_state;
 	struct wpa_signal_info *signal_info;
 	struct wpa_conn_info *conn_info;
 #ifdef CONFIG_WPA_SUPP
@@ -72,7 +71,7 @@ struct wifi_nrf_vif_ctx_zep {
 	bool ps_config_info_evnt;
 	bool passive_scan;
 	bool authorized;
-	struct wifi_nrf_ext_capa {
+	struct nrf_wifi_ext_capa {
 		enum nrf_wifi_iftype iftype;
 		unsigned char *ext_capa, *ext_capa_mask;
 		unsigned int ext_capa_len;
@@ -81,13 +80,13 @@ struct wifi_nrf_vif_ctx_zep {
 	bool twt_in_progress;
 };
 
-struct wifi_nrf_vif_ctx_map {
+struct nrf_wifi_vif_ctx_map {
 	const char *ifname;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx;
 };
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
-struct wifi_nrf_ctx_zep {
+struct nrf_wifi_ctx_zep {
 	void *drv_priv_zep;
 	void *rpu_ctx;
 #ifdef CONFIG_NRF700X_RADIO_TEST
@@ -95,7 +94,7 @@ struct wifi_nrf_ctx_zep {
 	bool rf_test_run;
 	unsigned char rf_test;
 #else /* CONFIG_NRF700X_RADIO_TEST */
-	struct wifi_nrf_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
+	struct nrf_wifi_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
 #ifdef CONFIG_NRF700X_UTIL
 	struct rpu_conf_params conf_params;
 #endif /* CONFIG_NRF700X_UTIL */
@@ -104,12 +103,12 @@ struct wifi_nrf_ctx_zep {
 	unsigned int extended_capa_len;
 };
 
-struct wifi_nrf_drv_priv_zep {
-	struct wifi_nrf_fmac_priv *fmac_priv;
+struct nrf_wifi_drv_priv_zep {
+	struct nrf_wifi_fmac_priv *fmac_priv;
 	/* TODO: Replace with a linked list to handle unlimited RPUs */
-	struct wifi_nrf_ctx_zep rpu_ctx_zep;
+	struct nrf_wifi_ctx_zep rpu_ctx_zep;
 };
 
-void wifi_nrf_scan_timeout_work(struct k_work *work);
-const char *wifi_nrf_get_drv_version(void);
+void nrf_wifi_scan_timeout_work(struct k_work *work);
+const char *nrf_wifi_get_drv_version(void);
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */

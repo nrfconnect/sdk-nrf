@@ -28,7 +28,7 @@
 
 #ifdef CONFIG_NRF700X_RADIO_TEST
 /**
- * wifi_nrf_fmac_init() - Initializes the UMAC IF layer of the RPU WLAN FullMAC
+ * nrf_wifi_fmac_init() - Initializes the UMAC IF layer of the RPU WLAN FullMAC
  *                        driver.
  *
  * This function initializes the UMAC IF layer of the RPU WLAN FullMAC driver.
@@ -40,11 +40,11 @@
  *
  * Returns: Pointer to the context of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(void);
+struct nrf_wifi_fmac_priv *nrf_wifi_fmac_init(void);
 
 
 /**
- * wifi_nrf_fmac_stats_get() - Issue a request to get stats from the RPU.
+ * nrf_wifi_fmac_stats_get() - Issue a request to get stats from the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @op_mode: Production/FCM mode.
  * @stats: Pointer to memory where the stats are to be copied.
@@ -54,16 +54,16 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(void);
  * send the event with the current statistics.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					     int op_mode,
 					     struct rpu_op_stats *stats);
 
 
 /**
- * wifi_nrf_fmac_radio_test_init() - Initialize the RPU for radio tests.
+ * nrf_wifi_fmac_radio_test_init() - Initialize the RPU for radio tests.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @params: Parameters necessary for the initialization.
  *
@@ -71,14 +71,14 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
  * for the radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_radio_test_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   struct rpu_conf_params *params);
 
 /**
- * wifi_nrf_fmac_radio_test_prog_tx() - Start TX tests in radio test mode.
+ * nrf_wifi_fmac_radio_test_prog_tx() - Start TX tests in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @params: Parameters necessary for the TX tests.
  *
@@ -86,14 +86,14 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx 
  * the TX tests in radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_radio_test_prog_tx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						      struct rpu_conf_params *params);
 
 /**
- * wifi_nrf_fmac_radio_test_prog_rx() - Start RX tests in radio test mode.
+ * nrf_wifi_fmac_radio_test_prog_rx() - Start RX tests in radio test mode.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @params: Parameters necessary for the RX tests.
  *
@@ -101,10 +101,10 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_c
  * the RX tests in radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_radio_test_prog_rx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						      struct rpu_conf_params *params);
 
 
@@ -120,10 +120,10 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
  * the RF test capture in radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						  enum nrf_wifi_rf_test rf_test_type,
 						  void *cap_data,
 						  unsigned short int num_samples,
@@ -142,10 +142,10 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  * in radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						  unsigned char enable,
 						  signed char tone_freq,
 						  signed char tx_power);
@@ -161,10 +161,10 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx 
  * the RF DPD test in radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_rf_test_dpd(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char enable);
 
 
@@ -177,10 +177,10 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fma
  * using the radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_get_temp(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+enum nrf_wifi_status nrf_wifi_fmac_rf_get_temp(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 
 
@@ -192,10 +192,10 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_temp(struct wifi_nrf_fmac_dev_ctx *fma
  * RF RSSI status in radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+enum nrf_wifi_status nrf_wifi_fmac_rf_get_rf_rssi(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 
 /**
@@ -207,10 +207,10 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
  * value in radio test mode.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_xo_val(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					      unsigned char value);
 
 /**
@@ -221,14 +221,14 @@ enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac
  * returns optimal XO value.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+enum nrf_wifi_status nrf_wifi_fmac_rf_test_compute_xo(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 #else
 
 /**
- * wifi_nrf_fmac_init() - Initializes the UMAC IF layer of the RPU WLAN FullMAC
+ * nrf_wifi_fmac_init() - Initializes the UMAC IF layer of the RPU WLAN FullMAC
  *                        driver.
  *
  * @rx_buf_pools : Pointer to configuration of Rx queue buffers.
@@ -243,12 +243,12 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_c
  *
  * Returns: Pointer to the context of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params *data_config,
+struct nrf_wifi_fmac_priv *nrf_wifi_fmac_init(struct nrf_wifi_data_config_params *data_config,
 					      struct rx_buf_pool_params *rx_buf_pools,
-					      struct wifi_nrf_fmac_callbk_fns *callbk_fns);
+					      struct nrf_wifi_fmac_callbk_fns *callbk_fns);
 
 /**
- * wifi_nrf_fmac_stats_get() - Issue a request to get stats from the RPU.
+ * nrf_wifi_fmac_stats_get() - Issue a request to get stats from the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @stats_type: The type of RPU statistics to get.
  * @stats: Pointer to memory where the stats are to be copied.
@@ -258,15 +258,15 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
  * send the event with the current statistics.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					     struct rpu_op_stats *stats);
 
 
 /**
- * wifi_nrf_fmac_scan() - Issue a scan request to the RPU.
+ * nrf_wifi_fmac_scan() - Issue a scan request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the scan is to be performed.
  * @scan_info: The parameters needed by the RPU for scan operation.
@@ -291,16 +291,16 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
  *      API.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_scan(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_scan(void *fmac_dev_ctx,
 					unsigned char if_idx,
 					struct nrf_wifi_umac_scan_info *scan_info);
 
 
 /**
- * wifi_nrf_fmac_scan_res_get() - Issue a scan results request to the RPU.
+ * nrf_wifi_fmac_scan_res_get() - Issue a scan results request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the scan results are to be fetched.
  * @scan_type: The scan type (i.e. DISPLAY or CONNECT scan).
@@ -309,15 +309,15 @@ enum wifi_nrf_status wifi_nrf_fmac_scan(void *fmac_dev_ctx,
  * instruct the firmware to return the results of a scan.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_scan_res_get(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						int scan_type);
 
 /**
- * wifi_nrf_fmac_scan() - Issue abort of an ongoing scan to the RPU.
+ * nrf_wifi_fmac_scan() - Issue abort of an ongoing scan to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the scan results are to be fetched.
  *
@@ -325,15 +325,15 @@ enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *fmac_dev_ctx,
  * instruct the firmware to abort an ongoing scan.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_abort_scan(void *dev_ctx,
 						unsigned char if_idx);
 
 #ifdef CONFIG_WPA_SUPP
 /**
- * wifi_nrf_fmac_auth() - Issue a authentication request to the RPU.
+ * nrf_wifi_fmac_auth() - Issue a authentication request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the authentication is to be
  *	    performed.
@@ -345,16 +345,16 @@ enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *dev_ctx,
  * interface identified with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_auth(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_auth(void *fmac_dev_ctx,
 					unsigned char if_idx,
 					struct nrf_wifi_umac_auth_info *auth_info);
 
 
 /**
- * wifi_nrf_fmac_deauth() - Issue a deauthentication request to the RPU.
+ * nrf_wifi_fmac_deauth() - Issue a deauthentication request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the deauthentication is to be
  *          performed.
@@ -365,16 +365,16 @@ enum wifi_nrf_status wifi_nrf_fmac_auth(void *fmac_dev_ctx,
  * on the interface identified with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_deauth(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_deauth(void *fmac_dev_ctx,
 					  unsigned char if_idx,
 					  struct nrf_wifi_umac_disconn_info *deauth_info);
 
 
 /**
- * wifi_nrf_fmac_assoc() - Issue a association request to the RPU.
+ * nrf_wifi_fmac_assoc() - Issue a association request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the association is to be
  *          performed.
@@ -386,16 +386,16 @@ enum wifi_nrf_status wifi_nrf_fmac_deauth(void *fmac_dev_ctx,
  * interface identified with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_assoc(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_assoc(void *fmac_dev_ctx,
 					 unsigned char if_idx,
 					 struct nrf_wifi_umac_assoc_info *assoc_info);
 
 
 /**
- * wifi_nrf_fmac_disassoc() - Issue a disassociation request to the RPU.
+ * nrf_wifi_fmac_disassoc() - Issue a disassociation request to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the disassociation is to be
  *	    performed.
@@ -406,16 +406,16 @@ enum wifi_nrf_status wifi_nrf_fmac_assoc(void *fmac_dev_ctx,
  * on the interface identified with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_disassoc(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_disassoc(void *fmac_dev_ctx,
 					    unsigned char if_idx,
 					    struct nrf_wifi_umac_disconn_info *disassoc_info);
 
 
 /**
- * wifi_nrf_fmac_add_key() - Add a key into the RPU security database.
+ * nrf_wifi_fmac_add_key() - Add a key into the RPU security database.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the key is to be added.
  * @key_info: Key specific information which needs to be passed to the RPU.
@@ -427,17 +427,17 @@ enum wifi_nrf_status wifi_nrf_fmac_disassoc(void *fmac_dev_ctx,
  * interface identified with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_add_key(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_add_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_key_info *key_info,
 					   const char *mac_addr);
 
 
 /**
- * wifi_nrf_fmac_del_key() - Delete a key from the RPU security database.
+ * nrf_wifi_fmac_del_key() - Delete a key from the RPU security database.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface from which the key is to be deleted.
  * @key_info: Key specific information which needs to be passed to the RPU.
@@ -449,17 +449,17 @@ enum wifi_nrf_status wifi_nrf_fmac_add_key(void *fmac_dev_ctx,
  * interface identified with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_del_key(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_del_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_key_info *key_info,
 					   const char *mac_addr);
 
 
 /**
- * wifi_nrf_fmac_set_key() - Set a key as a default for data or management
+ * nrf_wifi_fmac_set_key() - Set a key as a default for data or management
  *                           traffic in the RPU security database.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the key is to be set.
@@ -471,16 +471,16 @@ enum wifi_nrf_status wifi_nrf_fmac_del_key(void *fmac_dev_ctx,
  * the flags element set in @key_info parameter.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_key(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_key_info *key_info);
 
 
 /**
- * wifi_nrf_fmac_set_bss() - Set BSS parameters for an AP mode interface to the
+ * nrf_wifi_fmac_set_bss() - Set BSS parameters for an AP mode interface to the
  *                           RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the BSS parameters are to be set.
@@ -490,16 +490,16 @@ enum wifi_nrf_status wifi_nrf_fmac_set_key(void *fmac_dev_ctx,
  * instruct the firmware to set the BSS parameter for an AP mode interface.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_bss(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_bss(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_bss_info *bss_info);
 
 
 /**
- * wifi_nrf_fmac_chg_bcn() - Update the Beacon Template.
+ * nrf_wifi_fmac_chg_bcn() - Update the Beacon Template.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the Beacon Template is to be updated.
  * @data: Beacon Template which need to be passed to the RPU.
@@ -508,15 +508,15 @@ enum wifi_nrf_status wifi_nrf_fmac_set_bss(void *fmac_dev_ctx,
  * instruct the firmware to update beacon template for an AP mode interface.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_bcn(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_bcn(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_set_beacon_info *data);
 
 /**
- * wifi_nrf_fmac_start_ap() - Start a SoftAP.
+ * nrf_wifi_fmac_start_ap() - Start a SoftAP.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the SoftAP is to be started.
  * @ap_info: AP operation specific parameters which need to be passed to the
@@ -527,16 +527,16 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_bcn(void *fmac_dev_ctx,
  * @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_start_ap(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_start_ap(void *fmac_dev_ctx,
 					    unsigned char if_idx,
 					    struct nrf_wifi_umac_start_ap_info *ap_info);
 
 
 /**
- * wifi_nrf_fmac_stop_ap() - Stop a SoftAP.
+ * nrf_wifi_fmac_stop_ap() - Stop a SoftAP.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the SoftAP is to be stopped.
  *
@@ -545,15 +545,15 @@ enum wifi_nrf_status wifi_nrf_fmac_start_ap(void *fmac_dev_ctx,
  * @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_stop_ap(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_stop_ap(void *fmac_dev_ctx,
 					   unsigned char if_idx);
 
 
 /**
- * wifi_nrf_fmac_start_p2p_dev() - Start P2P mode on an interface.
+ * nrf_wifi_fmac_start_p2p_dev() - Start P2P mode on an interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the P2P mode is to be started.
  *
@@ -562,15 +562,15 @@ enum wifi_nrf_status wifi_nrf_fmac_stop_ap(void *fmac_dev_ctx,
  * @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_start(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_dev_start(void *fmac_dev_ctx,
 						 unsigned char if_idx);
 
 
 /**
- * wifi_nrf_fmac_stop_p2p_dev() - Start P2P mode on an interface.
+ * nrf_wifi_fmac_stop_p2p_dev() - Start P2P mode on an interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the P2P mode is to be started.
  *
@@ -579,14 +579,14 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_start(void *fmac_dev_ctx,
  * @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_stop(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_dev_stop(void *fmac_dev_ctx,
 						unsigned char if_idx);
 
 /**
- * wifi_nrf_fmac_p2p_roc_start()
+ * nrf_wifi_fmac_p2p_roc_start()
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface to be kept on channel and stay there.
  * @roc_info: Contans channel and time in ms to stay on.
@@ -595,15 +595,15 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_stop(void *fmac_dev_ctx,
  * to RPU to put p2p device in listen state for a duration.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_FMAC_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_FMAC_STATUS_FAIL
+ *		Pass: %NRF_WIFI_FMAC_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_FMAC_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_start(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_roc_start(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct remain_on_channel_info *roc_info);
 
 /**
- * wifi_nrf_fmac_p2p_roc_stop()
+ * nrf_wifi_fmac_p2p_roc_stop()
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx Index of the interface to be kept on channel and stay there.
  * @cookie: cancel p2p listen state of the matching cookie.
@@ -613,15 +613,15 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_start(void *fmac_dev_ctx,
  * of listen state.
  *
  * Returns: Status
- *		 Pass: %WIFI_NRF_FMAC_STATUS_SUCCESS
- *		 Fail: %WIFI_NRF_FMAC_STATUS_FAIL
+ *		 Pass: %NRF_WIFI_FMAC_STATUS_SUCCESS
+ *		 Fail: %NRF_WIFI_FMAC_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_stop(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_roc_stop(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						unsigned long long cookie);
 
 /**
- * wifi_nrf_fmac_mgmt_tx() - Transmit a management frame.
+ * nrf_wifi_fmac_mgmt_tx() - Transmit a management frame.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the frame is to be
  *              transmitted.
@@ -631,16 +631,16 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_stop(void *fmac_dev_ctx,
  * This function is used to instruct the RPU to transmit a management frame.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_mgmt_tx(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_mgmt_tx_info *mgmt_tx_info);
 
 
 /**
- * wifi_nrf_fmac_del_sta() - Remove a station.
+ * nrf_wifi_fmac_del_sta() - Remove a station.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the STA is connected.
  * @del_sta_info: Information regarding the station to be removed.
@@ -649,16 +649,16 @@ enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *fmac_dev_ctx,
  * deauthentication/disassociation frame to the same.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_del_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_del_sta_info *del_sta_info);
 
 
 /**
- * wifi_nrf_fmac_add_sta() - Indicate a new STA connection to the RPU.
+ * nrf_wifi_fmac_add_sta() - Indicate a new STA connection to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the STA is connected.
  * @add_sta_info: Information regarding the new station.
@@ -667,15 +667,15 @@ enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *fmac_dev_ctx,
  * successfully connected to the AP.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_add_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_add_sta_info *add_sta_info);
 
 /**
- * wifi_nrf_fmac_chg_sta() - Indicate changes to STA connection parameters to
+ * nrf_wifi_fmac_chg_sta() - Indicate changes to STA connection parameters to
  *                           the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the STA is connected.
@@ -685,17 +685,17 @@ enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *fmac_dev_ctx,
  * to the RPU.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_chg_sta_info *chg_sta_info);
 
 
 
 /**
- * wifi_nrf_fmac_mgmt_frame_reg() - Register the management frame type which
+ * nrf_wifi_fmac_mgmt_frame_reg() - Register the management frame type which
  *                                  needs to be sent up to the host by the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface from which the received frame is to be
@@ -707,28 +707,28 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *fmac_dev_ctx,
  * passed upto the host driver.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
 #endif /* CONFIG_WPA_SUPP */
 /**
- * wifi_nrf_fmac_mac_addr() - Get unused MAC address from base mac address.
+ * nrf_wifi_fmac_mac_addr() - Get unused MAC address from base mac address.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @addr: Memory to copy the mac address to.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_mac_addr(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					    unsigned char *addr);
 
 /**
- * wifi_nrf_fmac_vif_idx_get() - Assign a index for a new VIF.
+ * nrf_wifi_fmac_vif_idx_get() - Assign a index for a new VIF.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  *
  * This function searches for an unused VIF index and returns it.
@@ -736,10 +736,10 @@ enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_d
  * Returns: Index to be used for a new VIF
  *          In case of error @MAX_VIFS will be returned.
  */
-unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+unsigned char nrf_wifi_fmac_vif_idx_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 /**
- * wifi_nrf_fmac_add_vif() - Add a new virtual interface.
+ * nrf_wifi_fmac_add_vif() - Add a new virtual interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @os_vif_ctx: Pointer to VIF context that the user of the UMAC IF would like
  *              to be passed during invocation of callback functions like
@@ -753,29 +753,29 @@ unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
  * Returns: Index (maintained by the UMAC IF layer) of the VIF that was added.
  *          In case of error @MAX_VIFS will be returned.
  */
-unsigned char wifi_nrf_fmac_add_vif(void *fmac_dev_ctx,
+unsigned char nrf_wifi_fmac_add_vif(void *fmac_dev_ctx,
 				    void *os_vif_ctx,
 				    struct nrf_wifi_umac_add_vif_info *vif_info);
 
 
 /**
- * wifi_nrf_fmac_del_vif() - Deletes a virtual interface.
+ * nrf_wifi_fmac_del_vif() - Deletes a virtual interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface to be deleted.
  *
  * This function is used to send a command to
  * instruct the firmware to delete an interface which was added using
- * @wifi_nrf_fmac_add_vif.
+ * @nrf_wifi_fmac_add_vif.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_del_vif(void *fmac_dev_ctx,
 					   unsigned char if_idx);
 
 /**
- * wifi_nrf_fmac_chg_vif() - Change the attributes of an interface.
+ * nrf_wifi_fmac_chg_vif() - Change the attributes of an interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the functionality is to be
  *              bound.
@@ -786,16 +786,16 @@ enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *fmac_dev_ctx,
  * with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_vif(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_vif(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_chg_vif_attr_info *vif_info);
 
 
 /**
- * wifi_nrf_fmac_chg_vif_state() - Change the state of a virtual interface.
+ * nrf_wifi_fmac_chg_vif_state() - Change the state of a virtual interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface whose state needs to be changed.
  * @vif_info: State information to be changed for the interface.
@@ -805,16 +805,16 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif(void *fmac_dev_ctx,
  * @if_idx and parameters specified by @vif_info.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_vif_state(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_chg_vif_state_info *vif_info);
 
 
 /**
- * wifi_nrf_fmac_set_vif_macaddr() - Set MAC address on interface.
+ * nrf_wifi_fmac_set_vif_macaddr() - Set MAC address on interface.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface whose MAC address is to be changed.
  * @mac_addr: MAC address to set.
@@ -823,15 +823,15 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *fmac_dev_ctx,
  * with @if_idx.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_vif_macaddr(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_vif_macaddr(void *fmac_dev_ctx,
 						   unsigned char if_idx,
 						   unsigned char *mac_addr);
 
 /**
- * wifi_nrf_fmac_start_xmit() - Trasmit a frame to the RPU.
+ * nrf_wifi_fmac_start_xmit() - Trasmit a frame to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the frame is to be
  *              transmitted.
@@ -849,15 +849,15 @@ enum wifi_nrf_status wifi_nrf_fmac_set_vif_macaddr(void *fmac_dev_ctx,
  *     - The diver can cleanup the frame buffers after receiving this event.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_start_xmit(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_start_xmit(void *fmac_dev_ctx,
 					      unsigned char if_idx,
 					      void *netbuf);
 
 /**
- * wifi_nrf_fmac_suspend() - Inform the RPU that host is going to suspend
+ * nrf_wifi_fmac_suspend() - Inform the RPU that host is going to suspend
  *                           state.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  *
@@ -865,14 +865,14 @@ enum wifi_nrf_status wifi_nrf_fmac_start_xmit(void *fmac_dev_ctx,
  * inform the RPU that host is going to suspend state.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_suspend(void *fmac_dev_ctx);
+enum nrf_wifi_status nrf_wifi_fmac_suspend(void *fmac_dev_ctx);
 
 
 /**
- * wifi_nrf_fmac_resume() - Notify RPU that host has resumed from a suspended
+ * nrf_wifi_fmac_resume() - Notify RPU that host has resumed from a suspended
  *                          state.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  *
@@ -880,14 +880,14 @@ enum wifi_nrf_status wifi_nrf_fmac_suspend(void *fmac_dev_ctx);
  * to inform the RPU that host has resumed from a suspended state.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_resume(void *fmac_dev_ctx);
+enum nrf_wifi_status nrf_wifi_fmac_resume(void *fmac_dev_ctx);
 
 
 /**
- * wifi_nrf_fmac_get_tx_power() - Get tx power
+ * nrf_wifi_fmac_get_tx_power() - Get tx power
  *
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: VIF index.
@@ -896,14 +896,14 @@ enum wifi_nrf_status wifi_nrf_fmac_resume(void *fmac_dev_ctx);
  * to get the transmit power on a particular interface.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_tx_power(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_tx_power(void *fmac_dev_ctx,
 						unsigned int if_idx);
 
 /**
- * wifi_nrf_fmac_get_channel() - Get channel definition.
+ * nrf_wifi_fmac_get_channel() - Get channel definition.
  *
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: VIF index.
@@ -912,14 +912,14 @@ enum wifi_nrf_status wifi_nrf_fmac_get_tx_power(void *fmac_dev_ctx,
  * to get the channel configured on a particular interface.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_channel(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_channel(void *fmac_dev_ctx,
 					       unsigned int if_idx);
 
 /**
- * wifi_nrf_fmac_get_station() - Get station statistics
+ * nrf_wifi_fmac_get_station() - Get station statistics
  *
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: VIF index.
@@ -929,15 +929,15 @@ enum wifi_nrf_status wifi_nrf_fmac_get_channel(void *fmac_dev_ctx,
  * to get station statistics using a mac address.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_station(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_station(void *fmac_dev_ctx,
 					       unsigned int if_idx,
 					       unsigned char *mac);
 
 
-/* wifi_nrf_fmac_get_interface() - Get interface statistics
+/* nrf_wifi_fmac_get_interface() - Get interface statistics
  *
  * @dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: VIF index.
@@ -946,15 +946,15 @@ enum wifi_nrf_status wifi_nrf_fmac_get_station(void *fmac_dev_ctx,
  * to get interface statistics using interface index.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_interface(void *dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_interface(void *dev_ctx,
 					       unsigned int if_idx);
 
 
 /**
- * wifi_nrf_fmac_set_power_save() - Configure WLAN power management.
+ * nrf_wifi_fmac_set_power_save() - Configure WLAN power management.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which power management is to be set.
  * @state: State (Enable/Disable) of WLAN power management.
@@ -963,10 +963,10 @@ enum wifi_nrf_status wifi_nrf_fmac_get_interface(void *dev_ctx,
  * to RPU to Enable/Disable WLAN Power management.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_power_save(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_power_save(void *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  bool state);
 
@@ -980,10 +980,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save(void *fmac_dev_ctx,
  * to RPU to set uapsd queue value.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Fail : %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Fail : %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_uapsd_queue(void *fmac_dev_ctx,
 						   unsigned char if_idx,
 						   unsigned int uapsd_queue);
 
@@ -998,15 +998,15 @@ enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *fmac_dev_ctx,
  * inactivity time.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Fail : %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Fail : %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_power_save_timeout(void *dev_ctx,
 							  unsigned char if_idx,
 							  int ps_timeout);
 
 /**
- * wifi_nrf_fmac_set_qos_map() - Configure qos_map of for data
+ * nrf_wifi_fmac_set_qos_map() - Configure qos_map of for data
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the qos map be set.
  * @qos_info: qos_map information
@@ -1015,15 +1015,15 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *dev_ctx,
  * to RPU to set qos map information.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_qos_map(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_qos_map(void *fmac_dev_ctx,
 					       unsigned char if_idx,
 					       struct nrf_wifi_umac_qos_map_info *qos_info);
 
 /**
- * wifi_nrf_fmac_set_wowlan() - Configure WOWLAN.
+ * nrf_wifi_fmac_set_wowlan() - Configure WOWLAN.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @var: Wakeup trigger condition.
  *
@@ -1031,27 +1031,27 @@ enum wifi_nrf_status wifi_nrf_fmac_set_qos_map(void *fmac_dev_ctx,
  * to RPU to configure Wakeup trigger condition in RPU.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_wowlan(void *fmac_dev_ctx,
 					      unsigned int var);
 
 /**
- * wifi_nrf_fmac_get_wiphy() - Get PHY configuration.
+ * nrf_wifi_fmac_get_wiphy() - Get PHY configuration.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the CMD needs to be sent.
  *
  * This function is used to get PHY configuration from RPU.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_wiphy(void *fmac_dev_ctx, unsigned char if_idx);
+enum nrf_wifi_status nrf_wifi_fmac_get_wiphy(void *fmac_dev_ctx, unsigned char if_idx);
 
 /**
- * wifi_nrf_fmac_register_frame() - Register to get MGMT frames.
+ * nrf_wifi_fmac_register_frame() - Register to get MGMT frames.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the CMD needs to be sent.
  * @frame_info: Information regarding the management frame.
@@ -1059,14 +1059,14 @@ enum wifi_nrf_status wifi_nrf_fmac_get_wiphy(void *fmac_dev_ctx, unsigned char i
  * Register with RPU to receive MGMT frames.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_register_frame(void *dev_ctx, unsigned char if_idx,
+enum nrf_wifi_status nrf_wifi_fmac_register_frame(void *dev_ctx, unsigned char if_idx,
 						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
 /**
- * wifi_nrf_fmac_set_wiphy_params() - set wiphy parameters
+ * nrf_wifi_fmac_set_wiphy_params() - set wiphy parameters
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @wiphy_info: wiphy parameters
  *
@@ -1074,16 +1074,16 @@ enum wifi_nrf_status wifi_nrf_fmac_register_frame(void *dev_ctx, unsigned char i
  * to RPU to configure parameters relted to interface.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
 
-enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_wiphy_params(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_set_wiphy_info *wiphy_info);
 
 /**
- * wifi_nrf_fmac_twt_setup() - TWT setup command
+ * nrf_wifi_fmac_twt_setup() - TWT setup command
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the TWT parameters be set.
  * @twt_info: TWT parameters
@@ -1092,15 +1092,15 @@ enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *fmac_dev_ctx,
  * to RPU to configure parameters relted to TWT setup.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_twt_setup(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_twt_setup(void *fmac_dev_ctx,
 					     unsigned char if_idx,
 					     struct nrf_wifi_umac_config_twt_info *twt_info);
 
 /**
- * wifi_nrf_fmac_twt_teardown() - TWT teardown command
+ * nrf_wifi_fmac_twt_teardown() - TWT teardown command
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which the TWT parameters be set.
  * @twt_info: TWT parameters
@@ -1109,15 +1109,15 @@ enum wifi_nrf_status wifi_nrf_fmac_twt_setup(void *fmac_dev_ctx,
  * to RPU to tear down an existing TWT session.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_twt_teardown(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_twt_teardown(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						struct nrf_wifi_umac_config_twt_info *twt_info);
 
 /**
- * wifi_nrf_fmac_get_conn_info() - Get connection info from RPU
+ * nrf_wifi_fmac_get_conn_info() - Get connection info from RPU
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface.
  *
@@ -1125,16 +1125,16 @@ enum wifi_nrf_status wifi_nrf_fmac_twt_teardown(void *fmac_dev_ctx,
  * to RPU to fetch the connection information.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_conn_info(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_conn_info(void *fmac_dev_ctx,
 						unsigned char if_idx);
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
 /**
- * wifi_nrf_fmac_deinit() - De-initializes the UMAC IF layer of the RPU WLAN
+ * nrf_wifi_fmac_deinit() - De-initializes the UMAC IF layer of the RPU WLAN
  *                          FullMAC driver.
  * @fpriv: Pointer to the context of the UMAC IF layer.
  *
@@ -1146,37 +1146,37 @@ enum wifi_nrf_status wifi_nrf_fmac_get_conn_info(void *fmac_dev_ctx,
  *
  * Returns: None
  */
-void wifi_nrf_fmac_deinit(struct wifi_nrf_fmac_priv *fpriv);
+void nrf_wifi_fmac_deinit(struct nrf_wifi_fmac_priv *fpriv);
 
 
 /**
- * wifi_nrf_fmac_dev_add() - Adds a RPU instance.
+ * nrf_wifi_fmac_dev_add() - Adds a RPU instance.
  * @fpriv: Pointer to the context of the UMAC IF layer.
  *
  * This function adds an RPU instance. This function will return the
  * pointer to the context of the RPU instance. This pointer will need to be
  * supplied while invoking further device specific API's,
- * e.g. @wifi_nrf_fmac_scan etc.
+ * e.g. @nrf_wifi_fmac_scan etc.
  *
  * Returns: Pointer to the context of the RPU instance.
  */
-struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *fpriv,
+struct nrf_wifi_fmac_dev_ctx *nrf_wifi_fmac_dev_add(struct nrf_wifi_fmac_priv *fpriv,
 						    void *os_dev_ctx);
 
 
 /**
- * wifi_nrf_fmac_dev_rem() - Removes a RPU instance.
+ * nrf_wifi_fmac_dev_rem() - Removes a RPU instance.
  * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
  *
  * This function handles the removal of an RPU instance at the UMAC IF layer.
  *
  * Returns: None.
  */
-void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+void nrf_wifi_fmac_dev_rem(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 
 /**
- * wifi_nrf_fmac_dev_init() - Initializes a RPU instance.
+ * nrf_wifi_fmac_dev_init() - Initializes a RPU instance.
  * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
  * @rf_params_usr: RF parameters (if any) to be passed to the RPU.
  * @sleep_type: Type of RPU sleep.
@@ -1187,10 +1187,10 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  * This function initializes the firmware of an RPU instance.
  *
  * Returns:
- *		Pass: WIFI_NRF_STATUS_SUCCESS.
- *		Fail: WIFI_NRF_STATUS_FAIL.
+ *		Pass: NRF_WIFI_STATUS_SUCCESS.
+ *		Fail: NRF_WIFI_STATUS_FAIL.
  */
-enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #ifndef CONFIG_NRF700X_RADIO_TEST
 					    unsigned char *rf_params_usr,
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
@@ -1203,18 +1203,18 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 
 
 /**
- * wifi_nrf_fmac_dev_deinit() - De-initializes a RPU instance.
+ * nrf_wifi_fmac_dev_deinit() - De-initializes a RPU instance.
  * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
  *
  * This function de-initializes the firmware of an RPU instance.
  *
  * Returns: None.
  */
-void wifi_nrf_fmac_dev_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+void nrf_wifi_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 
 /**
- * wifi_nrf_fmac_fw_load() - Loads the Firmware(s) to the RPU WLAN device.
+ * nrf_wifi_fmac_fw_load() - Loads the Firmware(s) to the RPU WLAN device.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device, which was
  *            passed as @fmac_dev_ctx parameter via the @add_dev_callbk_fn
  *            callback function.
@@ -1223,30 +1223,30 @@ void wifi_nrf_fmac_dev_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  * This function loads the FullMAC firmware(s) to the RPU WLAN device.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_fw_info *fmac_fw);
+enum nrf_wifi_status nrf_wifi_fmac_fw_load(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					   struct nrf_wifi_fmac_fw_info *fmac_fw);
 
 
 /**
- * wifi_nrf_fmac_ver_get() - Get FW versions from the RPU.
+ * nrf_wifi_fmac_ver_get() - Get FW versions from the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @fw_ver: Pointer to the address where the FW version needs to be copied.
  *
  * This function is used to get Firmware version from the RPU.
  *
  * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
+ *		Pass: %NRF_WIFI_STATUS_SUCCESS
+ *		Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_ver_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					  unsigned int *fw_ver);
 
 
 /**
- * wifi_nrf_fmac_conf_btcoex() - Configure BT-Coex parameters in RPU.
+ * nrf_wifi_fmac_conf_btcoex() - Configure BT-Coex parameters in RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @params: BT-coex parameters which will be configured in RPU.
  *
@@ -1254,14 +1254,14 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
  * BT-Coex parameters in RPU.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_conf_btcoex(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					       void *cmd, unsigned int cmd_len);
 
 /**
- * wifi_nrf_fmac_conf_ltf_gi() - Configure HE LTF and GI parameters.
+ * nrf_wifi_fmac_conf_ltf_gi() - Configure HE LTF and GI parameters.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @he_ltf: HE LTF parameter which will be configured in RPU.
  * @he_gi: HE GI parameter which will be configured in RPU
@@ -1271,17 +1271,17 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fma
  * to configure HE ltf and gi parameters in RPU.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_conf_ltf_gi(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char he_ltf,
 					       unsigned char he_gi,
 					       unsigned char enabled);
 
 
 /**
- * wifi_nrf_fmac_set_mcast_addr - set the Multicast filter address.
+ * nrf_wifi_fmac_set_mcast_addr - set the Multicast filter address.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface whose state needs to be changed.
  * @mcast_info: Multicast information to be set
@@ -1291,16 +1291,16 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fma
  * with index @if_idx and parameters specified by @mcast_info.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_mcast_addr(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_mcast_addr(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  struct nrf_wifi_umac_mcast_cfg *mcast_info);
 
 
 /**
- * wifi_nrf_fmac_otp_mac_addr_get() - Fetch MAC address from OTP.
+ * nrf_wifi_fmac_otp_mac_addr_get() - Fetch MAC address from OTP.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @vif_idx: Interface index for which the MAC address is to be fetched.
  * @mac_addr: Pointer to the address where the MAC address needs to be copied.
@@ -1308,16 +1308,16 @@ enum wifi_nrf_status wifi_nrf_fmac_set_mcast_addr(struct wifi_nrf_fmac_dev_ctx *
  * This function is used to fetch MAC address from the OTP.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_otp_mac_addr_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						    unsigned char vif_idx,
 						    unsigned char *mac_addr);
 
 
 /**
- * wifi_nrf_fmac_rf_params_get() - Get the RF parameters to be programmed to the RPU.
+ * nrf_wifi_fmac_rf_params_get() - Get the RF parameters to be programmed to the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @rf_params: Pointer to the address where the RF params information needs to be copied.
  *
@@ -1326,45 +1326,45 @@ enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx
  * parameters are then returned in the @rf_params.
  *
  * Returns: Status
- *              Pass : %WIFI_NRF_STATUS_SUCCESS
- *              Error: %WIFI_NRF_STATUS_FAIL
+ *              Pass : %NRF_WIFI_STATUS_SUCCESS
+ *              Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_rf_params_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						 unsigned char *rf_params);
 
-struct wifi_nrf_fmac_reg_info {
+struct nrf_wifi_fmac_reg_info {
 	unsigned char alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 	bool force;
 };
 
 /**
- * wifi_nrf_fmac_set_reg() - Set regulatory domain in RPU.
+ * nrf_wifi_fmac_set_reg() - Set regulatory domain in RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @reg_info: Pointer to the address where the regulatory domain information
  *		  needs to be copied.
  * This function is used to set regulatory domain in the RPU.
  * Returns: Status
- *			Pass : %WIFI_NRF_STATUS_SUCCESS
- *			Error: %WIFI_NRF_STATUS_FAIL
+ *			Pass : %NRF_WIFI_STATUS_SUCCESS
+ *			Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_reg_info *reg_info);
+enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					   struct nrf_wifi_fmac_reg_info *reg_info);
 
 /**
- * wifi_nrf_fmac_get_reg() - Get regulatory domain from RPU.
+ * nrf_wifi_fmac_get_reg() - Get regulatory domain from RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @reg_info: Pointer to the address where the regulatory domain information
  *		  needs to be copied.
  * This function is used to get regulatory domain from the RPU.
  * Returns: Status
- *			Pass : %WIFI_NRF_STATUS_SUCCESS
- *			Error: %WIFI_NRF_STATUS_FAIL
+ *			Pass : %NRF_WIFI_STATUS_SUCCESS
+ *			Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_reg_info *reg_info);
+enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					   struct nrf_wifi_fmac_reg_info *reg_info);
 
 /**
- * wifi_nrf_fmac_get_power_save_info() - Get the current power save info.
+ * nrf_wifi_fmac_get_power_save_info() - Get the current power save info.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @if_idx: Index of the interface on which power management is to be set.
  *
@@ -1372,19 +1372,19 @@ enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
  * to RPU to Enable/Disable WLAN Power management.
  *
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_power_save_info(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_power_save_info(void *fmac_dev_ctx,
 						       unsigned char if_idx);
 
 #ifdef CONFIG_NRF700X_UTIL
-enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char rate_flag,
 					       int data_rate);
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 /**
- * wifi_nrf_fmac_get_host_ref_rpu_ps_ctrl_state() - Get the RPU power save
+ * nrf_wifi_fmac_get_host_ref_rpu_ps_ctrl_state() - Get the RPU power save
  *			status from host perspective.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
  * @rpu_ps_ctrl_state: Pointer to the address where the current rpu ps state
@@ -1393,10 +1393,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fma
  * This function is used to fetch the RPU power save status
  * from host perspective.
  * Returns: Status
- *              Pass: %WIFI_NRF_STATUS_SUCCESS
- *              Fail: %WIFI_NRF_STATUS_FAIL
+ *              Pass: %NRF_WIFI_STATUS_SUCCESS
+ *              Fail: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx,
 							      int *rpu_ps_ctrl_state);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif
@@ -1409,9 +1409,9 @@ enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx
  *
  * @details This function is used to send a command to RPU to configure listen interval.
  *
- * @return #wifi_nrf_status
+ * @return #nrf_wifi_status
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_listen_interval(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_listen_interval(void *fmac_dev_ctx,
 						       unsigned char if_idx,
 						       unsigned short listen_interval);
 
@@ -1424,9 +1424,9 @@ enum wifi_nrf_status wifi_nrf_fmac_set_listen_interval(void *fmac_dev_ctx,
  * @details This function is used to configure PS wakeup mode, either DTIM Interval
  *	    or Listen interval based. Default is DTIM interval based mode.
  *
- * @return #wifi_nrf_status
+ * @return #nrf_wifi_status
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_ps_wakeup_mode(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_ps_wakeup_mode(void *fmac_dev_ctx,
 						      unsigned char if_idx,
 						      bool ps_wakeup_mode);
 #endif /* __FMAC_API_H__ */

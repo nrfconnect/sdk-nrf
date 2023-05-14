@@ -294,8 +294,8 @@ Testing
 
            .. code-block:: console
 
-               wifi_nrf: Temperature reading success:
-               wifi_nrf: The temperature is = 21 degree Celsius
+               nrf_wifi: Temperature reading success:
+               nrf_wifi: The temperature is = 21 degree Celsius
 
          * To measure RF RSSI status with the following configuration:
 
@@ -312,7 +312,7 @@ Testing
 
            .. code-block:: console
 
-              wifi_nrf: RF RSSI value is = 0
+              nrf_wifi: RF RSSI value is = 0
 
          .. note::
 
@@ -335,7 +335,7 @@ Testing
 
            .. code-block:: console
 
-              wifi_nrf: Best XO value is = 43
+              nrf_wifi: Best XO value is = 43
 
          .. note::
 

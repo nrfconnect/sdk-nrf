@@ -35,7 +35,7 @@ struct rpu_op_stats {
 
 
 /**
- * struct wifi_nrf_fmac_priv - Structure to hold context information for the
+ * struct nrf_wifi_fmac_priv - Structure to hold context information for the
  *                             UMAC IF layer.
  * @opriv: Pointer to the OS abstraction layer.
  * @hpriv: Pointer to the HAL layer.
@@ -43,14 +43,14 @@ struct rpu_op_stats {
  * This structure maintains the context information necessary for the
  * operation of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv {
-	struct wifi_nrf_osal_priv *opriv;
-	struct wifi_nrf_hal_priv *hpriv;
+struct nrf_wifi_fmac_priv {
+	struct nrf_wifi_osal_priv *opriv;
+	struct nrf_wifi_hal_priv *hpriv;
 };
 
 
 /**
- * struct wifi_nrf_fmac_dev_ctx - Structure to hold per device context information
+ * struct nrf_wifi_fmac_dev_ctx - Structure to hold per device context information
  *                                for the UMAC IF layer.
  * @fpriv: Pointer to the UMAC IF abstraction layer.
  * @os_fmac_dev_ctx: Pointer to the per device OS context which is using the
@@ -63,8 +63,8 @@ struct wifi_nrf_fmac_priv {
  * This structure maintains the context information necessary for the
  * a single instance of an FullMAC based RPU.
  */
-struct wifi_nrf_fmac_dev_ctx {
-	struct wifi_nrf_fmac_priv *fpriv;
+struct nrf_wifi_fmac_dev_ctx {
+	struct nrf_wifi_fmac_priv *fpriv;
 	void *os_dev_ctx;
 	void *hal_dev_ctx;
 	struct rpu_fw_stats *fw_stats;
@@ -84,57 +84,57 @@ struct wifi_nrf_fmac_dev_ctx {
 #else /* CONFIG_NRF700X_RADIO_TEST */
 
 /**
- * enum wifi_nrf_fmac_ac - WLAN access categories.
- * @WIFI_NRF_FMAC_AC_BK: Background access category.
- * @WIFI_NRF_FMAC_AC_BE: Best-effor access category.
- * @WIFI_NRF_FMAC_AC_VI: Video access category.
- * @WIFI_NRF_FMAC_AC_VO: Voice access category.
- * @WIFI_NRF_FMAC_AC_MAX: Maximum number of WLAN access categories.
+ * enum nrf_wifi_fmac_ac - WLAN access categories.
+ * @NRF_WIFI_FMAC_AC_BK: Background access category.
+ * @NRF_WIFI_FMAC_AC_BE: Best-effor access category.
+ * @NRF_WIFI_FMAC_AC_VI: Video access category.
+ * @NRF_WIFI_FMAC_AC_VO: Voice access category.
+ * @NRF_WIFI_FMAC_AC_MAX: Maximum number of WLAN access categories.
  *
  * This enum lists the possible WLAN access categories.
  */
-enum wifi_nrf_fmac_ac {
-	WIFI_NRF_FMAC_AC_BK,
-	WIFI_NRF_FMAC_AC_BE,
-	WIFI_NRF_FMAC_AC_VI,
-	WIFI_NRF_FMAC_AC_VO,
-	WIFI_NRF_FMAC_AC_MC,
-	WIFI_NRF_FMAC_AC_MAX
+enum nrf_wifi_fmac_ac {
+	NRF_WIFI_FMAC_AC_BK,
+	NRF_WIFI_FMAC_AC_BE,
+	NRF_WIFI_FMAC_AC_VI,
+	NRF_WIFI_FMAC_AC_VO,
+	NRF_WIFI_FMAC_AC_MC,
+	NRF_WIFI_FMAC_AC_MAX
 };
 
 
 /**
- * enum wifi_nrf_fmac_if_op_state - The operational state of an interface.
- * @WIFI_NRF_FMAC_IF_OP_STATE_DOWN: The interface is non-operational.
- * @WIFI_NRF_FMAC_IF_OP_STATE_UP: The interface is operational.
- * @WIFI_NRF_FMAC_IF_OP_STATE_INVALID: Invalid value. Used for error checks.
+ * enum nrf_wifi_fmac_if_op_state - The operational state of an interface.
+ * @NRF_WIFI_FMAC_IF_OP_STATE_DOWN: The interface is non-operational.
+ * @NRF_WIFI_FMAC_IF_OP_STATE_UP: The interface is operational.
+ * @NRF_WIFI_FMAC_IF_OP_STATE_INVALID: Invalid value. Used for error checks.
  *
  * This enum lists the possible operational states of an interface.
  */
-enum wifi_nrf_fmac_if_op_state {
-	WIFI_NRF_FMAC_IF_OP_STATE_DOWN,
-	WIFI_NRF_FMAC_IF_OP_STATE_UP,
-	WIFI_NRF_FMAC_IF_OP_STATE_INVALID
+enum nrf_wifi_fmac_if_op_state {
+	NRF_WIFI_FMAC_IF_OP_STATE_DOWN,
+	NRF_WIFI_FMAC_IF_OP_STATE_UP,
+	NRF_WIFI_FMAC_IF_OP_STATE_INVALID
 };
 
 
 /**
- * enum wifi_nrf_fmac_if_carr_state - The carrier state of an interface.
- * @WIFI_NRF_FMAC_IF_CARR_STATE_OFF: The interface carrier is off.
- * @WIFI_NRF_FMAC_IF_CARR_STATE_ON: The interface carrier is on.
- * @WIFI_NRF_FMAC_IF_CARR_STATE_INVALID: Invalid value. Used for error checks.
+ * enum nrf_wifi_fmac_if_carr_state - The carrier state of an interface.
+ * @NRF_WIFI_FMAC_IF_CARR_STATE_OFF: The interface carrier is off.
+ * @NRF_WIFI_FMAC_IF_CARR_STATE_ON: The interface carrier is on.
+ * @NRF_WIFI_FMAC_IF_CARR_STATE_INVALID: Invalid value. Used for error checks.
  *
  * This enum lists the possible operational states of an interface.
  */
-enum wifi_nrf_fmac_if_carr_state {
-	WIFI_NRF_FMAC_IF_CARR_STATE_OFF,
-	WIFI_NRF_FMAC_IF_CARR_STATE_ON,
-	WIFI_NRF_FMAC_IF_CARR_STATE_INVALID
+enum nrf_wifi_fmac_if_carr_state {
+	NRF_WIFI_FMAC_IF_CARR_STATE_OFF,
+	NRF_WIFI_FMAC_IF_CARR_STATE_ON,
+	NRF_WIFI_FMAC_IF_CARR_STATE_INVALID
 };
 
 
 /**
- * struct wifi_nrf_fmac_callbk_fns - Callback functions to be invoked by UMAC
+ * struct nrf_wifi_fmac_callbk_fns - Callback functions to be invoked by UMAC
  *				     IF layer when a paticular event occurs.
  * @if_assoc_callbk_fn: Callback function to be called when an interface association
  *                      state changes.
@@ -143,9 +143,9 @@ enum wifi_nrf_fmac_if_carr_state {
  * This structure contains function pointers to all the callback functions that
  * the UMAC IF layer needs to invoked for various events.
  */
-struct wifi_nrf_fmac_callbk_fns {
-	enum wifi_nrf_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
-							    enum wifi_nrf_fmac_if_carr_state cs);
+struct nrf_wifi_fmac_callbk_fns {
+	enum nrf_wifi_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
+							    enum nrf_wifi_fmac_if_carr_state cs);
 
 	void (*rx_frm_callbk_fn)(void *os_vif_ctx,
 				 void *frm);
@@ -276,7 +276,7 @@ struct wifi_nrf_fmac_callbk_fns {
 };
 
 
-struct wifi_nrf_fmac_buf_map_info {
+struct nrf_wifi_fmac_buf_map_info {
 	bool mapped;
 	unsigned long nwb;
 };
@@ -372,14 +372,14 @@ struct tx_config {
 
 	struct peers_info peers[MAX_SW_PEERS];
 	unsigned int *send_pkt_coalesce_count_p;
-	void *data_pending_txq[MAX_SW_PEERS][WIFI_NRF_FMAC_AC_MAX];
+	void *data_pending_txq[MAX_SW_PEERS][NRF_WIFI_FMAC_AC_MAX];
 	void *wakeup_client_q;
 
 	/* Used to store tx descs(buff pool ids) */
 	unsigned long *buf_pool_bmp_p;
 
-	unsigned int outstanding_descs[WIFI_NRF_FMAC_AC_MAX];
-	unsigned int curr_peer_opp[WIFI_NRF_FMAC_AC_MAX];
+	unsigned int outstanding_descs[NRF_WIFI_FMAC_AC_MAX];
+	unsigned int curr_peer_opp[NRF_WIFI_FMAC_AC_MAX];
 	unsigned int next_spare_desc_ac;
 
 	struct tx_pkt_info *pkt_info_p;
@@ -394,7 +394,7 @@ struct tx_config {
 
 
 /**
- * struct wifi_nrf_fmac_priv - Structure to hold context information for the
+ * struct nrf_wifi_fmac_priv - Structure to hold context information for the
  *                             UMAC IF layer.
  * @opriv: Pointer to the OS abstraction layer.
  * @hpriv: Pointer to the HAL layer.
@@ -410,9 +410,9 @@ struct tx_config {
  * This structure maintains the context information necessary for the
  * operation of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv {
-	struct wifi_nrf_osal_priv *opriv;
-	struct wifi_nrf_hal_priv *hpriv;
+struct nrf_wifi_fmac_priv {
+	struct nrf_wifi_osal_priv *opriv;
+	struct nrf_wifi_hal_priv *hpriv;
 
 	struct nrf_wifi_data_config_params data_config;
 	unsigned char num_tx_tokens;
@@ -424,25 +424,25 @@ struct wifi_nrf_fmac_priv {
 	unsigned int max_ampdu_len_per_token;
 	unsigned int avail_ampdu_len_per_token;
 
-	struct wifi_nrf_fmac_callbk_fns callbk_fns;
+	struct nrf_wifi_fmac_callbk_fns callbk_fns;
 
 };
 
 /**
- * enum wifi_nrf_fmac_twt_state - The TWT state of device.
- * @WIFI_NRF_FMAC_TWT_STATE_SLEEP: The RPU in TWT sleep state
- * @WIFI_NRF_FMAC_TWT_STATE_AWAKE: The RPU in TWT awake state
+ * enum nrf_wifi_fmac_twt_state - The TWT state of device.
+ * @NRF_WIFI_FMAC_TWT_STATE_SLEEP: The RPU in TWT sleep state
+ * @NRF_WIFI_FMAC_TWT_STATE_AWAKE: The RPU in TWT awake state
  *
  * This enum lists the possible RPU TWT operational states.
  */
-enum wifi_nrf_fmac_twt_state {
-	WIFI_NRF_FMAC_TWT_STATE_SLEEP,
-	WIFI_NRF_FMAC_TWT_STATE_AWAKE
+enum nrf_wifi_fmac_twt_state {
+	NRF_WIFI_FMAC_TWT_STATE_SLEEP,
+	NRF_WIFI_FMAC_TWT_STATE_AWAKE
 };
 
 
 /**
- * struct wifi_nrf_fmac_dev_ctx - Structure to hold per device context information
+ * struct nrf_wifi_fmac_dev_ctx - Structure to hold per device context information
  *                                for the UMAC IF layer.
  * @fpriv: Pointer to the UMAC IF abstraction layer.
  * @os_fmac_dev_ctx: Pointer to the per device OS context which is using the
@@ -471,13 +471,13 @@ enum wifi_nrf_fmac_twt_state {
  * This structure maintains the context information necessary for the
  * a single instance of an FullMAC based RPU.
  */
-struct wifi_nrf_fmac_dev_ctx {
-	struct wifi_nrf_fmac_priv *fpriv;
+struct nrf_wifi_fmac_dev_ctx {
+	struct nrf_wifi_fmac_priv *fpriv;
 	void *os_dev_ctx;
 	void *hal_dev_ctx;
-	struct wifi_nrf_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
-	struct wifi_nrf_fmac_buf_map_info *tx_buf_info;
-	struct wifi_nrf_fmac_buf_map_info *rx_buf_info;
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
+	struct nrf_wifi_fmac_buf_map_info *tx_buf_info;
+	struct nrf_wifi_fmac_buf_map_info *rx_buf_info;
 	struct tx_config tx_config;
 	struct rpu_host_stats host_stats;
 	unsigned char num_sta;
@@ -489,7 +489,7 @@ struct wifi_nrf_fmac_dev_ctx {
 	bool fw_deinit_done;
 	bool alpha2_valid;
 	unsigned char alpha2[3];
-	enum wifi_nrf_fmac_twt_state twt_sleep_status;
+	enum nrf_wifi_fmac_twt_state twt_sleep_status;
 #ifdef CONFIG_NRF700X_TX_DONE_WQ_ENABLED
 	void *tx_done_tasklet;
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
@@ -501,7 +501,7 @@ struct wifi_nrf_fmac_dev_ctx {
 
 
 /**
- * struct wifi_nrf_fmac_vif_ctx - Structure to hold per VIF context information
+ * struct nrf_wifi_fmac_vif_ctx - Structure to hold per VIF context information
  *                                for the UMAC IF layer.
  * @fmac_dev_ctx: Pointer to the device context at the UMAC IF layer.
  * @os_vif_ctx: Pointer to the per VIF OS context which is using the
@@ -516,8 +516,8 @@ struct wifi_nrf_fmac_dev_ctx {
  * This structure maintains the context information necessary for the
  * a single instance of an VIF.
  */
-struct wifi_nrf_fmac_vif_ctx {
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx;
+struct nrf_wifi_fmac_vif_ctx {
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
 	void *os_vif_ctx;
 	char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	int groupwise_cipher;
@@ -528,14 +528,14 @@ struct wifi_nrf_fmac_vif_ctx {
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
-struct wifi_nrf_fw_info {
+struct nrf_wifi_fw_info {
 	const void *data;
 	unsigned int size;
 };
 
 
 /**
- * struct wifi_nrf_fmac_fw_info - Structure to hold firmware information
+ * struct nrf_wifi_fmac_fw_info - Structure to hold firmware information
  *                                for the UMAC IF layer.
  * @lmac_ram: Information related to the LMAC RAM binary.
  * @umac_ram: Information related to the UMAC RAM binary.
@@ -548,15 +548,15 @@ struct wifi_nrf_fw_info {
  *
  * This structure holds the UMAC and LMAC firmware information.
  */
-struct wifi_nrf_fmac_fw_info {
-	struct wifi_nrf_fw_info lmac_patch_pri;
-	struct wifi_nrf_fw_info lmac_patch_sec;
-	struct wifi_nrf_fw_info umac_patch_pri;
-	struct wifi_nrf_fw_info umac_patch_sec;
+struct nrf_wifi_fmac_fw_info {
+	struct nrf_wifi_fw_info lmac_patch_pri;
+	struct nrf_wifi_fw_info lmac_patch_sec;
+	struct nrf_wifi_fw_info umac_patch_pri;
+	struct nrf_wifi_fw_info umac_patch_sec;
 };
 
 
-struct wifi_nrf_fmac_otp_info {
+struct nrf_wifi_fmac_otp_info {
 	struct host_rpu_umac_info info;
 	unsigned int flags;
 };

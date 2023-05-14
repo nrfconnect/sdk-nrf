@@ -14,10 +14,10 @@
 #include "queue.h"
 #include "fmac_tx.h"
 
-enum wifi_nrf_status sap_client_ps_get_frames(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					      struct nrf_wifi_sap_ps_get_frames *config)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct peers_info *peer = NULL;
 	void *wakeup_client_q = NULL;
 	int id = -1;
@@ -25,24 +25,24 @@ enum wifi_nrf_status sap_client_ps_get_frames(struct wifi_nrf_fmac_dev_ctx *fmac
 	int desc = 0;
 
 	if (!fmac_dev_ctx || !config) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Invalid params\n",
 				      __func__);
 		goto out;
 	}
 
-	wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+	nrf_wifi_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 				    fmac_dev_ctx->tx_config.tx_lock);
 
-	id = wifi_nrf_fmac_peer_get_id(fmac_dev_ctx, config->mac_addr);
+	id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx, config->mac_addr);
 
 	if (id == -1) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Invalid Peer_ID, Mac Addr =%pM\n",
 				      __func__,
 				      config->mac_addr);
 
-		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 					   fmac_dev_ctx->tx_config.tx_lock);
 		goto out;
 	}
@@ -54,12 +54,12 @@ enum wifi_nrf_status sap_client_ps_get_frames(struct wifi_nrf_fmac_dev_ctx *fmac
 	wakeup_client_q = fmac_dev_ctx->tx_config.wakeup_client_q;
 
 	if (wakeup_client_q) {
-		wifi_nrf_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
 					 wakeup_client_q,
 					 peer);
 	}
 
-	for (ac = WIFI_NRF_FMAC_AC_VO; ac >= 0; --ac) {
+	for (ac = NRF_WIFI_FMAC_AC_VO; ac >= 0; --ac) {
 		desc = tx_desc_get(fmac_dev_ctx, ac);
 
 		if (desc < fmac_dev_ctx->fpriv->num_tx_tokens) {
@@ -67,19 +67,19 @@ enum wifi_nrf_status sap_client_ps_get_frames(struct wifi_nrf_fmac_dev_ctx *fmac
 		}
 	}
 
-	wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+	nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 				   fmac_dev_ctx->tx_config.tx_lock);
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 out:
 	return status;
 }
 
 
-enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					      struct nrf_wifi_sap_client_pwrsave *config)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct peers_info *peer = NULL;
 	void *wakeup_client_q = NULL;
 	int id = -1;
@@ -87,25 +87,25 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 	int desc = 0;
 
 	if (!fmac_dev_ctx || !config) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Invalid params\n",
 				      __func__);
 		goto out;
 	}
 
-	wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+	nrf_wifi_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 				    fmac_dev_ctx->tx_config.tx_lock);
 
-	id = wifi_nrf_fmac_peer_get_id(fmac_dev_ctx,
+	id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx,
 				       config->mac_addr);
 
 	if (id == -1) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Invalid Peer_ID, Mac address = %pM\n",
 				      __func__,
 				      config->mac_addr);
 
-		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 					   fmac_dev_ctx->tx_config.tx_lock);
 
 		goto out;
@@ -119,12 +119,12 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 		wakeup_client_q = fmac_dev_ctx->tx_config.wakeup_client_q;
 
 		if (wakeup_client_q) {
-			wifi_nrf_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
+			nrf_wifi_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
 						 wakeup_client_q,
 						 peer);
 		}
 
-		for (ac = WIFI_NRF_FMAC_AC_VO; ac >= 0; --ac) {
+		for (ac = NRF_WIFI_FMAC_AC_VO; ac >= 0; --ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);
 
 			if (desc < fmac_dev_ctx->fpriv->num_tx_tokens) {
@@ -133,10 +133,10 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 		}
 	}
 
-	wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+	nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 				   fmac_dev_ctx->tx_config.tx_lock);
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 
 out:
 	return status;

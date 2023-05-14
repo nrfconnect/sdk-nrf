@@ -16,7 +16,7 @@
 #include <stdbool.h>
 #include "osal_api.h"
 
-int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
+int nrf_wifi_utils_hex_str_to_val(struct nrf_wifi_osal_priv *opriv,
 				  unsigned char *hex_arr,
 				  unsigned int hex_arr_sz,
 				  unsigned char *str);

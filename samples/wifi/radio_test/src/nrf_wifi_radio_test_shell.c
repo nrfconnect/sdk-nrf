@@ -12,8 +12,8 @@
 #include <nrf_wifi_radio_test_shell.h>
 #include <util.h>
 
-extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
-struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
 
 static bool check_test_in_prog(const struct shell *shell)
@@ -283,9 +283,9 @@ static int check_channel_settings(const struct shell *shell,
 }
 
 
-enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
+enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN] = {0};
 
 	/* Check and save regulatory country code currently set */
@@ -302,10 +302,10 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	/* Initialize values which are other than 0 */
 	conf_params->op_mode = RPU_OP_MODE_RADIO_TEST;
 
-	status = wifi_nrf_fmac_rf_params_get(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_rf_params_get(ctx->rpu_ctx,
 					     conf_params->rf_params);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		goto out;
 	}
 
@@ -347,7 +347,7 @@ static int nrf_wifi_radio_test_set_defaults(const struct shell *shell,
 					    size_t argc,
 					    const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	if (!check_test_in_prog(shell)) {
 		return -ENOEXEC;
@@ -355,7 +355,7 @@ static int nrf_wifi_radio_test_set_defaults(const struct shell *shell,
 
 	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Configuration init failed\n");
@@ -1137,7 +1137,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 				    size_t argc,
 				    const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 
@@ -1158,10 +1158,10 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 
 		ctx->conf_params.rx = 0;
 
-		status = wifi_nrf_fmac_radio_test_prog_rx(ctx->rpu_ctx,
+		status = nrf_wifi_fmac_radio_test_prog_rx(ctx->rpu_ctx,
 							  &ctx->conf_params);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Disabling RX failed\n");
@@ -1176,10 +1176,10 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 
 		ctx->conf_params.tx = 0;
 
-		status = wifi_nrf_fmac_radio_test_prog_tx(ctx->rpu_ctx,
+		status = nrf_wifi_fmac_radio_test_prog_tx(ctx->rpu_ctx,
 							  &ctx->conf_params);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Disabling TX failed\n");
@@ -1206,7 +1206,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 						       ctx->conf_params.tx_tone_freq,
 						       ctx->conf_params.tx_power);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Disabling TX tone test failed\n");
@@ -1220,7 +1220,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 
 	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Configuration init failed\n");
@@ -1229,10 +1229,10 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 
 	ctx->conf_params.chan.primary_num = val;
 
-	status = wifi_nrf_fmac_radio_test_init(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_radio_test_init(ctx->rpu_ctx,
 					       &ctx->conf_params);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Programming init failed\n");
@@ -1282,7 +1282,7 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 				      size_t argc,
 				      const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 
@@ -1325,10 +1325,10 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 
 	ctx->conf_params.tx = val;
 
-	status = wifi_nrf_fmac_radio_test_prog_tx(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_radio_test_prog_tx(ctx->rpu_ctx,
 						  &ctx->conf_params);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Programming TX failed\n");
@@ -1343,7 +1343,7 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 				      size_t argc,
 				      const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 
@@ -1366,10 +1366,10 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 
 	ctx->conf_params.rx = val;
 
-	status = wifi_nrf_fmac_radio_test_prog_rx(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_radio_test_prog_rx(ctx->rpu_ctx,
 						  &ctx->conf_params);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Programming RX failed\n");
@@ -1405,7 +1405,7 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 				      size_t argc,
 				      const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	unsigned long rx_cap_type = 0;
 	unsigned char *rx_cap_buf = NULL;
 	char *ptr = NULL;
@@ -1460,7 +1460,7 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 					      ctx->conf_params.lna_gain,
 					      ctx->conf_params.bb_gain);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "RX ADC capture programming failed\n");
@@ -1496,7 +1496,7 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 				       size_t argc,
 				       const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 	int ret = -ENOEXEC;
@@ -1525,7 +1525,7 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 					       ctx->conf_params.tx_tone_freq,
 					       ctx->conf_params.tx_power);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "TX tone programming failed\n");
@@ -1550,7 +1550,7 @@ static int nrf_wifi_radio_set_dpd(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 	int ret = -ENOEXEC;
@@ -1578,7 +1578,7 @@ static int nrf_wifi_radio_set_dpd(const struct shell *shell,
 	status = nrf_wifi_fmac_rf_test_dpd(ctx->rpu_ctx,
 					   val);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "DPD programming failed\n");
@@ -1597,7 +1597,7 @@ static int nrf_wifi_radio_get_temperature(const struct shell *shell,
 					  size_t argc,
 					  const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 	int ret = -ENOEXEC;
@@ -1624,7 +1624,7 @@ static int nrf_wifi_radio_get_temperature(const struct shell *shell,
 
 	status = nrf_wifi_fmac_rf_get_temp(ctx->rpu_ctx);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "DPD programming failed\n");
@@ -1644,7 +1644,7 @@ static int nrf_wifi_radio_get_rf_rssi(const struct shell *shell,
 				      size_t argc,
 				      const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 	int ret = -ENOEXEC;
@@ -1671,7 +1671,7 @@ static int nrf_wifi_radio_get_rf_rssi(const struct shell *shell,
 
 	status = nrf_wifi_fmac_rf_get_rf_rssi(ctx->rpu_ctx);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "RF RSSI get failed\n");
@@ -1691,7 +1691,7 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 				     size_t argc,
 				     const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 	int ret = -ENOEXEC;
@@ -1726,7 +1726,7 @@ static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
 	status = nrf_wifi_fmac_set_xo_val(ctx->rpu_ctx,
 					       (unsigned char)val);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "XO value programming failed\n");
@@ -1747,7 +1747,7 @@ static int nrf_wifi_radio_comp_opt_xo_val(const struct shell *shell,
 					  size_t argc,
 					  const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	int ret = -ENOEXEC;
 
@@ -1760,7 +1760,7 @@ static int nrf_wifi_radio_comp_opt_xo_val(const struct shell *shell,
 
 	status = nrf_wifi_fmac_rf_test_compute_xo(ctx->rpu_ctx);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "XO value computation failed\n");
@@ -1956,21 +1956,21 @@ static int nrf_wifi_radio_test_get_stats(const struct shell *shell,
 					 size_t argc,
 					 const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct rpu_op_stats stats;
 
 	memset(&stats,
 	       0,
 	       sizeof(stats));
 
-	status = wifi_nrf_fmac_stats_get(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_stats_get(ctx->rpu_ctx,
 					 ctx->conf_params.op_mode,
 					 &stats);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "wifi_nrf_fmac_stats_get failed\n");
+			      "nrf_wifi_fmac_stats_get failed\n");
 		return -ENOEXEC;
 	}
 
@@ -2012,7 +2012,7 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 						size_t argc,
 						const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	struct coex_wlan_switch_ctrl params = { 0 };
 
@@ -2038,10 +2038,10 @@ static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
 
 	ctx->conf_params.wlan_ant_switch_ctrl = params.switch_A;
 
-	status = wifi_nrf_fmac_conf_btcoex(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_btcoex(ctx->rpu_ctx,
 					   &params, sizeof(params));
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "WLAN switch configuration failed\n");
@@ -2056,9 +2056,9 @@ static int nrf_wifi_radio_test_set_reg_domain(const struct shell *shell,
 					      size_t argc,
 					      const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int ret = -ENOEXEC;
-	struct wifi_nrf_fmac_reg_info reg_domain_info = {0};
+	struct nrf_wifi_fmac_reg_info reg_domain_info = {0};
 
 	if (strlen(argv[1]) != 2) {
 		shell_fprintf(shell, SHELL_WARNING,
@@ -2085,9 +2085,9 @@ static int nrf_wifi_radio_test_set_reg_domain(const struct shell *shell,
 	memcpy(reg_domain_info.alpha2, ctx->conf_params.country_code,
 			NRF_WIFI_COUNTRY_CODE_LEN);
 
-	status = wifi_nrf_fmac_set_reg(ctx->rpu_ctx, &reg_domain_info);
+	status = nrf_wifi_fmac_set_reg(ctx->rpu_ctx, &reg_domain_info);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Regulatory programming failed\n");
@@ -2430,11 +2430,11 @@ SHELL_CMD_REGISTER(wifi_radio_test,
 
 static int nrf_wifi_radio_test_shell_init(void)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		return -ENOEXEC;
 	}
 

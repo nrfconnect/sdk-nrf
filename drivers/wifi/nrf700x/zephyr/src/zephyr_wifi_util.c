@@ -7,14 +7,21 @@
 /* @file
  * @brief NRF Wi-Fi util shell module
  */
+#include <zephyr/kernel.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/init.h>
+#include <ctype.h>
+#include <host_rpu_sys_if.h>
+#include <fmac_structs.h>
+#include <queue.h>
 #include "host_rpu_umac_if.h"
 #include "fmac_api.h"
 #include "zephyr_fmac_main.h"
-#include "zephyr_wifi_util.h"
 
-extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
-struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
 static bool check_valid_data_rate(const struct shell *shell,
 				  unsigned char rate_flag,
@@ -64,12 +71,12 @@ static bool check_valid_data_rate(const struct shell *shell,
 }
 
 
-static struct wifi_nrf_vif_ctx_zep *net_if_get_vif_ctx(const struct shell *shell,
+static struct nrf_wifi_vif_ctx_zep *net_if_get_vif_ctx(const struct shell *shell,
 						       int indx)
 {
 	struct net_if *iface = NULL;
 	const struct device *dev;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	iface = net_if_get_by_index(indx);
 
@@ -185,7 +192,7 @@ static int nrf_wifi_util_set_he_ltf_gi(const struct shell *shell,
 				       size_t argc,
 				       const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 
@@ -200,12 +207,12 @@ static int nrf_wifi_util_set_he_ltf_gi(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	status = wifi_nrf_fmac_conf_ltf_gi(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_ltf_gi(ctx->rpu_ctx,
 					   ctx->conf_params.he_ltf,
 					   ctx->conf_params.he_gi,
 					   val);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Programming ltf_gi failed\n");
@@ -222,7 +229,7 @@ static int nrf_wifi_util_set_rts_threshold(const struct shell *shell,
 					   size_t argc,
 					   const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 	struct nrf_wifi_umac_set_wiphy_info wiphy_info;
@@ -235,11 +242,11 @@ static int nrf_wifi_util_set_rts_threshold(const struct shell *shell,
 
 		wiphy_info.rts_threshold = val;
 
-		status = wifi_nrf_fmac_set_wiphy_params(ctx->rpu_ctx,
+		status = nrf_wifi_fmac_set_wiphy_params(ctx->rpu_ctx,
 							0,
 							&wiphy_info);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Programming threshold failed\n");
@@ -257,7 +264,7 @@ static int nrf_wifi_util_set_uapsd_queue(const struct shell *shell,
 					 size_t argc,
 					 const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 
@@ -273,11 +280,11 @@ static int nrf_wifi_util_set_uapsd_queue(const struct shell *shell,
 	}
 
 	if (ctx->conf_params.uapsd_queue != val) {
-		status = wifi_nrf_fmac_set_uapsd_queue(ctx->rpu_ctx,
+		status = nrf_wifi_fmac_set_uapsd_queue(ctx->rpu_ctx,
 						       0,
 						       val);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Programming uapsd_queue failed\n");
@@ -297,7 +304,7 @@ static int nrf_wifi_util_set_passive_scan(const struct shell *shell,
 {
 	char *ptr = NULL;
 	unsigned long val = 0;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	vif_ctx_zep = net_if_get_vif_ctx(shell, atoi(argv[1]));
 
@@ -382,7 +389,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 	int vif_index = -1;
 	int peer_index = 0;
 	int max_vif_index = MAX(MAX_NUM_APS, MAX_NUM_STAS);
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	void *queue = NULL;
 	unsigned int tx_pending_pkts = 0;
 
@@ -404,9 +411,9 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 		"************* Tx Stats: vif(%d) peer(0) ***********\n",
 		vif_index);
 
-	for (int i = 0; i < WIFI_NRF_FMAC_AC_MAX ; i++) {
+	for (int i = 0; i < NRF_WIFI_FMAC_AC_MAX ; i++) {
 		queue = fmac_dev_ctx->tx_config.data_pending_txq[peer_index][i];
-		tx_pending_pkts = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
+		tx_pending_pkts = nrf_wifi_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
 
 		shell_fprintf(
 			shell,
@@ -425,7 +432,7 @@ static int nrf_wifi_util_tx_rate(const struct shell *shell,
 				 size_t argc,
 				 const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	long rate_flag = -1;
 	long data_rate = -1;
@@ -469,11 +476,11 @@ static int nrf_wifi_util_tx_rate(const struct shell *shell,
 
 	}
 
-	status = wifi_nrf_fmac_set_tx_rate(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_set_tx_rate(ctx->rpu_ctx,
 					   rate_flag,
 					   data_rate);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Programming tx_rate failed\n");
@@ -492,13 +499,13 @@ static int nrf_wifi_util_show_host_rpu_ps_ctrl_state(const struct shell *shell,
 						     size_t argc,
 						     const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int rpu_ps_state = -1;
 
-	status = wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(ctx->rpu_ctx,
+	status = nrf_wifi_fmac_get_host_rpu_ps_ctrl_state(ctx->rpu_ctx,
 							  &rpu_ps_state);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Failed to get PS state\n");
@@ -517,8 +524,8 @@ static int nrf_wifi_util_show_vers(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	unsigned int fw_ver;
 
 	fmac_dev_ctx = ctx->rpu_ctx;
@@ -526,9 +533,9 @@ static int nrf_wifi_util_show_vers(const struct shell *shell,
 	shell_fprintf(shell, SHELL_INFO, "Driver version: %s\n",
 				  NRF700X_DRIVER_VERSION);
 
-	status = wifi_nrf_fmac_ver_get(fmac_dev_ctx, &fw_ver);
+	status = nrf_wifi_fmac_ver_get(fmac_dev_ctx, &fw_ver);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 		 SHELL_INFO,
 		 "Failed to get firmware version\n");
@@ -550,8 +557,8 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 					size_t argc,
 					const char *argv[])
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct rpu_op_stats stats;
 	enum rpu_stats_type stats_type = RPU_STATS_TYPE_ALL;
 
@@ -578,9 +585,9 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 	fmac_dev_ctx = ctx->rpu_ctx;
 
 	memset(&stats, 0, sizeof(struct rpu_op_stats));
-	status = wifi_nrf_fmac_stats_get(fmac_dev_ctx, &stats);
+	status = nrf_wifi_fmac_stats_get(fmac_dev_ctx, &stats);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Failed to get stats\n");

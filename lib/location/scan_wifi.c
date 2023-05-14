@@ -141,7 +141,7 @@ int scan_wifi_init(void)
 	const struct device *wifi_dev;
 
 	wifi_iface = NULL;
-#if defined(CONFIG_WIFI_NRF700X)
+#if defined(CONFIG_NRF_WIFI700X)
 	wifi_dev = device_get_binding("wlan0");
 #else
 	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));

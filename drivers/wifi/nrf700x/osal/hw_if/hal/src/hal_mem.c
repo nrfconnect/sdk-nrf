@@ -75,12 +75,12 @@ static bool hal_rpu_is_mem_writable(enum RPU_PROC_TYPE proc,
 }
 
 
-static enum wifi_nrf_status rpu_mem_read_ram(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+static enum nrf_wifi_status rpu_mem_read_ram(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 					     void *src_addr,
 					     unsigned int ram_addr_val,
 					     unsigned int len)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	unsigned long addr_offset = 0;
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	unsigned long flags = 0;
@@ -91,38 +91,38 @@ static enum wifi_nrf_status rpu_mem_read_ram(struct wifi_nrf_hal_dev_ctx *hal_de
 					 &addr_offset,
 					 hal_dev_ctx->curr_proc);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: pal_rpu_addr_offset_get failed\n",
 				      __func__);
 		return status;
 	}
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-	wifi_nrf_osal_spinlock_irq_take(hal_dev_ctx->hpriv->opriv,
+	nrf_wifi_osal_spinlock_irq_take(hal_dev_ctx->hpriv->opriv,
 					hal_dev_ctx->rpu_ps_lock,
 					&flags);
 
 	status = hal_rpu_ps_wake(hal_dev_ctx);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: RPU wake failed\n",
 				      __func__);
 		goto out;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
-	wifi_nrf_bal_read_block(hal_dev_ctx->bal_dev_ctx,
+	nrf_wifi_bal_read_block(hal_dev_ctx->bal_dev_ctx,
 				src_addr,
 				addr_offset,
 				len);
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 out:
-	wifi_nrf_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
+	nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
@@ -131,12 +131,12 @@ out:
 }
 
 
-static enum wifi_nrf_status rpu_mem_write_ram(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+static enum nrf_wifi_status rpu_mem_write_ram(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 					      unsigned int ram_addr_val,
 					      void *src_addr,
 					      unsigned int len)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	unsigned long addr_offset = 0;
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	unsigned long flags = 0;
@@ -147,38 +147,38 @@ static enum wifi_nrf_status rpu_mem_write_ram(struct wifi_nrf_hal_dev_ctx *hal_d
 					 &addr_offset,
 					 hal_dev_ctx->curr_proc);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: pal_rpu_addr_offset_get failed\n",
 				      __func__);
 		return status;
 	}
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-	wifi_nrf_osal_spinlock_irq_take(hal_dev_ctx->hpriv->opriv,
+	nrf_wifi_osal_spinlock_irq_take(hal_dev_ctx->hpriv->opriv,
 					hal_dev_ctx->rpu_ps_lock,
 					&flags);
 
 	status = hal_rpu_ps_wake(hal_dev_ctx);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: RPU wake failed\n",
 				      __func__);
 		goto out;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
-	wifi_nrf_bal_write_block(hal_dev_ctx->bal_dev_ctx,
+	nrf_wifi_bal_write_block(hal_dev_ctx->bal_dev_ctx,
 				 addr_offset,
 				 src_addr,
 				 len);
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 out:
-	wifi_nrf_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
+	nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
@@ -187,12 +187,12 @@ out:
 }
 
 
-static enum wifi_nrf_status rpu_mem_write_core(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+static enum nrf_wifi_status rpu_mem_write_core(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 					       unsigned int core_addr_val,
 					       void *src_addr,
 					       unsigned int len)
 {
-	int status = WIFI_NRF_STATUS_FAIL;
+	int status = NRF_WIFI_STATUS_FAIL;
 	unsigned int addr_reg = 0;
 	unsigned int data_reg = 0;
 	unsigned int addr = 0;
@@ -204,14 +204,14 @@ static enum wifi_nrf_status rpu_mem_write_core(struct wifi_nrf_hal_dev_ctx *hal_
 	 */
 	if (!hal_rpu_is_mem_core_indirect(hal_dev_ctx->curr_proc,
 				 core_addr_val)) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address\n",
 				      __func__);
 		goto out;
 	}
 
 	if (core_addr_val % 4 != 0) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Address not multiple of 4 bytes\n",
 				      __func__);
 		goto out;
@@ -235,8 +235,8 @@ static enum wifi_nrf_status rpu_mem_write_core(struct wifi_nrf_hal_dev_ctx *hal_
 				   addr_reg,
 				   addr);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Writing to address reg failed\n",
 				      __func__);
 		goto out;
@@ -249,8 +249,8 @@ static enum wifi_nrf_status rpu_mem_write_core(struct wifi_nrf_hal_dev_ctx *hal_
 					   data_reg,
 					   data);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
-			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 					      "%s: Writing to data reg failed\n",
 					      __func__);
 			goto out;
@@ -261,7 +261,7 @@ out:
 }
 
 
-static unsigned int rpu_get_bev_addr_remap(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+static unsigned int rpu_get_bev_addr_remap(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 					   unsigned int bev_addr_val)
 {
 	unsigned int addr = 0;
@@ -280,12 +280,12 @@ static unsigned int rpu_get_bev_addr_remap(struct wifi_nrf_hal_dev_ctx *hal_dev_
 }
 
 
-static enum wifi_nrf_status rpu_mem_write_bev(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+static enum nrf_wifi_status rpu_mem_write_bev(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 					      unsigned int bev_addr_val,
 					      void *src_addr,
 					      unsigned int len)
 {
-	int status = WIFI_NRF_STATUS_FAIL;
+	int status = NRF_WIFI_STATUS_FAIL;
 	unsigned int addr = 0;
 	unsigned int data = 0;
 	unsigned int i = 0;
@@ -296,7 +296,7 @@ static enum wifi_nrf_status rpu_mem_write_bev(struct wifi_nrf_hal_dev_ctx *hal_d
 	if ((bev_addr_val < RPU_ADDR_BEV_START) ||
 	    (bev_addr_val > RPU_ADDR_BEV_END) ||
 	    (bev_addr_val % 4 != 0)) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Address not in range or not a multiple of 4 bytes\n",
 				      __func__);
 		goto out;
@@ -316,8 +316,8 @@ static enum wifi_nrf_status rpu_mem_write_bev(struct wifi_nrf_hal_dev_ctx *hal_d
 					   addr,
 					   data);
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
-			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 					      "%s: Writing to BEV reg failed\n",
 					      __func__);
 			goto out;
@@ -329,26 +329,26 @@ out:
 }
 
 
-enum wifi_nrf_status hal_rpu_mem_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+enum nrf_wifi_status hal_rpu_mem_read(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 				      void *src_addr,
 				      unsigned int rpu_mem_addr_val,
 				      unsigned int len)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	if (!hal_dev_ctx) {
 		goto out;
 	}
 
 	if (!src_addr) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid params\n",
 				      __func__);
 		goto out;
 	}
 
 	if (!hal_rpu_is_mem_readable(hal_dev_ctx->curr_proc, rpu_mem_addr_val)) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address 0x%X\n",
 				      __func__,
 				      rpu_mem_addr_val);
@@ -364,19 +364,19 @@ out:
 }
 
 
-enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+enum nrf_wifi_status hal_rpu_mem_write(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 				       unsigned int rpu_mem_addr_val,
 				       void *src_addr,
 				       unsigned int len)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	if (!hal_dev_ctx) {
 		return status;
 	}
 
 	if (!src_addr) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid params\n",
 				      __func__);
 		return status;
@@ -384,7 +384,7 @@ enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	if (!hal_rpu_is_mem_writable(hal_dev_ctx->curr_proc,
 				     rpu_mem_addr_val)) {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address 0x%X\n",
 				      __func__,
 				      rpu_mem_addr_val);
@@ -409,7 +409,7 @@ enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 					   src_addr,
 					   len);
 	} else {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 				      "%s: Invalid memory address 0x%X\n",
 				      __func__,
 				      rpu_mem_addr_val);
@@ -421,11 +421,11 @@ out:
 }
 
 
-enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+enum nrf_wifi_status hal_rpu_mem_clr(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 				     enum RPU_PROC_TYPE proc,
 				     enum HAL_RPU_MEM_TYPE mem_type)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	unsigned int mem_addr = 0;
 	unsigned int start_addr = 0;
 	unsigned int end_addr = 0;
@@ -449,7 +449,7 @@ enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		start_addr = region->start;
 		end_addr = region->end;
 	} else {
-		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 			"%s: Invalid mem_type(%d)\n",
 			__func__,
 			mem_type);
@@ -464,8 +464,8 @@ enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 					   &mem_val,
 					   sizeof(mem_val));
 
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
-			wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
 					      "%s: hal_rpu_mem_write failed\n",
 					      __func__);
 			goto out;
@@ -474,7 +474,7 @@ enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 out:
 	return status;
 }

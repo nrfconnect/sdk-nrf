@@ -19,6 +19,6 @@
 #include "rpu_hw_if.h"
 
 struct nrf_wifi_ctx_zep {
-	struct wifi_nrf_fmac_priv *fmac_priv;
+	struct nrf_wifi_fmac_priv *fmac_priv;
 	struct rpu_conf_params conf_params;
 };

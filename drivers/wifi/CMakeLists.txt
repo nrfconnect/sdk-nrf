@@ -3,4 +3,4 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-add_subdirectory_ifdef(CONFIG_WIFI_NRF700X nrf700x)
+add_subdirectory_ifdef(CONFIG_NRF_WIFI700X nrf700x)

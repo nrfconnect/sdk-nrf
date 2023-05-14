@@ -13,7 +13,7 @@ The driver configures the chipset and transfers the frames to and from the devic
 
 nRF700X is a companion IC and can be used with any Nordic Semiconductor System-on-Chips (SoCs) such as the nRF53 and nRF91 Series SoCs.
 
-You can enable the driver by using the :kconfig:option:`CONFIG_WIFI_NRF700X` Kconfig option.
+You can enable the driver by using the :kconfig:option:`CONFIG_NRF_WIFI700X` Kconfig option.
 
 Architecture
 *************

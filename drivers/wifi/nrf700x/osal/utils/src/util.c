@@ -14,7 +14,7 @@
 #include "host_rpu_data_if.h"
 
 
-int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
+int nrf_wifi_utils_hex_str_to_val(struct nrf_wifi_osal_priv *opriv,
 				  unsigned char *hex_arr,
 				  unsigned int hex_arr_sz,
 				  unsigned char *str)
@@ -29,7 +29,7 @@ int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
 	len = strlen(str);
 
 	if (len / 2 > hex_arr_sz) {
-		wifi_nrf_osal_log_err(opriv,
+		nrf_wifi_osal_log_err(opriv,
 				      "%s: String length (%d) greater than array size (%d)\n",
 				      __func__,
 				      len,
@@ -38,7 +38,7 @@ int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
 	}
 
 	if (len % 2) {
-		wifi_nrf_osal_log_err(opriv,
+		nrf_wifi_osal_log_err(opriv,
 				      "%s:String length = %d, is not a multiple of 2\n",
 				      __func__,
 				      len);
@@ -50,7 +50,7 @@ int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
 		ch = ((str[i] >= 'A' && str[i] <= 'Z') ? str[i] + 32 : str[i]);
 
 		if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'f')) {
-			wifi_nrf_osal_log_err(opriv,
+			nrf_wifi_osal_log_err(opriv,
 					      "%s: Invalid hex character in string %d\n",
 					      __func__,
 					      ch);

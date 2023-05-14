@@ -19,19 +19,19 @@
 #include "zephyr_fmac_main.h"
 #include "zephyr_wifi_mgmt.h"
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+LOG_MODULE_DECLARE(nrf_wifi, CONFIG_WIFI_LOG_LEVEL);
 
-extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
-void wifi_nrf_scan_timeout_work(struct k_work *work)
+void nrf_wifi_scan_timeout_work(struct k_work *work)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_scan_result res;
 	scan_result_cb_t disp_scan_cb = NULL;
 
-	vif_ctx_zep = CONTAINER_OF(work, struct wifi_nrf_vif_ctx_zep, scan_timeout_work);
+	vif_ctx_zep = CONTAINER_OF(work, struct nrf_wifi_vif_ctx_zep, scan_timeout_work);
 
 	disp_scan_cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
 
@@ -73,12 +73,12 @@ void wifi_nrf_scan_timeout_work(struct k_work *work)
 	vif_ctx_zep->scan_in_progress = false;
 }
 
-int wifi_nrf_disp_scan_zep(const struct device *dev,
+int nrf_wifi_disp_scan_zep(const struct device *dev,
 			   scan_result_cb_t cb)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_scan_info scan_info;
 	int ret = -1;
 
@@ -89,7 +89,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 		goto out;
 	}
 
-	if (vif_ctx_zep->if_op_state != WIFI_NRF_FMAC_IF_OP_STATE_UP) {
+	if (vif_ctx_zep->if_op_state != NRF_WIFI_FMAC_IF_OP_STATE_UP) {
 		LOG_ERR("%s: Interface not UP\n", __func__);
 		goto out;
 	}
@@ -122,10 +122,10 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid_len = 0;
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid[0] = 0;
 
-	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
+	status = nrf_wifi_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_scan failed\n", __func__);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_scan failed\n", __func__);
 		goto out;
 	}
 
@@ -133,30 +133,30 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	vif_ctx_zep->scan_in_progress = true;
 	vif_ctx_zep->scan_res_cnt = 0;
 
-	k_work_schedule(&vif_ctx_zep->scan_timeout_work, WIFI_NRF_SCAN_TIMEOUT);
+	k_work_schedule(&vif_ctx_zep->scan_timeout_work, NRF_WIFI_SCAN_TIMEOUT);
 
 	ret = 0;
 out:
 	return ret;
 }
 
-enum wifi_nrf_status wifi_nrf_disp_scan_res_get_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep)
+enum nrf_wifi_status nrf_wifi_disp_scan_res_get_zep(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	status = wifi_nrf_fmac_scan_res_get(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_scan_res_get(rpu_ctx_zep->rpu_ctx,
 					    vif_ctx_zep->vif_idx,
 					    SCAN_DISPLAY);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_scan failed\n", __func__);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_scan failed\n", __func__);
 		goto out;
 	}
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 out:
 	return status;
 }
@@ -196,12 +196,12 @@ static inline enum wifi_security_type drv_to_wifi_mgmt(int drv_security_type)
 	}
 }
 
-void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
+void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 				struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
 				unsigned int event_len,
 				bool more_res)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct umac_display_results *r = NULL;
 	struct wifi_scan_result res;
 	unsigned int i = 0;
@@ -265,12 +265,12 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 	}
 }
 
-int wifi_nrf_set_power_save(const struct device *dev,
+int nrf_wifi_set_power_save(const struct device *dev,
 			    struct wifi_ps_params *params)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	int ret = -1;
 	unsigned int uapsd_queue = UAPSD_Q_MIN; /* Legacy mode */
 
@@ -303,7 +303,7 @@ int wifi_nrf_set_power_save(const struct device *dev,
 				WIFI_PS_PARAM_LISTEN_INTERVAL_RANGE_INVALID;
 			return -EINVAL;
 		}
-		status = wifi_nrf_fmac_set_listen_interval(
+		status = nrf_wifi_fmac_set_listen_interval(
 						rpu_ctx_zep->rpu_ctx,
 						vif_ctx_zep->vif_idx,
 						params->listen_interval);
@@ -317,7 +317,7 @@ int wifi_nrf_set_power_save(const struct device *dev,
 			goto out;
 		}
 
-		status = wifi_nrf_fmac_set_power_save_timeout(
+		status = nrf_wifi_fmac_set_power_save_timeout(
 							rpu_ctx_zep->rpu_ctx,
 							vif_ctx_zep->vif_idx,
 							params->timeout_ms);
@@ -327,17 +327,17 @@ int wifi_nrf_set_power_save(const struct device *dev,
 			uapsd_queue = UAPSD_Q_MAX; /* WMM mode */
 		}
 
-		status = wifi_nrf_fmac_set_uapsd_queue(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_set_uapsd_queue(rpu_ctx_zep->rpu_ctx,
 						       vif_ctx_zep->vif_idx,
 						       uapsd_queue);
 	break;
 	case  WIFI_PS_PARAM_STATE:
-		status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 						      vif_ctx_zep->vif_idx,
 						      params->enabled);
 	break;
 	case WIFI_PS_PARAM_WAKEUP_MODE:
-		status = wifi_nrf_fmac_set_ps_wakeup_mode(
+		status = nrf_wifi_fmac_set_ps_wakeup_mode(
 							rpu_ctx_zep->rpu_ctx,
 							vif_ctx_zep->vif_idx,
 							params->wakeup_mode);
@@ -348,7 +348,7 @@ int wifi_nrf_set_power_save(const struct device *dev,
 		return -ENOTSUP;
 	}
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: Confiuring PS param %d failed\n",
 			__func__, params->type);
 		params->fail_reason =
@@ -362,13 +362,13 @@ out:
 	return ret;
 }
 
-int wifi_nrf_get_power_save_config(const struct device *dev,
+int nrf_wifi_get_power_save_config(const struct device *dev,
 				   struct wifi_ps_config *ps_config)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	int ret = -1;
 	int count = 0;
 
@@ -401,24 +401,24 @@ int wifi_nrf_get_power_save_config(const struct device *dev,
 
 	vif_ctx_zep->ps_config_info_evnt = false;
 
-	status = wifi_nrf_fmac_get_power_save_info(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_get_power_save_info(rpu_ctx_zep->rpu_ctx,
 						   vif_ctx_zep->vif_idx);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_get_power_save_info failed\n",
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_get_power_save_info failed\n",
 			__func__);
 		goto out;
 	}
 
 	do {
-		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
 					1);
 		 count++;
 	} while ((vif_ctx_zep->ps_config_info_evnt == false) &&
-		 (count < WIFI_NRF_FMAC_PS_CONF_EVNT_RECV_TIMEOUT));
+		 (count < NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT));
 
-	if (count == WIFI_NRF_FMAC_PS_CONF_EVNT_RECV_TIMEOUT) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+	if (count == NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT) {
+		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Timed out\n",
 				      __func__);
 		goto out;
@@ -430,7 +430,7 @@ out:
 }
 
 /* TWT interval conversion helpers: User <-> Protocol */
-static struct twt_interval_float wifi_nrf_twt_us_to_float(uint32_t twt_interval)
+static struct twt_interval_float nrf_wifi_twt_ms_to_float(uint32_t twt_interval)
 {
 	double mantissa = 0.0;
 	int exponent = 0;
@@ -446,7 +446,7 @@ static struct twt_interval_float wifi_nrf_twt_us_to_float(uint32_t twt_interval)
 	return twt_interval_float;
 }
 
-static uint64_t wifi_nrf_twt_float_to_us(struct twt_interval_float twt_interval_float)
+static uint32_t nrf_wifi_twt_float_to_ms(struct twt_interval_float twt_interval_float)
 {
 	/* Conversion to micro-seconds */
 	return floor(ldexp(twt_interval_float.mantissa, twt_interval_float.exponent) / (1000)) *
@@ -570,11 +570,11 @@ static signed int twt_wifi_mgmt_to_rpu_setup_cmd(enum wifi_twt_setup_cmd setup_c
 	return rpu_setup_cmd;
 }
 
-void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
+void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 					     struct nrf_wifi_umac_event_power_save_info *ps_info,
 					     unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	if (!vif_ctx || !ps_info) {
 		return;
@@ -604,7 +604,7 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 		twt_zep->dialog_token = twt_rpu->dialog_token;
 		twt_interval_float.mantissa = twt_rpu->twt_target_wake_interval_mantissa;
 		twt_interval_float.exponent = twt_rpu->twt_target_wake_interval_exponent;
-		twt_zep->twt_interval = wifi_nrf_twt_float_to_us(twt_interval_float);
+		twt_zep->twt_interval = nrf_wifi_twt_float_to_ms(twt_interval_float);
 		twt_zep->twt_wake_interval = twt_rpu->nominal_min_twt_wake_duration;
 	}
 
@@ -612,12 +612,12 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 }
 
 
-int wifi_nrf_set_twt(const struct device *dev,
+int nrf_wifi_set_twt(const struct device *dev,
 		     struct wifi_twt_params *twt_params)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_config_twt_info twt_info = {0};
 	int ret = -1;
 
@@ -646,7 +646,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 		}
 
 		struct twt_interval_float twt_interval_float =
-			wifi_nrf_twt_us_to_float(twt_params->setup.twt_interval);
+			nrf_wifi_twt_ms_to_float(twt_params->setup.twt_interval);
 
 		twt_info.twt_flow_id = twt_params->flow_id;
 		twt_info.neg_type = twt_wifi_mgmt_to_rpu_neg_type(twt_params->negotiation_type);
@@ -666,11 +666,11 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 		twt_info.dialog_token = twt_params->dialog_token;
 
-		status = wifi_nrf_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
 					   &twt_info);
 
-		if (status == WIFI_NRF_STATUS_SUCCESS) {
+		if (status == NRF_WIFI_STATUS_SUCCESS) {
 			vif_ctx_zep->twt_in_progress = true;
 		}
 
@@ -694,11 +694,11 @@ int wifi_nrf_set_twt(const struct device *dev,
 			twt_info.twt_flow_id = twt_params->flow_id;
 		}
 
-		status = wifi_nrf_fmac_twt_teardown(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_twt_teardown(rpu_ctx_zep->rpu_ctx,
 						    vif_ctx_zep->vif_idx,
 						    &twt_info);
 
-		if (status == WIFI_NRF_STATUS_SUCCESS) {
+		if (status == NRF_WIFI_STATUS_SUCCESS) {
 			vif_ctx_zep->neg_twt_flow_id = 0XFF;
 			vif_ctx_zep->twt_in_progress = false;
 		}
@@ -707,12 +707,12 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 	default:
 		LOG_ERR("Unknown TWT operation\n");
-		status = WIFI_NRF_STATUS_FAIL;
+		status = NRF_WIFI_STATUS_FAIL;
 		break;
 	}
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_set_twt failed\n", __func__);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_set_twt failed\n", __func__);
 		goto out;
 	}
 
@@ -721,11 +721,11 @@ out:
 	return ret;
 }
 
-void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_setup_zep(void *vif_ctx,
 				       struct nrf_wifi_umac_cmd_config_twt *twt_setup_info,
 				       unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_twt_params twt_params;
 	struct twt_interval_float twt_interval_float;
 
@@ -749,7 +749,7 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 			twt_setup_info->info.nominal_min_twt_wake_duration;
 	twt_interval_float.mantissa = twt_setup_info->info.twt_target_wake_interval_mantissa;
 	twt_interval_float.exponent = twt_setup_info->info.twt_target_wake_interval_exponent;
-	twt_params.setup.twt_interval = wifi_nrf_twt_float_to_us(twt_interval_float);
+	twt_params.setup.twt_interval = nrf_wifi_twt_float_to_ms(twt_interval_float);
 	twt_params.dialog_token = twt_setup_info->info.dialog_token;
 	twt_params.resp_status = twt_setup_info->info.twt_resp_status;
 
@@ -762,11 +762,11 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 }
 
 
-void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_teardown_zep(void *vif_ctx,
 					  struct nrf_wifi_umac_cmd_teardown_twt *twt_teardown_info,
 					  unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_twt_params twt_params = {0};
 
 	if (!vif_ctx || !twt_teardown_info) {
@@ -784,13 +784,13 @@ void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
 
-void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 					struct nrf_wifi_umac_event_twt_sleep *sleep_evnt,
 					unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 #ifdef CONFIG_NRF700X_DATA_TX
 	int desc = 0;
 	int ac = 0;
@@ -817,28 +817,28 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 
 	switch (sleep_evnt->info.type) {
 	case TWT_BLOCK_TX:
-		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
 
-		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_SLEEP;
+		fmac_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_SLEEP;
 
-		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
 	break;
 	case TWT_UNBLOCK_TX:
-		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
-		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
+		fmac_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 #ifdef CONFIG_NRF700X_DATA_TX
-		for (ac = WIFI_NRF_FMAC_AC_BE;
-		     ac <= WIFI_NRF_FMAC_AC_MAX; ++ac) {
+		for (ac = NRF_WIFI_FMAC_AC_BE;
+		     ac <= NRF_WIFI_FMAC_AC_MAX; ++ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);
 			if (desc < fmac_dev_ctx->fpriv->num_tx_tokens) {
 				tx_pending_process(fmac_dev_ctx, desc, ac);
 			}
 		}
 #endif
-		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 				fmac_dev_ctx->tx_config.tx_lock);
 	break;
 	default:
@@ -847,14 +847,14 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 }
 
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
-void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
+void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 				  void *nwb,
 				  unsigned short frequency,
 				  signed short signal)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = vif_ctx;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = vif_ctx;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_raw_scan_result bcn_prb_resp_info;
 	int frame_length = 0;
 	int val = signal;
@@ -880,21 +880,21 @@ void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
-	frame_length = wifi_nrf_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
+	frame_length = nrf_wifi_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
 						    nwb);
 
 	if (frame_length > CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH) {
-		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 				      &bcn_prb_resp_info.data,
-				      wifi_nrf_osal_nbuf_data_get(
+				      nrf_wifi_osal_nbuf_data_get(
 						fmac_dev_ctx->fpriv->opriv,
 						nwb),
 				      CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH);
 
 	} else {
-		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 				      &bcn_prb_resp_info.data,
-				      wifi_nrf_osal_nbuf_data_get(
+				      nrf_wifi_osal_nbuf_data_get(
 					      fmac_dev_ctx->fpriv->opriv,
 					      nwb),
 				      frame_length);
