@@ -8,6 +8,16 @@ if BT_MESH
 
 menu "Bluetooth mesh"
 
+config BT_MESH_SETTINGS_WORKQ
+	default n if SOC_NRF52832
+
+if BT_MESH_SETTINGS_WORKQ
+
+config BT_MESH_SETTINGS_WORKQ_STACK_SIZE
+	default 1400
+
+endif
+
 if BT_MESH_ADV_EXT
 
 # Set the optimal advertiser configuration to improve performance of the Relay, GATT and Friend
