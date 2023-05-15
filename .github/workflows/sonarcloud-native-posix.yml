@@ -65,33 +65,20 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
 
+      # Download the quarantine file base branch. This is needed to build and run the tests.
+      - name: Download quarentine file from nrf (PR only)
+        if : github.event_name == 'pull_request_target'
+        run: |
+          wget https://raw.githubusercontent.com/balaji-nordic/sdk-nrf/master/scripts/quarantine_downstream.yaml -P ncs/nrf/scripts/
+
       - name: Build native_posix tests with coverage enabled (via sonarcloud build wrapper)
         shell: bash
-        if : github.event_name != 'pull_request_target'
         run: |
           source ncs/zephyr/zephyr-env.sh
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --quarantine-list ncs/nrf/scripts/quarantine_downstream.yaml --coverage-tool gcovr
 
-      - name: Build native_posix tests on PR with coverage enabled (via sonarcloud build wrapper)
-        shell: bash
-        continue-on-error: true # Continue on error when running on PRs because the PR branch will not have the quarantine_downstream.yaml file. So we need to accept any failures.
-        if : github.event_name == 'pull_request_target' # The PR branch will not have the quarantine_downstream.yaml file. So we need to skip the quarantine list.
-        run: |
-          source ncs/zephyr/zephyr-env.sh
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --coverage-tool gcovr
-
-
-      - name: Run native_posix tests on PR
-        shell: bash
-        continue-on-error: true # Continue on error when running on PRs because the PR branch will not have the quarantine_downstream.yaml file. So we need to accept any failures.
-        if : github.event_name == 'pull_request_target' # The PR branch will not have the quarantine_downstream.yaml file. So we need to skip the quarantine list.
-        run: |
-          source ncs/zephyr/zephyr-env.sh
-          ncs/zephyr/scripts/twister --test-only -v -i -C -T ncs/nrf/ -p native_posix
-
       - name: Run native_posix tests
         shell: bash
-        if : github.event_name != 'pull_request_target'
         run: |
           source ncs/zephyr/zephyr-env.sh
           ncs/zephyr/scripts/twister --test-only -v -i -C -T ncs/nrf/ -p native_posix
@@ -113,7 +100,7 @@ jobs:
             --exclude=ncs/zephyr/subsys/net/lib/sockets/sockets_tls.c \
             --sonarqube coverage.xml
 
-      - name: Run sonar-scanner
+      - name: Run sonar-scanner on main
         if : github.event_name != 'pull_request_target'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -134,6 +121,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          wget https://raw.githubusercontent.com/balaji-nordic/sdk-nrf/main/sonar-project.properties -P ncs/nrf
           sonar-scanner -X \
                         --define project.settings=ncs/nrf/sonar-project.properties \
                         --define sonar.coverageReportPaths=coverage.xml \
