@@ -159,6 +159,15 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
+* Added:
+
+  * Support for nRF7000 EK.
+  * Support for nRF7001 EK and nRF7001 DK.
+
+* Updated:
+
+  * The shield for nRF7002 EK (``nrf7002_ek`` -> ``nrf7002ek_nrf7002``).
+
 |no_changes_yet_note|
 
 Applications
