@@ -70,6 +70,10 @@ config MCUMGR_GRP_IMG
 	bool
 	default y
 
+config MCUMGR_GRP_IMG_LOG_LEVEL
+	int
+	default 0
+
 config MCUMGR_TRANSPORT_NETBUF_SIZE
 	int
 	default 1024
