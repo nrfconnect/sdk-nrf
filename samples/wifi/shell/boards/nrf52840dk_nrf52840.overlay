@@ -5,13 +5,13 @@
  */
 
 /* Disabled because of a conflict on P1.08 - Arduino pin D7 (host-irq-gpios
- * in nrf7002_ek). */
+ * in nrf7002ek_nrf7002). */
 &spi1 {
 	status = "disabled";
 };
 
 /* Disabled because of conflicts on P1.01 and P1.02 - Arduino pins D0 and D1
- * (iovdd-ctrl-gpios and bucken-gpios in nrf7002_ek, respectively). */
+ * (iovdd-ctrl-gpios and bucken-gpios in nrf7002ek_nrf7002, respectively). */
 &uart1 {
 	status = "disabled";
 };

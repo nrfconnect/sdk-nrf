@@ -70,12 +70,12 @@ To enable Wi-Fi positioning and especially nRF7002 functionality, use a
 special DTC overlay with the compiler option ``-DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay`` and a
 configuration overlay ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf``.
 
-To build for the nRF9160 DK with nRF7002 EK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek`` and a scan-only overlay configuration.
+To build for the nRF9160 DK with nRF7002 EK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek_nrf7002`` and a scan-only overlay configuration.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -p -b nrf9160dk_nrf9160ns -- -DSHIELD=nrf7002_ek -DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+   west build -p -b nrf9160dk_nrf9160ns -- -DSHIELD=nrf7002ek_nrf7002 -DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
 
 Wi-Fi positioning has the following limitations:
 

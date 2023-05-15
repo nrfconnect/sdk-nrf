@@ -58,7 +58,7 @@ The driver communicates with the nRF700X device using the QSPI/SPI interface.
 The driver uses the QSPI/SPI interface to send commands to the nRF700X device, and to transfer the data to and from the device.
 The nRF7002 DK uses QSPI whereas the nRF7002 EK uses SPI.
 
-To connect the nRF7002 EK to the SoC, the ``nrf7002_ek`` shield is required.
+To connect the nRF7002 EK to the SoC, the ``nrf7002ek_nrf7002`` shield is required.
 
 
 Radio Test mode

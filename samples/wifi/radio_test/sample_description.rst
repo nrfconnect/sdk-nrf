@@ -64,12 +64,12 @@ The following is an example of the CLI command:
 
    west build -b nrf7002dk_nrf5340_cpuapp
 
-To build for the nRF7002 EK and nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek``.
+To build for the nRF7002 EK and nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek_nrf7002``.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002_ek
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek_nrf7002
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
