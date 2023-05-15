@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NPMX
+	bool "Enabling npmx"
+
+if NPMX
+
+config NPMX_INIT_PRIORITY
+	int "NPMX init priority"
+	default 90
+	help
+	  NPMX initialization priority.
+
+choice
+	prompt "IC version"
+	default NPMX_DEVICE_NPM1300_ENG_B
+
+	config NPMX_DEVICE_NPM1300_ENG_B
+		depends on I2C && GPIO
+		bool "nPM1300 Engineering B"
+endchoice
+
+module = NPMX
+module-str = npmx
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NPMX
