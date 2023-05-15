@@ -144,16 +144,15 @@ At the end of the configuration process, you can check the EUI-64 value using Op
 
 .. _ug_thread_configuring_crypto:
 
-Hardware-accelerated cryptography options
-=========================================
+Cryptography options
+====================
 
-You can enable hardware-accelerated cryptography by using the :ref:`nrf_security` (nrf_security).
-To do this, modify the setting of the following Kconfig option:
+By default, the OpenThread stack uses the :ref:`nrf_security` (nrf_security) for cryptographic operations.
+The module provides hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs as well as alternate software-based implementations of the Mbed TLS APIs
+To use `Mbed TLS`_, modify  the :kconfig:option:`OPENTHREAD_MBEDTLS_CHOICE` Kconfig option.
 
-* :kconfig:option:`CONFIG_OPENTHREAD_MBEDTLS` - Disable this option to disable the default Mbed TLS configuration for OpenThread.
-  The nrf_security module is enabled by default when Mbed TLS for OpenThread is disabled.
-
-For more configuration options, read the module documentation.
+For more information about the configuration and usage of the :ref:`nrf_security`, see the :ref:`nrf_security_config` page.
+For more information about the open source Mbed TLS implementation in the |NCS|, see the `sdk-mbedtls`_ repository.
 
 .. _ug_thread_configure_commission:
 
@@ -173,16 +172,15 @@ To enable the Thread network Joiner role on a device, set the following Kconfig 
 
 * :kconfig:option:`CONFIG_OPENTHREAD_JOINER` to ``y``.
 
+  When you set the :kconfig:option:`CONFIG_OPENTHREAD_JOINER` Kconfig option, the :kconfig:option:`CONFIG_SHELL_STACK_SIZE` Kconfig option is automatically increased to ``3168``, meaning the shell stack size is set to 3 KB.
+
 You can also configure how the commissioning process is to be started.
 The following options are available:
 
-* Start automatically after the Joiner powers up.
+* Provisioning starts automatically after the Joiner powers up.
   To configure this option, configure the :kconfig:option:`CONFIG_OPENTHREAD_JOINER_AUTOSTART` option for the Joiner device.
-* Start from the application.
-* Trigger by Command Line Interface commands.
-  In this case, the shell stack size must be increased to at least 3 KB by setting the following option:
-
-  * :kconfig:option:`CONFIG_SHELL_STACK_SIZE` to ``3168``.
+* Provisioning is started when the application makes a call to the OpenThread API.
+* Provisioning is started by using Command Line Interface commands.
 
 For more details about the commissioning process, see `Thread Commissioning on OpenThread portal`_.
 

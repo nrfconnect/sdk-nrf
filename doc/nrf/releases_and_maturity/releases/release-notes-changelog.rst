@@ -790,3 +790,5 @@ Documentation
       Some of these new sections also include guides that were previously in the getting started section.
     * "Working with..." device guides are now located under :ref:`device_guides`.
     * :ref:`release_notes`, :ref:`software_maturity`, :ref:`known_issues`, :ref:`glossary`, and :ref:`dev-model` are now located under :ref:`releases_and_maturity`.
+
+  * The :ref:`ug_thread` documentation to improve the overall presentation and add additional details where necessary.

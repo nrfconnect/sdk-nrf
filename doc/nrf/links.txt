@@ -836,9 +836,12 @@
 .. ### Source: openthread.io
 
 .. _`OpenThread.io`: https://openthread.io/
-.. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
+.. _`Device Types in the OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
 .. _`OpenThread logging`: https://openthread.io/guides/build/logs
+.. _`Mesh Link Establishment (MLE)`: https://openthread.io/guides/thread-primer/network-discovery#mesh-link-establishment
+.. _`IPv6 Addressing Scopes`: https://openthread.io/guides/thread-primer/ipv6-addressing#scopes
+.. _`Thread Partitions`: https://openthread.io/guides/thread-primer/node-roles-and-types#partitions
 
 .. _`OpenThread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
 .. _`OpenThread Border Router`: https://openthread.io/guides/border-router

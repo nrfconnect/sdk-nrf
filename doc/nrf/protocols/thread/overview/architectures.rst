@@ -7,7 +7,7 @@ OpenThread architectures
    :local:
    :depth: 2
 
-This page describes the OpenThread stack architecture and platform designs that are possible with the OpenThread network stack on Nordic Semiconductor devices in |NCS|.
+This page describes the OpenThread stack architecture and platform designs that are possible with the OpenThread network stack on Nordic Semiconductor devices in the |NCS|.
 
 The designs are described from the least complex to the most complex, starting with System-on-Chip designs.
 These are simple applications that consist of a single chip running a single protocol or multiple protocols.
@@ -58,7 +58,7 @@ It has the following disadvantages:
 
 * For some use cases, the nRF52 Series and nRF53 Series MCUs can be too slow (for example, when the application does complex data processing).
 * The application and the network share flash and RAM space, which can limit the application functionality.
-* Dual-bank DFU or an external flash is needed to update the firmware.
+* Might require external flash for DFU if the secondary application slot does not fit in the primary memory because of increased application size.
 
 .. figure:: images/thread_platform_design_soc.svg
    :alt: Thread-only architecture (nRF52)
@@ -129,7 +129,7 @@ Network co-processor (NCP)
 ==========================
 
 .. note::
-   This platform design is currently discontinued by |NCS|.
+   This platform design is currently discontinued by the |NCS|.
 
 In the standard NCP design, the full OpenThread stack runs on the processor that provides the Thread radio (the *network processor*), and the application layer runs on a host processor.
 The host processor is typically more capable than the network processor, but it has greater power demands.
@@ -144,7 +144,6 @@ This design has the following advantages:
 * When choosing an advanced and powerful host processor, applications can be very complex.
 * Only the network stack and a thin application reside on the network processor, which reduces the cost of the chip.
   RAM and flash usage are usually smaller than in a single-chip solution.
-* This design does not require support for dual-bank DFU, because the host can just replace the old image with a new one.
 
 It has the following disadvantages:
 
@@ -195,10 +194,10 @@ This platform design is suitable for the following development kits:
 
 .. _thread_architectures_designs_cp_uart:
 
-UART recommendations for NCP
-============================
+UART recommendations for co-processor designs
+=============================================
 
-Use the following recommended default UART settings for configuration based on :ref:`thread_architectures_designs_cp_ncp` architecture:
+Use the following recommended default UART settings for a configuration based on :ref:`thread_architectures_designs_cp` architecture:
 
 * Bit rate: 1000000
 * Start bits: 1
@@ -213,11 +212,11 @@ Flow control
 
 Hardware reset
    Use the Arduino-style hardware reset, where the DTR signal is coupled to the RES pin through a 0.01 µF capacitor.
-   This causes the NCP to automatically reset whenever the serial port is opened.
+   This causes the co-processor to automatically reset whenever the serial port is opened.
 
    .. note::
       This hardware reset method is not used in Nordic Semiconductor's solution.
-      Dedicate one of your host pins to control the RES pin on the NCP, so that you can easily perform a hardware reset if necessary.
+      Dedicate one of your host pins to control the RES pin on the co-processor, so that you can easily perform a hardware reset if necessary.
 
 Recommended UART signals
 ------------------------
@@ -236,4 +235,4 @@ The following UART signals are used in the Nordic Semiconductor's solution:
 |Google_CCLicense|
 The source page is available `here <OpenThread system architecture_>`_.
 
-.. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available.
+.. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available in the |NCS|.
