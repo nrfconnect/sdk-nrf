@@ -241,6 +241,9 @@ nRF Desktop
   * The :ref:`nrf_desktop_dfu_lock`.
     The utility provides synchronization mechanism for accessing the DFU flash.
     It is useful for application configurations that support more than one DFU method.
+  * The :ref:`nrf_desktop_dfu_mcumgr` that you can enable with the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` option.
+    The module handles image upload over MCUmgr SMP protocol.
+    The module integrates the :ref:`nrf_desktop_dfu_lock` for synchronizing flash access with other DFU methods.
 
 * Updated:
 
