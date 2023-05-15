@@ -163,12 +163,11 @@ Wi-Fi
 
   * Support for nRF7000 EK.
   * Support for nRF7001 EK and nRF7001 DK.
+  * Support for a new shield, nRF7002 Evaluation Board (EB) for Thingy53 (rev 1.1.0).
 
 * Updated:
 
   * The shield for nRF7002 EK (``nrf7002_ek`` -> ``nrf7002ek_nrf7002``).
-
-|no_changes_yet_note|
 
 Applications
 ============
