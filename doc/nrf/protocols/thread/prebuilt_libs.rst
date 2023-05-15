@@ -9,7 +9,7 @@ Pre-built libraries
    :depth: 2
 
 The |NCS| provides a set of :ref:`nrfxlib:ot_libs`.
-These pre-built libraries are available in nrfxlib and provide features and optional functionalities from the OpenThread stack.
+These pre-built libraries are available in :ref:`nrfxlib:nrfxlib` and provide features and optional functionalities from the OpenThread stack.
 You can use these libraries for building applications with support for the complete Thread Specification.
 
 To use a pre-built library, configure OpenThread to use pre-built libraries by setting the :kconfig:option:`CONFIG_OPENTHREAD_LIBRARY` Kconfig option and select one of the provided :ref:`thread_ug_feature_sets`.
@@ -32,8 +32,8 @@ The |NCS| provides the following feature sets:
   If you use pre-built libraries, you must choose a different feature set.
 
   .. note::
-    When :ref:`building OpenThread libraries from source <ug_thread_configuring_basic>`, you can select another feature set as base to select several configuration options at once.
-    You can then manually enable additional features, but you cannot disable features that are enabled by the chosen feature set.
+     When :ref:`building OpenThread libraries from source <ug_thread_configuring_basic>`, you can select another feature set as base to select several configuration options at once.
+     You can then manually enable additional features, but you cannot disable features that are enabled by the chosen feature set.
 
 The following table lists the supported features for each of these sets.
 No tick indicates that there is no support for the given feature in the related configuration, while the tick signifies that the feature is selected (``=1`` value).
@@ -191,6 +191,7 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       -
 
 For the full list of configuration options that were used during compilation, including their default values, see the :file:`openthread_lib_configuration.txt` file within each library folder in the nrfxlib repository.
+The library folders are inside :file:`openthread/lib`.
 
 .. _thread_ug_customizing_prebuilt:
 
@@ -233,18 +234,18 @@ Use this functionality for :ref:`certification <ug_thread_cert>` of your configu
 
 You can install the libraries either with or without debug symbols.
 Installing the libraries with debug symbols can be useful when debugging, but will take a significant amount of storage memory.
-You can remove the symbols when updating with the :kconfig:option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option enabled.
-The option is disabled by default.
 
 .. note::
-    When you select :kconfig:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`, the location of the destination directory for the libraries depends on the chosen :ref:`nrf_security backend <nrf_security_readme>`, either :kconfig:option:`CONFIG_CC3XX_BACKEND` or :kconfig:option:`CONFIG_OBERON_BACKEND`.
+   When you select :kconfig:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`, the location of the directory for the libraries depends on the chosen :ref:`nrf_security backend <nrf_security_readme>`, either :kconfig:option:`CONFIG_CC3XX_BACKEND` or :kconfig:option:`CONFIG_OBERON_BACKEND`.
+   For example, when building the complete set of libraries for a device that uses the ARM Cortex-M4 with FPU support, the directories are :file:`ncs/nrfxlib/openthread/cortex-m4/hard-float/v1.3/master/cc3xx` and :file:`ncs/nrfxlib/openthread/cortex-m4/hard-float/v1.3/master/oberon`, respectively.
 
 Updating the libraries without debug symbols
 ============================================
 
 There is a single command to update the libraries without debug symbols.
-When using the command line, run the command in the project folder.
-When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
+
+* When using the command line, run the command in the project folder.
+* When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
 
 Use the following command:
 
@@ -261,8 +262,9 @@ Updating the libraries with debug symbols
 =========================================
 
 There is a single command to update the libraries with debug symbols.
-When using the command line, run the command in the project folder.
-When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
+
+* When using the command line, run the command in the project folder.
+* When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
 
 Use the following command:
 

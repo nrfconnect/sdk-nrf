@@ -22,7 +22,8 @@ Moreover, take into account the following considerations:
 
 * The sample was compiled using:
 
-  * The default :file:`prj.conf` and the corresponding :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY`, :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION` choices.
+  * The default :file:`prj.conf` configuration file and the corresponding Kconfig options :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY` and :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION` selected.
+    See the :ref:`ug_thread_select_libraries` documentation for more information on the Kconfig choices.
   * The :kconfig:option:`CONFIG_ASSERT` Kconfig option set to ``n``.
 
 * Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.
@@ -33,7 +34,7 @@ The tables provide memory requirements for the following device type variants:
 * *MTD* - Minimal Thread Device.
 
 Some tables also list a *master* variant, which is an FTD with additional features, such as being able to have the *commissioner* or *border router* commissioning roles.
-See :ref:`thread_ug_feature_sets` for more information.
+See :ref:`thread_device_types` for more information on device types, and :ref:`thread_ot_commissioning` for more information on commissioning roles.
 
 .. _thread_ot_memory_5340:
 

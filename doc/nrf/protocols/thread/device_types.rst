@@ -41,7 +41,7 @@ Based on all these criteria, the Thread devices can be classified as follows:
      - Do not maintain a routing table and forward all their messages to the parent.
      - Rely on the parent to perform them.
 
-For additional information about Thread device types, see the documentation for `Device Types on OpenThread portal`_.
+For additional information about Thread device types, see the documentation for `Device Types in the OpenThread portal`_.
 
 .. _thread_types_ftd:
 

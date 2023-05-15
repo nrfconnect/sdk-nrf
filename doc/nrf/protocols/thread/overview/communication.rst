@@ -10,7 +10,7 @@ OpenThread co-processor communication
 The network co-processor (NCP) and radio co-processor (RCP) transport architectures include a transmit (TX) buffer that stores all the data that are to be received by the host using the `Spinel protocol`_.
 
 See :ref:`thread_architectures_designs_cp` for more information on the architectures.
-The NCP platform design is currently discontinued by |NCS|.
+The NCP platform design is currently discontinued by the |NCS|.
 
 .. _ug_thread_communication_priorities:
 
@@ -54,35 +54,37 @@ Receiving data and RX data flows
 
 This section illustrates the RX data flows for UART and SPI for when the commands are received by NCP/RCP:
 
-* Data RX flow for UART
+Data RX flow for UART
+---------------------
 
-  .. figure:: images/thread_data_flow_rx_uart.svg
-     :alt: Data RX flow for UART
+.. figure:: images/thread_data_flow_rx_uart.svg
+   :alt: Data RX flow for UART
 
-     Data RX flow for UART
+   Data RX flow for UART
 
-  In this flow:
+In this flow:
 
-  1. UART interface stores up to six bytes in the hardware FIFO.
-  #. HDLC-encoded data is stored in the Driver receive buffer.
-  #. HDLC data is decoded and stored in the NCP UART Driver receive buffer.
-  #. Spinel commands are dispatched and handled by proper routines.
+1. The UART interface stores up to six bytes in the hardware FIFO.
+#. HDLC-encoded data is stored in the Driver receive buffer.
+#. HDLC data is decoded and stored in the NCP UART Driver receive buffer.
+#. Spinel commands are dispatched and handled by proper routines.
 
-     * If a command requires a response, it will be added to the NCP response queue for later execution.
+   If a command requires a response, it will be added to the NCP response queue for later execution.
 
-* Data RX flow for SPI
+Data RX flow for SPI
+--------------------
 
-  .. figure:: images/thread_data_flow_rx_spi.svg
-     :alt: Data RX flow for SPI
+.. figure:: images/thread_data_flow_rx_spi.svg
+   :alt: Data RX flow for SPI
 
-     Data RX flow for SPI
+   Data RX flow for SPI
 
-  In this flow:
+In this flow:
 
-  1. SPI interface saves data into the NCP SPI RX buffer.
-  #. NCP obtains pointer to the Spinel frame in the buffer and handles it.
+1. The SPI interface saves data into the NCP SPI RX buffer.
+#. The NCP obtains a pointer to the Spinel frame in the buffer and handles it.
 
-     If a command requires a response, it will be added to the NCP response queue for later execution.
+   If a command requires a response, it will be added to the NCP response queue for later execution.
 
 .. _ug_thread_communication_rxtx_tx:
 
@@ -95,7 +97,7 @@ NCP/RCP has the following process for sending responses:
 #. In the NCP/RCP Response Queue, the command is checked for the data required by the host.
 #. NCP/RCP gathers the data and writes the response to the TX buffer by emptying the NCP/RCP Response Queue.
 
-   The process of writing the frames to the buffer is described in the :ref:`Writing to the buffer<ug_thread_writing_buffer>` paragraph.
+   The process of writing the frames to the buffer is described in the :ref:`Writing to the buffer<ug_thread_writing_buffer>` section.
 
 #. NCP/RCP sends the response from the TX buffer to the host.
 
@@ -105,7 +107,7 @@ Unsolicited update commands
 ===========================
 
 The Spinel protocol also allows sending unsolicited update commands from NCP to the host in addition to responses.
-These are used for example when NCP or a node receives a IPv6 packet that must be forwarded to the host.
+These are used, for example, when NCP or a node receives an IPv6 packet that must be forwarded to the host.
 
 The unsolicited update commands have the following characteristics:
 
@@ -123,13 +125,14 @@ The unsolicited update commands include both delayable and droppable frames (see
 
 #. Droppable frames:
 
-   1. Debug stream for application.
+   1. Debug stream for the application.
 
-      This is a separate log for application that has a property ID field that allows the application to distinguish different debug streams.
+      A separate log for the application.
+      It has a property ID field that allows the application to distinguish different debug streams.
 
    #. Log.
 
-      This is a log that can be used to report errors and debug information in the OpenThread stack and in Zephyr to the host :ref:`using Spinel <ug_thread_communication_logs>`.
+      A log that can be used to report errors and debug information in the OpenThread stack and in Zephyr to the host :ref:`using Spinel <ug_thread_communication_logs>`.
 
 .. _ug_thread_writing_buffer:
 
