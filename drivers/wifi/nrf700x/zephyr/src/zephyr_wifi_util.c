@@ -529,7 +529,7 @@ static int nrf_wifi_util_show_host_rpu_ps_ctrl_state(const struct shell *shell,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
-static int nrf_wifi_util_show_fw_ver(const struct shell *shell,
+static int nrf_wifi_util_show_vers(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
 {
@@ -538,6 +538,9 @@ static int nrf_wifi_util_show_fw_ver(const struct shell *shell,
 	unsigned int fw_ver;
 
 	fmac_dev_ctx = ctx->rpu_ctx;
+
+	shell_fprintf(shell, SHELL_INFO, "Driver version: %s\n",
+				  NRF700X_DRIVER_VERSION);
 
 	status = wifi_nrf_fmac_ver_get(fmac_dev_ctx, &fw_ver);
 
@@ -1051,10 +1054,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      0),
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-	SHELL_CMD_ARG(show_fw_ver,
+	SHELL_CMD_ARG(show_vers,
 		      NULL,
-		      "Display the firmware version",
-		      nrf_wifi_util_show_fw_ver,
+		      "Display the driver and the firmware versions",
+		      nrf_wifi_util_show_vers,
 		      1,
 		      0),
 #ifndef CONFIG_NRF700X_RADIO_TEST

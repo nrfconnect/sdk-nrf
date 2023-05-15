@@ -88,6 +88,11 @@ static const unsigned int rx3_buf_sz = 1000;
 
 struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
+const char *wifi_nrf_get_drv_version(void)
+{
+	return NRF700X_DRIVER_VERSION;
+}
+
 void wifi_nrf_event_proc_scan_start_zep(void *if_priv,
 					struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
 					unsigned int event_len)
