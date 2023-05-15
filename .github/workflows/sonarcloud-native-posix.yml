@@ -17,6 +17,15 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
+        if : github.event_name == 'pull_request_target'
+        with:
+          ref: ${{ github.event.pull_request.head.sha  }} # Checkout the PR's head sha instead of the target branch's sha
+          path: ncs/nrf
+          fetch-depth: 0
+
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        if : github.event_name != 'pull_request_target'
         with:
           path: ncs/nrf
           fetch-depth: 0
@@ -58,9 +67,19 @@ jobs:
 
       - name: Build native_posix tests with coverage enabled (via sonarcloud build wrapper)
         shell: bash
+        if : github.event_name != 'pull_request_target'
         run: |
           source ncs/zephyr/zephyr-env.sh
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --quarantine-list ncs/nrf/scripts/quarantine_downstream.yaml --coverage-tool gcovr
+
+      - name: Build native_posix tests on PR with coverage enabled (via sonarcloud build wrapper)
+        shell: bash
+        continue-on-error: true # Continue on error when running on PRs because the PR branch will not have the quarantine_downstream.yaml file. So we need to accept any failures.
+        if : github.event_name == 'pull_request_target' # The PR branch will not have the quarantine_downstream.yaml file. So we need to skip the quarantine list.
+        run: |
+          source ncs/zephyr/zephyr-env.sh
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --coverage-tool gcovr
+
 
       - name: Run native_posix tests
         shell: bash
@@ -86,6 +105,7 @@ jobs:
             --sonarqube coverage.xml
 
       - name: Run sonar-scanner
+        if : github.event_name != 'pull_request_target'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -94,3 +114,22 @@ jobs:
                         --define project.settings=ncs/nrf/sonar-project.properties \
                         --define sonar.coverageReportPaths=coverage.xml \
                         --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+
+      - name: Run sonar-scanner on PR
+        if : github.event_name == 'pull_request_target'
+        env :
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner -X \
+                        --define project.settings=ncs/nrf/sonar-project.properties \
+                        --define sonar.coverageReportPaths=coverage.xml \
+                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
+                        --define sonar.scm.revision=${{ env.HEAD_SHA }} \
+                        --define sonar.pullrequest.key=${{ env.PR_NUMBER }} \
+                        --define sonar.pullrequest.branch=${{ env.PR_BRANCH }} \
+                        --define sonar.pullrequest.base=${{ env.BASE_REF }}
