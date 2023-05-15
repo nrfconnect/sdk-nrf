@@ -29,6 +29,8 @@
 #include <fmac_api.h>
 #include <host_rpu_umac_if.h>
 
+#define NRF700X_DRIVER_VERSION "1.2.4.0"
+
 #ifndef CONFIG_NRF700X_RADIO_TEST
 /* Use same timeout as WPA supplicant, this is high mainly to handle
  * connected scan.
@@ -108,4 +110,5 @@ struct wifi_nrf_drv_priv_zep {
 };
 
 void wifi_nrf_scan_timeout_work(struct k_work *work);
+const char *wifi_nrf_get_drv_version(void);
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
