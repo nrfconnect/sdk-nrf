@@ -2134,6 +2134,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/cpu_meas.rst
    doc/dev_descr.rst
    doc/dfu.rst
+   doc/dfu_mcumgr.rst
    doc/dfu_lock.rst
    doc/factory_reset.rst
    doc/failsafe.rst

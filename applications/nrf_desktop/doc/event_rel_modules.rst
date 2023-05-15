@@ -47,6 +47,7 @@ Source modules for config_event
 * :ref:`nrf_desktop_ble_bond`
 * :ref:`nrf_desktop_ble_qos`
 * :ref:`nrf_desktop_dfu`
+* :ref:`nrf_desktop_factory_reset`
 * :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_hids`
 * :ref:`nrf_desktop_info`
@@ -63,6 +64,7 @@ Sink modules for config_event
 * :ref:`nrf_desktop_ble_latency`
 * :ref:`nrf_desktop_ble_qos`
 * :ref:`nrf_desktop_dfu`
+* :ref:`nrf_desktop_factory_reset`
 * :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_info`
 * :ref:`nrf_desktop_led_stream`
@@ -166,6 +168,8 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_constlat`
 * :ref:`nrf_desktop_cpu_meas`
 * :ref:`nrf_desktop_dfu`
+* :ref:`nrf_desktop_dfu_mcumgr`
+* :ref:`nrf_desktop_factory_reset`
 * :ref:`nrf_desktop_fast_pair_app`
 * :ref:`nrf_desktop_fn_keys`
 * :ref:`nrf_desktop_hfclk_lock`
