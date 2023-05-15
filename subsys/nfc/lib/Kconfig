@@ -84,6 +84,10 @@ endif# NFC_OWN_THREAD
 config NFC_LOW_LATENCY_IRQ
 	bool "Use low latency IRQ for NFC"
 	default y
+	# NFC low latency interrupt requires software interrupt being supported.
+	default y if $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_EGU)) || \
+		     $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_SWI))
+	select ZERO_LATENCY_IRQS
 	help
 	  Using this option ensures fast NFC interrupt
 	  execution on the cost of using additional interrupt (SWI).
