@@ -1,6 +1,6 @@
 tests:
-  at_custom_cmd.functionality_test:
+  at_cmd_custom.functionality_test:
     platform_allow: nrf9160dk_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    tags: at_custom_cmd
+    tags: at_cmd_custom

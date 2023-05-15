@@ -10,7 +10,7 @@
 #include <string.h>
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/at_custom_cmd.h>
+#include <modem/at_cmd_custom.h>
 #include <nrf_errno.h>
 
 static char response[64];
@@ -37,25 +37,24 @@ static void suite_teardown(void *f)
 static int at_cmd_callback_cmd1(char *buf, size_t len, char *at_cmd)
 {
 	zassert_mem_equal("AT+CMD1", at_cmd, strlen("AT+CMD1"), NULL);
-	return at_custom_cmd_respond(buf, len, "\r\n+CMD1: OK\r\n");
+	return at_cmd_custom_respond(buf, len, "\r\n+CMD1: OK\r\n");
 }
 
 static int at_cmd_callback_cmd2(char *buf, size_t len, char *at_cmd)
 {
 	zassert_mem_equal("AT+CMD2", at_cmd, strlen("AT+CMD2"), NULL);
-	return at_custom_cmd_respond(buf, len,
+	return at_cmd_custom_respond(buf, len,
 	"\r\n+CPMS: \"TA\",%d,%d,\"TA\",%d,%d\r\nOK\r\n", 0, 3, 0, 3);
 }
 
-/* AT filter list
- * Including all comands the filter should check for and function ptr
- * to functions to be called on detection.
+/* Custom AT commands
+ * Including all commands to check for and callbacks.
  */
 
-AT_CUSTOM_CMD(CMD1, "AT+CMD1", at_cmd_callback_cmd1);
-AT_CUSTOM_CMD(CMD2, "AT+CMD2", at_cmd_callback_cmd2);
+AT_CMD_CUSTOM(CMD1, "AT+CMD1", at_cmd_callback_cmd1);
+AT_CMD_CUSTOM(CMD2, "AT+CMD2", at_cmd_callback_cmd2);
 
-ZTEST(at_cmd_filter, test_at_custom_cmd_response)
+ZTEST(at_cmd_filter, test_at_cmd_custom_response)
 {
 	int err;
 
@@ -69,7 +68,7 @@ ZTEST(at_cmd_filter, test_at_custom_cmd_response)
 			strlen("\r\n+CPMS: \"TA\",0,3,\"TA\",0,3"), NULL);
 }
 
-ZTEST(at_cmd_filter, test_at_custom_cmd_buffer_size)
+ZTEST(at_cmd_filter, test_at_cmd_custom_buffer_size)
 {
 	int err;
 
@@ -77,7 +76,7 @@ ZTEST(at_cmd_filter, test_at_custom_cmd_buffer_size)
 	zassert_equal(-NRF_E2BIG, err, "nrf_modem_at_cmd failed, error: %d", err);
 }
 
-ZTEST(at_cmd_filter, test_at_custom_cmd_command_fault_on_NULL_buffer)
+ZTEST(at_cmd_filter, test_at_cmd_custom_command_fault_on_NULL_buffer)
 {
 	int err;
 

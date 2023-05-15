@@ -7,7 +7,7 @@ GCF SMS
    :local:
    :depth: 2
 
-The GCF SMS Library uses the :ref:`at_custom_cmd_readme` library and adds custom AT commands for the :c:func:`nrf_modem_at_cmd` function to comply with GCF SMS Certification criteria.
+The GCF SMS Library uses the :ref:`at_cmd_custom_readme` library and adds custom AT commands for the :c:func:`nrf_modem_at_cmd` function to comply with GCF SMS Certification criteria.
 The library implements the following AT commands:
 
 * ``AT+CPMS``

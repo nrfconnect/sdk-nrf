@@ -5,6 +5,6 @@
 #
 
 zephyr_library()
-zephyr_library_sources(at_custom_cmd.c)
+zephyr_library_sources(at_cmd_custom.c)
 
-zephyr_linker_sources(RWDATA at_custom_cmd.ld)
+zephyr_linker_sources(RWDATA at_cmd_custom.ld)

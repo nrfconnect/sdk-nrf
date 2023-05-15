@@ -533,23 +533,35 @@ Modem libraries
 
     * The Kconfig option :kconfig:option:`CONFIG_LTE_EDRX_REQ` will now prevent the modem from requesting eDRX in case the option is disabled, in contrast to the previous behavior, where eDRX was requested even if the option was disabled (in the case where the modem has preserved requesting eDRX in its NVS storage).
 
+* :ref:`at_cmd_custom_readme` library:
+
+  * Updated:
+
+    * Renamed the :c:macro:`AT_CUSTOM_CMD` macro to :c:macro:`AT_CMD_CUSTOM`.
+    * Renamed the :c:func:`at_custom_cmd_respond` function to :c:func:`at_cmd_custom_respond`.
+
+  * Removed:
+
+    * Macros :c:macro:`AT_CUSTOM_CMD_PAUSED` and :c:macro:`AT_CUSTOM_CMD_ACTIVE`.
+    * Functions :c:func:`at_custom_cmd_pause` and :c:func:`at_custom_cmd_active`.
+
 * :ref:`nrf_modem_lib_readme` library:
 
   * Added:
 
+    * The :c:func:`nrf_modem_lib_bootloader_init` function to initialize the Modem library in bootloader mode.
     * The function :c:func:`nrf_modem_lib_fault_strerror` to retrieve a statically allocated textual description of a given modem fault.
       The function can be enabled using the new Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_FAULT_STRERROR`.
-    * The :c:func:`nrf_modem_lib_bootloader_init` function to initialize the Modem library in bootloader mode.
 
   * Updated:
 
-    * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_IPC_PRIO_OVERRIDE` is now deprecated.
-    * The :c:func:`nrf_modem_lib_init` function is now initializing the Modem library in normal operating mode only and the ``mode`` parameter is removed from the input parameters.
+    * The :c:func:`nrf_modem_lib_init` function now initializes the Modem library in normal operating mode only and the ``mode`` parameter is removed.
       Use the :c:func:`nrf_modem_lib_bootloader_init` function to initialize the Modem library in bootloader mode.
     * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_SYS_INIT` is now deprecated.
       The application initializes the modem library using the :c:func:`nrf_modem_lib_init` function instead.
     * The :c:func:`nrf_modem_lib_shutdown` function now checks that the modem is in minimal functional mode (``CFUN=0``) before shutting down the modem.
       If not, a warning is given to the application, and minimal functional mode is set before calling the :c:func:`nrf_modem_shutdown` function.
+    * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_IPC_PRIO_OVERRIDE` is now deprecated.
 
   * Removed:
 

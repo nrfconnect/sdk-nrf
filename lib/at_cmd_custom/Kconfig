@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig AT_CUSTOM_CMD
+menuconfig AT_CMD_CUSTOM
 	bool "Custom AT commands"
 
-if AT_CUSTOM_CMD
+if AT_CMD_CUSTOM
 
-module=AT_CUSTOM_CMD
+module=AT_CMD_CUSTOM
 module-dep=LOG
 module-str= AT custom command library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # AT_CUSTOM_CMD
+endif # AT_CMD_CUSTOM
