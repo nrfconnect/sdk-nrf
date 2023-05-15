@@ -37,6 +37,12 @@ void nrfx_isr(const void *irq_handler)
 	TEST_ASSERT(false);
 }
 
+void nrfx_uarte_1_irq_handler(void)
+{
+	/* Declared only for pleasing linker. Never expected to be called. */
+	TEST_ASSERT(false);
+}
+
 void tearDown(void)
 {
 	p_uarte_inst_in_use = NULL;
