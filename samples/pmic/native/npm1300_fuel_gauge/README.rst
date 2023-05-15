@@ -12,7 +12,7 @@ The Fuel gauge sample demonstrates how to calculate the battery state of charge 
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -29,23 +29,39 @@ Wiring
 #. Connect the TWI interface between the chosen DK and the nPM1300 EK as in the following table:
 
    .. list-table:: nPM1300 EK connections.
-      :widths: 25 25
+      :widths: 25 25 25 25 25
       :header-rows: 1
 
       * - nPM1300 EK pins
         - nRF52 DK pins
+        - nRF52840 DK pins
+        - nRF5340 DK pins
+        - nRF9160 DK pins
       * - SDA
         - P0.26
+        - P0.26
+        - P1.02
+        - P0.30
       * - SCL
         - P0.27
+        - P0.27
+        - P1.03
+        - P0.31
+      * - VDDIO
+        - VDD
+        - VDD
+        - VDD
+        - VDD
       * - GND
+        - GND
+        - GND
+        - GND
         - GND
 
 #. Make the following connections on the nPM1300 EK:
 
    * Connect a USB power supply to the **J3** connector.
    * Connect a suitable battery to the **J2** connector.
-   * On the **P18** pin header, connect **VOUT2** and **VDDIO** pins with a jumper.
    * On the **P2** pin header, connect **VBAT** and **VBATIN** pins with a jumper.
    * On the **P17** pin header, connect all LEDs with jumpers.
    * On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
