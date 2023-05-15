@@ -250,6 +250,10 @@ nRF Desktop
 
   * The :ref:`nrf_desktop_dfu` to integrate the :ref:`nrf_desktop_dfu_lock` for synchronizing flash access with other DFU methods.
     Use the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option to enable this feature.
+  * The nRF desktop configurations that enable :ref:`nrf_desktop_bluetooth_guide_fast_pair`.
+    The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) instead of the ``B0`` bootloader.
+    This is done to support firmware updates using both :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr` modules.
+  * The :ref:`nrf_desktop_dfu_mcumgr` is used instead of the :ref:`nrf_desktop_smp` in MCUboot SMP configuration (:file:`prj_mcuboot_smp.conf`) for the nRF52840 DK.
   * The :ref:`nrf_desktop_dfu` automatically enables 8-bit write block size emulation (:kconfig:option:`CONFIG_SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS`) to ensure that update images with sizes not aligned to word size can be successfully stored in the internal flash.
     The feature is not enabled if the MCUboot bootloader is used and the secondary slot is placed in an external flash (when :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` is enabled).
   * The :ref:`nrf_desktop_ble_latency` uses low latency for the active Bluetooth connection in case of the SMP transfer event and regardless of the event submitter module.
