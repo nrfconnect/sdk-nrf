@@ -1233,18 +1233,16 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
 /**
  * wifi_nrf_fmac_ver_get() - Get FW versions from the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
- * @umac_ver: Pointer to the address where the UMAC version needs to be copied.
- * @lmac_ver: Pointer to the address where the LMAC version needs to be copied.
+ * @fw_ver: Pointer to the address where the FW version needs to be copied.
  *
- * This function is used to get Firmware versions from the RPU.
+ * This function is used to get Firmware version from the RPU.
  *
  * Returns: Status
  *		Pass: %WIFI_NRF_STATUS_SUCCESS
  *		Fail: %WIFI_NRF_STATUS_FAIL
  */
 enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					  unsigned int *umac_ver,
-					  unsigned int *lmac_ver);
+					  unsigned int *fw_ver);
 
 
 /**

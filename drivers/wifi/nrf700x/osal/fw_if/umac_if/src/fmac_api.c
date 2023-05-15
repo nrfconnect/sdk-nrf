@@ -862,31 +862,18 @@ out:
 
 
 enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					  unsigned int *umac_ver,
-					  unsigned int *lmac_ver)
+					  unsigned int *fw_ver)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
 	status = hal_rpu_mem_read(fmac_dev_ctx->hal_dev_ctx,
-				  umac_ver,
+				  fw_ver,
 				  RPU_MEM_UMAC_VER,
-				  sizeof(*umac_ver));
+				  sizeof(*fw_ver));
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Unable to read UMAC ver\n",
-				      __func__);
-		goto out;
-	}
-
-	status = hal_rpu_mem_read(fmac_dev_ctx->hal_dev_ctx,
-				  lmac_ver,
-				  RPU_MEM_LMAC_VER,
-				  sizeof(*lmac_ver));
-
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to read LMAC ver\n",
 				      __func__);
 		goto out;
 	}
