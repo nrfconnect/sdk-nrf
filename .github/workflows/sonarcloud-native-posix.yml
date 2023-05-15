@@ -81,8 +81,17 @@ jobs:
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ncs/zephyr/scripts/twister -b -C -v -i -T ncs/nrf/ -p native_posix --coverage-tool gcovr
 
 
+      - name: Run native_posix tests on PR
+        shell: bash
+        continue-on-error: true # Continue on error when running on PRs because the PR branch will not have the quarantine_downstream.yaml file. So we need to accept any failures.
+        if : github.event_name == 'pull_request_target' # The PR branch will not have the quarantine_downstream.yaml file. So we need to skip the quarantine list.
+        run: |
+          source ncs/zephyr/zephyr-env.sh
+          ncs/zephyr/scripts/twister --test-only -v -i -C -T ncs/nrf/ -p native_posix
+
       - name: Run native_posix tests
         shell: bash
+        if : github.event_name != 'pull_request_target'
         run: |
           source ncs/zephyr/zephyr-env.sh
           ncs/zephyr/scripts/twister --test-only -v -i -C -T ncs/nrf/ -p native_posix
