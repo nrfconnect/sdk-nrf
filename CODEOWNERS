@@ -88,7 +88,7 @@ Kconfig*                                  @tejlmand
 /lib/bin/                                 @rlubos @lemrey
 /lib/adp536x/                             @jtguggedal
 /lib/at_cmd_parser/                       @rlubos
-/lib/at_custom_cmd/                       @eivindj-nordic
+/lib/at_cmd_custom/                       @eivindj-nordic
 /lib/at_host/                             @rlubos
 /lib/at_monitor/                          @lemrey @rlubos
 /lib/at_shell/                            @jtguggedal @simensrostad
@@ -243,7 +243,7 @@ Kconfig*                                  @tejlmand
 /tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @anangl
 /tests/lib/at_cmd_parser/                 @rlubos
-/tests/lib/at_custom_cmd/                 @eivindj-nordic
+/tests/lib/at_cmd_custom/                 @eivindj-nordic
 /tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/nrf_fuel_gauge/                @nordic-auko @aasinclair

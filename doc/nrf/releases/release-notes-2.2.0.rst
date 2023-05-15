@@ -659,7 +659,7 @@ Bootloader libraries
 Modem libraries
 ---------------
 
-* Added the :ref:`at_custom_cmd_readme` library to add custom AT commands with application callbacks.
+* Added the :ref:`at_cmd_custom_readme` library to add custom AT commands with application callbacks.
 
 * :ref:`modem_info_readme` library:
 
@@ -728,7 +728,7 @@ Modem libraries
     * All the functions to return ``-EPERM`` instead of ``-EACCES`` when the operation is not permitted because the LTE link is active.
 
 * Renamed the AT SMS Cert library to :ref:`lib_gcf_sms_readme`.
-  The :ref:`lib_gcf_sms_readme` library now uses the :ref:`at_custom_cmd_readme` library to register filtered AT commands.
+  The :ref:`lib_gcf_sms_readme` library now uses the :ref:`at_cmd_custom_readme` library to register filtered AT commands.
 
 Libraries for networking
 ------------------------

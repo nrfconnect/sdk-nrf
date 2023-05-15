@@ -1,4 +1,4 @@
-.. _at_custom_cmd_readme:
+.. _at_cmd_custom_readme:
 
 Custom AT commands
 ##################
@@ -13,23 +13,23 @@ The list of custom AT commands are passed to the Modem library. This allows the 
 Configuration
 *************
 
-You can enable the custom AT commands library by setting the :kconfig:option:`CONFIG_AT_CUSTOM_CMD` Kconfig option.
+You can enable the custom AT commands library by setting the :kconfig:option:`CONFIG_AT_CMD_CUSTOM` Kconfig option.
 
 Usage
 *****
 
-To add a custom AT command or overwrite an existing command, you must add the AT commands filter and callback with the :c:macro:`AT_CUSTOM_CMD` macro in the :file:`at_custom_cmd.h` file.
+To add a custom AT command or overwrite an existing command, you must add the AT commands filter and callback with the :c:macro:`AT_CMD_CUSTOM` macro in the :file:`at_cmd_custom.h` file.
 If the filter matches the first characters of the AT command that is sent to the :c:func:`nrf_modem_at_cmd` function, the AT command is passed to the filter callback instead of to the modem.
 When returning from the callback, the content of the provided buffer is treated as the modem response and is returned to the ``nrf_modem_at_`` API that sent the command.
 
 .. note::
-   When the custom AT commands library is enabled, the application must not call the :c:func:`nrf_modem_at_cmd_filter_set` function because it overrides the handler set by the library.
-   Instead, the application must add the AT filters using the :c:macro:`AT_CUSTOM_CMD` macro.
+   When the custom AT commands library is enabled, the application must not call the :c:func:`nrf_modem_at_cmd_custom_set` function because it overrides the handler set by the library.
+   Instead, the application must add the AT filters using the :c:macro:`AT_CMD_CUSTOM` macro.
 
 Adding a custom command
 =======================
 
-The application can define an custom command to receive a callback using the :c:macro:`AT_CUSTOM_CMD` macro.
+The application can define a custom command to receive a callback using the :c:macro:`AT_CMD_CUSTOM` macro.
 A custom AT command has a name, a filter string, a callback function, and a state.
 Multiple parts of the application can define their own custom commands.
 However, there can be only one callback per filter match.
@@ -44,13 +44,13 @@ The following code snippet shows how to add a custom command that triggers on ``
 
 .. code-block:: c
 
-   /* AT filter callback for +MYCOMMAND calls */
-   AT_CUSTOM_CMD(my_command_filter, "AT+MYCOMMAND", my_command_callback);
+   /* Callback for +MYCOMMAND calls */
+   AT_CMD_CUSTOM(my_command_filter, "AT+MYCOMMAND", my_command_callback);
 
 	int my_command_callback(char *buf, size_t len, char *at_cmd);
 	{
 		printf("Callback for %s", at_cmd);
-		return at_custom_cmd_respond(buf, len, "OK\r\n");
+		return at_cmd_custom_respond(buf, len, "OK\r\n");
 	}
 
 AT command responses for custom commands
@@ -62,65 +62,38 @@ Hence, the following response format must match that of the modem:
 * The successful responses end with ``OK\r\n``.
 * For error response, use ``ERROR\r\n``, ``+CME ERROR: <errorcode>``, or ``+CMS ERROR: <errorcode>`` depending on the error.
 
-To simplify filling the response buffer, you can use the :c:func:`at_custom_cmd_respond` function.
+To simplify filling the response buffer, you can use the :c:func:`at_cmd_custom_respond` function.
 This allows formatting arguments and ensures that the response does not overflow the response buffer.
 
 The following code snippet shows how responses can be added to the ``+MYCOMMAND`` AT command.
 
 .. code-block:: c
 
-	/* AT filter callback for +MYCOMMAND calls */
-	AT_CUSTOM_CMD(my_command_filter, "AT+MYCOMMAND", my_command_callback);
+	/* Callback for +MYCOMMAND calls */
+	AT_CMD_CUSTOM(my_command_filter, "AT+MYCOMMAND", my_command_callback);
 
 	int my_command_callback(char *buf, size_t len, char *at_cmd);
 	{
 		/* test */
 		if(strncmp("AT+MYCOMMAND=?", at_cmd, strlen("AT+MYCOMMAND=?")) == 0) {
-			return at_custom_cmd_respond(buf, len, "+MYCOMMAND: (%d, %d)\r\nOK\r\n", 0, 1);
+			return at_cmd_custom_respond(buf, len, "+MYCOMMAND: (%d, %d)\r\nOK\r\n", 0, 1);
 		}
 		/* set */
 		if(strncmp("AT+MYCOMMAND=", at_cmd, strlen("AT+MYCOMMAND=")) == 0) {
-			return at_custom_cmd_respond(buf, len, "OK\r\n");
+			return at_cmd_custom_respond(buf, len, "OK\r\n");
 		}
 		/* read */
 		if(strncmp("AT+MYCOMMAND?", at_cmd, strlen("AT+MYCOMMAND?")) == 0) {
-			return at_custom_cmd_respond(buf, len, "+CME ERROR: %d\r\n", 1);
+			return at_cmd_custom_respond(buf, len, "+CME ERROR: %d\r\n", 1);
 		}
 	}
-
-
-Pausing and resuming
-====================
-
-A custom AT command is active by default.
-A custom AT command can be paused and resumed with the :c:func:`at_custom_cmd_pause` and :c:func:`at_custom_cmd_resume` functions, respectively.
-You can pause a custom command at declaration by appending :c:macro:`AT_CUSTOM_CMD_PAUSED` to the filter definition.
-
-The following code snippet shows how to resume a custom command that is paused by default:
-
-.. code-block:: c
-
-	/* AT filter callback for +MYCOMMAND calls */
-	AT_CUSTOM_CMD(my_command_filter, "AT+MYCOMMAND", my_command_callback, AT_CUSTOM_CMD_PAUSED);
-
-	int resume_my_command_filter(void)
-	{
-		/* resume the filter */
-		at_custom_cmd_resume(&my_command_filter);
-	}
-
-	int my_command_callback(char *buf, size_t len, char *at_cmd);
-	{
-		return at_custom_cmd_respond(buf, len "OK\r\n");
-	}
-
 
 API documentation
 *****************
 
-| Header file: :file:`include/modem/at_custom_cmd.h`
-| Source file: :file:`lib/at_custom_cmd/src/at_custom_cmd.c`
+| Header file: :file:`include/modem/at_cmd_custom.h`
+| Source file: :file:`lib/at_cmd_custom/src/at_cmd_custom.c`
 
-.. doxygengroup:: at_custom_cmd
+.. doxygengroup:: at_cmd_custom
    :project: nrf
    :members:

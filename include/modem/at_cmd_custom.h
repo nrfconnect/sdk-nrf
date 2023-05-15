@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef AT_CUSTOM_CMD_H_
-#define AT_CUSTOM_CMD_H_
+#ifndef AT_CMD_CUSTOM_H_
+#define AT_CMD_CUSTOM_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * @file at_custom_cmd.h
+ * @file at_cmd_custom.h
  *
- * @defgroup at_custom_cmd Custom AT commands
+ * @defgroup at_cmd_custom Custom AT commands
  *
  * @{
  *
@@ -45,13 +45,8 @@ extern "C" {
  * @retval -NRF_EFAULT if no buffer provided.
  * @retval -NRF_E2BIG if the provided buffer is too small for the response.
  */
-int at_custom_cmd_respond(char *buf, size_t buf_size,
+int at_cmd_custom_respond(char *buf, size_t buf_size,
 		const char *response, ...);
-
-/* Custom command filter is paused. */
-#define AT_CUSTOM_CMD_PAUSED 1
-/* Custom command filter is active, default. */
-#define AT_CUSTOM_CMD_ACTIVE 0
 
 /**
  * @brief Define an custom AT command callback.
@@ -59,15 +54,12 @@ int at_custom_cmd_respond(char *buf, size_t buf_size,
  * @param entry The entry name.
  * @param _filter The (partial) AT command on which the callback should trigger.
  * @param _callback The AT command callback function.
- * @param ... Optional initial state ( @c AT_CUSTOM_CMD_PAUSED or @c AT_CUSTOM_CMD_ACTIVE ).
- *	      The default is @c AT_CUSTOM_CMD_ACTIVE .
  */
-#define AT_CUSTOM_CMD(entry, _filter, _callback, ...)                                              \
+#define AT_CMD_CUSTOM(entry, _filter, _callback)                                              \
 	static int _callback(char *buf, size_t len, char *at_cmd);                                 \
-	static STRUCT_SECTION_ITERABLE(nrf_modem_at_cmd_filter, entry) = {                         \
+	static STRUCT_SECTION_ITERABLE(nrf_modem_at_cmd_custom, entry) = {                         \
 		.cmd = _filter,                                                                    \
 		.callback = _callback,                                                             \
-		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())                             \
 	}
 
 /**
@@ -75,14 +67,14 @@ int at_custom_cmd_respond(char *buf, size_t buf_size,
  *
  * @param entry Pointer to the custom AT command to pause.
  */
-void at_custom_cmd_pause(struct nrf_modem_at_cmd_filter *entry);
+void at_cmd_custom_pause(struct nrf_modem_at_cmd_custom *entry);
 
 /**
  * @brief Resume a custom AT command.
  *
  * @param entry Pointer to the custom AT command to resume.
  */
-void at_custom_cmd_resume(struct nrf_modem_at_cmd_filter *entry);
+void at_cmd_custom_resume(struct nrf_modem_at_cmd_custom *entry);
 
 /** @} */
 
@@ -90,4 +82,4 @@ void at_custom_cmd_resume(struct nrf_modem_at_cmd_filter *entry);
 }
 #endif
 
-#endif /* AT_CUSTOM_CMD_H_ */
+#endif /* AT_CMD_CUSTOM_H_ */

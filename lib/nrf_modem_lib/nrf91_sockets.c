@@ -173,6 +173,24 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case TLS_DTLS_HANDSHAKE_TIMEO:
 			*nrf_out_optname = NRF_SO_SEC_DTLS_HANDSHAKE_TIMEO;
 			break;
+		case TLS_CIPHERSUITE_USED:
+			*nrf_out_optname = NRF_SO_SEC_CIPHERSUITE_USED;
+			break;
+		case TLS_DTLS_CID:
+			*nrf_out_optname = NRF_SO_SEC_DTLS_CID;
+			break;
+		case TLS_DTLS_CID_STATUS:
+			*nrf_out_optname = NRF_SO_SEC_DTLS_CID_STATUS;
+			break;
+		case TLS_DTLS_CONN_SAVE:
+			*nrf_out_optname = NRF_SO_SEC_DTLS_CONN_SAVE;
+			break;
+		case TLS_DTLS_CONN_LOAD:
+			*nrf_out_optname = NRF_SO_SEC_DTLS_CONN_LOAD;
+			break;
+		case TLS_DTLS_HANDSHAKE_STATUS:
+			*nrf_out_optname = NRF_SO_SEC_HANDSHAKE_STATUS;
+			break;
 		default:
 			retval = -1;
 			break;

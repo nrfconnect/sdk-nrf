@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <modem/at_custom_cmd.h>
+#include <modem/at_cmd_custom.h>
 #include <nrf_errno.h>
 #include <nrf_modem_at.h>
 #include <stdbool.h>
@@ -15,27 +15,24 @@
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(at_custom_cmd, CONFIG_AT_CUSTOM_CMD_LOG_LEVEL);
+LOG_MODULE_REGISTER(at_cmd_custom, CONFIG_AT_CMD_CUSTOM_LOG_LEVEL);
 
-static int at_custom_cmd_sys_init(void)
+#define CMD_COUNT (_nrf_modem_at_cmd_custom_list_end - _nrf_modem_at_cmd_custom_list_start)
+
+static int at_cmd_custom_sys_init(void)
 {
 	int err;
-	extern struct nrf_modem_at_cmd_filter _nrf_modem_at_cmd_filter_list_start[];
-	int num_items = 0;
+	extern struct nrf_modem_at_cmd_custom _nrf_modem_at_cmd_custom_list_start[];
+	extern struct nrf_modem_at_cmd_custom _nrf_modem_at_cmd_custom_list_end[];
 
-	STRUCT_SECTION_FOREACH(nrf_modem_at_cmd_filter, f) {
-		LOG_DBG("AT filter: %s (%s)", f->cmd, f->paused ? "paused" : "enabled");
-		num_items++;
-	}
-
-	err = nrf_modem_at_cmd_filter_set(_nrf_modem_at_cmd_filter_list_start, num_items);
-	LOG_INF("AT filter enabled with %d entries.", num_items);
+	err = nrf_modem_at_cmd_custom_set(_nrf_modem_at_cmd_custom_list_start, CMD_COUNT);
+	LOG_INF("Custom AT commands enabled with %d entries.", CMD_COUNT);
 
 	return err;
 }
 
 /* Fill response buffer without overflowing the buffer. */
-int at_custom_cmd_respond(char *buf, size_t buf_size,
+int at_cmd_custom_respond(char *buf, size_t buf_size,
 			  const char *response, ...)
 {
 	va_list args;
@@ -59,16 +56,4 @@ int at_custom_cmd_respond(char *buf, size_t buf_size,
 	return 0;
 }
 
-void at_custom_cmd_pause(struct nrf_modem_at_cmd_filter *entry)
-{
-	entry->paused = true;
-	LOG_DBG("%s(%s)", __func__, entry->cmd);
-}
-
-void at_custom_cmd_resume(struct nrf_modem_at_cmd_filter *entry)
-{
-	entry->paused = false;
-	LOG_DBG("%s(%s)", __func__, entry->cmd);
-}
-
-SYS_INIT(at_custom_cmd_sys_init, APPLICATION, 0);
+SYS_INIT(at_cmd_custom_sys_init, APPLICATION, 0);
