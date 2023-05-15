@@ -76,10 +76,10 @@ static int wait_for_disconnect_complete(const struct device *dev)
 {
 	int ret = 0;
 	int timeout = 0;
+	struct wpa_supplicant *wpa_s = get_wpa_s_handle(dev);
 
-	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
-		status = CONNECTION_FAILURE;
+		ret = -ENODEV;
 		goto out;
 	}
 
@@ -91,7 +91,7 @@ static int wait_for_disconnect_complete(const struct device *dev)
 		k_sleep(K_MSEC(10));
 		timeout++;
 	}
-
+out:
 	return ret;
 }
 
@@ -269,6 +269,12 @@ int z_wpa_supplicant_disconnect(const struct device *dev)
 {
 	struct wpa_supplicant *wpa_s;
 	int ret = 0;
+	struct net_if *iface = net_if_lookup_by_dev(dev);
+
+	if (!iface) {
+		ret = -EINVAL;
+		goto out;
+	}
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
@@ -284,9 +290,19 @@ int z_wpa_supplicant_disconnect(const struct device *dev)
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Disconnect failed: %s",
+			   strerror(-ret));
+		return ret;
+	}
+
 	wpa_supp_restart_status_work();
 
-	return wait_for_disconnect_complete(dev);
+	ret = wait_for_disconnect_complete(dev);
+
+	wifi_mgmt_raise_disconnect_complete_event(iface, ret);
+
+	return ret;
 }
 
 
