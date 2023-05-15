@@ -33,3 +33,9 @@
 - scenarios:
     - applications.asset_tracker_v2.nrf7002ek_wifi-debug
   comment: "FLASH overflow issue under investigation"
+
+- scenarios:
+    - sample.bluetooth.mesh.sensor_client
+  platforms:
+    - nrf52dk_nrf52832
+  comment: "Sensor Client sample doesn't fit to RAM"
