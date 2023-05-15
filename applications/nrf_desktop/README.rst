@@ -1132,7 +1132,8 @@ nRF52840 Gaming Mouse (nrf52840gmouse_nrf52840)
         * Bluetooth is configured to use Nordic's SoftDevice link layer.
 
       * The configuration with the B0 bootloader is set as default.
-      * The board supports debug :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (:file:`prj_fast_pair.conf`).
+      * The board supports debug (:file:`prj_fast_pair.conf`) and release (:file:`prj_release_fast_pair.conf`) :ref:`nrf_desktop_bluetooth_guide_fast_pair` configurations.
+        Both configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and they support the firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 nRF52832 Desktop Mouse (nrf52dmouse_nrf52832) and nRF52810 Desktop Mouse (nrf52810dmouse_nrf52810)
       * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/arm/nrf52dmouse_nrf52832` and :file:`nrf/boards/arm/nrf52810dmouse_nrf52810`, respectively.
@@ -1147,6 +1148,7 @@ Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
       * Inputs are simulated based on the hardware button presses.
       * The configuration with the B0 bootloader is set as default.
       * The board supports debug :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (:file:`prj_fast_pair.conf`).
+        The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample dongle (nrf52833dk_nrf52833)
       * The configuration uses the nRF52833 Development Kit.
@@ -1168,6 +1170,7 @@ nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * Bluetooth is configured to use Nordic's SoftDevice link layer.
       * The preconfigured build types configure the device without the bootloader in debug mode and with B0 bootloader in release mode due to memory size limits.
       * The board supports release :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (:file:`prj_release_fast_pair.conf`).
+        The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 nRF52840 USB Dongle (nrf52840dongle_nrf52840) and nRF52833 USB Dongle (nrf52833dongle_nrf52833)
       * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
