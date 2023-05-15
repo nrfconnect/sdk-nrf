@@ -38,6 +38,8 @@ enum status_thread_state {
 #define CONNECTION_FAILURE 1
 #define CONNECTION_TERMINATED 2
 
+#define DISCONNECT_TIMEOUT_MS 5000
+
 #define _wpa_cli_cmd_v(cmd, ...) \
 	do { \
 		if (z_wpa_cli_cmd_v(cmd, ##__VA_ARGS__) < 0) { \
@@ -68,6 +70,29 @@ static K_WORK_DELAYABLE_DEFINE(wpa_supp_status_work,
 static inline struct wpa_supplicant * get_wpa_s_handle(const struct device *dev)
 {
 	return z_wpas_get_handle_by_ifname(dev->name);
+}
+
+static int wait_for_disconnect_complete(const struct device *dev)
+{
+	int ret = 0;
+	int timeout = 0;
+
+	wpa_s = get_wpa_s_handle(dev);
+	if (!wpa_s) {
+		status = CONNECTION_FAILURE;
+		goto out;
+	}
+
+	while (wpa_s->wpa_state != WPA_DISCONNECTED) {
+		if (timeout > DISCONNECT_TIMEOUT_MS) {
+			ret = -ETIMEDOUT;
+			break;
+		}
+		k_sleep(K_MSEC(10));
+		timeout++;
+	}
+
+	return ret;
 }
 
 static void supp_shell_connect_status(struct k_work *work)
@@ -259,11 +284,9 @@ int z_wpa_supplicant_disconnect(const struct device *dev)
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 
-	if (!ret) {
-		wpa_supp_restart_status_work();
-	}
+	wpa_supp_restart_status_work();
 
-	return ret;
+	return wait_for_disconnect_complete(dev);
 }
 
 
