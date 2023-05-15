@@ -191,6 +191,8 @@ nRF Desktop
     This is done to avoid flooding logs during USB state changes.
   * If the USB state is set to :c:enum:`USB_STATE_POWERED`, the :ref:`nrf_desktop_usb_state_pm` restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` instead of requiring :c:enum:`POWER_MANAGER_LEVEL_ALIVE`.
     This is done to prevent the device from powering down and waking up multiple times when an USB cable is connected.
+  * Disabled ``CONFIG_BOOT_SERIAL_IMG_GRP_HASH`` in MCUboot bootloader release configurations of boards that use nRF52820 SoC.
+    This is done to reduce the memory consumption.
 
 Thingy:53: Matter weather station
 ---------------------------------
