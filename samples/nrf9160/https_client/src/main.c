@@ -100,6 +100,9 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 	case PDN_EVENT_DEACTIVATED:
 		printk("PDP context %d deactivated\n", cid);
 		break;
+	case PDN_EVENT_NETWORK_DETACH:
+		printk("PDP context %d network detached\n", cid);
+		break;
 #if !IS_ENABLED(CONFIG_PDN_DEFAULT_FAM_IPV4)
 	case PDN_EVENT_IPV6_UP:
 		printk("PDP context %d IPv6 up\n", cid);
