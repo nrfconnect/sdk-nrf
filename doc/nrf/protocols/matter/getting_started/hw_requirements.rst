@@ -16,7 +16,7 @@ Supported SoCs
 
 Currently the following SoCs from Nordic Semiconductor are supported for use with the Matter protocol:
 
-* :ref:`nRF5340 <gs_programming_board_names>` (Matter over Thread and Matter over Wi-Fi through the ``nrf7002_ek`` shield)
+* :ref:`nRF5340 <gs_programming_board_names>` (Matter over Thread and Matter over Wi-Fi through the ``nrf7002ek_nrf7002`` shield)
 * :ref:`nRF5340 + nRF7002 <gs_programming_board_names>` (Matter over Thread and Matter over Wi-Fi)
 * :ref:`nRF52840 <gs_programming_board_names>` (Matter over Thread)
 

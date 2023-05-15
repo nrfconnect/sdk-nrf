@@ -44,19 +44,19 @@ The following is an example of the CLI command:
 
    west build -b nrf7002dk_nrf5340_cpuapp
 
-To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek``.
+To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek_nrf7002``.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002_ek
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek_nrf7002
 
-To build for the nRF9160 DK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002_ek`` and scan-only overlay configuration.
+To build for the nRF9160 DK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek_nrf7002`` and scan-only overlay configuration.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002_ek
+   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002ek_nrf7002
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
