@@ -535,11 +535,11 @@ static int nrf_wifi_util_show_fw_ver(const struct shell *shell,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	unsigned int umac_ver, lmac_ver;
+	unsigned int fw_ver;
 
 	fmac_dev_ctx = ctx->rpu_ctx;
 
-	status = wifi_nrf_fmac_ver_get(fmac_dev_ctx, &umac_ver, &lmac_ver);
+	status = wifi_nrf_fmac_ver_get(fmac_dev_ctx, &fw_ver);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,
@@ -549,15 +549,11 @@ static int nrf_wifi_util_show_fw_ver(const struct shell *shell,
 	}
 
 	shell_fprintf(shell, SHELL_INFO,
-		 "UMAC version: %d.%d.%d.%d\nLMAC version: %d.%d.%d.%d\n",
-		  NRF_WIFI_UMAC_VER(umac_ver),
-		  NRF_WIFI_UMAC_VER_MAJ(umac_ver),
-		  NRF_WIFI_UMAC_VER_MIN(umac_ver),
-		  NRF_WIFI_UMAC_VER_EXTRA(umac_ver),
-		  NRF_WIFI_LMAC_VER(lmac_ver),
-		  NRF_WIFI_LMAC_VER_MAJ(lmac_ver),
-		  NRF_WIFI_LMAC_VER_MIN(lmac_ver),
-		  NRF_WIFI_LMAC_VER_EXTRA(lmac_ver));
+		 "Firmware version: %d.%d.%d.%d\n",
+		  NRF_WIFI_UMAC_VER(fw_ver),
+		  NRF_WIFI_UMAC_VER_MAJ(fw_ver),
+		  NRF_WIFI_UMAC_VER_MIN(fw_ver),
+		  NRF_WIFI_UMAC_VER_EXTRA(fw_ver));
 
 	return status;
 }
