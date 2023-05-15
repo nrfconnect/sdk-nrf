@@ -28,6 +28,9 @@ target_sources_ifdef(CONFIG_DESKTOP_BLE_QOS_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/info.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_FACTORY_RESET
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/factory_reset.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_FAST_PAIR
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fast_pair.c)
 
