@@ -238,9 +238,14 @@ nRF Desktop
   * The :ref:`nrf_desktop_factory_reset`.
     The module is used by configurations that enable :ref:`nrf_desktop_bluetooth_guide_fast_pair` to factory reset both Fast Pair and Bluetooth non-volatile data.
     The factory reset is triggered using the configuration channel.
+  * The :ref:`nrf_desktop_dfu_lock`.
+    The utility provides synchronization mechanism for accessing the DFU flash.
+    It is useful for application configurations that support more than one DFU method.
 
 * Updated:
 
+  * The :ref:`nrf_desktop_dfu` to integrate the :ref:`nrf_desktop_dfu_lock` for synchronizing flash access with other DFU methods.
+    Use the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option to enable this feature.
   * The :ref:`nrf_desktop_dfu` automatically enables 8-bit write block size emulation (:kconfig:option:`CONFIG_SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS`) to ensure that update images with sizes not aligned to word size can be successfully stored in the internal flash.
     The feature is not enabled if the MCUboot bootloader is used and the secondary slot is placed in an external flash (when :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` is enabled).
   * The :ref:`nrf_desktop_ble_latency` uses low latency for the active Bluetooth connection in case of the SMP transfer event and regardless of the event submitter module.
