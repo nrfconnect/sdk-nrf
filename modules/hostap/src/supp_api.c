@@ -18,6 +18,7 @@
 #include "supp_main.h"
 #include "supp_api.h"
 #include "wpa_cli_zephyr.h"
+#include "supp_events.h"
 
 extern struct k_sem wpa_supplicant_ready_sem;
 extern struct wpa_global *global;
@@ -118,6 +119,7 @@ static void supp_shell_connect_status(struct k_work *work)
 	if (ctrl->requested_op == CONNECT && wpa_s->wpa_state != WPA_COMPLETED) {
 		if (ctrl->connection_timeout > 0 && seconds_counter++ > ctrl->connection_timeout) {
 			_wpa_cli_cmd_v("disconnect");
+			send_wifi_mgmt_event(wpa_s->ifname, NET_EVENT_WIFI_CMD_CONNECT_RESULT, -ETIMEDOUT);
 			status = CONNECTION_FAILURE;
 			goto out;
 		}
