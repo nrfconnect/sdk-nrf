@@ -493,7 +493,6 @@ static int reconnect(struct download_client *dl)
 		err = close(dl->fd);
 		if (err) {
 			LOG_DBG("disconnect failed, %d", err);
-			return err;
 		}
 		dl->fd = -1;
 	}

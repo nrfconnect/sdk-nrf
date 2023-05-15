@@ -258,7 +258,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		}
 		break;
 
-	case DOWNLOAD_CLIENT_EVT_ERROR: {
+	case DOWNLOAD_CLIENT_EVT_ERROR:
 		/* In case of socket errors we can return 0 to retry/continue,
 		 * or non-zero to stop
 		 */
@@ -283,7 +283,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 			goto error_and_close;
 		}
-	}
+		break;
 	case DOWNLOAD_CLIENT_EVT_CLOSED:
 		atomic_set_bit(&flags, FLAG_CLOSED);
 		/* Only clear flags if we are not going to resume */
