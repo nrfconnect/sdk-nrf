@@ -236,6 +236,9 @@ nRF Desktop
     This prevents blocking the bond slots until the subsequent erase advertising procedure is triggered.
   * Support for the :ref:`nrf_desktop_dfu` for devices using the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``).
     In this mode, the image is booted directly from the secondary slot instead of moving it to the primary slot.
+  * The :ref:`nrf_desktop_factory_reset`.
+    The module is used by configurations that enable :ref:`nrf_desktop_bluetooth_guide_fast_pair` to factory reset both Fast Pair and Bluetooth non-volatile data.
+    The factory reset is triggered using the configuration channel.
 
 * Updated:
 

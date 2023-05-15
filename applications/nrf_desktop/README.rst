@@ -1717,6 +1717,9 @@ The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
     This allows to pair only with the Fast Pair Seekers linked to Google Accounts that are already associated with the nRF Desktop device.
     In this mode the device by default rejects normal Bluetooth pairing (:ref:`CONFIG_DESKTOP_FAST_PAIR_LIMIT_NORMAL_PAIRING <config_desktop_app_options>` option is enabled).
     The Fast Pair UI indication is hidden after the Provider reaches :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` bonded peers on the used local identity.
+  * The :ref:`nrf_desktop_factory_reset` is enabled by default if the :ref:`nrf_desktop_config_channel` is supported by the device.
+    The factory reset operation removes both Fast Pair and Bluetooth non-volatile data.
+    The factory reset operation is triggered using the configuration channel.
 
 After successful erase advertising procedure, the peripheral removes all of the bonds of a given Bluetooth local identity.
 
@@ -2131,6 +2134,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/cpu_meas.rst
    doc/dev_descr.rst
    doc/dfu.rst
+   doc/factory_reset.rst
    doc/failsafe.rst
    doc/fast_pair_app.rst
    doc/fn_keys.rst
