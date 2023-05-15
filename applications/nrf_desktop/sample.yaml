@@ -28,7 +28,7 @@ tests:
       - nrf52840dk_nrf52840
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_wwcb.conf
-  applications.nrf_desktop.zdebug_fast_pair:
+  applications.nrf_desktop.zdebug_fast_pair.gmouse:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52840gmouse_nrf52840
     integration_platforms:
@@ -116,7 +116,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_release.conf
-  applications.nrf_desktop.zrelease_fast_pair:
+  applications.nrf_desktop.zrelease_fast_pair.keyboard:
     build_only: true
     platform_allow: nrf52kbd_nrf52832
     integration_platforms:
@@ -125,6 +125,15 @@ tests:
     extra_args: CONF_FILE=prj_release_fast_pair.conf
                 FP_MODEL_ID=0x52FF02
                 FP_ANTI_SPOOFING_KEY=8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=
+  applications.nrf_desktop.zrelease_fast_pair.gmouse:
+    build_only: true
+    platform_allow: nrf52840gmouse_nrf52840
+    integration_platforms:
+      - nrf52840gmouse_nrf52840
+    tags: bluetooth ci_build
+    extra_args: CONF_FILE=prj_release_fast_pair.conf
+                FP_MODEL_ID=0x8E717D
+                FP_ANTI_SPOOFING_KEY=dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=
   applications.nrf_desktop.zrelease_4llpmconn:
     build_only: true
     platform_allow: nrf52840dongle_nrf52840
