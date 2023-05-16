@@ -327,7 +327,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 		goto out;
 	}
 
-	LOG_INF("Firmware (v%d:%d:%d:%d) booted successfully\n",
+	LOG_INF("Firmware (v%d.%d.%d.%d) booted successfully\n",
 		NRF_WIFI_UMAC_VER(umac_ver),
 		NRF_WIFI_UMAC_VER_MAJ(umac_ver),
 		NRF_WIFI_UMAC_VER_MIN(umac_ver),
