@@ -1,0 +1,41 @@
+sample:
+  description: Sample for nPM1300 PMIC TIMER WATCHDOG
+  name: nPM1300 PMIC TIMER WATCHDOG
+
+common:
+  integration_platforms:
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf52840dk_nrf52840
+  platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+  tags: pmic
+
+tests:
+  sample.pmic.timer_watchdog_simple_eng_b:
+    extra_args: CONFIG_NPMX_DEVICE_NPM1300_ENG_B=y
+    timeout: 30
+    harness: console
+    harness_config:
+      fixture: nPM1300_setup_eng_b
+      type: multi_line
+      ordered: true
+      regex:
+        - "PMIC device ok"
+        - "Watchdog is being kicked, press any key to stop it."
+
+  sample.pmic.timer_watchdog_advanced_eng_b:
+    extra_args: CONFIG_NPMX_DEVICE_NPM1300_ENG_B=y
+    harness: console
+    harness_config:
+      fixture: nPM1300_setup_and_manual_action_eng_b
+      type: multi_line
+      ordered: true
+      regex:
+        - "PMIC device ok"
+        - "Watchdog is being kicked, press any key to stop it."
+        - "Kicking stopped!"
+        - "Wait for watchdog warning interrupt."
+        - "Watchdog warning callback"
+        - "Warning after ([0-9]{3}) ms"
+        - "SHIPHOLD"
+        - "Watchdog Timeout Warn"
+        - "Reset after ([0-9]{2}) ms"

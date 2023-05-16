@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c1 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+
+	// For this example faster i2c clock is required for faster events handling.
+	clock-frequency = <400000>;
+
+	npm_0: npm1300@6b {
+		status = "okay";
+		compatible = "nordic,npm1300-eng-b";
+		reg = <0x6b>;
+		host-int-gpios = <&gpio1 10 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+		pmic-int-pin = <0>;
+		pmic-reset-pin = <1>;
+	};
+};
+
+&i2c1_default {
+	group1 {
+		bias-pull-up;
+	};
+};
+
+/ {
+	buttons {
+		compatible = "gpio-keys";
+		irq_res0: irq_res_0 {
+			gpios = <&gpio1 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Reset interrupt";
+		};
+	};
+
+	aliases {
+		irqres0 = &irq_res0;
+	};
+};

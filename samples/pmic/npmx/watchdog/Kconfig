@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "PMIC example: Watchdog"
+
+choice
+	bool "Watchdog mode selection"
+
+config TESTCASE_WATCHDOG_MODE_WARNING
+	bool "Set watchdog to warning mode"
+
+config TESTCASE_WATCHDOG_MODE_RESET
+	bool "Set watchdog to reset mode"
+
+endchoice
+
+source "Kconfig.zephyr"
