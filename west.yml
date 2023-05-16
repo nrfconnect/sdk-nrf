@@ -59,7 +59,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 1fbee9f184e0047bc98fe96629dcafe45de5ab09
+      revision: v3.3.99-ncs1-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -118,7 +118,7 @@ manifest:
           compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 60b2d401add1887830000325b60bb02c47bd6b3b
+      revision: v1.10.0-ncs1-rc1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -127,19 +127,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: 9ca9f885bafb3a5d4896600f478147ad69757d82
+      revision: v3.3.0-ncs1-rc1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 390f9e1df360959399e36e6e91cecd21b46e447b
+      revision: v2.4.0-rc1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: f0bac93493174b21c6514ca473c370ba10cf4908
+      revision: v1.7.0-ncs1-rc1
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 0164b943c9fc3454af773ed2804514171b7b2c6c
+      revision: v2.4.0-rc1
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -157,7 +157,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 704d1e9bcd3873a5a64d327eca3c2f17ac135f93
+      revision: v2.4.0-rc1
       groups:
         - nrf-802154
     - name: dragoon
@@ -179,12 +179,12 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: 286b97f3a7514bc4924818611475ae5be0496ed1
+      revision: v2.4.0-rc1
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 498b507e095d98fe99575bf45675545a1dcc9221
+      revision: v2.4.0-rc1
       groups:
         - find-my
     - name: azure-sdk-for-c
