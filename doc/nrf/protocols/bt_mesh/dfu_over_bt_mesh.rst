@@ -1,13 +1,11 @@
-.. _ble_mesh_dfu_samples:
+.. _dfu_over_bt_mesh:
 
-Bluetooth mesh Device Firmware Update (DFU)
-###########################################
+DFU over Bluetooth mesh
+#######################
 
-Bluetooth mesh supports the distribution of firmware images across a mesh network.
-The Bluetooth mesh DFU subsystem implements the Firmware update section of the Bluetooth Mesh Model Specification v1.1.
-
-Bluetooth mesh DFU subsystem
-****************************
+.. contents::
+   :local:
+   :depth: 2
 
 The DFU specification is implemented in the Zephyr Bluetooth mesh DFU subsystem as three separate models:
 
@@ -15,43 +13,48 @@ The DFU specification is implemented in the Zephyr Bluetooth mesh DFU subsystem 
 * :ref:`zephyr:bluetooth_mesh_dfu_cli`
 * :ref:`zephyr:bluetooth_mesh_dfd_srv`
 
+The specification that the Bluetooth mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
 For more information about the Zephyr Bluetooth mesh DFU subsystem, see :ref:`zephyr:bluetooth_mesh_dfu`.
 
-Evaluating the Bluetooth mesh DFU through |NCS| samples
-*******************************************************
-
-The Bluetooth mesh subsystem provides a set of samples that can be used for evaluation of the Bluetooth mesh DFU specification and subsystem:
+The Bluetooth mesh subsystem in |NCS| provides a set of samples that can be used for evaluation of the Bluetooth mesh DFU specification and subsystem:
 
 * :ref:`ble_mesh_dfu_target` sample
 * :ref:`ble_mesh_dfu_distributor` sample
 
 To configure and control DFU on the Firmware Distribution Server, it is required to have the Firmware Distribution Client model.
 The Bluetooth mesh DFU subsystem in Zephyr provides a set of shell commands that can be used to substitute the need for the client.
-For the complete list of commands, see :ref:`zephyr:bluetooth_mesh_shell_dfd_server`.
+For the complete list of commands, see the :ref:`zephyr:bluetooth_mesh_shell_dfd_server` section of the Bluetooth mesh shell documentation.
+
+The commands can be executed in two ways:
+
+* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application or :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>`).
+* By accessing the :ref:`zephyr:shell_api` module over UART.
 
 Provisioning and configuring the devices
-========================================
+****************************************
 
 After programming the samples onto the boards, they need to be provisioned into the same Bluetooth mesh network with an external provisioner device.
+See the documentation for :ref:`provisioning the mesh DFU target device <ble_mesh_dfu_target_provisioning>` and :ref:`provisioning the mesh DFU distributor device <ble_mesh_dfu_distributor_provisioning>` for how this is done.
+
 After the provisioning is completed, a Configuration Client needs to add a common application key to all devices.
 The added application key must be bound:
 
-* On the Distributor: to the Firmware Distribution Server, Firmware Update Client, BLOB Transfer Server and BLOB Transfer Client models instantiated on the primary element, and to the Firmware Update Server and BLOB Transfer Server models instantiated on the secondary element of the device.
-* On Target nodes: to the Firmware Update Server and BLOB Transfer Server models instantiated on the primary element of the device.
+* On the Distributor: to the Firmware Distribution Server, Firmware Update Client, BLOB Transfer Server and BLOB Transfer Client models instantiated on the primary element, and to the Firmware Update Server and BLOB Transfer Server models instantiated on the secondary element of the device (see :ref:`Configuring models on the Distributor node <ble_mesh_dfu_distributor_model_config>`).
+* On Target nodes: to the Firmware Update Server and BLOB Transfer Server models instantiated on the primary element of the device (see :ref:`Configuring models on the Target node <ble_mesh_dfu_target_model_config>`).
 
 The bound application key will be used in the firmware distribution procedure.
 
 Uploading the firmware
-======================
+**********************
 
 After configuring the models, a new image can be uploaded to the Distributor.
-To upload the image, follow the instructions provided in :ref:`ble_mesh_dfu_distributor`.
+To upload the image, follow the instructions provided in the :ref:`ble_mesh_dfu_distributor_fw_image_upload` section of the :ref:`ble_mesh_dfu_distributor` sample documentation.
 
 The uploaded image needs to be registered in the Bluetooth mesh DFU subsystem.
 To achieve this, issue the ``mesh models dfu slot add`` shell command specifying size in bytes of the image that was uploaded to the Distributor.
 Optionally, you can provide firmware ID, metadata and Unique Resource Identifier (URI) parameters that come with the image.
 
-For example, to allocate a slot for :ref:`ble_mesh_dfu_target` sample with image size of 241236 bytes, with firmware ID set to ``0200000000000000``, and metadata generated as described in `bluetooth_mesh_dfu_eval_md`_ section below, type the following command::
+For example, to allocate a slot for the :ref:`ble_mesh_dfu_target` sample with image size of 241236 bytes, with firmware ID set to ``0200000000000000``, and metadata generated as described in :ref:`bluetooth_mesh_dfu_eval_md` section below, type the following command::
 
   mesh models dfu slot add 241236 0200000000000000 020000000100000094cf24017c26f3710100
 
@@ -65,7 +68,7 @@ Take note of this ID as it will then be needed to start the DFU transfer::
    To update any value in a slot, issue the ``mesh models dfu slot del`` command specifying the ID of the allocated slot, and then add the slot again.
 
 Populating the Distributor's receivers list
-===========================================
+*******************************************
 
 Add Target nodes to the DFU transfer by issuing the ``mesh models dfd receivers-add`` shell command.
 This shell command is specifying the element address of a Target node with the Firmware Update Server instance and the image index on the Target node that needs to be updated.
@@ -77,7 +80,7 @@ For example, for two Target nodes with addresses ``0x0004`` and ``0x0005`` respe
    To remove all receivers from the list, issue the ``mesh models dfd receivers-delete-all`` command.
 
 Initiating the distribution
-===========================
+***************************
 
 To start the DFU transfer, issue the ``mesh models dfd start`` shell command.
 This command requires two mandatory arguments: ``app_idx`` and ``slot_idx``:
@@ -95,7 +98,7 @@ To avoid applying the image immediately and only verify it, set the 4th argument
   mesh models dfd start 0 0 0 0
 
 Firmware distribution
----------------------
+=====================
 
 The transfer will take a couple of minutes, depending on the number of Target nodes and the network quality.
 To check the transfer progress, call the ``mesh models dfd receivers-get`` shell command, for example::
@@ -120,7 +123,7 @@ When the DFU transfer successfully completes, the phase will be set to  :c:enum:
 The :c:enum:`bt_mesh_dfd_phase` enumeration contains the complete list of distribution phases.
 
 Suspending the distribution
----------------------------
+===========================
 
 The firmware distribution can be suspended using the ``mesh models dfd suspend`` shell command.
 The distribution phase is switched to :c:enum:`BT_MESH_DFD_PHASE_TRANSFER_SUSPENDED` in this case.
@@ -128,7 +131,7 @@ The distribution phase is switched to :c:enum:`BT_MESH_DFD_PHASE_TRANSFER_SUSPEN
 To resume the DFU transfer, issue the ``mesh models dfu cli resume`` shell command.
 
 Applying the firmware image
-===========================
+***************************
 
 Depending on the update policy set at the start of the DFU transfer, the Firmware Distribution Server will do the following:
 
@@ -141,7 +144,7 @@ After applying the new firmware, the Firmware Distribution Server will immediate
 Depending on the :c:enum:`bt_mesh_dfu_effect` value received from the Target nodes after the DFU transfer is started, the following cases are possible:
 
 * If the image effect for a particular Target node is :c:enum:`BT_MESH_DFU_EFFECT_UNPROV`, the Firmware Distribution Server doesn't expect any reply from that Target node.
-  If the Distributor doesn't receive any reply, it will the request several times.
+  If the Distributor doesn't receive any reply, it will repeat the request several times.
   If the Distributor eventually receives a reply, the DFU for this particular Target node is considered unsuccessful.
   Otherwise, the DFU is considered successful.
 * In all other cases, the Distributor expects a reply from the Target node with the firmware ID equal to the firmware ID of the transferred image.
@@ -154,14 +157,14 @@ In this case, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_COMPLE
 If the DFU doesn't complete successfully, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_FAILED`.
 
 Cancelling the distribution
-===========================
+***************************
 
 To cancel the firmware distribution, use the ``mesh models dfd cancel`` shell command.
 The Firmware Distribution Server will start the cancelling procedure by sending a cancel message to all Targets and will switch phase to :c:enum:`BT_MESH_DFD_PHASE_CANCELING_UPDATE`.
 Once the cancelling procedure is completed, the phase is set to :c:enum:`BT_MESH_DFD_PHASE_IDLE`.
 
 Recovering from failed distribution
-===================================
+***********************************
 
 If the firmware distribution fails for any reason, the list of Target nodes should be cleared and the distribution phase should be set to :c:enum:`BT_MESH_DFD_PHASE_IDLE` before making a new attempt.
 To do this, run the following shell commands::
@@ -175,7 +178,7 @@ To do this, run the following shell commands::
 .. _bluetooth_mesh_dfu_eval_md:
 
 Composing the firmware metadata
-===============================
+*******************************
 
 The Bluetooth mesh DFU subsystem provides a set of shell commands that can be used to compose a firmware metadata.
 The format of metadata is defined in the :c:struct:`bt_mesh_dfu_metadata` structure.

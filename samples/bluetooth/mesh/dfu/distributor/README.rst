@@ -10,6 +10,8 @@ Bluetooth: Mesh Device Firmware Update (DFU) distributor
 The Bluetooth® mesh DFU distributor sample demonstrates how device firmware can be distributed over a Bluetooth mesh network.
 The sample implements the Firmware Distribution role of the :ref:`Bluetooth mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
 
+The specification that the Bluetooth mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
+
 Requirements
 ************
 
@@ -76,13 +78,13 @@ The models are used for the following purposes:
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 * The Binary Large Object (BLOB) Transfer models, :ref:`zephyr:bluetooth_mesh_blob_srv` and :ref:`zephyr:bluetooth_mesh_blob_cli`, provide functionality for sending large binary objects from a single source to many Target nodes over the Bluetooth mesh network.
-  It is the underlying transport method for the Device Firmware Update (DFU).
+  It is the underlying transport method for the DFU.
   BLOB Transfer Client and BLOB Transfer Server are instantiated on the primary element.
   An additional BLOB Transfer Server is instantiated on the secondary element.
-* To implement the Firmware Distribution role, the sample instantiates the :ref:`zephyr:bluetooth_mesh_dfd_srv` model.
+* To implement the Firmware Distribution role, the sample instantiates the models :ref:`zephyr:bluetooth_mesh_dfd_srv` and :ref:`zephyr:bluetooth_mesh_dfu_cli`.
   The Firmware Distribution Server model and its base models are instantiated on the primary element.
-  Also the :ref:`zephyr:bluetooth_mesh_dfu_cli` model is instantiated to support the self-update of the sample.
-  The :ref:`zephyr:bluetooth_mesh_dfu_srv` model and its base models are instantiated on the secondary element.
+  These models are also used to support the self-update of the sample.
+* To implement the Target node functionality of the :ref:`zephyr:bluetooth_mesh_dfu` subsystem, the :ref:`zephyr:bluetooth_mesh_dfu_srv` model and its base models are instantiated on the secondary element.
 
 Configuration
 *************
@@ -111,18 +113,44 @@ Testing
 
 This sample has been tested with the nRF52840 DK (nrf52840dk_nrf52840) board.
 
+.. _ble_mesh_dfu_distributor_provisioning:
+
+Provisioning the device
+-----------------------
+
+.. |device name| replace:: :guilabel:`Mesh DFU Distributor`
+
+.. include:: /includes/mesh_device_provisioning.txt
+
+.. _ble_mesh_dfu_distributor_model_config:
+
+Configuring models
+------------------
+
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
+
+Configure the Firmware Distribution Server, Firmware Update Client, BLOB Transfer Server and BLOB Transfer Client models on the primary element on the **Mesh DFU Distributor** node:
+
+* Bind each model to **Application Key 1**.
+
+Configure the Firmware Update Server and BLOB Transfer Server models on the secondary element on the **Mesh DFU Distributor** node:
+
+* Bind each model to **Application Key 1**.
+
 Performing a Device Firmware Update
 -----------------------------------
 
 The Bluetooth mesh defines the Firmware update Initiator role to control the firmware distribution.
 This sample supports, but doesn't require an external Initiator to control the DFU procedure.
 The Bluetooth mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
-Follow the description in the :ref:`ble_mesh_dfu_samples` guide on how to perform the firmware distribution without the Initiator.
+Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
 
 The commands can be executed in two ways:
 
 * Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application or :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>`).
 * By accessing the :ref:`zephyr:shell_api` module over UART.
+
+.. _ble_mesh_dfu_distributor_fw_image_upload:
 
 Uploading a firmware image
 --------------------------
@@ -192,3 +220,19 @@ Logging
 In this sample, the UART console is occupied by the shell module.
 Therefore, it uses SEGGER RTT as a logging backend.
 For the convenience, ``printk`` is also duplicated to SEGGER RTT.
+
+Dependencies
+************
+
+This sample uses the following |NCS| libraries:
+
+* :ref:`bt_mesh_dk_prov`
+* :ref:`dk_buttons_and_leds_readme`
+
+It also requires :ref:`MCUboot <mcuboot_ncs>` and :ref:`zephyr:mcu_mgr`.
+
+In addition, it uses the following Zephyr libraries:
+
+* :ref:`zephyr:bluetooth_mesh`:
+
+  * :file:`include/bluetooth/mesh.h`
