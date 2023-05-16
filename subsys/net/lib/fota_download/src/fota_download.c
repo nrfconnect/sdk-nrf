@@ -300,7 +300,7 @@ static int download_client_callback(const struct download_client_evt *event)
 error_and_close:
 	atomic_clear_bit(&flags, FLAG_RESUME);
 	(void)download_client_disconnect(&dlc);
-	dfu_target_reset();
+	dfu_target_done(false);
 	return -1;
 }
 
