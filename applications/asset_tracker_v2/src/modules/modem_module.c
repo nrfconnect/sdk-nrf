@@ -15,6 +15,10 @@
 #include <modem/nrf_modem_lib.h>
 #include <modem/pdn.h>
 
+#if defined(CONFIG_MEMFAULT)
+#include <memfault/ports/zephyr/http.h>
+#endif
+
 #define MODULE modem_module
 
 #include "modules_common.h"
@@ -701,6 +705,13 @@ static int modem_data_init(void)
 static int setup(void)
 {
 	int err;
+
+#if IS_ENABLED(CONFIG_MEMFAULT) && !IS_ENABLED(CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES)
+	err = memfault_zephyr_port_install_root_certs();
+	if (err) {
+		LOG_ERR("Failed to provision certificates, error: %d", err);
+	}
+#endif
 
 	err = lte_lc_init();
 	if (err) {
