@@ -1,0 +1,9 @@
+* NCS gaming mouse - Fast Pair Provider meant to be used with gaming mice:
+
+   .. |name| replace:: NCS gaming mouse
+   .. |model ID| replace:: ``0x8E717D``
+   .. |anti-spoofing key| replace:: ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
+   .. |type| replace:: Input device
+   .. |additional features| replace:: Data only connection, Support personalized name, Ringing device unsupported
+
+   .. include:: /includes/fast_pair_device.txt

@@ -1,0 +1,9 @@
+* NCS keyboard - The Fast Pair Provider meant to be used with keyboards:
+
+   .. |name| replace:: NCS keyboard
+   .. |model ID| replace:: ``0x52FF02``
+   .. |anti-spoofing key| replace:: ``8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=``
+   .. |type| replace:: Input device
+   .. |additional features| replace:: Data only connection, Support personalized name, Ringing device unsupported
+
+   .. include:: /includes/fast_pair_device.txt

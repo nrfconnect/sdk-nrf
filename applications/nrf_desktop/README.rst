@@ -866,25 +866,9 @@ Selecting a build type from command line
    You can use either your own provisioning data or the provisioning data obtained by Nordic Semiconductor for development purposes.
    The following debug devices are meant to be used with the nRF Desktop and have been registered:
 
-   * NCS keyboard - The Fast Pair Provider meant to be used with keyboards:
+   .. include:: /includes/fast_pair_keyboard.txt
 
-      .. |name| replace:: NCS keyboard
-      .. |model ID| replace:: ``0x52FF02``
-      .. |anti-spoofing key| replace:: ``8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=``
-      .. |type| replace:: Input device
-      .. |additional features| replace:: Data only connection, Support personalized name, Ringing device unsupported
-
-      .. include:: /includes/fast_pair_device.txt
-
-   * NCS gaming mouse - Fast Pair Provider meant to be used with gaming mice:
-
-      .. |name| replace:: NCS gaming mouse
-      .. |model ID| replace:: ``0x8E717D``
-      .. |anti-spoofing key| replace:: ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
-      .. |type| replace:: Input device
-      .. |additional features| replace:: Data only connection, Support personalized name, Ringing device unsupported
-
-      .. include:: /includes/fast_pair_device.txt
+   .. include:: /includes/fast_pair_gaming_mouse.txt
 
    See :ref:`ug_bt_fast_pair_provisioning` documentation for the following information:
 
