@@ -52,7 +52,7 @@ Dependencies
 
 This sample uses the TF-M module that can be found in the following location in the |NCS| folder structure:
 
-* ``modules/tee/tfm/``
+* :file:`modules/tee/tfm/`
 
 This sample uses the following libraries:
 
