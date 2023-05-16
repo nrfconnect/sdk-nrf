@@ -79,37 +79,9 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
-  sample.matter.lock.switchable_thread.nrf7000_ek:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 hci_rpmsg_SHIELD=nrf7002ek_nrf7000_coex CONFIG_WPA_SUPP=n
-      CONF_FILE=prj_thread_wifi_switched.conf CONFIG_CHIP_WIFI=n
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
-  sample.matter.lock.switchable_thread.nrf7001_ek:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7001 hci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
-      CONF_FILE=prj_thread_wifi_switched.conf CONFIG_CHIP_WIFI=n
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
   sample.matter.lock.switchable_wifi.nrf7002_ek:
     build_only: true
     extra_args: SHIELD=nrf7002ek hci_rpmsg_SHIELD=nrf7002ek_coex
-      CONF_FILE=prj_thread_wifi_switched.conf
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
-  sample.matter.lock.switchable_wifi.nrf7000_ek:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 hci_rpmsg_SHIELD=nrf7002ek_nrf7000_coex CONFIG_WPA_SUPP=n
-      CONF_FILE=prj_thread_wifi_switched.conf
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
-  sample.matter.lock.switchable_wifi.nrf7001_ek:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7001 hci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
       CONF_FILE=prj_thread_wifi_switched.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp

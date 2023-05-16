@@ -47,15 +47,3 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
-  sample.matter.light_bulb.nrf7000_ek:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 hci_rpmsg_SHIELD=nrf7002ek_nrf7000_coex CONFIG_WPA_SUPP=n
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
-  sample.matter.light_bulb.nrf7001_ek:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7001 hci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
