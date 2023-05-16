@@ -1164,12 +1164,12 @@ For example:
 LwM2M carrier library support
 =============================
 
-To build the MoSh sample with LwM2M carrier library support, use the ``-DOVERLAY_CONFIG=overlay-lwm2m_carrier.conf`` option.
+To build the MoSh sample with LwM2M carrier library support, use the ``-DOVERLAY_CONFIG=overlay-carrier.conf`` option.
 For example:
 
 .. code-block:: console
 
-   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-lwm2m_carrier.conf
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-carrier.conf
 
 P-GPS support
 =============
