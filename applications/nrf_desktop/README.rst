@@ -1930,12 +1930,21 @@ Depending on the side on which the process is handled:
 * On the host side, the process is handled by the :ref:`nrf_desktop_config_channel_script`.
   See the tool documentation for more information about how to execute the background DFU process on the host.
 
+.. _nrf_desktop_image_transfer_over_smp:
+
 Image transfer over SMP
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 If the MCUboot bootloader is selected, the update image can also be transferred in the background through the :ref:`nrf_desktop_ble_smp`.
 The `nRF Connect for Mobile`_ application uses binary files for the image transfer over the Simple Management Protocol (SMP).
-Depending on the selected image slot either the :file:`zephyr/app_update.bin` or :file:`zephyr/mcuboot_secondary_app_update.bin` file must be used for the background DFU procedure.
+The :guilabel:`DFU` button appears in the tab of the connected Bluetooth device that supports the image transfer over the SMP.
+After pressing the button, you can select the :file:`*.bin` file used for the firmware update.
+
+After building your application for configuration with the :ref:`nrf_desktop_ble_smp` enabled, the following firmware update files are generated in the build directory:
+
+ * :file:`zephyr/app_update.bin` - The application image that is bootable from the primary slot.
+ * :file:`zephyr/mcuboot_secondary_app_update.bin` - The application image that is bootable from the secondary slot.
+   The file is generated only if the MCUboot bootloader is built in the direct-xip mode.
 
 If the MCUboot bootloader uses the built-in direct-xip mode, you must upload the image for the slot that is currently unused.
 If the MCUboot bootloader built-in swap mode is used, the :file:`zephyr/app_update.bin` file must always be used.
