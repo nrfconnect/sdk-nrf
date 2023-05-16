@@ -104,6 +104,7 @@ Matter
   * The :ref:`ug_matter` protocol page with a table that lists compatibility versions for the |NCS|, the Matter SDK, and the Matter specification.
   * The :ref:`ug_matter_tools` page with installation instructions for the ZAP tool, moved from the :ref:`ug_matter_creating_accessory` page.
   * The :ref:`ug_matter_tools` page with information about CHIP Tool, CHIP Certificate Tool, and the Spake2+ Python tool.
+  * The :ref:`ug_matter_device_low_power_configuration` page with information about sleepy active threshold parameter configuration.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
