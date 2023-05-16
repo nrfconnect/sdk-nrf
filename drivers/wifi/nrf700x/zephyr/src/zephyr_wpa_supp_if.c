@@ -20,6 +20,8 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 
+#define ACTION_FRAME_RESP_TIMEOUT_MS 5000
+
 static int get_wifi_nrf_auth_type(int wpa_auth_alg)
 {
 	if (wpa_auth_alg & WPA_AUTH_ALG_OPEN) {
@@ -1246,6 +1248,10 @@ int wifi_nrf_nl80211_send_mlme(void *if_priv, const u8 *data,
 	 * to 0 always.
 	 */
 	if (wait_time || !noack) {
+		if (!noack && !wait_time) {
+			wait_time = ACTION_FRAME_RESP_TIMEOUT_MS;
+		}
+
 		while (!vif_ctx_zep->cookie_resp_received &&
 			timeout++ < wait_time) {
 			k_sleep(K_MSEC(1));
