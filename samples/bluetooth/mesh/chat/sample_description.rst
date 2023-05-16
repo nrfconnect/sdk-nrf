@@ -211,17 +211,17 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :file:`include/kernel.h`
 
 * :ref:`zephyr:shell_api`:
 
-  * ``include/shell.h``
-  * ``include/shell_uart.h``
+  * :file:`include/shell.h`
+  * :file:`include/shell_uart.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
+  * :file:`include/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * ``include/bluetooth/mesh.h``
+  * :file:`include/bluetooth/mesh.h`
