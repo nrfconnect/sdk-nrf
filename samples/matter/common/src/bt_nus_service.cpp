@@ -67,10 +67,6 @@ bool NUSService::Init(uint8_t priority, uint16_t minInterval, uint16_t maxInterv
 		}
 	};
 	mAdvertisingRequest.onStopped = []() {
-		bt_conn_auth_info_cb_unregister(&sConnAuthInfoCallbacks);
-		bt_conn_auth_cb_register(nullptr);
-		bt_nus_init(nullptr);
-
 		GetNUSService().mIsStarted = false;
 		LOG_DBG("NUS BLE advertising stopped");
 	};
@@ -185,14 +181,11 @@ void NUSService::Connected(bt_conn *conn, uint8_t err)
 
 		GetNUSService().mBTConnection = conn;
 		bt_conn_set_security(conn, BT_SECURITY_L3);
-
-		LOG_DBG("NUS BT Connected to %s", LogAddress(conn));
 	}
 }
 
 void NUSService::Disconnected(bt_conn *conn, uint8_t reason)
 {
-	LOG_DBG("NUS BT Disconnected from %s (reason %u)", LogAddress(conn), reason);
 	GetNUSService().mBTConnection = nullptr;
 }
 
