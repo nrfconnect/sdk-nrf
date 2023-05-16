@@ -1,11 +1,16 @@
 .. _ble_mesh_dfu_target:
 
-Bluetooth: Mesh Device Firmware Upgrade (DFU) target
-####################################################
+Bluetooth: Mesh Device Firmware Update (DFU) target
+###################################################
 
 .. contents::
    :local:
    :depth: 2
+
+The Bluetooth® mesh DFU target sample demonstrates how to update device firmware over Bluetooth mesh network.
+The sample implements the Target role of the :ref:`Bluetooth mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
+
+The specification that the Bluetooth mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
 
 Requirements
 ************
@@ -26,9 +31,6 @@ For uploading an image to the Distributor, this sample also requires a smartphon
 
 Overview
 ********
-
-The Bluetooth® mesh DFU target sample demonstrates how to update device firmware over Bluetooth mesh network.
-The sample implements the Target role of the :ref:`Bluetooth mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
 
 This sample can be used as a base image or be transferred over Bluetooth mesh to update existing nodes.
 
@@ -69,10 +71,10 @@ The models are used for the following purposes:
 * Config Server allows configurator devices to configure the node remotely.
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
-* The Binary Large Object (BLOB) Transfer models, :ref:`zephyr:bluetooth_mesh_blob_srv` and :ref:`zephyr:bluetooth_mesh_blob_cli`, provide functionality for sending large binary objects from a single source to many Target nodes over the Bluetooth mesh network.
-  It is the underlying transport method for the Device Firmware Update (DFU).
-  BLOB Transfer Server is instantiated on the primary element.
-* The :ref:`zephyr:bluetooth_mesh_dfu_srv` model and its base models are instantiated on the secondary element.
+* Binary Large Object (BLOB) Transfer models are the underlying transport mechanism for the mesh DFU feature.
+  BLOB Transfer Server is instantiated on the primary element and used to receive the firmware image binary from the Distributor node.
+* The :ref:`zephyr:bluetooth_mesh_dfu_srv` model is instantiated on the primary element.
+  Together with the extended BLOB Transfer Server model, the Firmware Update Server model implements all the required functionality for receiving firmware updates over the mesh network.
 
 Configuration
 *************
@@ -101,6 +103,28 @@ Testing
 
 This sample has been tested with the nRF52840 DK (nrf52840dk_nrf52840) board.
 
+.. _ble_mesh_dfu_target_provisioning:
+
+Provisioning the device
+-----------------------
+
+.. |device name| replace:: :guilabel:`Mesh DFU Target`
+
+.. include:: /includes/mesh_device_provisioning.txt
+
+.. _ble_mesh_dfu_target_model_config:
+
+Configuring models
+------------------
+
+See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
+
+Configure the BLOB Transfer Server model and the Firmware Update Server on the primary element on the **Mesh DFU Target** node:
+
+* Bind each model to **Application Key 1**.
+
+Once the models are bound to the application key, together they implement all the required functionality for receiving firmware updates over the mesh network from the Distributor node.
+
 .. _ble_mesh_dfu_target_upgrade:
 
 Performing a Device Firmware Update
@@ -110,8 +134,8 @@ This sample can be transferred as a DFU over a mesh network to update the existi
 The sample can also be the Target node updated by any firmware image that is compiled as the MCUboot application and transferred over the mesh network.
 In both cases, the firmware needs to be signed and the firmware version increased to pass the validation when the MCUboot swaps the images.
 
-To set a new version, alter the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` to a version that is higher than the default version of: ``"1.0.0+0"``.
-Then, after rebuilding the sample, the binary of the updated sample can be found under :file:`samples/bluetooth/mesh_dfu/target/build/zephyr/app_update.bin`.
+To set a new version, alter the Kconfig option :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` to a version that is higher than the default version of: ``"1.0.0+0"``.
+Then, after rebuilding the sample, the binary of the updated sample can be found in :file:`samples/bluetooth/mesh_dfu/target/build/zephyr/app_update.bin`.
 
 To perform a DFU with this sample, the following additional information is required:
 
@@ -120,7 +144,7 @@ Firmware ID
    For example, when the new version is ``2.0.0+0``, the encoded value will be ``0200000000000000``.
 
 Firmware metadata
-   This sample enables the :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA` option and uses the format defined by :ref:`Bluetooth mesh DFU subsystem<zephyr:bluetooth_mesh_dfu>`.
+   This sample enables the :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA` option and uses the format defined by the :ref:`Bluetooth mesh DFU subsystem<zephyr:bluetooth_mesh_dfu>`.
    How to generate valid metadata for this sample is described in :ref:`bluetooth_mesh_dfu_eval_md`.
 
 The firmware distribution process starts on a target node with checking a metadata supplied with a new firmware.
@@ -161,3 +185,19 @@ Logging
 =======
 
 In this sample, UART and SEGGER RTT are available as logging backends.
+
+Dependencies
+************
+
+This sample uses the following |NCS| libraries:
+
+* :ref:`bt_mesh_dk_prov`
+* :ref:`dk_buttons_and_leds_readme`
+
+It also requires :ref:`MCUboot <mcuboot_ncs>` and :ref:`zephyr:mcu_mgr`.
+
+In addition, it uses the following Zephyr libraries:
+
+* :ref:`zephyr:bluetooth_mesh`:
+
+  * :file:`include/bluetooth/mesh.h`
