@@ -1,0 +1,5 @@
+* Device name: |name|
+* Model ID: |model ID|
+* Anti-spoofing key (base64, uncompressed): |anti-spoofing key|
+* Type: |type|
+* Additional features: |additional features|

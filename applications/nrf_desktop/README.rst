@@ -868,19 +868,23 @@ Selecting a build type from command line
 
    * NCS keyboard - The Fast Pair Provider meant to be used with keyboards:
 
-      * Device name: NCS keyboard
-      * Model ID: ``0x52FF02``
-      * Anti-spoofing key (base64, uncompressed): ``8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=``
-      * Type: Input device
-      * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+      .. |name| replace:: NCS keyboard
+      .. |model ID| replace:: ``0x52FF02``
+      .. |anti-spoofing key| replace:: ``8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=``
+      .. |type| replace:: Input device
+      .. |additional features| replace:: Data only connection, Support personalized name, Ringing device unsupported
+
+      .. include:: /includes/fast_pair_device.txt
 
    * NCS gaming mouse - Fast Pair Provider meant to be used with gaming mice:
 
-      * Device name: NCS gaming mouse
-      * Model ID: ``0x8E717D``
-      * Anti-spoofing key (base64, uncompressed): ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
-      * Type: Input device
-      * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+      .. |name| replace:: NCS gaming mouse
+      .. |model ID| replace:: ``0x8E717D``
+      .. |anti-spoofing key| replace:: ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
+      .. |type| replace:: Input device
+      .. |additional features| replace:: Data only connection, Support personalized name, Ringing device unsupported
+
+      .. include:: /includes/fast_pair_device.txt
 
    See :ref:`ug_bt_fast_pair_provisioning` documentation for the following information:
 
