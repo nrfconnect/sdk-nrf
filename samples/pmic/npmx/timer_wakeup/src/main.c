@@ -128,16 +128,8 @@ void main(void)
 
 	/* Fill ship hold configuration structure. */
 	npmx_ship_config_t ship_config = {
-#if defined(SHPHLD_SHPHLDCONFIG_SHPHLDTIM_1000ms)
-		.time = NPMX_SHIP_TIME_1000_MS, /* SHPHLD must be held low for 1000 ms to exit */
-		/* from the ship or hibernate mode. */
-#elif defined(SHPHLD_SHPHLDCONFIG_SHPHLDTIM_1008ms)
 		.time = NPMX_SHIP_TIME_1008_MS, /* SHPHLD must be held low for 1008 ms to exit */
 		/* from the ship or hibernate mode. */
-#endif
-#if defined(SHPHLD_SHPHLDCONFIG_SHPHLDDISPULLDOWN_Msk)
-		.disable_active_pd = true, /* Active pull-downs on VSYS, VOUT(1/2) are disabled. */
-#endif
 		.inverted_polarity = false /* Button is active in the LOW state. */
 	};
 
@@ -172,11 +164,6 @@ void main(void)
 
 	/* Save compare value data to internal timer's registers. */
 	npmx_timer_task_trigger(m_timer_inst, NPMX_TIMER_TASK_STROBE);
-
-#if defined(TIMER_WAKEUPACT_TASKWAKEUPACT_Msk)
-	/* Activate TIMER wake-up mode. */
-	npmx_timer_task_trigger(m_timer_inst, NPMX_TIMER_TASK_WAKEUP);
-#endif
 
 	while (1) {
 		k_sleep(K_FOREVER);

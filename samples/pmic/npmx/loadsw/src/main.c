@@ -90,9 +90,7 @@ static void test_gpio_enable(npmx_instance_t *p_pm, npmx_ldsw_t *ldsw_1, npmx_ld
 
 	npmx_ldsw_gpio_config_t gpio_config = {
 		.gpio = NPMX_LDSW_GPIO_1, /* GPIO1 to be used as the signal. */
-#if defined(LDSW_LDSW1GPISEL_LDSW1GPIINV_Msk)
 		.inverted = false, /* GPI state will not be inverted. */
-#endif
 	};
 
 	/* Connect GPIO1 to enable LDSW1. */
