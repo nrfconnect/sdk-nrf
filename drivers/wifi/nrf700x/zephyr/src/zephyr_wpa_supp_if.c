@@ -736,6 +736,19 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 		auth_info.auth_type = type;
 	}
 
+	if (type == NRF_WIFI_AUTHTYPE_SHARED_KEY) {
+		size_t key_len = params->wep_key_len[params->wep_tx_keyidx];
+		struct nrf_wifi_umac_key_info *key_info = &auth_info.key_info;
+
+		key_info->cipher_suite = wpa_alg_to_cipher_suite(params->auth_alg, key_len);
+		memcpy(key_info->key.nrf_wifi_key,
+			   params->wep_key[params->wep_tx_keyidx],
+			   key_len);
+		key_info->key.nrf_wifi_key_len = key_len;
+		key_info->valid_fields |= NRF_WIFI_KEY_VALID | NRF_WIFI_KEY_IDX_VALID |
+			NRF_WIFI_CIPHER_SUITE_VALID;
+	}
+
 	if (params->local_state_change) {
 		auth_info.nrf_wifi_flags |= NRF_WIFI_CMD_AUTHENTICATE_LOCAL_STATE_CHANGE;
 	}
