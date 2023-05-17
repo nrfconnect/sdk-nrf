@@ -259,8 +259,10 @@ int wifi_nrf_set_power_save(const struct device *dev,
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	int ret = -1;
+	unsigned int uapsd_queue = UAPSD_Q_MIN; /* Legacy mode */
 
 	if (!dev || !params) {
+		LOG_ERR("%s: dev or params is NULL\n", __func__);
 		goto out;
 	}
 
@@ -278,63 +280,69 @@ int wifi_nrf_set_power_save(const struct device *dev,
 		goto out;
 	}
 
-	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
-					      vif_ctx_zep->vif_idx,
-					      params->enabled);
+	switch (params->type) {
+	case WIFI_PS_PARAM_LISTEN_INTERVAL:
+		if ((params->listen_interval <
+		     NRF_WIFI_LISTEN_INTERVAL_MIN) ||
+		    (params->listen_interval >
+		     WIFI_LISTEN_INTERVAL_MAX)) {
+			params->fail_reason =
+				WIFI_PS_PARAM_LISTEN_INTERVAL_RANGE_INVALID;
+			return -EINVAL;
+		}
+		status = wifi_nrf_fmac_set_listen_interval(
+						rpu_ctx_zep->rpu_ctx,
+						vif_ctx_zep->vif_idx,
+						params->listen_interval);
+	break;
+	case  WIFI_PS_PARAM_TIMEOUT:
+		if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
+			LOG_ERR("%s: Operation supported only in STA mode\n",
+				__func__);
+			params->fail_reason =
+				WIFI_PS_PARAM_FAIL_CMD_EXEC_FAIL;
+			goto out;
+		}
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_ failed\n", __func__);
-		goto out;
-	}
+		status = wifi_nrf_fmac_set_power_save_timeout(
+							rpu_ctx_zep->rpu_ctx,
+							vif_ctx_zep->vif_idx,
+							params->timeout_ms);
+	break;
+	case WIFI_PS_PARAM_MODE:
+		if (params->mode == WIFI_PS_MODE_WMM) {
+			uapsd_queue = UAPSD_Q_MAX; /* WMM mode */
+		}
 
-	ret = 0;
-out:
-	return ret;
-}
-
-
-int wifi_nrf_set_power_save_mode(const struct device *dev,
-				 struct wifi_ps_mode_params *ps_mode_params)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	int ret = -1;
-
-	if (!dev || !ps_mode_params) {
-		goto out;
-	}
-
-	vif_ctx_zep = dev->data;
-
-	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		goto out;
-	}
-
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
-	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
-		goto out;
-	}
-
-	if (ps_mode_params->mode == WIFI_PS_MODE_WMM) {
-		/*WMM mode */
 		status = wifi_nrf_fmac_set_uapsd_queue(rpu_ctx_zep->rpu_ctx,
 						       vif_ctx_zep->vif_idx,
-						       UAPSD_Q_MAX);
-	} else {
-		/* Legacy mode*/
-		status = wifi_nrf_fmac_set_uapsd_queue(rpu_ctx_zep->rpu_ctx,
-						       vif_ctx_zep->vif_idx,
-						       UAPSD_Q_MIN);
+						       uapsd_queue);
+	break;
+	case  WIFI_PS_PARAM_STATE:
+		status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
+						      vif_ctx_zep->vif_idx,
+						      params->enabled);
+	break;
+	case WIFI_PS_PARAM_WAKEUP_MODE:
+		status = wifi_nrf_fmac_set_ps_wakeup_mode(
+							rpu_ctx_zep->rpu_ctx,
+							vif_ctx_zep->vif_idx,
+							params->wakeup_mode);
+	break;
+	default:
+		params->fail_reason =
+			WIFI_PS_PARAM_FAIL_CMD_EXEC_FAIL;
+		return -ENOTSUP;
 	}
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_ failed\n", __func__);
+		LOG_ERR("%s: Confiuring PS param %d failed\n",
+			__func__, params->type);
+		params->fail_reason =
+			WIFI_PS_PARAM_FAIL_CMD_EXEC_FAIL;
 		goto out;
 	}
+
 
 	ret = 0;
 out:
@@ -561,9 +569,12 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 
 	vif_ctx_zep = vif_ctx;
 
-	vif_ctx_zep->ps_info->mode = ps_info->ps_mode;
-	vif_ctx_zep->ps_info->enabled = ps_info->enabled;
+	vif_ctx_zep->ps_info->ps_params.mode = ps_info->ps_mode;
+	vif_ctx_zep->ps_info->ps_params.enabled = ps_info->enabled;
 	vif_ctx_zep->ps_info->num_twt_flows = ps_info->num_twt_flows;
+	vif_ctx_zep->ps_info->ps_params.timeout_ms = ps_info->ps_timeout;
+	vif_ctx_zep->ps_info->ps_params.listen_interval = ps_info->listen_interval;
+	vif_ctx_zep->ps_info->ps_params.wakeup_mode = ps_info->extended_ps;
 
 	for (int i = 0; i < ps_info->num_twt_flows; i++) {
 		struct twt_interval_float twt_interval_float;
@@ -617,6 +628,10 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 	switch (twt_params->operation) {
 	case WIFI_TWT_SETUP:
+		if (vif_ctx_zep->twt_in_progress) {
+			return WIFI_TWT_FAIL_OPERATION_IN_PROGRESS;
+		}
+
 		struct twt_interval_float twt_interval_float =
 			wifi_nrf_twt_us_to_float(twt_params->setup.twt_interval);
 
@@ -641,6 +656,11 @@ int wifi_nrf_set_twt(const struct device *dev,
 		status = wifi_nrf_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
 					   &twt_info);
+
+		if (status == WIFI_NRF_STATUS_SUCCESS) {
+			vif_ctx_zep->twt_in_progress = true;
+		}
+
 		break;
 	case WIFI_TWT_TEARDOWN:
 		twt_info.twt_flow_id = twt_params->flow_id;
@@ -648,6 +668,8 @@ int wifi_nrf_set_twt(const struct device *dev,
 		if (twt_params->teardown.teardown_all) {
 			if (vif_ctx_zep->neg_twt_flow_id == 0xFF) {
 				LOG_ERR("Invalid negotiated TWT flow id\n");
+				twt_params->fail_reason =
+					WIFI_TWT_FAIL_INVALID_FLOW_ID;
 				goto out;
 			}
 			/* Update the negotiated flow id
@@ -665,6 +687,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 		if (status == WIFI_NRF_STATUS_SUCCESS) {
 			vif_ctx_zep->neg_twt_flow_id = 0XFF;
+			vif_ctx_zep->twt_in_progress = false;
 		}
 
 		break;
@@ -717,6 +740,11 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	twt_params.dialog_token = twt_setup_info->info.dialog_token;
 	twt_params.resp_status = twt_setup_info->info.twt_resp_status;
 
+	if ((twt_setup_info->info.twt_resp_status == 0) ||
+	    (twt_setup_info->info.neg_type != NRF_WIFI_ACCEPT_TWT)) {
+		vif_ctx_zep->twt_in_progress = false;
+	}
+
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
 
@@ -738,6 +766,7 @@ void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
 	twt_params.flow_id = twt_teardown_info->info.twt_flow_id;
 	/* TODO: ADD reason code in the twt_params structure */
 	vif_ctx_zep->neg_twt_flow_id = 0XFF;
+	vif_ctx_zep->twt_in_progress = false;
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
@@ -804,48 +833,67 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 	}
 }
 
-int wifi_nrf_set_power_save_timeout(const struct device *dev,
-			 struct wifi_ps_timeout_params *ps_timeout_params)
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
+				  void *nwb,
+				  unsigned short frequency,
+				  signed short signal)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = vif_ctx;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	int ret = -1;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_raw_scan_result bcn_prb_resp_info;
+	int frame_length = 0;
+	int val = signal;
 
-	if (!dev || !ps_timeout_params) {
-		goto out;
-	}
-
-	vif_ctx_zep = dev->data;
+	vif_ctx_zep = vif_ctx;
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
-		goto out;
+		return;
 	}
 
-	if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
-		LOG_ERR("%s: Operation supported only in STA mode\n",
-			__func__);
-		goto out;
+	if (!vif_ctx_zep->scan_in_progress) {
+		/*LOG_INF("%s: Scan not in progress : raw scan data not available\n", __func__);*/
+		return;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
-		goto out;
+		return;
 	}
 
-	status = wifi_nrf_fmac_set_power_save_timeout(rpu_ctx_zep->rpu_ctx,
-					  vif_ctx_zep->vif_idx,
-					  ps_timeout_params->timeout_ms);
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_ failed\n", __func__);
-		goto out;
+	frame_length = wifi_nrf_osal_nbuf_data_size(fmac_dev_ctx->fpriv->opriv,
+						    nwb);
+
+	if (frame_length > CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH) {
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+				      &bcn_prb_resp_info.data,
+				      wifi_nrf_osal_nbuf_data_get(
+						fmac_dev_ctx->fpriv->opriv,
+						nwb),
+				      CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH);
+
+	} else {
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
+				      &bcn_prb_resp_info.data,
+				      wifi_nrf_osal_nbuf_data_get(
+					      fmac_dev_ctx->fpriv->opriv,
+					      nwb),
+				      frame_length);
 	}
 
-	ret = 0;
-out:
-	return ret;
+#define MBM_TO_DBM 100
+	bcn_prb_resp_info.rssi = (val / MBM_TO_DBM); /* mBm to dBm */
+	bcn_prb_resp_info.frequency = frequency;
+	bcn_prb_resp_info.frame_length = frame_length;
+
+	wifi_mgmt_raise_raw_scan_result_event(vif_ctx_zep->zep_net_if_ctx,
+					      &bcn_prb_resp_info);
+
 }
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */

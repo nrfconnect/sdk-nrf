@@ -3213,6 +3213,12 @@ struct nrf_wifi_umac_cmd_config_extended_ps {
 #define NRF_WIFI_PS_MODE_LEGACY 0
 #define NRF_WIFI_PS_MODE_WMM 1
 
+/**
+ * Most APs have a DTIM value of 3, so we are expecting
+ * a minimum listen interval of 3 beacon intervals.
+ */
+#define NRF_WIFI_LISTEN_INTERVAL_MIN 3
+
 struct nrf_wifi_umac_event_power_save_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	unsigned char ps_mode;

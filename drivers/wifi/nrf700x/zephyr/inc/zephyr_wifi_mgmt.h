@@ -35,9 +35,6 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 int wifi_nrf_set_power_save(const struct device *dev,
 			    struct wifi_ps_params *params);
 
-int wifi_nrf_set_power_save_mode(const struct device *dev,
-				 struct wifi_ps_mode_params *ps_mode_params);
-
 int wifi_nrf_set_twt(const struct device *dev,
 	struct wifi_twt_params *twt_params);
 
@@ -60,6 +57,10 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 		struct nrf_wifi_umac_event_power_save_info *ps_info,
 		unsigned int event_len);
 
-int wifi_nrf_set_power_save_timeout(const struct device *dev,
-				    struct wifi_ps_timeout_params *ps_timeout);
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
+				  void *frm,
+				  unsigned short frequency,
+				  signed short signal);
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 #endif /*  __ZEPHYR_DISP_SCAN_H__ */
