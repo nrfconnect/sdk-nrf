@@ -112,3 +112,4 @@ yamllint==1.30.0
 zcbor==0.5.1
 zipp==3.4.0
 grpcio-tools==1.51.1
+wget==3.2
