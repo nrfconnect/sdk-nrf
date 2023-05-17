@@ -240,8 +240,7 @@ manifest:
     - name: npmx
       repo-path: npmx
       path: modules/npmx
-      revision: ae5739319628318429f89c541416f959d5a7ad30
-      remote: nordicsemi
+      revision: pull/96/head
 
   # West-related configuration for the nrf repository.
   self:
