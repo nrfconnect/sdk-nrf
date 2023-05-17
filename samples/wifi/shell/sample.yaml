@@ -197,3 +197,15 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build_superset
+  sample.nrf7002.superset.debug:
+    build_only: true
+    extra_args:
+      OVERLAY_CONFIG="overlay-zperf.conf overlay-debug.conf"
+      CONFIG_NRF700X_UTIL=y
+      CONFIG_WPA_CLI=y
+      CONFIG_NET_IPV4_FRAGMENT=y
+      CONFIG_NET_IPV4_FRAGMENT_MAX_PKT=24
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf5340_cpuapp
+    tags: ci_build_superset
