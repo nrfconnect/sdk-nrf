@@ -329,10 +329,6 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-* Added:
-
-  * The :ref:`nrf_provisioning_sample` sample that demonstrates how to use the :ref:`lib_nrf_provisioning` service.
-
 * :ref:`http_full_modem_update_sample` sample:
 
   * The sample now uses modem firmware versions 1.3.3 and 1.3.4.
@@ -605,10 +601,7 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-* Added
-
-  * The :ref:`lib_nrf_cloud_log` library for logging to nRF Cloud.
-  * The :ref:`lib_nrf_provisioning` library for device provisioning.
+* Added the :ref:`lib_nrf_cloud_log` library for logging to nRF Cloud.
 
 * :ref:`lib_nrf_cloud` library:
 
