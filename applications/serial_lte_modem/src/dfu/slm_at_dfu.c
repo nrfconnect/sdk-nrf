@@ -217,7 +217,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		break;
 	}
 
-	case DOWNLOAD_CLIENT_EVT_DONE:
+	case DOWNLOAD_CLIENT_EVT_CLOSED:
 		LOG_DBG("EVT_DONE");
 		if (dfu_step == DFU_FILE_IMAGE_DOWNLOAD) {
 			err = dfu_target_nrf52_done(true);
@@ -226,11 +226,7 @@ static int download_client_callback(const struct download_client_evt *event)
 				return err;
 			}
 		}
-		err = download_client_disconnect(&dlc);
-		if (err != 0) {
-			LOG_ERR("download_client_disconnect error: %d", err);
-			return err;
-		}
+
 		first_fragment = true;
 #if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
 		if (dfu_step == DFU_INIT_PACKET_DOWNLOAD) {
@@ -325,12 +321,9 @@ static  int dfu_download_start(const char *host, const char *file, int sec_tag,
 
 	socket_retries_left = CONFIG_SLM_DFU_SOCKET_RETRIES;
 	strncpy(file_buf, file, sizeof(file_buf));
-	err = download_client_set_host(&dlc, host, &config);
-	if (err != 0) {
-		return err;
-	}
 
-	err = download_client_start(&dlc, file_buf_ptr, 0);
+	err = download_client_get(&dlc, host, &config, file_buf_ptr, 0);
+
 	if (err != 0) {
 		download_client_disconnect(&dlc);
 		return err;
