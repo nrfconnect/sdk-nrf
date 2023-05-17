@@ -380,8 +380,6 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 				  const char *argv[])
 {
 	int vif_index = -1;
-	int queue_index = -1;
-	/* TODO: Get this from shell when AP mode is supported */
 	int peer_index = 0;
 	int max_vif_index = MAX(MAX_NUM_APS, MAX_NUM_STAS);
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
@@ -398,39 +396,25 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-	queue_index = atoi(argv[2]);
-	if ((queue_index < 0) || (queue_index >= WIFI_NRF_FMAC_AC_MAX)) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid queue(%d).\n",
-			      queue_index);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
 	fmac_dev_ctx = ctx->rpu_ctx;
-	queue = fmac_dev_ctx->tx_config.data_pending_txq[peer_index][queue_index];
 
-	tx_pending_pkts = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
-
+	/* TODO: Get peer_index from shell once AP mode is supported */
 	shell_fprintf(shell,
 		SHELL_INFO,
-		"************* Tx Stats: vif(%d) queue(%d) ***********\n",
-		vif_index,
-		queue_index);
-
-	shell_fprintf(shell,
-		SHELL_INFO,
-		"tx_pending_pkts = %d\n",
-		tx_pending_pkts);
+		"************* Tx Stats: vif(%d) peer(0) ***********\n",
+		vif_index);
 
 	for (int i = 0; i < WIFI_NRF_FMAC_AC_MAX ; i++) {
+		queue = fmac_dev_ctx->tx_config.data_pending_txq[peer_index][i];
+		tx_pending_pkts = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
+
 		shell_fprintf(
 			shell,
 			SHELL_INFO,
-			"Outstanding tokens: ac: %d -> %d\n",
+			"Outstanding tokens: ac: %d -> %d (pending_q_len: %d)\n",
 			i,
-			fmac_dev_ctx->tx_config.outstanding_descs[i]);
+			fmac_dev_ctx->tx_config.outstanding_descs[i],
+			tx_pending_pkts);
 	}
 
 	return 0;
@@ -1023,10 +1007,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
 		      "Displays transmit statistics\n"
-			  "vif_index: 0 - 1\n"
-			  "queue: 0 - 4\n",
+			  "vif_index: 0 - 1\n",
 		      nrf_wifi_util_tx_stats,
-		      3,
+		      2,
 		      0),
 	SHELL_CMD_ARG(tx_rate,
 		      NULL,
