@@ -9,7 +9,6 @@ zephyr_library()
 # One of NPMX devices have to be selected in Kconfig
 if(CONFIG_NPMX_DEVICE_NPM1300_ENG_B)
     zephyr_compile_definitions(NPM1300_ENG_B)
-    set(NPMX_BACKEND_TYPE "twim")
 else()
     return()
 endif()
@@ -21,11 +20,10 @@ set(INC_DIR ${ZEPHYR_NPMX_MODULE_DIR}/drivers/include)
 
 # Get backend files
 zephyr_include_directories("${ZEPHYR_NPMX_MODULE_DIR}/backends")
-zephyr_library_sources("${ZEPHYR_NPMX_MODULE_DIR}/backends/npmx_backend_${NPMX_BACKEND_TYPE}.c")
+zephyr_library_sources("${ZEPHYR_NPMX_MODULE_DIR}/backends/npmx_backend.c")
 
 # Get glue and config files
 zephyr_include_directories(.)
-zephyr_library_sources(npmx_glue.c)
 
 # Get drivers files
 zephyr_include_directories(${INC_DIR})

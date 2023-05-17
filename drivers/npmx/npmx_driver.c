@@ -10,6 +10,7 @@
 #include <zephyr/types.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/i2c.h>
+#include <zephyr/sys/byteorder.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(NPMX, CONFIG_NPMX_LOG_LEVEL);
@@ -19,6 +20,7 @@ LOG_MODULE_REGISTER(NPMX, CONFIG_NPMX_LOG_LEVEL);
 struct npmx_data {
 	const struct device *dev;
 	npmx_instance_t npmx_instance;
+	npmx_backend_config_t backend_config;
 	struct k_work work;
 	struct gpio_callback gpio_cb;
 	struct gpio_callback pof_gpio_cb;
@@ -167,20 +169,71 @@ static void generic_callback(npmx_instance_t *pm, npmx_callback_type_t type, uin
 	}
 }
 
+static int twi_write_function(void *context, uint16_t register_address, uint8_t *p_data,
+			      size_t num_of_bytes)
+{
+	struct i2c_dt_spec *i2c = (struct i2c_dt_spec *)context;
+	uint8_t wr_addr[2];
+	struct i2c_msg msgs[2];
+
+	/* npmx register address. */
+	sys_put_be16(register_address, wr_addr);
+
+	/* Setup I2C messages. */
+
+	/* Send the address to write to. */
+	msgs[0].buf = wr_addr;
+	msgs[0].len = 2U;
+	msgs[0].flags = I2C_MSG_WRITE;
+
+	/* Data to be written. STOP after that. */
+	msgs[1].buf = p_data;
+	msgs[1].len = num_of_bytes;
+	msgs[1].flags = I2C_MSG_WRITE | I2C_MSG_STOP;
+
+	return i2c_transfer(i2c->bus, msgs, 2, i2c->addr) == 0 ? NPMX_SUCCESS : NPMX_ERROR_IO;
+}
+
+static int twi_read_function(void *context, uint16_t register_address, uint8_t *p_data,
+			     size_t num_of_bytes)
+{
+	struct i2c_dt_spec *i2c = (struct i2c_dt_spec *)context;
+	uint8_t wr_addr[2];
+	struct i2c_msg msgs[2];
+
+	/* npmx register address. */
+	sys_put_be16(register_address, wr_addr);
+
+	/* Setup I2C messages. */
+
+	/* Send the address to read from. */
+	msgs[0].buf = wr_addr;
+	msgs[0].len = 2U;
+	msgs[0].flags = I2C_MSG_WRITE;
+
+	/* Read from device. STOP after that. */
+	msgs[1].buf = p_data;
+	msgs[1].len = num_of_bytes;
+	msgs[1].flags = I2C_MSG_READ | I2C_MSG_STOP;
+
+	return i2c_transfer(i2c->bus, msgs, 2, i2c->addr) == 0 ? NPMX_SUCCESS : NPMX_ERROR_IO;
+}
+
 static int npmx_driver_init(const struct device *dev)
 {
 	struct npmx_data *data = dev->data;
 	const struct npmx_config *config = dev->config;
 	const struct device *bus = config->i2c.bus;
-	npmx_backend_instance_t *const backend = &data->npmx_instance.backend_inst;
-
-	npmx_backend_init(backend, (void *)bus, config->i2c.addr);
+	npmx_instance_t *npmx_instance = &data->npmx_instance;
+	npmx_backend_config_t *backend_config = &data->backend_config;
 
 	data->dev = dev;
 
-	data->npmx_instance.generic_cb = generic_callback;
+	backend_config->write = twi_write_function;
+	backend_config->read = twi_read_function;
+	backend_config->context = (void *)&config->i2c;
 
-	npmx_error_t ret = npmx_core_init(&data->npmx_instance);
+	npmx_error_t ret = npmx_core_init(npmx_instance, backend_config, generic_callback, NULL);
 
 	if (!device_is_ready(bus)) {
 		LOG_ERR("%s: bus device %s is not ready", dev->name, bus->name);
@@ -194,7 +247,7 @@ static int npmx_driver_init(const struct device *dev)
 
 	/* Clear all events before enabling interrupts. */
 	for (uint32_t i = 0; i < NPMX_EVENT_GROUP_COUNT; i++) {
-		if (npmx_core_event_interrupt_disable(&data->npmx_instance, (npmx_event_group_t)i,
+		if (npmx_core_event_interrupt_disable(npmx_instance, (npmx_event_group_t)i,
 						      NPMX_EVENT_GROUP_ALL_EVENTS_MASK) !=
 		    NPMX_SUCCESS) {
 			LOG_ERR("Failed to disable interrupts");
@@ -209,7 +262,7 @@ static int npmx_driver_init(const struct device *dev)
 
 	if (config->pmic_reset_pin != -1) {
 		/* Configure pmic's gpio to work as output reset. */
-		npmx_gpio_mode_set(npmx_gpio_get(&data->npmx_instance, config->pmic_reset_pin),
+		npmx_gpio_mode_set(npmx_gpio_get(npmx_instance, config->pmic_reset_pin),
 				   NPMX_GPIO_MODE_OUTPUT_RESET);
 	}
 
