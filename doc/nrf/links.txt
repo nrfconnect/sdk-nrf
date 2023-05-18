@@ -392,6 +392,9 @@
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
 
+.. _`nPM1300 product website`: https://www.nordicsemi.com/products/npm1300
+.. _`nPM1300 EK product page`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK
+
 .. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
 
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
@@ -530,6 +533,9 @@
 .. _`Programming application and modem firmware on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91_gsg/UG/thingy91_gsg/updating_fw.html
 
 .. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
+
+.. _`nPM1300`: https://infocenter.nordicsemi.com/topic/struct_pmic/struct/npm1300.html
+.. _`nPM1300 EK User Guide`: https://infocenter.nordicsemi.com/topic/ug_npm1300_ek/UG/nPM1300_EK/intro.html
 
 .. _`Debugger access protection for nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/dif.html#debugger_access
 .. _`AP-Protect for nRF5340`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/debugandtrace.html#access_port_protection

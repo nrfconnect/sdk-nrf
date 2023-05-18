@@ -542,3 +542,4 @@ Added:
 
 * A page on :ref:`ug_wireless_coexistence` in :ref:`protocols`.
 * Pages on :ref:`thread_device_types` and :ref:`thread_sed_ssed` to the :ref:`ug_thread` documentation.
+* A new section :ref:`ug_pmic`, containing :ref:`ug_npm1300_features` and :ref:`ug_npm1300_gs`.
