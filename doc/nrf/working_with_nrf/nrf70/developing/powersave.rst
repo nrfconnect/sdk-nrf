@@ -67,15 +67,20 @@ The following Power Save modes are supported and can be configured by the user o
   nRF70 Series devices operate in this mode by default.
   The user or application can change the device to the Permanent Active mode using the ``NET_REQUEST_WIFI_PS`` network management API.
 
+Further the Wi-Fi® interface can be configured in one of the following dynamic Power Save modes:
+
+* **Normal Power Save:** Delivery Traffic Indication Message (DTIM).
+  DTIM is the default configuration and enabled by the application based on the traffic profile.
+* **Extended Power Save:** Listen interval-based power save mode.
+  The Listen interval based-Power Save mode is supported to enable devices to sleep longer than the DTIM period.
+  It is typically low and not useful for power saving.
+* **Deep sleep:** Target Wake Time (TWT) power save.
+  TWT can be enabled if the connected access point is Wi-Fi 6 capable.
+
 .. _ug_nrf70_developing_powersave_dtim:
 
 Delivery Traffic Indication Message (DTIM)
 ******************************************
-
-The Wi-Fi® interface can be configured in either Delivery Traffic Indication Message or Target Wake Time (TWT) power save modes.
-DTIM is the default configuration and enabled by the application based on the traffic profile.
-TWT can be enabled if the connected access point is Wi-Fi 6 capable.
-
 Devices in DTIM Power Save mode can wake at any time to transmit uplink traffic, but can only receive downlink traffic (broadcast, multicast or unicast) immediately after receiving a DTIM beacon.
 To make the device in Power Save mode aware that the access point has buffered downlink traffic, the access point uses the Traffic Indication Map (TIM) element present in the beacon frames.
 The device in Power Save mode wakes up to receive the DTIM beacon and checks the status of the TIM element.
@@ -143,12 +148,62 @@ The following figure illustrates the unicast frame data retrieval mechanism in W
    WMM Power Save mode
 
 Legacy Power Save mode is the default option in nRF70 Series devices.
-The user or application can configure the WMM mode using the ``NET_REQUEST_WIFI_PS_MODE`` network management API.
+The user or application can configure the WMM mode using the ``NET_REQUEST_WIFI_PS`` network management API.
 The WMM mode does not deliver a significant performance or power difference when compared to Legacy mode in Dynamic Power Save operation.
 
 The average power consumption of the device is affected by the DTIM period.
 The typical value is three beacons, for example, 307 ms for a beacon period of 100-time units.
 The higher DTIM period results in increased power saving and higher latency to the application data.
+
+.. _ug_nrf70_developing_powersave_extended_ps:
+
+Extended Power Save
+*******************
+
+This feature helps legacy connections to go to extended power save similar to the Target Wake Time (TWT) feature in Wi-Fi 6.
+The device wakeup interval is adjusted to nearest multiple of the DTIM period.
+For example, when the Listen interval is 10, the device wakes up for every 9th beacon if the DTIM is 3, and wkaes up to the 8th beacon if the DTIM is 4.
+The device wakes up for the configured Listen interval instead of the DTIM beacon.
+It will miss the chance of receiving broadcast and multicast frames which get scheduled after the DTIM beacon.
+
+.. note::
+    The Listen interval-based power needs to be enabled only if the application can handle loss broadcast frames.
+
+Chances of losing broadcast frames increases with higher listen intervals.
+
+The following parameters control the functionality of the extended power save operation.
+
+Listen interval
+===============
+
+The Listen interval is a field that is present in an association request frame.
+It indicates how frequently the device will wake up to check for any buffered traffic by checking TIM IE in the beacon.
+A larger value enables the devices to save more power by sleeping for longer periods.
+Larger listen intervals add burden to the AP, as the AP will need to buffer frames much longer to the device and this may force the AP to decline connection.
+Also if the buffered frames exceed the MPDU/MSDU lifetime then, they will be silently discarded by the AP which causes frame loss.
+The typical listen interval is 10 beacons.
+The Listen interval can be set using ``NET_REQUEST_WIFI_PS`` API and should be called before connecting to the AP.
+
+Wakeup mode
+===========
+
+The device can be configured to wake up for the DTIM or Listen interval by using ``NET_REQUEST_WIFI_PS`` API.
+The device can switch from the DTIM to the Listen interval-based Power Save at runtime seamlessly.
+
+
+The following figure illustrates the change in wakeup mode from the DTIM to the Listen interval.
+
+.. figure:: images/nRF70_ug_change_wakeup_mode_from_dtim_to_li.png
+   :alt: Change Power Save wakeup mode from DTIM to Listen interval
+
+   Change Power Save wakeup mode form DTIM to Listen interval
+
+The following figure illustrates the change in wakeup mode from the Listen interval to DTIM.
+
+.. figure:: images/nRF70_ug_change_wakeup_mode_from_li_to_dtim.png
+   :alt: Change Power Save wakeup mode from Listen interval to DTIM
+
+   Change Power Save wakeup mode from Listen interval to DTIM
 
 .. _ug_nrf70_developing_powersave_twt:
 
@@ -322,14 +377,30 @@ The following shell commands and network management APIs are provided for power 
      - wifi ps off
      - Turn off power save feature
      - Power Save disabled
-   * - net_mgmt(NET_REQUEST_WIFI_PS_MODE)
+   * - net_mgmt(NET_REQUEST_WIFI_PS)
      - wifi ps_mode legacy
      - Config mode as Legacy
      -
-   * - net_mgmt(NET_REQUEST_WIFI_PS_MODE)
+   * - net_mgmt(NET_REQUEST_WIFI_PS)
      - wifi ps_mode wmm
      - Config mode as WMM
      -
+   * - net_mgmt(NET_REQUEST_WIFI_PS)
+     - wifi ps_timeout
+     - Config ps timeout duration (in ms)
+     -
+   * - net_mgmt(NET_REQUEST_WIFI_PS)
+     - wifi ps_listen_interval
+     - Config ps_listen_interval
+     -
+   * - net_mgmt(NET_REQUEST_WIFI_PS)
+     - wifi ps_wakeup_mode dtim
+     - Config ps wakeup mode as DTIM
+     - Wakeup mode set to DTIM
+   * - net_mgmt(NET_REQUEST_WIFI_PS)
+     - wifi ps_wakeup_mode listen_interval
+     - Config ps wakeup mode as listen_interval
+     - Wakeup mode set to listem interval
    * - net_mgmt(NET_REQUEST_WIFI_TWT)
      - wifi twt setup 0 0 1 1 0 1 1 1 65 524
      - | Set up TWT:
