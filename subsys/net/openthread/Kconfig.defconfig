@@ -172,7 +172,7 @@ config NET_PKT_TIMESTAMP
 # CSL Transmitter configuration
 config OPENTHREAD_PLATFORM_CSL_UNCERT
 	int
-	default 20
+	default 12
 
 config IEEE802154_NRF5_DELAY_TRX_ACC
 	int
@@ -188,9 +188,13 @@ config OPENTHREAD_CSL_RECEIVE_TIME_AHEAD
 	int
 	default 5000
 
-config OPENTHREAD_CSL_MIN_RECEIVE_ON
+config OPENTHREAD_MIN_RECEIVE_ON_AHEAD
 	int
-	default 200
+	default 104
+
+config OPENTHREAD_MIN_RECEIVE_ON_AFTER
+	int
+	default 0
 
 config OPENTHREAD_CSL_TIMEOUT
 	int
