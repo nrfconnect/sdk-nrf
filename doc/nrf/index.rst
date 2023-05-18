@@ -25,6 +25,7 @@ A "99" at the end of the version number of this documentation indicates continuo
    nrf70
    nrf53
    nrf52
+   pmic
    protocols
    applications
    samples
