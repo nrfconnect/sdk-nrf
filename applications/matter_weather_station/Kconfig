@@ -13,6 +13,9 @@ config AVERAGE_CURRENT_CONSUMPTION
 	  The predicted average current consumption of the Matter weather station
 	  device, used to estimate the remaining battery time.
 
+config CHIP_ICD_SUBSCRIPTION_HANDLING
+	default y
+
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
 source "Kconfig.zephyr"
