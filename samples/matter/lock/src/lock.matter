@@ -1552,7 +1552,6 @@ server cluster DoorLock = 257 {
   readonly attribute boolean actuatorEnabled = 2;
   readonly attribute int16u numberOfTotalUsersSupported = 17;
   readonly attribute int16u numberOfPINUsersSupported = 18;
-  readonly attribute int16u numberOfRFIDUsersSupported = 19;
   readonly attribute int8u maxPINCodeLength = 23;
   readonly attribute int8u minPINCodeLength = 24;
   readonly attribute DlCredentialRuleMask credentialRulesSupport = 27;
@@ -1940,7 +1939,6 @@ endpoint 1 {
     ram      attribute actuatorEnabled;
     ram      attribute numberOfTotalUsersSupported default = 10;
     ram      attribute numberOfPINUsersSupported default = 10;
-    ram      attribute numberOfRFIDUsersSupported default = 0;
     ram      attribute maxPINCodeLength default = 8;
     ram      attribute minPINCodeLength default = 6;
     ram      attribute credentialRulesSupport default = 1;
@@ -1958,7 +1956,7 @@ endpoint 1 {
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
-    ram      attribute featureMap default = 0x101;
+    ram      attribute featureMap default = 0x181;
     ram      attribute clusterRevision default = 6;
   }
 }

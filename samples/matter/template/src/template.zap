@@ -1,5 +1,5 @@
 {
-  "featureLevel": 92,
+  "featureLevel": 96,
   "creator": "zap",
   "keyValuePairs": [
     {
@@ -1925,7 +1925,7 @@
               "code": 0,
               "mfgCode": null,
               "side": "server",
-              "type": "HourFormat",
+              "type": "HourFormatEnum",
               "included": 1,
               "storageOption": "NVM",
               "singleton": 0,
@@ -1941,7 +1941,7 @@
               "code": 1,
               "mfgCode": null,
               "side": "server",
-              "type": "CalendarType",
+              "type": "CalendarTypeEnum",
               "included": 1,
               "storageOption": "NVM",
               "singleton": 0,
