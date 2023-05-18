@@ -54,12 +54,15 @@ constexpr uint8_t kDefaultMaxLevel = 254;
 #if NUMBER_OF_BUTTONS == 2
 constexpr uint32_t kAdvertisingTriggerTimeout = 3000;
 #endif
+constexpr uint16_t kTriggerEffectTimeout = 5000;
+constexpr uint16_t kTriggerEffectFinishTimeout = 1000;
 
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 k_timer sFunctionTimer;
+k_timer sTriggerEffectTimer;
 
 Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
-		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED };
+		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED, AppTask::TriggerIdentifyEffectHandler };
 
 LEDWidget sStatusLED;
 LEDWidget sIdentifyLED;
@@ -70,6 +73,7 @@ FactoryResetLEDsWrapper<2> sFactoryResetLEDs{ { FACTORY_RESET_SIGNAL_LED, FACTOR
 bool sIsNetworkProvisioned = false;
 bool sIsNetworkEnabled = false;
 bool sHaveBLEConnections = false;
+bool sIsTriggerEffectActive = false;
 
 const struct pwm_dt_spec sLightPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 
@@ -170,6 +174,9 @@ CHIP_ERROR AppTask::Init()
 	k_timer_init(&sFunctionTimer, &AppTask::FunctionTimerTimeoutCallback, nullptr);
 	k_timer_user_data_set(&sFunctionTimer, this);
 
+	/* Initialize trigger effect timer */
+	k_timer_init(&sTriggerEffectTimer, &AppTask::TriggerEffectTimerTimeoutCallback, nullptr);
+
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
 	/* Initialize DFU over SMP */
 	GetDFUOverSMP().Init();
@@ -258,6 +265,56 @@ void AppTask::IdentifyStopHandler(Identify *)
 		Instance().mPWMDevice.ApplyLevel();
 	};
 	PostEvent(event);
+}
+
+void AppTask::TriggerEffectTimerTimeoutCallback(k_timer *timer)
+{
+	LOG_INF("Identify effect completed");
+
+	sIsTriggerEffectActive = false;
+
+	sIdentifyLED.Set(false);
+	Instance().mPWMDevice.ApplyLevel();
+}
+
+void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
+{
+	switch (identify->mCurrentEffectIdentifier) {
+	/* Just handle all effects in the same way. */
+	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_BLINK:
+	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_BREATHE:
+	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_OKAY:
+	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_CHANNEL_CHANGE:
+		LOG_INF("Identify effect identifier changed to %d", identify->mCurrentEffectIdentifier);
+
+		sIsTriggerEffectActive = false;
+
+		k_timer_stop(&sTriggerEffectTimer);
+		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectTimeout), K_NO_WAIT);
+
+		Instance().mPWMDevice.SuppressOutput();
+		sIdentifyLED.Blink(LedConsts::kIdentifyBlinkRate_ms);
+
+		break;
+	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_FINISH_EFFECT:
+		LOG_INF("Identify effect finish triggered");
+		k_timer_stop(&sTriggerEffectTimer);
+		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectFinishTimeout), K_NO_WAIT);
+		break;
+	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_STOP_EFFECT:
+		if (sIsTriggerEffectActive) {
+			sIsTriggerEffectActive = false;
+
+			k_timer_stop(&sTriggerEffectTimer);
+
+			sIdentifyLED.Set(false);
+			Instance().mPWMDevice.ApplyLevel();
+		}
+		break;
+	default:
+		LOG_ERR("Received invalid effect identifier.");
+		break;
+	}
 }
 
 #if NUMBER_OF_BUTTONS == 2

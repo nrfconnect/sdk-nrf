@@ -59,7 +59,7 @@
 	}
 
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 183
+#define GENERATED_ATTRIBUTE_COUNT 175
 #define GENERATED_ATTRIBUTES                                                                                                          \
 	{                                                                                                                             \
 		/* Endpoint: 0, Cluster: Descriptor (server) */                                                                       \
@@ -400,14 +400,6 @@
                                                                                                                                       \
 			/* Endpoint: 1, Cluster: Window Covering (server) */                                                          \
 			{ ZAP_SIMPLE_DEFAULT(0x08), 0x00000000, 1, ZAP_TYPE(ENUM8), 0 }, /* Type */                                   \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000001, 2, ZAP_TYPE(INT16U), 0 }, /* PhysicalClosedLimitLift                \
-											     */                                       \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000002, 2, ZAP_TYPE(INT16U), 0 }, /* PhysicalClosedLimitTilt                \
-											     */                                       \
-			{ ZAP_SIMPLE_DEFAULT(0), 0x00000003, 2, ZAP_TYPE(INT16U),                                                     \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* CurrentPositionLift */                    \
-			{ ZAP_SIMPLE_DEFAULT(0), 0x00000004, 2, ZAP_TYPE(INT16U),                                                     \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* CurrentPositionTilt */                    \
 			{ ZAP_SIMPLE_DEFAULT(0x0000), 0x00000005, 2, ZAP_TYPE(INT16U),                                                \
 			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* NumberOfActuationsLift */                                                \
 			{ ZAP_SIMPLE_DEFAULT(0x0000), 0x00000006, 2, ZAP_TYPE(INT16U),                                                \
@@ -432,14 +424,6 @@
 			{ ZAP_SIMPLE_DEFAULT(0), 0x0000000F, 2, ZAP_TYPE(PERCENT100THS),                                              \
 			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* CurrentPositionTiltPercent100ths          \
 											  */                                          \
-			{ ZAP_SIMPLE_DEFAULT(0x0000), 0x00000010, 2, ZAP_TYPE(INT16U),                                                \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* InstalledOpenLimitLift */                                                \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000011, 2, ZAP_TYPE(INT16U),                                                \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* InstalledClosedLimitLift */                                              \
-			{ ZAP_SIMPLE_DEFAULT(0x0000), 0x00000012, 2, ZAP_TYPE(INT16U),                                                \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* InstalledOpenLimitTilt */                                                \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000013, 2, ZAP_TYPE(INT16U),                                                \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* InstalledClosedLimitTilt */                                              \
 			{ ZAP_MIN_MAX_DEFAULTS_INDEX(0), 0x00000017, 1, ZAP_TYPE(BITMAP8),                                            \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(TOKENIZE) |                                                \
 				  ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* Mode */                                                          \
@@ -556,9 +540,7 @@
   0x00000000 /* UpOrOpen */, \
   0x00000001 /* DownOrClose */, \
   0x00000002 /* StopMotion */, \
-  0x00000004 /* GoToLiftValue */, \
   0x00000005 /* GoToLiftPercentage */, \
-  0x00000007 /* GoToTiltValue */, \
   0x00000008 /* GoToTiltPercentage */, \
   chip::kInvalidCommandId /* end of list */, \
 }
@@ -768,8 +750,8 @@
       /* Endpoint: 1, Cluster: Window Covering (server) */ \
       .clusterId = 0x00000102, \
       .attributes = ZAP_ATTRIBUTE_INDEX(159), \
-      .attributeCount = 24, \
-      .clusterSize = 43, \
+      .attributeCount = 16, \
+      .clusterSize = 27, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(ATTRIBUTE_CHANGED_FUNCTION), \
       .functions = chipFuncArrayWindowCoveringServer, \
       .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 52 ), \
@@ -786,7 +768,7 @@
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                                       \
 	{                                                                                                              \
-		{ ZAP_CLUSTER_INDEX(0), 13, 110 }, { ZAP_CLUSTER_INDEX(13), 3, 56 },                                   \
+		{ ZAP_CLUSTER_INDEX(0), 13, 110 }, { ZAP_CLUSTER_INDEX(13), 3, 40 },                                   \
 	}
 
 // Largest attribute size is needed for various buffers
@@ -799,7 +781,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define ATTRIBUTE_SINGLETONS_SIZE (35)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (166)
+#define ATTRIBUTE_MAX_SIZE (150)
 
 // Number of fixed endpoints
 #define FIXED_ENDPOINT_COUNT (2)
@@ -820,10 +802,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
-		{ 0x0016, 1 },                                                                                         \
-		{                                                                                                      \
-			0x0202, 2                                                                                      \
-		}                                                                                                      \
+		{ 0x0016, 1 }, { 0x0202, 2 }                                                                           \
 	}
 
 // Array of device type offsets

@@ -1188,10 +1188,6 @@ server cluster WindowCovering = 258 {
   }
 
   readonly attribute Type type = 0;
-  readonly attribute int16u physicalClosedLimitLift = 1;
-  readonly attribute int16u physicalClosedLimitTilt = 2;
-  readonly attribute nullable int16u currentPositionLift = 3;
-  readonly attribute nullable int16u currentPositionTilt = 4;
   readonly attribute int16u numberOfActuationsLift = 5;
   readonly attribute int16u numberOfActuationsTilt = 6;
   readonly attribute ConfigStatus configStatus = 7;
@@ -1203,10 +1199,6 @@ server cluster WindowCovering = 258 {
   readonly attribute EndProductType endProductType = 13;
   readonly attribute nullable Percent100ths currentPositionLiftPercent100ths = 14;
   readonly attribute nullable Percent100ths currentPositionTiltPercent100ths = 15;
-  readonly attribute int16u installedOpenLimitLift = 16;
-  readonly attribute int16u installedClosedLimitLift = 17;
-  readonly attribute int16u installedOpenLimitTilt = 18;
-  readonly attribute int16u installedClosedLimitTilt = 19;
   attribute access(write: manage) Mode mode = 23;
   readonly attribute SafetyStatus safetyStatus = 26;
   readonly attribute command_id generatedCommandList[] = 65528;
@@ -1216,16 +1208,8 @@ server cluster WindowCovering = 258 {
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 
-  request struct GoToLiftValueRequest {
-    INT16U liftValue = 0;
-  }
-
   request struct GoToLiftPercentageRequest {
     Percent100ths liftPercent100thsValue = 0;
-  }
-
-  request struct GoToTiltValueRequest {
-    INT16U tiltValue = 0;
   }
 
   request struct GoToTiltPercentageRequest {
@@ -1235,9 +1219,7 @@ server cluster WindowCovering = 258 {
   command UpOrOpen(): DefaultSuccess = 0;
   command DownOrClose(): DefaultSuccess = 1;
   command StopMotion(): DefaultSuccess = 2;
-  command GoToLiftValue(GoToLiftValueRequest): DefaultSuccess = 4;
   command GoToLiftPercentage(GoToLiftPercentageRequest): DefaultSuccess = 5;
-  command GoToTiltValue(GoToTiltValueRequest): DefaultSuccess = 7;
   command GoToTiltPercentage(GoToTiltPercentageRequest): DefaultSuccess = 8;
 }
 
@@ -1499,10 +1481,6 @@ endpoint 1 {
 
   server cluster WindowCovering {
     ram      attribute type default = 0x08;
-    ram      attribute physicalClosedLimitLift default = 0xFFFF;
-    ram      attribute physicalClosedLimitTilt default = 0xFFFF;
-    persist  attribute currentPositionLift default = 0;
-    persist  attribute currentPositionTilt default = 0;
     persist  attribute numberOfActuationsLift default = 0x0000;
     persist  attribute numberOfActuationsTilt default = 0x0000;
     persist  attribute configStatus default = 0x03;
@@ -1514,10 +1492,6 @@ endpoint 1 {
     ram      attribute endProductType default = 0x00;
     persist  attribute currentPositionLiftPercent100ths default = 0;
     persist  attribute currentPositionTiltPercent100ths default = 0;
-    persist  attribute installedOpenLimitLift default = 0x0000;
-    persist  attribute installedClosedLimitLift default = 0xFFFF;
-    persist  attribute installedOpenLimitTilt default = 0x0000;
-    persist  attribute installedClosedLimitTilt default = 0xFFFF;
     persist  attribute mode default = 0x0;
     ram      attribute safetyStatus default = 0x0000;
     callback attribute generatedCommandList;
