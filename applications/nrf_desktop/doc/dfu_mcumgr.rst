@@ -10,8 +10,9 @@ Device Firmware Upgrade MCUmgr module
 The Device Firmware Upgrade MCUmgr module is responsible for performing a Device Firmware Upgrade (DFU) over Simple Management Protocol (SMP).
 
 If you enable the Bluetooth LE as transport, you can perform the DFU using, for example, the `nRF Connect for Mobile`_ application.
-The :guilabel:`DFU` button appears in the tab with the connected Bluetooth® devices.
+The :guilabel:`DFU` button appears in the tab of the connected Bluetooth device that supports the image transfer over the Simple Management Protocol (SMP).
 After pressing the button, you can select the :file:`*.bin` file used for the firmware update.
+See the :ref:`nrf_desktop_image_transfer_over_smp` section for information about which binary file should be used for the DFU image transfer.
 
 .. note::
     The Device Firmware Upgrade MCUmgr module implementation is currently marked as experimental because it uses internal MCUmgr API.

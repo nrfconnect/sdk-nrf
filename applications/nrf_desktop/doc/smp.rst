@@ -9,11 +9,7 @@ Simple Management Protocol module
    :depth: 2
 
 The |smp| is responsible for performing a Device Firmware Upgrade (DFU) over Bluetooth® LE.
-
-You can perform the DFU using for example the `nRF Connect for Mobile`_ application.
-The :guilabel:`DFU` button appears in the tab with the connected Bluetooth® devices.
-After pressing the button, you can select the :file:`*.bin` file that is to be used for the firmware update.
-See the :ref:`nrf_desktop_image_transfer_over_smp` section for information about which binary file should be used for the DFU image transfer.
+You can perform the DFU using, for example, the `nRF Connect for Mobile`_ application.
 
 Module events
 *************
@@ -29,4 +25,4 @@ Implementation details
 **********************
 
 nRF Desktop uses the |smp| from :ref:`lib_caf` (CAF).
-See the :ref:`CAF module <caf_ble_smp>` page for implementation details.
+See the :ref:`CAF module <caf_ble_smp>` page for the implementation details and guide on how to perform the firmware update in the `nRF Connect for Mobile`_ application.

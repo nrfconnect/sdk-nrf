@@ -84,7 +84,7 @@ The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize flash ac
 If multiple DFU transports are enabled in your application configuration, make sure that the following conditions are met:
 
 * The :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option is enabled
-* All of the used DFU transports use the :ref:`nrf_desktop_dfu_lock` module.
+* All of the used DFU transports use the :ref:`nrf_desktop_dfu_lock`.
 
 On each DFU attempt, the module attempts to claim ownership over the DFU flash using the DFU Lock API.
 It holds the DFU owner status until the DFU process is completed or timed out.
@@ -102,7 +102,7 @@ The DFU module implementation is centered around the transmission and the storag
 * `Protocol operations`_ - How the module exchanges information with the host.
 * `Partition preparation`_ - How the module prepares for receiving an image.
 
-The firmware transfer operation can also be carried out by :ref:`nrf_desktop_ble_smp`.
+The firmware transfer operation can also be carried out either by the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`.
 The application user must not perform more than one firmware upgrade at a time.
 The modification of the data by multiple application modules would result in a broken image that would be rejected by the bootloader.
 
