@@ -8,7 +8,7 @@ DFU lock utility
    :depth: 2
 
 The DFU lock utility provides a synchronization mechanism for accessing the DFU flash.
-It is needed for application configurations that support more than one DFU transports.
+It is needed for application configurations that support more than one DFU transport.
 
 The DFU lock utility provides a basic synchronization API for all declared DFU owners.
 Each DFU owner can be declared using the :c:struct:`dfu_lock_owner` structure.
@@ -26,7 +26,7 @@ The previous owner can use this callback for tracking the DFU flash status and t
 Configuration
 *************
 
-Use the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option to enable the utility module.
+Use the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option to enable the utility.
 
 Currently, the DFU lock utility is automatically used if you enable both supported DFU transports in your application:
 

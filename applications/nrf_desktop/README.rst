@@ -1679,7 +1679,7 @@ The GATT Service is implemented by the :ref:`nrf_desktop_dev_descr`.
 Apart from the GATT Services, an nRF Desktop peripheral device must enable and configure the following application modules:
 
 * :ref:`nrf_desktop_ble_adv` - Controls the Bluetooth advertising.
-* :ref:`nrf_desktop_ble_latency` - Keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is being used or when an update image is being received by the :ref:`nrf_desktop_ble_smp`.
+* :ref:`nrf_desktop_ble_latency` - Keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is used or when either the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` receive an update image.
   This is done to ensure quick data transfer.
 
 Optionally, you can also enable the following module:
@@ -1775,7 +1775,9 @@ The nRF Desktop application can use one of the following bootloaders:
     You can use the MCUboot for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
     The MCUboot can also be used for the background DFU over Simple Management Protocol (SMP).
     The SMP can be used to transfer the new firmware image in the background, for example, from an Android device.
-    In that case, the :ref:`nrf_desktop_ble_smp` is used to handle the image transfer.
+    In that case, either the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` is used to handle the image transfer.
+    The :ref:`nrf_desktop_ble_smp` relies on a generic module implemented in the Common Application Framework (CAF).
+    The :ref:`nrf_desktop_dfu_mcumgr` uses an application-specific implementation that allows to synchronize a secondary image slot access with the :ref:`nrf_desktop_dfu` using the :ref:`nrf_desktop_dfu_lock`.
 
   * :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>`.
     In this scenario, the MCUboot bootloader supports the USB serial recovery.
@@ -1833,7 +1835,7 @@ The swap mode is the image upgrade mode used by default for the :ref:`background
 
 If the swap mode is used, the application must request firmware upgrade and confirm the running image.
 For this purpose, make sure to enable :kconfig:option:`CONFIG_IMG_MANAGER` and :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER` Kconfig options in the application configuration.
-These options allow the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_ble_smp` to manage the DFU image.
+These options allow the :ref:`nrf_desktop_dfu`, :ref:`nrf_desktop_ble_smp`, and :ref:`nrf_desktop_dfu_mcumgr` to manage the DFU image.
 
 .. note::
   When the MCUboot bootloader is in the swap mode, it can use a secondary image slot located on the external flash.
@@ -1853,7 +1855,7 @@ In that scenario, the MCUboot bootloader simply boots the image with the higher 
 
 By default, the MCUboot bootloader ignores the build number while comparing image versions.
 Enable the ``CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER`` Kconfig option in the bootloader configuration to use the build number while comparing image versions.
-To apply the same option for the :ref:`nrf_desktop_ble_smp`, enable the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_VERSION_CMP_USE_BUILD_NUMBER` Kconfig option in the application configuration.
+To apply the same option for the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`, enable the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_VERSION_CMP_USE_BUILD_NUMBER` Kconfig option in the application configuration.
 
 It is recommended to also enable the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option in the application configuration to make sure that MCUmgr rejects application image updates with invalid start address.
 This prevents uploading an update image build for improper slot through the MCUmgr's Simple Management Protocol (SMP).
@@ -1901,7 +1903,7 @@ At the end of these three stages, the nRF Desktop application will be rebooted w
 
 .. note::
   The background firmware upgrade can also be performed over the Simple Management Protocol (SMP).
-  For more detailed information about the DFU over SMP, read the :ref:`nrf_desktop_ble_smp` documentation.
+  For more details about the DFU over SMP, read the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` documentation.
 
 Update image generation
 -----------------------
@@ -1935,12 +1937,12 @@ Depending on the side on which the process is handled:
 Image transfer over SMP
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-If the MCUboot bootloader is selected, the update image can also be transferred in the background through the :ref:`nrf_desktop_ble_smp`.
+If the MCUboot bootloader is selected, the update image can also be transferred in the background either through the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`.
 The `nRF Connect for Mobile`_ application uses binary files for the image transfer over the Simple Management Protocol (SMP).
 The :guilabel:`DFU` button appears in the tab of the connected Bluetooth device that supports the image transfer over the SMP.
 After pressing the button, you can select the :file:`*.bin` file used for the firmware update.
 
-After building your application for configuration with the :ref:`nrf_desktop_ble_smp` enabled, the following firmware update files are generated in the build directory:
+After building your application for configuration with either the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` enabled, the following firmware update files are generated in the build directory:
 
  * :file:`zephyr/app_update.bin` - The application image that is bootable from the primary slot.
  * :file:`zephyr/mcuboot_secondary_app_update.bin` - The application image that is bootable from the secondary slot.
