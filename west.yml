@@ -184,7 +184,7 @@ manifest:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.4.0-rc1
+      revision: pull/143/head
       groups:
         - find-my
     - name: azure-sdk-for-c
