@@ -9,6 +9,6 @@
 		compatible = "nordic,nrf700x-coex";
 		status0-gpios = <&edge_connector 15 GPIO_ACTIVE_HIGH>;
 		req-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
-		grant-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+		grant-gpios = <&gpio1 1 (GPIO_PULL_DOWN | GPIO_ACTIVE_LOW)>;
 	};
 };
