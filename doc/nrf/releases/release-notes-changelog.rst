@@ -187,7 +187,7 @@ nRF9160: Asset Tracker v2
   * The application now uses the function :c:func:`nrf_cloud_location_request_msg_json_encode` to create an nRF Cloud location request message.
   * The application now uses defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
   * Instead of sending a battery voltage, the PMIC's fuel gauge function is used to get a battery percentage. For nRF Cloud, the data ID "VOLTAGE" has been replaced with "BATTERY". For the other cloud backends, the name stays the same, but the range changes to 0-100.
-  * Enabled external flash in the nRF9160 DK device tree overlays for v0.14.0 and newer, as it is now disabled by default in the device tree.
+  * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -334,6 +334,7 @@ nRF9160 samples
 * :ref:`http_full_modem_update_sample` sample:
 
   * The sample now uses modem firmware versions 1.3.3 and 1.3.4.
+  * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
 * :ref:`http_modem_delta_update_sample` sample:
 
@@ -350,6 +351,7 @@ nRF9160 samples
     * The sample now uses defines from the :ref:`lib_nrf_cloud` library for string values related to nRF Cloud.
       Removed the inclusion of the file :file:`nrf_cloud_codec.h`.
     * Modem FOTA now updates the firmware without rebooting the application.
+    * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
 * :ref:`https_client` sample:
 
@@ -368,6 +370,7 @@ nRF9160 samples
   * Updated:
 
     * The sample now integrates the :ref:`lib_lwm2m_client_utils` FOTA callback functionality.
+    * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
 * :ref:`pdn_sample` sample:
 
@@ -378,11 +381,16 @@ nRF9160 samples
   * Updated:
 
     * Increased the MCUboot partition size to the minimum necessary to allow bootloader FOTA.
+    * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
   * Added:
 
     * Sending of log messages directly to nRF Cloud.
     * Overlay to enable `Zephyr Logging`_ backend for full logging to nRF Cloud.
+
+* :ref:`nrf_cloud_rest_fota` sample:
+
+    * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
@@ -402,6 +410,10 @@ nRF9160 samples
     The documentation is now found in the :ref:`debug_samples` section.
   * Added support for the nRF7002 DK.
   * Added a Kconfig fragment to enable ETB trace.
+
+* :ref:`modem_trace_flash` sample:
+
+  * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------

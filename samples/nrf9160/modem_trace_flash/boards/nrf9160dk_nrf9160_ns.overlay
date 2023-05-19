@@ -13,6 +13,7 @@
 	mx25r64: mx25r6435f@1 {
 		compatible = "jedec,spi-nor";
 		reg = <1>;
+		status = "okay";
 		spi-max-frequency = <8000000>;
 		jedec-id = [c2 28 17];
 		sfdp-bfp = [
