@@ -9,6 +9,7 @@
 #include <string.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
+#include <nrf_socket.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_udp_proxy.h"
@@ -47,6 +48,7 @@ static struct udp_proxy {
 	int sock;		/* Socket descriptor. */
 	int family;		/* Socket address family */
 	sec_tag_t sec_tag;	/* Security tag of the credential */
+	int conn_id;		/* Enable/Disable DTLS connection ID */
 	enum slm_udp_role role;	/* Client or Server proxy */
 	union {			/* remote host */
 		struct sockaddr_in remote;   /* IPv4 host */
@@ -173,7 +175,6 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 		ret = socket(proxy.family, SOCK_DGRAM, IPPROTO_UDP);
 	} else {
 		ret = socket(proxy.family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
-
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
@@ -190,6 +191,25 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 			LOG_ERR("set tag list failed: %d", -errno);
 			ret = -errno;
 			goto cli_exit;
+		}
+
+		/* Best effort to enable/disable DTLS conn_id and load it */
+		uint32_t dtls_cid = (proxy.conn_id != 0) ?
+			NRF_SO_SEC_DTLS_CID_ENABLED : NRF_SO_SEC_DTLS_CID_DISABLED;
+
+		ret = nrf_setsockopt(proxy.sock, NRF_SOL_SECURE, NRF_SO_SEC_DTLS_CID,
+				     &dtls_cid, sizeof(dtls_cid));
+		if (ret) {
+			LOG_WRN("set conn id (%d) failed: %d", dtls_cid, -errno);
+		} else if (proxy.conn_id != 0) {
+			ret = nrf_setsockopt(proxy.sock, NRF_SOL_SECURE,
+					     NRF_SO_SEC_DTLS_CONN_LOAD,
+					     NULL, 0);
+			if (ret) {
+				LOG_WRN("Load DTLS connection failed: %d", ret);
+			} else {
+				LOG_INF("DTLS connection resumed");
+			}
 		}
 	}
 
@@ -208,6 +228,34 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 		LOG_ERR("connect() failed: %d", -errno);
 		ret = -errno;
 		goto cli_exit;
+	}
+
+	/* Check conn_id status */
+	if (proxy.conn_id != 0) {
+		int status = -1;
+		int status_len = sizeof(status);
+
+		ret = nrf_getsockopt(proxy.sock, NRF_SOL_SECURE, NRF_SO_SEC_DTLS_CID_STATUS,
+				     &status, &status_len);
+		if (ret) {
+			LOG_WRN("Unable to get DTLS connection ID status: %d", ret);
+		} else {
+			/**
+			 * NRF_SO_SEC_DTLS_CID_STATUS_DISABLED 0
+			 * NRF_SO_SEC_DTLS_CID_STATUS_DOWNLINK 1
+			 * NRF_SO_SEC_DTLS_CID_STATUS_UPLINK 2
+			 * NRF_SO_SEC_DTLS_CID_STATUS_BIDIRECTIONAL 3
+			 */
+			LOG_INF("DTLS connection ID status: %d", status);
+			if (status != NRF_SO_SEC_DTLS_CID_STATUS_DISABLED) {
+				ret = nrf_setsockopt(proxy.sock, NRF_SOL_SECURE,
+						     NRF_SO_SEC_DTLS_CONN_SAVE,
+						     NULL, 0);
+				if (ret) {
+					LOG_WRN("Save DTLS connection failed: %d", ret);
+				}
+			}
+		}
 	}
 
 	udp_thread_id = k_thread_create(&udp_thread, udp_thread_stack,
@@ -481,7 +529,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XUDPCLI commands
- *  AT#XUDPCLI=<op>[,<url>,<port>[,<sec_tag>]
+ *  AT#XUDPCLI=<op>[,<url>,<port>[,<sec_tag>,<connection_id>]
  *  AT#XUDPCLI? READ command not supported
  *  AT#XUDPCLI=?
  */
@@ -516,6 +564,9 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			proxy.sec_tag  = INVALID_SEC_TAG;
 			if (at_params_valid_count_get(&at_param_list) > 4) {
 				at_params_unsigned_int_get(&at_param_list, 4, &proxy.sec_tag);
+				if (at_params_valid_count_get(&at_param_list) > 5) {
+					at_params_int_get(&at_param_list, 5, &proxy.conn_id);
+				}
 			}
 			proxy.family = (op == CLIENT_CONNECT) ? AF_INET : AF_INET6;
 			err = do_udp_client_connect(url, port);
