@@ -286,6 +286,14 @@ static int check_channel_settings(const struct shell *shell,
 enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_params)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN] = {0};
+
+	/* Check and save regulatory country code currently set */
+	if (strlen(conf_params->country_code)) {
+		memcpy(country_code,
+		       conf_params->country_code,
+		       NRF_WIFI_COUNTRY_CODE_LEN);
+	}
 
 	memset(conf_params,
 	       0,
@@ -319,7 +327,17 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->ru_index = 1;
 	conf_params->tx_pkt_cw = 15;
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
-	memcpy(conf_params->country_code, "00", 3);
+
+	/* Store back the currently set country code */
+	if (strlen(country_code)) {
+		memcpy(conf_params->country_code,
+		       country_code,
+		       NRF_WIFI_COUNTRY_CODE_LEN);
+	} else {
+		memcpy(conf_params->country_code,
+		       "00",
+		       NRF_WIFI_COUNTRY_CODE_LEN);
+	}
 out:
 	return status;
 }
