@@ -328,6 +328,11 @@ Then add the following relevant devicetree blocks to the application`s devicetre
 
 .. code-block:: devicetree
 
+   /* Enable the external flash device (required) */
+   &mx25r64 {
+	    status = "okay";
+   };
+
    /* Configure partition manager to use mx25r64 as the external flash device */
    / {
        chosen {
