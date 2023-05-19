@@ -54,3 +54,7 @@
 		nordic,drive-mode = <NRF_DRIVE_H0H1>;
 	};
 };
+
+&gd25lb256 {
+	status = "okay";
+};
