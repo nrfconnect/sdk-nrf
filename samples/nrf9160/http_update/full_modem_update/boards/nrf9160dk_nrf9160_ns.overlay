@@ -5,10 +5,12 @@
  */
 
 &spi3 {
-	cs-gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
-	mx25r64: mx25r6435f@0 {
+	cs-gpios = <&arduino_header 16 GPIO_ACTIVE_LOW>, /* D10 */
+		   <&gpio0 25 GPIO_ACTIVE_LOW>;
+	mx25r64: mx25r6435f@1 {
 		compatible = "jedec,spi-nor";
 		reg = <0>;
+		status = "okay";
 		spi-max-frequency = <80000000>;
 		jedec-id = [c2 28 17];
 		size = <67108864>;
