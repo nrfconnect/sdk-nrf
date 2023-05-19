@@ -264,6 +264,7 @@ nRF Desktop
   * Set the max compiled-in log level to ``warning`` for the Bluetooth HCI core (:kconfig:option:`CONFIG_BT_HCI_CORE_LOG_LEVEL`).
     This is done to avoid flooding logs during application boot.
   * The documentation with debug Fast Pair provisioning data obtained for development purposes.
+  * Aligned the nRF52833 dongle's board DTS configuration files and nRF Desktop's application-specific DTS overlays to hardware revision 0.2.1.
 
 Samples
 =======
