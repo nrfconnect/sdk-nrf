@@ -13,6 +13,11 @@ The sample provides the following functionality:
   * On/off and dim up/down using one button
   * Scene recall/store of light levels with a second button
 
+This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
+
+  * Dimming Control NLC Profile
+  * Basic Scene Selector NLC Profile
+
 Requirements
 ************
 

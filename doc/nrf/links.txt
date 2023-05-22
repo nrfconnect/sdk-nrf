@@ -645,6 +645,7 @@
 
 .. _`Bluetooth mesh model specification`:
 .. _`Bluetooth mesh profile specification`: https://www.bluetooth.com/specifications/specs/
+.. _`Bluetooth NLC profile specifications`: https://www.bluetooth.com/specifications/specs/
 
 .. _`Bluetooth mesh model overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
 .. _`Bluetooth mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/mesh/mesh-glossary/
