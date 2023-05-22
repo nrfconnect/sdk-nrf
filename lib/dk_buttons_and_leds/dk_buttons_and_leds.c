@@ -19,9 +19,10 @@ LOG_MODULE_REGISTER(dk_buttons_and_leds, CONFIG_DK_LIBRARY_LOG_LEVEL);
 #define LEDS_NODE DT_PATH(leds)
 
 #define GPIO0_DEV DEVICE_DT_GET(DT_NODELABEL(gpio0))
+#define GPIO1_DEV DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio1))
 
-/* GPIO0 and GPIO expander devices require different interrupt flags. */
-#define FLAGS_GPIO0_ACTIVE GPIO_INT_LEVEL_ACTIVE
+/* GPIO0, GPIO1 and GPIO expander devices require different interrupt flags. */
+#define FLAGS_GPIO_0_1_ACTIVE GPIO_INT_LEVEL_ACTIVE
 #define FLAGS_GPIO_EXP_ACTIVE (GPIO_INT_EDGE | GPIO_INT_HIGH_1 | GPIO_INT_LOW_0 | GPIO_INT_ENABLE)
 
 #define GPIO_SPEC_AND_COMMA(button_or_led) GPIO_DT_SPEC_GET(button_or_led, gpios),
@@ -63,8 +64,9 @@ static int callback_ctrl(bool enable)
 	 */
 	for (size_t i = 0; (i < ARRAY_SIZE(buttons)) && !err; i++) {
 		if (enable) {
-			flags = ((buttons[i].port == GPIO0_DEV) ? FLAGS_GPIO0_ACTIVE :
-								  FLAGS_GPIO_EXP_ACTIVE);
+			flags = ((buttons[i].port == GPIO0_DEV || buttons[i].port == GPIO1_DEV) ?
+					 FLAGS_GPIO_0_1_ACTIVE :
+					 FLAGS_GPIO_EXP_ACTIVE);
 		} else {
 			flags = GPIO_INT_DISABLE;
 		}
@@ -202,9 +204,10 @@ static void button_pressed(const struct device *gpio_dev, struct gpio_callback *
 
 	switch (state) {
 	case STATE_WAITING:
-		if (gpio_dev == GPIO0_DEV) {
-			/* GPIO0 has active high triggered interrupts and must be disabled here
-			 * to avoid successive events from blocking the buttons_scan_fn function.
+		if (gpio_dev == GPIO0_DEV || gpio_dev == GPIO1_DEV) {
+			/* GPIO0 & GPIO1 has active high triggered interrupts and must be
+			 * disabled here to avoid successive events from blocking the
+			 * buttons_scan_fn function.
 			 */
 			err = callback_ctrl(false);
 			if (err) {
