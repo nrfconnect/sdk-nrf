@@ -47,18 +47,21 @@ static int setup_tls_server_socket(void)
 			 sizeof(sec_tag_list));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS security TAG list. Err: %d", errno);
+		(void)close(sock);
 		return -errno;
 	}
 
 	err = bind(sock, (struct sockaddr *)&my_addr, sizeof(my_addr));
 	if (err < 0) {
 		LOG_ERR("Failed to bind TLS socket. Err: %d", errno);
+		(void)close(sock);
 		return -errno;
 	}
 
 	err = listen(sock, MAX_CLIENT_QUEUE);
 	if (err < 0) {
 		LOG_ERR("Failed to listen on TLS socket. Err: %d", errno);
+		(void)close(sock);
 		return -errno;
 	}
 
