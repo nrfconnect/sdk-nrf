@@ -443,7 +443,7 @@ static int float32_encode(const struct bt_mesh_sensor_format *format,
 			  const struct sensor_value *val,
 			  struct net_buf_simple *buf)
 {
-	if (net_buf_simple_tailroom(buf) < 1) {
+	if (net_buf_simple_tailroom(buf) < sizeof(float)) {
 		return -ENOMEM;
 	}
 
@@ -458,7 +458,7 @@ static int float32_encode(const struct bt_mesh_sensor_format *format,
 static int float32_decode(const struct bt_mesh_sensor_format *format,
 			  struct net_buf_simple *buf, struct sensor_value *val)
 {
-	if (buf->len < 1) {
+	if (buf->len < sizeof(float)) {
 		return -ENOMEM;
 	}
 
