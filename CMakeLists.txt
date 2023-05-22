@@ -11,6 +11,11 @@ set(NRF_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "NCS root directory")
 # is cached.
 set(CONF_FILE_BUILD_TYPE ${CONF_FILE_BUILD_TYPE} CACHE INTERNAL "The build type")
 
+# Enable Link Time Optimization
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND CONFIG_SIZE_OPTIMIZATIONS)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
+endif()
+
 include(cmake/extensions.cmake)
 include(cmake/version.cmake)
 include(cmake/multi_image.cmake)

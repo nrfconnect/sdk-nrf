@@ -171,7 +171,7 @@ void __mock_nrf_modem_at_scanf_ReturnVarg_string(char *value)
 	strcpy(varg->value.str, value);
 }
 
-int __cmock_nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
+int  __attribute__((used)) __cmock_nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
 {
 	int i = 0;
 	va_list args;
