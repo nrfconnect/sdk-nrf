@@ -48,6 +48,10 @@ Provisioning is performed using the `nRF Mesh mobile app`_.
 This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 1** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 2** can be used to store and restore scenes on the network nodes.
 
+.. note::
+  When running this sample on a Thingy:53, the scene selection functionality will not be available as the device only has one button.
+  The Thingy:53's single button will have the dimming and on/off functionality as described for **Button 1** in this documentation.
+
 Provisioning
 ============
 
@@ -161,10 +165,10 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the Generic Level Client model on the first element on the **Mesh Light Dimmer** node:
+Configure the first element on the **Mesh Light Dimmer** node:
 
-* Bind the model to **Application Key 1**.
-* Configure the publication to any group.
+* Bind the following models to **Application Key 1**: Generic Level Client, Generic OnOff Client and Scene Client.
+* Configure the publication for all models to the same group. This can be any group.
 
 Configure the first element on the target **Mesh Light Fixture** node:
 
