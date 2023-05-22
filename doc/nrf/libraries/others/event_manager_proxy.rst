@@ -152,12 +152,12 @@ From that moment, the event is treated similarly as any other locally generated 
 Limitations
 ***********
 
-The event passed through the Event Manager Proxy is treated and processed the same way as any locally generated event.
+The event passed through the Event Manager Proxy is treated and processed in the same way as any locally generated event.
 The core that sources the event must not subscribe to the same event in another core.
-If it does, once the core receives such an event generated remotely, it would resend the event automatically from that local core to the ones that subscribed to it.
-We would run into a dangerous situation where two cores subscribe to the same event.
-Once generated, such an event would be continuously resent between the cores.
-The currently proposed approach is to create special events for each core even if they look the same, they must have different codes.
+If it does, once the core receives such an event generated remotely, it automatically resends the event from that local core to the ones that subscribed to it.
+This results in a situation where two cores subscribe to the same event.
+Once generated, this event is continuously sent between the cores.
+The current approach is to create events for each core with different codes, even if they look similar.
 
 .. _event_manager_proxy_api:
 
