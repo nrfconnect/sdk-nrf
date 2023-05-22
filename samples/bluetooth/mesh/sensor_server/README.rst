@@ -15,6 +15,11 @@ In addition, the samples demonstrate usage of both :ref:`single-channel sensor t
    This sample must be paired with the :ref:`bluetooth_mesh_sensor_client` sample to show any functionality.
    The mesh sensor provides the sensor data used by the observer.
 
+This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
+
+  * Ambient Light Sensor NLC Profile
+  * Occupancy Sensor NLC Profile
+
 Requirements
 ************
 

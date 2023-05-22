@@ -82,6 +82,7 @@ Bluetooth mesh
 * Updated the protocol user guide with the information about :ref:`ble_mesh_dfu_samples`.
 * Updated the default configuration of advertising sets used by the Bluetooth mesh subsystem to improve performance of the Relay, GATT and Friend features.
   This configuration is specified in the :file:`ncs/nrf/subsys/bluetooth/mesh/Kconfig` file.
+* Updated samples :ref:`bluetooth_mesh_sensor_server`, :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_light_dim` to demonstrate the Bluetooth :ref:`ug_bt_mesh_nlc`.
 
 See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samples.
 
