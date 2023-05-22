@@ -37,6 +37,11 @@ __version__ = "0.1.0"
 logger = logging.getLogger(__name__)
 
 
+def remove_prefix(s: str, prefix: str) -> str:
+    """Remove a prefix from a string, if found."""
+    return s[len(prefix) :] if s.startswith(prefix) else s
+
+
 def parse_pip_requirements(lines: List[str]) -> Dict[str, str]:
     """Create a mapping from a pip requirements file.
     The listed dependencies are mapped to their required versions.
@@ -60,7 +65,7 @@ def parse_pip_requirements(lines: List[str]) -> Dict[str, str]:
         # Conditionals (;) are ignored.
         tool, version = re.match(r"([^~><=!;]*)([^;]*)", line).groups()
         tool = tool.upper().replace("-", "_")
-        version = version.strip().removeprefix("==")
+        version = remove_prefix(version.strip(), "==")
         versions[f"{tool}_VERSION"] = version
     return versions
 
@@ -78,7 +83,7 @@ def tool_version_replace(app: Sphinx) -> Callable:
             logger.warning(f"Tool version file '{path.as_posix()}' does not exist")
             continue
 
-        os = path.stem.removeprefix("tools-versions-").upper()
+        os = remove_prefix(path.stem, "tools-versions-").upper()
         if path.suffix in [".yml", ".yaml"]:
             with open(path) as version_file:
                 yaml_object = yaml.safe_load(version_file)
