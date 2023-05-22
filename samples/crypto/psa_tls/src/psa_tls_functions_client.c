@@ -48,6 +48,7 @@ static int setup_tls_client_socket(void)
 			 &verify, sizeof(verify));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS peer verification. Err %d", errno);
+		(void)close(sock);
 		return -errno;
 	}
 
@@ -55,6 +56,7 @@ static int setup_tls_client_socket(void)
 			 sizeof(sec_tag_list));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS security TAG list. Err: %d", errno);
+		(void)close(sock);
 		return -errno;
 	}
 
@@ -62,6 +64,7 @@ static int setup_tls_client_socket(void)
 			 TLS_PEER_HOSTNAME, sizeof(TLS_PEER_HOSTNAME));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS_HOSTNAME option. Err: %d", errno);
+		(void)close(sock);
 		return -errno;
 	}
 
@@ -89,7 +92,7 @@ void process_psa_tls(void)
 
 		sock = setup_tls_client_socket();
 		if (sock < 0) {
-			LOG_INF("Retrying to aquiring socket");
+			LOG_INF("Retrying acquiring socket");
 			k_sleep(K_MSEC(1000));
 			continue;
 		}
