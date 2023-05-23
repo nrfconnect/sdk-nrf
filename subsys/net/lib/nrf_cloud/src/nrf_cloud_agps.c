@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(nrf_cloud_agps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_agps_schema_v1.h"
 
-extern void agps_print(enum nrf_cloud_agps_type type, void *data);
+extern void agps_print(uint16_t type, void *data);
 
 static K_SEM_DEFINE(agps_injection_active, 1, 1);
 
