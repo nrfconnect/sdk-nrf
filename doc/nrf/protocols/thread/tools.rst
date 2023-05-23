@@ -158,7 +158,7 @@ To set up and configure the OpenThread Border Router, follow the official `OpenT
 
       cd ot-br-posix
       git pull --unshallow
-      git checkout a892bf7
+      git checkout 9185bda
 
 * After the *Build and install OTBR* section, configure RCP device's UART baud rate in *otbr-agent*.
   Modify the :file:`/etc/default/otbr-agent` configuration file with default RCP baud rate:
@@ -200,7 +200,7 @@ To install and configure the OpenThread Border Router using the Docker container
 
    .. code-block:: console
 
-      docker pull nrfconnect/otbr:a892bf7
+      docker pull nrfconnect/otbr:9185bda
 
 #. Connect the radio co-processor that you configured in :ref:`ug_thread_tools_tbr_rcp` to the Border Router device.
 #. Start the OpenThread Border Router container using the following commands:
@@ -210,7 +210,7 @@ To install and configure the OpenThread Border Router using the Docker container
       sudo modprobe ip6table_filter
       sudo docker run -it --rm --privileged --name otbr --network otbr -p 8080:80 \
       --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" \
-      --volume /dev/ttyACM0:/dev/radio nrfconnect/otbr:a892bf7 --radio-url spinel+hdlc+uart:///dev/radio?uart-baudrate=1000000
+      --volume /dev/ttyACM0:/dev/radio nrfconnect/otbr:9185bda --radio-url spinel+hdlc+uart:///dev/radio?uart-baudrate=1000000
 
    Replace ``/dev/ttyACM0`` with the device node name of the OpenThread radio co-processor.
 
