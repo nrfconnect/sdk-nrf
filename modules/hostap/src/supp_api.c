@@ -81,12 +81,14 @@ static int wait_for_disconnect_complete(const struct device *dev)
 
 	if (!wpa_s) {
 		ret = -ENODEV;
+		wpa_printf(MSG_ERROR, "Failed to get wpa_s handle");
 		goto out;
 	}
 
 	while (wpa_s->wpa_state != WPA_DISCONNECTED) {
 		if (timeout > DISCONNECT_TIMEOUT_MS) {
 			ret = -ETIMEDOUT;
+			wpa_printf(MSG_WARNING, "Failed to disconnect from network");
 			break;
 		}
 		k_sleep(K_MSEC(10));
@@ -189,12 +191,14 @@ int z_wpa_supplicant_connect(const struct device *dev,
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
 		ret = -1;
+		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
 		goto out;
 	}
 
 	_wpa_cli_cmd_v("remove_network all");
 	ret = z_wpa_ctrl_add_network(&resp);
 	if (ret) {
+		wpa_printf(MSG_ERROR, "Failed to add network");
 		goto out;
 	}
 
@@ -245,6 +249,8 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		int freq = chan_to_freq(params->channel);
 		if (freq < 0) {
 			ret = -1;
+			wpa_printf(MSG_ERROR, "Invalid channel %d",
+				params->channel);
 			goto out;
 		}
 		z_wpa_cli_cmd_v("set_network %d scan_freq %d",
@@ -275,6 +281,7 @@ int z_wpa_supplicant_disconnect(const struct device *dev)
 
 	if (!iface) {
 		ret = -EINVAL;
+		wpa_printf(MSG_ERROR, "Device %s not found", dev->name);
 		goto out;
 	}
 
@@ -283,6 +290,7 @@ int z_wpa_supplicant_disconnect(const struct device *dev)
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
 		ret = -EINVAL;
+		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
 		goto out;
 	}
 	wpa_supp_api_ctrl.dev = dev;
@@ -349,11 +357,13 @@ int z_wpa_supplicant_status(const struct device *dev,
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
+		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
 		goto out;
 	}
 
 	si = os_zalloc(sizeof(struct wpa_signal_info));
 	if (!si) {
+		wpa_printf(MSG_ERROR, "Failed to allocate memory for signal info");
 		goto out;
 	}
 
