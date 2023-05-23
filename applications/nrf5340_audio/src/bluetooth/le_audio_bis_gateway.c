@@ -13,6 +13,7 @@
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 #include <../subsys/bluetooth/audio/bap_iso.h>
+#include <zephyr/sys/byteorder.h>
 
 #include "macros_common.h"
 #include "nrf5340_audio_common.h"
@@ -27,9 +28,9 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 		 ZBUS_MSG_INIT(0));
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
-#define STANDARD_QUALITY_16KHZ 16000
-#define STANDARD_QUALITY_24KHZ 24000
-#define HIGH_QUALITY_48KHZ 48000
+#define STANDARD_QUALITY_16KHZ	   16000
+#define STANDARD_QUALITY_24KHZ	   24000
+#define HIGH_QUALITY_48KHZ	   48000
 
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
@@ -283,13 +284,26 @@ static int adv_create(void)
 	return 0;
 }
 
+/**
+ * @brief Set the channel allocation to a preset codec configuration.
+ *
+ * @param codec The preset codec configuration.
+ * @param loc   Location bitmask setting.
+ */
+static void bt_codec_allocation_set(struct bt_codec_data *codec, enum bt_audio_location loc)
+{
+	codec->data.type = BT_CODEC_CONFIG_LC3_CHAN_ALLOC;
+	sys_put_le32(loc, codec->value);
+	codec->data.data = codec->value;
+	codec->data.data_len = 4;
+}
+
 static int initialize(le_audio_timestamp_cb timestmp_cb)
 {
 	int ret;
 	static bool initialized;
-	struct bt_codec_data bis_codec_data =
-		BT_CODEC_DATA(BT_CODEC_CONFIG_LC3_FREQ, BT_AUDIO_CODEC_CONFIG_FREQ);
 	struct bt_bap_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
+	struct bt_codec_data bis_codec_data[ARRAY_SIZE(stream_params)];
 	struct bt_bap_broadcast_source_subgroup_param
 		subgroup_params[CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
 	struct bt_bap_broadcast_source_create_param create_param;
@@ -312,7 +326,9 @@ static int initialize(le_audio_timestamp_cb timestmp_cb)
 		stream_params[i].stream = &audio_streams[i];
 		bt_bap_stream_cb_register(stream_params[i].stream, &stream_ops);
 		stream_params[i].data_count = 1U;
-		stream_params[i].data = &bis_codec_data;
+		stream_params[i].data = &bis_codec_data[i];
+		/* The channel allocation is set incrementally */
+		bt_codec_allocation_set(stream_params[i].data, BIT(i));
 	}
 
 	for (size_t i = 0U; i < ARRAY_SIZE(subgroup_params); i++) {
@@ -489,7 +505,7 @@ int le_audio_send(struct encoded_audio enc_audio)
 		}
 	}
 
-	struct bt_iso_tx_info tx_info = { 0 };
+	struct bt_iso_tx_info tx_info = {0};
 
 	ret = bt_iso_chan_get_tx_sync(&audio_streams[0].ep->iso->chan, &tx_info);
 
