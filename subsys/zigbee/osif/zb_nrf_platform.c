@@ -321,6 +321,12 @@ int zigbee_init(void)
 	zb_set_network_coordinator_role(channel_mask);
 #elif defined(CONFIG_ZIGBEE_ROLE_ROUTER)
 	zb_set_network_router_role(channel_mask);
+
+/* Enable full distributed network operability. */
+#if (ZBOSS_MAJOR == 3U) && (ZBOSS_MINOR == 11U)
+	zb_enable_distributed();
+#endif
+
 #elif defined(CONFIG_ZIGBEE_ROLE_END_DEVICE)
 	zb_set_network_ed_role(channel_mask);
 #else
