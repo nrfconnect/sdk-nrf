@@ -8,6 +8,7 @@
 #define IDENTITY_KEY_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * @file
