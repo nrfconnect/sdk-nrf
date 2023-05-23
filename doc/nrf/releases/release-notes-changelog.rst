@@ -824,6 +824,7 @@ Documentation
 * Added:
 
   * A page on :ref:`ug_nrf70_developing_regulatory_support` in the :ref:`ug_nrf70_developing` user guide.
+  * A section on :ref:`building Wi-Fi applications<thingy53_build_pgm_targets_wifi>` to the :ref:`ug_thingy53` page.
 
 * Updated:
 
