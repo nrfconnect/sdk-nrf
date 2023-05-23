@@ -106,6 +106,7 @@ Matter
   * The :ref:`ug_matter_tools` page with information about CHIP Tool, CHIP Certificate Tool, and the Spake2+ Python tool.
   * The :ref:`ug_matter_device_low_power_configuration` page with information about sleepy active threshold parameter configuration.
   * The default number of user RTC channels on the nRF5340 SoC's network core from 2 to 3 (the platform default) to fix the CSL transmitter feature on Matter over Thread devices acting as Thread routers.
+  * :ref:`ug_matter_hw_requirements` with updated memory requirement values valid for the |NCS| v2.4.0.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
