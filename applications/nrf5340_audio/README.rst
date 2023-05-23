@@ -1182,6 +1182,7 @@ The application also depends on the following Zephyr libraries:
   * :file:`include/bluetooth/hci.h`
   * :file:`include/bluetooth/uuid.h`
 
+.. _nrf53_audio_app_options:
 .. _config_nrf53_audio_app_options:
 
 Application configuration options
