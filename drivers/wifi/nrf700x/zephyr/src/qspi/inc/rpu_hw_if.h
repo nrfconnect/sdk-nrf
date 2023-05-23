@@ -54,8 +54,7 @@ int rpu_clks_on(void);
 int rpu_enable(void);
 int rpu_disable(void);
 
-#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 int ble_ant_switch(unsigned int ant_switch);
 #endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */

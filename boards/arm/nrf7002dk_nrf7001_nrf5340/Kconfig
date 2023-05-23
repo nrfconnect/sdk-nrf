@@ -1,5 +1,3 @@
-# nRF7001 DK board configuration
-
 # Copyright (c) 2023 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
@@ -9,7 +7,7 @@ config IPM_NRFX
 config MBOX_NRFX_IPC
 	default MBOX
 
-if BOARD_NRF7001DK_NRF5340_CPUAPP || BOARD_NRF7001DK_NRF5340_CPUAPP_NS
+if BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP_NS
 
 config BOARD_ENABLE_DCDC_APP
 	bool "Enable Application MCU DCDC converter"
@@ -54,7 +52,7 @@ config BOARD_ENABLE_CPUNET
 
 config DOMAIN_CPUNET_BOARD
 	string
-	default "nrf7001dk_nrf5340_cpunet" if BOARD_NRF7001DK_NRF5340_CPUAPP || BOARD_NRF7001DK_NRF5340_CPUAPP_NS
+	default "nrf7002dk_nrf7001_nrf5340_cpunet" if BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP_NS
 	depends on BOARD_ENABLE_CPUNET
 	help
 	  The board which will be used for CPUNET domain when creating a multi
@@ -62,9 +60,9 @@ config DOMAIN_CPUNET_BOARD
 	  another board. For example hci_rpmsg on the nRF5340_cpunet for
 	  Bluetooth applications.
 
-endif #  BOARD_NRF7001DK_NRF5340_CPUAPP || BOARD_NRF7001DK_NRF5340_CPUAPP_NS
+endif #  BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP || BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP_NS
 
-if BOARD_NRF7001DK_NRF5340_CPUNET
+if BOARD_NRF7002DK_NRF7001_NRF5340_CPUNET
 
 # BT_CTLR depends on BT. When BT is enabled we should default to also
 # enabling the controller.
@@ -76,10 +74,10 @@ config BT_ECC
 
 config DOMAIN_CPUAPP_BOARD
 	string
-	default "nrf7001dk_nrf5340_cpuapp" if BOARD_NRF7001DK_NRF5340_CPUNET
+	default "nrf7002dk_nrf7001_nrf5340_cpuapp" if BOARD_NRF7002DK_NRF7001_NRF5340_CPUNET
 	help
 	  The board which will be used for CPUAPP domain when creating a multi
 	  image application where one or more images should be located on
 	  another board.
 
-endif # BOARD_NRF7001DK_NRF5340_CPUNET
+endif # BOARD_NRF7002DK_NRF7001_NRF5340_CPUNET

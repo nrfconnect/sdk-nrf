@@ -35,8 +35,7 @@ GPIO_DT_SPEC_GET(NRF7002_NODE, iovdd_ctrl_gpios);
 static const struct gpio_dt_spec bucken_spec =
 GPIO_DT_SPEC_GET(NRF7002_NODE, bucken_gpios);
 
-#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 #define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
 static const struct gpio_dt_spec btrf_switch_spec =
@@ -139,8 +138,7 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 
 int ble_gpio_config(void)
 {
-#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	int ret;
 
@@ -225,8 +223,7 @@ int rpu_pwron(void)
 	return 0;
 }
 
-#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 int ble_ant_switch(unsigned int ant_switch)
 {

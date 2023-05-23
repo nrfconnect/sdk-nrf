@@ -301,8 +301,7 @@ int main(void)
 	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 	k_sleep(K_SECONDS(1));
 
-#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	if (strlen(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY)) {
 		char key[QSPI_KEY_LEN_BYTES];

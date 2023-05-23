@@ -10,7 +10,7 @@
 
 #include <soc.h>
 
-LOG_MODULE_REGISTER(nrf7001dk_nrf5340_cpuapp, CONFIG_LOG_DEFAULT_LEVEL);
+LOG_MODULE_REGISTER(nrf7002dk_nrf7001_nrf5340_cpuapp, CONFIG_LOG_DEFAULT_LEVEL);
 
 #if defined(CONFIG_BT_CTLR_DEBUG_PINS_CPUAPP)
 #include <../subsys/bluetooth/controller/ll_sw/nordic/hal/nrf5/debug.h>
