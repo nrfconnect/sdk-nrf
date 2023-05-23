@@ -269,11 +269,11 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_fmac_fw_info fw_info;
 	void *rpu_ctx = NULL;
-#if defined(CONFIG_BOARD_NRF7000) || defined(CONFIG_BOARD_NRF7001)
+#if defined(CONFIG_BOARD_NRF7001)
 	enum op_band op_band = BAND_24G;
-#else /* CONFIG_BOARD_NRF7000 || CONFIG_BOARD_NRF7001 */
+#else /* CONFIG_BOARD_NRF7001 */
 	enum op_band op_band = BAND_ALL;
-#endif /* CONFIG_BOARD_NRF7000 || CONFIG_BOARD_NRF7001 */
+#endif /* CONFIG_BOARD_NRF7001 */
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	int sleep_type = -1;
 
