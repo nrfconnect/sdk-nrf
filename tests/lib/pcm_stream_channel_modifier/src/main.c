@@ -56,7 +56,7 @@ uint8_t combine_32[] = { 1,  2,	 3,  4,	 13, 14, 15, 16, 5,  6,	 7,  8,
 uint8_t stereo_split_left_32[] = { 1, 13, 2, 14, 5, 17, 6, 18, 9, 21, 10, 22 };
 uint8_t stereo_split_right_32[] = { 3, 15, 4, 16, 7, 19, 8, 20, 11, 23, 12, 24 };
 
-void test_pscm_zero_pad_16(void)
+ZTEST(suite_pscm, test_pscm_zero_pad_16)
 {
 	uint16_t left_test_list[50];
 	uint16_t right_test_list[50];
@@ -76,7 +76,7 @@ void test_pscm_zero_pad_16(void)
 	verify_array_eq(right_test_list, right_zero_padded_16, output_size);
 }
 
-void test_pscm_zero_pad_24(void)
+ZTEST(suite_pscm, test_pscm_zero_pad_24)
 {
 	uint8_t left_test_list[50];
 	uint8_t right_test_list[50];
@@ -96,7 +96,7 @@ void test_pscm_zero_pad_24(void)
 	verify_array_eq(right_test_list, right_zero_padded_24, output_size);
 }
 
-void test_pscm_zero_pad_32(void)
+ZTEST(suite_pscm, test_pscm_zero_pad_32)
 {
 	uint32_t left_test_list[50];
 	uint32_t right_test_list[50];
@@ -116,7 +116,7 @@ void test_pscm_zero_pad_32(void)
 	verify_array_eq(right_test_list, right_zero_padded_32, output_size);
 }
 
-void test_pscm_copy_pad_16(void)
+ZTEST(suite_pscm, test_pscm_copy_pad_16)
 {
 	uint16_t copy_test_list[50];
 	size_t output_size;
@@ -128,7 +128,7 @@ void test_pscm_copy_pad_16(void)
 	verify_array_eq(copy_test_list, copy_padded_16, output_size);
 }
 
-void test_pscm_copy_pad_24(void)
+ZTEST(suite_pscm, test_pscm_copy_pad_24)
 {
 	uint8_t copy_test_list[50];
 	size_t output_size;
@@ -140,7 +140,7 @@ void test_pscm_copy_pad_24(void)
 	verify_array_eq(copy_test_list, copy_padded_24, output_size);
 }
 
-void test_pscm_copy_pad_32(void)
+ZTEST(suite_pscm, test_pscm_copy_pad_32)
 {
 	uint32_t copy_test_list[50];
 	size_t output_size;
@@ -152,7 +152,7 @@ void test_pscm_copy_pad_32(void)
 	verify_array_eq(copy_test_list, copy_padded_32, output_size);
 }
 
-void test_pscm_combine_16(void)
+ZTEST(suite_pscm, test_pscm_combine_16)
 {
 	uint16_t combine_test_list[50];
 	size_t output_size;
@@ -165,7 +165,7 @@ void test_pscm_combine_16(void)
 	verify_array_eq(combine_test_list, combine_16, output_size);
 }
 
-void test_pscm_combine_24(void)
+ZTEST(suite_pscm, test_pscm_combine_24)
 {
 	uint8_t combine_test_list[50];
 	size_t output_size;
@@ -178,7 +178,7 @@ void test_pscm_combine_24(void)
 	verify_array_eq(combine_test_list, combine_24, output_size);
 }
 
-void test_pscm_combine_32(void)
+ZTEST(suite_pscm, test_pscm_combine_32)
 {
 	uint32_t combine_test_list[50];
 	size_t output_size;
@@ -191,7 +191,7 @@ void test_pscm_combine_32(void)
 	verify_array_eq(combine_test_list, combine_32, output_size);
 }
 
-void test_pscm_one_channel_split_16(void)
+ZTEST(suite_pscm, test_pscm_one_channel_split_16)
 {
 	uint8_t left_test_list[50];
 	uint8_t right_test_list[50];
@@ -212,7 +212,7 @@ void test_pscm_one_channel_split_16(void)
 	verify_array_eq(right_test_list, unpadded_left, output_size);
 }
 
-void test_pscm_one_channel_split_24(void)
+ZTEST(suite_pscm, test_pscm_one_channel_split_24)
 {
 	uint8_t left_test_list[50];
 	uint8_t right_test_list[50];
@@ -233,7 +233,7 @@ void test_pscm_one_channel_split_24(void)
 	verify_array_eq(right_test_list, unpadded_left, output_size);
 }
 
-void test_pscm_one_channel_split_32(void)
+ZTEST(suite_pscm, test_pscm_one_channel_split_32)
 {
 	uint8_t left_test_list[50];
 	uint8_t right_test_list[50];
@@ -254,7 +254,7 @@ void test_pscm_one_channel_split_32(void)
 	verify_array_eq(right_test_list, unpadded_left, output_size);
 }
 
-void test_pscm_two_channel_split_16(void)
+ZTEST(suite_pscm, test_pscm_two_channel_split_16)
 {
 	uint16_t left_test_list[50];
 	uint16_t right_test_list[50];
@@ -270,7 +270,7 @@ void test_pscm_two_channel_split_16(void)
 	verify_array_eq(right_test_list, stereo_split_right_16, output_size);
 }
 
-void test_pscm_two_channel_split_24(void)
+ZTEST(suite_pscm, test_pscm_two_channel_split_24)
 {
 	uint8_t left_test_list[50];
 	uint8_t right_test_list[50];
@@ -286,7 +286,7 @@ void test_pscm_two_channel_split_24(void)
 	verify_array_eq(right_test_list, stereo_split_right_24, output_size);
 }
 
-void test_pscm_two_channel_split_32(void)
+ZTEST(suite_pscm, test_pscm_two_channel_split_32)
 {
 	uint32_t left_test_list[50];
 	uint32_t right_test_list[50];
@@ -302,25 +302,4 @@ void test_pscm_two_channel_split_32(void)
 	verify_array_eq(right_test_list, stereo_split_right_32, output_size);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_suite_pscm,
-		ztest_unit_test(test_pscm_zero_pad_16),
-		ztest_unit_test(test_pscm_copy_pad_16),
-		ztest_unit_test(test_pscm_combine_16),
-		ztest_unit_test(test_pscm_one_channel_split_16),
-		ztest_unit_test(test_pscm_two_channel_split_16),
-		ztest_unit_test(test_pscm_zero_pad_24),
-		ztest_unit_test(test_pscm_copy_pad_24),
-		ztest_unit_test(test_pscm_combine_24),
-		ztest_unit_test(test_pscm_one_channel_split_24),
-		ztest_unit_test(test_pscm_two_channel_split_24),
-		ztest_unit_test(test_pscm_zero_pad_32),
-		ztest_unit_test(test_pscm_copy_pad_32),
-		ztest_unit_test(test_pscm_combine_32),
-		ztest_unit_test(test_pscm_one_channel_split_32),
-		ztest_unit_test(test_pscm_two_channel_split_32)
-	);
-
-	ztest_run_test_suite(test_suite_pscm);
-}
+ZTEST_SUITE(suite_pscm, NULL, NULL, NULL, NULL, NULL);

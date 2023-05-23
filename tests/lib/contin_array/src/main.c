@@ -30,7 +30,7 @@ static const uint8_t test_arr[] = {
 };
 /* clang-format on */
 
-void test_simp_arr_loop(void)
+ZTEST(suite_contin_array, test_simp_arr_loop)
 {
 	const uint32_t NUM_ITERATIONS = 200;
 	const size_t CONTIN_ARR_SIZE = 97; /* Test with random "uneven" value */
@@ -74,7 +74,7 @@ void test_simp_arr_loop(void)
 }
 
 /* Test with const array size being shorter than contin array size */
-void test_simp_arr_loop_short(void)
+ZTEST(suite_contin_array, test_simp_arr_loop_short)
 {
 	const uint32_t NUM_ITERATIONS = 2000;
 	const size_t CONTIN_ARR_SIZE = 97; /* Test with random "uneven" value */
@@ -115,12 +115,4 @@ void test_simp_arr_loop_short(void)
 	}
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_suite_contin_array,
-		ztest_unit_test(test_simp_arr_loop),
-		ztest_unit_test(test_simp_arr_loop_short)
-	);
-
-	ztest_run_test_suite(test_suite_contin_array);
-}
+ZTEST_SUITE(suite_contin_array, NULL, NULL, NULL, NULL, NULL);

@@ -17,7 +17,7 @@ void verify_array_eq(int16_t *p1, int16_t *p2, uint32_t elements)
 	}
 }
 
-void test_mix_with_nothing(void)
+ZTEST(suite_pcm_mix, test_mix_with_nothing)
 {
 	int ret;
 	int16_t sample_a[] = { 0, 1, -1 };
@@ -29,7 +29,7 @@ void test_mix_with_nothing(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_mix_with_silence(void)
+ZTEST(suite_pcm_mix, test_mix_with_silence)
 {
 	int ret;
 	int16_t sample_a[] = { 0, 1, 0 };
@@ -42,7 +42,7 @@ void test_mix_with_silence(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_mix_various_legal(void)
+ZTEST(suite_pcm_mix, test_mix_various_legal)
 {
 	int ret;
 	int16_t sample_a[] = { 12, 1, 2, 3, -4, 2000, -2000 };
@@ -55,7 +55,7 @@ void test_mix_various_legal(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_illegal_arguments(void)
+ZTEST(suite_pcm_mix, test_illegal_arguments)
 {
 	int ret;
 	int16_t sample_a[] = { 0, 1, 2 };
@@ -72,7 +72,7 @@ void test_illegal_arguments(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_high_values(void)
+ZTEST(suite_pcm_mix, test_high_values)
 {
 	int ret;
 	int16_t sample_a[] = { INT16_MAX, INT16_MIN, INT16_MIN, INT16_MAX };
@@ -85,7 +85,7 @@ void test_high_values(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_mono_into_stereo_lr(void)
+ZTEST(suite_pcm_mix, test_mono_into_stereo_lr)
 {
 	int ret;
 	int16_t sample_a[] = { 10, 10, 10, 10 };
@@ -99,7 +99,7 @@ void test_mono_into_stereo_lr(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_mono_into_stereo_l(void)
+ZTEST(suite_pcm_mix, test_mono_into_stereo_l)
 {
 	int ret;
 	int16_t sample_a[] = { 10, 10, 10, 10 };
@@ -113,7 +113,7 @@ void test_mono_into_stereo_l(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_mono_into_stereo_r(void)
+ZTEST(suite_pcm_mix, test_mono_into_stereo_r)
 {
 	int ret;
 	int16_t sample_a[] = { 10, 10, 10, 10 };
@@ -127,18 +127,4 @@ void test_mono_into_stereo_r(void)
 	verify_array_eq(sample_a, sample_r, ARRAY_SIZE(sample_r));
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_suite_pcm_mix,
-		ztest_unit_test(test_mix_with_nothing),
-		ztest_unit_test(test_mix_with_silence),
-		ztest_unit_test(test_mix_various_legal),
-		ztest_unit_test(test_illegal_arguments),
-		ztest_unit_test(test_high_values),
-		ztest_unit_test(test_mono_into_stereo_lr),
-		ztest_unit_test(test_mono_into_stereo_l),
-		ztest_unit_test(test_mono_into_stereo_r)
-	);
-
-	ztest_run_test_suite(test_suite_pcm_mix);
-}
+ZTEST_SUITE(suite_pcm_mix, NULL, NULL, NULL, NULL, NULL);
