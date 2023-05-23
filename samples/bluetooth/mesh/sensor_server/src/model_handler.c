@@ -48,6 +48,7 @@ static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
 static struct sensor_value pres_mot_thres;
+static double amb_light_level_ref;
 static double amb_light_level_gain = 1.0;
 /* Using a dummy ambient light value because we do not have a real ambient light sensor. */
 static double dummy_ambient_light_value;
@@ -371,8 +372,9 @@ static int amb_light_level_ref_set(struct bt_mesh_sensor_srv *srv,
 				   struct bt_mesh_msg_ctx *ctx,
 				   const struct sensor_value *value)
 {
-	double amb_light_level_ref = sensor_value_to_double(value);
 	struct sensor_value gain_value_tmp;
+
+	amb_light_level_ref = sensor_value_to_double(value);
 
 	/* When using the a real ambient light sensor the sensor value should be
 	 * read and used instead of the dummy value.
@@ -391,6 +393,16 @@ static int amb_light_level_ref_set(struct bt_mesh_sensor_srv *srv,
 	return 0;
 }
 
+static void amb_light_level_ref_get(struct bt_mesh_sensor_srv *srv,
+				     struct bt_mesh_sensor *sensor,
+				     const struct bt_mesh_sensor_setting *setting,
+				     struct bt_mesh_msg_ctx *ctx,
+				     struct sensor_value *rsp)
+{
+	(void)sensor_value_from_double(rsp, amb_light_level_ref);
+	printk("Ambient light level ref: %s\n", bt_mesh_sensor_ch_str(rsp));
+};
+
 static struct bt_mesh_sensor_setting amb_light_level_setting[] = {
 	{
 		.type = &bt_mesh_sensor_gain,
@@ -399,6 +411,7 @@ static struct bt_mesh_sensor_setting amb_light_level_setting[] = {
 	},
 	{
 		.type = &bt_mesh_sensor_present_amb_light_level,
+		.get = amb_light_level_ref_get,
 		.set = amb_light_level_ref_set,
 	},
 };
