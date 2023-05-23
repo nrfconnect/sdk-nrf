@@ -16,6 +16,12 @@ config BT_MAX_CONN
 	range 1 20 if BT_LL_SOFTDEVICE
 	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
 
+config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
+	bool
+	default y if !BT_CTLR
+	help
+	  Include SoftDevice header files provided with the library.
+
 if BT_CTLR
 rsource "controller/Kconfig"
 endif

@@ -50,6 +50,7 @@ choice BT_LL_SOFTDEVICE_BUILD_TYPE
 
 config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 	bool "Use library"
+	select BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 
 endchoice
 
