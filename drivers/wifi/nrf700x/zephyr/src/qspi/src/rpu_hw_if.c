@@ -35,6 +35,14 @@ GPIO_DT_SPEC_GET(NRF7002_NODE, iovdd_ctrl_gpios);
 static const struct gpio_dt_spec bucken_spec =
 GPIO_DT_SPEC_GET(NRF7002_NODE, bucken_gpios);
 
+#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+#define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
+static const struct gpio_dt_spec btrf_switch_spec =
+GPIO_DT_SPEC_GET(NRF_RADIO_COEX_NODE, btrf_switch_gpios);
+#endif /* CONFIG_BOARD_NRF700XDK_NRF5340_CPUAPP */
+
 char blk_name[][15] = { "SysBus",   "ExtSysBus",	   "PBus",	   "PKTRAM",
 			       "GRAM",	   "LMAC_ROM",	   "LMAC_RET_RAM", "LMAC_SRC_RAM",
 			       "UMAC_ROM", "UMAC_RET_RAM", "UMAC_SRC_RAM" };
@@ -131,7 +139,9 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 
 int ble_gpio_config(void)
 {
-#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	int ret;
 
 	if (!device_is_ready(btrf_switch_spec.port)) {
@@ -143,7 +153,7 @@ int ble_gpio_config(void)
 	return ret;
 #else
 	return 0;
-#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
+#endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
 }
 
 
@@ -198,19 +208,26 @@ int rpu_pwron(void)
 		LOG_ERR("IOVDD GPIO set failed...\n");
 		return ret;
 	}
-	/* Settling time for iovdd nRF7002 DK/EK - switch (TCK106AG): ~600us
-	 * For nRF7002 Evaluation board, we add 1ms more to ensure
-	 * that the total time after bucken assertion is more than 2.5ms
-	 * so making this 3ms (1ms + 2ms)
+
+	/* Settling time for iovdd nRF7002 DK/EK - switch (TCK106AG): ~600us */
+	k_msleep(1);
+
+#ifdef SHIELD_NRF7002EB
+	/* For nRF7002 Evaluation board, we need a total time after bucken assertion
+	 * to be 6ms (2ms+4ms)
 	 */
-	k_msleep(2);
+	k_msleep(4);
+#endif /* SHIELD_NRF7002EB */
+
 	LOG_DBG("Bucken = %d, IOVDD = %d\n", gpio_pin_get_dt(&bucken_spec),
 			gpio_pin_get_dt(&iovdd_ctrl_spec));
 
 	return 0;
 }
 
-#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 int ble_ant_switch(unsigned int ant_switch)
 {
 	return gpio_pin_set_dt(&btrf_switch_spec, ant_switch & 0x1);
