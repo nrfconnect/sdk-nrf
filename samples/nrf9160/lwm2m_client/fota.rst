@@ -15,6 +15,10 @@ However, Zephyr only implements version 1.0 of the Firmware Update object.
 The main difference between these two versions is that the Advanced Firmware Update object is multi-instance.
 For more information about the differences, see `LwM2M Firmware Update version 1.1 <LwM2M v1.2 specification_>`_.
 
+.. note::
+   This object is still under development in AVSystem Coiote platform.
+   The following sections describe the object and how to test it manually without the Coiote user interface that is still under development.
+
 Extended resources
 ******************
 
