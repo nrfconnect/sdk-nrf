@@ -594,7 +594,8 @@ int main(void)
 {
 	int err;
 
-	LOG_INF("nRF Cloud REST Cellular Location Sample");
+	LOG_INF("nRF Cloud REST Cellular Location Sample, version: %s",
+		CONFIG_REST_CELL_LOCATION_SAMPLE_VERSION);
 
 	err = init();
 	if (err) {

@@ -45,6 +45,6 @@ K_THREAD_DEFINE(con_thread, CONFIG_CONNECTION_THREAD_STACK_SIZE, connection_mana
  */
 int main(void)
 {
-	LOG_INF("nRF Cloud MQTT multi-service sample has started.");
+	LOG_INF("nRF Cloud MQTT multi-service sample has started, version: %s", CONFIG_APP_VERSION);
 	return 0;
 }

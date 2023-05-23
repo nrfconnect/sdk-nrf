@@ -6,6 +6,10 @@
 
 menu "nRF Cloud REST Cellular Location Sample"
 
+config REST_CELL_LOCATION_SAMPLE_VERSION
+	string "The sample's version string"
+	default "1.0.0"
+
 config REST_CELL_LOCATION_DO_JITP
 	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
 	help
