@@ -44,6 +44,11 @@ Devices in the nRF70 Series are supported by the following boards in the `Zephyr
      - ``nrf7002dk_nrf5340_cpuapp``
      - | `Product Specification <Product specification for nRF70 Series devices_>`_
        | `User Guide <nRF7002 DK Hardware_>`_
+   * - nRF7001 emulation on nRF7002 DK
+     - Not applicable
+     - PCA10143
+     - ``nrf7002dk_nrf7001_nrf5340_cpuapp``
+     - | `nRF70 Series Specification <nRF70 Series_>`_
    * - nRF5340 DK
      - nRF7002 EK
      - PCA10095
