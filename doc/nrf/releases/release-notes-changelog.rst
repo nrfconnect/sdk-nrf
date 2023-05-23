@@ -743,7 +743,14 @@ sdk-nrfxlib
 
 * Added:
 
-  * New library :ref:`nrf_fuel_gauge`.
+  * :ref:`nrf_fuel_gauge`.
+  * PSA core implementation provided by nrf_oberon PSA core.
+
+* Updated:
+
+  * Deprecated PSA core implementation from Mbed TLS.
+  * Deprecated PSA driver implementation from Mbed TLS.
+
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
