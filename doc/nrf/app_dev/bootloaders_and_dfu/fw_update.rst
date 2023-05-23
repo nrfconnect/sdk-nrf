@@ -305,7 +305,7 @@ To assign a semantic version number to your application, pass the version string
 
 See the `Semantic versioning`_ webpage or :doc:`mcuboot:imgtool` for details on version syntax.
 
-.. warning::
+.. caution::
 
    Enabling ``CONFIG_BOOT_UPGRADE_ONLY`` prevents the fallback recovery of application images.
    Consult its Kconfig description and the :doc:`MCUboot Design documentation <mcuboot:design>` for more information on how to use it.
