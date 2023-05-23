@@ -56,12 +56,12 @@ The following code snippet shows an example DTS configuration:
         pinctrl-0 = <&spi1_default_alt>;
         pinctrl-1 = <&spi1_sleep_alt>;
         pinctrl-names = "default", "sleep";
-        cs-gpios = <&gpio0 13 0>;
+        cs-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
 
         pmw3360@0 {
                 compatible = "pixart,pmw3360";
                 reg = <0>;
-                irq-gpios = <&gpio0 21 0>;
+                irq-gpios = <&gpio0 21 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
                 spi-max-frequency = <2000000>;
         };
     };
@@ -81,7 +81,6 @@ Moreover, you must configure the following parameters:
 * Parameters inherited from the ``spi-device`` binding that are defined for every SPI device:
 
   * ``reg`` - The slave ID number the device has on a bus.
-  * ``label`` - Name of the device.
   * ``spi-max-frequency`` - Used for setting the bus clock frequency.
 
 * Pin to which the motion sensor IRQ line is connected (``irq-gpios``).
