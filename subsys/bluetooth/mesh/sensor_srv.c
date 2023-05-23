@@ -1110,6 +1110,17 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_srv_cb = {
 	.settings_set = sensor_srv_settings_set,
 };
 
+static int sensor_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_sensor_srv *srv = model->user_data;
+
+	return bt_mesh_model_extend(model, srv->model);
+}
+
+const struct bt_mesh_model_cb _bt_mesh_sensor_setup_srv_cb = {
+	.init = sensor_setup_srv_init,
+};
+
 int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct bt_mesh_sensor *sensor,

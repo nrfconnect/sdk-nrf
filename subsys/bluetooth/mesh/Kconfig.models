@@ -610,6 +610,7 @@ menuconfig BT_MESH_SENSOR_SRV
 	bool "Sensor Server"
 	select BT_MESH_NRF_MODELS
 	select BT_MESH_SENSOR
+	select BT_MESH_MODEL_EXTENSIONS
 	help
 	  Enable mesh Sensor Server model.
 
