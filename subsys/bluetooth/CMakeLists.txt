@@ -17,7 +17,3 @@ add_subdirectory_ifdef(CONFIG_BT_MESH mesh)
 add_subdirectory_ifdef(CONFIG_BT_NRF_SERVICES services)
 
 add_subdirectory_ifdef(CONFIG_BT_RPC rpc)
-
-if(CONFIG_BT)
-  zephyr_link_libraries(INTERFACE SOFTDEVICE_CONTROLLER_LIB_HEADERS)
-endif()
