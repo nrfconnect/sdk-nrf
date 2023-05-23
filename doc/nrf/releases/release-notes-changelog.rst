@@ -758,6 +758,10 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
     * Support for devices using MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``).
       In this mode, the image is booted directly from the secondary slot without moving it to the primary slot.
 
+* :ref:`west_sbom`
+
+  * SPDX License List database updated to version 3.20.
+
 MCUboot
 =======
 
