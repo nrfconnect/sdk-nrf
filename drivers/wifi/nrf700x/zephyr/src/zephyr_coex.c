@@ -40,8 +40,7 @@ static struct wifi_nrf_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 /* copied from uccp530_77_registers.h of UCCP toolkit */
 #define ABS_PMB_WLAN_MAC_CTRL_PULSED_SOFTWARE_RESET 0xA5009A00UL
 
-#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	#define NRF_RADIO_COEX_NODE DT_NODELABEL(nrf_radio_coex)
 	static const struct gpio_dt_spec btrf_switch_spec =
@@ -206,8 +205,7 @@ int nrf_wifi_coex_config_pta(enum nrf_wifi_pta_wlan_op_band wlan_band, bool sepa
 	return 0;
 }
 
-#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 int nrf_wifi_config_sr_switch(bool separate_antennas)
 {

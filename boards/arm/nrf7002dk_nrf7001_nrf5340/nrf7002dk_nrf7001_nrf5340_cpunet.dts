@@ -6,11 +6,11 @@
 
 /dts-v1/;
 #include <nordic/nrf5340_cpunet_qkaa.dtsi>
-#include "nrf7001dk_nrf5340_cpunet-pinctrl.dtsi"
+#include "nrf7002dk_nrf7001_nrf5340_cpunet-pinctrl.dtsi"
 
 / {
-	model = "Nordic NRF7001 DK NRF5340 Network";
-	compatible = "nordic,nrf7001-dk-nrf5340-cpunet";
+	model = "Nordic NRF7002 DK (emulating NRF7001) NRF5340 Network";
+	compatible = "nordic,nrf7002-dk-nrf5340-cpunet";
 
 	chosen {
 		zephyr,console = &uart0;

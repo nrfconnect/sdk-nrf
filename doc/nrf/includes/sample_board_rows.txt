@@ -154,17 +154,17 @@
 
 | :ref:`nRF7002 DK <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7002dk_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7002dk_nrf5340_cpunet`` |
 
-.. nrf7001dk_nrf5340_cpuapp
+.. nrf7002dk_nrf7001_nrf5340_cpuapp
 
-| :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7001dk_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7001dk_nrf5340_cpuapp`` |
+| :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7002dk_nrf7001_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7002dk_nrf7001_nrf5340_cpuapp`` |
 
-.. nrf7001dk_nrf5340_cpuapp_ns
+.. nrf7002dk_nrf7001_nrf5340_cpuapp_ns
 
-| :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7001dk_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7001dk_nrf5340_cpuapp_ns`` |
+| :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7002dk_nrf7001_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7002dk_nrf7001_nrf5340_cpuapp_ns`` |
 
-.. nrf7001dk_nrf5340_cpunet
+.. nrf7002dk_nrf7001_nrf5340_cpunet
 
-| :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7001dk_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7001dk_nrf5340_cpunet`` |
+| :ref:`nRF7002 DK (emulating nRF7001) <nrf7002dk_nrf5340>` | PCA10143 | :ref:`nrf7002dk_nrf7001_nrf5340 <nrf7002dk_nrf5340>` | ``nrf7002dk_nrf7001_nrf5340_cpunet`` |
 .. native_posix
 
 | Native Posix | | native_posix | ``native_posix`` |

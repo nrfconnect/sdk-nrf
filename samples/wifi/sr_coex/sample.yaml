@@ -12,8 +12,8 @@ tests:
   sample.nrf7001.ble_coex:
     build_only: true
     integration_platforms:
-      - nrf7001dk_nrf5340_cpuapp
-    platform_allow: nrf7001dk_nrf5340_cpuapp
+      - nrf7002dk_nrf7001_nrf5340_cpuapp
+    platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
     tags: ci_build
   sample.nrf7002ek.ble_coex:
     build_only: true
