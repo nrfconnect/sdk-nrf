@@ -30,7 +30,7 @@ tests:
     platform_allow: nrf5340dk_nrf5340_cpuapp
   sample.nrf7002_eb.thingy53.sr_coex:
     build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7002_eb
+    extra_args: SHIELD=nrf7002eb
     integration_platforms:
       - thingy53_nrf5340_cpuapp
     platform_allow: thingy53_nrf5340_cpuapp

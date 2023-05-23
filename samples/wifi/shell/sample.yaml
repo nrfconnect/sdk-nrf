@@ -138,7 +138,7 @@ tests:
     platform_allow: nrf7002dk_nrf5340_cpuapp_ns
   sample.nrf7002_eb.thingy53.shell:
     build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7002_eb CONFIG_BOARD_ENABLE_CPUNET=y
+    extra_args: SHIELD=nrf7002eb CONFIG_BOARD_ENABLE_CPUNET=y
     integration_platforms:
       - thingy53_nrf5340_cpuapp
     platform_allow: thingy53_nrf5340_cpuapp

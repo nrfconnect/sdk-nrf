@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <freq.h>
-#include "nrf7002ek_nrf7002_eb_coex.overlay"
+#include "nrf7002eb_coex.overlay"
 
 &edge_connector_spi {
 	status = "okay";
