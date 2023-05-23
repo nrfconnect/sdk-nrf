@@ -171,7 +171,7 @@ Wi-Fi
 
 * Updated:
 
-  * The shield for nRF7002 EK (``nrf7002_ek`` -> ``nrf7002ek_nrf7002``).
+  * The shield for nRF7002 EK (``nrf7002_ek`` -> ``nrf7002ek``).
 
 Applications
 ============

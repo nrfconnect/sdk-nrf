@@ -27,7 +27,7 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns
-    extra_args: SHIELD=nrf7002ek_nrf7002 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.nrf9160.location.nrf7000ek_wifi:
