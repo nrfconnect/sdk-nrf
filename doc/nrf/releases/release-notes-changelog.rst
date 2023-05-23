@@ -423,7 +423,7 @@ Trusted Firmware-M (TF-M) samples
 
 * :ref:`provisioning_image` sample:
 
-  * Thet network core logic is now moved to the new sample :ref:`provisioning_image_net_core` instead of being a Zephyr module..
+  * The network core logic is now moved to the new sample :ref:`provisioning_image_net_core` instead of being a Zephyr module.
 
 Thread samples
 --------------
