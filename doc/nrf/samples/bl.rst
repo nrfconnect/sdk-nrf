@@ -10,5 +10,5 @@ Bluetooth samples
 
    ../../../samples/bluetooth/*/README
    ../../../samples/bluetooth/mesh/*/README
-   ../../../samples/bluetooth/mesh/mesh_dfu/distributor/README
-   ../../../samples/bluetooth/mesh/mesh_dfu/target/README
+   ../../../samples/bluetooth/mesh/dfu/distributor/README
+   ../../../samples/bluetooth/mesh/dfu/target/README
