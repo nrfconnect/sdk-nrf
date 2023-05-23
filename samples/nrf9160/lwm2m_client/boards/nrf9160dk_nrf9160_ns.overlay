@@ -21,7 +21,7 @@
 		   <&gpio0 25 GPIO_ACTIVE_LOW>;
 	mx25r64: mx25r6435f@1 {
 		compatible = "jedec,spi-nor";
-		reg = <0>;
+		reg = <1>;
 		status = "okay";
 		spi-max-frequency = <80000000>;
 		jedec-id = [c2 28 17];
