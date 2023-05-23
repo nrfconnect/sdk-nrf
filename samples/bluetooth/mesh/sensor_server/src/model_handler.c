@@ -333,7 +333,7 @@ static void amb_light_level_gain_get(struct bt_mesh_sensor_srv *srv,
 				     struct sensor_value *rsp)
 {
 	(void)sensor_value_from_double(rsp, amb_light_level_gain);
-	printk("Ambient light level gain: %f\n", amb_light_level_gain);
+	printk("Ambient light level gain: %s\n", bt_mesh_sensor_ch_str(rsp));
 };
 
 static void amb_light_level_gain_store(double gain)
@@ -360,7 +360,7 @@ static int amb_light_level_gain_set(struct bt_mesh_sensor_srv *srv,
 				    const struct sensor_value *value)
 {
 	amb_light_level_gain_store(sensor_value_to_double(value));
-	printk("Ambient light level gain: %f\n", amb_light_level_gain);
+	printk("Ambient light level gain: %s\n", bt_mesh_sensor_ch_str(value));
 
 	return 0;
 }
@@ -372,6 +372,7 @@ static int amb_light_level_ref_set(struct bt_mesh_sensor_srv *srv,
 				   const struct sensor_value *value)
 {
 	double amb_light_level_ref = sensor_value_to_double(value);
+	struct sensor_value gain_value_tmp;
 
 	/* When using the a real ambient light sensor the sensor value should be
 	 * read and used instead of the dummy value.
@@ -382,8 +383,10 @@ static int amb_light_level_ref_set(struct bt_mesh_sensor_srv *srv,
 		amb_light_level_gain_store(FLT_MAX);
 	}
 
-	printk("Ambient light level ref(%f), gain(%f)\n",
-		amb_light_level_ref, amb_light_level_gain);
+	sensor_value_from_double(&gain_value_tmp, amb_light_level_gain);
+
+	printk("Ambient light level ref(%s) ", bt_mesh_sensor_ch_str(value));
+	printk("gain(%s)\n", bt_mesh_sensor_ch_str(&gain_value_tmp));
 
 	return 0;
 }
