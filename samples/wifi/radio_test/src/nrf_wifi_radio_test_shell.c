@@ -1379,7 +1379,9 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 	return 0;
 }
 
-#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 static int nrf_wifi_radio_test_ble_ant_switch_ctrl(const struct shell *shell,
 					     size_t argc,
 					     const char *argv[])
@@ -1397,7 +1399,7 @@ static int nrf_wifi_radio_test_ble_ant_switch_ctrl(const struct shell *shell,
 
 	return ble_ant_switch(val);
 }
-#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
+#endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
 
 
 static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
@@ -1920,12 +1922,14 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      "rx_capture_length = %d\n",
 		      conf_params->capture_length);
 
-#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "ble_ant_switch_ctrl = %d\n",
 		      conf_params->ble_ant_switch_ctrl);
-#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
+#endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
@@ -2289,7 +2293,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx,
 		      2,
 		      0),
-#ifdef CONFIG_BOARD_NRF7002DK_NRF5340
+#if defined(CONFIG_BOARD_NRF7000DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7001DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 	SHELL_CMD_ARG(ble_ant_switch_ctrl,
 		      NULL,
 		      "0 - Switch set to use the BLE antenna\n"
@@ -2297,7 +2303,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_ble_ant_switch_ctrl,
 		      2,
 		      0),
-#endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
+#endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
 	SHELL_CMD_ARG(rx_lna_gain,
 		      NULL,
 		      "<val> - LNA gain to be configured.\n"
