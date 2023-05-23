@@ -133,9 +133,9 @@ See `Thread samples`_ for the list of changes for the Thread samples.
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Fixed:
 
-See `Zigbee samples`_ for the list of changes for the Zigbee samples.
+  * An issue where device is not fully operational in the distributed network by adding call to the :c:func:`zb_enable_distributed` function for Zigbee Router role by default.
 
 Enhanced ShockBurst (ESB)
 -------------------------
