@@ -44,8 +44,8 @@ IPv6 network support
 The development kits for this sample offer the following IPv6 network support for Matter:
 
 * Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
-* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek_nrf7002`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
-* :ref:`Switching of Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek_nrf7002`` shield attached, using the ``thread_wifi_switched`` build type.
+* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
+* :ref:`Switching of Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield attached, using the ``thread_wifi_switched`` build type.
 
 Overview
 ********
@@ -463,7 +463,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek_nrf7002 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7002_coex -DCONFIG_CHIP_WIFI=n
+      west build -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dhci_rpmsg_SHIELD=nrf7002ek_coex -DCONFIG_CHIP_WIFI=n
 
 #. Program the application to the kit using the following command:
 
@@ -487,7 +487,7 @@ To test this feature, complete the following steps:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek_nrf7002 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7002_coex
+      west build -b nrf5340dk_nrf5340_cpuapp -p always -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dhci_rpmsg_SHIELD=nrf7002ek_coex
 
 #. Program the application to another partition of the external flash using the following command:
 
@@ -524,14 +524,14 @@ Complete the following steps to generate the Matter OTA combined image file:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek_nrf7002 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7002_coex -DCONFIG_CHIP_WIFI=n
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_thread -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dhci_rpmsg_SHIELD=nrf7002ek_coex -DCONFIG_CHIP_WIFI=n
 
    This command creates the *build_thread* directory, where the Matter over Thread application is stored.
 #. Build the door lock application for Matter over Wi-Fi by running the following command:
 
    .. code-block:: console
 
-      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek_nrf7002 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7002_coex
+      west build -b nrf5340dk_nrf5340_cpuapp -d build_wifi -- -DCONF_FILE=prj_thread_wifi_switched.conf -DSHIELD=nrf7002ek -Dhci_rpmsg_SHIELD=nrf7002ek_coex
 
    This command creates the *build_wifi* directory, where the Matter over Wi-Fi application is stored.
 #. Combine Matter OTA image files generated for both variants by running the ``combine_ota_images.py`` script in the sample directory by running the following command (with ``<output_directory>`` changed to the directory name of your choice):

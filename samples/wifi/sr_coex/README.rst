@@ -231,7 +231,7 @@ For nRF7002 EK:
 
 .. code-block:: console
 
-   -DSHIELD=nrf7002ek_nrf7002 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7002_coex
+   -DSHIELD=nrf7002ek -Dhci_rpmsg_SHIELD=nrf7002ek_coex
 
 For nRF7001 EK:
 
