@@ -75,7 +75,7 @@ void create_thread(void (*thread_ptr)(void *, void *), int err_val, int rv_in)
 			K_PRIO_COOP(PRIORITY), 0, K_NO_WAIT);
 }
 
-void test_macro_err_chk(void)
+ZTEST(suite_macros, test_macro_err_chk)
 {
 	k_thread_priority_set(_current, K_PRIO_PREEMPT(MAIN_PRIORITY));
 
@@ -103,7 +103,7 @@ void test_macro_err_chk(void)
 	zassert_not_equal(rv, rv_in, "Thread was not killed\n");
 }
 
-void test_macro_err_chk_msg(void)
+ZTEST(suite_macros, test_macro_err_chk_msg)
 {
 	k_thread_priority_set(_current, K_PRIO_PREEMPT(MAIN_PRIORITY));
 
@@ -131,7 +131,7 @@ void test_macro_err_chk_msg(void)
 	zassert_not_equal(rv, rv_in, "Thread was not killed\n");
 }
 
-void test_macro_min(void)
+ZTEST(suite_macros, test_macro_min)
 {
 	int ret;
 
@@ -148,13 +148,4 @@ void test_macro_min(void)
 	zassert_equal(ret, -5, "Wrong value returned from MIN macro");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_suite_macros,
-		ztest_unit_test(test_macro_err_chk),
-		ztest_unit_test(test_macro_err_chk_msg),
-		ztest_unit_test(test_macro_min)
-	);
-
-	ztest_run_test_suite(test_suite_macros);
-}
+ZTEST_SUITE(suite_macros, NULL, NULL, NULL, NULL, NULL);

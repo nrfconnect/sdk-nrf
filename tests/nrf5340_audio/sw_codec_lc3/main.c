@@ -471,7 +471,7 @@ static uint16_t encoded_bytes_written_r;
 static uint16_t decoded_bytes_written_l;
 static uint16_t decoded_bytes_written_r;
 
-void test_sw_codec_lc3_init(void)
+static void *test_sw_codec_lc3_init(void)
 {
 	int ret;
 
@@ -482,11 +482,13 @@ void test_sw_codec_lc3_init(void)
 	zassert_equal(ret, 0, "lc3_enc_init did not return zero");
 
 	ret = sw_codec_lc3_dec_init(PCM_SAMPLE_RATE, PCM_BIT_DEPTH, LC3_FRAME_SIZE_US,
-				    LC3_NUM_CHANNELS);
+				    SW_CODEC_STEREO);
 	zassert_equal(ret, 0, "lc3_dec_init did not return zero");
+
+	return NULL;
 }
 
-void test_sw_codec_lc3_enc(void)
+ZTEST(suite_sw_codec_lc3, test_sw_codec_lc3_enc_dec)
 {
 	int ret;
 
@@ -504,11 +506,6 @@ void test_sw_codec_lc3_enc(void)
 		      "ENC num bytes left and right are not equal");
 	zassert_equal(memcmp(audio_encoded_l, audio_encoded_r, encoded_bytes_written_l), 0,
 		      "Left encoded data does not match right encoded data");
-}
-
-void test_sw_codec_lc3_dec(void)
-{
-	int ret;
 
 	ret = sw_codec_lc3_dec_run(audio_encoded_l, encoded_bytes_written_l, DEC_BUF_SIZE,
 				   AUDIO_CH_L, audio_decoded_l, &decoded_bytes_written_l, false);
@@ -524,13 +521,4 @@ void test_sw_codec_lc3_dec(void)
 		      "Left PCM data does not match right PCM data");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_suite_sw_codec_lc3,
-		ztest_unit_test(test_sw_codec_lc3_init),
-		ztest_unit_test(test_sw_codec_lc3_enc),
-		ztest_unit_test(test_sw_codec_lc3_dec)
-	);
-
-	ztest_run_test_suite(test_suite_sw_codec_lc3);
-}
+ZTEST_SUITE(suite_sw_codec_lc3, NULL, test_sw_codec_lc3_init, NULL, NULL, NULL);

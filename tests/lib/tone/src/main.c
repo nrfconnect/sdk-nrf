@@ -38,7 +38,7 @@ static void tone_high_low_idx(int16_t *tone, size_t size, uint32_t *idx_low, uin
 }
 
 /* Get the index of the lowest and highest sample */
-void test_tone_gen_valid(void)
+ZTEST(suite_tone, test_tone_gen_valid)
 {
 #define NUM_TESTS 3
 	uint16_t freq[] = { 100, 480, 960 };
@@ -67,7 +67,7 @@ void test_tone_gen_valid(void)
 	}
 }
 
-void test_illegal_args(void)
+ZTEST(suite_tone, test_illegal_args)
 {
 	int16_t tone[200] = { 0 };
 	size_t tone_size;
@@ -99,12 +99,4 @@ void test_illegal_args(void)
 		      "Err code returned");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_suite_tone,
-		ztest_unit_test(test_tone_gen_valid),
-		ztest_unit_test(test_illegal_args)
-	);
-
-	ztest_run_test_suite(test_suite_tone);
-}
+ZTEST_SUITE(suite_tone, NULL, NULL, NULL, NULL, NULL);

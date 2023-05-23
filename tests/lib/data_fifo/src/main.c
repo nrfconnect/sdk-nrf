@@ -31,7 +31,7 @@ static void internal_test_remaining_elements(struct data_fifo *data_fifo, uint32
 		      num_locked, line);
 }
 
-void test_data_fifo_init_ok(void)
+ZTEST(suite_data_fifo, test_data_fifo_init_ok)
 {
 	DATA_FIFO_DEFINE(data_fifo, 8, 128);
 
@@ -41,7 +41,7 @@ void test_data_fifo_init_ok(void)
 	zassert_equal(ret, 0, "init did not return 0");
 }
 
-void test_data_fifo_data_put_get_ok(void)
+ZTEST(suite_data_fifo, test_data_fifo_data_put_get_ok)
 {
 #define DATA_SIZE 5
 	DATA_FIFO_DEFINE(data_fifo, 8, 128);
@@ -116,7 +116,7 @@ void test_data_fifo_data_put_get_ok(void)
 	internal_test_remaining_elements(&data_fifo, 0, 0, __LINE__);
 }
 
-void test_data_fifo_data_put_too_many(void)
+ZTEST(suite_data_fifo, test_data_fifo_data_put_too_many)
 {
 #define BLOCKS_NUM 10
 	DATA_FIFO_DEFINE(data_fifo, 10, 128);
@@ -151,7 +151,7 @@ void test_data_fifo_data_put_too_many(void)
 	zassert_equal(ret, -ENOMEM, "first_vacant_get did not ENOMEM");
 }
 
-void test_data_fifo_data_put_too_much_data(void)
+ZTEST(suite_data_fifo, test_data_fifo_data_put_too_much_data)
 {
 	DATA_FIFO_DEFINE(data_fifo, 10, 128);
 
@@ -170,7 +170,7 @@ void test_data_fifo_data_put_too_much_data(void)
 	zassert_equal(ret, -ENOMEM, "block_lock did not return -EACCESS");
 }
 
-void test_data_fifo_data_put_size_zero(void)
+ZTEST(suite_data_fifo, test_data_fifo_data_put_size_zero)
 {
 	DATA_FIFO_DEFINE(data_fifo, 10, 128);
 
@@ -189,13 +189,4 @@ void test_data_fifo_data_put_size_zero(void)
 	zassert_equal(ret, -EINVAL, "block_lock did not return -EINVAL");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(test_suite_data_fifo, ztest_unit_test(test_data_fifo_init_ok),
-			 ztest_unit_test(test_data_fifo_data_put_get_ok),
-			 ztest_unit_test(test_data_fifo_data_put_too_many),
-			 ztest_unit_test(test_data_fifo_data_put_too_much_data),
-			 ztest_unit_test(test_data_fifo_data_put_size_zero));
-
-	ztest_run_test_suite(test_suite_data_fifo);
-}
+ZTEST_SUITE(suite_data_fifo, NULL, NULL, NULL, NULL, NULL);

@@ -120,11 +120,11 @@ Kconfig*                                  @tejlmand
 /lib/modem_slm/                           @SeppoTakalo @VTPeltoketo @MarkusLassila
 /lib/modem_attest_token/                  @jayteemo
 /lib/qos/                                 @simensrostad
-/lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/contin_array/                        @koffes @alexsven @erikrobstad @rick1082 @gWacey
-/lib/tone/                                @koffes @alexsven @erikrobstad @rick1082 @gWacey
-/lib/pcm_stream_channel_modifier/         @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/data_fifo/                           @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/lib/pcm_stream_channel_modifier/         @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/lib/tone/                                @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
@@ -261,9 +261,11 @@ Kconfig*                                  @tejlmand
 /tests/lib/nrf_modem_lib/                 @lemrey @MirkoCovizzi
 /tests/lib/nrf_modem_lib/nrf91_sockets/   @MirkoCovizzi
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
-/tests/lib/tone/                          @koffes @alexsven @erikrobstad @rick1082 @gWacey
-/tests/lib/pcm_stream_channel_modifier/   @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/tests/lib/contin_array/                  @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/lib/data_fifo/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/tests/lib/pcm_mix/                       @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/tests/lib/pcm_stream_channel_modifier/   @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/tests/lib/tone/                          @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @hakonfam
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
