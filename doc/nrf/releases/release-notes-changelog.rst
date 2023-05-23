@@ -221,8 +221,13 @@ nRF9160 samples
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
-  * Added the ``disable_response`` parameter to the :c:struct:`nrf_cloud_rest_location_request` structure.
-    If set to true, no location data is returned to the device when the :c:func:`nrf_cloud_rest_location_get` function is called.
+  * Added:
+
+    * The ``disable_response`` parameter to the :c:struct:`nrf_cloud_rest_location_request` structure.
+      If set to true, no location data is returned to the device when the :c:func:`nrf_cloud_rest_location_get` function is called.
+    * A Kconfig option :kconfig:option:`REST_CELL_LOCATION_SAMPLE_VERSION` for the sample version.
+
+  * Updated the sample to print its version when started.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
