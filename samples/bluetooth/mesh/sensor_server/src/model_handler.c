@@ -511,16 +511,26 @@ static struct bt_mesh_sensor present_amb_light_level = {
 	},
 };
 
-static struct bt_mesh_sensor *const sensors[] = {
-	&chip_temp,
-	&rel_chip_temp_runtime,
-	&presence_sensor,
-	&time_since_presence_detected,
+static struct bt_mesh_sensor *const ambient_light_sensor[] = {
 	&present_amb_light_level,
 };
 
-static struct bt_mesh_sensor_srv sensor_srv =
-	BT_MESH_SENSOR_SRV_INIT(sensors, ARRAY_SIZE(sensors));
+static struct bt_mesh_sensor *const occupancy_sensor[] = {
+	&presence_sensor,
+	&time_since_presence_detected,
+};
+
+static struct bt_mesh_sensor *const chip_temp_sensor[] = {
+	&chip_temp,
+	&rel_chip_temp_runtime,
+};
+
+static struct bt_mesh_sensor_srv ambient_light_sensor_srv =
+	BT_MESH_SENSOR_SRV_INIT(ambient_light_sensor, ARRAY_SIZE(ambient_light_sensor));
+static struct bt_mesh_sensor_srv occupancy_sensor_srv =
+	BT_MESH_SENSOR_SRV_INIT(occupancy_sensor, ARRAY_SIZE(occupancy_sensor));
+static struct bt_mesh_sensor_srv chip_temp_sensor_srv =
+	BT_MESH_SENSOR_SRV_INIT(chip_temp_sensor, ARRAY_SIZE(chip_temp_sensor));
 
 static struct k_work_delayable presence_detected_work;
 
@@ -535,7 +545,7 @@ static void presence_detected(struct k_work *work)
 		.val1 = 1,
 	};
 
-	err = bt_mesh_sensor_srv_pub(&sensor_srv, NULL, &presence_sensor, &val);
+	err = bt_mesh_sensor_srv_pub(&occupancy_sensor_srv, NULL, &presence_sensor, &val);
 
 	if (err) {
 		printk("Error publishing end of presence (%d)\n", err);
@@ -578,7 +588,7 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 				.val1 = 0,
 			};
 
-			err = bt_mesh_sensor_srv_pub(&sensor_srv, NULL,
+			err = bt_mesh_sensor_srv_pub(&occupancy_sensor_srv, NULL,
 						&presence_sensor, &val);
 
 			if (err) {
@@ -603,7 +613,8 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 			printk("Error getting ambient light level sensor data (%d)\n", err);
 		}
 
-		err = bt_mesh_sensor_srv_pub(&sensor_srv, NULL, &present_amb_light_level, &val);
+		err = bt_mesh_sensor_srv_pub(&ambient_light_sensor_srv, NULL,
+					     &present_amb_light_level, &val);
 		if (err) {
 			printk("Error publishing present ambient light level (%d)\n", err);
 		}
@@ -674,7 +685,13 @@ static struct bt_mesh_elem elements[] = {
 		     BT_MESH_MODEL_LIST(BT_MESH_MODEL_CFG_SRV,
 					BT_MESH_MODEL_HEALTH_SRV(&health_srv,
 								 &health_pub),
-					BT_MESH_MODEL_SENSOR_SRV(&sensor_srv)),
+					BT_MESH_MODEL_SENSOR_SRV(&ambient_light_sensor_srv)),
+		     BT_MESH_MODEL_NONE),
+	BT_MESH_ELEM(2,
+		     BT_MESH_MODEL_LIST(BT_MESH_MODEL_SENSOR_SRV(&occupancy_sensor_srv)),
+		     BT_MESH_MODEL_NONE),
+	BT_MESH_ELEM(3,
+		     BT_MESH_MODEL_LIST(BT_MESH_MODEL_SENSOR_SRV(&chip_temp_sensor_srv)),
 		     BT_MESH_MODEL_NONE),
 };
 
