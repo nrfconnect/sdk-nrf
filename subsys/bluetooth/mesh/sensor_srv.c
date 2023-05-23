@@ -202,7 +202,7 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		if (sensor) {
 			buf_status_add(srv, sensor, ctx, &rsp);
 		} else {
-			LOG_WRN("Unknown sensor ID 0x%04x", id);
+			LOG_DBG("Unknown sensor ID 0x%04x", id);
 			sensor_status_id_encode(&rsp, 0, id);
 		}
 
@@ -253,7 +253,7 @@ static int handle_column_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	net_buf_simple_add_le16(&rsp, id);
 
 	if (!sensor || !sensor->series.get) {
-		LOG_WRN("No series support in 0x%04x", sensor->type->id);
+		LOG_DBG("No series support in 0x%04x", sensor->type->id);
 		goto respond;
 	}
 
@@ -279,7 +279,7 @@ static int handle_column_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	}
 
 	if (!sensor->series.columns) {
-		LOG_WRN("No series support in 0x%04x", sensor->type->id);
+		LOG_DBG("No series support in 0x%04x", sensor->type->id);
 		goto respond;
 	}
 
@@ -348,7 +348,7 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	net_buf_simple_add_le16(&rsp, id);
 
 	if (!sensor || !sensor->series.get) {
-		LOG_WRN("No series support in 0x%04x", sensor->type->id);
+		LOG_DBG("No series support in 0x%04x", sensor->type->id);
 		goto respond;
 	}
 
@@ -390,7 +390,7 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 
 	col_format = bt_mesh_sensor_column_format_get(sensor->type);
 	if (!col_format || !sensor->series.columns) {
-		LOG_WRN("No series support in 0x%04x", sensor->type->id);
+		LOG_DBG("No series support in 0x%04x", sensor->type->id);
 		goto respond;
 	}
 
