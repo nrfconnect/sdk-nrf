@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Audio Module"
+
+config AUDIO_MODULE
+	tristate "Enable the audio module"
+	depends on DATA_FIFO || AUDIO_MODULE_TEST
+
+config AUDIO_MODULE_TEST
+	bool "Enable test mode"
+	default n
+	help
+	  Enable the test mode for the audio module.
+
+config AUDIO_MODULE_NAME_SIZE
+	int "Maximum size for module naming in characters"
+	default 20
+
+module = AUDIO_MODULE
+module-str = audio_module
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Audio Module

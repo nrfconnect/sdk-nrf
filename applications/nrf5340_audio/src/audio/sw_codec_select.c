@@ -222,6 +222,7 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg)
 				LOG_WRN("Trying to uninit decoder, it has not been initialized");
 				return -EALREADY;
 			}
+
 			ret = sw_codec_lc3_dec_uninit_all();
 			if (ret) {
 				return ret;
@@ -298,6 +299,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		return -ENODEV;
 #endif /* (CONFIG_SW_CODEC_LC3) */
 	}
+
 	default:
 		LOG_ERR("Unsupported codec: %d", sw_codec_cfg.sw_codec);
 		return false;
