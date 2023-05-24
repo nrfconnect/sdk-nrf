@@ -47,19 +47,20 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define FIRMWARE_CONFLICTING_INSTANCES_ID       17	/* unused */
 
 #define FIRMWARE_MAX_ID				17
+#define LINKED_INSTANCES_LEN			(MAX_INSTANCE_COUNT - 1)
+#define PACKAGE_URI_LEN				255
 
 #define DELIVERY_METHOD_PULL_ONLY		0
 #define DELIVERY_METHOD_PUSH_ONLY		1
 #define DELIVERY_METHOD_BOTH			2
 
-#define PACKAGE_URI_LEN				255
 
 /*
  * Calculate resource instances as follows:
  * start with FIRMWARE_MAX_ID
- * subtract EXEC resources (1)
+ * subtract EXEC resource and multi-resources then add how many multi-resources we need
  */
-#define RESOURCE_INSTANCE_COUNT	(FIRMWARE_MAX_ID - 1)
+#define RESOURCE_INSTANCE_COUNT	(FIRMWARE_MAX_ID - 3 + 2 * LINKED_INSTANCES_LEN)
 
 /* resource state variables */
 static uint8_t update_state[MAX_INSTANCE_COUNT];
@@ -68,8 +69,8 @@ static uint8_t delivery_method[MAX_INSTANCE_COUNT];
 static time_t last_change[MAX_INSTANCE_COUNT];
 static char package_uri[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
 static char component_version[MAX_INSTANCE_COUNT][PACKAGE_URI_LEN];
-static struct lwm2m_objlnk linked_instances[MAX_INSTANCE_COUNT];
-static struct lwm2m_objlnk conflict_instances[MAX_INSTANCE_COUNT];
+static struct lwm2m_objlnk linked_instances[MAX_INSTANCE_COUNT * (MAX_INSTANCE_COUNT - 1)];
+static struct lwm2m_objlnk conflict_instances[MAX_INSTANCE_COUNT * (MAX_INSTANCE_COUNT - 1)];
 
 /* A varying number of firmware object instances exists */
 static struct lwm2m_engine_obj firmware;
@@ -350,13 +351,21 @@ static bool update_object_link_parse(char *data_ptr, uint16_t obj_inst_id,
 
 static int update_arguments_parse(uint16_t obj_inst_id, char *args, uint16_t args_len)
 {
-	struct lwm2m_objlnk object_link[2];
+	struct lwm2m_objlnk object_link;
 	char *temp = args;
 	char *s_ptr;
 	char *e_ptr;
-	uint16_t link_to_this_instance;
 	uint8_t update_parameter;
-	int number_of_objects = 0;
+	int n_linked = 0;
+	int n_conflicts = 0;
+
+	/* Remove existing object links as this is a new update */
+	for (int i = 0; i < LINKED_INSTANCES_LEN; ++i) {
+		lwm2m_delete_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, obj_inst_id,
+						  FIRMWARE_CONFLICTING_INSTANCES_ID, i));
+		lwm2m_delete_res_inst(&LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, obj_inst_id,
+						  FIRMWARE_LINKED_INSTANCES_ID, i));
+	}
 
 	if (!args || !args_len) {
 		return 0;
@@ -383,17 +392,25 @@ static int update_arguments_parse(uint16_t obj_inst_id, char *args, uint16_t arg
 					s_ptr++;
 				}
 
-				if (!update_object_link_parse(s_ptr, obj_inst_id,
-							      &object_link[number_of_objects])) {
+				if (!update_object_link_parse(s_ptr, obj_inst_id, &object_link)) {
 					return -1;
 				}
 
-				if (lwm2m_adv_firmware_get_update_state(
-					    object_link[number_of_objects].obj_inst) !=
+				if (lwm2m_adv_firmware_get_update_state(object_link.obj_inst) !=
 				    STATE_DOWNLOADED) {
+					struct lwm2m_obj_path path =
+						LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, obj_inst_id,
+							  FIRMWARE_CONFLICTING_INSTANCES_ID,
+							  n_conflicts++);
+					lwm2m_create_res_inst(&path);
+					lwm2m_set_objlnk(&path, &object_link);
 					return -1;
 				}
-				number_of_objects++;
+				struct lwm2m_obj_path path =
+					LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, obj_inst_id,
+						  FIRMWARE_LINKED_INSTANCES_ID, n_linked++);
+				lwm2m_create_res_inst(&path);
+				lwm2m_set_objlnk(&path, &object_link);
 			} else {
 				/* No data with Parameter */
 				args_len = 0;
@@ -401,14 +418,6 @@ static int update_arguments_parse(uint16_t obj_inst_id, char *args, uint16_t arg
 		}
 	}
 
-	link_to_this_instance = obj_inst_id;
-	for (int i = 0; i < number_of_objects; i++) {
-		LOG_INF("Linked Update for instance %d", object_link[i].obj_inst);
-		lwm2m_set_objlnk(&LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID,
-				 link_to_this_instance, FIRMWARE_LINKED_INSTANCES_ID),
-				 &object_link[i]);
-		link_to_this_instance = object_link[i].obj_inst;
-	}
 	return 0;
 }
 
@@ -501,12 +510,15 @@ static struct lwm2m_engine_obj_inst *firmware_create(uint16_t obj_inst_id)
 	INIT_OBJ_RES_DATA_LEN(FIRMWARE_CURRENT_VERSION_ID, res[obj_inst_id], i,
 			      res_inst[obj_inst_id], j, &component_version[obj_inst_id],
 			      sizeof(component_version[obj_inst_id]), 0);
-	INIT_OBJ_RES_DATA(FIRMWARE_LINKED_INSTANCES_ID, res[obj_inst_id], i, res_inst[obj_inst_id],
-			  j, &(linked_instances[obj_inst_id]),
-			  sizeof(linked_instances[obj_inst_id]));
-	INIT_OBJ_RES_DATA(FIRMWARE_CONFLICTING_INSTANCES_ID, res[obj_inst_id], i,
-			  res_inst[obj_inst_id], j, &(conflict_instances[obj_inst_id]),
-			  sizeof(conflict_instances[obj_inst_id]));
+	INIT_OBJ_RES_MULTI_DATA_LEN(FIRMWARE_LINKED_INSTANCES_ID, res[obj_inst_id], i,
+				    res_inst[obj_inst_id], j, LINKED_INSTANCES_LEN, false,
+				    &(linked_instances[obj_inst_id * LINKED_INSTANCES_LEN]),
+				    sizeof(struct lwm2m_objlnk), 0);
+	INIT_OBJ_RES_MULTI_DATA_LEN(FIRMWARE_CONFLICTING_INSTANCES_ID, res[obj_inst_id], i,
+				    res_inst[obj_inst_id], j, LINKED_INSTANCES_LEN, false,
+				    &(conflict_instances[obj_inst_id * LINKED_INSTANCES_LEN]),
+				    sizeof(struct lwm2m_objlnk), 0);
+
 	inst[obj_inst_id].resources = res[obj_inst_id];
 	inst[obj_inst_id].resource_count = i;
 

@@ -1235,12 +1235,16 @@ static void lwm2m_firmware_register_write_callbacks(int instance_id)
 static void firmware_update_check_linked_instances(int instance_id)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	/* TODO: When Advanced Firmware object supports more than two
+	 * resources, this needs to be changed so that it checks all linked
+	 * instances. Now we just assume that there could be only one link
+	 */
 	struct lwm2m_obj_path path;
 	struct lwm2m_objlnk object_link;
 	uint8_t result;
 
 	path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id,
-			 LWM2M_ADV_FOTA_LINKED_INSTANCES_ID);
+			 LWM2M_ADV_FOTA_LINKED_INSTANCES_ID, 0);
 
 	if (lwm2m_get_objlnk(&path, &object_link)) {
 		return;
@@ -1272,9 +1276,8 @@ static void firmware_update_check_linked_instances(int instance_id)
 #endif
 		}
 	}
-	object_link.obj_inst = 0;
-	object_link.obj_id = 0;
-	lwm2m_set_objlnk(&path, &object_link);
+	/* Remove link */
+	lwm2m_delete_res_inst(&path);
 #endif
 }
 
