@@ -40,6 +40,8 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_LBS_VAL),
 };
 
+static struct bt_le_ext_adv *adv;
+static struct bt_le_ext_adv_start_param ext_adv_param;
 static bool ble_button_state;
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -89,14 +91,47 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 
 static void lbs_adv_start(void)
 {
-	int err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	struct bt_le_adv_param *adv_params = BT_LE_ADV_CONN;
+	int err;
+	size_t id_count = 0xFF;
 
+	/* Use different identity from Bluetooth mesh to avoid conflicts with Mesh Provisioning
+	 * Service and Mesh Proxy Service advertisements.
+	 */
+	bt_id_get(NULL, &id_count);
+
+	if (id_count < CONFIG_BT_ID_MAX) {
+		adv_params->id = bt_id_create(NULL, NULL);
+		if (adv_params->id < 0) {
+			printk("Unable to create a new identity for LBS (err %d)."
+			       " Using the default one.\n", adv_params->id);
+			adv_params->id = BT_ID_DEFAULT;
+		}
+
+		printk("Created a new identity for LBS: %d\n", adv_params->id);
+	} else {
+		adv_params->id = BT_ID_DEFAULT + 1;
+		printk("Recovered identity for LBS: %d\n", adv_params->id);
+	}
+
+	err = bt_le_ext_adv_create(adv_params, NULL, &adv);
 	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
+		printk("Creating LBS service adv instance failed (err %d)\n", err);
 		return;
 	}
 
-	printk("Advertising successfully started\n");
+	err = bt_le_ext_adv_set_data(adv, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	if (err) {
+		printk("Setting LBS service adv data failed (err %d)\n", err);
+		return;
+	}
+
+	err = bt_le_ext_adv_start(adv, &ext_adv_param);
+	if (err) {
+		printk("Starting advertising of LBS service failed (err %d)\n", err);
+	} else {
+		printk("Advertising successfully started\n");
+	}
 }
 
 static void lbs_init(void)
