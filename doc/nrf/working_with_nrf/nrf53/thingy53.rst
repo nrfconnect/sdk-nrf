@@ -78,12 +78,12 @@ Building Wi-Fi applications on Thingy:53
 You can use the Nordic Thingy:53 with the nRF7002 Expansion Board (EB) for Wi-Fi development.
 Connect the nRF7002 EB to the **P9** connector on Thingy:53.
 
-To build for the nRF7002 EB with Thingy:53, use the ``thingy53_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002eb_nrf7002``.
+To build for the nRF7002 EB with Thingy:53, use the ``thingy53_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002eb``.
 For example, you can use the following command when building on the command line:
 
 .. code-block::
 
-   west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb_nrf7002
+   west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb
 
 For the compatible Wi-Fi samples in the |NCS|, see the :ref:`wifi_samples` section.
 
