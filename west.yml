@@ -152,7 +152,7 @@ manifest:
       userdata:
         ncs:
           upstream-url: https://github.com/project-chip/connectedhomeip
-          upstream-sha: 4088a77f557e8571a39338fad51a1d8eb0131d79
+          upstream-sha: 8f66f4215bc0708efc8cc73bda80620e67d8955f
           compare-by-default: false
     - name: nrf-802154
       repo-path: sdk-nrf-802154
@@ -212,7 +212,7 @@ manifest:
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
-          upstream-sha: 55074652907295709f9f3361244a6e76f732bcba
+          upstream-sha: d9abe3071c0131a4adb5d7e7451319b735e6d855
           compare-by-default: false
 
     # Other third-party repositories.
