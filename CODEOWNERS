@@ -205,6 +205,7 @@ Kconfig*                                  @tejlmand
 /share/ncs-package/                       @tejlmand
 /snippets/nrf91-modem-trace-uart/         @eivindj-nordic
 /snippets/tfm-enable-share-uart/          @KajaKoren
+/subsys/audio_module/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @ludvigsj
 /subsys/bluetooth/controller/             @rugeGerritsen
@@ -287,6 +288,7 @@ Kconfig*                                  @tejlmand
 /tests/modules/mcuboot/direct_xip/        @hakonfam
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/nrf5340_audio/                     @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
+/tests/subsys/audio_module/               @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @ludvigsj
 /tests/subsys/bluetooth/fast_pair/        @MarekPieta @kapi-no @KAGA164

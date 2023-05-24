@@ -1,0 +1,7 @@
+tests:
+  nrf5340_audio.audio_module_test:
+    platform_allow: qemu_cortex_m3 nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - qemu_cortex_m3
+      - nrf5340dk_nrf5340_cpuapp
+    tags: audio_module nrf5340_audio_unit_tests
