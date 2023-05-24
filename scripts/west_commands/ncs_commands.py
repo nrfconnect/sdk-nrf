@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 from textwrap import dedent
-from typing import Any, NamedTuple, Optional, TYPE_CHECKING
+from typing import Any, List, NamedTuple, Optional, TYPE_CHECKING
 
 from west import log
 from west.commands import WestCommand
@@ -158,7 +158,7 @@ class NcsWestCommand(WestCommand):
         # we want to build an ncs_pmap too. if we have a projects arg,
         # we'll use that. otherwise, we'll just use all the projects
         # in the NCS west manifest.
-        if hasattr(args, 'projects'):
+        if hasattr(args, 'projects') and args.projects:
             try:
                 projects = self.manifest.get_projects(
                     args.projects, only_cloned=True)
@@ -168,13 +168,21 @@ class NcsWestCommand(WestCommand):
                 unknown, uncloned = ve.args
                 if unknown:
                     log.die('unknown projects:', ', '.join(unknown))
-                if uncloned:
-                    log.die('uncloned downstream projects:',
-                            ', '.join(u.name for u in uncloned) + '\n' +
-                            'Run "west update", then retry.')
+                self.die_if_any_uncloned(uncloned)
         else:
-            projects = self.manifest.projects
+            projects = [project for project in self.manifest.projects
+                        if self.to_upstream_repository(project) is not None]
+            self.die_if_any_uncloned(projects)
         self.ncs_pmap = {p.name: p for p in projects}
+
+    @staticmethod
+    def die_if_any_uncloned(projects: List[Project]) -> None:
+        uncloned = [project for project in projects if not project.is_cloned()]
+        if not uncloned:
+            return
+        log.die('uncloned downstream projects:',
+                ', '.join(project.name for project in uncloned) + '\n' +
+                'Run "west update", then retry.')
 
     def zephyr_manifest(self) -> Manifest:
         # Load the upstream manifest. Since west v0.13, the resulting
