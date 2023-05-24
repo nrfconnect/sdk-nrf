@@ -101,7 +101,7 @@ class Fota():
         self.app_instance_id = 0
         if self.fota_object == 33629:
             self.modem_instance_id = 1
-            self.observation_url = "Advanced Firmware Update"
+            self.observation_url = "Multicomponent Firmware Update"
         else:
             self.modem_instance_id = 0
             self.observation_url = "Firmware Update"
@@ -121,7 +121,7 @@ class Fota():
     def firmware_url_resource_get(self, instance_id):
         app_pack_url = None
         if self.fota_object == 33629:
-            app_pack_url = f'Advanced Firmware Update.{instance_id}.Package URI'
+            app_pack_url = f'Multicomponent Firmware Update.{instance_id}.Package URI'
         else:
             app_pack_url = f'Firmware Update.{instance_id}.Package URI'
         return app_pack_url
