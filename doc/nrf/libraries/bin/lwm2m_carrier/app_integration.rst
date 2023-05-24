@@ -72,7 +72,7 @@ Following are some of the general Kconfig options that you can configure:
 
   * This configuration allows the LwM2M carrier library to use the bootstrap information stored on the SIM card.
     The configuration in the SIM will take precedence over any other configuration.
-    For example, if a bootstrap server URI is fetched from the SIM, the configuration set by the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` Kconfig option is ignored.
+    For example, if a bootstrap server URI is fetched from the SIM, the configuration set by the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` Kconfig option is ignored.
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT`:
 
@@ -81,7 +81,7 @@ Following are some of the general Kconfig options that you can configure:
   * The timeout closes the DTLS session.
     A new DTLS session will be created on the next activity (for example, lifetime trigger).
   * Leaving this configuration empty (``0``) sets it to a default of 60 seconds.
-  * This configuration does not apply when the DTLS session is using Connection ID, enabled by the :c:macro:`NRF_SO_SEC_DTLS_CID` socket option.
+  * This configuration does not apply when the DTLS session is using Connection ID.
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL`:
 
