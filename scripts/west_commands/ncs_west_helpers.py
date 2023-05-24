@@ -28,8 +28,8 @@ except ImportError:
              "with pip3.")
 from west import log
 
-from pygit2_helpers import title_is_revert, title_has_sauce, \
-    title_no_sauce, commit_reverts_what, commit_title
+from pygit2_helpers import title_is_revert, title_no_sauce, \
+        commit_reverts_what, commit_title
 
 __all__ = ['InvalidRepositoryError', 'UnknownCommitsError', 'RepoAnalyzer']
 
@@ -256,15 +256,6 @@ class RepoAnalyzer:
                         log.wrn(('commit {} ("{}") reverts {}, '
                                  "which isn't in downstream history").
                                 format(sha, sl, rsha))
-
-            # Emit a warning if we have a non-revert patch with an
-            # incorrect sauce tag. (Again, downstream might carry reverts
-            # of upstream patches as hotfixes, which we shouldn't
-            # warn about.)
-            if (not title_has_sauce(sl, self._downstream_sauce) and
-                    not is_revert):
-                log.wrn(f'{self.downstream_repo.name}: bad or missing sauce tag: '
-                        f'{sha} ("{sl}")')
 
             downstream_out[sha] = c
             log.dbg('** added oot patch: {} ("{}")'.format(sha, sl),
