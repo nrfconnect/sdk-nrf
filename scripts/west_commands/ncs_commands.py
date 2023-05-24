@@ -30,7 +30,8 @@ except ImportError:
              "with pip3.")
 
 import ncs_west_helpers as nwh
-from pygit2_helpers import commit_affects_files, commit_title
+from pygit2_helpers import commit_affects_files, commit_title, \
+    title_has_sauce, title_is_revert
 
 WEST_V0_13_0_OR_LATER = version.parse(west_version) >= version.parse('0.13.0')
 
@@ -382,7 +383,17 @@ class NcsLoot(NcsWestCommand):
             if self.args.sha_only:
                 log.inf(sha)
             else:
-                log.inf(f'{index+1}. {sha} {title}')
+                # Emit a warning if we have a non-revert patch with an
+                # incorrect sauce tag. (Again, downstream might carry
+                # reverts of upstream patches, which we shouldn't warn
+                # about.)
+                if not title_has_sauce(title) and not title_is_revert(title):
+                    space = ' ' * len(f'{index+1}. ')
+                    sauce_note = \
+                        f'\n{space}[NOTE: commit title is missing a sauce tag]'
+                else:
+                    sauce_note = ''
+                log.inf(f'{index+1}. {sha} {title}{sauce_note}')
 
             if self.args.json:
                 json_sha_list.append(sha)
