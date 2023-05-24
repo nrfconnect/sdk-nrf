@@ -32,6 +32,10 @@
 
 | :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk_nrf52840 <nrf9160dk_nrf52840>` | ``nrf9160dk_nrf52840`` |
 
+.. nrf9161dk_nrf9161_ns
+
+| nRF9161 DK |  | ``nrf9161dk_nrf9161`` | ``nrf9161dk_nrf9161_ns`` |
+
 .. nrf5340dk_nrf5340_cpuapp
 
 | :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :ref:`nrf5340dk_nrf5340 <nrf5340dk_nrf5340>` | ``nrf5340dk_nrf5340_cpuapp`` |
