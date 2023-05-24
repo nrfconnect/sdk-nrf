@@ -54,7 +54,7 @@ features:
   wifi:
     STA Mode: WPA_SUPP && WIFI_NRF700X
     Scan only (for location accuracy): WIFI_NRF700X && !WPA_SUPP
-    BLE Co-existence: WIFI_NRF700X && NRF700X_BT_COEX
+    Bluetooth LE Co-existence: WIFI_NRF700X && NRF700X_BT_COEX
   trusted_firmware_m:
     Minimal Build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
     Full build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_NOT_SET && NRF_SECURITY
