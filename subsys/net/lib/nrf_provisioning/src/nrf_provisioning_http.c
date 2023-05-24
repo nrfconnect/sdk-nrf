@@ -44,8 +44,8 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define API_GET_CMDS API_VER API_PRV "/commands"
 #define CMDS_AFTER "after=%s"
 #define CMDS_CVER "cver=%s"
-#define CMDS_MAX_RX_SZ "rxSize=%s"
-#define CMDS_MAX_TX_SZ "txSize=%s"
+#define CMDS_MAX_RX_SZ "rxMaxSize=%s"
+#define CMDS_MAX_TX_SZ "txMaxSize=%s"
 #define CMDS_MVER "mver=%s"
 #define API_CMDS_TEMPLATE (API_GET_CMDS "?" \
 	CMDS_AFTER "&" CMDS_MAX_RX_SZ "&" CMDS_MAX_TX_SZ "&" CMDS_MVER "&" CMDS_CVER)

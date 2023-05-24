@@ -318,19 +318,19 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 		char *cversion;
 		char *endpoint;
 		char *command;
-		char *txSize;
-		char *rxSize;
+		char *txMaxSize;
+		char *rxMaxSize;
 	};
 
-	/* 'txSize', 'rxSize', 'mver', 'cver' and 'after' */
+	/* 'txMaxSize', 'rxMaxSize', 'mver', 'cver' and 'after' */
 	char *query_items[QUERY_ITEMS_MAX] = { NULL, NULL, NULL, NULL };
 
 	struct url_info info = { .apiver = 0,
 				 .mversion = NULL,
 				 .endpoint = NULL,
 				 .command = NULL,
-				 .txSize = NULL,
-				 .rxSize = NULL };
+				 .txMaxSize = NULL,
+				 .rxMaxSize = NULL };
 
 	tokens = (char *)malloc(strlen(req_ctx->url) + 1);
 
@@ -369,7 +369,7 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 
 	resp_ctx->http_status_code = NRF_PROVISIONING_HTTP_STATUS_NO_CONTENT;
 
-	/* '/v1/provisioning/commands?txSize=1536&rxSize=1536&mver=1.3.2&cver=1' */
+	/* '/v1/provisioning/commands?txMaxSize=1536&rxMaxSize=1536&mver=1.3.2&cver=1' */
 
 	TEST_ASSERT_EQUAL_INT(3, sgmtc);
 	TEST_ASSERT_GREATER_OR_EQUAL_INT(1, atoi(&(info.apiver[1]))); /* No 'v' */
@@ -378,7 +378,7 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 
 	/* At least 'after' */
 	TEST_ASSERT_GREATER_OR_EQUAL_INT(1, qcnt);
-	/* No more than 'txSize', 'rxSize', 'mver', 'cver' and 'after'*/
+	/* No more than 'txMaxSize', 'rxMaxSize', 'mver', 'cver' and 'after'*/
 	TEST_ASSERT_LESS_OR_EQUAL_INT(QUERY_ITEMS_MAX, qcnt);
 
 	for (int idx = 0; idx < QUERY_ITEMS_MAX && query_items[idx]; idx++) {
@@ -388,14 +388,14 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 		} else if (strncmp(query_items[idx], "cver=", strlen("cver=")) == 0) {
 			info.cversion = &(query_items[idx][strlen("cver=")]);
 			TEST_ASSERT_GREATER_OR_EQUAL_INT(1, atoi(info.cversion));
-		} else if (strncmp(query_items[idx], "txSize=", strlen("txSize=")) == 0) {
-			info.txSize = &(query_items[idx][strlen("txSize=")]);
+		} else if (strncmp(query_items[idx], "txMaxSize=", strlen("txMaxSize=")) == 0) {
+			info.txMaxSize = &(query_items[idx][strlen("txMaxSize=")]);
 			TEST_ASSERT_EQUAL_INT(
-				CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ, atoi(info.txSize));
-		} else if (strncmp(query_items[idx], "rxSize=", strlen("rxSize=")) == 0) {
-			info.rxSize = &(query_items[idx][strlen("rxSize=")]);
+				CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ, atoi(info.txMaxSize));
+		} else if (strncmp(query_items[idx], "rxMaxSize=", strlen("rxMaxSize=")) == 0) {
+			info.rxMaxSize = &(query_items[idx][strlen("rxMaxSize=")]);
 			TEST_ASSERT_EQUAL_INT(
-				CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ, atoi(info.rxSize));
+				CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ, atoi(info.rxMaxSize));
 		} else if (strncmp(query_items[idx], "after=", strlen("after=")) == 0) {
 			;
 		} else {

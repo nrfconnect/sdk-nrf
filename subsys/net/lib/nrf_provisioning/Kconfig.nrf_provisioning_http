@@ -33,7 +33,7 @@ config NRF_PROVISIONING_HTTP_RX_BUF_SZ
 
 config NRF_PROVISIONING_HTTP_TX_BUF_SZ
 	int "Request body size"
-	default 1536
+	default 2048
 
 rsource "Kconfig.nrf_provisioning_codec"
 
