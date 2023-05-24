@@ -30,10 +30,6 @@
 #define ADP536X_VBAT_READ_H				0x25
 #define ADP536X_VBAT_READ_L				0x26
 #define ADP536X_FUEL_GAUGE_MODE				0x27
-#define ADP536X_BUCK_CFG				0x29
-#define ADP536X_BUCK_OUTPUT				0x2A
-#define ADP536X_BUCKBST_CFG				0x2B
-#define ADP536X_BUCKBST_OUTPUT				0x2C
 #define ADP536X_DEFAULT_SET_REG				0x37
 
 /* Manufacturer and model ID register. */
@@ -118,26 +114,6 @@
 #define ADP536X_BAT_OC_CHG_OC_CHG(x)			(((x) & 0x07) << 5)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG_MSK		GENMASK(4, 3)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG(x)		(((x) & 0x03) << 3)
-
-/* Buck configure register. */
-#define ADP536X_BUCK_CFG_DISCHG_BUCK_MSK		BIT(1)
-#define ADP536X_BUCK_CFG_DISCHG_BUCK(x)			(((x) & 0x01) << 1)
-
-/* Buck output voltage setting register. */
-#define ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK		GENMASK(5, 0)
-#define ADP536X_BUCK_OUTPUT_VOUT_BUCK(x)		(((x) & 0x3F) << 0)
-#define ADP536X_BUCK_OUTPUT_BUCK_DLY_MSK		GENMASK(7, 6)
-#define ADP536X_BUCK_OUTPUT_BUCK_DLY(x)			(((x) & 0x03) << 6)
-
-/* Buck/boost output voltage setting register. */
-#define ADP536X_BUCKBST_OUTPUT_VOUT_BUCKBST_MSK		GENMASK(5, 0)
-#define ADP536X_BUCKBST_OUTPUT_VOUT_BUCKBST(x)		(((x) & 0x3F) << 0)
-#define ADP536X_BUCKBST_OUT_BUCK_DLY_MSK		GENMASK(7, 6)
-#define ADP536X_BUCKBST_OUT_BUCK_DLY(x)			(((x) & 0x03) << 6)
-
-/* Buck/boost configure register. */
-#define ADP536X_BUCKBST_CFG_EN_BUCKBST_MSK		BIT(0)
-#define ADP536X_BUCKBST_CFG_EN_BUCKBST(x)		(((x) & 0x01) << 0)
 
 /* DEFAULT_SET register. */
 #define ADP536X_DEFAULT_SET_MSK				GENMASK(7, 0)
@@ -243,40 +219,6 @@ int adp536x_oc_chg_current_set(uint8_t value)
 	return adp536x_reg_write_mask(ADP536X_BAT_OC_CHG,
 					ADP536X_BAT_OC_CHG_OC_CHG_MSK,
 					ADP536X_BAT_OC_CHG_OC_CHG(value));
-}
-
-int adp536x_buck_1v8_set(void)
-{
-	/* 1.8V equals to 0b11000 = 0x18 according to ADP536X datasheet. */
-	uint8_t value = 0x18;
-
-	return adp536x_reg_write_mask(ADP536X_BUCK_OUTPUT,
-					ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK,
-					ADP536X_BUCK_OUTPUT_VOUT_BUCK(value));
-}
-
-int adp536x_buck_discharge_set(bool enable)
-{
-	return adp536x_reg_write_mask(ADP536X_BUCK_CFG,
-				ADP536X_BUCK_CFG_DISCHG_BUCK_MSK,
-				ADP536X_BUCK_CFG_DISCHG_BUCK(enable));
-}
-
-int adp536x_buckbst_3v3_set(void)
-{
-	/* 3.3V equals to 0b10011 = 0x13, according to ADP536X datasheet. */
-	uint8_t value = 0x13;
-
-	return adp536x_reg_write_mask(ADP536X_BUCKBST_OUTPUT,
-				ADP536X_BUCKBST_OUTPUT_VOUT_BUCKBST_MSK,
-				ADP536X_BUCKBST_OUTPUT_VOUT_BUCKBST(value));
-}
-
-int adp536x_buckbst_enable(bool enable)
-{
-	return adp536x_reg_write_mask(ADP536X_BUCKBST_CFG,
-					ADP536X_BUCKBST_CFG_EN_BUCKBST_MSK,
-					ADP536X_BUCKBST_CFG_EN_BUCKBST(enable));
 }
 
 static int adp536x_default_set(void)

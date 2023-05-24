@@ -16,6 +16,9 @@ The library accesses the features of the ADP5360 PMIC by conducting Inter-Integr
 Generic read, write, and masked write functions are private to the library.
 The feature-specific functions are available to the user.
 
+.. note::
+   Regulator functionality (BUCK/BUCKBOOST) is exposed using the :ref:`Zephyr regulator API <regulator_api>`.
+
 Supported features
 ==================
 

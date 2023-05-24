@@ -155,32 +155,6 @@ int adp536x_oc_chg_hiccup_set(bool enable);
 int adp536x_oc_dis_hiccup_set(bool enable);
 
 /**
- * @brief Enable the buck/boost regulator.
- *
- * @param[in] enable The requested regulator operation state.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int adp536x_buckbst_enable(bool enable);
-
-/**
- * @brief Set the buck regulator to 1.8 V.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int adp536x_buck_1v8_set(void);
-
-/**
- * @brief Set the buck/boost regulator to 3.3 V.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int adp536x_buckbst_3v3_set(void);
-
-/**
  * @brief Reset the device to its default values.
  *
  * @retval 0 If the operation was successful.
@@ -197,16 +171,6 @@ int adp536x_factory_reset(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int adp536x_oc_chg_current_set(uint8_t value);
-
-/**
- * @brief Set the buck discharge resistor status.
- *
- * @param[in] enable Boolean value to enable or disable the discharge resistor.
- *
- * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int adp536x_buck_discharge_set(bool enable);
 
 /**
  * @brief Set Fuel Gauge operating mode
