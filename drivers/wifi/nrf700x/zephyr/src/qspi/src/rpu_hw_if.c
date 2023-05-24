@@ -212,7 +212,7 @@ int rpu_pwron(void)
 	/* Settling time for iovdd nRF7002 DK/EK - switch (TCK106AG): ~600us */
 	k_msleep(1);
 
-#ifdef SHIELD_NRF7002EB
+#ifdef CONFIG_SHIELD_NRF7002EB
 	/* For nRF7002 Evaluation board, we need a total time after bucken assertion
 	 * to be 6ms (2ms+4ms)
 	 */
