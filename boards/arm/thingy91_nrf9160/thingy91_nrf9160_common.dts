@@ -143,6 +143,30 @@
 		reg = <0x38>;
 		int-gpios = <&gpio0 27 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 	};
+
+	pmic@46 {
+		compatible = "adi,adp5360";
+		reg = <0x46>;
+
+		regulators {
+			compatible = "adi,adp5360-regulator";
+
+			BUCK {
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-init-microvolt = <1800000>;
+				regulator-always-on;
+				adi,enable-output-discharge;
+			};
+
+			BUCKBOOST {
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-init-microvolt = <3300000>;
+				regulator-always-on;
+			};
+		};
+	};
 };
 
 &spi3 {

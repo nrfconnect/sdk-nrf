@@ -13,13 +13,6 @@ LOG_MODULE_REGISTER(board_secure, CONFIG_BOARD_LOG_LEVEL);
 #define ADP536X_I2C_DEVICE	DEVICE_DT_GET(DT_NODELABEL(i2c2))
 #define LC_MAX_READ_LENGTH	128
 
-/* The BH1749 on must be powered by the ADP5360 before it can be initialized. */
-#if IS_ENABLED(CONFIG_BH1749)
-BUILD_ASSERT(CONFIG_BOARD_INIT_PRIORITY < CONFIG_SENSOR_INIT_PRIORITY,
-	     "The board initialization must happen before the sensor initialization "
-	     "for the sensors to be powered before initializing");
-#endif
-
 static int power_mgmt_init(void)
 {
 	int err;
@@ -27,33 +20,6 @@ static int power_mgmt_init(void)
 	err = adp536x_init(ADP536X_I2C_DEVICE);
 	if (err) {
 		LOG_ERR("ADP536X failed to initialize, error: %d\n", err);
-		return err;
-	}
-
-	err = adp536x_buck_1v8_set();
-	if (err) {
-		LOG_ERR("Could not set buck to 1.8 V, error: %d\n", err);
-		return err;
-	}
-
-	err = adp536x_buckbst_3v3_set();
-	if (err) {
-		LOG_ERR("Could not set buck/boost to 3.3 V, error: %d\n", err);
-		return err;
-	}
-
-	err = adp536x_buckbst_enable(true);
-	if (err) {
-		LOG_ERR("Could not enable buck/boost output, error: %d\n", err);
-		return err;
-	}
-
-	/* Enables discharge resistor for buck regulator that brings the voltage
-	 * on its output faster down when it's inactive. Needed because some
-	 * components require to boot up from ~0V.
-	 */
-	err = adp536x_buck_discharge_set(true);
-	if (err) {
 		return err;
 	}
 
