@@ -18,10 +18,6 @@ config MODEM_THREAD_STACK_SIZE
 	int "Modem module thread stack size"
 	default 2048
 
-config MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES
-	bool "Auto request power saving features"
-	default y
-
 config MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM
 	bool "Convert RSRP values to dBm for dynamic modem data"
 	default y

@@ -630,26 +630,6 @@ static bool data_type_is_requested(enum app_module_data_type *data_list,
 	return false;
 }
 
-static int configure_low_power(void)
-{
-	int err;
-	bool enable = IS_ENABLED(CONFIG_MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES);
-
-	err = lte_lc_psm_req(enable);
-	if (err) {
-		LOG_ERR("lte_lc_psm_req, error: %d", err);
-		return err;
-	}
-
-	if (enable) {
-		LOG_DBG("PSM requested");
-	} else {
-		LOG_DBG("PSM disabled");
-	}
-
-	return 0;
-}
-
 static int lte_connect(void)
 {
 	int err;
@@ -706,12 +686,6 @@ static int setup(void)
 	err = pdn_default_ctx_cb_reg(pdn_event_handler);
 	if (err) {
 		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", err);
-		return err;
-	}
-
-	err = configure_low_power();
-	if (err) {
-		LOG_ERR("configure_low_power, error: %d", err);
 		return err;
 	}
 
@@ -814,12 +788,14 @@ static void on_all_states(struct modem_msg_data *msg)
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_USER_ASSOCIATED)) {
 
-		/* Re-enable low power features after cloud has been associated. */
-		int err = configure_low_power();
+		if (IS_ENABLED(CONFIG_LTE_PSM_REQ)) {
+			/* Re-enable low power features after cloud has been associated. */
+			int err = lte_lc_psm_req(true);
 
-		if (err) {
-			LOG_ERR("configure_low_power, error: %d", err);
-			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+			if (err) {
+				LOG_ERR("lte_lc_psm_req, error: %d", err);
+				SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+			}
 		}
 	}
 
