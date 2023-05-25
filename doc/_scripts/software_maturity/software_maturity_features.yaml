@@ -42,7 +42,7 @@ features:
     Thread TCP: OPENTHREAD_TCP_ENABLE
   matter:
     Matter over Thread: CHIP && NET_L2_OPENTHREAD
-    Matter over Wi-Fi: CHIP_OVER_WIFI
+    Matter over Wi-Fi: CHIP && WIFI_NRF700X
     Matter commissioning over IP: CHIP
     Matter commissioning over Bluetooth LE with QR code onboarding: CHIP && BT
     Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING

@@ -41,8 +41,6 @@ rsource "shell/Kconfig"
 
 rsource "mpsl/Kconfig"
 
-rsource "matter/Kconfig"
-
 rsource "partition_manager/Kconfig"
 
 rsource "nrf_rpc/Kconfig"
