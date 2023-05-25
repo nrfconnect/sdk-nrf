@@ -307,8 +307,7 @@ config BT_UNINIT_MPSL_ON_DISABLE
 	  override any interrupt handlers used by MPSL.
 
 config BT_CTLR_SDC_PAWR_ADV
-	bool "LE Periodic Advertising with Responses Advertising State [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "LE Periodic Advertising with Responses Advertising State"
 	depends on BT_PER_ADV
 	depends on BT_CTLR_SYNC_TRANSFER_SENDER
 	default y if BT_PER_ADV_RSP
@@ -362,8 +361,7 @@ endif
 
 
 config BT_CTLR_SDC_PAWR_SYNC
-	bool "LE Periodic Advertising with Responses Synchronization State [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "LE Periodic Advertising with Responses Synchronization State"
 	depends on BT_CTLR_SYNC_PERIODIC
 	depends on BT_CTLR_SYNC_TRANSFER_SENDER
 	depends on BT_CTLR_SYNC_TRANSFER_RECEIVER
