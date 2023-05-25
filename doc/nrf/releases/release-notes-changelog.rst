@@ -140,6 +140,8 @@ nRF9160: Asset Tracker v2
   * Enabled link time optimization to reduce the flash size of the application.
     You can disable this using the Kconfig option :kconfig:option:`CONFIG_ASSET_TRACKER_V2_LTO`.
 
+* Fixed an issue with movement timeout handling in passive mode.
+
 nRF9160: Serial LTE modem
 -------------------------
 

@@ -286,10 +286,15 @@ static void data_sample_timer_handler(struct k_timer *timer)
 {
 	ARG_UNUSED(timer);
 
-	/* Cancel if a previous sample request has not completed or the device is not under
-	 * activity in passive mode.
+	/* Cancel if a previous sample request has not completed. */
+	if (sample_request_ongoing) {
+		return;
+	}
+
+	/* Cancel if the data sample timer expired and device is not under activity in passive mode.
+	 * Movement timeout timer triggers sampling also when there is no movement.
 	 */
-	if (sample_request_ongoing || ((sub_state == SUB_STATE_PASSIVE_MODE) && !activity)) {
+	if (timer == &data_sample_timer && sub_state == SUB_STATE_PASSIVE_MODE && !activity) {
 		return;
 	}
 
