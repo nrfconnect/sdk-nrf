@@ -76,11 +76,13 @@ To switch to release |release| of the |NCS|, enter the following commands in the
    git checkout |release|
    west update
 
-To update to a particular revision (SHA), make sure that you have that particular revision locally before you check it out (by running ``git fetch origin``)::
+To update to a particular revision, make sure that you have that particular revision on your local file system before you check it out (by running ``git fetch origin``)::
 
    git fetch origin
-   git checkout 224bee9055d986fe2677149b8cbda0ff10650a6e
+   git checkout *next_revision*
    west update
+
+In this case, *next_revision* can be either a SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``), a branch, or a tag name.
 
 To switch to the latest state of development, enter the following commands::
 

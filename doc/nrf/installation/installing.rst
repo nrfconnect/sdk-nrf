@@ -286,7 +286,6 @@ To clone the repositories, complete the following steps:
      You can find the tag in the :ref:`release_notes` of the release.
    * To work with a :ref:`development tag <intro_vers_revs>`, the identifier is the corresponding tag (for example, ``v1.2.99-dev1``)
    * To work with a branch, the identifier is the branch name (for example, ``main`` to work with the latest state of development).
-   * To work with a specific state, the identifier is the SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``).
 
 #. On the command line, go to the :file:`ncs` folder (``cd ncs``) and initialize west with the revision of the |NCS| that you want to check out, replacing *nRFConnectSDK_revision* with the identifier:
 
@@ -346,6 +345,14 @@ Your directory structure now looks similar to this:
 This is a simplified structure preview.
 There are additional folders, and the structure might change over time.
 The full set of repositories and folders is defined in the manifest file.
+
+In order to change the state of development you want to use to a different revision, enter the following commands from the :file:`nrf` directory you created earlier::
+
+  git checkout *next_revision*
+  west update
+
+In this case, *next_revision* can be either a SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``), a branch, or a tag name.
+You can use any revision of the sdk-nrf repository that is available on your local file system.
 
 .. _additional_deps:
 
