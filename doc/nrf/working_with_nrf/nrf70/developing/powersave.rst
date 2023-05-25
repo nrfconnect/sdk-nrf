@@ -73,7 +73,6 @@ Further the Wi-Fi® interface can be configured in one of the following dynamic 
   DTIM is the default configuration and enabled by the application based on the traffic profile.
 * **Extended Power Save:** Listen interval-based power save mode.
   The Listen interval based-Power Save mode is supported to enable devices to sleep longer than the DTIM period.
-  It is typically low and not useful for power saving.
 * **Deep sleep:** Target Wake Time (TWT) power save.
   TWT can be enabled if the connected access point is Wi-Fi 6 capable.
 
