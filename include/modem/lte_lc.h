@@ -1042,6 +1042,13 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat);
  *         power saving mode (PSM) using default Kconfig value or as set using
  *         `lte_lc_psm_param_set`.
  *
+ *  @note CONFIG_LTE_PSM_REQ can be set to enable PSM, which is generally sufficient.
+ *	  This option allows explicit disabling/enabling of PSM requesting
+ *	  after modem initialization.
+ *	  Calling this function for run-time control is possible, but it should be noted that
+ *	  conflicts may arise with the value set by CONFIG_LTE_PSM_REQ if it is called
+ *	  during modem initialization.
+ *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
  */
@@ -1099,6 +1106,13 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
  *         use of eDRX using values set by `lte_lc_edrx_param_set`. The
  *         default values are defined in Kconfig.
  *         For reference see 3GPP 27.007 Ch. 7.40.
+ *
+ *  @note CONFIG_LTE_EDRX_REQ can be set to enable eDRX, which is generally sufficient.
+ *	  This option allows explicit disabling/enabling of eDRX requesting after
+ *	  modem initialization.
+ *	  Calling this function for run-time control is possible, but it should be noted that
+ *	  conflicts may arise with the value set by CONFIG_LTE_EDRX_REQ if it is called
+ *	  during modem initialization.
  *
  * @param enable Boolean value enabling or disabling the use of eDRX.
  *
