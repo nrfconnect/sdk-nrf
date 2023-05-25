@@ -19,6 +19,14 @@ config ASSET_TRACKER_V2_APP_VERSION_MAX_LEN
 	int "Maximum length of the application firmware version"
 	default 150
 
+config ASSET_TRACKER_V2_LTO
+	bool "Enable link time optimization"
+	default y if SIZE_OPTIMIZATIONS
+	help
+	  Compile the Asset Tracker application code with link time optimization enabled. This
+	  option is only applied for the application code and not the libraries and external modules
+	  that are linked in.
+
 rsource "src/modules/Kconfig.modules_common"
 rsource "src/modules/Kconfig.cloud_module"
 rsource "src/cloud/Kconfig.lwm2m_integration"

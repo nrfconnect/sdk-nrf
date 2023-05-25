@@ -134,7 +134,10 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Enabled link time optimization to reduce the flash size of the application.
+    You can disable this using the Kconfig option :kconfig:option:`CONFIG_ASSET_TRACKER_V2_LTO`.
 
 nRF9160: Serial LTE modem
 -------------------------
