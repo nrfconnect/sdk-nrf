@@ -81,16 +81,16 @@ void test_cb_error_found(struct bt_conn *conn, int err, void *context)
 	printk("%s\n", __func__);
 	zassert_unreachable("HIDS error found");
 }
-
-
 struct bt_gatt_dm_cb test_hids_cb = {
 	.completed         = test_cb_completed,
 	.service_not_found = test_cb_service_not_found,
 	.error_found       = test_cb_error_found
 };
 
-void test_setup(void)
+void test_before(void *fixture)
 {
+	ARG_UNUSED(fixture);
+
 	k_sem_reset(&discovery_finished);
 	bt_gatt_discover_mock_setup(discover_sim, ARRAY_SIZE(discover_sim));
 }
@@ -126,8 +126,10 @@ struct bt_gatt_dm *run_dm_next(struct bt_gatt_dm *dm)
 	return dm_next;
 }
 
+ZTEST_SUITE(gatt_tests, NULL, NULL, test_before, NULL, NULL);
+
 /* The service that is not present */
-void test_gatt_none_serv(void)
+ZTEST(gatt_tests, test_gatt_none_serv)
 {
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_BAS);
 
@@ -136,7 +138,7 @@ void test_gatt_none_serv(void)
 
 /* This is just a simple test to check if another service than
  * first one can be accessed */
-void test_gatt_DIS_simple_next_attr(void)
+ZTEST(gatt_tests, test_gatt_DIS_simple_next_attr)
 {
 	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_DIS);
@@ -162,7 +164,7 @@ void test_gatt_DIS_simple_next_attr(void)
 		      bt_gatt_dm_attr_cnt(dm));
 }
 
-void test_gatt_DIS_attr_by_handle(void)
+ZTEST(gatt_tests, test_gatt_DIS_attr_by_handle)
 {
 	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_DIS);
@@ -184,7 +186,7 @@ void test_gatt_DIS_attr_by_handle(void)
 		      bt_gatt_dm_attr_cnt(dm));
 }
 
-void test_gatt_HIDS_simple_next_attr(void)
+ZTEST(gatt_tests, test_gatt_HIDS_simple_next_attr)
 {
 	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_HIDS);
@@ -205,7 +207,7 @@ void test_gatt_HIDS_simple_next_attr(void)
 		      bt_gatt_dm_attr_cnt(dm));
 }
 
-void test_gatt_HIDS_attr_by_handle(void)
+ZTEST(gatt_tests, test_gatt_HIDS_attr_by_handle)
 {
 	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_HIDS);
@@ -227,7 +229,7 @@ void test_gatt_HIDS_attr_by_handle(void)
 		      bt_gatt_dm_attr_cnt(dm));
 }
 
-void test_gatt_HIDS_next_chrc_access(void)
+ZTEST(gatt_tests, test_gatt_HIDS_next_chrc_access)
 {
 	struct bt_gatt_dm *dm;
 	const struct bt_gatt_dm_attr *attr_serv;
@@ -329,7 +331,7 @@ void test_gatt_HIDS_next_chrc_access(void)
 		      bt_gatt_dm_attr_cnt(dm));
 }
 
-void test_gatt_HIDS_chrc_by_uuid(void)
+ZTEST(gatt_tests, test_gatt_HIDS_chrc_by_uuid)
 {
 	struct bt_gatt_dm *dm;
 	const struct bt_gatt_dm_attr *attr_chrc;
@@ -369,7 +371,7 @@ void test_gatt_HIDS_chrc_by_uuid(void)
 		      bt_gatt_dm_attr_cnt(dm));
 }
 
-void test_gatt_generic_serv(void)
+ZTEST(gatt_tests, test_gatt_generic_serv)
 {
 	struct bt_gatt_dm *dm;
 	const struct bt_gatt_dm_attr *attr_serv;
@@ -441,7 +443,7 @@ void test_gatt_generic_serv(void)
 	/* No cleanup here - cleanup is done in run_dm_next */
 }
 
-void test_gatt_many_serv_by_uuid(void)
+ZTEST(gatt_tests, test_gatt_many_serv_by_uuid)
 {
 	struct bt_gatt_dm *dm;
 	const struct bt_gatt_dm_attr *attr_serv;
@@ -467,29 +469,10 @@ void test_gatt_many_serv_by_uuid(void)
 		      bt_gatt_dm_attr_cnt(dm),
 		      "Unexpected number of attributes detected: %d",
 		      bt_gatt_dm_attr_cnt(dm));
-}
 
-void test_main(void)
-{
-	ztest_test_suite(
-		test_gatt,
-		ztest_unit_test_setup_teardown(test_gatt_none_serv, test_setup, unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_DIS_simple_next_attr, test_setup,
-					       unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_DIS_attr_by_handle, test_setup,
-					       unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_HIDS_simple_next_attr, test_setup,
-					       unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_HIDS_attr_by_handle, test_setup,
-					       unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_HIDS_next_chrc_access, test_setup,
-					       unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_HIDS_chrc_by_uuid, test_setup,
-					       unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_generic_serv, test_setup, unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_many_serv_by_uuid, test_setup,
-					       unit_test_noop)
-	);
-
-	ztest_run_test_suite(test_gatt);
+	/* ------------------------------------------------------ */
+	/* Clean up */
+	bt_gatt_dm_data_release(dm);
+	zassert_equal(0, bt_gatt_dm_attr_cnt(dm), "Parameter count after clearing: %d",
+		      bt_gatt_dm_attr_cnt(dm));
 }
