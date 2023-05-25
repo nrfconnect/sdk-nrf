@@ -41,11 +41,24 @@ static const struct bt_data sd[] = {
 };
 
 static struct bt_le_ext_adv *adv;
-static struct bt_le_ext_adv_start_param ext_adv_param;
+static struct bt_le_adv_param *adv_params = BT_LE_ADV_CONN;
 static bool ble_button_state;
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
+	struct bt_conn_info cinfo;
+	int ec;
+
+	ec = bt_conn_get_info(conn, &cinfo);
+	if (ec) {
+		printk("Unable to get connection info (err %d)\n", ec);
+		return;
+	}
+
+	if (cinfo.id != adv_params->id) {
+		return;
+	}
+
 	if (err) {
 		printk("Connection failed (err %u)\n", err);
 		return;
@@ -56,6 +69,19 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
+	struct bt_conn_info cinfo;
+	int ec;
+
+	ec = bt_conn_get_info(conn, &cinfo);
+	if (ec) {
+		printk("Unable to get connection info (err %d)\n", ec);
+		return;
+	}
+
+	if (cinfo.id != adv_params->id) {
+		return;
+	}
+
 	printk("Disconnected (reason %u)\n", reason);
 }
 
@@ -91,7 +117,6 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 
 static void lbs_adv_start(void)
 {
-	struct bt_le_adv_param *adv_params = BT_LE_ADV_CONN;
 	int err;
 	size_t id_count = 0xFF;
 
@@ -126,7 +151,7 @@ static void lbs_adv_start(void)
 		return;
 	}
 
-	err = bt_le_ext_adv_start(adv, &ext_adv_param);
+	err = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
 	if (err) {
 		printk("Starting advertising of LBS service failed (err %d)\n", err);
 	} else {
