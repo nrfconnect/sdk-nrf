@@ -64,6 +64,21 @@ See `Testing diagnostic module`_ section for an example.
 .. note::
     If you disable the :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :kconfig:option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
 
+For the ``nrf52840dongle_nrf52840`` build target, diagnostic GPIO commands can also be used.
+They are enabled in the ``openthread_config`` node in the :file:`boards/nrf52840dongle_nrf52840.overlay` file, with the node configured for the **P0.19** pin, which is connected to the **RESET** pin on the nRF52840 Dongle.
+The pin is set in output mode with a low state so that the **RESET** pin is pulled to **GND**, which results in the device rebooting without skipping the bootloader.
+This functionality is not enabled by other commands, such as ``factoryreset``, as they can only trigger a software reset, skipping the bootloader.
+
+To reboot to the bootloader, run the following commands on the device:
+
+.. code-block:: console
+
+   uart:~$ ot diag start
+   start diagnostics mode
+   status 0x00
+   Done
+   uart:~$ ot diag gpio mode 0 out
+
 Configuration
 *************
 

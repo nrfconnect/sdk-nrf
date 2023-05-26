@@ -72,6 +72,12 @@ You can also use your own application, provided that it supports the Spinel comm
     |thread_hwfc_enabled|
     In addition, the Co-processor sample reconfigures the baud rate to 1000000 bit/s by default.
 
+Diagnostic module
+=================
+
+The Co-processor sample enables a diagnostic module in a similar way as described in the :ref:`ot_cli_sample_diag_module` section of the :ref:`ot_cli_sample` sample documentation.
+However, the Co-processor and CLI samples use different commands for the module, as described in the :ref:`ot_coprocessor_testing` section.
+
 Configuration
 *************
 
@@ -112,6 +118,8 @@ Building and running
 |enable_thread_before_testing|
 
 .. include:: /includes/build_and_run.txt
+
+.. _ot_coprocessor_testing:
 
 Testing
 =======
