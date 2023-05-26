@@ -27,7 +27,10 @@ static void generate_random_secp256r1_private_key(uint8_t *key_buff)
 
 	/* Initialize PSA Crypto */
 	status = psa_crypto_init();
-	__ASSERT(status == PSA_SUCCESS, "psa_crypto_init failed! Error: %d", status);
+	if (status != PSA_SUCCESS) {
+		printk("psa_crypto_init failed! Error: %d", status);
+		k_panic();
+	}
 
 	/* Configure the key attributes */
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -42,15 +45,27 @@ static void generate_random_secp256r1_private_key(uint8_t *key_buff)
 	psa_set_key_bits(&key_attributes, IDENTITY_KEY_SIZE_BYTES * 8);
 
 	status = psa_generate_key(&key_attributes, &key_handle);
-	__ASSERT(status == PSA_SUCCESS, "psa_generate_key failed! Error: %d", status);
+	if (status != PSA_SUCCESS) {
+		printk("psa_generate_key failed! Error: %d", status);
+		k_panic();
+	}
 
 	status = psa_export_key(key_handle, key_buff, IDENTITY_KEY_SIZE_BYTES, &olen);
-	__ASSERT(status == PSA_SUCCESS, "psa_export_key failed! Error: %d", status);
+	if (status != PSA_SUCCESS) {
+		printk("psa_export_key failed! Error: %d", status);
+		k_panic();
+	}
 
-	__ASSERT(olen == IDENTITY_KEY_SIZE_BYTES, "Exported size missmatch! Key size: %d", olen);
+	if (olen != IDENTITY_KEY_SIZE_BYTES) {
+		printk("Exported size mismatch! Key size: %d", olen);
+		k_panic();
+	}
 
 	status = psa_destroy_key(key_handle);
-	__ASSERT(status == PSA_SUCCESS, "psa_destroy_key failed! Error: %d", status);
+	if (status != PSA_SUCCESS) {
+		printk("psa_destroy_key failed! Error: %d", status);
+		k_panic();
+	}
 }
 
 void identity_key_write_random(void)
@@ -71,11 +86,16 @@ void identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
 {
 	int err;
 
-	__ASSERT(identity_key_mkek_is_written(), "Could not find the MKEK!");
+	if (!identity_key_mkek_is_written()) {
+		printk("Could not find the MKEK!");
+		k_panic();
+	}
 
 	err = nrf_cc3xx_platform_identity_key_store(NRF_KMU_SLOT_KIDENT, key);
-	__ASSERT(err == NRF_CC3XX_PLATFORM_SUCCESS, "Identity key write failed ! Error: %d", err);
-
+	if (err != NRF_CC3XX_PLATFORM_SUCCESS) {
+		printk("Identity key write failed ! Error: %d", err);
+		k_panic();
+	}
 }
 
 /* This key is used by the TF-M regression tests and it is taken from the TF-M
