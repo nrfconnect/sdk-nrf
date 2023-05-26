@@ -331,6 +331,10 @@ Libraries for networking
     * :c:struct:`nrf_cloud_obj` structure and functions for encoding and decoding nRF Cloud data.
     * :c:func:`nrf_cloud_obj_pgps_request_create` function that creates a P-GPS request for nRF Cloud.
 
+  * Updated:
+
+    * Moved JSON manipulation from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
+
   * Removed:
 
     * Unused internal codec function ``nrf_cloud_format_single_cell_pos_req_json()``.
