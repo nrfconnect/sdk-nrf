@@ -179,21 +179,12 @@ static uint16_t get_message_id(const uint16_t requested_id)
  */
 static void dc_endpoint_free(void)
 {
-	if (nct.dc_rx_endp.utf8 != NULL) {
-		nrf_cloud_free((void *)nct.dc_rx_endp.utf8);
-	}
-	if (nct.dc_tx_endp.utf8 != NULL) {
-		nrf_cloud_free((void *)nct.dc_tx_endp.utf8);
-	}
-	if (nct.dc_m_endp.utf8 != NULL) {
-		nrf_cloud_free((void *)nct.dc_m_endp.utf8);
-	}
-	if (nct.dc_bulk_endp.utf8 != NULL) {
-		nrf_cloud_free((void *)nct.dc_bulk_endp.utf8);
-	}
-	if (nct.dc_bin_endp.utf8 != NULL) {
-		nrf_cloud_free((void *)nct.dc_bin_endp.utf8);
-	}
+
+	nrf_cloud_free((void *)nct.dc_rx_endp.utf8);
+	nrf_cloud_free((void *)nct.dc_tx_endp.utf8);
+	nrf_cloud_free((void *)nct.dc_m_endp.utf8);
+	nrf_cloud_free((void *)nct.dc_bulk_endp.utf8);
+	nrf_cloud_free((void *)nct.dc_bin_endp.utf8);
 
 	dc_endpoint_reset();
 #if defined(CONFIG_NRF_CLOUD_FOTA)
@@ -294,10 +285,8 @@ static int nct_client_id_set(const char * const client_id)
 		return -ENOMSG;
 	}
 
-	if (client_id_buf) {
-		nrf_cloud_free(client_id_buf);
-		client_id_buf = NULL;
-	}
+	nrf_cloud_free(client_id_buf);
+	client_id_buf = NULL;
 
 	/* Add one for NULL terminator */
 	++len;
@@ -417,26 +406,16 @@ static int allocate_and_format_topic(char **topic_buf, const char * const topic_
 
 static void nct_reset_topics(void)
 {
-	if (accepted_topic) {
-		nrf_cloud_free(accepted_topic);
-		accepted_topic = NULL;
-	}
-	if (rejected_topic) {
-		nrf_cloud_free(rejected_topic);
-		rejected_topic = NULL;
-	}
-	if (update_delta_topic) {
-		nrf_cloud_free(update_delta_topic);
-		update_delta_topic = NULL;
-	}
-	if (update_topic) {
-		nrf_cloud_free(update_topic);
-		update_topic = NULL;
-	}
-	if (shadow_get_topic) {
-		nrf_cloud_free(shadow_get_topic);
-		shadow_get_topic = NULL;
-	}
+	nrf_cloud_free(accepted_topic);
+	accepted_topic = NULL;
+	nrf_cloud_free(rejected_topic);
+	rejected_topic = NULL;
+	nrf_cloud_free(update_delta_topic);
+	update_delta_topic = NULL;
+	nrf_cloud_free(update_topic);
+	update_topic = NULL;
+	nrf_cloud_free(shadow_get_topic);
+	shadow_get_topic = NULL;
 
 	memset(nct_cc_rx_list, 0, sizeof(nct_cc_rx_list[0]) * CC_RX_LIST_CNT);
 	memset(nct_cc_tx_list, 0, sizeof(nct_cc_tx_list[0]) * CC_TX_LIST_CNT);
@@ -1070,10 +1049,8 @@ void nct_uninit(void)
 	dc_endpoint_free();
 	nct_reset_topics();
 
-	if (client_id_buf) {
-		nrf_cloud_free(client_id_buf);
-		client_id_buf = NULL;
-	}
+	nrf_cloud_free(client_id_buf);
+	client_id_buf = NULL;
 
 	memset(&nct, 0, sizeof(nct));
 	mqtt_client_initialized = false;

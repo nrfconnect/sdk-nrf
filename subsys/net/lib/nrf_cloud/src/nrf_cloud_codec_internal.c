@@ -1719,20 +1719,15 @@ void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job)
 		return;
 	}
 
-	if (job->id) {
-		nrf_cloud_free(job->id);
-		job->id = NULL;
-	}
+	nrf_cloud_free(job->id);
+	job->id = NULL;
 
-	if (job->host) {
-		nrf_cloud_free(job->host);
-		job->host = NULL;
-	}
+	nrf_cloud_free(job->host);
+	job->host = NULL;
 
-	if (job->path) {
-		nrf_cloud_free(job->path);
-		job->path = NULL;
-	}
+	nrf_cloud_free(job->path);
+	job->path = NULL;
+}
 }
 
 int nrf_cloud_rest_fota_execution_decode(const char *const response,

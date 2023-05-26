@@ -321,12 +321,9 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 	ret = do_rest_client_request(rest_ctx, &req, &resp, true, false);
 
 clean_up:
-	if (url) {
-		nrf_cloud_free(url);
-	}
-	if (auth_hdr) {
-		nrf_cloud_free(auth_hdr);
-	}
+
+	nrf_cloud_free(url);
+	nrf_cloud_free(auth_hdr);
 
 	close_connection(rest_ctx);
 
@@ -464,15 +461,9 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	ret = do_rest_client_request(rest_ctx, &req, &resp, true, false);
 
 clean_up:
-	if (url) {
-		nrf_cloud_free(url);
-	}
-	if (auth_hdr) {
-		nrf_cloud_free(auth_hdr);
-	}
-	if (payload) {
-		nrf_cloud_free(payload);
-	}
+	nrf_cloud_free(url);
+	nrf_cloud_free(auth_hdr);
+	nrf_cloud_free(payload);
 
 	close_connection(rest_ctx);
 
@@ -555,12 +546,8 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 clean_up:
-	if (url) {
-		nrf_cloud_free(url);
-	}
-	if (auth_hdr) {
-		nrf_cloud_free(auth_hdr);
-	}
+	nrf_cloud_free(url);
+	nrf_cloud_free(auth_hdr);
 
 	close_connection(rest_ctx);
 
@@ -637,9 +624,7 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 clean_up:
-	if (auth_hdr) {
-		nrf_cloud_free(auth_hdr);
-	}
+	nrf_cloud_free(auth_hdr);
 	if (payload) {
 		cJSON_free(payload);
 	}
@@ -927,12 +912,8 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	last_request_timestamp = k_uptime_get();
 
 clean_up:
-	if (url) {
-		nrf_cloud_free(url);
-	}
-	if (auth_hdr) {
-		nrf_cloud_free(auth_hdr);
-	}
+	nrf_cloud_free(url);
+	nrf_cloud_free(auth_hdr);
 
 	close_connection(rest_ctx);
 
@@ -1020,12 +1001,8 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	ret = do_rest_client_request(rest_ctx, &req, &resp, true, true);
 
 clean_up:
-	if (url) {
-		nrf_cloud_free(url);
-	}
-	if (auth_hdr) {
-		nrf_cloud_free(auth_hdr);
-	}
+	nrf_cloud_free(url);
+	nrf_cloud_free(auth_hdr);
 	if (req.body) {
 		cJSON_free((void *)req.body);
 	}
@@ -1247,18 +1224,14 @@ int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest
 	ret = do_rest_client_request(rest_ctx, &req, &resp, true, false);
 
 clean_up:
-	if (url) {
-		nrf_cloud_free(url);
-	}
-	if (auth_hdr) {
-		nrf_cloud_free(auth_hdr);
-	}
+	nrf_cloud_free(url);
+	nrf_cloud_free(auth_hdr);
+	nrf_cloud_free(d2c);
+
 	if (req.body) {
 		cJSON_free((void *)req.body);
 	}
-	if (d2c) {
-		nrf_cloud_free(d2c);
-	}
+
 	cJSON_Delete(root_obj);
 
 	close_connection(rest_ctx);

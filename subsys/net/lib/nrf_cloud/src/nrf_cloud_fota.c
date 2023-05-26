@@ -376,10 +376,8 @@ static void reset_topic(struct mqtt_utf8 *const topic)
 		return;
 	}
 
-	if (topic->utf8) {
-		nrf_cloud_free((void *)topic->utf8);
-		topic->utf8 = NULL;
-	}
+	nrf_cloud_free((void *)topic->utf8);
+	topic->utf8 = NULL;
 	topic->size = 0;
 }
 
@@ -1262,9 +1260,7 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 
 send_ack:
 	/* Cleanup the payload buffer which is no longer needed */
-	if (payload) {
-		nrf_cloud_free(payload);
-	}
+	nrf_cloud_free((void *)payload);
 
 	/* Send the ACK if required and then continue processing, which may result
 	 * in an additional MQTT transaction
