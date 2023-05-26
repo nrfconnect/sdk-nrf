@@ -59,7 +59,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 0933a4b2949889ca924b10aff05b1093dabe7ba0
+      revision: v3.3.99-ncs1-rc2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -118,7 +118,7 @@ manifest:
           compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: d5d451ec21d749f7bc09910f7c426f332c557900
+      revision: v1.10.0-ncs1-rc2
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -127,19 +127,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: 829e3edc7a635944bee1fffec1f77f1d27e17471
+      revision: v3.3.0-ncs1-rc2
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 91f0fea5b4b9cc10d1b0419691db6e92d1df7ec4
+      revision: v2.4.0-rc2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v1.7.0-ncs1-snapshot1
+      revision: v1.7.0-ncs1-rc2
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 0819495b18cf1601555e7eec16fcf2bd7efa2764
+      revision: v2.4.0-rc2
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -157,7 +157,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 6abc4e6653cab9c585b3b11775aa1a2c9440ea66
+      revision: v2.4.0-rc2
       groups:
         - nrf-802154
     - name: dragoon
@@ -179,12 +179,12 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: 8c78f3f82651e71c261682d3d6d09cd096b09035
+      revision: v2.4.0-rc2
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 01304c1f69f886da59488d63bba36a09f8253b35
+      revision: v2.4.0-rc2
       groups:
         - find-my
     - name: azure-sdk-for-c
