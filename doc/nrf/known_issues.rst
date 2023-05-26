@@ -1346,7 +1346,37 @@ nRF5340 Audio
 
 The issues in this section are related to the :ref:`nrf53_audio_app` application.
 
-.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0
+
+OCT-2070: Detection issues with USB-C to USB-C connection
+  Using USB-C to USB-C when connecting an nRF5340 Audio DK to PC is not correctly detected on some Windows systems.
+
+  **Affected platforms:** nRF5340 Audio DK
+
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+OCT-2154: USB audio interface does not work correctly on macOS
+  The audio stream is intermittent on the headset side after connecting the gateway to a Mac computer and starting audio stream.
+  This issue occurs sporadically after building the nRF5340 Audio application with the default USB port as the audio source.
+
+  **Affected platforms:** nRF5340 Audio DK
+
+.. rst-class:: v2-4-0 v2-3-0
+
+OCT-2325: If a problematic DFU-image is deployed, causing the image-swap at boot to fail,
+  the device may appear bricked with no obvious way of recovery.
+
+  **Affected platforms:** nRF5340 Audio DK
+
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+OCT-2401: The HW codec has a variable (0-20 uS) audio interface (I2S) lock variability.
+  This will cause a static offset of the stream, which will cause an undesired extra L-R sync difference.
+
+  **Affected platforms:** nRF5340 Audio DK
+
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 OCT-2501: Charging over seven hours results in error
   Since the nRF5340 Audio DK uses a large battery, the nPM1100 can go into error when charging time surpasses 7 hours.
@@ -1357,90 +1387,110 @@ OCT-2501: Charging over seven hours results in error
 
   **Workaround:** To start the charging again, turn the nRF5340 Audio DK off and then on again.
 
-.. rst-class:: v2-3-0
+.. rst-class:: v2-4-0
 
-OCT-2472: Headset fault upon gateway reset in the bidirectional stream mode
-  The headset may react with a usage fault when the :kconfig:option:`CONFIG_STREAM_BIDIRECTIONAL` application Kconfig option is set to ``y`` and the gateway is reset during a stream.
-  This issue is under investigation.
+OCT-2539: Presentation delay may not work as expected under some configurations.
+  Relates to OCT-2557, OCT-2489.
 
-  **Affected platforms:** nRF5340 Audio DK
+.. rst-class:: v2-4-0
 
-.. rst-class:: v2-3-0
-
-OCT-2470: Discovery of Media Control Service fails
-  When restarting or resetting the gateway, one or more headsets may run into a condition where the discovery of the Media Control Service fails.
+OCT-2558: Endpoint in BIS headset not set correctly. This may impact possibility to adjust volume
+  for right headset and may impact broadcast switching.
+  Related to OCT-2375, OCT-2484, OCT-2394, OCT-2571
 
   **Affected platforms:** nRF5340 Audio DK
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0
 
-OCT-2070: Detection issues with USB-C to USB-C connection
-  Using USB-C to USB-C when connecting an nRF5340 Audio DK to PC is not correctly detected on some Windows systems.
+OCT-2569: BIS headset may enter an unwanted state if gateway power is toggled quickly or
+  if headset is moved out of radio range.
 
-  **Affected platforms:** nRF5340 Audio DK
-
-.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
-
-OCT-2154: USB audio interface does not work correctly on macOS
-  The audio stream is intermittent on the headset side after connecting the gateway to a Mac computer and starting audio stream.
-  This issue occurs sporadically after building the nRF5340 Audio application with the default USB port as the audio source.
+  **Workaround:** Reset BIS headset
 
   **Affected platforms:** nRF5340 Audio DK
 
-.. rst-class:: v2-2-0
+.. rst-class:: v2-4-0
 
-OCT-2347: Stream reestablishment issues in CIS
-  In the CIS mode, if a stream is running and the headset is reset, the gateway cannot reestablish the stream properly.
+OCT-2585: Initial L-R sync may lock with an offset.
+  The left and right headset may lock as inteded, but there will be a small static
+  time offset between the two headsets.
 
   **Affected platforms:** nRF5340 Audio DK
+
+.. rst-class:: v2-4-0
+
+OCT-2587: A CIS gateway will try to connect to a BIS gateway if they have the same device name.
+
+  **Workaround:** Use different CONFIG_BT_DEVICE_NAME for BIS and CIS.
+
+  **Affected platforms:** nRF5340 Audio DK
+
 
 Controller subsystem for nRF5340 Audio
 --------------------------------------
 
 The following known issues apply to the LE Audio subsystem (NET core controller) for nRF5340 used in the nRF5340 Audio application.
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0
 
 OCX-138: Some conformance tests not passing
    Not all Bluetooth conformance tests cases pass.
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0
 
 OCX-152: OCX-146: 40 ms ACL interval may cause TWS to be unstable
   There may be combinations of ACL intervals and other controller settings that cause instabilities to connected or true wireless stereo setups.
 
   **Workaround:** Use an alternative ACL connection interval.
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0
+
+OCX-153: Cannot create BIG sync after terminate pending BIG sync
+If a pending BIG sync is canceled by sending the LE Broadcast Isochronous Group Sync Estabilished
+ command, then it is impossible for the host to create a new BIG sync afterwards.
+
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0
 
 OCX-155: Larger timestamps than intended
    The timestamps/Service Data Unit references (SDU refs), may occasionally be larger than intended and then duplicated in the next interval.
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0
 
 OCX-156: PTO is not supported
    The controller does not support Pre-Transmission Offset.
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0
 
-OCX-157: OCT-140: Interleaved broadcasts streaming issues
+OCX-157: OCX-140: Interleaved broadcasts streaming issues
   Interleaved broadcasts are unable to stream with certain Quality of Service (QoS) configurations.
 
   **Workaround:** Set retransmits (RTN) to ``<= 2`` and octets per frame to ``<= 80`` for stereo.
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0
+  OCX-178: Transport latency doesn't effect flush timeout.
 
-OCX-165: Collisions of BIS and ACL on the same broadcaster/central
-   Broadcast Isochronous Stream (BIS) and Asynchronous Connection-oriented Logical transports (ACL) may collide in the scheduler.
+.. rst-class:: v2-4-0
 
-   **Workaround:** Create the ACLs before creating any BISes.
+  OCX-183: Feature request control procedure initiated when controller is in progress of
+  creating CIS and CIS is not yet established.
 
-.. rst-class:: v2-3-0 v2-2-0
+.. rst-class:: v2-4-0
 
-OCX-168: Issues with reestablishing streams
-   Syncing of broadcast receivers takes longer than in version 3310, especially for high retransmit (RTN) values.
+  OCX-184: If 0 dBm TX power is selected, the FEM/PA TX/RX pins do not toggle correctly.
 
-   **Workaround:** Set retransmits (RTN) to a lower value to reduce the resynchronization time.
+  **Workaround:** Set max TX power larger than 0 dBm.
+
+
+.. rst-class:: v2-4-0
+
+  OCX-188: The controller reserves some pins (0.28 - 0.31), which may collide with FEM/PA features.
+
+  **Workaround:** Use different pins for FEM/PA control.
+
+.. rst-class:: v2-4-0
+  OCX-189: When inputting -40 dBm to HCI_OPCODE_VS_SET_CONN_TX_PWR (0x3F6),
+  the actual TX power is changed to -20 dBm.
+
 
 nRF Machine Learning
 ====================
