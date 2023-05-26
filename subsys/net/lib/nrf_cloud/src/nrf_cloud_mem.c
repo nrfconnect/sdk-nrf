@@ -28,7 +28,9 @@ void *nrf_cloud_malloc(size_t size)
 
 void nrf_cloud_free(void *ptr)
 {
-	used_hooks.free_fn(ptr);
+	if (ptr) {
+		used_hooks.free_fn(ptr);
+	}
 }
 
 void nrf_cloud_os_mem_hooks_init(struct nrf_cloud_os_mem_hooks *hooks)

@@ -172,13 +172,13 @@ static int state_ua_pin_wait(void)
 	}
 
 	err = nct_cc_send(&msg);
-	if (err) {
-		LOG_ERR("nct_cc_send failed %d", err);
-		nrf_cloud_free((void *)msg.data.ptr);
-		return err;
-	}
 
 	nrf_cloud_free((void *)msg.data.ptr);
+
+	if (err) {
+		LOG_ERR("nct_cc_send failed %d", err);
+		return err;
+	}
 
 	struct nrf_cloud_evt evt = {
 		.type = NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST,
@@ -320,13 +320,13 @@ static int state_ua_pin_complete(void)
 	c2d_topic_modified = false;
 
 	err = nct_cc_send(&msg);
-	if (err) {
-		LOG_ERR("nct_cc_send failed %d", err);
-		nrf_cloud_free((void *)msg.data.ptr);
-		return err;
-	}
 
 	nrf_cloud_free((void *)msg.data.ptr);
+
+	if (err) {
+		LOG_ERR("nct_cc_send failed %d", err);
+		return err;
+	}
 
 	struct nrf_cloud_evt evt = {
 		.type = NRF_CLOUD_EVT_USER_ASSOCIATED,
