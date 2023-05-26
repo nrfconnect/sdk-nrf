@@ -1601,7 +1601,7 @@ int le_audio_send(struct encoded_audio enc_audio)
 
 	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)) {
 		LOG_ERR("The encoded data size does not match the SDU size");
-		return -ECANCELED;
+		return -EINVAL;
 	}
 
 	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
@@ -1611,7 +1611,10 @@ int le_audio_send(struct encoded_audio enc_audio)
 		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream.ep->iso->chan,
 					      &tx_info);
 	} else {
-		LOG_ERR("No headset in stream state");
+		/* This can happen if a headset is reset and the state in
+		 * streamctrl hasn't had time to update yet
+		 */
+		LOG_DBG("No headset in stream state");
 		return -ECANCELED;
 	}
 

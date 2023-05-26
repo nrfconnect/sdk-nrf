@@ -205,7 +205,11 @@ void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t n
 		ret = le_audio_send(enc_audio);
 
 		if (ret != 0 && ret != prev_ret) {
-			LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
+			if (ret == -ECANCELED) {
+				LOG_WRN("Sending operation cancelled");
+			} else {
+				LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
+			}
 		}
 		prev_ret = ret;
 	}
