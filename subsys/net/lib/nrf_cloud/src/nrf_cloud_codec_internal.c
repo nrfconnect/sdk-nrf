@@ -1728,7 +1728,293 @@ void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job)
 	nrf_cloud_free(job->path);
 	job->path = NULL;
 }
+
+/* FOTA job format via MQTT:
+ * ["jobExecutionId",firmwareType,fileSize,"host","path"]
+ * ["BLE ID","jobExecutionId",firmwareType,fileSize,"host","path"]
+ *
+ * Examples:
+ * ["abcd1234",0,1234,"nrfcloud.com","v1/firmwares/appfw.bin"]
+ * ["12:AB:34:CD:56:EF","efgh5678",0,321,"nrfcloud.com", "v1/firmwares/ble.bin"]
+ */
+enum rcv_item_idx {
+	RCV_ITEM_IDX_BLE_ID,
+	RCV_ITEM_IDX_JOB_ID,
+	RCV_ITEM_IDX_FW_TYPE,
+	RCV_ITEM_IDX_FILE_SIZE,
+	RCV_ITEM_IDX_FILE_HOST,
+	RCV_ITEM_IDX_FILE_PATH,
+	RCV_ITEM_IDX__SIZE,
+};
+
+int nrf_cloud_fota_job_decode(struct nrf_cloud_fota_job_info *const job_info,
+			      bt_addr_t *const ble_id,
+			      const struct nrf_cloud_data *const input)
+{
+	if (!job_info || !input || (!input->ptr)) {
+		return -EINVAL;
+	}
+
+	int err = -ENOMSG;
+	size_t job_id_len;
+	int offset = !ble_id ? 1 : 0;
+	cJSON *array = cJSON_Parse(input->ptr);
+
+	if (!array || !cJSON_IsArray(array)) {
+		LOG_ERR("Invalid JSON array");
+		err = -EINVAL;
+		goto cleanup;
+	}
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_LOG_LEVEL_DGB)) {
+		char *temp = cJSON_PrintUnformatted(array);
+
+		if (temp) {
+			LOG_DBG("JSON array: %s", temp);
+			cJSON_FreeString(temp);
+		}
+	}
+
+	memset(job_info, 0, sizeof(*job_info));
+
+	/* Get the job ID separately, it may be needed to reject an invalid job */
+	job_info->id = json_strdup(cJSON_GetArrayItem(array, RCV_ITEM_IDX_JOB_ID - offset));
+	if (job_info->id == NULL) {
+		LOG_ERR("FOTA job ID not found");
+		goto cleanup;
+	}
+
+	/* Check that the job ID is a valid size */
+	job_id_len = strlen(job_info->id);
+	if (job_id_len > (NRF_CLOUD_FOTA_JOB_ID_SIZE - 1)) {
+		LOG_ERR("Job ID length: %d, exceeds allowed length: %d",
+			job_id_len, NRF_CLOUD_FOTA_JOB_ID_SIZE - 1);
+		goto cleanup;
+	}
+
+#if CONFIG_NRF_CLOUD_FOTA_BLE_DEVICES
+	if (ble_id) {
+		char *ble_str;
+
+		/* Get the BLE ID string and copy to bt_addr_t structure */
+		if (json_array_str_get(array, RCV_ITEM_IDX_BLE_ID,
+					  &ble_str)) {
+			LOG_ERR("Failed to get BLE ID from job");
+			goto cleanup;
+		}
+
+		if (bt_addr_from_str(ble_str, ble_id)) {
+			err = -EADDRNOTAVAIL;
+			LOG_ERR("Invalid BLE ID: %s", ble_str);
+			goto cleanup;
+		}
+	}
+#endif
+
+	/* Get and allocate host and path strings */
+	job_info->host = json_strdup(cJSON_GetArrayItem(array, RCV_ITEM_IDX_FILE_HOST - offset));
+	job_info->path = json_strdup(cJSON_GetArrayItem(array, RCV_ITEM_IDX_FILE_PATH - offset));
+
+	/* Get type and file size */
+	if ((job_info->host == NULL) || (job_info->path == NULL) ||
+	    json_array_num_get(array, RCV_ITEM_IDX_FW_TYPE - offset, (int *)&job_info->type) ||
+	    json_array_num_get(array, RCV_ITEM_IDX_FILE_SIZE - offset, &job_info->file_size)) {
+		LOG_ERR("Error parsing job info");
+		goto cleanup;
+	}
+
+	/* Check that the FOTA type is valid */
+	if (job_info->type < NRF_CLOUD_FOTA_TYPE__FIRST ||
+	    job_info->type >= NRF_CLOUD_FOTA_TYPE__INVALID) {
+		LOG_ERR("Invalid FOTA type: %d", job_info->type);
+		goto cleanup;
+	}
+
+	/* Success */
+	err = 0;
+
+cleanup:
+	if (array) {
+		cJSON_Delete(array);
+	}
+
+	if (err) {
+		/* On error, leave the job ID so that the job can be cancelled */
+		nrf_cloud_free(job_info->host);
+		job_info->host = NULL;
+		nrf_cloud_free(job_info->path);
+		job_info->path = NULL;
+
+		job_info->type = NRF_CLOUD_FOTA_TYPE__INVALID;
+	}
+
+	return err;
 }
+
+static const char * const get_error_string(const enum nrf_cloud_fota_error err)
+{
+	switch (err) {
+	case NRF_CLOUD_FOTA_ERROR_DOWNLOAD_START:
+		return "Failed to start download";
+	case NRF_CLOUD_FOTA_ERROR_DOWNLOAD:
+		return "Error during download";
+	case NRF_CLOUD_FOTA_ERROR_UNABLE_TO_VALIDATE:
+		return "FOTA update not validated";
+	case NRF_CLOUD_FOTA_ERROR_APPLY_FAIL:
+		return "Error applying update";
+	case NRF_CLOUD_FOTA_ERROR_MISMATCH:
+		return "FW file does not match specified FOTA type";
+	case NRF_CLOUD_FOTA_ERROR_BAD_JOB_INFO:
+		return "Job info is invalid";
+	case NRF_CLOUD_FOTA_ERROR_BAD_TYPE:
+		return "FOTA type not supported";
+	case NRF_CLOUD_FOTA_ERROR_NONE:
+		__fallthrough;
+	default:
+		return "";
+	}
+}
+
+int nrf_cloud_obj_fota_job_update_create(struct nrf_cloud_obj *const obj,
+					 const struct nrf_cloud_fota_job * const job)
+{
+	if (!job || !obj) {
+		return -EINVAL;
+	}
+	if (!NRF_CLOUD_OBJ_TYPE_VALID(obj)) {
+		return -EBADF;
+	}
+
+	switch (obj->type) {
+	case NRF_CLOUD_OBJ_TYPE_JSON:
+	{
+		bool result;
+
+		obj->json = cJSON_CreateArray();
+		if (!obj->json) {
+			LOG_ERR("Failed to create JSON array");
+			return -ENOMEM;
+		}
+
+		result = (json_array_str_add(obj->json, job->info.id) == 0) &&
+			 (json_array_num_add(obj->json, job->status) == 0);
+
+		if (job->status == NRF_CLOUD_FOTA_DOWNLOADING) {
+			result &= (json_array_num_add(obj->json, job->dl_progress) == 0);
+		} else {
+			result &= (json_array_str_add(obj->json,
+						      get_error_string(job->error)) == 0);
+		}
+
+		if (!result) {
+			LOG_ERR("Failed to update JSON array");
+			(void)nrf_cloud_obj_free(obj);
+			return -ENOMEM;
+		}
+
+		break;
+	}
+	default:
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_BLE_DEVICES)
+int nrf_cloud_obj_fota_ble_job_request_create(struct nrf_cloud_obj *const obj,
+					       const bt_addr_t *const ble_id)
+{
+	if (!ble_id || !obj) {
+		return -EINVAL;
+	}
+	if (!NRF_CLOUD_OBJ_TYPE_VALID(obj)) {
+		return -EBADF;
+	}
+
+	switch (obj->type) {
+	case NRF_CLOUD_OBJ_TYPE_JSON:
+	{
+		char ble_id_str[BT_ADDR_LE_STR_LEN];
+		int ret;
+
+		ret = bt_addr_to_str(ble_id, ble_id_str, BT_ADDR_LE_STR_LEN);
+		if (ret < 0 || ret >= BT_ADDR_LE_STR_LEN) {
+			return -EADDRNOTAVAIL;
+		}
+
+		obj->json = cJSON_CreateArray();
+		if (!obj->json) {
+			return -ENOMEM;
+		}
+
+		if (json_array_str_add(obj->json, ble_id_str) != 0) {
+			nrf_cloud_obj_free(obj);
+			return -ENOMEM;
+		}
+
+		break;
+	}
+	default:
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+
+int nrf_cloud_obj_fota_ble_job_update_create(struct nrf_cloud_obj *const obj,
+					     const struct nrf_cloud_fota_ble_job *const ble_job,
+					     const enum nrf_cloud_fota_status status)
+{
+	if (!ble_job || !obj) {
+		return -EINVAL;
+	}
+	if (!NRF_CLOUD_OBJ_TYPE_VALID(obj)) {
+		return -EBADF;
+	}
+
+	switch (obj->type) {
+	case NRF_CLOUD_OBJ_TYPE_JSON:
+	{
+		char ble_id_str[BT_ADDR_LE_STR_LEN];
+		bool result;
+		int ret;
+
+		obj->json = cJSON_CreateArray();
+		if (!obj->json) {
+			return -ENOMEM;
+		}
+
+		ret = bt_addr_to_str(&ble_job->ble_id, ble_id_str, BT_ADDR_LE_STR_LEN);
+		if (ret < 0 || ret >= BT_ADDR_LE_STR_LEN) {
+			return -EADDRNOTAVAIL;
+		}
+
+		result = (json_array_str_add(obj->json, ble_id_str) == 0) &&
+			 (json_array_str_add(obj->json, ble_job->info.id) == 0) &&
+			 (json_array_num_add(obj->json, status) == 0);
+
+		if (status == NRF_CLOUD_FOTA_DOWNLOADING) {
+			result &= (json_array_num_add(obj->json, ble_job->dl_progress) == 0);
+		} else {
+			result &= (json_array_str_add(obj->json,
+						      get_error_string(ble_job->error)) == 0);
+		}
+
+		if (!result) {
+			(void)nrf_cloud_obj_free(obj);
+			return -ENOMEM;
+		}
+
+		break;
+	}
+	default:
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+#endif
 
 int nrf_cloud_rest_fota_execution_decode(const char *const response,
 	struct nrf_cloud_fota_job_info *const job)
@@ -1815,8 +2101,7 @@ err_cleanup:
 	return ret;
 }
 
-int get_string_from_array(const cJSON *const array, const int index,
-			  char **string_out)
+int json_array_str_get(const cJSON *const array, const int index, char **string_out)
 {
 	__ASSERT_NO_MSG(string_out != NULL);
 
@@ -1833,6 +2118,47 @@ int get_string_from_array(const cJSON *const array, const int index,
 	*string_out = item->valuestring;
 
 	return 0;
+}
+
+int json_array_num_get(const cJSON *const array, const int index, int *number_out)
+{
+	__ASSERT_NO_MSG(number_out != NULL);
+
+	cJSON *item = cJSON_GetArrayItem(array, index);
+
+	if (!cJSON_IsNumber(item)) {
+		return -EINVAL;
+	}
+
+	*number_out = item->valueint;
+
+	return 0;
+}
+
+int json_array_str_add(cJSON *const array, const char *const string)
+{
+	__ASSERT_NO_MSG(array != NULL);
+
+	cJSON *item = cJSON_CreateString(string);
+
+	if (item) {
+		return cJSON_AddItemToArray(array, item) ? 0 : -EIO;
+	}
+
+	return -ENOMEM;
+}
+
+int json_array_num_add(cJSON *const array, const int number)
+{
+	__ASSERT_NO_MSG(array != NULL);
+
+	cJSON *item = cJSON_CreateNumber(number);
+
+	if (item) {
+		return cJSON_AddItemToArray(array, item) ? 0 : -EIO;
+	}
+
+	return -ENOMEM;
 }
 
 int get_string_from_obj(const cJSON *const obj, const char *const key,
@@ -2369,7 +2695,7 @@ int nrf_cloud_rest_error_decode(const char *const buf, enum nrf_cloud_error *con
 	}
 
 	/* Some responses are only an array of strings */
-	if (cJSON_IsArray(root_obj) && (get_string_from_array(root_obj, 0, &msg) == 0)) {
+	if (cJSON_IsArray(root_obj) && (json_array_str_get(root_obj, 0, &msg) == 0)) {
 		goto cleanup;
 	}
 
@@ -2835,8 +3161,8 @@ int nrf_cloud_pgps_response_decode(const char *const response,
 
 	/* MQTT response is an array, REST is key/value map */
 	if (cJSON_IsArray(rsp_obj)) {
-		if (get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
-		    get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
+		if (json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
+		    json_array_str_get(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
 			LOG_ERR("Invalid P-GPS array response format");
 			err = -EPROTO;
 			goto cleanup;
