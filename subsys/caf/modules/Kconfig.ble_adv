@@ -101,8 +101,8 @@ endif
 config CAF_BLE_ADV_FILTER_ACCEPT_LIST
 	bool "Enable filter accept list"
 	select BT_FILTER_ACCEPT_LIST
-	select BT_CTLR_FILTER_ACCEPT_LIST
-	select BT_CTLR_PRIVACY
+	select BT_CTLR_FILTER_ACCEPT_LIST if BT_CTLR
+	select BT_CTLR_PRIVACY if BT_CTLR
 	help
 	  If the used local identity already has bond, the device will filter
 	  incoming scan response data requests and connection requests. In
