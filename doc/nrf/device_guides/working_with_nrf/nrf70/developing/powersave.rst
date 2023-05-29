@@ -404,10 +404,10 @@ The following shell commands and network management APIs are provided for power 
      - Config ps wakeup mode as listen_interval
      - Wakeup mode set to listem interval
    * - net_mgmt(NET_REQUEST_WIFI_TWT)
-     - wifi twt setup 0 0 1 1 0 1 1 1 65000 52400
+     - wifi twt setup 0 0 1 1 0 1 1 1 65000 524000
      - | Set up TWT:
-       | TWT wake interval - 524000 µs
-       | TWT wake duration - 65000 µs
+       | TWT wake interval - 65000 µs
+       | TWT interval - 524000 µs
      - TWT operation TWT setup with dg - 1, flow_id - 1 requested
    * - net_mgmt(NET_REQUEST_WIFI_TWT)
      - wifi twt teardown 0 0 1 1
