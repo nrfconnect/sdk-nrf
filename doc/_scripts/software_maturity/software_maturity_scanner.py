@@ -273,7 +273,7 @@ def find_all_socs(all_samples: List[str]) -> List[str]:
 
     # Only use nRF boards, but not nRF51 series
     all_boards = set(filter(BOARD_FILTER, all_boards))
-    all_socs = {re.search(r"_(nrf[0-9]+)", b).group(1) for b in all_boards}
+    all_socs = {re.findall(r"_(nrf[0-9]+)", b)[-1] for b in all_boards}
     return list(sorted(all_socs))
 
 
