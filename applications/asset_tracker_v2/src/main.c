@@ -423,8 +423,15 @@ static void on_state_init(struct app_msg_data *msg)
 /* Message handler for STATE_RUNNING. */
 static void on_state_running(struct app_msg_data *msg)
 {
-	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED)) {
+	/* A flag used to trigger sampling when connected to the cloud for the first time. Cloud
+	 * connection re-establishment should not trigger sampling.
+	 */
+	static bool initial_sampling_requested;
+
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED) && !initial_sampling_requested) {
 		data_get();
+
+		initial_sampling_requested = true;
 	}
 
 	if (IS_EVENT(msg, app, APP_EVT_DATA_GET_ALL)) {
