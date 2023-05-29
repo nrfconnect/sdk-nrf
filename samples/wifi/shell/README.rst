@@ -71,24 +71,29 @@ Supported CLI commands
    * - Subcommands
      - Description
    * - scan
-     - Scan for access points in the vicinity
+     - Scan for Wi-Fi APs
    * - connect
-     - | Connect to an access point with below parameters:
+     - | Connect to a Wi-Fi AP with the following parameters:
        | <SSID>
        | <Channel number> (optional: 0 means all)
        | <PSK> (optional: valid only for secured SSIDs)
        | <Security type> (optional: 0-None, 1-PSK, 2-PSK-256, 3-SAE)
        | <MFP> (optional: 0-Disable, 1-Optional, 2-Required)
    * - disconnect
-     - Disconnect from the current access point
+     - Disconnect from the Wi-Fi AP
    * - status
-     - Get the status of the Wi-Fi interface
+     - Status of the Wi-Fi interface
    * - statistics
-     - Get the statistics of the Wi-Fi interface
-   * - ap_enable
-     - Configure the Wi-Fi interface as access point mode
-   * - ap_disable
-     - Configure the Wi-Fi interface as station mode
+     - Wi-Fi interface statistics
+   * - ap
+     - | Access Point mode commands
+       | enable - Enable Access Point mode, with the following parameters:
+       | <SSID>
+       | <SSID length>
+       | <channel> [optional]
+       | <psk> [optional]
+       | disable - Disable Access Point mode
+       | (Note that the Access Point mode is presently not supported.)
    * - ps
      - | Configure power save
        | No argument - Prints current configuration
@@ -104,13 +109,14 @@ Supported CLI commands
        | setup - Start a TWT flow:
        | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
        | <setup_cmd: 0 - Request, 1 - Suggest, 2 - Demand>
-       | <dialog_token> <flow_id> <responder> <trigger> <implicit>
-       | <announce> <twt_wake_interval> <twt_interval>
+       | <dialog_token: 1-255> <flow_id: 0-7> <responder: 0/1> <trigger: 0/1>
+       | <implicit: 0/1> <announce: 0/1> <twt_wake_interval: 1-262144 µs>
+       | <twt_interval: 1µs-2^31µs>
        |
        | teardown - Teardown a TWT flow:
        | <negotiation_type: 0 - Individual, 1 - Broadcast, 2 - Wake TBTT>
        | <setup_cmd: 0 - Request, 1 - Suggest, 2 - Demand>
-       | <dialog_token> <flow_id>
+       | <dialog_token: 1-255> <flow_id: 0-7>
        |
        | teardown_all - Teardown all TWT flows
    * - reg_domain
