@@ -283,7 +283,9 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
-|no_changes_yet_note|
+* :ref:`caf_ble_adv`:
+
+  * Updated the dependencies of the :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option so that it can be used when the Bluetooth controller is running on the network core.
 
 Shell libraries
 ---------------
