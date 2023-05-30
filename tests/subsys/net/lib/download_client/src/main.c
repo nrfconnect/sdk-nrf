@@ -259,6 +259,66 @@ ZTEST(download_client, test_get)
 	zassert_true(wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED), "Socket must have closed");
 }
 
+ZTEST(download_client, test_download_recv_timeout_fail)
+{
+	struct download_client client;
+	/* server does not respond, recv fails, send is still okay */
+	size_t socket_recvfrom_ret_values[] = { 25, 25, -1, -1 };
+	size_t socket_sendto_ret_values[] = { 20, 20, 20, 20 };
+	/* first retransmission succeeds, second fails due to backoff max retries */
+	size_t coap_initiate_retransmission_ret_values[] = { 0, 1 };
+
+	coap_get_recv_timeout_fake.custom_fake = coap_get_recv_timeout_fake_default;
+	coap_parse_fake.custom_fake = coap_parse_fake_default;
+	coap_request_send_fake.custom_fake = coap_request_send_fake_default;
+	coap_initiate_retransmission_fake.custom_fake = coap_initiate_retransmission_fake_default;
+
+	test_set_ret_val_socket_offload_recvfrom(socket_recvfrom_ret_values,
+						 ARRAY_SIZE(socket_recvfrom_ret_values));
+	test_set_ret_val_socket_offload_sendto(socket_sendto_ret_values,
+					       ARRAY_SIZE(socket_sendto_ret_values));
+	test_set_ret_val_coap_initiate_retransmission(
+		coap_initiate_retransmission_ret_values,
+		ARRAY_SIZE(coap_initiate_retransmission_ret_values));
+
+	download_start(&client);
+
+	zassert_true(wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR));
+	zassert_equal(last_event.error, -ETIMEDOUT);
+	zassert_equal(coap_get_recv_timeout_fake.call_count, 4);
+	zassert_equal(coap_request_send_fake.call_count, 4);
+	zassert_equal(coap_parse_fake.call_count, 2);
+	zassert_equal(coap_initiate_retransmission_fake.call_count, 2);
+
+	download_stop(&client);
+}
+
+ZTEST(download_client, test_download_send_timeout_reconnect_ok)
+{
+	struct download_client client;
+	/* server does not respond, recv fails, send is still okay */
+	size_t socket_recvfrom_ret_values[] = { 25, 25, 25 };
+	size_t socket_sendto_ret_values[] = { 20, 20, -1, 20 };
+
+	coap_get_recv_timeout_fake.custom_fake = coap_get_recv_timeout_fake_default;
+	coap_parse_fake.custom_fake = coap_parse_fake_default;
+	coap_request_send_fake.custom_fake = coap_request_send_fake_default;
+
+	test_set_ret_val_socket_offload_recvfrom(socket_recvfrom_ret_values,
+						 ARRAY_SIZE(socket_recvfrom_ret_values));
+	test_set_ret_val_socket_offload_sendto(socket_sendto_ret_values,
+					       ARRAY_SIZE(socket_sendto_ret_values));
+
+	download_start(&client);
+
+	zassert_true(wait_for_event(DOWNLOAD_CLIENT_EVT_DONE));
+	zassert_equal(coap_get_recv_timeout_fake.call_count, 3);
+	zassert_equal(coap_request_send_fake.call_count, 4);
+	zassert_equal(coap_parse_fake.call_count, 3);
+
+	download_stop(&client);
+}
+
 extern int mock_nrf_modem_lib_socket_offload_init(const struct device *dev);
 
 #define TEST_SOCKET_PRIO 40
