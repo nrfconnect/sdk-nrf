@@ -578,7 +578,7 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 	fmac_dev_ctx = ctx->rpu_ctx;
 
 	memset(&stats, 0, sizeof(struct rpu_op_stats));
-	status = wifi_nrf_fmac_stats_get(fmac_dev_ctx, &stats);
+	status = wifi_nrf_fmac_stats_get(fmac_dev_ctx, 0, &stats);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		shell_fprintf(shell,

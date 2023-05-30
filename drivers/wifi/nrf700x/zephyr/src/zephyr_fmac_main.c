@@ -353,16 +353,25 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 	tx_pwr_ctrl_params.band_edge_5g_unii_4_lo = CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF;
 	tx_pwr_ctrl_params.band_edge_5g_unii_4_hi = CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF;
 
-	status = wifi_nrf_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
-#ifndef CONFIG_NRF700X_RADIO_TEST
-					NULL,
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
+#ifdef CONFIG_NRF700X_RADIO_TEST
+	status = wifi_nrf_fmac_dev_init_rt(rpu_ctx_zep->rpu_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 					sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 					NRF_WIFI_DEF_PHY_CALIB,
 					op_band,
 					&tx_pwr_ctrl_params);
+#else
+	status = wifi_nrf_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
+					NULL,
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+					sleep_type,
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+					NRF_WIFI_DEF_PHY_CALIB,
+					op_band,
+					&tx_pwr_ctrl_params);
+#endif /* CONFIG_NRF700X_RADIO_TEST */
+
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_dev_init failed\n", __func__);
@@ -434,7 +443,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 							rx_buf_pools,
 							&callbk_fns);
 #else /* !CONFIG_NRF700X_RADIO_TEST */
-	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init();
+	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init_rt();
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
 	if (rpu_drv_priv_zep.fmac_priv == NULL) {
@@ -470,7 +479,11 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 
 	return 0;
 fmac_deinit:
+#ifdef CONFIG_NRF700X_RADIO_TEST
+	wifi_nrf_fmac_deinit_rt(rpu_drv_priv_zep.fmac_priv);
+#else
 	wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 err:
 	return -1;
 }
