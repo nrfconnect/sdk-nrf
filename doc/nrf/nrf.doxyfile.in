@@ -751,11 +751,14 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-
 INPUT                  = @NRF_BASE@/applications \
                          @NRF_BASE@/lib \
                          @NRF_BASE@/include \
-                         @NRF_BASE@/subsys/zigbee/osif/zb_nrf_platform.h
+                         @NRF_BASE@/subsys/zigbee/osif/zb_nrf_platform.h \
+                         @NRF_BASE@/drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/fmac_api_common.h \
+                         @NRF_BASE@/drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/fmac_structs_common.h \
+                         @NRF_BASE@/drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/default \
+                         @NRF_BASE@/drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/radio_test/fmac_api.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
