@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- */
+* Copyright (c) 2022 grandcentrix GmbH
+*
+* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+*/
+
+#include "socket_mock.h"
+
 #include <zephyr/net/socket_offload.h>
 #include <sockets_internal.h>
-#include <zephyr/ztest.h>
-
-#include "mock/socket.h"
 
 void mock_socket_iface_init(struct net_if *iface);
 
@@ -24,11 +24,36 @@ struct net_if_api mock_if_api = {
  * for a short moment anyway
  */
 
+static size_t *mock_socket_offload_recvfrom_ret_values;
+static size_t mock_socket_offload_recvfrom_ret_len;
+static size_t mock_socket_offload_recvfrom_ret_cnt;
+
+void test_set_ret_val_socket_offload_recvfrom(size_t *values, size_t len)
+{
+	mock_socket_offload_recvfrom_ret_values = values;
+	mock_socket_offload_recvfrom_ret_len = len;
+	mock_socket_offload_recvfrom_ret_cnt = 0;
+}
+
 static ssize_t mock_socket_offload_recvfrom(void *obj, void *buf, size_t len, int flags,
 					    struct sockaddr *from, socklen_t *fromlen)
 {
+	int ret;
+
+	if (mock_socket_offload_recvfrom_ret_cnt == mock_socket_offload_recvfrom_ret_len) {
+		printk("Missing return values for mock_socket_offload_recvfrom\n");
+		return 0;
+	}
+
 	k_sleep(K_MSEC(50));
-	return ztest_get_return_value();
+
+	ret = mock_socket_offload_recvfrom_ret_values[mock_socket_offload_recvfrom_ret_cnt++];
+
+	if (ret == -1) {
+		errno = ETIMEDOUT;
+	}
+
+	return ret;
 }
 
 static ssize_t mock_socket_offload_read(void *obj, void *buffer, size_t count)
@@ -36,11 +61,42 @@ static ssize_t mock_socket_offload_read(void *obj, void *buffer, size_t count)
 	return mock_socket_offload_recvfrom(obj, buffer, count, 0, NULL, 0);
 }
 
+static size_t *mock_socket_offload_sendto_ret_values;
+static size_t mock_socket_offload_sendto_ret_len;
+static size_t mock_socket_offload_sendto_ret_cnt;
+
+void test_set_ret_val_socket_offload_sendto(size_t *values, size_t len)
+{
+	mock_socket_offload_sendto_ret_values = values;
+	mock_socket_offload_sendto_ret_len = len;
+	mock_socket_offload_sendto_ret_cnt = 0;
+}
+
 static ssize_t mock_socket_offload_sendto(void *obj, const void *buf, size_t len, int flags,
 					  const struct sockaddr *to, socklen_t tolen)
 {
+	int ret;
+
+	if (mock_socket_offload_sendto_ret_cnt == mock_socket_offload_sendto_ret_len) {
+		printk("Missing return values for mock_socket_offload_recvfrom\n");
+		return 0;
+	}
+
 	k_sleep(K_MSEC(50));
-	return ztest_get_return_value();
+
+	ret = mock_socket_offload_sendto_ret_values[mock_socket_offload_sendto_ret_cnt++];
+
+	if (ret == -1) {
+		errno = ETIMEDOUT;
+	}
+
+	return ret;
+}
+
+void test_socket_mock_teardown(void)
+{
+	test_set_ret_val_socket_offload_recvfrom(NULL, 0);
+	test_set_ret_val_socket_offload_sendto(NULL, 0);
 }
 
 static ssize_t mock_socket_offload_write(void *obj, const void *buffer, size_t count)
@@ -285,11 +341,6 @@ int mock_socket_create(int family, int type, int proto)
 	return fd;
 }
 
-int mock_nrf_modem_lib_socket_offload_init(const struct device *arg)
-{
-	return 0;
-}
-
 static const struct socket_dns_offload mock_socket_dns_offload_ops = {
 	.getaddrinfo = mock_socket_offload_getaddrinfo,
 	.freeaddrinfo = mock_socket_offload_freeaddrinfo,
@@ -302,4 +353,9 @@ void mock_socket_iface_init(struct net_if *iface)
 	iface->if_dev->socket_offload = mock_socket_create;
 
 	socket_offload_dns_register(&mock_socket_dns_offload_ops);
+}
+
+int mock_nrf_modem_lib_socket_offload_init(const struct device *dev)
+{
+	return 0;
 }
