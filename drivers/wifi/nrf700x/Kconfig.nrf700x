@@ -80,6 +80,7 @@ config NRF700X_DATA_TX
 	default y if WPA_SUPP || NRF700X_AP_MODE || NRF700X_P2P_MODE
 
 config NRF700X_UTIL
+	depends on SHELL
 	bool "Enable Utility shell in nRF700x driver"
 
 config NRF700X_BT_COEX
