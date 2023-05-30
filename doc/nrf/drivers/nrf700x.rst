@@ -37,7 +37,8 @@ The driver supports two modes of operations:
 
 Wi-Fi mode
 ^^^^^^^^^^
-In this mode the driver is designed to be used with the Zephyr networking stack. It is implemented as a network interface driver.
+In this mode, the driver is designed to be used with the Zephyr networking stack.
+It is implemented as a network interface driver.
 
 The driver supports the following IEEE 802.11 features:
 
@@ -56,8 +57,8 @@ Except for scan only mode, the driver uses host access point daemon (hostapd) to
 
 Radio test mode
 ^^^^^^^^^^^^^^^
-The nRF700X Wi-Fi driver supports Radio Test mode, which can be used to test the RF performance of the nRF700X device.
-This is a build time option and can be enabled by using the :kconfig:option:`CONFIG_NRF700X_RADIO_TEST` Kconfig option.
+The nRF700X Wi-Fi driver supports Radio Test mode, which you can use to test the RF performance of the nRF700X device.
+This is a build time option that you can enable using the :kconfig:option:`CONFIG_NRF700X_RADIO_TEST` Kconfig option.
 
 For more details about using this driver in Radio Test mode, see :ref:`wifi_radio_test`.
 
@@ -74,7 +75,18 @@ To connect the nRF7002 EK to the SoC, the ``nrf7002ek`` shield is required.
 API documentation
 *****************
 
-| Source folder: :file:`drivers/wifi/nrf700x/`
-
 After the nrf700x driver has been initialized, the application will see it as an Ethernet interface.
 To use the Ethernet interface, the application can use `Zephyr Network APIs`_.
+
+Low-level API documentation
+***************************
+
+The nRF700X Wi-Fi driver provides a low-level API for use cases where the application needs to access the nRF700X device directly.
+This is typically intended for customers who want to use the nRF700X device in a different platform than Zephyr.
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+   :glob:
+
+   nrf700x/*
