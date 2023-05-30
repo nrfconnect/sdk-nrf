@@ -1,2 +1,2 @@
 jinja2
-scancode-toolkit[full]
+scancode-toolkit[full]==31.2.6
