@@ -314,6 +314,13 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 |no_changes_yet_note|
 
+* :ref:`west_sbom`:
+
+  * Changed:
+
+    * To reduce RAM usage, the script now runs the `Scancode-Toolkit`_ detector in a single process.
+      This change slows down the licenses detector, because it is no longer executed simultaneously on all files.
+
 MCUboot
 =======
 
