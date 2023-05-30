@@ -11,6 +11,7 @@
 #include <zephyr_fmac_main.h>
 #include <nrf_wifi_radio_test_shell.h>
 #include <util.h>
+#include "fmac_api_common.h"
 
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;

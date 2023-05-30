@@ -22,6 +22,14 @@ zephyr_include_directories(
 	osal/fw_if/umac_if/inc/fw
 )
 
+zephyr_include_directories_ifdef(CONFIG_NRF700X_RADIO_TEST
+	osal/fw_if/umac_if/inc/radio_test
+)
+
+zephyr_include_directories_ifndef(CONFIG_NRF700X_RADIO_TEST
+	osal/fw_if/umac_if/inc/default
+)
+
 zephyr_library_sources_ifdef(CONFIG_NRF700X_BT_COEX
 	zephyr/src/zephyr_coex.c
 )
@@ -42,7 +50,7 @@ zephyr_library_sources(
 	osal/bus_if/bus/qspi/src/qspi.c
 	osal/fw_if/umac_if/src/cmd.c
 	osal/fw_if/umac_if/src/event.c
-	osal/fw_if/umac_if/src/fmac_api.c
+	osal/fw_if/umac_if/src/fmac_api_common.c
 	zephyr/src/shim.c
 	zephyr/src/zephyr_work.c
 	zephyr/src/timer.c
@@ -58,6 +66,11 @@ zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST
 	osal/fw_if/umac_if/src/fmac_util.c
 	zephyr/src/zephyr_wifi_mgmt.c
 	zephyr/src/zephyr_net_if.c
+	osal/fw_if/umac_if/src/default/fmac_api.c
+)
+
+zephyr_library_sources_ifdef(CONFIG_NRF700X_RADIO_TEST
+	osal/fw_if/umac_if/src/radio_test/fmac_api.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_DATA_TX

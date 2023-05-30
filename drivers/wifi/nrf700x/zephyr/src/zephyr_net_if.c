@@ -629,7 +629,7 @@ int wifi_nrf_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	}
 
 	memset(&stats, 0, sizeof(struct rpu_op_stats));
-	status = wifi_nrf_fmac_stats_get(rpu_ctx_zep->rpu_ctx, &stats);
+	status = wifi_nrf_fmac_stats_get(rpu_ctx_zep->rpu_ctx, 0, &stats);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_stats_get failed\n", __func__);
