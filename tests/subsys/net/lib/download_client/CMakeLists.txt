@@ -9,37 +9,25 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(download_client)
 
-FILE(GLOB app_sources src/mock/*.c src/*.c)
-target_sources(app PRIVATE ${app_sources})
+set(APP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-target_include_directories(app
-        PRIVATE
-        ${ZEPHYR_BASE}/../nrf/include/net/
-        ${ZEPHYR_BASE}/subsys/net/ip/
-        src/
-        )
+# Add test sources
+target_sources(app PRIVATE ${APP_SRC_DIR}/main.c)
+target_sources(app PRIVATE ${APP_SRC_DIR}/stubs.c)
+target_sources(app PRIVATE ${APP_SRC_DIR}/socket_mock.c)
+target_sources(app PRIVATE ${ZEPHYR_BASE}/../nrf/subsys/net/lib/download_client/src/download_client.c)
+target_sources(app PRIVATE ${ZEPHYR_BASE}/../nrf/subsys/net/lib/download_client/src/parse.c)
 
-add_library(download_client STATIC
-        ${ZEPHYR_BASE}/../nrf/subsys/net/lib/download_client/src/download_client.c
-        ${ZEPHYR_BASE}/../nrf/subsys/net/lib/download_client/src/parse.c
-        )
+# Add includes directories
+target_include_directories(app PRIVATE ${APP_SRC_DIR})
+target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/include/net/)
+target_include_directories(app PRIVATE ${ZEPHYR_BASE}/subsys/net/ip/)
 
-target_link_libraries(download_client PUBLIC zephyr_interface)
-target_link_libraries(app PRIVATE download_client)
-
-zephyr_append_cmake_library(download_client)
-
-zephyr_compile_options(
-        -DCONFIG_DOWNLOAD_CLIENT_BUF_SIZE=0x40
-        -DCONFIG_DOWNLOAD_CLIENT_STACK_SIZE=2048
-)
-
-target_compile_definitions(
-        download_client PRIVATE
-        -DCONFIG_COAP=1
-        -DCONFIG_DOWNLOAD_CLIENT_LOG_LEVEL=4
-        -DCONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE=256
-        -DCONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE=32
-        -DCONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE=64
-        -DCONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS=0
-)
+add_compile_definitions(CONFIG_COAP=1)
+add_compile_definitions(CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL=4)
+add_compile_definitions(CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE=256)
+add_compile_definitions(CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE=32)
+add_compile_definitions(CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE=64)
+add_compile_definitions(CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS=0)
+add_compile_definitions(CONFIG_DOWNLOAD_CLIENT_BUF_SIZE=0x40)
+add_compile_definitions(CONFIG_DOWNLOAD_CLIENT_STACK_SIZE=2048)
