@@ -51,6 +51,67 @@ endif # BT_MESH_RELAY
 
 endif
 
+config BT_MESH_NLC_PERF_CONF
+	bool "Enable NLC performance configurations"
+	help
+	  Enables performance configurations required for NLC profiles.
+	  When implementing the NLC Basic Lightness Controller profile
+	  individually or in conjunction with other NLC profiles, also
+	  enable CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL.
+
+choice BT_MESH_NLC_PERF_OPTIONS
+	prompt "NLC configuration options"
+	depends on BT_MESH_NLC_PERF_CONF
+
+config BT_MESH_NLC_PERF_DEFAULT
+	bool "Default"
+	help
+	  Enables performance configurations required for the NLC Basic Scene Selector,
+	  Dimming Control, Energy Monitor, Occupancy Sensor and Ambient Light Sensor profiles.
+	  When implementing the NLC Basic Lightness Controller profile individually or in
+	  conjunction with other NLC profiles, use CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL instead.
+
+config BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+	bool "Enable strict performance configurations required for the Basic Lightness Controller"
+	help
+	  Enables required performance configurations for the
+	  NLC Basic Lightness Controller. The NLC Basic Lightness Controller
+	  share most performance configurations with the common NLC profiles
+	  (CONFIG_BT_MESH_NLC_PERF_DEFAULT) but with more strict requirements for a
+	  subset of the configurations.
+
+endchoice
+
+config BT_MESH_CRPL
+	default 32 if BT_MESH_NLC_PERF_DEFAULT
+	default 255 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+	range 32 65535 if BT_MESH_NLC_PERF_DEFAULT
+	range 255 65535 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+
+config BT_MESH_MODEL_GROUP_COUNT
+	default 32 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+	range 32 4096 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+
+if BT_MESH_NLC_PERF_CONF
+
+config BT_MESH_MSG_CACHE_SIZE
+	default 64
+	range 64 65535
+
+config BT_MESH_APP_KEY_COUNT
+	default 3
+	range 3 4096
+
+config BT_MESH_SUBNET_COUNT
+	default 2
+	range 2 4096
+
+config BT_MESH_PROXY_FILTER_SIZE
+	default 8
+	range 8 32767
+
+endif
+
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"
 rsource "shell/Kconfig"
