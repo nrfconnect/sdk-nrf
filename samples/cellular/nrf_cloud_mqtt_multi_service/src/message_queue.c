@@ -4,7 +4,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <stdio.h>
 #include <net/nrf_cloud.h>
 #include <date_time.h>
 #include <zephyr/logging/log.h>
@@ -81,9 +80,9 @@ static void free_queued_dev_msg_message(struct nrf_cloud_obj *msg_obj)
 }
 
 /**
- * @brief Consume (attempt to send) a single device message from the device message queue. Will wait
- *        until connection to nRF Cloud is established before actually sending. If message fails
- *	  to send, it will be dropped.
+ * @brief Consume (attempt to send) a single device message from the device message queue.
+ *	  Waits for nRF Cloud readiness before sending each message.
+ *	  If the message fails to send, it will be reenqueued.
  *
  * @return int - 0 on success, otherwise negative error code.
  */

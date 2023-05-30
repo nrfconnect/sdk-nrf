@@ -15,13 +15,6 @@ config POWER_SAVING_MODE_ENABLE
 	help
 	  Enable to request Power Saving Mode from cellular network.
 
-config LTE_INIT_RETRY_TIMEOUT_SECONDS
-	int "LTE initialization retry timeout (seconds)"
-	default 30
-	help
-	  Sets the number of seconds between each LTE modem initialization
-	  retry.
-
 config CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS
 	int "Cloud connection retry timeout (seconds)"
 	default 30
@@ -66,7 +59,7 @@ config MESSAGE_THREAD_STACK_SIZE
 
 config LED_THREAD_STACK_SIZE
 	int "LED Thread Stack Size (bytes)"
-	default 512
+	default 1024
 	help
 	  Sets the stack size (in bytes) for the LED thread.
 
