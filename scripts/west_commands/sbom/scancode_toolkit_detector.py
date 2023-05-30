@@ -15,7 +15,7 @@ from tempfile import NamedTemporaryFile
 from west import log
 from data_structure import Data, FileInfo, License
 from args import args
-from common import SbomException, command_execute, concurrent_pool_iter
+from common import SbomException, command_execute
 from license_utils import is_spdx_license
 
 
@@ -40,7 +40,9 @@ def run_scancode(file: FileInfo) -> 'set(str)':
                         '--license-score', '100',
                         '--license-text-diagnostics',
                         '--quiet',
-                        file.file_path, allow_stderr=True)
+                        f'-n {args.processes if args.processes > 0 else os.cpu_count()}', # Does not observe grow of efficiency on single file run.
+                        file.file_path,
+                        allow_stderr=True)
         output_file.seek(0)
         result = json.loads(output_file.read())
         output_file.close()
@@ -59,7 +61,9 @@ def detect(data: Data, optional: bool):
     if len(filtered) > 0:
         check_scancode()
 
-    for result, file, _ in concurrent_pool_iter(run_scancode, filtered):
+    decoded = map(run_scancode, filtered)
+
+    for result, file in zip(decoded, filtered):
         for i in result['files'][0]['licenses']:
 
             friendly_id = ''

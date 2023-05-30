@@ -222,6 +222,7 @@ The ``ncs-sbom`` command includes the following detectors:
      --scancode ~/scancode-toolkit/scancode
 
   This detector is optional because it is significantly slower than the others.
+  Due to its limitations, it is run on single files one by one using a single process.
 
 * ``external-file`` - Search for license information in an external file. Enabled by default.
 
