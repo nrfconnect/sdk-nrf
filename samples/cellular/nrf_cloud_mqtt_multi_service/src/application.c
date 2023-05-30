@@ -14,13 +14,14 @@
 #include <stdio.h>
 
 #include "application.h"
+
 #include "temperature.h"
 #include "cloud_connection.h"
 #include "message_queue.h"
-
 #include "location_tracking.h"
 #include "led_control.h"
 #include "at_commands.h"
+
 
 LOG_MODULE_REGISTER(application, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 

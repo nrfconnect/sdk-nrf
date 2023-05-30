@@ -9,6 +9,7 @@
 #include <zephyr/sys/util.h>
 #include <modem/location.h>
 #include <date_time.h>
+#include <modem/lte_lc.h>
 
 #include "location_tracking.h"
 
@@ -50,8 +51,16 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval)
 {
 	int err;
 
+	LOG_DBG("Starting location tracking");
+
 	if (!date_time_is_valid()) {
 		LOG_WRN("Date and time unknown. Location Services results may suffer");
+	}
+
+	/* Enable GNSS on the modem */
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
+	if (err) {
+		LOG_ERR("Activating GNSS failed, error: %d. Continuing without GNSS", err);
 	}
 
 	/* Update the location update handler. */

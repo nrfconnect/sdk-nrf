@@ -218,104 +218,35 @@ static void update_shadow(void)
 
 /* External event handlers */
 
-/**
- * @brief Handler for LTE events coming from modem.
- *
- * @param evt Events from modem.
+/* Handler for L4/connectivity events
+ * This allows the cloud module to react to network gain and loss.
+ * The conn_mgr subsystem is responsible for seeking / maintaining network connectivity and
+ * firing these events.
  */
-static void lte_event_handler(const struct lte_lc_evt *const evt)
+struct net_mgmt_event_callback l4_callback;
+static void l4_event_handler(struct net_mgmt_event_callback *cb,
+			     uint32_t event, struct net_if *iface)
 {
-	switch (evt->type) {
-	case LTE_LC_EVT_NW_REG_STATUS:
-		LOG_DBG("LTE_EVENT: Network registration status %d, %s", evt->nw_reg_status,
-			evt->nw_reg_status == LTE_LC_NW_REG_NOT_REGISTERED ?	  "Not Registered" :
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?	 "Registered Home" :
-			evt->nw_reg_status == LTE_LC_NW_REG_SEARCHING ?		       "Searching" :
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTRATION_DENIED ?
-									     "Registration Denied" :
-			evt->nw_reg_status == LTE_LC_NW_REG_UNKNOWN ?			 "Unknown" :
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING ?
-									      "Registered Roaming" :
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_EMERGENCY ?
-									    "Registered Emergency" :
-			evt->nw_reg_status == LTE_LC_NW_REG_UICC_FAIL ?		       "UICC Fail" :
-											 "Invalid");
+	if (event == NET_EVENT_L4_CONNECTED) {
+		LOG_INF("Network connectivity gained!");
 
-		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			LOG_INF("Network connectivity lost!");
+		/* Set the network ready flag */
+		k_event_post(&cloud_events, NETWORK_READY);
 
-			/* Clear the network ready flag */
-			k_event_clear(&cloud_events, NETWORK_READY);
 
-			/* Disconnect from cloud as well. */
-			disconnect_cloud();
-		} else {
-			LOG_INF("Network connectivity gained!");
+	} else if (event == NET_EVENT_L4_DISCONNECTED) {
+		LOG_INF("Network connectivity lost!");
 
-			/* Set the network ready flag */
-			k_event_post(&cloud_events, NETWORK_READY);
-		}
+		/* Clear the network ready flag */
+		k_event_clear(&cloud_events, NETWORK_READY);
 
-		break;
-	case LTE_LC_EVT_PSM_UPDATE:
-		LOG_DBG("LTE_EVENT: PSM parameter update: TAU: %d, Active time: %d",
-			evt->psm_cfg.tau, evt->psm_cfg.active_time);
-		break;
-	case LTE_LC_EVT_EDRX_UPDATE: {
-		/* This check is necessary to silence compiler warnings by
-		 * sprintf when debug logs are not enabled.
-		 */
-		if (IS_ENABLED(CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL_DBG)) {
-			char log_buf[60];
-			ssize_t len;
-
-			len = snprintf(log_buf, sizeof(log_buf),
-				"LTE_EVENT: eDRX parameter update: eDRX: %f, PTW: %f",
-				evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
-			if (len > 0) {
-				LOG_DBG("%s", log_buf);
-			}
-		}
-		break;
-	}
-	case LTE_LC_EVT_RRC_UPDATE:
-		LOG_DBG("LTE_EVENT: RRC mode: %s",
-			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
-			"Connected" : "Idle");
-		break;
-	case LTE_LC_EVT_CELL_UPDATE:
-		LOG_DBG("LTE_EVENT: LTE cell changed: Cell ID: %d, Tracking area: %d",
-			evt->cell.id, evt->cell.tac);
-		break;
-	case LTE_LC_EVT_LTE_MODE_UPDATE:
-		LOG_DBG("LTE_EVENT: Active LTE mode changed: %s",
-			evt->lte_mode == LTE_LC_LTE_MODE_NONE ? "None" :
-			evt->lte_mode == LTE_LC_LTE_MODE_LTEM ? "LTE-M" :
-			evt->lte_mode == LTE_LC_LTE_MODE_NBIOT ? "NB-IoT" :
-			"Unknown");
-		break;
-	case LTE_LC_EVT_MODEM_EVENT:
-		LOG_DBG("LTE_EVENT: Modem domain event, type: %s",
-			evt->modem_evt == LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE ?
-				"Light search done" :
-			evt->modem_evt == LTE_LC_MODEM_EVT_SEARCH_DONE ?
-				"Search done" :
-			evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP ?
-				"Reset loop detected" :
-			evt->modem_evt == LTE_LC_MODEM_EVT_BATTERY_LOW ?
-				"Low battery" :
-			evt->modem_evt == LTE_LC_MODEM_EVT_OVERHEATED ?
-				"Modem is overheated" :
-				"Unknown");
-		break;
-	default:
-		break;
+		/* Disconnect from cloud as well. */
+		disconnect_cloud();
 	}
 }
 
 /* Handler for date_time library events, used to keep track of whether the current time is known */
-static void date_time_evt_handler(const struct date_time_evt *date_time_evt)
+static void date_time_event_handler(const struct date_time_evt *date_time_evt)
 {
 	if (date_time_is_valid()) {
 		k_event_post(&cloud_events, DATE_TIME_KNOWN);
@@ -448,52 +379,35 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 }
 
 /**
- * @brief Set up the modem library.
+ * @brief Set up for the nRF Cloud connection (without connecting)
  *
- * @return int - 0 on success, otherwise a negative error code.
- */
-static int setup_modem(void)
-{
-	int ret;
-
-	/*
-	 * If there is a pending modem delta firmware update stored, nrf_modem_lib_init will
-	 * attempt to install it before initializing the modem library, and return a
-	 * positive value to indicate that this occurred. This code can be used to
-	 * determine whether the update was successful.
-	 */
-	ret = nrf_modem_lib_init();
-
-	if (ret < 0) {
-		LOG_ERR("Modem library initialization failed, error: %d", ret);
-		return ret;
-	} else if (ret == NRF_MODEM_DFU_RESULT_OK) {
-		LOG_DBG("Modem library initialized after "
-			"successful modem firmware update.");
-	} else if (ret > 0) {
-		LOG_ERR("Modem library initialized after "
-			"failed modem firmware update, error: %d", ret);
-	} else {
-		LOG_DBG("Modem library initialized.");
-	}
-
-	/* Register to be notified when the modem has figured out the current time. */
-	date_time_register_handler(date_time_evt_handler);
-
-	return 0;
-}
-
-
-/**
- * @brief Set up the nRF Cloud library
- *
- * Call this before setup_network so that any pending FOTA job is handled first.
- * This avoids calling setup_network pointlessly right before a FOTA-initiated reboot.
+ * Sets up required event hooks and initializes the nrf_cloud library.
  *
  * @return int - 0 on success, otherwise negative error code.
  */
 static int setup_cloud(void)
 {
+	/* Register to be notified of network availability changes.
+	 *
+	 * If the chosen connectivity layer becomes ready instantaneously, it is possible that
+	 * L4_CONNECTED will be fired before reaching this function, in which case we will miss
+	 * the notification.
+	 *
+	 * If that is a serious concern, use SYS_INIT with priority 0 (less than
+	 * CONFIG_NET_CONNECTION_MANAGER_PRIORITY) to register this hook before conn_mgr
+	 * initializes.
+	 *
+	 * In reality, connectivity layers such as LTE take some time to go online, so registering
+	 * the hook here is fine.
+	 */
+	net_mgmt_init_event_callback(
+		&l4_callback, l4_event_handler, NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED
+	);
+	net_mgmt_add_event_callback(&l4_callback);
+
+	/* Register to be notified when the modem has figured out the current time. */
+	date_time_register_handler(date_time_event_handler);
+
 	/* Initialize nrf_cloud library. */
 	struct nrf_cloud_init_param params = {
 		.event_handler = cloud_event_handler,
@@ -511,85 +425,13 @@ static int setup_cloud(void)
 	return 0;
 }
 
-/**
- * @brief Set up network and start trying to connect.
- *
- * @return int - 0 on success, otherwise a negative error code.
- */
-static int setup_network(void)
-{
-	int err;
-
-	/* Perform Configuration */
-	if (IS_ENABLED(CONFIG_POWER_SAVING_MODE_ENABLE)) {
-		/* Requesting PSM before connecting allows the modem to inform
-		 * the network about our wish for certain PSM configuration
-		 * already in the connection procedure instead of in a separate
-		 * request after the connection is in place, which may be
-		 * rejected in some networks.
-		 */
-		LOG_INF("Requesting PSM mode");
-
-		err = lte_lc_psm_req(true);
-		if (err) {
-			LOG_ERR("Failed to set PSM parameters, error: %d", err);
-			return err;
-		} else {
-			LOG_INF("PSM mode requested");
-		}
-	}
-
-	/* Modem events must be enabled before we can receive them. */
-	err = lte_lc_modem_events_enable();
-	if (err) {
-		LOG_ERR("lte_lc_modem_events_enable failed, error: %d", err);
-		return err;
-	}
-
-	/* Init the modem, and start keeping an active connection.
-	 * Note that if connection is lost, the modem will automatically attempt to
-	 * re-establish it after this call.
-	 */
-	LOG_INF("Starting connection to LTE network...");
-	err = lte_lc_init_and_connect_async(lte_event_handler);
-	if (err) {
-		LOG_ERR("Modem could not be configured, error: %d", err);
-		return err;
-	}
-
-	return 0;
-}
-
 void cloud_connection_thread_fn(void)
 {
 	long_led_pattern(LED_WAITING);
 
-	/* Enable the modem */
-	LOG_INF("Setting up modem...");
-	if (setup_modem()) {
-		LOG_ERR("Fatal: Modem setup failed");
-		long_led_pattern(LED_FAILURE);
-		return;
-	}
-
-	/* The nRF Cloud library need only be initialized once, and does not need to be reset
-	 * under any circumstances, even error conditions.
-	 */
 	LOG_INF("Setting up nRF Cloud library...");
 	if (setup_cloud()) {
 		LOG_ERR("Fatal: nRF Cloud library setup failed");
-		long_led_pattern(LED_FAILURE);
-		return;
-	}
-
-	/* Set up network and start trying to connect.
-	 * This is done once only, since the network implementation should handle network
-	 * persistence then after. (Once we request connection, it will automatically try to
-	 * reconnect whenever connection is lost).
-	 */
-	LOG_INF("Setting up network...");
-	if (setup_network()) {
-		LOG_ERR("Fatal: Network setup failed");
 		long_led_pattern(LED_FAILURE);
 		return;
 	}
