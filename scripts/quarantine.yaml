@@ -8,19 +8,6 @@
 #    - all
 
 - scenarios:
-    - sample.tfm.psa_test_crypto
-    - sample.tfm.psa_test_initial_attestation
-    - sample.tfm.psa_test_internal_trusted_storage
-    - sample.tfm.psa_test_protected_storage
-    - sample.tfm.psa_test_storage
-    - sample.tfm.regression_ipc_lvl1
-    - sample.tfm.regression_ipc_lvl2
-    - sample.tfm.regression_lib_mode
-  platforms:
-    - all
-  comment: "Disable zephyr Regression and PSA Arch tests, we maintain copies of these in sdk-nrf"
-
-- scenarios:
     - applications.asset_tracker_v2.nrf7002ek_wifi-debug
     - applications.asset_tracker_v2.nrf7002ek_wifi-release
   platforms:
