@@ -325,11 +325,7 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam fam,
 	int err;
 	char family[] = "IPV4V6"; /* longest family */
 
-	if (!apn) {
-		return -EFAULT;
-	}
-
-	if (strlen(apn) >= APN_STR_MAX_LEN) {
+	if (apn != NULL && strlen(apn) >= APN_STR_MAX_LEN) {
 		return -EINVAL;
 	}
 
@@ -346,6 +342,9 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam fam,
 	case PDN_FAM_NONIP:
 		strncpy(family, "Non-IP", sizeof(family));
 		break;
+	default:
+		LOG_ERR("Wrong family %d", fam);
+		return -EINVAL;
 	}
 
 	if (opt) {
@@ -359,7 +358,11 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam fam,
 			opt->nslpi,
 			opt->secure_pco);
 	} else {
-		err = nrf_modem_at_printf("AT+CGDCONT=%u,%s,%s", cid, family, apn);
+		if (apn != NULL) {
+			err = nrf_modem_at_printf("AT+CGDCONT=%u,%s,%s", cid, family, apn);
+		} else {
+			err = nrf_modem_at_printf("AT+CGDCONT=%u,%s", cid, family);
+		}
 	}
 
 	if (err) {
