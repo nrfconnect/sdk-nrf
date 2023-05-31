@@ -309,7 +309,9 @@ Debug libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`pdn_readme` library:
+
+  * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
 
 Libraries for networking
 ------------------------
