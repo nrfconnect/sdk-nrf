@@ -18,7 +18,7 @@ Highlights
 
 The following list includes the summary of the most relevant changes introduced in this release.
 
-* Added support for the following features:
+* Added :ref:`support <software_maturity>` for the following features:
 
   * Matter:
 
@@ -27,12 +27,8 @@ The following list includes the summary of the most relevant changes introduced 
 
   * Bluetooth® Low Energy:
 
-    * Encrypted Advertising Data (EAD).
-      This is a new feature introduced in Bluetooth v5.4 specification that provides a standardized way of encrypting data in advertising as well as sharing key material, which is required for data encryption.
     * Periodic Advertising with Responses (PAwR).
       The advertiser role feature was added as experimental in |NCS| v2.3.0, and now both advertiser and scanner are supported.
-
-    See the `Bluetooth 5.4 DevZone blog`_ to learn more about these features.
 
   * Bluetooth mesh:
 
@@ -55,7 +51,7 @@ The following list includes the summary of the most relevant changes introduced 
 
     * The Oberon PSA core library provides an optimized implementation of the PSA Crypto API, which reduces the required flash footprint when compared to the Mbed TLS PSA Crypto implementation.
 
-* Added experimental support for the following features:
+* Added :ref:`experimental support <software_maturity>` for the following features:
 
   * PMIC: nPM1300 PMIC and nPM1300 EK:
 
@@ -63,6 +59,11 @@ The following list includes the summary of the most relevant changes introduced 
     * :ref:`Sample showing fuel gauge functionality <npm1300_fuel_gauge>`.
       The sample calculates battery state of charge, time to empty, time to full and provides updates of these over the terminal once every second.
     * :ref:`Sample providing a shell interface <zephyr:npm1300_ek_sample>` that supports PMIC features: regulators (BUCKs, LDO) and GPIOs.
+
+  * Bluetooth Low Energy:
+
+    * Encrypted Advertising Data (EAD).
+      This is a new feature introduced in Bluetooth v5.4 specification that provides a standardized way of encrypting data in advertising as well as sharing key material, which is required for data encryption.
 
   * Bluetooth mesh 1.1:
 
