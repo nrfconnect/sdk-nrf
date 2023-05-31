@@ -139,7 +139,7 @@ static void result_ready_cb(int err)
 	}
 }
 
-static void test_init(void)
+static void *test_init(void)
 {
 	zassert_equal(ei_wrapper_get_frame_size(), EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME,
 		     "Wrong frame size");
@@ -168,14 +168,15 @@ static void test_init(void)
 
 	err = ei_wrapper_init(result_ready_cb);
 	zassert_true(err, "Double initialization should not be allowed");
+	return NULL;
 }
 
-static void test_basic(void)
+ZTEST(suite0, test_basic)
 {
 	run_basic_setup(prediction_idx, 1, 0, 0);
 }
 
-static void test_run_from_cb(void)
+ZTEST(suite0, test_run_from_cb)
 {
 	int err;
 
@@ -196,7 +197,7 @@ static void test_run_from_cb(void)
 	zassert_ok(err, "Cannot take semaphore");
 }
 
-static void test_result_read_fail(void)
+ZTEST(suite0, test_result_read_fail)
 {
 	int err;
 	const char *label;
@@ -216,7 +217,7 @@ static void test_result_read_fail(void)
 	zassert_true(err, "No error for ei_wrapper_get_timing");
 }
 
-static void test_data_add_fail(void)
+ZTEST(suite0, test_data_add_fail)
 {
 	zassert_false(((EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME + 1) %
 		       EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME) == 0,
@@ -228,7 +229,7 @@ static void test_data_add_fail(void)
 	zassert_true(err, "Expected error adding data with improper size");
 }
 
-static void test_double_start(void)
+ZTEST(suite0, test_double_start)
 {
 	int err;
 
@@ -249,7 +250,7 @@ static void test_double_start(void)
 }
 
 
-static void test_overflow(void)
+ZTEST(suite0, test_overflow)
 {
 	int err = 0;
 	size_t counter = 0;
@@ -267,7 +268,7 @@ static void test_overflow(void)
 	}
 }
 
-static void test_cancel(void)
+ZTEST(suite0, test_cancel)
 {
 	int err;
 
@@ -286,7 +287,7 @@ static void test_cancel(void)
 	zassert_ok(err, "Cannot clear data");
 }
 
-static void test_loop(void)
+ZTEST(suite0, test_loop)
 {
 	const static size_t loop_cnt = 100;
 
@@ -310,7 +311,7 @@ static void test_loop(void)
 	}
 }
 
-static void test_sliding_window(void)
+ZTEST(suite0, test_sliding_window)
 {
 	const static size_t frame_surplus = 100;
 	const static size_t loop_cnt = frame_surplus + 1;
@@ -335,7 +336,7 @@ static void test_sliding_window(void)
 	}
 }
 
-static void test_data_after_start(void)
+ZTEST(suite0, test_data_after_start)
 {
 	static const size_t loop_cnt = 10;
 	static const size_t window_shift = 2;
@@ -379,7 +380,7 @@ static void test_thread_fn(void)
 	}
 }
 
-static void test_data_thread(void)
+ZTEST(suite0, test_data_thread)
 {
 	static const size_t thread_stack_size = 1000;
 	static struct k_thread thread;
@@ -415,7 +416,7 @@ void timer_fn(struct k_timer *timer)
 	}
 }
 
-static void test_data_isr(void)
+ZTEST(suite0, test_data_isr)
 {
 	static const size_t period_ms = 10;
 	static K_TIMER_DEFINE(test_timer, timer_fn, NULL);
@@ -430,8 +431,9 @@ static void test_data_isr(void)
 	zassert_ok(err, "Cannot take semaphore");
 }
 
-static void setup_fn(void)
+static void setup_fn(void *unused)
 {
+	ARG_UNUSED(unused);
 	bool cancelled;
 	int err = ei_wrapper_clear_data(&cancelled);
 
@@ -439,28 +441,4 @@ static void setup_fn(void)
 	zassert_ok(err, "Cannot clear data");
 }
 
-static void teardown_fn(void)
-{
-
-}
-
-void test_main(void)
-{
-	ztest_test_suite(test_ei_wrapper,
-		ztest_unit_test(test_init),
-		ztest_unit_test_setup_teardown(test_basic, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_run_from_cb, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_result_read_fail, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_data_add_fail, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_double_start, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_overflow, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_cancel, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_loop, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_sliding_window, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_data_after_start, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_data_thread, setup_fn, teardown_fn),
-		ztest_unit_test_setup_teardown(test_data_isr, setup_fn, teardown_fn)
-	);
-
-	ztest_run_test_suite(test_ei_wrapper);
-}
+ZTEST_SUITE(suite0, NULL, test_init, setup_fn, NULL, NULL);
