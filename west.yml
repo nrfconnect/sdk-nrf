@@ -59,7 +59,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: v3.3.99-ncs1-rc2
+      revision: v3.3.99-ncs1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -118,7 +118,7 @@ manifest:
           compare-by-default: false
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.10.0-ncs1-rc2
+      revision: v1.10.0-ncs1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -127,19 +127,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.3.0-ncs1-rc2
+      revision: v3.3.0-ncs1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: c3d4ead55c0bf772e489b5ff80a2f109f9e5d106
+      revision: v2.4.0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v1.7.0-ncs1-rc2
+      revision: v1.7.0-ncs1
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 9e6386ca7506b04beccba7ec7054054b48ae4d7e
+      revision: v2.4.0
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -157,7 +157,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.4.0-rc2
+      revision: v2.4.0
       groups:
         - nrf-802154
     - name: dragoon
@@ -179,12 +179,12 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: v2.4.0-rc2
+      revision: v2.4.0
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.4.0-rc2
+      revision: v2.4.0
       groups:
         - find-my
     - name: azure-sdk-for-c
