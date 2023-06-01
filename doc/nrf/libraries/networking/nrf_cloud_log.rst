@@ -101,6 +101,12 @@ Configure the message encoding:
 * :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` or :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY`
 
 See `Dictionary-based Logging`_ to learn how dictionary-based logging works, how the dictionary is built, and how to decode the binary log output.
+Dictionary logs are compact binary log messages that require decoding using an offline script.
+As such, dictionary logs are up to 60% smaller than JSON logs, but cannot be viewed in the nRF Cloud user interface in real time.
+Instead, the user interface displays a link from which you can download a single binary file containing the logs.
+To successfully decode dictionary logs, you must use the :file:`log_dictionary.json` file built by the build system at the same time as the firmware image.
+If you modify the source code and build the firmware image again, the :file:`log_dictionary.json` file may change.
+Keep track of each firmware image and the :file:`log_dictionary.json` file when a device runs different firmware images.
 
 Configure the default log level to be sent to the cloud:
 
