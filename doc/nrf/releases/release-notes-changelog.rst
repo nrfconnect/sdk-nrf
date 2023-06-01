@@ -176,7 +176,10 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_cloud_mqtt_multi_service` sample:
+
+  * Added documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
+  * Changed the :file:`overlay_nrfcloud_logging.conf` file to enable JSON logs by default.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -271,6 +274,10 @@ Libraries for networking
 * Multicell location library:
 
   * This library is now removed and relevant functionality is available through the :ref:`lib_location` library.
+
+* :ref:`lib_nrf_cloud_log` library:
+
+  * Added explanation of text versus dictionary logs.
 
 Libraries for NFC
 -----------------

@@ -116,9 +116,11 @@ The |NCS| provides the :ref:`lib_nrf_cloud` library, which if enabled, allows yo
 For more information on the various services, see the following documentation:
 
 1. :ref:`lib_nrf_cloud_agps`
-#. :ref:`lib_nrf_cloud_cell_pos`
+#. :ref:`lib_nrf_cloud_location`
 #. :ref:`lib_nrf_cloud_fota`
 #. :ref:`lib_nrf_cloud_pgps`
+#. :ref:`lib_nrf_cloud_alert`
+#. :ref:`lib_nrf_cloud_log`
 
 Applications and samples
 ************************

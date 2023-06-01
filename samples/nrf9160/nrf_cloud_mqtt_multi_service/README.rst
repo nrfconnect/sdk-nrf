@@ -8,7 +8,7 @@ nRF9160: nRF Cloud MQTT multi-service
    :depth: 2
 
 This sample is a minimal, error tolerant, integrated demonstration of the :ref:`lib_nrf_cloud`, :ref:`lib_location`, and :ref:`lib_at_host` libraries.
-It demonstrates how you can use these libraries together to support Firmware-Over-The-Air (FOTA), Location Services, periodic sensor samples, and more in your `nRF Cloud`_-enabled application.
+It demonstrates how you can integrate Firmware-Over-The-Air (FOTA), Location Services, Alert and Log Services, periodic sensor sampling, and more in your `nRF Cloud`_-enabled application.
 It also demonstrates how to implement error tolerance in your cellular applications without relying on reboot loops.
 
 .. _nrf_cloud_mqtt_multi_service_requirements:
@@ -40,6 +40,10 @@ This sample implements or demonstrates the following features:
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
 * Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_ using `cJSON`_.
 * Minimal LED status indication using the `Zephyr LED API`_.
+* Transmission of an alert on sample startup using the :ref:`lib_nrf_cloud_alert` library.
+* Transmission of additional alerts, whenever a specified temperature limit is exceeded.
+* Optional transmission of log messages to the cloud using the :ref:`lib_nrf_cloud_log` library.
+
 
 .. _nrf_cloud_mqtt_multi_service_structure_and_theory_of_operation:
 
@@ -598,6 +602,21 @@ This is only supported on the `Nordic nRF9160 DK`_ with an attached nRF7002 EK.
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_mqtt_multi_service_wifi_location_tracking>`.
 
+Building with nRF Cloud logging support
+=======================================
+
+To enable transmission of `logs <Zephyr Logging_>`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` library, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_nrfcloud_logging.conf``
+
+This overlay enables transmission of `logs <Zephyr Logging_>`_ to nRF Cloud.
+Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` Kconfig option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
+
+The overlay selects the :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` Kconfig option that enables log messages in JSON format.
+You can read JSON log messages in real-time in the nRF Cloud user interface.
+However, because JSON logs are large, you may want to edit the overlay file to change to using dictionary logging.
+Deselect the :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` Kconfig option and select :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY` instead.
+See `Dictionary-based Logging`_ to learn how dictionary-based logging works, how the dictionary is built, and how to decode the binary log output.
 
 .. _nrf_cloud_mqtt_multi_service_dependencies:
 
@@ -610,6 +629,8 @@ This sample uses the following |NCS| libraries and drivers:
 * :ref:`lib_location`
 * :ref:`lib_at_host`
 * :ref:`lte_lc_readme`
+* :ref:`lib_nrf_cloud_alert`
+* :ref:`lib_nrf_cloud_log`
 
 It uses the following `sdk-nrfxlib`_ library:
 
