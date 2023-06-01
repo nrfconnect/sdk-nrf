@@ -33,6 +33,29 @@ extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
 static struct net_mgmt_event_callback ip_maddr4_cb;
 static struct net_mgmt_event_callback ip_maddr6_cb;
 
+static void wifi_nrf_net_iface_work_handler(struct k_work *work)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
+								struct wifi_nrf_vif_ctx_zep,
+								wifi_nrf_net_iface_work);
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	if (!vif_ctx_zep->zep_net_if_ctx) {
+		LOG_ERR("%s: zep_net_if_ctx is NULL\n", __func__);
+		return;
+	}
+
+	if (vif_ctx_zep->if_carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_ON) {
+		net_if_dormant_off(vif_ctx_zep->zep_net_if_ctx);
+	} else if (vif_ctx_zep->if_carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_OFF) {
+		net_if_dormant_on(vif_ctx_zep->zep_net_if_ctx);
+	}
+}
+
 #ifdef CONFIG_NRF700X_DATA_TX
 void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 {
@@ -78,14 +101,9 @@ enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
 
 	vif_ctx_zep->if_carr_state = carr_state;
 
-	if (vif_ctx_zep->zep_net_if_ctx) {
-		if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_ON) {
-			net_eth_carrier_on(vif_ctx_zep->zep_net_if_ctx);
-		} else if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_OFF) {
-			net_eth_carrier_off(vif_ctx_zep->zep_net_if_ctx);
-		}
-	}
 	LOG_DBG("%s: Carrier state: %d\n", __func__, carr_state);
+
+	k_work_submit(&vif_ctx_zep->wifi_nrf_net_iface_work);
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 
@@ -324,7 +342,8 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 	}
 
 	ethernet_init(iface);
-	net_if_carrier_off(iface);
+	net_eth_carrier_on(iface);
+	net_if_dormant_on(iface);
 
 	net_if_set_link_addr(iface,
 			     vif_ctx_zep->mac_addr.addr,
@@ -340,7 +359,8 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 			     ip_maddr_event_handler,
 			     NET_EVENT_IPV6_MADDR_ADD | NET_EVENT_IPV6_MADDR_DEL);
 	net_mgmt_add_event_callback(&ip_maddr6_cb);
-
+	k_work_init(&vif_ctx_zep->wifi_nrf_net_iface_work,
+		    wifi_nrf_net_iface_work_handler);
 }
 
 
