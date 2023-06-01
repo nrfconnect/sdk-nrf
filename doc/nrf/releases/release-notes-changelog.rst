@@ -294,7 +294,7 @@ Libraries for Zigbee
 sdk-nrfxlib
 -----------
 
-|no_changes_yet_note|
+* Added experimental support for EC J-PAKE, SPAKE2+ and SRP.
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
