@@ -6,12 +6,10 @@
 
 menuconfig EDGE_IMPULSE
 	bool "Enable Edge Impulse"
-	depends on CPLUSPLUS
+	depends on CPP
 	depends on STD_CPP11
-	depends on LIB_CPLUSPLUS
-	depends on NEWLIB_LIBC
-	depends on NEWLIB_LIBC_FLOAT_PRINTF
 	depends on !FP16
+	select REQUIRES_FULL_LIBCPP
 	imply FPU
 	imply CBPRINTF_FP_SUPPORT
 	help
@@ -91,6 +89,9 @@ config EI_WRAPPER_PROFILING
 
 config EI_WRAPPER_DEBUG_MODE
 	bool "Run Edge Impulse library in debug mode"
+	imply NEWLIB_LIBC_FLOAT_PRINTF
+	help
+	  Enables additional log information from Edge Impulse library.
 
 module=EI_WRAPPER
 module-dep=LOG

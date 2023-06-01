@@ -79,15 +79,15 @@ Complete the following steps to configure the building process:
 
 1. Make sure that the following Kconfig options are enabled:
 
-   * :kconfig:option:`CONFIG_CPLUSPLUS`
+   * :kconfig:option:`CONFIG_CPP`
    * :kconfig:option:`CONFIG_STD_CPP11`
-   * :kconfig:option:`CONFIG_LIB_CPLUSPLUS`
-   * :kconfig:option:`CONFIG_NEWLIB_LIBC`
-   * :kconfig:option:`CONFIG_NEWLIB_LIBC_FLOAT_PRINTF`
 
    .. note::
       The :kconfig:option:`CONFIG_FPU` Kconfig option is implied by default if floating point unit (FPU) is supported by the hardware.
       Using FPU speeds up calculations.
+
+      The Edge Impulse library requires full C++ standard library implementation.
+      Because of that, the :kconfig:option:`CONFIG_EDGE_IMPULSE` option selects the :kconfig:option:`CONFIG_REQUIRES_FULL_LIBCPP` option.
 
 #. Make sure that the :kconfig:option:`CONFIG_FP16` Kconfig option is disabled.
    The Edge Impulse library is not compatible with half-precision floating point support introduced in Zephyr.
