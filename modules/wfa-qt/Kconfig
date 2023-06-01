@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = WFA_QT
+module-str = Log level for WFA Quick Track
+module-help = Sets log level for WFA Quick Track
+source "subsys/logging/Kconfig.template.log_config"
+
+config WFA_QT_CONTROL_APP
+	# Need full POSIX from libc, Zephyr's POSIX support is only partial
+	depends on !POSIX_API
+	select PTHREAD_IPC
+	bool "WFA Quicktrack control app"
+
+config WFA_QT_THREAD_STACK_SIZE
+	int "WFA QT thread stack size"
+	default 4096
+	help
+	  Set the stack size for WFA QT thread.
