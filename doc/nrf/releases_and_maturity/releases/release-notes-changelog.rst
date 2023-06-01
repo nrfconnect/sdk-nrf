@@ -394,6 +394,7 @@ Modem libraries
 * :ref:`nrf_modem_lib_readme`:
 
    * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
+   * Added CEREG event tracking to ``lte_connectivity``.
 
 Libraries for networking
 ------------------------
