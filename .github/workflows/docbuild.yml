@@ -14,7 +14,7 @@ on:
       - 'doc/**'
       - 'include/**'
       - 'scripts/requirements-doc.txt'
-      - 'scripts/tools-versions-*.txt'
+      - 'scripts/tools-versions-*.yml'
       - 'west.yml'
   push:
     branches:
@@ -42,7 +42,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y ninja-build mscgen plantuml
-          DOXYGEN_VERSION=$(cat ./ncs/nrf/scripts/tools-versions-linux.txt |grep 'doxygen' | sed 's/^.*=//')
+          sudo snap install yq
+          DOXYGEN_VERSION=$(yq ".doxygen.version" ./ncs/nrf/scripts/tools-versions-linux.yml)
           wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
