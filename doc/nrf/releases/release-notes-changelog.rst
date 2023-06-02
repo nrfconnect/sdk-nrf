@@ -162,7 +162,11 @@ Samples
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`direct_test_mode` sample:
+
+  * Added:
+
+    * Support for the nRF52840 DK.
 
 Bluetooth mesh samples
 ----------------------
