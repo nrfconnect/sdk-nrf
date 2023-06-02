@@ -117,6 +117,12 @@ config BT_FAST_PAIR_BATTERY
 	help
 	  Add Fast Pair battery module source files.
 
+config BT_FAST_PAIR_FACTORY_RESET
+	bool
+	default y
+	help
+	  Add Fast Pair factory reset source files.
+
 module = BT_FAST_PAIR
 module-str = Fast Pair Service
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

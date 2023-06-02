@@ -11,8 +11,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(test_main);
 
-#include <bluetooth/services/fast_pair.h>
-
+#include "fp_storage.h"
 #include "fp_storage_ak.h"
 #include "fp_storage_ak_priv.h"
 #include "fp_storage_pn.h"
@@ -394,7 +393,7 @@ static void store_data_and_factory_reset(void)
 	cu_account_keys_validate_loaded(seed, key_count);
 	personalized_name_validate_loaded(name);
 
-	err = bt_fast_pair_factory_reset();
+	err = fp_storage_factory_reset();
 	zassert_ok(err, "Unexpected error in factory reset");
 }
 
