@@ -425,6 +425,9 @@ For the list of |NCS| specific commits, including commits cherry-picked from ups
 
 The current |NCS| main branch is based on revision ``4bbd91a908`` of Zephyr.
 
+.. note::
+   For possible breaking changes and changes between the latest Zephyr release and the current Zephyr version, refer to the :ref:`Zephyr release notes <zephyr_release_notes>`.
+
 Additions specific to |NCS|
 ---------------------------
 
