@@ -1,0 +1,22 @@
+name: Check code formatting
+
+on: pull_request
+
+env:
+  CLANG_FORMAT_VERSION: "16.0"
+
+jobs:
+  check-code-formatting:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install clang-format
+        run: pip install clang-format~=${CLANG_FORMAT_VERSION}
+
+      - name: Run clang-format
+        run: git clang-format origin/${{ github.base_ref }} --verbose
