@@ -7,7 +7,8 @@
 #include <errno.h>
 #include <string.h>
 #include <zephyr/settings/settings.h>
-#include <bluetooth/services/fast_pair.h>
+
+#include "fp_storage.h"
 
 #include "fp_storage_manager.h"
 #include "fp_storage_manager_priv.h"
@@ -129,7 +130,7 @@ static int fp_settings_commit(void)
 SETTINGS_STATIC_HANDLER_DEFINE(fp_storage_manager, SETTINGS_SM_SUBTREE_NAME, NULL,
 			       fp_settings_set, fp_settings_commit, NULL);
 
-int bt_fast_pair_factory_reset(void)
+int fp_storage_factory_reset(void)
 {
 	int err;
 
