@@ -8,6 +8,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/shell/shell.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/nrf_modem_lib_trace.h>
@@ -24,6 +25,7 @@ LOG_MODULE_REGISTER(modem_trace_flash_sample, CONFIG_MODEM_TRACE_FLASH_SAMPLE_LO
 #define READ_BUF_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART1_DT_NODE);
+static struct k_work trace_dump;
 
 LTE_LC_ON_CFUN(cfun_hook, on_cfun, NULL);
 
@@ -44,8 +46,9 @@ static void print_uart1(char *buf, int len)
 	}
 }
 
-static void print_traces(void)
+static void print_traces(struct k_work *work)
 {
+	ARG_UNUSED(work);
 	uint8_t read_buf[READ_BUF_SIZE];
 	int ret;
 	size_t read_offset = 0;
@@ -78,7 +81,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
 		printk("Button 1 pressed - dumping traces to uart1\n");
-		print_traces();
+		k_work_submit(&trace_dump);
 	}
 
 	if (has_changed & button_states & DK_BTN2_MSK) {
@@ -99,11 +102,33 @@ void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt)
 	}
 }
 
+static int shell_print_traces(const struct shell *sh, size_t argc,
+			    char **argv)
+{
+	ARG_UNUSED(sh);
+	ARG_UNUSED(argv);
+	ARG_UNUSED(argc);
+	k_work_submit(&trace_dump);
+	return 0;
+}
+
+
+SHELL_STATIC_SUBCMD_SET_CREATE(trace_cmd_set,
+	SHELL_CMD(dump_traces, NULL,
+		  "Dump traces to UART1.",
+		  shell_print_traces),
+	SHELL_SUBCMD_SET_END /* Array terminated. */
+);
+
+SHELL_CMD_REGISTER(modem_trace_flash, &trace_cmd_set, "Modem trace sample commands", NULL);
+
 int main(void)
 {
 	int err;
 
 	LOG_INF("Modem trace backend sample started\n");
+
+	k_work_init(&trace_dump, print_traces);
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
