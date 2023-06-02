@@ -121,6 +121,10 @@ struct nrf_cloud_rest_location_request {
 	struct lte_lc_cells_info *cell_info;
 	/** Wi-Fi network information used in request */
 	struct wifi_scan_info *wifi_info;
+	/** If true, nRF Cloud will not send the location data to the device
+	 * in the REST response body. The location will still be recorded in the cloud.
+	 */
+	bool disable_response;
 };
 
 /** @brief Data required for nRF Cloud Assisted GPS (A-GPS) request */
