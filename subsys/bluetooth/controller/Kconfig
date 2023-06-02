@@ -242,7 +242,6 @@ endchoice
 
 config BT_SDC_ADDITIONAL_MEMORY
 	int "Allocates additional memory to the SDC memory pool"
-	default 0
 	help
 	  This is for testing and internal use only.
 
