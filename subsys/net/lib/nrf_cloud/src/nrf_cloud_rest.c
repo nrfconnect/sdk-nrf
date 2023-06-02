@@ -71,7 +71,8 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_UPDATE_FOTA_DETAILS_TMPLT	"{\"status\":\"%s\", \"details\":\"%s\"}"
 
 #define API_LOCATION			"/location"
-#define API_GET_LOCATION_TEMPLATE	API_VER API_LOCATION "/ground-fix"
+#define API_GET_LOCATION		API_VER API_LOCATION "/ground-fix"
+#define API_GET_LOCATION_NO_REPLY	API_VER API_LOCATION "/ground-fix?doReply=0"
 #define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps"
 #define API_GET_PGPS_BASE		API_VER API_LOCATION "/pgps"
 
@@ -588,7 +589,7 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_POST);
 
-	req.url = API_GET_LOCATION_TEMPLATE;
+	req.url = request->disable_response ? API_GET_LOCATION_NO_REPLY : API_GET_LOCATION;
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -616,13 +617,16 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.body = payload;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp, true, true);
+	ret = do_rest_client_request(rest_ctx, &req, &resp, true, !request->disable_response);
 
 	if (ret) {
 		goto clean_up;
 	}
 
-	if (result) {
+	if (result && request->disable_response) {
+		LOG_WRN("A result struct is provided but location response is disabled");
+		result->type = LOCATION_TYPE__INVALID;
+	} else if (result && !request->disable_response) {
 		ret = nrf_cloud_location_response_decode(rest_ctx->response, result);
 		if (ret != 0) {
 			if (ret > 0) {
