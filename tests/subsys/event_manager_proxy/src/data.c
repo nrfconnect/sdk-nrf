@@ -14,8 +14,10 @@
 #include "test_utils.h"
 #include "data_events.h"
 
-
 #define MODULE test_data
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(MODULE);
 
 static K_SEM_DEFINE(waiting_response_sem, 0, 1);
 
@@ -35,7 +37,7 @@ struct data_big_content {
 static struct data_content data_response;
 static struct data_big_content data_big_response;
 
-static void test_data_response(void)
+ZTEST(data_tests, test_data_response)
 {
 	struct data_event *event = new_data_event();
 	struct data_content rand_test_data;
@@ -66,7 +68,7 @@ static void test_data_response(void)
 	test_end(TEST_DATA_RESPONSE);
 }
 
-static void test_data_big_response(void)
+ZTEST(data_tests, test_data_big_response)
 {
 	struct data_big_event *event = new_data_big_event();
 	struct data_big_content rand_test_data;
@@ -94,7 +96,7 @@ static void test_data_big_response(void)
 	test_end(TEST_DATA_RESPONSE);
 }
 
-static void test_data_burst(void)
+ZTEST(data_tests, test_data_burst)
 {
 	uint32_t us_spent;
 
@@ -116,7 +118,7 @@ static void test_data_burst(void)
 	printk(" Test sending data burst speed %lu msg/sec\n", speed);
 }
 
-static void test_data_burst_from_remote(void)
+ZTEST(data_tests, test_data_burst_from_remote)
 {
 	uint32_t us_spent;
 
@@ -136,7 +138,7 @@ static void test_data_burst_from_remote(void)
 	printk(" Test receiving data burst speed %lu msg/sec\n", speed);
 }
 
-static void test_data_ping_pong_performance(void)
+ZTEST(data_tests, test_data_ping_pong_performance)
 {
 	uint32_t us_spent;
 	int err;
@@ -183,7 +185,7 @@ static void test_data_ping_pong_performance(void)
 	printk(" Test data ping pong speed %lu msg/sec\n", speed);
 }
 
-static void test_data_big_burst(void)
+ZTEST(data_tests, test_data_big_burst)
 {
 	uint32_t us_spent;
 
@@ -205,7 +207,7 @@ static void test_data_big_burst(void)
 	printk(" Test sending data big burst speed %lu msg/sec\n", speed);
 }
 
-static void test_data_big_burst_from_remote(void)
+ZTEST(data_tests, test_data_big_burst_from_remote)
 {
 	uint32_t us_spent;
 
@@ -225,7 +227,7 @@ static void test_data_big_burst_from_remote(void)
 	printk(" Test receiving data big burst speed %lu msg/sec\n", speed);
 }
 
-static void test_data_big_ping_pong_performance(void)
+ZTEST(data_tests, test_data_big_ping_pong_performance)
 {
 	uint32_t us_spent;
 	int err;
@@ -295,26 +297,16 @@ APP_EVENT_LISTENER(MODULE, data_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, data_response_event);
 APP_EVENT_SUBSCRIBE(MODULE, data_big_response_event);
 
-void data_register(void)
+static int test_data_events_register(void)
 {
 	const struct device *ipc_instance  = REMOTE_IPC_DEV;
 
-	REMOTE_EVENT_SUBSCRIBE_TEST(ipc_instance, data_response_event);
-	REMOTE_EVENT_SUBSCRIBE_TEST(ipc_instance, data_big_response_event);
+	REMOTE_EVENT_SUBSCRIBE(ipc_instance, data_response_event);
+	REMOTE_EVENT_SUBSCRIBE(ipc_instance, data_big_response_event);
+
+	return 0;
 }
 
-void data_run(void)
-{
-	ztest_test_suite(data_tests,
-			 ztest_unit_test(test_data_response),
-			 ztest_unit_test(test_data_big_response),
-			 ztest_unit_test(test_data_burst),
-			 ztest_unit_test(test_data_burst_from_remote),
-			 ztest_unit_test(test_data_ping_pong_performance),
-			 ztest_unit_test(test_data_big_burst),
-			 ztest_unit_test(test_data_big_burst_from_remote),
-			 ztest_unit_test(test_data_big_ping_pong_performance)
-			 );
+SYS_INIT(test_data_events_register, APPLICATION, CONFIG_APP_PROXY_REGISTER_PRIO);
 
-	ztest_run_test_suite(data_tests);
-}
+ZTEST_SUITE(data_tests, NULL, NULL, NULL, NULL, NULL);
