@@ -8,7 +8,7 @@ menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
 
-menu "Event manager proxy sample application settings"
+menu "Event manager proxy test settings"
 
 config APP_INCLUDE_REMOTE_IMAGE
 	bool "Include remote image as sub image"
@@ -19,6 +19,39 @@ config APP_INCLUDE_REMOTE_IMAGE
 config APP_REMOTE_BOARD
 	string "The name of the CORE to be used by remote image"
 	depends on APP_INCLUDE_REMOTE_IMAGE
+
+config APP_SYSTEM_INIT_PRIO
+	int "The application preparation initializaition priority"
+	default 0
+	help
+	  The priority of initialization of everything that have to happen
+	  before the proxy initialation.
+	  The remote core is initialized here if required.
+
+config APP_PROXY_INIT_PRIO
+	int "Proxy initialization priority"
+	default 1
+	help
+	  The Event manager proxy initialization priority.
+	  Make sure that initialization happens before registration and starting.
+
+config APP_PROXY_REGISTER_PRIO
+	int "Proxy registration priority"
+	default 2
+	help
+	  The Event manager proxy registration priority.
+	  The moment when all the modules reqisters to the required events to remote.
+	  Make sure that it happens after the proxy itself is initialized but before
+	  it is started.
+
+config APP_PROXY_START_PRIO
+	int "Proxy start priority"
+	default 5
+	help
+	  The Event manager proxy starting priority.
+	  The moment when Event manager is started.
+	  After this time no more remote event registration is allowed.
+	  Make sure that it happens after event proxy registration.
 
 rsource "common_events/Kconfig"
 endmenu

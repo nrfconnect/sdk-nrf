@@ -13,13 +13,15 @@
 #include "test_utils.h"
 #include "simple_events.h"
 
-
 #define MODULE test_simple
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(MODULE);
 
 static K_SEM_DEFINE(waiting_pong_sem, 0, 1);
 
 
-static void test_simple_ping_pong(void)
+ZTEST(simple_tests, test_simple_ping_pong)
 {
 	struct simple_ping_event *ping = new_simple_ping_event();
 
@@ -30,7 +32,7 @@ static void test_simple_ping_pong(void)
 	zassert_ok(err, "No pong event received");
 }
 
-static void test_simple_burst(void)
+ZTEST(simple_tests, test_simple_burst)
 {
 	uint32_t us_spent;
 
@@ -52,7 +54,7 @@ static void test_simple_burst(void)
 	printk(" Test sending simple burst speed %lu msg/sec\n", speed);
 }
 
-static void test_simple_burst_from_remote(void)
+ZTEST(simple_tests, test_simple_burst_from_remote)
 {
 	uint32_t us_spent;
 
@@ -74,7 +76,7 @@ static void test_simple_burst_from_remote(void)
 	printk(" Test receiving simple burst speed %lu msg/sec\n", speed);
 }
 
-static void test_simple_ping_pong_performance(void)
+ZTEST(simple_tests, test_simple_ping_pong_performance)
 {
 	uint32_t us_spent;
 	int err;
@@ -117,21 +119,15 @@ static bool simple_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, simple_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, simple_pong_event);
 
-void simple_register(void)
+int test_simple_events_register(void)
 {
 	const struct device *ipc_instance  = REMOTE_IPC_DEV;
 
-	REMOTE_EVENT_SUBSCRIBE_TEST(ipc_instance, simple_pong_event);
+	REMOTE_EVENT_SUBSCRIBE(ipc_instance, simple_pong_event);
+
+	return 0;
 }
 
-void simple_run(void)
-{
-	ztest_test_suite(simple_tests,
-			 ztest_unit_test(test_simple_ping_pong),
-			 ztest_unit_test(test_simple_burst),
-			 ztest_unit_test(test_simple_burst_from_remote),
-			 ztest_unit_test(test_simple_ping_pong_performance)
-			 );
+SYS_INIT(test_simple_events_register, APPLICATION, CONFIG_APP_PROXY_REGISTER_PRIO);
 
-	ztest_run_test_suite(simple_tests);
-}
+ZTEST_SUITE(simple_tests, NULL, NULL, NULL, NULL, NULL);

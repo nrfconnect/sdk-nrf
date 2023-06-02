@@ -33,7 +33,7 @@ add_subdirectory(modules)
 target_include_directories(app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_sources(app PRIVATE
-  src/main.c
+  src/test_init.c
   src/data.c
   src/simple.c
 )
