@@ -5,7 +5,13 @@ tests:
     integration_platforms:
       - native_posix
     tags: unittest
-  nrf_provisioning.unittest:
+  nrf_provisioning.unittest_http:
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: unittest
+  nrf_provisioning.unittest_coap:
+    extra_args: CONF_FILE="prj_coap.conf"
     platform_allow: native_posix
     integration_platforms:
       - native_posix
