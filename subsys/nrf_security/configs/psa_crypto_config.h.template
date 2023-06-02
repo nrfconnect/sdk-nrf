@@ -420,11 +420,6 @@
 #cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
 #cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
 
-/* TF-M has dependency on mbedtls_hkdf function in order to avoid a recursion problem.
- * See tfm_builtin_key_loader.c for explanation.
- */
-#cmakedefine MBEDTLS_HKDF_C
-
 #include "psa/psa_crypto_config_oberon.h"
 
 #endif /* PSA_CRYPTO_CONFIG_H */

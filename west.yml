@@ -144,7 +144,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v1.7.0-ncs1
+      revision: 2ff3fddf645aff27fac90a71c315459e765b402d
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
