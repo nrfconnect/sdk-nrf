@@ -995,7 +995,7 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
  */
 int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
-/** @brief Deinitialize the LTE module, powers of the modem.
+/** @brief Deinitialize the LTE module, powers off the modem.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if an AT command failed.
