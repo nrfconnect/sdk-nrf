@@ -47,13 +47,6 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR
   )
 endif()
 
-if(CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND CONFIG_MBEDTLS_HKDF_C)
-  # TF-M 1.7.0 requires legacy mbedtls_hkdf function in key loader.
-  append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
-    hkdf.c
-  )
-endif()
-
 if(CONFIG_CRYPTOCELL_CC310_USABLE)
 append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
   gcm.c

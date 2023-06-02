@@ -73,13 +73,6 @@ set(CONFIG_MBEDTLS_USE_PSA_CRYPTO                   False)
 # complete build with all libraries and a full mbedcrypto library for linking.
 set(CONFIG_BUILD_WITH_TFM                           False)
 
-# In TF-M 1.7.0 we required mbedtls_hkdf function in HUK derivation.
-if (CONFIG_TFM_PROFILE_TYPE_MINIMAL)
-  set(CONFIG_MBEDTLS_HKDF_C                         False)
-else()
-  set(CONFIG_MBEDTLS_HKDF_C                         True)
-endif()
-
 if (NOT CONFIG_TFM_PROFILE_TYPE_MINIMAL AND CONFIG_PSA_CORE_OBERON)
   set(CONFIG_PSA_CRYPTO_DRIVER_OBERON                 True)
   set(CONFIG_PSA_CRYPTO_DRIVER_HAS_KDF_SUPPORT_OBERON True)
