@@ -510,10 +510,6 @@ static int link_enable_disable_rel14_features(bool enable)
 		mosh_warn("Release 14 features %s AT-command failed, err %d",
 			((enable) ? "enable" : "disable"),
 			ret);
-	} else if (ret > 0) {
-		mosh_warn("Release 14 features %s AT-command error, type %d err %d",
-			((enable) ? "enable" : "disable"),
-			nrf_modem_at_err_type(ret), nrf_modem_at_err(ret));
 	}
 	return 0;
 }
