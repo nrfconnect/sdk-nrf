@@ -24,7 +24,9 @@
 LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
-#define BASE_10 10
+#define BASE_10		      10
+
+static uint32_t prev_volume_reg_val = OUT_VOLUME_DEFAULT;
 
 static cs47l63_t cs47l63_driver;
 
@@ -73,58 +75,52 @@ int hw_codec_volume_set(uint8_t set_val)
 	if (ret) {
 		return ret;
 	}
+
+	prev_volume_reg_val = volume_reg_val;
+
+	/* This is rounded down to nearest integer */
+	LOG_DBG("Volume: %" PRId32 " dB", (volume_reg_val / 2) - MAX_VOLUME_DB);
+
 	return 0;
 }
 
 int hw_codec_volume_adjust(int8_t adjustment_db)
 {
 	int ret;
-	static uint32_t prev_volume_reg_val = OUT_VOLUME_DEFAULT;
+	int32_t new_volume_reg_val;
 
 	LOG_DBG("Adj dB in: %d", adjustment_db);
 
 	if (adjustment_db == 0) {
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-					(prev_volume_reg_val | CS47L63_OUT_VU) &
-						~CS47L63_OUT1L_MUTE);
-		return ret;
+		new_volume_reg_val = prev_volume_reg_val;
+	} else {
+		uint32_t volume_reg_val;
+
+		ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
+		if (ret) {
+			LOG_ERR("Failed to get volume from CS47L63");
+			return ret;
+		}
+
+		volume_reg_val &= CS47L63_OUT1L_VOL_MASK;
+
+		/* The adjustment is in dB, 1 bit equals 0.5 dB,
+		 * so multiply by 2 to get increments of 1 dB
+		 */
+		new_volume_reg_val = volume_reg_val + (adjustment_db * 2);
+		if (new_volume_reg_val <= 0) {
+			LOG_WRN("Volume at MIN (-64dB)");
+			new_volume_reg_val = 0;
+		} else if (volume_reg_val >= MAX_VOLUME_REG_VAL) {
+			LOG_WRN("Volume at MAX (0dB)");
+			new_volume_reg_val = MAX_VOLUME_REG_VAL;
+		}
 	}
 
-	uint32_t volume_reg_val;
-
-	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
+	ret = hw_codec_volume_set(new_volume_reg_val);
 	if (ret) {
 		return ret;
 	}
-
-	volume_reg_val &= CS47L63_OUT1L_VOL_MASK;
-
-	/* The adjustment is in dB, 1 bit equals 0.5 dB,
-	 * so multiply by 2 to get increments of 1 dB
-	 */
-	int32_t new_volume_reg_val = volume_reg_val + (adjustment_db * 2);
-
-	if (new_volume_reg_val < 0) {
-		LOG_WRN("Volume at MIN (-64dB)");
-		new_volume_reg_val = 0;
-
-	} else if (new_volume_reg_val > MAX_VOLUME_REG_VAL) {
-		LOG_WRN("Volume at MAX (0dB)");
-		new_volume_reg_val = MAX_VOLUME_REG_VAL;
-	}
-
-	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-				((uint32_t)new_volume_reg_val | CS47L63_OUT_VU) &
-					~CS47L63_OUT1L_MUTE);
-
-	if (ret) {
-		return ret;
-	}
-
-	prev_volume_reg_val = new_volume_reg_val;
-
-	/* This is rounded down to nearest integer */
-	LOG_DBG("Volume: %" PRId32 " dB", (new_volume_reg_val / 2) - MAX_VOLUME_DB);
 
 	return 0;
 }
