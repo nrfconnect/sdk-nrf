@@ -4,29 +4,30 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/kernel.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/conn_mgr_connectivity.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
+#include <zephyr/logging/log.h>
+
 #include <dk_buttons_and_leds.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
-#include <zephyr/logging/log.h>
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
 #include <hw_id.h>
 #endif
 
-#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
-#include <modem/nrf_modem_lib.h>
-#endif
-
-#if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
-#include <modem/lte_lc.h>
-#endif
-
 LOG_MODULE_REGISTER(azure_iot_hub_sample, CONFIG_AZURE_IOT_HUB_SAMPLE_LOG_LEVEL);
+
+/* Macros used to subscribe to specific Zephyr net management events. */
+#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 /* Interval [s] between sending events to the IoT hub. The value can be changed
  * by setting a new desired value for property 'telemetryInterval' in the
@@ -34,7 +35,11 @@ LOG_MODULE_REGISTER(azure_iot_hub_sample, CONFIG_AZURE_IOT_HUB_SAMPLE_LOG_LEVEL)
  */
 #define EVENT_INTERVAL		20
 #define RECV_BUF_SIZE		1024
-#define APP_WORK_Q_STACK_SIZE	KB(2)
+#define APP_WORK_Q_STACK_SIZE	KB(8)
+
+/* Zephyr net management event callback structures. */
+static struct net_mgmt_event_callback l4_cb;
+static struct net_mgmt_event_callback conn_cb;
 
 struct method_data {
 	struct k_work work;
@@ -118,8 +123,7 @@ static void event_interval_apply(int interval)
 	}
 
 	atomic_set(&event_interval, interval);
-	k_work_reschedule_for_queue(&application_work_q, &send_event_work,
-				    K_NO_WAIT);
+	k_work_reschedule_for_queue(&application_work_q, &send_event_work, K_NO_WAIT);
 }
 
 static void on_evt_twin_desired(char *buf, size_t len)
@@ -350,74 +354,46 @@ static void twin_report_work_fn(struct k_work *work)
 	LOG_INF("New telemetry interval has been applied: %d",  new_interval);
 }
 
-#if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
-
-static void lte_handler(const struct lte_lc_evt *const evt)
+static void on_net_event_l4_connected(void)
 {
-	static bool connected;
-
-	switch (evt->type) {
-	case LTE_LC_EVT_NW_REG_STATUS:
-		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-		    (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			if (!connected) {
-				break;
-			}
-
-			connected = false;
-
-			LOG_INF("LTE network is disconnected.");
-			LOG_INF("Subsequent sending of data may block or fail.");
-			break;
-		}
-
-		LOG_INF("Network registration status: %s",
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
-			"Connected - home network" : "Connected - roaming");
-		k_sem_give(&network_connected_sem);
-
-		connected = true;
-		break;
-	case LTE_LC_EVT_PSM_UPDATE:
-		LOG_INF("PSM parameter update: TAU: %d, Active time: %d",
-		       evt->psm_cfg.tau, evt->psm_cfg.active_time);
-		break;
-	case LTE_LC_EVT_EDRX_UPDATE: {
-		char log_buf[60];
-		ssize_t len;
-
-		len = snprintk(log_buf, sizeof(log_buf),
-			       "eDRX parameter update: eDRX: %f, PTW: %f",
-			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
-		if (len > 0) {
-			LOG_INF("%s", log_buf);
-		}
-		break;
-	}
-	case LTE_LC_EVT_RRC_UPDATE:
-		LOG_INF("RRC mode: %s",
-			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
-			"Connected" : "Idle");
-		break;
-	case LTE_LC_EVT_CELL_UPDATE:
-		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
-			evt->cell.id, evt->cell.tac);
-		break;
-	default:
-		break;
-	}
+	k_sem_give(&network_connected_sem);
 }
 
-static void modem_configure(void)
+static void on_net_event_l4_disconnected(void)
 {
-	int err = lte_lc_init_and_connect_async(lte_handler);
+	(void)azure_iot_hub_disconnect();
+}
 
-	if (err) {
-		LOG_INF("Modem could not be configured, error: %d", err);
+
+
+static void l4_event_handler(struct net_mgmt_event_callback *cb,
+			     uint32_t event,
+			     struct net_if *iface)
+{
+	switch (event) {
+	case NET_EVENT_L4_CONNECTED:
+		LOG_INF("IP Up");
+		on_net_event_l4_connected();
+		break;
+	case NET_EVENT_L4_DISCONNECTED:
+		LOG_INF("IP down");
+		on_net_event_l4_disconnected();
+		break;
+	default:
 		return;
 	}
 }
-#endif /* CONFIG_LTE_LINK_CONTROL*/
+
+static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
+				       uint32_t event,
+				       struct net_if *iface)
+{
+	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
+		LOG_ERR("Fatal error received from the connectivity layer, rebooting");
+		sys_reboot(SYS_REBOOT_COLD);
+		CODE_UNREACHABLE;
+	}
+}
 
 static void work_init(void)
 {
@@ -531,14 +507,29 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 int main(void)
 {
 	int err;
+	struct net_if *net_if = net_if_get_default();
 
-#if IS_ENABLED(CONFIG_NRF_MODEM_LIB)
-	err = nrf_modem_lib_init();
-	if (err) {
-		LOG_ERR("Modem library initialization failed, error: %d", err);
-		return 0;
+	if (net_if == NULL) {
+		LOG_ERR("Pointer to network interface is NULL");
+		return -ECANCELED;
 	}
-#endif
+
+	/* Setup handler for Zephyr NET Connection Manager events. */
+	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_cb);
+
+	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
+	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
+	net_mgmt_add_event_callback(&conn_cb);
+
+	LOG_INF("Bringing network interface up");
+
+	err = net_if_up(net_if);
+	if (err) {
+		LOG_ERR("net_if_up, error: %d", err);
+		return err;
+	}
+
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
 	char device_id[128];
@@ -575,12 +566,24 @@ int main(void)
 	work_init();
 	cJSON_Init();
 
-#if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
-	LOG_INF("Connecting to LTE network");
-	modem_configure();
+	LOG_INF("Connecting...");
+
+	/* Temporary fix to prevent using Wi-Fi before WPA supplicant is ready.
+	 * TODO: Remove this when WPA supplicant ready events has been added.
+	 */
+	k_sleep(K_SECONDS(1));
+
+	/* Connecting to the configured connectivity layer.
+	 * Wi-Fi or LTE depending on the board that the sample was built for.
+	 */
+	err = conn_mgr_if_connect(net_if);
+	if (err) {
+		LOG_ERR("conn_mgr_if_connect, error: %d", err);
+		return err;
+	}
+
 	k_sem_take(&network_connected_sem, K_FOREVER);
 	LOG_INF("Connected to LTE network");
-#endif
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 	/* Using the device ID as DPS registration ID. */
