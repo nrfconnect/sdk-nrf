@@ -187,6 +187,18 @@ nRF9160 samples
   * Added documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
   * Changed the :file:`overlay_nrfcloud_logging.conf` file to enable JSON logs by default.
 
+* :ref:`http_application_update_sample` sample:
+
+   * Updated credentials for the HTTPS connection.
+
+* :ref:`http_full_modem_update_sample` sample:
+
+   * Updated credentials for the HTTPS connection.
+
+* :ref:`http_modem_delta_update_sample` sample:
+
+   * Updated credentials for the HTTPS connection.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 

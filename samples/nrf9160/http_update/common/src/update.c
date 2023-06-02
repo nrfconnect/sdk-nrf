@@ -28,7 +28,7 @@ static char filename[128] = {0};
 int cert_provision(void)
 {
 	static const char cert[] = {
-		#include "../cert/BaltimoreCyberTrustRoot"
+		#include "../cert/AmazonRootCA1"
 	};
 	BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 
