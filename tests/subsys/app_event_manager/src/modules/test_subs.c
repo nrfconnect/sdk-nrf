@@ -23,6 +23,11 @@ static bool app_event_handler_first(const struct app_event_header *aeh)
 		struct test_start_event *event = cast_test_start_event(aeh);
 
 		cur_test_id = event->test_id;
+		if (cur_test_id == TEST_SUBSCRIBER_ORDER) {
+			first_cnt = 0;
+			early_cnt = 0;
+			normal_cnt = 0;
+		}
 
 		return false;
 	}

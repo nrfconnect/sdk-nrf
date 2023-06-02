@@ -17,6 +17,7 @@
 #define MODULE test_data
 
 static enum test_id cur_test_id;
+static int i;
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
@@ -24,6 +25,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		struct test_start_event *event = cast_test_start_event(aeh);
 
 		cur_test_id = event->test_id;
+		if (cur_test_id == TEST_EVENT_ORDER) {
+			i = 0;
+		}
 
 		return false;
 	}
@@ -53,7 +57,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 	if (is_order_event(aeh)) {
 		if (cur_test_id == TEST_EVENT_ORDER) {
-			static int i;
 			struct order_event *event = cast_order_event(aeh);
 
 			zassert_equal(event->val, i, "Incorrent event order");

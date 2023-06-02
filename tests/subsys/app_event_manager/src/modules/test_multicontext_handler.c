@@ -26,6 +26,10 @@ static void end_test(void)
 	APP_EVENT_SUBMIT(event);
 }
 
+static bool isr_received;
+static bool t1_received;
+static bool t2_received;
+
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_test_start_event(aeh)) {
@@ -35,6 +39,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		case TEST_MULTICONTEXT:
 		{
 			cur_test_id = st->test_id;
+			isr_received = false;
+			t1_received = false;
+			t2_received = false;
 
 			break;
 		}
@@ -51,9 +58,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 	if (is_multicontext_event(aeh)) {
 		if (cur_test_id == TEST_MULTICONTEXT) {
-			static bool isr_received;
-			static bool t1_received;
-			static bool t2_received;
 
 			struct multicontext_event *ev =
 				cast_multicontext_event(aeh);
