@@ -1,0 +1,43 @@
+name: Build and run on native_posix
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci:v0.26.4
+    strategy:
+      matrix:
+        # Parrallelize the build by running using twister's subset parameter
+        # The size of this should match the environment variable SUBSET_SIZE below.
+        subset: [1, 2, 3, 4, 5]
+    env:
+      # Size of the subset array above.
+      SUBSET_SIZE: 5
+      CMAKE_PREFIX_PATH: /opt/toolchains
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: ncs/nrf
+
+      # Additional dependencies for building NCS unit tests
+      - name: Install deps
+        run: |
+          apt-get update
+          apt-get install -y ruby-full
+          pip3 install zcbor==0.5.1
+
+      - name: West init and update
+        run: |
+          west init -l ncs/nrf
+          cd ncs
+          west update --narrow -o=--depth=1
+
+      - name: Build and run on native_posix
+        shell: bash
+        run: |
+          ncs/zephyr/scripts/twister -p native_posix --subset ${{ matrix.subset }}/${{ env.SUBSET_SIZE }} -v -i -T ncs/nrf/

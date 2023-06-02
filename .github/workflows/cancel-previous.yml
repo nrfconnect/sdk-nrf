@@ -2,7 +2,7 @@ name: Cancel previous workflow
 on:
   workflow_run:
     # List long running github workflows here.
-    workflows: ["Documentation Build"]
+    workflows: ["Documentation Build", "Build and run on native_posix"]
     types:
       - requested
 jobs:
