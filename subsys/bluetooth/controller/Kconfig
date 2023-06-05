@@ -380,5 +380,11 @@ config BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT
 	  Increasing this will make it possible to prepare multiple responses ahead of time.
 
 endif
+
+config BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE
+	bool
+	help
+	  Convenience config to silence unexpected incoming msg type
+
 endmenu
 endif  # BT_LL_SOFTDEVICE

@@ -410,7 +410,10 @@ static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
 		data_packet_process(p_hci_buffer);
 	} else {
-		LOG_ERR("Unexpected msg_type: %u. This if-else needs a new branch", msg_type);
+		if (!IS_ENABLED(CONFIG_BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE)) {
+			LOG_ERR("Unexpected msg_type: %u. This if-else needs a new branch",
+				msg_type);
+		}
 	}
 
 	return true;
