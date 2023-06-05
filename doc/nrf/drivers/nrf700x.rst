@@ -33,8 +33,11 @@ Design overview
 The nRF700X Wi-Fi driver follows an OS agnostic design, and the driver is implemented into OS agnostic and OS (Zephyr) specific implementation files.
 The OS agnostic files are located in the :file:`drivers/wifi/nrf700x/osal/` folder and the OS specific files are located in the :file:`drivers/wifi/nrf700x/zephyr/` folder.
 
-The driver is designed to be used with the Zephyr networking stack.
-It is implemented as a network interface driver.
+The driver supports two modes of operations:
+
+Wi-Fi mode
+^^^^^^^^^^
+In this mode the driver is designed to be used with the Zephyr networking stack. It is implemented as a network interface driver.
 
 The driver supports the following IEEE 802.11 features:
 
@@ -51,6 +54,13 @@ The following features are in the driver code but not yet supported:
 
 Except for scan only mode, the driver uses host access point daemon (hostapd) to implement AP Media Access Control (MAC) Sublayer Management Entity (AP MLME) and wpa_supplicant to implement 802.1X supplicant.
 
+Radio test mode
+^^^^^^^^^^^^^^^
+The nRF700X Wi-Fi driver supports Radio Test mode, which can be used to test the RF performance of the nRF700X device.
+This is a build time option and can be enabled by using the :kconfig:option:`CONFIG_NRF700X_RADIO_TEST` Kconfig option.
+
+For more details about using this driver in Radio Test mode, see :ref:`wifi_radio_test`.
+
 Driver to nRF700X communication
 *******************************
 
@@ -60,14 +70,6 @@ The nRF7002 DK uses QSPI whereas the nRF7002 EK uses SPI.
 
 To connect the nRF7002 EK to the SoC, the ``nrf7002ek_nrf7002`` shield is required.
 
-
-Radio Test mode
-***************
-
-The nRF700X Wi-Fi driver supports Radio Test mode, which can be used to test the RF performance of the nRF700X device.
-This is a build time option and can be enabled by using the :kconfig:option:`CONFIG_NRF700X_RADIO_TEST` Kconfig option.
-
-For more details about using this driver in Radio Test mode, see :ref:`wifi_radio_test`.
 
 API documentation
 *****************
