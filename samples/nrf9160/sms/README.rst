@@ -57,7 +57,7 @@ Check and configure the following optional library options that are used by the 
 * :kconfig:option:`CONFIG_ASSERT`
 * :kconfig:option:`CONFIG_ASSERT_VERBOSE`
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

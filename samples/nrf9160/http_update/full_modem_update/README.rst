@@ -71,7 +71,7 @@ CONFIG_DOWNLOAD_MODEM_1_FILE
    It supports files encoded in the serialized :file:`.cbor` format.
    See :ref:`lib_fmfu_fdev_serialization` for additional information.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

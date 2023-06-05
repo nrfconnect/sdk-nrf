@@ -55,7 +55,7 @@ Check and configure the following Kconfig options:
 CONFIG_EXTENDED_CIPHERSUITE_LIST
    The sample configuration extends the cipher suite list with extra cipher suites that are only supported by modem firmware v1.3.x, where x is greater than or equal to 1 and modem firmware v1.2.x, where x is greater than or equal to 7.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

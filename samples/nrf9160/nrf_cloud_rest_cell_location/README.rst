@@ -77,7 +77,7 @@ Check and configure the following Kconfig options for the sample:
 CONFIG_REST_CELL_LOCATION_DO_JITP - Enable prompt to perform JITP via REST
    This configuration option defines whether the application prompts the user for just-in-time provisioning on startup.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
