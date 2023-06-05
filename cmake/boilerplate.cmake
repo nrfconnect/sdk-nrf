@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018-2023 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -30,3 +30,7 @@ if(DEFINED NRF_SUPPORTED_BUILD_TYPES)
 endif()
 
 list(PREPEND CMAKE_MODULE_PATH ${NRF_DIR}/cmake/modules)
+
+if(EXISTS ${NRF_DIR}/../sdk-nrf-next)
+  list(PREPEND CMAKE_MODULE_PATH ${NRF_DIR}/../sdk-nrf-next/cmake/modules)
+endif()
