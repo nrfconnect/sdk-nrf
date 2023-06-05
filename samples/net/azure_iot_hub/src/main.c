@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
-#include <zephyr/net/net_if.h>
+#include <zephyr/net/conn_mgr.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
@@ -372,11 +372,11 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 {
 	switch (event) {
 	case NET_EVENT_L4_CONNECTED:
-		LOG_INF("IP Up");
+		LOG_INF("Network connectivity established and IP address assigned");
 		on_net_event_l4_connected();
 		break;
 	case NET_EVENT_L4_DISCONNECTED:
-		LOG_INF("IP down");
+		LOG_INF("Network connectivity lost, no IP address assigned");
 		on_net_event_l4_disconnected();
 		break;
 	default:
@@ -507,43 +507,8 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 int main(void)
 {
 	int err;
-	struct net_if *net_if = net_if_get_default();
-
-	if (net_if == NULL) {
-		LOG_ERR("Pointer to network interface is NULL");
-		return -ECANCELED;
-	}
-
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
-
-	LOG_INF("Bringing network interface up");
-
-	err = net_if_up(net_if);
-	if (err) {
-		LOG_ERR("net_if_up, error: %d", err);
-		return err;
-	}
-
-
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
-	char device_id[128];
-
-	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
-	if (err) {
-		LOG_ERR("Failed to retrieve device ID");
-		return 0;
-	}
-#else
-	char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
-#endif
-
 	char hostname[128] = CONFIG_AZURE_IOT_HUB_HOSTNAME;
+	char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
 	struct azure_iot_hub_config cfg = {
 		.device_id = {
 			.ptr = device_id,
@@ -557,6 +522,34 @@ int main(void)
 	};
 
 	LOG_INF("Azure IoT Hub sample started");
+
+	/* Setup handler for Zephyr NET Connection Manager events. */
+	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_cb);
+
+	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
+	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
+	net_mgmt_add_event_callback(&conn_cb);
+
+	LOG_INF("Bringing network interface up and connecting to the network");
+
+	/* Connecting to the configured connectivity layer.
+	 * Wi-Fi or LTE depending on the board that the sample was built for.
+	 */
+	err = conn_mgr_all_if_up(true);
+	if (err) {
+		LOG_ERR("conn_mgr_if_connect, error: %d", err);
+		return err;
+	}
+
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
+	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
+	if (err) {
+		LOG_ERR("Failed to retrieve device ID");
+		return 0;
+	}
+#endif
+
 	LOG_INF("Device ID: %s", device_id);
 
 #if IS_ENABLED(CONFIG_DK_LIBRARY)
@@ -566,24 +559,9 @@ int main(void)
 	work_init();
 	cJSON_Init();
 
-	LOG_INF("Connecting...");
-
-	/* Temporary fix to prevent using Wi-Fi before WPA supplicant is ready.
-	 * TODO: Remove this when WPA supplicant ready events has been added.
-	 */
-	k_sleep(K_SECONDS(1));
-
-	/* Connecting to the configured connectivity layer.
-	 * Wi-Fi or LTE depending on the board that the sample was built for.
-	 */
-	err = conn_mgr_if_connect(net_if);
-	if (err) {
-		LOG_ERR("conn_mgr_if_connect, error: %d", err);
-		return err;
-	}
-
 	k_sem_take(&network_connected_sem, K_FOREVER);
-	LOG_INF("Connected to LTE network");
+
+	LOG_INF("Connected to network");
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 	/* Using the device ID as DPS registration ID. */
