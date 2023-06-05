@@ -547,11 +547,11 @@ Libraries for networking
   * Added support for Firmware Update object to use :ref:`lib_fota_download` library for downloading firmware images.
   * Added support for full modem firmware update.
 
-* :ref:`lib_multicell_location` library:
+* Multicell location library:
 
   * Updated to only request neighbor cell measurements when connected and to only copy neighbor cell measurements if they exist.
   * Added support for Polte location service.
-  * Removed device ID from the :c:func:`multicell_location_get` parameter list. nRF Cloud and HERE did not use it
+  * Removed device ID from the ``multicell_location_get`` function parameter list. nRF Cloud and HERE did not use it
     Skyhook will now set modem UUID as its device ID.
   * Selection of location service changed from compile-time to runtime configuration.
   * Added support for MQTT transport for nRF Cloud service.
