@@ -27,6 +27,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		switch (event->state) {
 		case USB_STATE_POWERED:
+			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_SUSPENDED);
+			break;
 		case USB_STATE_ACTIVE:
 			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_ALIVE);
 			break;

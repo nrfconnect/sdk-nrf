@@ -34,7 +34,8 @@ Implementation details
 For the change of the restricted power level, the module reacts to :c:struct:`usb_state_event`.
 Upon reception of the event and depending on the current USB state, the module requests different power restrictions:
 
-* If the USB state is set to :c:enum:`USB_STATE_POWERED` or :c:enum:`USB_STATE_ACTIVE`, the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` is required.
+* If the USB state is set to :c:enum:`USB_STATE_POWERED`, the module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
+* If the USB state is set to :c:enum:`USB_STATE_ACTIVE`, the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` is required.
 * If the USB state is set to :c:enum:`USB_STATE_DISCONNECTED`, any power level is allowed.
 * If the USB state is set to :c:enum:`USB_STATE_SUSPENDED`, the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` is imposed.
   The module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` and generates :c:struct:`force_power_down_event`.
