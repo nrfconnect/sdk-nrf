@@ -118,10 +118,10 @@ static void restrict_power_state(size_t module, enum power_manager_level lvl)
 		}
 		module_flags_clear_bit(&power_mode_restrict_flags[current], module);
 	}
-	LOG_INF("Power state SUSPENDED: %s",
+	LOG_DBG("Power state SUSPENDED: %s",
 		check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED) ?
 			"ALLOWED" : "BLOCKED");
-	LOG_INF("Power state OFF: %s",
+	LOG_DBG("Power state OFF: %s",
 		check_if_power_state_allowed(POWER_MANAGER_LEVEL_OFF) ?
 			"ALLOWED" : "BLOCKED");
 }
