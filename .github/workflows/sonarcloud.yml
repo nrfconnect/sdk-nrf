@@ -25,7 +25,7 @@ jobs:
       # Install more dependencies that are not part of the docker image but are needed by the workflow
       - name: Install more deps
         run: |
-          apt install -y lcov gcc-multilib curl
+          apt install -y lcov curl
 
       # The docker image comes pre-initialized with west dependencies. We want to do west update ourselves to to be sure that we get the latest changes in all repos.
       # The docker image is built nightly. So it may contain slightly out of date repos.
