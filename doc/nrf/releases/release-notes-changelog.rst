@@ -319,6 +319,10 @@ Common Application Framework (CAF)
 
   * Updated the dependencies of the :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option so that it can be used when the Bluetooth controller is running on the network core.
 
+* :ref:`caf_power_manager`:
+
+  * Reduced verbosity of logs denoting allowed power states from ``info`` to ``debug``.
+
 Shell libraries
 ---------------
 
