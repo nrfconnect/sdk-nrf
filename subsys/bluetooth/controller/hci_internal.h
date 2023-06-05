@@ -10,6 +10,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <sdc_hci_cmd_le.h>
+#include <sdc_hci_cmd_info_params.h>
 
 #ifndef HCI_INTERNAL_H__
 #define HCI_INTERNAL_H__
@@ -81,5 +83,19 @@ int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t
  * @return Zero on success or (negative) error code otherwise.
  */
 int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out);
+
+/** @brief Retrieve the list of supported commands configured for this build
+ *
+ * @param[out] cmds The list of supported commands
+ */
+void hci_internal_supported_commands(
+	sdc_hci_ip_supported_commands_t *cmds);
+
+/** @brief Retrieve the list of supported LE features configured for this build
+ *
+ * @param[out] features The list of supported features
+ */
+void hci_internal_le_supported_features(
+	sdc_hci_cmd_le_read_local_supported_features_return_t *features);
 
 #endif
