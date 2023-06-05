@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
-        if : github.event_name == 'pull_request_target'
+        if: github.event_name == 'pull_request_target'
         with:
           ref: ${{ github.event.pull_request.head.sha  }} # Checkout the PR's head sha instead of the target branch's sha
           path: ncs/nrf
@@ -25,7 +25,7 @@ jobs:
 
       - name: Checkout the code
         uses: actions/checkout@v2
-        if : github.event_name != 'pull_request_target'
+        if: github.event_name != 'pull_request_target'
         with:
           path: ncs/nrf
           fetch-depth: 0
@@ -33,7 +33,7 @@ jobs:
       # Install more dependencies that are not part of the docker image but are needed by the workflow
       - name: Install more deps
         run: |
-          apt install -y lcov gcc-multilib curl
+          apt install -y lcov curl
 
       # The docker image comes pre-initialized with west dependencies. We want to do west update ourselves to to be sure that we get the latest changes in all repos.
       # The docker image is built nightly. So it may contain slightly out of date repos.
@@ -67,7 +67,7 @@ jobs:
 
       # Download the quarantine file base branch. This is needed to build and run the tests.
       - name: Download quarentine file from nrf (PR only)
-        if : github.event_name == 'pull_request_target'
+        if: github.event_name == 'pull_request_target'
         run: |
           wget https://raw.githubusercontent.com/balaji-nordic/sdk-nrf/master/scripts/quarantine_downstream.yaml -P ncs/nrf/scripts/
 
@@ -101,7 +101,7 @@ jobs:
             --sonarqube coverage.xml
 
       - name: Run sonar-scanner on main
-        if : github.event_name != 'pull_request_target'
+        if: github.event_name != 'pull_request_target'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -112,8 +112,8 @@ jobs:
                         --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
 
       - name: Run sonar-scanner on PR
-        if : github.event_name == 'pull_request_target'
-        env :
+        if: github.event_name == 'pull_request_target'
+        env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BRANCH: ${{ github.event.pull_request.head.ref }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
