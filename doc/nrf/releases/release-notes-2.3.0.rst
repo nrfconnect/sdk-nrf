@@ -741,7 +741,7 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * The :ref:`lib_multicell_location` library is now :ref:`deprecated <api_deprecation>`.
+  * The Multicell location library is now :ref:`deprecated <api_deprecation>`.
     Relevant functionality from the library is moved to this library.
     The following features were not moved:
 
@@ -789,7 +789,7 @@ Modem libraries
 * Added the :ref:`lib_modem_slm` library.
   This library is meant for the external MCU to work with nRF9160 SiP through the :ref:`serial_lte_modem` application.
 
-* :ref:`lib_multicell_location` library is :ref:`deprecated <api_deprecation>` and will be removed in one of the future releases.
+* Multicell location library is :ref:`deprecated <api_deprecation>` and will be removed in one of the future releases.
 
 * :ref:`modem_info_readme` library:
 
@@ -811,7 +811,7 @@ Libraries for networking
 
   * Pulled out the :file:`azure_iot_hub_mqtt.c` file that is now implemented by a new library :ref:`lib_mqtt_helper`.
 
-* :ref:`lib_multicell_location` library:
+* Multicell location library:
 
   * This library is now deprecated and relevant functionality is available through the :ref:`lib_location` library.
 

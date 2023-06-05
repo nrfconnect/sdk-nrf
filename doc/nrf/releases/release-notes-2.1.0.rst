@@ -828,12 +828,12 @@ Libraries for networking
     * An issue that prevented full modem FOTA updates to be installed during library initialization.
     * An issue that caused the :c:func:`nrf_cloud_client_id_get` function to fail if both :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` and :kconfig:option:`CONFIG_NRF_CLOUD_REST` were enabled.
 
-* :ref:`lib_multicell_location` library:
+* Multicell location library:
 
   * Added:
 
     * Timeout parameter.
-    * Structure for input parameters for :c:func:`multicell_location_get` to make updates easier in the future.
+    * Structure for input parameters for ``multicell_location_get`` function to make updates easier in the future.
 
   * Updated the conversions of RSRP and RSRQ.
     These now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.

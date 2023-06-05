@@ -268,7 +268,9 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* Multicell location library:
+
+  * This library is now removed and relevant functionality is available through the :ref:`lib_location` library.
 
 Libraries for NFC
 -----------------

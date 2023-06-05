@@ -765,7 +765,7 @@ Libraries for networking
   * Fixed premature assistance suppression when the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` option is enabled.
     Added a 10 minute margin of error to ensure A-GPS assistance is downloaded every two hours even if the modem requests assistance a little early.
 
-* :ref:`lib_multicell_location` library:
+* Multicell location library:
 
   * Removed support for Skyhook.
 

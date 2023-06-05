@@ -735,7 +735,7 @@ Libraries for networking
 
 * Added :ref:`lib_lwm2m_location_assistance` library that supports using A-GPS, P-GPS, and ground fix assistance from nRF Cloud through an LwM2M server.
 
-* :ref:`lib_multicell_location` library:
+* Multicell location library:
 
   * Removed the Kconfig option :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`.
     The maximum number of supported neighbor cell measurements for HERE location services depends on the :kconfig:option:`CONFIG_LTE_NEIGHBOR_CELLS_MAX` Kconfig option.
