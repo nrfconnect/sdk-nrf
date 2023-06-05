@@ -62,7 +62,7 @@ CONFIG_DOWNLOAD_FILE_V1
 CONFIG_DOWNLOAD_FILE_V2
   This configuration option configures the file name of the *version 2* of the update image.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

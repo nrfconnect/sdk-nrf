@@ -8,4 +8,5 @@ Modem libraries
    :glob:
    :caption: Subpages:
 
+   nrf_modem_lib/index
    *

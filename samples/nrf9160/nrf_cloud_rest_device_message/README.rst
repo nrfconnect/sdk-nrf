@@ -94,7 +94,7 @@ CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM - Button number
 CONFIG_REST_DEVICE_MESSAGE_DO_JITP - Enable prompt to perform JITP over REST
    This configuration option defines whether the application prompts the user for just-in-time provisioning on startup.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

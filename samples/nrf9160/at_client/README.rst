@@ -28,7 +28,7 @@ You can initiate the commands from a terminal or the `LTE Link Monitor`_, which 
 
 For more information on the AT commands, see the `AT Commands Reference Guide`_.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

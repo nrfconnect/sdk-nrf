@@ -30,7 +30,7 @@ The sample performs the following operations:
 
 This triggers the callbacks for :c:func:`on_modem_init`, :c:func:`on_cfun` and :c:func:`on_modem_shutdown` functions.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

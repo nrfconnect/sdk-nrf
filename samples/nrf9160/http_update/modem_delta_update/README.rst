@@ -28,7 +28,7 @@ The sample connects to an HTTP server to download a signed modem delta image.
 The delta images are part of the official modem firmware releases.
 The sample automatically downloads the correct delta image to go from the base version to the test version, or the test version to the base version, depending on the currently installed version.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

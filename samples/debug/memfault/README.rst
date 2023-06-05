@@ -141,7 +141,7 @@ Configuration files
    :start-after: memfault_config_files_start
    :end-before: memfault_config_files_end
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 

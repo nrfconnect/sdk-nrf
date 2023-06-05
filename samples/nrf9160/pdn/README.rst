@@ -32,7 +32,7 @@ Finally, the sample prints the PDP context IDs and PDN IDs of both the default P
    Hence, the :ref:`pdn_readme` library can automatically register to the necessary packet domain events notifications using the `AT+CGEREP=1 <AT+CGEREP set command_>`_ AT command, and notifications for unsolicited reporting of error codes sent by the network using the `AT+CNEC=16 <AT+CNEC set command_>`_ AT command.
    If your application does not use the :ref:`lte_lc_readme` library to change the modem's functional mode, you have to subscribe to these notifications manually before the functional mode is changed.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
