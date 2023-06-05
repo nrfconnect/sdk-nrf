@@ -26,8 +26,9 @@ endmacro()
 # Load static configuration if found.
 # Try user defined file first, then file found in configuration directory,
 # finally file from board directory.
-
-set(user_def_pm_static ${PM_STATIC_YML_FILE})
+if(DEFINED PM_STATIC_YML_FILE)
+  string(CONFIGURE "${PM_STATIC_YML_FILE}" user_def_pm_static)
+endif()
 
 ncs_file(CONF_FILES ${APPLICATION_CONFIG_DIR}
          PM conf_dir_pm_static
