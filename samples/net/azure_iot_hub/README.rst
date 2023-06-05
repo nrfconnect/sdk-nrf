@@ -133,11 +133,11 @@ When the sample runs, the device boots, and the sample displays the following ou
 .. code-block:: console
 
 	*** Booting Zephyr OS build v2.3.0-rc1-ncs1-1453-gf41496cd30d5  ***
-	<inf> azure_iot_hub_sample: Bringing network interface up
 	<inf> azure_iot_hub_sample: Azure IoT Hub sample started
-	<inf> azure_iot_hub_sample: Device ID: nrf91dk-dev
+	<inf> azure_iot_hub_sample: Bringing network interface up and connecting to the network
+	<inf> azure_iot_hub_sample: Device ID: my-device
 	<inf> azure_iot_hub_sample: Connecting...
-	<inf> azure_iot_hub_sample: IP Up
+	<inf> azure_iot_hub_sample: Network connectivity established and IP address assigned
 	<inf> azure_iot_hub_sample: Azure IoT Hub library initialized
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_CONNECTING
 	<inf> azure_iot_hub_sample: Connection request sent to IoT Hub
@@ -165,13 +165,19 @@ If a new telemetry interval is set in the device twin, the console output is lik
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries and drivers:
+The sample uses the following |NCS| and Zephyr libraries:
 
-* :ref:`lib_azure_iot_hub
-
-It uses the following libraries and secure firmware component for nRF9160 DK and Thingy:91 builds:
-
-* :ref:`lte_lc_readme`
-* :ref:`nrfxlib:nrf_modem`
-* :ref:`Trusted Firmware-M <ug_tfm>`
+* :ref:`lib_azure_iot_hub`
 * :ref:`net_if_interface`
+* :ref:`net_mgmt_interface`
+
+It uses the following libraries and secure firmware component for nRF91 Series builds:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`
+* :ref:`modem_info_readme`
+
+It uses the following libraries for nRF7 Series builds:
+
+* :ref:`nrf_security`
+* :ref:`nrf700x_wifi`
+* :ref:`lib_wifi_credentials`
