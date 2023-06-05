@@ -245,12 +245,6 @@ config BT_LL_SOFTDEVICE_MULTIROLE
 
 endchoice
 
-config BT_SDC_ADDITIONAL_MEMORY
-	int "Allocates additional memory to the SDC memory pool"
-	default 0
-	help
-	  This is for testing and internal use only.
-
 config BT_CTLR_FAL_SIZE
 	int "Configures the maximum number of addresses in the Filter Accept List"
 	range 0 255
