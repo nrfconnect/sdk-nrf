@@ -176,14 +176,17 @@ Samples and applications built for Thingy:53 include the MCUboot bootloader that
 This method uses signed binary files :file:`app_update.bin` and :file:`net_core_app_update.bin` (or :file:`dfu_application.zip`).
 You can program the precompiled firmware image using one of the following ways:
 
-* Use the :doc:`mcuboot:index-ncs` feature and the built-in serial recovery mode of Thingy:53.
-  In this scenario Thingy is connected directly to your PC through USB.
+* Use the :doc:`MCUboot<mcuboot:index-ncs>` feature and the built-in serial recovery mode of Thingy:53.
+  In this scenario, the Thingy is connected directly to your PC through USB.
+  For details, refer to the :ref:`thingy53_app_mcuboot_bootloader` section.
+
+  See the :ref:`thingy53_gs_updating_usb` section in the :ref:`ug_thingy53_gs` guide for the detailed procedures on how to program the Thingy:53 using `nRF Connect Programmer`_.
 * Update the firmware over-the-air (OTA) using Bluetooth LE and the nRF Programmer mobile application for Android or iOS.
   To use this method, the application that is currently programmed on Thingy:53 must support it.
   For details, refer to :ref:`thingy53_app_fota_smp` section.
   All precompiled images support OTA using Bluetooth.
 
-See :ref:`thingy53_gs_updating_firmware` for the detailed procedures on how to program a Thingy:53 using `nRF Connect Programmer`_ or the `nRF Programmer`_ for Android or iOS.
+  See the :ref:`thingy53_gs_updating_ble` section in the :ref:`ug_thingy53_gs` guide for the detailed procedures on how to program a Thingy:53 using `nRF Programmer`_ for Android or iOS.
 
 .. _thingy53_app_guide:
 
@@ -218,7 +221,7 @@ MCUboot bootloader
 
 MCUboot bootloader is enabled by default for Thingy:53 in the :file:`Kconfig.defconfig` file of the board.
 This ensures that the sample includes the MCUboot bootloader and that an MCUboot-compatible image is generated when the sample is built.
-When using |NCS| to build the MCUboot bootloader for the Thingy:53, the configuration is applied automatically from the MCUboot repository.
+When using the |NCS| to build the MCUboot bootloader for the Thingy:53, the configuration is applied automatically from the MCUboot repository.
 
 The MCUboot bootloader supports serial recovery and a custom command to erase the settings storage partition.
 Erasing the settings partition is needed to ensure that an application is not booted with incompatible content loaded from the settings partition.
