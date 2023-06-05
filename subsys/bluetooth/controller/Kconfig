@@ -118,7 +118,7 @@ config BT_CTLR_SDC_PERIPHERAL_COUNT
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
 	default 7500
-	range 2500 4000000
+	range 1250 4000000
 	help
 	  The time set aside for connections on every connection interval in
 	  microseconds. The event length and the connection interval are the
