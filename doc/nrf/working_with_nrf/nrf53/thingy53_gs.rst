@@ -139,18 +139,16 @@ Complete the following steps to update the firmware:
 
    The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
 
-#. Open the connector cover on the side of the Nordic Thingy:53 and plug the Nordic Thingy:53 into the computer using a USB-C cable.
+#. Take off the top cover of the Nordic Thingy:53 so you can access the **SW2** button in Step 7.
+#. Plug the Nordic Thingy:53 into the computer using a USB-C cable.
 
    .. figure:: images/thingy53_sw1_usb.svg
       :alt: The Nordic Thingy:53 schematic - **SW1** and USB connector cover
 
       The Nordic Thingy:53 schematic - **SW1** and USB connector cover
 
-#. Move the power switch **SW1** to the **ON** position.
 #. Open nRF Connect for Desktop and launch the Programmer app.
-#. Move the power switch **SW1** to the **OFF** position.
-#. Take off the top cover to access the **SW2** button.
-#. Press **SW2** while switching **SW1** to the **ON** position.
+#. Press **SW2** while moving the power switch **SW1** to the **ON** position.
 
    .. figure:: images/thingy53_sw1_sw2.svg
       :alt: The Nordic Thingy:53 schematic - **SW1** and **SW2**
@@ -187,7 +185,7 @@ Complete the following steps to update the firmware:
 
    When the update is complete, a **Completed successfully** message appears.
 
-You can now disconnect the Nordic Thingy:53 from the computer.
+You can now disconnect the Nordic Thingy:53 from the computer and put the top cover back on.
 
 .. _thingy53_gs_updating_external_probe:
 
