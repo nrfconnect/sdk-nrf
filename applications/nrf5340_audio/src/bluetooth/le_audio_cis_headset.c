@@ -30,8 +30,8 @@ LOG_MODULE_REGISTER(cis_headset, CONFIG_BLE_LOG_LEVEL);
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#define CHANNEL_COUNT_1 BIT(0)
-#define BLE_ISO_LATENCY_MS 10
+#define CHANNEL_COUNT_1	    BIT(0)
+#define BLE_ISO_LATENCY_MS  10
 #define BLE_ISO_RETRANSMITS 2
 #define BT_LE_ADV_FAST_CONN                                                                        \
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, BT_GAP_ADV_FAST_INT_MIN_1,                      \
@@ -54,7 +54,10 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_CO
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
 #define CSIP_SET_SIZE 2
-enum csip_set_rank { CSIP_HL_RANK = 1, CSIP_HR_RANK = 2 };
+enum csip_set_rank {
+	CSIP_HL_RANK = 1,
+	CSIP_HR_RANK = 2
+};
 
 static struct bt_csip_set_member_svc_inst *csip;
 static struct bt_le_ext_adv *adv_ext;
@@ -68,8 +71,7 @@ static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
-	BT_CSIP_DATA_RSI(csip_rsi)
-};
+	BT_CSIP_DATA_RSI(csip_rsi)};
 
 static void le_audio_event_publish(enum le_audio_evt_type event)
 {
@@ -105,8 +107,8 @@ struct bt_csip_set_member_register_param csip_param = {
 	.lockable = true,
 #if !CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA
 	/* CSIP SIRK for demo is used, must be changed before production */
-	.set_sirk = { 'N', 'R', 'F', '5', '3', '4', '0', '_', 'T', 'W', 'S', '_', 'D', 'E', 'M',
-		      'O' },
+	.set_sirk = {'N', 'R', 'F', '5', '3', '4', '0', '_', 'T', 'W', 'S', '_', 'D', 'E', 'M',
+		     'O'},
 #else
 #warning "CSIP test sample data is used, must be changed before production"
 #endif
@@ -125,11 +127,10 @@ static enum bt_audio_dir caps_dirs[] = {
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
 
-static const struct bt_codec_qos_pref qos_pref =
-	BT_CODEC_QOS_PREF(true, BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS, BLE_ISO_LATENCY_MS,
-			  CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
-			  CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US,
-			  CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
+static const struct bt_codec_qos_pref qos_pref = BT_CODEC_QOS_PREF(
+	true, BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS, BLE_ISO_LATENCY_MS,
+	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
+	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
 
 /* clang-format off */
 static struct bt_pacs_cap caps[] = {
@@ -286,6 +287,8 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 			 const struct bt_codec *codec, struct bt_bap_stream **stream,
 			 struct bt_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
+	int ret;
+
 	LOG_DBG("LC3 configure call-back");
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
@@ -326,6 +329,17 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 
 			*stream = audio_stream;
 			*pref = qos_pref;
+
+			/* MCS discover needs to be done once per connection */
+			if (IS_ENABLED(CONFIG_BT_MCC)) {
+				ret = ble_mcs_discover(conn);
+				if (ret == -EALREADY) {
+					LOG_DBG("Discovery already run or in progress");
+				} else if (ret) {
+					LOG_ERR("Failed to start discovery of MCS: %d", ret);
+				}
+			}
+
 			return 0;
 		}
 	}
@@ -356,19 +370,7 @@ static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *q
 static int lc3_enable_cb(struct bt_bap_stream *stream, const struct bt_codec_data *meta,
 			 size_t meta_count, struct bt_bap_ascs_rsp *rsp)
 {
-	int ret;
-
 	LOG_DBG("Enable: stream %p meta_count %d", (void *)stream, meta_count);
-
-	/* MCS discover needs to be done once per connection */
-	if (IS_ENABLED(CONFIG_BT_MCC)) {
-		ret = ble_mcs_discover(stream->conn);
-		if (ret == -EALREADY) {
-			LOG_DBG("Discovery already run or in progress");
-		} else if (ret) {
-			LOG_ERR("Failed to start discovery of MCS: %d", ret);
-		}
-	}
 
 	return 0;
 }
