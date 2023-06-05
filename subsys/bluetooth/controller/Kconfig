@@ -115,9 +115,12 @@ config BT_CTLR_SDC_PERIPHERAL_COUNT
 	  NOTE: the number of central roles is defined as
 	  BT_MAX_CONN - BT_CTLR_SDC_PERIPHERAL_COUNT
 
+config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
+	bool "Override event length default"
+
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
-	default 7500
+	default 7500 if !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	range 1250 4000000
 	help
 	  The time set aside for connections on every connection interval in
