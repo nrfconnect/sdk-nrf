@@ -6,25 +6,17 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-
-if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
-  message(FATAL_ERROR
-          "Board ${BOARD} is not supported.\n"
-          "Please make sure board specific configuration files are added to "
-          "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
-endif()
-
 ################################################################################
 
 # The application uses the configuration/<board> scheme for configuration files.
-set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
+set(APPLICATION_CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/configuration/\${BOARD}")
 
 get_filename_component(MATTER_MODULE_ROOT $ENV{ZEPHYR_BASE}/../modules/lib/matter REALPATH)
 set(multiprotocol_rpmsg_KCONFIG_ROOT ${MATTER_MODULE_ROOT}/config/nrfconnect/chip-module/Kconfig.multiprotocol_rpmsg.root)
 set(hci_rpmsg_KCONFIG_ROOT ${MATTER_MODULE_ROOT}/config/nrfconnect/chip-module/Kconfig.hci_rpmsg.root)
 
 if(OVERLAY_CONFIG STREQUAL "overlay-factory_data.conf")
-    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_factory_data.yml)
+    set(PM_STATIC_YML_FILE ${APPLICATION_CONFIG_DIR}/pm_static_factory_data.yml)
 endif()
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
