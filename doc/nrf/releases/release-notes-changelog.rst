@@ -162,6 +162,11 @@ nRF Desktop
 
   All listed Kconfig options are enabled by default and depend on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
 
+* Updated:
+
+  * Set the max compiled-in log level to ``warning`` for the USB HID class (:kconfig:option:`CONFIG_USB_HID_LOG_LEVEL_CHOICE`) and reduce the log message levels used in the :ref:`nrf_desktop_usb_state_pm` source code.
+    This is done to avoid flooding logs during USB state changes.
+
 Samples
 =======
 

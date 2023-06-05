@@ -102,6 +102,12 @@ choice USB_DRIVER_LOG_LEVEL_CHOICE
 	  Disable USB driver logs to avoid flooding logs.
 endchoice
 
+choice USB_HID_LOG_LEVEL_CHOICE
+	default USB_HID_LOG_LEVEL_WRN
+	help
+	  Reduce USB HID log level to avoid flooding logs on USB state changes.
+endchoice
+
 module = DESKTOP_USB_STATE
 module-str = USB state
 source "subsys/logging/Kconfig.template.log_config"
