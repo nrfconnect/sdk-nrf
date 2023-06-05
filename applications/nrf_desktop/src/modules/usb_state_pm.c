@@ -23,7 +23,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	if (is_usb_state_event(aeh)) {
 		const struct usb_state_event *event = cast_usb_state_event(aeh);
 
-		LOG_INF("USB state change detected");
+		LOG_DBG("USB state change detected");
 
 		switch (event->state) {
 		case USB_STATE_POWERED:
@@ -34,7 +34,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_MAX);
 			break;
 		case USB_STATE_SUSPENDED:
-			LOG_INF("USB suspended");
+			LOG_DBG("USB suspended");
 			power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_SUSPENDED);
 			force_power_down();
 			break;
