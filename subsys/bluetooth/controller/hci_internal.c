@@ -194,7 +194,7 @@ static void encode_command_complete_header(uint8_t * const event,
 	event[BT_HCI_EVT_HDR_SIZE + sizeof(struct bt_hci_evt_cmd_complete)] = status;
 }
 
-static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
+void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 {
 	memset(cmds, 0, sizeof(*cmds));
 
@@ -478,7 +478,8 @@ static void supported_features(sdc_hci_ip_lmp_features_t *features)
 	features->le_supported = 1;
 }
 
-static void le_supported_features(sdc_hci_cmd_le_read_local_supported_features_return_t *features)
+void hci_internal_le_supported_features(
+	sdc_hci_cmd_le_read_local_supported_features_return_t *features)
 {
 	memset(features, 0, sizeof(*features));
 
@@ -706,7 +707,7 @@ static uint8_t info_param_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_ip_read_local_version_information((void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_IP_READ_LOCAL_SUPPORTED_COMMANDS:
 		*param_length_out += sizeof(sdc_hci_cmd_ip_read_local_supported_commands_return_t);
-		supported_commands((void *)event_out_params);
+		hci_internal_supported_commands((void *)event_out_params);
 		return 0;
 	case SDC_HCI_OPCODE_CMD_IP_READ_LOCAL_SUPPORTED_FEATURES:
 		*param_length_out += sizeof(sdc_hci_cmd_ip_read_local_supported_features_return_t);
@@ -760,7 +761,7 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 
 	case SDC_HCI_OPCODE_CMD_LE_READ_LOCAL_SUPPORTED_FEATURES:
 		*param_length_out += sizeof(sdc_hci_cmd_le_read_local_supported_features_return_t);
-		le_supported_features((void *)event_out_params);
+		hci_internal_le_supported_features((void *)event_out_params);
 		return 0;
 
 	case SDC_HCI_OPCODE_CMD_LE_SET_RANDOM_ADDRESS:
