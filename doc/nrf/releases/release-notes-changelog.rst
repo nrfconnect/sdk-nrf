@@ -294,7 +294,7 @@ Libraries for Zigbee
 sdk-nrfxlib
 -----------
 
-* Added experimental support for EC J-PAKE, SPAKE2+ and SRP.
+* Added experimental support for password-authenticated key exchange (PAKE) algorithms EC J-PAKE, SPAKE2+ and SRP.
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
