@@ -6,7 +6,7 @@
 
 # This file is nrf_security's entry-point for the TF-M build system
 
-set(NRFXLIB_DIR ${CMAKE_CURRENT_LIST_DIR}/../..)
+set(NRFXLIB_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../../nrfxlib)
 set(NRF_SECURITY_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
 
 include(${NRF_SECURITY_ROOT}/cmake/extensions.cmake)
