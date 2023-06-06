@@ -17,7 +17,7 @@ set_property(TARGET zephyr_property_target
 # Set the path used by TF-M to build mbedcrypto in the secure image
 # The CMakelists.txt in this folder is called when building mbed TLS
 set_property(TARGET zephyr_property_target
-  PROPERTY TFM_MBEDCRYPTO_PATH ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_security/tfm
+  PROPERTY TFM_MBEDCRYPTO_PATH ${CMAKE_CURRENT_LIST_DIR}/../tfm
 )
 
 # Set the configuration files

@@ -54,3 +54,5 @@ rsource "caf/Kconfig"
 rsource "ieee802154/Kconfig"
 
 rsource "dm/Kconfig"
+
+rsource "nrf_security/Kconfig"
