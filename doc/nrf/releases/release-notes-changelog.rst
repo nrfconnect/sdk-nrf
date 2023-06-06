@@ -189,7 +189,9 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`bluetooth_mesh_sensor_client` sample:
+
+  * Fixed an issue with the sample not fitting into RAM size on the nrf52dk_nrf52832 board.
 
 nRF9160 samples
 ---------------
