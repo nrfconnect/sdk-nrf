@@ -188,7 +188,7 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		       const void *buf, size_t len)
 {
 	int err;
-	char *p;
+	char *begin, *end;
 
 	if (buf == NULL) {
 		return -EINVAL;
@@ -199,16 +199,26 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		return err;
 	}
 
-	p = scratch_buf;
+	begin = scratch_buf;
 	for (size_t i = 0; i < 3; i++) {
-		p = strchr(p, '\"');
-		if (!p) {
+		begin = strchr(begin, '\"');
+		if (!begin) {
 			return -ENOENT;
 		}
-		p++;
+		begin++;
 	}
 
-	if (memcmp(p, buf, len)) {
+	end = strchr(begin, '\"');
+	if (!end) {
+		return -ENOENT;
+	}
+
+	if (end - begin != len) {
+		LOG_DBG("Credential length mismatch");
+		return 1;
+	}
+
+	if (memcmp(begin, buf, len)) {
 		LOG_DBG("Credential data mismatch");
 		return 1;
 	}
