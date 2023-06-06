@@ -167,7 +167,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
-/samples/peripheral/802154_phy_test/      @czeslawmakarski
+/samples/peripheral/802154_phy_test/      @ankuns @jciupis @ahasztag
 /samples/tfm/                             @SebastianBoe @joerchan
 /samples/zigbee/                          @tomchy @sebastiandraus
 /samples/CMakeLists.txt                   @tejlmand
@@ -202,7 +202,7 @@ Kconfig*                                  @tejlmand
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic
 /subsys/dm/                               @maje-emb
-/subsys/ieee802154/                       @rlubos @czeslawmakarski
+/subsys/ieee802154/                       @rlubos @ankuns @jciupis @ahasztag
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/emds/                             @balaklaka
 /subsys/esb/                              @lemrey
