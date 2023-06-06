@@ -1,0 +1,314 @@
+#
+# Copyright (c) 2021-2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PSA_CRYPTO_DRIVER_OBERON
+    bool
+    prompt "PSA Oberon Driver" if !PSA_PROMPTLESS
+    default y #if !CRYPTOCELL_USABLE
+    select NRF_OBERON
+	help
+	  Enable PSA Driver for nrf_oberon
+
+if PSA_CRYPTO_DRIVER_OBERON
+
+# MBEDTLS_PSA_BUILTIN_ALG_CBC_MAC - Currently not supported
+
+config PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_OBERON || \
+		   PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_OBERON || \
+		   PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_OBERON || \
+		   PSA_CRYPTO_DRIVER_ALG_CTR_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_AEAD_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_CCM_OBERON || \
+		   PSA_CRYPTO_DRIVER_ALG_GCM_OBERON || \
+		   PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_CMAC_OBERON	|| \
+		   PSA_CRYPTO_DRIVER_ALG_HMAC_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_HASH_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_SHA_1_OBERON	|| \
+		   PSA_CRYPTO_DRIVER_ALG_SHA_224_OBERON	|| \
+		   PSA_CRYPTO_DRIVER_ALG_SHA_256_OBERON	|| \
+		   PSA_CRYPTO_DRIVER_ALG_SHA_384_OBERON	|| \
+		   PSA_CRYPTO_DRIVER_ALG_SHA_512_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_KDF_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_HKDF_OBERON || \
+		   PSA_CRYPTO_DRIVER_ALG_TLS12_PRF_OBERON || \
+		   PSA_CRYPTO_DRIVER_ALG_TLS12_PSK_TO_MS_OBERON
+	depends on PSA_CORE_OBERON
+	help
+	  Only Oberon PSA core supports Key Derivation through driver interface.
+
+config PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_HAS_RSA_CRYPT_SUPPORT_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_ASYM_SIGN_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_OBERON	|| \
+		   PSA_CRYPTO_DRIVER_ALG_ECDSA_OBERON                   || \
+		   PSA_CRYPTO_DRIVER_HAS_RSA_SIGN_SUPPORT_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_ECC_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_OBERON 	|| \
+		   PSA_CRYPTO_DRIVER_ALG_ECDSA_OBERON			|| \
+		   PSA_CRYPTO_DRIVER_ALG_ECDH_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_RSA_CRYPT_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_OBERON     || \
+		   PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_RSA_SIGN_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_OBERON      || \
+		   PSA_CRYPTO_DRIVER_ALG_RSA_PSS_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_RSA_SUPPORT_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_HAS_RSA_CRYPT_SUPPORT_OBERON      || \
+		   PSA_CRYPTO_DRIVER_HAS_RSA_SIGN_SUPPORT_OBERON
+
+config PSA_CRYPTO_DRIVER_HAS_ACCEL_KEY_TYPES_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_OBERON    || \
+		   PSA_CRYPTO_DRIVER_HAS_ASYM_SIGN_SUPPORT_OBERON	|| \
+		   PSA_CRYPTO_DRIVER_HAS_AEAD_SUPPORT_OBERON		|| \
+		   PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_OBERON          || \
+		   PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_OBERON
+
+config PSA_CRYPTO_DRIVER_ALG_PRNG_OBERON
+	bool
+	default y
+	depends on PSA_CORE_OBERON
+	depends on !PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM
+	depends on PSA_WANT_GENERATE_RANDOM
+	help
+	  Only Oberon PSA core supports generate random through driver interface.
+
+config PSA_CRYPTO_DRIVER_ALG_CTR_DRBG_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_PRNG_OBERON && \
+		   PSA_WANT_ALG_CTR_DRBG
+
+config PSA_CRYPTO_DRIVER_ALG_HMAC_DRBG_OBERON
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_PRNG_OBERON && \
+		   PSA_WANT_ALG_HMAC_DRBG
+
+config PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_OBERON
+	bool
+	prompt "PSA CBC support (without padding) - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_CBC_NO_PADDING && \
+		    !PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_OBERON
+	bool
+	prompt "PSA CBC support (with PKCS#7 padding) - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_CBC_PKCS7 && \
+		    !PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_CCM_OBERON
+	bool
+	prompt "PSA AES CCM support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_CCM && \
+		     !PSA_CRYPTO_DRIVER_ALG_CCM_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_OBERON
+	bool
+	prompt "PSA ChaCha20/Poly1305 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_CHACHA20_POLY1305 && \
+		     !PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_CMAC_OBERON
+	bool
+	prompt "PSA AES CMAC support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_CMAC
+
+config PSA_CRYPTO_DRIVER_ALG_CTR_OBERON
+	bool
+	prompt "PSA AES CTR mode support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_CTR && \
+		     !PSA_CRYPTO_DRIVER_ALG_CTR_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_OBERON
+	bool
+	prompt "PSA ECDSA support (deterministic mode) - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_DETERMINISTIC_ECDSA && \
+		     !PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_OBERON
+	bool
+	prompt "PSA AES ECB (no padding) - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_ECB_NO_PADDING && \
+		     !PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_ECDH_OBERON
+	bool
+	prompt "PSA ECDH support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_ECDH && \
+		     !PSA_CRYPTO_DRIVER_ALG_ECDH_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_ECDSA_OBERON
+	bool
+	prompt "PSA ECDSA support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_ECDSA && \
+		     !PSA_CRYPTO_DRIVER_ALG_ECDSA_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_GCM_OBERON
+	bool
+	prompt "PSA AES GCM support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_GCM && \
+		     !PSA_CRYPTO_DRIVER_ALG_GCM_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_HKDF_OBERON
+	bool
+	prompt "PSA HKDF support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_HKDF
+
+config PSA_CRYPTO_DRIVER_ALG_HMAC_OBERON
+	bool
+	prompt "PSA HMAC support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_HMAC
+
+config PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_OBERON
+	bool
+	prompt "PSA RSA OAEP support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_RSA_OAEP
+
+config PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_OBERON
+	bool
+	prompt "PSA RSA crypt support (PKCS1V15 mode) - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
+
+config PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_OBERON
+	bool
+	prompt "PSA RSA signature support (PKCS1V15 mode) - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_RSA_PKCS1V15_SIGN
+
+config PSA_CRYPTO_DRIVER_ALG_RSA_PSS_OBERON
+	bool
+	prompt "PSA RSA (PSS mode) - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_RSA_PSS
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_1_OBERON
+	bool
+	prompt "PSA SHA1 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SHA_1 && \
+		     !PSA_CRYPTO_DRIVER_ALG_SHA_1_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_224_OBERON
+	bool
+	prompt "PSA SHA-224 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SHA_224 && \
+		     !PSA_CRYPTO_DRIVER_ALG_SHA_224_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_256_OBERON
+	bool
+	prompt "PSA SSH-256 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SHA_256 && \
+		     !PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_384_OBERON
+	bool
+	prompt "PSA SHA-384 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SHA_384
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_512_OBERON
+	bool
+	prompt "PSA SHA-512 support - oberon" if !PSA_PROMPTLESS
+	default y if PSA_WANT_ALG_SHA_512
+
+config PSA_CRYPTO_DRIVER_ALG_TLS12_PRF_OBERON
+	bool
+	prompt "PSA TLS 1.2 PRF support - oberon" if !PSA_PROMPTLESS
+	depends on PSA_WANT_ALG_TLS12_PRF
+	default y if !PSA_DEFAULT_OFF
+
+config PSA_CRYPTO_DRIVER_ALG_TLS12_PSK_TO_MS_OBERON
+	bool
+	prompt "PSA TLS 1.2 PSK to MS support - oberon" if !PSA_PROMPTLESS
+	depends on PSA_WANT_ALG_TLS12_PSK_TO_MS
+	default y if !PSA_DEFAULT_OFF
+
+config PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_OBERON
+	bool
+	prompt "PSA stream cipher support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_STREAM_CIPHER && \
+		     !PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_CC3XX
+
+config PSA_CRYPTO_DRIVER_ECC_MONTGOMERY_255_OBERON
+	bool
+	prompt "PSA ECC Curve25519 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_MONTGOMERY_255 && \
+		     !PSA_CRYPTO_DRIVER_ECC_MONTGOMERY_255_CC3XX
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_224_OBERON
+	bool
+	prompt "PSA ECC secp224r1 - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_224 && \
+		     !PSA_CRYPTO_DRIVER_ECC_SECP_R1_224_CC3XX
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_256_OBERON
+	bool
+	prompt "PSA ECC secp256r1 - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_256 && \
+		     !PSA_CRYPTO_DRIVER_ECC_SECP_R1_256_CC3XX
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_384_OBERON
+	bool
+	prompt "PSA ECC secp384r1 - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_384 && \
+		     !PSA_CRYPTO_DRIVER_ECC_SECP_R1_384_CC3XX
+
+config PSA_CRYPTO_DRIVER_ECC_TWISTED_EDWARDS_255_OBERON
+	bool
+	prompt "PSA ECC Curve Ed25519 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_TWISTED_EDWARDS_255
+
+config PSA_CRYPTO_DRIVER_RSA_KEY_SIZE_1024_OBERON
+	bool
+	default y
+	depends on TFM_PSA_TEST_CRYPTO || \
+		   TFM_REGRESSION_S || \
+		   TFM_REGRESSION_NS
+	help
+	  Prompt-less configuration to allow RSA key size 1024 bits for testing
+	  RSA with 1024 bit keys is not recommended for new designs.
+	  Please see https://www.keylength.com/
+
+endif

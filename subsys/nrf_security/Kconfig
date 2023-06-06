@@ -1,0 +1,211 @@
+#
+# Copyright (c) 2019-2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nrf_security module"
+
+config NORDIC_SECURITY_PROMPTLESS
+	bool
+	help
+	  Internal setting to disable the Nordic security backend
+	  This setting is Kconfig internal that must be used by subsystems that
+	  provides nRF Security selection groups.
+
+
+config NORDIC_SECURITY_BACKEND
+	bool
+	prompt "Use nrf_security with Mbed TLS legacy crypto APIs support" \
+		if !NORDIC_SECURITY_PROMPTLESS
+	default y if BUILD_WITH_TFM
+	depends on SOC_FAMILY_NRF
+	select NRF_SECURITY
+	select MBEDTLS_LEGACY_CRYPTO_C
+	select OBERON_BACKEND if BUILD_WITH_TFM
+	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
+	help
+	  Using this configuration enables legacy support for mbed TLS APIs
+	  This configuration is not to be used for PSA API support.
+	  Note that this will enable nrf_oberon by default. Multiple backends is
+	  not supported.
+
+config NRF_SECURITY
+	bool
+	prompt "Use nrf_security module" if !PSA_PROMPTLESS
+	depends on SOC_FAMILY_NRF
+	default y if BUILD_WITH_TFM
+	select ENTROPY_GENERATOR
+	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
+	help
+	  Set this configuration to enable nrf_security module. This provides
+	  Arm PSA cryptography APIs with RNG support (optionally).
+
+config PSA_PROMPTLESS
+	bool
+
+if NRF_SECURITY
+
+config MBEDTLS_CFG_FILE
+	string "mbed TLS configuration file"
+	default "nrf-config.h"
+	help
+	  Name of the config file for mbed TLS. This configuration file is used
+	  in configurations with or without PSA APIs supported.
+
+config MBEDTLS_USER_CONFIG_FILE
+	string "mbed TLS user configuration file"
+	default "nrf-config-user.h"
+	help
+	  Name of the file that will contain additional configurations for mbed TLS.
+	  This file may be generated and will contain PSA configurations if PSA APIs
+	  are generated in the system. This file is empty if legacy support is used.
+
+config GENERATE_MBEDTLS_CFG_FILE
+	bool
+	prompt "Generate mbed TLS config files"
+	default y
+	help
+	  nrf_security will generate mbed TLS configuration file(s)
+	  based on the selection of configuration options in Kconfig.
+	  However, if the generated configuration file needs custom
+	  adjustments, this setting can be used to disable generating the
+	  mbed TLS configuration file. Only disable this setting if you know
+	  what you are doing.
+
+config MBEDTLS_ENABLE_HEAP
+	bool "Enable global heap for mbed TLS"
+	default y if BUILD_WITH_TFM
+	help
+	  This option enables the mbedtls to use the heap. This setting must
+	  be global so that various applications and libraries in Zephyr do not
+	  try to do this themselves as there can be only one heap defined
+	  in mbedtls. If this is enabled, then the Zephyr will, during the device
+	  startup, initialize the heap automatically.
+
+config MBEDTLS_HEAP_SIZE
+	int "Heap size for mbed TLS"
+	default 15360 if OPENTHREAD_NRF_SECURITY
+	default 512
+	depends on MBEDTLS_ENABLE_HEAP
+	help
+	  Heap size for mbed TLS in bytes.
+	  For streaming communication with arbitrary (HTTPS) servers on the
+	  Internet, 32KB + overheads (up to another 20KB) may be needed.
+	  Ensure to adjust the heap size according to the need of the
+	  application.
+
+# Include TLS/DTLS and x509 configurations
+rsource "Kconfig.tls"
+
+# Include PSA Crypto configurations
+rsource "Kconfig.psa"
+
+# Include Legacy mbed TLS configurations
+rsource "Kconfig.legacy"
+
+endif # NRF_SECURITY
+
+menu "Zephyr legacy configurations"
+	depends on !MBEDTLS_BUILTIN
+
+config MBEDTLS_TLS_VERSION_1_2
+	bool "Enable support for TLS 1.2 (DTLS 1.2)"
+	select PSA_WANT_ALG_SHA_1
+	select PSA_WANT_ALG_SHA_224
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_SHA_384
+	select PSA_WANT_ALG_SHA_512
+	select MBEDTLS_CIPHER
+
+config MBEDTLS_DTLS
+	bool "Enable support for DTLS"
+	depends on MBEDTLS_TLS_VERSION_1_2 || MBEDTLS_SSL_PROTO_TLS1_2
+	select MBEDTLS_SSL_PROTO_DTLS
+
+config MBEDTLS_KEY_EXCHANGE_ALL_ENABLED
+	bool "Enable all available ciphersuites"
+	help
+	  The default behaviour with nrf_security is to always enable every ciphersuite
+	  that is available. This configuration has no effect, but ensures that samples
+	  and subsystem usage doesn't break.
+
+config MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED
+	bool "Enable some PSK ciphersuites"
+	help
+	  The default behaviour of nrf_security is to always enable some ciphersuites.
+	  This configuration has no effect but ensures that samples and subsystem usage
+	  doesn't break.
+
+config MBEDTLS_ECP_ALL_ENABLED
+	bool "Enable all available elliptic curves"
+	select PSA_WANT_ECC_SECP_R1_192
+	select PSA_WANT_ECC_SECP_R1_224
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_ECC_SECP_R1_384
+	select PSA_WANT_ECC_SECP_R1_521
+	select PSA_WANT_ECC_SECP_K1_192
+	select PSA_WANT_ECC_SECP_K1_224
+	select PSA_WANT_ECC_SECP_K1_256
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_256
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_384
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_512
+	select PSA_WANT_ECC_MONTGOMERY_255
+	select PSA_WANT_ECC_MONTGOMERY_448
+
+config MBEDTLS_CIPHER_ALL_ENABLED
+	bool "Enable all available ciphers"
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_ALG_CBC_NO_PADDING
+	select PSA_WANT_ALG_CBC_PKCS7
+	select PSA_WANT_ALG_CFB
+	select PSA_WANT_ALG_CTR
+	select PSA_WANT_ALG_OFB
+	select PSA_WANT_ALG_CCM
+	select PSA_WANT_ALG_GCM
+	select PSA_WANT_ALG_CHACHA20_POLY1305
+	select PSA_WANT_ALG_STREAM_CIPHER
+
+config MBEDTLS_MAC_ALL_ENABLED
+	bool "Enable all available MAC methods"
+	select PSA_WANT_ALG_CMAC
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_SHA_1
+	select PSA_WANT_ALG_SHA_224
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_SHA_384
+	select PSA_WANT_ALG_SHA_512
+
+config MBEDTLS_MAC_SHA256_ENABLED
+	bool "Enable the SHA-224 and SHA-256 hash algorithms"
+	default y
+	select PSA_WANT_ALG_SHA_224
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_HMAC
+
+config MBEDTLS_MAC_MD5_ENABLED
+	bool "MD5 hash algorithm"
+
+config MBEDTLS_CTR_DRBG_ENABLED
+	bool "Enable the CTR_DRBG AES-256-based random generator"
+	select PSA_WANT_ALG_CTR_DRBG
+
+config MBEDTLS_HMAC_DRBG_ENABLED
+	bool "Enable the HMAC_DRBG random generator"
+	select PSA_WANT_ALG_HMAC_DRBG
+
+config MBEDTLS_CIPHER
+	bool "Enable the generic cipher layer."
+
+config MBEDTLS_MD
+	bool "Enable the generic message digest layer."
+
+config MBEDTLS_ENTROPY_ENABLED
+	bool "Enable mbedTLS generic entropy pool"
+
+config MBEDTLS_GENPRIME_ENABLED
+	bool "Enable the prime-number generation code."
+
+endmenu # Zephyr legacy configurations
+
+endmenu

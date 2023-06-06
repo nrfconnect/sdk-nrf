@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice PSA_CORE
+	prompt "PSA Core implementation"
+	default PSA_CORE_OBERON
+
+config PSA_CORE_BUILTIN
+	bool "[DEPRECATED] PSA Core implementation - Builtin"
+	help
+	  [DEPRECATED] Select PSA_CORE_OBERON instead.
+
+config PSA_CORE_OBERON
+	bool "PSA Core implementation - Oberon"
+
+endchoice
+
