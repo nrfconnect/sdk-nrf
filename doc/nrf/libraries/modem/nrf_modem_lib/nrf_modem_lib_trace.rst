@@ -150,6 +150,25 @@ The snippet uses UART1. However, any free UART instance can be selected.
 
 This is in addition to selecting the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART`, :kconfig:option:`CONFIG_UART_ASYNC_API`, and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
 
+Modem tracing with RTT
+**********************
+
+.. note::
+
+   Modem tracing with RTT is experimental.
+
+Following are the requirements to perform tracing with RTT:
+
+* An nRF91 Series DK with Segger J-Link on-Board or an external Segger J-Link
+* J-Link RTT logger software application
+
+To enable modem traces with RTT, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` and :kconfig:option:`CONFIG_USE_SEGGER_RTT` Kconfig options, with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option.
+
+The traces can be captured using the J-Link RTT logger software.
+This produces a RAW binary trace file with a ``.log`` extension.
+The RAW binary trace file can be converted to PCAP with the :guilabel:`Convert RAW trace to PCAP` option in the Trace Collector V2 preview application of `nRF Connect for Desktop`_.
+By default, files with the ``.log`` extension are not shown.
+
 .. _adding_custom_modem_trace_backends:
 
 Adding custom trace backends
