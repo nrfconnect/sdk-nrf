@@ -131,7 +131,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.4.0
+      revision: acf83cd8293c1f7df197c215934a82a94733b2c1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -208,7 +208,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: d9abe3071c0131a4adb5d7e7451319b735e6d855
+      revision: d5a6630a839477ffb68686f0315f860cc5bc1238
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
