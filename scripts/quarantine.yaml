@@ -108,9 +108,3 @@
   platforms:
     - thingy53_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.bluetooth.mesh.sensor_client
-  platforms:
-    - nrf52dk_nrf52832
-  comment: "Sensor Client sample doesn't fit to RAM"
