@@ -3,16 +3,32 @@ sample:
     application
   name: Wi-Fi BLE coex
 tests:
-  sample.nrf7002.ble_coex:
+  sample.nrf7002.ble_coex_sep_ant:
     build_only: true
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
+    extra_args: CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
-  sample.nrf7001.ble_coex:
+  sample.nrf7002.ble_coex_sha_ant:
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp
+    extra_args: CONFIG_COEX_SEP_ANTENNAS=n
+    platform_allow: nrf7002dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.nrf7001.ble_coex_sep_ant:
     build_only: true
     integration_platforms:
       - nrf7002dk_nrf7001_nrf5340_cpuapp
+    extra_args: CONFIG_COEX_SEP_ANTENNAS=y
+    platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
+    tags: ci_build
+  sample.nrf7001.ble_coex_sha_ant:
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf7001_nrf5340_cpuapp
+    extra_args: CONFIG_COEX_SEP_ANTENNAS=n
     platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
     tags: ci_build
   sample.nrf7002ek.ble_coex:
@@ -20,6 +36,7 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     extra_args: SHIELD=nrf7002ek hci_rpmsg_SHIELD=nrf7002ek_coex
+                CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build
   sample.nrf7001ek.ble_coex:
@@ -27,6 +44,7 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     extra_args: SHIELD=nrf7002ek_nrf7001 hci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
+                CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf5340dk_nrf5340_cpuapp
   sample.nrf7002_eb.thingy53.sr_coex:
     build_only: true
