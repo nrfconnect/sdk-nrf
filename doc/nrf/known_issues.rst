@@ -278,6 +278,13 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-4-0
+
+KRKNWK-17064: Incorrect links in the Matter documentation
+  The following links to Matter SDK documentation point to the ``master`` version of the Matter SDK module instead of the commit SHA used for the |NCS| v2.4.0: `other controller setups`_, `CHIP Certificate Tool source files`_, and `Bluetooth LE Arbiter's header file`_.
+
+  **Workaround:** Change ``master`` to the ``9e6386c`` commit SHA in the page URLs to see the content valid for the |NCS| v2.4.0 release.
+
 .. rst-class:: v2-3-0
 
 KRKNWK-16728: Sleepy device may consume much power when commissioned to a commercial ecosystem

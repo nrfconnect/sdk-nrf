@@ -107,8 +107,6 @@
 .. _`Matter GitHub repository`: https://github.com/project-chip/connectedhomeip
 .. _`dedicated Matter fork`: https://github.com/nrfconnect/sdk-connectedhomeip
 .. _`Matter SDK version`: https://github.com/project-chip/connectedhomeip/releases
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/master/src/controller
-.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/master/src/tools
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`ZCL Advanced Platform releases`: https://github.com/project-chip/zap/releases
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
@@ -117,7 +115,12 @@
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 .. _`Matter factory data Kconfig options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/kconfig/index.html#!CHIP_FACTORY_DATA
-.. _`Bluetooth LE Arbiter's header file`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/src/platform/Zephyr/BLEAdvertisingArbiter.h
+
+.. ### Matter links that need updated SHA per release
+
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/9e6386c/src/controller
+.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/9e6386c/src/tools
+.. _`Bluetooth LE Arbiter's header file`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/9e6386c/src/platform/Zephyr/BLEAdvertisingArbiter.h
 
 .. _`bt_nus_service.cpp`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus_service.cpp
 .. _`bt_nus_service.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus_service.h
