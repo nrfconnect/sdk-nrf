@@ -159,6 +159,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       COMMAND
       # Sign the binary version of the input hex file.
       ${sign_cmd}
+      ${encrypt_cmd}
       ${sign_dependencies}
       ${SIGN_ARG_ROM_FIXED}
       --slot-size ${SIGN_ARG_SLOT_SIZE}
@@ -304,6 +305,34 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     endif()
   endif()
 
+   if (NOT DEFINED CONFIG_BOOT_ENCRYPTION_KEY_FILE)
+     get_shared(mcuboot_enc_key IMAGE mcuboot PROPERTY ENCRYPTION_KEY_FILE)
+     set(CONFIG_BOOT_ENCRYPTION_KEY_FILE ${mcuboot_enc_key})
+   endif ()
+
+   foreach (filepath ${mcuboot_CONF_FILE})
+     file(STRINGS ${filepath} mcuboot_CONFIG_BOOT_ENCRYPTION_KEY_FILE
+          REGEX "^CONFIG_BOOT_ENCRYPTION_KEY_FILE=")
+     if (mcuboot_CONFIG_BOOT_ENCRYPTION_KEY_FILE)
+       get_filename_component(mcuboot_CONF_DIR ${filepath} DIRECTORY)
+     endif()
+   endforeach()
+
+   if(IS_ABSOLUTE ${CONFIG_BOOT_ENCRYPTION_KEY_FILE})
+     set(mcuboot_enc_key_file ${CONFIG_BOOT_ENCRYPTION_KEY_FILE})
+   elseif (DEFINED mcuboot_CONF_DIR)
+     if (EXISTS ${mcuboot_CONF_DIR}/${CONFIG_BOOT_ENCRYPTION_KEY_FILE})
+       set(mcuboot_enc_key_file ${mcuboot_CONF_DIR}/${CONFIG_BOOT_ENCRYPTION_KEY_FILE})
+     endif()
+   endif()
+
+  if(CONFIG_MCUBOOT_ENCRYPT_IMAGES)
+    # Set key from MCUBoot source directory
+    if (NOT DEFINED mcuboot_enc_key_file)
+	set(mcuboot_enc_key_file ${ZEPHYR_MCUBOOT_MODULE_DIR}/${CONFIG_BOOT_ENCRYPTION_KEY_FILE})
+    endif()
+  endif()
+
   if(CONFIG_SIGN_IMAGES)
     # Set default key
     if (NOT DEFINED mcuboot_key_file)
@@ -346,6 +375,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     else()
       set(imgtool_extra)
     endif()
+
+     if(CONFIG_MCUBOOT_ENCRYPT_IMAGES)
+       set(encrypt_cmd --encrypt ${mcuboot_enc_key_file})
+     else()
+       set(encrypt_cmd)
+     endif()
 
     set(sign_cmd
       ${PYTHON_EXECUTABLE}

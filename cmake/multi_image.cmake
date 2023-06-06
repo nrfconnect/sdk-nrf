@@ -19,6 +19,11 @@ if(IMAGE_NAME)
   if(CONFIG_BOOT_SIGNATURE_KEY_FILE)
     set_shared(IMAGE ${IMAGE_NAME} PROPERTY SIGNATURE_KEY_FILE ${CONFIG_BOOT_SIGNATURE_KEY_FILE})
   endif()
+  # Share the encryption key file so that the parent image can use it to
+  # generate encrypted update candidates.
+  if(CONFIG_BOOT_ENCRYPTION_KEY_FILE)
+    set_shared(IMAGE ${IMAGE_NAME} PROPERTY ENCRYPTION_KEY_FILE ${CONFIG_BOOT_ENCRYPTION_KEY_FILE})
+  endif()
 
   generate_shared(IMAGE ${IMAGE_NAME} FILE ${CMAKE_BINARY_DIR}/shared_vars.cmake)
 else()

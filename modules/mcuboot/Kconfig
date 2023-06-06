@@ -21,6 +21,23 @@ config SIGN_IMAGES
 	  Sign images for MCUBoot as integrated part of the build stages using
 	  the private key.
 
+config BOOT_ENCRYPTION_KEY_FILE
+	string "MCUBoot encryption private PEM key file"
+	depends on !MCUBOOT_BUILD_STRATEGY_FROM_SOURCE
+	help
+	  Absolute path to PEM key file containing the private key.
+	  The file contains the public key that is used to encrypt the
+          ephemeral key that encrypts the image. The corresponding
+          private key is hard coded in the MCUboot source code and is
+          used to decrypt the ephemeral key that is embedded in the
+          image.
+
+config MCUBOOT_ENCRYPT_IMAGES
+	bool "Encrypt images for MCUBoot"
+	depends on SIGN_IMAGES
+	help
+	  Encrypt update image for MCUBoot as integrated part of the build stage.
+
 if BOOTLOADER_MCUBOOT
 
 config BOOT_BUILD_DIRECT_XIP_VARIANT
