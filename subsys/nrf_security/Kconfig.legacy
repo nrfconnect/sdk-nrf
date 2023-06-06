@@ -1,0 +1,794 @@
+#
+# Copyright (c) 2021-2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MBEDTLS_PLATFORM_MEMORY
+	bool
+	default y
+
+config MBEDTLS_PLATFORM_C
+	bool
+	default y
+
+config MBEDTLS_MEMORY_C
+	bool
+	default y
+
+config MBEDTLS_MEMORY_BUFFER_ALLOC_C
+	bool
+	default y
+
+config MBEDTLS_THREADING_C
+	bool
+	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+
+# Platform configurations for _ALT defines
+config MBEDTLS_PLATFORM_EXIT_ALT
+	bool
+
+config MBEDTLS_PLATFORM_FPRINTF_ALT
+	bool
+
+config MBEDTLS_PLATFORM_PRINTF_ALT
+	bool
+
+config MBEDTLS_PLATFORM_SNPRINTF_ALT
+	bool
+
+config MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
+	bool
+	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+
+config MBEDTLS_ENTROPY_HARDWARE_ALT
+	bool
+	default y
+
+config MBEDTLS_THREADING_ALT
+	bool
+	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+
+config MBEDTLS_PLATFORM_ZEROIZE_ALT
+	bool
+	default y if NRF_CC3XX_PLATFORM
+
+# Legacy configurations for _ALT defines
+config MBEDTLS_AES_SETKEY_ENC_ALT
+	bool
+	depends on OBERON_ONLY_ENABLED
+	default y
+
+config MBEDTLS_AES_SETKEY_DEC_ALT
+	bool
+	depends on OBERON_ONLY_ENABLED
+	default y
+
+config MBEDTLS_AES_ENCRYPT_ALT
+	bool
+	depends on OBERON_ONLY_ENABLED
+	default y
+
+config MBEDTLS_AES_DECRYPT_ALT
+	bool
+	depends on OBERON_ONLY_ENABLED
+	default y
+
+config MBEDTLS_AES_ALT
+	bool
+	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_CMAC_ALT
+	bool
+	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_CCM_ALT
+	bool
+	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_GCM_ALT
+	bool
+	depends on CC312_BACKEND || \
+		   (PSA_CRYPTO_DRIVER_CC3XX && CRYPTOCELL_CC312_USABLE)
+	default y
+
+config MBEDTLS_CHACHA20_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_POLY1305_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_CHACHAPOLY_ALT
+	bool
+	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+	depends on MBEDTLS_CHACHA20_ALT
+
+config MBEDTLS_DHM_ALT
+	bool
+	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_ECP_ALT
+	bool
+	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_ECDH_GEN_PUBLIC_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_ECDH_COMPUTE_SHARED_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_ECDSA_GENKEY_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_ECDSA_SIGN_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_ECDSA_VERIFY_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_ECJPAKE_ALT
+	bool
+	depends on OBERON_ONLY_ENABLED
+	default y
+
+config MBEDTLS_RSA_ALT
+	bool
+	depends on CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_SHA1_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_SHA224_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_SHA256_ALT
+	bool
+	depends on OBERON_BACKEND || PSA_CRYPTO_DRIVER_OBERON || \
+		   CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
+	default y
+
+config MBEDTLS_SHA384_ALT
+	bool
+
+config MBEDTLS_SHA512_ALT
+	bool
+
+# Legacy configurations required for RNG in Legacy and PSA scope
+
+config MBEDTLS_ENTROPY_FORCE_SHA256
+	bool
+	default y
+	help
+	  Enforcing usage of SHA-256 for concatenating entropy from multiple sources
+	  by default.
+
+config MBEDTLS_ENTROPY_MAX_SOURCES
+	int
+	default 1
+	help
+	  Max entropy sources (Defaults to 1)
+
+config MBEDTLS_NO_PLATFORM_ENTROPY
+ 	bool
+	default y
+
+# End items required for non CryptoCell RNG in PSA scope
+
+config NRF_SECURITY_ADVANCED
+	bool
+	prompt "Advanced mbed TLS Configuration Settings"
+	help
+	  This configuration has no effect and will be deprecated.
+	  It is kept in to ensure projects setting this aren't affected.
+
+# Prompt-less configuration to state what is missing
+
+config CC310_ONLY_PSA_ENABLED
+	bool
+	default y
+	depends on CRYPTOCELL_CC310_USABLE && !PSA_CRYPTO_DRIVER_OBERON && \
+		   !(MBEDTLS_PSA_BUILTIN_HAS_CIPHER_SUPPORT || MBEDTLS_PSA_BUILTIN_HAS_AEAD_SUPPORT)
+
+config CC312_ONLY_PSA_ENABLED
+	bool
+	default y
+	depends on CRYPTOCELL_CC312_USABLE && !PSA_CRYPTO_DRIVER_OBERON && \
+		   !(MBEDTLS_PSA_BUILTIN_HAS_CIPHER_SUPPORT || MBEDTLS_PSA_BUILTIN_HAS_AEAD_SUPPORT)
+
+config CC310_ONLY_ENABLED
+	bool
+	default y
+	depends on (CC310_BACKEND && !OBERON_BACKEND) || \
+		   CC310_ONLY_PSA_ENABLED
+
+config CC312_ONLY_ENABLED
+	bool
+	default y
+	depends on (CC312_BACKEND && !OBERON_BACKEND) || \
+		   CC312_ONLY_PSA_ENABLED
+
+config OBERON_ONLY_PSA_ENABLED
+	bool
+	default y
+	depends on (PSA_CRYPTO_DRIVER_OBERON && !PSA_CRYPTO_DRIVER_CC3XX) && \
+		   !CC3XX_BACKEND
+
+config OBERON_ONLY_ENABLED
+	bool
+	default y
+	depends on (OBERON_BACKEND && !CC3XX_BACKEND) || \
+		    OBERON_ONLY_PSA_ENABLED
+
+menu "Legacy mbed TLS crypto APIs"
+
+config MBEDTLS_MPI_WINDOW_SIZE
+	int
+	default 6
+	range 1 6
+	help
+	  Maximum window size used for modular exponentiation.
+	  The default value of 6 is set to match with the configuration used
+	  when building the CryptoCell runtime libraries.
+
+config MBEDTLS_MPI_MAX_SIZE
+	int
+	default 256 if CRYPTOCELL_CC310_USABLE || !CRYPTOCELL_USABLE
+	default 384 if CRYPTOCELL_CC312_USABLE
+
+config MBEDTLS_LEGACY_CRYPTO_C
+	bool
+	prompt "Enable (legacy) mbed TLS crypto APIs"
+	default y if BUILD_WITH_TFM
+	help
+	  Enable support for legacy mbed TLS APIs.
+	  Note that this is a configuration that may be removed at some point.
+	  It is only provided during a transition period while PSA Crypto APIs become
+	  the defacto front-end. Enabling this will enable nrf_oberon for all features that
+	  are supported and builtin for the remaining functionality.
+
+if MBEDTLS_LEGACY_CRYPTO_C
+
+config CC310_BACKEND
+	bool
+	depends on CRYPTOCELL_CC310_USABLE && !BUILD_WITH_TFM && \
+		   (PSA_CRYPTO_DRIVER_CC3XX || CC3XX_BACKEND)
+	default y
+	help
+	  Convenience configuration to state explicitly that CryptoCell CC310 is enabled.
+
+config CC312_BACKEND
+	bool
+	depends on CRYPTOCELL_CC312_USABLE && !BUILD_WITH_TFM && \
+		   (PSA_CRYPTO_DRIVER_CC3XX || CC3XX_BACKEND)
+	default y
+	help
+	  Convenience configuration to state explicitly that CryptoCell CC312 is enabled.
+
+config CC3XX_BACKEND_FORCED
+	bool
+
+config OBERON_BACKEND_FORCED
+	bool
+	
+config CC3XX_BACKEND
+	bool
+	depends on CRYPTOCELL_USABLE && !OBERON_BACKEND_FORCED
+	prompt "Configuration to enable CryptoCell CC3XX for legacy mbed TLS APIs"
+	help
+	  This configuration enables legacy mbed TLS APIs using cc3xx.
+	  PSA_CRYPTO_DRIVER_CC3XX should be used instead, and will replace this once
+	  PSA crypto APIs are standardized.
+
+config OBERON_BACKEND
+	bool
+	prompt "Configuration to enable nrf_oberon for legacy mbed TLS APIs"
+	select NRF_OBERON
+	depends on !(CC3XX_BACKEND_FORCED || CC3XX_BACKEND)
+	help
+	  This configuration enables legacy mbed TLS APIs using nrf_oberon.
+	  PSA_CRYPTO_DRIVER_OBERON should be used instead and will replace this once
+	  PSA crypto APIs are standardized.
+
+config MBEDTLS_CTR_DRBG_C
+	bool
+	prompt "PRNG using CTR_DRBG"
+	select MBEDTLS_AES_C
+	default y if !CRYPTOCELL_USABLE
+	help
+	  This setting will enable CTR_DRBG APIs in mbed TLS.
+	  Corresponds to MBEDTLS_CTR_DRBG_C setting in mbed TLS config file.
+
+config MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
+	bool
+	default y if CRYPTOCELL_CC310_USABLE
+	help
+	  Use 128 bit AES instead of 256 bit for CTR_DRBG.
+
+config MBEDTLS_HMAC_DRBG_C
+	bool
+	prompt "PRNG using HMAC_DRBG"
+	default y
+	select MBEDTLS_SHA256_C
+	help
+	  This setting will enable HMAC_DRBG APIs in mbed TLS.
+	  Corresponds to MBEDTLS_HMAC_DRBG_C setting in mbed TLS config file.
+
+config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+	bool
+	prompt "External RNG"
+	default y if CRYPTOCELL_USABLE
+	help
+	  Convenience layer for handling entropy before it is fully supported in
+	  PSA Crypto APIs and drivers. This is set by default for legacy and PSA 
+	  modes.
+
+config MBEDTLS_ENTROPY_C
+	bool
+	prompt "Entropy gathering"
+	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+	default y if !CRYPTOCELL_USABLE
+	help
+	  Enable this setting to build entropy APIs usable to gather entropy
+	  form external sources. Only in use for devices that doesn't have 
+	  CryptoCell.
+
+menuconfig MBEDTLS_AES_C
+	bool
+	prompt "AES - Advanced Encryption Standard"
+	default y
+	help
+	  This setting will enable AES block cipher, including ECB - Electronic Code Book.
+	  Enabling AES will provide a sub-menu which allows for fine grained
+	  configuration of specific cipher support.
+	  Corresponds to MBEDTLS_AES_C setting in mbed TLS config file.
+
+if MBEDTLS_AES_C
+
+comment "Cipher Selection"
+
+config MBEDTLS_CIPHER_MODE_CBC
+	bool "AES-CBC - AES Cipher Block Chaining mode"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  Enable the AES Cipher Block Chaining (CBC) mode,
+	  MBEDTLS_CIPHER_MODE_CBC setting in mbed TLS config file.
+
+menu "CBC cipher padding modes"
+	depends on MBEDTLS_CIPHER_MODE_CBC
+
+config MBEDTLS_CIPHER_PADDING_PKCS7
+	bool
+	prompt "Enable MBEDTLS_CIPHER_PADDING_PKCS7"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  Enable support for PKCS7 padding for CBC cipher functions in mbedTLS.
+	  That is, fill buffer with ll bytes, where ll is padding length.
+
+config MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS
+	bool
+	prompt "Enable MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS"
+	default y
+	help
+	  Enable support for one and zeros padding for CBC cipher functions in mbedTLS.
+	  That is, fill buffer with 80 00 .. 00.
+
+config MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN
+	bool
+	prompt "Enable MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN"
+	default y
+	help
+	  Enable support for zeros and length padding for CBC cipher functions in mbedTLS.
+	  That is, fill buffer with 00 .. 00 ll, where ll is padding length.
+
+config MBEDTLS_CIPHER_PADDING_ZEROS
+	bool
+	prompt "Enable MBEDTLS_CIPHER_PADDING_ZEROS"
+	default y
+	help
+	  Enable support for zeros padding for CBC cipher functions in mbedTLS.
+	  That is, fill buffer with 00 .. 00.
+
+config MBEDTLS_AES_FEWER_TABLES
+	bool
+	prompt "Use fewer tables for AES"
+	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
+
+config MBEDTLS_AES_ROM_TABLES
+	bool
+	prompt "Use AES tables in ROM"
+	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
+
+endmenu # CBC cipher padding modes
+
+config MBEDTLS_CIPHER_MODE_CTR
+	bool "AES-CTR - AES Counter Block Cipher mode"
+	default y
+	help
+	  Enable the AES Counter Block Cipher mode (CTR) mode,
+	  MBEDTLS_CIPHER_MODE_CTR setting in mbed TLS config file.
+
+config MBEDTLS_CIPHER_MODE_CFB
+	bool "AES-CFB - AES Cipher Feedback mode"
+	depends on OBERON_BACKEND
+	default y
+	help
+	  Enable the AES Cipher Feedback mode (CFB) mode,
+	  MBEDTLS_CIPHER_MODE_CFB setting in mbed TLS config file.
+
+config MBEDTLS_CIPHER_MODE_OFB
+	bool "AES-OFB - AES Output Feedback mode"
+	depends on OBERON_BACKEND
+	default y
+	help
+	  Enable the AES Output Feedback mode (OFB) mode,
+	  MBEDTLS_CIPHER_MODE_OFB setting in mbed TLS config file.
+
+config MBEDTLS_CIPHER_MODE_XTS
+	bool "AES-XTS - AES Xor-encrypt-xor with ciphertext stealing mode"
+	depends on OBERON_BACKEND
+	# default y - Currently not supported
+	help
+	  Enable the AES Xor-encrypt-xor with ciphertext stealing mode (XTS) mode,
+	  MBEDTLS_CIPHER_MODE_XTS setting in mbed TLS config file.
+
+config MBEDTLS_CMAC_C
+	bool "AES-CMAC - AES Cipher-based Message Authentication Code mode for block ciphers"
+	default y
+	help
+	  Enable AES CMAC support.
+
+endif # MBEDTLS_AES_C
+
+menu "AEAD  - Authenticated Encryption with Associated Data"
+
+config MBEDTLS_CCM_C
+	bool "AES-CCM - AES Counter with CBC-MAC mode"
+	depends on MBEDTLS_AES_C
+	default y
+	help
+	  Enable the Counter with CBC-MAC (CCM) mode for 128-bit block cipher.
+	  This also includes CCM*
+	  MBEDTLS_CCM_C setting in mbed TLS config file.
+
+config MBEDTLS_GCM_C
+	bool
+	prompt "AES-GCM - AES Galois/Counter Mode support"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  Enable the GCM module.
+	  MBEDTLS_GCM_C setting in mbed TLS config file.
+
+config MBEDTLS_CHACHA20_C
+	bool
+	prompt "CHACHA20 stream cipher support"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  Enable the CHACHA20 stream cipher.
+	  MBEDTLS_CHACHA20_C setting in mbed TLS config file.
+
+config MBEDTLS_POLY1305_C
+	bool
+	prompt "POLY1305 module support"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  Enable the POLY1305 module.
+	  MBEDTLS_POLY1305_C setting in mbed TLS config file.
+
+config MBEDTLS_CHACHAPOLY_C
+	bool
+	prompt "CHACHA-POLY module support"
+	depends on (MBEDTLS_CHACHA20_C && MBEDTLS_POLY1305_C)
+	default y if !NET_L2_OPENTHREAD
+	help
+	  Enable the CHACHA-POLY module.
+	  MBEDTLS_CHACHAPOLY_C setting in mbed TLS config file.
+
+endmenu # AEAD  - Authenticated Encryption with Associated Data
+
+config MBEDTLS_DHM_C
+	bool
+	prompt "DHM - Diffie-Hellman-Merkel"
+	default y if MBEDTLS_TLS_LIBRARY
+	help
+	  Enable the DHM module.
+	  MBEDTLS_DHM_C setting in mbed TLS config file.
+
+menuconfig MBEDTLS_ECP_C
+	bool
+	prompt "ECC - Eliptic Curve Cryptography"
+	default y
+	help
+	  Enable low level APIs for elliptic curves for
+	  additional functionality (besides ECDH and ECDSA)
+	  Enabling ECC will provide a sub-menu which allows for fine grained
+	  configuration of ECC based features and specific cipher support.
+	  Corresponds to MBEDTLS_ECP_C setting in mbed TLS config file.
+
+if MBEDTLS_ECP_C
+
+config MBEDTLS_ECDH_C
+	bool
+	prompt "ECDH  - Elliptic Curve Diffie-Hellman"
+	default y
+	help
+	  Enable the ECDH module.
+	  MBEDTLS_ECDH_C setting in mbed TLS config file.
+
+config MBEDTLS_ECDSA_C
+	bool
+	prompt "ECDSA - Elliptic Curve Digital Signature Algorithm"
+	default y
+	help
+	  Enable the ECDSA module.
+	  MBEDTLS_ECDSA_C setting in mbed TLS config file.
+
+config MBEDTLS_ECDSA_DETERMINISTIC
+	bool "Enable deterministic ECDSA (RFC 6979)"
+	select MBEDTLS_HMAC_DRBG_C
+	depends on MBEDTLS_ECDSA_C
+	default y
+
+config MBEDTLS_ECJPAKE_C
+	bool "ECJPAKE - Elliptic curve J-PAKE"
+	default y
+	help
+	  Enable support for ECJPAKE
+
+menu "ECC curves"
+
+config MBEDTLS_ECP_DP_SECP192R1_ENABLED
+	bool "Enable NIST curve secp192r1"
+	depends on !OBERON_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_SECP192R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_SECP224R1_ENABLED
+	bool "Enable NIST curve secp224r1"
+	default n
+	help
+	  MBEDTLS_ECP_DP_SECP224R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_SECP256R1_ENABLED
+	bool "Enable NIST curve secp256r1"
+	default y
+	help
+	  MBEDTLS_ECP_DP_SECP256R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_SECP384R1_ENABLED
+	bool "Enable NIST curve secp384r1"
+	depends on !OBERON_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_SECP384R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_SECP521R1_ENABLED
+	bool "Enable NIST curve secp521r1"
+	depends on !OBERON_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_SECP521R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_SECP192K1_ENABLED
+	bool "Enable Koblitz curve secp192k1"
+	depends on !OBERON_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_SECP192K1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_SECP224K1_ENABLED
+	bool "Enable Koblitz curve secp224k1"
+	depends on !OBERON_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_SECP224K1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_SECP256K1_ENABLED
+	bool "Enable Koblitz curve secp256k1"
+	depends on !OBERON_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_SECP256K1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_BP256R1_ENABLED
+	bool "Enable Brainpool curve bp256r1"
+	depends on !OBERON_BACKEND
+	depends on !CC3XX_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_BP256R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_BP384R1_ENABLED
+	bool "Enable Brainpool curve bp384r1"
+	depends on !OBERON_BACKEND
+	depends on !CC3XX_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_BP384R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_BP512R1_ENABLED
+	bool "Enable Brainpool curve bp512r1"
+	depends on !OBERON_BACKEND
+	depends on !CC3XX_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_BP512R1_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_CURVE25519_ENABLED
+	bool "Enable Curve25519"
+	depends on !OBERON_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_CURVE25519_ENABLED setting in mbed TLS config file.
+
+config MBEDTLS_ECP_DP_CURVE448_ENABLED
+	bool "Enable Curve448"
+	depends on !OBERON_BACKEND
+	depends on !CC3XX_BACKEND
+	default n
+	help
+	  MBEDTLS_ECP_DP_CURVE448_ENABLED setting in mbed TLS config file.
+
+endmenu # ECC curves
+
+endif # MBEDTLS_ECP_C
+
+config MBEDTLS_HKDF_C
+	bool
+	prompt "HKDF support"
+	default y
+	help
+	  Enable HKDF support.
+	  MBEDTLS_HKDF_C setting in mbed TLS config file.
+
+config MBEDTLS_RSA_C
+	bool
+	prompt "RSA - Rivest-Shamir-Adleman cryptosystem"
+	help
+	  Enable RSA cryptosystem support.
+	  MBEDTLS_RSA_C setting in mbed TLS config file.
+
+if MBEDTLS_RSA_C
+
+comment "RSA Encoding Selection"
+
+config MBEDTLS_GENPRIME
+	bool
+	default y
+
+config MBEDTLS_PKCS1_V15
+	bool "PKCS1 v1.5 support"
+	default y
+
+config MBEDTLS_PKCS1_V21
+	bool "PKCS1 v2.1 support"
+	default y
+
+endif # MBEDTLS_RSA_C
+
+menu "SHA - Secure Hash Algorithm"
+
+config MBEDTLS_MD5_C
+	bool
+	default y if NET_TCP
+	help
+	  MD5 hash functionality.
+	  MD5 is not recommended for general use as a secure hash algorithm.
+
+config MBEDTLS_SHA1_C
+	bool
+	prompt "SHA-1 hash functionality"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  SHA-1 hash functionality.
+
+config MBEDTLS_SHA224_C
+	bool
+	prompt "SHA-224 hash functionality"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  SHA-224 hash functionality.
+
+config MBEDTLS_SHA256_C
+	bool
+	prompt "SHA-256 hash functionality"
+	default y
+	help
+	  SHA-256 hash functionality.
+
+config MBEDTLS_SHA256_SMALLER
+	bool
+	prompt "Use smaller SHA-256 implementation"
+	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
+	depends on MBEDTLS_SHA256_C
+
+config MBEDTLS_SHA384_C
+	bool
+	prompt "SHA-384 hash functionality"
+	select MBEDTLS_SHA512_C
+	default y if !NET_L2_OPENTHREAD
+	help
+	  SHA-384 hash functionality.
+
+config MBEDTLS_SHA512_C
+	bool
+	prompt "SHA-512 hash functionality"
+	default y if !NET_L2_OPENTHREAD
+	help
+	  SHA-512 hash functionality.
+
+config MBEDTLS_512_SMALLER
+	bool
+	prompt "Use smaller SHA-256 implementation"
+	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
+	depends on MBEDTLS_SHA512_C
+
+endmenu # SHA - Secure Hash Algorithm
+
+endif #MBEDTLS_LEGACY_CRYPTO_C
+
+config MBEDTLS_CIPHER_C
+	bool
+	prompt "Enable Cipher support"
+	default y if MBEDTLS_PSA_CRYPTO_C || MBEDTLS_USE_PSA_CRYPTO || MBEDTLS_LEGACY_CRYPTO_C
+
+config MBEDTLS_MD_C
+	bool
+	prompt "Enable MD support"
+	default y if MBEDTLS_PSA_CRYPTO_C || MBEDTLS_USE_PSA_CRYPTO || MBEDTLS_LEGACY_CRYPTO_C
+
+config MBEDTLS_PK_C
+	bool
+	prompt "Enable PK support"
+
+config MBEDTLS_PKCS5_C
+	bool
+	prompt "Enable PKCS5 support"
+	default y
+	depends on MBEDTLS_MD_C
+
+config MBEDTLS_PK_WRITE_C
+	bool
+	prompt "Enable PK write support"
+	# default y if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_PSA_CRYPTO_SPM
+
+config MBEDTLS_PK_PARSE_C
+	bool
+	prompt "Enable PK parse support"
+	default y if MBEDTLS_TLS_LIBRARY
+
+endmenu # Legacy mbed TLS crypto APIs

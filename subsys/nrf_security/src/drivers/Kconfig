@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MBEDTLS_PSA_ACCEL_KEY_TYPE_SUPPORT
+	bool
+	default y
+	depends on MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR || \
+		   MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY || \
+		   MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_KEY_PAIR || \
+		   MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_PUBLIC_KEY || \
+		   MBEDTLS_PSA_ACCEL_KEY_TYPE_AES || \
+		   MBEDTLS_PSA_ACCEL_KEY_TYPE_CHACHA20
+
+config MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_ECC_KEY_PAIR && \
+		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+
+config MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY && \
+		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+
+config MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_KEY_PAIR
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_RSA_KEY_PAIR && \
+		   (PSA_CRYPTO_DRIVER_CC3XX)
+
+config MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_PUBLIC_KEY
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY && \
+		   (PSA_CRYPTO_DRIVER_CC3XX)
+
+config MBEDTLS_PSA_ACCEL_KEY_TYPE_AES
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_AES && \
+		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+
+config MBEDTLS_PSA_ACCEL_KEY_TYPE_CHACHA20
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_CHACHA20 && \
+		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+
+
+rsource "nrf_cc3xx/Kconfig"
+
+rsource "nrf_cc3xx_platform/Kconfig"
+
+rsource "nrf_oberon/Kconfig"
+
+rsource "zephyr/Kconfig"
+
+rsource "builtin/Kconfig"

@@ -1,0 +1,136 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MBEDTLS_PSA_CRYPTO_C
+	bool
+	prompt "Enable PSA crypto APIs"
+	default y
+	help
+	  Enable the Platform Security Architecture cryptography API.
+	  Corresponds to  setting in mbed TLS config file.
+
+if MBEDTLS_PSA_CRYPTO_C
+
+config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+	bool
+
+osource "modules/mbedtls/Kconfig.psa"
+
+config PSA_WANT_ALG_CTR_DRBG
+	bool
+	default y if ENTROPY_GENERATOR
+
+config PSA_WANT_ALG_HMAC_DRBG
+	bool
+	default y if PSA_WANT_ALG_DETERMINISTIC_ECDSA
+
+config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+	bool
+	default y if CRYPTOCELL_USABLE
+
+rsource "src/core/Kconfig"
+
+comment "PSA Driver Support"
+
+config MBEDTLS_PSA_CRYPTO_DRIVERS
+	bool
+	default y
+
+config PSA_DEFAULT_OFF
+	bool
+
+config PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
+	bool
+	depends on PSA_CRYPTO_DRIVER_CC3XX 	|| \
+			   PSA_CRYPTO_DRIVER_OBERON
+	default y
+	help
+		Internal configuration that is set if any driver is
+		enabled
+
+config PSA_CRYPTO_SECURE
+	bool
+
+config MBEDTLS_PSA_CRYPTO_CLIENT
+	bool
+	default y
+
+rsource "src/drivers/Kconfig"
+
+
+
+menu "PSA API support"
+
+config MBEDTLS_PSA_CRYPTO_SPM
+	bool
+	help
+	  Configation that enables alternate naming of mbedcrypto symbols in
+	  scope of TF-M build (Prefixes with mbedcrypto__)
+
+config MBEDTLS_PSA_CRYPTO_STORAGE_C
+	bool "PSA storage for persistent keys" if !BUILD_WITH_TFM
+	default y if BUILD_WITH_TFM
+	help
+	  Corresponds to MBEDTLS_PSA_CRYPTO_STORAGE_C setting in mbed TLS config file.
+
+config MBEDTLS_USE_PSA_CRYPTO
+	bool "PSA APIs for X.509 and TLS library"
+	default y
+	help
+	  Corresponds to MBEDTLS_USE_PSA_CRYPTO setting in mbed TLS config file.
+
+config PSA_ITS_ENCRYPTED
+	bool
+	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
+	help
+	  Enables authenticated encryption for PSA Internal Trusted Storage files
+
+
+menuconfig PSA_NATIVE_ITS
+	bool "PSA native Internal Trusted Storage"
+	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
+	depends on !BUILD_WITH_TFM
+
+if PSA_NATIVE_ITS
+
+choice
+	prompt "Backend selection for PSA native ITS"
+	# Please move this depends to the specific choice configuration when more
+	# than one choice is available
+	depends on SETTINGS && !SETTINGS_NONE
+	help
+	  Select backend for PSA native Internal Trusted Storage
+
+config CHOICE_PSA_EITS_BACKEND_ZEPHYR_SETTINGS
+	bool "Zephyr Settings"
+	select PSA_EITS_BACKEND_ZEPHYR
+
+endchoice
+
+menuconfig PSA_EITS_BACKEND_ZEPHYR
+	bool "Native ITS backend based on Zephyr Settings subsystem"
+	depends on CHOICE_PSA_EITS_BACKEND_ZEPHYR_SETTINGS
+	help
+	  Enable to get access for flashing operation based on Zephyr Settings
+	  subsystem.
+
+if PSA_EITS_BACKEND_ZEPHYR
+
+config PSA_EITS_READ_BUFF_SIZE
+	int "The size of the buffer used when reading with an offset"
+	default 2048
+
+module = PSA_EITS_BACKEND_ZEPHYR
+module-str = PSA EITS Zephyr backend
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # PSA_EITS_BACKEND_ZEPHYR
+
+endif # PSA_NATIVE_ITS
+
+endmenu # PSA API support
+
+endif # MBEDTLS_PSA_CRYPTO_C

@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PSA_CRYPTO_DRIVER_ENTROPY_ZEPHYR
+	bool
+	default y
+	depends on PSA_CORE_OBERON
+	depends on !PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM
+	depends on PSA_WANT_GENERATE_RANDOM
+	help
+	  Only Oberon PSA core supports entropy through driver interface.

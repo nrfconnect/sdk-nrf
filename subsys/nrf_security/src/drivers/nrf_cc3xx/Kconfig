@@ -1,0 +1,261 @@
+#
+# Copyright (c) 2021-2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PSA_CRYPTO_DRIVER_CC3XX
+    bool
+    prompt "PSA CryptoCell Driver" if !PSA_PROMPTLESS
+    depends on CRYPTOCELL_USABLE
+    default n
+    select NRF_CC3XX_PLATFORM if !BUILD_WITH_TFM
+	help
+	  Enable PSA Driver for CryptoCell
+
+if PSA_CRYPTO_DRIVER_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_CC3XX || \
+		   PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_CC3XX || \
+		   PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_CC3XX || \
+		   PSA_CRYPTO_DRIVER_ALG_CTR_CC3XX || \
+		   PSA_CRYPTO_DRIVER_ALG_OFB_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_AEAD_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_CCM_CC3XX || \
+		   PSA_CRYPTO_DRIVER_ALG_GCM_CC3XX || \
+		   PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_CMAC_CC3XX	|| \
+		   PSA_CRYPTO_DRIVER_ALG_HMAC_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_HASH_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_SHA_1_CC3XX	|| \
+		   PSA_CRYPTO_DRIVER_ALG_SHA_224_CC3XX	|| \
+		   PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX
+
+# PSA_CRYPTO_DRIVER_HAS_KDF_SUPPORT_CC3XX - Currently not supported
+
+config PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_CC3XX 		|| \
+		   PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_ASYM_SIGN_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_CC3XX	|| \
+		   PSA_CRYPTO_DRIVER_ALG_ECDSA_CC3XX 			|| \
+		   PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_ECC_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_CC3XX 	|| \
+		   PSA_CRYPTO_DRIVER_ALG_ECDSA_CC3XX			|| \
+		   PSA_CRYPTO_DRIVER_ALG_ECDH_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_RSA_SUPPORT_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_CC3XX 	|| \
+		   PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_CC3XX	|| \
+		   PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_CC3XX
+
+config PSA_CRYPTO_DRIVER_HAS_ACCEL_KEY_TYPES_CC3XX
+	bool
+	default y
+	depends on PSA_CRYPTO_DRIVER_HAS_ASYM_ENCRYPT_SUPPORT_CC3XX 	|| \
+		   PSA_CRYPTO_DRIVER_HAS_ASYM_SIGN_SUPPORT_CC3XX	|| \
+		   PSA_CRYPTO_DRIVER_HAS_AEAD_SUPPORT_CC3XX		|| \
+		   PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_CC3XX		|| \
+		   PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_CC3XX
+
+config PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_CC3XX
+	bool
+	prompt "PSA CBC support (without padding) - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_CBC_NO_PADDING
+
+config PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_CC3XX
+	bool
+	prompt "PSA CBC support (padded with PKCS#7) - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_CBC_PKCS7
+
+config PSA_CRYPTO_DRIVER_ALG_CCM_CC3XX
+	bool
+	prompt "PSA AES CCM support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_CCM
+
+config PSA_CRYPTO_DRIVER_ALG_OFB_CC3XX
+	bool
+	prompt "PSA AES OFB support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_OFB
+
+config PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_CC3XX
+	bool
+	prompt "PSA ChaCha20/Poly1305 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_CHACHA20_POLY1305
+
+config PSA_CRYPTO_DRIVER_ALG_CMAC_CC3XX
+	bool
+	prompt "PSA AES CMAC support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_CMAC
+
+config PSA_CRYPTO_DRIVER_ALG_CTR_CC3XX
+	bool
+	prompt "PSA AES CTR mode support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_CTR
+
+config PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_CC3XX
+	bool
+	prompt "PSA ECDSA support (deterministic mode) - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_DETERMINISTIC_ECDSA
+
+config PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_CC3XX
+	bool
+	prompt "PSA AES ECB (no padding) - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_ECB_NO_PADDING
+
+config PSA_CRYPTO_DRIVER_ALG_ECDH_CC3XX
+	bool
+	prompt "PSA ECDH support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_ECDH
+
+config PSA_CRYPTO_DRIVER_ALG_ECDSA_CC3XX
+	bool
+	prompt "PSA ECDSA support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_ECDSA
+
+config PSA_CRYPTO_DRIVER_ALG_GCM_CC3XX
+	bool
+	prompt "PSA AES GCM support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_GCM && CRYPTOCELL_CC312_USABLE
+
+# PSA_CRYPTO_DRIVER_ALG_HKDF_CC3XX - Currently not supported
+
+config PSA_CRYPTO_DRIVER_ALG_HMAC_CC3XX
+	bool
+	prompt "PSA HMAC support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_HMAC
+
+# PSA_CRYPTO_DRIVER_ALG_PBKDF2_HMAC_CC3XX - Currently not supported
+
+config PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_CC3XX
+	bool
+	prompt "PSA RSA OAEP support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_RSA_OAEP
+
+config PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_CC3XX
+	bool
+	prompt "PSA RSA crypt support (PKCS1V15 mode) - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
+
+config PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_CC3XX
+	bool
+	prompt "PSA RSA signature support (PKCS1V15 mode) - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_RSA_PKCS1V15_SIGN
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_1_CC3XX
+	bool
+	prompt "PSA SHA1 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_SHA_1
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_224_CC3XX
+	bool
+	prompt "PSA SHA-224 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_SHA_224
+
+config PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX
+	bool
+	prompt "PSA SSH-256 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_SHA_256
+
+config PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_CC3XX
+	bool
+	prompt "PSA stream cipher support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ALG_STREAM_CIPHER
+
+config PSA_CRYPTO_DRIVER_ECC_BRAINPOOL_P_R1_256_CC3XX
+	bool
+	prompt "PSA ECC Brainpool256r1 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ECC_BRAINPOOL_P_R1_256
+
+config PSA_CRYPTO_DRIVER_ECC_MONTGOMERY_255_CC3XX
+	bool
+	prompt "PSA ECC Curve25519 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ECC_MONTGOMERY_255
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_K1_192_CC3XX
+	bool
+	prompt "PSA ECC secp192k1 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF
+	depends on PSA_WANT_ECC_SECP_K1_192
+
+# PSA_CRYPTO_DRIVER_ECC_SECP_K1_224_CC3XX - Currently not supported
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_K1_256_CC3XX
+	bool
+	prompt "PSA ECC secp256k1 support - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_K1_256
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_192_CC3XX
+	bool
+	prompt "PSA ECC secp192r1 - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_192
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_224_CC3XX
+	bool
+	prompt "PSA ECC secp224r1 - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_224
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_256_CC3XX
+	bool
+	prompt "PSA ECC secp256r1 - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_256
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_384_CC3XX
+	bool
+	prompt "PSA ECC secp384r1 - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_384
+
+config PSA_CRYPTO_DRIVER_ECC_SECP_R1_521_CC3XX
+	bool
+	prompt "PSA ECC secp521r1 - cc3xx" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ECC_SECP_R1_521
+
+# PSA_CRYPTO_DRIVER_ALG_XTS_CC3XX - Currently not supported
+
+endif # PSA_CRYPTO_DRIVER_CC3XX
