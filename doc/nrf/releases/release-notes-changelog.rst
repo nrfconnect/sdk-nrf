@@ -337,6 +337,10 @@ Modem libraries
 
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
 
+* :ref:`nrf_modem_lib_readme`:
+
+   * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
+
 Libraries for networking
 ------------------------
 
