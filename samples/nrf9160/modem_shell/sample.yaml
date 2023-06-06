@@ -135,7 +135,8 @@ tests:
   sample.nrf9160.modem_shell.location_service_ext_pgps_nrf7002ek_wifi:
     build_only: true
     extra_configs:
-      - CONFIG_LOCATION_SERVICE_EXTERNAL=y CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
+      - CONFIG_LOCATION_SERVICE_EXTERNAL=y
+      - CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
     extra_args: SHIELD=nrf7002ek
                 OVERLAY_CONFIG="overlay-cloud_mqtt.conf;overlay-pgps.conf;overlay-nrf7002ek-wifi-scan-only.conf"
                 DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
@@ -197,8 +198,9 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_configs:
-      - CONFIG_LOCATION_METHOD_GNSS=y CONFIG_LOCATION_METHOD_CELLULAR=n
-        CONFIG_LOCATION_METHOD_WIFI=y
+      - CONFIG_LOCATION_METHOD_GNSS=y
+      - CONFIG_LOCATION_METHOD_CELLULAR=n
+      - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
     tags: ci_build
@@ -208,8 +210,9 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_configs:
-      - CONFIG_LOCATION_METHOD_GNSS=n CONFIG_LOCATION_METHOD_CELLULAR=y
-        CONFIG_LOCATION_METHOD_WIFI=y
+      - CONFIG_LOCATION_METHOD_GNSS=n
+      - CONFIG_LOCATION_METHOD_CELLULAR=y
+      - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
     tags: ci_build
@@ -219,8 +222,9 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_configs:
-      - CONFIG_LOCATION_METHOD_GNSS=n CONFIG_LOCATION_METHOD_CELLULAR=n
-        CONFIG_LOCATION_METHOD_WIFI=y
+      - CONFIG_LOCATION_METHOD_GNSS=n
+      - CONFIG_LOCATION_METHOD_CELLULAR=n
+      - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
     tags: ci_build
@@ -230,8 +234,9 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_configs:
-      - CONFIG_LOCATION_METHOD_GNSS=y CONFIG_LOCATION_METHOD_CELLULAR=n
-        CONFIG_LOCATION_METHOD_WIFI=n
+      - CONFIG_LOCATION_METHOD_GNSS=y
+      - CONFIG_LOCATION_METHOD_CELLULAR=n
+      - CONFIG_LOCATION_METHOD_WIFI=n
     tags: ci_build
   sample.nrf9160.modem_shell.location_cellular_no_wifi_no_gnss:
     build_only: true
@@ -239,8 +244,9 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_configs:
-      - CONFIG_LOCATION_METHOD_GNSS=n CONFIG_LOCATION_METHOD_CELLULAR=y
-        CONFIG_LOCATION_METHOD_WIFI=n
+      - CONFIG_LOCATION_METHOD_GNSS=n
+      - CONFIG_LOCATION_METHOD_CELLULAR=y
+      - CONFIG_LOCATION_METHOD_WIFI=n
     tags: ci_build
 
   # Configurations with modem UART traces to make sure they fit into image.
@@ -265,8 +271,8 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_LTE_NETWORK_MODE_LTE_M=y
-        CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
-        CONFIG_NRF_MODEM_LIB_TRACE=y
+      - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
+      - CONFIG_NRF_MODEM_LIB_TRACE=y
     integration_platforms:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
