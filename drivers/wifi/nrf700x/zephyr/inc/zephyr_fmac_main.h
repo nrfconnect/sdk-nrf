@@ -80,6 +80,8 @@ struct wifi_nrf_vif_ctx_zep {
 	bool cookie_resp_received;
 	bool twt_in_progress;
 	struct k_work wifi_nrf_net_iface_work;
+	unsigned long rssi_record_timestamp_us;
+	signed short rssi;
 };
 
 struct wifi_nrf_vif_ctx_map {

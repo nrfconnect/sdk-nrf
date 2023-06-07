@@ -261,4 +261,21 @@ config WIFI_FIXED_MAC_ADDRESS
 	string "WiFi Fixed MAC address in format XX:XX:XX:XX:XX:XX"
 	help
 		This overrides the MAC address read from OTP. Strictly for testing purposes only.
+
+config NRF700X_RSSI_STALE_TIMEOUT_MS
+	int "RSSI stale timeout in milliseconds"
+	default 1000
+	help
+	  RSSI stale timeout is the period after which driver querries
+	  RPU to get the RSSI the value.
+	  If data is active (e.g. ping), driver stores the RSSI value from
+	  the received frames and provides this stored information
+	  to wpa_supplicant. In this case a higher value will be suitable
+	  as stored RSSI value at driver will be updated regularly.
+	  If data is not active or after the stale timeout duration,
+	  driver queries the RPU to get the RSSI value
+	  and provides it to wpa_suuplicant. The value should be set to lower
+	  value as driver does not store it and requires RPU to provide the
+	  info.
+
 endif
