@@ -77,6 +77,8 @@ struct wifi_nrf_vif_ctx_zep {
 	} iface_ext_capa;
 	bool cookie_resp_received;
 	struct k_work wifi_nrf_net_iface_work;
+	unsigned long rssi_record_timestamp_us;
+	signed short rssi;
 };
 
 struct wifi_nrf_vif_ctx_map {

@@ -1001,6 +1001,7 @@ int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	enum wifi_nrf_status ret = WIFI_NRF_STATUS_FAIL;
 	int sem_ret;
+	int rssi_record_elapsed_time_ms = 0;
 
 	if (!if_priv || !si || !bssid) {
 		LOG_ERR("%s: Invalid params\n", __func__);
@@ -1012,17 +1013,25 @@ int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	vif_ctx_zep->signal_info = si;
-	ret = wifi_nrf_fmac_get_station(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, bssid);
-	if (ret != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: Failed to get station info\n", __func__);
-		goto out;
-	}
 
-	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
-	if (sem_ret) {
-		LOG_ERR("%s: Failed to get station info, ret = %d\n", __func__, sem_ret);
-		ret = WIFI_NRF_STATUS_FAIL;
-		goto out;
+	rssi_record_elapsed_time_ms = wifi_nrf_osal_time_elapsed_us(fmac_dev_ctx->fpriv->opriv,
+						    vif_ctx_zep->rssi_record_timestamp_us) / 1000;
+
+	if (rssi_record_elapsed_time_ms > CONFIG_NRF700X_RSSI_STALE_TIMEOUT_MS) {
+		ret = wifi_nrf_fmac_get_station(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, bssid);
+		if (ret != WIFI_NRF_STATUS_SUCCESS) {
+			LOG_ERR("%s: Failed to send get station info command\n", __func__);
+			goto out;
+		}
+
+		sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+		if (sem_ret) {
+			LOG_ERR("%s: Failed to get station info, ret = %d\n", __func__, sem_ret);
+			ret = WIFI_NRF_STATUS_FAIL;
+			goto out;
+		}
+	} else {
+		si->current_signal = (int)vif_ctx_zep->rssi;
 	}
 
 	ret = wifi_nrf_fmac_get_interface(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);

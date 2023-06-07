@@ -215,6 +215,8 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 
 	vif_ctx = fmac_dev_ctx->vif_ctx[config->wdev_id];
 
+	fmac_dev_ctx->fpriv->callbk_fns.process_rssi_from_rx(vif_ctx->os_vif_ctx,
+							     config->signal);
 	num_pkts = config->rx_pkt_cnt;
 
 	for (i = 0; i < num_pkts; i++) {

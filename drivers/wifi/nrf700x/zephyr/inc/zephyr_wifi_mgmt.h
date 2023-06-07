@@ -66,4 +66,6 @@ void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
 				  unsigned short frequency,
 				  signed short signal);
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
+void wifi_nrf_process_rssi_from_rx(void *vif_ctx,
+				   signed short signal);
 #endif /*  __ZEPHYR_DISP_SCAN_H__ */

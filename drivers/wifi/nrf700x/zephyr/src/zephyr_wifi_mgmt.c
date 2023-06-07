@@ -14,6 +14,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "util.h"
 #include "fmac_api.h"
 #include "fmac_tx.h"
 #include "zephyr_fmac_main.h"
@@ -957,8 +958,7 @@ void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
 				      frame_length);
 	}
 
-#define MBM_TO_DBM 100
-	bcn_prb_resp_info.rssi = (val / MBM_TO_DBM); /* mBm to dBm */
+	bcn_prb_resp_info.rssi = MBM_TO_DBM(val);
 	bcn_prb_resp_info.frequency = frequency;
 	bcn_prb_resp_info.frame_length = frame_length;
 
@@ -967,3 +967,31 @@ void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
 
 }
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
+
+void wifi_nrf_process_rssi_from_rx(void *vif_ctx,
+				   signed short signal)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = vif_ctx;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	vif_ctx_zep->rssi = MBM_TO_DBM(signal);
+	vif_ctx_zep->rssi_record_timestamp_us =
+		wifi_nrf_osal_time_get_curr_us(fmac_dev_ctx->fpriv->opriv);
+}

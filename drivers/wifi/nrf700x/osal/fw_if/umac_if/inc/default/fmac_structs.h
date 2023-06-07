@@ -245,6 +245,10 @@ struct wifi_nrf_fmac_callbk_fns {
 					  unsigned short frequency,
 					  signed short signal);
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
+
+	/** Callback function to be called when to process rssi of the received frame. */
+	void (*process_rssi_from_rx)(void *os_vif_ctx,
+				     signed short signal);
 };
 
 /**
