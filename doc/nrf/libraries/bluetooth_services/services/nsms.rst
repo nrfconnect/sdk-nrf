@@ -43,7 +43,7 @@ To use this library, enable the :kconfig:option:`CONFIG_BT_NSMS` Kconfig option.
 API documentation
 *****************
 
-| Header file: :file:`include/nsms.h`
+| Header file: :file:`include/bluetooth/services/nsms.h`
 | Source file: :file:`subsys/bluetooth/services/nsms.c`
 
 .. doxygengroup:: bt_nsms
