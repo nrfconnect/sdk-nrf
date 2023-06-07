@@ -1,7 +1,7 @@
 .. _download_sample:
 
-Cellular: Download client
-#########################
+Download client
+###############
 
 .. contents::
    :local:
@@ -42,7 +42,8 @@ To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoA
 Using TLS and DTLS
 ==================
 
-When the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set, the sample provisions the certificate found in the :file:`samples/cellular/download/cert` folder.
+
+When the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set, the sample provisions the certificate found in the :file:`samples/net/download/cert` folder.
 The certificate file name is indicated by the :ref:`CONFIG_SAMPLE_CERT_FILE <CONFIG_SAMPLE_CERT_FILE>` option.
 This certificate will work for the default test files.
 If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
@@ -97,7 +98,7 @@ CONFIG_SAMPLE_SHA256_HASH - Hash configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/download`
+.. |sample path| replace:: :file:`samples/net/download`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -121,10 +122,15 @@ The following output is logged on the terminal when the sample downloads a file 
 
    Download client sample started
    Provisioning certificate
-   Waiting for network.. OK
+   Connecting to network
+   IP Up
+   Network connected
    Downloading https://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png
    [ 100% ] |==================================================| (102923/102923 bytes)
-   Download completed in 12966 ms @ 7937 bytes per sec, total 102923 bytes
+   Download completed in 13679 ms @ 7524 bytes per sec, total 102923 bytes
+   IP down
+   Disconnected from network
+   Socket closed
    Bye
 
 Dependencies
@@ -133,7 +139,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`modem_key_mgmt`
-* :ref:`lte_lc_readme`
+* :ref:`nrf_modem_lib_readme`
 
 It uses the following `sdk-nrfxlib`_ library:
 

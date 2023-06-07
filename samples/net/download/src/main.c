@@ -5,18 +5,32 @@
  */
 
 #include <string.h>
-#include <zephyr/kernel.h>
 #include <stdlib.h>
-#include <modem/nrf_modem_lib.h>
-#include <modem/lte_lc.h>
-#include <modem/modem_key_mgmt.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/conn_mgr_connectivity.h>
 #include <net/download_client.h>
+
+#if CONFIG_SAMPLE_SECURE_SOCKET
+#include <modem/modem_key_mgmt.h>
+#endif
 
 #define URL CONFIG_SAMPLE_FILE_URL
 #define SEC_TAG CONFIG_SAMPLE_SEC_TAG
 
+/* Macros used to subscribe to specific Zephyr NET management events. */
+#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
+
 #define PROGRESS_WIDTH 50
 #define STARTING_OFFSET 0
+
+/* Zephyr NET management event callback structures. */
+static struct net_mgmt_event_callback l4_cb;
+static struct net_mgmt_event_callback conn_cb;
+static struct net_if *net_if;
+
+static K_SEM_DEFINE(network_connected_sem, 0, 1);
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
 static const char cert[] = {
@@ -82,6 +96,44 @@ static int cert_provision(void)
 	return 0;
 }
 #endif
+
+static void on_net_event_l4_disconnected(void)
+{
+	printk("Disconnected from network\n");
+}
+
+static void on_net_event_l4_connected(void)
+{
+	k_sem_give(&network_connected_sem);
+}
+
+static void l4_event_handler(struct net_mgmt_event_callback *cb,
+			     uint32_t event,
+			     struct net_if *iface)
+{
+	switch (event) {
+	case NET_EVENT_L4_CONNECTED:
+		printk("IP Up\n");
+		on_net_event_l4_connected();
+		break;
+	case NET_EVENT_L4_DISCONNECTED:
+		printk("IP down\n");
+		on_net_event_l4_disconnected();
+		break;
+	default:
+		break;
+	}
+}
+
+static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
+				       uint32_t event,
+				       struct net_if *iface)
+{
+	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
+		printk("Fatal error received from the connectivity layer, rebooting\n");
+		return;
+	}
+}
 
 static void progress_print(size_t downloaded, size_t file_size)
 {
@@ -151,7 +203,7 @@ static int callback(const struct download_client_evt *event)
 #endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
-		lte_lc_power_off();
+		(void)conn_mgr_if_disconnect(net_if);
 		printk("Bye\n");
 		return 0;
 
@@ -160,7 +212,7 @@ static int callback(const struct download_client_evt *event)
 		if (event->error == -ECONNRESET) {
 			/* With ECONNRESET, allow library to attempt a reconnect by returning 0 */
 		} else {
-			lte_lc_power_off();
+			(void)conn_mgr_if_disconnect(net_if);
 			/* Stop download */
 			return -1;
 		}
@@ -179,10 +231,24 @@ int main(void)
 
 	printk("Download client sample started\n");
 
-	err = nrf_modem_lib_init();
+	net_if = net_if_get_default();
+	if (net_if == NULL) {
+		printk("Pointer to network interface is NULL\n");
+		return -ECANCELED;
+	}
+
+	/* Setup handler for Zephyr NET Connection Manager events. */
+	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_cb);
+
+	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
+	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
+	net_mgmt_add_event_callback(&conn_cb);
+
+	err = net_if_up(net_if);
 	if (err) {
-		printk("Modem library initialization failed, error: %d\n", err);
-		return 0;
+		printk("net_if_up, error: %d\n", err);
+		return err;
 	}
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
@@ -193,14 +259,22 @@ int main(void)
 	}
 #endif
 
-	printk("Waiting for network.. ");
-	err = lte_lc_init_and_connect();
+	/* Add temporary fix to prevent using Wi-Fi before WPA supplicant is ready. */
+	/* Remove this whenever wpa supplicant ready events has been added. */
+	k_sleep(K_SECONDS(1));
+
+	printk("Connecting to network\n");
+
+	err = conn_mgr_if_connect(net_if);
 	if (err) {
-		printk("Failed to connect to the LTE network, err %d\n", err);
-		return 0;
+		printk("conn_mgr_if_connect, error: %d\n", err);
+		return err;
 	}
 
-	printk("OK\n");
+	k_sem_take(&network_connected_sem, K_FOREVER);
+
+	printk("Network connected\n");
+
 	err = download_client_init(&downloader, callback);
 	if (err) {
 		printk("Failed to initialize the client, err %d", err);

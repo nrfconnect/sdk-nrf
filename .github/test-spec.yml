@@ -92,7 +92,7 @@
   - "samples/cellular/at_monitor/**/*"
   - "samples/cellular/ciphersuites/**/*"
   - "samples/cellular/coap_client/**/*"
-  - "samples/cellular/download/**/*"
+  - "samples/net/download/**/*"
   - "samples/cellular/http_update/**/*"
   - "samples/cellular/https_client/**/*"
   - "samples/cellular/modem_*/**/*"
