@@ -20,7 +20,7 @@ static void reset_to_valid_time(struct tm *time)
 	time->tm_sec = 30;
 }
 
-static void test_date_time_invalid_input(void)
+ZTEST(test_date_time, test_date_time_invalid_input)
 {
 	int ret;
 	struct tm date_time_dummy;
@@ -117,7 +117,7 @@ static void test_date_time_invalid_input(void)
 
 }
 
-static void test_date_time_premature_request(void)
+ZTEST(test_date_time, test_date_time_premature_request)
 {
 	int ret;
 	int64_t ts_unix_ms = 0;
@@ -133,7 +133,7 @@ static void test_date_time_premature_request(void)
 
 }
 
-static void test_date_time_already_converted(void)
+ZTEST(test_date_time, test_date_time_already_converted)
 {
 	int ret;
 
@@ -161,7 +161,7 @@ static void test_date_time_already_converted(void)
 		      "ts_unix_ms should equal ts_unix_ms_prev");
 }
 
-static void test_date_time_negative_uptime(void)
+ZTEST(test_date_time, test_date_time_negative_uptime)
 {
 	int ret;
 
@@ -172,7 +172,7 @@ static void test_date_time_negative_uptime(void)
 		      "date_time_uptime_to_unix_time_ms should return -EINVAL");
 }
 
-static void test_date_time_clear(void)
+ZTEST(test_date_time, test_date_time_clear)
 {
 	int ret;
 
@@ -189,7 +189,7 @@ static void test_date_time_clear(void)
 	zassert_equal(0, ts_unix_ms, "ts_unix_ms should equal 0");
 }
 
-static void test_date_time_conversion(void)
+ZTEST(test_date_time, test_date_time_conversion)
 {
 	int ret;
 	struct tm date_time_dummy = {
@@ -265,7 +265,7 @@ static void test_date_time_conversion(void)
 		       "Converted value should be within 100 ms of the expected result");
 }
 
-static void test_date_time_validity(void)
+ZTEST(test_date_time, test_date_time_validity)
 {
 	int ret;
 	struct tm date_time_dummy = {
@@ -289,17 +289,13 @@ static void test_date_time_validity(void)
 	zassert_equal(true, ret, "date_time_is_valid should equal true");
 }
 
-static void test_date_time_setup(void)
+static void date_time_after(void *unused)
 {
-	/** */
-}
-
-static void test_date_time_teardown(void)
-{
+	ARG_UNUSED(unused);
 	date_time_clear();
 }
 
-void test_main(void)
+static void *suite_setup(void)
 {
 	/* Delay to ensure that k_uptime_get returns positive non-zero value
 	 * irrespective of what CONFIG_SYS_CLOCK_TICKS_PER_SEC value is.
@@ -307,36 +303,7 @@ void test_main(void)
 	 */
 	k_sleep(K_SECONDS(1));
 
-	ztest_test_suite(test_date_time,
-		ztest_unit_test_setup_teardown(
-					test_date_time_invalid_input,
-					test_date_time_setup,
-					test_date_time_teardown),
-		ztest_unit_test_setup_teardown(
-					test_date_time_premature_request,
-					test_date_time_setup,
-					test_date_time_teardown),
-		ztest_unit_test_setup_teardown(
-					test_date_time_clear,
-					test_date_time_setup,
-					test_date_time_teardown),
-		ztest_unit_test_setup_teardown(
-					test_date_time_negative_uptime,
-					test_date_time_setup,
-					test_date_time_teardown),
-		ztest_unit_test_setup_teardown(
-					test_date_time_already_converted,
-					test_date_time_setup,
-					test_date_time_teardown),
-		ztest_unit_test_setup_teardown(
-					test_date_time_conversion,
-					test_date_time_setup,
-					test_date_time_teardown),
-		ztest_unit_test_setup_teardown(
-					test_date_time_validity,
-					test_date_time_setup,
-					test_date_time_teardown)
-	);
-
-	ztest_run_test_suite(test_date_time);
+	return NULL;
 }
+
+ZTEST_SUITE(test_date_time, NULL, suite_setup, NULL, date_time_after, NULL);
