@@ -41,10 +41,12 @@ config EDGE_IMPULSE_URI
 	default ''
 	help
 	  Specify URI used to access archive with Edge Impulse library.
-	  The library will be downloaded into build directory. Make sure
-	  to specify the HTTP API key header as EI_API_KEY_HEADER variable
-	  during build if the HTTP server uses it.
-	  You can also specify absolute file path of a local file.
+	  The library will be downloaded into the build directory. You can specify
+	  more than one URI separated by a semicolon.
+	  Make sure to specify the HTTP API key header as EI_API_KEY_HEADER
+	  variable during build if the HTTP server uses it.
+	  You can also specify the absolute file path of a local file. In that
+	  case, only one URI has to be defined.
 
 endif # EDGE_IMPULSE
 
