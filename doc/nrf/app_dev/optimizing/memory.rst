@@ -183,6 +183,8 @@ Besides applying `General recommendations`_, you can also complete the following
 * Reduce the verbosity of assert messages by setting :kconfig:option:`CONFIG_ASSERT_VERBOSE` to ``n``.
 * Check `Thread`_ memory footprint optimization actions, as the Matter application layer uses OpenThread.
 
+Additionally, you can turn off logging for single Matter modules on the Matter SDK side, as described in :ref:`ug_matter_device_optimizing_memory_logs`.
+
 .. _app_memory_nfc:
 
 NFC
