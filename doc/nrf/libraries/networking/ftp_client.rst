@@ -36,7 +36,7 @@ Due to the differences in the implementation of FTP servers, the library might n
 API documentation
 *****************
 
-| Header file: :file:`include/ftp_client.h`
+| Header file: :file:`include/net/ftp_client.h`
 | Source files: :file:`subsys/net/lib/ftp_client/src/`
 
 .. doxygengroup:: ftp_client

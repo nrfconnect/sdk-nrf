@@ -62,23 +62,6 @@ Supported features
 ******************
 The library supports encoding AAR (Android Application Record) and Universal Links into NFC message.
 
-Library Files
-*************
-
-Files used by the Launch App messages and records.
-
-Launch App messages
-===================
-
-| Header file: :file:`include/nfc/ndef/launchapp_msg.h`
-| Source file: :file:`subsys/nfc/ndef/launchapp_msg.c`
-
-Launch App records
-==================
-
-| Header file: :file:`include/nfc/ndef/launchapp_rec.h`
-| Source file: :file:`subsys/nfc/ndef/launchapp_rec.c`
-
 Samples using the library
 *************************
 
@@ -98,6 +81,9 @@ API documentation
 Launch App messages
 ===================
 
+| Header file: :file:`include/nfc/ndef/launchapp_msg.h`
+| Source file: :file:`subsys/nfc/ndef/launchapp_msg.c`
+
 .. doxygengroup:: nfc_launchapp_msg
    :project: nrf
    :members:
@@ -106,6 +92,9 @@ Launch App messages
 
 Launch App records
 ===================
+
+| Header file: :file:`include/nfc/ndef/launchapp_rec.h`
+| Source file: :file:`subsys/nfc/ndef/launchapp_rec.c`
 
 .. doxygengroup:: nfc_launchapp_rec
    :project: nrf
