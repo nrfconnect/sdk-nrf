@@ -19,6 +19,10 @@ CHIP_ERROR OTAMultiImageProcessorImpl::PrepareDownload()
 
 	TriggerFlashAction(ExternalFlashManager::Action::WAKE_UP);
 
+#ifdef CONFIG_WIFI_NRF700X
+	ReturnErrorOnFailure(WiFiManager::Instance().SetLowPowerMode(false));
+#endif /* CONFIG_WIFI_NRF700X */
+
 	return DeviceLayer::SystemLayer().ScheduleLambda(
 		[this] { mDownloader->OnPreparedForDownload(PrepareMultiDownload()); });
 }
