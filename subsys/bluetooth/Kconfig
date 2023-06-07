@@ -15,6 +15,10 @@ config BT_MAX_CONN
 	int
 	range 1 20 if BT_LL_SOFTDEVICE
 	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
+	help
+	  When using the SoftDevice controller, the application needs to configure
+	  the number of peripheral and central links explicity.
+	  See BT_CTLR_SDC_PERIPHERAL_COUNT
 
 config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 	bool
