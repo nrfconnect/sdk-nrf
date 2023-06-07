@@ -123,7 +123,7 @@ The :ref:`nRF9160:Asset Tracker v2 <asset_tracker_v2_description>` application u
 API documentation
 *****************
 
-| Header file: :file:`include/lib/qos.h`
+| Header file: :file:`include/qos.h`
 | Source files: :file:`lib/qos.c`
 
 .. doxygengroup:: qos
