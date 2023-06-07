@@ -7,12 +7,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <zephyr/kernel.h>
+#include <zephyr/net/socket.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <net/download_client.h>
 
-#if CONFIG_SAMPLE_SECURE_SOCKET
+#if CONFIG_MODEM_KEY_MGMT
 #include <modem/modem_key_mgmt.h>
+#else
+#include <zephyr/net/tls_credentials.h>
 #endif
 
 #define URL CONFIG_SAMPLE_FILE_URL
@@ -45,6 +48,7 @@ static struct download_client_cfg config = {
 #if CONFIG_SAMPLE_SECURE_SOCKET
 	.sec_tag_list = sec_tag_list,
 	.sec_tag_count = ARRAY_SIZE(sec_tag_list),
+	.set_tls_hostname = true,
 #endif
 };
 
@@ -56,10 +60,13 @@ static mbedtls_sha256_context sha256_ctx;
 static int64_t ref_time;
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
-/* Provision certificate to modem */
 static int cert_provision(void)
 {
 	int err;
+
+	printk("Provisioning certificate\n");
+
+#if CONFIG_MODEM_KEY_MGMT
 	bool exists;
 
 	err = modem_key_mgmt_exists(SEC_TAG,
@@ -76,13 +83,13 @@ static int cert_provision(void)
 		err = modem_key_mgmt_cmp(SEC_TAG,
 					 MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 					 cert, sizeof(cert) - 1);
+
 		printk("%s\n", err ? "mismatch" : "match");
+
 		if (!err) {
 			return 0;
 		}
 	}
-
-	printk("Provisioning certificate\n");
 
 	/*  Provision certificate to the modem */
 	err = modem_key_mgmt_write(SEC_TAG,
@@ -92,6 +99,16 @@ static int cert_provision(void)
 		printk("Failed to provision certificate, err %d\n", err);
 		return err;
 	}
+#else /* CONFIG_MODEM_KEY_MGMT */
+	err = tls_credential_add(SEC_TAG,
+				 TLS_CREDENTIAL_CA_CERTIFICATE,
+				 cert,
+				 sizeof(cert));
+	if (err < 0) {
+		printk("Failed to register CA certificate: %d\n", err);
+		return err;
+	}
+#endif /* !CONFIG_MODEM_KEY_MGMT */
 
 	return 0;
 }
@@ -231,12 +248,6 @@ int main(void)
 
 	printk("Download client sample started\n");
 
-	net_if = net_if_get_default();
-	if (net_if == NULL) {
-		printk("Pointer to network interface is NULL\n");
-		return -ECANCELED;
-	}
-
 	/* Setup handler for Zephyr NET Connection Manager events. */
 	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
 	net_mgmt_add_event_callback(&l4_cb);
@@ -245,9 +256,9 @@ int main(void)
 	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
 	net_mgmt_add_event_callback(&conn_cb);
 
-	err = net_if_up(net_if);
+	err = conn_mgr_all_if_up(true);
 	if (err) {
-		printk("net_if_up, error: %d\n", err);
+		printk("conn_mgr_all_if_up, error: %d\n", err);
 		return err;
 	}
 
@@ -259,15 +270,11 @@ int main(void)
 	}
 #endif
 
-	/* Add temporary fix to prevent using Wi-Fi before WPA supplicant is ready. */
-	/* Remove this whenever wpa supplicant ready events has been added. */
-	k_sleep(K_SECONDS(1));
-
 	printk("Connecting to network\n");
 
-	err = conn_mgr_if_connect(net_if);
+	err = conn_mgr_all_if_connect(true);
 	if (err) {
-		printk("conn_mgr_if_connect, error: %d\n", err);
+		printk("conn_mgr_all_if_connect, error: %d\n", err);
 		return err;
 	}
 
