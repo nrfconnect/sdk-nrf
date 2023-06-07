@@ -234,8 +234,8 @@ static int adv_create(void)
 		broadcast_id = CONFIG_BT_AUDIO_BROADCAST_ID_FIXED;
 	}
 
-	ext_ad[0] = (struct bt_data)BT_DATA_BYTES(BT_DATA_BROADCAST_NAME,
-						  CONFIG_BT_AUDIO_BROADCAST_NAME);
+	ext_ad[0] = (struct bt_data)BT_DATA(BT_DATA_BROADCAST_NAME, CONFIG_BT_AUDIO_BROADCAST_NAME,
+					    sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1);
 
 	/* Setup extended advertising data */
 	net_buf_simple_add_le16(&ad_buf, BT_UUID_BROADCAST_AUDIO_VAL);
