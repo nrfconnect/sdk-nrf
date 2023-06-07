@@ -24,12 +24,12 @@ Overview
 
 The sample first initializes the :ref:`nrfxlib:nrf_modem` and AT communications.
 Next, it provisions a certificate to the modem using the :ref:`modem_key_mgmt` library if the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set.
-The provisioning of the certificates must be done before connecting to the LTE network since the certificates can only be provisioned when the device is not connected.
+When using an nRF91 Series device, the provisioning of the certificates must be done before connecting to the LTE network since the certificates can only be provisioned when the device is not connected.
 The certificate file name and security tag can be configured using the :ref:`CONFIG_SAMPLE_SEC_TAG <CONFIG_SAMPLE_SEC_TAG>` and the :ref:`CONFIG_SAMPLE_CERT_FILE <CONFIG_SAMPLE_CERT_FILE>` options, respectively.
 
 The sample then performs the following actions:
 
-1. Establishes a connection to the LTE network
+1. Establishes a connection to the network
 #. Optionally sets up the secure socket options
 #. Uses the :ref:`lib_download_client` library to download a file from an HTTP server.
 
@@ -42,8 +42,7 @@ To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoA
 Using TLS and DTLS
 ==================
 
-
-When the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set, the sample provisions the certificate found in the :file:`samples/net/download/cert` folder.
+By default, the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set, which means that the sample provisions the certificate found in the :file:`samples/net/download/cert` folder.
 The certificate file name is indicated by the :ref:`CONFIG_SAMPLE_CERT_FILE <CONFIG_SAMPLE_CERT_FILE>` option.
 This certificate will work for the default test files.
 If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
@@ -136,7 +135,7 @@ The following output is logged on the terminal when the sample downloads a file 
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries:
+This sample uses the following |NCS| libraries when using an nRF91 Series device:
 
 * :ref:`modem_key_mgmt`
 * :ref:`nrf_modem_lib_readme`
