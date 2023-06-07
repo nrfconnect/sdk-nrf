@@ -86,7 +86,7 @@ See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samp
 Matter
 ------
 
-|no_changes_yet_note|
+* Added a page about :ref:`ug_matter_device_optimizing_memory`.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
