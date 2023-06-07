@@ -42,7 +42,7 @@ Read
 API documentation
 *****************
 
-| Header file: :file:`include/throughput.h`
+| Header file: :file:`include/bluetooth/services/throughput.h`
 | Source file: :file:`subsys/bluetooth/services/throughput.c`
 
 .. doxygengroup::  bt_throughput
