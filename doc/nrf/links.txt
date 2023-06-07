@@ -540,7 +540,7 @@
 .. _`Measuring current on nRF9160 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/hw_measure_current.html
 .. _`Release Assistance Indication (RAI)`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/xrai.html
 
-.. _`Electrical specification of nrf9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/_tmp/alta.nRF9160/autodita/CURRENT/parameters.frontpage.html#
+.. _`Electrical specification of nRF9160`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/_tmp/alta.nRF9160/autodita/CURRENT/parameters.frontpage.html#
 
 .. _`nAN34`: https://infocenter.nordicsemi.com/pdf/nan_34.pdf
 
