@@ -7,7 +7,6 @@
 # nrfxlib documentation build configuration file
 
 import os
-import re
 from pathlib import Path
 import sys
 
@@ -90,21 +89,6 @@ doxyrunner_fmt_vars = {
     "NRFXLIB_BASE": str(NRFXLIB_BASE),
     "OUTPUT_DIRECTORY": str(doxyrunner_outdir),
 }
-
-# create mbedtls config header (needed for Doxygen)
-doxyrunner_outdir.mkdir(exist_ok=True)
-
-fin_path = NRFXLIB_BASE / "nrf_security" / "configs" / "legacy_crypto_config.h.template"
-fout_path = doxyrunner_outdir / "mbedtls_doxygen_config.h"
-
-with open(fin_path) as fin, open(fout_path, "w") as fout:
-    fout.write(
-        re.sub(
-            r"#cmakedefine ([A-Z0-9_-]+)",
-            r"#define \1",
-            fin.read()
-        )
-    )
 
 # Options for breathe ----------------------------------------------------------
 
