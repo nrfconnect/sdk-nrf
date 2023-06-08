@@ -95,7 +95,7 @@ After :ref:`nrf_desktop_ble_discovery` successfully discovers a connected periph
 The subscriber can use either the HID boot protocol or the HID report protocol, but both protocols cannot be used at the same time.
 In the current implementation, the :ref:`nrf_desktop_usb_state` supports either the HID boot keyboard or the HID boot mouse reports, because the HID boot protocol code is set using a single Kconfig option that is common for all of the instances of the USB HID.
 
-The :c:func:`hidc_read` callback is called when HID input report is received from the connected peripheral.
+The :c:func:`hogp_read` callback is called when HID input report is received from the connected peripheral.
 The received HID input report data is converted to ``hid_report_event``.
 
 ``hid_report_event`` is submitted and then the HID-class USB device configured by :ref:`nrf_desktop_usb_state` forwards it to the host.
