@@ -115,8 +115,8 @@ Kconfig*                                  @tejlmand
 /lib/date_time/                           @trantanen @tokangas
 /lib/hw_id/                               @maxd-nordic
 /lib/wave_gen/                            @MarekPieta
-/lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
-/lib/identity_key/                        @frkv @Vge0rge
+/lib/hw_unique_key/                       @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/lib/identity_key/                        @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_slm/                           @SeppoTakalo @VTPeltoketo @MarkusLassila
 /lib/modem_attest_token/                  @jayteemo
@@ -139,7 +139,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/peripheral_fast_pair/  @MarekPieta @kapi-no @KAGA164
 /samples/bootloader/                      @hakonfam @oyvindronningstad
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
-/samples/crypto/                          @frkv @Vge0rge
+/samples/crypto/                          @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/hw_id/                           @maxd-nordic
 /samples/edge_impulse/                    @pdunaj
@@ -147,9 +147,7 @@ Kconfig*                                  @tejlmand
 /samples/app_event_manager/               @pdunaj @MarekPieta
 /samples/event_manager_proxy/             @rakons
 /samples/gazell/                          @leewkb4567
-/samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
-/samples/keys/identity_key_generation/    @frkv @Vge0rge
-/samples/keys/identity_key_usage/         @frkv @Vge0rge
+/samples/keys/                            @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/mpsl/                            @rugeGerritsen
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
@@ -170,7 +168,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @ankuns @jciupis @ahasztag
-/samples/tfm/                             @SebastianBoe @joerchan
+/samples/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/zigbee/                          @tomchy @sebastiandraus
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
@@ -233,10 +231,10 @@ Kconfig*                                  @tejlmand
 /subsys/pcd/                              @hakonfam
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
-/subsys/nonsecure/                        @SebastianBoe
+/subsys/nonsecure/                        @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /modules/                                 @tejlmand
-/modules/tfm/                             @SebastianBoe @joerchan
+/modules/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @ludvigsj
@@ -252,7 +250,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/nrf_fuel_gauge/                @nordic-auko @aasinclair
 /tests/lib/gcf_sms/                       @eivindj-nordic
-/tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
+/tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /tests/lib/hw_id/                         @maxd-nordic
 /tests/lib/location/                      @trantanen @jhirsi @tokangas
 /tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad @trantanen
@@ -299,6 +297,6 @@ Kconfig*                                  @tejlmand
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
-/tests/tfm/                               @SebastianBoe @joerchan @torsteingrindvik @magnev
+/tests/tfm/                               @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky @torsteingrindvik @magnev
 /tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi
