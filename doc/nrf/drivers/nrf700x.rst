@@ -30,8 +30,8 @@ The following figure illustrates the architecture of the nRF700X Wi-Fi driver.
 Design overview
 ***************
 
-The nRF700X Wi-Fi driver follows an OS agnostic design, and the driver is implemented into OS agnostic and OS (Zephyr) specific implementation files.
-The OS agnostic files are located in the :file:`drivers/wifi/nrf700x/osal/` folder and the OS specific files are located in the :file:`drivers/wifi/nrf700x/zephyr/` folder.
+The nRF700X Wi-Fi driver follows an OS agnostic design, and the driver implementation is split into OS agnostic and OS (Zephyr) specific code.
+The OS agnostic code is located in the :file:`drivers/wifi/nrf700x/osal/` folder and the OS specific code is located in the :file:`drivers/wifi/nrf700x/zephyr/` folder.
 
 The driver supports two modes of operations:
 
@@ -68,7 +68,7 @@ The driver communicates with the nRF700X device using the QSPI/SPI interface.
 The driver uses the QSPI/SPI interface to send commands to the nRF700X device, and to transfer the data to and from the device.
 The nRF7002 DK uses QSPI whereas the nRF7002 EK uses SPI.
 
-To connect the nRF7002 EK to the SoC, the ``nrf7002ek_nrf7002`` shield is required.
+To connect the nRF7002 EK to the SoC, the ``nrf7002ek`` shield is required.
 
 
 API documentation
