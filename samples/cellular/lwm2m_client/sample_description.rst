@@ -478,6 +478,8 @@ The following files are available:
 * :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance in the sample.
 * :file:`overlay-lowpower.conf` - Disables certain features to bring the power consumption down.
 * :file:`overlay-adv-firmware.conf` - Enables experimental Advanced Firmware Update object.
+* :file:`overlay-dtls-cid.conf` - Enables DTLS Connection Identifier.
+  This requires modem firmware version 1.3.5 or newer.
 
 Moreover, the sample also provides the following files for LwM2M 1.1 features:
 

@@ -71,6 +71,9 @@ But if this waiting period is longer than the maximum delay set for the data tra
 .. note::
    Connection pre-evaluation consumes a small amount of energy every time it requests information about a cell.
 
+The :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID` Kconfig option enables DTLS Connection Identifier functionality in handshake.
+Enabling this feature requires that either the :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_STOP_POLLING_AT_IDLE` or :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_LISTEN_AT_IDLE` Kconfig option is selected.
+
 Defining custom objects
 =======================
 

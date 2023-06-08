@@ -257,6 +257,13 @@ config LWM2M_CLIENT_UTILS_LTE_CONNEVAL
 	  The information is used to determine when the actual data transmission is
 	  started.
 
+config LWM2M_CLIENT_UTILS_DTLS_CID
+	bool "Enable DTLS Connection Identifier"
+	help
+	  Enable DTLS connection Identifier negitiation.
+	  Requires either LWM2M_RD_CLIENT_STOP_POLLING_AT_IDLE or LWM2M_RD_CLIENT_LISTEN_AT_IDLE to be useful.
+	  This requires modem firmware 1.3.5 or newer.
+
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library

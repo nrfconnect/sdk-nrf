@@ -90,6 +90,7 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_s8, const struct lwm2m_obj_path *, int8_t)
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_s32, const struct lwm2m_obj_path *, int32_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_register_exec_callback, const struct lwm2m_obj_path *,
 		       lwm2m_engine_execute_cb_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_default_sockopt, struct lwm2m_ctx *);
 DEFINE_FAKE_VOID_FUNC(engine_trigger_update, bool);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_rai_req, enum lwm2m_rai_mode);
 DEFINE_FAKE_VALUE_FUNC(struct net_if*, net_if_lookup_by_dev, const struct device *);
