@@ -88,7 +88,7 @@ This platform design is suitable for the following development kits:
 
 For this design, the Wi-Fi driver on the application core communicates with the external nRF7002 Wi-Fi 6 Companion IC over QSPI or SPI:
 
-* For the ``nrf5340dk_nrf5340_cpuapp``, nRF7002 support is added using ``nrf7002ek_nrf7002`` shield connected through SPI.
+* For the ``nrf5340dk_nrf5340_cpuapp``, nRF7002 support is added using ``nrf7002ek`` shield connected through SPI.
 * For the ``nrf7002dk_nrf5340_cpuapp``, nRF7002 is connected with the nRF5340 SoC through QSPI.
 
 .. figure:: images/matter_platform_design_nRF53_wifi.svg
@@ -115,7 +115,7 @@ This platform design is suitable for the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp
 
-This design is only available for the ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek_nrf7002`` shield.
+This design is only available for the ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002ek`` shield.
 The Wi-Fi driver on the application core communicates through SPI with the external nRF7002 EK shield, which works as the Wi-Fi 6 Companion IC.
 
 .. figure:: images/matter_platform_design_nRF53_wifi_switching.svg
