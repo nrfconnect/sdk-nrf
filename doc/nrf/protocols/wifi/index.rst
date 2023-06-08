@@ -173,3 +173,5 @@ The program offers three different paths of certification to Contributor-level `
 Implementer-level members can take advantage of the program by implementing Wi-Fi modules that have been previously certified by a Contributor-level member, for example one of the `Nordic third-party modules`_.
 
 For details about the Wi-Fi certification program and the available paths for the nRF70 Series, read the `Wi-Fi Alliance Certification for nRF70 Series`_ document.
+
+For instructions on how to specifically use the QuickTrack certification path, see the :ref:`wifi_wfa_qt_app_sample` page.
