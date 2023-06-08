@@ -58,14 +58,14 @@ For more information, see the :doc:`MCUboot documentation <mcuboot:design>`.
 Cryptographic operations in |NCS|
 *********************************
 
-Cryptographic operations in |NCS| are handled by the :ref:`nrfxlib:nrf_security`, which is configurable through Kconfig options.
+Cryptographic operations in |NCS| are handled by the :ref:`nrf_security`, which is configurable through Kconfig options.
 The module can be enabled through the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option, and it allows the usage of `Mbed TLS`_ and `PSA Cryptography API 1.0.1`_ for cryptographic operations and random number generation in the application.
 
-The :ref:`nrfxlib:nrf_security` acts as an orchestrator for the different cryptographic libraries available in the system.
+The :ref:`nrf_security` acts as an orchestrator for the different cryptographic libraries available in the system.
 These libraries include the binary versions of accelerated cryptographic libraries listed in :ref:`nrfxlib:crypto`, and the open source Mbed TLS implementation in |NCS| located in `sdk-mbedtls`_.
 
 The Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY` prioritizes the usage of the accelerated libraries by default when this is supported by the platform.
-For more information about the configuration and usage of the :ref:`nrfxlib:nrf_security`, see the :ref:`nrfxlib:nrf_security_config` page.
+For more information about the configuration and usage of the :ref:`nrf_security`, see the :ref:`nrf_security_config` page.
 
 See also :ref:`crypto_samples` for examples of how to configure and perform different cryptographic operations in the |NCS|.
 

@@ -235,7 +235,7 @@ This sample uses the following |NCS| libraries and drivers:
 It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:nrf_modem`
-* :ref:`nrfxlib:nrf_security`
+* :ref:`nrf_security`
 
 In addition, it uses the following secure firmware component:
 

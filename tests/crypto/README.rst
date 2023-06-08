@@ -7,7 +7,7 @@ Cryptography tests
    :local:
    :depth: 2
 
-Cryptography tests verify the functionality of the :ref:`nrfxlib:nrf_security` by using known test vectors approved by the National Institute of Standards and Technology (NIST) and others.
+Cryptography tests verify the functionality of the :ref:`nrf_security` by using known test vectors approved by the National Institute of Standards and Technology (NIST) and others.
 
 Requirements
 ************
@@ -31,7 +31,7 @@ The tests do not use the standard Ztest output but provide custom output for the
 See :ref:`crypto_test_ztest_custom` for details.
 
 The tests are executed if the cryptographic functionality is enabled in Kconfig.
-Make sure to configure :ref:`nrfxlib:nrf_security` and all available hardware or software backends to enable the tests.
+Make sure to configure :ref:`nrf_security` and all available hardware or software backends to enable the tests.
 See :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`.
 
 +--------------------+-------------+----------------------------------------------------------------------------+----------------------------------------------------------------------------+

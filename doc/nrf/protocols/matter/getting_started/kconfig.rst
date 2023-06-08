@@ -26,5 +26,5 @@ Configuration options for other modules
 ***************************************
 
 Because Matter is an application layer protocol on top of the other IPv6-based transport protocols (see :ref:`ug_matter_architecture`), it uses multiple software modules with their own configuration options to provide the communication between the devices and the necessary functionalities.
-It uses modules such as Bluetooth® LE, the IPv6 stack (for example :ref:`Thread <ug_thread_configuring>`), :ref:`nRF Security <nrfxlib:nrf_security_config>`, or :ref:`MCUboot <mcuboot:mcuboot_ncs>`.
+It uses modules such as Bluetooth® LE, the IPv6 stack (for example :ref:`Thread <ug_thread_configuring>`), :ref:`nRF Security <nrf_security_config>`, or :ref:`MCUboot <mcuboot:mcuboot_ncs>`.
 Make sure to review the configuration options of these modules when configuring Matter.

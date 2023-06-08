@@ -147,7 +147,7 @@ At the end of the configuration process, you can check the EUI-64 value using Op
 Hardware-accelerated cryptography options
 =========================================
 
-You can enable hardware-accelerated cryptography by using the :ref:`nrfxlib:nrf_security` (nrf_security).
+You can enable hardware-accelerated cryptography by using the :ref:`nrf_security` (nrf_security).
 To do this, modify the setting of the following Kconfig option:
 
 * :kconfig:option:`CONFIG_OPENTHREAD_MBEDTLS` - Disable this option to disable the default Mbed TLS configuration for OpenThread.

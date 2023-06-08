@@ -276,7 +276,7 @@ nRF9160
 Crypto
 ======
 
-* The :ref:`nrfxlib:nrf_security` glue layer is broken because symbol renaming is not handled correctly.
+* The :ref:`nrf_security` glue layer is broken because symbol renaming is not handled correctly.
   Therefore, the behavior is undefined when selecting multiple back-ends for the same algorithm (for example, AES).
 
 
