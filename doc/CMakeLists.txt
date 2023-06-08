@@ -83,7 +83,17 @@ function(add_docset name)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
   set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR})
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
-  set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE})
+
+  set(DOCSET_ENV
+    DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
+    # ncs/nrfxlib/Kconfig.nrfxlib sources a Kconfig from the nrf repo
+    # and therefore needs to know where ZEPHYR_NRF_MODULE_DIR is. The
+    # non-doc build adds this env var from kconfig.cmake but the doc
+    # build does not use this kconfig.cmake so we must add the env var
+    # here
+    ZEPHYR_NRF_MODULE_DIR=${NRF_BASE}
+  )
+
 
   if(NOT ${DOCSET_DODGY})
     set(EXTRA_ARGS ${SPHINXOPTS_EXTRA})
