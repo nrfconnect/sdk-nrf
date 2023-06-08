@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
  *  Declaration of context structures for use with the PSA driver wrapper
  *  interface. This file contains the context structures for 'composite'
  *  operations, i.e. those operations which need to make use of other operations
@@ -14,21 +20,6 @@
  * multi-part state objects of the PSA drivers included in the cryptographic
  * library. The definition of these objects are then used by crypto_struct.h
  * to define the implementation-defined types of PSA multi-part state objects.
- */
-/*  Copyright The Mbed TLS Contributors
- *  SPDX-License-Identifier: Apache-2.0
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may
- *  not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
  */
 
 #ifndef PSA_CRYPTO_DRIVER_CONTEXTS_COMPOSITES_H

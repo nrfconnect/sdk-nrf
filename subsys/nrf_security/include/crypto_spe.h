@@ -1,8 +1,7 @@
 /*
- * Copyright (c) 2019-2021, Arm Limited. All rights reserved.
+ * Copyright (c) 2021 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: BSD-3-Clause
- *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /**
