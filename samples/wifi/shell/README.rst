@@ -219,7 +219,7 @@ Testing
 Dependencies
 ************
 
-This sample uses the following `sdk-nrfxlib`_ library:
+This sample uses the following library:
 
 * :ref:`nrf_security`
 

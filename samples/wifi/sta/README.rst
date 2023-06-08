@@ -198,6 +198,6 @@ See :ref:`app_power_opt` for more information on power management testing and us
 Dependencies
 ************
 
-This sample uses the following `sdk-nrfxlib`_ library:
+This sample uses the following library:
 
 * :ref:`nrf_security`

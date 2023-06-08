@@ -499,6 +499,6 @@ As is evident from the results of the sample execution, coexistence harmonizes a
 Dependencies
 ************
 
-This sample uses the following `sdk-nrfxlib`_ library:
+This sample uses the following library:
 
 * :ref:`nrf_security`
