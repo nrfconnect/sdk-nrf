@@ -510,6 +510,13 @@ Libraries for networking
 
 * Added the :ref:`lib_nrf_cloud_coap` library for accessing nRF Cloud services using CoAP.
 
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Added:
+
+    * Support for using pre-provisioned X.509 certificates.
+    * Support for using DTLS Connection Identifier
+
 Libraries for NFC
 -----------------
 

@@ -505,7 +505,7 @@ ZTEST(lwm2m_client_utils_security, test_load_credentials_PSK)
 
 	rc = ctx.load_credentials(&ctx);
 	zassert_equal(rc, 0, "wrong return value");
-	zassert_equal(modem_key_mgmt_exists_fake.call_count, 2, "Did not check existing (%d)",
+	zassert_equal(modem_key_mgmt_exists_fake.call_count, 5, "Did not check existing (%d)",
 		      modem_key_mgmt_exists_fake.call_count);
 	zassert_equal(modem_key_mgmt_write_fake.call_count, 2, "Did not write PSK");
 	zassert_equal(lte_lc_func_mode_set_fake.call_count, 1, "Did not set mode");
@@ -529,7 +529,7 @@ ZTEST(lwm2m_client_utils_security, test_load_credentials_CERT_provisioned)
 	modem_key_mgmt_exists_fake.custom_fake = modem_X509_exists;
 	rc = ctx.load_credentials(&ctx);
 	zassert_equal(rc, 0, "wrong return value");
-	zassert_equal(modem_key_mgmt_exists_fake.call_count, 3, "Did not check existing (%d)",
+	zassert_equal(modem_key_mgmt_exists_fake.call_count, 6, "Did not check existing (%d)",
 		      modem_key_mgmt_exists_fake.call_count);
 	zassert_equal(modem_key_mgmt_write_fake.call_count, 0, "Tried to write");
 	zassert_equal(lte_lc_func_mode_set_fake.call_count, 0, "Changed LTE mode");
