@@ -13,7 +13,7 @@
 };
 
 /* Disabled because of conflicts on P0.00 and P0.01 - Arduino pins D0 and D1
- * (iovdd-ctrl-gpios and bucken-gpios in nrf7002ek_nrf7002, respectively). */
+ * (iovdd-ctrl-gpios and bucken-gpios in nrf7002ek, respectively). */
 &uart1 {
 	status = "disabled";
 };
