@@ -104,6 +104,11 @@ The following configurations are recommended for low power behavior:
 * :ref:`CONFIG_UDP_EDRX_ENABLE <CONFIG_UDP_EDRX_ENABLE>` set to false.
 * :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` set to true for NB-IoT. It is not supported for LTE-M.
 
+.. note::
+   In applications where downlink messaging from the cloud to the device is expected, we recommend setting
+   the :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` option to a higher value than ``0`` to ensure data is received
+   before the device enters PSM.
+
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
 See `Power saving mode setting section in AT commands reference document`_ for a conversion chart of these timer values.
 
