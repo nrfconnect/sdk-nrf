@@ -344,17 +344,10 @@ endif # BUILD_WITH_TFM
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
 
 if !TFM_PROFILE_TYPE_MINIMAL
-rsource "Kconfig.mbedtls.defconfig"
-
 # When enabling full TFM support, then partitions and crypto modules shall be available.
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
 endif
-
-if TFM_PROFILE_TYPE_MINIMAL
-rsource "Kconfig.mbedtls_minimal.defconfig"
-rsource "Kconfig.tfm_minimal.defconfig"
-endif # TFM_PROFILE_TYPE_MINIMAL
 
 if BUILD_WITH_TFM
 
@@ -428,7 +421,5 @@ config TFM_NRF_PROVISIONING
 	  Provision the TF-M image. When enabled, TF-M must be in the PSA
 	  provisioning lifecycle state in order to boot. See provisioning
 	  guide for more details.
-
-rsource "Kconfig.psa.defconfig"
 
 endif # BUILD_WITH_TFM
