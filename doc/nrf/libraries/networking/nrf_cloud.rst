@@ -238,3 +238,21 @@ API documentation
 .. doxygengroup:: nrf_cloud
    :project: nrf
    :members:
+
+nRF Cloud codec documentation
+*****************************
+
+| Header file: :file:`include/net/nrf_cloud_codec.h`
+
+.. doxygengroup:: nrf_cloud_codec
+   :project: nrf
+   :members:
+
+nRF Cloud common definitions
+****************************
+
+| Header file: :file:`include/net/nrf_cloud_defs.h`
+
+.. doxygengroup:: nrf_cloud_defs
+   :project: nrf
+   :members:

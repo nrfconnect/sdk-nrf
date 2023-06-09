@@ -9,6 +9,10 @@
 
 #include <zephyr/toolchain/common.h>
 
+/** @defgroup nrf_cloud_defs nRF Cloud common defines
+ * @{
+ */
+
 /* Message schemas defined by nRF Cloud:
  * https://github.com/nRFCloud/application-protocols/tree/v1/schemas
  */
@@ -180,9 +184,9 @@
 #define NRF_CLOUD_JSON_KEY_APP_VER		"appVersion"
 #define NRF_CLOUD_JSON_VAL_NOT_ASSOC		"not_associated"
 #define NRF_CLOUD_JSON_VAL_PAIRED		"paired"
-/** Current FOTA version string used in device shadow */
+/* Current FOTA version string used in device shadow */
 #define NRF_CLOUD_FOTA_VER_STR			"fota_v" STRINGIFY(NRF_CLOUD_FOTA_VER)
-/** Max length of nRF Cloud's stage/environment name */
+/* Max length of nRF Cloud's stage/environment name */
 #define NRF_CLOUD_STAGE_ID_MAX_LEN		8
 /** Max length of a tenant ID on nRF Cloud */
 #define NRF_CLOUD_TENANT_ID_MAX_LEN		64
@@ -206,4 +210,5 @@
 #define NRF_CLOUD_JSON_VAL_TOPIC_WILDCARD	"/+"
 #define NRF_CLOUD_JSON_VAL_TOPIC_BIN		"/bin"
 
+/** @} */
 #endif /* NRF_CLOUD_DEFS_H__ */
