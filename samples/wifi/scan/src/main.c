@@ -22,6 +22,8 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
+#include <zephyr/net/ethernet.h>
+#include <zephyr/net/ethernet_mgmt.h>
 
 #include "net_private.h"
 
@@ -185,6 +187,20 @@ static int wifi_scan(void)
 	return 0;
 }
 
+static bool is_mac_addr_set(struct net_if *iface)
+{
+	struct net_linkaddr *linkaddr = net_if_get_link_addr(iface);
+	struct net_eth_addr wifi_addr;
+
+	if (!linkaddr || linkaddr->len != WIFI_MAC_ADDR_LEN) {
+		return false;
+	}
+
+	memcpy(wifi_addr.addr, linkaddr->addr, WIFI_MAC_ADDR_LEN);
+
+	return net_eth_is_addr_valid(&wifi_addr);
+}
+
 int main(void)
 {
 	scan_result = 0U;
@@ -202,6 +218,31 @@ int main(void)
 #endif
 	k_sleep(K_SECONDS(1));
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock / MHZ(1));
+
+	if (!is_mac_addr_set(net_if_get_default())) {
+		struct net_if *iface = net_if_get_default();
+		int ret;
+
+		/* Set a local MAC address with Nordic OUI */
+		ret = net_if_down(iface);
+		if (ret) {
+			LOG_ERR("Cannot bring down iface (%d)", ret);
+			return ret;
+		}
+
+		net_mgmt(NET_REQUEST_ETHERNET_SET_MAC_ADDRESS, iface,
+			 (void *)CONFIG_WIFI_MAC_ADDRESS, sizeof(CONFIG_WIFI_MAC_ADDRESS));
+
+		ret = net_if_up(iface);
+		if (ret) {
+			LOG_ERR("Cannot bring up iface (%d)", ret);
+			return ret;
+		}
+
+		LOG_INF("OTP not programmed, proceeding with local MAC: %s", net_sprint_ll_addr(
+							net_if_get_link_addr(iface)->addr,
+							net_if_get_link_addr(iface)->len));
+	}
 
 	wifi_scan();
 
