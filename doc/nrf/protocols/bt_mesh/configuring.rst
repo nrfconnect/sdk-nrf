@@ -94,8 +94,9 @@ These options are only compatible with devices supporting Bluetooth Low Energy (
 
 * The following configuration options allow fitting the full relayed mesh advertiser frame into a single Link Layer payload:
 
-  * :kconfig:option:`CONFIG_BT_CTLR_DATA_LENGTH_MAX` =37.
-  * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_SIZE` =37.
+  * :kconfig:option:`CONFIG_BT_CTLR_DATA_LENGTH_MAX` set to 37.
+  * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_SIZE` set to 37.
+  * :kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` set to 37.
 
 * The following option allows sending up to several data frames during the single connection interval:
 
@@ -109,6 +110,7 @@ The following configuration options are used to configure the Bluetooth Low Ener
 * :kconfig:option:`CONFIG_BT_COMPANY_ID` - Sets the Bluetooth Company Identifier for this device.
 * :kconfig:option:`CONFIG_BT_DEVICE_NAME` - Defines the Bluetooth device name.
 * :kconfig:option:`CONFIG_BT_L2CAP_TX_MTU` - Sets the maximum L2CAP MTU for L2CAP TX buffers.
+  When GATT is enabled, the recommended value is the value of :kconfig:option:`CONFIG_BT_BUF_ACL_TX_SIZE` minus 4.
 * :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` - Sets the number of buffers available for outgoing L2CAP packets.
 * :kconfig:option:`CONFIG_BT_RX_STACK_SIZE` - Sets the size of the receiving thread stack.
 * :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET` - Sets the maximum number of simultaneous advertising sets.
