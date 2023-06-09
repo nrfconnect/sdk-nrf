@@ -106,7 +106,7 @@ endchoice # DATA_DEVICE_MODE #
 
 config DATA_ACTIVE_TIMEOUT_SECONDS
 	int "Default active wait timeout in seconds"
-	default 120
+	default 300
 	help
 	  Number of seconds between sampling/publication in active mode.
 
