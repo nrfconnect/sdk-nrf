@@ -71,6 +71,7 @@ jobs:
       if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       run: |
         export ZEPHYR_BASE="$(dirname "$(pwd)")/zephyr"
+        export ZEPHYR_NRF_MODULE_DIR="$(dirname "$(pwd)")/nrf"
         # debug
         ls -la
         git log --pretty=oneline | head -n 10
