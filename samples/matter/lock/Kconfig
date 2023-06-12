@@ -97,6 +97,14 @@ endif # CHIP_WIFI
 config CHIP_ICD_SUBSCRIPTION_HANDLING
 	default y
 
+config MATTER_LOCK_LTO
+	bool "Enable link time optimization"
+	default y if SIZE_OPTIMIZATIONS
+	help
+	  Compile the Matter lock application code with link time optimization enabled. This
+	  option is only applied for the application code and not the libraries and external modules
+	  that are linked in.
+
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
 source "Kconfig.zephyr"

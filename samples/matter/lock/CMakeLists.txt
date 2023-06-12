@@ -97,4 +97,9 @@ if(CONFIG_THREAD_WIFI_SWITCHING)
             ${APPLICATION_BINARY_DIR}/zephyr/net_core_app_update.bin
     )
 endif()
+
+if(CONFIG_MATTEL_LOCK_LTO)
+    target_compile_options(app PRIVATE "-flto")
+endif()
+
 # NORDIC SDK APP END
