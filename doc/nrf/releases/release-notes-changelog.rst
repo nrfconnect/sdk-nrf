@@ -379,6 +379,10 @@ Libraries for networking
 
   * Added explanation of text versus dictionary logs.
 
+* :ref:`lib_download_client` library:
+
+  * Added support for DTLS Connection Identifier feature.
+
 * :ref:`lib_nrf_cloud` library:
 
   * Added:

@@ -58,6 +58,8 @@ Make sure to configure the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` and
 
 The application must provision the TLS credentials and pass the security tag to the library when using CoAPS and calling :c:func:`download_client_connect`.
 
+When modem firmware v1.3.5 or newer is used, you can enable the support for DTLS Connection Identifier feature in the download client library by enabling :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_CID` Kconfig option.
+
 Limitations
 ***********
 
