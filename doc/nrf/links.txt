@@ -37,6 +37,7 @@
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 
 .. _`sdk-mbedtls`: https://github.com/nrfconnect/sdk-mbedtls
+.. _`Arm Mbed TLS project`: https://github.com/ARMmbed/mbedtls
 
 .. _`nrfconnect GitHub organization`: https://github.com/nrfconnect
 .. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
