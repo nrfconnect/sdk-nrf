@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 #include <zephyr/net/mqtt.h>
+#include <dfu/dfu_target.h>
 
 /**
  * @defgroup aws_iot AWS IoT library
@@ -94,7 +95,14 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_PINGRESP,
 	/** FOTA update start. */
 	AWS_IOT_EVT_FOTA_START,
-	/** FOTA update done, request to reboot. */
+	/** FOTA done. Payload of type @ref dfu_target_image_type (image).
+	 *
+	 *  If the image parameter type is of type DFU_TARGET_IMAGE_TYPE_MCUBOOT the device needs to
+	 *  reboot to apply the new application image.
+	 *
+	 *  If the image parameter type is of type DFU_TARGET_IMAGE_TYPE_MODEM_DELTA the modem
+	 *  needs to be reinitialized to apply the new modem image.
+	 */
 	AWS_IOT_EVT_FOTA_DONE,
 	/** FOTA erase pending. */
 	AWS_IOT_EVT_FOTA_ERASE_PENDING,
@@ -167,6 +175,7 @@ struct aws_iot_evt {
 		int fota_progress;
 		bool persistent_session;
 		uint16_t message_id;
+		enum dfu_target_image_type image;
 	} data;
 };
 
