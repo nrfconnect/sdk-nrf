@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2023, Arm Limited. All rights reserved.
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef PSA_CRYPTO_DRIVER_CONTEXTS_KDF_H
