@@ -9,6 +9,7 @@
 import os
 from pathlib import Path
 import sys
+import re
 
 
 # Paths ------------------------------------------------------------------------
@@ -131,6 +132,21 @@ doxyrunner_fmt_vars = {
     "NRF_BASE": str(NRF_BASE),
     "NRF_BINARY_DIR": str(utils.get_builddir() / "nrf"),
 }
+
+# create mbedtls config header (needed for Doxygen)
+doxyrunner_outdir.mkdir(exist_ok=True)
+
+fin_path = NRF_BASE / "subsys" / "nrf_security" / "configs" / "legacy_crypto_config.h.template"
+fout_path = doxyrunner_outdir / "mbedtls_doxygen_config.h"
+
+with open(fin_path) as fin, open(fout_path, "w") as fout:
+    fout.write(
+        re.sub(
+            r"#cmakedefine ([A-Z0-9_-]+)",
+            r"#define \1",
+            fin.read()
+        )
+    )
 
 # Options for breathe ----------------------------------------------------------
 
