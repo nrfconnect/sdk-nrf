@@ -679,6 +679,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_QOS_CHANNEL_SURVEY)) {
+		err = sdc_support_qos_channel_survey();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_PAWR_ADV)) {
 		err = sdc_support_le_periodic_adv_with_rsp();
 		if (err) {

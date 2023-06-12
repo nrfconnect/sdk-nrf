@@ -107,6 +107,12 @@ config BT_CTLR_SDC_LLPM
 	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
 	  which lets the application use connection intervals down to 1 ms.
 
+config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
+	bool "Enable channel survey"
+	select EXPERIMENTAL
+	help
+	  Channel survey feature support
+
 config BT_CTLR_SDC_PERIPHERAL_COUNT
 	int "Number of concurrent peripheral roles"
 	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
