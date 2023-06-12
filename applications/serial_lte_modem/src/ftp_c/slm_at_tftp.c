@@ -11,7 +11,6 @@
 #include <zephyr/net/tftp.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
-#include "slm_at_ftp.h"
 
 LOG_MODULE_REGISTER(slm_tftp, CONFIG_SLM_LOG_LEVEL);
 
