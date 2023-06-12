@@ -119,7 +119,7 @@ Crypto
 
 * Added :ref:`nrfxlib:nrf_oberon_readme` v3.0.0 (see :ref:`nrfxlib:crypto_changelog_oberon` for details)
 * Added :ref:`nrfxlib:nrf_cc310_mbedcrypto_readme` v0.7.0 (initial, experimental release) to do hardware-accelerated cryptography using Arm CryptoCell CC310 in select architectures
-* Added :ref:`nrfxlib:nrf_security` v0.7.0 (initial, experimental release) to bridge software-implemented mbed TLS and hardware-accelerated alternatives (nrf_cc310_mbedcrypto library) through the use of a glue layer
+* Added :ref:`nrf_security` v0.7.0 (initial, experimental release) to bridge software-implemented mbed TLS and hardware-accelerated alternatives (nrf_cc310_mbedcrypto library) through the use of a glue layer
 
 
 Subsystems
@@ -220,7 +220,7 @@ nRF9160
 Crypto
 ======
 
-* The :ref:`nrfxlib:nrf_security` glue layer is broken because symbol renaming is not handled correctly.
+* The :ref:`nrf_security` glue layer is broken because symbol renaming is not handled correctly.
   Therefore, the behavior is undefined when selecting multiple back-ends for the same algorithm (for example, AES).
 
 

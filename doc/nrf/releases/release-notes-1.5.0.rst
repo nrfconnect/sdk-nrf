@@ -366,7 +366,7 @@ Crypto
 
 * Updated:
 
-  * :ref:`nrfxlib:nrf_security`:
+  * :ref:`nrf_security`:
 
     * Added Kconfig options for TLS/DTLS and x509 certificates.
     * Added Kconfig options for ``PK`` and ``PK_WRITE`` (:kconfig:option:`CONFIG_MBEDTLS_PK_C` and :kconfig:option:`CONFIG_MBEDTLS_PK_WRITE_C`).

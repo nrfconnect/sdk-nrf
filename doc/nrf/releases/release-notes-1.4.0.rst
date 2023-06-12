@@ -396,9 +396,9 @@ Crypto
 * Updated:
 
   * Renamed all APIs with ``cc310`` in the name to ``cc3xx`` because of added support for CC312.
-    This change also affects :ref:`nrfxlib:nrf_security`'s Kconfig options, where ``_CC310_`` was replaced with ``_CC3XX_`` in option names.
+    This change also affects :ref:`nrf_security`'s Kconfig options, where ``_CC310_`` was replaced with ``_CC3XX_`` in option names.
     The ``nrf_cc310_bl`` still uses the ``cc310`` naming scheme.
-  * Updated :ref:`nrfxlib:nrf_security` to use mbedTLS v2.23.0.
+  * Updated :ref:`nrf_security` to use mbedTLS v2.23.0.
   * Disabled the CMAC glue layer, as it was causing issues.
     Now CMAC is provided by a single selected backend (through Kconfig).
 
@@ -650,7 +650,7 @@ User guides
 nrfxlib
 -------
 
-* :ref:`nrfxlib:nrf_security_readme` - updated :ref:`nrfxlib:nrf_security_backend_config` and modified structure extensively to improve maintainability (restructured with better sections and headings)
+* :ref:`nrf_security_readme` - updated :ref:`nrf_security_backend_config` and modified structure extensively to improve maintainability (restructured with better sections and headings)
 * :ref:`nrfxlib:mpsl` - updated with :ref:`nrfxlib:mpsl_fem`
 
 Known issues

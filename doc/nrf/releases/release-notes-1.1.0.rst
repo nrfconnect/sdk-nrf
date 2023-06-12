@@ -321,7 +321,7 @@ Updated libraries
   * Added support to do hardware-accelerated cryptography using Arm CryptoCell CC310 in select architectures.
   * Miscellaneous bugfixes.
 
-* :ref:`nrfxlib:nrf_security`:
+* :ref:`nrf_security`:
 
   * Refactored build system and configuration.
   * Fixed bugs in the AES glue layer preventing correct decryption.
@@ -485,7 +485,7 @@ Documentation
   * :ref:`nrfxlib:softdevice_controller`
   * BSD library
   * :ref:`nrfxlib:nrf_cc310_platform_readme`
-  * :ref:`nrfxlib:nrf_security`
+  * :ref:`nrf_security`
   * :ref:`mcuboot:mcuboot_wrapper`
   * :ref:`mcuboot:mcuboot_ncs`
 

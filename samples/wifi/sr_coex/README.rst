@@ -501,4 +501,4 @@ Dependencies
 
 This sample uses the following `sdk-nrfxlib`_ library:
 
-* :ref:`nrfxlib:nrf_security`
+* :ref:`nrf_security`
