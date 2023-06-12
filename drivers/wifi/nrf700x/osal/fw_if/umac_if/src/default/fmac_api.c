@@ -2224,6 +2224,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 1);
 
 	if (count == 0) {
+		status = WIFI_NRF_STATUS_FAIL;
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: RPU is unresponsive for %d sec\n",
 				      __func__, RPU_CMD_TIMEOUT_MS / 1000);
