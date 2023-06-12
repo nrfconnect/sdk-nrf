@@ -171,9 +171,6 @@ if NRF_CLOUD_PGPS_STORAGE_PARTITION
 
 config NRF_CLOUD_PGPS_PARTITION_SIZE
 	hex "Size of flash partition for P-GPS data storage"
-	# Workaround for known issue NCSDK-16916.
-	# Set the size of the storage partition to a multiple of CONFIG_NRF_SPU_FLASH_REGION_SIZE.
-	default 0x18000 if BUILD_WITH_TFM
 	default 0x15000
 	help
 	  This must be at least 2048 bytes times NRF_COUND_PGPS_NUM_PREDICTIONS.
