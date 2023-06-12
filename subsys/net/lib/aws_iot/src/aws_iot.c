@@ -199,6 +199,7 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 	case AWS_FOTA_EVT_DONE:
 		LOG_DBG("AWS_FOTA_EVT_DONE");
 		aws_iot_evt.type = AWS_IOT_EVT_FOTA_DONE;
+		aws_iot_evt.data.image = fota_evt->image;
 		break;
 	case AWS_FOTA_EVT_ERASE_PENDING:
 		LOG_DBG("AWS_FOTA_EVT_ERASE_PENDING");
