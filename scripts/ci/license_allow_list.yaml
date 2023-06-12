@@ -43,8 +43,10 @@ Apache-2.0: |
   ^nrf/ext/
   /src/zap-generated/
   ^nrf/tests/bluetooth/tester/src/main.c$
+  ^nrf/subsys/nrf_security/src/legacy
 curl: "^nrf/ext/"
 MIT: "^nrf/ext/"
-BSD-3-CLAUSE: "^nrf/ext/"
+BSD-3-CLAUSE: |
+  ^nrf/ext/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
 GPL-2.0: "/matter_weather_station/.clang-format"
