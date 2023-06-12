@@ -217,7 +217,7 @@ static void link_cell_change_work(struct k_work *work_item)
 
 static void link_rsrp_signal_handler(char rsrp_value)
 {
-	modem_rsrp = (int8_t)RSRP_IDX_TO_DBM(rsrp_value);
+	modem_rsrp = RSRP_IDX_TO_DBM(rsrp_value);
 	k_work_submit_to_queue(&mosh_common_work_q, &modem_info_signal_work);
 }
 
