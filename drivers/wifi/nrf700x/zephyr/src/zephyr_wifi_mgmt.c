@@ -880,6 +880,8 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 
 		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_SLEEP;
 
+		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
+						WIFI_TWT_STATE_SLEEP);
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
 	break;
@@ -887,6 +889,8 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    fmac_dev_ctx->tx_config.tx_lock);
 		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
+		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
+						WIFI_TWT_STATE_AWAKE);
 #ifdef CONFIG_NRF700X_DATA_TX
 		for (ac = WIFI_NRF_FMAC_AC_BE;
 		     ac <= WIFI_NRF_FMAC_AC_MAX; ++ac) {
