@@ -99,6 +99,13 @@ struct nrf_modem_lib_shutdown_cb {
  *
  * The callback function @p _callback is invoked after the library has been initialized.
  *
+ * @note The @c NRF_MODEM_LIB_ON_INIT callback can be used to perform modem and library
+ * configurations that require the modem to be turned on in offline mode. It cannot be used to
+ * change the modem functional mode. Calls to @c lte_lc_connect and CFUN AT calls are not
+ * allowed, and must be done after @c nrf_modem_lib_init has returned. If a library needs to
+ * perform operations after the link is up, it can use the link controller and subscribe to a
+ * @c LTE_LC_ON_CFUN callback.
+ *
  * @param name Callback name
  * @param _callback Callback function name
  * @param _context User-defined context for the callback
