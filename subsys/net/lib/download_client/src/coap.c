@@ -47,6 +47,7 @@ int coap_block_init(struct download_client *client, size_t from)
 	coap_block_transfer_init(&client->coap.block_ctx,
 				 CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE, 0);
 	client->coap.block_ctx.current = from;
+	coap_pending_clear(&client->coap.pending);
 	return 0;
 }
 
