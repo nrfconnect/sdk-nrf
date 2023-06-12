@@ -2905,6 +2905,12 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
+
+DRGN-17562: One of the LE Transmit Power Reporting Events might not be reported to the host.
+  When multiple LE Transmit Power Reporting Events are generated at the same time for the same PHY, one of these events will be missed.
+  This will occur only when there are simultaneous remote and local power level changes on the same PHY.
+
 .. rst-class:: v2-4-0 v2-3-0 v2-2-0
 
 DRGN-19039: Multirole advertiser not seen by peer in some cases
