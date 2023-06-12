@@ -9,14 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/toolchain/common.h>
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/unistd.h>
-#include <zephyr/posix/netdb.h>
-#include <zephyr/posix/sys/time.h>
-#include <zephyr/posix/sys/socket.h>
-#else
 #include <zephyr/net/socket.h>
-#endif
 #include <zephyr/net/socket_ncs.h>
 #include <zephyr/net/tls_credentials.h>
 #include <net/download_client.h>
@@ -135,7 +128,7 @@ static int set_recv_socket_timeout(int fd, int timeout_ms)
 		.tv_usec = (timeout_ms % 1000) * 1000,
 	};
 
-	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
+	err = zsock_setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
 	if (err) {
 		LOG_WRN("Failed to set socket timeout, errno %d", errno);
 		return -1;
@@ -157,7 +150,7 @@ static int set_snd_socket_timeout(int fd, int timeout_ms)
 		.tv_usec = (timeout_ms % 1000) * 1000,
 	};
 
-	err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
+	err = zsock_setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
 	if (err) {
 		LOG_WRN("Failed to set socket timeout, errno %d", errno);
 		return -1;
@@ -179,14 +172,14 @@ static int socket_sectag_set(int fd, const int * const sec_tag_list, uint8_t sec
 
 	verify = REQUIRED;
 
-	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
 		LOG_ERR("Failed to setup peer verification, errno %d", errno);
 		return -errno;
 	}
 
 	LOG_INF("Setting up TLS credentials, sec tag count %u", sec_tag_count);
-	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 			 sizeof(sec_tag_t) * sec_tag_count);
 	if (err) {
 		LOG_ERR("Failed to setup socket security tag list, errno %d", errno);
@@ -209,7 +202,7 @@ static int socket_tls_hostname_set(int fd, const char * const hostname)
 		return err;
 	}
 
-	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, parsed_host,
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_HOSTNAME, parsed_host,
 			 strlen(parsed_host));
 	if (err) {
 		LOG_ERR("Failed to setup TLS hostname (%s), errno %d",
@@ -228,7 +221,7 @@ static int socket_pdn_id_set(int fd, uint8_t pdn_id)
 	(void) snprintf(buf, sizeof(buf), "pdn%d", pdn_id);
 
 	LOG_INF("Binding to PDN ID: %s", buf);
-	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &buf, strlen(buf));
+	err = zsock_setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &buf, strlen(buf));
 	if (err) {
 		LOG_ERR("Failed to bind socket to PDN ID %d, err %d",
 			pdn_id, errno);
@@ -244,9 +237,9 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 	int err;
 	char pdnserv[4];
 	char hostname[HOSTNAME_SIZE];
-	struct addrinfo *ai;
+	struct zsock_addrinfo *ai;
 
-	struct addrinfo hints = {
+	struct zsock_addrinfo hints = {
 		.ai_family = family,
 	};
 
@@ -259,9 +252,9 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 	if (pdn_id) {
 		hints.ai_flags = AI_PDNSERV;
 		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
-		err = getaddrinfo(hostname, pdnserv, &hints, &ai);
+		err = zsock_getaddrinfo(hostname, pdnserv, &hints, &ai);
 	} else {
-		err = getaddrinfo(hostname, NULL, &hints, &ai);
+		err = zsock_getaddrinfo(hostname, NULL, &hints, &ai);
 	}
 
 	if (err) {
@@ -271,7 +264,7 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 	}
 
 	*sa = *(ai->ai_addr);
-	freeaddrinfo(ai);
+	zsock_freeaddrinfo(ai);
 
 	return 0;
 }
@@ -364,7 +357,7 @@ static int client_connect(struct download_client *dl)
 	LOG_DBG("family: %d, type: %d, proto: %d",
 		dl->remote_addr.sa_family, type, dl->proto);
 
-	dl->fd = socket(dl->remote_addr.sa_family, type, dl->proto);
+	dl->fd = zsock_socket(dl->remote_addr.sa_family, type, dl->proto);
 	if (dl->fd < 0) {
 		LOG_ERR("Failed to create socket, err %d", errno);
 		return -errno;
@@ -409,7 +402,7 @@ static int client_connect(struct download_client *dl)
 	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
 		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
 
-	err = connect(dl->fd, &dl->remote_addr, addrlen);
+	err = zsock_connect(dl->fd, &dl->remote_addr, addrlen);
 	if (err) {
 		err = -errno;
 		LOG_ERR("Unable to connect, errno %d", -err);
@@ -436,7 +429,7 @@ int socket_send(const struct download_client *client, size_t len, int timeout)
 	}
 
 	while (len) {
-		sent = send(client->fd, client->buf + off, len, 0);
+		sent = zsock_send(client->fd, client->buf + off, len, 0);
 		if (sent < 0) {
 			return -errno;
 		}
@@ -504,7 +497,7 @@ static int reconnect(struct download_client *dl)
 
 	LOG_INF("Reconnecting...");
 	if (dl->fd >= 0) {
-		err = close(dl->fd);
+		err = zsock_close(dl->fd);
 		if (err) {
 			LOG_DBG("disconnect failed, %d", err);
 		}
@@ -544,7 +537,7 @@ static ssize_t socket_recv(struct download_client *dl)
 		return -1;
 	}
 
-	return recv(dl->fd, dl->buf + dl->offset, sizeof(dl->buf) - dl->offset, 0);
+	return zsock_recv(dl->fd, dl->buf + dl->offset, sizeof(dl->buf) - dl->offset, 0);
 }
 
 static int request_resend(struct download_client *dl)
@@ -731,7 +724,7 @@ static int handle_disconnect(struct download_client *client)
 	k_mutex_lock(&client->mutex, K_FOREVER);
 
 	if (client->fd != -1) {
-		err = close(client->fd);
+		err = zsock_close(client->fd);
 		if (err) {
 			err = errno;
 			LOG_ERR("Failed to close socket, errno %d", err);
