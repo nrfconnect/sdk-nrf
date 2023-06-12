@@ -1201,6 +1201,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_conn_event_extend((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_QOS_CONN_EVENT_REPORT_ENABLE:
 		return sdc_hci_cmd_vs_qos_conn_event_report_enable((void *)cmd_params);
+#ifdef CONFIG_BT_CTLR_SDC_QOS_CHANNEL_SURVEY
+	case SDC_HCI_OPCODE_CMD_VS_QOS_CHANNEL_SURVEY_ENABLE:
+		return sdc_hci_cmd_vs_qos_channel_survey_enable((void *)cmd_params);
+#endif
 	case SDC_HCI_OPCODE_CMD_VS_EVENT_LENGTH_SET:
 		return sdc_hci_cmd_vs_event_length_set((void *)cmd_params);
 #ifdef CONFIG_BT_PERIPHERAL
