@@ -359,7 +359,7 @@ static bool is_ip_address(const char *host)
 	return false;
 }
 
-#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) && defined(PM_S1_ADDRESS)
 static int read_s0_active(uint32_t s0_address, uint32_t s1_address,
 			  bool *const s0_active)
 {
