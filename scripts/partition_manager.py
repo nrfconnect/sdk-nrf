@@ -9,6 +9,13 @@ import yaml
 from os import path
 import sys
 from pprint import pformat
+try:
+    from math import lcm
+except ImportError:
+    # math.lcm was introduced in 3.9, use gcd in <3.9
+    from math import gcd
+    def lcm(x, y):
+        return abs(x * y) // gcd(x, y)
 
 PERMITTED_STR_KEYS = ['size', 'region']
 END_TO_START = 'end_to_start'
@@ -333,6 +340,38 @@ def resolve(reqs, dp, system_reqs = None):
     return solution, sub_partitions
 
 
+# Add alignment spec to a placement spec that might already contain one
+# (requiring merging using least common multiple)
+def merge_align(placement, new_align):
+    new_keys = list(new_align.keys())
+    if new_keys not in (['start'], ['end']):
+        raise PartitionError(f"Unexpected keys in {new_align}")
+
+    if 'align' in placement.keys() and list(placement['align'].keys()) != new_keys: # disallow both 'start' and 'end' alignment.
+        raise PartitionError(f"Cannot make partition align both {list(placement['align'].keys())} and {new_keys}")
+
+    placement.setdefault('align', {}).setdefault(new_keys[0], 1)
+    placement['align'][new_keys[0]] = lcm(placement['align'][new_keys[0]], new_align[new_keys[0]])
+
+
+# If a span partition has alignment spec ('align' or 'align_next'), apply those
+# to the first or last element of the span.
+def propagate_sub_partition_alignment(reqs, sub_partitions, solution):
+    for s in sub_partitions.values():
+        if 'placement' in s.keys():
+            spanned_parts = list(p for p in solution if p in s['span'])
+            if 'align' in s['placement'].keys():
+                aligned_part = spanned_parts[0] if 'start' in s['placement']['align'].keys() else spanned_parts[-1]
+                reqs[aligned_part].setdefault('placement', {})
+                merge_align(reqs[aligned_part]['placement'], s['placement']['align'])
+            if 'align_next' in s['placement'].keys():
+                aligned_part = spanned_parts[-1]
+                reqs[aligned_part].setdefault('placement', {}).setdefault('align_next', 1)
+                reqs[aligned_part]['placement']['align_next'] \
+                    = lcm(reqs[aligned_part]['placement']['align_next'],
+                          s['placement']['align_next'])
+
+
 def shared_size(reqs, share_with, total_size, dp):
     size = sizeof(reqs, share_with, total_size, dp)
     if share_with == dp or \
@@ -410,6 +449,8 @@ def verify_layout(reqs, solution, total_size, flash_start):
 
 
 def set_addresses_and_align(reqs, sub_partitions, solution, size, dp, start=0, system_reqs=None):
+    propagate_sub_partition_alignment(reqs, sub_partitions, solution)
+
     all_reqs = dict(reqs, **sub_partitions)
     if system_reqs is None:
         system_reqs = all_reqs
@@ -1761,6 +1802,34 @@ def test():
     expect_addr_size(td, 'j', 980, None)
     expect_addr_size(td, 'k', 960, 40)
 
+    # Test alignment of spans.
+    td = {
+        'a': {'placement': {'before': ['b']}, 'size': 100},
+        'b': {'placement': {'before': ['c']}, 'size': 20}, # gets end-aligned to 130 (end at 150)
+        'c': {'placement': {'before': ['d']}, 'size': 100}, # gets start-aligned to 200
+        'd': {'placement': {'before': ['e'], 'align': {'start': 200}}, 'size': 100}, # gets start-aligned to 400
+        'e': {'placement': {'before': ['app']}, 'size': 100}, # gets start-aligned to 600 because of align_next
+        's': {'span': ['b'], 'placement': {'align': {'end': 10}}},
+        't': {'span': ['a', 's'], 'placement': {'align': {'end': 25}}}, # spans a and b
+        'u': {'span': ['c'], 'placement': {'align': {'start': 20}}},
+        'v': {'span': ['u', 'd'], 'placement': {'align': {'start': 50}, 'align_next': 200}}, # spans c and d
+        'app': {}}
+    fix_syntactic_sugar(td)
+    s, sub_partitions = resolve(td, 'app')
+    set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
+    set_sub_partition_address_and_size(td, sub_partitions)
+    calculate_end_address(td)
+    expect_addr_size(td, 'a', 0, 100)
+    expect_addr_size(td, 'b', 130, 20)
+    expect_addr_size(td, 'c', 200, 100)
+    expect_addr_size(td, 'd', 400, 100)
+    expect_addr_size(td, 'e', 600, 100)
+    expect_addr_size(td, 'app', 700, 300)
+    expect_addr_size(td, 's', 130, 20)
+    expect_addr_size(td, 't', 0, 150)
+    expect_addr_size(td, 'u', 200, 100)
+    expect_addr_size(td, 'v', 200, 300)
+
     td = {'mcuboot': {'placement': {'before': ['app', 'spu']}, 'size': 200},
           'b0': {'placement': {'before': ['mcuboot', 'app']}, 'size': 100},
           'app': {}}
@@ -1991,6 +2060,25 @@ def test():
                'region5': None}
     sorted_regions = sort_regions(td, regions)
     assert list(sorted_regions.keys()) == ['region2', 'region5', 'region4', 'region3', 'region1']
+
+    # test merge_align
+    ma_test1 = ({'align': {'start': 0x100}}, {'start': 0x200})
+    ma_test2 = ({'align': {'end': 0x180}}, {'end': 0x200})
+    ma_test3_inv = ({'align': {'endd': 0x180}}, {'end': 0x200})
+    ma_test4_inv = ({'align': {'end': 0x180}}, {'endd': 0x200})
+    ma_test5_inv = ({'align': {'start': 0x100}}, {'start': 0x200, 'end': 0x200})
+
+    merge_align(*ma_test1)
+    assert ma_test1[0]['align']['start'] == 0x200
+    merge_align(*ma_test2)
+    assert ma_test2[0]['align']['end'] == 0x600
+    for t in (ma_test3_inv, ma_test4_inv, ma_test5_inv):
+        failed = False
+        try:
+            merge_align(*t)
+        except PartitionError:
+            failed = True
+        assert failed
 
     print('All tests passed!')
 

@@ -150,6 +150,8 @@ placement: dict
          If necessary, empty partitions are inserted in front of or behind the partition to ensure that the alignment is correct.
          Only one key can be specified.
          Partitions that directly or indirectly (through :ref:`spans <partition_manager_spans>`) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
+         If ``align`` is used on a container partition, it will be propagated to the first or last member partition.
+         If that partition has its own ``align``, the two will be merged using "least common multiple", unless one has ``start`` and one has ``end``, in which case partition manager will fail.
 
       align_next: int
          Ensure that the _next_ partition is aligned on this number of bytes.
@@ -157,6 +159,7 @@ placement: dict
          If the start of the next partition is already aligned, the largest alignment takes effect.
          ``align_next`` fails if the alignment of the start of the next partition is not a divisor or multiple of the ``align_next`` value.
          ``align_next`` also fails if the end of the next partition is aligned.
+         If ``align_next`` is added to a container partition, it is propagated to, and possibly merged with, the last element (as with ``align``).
 
 .. _partition_manager_spans:
 
@@ -164,7 +167,7 @@ span: list OR span: string
    This property is used to define container partitions.
    Its value may be a list or string.
 
-   Since this property is used to define container partitions, it cannot be used together with the ``placement`` property.
+   Since this property is used to define container partitions, it cannot be used together with the ``before`` or ``after`` properties.
 
    If the value is a list, its elements are the names of the partitions that should be placed in the container:
 

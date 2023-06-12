@@ -764,6 +764,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * The size of the span partitions was changed to include the alignment paritions (``EMPTY_x``) appearing between other partitions, but not alignment partitions at the beginning or end of the span partition.
     The size of the span partitions now reflects the memory space taken from the start of the first of its elements to the end of the last, not just the sum of the sizes of the included partitions.
+  * Span partitions now support alignment like other partitions (the ``align`` and ``align_next`` keywords).
 
 * :ref:`west_sbom`:
 
