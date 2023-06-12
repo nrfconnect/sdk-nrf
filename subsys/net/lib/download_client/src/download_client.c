@@ -17,6 +17,7 @@
 #else
 #include <zephyr/net/socket.h>
 #endif
+#include <zephyr/net/socket_ncs.h>
 #include <zephyr/net/tls_credentials.h>
 #include <net/download_client.h>
 #include <zephyr/logging/log.h>
@@ -387,6 +388,19 @@ static int client_connect(struct download_client *dl)
 			err = socket_tls_hostname_set(dl->fd, dl->host);
 			if (err) {
 				goto cleanup;
+			}
+		}
+
+		if (dl->proto == IPPROTO_DTLS_1_2 && IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_CID)) {
+			/* Enable connection ID */
+			uint32_t dtls_cid = TLS_DTLS_CID_ENABLED;
+
+			err = setsockopt(dl->fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
+					 sizeof(dtls_cid));
+			if (err) {
+				err = -errno;
+				LOG_ERR("Failed to enable TLS_DTLS_CID: %d", err);
+				/* Not fatal, so continue */
 			}
 		}
 	}
