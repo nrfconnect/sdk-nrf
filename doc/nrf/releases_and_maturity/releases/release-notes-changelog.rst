@@ -799,6 +799,10 @@ Libraries for networking
 
 * :ref:`lib_download_client` library:
 
+  * Added:
+
+    * Kconfig option :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_CID` that allows use of Connection Identifier on DTLS connection.
+
   * Updated:
 
     * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option's default value to ``255``.
