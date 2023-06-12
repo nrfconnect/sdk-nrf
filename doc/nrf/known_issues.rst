@@ -541,9 +541,9 @@ KRKNWK-9461 / KRKNWK-9596 : Multiprotocol sample crashes with some smartphones
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
-  A decrease of throughput of around 5-10% has been observed for the :ref:`CC310 nrf_security backend <nrfxlib:nrf_security_backends_cc3xx>` when compared with :ref:`nrf_oberon <nrf_security_backends_oberon>` or :ref:`the standard mbedtls backend <nrf_security_backends_orig_mbedtls>`.
+  A decrease of throughput of around 5-10% has been observed for the :ref:`CC310 nrf_security backend <nrf_security_backends_cc3xx>` when compared with :ref:`nrf_oberon <nrf_security_backends_oberon>` or :ref:`the standard mbedtls backend <nrf_security_backends_orig_mbedtls>`.
   CC310 nrf_security backend is used by default for nRF52840 boards.
-  The source of throughput decrease is coupled to the cost of RTOS mutex locking when using the :ref:`CC310 nrf_security backend <nrfxlib:nrf_security_backends_cc3xx>` when the APIs are called with shorter inputs.
+  The source of throughput decrease is coupled to the cost of RTOS mutex locking when using the :ref:`CC310 nrf_security backend <nrf_security_backends_cc3xx>` when the APIs are called with shorter inputs.
 
   **Affected platforms:** nRF52840
 
@@ -2670,7 +2670,7 @@ NCSDK-5546: Oberon missing symbols for HKDF
 .. rst-class:: v1-3-1 v1-3-0
 
 Limited support for Nordic Security Module
-  The :ref:`nrfxlib:nrf_security` is currently only fully supported on nRF52840 and nRF9160 devices.
+  The :ref:`nrf_security` is currently only fully supported on nRF52840 and nRF9160 devices.
   It gives compile errors on nRF52832, nRF52833, nRF52820, nRF52811, and nRF52810.
 
   **Affected platforms:** nRF52832, nRF52833, nRF52820, nRF52811, nRF52810
@@ -2680,7 +2680,7 @@ Limited support for Nordic Security Module
 .. rst-class:: v1-0-0 v0-4-0
 
 Glue layer symbol renaming issue
-  The :ref:`nrfxlib:nrf_security` glue layer is broken because symbol renaming is not handled correctly.
+  The :ref:`nrf_security` glue layer is broken because symbol renaming is not handled correctly.
   Therefore, the behavior is undefined when selecting multiple back-ends for the same algorithm (for example, AES).
 
 GNSS sockets

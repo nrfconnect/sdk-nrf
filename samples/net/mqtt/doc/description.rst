@@ -295,5 +295,5 @@ It uses the following libraries and secure firmware component for nRF9160 DK and
 
 It uses the following libraries for nRF7002 DK builds:
 
-* :ref:`nrfxlib:nrf_security`
+* :ref:`nrf_security`
 * :ref:`net_if_interface`

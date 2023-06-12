@@ -221,7 +221,7 @@ Dependencies
 
 This sample uses the following `sdk-nrfxlib`_ library:
 
-* :ref:`nrfxlib:nrf_security`
+* :ref:`nrf_security`
 
 This sample also uses modules found in the following locations in the |NCS| folder structure:
 

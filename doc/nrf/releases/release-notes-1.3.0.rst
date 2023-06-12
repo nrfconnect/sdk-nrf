@@ -342,7 +342,7 @@ Crypto
 
 * Added nRF Oberon v3.0.5 with a companion library that provides an mbed TLS frontend for groups of cryptographic algorithms (SHA, ECC, ECJPAKE, AES).
   See the :ref:`nrfxlib:crypto_changelog_oberon` for detailed information.
-* Added nRF Oberon as a backend in the :ref:`nrfxlib:nrf_security`.
+* Added nRF Oberon as a backend in the :ref:`nrf_security`.
 
 NFC
 ---
@@ -446,7 +446,7 @@ In addition to documentation related to the changes listed above, the following 
 * BSD library - added documentation about GNSS socket.
 * :ref:`nrfxlib:mpsl` - added documentation about :ref:`nrfxlib:mpsl_timeslot`, :ref:`nrfxlib:mpsl_radio_notification`, and :ref:`nrfxlib:mpsl_tx_power_control`
 * :ref:`nrfxlib:nfc` - added documentation about :ref:`nrfxlib:type_2_tag` and :ref:`nrfxlib:type_4_tag`, updated the :ref:`nrfxlib:nfc_integration_notes`
-* :ref:`nrfxlib:nrf_security` - updated
+* :ref:`nrf_security` - updated
 
 Known issues
 ************
@@ -543,7 +543,7 @@ Crypto
 
 * nRF Oberon v3.0.5 is missing symbols for HKDF using SHA1, which will be fixed in an upcoming version of the library.
   As a workaround, use a different backend (for example, vanilla mbed TLS) for HKDF/HMAC using SHA1. (NCSDK-5546)
-* The :ref:`nrfxlib:nrf_security` is currently only fully supported on nRF52840 and nRF9160 devices.
+* The :ref:`nrf_security` is currently only fully supported on nRF52840 and nRF9160 devices.
   It gives compile errors on nRF52832, nRF52833, nRF52820, nRF52811, and nRF52810.
   These errors can be fixed by cherry-picking commits in `nrfxlib PR #205 <https://github.com/nrfconnect/sdk-nrfxlib/pull/205>`_.
 
