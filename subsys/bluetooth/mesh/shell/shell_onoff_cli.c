@@ -104,7 +104,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	onoff_cmds, SHELL_CMD_ARG(get, NULL, NULL, cmd_onoff_get, 1, 0),
-	SHELL_CMD_ARG(set, NULL, "<OnOff> [TransTime(ms) [Delay(ms)]]", cmd_OnOff_set, 2, 2),
+	SHELL_CMD_ARG(set, NULL, "<OnOff> [TransTime(ms) [Delay(ms)]]", cmd_onoff_set, 2, 2),
 	SHELL_CMD_ARG(set-unack, NULL, "<OnOff> [TransTime(ms) [Delay(ms)]]",
 		      cmd_onoff_set_unack, 2, 2),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
