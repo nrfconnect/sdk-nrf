@@ -7,6 +7,12 @@
 #include <zephyr/ztest.h>
 #include <ei_run_classifier.h>
 
+static size_t prediction_idx;
+
+void ei_run_classifier_mock_init(void)
+{
+	prediction_idx = 0;
+}
 
 /* Input data must be ascending sequence of floats. Difference between
  * subsequent elements of input sequence equals 1. The first element
@@ -44,7 +50,6 @@ EI_IMPULSE_ERROR run_classifier(signal_t *signal,
 				ei_impulse_result_t *result,
 				bool debug)
 {
-	static size_t prediction_idx = 0;
 	ARG_UNUSED(debug);
 
 	/* Test getting data. */

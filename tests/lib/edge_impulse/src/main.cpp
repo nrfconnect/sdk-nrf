@@ -8,11 +8,15 @@
 #include <zephyr/kernel.h>
 #include <ei_test_params.h>
 #include <ei_wrapper.h>
+#include <ei_run_classifier_mock.h>
 
 #define EI_TEST_SEM_TIMEOUT  K_MSEC(200 + (10 * EI_MOCK_BUSY_WAIT_TIME / 1000))
 #define EI_TEST_ISR_WINDOW_SHIFT		2
 #define EI_TEST_THREAD_WINDOW_SHIFT		2
 #define EI_TEST_WINDOW_SHIFT_CB			1
+
+#define TEST_THREAD_SLEEP_MS  10
+static size_t timer_fn_calls;
 
 static atomic_t rerun_in_cb;
 
@@ -141,6 +145,13 @@ static void result_ready_cb(int err)
 
 static void *test_init(void)
 {
+	static bool init_once;
+
+	if (init_once) {
+		return NULL;
+	}
+	init_once = true;
+
 	zassert_equal(ei_wrapper_get_frame_size(), EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME,
 		     "Wrong frame size");
 	zassert_equal(ei_wrapper_get_window_size(), EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE,
@@ -369,14 +380,13 @@ ZTEST(suite0, test_data_after_start)
 
 static void test_thread_fn(void)
 {
-	static const size_t sleep_ms = 10;
 	int err;
 
 	for (size_t i = 0; i <= EI_TEST_THREAD_WINDOW_SHIFT; i++) {
 		err = add_input_data(prediction_idx, 0);
 		zassert_ok(err, "Cannot add input data");
 
-		k_sleep(K_MSEC(sleep_ms));
+		k_sleep(K_MSEC(TEST_THREAD_SLEEP_MS));
 	}
 }
 
@@ -399,19 +409,20 @@ ZTEST(suite0, test_data_thread)
 	zassert_ok(err, "Cannot start prediction");
 	err = k_sem_take(&test_sem, EI_TEST_SEM_TIMEOUT);
 	zassert_ok(err, "Cannot take semaphore");
+	err = k_thread_join(&thread, K_MSEC(TEST_THREAD_SLEEP_MS * 777));
+	zassert_ok(err, "Thread still running");
 }
 
 void timer_fn(struct k_timer *timer)
 {
-	static size_t calls = 0;
 	int err;
 
 	err = add_input_data(prediction_idx, 0);
 	zassert_ok(err, "Cannot add input data");
 
-	calls++;
+	timer_fn_calls++;
 
-	if (calls > EI_TEST_ISR_WINDOW_SHIFT) {
+	if (timer_fn_calls > EI_TEST_ISR_WINDOW_SHIFT) {
 		k_timer_stop(timer);
 	}
 }
@@ -419,6 +430,7 @@ void timer_fn(struct k_timer *timer)
 ZTEST(suite0, test_data_isr)
 {
 	static const size_t period_ms = 10;
+	timer_fn_calls = 0;
 	static K_TIMER_DEFINE(test_timer, timer_fn, NULL);
 	int err;
 
@@ -434,11 +446,16 @@ ZTEST(suite0, test_data_isr)
 static void setup_fn(void *unused)
 {
 	ARG_UNUSED(unused);
+
 	bool cancelled;
 	int err = ei_wrapper_clear_data(&cancelled);
+	prediction_idx = 0;
+	ei_run_classifier_mock_init();
 
 	zassert_false(cancelled, "Prediction was not cancelled");
 	zassert_ok(err, "Cannot clear data");
+	err = k_sem_take(&test_sem, K_MSEC(20));
+	zassert_true(err, "Unhandled prediction result");
 }
 
 ZTEST_SUITE(suite0, NULL, test_init, setup_fn, NULL, NULL);
