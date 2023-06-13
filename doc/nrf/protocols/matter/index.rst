@@ -13,8 +13,6 @@ Matter
 `Matter`_ (formerly Project Connected Home over IP or Project CHIP) is an open-source application layer that aims at creating a unified communication standard across smart home devices, mobile applications, and cloud services.
 It supports a wide range of existing technologies, including Wi-Fi, Thread, and Bluetooth® LE, and uses IPv6-based transport protocols like TCP and UDP to ensure connectivity between different kinds of networks.
 
-Matter over Thread support is in the :ref:`production state <software_maturity>`, but Matter over Wi-Fi is in an early development stage and must be treated as an :ref:`experimental feature <software_maturity>`.
-
 .. matter_intro_end
 
 The |NCS| allows you to develop applications with different versions of Matter, as per the following table:
