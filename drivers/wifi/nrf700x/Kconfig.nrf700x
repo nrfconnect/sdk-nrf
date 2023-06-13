@@ -252,4 +252,9 @@ config NRF700X_RPU_PS_IDLE_TIMEOUT_MS
 	default 10
 
 endif
+
+config WIFI_FIXED_MAC_ADDRESS
+	string "WiFi Fixed MAC address in format XX:XX:XX:XX:XX:XX"
+	help
+		This overrides the MAC address read from OTP. Strictly for testing purposes only.
 endif
