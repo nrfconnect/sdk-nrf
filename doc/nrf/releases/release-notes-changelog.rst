@@ -286,6 +286,10 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
+* Added:
+
+  * :ref:`nrf_security` library, relocated from the sdk-nrfxlib repository to the :file:`subsys/nrf_security` directory.
+
 Binary libraries
 ----------------
 
@@ -345,6 +349,11 @@ Libraries for NFC
 
 |no_changes_yet_note|
 
+Nordic Security Module
+----------------------
+
+|no_changes_yet_note|
+
 Other libraries
 ---------------
 
@@ -374,7 +383,7 @@ Libraries for Zigbee
 sdk-nrfxlib
 -----------
 
-|no_changes_yet_note|
+* Removed the relocated :ref:`nrf_security` library.
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
