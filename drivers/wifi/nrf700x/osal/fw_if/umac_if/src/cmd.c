@@ -141,7 +141,7 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	umac_cmd_data->sys_params.sleep_enable = sleep_type;
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #ifdef CONFIG_NRF700X_TCP_IP_CHECKSUM_OFFLOAD
-	umac_cmd_data->sys_params.tcp_ip_checksum_offload = 1;
+	umac_cmd_data->tcp_ip_checksum_offload = 1;
 #endif /* CONFIG_NRF700X_TCP_IP_CHECKSUM_OFFLOAD */
 
 	wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv, "RPU LPM type: %s\n",
