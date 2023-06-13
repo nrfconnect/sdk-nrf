@@ -71,17 +71,16 @@ target_sources(platform_ns
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_UART_STDOUT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_uart_stdout.c>
   )
 
-if (${TFM_PARTITION_CRYPTO} AND (NOT ${PLATFORM_DEFAULT_CRYPTO_KEYS}))
-  if (${CRYPTO_KEY_DERIVATION_MODULE_DISABLED})
-    target_sources(platform_crypto_keys
-      PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/common/dummy_crypto_keys.c
-    )
-  else ()
-    target_sources(platform_crypto_keys
-      PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
-    )
+if (${TFM_PARTITION_CRYPTO})
+  target_sources(platform_crypto_keys
+    PRIVATE
+      ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
+  )
+
+  if (${CONFIG_HW_UNIQUE_KEY})
+    target_compile_definitions(platform_s PUBLIC
+      CONFIG_HW_UNIQUE_KEY
+      $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>)
 
     target_sources(platform_s
       PRIVATE
@@ -112,8 +111,6 @@ endif()
 if (CONFIG_NRF_TRACE_PORT)
   target_compile_definitions(platform_s PUBLIC ENABLE_TRACE)
 endif()
-
-target_compile_definitions(platform_s PUBLIC CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_RANDOM)
 
 if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
   # Added here to satisfy the following requirement from tfm_crypto.yaml:

@@ -209,7 +209,22 @@ config TFM_QCBOR_PATH
 	string
 	default "$(ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR)/../qcbor"
 
+config TFM_PARTITION_PROTECTED_STORAGE
+	bool
+	select HW_UNIQUE_KEY
+	help
+	  The encryption policy relies on a secret hardware unique key (HUK) per device
+
 if TFM_PARTITION_CRYPTO
+
+config TFM_CRYPTO_BUILTIN_KEYS
+	bool
+	prompt "TF-M crypto builtin keys"
+	default y
+	depends on !TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Whether to allow crypto service to store builtin keys.
+	  Without this, ALL builtin keys must be stored in a platform-specific location
 
 config TFM_CRYPTO_ENGINE_BUF_SIZE
 	int

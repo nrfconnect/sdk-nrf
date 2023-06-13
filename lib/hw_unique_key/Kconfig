@@ -7,6 +7,7 @@
 config HW_UNIQUE_KEY_SRC
 	bool
 	default y if HW_UNIQUE_KEY || HW_UNIQUE_KEY_LOAD
+	depends on !ARM_NONSECURE_FIRMWARE
 	help
 	  This is true whenever hw_unique_key source files are included in the
 	  build.
@@ -30,12 +31,13 @@ config HW_UNIQUE_KEY_LOAD
 config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"
 	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
-	depends on NRF_CC3XX_PLATFORM
+	depends on NRF_CC3XX_PLATFORM || BUILD_WITH_TFM
 	depends on NRF_SECURITY
-	depends on !ARM_NONSECURE_FIRMWARE
-	depends on MPU_ALLOW_FLASH_WRITE
+	depends on MPU_ALLOW_FLASH_WRITE || BUILD_WITH_TFM
+	depends on !BUILD_WITH_TFM || TFM_CRYPTO_BUILTIN_KEYS
 	select FPROTECT if HAS_HW_NRF_ACL
 	imply NRFX_NVMC if HAS_HW_NRF_ACL
+	default y if BUILD_WITH_TFM
 	help
 	  This option will load the Hardware Unique Key (HUK) in the KDR
 	  registers of the CryptoCell peripheral and sets the LCS. It will also
@@ -46,7 +48,8 @@ if HW_UNIQUE_KEY
 
 config HW_UNIQUE_KEY_RANDOM
 	bool "Enable writing random HW Unique Keys"
-	depends on MAIN_STACK_SIZE >= 2048
+	depends on MAIN_STACK_SIZE >= 2048 || BUILD_WITH_TFM
+	default y if BUILD_WITH_TFM
 	help
 	  Enable the hw_unique_key_write_random() function which utilizes the
 	  NRF_CC3XX_PLATFORM to get random numbers.
