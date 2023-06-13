@@ -234,7 +234,7 @@ config MBEDTLS_SSL_CONTEXT_SERIALIZATION
 	prompt "Enable serialization of TLS conftext structures"
 	default y
 	help
-	  This setting enables serialization of TLS structures, throught use of
+	  This setting enables serialization of TLS structures, through use of
 	  the mbedtls_ssl_context_save() and mbedtls_ssl_context_load().
 	  Corresponds to MBEDTLS_SSL_CONTEXT_SERIALIZATION in mbed TLS config file.
 

@@ -49,7 +49,7 @@ else()
   endif()
 endif()
 
-# Add the zephyr-specific sources neccessary for nrf_security
+# Add the zephyr-specific sources necessary for nrf_security
 # This library contains files that require knowledge of zephyr
 if(DEFINED src_zephyr)
   zephyr_library_named(mbedtls_zephyr)

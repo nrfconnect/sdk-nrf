@@ -12,7 +12,7 @@ This mechanism is intended to extend the available feature set of hardware-accel
 
 You can enable a cryptographic feature or algorithm using PSA Crypto API configurations that follow the format ``PSA_WANT_ALG_XXXX``.
 
-Enabling more than one PSA driver might add support for additional key sizes or modes of operation. 
+Enabling more than one PSA driver might add support for additional key sizes or modes of operation.
 
 It is possible to disable specific features on the PSA driver level to optimize the code size.
 
@@ -23,7 +23,7 @@ The nrf_security module supports the following PSA drivers:
 
 .. note::
    Whenever this documentation mentions 'original' Mbed TLS, it refers to the open-source `Arm Mbed TLS project`_, not the customized version available in Zephyr.
-   There is an option to utilize a 'built-in' driver, which corresponds to the software-implemented cryptography from the 'original' Mbed TLS deliverables. 
+   There is an option to utilize a 'built-in' driver, which corresponds to the software-implemented cryptography from the 'original' Mbed TLS deliverables.
    This is provided to ensure that the cryptographic toolbox supports all requested features.
 
 .. _nrf_security_drivers_cc3xx:

@@ -15,7 +15,7 @@ This section covers the configurations available when using :ref:`legacy_crypto_
 Configuring backends
 ********************
 
-The legacy configuration does not allow multiple backends being enabled at the same time. 
+The legacy configuration does not allow multiple backends being enabled at the same time.
 
 The choice of implementation is controlled by setting :kconfig:option:`CONFIG_CC3XX_BACKEND` for devices with the CryptoCell hardware peripheral, or :kconfig:option:`CONFIG_OBERON_BACKEND`.
 
