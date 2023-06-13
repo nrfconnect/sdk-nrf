@@ -956,7 +956,7 @@ Documentation
   * The :ref:`ug_nrf9160` guide, relevant application and sample documentation with a section about :ref:`external flash <nrf9160_external_flash>`.
   * The :ref:`nrf_modem_lib_readme` library documentation with a section about :ref:`modem trace flash backend <modem_trace_flash_backend>`.
   * The :ref:`mod_memfault` library documentation has been moved from :ref:`lib_others` to :ref:`lib_debug`.
-  * The :ref:`mqtt_sample` sample documentation has been moved from :ref:`nrf9160_samples` to :ref:`networking_samples`.
+  * The :ref:`mqtt_sample` sample documentation has been moved from nRF9160 samples to :ref:`networking_samples`.
   * The :ref:`ug_thingy53` guide by adding a section on :ref:`building Wi-Fi applications <thingy53_build_pgm_targets_wifi>`.
   * The :ref:`ug_bt_mesh_configuring` page with additional configuration options used to configure the behavior and performance of a Bluetooth mesh network.
 

@@ -1,0 +1,9 @@
+sample:
+  name: TLS Ciphersuites sample
+tests:
+  sample.cellular.ciphersuites:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    tags: ci_build

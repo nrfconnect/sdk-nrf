@@ -51,7 +51,7 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
 
       .. code-block:: console
 
-         cd nrf/samples/nrf9160/at_client
+         cd nrf/samples/cellular/at_client
 
 #.    Build the application using the west command.
       The build target is specified by the parameter *build_target* in the west command as follows:

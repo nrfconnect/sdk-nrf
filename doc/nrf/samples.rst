@@ -25,6 +25,7 @@ General information about samples in the |NCS|
    :caption: Subpages:
 
    samples/bl
+   samples/cellular
    samples/crypto
    samples/debug
    samples/edge
@@ -34,7 +35,6 @@ General information about samples in the |NCS|
    samples/net
    samples/nfc
    samples/nrf5340
-   samples/nrf9160
    samples/pmic
    samples/tfm
    samples/thread

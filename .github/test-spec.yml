@@ -57,7 +57,7 @@
       - "subsys/nrf_security/**/*"
       - "!subsys/nrf_security/doc/**/*"
       - "!subsys/nrf_security/*.rst"
-  - "samples/nrf9160/lwm2m_client/**/*"
+  - "samples/cellular/lwm2m_client/**/*"
 
 "CI-audio-test":
   - "applications/nrf5340_audio/**/*"
@@ -92,18 +92,17 @@
   - "lib/nrf_modem_lib/**/*"
   - "lib/pdn/**/*"
   - "lib/sms/**/*"
-  - "samples/nrf9160/at_client/**/*"
-  - "samples/nrf9160/at_monitor/**/*"
-  - "samples/nrf9160/ciphersuites/**/*"
-  - "samples/nrf9160/coap_client/**/*"
-  - "samples/nrf9160/download/**/*"
-  - "samples/nrf9160/fmfu_smp_svr/**/*"
-  - "samples/nrf9160/http_update/**/*"
-  - "samples/nrf9160/https_client/**/*"
-  - "samples/nrf9160/modem_*/**/*"
-  - "samples/nrf9160/pdn/**/*"
-  - "samples/nrf9160/sms/**/*"
-  - "samples/nrf9160/udp/**/*"
+  - "samples/cellular/at_client/**/*"
+  - "samples/cellular/at_monitor/**/*"
+  - "samples/cellular/ciphersuites/**/*"
+  - "samples/cellular/coap_client/**/*"
+  - "samples/cellular/download/**/*"
+  - "samples/cellular/http_update/**/*"
+  - "samples/cellular/https_client/**/*"
+  - "samples/cellular/modem_*/**/*"
+  - "samples/cellular/mqtt_simple/**/*"
+  - "samples/cellular/pdn/**/*"
+  - "samples/cellular/sms/**/*"
   - "subsys/net/lib/download_client/**/*"
 
 "CI-lwm2m-test":
@@ -112,7 +111,7 @@
   - "lib/bin/**/*"
   - "lib/lte_link_control/**/*"
   - "lib/nrf_modem_lib/**/*"
-  - "samples/nrf9160/lwm2m_carrier/**/*"
+  - "samples/cellular/lwm2m_carrier/**/*"
 
 "CI-boot-dfu-test":
   - "include/bl*"
@@ -124,9 +123,9 @@
   - "cmake/*"
   - "lib/lte_link_control/**/*"
   - "modules/mcuboot/**/*"
-  - "samples/nrf9160/*fota/**/*"
-  - "samples/nrf9160/fmfu_smp_svr/**/*"
-  - "samples/nrf9160/http_update/**/*"
+  - "samples/cellular/*fota/**/*"
+  - "samples/cellular/fmfu_smp_svr/**/*"
+  - "samples/cellular/http_update/**/*"
   - "samples/nrf5340/netboot/*"
   - "samples/bootloader/**/*"
   - "scripts/bootloader/**/*"
@@ -213,9 +212,9 @@
   - "lib/date_time/**/*"
   - "drivers/sensor/sensor_sim/**/*"
   - "applications/asset_tracker_v2/**/*"
-  - "samples/nrf9160/udp/**/*"
-  - "samples/nrf9160/aws_iot/**/*"
-  - "samples/nrf9160/azure_iot_hub/**/*"
+  - "samples/cellular/udp/**/*"
+  - "samples/cellular/aws_iot/**/*"
+  - "samples/cellular/azure_iot_hub/**/*"
 
 "CI-apps-test":
   - "applications/machine_learning/**/*"
@@ -423,7 +422,7 @@
   - "lib/pdn/**/*"
   - "lib/sms/**/*"
   - "lib/supl/**/*"
-  - "samples/nrf9160/modem_shell/**/*"
+  - "samples/cellular/modem_shell/**/*"
   - "subsys/net/lib/download_client/**/*"
   - "subsys/net/lib/fota_download/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
@@ -457,8 +456,8 @@
   - "lib/modem_jwt/**/*"
   - "lib/modem_key_mgmt/**/*"
   - "lib/supl/**/*"
-  - "samples/nrf9160/gnss/**/*"
-  - "samples/nrf9160/location/**/*"
+  - "samples/cellular/gnss/**/*"
+  - "samples/cellular/location/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
   - "subsys/net/lib/rest_client/**/*"
 
@@ -473,7 +472,7 @@
 
 "CI-cloud-test":
   - "include/net/nrf_cloud*"
-  - "samples/nrf9160/nrf_cloud_*/**/*"
+  - "samples/cellular/nrf_cloud_*/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
   - any:
       - "subsys/nrf_security/**/*"

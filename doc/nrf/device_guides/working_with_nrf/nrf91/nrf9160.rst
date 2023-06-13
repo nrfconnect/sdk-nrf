@@ -406,4 +406,4 @@ It is also possible to change the size of the partition with :kconfig:option:`CO
 Available drivers, libraries, and samples
 *****************************************
 
-See the :ref:`drivers`, :ref:`libraries`, and :ref:`nRF9160 samples <nrf9160_samples>` sections and the respective repository folders for up-to-date information.
+See the :ref:`drivers`, :ref:`libraries`, and :ref:`samples <cellular_samples>` sections and the respective repository folders for up-to-date information.

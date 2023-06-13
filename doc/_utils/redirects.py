@@ -179,7 +179,7 @@ NRF = [
     ("samples/samples_matter","samples/matter"),
     ("samples/samples_nfc","samples/nfc"),
     ("samples/samples_nrf5340","samples/nrf5340"),
-    ("samples/samples_nrf9160","samples/nrf9160"),
+    ("samples/samples_nrf9160","samples/cellular"),
     ("samples/samples_other","samples/other"),
     ("samples/samples_tfm","samples/tfm"),
     ("samples/samples_thread","samples/thread"),

@@ -14,7 +14,7 @@ Template: Library
 
    * Give the library a concise name that also corresponds to the folder name.
 
-     If the library targets a specific protocol or device, add it in the title before the library name (for example, "NFC:" or "nRF9160:").
+     If the library targets a specific protocol or device, add it in the title before the library name (for example, "NFC:").
      Do not include the word "library" in the title.
      Use the provided stock phrases and includes when possible.
 

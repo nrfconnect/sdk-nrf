@@ -80,7 +80,7 @@ There are three ways to define this storage location:
   This partition can optionally be located in external flash for the nRF9160 development kit version 0.14.0 and later.
   This conserves space in the main flash for storing code or other data.
 
-  To use an external flash partition, enable the following options in your project's configuration file or place them in a configuration overlay file (for example :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service/overlay_pgps_ext_flash.conf`):
+  To use an external flash partition, enable the following options in your project's configuration file or place them in a configuration overlay file (for example :file:`samples/cellular/nrf_cloud_mqtt_multi_service/overlay_pgps_ext_flash.conf`):
 
   * :kconfig:option:`CONFIG_SPI`
   * :kconfig:option:`CONFIG_SPI_NOR`
@@ -123,7 +123,7 @@ There are three ways to define this storage location:
      };
 
   This is typically placed in a file within your application's source folder in a :file:`boards` subfolder.
-  See an example provided in the file :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service/boards/nrf9160dk_nrf9160_ns_0_14_0.overlay`.
+  See an example provided in the file :file:`samples/cellular/nrf_cloud_mqtt_multi_service/boards/nrf9160dk_nrf9160_ns_0_14_0.overlay`.
 
 * To use the MCUboot secondary partition as storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY` option.
 

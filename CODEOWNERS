@@ -153,17 +153,17 @@ Kconfig*                                  @tejlmand
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
 /samples/nrf5340/empty_app_core/          @doki-nordic
-/samples/nrf9160/                         @rlubos @lemrey
-/samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
-/samples/nrf9160/battery/                 @MirkoCovizzi
-/samples/nrf9160/location/                @trantanen @jhirsi @tokangas
-/samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
-/samples/nrf9160/modem_shell/             @trantanen @jhirsi @tokangas
-/samples/nrf9160/nidd/                    @stig-bjorlykke
-/samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
-/samples/nrf9160/nrf_provisioning/        @SeppoTakalo @juhaylinen
-/samples/nrf9160/modem_trace_flash/       @gregersrygg @balaji-nordic
-/samples/nrf9160/sms/                     @trantanen @tokangas
+/samples/cellular/                         @rlubos @lemrey
+/samples/cellular/azure_*                  @jtguggedal @simensrostad @coderbyheart
+/samples/cellular/battery/                 @MirkoCovizzi
+/samples/cellular/location/                @trantanen @jhirsi @tokangas
+/samples/cellular/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
+/samples/cellular/modem_shell/             @trantanen @jhirsi @tokangas
+/samples/cellular/nidd/                    @stig-bjorlykke
+/samples/cellular/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
+/samples/cellular/nrf_provisioning/        @SeppoTakalo @juhaylinen
+/samples/cellular/modem_trace_flash/       @gregersrygg @balaji-nordic
+/samples/cellular/sms/                     @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb

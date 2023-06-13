@@ -564,7 +564,7 @@ In addition to documentation related to the changes listed above, the following 
       * Removed the weather station sample page for Matter.
         The sample has been upgraded to application.
 
-    * :ref:`nrf9160_samples`:
+    * nRF9160 samples:
 
       * :ref:`http_full_modem_update_sample` - Updated with the description of its customization options for firmware files.
 
