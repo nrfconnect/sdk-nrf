@@ -13,3 +13,23 @@
   platforms:
     - all
   comment: "Temporary disable till the issue is fixed"
+
+- scenarios:
+    - fast_pair.storage.account_key_storage.*
+    - fast_pair.storage.factory_reset.*
+  platforms:
+    - all
+  comment: "Excluded due to the old Ztest API  - issue: NCSDK-21698"
+
+- scenarios:
+    - nrf_profiler.core
+  platforms:
+    - all
+  comment: "Excluded due to the old Ztest API  - issue: NCSDK-21696"
+
+- scenarios:
+    - zigbee.osif.*
+    - zigbee.zboss_api.*
+  platforms:
+    - all
+  comment: "Excluded due to the old Ztest API  - issue: KRKNWK-16665"
