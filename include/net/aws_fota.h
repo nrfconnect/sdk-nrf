@@ -12,6 +12,7 @@
 #define AWS_FOTA_H__
 
 #include <dfu/dfu_target.h>
+#include <zephyr/net/mqtt.h>
 
 /**
  * @defgroup aws_fota AWS FOTA library
@@ -63,16 +64,15 @@ typedef void (*aws_fota_callback_t)(struct aws_fota_event *fota_evt);
 
 /**@brief Initialize the AWS Firmware Over the Air library.
  *
- * @param client       Pointer to an initialized MQTT instance.
  * @param evt_handler  Callback function for events emitted by the aws_fota
  *                     library.
  *
  * @retval 0       If successfully initialized.
- * @retval -EINVAL If any of the input values are invalid.
+ * @retval -EINVAL If the passed in event handler is NULL.
+ * @retval -EPERM  If the library has already been initialized.
  * @return         Negative value on error.
  */
-int aws_fota_init(struct mqtt_client *const client,
-		  aws_fota_callback_t evt_handler);
+int aws_fota_init(aws_fota_callback_t evt_handler);
 
 /**@brief AWS Firmware over the air mqtt event handler.
  *
@@ -83,8 +83,7 @@ int aws_fota_init(struct mqtt_client *const client,
  * @retval 1 If successful but wants the application to handle the event.
  * @return   A negative value on error.
  */
-int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
-			      const struct mqtt_evt *evt);
+int aws_fota_mqtt_evt_handler(struct mqtt_client *const client, const struct mqtt_evt *evt);
 
 /**@brief Get the null-terminated job id string.
  *

@@ -1,0 +1,6 @@
+tests:
+  net.lib.aws_iot:
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: aws_iot

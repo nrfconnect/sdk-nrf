@@ -11,102 +11,25 @@ orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
 menuconfig $(module)
 	bool
 	prompt "AWS IoT library" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
-	select MQTT_LIB
+	select MQTT_HELPER
 	select MQTT_LIB_TLS
 
 if AWS_IOT
 
-config AWS_IOT_SEND_TIMEOUT
-	bool "Send data with socket timeout"
-	default y
-	help
-	  Configures a timeout on the AWS IoT socket to ensure that a call to the send function will
-	  not block indefinitely. To configure the length of the timeout,
-	  use AWS_IOT_SEND_TIMEOUT_SEC.
-
-if AWS_IOT_SEND_TIMEOUT
-
-config AWS_IOT_SEND_TIMEOUT_SEC
-	int "Send timeout"
-	default 60
-	help
-	  Timeout in seconds to use when the AWS IoT socket is configured to
-	  send with a timeout by enabling AWS_IOT_SEND_TIMEOUT.
-
-endif
-
-config AWS_IOT_STATIC_IPV4
-	bool "Enable use of static IPv4"
-
-config AWS_IOT_STATIC_IPV4_ADDR
-	string "Static IPv4 address"
-	depends on AWS_IOT_STATIC_IPV4
-
-config AWS_IOT_SEC_TAG
-	int "Security tag to use for AWS IoT connection"
-
-config AWS_IOT_BROKER_HOST_NAME_APP
-	bool "AWS IoT sever hostname provided by application run-time"
-
 config AWS_IOT_BROKER_HOST_NAME
 	string "AWS IoT server hostname"
-	depends on !AWS_IOT_BROKER_HOST_NAME_APP
-
-config AWS_IOT_PORT
-	int "AWS server port"
-	default 8883
-
-config AWS_IOT_MQTT_RX_TX_BUFFER_LEN
-	int "Buffer sizes for the MQTT library"
-	default 1000
-	help
-	  Specifies maximum message size can be transmitted/received through
-	  MQTT (exluding MQTT PUBLISH payload).
-
-config AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN
-	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)"
-	default 2304
-
-config AWS_IOT_IPV6
-	bool "Configure AWS IoT library to use IPv6 addressing. Otherwise IPv4 is used"
-
-config AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT
-	int "Amount of entries in the application subscription list"
-	default 0
-
-config AWS_IOT_BROKER_HOST_NAME_MAX_LEN
-	int "Maximum length of broker host name"
-	default 64
-
-config AWS_IOT_CLIENT_ID_MAX_LEN
-	int "Maximum length of cliend id"
-	default 30
-
-config AWS_IOT_PROVISION_CERTIFICATES
-	bool "Run-time provisioning of certificates"
-	default y if BOARD_QEMU_X86
-	imply MBEDTLS_PEM_CERTIFICATE_FORMAT if MBEDTLS
-	help
-	  Enable run-time provisioning of certificates from the
-	  certificates header file selected by using AWS_IOT_CERTIFICATES_FILE
-	  This option is only available for QEMU x86 build targets.
-
-config AWS_IOT_CERTIFICATES_FILE
-	string "AWS IoT certificates"
-	depends on AWS_IOT_PROVISION_CERTIFICATES
-	default "../include/aws-certs.h"
-	help
-	  The default path for a header file that contains definitions for certificates that are
-	  used during run-time provisioning of TLS credentials.
-	  By default, the library expects the credentials to be in
-	  Privacy Enhanced Mail (PEM) format. See "aws-certs.h" for a template.
 
 config AWS_IOT_CLIENT_ID_STATIC
 	string "Static client id"
 	default "my-thing"
 
-config AWS_IOT_CLIENT_ID_APP
-	bool "Client ID provided by application run-time"
+config AWS_IOT_CLIENT_ID_MAX_LEN
+	int "Maximum length of client id"
+	default 40
+
+config AWS_IOT_CONNECT_TIMEOUT_SECONDS
+	int "Connect timeout in seconds"
+	default 30
 
 config AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST
 	bool "Request the device shadow automatically upon a connection to AWS"
@@ -133,42 +56,9 @@ config AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE
 config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
 	bool "Subscribe to delete rejected shadow topic, $aws/things/<thing-name>/shadow/delete/rejected"
 
-config AWS_IOT_LAST_WILL
-	bool "This option includes the last will message and topic in the initial MQTT handshake"
-	help
-	  If this option is set a configurable last will topic and message is
-	  provided by the device in the MQTT CONNECT message. Upon a disconnect
-	  from the AWS IoT broker the broker will publish the last will message
-	  to the last will topic.
-
-if AWS_IOT_LAST_WILL
-
-config AWS_IOT_LAST_WILL_MESSAGE
-	string "Message published to the last will topic"
-	default "{\"lastwill\": \"offline\"}"
-
-config AWS_IOT_LAST_WILL_TOPIC
-	string "Topic that the last will message is published to"
-	default "lastwilltopic"
-
-endif
-
-config AWS_IOT_CONNECTION_POLL_THREAD
-	bool "Enable polling on MQTT socket in AWS IoT backend"
-	default y
-
-if AWS_IOT_CONNECTION_POLL_THREAD
-
-config AWS_IOT_POLL_THREAD_STACK_SIZE
-	int "stack size of the AWS IoT poll thread"
-	default 4096 if BOARD_QEMU_X86 || BOARD_NRF7002DK_NRF5340_CPUAPP
-	default 3072
-
-endif
-
-module=AWS_IOT
-module-dep=LOG
-module-str=AWS IoT
+module = AWS_IOT
+module-dep = LOG
+module-str = AWS IoT
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # AWS_IOT

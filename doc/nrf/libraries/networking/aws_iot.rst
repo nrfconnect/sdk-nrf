@@ -83,7 +83,7 @@ There are multiple ways to generate and register these certificates:
          where ``<serial port>`` is the serial port of your device.
 
       #. Select a security tag that is not yet in use.
-         This security tag must match the value set in the :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG` Kconfig option.
+         This security tag must match the value set in the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option.
 
       #. Generate a key pair and obtain a CSR using the following command:
 
@@ -149,7 +149,7 @@ There are multiple ways to generate and register these certificates:
          where ``<serial port>`` corresponds to the serial port of your device.
 
       #. Select a security tag that is not yet in use.
-         This security tag must match the value set in :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG` Kconfig option.
+         This security tag must match the value set in :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option.
 
       #. Provision the client certificate using the following command:
 
@@ -189,8 +189,8 @@ There are multiple ways to generate and register these certificates:
       #. Take note of the certificate ARN, as it will be required later.
       #. Download the `Amazon Root CA 1`_ PEM file as :file:`ca-cert.pem`.
       #. Provision the certificates and private key at runtime to the Mbed TLS stack.
-         This is achieved by placing the PEM files into a :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_AWS_IOT_PROVISION_CERTIFICATES` Kconfig option is enabled.
-         For more information, refer to the :ref:`aws_iot` sample as well as the :kconfig:option:`CONFIG_AWS_IOT_CERTIFICATES_FILE` Kconfig option.
+         This is achieved by placing the PEM files into a :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
+         For more information, refer to the :ref:`aws_iot` sample as well as the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FILE` Kconfig option.
 
 .. rst-class:: numbered-step
 
@@ -280,7 +280,7 @@ Complete the following steps to set the required library options:
    For information on how to set this value at runtime, refer to :ref:`lib_set_aws_hostname`.
 #. Set the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` Kconfig option to the name of the *Thing* created earlier.
    For information on how to set this value at runtime, refer to :ref:`lib_set_client_id`.
-#. Set the :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag for which the key and certificate were provisioned earlier.
+#. Set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` to the security tag for which the key and certificate were provisioned earlier.
 
 Optional library options
 ------------------------
@@ -297,20 +297,29 @@ To subscribe to the various `AWS IoT Device Shadow Topics`_ , set the following 
 
 Other options:
 
-* :kconfig:option:`CONFIG_AWS_IOT_LAST_WILL`
-* :kconfig:option:`CONFIG_AWS_IOT_LAST_WILL_TOPIC`
-* :kconfig:option:`CONFIG_AWS_IOT_LAST_WILL_MESSAGE`
-* :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN`
-* :kconfig:option:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN`
-* :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP`
+* :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN`
-* :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN`
-* :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_APP`
+* :kconfig:option:`CONFIG_AWS_IOT_CONNECT_TIMEOUT_SECONDS`
+* :kconfig:option:`CONFIG_AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST`
 
+MQTT helper library specific options:
+
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEND_TIMEOUT`
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEND_TIMEOUT_SEC`
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`
+* :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG`
+* :kconfig:option:`CONFIG_MQTT_HELPER_PORT`
+* :kconfig:option:`CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE`
+* :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN`
+* :kconfig:option:`CONFIG_MQTT_HELPER_STACK_SIZE`
+* :kconfig:option:`CONFIG_MQTT_HELPER_NATIVE_TLS`
+* :kconfig:option:`CONFIG_MQTT_HELPER_LAST_WILL`
+* :kconfig:option:`CONFIG_MQTT_HELPER_LAST_WILL_TOPIC`
+* :kconfig:option:`CONFIG_MQTT_HELPER_LAST_WILL_MESSAGE`
 
 .. note::
-   If you are using a longer device ID that is either set by the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
+   If you are using a longer client ID that is either set by the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during connect, it might be required to increase the value of the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` to reserve enough space for the client ID string.
 
 .. _aws_iot_usage:
 
@@ -326,8 +335,8 @@ Initializing the library
 The library is initialized by calling the :c:func:`aws_iot_init` function.
 If this API call fails, the application must not make any other API calls to the library.
 
-Connecting to the AWS IoT message broker
-========================================
+Connecting to the AWS IoT MQTT broker
+=====================================
 
 After the initialization, the :c:func:`aws_iot_connect` function must be called to connect to the AWS IoT broker.
 If this API call fails, the application must retry the connection by calling :c:func:`aws_iot_connect` again.
@@ -337,15 +346,12 @@ If this API call fails, the application must retry the connection by calling :c:
    Due to this its recommended to implement a routine that tries to reconnect the device upon a disconnect.
 
 During an attempt to connect to the AWS IoT broker, the library tries to establish a connection using a TLS handshake, which usually spans a few seconds.
-When the library has established a connection and subscribed to all the configured and passed-in topics, it will propagate the :c:enumerator:`AWS_IOT_EVT_READY` event to signify that the library is ready to be used.
+When the library has established a connection and subscribed to all the configured and passed-in topics, it will propagate the :c:enumerator:`AWS_IOT_EVT_CONNECTED` event to signify that the library is connected and ready to be used.
 
 Subscribing to non-AWS specific topics
 ======================================
 
-To subscribe to non-AWS specific topics, complete the following steps:
-
-* Specify the number of additional topics that needs to be subscribed to, by setting the :kconfig:option:`CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT` option.
-* Pass a list containing application specific topics in the :c:func:`aws_iot_subscription_topics_add` function, after the :c:func:`aws_iot_init` function call and before the :c:func:`aws_iot_connect` function call.
+To subscribe to non-AWS specific topics, pass a list containing the topics using the :c:func:`aws_iot_application_topics_set` function before calling the :c:func:`aws_iot_connect` function.
 
 The following code example shows how to subscribe to non-AWS specific topics:
 
@@ -354,22 +360,23 @@ The following code example shows how to subscribe to non-AWS specific topics:
 	#define CUSTOM_TOPIC_1	"my-custom-topic/example"
 	#define CUSTOM_TOPIC_2	"my-custom-topic/example2"
 
-	const struct aws_iot_topic_data topics_list[2] = {
-		[0].str = CUSTOM_TOPIC_1,
-		[0].len = strlen(CUSTOM_TOPIC_1),
-		[1].str = CUSTOM_TOPIC_2,
-		[1].len = strlen(CUSTOM_TOPIC_2)
+	static const struct mqtt_topic topic_list[] = {
+		{
+			.topic.utf8 = MY_CUSTOM_TOPIC_1,
+			.topic.size = strlen(MY_CUSTOM_TOPIC_1),
+			.qos = MQTT_QOS_1_AT_LEAST_ONCE,
+		},
+		{
+			.topic.utf8 = MY_CUSTOM_TOPIC_2,
+			.topic.size = strlen(MY_CUSTOM_TOPIC_2),
+			.qos = MQTT_QOS_1_AT_LEAST_ONCE,
+		}
 	};
 
-	err = aws_iot_subscription_topics_add(topics_list, ARRAY_SIZE(topics_list));
+	err = aws_iot_application_topics_set(topic_list, ARRAY_SIZE(topic_list));
 	if (err) {
-		LOG_ERR("aws_iot_subscription_topics_add, error: %d", err);
-		return err;
-	}
-
-	err = aws_iot_init(NULL, aws_iot_event_handler);
-	if (err) {
-		LOG_ERR("AWS IoT library could not be initialized, error: %d", err);
+		LOG_ERR("aws_iot_application_topics_set, error: %d", err);
+		FATAL_ERROR();
 		return err;
 	}
 
@@ -424,17 +431,18 @@ The following code example shows how to publish to non-AWS specific topics:
 Setting client ID at run-time
 =============================
 
-The AWS IoT library also supports passing in the client ID at run time.
-To enable this feature, set the ``client_id`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_init` function when initializing the library, and set the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP` Kconfig option.
+The library supports passing in the client ID at runtime.
+To use this feature, set the ``client_id`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_connect` function when connecting.
+The ``client_id`` entry must be a null-terminated string.
 
 .. _lib_set_aws_hostname:
 
 Setting the AWS host name at runtime
 ====================================
 
-The AWS IoT library also supports passing the endpoint address at runtime by setting the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_APP` option.
-If this option is set, the ``host_name`` and ``host_name_len`` must be set in the :c:struct:`aws_iot_config` structure before it is passed into the :c:func:`aws_iot_init` function.
-The length of your AWS host name (:kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`) must be shorter than the default value of :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN`, for proper initialization of the library.
+The library supports passing in the endpoint URL at runtime.
+To use this feature, set the ``host_name`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_connect` function when connecting.
+The ``client_id`` entry must be a null-terminated string.
 
 .. _aws_iot_testing_and_debugging:
 
@@ -459,7 +467,7 @@ For issues related to the library and |NCS| in general, refer to :ref:`known_iss
 * If you are experiencing unexpected disconnects from AWS IoT, try decreasing the value of the :kconfig:option:`CONFIG_MQTT_KEEPALIVE` option or publishing data more frequently.
   AWS IoT specifies a maximum allowed keepalive of 1200 seconds (20 minutes), however in certain LTE networks, the Network Address Translation (NAT) timeout can be considerably lower.
   As a recommendation to prevent the likelihood of unexpected disconnects, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the highest value of the network NAT and maximum allowed MQTT keepalive.
-* If publishing larger payloads fails, you might need to increase the value of the :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` option.
+* If publishing larger payloads fails, you might need to increase the value of the :kconfig:option:`CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE` option.
 * For nRF9160-based boards, the size of incoming messages cannot exceed approximately 2 kB.
   This is due to a limitation of the modem's internal TLS buffers.
   Messages that exceed this limitation will be dropped.
@@ -467,7 +475,8 @@ For issues related to the library and |NCS| in general, refer to :ref:`known_iss
 AWS FOTA
 ========
 
-The library automatically includes and enables support for FOTA using the :ref:`lib_aws_fota` library.
+The library supports FOTA using the :ref:`lib_aws_fota` library.
+This library can be enabled by setting the :kconfig:option:`CONFIG_AWS_FOTA` Kconfig option.
 To create a FOTA job, refer to the :ref:`lib_aws_fota` documentation.
 
 API documentation

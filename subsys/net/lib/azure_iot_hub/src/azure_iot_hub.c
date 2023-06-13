@@ -457,8 +457,10 @@ AZ_HUB_STATIC void on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_b
 	azure_iot_hub_notify_event(&evt);
 }
 
-AZ_HUB_STATIC void on_connack(enum mqtt_conn_return_code return_code)
+AZ_HUB_STATIC void on_connack(enum mqtt_conn_return_code return_code, bool session_present)
 {
+	ARG_UNUSED(session_present);
+
 	int err;
 	struct azure_iot_hub_evt evt = {
 		.type = AZURE_IOT_HUB_EVT_CONNECTED,

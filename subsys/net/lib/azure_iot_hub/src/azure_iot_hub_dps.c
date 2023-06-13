@@ -717,8 +717,10 @@ AZ_DPS_STATIC void on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_b
 	handle_reg_update(topic_span, payload_span);
 }
 
-static void on_connack(enum mqtt_conn_return_code return_code)
+static void on_connack(enum mqtt_conn_return_code return_code, bool session_present)
 {
+	ARG_UNUSED(session_present);
+
 	int err;
 
 	if (return_code != MQTT_CONNECTION_ACCEPTED) {

@@ -67,7 +67,7 @@ static struct s_object {
  * The functions are called whenever specific MQTT packets are received from the broker, or
  * some library state has changed.
  */
-static void on_mqtt_connack(enum mqtt_conn_return_code return_code)
+static void on_mqtt_connack(enum mqtt_conn_return_code return_code, bool session_present)
 {
 	ARG_UNUSED(return_code);
 

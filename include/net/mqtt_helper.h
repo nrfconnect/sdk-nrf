@@ -45,8 +45,22 @@ struct mqtt_helper_buf {
 	size_t size;
 };
 
-typedef void (*mqtt_helper_handler_t)(struct mqtt_evt *evt);
-typedef void (*mqtt_helper_on_connack_t)(enum mqtt_conn_return_code return_code);
+/** @brief Handler invoked for events that are received from the MQTT stack.
+ *	   This callback handler can be used to filter incoming MQTT events before they are
+ *	   processed by the MQTT helper library.
+ *
+ *  @param client Pointer to the MQTT client instance.
+ *  @param event Pointer to the MQTT event.
+ *
+ *  @retval 0 if the event is handled by the caller. No further processing of the MQTT event will
+ *	      be carried out by the MQTT helper library.
+ *  @retval 1 if the MQTT helper library should continue to process the event after
+ *	      the handler returns.
+ */
+typedef bool (*mqtt_helper_on_all_events_t)(struct mqtt_client *const client,
+					    const struct mqtt_evt *const event);
+typedef void (*mqtt_helper_on_connack_t)(enum mqtt_conn_return_code return_code,
+					 bool session_present);
 typedef void (*mqtt_helper_on_disconnect_t)(int result);
 typedef void (*mqtt_helper_on_publish_t)(struct mqtt_helper_buf topic_buf,
 					 struct mqtt_helper_buf payload_buf);
@@ -57,6 +71,7 @@ typedef void (*mqtt_helper_on_error_t)(enum mqtt_helper_error error);
 
 struct mqtt_helper_cfg {
 	struct {
+		mqtt_helper_on_all_events_t on_all_events;
 		mqtt_helper_on_connack_t on_connack;
 		mqtt_helper_on_disconnect_t on_disconnect;
 		mqtt_helper_on_publish_t on_publish;

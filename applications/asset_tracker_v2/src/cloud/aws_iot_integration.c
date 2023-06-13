@@ -74,10 +74,8 @@ static char pgps_request_topic[PGPS_REQUEST_TOPIC_LEN + 1];
 static char pgps_response_topic[PGPS_RESPONSE_TOPIC_LEN + 1];
 static char memfault_topic[MEMFAULT_TOPIC_LEN + 1];
 
-static struct aws_iot_topic_data sub_topics[APP_SUB_TOPICS_COUNT];
-static struct aws_iot_topic_data pub_topics[APP_PUB_TOPICS_COUNT];
-
-static struct aws_iot_config config;
+static struct mqtt_topic sub_topics[APP_SUB_TOPICS_COUNT];
+static struct mqtt_topic pub_topics[APP_PUB_TOPICS_COUNT];
 
 static cloud_wrap_evt_handler_t wrapper_evt_handler;
 
@@ -100,8 +98,8 @@ static int populate_app_endpoint_topics(void)
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_BATCH].str = batch_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_BATCH].len = BATCH_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_BATCH].topic.utf8 = batch_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_BATCH].topic.size = BATCH_TOPIC_LEN;
 
 	err = snprintf(messages_topic, sizeof(messages_topic), MESSAGES_TOPIC,
 		       client_id_buf);
@@ -109,8 +107,8 @@ static int populate_app_endpoint_topics(void)
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_UI].str = messages_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_UI].len = MESSAGES_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_UI].topic.utf8 = messages_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_UI].topic.size = MESSAGES_TOPIC_LEN;
 
 	err = snprintf(ground_fix_topic, sizeof(ground_fix_topic),
 		       GROUND_FIX_TOPIC, client_id_buf);
@@ -118,8 +116,8 @@ static int populate_app_endpoint_topics(void)
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].str = ground_fix_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].len = GROUND_FIX_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].topic.utf8 = ground_fix_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].topic.size = GROUND_FIX_TOPIC_LEN;
 
 	err = snprintf(agnss_request_topic, sizeof(agnss_request_topic),
 		       AGNSS_REQUEST_TOPIC, client_id_buf);
@@ -127,8 +125,8 @@ static int populate_app_endpoint_topics(void)
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_AGNSS].str = agnss_request_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_AGNSS].len = AGNSS_REQUEST_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_AGNSS].topic.utf8 = agnss_request_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_AGNSS].topic.size = AGNSS_REQUEST_TOPIC_LEN;
 
 	err = snprintf(pgps_request_topic, sizeof(pgps_request_topic),
 		       PGPS_REQUEST_TOPIC, client_id_buf);
@@ -136,24 +134,24 @@ static int populate_app_endpoint_topics(void)
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_PGPS].str = pgps_request_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_PGPS].len = PGPS_REQUEST_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_PGPS].topic.utf8 = pgps_request_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_PGPS].topic.size = PGPS_REQUEST_TOPIC_LEN;
 
 	err = snprintf(memfault_topic, sizeof(memfault_topic), MEMFAULT_TOPIC, client_id_buf);
 	if (err != MEMFAULT_TOPIC_LEN) {
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].str = memfault_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].len = MEMFAULT_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].topic.utf8 = memfault_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].topic.size = MEMFAULT_TOPIC_LEN;
 
 	err = snprintf(cfg_topic, sizeof(cfg_topic), CFG_TOPIC, client_id_buf);
 	if (err != CFG_TOPIC_LEN) {
 		return -ENOMEM;
 	}
 
-	sub_topics[APP_SUB_TOPIC_IDX_CFG].str = cfg_topic;
-	sub_topics[APP_SUB_TOPIC_IDX_CFG].len = CFG_TOPIC_LEN;
+	sub_topics[APP_SUB_TOPIC_IDX_CFG].topic.utf8 = cfg_topic;
+	sub_topics[APP_SUB_TOPIC_IDX_CFG].topic.size = CFG_TOPIC_LEN;
 
 	err = snprintf(agnss_response_topic, sizeof(agnss_response_topic), AGNSS_RESPONSE_TOPIC,
 		       client_id_buf);
@@ -161,8 +159,8 @@ static int populate_app_endpoint_topics(void)
 		return -ENOMEM;
 	}
 
-	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].str = agnss_response_topic;
-	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].len = AGNSS_RESPONSE_TOPIC_LEN;
+	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].topic.utf8 = agnss_response_topic;
+	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].topic.size = AGNSS_RESPONSE_TOPIC_LEN;
 
 	err = snprintf(pgps_response_topic, sizeof(pgps_response_topic), PGPS_RESPONSE_TOPIC,
 		       client_id_buf);
@@ -170,11 +168,10 @@ static int populate_app_endpoint_topics(void)
 		return -ENOMEM;
 	}
 
-	sub_topics[APP_SUB_TOPIC_IDX_PGPS].str = pgps_response_topic;
-	sub_topics[APP_SUB_TOPIC_IDX_PGPS].len = PGPS_RESPONSE_TOPIC_LEN;
+	sub_topics[APP_SUB_TOPIC_IDX_PGPS].topic.utf8 = pgps_response_topic;
+	sub_topics[APP_SUB_TOPIC_IDX_PGPS].topic.size = PGPS_RESPONSE_TOPIC_LEN;
 
-	err = aws_iot_subscription_topics_add(sub_topics,
-					      ARRAY_SIZE(sub_topics));
+	err = aws_iot_application_topics_set(sub_topics, ARRAY_SIZE(sub_topics));
 	if (err) {
 		LOG_ERR("cloud_ep_subscriptions_add, error: %d", err);
 		return err;
@@ -222,9 +219,6 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		break;
 	case AWS_IOT_EVT_CONNECTED:
 		LOG_DBG("AWS_IOT_EVT_CONNECTED");
-		break;
-	case AWS_IOT_EVT_READY:
-		LOG_DBG("AWS_IOT_EVT_READY");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_CONNECTED;
 		notify = true;
 		break;
@@ -317,11 +311,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 		 CONFIG_CLOUD_CLIENT_ID);
 #endif
 
-	/* Fetch IMEI from modem data and set IMEI as cloud connection ID **/
-	config.client_id = client_id_buf;
-	config.client_id_len = strlen(client_id_buf);
-
-	err = aws_iot_init(&config, aws_iot_event_handler);
+	err = aws_iot_init(aws_iot_event_handler);
 	if (err) {
 		LOG_ERR("aws_iot_init, error: %d", err);
 		return err;
@@ -353,7 +343,11 @@ int cloud_wrap_connect(void)
 {
 	int err;
 
-	err = aws_iot_connect(NULL);
+	struct aws_iot_config config = {
+		.client_id = client_id_buf
+	};
+
+	err = aws_iot_connect(&config);
 	if (err) {
 		LOG_ERR("aws_iot_connect, error: %d", err);
 		return err;
@@ -450,7 +444,8 @@ int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/batch */
-		.topic = pub_topics[APP_PUB_TOPIC_IDX_BATCH]
+		.topic.str = pub_topics[APP_PUB_TOPIC_IDX_BATCH].topic.utf8,
+		.topic.len = pub_topics[APP_PUB_TOPIC_IDX_BATCH].topic.size
 	};
 
 	err = aws_iot_send(&msg);
@@ -474,7 +469,8 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/messages */
-		.topic = pub_topics[APP_PUB_TOPIC_IDX_UI]
+		.topic.str = pub_topics[APP_PUB_TOPIC_IDX_UI].topic.utf8,
+		.topic.len = pub_topics[APP_PUB_TOPIC_IDX_UI].topic.size
 	};
 
 	err = aws_iot_send(&msg);
@@ -495,7 +491,8 @@ int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/ncellmeas */
-		.topic = pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS]
+		.topic.str = pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].topic.utf8,
+		.topic.len = pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].topic.size
 	};
 
 	err = aws_iot_send(&msg);
@@ -521,7 +518,8 @@ int cloud_wrap_agnss_request_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/agps/get */
-		.topic = pub_topics[APP_PUB_TOPIC_IDX_AGNSS]
+		.topic.str = pub_topics[APP_PUB_TOPIC_IDX_AGNSS].topic.utf8,
+		.topic.len = pub_topics[APP_PUB_TOPIC_IDX_AGNSS].topic.size
 	};
 
 	err = aws_iot_send(&msg);
@@ -542,7 +540,8 @@ int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/pgps/get */
-		.topic = pub_topics[APP_PUB_TOPIC_IDX_PGPS]
+		.topic.str = pub_topics[APP_PUB_TOPIC_IDX_PGPS].topic.utf8,
+		.topic.len = pub_topics[APP_PUB_TOPIC_IDX_PGPS].topic.size
 	};
 
 	err = aws_iot_send(&msg);
@@ -563,7 +562,8 @@ int cloud_wrap_memfault_data_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/memfault */
-		.topic = pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT]
+		.topic.str = pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].topic.utf8,
+		.topic.len = pub_topics[APP_PUB_TOPIC_IDX_MEMFAULT].topic.size
 	};
 
 	err = aws_iot_send(&msg);

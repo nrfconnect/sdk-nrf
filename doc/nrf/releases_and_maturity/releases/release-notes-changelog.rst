@@ -333,7 +333,11 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_aws_iot` library:
+
+  * Added library tests.
+  * Updated the library to use the :ref:`lib_mqtt_helper` library.
+    This simplifies the handling of the MQTT stack.
 
 Libraries for NFC
 -----------------
