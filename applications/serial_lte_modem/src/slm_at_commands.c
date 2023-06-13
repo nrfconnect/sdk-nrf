@@ -47,9 +47,6 @@
 #if defined(CONFIG_SLM_GPIO)
 #include "slm_at_gpio.h"
 #endif
-#if defined(CONFIG_SLM_NRF52_DFU)
-#include "slm_at_dfu.h"
-#endif
 #if defined(CONFIG_SLM_CARRIER)
 #include "slm_at_carrier.h"
 #endif
@@ -461,12 +458,6 @@ int handle_at_gpio_configure(enum at_cmd_type cmd_type);
 int handle_at_gpio_operate(enum at_cmd_type cmd_type);
 #endif
 
-#if defined(CONFIG_SLM_NRF52_DFU)
-int handle_at_dfu_get(enum at_cmd_type cmd_type);
-int handle_at_dfu_size(enum at_cmd_type cmd_type);
-int handle_at_dfu_run(enum at_cmd_type cmd_type);
-#endif
-
 #if defined(CONFIG_SLM_CARRIER)
 int handle_at_carrier(enum at_cmd_type cmd_type);
 #endif
@@ -575,12 +566,6 @@ static struct slm_at_cmd {
 #if defined(CONFIG_SLM_GPIO)
 	{"AT#XGPIOCFG", handle_at_gpio_configure},
 	{"AT#XGPIO", handle_at_gpio_operate},
-#endif
-
-#if defined(CONFIG_SLM_NRF52_DFU)
-	{"AT#XDFUGET", handle_at_dfu_get},
-	{"AT#XDFUSIZE", handle_at_dfu_size},
-	{"AT#XDFURUN", handle_at_dfu_run},
 #endif
 
 #if defined(CONFIG_SLM_CARRIER)
@@ -713,13 +698,6 @@ int slm_at_init(void)
 	err = slm_at_twi_init();
 	if (err) {
 		LOG_ERR("TWI could not be initialized: %d", err);
-		return -EFAULT;
-	}
-#endif
-#if defined(CONFIG_SLM_NRF52_DFU)
-	err = slm_at_dfu_init();
-	if (err) {
-		LOG_ERR("DFU could not be initialized: %d", err);
 		return -EFAULT;
 	}
 #endif

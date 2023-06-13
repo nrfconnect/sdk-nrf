@@ -145,7 +145,9 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-|no_changes_yet_note|
+* Removed:
+
+  * DFU AT commands ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` because they were not usable without a custom application in the target (nRF52 series) device.
 
 nRF5340 Audio
 -------------
