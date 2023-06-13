@@ -292,8 +292,16 @@ MQTT_HELPER_STATIC void on_publish(const struct mqtt_evt *mqtt_evt)
 }
 
 MQTT_HELPER_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
-			     const struct mqtt_evt *mqtt_evt)
+					 const struct mqtt_evt *mqtt_evt)
 {
+	if (current_cfg.cb.on_all_events != NULL) {
+		if (!current_cfg.cb.on_all_events(mqtt_client,
+						  (const struct mqtt_evt *const)mqtt_evt)) {
+			/* Event processed by the caller, ignore and return. */
+			return;
+		}
+	}
+
 	switch (mqtt_evt->type) {
 	case MQTT_EVT_CONNACK:
 		LOG_DBG("MQTT mqtt_client connected");
@@ -305,7 +313,8 @@ MQTT_HELPER_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		}
 
 		if (current_cfg.cb.on_connack) {
-			current_cfg.cb.on_connack(mqtt_evt->param.connack.return_code);
+			current_cfg.cb.on_connack(mqtt_evt->param.connack.return_code,
+						  mqtt_evt->param.connack.session_present_flag);
 		}
 		break;
 	case MQTT_EVT_DISCONNECT:
@@ -446,6 +455,23 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 	mqtt_client.rx_buf_size	        = sizeof(rx_buffer);
 	mqtt_client.tx_buf	        = tx_buffer;
 	mqtt_client.tx_buf_size	        = sizeof(tx_buffer);
+
+#if defined(CONFIG_MQTT_HELPER_LAST_WILL)
+	static struct mqtt_topic last_will_topic = {
+		.topic.utf8 = CONFIG_MQTT_HELPER_LAST_WILL_TOPIC,
+		.topic.size = sizeof(CONFIG_MQTT_HELPER_LAST_WILL_TOPIC) - 1,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE
+	};
+
+	static struct mqtt_utf8 last_will_message = {
+		.utf8 = CONFIG_MQTT_HELPER_LAST_WILL_MESSAGE,
+		.size = sizeof(CONFIG_MQTT_HELPER_LAST_WILL_MESSAGE) - 1
+	};
+
+	mqtt_client.will_topic = &last_will_topic;
+	mqtt_client.will_message = &last_will_message;
+#endif
+
 #if defined(CONFIG_MQTT_LIB_TLS)
 	mqtt_client.transport.type      = MQTT_TRANSPORT_SECURE;
 #else

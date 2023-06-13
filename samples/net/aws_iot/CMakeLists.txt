@@ -17,6 +17,5 @@ target_sources(app PRIVATE src/json_payload/json_payload.c)
 zephyr_include_directories(src)
 zephyr_include_directories(src/json_payload)
 
-# Make folder containing certificates global so that it can be located by
-# the AWS IoT library.
-zephyr_include_directories_ifdef(CONFIG_AWS_IOT_PROVISION_CERTIFICATES certs)
+# Make folder containing certificates global so that it can be located by the MQTT helper library.
+zephyr_include_directories_ifdef(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES certs)

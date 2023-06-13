@@ -168,7 +168,7 @@ Configurations for AWS IoT library
 To enable communication with AWS IoT, set the following options in the :file:`overlay-aws.conf` file:
 
 * :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
-* :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`
+* :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`
 
 Configurations for Azure IoT Hub library
 ----------------------------------------

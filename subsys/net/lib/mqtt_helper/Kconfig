@@ -107,6 +107,26 @@ config MQTT_HELPER_CERTIFICATES_FILE
 	  By default, the library expects the credentials to be in
 	  Privacy Enhanced Mail (PEM) format. See "mqtt-certs.h" for a template.
 
+config MQTT_HELPER_LAST_WILL
+	bool "Last will"
+	help
+	  If this option is set a configurable last will topic and message is
+	  provided by the device in the MQTT CONNECT message. Upon a disconnect
+	  from the MQTT broker the broker will publish the last will message
+	  to the last will topic.
+
+if MQTT_HELPER_LAST_WILL
+
+config MQTT_HELPER_LAST_WILL_MESSAGE
+	string "Last will message"
+	default "{\"lastwill\": \"offline\"}"
+
+config MQTT_HELPER_LAST_WILL_TOPIC
+	string "Last will topic"
+	default "lastwilltopic"
+
+endif
+
 module = MQTT_HELPER
 module-str = MQTT helper library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

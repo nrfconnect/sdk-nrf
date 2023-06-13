@@ -180,7 +180,7 @@ static void cb_on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf p
 	k_sem_give(&publish_sem);
 }
 
-static void cb_on_connack(enum mqtt_conn_return_code return_code)
+static void cb_on_connack(enum mqtt_conn_return_code return_code, bool session_present)
 {
 	switch (return_code) {
 	case MQTT_CONNECTION_ACCEPTED:

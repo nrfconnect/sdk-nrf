@@ -623,7 +623,7 @@ static int on_suback_evt(struct mqtt_client *const client, uint16_t message_id)
 			break;
 	default:
 		/* Message ID not related to AWS FOTA. */
-		break;
+		return 1;
 	} /* end switch(message_id) */
 
 	return 0;
@@ -637,6 +637,8 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client, const struct mqt
 		LOG_WRN("AWS FOTA library not initialized");
 		return -ENOENT;
 	}
+
+	client_internal = client;
 
 	switch (evt->type) {
 	case MQTT_EVT_CONNACK:
@@ -709,12 +711,14 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client, const struct mqt
 		}
 
 		err = on_suback_evt(client, evt->param.suback.message_id);
-		if (err) {
+		if (err < 0) {
 			LOG_WRN("on_suback_evt, error: %d", err);
 			goto cleanup;
+		} else if (err == 1) {
+			return err;
 		}
 
-		return 1;
+		return 0;
 
 	default:
 		/* Handling for default case */
@@ -794,21 +798,19 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 	}
 }
 
-int aws_fota_init(struct mqtt_client *const client, aws_fota_callback_t evt_handler)
+int aws_fota_init(aws_fota_callback_t evt_handler)
 {
 	int err;
+
+	if (evt_handler == NULL) {
+		return -EINVAL;
+	}
 
 	if (internal_state != STATE_UNINIT) {
 		LOG_WRN("AWS FOTA library has already been initialized");
 		return -EPERM;
 	}
 
-	if (client == NULL || evt_handler == NULL) {
-		return -EINVAL;
-	}
-
-	/* Store client to make it available in event handlers. */
-	client_internal = client;
 	callback = evt_handler;
 
 	err = fota_download_init(http_fota_handler);
