@@ -69,3 +69,8 @@ int nrf_provisioning_at_cmd(void *resp, size_t resp_sz, const char *cmd)
 {
 	return nrf_modem_at_cmd(resp, resp_sz, "%s", cmd);
 }
+
+int nrf_provisioning_at_del_credential(int tag, int type)
+{
+	return nrf_modem_at_printf("AT%%CMNG=3,%d,%d", tag, type);
+}

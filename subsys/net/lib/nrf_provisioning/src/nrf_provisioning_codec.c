@@ -5,6 +5,7 @@
  */
 
 #include <string.h>
+#include <stdio.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -287,10 +288,19 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		ret = nrf_provisioning_at_cmd(resp, resp_sz, out->at_buff);
 
 		if (ret == -E2BIG) {
+			int tag = 0;
+			int type = 0;
+
 			LOG_DBG("Buffer too small for AT response, retrying");
 			k_free(resp);
 			resp = NULL;
-
+			if (sscanf(out->at_buff, "AT%%KEYGEN=%d,%d,%*s", &tag, &type) == 2) {
+				LOG_DBG("Clear sec_tag %d, type %d", tag, type);
+				ret = nrf_provisioning_at_del_credential(tag, type);
+				if (ret < 0) {
+					LOG_ERR("AT cmd failed, error: %d", ret);
+				}
+			}
 			resp_sz *= 2; /* Previous size wasn't sufficient */
 			if (resp_sz > AT_RESP_MAX_SIZE) {
 				LOG_ERR("Key or CSR too big");
