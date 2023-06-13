@@ -30,8 +30,8 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 		 ZBUS_MSG_INIT(0));
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
-#define CIS_CONN_RETRY_TIMES 5
-#define CIS_CONN_RETRY_DELAY_MS 500
+#define CIS_CONN_RETRY_TIMES	   5
+#define CIS_CONN_RETRY_DELAY_MS	   500
 #define CONNECTION_PARAMETERS                                                                      \
 	BT_LE_CONN_PARAM(CONFIG_BLE_ACL_CONN_INTERVAL, CONFIG_BLE_ACL_CONN_INTERVAL,               \
 			 CONFIG_BLE_ACL_SLAVE_LATENCY, CONFIG_BLE_ACL_SUP_TIMEOUT)
@@ -76,6 +76,7 @@ struct temp_cap_storage {
 	struct bt_conn *conn;
 	/* Must be the same size as sink_codec_cap and source_codec_cap */
 	struct bt_codec codec[CONFIG_CODEC_CAP_COUNT_MAX];
+	uint8_t num_caps_total;
 };
 
 static struct le_audio_headset headsets[CONFIG_BT_MAX_CONN];
@@ -797,6 +798,11 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 			for (int i = 0; i < codec->meta_count; i++) {
 				store_loc->meta[i].data.data = store_loc->meta[i].value;
 			}
+
+			/* In temp_cap.num_caps_total we want to store the actual number
+			 * of capabilities, while params->num_caps is an iterator
+			 */
+			temp_cap[temp_cap_index].num_caps_total = params->num_caps + 1;
 		} else {
 			LOG_WRN("No more space. Increase CODEC_CAPAB_COUNT_MAX");
 		}
@@ -811,9 +817,9 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 	}
 
 	/* At this point the location/channel index of the headset is always known */
-	for (int i = 0; i < CONFIG_CODEC_CAP_COUNT_MAX; i++) {
-		memcpy(&headsets[channel_index].sink_codec_cap[i], &temp_cap[temp_cap_index].codec,
-		       (sizeof(struct bt_codec)));
+	for (int i = 0; i < temp_cap[temp_cap_index].num_caps_total; i++) {
+		memcpy(&headsets[channel_index].sink_codec_cap[i],
+		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_codec));
 	}
 
 	if (ep != NULL) {
@@ -844,7 +850,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 #endif /* (CONFIG_BT_VCP_VOL_CTLR ) */
 
 	if (valid_codec_cap_check(headsets[channel_index].sink_codec_cap,
-				  ARRAY_SIZE(headsets[channel_index].sink_codec_cap))) {
+				  temp_cap[temp_cap_index].num_caps_total)) {
 		if (conn == headsets[AUDIO_CH_L].headset_conn) {
 			bt_codec_allocation_set(&lc3_preset_sink.codec,
 						BT_AUDIO_LOCATION_FRONT_LEFT);
@@ -920,6 +926,11 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 			for (int i = 0; i < codec->meta_count; i++) {
 				store_loc->meta[i].data.data = store_loc->meta[i].value;
 			}
+
+			/* In temp_cap.num_caps_total we want to store the actual number
+			 * of capabilities, while params->num_caps is an iterator
+			 */
+			temp_cap[temp_cap_index].num_caps_total = params->num_caps + 1;
 		} else {
 			LOG_WRN("No more space. Increase CODEC_CAPAB_COUNT_MAX");
 		}
@@ -934,9 +945,9 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 	}
 
 	/* At this point the location/channel index of the headset is always known */
-	for (int i = 0; i < CONFIG_CODEC_CAP_COUNT_MAX; i++) {
+	for (int i = 0; i < temp_cap[temp_cap_index].num_caps_total; i++) {
 		memcpy(&headsets[channel_index].source_codec_cap[i],
-		       &temp_cap[temp_cap_index].codec, (sizeof(struct bt_codec)));
+		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_codec));
 	}
 
 	if (ep != NULL) {
@@ -960,7 +971,7 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 	(void)memset(params, 0, sizeof(*params));
 
 	if (valid_codec_cap_check(headsets[channel_index].source_codec_cap,
-				  ARRAY_SIZE(headsets[channel_index].source_codec_cap))) {
+				  temp_cap[temp_cap_index].num_caps_total)) {
 		if (conn == headsets[AUDIO_CH_L].headset_conn) {
 			bt_codec_allocation_set(&lc3_preset_source.codec,
 						BT_AUDIO_LOCATION_FRONT_LEFT);
@@ -1590,7 +1601,7 @@ int le_audio_send(struct encoded_audio enc_audio)
 {
 	int ret;
 	size_t data_size_pr_stream;
-	struct bt_iso_tx_info tx_info = { 0 };
+	struct bt_iso_tx_info tx_info = {0};
 
 	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == ARRAY_SIZE(headsets))) {
 		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
