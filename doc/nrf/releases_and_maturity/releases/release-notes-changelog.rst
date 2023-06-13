@@ -383,7 +383,12 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-|no_changes_yet_note|
+Wi-Fi drivers
+-------------
+
+* Added:
+
+  * TCP/IP checksum offload is now enabled by default for the nRF70 Series.
 
 Libraries
 =========

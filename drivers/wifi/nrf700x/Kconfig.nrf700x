@@ -53,6 +53,7 @@ config NRF_WIFI_LOW_POWER
 
 config NRF700X_TCP_IP_CHECKSUM_OFFLOAD
 	bool "Enable TCP/IP checksum offload"
+	default y
 
 config NRF700X_REG_DOMAIN
 	string "The ISO/IEC alpha2 country code for the country in which this device is currently operating. Default 00 (World regulatory)"
