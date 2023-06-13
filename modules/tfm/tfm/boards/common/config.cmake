@@ -23,3 +23,6 @@ set(PLATFORM_DEFAULT_PROVISIONING       OFF         CACHE BOOL      "Use default
 set(NRF_PROVISIONING                    OFF         CACHE BOOL      "Use Nordic provisioning implementation")
 set(CONFIG_NFCT_PINS_AS_GPIOS           OFF         CACHE BOOL      "Use NFCT pins as GPIOs.")
 set(CONFIG_NRF_TRACE_PORT               OFF         CACHE BOOL      "Enable trace port.")
+
+set(CONFIG_HW_UNIQUE_KEY                ON          CACHE BOOL      "Enable Hardware Unique Key")
+set(CONFIG_HW_UNIQUE_KEY_RANDOM         ON          CACHE BOOL      "Write a new Hardware Unique Key if none exists")
