@@ -98,7 +98,9 @@ static void de_init(struct download_client *client)
 	wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, 10);
 }
 
-static void test_download_simple(void)
+ZTEST_SUITE(download_client, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(download_client, test_download_simple)
 {
 	int32_t recvfrom_params[] = { 25, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20 };
@@ -116,7 +118,7 @@ static void test_download_simple(void)
 	de_init(&client);
 }
 
-static void test_download_reconnect_on_socket_error(void)
+ZTEST(download_client, test_download_reconnect_on_socket_error)
 {
 	int32_t recvfrom_params[] = { 25, -1, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20, 20 };
@@ -134,7 +136,7 @@ static void test_download_reconnect_on_socket_error(void)
 	de_init(&client);
 }
 
-static void test_download_reconnect_on_peer_close(void)
+ZTEST(download_client, test_download_reconnect_on_peer_close)
 {
 	int32_t recvfrom_params[] = { 25, 0, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20, 20 };
@@ -152,7 +154,7 @@ static void test_download_reconnect_on_peer_close(void)
 	de_init(&client);
 }
 
-static void test_download_ignore_duplicate_block(void)
+ZTEST(download_client, test_download_ignore_duplicate_block)
 {
 	int32_t recvfrom_params[] = { 25, 25, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20 };
@@ -173,7 +175,7 @@ static void test_download_ignore_duplicate_block(void)
 	de_init(&client);
 }
 
-static void test_download_abort_on_invalid_block(void)
+ZTEST(download_client, test_download_abort_on_invalid_block)
 {
 	int32_t recvfrom_params[] = { 25, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20 };
@@ -194,7 +196,7 @@ static void test_download_abort_on_invalid_block(void)
 	de_init(&client);
 }
 
-static void test_get(void)
+ZTEST(download_client, test_get)
 {
 	int err;
 	int32_t recvfrom_params[] = { 25, 25, 25 };
@@ -210,18 +212,6 @@ static void test_get(void)
 	zassert_ok(err, NULL);
 	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, 10), "Download must have finished");
 	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, 10), "Socket must have closed");
-}
-
-void test_main(void)
-{
-	ztest_test_suite(lib_fota_download_test, ztest_unit_test(test_download_simple),
-			 ztest_unit_test(test_download_reconnect_on_socket_error),
-			 ztest_unit_test(test_download_reconnect_on_peer_close),
-			 ztest_unit_test(test_download_ignore_duplicate_block),
-			 ztest_unit_test(test_download_abort_on_invalid_block),
-			 ztest_unit_test(test_get));
-
-	ztest_run_test_suite(lib_fota_download_test);
 }
 
 #define TEST_SOCKET_PRIO 40
