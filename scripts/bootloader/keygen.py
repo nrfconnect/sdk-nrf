@@ -5,8 +5,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 
-from ecdsa import SigningKey
-from ecdsa.curves import NIST256p
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.serialization import load_pem_private_key as load_pem
 from hashlib import sha256
 import argparse
 import sys
@@ -20,8 +21,12 @@ def generate_legal_key():
     :return: A key who's SHA256 digest does not contain 0xFFFF
     """
     while True:
-        key = SigningKey.generate(curve=NIST256p)
-        digest = sha256(key.get_verifying_key().to_string()).digest()[:16]
+        key = ec.generate_private_key(ec.SECP256R1())
+        public_bytes = key.public_key().public_bytes(
+                encoding=serialization.Encoding.DER,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo,
+                )
+        digest = sha256(public_bytes).digest()[:16]
         if not (any([digest[n:n + 2] == b'\xff\xff'
                      for n in range(0, len(digest), 2)])):
             return key
@@ -47,14 +52,19 @@ if __name__ == '__main__':
                              'of generating it.')
 
     args = parser.parse_args()
-
-    sk = (SigningKey.from_pem(args.infile.read())
-          if args.infile else generate_legal_key())
+    sk = (load_pem(args.infile.read(), password=None) if args.infile else generate_legal_key())
 
     if args.private:
-        args.out.write(sk.to_pem())
+        private_pem = sk.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.PKCS8,
+                encryption_algorithm=serialization.NoEncryption(),
+                )
+        args.out.write(private_pem)
 
     if args.public:
-        vk = sk.get_verifying_key()
-        vk.to_pem()
-        args.out.write(vk.to_pem())
+        public_pem = sk.public_key().public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo,
+                )
+        args.out.write(public_pem)
