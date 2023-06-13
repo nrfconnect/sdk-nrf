@@ -164,7 +164,6 @@ Kconfig*                                  @tejlmand
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/cellular/                        @rlubos @lemrey
-/samples/cellular/azure_*                 @jtguggedal @simensrostad @coderbyheart
 /samples/cellular/battery/                @MirkoCovizzi
 /samples/cellular/location/               @trantanen @jhirsi @tokangas
 /samples/cellular/lwm2m_client/           @rlubos @SeppoTakalo @jheiskan81 @juhaylinen

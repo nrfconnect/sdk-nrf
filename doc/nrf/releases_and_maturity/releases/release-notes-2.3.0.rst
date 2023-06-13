@@ -554,7 +554,7 @@ nRF9160 samples
     * Removed user prompt and button press handling for FOTA enablement.
     * The sample now uses a partition in external flash for full modem FOTA updates.
 
-* :ref:`azure_fota_sample` sample:
+* nRF9160: Azure FOTA sample:
 
   * Updated the sample to use the logging subsystem for console output.
 

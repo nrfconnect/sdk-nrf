@@ -592,6 +592,10 @@ Networking samples
   * Added support for the nRF9161 development kit.
   * Moved the sample from :file:`nrf9160/azure_iot_hub` folder to :file:`net/azure_iot_hub`.
     The documentation is now found in the :ref:`networking_samples` section.
+  * Added FOTA support using the :ref:`lib_azure_fota` library.
+
+* Removed Cellular: Azure FOTA sample.
+  FOTA using Azure IoT Hub is now demonstrated in the :ref:`azure_iot_hub` sample.
 
 * :ref:`download_sample` sample:
 
