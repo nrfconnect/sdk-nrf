@@ -203,7 +203,7 @@ config MBEDTLS_ENTROPY_MAX_SOURCES
 	  Max entropy sources (Defaults to 1)
 
 config MBEDTLS_NO_PLATFORM_ENTROPY
- 	bool
+	bool
 	default y
 
 # End items required for non CryptoCell RNG in PSA scope
@@ -303,7 +303,7 @@ config CC3XX_BACKEND_FORCED
 
 config OBERON_BACKEND_FORCED
 	bool
-	
+
 config CC3XX_BACKEND
 	bool
 	depends on CRYPTOCELL_USABLE && !OBERON_BACKEND_FORCED
@@ -353,7 +353,7 @@ config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 	default y if CRYPTOCELL_USABLE
 	help
 	  Convenience layer for handling entropy before it is fully supported in
-	  PSA Crypto APIs and drivers. This is set by default for legacy and PSA 
+	  PSA Crypto APIs and drivers. This is set by default for legacy and PSA
 	  modes.
 
 config MBEDTLS_ENTROPY_C
@@ -363,7 +363,7 @@ config MBEDTLS_ENTROPY_C
 	default y if !CRYPTOCELL_USABLE
 	help
 	  Enable this setting to build entropy APIs usable to gather entropy
-	  form external sources. Only in use for devices that doesn't have 
+	  form external sources. Only in use for devices that doesn't have
 	  CryptoCell.
 
 menuconfig MBEDTLS_AES_C

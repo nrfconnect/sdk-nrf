@@ -27,27 +27,28 @@
  * PSA Driver wrapper layer as the union of all possible drivers' contexts.
  *
  * The union members are the driver's context structures, and the member names
- * are formatted as `'drivername'_ctx`. */
+ * are formatted as `'drivername'_ctx`.
+ */
 
 typedef union {
-    unsigned dummy; /* Make sure this union is always non-empty */
+	unsigned int dummy; /* Make sure this union is always non-empty */
 #ifdef PSA_CRYPTO_DRIVER_HAS_KDF_SUPPORT_OBERON
-    oberon_key_derivation_operation_t oberon_kdf_ctx;
+	oberon_key_derivation_operation_t oberon_kdf_ctx;
 #endif
 } psa_driver_key_derivation_context_t;
 
 typedef union {
-    unsigned dummy; /* Make sure this union is always non-empty */
+	unsigned int dummy; /* Make sure this union is always non-empty */
 } psa_driver_pake_context_t;
 
 typedef union {
-    unsigned dummy; /* Make sure this union is always non-empty */
+	unsigned int dummy; /* Make sure this union is always non-empty */
 
 #if defined(PSA_CRYPTO_DRIVER_ALG_CTR_DRBG_OBERON)
-    oberon_ctr_drbg_context_t oberon_ctr_drbg_ctx;
+	oberon_ctr_drbg_context_t oberon_ctr_drbg_ctx;
 #endif
 #if defined(PSA_CRYPTO_DRIVER_ALG_HMAC_DRBG_OBERON)
-    oberon_hmac_drbg_context_t oberon_hmac_drbg_ctx;
+	oberon_hmac_drbg_context_t oberon_hmac_drbg_ctx;
 #endif
 
 } psa_driver_random_context_t;

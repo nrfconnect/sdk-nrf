@@ -5,11 +5,11 @@
 #
 
 menuconfig PSA_CRYPTO_DRIVER_CC3XX
-    bool
-    prompt "PSA CryptoCell Driver" if !PSA_PROMPTLESS
-    depends on CRYPTOCELL_USABLE
-    default n
-    select NRF_CC3XX_PLATFORM if !BUILD_WITH_TFM
+	bool
+	prompt "PSA CryptoCell Driver" if !PSA_PROMPTLESS
+	depends on CRYPTOCELL_USABLE
+	default n
+	select NRF_CC3XX_PLATFORM if !BUILD_WITH_TFM
 	help
 	  Enable PSA Driver for CryptoCell
 

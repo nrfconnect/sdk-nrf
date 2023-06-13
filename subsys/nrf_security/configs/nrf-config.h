@@ -109,11 +109,11 @@ extern "C" {
 #endif
 #endif
 
-#if defined(PSA_WANT_ALG_RSA)                || \
-    defined(PSA_WANT_ALG_RSA_OAEP)           || \
-    defined(PSA_WANT_ALG_RSA_PKCS1V15_CRYPT) || \
-    defined(PSA_WANT_ALG_RSA_PKCS1V15_SIGN)  || \
-    defined(PSA_WANT_ALG_RSA_PSS)
+#if     defined(PSA_WANT_ALG_RSA)                || \
+	defined(PSA_WANT_ALG_RSA_OAEP)           || \
+	defined(PSA_WANT_ALG_RSA_PKCS1V15_CRYPT) || \
+	defined(PSA_WANT_ALG_RSA_PKCS1V15_SIGN)  || \
+	defined(PSA_WANT_ALG_RSA_PSS)
 
 #if defined(PSA_WANT_ALG_SHA_1)
 #define MBEDTLS_PSA_BUILTIN_ALG_SHA_1
@@ -324,7 +324,7 @@ extern "C" {
 #define MBEDTLS_ECP_DP_SECP256K1_ENABLED
 #endif
 
-// Nordic added
+/* Nordic added */
 #if defined(MBEDTLS_PK_PARSE_C)
 #define MBEDTLS_ASN1_PARSE_C
 #endif
@@ -365,18 +365,18 @@ extern "C" {
 #define MBEDTLS_PSA_BUILTIN_ALG_TLS12_PSK_TO_MS 1
 #endif
 
-// TLS/DTLS additions
+/* TLS/DTLS additions */
 #if !defined(MBEDTLS_PSA_CRYPTO_SPM)
-#if defined(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)    || \
-    defined(MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED)     || \
-    defined(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED)   || \
-    defined(MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED)      || \
-    defined(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)    || \
-    defined(MBEDTLS_KEY_EXCHANGE_PSK_ENABLED)           || \
-    defined(MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED)       || \
-    defined(MBEDTLS_KEY_EXCHANGE_RSA_ENABLED)           || \
-    defined(MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED)       || \
-    defined(MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED)
+#if     defined(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)    || \
+	defined(MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED)     || \
+	defined(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED)   || \
+	defined(MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED)      || \
+	defined(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)    || \
+	defined(MBEDTLS_KEY_EXCHANGE_PSK_ENABLED)           || \
+	defined(MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED)       || \
+	defined(MBEDTLS_KEY_EXCHANGE_RSA_ENABLED)           || \
+	defined(MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED)       || \
+	defined(MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED)
 #define MBEDTLS_X509_CRT_PARSE_C
 #define MBEDTLS_ASN1_PARSE_C
 #define MBEDTLS_ASN1_WRITE_C
@@ -389,13 +389,13 @@ extern "C" {
 #endif
 
 #if defined(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
-    #define MBEDTLS_ECJPAKE_C
-    #define MBEDTLS_ECP_C
+#define MBEDTLS_ECJPAKE_C
+#define MBEDTLS_ECP_C
 #endif
 #endif /* MBEDTLS_PSA_CRYPTO_SPM */
 
-#if defined(MBEDTLS_PSA_BUILTIN_ALG_CMAC) || \
-    defined(MBEDTLS_PSA_BUILTIN_ALG_HMAC)
+#if     defined(MBEDTLS_PSA_BUILTIN_ALG_CMAC) || \
+	defined(MBEDTLS_PSA_BUILTIN_ALG_HMAC)
 #define MBEDTLS_PSA_BUILTIN_MAC
 #endif
 

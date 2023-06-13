@@ -18,7 +18,7 @@ set(mbedtls_target    ${MBEDTLS_TARGET_PREFIX}mbedtls)
 
 # Building nrf security for TF-M implies the following:
 # - Parse NRF_SECURITY_SETTINGS into CMake variables.
-#   Variables transfered from Zephyr to nRF Security TF-M build includes:
+#   Variables transferred from Zephyr to nRF Security TF-M build includes:
 #   - <build>/zephyr/.config
 #   - GCC_M_CPU
 #   - ARM_MBEDTLS_PATH

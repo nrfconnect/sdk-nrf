@@ -29,7 +29,8 @@
 #include "psa/crypto_driver_common.h"
 
 /* Include the context structure definitions for those drivers that were
- * declared during the autogeneration process. */
+ * declared during the autogeneration process.
+ */
 #if defined(PSA_CRYPTO_DRIVER_CC3XX)
 #include "cc3xx_crypto_primitives.h"
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
@@ -41,7 +42,6 @@
 #include "oberon_hash.h"
 #endif
 
-
 #if defined(PSA_CORE_BUILTIN)
 /* Include the context structure definitions for the Mbed TLS software drivers */
 #include "psa/crypto_builtin_primitives.h"
@@ -52,31 +52,32 @@
  *
  * The union members are the driver's context structures, and the member names
  * are formatted as `'drivername'_ctx`. This allows for procedural generation
- * of both this file and the content of psa_crypto_driver_wrappers.c */
+ * of both this file and the content of psa_crypto_driver_wrappers.c
+ */
 
 typedef union {
-    unsigned dummy; /* Make sure this union is always non-empty */
+	unsigned int dummy; /* Make sure this union is always non-empty */
 #if defined(MBEDTLS_PSA_BUILTIN_HAS_HASH_SUPPORT)
-    mbedtls_psa_hash_operation_t mbedtls_ctx;
+	mbedtls_psa_hash_operation_t mbedtls_ctx;
 #endif
 #if defined(PSA_CRYPTO_DRIVER_CC3XX)
-    cc3xx_hash_operation_t cc3xx_driver_ctx;
+	cc3xx_hash_operation_t cc3xx_driver_ctx;
 #endif
 #if defined(PSA_CRYPTO_DRIVER_HAS_HASH_SUPPORT_OBERON)
-    oberon_hash_operation_t oberon_driver_ctx;
+	oberon_hash_operation_t oberon_driver_ctx;
 #endif
 } psa_driver_hash_context_t;
 
 typedef union {
-    unsigned dummy; /* Make sure this union is always non-empty */
+	unsigned int dummy; /* Make sure this union is always non-empty */
 #if defined(MBEDTLS_PSA_BUILTIN_HAS_CIPHER_SUPPORT)
-    mbedtls_psa_cipher_operation_t mbedtls_ctx;
+	mbedtls_psa_cipher_operation_t mbedtls_ctx;
 #endif
 #if defined(PSA_CRYPTO_DRIVER_CC3XX)
-    cc3xx_cipher_operation_t cc3xx_driver_ctx;
+	cc3xx_cipher_operation_t cc3xx_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
 #if defined(PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_OBERON)
-    oberon_cipher_operation_t oberon_driver_ctx;
+	oberon_cipher_operation_t oberon_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
 
 } psa_driver_cipher_context_t;
