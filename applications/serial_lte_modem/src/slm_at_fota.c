@@ -21,8 +21,8 @@
 LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 
 /* file_uri: scheme://hostname[:port]path[?parameters] */
-#define FILE_URI_MAX	2048
-#define SCHEMA_HTTP	"http"
+#define FILE_URI_MAX	CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
+#define SCHEMA_HTTP     "http"
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 #define URI_SCHEMA_MAX	8
