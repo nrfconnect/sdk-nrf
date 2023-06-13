@@ -231,8 +231,10 @@ Cryptography samples
 
 * Added the :ref:`crypto_ecjpake` sample demonstrating usage of EC J-PAKE.
 
-nRF9160 samples
----------------
+Cellular samples (renamed from nRF9160 samples)
+-----------------------------------------------
+
+* Renamed nRF9160 samples to cellular samples and are now found in the :file:`samples/cellular` folder.
 
 * Added the :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
 

@@ -1,0 +1,48 @@
+sample:
+  name: location Sample
+tests:
+  sample.cellular.location:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    tags: ci_build
+  sample.cellular.location.esp_wifi:
+    build_only: true
+    extra_args: >
+      OVERLAY_CONFIG=overlay-esp-wifi.conf DTC_OVERLAY_FILE="esp_8266_nrf9160ns.overlay"
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    tags: ci_build
+  sample.cellular.location.pgps:
+    build_only: true
+    extra_args: OVERLAY_CONFIG=overlay-pgps.conf
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    tags: ci_build
+  sample.cellular.location.nrf7002ek_wifi:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+    tags: ci_build
+  sample.cellular.location.nrf7000ek_wifi:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_args: SHIELD=nrf7002ek_nrf7000 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay" CONFIG_WPA_SUPP=n
+    tags: ci_build
+  sample.cellular.location.nrf7001ek_wifi:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_args: SHIELD=nrf7002ek_nrf7001 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+    tags: ci_build

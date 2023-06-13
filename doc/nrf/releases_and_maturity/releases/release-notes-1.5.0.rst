@@ -87,7 +87,7 @@ nRF9160
   * :ref:`nrf_coap_client_sample` sample - Updated the default server URL to ``californium.eclipseprojects.io``.
   * nRF9160: Simple MQTT sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
   * Extracted the certificate, button, and LED handling functionality from :ref:`http_application_update_sample` sample to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample` sample.
-  * Moved the :ref:`http_application_update_sample` sample from :file:`samples/nrf9160/http_application_update/` to :file:`samples/nrf9160/http_update/application_update`.
+  * Moved the :ref:`http_application_update_sample` sample from ``samples/nrf9160/http_application_update/`` to ``samples/nrf9160/http_update/application_update``.
   * :ref:`lib_download_client` library:
 
     * Reintroduced the optional TCP timeout (enabled by default) on the TCP socket that is used for the download.

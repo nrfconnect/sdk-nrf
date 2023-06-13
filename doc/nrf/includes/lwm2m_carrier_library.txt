@@ -4,7 +4,7 @@ See the library's documentation for more information and configuration options.
 To enable the LwM2M carrier library, add the parameter ``-DOVERLAY_CONFIG=overlay-carrier.conf`` to your build command.
 
 The CA root certificates that are needed for modem FOTA are not provisioned in the |application_sample_name|.
-You can flash the :ref:`lwm2m_carrier` sample to write the certificates to modem before flashing the |application_sample_name|, or use the :ref:`at_client_sample` sample as explained in :ref:`Preparing the nRF9160: LwM2M Client sample for production <lwm2m_client_provisioning>`.
+You can flash the :ref:`lwm2m_carrier` sample to write the certificates to modem before flashing the |application_sample_name|, or use the :ref:`at_client_sample` sample as explained in :ref:`preparing the Cellular: LwM2M Client sample for production <lwm2m_client_provisioning>`.
 It is also possible to modify the |application_sample_name| project itself to include the certificate provisioning, as demonstrated in the :ref:`lwm2m_carrier` sample.
 
 .. code-block:: c

@@ -1870,8 +1870,8 @@ Unstable NFC tag samples
   NFC tag samples are unstable when exhaustively tested (performing many repeated read and/or write operations).
   NFC tag data might be corrupted.
 
-nRF9160 samples
-===============
+Cellular samples
+================
 
 .. rst-class:: v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
@@ -1883,7 +1883,7 @@ NCSDK-5666: LTE Sensor Gateway
 .. rst-class:: v1-2-0
 
 GPS sockets and SUPL client library stops working
-  The `nRF9160: GPS with SUPL client library <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/nrf9160/gps/README.html>`_ sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
+  The `nRF9160: GPS with SUPL client library <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/cellular/gps/README.html>`_ sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
 
   **Affected platforms:** nRF9160
 

@@ -56,7 +56,7 @@ Configuration
 To run the library in an application, you must implement the application with the API of the library.
 Enable the library by setting the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig option to ``y``.
 
-The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
+The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/cellular/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 To overwrite the carrier default settings, you can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` with the Kconfig options specified in the following sections.
 You can also use the provided :ref:`lwm2m_carrier_shell` to quickly get started and experiment with the API.
