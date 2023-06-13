@@ -53,7 +53,7 @@ bool nrf_provisioning_at_cmee_is_active(void);
 /**
  * @brief Sets mobile termination error reporting to a given state.
  *
- * @param state Buffer to receive the time into.
+ * @param state State for error reporting.
  *
  * @returns  Zero on success, negative error code on failure.
  */
@@ -62,9 +62,6 @@ int nrf_provisioning_at_cmee_control(enum nrf_provisioning_at_cmee_state state);
 /**
  * @brief Enables mobile termination error reporting state.
  *
- * @param buff Buffer to receive the time into.
- * @param size Buffer size.
- *
  * @returns  Previous state
  */
 bool nrf_provisioning_at_cmee_enable(void);
@@ -72,14 +69,24 @@ bool nrf_provisioning_at_cmee_enable(void);
 /**
  * @brief Send any AT command.
  *
- * @param buff Buffer to receive the response into.
- * @param size Buffer size.
- * @param size Command to be send.
+ * @param resp Buffer to receive the response into.
+ * @param resp_sz Buffer size.
+ * @param cmd AT command to be send.
  *
  * @returns Zero on success, negative error code on failure or positive error code when CMEE code
  * needs to be checked.
  */
 int nrf_provisioning_at_cmd(void *resp, size_t resp_sz, const char *cmd);
+
+/**
+ * @brief Delete credential.
+ *
+ * @param tag The security tag of the credential.
+ * @param type The credential type.
+ *
+ * @returns  Zero on success, negative error code on failure.
+ */
+int nrf_provisioning_at_del_credential(int sec_tag, int type);
 
 #ifdef __cplusplus
 }
