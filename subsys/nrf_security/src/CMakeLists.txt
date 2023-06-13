@@ -13,7 +13,7 @@
 # For NCS  the nrf_security/CMakeLists.txt     file will execute this file.
 #
 
-set(OBERON_PSA_PATH ${NRF_SECURITY_ROOT}/oberon/psa)
+set(OBERON_PSA_PATH ${NRF_DIR}/ext/oberon/psa)
 
 # Library for mbedcrypto includes and configurations
 add_library(mbedcrypto_common INTERFACE)
