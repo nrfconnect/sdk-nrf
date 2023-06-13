@@ -268,3 +268,8 @@ Hardware Unique Key
 .. toggle::
 
   .. sml-table:: hw_unique_key
+
+PMIC device support
+*******************
+
+The following table indicates the software maturity levels of the support for each PMIC device:

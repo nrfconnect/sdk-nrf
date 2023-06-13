@@ -64,3 +64,4 @@ features:
     Immutable Bootloader as part of build: SECURE_BOOT
   hw_unique_key:
     Key Derivation from Hardware Unique Key: HW_UNIQUE_KEY
+    nPM1300: REGULATOR_NPM1300
