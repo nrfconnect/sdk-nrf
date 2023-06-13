@@ -24,7 +24,7 @@ struct shell_model_instance {
 struct sensor_value shell_model_strtosensorval(const char *str, int *err)
 {
 	int temp_err = 0;
-	struct sensor_value out;
+	struct sensor_value out = { 0 };
 
 	double val = shell_model_strtodbl(str, &temp_err);
 

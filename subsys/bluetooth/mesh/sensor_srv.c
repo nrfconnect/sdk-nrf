@@ -253,7 +253,7 @@ static int handle_column_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	net_buf_simple_add_le16(&rsp, id);
 
 	if (!sensor || !sensor->series.get) {
-		LOG_DBG("No series support in 0x%04x", sensor->type->id);
+		LOG_DBG("No series support in 0x%04x", id);
 		goto respond;
 	}
 
@@ -326,7 +326,12 @@ static uint16_t max_column_count(const struct bt_mesh_sensor_type *sensor)
 	for (int i = 0; i < sensor->channel_count; i++) {
 		column_size += sensor->channels[i].format->size;
 	}
-	return (BT_MESH_TX_SDU_MAX - BT_MESH_MIC_SHORT - 3) / column_size;
+
+	if (column_size) {
+		return (BT_MESH_TX_SDU_MAX - BT_MESH_MIC_SHORT - 3) / column_size;
+	} else {
+		return (BT_MESH_TX_SDU_MAX - BT_MESH_MIC_SHORT - 3);
+	}
 }
 
 static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
@@ -348,7 +353,7 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	net_buf_simple_add_le16(&rsp, id);
 
 	if (!sensor || !sensor->series.get) {
-		LOG_DBG("No series support in 0x%04x", sensor->type->id);
+		LOG_DBG("No series support in 0x%04x", id);
 		goto respond;
 	}
 
@@ -395,7 +400,6 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	}
 
 	struct bt_mesh_sensor_column range;
-	bool ranged = (buf->len != 0);
 
 	if (buf->len == col_format->size * 2) {
 		int err;
@@ -418,6 +422,7 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	}
 
 	for (uint32_t i = 0; i < sensor->series.column_count; ++i) {
+		bool ranged = (buf->len != 0);
 		const struct bt_mesh_sensor_column *col =
 			&sensor->series.columns[i];
 
