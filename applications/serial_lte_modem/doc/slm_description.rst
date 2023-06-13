@@ -193,35 +193,6 @@ CONFIG_SLM_HTTPC - HTTP client support in SLM
 CONFIG_SLM_TWI - TWI support in SLM
    This option enables additional AT commands for using the TWI service.
 
-.. _CONFIG_SLM_NRF52_DFU:
-
-CONFIG_SLM_NRF52_DFU - nRF52 DFU support
-   This option enables additional AT commands for nRF52 DFU support.
-
-.. _CONFIG_SLM_NRF52_DFU_LEGACY:
-
-CONFIG_SLM_NRF52_DFU_LEGACY - nRF52 legacy DFU support
-   This option enables support of the serial DFU protocol in legacy nRF52 SDKs.
-
-.. _CONFIG_SLM_DFU_SOCKET_RETRIES:
-
-CONFIG_SLM_DFU_SOCKET_RETRIES - Number of download retries
-   This option defines the number of retries for socket-related download issues.
-   The default value is 2.
-
-.. _CONFIG_SLM_DFU_FLASH_BUF_SZ:
-
-CONFIG_SLM_DFU_FLASH_BUF_SZ - Buffer size for flash write operations.
-   This option defines the buffer size for flash write operations.
-   This buffer size must be aligned to the minimal flash write block size.
-   The default value is 512.
-
-.. _CONFIG_SLM_DFU_INIT_PACKET_SZ:
-
-CONFIG_SLM_DFU_INIT_PACKET_SZ - Buffer size for init packet.
-   This option defines the buffer size for receiving the init packet in the legacy serial DFU protocol.
-   The default value is 512.
-
 Additional configuration
 ========================
 

@@ -39,7 +39,6 @@ The modem-specific AT commands are documented in the `nRF91 AT Commands Referenc
    TCPIP_AT_commands
    ICMP_AT_commands
    FOTA_AT_commands
-   DFU_AT_commands
    SMS_AT_commands
    FTP_AT_commands
    GNSS_AT_commands

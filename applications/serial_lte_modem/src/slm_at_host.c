@@ -20,9 +20,6 @@
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
-#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
-#include "slip.h"
-#endif
 
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
@@ -46,8 +43,7 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
 static enum slm_operation_modes {
 	SLM_AT_COMMAND_MODE,  /* AT command host or bridge */
-	SLM_DATA_MODE,        /* Raw data sending */
-	SLM_DFU_MODE          /* nRF52 DFU controller */
+	SLM_DATA_MODE        /* Raw data sending */
 } slm_operation_mode;
 
 /* list supported UART instances and get HWFC property from DTS */
@@ -139,26 +135,16 @@ static int uart_send(const uint8_t *buffer, size_t len)
 
 void rsp_send_ok(void)
 {
-	if (slm_operation_mode == SLM_DFU_MODE) {
-		return;
-	}
 	(void)uart_send(OK_STR, sizeof(OK_STR) - 1);
 }
 
 void rsp_send_error(void)
 {
-	if (slm_operation_mode == SLM_DFU_MODE) {
-		return;
-	}
 	(void)uart_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 }
 
 void rsp_send(const char *fmt, ...)
 {
-	if (slm_operation_mode == SLM_DFU_MODE) {
-		return;
-	}
-
 	k_sem_take(&rsp_sent, K_FOREVER);
 
 	va_list arg_ptr;
@@ -175,10 +161,6 @@ void rsp_send(const char *fmt, ...)
 void data_send(const uint8_t *data, size_t len)
 {
 	enum pm_device_state state = PM_DEVICE_STATE_OFF;
-
-	if (slm_operation_mode == SLM_DFU_MODE) {
-		return;
-	}
 
 	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATA");
 
@@ -461,123 +443,6 @@ static void notification_handler(const char *notification)
 		}
 	}
 }
-
-#if defined(CONFIG_SLM_NRF52_DFU)
-/* Overall, nRF52 DFU is supported or not */
-#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
-/* Functions for legacy Serial DFU Protocol, UART is in TX and RX */
-#define DFU_RX_MAX_DELAY 1000 /* in milliseconds */
-static K_SEM_DEFINE(dfu_response, 0, 1);
-
-void enter_dfumode(void)
-{
-	if (slm_operation_mode != SLM_DFU_MODE) {
-		slm_operation_mode = SLM_DFU_MODE;
-		LOG_INF("Enter dfumode");
-	}
-}
-
-void exit_dfumode(void)
-{
-	if (slm_operation_mode == SLM_DFU_MODE) {
-		/* Enable UART for command mode */
-		slm_operation_mode = SLM_AT_COMMAND_MODE;
-		(void) uart_receive_enable();
-		LOG_INF("Exit dfumode");
-	}
-}
-
-int dfu_drv_tx(const uint8_t *data, uint16_t length)
-{
-	int ret = 0;
-
-	if (length == 0 || slm_operation_mode != SLM_DFU_MODE) {
-		return -EINVAL;
-	}
-
-	if (length > SLIP_SIZE_MAX) {
-		ret = -ENOMEM;
-	} else {
-		uint32_t slip_pkt_len;
-
-		encode_slip(rsp_buf, &slip_pkt_len, data, length);
-		LOG_HEXDUMP_DBG(rsp_buf, slip_pkt_len, "DFU-TX");
-		ret = uart_send(rsp_buf, slip_pkt_len);
-	}
-
-	return ret;
-}
-
-int dfu_drv_rx(uint8_t *data, uint32_t max_len, uint32_t *real_len)
-{
-	int ret;
-
-	if (data == NULL) {
-		return -EINVAL;
-	}
-
-	at_buf_len = 0;
-	ret = k_sem_take(&dfu_response, K_MSEC(DFU_RX_MAX_DELAY));
-	if (ret) {
-		LOG_ERR("DFU response error: %d", ret);
-		return -EAGAIN;
-	}
-
-	ret = decode_slip(data, real_len, at_buf, at_buf_len);
-	if (ret) {
-		return ret;
-	}
-	if (*real_len > max_len) {
-		return -ENOMEM;
-	}
-
-	LOG_HEXDUMP_DBG(data, *real_len, "DFU-RX");
-
-	return 0;
-}
-
-static int dfu_rx_handler(const uint8_t *data, int datalen)
-{
-	memcpy(at_buf + at_buf_len, data, datalen);
-	at_buf_len += datalen;
-
-	if (at_buf[at_buf_len - 1] == SLIP_END) {
-		k_sem_give(&dfu_response);
-	}
-
-	return 0;
-}
-#else
-/* Functions for MCUBOOT-based DFU protocol, UART is in TX only */
-void enter_dfumode(void)
-{
-	if (slm_operation_mode != SLM_DFU_MODE) {
-		slm_operation_mode = SLM_DFU_MODE;
-		/* only UART Send */
-		uart_receive_disable(true);
-		LOG_INF("Enter dfumode");
-	}
-}
-
-void exit_dfumode(void)
-{
-	if (slm_operation_mode == SLM_DFU_MODE) {
-		slm_operation_mode = SLM_AT_COMMAND_MODE;
-		(void) uart_receive_enable();
-		LOG_INF("Exit dfumode");
-	}
-}
-
-int dfu_drv_tx(const uint8_t *data, uint16_t length)
-{
-	if (length == 0 || slm_operation_mode != SLM_DFU_MODE) {
-		return -EINVAL;
-	}
-
-	return uart_send(data, length);
-}
-#endif /* CONFIG_SLM_NRF52_DFU_LEGACY */
-#endif /* CONFIG_SLM_NRF52_DFU */
 
 static void raw_send(struct k_work *work)
 {
@@ -1009,10 +874,6 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 			if (err) {
 				return;
 			}
-#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
-		} else if (slm_operation_mode == SLM_DFU_MODE) {
-			(void)dfu_rx_handler(&(evt->data.rx.buf[pos]), evt->data.rx.len);
-#endif /* CONFIG_SLM_NRF52_DFU_LEGACY */
 		} else {
 			LOG_WRN("No handler");
 		}
