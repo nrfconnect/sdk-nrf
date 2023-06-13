@@ -29,16 +29,9 @@ K_THREAD_DEFINE(app_thread, CONFIG_APPLICATION_THREAD_STACK_SIZE, main_applicati
 K_THREAD_DEFINE(msg_thread, CONFIG_MESSAGE_THREAD_STACK_SIZE, message_queue_thread_fn,
 		NULL, NULL, NULL, 0, 0, 0);
 
-/* Define, and automatically start the connection management thread. See cloud_connection.c
- *
- * The connection thread is given higher priority (-1) so that it can preempt the other threads,
- * for instance in the event of a call to disconnect_cloud().
- *
- * Priority -1 is also a non-preeemptible priority level, so other threads, even of higher
- * priority, cannot interrupt the connection thread until it yields.
- */
-K_THREAD_DEFINE(con_thread, CONFIG_CONNECTION_THREAD_STACK_SIZE, connection_management_thread_fn,
-		NULL, NULL, NULL, -1, 0, 0);
+/* Define, and automatically start the cloud connection thread. See cloud_connection.c */
+K_THREAD_DEFINE(con_thread, CONFIG_CONNECTION_THREAD_STACK_SIZE, cloud_connection_thread_fn,
+		NULL, NULL, NULL, 0, 0, 0);
 
 /* main() is called from the main thread, which defaults to priority zero,
  * but for illustrative purposes we don't use it. main_application() could be called directly

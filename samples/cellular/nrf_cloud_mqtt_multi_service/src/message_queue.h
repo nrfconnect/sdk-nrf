@@ -8,7 +8,7 @@
 #include <net/nrf_cloud_codec.h>
 
 /**
- * @brief Schedule a cloud object to be sent as a device message payload. Message will
+ * @brief Schedule a cloud object to be sent as a device message payload. The message will
  *	  be held asynchronously until a valid nRF Cloud connection is established.
  *	  Caller is no longer responsible for device message memory after function returns.
  * @return int - 0 on success, otherwise negative error.

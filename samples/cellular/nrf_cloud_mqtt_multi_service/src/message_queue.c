@@ -103,7 +103,7 @@ static int consume_device_message(void)
 
 	/* Wait until we are able to send it. */
 	LOG_DBG("Waiting for valid connection before transmitting device message");
-	(void)await_connection(K_FOREVER);
+	(void)await_cloud_ready(K_FOREVER);
 
 	/* Attempt to send it.
 	 *

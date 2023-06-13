@@ -15,74 +15,64 @@
 typedef void (*dev_msg_handler_cb_t)(const struct nrf_cloud_data *const dev_msg);
 
 /**
- * @brief Await connection to a network.
+ * @brief Sleep until the network is ready for use, or the specified timeout elapses.
  *
  * @param timeout - The time to wait before timing out.
- * @return true if occurred.
+ * @return true if the network became ready in time.
  * @return false if timed out.
  */
-bool await_network_connection(k_timeout_t timeout);
+bool await_network_ready(k_timeout_t timeout);
 
 /**
- * @brief Await a complete and readied connection to nRF Cloud.
+ * @brief Sleep until the nRF Cloud connection is ready for use, or the specified timeout elapses.
  *
  * @param timeout - The time to wait before timing out.
- * @return true if occurred.
+ * @return true if nRF Cloud became ready in time.
  * @return false if timed out.
  */
-bool await_connection(k_timeout_t timeout);
+bool await_cloud_ready(k_timeout_t timeout);
 
 /**
- * @brief Await a disconnection from nRF Cloud.
+ * @brief Sleep until connection to nRF Cloud is lost, or the specified timeout elapses.
  *
  * @param timeout - The time to wait before timing out.
- * @return true if occurred.
+ * @return true if the connection was lost within the timeout.
  * @return false if timed out.
  */
-bool await_cloud_disconnection(k_timeout_t timeout);
+bool await_cloud_disconnected(k_timeout_t timeout);
 
 /**
- * @brief Await the determination of current date and time by the modem.
+ * @brief Sleep until the current date-time is known, or the specified timeout elapses.
  *
  * @param timeout - The time to wait before timing out.
- * @return true if occurred.
+ * @return true if the current date-time was determined within the timeout.
  * @return false if timed out.
  */
 bool await_date_time_known(k_timeout_t timeout);
 
 /**
- * @brief Check whether we are currently connected to nRF Cloud.
+ * @brief Register a device message handler to receive general device messages from nRF Cloud.
  *
- * @return bool - Whether we are currently connected to nRF Cloud.
- */
-bool cloud_is_connected(void);
-
-/**
- * @brief Check whether we are currently disconnecting from nRF Cloud.
- *
- * @return bool - Whether we are currently disconnecting from nRF Cloud.
- */
-bool cloud_is_disconnecting(void);
-
-/**
- * @brief Register a device message handler to receive general device messages from nRF Cloud
- *
- * The callback will be called directly from the connection nRF Cloud connection poll thread,
- * so it will block receipt of data from nRF Cloud until complete. Avoid lengthy operations.
+ * The callback will be called directly from the nRF Cloud connection poll thread, so it will block
+ * receipt of data from nRF Cloud until complete. Avoid lengthy operations.
  *
  * @param handler_cb - The callback to handle device messages
  */
 void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb);
 
 /**
- * @brief Trigger and/or notify of a disconnection from nRF Cloud.
+ * @brief Disconnect from nRF Cloud and update internal state accordingly.
+ *
+ * May also be called to report an external disconnection.
  */
 void disconnect_cloud(void);
 
 /**
- * @brief The connection management thread function.
- * Manages our connection to nRF Cloud, resetting and restablishing as necessary.
+ * @brief Cloud connection thread function.
+ *
+ * This function manages the cloud connection thread. Once called, it begins monitoring network
+ * status and persistently maintains a connection to nRF Cloud whenever Internet is available.
  */
-void connection_management_thread_fn(void);
+void cloud_connection_thread_fn(void);
 
 #endif /* _CLOUD_CONNECTION_H_ */

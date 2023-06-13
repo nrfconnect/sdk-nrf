@@ -305,7 +305,7 @@ void main_application_thread_fn(void)
 	}
 
 	/* Wait for first connection before starting the application. */
-	(void)await_connection(K_FOREVER);
+	(void)await_cloud_ready(K_FOREVER);
 
 	(void)nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
 

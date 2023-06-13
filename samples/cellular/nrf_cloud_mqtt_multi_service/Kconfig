@@ -29,13 +29,6 @@ config CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS
 	  If connecting to nRF Cloud takes longer than this timeout, it will be
 	  reattempted.
 
-config CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS
-	int "Cloud connection reestablishment delay (seconds)"
-	default 5
-	help
-	  After the connection to nRF Cloud has been reset, wait this amount of
-	  time before attempting to connect again.
-
 config CLOUD_READY_TIMEOUT_SECONDS
 	int "Cloud readiness timeout (seconds)"
 	default 600
