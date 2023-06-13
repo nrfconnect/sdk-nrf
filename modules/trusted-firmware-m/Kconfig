@@ -212,8 +212,16 @@ config TFM_QCBOR_PATH
 config TFM_PARTITION_PROTECTED_STORAGE
 	bool
 	select HW_UNIQUE_KEY
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_CCM if SOC_SERIES_NRF91X
+	select PSA_WANT_ALG_GCM if SOC_NRF5340_CPUAPP
 	help
-	  The encryption policy relies on a secret hardware unique key (HUK) per device
+	  The encryption policy relies on a secret hardware unique key (HUK) per device.
+	  The protected storage partition require HKDF with HMAC and SHA-256 to
+	  derive the storage key and an AEAD encryption algorithm for storage
+	  encryption.
 
 if TFM_PARTITION_CRYPTO
 
@@ -222,9 +230,13 @@ config TFM_CRYPTO_BUILTIN_KEYS
 	prompt "TF-M crypto builtin keys"
 	default y
 	depends on !TFM_PROFILE_TYPE_MINIMAL
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_SHA_256
 	help
 	  Whether to allow crypto service to store builtin keys.
-	  Without this, ALL builtin keys must be stored in a platform-specific location
+	  Without this, ALL builtin keys must be stored in a platform-specific location.
+	  Builtin keys require HKDF with HMAC and SHA-256 to derive sub-keys.
 
 config TFM_CRYPTO_ENGINE_BUF_SIZE
 	int
