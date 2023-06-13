@@ -231,7 +231,7 @@ FOTA upgrades using other cloud services
 
 FOTA upgrades can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
 If you are uploading the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket, see the :ref:`lib_aws_fota` documentation for instructions.
-Samples are provided in |NCS| for AWS (:ref:`aws_iot` sample) and Azure (:ref:`azure_fota_sample` sample).
+Samples are provided in |NCS| for AWS (:ref:`aws_iot` sample) and Azure (:ref:`azure_iot_hub` sample).
 
 Your application must be able to retrieve the host and file name for the binary file.
 See the :ref:`lib_fota_download` library documentation for information about the format of this information, especially when providing two files for a bootloader upgrade.
@@ -244,7 +244,7 @@ Samples and applications implementing FOTA
 * :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
 * :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
 * :ref:`aws_iot` sample - performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
-* :ref:`azure_fota_sample` sample - performs a FOTA update from the Azure IoT Hub.
+* :ref:`azure_iot_hub` sample - performs a FOTA update from the Azure IoT Hub.
 * :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled). It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
 
 .. _nrf9160_ug_gnss:

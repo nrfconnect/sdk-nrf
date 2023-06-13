@@ -15,7 +15,7 @@ DPS can be enabled at compile time to make use of the device provisioning servic
 When the device provisioning is complete, the library automatically connects to the assigned Azure IoT Hub.
 
 The library also has integrated support for a proprietary FOTA solution.
-For more information on Azure FOTA, see the documentation on :ref:`lib_azure_fota` library and :ref:`azure_fota_sample` sample.
+For more information on Azure FOTA, see the documentation on :ref:`lib_azure_fota` library and :ref:`azure_iot_hub` sample.
 
 The library uses `Azure SDK for Embedded C`_ for message processing and other operations.
 For more information on how Azure SDK for Embedded C is integrated in this library, see :module_file:`Azure SDK for Embedded C IoT client libraries<azure-sdk-for-c: sdk/docs/iot/README.md>`.

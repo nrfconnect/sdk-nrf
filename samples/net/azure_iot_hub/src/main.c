@@ -11,6 +11,7 @@
 #include <zephyr/sys/reboot.h>
 #include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
 #include <zephyr/logging/log.h>
@@ -41,14 +42,15 @@ LOG_MODULE_REGISTER(azure_iot_hub_sample, CONFIG_AZURE_IOT_HUB_SAMPLE_LOG_LEVEL)
 static struct net_mgmt_event_callback l4_cb;
 static struct net_mgmt_event_callback conn_cb;
 
-struct method_data {
+static struct method_data {
 	struct k_work work;
 	char request_id[8];
 	char name[32];
 	char payload[200];
 } method_data;
-struct k_work twin_report_work;
-struct k_work_delayable send_event_work;
+static struct k_work twin_report_work;
+static struct k_work_delayable send_event_work;
+static struct k_work_delayable reboot_work;
 
 static char recv_buf[RECV_BUF_SIZE];
 static void direct_method_handler(struct k_work *work);
@@ -163,6 +165,13 @@ static void on_evt_direct_method(struct azure_iot_hub_method *method)
 	k_work_submit_to_queue(&application_work_q, &method_data.work);
 }
 
+static void reboot_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	sys_reboot(SYS_REBOOT_COLD);
+}
+
 static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 {
 	switch (evt->type) {
@@ -182,6 +191,11 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		break;
 	case AZURE_IOT_HUB_EVT_READY:
 		LOG_INF("AZURE_IOT_HUB_EVT_READY");
+
+		/* All initializations and cloud connection were successful, now mark
+		 * image as working so that we will not revert upon reboot.
+		 */
+		boot_write_img_confirmed();
 
 		/* The AZURE_IOT_HUB_EVT_READY event indicates that the
 		 * IoT hub connection is established and interaction with the
@@ -222,6 +236,23 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		break;
 	case AZURE_IOT_HUB_EVT_PUBACK:
 		LOG_INF("AZURE_IOT_HUB_EVT_PUBACK");
+		break;
+	case AZURE_IOT_HUB_EVT_FOTA_START:
+		LOG_INF("AZURE_IOT_HUB_EVT_FOTA_START");
+		break;
+	case AZURE_IOT_HUB_EVT_FOTA_DONE:
+		LOG_INF("AZURE_IOT_HUB_EVT_FOTA_DONE");
+		LOG_INF("The device will reboot in 5 seconds to apply update");
+		k_work_schedule(&reboot_work, K_SECONDS(5));
+		break;
+	case AZURE_IOT_HUB_EVT_FOTA_ERASE_PENDING:
+		LOG_INF("AZURE_IOT_HUB_EVT_FOTA_ERASE_PENDING");
+		break;
+	case AZURE_IOT_HUB_EVT_FOTA_ERASE_DONE:
+		LOG_INF("AZURE_IOT_HUB_EVT_FOTA_ERASE_DONE");
+		break;
+	case AZURE_IOT_HUB_EVT_FOTA_ERROR:
+		LOG_ERR("AZURE_IOT_HUB_EVT_FOTA_ERROR: FOTA failed");
 		break;
 	case AZURE_IOT_HUB_EVT_ERROR:
 		LOG_INF("AZURE_IOT_HUB_EVT_ERROR");
@@ -400,6 +431,7 @@ static void work_init(void)
 	k_work_init(&method_data.work, direct_method_handler);
 	k_work_init(&twin_report_work, twin_report_work_fn);
 	k_work_init_delayable(&send_event_work, send_event);
+	k_work_init_delayable(&reboot_work, reboot_work_fn);
 	k_work_queue_start(&application_work_q, application_stack_area,
 		       K_THREAD_STACK_SIZEOF(application_stack_area),
 		       K_HIGHEST_APPLICATION_THREAD_PRIO, NULL);
