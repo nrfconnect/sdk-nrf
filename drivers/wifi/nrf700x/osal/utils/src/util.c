@@ -84,7 +84,7 @@ bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr)
 {
 	unsigned char zero_addr[NRF_WIFI_ETH_ADDR_LEN] = {0};
 
-	return ((memcmp(mac_addr,
+	return (mac_addr && (memcmp(mac_addr,
 			zero_addr,
 			sizeof(zero_addr)) != 0) &&
 		!(mac_addr[0] & 0x1));
