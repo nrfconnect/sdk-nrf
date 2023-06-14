@@ -243,7 +243,7 @@ manifest:
     - name: bsim
       repo-path: bsim_west
       remote: babblesim
-      revision: 908ffde6298a937c6549dbfa843a62caab26bfc5
+      revision: 384a091445c57b44ac8cbd18ebd245b47c71db94
       import:
         path-prefix: tools
 
