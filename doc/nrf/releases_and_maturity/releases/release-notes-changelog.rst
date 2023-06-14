@@ -647,6 +647,7 @@ Modem libraries
     * The trace backends can now return ``-EAGAIN`` if the write operation can be retried.
     * Fixed a rare bug that caused a deadlock between two threads when one thread sent data while the other received a lot of data quickly.
     * The ``SO_IP_ECHO_REPLY``, ``SO_IPV6_ECHO_REPLY``, ``SO_TCP_SRV_SESSTIMEO`` and ``SO_SILENCE_ALL`` socket option levels to align with the modem option levels.
+    * The :ref:`modem_trace_module` is now initialized before the callbacks registered using the :c:macro:`NRF_MODEM_LIB_ON_INIT` macro are called.
 
 * :ref:`lte_lc_readme` library:
 

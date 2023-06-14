@@ -57,6 +57,8 @@ static int trace_backend_write_cmock_num_calls;
 
 static int callback_evt;
 
+extern void nrf_modem_lib_trace_init(void);
+
 /* This is the override for the _weak callback. */
 void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt)
 {
@@ -95,13 +97,6 @@ void setUp(void)
 	RESET_FAKE(nrf_modem_at_printf);
 
 	clear_rw_frags();
-}
-
-static void NRF_MODEM_LIB_ON_INIT_callback(void)
-{
-	STRUCT_SECTION_FOREACH(nrf_modem_lib_init_cb, e) {
-		e->callback(0, e->context);
-	}
 }
 
 static void generate_trace_frag(struct nrf_modem_trace_data *frag)
@@ -217,7 +212,7 @@ void test_trace_thread_handler_get_single(void)
 	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
 	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
 
-	NRF_MODEM_LIB_ON_INIT_callback();
+	nrf_modem_lib_trace_init();
 
 	generate_trace_frag(&header);
 	generate_trace_frag(&data);
@@ -248,7 +243,7 @@ void test_trace_thread_handler_get_multi(void)
 	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
 	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
 
-	NRF_MODEM_LIB_ON_INIT_callback();
+	nrf_modem_lib_trace_init();
 
 	for (int i = 0; i < TRACE_THREAD_HANDLER_MULTI_RUNS; i++) {
 		struct nrf_modem_trace_data header = { 0 };
@@ -291,7 +286,7 @@ void test_trace_thread_handler_write_efault(void)
 	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
 	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
 
-	NRF_MODEM_LIB_ON_INIT_callback();
+	nrf_modem_lib_trace_init();
 
 	generate_trace_frag(&header);
 	generate_trace_frag(&data);
@@ -315,7 +310,7 @@ void test_trace_thread_handler_get_einprogress(void)
 	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
 	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
 
-	NRF_MODEM_LIB_ON_INIT_callback();
+	nrf_modem_lib_trace_init();
 
 	nrf_modem_trace_get_error = -EINPROGRESS;
 
@@ -331,7 +326,7 @@ void test_trace_thread_handler_get_enodata(void)
 	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
 	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
 
-	NRF_MODEM_LIB_ON_INIT_callback();
+	nrf_modem_lib_trace_init();
 
 	nrf_modem_trace_get_error = -ENODATA;
 
@@ -347,7 +342,7 @@ void test_trace_thread_handler_get_eshutdown(void)
 	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
 	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
 
-	NRF_MODEM_LIB_ON_INIT_callback();
+	nrf_modem_lib_trace_init();
 
 	nrf_modem_trace_get_error = -ESHUTDOWN;
 
@@ -387,7 +382,7 @@ void test_nrf_modem_lib_trace_enospc(void)
 	__cmock_trace_backend_write_Stub(trace_backend_write_stub);
 	__cmock_trace_backend_deinit_Stub(trace_backend_deinit_stub);
 
-	NRF_MODEM_LIB_ON_INIT_callback();
+	nrf_modem_lib_trace_init();
 
 	trace_backend_write_error = -ENOSPC;
 

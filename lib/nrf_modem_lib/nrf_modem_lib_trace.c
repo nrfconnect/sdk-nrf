@@ -18,8 +18,6 @@
 
 LOG_MODULE_REGISTER(nrf_modem_lib_trace, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
-NRF_MODEM_LIB_ON_INIT(trace_init, trace_init_callback, NULL);
-
 K_SEM_DEFINE(trace_sem, 0, 1);
 K_SEM_DEFINE(trace_clear_sem, 0, 1);
 K_SEM_DEFINE(trace_done_sem, 1, 1);
@@ -329,11 +327,9 @@ static int trace_init(void)
 	return 0;
 }
 
-static void trace_init_callback(int err, void *ctx)
+void nrf_modem_lib_trace_init(void)
 {
-	if (err) {
-		return;
-	}
+	int err;
 
 	err = trace_init();
 	if (err) {
