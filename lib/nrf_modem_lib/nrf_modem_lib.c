@@ -67,6 +67,10 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 	.fault_handler = nrf_modem_fault_handler
 };
 
+#if CONFIG_NRF_MODEM_LIB_TRACE
+extern void nrf_modem_lib_trace_init(void);
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE */
+
 static void log_fw_version_uuid(void)
 {
 	int err;
@@ -121,11 +125,19 @@ static int _nrf_modem_lib_init(void)
 
 	rc = nrf_modem_init(&init_params);
 
+#if CONFIG_NRF_MODEM_LIB_TRACE
+	/* We enable tracing as early as possible because the modem can only store a given
+	 * amount of traces internally before they are dropped.
+	 */
+	nrf_modem_lib_trace_init();
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE */
+
 	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID)) {
 		log_fw_version_uuid();
 	}
 
 	LOG_DBG("Modem library has initialized, ret %d", rc);
+
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_init_cb, e) {
 		LOG_DBG("Modem init callback: %p", e->callback);
 		e->callback(rc, e->context);
