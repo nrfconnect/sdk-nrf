@@ -288,9 +288,15 @@ nrf_802154_sl_lptimer_platform_result_t nrf_802154_platform_sl_lptimer_hw_task_p
 		}
 	}
 
-	if (z_nrf_rtc_timer_set(m_hw_task.chan, fire_lpticks, NULL, NULL) != 0) {
+	if (z_nrf_rtc_timer_exact_set(m_hw_task.chan, fire_lpticks, NULL, NULL) != 0) {
 		hw_task_state_set(HW_TASK_STATE_SETTING_UP, HW_TASK_STATE_IDLE);
-		return NRF_802154_SL_LPTIMER_PLATFORM_TOO_DISTANT;
+		uint64_t now = z_nrf_rtc_timer_read();
+
+		if ((fire_lpticks > now) &&
+		    (fire_lpticks - now > NRF_RTC_TIMER_MAX_SCHEDULE_SPAN/2)) {
+			return NRF_802154_SL_LPTIMER_PLATFORM_TOO_DISTANT;
+		}
+		return NRF_802154_SL_LPTIMER_PLATFORM_TOO_LATE;
 	}
 
 	evt_address = z_nrf_rtc_timer_compare_evt_address_get(m_hw_task.chan);
