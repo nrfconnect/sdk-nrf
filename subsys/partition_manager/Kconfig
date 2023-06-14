@@ -107,7 +107,6 @@ rsource "Kconfig.template.partition_region"
 
 config PM_PGPS_ALIGN
 	hex
-	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
 	default NRF_CLOUD_PGPS_PARTITION_ALIGN
 	depends on PM_PARTITION_REGION_PGPS_EXTERNAL && BUILD_WITH_TFM
 
