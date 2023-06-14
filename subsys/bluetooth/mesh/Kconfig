@@ -8,9 +8,6 @@ if BT_MESH
 
 menu "Bluetooth mesh"
 
-config BT_MESH_SETTINGS_WORKQ
-	default n if SOC_NRF52832
-
 if BT_MESH_SETTINGS_WORKQ
 
 config BT_MESH_SETTINGS_WORKQ_STACK_SIZE
