@@ -28,11 +28,6 @@ enum fota_status {
 };
 
 /**
- * @brief Define SLM specified FOTA type for Bootloader
- */
-#define SLM_DFU_TARGET_IMAGE_TYPE_BL1	(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA + 1)
-
-/**
  * @brief Initialize FOTA AT command parser.
  *
  * @retval 0 If the operation was successful.

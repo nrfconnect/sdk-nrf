@@ -224,10 +224,6 @@ The following configuration files are provided:
   You can include it by adding ``-DOVERLAY_CONFIG=overlay-native_tls.conf`` to your build command.
   See :ref:`cmake_options`.
 
-* :file:`overlay-secure_bootloader.conf` - This configuration file contains additional configuration options that are required to use :ref:`ug_bootloader`.
-  You can include it by adding ``-DOVERLAY_CONFIG=overlay-secure_bootloader`` to your build command.
-  See :ref:`cmake_options`.
-
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
   See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
 
