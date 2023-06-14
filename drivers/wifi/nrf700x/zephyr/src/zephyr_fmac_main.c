@@ -508,6 +508,19 @@ err:
 }
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
+
+static struct wifi_mgmt_ops wifi_nrf_mgmt_ops = {
+	.scan = wifi_nrf_disp_scan_zep,
+#ifdef CONFIG_NET_STATISTICS_WIFI
+	.get_stats = wifi_nrf_stats_get,
+#endif /* CONFIG_NET_STATISTICS_WIFI */
+	.set_power_save = wifi_nrf_set_power_save,
+	.set_twt = wifi_nrf_set_twt,
+	.reg_domain = wifi_nrf_reg_domain,
+	.get_power_save_config = wifi_nrf_get_power_save_config,
+};
+
+
 static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.wifi_iface.iface_api.init = wifi_nrf_if_init_zep,
 	.wifi_iface.start = wifi_nrf_if_start_zep,
@@ -518,14 +531,7 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	.wifi_iface.get_stats = wifi_nrf_eth_stats_get,
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
-	.scan = wifi_nrf_disp_scan_zep,
-#ifdef CONFIG_NET_STATISTICS_WIFI
-	.get_stats = wifi_nrf_stats_get,
-#endif /* CONFIG_NET_STATISTICS_WIFI */
-	.set_power_save = wifi_nrf_set_power_save,
-	.set_twt = wifi_nrf_set_twt,
-	.reg_domain = wifi_nrf_reg_domain,
-	.get_power_save_config = wifi_nrf_get_power_save_config,
+	.wifi_mgmt_api = &wifi_nrf_mgmt_ops,
 };
 
 #ifdef CONFIG_WPA_SUPP
