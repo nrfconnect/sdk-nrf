@@ -33,15 +33,14 @@ LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 #define FOTA_FUTURE_FEATURE	0
 
 enum slm_fota_operation {
-	SLM_FOTA_STOP,
-	SLM_FOTA_START_APP,
-	SLM_FOTA_START_MFW,
-	SLM_FOTA_START_BL,
-	SLM_FOTA_PAUSE_RESUME,
+	SLM_FOTA_STOP = 0,
+	SLM_FOTA_START_APP = 1,
+	SLM_FOTA_START_MFW = 2,
+	SLM_FOTA_PAUSE_RESUME = 4,
 	SLM_FOTA_APP_READ = 6,
-	SLM_FOTA_MFW_READ,
-	SLM_FOTA_ERASE_APP,
-	SLM_FOTA_ERASE_MFW
+	SLM_FOTA_MFW_READ = 7,
+	SLM_FOTA_ERASE_APP = 8,
+	SLM_FOTA_ERASE_MFW = 9
 };
 
 static char path[FILE_URI_MAX];
@@ -220,34 +219,6 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 		return -EINVAL;
 	}
 
-#if defined(CONFIG_SECURE_BOOT)
-	/* When download MCUBOOT bootloader, S0 and S1 must be separated by "+"
-	 * Convert "+" to " " SPACE as this is required in fota_download
-	 */
-	char *delimiter = strstr(path, "+");
-
-	if (delimiter == NULL) {
-		LOG_ERR("Invalid S0/S1 string");
-		return -EINVAL;
-	}
-
-	*delimiter = ' ';
-
-	/* When download MCUBOOT bootloader, S0 and S1 must be two full filepath
-	 * as this is required in fota_download
-	 */
-	char *tmp = strrchr(path, '/');
-
-	if (tmp != NULL) {
-		char path2[FILE_URI_MAX] = { 0 };
-
-		memcpy(path2, path, tmp - path + 1);
-		tmp = delimiter + 1;
-		strcat(path2, tmp);
-		strcpy(tmp, path2);
-	}
-#endif
-
 	/* Stores everything before path (schema, hostname, port) */
 	memset(hostname, 0x00, URI_HOST_MAX);
 	if (parser.field_set & (1 << UF_HOST)) {
@@ -352,12 +323,7 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 		}
 		if (op == SLM_FOTA_STOP) {
 			err = fota_download_cancel();
-#if defined(CONFIG_SECURE_BOOT)
-		} else if (op == SLM_FOTA_START_APP || op == SLM_FOTA_START_MFW ||
-			   op == SLM_FOTA_START_BL) {
-#else
 		} else if (op == SLM_FOTA_START_APP || op == SLM_FOTA_START_MFW) {
-#endif
 			char uri[FILE_URI_MAX];
 			uint16_t pdn_id;
 			int size = FILE_URI_MAX;
@@ -371,7 +337,7 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			if (at_params_valid_count_get(&at_param_list) > 3) {
 				at_params_unsigned_int_get(&at_param_list, 3, &sec_tag);
 			}
-			if (op == SLM_FOTA_START_APP || op == SLM_FOTA_START_BL) {
+			if (op == SLM_FOTA_START_APP) {
 				type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 			} else {
 				type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
@@ -382,16 +348,6 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			} else {
 				err = do_fota_start(op, uri, sec_tag, 0, type);
 			}
-#if defined(CONFIG_SECURE_BOOT)
-			if (op == SLM_FOTA_START_BL) {
-				bool s0_active;
-
-				/* Override fota_type with SLM specified type */
-				fota_type = SLM_DFU_TARGET_IMAGE_TYPE_BL1;
-				(void)fota_download_s0_active_get(&s0_active);
-				LOG_INF("orig s0_active %d", s0_active);
-			}
-#endif
 #if FOTA_FUTURE_FEATURE
 		} else if (op == SLM_FOTA_PAUSE_RESUME) {
 			if (paused) {
@@ -418,17 +374,10 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-#if defined(CONFIG_SECURE_BOOT)
-		rsp_send("\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
-			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW, SLM_FOTA_START_BL,
-			SLM_FOTA_APP_READ, SLM_FOTA_MFW_READ,
-			SLM_FOTA_ERASE_APP, SLM_FOTA_ERASE_MFW);
-#else
 		rsp_send("\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
 			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW,
 			SLM_FOTA_APP_READ, SLM_FOTA_MFW_READ,
 			SLM_FOTA_ERASE_APP, SLM_FOTA_ERASE_MFW);
-#endif
 		err = 0;
 		break;
 

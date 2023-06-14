@@ -31,7 +31,6 @@ Syntax
   * ``0`` - Cancel FOTA (during download only).
   * ``1`` - Start FOTA for application update.
   * ``2`` - Start FOTA for modem delta update.
-  * ``3`` - Start FOTA for bootloader update (optional if :ref:`nRF Secure Immutable Bootloader (NSIB) <bootloader>` enabled).
   * ``6`` - Read application image size and version (optional for application FOTA).
   * ``7`` - Read modem scratch space size and offset (optional for modem FOTA).
   * ``8`` - Erase MCUboot secondary slot (optional for application FOTA).
@@ -114,17 +113,6 @@ Example
 
    Application download and activate if NSIB is enabled
    AT#XFOTA=1,"http://remote.host/fota/slm_app_update.bin+slm_app_update.bin"
-   OK
-   #XFOTA: 1,0,0
-   ...
-   #XFOTA:4,0
-   AT#XRESET
-   OK
-   READY
-   #XFOTA: 5,0
-
-   Bootloader download and activate if NSIB is enabled
-   AT#XFOTA=3,"http://remote.host/fota/signed_by_mcuboot_and_b0_s0_image_update.bin+signed_by_mcuboot_and_b0_s1_image_update.bin"
    OK
    #XFOTA: 1,0,0
    ...
@@ -218,16 +206,5 @@ Examples
    AT#XFOTA=?
 
    #XFOTA: (0,1,2,6,7,8,9),<file_url>,<sec_tag>,<apn>
-
-   OK
-
-Examples(if NSIB is enabled)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-   AT#XFOTA=?
-
-   #XFOTA: (0,1,2,3,6,7,8,9),<file_url>,<sec_tag>,<apn>
 
    OK

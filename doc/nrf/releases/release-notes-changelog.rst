@@ -148,6 +148,7 @@ nRF9160: Serial LTE modem
 * Removed:
 
   * DFU AT commands ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` because they were not usable without a custom application in the target (nRF52 series) device.
+  * Support for bootloader FOTA update because it is not needed for Serial LTE modem.
 
 nRF5340 Audio
 -------------
