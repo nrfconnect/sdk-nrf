@@ -21,10 +21,12 @@ LOG_MODULE_REGISTER(zzhc, CONFIG_ZZHC_LOG_LEVEL);
 
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>
+#include <modem/nrf_modem_lib.h>
 #include <nrf_socket.h>
 
 #include "zzhc_internal.h"
 
+NRF_MODEM_LIB_ON_INIT(zzhc_init_hook, on_modem_lib_init, NULL);
 AT_MONITOR(zzhc_monitor, ANY, response_handler);
 
 #define REGVER            2         /** Self-registration protocol version */
@@ -41,6 +43,9 @@ AT_MONITOR(zzhc_monitor, ANY, response_handler);
 
 #define THREAD_PRIORITY   K_PRIO_PREEMPT(CONFIG_ZZHC_THREAD_PRIO)
 #define STACK_SIZE        CONFIG_ZZHC_STACK_SIZE
+
+static struct k_thread zzhc_thread;
+static K_THREAD_STACK_DEFINE(zzhc_thread_stack, STACK_SIZE);
 
 /**@brief Host name of self-registration server. */
 static char const hostname[] = "zzhc.vnet.cn";
@@ -694,6 +699,7 @@ static void zzhc_init(void *arg1, void *arg2, void *arg3)
 	/* Initialize external modules */
 	rc = zzhc_ext_init(ctx);
 	if (rc != 0) {
+		LOG_DBG("zzhc_ext_init() = %d", rc);
 		goto zzhc_init_cleanup;
 	}
 
@@ -714,6 +720,21 @@ zzhc_init_cleanup:
 	LOG_DBG("Exit.");
 }
 
-K_THREAD_DEFINE(zzhc_thread, STACK_SIZE,
-		zzhc_init, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, 0);
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	/** ret: Zero on success, a positive value @em nrf_modem_dfu when executing
+	 *  Modem firmware updates, and negative errno on other failures.
+	 *
+	 *  ZZHC thread is only started upon normal modem lib initialization.
+	 */
+	if (ret == 0) {
+		k_thread_create(&zzhc_thread, zzhc_thread_stack,
+				K_THREAD_STACK_SIZEOF(zzhc_thread_stack),
+				zzhc_init, NULL, NULL, NULL,
+				THREAD_PRIORITY, K_USER, K_NO_WAIT);
+
+		LOG_DBG("zzhc_thread created");
+	}
+}
