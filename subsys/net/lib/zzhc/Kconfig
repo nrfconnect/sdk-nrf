@@ -9,8 +9,8 @@ menu "Self-Registration (Zi ZHu Ce)"
 config ZZHC
 	bool "Self-Registration Daemon"
 	depends on TRUSTED_EXECUTION_NONSECURE
-	select NRF_MODEM_LIB
-	select SETTINGS
+	depends on NRF_MODEM_LIB
+	depends on SETTINGS
 	select AT_CMD_PARSER
 	select AT_MONITOR
 	select BASE64
