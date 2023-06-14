@@ -11,6 +11,7 @@
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/endpoint.h>
 #include <../subsys/bluetooth/audio/audio_iso.h>
+#include <zephyr/sys/byteorder.h>
 
 #include "macros_common.h"
 #include "ctrl_events.h"
@@ -288,13 +289,26 @@ static int adv_create(void)
 	return 0;
 }
 
+/**
+ * @brief Set the channel allocation to a preset codec configuration.
+ *
+ * @param codec The preset codec configuration.
+ * @param loc   Location bitmask setting.
+ */
+static void bt_codec_allocation_set(struct bt_codec_data *codec, enum bt_audio_location loc)
+{
+	codec->data.type = BT_CODEC_CONFIG_LC3_CHAN_ALLOC;
+	sys_put_le32(loc, codec->value);
+	codec->data.data = codec->value;
+	codec->data.data_len = 4;
+}
+
 static int initialize(void)
 {
 	int ret;
 	static bool initialized;
-	struct bt_codec_data bis_codec_data =
-		BT_CODEC_DATA(BT_CODEC_CONFIG_LC3_FREQ, BT_AUDIO_FREQ);
 	struct bt_audio_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
+	struct bt_codec_data bis_codec_data[ARRAY_SIZE(stream_params)];
 	struct bt_audio_broadcast_source_subgroup_param
 		subgroup_params[CONFIG_BT_AUDIO_BROADCAST_SRC_SUBGROUP_COUNT];
 	struct bt_audio_broadcast_source_create_param create_param;
@@ -310,7 +324,9 @@ static int initialize(void)
 		stream_params[i].stream = &audio_streams[i];
 		bt_audio_stream_cb_register(stream_params[i].stream, &stream_ops);
 		stream_params[i].data_count = 1U;
-		stream_params[i].data = &bis_codec_data;
+		stream_params[i].data = &bis_codec_data[i];
+		/* The channel allocation is set incrementally */
+		bt_codec_allocation_set(stream_params[i].data, BIT(i));
 	}
 
 	for (size_t i = 0U; i < ARRAY_SIZE(subgroup_params); i++) {
