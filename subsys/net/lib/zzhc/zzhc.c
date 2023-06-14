@@ -38,11 +38,13 @@ AT_MONITOR(zzhc_monitor, ANY, response_handler);
 #define RETRY_TIMEOUT     3600      /** 1 hour, 3600s */
 #define RETRY_CNT_MAX     3         /** Max. value of retry counter */
 #define WHITELISTED_OP_ID 6         /** Whitelisted Operator ID */
-#define PRIMARY_DNS "218.4.4.4"
-#define SECONDARY_DNS "218.2.2.2"
+#define PRIMARY_DNS "218.2.2.2"
+#define SECONDARY_DNS "218.4.4.4"
 
 #define THREAD_PRIORITY   K_PRIO_PREEMPT(CONFIG_ZZHC_THREAD_PRIO)
 #define STACK_SIZE        CONFIG_ZZHC_STACK_SIZE
+
+static uint8_t at_resp[256];
 
 static struct k_thread zzhc_thread;
 static K_THREAD_STACK_DEFINE(zzhc_thread_stack, STACK_SIZE);
@@ -472,11 +474,11 @@ static int check_and_set_dns(struct zzhc *ctx)
 		.ai_protocol = NRF_IPPROTO_TCP,
 	};
 
-	err = nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN,
-			       "AT+CGCONTRDP=0");
+	err = nrf_modem_at_cmd(at_resp, sizeof(at_resp), "AT+CGCONTRDP=0");
 
 	if (err) {
-		return -EIO;
+		LOG_WRN("nrf_modem_at_cmd failed. errno: %d", err);
+		return 0;
 	}
 
 	snprintk(dns_compare, sizeof(dns_compare),
@@ -484,7 +486,7 @@ static int check_and_set_dns(struct zzhc *ctx)
 		 PRIMARY_DNS,
 		 SECONDARY_DNS);
 
-	if (strstr(ctx->at_resp, dns_compare)) {
+	if (strstr(at_resp, dns_compare) != NULL) {
 		return 0;
 	}
 
