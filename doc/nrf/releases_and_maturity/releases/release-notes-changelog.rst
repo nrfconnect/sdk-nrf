@@ -292,6 +292,9 @@ Cellular samples (renamed from nRF9160 samples)
   * Added documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
   * Changed the :file:`overlay_nrfcloud_logging.conf` file to enable JSON logs by default.
   * The :c:struct:`nrf_cloud_obj` structure and associated functions are now used to encode and decode nRF Cloud data.
+  * Cleaned up and simplified connection logic.
+  * Switched from using the :ref:`lte_lc_readme` library directly to using Zephyr's ``conn_mgr`` and the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kconfig option.
+  * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
 
 * :ref:`http_application_update_sample` sample:
 

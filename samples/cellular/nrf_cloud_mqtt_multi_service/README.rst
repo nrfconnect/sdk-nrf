@@ -9,7 +9,7 @@ Cellular: nRF Cloud MQTT multi-service
 
 This sample is a minimal, error tolerant, integrated demonstration of the :ref:`lib_nrf_cloud`, :ref:`lib_location`, and :ref:`lib_at_host` libraries.
 It demonstrates how you can integrate Firmware-Over-The-Air (FOTA), Location Services, Alert and Log Services, periodic sensor sampling, and more in your `nRF Cloud`_-enabled application.
-It also demonstrates how to implement error tolerance in your cellular applications without relying on reboot loops.
+It also demonstrates how to build connected, error-tolerant applications without worrying about physical-level specifics using Zephyr's ``conn_mgr``.
 
 .. _nrf_cloud_mqtt_multi_service_requirements:
 
@@ -31,7 +31,8 @@ Features
 
 This sample implements or demonstrates the following features:
 
-* Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`nrf_modem` and :ref:`lib_nrf_cloud` library.
+* Generic, disconnect-tolerant integration of LTE using Zephyr's ``conn_mgr`` and :kconfig:option:`CONFIG_LTE_CONNECTIVITY`.
+* Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`lib_nrf_cloud` library.
 * Support for `Firmware-Over-The-Air (FOTA) update service <nRF Cloud Getting Started FOTA documentation_>`_ using the `nRF Cloud`_ portal.
 * Support for `modem AT commands <AT Commands Reference Guide_>`_ over UART using the :ref:`lib_at_host` library.
 * Support for remote execution of modem AT commands using application-specific device messages.
@@ -44,7 +45,6 @@ This sample implements or demonstrates the following features:
 * Transmission of additional alerts, whenever a specified temperature limit is exceeded.
 * Optional transmission of log messages to the cloud using the :ref:`lib_nrf_cloud_log` library.
 
-
 .. _nrf_cloud_mqtt_multi_service_structure_and_theory_of_operation:
 
 Structure and theory of operation
@@ -54,58 +54,51 @@ This sample is separated into a number of smaller functional units.
 The top level functional unit and entry point for the sample is the :file:`src/main.c` file.
 This file starts three primary threads, each with a distinct function:
 
-* The connection thread (``con_thread``) runs the :ref:`nrf_cloud_mqtt_multi_service_connection_management_loop`, which maintains a connection to `nRF Cloud`_.
-* The application thread (``app_thread``) Runs the :ref:`nrf_cloud_mqtt_multi_service_application_thread_and_main_application_loop`, which may add `device messages <nRF Cloud Device Messages_>`_ to the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
-* The message thread (``msg_thread``) processes the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue` whenever there is an active connection.
+* The cloud connection thread (``con_thread``, :file:`src/cloud_connection.c`) runs the :ref:`nrf_cloud_mqtt_multi_service_cloud_connection_loop`, which maintains a connection to `nRF Cloud`_.
+* The application thread (``app_thread``, :file:`src/application.c`) runs the :ref:`nrf_cloud_mqtt_multi_service_application_thread_and_main_application_loop`, which controls demo features and submits `device messages <nRF Cloud Device Messages_>`_ to the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
+* The message queue thread (``msg_thread``, :file:`src/message_queue.c`) then transmits these messages whenever there is an active connection.
+  See :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
 
 :file:`src/main.c` also optionally starts a fourth thread, the ``led_thread``, which animates any onboard LEDs if :ref:`nrf_cloud_mqtt_multi_service_led_status_indication` is enabled.
 
-.. _nrf_cloud_mqtt_multi_service_connection_management_loop:
+.. _nrf_cloud_mqtt_multi_service_cloud_connection_loop:
 
-Connection management loop
-==========================
+Cloud connection loop
+=====================
 
-The connection management loop performs the following four primary tasks:
+The cloud connection loop (implemented in :file:`src/cloud_connection.c`) monitors network availability.
+It starts a connection with `nRF Cloud`_ whenever the Internet becomes reachable, and closes that connection whenever Internet access is lost.
+It has error handling and timeout features to ensure that failed or lost connections are re-established after a waiting period (:kconfig:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
 
-1) Configures and activates the cellular modem.
-#) Starts a connection to the LTE network.
-#) Maintains a connection to `nRF Cloud`_.
-#) Re-establishes or retries all lost or failed connections.
+Since the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kcofig option is enabled, Zephyr's ``conn_mgr`` automatically enables and connects to LTE.
 
-The modem only needs to be set up and connected to LTE once.
-If LTE is lost, the modem automatically works to re-establish it.
+Whenever a connection to nRF Cloud is started, the cloud connection loop follows the :ref:`nRF Cloud connection process <lib_nrf_cloud_connect>`.
+The :ref:`lib_nrf_cloud` library handles most of the connection process, with exception to the following behavior:
 
-The connection to nRF Cloud must be maintained manually by the application.
-A significant portion of the :file:`src/connection.c` file is dedicated to this task.
-
-This file also maintains a number of `Zephyr Events`_ tracking the state of the LTE and nRF Cloud connections.
-The connection management loop relies on these events to control its progression.
-
-The connection management loop must conform to the :ref:`nRF Cloud connection process <lib_nrf_cloud_connect>`.
-This is mostly handled by the :ref:`lib_nrf_cloud` library, with exception to the following behavior:
 When a device is first being associated with an nRF Cloud account, the `nRF Cloud MQTT API`_ will send a user association request notification to the device.
 Upon receiving this notification, the device must wait for a user association success notification, and then manually disconnect from and reconnect to nRF Cloud.
 Notifications of user association success are sent for every subsequent connection after this as well, so the device must only disconnect and reconnect if it previously received a user association request notification.
-This behavior is handled by the ``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` cases inside the :c:func:`cloud_event_handler` function in the :file:`src/connection.c` file.
+This behavior is handled by the ``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` cases inside the :c:func:`cloud_event_handler` function.
 
-The application must also manually reset its connection to nRF Cloud whenever LTE is lost.
-Otherwise, the :ref:`lib_nrf_cloud` library will deadlock.
-The ``LTE_LC_EVT_NW_REG_STATUS`` case inside the :c:func:`lte_event_handler` function performs this task.
-
-Upon startup, the connection management loop also updates the `Device Shadow <nRF Cloud Device Shadows_>`_.
-This is performed in the :c:func:`update_shadow` function of the :file:`src/connection.c` file.
+Upon startup, the cloud connection loop also updates the `device shadow <nRF Cloud Device Shadows_>`_.
+This is performed in the :c:func:`update_shadow` function.
 
 .. _nrf_cloud_mqtt_multi_service_device_message_queue:
 
 Device message queue
 ====================
 
-Any thread may submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue, where they are stored until a working connection to `nRF Cloud`_ is established.
+Any thread may submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue (implemented in :file:`src/message_queue.c`), where they are stored until a working connection to `nRF Cloud`_ is established.
 Once this happens, the message thread transmits all enqueued device messages, one at a time and in fast succession, to nRF Cloud.
 If an enqueued message fails to send, it will be sent back to the queue and tried again later.
-If more than :ref:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES <CONFIG_MAX_CONSECUTIVE_SEND_FAILURES>` messages fail to send in a row, the connection to nRF Cloud is reset and re-established after a short delay.
-The transmission pauses again whenever connection to nRF Cloud is lost.
-Management of the device message queue is implemented entirely in the :file:`src/connection.c` file.
+Transmission is paused whenever connection to nRF Cloud is lost.
+If more than :ref:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES <CONFIG_MAX_CONSECUTIVE_SEND_FAILURES>` messages in a row fail to send, the connection to nRF Cloud is reset, and then reconnected after a delay (:kconfig:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
+
+Most messages sent to nRF Cloud by this sample are sent using the message queue, but the following are sent directly:
+* Alerts using the :ref:`lib_nrf_cloud_alert` library.
+* Logs using the :ref:`lib_nrf_cloud_log` library.
+* `Device shadow <nRF Cloud Device Shadows_>`_ updates.
+* Ground fix requests from the :ref:`lib_location` library.
 
 .. _nrf_cloud_mqtt_multi_service_application_thread_and_main_application_loop:
 
@@ -120,6 +113,7 @@ It performs the following major tasks:
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
 * Sends sensor sample and location device messages to the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
 * Checks for and executes :ref:`remote modem AT command requests <nrf_cloud_mqtt_multi_service_remote_at>`.
+* Sends temperature alerts and sample startup alerts using the the :ref:`lib_nrf_cloud_alert` library.
 
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
@@ -133,11 +127,11 @@ The `FOTA update <nRF Cloud Getting Started FOTA Documentation_>`_ support is al
 
 However, even with :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` enabled, applications must still reboot themselves manually after FOTA download completion, and must still update their `Device Shadow <nRF Cloud Device Shadows_>`_ to reflect FOTA support.
 
-Reboot after download completion is handled by the :file:`src/fota_support.c` file, triggered by a call from the :file:`src/connection.c` file.
+Reboot after download completion is handled by the :file:`src/fota_support.c` file, triggered by a call from the :file:`src/cloud_connection.c` file.
 
-`Device Shadow <nRF Cloud Device Shadows_>`_ updates are performed in the :file:`src/connection.c` file.
+`Device Shadow <nRF Cloud Device Shadows_>`_ updates are performed in the :file:`src/cloud_connection.c` file.
 
-In a real-world setting, these two behaviors could be directly implemented in the :file:`src/connection.c` file.
+In a real-world setting, these two behaviors could be directly implemented in the :file:`src/cloud_connection.c` file.
 In this sample, they are separated for clarity.
 
 This sample supports full modem FOTA for the nRF9160 development kit version 0.14.0 and higher.
@@ -170,7 +164,7 @@ The required Kconfig options are implicitly enabled by :ref:`CONFIG_TEMP_DATA_US
 
 .. note::
   For temperature readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
-  This is performed by the :file:`src/connection.c` file.
+  This is performed by the :file:`src/cloud_connection.c` file.
 
 .. _nrf_cloud_mqtt_multi_service_location_tracking:
 
@@ -181,7 +175,7 @@ All matters concerning location tracking are handled in the :file:`src/location_
 This involves setting up a periodic location request, and then passing the results to a callback configured by the :file:`src/application.c` file.
 
 For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
-This is performed by the :file:`src/connection.c` file.
+This is performed by the :file:`src/cloud_connection.c` file.
 
 Each enabled location method is tried in the following order until one succeeds: GNSS, Wi-Fi, then cellular.
 
@@ -388,21 +382,10 @@ CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL_DBG - Sample debug logging
 CONFIG_POWER_SAVING_MODE_ENABLE - Enable Power Saving Mode (PSM)
    Requests Power Saving Mode from cellular network when enabled.
 
-.. _CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS:
-
-CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS - LTE initialization retry timeout
-   Sets the number of seconds between each LTE modem initialization retry.
-
 .. _CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS:
 
 CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS - Cloud connection retry timeout (seconds)
    Sets the cloud connection retry timeout in seconds.
-
-.. _CONFIG_CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS:
-
-CONFIG_CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS - Cloud connection re-establishment delay (seconds)
-   Sets the connection re-establishment delay in seconds.
-   When the connection to nRF Cloud has been reset, wait for this amount of time before a new attempt to connect.
 
 .. _CONFIG_CLOUD_READY_TIMEOUT_SECONDS:
 
