@@ -535,8 +535,7 @@ ZTEST(emds_flash_tests, test_overflow)
 
 	data_in[0] = 'D';
 	for (size_t i = 0; i < test_cnt; i++) {
-		emds_flash_read(&ctx, i, data_out,
-				  sizeof(data_out));
+		(void)emds_flash_read(&ctx, i, data_out, sizeof(data_out));
 		zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
 		memset(data_out, 0, sizeof(data_out));
 		data_in[0]++;
@@ -629,9 +628,9 @@ ZTEST(emds_flash_tests, test_write_speed)
 
 	memset(data_in_big, 69, sizeof(data_in_big));
 
-	dk_leds_init();
-	dk_set_led(0, false);
-	flash_clear();
+	(void)dk_leds_init();
+	(void)dk_set_led(0, false);
+	(void)flash_clear();
 	device_reset();
 
 #if defined(CONFIG_BT)
@@ -639,8 +638,8 @@ ZTEST(emds_flash_tests, test_write_speed)
 	(void)sdc_disable();
 	mpsl_uninit();
 #endif
-	emds_flash_init(&ctx);
-	emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size);
+	(void)emds_flash_init(&ctx);
+	(void)emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size);
 
 	tic = k_uptime_ticks();
 	dk_set_led(0, true);

@@ -77,7 +77,7 @@ static char *print_state(enum test_states s)
 static void app_store_cb(void)
 {
 #if defined(CONFIG_BT) && !defined(CONFIG_BT_LL_SW_SPLIT)
-	bt_enable(NULL);
+	(void)bt_enable(NULL);
 #endif
 }
 
@@ -329,12 +329,12 @@ ZTEST_SUITE(several_store, pragma_several_store, NULL, NULL, NULL, NULL);
 void test_main(void)
 {
 #if defined(CONFIG_BT) && !defined(CONFIG_BT_LL_SW_SPLIT)
-	bt_enable(NULL);
+	(void)bt_enable(NULL);
 #endif
 #if CONFIG_SETTINGS
-	settings_subsys_init();
-	settings_register(&emds_test_conf);
-	settings_load();
+	(void)settings_subsys_init();
+	(void)settings_register(&emds_test_conf);
+	(void)settings_load();
 #endif
 	enum test_states run_state = state[iteration];
 
@@ -350,12 +350,12 @@ void test_main(void)
 #if CONFIG_SETTINGS
 	iteration++;
 	if (iteration < ARRAY_SIZE(state)) {
-		settings_save_one("emds_test/iteration", &iteration, sizeof(iteration));
+		(void)settings_save_one("emds_test/iteration", &iteration, sizeof(iteration));
 		sys_reboot(SYS_REBOOT_COLD);
 	} else {
-		settings_save_one("emds_test/iteration", 0, sizeof(iteration));
+		(void)settings_save_one("emds_test/iteration", 0, sizeof(iteration));
 	}
 #else
-	emds_clear();
+	(void)emds_clear();
 #endif
 }
