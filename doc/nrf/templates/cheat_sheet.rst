@@ -481,6 +481,133 @@ To manually type a block of code, you can use ``code-block``:
 
      python buildprog.py -c app -b debug -d both
 
+You can also apply code highlighting as in the following examples:
+
+Devicetree:
+
+.. code-block:: devicetree
+
+    &pinctrl {
+        spi0_default_alt: spi0_default_alt {
+            group1 {
+                psels = <NRF_PSEL(SPI_SCK, 0, 10)>,
+                        <NRF_PSEL(SPI_MISO, 0, 12)>,
+                        <NRF_PSEL(SPI_MOSI, 0, 13)>;
+            };
+        };
+
+        spi0_sleep_alt: spi0_sleep_alt {
+            group1 {
+                psels = <NRF_PSEL(SPI_SCK, 0, 16)>,
+                        <NRF_PSEL(SPI_MISO, 0, 15)>,
+                        <NRF_PSEL(SPI_MOSI, 0, 17)>;
+                low-power-enable;
+          };
+        };
+    };
+  };
+
+Devicetree (alternative):
+
+.. code-block:: DTS
+
+   / {
+           chosen {
+                   ncs,dm-timer = &timer2;
+           };
+   };
+
+C:
+
+.. code-block:: c
+
+    static struct bt_mesh_model_pub pub_ctx;
+    static struct net_buf_simple pub_msg;
+    static uint8_t buf[BT_MESH_MODEL_BUF_LEN(MESSAGE_SET_OPCODE,
+                                             MESSAGE_SET_MAXLEN)];
+
+    static int model_init(struct bt_mesh_model *model)
+    {
+        model->pub = &pub_ctx;
+        net_buf_simple_init_with_data(&pub_msg, buf, sizeof(buf));
+        pub_ctx.msg = &pub_msg;
+
+        return 0;
+    }
+
+C++:
+
+.. code-block:: C++
+
+    #include <zephyr/pm/device.h>
+
+    const auto * qspi_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
+    if (device_is_ready(qspi_dev))
+    {
+        // Put the peripheral into suspended state.
+        pm_device_action_run(qspi_dev, PM_DEVICE_ACTION_SUSPEND);
+
+        // Resume the peripheral from the suspended state.
+        pm_device_action_run(qspi_dev, PM_DEVICE_ACTION_RESUME);
+    }
+
+C++ (alternative):
+
+   .. code-block:: cpp
+
+      struct Request : public sys_snode_t
+      {
+         uint8_t priority;                     ///< Advertising request priority. Lower value means higher priority
+         uint32_t options;                     ///< Advertising options: bitmask of BT_LE_ADV_OPT_XXX constants from Zephyr
+         uint16_t minInterval;                 ///< Minimum advertising interval in 0.625 ms units
+         uint16_t maxInterval;                 ///< Maximum advertising interval in 0.625 ms units
+         Span<const bt_data> advertisingData;  ///< Advertising data fields
+         Span<const bt_data> scanResponseData; ///< Scan response data fields
+         OnAdvertisingStarted onStarted;       ///< (Optional) Callback invoked when the request becomes top-priority.
+         OnAdvertisingStopped onStopped;       ///< (Optional) Callback invoked when the request stops being top-priority.
+      };
+
+Kconfig:
+
+.. code-block:: Kconfig
+
+   EXT_API = MY
+   id = 0xBEEF
+   flags = 0
+   ver = 1
+   source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+
+cmake:
+
+.. code-block:: cmake
+
+   if(CONFIG_NRF_MODEM_LIB_TRACE)
+
+   zephyr_library()
+   # Only add 'custom' backend to compilation when selected.
+   zephyr_library_sources_ifdef(
+     CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_MY_TRACE_BACKEND
+     path/to/my_trace_backend.c
+   )
+
+   endif()
+
+yaml:
+
+.. code-block:: YAML
+
+   ncs:
+     upstream-url: https://...
+     upstream-sha: GIT_SHA
+     compare-by-default: <true|false>
+
+Python:
+
+.. code-block:: python
+
+   class OpenThread(OpenThreadTHCI, IThci)
+
+
 Linking between doc sets
 ************************
 
@@ -519,7 +646,10 @@ For C++ elements:
 Kconfig
 =======
 
-Link to Kconfig options using :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`.
+Link to library Kconfig options using :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`.
+
+For more information on how to link to application-specific configuration options, see :ref:`Configuration options <sample_config_options>`.
+Example: :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>`.
 
 Linked RST project
 ==================

@@ -119,6 +119,8 @@ Setup*
    Add information about the initial setup here, for example, that the user must install or enable some library before they can compile this sample, or set up and select a specific backend.
    Most samples do not need this section.
 
+.. _sample_config_options:
+
 Configuration options*
 ======================
 
