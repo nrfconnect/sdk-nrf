@@ -239,7 +239,7 @@ config PSA_CRYPTO_DRIVER_ALG_SHA_224_OBERON
 
 config PSA_CRYPTO_DRIVER_ALG_SHA_256_OBERON
 	bool
-	prompt "PSA SSH-256 support - oberon" if !PSA_PROMPTLESS
+	prompt "PSA SHA-256 support - oberon" if !PSA_PROMPTLESS
 	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SHA_256 && \
 		     !PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX
 
