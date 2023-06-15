@@ -340,7 +340,7 @@ int nrf_cloud_rest_shadow_device_status_update(struct nrf_cloud_rest_context *co
 
 	(void)nrf_cloud_codec_init(NULL);
 
-	ret = nrf_cloud_shadow_dev_status_encode(dev_status, &data_out, false);
+	ret = nrf_cloud_shadow_dev_status_encode(dev_status, &data_out, false, true);
 	if (ret) {
 		LOG_ERR("Failed to encode device status, error: %d", ret);
 		return ret;
