@@ -3720,6 +3720,38 @@ class OpenThreadTHCI(object):
             cmd = 'srp client start %s' % dst_addr[0]
             self.__executeCommand(cmd)
 
+    @API
+    def get_br_omr_address(self):
+        cmd = 'br omrprefix'
+        getomr = self.__executeCommand(cmd)
+        print(getomr)
+        cmd = 'ipaddr'
+        ipaddr = self.__executeCommand(cmd)
+        print(ipaddr)
+        result = []
+        for ip in ipaddr:
+            try:
+                if (ipaddress.ip_address(unicode(ip)) in ipaddress.ip_network(unicode(getomr[0]))):
+                    result.append(ip)
+            except:
+                continue
+        if not result:
+            raise ValueError("No OMR address found for the registered OMR prefix.")
+        else:
+            return result
+
+    @API
+    def get_ed_omr_address(self, br_omr_prefix):
+        cmd = 'ipaddr'
+        ipaddr = self.__executeCommand(cmd)
+        print(ipaddr)
+        full_addr = []
+        for i in ipaddr[:-1]:
+            full_addr.append(ModuleHelper.GetFullIpv6Address(i.strip()))
+        print(full_addr)
+        result = (filter(lambda x: x.startswith(''.join(br_omr_prefix)), full_addr))
+        return result
+
     def dns_query(self, service_type='_thread-test._udp'):
         """ Send unicast DNS query
 
