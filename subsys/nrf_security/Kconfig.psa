@@ -10,7 +10,7 @@ config MBEDTLS_PSA_CRYPTO_C
 	default y
 	help
 	  Enable the Platform Security Architecture cryptography API.
-	  Corresponds to  setting in mbed TLS config file.
+	  Corresponds to setting in mbed TLS config file.
 
 if MBEDTLS_PSA_CRYPTO_C
 
@@ -48,8 +48,8 @@ config PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
 			   PSA_CRYPTO_DRIVER_OBERON
 	default y
 	help
-		Internal configuration that is set if any driver is
-		enabled
+	  configuration that is set if any driver is
+	  enabled
 
 config PSA_CRYPTO_SECURE
 	bool
