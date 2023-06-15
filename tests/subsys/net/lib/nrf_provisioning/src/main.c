@@ -597,7 +597,7 @@ void test_http_responses_valid(void)
 	};
 	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_http_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 
@@ -646,7 +646,7 @@ void test_codec_finished_valid(void)
 	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_codec_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 
@@ -685,7 +685,7 @@ void test_codec_priv_keygen_valid(void)
 	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_codec_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 
@@ -738,7 +738,7 @@ void test_codec_priv_keygen_rejected_invalid(void)
 	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_codec_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 
@@ -784,7 +784,7 @@ void test_codec_endorsement_keygen_valid(void)
 	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_codec_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 
@@ -827,7 +827,7 @@ void test_codec_endorsement_keygen_invalid(void)
 	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_codec_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 
@@ -871,7 +871,7 @@ void test_codec_config_store1_valid(void)
 	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_codec_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 
@@ -950,7 +950,7 @@ void test_codec_modem_unresponsive_invalid(void)
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	int mm_cb_ret = -EFAULT;
 
-	struct nrf_provisioning_codec_mm_change dummy_cb = {
+	struct nrf_provisioning_mm_change dummy_cb = {
 		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
 	};
 

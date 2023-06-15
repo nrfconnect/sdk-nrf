@@ -12,6 +12,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/net/coap_client.h>
 
+#include <net/nrf_provisioning.h>
 #include "nrf_provisioning_at.h"
 #include "nrf_provisioning_codec.h"
 #include "nrf_provisioning_coap.h"
@@ -49,12 +50,12 @@ static struct coap_client client;
 
 static K_SEM_DEFINE(coap_response, 0, 1);
 
-int nrf_provisioning_coap_init(struct nrf_provisioning_coap_mm_change *mmode)
+int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode)
 {
 	static bool initialized;
 	int ret;
 
-	nrf_provisioning_codec_init((struct nrf_provisioning_codec_mm_change *)mmode);
+	nrf_provisioning_codec_init(mmode);
 
 	if (initialized) {
 		return 0;

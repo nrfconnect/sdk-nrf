@@ -39,7 +39,7 @@ LOG_MODULE_REGISTER(nrf_provisioning_codec, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
 #define AT_RESP_MAX_SIZE 4096
 
-static struct nrf_provisioning_codec_mm_change mm;
+static struct nrf_provisioning_mm_change mm;
 
 static struct cdc_out_fmt_data {
 	/* Data */
@@ -67,7 +67,7 @@ char * const nrf_provisioning_codec_get_latest_cmd_id(void)
 	return nrf_provisioning_latest_corr_id;
 }
 
-int nrf_provisioning_codec_init(struct nrf_provisioning_codec_mm_change *mmode)
+int nrf_provisioning_codec_init(struct nrf_provisioning_mm_change *mmode)
 {
 	mm.cb = mmode->cb;
 	mm.user_data = mmode->user_data;

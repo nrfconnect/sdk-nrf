@@ -351,9 +351,9 @@ int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
-		ret = nrf_provisioning_http_init((struct nrf_provisioning_http_mm_change *)&mm);
+		ret = nrf_provisioning_http_init(&mm);
 	} else {
-		ret = nrf_provisioning_coap_init((struct nrf_provisioning_coap_mm_change *)&mm);
+		ret = nrf_provisioning_coap_init(&mm);
 	}
 	if (ret) {
 		goto exit;
