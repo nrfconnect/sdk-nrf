@@ -1632,9 +1632,9 @@ void nrf_cloud_device_status_free(struct nrf_cloud_data *status)
 }
 
 int nrf_cloud_shadow_dev_status_encode(const struct nrf_cloud_device_status *const dev_status,
-	struct nrf_cloud_data * const output, const bool include_state)
+	struct nrf_cloud_data * const output, const bool include_state, const bool include_reported)
 {
-	if (!dev_status || !output) {
+	if (!dev_status || !output || (include_state && !include_reported)) {
 		return -EINVAL;
 	}
 
@@ -1643,7 +1643,9 @@ int nrf_cloud_shadow_dev_status_encode(const struct nrf_cloud_device_status *con
 	cJSON *reported_obj = NULL;
 	cJSON *root_obj = cJSON_CreateObject();
 
-	if (include_state) {
+	if (!include_reported) {
+		reported_obj = root_obj;
+	} else if (include_state) {
 		state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
 		reported_obj = cJSON_AddObjectToObjectCS(state_obj, NRF_CLOUD_JSON_KEY_REP);
 	} else {
