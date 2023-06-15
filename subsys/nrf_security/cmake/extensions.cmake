@@ -8,23 +8,19 @@
 # This macro creates a variable for a base input if CONFIG_<base> is set and
 # sets it to True
 #
-macro(kconfig_check_and_set_base base)
+macro(kconfig_check_and_set_base_val base val)
   if (CONFIG_${base})
-    nrf_security_debug("Setting ${base} to True")
-    set(${base} TRUE)
+    nrf_security_debug("Setting ${base} to ${val}")
+    set(${base} ${val})
   endif()
 endmacro()
 
-
 #
-# This macro creates a variable with a value for a base input if CONFIG_<base>
-# is set
+# This macro creates a variable for a base input if CONFIG_<base> is set and
+# sets it to True
 #
-macro(kconfig_check_and_set_base_val base val)
-  if (CONFIG_${base})
-    nrf_security_debug("Setting ${base} ${val}")
-    set(${base} ${val})
-  endif()
+macro(kconfig_check_and_set_base base)
+  kconfig_check_and_set_base_val(${base} True)
 endmacro()
 
 #
@@ -43,12 +39,12 @@ macro(kconfig_check_and_set_base_int base)
 endmacro()
 
 #
-# Internal macro which will create a variable base if it doesn't exist
+# Internal macro which will create a variable base if it doesn't exist and set it to val
 # if all Kconfig variables in the ARGN list are true (stripped for CONFIG_ is given)
 #
-macro(kconfig_check_and_set_base_depends base)
+macro(kconfig_check_and_set_base_to_val_depends base val)
   if(NOT ${base})
-    set(${base} TRUE)
+    set(${base} val)
     foreach(arg ${ARGN})
       if (NOT CONFIG_${arg})
         nrf_security_debug("Unsetting ${base} because ${arg} is not set")
@@ -60,18 +56,19 @@ macro(kconfig_check_and_set_base_depends base)
 endmacro()
 
 #
-# Internal macro which will create a variable base and set to 1 if dependent
-# Kconfig variables in the ARGN list (stripped for CONFIG_ is given)
+# Internal macro which will create a variable base if it doesn't exist and set it to true
+# if all Kconfig variables in the ARGN list are true (stripped for CONFIG_ is given)
+#
+macro(kconfig_check_and_set_base_depends base)
+  kconfig_check_and_set_base_to_val_depends(${base} True ${ARGN})
+endmacro()
+
+#
+# Internal macro which will create a variable base if it doesn't exist and set it to 1
+# if all Kconfig variables in the ARGN list are true (stripped for CONFIG_ is given)
 #
 macro(kconfig_check_and_set_base_to_one_depends base)
-  set(${base} 1)
-  foreach(arg ${ARGN})
-    if (NOT CONFIG_${arg})
-      nrf_security_debug("Unsetting ${base} because ${arg} is not set")
-      unset(${base})
-      break()
-    endif()
-  endforeach()
+  kconfig_check_and_set_base_to_val_depends(${base} 1 ${ARGN})
 endmacro()
 
 #
