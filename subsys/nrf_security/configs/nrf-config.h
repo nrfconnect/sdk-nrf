@@ -40,6 +40,7 @@ extern "C" {
 #if defined(PSA_WANT_ALG_ECDSA)
 #define MBEDTLS_ECDSA_C
 #define MBEDTLS_ECP_C
+#define MBEDTLS_BIGNUM_C
 #define MBEDTLS_ASN1_PARSE_C
 #define MBEDTLS_ASN1_WRITE_C
 #endif
