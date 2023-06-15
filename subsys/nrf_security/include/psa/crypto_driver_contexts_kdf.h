@@ -23,6 +23,18 @@
 #include "oberon_hmac_drbg.h"
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON)
+#include "oberon_jpake.h"
+#endif
+
+#if defined(PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON)
+#include "oberon_spake2p.h"
+#endif
+
+#if defined(PSA_CRYPTO_DRIVER_ALG_SRP_OBERON)
+#include "oberon_srp.h"
+#endif
+
 /* Define the context to be used for an operation that is executed through the
  * PSA Driver wrapper layer as the union of all possible drivers' contexts.
  *
@@ -39,6 +51,15 @@ typedef union {
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
+#if defined(PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON)
+	oberon_jpake_operation_t oberon_jpake_ctx;
+#endif
+#if defined(PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON)
+	oberon_spake2p_operation_t oberon_spake2p_ctx;
+#endif
+#if defined(PSA_CRYPTO_DRIVER_ALG_SRP_OBERON)
+	oberon_srp_operation_t oberon_srp_ctx;
+#endif
 } psa_driver_pake_context_t;
 
 typedef union {

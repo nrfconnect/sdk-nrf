@@ -80,6 +80,15 @@
 #if defined(PSA_CRYPTO_DRIVER_ALG_HMAC_DRBG_OBERON)
 #include "oberon_hmac_drbg.h"
 #endif
+#if defined(PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON)
+#include "oberon_jpake.h"
+#endif
+#if defined(PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON)
+#include "oberon_spake2p.h"
+#endif
+#if defined(PSA_CRYPTO_DRIVER_ALG_SRP_OBERON)
+#include "oberon_srp.h"
+#endif
 
 /* Include TF-M builtin key driver */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
@@ -116,6 +125,11 @@
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 #define PSA_CRYPTO_TFM_BUILTIN_KEY_LOADER_DRIVER_ID (6)
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
+
+/* PAKE driver ids */
+#define OBERON_JPAKE_DRIVER_ID   1
+#define OBERON_SPAKE_DRIVER_ID   2
+#define OBERON_SRP_DRIVER_ID     3
 
 /* This option is deprecated and unsupported */
 #if defined(MBEDTLS_PSA_CRYPTO_SE_C)
@@ -1995,6 +2009,306 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 }
+
+#if defined(CONFIG_PSA_CORE_OBERON)
+/*
+ * PAKE functions.
+ *
+ * These APIs are not standardized and should be considered experimental.
+ */
+psa_status_t psa_driver_wrapper_pake_setup(
+	psa_pake_operation_t *operation,
+	const psa_pake_cipher_suite_t *cipher_suite)
+{
+	psa_status_t status;
+
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	if (cipher_suite->algorithm == PSA_ALG_JPAKE) {
+		status = oberon_jpake_setup(
+			&operation->ctx.oberon_jpake_ctx, cipher_suite);
+		if (status == PSA_SUCCESS) {
+			operation->id = OBERON_JPAKE_DRIVER_ID;
+		}
+		return status;
+	}
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	if (cipher_suite->algorithm == PSA_ALG_SPAKE2P) {
+		status = oberon_spake2p_setup(
+			&operation->ctx.oberon_spake2p_ctx, cipher_suite);
+		if (status == PSA_SUCCESS) {
+			operation->id = OBERON_SPAKE_DRIVER_ID;
+		}
+		return status;
+	}
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	if (cipher_suite->algorithm == PSA_ALG_SRP_6) {
+		status = oberon_srp_setup(
+			&operation->ctx.oberon_srp_ctx, cipher_suite);
+		if (status == PSA_SUCCESS) {
+			operation->id = OBERON_SRP_DRIVER_ID;
+		}
+		return status;
+	}
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	(void)status;
+	(void)operation;
+	(void)cipher_suite;
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_driver_wrapper_pake_set_password_key(
+	psa_pake_operation_t *operation,
+	const psa_key_attributes_t *attributes,
+	const uint8_t *password, size_t password_length)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_set_password_key(
+			&operation->ctx.oberon_jpake_ctx,
+			attributes, password, password_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_set_password_key(
+			&operation->ctx.oberon_spake2p_ctx,
+			attributes, password, password_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return oberon_srp_set_password_key(
+			&operation->ctx.oberon_srp_ctx,
+			attributes, password, password_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		(void)attributes;
+		(void)password;
+		(void)password_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_set_user(
+	psa_pake_operation_t *operation,
+	const uint8_t *user_id, size_t user_id_len)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_set_user(
+			&operation->ctx.oberon_jpake_ctx,
+			user_id, user_id_len);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_set_user(
+			&operation->ctx.oberon_spake2p_ctx,
+			user_id, user_id_len);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return oberon_srp_set_user(
+			&operation->ctx.oberon_srp_ctx,
+			user_id, user_id_len);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		(void)user_id;
+		(void)user_id_len;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_set_peer(
+	psa_pake_operation_t *operation,
+	const uint8_t *peer_id, size_t peer_id_len)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_set_peer(
+			&operation->ctx.oberon_jpake_ctx,
+			peer_id, peer_id_len);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_set_peer(
+			&operation->ctx.oberon_spake2p_ctx,
+			peer_id, peer_id_len);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return PSA_ERROR_NOT_SUPPORTED;
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		(void)peer_id;
+		(void)peer_id_len;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_set_role(
+	psa_pake_operation_t *operation,
+	psa_pake_role_t role)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_set_role(
+			&operation->ctx.oberon_jpake_ctx,
+			role);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_set_role(
+			&operation->ctx.oberon_spake2p_ctx,
+			role);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return oberon_srp_set_role(
+			&operation->ctx.oberon_srp_ctx,
+			role);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		(void)role;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_output(
+	psa_pake_operation_t *operation,
+	psa_pake_step_t step,
+	uint8_t *output, size_t output_size, size_t *output_length)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_output(
+			&operation->ctx.oberon_jpake_ctx,
+			step,
+			output, output_size, output_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_output(
+			&operation->ctx.oberon_spake2p_ctx,
+			step,
+			output, output_size, output_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return oberon_srp_output(
+			&operation->ctx.oberon_srp_ctx,
+			step,
+			output, output_size, output_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		(void)step;
+		(void)output;
+		(void)output_size;
+		(void)output_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_input(
+	psa_pake_operation_t *operation,
+	psa_pake_step_t step,
+	const uint8_t *input, size_t input_length)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_input(
+			&operation->ctx.oberon_jpake_ctx,
+			step,
+			input, input_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_input(
+			&operation->ctx.oberon_spake2p_ctx,
+			step,
+			input, input_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return oberon_srp_input(
+			&operation->ctx.oberon_srp_ctx,
+			step,
+			input, input_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		(void)step;
+		(void)input;
+		(void)input_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_get_implicit_key(
+	psa_pake_operation_t *operation,
+	uint8_t *output, size_t output_size, size_t *output_length)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_get_implicit_key(
+			&operation->ctx.oberon_jpake_ctx,
+			output, output_size, output_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_get_implicit_key(
+			&operation->ctx.oberon_spake2p_ctx,
+			output, output_size, output_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return oberon_srp_get_implicit_key(
+			&operation->ctx.oberon_srp_ctx,
+			output, output_size, output_length);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		(void)output;
+		(void)output_size;
+		(void)output_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_pake_abort(
+	psa_pake_operation_t *operation)
+{
+	switch (operation->id) {
+#ifdef PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	case OBERON_JPAKE_DRIVER_ID:
+		return oberon_jpake_abort(&operation->ctx.oberon_jpake_ctx);
+#endif /* PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	case OBERON_SPAKE_DRIVER_ID:
+		return oberon_spake2p_abort(&operation->ctx.oberon_spake2p_ctx);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON */
+#ifdef PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	case OBERON_SRP_DRIVER_ID:
+		return oberon_srp_abort(&operation->ctx.oberon_srp_ctx);
+#endif /* PSA_CRYPTO_DRIVER_ALG_SRP_OBERON */
+
+	default:
+		return PSA_SUCCESS;
+	}
+}
+#endif /* defined(CONFIG_PSA_CORE_OBERON) */
 
 /*
  * Asymmetric operations
