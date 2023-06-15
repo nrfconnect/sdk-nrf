@@ -7,6 +7,7 @@
 #ifndef NRF_PROVISIONING_CODEC_H__
 #define NRF_PROVISIONING_CODEC_H__
 
+#include <net/nrf_provisioning.h>
 #include <modem/lte_lc.h>
 
 #include "nrf_provisioning_cbor_encode_types.h"
@@ -36,29 +37,9 @@ struct cdc_context {
 };
 
 /**
- * @typedef nrf_provisioning_codec_mm_cb_t
- * @brief Callback to request a modem state change, being it powering off, flight mode etc.
- *
- * @return <0 on error,  previous mode on success.
- */
-typedef int (*nrf_provisioning_codec_mm_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
-
-/**
- * @struct nrf_provisioning_codec_mm_change
- * @brief Callback used for querying permission from the app to proceed when modem's state changes
- *
- * @param cb        The callback function.
- * @param user_data App specific data to be fed to the callback once it's called.
- */
-struct nrf_provisioning_codec_mm_change {
-	nrf_provisioning_codec_mm_cb_t cb;
-	void *user_data;
-};
-
-/**
  *  @brief Initialize the codec used encoding the data to the cloud.
  */
-int nrf_provisioning_codec_init(struct nrf_provisioning_codec_mm_change *mmode);
+int nrf_provisioning_codec_init(struct nrf_provisioning_mm_change *mmode);
 
 /**
  * @brief For each provisioning request setup the environment

@@ -12,6 +12,8 @@
 #define NRF_PROVISIONING_HTTP_H__
 
 #include <stdbool.h>
+
+#include <net/nrf_provisioning.h>
 #include <modem/lte_lc.h>
 
 #ifdef __cplusplus
@@ -41,27 +43,7 @@ enum nrf_provisioning_http_status {
 #define NRF_PROVISIONING_TIMEOUT_MINIMUM (5000)
 #define NRF_PROVISIONING_TIMEOUT_NONE (SYS_FOREVER_MS)
 
-/**
- * @typedef nrf_provisioning_http_mm_cb_t
- * @brief Callback to request a modem state change, being it powering off, flight mode etc.
- *
- * @return <0 on error,  previous mode on success.
- */
-typedef int (*nrf_provisioning_http_mm_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
-
-/**
- * @struct nrf_provisioning_http_mm_change
- * @brief Callback used for querying permission from the app to proceed when modem's state changes
- *
- * @param cb        The callback function
- * @param user_data App specific data to be fed to the callback once it's called
- */
-struct nrf_provisioning_http_mm_change {
-	nrf_provisioning_http_mm_cb_t cb;
-	void *user_data;
-};
-
-int nrf_provisioning_http_init(struct nrf_provisioning_http_mm_change *mmode);
+int nrf_provisioning_http_init(struct nrf_provisioning_mm_change *mmode);
 
 /** @brief Parameters and data for using the nRF Cloud REST API */
 struct nrf_provisioning_http_context {

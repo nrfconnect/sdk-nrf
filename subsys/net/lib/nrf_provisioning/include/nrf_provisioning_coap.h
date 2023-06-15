@@ -12,31 +12,12 @@
 #ifndef NRF_PROVISIONING_COAP_H__
 #define NRF_PROVISIONING_COAP_H__
 
+#include <net/nrf_provisioning.h>
 #include <modem/lte_lc.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * @typedef nrf_provisioning_coap_mm_cb_t
- * @brief Callback to request a modem state change, being it powering off, flight mode etc.
- *
- * @return <0 on error,  previous mode on success.
- */
-typedef int (*nrf_provisioning_coap_mm_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
-
-/**
- * @struct nrf_provisioning_coap_mm_change
- * @brief Callback used for querying permission from the app to proceed when modem's state changes
- *
- * @param cb        The callback function
- * @param user_data App specific data to be fed to the callback once it's called
- */
-struct nrf_provisioning_coap_mm_change {
-	nrf_provisioning_coap_mm_cb_t cb;
-	void *user_data;
-};
 
 /** @brief Parameters and data for using the nRF Cloud CoAP API */
 struct nrf_provisioning_coap_context {
@@ -61,7 +42,7 @@ struct nrf_provisioning_coap_context {
 	size_t response_len;
 };
 
-int nrf_provisioning_coap_init(struct nrf_provisioning_coap_mm_change *mmode);
+int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode);
 int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_ctx);
 
 #ifdef __cplusplus

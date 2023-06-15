@@ -80,12 +80,12 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define USER_AGENT_HDR (HDR_TYPE_USER_AGENT "/" ZEPHYR_VER CRLF)
 
 
-int nrf_provisioning_http_init(struct nrf_provisioning_http_mm_change *mmode)
+int nrf_provisioning_http_init(struct nrf_provisioning_mm_change *mmode)
 {
 	static bool initialized;
 	int ret;
 
-	nrf_provisioning_codec_init((struct nrf_provisioning_codec_mm_change *)mmode);
+	nrf_provisioning_codec_init(mmode);
 
 	if (initialized) {
 		return 0;
