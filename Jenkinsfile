@@ -1,4 +1,4 @@
-@Library("CI_LIB") _
+@Library("CI_LIB@upmerge_zephyr_3_4") _
 
 def pipeline = new ncs.sdk_nrf.Main()
 
