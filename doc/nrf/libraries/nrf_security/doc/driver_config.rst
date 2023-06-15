@@ -87,15 +87,17 @@ Key Derivation Function
 
 To enable key derivation function (KDF) support, set one or more of the following Kconfig options:
 
-+-------------------+-------------------------------------------------------+
-| KDF algorithm     | Configuration option                                  |
-+===================+=======================================================+
-| HKDF              | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`            |
-+-------------------+-------------------------------------------------------+
-| TLS 1.2 PRF       | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`       |
-+-------------------+-------------------------------------------------------+
-| TLS 1.2 PSK to MS | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS` |
-+-------------------+-------------------------------------------------------+
++--------------------------+------------------------------------------------------------+
+| KDF algorithm            | Configuration option                                       |
++==========================+============================================================+
+| HKDF                     | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`                 |
++--------------------------+------------------------------------------------------------+
+| TLS 1.2 PRF              | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`            |
++--------------------------+------------------------------------------------------------+
+| TLS 1.2 PSK to MS        | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`      |
++--------------------------+------------------------------------------------------------+
+| TLS 1.2 EC J-PAKE to PMS | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS` |
++--------------------------+------------------------------------------------------------+
 
 
 Key Derivation Function driver configurations
@@ -400,3 +402,39 @@ You can use the following PSA driver-specific configurations for fine-grained co
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
 | SHA-512               |  Not supported                                                | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_512_OBERON` |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
+
+
+Password-authenticated key agreement configurations
+***************************************************
+
+To enable password-authenticated key agreement support, configure the related password-authenticated key exchange (PAKE) algorithms using one or more of the following Kconfig options:
+
++-----------------------+-----------------------------------------------+
+| PAKE algorithm        | Configuration option                          |
++=======================+===============================================+
+| EC J-PAKE             | :kconfig:option:`CONFIG_PSA_WANT_ALG_JPAKE`   |
++-----------------------+-----------------------------------------------+
+| SPAKE2+               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P` |
++-----------------------+-----------------------------------------------+
+| SRP                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP`     |
++-----------------------+-----------------------------------------------+
+
+.. note::
+   * The algorithms are only available together with the nrf_oberon PSA Core (:kconfig:option:`CONFIG_PSA_CORE_OBERON`).
+   * The provided support is experimental.
+   * Not supported with TF-M.
+
+Password-authenticated key agreement driver configurations
+==========================================================
+
+You can use the following PSA driver-specific configurations for fine-grained control over which drivers provide password-authenticated key agreement support.
+
++-----------------------+--------------------------+---------------------------------------------------------------+
+| PAKE algorithm        | nrf_cc3xx driver support | nrf_oberon driver support                                     |
++=======================+==========================+===============================================================+
+| EC J-PAKE             | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON`   |
++-----------------------+--------------------------+---------------------------------------------------------------+
+| SPAKE2+               | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON` |
++-----------------------+--------------------------+---------------------------------------------------------------+
+| SRP                   | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SRP_OBERON`     |
++-----------------------+--------------------------+---------------------------------------------------------------+
