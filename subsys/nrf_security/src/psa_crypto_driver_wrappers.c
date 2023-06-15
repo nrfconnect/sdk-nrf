@@ -2404,7 +2404,7 @@ psa_status_t psa_driver_wrapper_init_random(psa_driver_random_context_t *context
 #endif /* defined(PSA_CRYPTO_DRIVER_ALG_PRNG_OBERON) */
 
 	(void)context;
-	return PSA_ERROR_NOT_SUPPORTED;
+	return PSA_SUCCESS;
 }
 
 psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context, uint8_t *output,
@@ -2469,7 +2469,7 @@ psa_status_t psa_driver_wrapper_free_random(psa_driver_random_context_t *context
 #endif /* defined(PSA_CRYPTO_DRIVER_ALG_PRNG_OBERON) */
 
 	(void)context;
-	return PSA_ERROR_NOT_SUPPORTED;
+	return PSA_SUCCESS;
 }
 
 psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
