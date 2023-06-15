@@ -7,12 +7,12 @@ Secure bootloader chain
    :local:
    :depth: 2
 
-The architecture behind the secure bootloader solutions provided by |NCS| is based on the *chain of trust* concept.
+The |NCS| (NCS) secure bootloader solutions are built on the *chain of trust* concept.
 
 By using this secure bootloader chain, you can ensure that all code being executed has been authorized and that your application is protected against running altered code.
 If, for example, an attacker tries to modify your application, or you have a bug in your code that overwrites parts of the application firmware image, the secure bootloader chain detects that the firmware has been altered and your application does not start.
 
-Choose the structure of the secure bootloader chain depending on which firmware update scheme you need:
+Select the structure of the secure bootloader chain based on your firmware update requirements:
 
 * If you want the bootloader to perform firmware updates for only upgrading an application, then use the :ref:`single-stage, immutable bootloader <immutable_bootloader>` solution.
 * If you want the bootloader to support firmware updates for both itself and the application, then use the :ref:`two-stage, upgradable bootloader <upgradable_bootloader>` solution.
@@ -26,7 +26,7 @@ Each layer guarantees the trustworthiness of the following layer, all the way ba
 
 A RoT consists of hardware, software, and data components that must always behave as expected because any misbehavior cannot be detected.
 
-You can compare a chain of trust to the concept of a door with its root of trust being a key:
+Think of a chain of trust like a door, where the root of trust is the key:
 
 1. You trust a door because you trust the lock.
 #. You trust the lock because you trust the key.
@@ -46,7 +46,7 @@ After all of the images in the bootloader chain have been verified successfully,
 Architecture
 ************
 
-There are two implementations currently supported:
+The |NCS| (NCS) currently supports two implementations:
 
 * The first implementation provides the first stage in the chain, the immutable :ref:`bootloader`, which could be either |NSIB| or :doc:`MCUboot <mcuboot:index-ncs>`.
   It does not support bootloader upgradability, but it is useful if you need just the capability to update your application.
@@ -106,7 +106,7 @@ If the verification fails, the boot process stops.
 This way, the immutable bootloader can guarantee that the next image in the boot sequence will not start up if it has been tampered with in any way.
 For example, if an attacker attempts to take over the device by altering the firmware, the device will not boot, and thus not run the infected code.
 
-The immutable bootloader is flash-locked and cannot be modified or deleted without erasing the entire device.
+The immutable bootloader is locked to the flash memory and cannot be modified or deleted without erasing the entire device.
 For the |NSIB|, see :ref:`Locking the flash memory <bootloader_rot>` for more information.
 
 Except for providing your own keys, there is no need to modify the immutable bootloader in any way before you program it.
@@ -119,7 +119,7 @@ The verification provided by this bootloader is recommended and suitable for all
    You must generate and use your own signing keys while in development and before deploying when using either MCUboot or the |NSIB| as an immutable bootloader.
    See :ref:`ug_fw_update_development_keys` for more information.
 
-The :ref:`bootloader capabilities table <app_bootloaders_support_table>` indicates the bootloaders that are valid for use as immutable bootloaders.
+The :ref:`bootloader capabilities table <app_bootloaders_support_table>` lists the bootloaders that you can use as an immutable bootloader.
 
 .. _upgradable_bootloader:
 
@@ -140,7 +140,7 @@ Also, it can upgrade both itself and the following image in the boot sequence, w
    You should add a second-stage bootloader only when necessary by the design or firmware upgrade needs.
    Adding the second stage bootloader for no reason will lead to a degradation of the system's overall security, as attackers can exploit bugs that may exist in either bootloader.
 
-The :ref:`bootloader capabilities table <app_bootloaders_support_table>` indicates the bootloaders that are valid for use as an upgradable bootloader.
+The :ref:`bootloader capabilities table <app_bootloaders_support_table>` lists the bootloaders that you can use as an upgradable bootloader.
 
 .. _upgradable_bootloader_presigned_variants:
 
@@ -148,9 +148,9 @@ Pre-signed variants
 -------------------
 
 When programming an upgradable bootloader, the build system can automatically generate pre-signed variants of the image verified by the |NSIB|.
-The upgradable bootloader does not use pre-signed variants for updating the application.
+The upgradable bootloader does not use pre-signed variants to update the application.
 
-You must build with pre-signed variants when building upgrade images for the image that follows the |NSIB| in the boot chain, such as the upgradable bootloader or the application.
+When building upgrade images for the image following the |NSIB| in the boot chain, like the upgradable bootloader or application, you must build with pre-signed variants.
 Firmware update packages of the upgradable bootloader must contain images for both slots, since it may not be known which slot is in use by its current version while deployed in the field.
 See the :ref:`bootloader_pre_signed_variants` section of the |NSIB| documentation for more details.
 
@@ -162,7 +162,7 @@ Having both slots programmed allows the immutable bootloader to invalidate the c
 Flash memory partitions
 =======================
 
-Flash memory partitioning is handled differently for each bootloader.
+Each bootloader handles flash memory partitioning differently.
 
 After building the application, you can print a report of how the flash partitioning has been handled for a bootloader, or combination of bootloaders, by using :ref:`pm_partition_reports`.
 
