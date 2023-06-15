@@ -251,6 +251,7 @@ extern "C" {
 
 #if defined(PSA_WANT_ALG_CCM)
 #define MBEDTLS_CCM_C
+#define MBEDTLS_AES_C
 #endif
 
 #if defined(PSA_WANT_ALG_GCM)
