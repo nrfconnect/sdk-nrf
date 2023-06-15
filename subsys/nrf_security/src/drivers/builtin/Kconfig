@@ -273,7 +273,7 @@ config MBEDTLS_PSA_BUILTIN_ALG_SHA_224
 
 config MBEDTLS_PSA_BUILTIN_ALG_SHA_256
 	bool
-	prompt "PSA SSH-256 support - builtin" if !PSA_PROMPTLESS
+	prompt "PSA SHA-256 support - builtin" if !PSA_PROMPTLESS
 	depends on PSA_WANT_ALG_SHA_256
 	default y if !PSA_DEFAULT_OFF && \
 		     !(PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX || \

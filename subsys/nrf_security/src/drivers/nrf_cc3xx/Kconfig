@@ -196,7 +196,7 @@ config PSA_CRYPTO_DRIVER_ALG_SHA_224_CC3XX
 
 config PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX
 	bool
-	prompt "PSA SSH-256 support - cc3xx" if !PSA_PROMPTLESS
+	prompt "PSA SHA-256 support - cc3xx" if !PSA_PROMPTLESS
 	default y if !PSA_DEFAULT_OFF
 	depends on PSA_WANT_ALG_SHA_256
 
