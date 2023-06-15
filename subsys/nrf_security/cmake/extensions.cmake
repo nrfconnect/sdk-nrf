@@ -38,7 +38,7 @@ endmacro()
 # This macro expects the CONFIG_<base> to be a int value and creates a variable
 # named base with the value of CONFIG_<base>
 #
-macro(kconfig_check_And_set_base_int base)
+macro(kconfig_check_and_set_base_int base)
   kconfig_check_and_set_base_val(${base} "${CONFIG_${base}}")
 endmacro()
 
