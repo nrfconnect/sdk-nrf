@@ -264,6 +264,14 @@ config PSA_CRYPTO_DRIVER_ALG_TLS12_PSK_TO_MS_OBERON
 	depends on PSA_WANT_ALG_TLS12_PSK_TO_MS
 	default y if !PSA_DEFAULT_OFF
 
+config PSA_CRYPTO_DRIVER_ALG_TLS12_ECJPAKE_TO_PMS_OBERON
+	bool
+	prompt "PSA TLS 1.2 EC J-PAKE to PMS support - oberon" if !PSA_PROMPTLESS
+	depends on PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS
+	depends on PSA_CORE_OBERON
+	select EXPERIMENTAL
+	default y if !PSA_DEFAULT_OFF
+
 config PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_OBERON
 	bool
 	prompt "PSA stream cipher support - oberon" if !PSA_PROMPTLESS
@@ -309,5 +317,26 @@ config PSA_CRYPTO_DRIVER_RSA_KEY_SIZE_1024_OBERON
 	  Prompt-less configuration to allow RSA key size 1024 bits for testing
 	  RSA with 1024 bit keys is not recommended for new designs.
 	  Please see https://www.keylength.com/
+
+config PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON
+	bool
+	prompt "PSA J-PAKE support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_JPAKE
+	select EXPERIMENTAL
+	depends on PSA_CORE_OBERON
+
+config PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
+	bool
+	prompt "PSA SPAKE2+ support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SPAKE2P
+	select EXPERIMENTAL
+	depends on PSA_CORE_OBERON
+
+config PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
+	bool
+	prompt "PSA SRP support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SRP
+	select EXPERIMENTAL
+	depends on PSA_CORE_OBERON
 
 endif

@@ -182,3 +182,19 @@
 #define PSA_NEED_OBERON_KDF_DRIVER                             1
 #define PSA_NEED_OBERON_TLS12_PSK_TO_MS                        1
 #endif
+
+#if defined(PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON)
+#define PSA_NEED_OBERON_JPAKE_DRIVER                           1
+#endif
+
+#if defined(PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON)
+#define PSA_NEED_OBERON_SPAKE2P_DRIVER                         1
+#endif
+
+#if defined(PSA_CRYPTO_DRIVER_ALG_SRP_OBERON)
+#define PSA_NEED_OBERON_SRP_DRIVER                             1
+#endif
+
+#if defined(PSA_CRYPTO_DRIVER_ALG_TLS12_ECJPAKE_TO_PMS_OBERON)
+#define PSA_NEED_OBERON_ECJPAKE_TO_PMS                         1
+#endif

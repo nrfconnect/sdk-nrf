@@ -43,6 +43,10 @@ if (COMPILE_PSA_APIS)
 
   append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_ECDH_OBERON               src_crypto_oberon ${drivers_path} oberon_ecdh.c)
 
+  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON              src_crypto_oberon ${drivers_path} oberon_jpake.c)
+  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON            src_crypto_oberon ${drivers_path} oberon_spake2p.c)
+  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_SRP_OBERON                src_crypto_oberon ${drivers_path} oberon_srp.c)
+
   append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_CTR_DRBG_OBERON           src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
   append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_HMAC_DRBG_OBERON          src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
 
