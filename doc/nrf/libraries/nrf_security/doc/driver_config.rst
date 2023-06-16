@@ -91,17 +91,24 @@ Key Derivation Function
 
 To enable key derivation function (KDF) support, set one or more of the following Kconfig options:
 
-+--------------------------+------------------------------------------------------------+
-| KDF algorithm            | Configuration option                                       |
-+==========================+============================================================+
-| HKDF                     | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`                 |
-+--------------------------+------------------------------------------------------------+
-| TLS 1.2 PRF              | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`            |
-+--------------------------+------------------------------------------------------------+
-| TLS 1.2 PSK to MS        | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`      |
-+--------------------------+------------------------------------------------------------+
-| TLS 1.2 EC J-PAKE to PMS | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS` |
-+--------------------------+------------------------------------------------------------+
++--------------------------+---------------------------------------------------------------+
+| KDF algorithm            | Configuration option                                          |
++==========================+===============================================================+
+| HKDF                     | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`                    |
++--------------------------+---------------------------------------------------------------+
+| PBKDF2-HMAC              | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC`             |
++--------------------------+---------------------------------------------------------------+
+| PBKDF2-AES-CMAC-PRF-128  | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128` |
++--------------------------+---------------------------------------------------------------+
+| TLS 1.2 PRF              | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`               |
++--------------------------+---------------------------------------------------------------+
+| TLS 1.2 PSK to MS        | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`         |
++--------------------------+---------------------------------------------------------------+
+| TLS 1.2 EC J-PAKE to PMS | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`    |
++-------------------------+----------------------------------------------------------------+
+
+.. note::
+   * PBKDF2 algorithms are not supported with TF-M.
 
 
 Key Derivation Function driver configurations
@@ -109,15 +116,21 @@ Key Derivation Function driver configurations
 
 You can use the following Kconfig options for fine-grained control over which drivers provide Key Derivation Function (KDF) support:
 
-+-------------------+--------------------------+-----------------------------------------------------------------------+
-| KDF algorithm     | nrf_cc3xx driver support | nrf_oberon driver support                                             |
-+===================+==========================+==========================================+============================+
-| HKDF              | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_HKDF_OBERON`            |
-+-------------------+--------------------------+-----------------------------------------------------------------------+
-| TLS 1.2 PRF       | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_TLS12_PRF_OBERON`       |
-+-------------------+--------------------------+-----------------------------------------------------------------------+
-| TLS 1.2 PSK to MS | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_TLS12_PSK_TO_MS_OBERON` |
-+-------------------+--------------------------+-----------------------------------------------------------------------+
++--------------------------+--------------------------+-------------------------------------------------------------------------------+
+| KDF algorithm            | nrf_cc3xx driver support | nrf_oberon driver support                                                     |
++==========================+==========================+==========================================+====================================+
+| HKDF                     | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_HKDF_OBERON`                    |
++--------------------------+--------------------------+-------------------------------------------------------------------------------+
+| PBKDF2-HMAC              | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_PBKDF2_HMAC_OBERON`             |
++--------------------------+--------------------------+-------------------------------------------------------------------------------+
+| PBKDF2-AES-CMAC-PRF-128  | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_PBKDF2_AES_CMAC_PRF_128_OBERON` |
++--------------------------+--------------------------+-------------------------------------------------------------------------------+
+| TLS 1.2 PRF              | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_TLS12_PRF_OBERON`               |
++--------------------------+--------------------------+-------------------------------------------------------------------------------+
+| TLS 1.2 PSK to MS        | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_TLS12_PSK_TO_MS_OBERON`         |
++--------------------------+--------------------------+-------------------------------------------------------------------------------+
+| TLS 1.2 EC J-PAKE to PMS | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_TLS12_ECJPAKE_TO_PMS_OBERON`    |
++--------------------------+--------------------------+-------------------------------------------------------------------------------+
 
 
 MAC configurations
@@ -432,7 +445,6 @@ To enable password-authenticated key agreement support, configure the related pa
 +-----------------------+-----------------------------------------------+
 
 .. note::
-   * The algorithms are only available together with the nrf_oberon PSA Core (:kconfig:option:`CONFIG_PSA_CORE_OBERON`).
    * The provided support is experimental.
    * Not supported with TF-M.
 
