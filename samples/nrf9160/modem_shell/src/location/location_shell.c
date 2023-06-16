@@ -65,6 +65,7 @@ static const char location_get_usage_str[] =
 	"[--gnss_timeout <timeout in secs>] [--gnss_visibility]\n"
 	"[--gnss_priority] [--gnss_cloud_nmea] [--gnss_cloud_pvt]\n"
 	"[--cellular_timeout <timeout in secs>] [--cellular_service <service_string>]\n"
+	"[--cellular_cell_count <cell count>]\n"
 	"[--wifi_timeout <timeout in secs>] [--wifi_service <service_string>]\n"
 	"[--cloud_resp_disabled]\n"
 	"\n"
@@ -89,6 +90,8 @@ static const char location_get_usage_str[] =
 	"                              Zero means timeout is disabled.\n"
 	"  --cellular_service, [str]   Used cellular positioning service:\n"
 	"                              'any' (default), 'nrf' or 'here'\n"
+	"  --cellular_cell_count, [int]\n"
+	"                              Requested number of cells\n"
 	"  --wifi_timeout, [float]     Wi-Fi timeout in seconds. Zero means timeout is disabled.\n"
 	"  --wifi_service, [str]       Used Wi-Fi positioning service:\n"
 	"                              'any' (default), 'nrf' or 'here'\n"
@@ -110,6 +113,7 @@ enum {
 	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT,
 	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT,
 	LOCATION_SHELL_OPT_CELLULAR_SERVICE,
+	LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT,
 	LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED,
 	LOCATION_SHELL_OPT_WIFI_TIMEOUT,
 	LOCATION_SHELL_OPT_WIFI_SERVICE,
@@ -130,6 +134,7 @@ static struct option long_options[] = {
 	{ "gnss_cloud_pvt", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
 	{ "cellular_service", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_SERVICE },
+	{ "cellular_cell_count", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT },
 	{ "cloud_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED },
 	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
 	{ "wifi_service", required_argument, 0, LOCATION_SHELL_OPT_WIFI_SERVICE },
@@ -392,6 +397,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	float cellular_timeout = 0;
 	bool cellular_timeout_set = false;
 	enum location_service cellular_service = LOCATION_SERVICE_ANY;
+	int cellular_cell_count = 0;
+	bool cellular_cell_count_set = false;
 
 	float wifi_timeout = 0;
 	bool wifi_timeout_set = false;
@@ -462,6 +469,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				mosh_error("Unknown cellular positioning service. See usage:");
 				goto show_usage;
 			}
+			break;
+		case LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT:
+			cellular_cell_count = atoi(optarg);
+			cellular_cell_count_set = true;
 			break;
 		case LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED:
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
@@ -607,6 +618,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 					config.methods[i].cellular.timeout =
 						(cellular_timeout == 0) ?
 						SYS_FOREVER_MS : cellular_timeout * MSEC_PER_SEC;
+				}
+				if (cellular_cell_count_set) {
+					config.methods[i].cellular.cell_count = cellular_cell_count;
 				}
 			} else if (config.methods[i].method == LOCATION_METHOD_WIFI) {
 				config.methods[i].wifi.service = wifi_service;

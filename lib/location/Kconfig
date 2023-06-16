@@ -279,6 +279,14 @@ config LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT
 	  Default value used in location_config_defaults_set() function for timeout
 	  member within location_cellular_config structure.
 
+config LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT
+	int "Number of requested cellular neighbors"
+	default 4
+	range 0 15
+	help
+	  Default value used in location_config_defaults_set() function for cell_count
+	  member within location_cellular_config structure.
+
 endif # LOCATION_METHOD_CELLULAR
 
 if LOCATION_METHOD_WIFI

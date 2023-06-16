@@ -48,6 +48,10 @@ static const char ncellmeas_resp[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",2300,7,63,31,"
 	"150344527,2300,8,60,29,0,2400,11,55,26,184\r\n";
 
+static const char ncellmeas_gci_resp[] =
+	"%NCELLMEAS:0,\"00023906\",\"24405\",\"5A00\",64,1830518,6400,116,53,16,1840265,1,0,"
+	"\"001E3904\",\"24405\",\"5A00\",65535,0,6400,42,48,7,1840265,0,0\r\n";
+
 char http_resp[512];
 
 static const char http_resp_header_ok[] =
@@ -358,6 +362,8 @@ void test_location_cellular(void)
 
 	location_config_defaults_set(&config, 1, methods);
 
+	config.methods[0].cellular.cell_count = 2;
+
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
@@ -366,7 +372,7 @@ void test_location_cellular(void)
 
 	location_callback_called_expected = true;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -401,9 +407,10 @@ void test_location_cellular_cancel_during_ncellmeas(void)
 	enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
 
 	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].cellular.cell_count = 2;
 	location_callback_called_expected = false;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -519,14 +526,14 @@ void test_location_request_default(void)
 
 	/***** Fallback to cellular *****/
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
-	cellular_rest_req_resp_handle();
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=4,%d", 0);
 
 	/* Select cellular service to be used */
 	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
@@ -538,10 +545,15 @@ void test_location_request_default(void)
 	 * Otherwise, lte_lc would ignore NCELLMEAS notification because no NCELLMEAS on going
 	 * from lte_lc point of view.
 	 */
-	k_sleep(K_MSEC(10000));
+	k_sleep(K_MSEC(1000));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);
+
+	cellular_rest_req_resp_handle();
+
+	k_sleep(K_MSEC(1000));
+	at_monitor_dispatch(ncellmeas_gci_resp);
 }
 
 /* Test location request with:
@@ -559,6 +571,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	location_config_defaults_set(&config, 2, methods);
 	config.mode = LOCATION_REQ_MODE_ALL;
 	config.methods[0].cellular.timeout = SYS_FOREVER_MS;
+	config.methods[0].cellular.cell_count = 2;
 	config.methods[1].gnss.timeout = -10;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
@@ -570,7 +583,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 
 	/***** First cellular positioning *****/
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -675,6 +688,7 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	location_config_defaults_set(&config, 2, methods);
 	config.mode = LOCATION_REQ_MODE_ALL;
 	config.methods[0].cellular.timeout = 100;
+	config.methods[0].cellular.cell_count = 2;
 	config.methods[1].gnss.timeout = 100;
 
 	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
@@ -682,7 +696,7 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	location_callback_called_expected = true;
 
 	/***** First cellular positioning *****/
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -859,6 +873,7 @@ void test_location_cellular_periodic(void)
 
 	location_config_defaults_set(&config, 1, methods);
 	config.interval = 1;
+	config.methods[0].cellular.cell_count = 2;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
 	test_location_event_data.location.latitude = 61.50375;
@@ -868,7 +883,7 @@ void test_location_cellular_periodic(void)
 
 	location_callback_called_expected = true;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -913,7 +928,7 @@ void test_location_cellular_periodic(void)
 	rest_req_ctx.port = HTTPS_PORT;
 	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();

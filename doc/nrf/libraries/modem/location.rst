@@ -47,6 +47,9 @@ The supported location methods are as follows:
 * Cellular positioning
 
   * Uses :ref:`lte_lc_readme` for getting a list of nearby cellular base stations.
+  * Neighbor cell measurement is performed with :c:enum:`LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE` search type.
+    A GCI search with :c:enum:`LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT` search type is performed if the previous search did not find enough cells.
+    For more details on GCI search, see :c:member:`location_cellular_config.cell_count`.
   * The ``cloud location`` method handles sending cell information to the selected location service and getting the calculated location back to the device.
 
 * Wi-Fi positioning
@@ -182,6 +185,7 @@ when :c:func:`location_config_defaults_set` function is called:
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION`
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE`
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT`
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT`
 
 Usage

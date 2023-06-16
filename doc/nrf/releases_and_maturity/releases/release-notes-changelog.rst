@@ -360,6 +360,10 @@ Modem libraries
 
   * Updated the :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
 
+* :ref:`lib_location` library:
+
+  * Neighbor cell search is modified to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
+
 * :ref:`pdn_readme` library:
 
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.

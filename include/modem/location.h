@@ -339,6 +339,9 @@ struct location_cellular_config {
 	 * @ref location_config_defaults_set function is called and can be changed
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT configuration.
 	 *
+	 * Timeout only applies to neighbor cell search, not the cloud communication.
+	 * Timeout for the entire location request specified in @ref location_config structure
+	 * is still valid.
 	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
 	 * event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
 	 * @ref location_config structure is still valid.
@@ -354,6 +357,28 @@ struct location_cellular_config {
 	 * This parameter is ignored when CONFIG_LOCATION_SERVICE_EXTERNAL is enabled.
 	 */
 	enum location_service service;
+
+	/**
+	 * @brief Number of cells to be requested for cellular positioning.
+	 *
+	 * @details Default value is 4. It is applied when
+	 * @ref location_config_defaults_set function is called and can be changed
+	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT configuration.
+	 *
+	 * Maximum value is 15.
+	 *
+	 * Zero indicates that only normal neighbor cell search is performed but no GCI search.
+	 *
+	 * If there are less than requested number of neighbor cells (including current cell),
+	 * GCI (surrounding) cells are requested also.
+	 *
+	 * Note that even if there are a lot of cells available, the number of cells
+	 * used for positioning may be lower than the requested number of cells due to
+	 * the behavior of the search algorithm. Also, the number of cells used for
+	 * positioning may be higher than the requested number of cells if there are
+	 * more neighbor cells (including current cell).
+	 */
+	uint8_t cell_count;
 };
 
 /** Wi-Fi positioning configuration. */
@@ -365,6 +390,10 @@ struct location_wifi_config {
 	 * @details Default value is 30000 (30 seconds). It is applied when
 	 * @ref location_config_defaults_set function is called and can be changed
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT configuration.
+	 *
+	 * Timeout only applies to Wi-Fi scan, not the cloud communication.
+	 * Timeout for the entire location request specified in @ref location_config structure
+	 * is still valid.
 	 *
 	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
 	 * event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
