@@ -81,6 +81,14 @@
 #define PSA_NEED_OBERON_HKDF_EXPAND                            1
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_ALG_PBKDF2_HMAC_OBERON)
+#define PSA_NEED_OBERON_PBKDF2_HMAC                            1
+#endif
+
+#if defined(PSA_CRYPTO_DRIVER_ALG_PBKDF2_AES_CMAC_PRF_128_OBERON)
+#define PSA_NEED_OBERON_PBKDF2_AES_CMAC_PRF_128                1
+#endif
+
 #if defined(PSA_CRYPTO_DRIVER_ALG_HMAC_OBERON)
 #define PSA_NEED_OBERON_HMAC                                   1
 #endif
