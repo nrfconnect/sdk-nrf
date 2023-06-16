@@ -74,10 +74,15 @@ int main(void)
 	LOG_INF("Writing the identity key to KMU");
 
 #ifdef CONFIG_IDENTITY_KEY_DUMMY
-	identity_key_write_dummy();
+	err = identity_key_write_dummy();
 #else
-	identity_key_write_random();
+	err = identity_key_write_random();
 #endif
+
+	if (err != IDENTITY_KEY_SUCCESS) {
+		LOG_INF("Failure: Identity key write failed! Exiting!");
+		return 0;
+	}
 
 	if (!identity_key_is_written()) {
 		LOG_INF("Failure: Identity key is not written! Exiting!");

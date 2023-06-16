@@ -400,7 +400,13 @@ Nordic Security Module
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lib_identity_key` library:
+
+  * Updated:
+
+    * :c:func:`identity_key_write_random`, :c:func:`identity_key_write_key` and :c:func:`identity_key_write_dummy` functions to return an error code and not panic on error.
+    * :c:func:`identity_key_read` function to always return an error code from the library-defined codes.
+    * The defined error code names with prefix IDENTITY_KEY_ERR_*.
 
 Common Application Framework (CAF)
 ----------------------------------
