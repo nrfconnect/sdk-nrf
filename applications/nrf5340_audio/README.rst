@@ -753,7 +753,7 @@ Programming with the script
       python buildprog.py -c both -b debug -d both -p
 
    This command builds the application with the ``debug`` application version for both the headset and the gateway and programs the application core.
-   Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`applications/nrf5340_audio/bin` directory and programs it to the network core of both the gateway and the headset.
+   Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`nrf/lib/bin/bt_ll_acs_nrf53/bin` directory and programs it to the network core of both the gateway and the headset.
 
    .. note::
       If the programming command fails because of :ref:`readback_protection_error`, run :file:`buildprog.py` with the ``--recover-on-fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
