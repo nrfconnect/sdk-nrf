@@ -132,6 +132,10 @@
 #error "MBEDTLS_PSA_CRYPTO_SE_C is not supported"
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
+psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
+#endif
+
 psa_status_t psa_driver_wrapper_init(void)
 {
 	return PSA_SUCCESS;
@@ -2410,6 +2414,9 @@ psa_status_t psa_driver_wrapper_init_random(psa_driver_random_context_t *context
 psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context, uint8_t *output,
 					   size_t output_size)
 {
+#if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
+	return prng_test_generate_random(output, output_size);
+#endif
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM)
 	int err;
 	size_t output_length;
