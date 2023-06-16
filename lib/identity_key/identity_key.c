@@ -19,7 +19,7 @@
 
 LOG_MODULE_REGISTER(identity_key);
 
-static void generate_random_secp256r1_private_key(uint8_t *key_buff)
+static int generate_random_secp256r1_private_key(uint8_t *key_buff)
 {
 	psa_status_t status;
 	psa_key_handle_t key_handle;
@@ -29,7 +29,7 @@ static void generate_random_secp256r1_private_key(uint8_t *key_buff)
 	status = psa_crypto_init();
 	if (status != PSA_SUCCESS) {
 		printk("psa_crypto_init failed! Error: %d", status);
-		k_panic();
+		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
 	}
 
 	/* Configure the key attributes */
@@ -47,55 +47,68 @@ static void generate_random_secp256r1_private_key(uint8_t *key_buff)
 	status = psa_generate_key(&key_attributes, &key_handle);
 	if (status != PSA_SUCCESS) {
 		printk("psa_generate_key failed! Error: %d", status);
-		k_panic();
+		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
 	}
 
 	status = psa_export_key(key_handle, key_buff, IDENTITY_KEY_SIZE_BYTES, &olen);
 	if (status != PSA_SUCCESS) {
 		printk("psa_export_key failed! Error: %d", status);
-		k_panic();
+		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
 	}
 
 	if (olen != IDENTITY_KEY_SIZE_BYTES) {
 		printk("Exported size mismatch! Key size: %d", olen);
-		k_panic();
+		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
 	}
 
 	status = psa_destroy_key(key_handle);
 	if (status != PSA_SUCCESS) {
 		printk("psa_destroy_key failed! Error: %d", status);
-		k_panic();
+		return -IDENTITY_KEY_ERR_GENERATION_FAILED;
 	}
+
+	return IDENTITY_KEY_SUCCESS;
 }
 
-void identity_key_write_random(void)
+int identity_key_write_random(void)
 {
+	int err;
 	uint8_t key_buff[IDENTITY_KEY_SIZE_BYTES];
 
-	/* This function will panic if the key generation fails */
-	generate_random_secp256r1_private_key(key_buff);
+	/* Generate the identity key */
+	err = generate_random_secp256r1_private_key(key_buff);
+	if (err != IDENTITY_KEY_SUCCESS) {
+		return err;
+	}
 
 	/* Write the key into KMU using the MKEK as encryption key */
-	identity_key_write_key(key_buff);
+	err = identity_key_write_key(key_buff);
+	if (err != IDENTITY_KEY_SUCCESS) {
+		return err;
+	}
 
 	/* Clear the unencrypted key from RAM for security reasons */
 	nrf_cc3xx_platform_identity_key_free(key_buff);
+
+	return IDENTITY_KEY_SUCCESS;
 }
 
-void identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
+int identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
 {
 	int err;
 
 	if (!identity_key_mkek_is_written()) {
 		printk("Could not find the MKEK!");
-		k_panic();
+		return -IDENTITY_KEY_ERR_MKEK_MISSING;
 	}
 
 	err = nrf_cc3xx_platform_identity_key_store(NRF_KMU_SLOT_KIDENT, key);
 	if (err != NRF_CC3XX_PLATFORM_SUCCESS) {
 		printk("Identity key write failed ! Error: %d", err);
-		k_panic();
+		return -IDENTITY_KEY_ERR_WRITE_FAILED;
 	}
+
+	return IDENTITY_KEY_SUCCESS;
 }
 
 /* This key is used by the TF-M regression tests and it is taken from the TF-M
@@ -115,10 +128,10 @@ uint8_t dummy_identity_secp256r1_private_key[IDENTITY_KEY_SIZE_BYTES] = {
 	0x4B, 0x92, 0xA1, 0x93, 0x71, 0x34, 0x58, 0x5F
 };
 
-void identity_key_write_dummy(void)
+int identity_key_write_dummy(void)
 {
 	LOG_INF("WARNING: Using a dummy identity key not meant for production!");
-	identity_key_write_key(dummy_identity_secp256r1_private_key);
+	return identity_key_write_key(dummy_identity_secp256r1_private_key);
 }
 
 bool identity_key_mkek_is_written(void)
@@ -137,11 +150,11 @@ int identity_key_read(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
 
 	/* MKEK is required to retrieve key */
 	if (!identity_key_mkek_is_written()) {
-		return -ERR_IDENTITY_KEY_MKEK_MISSING;
+		return -IDENTITY_KEY_ERR_MKEK_MISSING;
 	}
 
 	if (!identity_key_is_written()) {
-		return -ERR_IDENTITY_KEY_MISSING;
+		return -IDENTITY_KEY_ERR_MISSING;
 	}
 
 	/* Retrieve the identity key */
@@ -149,8 +162,8 @@ int identity_key_read(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
 	if (err != NRF_CC3XX_PLATFORM_SUCCESS) {
 		LOG_INF("The identity key read from: %d", NRF_KMU_SLOT_KIDENT);
 		LOG_INF("failed with error code: %d", err);
-		return -ERR_IDENTITY_KEY_READ_FAILED;
+		return -IDENTITY_KEY_ERR_READ_FAILED;
 	}
 
-	return 0;
+	return IDENTITY_KEY_SUCCESS;
 }

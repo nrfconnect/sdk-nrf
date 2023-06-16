@@ -58,7 +58,7 @@ int main(void)
 
 	LOG_INF("Reading the identity key.");
 	err = identity_key_read(key);
-	if (err != 0) {
+	if (err != IDENTITY_KEY_SUCCESS) {
 		LOG_INF("Identity key read failed! (Error: %d). Exiting!", err);
 		return 0;
 	}

@@ -26,13 +26,22 @@ extern "C" {
 #define IDENTITY_KEY_SIZE_BYTES                 (32)
 
 /** @brief Error value when MKEK is missing from the KMU */
-#define ERR_IDENTITY_KEY_MKEK_MISSING           (0x15501)
+#define IDENTITY_KEY_ERR_MKEK_MISSING           (0x15501)
 
 /** @brief Error value when identity key is missing from the KMU */
-#define ERR_IDENTITY_KEY_MISSING                (0x15502)
+#define IDENTITY_KEY_ERR_MISSING                (0x15502)
 
 /** @brief Error value when identity key can't be read */
-#define ERR_IDENTITY_KEY_READ_FAILED            (0x15503)
+#define IDENTITY_KEY_ERR_READ_FAILED            (0x15503)
+
+/** @brief Error value when identity key can't be written */
+#define IDENTITY_KEY_ERR_WRITE_FAILED           (0x15504)
+
+/** @brief Error value when identity key generation failed */
+#define IDENTITY_KEY_ERR_GENERATION_FAILED      (0x15505)
+
+/** @brief Return code for success */
+#define IDENTITY_KEY_SUCCESS                    (0x0)
 
 /**
  * @brief Function to check that the MKEK is present
@@ -58,7 +67,7 @@ bool identity_key_is_written(void);
  *
  * @param key   Buffer to hold the decrypted identity key
  *
- * @return Zero on success, otherwise a non-zero error code
+ * @return IDENTITY_KEY_SUCCESS on success, otherwise a negative identity key error code
  */
 int identity_key_read(uint8_t key[IDENTITY_KEY_SIZE_BYTES]);
 
@@ -67,12 +76,12 @@ int identity_key_read(uint8_t key[IDENTITY_KEY_SIZE_BYTES]);
  *
  * The identity key will be encrypted using the Master Key Encryption Key (MKEK).
  *
- * @note A panic-function that does not return will be called on write-failure.
- *
  * @note This function is generally only used in provisioning of the device
  *       and hence is not part of the code running on the end-product.
+ *
+ * @return IDENTITY_KEY_SUCCESS on success, otherwise a negative identity key error code
  */
-void identity_key_write_random(void);
+int identity_key_write_random(void);
 
 /**
  * @brief Function to write a previously generated identity key to the KMU
@@ -82,12 +91,12 @@ void identity_key_write_random(void);
  * This function can be used in a scheme where the key is securely provisioned to
  * the device in production.
  *
- * @note A panic-function that does not return will be called on write-failure.
- *
  * @note This function is generally only used in provisioning of the device
  *       and hence is not part of the code running on the end-product.
+ *
+ * @return IDENTITY_KEY_SUCCESS on success, otherwise a negative identity key error code
  */
-void identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES]);
+int identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES]);
 
 /**
  * @brief Function to write a dummy identity key to KMU
@@ -97,9 +106,9 @@ void identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES]);
  * @warning The dummy identity key is must only be used for debugging and testing purposes.
  *          Never use this function in production!
  *
- * @note A panic-function that does not return will be called on write-failure.
+ * @return IDENTITY_KEY_SUCCESS on success, otherwise a negative identity key error code
  */
-void identity_key_write_dummy(void);
+int identity_key_write_dummy(void);
 
 #ifdef __cplusplus
 }
