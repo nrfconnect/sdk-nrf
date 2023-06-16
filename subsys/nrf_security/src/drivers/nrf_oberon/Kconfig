@@ -7,7 +7,7 @@
 menuconfig PSA_CRYPTO_DRIVER_OBERON
 	bool
 	prompt "PSA Oberon Driver" if !PSA_PROMPTLESS
-	default y #if !CRYPTOCELL_USABLE
+	default y
 	select NRF_OBERON
 	help
 	  Enable PSA Driver for nrf_oberon
