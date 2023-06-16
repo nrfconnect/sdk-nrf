@@ -17,17 +17,6 @@ To enable the Nordic Security Module with PSA crypto support, set the :kconfig:o
 PSA crypto support is provided through PSA Crypto APIs and is implemented by PSA core.
 PSA core uses PSA drivers to implement the cryptographic features either in software, or using hardware accelerators.
 
-Starting from |NCS| v2.4.0, the Mbed TLS PSA core is deprecated and replaced with nrf_oberon PSA core.
-The nrf_oberon PSA core code is an optimized and efficient implementation of PSA core licensed for use on Nordic Semiconductor devices.
-
-+---------------+--------------------------------------------------+------------------------------------------------+
-| PSA core      | Configuration option                             | Notes                                          |
-+===============+==================================================+================================================+
-| nrf_oberon    | :kconfig:option:`CONFIG_PSA_CORE_OBERON`         | Default                                        |
-+---------------+--------------------------------------------------+------------------------------------------------+
-| Mbed TLS      | :kconfig:option:`CONFIG_PSA_CORE_BUILTIN`        | DEPRECATED                                     |
-+---------------+--------------------------------------------------+------------------------------------------------+
-
 .. _legacy_crypto_support:
 
 Legacy crypto support
