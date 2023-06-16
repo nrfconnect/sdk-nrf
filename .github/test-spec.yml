@@ -53,6 +53,10 @@
   - "subsys/dfu/dfu_target/**/*"
   - "subsys/dfu/fmfu_fdev/**/*"
   - "subsys/fw_info/**/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
   - "samples/nrf9160/lwm2m_client/**/*"
 
 "CI-audio-test":
@@ -154,6 +158,10 @@
   - "samples/tfm/**/*"
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
   - "tests/modules/tfm"
   - "tests/tfm/**/*"
 
@@ -252,6 +260,10 @@
   - "drivers/net/*"
   - "samples/crypto/**/*"
   - "subsys/partition_manager/**/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
   - "tests/crypto/**/*"
   - "modules/cjson/**/*"
   - "include/tfm/**/*"
@@ -292,6 +304,10 @@
   - "subsys/ieee802154/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/net/openthread/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
 
 "CI-thread-test":
   - "samples/openthread/**/*"
@@ -326,6 +342,10 @@
   - "subsys/pcd/**/*"
   - "subsys/bluetooth/controller/*"
   - "subsys/net/openthread/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
   - "modules/nrfxlib/nrf_802154/**/*"
   - "modules/mcuboot/**/*"
   - "samples/matter/**/*"
@@ -343,6 +363,10 @@
   - "subsys/app_event_manager/**/*"
   - "subsys/nfc/**/*"
   - "subsys/partition_manager/**/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
   - "modules/mcuboot/**/*"
   - any:
       - "include/bluetooth/**/*"
@@ -444,9 +468,17 @@
 "CI-wifi":
   - "drivers/wifi/**/*"
   - "samples/wifi/**/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
   - "modules/lib/hostap/**/*"
 
 "CI-cloud-test":
   - "include/net/nrf_cloud*"
   - "samples/nrf9160/nrf_cloud_*/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
