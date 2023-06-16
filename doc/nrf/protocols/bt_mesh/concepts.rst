@@ -316,3 +316,14 @@ Replay protection
 
 To guard against malicious devices replaying previous messages, every device keeps a running sequence number, which is used for outbound messages.
 Each mesh message is sent with a unique pair of sequence number and source address. When receiving a message, the receiving device stores the sequence number and makes sure that it is more recent than the last sequence number it received from the same source address.
+
+.. _mesh_concepts_coexistence:
+
+Bluetooth LE and mesh coexistence
+*********************************
+
+Bluetooth mesh uses the preset local identity value.
+For more information about the advertisement identity, see :ref:`zephyr:bluetooth_mesh_adv_identity`.
+
+Bluetooth mesh sample :ref:`bluetooth_ble_peripheral_lbs_coex` demonstrates how to perform correct local identity allocation for Bluetooth LE purposes to avoid identity conflict with Bluetooth mesh.
+See the file :file:`samples/bluetooth/mesh/ble_pripheral_lbs_coex/src/lb_service_handler.c` for details.
