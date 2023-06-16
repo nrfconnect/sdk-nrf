@@ -77,29 +77,6 @@ Enabling the nrf_oberon driver
 
 To enable the :ref:`nrf_oberon_readme` PSA driver, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` Kconfig option.
 
-.. _nrf_security_drivers_builtin:
-
-Built-in Mbed TLS
-*****************
-
-Built-in Mbed TLS uses the open-source software from the `Arm Mbed TLS project`_ with minimal adjustments in PSA Core and PSA driver scope to support multiple drivers.
-
-The fork of `Arm Mbed TLS project`_ used by nrf_security is checked out using ``west`` and is located in the folder called :file:`mbedtls` in the root of nRF Connect SDK repository.
-
-Built-in Mbed TLS support can be used to add support for features not available in the `Arm CryptoCell cc3xx driver`_, for example AES-256 or ECC Brainpool curve types.
-
-Similarly, you can use the built-in Mbed TLS to add support for features not available in the `nrf_oberon driver`_, for example to add support for more ECC curve types.
-
-.. note::
-   nrf_security provides a replacement to the file :file:`psa_crypto_driver_wrappers.c` with adjustments to support multiple drivers.
-
-Enabling the built-in Mbed TLS support
-======================================
-
-To enable the built-in Mbed TLS support, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_BUILTIN` Kconfig option to ``y``.
-
-It is generally not needed to enable built-in Mbed TLS support manually, as there is Kconfig logic that does that, depending on the enabled cryptographic features or algorithms and the configuration of PSA drivers.
-
 Legacy Mbed TLS
 ***************
 

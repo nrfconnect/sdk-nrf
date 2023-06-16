@@ -256,9 +256,6 @@ To configure elliptic curve support, set one or more of the following Kconfig op
 | secp521r1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`         |
 +-----------------------+-----------------------------------------------------------+
 
-.. note::
-   * :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521` is only supported by :ref:`nrf_security_drivers_builtin`.
-
 
 ECC curve driver configurations
 ===============================
