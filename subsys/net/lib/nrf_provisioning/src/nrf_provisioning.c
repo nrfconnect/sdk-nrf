@@ -69,6 +69,20 @@ static time_t nxt_provisioning;
 static struct nrf_provisioning_mm_change mm;
 static struct nrf_provisioning_dm_change dm;
 
+NRF_MODEM_LIB_ON_INIT(nrf_provisioning_init_hook, nrf_provisioning_on_modem_init, NULL);
+
+static void nrf_provisioning_on_modem_init(int ret, void *ctx)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_AUTO_INIT)) {
+		err = nrf_provisioning_init(NULL, NULL);
+		if (err) {
+			LOG_ERR("Failed to initialize provisioning client");
+		}
+	}
+}
+
 static int cert_provision(void)
 {
 	int ret = 0;
@@ -381,15 +395,6 @@ int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
 
 	lte_lc_register_handler(nrf_provisioning_lte_handler);
 
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SYS_INIT)) {
-		LOG_INF("Establishing LTE link ...");
-		ret = lte_lc_init_and_connect();
-		if (ret) {
-			LOG_ERR("LTE link could not be established (%d)", ret);
-			goto exit;
-		}
-	}
-
 	/* Let the provisioning thread run */
 	k_condvar_signal(&np_cond);
 exit:
@@ -510,14 +515,8 @@ int nrf_provisioning_req(void)
 	int ret;
 	int backoff;
 
-#if !defined(CONFIG_NRF_PROVISIONING_SYS_INIT)
-	/* Only in case that an application calls nrf_provisioning_init() solely
-	 * there's need to wait it happen. If initialization is triggered during Sysinit we can
-	 * trust it has already happened.
-	 */
 	k_condvar_wait(&np_cond, &np_mtx, K_FOREVER);
 	k_mutex_unlock(&np_mtx);
-#endif
 
 	while (true) {
 		backoff = 1; /* Backoff start interval */
@@ -592,12 +591,3 @@ int nrf_provisioning_req(void)
 K_THREAD_DEFINE(nrf_provisioning, NRF_PROVISIONING_STACK_SIZE,
 		nrf_provisioning_req, NULL, NULL, NULL,
 		NRF_PROVISIONING_PRIORITY, 0, 0);
-
-#if defined(CONFIG_NRF_PROVISIONING_SYS_INIT)
-static int nrf_provisioning_sysinit(void)
-{
-	return nrf_provisioning_init(NULL, NULL);
-}
-
-SYS_INIT(nrf_provisioning_sysinit, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-#endif
