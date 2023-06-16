@@ -26,6 +26,7 @@ target_sources_ifdef(CONFIG_SLM_NATIVE_TLS app PRIVATE src/slm_native_tls.c)
 target_sources_ifdef(CONFIG_SLM_NATIVE_TLS app PRIVATE src/slm_at_cmng.c)
 
 add_subdirectory_ifdef(CONFIG_SLM_GNSS src/gnss)
+add_subdirectory_ifdef(CONFIG_SLM_NRF_CLOUD src/nrfcloud)
 add_subdirectory_ifdef(CONFIG_SLM_FTPC src/ftp_c)
 add_subdirectory_ifdef(CONFIG_SLM_MQTTC src/mqtt_c)
 add_subdirectory_ifdef(CONFIG_SLM_HTTPC src/http_c)

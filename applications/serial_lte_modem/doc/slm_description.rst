@@ -144,23 +144,10 @@ CONFIG_SLM_SMS - SMS support in SLM
 CONFIG_SLM_GNSS - GNSS support in SLM
    This option enables additional AT commands for using the GNSS service.
 
-.. _CONFIG_SLM_AGPS:
+.. _CONFIG_SLM_NRF_CLOUD:
 
-CONFIG_SLM_AGPS - nRF Cloud A-GPS support in SLM
-   This option enables additional AT commands for using the nRF Cloud A-GPS service.
-   It is not selected by default.
-
-.. _CONFIG_SLM_PGPS:
-
-CONFIG_SLM_PGPS - nRF Cloud P-GPS support in SLM
-   This option enables additional AT commands for using the nRF Cloud P-GPS service.
-   It is not selected by default.
-
-.. _CONFIG_SLM_LOCATION:
-
-CONFIG_SLM_LOCATION - nRF Cloud cellular and Wi-Fi location support in SLM
-   This option enables additional AT commands for using the nRF Cloud location service.
-   It is not selected by default.
+CONFIG_SLM_NRF_CLOUD - nRF Cloud support in SLM
+   This option enables additional AT commands for using the nRF Cloud service.
 
 .. _CONFIG_SLM_FTPC:
 
