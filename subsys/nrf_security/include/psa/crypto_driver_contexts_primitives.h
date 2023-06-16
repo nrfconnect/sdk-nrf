@@ -42,11 +42,6 @@
 #include "oberon_hash.h"
 #endif
 
-#if defined(PSA_CORE_BUILTIN)
-/* Include the context structure definitions for the Mbed TLS software drivers */
-#include "psa/crypto_builtin_primitives.h"
-#endif
-
 /* Define the context to be used for an operation that is executed through the
  * PSA Driver wrapper layer as the union of all possible driver's contexts.
  *
@@ -57,9 +52,6 @@
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
-#if defined(MBEDTLS_PSA_BUILTIN_HAS_HASH_SUPPORT)
-	mbedtls_psa_hash_operation_t mbedtls_ctx;
-#endif
 #if defined(PSA_CRYPTO_DRIVER_CC3XX)
 	cc3xx_hash_operation_t cc3xx_driver_ctx;
 #endif
@@ -70,9 +62,6 @@ typedef union {
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
-#if defined(MBEDTLS_PSA_BUILTIN_HAS_CIPHER_SUPPORT)
-	mbedtls_psa_cipher_operation_t mbedtls_ctx;
-#endif
 #if defined(PSA_CRYPTO_DRIVER_CC3XX)
 	cc3xx_cipher_operation_t cc3xx_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
