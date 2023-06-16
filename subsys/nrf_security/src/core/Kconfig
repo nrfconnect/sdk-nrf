@@ -8,13 +8,7 @@ choice PSA_CORE
 	prompt "PSA Core implementation"
 	default PSA_CORE_OBERON
 
-config PSA_CORE_BUILTIN
-	bool "[DEPRECATED] PSA Core implementation - Builtin"
-	help
-	  [DEPRECATED] Select PSA_CORE_OBERON instead.
-
 config PSA_CORE_OBERON
 	bool "PSA Core implementation - Oberon"
 
 endchoice
-
