@@ -296,7 +296,8 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Removed the random hardware unique key sample.
+  The sample is redundant since its functionality is presented as part of the :ref:`hw_unique_key_usage` sample.
 
 Drivers
 =======
