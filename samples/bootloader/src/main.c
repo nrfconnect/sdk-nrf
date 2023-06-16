@@ -37,7 +37,11 @@ int load_huk(void)
 
 	}
 
-	hw_unique_key_load_kdr();
+	if (hw_unique_key_load_kdr() != HW_UNIQUE_KEY_SUCCESS) {
+		printk("Error: Cannot load the Hardware Unique Key into the KDR.\n");
+		k_panic();
+		return -1;
+	}
 
 	return 0;
 }

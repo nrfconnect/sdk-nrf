@@ -18,7 +18,11 @@ int main(void)
 {
 	int err;
 	LOG_INF("Generating random HUK keys (including MKEK)");
-	hw_unique_key_write_random();
+	err = hw_unique_key_write_random();
+	if (err != HW_UNIQUE_KEY_SUCCESS) {
+		LOG_INF("Failure: Writing random HUK keys failed. Exiting!");
+		return 0;
+	}
 
 	if (identity_key_is_written()) {
 		LOG_INF("Failure: Identity key slot already written. Exiting!");

@@ -21,11 +21,11 @@ static const uint32_t huk_magic[4] = {
 
 static uint32_t huk_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS;
 
-void hw_unique_key_write(enum hw_unique_key_slot kmu_slot, const uint8_t *key)
+int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)
 {
-	if (kmu_slot != HUK_KEYSLOT_KDR) {
-		printk("KMU slot must be HUK_KEYSLOT_KDR on nRF52840\r\n");
-		k_panic();
+	if (key_slot != HUK_KEYSLOT_KDR) {
+		printk("Key slot must be HUK_KEYSLOT_KDR on nRF52840\r\n");
+		return -HW_UNIQUE_KEY_ERR_WRITE_FAILED;
 	}
 
 	nrfx_nvmc_words_write(huk_addr, huk_magic, sizeof(huk_magic)/4);
@@ -34,13 +34,15 @@ void hw_unique_key_write(enum hw_unique_key_slot kmu_slot, const uint8_t *key)
 	nrfx_nvmc_words_write(huk_addr + sizeof(huk_magic), key, HUK_SIZE_WORDS);
 	while (!nrfx_nvmc_write_done_check())
 		;
+
+	return HW_UNIQUE_KEY_SUCCESS;
 }
 
-bool hw_unique_key_is_written(enum hw_unique_key_slot kmu_slot)
+bool hw_unique_key_is_written(enum hw_unique_key_slot key_slot)
 {
-	if (kmu_slot != HUK_KEYSLOT_KDR) {
-		printk("KMU slot must be HUK_KEYSLOT_KDR on nRF52840\r\n");
-		k_panic();
+	if (key_slot != HUK_KEYSLOT_KDR) {
+		printk("Key slot must be HUK_KEYSLOT_KDR on nRF52840\r\n");
+		return false;
 	}
 
 	uint32_t protection = fprotect_is_protected(huk_addr);
@@ -60,27 +62,29 @@ bool hw_unique_key_is_written(enum hw_unique_key_slot kmu_slot)
 	return false;
 }
 
-void hw_unique_key_load_kdr(void)
+int hw_unique_key_load_kdr(void)
 {
 	int err = -1;
 
 	/* Compare the huk_magic data with the content of the page */
 	if (memcmp((uint8_t *)huk_addr, huk_magic, sizeof(huk_magic) != 0)) {
 		printk("Could not load the HUK, magic data is not present\r\n");
-		k_panic();
+		return -HW_UNIQUE_KEY_ERR_MISSING;
 	}
 
 	err = nrf_cc3xx_platform_kdr_load_key((uint8_t *)huk_addr +
 					      sizeof(huk_magic));
 	if (err != 0) {
 		printk("The HUK loading failed with error code: %d\r\n", err);
-		k_panic();
+		return -HW_UNIQUE_KEY_ERR_GENERIC_ERROR;
 	}
 
 	/* Lock the flash page which holds the key */
 	err = fprotect_area_no_access(huk_addr, CONFIG_FPROTECT_BLOCK_SIZE);
 	if (err != 0) {
 		printk("Fprotect failed with error code: %d\r\n", err);
-		k_panic();
+		return -HW_UNIQUE_KEY_ERR_GENERIC_ERROR;
 	}
+
+	return HW_UNIQUE_KEY_SUCCESS;
 }

@@ -49,28 +49,30 @@ static int write_slot(enum hw_unique_key_slot kmu_slot, uint32_t target_addr, co
 			NRF_CC3XX_PLATFORM_KMU_DEFAULT_PERMISSIONS, key);
 }
 
-void hw_unique_key_write(enum hw_unique_key_slot kmu_slot, const uint8_t *key)
+int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)
 {
-	int err = write_slot(kmu_slot, NRF_CC3XX_PLATFORM_KMU_AES_ADDR, key);
+	int err = write_slot(key_slot, NRF_CC3XX_PLATFORM_KMU_AES_ADDR, key);
 
 #ifdef HUK_HAS_CC312
 	if (err == 0) {
-		err = write_slot(kmu_slot + 1, NRF_CC3XX_PLATFORM_KMU_AES_ADDR_2,
+		err = write_slot(key_slot + 1, NRF_CC3XX_PLATFORM_KMU_AES_ADDR_2,
 				key + (HUK_SIZE_BYTES / 2));
 	}
 #endif
 
 	if (err != 0) {
-		printk("The HUK writing to: %d failed with error code: %d\r\n", kmu_slot, err);
-		k_panic();
+		printk("The HUK writing to: %d failed with error code: %d\r\n", key_slot, err);
+		return -HW_UNIQUE_KEY_ERR_WRITE_FAILED;
 	}
+
+	return HW_UNIQUE_KEY_SUCCESS;
 }
 
-bool hw_unique_key_is_written(enum hw_unique_key_slot kmu_slot)
+bool hw_unique_key_is_written(enum hw_unique_key_slot key_slot)
 {
 #ifdef HUK_HAS_CC312
-	return key_written(kmu_slot) || key_written(kmu_slot + 1);
+	return key_written(key_slot) || key_written(key_slot + 1);
 #else
-	return key_written(kmu_slot);
+	return key_written(key_slot);
 #endif
 }

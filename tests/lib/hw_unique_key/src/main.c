@@ -102,7 +102,8 @@ static void do_key_test(void)
 			uint32_t keyslot = huk_slots[i];
 
 			zassert_false(hw_unique_key_is_written(keyslot), NULL);
-			hw_unique_key_write(keyslot, test_key);
+			err = hw_unique_key_write(keyslot, test_key);
+			zassert_equal(HW_UNIQUE_KEY_SUCCESS, err, "unexpected error: %d\n", err);
 			zassert_true(hw_unique_key_is_written(keyslot), NULL);
 		}
 
@@ -117,7 +118,9 @@ static void do_key_test(void)
 
 #ifndef HUK_HAS_KMU
 			if (huk_slots[i] == HUK_KEYSLOT_KDR) {
-				hw_unique_key_load_kdr();
+				err = hw_unique_key_load_kdr();
+				zassert_equal(HW_UNIQUE_KEY_SUCCESS, err, "unexpected error: %d\n",
+					      err);
 			}
 #endif
 

@@ -27,7 +27,7 @@ psa_key_id_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 
 	int result = hw_unique_key_derive_key(KEYSLOT, NULL, 0,
 		key_label, label_size, key_out, sizeof(key_out));
-	if (result != 0) {
+	if (result != HW_UNIQUE_KEY_SUCCESS) {
 		printk("hw_unique_key_derive_key returned error: %d\n", result);
 		return 0;
 	}
