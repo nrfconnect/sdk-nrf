@@ -17,10 +17,17 @@
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 static struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
+static struct lte_lc_cell gci_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cells_info scan_cellular_info = {
-	.neighbor_cells = neighbor_cells
+	.neighbor_cells = neighbor_cells,
+	.gci_cells = gci_cells
 };
-static struct k_sem *scan_cellular_ready;
+
+static bool running;
+/* Indicates when individual ncellmeas operation is completed. This is internal to this file. */
+static struct k_sem scan_cellular_sem_ncellmeas_evt;
+/* Requested number of cells to be searched. */
+static int8_t scan_cellular_cell_count;
 
 struct lte_lc_cells_info *scan_cellular_results_get(void)
 {
@@ -36,10 +43,11 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
-		if (scan_cellular_ready == NULL) {
+		if (!running) {
 			return;
 		}
-		LOG_DBG("Cell measurements results received");
+		LOG_DBG("Cell measurements results received: ncells_count=%d, gci_cells_count=%d",
+			evt->cells_info.ncells_count, evt->cells_info.gci_cells_count);
 
 		/* Copy current cell information */
 		memcpy(&scan_cellular_info.current_cell,
@@ -54,30 +62,46 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 
 			scan_cellular_info.ncells_count = evt->cells_info.ncells_count;
 		} else {
-			scan_cellular_info.ncells_count = 0;
-			LOG_DBG("No neighbor cell information from modem.");
+			LOG_DBG("No neighbor cell information from modem");
 		}
 
-		k_sem_give(scan_cellular_ready);
-		scan_cellular_ready = NULL;
+		/* Copy surrounding cell information if present */
+		if (evt->cells_info.gci_cells_count > 0 && evt->cells_info.gci_cells) {
+			memcpy(scan_cellular_info.gci_cells,
+			       evt->cells_info.gci_cells,
+			       sizeof(struct lte_lc_cell) * evt->cells_info.gci_cells_count);
+
+			scan_cellular_info.gci_cells_count = evt->cells_info.gci_cells_count;
+		} else {
+			LOG_DBG("No surrounding cell information from modem");
+
+		}
+
+		k_sem_give(&scan_cellular_sem_ncellmeas_evt);
 	} break;
 	default:
 		break;
 	}
 }
 
-int scan_cellular_start(struct k_sem *ncellmeas_ready)
+int scan_cellular_start(uint8_t cell_count)
 {
 	struct location_utils_modem_params_info modem_params = { 0 };
+	struct lte_lc_ncellmeas_params ncellmeas_params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE,
+		.gci_count = 0
+	};
 	int err;
 
-	scan_cellular_ready = ncellmeas_ready;
+	running = true;
+	scan_cellular_cell_count = cell_count;
 	scan_cellular_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	scan_cellular_info.ncells_count = 0;
+	scan_cellular_info.gci_cells_count = 0;
 
 	LOG_DBG("Triggering cell measurements");
 
-	/* Starting measurements with lte_lc default parameters */
-	err = lte_lc_neighbor_cell_measurement(NULL);
+	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 	if (err) {
 		LOG_WRN("Failed to initiate neighbor cell measurements: %d, "
 			"next: fallback to get modem parameters",
@@ -99,23 +123,60 @@ int scan_cellular_start(struct k_sem *ncellmeas_ready)
 			scan_cellular_info.current_cell.id = modem_params.cell_id;
 			scan_cellular_info.current_cell.phys_cell_id = modem_params.phys_cell_id;
 		}
-		k_sem_give(scan_cellular_ready);
-		scan_cellular_ready = NULL;
+		goto end;
 	}
+	err = k_sem_take(&scan_cellular_sem_ncellmeas_evt, K_FOREVER);
+	if (err) {
+		/* Semaphore was reset so stop search procedure */
+		err = 0;
+		goto end;
+	}
+
+	/* Calculate the number of GCI cells to be requested.
+	 * We should subtract 1 for current cell as ncell_count won't include it.
+	 * GCI count requested from modem includes also current cell so we should add 1.
+	 * So these two cancel each other.
+	 */
+	scan_cellular_cell_count = scan_cellular_cell_count - scan_cellular_info.ncells_count;
+
+	if (scan_cellular_cell_count > 0) {
+
+		ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT;
+		ncellmeas_params.gci_count = scan_cellular_cell_count;
+
+		/* GCI count given to modem cannot be one */
+		if (ncellmeas_params.gci_count == 1) {
+			ncellmeas_params.gci_count++;
+		}
+
+		err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
+		if (err) {
+			LOG_WRN("Failed to initiate GCI cell measurements: %d", err);
+			/* Clearing 'err' because normal neighbor search has succeeded
+			 * so those are still valid and positioning can procede with that data
+			 */
+			err = 0;
+			goto end;
+		}
+		k_sem_take(&scan_cellular_sem_ncellmeas_evt, K_FOREVER);
+	}
+
+end:
+	running = false;
 	return err;
 }
 
 int scan_cellular_cancel(void)
 {
-	if (scan_cellular_ready != NULL) {
+	if (running) {
 		/* Cancel/stopping might trigger a NCELLMEAS notification */
 		(void)lte_lc_neighbor_cell_measurement_cancel();
-		k_sem_reset(scan_cellular_ready);
+		k_sem_reset(&scan_cellular_sem_ncellmeas_evt);
 	} else {
 		return -EPERM;
 	}
 
-	scan_cellular_ready = NULL;
+	running = false;
 
 	return 0;
 }
@@ -123,6 +184,8 @@ int scan_cellular_cancel(void)
 int scan_cellular_init(void)
 {
 	lte_lc_register_handler(scan_cellular_lte_ind_handler);
+
+	k_sem_init(&scan_cellular_sem_ncellmeas_evt, 0, 1);
 
 	return 0;
 }

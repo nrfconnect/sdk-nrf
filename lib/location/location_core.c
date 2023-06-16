@@ -335,6 +335,7 @@ void location_core_config_log(const struct location_config *config)
 			LOG_DBG("      Service: %s (%d)",
 				location_core_service_str(config->methods[i].cellular.service),
 				config->methods[i].cellular.service);
+			LOG_DBG("      Cell count: %d", config->methods[i].cellular.cell_count);
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 		} else if (type == LOCATION_METHOD_WIFI) {
 			LOG_DBG("      Timeout: %dms", config->methods[i].wifi.timeout);
@@ -365,6 +366,8 @@ static int location_core_location_get_pos(void)
 
 	location_core_current_config_set(&loc_req_info.config);
 	/* Location request starts from the first method */
+	loc_req_info.timeout_uptime = (loc_req_info.config.timeout != SYS_FOREVER_MS) ?
+		k_uptime_get() + loc_req_info.config.timeout : SYS_FOREVER_MS;
 	loc_req_info.execute_fallback = true;
 	loc_req_info.current_method_index = 0;
 	requested_method = loc_req_info.methods[loc_req_info.current_method_index];
