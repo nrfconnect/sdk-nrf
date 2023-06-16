@@ -98,24 +98,24 @@ int main(void)
 
 	LOG_INF("nRF Device Provisioning Sample");
 
-	if (!IS_ENABLED(CONFIG_NRF_PROVISIONING_SYS_INIT)) {
-		ret = nrf_modem_lib_init();
-		if (ret < 0) {
-			LOG_ERR("Unable to init modem library (%d)", ret);
-			return 0;
-		}
-
-		LOG_INF("Establishing LTE link ...");
-		ret = lte_lc_init_and_connect();
-		if (ret) {
-			LOG_ERR("LTE link could not be established (%d)", ret);
-			return 0;
-		}
+	ret = nrf_modem_lib_init();
+	if (ret < 0) {
+		LOG_ERR("Unable to init modem library (%d)", ret);
+		return 0;
 	}
 
-	ret = nrf_provisioning_init(&mmode, &dmode);
+	LOG_INF("Establishing LTE link ...");
+	ret = lte_lc_init_and_connect();
 	if (ret) {
-		LOG_ERR("Failed to initialize provisioning client");
+		LOG_ERR("LTE link could not be established (%d)", ret);
+		return 0;
+	}
+
+	if (!IS_ENABLED(CONFIG_NRF_PROVISIONING_AUTO_INIT)) {
+		ret = nrf_provisioning_init(&mmode, &dmode);
+		if (ret) {
+			LOG_ERR("Failed to initialize provisioning client");
+		}
 	}
 
 	return 0;

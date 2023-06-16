@@ -61,14 +61,6 @@ int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode)
 		return 0;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SYS_INIT)) {
-		ret = nrf_modem_lib_init();
-		if (ret < 0) {
-			LOG_ERR("Failed to initialize modem library, error: %d", ret);
-			return ret;
-		}
-	}
-
 	/* Modem info library is used to obtain the modem FW version */
 	ret = modem_info_init();
 	if (ret) {

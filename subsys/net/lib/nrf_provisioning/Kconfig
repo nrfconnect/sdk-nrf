@@ -13,10 +13,10 @@ menuconfig NRF_PROVISIONING
 
 if NRF_PROVISIONING
 
-config NRF_PROVISIONING_SYS_INIT
-	bool "Initialize during SYS_INIT"
+config NRF_PROVISIONING_AUTO_INIT
+	bool "Initialize the client automatically"
 	help
-	  Initialize the client automatically during the SYS_INIT sequence.
+	  Initialize the client automatically after the modem library is initialized.
 
 config NRF_PROVISIONING_INTERVAL_S
 	int "Maximum provisioning interval in seconds"
