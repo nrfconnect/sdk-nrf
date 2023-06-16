@@ -88,6 +88,11 @@ config PSA_ITS_ENCRYPTED
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
 
+config PSA_CRYPTO_DRIVER_ALG_PRNG_TEST
+	bool
+	help
+	  Internal option used for testing. User provided function will be called
+	  to get random bytes.
 
 menuconfig PSA_NATIVE_ITS
 	bool "PSA native Internal Trusted Storage"
