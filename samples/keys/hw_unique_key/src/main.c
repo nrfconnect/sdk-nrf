@@ -64,7 +64,11 @@ int main(void)
 
 	if (!hw_unique_key_are_any_written()) {
 		printk("Writing random keys to KMU\n");
-		hw_unique_key_write_random();
+		result = hw_unique_key_write_random();
+		if (result != HW_UNIQUE_KEY_SUCCESS) {
+			printk("hw_unique_key_write_random returned error: %d\n", result);
+			return 0;
+		}
 		printk("Success!\n\n");
 
 #if !defined(HUK_HAS_KMU)

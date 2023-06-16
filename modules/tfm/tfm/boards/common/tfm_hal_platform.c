@@ -48,7 +48,11 @@ static enum tfm_hal_status_t crypto_platform_init(void)
     !defined(PLATFORM_DEFAULT_CRYPTO_KEYS)
 	if (!hw_unique_key_are_any_written()) {
 		SPMLOG_INFMSG("Writing random Hardware Unique Keys to the KMU.\r\n");
-		hw_unique_key_write_random();
+		err = hw_unique_key_write_random();
+		if (err != HW_UNIQUE_KEY_SUCCESS) {
+			SPMLOG_DBGMSGVAL("hw_unique_key_write_random failed with error code:", err);
+			return TFM_HAL_ERROR_BAD_STATE;
+		}
 		SPMLOG_INFMSG("Success\r\n");
 	}
 #endif

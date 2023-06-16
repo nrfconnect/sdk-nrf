@@ -409,6 +409,15 @@ Other libraries
     * :c:func:`identity_key_read` function to always return an error code from the library-defined codes.
     * The defined error code names with prefix IDENTITY_KEY_ERR_*.
 
+* :ref:`lib_hw_unique_key` library:
+
+  * Updated:
+
+    * :c:func:`hw_unique_key_write`, :c:func:`hw_unique_key_write_random` and :c:func:`hw_unique_key_load_kdr` functions to return an error code and not panic on error.
+    * :c:func:`hw_unique_key_derive_key` function to always return an error code from the library-defined codes.
+    * The defined error code names with prefix HW_UNIQUE_KEY_ERR_*.
+
+
 Common Application Framework (CAF)
 ----------------------------------
 
