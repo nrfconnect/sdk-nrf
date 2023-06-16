@@ -17,6 +17,7 @@ config SLM_AT_MODE
 	bool "Serial LTE Modem by raw AT mode"
 	default y
 	select AT_CMD_PARSER
+	select AT_MONITOR
 
 config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
@@ -124,7 +125,14 @@ config SLM_SMS
 	help
 	  Support SMS send/receive in plain text
 
-rsource "src/gnss/Kconfig"
+config SLM_GNSS
+	bool "GNSS support in SLM"
+	default y
+
+config SLM_NRF_CLOUD
+	bool "nRF Cloud support in SLM"
+	default y
+
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"

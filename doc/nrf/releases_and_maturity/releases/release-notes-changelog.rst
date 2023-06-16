@@ -159,6 +159,10 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
+* Updated:
+
+  * The configuration to enable support for nRF Cloud A-GPS service and nRF Cloud Location service by default.
+
 * Removed:
 
   * DFU AT commands ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` because they were not usable without a custom application in the target (nRF52 series) device.
