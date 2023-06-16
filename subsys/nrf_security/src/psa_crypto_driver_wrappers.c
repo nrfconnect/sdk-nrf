@@ -1838,7 +1838,6 @@ psa_status_t psa_driver_wrapper_mac_abort(psa_mac_operation_t *operation)
 	}
 }
 
-#if defined CONFIG_PSA_CORE_OBERON
 /*
  * Key derivation functions
  */
@@ -1945,8 +1944,6 @@ psa_status_t psa_driver_wrapper_key_derivation_abort(psa_key_derivation_operatio
 		return PSA_SUCCESS;
 	}
 }
-
-#endif /* CONFIG_PSA_CORE_OBERON */
 
 /*
  * Key agreement functions
@@ -2101,8 +2098,6 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(
 	}
 }
 
-#if defined(CONFIG_PSA_CORE_OBERON)
-
 psa_status_t psa_driver_wrapper_init_random(psa_driver_random_context_t *context)
 {
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM)
@@ -2205,7 +2200,5 @@ psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bit
 	*estimate_bits = 0;
 	return PSA_ERROR_INSUFFICIENT_ENTROPY;
 }
-
-#endif /* CONFIG_PSA_CORE_OBERON */
 
 #endif /* MBEDTLS_PSA_CRYPTO_C */
