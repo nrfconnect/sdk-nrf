@@ -395,6 +395,8 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 		goto respond;
 	}
 
+	/* Check buf->len different from 0, before decoding buf to range and buf->len changes. */
+	bool ranged = (buf->len != 0);
 	struct bt_mesh_sensor_column range;
 
 	if (buf->len == col_format->size * 2) {
@@ -418,7 +420,6 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	}
 
 	for (uint32_t i = 0; i < sensor->series.column_count; ++i) {
-		bool ranged = (buf->len != 0);
 		const struct bt_mesh_sensor_column *col =
 			&sensor->series.columns[i];
 
