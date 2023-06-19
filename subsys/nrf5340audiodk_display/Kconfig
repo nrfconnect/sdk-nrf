@@ -1,0 +1,2 @@
+config NRF5340AUDIODK_DISPLAY
+    bool "Hei"
