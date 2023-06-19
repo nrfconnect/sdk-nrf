@@ -38,7 +38,7 @@ static const struct device *light_sensor_dev = DEVICE_DT_GET(DT_NODELABEL(bh1749
 static int64_t fetch_timestamp;
 
 
-static int sensor_read(struct sensor_value measurements[])
+static int _sensor_read(struct sensor_value measurements[])
 {
 	int ret;
 
@@ -75,7 +75,7 @@ int light_sensor_read(uint32_t *light_value)
 #if !defined(LIGHT_SENSOR_SIMULATED)
 	int ret;
 
-	ret = sensor_read(light_values);
+	ret = _sensor_read(light_values);
 	if (ret == -EBUSY) {
 		return ret;
 	} else if (ret) {
@@ -113,7 +113,7 @@ int colour_sensor_read(uint32_t *colour_value)
 	ui_sense_led_on_off(true);
 	k_sleep(K_MSEC(SENSE_LED_ON_TIME_MS));
 
-	ret = sensor_read(colour_values);
+	ret = _sensor_read(colour_values);
 
 	ui_sense_led_on_off(false);
 
