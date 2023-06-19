@@ -116,4 +116,6 @@ void wifi_nrf_scan_timeout_work(struct k_work *work);
 const char *wifi_nrf_get_drv_version(void);
 enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);
 enum wifi_nrf_status wifi_nrf_fmac_dev_rem_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);
+enum wifi_nrf_status wifi_nrf_fw_load(void *rpu_ctx);
+
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */

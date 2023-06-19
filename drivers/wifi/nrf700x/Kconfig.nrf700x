@@ -26,6 +26,23 @@ config NRF_WIFI_IF_AUTO_START
 	bool
 	default y
 
+config NRF_WIFI_PATCHES_EXT_FLASH
+	bool "Store nRF700x FW patches in external flash"
+	# nRF7002 supports SPI based external flash access with no XIP
+	# Disable until Matter DFU changes are ready
+	# default y if BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF52840DK_NRF52840
+	# For accessing external flash
+	select FLASH
+	# For relocation code to external flash
+	select XIP
+	select BUILD_NO_GAP_FILL
+	select CODE_DATA_RELOCATION
+	select HAVE_CUSTOM_LINKER_SCRIPT
+
+config CUSTOM_LINKER_SCRIPT
+	string "Custom linker script for nRF700x FW patches"
+	default "${ZEPHYR_BASE}/../nrf/drivers/wifi/nrf700x/rpu_fw_patches.ld"
+
 config NRF_WIFI_LOW_POWER
 	bool "Enable low power mode in nRF Wi-Fi chipsets"
 	default y
