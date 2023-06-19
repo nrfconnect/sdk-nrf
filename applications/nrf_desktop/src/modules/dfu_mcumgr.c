@@ -54,11 +54,11 @@ static void dfu_timeout_handler(struct k_work *work)
 	}
 }
 
-static int32_t mcumgr_img_mgmt_cb(uint32_t event,
-				  int32_t rc,
-				  bool *abort_more,
-				  void *data,
-				  size_t data_size)
+static enum mgmt_cb_return mcumgr_img_mgmt_cb(uint32_t event,
+					      enum mgmt_cb_return prev_status,
+					      int32_t *rc, uint16_t *group,
+					      bool *abort_more, void *data,
+					      size_t data_size)
 {
 	LOG_DBG("MCUmgr Image Management Event with the %d ID",
 		u32_count_trailing_zeros(MGMT_EVT_GET_ID(event)));
@@ -74,7 +74,7 @@ static int32_t mcumgr_img_mgmt_cb(uint32_t event,
 		APP_EVENT_SUBMIT(new_ble_smp_transfer_event());
 	}
 
-	return MGMT_ERR_EOK;
+	return MGMT_CB_OK;
 }
 
 static struct mgmt_callback img_mgmt_callback = {
@@ -82,11 +82,11 @@ static struct mgmt_callback img_mgmt_callback = {
 	.event_id = MGMT_EVT_OP_IMG_MGMT_ALL,
 };
 
-static int32_t mcumgr_os_mgmt_reset_cb(uint32_t event,
-				       int32_t rc,
-				       bool *abort_more,
-				       void *data,
-				       size_t data_size)
+static enum mgmt_cb_return mcumgr_os_mgmt_reset_cb(uint32_t event,
+						   enum mgmt_cb_return prev_status,
+						   int32_t *rc, uint16_t *group,
+						   bool *abort_more, void *data,
+						   size_t data_size)
 {
 	LOG_INF("MCUmgr OS Management Reset Event");
 
@@ -96,7 +96,7 @@ static int32_t mcumgr_os_mgmt_reset_cb(uint32_t event,
 		return MGMT_ERR_EACCESSDENIED;
 	}
 
-	return MGMT_ERR_EOK;
+	return MGMT_CB_OK;
 }
 
 static struct mgmt_callback os_mgmt_reset_callback = {
