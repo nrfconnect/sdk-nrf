@@ -101,6 +101,7 @@ Kconfig*                                  @tejlmand
 /lib/location/                            @trantanen @jhirsi @tokangas
 /lib/lte_link_control/                    @jtguggedal @tokangas @simensrostad @trantanen
 /lib/modem_antenna/                       @tokangas
+/lib/modem_battery/                       @MirkoCovizzi
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multithreading_lock/                 @rugeGerritsen
@@ -155,6 +156,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
+/samples/nrf9160/battery/                 @MirkoCovizzi
 /samples/nrf9160/location/                @trantanen @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
 /samples/nrf9160/modem_shell/             @trantanen @jhirsi @tokangas
@@ -256,6 +258,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad @trantanen
 /tests/lib/lte_lc_api/                    @maxd-nordic @trantanen @tokangas
 /tests/lib/modem_jwt/                     @SeppoTakalo
+/tests/lib/modem_battery/                 @MirkoCovizzi
 /tests/lib/modem_info/                    @maxd-nordic
 /tests/lib/qos/                           @simensrostad
 /tests/lib/sfloat/                        @kapi-no @maje-emb

@@ -123,14 +123,17 @@ static void lbs_adv_start(void)
 	/* Use different identity from Bluetooth mesh to avoid conflicts with Mesh Provisioning
 	 * Service and Mesh Proxy Service advertisements.
 	 */
-	bt_id_get(NULL, &id_count);
+	(void)bt_id_get(NULL, &id_count);
 
 	if (id_count < CONFIG_BT_ID_MAX) {
-		adv_params->id = bt_id_create(NULL, NULL);
-		if (adv_params->id < 0) {
+		int id = bt_id_create(NULL, NULL);
+
+		if (id < 0) {
 			printk("Unable to create a new identity for LBS (err %d)."
-			       " Using the default one.\n", adv_params->id);
+			       " Using the default one.\n", id);
 			adv_params->id = BT_ID_DEFAULT;
+		} else {
+			adv_params->id = id;
 		}
 
 		printk("Created a new identity for LBS: %d\n", adv_params->id);

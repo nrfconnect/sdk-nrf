@@ -328,6 +328,10 @@ int sensor_column_decode(
 	int err;
 
 	col_format = bt_mesh_sensor_column_format_get(type);
+	if (!col_format) {
+		return -ENOTSUP;
+	}
+
 	err = sensor_ch_decode(buf, col_format, &col->start);
 	if (err) {
 		return err;

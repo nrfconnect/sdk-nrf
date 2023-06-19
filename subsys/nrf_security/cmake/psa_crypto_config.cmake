@@ -310,7 +310,6 @@ kconfig_check_and_set_base_to_one(MBEDTLS_PK_WRITE_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_MD_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_ALT)
-kconfig_check_and_set_base_to_one(MBEDTLS_HKDF_C)
 
 # Set the max curve bits for the PSA APIs without using MBEDTLS defines
 if (CONFIG_PSA_CRYPTO_DRIVER_ECC_SECP_R1_521_CC3XX)

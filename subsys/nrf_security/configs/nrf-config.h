@@ -40,6 +40,7 @@ extern "C" {
 #if defined(PSA_WANT_ALG_ECDSA)
 #define MBEDTLS_ECDSA_C
 #define MBEDTLS_ECP_C
+#define MBEDTLS_BIGNUM_C
 #define MBEDTLS_ASN1_PARSE_C
 #define MBEDTLS_ASN1_WRITE_C
 #endif
@@ -59,7 +60,6 @@ extern "C" {
 #define MBEDTLS_BIGNUM_C
 #define MBEDTLS_OID_C
 #define MBEDTLS_PKCS1_V21
-#define MBEDTLS_MD_C
 #ifndef MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR
 #define MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR
 #endif
@@ -86,7 +86,6 @@ extern "C" {
 #define MBEDTLS_BIGNUM_C
 #define MBEDTLS_OID_C
 #define MBEDTLS_PKCS1_V15
-#define MBEDTLS_MD_C
 #ifndef MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR
 #define MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR
 #endif
@@ -100,7 +99,6 @@ extern "C" {
 #define MBEDTLS_BIGNUM_C
 #define MBEDTLS_OID_C
 #define MBEDTLS_PKCS1_V21
-#define MBEDTLS_MD_C
 #ifndef MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR
 #define MBEDTLS_PSA_BUILTIN_KEY_TYPE_RSA_KEY_PAIR
 #endif
@@ -253,6 +251,7 @@ extern "C" {
 
 #if defined(PSA_WANT_ALG_CCM)
 #define MBEDTLS_CCM_C
+#define MBEDTLS_AES_C
 #endif
 
 #if defined(PSA_WANT_ALG_GCM)

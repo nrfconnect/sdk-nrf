@@ -202,6 +202,8 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* Added the :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
+
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Added documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
@@ -221,8 +223,13 @@ nRF9160 samples
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
-  * Added the ``disable_response`` parameter to the :c:struct:`nrf_cloud_rest_location_request` structure.
-    If set to true, no location data is returned to the device when the :c:func:`nrf_cloud_rest_location_get` function is called.
+  * Added:
+
+    * The ``disable_response`` parameter to the :c:struct:`nrf_cloud_rest_location_request` structure.
+      If set to true, no location data is returned to the device when the :c:func:`nrf_cloud_rest_location_get` function is called.
+    * A Kconfig option :kconfig:option:`REST_CELL_LOCATION_SAMPLE_VERSION` for the sample version.
+
+  * Updated the sample to print its version when started.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -312,6 +319,8 @@ Debug libraries
 
 Modem libraries
 ---------------
+
+* Added the :ref:`modem_battery_readme` library that obtains battery voltage information or notifications from a modem.
 
 * :ref:`pdn_readme` library:
 

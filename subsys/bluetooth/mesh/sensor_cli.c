@@ -309,6 +309,10 @@ static int handle_series_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 		val_len += (col_format->size * 2);
 	}
 
+	if (!val_len) {
+		return -ENOTSUP;
+	}
+
 	uint8_t count = buf->len / val_len;
 
 	for (uint8_t i = 0; i < count; i++) {

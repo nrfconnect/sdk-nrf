@@ -1,0 +1,24 @@
+menu "Battery sample"
+
+config HIGH_BAT_REFRESH_INTERVAL_SEC
+	int "Refresh interval (sec) while battery voltage is high."
+	default 5
+
+config LOW_BAT_REFRESH_INTERVAL_SEC
+	int "Refresh interval (sec) while battery voltage is low."
+	default 60
+
+config POFWARN_REFRESH_INTERVAL_SEC
+	int "Refresh interval (sec) after receiving power-off warning."
+	default 120
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+
+module = BATTERY_SAMPLE
+module-str = Battery sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
