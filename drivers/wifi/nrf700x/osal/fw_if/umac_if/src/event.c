@@ -146,6 +146,13 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 	unsigned int event_num = 0;
 	bool more_res = false;
 
+	if (!fmac_dev_ctx || !event_data) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
 	umac_hdr = event_data;
 	if_id = umac_hdr->ids.wdev_id;
 	event_num = umac_hdr->cmd_evnt;
@@ -809,6 +816,10 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned char *sys_head = NULL;
+
+	if (!fmac_dev_ctx || !rpu_msg) {
+		return status;
+	}
 
 	sys_head = (unsigned char *)rpu_msg->msg;
 

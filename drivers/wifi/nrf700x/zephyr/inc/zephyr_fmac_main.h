@@ -111,6 +111,10 @@ struct wifi_nrf_drv_priv_zep {
 	struct wifi_nrf_ctx_zep rpu_ctx_zep;
 };
 
+extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
+
 void wifi_nrf_scan_timeout_work(struct k_work *work);
 const char *wifi_nrf_get_drv_version(void);
+enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);
+enum wifi_nrf_status wifi_nrf_fmac_dev_rem_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
