@@ -171,8 +171,10 @@ FEM support
 Emergency data storage
 ======================
 
-To build this sample with support for emergency data storage, set ``OVERLAY_CONFIG`` to :file:`overlay-emds.conf`.
+To build this sample with support for emergency data storage (EMDS), set ``OVERLAY_CONFIG`` to :file:`overlay-emds.conf`.
 This will save replay protection list (RPL) data and some of the :ref:`bt_mesh_lightness_srv_readme` data to the emergency data storage instead of to the :ref:`settings_api`.
+When using EMDS, certain considerations need to be taken regarding hardware choices in your application design.
+See :ref:`emds_readme_application_integration` in the EMDS documentation for more information.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.

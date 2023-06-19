@@ -107,6 +107,51 @@ To initialize the emergency data storage, complete the following steps:
 #. Call :c:func:`emds_prepare`.
 #. Create interrupt or other functionality that will call :c:func:`emds_store`.
 
+.. _emds_readme_application_integration:
+
+Application integration
+***********************
+
+When using EMDS in an application, you need to know the worst case scenario for how long power is required to be available.
+This knowledge makes it possible for you to make good design choices ensuring enough backup power to reach this time requirement.
+
+The easiest way of computing an estimate of the time required to store all entries, in a worst case scenario, is to call the :c:func:`emds_store_time_get` function.
+This function returns a worst-case storage time estimate in microseconds (µs) for a given application.
+For this to work, Kconfig options :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`, :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US` and :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US` need to be set as described in the `Implementation`_ section.
+The :c:func:`emds_store_time_get` function estimates the required worst-case time to store :math:`n` entries using the following formula:
+
+.. math::
+
+   t_\text{store} = t_\text{base} + \sum_{i = 1}^n \left(t_\text{entry} + t_\text{word}\left(\left\lceil\frac{s_\text{ate}}{s_\text{block}}\right\rceil + \left\lceil\frac{s_i}{s_\text{block}}\right\rceil \right)\right)
+
+where :math:`t_\text{base}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`, :math:`t_\text{entry}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US` and :math:`t_\text{word}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US`.
+:math:`s_i` is the size of the :math:`i`\ th entry in bytes and :math:`s_\text{block}` is the number of bytes in one word of flash.
+These can be found by looking at datasheets, driver documentation, and the configuration of the application.
+:math:`s_\text{ate}` is the size of the allocation table entry used by the EMDS flash module, which is 8 B.
+
+Example of time estimation
+==========================
+
+Using the formula from the previous section, you can estimate the time required to store all entries for the :ref:`bluetooth_mesh_light_lc` sample running on the nRF52840.
+The following values can be inserted into the formula:
+
+*  Set :math:`t_\text{base}` = 9000 µs.
+   This is the worst case overhead when a store is triggered in the middle of an erase on nRF52840 with :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` enabled in the sample by default, and should be adjusted when using other configurations.
+*  Set :math:`t_\text{entry}` = 300 µs and :math:`t_\text{word}` = 41 µs. *Note: These values are valid only for this specific chip and configuration, and should be computed for the specific configuration whenever using EMDS.*
+*  The sample uses two entries, one for the RPL with 255 entries (:math:`s_i` = 2040 B) and one for the lightness state (:math:`s_i` = 3 B).
+*  The flash write block size :math:`s_\text{block}` in this case is 4 B, and the ATE size :math:`s_\text{ate}` is 8 B.
+
+This gives the following formula to compute estimated storage time:
+
+.. math::
+   \begin{aligned}
+   t_\text{store} = 9000\text{ µs} &+ \left( 300\text{ µs} + 41\text{ µs} \times \left( \left\lceil\frac{8\text{ B}}{4\text{ B}}\right\rceil + \left\lceil\frac{2040\text{ B}}{4\text{ B}}\right\rceil \right) \right) \\
+   &+ \left( 300\text{ µs} + 41\text{ µs} \times \left( \left\lceil\frac{8\text{ B}}{4\text{ B}}\right\rceil + \left\lceil\frac{3\text{ B}}{4\text{ B}}\right\rceil \right) \right) \\
+   &= 30715\text{ µs}
+   \end{aligned}
+
+Calling the :c:func:`emds_store_time_get` function in the sample automatically computes the result of the formula and returns 30715.
+
 Limitations
 ***********
     The power-fail comparator for the nRF528xx cannot be used with EMDS, as it will prevent the NVMC from performing write operations to flash.
