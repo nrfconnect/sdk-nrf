@@ -56,7 +56,7 @@ milksnake==0.1.5
 mock==4.0.3
 mypy-extensions==0.4.3
 mypy==0.921
-naturalsort==1.5.1
+natsort==8.3.1
 packaging==20.8
 pluggy==0.13.1
 ply==3.11
