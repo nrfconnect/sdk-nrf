@@ -426,6 +426,7 @@ int emds_flash_init(struct emds_fs *fs)
 
 	k_mutex_lock(&fs->emds_lock, K_FOREVER);
 	fs->ate_size = align_size(fs, sizeof(struct emds_ate));
+	__ASSERT(fs->ate_size == 8, "ATE size not aligned with documented value");
 	rc = ate_last_recover(fs);
 	k_mutex_unlock(&fs->emds_lock);
 	if (rc) {
