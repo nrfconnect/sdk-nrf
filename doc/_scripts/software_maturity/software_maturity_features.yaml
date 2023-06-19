@@ -5,7 +5,15 @@ top_table:
   LTE: LTE_LINK_CONTROL
   HomeKit: HOMEKIT
   Matter: CHIP
-  Wi-Fi: WIFI && WIFI_NRF700X
+  Wi-Fi:
+    rule: WIFI && WIFI_NRF700X
+    boards_and_shields:
+      - SHIELD_NRF7002EK
+      - SHIELD_NRF7002EK_NRF7000
+      - SHIELD_NRF7002EK_NRF7001
+      - SHIELD_NRF7002EB
+      - BOARD_NRF7002DK_NRF5340_CPUAPP
+      - BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP
 features:
   bluetooth:
     Bluetooth LE Peripheral/Central: BT_CTLR && (BT_CENTRAL || BT_PERIPHERAL)
@@ -59,9 +67,32 @@ features:
     HomeKit - OTA DFU over Bluetooth LE: HOMEKIT && HOMEKIT_NORDIC_DFU
     HomeKit - OTA DFU over HomeKit: HOMEKIT && BT && CONFIG_HAP_FIRMWARE_UPDATE
   wifi:
-    STA Mode: WPA_SUPP && WIFI_NRF700X
-    Scan only (for location accuracy): WIFI_NRF700X && !WPA_SUPP
-    Bluetooth LE Co-existence: WIFI_NRF700X && NRF700X_BT_COEX
+    STA Mode:
+      rule: WPA_SUPP && WIFI_NRF700X
+      boards_and_shields:
+        - SHIELD_NRF7002EK
+        - SHIELD_NRF7002EK_NRF7000
+        - SHIELD_NRF7002EK_NRF7001
+        - SHIELD_NRF7002EB
+        - BOARD_NRF7002DK_NRF5340_CPUAPP
+        - BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP
+    Scan only (for location accuracy):
+      rule: WIFI_NRF700X && !WPA_SUPP
+      boards_and_shields:
+        - SHIELD_NRF7002EK
+        - SHIELD_NRF7002EK_NRF7000
+        - SHIELD_NRF7002EK_NRF7001
+        - SHIELD_NRF7002EB
+        - BOARD_NRF7002DK_NRF5340_CPUAPP
+        - BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP
+    Bluetooth LE Co-existence:
+      rule: WIFI_NRF700X && NRF700X_BT_COEX
+      boards_and_shields:
+        - SHIELD_NRF7002EK
+        - SHIELD_NRF7002EK_NRF7001
+        - SHIELD_NRF7002EB
+        - BOARD_NRF7002DK_NRF5340_CPUAPP
+        - BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP
   trusted_firmware_m:
     Minimal Build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
     Full build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_NOT_SET && NRF_SECURITY
