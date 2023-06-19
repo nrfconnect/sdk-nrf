@@ -383,10 +383,27 @@ out:
 	return status;
 }
 
+enum wifi_nrf_status wifi_nrf_fmac_dev_rem_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep)
+{
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+
+	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
+#ifdef CONFIG_NRF700X_RADIO_TEST
+	wifi_nrf_fmac_dev_deinit_rt(rpu_ctx_zep->rpu_ctx);
+	wifi_nrf_fmac_dev_rem_rt(rpu_ctx_zep->rpu_ctx);
+#else
+	wifi_nrf_fmac_dev_deinit(rpu_ctx_zep->rpu_ctx);
+	wifi_nrf_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
+#endif /* CONFIG_NRF700X_RADIO_TEST */
+
+	rpu_ctx_zep->rpu_ctx = NULL;
+	LOG_DBG("%s: FMAC device removed\n", __func__);
+
+	return WIFI_NRF_STATUS_SUCCESS;
+}
 
 static int wifi_nrf_drv_main_zep(const struct device *dev)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	struct wifi_nrf_fmac_callbk_fns callbk_fns = { 0 };
 	struct nrf_wifi_data_config_params data_config = { 0 };
@@ -445,6 +462,8 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 							rx_buf_pools,
 							&callbk_fns);
 #else /* !CONFIG_NRF700X_RADIO_TEST */
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
 	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init_rt();
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 
@@ -467,24 +486,21 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 		(MAX_PKT_RAM_TX_ALIGN_OVERHEAD * max_tx_aggregation);
 #endif /* CONFIG_NRF700X_DATA_TX */
 
+#ifdef CONFIG_NRF700X_RADIO_TEST
 	status = wifi_nrf_fmac_dev_add_zep(&rpu_drv_priv_zep);
-
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_dev_add_zep failed\n",
-			__func__);
+		LOG_ERR("%s: wifi_nrf_fmac_dev_add_zep failed\n", __func__);
 		goto fmac_deinit;
 	}
-#ifndef CONFIG_NRF700X_RADIO_TEST
+#else
 	k_work_init_delayable(&vif_ctx_zep->scan_timeout_work,
 			      wifi_nrf_scan_timeout_work);
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 
 	return 0;
-fmac_deinit:
 #ifdef CONFIG_NRF700X_RADIO_TEST
+fmac_deinit:
 	wifi_nrf_fmac_deinit_rt(rpu_drv_priv_zep.fmac_priv);
-#else
-	wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 err:
 	return -1;

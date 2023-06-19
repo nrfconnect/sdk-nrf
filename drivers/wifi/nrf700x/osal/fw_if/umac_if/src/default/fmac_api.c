@@ -316,6 +316,7 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 
 	wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
 			       fmac_dev_ctx);
+	fmac_dev_ctx = NULL;
 }
 
 
