@@ -559,8 +559,8 @@ void ieee802154_init(struct net_if *iface)
 	LOG_DBG("The 802.15.4 interface initialized.");
 }
 
-enum net_verdict ieee802154_radio_handle_ack(struct net_if *iface,
-					     struct net_pkt *pkt)
+enum net_verdict ieee802154_handle_ack(struct net_if *iface,
+				       struct net_pkt *pkt)
 {
 	ARG_UNUSED(iface);
 
