@@ -19,7 +19,7 @@
 #include <zephyr/net/wifi_mgmt.h>
 #include <net/l2_wifi_connect.h>
 
-#include <rpu_fw_patches.h>
+
 #include <util.h>
 #include <fmac_api.h>
 #include <zephyr_fmac_main.h>
@@ -269,7 +269,6 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_fmac_fw_info fw_info;
 	void *rpu_ctx = NULL;
 #if defined(CONFIG_BOARD_NRF7001)
 	enum op_band op_band = BAND_24G;
@@ -302,25 +301,9 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv
 
 	rpu_ctx_zep->rpu_ctx = rpu_ctx;
 
-	memset(&fw_info,
-	       0,
-	       sizeof(fw_info));
-
-	fw_info.lmac_patch_pri.data = wifi_nrf_lmac_patch_pri_bimg;
-	fw_info.lmac_patch_pri.size = sizeof(wifi_nrf_lmac_patch_pri_bimg);
-	fw_info.lmac_patch_sec.data = wifi_nrf_lmac_patch_sec_bin;
-	fw_info.lmac_patch_sec.size = sizeof(wifi_nrf_lmac_patch_sec_bin);
-	fw_info.umac_patch_pri.data = wifi_nrf_umac_patch_pri_bimg;
-	fw_info.umac_patch_pri.size = sizeof(wifi_nrf_umac_patch_pri_bimg);
-	fw_info.umac_patch_sec.data = wifi_nrf_umac_patch_sec_bin;
-	fw_info.umac_patch_sec.size = sizeof(wifi_nrf_umac_patch_sec_bin);
-
-	/* Load the FW patches to the RPU */
-	status = wifi_nrf_fmac_fw_load(rpu_ctx,
-				       &fw_info);
-
+	status = wifi_nrf_fw_load(rpu_ctx);
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_fw_load failed\n", __func__);
+		LOG_ERR("%s: wifi_nrf_fw_load failed\n", __func__);
 		goto out;
 	}
 

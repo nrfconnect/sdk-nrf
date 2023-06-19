@@ -55,6 +55,7 @@ zephyr_library_sources(
 	zephyr/src/zephyr_work.c
 	zephyr/src/timer.c
 	zephyr/src/zephyr_fmac_main.c
+	zephyr/src/zephyr_fw_load.c
 	zephyr/src/qspi/src/device.c
 	zephyr/src/qspi/src/rpu_hw_if.c
 	zephyr/src/qspi/src/ficr_prog.c
@@ -107,3 +108,8 @@ zephyr_library_sources_ifdef(CONFIG_NRF700X_ON_SPI
 zephyr_library_sources_ifdef(CONFIG_NRF700X_UTIL
 	zephyr/src/zephyr_wifi_util.c
 )
+
+if (CONFIG_NRF_WIFI_PATCHES_EXT_FLASH)
+# Run patches from the external flash (XIP). No need to copy.
+zephyr_code_relocate(FILES zephyr/src/zephyr_fw_load.c LOCATION EXTFLASH_RODATA NOCOPY)
+endif()
