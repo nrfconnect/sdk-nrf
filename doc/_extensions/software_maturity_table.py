@@ -178,7 +178,11 @@ class SoftwareMaturityTable(SphinxDirective):
         if "add-rows" in self.options:
             for feature, default_value in self.options["add-rows"]:
                 if feature not in features:
-                    maturity_list = {"Experimental":[], "Supported":[], default_value:all_socs}
+                    maturity_list = {
+                        "Experimental": [],
+                        "Supported": [],
+                        default_value: all_socs,
+                    }
                     features[feature] = maturity_list
 
         # Create a matrix-like table
@@ -202,6 +206,9 @@ class SoftwareMaturityTable(SphinxDirective):
             row += entry
         thead.append(row)
 
+        footnote_targets = {}
+        footnotes = {}
+
         # Table body
         rows = []
         feature_prefix = table_type + "_"
@@ -213,6 +220,18 @@ class SoftwareMaturityTable(SphinxDirective):
             ):
                 continue
 
+            experimental = {}
+            supported = {}
+            for mapping, maturity in [
+                (experimental, "Experimental"),
+                (supported, "Supported"),
+            ]:
+                for soc in maturity_list[maturity]:
+                    if isinstance(soc, str):
+                        mapping[soc] = None
+                    else:
+                        mapping.update(soc)
+
             row = nodes.row()
             rows.append(row)
 
@@ -223,9 +242,15 @@ class SoftwareMaturityTable(SphinxDirective):
 
             for soc in all_socs:
                 entry = nodes.entry()
-                if soc in maturity_list["Experimental"]:
+                footnote_target = None
+
+                if soc in experimental:
+                    if experimental[soc]:
+                        footnote_target = tuple(experimental[soc])
                     text = nodes.Text("Experimental")
-                elif soc in maturity_list["Supported"]:
+                elif soc in supported:
+                    if supported[soc]:
+                        footnote_target = tuple(supported[soc])
                     text = nodes.Text("Supported")
                 elif soc in default_values:
                     text = nodes.Text(default_values[soc])
@@ -239,16 +264,45 @@ class SoftwareMaturityTable(SphinxDirective):
                             and in_soc.lower() == soc.lower()
                         ):
                             text = nodes.Text(val)
+                            footnote_target = None
                             break
 
                 entry += text
+
+                # Create references to footnotes
+                if footnote_target:
+                    if footnote_target not in footnote_targets:
+                        ref_number = len(footnotes) + 1
+                        footnote_targets[footnote_target] = ref_number
+                        footnotes[ref_number] = [entry]
+                    else:
+                        ref_number = footnote_targets[footnote_target]
+                        footnotes[ref_number].append(entry)
+                    superscript = nodes.superscript(text=f"{ref_number}")
+                    entry.append(superscript)
                 row += entry
+
+        indexed_targets = {i: target for target, i in footnote_targets.items()}
+        footnote_paragraph = nodes.paragraph()
+
+        # Create footnotes
+        for i in range(1, len(indexed_targets) + 1):
+            if len(indexed_targets[i]) == 1:
+                joined_targets = indexed_targets[i][0]
+            else:
+                joined_targets = (
+                    f"{', '.join(indexed_targets[i][:-1])} or {indexed_targets[i][-1]}"
+                )
+            footnote_text = nodes.Text(f"[{i}]: Only with {joined_targets}")
+            list_item = nodes.list_item()
+            list_item += footnote_text
+            footnote_paragraph += list_item
 
         tbody = nodes.tbody()
         tbody.extend(rows)
         tgroup += tbody
 
-        return [table]
+        return [table, footnote_paragraph]
 
 
 def download_sml_table(app: Sphinx) -> None:
