@@ -278,6 +278,17 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-4-0 v2-3-0
+
+KRKNWK-12467: Application core can crash on nRF5340 when there is a high load on Zephyr's main thread
+  The priority of Zephyr's main thread is set to the same value as the IPC thread's priority (``0``).
+  Because of this setting, when Zephyr's main thread is working for a long time, an interrupt related to the IEEE 802.15.4 radio driver can occur and the application core can crash due to a lack of communication with the network core.
+  To avoid blocking the communication between cores, the main thread priority should have a lower priority than the IPC priority.
+
+  **Affected platforms:** nRF5340
+
+  **Workaround:** Add an additional Kconfig option :kconfig:option:`CONFIG_MAIN_THREAD_PRIORITY` set to ``1`` to the build configuration.
+
 .. rst-class:: v2-4-0
 
 KRKNWK-17064: Incorrect links in the Matter documentation
