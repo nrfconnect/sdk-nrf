@@ -29,4 +29,7 @@ void wifi_nrf_fmac_vif_clear_ctx(void *fmac_dev_ctx,
 void wifi_nrf_fmac_vif_update_if_type(void *fmac_dev_ctx,
 				      unsigned char if_idx,
 				      int if_type);
+
+unsigned int wifi_nrf_fmac_get_num_vifs(void *fmac_dev_ctx);
+
 #endif /* __FMAC_VIF_H__ */
