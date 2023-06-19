@@ -121,3 +121,17 @@ void wifi_nrf_fmac_vif_update_if_type(void *dev_ctx,
 
 	vif_ctx->if_type = if_type;
 }
+
+unsigned int wifi_nrf_fmac_get_num_vifs(void *dev_ctx)
+{
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = dev_ctx;
+
+	if (!fmac_dev_ctx) {
+		/* Don't return error here, as FMAC might be initialized based
+		 * the number of VIFs.
+		 */
+		return 0;
+	}
+
+	return fmac_dev_ctx->num_sta + fmac_dev_ctx->num_ap;
+}
