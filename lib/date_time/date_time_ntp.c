@@ -6,6 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/net/sntp.h>
+#include <zephyr/net/socket.h>
 #include <zephyr/net/socketutils.h>
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
@@ -30,15 +31,15 @@ static struct sntp_time sntp_time;
 static int sntp_time_request(const char *server, uint32_t timeout, struct sntp_time *time)
 {
 	int err;
-	struct addrinfo *addrinfo;
+	struct zsock_addrinfo *addrinfo;
 	struct sntp_ctx sntp_ctx;
 
-	struct addrinfo hints = {
+	struct zsock_addrinfo hints = {
 		.ai_flags = AI_NUMERICSERV,
 		.ai_family = AF_UNSPEC /* Allow both IPv4 and IPv6 addresses */
 	};
 
-	err = getaddrinfo(server, STRINGIFY(NTP_PORT), &hints, &addrinfo);
+	err = zsock_getaddrinfo(server, STRINGIFY(NTP_PORT), &hints, &addrinfo);
 	if (err) {
 		LOG_WRN("getaddrinfo, error: %d", err);
 		return err;
@@ -56,7 +57,7 @@ static int sntp_time_request(const char *server, uint32_t timeout, struct sntp_t
 	}
 
 socket_close:
-	freeaddrinfo(addrinfo);
+	zsock_freeaddrinfo(addrinfo);
 
 	sntp_close(&sntp_ctx);
 
