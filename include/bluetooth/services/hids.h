@@ -340,7 +340,7 @@ struct bt_hids_rep_map {
 	uint8_t const *data;
 
 	/** Size of the map. */
-	uint8_t size;
+	uint16_t size;
 };
 
 /** @brief HID Protocol Mode event handler.

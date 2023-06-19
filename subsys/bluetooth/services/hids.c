@@ -14,6 +14,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/att.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/uuid.h>
@@ -878,6 +879,11 @@ int bt_hids_init(struct bt_hids *hids_obj,
 		 const struct bt_hids_init_param *init_param)
 {
 	LOG_DBG("Initializing HIDS.");
+
+	if (init_param->rep_map.size > BT_ATT_MAX_ATTRIBUTE_LEN) {
+		LOG_WRN("Report map size exceeds max ATT attribute length");
+		return -EMSGSIZE;
+	}
 
 	hids_obj->pm.evt_handler = init_param->pm_evt_handler;
 	hids_obj->cp.evt_handler = init_param->cp_evt_handler;
