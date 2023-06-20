@@ -53,7 +53,7 @@ The following figure provides an overview of the Matter certification process st
 Initial requirements: Membership at CSA
 =======================================
 
-Before you start applying for the Matter certification, you must join CSA, as detailed in the following table.
+Before you start applying for the Matter certification, you must join CSA, which is the Standards Developing Organization (SDO) for Matter.
 
 .. table::
 
@@ -63,7 +63,7 @@ Before you start applying for the Matter certification, you must join CSA, as de
    | Matter Certification          | Production                | `Join CSA`_                 | Adopter                                |
    +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 
-Joining CSA allows you to meet the following requirements:
+Joining CSA allows you to meet the following certification requirements:
 
 * Familiarity with the Matter Core Specification, which is the standard for the certification.
   You can download it from the `CSA Specifications Download Request`_ page.
@@ -122,7 +122,7 @@ Certification document templates from Nordic Semiconductor
   .. note::
      Nordic Semiconductor provides just example answers based on the reference SDK applications, which may guide you on how to answer to certain platform-related questions.
      You are still solely responsible for filling original documents according to a product specification.
-     The final approval depends on the Director of Certification in the given Standards Developing Organization (SDO).
+     The final approval depends on the Director of Certification in the given SDO.
 
 PICS
 ++++
@@ -207,6 +207,8 @@ The following table lists Matter over Thread certification requirements for when
 
 Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
 
+You can also find more information about the Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
+
 .. _ug_matter_device_certification_reqs_mowifi:
 
 Matter over Wi-Fi certification requirements
@@ -249,6 +251,8 @@ The following table lists certification requirements for products that offer :re
 Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
 :ref:`Wi-Fi certification <ug_wifi_certification>` is not yet available for inheritance from Nordic Semiconductor.
 
+You can also find more information about the Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
+
 .. _ug_matter_device_certification_reqs_dependent:
 
 Matter dependent certification inheritance
@@ -257,10 +261,12 @@ Matter dependent certification inheritance
 If your product uses qualified Bluetooth stack or certified Thread libraries (or both) provided as part of the |NCS|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
 In practice, this means reusing Nordic Semiconductor's certification identifiers, which were obtained as a result of the official certification procedures.
 
+When reusing Nordic Semiconductor's certification identifiers, you still need to join the SDO and meet its requirements to apply for certification by inheritance.
+For example, if you want to inherit Nordic Semiconductor's certification for Matter over Thread, you still need to join organizations listed in :ref:`ug_matter_device_certification_reqs_mot` and meet the inheritance requirements of each of the SDOs.
+
 .. note::
-   The inheritance is granted by the related SDO after you join the organization and apply for certification by inheritance.
-   The procedure differs from SDO to SDO and has different names.
-   For details, contact the appropriate certification body in the SDO.
+      The inheritance procedure differs from SDO to SDO and has different names.
+      For details, contact the appropriate certification body in the SDO.
 
 Certification identifiers
 -------------------------
