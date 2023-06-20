@@ -1,4 +1,7 @@
 """
+SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+Copyright (c) 2023 Nordic Semiconductor ASA
+
 NCS Software Maturity Level Scanner
 ===================================
 
@@ -113,8 +116,6 @@ is experimental and the others are not, the feature will still be marked as
 experimental. If this is an undesired outcome, the feature should be split
 into two separate features, one with the experimental symbols and the other
 with the supported ones.
-
-Copyright (c) 2022 Nordic Semiconductor ASA
 """
 
 from enum import IntEnum
