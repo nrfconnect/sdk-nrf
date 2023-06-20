@@ -1093,5 +1093,52 @@ ZTEST(light_ctrl_pi_reg_test, test_linear_output_state)
 		      expected_lightness, pi_reg_test_ctx.lightness);
 }
 
+/* Test that ambient light level reset to zero after timeout. */
+ZTEST(light_ctrl_pi_reg_test, test_amb_light_level_timeout)
+{
+	/* int_timeout = <number of interval before timeout> - 1. */
+	uint32_t int_timeout = CONFIG_BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT * MSEC_PER_SEC /
+			       CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL - 1;
+	uint16_t expected_lightness;
+
+	/* Run the regulator and stop right before the ambient light level timer refresh. */
+	start_reg(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON -
+		  REG_ACCURACY(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON) - 1);
+	trigger_pi_reg(int_timeout, true);
+	expected_lightness = SUMMATION_STEP(light_ctrl_srv.reg->cfg.ki.up) * int_timeout +
+			     light_ctrl_srv.reg->cfg.kp.up;
+	zassert_equal(pi_reg_test_ctx.lightness, expected_lightness, "Expected: %d, got: %d",
+		      expected_lightness, pi_reg_test_ctx.lightness);
+
+	/* One more run to trigger the timer refresh. */
+	trigger_pi_reg(1, true);
+
+	/* Run regulator and stop right before the ambient light level timer refresh. */
+	trigger_pi_reg(int_timeout - 1, false);
+	expected_lightness = SUMMATION_STEP(light_ctrl_srv.reg->cfg.ki.up) * int_timeout * 2 +
+			     light_ctrl_srv.reg->cfg.kp.up;
+	zassert_equal(pi_reg_test_ctx.lightness, expected_lightness, "Expected: %d, got: %d",
+		      expected_lightness, pi_reg_test_ctx.lightness);
+	zassert_not_equal(light_ctrl_srv.reg->measured, 0, "Ambient Light Level is reset");
+
+	/* Run the regulator once again to reset the ambient light level. */
+	trigger_pi_reg(1, false);
+	expected_lightness += SUMMATION_STEP(light_ctrl_srv.reg->cfg.ki.up);
+	zassert_equal(pi_reg_test_ctx.lightness, expected_lightness, "Expected: %d, got: %d",
+		      expected_lightness, pi_reg_test_ctx.lightness);
+	zassert_equal(light_ctrl_srv.reg->measured, 0, "Ambient Light Level is not reset");
+
+	/* Run the regulator and check that it drove the lightness value up. */
+	trigger_pi_reg(1, false);
+	float input = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON -
+		      REG_ACCURACY(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON);
+	/* Subtract proportional part as it never added to the internal sum. */
+	expected_lightness -= light_ctrl_srv.reg->cfg.kp.up;
+	expected_lightness += SUMMATION_STEP(light_ctrl_srv.reg->cfg.ki.up * input) +
+			      input * light_ctrl_srv.reg->cfg.kp.up;
+	zassert_equal(pi_reg_test_ctx.lightness, expected_lightness, "Expected: %d, got: %d",
+		      expected_lightness, pi_reg_test_ctx.lightness);
+}
+
 ZTEST_SUITE(light_ctrl_test, NULL, NULL, setup, teardown, NULL);
 ZTEST_SUITE(light_ctrl_pi_reg_test, NULL, NULL, setup_pi_reg, teardown_pi_reg, NULL);
