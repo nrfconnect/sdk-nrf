@@ -47,7 +47,7 @@ The use of :kconfig:option:`CONFIG_SPI_NOR_IDLE_IN_DPD` option to enable deep-po
 However, it adds overhead for each SPI instruction, which causes an approximately 20% reduction in write performance.
 
 The sample uses the :ref:`nrfxlib:nrf_modem` to turn on and off the modem traces and also enable and disable the modem.
-In addition, it uses the :ref:`zephyr:uart_api` to send modem traces over UART1.
+In addition, it can use the :ref:`zephyr:uart_api` to dump the traces from flash to UART. Configure the ``nordic,modem-trace-uart`` device tree chosen node to the uart device to enable this feature.
 
 Flash space
 ===========

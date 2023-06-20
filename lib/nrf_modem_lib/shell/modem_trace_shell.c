@@ -13,6 +13,8 @@
 #include "modem_trace_memfault.h"
 #endif
 
+#include "modem_trace_uart.h"
+
 static uint32_t trace_start_time_ms;
 static uint32_t trace_duration_ms;
 
@@ -133,10 +135,41 @@ void send_traces_to_memfault(const struct shell *sh, size_t argc, char **argv, v
 #endif /* defined(CONFIG_MEMFAULT) */
 }
 
+void send_traces_to_uart(const struct shell *sh, size_t argc, char **argv, void *data)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	ARG_UNUSED(data);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_TRACE_SHELL_UART)) {
+		size_t size = nrf_modem_lib_trace_data_size();
+
+		if (size == -ENOTSUP) {
+			shell_error(sh,
+				"The current modem trace backend does not support this operation");
+			return;
+		} else if (size < 0) {
+			shell_error(sh, "Failed to get modem traces size: %d", size);
+			return;
+		} else if (size == 0) {
+			shell_error(sh, "No data to send");
+			return;
+		}
+
+		modem_trace_uart_send(sh, size);
+	} else {
+		shell_error(sh, "Missing chosen node for nordic,modem-trace-uart. "
+			"Please configure which uart to use.");
+	}
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(send_cmd,
 	SHELL_CMD(memfault, NULL,
 		"Send stored traces to Memfault as Custom Data Recording.",
 		send_traces_to_memfault),
+	SHELL_CMD(uart, NULL,
+		"Send stored traces to UART",
+		send_traces_to_uart),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_SUBCMD_DICT_SET_CREATE(start_cmd, modem_trace_shell_start,

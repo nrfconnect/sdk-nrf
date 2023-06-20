@@ -6,8 +6,6 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/device.h>
-#include <zephyr/drivers/uart.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/nrf_modem_lib_trace.h>
@@ -19,12 +17,6 @@
 
 LOG_MODULE_REGISTER(modem_trace_flash_sample, CONFIG_MODEM_TRACE_FLASH_SAMPLE_LOG_LEVEL);
 
-#define UART1_DT_NODE DT_NODELABEL(uart1)
-
-#define READ_BUF_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE
-
-static const struct device *const uart_dev = DEVICE_DT_GET(UART1_DT_NODE);
-
 LTE_LC_ON_CFUN(cfun_hook, on_cfun, NULL);
 
 /* Callback for when modem functional mode is changed */
@@ -33,45 +25,15 @@ static void on_cfun(enum lte_lc_func_mode mode, void *context)
 	LOG_INF("LTE mode changed to %d\n", mode);
 }
 
-static void print_uart1(char *buf, int len)
-{
-	if (!device_is_ready(uart_dev)) {
-		LOG_ERR("uart1 device not found/ready!");
-		return;
-	}
-	for (int i = 0; i < len; i++) {
-		uart_poll_out(uart_dev, buf[i]);
-	}
-}
+
 
 static void print_traces(void)
 {
-	uint8_t read_buf[READ_BUF_SIZE];
-	int ret;
-	size_t read_offset = 0;
-
-	ret = nrf_modem_lib_trace_data_size();
-	printk("Reading out %d bytes of trace data\n", ret);
-
-	/* Read out the trace data from flash */
-	while (ret > 0) {
-		ret = nrf_modem_lib_trace_read(read_buf, READ_BUF_SIZE);
-		if (ret < 0) {
-			if (ret == -ENODATA) {
-				break;
-			}
-			LOG_ERR("Error reading modem traces: %d", ret);
-			break;
-		}
-		if (ret == 0) {
-			LOG_DBG("No more traces to read from flash");
-			break;
-		}
-
-		read_offset += ret;
-		print_uart1(read_buf, ret);
+	if (IS_ENABLED(MODEM_TRACE_FLASH_SAMPLE_UART)) {
+		print_traces();
+	} else {
+		LOG_ERR("No chosen device found for nordic,modem-trace-uart");
 	}
-	LOG_INF("Total trace bytes read from flash: %d", read_offset);
 }
 
 static void button_handler(uint32_t button_states, uint32_t has_changed)
@@ -108,10 +70,6 @@ int main(void)
 	err = dk_buttons_init(button_handler);
 	if (err) {
 		LOG_ERR("Failed to initialize DK buttons library, error: %d\n", err);
-	}
-
-	if (!device_is_ready(uart_dev)) {
-		LOG_ERR("uart1 device not found/ready!");
 	}
 
 	nrf_modem_lib_init();

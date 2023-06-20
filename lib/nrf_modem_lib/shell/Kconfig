@@ -3,3 +3,12 @@ config NRF_MODEM_LIB_TRACE_SHELL
 	default y
 	depends on SHELL
 	depends on NRF_MODEM_LIB_TRACE
+
+if NRF_MODEM_LIB_TRACE_SHELL
+
+DT_CHOSEN_NORDIC_MODEM_TRACE_UART := nordic,modem-trace-uart
+config NRF_MODEM_LIB_TRACE_SHELL_UART
+	bool
+	default $(dt_chosen_enabled,$(DT_CHOSEN_NORDIC_MODEM_TRACE_UART))
+
+endif

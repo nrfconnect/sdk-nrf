@@ -45,8 +45,10 @@
 		ext-flash = &mx25r64;
 	};
 
-	/* Configure partition manager to use mx25r64 as the external flash */
 	chosen {
+		/* Configure partition manager to use mx25r64 as the external flash */
 		nordic,pm-ext-flash = &mx25r64;
+		/* Use UART1 for modem traces (on button press) */
+		nordic,modem-trace-uart = &uart1;
 	};
 };

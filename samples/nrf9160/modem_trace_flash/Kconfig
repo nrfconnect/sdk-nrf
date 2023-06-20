@@ -6,6 +6,10 @@
 
 menu "Modem trace flash backend sample"
 
+config MODEM_TRACE_FLASH_SAMPLE_UART
+	bool
+	default $(dt_chosen_enabled,$(DT_CHOSEN_NORDIC_MODEM_TRACE_UART))
+
 endmenu
 
 module = MODEM_TRACE_FLASH_SAMPLE

@@ -10,3 +10,4 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(modem_trace_flash)
 
 target_sources(app PRIVATE src/main.c)
+target_sources_ifdef(MODEM_TRACE_FLASH_SAMPLE_UART app PRIVATE src/dump_uart.c)
