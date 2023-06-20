@@ -62,7 +62,7 @@ static void ipc_send_work_handler(struct k_work *work)
 	if (ret == -ENOMEM) {
 		k_work_reschedule(&dev_data->ipc_send_work, K_MSEC(IPC_RESEND_DELAY));
 	} else if (ret < 0) {
-		__ASSERT(false, "Failed to send data over ipc, err: %d", err);
+		__ASSERT(false, "Failed to send data over ipc, ret: %d", ret);
 		ret = 0;
 	} else {
 		/* Do nothing */
