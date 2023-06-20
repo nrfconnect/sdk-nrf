@@ -368,7 +368,12 @@ Libraries for NFC
 Nordic Security Module
 ----------------------
 
-|no_changes_yet_note|
+:ref:`nrf_security` library:
+
+  * Removed:
+
+    * Option to build Mbed TLS builtin PSA core (:kconfig:option:`CONFIG_PSA_CORE_BUILTIN`).
+    * Option to build Mbed TLS builtin PSA crypto driver (:kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_BUILTIN`) and all its associated algorithms (``CONFIG_MBEDTLS_PSA_BUILTIN_ALG_xxx``).
 
 Other libraries
 ---------------
