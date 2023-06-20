@@ -107,21 +107,18 @@ void bt_mesh_dtt_srv_set(struct bt_mesh_dtt_srv *srv, uint32_t transition_time);
 int bt_mesh_dtt_srv_pub(struct bt_mesh_dtt_srv *srv,
 			struct bt_mesh_msg_ctx *ctx);
 
-/** @brief Find the Generic DTT server in a given element.
+/** @brief Find the Generic DTT server over multiple elements.
  *
- * @param[in] elem Element to find the DTT server in.
+ * If the DTT Server is not present on the given element of the model, then the
+ * try to find the DTT Server model instance that is present on the element with
+ * the largest address that is smaller than the address of the given element.
+ *
+ * @param[in] elem Element to start search of the DTT server in.
  *
  * @return A pointer to the DTT server instance, or NULL if no instance is
  * found.
  */
-static inline struct bt_mesh_dtt_srv *
-bt_mesh_dtt_srv_get(const struct bt_mesh_elem *elem)
-{
-	struct bt_mesh_model *model = bt_mesh_model_find(
-		elem, BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV);
-
-	return (struct bt_mesh_dtt_srv *)(model ? model->user_data : NULL);
-}
+struct bt_mesh_dtt_srv *bt_mesh_dtt_srv_get(const struct bt_mesh_elem *elem);
 
 /** @brief Get the default transition parameters for the given model.
  *
@@ -134,8 +131,13 @@ static inline bool
 bt_mesh_dtt_srv_transition_get(struct bt_mesh_model *model,
 			       struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_dtt_srv *srv =
-		bt_mesh_dtt_srv_get(bt_mesh_model_elem(model));
+	struct bt_mesh_dtt_srv *srv;
+
+	if (IS_ENABLED(CONFIG_BT_MESH_DTT_SRV)) {
+		srv = bt_mesh_dtt_srv_get(bt_mesh_model_elem(model));
+	} else {
+		srv = NULL;
+	}
 
 	transition->time = srv ? srv->transition_time : 0;
 	transition->delay = 0;

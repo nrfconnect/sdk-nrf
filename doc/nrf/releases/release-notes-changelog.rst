@@ -329,6 +329,8 @@ Bluetooth libraries and services
 
     * The :kconfig:option:`BT_MESH_MODEL_SRV_STORE_TIMEOUT` Kconfig option, that is controlling timeout for storing of model states, is replaced by the :kconfig:option:`BT_MESH_STORE_TIMEOUT` Kconfig option.
 
+  * Fixed an issue where the :ref:'bt_mesh_dtt_srv_readme' model could not be found for models spanning multiple elements.
+
 Bootloader libraries
 --------------------
 

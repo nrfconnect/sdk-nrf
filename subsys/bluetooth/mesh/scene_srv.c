@@ -820,10 +820,8 @@ const struct bt_mesh_model_cb _bt_mesh_scene_srv_cb = {
 static int scene_setup_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
-	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
-	struct bt_mesh_model *dtt_srv = NULL;
+	struct bt_mesh_dtt_srv *dtt_srv = NULL;
 	int err;
-	int i;
 
 	if (!srv) {
 		return -EINVAL;
@@ -831,10 +829,8 @@ static int scene_setup_srv_init(struct bt_mesh_model *model)
 
 	srv->setup_mod = model;
 
-	for (i = model->elem_idx; (i >= 0) && (dtt_srv == NULL); --i) {
-		struct bt_mesh_elem *elem = &comp->elem[i];
-
-		dtt_srv = bt_mesh_model_find(elem, BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV);
+	if (IS_ENABLED(CONFIG_BT_MESH_DTT_SRV)) {
+		dtt_srv = bt_mesh_dtt_srv_get(bt_mesh_model_elem(model));
 	}
 
 	if (!dtt_srv) {
@@ -842,7 +838,7 @@ static int scene_setup_srv_init(struct bt_mesh_model *model)
 		return -EINVAL;
 	}
 
-	err = bt_mesh_model_extend(srv->setup_mod, dtt_srv);
+	err = bt_mesh_model_extend(srv->setup_mod, dtt_srv->model);
 	if (err) {
 		return err;
 	}
