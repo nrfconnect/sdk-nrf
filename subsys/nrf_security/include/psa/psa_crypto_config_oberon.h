@@ -29,10 +29,6 @@
 #define PSA_NEED_OBERON_AES_CCM                                1
 #endif
 
-#if defined(PSA_CRYPTO_DRIVER_ALG_CMAC_OBERON)
-#define PSA_NEED_OBERON_CMAC                                   1
-#endif
-
 #if defined(PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_OBERON)
 #define PSA_NEED_OBERON_CHACHA20_POLY1305                      1
 #endif
