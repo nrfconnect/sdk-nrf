@@ -963,6 +963,11 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
+	if (vif_ctx_zep->if_op_state != WIFI_NRF_FMAC_IF_OP_STATE_UP) {
+		LOG_DBG("%s: Interface not UP, ignoring\n", __func__);
+		return 0;
+	}
+
 	memset(&chg_sta_info, 0x0, sizeof(chg_sta_info));
 
 	memcpy(chg_sta_info.mac_addr, bssid, ETH_ALEN);
