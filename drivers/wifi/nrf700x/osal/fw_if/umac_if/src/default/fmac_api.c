@@ -289,6 +289,7 @@ static void wifi_nrf_fmac_fw_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 
 	while (!fmac_dev_ctx->fw_deinit_done) {
 #define MAX_DEINIT_WAIT (5 * 1000 * 1000)
+		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv, 1);
 		if (wifi_nrf_osal_time_elapsed_us(fmac_dev_ctx->fpriv->opriv,
 						  start_time_us) >= MAX_DEINIT_WAIT) {
 			break;
