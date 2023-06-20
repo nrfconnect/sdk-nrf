@@ -168,6 +168,10 @@ struct bt_mesh_light_ctrl_srv {
 		BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, 3)];
 	/** Resume control timeout (in seconds) */
 	uint16_t resume;
+#if CONFIG_BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT
+	/* Time when the last ambient light level report was received. */
+	int64_t amb_light_level_timestamp;
+#endif
 	/** Setup model publish parameters */
 	struct bt_mesh_model_pub setup_pub;
 	/* Publication buffer */
