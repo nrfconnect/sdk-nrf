@@ -289,6 +289,18 @@ config BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL
 	  Update interval of the specification-defined illuminance regulator (in milliseconds).
 
 endif #BT_MESH_LIGHT_CTRL_REG_SPEC
+
+config BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT
+	int "Ambient light level report timeout (seconds)"
+	default 300
+	range 0 16777
+	help
+	  Defines time in seconds the Light Lightness Control Server waits after receiving the
+	  Sensor Status message with the present ambient light level property ID before setting
+	  the ambient light level to zero and passing it to the regulator. This option helps
+	  avoiding an issue with the regulator getting stuck with an old output value, and not
+	  triggering new report from the sensor. When set to zero, the timeout is disabled.
+
 endif #BT_MESH_LIGHT_CTRL_REG
 
 menuconfig BT_MESH_LIGHT_CTRL_SRV

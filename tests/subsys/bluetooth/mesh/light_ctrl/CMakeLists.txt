@@ -57,7 +57,10 @@ target_compile_options(app
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON=500
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG=200
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY=100
+  -DCONFIG_BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT=20
 )
+
+zephyr_linker_sources(SECTIONS ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.ld)
 
 zephyr_ld_options(
     ${LINKERFLAGPREFIX},--allow-multiple-definition
