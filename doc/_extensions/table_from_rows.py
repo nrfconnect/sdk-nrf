@@ -7,8 +7,10 @@ from docutils import io, statemachine
 from docutils.utils.error_reporting import ErrorString
 from docutils.parsers.rst import directives
 from sphinx.util.docutils import SphinxDirective
+from typing import Dict, Set
 import os
 import yaml
+import re
 
 
 __version__ = '0.0.2'
@@ -85,7 +87,12 @@ class TableFromRows(SphinxDirective):
         return sizes
 
     def _load_header_and_rows(
-        self, source_path, header_section, rows_sections, transform_rows_func=None
+        self,
+        source_path,
+        header_section,
+        rows_sections,
+        transform_rows_func=None,
+        shields=None,
     ):
         try:
             self.state.document.settings.record_dependencies.add(source_path)
@@ -96,6 +103,13 @@ class TableFromRows(SphinxDirective):
         lines = include_file.readlines()
         header_lines = self._load_section(lines, header_section)
         rows = [self._load_section(lines, section) for section in rows_sections]
+        if shields:
+            header_lines[0] += ' Shields |'
+            for i, target in enumerate(rows_sections):
+                if target in shields:
+                    rows[i][0] += f'``{"`` ``".join(shields[target])}``'
+                rows[i][0] += ' |'
+
         if transform_rows_func:
             transform_rows_func(rows)
         column_sizes = self._find_column_sizes(header_lines, rows)
@@ -140,16 +154,35 @@ class TableFromSampleYaml(TableFromRows):
         to_delete = []
         for row in rows:
             columns = row[0].split('|')[1:-1]
-            common_info = '|'.join(columns[:-1])
-            build_target = columns[-1]
+            common_info = '|'.join(columns[:3]) + '|' + '|'.join(columns[4:])
+            build_target = columns[3]
             if common_info in seen:
-                seen[common_info].append(f'| | | | {build_target} |')
+                extended_row = f'| | | | {build_target} |' + ' |' * len(columns[4:])
+                seen[common_info].append(extended_row)
                 to_delete.append(row)
             else:
                 seen[common_info] = row
 
         for row in to_delete:
             rows.remove(row)
+
+    @staticmethod
+    def _find_shields(shields: Dict[str, Set[str]], sample_data: dict):
+        """Associate all integration platforms for a sample with any shield used.
+        """
+
+        if 'extra_args' not in sample_data:
+            return
+
+        shield_args = re.findall(r'SHIELD=(\S*)', sample_data['extra_args'])
+        if not shield_args:
+            return
+
+        for platform in sample_data['integration_platforms']:
+            if platform in shields:
+                shields[platform].update(shield_args)
+            else:
+                shields[platform] = set(shield_args)
 
     def _rows_from_sample_yaml(self, path):
         """Search for a sample.yaml file and return a union of all relevant boards.
@@ -158,6 +191,9 @@ class TableFromSampleYaml(TableFromRows):
         If the file is not found and the document folder is named "doc", the
         parent folder is searched. Should a sample.yaml still not be found, all
         subfolders are searched and every found sample.yaml is used.
+
+        Shields are retrieved from the extra_args sections in the file for every
+        argument prefixed with "SHIELD=".
 
         nrf51 and qemu boards are ignored."""
 
@@ -185,15 +221,18 @@ class TableFromSampleYaml(TableFromRows):
             raise self.severe(f'"{path}" not found')
 
         boards = set()
+        shields = {}
         for sample_yaml_path in sample_yamls:
             with open(sample_yaml_path) as sample_yaml:
                 data = yaml.safe_load(sample_yaml)
 
             if 'common' in data and 'integration_platforms' in data['common']:
                 boards.update(data['common']['integration_platforms'])
+                self._find_shields(shields, data['common'])
             for test in data['tests'].values():
                 if 'integration_platforms' in test:
                     boards.update(test['integration_platforms'])
+                    self._find_shields(shields, test)
 
         boards = list(filter(
             lambda b: not b.startswith('qemu') and not b.startswith('nrf51'),
@@ -204,7 +243,7 @@ class TableFromSampleYaml(TableFromRows):
         if not boards:
             raise self.severe(f'{path} has no relevant integration_platforms')
 
-        return boards
+        return boards, shields
 
     def run(self):
         reference_file = self.config.table_from_sample_yaml_board_reference
@@ -213,13 +252,14 @@ class TableFromSampleYaml(TableFromRows):
         source = self.state_machine.input_lines.source(
                 self.lineno - self.state_machine.input_offset - 1)
         source_dir = os.path.dirname(os.path.abspath(source))
-        sample_yaml_rows = self._rows_from_sample_yaml(source_dir)
+        sample_yaml_rows, shields = self._rows_from_sample_yaml(source_dir)
 
         raw = '\n'.join(self._load_header_and_rows(
             path,
             'heading',
             sample_yaml_rows,
             transform_rows_func=self._merge_rows,
+            shields=shields,
         ))
         lines = statemachine.string2lines(raw)
         self.state_machine.insert_input(lines, path)
