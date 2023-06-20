@@ -95,15 +95,9 @@ static int dtls_setup(int fd)
 	LOG_INF("TLS setup");
 
 	/* Set up TLS peer verification */
-	enum {
-		NONE = 0,
-		OPTIONAL = 1,
-		REQUIRED = 2,
-	};
+	verify = TLS_PEER_VERIFY_REQUIRED;
 
-	verify = REQUIRED;
-
-	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
 		LOG_ERR("Failed to setup peer verification, err %d", errno);
 		return err;
@@ -112,7 +106,7 @@ static int dtls_setup(int fd)
 	/* Associate the socket with the security tag
 	 * we have provisioned the certificate with.
 	 */
-	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
 	if (err) {
 		LOG_ERR("Failed to setup TLS sec tag, err %d", errno);
 		return err;
@@ -124,16 +118,25 @@ static int dtls_setup(int fd)
 		session_cache = TLS_SESSION_CACHE_DISABLED;
 	}
 
-	err = setsockopt(fd, SOL_TLS, TLS_SESSION_CACHE,
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_SESSION_CACHE,
 					&session_cache, sizeof(session_cache));
 	if (err) {
 		LOG_ERR("Failed to set TLS_SESSION_CACHE option: %d", errno);
 		return err;
 	}
 
-	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, COAP_HOST, strlen(COAP_HOST));
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_HOSTNAME, COAP_HOST, strlen(COAP_HOST));
 	if (err) {
 		LOG_ERR("Failed to setup TLS hostname, err %d", errno);
+		return err;
+	}
+
+	/* Enable connection ID */
+	uint32_t dtls_cid = TLS_DTLS_CID_ENABLED;
+
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid, sizeof(dtls_cid));
+	if (err) {
+		LOG_ERR("Failed to enable connection ID, err %d", errno);
 		return err;
 	}
 
@@ -142,7 +145,7 @@ static int dtls_setup(int fd)
 
 static int socket_connect(int *const fd)
 {
-	static struct addrinfo hints;
+	static struct zsock_addrinfo hints;
 	int st;
 	int ret = 0;
 	struct sockaddr *sa;
@@ -159,7 +162,7 @@ static int socket_connect(int *const fd)
 #endif /* defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4) */
 
 	hints.ai_socktype = SOCK_DGRAM;
-	st = getaddrinfo(COAP_HOST, PEER_PORT, &hints, &address);
+	st = zsock_getaddrinfo(COAP_HOST, PEER_PORT, &hints, &address);
 	LOG_DBG("getaddrinfo status: %d", st);
 	LOG_DBG("fd: %d", *fd);
 
@@ -170,13 +173,13 @@ static int socket_connect(int *const fd)
 	}
 
 	sa = address->ai_addr;
-	inet_ntop(sa->sa_family,
+	zsock_inet_ntop(sa->sa_family,
 		  (void *)&((struct sockaddr_in *)sa)->sin_addr,
 		  peer_addr,
 		  INET6_ADDRSTRLEN);
 	LOG_DBG("getaddrinfo() %s", peer_addr);
 
-	*fd = socket(address->ai_family, address->ai_socktype, IPPROTO_DTLS_1_2);
+	*fd = zsock_socket(address->ai_family, address->ai_socktype, IPPROTO_DTLS_1_2);
 	if (*fd < 0) {
 		LOG_ERR("Failed to create UDP socket %d", errno);
 		ret = -ENOTCONN;
@@ -191,7 +194,7 @@ static int socket_connect(int *const fd)
 		goto clean_up;
 	}
 
-	if (connect(*fd, address->ai_addr, address->ai_addrlen) < 0) {
+	if (zsock_connect(*fd, address->ai_addr, address->ai_addrlen) < 0) {
 		LOG_ERR("Failed to connect UDP socket %d", errno);
 		if (errno == ETIMEDOUT) {
 			ret = -ETIMEDOUT;
@@ -206,7 +209,7 @@ clean_up:
 
 	if (ret) {
 		if (*fd > -1) {
-			(void)close(*fd);
+			(void)zsock_close(*fd);
 			*fd = -1;
 		}
 	}
@@ -219,7 +222,7 @@ static int socket_close(int *const fd)
 	int ret;
 
 	if (*fd > -1) {
-		ret = close(*fd);
+		ret = zsock_close(*fd);
 		if (ret) {
 			LOG_WRN("Failed to close socket, error: %d", errno);
 		}
