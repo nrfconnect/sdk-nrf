@@ -9,8 +9,6 @@ config PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM
 	default y
 	depends on CRYPTOCELL_USABLE
 	depends on PSA_WANT_GENERATE_RANDOM
-	help
-	  Only Oberon PSA core supports generate random through driver interface.
 
 config PSA_CRYPTO_DRIVER_ALG_CTR_DRBG_CC3XX_PLATFORM
 	bool
