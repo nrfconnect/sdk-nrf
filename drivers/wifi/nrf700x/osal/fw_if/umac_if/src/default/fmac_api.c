@@ -2103,6 +2103,8 @@ enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *dev_ctx,
 					      __func__);
 			goto out;
 		}
+	} else {
+		status = WIFI_NRF_STATUS_SUCCESS;
 	}
 
 	wifi_nrf_fmac_vif_decr_if_type(fmac_dev_ctx, vif_ctx->if_type);
