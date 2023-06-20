@@ -53,6 +53,8 @@ To enable AES cipher modes, set one or more of the following Kconfig options:
 +----------------+------------------------------------------------------+
 | XTS            | :kconfig:option:`CONFIG_PSA_WANT_ALG_XTS`            |
 +----------------+------------------------------------------------------+
+| Stream cipher  | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`  |
++----------------+------------------------------------------------------+
 
 
 AES cipher driver configurations
@@ -76,6 +78,8 @@ You can use the following Kconfig options for fine-grained control over which dr
 | OFB            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_OFB_CC3XX`            | Not supported                                                        |
 +----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
 | XTS            | Not supported                                                       | Not supported                                                        |
++----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| Stream cipher  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_CC3XX`  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_OBERON`  |
 +----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
 
 .. note::
@@ -241,7 +245,7 @@ To configure elliptic curve support, set one or more of the following Kconfig op
 +-----------------------+-----------------------------------------------------------+
 | Curve448              | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`      |
 +-----------------------+-----------------------------------------------------------+
-| Ed25519               | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255` |
+| Edwards25519          | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255` |
 +-----------------------+-----------------------------------------------------------+
 | secp192k1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`         |
 +-----------------------+-----------------------------------------------------------+
@@ -277,7 +281,7 @@ You can use the following Kconfig options for fine-grained control over which dr
 +-----------------------+--------------------------------------------------------------------------+---------------------------------------------------------------------------+
 | Curve448              | Not supported                                                            | Not supported                                                             |
 +-----------------------+--------------------------------------------------------------------------+---------------------------------------------------------------------------+
-| Ed25519               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ECC_TWISTED_EDWARDS_255_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ECC_TWISTED_EDWARDS_255_OBERON` |
+| Edwards25519          | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ECC_TWISTED_EDWARDS_255_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ECC_TWISTED_EDWARDS_255_OBERON` |
 +-----------------------+--------------------------------------------------------------------------+---------------------------------------------------------------------------+
 | secp192k1             | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ECC_SECP_K1_192_CC3XX`         | Not supported                                                             |
 +-----------------------+--------------------------------------------------------------------------+---------------------------------------------------------------------------+
@@ -364,43 +368,51 @@ You can use the following Kconfig options for fine-grained control over which dr
    * :ref:`nrf_security_drivers_oberon` does not support RSA key pair generation.
 
 
-Secure Hash configurations
-**************************
+Hash configurations
+*******************
 
-To configure the Secure Hash algorithms, set one or more of the following Kconfig options:
+To configure the Hash algorithms, set one or more of the following Kconfig options:
 
-+-----------------------+-----------------------------------------------+
-| Hash algorithm        | Configuration option                          |
-+=======================+===============================================+
-| SHA-1                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`   |
-+-----------------------+-----------------------------------------------+
-| SHA-224               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224` |
-+-----------------------+-----------------------------------------------+
-| SHA-256               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256` |
-+-----------------------+-----------------------------------------------+
-| SHA-384               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_384` |
-+-----------------------+-----------------------------------------------+
-| SHA-512               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512` |
-+-----------------------+-----------------------------------------------+
++-----------------------+---------------------------------------------------+
+| Hash algorithm        | Configuration option                              |
++=======================+===================================================+
+| SHA-1                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`       |
++-----------------------+---------------------------------------------------+
+| SHA-224               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224`     |
++-----------------------+---------------------------------------------------+
+| SHA-256               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256`     |
++-----------------------+---------------------------------------------------+
+| SHA-384               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_384`     |
++-----------------------+---------------------------------------------------+
+| SHA-512               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512`     |
++-----------------------+---------------------------------------------------+
+| MD5                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_MD5`         |
++-----------------------+---------------------------------------------------+
+| RIPEMD160             | :kconfig:option:`CONFIG_PSA_WANT_ALG_RIPEMD160`   |
++-----------------------+---------------------------------------------------+
 
 
-Secure Hash driver configurations
-=================================
+Hash driver configurations
+==========================
 
-You can use the following PSA driver-specific configurations for fine-grained control over which drivers provide the Secure Hash algorithm.
+You can use the following PSA driver-specific configurations for fine-grained control over which drivers provide the Hash algorithm.
 
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
 | Hash algorithm        |  nrf_cc3xx driver support                                     | nrf_oberon driver support                                     |
 +=======================+===============================================================+===============================================================+
-| SHA-1                 |  :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_CC3XX`   | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_OBERON`   |
+| SHA-1                 | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_CC3XX`    | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_OBERON`   |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
-| SHA-224               |  :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_224_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_224_OBERON` |
+| SHA-224               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_224_CC3XX`  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_224_OBERON` |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
-| SHA-256               |  :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_256_OBERON` |
+| SHA-256               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_256_CC3XX`  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_256_OBERON` |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
-| SHA-384               |  Not supported                                                | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_384_OBERON` |
+| SHA-384               | Not supported                                                 | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_384_OBERON` |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
-| SHA-512               |  Not supported                                                | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_512_OBERON` |
+| SHA-512               | Not supported                                                 | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_512_OBERON` |
++-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
+| MD5                   | Not supported                                                 | Not supported                                                 |
++-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
+| RIPEMD160             | Not supported                                                 | Not supported                                                 |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
 
 
