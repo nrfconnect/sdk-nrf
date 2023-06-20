@@ -83,8 +83,12 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 
 Bluetooth® LE
 -------------
+* Updated the Bluetooth HCI headers.
+  The ``hci.h`` header now contains only the function prototypes, and the new
+  ``hci_types.h`` header defines all HCI-related macros and structs.
 
-|no_changes_yet_note|
+  The previous ``hci_err.h`` header has been merged into the new ``hci_types.h`` header.
+  This can break builds that were directly including ``hci_err.h``.
 
 Bluetooth mesh
 --------------
