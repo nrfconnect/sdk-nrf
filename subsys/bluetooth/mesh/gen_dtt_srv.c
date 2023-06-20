@@ -7,6 +7,7 @@
 #include <string.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
 #include "model_utils.h"
+#include "mesh/access.h"
 
 static void encode_status(struct net_buf_simple *buf, uint32_t transition_time)
 {
@@ -187,4 +188,24 @@ int bt_mesh_dtt_srv_pub(struct bt_mesh_dtt_srv *srv,
 	encode_status(&msg, srv->transition_time);
 
 	return bt_mesh_msg_send(srv->model, ctx, &msg);
+}
+
+struct bt_mesh_dtt_srv *bt_mesh_dtt_srv_get(const struct bt_mesh_elem *elem)
+{
+	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
+	uint16_t index;
+
+	index = elem->addr - comp->elem[0].addr;
+	for (int i = index; i >= 0; --i) {
+		struct bt_mesh_elem *element = &comp->elem[i];
+
+		struct bt_mesh_model *model =
+			bt_mesh_model_find(element, BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV);
+
+		if (model) {
+			return (struct bt_mesh_dtt_srv *)(model->user_data);
+		}
+	};
+
+	return NULL;
 }
