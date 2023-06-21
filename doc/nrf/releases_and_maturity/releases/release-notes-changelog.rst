@@ -298,7 +298,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Changed building method to use :ref:`zephyr:snippets` for predefined configuration.
 
 Sensor samples
 --------------

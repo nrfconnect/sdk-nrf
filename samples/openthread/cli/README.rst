@@ -86,28 +86,21 @@ Configuration
 
 .. _ot_cli_sample_activating_variants:
 
-Configuration files
-===================
+Snippets
+========
 
-The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
-You can find the configuration files in the root directory of the sample.
+.. include:: /includes/sample_snippets.txt
 
-Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+The following snippets are available:
 
-The following configuration files are available:
-
-* :file:`overlay-usb.conf` - Enables USB transport support.
-  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
-* :file:`overlay-logging.conf` - Enables logging using RTT.
+* ``usb`` - Enables USB transport support.
+* ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
-* :file:`overlay-debug.conf` - Enables debugging the Thread sample with GDB thread awareness.
-* :file:`overlay-ci.conf` - Disables boot banner and shell prompt.
-* :file:`overlay-multiprotocol.conf` - Enables Bluetooth LE support in this sample.
-* :file:`overlay-tcp.conf` - Enables experimental TCP support in this sample.
-* :file:`overlay-low_power.conf` - Enables low power consumption mode in this sample.
-  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`low_power.overlay`.
+* ``debug`` - Enables debugging the Thread sample with GDB thread awareness.
+* ``ci`` - Disables boot banner and shell prompt.
+* ``multiprotocol`` - Enables Bluetooth LE support in this sample.
+* ``tcp`` - Enables experimental TCP support in this sample.
+* ``low_power`` - Enables low power consumption mode in this sample.
 
 FEM support
 ===========
@@ -542,7 +535,7 @@ Power consumption measurements
 
 You can use the Thread CLI sample to perform power consumption measurements for Sleepy End Devices.
 
-After building and flashing with :file:`overlay-low_power.conf` and :file:`low_power.overlay`, the device will start regular operation with the UART console enabled.
+After building and flashing with the ``low_power`` snippet, the device will start regular operation with the UART console enabled.
 This allows for easy configuration of the device, specifically the Sleepy End Device polling period or the Synchronized Sleepy End Device (SSED) CSL period and other relevant parameters.
 
 When the device becomes attached to a Thread Router it will automatically suspend UART operation and power down unused RAM.

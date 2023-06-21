@@ -113,22 +113,18 @@ Configuration
 
 .. _coap_client_sample_activating_variants:
 
-Configuration files
-===================
+Snippets
+========
 
-The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
-You can find the configuration files in the root directory of the sample.
+.. include:: /includes/sample_snippets.txt
 
-Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+The following snippets are available:
 
-The following configuration files are available:
-
-* :file:`overlay-mtd.conf` - Enables the Minimal Thread Device variant.
-* :file:`overlay-logging.conf` - Enables logging using RTT.
+* ``debug`` - Enables debugging the Thread sample by enabling :c:func:`__ASSERT()` statements globally.
+* ``mtd`` - Enables the Minimal Thread Device variant.
+* ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
-* :file:`overlay-multiprotocol_ble.conf` - Enables the Multiprotocol Bluetooth LE extension.
+* ``multiprotocol_ble`` - Enables the Multiprotocol Bluetooth LE extension.
 
 FEM support
 ===========
