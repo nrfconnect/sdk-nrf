@@ -14,4 +14,8 @@
 		compatible = "openthread,config";
 		diag-gpios = <&gpio0 19 GPIO_ACTIVE_HIGH>;
 	};
+
+	chosen {
+		zephyr,ot-uart = &cdc_acm_uart;
+	};
 };
