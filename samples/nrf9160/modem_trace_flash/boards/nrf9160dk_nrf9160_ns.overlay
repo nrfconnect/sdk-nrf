@@ -27,13 +27,6 @@
 	};
 };
 
-/* Enable high drive mode for the SPI3 pins to get a square signal at 8 MHz */
-&spi3_default {
-	group1 {
-		nordic,drive-mode = <NRF_DRIVE_H0H1>;
-	};
-};
-
 /* Enable UART1 at 1 megabaud for printing modem traces  */
 &uart1 {
 	status = "okay";
