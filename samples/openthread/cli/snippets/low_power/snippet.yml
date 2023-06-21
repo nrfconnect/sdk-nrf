@@ -1,0 +1,4 @@
+name: low_power
+append:
+  EXTRA_CONF_FILE: low_power.conf
+  EXTRA_DTC_OVERLAY_FILE: low_power.overlay

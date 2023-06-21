@@ -1,0 +1,3 @@
+name: multiprotocol_ble
+append:
+  EXTRA_CONF_FILE: multiprotocol_ble.conf
