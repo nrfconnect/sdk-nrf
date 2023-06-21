@@ -29,6 +29,7 @@ BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
 
 #define AT_CFUN_READ "AT+CFUN?"
 #define AT_CFUN0_VAL 0
+#define AT_CFUN4_VAL 4
 
 /* The heap implementation in `nrf_modem_os.c` require some overhead
  * to allow allocating up to `NRF_MODEM_LIB_SHMEM_TX_SIZE` bytes.
@@ -163,9 +164,11 @@ int nrf_modem_lib_shutdown(void)
 		e->callback(e->context);
 	}
 
-	/* The application must set CFUN=0 before calling nrf_modem_shutdown. */
+	/* The application must disable both transmit and receive RF circuits, and deactivate
+	 *  LTE and GNSS services, before calling nrf_modem_shutdown.
+	 */
 	ret = nrf_modem_at_scanf(AT_CFUN_READ, "+CFUN: %hu", &mode);
-	if (ret == 1 && mode != AT_CFUN0_VAL) {
+	if (ret == 1 && (mode != AT_CFUN0_VAL && mode != AT_CFUN4_VAL)) {
 		LOG_WRN("Application should set minimal functional mode (CFUN=0) before "
 			"shutting down modem library");
 		nrf_modem_at_printf("AT+CFUN=0");
