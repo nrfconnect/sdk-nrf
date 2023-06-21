@@ -5,8 +5,9 @@
  */
 #include <unity.h>
 #include <stdbool.h>
-#include <zephyr/kernel.h>
 #include <string.h>
+#include <zephyr/kernel.h>
+#include <zephyr/settings/settings.h>
 #include <zephyr/init.h>
 
 #include <azure/az_core.h>
@@ -15,7 +16,6 @@
 #include "azure_iot_hub_dps_private.h"
 
 #include "cmock_mqtt_helper.h"
-#include "cmock_settings.h"
 
 #define TEST_DPS_HOSTNAME			CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME
 
@@ -73,10 +73,6 @@ static K_SEM_DEFINE(reg_assigning_sem, 0, 1);
 /* Test suite configuration functions */
 void setUp(void)
 {
-	__cmock_settings_subsys_init_IgnoreAndReturn(0);
-	__cmock_settings_load_subtree_IgnoreAndReturn(0);
-	__cmock_settings_save_one_IgnoreAndReturn(0);
-	__cmock_settings_delete_IgnoreAndReturn(0);
 	az_precondition_failed_set_callback(az_precondition_failed_cb);
 
 	dps_state = DPS_STATE_UNINIT;
@@ -143,6 +139,23 @@ static void dps_handler(enum azure_iot_hub_dps_reg_status state)
 }
 
 /* Tests */
+
+void test_azure_iot_hub_dps_reset_before_init(void)
+{
+	TEST_ASSERT_EQUAL(-ENOENT, azure_iot_hub_dps_reset());
+}
+
+void test_azure_iot_hub_dps_reset_after_init(void)
+{
+	struct azure_iot_hub_dps_config config = {
+		.handler = dps_handler,
+		.reg_id.ptr = TEST_REGISTRATION_ID,
+		.reg_id.size = TEST_REGISTRATION_ID_LEN,
+	};
+
+	TEST_ASSERT_EQUAL(0, azure_iot_hub_dps_init(&config));
+	TEST_ASSERT_EQUAL(0, azure_iot_hub_dps_reset());
+}
 
 void test_azure_iot_hub_dps_init_invalid_config(void)
 {

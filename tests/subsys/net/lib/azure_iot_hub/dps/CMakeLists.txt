@@ -13,8 +13,7 @@ project(azure_iot_hub_dps_test)
 test_runner_generate(src/azure_iot_hub_dps_test.c)
 
 # Create mock
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/mqtt_helper.h)
-cmock_handle(${ZEPHYR_BASE}/include/zephyr/settings/settings.h)
+cmock_handle(${NRF_DIR}/include/net/mqtt_helper.h)
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE
