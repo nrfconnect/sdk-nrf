@@ -7,18 +7,19 @@ tests:
     extra_args: OVERLAY_CONFIG=overlay-logging.conf;overlay-vendor_hook.conf
     integration_platforms:
       - nrf52840dk_nrf52840
+      - nrf52840dongle_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    platform_allow: >
+      nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
   sample.openthread.coprocessor.usb:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-usb.conf DTC_OVERLAY_FILE="usb.overlay"
     integration_platforms:
       - nrf52840dk_nrf52840
-      - nrf52840dongle_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52833dk_nrf52833
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
       nrf21540dk_nrf52840
     tags: ci_build
