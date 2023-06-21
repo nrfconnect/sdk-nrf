@@ -198,7 +198,7 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
-                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay;nrf9160dk_with_ext_flash.overlay"
     tags: ci_build
   applications.asset_tracker_v2.nrf7002ek_wifi.nrf9161dk:
     build_only: true
