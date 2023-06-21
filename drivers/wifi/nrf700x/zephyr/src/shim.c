@@ -567,6 +567,7 @@ static void zep_shim_bus_qspi_dev_rem(void *os_qspi_dev_ctx)
 	dev = os_qspi_dev_ctx;
 
 	/* TODO: Make qspi_dev a dynamic instance and remove it here */
+	rpu_disable();
 }
 
 static void *zep_shim_bus_qspi_init(void)
