@@ -1,0 +1,5 @@
+The sample provides predefined :ref:`zephyr:snippets` for typical use cases, and to activate sample extensions.
+You can find the snippets in the :file:`snippets` directory of the sample.
+
+Specify the corresponding snippet names in the :makevar:`SNIPPET` option when building with CMake, or as a ``-S`` argument when using west.
+For more information about using snippets, see :ref:`zephyr:using-snippets` in the Zephyr documentation.

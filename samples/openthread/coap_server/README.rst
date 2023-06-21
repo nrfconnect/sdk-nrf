@@ -61,18 +61,16 @@ Configuration
 
 .. _coap_server_sample_activating_variants:
 
-Configuration files
-===================
+Snippets
+========
 
-The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
-You can find the configuration files in the root directory of the sample.
+.. include:: /includes/sample_snippets.txt
 
-Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+The following snippets are available:
 
-:file:`overlay-logging.conf` is a configuration file that enables logging using RTT.
-For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
+* ``debug`` - Enables debugging the Thread sample by enabling :c:func:`__ASSERT()` statements globally.
+* ``logging`` - Enables logging using RTT.
+  For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 
 FEM support
 ===========

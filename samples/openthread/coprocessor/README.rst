@@ -20,7 +20,7 @@ However, it customizes Zephyr's sample to fulfill the |NCS| requirements (for ex
 * Thread 1.2 features.
 
 This sample supports optional :ref:`logging extension <ot_coprocessor_sample_logging>`, which can be turned on or off independently.
-See :ref:`ot_coprocessor_sample_config_files` for details.
+See :ref:`ot_coprocessor_sample_activating_variants` for details.
 
 Requirements
 ************
@@ -56,7 +56,7 @@ Moreover, using the Spinel logging backend (by setting :kconfig:option:`CONFIG_L
 
 By default, the log levels for all modules are set to critical to not engage the microprocessor in unnecessary activities.
 To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
-Use the :file:`overlay-logging.conf` overlay file as reference for this purpose.
+Use the :file:`logging.conf` configuration file located in the :file:`snippets/logging/` directory as reference for this purpose.
 
 User interface
 **************
@@ -87,23 +87,19 @@ Check and configure the following library option that is used by the sample:
 
 * :kconfig:option:`CONFIG_OPENTHREAD_COPROCESSOR_RCP` - Selects the RCP architecture for the sample.
 
-.. _ot_coprocessor_sample_config_files:
+.. _ot_coprocessor_sample_activating_variants:
 
-Configuration files
-===================
+Snippets
+========
 
-The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
-You can find the configuration files in the root directory of the sample.
+.. include:: /includes/sample_snippets.txt
 
-Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+The following snippets are available:
 
-The following configuration files are available:
-
-* :file:`overlay-logging.conf` - Enables logging using RTT.
+* ``debug`` - Enables debugging the Thread sample by enabling :c:func:`__ASSERT()` statements globally.
+* ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
-* :file:`overlay-usb.conf` - Enables emulating a serial port over USB for Spinel communication with the host. Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+* ``usb`` - Enables emulating a serial port over USB for Spinel communication with the host.
 
 FEM support
 ===========

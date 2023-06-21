@@ -195,10 +195,10 @@ You can enable the OpenThread stack logging for your project with the following 
 * :kconfig:option:`CONFIG_OPENTHREAD_DEBUG` - This option enables logging for the OpenThread stack.
 
 Both options must be enabled to allow logging.
-Use the :file:`overlay-logging.conf` configuration file to enable both options for the Thread samples in the |NCS|.
+Use the ``logging`` snippet to enable both options for the Thread samples in the |NCS|.
 
 After setting these options, you can choose one of several :ref:`logging backends <ug_logging_backends>` available in Zephyr and supported in the |NCS|.
-The :file:`overlay-logging.conf` configuration file enables :ref:`ug_logging_backends_rtt` as the logging backend by default.
+The ``logging`` snippet enables :ref:`ug_logging_backends_rtt` as the logging backend by default.
 
 .. note::
     If you are working with Thread samples, enabling logging and logging backend is optional.
