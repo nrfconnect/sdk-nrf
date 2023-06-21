@@ -374,13 +374,6 @@ Then add the following relevant devicetree blocks to the application`s devicetre
        };
    };
 
-   /* Enable high drive mode for the SPI3 pins to get a square signal at 8 MHz */
-   &spi3_default {
-       group1 {
-           nordic,drive-mode = <NRF_DRIVE_H0H1>;
-       };
-   };
-
    /* Enable high performance mode to increase write/erase performance */
    &mx25r64 {
        mxicy,mx25r-power-mode = "high-performance";
