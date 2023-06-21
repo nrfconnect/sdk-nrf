@@ -11,7 +11,6 @@
 
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/buf.h>
-#include <zephyr/bluetooth/hci_err.h>
 #include <zephyr/drivers/bluetooth/hci_driver.h>
 
 #include <mpsl/mpsl_work.h>

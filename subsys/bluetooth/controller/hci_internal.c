@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/bluetooth/hci.h>
-#include <zephyr/bluetooth/hci_err.h>
 #include <zephyr/bluetooth/buf.h>
 #include <zephyr/sys/byteorder.h>
 #include <sdc_hci.h>
