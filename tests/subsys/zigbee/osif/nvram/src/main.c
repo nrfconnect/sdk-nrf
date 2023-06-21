@@ -31,7 +31,21 @@ void zboss_signal_handler(zb_bufid_t bufid)
 {
 }
 
-static void test_zb_nvram_memory_size(void)
+static void test_case_setup(void *f)
+{
+	ARG_UNUSED(f);
+
+	/* Erase NVRAM to have repeatability of test runs. */
+	for (int page = 0; page < CONFIG_ZIGBEE_NVRAM_PAGE_COUNT; page++) {
+		int ret = zb_osif_nvram_erase_async(page);
+
+		zassert_true(ret == RET_OK, "Erasing failed");
+	}
+}
+
+ZTEST_SUITE(osif_test, NULL, NULL, test_case_setup, NULL, NULL);
+
+ZTEST(osif_test, test_zb_nvram_memory_size)
 {
 	zassert_true(zb_get_nvram_page_length() == ZBOSS_NVRAM_PAGE_SIZE,
 		     "Page size fail");
@@ -40,7 +54,7 @@ static void test_zb_nvram_memory_size(void)
 		     "Page count fail");
 }
 
-static void test_zb_nvram_erase(void)
+ZTEST(osif_test, test_zb_nvram_erase)
 {
 	for (int page = 0; page < CONFIG_ZIGBEE_NVRAM_PAGE_COUNT; page++) {
 		int ret = zb_osif_nvram_erase_async(page);
@@ -65,7 +79,7 @@ static void test_zb_nvram_erase(void)
 	}
 }
 
-static void test_zb_nvram_write(void)
+ZTEST(osif_test, test_zb_nvram_write)
 {
 	const uint8_t MEM_PATTERN = 0xAA;
 
@@ -94,16 +108,4 @@ static void test_zb_nvram_write(void)
 			}
 		}
 	}
-}
-
-
-void test_main(void)
-{
-	ztest_test_suite(osif_test,
-			 ztest_unit_test(test_zb_nvram_memory_size),
-			 ztest_unit_test(test_zb_nvram_erase),
-			 ztest_unit_test(test_zb_nvram_write)
-			 );
-
-	ztest_run_test_suite(osif_test);
 }

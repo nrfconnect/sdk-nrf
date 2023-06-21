@@ -29,7 +29,9 @@ uint8_t aes_ciphertext[AES_PLAINTEXT_LENGTH] = {
 };
 
 
-static void test_crypto(void)
+ZTEST_SUITE(nrf_osif_crypto_tests, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(nrf_osif_crypto_tests, test_crypto)
 {
 	uint8_t aes_encrypted[AES_PLAINTEXT_LENGTH] = {};
 	int i;
@@ -41,13 +43,4 @@ static void test_crypto(void)
 		zassert_equal(aes_encrypted[i], aes_ciphertext[i],
 			      "Encrypted data mismatch at byte %d", i);
 	}
-}
-
-void test_main(void)
-{
-	ztest_test_suite(nrf_osif_crypto_tests,
-			ztest_unit_test(test_crypto)
-	);
-
-	ztest_run_test_suite(nrf_osif_crypto_tests);
 }
