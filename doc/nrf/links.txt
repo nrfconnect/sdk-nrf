@@ -50,6 +50,9 @@
 
 .. _`nRF Blinky`: https://github.com/NordicSemiconductor/Android-nRF-Blinky
 
+.. _`Source code for nRF Wi-Fi Provisioner mobile app for Android`: https://github.com/NordicSemiconductor/Android-nRF-Wi-Fi-Provisioner
+.. _`Source code for nRF Wi-Fi Provisioner mobile app for iOS`: https://github.com/NordicSemiconductor/IOS-nRF-Wi-Fi-Provisioner
+
 .. _`Ethernet over RTT for Linux`: https://github.com/doki-nordic/experimental-eth-rtt-link/
 
 .. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk

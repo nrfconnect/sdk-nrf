@@ -7,10 +7,13 @@ Wi-Fi Provisioning Service
    :local:
    :depth: 2
 
+This module implements a Bluetooth® GATT service for Wi-Fi® provisioning.
+This library is to be used with the :ref:`wifi_provisioning` sample.
+The Wi-Fi Provisioning Service forms a complete reference solution, together with the mobile application.
+You can find details in the documentation of the :ref:`wifi_provisioning` sample.
+
 Overview
 ********
-
-This module implements a Bluetooth® GATT service for Wi-Fi® provisioning.
 
 The service is divided into three parts:
 
@@ -74,9 +77,9 @@ The characteristic requirements of the Wi-Fi Provisioning Service are shown in t
 
 The purpose of each characteristic is as follows:
 
-* ``Information``: for client to get ``Info`` message from server.
-* ``Operation Control Point``: for client to send ``Request`` message to server, and server to send ``Response`` message to client.
-* ``Data Out``: for server to send ``Result`` message to the client.
+* ``Information``: For client to get ``Info`` message from server.
+* ``Operation Control Point``: For client to send ``Request`` message to server, and server to send ``Response`` message to client.
+* ``Data Out``: For server to send ``Result`` message to the client.
 
 Task and event handling
 ***********************
@@ -124,17 +127,17 @@ The service uses four message types:
 
   The ``Response`` message contains one of following response codes:
 
-  * ``SUCCESS``: the operation is dispatched successfully.
-  * ``INVALID_ARGUMENT``: the argument is invalid.
-  * ``INVALID_PROTO``: the message cannot be encoded or decoded.
-  * ``INTERNAL_ERROR``: the operation cannot be dispatched properly.
+  * ``SUCCESS``: The operation is dispatched successfully.
+  * ``INVALID_ARGUMENT``: The argument is invalid.
+  * ``INVALID_PROTO``: The message cannot be encoded or decoded.
+  * ``INTERNAL_ERROR``: The operation cannot be dispatched properly.
 
   If the command is ``GET_STATUS``, the response includes some or all of the following fields:
 
-  * ``state``: describes the Wi-Fi connection state according to values defined in the :file:`common.proto` file.
-  * ``provisioning_info``: includes Wi-Fi provisioning information stored in the non-volatile memory (NVM) of the device.
-  * ``connection_info``: includes Wi-Fi connection details.
-  * ``scan_info``: includes the parameters used for the AP scan.
+  * ``state``: Describes the Wi-Fi connection state according to values defined in the :file:`common.proto` file.
+  * ``provisioning_info``: Includes Wi-Fi provisioning information stored in the non-volatile memory (NVM) of the device.
+  * ``connection_info``: Includes Wi-Fi connection details.
+  * ``scan_info``: Includes the parameters used for the AP scan.
 
 * ``Result``: Carries asynchronous data about the operation status.
 

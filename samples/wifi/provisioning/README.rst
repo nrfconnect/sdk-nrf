@@ -21,7 +21,12 @@ The sample supports the following development kits:
 The sample requires a smartphone (configurator) with Nordic Semiconductor's nRF Wi-Fi Provisioner app installed in one of the following versions:
 
 * `nRF Wi-Fi Provisioner mobile app for Android`_
+
+   * `Source code for nRF Wi-Fi Provisioner mobile app for Android`_
+
 * `nRF Wi-Fi Provisioner mobile app for iOS`_
+
+   * `Source code for nRF Wi-Fi Provisioner mobile app for iOS`_
 
 Overview
 ********
@@ -78,9 +83,9 @@ It contains the UUID of the Wi-Fi Provisioning Service and four bytes of service
 
 * Flag: 16-bit little endian field. Byte 2 (first byte on air) is LSB, and Byte 3 (second byte on air) is MSB.
 
-  * Bit 0: provisioning status. The value is ``1`` if the device is provisioned, otherwise it is ``0``.
+  * Bit 0: Provisioning status. The value is ``1`` if the device is provisioned, otherwise it is ``0``.
 
-  * Bit 1: connection status. The value is ``1`` if Wi-Fi is connected, otherwise it is ``0``.
+  * Bit 1: Connection status. The value is ``1`` if Wi-Fi is connected, otherwise it is ``0``.
 
   * Bit 2 - 15: RFU
 
