@@ -125,8 +125,8 @@ Serial transport
 ================
 
 The Thread CLI sample supports UART and USB CDC ACM as serial transports.
-By default, it uses UART transport.
-To switch to USB transport, :ref:`activate the USB overlay extension <ot_cli_sample_activating_variants>`.
+By default, it uses USB CDC ACM transport for ``nrf52840dongle_nrf52840``, and UART transport for other build targets.
+To switch to USB transport on targets that use UART by default, :ref:`activate the USB overlay extension <ot_cli_sample_activating_variants>`.
 
 Building and running
 ********************

@@ -272,7 +272,8 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Updated the build target ``nrf52840dongle_nrf52840`` to use USB CDC ACM as serial transport as default.
+  Samples for this target can now be built without providing extra configuration arguments.
 
 Matter samples
 --------------
