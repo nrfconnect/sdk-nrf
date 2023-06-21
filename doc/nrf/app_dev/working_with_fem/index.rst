@@ -75,7 +75,7 @@ The following FEM implementations are supported:
   To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO` Kconfig option to ``y``.
 * The nRF21540 GPIO+SPI implementation, see :ref:`ug_radio_fem_nrf21540_spi_gpio`.
   To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option to ``y``.
-* The nRF21540 2-pin simple GPIO implementation.
+* The 2-pin simple GPIO implementation.
   To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` Kconfig option to ``y``.
 
 It is possible to only use the :ref:`nrfxlib:mpsl_fem` API if your application does not require other MPSL features.
@@ -372,18 +372,18 @@ To use nRF21540 in SPI or mixed mode, complete the following steps:
       };
 
       fem_spi: &spi3 {
-	      status = "okay";
+         status = "okay";
          pinctrl-0 = <&spi3_default_alt>;
          pinctrl-1 = <&spi3_sleep_alt>;
          pinctrl-names = "default", "sleep";
-	      cs-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
+         cs-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
 
-	      nrf_radio_fem_spi: nrf21540_fem_spi@0 {
-		      compatible = "nordic,nrf21540-fem-spi";
-		      status = "okay";
-		      reg = <0>;
-		      spi-max-frequency = <8000000>;
-	      };
+         nrf_radio_fem_spi: nrf21540_fem_spi@0 {
+            compatible = "nordic,nrf21540-fem-spi";
+            status = "okay";
+            reg = <0>;
+            spi-max-frequency = <8000000>;
+         };
       };
 
    In this example, the nRF21540 is controlled by the ``spi3`` bus.
@@ -615,7 +615,7 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 
 .. code-block:: none
 
-	set(SHIELD nrf21540_ek)
+   set(SHIELD nrf21540_ek)
 
 To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540_ek`` in the **Extra Cmake arguments** field.
 See :ref:`cmake_options`.
