@@ -1,7 +1,6 @@
 tests:
   net.lib.azure_iot_hub_dps:
-    platform_allow: qemu_cortex_m3 native_posix
+    platform_allow: native_posix
     integration_platforms:
-      - qemu_cortex_m3
       - native_posix
     tags: azure_iot_hub_dps

@@ -968,26 +968,17 @@ int azure_iot_hub_dps_hostname_delete(void)
 	int err;
 
 	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_KEY);
-	if (err == -ENOENT) {
-		LOG_DBG("No hostname was stored");
-		goto exit_on_success;
-	} else if (err) {
+	if (err) {
 		LOG_ERR("Failed to delete Azure IoT Hub hostname, error: %d", err);
-
-		return -EFAULT;
+		return err;
 	}
 
 	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_HOSTNAME_LEN_KEY);
-	if (err == -ENOENT) {
-		LOG_DBG("No hostname length was stored");
-		goto exit_on_success;
-	} else if (err) {
+	if (err) {
 		LOG_ERR("Failed to delete Azure IoT Hub hostname length, error: %d", err);
-
-		return -EFAULT;
+		return err;
 	}
 
-exit_on_success:
 	dps_reg_ctx.assigned_hub = AZ_SPAN_EMPTY;
 
 	return 0;
@@ -998,26 +989,17 @@ int azure_iot_hub_dps_device_id_delete(void)
 	int err;
 
 	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_DEVICE_ID_KEY);
-	if (err == -ENOENT) {
-		LOG_DBG("No device ID was stored");
-		goto exit_on_success;
-	} else if (err) {
+	if (err) {
 		LOG_ERR("Failed to delete assigned device ID, error: %d", err);
-
-		return -EFAULT;
+		return err;
 	}
 
 	err = settings_delete(DPS_SETTINGS_KEY "/" DPS_SETTINGS_DEVICE_ID_LEN_KEY);
-	if (err == -ENOENT) {
-		LOG_DBG("No device ID length was stored");
-		goto exit_on_success;
-	} else if (err) {
+	if (err) {
 		LOG_ERR("Failed to delete assigned device ID length, error: %d", err);
-
-		return -EFAULT;
+		return err;
 	}
 
-exit_on_success:
 	dps_reg_ctx.assigned_device_id = AZ_SPAN_EMPTY;
 
 	return 0;
@@ -1047,14 +1029,9 @@ int azure_iot_hub_dps_reset(void)
 	dps_reg_ctx.status = AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED;
 
 	err = azure_iot_hub_dps_hostname_delete();
-	if (err == -EFAULT) {
+	if (err) {
 		return err;
 	};
 
-	err = azure_iot_hub_dps_device_id_delete();
-	if (err == -EFAULT) {
-		return err;
-	};
-
-	return 0;
+	return azure_iot_hub_dps_device_id_delete();
 }
