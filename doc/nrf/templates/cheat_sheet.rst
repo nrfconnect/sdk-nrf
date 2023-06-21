@@ -332,7 +332,7 @@ Include 1:
      :end-line: 27
 
 Include 2:
-  .. include:: ../getting_started/installing.rst
+  .. include:: ../installation/installing.rst
      :start-after: west-error-start
      :end-before: west-error-end
 
@@ -355,7 +355,7 @@ Include 4:
 You can also use ncs-include if you want to use the indentation options inside the nrf doc set:
 
 Include 5 (similar to include 2, but improved indentation):
-  .. ncs-include:: ../getting_started/installing.rst
+  .. ncs-include:: ../installation/installing.rst
      :start-after: west-error-start
      :end-before: west-error-end
      :auto-dedent:
