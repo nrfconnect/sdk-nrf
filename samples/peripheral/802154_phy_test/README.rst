@@ -921,9 +921,9 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 .. note::
-   On the |nRF5340DKnoref|, the IEEE 802.15.4 PHY Test Tool is a standalone network sample that does not require any counterpart application sample.
-   However, you must still program the application core to boot up the network core, and forward the UART pins to the network core of the CMD device.
-   The :ref:`nrf5340_empty_app_core` sample, which does both, is built and programmed automatically by default.
+   On the |nRF5340DKnoref|, the IEEE 802.15.4 PHY Test Tool sample is designed to run on the network core and requires the :ref:`nrf5340_remote_shell` running on the application core.
+   This sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical UART interface of the application core.
+   The Remote IPC shell sample is built and programmed automatically by default.
 
 .. _802154_phy_test_testing:
 
