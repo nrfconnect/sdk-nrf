@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/dfu/mcuboot.h>
+#include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/sys/math_extras.h>
 
@@ -27,14 +28,16 @@ static atomic_t mcumgr_event_active = ATOMIC_INIT(false);
 /* nRF Desktop MCUmgr DFU module cannot be enabled together with the CAF BLE SMP module. */
 BUILD_ASSERT(!IS_ENABLED(CONFIG_CAF_BLE_SMP));
 
-/* Declare the function here as it is not available in the MCUmgr API. */
-void img_mgmt_reset_upload(void);
-
 static void dfu_lock_owner_changed(const struct dfu_lock_owner *new_owner)
 {
 	LOG_DBG("MCUmgr progress reset due to the different DFU owner: %s", new_owner->name);
 
+#ifdef CONFIG_DESKTOP_DFU_LOCK
+	/* The function declaration is not included in MCUmgr's header file if the mutex locking
+	 * of the image management state object is disabled.
+	 */
 	img_mgmt_reset_upload();
+#endif /* CONFIG_DESKTOP_DFU_LOCK */
 }
 
 const static struct dfu_lock_owner mcumgr_owner = {
