@@ -28,6 +28,10 @@ endif()
 
 if(CONFIG_BOOTLOADER_MCUBOOT)
   if (CONFIG_NCS_IS_VARIANT_IMAGE)
+    # NCS Handles everything regarding mcuboot, ensure Zephyr doesn't interfere.
+    # This is a temporary solution until Zephyr signing has been made more modular.
+    set(CONFIG_BOOTLOADER_MCUBOOT False PARENT_SCOPE)
+
     # When building the variant of an image, the configuration of the variant image
     # is identical to the base image, except 'CONFIG_NCS_IS_VARIANT_IMAGE'. The
     # logic below should only be performed once, for the base image, not for the variant variant.
