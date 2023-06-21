@@ -513,9 +513,9 @@ static int gnss_init_and_start(void)
 	/* Default to no power saving. */
 	uint8_t power_mode = NRF_MODEM_GNSS_PSM_DISABLED;
 
-#if defined(GNSS_SAMPLE_POWER_SAVING_MODERATE)
+#if defined(CONFIG_GNSS_SAMPLE_POWER_SAVING_MODERATE)
 	power_mode = NRF_MODEM_GNSS_PSM_DUTY_CYCLING_PERFORMANCE;
-#elif defined(GNSS_SAMPLE_POWER_SAVING_HIGH)
+#elif defined(CONFIG_GNSS_SAMPLE_POWER_SAVING_HIGH)
 	power_mode = NRF_MODEM_GNSS_PSM_DUTY_CYCLING_POWER;
 #endif
 
