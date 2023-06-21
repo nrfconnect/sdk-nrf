@@ -11,9 +11,12 @@
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <stdio.h>
 
 #include "wpa_cli_zephyr.h"
 
+/* wait period before moving to next entry in list */
+#define CONNECTION_TIMEOUT 10
 /* Ensure 'strnlen' is available even with -std=c99. */
 size_t strnlen(const char *buf, size_t bufsz);
 
@@ -23,6 +26,81 @@ LOG_MODULE_REGISTER(wifi_mgmt_ext, CONFIG_WIFI_MGMT_EXT_LOG_LEVEL);
 	BUILD_ASSERT(sizeof(CONFIG_WIFI_CREDENTIALS_STATIC_SSID) != 1,
 		     "CONFIG_WIFI_CREDENTIALS_STATIC_SSID required");
 #endif /* defined(CONFIG_WIFI_CREDENTIALS_STATIC) */
+
+static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
+				struct wifi_connect_req_params *params)
+{
+	char *ssid = NULL;
+	char *psk = NULL;
+	int ret;
+
+	/* SSID */
+	ssid = (char *)k_malloc(creds->header.ssid_len + 1);
+	if (!ssid) {
+		LOG_ERR("Failed to allocate memory for SSID\n");
+		ret = -ENOMEM;
+		goto err_out;
+	}
+	memset(ssid, 0, creds->header.ssid_len + 1);
+	ret = snprintf(ssid, creds->header.ssid_len + 1, "%s", creds->header.ssid);
+	if (ret > creds->header.ssid_len) {
+		LOG_ERR("SSID string truncated\n");
+		ret = -EINVAL;
+		goto err_out;
+	}
+	params->ssid = ssid;
+	params->ssid_length = creds->header.ssid_len;
+
+	/* PSK (optional) */
+	if (creds->password_len > 0) {
+		psk = (char *)k_malloc(creds->password_len + 1);
+		if (!psk) {
+			LOG_ERR("Failed to allocate memory for PSK\n");
+			ret = -ENOMEM;
+			goto err_out;
+		}
+		memset(psk, 0, creds->password_len + 1);
+		ret = snprintf(psk,  creds->password_len + 1, "%s", creds->password);
+		if (ret > creds->password_len) {
+			LOG_ERR("PSK string truncated\n");
+			ret = -EINVAL;
+			goto err_out;
+		}
+		params->psk = psk;
+		params->psk_length = creds->password_len;
+	}
+
+	/* Defaults */
+	params->security = creds->header.type;
+	params->mfp = WIFI_MFP_OPTIONAL;
+	params->channel = WIFI_CHANNEL_ANY;
+	params->timeout = CONNECTION_TIMEOUT;
+
+	/* Security type (optional) */
+	if (creds->header.type > WIFI_SECURITY_TYPE_MAX) {
+		params->security = WIFI_SECURITY_TYPE_NONE;
+	}
+
+	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_2_4GHz) {
+		params->band = WIFI_FREQ_BAND_2_4_GHZ;
+	} else if (creds->header.flags & WIFI_CREDENTIALS_FLAG_5GHz) {
+		params->band = WIFI_FREQ_BAND_5_GHZ;
+	} else {
+		params->band = WIFI_FREQ_BAND_UNKNOWN;
+	}
+
+	return 0;
+err_out:
+	if (ssid) {
+		k_free(ssid);
+		ssid = NULL;
+	}
+	if (psk) {
+		k_free(psk);
+		psk = NULL;
+	}
+	return ret;
+}
 
 static inline const char *wpa_supp_security_txt(enum wifi_security_type security)
 {
@@ -41,59 +119,35 @@ static inline const char *wpa_supp_security_txt(enum wifi_security_type security
 	}
 }
 
-static int add_network_from_credentials_struct_personal(struct wifi_credentials_personal *creds)
+static int add_network_from_credentials_struct_personal(struct wifi_credentials_personal *creds,
+							struct net_if *iface)
 {
 	int ret = 0;
-	struct add_network_resp resp = {0};
+	struct wifi_connect_req_params cnx_params = {0};
 
-	ret = z_wpa_ctrl_add_network(&resp);
-	if (ret) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", ret, __FILE__, __LINE__);
-		return ret;
+	if (__stored_creds_to_params(creds, &cnx_params)) {
+		ret = -ENOEXEC;
+		goto out;
 	}
 
-	z_wpa_cli_cmd_v("set_network %d ssid \"%s\"", resp.network_id, creds->header.ssid);
-	z_wpa_cli_cmd_v("set_network %d key_mgmt %s", resp.network_id,
-		     wpa_supp_security_txt(creds->header.type));
+	if (net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
+		     &cnx_params, sizeof(struct wifi_connect_req_params))) {
+		LOG_ERR("Connection request failed\n");
 
-	if (creds->header.type == WIFI_SECURITY_TYPE_PSK ||
-	    creds->header.type == WIFI_SECURITY_TYPE_PSK_SHA256) {
-		z_wpa_cli_cmd_v("set_network %d psk \"%.*s\"", resp.network_id,
-			     creds->password_len, creds->password);
+		return -ENOEXEC;
 	}
 
-	if (creds->header.type == WIFI_SECURITY_TYPE_SAE) {
-		z_wpa_cli_cmd_v("set_network %d sae_password \"%.*s\"",
-			     resp.network_id, creds->password_len, creds->password);
+	LOG_INF("Connection requested\n");
+
+out:
+	if (cnx_params.psk) {
+		k_free((void *)cnx_params.psk);
 	}
 
-	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_BSSID) {
-		z_wpa_cli_cmd_v("set_network %d bssid %02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
-			resp.network_id,
-			creds->header.bssid[0], creds->header.bssid[1],
-			creds->header.bssid[2], creds->header.bssid[3],
-			creds->header.bssid[4], creds->header.bssid[5]);
+	if (cnx_params.ssid) {
+		k_free((void *)cnx_params.ssid);
 	}
 
-	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_FAVORITE) {
-		z_wpa_cli_cmd_v("set_network %d priority 1", resp.network_id);
-	}
-
-	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_2_4GHz) {
-		z_wpa_cli_cmd_v("set_network %d freq_list "
-			     "2412 2417 2422 2427 2432 2437 2442 "
-			     "2447 2452 2457 2462 2467 2472 2484", resp.network_id);
-	}
-
-	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_5GHz) {
-		z_wpa_cli_cmd_v("set_network %d freq_list "
-			     "5180 5200 5220 5240 5260 5280 5300 "
-			     "5310 5320 5500 5520 5540 5560 5580 "
-			     "5600 5620 5640 5660 5680 5700 5745 "
-			     "5765 5785 5805 5825", resp.network_id);
-	}
-
-	z_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 	return ret;
 }
 
@@ -111,10 +165,10 @@ static void add_stored_network(void *cb_arg, const char *ssid, size_t ssid_len)
 		return;
 	}
 
-	add_network_from_credentials_struct_personal(&creds);
+	add_network_from_credentials_struct_personal(&creds, (struct net_if *)cb_arg);
 }
 
-static int add_static_network_config(void)
+static int add_static_network_config(struct net_if *iface)
 {
 #if defined(CONFIG_WIFI_CREDENTIALS_STATIC)
 
@@ -156,7 +210,7 @@ static int add_static_network_config(void)
 	LOG_DBG("Adding statically configured WiFi network [%s] to internal list.",
 		creds.header.ssid);
 
-	return add_network_from_credentials_struct_personal(&creds);
+	return add_network_from_credentials_struct_personal(&creds, iface);
 #else
 	return 0;
 #endif /* defined(CONFIG_WIFI_CREDENTIALS_STATIC) */
@@ -167,14 +221,12 @@ static int wifi_ext_command(uint32_t mgmt_request, struct net_if *iface,
 {
 	int ret = 0;
 
-	z_wpa_cli_cmd_v("remove_network all");
-
-	ret = add_static_network_config();
+	ret = add_static_network_config(iface);
 	if (ret) {
 		return ret;
 	}
 
-	wifi_credentials_for_each_ssid(add_stored_network, NULL);
+	wifi_credentials_for_each_ssid(add_stored_network, iface);
 
 	return ret;
 };
