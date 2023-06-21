@@ -272,10 +272,11 @@ out:
 
 static void wifi_nrf_fmac_fw_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
+	/* TODO: To be activated once UMAC supports deinit */
+#ifdef NOTYET
 	unsigned long start_time_us = 0;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
-	/* TODO: To be activated once UMAC supports deinit */
 	status = umac_cmd_deinit(fmac_dev_ctx);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
@@ -304,10 +305,12 @@ static void wifi_nrf_fmac_fw_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 		goto out;
 	}
 out:
+#endif /* NOTYET */
 	wifi_nrf_fmac_deinit_rx(fmac_dev_ctx);
 #ifdef CONFIG_NRF700X_DATA_TX
 	wifi_nrf_fmac_deinit_tx(fmac_dev_ctx);
 #endif /* CONFIG_NRF700X_DATA_TX */
+
 }
 
 void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
