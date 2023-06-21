@@ -223,6 +223,14 @@ int rpu_pwron(void)
 	return 0;
 }
 
+int rpu_pwroff(void)
+{
+	gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
+	gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
+
+	return 0;
+}
+
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 int ble_ant_switch(unsigned int ant_switch)
@@ -351,7 +359,7 @@ int rpu_enable(void)
 
 int rpu_disable(void)
 {
-	gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
-	gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
+	rpu_pwroff();
+
 	return 0;
 }

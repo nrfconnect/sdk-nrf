@@ -114,6 +114,9 @@ static void wifi_nrf_bus_qspi_dev_rem(void *bus_dev_ctx)
 	wifi_nrf_osal_bus_qspi_dev_intr_unreg(qspi_dev_ctx->qspi_priv->opriv,
 					      qspi_dev_ctx->os_qspi_dev_ctx);
 
+	wifi_nrf_osal_bus_qspi_dev_rem(qspi_dev_ctx->qspi_priv->opriv,
+					       qspi_dev_ctx->os_qspi_dev_ctx);
+
 	wifi_nrf_osal_mem_free(qspi_dev_ctx->qspi_priv->opriv,
 			       qspi_dev_ctx);
 }
