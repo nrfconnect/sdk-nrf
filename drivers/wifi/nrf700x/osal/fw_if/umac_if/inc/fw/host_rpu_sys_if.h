@@ -388,6 +388,7 @@ struct nrf_wifi_interface_stats {
 	unsigned int rx_beacon_miss_count;
 	unsigned int rx_bytes;
 	unsigned int rx_checksum_error_count;
+	unsigned int replay_attack_drop_cnt;
 } __NRF_WIFI_PKD;
 
 struct rpu_umac_stats {
@@ -639,6 +640,7 @@ struct nrf_wifi_cmd_sys_init {
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN];
 	unsigned int op_band;
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
+	unsigned short maxidle_insec;
 } __NRF_WIFI_PKD;
 
 /**
