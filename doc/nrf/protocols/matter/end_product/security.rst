@@ -14,7 +14,7 @@ Enable AP-Protect
 
 Make sure to enable the AP-Protect feature for the production devices to disable the debug functionality.
 
-.. include:: ../../../app_dev/ap_protect/index.rst
+.. include:: ../../../security/ap_protect.rst
    :start-after: app_approtect_info_start
    :end-before: app_approtect_info_end
 
