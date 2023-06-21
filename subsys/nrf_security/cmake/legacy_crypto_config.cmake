@@ -189,11 +189,6 @@ if (CONFIG_CC3XX_BACKEND)
   endif()
 endif()
 
-# Ensure that MBEDTLS_SHA224_C is set if MBEDTLS_SHA256_C
-# to prevent build errors.
-kconfig_check_and_set_base_depends(MBEDTLS_SHA224_C
-  MBEDTLS_SHA256_C
-)
 
 # Convert defines required even in PSA mode
 kconfig_check_and_set_base_depends(MBEDTLS_SHA1_C
@@ -281,6 +276,11 @@ Kconfig_check_and_set_base_depends(MBEDTLS_ECP_DP_CURVE448_ENABLED
   PSA_WANT_ECC_MONTGOMERY_448
 )
 
+# Ensure that MBEDTLS_SHA224_C is set if MBEDTLS_SHA256_C
+# to prevent build errors.
+kconfig_check_and_set_base_depends(MBEDTLS_SHA224_C
+  MBEDTLS_SHA256_C
+)
 
 if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
   # Generate the mbed TLS config file (default nrf-config.h)
