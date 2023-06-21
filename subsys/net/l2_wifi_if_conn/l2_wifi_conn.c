@@ -47,7 +47,7 @@ static void wifi_conn_work_handler(struct k_work *work)
 
 static int wifi_conn_timeout_schedule(void)
 {
-	int rc;
+	int rc = 0;
 
 	if (conn_mgr_if_get_timeout(wifi_iface) > CONN_MGR_IF_NO_TIMEOUT) {
 		rc = k_work_schedule_for_queue(&wifi_conn_wq, &wifi_conn_work,
