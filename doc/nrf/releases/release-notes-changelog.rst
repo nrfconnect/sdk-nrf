@@ -338,6 +338,10 @@ Modem libraries
 
 * Added the :ref:`modem_battery_readme` library that obtains battery voltage information or notifications from a modem.
 
+* :ref:`nrf_modem_lib_readme`:
+
+  * Updated the :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
+
 * :ref:`pdn_readme` library:
 
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
