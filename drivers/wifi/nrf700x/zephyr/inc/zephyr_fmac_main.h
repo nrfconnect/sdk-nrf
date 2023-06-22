@@ -60,10 +60,8 @@ struct wifi_nrf_vif_ctx_zep {
 #ifdef CONFIG_WPA_SUPP
 	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
 #endif /* CONFIG_WPA_SUPP */
-	/* Used to store the negotiated twt flow id
-	 * for "twt_teardown_all" command.
-	 */
-	unsigned char neg_twt_flow_id;
+	unsigned char twt_flows_map;
+	unsigned char twt_flow_in_progress_map;
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
@@ -78,7 +76,6 @@ struct wifi_nrf_vif_ctx_zep {
 		unsigned int ext_capa_len;
 	} iface_ext_capa;
 	bool cookie_resp_received;
-	bool twt_in_progress;
 	struct k_work wifi_nrf_net_iface_work;
 };
 

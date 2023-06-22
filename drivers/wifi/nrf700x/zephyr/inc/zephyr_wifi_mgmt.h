@@ -50,6 +50,9 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 		struct nrf_wifi_umac_event_twt_sleep *twt_sleep_info,
 		unsigned int event_len);
 
+int wifi_nrf_twt_teardown_flows(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
+		unsigned char start_flow_id, unsigned char end_flow_id);
+
 int wifi_nrf_get_power_save_config(const struct device *dev,
 		struct wifi_ps_config *ps_config);
 

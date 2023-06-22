@@ -611,6 +611,60 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 	vif_ctx_zep->ps_config_info_evnt = true;
 }
 
+static void wifi_nrf_twt_update_internal_state(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
+	bool setup, unsigned char flow_id)
+{
+	if (setup) {
+		vif_ctx_zep->twt_flows_map |= BIT(flow_id);
+		vif_ctx_zep->twt_flow_in_progress_map &= ~BIT(flow_id);
+	} else {
+		vif_ctx_zep->twt_flows_map &= ~BIT(flow_id);
+	}
+}
+
+int wifi_nrf_twt_teardown_flows(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
+		unsigned char start_flow_id, unsigned char end_flow_id)
+{
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_umac_config_twt_info twt_info = {0};
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	int ret = 0;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		ret = -1;
+		goto out;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		ret = -1;
+		goto out;
+	}
+
+	for (int flow_id = start_flow_id; flow_id < end_flow_id; flow_id++) {
+		if (!(vif_ctx_zep->twt_flows_map & BIT(flow_id))) {
+			continue;
+		}
+		twt_info.twt_flow_id = flow_id;
+		status = wifi_nrf_fmac_twt_teardown(rpu_ctx_zep->rpu_ctx,
+						vif_ctx_zep->vif_idx,
+						&twt_info);
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			LOG_ERR("%s: TWT teardown for flow id %d failed\n",
+				__func__, flow_id);
+			ret = -1;
+			continue;
+		}
+		/* UMAC doesn't send TWT teardown event for host initiated teardown */
+		wifi_nrf_twt_update_internal_state(vif_ctx_zep, false, flow_id);
+	}
+
+out:
+	return ret;
+}
 
 int wifi_nrf_set_twt(const struct device *dev,
 		     struct wifi_twt_params *twt_params)
@@ -639,10 +693,26 @@ int wifi_nrf_set_twt(const struct device *dev,
 		goto out;
 	}
 
+	if (!(twt_params->operation == WIFI_TWT_TEARDOWN && twt_params->teardown.teardown_all) &&
+		twt_params->flow_id >= WIFI_MAX_TWT_FLOWS) {
+		LOG_ERR("%s: Invalid flow id: %d\n",
+			__func__, twt_params->flow_id);
+		twt_params->fail_reason = WIFI_TWT_FAIL_INVALID_FLOW_ID;
+		goto out;
+	}
+
 	switch (twt_params->operation) {
 	case WIFI_TWT_SETUP:
-		if (vif_ctx_zep->twt_in_progress) {
-			return WIFI_TWT_FAIL_OPERATION_IN_PROGRESS;
+		if (vif_ctx_zep->twt_flow_in_progress_map & BIT(twt_params->flow_id)) {
+			twt_params->fail_reason = WIFI_TWT_FAIL_OPERATION_IN_PROGRESS;
+			goto out;
+		}
+
+		if (twt_params->setup_cmd == WIFI_TWT_SETUP_CMD_REQUEST) {
+			if (vif_ctx_zep->twt_flows_map & BIT(twt_params->flow_id)) {
+				twt_params->fail_reason = WIFI_TWT_FAIL_FLOW_ALREADY_EXISTS;
+				goto out;
+			}
 		}
 
 		struct twt_interval_float twt_interval_float =
@@ -670,39 +740,29 @@ int wifi_nrf_set_twt(const struct device *dev,
 					   vif_ctx_zep->vif_idx,
 					   &twt_info);
 
-		if (status == WIFI_NRF_STATUS_SUCCESS) {
-			vif_ctx_zep->twt_in_progress = true;
-		}
-
 		break;
 	case WIFI_TWT_TEARDOWN:
-		twt_info.twt_flow_id = twt_params->flow_id;
+		unsigned char start_flow_id = 0;
+		unsigned char end_flow_id = WIFI_MAX_TWT_FLOWS;
 
-		if (twt_params->teardown.teardown_all) {
-			if (vif_ctx_zep->neg_twt_flow_id == 0xFF) {
-				LOG_ERR("Invalid negotiated TWT flow id\n");
-				twt_params->fail_reason =
-					WIFI_TWT_FAIL_INVALID_FLOW_ID;
+		if (!twt_params->teardown.teardown_all) {
+			if (!(vif_ctx_zep->twt_flows_map & BIT(twt_params->flow_id))) {
+				twt_params->fail_reason = WIFI_TWT_FAIL_INVALID_FLOW_ID;
 				goto out;
 			}
-			/* Update the negotiated flow id
-			 * from the negotiated value.
-			 */
-			twt_info.twt_flow_id = vif_ctx_zep->neg_twt_flow_id;
-		} else {
-			/* Update the flow id as given by the user. */
+			start_flow_id = twt_params->flow_id;
+			end_flow_id = twt_params->flow_id + 1;
 			twt_info.twt_flow_id = twt_params->flow_id;
 		}
 
-		status = wifi_nrf_fmac_twt_teardown(rpu_ctx_zep->rpu_ctx,
-						    vif_ctx_zep->vif_idx,
-						    &twt_info);
-
-		if (status == WIFI_NRF_STATUS_SUCCESS) {
-			vif_ctx_zep->neg_twt_flow_id = 0XFF;
-			vif_ctx_zep->twt_in_progress = false;
+		status = wifi_nrf_twt_teardown_flows(vif_ctx_zep,
+						     start_flow_id,
+						     end_flow_id);
+		if (status != WIFI_NRF_STATUS_SUCCESS) {
+			LOG_ERR("%s: TWT teardown failed: start_flow_id: %d, end_flow_id: %d\n",
+				__func__, start_flow_id, end_flow_id);
+			goto out;
 		}
-
 		break;
 
 	default:
@@ -737,8 +797,6 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 
 	twt_params.operation = WIFI_TWT_SETUP;
 	twt_params.flow_id = twt_setup_info->info.twt_flow_id;
-	/* Store the negotiated flow id and pass it to user. */
-	vif_ctx_zep->neg_twt_flow_id = twt_setup_info->info.twt_flow_id;
 	twt_params.negotiation_type = twt_rpu_to_wifi_mgmt_neg_type(twt_setup_info->info.neg_type);
 	twt_params.setup_cmd = twt_rpu_to_wifi_mgmt_setup_cmd(twt_setup_info->info.setup_cmd);
 	twt_params.setup.trigger = twt_setup_info->info.ap_trigger_frame ? 1 : 0;
@@ -754,8 +812,8 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 	twt_params.resp_status = twt_setup_info->info.twt_resp_status;
 
 	if ((twt_setup_info->info.twt_resp_status == 0) ||
-	    (twt_setup_info->info.neg_type != NRF_WIFI_ACCEPT_TWT)) {
-		vif_ctx_zep->twt_in_progress = false;
+	    (twt_setup_info->info.neg_type == NRF_WIFI_ACCEPT_TWT)) {
+		wifi_nrf_twt_update_internal_state(vif_ctx_zep, true, twt_params.flow_id);
 	}
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
@@ -778,8 +836,7 @@ void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
 	twt_params.operation = WIFI_TWT_TEARDOWN;
 	twt_params.flow_id = twt_teardown_info->info.twt_flow_id;
 	/* TODO: ADD reason code in the twt_params structure */
-	vif_ctx_zep->neg_twt_flow_id = 0XFF;
-	vif_ctx_zep->twt_in_progress = false;
+	wifi_nrf_twt_update_internal_state(vif_ctx_zep, false, twt_params.flow_id);
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
