@@ -213,6 +213,8 @@ config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS
 
 endif # NRF_MODEM_LIB_TRACE
 
+rsource "lte_net_if/Kconfig"
+
 choice NRF_MODEM_LIB_ON_FAULT
 	prompt "Action on modem fault"
 	default NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
