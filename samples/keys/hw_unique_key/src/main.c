@@ -19,6 +19,8 @@
 #include <zephyr/sys/reboot.h>
 #endif /* !defined(HUK_HAS_KMU) */
 
+#include "derive_key.h"
+
 #define IV_LEN 12
 #define MAC_LEN 16
 
@@ -28,9 +30,6 @@
 #else
 #define ENCRYPT_ALG PSA_ALG_GCM
 #endif
-
-psa_key_id_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
-			uint32_t label_size);
 
 void hex_dump(uint8_t *buff, uint32_t len)
 {

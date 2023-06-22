@@ -9,6 +9,8 @@
 #include <psa/crypto.h>
 #include <hw_unique_key.h>
 
+#include "derive_key.h"
+
 #ifdef HUK_HAS_KMU
 #define KEYSLOT HUK_KEYSLOT_MKEK
 #else
