@@ -5,13 +5,11 @@
  */
 
 #include <unity.h>
+#include <zephyr/device.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/device.h>
-
-/* UUT header file */
-#include "lte_net_if.h"
+#include <modem/nrf_modem_lib.h>
 
 /* Mocked libraries */
 #include "cmock_lte_lc.h"

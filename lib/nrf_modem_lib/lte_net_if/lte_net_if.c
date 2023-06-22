@@ -14,7 +14,6 @@
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 
-#include "lte_net_if.h"
 #include "lte_ip_addr_helper.h"
 
 LOG_MODULE_REGISTER(nrf_modem_lib_netif, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
@@ -38,6 +37,8 @@ static void connection_timeout_schedule(void);
 
 /* Delayable work used to handle LTE connection timeouts. */
 static K_WORK_DELAYABLE_DEFINE(connection_timeout_work, connection_timeout_work_fn);
+
+static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn);
 
 /* Local reference to the network interface the l2 connection layer is bound to. */
 static struct net_if *iface_bound;
@@ -339,8 +340,7 @@ static void lte_reg_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-/* Public APIs */
-void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
+static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 {
 	int ret;
 	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
@@ -460,7 +460,7 @@ int lte_net_if_disable(void)
 	return 0;
 }
 
-int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
+static int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
 {
 	ARG_UNUSED(if_conn);
 
@@ -478,7 +478,7 @@ int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
 	return 0;
 }
 
-int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
+static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
 {
 	ARG_UNUSED(if_conn);
 
@@ -497,8 +497,8 @@ int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
 	return 0;
 }
 
-int lte_net_if_options_set(struct conn_mgr_conn_binding *const if_conn, int name, const void *value,
-			   size_t length)
+static int lte_net_if_options_set(struct conn_mgr_conn_binding *const if_conn, int name,
+				  const void *value, size_t length)
 {
 	ARG_UNUSED(name);
 
@@ -539,8 +539,8 @@ int lte_net_if_options_set(struct conn_mgr_conn_binding *const if_conn, int name
 	return 0;
 }
 
-int lte_net_if_options_get(struct conn_mgr_conn_binding *const if_conn, int name, void *value,
-			   size_t *length)
+static int lte_net_if_options_get(struct conn_mgr_conn_binding *const if_conn, int name,
+				  void *value, size_t *length)
 {
 	switch (name) {
 	case NRF_MODEM_LIB_NET_IF_DOWN:
@@ -566,3 +566,14 @@ int lte_net_if_options_get(struct conn_mgr_conn_binding *const if_conn, int name
 
 	return 0;
 }
+
+/* Bind connectity APIs.
+ * extern in nrf91_sockets.c
+ */
+struct conn_mgr_conn_api lte_net_if_conn_mgr_api = {
+	.init = lte_net_if_init,
+	.connect = lte_net_if_connect,
+	.disconnect = lte_net_if_disconnect,
+	.set_opt = lte_net_if_options_set,
+	.get_opt = lte_net_if_options_get,
+};

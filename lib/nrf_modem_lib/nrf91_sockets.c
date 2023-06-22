@@ -36,11 +36,12 @@
 #include <zephyr/posix/sys/socket.h>
 #endif
 
-#if defined(CONFIG_NRF_MODEM_LIB_NET_IF)
-#include "lte_net_if/lte_net_if.h"
-#endif /* CONFIG_NRF_MODEM_LIB_NET_IF */
-
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
+
+/* Macro used to define a private Connection Manager connectivity context type.
+ * Required but not implemented.
+ */
+#define NRF_MODEM_LIB_NET_IF_CTX_TYPE void *
 
 #define OBJ_TO_SD(obj) (((struct nrf_sock_ctx *)obj)->nrf_fd)
 #define OBJ_TO_CTX(obj) ((struct nrf_sock_ctx *)obj)
@@ -1158,9 +1159,13 @@ static void nrf91_iface_api_init(struct net_if *iface)
 
 static int nrf91_iface_enable(const struct net_if *iface, bool enabled)
 {
-	/* Enables or disable the device (in response to admin state change) */
 #if defined(CONFIG_NRF_MODEM_LIB_NET_IF)
-	return enabled ? lte_net_if_enable() : lte_net_if_disable();
+	/* Enables or disable the device (in response to admin state change) */
+	extern int lte_net_if_enable(void);
+	extern int lte_net_if_disable(void);
+
+	return enabled ? lte_net_if_enable() :
+			 lte_net_if_disable();
 #else
 	ARG_UNUSED(iface);
 	ARG_UNUSED(enabled);
@@ -1181,16 +1186,8 @@ NET_DEVICE_OFFLOAD_INIT(nrf91_socket, "nrf91_socket",
 			0, &nrf91_iface_offload_api, 1280);
 
 #if defined(CONFIG_NRF_MODEM_LIB_NET_IF)
-/* Bind l2 connectity APIs. */
-static struct conn_mgr_conn_api conn_api = {
-	.init = lte_net_if_init,
-	.connect = lte_net_if_connect,
-	.disconnect = lte_net_if_disconnect,
-	.set_opt = lte_net_if_options_set,
-	.get_opt = lte_net_if_options_get,
-};
-
-CONN_MGR_CONN_DEFINE(NRF_MODEM_LIB_NET_IF, &conn_api);
+extern struct conn_mgr_conn_api lte_net_if_conn_mgr_api;
+CONN_MGR_CONN_DEFINE(NRF_MODEM_LIB_NET_IF, &lte_net_if_conn_mgr_api);
 CONN_MGR_BIND_CONN(nrf91_socket, NRF_MODEM_LIB_NET_IF);
 #endif /* CONFIG_NRF_MODEM_LIB_NET_IF */
 
