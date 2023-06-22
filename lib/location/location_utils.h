@@ -28,12 +28,15 @@ struct location_utils_modem_params_info {
 };
 
 /**
- * @brief Check if default PDN context is active.
+ * @brief Check if LTE networking is available.
  *
- * @retval true      If default PDN context is active.
- * @retval false     If default PDN context is not active.
+ * Checks for an active default PDN bearer, but does not check cell registration status,
+ * so may give false positive, but not false negative.
+ *
+ * @retval true      LTE networking is available.
+ * @retval false     LTE networking is not available.
  */
-bool location_utils_is_default_pdn_active(void);
+bool location_utils_is_lte_available(void);
 
 /**
  * @brief Read modem parameters.

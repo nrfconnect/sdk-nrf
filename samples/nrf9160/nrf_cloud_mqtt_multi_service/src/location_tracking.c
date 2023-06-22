@@ -8,11 +8,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <modem/location.h>
-#include <modem/nrf_modem_lib.h>
-#include <nrf_modem_at.h>
 #include <date_time.h>
-#include <net/nrf_cloud_agps.h>
-#include <net/nrf_cloud_pgps.h>
 
 #include "location_tracking.h"
 

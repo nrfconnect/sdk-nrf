@@ -4,10 +4,19 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config LOCATION
+config LOCATION_METHOD_GNSS
 	bool "Internal"
 	#depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
+	default y
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config LOCATION_METHOD_CELLULAR
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	default y
 	help
 	  Redefinition to disable modemlib requirement from the tests as we want to mock it.

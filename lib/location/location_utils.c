@@ -12,7 +12,6 @@
 
 #include <zephyr/posix/time.h>
 
-#include <nrf_modem_at.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <net/nrf_cloud.h>
@@ -31,7 +30,10 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 char jwt_buf[600];
 
-bool location_utils_is_default_pdn_active(void)
+#if defined(CONFIG_NRF_MODEM_LIB)
+#include <nrf_modem_at.h>
+
+bool location_utils_is_lte_available(void)
 {
 	char at_response_str[128];
 	const char *p;
@@ -44,9 +46,10 @@ bool location_utils_is_default_pdn_active(void)
 		return false;
 	}
 
-	/* Search for a string +CGACT: <cid>,<state> */
+	/* Check whether a PDN bearer is active by searching for a string +CGACT: <cid>,<state> */
 	p = strstr(at_response_str, "+CGACT: 0,1");
 	if (p) {
+		/* If it is, then LTE networking is likely available. */
 		is_active = true;
 	}
 	return is_active;
@@ -106,6 +109,20 @@ int location_utils_modem_params_read(struct location_utils_modem_params_info *mo
 	}
 	return err;
 }
+
+#else /* CONFIG_NRF_MODEM_LIB */
+
+bool location_utils_is_lte_available(void)
+{
+	return false;
+}
+
+int location_utils_modem_params_read(struct location_utils_modem_params_info *modem_params)
+{
+	return 0;
+}
+
+#endif /* CONFIG_NRF_MODEM_LIB*/
 
 const char *location_utils_nrf_cloud_jwt_generate(void)
 {

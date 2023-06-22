@@ -10,8 +10,6 @@
 
 #include <zephyr/logging/log.h>
 #include <zephyr/net/tls_credentials.h>
-#include <modem/lte_lc.h>
-#include <modem/modem_key_mgmt.h>
 
 #include "cloud_service.h"
 #include "cloud_service_nrf.h"

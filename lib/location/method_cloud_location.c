@@ -126,7 +126,7 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 		.timeout_ms = used_timeout_ms
 	};
 
-	if (!location_utils_is_default_pdn_active()) {
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB) && !location_utils_is_lte_available()) {
 		/* Not worth to start trying to fetch the location over LTE.
 		 * Thus, fail faster in this case and save the trying "costs".
 		 */
