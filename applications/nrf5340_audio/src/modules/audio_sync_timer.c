@@ -27,11 +27,11 @@ const nrfx_timer_t audio_sync_timer_instance =
 static uint8_t dppi_channel_timer_clear;
 static uint8_t dppi_channel_i2s_frame_start;
 
-static nrfx_timer_config_t cfg = { .frequency = NRF_TIMER_FREQ_1MHz,
-				   .mode = NRF_TIMER_MODE_TIMER,
-				   .bit_width = NRF_TIMER_BIT_WIDTH_32,
-				   .interrupt_priority = NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
-				   .p_context = NULL };
+static nrfx_timer_config_t cfg = {.frequency = NRFX_MHZ_TO_HZ(1UL),
+				  .mode = NRF_TIMER_MODE_TIMER,
+				  .bit_width = NRF_TIMER_BIT_WIDTH_32,
+				  .interrupt_priority = NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
+				  .p_context = NULL};
 
 static void event_handler(nrf_timer_event_t event_type, void *ctx)
 {
@@ -54,7 +54,6 @@ static void event_handler(nrf_timer_event_t event_type, void *ctx)
 static int audio_sync_timer_init(void)
 {
 	nrfx_err_t ret;
-
 
 	ret = nrfx_timer_init(&audio_sync_timer_instance, &cfg, event_handler);
 	if (ret - NRFX_ERROR_BASE_NUM) {

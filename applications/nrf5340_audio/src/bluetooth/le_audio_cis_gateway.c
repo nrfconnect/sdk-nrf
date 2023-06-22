@@ -51,6 +51,7 @@ struct le_audio_headset {
 	char *ch_name;
 	bool hci_wrn_printed;
 	uint32_t seq_num;
+	uint8_t num_eps;
 	struct bt_bap_stream sink_stream;
 	struct bt_bap_ep *sink_ep;
 	struct bt_codec sink_codec_cap[CONFIG_CODEC_CAP_COUNT_MAX];
@@ -74,9 +75,9 @@ struct worker_data {
 
 struct temp_cap_storage {
 	struct bt_conn *conn;
+	uint8_t num_caps;
 	/* Must be the same size as sink_codec_cap and source_codec_cap */
 	struct bt_codec codec[CONFIG_CODEC_CAP_COUNT_MAX];
-	uint8_t num_caps_total;
 };
 
 static struct le_audio_headset headsets[CONFIG_BT_MAX_CONN];
@@ -110,13 +111,7 @@ static bool playing_state = true;
 static void ble_acl_start_scan(void);
 static bool ble_acl_gateway_all_links_connected(void);
 
-static struct bt_bap_unicast_client_discover_params audio_sink_discover_param[CONFIG_BT_MAX_CONN];
-
-#if (CONFIG_BT_AUDIO_RX)
-static struct bt_bap_unicast_client_discover_params audio_source_discover_param[CONFIG_BT_MAX_CONN];
-
 static int discover_source(struct bt_conn *conn);
-#endif /* (CONFIG_BT_AUDIO_RX) */
 
 static void le_audio_event_publish(enum le_audio_evt_type event)
 {
@@ -343,9 +338,124 @@ static void available_contexts_cb(struct bt_conn *conn, enum bt_audio_context sn
 	LOG_DBG("conn: %s, snk ctx %d src ctx %d\n", addr, snk_ctx, src_ctx);
 }
 
-static const struct bt_bap_unicast_client_cb unicast_client_cbs = {
+static int temp_cap_index_get(struct bt_conn *conn, uint8_t *index)
+{
+	if (conn == NULL) {
+		LOG_ERR("No conn provided");
+		return -EINVAL;
+	}
+
+	for (int i = 0; i < ARRAY_SIZE(temp_cap); i++) {
+		if (temp_cap[i].conn == conn) {
+			*index = i;
+			return 0;
+		}
+	}
+
+	/* Connection not found in temp_cap, searching for empty slot */
+	for (int i = 0; i < ARRAY_SIZE(temp_cap); i++) {
+		if (temp_cap[i].conn == NULL) {
+			temp_cap[i].conn = conn;
+			*index = i;
+			return 0;
+		}
+	}
+
+	LOG_WRN("No more space in temp_cap");
+
+	return -ECANCELED;
+}
+
+static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir, const struct bt_codec *codec)
+{
+	int ret;
+	uint8_t temp_cap_index;
+
+	ret = temp_cap_index_get(conn, &temp_cap_index);
+	if (ret) {
+		LOG_ERR("Could not get temporary CAP storage index");
+		return;
+	}
+
+	if (codec->id != BT_CODEC_LC3_ID) {
+		LOG_DBG("Only the LC3 codec is supported");
+		return;
+	}
+
+	/* num_caps is an increasing index that starts at 0 */
+	if (temp_cap[temp_cap_index].num_caps <= ARRAY_SIZE(temp_cap[temp_cap_index].codec)) {
+		struct bt_codec *codec_loc =
+			&temp_cap[temp_cap_index].codec[temp_cap[temp_cap_index].num_caps];
+
+		memcpy(codec_loc, codec, sizeof(struct bt_codec));
+
+		for (int i = 0; i < codec->data_count; i++) {
+			codec_loc->data[i].data.data = codec_loc->data[i].value;
+		}
+
+		for (int i = 0; i < codec->meta_count; i++) {
+			codec_loc->meta[i].data.data = codec_loc->meta[i].value;
+		}
+
+		temp_cap[temp_cap_index].num_caps++;
+	} else {
+		LOG_WRN("No more space. Increase CODEC_CAPAB_COUNT_MAX");
+	}
+}
+
+static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_bap_ep *ep)
+{
+	int ret;
+	uint8_t channel_index = 0;
+
+	ret = channel_index_get(conn, &channel_index);
+	if (ret) {
+		LOG_ERR("Unknown connection, should not reach here");
+		return;
+	}
+
+	if (dir == BT_AUDIO_DIR_SINK) {
+		if (ep != NULL) {
+			if (headsets[channel_index].num_eps > 0) {
+				LOG_WRN("More than one sink endpoints found, ep idx 0 is used by "
+					"default");
+				return;
+			}
+
+			headsets[channel_index].sink_ep = ep;
+			headsets[channel_index].num_eps++;
+			return;
+		}
+
+		if (headsets[channel_index].sink_ep == NULL) {
+			LOG_WRN("No sink endpoints found");
+			return;
+		}
+		return;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
+		if (dir == BT_AUDIO_DIR_SOURCE) {
+			if (ep != NULL) {
+				headsets[channel_index].source_ep = ep;
+				return;
+			}
+
+			if (headsets[channel_index].source_ep == NULL) {
+				LOG_WRN("No source endpoints found");
+				return;
+			}
+		} else {
+			LOG_WRN("Endpoint direction not recognized: %d", dir);
+		}
+	}
+}
+
+static struct bt_bap_unicast_client_cb unicast_client_cbs = {
 	.location = unicast_client_location_cb,
 	.available_contexts = available_contexts_cb,
+	.pac_record = pac_record_cb,
+	.endpoint = endpoint_cb,
 };
 
 static void stream_sent_cb(struct bt_bap_stream *stream)
@@ -399,7 +509,8 @@ static void stream_configured_cb(struct bt_bap_stream *stream, const struct bt_c
 			if (i != channel_index && headsets[i].headset_conn != NULL) {
 				ret = update_sink_stream_qos(&headsets[i], new_pres_dly_us);
 				if (ret) {
-					LOG_ERR("Presentation delay not set for %s headset: %d",
+					LOG_ERR("Presentation delay not set for %s "
+						"headset: %d",
 						headsets[channel_index].ch_name, ret);
 				}
 			}
@@ -703,34 +814,6 @@ static void bt_codec_allocation_set(struct bt_codec *codec, enum bt_audio_locati
 	}
 }
 
-static int temp_cap_index_get(struct bt_conn *conn, uint8_t *index)
-{
-	if (conn == NULL) {
-		LOG_ERR("No conn provided");
-		return -EINVAL;
-	}
-
-	for (int i = 0; i < ARRAY_SIZE(temp_cap); i++) {
-		if (temp_cap[i].conn == conn) {
-			*index = i;
-			return 0;
-		}
-	}
-
-	/* Connection not found in temp_cap, searching for empty slot */
-	for (int i = 0; i < ARRAY_SIZE(temp_cap); i++) {
-		if (temp_cap[i].conn == NULL) {
-			temp_cap[i].conn = conn;
-			*index = i;
-			return 0;
-		}
-	}
-
-	LOG_WRN("No more space in temp_cap");
-
-	return -ECANCELED;
-}
-
 /**
  * @brief  Check if the gateway can support the headset codec capabilities
  *
@@ -757,56 +840,17 @@ static bool valid_codec_cap_check(struct bt_codec cap_array[], size_t size)
 	return false;
 }
 
-static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struct bt_bap_ep *ep,
-			     struct bt_bap_unicast_client_discover_params *params)
+static void discover_sink_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 {
-	int ret = 0;
+	int ret;
 	uint8_t channel_index = 0;
-	uint8_t temp_cap_index = 0;
+	uint8_t temp_cap_index;
 
-	if (params->err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
+	if (err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
 		LOG_WRN("No sinks found");
 		return;
-	} else if (params->err) {
-		LOG_ERR("Discovery failed: %d", params->err);
-		return;
-	}
-
-	ret = temp_cap_index_get(conn, &temp_cap_index);
-	if (ret) {
-		LOG_ERR("Could not get temporary CAP storage index");
-		return;
-	}
-
-	if (codec != NULL) {
-		if (codec->id != BT_CODEC_LC3_ID) {
-			LOG_DBG("Only the LC3 codec is supported");
-			return;
-		}
-
-		/* params->num_caps is an increasing index that starts at 0 */
-		if (params->num_caps <= ARRAY_SIZE(temp_cap[temp_cap_index].codec)) {
-			struct bt_codec *store_loc =
-				&temp_cap[temp_cap_index].codec[params->num_caps];
-
-			memcpy(store_loc, codec, sizeof(struct bt_codec));
-
-			for (int i = 0; i < codec->data_count; i++) {
-				store_loc->data[i].data.data = store_loc->data[i].value;
-			}
-
-			for (int i = 0; i < codec->meta_count; i++) {
-				store_loc->meta[i].data.data = store_loc->meta[i].value;
-			}
-
-			/* In temp_cap.num_caps_total we want to store the actual number
-			 * of capabilities, while params->num_caps is an iterator
-			 */
-			temp_cap[temp_cap_index].num_caps_total = params->num_caps + 1;
-		} else {
-			LOG_WRN("No more space. Increase CODEC_CAPAB_COUNT_MAX");
-		}
-
+	} else if (err) {
+		LOG_ERR("Discovery failed: %d", err);
 		return;
 	}
 
@@ -816,31 +860,19 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 		return;
 	}
 
+	ret = temp_cap_index_get(conn, &temp_cap_index);
+	if (ret) {
+		LOG_ERR("Could not get temporary CAP storage index");
+		return;
+	}
+
 	/* At this point the location/channel index of the headset is always known */
-	for (int i = 0; i < temp_cap[temp_cap_index].num_caps_total; i++) {
+	for (int i = 0; i < CONFIG_CODEC_CAP_COUNT_MAX; i++) {
 		memcpy(&headsets[channel_index].sink_codec_cap[i],
 		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_codec));
 	}
 
-	if (ep != NULL) {
-		/* params->num_eps is an increasing index that starts at 0 */
-		if (params->num_eps > 0) {
-			LOG_WRN("More than one sink endpoints found, ep idx 0 is used by default");
-			return;
-		}
-
-		headsets[channel_index].sink_ep = ep;
-		return;
-	}
-
-	if (headsets[channel_index].sink_ep == NULL) {
-		LOG_WRN("No sink endpoints found");
-		return;
-	}
-
-	LOG_DBG("Sink discover complete: err %d", params->err);
-
-	(void)memset(params, 0, sizeof(*params));
+	LOG_DBG("Sink discover complete");
 
 #if (CONFIG_BT_VCP_VOL_CTLR)
 	ret = ble_vcs_discover(conn, channel_index);
@@ -850,7 +882,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 #endif /* (CONFIG_BT_VCP_VOL_CTLR ) */
 
 	if (valid_codec_cap_check(headsets[channel_index].sink_codec_cap,
-				  temp_cap[temp_cap_index].num_caps_total)) {
+				  temp_cap[temp_cap_index].num_caps)) {
 		if (conn == headsets[AUDIO_CH_L].headset_conn) {
 			bt_codec_allocation_set(&lc3_preset_sink.codec,
 						BT_AUDIO_LOCATION_FRONT_LEFT);
@@ -874,67 +906,27 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 	/* Free up the slot in temp_cap */
 	memset(temp_cap[temp_cap_index].codec, 0, sizeof(temp_cap[temp_cap_index].codec));
 	temp_cap[temp_cap_index].conn = NULL;
+	temp_cap[temp_cap_index].num_caps = 0;
 
-#if (CONFIG_BT_AUDIO_RX)
-	ret = discover_source(conn);
-	if (ret) {
-		LOG_WRN("Failed to discover source: %d", ret);
+	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
+		ret = discover_source(conn);
+		if (ret) {
+			LOG_WRN("Failed to discover source: %d", ret);
+		}
 	}
-#endif /* (CONFIG_BT_AUDIO_RX) */
 }
 
-#if (CONFIG_BT_AUDIO_RX)
-static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, struct bt_bap_ep *ep,
-			       struct bt_bap_unicast_client_discover_params *params)
+static void discover_source_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 {
-	int ret = 0;
-
+	int ret;
 	uint8_t channel_index = 0;
-	uint8_t temp_cap_index = 0;
+	uint8_t temp_cap_index;
 
-	if (params->err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
+	if (err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
 		LOG_WRN("No sources found");
 		return;
-	} else if (params->err) {
-		LOG_ERR("Discovery failed: %d", params->err);
-		return;
-	}
-
-	ret = temp_cap_index_get(conn, &temp_cap_index);
-	if (ret) {
-		LOG_ERR("Could not get temporary CAP storage index");
-		return;
-	}
-
-	if (codec != NULL) {
-		if (codec->id != BT_CODEC_LC3_ID) {
-			LOG_DBG("Only the LC3 codec is supported");
-			return;
-		}
-
-		/* params->num_caps is an increasing index that starts at 0 */
-		if (params->num_caps <= ARRAY_SIZE(temp_cap[temp_cap_index].codec)) {
-			struct bt_codec *store_loc =
-				&temp_cap[temp_cap_index].codec[params->num_caps];
-
-			memcpy(store_loc, codec, sizeof(struct bt_codec));
-
-			for (int i = 0; i < codec->data_count; i++) {
-				store_loc->data[i].data.data = store_loc->data[i].value;
-			}
-
-			for (int i = 0; i < codec->meta_count; i++) {
-				store_loc->meta[i].data.data = store_loc->meta[i].value;
-			}
-
-			/* In temp_cap.num_caps_total we want to store the actual number
-			 * of capabilities, while params->num_caps is an iterator
-			 */
-			temp_cap[temp_cap_index].num_caps_total = params->num_caps + 1;
-		} else {
-			LOG_WRN("No more space. Increase CODEC_CAPAB_COUNT_MAX");
-		}
-
+	} else if (err) {
+		LOG_ERR("Discovery failed: %d", err);
 		return;
 	}
 
@@ -944,34 +936,22 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 		return;
 	}
 
+	ret = temp_cap_index_get(conn, &temp_cap_index);
+	if (ret) {
+		LOG_ERR("Could not get temporary CAP storage index");
+		return;
+	}
+
 	/* At this point the location/channel index of the headset is always known */
-	for (int i = 0; i < temp_cap[temp_cap_index].num_caps_total; i++) {
+	for (int i = 0; i < temp_cap[temp_cap_index].num_caps; i++) {
 		memcpy(&headsets[channel_index].source_codec_cap[i],
 		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_codec));
 	}
 
-	if (ep != NULL) {
-		/* params->num_eps is an increasing index that starts at 0 */
-		if (params->num_eps > 0) {
-			LOG_WRN("More than one src endpoints found, ep idx 0 is used by default");
-			return;
-		}
-
-		headsets[channel_index].source_ep = ep;
-		return;
-	}
-
-	if (headsets[channel_index].source_ep == NULL) {
-		LOG_WRN("No source endpoints found");
-		return;
-	}
-
-	LOG_DBG("Source discover complete: err %d", params->err);
-
-	(void)memset(params, 0, sizeof(*params));
+	LOG_DBG("Source discover complete");
 
 	if (valid_codec_cap_check(headsets[channel_index].source_codec_cap,
-				  temp_cap[temp_cap_index].num_caps_total)) {
+				  temp_cap[temp_cap_index].num_caps)) {
 		if (conn == headsets[AUDIO_CH_L].headset_conn) {
 			bt_codec_allocation_set(&lc3_preset_source.codec,
 						BT_AUDIO_LOCATION_FRONT_LEFT);
@@ -996,8 +976,8 @@ static void discover_source_cb(struct bt_conn *conn, struct bt_codec *codec, str
 	/* Free up the slot in temp_cap */
 	memset(temp_cap[temp_cap_index].codec, 0, sizeof(temp_cap[temp_cap_index].codec));
 	temp_cap[temp_cap_index].conn = NULL;
+	temp_cap[temp_cap_index].num_caps = 0;
 }
-#endif /* (CONFIG_BT_AUDIO_RX) */
 
 static bool ble_acl_gateway_all_links_connected(void)
 {
@@ -1214,6 +1194,8 @@ static void disconnected_headset_cleanup(uint8_t chan_idx)
 	k_work_cancel_delayable(&headsets[chan_idx].stream_start_source_work);
 	headsets[chan_idx].source_ep = NULL;
 	memset(headsets[chan_idx].source_codec_cap, 0, sizeof(headsets[chan_idx].source_codec_cap));
+
+	headsets[chan_idx].num_eps = 0;
 }
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
@@ -1240,12 +1222,12 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 
 static int discover_sink(struct bt_conn *conn)
 {
-	int ret = 0;
+	int ret;
 	static uint8_t discover_index;
 
-	audio_sink_discover_param[discover_index].func = discover_sink_cb;
-	audio_sink_discover_param[discover_index].dir = BT_AUDIO_DIR_SINK;
-	ret = bt_bap_unicast_client_discover(conn, &audio_sink_discover_param[discover_index]);
+	unicast_client_cbs.discover = discover_sink_cb;
+
+	ret = bt_bap_unicast_client_discover(conn, BT_AUDIO_DIR_SINK);
 	discover_index++;
 
 	/* Avoid multiple discover procedure sharing the same params */
@@ -1256,15 +1238,14 @@ static int discover_sink(struct bt_conn *conn)
 	return ret;
 }
 
-#if (CONFIG_BT_AUDIO_RX)
 static int discover_source(struct bt_conn *conn)
 {
-	int ret = 0;
+	int ret;
 	static uint8_t discover_index;
 
-	audio_source_discover_param[discover_index].func = discover_source_cb;
-	audio_source_discover_param[discover_index].dir = BT_AUDIO_DIR_SOURCE;
-	ret = bt_bap_unicast_client_discover(conn, &audio_source_discover_param[discover_index]);
+	unicast_client_cbs.discover = discover_source_cb;
+
+	ret = bt_bap_unicast_client_discover(conn, BT_AUDIO_DIR_SOURCE);
 	discover_index++;
 
 	/* Avoid multiple discover procedure sharing the same params */
@@ -1274,7 +1255,6 @@ static int discover_source(struct bt_conn *conn)
 
 	return ret;
 }
-#endif /* (CONFIG_BT_AUDIO_RX) */
 
 static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
@@ -1440,6 +1420,8 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 	receive_cb = recv_cb;
 	timestamp_cb = timestmp_cb;
 
+	LOG_DBG("Start workers");
+
 	for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
 		headsets[i].sink_stream.ops = &stream_ops;
 		headsets[i].source_stream.ops = &stream_ops;
@@ -1484,11 +1466,13 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 	for (int i = 0; i < ARRAY_SIZE(pair_params); i++) {
 		pair_params[i].tx_param = &stream_params[stream_iterator];
 		stream_iterator++;
-#if (CONFIG_BT_AUDIO_RX)
-		pair_params[i].rx_param = &stream_params[stream_iterator];
-#else
-		pair_params[i].rx_param = NULL;
-#endif /* (CONFIG_BT_AUDIO_RX) */
+
+		if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
+			pair_params[i].rx_param = &stream_params[stream_iterator];
+		} else {
+			pair_params[i].rx_param = NULL;
+		}
+
 		stream_iterator++;
 	}
 
@@ -1670,7 +1654,9 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 	if (ret) {
 		return ret;
 	}
+	LOG_DBG("Initialized");
 
+	LOG_DBG("Start scanning");
 	ble_acl_start_scan();
 	return 0;
 }
