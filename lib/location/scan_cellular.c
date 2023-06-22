@@ -139,15 +139,12 @@ int scan_cellular_start(uint8_t cell_count)
 	 */
 	scan_cellular_cell_count = scan_cellular_cell_count - scan_cellular_info.ncells_count;
 
-	if (scan_cellular_cell_count > 0) {
+	LOG_DBG("scan_cellular_start: scan_cellular_cell_count=%d", scan_cellular_cell_count);
+
+	if (scan_cellular_cell_count > 1) {
 
 		ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT;
 		ncellmeas_params.gci_count = scan_cellular_cell_count;
-
-		/* GCI count given to modem cannot be one */
-		if (ncellmeas_params.gci_count == 1) {
-			ncellmeas_params.gci_count++;
-		}
 
 		err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 		if (err) {

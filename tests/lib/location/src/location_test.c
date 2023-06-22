@@ -49,8 +49,8 @@ static const char ncellmeas_resp[] =
 	"150344527,2300,8,60,29,0,2400,11,55,26,184\r\n";
 
 static const char ncellmeas_gci_resp[] =
-	"%NCELLMEAS:0,\"00023906\",\"24405\",\"5A00\",64,1830518,6400,116,53,16,1840265,1,0,"
-	"\"001E3904\",\"24405\",\"5A00\",65535,0,6400,42,48,7,1840265,0,0\r\n";
+	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",10512,9034,2300,7,63,31,150344527,1,0,"
+	"\"00011B08\",\"26295\",\"00B7\",65535,0,2300,9,62,30,150345527,0,0\r\n";
 
 char http_resp[512];
 
@@ -545,14 +545,14 @@ void test_location_request_default(void)
 	 * Otherwise, lte_lc would ignore NCELLMEAS notification because no NCELLMEAS on going
 	 * from lte_lc point of view.
 	 */
-	k_sleep(K_MSEC(1000));
+	k_sleep(K_MSEC(100));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);
 
 	cellular_rest_req_resp_handle();
 
-	k_sleep(K_MSEC(1000));
+	k_sleep(K_MSEC(100));
 	at_monitor_dispatch(ncellmeas_gci_resp);
 }
 

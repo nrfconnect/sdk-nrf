@@ -975,6 +975,22 @@ void test_lte_lc_cereg(void)
 	at_monitor_dispatch(at_notif);
 }
 
+/* Test failing neighbor cell measurement first to see that the semaphore is given properly */
+void test_lte_lc_neighbor_cell_measurement_fail(void)
+{
+	int ret;
+
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE,
+		.gci_count = 0,
+	};
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", -NRF_ENOMEM);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
 void test_lte_lc_neighbor_cell_measurement_neighbors(void)
 {
 	int ret;
