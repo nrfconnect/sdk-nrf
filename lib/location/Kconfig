@@ -6,17 +6,19 @@
 
 menuconfig LOCATION
 	bool "Location"
-	depends on NRF_MODEM_LIB
-	depends on LTE_LINK_CONTROL
 
 if LOCATION
 
 config LOCATION_METHOD_GNSS
 	bool "Allow GNSS to be used for obtaining the location"
+	depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
 	default y
 
 config LOCATION_METHOD_CELLULAR
 	bool "Allow cellular positioning to be used for obtaining the location"
+	depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
 	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	default y
 

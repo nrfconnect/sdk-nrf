@@ -20,3 +20,9 @@ cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h FUNC_
 zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include)
 
 target_sources(app PRIVATE src/location_test.c)
+
+# Extend autoconf.h for nrf/lib/location
+# Allows KConfig options to be enabled for nrf/lib/location without affecting CMake
+# ..__nrf__lib__location is the name assigned to nrf/lib/location by the zephyr_library() macro in
+# zephyr/cmake/modules/extensions.cmake
+target_compile_options(..__nrf__lib__location PRIVATE "SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext.h")

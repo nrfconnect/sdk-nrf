@@ -5,13 +5,12 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
-#include <modem/nrf_modem_lib.h>
-#include <modem/lte_lc.h>
 #include <zephyr/net/socket.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <date_time.h>
 #include <zephyr/logging/log.h>
+#include <modem/nrf_modem_lib.h>
 
 #include "connection.h"
 

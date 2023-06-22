@@ -6,7 +6,5 @@
 config NRF_CLOUD_LOCATION
 	bool "Enable nRF Cloud Location (cellular and/or Wi-Fi) over MQTT"
 	imply FPU
-	depends on MODEM_INFO
-	depends on MODEM_INFO_ADD_NETWORK
 	depends on NRF_CLOUD_MQTT
 	select CJSON_LIB

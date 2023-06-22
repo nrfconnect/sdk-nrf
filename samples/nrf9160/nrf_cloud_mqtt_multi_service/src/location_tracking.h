@@ -32,7 +32,8 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval);
 static inline bool location_tracking_enabled(void)
 {
 	return IS_ENABLED(CONFIG_LOCATION_TRACKING_GNSS) ||
-	       IS_ENABLED(CONFIG_LOCATION_TRACKING_CELLULAR);
+	       IS_ENABLED(CONFIG_LOCATION_TRACKING_CELLULAR) ||
+	       IS_ENABLED(CONFIG_LOCATION_TRACKING_WIFI);
 }
 
 

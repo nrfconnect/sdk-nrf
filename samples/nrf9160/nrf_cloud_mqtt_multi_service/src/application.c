@@ -6,8 +6,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/location.h>
-#include <nrf_modem_at.h>
-#include <nrf_errno.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_log.h>
@@ -21,6 +19,7 @@
 
 #include "location_tracking.h"
 #include "led_control.h"
+#include "at_commands.h"
 
 LOG_MODULE_REGISTER(application, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 
@@ -37,9 +36,6 @@ BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_
 #define TEMP_ALERT_LIMIT ((float)CONFIG_TEMP_ALERT_LIMIT)
 #define TEMP_ALERT_HYSTERESIS 1.5f
 #define TEMP_ALERT_LOWER_LIMIT (TEMP_ALERT_LIMIT - TEMP_ALERT_HYSTERESIS)
-
-/* Buffer to contain modem responses when performing AT command requests */
-static char at_req_resp_buf[CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH];
 
 /**
  * @brief Construct a device message object with automatically generated timestamp
@@ -226,32 +222,7 @@ static void handle_at_cmd_requests(const struct nrf_cloud_data *const dev_msg)
 	}
 
 	/* Execute the command and receive the result */
-	LOG_DBG("Modem AT command requested: %s", cmd);
-	memset(at_req_resp_buf, 0, sizeof(at_req_resp_buf));
-
-	/* We must pass the command in using a format specifier it might contain special characters
-	 * such as %.
-	 *
-	 * We subtract 1 from the passed-in response buffer length to ensure that the response is
-	 * always null-terminated, even when the response is longer than the response buffer size.
-	 */
-	err = nrf_modem_at_cmd(at_req_resp_buf, sizeof(at_req_resp_buf) - 1, "%s", cmd);
-
-	LOG_DBG("Modem AT command response (%d, %d): %s",
-		nrf_modem_at_err_type(err), nrf_modem_at_err(err), at_req_resp_buf);
-
-	/* Trim \r\n from modem response for better readability in the portal. */
-	at_req_resp_buf[MAX(0, strlen(at_req_resp_buf) - 2)] = '\0';
-
-	/* If an error occurred with the request, report it */
-	if (err < 0) {
-		/* Negative error codes indicate an error with the modem lib itself, so the
-		 * response buffer will be empty (or filled with junk). Thus, we can print the
-		 * error message directly into it.
-		 */
-		snprintf(at_req_resp_buf, sizeof(at_req_resp_buf), AT_CMD_REQUEST_ERR_FORMAT, err);
-		LOG_ERR("%s", at_req_resp_buf);
-	}
+	char *response = execute_at_cmd_request(cmd);
 
 	/* To re-use msg_obj for the response message we must first free its memory and
 	 * reset its state.
@@ -259,9 +230,18 @@ static void handle_at_cmd_requests(const struct nrf_cloud_data *const dev_msg)
 	 */
 	cmd = NULL;
 	/* Free the object's allocated memory */
-	(void)nrf_cloud_obj_free(&msg_obj);
+	err = nrf_cloud_obj_free(&msg_obj);
+	if (err) {
+		LOG_ERR("Failed to free AT CMD request");
+		return;
+	}
+
 	/* Reset the object's state */
-	(void)nrf_cloud_obj_reset(&msg_obj);
+	err = nrf_cloud_obj_reset(&msg_obj);
+	if (err) {
+		LOG_ERR("Failed to reset AT CMD request message object for reuse");
+		return;
+	}
 
 	err = create_timestamped_device_message(&msg_obj, NRF_CLOUD_JSON_APPID_VAL_MODEM,
 						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
@@ -270,7 +250,7 @@ static void handle_at_cmd_requests(const struct nrf_cloud_data *const dev_msg)
 	}
 
 	/* Populate response with command result */
-	err = nrf_cloud_obj_str_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, at_req_resp_buf, false);
+	err = nrf_cloud_obj_str_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, response, false);
 	if (err) {
 		LOG_ERR("Failed to populate AT CMD response with modem response data");
 		goto cleanup;
