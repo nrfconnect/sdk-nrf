@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/net/net_if.h>
+
 /** @brief Add IPv4 address for the default PDP context to the network interface.
  *
  *  @param iface Pointer to network interface.
