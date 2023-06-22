@@ -1,15 +1,19 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2021-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
 
 #include "rf_proc.h"
 #include "timer_proc.h"
 #include "comm_proc.h"
 #include "periph_proc.h"
+#if defined(CONFIG_APP_RPC)
+#include "app_rpc.h"
+#endif
 
 #include <zephyr/logging/log.h>
 	LOG_MODULE_REGISTER(phy_tt);
@@ -24,7 +28,11 @@
 
 void ptt_do_reset_ext(void)
 {
-	NVIC_SystemReset();
+#if defined(CONFIG_APP_RPC)
+	app_system_reboot();
+#else
+	sys_reboot(SYS_REBOOT_COLD);
+#endif
 }
 
 static int rf_setup(void)
