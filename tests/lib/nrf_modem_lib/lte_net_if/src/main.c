@@ -10,9 +10,6 @@
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/device.h>
 
-/* UUT header file */
-#include "lte_net_if.h"
-
 /* Mocked libraries */
 #include "cmock_lte_lc.h"
 #include "cmock_nrf_modem_lib.h"
