@@ -69,8 +69,8 @@ config NRF_MODEM_LIB_NET_IF_AUTO_DOWN
 	 down when it stops trying to connect. This option sets the default value, the option has
 	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
 
-endif # NRF_MODEM_LIB_NET_IF
-
 module = NRF_MODEM_LIB_NET_IF
 module-str = Modem network interface
 source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_MODEM_LIB_NETIF
