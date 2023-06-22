@@ -67,7 +67,8 @@ static char rai_param[2] = CONFIG_LTE_RAI_REQ_VALUE;
 
 /* Requested NCELLMEAS params */
 static struct lte_lc_ncellmeas_params ncellmeas_params;
-static bool ncellmeas_ongoing;
+/* Sempahore value 1 means ncellmeas is not ongoing, and 0 means it's ongoing. */
+K_SEM_DEFINE(ncellmeas_idle_sem, 1, 1);
 
 static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
 
@@ -394,7 +395,7 @@ static void at_handler_ncellmeas(const char *response)
 
 	__ASSERT_NO_MSG(response != NULL);
 
-	if (event_handler_list_is_empty() || !ncellmeas_ongoing) {
+	if (event_handler_list_is_empty() || k_sem_count_get(&ncellmeas_idle_sem) > 0) {
 		/* No need to parse the response if there is no handler
 		 * to receive the parsed data or
 		 * if a measurement is not going/started by using
@@ -445,7 +446,7 @@ static void at_handler_ncellmeas(const char *response)
 		k_free(neighbor_cells);
 	}
 exit:
-	ncellmeas_ongoing = false;
+	k_sem_give(&ncellmeas_idle_sem);
 }
 
 static void at_handler_xmodemsleep(const char *response)
@@ -1461,7 +1462,8 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 			LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE),
 		 "Invalid argument, API does not accept enum values directly anymore");
 
-	if (ncellmeas_ongoing) {
+	if (k_sem_take(&ncellmeas_idle_sem, K_SECONDS(1)) != 0) {
+		LOG_WRN("Neighbor cell measurement already in progress");
 		return -EINPROGRESS;
 	}
 
@@ -1493,9 +1495,9 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 
 	if (err) {
 		err = -EFAULT;
+		k_sem_give(&ncellmeas_idle_sem);
 	} else {
 		ncellmeas_params = used_params;
-		ncellmeas_ongoing = true;
 	}
 
 	return err;
@@ -1508,7 +1510,8 @@ int lte_lc_neighbor_cell_measurement_cancel(void)
 	if (err) {
 		err = -EFAULT;
 	}
-	ncellmeas_ongoing = false;
+
+	k_sem_give(&ncellmeas_idle_sem);
 
 	return err;
 }
