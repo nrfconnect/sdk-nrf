@@ -4,19 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <string.h>
 #include <zephyr/device.h>
 #include <zephyr/types.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
-#include <string.h>
 
 #ifdef CONFIG_POSIX_API
 #include <arpa/inet.h>
 #endif
 
-#include <zephyr/logging/log.h>
+#include "lte_ip_addr_helper.h"
 
 LOG_MODULE_REGISTER(ip_addr_helper, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
 
