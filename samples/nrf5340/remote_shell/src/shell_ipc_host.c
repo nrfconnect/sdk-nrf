@@ -50,7 +50,7 @@ static int ipc_init(void)
 	}
 
 	err = ipc_service_open_instance(dev);
-	if (err) {
+	if (err && (err != -EALREADY)) {
 		return err;
 	}
 
