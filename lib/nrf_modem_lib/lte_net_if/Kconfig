@@ -17,6 +17,17 @@ menuconfig NRF_MODEM_LIB_NET_IF
 
 if NRF_MODEM_LIB_NET_IF
 
+config NRF_MODEM_LIB_NET_IF_AUTO_START
+	bool "Network interface auto-start"
+	default y
+	help
+	  If this option is enabled, the modem is automatically initialized from the main context
+	  at SYS init.
+	  Initialization of the modem might take some time, so bear in mind that the main context
+	  will be blocked for that duration.
+	  If this option is disabled the modem must be manually initialized by bringing
+	  the network interface's administrative state up by calling net_if_up().
+
 config NRF_MODEM_LIB_NET_IF_WORKQUEUE_STACK_SIZE
 	int "Workqueue stack size"
 	default 1024
