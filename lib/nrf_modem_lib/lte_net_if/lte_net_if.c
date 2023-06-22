@@ -14,10 +14,10 @@
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 
+#include "lte_net_if.h"
 #include "lte_ip_addr_helper.h"
-#include "lte_connectivity.h"
 
-LOG_MODULE_REGISTER(lte_connectivity, CONFIG_LTE_CONNECTIVITY_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_modem_lib_netif, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
 
 /* This library requires that Zephyr's IPv4 and IPv6 stacks are enabled.
  *
@@ -34,7 +34,7 @@ BUILD_ASSERT((CONFIG_NET_CONNECTION_MANAGER_STACK_SIZE >= 1024),
 
 /* Forward declarations */
 static void connection_timeout_work_fn(struct k_work *work);
-int lte_connectivity_disconnect(struct conn_mgr_conn_binding *const if_conn);
+int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn);
 
 /* Delayable work used to handle LTE connection timeouts. */
 static K_WORK_DELAYABLE_DEFINE(connection_timeout_work, connection_timeout_work_fn);
@@ -43,7 +43,7 @@ static K_WORK_DELAYABLE_DEFINE(connection_timeout_work, connection_timeout_work_
 static struct net_if *iface_bound;
 
 /* Variable used to specify behavior when the network interface is brought down. */
-static uint8_t net_if_down_options = LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN;
+static uint8_t net_if_down_options = NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN;
 
 /* Local functions */
 
@@ -54,7 +54,7 @@ static void fatal_error_notify_and_disconnect(void)
 {
 	net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
 	net_if_dormant_on(iface_bound);
-	(void)lte_connectivity_disconnect(NULL);
+	(void)lte_net_if_disconnect(NULL);
 }
 
 /* Handler called on modem faults. */
@@ -71,10 +71,10 @@ static void connection_timeout_work_fn(struct k_work *work)
 
 	LOG_DBG("LTE connection timeout");
 
-	int ret = lte_connectivity_disconnect(NULL);
+	int ret = lte_net_if_disconnect(NULL);
 
 	if (ret) {
-		LOG_ERR("lte_connectivity_disconnect, error: %d", ret);
+		LOG_ERR("lte_net_if_disconnect, error: %d", ret);
 		net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
 	}
 
@@ -196,7 +196,7 @@ static void on_pdn_deactivated(void)
 		/* If persistence is disabled, LTE is deactivated upon a lost connection.
 		 * Re-establishment is reliant on the application calling conn_mgr_if_connect().
 		 */
-		ret = lte_connectivity_disconnect(NULL);
+		ret = lte_net_if_disconnect(NULL);
 		if (ret) {
 			LOG_ERR("lte_lc_func_mode_set, error: %d", ret);
 			net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
@@ -264,16 +264,16 @@ static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 }
 
 /* Public APIs */
-void lte_connectivity_init(struct conn_mgr_conn_binding *if_conn)
+void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 {
 	int ret;
-	int timeout = CONFIG_LTE_CONNECTIVITY_CONNECT_TIMEOUT_SECONDS;
-	int persistent = IS_ENABLED(CONFIG_LTE_CONNECTIVITY_CONNECTION_PERSISTENCE);
+	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
+	int persistent = IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE);
 
 	net_if_dormant_on(if_conn->iface);
 
 	/* Default auto features off. */
-	if (!IS_ENABLED(CONFIG_LTE_CONNECTIVITY_AUTO_CONNECT)) {
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT)) {
 		ret = conn_mgr_if_set_flag(if_conn->iface, CONN_MGR_IF_NO_AUTO_CONNECT, true);
 		if (ret) {
 			LOG_ERR("conn_mgr_if_set_flag, error: %d", ret);
@@ -282,7 +282,7 @@ void lte_connectivity_init(struct conn_mgr_conn_binding *if_conn)
 		}
 	}
 
-	if (!IS_ENABLED(CONFIG_LTE_CONNECTIVITY_AUTO_DOWN)) {
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN)) {
 		ret = conn_mgr_if_set_flag(if_conn->iface, CONN_MGR_IF_NO_AUTO_DOWN, true);
 		if (ret) {
 			LOG_ERR("conn_mgr_if_set_flag, error: %d", ret);
@@ -315,10 +315,10 @@ void lte_connectivity_init(struct conn_mgr_conn_binding *if_conn)
 	/* Keep local reference to the network interface that the connectivity layer is bound to. */
 	iface_bound = if_conn->iface;
 
-	LOG_DBG("LTE Connectivity library initialized");
+	LOG_DBG("Modem network interface ready");
 }
 
-int lte_connectivity_enable(void)
+int lte_net_if_enable(void)
 {
 	int ret;
 
@@ -342,20 +342,20 @@ int lte_connectivity_enable(void)
 	return 0;
 }
 
-int lte_connectivity_disable(void)
+int lte_net_if_disable(void)
 {
 	int ret;
 
-	if (net_if_down_options == LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN) {
+	if (net_if_down_options == NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN) {
 		ret = nrf_modem_lib_shutdown();
 		if (ret) {
 			LOG_ERR("nrf_modem_lib_shutdown, retval: %d", ret);
 			return ret;
 		}
-	} else if (net_if_down_options == LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT) {
-		ret = lte_connectivity_disconnect(NULL);
+	} else if (net_if_down_options == NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT) {
+		ret = lte_net_if_disconnect(NULL);
 		if (ret) {
-			LOG_ERR("lte_connectivity_disconnect, retval: %d", ret);
+			LOG_ERR("lte_net_if_disconnect, retval: %d", ret);
 			return ret;
 		}
 	} else {
@@ -366,7 +366,7 @@ int lte_connectivity_disable(void)
 	return 0;
 }
 
-int lte_connectivity_connect(struct conn_mgr_conn_binding *const if_conn)
+int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
 {
 	ARG_UNUSED(if_conn);
 
@@ -384,7 +384,7 @@ int lte_connectivity_connect(struct conn_mgr_conn_binding *const if_conn)
 	return 0;
 }
 
-int lte_connectivity_disconnect(struct conn_mgr_conn_binding *const if_conn)
+int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
 {
 	ARG_UNUSED(if_conn);
 
@@ -403,14 +403,14 @@ int lte_connectivity_disconnect(struct conn_mgr_conn_binding *const if_conn)
 	return 0;
 }
 
-int lte_connectivity_options_set(struct conn_mgr_conn_binding *const if_conn, int name,
-				 const void *value, size_t length)
+int lte_net_if_options_set(struct conn_mgr_conn_binding *const if_conn, int name, const void *value,
+			   size_t length)
 {
 	ARG_UNUSED(name);
 
 	uint8_t *temp;
 
-	if (name != LTE_CONNECTIVITY_IF_DOWN) {
+	if (name != NRF_MODEM_LIB_NET_IF_DOWN) {
 		return -ENOPROTOOPT;
 	}
 
@@ -422,10 +422,10 @@ int lte_connectivity_options_set(struct conn_mgr_conn_binding *const if_conn, in
 	net_if_down_options = *temp;
 
 	switch (net_if_down_options) {
-	case LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN:
+	case NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN:
 		LOG_DBG("Shutdown modem when the network interface is brought down");
 		break;
-	case LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT:
+	case NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT:
 		LOG_DBG("Disconnected from LTE when the network interface is brought down");
 		break;
 	default:
@@ -436,14 +436,14 @@ int lte_connectivity_options_set(struct conn_mgr_conn_binding *const if_conn, in
 	return 0;
 }
 
-int lte_connectivity_options_get(struct conn_mgr_conn_binding *const if_conn, int name, void *value,
-				 size_t *length)
+int lte_net_if_options_get(struct conn_mgr_conn_binding *const if_conn, int name, void *value,
+			   size_t *length)
 {
 	ARG_UNUSED(name);
 
 	uint8_t *temp = (uint8_t *)value;
 
-	if (name != LTE_CONNECTIVITY_IF_DOWN) {
+	if (name != NRF_MODEM_LIB_NET_IF_DOWN) {
 		return -ENOPROTOOPT;
 	}
 
