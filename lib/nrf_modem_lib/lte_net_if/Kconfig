@@ -58,6 +58,17 @@ config NRF_MODEM_LIB_NET_IF_AUTO_DOWN
 	 down when it stops trying to connect. This option sets the default value, the option has
 	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
 
+config NRF_MODEM_LIB_NET_IF_AUTO_START
+	bool "Network interface auto-start [DEPRECATED]"
+	select DEPRECATED
+	help
+	  If this option is enabled, the modem is automatically initialized from the main context
+	  at SYS init.
+	  Initialization of the modem might take some time, so bear in mind that the main context
+	  will be blocked for that duration.
+	  If this option is disabled the modem must be manually initialized by bringing
+	  the network interface's administrative state up by calling net_if_up().
+
 module = NRF_MODEM_LIB_NET_IF
 module-str = Modem network interface
 source "subsys/logging/Kconfig.template.log_config"
