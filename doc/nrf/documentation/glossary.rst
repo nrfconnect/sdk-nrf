@@ -10,8 +10,14 @@ Glossary
 .. glossary::
    :sorted:
 
-   Access Port Protection (APPROTECT)
-      A register used to prevent read and write access to all CPU registers and memory-mapped addresses.
+   Access port protection mechanism (AP-Protect)
+      A mechanism used to prevent read and write access to all CPU registers and memory-mapped addresses.
+      In the |NCS|, it uses ``APPROTECT`` registers and several Kconfig options, as described in :ref:`app_approtect`.
+      See also :term:`Secure access port protection mechanism (Secure AP-Protect)`.
+
+   AHB Access Port (AHB-AP)
+      An Arm Coresight component that allows a debug probe to access CPU cores for programming and debugging.
+      Access through the AHB-AP can be blocked with :term:`Access port protection mechanism (AP-Protect)`.
 
    Almanac data
       In the :term:`Global Navigation Satellite System (GNSS)`, the data providing coarse orbit and status information for each satellite in the constellation.
@@ -612,9 +618,10 @@ Glossary
       It comes with digital encoder and decoder for transferring audio data.
       It is being gradually supplanted by the :term:`LC3 codec` developed for :term:`LE Audio`.
 
-   Secure Access Port Protection (SECUREAPPROTECT)
-      A register used to prevent read and write access to all secure CPU registers and secure memory-mapped addresses.
-      See :term:`Access Port Protection (APPROTECT)`.
+   Secure access port protection mechanism (Secure AP-Protect)
+      A mechanism used to prevent read and write access to all secure CPU registers and secure memory-mapped addresses.
+      In the |NCS|, it uses ``SECUREAPPROTECT`` registers and several Kconfig options, as described in :ref:`app_approtect`.
+      See also :term:`Access port protection mechanism (AP-Protect)`.
 
    Secure Processing Environment (SPE)
       One of the two processing environments when using Cortex-M Security Extensions.
