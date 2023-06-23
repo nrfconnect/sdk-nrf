@@ -34,7 +34,7 @@ For detailed information, refer to the hardware documentation.
      - How to disable
    * - Hardware
      - Disabled
-     - Writing ``UICR.APPROTECT`` to ``Enabled`` and performing a reset.
+     - Writing ``Enabled`` to ``UICR.APPROTECT`` and performing a reset.
      - Issuing an ``ERASEALL`` command via CTRL-AP.
        This command erases the flash, UICR, and RAM, including ``UICR.APPROTECT``.
    * - Hardware and software
@@ -43,7 +43,7 @@ For detailed information, refer to the hardware documentation.
      - Issuing an ``ERASEALL`` command via CTRL-AP.
        This command erases the flash, UICR, and RAM, including ``UICR.APPROTECT``.
 
-       To keep the AP-Protect disabled, ``UICR.APPROTECT`` must be programmed to ``HwDisabled`` and the firmware must write ``APPROTECT.DISABLE`` to ``SwDisable``.
+       To keep the AP-Protect disabled, ``UICR.APPROTECT`` must be programmed to ``HwDisabled`` and the firmware must write ``SwDisable`` to ``APPROTECT.DISABLE``.
 
 The following table lists related SoCs with information about the AP-Protect mechanism they support.
 For some SoCs, the AP-Protect implementation is different depending on the build code of the device.
@@ -124,19 +124,21 @@ Based on the available implementation types, you can configure the access port p
 
    * - AP-Protect state
      - Related Kconfig option in the |NCS|
-     - Description
+     - Description of the AP-Protect state
      - AP-Protect implementation type
    * - Locked
      - :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` for Secure AP-Protect)
-     - In this state, CPU writes to enable and lock AP-Protect. UICR is not modified.
+     - In this state, CPU uses the MDK system start-up file to enable and lock AP-Protect. UICR is not modified.
      - Hardware and software
    * - Authenticated
      - :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` for Secure AP-Protect)
-     - In this state, AP-Protect is left enabled and it is up to the user handler to unlock the device if needed.
+     - In this state, AP-Protect is left enabled and it is up to the user-space code to handle unlocking the device if needed.
+       The MDK will close the debug AHB-AP, but not lock it, so the AHB-AP can be reopened by the firmware.
+       Reopening the AHB-AP should be preceded by a handshake operation over UART, CTRL-AP Mailboxes, or some other communication channel.
      - Hardware and software
    * - Open
      - :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` for Secure AP-Protect)
-     - In this state, AP-Protect follows the UICR register. If the UICR is open, the AP-Protect will be disabled.
+     - In this state, AP-Protect follows the UICR register. If the UICR is open, meaning ``UICR.APPROTECT`` has the value ``Disabled``, the AP-Protect will be disabled. (The exact value, placement, the enumeration name, and format varies between nRF Series families.)
      - Hardware; hardware and software
 
 .. _app_approtect_ncs_lock:
