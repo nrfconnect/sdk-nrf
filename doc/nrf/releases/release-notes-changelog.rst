@@ -206,6 +206,10 @@ Bluetooth mesh samples
 
   * Fixed an issue with the sample not fitting into RAM size on the nrf52dk_nrf52832 board.
 
+* :ref:`ble_mesh_dfu_target` sample:
+
+  * Enabled Firmware Update Server shell commands allowing users to cancel DFU on the Target node.
+
 Cryptography samples
 --------------------
 

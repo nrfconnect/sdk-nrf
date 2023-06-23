@@ -181,6 +181,13 @@ The firmware distribution process then succeeds on the Distributor side, if the 
 
 For more information about the firmware distribution process, see :ref:`zephyr:bluetooth_mesh_dfu`.
 
+Interacting with the sample through shell
+-----------------------------------------
+
+This sample enables the Firmware Update Server model shell commands using the :kconfig:option:`CONFIG_BT_MESH_SHELL_DFU_SRV` Kconfig option.
+This allows cancelling of an ongoing DFU transfer using the ``mesh models dfu srv rx-cancel`` shell command, if the ongoing DFU transfer gets stalled.
+See :ref:`bluetooth_mesh_shell` for information about Bluetooth mesh shell commands.
+
 Logging
 =======
 
