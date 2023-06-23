@@ -376,7 +376,7 @@ int z_wpa_supplicant_status(const struct device *dev,
 
 		os_memcpy(status->bssid, wpa_s->bssid, WIFI_MAC_ADDR_LEN);
 		status->band = wpas_band_to_zephyr(wpas_freq_to_band(wpa_s->assoc_freq));
-		status->security = wpas_key_mgmt_to_zephyr(ssid->key_mgmt);
+		status->security = wpas_key_mgmt_to_zephyr(wpa_s->key_mgmt);
 		status->mfp = ssid->ieee80211w; /* Same mapping */
 		ieee80211_freq_to_chan(wpa_s->assoc_freq, &channel);
 		status->channel = channel;
