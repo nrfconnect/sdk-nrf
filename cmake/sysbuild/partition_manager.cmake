@@ -150,6 +150,15 @@ function(partition_manager)
   set(pm_var_names)
   import_kconfig(PM_ ${pm_out_dotconf_file} pm_var_names)
 
+  if(DEFINED PM_MCUBOOT_PAD_SIZE AND
+     (NOT "${PM_MCUBOOT_PAD_SIZE}" STREQUAL "${SB_CONFIG_PM_MCUBOOT_PAD}")
+  )
+    message(WARNING "MCUboot padding partition size is ${PM_MCUBOOT_PAD_SIZE} "
+            "but signing uses ${SB_CONFIG_PM_MCUBOOT_PAD}, please adjust "
+            "`PM_MCUBOOT_PAD` value in sysbuild Kconfig to ${PM_MCUBOOT_PAD_SIZE}."
+    )
+  endif()
+
   foreach(name ${pm_var_names})
     set_property(
       TARGET partition_manager${underscore}${PM_DOMAIN}
