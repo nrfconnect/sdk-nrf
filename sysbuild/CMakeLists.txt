@@ -19,6 +19,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endforeach()
 
+  if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+    set_config_string(${DEFAULT_IMAGE} CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS
+                      "--pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD}"
+    )
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 # Sysbuild function hooks used by nRF Connect SDK

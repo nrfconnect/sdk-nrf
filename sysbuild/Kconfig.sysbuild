@@ -10,5 +10,15 @@ config PARTITION_MANAGER
 	bool "Partition Manager"
 	default y
 
+config PM_MCUBOOT_PAD
+	hex "Memory reserved for MCUBOOT_PAD"
+	default 0x200
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  MCUBOOT_PAD size in partition file.
+	  This value is default 0x200 but if using static partitions having a
+	  different padding size, then this value must be updated to correspond
+	  to the value in the static partition file.
+
 rsource "Kconfig.netcore"
 rsource "Kconfig.secureboot"
