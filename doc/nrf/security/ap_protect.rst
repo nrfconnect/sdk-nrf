@@ -25,6 +25,8 @@ For detailed information, refer to the hardware documentation.
 
 .. list-table:: AP-Protect implementations
    :header-rows: 1
+   :align: center
+   :widths: auto
 
    * - AP-Protect implementation type
      - Default factory state
@@ -49,6 +51,8 @@ See the related hardware documentation for more information about which implemen
 
 .. list-table:: SoC AP-Protect matrix
    :header-rows: 1
+   :align: center
+   :widths: auto
 
    * - SoC
      - Hardware AP-Protect support
@@ -115,6 +119,8 @@ Based on the available implementation types, you can configure the access port p
 
 .. list-table:: AP-Protect states
    :header-rows: 1
+   :align: center
+   :widths: auto
 
    * - AP-Protect state
      - Related Kconfig option in the |NCS|
