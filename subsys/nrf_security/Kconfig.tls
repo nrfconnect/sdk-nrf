@@ -73,21 +73,14 @@ menuconfig MBEDTLS_TLS_LIBRARY
 	bool
 	prompt "Create mbed TLS transport layer security library"
 	select MBEDTLS_X509_LIBRARY
+	imply PSA_WANT_ALG_TLS12_PRF
+	imply PSA_WANT_ALG_TLS12_PSK_TO_MS
 	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	help
 	  Create the mbed SSL/TLS library in addition to the mbed crypto
 	  library.
 
 if MBEDTLS_TLS_LIBRARY
-
-# Enact override to set this configuration in case MBEDTLS_TLS_LIBRARY is enabled
-config PSA_WANT_ALG_TLS12_PRF
-	bool
-	default y
-
-config PSA_WANT_ALG_TLS12_PSK_TO_MS
-	bool
-	default y
 
 config MBEDTLS_SSL_CLI_C
 	bool "Enable the SSL/TLS client code"
