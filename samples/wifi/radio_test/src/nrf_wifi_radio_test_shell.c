@@ -16,6 +16,7 @@
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
+#define NRF_WIFI_RADIO_TEST_INIT_TIMEOUT_MS 5000
 
 static bool check_test_in_prog(const struct shell *shell)
 {
@@ -2432,6 +2433,18 @@ SHELL_CMD_REGISTER(wifi_radio_test,
 static int nrf_wifi_radio_test_shell_init(void)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	unsigned int timeout = 0;
+
+	while (!ctx->rpu_ctx && timeout < NRF_WIFI_RADIO_TEST_INIT_TIMEOUT_MS) {
+		k_sleep(K_MSEC(100));
+		timeout += 100;
+	}
+
+	if (!ctx->rpu_ctx) {
+		printf("nRF Wi-Fi radio test shell init timedout waiting for driver: %d\n",
+		       NRF_WIFI_RADIO_TEST_INIT_TIMEOUT_MS);
+		return -ENOEXEC;
+	}
 
 	status = nrf_wifi_radio_test_conf_init(&ctx->conf_params);
 
