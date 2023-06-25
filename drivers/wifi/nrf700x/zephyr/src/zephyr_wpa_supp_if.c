@@ -14,6 +14,7 @@
 #include <zephyr/logging/log.h>
 
 #include "zephyr_fmac_main.h"
+#include "zephyr_wifi_mgmt.h"
 #include "zephyr_wpa_supp_if.h"
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
@@ -427,6 +428,8 @@ void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.disassoc)	{
 		vif_ctx_zep->supp_callbk_fns.disassoc(vif_ctx_zep->supp_drv_if_ctx, &event);
 	}
+
+	(void) wifi_nrf_twt_teardown_flows(vif_ctx_zep, 0, NRF_WIFI_MAX_TWT_FLOWS);
 }
 
 void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
@@ -634,7 +637,7 @@ int wifi_nrf_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned s
 		goto out;
 	}
 
-	ret = 0;
+	ret = wifi_nrf_twt_teardown_flows(vif_ctx_zep, 0, NRF_WIFI_MAX_TWT_FLOWS);
 out:
 	return ret;
 }
