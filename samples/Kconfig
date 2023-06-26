@@ -33,9 +33,9 @@ config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	bool "Include RPMsg sample on netcore"
-	depends on SOC_NRF5340_CPUAPP && (BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST)
+	depends on SOC_NRF5340_CPUAPP && (BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO)
 	select PARTITION_MANAGER_ENABLED
-	default y if BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST
+	default y if BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO
 	help
 	  Enabling this setting will include a network stack to run on the
 	  network core and communicate over RPMsg with the application core.
@@ -65,35 +65,35 @@ if NCS_INCLUDE_RPMSG_CHILD_IMAGE
 
 config NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
 	bool
-	depends on BT_RPMSG && NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST
+	depends on BT_RPMSG && NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST_COMBO
 	default y
 	help
 	  multiprotocol_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE
 	bool
-	depends on BT_RPMSG && !NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST
+	depends on BT_RPMSG && !NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST_COMBO
 	default y
 	help
 	  hci_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
 	bool
-	depends on NRF_802154_SER_HOST && !BT_RPMSG && !BT_RPC && !NRF700X_RADIO_TEST
+	depends on NRF_802154_SER_HOST && !BT_RPMSG && !BT_RPC && !NRF700X_RADIO_TEST_COMBO
 	default y
 	help
 	  802154_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
 	bool
-	depends on BT_RPC && !NRF700X_RADIO_TEST
+	depends on BT_RPC && !NRF700X_RADIO_TEST_COMBO
 	default y
 	help
 	  rpc_host sample as a child image (network core).
 
 config NCS_SAMPLE_PERIPHERAL_RADIO_TEST_CHILD_IMAGE
 	bool "Add peripheral radio_test sample as a child image"
-	depends on NRF700X_RADIO_TEST && BOARD_ENABLE_CPUNET
+	depends on NRF700X_RADIO_TEST_COMBO
 	default y
 	select PARTITION_MANAGER_ENABLED
 	help
