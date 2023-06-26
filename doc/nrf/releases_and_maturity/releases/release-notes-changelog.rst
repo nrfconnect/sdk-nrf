@@ -313,7 +313,13 @@ Cellular samples (renamed from nRF9160 samples)
 
 * :ref:`modem_shell_application` sample:
 
-  * The sample now uses the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
+  * Added:
+
+    * Support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
+
+  * Updated:
+
+    * The sample to use the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -459,11 +465,11 @@ Modem libraries
 
   * Added:
 
-    * Added support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
+    * Support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
 
   * Updated:
 
-    * Neighbor cell search is modified to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
+    * Neighbor cell search to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
 
 * :ref:`pdn_readme` library:
 
