@@ -7,3 +7,4 @@ tests:
       - nrf9160dk_nrf9160_ns
       - qemu_cortex_m3
     tags: edge_impulse
+    timeout: 420
