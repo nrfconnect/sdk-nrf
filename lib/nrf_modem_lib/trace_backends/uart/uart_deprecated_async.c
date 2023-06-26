@@ -60,8 +60,8 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	const nrfx_uarte_config_t config = {
 		.skip_gpio_cfg = true,
 		.skip_psel_cfg = true,
-		.hal_cfg.hwfc = NRF_UARTE_HWFC_DISABLED,
-		.hal_cfg.parity = NRF_UARTE_PARITY_EXCLUDED,
+		.config.hwfc = NRF_UARTE_HWFC_DISABLED,
+		.config.parity = NRF_UARTE_PARITY_EXCLUDED,
 		.baudrate = NRF_UARTE_BAUDRATE_1000000,
 		.interrupt_priority = DT_IRQ(UART1_NL, priority),
 		.p_context = NULL,
@@ -119,7 +119,7 @@ int trace_backend_write(const void *data, size_t len)
 			break;
 		}
 
-		err = nrfx_uarte_tx(&uarte_inst, &buf[idx], transfer_len);
+		err = nrfx_uarte_tx(&uarte_inst, &buf[idx], transfer_len, 0);
 		if (err != NRFX_SUCCESS) {
 			LOG_ERR("nrfx_uarte_tx error: %d", err);
 			k_sem_give(&tx_sem);
