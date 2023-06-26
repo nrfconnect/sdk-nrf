@@ -756,12 +756,12 @@ Programming with the script
    Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`nrf/lib/bin/bt_ll_acs_nrf53/bin` directory and programs it to the network core of both the gateway and the headset.
 
    .. note::
-      If the programming command fails because of :ref:`readback_protection_error`, run :file:`buildprog.py` with the ``--recover-on-fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
+      If the programming command fails because of :ref:`readback_protection_error`, run :file:`buildprog.py` with the ``--recover_on_fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
       For example, using the programming command example above:
 
       .. code-block:: console
 
-         python buildprog.py -c both -b debug -d both -p --recover-on-fail
+         python buildprog.py -c both -b debug -d both -p --recover_on_fail
 
    If you want to program firmware that has DFU enabled, you must include the DFU parameters in the command.
    The command for programming with DFU enabled can look as follows:
