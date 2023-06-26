@@ -6,11 +6,11 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-if (DEFINED SHIELD AND ${BOARD} STREQUAL "nrf5340dk_nrf5340_cpunet")
+if(DEFINED SHIELD AND "${BOARD}" STREQUAL "nrf5340dk_nrf5340_cpunet")
   string(REPLACE " " ";" SHIELD_LIST "${SHIELD}")
-  foreach(sh IN_LIST SHIELD_LIST)
-    if (${sh} STREQUAL "nrf21540_ek")
-      if (CONFIG_RADIO_TEST_USB)
+  foreach(sh IN LISTS SHIELD_LIST)
+    if("${sh}" STREQUAL "nrf21540_ek")
+      if(CONFIG_RADIO_TEST_USB)
         set(remote_shell_DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/nrf21540_ek_usb.overlay)
       else()
         set(remote_shell_DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/nrf21540_ek.overlay)
@@ -21,11 +21,11 @@ if (DEFINED SHIELD AND ${BOARD} STREQUAL "nrf5340dk_nrf5340_cpunet")
   endforeach()
 endif()
 
-if (NOT DEFINED remote_shell_DTC_OVERLAY_FILE AND CONFIG_RADIO_TEST_USB)
+if(NOT DEFINED remote_shell_DTC_OVERLAY_FILE AND CONFIG_RADIO_TEST_USB)
   set(remote_shell_DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/usb.overlay)
 endif()
 
-if (CONFIG_RADIO_TEST_USB)
+if(CONFIG_RADIO_TEST_USB)
   set(remote_shell_CONF_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/prj_usb.conf)
 endif()
 

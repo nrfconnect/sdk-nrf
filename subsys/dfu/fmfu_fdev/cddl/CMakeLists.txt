@@ -51,7 +51,7 @@ find_program(
   clang-format-4
   )
 
-if (${CLANG_FORMAT} STREQUAL CLANG_FORMAT-NOTFOUND)
+if(NOT CLANG_FORMAT)
   message(WARNING
     "'clang-format' not found, generated code will not be formatted")
 else()

@@ -101,7 +101,7 @@ if(NCS_SYSBUILD_PARTITION_MANAGER)
     set(sign_depends ${slot}_hex)
   endif()
 else()
-  if (${slot} STREQUAL "s1_image")
+  if ("${slot}" STREQUAL "s1_image")
     # The s1_image slot is built as a child image, add the dependency and
     # path to its hex file accordingly. We cannot use the shared variables
     # from the s1 child image since its configure stage might not have executed
@@ -148,7 +148,7 @@ endif()
   elseif (CONFIG_SB_SIGNING_CUSTOM)
     set(custom_sign_cmd "${CONFIG_SB_SIGNING_COMMAND}")
 
-    if ((custom_sign_cmd STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
+    if (("${custom_sign_cmd}" STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
       message(FATAL_ERROR "You must specify a signing command and valid public key file for custom signing.")
     endif()
 

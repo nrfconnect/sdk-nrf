@@ -19,7 +19,7 @@ else()
 endif()
 
 
-if (CONFIG_HUK_TEST_BOARD_SNR STREQUAL "")
+if("${CONFIG_HUK_TEST_BOARD_SNR}" STREQUAL "")
   message(WARNING "If it is to be run on target, this test requires setting "
       "CONFIG_HUK_TEST_BOARD_SNR")
 else()
