@@ -9,11 +9,13 @@ Configuration
 
 You can enable the Nordic Security Module using `PSA crypto support`_ or `Legacy crypto support`_.
 
+To enable the Nordic Security Module, set the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option along with additional configuration options, as described in :ref:`nrf_security_driver_config`.
+This includes PSA crypto support by default.
+
 PSA crypto support
 ******************
 
-To enable the Nordic Security Module with PSA crypto support, set the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option along with additional configuration options, as described in :ref:`nrf_security_driver_config`.
-
+PSA crypto support is included by default when you enable Nordic Security Module through the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
 PSA crypto support is provided through PSA Crypto APIs and is implemented by PSA core.
 PSA core uses PSA drivers to implement the cryptographic features either in software, or using hardware accelerators.
 
@@ -21,7 +23,8 @@ PSA core uses PSA drivers to implement the cryptographic features either in soft
 
 Legacy crypto support
 *********************
-To enable the legacy crypto support mode of Nordic Security Module, set the :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` Kconfig option along with additional configuration options, as described in :ref:`nrf_security_legacy_config`.
+
+To enable the legacy crypto support mode of Nordic Security Module, set both the :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` and :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig options along with additional configuration options, as described in :ref:`nrf_security_legacy_config`.
 The legacy crypto support allows backwards compatibility for software that requires usage of Mbed TLS crypto toolbox functions prefixed with ``mbedtls_``.
 
 Custom Mbed TLS configuration files
