@@ -457,7 +457,13 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * Neighbor cell search is modified to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
+  * Added:
+
+    * Added support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
+
+  * Updated:
+
+    * Neighbor cell search is modified to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
 
 * :ref:`pdn_readme` library:
 
