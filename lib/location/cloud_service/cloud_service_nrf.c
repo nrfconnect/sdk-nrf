@@ -8,18 +8,23 @@
 #include <zephyr/logging/log.h>
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 #include <net/nrf_cloud_location.h>
-#else
+#elif defined(CONFIG_NRF_CLOUD_REST)
 #include <net/nrf_cloud_rest.h>
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
 #endif
 
 #include "cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-/* Verify that MQTT or REST is enabled */
+/* Verify that MQTT, REST or CoAP is enabled */
 BUILD_ASSERT(
-	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_REST),
-	"CONFIG_NRF_CLOUD_MQTT or CONFIG_NRF_CLOUD_REST transport must be enabled");
+	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
+	IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
+	IS_ENABLED(CONFIG_NRF_CLOUD_COAP),
+	"CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST or CONFIG_NRF_CLOUD_COAP transport "
+	"must be enabled");
 
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
@@ -98,7 +103,7 @@ int cloud_service_nrf_pos_get(
 	struct location_data *const location)
 {
 	int err;
-	struct nrf_cloud_location_result result;
+#if defined(CONFIG_NRF_CLOUD_REST)
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
@@ -107,13 +112,20 @@ int cloud_service_nrf_pos_get(
 		.rx_buf_len = rcv_buf_len,
 		.fragment_size = 0
 	};
+#endif
 	const struct nrf_cloud_rest_location_request loc_req = {
 		.cell_info = params->cell_data,
 		.wifi_info = params->wifi_data
 	};
+	struct nrf_cloud_location_result result;
 
+#if defined(CONFIG_NRF_CLOUD_REST)
 	LOG_DBG("Sending positioning request (REST)");
 	err = nrf_cloud_rest_location_get(&rest_ctx, &loc_req, &result);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	LOG_DBG("Sending positioning request (CoAP)");
+	err = nrf_cloud_coap_location_get(&loc_req, &result);
+#endif
 	if (!err) {
 		location->accuracy = (double)result.unc;
 		location->latitude = result.lat;
