@@ -10,6 +10,10 @@ ExternalZephyrProject_Add(
     SOURCE_DIR ${APP_DIR}/remote
     BOARD ${SB_CONFIG_REMOTE_BOARD}
   )
+list(APPEND PM_DOMAINS CPUNET)
+set(PM_CPUNET_IMAGES remote)
+set(DOMAIN_APP_CPUNET remote)
+set(CPUNET_PM_DOMAIN_DYNAMIC_PARTITION remote CACHE INTERNAL "")
 
 # Add a dependency so that the remote sample will be built and flashed first
 add_dependencies(hello_world remote)
