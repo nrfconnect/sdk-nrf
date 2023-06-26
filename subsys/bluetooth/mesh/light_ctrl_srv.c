@@ -850,6 +850,21 @@ static int handle_light_onoff_get(struct bt_mesh_model *model, struct bt_mesh_ms
 	return 0;
 }
 
+static bool transition_get(struct bt_mesh_model *model,
+			   struct bt_mesh_model_transition *transition,
+			   struct net_buf_simple *buf)
+{
+	/* Light LC Server uses state machine values instead of DTT if Transition Time field is not
+	 * present in the message.
+	 */
+	if (buf->len == 2) {
+		model_transition_buf_pull(buf, transition);
+		return true;
+	}
+
+	return false;
+}
+
 static int light_onoff_set(struct bt_mesh_light_ctrl_srv *srv, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf, bool ack)
 {
@@ -862,7 +877,7 @@ static int light_onoff_set(struct bt_mesh_light_ctrl_srv *srv, struct bt_mesh_ms
 	uint8_t tid = net_buf_simple_pull_u8(buf);
 
 	struct bt_mesh_model_transition transition;
-	bool has_trans = !!model_transition_get(srv->model, &transition, buf);
+	bool has_trans = transition_get(srv->model, &transition, buf);
 
 	enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 
