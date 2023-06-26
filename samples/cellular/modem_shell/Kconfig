@@ -94,10 +94,17 @@ config MOSH_CLOUD_REST
 	select NRF_CLOUD_AGPS_FILTERED_RUNTIME if NRF_CLOUD_AGPS && !NRF_CLOUD_MQTT
 
 config MOSH_CLOUD_MQTT
-	bool "MQTT connection to nRFCloud"
+	bool "MQTT connection to nRF Cloud"
 	select NRF_CLOUD_MQTT
 	help
-	  MQTT connection to nRFCloud.
+	  MQTT connection to nRF Cloud.
+
+config MOSH_CLOUD_COAP
+	bool "CoAP connection to nRF Cloud"
+	select NRF_CLOUD_COAP
+	select MODEM_JWT
+	help
+	  CoAP connection to nRF Cloud.
 
 config MOSH_CLOUD_LWM2M
 	bool "Cloud connection using LwM2M"
