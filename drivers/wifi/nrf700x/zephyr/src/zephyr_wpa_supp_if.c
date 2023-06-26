@@ -1036,7 +1036,7 @@ int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 
 	ret = wifi_nrf_fmac_get_interface(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 	if (ret != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: Failed to get interface info\n", __func__);
+		LOG_ERR("%s: Failed to send get interface info command\n", __func__);
 		goto out;
 	}
 
