@@ -1190,12 +1190,22 @@ For example:
 Cloud over MQTT
 ===============
 
-To build the MoSh sample with cloud connectivity, use the ``-DOVERLAY_CONFIG=overlay-cloud_mqtt.conf`` option.
+To build the MoSh sample with cloud connectivity over MQTT, use the ``-DOVERLAY_CONFIG=overlay-cloud_mqtt.conf`` option.
 For example:
 
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
+
+Cloud over CoAP
+===============
+
+To build the MoSh sample with cloud connectivity over CoAP, use the ``-DOVERLAY_CONFIG=overlay-cloud_coap.conf`` option.
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_coap.conf
 
 Location service handled in application
 =======================================

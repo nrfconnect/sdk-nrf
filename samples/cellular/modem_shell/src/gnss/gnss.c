@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <modem/modem_jwt.h>
 #include <net/nrf_cloud_rest.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
 #endif /* CONFIG_NRF_CLOUD_AGPS */
@@ -52,9 +55,12 @@ BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library cannot be enabled at 
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-/* Verify that MQTT or REST is enabled */
-BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_REST),
-	     "CONFIG_NRF_CLOUD_MQTT or CONFIG_NRF_CLOUD_REST transport must be enabled");
+/* Verify that MQTT, REST or COAP is enabled */
+BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
+	     IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
+	     IS_ENABLED(CONFIG_NRF_CLOUD_COAP),
+	     "CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST or CONFIG_NRF_CLOUD_COAP "
+	     "transport must be enabled");
 #endif
 
 #define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 1536
@@ -113,7 +119,8 @@ static struct k_work get_pgps_data_work;
 	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)) || \
 	(defined(CONFIG_NRF_CLOUD_PGPS) && \
 	 !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS))) && \
-	!defined(CONFIG_NRF_CLOUD_MQTT)
+	!defined(CONFIG_NRF_CLOUD_MQTT) && \
+	defined(CONFIG_NRF_CLOUD_REST)
 static char jwt_buf[600];
 static char rx_buf[2048];
 #endif
@@ -652,7 +659,8 @@ static void get_agps_data(struct k_work *item)
 	} else if (err) {
 		mosh_error("GNSS: Failed to request A-GPS data, error: %d", err);
 	}
-#else
+#else /* REST and CoAP */
+#if defined(CONFIG_NRF_CLOUD_REST)
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
 	if (err) {
 		mosh_error("GNSS: Failed to generate JWT, error: %d", err);
@@ -667,6 +675,7 @@ static void get_agps_data(struct k_work *item)
 		.rx_buf = rx_buf,
 		.rx_buf_len = sizeof(rx_buf),
 	};
+#endif
 
 	struct nrf_cloud_rest_agps_request request = {
 		.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
@@ -696,7 +705,11 @@ static void get_agps_data(struct k_work *item)
 		request.net_info = &net_info;
 	}
 
+#if defined(CONFIG_NRF_CLOUD_REST)
 	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	err = nrf_cloud_coap_agps_data_get(&request, &result);
+#endif
 	if (err) {
 		mosh_error("GNSS: Failed to get A-GPS data, error: %d", err);
 		return;
@@ -861,9 +874,14 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	} else {
 		mosh_print("GNSS: P-GPS predictions requested");
 	}
-#else
+#else /* !CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS */
 	mosh_print("GNSS: Getting P-GPS predictions from nRF Cloud...");
 
+	struct nrf_cloud_rest_pgps_request request = {
+		.pgps_req = &pgps_request
+	};
+
+#if defined(CONFIG_NRF_CLOUD_REST)
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
 	if (err) {
 		mosh_error("GNSS: Failed to generate JWT, error: %d", err);
@@ -879,11 +897,21 @@ static void get_pgps_data_work_fn(struct k_work *work)
 		.rx_buf_len = sizeof(rx_buf),
 	};
 
-	struct nrf_cloud_rest_pgps_request request = {
-		.pgps_req = &pgps_request
-	};
-
 	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	struct nrf_cloud_pgps_result file_location = {0};
+	static char host[64];
+	static char path[128];
+
+	memset(host, 0, sizeof(host));
+	memset(path, 0, sizeof(path));
+	file_location.host = host;
+	file_location.host_sz = sizeof(host);
+	file_location.path = path;
+	file_location.path_sz = sizeof(path);
+
+	err = nrf_cloud_coap_pgps_url_get(&request, &file_location);
+#endif
 	if (err) {
 		mosh_error("GNSS: Failed to get P-GPS data, error: %d", err);
 
@@ -894,7 +922,11 @@ static void get_pgps_data_work_fn(struct k_work *work)
 
 	mosh_print("GNSS: Processing P-GPS response");
 
+#if defined(CONFIG_NRF_CLOUD_REST)
 	err = nrf_cloud_pgps_process(rest_ctx.response, rest_ctx.response_len);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	err = nrf_cloud_pgps_update(&file_location);
+#endif
 	if (err) {
 		mosh_error("GNSS: Failed to process P-GPS response, error: %d", err);
 
@@ -913,7 +945,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	}
 
 	mosh_print("GNSS: P-GPS predictions requested");
-#endif
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS */
 }
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
 
