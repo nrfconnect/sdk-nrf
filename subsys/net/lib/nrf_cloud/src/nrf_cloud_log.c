@@ -65,7 +65,7 @@ void logs_init_context(void *rest_ctx, const char *dev_id, int log_level,
 	context->src_id = src_id;
 	context->src_name = src_name;
 	context->dom_id = dom_id;
-	context->sequence = log_sequence++;
+	context->sequence = atomic_inc(&log_sequence);
 
 	if (dev_id) {
 		strncpy(context->device_id, dev_id, NRF_CLOUD_CLIENT_ID_MAX_LEN);
