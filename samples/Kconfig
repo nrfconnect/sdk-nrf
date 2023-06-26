@@ -18,6 +18,11 @@ config NCS_SAMPLES_DEFAULTS
 
 if SOC_SERIES_NRF53X
 
+config NRF700X_RADIO_TEST_COMBO
+	bool "Enable radio test combo build for nRF5340"
+	depends on SOC_NRF5340_CPUAPP
+	select BOARD_ENABLE_CPUNET
+
 config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 	bool "Add empty_app_core as a child image"
 	depends on SOC_NRF5340_CPUNET
