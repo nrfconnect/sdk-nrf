@@ -51,7 +51,7 @@ static void uart_send_cb(zb_uint8_t status)
 /**
  * Configure ZBOSS OSIF serial interface.
  */
-static void configure_test_suite(void)
+static void configure_osif_serial(void)
 {
 	zb_osif_serial_init();
 	zb_osif_serial_set_cb_recv_data(uart_recv_cb);
@@ -74,6 +74,20 @@ static void assert_transmission(uint8_t *buf, size_t len)
 		"Transmitted and received bytes differ");
 }
 
+static void *setup_test_suite(void)
+{
+	printk("---------------------------------------------------\r\n");
+	printk("PRECONDITION: Short UART1 pins before running tests\r\n");
+	printk("---------------------------------------------------\r\n");
+
+	/* Enable zigbee callbacks implemented in zigbee_scheduler mock. */
+	zigbee_enable();
+
+	/* Configure UART driver. */
+	configure_osif_serial();
+
+	return NULL;
+}
 
 /**
  * Verify that:
@@ -81,8 +95,10 @@ static void assert_transmission(uint8_t *buf, size_t len)
  *  - There is no ongoing TX operation.
  *  - Reset RX buffer counter and its contents.
  */
-static void setup_test_case(void)
+static void setup_test_case(void *fixture)
 {
+	ARG_UNUSED(fixture);
+
 	zassert_not_null(uart_dev, "UART device was not initialized");
 
 	/* Ensure that there is no ongoing transmission. */
@@ -94,11 +110,12 @@ static void setup_test_case(void)
 	memset(uart_rx_test_buf, 0, sizeof(uart_rx_test_buf));
 }
 
+ZTEST_SUITE(nrf_osif_serial_tests, NULL, setup_test_suite, setup_test_case, NULL, NULL);
 
 /**
  * Verify simple transmission and reception.
  */
-static void test_tx_rx(void)
+ZTEST(nrf_osif_serial_tests, test_tx_rx)
 {
 	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
@@ -117,7 +134,7 @@ static void test_tx_rx(void)
 /**
  * Verify UART sleep API.
  */
-static void test_sleep(void)
+ZTEST(nrf_osif_serial_tests, test_sleep)
 {
 	zassert_not_null(uart_dev, "UART device was not initialized");
 
@@ -130,12 +147,14 @@ static void test_sleep(void)
 
 	zassert_not_null(uart_dev,
 		"UART device is not initialized after sleep period");
+
+	k_sem_give(&tx_lock);
 }
 
 /**
  * Verify reception of odd-size transmissions.
  */
-static void test_undiv_tx_rx(void)
+ZTEST(nrf_osif_serial_tests, test_undiv_tx_rx)
 {
 	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
@@ -166,7 +185,7 @@ static void test_undiv_tx_rx(void)
 /**
  * Verify reception of several, continuous transmissions.
  */
-static void test_multi_tx_rx(void)
+ZTEST(nrf_osif_serial_tests, test_multi_tx_rx)
 {
 	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
@@ -194,7 +213,7 @@ static void test_multi_tx_rx(void)
 /**
  * Verify reception of large buffer through several reception requests.
  */
-static void test_small_rx_buffer(void)
+ZTEST(nrf_osif_serial_tests, test_small_rx_buffer)
 {
 	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
@@ -220,7 +239,7 @@ static void test_small_rx_buffer(void)
 /**
  * Verify that it is possible to receive transmission of single-chunk length.
  */
-static void test_single_rx_chunk(void)
+ZTEST(nrf_osif_serial_tests, test_single_rx_chunk)
 {
 	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_BUF_LEN] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
@@ -235,7 +254,7 @@ static void test_single_rx_chunk(void)
 /**
  * Verify that it is possible to receive transmission of double-chunk length.
  */
-static void test_two_rx_chunks(void)
+ZTEST(nrf_osif_serial_tests, test_two_rx_chunks)
 {
 	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_BUF_LEN * 2] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
@@ -251,7 +270,7 @@ static void test_two_rx_chunks(void)
  * Verify that it is possible to receive transmission shorter than requested
  * (one byte).
  */
-static void test_rx_timeout_single_byte(void)
+ZTEST(nrf_osif_serial_tests, test_rx_timeout_single_byte)
 {
 #if CONFIG_ZIGBEE_UART_RX_BUF_LEN < 2
 	ztest_test_skip();
@@ -275,7 +294,7 @@ static void test_rx_timeout_single_byte(void)
  * Verify that it is possible to receive transmission shorter than requested
  * (one chunk and one byte).
  */
-static void test_rx_timeout_chunk_and_single_byte(void)
+ZTEST(nrf_osif_serial_tests, test_rx_timeout_chunk_and_single_byte)
 {
 #if CONFIG_ZIGBEE_UART_RX_BUF_LEN < 2
 	ztest_test_skip();
@@ -299,7 +318,7 @@ static void test_rx_timeout_chunk_and_single_byte(void)
  * Verify that it is possible to receive transmission shorter than requested
  * (two chunks and one byte).
  */
-static void test_rx_timeout_two_chunks_and_single_byte(void)
+ZTEST(nrf_osif_serial_tests, test_rx_timeout_two_chunks_and_single_byte)
 {
 	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_BUF_LEN*2+1] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
@@ -313,59 +332,4 @@ static void test_rx_timeout_two_chunks_and_single_byte(void)
 	zb_osif_serial_send_data(test_serial_data, bytes_filled);
 
 	assert_transmission(test_serial_data, bytes_filled);
-}
-
-void test_main(void)
-{
-	printk("---------------------------------------------------\r\n");
-	printk("PRECONDITION: Short UART1 pins before running tests\r\n");
-	printk("---------------------------------------------------\r\n");
-
-	/* Enable zigbee callbacks implemented in zigbee_scheduler mock. */
-	zigbee_enable();
-
-	/* Configure UART driver. */
-	configure_test_suite();
-
-	ztest_test_suite(nrf_osif_serial_tests,
-		ztest_unit_test_setup_teardown(
-			test_tx_rx,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test(test_sleep),
-		ztest_unit_test_setup_teardown(
-			test_undiv_tx_rx,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_multi_tx_rx,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_small_rx_buffer,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_single_rx_chunk,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_two_rx_chunks,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_rx_timeout_single_byte,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_rx_timeout_chunk_and_single_byte,
-			setup_test_case,
-			unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_rx_timeout_two_chunks_and_single_byte,
-			setup_test_case,
-			unit_test_noop)
-		);
-
-	ztest_run_test_suite(nrf_osif_serial_tests);
 }
