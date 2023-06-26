@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 # Set USB as default transport when nRF52 Dongle board is selected
-if (${BOARD} STREQUAL "nrf52840dongle_nrf52840")
+if("${BOARD}" STREQUAL "nrf52840dongle_nrf52840")
   set(CONF_FILE "prj_usb.conf")
 endif()
 

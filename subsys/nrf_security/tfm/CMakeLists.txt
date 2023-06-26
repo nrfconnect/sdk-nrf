@@ -85,7 +85,7 @@ endif()
 # TF-M build require that PSA Crypto APIs are compiled
 set(COMPILE_PSA_APIS True)
 
-if (${PROJECT_NAME} STREQUAL "Bootloader")
+if ("${PROJECT_NAME}" STREQUAL "Bootloader")
   set(CONFIG_CC3XX_MBEDTLS_RSA_C    True)
   set(CONFIG_MBEDTLS_RSA_C          True)
   set(CONFIG_MBEDTLS_PKCS1_V21      True)
