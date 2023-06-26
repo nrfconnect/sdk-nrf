@@ -55,7 +55,19 @@ Comparison of SED and SSED
 **************************
 
 Compared to an SED, an SSED has no drawbacks for transmission and provides reduced power consumption and network traffic.
-This means you should configure your SED devices as SSEDs whenever possible.
+
+Based on the SED and SSED characteristics, use SSED for cases that meet one or more of the following criteria:
+
+* You need a small latency (ensured by small poll period for SEDs or small CSL Period for SSEDs).
+  As a general rule, SSED is a viable option and may decrease power consumption if the CSL Period is small (less than 20 seconds) and the parent has decent CSL Accuracy.
+* You want to have similar or smaller power consumption than with SED.
+* You want to reduce over-the-air radio traffic in an environment with many SEDs.
+
+In short, SSEDs are viable only when the additional application code and complexity to handle the more frequent polling are justified by the lower power usage or less intensive radio channel usage (or both).
+
+For example, one specific market application of SSEDs could be window coverings.
+For this use case to work as an SSED, the blinds must be very responsive (for example, with a latency within 500 ms), while the data must be very rarely exchanged between the controller device and the window covering device.
+
 You can see the difference in power consumption on the :ref:`Thread power consumption <thread_power_consumption>` page.
 
 .. figure:: overview/images/thread_sed_ssed_comparison.svg

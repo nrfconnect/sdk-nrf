@@ -50,7 +50,7 @@ During those intervals, the device waits for the router to send it any data rela
 The SSED does require sending packets occasionally to keep synchronization with the router.
 However, unlike a regular SED, an SSED does not actively communicate with the router by polling and goes into the idle mode between the scheduled activity periods.
 If there is no application-related traffic for an extended period of time, the SSED sends a data poll request packet to synchronize with the parent.
-Compared to a standard SED, the SSED features further reduce energy consumption of the device and generate less data traffic.
+Compared to a standard SED, the SSED features can further reduce energy consumption of the device and generate less data traffic.
 
 .. figure:: ../../../doc/nrf/protocols/thread/overview/images/thread_sed_ssed_comparison.svg
    :alt: Comparison of Thread SED and Thread SSED radio activity
