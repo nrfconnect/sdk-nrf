@@ -153,7 +153,7 @@ static int add_static_network_config(void)
 	memcpy(creds.password, CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD,
 	strlen(CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD));
 
-	LOG_INF("Adding statically configured WiFi network [%s] to internal list.",
+	LOG_DBG("Adding statically configured WiFi network [%s] to internal list.",
 		creds.header.ssid);
 
 	return add_network_from_credentials_struct_personal(&creds);

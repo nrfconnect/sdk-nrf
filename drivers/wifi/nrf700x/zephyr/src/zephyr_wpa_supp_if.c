@@ -486,7 +486,7 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (vif_ctx_zep->scan_in_progress) {
-		LOG_INF("%s: Scan already in progress\n", __func__);
+		LOG_ERR("%s: Scan already in progress\n", __func__);
 		ret = -EBUSY;
 		goto out;
 	}
@@ -565,7 +565,7 @@ int wifi_nrf_wpa_supp_scan_abort(void *if_priv)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!vif_ctx_zep->scan_in_progress) {
-		LOG_INF("%s:Ignore scan abort, no scan in progress", __func__);
+		LOG_ERR("%s:Ignore scan abort, no scan in progress", __func__);
 		goto out;
 	}
 
@@ -763,7 +763,7 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 		count++;
 		ret = -1;
 	} else {
-		LOG_INF("%s:Authentication request sent successfully\n", __func__);
+		LOG_DBG("%s:Authentication request sent successfully\n", __func__);
 		ret = 0;
 	}
 out:
@@ -827,7 +827,7 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: MLME command failed (assoc)\n", __func__);
 	} else {
-		LOG_INF("%s: Association request sent successfully\n", __func__);
+		LOG_DBG("%s: Association request sent successfully\n", __func__);
 		ret = 0;
 	}
 
