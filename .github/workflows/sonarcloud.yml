@@ -12,8 +12,6 @@ jobs:
     runs-on: self-hosted
     container: nordicplayground/nrfconnect-sdk:main
     env:
-      SONAR_SCANNER_VERSION: 4.7.0.2747
-      BUILD_WRAPPER_DOWNLOAD_URL: https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
     steps:
       - name: Checkout the code
