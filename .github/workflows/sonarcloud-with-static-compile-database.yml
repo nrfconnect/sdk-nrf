@@ -1,0 +1,77 @@
+name: Sonarcloud analysis (With Compilation DB)
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+
+jobs:
+  build:
+    name: Sonar cloud analysis
+    runs-on: ubuntu-latest
+    container: nordicplayground/nrfconnect-sdk:main
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        if: github.event_name == 'pull_request_target'
+        with:
+          ref: ${{ github.event.pull_request.head.sha  }} # Checkout the PR's head sha instead of the target branch's sha
+          path: ncs/nrf
+          fetch-depth: 0
+
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        if: github.event_name != 'pull_request_target'
+        with:
+          path: ncs/nrf
+          fetch-depth: 0
+
+      # Install more dependencies that are not part of the docker image but are needed by the workflow
+      - name: Install more deps
+        run: |
+          apt install -y curl zip
+
+      # Download compilation databse
+      - name: Download compilation database
+        run: |
+          wget https://github.com/balaji-nordic/ncs-compile-database/raw/c11a1a1aa85793bd4070c8c2581b15f572607ea0/ncs_compile_database.zip
+          unzip ncs_compile_database.zip
+          rm ncs_compile_database.zip
+
+      - name: Install sonar-scanner and build-wrapper
+        uses: sonarsource/sonarcloud-github-c-cpp@v1.3.2
+
+      - name: Run sonar-scanner on main
+        if: github.event_name != 'pull_request_target'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner -X \
+                        --define sonar.cfamily.compile-commands=compile_commands.json
+                        --define project.settings=ncs/nrf/sonar-project.properties \
+                        --define sonar.coverageReportPaths=coverage.xml \
+                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+
+      - name: Run sonar-scanner on PR
+        if: github.event_name == 'pull_request_target'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          wget https://raw.githubusercontent.com/balaji-nordic/sdk-nrf/main/sonar-project.properties -P ncs/nrf
+          sonar-scanner -X \
+                        --define sonar.cfamily.compile-commands=compile_commands.json
+                        --define project.settings=ncs/nrf/sonar-project.properties \
+                        --define sonar.coverageReportPaths=coverage.xml \
+                        --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
+                        --define sonar.scm.revision=${{ env.HEAD_SHA }} \
+                        --define sonar.pullrequest.key=${{ env.PR_NUMBER }} \
+                        --define sonar.pullrequest.branch=${{ env.PR_BRANCH }} \
+                        --define sonar.pullrequest.base=${{ env.BASE_REF }}
