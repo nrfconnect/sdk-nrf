@@ -163,6 +163,10 @@ To cancel the firmware distribution, use the ``mesh models dfd cancel`` shell co
 The Firmware Distribution Server will start the cancelling procedure by sending a cancel message to all Targets and will switch phase to :c:enum:`BT_MESH_DFD_PHASE_CANCELING_UPDATE`.
 Once the cancelling procedure is completed, the phase is set to :c:enum:`BT_MESH_DFD_PHASE_IDLE`.
 
+.. note::
+   It is possible to cancel the firmware distribution on a specific Target node at any time by sending Firmware Update Cancel message.
+   To do this, use the ``mesh models dfu cli cancel`` shell command specifying unicast address of the Target node.
+
 Recovering from failed distribution
 ***********************************
 
@@ -171,6 +175,8 @@ To do this, run the following shell commands::
 
   mesh models dfd receivers-delete-all
   mesh models dfd cancel
+
+To bring a stalled Target node to idle state, use the ``mesh models dfu cli cancel`` shell command.
 
 .. note::
    This does not affect the allocated image slots.
