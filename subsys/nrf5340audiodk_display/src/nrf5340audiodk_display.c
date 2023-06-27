@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <nrf5340audiodk_display/nrf5340audiodk_display.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>

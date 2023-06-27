@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
 #include <nrf5340audiodk_display/nrf5340audiodk_display.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
@@ -12,6 +17,10 @@
 #include <zephyr/logging/log.h>
 #include <stdint.h>
 #include "nrf5340audiodk_display_internal.h"
+#include <C:\ncs\v2.4.0\nrf\applications\nrf5340_audio\src\modules\hw_codec.h>
+#include <math.h>
+
+LOG_MODULE_REGISTER(nrf5340audiodk_display, CONFIG_NRF5340AUDIODK_DISPLAY_LOG_LEVEL);
 
 enum button_action {
 	BUTTON_PRESS,
@@ -33,37 +42,59 @@ static void event_cb_play_pause_button(lv_event_t *e)
 
 	int ret;
 	ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
-	/* 	if (ret) {
-			LOG_ERR("Failed to publish button msg, ret: %d", ret);
-	} */
+	if (ret) {
+		LOG_ERR("Failed to publish button msg, ret: %d", ret);
+	}
 }
+int volume_level_int;
 
 static void event_cb_volume_up_button(lv_event_t *e)
 {
 	struct button_msg msg;
+	/* maybe wrap this in func */
+	int volume_level_prosent_int;
+	char volume_level_prosent_str[20];
+
+	lv_obj_t *btn = lv_event_get_target(e);
+	lv_obj_t *parent = lv_obj_get_parent(btn);
+	lv_obj_t *volume = lv_obj_get_child(parent, 0);
 
 	msg.button_action = BUTTON_PRESS;
 	msg.button_pin = BUTTON_VOLUME_UP;
 
 	int ret;
 	ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
-	/* if (ret) {
+	if (ret) {
 		LOG_ERR("Failed to publish button msg, ret: %d", ret);
-} */
+	}
+	volume_level_int = hw_codec_volume_get();
+	lv_label_set_text(volume, "Up");
+
+	LOG_INF("Value:%d", volume_level_int);
 }
 
 static void event_cb_volume_down_button(lv_event_t *e)
 {
 	struct button_msg msg;
+	lv_obj_t *btn = lv_event_get_target(e);
+	lv_obj_t *parent = lv_obj_get_parent(btn);
+	lv_obj_t *volume = lv_obj_get_child(parent, 0);
+
+	int volume_level_int;
+	int volume_level_prosent_int;
+	char volume_level_prosent_str[8];
 
 	msg.button_action = BUTTON_PRESS;
 	msg.button_pin = BUTTON_VOLUME_DOWN;
 
 	int ret;
 	ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
-	/* if (ret) {
-			LOG_ERR("Failed to publish button msg, ret: %d", ret);
-	} */
+	if (ret) {
+		LOG_ERR("Failed to publish button msg, ret: %d", ret);
+	}
+	volume_level_int = hw_codec_volume_get();
+
+	lv_label_set_text(volume, "down");
 }
 static void event_cb_btn4_button(lv_event_t *e)
 {
@@ -74,9 +105,9 @@ static void event_cb_btn4_button(lv_event_t *e)
 
 	int ret;
 	ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
-	/* 	if (ret) {
-			LOG_ERR("Failed to publish button msg, ret: %d", ret);
-	} */
+	if (ret) {
+		LOG_ERR("Failed to publish button msg, ret: %d", ret);
+	}
 }
 
 static void event_cb_btn5_button(lv_event_t *e)
@@ -88,9 +119,9 @@ static void event_cb_btn5_button(lv_event_t *e)
 
 	int ret;
 	ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
-	/* 	if (ret) {
-			LOG_ERR("Failed to publish button msg, ret: %d", ret);
-	} */
+	if (ret) {
+		LOG_ERR("Failed to publish button msg, ret: %d", ret);
+	}
 }
 
 void create_play_pause_button(lv_obj_t *current_screen)
@@ -113,25 +144,21 @@ void create_volume_buttons(lv_obj_t *current_screen)
 
 	lv_obj_t *volume_up_label;
 	lv_obj_t *volume_down_label;
-	lv_obj_t *volume_level_label;
 
 	volume_up_button = lv_btn_create(current_screen);
 	volume_down_button = lv_btn_create(current_screen);
 
 	volume_up_label = lv_label_create(volume_up_button);
 	volume_down_label = lv_label_create(volume_down_button);
-	volume_level_label = lv_label_create(current_screen);
 
 	lv_label_set_text(volume_up_label, "Vol+");
 	lv_label_set_text(volume_down_label, "Vol-");
-	lv_label_set_text(volume_level_label, "Volume");
 
 	lv_obj_align(volume_up_button, LV_ALIGN_TOP_RIGHT, 0, 0);
 	lv_obj_align(volume_down_button, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
 
 	lv_obj_align(volume_up_label, LV_ALIGN_TOP_RIGHT, 0, 0);
 	lv_obj_align(volume_down_label, LV_ALIGN_CENTER, 0, 0);
-	lv_obj_align(volume_level_label, LV_ALIGN_TOP_RIGHT, 0, 40);
 	lv_obj_add_event_cb(volume_up_button, event_cb_volume_up_button, LV_EVENT_CLICKED, NULL);
 	lv_obj_add_event_cb(volume_down_button, event_cb_volume_down_button, LV_EVENT_CLICKED,
 			    NULL);
@@ -188,8 +215,14 @@ void create_devicetype_label(lv_obj_t *current_screen)
 	lv_label_set_text(what_dev_am_i_label, what_dev_am_i);
 	lv_obj_align(what_dev_am_i_label, LV_ALIGN_BOTTOM_MID, 0, 0);
 }
+
 void create_button_tab(lv_obj_t *screen)
 {
+	lv_obj_t *volume_level_label;
+	volume_level_label = lv_label_create(screen);
+	lv_label_set_text(volume_level_label, "Volume");
+	lv_obj_align(volume_level_label, LV_ALIGN_RIGHT_MID, 0, 0);
+
 #if (CONFIG_AUDIO_DEV == 1)
 	create_btn4_headset_button(screen);
 #endif

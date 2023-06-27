@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
 config NRF5340AUDIODK_DISPLAY
     bool "Need this string for config to work"
     select DISPLAY
@@ -19,3 +25,7 @@ config NRF5340AUDIODK_DISPLAY
     select CONFIG_LV_USE_BTN
     select CONFIG_LV_USE_IMG
     select CONFIG_LV_FONT_MONTSERRAT_14
+module=NRF5340AUDIODK_DISPLAY
+module-dep=LOG
+module-str=NRF5340AUDIODK_DISPLAY
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

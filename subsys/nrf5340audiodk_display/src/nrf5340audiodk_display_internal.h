@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 enum button_pin_names {
 	BUTTON_VOLUME_DOWN = DT_GPIO_PIN(DT_ALIAS(sw0), gpios),
 	BUTTON_VOLUME_UP = DT_GPIO_PIN(DT_ALIAS(sw1), gpios),
@@ -5,7 +11,5 @@ enum button_pin_names {
 	BUTTON_4 = DT_GPIO_PIN(DT_ALIAS(sw3), gpios),
 	BUTTON_5 = DT_GPIO_PIN(DT_ALIAS(sw4), gpios),
 };
-
-
 
 void create_button_tab(lv_obj_t *screen);

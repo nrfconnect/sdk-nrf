@@ -32,6 +32,10 @@ static cs47l63_t cs47l63_driver;
 
 /**@brief Write to multiple registers in CS47L63
  */
+uint32_t hw_codec_volume_get()
+{
+	return prev_volume_reg_val;
+}
 static int cs47l63_comm_reg_conf_write(const uint32_t config[][2], uint32_t num_of_regs)
 {
 	int ret;

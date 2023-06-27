@@ -8,7 +8,7 @@
 #define _HW_CODEC_H_
 
 #include <stdint.h>
-
+uint32_t hw_codec_volume_get();
 /**
  * @brief  Set volume on HW_CODEC
  *
