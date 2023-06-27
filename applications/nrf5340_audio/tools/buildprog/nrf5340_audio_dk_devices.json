@@ -1,16 +1,16 @@
 [
  {
-        "nrf5340_audio_dk_snr": 1050123372,
+        "nrf5340_audio_dk_snr": 1050163097,
         "nrf5340_audio_dk_dev": "headset",
         "channel": "left"
  },
  {
-        "nrf5340_audio_dk_snr": 1050133518,
+        "nrf5340_audio_dk_snr": 1050156006,
         "nrf5340_audio_dk_dev": "gateway",
         "channel": "NA"
  },
  {
-        "nrf5340_audio_dk_snr": 1050163097,
+        "nrf5340_audio_dk_snr": 1050129901,
         "nrf5340_audio_dk_dev": "headset",
         "channel": "right"
  }

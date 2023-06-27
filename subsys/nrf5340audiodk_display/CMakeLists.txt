@@ -6,5 +6,6 @@
 zephyr_library()
 
 zephyr_library_sources(
-  src/audiotest.c
+  src/nrf5340audiodk_display.c
+  src/button_tab.c
   )

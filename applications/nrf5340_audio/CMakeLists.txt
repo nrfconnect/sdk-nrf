@@ -8,6 +8,9 @@ cmake_minimum_required(VERSION 3.20.0)
 
 file(TO_CMAKE_PATH $ENV{ZEPHYR_BASE} CMAKE_STYLE_ZEPHYR)
 
+
+set(SHIELD adafruit_2_8_tft_touch_v2)
+
 if (CONFIG_AUDIO_DFU EQUAL 1)
     list(APPEND mcuboot_OVERLAY_CONFIG
         "${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-mcuboot.conf"

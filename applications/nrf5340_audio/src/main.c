@@ -25,6 +25,7 @@
 #include "audio_system.h"
 #include "channel_assignment.h"
 #include "streamctrl.h"
+#include <nrf5340audiodk_display/nrf5340audiodk_display.h>
 
 #if defined(CONFIG_AUDIO_DFU_ENABLE)
 #include "dfu_entry.h"
@@ -227,4 +228,5 @@ int main(void)
 
 	ret = streamctrl_start();
 	ERR_CHK(ret);
+	display_init();
 }

@@ -1,2 +1,21 @@
 config NRF5340AUDIODK_DISPLAY
-    bool "Hei"
+    bool "Need this string for config to work"
+    select DISPLAY
+    select LOG
+    select LVGL
+    select LV_MEM_CUSTOM
+    select LV_USE_LOG
+    select LV_USE_LABEL
+    select LV_USE_BTN
+    select LV_USE_IMG
+    select LV_FONT_MONTSERRAT_14
+    select CONFIG_LOG
+    select CONFIG_LOG_MODE_MINIMAL
+    select CONFIG_DISPLAY
+    select CONFIG_LVGL
+    select CONFIG_LV_MEM_CUSTOM
+    select CONFIG_LV_USE_LOG
+    select CONFIG_LV_USE_LABEL
+    select CONFIG_LV_USE_BTN
+    select CONFIG_LV_USE_IMG
+    select CONFIG_LV_FONT_MONTSERRAT_14
