@@ -96,7 +96,6 @@ manifest:
           - picolibc
           - psa-arch-tests
           - segger
-          - tinycbor
           - tinycrypt
           - tf-m-tests
           - uoscore-uedhoc
