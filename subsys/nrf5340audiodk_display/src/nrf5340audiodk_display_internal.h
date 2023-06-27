@@ -7,12 +7,5 @@ enum button_pin_names {
 };
 
 
-void create_play_pause_button(lv_obj_t *screen);
-void create_volume_buttons(lv_obj_t *screen);
-void create_btn4_button(lv_obj_t *screen);
-void create_btn5_button(lv_obj_t *screen);
 
-
-
-
-void create_buttontab(lv_obj_t *screen);
+void create_button_tab(lv_obj_t *screen);
