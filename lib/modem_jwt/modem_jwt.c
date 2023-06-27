@@ -13,7 +13,7 @@
 #include <zephyr/sys/base64.h>
 
 #define JWT_CMD_TEMPLATE "AT%%JWT=%d,%u,\"%s\",\"%s\""
-#define JWT_CMD_TEMPLATE_SEC_TAG "AT%%JWT=%d,%u,\"%s\",\"%s\",%d,%d"
+#define JWT_CMD_TEMPLATE_SEC_TAG "AT%%JWT=%d,%u,\"%s\",\"%s\",%u,%d"
 #define MAX_INT_PRINT_SZ 11
 #define JWT_CMD_PRINT_INT_SZ (MAX_INT_PRINT_SZ * 4)
 #define GET_BASE64_DECODED_LEN(n) (3 * n / 4)

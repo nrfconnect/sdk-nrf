@@ -36,7 +36,7 @@ enum jwt_alg_type {
 /** @brief JWT parameters required for JWT generation and pointer to generated JWT */
 struct jwt_data {
 	/** Modem sec tag to use for JWT signing */
-	int sec_tag;
+	unsigned int sec_tag;
 	/** Key type in the specified sec tag */
 	enum jwt_key_type key;
 	/** JWT signing algorithm */
