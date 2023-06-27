@@ -48,6 +48,11 @@ static struct k_work cmd_send_work;
 
 static inline void write_uart_string(const char *str)
 {
+	if (IS_ENABLED(CONFIG_LOG_BACKEND_UART)) {
+		LOG_RAW("%s", str);
+		return;
+	}
+
 	/* Send characters until, but not including, null */
 	for (size_t i = 0; str[i]; i++) {
 		uart_poll_out(uart_dev, str[i]);
