@@ -27,6 +27,8 @@
 
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
+struct zep_shim_intr_priv *intr_priv;
+
 static void *zep_shim_mem_alloc(size_t size)
 {
 	size = (size + 4) & 0xfffffffc;
@@ -627,11 +629,7 @@ static void zep_shim_bus_qspi_dev_host_map_get(void *os_qspi_dev_ctx,
 
 static void irq_work_handler(struct k_work *work)
 {
-	struct zep_shim_intr_priv *intr_priv = NULL;
 	int ret = 0;
-
-	intr_priv =
-		(struct zep_shim_intr_priv *)CONTAINER_OF(work, struct zep_shim_intr_priv, work);
 
 	ret = intr_priv->callbk_fn(intr_priv->callbk_data);
 
@@ -645,9 +643,8 @@ extern struct k_work_q zep_wifi_intr_q;
 
 static void zep_shim_irq_handler(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-	struct zep_shim_intr_priv *intr_priv = NULL;
-
-	intr_priv = (struct zep_shim_intr_priv *)cb;
+	ARG_UNUSED(cb);
+	ARG_UNUSED(pins);
 
 	k_work_schedule_for_queue(&zep_wifi_intr_q, &intr_priv->work, K_NO_WAIT);
 }
@@ -656,8 +653,9 @@ static enum wifi_nrf_status zep_shim_bus_qspi_intr_reg(void *os_dev_ctx, void *c
 						       int (*callbk_fn)(void *callbk_data))
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct zep_shim_intr_priv *intr_priv = NULL;
 	int ret = -1;
+
+	ARG_UNUSED(os_dev_ctx);
 
 	intr_priv = k_calloc(sizeof(*intr_priv), sizeof(char));
 
@@ -688,6 +686,14 @@ out:
 
 static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 {
+	ARG_UNUSED(os_qspi_dev_ctx);
+
+	k_work_cancel_delayable(&intr_priv->work);
+
+	rpu_irq_remove(&intr_priv->gpio_cb_data);
+
+	k_free(intr_priv);
+	intr_priv = NULL;
 }
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER

@@ -46,6 +46,7 @@ int rpu_wakeup(void);
 int rpu_sleep_status(void);
 void rpu_get_sleep_stats(uint32_t addr, uint32_t *buff, uint32_t wrd_len);
 int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)());
+int rpu_irq_remove(struct gpio_callback *irq_callback_data);
 
 int rpu_wrsr2(uint8_t data);
 int rpu_rdsr2(void);

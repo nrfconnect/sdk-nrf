@@ -135,6 +135,13 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 	return 0;
 }
 
+int rpu_irq_remove(struct gpio_callback *irq_callback_data)
+{
+	gpio_remove_callback(host_irq_spec.port, irq_callback_data);
+
+	return 0;
+}
+
 
 int ble_gpio_config(void)
 {
