@@ -24,6 +24,13 @@ tests:
       - nrf52840dk_nrf52840
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
     tags: ci_build
+  sample.nrf5340.radio_test_combo:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek CONFIG_NRF700X_RADIO_TEST_COMBO=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
   sample.nrf7000_eks.radio_test:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
