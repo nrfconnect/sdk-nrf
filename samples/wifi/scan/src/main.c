@@ -37,10 +37,13 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 				NET_EVENT_WIFI_SCAN_DONE |		\
 				NET_EVENT_WIFI_RAW_SCAN_RESULT)
 #endif
+#define SCAN_TIMEOUT_MS 10000
 
 static uint32_t scan_result;
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
+
+K_SEM_DEFINE(scan_sem, 0, 1);
 
 static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 {
@@ -150,6 +153,7 @@ static void handle_wifi_scan_done(struct net_mgmt_event_callback *cb)
 	}
 
 	scan_result = 0U;
+	k_sem_give(&scan_sem);
 }
 
 static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
@@ -183,6 +187,8 @@ static int wifi_scan(void)
 	}
 
 	printk("Scan requested\n");
+
+	k_sem_take(&scan_sem, K_MSEC(SCAN_TIMEOUT_MS));
 
 	return 0;
 }
