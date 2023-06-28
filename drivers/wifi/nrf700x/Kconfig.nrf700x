@@ -16,6 +16,12 @@ config WIFI_NRF700X
 	  Nordic Wi-Fi Driver
 if WIFI_NRF700X
 
+module = WIFI_NRF700X_BUS
+module-dep = LOG
+module-str = Log level for Wi-Fi nRF700x bus layers
+module-help = Sets log level for Wi-Fi nRF700x bus layers
+source "subsys/net/Kconfig.template.log_config.net"
+
 config NRF_WIFI_IF_AUTO_START
 	bool
 	default y
