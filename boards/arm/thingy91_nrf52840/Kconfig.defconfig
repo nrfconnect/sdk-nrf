@@ -9,6 +9,12 @@ if BOARD_THINGY91_NRF52840
 config BOARD
 	default "thingy91_nrf52840"
 
+config BT_CTLR
+	default BT
+
+config BT_WAIT_NOP
+	default BT
+
 if USB
 
 config USB_NRFX
