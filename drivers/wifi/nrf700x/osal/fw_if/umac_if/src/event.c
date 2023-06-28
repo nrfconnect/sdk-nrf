@@ -169,6 +169,11 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 	vif_ctx = fmac_dev_ctx->vif_ctx[if_id];
 	callbk_fns = &fmac_dev_ctx->fpriv->callbk_fns;
 
+	wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+			      "%s: Event %d received from UMAC\n",
+			      __func__,
+			      event_num);
+
 	switch (umac_hdr->cmd_evnt) {
 	case NRF_WIFI_UMAC_EVENT_TRIGGER_SCAN_START:
 		if (callbk_fns->scan_start_callbk_fn)
@@ -502,12 +507,17 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 		break;
 #endif /* CONFIG_WPA_SUPP */
 	default:
-		wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No callback registered for event %d\n",
 				      __func__,
 				      umac_hdr->cmd_evnt);
 		break;
 	}
+
+	wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+			      "%s: Event %d processed\n",
+			      __func__,
+			      event_num);
 
 out:
 	return status;
@@ -532,6 +542,11 @@ wifi_nrf_fmac_data_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	}
 
 	event = ((struct nrf_wifi_umac_head *)umac_head)->cmd;
+
+	wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+			      "%s: Event %d received from UMAC\n",
+			      __func__,
+			      event);
 
 	switch (event) {
 	case NRF_WIFI_CMD_RX_BUFF:
@@ -878,6 +893,11 @@ enum wifi_nrf_status wifi_nrf_fmac_event_callback(void *mac_dev_ctx,
 	umac_hdr = (struct nrf_wifi_umac_hdr *)rpu_msg->msg;
 	umac_msg_len = rpu_msg->hdr.len;
 	umac_msg_type = umac_hdr->cmd_evnt;
+
+	wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
+			      "%s: Event type %d recd\n",
+			      __func__,
+			      rpu_msg->type);
 
 	switch (rpu_msg->type) {
 #ifndef CONFIG_NRF700X_RADIO_TEST
