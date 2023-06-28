@@ -8,6 +8,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/bluetooth/att.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/vcp.h>
 #include <zephyr/bluetooth/audio/media_proxy.h>
@@ -182,7 +183,14 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 	uint8_t idx = bt_conn_index(conn);
 
 	if (err) {
-		LOG_ERR("Discovery of MCS failed (%d)", err);
+		if (err == BT_ATT_ERR_UNLIKELY) {
+			/* BT_ATT_ERR_UNLIKELY may occur in normal operating conditions, hence it
+			 * will be treated as a warning.
+			 */
+			LOG_WRN("Discovery of MCS failed (%d)", err);
+		} else {
+			LOG_ERR("Discovery of MCS failed (%d)", err);
+		}
 		mcp_mcs_disc_status[idx] = IDLE;
 		return;
 	}
