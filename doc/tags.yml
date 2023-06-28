@@ -1,0 +1,9 @@
+# Document tags for Zoomin.
+
+# Tags for all topics:
+mapping_global:
+  - ncs-__VERSION__
+
+# Tags for individual topics:
+mapping_topics:
+# - filename.md ["tag1","tag2","keyword"]
