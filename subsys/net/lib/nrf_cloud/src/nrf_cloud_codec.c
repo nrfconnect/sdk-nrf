@@ -197,6 +197,7 @@ int nrf_cloud_obj_reset(struct nrf_cloud_obj *const obj)
 	case NRF_CLOUD_OBJ_TYPE_JSON:
 	{
 		obj->json = NULL;
+		break;
 	}
 	default:
 		return -ENOTSUP;
@@ -207,7 +208,7 @@ int nrf_cloud_obj_reset(struct nrf_cloud_obj *const obj)
 
 	obj->enc_src = NRF_CLOUD_ENC_SRC_NONE;
 
-	return -ENOTSUP;
+	return 0;
 }
 
 int nrf_cloud_obj_bulk_init(struct nrf_cloud_obj *const bulk)

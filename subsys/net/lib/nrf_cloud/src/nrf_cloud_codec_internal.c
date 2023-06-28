@@ -931,12 +931,12 @@ int json_send_to_cloud(cJSON *const request)
 		return -ENOMEM;
 	}
 
-	LOG_DBG("Created request: %s", msg_string);
-
 	struct nct_dc_data msg = {
 		.data.ptr = msg_string,
 		.data.len = strlen(msg_string)
 	};
+
+	LOG_DBG("Created request: %s (size: %u)", (char *)msg.data.ptr, msg.data.len);
 
 	err = nct_dc_send(&msg);
 	if (err) {
@@ -2321,6 +2321,9 @@ int nrf_cloud_cell_pos_req_json_encode(struct lte_lc_cells_info const *const inf
 		return -EINVAL;
 	}
 
+	LOG_DBG("Encoding lte_lc_cells_info with ncells_count: %u and gci_cells_count: %u",
+		inf->ncells_count, inf->gci_cells_count);
+
 	int err;
 	cJSON *lte_array;
 	cJSON *lte_obj;
@@ -2384,6 +2387,8 @@ int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 	if (!wifi || !req_obj_out || !wifi->ap_info || !wifi->cnt) {
 		return -EINVAL;
 	}
+
+	LOG_DBG("Encoding wifi_scan_info with count: %u", wifi->cnt);
 
 	cJSON *wifi_obj = NULL;
 	cJSON *ap_array = NULL;
