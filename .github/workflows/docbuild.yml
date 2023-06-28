@@ -96,6 +96,10 @@ jobs:
             echo "publish2 main ${VERSION} ${ARCHIVE}" > "${MONITOR}"
           fi
 
+          # add zoomin metadata
+          cp doc/custom.properties doc/_build/html
+          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/custom.properties
+
           # compress
           cd doc/_build/html
           zip -rq "${ARCHIVE}" .
