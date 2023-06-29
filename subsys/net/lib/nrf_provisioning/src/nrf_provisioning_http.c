@@ -8,6 +8,7 @@
 #include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <version.h>
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/unistd.h>
 #include <zephyr/posix/sys/socket.h>
@@ -58,6 +59,7 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
 #define HDR_TYPE_ALL "*/*"
 #define HDR_TYPE_APP_CBOR "application/cbor"
+#define HDR_TYPE_USER_AGENT "User-Agent: Zephyr"
 
 #define CONTENT_TYPE "Content-Type: "
 #define CONTENT_TYPE_ALL (CONTENT_TYPE HDR_TYPE_ALL CRLF)
@@ -72,6 +74,11 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
 #define PRV_CONTENT_TYPE_HDR (CONTENT_TYPE HDR_TYPE_ALL CRLF)
 #define PRV_CONNECTION_HDR "Connection: close" CRLF
+
+#define ZEPHYR_VER STRINGIFY(KERNEL_VERSION_MAJOR) "." STRINGIFY(KERNEL_VERSION_MINOR) " (" \
+	STRINGIFY(BUILD_VERSION) " " CONFIG_BOARD ")"
+#define USER_AGENT_HDR (HDR_TYPE_USER_AGENT "/" ZEPHYR_VER CRLF)
+
 
 int nrf_provisioning_http_init(struct nrf_provisioning_http_mm_change *mmode)
 {
@@ -397,6 +404,7 @@ static int nrf_provisioning_responses_req(struct nrf_provisioning_http_context *
 	char *const headers[] = { CONTENT_TYPE_APP_CBOR,
 				  HDR_ACCEPT_ALL,
 				  (char *const)auth_hdr,
+				  USER_AGENT_HDR,
 				  PRV_CONNECTION_HDR,
 				  NULL };
 
@@ -488,6 +496,7 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 		char *const headers[] = { HDR_ACCEPT_APP_CBOR,
 					(char *const)auth_hdr,
 					PRV_CONTENT_TYPE_HDR,
+					USER_AGENT_HDR,
 					PRV_CONNECTION_HDR,
 					NULL };
 
