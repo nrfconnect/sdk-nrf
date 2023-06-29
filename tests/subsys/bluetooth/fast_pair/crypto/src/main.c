@@ -8,7 +8,7 @@
 #include "fp_crypto.h"
 #include "fp_common.h"
 
-static void test_sha256(void)
+ZTEST(suite_crypto, test_sha256)
 {
 	static const uint8_t input_data[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
 
@@ -27,7 +27,7 @@ static void test_sha256(void)
 			  "Invalid hashing result.");
 }
 
-static void test_hmac_sha256(void)
+ZTEST(suite_crypto, test_hmac_sha256)
 {
 	static const uint8_t input_data[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0xEE,
 					     0x4A, 0x24, 0x83, 0x73, 0x80, 0x52, 0xE4, 0x4E, 0x9B,
@@ -53,7 +53,7 @@ static void test_hmac_sha256(void)
 			  "Invalid hashing result.");
 }
 
-static void test_aes128_ecb(void)
+ZTEST(suite_crypto, test_aes128_ecb)
 {
 	static const uint8_t plaintext[] = {0xF3, 0x0F, 0x4E, 0x78, 0x6C, 0x59, 0xA7, 0xBB, 0xF3,
 					    0x87, 0x3B, 0x5A, 0x49, 0xBA, 0x97, 0xEA};
@@ -77,7 +77,7 @@ static void test_aes128_ecb(void)
 	zassert_mem_equal(result_buf, plaintext, sizeof(plaintext), "Invalid decryption result.");
 }
 
-static void test_aes128_ctr(void)
+ZTEST(suite_crypto, test_aes128_ctr)
 {
 	static const uint8_t plaintext[] = {0x53, 0x6F, 0x6D, 0x65, 0x6F, 0x6E, 0x65, 0x27, 0x73,
 					    0x20, 0x47, 0x6F, 0x6F, 0x67, 0x6C, 0x65, 0x20, 0x48,
@@ -107,7 +107,7 @@ static void test_aes128_ctr(void)
 	zassert_mem_equal(result_buf, plaintext, sizeof(plaintext), "Invalid decryption result.");
 }
 
-static void test_ecdh(void)
+ZTEST(suite_crypto, test_ecdh)
 {
 	static const uint8_t bobs_private_key[] = {0x02, 0xB4, 0x37, 0xB0, 0xED, 0xD6, 0xBB, 0xD4,
 						   0x29, 0x06, 0x4A, 0x4E, 0x52, 0x9F, 0xCB, 0xF1,
@@ -164,7 +164,7 @@ static void test_ecdh(void)
 			  "Invalid key on Alice's side.");
 }
 
-static void test_aes_key_from_ecdh_shared_secret(void)
+ZTEST(suite_crypto, test_aes_key_from_ecdh_shared_secret)
 {
 	static const uint8_t ecdh_shared_key[] = {0x9D, 0xAD, 0xE4, 0xF8, 0x6A, 0xC3, 0x48, 0x8B,
 						  0xBA, 0xC2, 0xAC, 0x34, 0xB5, 0xFE, 0x68, 0xA0,
@@ -182,7 +182,7 @@ static void test_aes_key_from_ecdh_shared_secret(void)
 	zassert_mem_equal(result_buf, aes_key, sizeof(aes_key), "Invalid resulting key.");
 }
 
-static void test_bloom_filter(void)
+ZTEST(suite_crypto, test_bloom_filter)
 {
 	static const uint16_t salt = 0xC7C8;
 
@@ -253,7 +253,7 @@ static void test_bloom_filter(void)
 			  "Invalid resulting filter.");
 }
 
-static void test_additional_data_packet(void)
+ZTEST(suite_crypto, test_additional_data_packet)
 {
 	static const uint8_t input_data[] = {0x53, 0x6F, 0x6D, 0x65, 0x6F, 0x6E, 0x65, 0x27, 0x73,
 					     0x20, 0x47, 0x6F, 0x6F, 0x67, 0x6C, 0x65, 0x20, 0x48,
@@ -303,18 +303,4 @@ static void test_additional_data_packet(void)
 			  0, "Expected error during decoding non-integral packet.");
 }
 
-void test_main(void)
-{
-	ztest_test_suite(fast_pair_crypto_tests,
-			 ztest_unit_test(test_sha256),
-			 ztest_unit_test(test_hmac_sha256),
-			 ztest_unit_test(test_aes128_ecb),
-			 ztest_unit_test(test_aes128_ctr),
-			 ztest_unit_test(test_ecdh),
-			 ztest_unit_test(test_aes_key_from_ecdh_shared_secret),
-			 ztest_unit_test(test_bloom_filter),
-			 ztest_unit_test(test_additional_data_packet)
-			 );
-
-	ztest_run_test_suite(fast_pair_crypto_tests);
-}
+ZTEST_SUITE(suite_crypto, NULL, NULL, NULL, NULL, NULL);
