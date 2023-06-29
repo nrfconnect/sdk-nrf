@@ -484,6 +484,8 @@ Libraries for networking
     * Unused internal codec function ``nrf_cloud_format_single_cell_pos_req_json()``.
     * ``nrf_cloud_location_request_msg_json_encode()`` function and replaced with :c:func:`nrf_cloud_obj_location_request_create`.
 
+* Added the :ref:`lib_nrf_cloud_coap` library for accessing nRF Cloud services using CoAP.
+
 Libraries for NFC
 -----------------
 

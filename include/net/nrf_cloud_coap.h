@@ -47,9 +47,9 @@ int nrf_cloud_coap_connect(void);
  *
  * This function temporarily pauses the nRF Cloud CoAP connection so that
  * another DTLS socket can be opened and used. Once the new socket is no longer needed,
- * close that one, then use nrf_cloud_coap_resume() to resume using CoAP.
+ * close it and use nrf_cloud_coap_resume() to resume using CoAP.
  * Do not call nrf_cloud_coap_disconnect() nor shut down the LTE connection,
- * or else the requisite data for the socket will be discarded in the modem,
+ * or the requisite data for the socket will be discarded in the modem,
  * and the connection cannot be resumed. In that case, call nrf_cloud_coap_connect(),
  * which results in a full DTLS handshake.
  *
