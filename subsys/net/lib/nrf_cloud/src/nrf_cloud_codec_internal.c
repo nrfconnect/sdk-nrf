@@ -3022,7 +3022,7 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	*
 }
 #endif /* CONFIG_NRF_MODEM */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame * const request,
 				   cJSON * const agps_req_obj_out)
 {
