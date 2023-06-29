@@ -804,7 +804,7 @@ static int sys_timer_init(void)
 {
 	nrfx_err_t nrfx_err;
 	const nrfx_timer_config_t config = {
-		.frequency = NRF_TIMER_FREQ_1MHz,
+		.frequency = NRFX_MHZ_TO_HZ(1),
 		.mode = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
