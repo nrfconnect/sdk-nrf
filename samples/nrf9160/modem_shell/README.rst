@@ -479,7 +479,7 @@ To send data to Memfault, you must have a `Memfault account <Memfault registrati
 Refer to the :ref:`ug_memfault` guide for more information.
 The Memfault overlay config (:file:`overlay-memfault.conf`) includes the most common configuration options for using the Memfault with modem traces.
 
-.. include:: /libraries/modem/nrf_modem_lib.rst
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_memfault_trace_start
    :end-before: modem_memfault_trace_end
 

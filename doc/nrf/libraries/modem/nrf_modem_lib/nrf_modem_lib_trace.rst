@@ -296,7 +296,7 @@ Modem trace shell command
 Shell command: ``modem_trace``
 
 You can use the modem trace commands to control the trace functionality in the modem when :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_SHELL` is enabled.
-A trace backend that can store modem traces is required to upload modem traces to the cloud.
+A trace backend that can store modem traces to flash is required to send modem traces to the cloud.
 
 Following are some examples of modem tracing:
 
@@ -323,7 +323,7 @@ Following are some examples of modem tracing:
 Send to Memfault
 ================
 
-To send data to Memfault, you must have a `Memfault account <Memfault registration page_>`_, a project key, and :ref:`configure Memfault <ug_memfault_config>` in your application.
+To send stored modem traces to Memfault, you must have a `Memfault account <Memfault registration page_>`_, a project key, and :ref:`configure Memfault <ug_memfault_config>` in your application.
 Refer to the :ref:`ug_memfault` guide for more information.
 
 .. modem_memfault_trace_start
@@ -352,7 +352,7 @@ See the following figure, which shows how to download the modem trace data in th
 .. modem_memfault_trace_end
 
 The following is an example to send modem traces to Memfault.
-This will free up the stored traces as they are sent.
+This will free up the stored traces after they are sent.
 
   .. code-block:: console
 
