@@ -11,7 +11,7 @@ gperf:
 dtc:
   version: 1.4.7-3ubuntu2
 west:
-  version: 1.0.0
+  version: 1.1.0
 gn:
   version: e55664a01f6ee92762210d0c01b13552f8117e11
 nanopb:
