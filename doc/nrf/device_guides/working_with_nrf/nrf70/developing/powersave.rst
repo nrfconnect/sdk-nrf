@@ -430,7 +430,7 @@ To measure the power consumption of the nRF70 Series device, complete the follow
    You can use the **P21** pin **1** labeled as **GND** (-).
 #. Connect the **Vout** on the PPK2 kit to the **P23** pin **1** on the DK.
 
-   .. figure:: images/power_profiler2_pc_nrf7002_dk.svg
+   .. figure:: images/power_profiler2_pc_nrf7002_dk.png
       :alt: Typical configuration for measuring power on the DK
 
       Typical configuration for measuring power on the DK
