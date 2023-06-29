@@ -582,7 +582,7 @@ The FOTA upgrades are only available when :ref:`nrf53_audio_app_building_script`
 With the appropriate parameters provided, the :file:`buildprog.py` Python script will add overlay files for the given DFU type.
 To enable the desired FOTA functions:
 
-* To define flash memory layout, include the ``-m internal`` parameter for the internal layout or the ``-m external`` parameter for the external layout.
+* To define flash memory layout, include the ``-m internal`` parameter for the internal layout (when using the ``release`` application version) or the ``-m external`` parameter for the external layout (when using either ``release`` or ``debug``).
 * To use the minimal size network core bootloader, add the ``-M`` parameter.
 
 For the full list of parameters and examples, see the :ref:`nrf53_audio_app_building_script_running` section.
@@ -723,11 +723,11 @@ See the following examples of the parameter usage with the command run from the 
      python buildprog.py -c app -b debug -d both
 
 * Example 2: The following command builds the application using the script for both the application and the network core (``both``).
-  As in *example 1*, it builds with the ``debug`` application version, but with the DFU internal flash memory layout enabled and using the minimal size of the network core bootloader:
+  It builds with the ``release`` application version, with the DFU internal flash memory layout enabled, and using the minimal size of the network core bootloader:
 
   .. code-block:: console
 
-     python buildprog.py -c both -b debug -d both -m internal -M
+     python buildprog.py -c both -b release -d both -m internal -M
 
   If you run this command with the ``external`` DFU type parameter instead of ``internal``, the external flash memory layout will be enabled.
 
@@ -768,7 +768,7 @@ Programming with the script
 
    .. code-block:: console
 
-     python buildprog.py -c both -b debug -d both -m internal -M -p
+     python buildprog.py -c both -b release -d both -m internal -M -p
 
 Getting help
    Run ``python buildprog.py -h`` for information about all available script parameters.
