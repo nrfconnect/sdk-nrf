@@ -32,6 +32,14 @@ To configure and use CHIP Tool for Linux or macOS with Matter over Wi-Fi, comple
 
 .. rst-class:: numbered-step
 
+Update the Matter module
+========================
+
+Update the Matter module to the latest version by :ref:`gs_updating`.
+If you are working with a newly installed |NCS| or a specific release of the |NCS|, you can skip this step.
+
+.. rst-class:: numbered-step
+
 Program the sample
 ==================
 
@@ -51,8 +59,7 @@ To use this controller type, complete the following steps:
 
 1. Choose one of the following options:
 
-   * For Linux only - Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
-     Make sure that the package is compatible with your |NCS| version.
+   * For Linux only - Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page for the |NCS| version you are working with (or the latest version available).
    * For both Linux and macOS - Build it manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory and using the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 
 #. Configure the CHIP Tool for Linux or macOS by following the steps in the sections of the :doc:`matter:chip_tool_guide` in the Matter documentation:
