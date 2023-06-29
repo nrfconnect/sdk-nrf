@@ -373,6 +373,7 @@ void zb_osif_set_user_io_buffer(zb_byte_array_t *buf_ptr, zb_ushort_t capacity)
 	(void)k_sem_take(&tx_done_sem, K_FOREVER);
 
 	uart_tx_buf = buf_ptr->ring_buf;
+	uart_tx_buf_bak = uart_tx_buf;
 	uart_tx_buf_size = capacity;
 
 	k_sem_give(&tx_done_sem);
