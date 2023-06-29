@@ -394,6 +394,7 @@ Libraries for networking
   * Updated:
 
     * Moved JSON manipulation from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
+    * Fixed a build issue that occurred when MQTT and P-GPS are enabled and A-GPS is disabled.
 
   * Removed:
 

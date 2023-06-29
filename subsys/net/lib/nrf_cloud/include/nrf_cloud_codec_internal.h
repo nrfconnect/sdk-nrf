@@ -17,7 +17,7 @@
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_agps.h>
 #endif
 #if defined(CONFIG_NRF_MODEM)
@@ -287,7 +287,7 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	*
 				    cJSON * const pvt_data_obj);
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 /** @brief Build A-GPS type array based on request.
  */
 int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame *const request,
