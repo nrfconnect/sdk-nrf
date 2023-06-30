@@ -26,6 +26,8 @@ LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 const uint32_t z_mpsl_used_nrf_ppi_channels = MPSL_RESERVED_PPI_CHANNELS;
 const uint32_t z_mpsl_used_nrf_ppi_groups;
 
+extern void rtc_pretick_rtc0_isr_hook(void);
+
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X)
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
 #elif IS_ENABLED(CONFIG_SOC_SERIES_NRF53X)
@@ -87,6 +89,11 @@ static void mpsl_rtc0_isr_wrapper(const void *args)
 {
 	ARG_UNUSED(args);
 
+	if (IS_ENABLED(CONFIG_SOC_NRF53_RTC_PRETICK) &&
+	    IS_ENABLED(CONFIG_SOC_NRF5340_CPUNET)) {
+		rtc_pretick_rtc0_isr_hook();
+	}
+
 	MPSL_IRQ_RTC0_Handler();
 
 	ISR_DIRECT_PM();
@@ -139,6 +146,10 @@ ISR_DIRECT_DECLARE(mpsl_timer0_isr_wrapper)
 
 ISR_DIRECT_DECLARE(mpsl_rtc0_isr_wrapper)
 {
+	if (IS_ENABLED(CONFIG_SOC_NRF53_RTC_PRETICK) &&
+	    IS_ENABLED(CONFIG_SOC_NRF5340_CPUNET)) {
+		rtc_pretick_rtc0_isr_hook();
+	}
 	MPSL_IRQ_RTC0_Handler();
 
 	ISR_DIRECT_PM();
