@@ -8,6 +8,7 @@
 
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/gap.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/audio/bap.h>
@@ -1104,14 +1105,13 @@ static void ad_parse(struct net_buf_simple *p_ad, const bt_addr_le_t *addr)
 	}
 }
 
-static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
-			    struct net_buf_simple *p_ad)
+static void on_device_found(const struct bt_le_scan_recv_info *info, struct net_buf_simple *p_ad)
 {
-	switch (type) {
+	switch (info->adv_type) {
 	case BT_GAP_ADV_TYPE_ADV_DIRECT_IND:
 		/* Direct advertising has no payload, so no need to parse */
 		if (bonded_num) {
-			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)addr);
+			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)info->addr);
 		}
 		break;
 	case BT_GAP_ADV_TYPE_ADV_IND:
@@ -1120,14 +1120,17 @@ static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 		/* Fall through */
 	case BT_GAP_ADV_TYPE_SCAN_RSP:
 		/* Note: May lead to connection creation */
-		if (bonded_num < CONFIG_BT_MAX_PAIRED) {
-			ad_parse(p_ad, addr);
+		if ((bonded_num < CONFIG_BT_MAX_PAIRED) &&
+		    (info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE)) {
+			ad_parse(p_ad, info->addr);
 		}
 		break;
 	default:
 		break;
 	}
 }
+
+struct bt_le_scan_cb scan_callback = {.recv = on_device_found};
 
 static void ble_acl_start_scan(void)
 {
@@ -1151,7 +1154,7 @@ static void ble_acl_start_scan(void)
 		LOG_INF("All bonded slots filled, will not accept new devices");
 	}
 
-	ret = bt_le_scan_start(scan_param, on_device_found);
+	ret = bt_le_scan_start(scan_param, NULL);
 	if (ret && ret != -EALREADY) {
 		LOG_WRN("Scanning failed to start: %d", ret);
 		return;
@@ -1524,6 +1527,7 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 #endif /* CONFIG_BT_MCS */
 
 	bt_conn_cb_register(&conn_callbacks);
+	bt_le_scan_cb_register(&scan_callback);
 
 	initialized = true;
 
