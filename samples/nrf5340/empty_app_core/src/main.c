@@ -9,6 +9,7 @@
 #include <init.h>
 #include <nrf.h>
 #include <nrfx.h>
+#include <net_core_monitor.h>
 
 /** @brief Power OFF entire RAM and suspend CPU forever.
  *
@@ -39,8 +40,26 @@ void disable_ram_and_wfi(register volatile uint32_t *reg_begin,
 void main(void)
 {
 	/* Power off RAM and suspend CPU */
-	disable_ram_and_wfi(&NRF_VMC->RAM[0].POWER,
-			    &NRF_VMC->RAM[ARRAY_SIZE(NRF_VMC->RAM) - 1].POWER);
+	if (IS_ENABLED(CONFIG_NET_CORE_MONITOR)) {
+		while(1) {
+			k_msleep(2 *
+				COND_CODE_1(CONFIG_NET_CORE_MONITOR,
+					(CONFIG_NCM_APP_FEEDING_INTERVAL_MSEC), (0)));
+
+			int err = ncm_net_status_check(true);
+			if (err == -EBUSY) {
+				printk("Netcore stuck and got reset.\n");
+			} else if (err == -EFAULT) {
+				printk("Netcore was reset.\n");
+			} else {
+				/* Netcore state is OK. */
+			}
+		}
+	} else {
+		disable_ram_and_wfi(&NRF_VMC->RAM[0].POWER,
+				    &NRF_VMC->RAM[ARRAY_SIZE(NRF_VMC->RAM) - 1].POWER);
+
+	}
 }
 
 /** @brief Allow access to specific GPIOs for the network core.
