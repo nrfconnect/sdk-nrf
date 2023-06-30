@@ -68,7 +68,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY) &&
-	    is_wake_up_event(aeh)) {
+	    is_wakeup_event(aeh)) {
 		constlat_on();
 		return false;
 	}
@@ -82,6 +82,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
 #endif

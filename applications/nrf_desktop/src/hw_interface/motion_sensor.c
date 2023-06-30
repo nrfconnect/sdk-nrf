@@ -203,7 +203,7 @@ static void data_ready_handler(const struct device *dev, const struct sensor_tri
 	case STATE_SUSPENDED_DISCONNECTED:
 		if (IS_ENABLED(CONFIG_DESKTOP_MOTION_PM_EVENTS)) {
 			/* Wake up system - this will wake up thread */
-			APP_EVENT_SUBMIT(new_wake_up_event());
+			APP_EVENT_SUBMIT(new_wakeup_event());
 			break;
 		}
 		/* Fall-through */
@@ -633,7 +633,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_PM_EVENTS) &&
-	    is_wake_up_event(aeh)) {
+	    is_wakeup_event(aeh)) {
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
 		if ((state.state == STATE_SUSPENDED) ||
 		    (state.state == STATE_SUSPENDED_DISCONNECTED)) {
@@ -724,6 +724,6 @@ APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
 #if CONFIG_DESKTOP_MOTION_PM_EVENTS
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
 #endif

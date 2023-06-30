@@ -542,7 +542,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			module_set_state(MODULE_STATE_READY);
 		} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
 			/* Settings need to be loaded on start before the scan begins.
-			 * As the ble_bond module reports its READY state also on wake_up_event,
+			 * As the ble_bond module reports its READY state also on wakeup_event,
 			 * to avoid multiple scan start triggering on wake-up scan will be started
 			 * from here only on start-up.
 			 */
@@ -681,7 +681,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS) &&
-	    is_wake_up_event(aeh)) {
+	    is_wakeup_event(aeh)) {
 		if (scan_blocked) {
 			scan_blocked = false;
 			if (ble_bond_ready) {
@@ -705,5 +705,5 @@ APP_EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #ifdef CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 #endif

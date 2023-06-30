@@ -29,5 +29,5 @@ Enable the module with the :ref:`CONFIG_DESKTOP_HFCLK_LOCK_ENABLE <config_deskto
 Implementation details
 **********************
 
-The high frequency clock is disabled on ``power_down_event`` and reenabled on ``wake_up_event``.
+The high frequency clock is disabled on ``power_down_event`` and reenabled on ``wakeup_event``.
 This is done to reduce the power consumption.

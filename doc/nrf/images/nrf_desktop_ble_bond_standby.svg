@@ -109,9 +109,9 @@
 			<text x="4" y="290.43" class="st14">power_down_event</text>		</g>
 		<g id="shape463-67" transform="translate(27.355,-161.27)">
 			<title>Sheet.463</title>
-			<desc>wake_up_event</desc>
+			<desc>wakeup_event</desc>
 			<rect x="0" y="282.227" width="71.3622" height="11.0077" class="st13"/>
-			<text x="4" y="290.43" class="st14">wake_up_event</text>		</g>
+			<text x="4" y="290.43" class="st14">wakeup_event</text>		</g>
 		<g id="shape464-70" transform="translate(169.087,-217.126)">
 			<title>Sheet.464</title>
 			<desc>(on initialization)</desc>
@@ -124,9 +124,9 @@
 			<text x="4" y="290.43" class="st14">power_down_event</text>		</g>
 		<g id="shape469-76" transform="translate(68.3225,-51.1397)">
 			<title>Sheet.469</title>
-			<desc>wake_up_event</desc>
+			<desc>wakeup_event</desc>
 			<rect x="0" y="282.227" width="78.1732" height="11.0077" class="st13"/>
-			<text x="4" y="290.43" class="st14">wake_up_event</text>		</g>
+			<text x="4" y="290.43" class="st14">wakeup_event</text>		</g>
 		<g id="shape471-79" transform="translate(172.953,-124.902)">
 			<title>Sheet.471</title>
 			<desc>DONGLE_PEER_SELECTOR_POS (PEER_OPERATION_SELECTED)</desc>

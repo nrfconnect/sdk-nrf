@@ -343,7 +343,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_wake_up_event(aeh)) {
+	if (is_wakeup_event(aeh)) {
 		if (state == STATE_OFF) {
 			int err = wake_up();
 
@@ -366,4 +366,4 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);

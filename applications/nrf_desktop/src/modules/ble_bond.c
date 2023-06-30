@@ -1053,7 +1053,7 @@ static bool handle_power_down_event(const struct power_down_event *event)
 	return false;
 }
 
-static bool handle_wake_up_event(const struct wake_up_event *event)
+static bool handle_wakeup_event(const struct wakeup_event *event)
 {
 	switch (state) {
 	case STATE_DISABLED_STANDBY:
@@ -1144,8 +1144,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER) &&
-	    is_wake_up_event(aeh)) {
-		return handle_wake_up_event(cast_wake_up_event(aeh));
+	    is_wakeup_event(aeh)) {
+		return handle_wakeup_event(cast_wakeup_event(aeh));
 	}
 
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
@@ -1172,7 +1172,7 @@ APP_EVENT_SUBSCRIBE(MODULE, selector_event);
 #endif
 #if IS_ENABLED(CONFIG_CAF_POWER_MANAGER)
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 #endif
 
 #if IS_ENABLED(CONFIG_SHELL)

@@ -157,9 +157,9 @@
 			<text x="6.23" y="435.11" class="st18">STATE_DONGLE_ERASE_PEER</text>		</g>
 		<g id="shape464-109" transform="translate(169.307,-387.907)">
 			<title>Sheet.464</title>
-			<desc>wake_up_event</desc>
+			<desc>wakeup_event</desc>
 			<rect x="0" y="426.007" width="70.122" height="22.6092" class="st1"/>
-			<text x="4" y="439.71" class="st15">wake_up_event</text>		</g>
+			<text x="4" y="439.71" class="st15">wakeup_event</text>		</g>
 		<g id="shape465-112" transform="translate(169.307,-424.399)">
 			<title>Sheet.465</title>
 			<desc>power_down_event</desc>

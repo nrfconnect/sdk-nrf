@@ -305,7 +305,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
 	    IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS) &&
-	    is_wake_up_event(aeh)) {
+	    is_wakeup_event(aeh)) {
 		latency_state |= CONN_LOW_LATENCY_LOCKED;
 		update_llpm_conn_latency_lock();
 
@@ -330,5 +330,5 @@ APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
 #if CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK && CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 #endif

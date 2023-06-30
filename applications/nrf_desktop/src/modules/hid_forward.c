@@ -390,7 +390,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 
 	if (suspended) {
 		/* If suspended, report should wake up the board. */
-		struct wake_up_event *event = new_wake_up_event();
+		struct wakeup_event *event = new_wakeup_event();
 		APP_EVENT_SUBMIT(event);
 	}
 
@@ -1480,7 +1480,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_wake_up_event(aeh)) {
+	if (is_wakeup_event(aeh)) {
 		suspended = false;
 
 		return false;
@@ -1513,7 +1513,7 @@ APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

@@ -223,10 +223,10 @@ Sink modules for power_down_event
 * :ref:`nrf_desktop_power_manager`
 
 
-.. _nrf_desktop_wake_up_event_sources:
+.. _nrf_desktop_wakeup_event_sources:
 
-Source modules for wake_up_event
-================================
+Source modules for wakeup_event
+===============================
 
 * :ref:`nrf_desktop_ble_adv`
 * :ref:`nrf_desktop_buttons`
@@ -235,10 +235,10 @@ Source modules for wake_up_event
 * :ref:`nrf_desktop_power_manager`
 * :ref:`nrf_desktop_wheel`
 
-.. _nrf_desktop_wake_up_event_sinks:
+.. _nrf_desktop_wakeup_event_sinks:
 
-Sink modules for wake_up_event
-==============================
+Sink modules for wakeup_event
+=============================
 
 * :ref:`nrf_desktop_power_manager`
 * :ref:`nrf_desktop_battery_charger`

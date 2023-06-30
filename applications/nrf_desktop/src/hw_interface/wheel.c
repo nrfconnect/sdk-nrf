@@ -148,7 +148,7 @@ static int wakeup_int_ctrl_nolock(bool enable)
 static void wakeup_cb(const struct device *gpio_dev, struct gpio_callback *cb,
 		      uint32_t pins)
 {
-	struct wake_up_event *event;
+	struct wakeup_event *event;
 	int err;
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
@@ -162,7 +162,7 @@ static void wakeup_cb(const struct device *gpio_dev, struct gpio_callback *cb,
 			break;
 
 		case STATE_SUSPENDED:
-			event = new_wake_up_event();
+			event = new_wakeup_event();
 			APP_EVENT_SUBMIT(event);
 			break;
 
@@ -359,7 +359,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (is_wake_up_event(aeh)) {
+	if (is_wakeup_event(aeh)) {
 		int err;
 
 		k_spinlock_key_t key = k_spin_lock(&lock);
@@ -436,5 +436,5 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

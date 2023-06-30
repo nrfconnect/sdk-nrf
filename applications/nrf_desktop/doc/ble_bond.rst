@@ -172,7 +172,7 @@ The module can go into one of the following standby states to make sure that the
 Going into the standby states and leaving these states happens in reaction to the following events:
 
 * ``power_down_event`` - On this event, the module goes into one of the standby states and the ongoing peer operation is cancelled.
-* ``wake_up_event`` - On this event, the module returns from the standby state.
+* ``wakeup_event`` - On this event, the module returns from the standby state.
 
 .. figure:: /images/nrf_desktop_ble_bond_standby.svg
    :alt: nRF Desktop Bluetooth LE bond module standby state diagram

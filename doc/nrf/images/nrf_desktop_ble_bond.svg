@@ -333,13 +333,13 @@
 			<text x="4" y="576.2" class="st9">power_down_event</text>		</g>
 		<g id="shape468-253" transform="translate(338.323,-239.442)">
 			<title>Sheet.468</title>
-			<desc>wake_up_event</desc>
+			<desc>wakeup_event</desc>
 			<rect x="0" y="564.489" width="89.819" height="18.6138" class="st4"/>
-			<text x="4" y="576.2" class="st9">wake_up_event</text>		</g>
+			<text x="4" y="576.2" class="st9">wakeup_event</text>		</g>
 		<g id="shape469-256" transform="translate(368.937,-301.275)">
 			<title>Sheet.469</title>
-			<desc>wake_up_event</desc>
+			<desc>wakeup_event</desc>
 			<rect x="0" y="551.525" width="65.7638" height="31.577" class="st4"/>
-			<text x="5.72" y="569.71" class="st9">wake_up_event</text>		</g>
+			<text x="10.17" y="569.71" class="st9">wakeup_event</text>		</g>
 	</g>
 </svg>

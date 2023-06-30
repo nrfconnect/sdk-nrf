@@ -714,7 +714,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_REMOTE_WAKEUP) &&
-	    is_wake_up_event(aeh)) {
+	    is_wakeup_event(aeh)) {
 		usb_wakeup();
 		return false;
 	}
@@ -731,5 +731,5 @@ APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 APP_EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
 #if CONFIG_DESKTOP_USB_REMOTE_WAKEUP
-APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wakeup_event);
 #endif
