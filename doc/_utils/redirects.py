@@ -219,4 +219,5 @@ NRF = [
     ("working_with_nrf/nrf91/thingy91","device_guides/working_with_nrf/nrf91/thingy91"),
     ("ug_thingy91_gsg","device_guides/working_with_nrf/nrf91/thingy91_gsg"),
     ("working_with_nrf/nrf91/thingy91_gsg","device_guides/working_with_nrf/nrf91/thingy91_gsg"),
+    ("known_issues","releases_and_maturity/known_issues"),
 ]
