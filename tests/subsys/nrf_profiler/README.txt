@@ -1,13 +1,12 @@
 Profiler Test
 -------------
 
-Four tests are performed.
-One test is initialization test and the other three are performance tests.
-
-Performance tests do not check whether a data is transmitted.
+The test suite consists of three performance tests.
+The tests do not check whether data is transmitted.
 To examine it, one has to collect data transmitted to host using a Profiler backend's host tool and check manually whether the data is correct.
 
-Expected data is as follows:
+The expected output looks as follows:
+
 1. 100 events named "no data event" with no data.
 2. 100 events named "data event" with one value named "value1" of type "u32".
    The value starts from 0 and is incremented by one with every event.

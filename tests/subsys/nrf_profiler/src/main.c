@@ -86,13 +86,16 @@ static uint32_t test_performance_core(void (*profiler_func)(struct log_event_buf
 	return elapsed_time_us;
 }
 
-static void test_init(void)
+static void *test_init(void)
 {
 	zassert_ok(nrf_profiler_init(), "Error when initializing");
 	register_profiler_events();
+
+	return NULL;
 }
 
-static void test_performance1(void)
+/* Test in the suite are expected to run in alphanumerical order. */
+ZTEST(suite_nrf_profiler, test_performance_01)
 {
 	/* Profiling events with no data */
 	uint32_t elapsed_time_us = test_performance_core(NULL, no_data_event_id);
@@ -101,7 +104,7 @@ static void test_performance1(void)
 	       PROFILED_EVENTS_NB, elapsed_time_us);
 }
 
-static void test_performance2(void)
+ZTEST(suite_nrf_profiler, test_performance_02)
 {
 	uint32_t elapsed_time_us = test_performance_core(profile_data_event, data_event_id);
 
@@ -109,22 +112,12 @@ static void test_performance2(void)
 	       PROFILED_EVENTS_NB, elapsed_time_us);
 }
 
-static void test_performance3(void)
+ZTEST(suite_nrf_profiler, test_performance_03)
 {
 	uint32_t elapsed_time_us = test_performance_core(profile_big_event, big_event_id);
 
-	printk("Logged %d events with 14-byte data and 14-character string.\nElapsed time [us]: %d\n",
-	       PROFILED_EVENTS_NB, elapsed_time_us);
+	printk("Logged %d events with 14-byte data and 14-character string.\n"
+	       "Elapsed time [us]: %d\n", PROFILED_EVENTS_NB, elapsed_time_us);
 }
 
-void test_main(void)
-{
-	ztest_test_suite(nrf_profiler_tests,
-			 ztest_unit_test(test_init),
-			 ztest_unit_test(test_performance1),
-			 ztest_unit_test(test_performance2),
-			 ztest_unit_test(test_performance3)
-			 );
-
-	ztest_run_test_suite(nrf_profiler_tests);
-}
+ZTEST_SUITE(suite_nrf_profiler, NULL, test_init, NULL, NULL, NULL);
