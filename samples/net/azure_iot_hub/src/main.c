@@ -552,12 +552,26 @@ int main(void)
 
 	LOG_INF("Device ID: %s", device_id);
 
+	if (!IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)) {
+		LOG_INF("Host name: %s", hostname);
+	}
+
 #if IS_ENABLED(CONFIG_DK_LIBRARY)
 	dk_leds_init();
 #endif
 
 	work_init();
 	cJSON_Init();
+
+	/* Resend connection status if the sample is built for QEMU x86.
+	 * This is necessary because the network interface is automatically brought up
+	 * at SYS_INIT() before main() is called.
+	 * This means that NET_EVENT_L4_CONNECTED fires before the
+	 * appropriate handler l4_event_handler() is registered.
+	 */
+	if (IS_ENABLED(CONFIG_BOARD_QEMU_X86)) {
+		conn_mgr_resend_status();
+	}
 
 	k_sem_take(&network_connected_sem, K_FOREVER);
 
