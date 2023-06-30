@@ -22,12 +22,6 @@
   comment: "Excluded due to the old Ztest API  - issue: NCSDK-21698"
 
 - scenarios:
-    - nrf_profiler.core
-  platforms:
-    - all
-  comment: "Excluded due to the old Ztest API  - issue: NCSDK-21696"
-
-- scenarios:
     - zigbee.osif.*
     - zigbee.zboss_api.*
   platforms:
