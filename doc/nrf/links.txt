@@ -223,32 +223,32 @@
 .. _`nRF Connect SDK v0.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.3.0/nrf/index.html
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
-.. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
-.. _`known issues for nRF Connect SDK v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-4-0
-.. _`known issues for nRF Connect SDK v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-3-0
-.. _`known issues for nRF Connect SDK v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-2-0
-.. _`known issues for nRF Connect SDK v2.1.4`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-4
-.. _`known issues for nRF Connect SDK v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-3
-.. _`known issues for nRF Connect SDK v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-2
-.. _`known issues for nRF Connect SDK v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-1
-.. _`known issues for nRF Connect SDK v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-1-0
-.. _`known issues for nRF Connect SDK v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-0-2
-.. _`known issues for nRF Connect SDK v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-0-1
-.. _`known issues for nRF Connect SDK v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-0-0
-.. _`known issues for nRF Connect SDK v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-9-2
-.. _`known issues for nRF Connect SDK v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-9-1
-.. _`known issues for nRF Connect SDK v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-9-0
-.. _`known issues for nRF Connect SDK v1.8.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-8-0
-.. _`known issues for nRF Connect SDK v1.7.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-7-1
-.. _`known issues for nRF Connect SDK v1.7.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-7-0
-.. _`known issues for nRF Connect SDK v1.6.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-6-1
-.. _`known issues for nRF Connect SDK v1.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-6-0
-.. _`known issues for nRF Connect SDK v1.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-5-2
-.. _`known issues for nRF Connect SDK v1.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-5-1
-.. _`known issues for nRF Connect SDK v1.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-5-0
-.. _`known issues for nRF Connect SDK v1.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-2
-.. _`known issues for nRF Connect SDK v1.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-1
-.. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-0
+.. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-0
+.. _`known issues for nRF Connect SDK v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-3-0
+.. _`known issues for nRF Connect SDK v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-2-0
+.. _`known issues for nRF Connect SDK v2.1.4`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-4
+.. _`known issues for nRF Connect SDK v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-3
+.. _`known issues for nRF Connect SDK v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-2
+.. _`known issues for nRF Connect SDK v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-1
+.. _`known issues for nRF Connect SDK v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-0
+.. _`known issues for nRF Connect SDK v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-0-2
+.. _`known issues for nRF Connect SDK v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-0-1
+.. _`known issues for nRF Connect SDK v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-0-0
+.. _`known issues for nRF Connect SDK v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-9-2
+.. _`known issues for nRF Connect SDK v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-9-1
+.. _`known issues for nRF Connect SDK v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-9-0
+.. _`known issues for nRF Connect SDK v1.8.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-8-0
+.. _`known issues for nRF Connect SDK v1.7.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-7-1
+.. _`known issues for nRF Connect SDK v1.7.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-7-0
+.. _`known issues for nRF Connect SDK v1.6.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-6-1
+.. _`known issues for nRF Connect SDK v1.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-6-0
+.. _`known issues for nRF Connect SDK v1.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-5-2
+.. _`known issues for nRF Connect SDK v1.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-5-1
+.. _`known issues for nRF Connect SDK v1.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-5-0
+.. _`known issues for nRF Connect SDK v1.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-2
+.. _`known issues for nRF Connect SDK v1.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-1
+.. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-0
 
 .. _`connecting to nRF Cloud`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/nrf_cloud.html#connecting
 
