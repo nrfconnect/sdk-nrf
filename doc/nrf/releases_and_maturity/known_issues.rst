@@ -296,7 +296,7 @@ KRKNWK-17064: Incorrect links in the Matter documentation
 
   **Workaround:** Change ``master`` to the ``9e6386c`` commit SHA in the page URLs to see the content valid for the |NCS| v2.4.0 release.
 
-.. rst-class:: v2-3-0
+.. rst-class:: v2-3-0 v2-2-0
 
 KRKNWK-16728: Sleepy device may consume much power when commissioned to a commercial ecosystem
   The controllers in the commercial ecosystem fabric establish a subscription to a Matter device's attributes.
@@ -304,6 +304,7 @@ KRKNWK-16728: Sleepy device may consume much power when commissioned to a commer
   In some cases, the selected intervals can be small, and the Matter device will have to report status very often, which results in high power consumption.
 
   **Workaround:** Implement ``OnSubscriptionRequested`` method in your application to set values of subscription report intervals that are appropriate for your use case.
+  Additionally, register your class implementation to make ``InteractionModelEngine`` use it.
   This is an example of how your implementation could look:
 
   .. code-block::
@@ -323,6 +324,19 @@ KRKNWK-16728: Sleepy device may consume much power when commissioned to a commer
         uint32_t exampleMaxInterval = 60;
         return aReadHandler.SetReportingIntervals(exampleMaxInterval);
      }
+
+  The class implementation can be registered in your application code the a following way:
+
+  .. code-block::
+
+      #include <app/InteractionModelEngine.h>
+
+      SubscriptionApplicationCallback myClassInstance;
+
+      chip::app::InteractionModelEngine::GetInstance()->RegisterReadHandlerAppCallback(&myClassInstance);
+
+  You can use the ``ICDUtil`` module implementation that was introduced in the |NCS| v2.4.0 as a reference.
+  It is located in the :file:`samples/matter/common/src/icd_util.cpp` file in the :file:`nrf` directory.
 
 .. rst-class:: v2-3-0 v2-2-0
 
