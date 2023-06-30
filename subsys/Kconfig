@@ -52,3 +52,5 @@ rsource "caf/Kconfig"
 rsource "ieee802154/Kconfig"
 
 rsource "dm/Kconfig"
+
+rsource "net_core_monitor/Kconfig"
