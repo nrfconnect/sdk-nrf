@@ -7,7 +7,7 @@
 #ifndef NET_CORE_MONITOR_H_
 #define NET_CORE_MONITOR_H_
 
-#include <zephyr/kernel.h>
+#include <kernel.h>
 
 /**
  * @file

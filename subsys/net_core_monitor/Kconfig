@@ -7,6 +7,8 @@
 config NET_CORE_MONITOR
 	bool "NCM (Network Core Monitor) module [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select MULTITHREADING
+	select SYS_CLOCK_EXISTS
 	depends on (SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET)
 	help
 	  Enable the Network Core Monitor module.
