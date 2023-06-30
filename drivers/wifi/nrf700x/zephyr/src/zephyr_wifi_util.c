@@ -839,7 +839,8 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  "rx_beacon_success_count: %u\n"
 				  "rx_beacon_miss_count: %u\n"
 				  "rx_bytes: %u\n"
-				  "rx_checksum_error_count: %u\n\n",
+				  "rx_checksum_error_count: %u\n\n"
+				  "replay_attack_drop_cnt: %u\n\n",
 				  umac->interface_data_stats.tx_unicast_pkt_count,
 				  umac->interface_data_stats.tx_multicast_pkt_count,
 				  umac->interface_data_stats.tx_broadcast_pkt_count,
@@ -850,7 +851,8 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  umac->interface_data_stats.rx_beacon_success_count,
 				  umac->interface_data_stats.rx_beacon_miss_count,
 				  umac->interface_data_stats.rx_bytes,
-				  umac->interface_data_stats.rx_checksum_error_count);
+				  umac->interface_data_stats.rx_checksum_error_count,
+				  umac->interface_data_stats.replay_attack_drop_cnt);
 	} else if (stats_type == RPU_STATS_TYPE_LMAC || stats_type == RPU_STATS_TYPE_ALL) {
 		struct rpu_lmac_stats *lmac = &stats.fw.lmac;
 
