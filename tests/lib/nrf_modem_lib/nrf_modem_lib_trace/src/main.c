@@ -8,6 +8,7 @@
 #include <unity.h>
 #include <zephyr/toolchain/common.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/fff.h>
 #include <syscalls/rand32.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/trace_backend.h>
@@ -18,6 +19,10 @@
 #include "cmock_nrf_modem.h"
 #include "cmock_nrf_modem_trace.h"
 #include "cmock_nrf_modem_os.h"
+
+DEFINE_FFF_GLOBALS;
+
+FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_printf, const char *, ...);
 
 LOG_MODULE_REGISTER(trace_test, CONFIG_NRF_MODEM_LIB_TRACE_TEST_LOG_LEVEL);
 
@@ -31,10 +36,8 @@ extern struct nrf_modem_lib_trace_backend trace_backend;
 
 static void clear_rw_frags(void);
 
-static const char *trace_level_set_fmt = "AT%%XMODEMTRACE=1,%d";
-static const char *at_printf_fmt_expected;
-static enum nrf_modem_lib_trace_level at_printf_trace_level_expected;
-static int at_printf_return;
+#define TRACE_LEVEL_FMT "AT%%XMODEMTRACE=1,%d"
+#define TRACE_LEVEL_INVALID 42
 
 #define MAX_N_STATIC_FRAGS 64
 static struct nrf_modem_trace_data read_frags[MAX_N_STATIC_FRAGS];
@@ -52,15 +55,34 @@ static int nrf_modem_trace_get_cmock_num_calls;
 static int trace_backend_write_error;
 static int trace_backend_write_cmock_num_calls;
 
-static void nrf_modem_at_printf_ExpectTraceLevelAndReturn(
-	const char *fmt, const enum nrf_modem_lib_trace_level trace_level, int retval);
-
 static int callback_evt;
 
 /* This is the override for the _weak callback. */
 void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt)
 {
 	callback_evt = evt;
+}
+
+static int nrf_modem_at_printf_trace_level_full(const char *fmt, va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING(TRACE_LEVEL_FMT, fmt);
+
+	int val = va_arg(args, int);
+
+	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_TRACE_LEVEL_FULL, val);
+
+	return 0;
+}
+
+static int nrf_modem_at_printf_trace_level_invalid(const char *fmt, va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING(TRACE_LEVEL_FMT, fmt);
+
+	int val = va_arg(args, int);
+
+	TEST_ASSERT_EQUAL(TRACE_LEVEL_INVALID, val);
+
+	return -EFAULT;
 }
 
 void setUp(void)
@@ -70,8 +92,7 @@ void setUp(void)
 	trace_backend_write_error = 0;
 	trace_backend_write_cmock_num_calls = 9;
 
-	nrf_modem_at_printf_ExpectTraceLevelAndReturn(
-		"AT%%XMODEMTRACE=1,%d", NRF_MODEM_LIB_TRACE_LEVEL_FULL, 0);
+	RESET_FAKE(nrf_modem_at_printf);
 
 	clear_rw_frags();
 }
@@ -106,35 +127,6 @@ static void clear_rw_frags(void)
 static void wait_trace_deinit(void)
 {
 	k_sem_take(&backend_deinit_sem, K_FOREVER);
-}
-
-static void nrf_modem_at_printf_ExpectTraceLevelAndReturn(
-	const char *fmt, const enum nrf_modem_lib_trace_level trace_level, int retval)
-{
-	at_printf_fmt_expected = fmt;
-	at_printf_trace_level_expected = trace_level;
-	at_printf_return = retval;
-}
-
-/* Custom mock written for nrf_modem_at_printf since CMock can not be made to test parameters
- * of variadic functions.
- */
-int nrf_modem_at_printf(const char *fmt, ...)
-{
-	va_list args;
-	unsigned int trace_level;
-
-	TEST_ASSERT_EQUAL_STRING(at_printf_fmt_expected, fmt);
-
-	if (strcmp(at_printf_fmt_expected, trace_level_set_fmt) == 0) {
-		va_start(args, fmt);
-		trace_level = va_arg(args, unsigned int);
-		va_end(args);
-
-		TEST_ASSERT_EQUAL(at_printf_trace_level_expected, trace_level);
-	}
-
-	return at_printf_return;
 }
 
 int32_t nrf_modem_os_timedwait_stub(uint32_t context, int32_t *timeout, int cmock_num_calls)
@@ -368,9 +360,7 @@ void test_nrf_modem_lib_trace_level_set(void)
 {
 	int ret;
 
-	nrf_modem_at_printf_ExpectTraceLevelAndReturn(trace_level_set_fmt,
-						      NRF_MODEM_LIB_TRACE_LEVEL_FULL,
-						      0);
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_trace_level_full;
 
 	ret = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_FULL);
 	TEST_ASSERT_EQUAL(0, ret);
@@ -379,13 +369,10 @@ void test_nrf_modem_lib_trace_level_set(void)
 void test_nrf_modem_lib_trace_level_set_efault(void)
 {
 	int ret;
-	int wrong_level = 42;
 
-	nrf_modem_at_printf_ExpectTraceLevelAndReturn(trace_level_set_fmt,
-						      wrong_level,
-						      -EFAULT);
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_trace_level_invalid;
 
-	ret = nrf_modem_lib_trace_level_set(wrong_level);
+	ret = nrf_modem_lib_trace_level_set(TRACE_LEVEL_INVALID);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
 }
 

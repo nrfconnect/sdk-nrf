@@ -32,6 +32,7 @@ target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib_trace.c)
 # include paths
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
+zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
 
 # Required for calling libmodem hooks
 zephyr_linker_sources(RODATA ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib.ld)
