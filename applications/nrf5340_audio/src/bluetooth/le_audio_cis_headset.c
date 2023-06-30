@@ -169,7 +169,7 @@ static void print_codec(const struct bt_codec *codec, enum bt_audio_dir dir)
 {
 	if (codec->id == BT_CODEC_LC3_ID) {
 		/* LC3 uses the generic LTV format - other codecs might do as well */
-		uint32_t chan_allocation;
+		enum bt_audio_location chan_allocation;
 
 		if (dir == BT_AUDIO_DIR_SINK) {
 			LOG_INF("LC3 codec config for sink:");

@@ -35,7 +35,7 @@ struct audio_codec_info {
 	uint16_t vid;
 	int frequency;
 	int frame_duration_us;
-	int chan_allocation;
+	enum bt_audio_location chan_allocation;
 	int octets_per_sdu;
 	int bitrate;
 	int blocks_per_sdu;
