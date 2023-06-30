@@ -30,6 +30,8 @@ static void mpsl_calibration_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(calibration_work, mpsl_calibration_work_handler);
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC */
 
+extern void rtc_pretick_rtc0_isr_hook(void);
+
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X)
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
 #elif IS_ENABLED(CONFIG_SOC_SERIES_NRF53X)
@@ -91,6 +93,11 @@ static void mpsl_rtc0_isr_wrapper(const void *args)
 {
 	ARG_UNUSED(args);
 
+	if (IS_ENABLED(CONFIG_SOC_NRF53_RTC_PRETICK) &&
+	    IS_ENABLED(CONFIG_SOC_NRF5340_CPUNET)) {
+		rtc_pretick_rtc0_isr_hook();
+	}
+
 	MPSL_IRQ_RTC0_Handler();
 
 	ISR_DIRECT_PM();
@@ -143,6 +150,10 @@ ISR_DIRECT_DECLARE(mpsl_timer0_isr_wrapper)
 
 ISR_DIRECT_DECLARE(mpsl_rtc0_isr_wrapper)
 {
+	if (IS_ENABLED(CONFIG_SOC_NRF53_RTC_PRETICK) &&
+	    IS_ENABLED(CONFIG_SOC_NRF5340_CPUNET)) {
+		rtc_pretick_rtc0_isr_hook();
+	}
 	MPSL_IRQ_RTC0_Handler();
 
 	ISR_DIRECT_PM();
