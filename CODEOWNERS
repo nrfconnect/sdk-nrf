@@ -233,6 +233,7 @@ Kconfig*                                  @tejlmand
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
 /subsys/nonsecure/                        @SebastianBoe
+/subsys/net_core_monitor/                 @maje-emb
 /modules/                                 @tejlmand
 /modules/tfm/                             @SebastianBoe @joerchan
 /subsys/zigbee/                           @tomchy @sebastiandraus
