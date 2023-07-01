@@ -615,6 +615,7 @@ Libraries
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
 * Added :ref:`nrf_security` library, relocated from the sdk-nrfxlib repository to the :file:`subsys/nrf_security` directory.
+* Added :ref:`network_core_monitor` library for monitoring the status of the nRF5340 processor's network core.
 
 Debug libraries
 ---------------

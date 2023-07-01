@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NET_CORE_MONITOR
+	bool "NCM (Network Core Monitor) module [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on (SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET)
+	help
+	  Enable the Network Core Monitor module.
+
+if NET_CORE_MONITOR
+
+menu "Net Core Monitor"
+
+config NCM_APP_FEEDING_INTERVAL_MSEC
+	default 500
+	int "Application core feeding interval (in ms)"
+
+config NCM_RESET_INIT_PRIORITY
+	int "Reset init priority"
+	default KERNEL_INIT_PRIORITY_DEFAULT
+
+endmenu
+
+module = NET_CORE_MONITOR
+module-str = NET_CORE_MONITOR
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #NET_CORE_MONITOR

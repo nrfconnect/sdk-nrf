@@ -56,3 +56,5 @@ rsource "ieee802154/Kconfig"
 rsource "dm/Kconfig"
 
 rsource "nrf_security/Kconfig"
+
+rsource "net_core_monitor/Kconfig"
