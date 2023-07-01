@@ -245,6 +245,7 @@ Kconfig*                                  @tejlmand
 /subsys/shell/                            @nordic-krch
 /subsys/nonsecure/                        @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/subsys/net_core_monitor/                 @maje-emb
 /modules/                                 @tejlmand
 /modules/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/zigbee/                           @tomchy @sebastiandraus

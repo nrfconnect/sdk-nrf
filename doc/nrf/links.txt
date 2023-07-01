@@ -521,6 +521,8 @@
 .. _`nRF5340 Audio DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_audio/UG/nrf5340_audio/intro.html
 .. _`Requirements for external flash memory DFU`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_audio/UG/nrf5340_audio/hw_external_memory.html
 
+.. _`RESETREAS`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf5340%2Fchapters%2Freset%2Fdoc%2Freset.html&cp=4_0_0_3_9_10_0&anchor=register.RESETREAS
+
 .. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html?cp=5_0_0_4_2_2#unique_220399309
 .. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
