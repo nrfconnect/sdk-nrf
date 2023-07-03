@@ -597,6 +597,13 @@ Networking samples
   * Moved the sample from :file:`cellular/download` folder to :file:`net/download`.
     The documentation is now found in the :ref:`networking_samples` section.
 
+* :ref:`https_client` sample:
+
+  * Added support for Wi-Fi and LTE connectivity through the connection manager API.
+  * Added support for the nRF9161 development kit.
+  * Moved the sample from :file:`nrf9160/https_client` folder to :file:`net/https_client`.
+    The documentation is now found in the :ref:`networking_samples` section.
+
 |no_changes_yet_note|
 
 Multicore samples
