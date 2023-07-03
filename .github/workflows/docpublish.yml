@@ -46,7 +46,7 @@ jobs:
 
           # trust server
           mkdir -p ~/.ssh
-          ssh-keyscan upload.zoominsoftware.io >> ~/.ssh/known_hosts
+          ssh-keyscan upload-v1.zoominsoftware.io >> ~/.ssh/known_hosts
 
           # prepare key
           echo "${{ secrets.NCS_ZOOMIN_KEY }}" | base64 -d > zoomin_key
@@ -54,7 +54,7 @@ jobs:
 
           # upload files
           for file in docs/*.zip; do
-            sftp -v -i zoomin_key nordic@upload.zoominsoftware.io <<EOF
+            sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
             cd /nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
             put ${file}
             quit
