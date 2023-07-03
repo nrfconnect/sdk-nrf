@@ -169,11 +169,12 @@ config BT_CTLR_SDC_SCAN_BUFFER_COUNT
 
 config BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT
 	int "Number of periodic synchronization receive buffers"
-	default 2
+	default 3
 	range 2 20
 	help
 	  The buffers are used for processing incoming packets
 	  and storing periodic advertising reports.
+	  The minimum amount of buffers to allow receiving chains is 3.
 
 # CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE is declared in Zephyr and also
 # here for a second time, to set different range for the SoftDevice Controller.
