@@ -105,7 +105,7 @@ Button 4:
 
 Terminal:
    All sensor values gathered from the server are printed over UART.
-   For more details, see :ref:`gs_testing`.
+   For more details, see :ref:`testing`.
 
 .. note::
    Some sensor and setting values need to be get/set through shell commands, as there is not enough buttons on the board for all sensor and setting values.
@@ -148,7 +148,7 @@ After programming the sample to your development kit, you can test it by using a
 Testing consists of provisioning the device and configuring it for communication with the mesh models.
 
 All sensor values gathered from the server are printed over UART.
-For more details, see :ref:`gs_testing`.
+For more details, see :ref:`testing`.
 
 Provisioning the device
 -----------------------

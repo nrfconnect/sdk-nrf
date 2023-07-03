@@ -11,7 +11,7 @@ The |NCS| provides board definitions for all Nordic Semiconductor devices.
 In addition, you can define custom boards.
 
 .. _app_boards_names:
-.. _gs_programming_board_names:
+.. _programming_board_names:
 
 Board names
 ***********
@@ -201,6 +201,6 @@ More information about SPE and NSPE
 Read the following pages for a better understanding of security by separation in the |NCS|:
 
 * :ref:`ug_tfm`
-* :ref:`gs_debugging_spe_nspe`
+* :ref:`debugging_spe_nspe`
 * `An Introduction to Trusted Firmware-M (TF-M)`_ on DevZone
 * `TF-M documentation`_

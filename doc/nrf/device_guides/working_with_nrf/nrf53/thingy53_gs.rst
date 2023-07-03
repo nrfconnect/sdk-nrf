@@ -12,8 +12,8 @@ It tells you how to update the firmware on the nRF5340 :term:`System on Chip (So
 
 If you have already set up your Nordic Thingy:53 and want to learn more, see the following documentation:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_thingy53` for more advanced topics related to the Nordic Thingy:53.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -274,5 +274,5 @@ Next steps
 You have now completed getting started with the Nordic Thingy:53.
 See the following links for where to go next:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_thingy53` for more advanced topics related to the Nordic Thingy:53.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.

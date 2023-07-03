@@ -53,7 +53,7 @@ Testing using the shell_bt_nus script
 After programming the sample to your development kits, complete the following steps to test it:
 
 1. Start a console application, like PuTTY, and connect through UART to the ``shell_bt_nus`` application running on the development kit to check the log.
-   See :ref:`gs_testing` for more information on how to connect with PuTTY through UART.
+   See :ref:`testing` for more information on how to connect with PuTTY through UART.
 #. Run the following command in the |NCS| root directory to install the script dependencies:
 
    .. code-block:: console

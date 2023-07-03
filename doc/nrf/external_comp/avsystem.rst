@@ -33,7 +33,7 @@ Integration prerequisites
 
 Before you start the |NCS| integration with AVSystem's Coiote IoT Device Management, make sure that the following prerequisites are completed:
 
-* :ref:`Setup of nRF Connect SDK <getting_started>` environment.
+* :ref:`Installation of the nRF Connect SDK <installation>`.
 * :ref:`Setup of nRF9160 DK <ug_nrf9160_gs>`.
 * Creation of an account in `AVSystem's Coiote Device Management <Coiote Device Management_>`_.
 * :ref:`Creation of an nRF Cloud account <creating_cloud_account>` (if you are utilizing nRF Cloud Location Services).

@@ -15,8 +15,8 @@ The nRF70 series devices are designed for Internet of Things (IoT) applications 
 
 For additional information, see the following documentation:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`nrf7002dk_nrf5340`
-* The :ref:`introductory documentation <getting_started>` if you are not familiar with the |NCS| and the development environment.
 
 The following figure illustrates the partitioning of the Wi-Fi stack between the nRF70 series device and the host device:
 

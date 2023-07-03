@@ -1036,7 +1036,7 @@ Documentation
 * Added:
 
   * :ref:`ncs_2.0.0_migration` reflecting major changes in |NCS| v2.0.0 that might require a migration action.
-  * Documentation for :ref:`debugging of nRF5340 <debugging>` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
+  * Documentation for debugging of nRF5340 in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
   * Section about :ref:`ug_nrf5340_intro_xip` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
   * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in :ref:`ug_matter_configuring_device_identification` user guide.
   * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.

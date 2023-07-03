@@ -33,7 +33,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF52840
 
-      The following table lists memory requirements for samples running on the :ref:`nRF52840 DK <gs_programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
 
       +------------------------------------------------------------------------------------------------------------------------+--------------------------+---------------------------+----------------------------------+-----------------------------+-------------+--------------------------+-------------+
       | Sample                                                                                                                 | ROM, ZBOSS stack + App   | ROM, MCUboot bootloader   | ROM, ZBOSS non-volatile memory   | ROM, ZBOSS product config   | Total ROM   | RAM, ZBOSS stack + App   | Total RAM   |
@@ -63,7 +63,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF52833
 
-      The following table lists memory requirements for samples running on the :ref:`nRF52833 DK <gs_programming_board_names>` (:ref:`nrf52833dk_nrf52833 <zephyr:nrf52833dk_nrf52833>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF52833 DK <programming_board_names>` (:ref:`nrf52833dk_nrf52833 <zephyr:nrf52833dk_nrf52833>`).
 
       +------------------------------------------------------------------------------------------------------------------------+--------------------------+---------------------------+----------------------------------+-----------------------------+-------------+--------------------------+-------------+
       | Sample                                                                                                                 | ROM, ZBOSS stack + App   | ROM, MCUboot bootloader   | ROM, ZBOSS non-volatile memory   | ROM, ZBOSS product config   | Total ROM   | RAM, ZBOSS stack + App   | Total RAM   |
@@ -93,7 +93,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF5340
 
-      The following table lists memory requirements for samples running on the :ref:`nRF5340 DK <gs_programming_board_names>` (:ref:`nrf5340dk_nrf5340_cpuapp <zephyr:nrf5340dk_nrf5340>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF5340 DK <programming_board_names>` (:ref:`nrf5340dk_nrf5340_cpuapp <zephyr:nrf5340dk_nrf5340>`).
 
       +------------------------------------------------------------------------------------------------------------------------+--------------------------+---------------------------+----------------------------------+-----------------------------+-------------+--------------------------+-------------+
       | Sample                                                                                                                 | ROM, ZBOSS stack + App   | ROM, MCUboot bootloader   | ROM, ZBOSS non-volatile memory   | ROM, ZBOSS product config   | Total ROM   | RAM, ZBOSS stack + App   | Total RAM   |
@@ -123,7 +123,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF21540
 
-      The following table lists memory requirements for samples running on the :ref:`nR21540 DK <gs_programming_board_names>` (:ref:`nrf21540dk_nrf52840 <zephyr:nrf21540dk_nrf52840>`).
+      The following table lists memory requirements for samples running on the :ref:`nR21540 DK <programming_board_names>` (:ref:`nrf21540dk_nrf52840 <zephyr:nrf21540dk_nrf52840>`).
 
       +------------------------------------------------------------------------------------------------------------------------+--------------------------+---------------------------+----------------------------------+-----------------------------+-------------+--------------------------+-------------+
       | Sample                                                                                                                 | ROM, ZBOSS stack + App   | ROM, MCUboot bootloader   | ROM, ZBOSS non-volatile memory   | ROM, ZBOSS product config   | Total ROM   | RAM, ZBOSS stack + App   | Total RAM   |
@@ -153,7 +153,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF52840 Dongle
 
-      The following table lists memory requirements for samples running on the :ref:`nRF52840 Dongle <gs_programming_board_names>` (:ref:`nrf52840dongle_nrf52840 <zephyr:nrf52840dongle_nrf52840>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF52840 Dongle <programming_board_names>` (:ref:`nrf52840dongle_nrf52840 <zephyr:nrf52840dongle_nrf52840>`).
 
       +------------------------------------------------------------------------------------------------------------------------+--------------------------+---------------------------+----------------------------------+-----------------------------+-------------+--------------------------+-------------+
       | Sample                                                                                                                 | ROM, ZBOSS stack + App   | ROM, MCUboot bootloader   | ROM, ZBOSS non-volatile memory   | ROM, ZBOSS product config   | Total ROM   | RAM, ZBOSS stack + App   | Total RAM   |

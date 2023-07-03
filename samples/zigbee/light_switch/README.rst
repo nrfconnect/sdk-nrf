@@ -125,7 +125,7 @@ For example, when building from the command line, use the following command:
    west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG='overlay-multiprotocol_ble.conf'
 
 
-For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`gs_programming_board_names`.
+For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`programming_board_names`.
 
 See :ref:`cmake_options` for instructions on how to add flags to your build.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.

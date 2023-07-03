@@ -18,8 +18,8 @@ GN tool
 To build and develop Matter applications, you need the `GN`_ meta-build system.
 This system generates the Ninja files that the |NCS| uses.
 
-The GN is automatically installed with the |NCS|'s Toolchain Manager when you :ref:`install the SDK automatically <gs_assistant>`.
-If you are updating from the |NCS| version earlier than v1.5.0 or you are installing the |NCS| manually, see the :ref:`GN installation instructions <gs_installing_gn>`.
+The GN is automatically installed with the |NCS|'s Toolchain Manager when you :ref:`install the SDK automatically <auto_installation>`.
+If you are updating from the |NCS| version earlier than v1.5.0 or you are installing the |NCS| manually, see the :ref:`GN installation instructions <manual_installation_gn>`.
 
 .. _ug_matter_gs_tools_controller:
 

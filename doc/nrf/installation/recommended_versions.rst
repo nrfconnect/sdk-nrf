@@ -1,4 +1,5 @@
 .. _gs_recommended_versions:
+.. _requirements:
 
 Requirements
 ############
@@ -18,11 +19,10 @@ However, there are some Zephyr features that are currently only available on Lin
 
 .. note::
 
-   .. _gs_update_os:
-
    Before you start setting up the |NCS| toolchain, install available updates for your operating system.
 
 .. _gs_supported_OS:
+.. _supported_OS:
 
 Supported operating systems
 ***************************
@@ -102,7 +102,7 @@ Required tools
 ==============
 
 The following table shows the tools that are required for working with |NCS| v\ |version|.
-It lists the versions that are used for testing and installed when using the :ref:`Toolchain Manager <gs_app_tcm>`, as described in :ref:`gs_assistant`.
+It lists the versions that are used for testing and installed when using the :ref:`Toolchain Manager <auto_installation>`.
 Other versions might also work, but are not verified.
 
 .. _req_tools_table:
@@ -188,8 +188,8 @@ The following table shows the Python packages that are required for working with
 If no version is specified, the default version provided with pip is recommended.
 If a version is specified, it is important that the installed version matches the required version.
 
-The :ref:`Toolchain Manager <gs_app_tcm>` will install all Python dependencies into a local environment in the Toolchain Manager app, not the system.
-If you install manually, see :ref:`additional_deps` for instructions on how to install the Python dependencies and :ref:`gs_updating` for information about how to keep them updated.
+The :ref:`Toolchain Manager <auto_installation>` will install all Python dependencies into a local environment in the Toolchain Manager app, not the system.
+If you install manually, see :ref:`additional_deps` for instructions on how to install the Python dependencies and :ref:`updating` for information about how to keep them updated.
 
 Building and running applications, samples, and tests
 -----------------------------------------------------

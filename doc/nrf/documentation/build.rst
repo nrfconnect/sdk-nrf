@@ -25,7 +25,7 @@ The following tool versions have been tested to work:
 
 Complete the following steps to install the required tools:
 
-1. If you have not done so already, install the |NCS| as described in :ref:`gs_installing` or :ref:`gs_assistant`.
+1. If you have not done so already, install the |NCS| as described in :ref:`auto_installation` or :ref:`manual_installation`.
 #. Install or update all required :ref:`Python dependencies <additional_deps>`.
 #. Install `Doxygen`_.
 #. Install `Mscgen`_ and make sure that the ``mscgen`` executable is in your :envvar:`PATH`.

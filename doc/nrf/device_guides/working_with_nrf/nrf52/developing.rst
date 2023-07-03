@@ -17,7 +17,7 @@ See one of the following guides for detailed information about the corresponding
 * `nRF52 DK <nRF52 DK User Guide_>`_
 
 To get started with your nRF52 Series DK, follow the steps in the :ref:`ug_nrf52_gs` section.
-If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
+If you are not familiar with the |NCS| and its development environment, see :ref:`installation` and :ref:`configuration_and_build` documentation.
 
 .. _ug_nrf52_developing_ble_fota:
 .. fota_upgrades_intro_start

@@ -40,7 +40,7 @@ See :ref:`thread_ug_feature_sets` for more information.
 nRF5340 DK RAM and flash memory requirements
 *********************************************
 
-The following tables present memory requirements for samples running on the :ref:`nRF5340 DK <gs_programming_board_names>` (:ref:`nrf5340dk_nrf5340 <zephyr:nrf5340dk_nrf5340>`) with the software cryptography support provided by the :ref:`nrfxlib:nrf_oberon_readme` module.
+The following tables present memory requirements for samples running on the :ref:`nRF5340 DK <programming_board_names>` (:ref:`nrf5340dk_nrf5340 <zephyr:nrf5340dk_nrf5340>`) with the software cryptography support provided by the :ref:`nrfxlib:nrf_oberon_readme` module.
 
 .. table:: nRF5340 single protocol Thread 1.3 memory requirements
 
@@ -87,7 +87,7 @@ The following tables present memory requirements for samples running on the :ref
 nRF52840 DK RAM and flash memory requirements
 *********************************************
 
-The following tables present memory requirements for samples running on the :ref:`nRF52840 DK <gs_programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`) with the software cryptography support provided by the :ref:`nrfxlib:nrf_oberon_readme` module.
+The following tables present memory requirements for samples running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`) with the software cryptography support provided by the :ref:`nrfxlib:nrf_oberon_readme` module.
 
 .. table:: nRF52840 single protocol Thread 1.3 memory requirements
 

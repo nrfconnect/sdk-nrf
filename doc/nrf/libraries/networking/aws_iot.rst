@@ -273,7 +273,7 @@ The length of your AWS host name (:kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NA
 Testing and debugging
 =====================
 
-If you have issues with the library or sample, refer to :ref:`gs_testing`.
+For general information about testing and debugging, see :ref:`testing`.
 
 Topic monitoring
 ----------------

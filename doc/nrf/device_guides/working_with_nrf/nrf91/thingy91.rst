@@ -15,7 +15,7 @@ Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navi
 
 You can find more information on the product in the `Thingy:91 product page`_ and in the `Nordic Thingy:91 User Guide`_.
 The |NCS| provides support for developing applications on the Thingy:91.
-If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
+If you are not familiar with the |NCS|, see :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
 This guide gives you more information on the various aspects of Thingy:91.
 
@@ -112,7 +112,7 @@ Building and programming from the source code
 
 You can also program the Thingy:91 by using the images obtained by building the code in an |NCS| environment.
 
-To set up your system to be able to build a compatible firmware image, follow the :ref:`getting_started` guide for |NCS|.
+To set up your system to be able to build a compatible firmware image, follow the :ref:`installation` guide for the |NCS| and read the :ref:`configuration_and_build` documentation.
 The build targets of interest for Thingy:91 in |NCS| are as follows:
 
 +---------------+---------------------------------------------------+

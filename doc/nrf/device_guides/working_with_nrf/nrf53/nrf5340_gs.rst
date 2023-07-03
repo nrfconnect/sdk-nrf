@@ -12,8 +12,8 @@ It tells you how to install the :ref:`peripheral_uart` sample and perform a quic
 
 If you have already set up your nRF5340 DK and want to learn more, see the following documentation:
 
-* :ref:`ug_nrf5340` for more advanced topics related to the nRF5340 DK if you are already familiar with the |NCS|.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
+* :ref:`ug_nrf5340` documentation for more advanced topics related to the nRF5340 DK.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -109,5 +109,5 @@ Next steps
 You have now completed getting started with the nRF5340 DK.
 See the following links for where to go next:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_nrf5340` documentation for more advanced topics related to the nRF5340 DK.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.

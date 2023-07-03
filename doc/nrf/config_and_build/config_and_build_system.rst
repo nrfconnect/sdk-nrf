@@ -51,7 +51,7 @@ You must be aware of these additions when you start writing your own application
 
     find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
-* The |NCS| allows you to :ref:`create custom build type files <gs_modifying_build_types>` instead of using a single :file:`prj.conf` file.
+* The |NCS| allows you to :ref:`create custom build type files <modifying_build_types>` instead of using a single :file:`prj.conf` file.
 * The |NCS| build system extends Zephyr's with support for multi-image builds.
   You can find out more about these in the :ref:`ug_multi_image` section.
 * The |NCS| adds a :ref:`partition_manager`, responsible for partitioning the available flash memory.

@@ -93,7 +93,7 @@ Building and running
 The Device sample is under :file:`samples/gazell/gzll_ack_payload_device` in the |NCS| folder structure.
 The Host sample is under :file:`samples/gazell/gzll_ack_payload_host` in the |NCS| folder structure.
 
-See :ref:`gs_programming` for information about how to build and program the application.
+See :ref:`programming` for information about how to build and program the application.
 
 Testing
 =======

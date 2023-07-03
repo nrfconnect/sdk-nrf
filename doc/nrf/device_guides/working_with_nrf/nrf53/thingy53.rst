@@ -32,7 +32,7 @@ Building and programming from the source code
 
 You can program the Nordic Thingy:53 by using the images obtained by building the code in the |NCS| environment.
 
-To set up your system to be able to build a firmware image, follow the :ref:`getting_started` guide for the |NCS|.
+To set up your system to be able to build a firmware image, follow the :ref:`installation` guide for the |NCS|.
 
 .. _thingy53_build_pgm_targets:
 

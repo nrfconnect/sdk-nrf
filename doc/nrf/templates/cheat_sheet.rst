@@ -672,7 +672,7 @@ Numbered sections
 *****************
 
 This is a special type of headings that will be automatically turned into steps of a large procedure.
-For usage example, see :ref:`gs_installing`.
+For usage example, see :ref:`manual_installation`.
 
 .. rst-class:: numbered-step
 

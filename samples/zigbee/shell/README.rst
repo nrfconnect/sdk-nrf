@@ -53,7 +53,7 @@ Available shell interfaces
 
 You can run the Zigbee shell commands after connecting and configuring any of the :ref:`supported backends <lib_zigbee_shell>` for testing.
 These interfaces are completely independent one from another and can be used simultaneously or exclusively.
-For information about setup, see :ref:`gs_testing`.
+For information about setup, see :ref:`testing`.
 
 The Zigbee Shell sample uses UART as the default shell backend.
 To change the shell backend from the default UART to the nRF USB CDC ACM, use the :file:`prj_usb.conf` configuration file and add the ``-DCONF_FILE='prj_usb.conf'`` flag when building the sample.

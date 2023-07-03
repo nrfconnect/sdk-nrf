@@ -109,7 +109,7 @@ For this quick start guide, we will install the following software:
 Set up the software
 *******************
 
-The following steps are a simplified version of the |NCS|'s :ref:`gs_assistant` procedure.
+The following steps are a simplified version of the |NCS|'s :ref:`auto_installation` procedure.
 
 To set up the required software, complete the following steps:
 

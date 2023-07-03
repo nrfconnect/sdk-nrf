@@ -831,7 +831,7 @@ Configuration table overview
 Building and programming using command line
 ===========================================
 
-You can also build the nRF5340 Audio application using the standard |NCS| :ref:`build steps <gs_programming>` for the command line.
+You can also build the nRF5340 Audio application using the standard |NCS| :ref:`build steps <programming_cmd>` for the command line.
 
 .. note::
    Using this method requires you to build and program each development kit one at a time before moving to the next configuration, which can be time-consuming.
@@ -854,7 +854,7 @@ Complete the following steps to build the application:
       * For the debug version: No build flag needed.
       * For the release version: ``-DCONF_FILE=prj_release.conf``
 
-#. Build the application using the standard :ref:`build steps <gs_programming>`.
+#. Build the application using the standard :ref:`build steps <programming_cmd>` for the command line.
    For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command:
 
    .. code-block:: console

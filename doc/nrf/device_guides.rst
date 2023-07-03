@@ -4,7 +4,7 @@ Device configuration guides
 ###########################
 
 The |NCS| provides :ref:`board support <app_boards>` for all Nordic Semiconductor devices.
-While the information in the :ref:`config_and_build` and :ref:`test_and_optimize` sections apply to all supported devices, the guides in this section include more specific information for each supported nRF Series family.
+While the information in the :ref:`configuration_and_build` and :ref:`test_and_optimize` sections apply to all supported devices, the guides in this section include more specific information for each supported nRF Series family.
 You can also find here guides that are strictly related to hardware features.
 
 .. toctree::

@@ -602,8 +602,8 @@ Documentation
   * The structure of the :ref:`nrf_modem_lib_readme` documentation.
   * The structure of the |NCS| documentation at its top level, with the following major changes:
 
-    * The getting started section has been replaced with :ref:`Installation <getting_started>`.
-    * The guides previously located in the application development section have been moved to :ref:`config_and_build`, :ref:`test_and_optimize`, :ref:`device_guides`, and :ref:`security_index`.
+    * The getting started section has been replaced with :ref:`Installation <installation>`.
+    * The guides previously located in the application development section have been moved to :ref:`configuration_and_build`, :ref:`test_and_optimize`, :ref:`device_guides`, and :ref:`security_index`.
       Some of these new sections also include guides that were previously in the getting started section.
     * "Working with..." device guides are now located under :ref:`device_guides`.
     * :ref:`release_notes`, :ref:`software_maturity`, :ref:`known_issues`, :ref:`glossary`, and :ref:`dev-model` are now located under :ref:`releases_and_maturity`.
