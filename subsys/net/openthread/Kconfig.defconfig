@@ -140,7 +140,7 @@ config MBEDTLS_CIPHER_MODE_XTS
 
 config MBEDTLS_HEAP_SIZE
 	int
-	default 10240
+	default 12440
 
 config OPENTHREAD_PING_SENDER
 	bool
