@@ -94,7 +94,7 @@
   - "samples/cellular/coap_client/**/*"
   - "samples/net/download/**/*"
   - "samples/cellular/http_update/**/*"
-  - "samples/cellular/https_client/**/*"
+  - "samples/net/https_client/**/*"
   - "samples/cellular/modem_*/**/*"
   - "samples/cellular/mqtt_simple/**/*"
   - "samples/cellular/pdn/**/*"
