@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrf5340audiodk_display/nrf5340audiodk_display.h>
+#include <display/display.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/display.h>
@@ -17,7 +17,9 @@
 #define LOG_LEVEL CONFIG_LOG_DEFAULT_LEVEL
 #include <zephyr/logging/log.h>
 #include <stdint.h>
-#include "nrf5340audiodk_display_internal.h"
+#include "button_tab.h"
+
+#define MY_PRIORITY 5
 LOG_MODULE_REGISTER(app);
 
 int test;
@@ -49,9 +51,12 @@ void create_timestamp_label(lv_obj_t *current_screen)
 		k_sleep(K_MSEC(10));
 	}
 }
+K_THREAD_STACK_DEFINE(update_volume_level_thread_STACK, CONFIG_MAIN_STACK_SIZE);
 
 void display_init()
 {
+	struct k_thread update_volume_level_data;
+	k_tid_t update_volume_level_thread;
 	lv_obj_t *tabview;
 	tabview = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 50);
 
@@ -66,9 +71,13 @@ void display_init()
 		LOG_ERR("Device not ready, aborting test");
 		return;
 	}
-	create_button_tab(button_tab);
+	update_volume_level_thread = k_thread_create(
+		&update_volume_level_data, update_volume_level_thread_STACK,
+		K_THREAD_STACK_SIZEOF(update_volume_level_thread_STACK), update_volume_level,
+		(void *)button_tab, NULL, NULL, MY_PRIORITY, 0, K_NO_WAIT);
 
 	display_blanking_off(display_dev);
+	button_tab_create(button_tab);
 
 	while (1) {
 		lv_task_handler();

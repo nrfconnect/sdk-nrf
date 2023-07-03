@@ -25,7 +25,7 @@
 #include "audio_system.h"
 #include "channel_assignment.h"
 #include "streamctrl.h"
-#include <nrf5340audiodk_display/nrf5340audiodk_display.h>
+#include <display/display.h>
 
 #if defined(CONFIG_AUDIO_DFU_ENABLE)
 #include "dfu_entry.h"

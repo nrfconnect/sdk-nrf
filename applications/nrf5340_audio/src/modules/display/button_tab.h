@@ -12,4 +12,5 @@ enum button_pin_names {
 	BUTTON_5 = DT_GPIO_PIN(DT_ALIAS(sw4), gpios),
 };
 
-void create_button_tab(lv_obj_t *screen);
+void button_tab_create(lv_obj_t *current_screen);
+extern void update_volume_level(void *arg1, void *arg2, void *arg3);

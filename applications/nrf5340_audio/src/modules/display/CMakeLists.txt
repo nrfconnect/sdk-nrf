@@ -3,9 +3,9 @@
 #
 #SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-zephyr_library()
 
-zephyr_library_sources(
-  src/nrf5340audiodk_display.c
-  src/button_tab.c
+target_sources(app PRIVATE
+  display.c
+  button_tab.c
+  log_tab.c
   )

@@ -1,0 +1,1 @@
+void display_init();

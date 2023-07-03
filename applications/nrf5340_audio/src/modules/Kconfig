@@ -117,3 +117,4 @@ config BUTTON_PUBLISH_STACK_SIZE
 
 endmenu # Stack sizes
 endmenu # Modules
+rsource "display/Kconfig"

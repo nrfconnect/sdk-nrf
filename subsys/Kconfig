@@ -55,6 +55,4 @@ rsource "ieee802154/Kconfig"
 
 rsource "dm/Kconfig"
 
-rsource "nrf5340audiodk_display/Kconfig"
-
 rsource "nrf_security/Kconfig"

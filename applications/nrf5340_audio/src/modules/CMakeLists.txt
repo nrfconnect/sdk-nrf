@@ -20,3 +20,4 @@ if (CONFIG_AUDIO_DFU_ENABLE)
 			    ${CMAKE_CURRENT_SOURCE_DIR}/dfu_entry.c
 	)
 endif()
+add_subdirectory(display)
