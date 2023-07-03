@@ -42,7 +42,7 @@ Zigbee shell commands are available for the following backends when testing samp
 * Segger RTT
 
 You can run the Zigbee shell commands after connecting and configuring the backend for testing.
-For more information, see :ref:`gs_testing`.
+For more information, see :ref:`testing`.
 
 .. _zigbee_shell_reference:
 

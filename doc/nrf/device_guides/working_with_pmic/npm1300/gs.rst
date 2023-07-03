@@ -81,5 +81,5 @@ Next steps
 You have now completed getting started with the nPM1300 EK.
 See the following links for where to go next:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * The EK `User Guide <nPM1300 EK User Guide_>`_ for detailed information related to the nPM1300 EK.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.

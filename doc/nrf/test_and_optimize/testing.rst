@@ -1,4 +1,5 @@
 .. _gs_testing:
+.. _testing:
 
 Testing and debugging an application
 ####################################
@@ -115,6 +116,7 @@ To connect to the nRF9160-based kit with LTE Link Monitor, perform the following
       In the case of nRF9160 DK, the reset button must be pressed to restart the device and to start the application.
 
 .. _gs_debugging:
+.. _debugging:
 
 Debugging an application
 ************************
@@ -139,7 +141,7 @@ If you want to reset the network core while debugging, make sure to first reset 
 
 For more information about debugging in the |nRFVSC|, for example testing and debugging with custom options, see the `Debugging overview`_ and other guides in the debugging section of the extension documentation.
 
-.. _gs_debugging_spe_nspe:
+.. _debugging_spe_nspe:
 
 Debugging secure and non-secure firmware
 ========================================
@@ -168,7 +170,7 @@ Debug build types
 -----------------
 
 Some applications and samples provide a specific build type that enables additional debug functionalities.
-You can select build types when you are :ref:`configuring the build settings <gs_modifying_build_types>`.
+You can select build types when you are :ref:`configuring the build settings <modifying_build_types>`.
 
 Debug logging
 -------------

@@ -13,8 +13,8 @@ It tells you how to update the Thingy:91 application and modem firmware and conn
 
 If you have already set up your Thingy:91 and want to learn more, see the following documentation:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_thingy91` for more advanced topics related to the Thingy:91.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -591,6 +591,6 @@ Next steps
 You have now completed getting started with the Thingy:91.
 See the following links for where to go next:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_thingy91` for more advanced topics related to the Thingy:91.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 * :ref:`connectivity_bridge` about using the nRF UART Service with Thingy:91.

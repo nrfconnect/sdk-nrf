@@ -16,15 +16,15 @@ Supported SoCs
 
 Currently the following SoCs from Nordic Semiconductor are supported for use with the Matter protocol:
 
-* :ref:`nRF5340 <gs_programming_board_names>` (Matter over Thread and Matter over Wi-Fi through the ``nrf7002ek`` shield)
-* :ref:`nRF5340 + nRF7002 <gs_programming_board_names>` (Matter over Thread and Matter over Wi-Fi)
-* :ref:`nRF52840 <gs_programming_board_names>` (Matter over Thread)
+* :ref:`nRF5340 <programming_board_names>` (Matter over Thread and Matter over Wi-Fi through the ``nrf7002ek`` shield)
+* :ref:`nRF5340 + nRF7002 <programming_board_names>` (Matter over Thread and Matter over Wi-Fi)
+* :ref:`nRF52840 <programming_board_names>` (Matter over Thread)
 
 Front-End Modules
 =================
 
 SoCs from Nordic Semiconductor that can run the Matter protocol over Thread can also work with external Front-End Modules.
-For more information about the FEM support in the |NCS|, see :ref:`ug_radio_fem` and :ref:`nRF21540 DK <gs_programming_board_names>`.
+For more information about the FEM support in the |NCS|, see :ref:`ug_radio_fem` and :ref:`nRF21540 DK <programming_board_names>`.
 
 .. _ug_matter_hw_requirements_external_flash:
 
@@ -54,7 +54,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF52840 DK
 
-      The following table lists memory requirements for samples running on the :ref:`nRF52840 DK <gs_programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
 
       +------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                           |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -82,7 +82,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF5340 DK
 
-      The following table lists memory requirements for samples running on the :ref:`nRF5340 DK <gs_programming_board_names>` (:ref:`nrf5340dk_nrf5340_cpuapp <zephyr:nrf5340dk_nrf5340>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF5340 DK <programming_board_names>` (:ref:`nrf5340dk_nrf5340_cpuapp <zephyr:nrf5340dk_nrf5340>`).
 
       +------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                           |   MCUBoot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -110,7 +110,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: Nordic Thingy:53
 
-      The following table lists memory requirements for samples running on the :ref:`Thingy:53 <gs_programming_board_names>` (:ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`).
+      The following table lists memory requirements for samples running on the :ref:`Thingy:53 <programming_board_names>` (:ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`).
 
       +---------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                        |   MCUBoot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -122,7 +122,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF7002 DK
 
-      The following table lists memory requirements for samples running on the :ref:`nRF7002 DK <gs_programming_board_names>` (:ref:`nrf7002dk_nrf5340_cpuapp <nrf7002dk_nrf5340>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF7002 DK <programming_board_names>` (:ref:`nrf7002dk_nrf5340_cpuapp <nrf7002dk_nrf5340>`).
 
 
       +------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
@@ -163,7 +163,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF52840 DK
 
-      The following memory map is valid for Matter applications running on the :ref:`nRF52840 DK <gs_programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
+      The following memory map is valid for Matter applications running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`).
 
       Internal flash (size: 0x100000 = 1024kB)
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
@@ -200,7 +200,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF5340 DK
 
-      The following memory map is valid for Matter applications running on the :ref:`nRF5340 DK <gs_programming_board_names>` (:ref:`nrf5340dk_nrf5340_cpuapp <zephyr:nrf5340dk_nrf5340>`).
+      The following memory map is valid for Matter applications running on the :ref:`nRF5340 DK <programming_board_names>` (:ref:`nrf5340dk_nrf5340_cpuapp <zephyr:nrf5340dk_nrf5340>`).
 
       Application core flash (size: 0x100000 = 1024kB)
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
@@ -274,7 +274,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: Nordic Thingy:53
 
-      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :ref:`Thingy:53 <gs_programming_board_names>` (:ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`).
+      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :ref:`Thingy:53 <programming_board_names>` (:ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`).
       The values are valid for the ``debug`` and ``release`` build types.
 
       Application core flash (size: 0x100000 = 1024kB)
@@ -347,7 +347,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: Nordic Thingy:53 (factory data)
 
-      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :ref:`Thingy:53 <gs_programming_board_names>` (:ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`).
+      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :ref:`Thingy:53 <programming_board_names>` (:ref:`thingy53_nrf5340 <zephyr:thingy53_nrf5340>`).
       The values are valid for the ``factory_data`` build type.
 
       Application core flash (size: 0x100000 = 1024kB)
@@ -422,7 +422,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF7002 DK
 
-      The following memory map is valid for Matter applications running on the :ref:`nRF7002 DK <gs_programming_board_names>` (:ref:`nrf7002dk_nrf5340 <nrf7002dk_nrf5340>`).
+      The following memory map is valid for Matter applications running on the :ref:`nRF7002 DK <programming_board_names>` (:ref:`nrf7002dk_nrf5340 <nrf7002dk_nrf5340>`).
 
       Application core flash (size: 0x100000 = 1024kB)
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+

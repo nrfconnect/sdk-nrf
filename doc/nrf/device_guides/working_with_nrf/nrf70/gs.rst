@@ -227,13 +227,12 @@ Programming the firmware to the DK
 Follow the instructions in the :ref:`gs_programming` page to build and flash applications.
 
 .. note::
-   To flash and debug applications on the nRF7002 DK you must use the nRF Command Line Tools version 10.12.0 or above.
-   For further information on how to install the nRF Command Line Tools, see :ref:`gs_updating`.
+   To flash and debug applications on the nRF7002 DK, you must use the `nRF Command Line Tools`_ version 10.12.0 or above.
 
 Debugging
 =========
 
-See the :ref:`gs_testing` page for information about debugging.
+See the :ref:`testing` page for information about debugging.
 
 
 Testing the LEDs and buttons in the nRF7002 DK

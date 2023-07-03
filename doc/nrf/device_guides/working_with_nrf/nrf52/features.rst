@@ -15,7 +15,7 @@ For additional information, see the following documentation:
 * `nRF52 Series`_ for the technical documentation on the nRF52 Series chips and associated kits.
 * :ref:`ug_nrf52_gs`.
 * :ref:`ug_nrf52` for more advanced topics related to the nRF52 Series.
-* The :ref:`introductory documentation <getting_started>` if you are not familiar with the |NCS| and the development environment.
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
 .. _nrf52_supported_boards:
 

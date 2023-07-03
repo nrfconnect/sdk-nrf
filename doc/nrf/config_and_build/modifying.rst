@@ -1,4 +1,5 @@
 .. _gs_modifying:
+.. _modifying:
 
 Modifying an application
 ########################
@@ -230,7 +231,7 @@ The documentation for each :ref:`configuration option <configuration_options>` l
          These tools present all available options and allow you to select the ones that you need.
 
       Alternatively, you can configure your application using menuconfig.
-      For this purpose, run the following command when :ref:`gs_programming_cmd`.
+      For this purpose, run the following command when :ref:`programming_cmd`.
 
       .. code-block:: console
 
@@ -301,6 +302,7 @@ For information about what variables can be set and how to add these variables i
       See :ref:`zephyr:west-building-cmake-args` for more information.
 
 .. _gs_modifying_build_types:
+.. _modifying_build_types:
 
 Configuring build types
 ***********************

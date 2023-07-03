@@ -171,7 +171,7 @@ Some title*
 .. note::
    If required, add subsections for additional build instructions.
    Use these subsections sparingly and only if the content does not fit into other sections (mainly `Configuration*`_).
-   If the additional build instructions are valid for other applications as well, consider adding them to the :ref:`getting_started` section instead and linking to them.
+   If the additional build instructions are valid for other applications as well, consider adding them to the :ref:`configuration_and_build` section instead and linking to them.
 
 Testing
 =======
@@ -206,7 +206,7 @@ References*
    Provide a link to other relevant documentation for the user to get more information.
 
 .. tip::
-   Do not include links to documents that are common to all or many of our applications. For example, :ref:`getting_started` section.
+   Do not include links to documents that are common to all or many of our applications. For example, :ref:`installation` section.
 
 Related projects and applications*
 ==================================

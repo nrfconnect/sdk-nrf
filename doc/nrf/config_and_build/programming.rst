@@ -1,4 +1,5 @@
 .. _gs_programming:
+.. _programming:
 
 Building and programming an application
 #######################################
@@ -16,7 +17,7 @@ For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide 
 .. note::
    |application_sample_long_path_windows|
 
-.. _gs_programming_vsc:
+.. _programming_vsc:
 
 Building with |VSC|
 *******************
@@ -29,16 +30,16 @@ If you want to build and program with custom options, read about the advanced `C
 
 |output_files_note|
 
-.. _gs_programming_cmd:
+.. _programming_cmd:
 
 Building on the command line
 ****************************
 
-After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <gs_app_installing_choose_building_method_cl>` command-line build setup, use the following steps to build |NCS| projects on the command line.
+After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <auto_installation_choose_building_method_cl>` command-line build setup, use the following steps to build |NCS| projects on the command line.
 
 1.    Open a terminal window.
 
-      If you have installed the |NCS| using the :ref:`Toolchain Manager <gs_app_tcm>`, click the down arrow next to the version you installed and select :guilabel:`Open bash`.
+      If you have installed the |NCS| using the :ref:`Toolchain Manager <auto_installation>`, click the down arrow next to the version you installed and select :guilabel:`Open bash`.
 
       .. figure:: ../installation/images/gs-assistant_tm_dropdown.png
          :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
@@ -61,7 +62,7 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
 
          west build -b *build_target*
 
-      See :ref:`gs_programming_board_names` for more information on the supported boards and build targets.
+      See :ref:`programming_board_names` for more information on the supported boards and build targets.
       The board targets supported for a given application are always listed in its requirements section.
 
       After running the ``west build`` command, the build files can be found in :file:`build/zephyr`.

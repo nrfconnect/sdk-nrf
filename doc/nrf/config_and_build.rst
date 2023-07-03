@@ -1,5 +1,5 @@
 .. _ug_app_dev:
-.. _config_and_build:
+.. _configuration_and_build:
 
 Configuration and building
 ##########################

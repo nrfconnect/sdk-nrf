@@ -13,7 +13,7 @@ The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) us
 
 See the `nRF5340 DK User Guide`_ for detailed information about the nRF5340 DK hardware.
 To get started with the nRF5340 DK, follow the steps in :ref:`ug_nrf5340_gs`.
-If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
+If you are not familiar with the |NCS| and its development environment, see :ref:`installation` and :ref:`configuration_and_build` documentation.
 
 .. note::
    The nRF5340 PDK has been deprecated with the introduction of the production-level nRF5340 DK.
@@ -433,7 +433,7 @@ To program the nRF5340 DK from the command line, use either west or nrfjprog (wh
 Separate images
 ---------------
 
-To build and program the application sample and the network sample as separate images, follow the instructions in :ref:`gs_programming_cmd` for each of the samples.
+To build and program the application sample and the network sample as separate images, follow the instructions in :ref:`programming_cmd` for each of the samples.
 
 See the following instructions for programming the images separately:
 
@@ -476,7 +476,7 @@ See :ref:`readback_protection_error` if you encounter an error.
 Multi-image build
 -----------------
 
-To build and program a multi-image HEX file, follow the instructions in :ref:`gs_programming_cmd` for the application core sample.
+To build and program a multi-image HEX file, follow the instructions in :ref:`programming_cmd` for the application core sample.
 
 To program the multi-image HEX file, you must use west.
 Programming multi-image builds for different cores is not yet supported in nrfjprog.
@@ -646,12 +646,10 @@ Container for firmware update binaries
 The build system will automatically place both the application core and the network core update binaries (:file:`app_update.bin` and :file:`net_core_app_update.bin`) into a container package named :file:`dfu_application.zip`.
 This container package can be used by update tools to pass both images during the simultaneous update of multiple images.
 
-.. _debugging:
-
 Debugging
 *********
 
-See :ref:`gs_debugging` for information about how to debug your application.
+See :ref:`debugging` for information about how to debug your application.
 
 .. _logging_cpunet:
 

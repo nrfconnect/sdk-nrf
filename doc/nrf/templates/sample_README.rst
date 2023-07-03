@@ -197,7 +197,7 @@ Some title*
 .. note::
    If required, add subsections for additional build instructions.
    Use these subsections sparingly and only if the content does not fit into other sections (mainly Configuration).
-   If the additional build instructions are valid for other samples as well, consider adding them to the :ref:`getting_started` section instead and linking to them.
+   If the additional build instructions are valid for other samples as well, consider adding them to the :ref:`configuration_and_build` section instead and linking to them.
 
 
 Testing

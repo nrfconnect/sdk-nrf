@@ -742,7 +742,7 @@ You can set ``PM_STATIC_YML_FILE`` to contain exactly the static configuration y
 
 If you do not set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
 
-* If build type is used, :ref:`gs_modifying_build_types`, the following order applies:
+* If build type is used (see :ref:`modifying_build_types`), the following order applies:
 
   1. If the file :file:`pm_static_<board>_<revision>_<buildtype>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static_<board>_<buildtype>.yml` exists, it will be used.

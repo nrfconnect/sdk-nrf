@@ -11,7 +11,7 @@ The nRF9160 DK is a hardware development platform used to design and develop app
 
 See the `nRF9160 DK Hardware`_ guide for detailed information about the nRF9160 DK hardware.
 To get started with the nRF9160 DK, follow the steps in the :ref:`ug_nrf9160_gs` section.
-If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
+If you are not familiar with the |NCS|, see :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
 .. _nrf9160_ug_intro:
 

@@ -47,13 +47,14 @@ The search engine only looks up the perfect matches for each word or phrase.
    |NCS| documentation search field
 
 The results are displayed for all documentation sets, with each search result entry prefixed with the name of the documentation set in which the result is found.
-For example, the search result "nRF Connect SDK » Getting started" refers to the Getting Started page from the "nRF Connect SDK" documentation set.
-The search match is highlighted.
+For example, the search result "nRF Connect SDK » Installation" refers to the :ref:`installation` page from the "nRF Connect SDK" documentation set.
 
 .. figure:: images/doc_structure_search_results.PNG
    :alt: nRF Connect SDK documentation search result entry
 
    |NCS| documentation search result entry
+
+The search match is highlighted when you open a search result entry.
 
 .. _doc_structure_versions:
 

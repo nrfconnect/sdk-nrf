@@ -26,7 +26,7 @@ Power Profiler Kit II is a flexible, low-cost tool that you can use for real-tim
 You can measure power on a connected development kit or any external board.
 
 Together, these tools provide a unified solution for developers to evaluate, develop and characterize ultra-low power designs with ease.
-See :ref:`getting_started` for more information about the |NCS| and the development environment.
+See :ref:`installation` and :ref:`configuration_and_build` for more information about the |NCS| and its development environment.
 
 Disable serial logging
 **********************

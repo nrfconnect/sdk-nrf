@@ -1,4 +1,5 @@
 .. _gs_installing:
+.. _manual_installation:
 
 Installing manually
 ###################
@@ -7,7 +8,7 @@ Installing manually
    :local:
    :depth: 2
 
-The recommended way to get started with the |NCS| is to install using nRF Connect for Desktop, which is described on the :ref:`gs_assistant` page.
+The recommended way to get started with the |NCS| is to install using nRF Connect for Desktop, which is described on the :ref:`auto_installation` page.
 However, if you prefer to install the toolchain manually, follow the instructions described below.
 
 To manually install the |NCS|, you must first install all the required tools and clone the |NCS| repositories.
@@ -15,9 +16,9 @@ To manually install the |NCS|, you must first install all the required tools and
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds on top of it tools and modules required to build |NCS| samples and applications.
 If you already have your system set up to work with Zephyr OS, based on Zephyr's :ref:`zephyr:getting_started`, it means you have most of the requirements for the |NCS| installed.
 However, you still need to install a set of additional tools, including Python dependencies and the |nRFVSC| (the default IDE for the |NCS|).
-You might also need the :ref:`GN tool <gs_installing_gn>` if you are interested in creating :ref:`ug_matter` applications.
+You might also need the :ref:`GN tool <manual_installation_gn>` if you are interested in creating :ref:`ug_matter` applications.
 
-.. _gs_installing_update_os:
+.. _manual_installation_update_os:
 
 .. rst-class:: numbered-step
 
@@ -25,9 +26,10 @@ Update your operating system
 ****************************
 
 Before you start setting up the |NCS| toolchain, install available updates for your operating system.
-See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
+See :ref:`requirements` for information on the supported operating systems and Zephyr features.
 
 .. _gs_installing_tools:
+.. _manual_installation_tools:
 
 .. rst-class:: numbered-step
 
@@ -99,6 +101,7 @@ The installation process is different depending on your operating system.
 ..
 
 .. _gs_installing_gn:
+.. _manual_installation_gn:
 
 If you want to build `Matter`_ applications, additionally install the `GN`_ meta-build system.
 This system generates the Ninja files that the |NCS| uses.
@@ -203,6 +206,7 @@ This system generates the Ninja files that the |NCS| uses.
 ..
 
 .. _gs_installing_west:
+.. _manual_installation_west:
 
 .. rst-class:: numbered-step
 
@@ -268,7 +272,7 @@ The revision of each of those repositories is determined by the current revision
 
    Unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
 
-For more information about the repository and development model, see the :ref:`development model section <dev-model>`.
+For more information about the repository and development model, see the :ref:`development model <dev-model>` page.
 
 To clone the repositories, complete the following steps:
 
@@ -392,6 +396,7 @@ Use the following commands to install the requirements for each repository.
 ..
 
 .. _gs_installing_toolchain:
+.. _manual_installation_toolchain:
 
 .. rst-class:: numbered-step
 

@@ -12,8 +12,8 @@ You will update the firmware (both the modem firmware and the application firmwa
 
 If you have already set up your nRF9160 DK and want to learn more, see the following documentation:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_nrf9160` for more advanced topics related to the nRF9160 DK if you are already familiar with the |NCS|.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 
@@ -414,5 +414,5 @@ Next steps
 You have now completed getting started with the nRF9160 DK.
 See the following links for where to go next:
 
+* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * :ref:`ug_nrf9160` for more advanced topics related to the nRF9160 DK.
-* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.

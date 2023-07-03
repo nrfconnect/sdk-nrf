@@ -15,9 +15,9 @@ Integration prerequisites
 
 Before you start the |NCS| integration with Edge Impulse, make sure that the following prerequisites are completed:
 
-   * :ref:`Setup of the nRF Connect SDK <getting_started>` environment.
-   * Setup of the required :term:`Development Kit (DK)`.
-   * Creation of an `Edge Impulse studio account <Edge Impulse studio signup_>`_ and an Edge Impulse project.
+* :ref:`Installation of the nRF Connect SDK <installation>`.
+* Setup of the required :term:`Development Kit (DK)`.
+* Creation of an `Edge Impulse studio account <Edge Impulse studio signup_>`_ and an Edge Impulse project.
 
 Solution architecture
 *********************

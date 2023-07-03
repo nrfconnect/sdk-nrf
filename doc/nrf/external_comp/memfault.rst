@@ -25,12 +25,12 @@ Prerequisites
 
 Before you start the |NCS| integration with Memfault, make sure that the following prerequisites are completed:
 
-   * :ref:`Setup of nRF Connect SDK <getting_started>` environment.
-   * :ref:`Setup of nRF9160 DK <ug_nrf9160_gs>`.
-   * Sign up in the `Memfault registration page`_ and `create a new project in Memfault`_.
-     You will be directed to the Integration guide for Memfault.
-     You receive the ``project key`` here to set in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
-     After registration, you can connect up to 100 devices for free.
+* :ref:`Installation of the nRF Connect SDK <installation>`.
+* :ref:`Setup of nRF9160 DK <ug_nrf9160_gs>`.
+* Sign up in the `Memfault registration page`_ and `create a new project in Memfault`_.
+  You will be directed to the Integration guide for Memfault.
+  You receive the ``project key`` here to set in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
+  After registration, you can connect up to 100 devices for free.
 
 Solution architecture
 *********************

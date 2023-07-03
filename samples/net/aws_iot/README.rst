@@ -226,7 +226,7 @@ To enable more verbose logging from the AWS IoT library, enable the :kconfig:opt
 
 * If you are having issues with connectivity on nRF91 Series devices, see the `Trace Collector`_ documentation to learn how to capture modem traces in order to debug network traffic in Wireshark.
   The sample enables modem traces by default, as set by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` option.
-* If you have issues with the sample, refer to :ref:`gs_testing`.
+* If you have issues with the sample, refer to :ref:`testing`.
 * For issues related to connection towards AWS IoT, refer to :ref:`AWS IoT library troubleshooting <aws_iot_troubleshooting>`.
 
 Dependencies

@@ -1,5 +1,6 @@
 .. _gs_app_tcm:
 .. _gs_assistant:
+.. _auto_installation:
 
 Installing automatically
 ########################
@@ -17,12 +18,12 @@ Install prerequisites
 *********************
 
 Before you start setting up the toolchain, install available updates for your operating system.
-See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
+See :ref:`requirements` for information on the supported operating systems and Zephyr features.
 
 Additionally, make sure you install the Universal version of SEGGER J-Link.
 This is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
 
-.. _tcm_setup:
+.. _auto_installation_tcm_setup:
 
 .. rst-class:: numbered-step
 
@@ -40,7 +41,7 @@ To install the Toolchain Manager app, complete the following steps:
 
 The app is installed on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
 
-.. _gs_app_installing-ncs-tcm:
+.. _auto_installation_ncs_tcm:
 
 .. rst-class:: numbered-step
 
@@ -62,7 +63,7 @@ Complete the following steps to install the |NCS| source code:
    The |NCS| version of your choice is installed on your machine.
    The :guilabel:`Install` button changes to :guilabel:`Open VS Code`.
 
-.. _gs_app_installing_choose_building_method:
+.. _auto_installation_choose_building_method:
 
 .. rst-class:: numbered-step
 
@@ -76,7 +77,7 @@ There are two ways you can build an application:
 
 |vsc_extension_description|
 
-.. _gs_app_installing_choose_building_method_vsc:
+.. _auto_installation_choose_building_method_vsc:
 
 Installing |nRFVSC|
 ===================
@@ -89,9 +90,9 @@ To build on the |nRFVSC|, complete the following steps:
 #. Click **Install missing extensions**.
 #. Once the extensions are installed, click **Open VS Code** button again.
 
-You can then follow the instructions in :ref:`gs_programming_vsc`.
+You can then follow the instructions in :ref:`programming_vsc`.
 
-.. _gs_app_installing_choose_building_method_cl:
+.. _auto_installation_choose_building_method_cl:
 
 Installing command line requirements
 ====================================
@@ -109,4 +110,4 @@ To build on the command line, complete the following steps:
 
 #. Select :guilabel:`Open command prompt`.
 
-You can then follow the instructions in :ref:`gs_programming_cmd`.
+You can then follow the instructions in :ref:`programming_cmd`.
