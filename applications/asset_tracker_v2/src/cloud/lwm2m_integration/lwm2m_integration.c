@@ -158,6 +158,9 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 			state = CONNECTED;
 		}
 		break;
+	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE:
+		LOG_DBG("LWM2M_RD_CLIENT_EVENT_REG_UPDATE");
+		break;
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
 		LOG_WRN("LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
