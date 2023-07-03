@@ -19,13 +19,34 @@
 #include <stdint.h>
 #include <C:\ncs\v2.4.0\nrf\applications\nrf5340_audio\src\modules\hw_codec.h>
 #include <math.h>
-#include <zephyr/logging/log_backend.h>
 #include <zephyr/logging/log_output.h>
 #include "log_tab.h"
+#include <stdbool.h>
+#include <zephyr/toolchain.h>
+#include <zephyr/logging/log_backend.h>
 #include <zephyr/logging/log_ctrl.h>
+
 LOG_MODULE_REGISTER(display, CONFIG_DISPLAY_LOG_LEVEL);
 
-/* static void panic(const struct log_backend *const backend)
+lv_obj_t *wrn_label;
+
+struct backend_context {
+	uint32_t cnt;
+	const char *exp_str[10];
+	uint32_t delay;
+	bool active;
+	struct k_timer timer;
+};
+static int cbprintf_callback(int c, void *ctx)
+{
+	char **p = ctx;
+
+	**p = c;
+	(*p)++;
+
+	return c;
+}
+static void panic(const struct log_backend *const backend)
 {
 	ARG_UNUSED(backend);
 }
@@ -51,10 +72,6 @@ static int backend_is_ready(const struct log_backend *const backend)
 
 	return context->active ? 0 : -EBUSY;
 }
-static const struct log_backend_api backend_api = {.process = backend_process,
-						   .init = backend_init,
-						   .is_ready = backend_is_ready,
-						   .panic = panic};
 static void backend_process(const struct log_backend *const backend, union log_msg_generic *msg)
 {
 	char str[100];
@@ -67,13 +84,21 @@ static void backend_process(const struct log_backend *const backend, union log_m
 	int slen = cbpprintf(cbprintf_callback, &pstr, p);
 
 	str[slen] = '\0';
-
-	zassert_equal(strcmp(str, context->exp_str[context->cnt]), 0,
-		      "Unexpected string %s (exp:%s)", str, context->exp_str[context->cnt]);
-
-	context->cnt++;
+	if (log_msg_get_level(&msg->log) == LOG_LEVEL_WRN) {
+		LOG_INF("Philip");
+		lv_label_set_text(wrn_label, str);
+	}
 }
-
-void log_tab_create()
+static const struct log_backend_api backend_api = {.process = backend_process,
+						   .init = backend_init,
+						   .is_ready = backend_is_ready,
+						   .panic = panic};
+void log_tab_create(lv_obj_t *screen)
 {
-} */
+	wrn_label = lv_label_create(screen);
+	lv_label_set_text(wrn_label, "PHILIP");
+	lv_obj_align(wrn_label, LV_ALIGN_BOTTOM_MID, 0, 0);
+
+	static struct backend_context context1 = {.delay = 500};
+	LOG_BACKEND_DEFINE(philip_backend, backend_api, true, &context1);
+}

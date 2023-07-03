@@ -18,7 +18,7 @@
 #include <zephyr/logging/log.h>
 #include <stdint.h>
 #include "button_tab.h"
-
+#include "log_tab.h"
 #define MY_PRIORITY 5
 LOG_MODULE_REGISTER(app);
 
@@ -78,7 +78,7 @@ void display_init()
 
 	display_blanking_off(display_dev);
 	button_tab_create(button_tab);
-
+	log_tab_create(log_tab);
 	while (1) {
 		lv_task_handler();
 		k_sleep(K_MSEC(16));

@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-void log_tab_create();
+void log_tab_create(lv_obj_t *screen);
