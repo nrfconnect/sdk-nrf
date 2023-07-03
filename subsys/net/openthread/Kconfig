@@ -52,6 +52,12 @@ config OPENTHREAD_NRF_SECURITY
 config OPENTHREAD_MBEDTLS_LIB_NAME
 	default "mbedtls_external" if OPENTHREAD_NRF_SECURITY
 
+config OPENTHREAD_MBEDTLS_DEBUG
+	bool "MbedTLS logs for OpenThread"
+	select MBEDTLS
+	select MBEDTLS_DEBUG
+	select MBEDTLS_DEBUG_C
+
 config OPENTHREAD_THREAD_STACK_SIZE
 	int "OpenThread thread stack size"
 	default 6240 if OPENTHREAD_COMMISSIONER || OPENTHREAD_JOINER
