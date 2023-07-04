@@ -171,15 +171,15 @@ AEAD configurations
 
 To enable Authenticated Encryption with Associated Data (AEAD), set one or more of the following Kconfig options:
 
-+----------------+---------------------------------------------------------+
-| AEAD cipher    | Configuration option                                    |
-+================+=========================================================+
-| AES CCM        | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`               |
-+----------------+---------------------------------------------------------+
-| AES GCM        | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`               |
-+----------------+---------------------------------------------------------+
-| ChaCha/Poly    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305` |
-+----------------+---------------------------------------------------------+
++-----------------------+---------------------------------------------------------+
+| AEAD cipher           | Configuration option                                    |
++=======================+=========================================================+
+| AES CCM               | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`               |
++-----------------------+---------------------------------------------------------+
+| AES GCM               | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`               |
++-----------------------+---------------------------------------------------------+
+| ChaCha20-Poly1305     | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305` |
++-----------------------+---------------------------------------------------------+
 
 
 AEAD driver configurations
@@ -187,15 +187,15 @@ AEAD driver configurations
 
 You can use the following Kconfig options for fine-grained control over which drivers provide AEAD support:
 
-+----------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
-| AEAD cipher    | nrf_cc3xx driver support                                               | nrf_oberon driver support                                               |
-+================+========================================================================+=========================================================================+
-| AES CCM        | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_OBERON`               |
-+----------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
-| AES GCM        | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_OBERON`               |
-+----------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
-| ChaCha/Poly    | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_OBERON` |
-+----------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
++-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
+| AEAD cipher           | nrf_cc3xx driver support                                               | nrf_oberon driver support                                               |
++=======================+========================================================================+=========================================================================+
+| AES CCM               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_OBERON`               |
++-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
+| AES GCM               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_OBERON`               |
++-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
+| ChaCha20-Poly1305     | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_OBERON` |
++-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
 
 .. note::
    * The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell cc310.
