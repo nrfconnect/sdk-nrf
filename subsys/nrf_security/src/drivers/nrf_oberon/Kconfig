@@ -218,13 +218,13 @@ config PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_OBERON
 
 config PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_OBERON
 	bool
-	prompt "PSA RSA crypt support (PKCS1V15 mode) - oberon" if !PSA_PROMPTLESS
+	prompt "PSA RSA crypt support (PKCS#1 v1.5 mode) - oberon" if !PSA_PROMPTLESS
 	default y if !PSA_DEFAULT_OFF
 	depends on PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
 
 config PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_OBERON
 	bool
-	prompt "PSA RSA signature support (PKCS1V15 mode) - oberon" if !PSA_PROMPTLESS
+	prompt "PSA RSA signature support (PKCS#1 v1.5 mode) - oberon" if !PSA_PROMPTLESS
 	default y if !PSA_DEFAULT_OFF
 	depends on PSA_WANT_ALG_RSA_PKCS1V15_SIGN
 
