@@ -74,7 +74,7 @@ void wifi_nrf_scan_timeout_work(struct k_work *work)
 	vif_ctx_zep->scan_in_progress = false;
 }
 
-int wifi_nrf_disp_scan_zep(const struct device *dev,
+int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
 			   scan_result_cb_t cb)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;

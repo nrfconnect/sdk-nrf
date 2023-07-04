@@ -23,7 +23,8 @@ struct twt_interval_float {
 	unsigned char exponent;
 };
 
-int wifi_nrf_disp_scan_zep(const struct device *dev, scan_result_cb_t cb);
+int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
+			   scan_result_cb_t cb);
 
 enum wifi_nrf_status wifi_nrf_disp_scan_res_get_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep);
 
