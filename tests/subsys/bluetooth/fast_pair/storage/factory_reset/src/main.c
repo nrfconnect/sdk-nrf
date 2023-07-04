@@ -182,35 +182,6 @@ static int fp_settings_data_validate_empty_cb(const char *key, size_t len, setti
 		return 0;
 	}
 
-	if (!strncmp(key, SETTINGS_RESET_IN_PROGRESS_FULL_NAME,
-		     sizeof(SETTINGS_RESET_IN_PROGRESS_FULL_NAME))) {
-		int rc;
-		bool reset_in_progress;
-
-		if (len != sizeof(reset_in_progress)) {
-			*err = -EINVAL;
-			return *err;
-		}
-
-		rc = read_cb(cb_arg, &reset_in_progress, len);
-		if (rc < 0) {
-			*err = rc;
-			return *err;
-		}
-
-		if (rc != len) {
-			*err = -EINVAL;
-			return *err;
-		}
-
-		if (reset_in_progress) {
-			*err = -EFAULT;
-			return *err;
-		}
-
-		return 0;
-	}
-
 	*err = -EFAULT;
 	return *err;
 }
