@@ -76,8 +76,13 @@ static int reset_in_progress_set(bool in_progress)
 {
 	int err;
 
-	err = settings_save_one(SETTINGS_RESET_IN_PROGRESS_FULL_NAME, &in_progress,
-				sizeof(in_progress));
+	if (in_progress) {
+		err = settings_save_one(SETTINGS_RESET_IN_PROGRESS_FULL_NAME, &in_progress,
+					sizeof(in_progress));
+	} else {
+		err = settings_delete(SETTINGS_RESET_IN_PROGRESS_FULL_NAME);
+	}
+
 	if (err) {
 		return err;
 	}
