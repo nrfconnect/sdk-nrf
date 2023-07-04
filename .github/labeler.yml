@@ -15,7 +15,7 @@
   - "**/*.rst"
 
 "changelog-entry-required":
-  - all: ["!doc/nrf/releases/release-notes-changelog.rst"]
+  - all: ["!doc/nrf/releases_and_maturity/releases/release-notes-changelog.rst"]
 
 "ble mesh":
   - "subsys/bluetooth/mesh/*"
