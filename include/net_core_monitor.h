@@ -25,11 +25,13 @@ extern "C" {
  *  Checking the status of the network core.
  *  The function should be called less frequently than CONFIG_NCM_APP_FEEDING_INTERVAL_MSEC
  *
+ *  @param reset_on_failure If true network core is reset on failure.
+ *
  *  @retval 0 if it works properly.
  *          -EBUSY network core failure occurred
  *          -EFAULT network core restart occurred
  */
-int ncm_net_status_check(void);
+int ncm_net_status_check(bool reset_on_failure);
 
 #ifdef __cplusplus
 }

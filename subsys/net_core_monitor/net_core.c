@@ -18,15 +18,27 @@
 LOG_MODULE_REGISTER(net_core_monitor, CONFIG_NET_CORE_MONITOR_LOG_LEVEL);
 
 static void ncm_work_handler(struct k_work *work);
-K_WORK_DELAYABLE_DEFINE(ncm_work, ncm_work_handler);
+static K_WORK_DELAYABLE_DEFINE(ncm_work, ncm_work_handler);
 
-static uint32_t live_cnt;
+static bool once;
 
 static void ncm_work_handler(struct k_work *work)
 {
-	live_cnt++;
+	uint32_t mem = APP_IPC_GPMEM;
+	uint32_t reset_cnt = mem >> 16;
+	uint32_t cnt = mem & 0xFFFF;
 
-	APP_IPC_GPMEM = live_cnt;
+	if (once == false) {
+		reset_cnt++;
+		reset_cnt &= 0xFFFF;
+		once = true;
+	}
+	cnt++;
+	cnt &= 0xFFFF;
+
+	mem = (reset_cnt << 16) | cnt;
+
+	APP_IPC_GPMEM = mem;
 	k_work_reschedule(&ncm_work, K_MSEC(CONFIG_NCM_APP_FEEDING_INTERVAL_MSEC));
 }
 
@@ -35,4 +47,5 @@ static int net_init(const struct device *unused)
 	k_work_schedule(&ncm_work, K_NO_WAIT);
 	return 0;
 }
+
 SYS_INIT(net_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
