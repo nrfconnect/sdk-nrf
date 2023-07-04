@@ -347,6 +347,11 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* :ref:`bt_fast_pair_readme` library:
+
+  * Deleted reset in progress flag from settings storage instead of storing it as ``false`` on factory reset operation.
+    This is done to ensure that no Fast Pair data is left in the settings storage after the factory reset.
+
 * :ref:`bt_mesh` library:
 
   * Added:
