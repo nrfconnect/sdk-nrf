@@ -15,7 +15,6 @@
   comment: "Temporary disable till the issue is fixed"
 
 - scenarios:
-    - fast_pair.storage.account_key_storage.*
     - fast_pair.storage.factory_reset.*
   platforms:
     - all
