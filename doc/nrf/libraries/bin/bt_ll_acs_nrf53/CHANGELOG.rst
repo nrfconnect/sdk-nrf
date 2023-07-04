@@ -9,6 +9,19 @@ Changelog
 
 Notable changes to this controller are documented in this file.
 
+Controller v3357
+****************
+
+The following changes have been introduced in the v3357 of the controller:
+
+Changes
+=======
+
+* Updated the controller to be able to read RSSI from the CIS ISO channel using the ``HCI_Read_RSSI`` HCI command.
+* Fixed an issue where pins P0.28 to P0.31 cannot be allocated for controlling front-end modules (FEMs).
+* Fixed an issue where the FEM control pins cannot work when the TX output power setting equals 0 dBm.
+
+
 Controller v3349
 ****************
 
