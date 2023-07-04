@@ -65,6 +65,7 @@ config LWM2M_CARRIER_ATT
 config LWM2M_CARRIER_LG_UPLUS
 	bool "LG U+"
 	depends on DFU_TARGET_MCUBOOT
+	depends on FLASH_MAP
 	default y
 	help
 	  Enable Carrier Library when the SIM Subscriber ID is LG U+.
