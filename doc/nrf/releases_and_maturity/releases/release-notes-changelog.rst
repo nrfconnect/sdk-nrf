@@ -309,7 +309,10 @@ Cellular samples (renamed from nRF9160 samples)
 
 * Renamed nRF9160 samples to cellular samples and are now found in the :file:`samples/cellular` folder.
 
-* Added the :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
+* Added:
+
+  * The :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
+  * The :ref:`nrf_provisioning_sample` sample that demonstrates how to use the :ref:`lib_nrf_provisioning` service.
 
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
@@ -547,6 +550,10 @@ Modem libraries
 
 Libraries for networking
 ------------------------
+
+* Added
+
+  * The :ref:`lib_nrf_provisioning` library for device provisioning.
 
 * Multicell location library:
 
