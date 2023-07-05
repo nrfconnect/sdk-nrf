@@ -320,15 +320,15 @@ To enable PRNG seeded by entropy (also known as TRNG), set one or more of the fo
 +---------------------------+-------------------------------------------------+
 | PRNG algorithms           | Configuration option                            |
 +===========================+=================================================+
-| CTR_DRBG                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`  |
+| CTR-DRBG                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`  |
 +---------------------------+-------------------------------------------------+
-| HMAC_DRBG                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` |
+| HMAC-DRBG                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` |
 +---------------------------+-------------------------------------------------+
 
 .. note::
    * Both PRNG algorithms are NIST qualified Cryptographically Secure Pseudo Random Number Generators (CSPRNG).
    * :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG` and :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` are custom configurations not described by the PSA Crypto specification.
-   * If multiple PRNG algorithms are enabled at the same time, CTR_DRBG will be prioritized for random number generation through the front-end APIs for PSA Crypto.
+   * If multiple PRNG algorithms are enabled at the same time, CTR-DRBG will be prioritized for random number generation through the front-end APIs for PSA Crypto.
 
 
 RNG driver configurations
