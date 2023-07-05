@@ -566,7 +566,7 @@ In addition to documentation related to the changes listed above, the following 
 
     * nRF9160 samples:
 
-      * :ref:`http_full_modem_update_sample` - Updated with the description of its customization options for firmware files.
+      * :ref:`http_modem_full_update_sample` - Updated with the description of its customization options for firmware files.
 
     * :ref:`zigbee_samples`:
 

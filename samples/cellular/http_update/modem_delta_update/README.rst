@@ -15,7 +15,7 @@ The sample uses the :ref:`lib_fota_download` library to download a file from a r
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -45,8 +45,10 @@ Testing
 After programming the sample to your development kit,, test it by performing the following steps:
 
 1. Note the LED pattern (1 or 2 LEDs).
-#. Press **Button 1** on the nRF9160 DK or type "download" in the terminal emulator to start the download process of the delta to the alternative firmware version.
-#. Once the download has been completed, follow the reboot instructions printed to the UART console.
+#. Press **Button 1** on the nRF91 Series DK or type "download" in the terminal emulator to start downloading the delta modem firmware update.
+   Wait for the download to complete.
+#. Press **Button 1** on the nRF91 Series DK or type "apply" in the terminal emulator to apply the delta modem firmware update.
+   Once the modem update procedure is complete, the modem is reinitialized to run the new firmware.
 #. Observe that the LED pattern has changed (1 vs 2).
 #. Start over from point 1, to perform the delta update back to the previous version.
 

@@ -543,7 +543,7 @@ Multicore samples
 nRF9160 samples
 ---------------
 
-* :ref:`http_full_modem_update_sample` sample:
+* :ref:`http_modem_full_update_sample` sample:
 
   * The sample now uses modem firmware versions 1.3.3 and 1.3.4.
   * Enabled external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.

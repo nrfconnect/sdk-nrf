@@ -13,7 +13,7 @@ It uses the :ref:`lib_fota_download` library to download two image files from a 
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -111,7 +111,7 @@ After programming the sample to your development kit, test it by performing the 
    Remember to rename the file to match the ``CONFIG_DOWNLOAD_FILE_V1`` configuration option.
 #. Configure the application image version to be 2 and rebuild the application.
 #. Upload the file :file:`app_update.bin` with the application image version 2 to the server you have chosen.
-#. Reset your nRF9160 DK to start the application.
+#. Reset your nRF91 Series DK to start the application.
 #. Open a terminal emulator and observe that an output similar to the following is printed:
 
    .. code-block::
@@ -120,9 +120,9 @@ After programming the sample to your development kit, test it by performing the 
 
 #. Observe that **LED 1** is lit.
    This indicates that version 1 of the application is running.
-#. Press **Button 1** on the nRF9160 DK or type "download" in the terminal emulator to start the download process, and wait until ``Download complete`` is printed in the terminal.
-#. Press the **RESET** button on the kit or type "reset" in the terminal emulator.
-   MCUboot will now detect the downloaded image and program it to flash memory.
+#. Press **Button 1** on the nRF91 Series DK or type "download" in the terminal emulator to start the download process, and wait until ``Download complete`` is printed in the terminal.
+#. Press **Button 1** on the nRF91 Series DK or type "apply" in the terminal emulator to reboot and apply the update.
+   MCUboot now detects the downloaded image and program it to flash memory.
    This can take up to a minute.
    Nothing is printed in the terminal while the writing is in progress.
 #. Observe that **LED 1** and **LED 2** are lit.

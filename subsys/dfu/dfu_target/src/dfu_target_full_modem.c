@@ -150,5 +150,8 @@ int dfu_target_full_modem_reset(void)
 	if (!configured) {
 		return -EPERM;
 	}
+
+	configured = false;
+
 	return dfu_target_stream_reset();
 }

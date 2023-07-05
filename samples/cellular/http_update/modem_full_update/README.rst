@@ -1,4 +1,4 @@
-.. _http_full_modem_update_sample:
+.. _http_modem_full_update_sample:
 
 Cellular: HTTP full modem update
 ################################
@@ -13,7 +13,7 @@ The sample downloads the modem firmware signed by Nordic Semiconductor and updat
 Requirements
 ************
 
-The sample supports the following development kit, version 0.14.0 or higher:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -25,7 +25,8 @@ Overview
 ********
 
 An |external_flash_size| of free space is required to perform a full modem update.
-Hence, only versions 0.14.0 and later of the nrf9160 DK support this sample as the earlier versions do not have any external flash memory.
+Hence, for the nRF9160 DK, version 0.14.0 or higher is supported by the sample as the earlier versions do not have any external flash memory.
+The nRF9161 DK has external flash memory.
 
 The sample proceeds as follows:
 
@@ -34,8 +35,8 @@ The sample proceeds as follows:
 #. It prevalidates the update if the firmware supports the prevalidation process.
 #. It then programs the update to the modem, using the :ref:`lib_fmfu_fdev` library.
 
-The current version of this sample downloads two different versions of the firmware, namely 1.3.3 and 1.3.4.
-The sample then selects the version which is currently not installed.
+The current version of this sample downloads two different versions of the firmware.
+The sample then selects the version to install based on the currently installed version.
 
 Configuration
 *************
@@ -88,9 +89,10 @@ Testing
 |test_sample|
 
 1. Start the application and wait for a prompt for pressing a button.
-#. Press the button or type "download" in the terminal emulator to start the update procedure.
-#. Once the download has completed, the modem update procedure begins automatically.
-#. Press the **Reset** button or type "reset" in the terminal emulator to reset the development kit.
+#. Press the **Button 1** button or type "download" in the terminal emulator to start downloading the update.
+   Wait for the download to complete.
+#. Press the **Button 2** button or type "apply" in the terminal emulator to apply the update.
+   Once the modem update procedure is complete, the modem is reinitialized to run the new firmware.
 #. Observe that the LED pattern has changed.
 
 Dependencies
