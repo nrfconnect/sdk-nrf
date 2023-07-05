@@ -31,10 +31,10 @@ If multiple drivers are enabled, the first ordered item in this table takes prec
 Enabling or disabling PSA driver specific configurations controls the support for a given algorithm, per driver.
 
 
-AES cipher configurations
-*************************
+Cipher configurations
+*********************
 
-To enable AES cipher modes, set one or more of the following Kconfig options:
+To enable cipher modes, set one or more of the following Kconfig options:
 
 +----------------+------------------------------------------------------+
 | Cipher mode    | Configuration option                                 |
@@ -57,10 +57,10 @@ To enable AES cipher modes, set one or more of the following Kconfig options:
 +----------------+------------------------------------------------------+
 
 
-AES cipher driver configurations
-================================
+Cipher driver configurations
+============================
 
-You can use the following Kconfig options for fine-grained control over which drivers provide AES cipher support:
+You can use the following Kconfig options for fine-grained control over which drivers provide cipher support:
 
 +----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
 | Cipher mode    | nrf_cc3xx driver support                                            | nrf_oberon driver support                                            |
@@ -162,8 +162,8 @@ You can use the following Kconfig options for fine-grained control over which dr
 +----------------+-----------------------------------------------------------+------------------------------------------------------------+
 
 .. note::
-   * The :ref:`nrf_security_drivers_cc3xx` is limited to AES CMAC key sizes of 128 bits on devices with Arm CryptoCell cc310.
-   * The :ref:`nrf_security_drivers_cc3xx` is limited to HMAC using SHA-1, SHA-224, and SHA-256 on devices with Arm CryptoCell.
+   * The :ref:`nrf_security_drivers_cc3xx` is limited to CMAC using AES key sizes of 128 bits on devices with Arm CryptoCell cc310.
+   * The :ref:`nrf_security_drivers_cc3xx` is limited to HMAC using SHA-1, SHA-224, and SHA-256.
 
 
 AEAD configurations
@@ -174,9 +174,9 @@ To enable Authenticated Encryption with Associated Data (AEAD), set one or more 
 +-----------------------+---------------------------------------------------------+
 | AEAD cipher           | Configuration option                                    |
 +=======================+=========================================================+
-| AES CCM               | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`               |
+| CCM                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`               |
 +-----------------------+---------------------------------------------------------+
-| AES GCM               | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`               |
+| GCM                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`               |
 +-----------------------+---------------------------------------------------------+
 | ChaCha20-Poly1305     | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305` |
 +-----------------------+---------------------------------------------------------+
@@ -190,16 +190,16 @@ You can use the following Kconfig options for fine-grained control over which dr
 +-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
 | AEAD cipher           | nrf_cc3xx driver support                                               | nrf_oberon driver support                                               |
 +=======================+========================================================================+=========================================================================+
-| AES CCM               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_OBERON`               |
+| CCM                   | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CCM_OBERON`               |
 +-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
-| AES GCM               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_OBERON`               |
+| GCM                   | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_CC3XX`               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_GCM_OBERON`               |
 +-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
 | ChaCha20-Poly1305     | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CHACHA20_POLY1305_OBERON` |
 +-----------------------+------------------------------------------------------------------------+-------------------------------------------------------------------------+
 
 .. note::
    * The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell cc310.
-   * The :ref:`nrf_security_drivers_cc3xx` does not provide hardware support for AES GCM on devices with Arm CryptoCell cc310.
+   * The :ref:`nrf_security_drivers_cc3xx` does not provide hardware support for GCM on devices with Arm CryptoCell cc310.
 
 
 ECC configurations
