@@ -9,6 +9,7 @@
 #include <string.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
+#include <zephyr/net/net_ip.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_socket.h"
@@ -306,15 +307,12 @@ static int do_socket_close(void)
 
 static int do_socketopt_set(int option, int value)
 {
-	int ret = -ENOTSUP;
+	int ret = 0;
 
 	switch (option) {
 	case SO_BINDTODEVICE:
 	case SO_REUSEADDR:
 		ret = setsockopt(sock.fd, SOL_SOCKET, option, &value, sizeof(int));
-		if (ret < 0) {
-			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
-		}
 		break;
 
 	case SO_RCVTIMEO:
@@ -323,20 +321,20 @@ static int do_socketopt_set(int option, int value)
 		socklen_t len = sizeof(struct timeval);
 
 		ret = setsockopt(sock.fd, SOL_SOCKET, option, &tmo, len);
-		if (ret < 0) {
-			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
-		}
 	} break;
 
 	/** NCS extended socket options */
 	case SO_SILENCE_ALL:
+		ret = setsockopt(sock.fd, IPPROTO_ALL, option, &value, sizeof(int));
+		break;
 	case SO_IP_ECHO_REPLY:
+		ret = setsockopt(sock.fd, IPPROTO_IP, option, &value, sizeof(int));
+		break;
 	case SO_IPV6_ECHO_REPLY:
+		ret = setsockopt(sock.fd, IPPROTO_IPV6, option, &value, sizeof(int));
+		break;
 	case SO_TCP_SRV_SESSTIMEO:
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, &value, sizeof(int));
-		if (ret < 0) {
-			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
-		}
+		ret = setsockopt(sock.fd, IPPROTO_TCP, option, &value, sizeof(int));
 		break;
 
 	/* RAI-related */
@@ -346,19 +344,30 @@ static int do_socketopt_set(int option, int value)
 	case SO_RAI_ONGOING:
 	case SO_RAI_WAIT_MORE:
 		ret = setsockopt(sock.fd, SOL_SOCKET, option, NULL, 0);
-		if (ret < 0) {
-			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
-		}
-		break;
-
-	case SO_PRIORITY:
-	case SO_TIMESTAMPING:
-		rsp_send("\r\n#XSOCKETOPT: \"not supported\"\r\n");
 		break;
 
 	default:
-		LOG_WRN("Unknown option %d", option);
+		ret = -ENOTSUP;
+		LOG_WRN("Unsupported option: %d", option);
 		break;
+	}
+
+	if (ret && ret != -ENOTSUP) {
+		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
+	}
+
+	return ret;
+}
+
+static int do_sockopt_get_int(int level, int option)
+{
+	int ret;
+	int value;
+	socklen_t len = sizeof(int);
+
+	ret = getsockopt(sock.fd, level, option, &value, &len);
+	if (ret == 0) {
+		rsp_send("\r\n#XSOCKETOPT: %d\r\n", value);
 	}
 
 	return ret;
@@ -370,20 +379,20 @@ static int do_socketopt_get(int option)
 
 	switch (option) {
 	case SO_SILENCE_ALL:
+		ret = do_sockopt_get_int(IPPROTO_ALL, option);
+		break;
 	case SO_IP_ECHO_REPLY:
+		ret = do_sockopt_get_int(IPPROTO_IP, option);
+		break;
 	case SO_IPV6_ECHO_REPLY:
+		ret = do_sockopt_get_int(IPPROTO_IPV6, option);
+		break;
 	case SO_TCP_SRV_SESSTIMEO:
-	case SO_ERROR: {
-		int value;
-		socklen_t len = sizeof(int);
-
-		ret = getsockopt(sock.fd, SOL_SOCKET, option, &value, &len);
-		if (ret) {
-			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
-		} else {
-			rsp_send("\r\n#XSOCKETOPT: %d\r\n", value);
-		}
-	} break;
+		ret = do_sockopt_get_int(IPPROTO_TCP, option);
+		break;
+	case SO_ERROR:
+		ret = do_sockopt_get_int(SOL_SOCKET, option);
+		break;
 
 	case SO_RCVTIMEO:
 	case SO_SNDTIMEO: {
@@ -391,21 +400,19 @@ static int do_socketopt_get(int option)
 		socklen_t len = sizeof(struct timeval);
 
 		ret = getsockopt(sock.fd, SOL_SOCKET, option, &tmo, &len);
-		if (ret) {
-			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
-		} else {
-			rsp_send("\r\n#XSOCKETOPT: \"%ld sec\"\r\n", (long)tmo.tv_sec);
+		if (ret == 0) {
+			rsp_send("\r\n#XSOCKETOPT: %ld\r\n", (long)tmo.tv_sec);
 		}
 	} break;
 
-	case SO_TYPE:
-	case SO_PRIORITY:
-	case SO_PROTOCOL:
-		rsp_send("\r\n#XSOCKETOPT: \"not supported\"\r\n");
-		break;
-
 	default:
+		ret = -ENOTSUP;
+		LOG_WRN("Unsupported option: %d", option);
 		break;
+	}
+
+	if (ret && ret != -ENOTSUP) {
+		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 	}
 
 	return ret;
@@ -413,7 +420,7 @@ static int do_socketopt_get(int option)
 
 static int do_secure_socketopt_set_str(int option, const char *value)
 {
-	int ret = -ENOTSUP;
+	int ret = 0;
 
 	switch (option) {
 	case TLS_HOSTNAME:
@@ -425,15 +432,16 @@ static int do_secure_socketopt_set_str(int option, const char *value)
 		} else {
 			ret = setsockopt(sock.fd, SOL_TLS, option, value, strlen(value));
 		}
-		if (ret < 0) {
-			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
-		}
 		break;
 
 	default:
-		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
-		LOG_WRN("Unknown option %d", option);
+		ret = -ENOTSUP;
+		LOG_WRN("Unsupported option: %d", option);
 		break;
+	}
+
+	if (ret && ret != -ENOTSUP) {
+		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 	}
 
 	return ret;
@@ -441,7 +449,7 @@ static int do_secure_socketopt_set_str(int option, const char *value)
 
 static int do_secure_socketopt_set_int(int option, int value)
 {
-	int ret = -ENOTSUP;
+	int ret = 0;
 
 	switch (option) {
 	case TLS_PEER_VERIFY:
@@ -450,15 +458,19 @@ static int do_secure_socketopt_set_int(int option, int value)
 	case TLS_DTLS_HANDSHAKE_TIMEO:
 	case TLS_DTLS_CID:
 		ret = setsockopt(sock.fd, SOL_TLS, option, &value, sizeof(value));
-		if (ret < 0) {
+		if (ret) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
 		break;
 
 	default:
-		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
-		LOG_WRN("Unknown option %d", option);
+		ret = -ENOTSUP;
+		LOG_WRN("Unsupported option: %d", option);
 		break;
+	}
+
+	if (ret && ret != -ENOTSUP) {
+		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 	}
 
 	return ret;
@@ -466,28 +478,37 @@ static int do_secure_socketopt_set_int(int option, int value)
 
 static int do_secure_socketopt_get(int option)
 {
+	int ret = 0;
+	int value;
+	socklen_t len = sizeof(int);
+
 	switch (option) {
 	case TLS_CIPHERSUITE_USED: /* MFW >= 2.0.0 */
-	case TLS_DTLS_CID_STATUS:
+		ret = getsockopt(sock.fd, SOL_TLS, option, &value, &len);
+		if (ret == 0) {
+			rsp_send("\r\n#XSSOCKETOPT: 0x%x\r\n", value);
+		}
 		break;
+	case TLS_DTLS_CID_STATUS:
+	case TLS_PEER_VERIFY:
+	case TLS_SESSION_CACHE:
+	case TLS_DTLS_HANDSHAKE_TIMEO:
+		ret = getsockopt(sock.fd, SOL_TLS, option, &value, &len);
+		if (ret == 0) {
+			rsp_send("\r\n#XSSOCKETOPT: %d\r\n", value);
+		}
+		break;
+
 	default:
-		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
-		return -1;
+		ret = -ENOTSUP;
+		LOG_WRN("Unsupported option: %d", option);
+		break;
 	}
 
-	int ret;
-	int value;
-	socklen_t len = sizeof(value);
-
-	ret = getsockopt(sock.fd, SOL_TLS, option, &value, &len);
-	if (ret) {
-		/* The modem doesn't distinguish between unsupported and
-		 * invalid arguments. EINVAL is returned in both cases.
-		 */
-		LOG_ERR("getsockopt(%d) error: %d", option, -errno);
-	} else {
-		rsp_send("\r\n#XSSOCKETOPT: %d\r\n", value);
+	if (ret && ret != -ENOTSUP) {
+		LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 	}
+
 	return ret;
 }
 
