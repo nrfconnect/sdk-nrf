@@ -83,7 +83,6 @@ add_subdirectory(src/bluetooth)
 add_subdirectory(src/drivers)
 add_subdirectory(src/modules)
 add_subdirectory(src/utils)
-
 ## Cirrus Logic
 if (CONFIG_HW_CODEC_CIRRUS_LOGIC)
     if (ZEPHYR_CIRRUS_LOGIC_MODULE_DIR)

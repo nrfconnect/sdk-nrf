@@ -43,3 +43,30 @@ config USB_DEVICE_LOG_LEVEL
 endif # AUDIO_SOURCE_USB
 
 endif # AUDIO_DEV = 2 (GATEWAY)
+
+config LOG
+	default y
+#config LOG_MODE_MINIMAL
+#	default y
+config DISPLAY
+	default y
+config LVGL
+	default y
+config LV_MEM_CUSTOM
+	default y
+config LV_USE_LOG
+	default y
+config LV_USE_LABEL
+	default y
+config LV_USE_BTN
+	default y
+config LV_USE_IMG
+	default y
+config LV_FONT_MONTSERRAT_14
+	default y
+config MAIN_STACK_SIZE
+	int "Stack size"
+	default 4096
+config LV_Z_MEM_POOL_NUMBER_BLOCKS
+	int "Dont know"
+	default 8

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <display/display.h>
+#include "display.h"
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/display.h>
@@ -14,7 +14,6 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/zbus/zbus.h>
-#define LOG_LEVEL CONFIG_LOG_DEFAULT_LEVEL
 #include <zephyr/logging/log.h>
 #include <stdint.h>
 #include <C:\ncs\v2.4.0\nrf\applications\nrf5340_audio\src\modules\hw_codec.h>
@@ -25,11 +24,11 @@
 #include <zephyr/toolchain.h>
 #include <zephyr/logging/log_backend.h>
 #include <zephyr/logging/log_ctrl.h>
+#define LOG_MAX_LENGTH 20
+LOG_MODULE_REGISTER(display_log);
 
-LOG_MODULE_REGISTER(display, CONFIG_DISPLAY_LOG_LEVEL);
-
-lv_obj_t *wrn_label;
-
+lv_obj_t *log_list;
+int cnt;
 struct backend_context {
 	uint32_t cnt;
 	const char *exp_str[10];
@@ -74,6 +73,8 @@ static int backend_is_ready(const struct log_backend *const backend)
 }
 static void backend_process(const struct log_backend *const backend, union log_msg_generic *msg)
 {
+	lv_obj_t *oldest_label;
+	lv_obj_t *last_label;
 	char str[100];
 	char *pstr = str;
 	struct backend_context *context = (struct backend_context *)backend->cb->ctx;
@@ -85,8 +86,14 @@ static void backend_process(const struct log_backend *const backend, union log_m
 
 	str[slen] = '\0';
 	if (log_msg_get_level(&msg->log) == LOG_LEVEL_WRN) {
-		LOG_INF("Philip");
-		lv_label_set_text(wrn_label, str);
+		cnt++;
+		last_label = lv_list_add_text(log_list, str);
+		lv_obj_scroll_to_view(last_label, LV_ANIM_OFF);
+		if (cnt > LOG_MAX_LENGTH) {
+			oldest_label = lv_obj_get_child(log_list, 0);
+			lv_group_remove_obj(oldest_label);
+			lv_obj_del(oldest_label);
+		}
 	}
 }
 static const struct log_backend_api backend_api = {.process = backend_process,
@@ -95,10 +102,10 @@ static const struct log_backend_api backend_api = {.process = backend_process,
 						   .panic = panic};
 void log_tab_create(lv_obj_t *screen)
 {
-	wrn_label = lv_label_create(screen);
-	lv_label_set_text(wrn_label, "PHILIP");
-	lv_obj_align(wrn_label, LV_ALIGN_BOTTOM_MID, 0, 0);
+	log_list = lv_list_create(screen);
+	lv_obj_set_size(log_list, lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL) - 70);
+	lv_obj_align(log_list, LV_ALIGN_TOP_LEFT, 0, 0);
 
 	static struct backend_context context1 = {.delay = 500};
-	LOG_BACKEND_DEFINE(philip_backend, backend_api, true, &context1);
+	LOG_BACKEND_DEFINE(display_log_backend, backend_api, true, &context1);
 }
