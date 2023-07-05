@@ -315,7 +315,10 @@ You can use the following Kconfig options for fine-grained control over which dr
 RNG configurations
 ******************
 
-To enable PRNG seeded by entropy (also known as TRNG), set one or more of the following configurations:
+Enable RNG using the :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM` Kconfig option.
+
+RNG uses PRNG seeded by entropy (also known as TRNG).
+When RNG is enabled, set at least one of the following configurations:
 
 +---------------------------+-------------------------------------------------+
 | PRNG algorithms           | Configuration option                            |
