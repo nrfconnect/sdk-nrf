@@ -25,7 +25,10 @@ zb_uint32_t GetAlarmCount(void)
 	return alarm_counter;
 }
 
-static void test_zb_osif_timer(void)
+
+ZTEST_SUITE(osif_test, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(osif_test, test_zb_osif_timer)
 {
 	ZB_START_HW_TIMER();
 	zassert_true(ZB_CHECK_TIMER_IS_ON(), "Counter stopped");
@@ -50,13 +53,4 @@ static void test_zb_osif_timer(void)
 
 	zassert_true((alarm_count != new_alarm_count),
 		     "Alarm handler has not occurred");
-}
-
-void test_main(void)
-{
-	ztest_test_suite(osif_test,
-			 ztest_unit_test(test_zb_osif_timer)
-			 );
-
-	ztest_run_test_suite(osif_test);
 }
