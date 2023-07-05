@@ -39,12 +39,6 @@
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
-#if defined(CONFIG_NRF91_SOCKET_ENABLE_DEBUG_LOGS)
-/* TODO: Add debug */
-#endif
-
-#define PROTO_WILDCARD 0
-
 #define OBJ_TO_SD(obj) (((struct nrf_sock_ctx *)obj)->nrf_fd)
 #define OBJ_TO_CTX(obj) ((struct nrf_sock_ctx *)obj)
 
