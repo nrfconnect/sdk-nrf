@@ -12,7 +12,10 @@
 #define ZB_BEACON_INTERVAL_USEC 15360
 #define ZB_BEACON_INTERVAL_MSEC ((ZB_BEACON_INTERVAL_USEC + 1000 - 1) / 1000)
 
-static void test_zb_osif_timer(void)
+
+ZTEST_SUITE(osif_test, NULL, NULL, NULL, NULL, NULL);
+
+ZTEST(osif_test, test_zb_osif_timer)
 {
 	ZB_START_HW_TIMER();
 	zassert_true(ZB_CHECK_TIMER_IS_ON(), "Zephyr timer not running");
@@ -41,13 +44,4 @@ static void test_zb_osif_timer(void)
 		     "ZBOSS time value was not increased");
 	zassert_true((time_stop_bi <= time_start_bi + 2),
 		     "ZBOSS time value was increased by more than 2 BI");
-}
-
-void test_main(void)
-{
-	ztest_test_suite(osif_test,
-			 ztest_unit_test(test_zb_osif_timer)
-			 );
-
-	ztest_run_test_suite(osif_test);
 }
