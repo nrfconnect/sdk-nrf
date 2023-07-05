@@ -348,8 +348,8 @@ config PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON
 
 config PSA_CRYPTO_DRIVER_ALG_SRP_OBERON
 	bool
-	prompt "PSA SRP support - oberon" if !PSA_PROMPTLESS
-	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SRP
+	prompt "PSA SRP-6 support - oberon" if !PSA_PROMPTLESS
+	default y if !PSA_DEFAULT_OFF && PSA_WANT_ALG_SRP_6
 	select EXPERIMENTAL
 	depends on PSA_CORE_OBERON
 

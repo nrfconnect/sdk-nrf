@@ -50,7 +50,7 @@
 #cmakedefine PSA_WANT_ALG_STREAM_CIPHER                         @PSA_WANT_ALG_STREAM_CIPHER@
 #cmakedefine PSA_WANT_ALG_JPAKE                                 @PSA_WANT_ALG_JPAKE@
 #cmakedefine PSA_WANT_ALG_SPAKE2P                               @PSA_WANT_ALG_SPAKE2P@
-#cmakedefine PSA_WANT_ALG_SRP                                   @PSA_WANT_ALG_SRP@
+#cmakedefine PSA_WANT_ALG_SRP_6                                 @PSA_WANT_ALG_SRP_6@
 #cmakedefine PSA_WANT_ALG_TLS12_PRF                             @PSA_WANT_ALG_TLS12_PRF@
 #cmakedefine PSA_WANT_ALG_TLS12_PSK_TO_MS                       @PSA_WANT_ALG_TLS12_PSK_TO_MS@
 #cmakedefine PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS                  @PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS@
