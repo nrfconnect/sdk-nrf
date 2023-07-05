@@ -64,21 +64,6 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-void test_zboss_startup_signals(void)
-{
-	zboss_signals_collected = 0;
-
-	/*
-	 * The whole ZBOSS flash area needs to be erased,
-	 * so the timeout value has to be quite big.
-	 */
-	k_sem_take(&zboss_init_lock, K_MSEC(1000));
-
-	zassert_equal(zboss_signals_collected, 3,
-		"ZBOSS startup failed. Not all startup signals were collected.");
-}
-
-
 K_MSGQ_DEFINE(zb_callback_queue, sizeof(uint32_t), N_THREADS, 4);
 
 static void add_to_queue_from_callback(uint8_t int_to_put)
@@ -143,7 +128,37 @@ K_THREAD_DEFINE(THREAD_2, STACKSIZE, thread_2, NULL, NULL, NULL,
 K_THREAD_DEFINE(THREAD_3, STACKSIZE, thread_3, NULL, NULL, NULL,
 		PRIORITY, 0, -1);
 
-void test_zboss_app_alarm(void)
+
+static bool zboss_api_signals_predicate(const void *state)
+{
+	return *((const bool *)state) == false;
+}
+
+ZTEST_SUITE(zboss_api_signals, zboss_api_signals_predicate, NULL, NULL, NULL, NULL);
+
+ZTEST(zboss_api_signals, test_zboss_startup_signals)
+{
+	zboss_signals_collected = 0;
+
+	/*
+	 * The whole ZBOSS flash area needs to be erased,
+	 * so the timeout value has to be quite big.
+	 */
+	k_sem_take(&zboss_init_lock, K_MSEC(1000));
+
+	zassert_equal(zboss_signals_collected, 3,
+		"ZBOSS startup failed. Not all startup signals were collected.");
+}
+
+
+static bool zboss_api_alarm_predicate(const void *state)
+{
+	return *((const bool *)state) == true;
+}
+
+ZTEST_SUITE(zboss_api_alarm, zboss_api_alarm_predicate, NULL, NULL, NULL, NULL);
+
+ZTEST(zboss_api_alarm, test_zboss_app_alarm)
 {
 	k_tid_t thread_id_array[N_THREADS] = {THREAD_0, THREAD_1,
 					      THREAD_2, THREAD_3};
@@ -182,15 +197,20 @@ void test_zboss_app_alarm(void)
 
 void test_main(void)
 {
+	bool zboss_startup_finished = false;
+
 	/* Erase NVRAM to have repeatability of test runs. */
 	zigbee_erase_persistent_storage(ZB_TRUE);
 
 	/* Start Zigbee default thread */
 	zigbee_enable();
 
-	ztest_test_suite(zboss_api_alarm,
-			 ztest_unit_test(test_zboss_startup_signals),
-			 ztest_unit_test(test_zboss_app_alarm));
+	/* Only zboss_api_signals test suite should run now. */
+	ztest_run_all(&zboss_startup_finished);
 
-	ztest_run_test_suite(zboss_api_alarm);
+	/* Only zboss_api_alarm test suite should run now. */
+	zboss_startup_finished = true;
+	ztest_run_all(&zboss_startup_finished);
+
+	ztest_verify_all_test_suites_ran();
 }
