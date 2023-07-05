@@ -117,6 +117,8 @@ int slm_tls_loadcrdl(sec_tag_t sec_tag)
 
 exit:
 	k_free(crdl);
+	crdl = NULL;
+
 	return ret;
 }
 
@@ -132,7 +134,9 @@ int slm_tls_unloadcrdl(sec_tag_t sec_tag)
 	tls_credential_delete(sec_tag, TLS_CREDENTIAL_CA_CERTIFICATE);
 	tls_credential_delete(sec_tag, TLS_CREDENTIAL_SERVER_CERTIFICATE);
 	tls_credential_delete(sec_tag, TLS_CREDENTIAL_PRIVATE_KEY);
+
 	k_free(crdl);
+	crdl = NULL;
 
 	return 0;
 }

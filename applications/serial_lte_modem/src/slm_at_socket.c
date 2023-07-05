@@ -17,11 +17,12 @@
 
 LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 
+#define SLM_MAX_SOCKET_COUNT CONFIG_POSIX_MAX_FDS
+
 /*
  * Known limitation in this version
  * - Multiple concurrent sockets
  * - TCP server accept one connection only
- * - Receive more than IPv4 MTU one-time
  */
 
 /**@brief Socket operations. */
@@ -166,7 +167,11 @@ static int do_secure_socket_open(int peer_verify)
 	int proto = IPPROTO_TLS_1_2;
 
 	if (sock.type == SOCK_STREAM) {
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		ret = socket(sock.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
+#else
 		ret = socket(sock.family, SOCK_STREAM, IPPROTO_TLS_1_2);
+#endif
 	} else if (sock.type == SOCK_DGRAM) {
 		ret = socket(sock.family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
 		proto = IPPROTO_DTLS_1_2;
@@ -188,10 +193,12 @@ static int do_secure_socket_open(int peer_verify)
 
 	sec_tag_t sec_tag_list[1] = { sock.sec_tag };
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	ret = slm_tls_loadcrdl(sock.sec_tag);
-	if (ret < 0) {
-		LOG_ERR("Fail to load credential: %d", ret);
-		goto error_exit;
+	if (sock.type == SOCK_STREAM) {
+		ret = slm_tls_loadcrdl(sock.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Fail to load credential: %d", ret);
+			goto error_exit;
+		}
 	}
 #endif
 	ret = setsockopt(sock.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list, sizeof(sec_tag_t));
@@ -232,7 +239,7 @@ static int do_secure_socket_open(int peer_verify)
 
 error_exit:
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.sec_tag != INVALID_SEC_TAG) {
+	if (sock.type == SOCK_STREAM && sock.sec_tag != INVALID_SEC_TAG) {
 		(void)slm_tls_unloadcrdl(sock.sec_tag);
 		sock.sec_tag = INVALID_SEC_TAG;
 	}
@@ -251,7 +258,7 @@ static int do_socket_close(void)
 	}
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.sec_tag != INVALID_SEC_TAG) {
+	if (sock.type == SOCK_STREAM && sock.sec_tag != INVALID_SEC_TAG) {
 		ret = slm_tls_unloadcrdl(sock.sec_tag);
 		if (ret < 0) {
 			LOG_WRN("Fail to unload credential: %d", ret);
