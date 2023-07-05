@@ -11,6 +11,4 @@ project(full_modem_update)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE ../common/src/update.c)
-target_include_directories(app PRIVATE ../common/include)
 # NORDIC SDK APP END

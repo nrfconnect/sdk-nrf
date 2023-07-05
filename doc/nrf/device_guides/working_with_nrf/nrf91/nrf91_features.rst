@@ -240,7 +240,7 @@ You can hardcode the information in the application, or you can use a functional
 Samples and applications implementing FOTA
 ------------------------------------------
 
-* :ref:`http_full_modem_update_sample` sample - performs a full firmware OTA update of the modem.
+* :ref:`http_modem_full_update_sample` sample - performs a full firmware OTA update of the modem.
 * :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
 * :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
 * :ref:`aws_iot` sample - performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.

@@ -441,7 +441,7 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Updated credentials for the HTTPS connection.
 
-* :ref:`http_full_modem_update_sample` sample:
+* :ref:`http_modem_full_update_sample` sample:
 
   * Updated credentials for the HTTPS connection.
 
