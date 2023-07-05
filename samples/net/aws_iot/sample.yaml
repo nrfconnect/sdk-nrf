@@ -1,0 +1,15 @@
+sample:
+  name: AWS IoT sample
+tests:
+  sample.net.aws_iot:
+    tags: ci_build
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns nrf7002dk_nrf5340_cpuapp
+    extra_configs:
+      - CONFIG_WIFI_CREDENTIALS_STATIC_SSID="ssid"
+      - CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD="psk"

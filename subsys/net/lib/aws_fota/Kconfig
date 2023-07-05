@@ -6,8 +6,8 @@
 menuconfig AWS_FOTA
 	bool "AWS Jobs FOTA library"
 	select AWS_JOBS
+	select CJSON_LIB
 	depends on FOTA_DOWNLOAD
-	depends on CJSON_LIB
 	depends on !BOARD_QEMU_X86
 	default y if AWS_IOT
 

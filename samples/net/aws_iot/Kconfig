@@ -10,6 +10,12 @@ config AWS_IOT_SAMPLE_APP_VERSION
 	string "Application version"
 	default "v1.0.0"
 
+config AWS_IOT_SAMPLE_JSON_MESSAGE_SIZE_MAX
+	int "Maximum size of JSON messages"
+	default 200
+	help
+	  Maximum size of JSON messages that are sent to AWS IoT.
+
 config AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS
 	int "Interval in seconds that the sample will publish data"
 	default 60
@@ -20,7 +26,7 @@ config AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
 
 config AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
 	bool "Use HW ID as device ID"
-	select HW_ID_LIBRARY
+	depends on HW_ID_LIBRARY
 	help
 	  Use the devices's hardware ID as device ID when connecting to AWS IOT
 
