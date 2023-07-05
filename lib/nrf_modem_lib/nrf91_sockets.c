@@ -551,16 +551,14 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 	}
 
 	if (from == NULL || fromlen == NULL) {
-		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, flags,
-				      NULL, NULL);
+		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, flags, NULL, NULL);
 	} else {
 		/* Allocate space for maximum of IPv4 and IPv6 family type. */
-		struct nrf_sockaddr_in6 cliaddr_storage = { 0 };
+		struct nrf_sockaddr_in6 cliaddr_storage = {0};
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in6);
 		struct nrf_sockaddr *cliaddr = (struct nrf_sockaddr *)&cliaddr_storage;
 
-		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, flags,
-				      cliaddr, &sock_len);
+		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, flags, cliaddr, &sock_len);
 		if (retval < 0) {
 			goto exit;
 		}
@@ -571,8 +569,7 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 			*fromlen = sizeof(struct sockaddr_in);
 		} else if (cliaddr->sa_family == NRF_AF_INET6 &&
 			   sock_len == sizeof(struct nrf_sockaddr_in6)) {
-			nrf_to_z_ipv6(from, (struct nrf_sockaddr_in6 *)
-					  cliaddr);
+			nrf_to_z_ipv6(from, (struct nrf_sockaddr_in6 *)cliaddr);
 			*fromlen = sizeof(struct sockaddr_in6);
 		}
 	}
@@ -598,26 +595,23 @@ static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
 	ssize_t retval;
 
 	if (ctx->lock) {
-		(void) k_mutex_unlock(ctx->lock);
+		(void)k_mutex_unlock(ctx->lock);
 	}
 
 	if (to == NULL) {
-		retval = nrf_sendto(sd, buf, len, flags, NULL,
-				    0);
+		retval = nrf_sendto(sd, buf, len, flags, NULL, 0);
 	} else if (to->sa_family == AF_INET) {
 		struct nrf_sockaddr_in ipv4;
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in);
 
 		z_to_nrf_ipv4(to, &ipv4);
-		retval = nrf_sendto(sd, buf, len, flags,
-				    (struct nrf_sockaddr*)&ipv4, sock_len);
+		retval = nrf_sendto(sd, buf, len, flags, (struct nrf_sockaddr *)&ipv4, sock_len);
 	} else if (to->sa_family == AF_INET6) {
 		struct nrf_sockaddr_in6 ipv6;
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in6);
 
 		z_to_nrf_ipv6(to, &ipv6);
-		retval = nrf_sendto(sd, buf, len, flags,
-				    (struct nrf_sockaddr*)&ipv6, sock_len);
+		retval = nrf_sendto(sd, buf, len, flags, (struct nrf_sockaddr *)&ipv6, sock_len);
 	} else {
 		errno = EAFNOSUPPORT;
 		retval = -1;
