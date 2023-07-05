@@ -53,10 +53,6 @@
   - "subsys/dfu/dfu_target/**/*"
   - "subsys/dfu/fmfu_fdev/**/*"
   - "subsys/fw_info/**/*"
-  - any:
-      - "subsys/nrf_security/**/*"
-      - "!subsys/nrf_security/doc/**/*"
-      - "!subsys/nrf_security/*.rst"
   - "samples/cellular/lwm2m_client/**/*"
 
 "CI-audio-test":
@@ -359,10 +355,6 @@
   - "subsys/app_event_manager/**/*"
   - "subsys/nfc/**/*"
   - "subsys/partition_manager/**/*"
-  - any:
-      - "subsys/nrf_security/**/*"
-      - "!subsys/nrf_security/doc/**/*"
-      - "!subsys/nrf_security/*.rst"
   - "modules/mcuboot/**/*"
   - any:
       - "include/bluetooth/**/*"
@@ -464,17 +456,9 @@
 "CI-wifi":
   - "drivers/wifi/**/*"
   - "samples/wifi/**/*"
-  - any:
-      - "subsys/nrf_security/**/*"
-      - "!subsys/nrf_security/doc/**/*"
-      - "!subsys/nrf_security/*.rst"
   - "modules/lib/hostap/**/*"
 
 "CI-cloud-test":
   - "include/net/nrf_cloud*"
   - "samples/cellular/nrf_cloud_*/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
-  - any:
-      - "subsys/nrf_security/**/*"
-      - "!subsys/nrf_security/doc/**/*"
-      - "!subsys/nrf_security/*.rst"
