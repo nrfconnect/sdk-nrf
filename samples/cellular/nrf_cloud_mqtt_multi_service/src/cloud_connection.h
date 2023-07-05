@@ -1,10 +1,10 @@
-/* Copyright (c) 2022 Nordic Semiconductor ASA
+/* Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _CONNECTION_H_
-#define _CONNECTION_H_
+#ifndef _CLOUD_CONNECTION_H_
+#define _CLOUD_CONNECTION_H_
 #include <net/nrf_cloud.h>
 
 /**
@@ -81,32 +81,9 @@ bool await_connection(k_timeout_t timeout);
 bool await_date_time_known(k_timeout_t timeout);
 
 /**
- * @brief Consume (attempt to send) a single device message from the device message queue. Will wait
- *        until connection to nRF Cloud is established before actually sending. If message fails
- *	  to send, it will be dropped.
- *
- * @return int - 0 on success, otherwise negative error code.
- */
-int consume_device_message(void);
-
-/**
- * @brief Schedule a cloud object to be sent as a device message payload. Message will
- *	  be held asynchronously until a valid nRF Cloud connection is established.
- *	  Caller is no longer responsible for device message memory after function returns.
- * @return int - 0 on success, otherwise negative error.
- */
-int send_device_message(struct nrf_cloud_obj *const msg_obj);
-
-/**
- * @brief The message queue thread function.
- * Continually consumes device messages from the device message queue.
- */
-void message_queue_thread_fn(void);
-
-/**
  * @brief The connection management thread function.
  * Manages our connection to nRF Cloud, resetting and restablishing as necessary.
  */
 void connection_management_thread_fn(void);
 
-#endif /* _CONNECTION_H_ */
+#endif /* _CLOUD_CONNECTION_H_ */

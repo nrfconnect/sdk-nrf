@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #include "nrf_cloud_codec_internal.h"
-#include "connection.h"
+#include "cloud_connection.h"
 #include "at_commands.h"
 
 LOG_MODULE_REGISTER(at_cmd_execution, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);

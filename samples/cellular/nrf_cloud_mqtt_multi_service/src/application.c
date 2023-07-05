@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 Nordic Semiconductor ASA
+/* Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -15,7 +15,8 @@
 
 #include "application.h"
 #include "temperature.h"
-#include "connection.h"
+#include "cloud_connection.h"
+#include "message_queue.h"
 
 #include "location_tracking.h"
 #include "led_control.h"

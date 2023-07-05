@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 Nordic Semiconductor ASA
+/* Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,7 +7,8 @@
 #include <stdio.h>
 #include <zephyr/logging/log.h>
 #include "application.h"
-#include "connection.h"
+#include "cloud_connection.h"
+#include "message_queue.h"
 #include "led_control.h"
 
 LOG_MODULE_REGISTER(main, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
@@ -24,11 +25,11 @@ K_THREAD_DEFINE(led_thread, CONFIG_LED_THREAD_STACK_SIZE, led_animation_thread_f
 K_THREAD_DEFINE(app_thread, CONFIG_APPLICATION_THREAD_STACK_SIZE, main_application_thread_fn,
 		NULL, NULL, NULL, 0, 0, 0);
 
-/* Define, and automatically start the message queue thread. See connection.c */
+/* Define, and automatically start the message queue thread. See message_queue.c */
 K_THREAD_DEFINE(msg_thread, CONFIG_MESSAGE_THREAD_STACK_SIZE, message_queue_thread_fn,
 		NULL, NULL, NULL, 0, 0, 0);
 
-/* Define, and automatically start the connection management thread. See connection.c
+/* Define, and automatically start the connection management thread. See cloud_connection.c
  *
  * The connection thread is given higher priority (-1) so that it can preempt the other threads,
  * for instance in the event of a call to disconnect_cloud().
