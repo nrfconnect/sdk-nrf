@@ -81,16 +81,7 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC - MQTT subscribe topic
 	This configuration option sets the topic to which the sample subscribes.
 	Default is ``<clientID>/my/subscribe/topic``.
 
-Wi-Fi options
--------------
-
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC` - This option enables static Wi-Fi configuration.
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_SSID` - Wi-Fi SSID.
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD` - Wi-Fi password.
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_OPEN` - Wi-Fi network uses no password.
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_PSK` - Wi-Fi network uses a password and PSK security (default).
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_PSK_SHA256` - Wi-Fi network uses a password and PSK-256 security.
-* :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_TYPE_SAE` - Wi-Fi network uses a password and SAE security.
+.. include:: /includes/wifi_credentials_options.txt
 
 Additional configuration
 ========================

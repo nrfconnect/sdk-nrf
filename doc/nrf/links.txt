@@ -806,6 +806,7 @@
 
 .. _`AWS IoT Just-in-time-provisioning`: https://aws.amazon.com/blogs/iot/just-in-time-registration-of-device-certificates-on-aws-iot/
 .. _`AWS IoT Device Shadow Topics`: https://docs.aws.amazon.com/iot/latest/developerguide/device-shadow-mqtt.html
+.. _`AWS IoT Device Shadow Service`: https://docs.aws.amazon.com/iot/latest/developerguide/iot-device-shadows.html
 
 .. _`AWS IoT Developer Guide`: https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html
 .. _`AWS IoT MQTT`: https://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html

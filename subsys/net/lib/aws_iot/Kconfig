@@ -161,7 +161,7 @@ if AWS_IOT_CONNECTION_POLL_THREAD
 
 config AWS_IOT_POLL_THREAD_STACK_SIZE
 	int "stack size of the AWS IoT poll thread"
-	default 4096 if BOARD_QEMU_X86
+	default 4096 if BOARD_QEMU_X86 || BOARD_NRF7002DK_NRF5340_CPUAPP
 	default 3072
 
 endif

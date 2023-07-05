@@ -80,7 +80,6 @@ The following |NCS| samples and applications use this library:
 * :ref:`location_sample`
 * :ref:`gnss_sample`
 * :ref:`modem_shell_application`
-* :ref:`aws_iot`
 * :ref:`lwm2m_client`
 
 Limitations

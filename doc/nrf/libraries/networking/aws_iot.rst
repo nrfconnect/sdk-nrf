@@ -97,6 +97,9 @@ Provisioning of the certificates
 
 .. include:: /includes/cert-flashing.txt
 
+For nRF70 Series devices, the TLS credentials need to be provisioned to the Mbed TLS stack at runtime before establishing a connection to AWS IoT.
+This can be done by enabling the :kconfig:option:`CONFIG_AWS_IOT_PROVISION_CERTIFICATES` option and placing the credentials in the path specified by the :Kconfig:option:`CONFIG_AWS_IOT_CERTIFICATES_FILE` option.
+
 .. _configuring:
 
 Configuration
@@ -116,7 +119,7 @@ Complete the following steps to set the required library options:
 Optional library options
 ========================
 
-To subscribe to the various `AWS IoT Device Shadow Topics`_, set the following options:
+To subscribe to the various `AWS IoT Device Shadow Topics`_ , set the following options:
 
 * :kconfig:option:`CONFIG_AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE`
 * :kconfig:option:`CONFIG_AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE`
@@ -143,11 +146,13 @@ Other options:
 .. note::
    If you are using a longer device ID that is either set by the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
 
+.. _aws_iot_usage:
+
 Usage
 *****
 
 The :ref:`aws_iot` sample showcases the use of this library and can be used to verify a connection to AWS IoT.
-To configure and run the sample, complete the steps described in :ref:`setup_awsiot` and :ref:`aws_iot_sample_building_and_running`.
+To configure and run the sample, complete the steps described in :ref:`aws_iot_sample_server_setup` and :ref:`aws_iot_sample_building_and_running`.
 
 Initializing the library
 ========================
@@ -263,15 +268,33 @@ The AWS IoT library also supports passing the endpoint address at runtime by set
 If this option is set, the ``host_name`` and ``host_name_len`` must be set in the :c:struct:`aws_iot_config` structure before it is passed into the :c:func:`aws_iot_init` function.
 The length of your AWS host name (:kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`) must be shorter than the default value of :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME_MAX_LEN`, for proper initialization of the library.
 
+.. _aws_iot_testing_and_debugging:
+
 Testing and debugging
 =====================
 
 If you have issues with the library or sample, refer to :ref:`gs_testing`.
 
+Topic monitoring
+----------------
+
+To observe incoming messages, navigate to the `AWS IoT console`_ and click :guilabel:`MQTT test client`.
+Subscribe to the topic that you want to monitor, or use the wild card token **#** to monitor all topics.
+
+.. _aws_iot_troubleshooting:
+
 Troubleshooting
 ===============
 
 For issues related to the library and |NCS| in general, refer to :ref:`known_issues`.
+
+* If you are experiencing unexpected disconnects from AWS IoT, try decreasing the value of the :kconfig:option:`CONFIG_MQTT_KEEPALIVE` option or publishing data more frequently.
+  AWS IoT specifies a maximum allowed keepalive of 1200 seconds (20 minutes), however in certain LTE networks, the Network Address Translation (NAT) timeout can be considerably lower.
+  As a recommendation to prevent the likelihood of unexpected disconnects, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the highest value of the network NAT and maximum allowed MQTT keepalive.
+* If publishing larger payloads fails, you might need to increase the value of the :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` option.
+* For nRF9160-based boards, the size of incoming messages cannot exceed approximately 2 kB.
+  This is due to a limitation of the modem's internal TLS buffers.
+  Messages that exceed this limitation will be dropped.
 
 AWS FOTA
 ========
