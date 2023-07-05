@@ -547,7 +547,7 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 	ssize_t retval;
 
 	if (ctx->lock) {
-		k_mutex_unlock(ctx->lock);
+		(void) k_mutex_unlock(ctx->lock);
 	}
 
 	if (from == NULL || fromlen == NULL) {
@@ -578,11 +578,11 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 	}
 
 exit:
+	/* Context might have been freed during this call.
+	 * Check again before accessing.
+	 */
 	if (ctx->lock) {
-		/* don't touch this if the context has been released
-		 * as a consequence of the socket being closed
-		 */
-		k_mutex_lock(ctx->lock, K_FOREVER);
+		(void) k_mutex_lock(ctx->lock, K_FOREVER);
 	}
 
 	return retval;
@@ -594,7 +594,12 @@ static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
 					   socklen_t tolen)
 {
 	int sd = OBJ_TO_SD(obj);
+	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
 	ssize_t retval;
+
+	if (ctx->lock) {
+		(void) k_mutex_unlock(ctx->lock);
+	}
 
 	if (to == NULL) {
 		retval = nrf_sendto(sd, buf, len, flags, NULL,
@@ -616,6 +621,13 @@ static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
 	} else {
 		errno = EAFNOSUPPORT;
 		retval = -1;
+	}
+
+	/* Context might have been freed during this call.
+	 * Check again before accessing.
+	 */
+	if (ctx->lock) {
+		(void) k_mutex_lock(ctx->lock, K_FOREVER);
 	}
 
 	return retval;

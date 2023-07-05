@@ -395,6 +395,7 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
+  * Fixed a rare bug that caused a deadlock between two threads when one thread sent data while the other received a lot of data quickly.
   * Updated the :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
 
 * :ref:`lib_location` library:
