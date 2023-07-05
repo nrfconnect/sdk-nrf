@@ -10,7 +10,7 @@ Socket AT commands
 The following commands list contains socket-related AT commands.
 The application can open up to 8 sockets and select the active one among them.
 
-For more information on the networking services, visit the `BSD Networking Services Spec Reference`_.
+For more information on the networking services, see the `Zephyr Network APIs`_.
 
 Socket #XSOCKET
 ===============
@@ -505,9 +505,66 @@ Syntax
   * ``0`` - Get
   * ``1`` - Set
 
-For a complete list of the supported SET ``<name>`` accepted parameters, see the `SETSOCKETOPT Service Spec Reference`_.
+* The ``<name>`` parameter can accept one of the following values:
 
-For a complete list of the supported GET ``<name>`` accepted parameters, see the `GETSOCKETOPT Service Spec Reference`_.
+  * ``2`` - :c:macro:`SO_REUSEADDR` (set-only).
+
+    * ``<value>`` is an integer that indicates whether the reuse of local addresses is enabled.
+      It is ``0`` for disabled or ``1`` for enabled.
+
+  * ``20`` - :c:macro:`SO_RCVTIMEO`.
+
+    * ``<value>`` is an integer that indicates the receive timeout in seconds.
+
+  * ``21`` - :c:macro:`SO_SNDTIMEO`.
+
+    * ``<value>`` is an integer that indicates the send timeout in seconds.
+
+  * ``25`` - :c:macro:`SO_BINDTODEVICE` (set-only).
+
+    * ``<value>`` is an integer that indicates the PDP context ID to bind to.
+
+  * ``30`` - :c:macro:`SO_SILENCE_ALL`.
+
+    * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv4 and IPv6 are disabled.
+      It is ``0`` for allowing ICMP echo replies or ``1`` for disabling them.
+
+  * ``31`` - :c:macro:`SO_IP_ECHO_REPLY`.
+
+    * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv4 are enabled.
+      It is ``0`` for disabled or ``1`` for enabled.
+
+  * ``32`` - :c:macro:`SO_IPV6_ECHO_REPLY`.
+
+    * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv6 are enabled.
+      It is ``0`` for disabled or ``1`` for enabled.
+
+  * ``50`` - :c:macro:`SO_RAI_NO_DATA` (set-only).
+    Immediately release the RRC.
+
+    * ``<value>`` is ignored.
+
+  * ``51`` - :c:macro:`SO_RAI_LAST` (set-only).
+    Enter Radio Resource Control (RRC) idle immediately after the next send operation.
+
+    * ``<value>`` is ignored.
+
+  * ``52`` - :c:macro:`SO_RAI_ONE_RESP` (set-only).
+    Wait for one incoming packet after the next send operation, before entering RRC idle mode.
+
+    * ``<value>`` is ignored.
+
+  * ``53`` - :c:macro:`SO_RAI_ONGOING` (set-only).
+    Keep RRC in connected mode after the next send operation (client).
+
+    * ``<value>`` is ignored.
+
+  * ``54`` - :c:macro:`SO_RAI_WAIT_MORE` (set-only).
+    Keep RRC in connected mode after the next send operation (server).
+
+    * ``<value>`` is ignored.
+
+See `nRF socket options`_ for explanation of the supported options.
 
 Examples
 ~~~~~~~~
@@ -582,35 +639,55 @@ Syntax
 
 * The ``<name>`` parameter can accept one of the following values:
 
-  * ``2`` - :c:macro:`TLS_HOSTNAME`.
-    ``<value>`` is a string.
-    It may be ``"NULL"`` to disable hostname verification.
-  * ``4`` - :c:macro:`TLS_CIPHERSUITE_USED` (get-only).
-    It is the cipher suite chosen during the TLS handshake.
-    The integer returned is the identifier of the chosen cipher suite, assigned by the IANA.
-    This option is only supported with modem firmware 2.0.0 and newer.
-  * ``5`` - :c:macro:`TLS_PEER_VERIFY`.
-    ``<value>`` is an integer and can be either ``0`` or ``1``.
-  * ``12`` - :c:macro:`TLS_SESSION_CACHE`.
-    ``<value>`` is an integer and can be either ``0`` or ``1``.
-  * ``13`` - :c:macro:`TLS_SESSION_CACHE_PURGE`.
-    ``<value>`` can accept any integer value.
-  * ``14`` - :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO`.
-    ``<value>`` is the timeout in seconds and can be one of the following integers: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
-  * ``17`` - :c:macro:`TLS_DTLS_CID`.
-    ``<value>`` is the DTLS connection identifier setting and can be one of the following integers:
+  * ``2`` - :c:macro:`TLS_HOSTNAME` (set-only).
 
-    * ``0`` - :c:macro:`TLS_DTLS_CID_DISABLED`.
-    * ``1`` - :c:macro:`TLS_DTLS_CID_SUPPORTED`.
-    * ``2`` - :c:macro:`TLS_DTLS_CID_ENABLED`.
+    * ``<value>`` is a string that indicates the hostname to check against during TLS handshakes.
+      It can be ``NULL`` to disable hostname verification.
+
+  * ``4`` - :c:macro:`TLS_CIPHERSUITE_USED` (get-only).
+    The TLS cipher suite chosen during the TLS handshake.
+    This option is only supported with modem firmware 2.0.0 and newer.
+
+  * ``5`` - :c:macro:`TLS_PEER_VERIFY`.
+
+    * ``<value>`` is an integer that indicates what peer verification level should be used.
+      It is ``0`` for none, ``1`` for optional or ``2`` for required.
+
+  * ``12`` - :c:macro:`TLS_SESSION_CACHE`.
+
+    * ``<value>`` is an integer that indicates whether TLS session caching should be used.
+      It is ``0`` for disabled or ``1`` for enabled.
+
+  * ``13`` - :c:macro:`TLS_SESSION_CACHE_PURGE` (set-only).
+    Indicates that the TLS session cache should be deleted.
+
+    * ``<value>`` can be any integer value.
+
+  * ``14`` - :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO`.
+
+    * ``<value>`` is an integer that indicates the DTLS handshake timeout in seconds.
+      It can be one of the following values: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
+
+  * ``17`` - :c:macro:`TLS_DTLS_CID`.
+
+    * ``<value>`` is an integer that indicates the DTLS connection identifier setting.
+      It can be one of the following values:
+
+      * ``0`` - :c:macro:`TLS_DTLS_CID_DISABLED`.
+      * ``1`` - :c:macro:`TLS_DTLS_CID_SUPPORTED`.
+      * ``2`` - :c:macro:`TLS_DTLS_CID_ENABLED`.
 
     This option is only supported with modem firmware 1.3.5 and newer.
     See :ref:`nrfxlib:dtls_cid_setting` for more details regarding the allowed values.
+
   * ``18`` - :c:macro:`TLS_DTLS_CID_STATUS` (get-only).
     It is the DTLS connection identifier status.
     It can be retrieved after the DTLS handshake.
     This option is only supported with modem firmware 1.3.5 and newer.
     See :ref:`nrfxlib:dtls_cid_status` for more details regarding the returned values.
+
+See `nRF socket options`_ for explanation of the supported options.
+
 
 Example
 ~~~~~~~~
