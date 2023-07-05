@@ -36,25 +36,25 @@ Cipher configurations
 
 To enable cipher modes, set one or more of the following Kconfig options:
 
-+----------------+------------------------------------------------------+
-| Cipher mode    | Configuration option                                 |
-+================+======================================================+
-| ECB_NO_PADDING | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING` |
-+----------------+------------------------------------------------------+
-| CBC_NO_PADDING | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING` |
-+----------------+------------------------------------------------------+
-| CBC_PKCS7      | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`      |
-+----------------+------------------------------------------------------+
-| CFB            | :kconfig:option:`CONFIG_PSA_WANT_ALG_CFB`            |
-+----------------+------------------------------------------------------+
-| CTR            | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`            |
-+----------------+------------------------------------------------------+
-| OFB            | :kconfig:option:`CONFIG_PSA_WANT_ALG_OFB`            |
-+----------------+------------------------------------------------------+
-| XTS            | :kconfig:option:`CONFIG_PSA_WANT_ALG_XTS`            |
-+----------------+------------------------------------------------------+
-| Stream cipher  | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`  |
-+----------------+------------------------------------------------------+
++-----------------------+------------------------------------------------------+
+| Cipher mode           | Configuration option                                 |
++=======================+======================================================+
+| ECB no padding        | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING` |
++-----------------------+------------------------------------------------------+
+| CBC no padding        | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING` |
++-----------------------+------------------------------------------------------+
+| CBC PKCS#7 padding    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`      |
++-----------------------+------------------------------------------------------+
+| CFB                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CFB`            |
++-----------------------+------------------------------------------------------+
+| CTR                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`            |
++-----------------------+------------------------------------------------------+
+| OFB                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_OFB`            |
++-----------------------+------------------------------------------------------+
+| XTS                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_XTS`            |
++-----------------------+------------------------------------------------------+
+| Stream cipher         | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`  |
++-----------------------+------------------------------------------------------+
 
 
 Cipher driver configurations
@@ -62,25 +62,25 @@ Cipher driver configurations
 
 You can use the following Kconfig options for fine-grained control over which drivers provide cipher support:
 
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| Cipher mode    | nrf_cc3xx driver support                                            | nrf_oberon driver support                                            |
-+================+=====================================================================+======================================================================+
-| ECB_NO_PADDING | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_OBERON` |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| CBC_NO_PADDING | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_OBERON` |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| CBC_PKCS7      | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_CC3XX`      | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_OBERON`      |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| CFB            | Not supported                                                       | Not supported                                                        |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| CTR            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CTR_CC3XX`            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CTR_OBERON`            |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| OFB            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_OFB_CC3XX`            | Not supported                                                        |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| XTS            | Not supported                                                       | Not supported                                                        |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
-| Stream cipher  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_CC3XX`  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_OBERON`  |
-+----------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| Cipher mode           | nrf_cc3xx driver support                                            | nrf_oberon driver support                                            |
++=======================+=====================================================================+======================================================================+
+| ECB no padding        | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_ECB_NO_PADDING_OBERON` |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| CBC no padding        | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_CC3XX` | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_NO_PADDING_OBERON` |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| CBC PKCS#7 padding    | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_CC3XX`      | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CBC_PKCS7_OBERON`      |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| CFB                   | Not supported                                                       | Not supported                                                        |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| CTR                   | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CTR_CC3XX`            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_CTR_OBERON`            |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| OFB                   | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_OFB_CC3XX`            | Not supported                                                        |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| XTS                   | Not supported                                                       | Not supported                                                        |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
+| Stream cipher         | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_CC3XX`  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_STREAM_CIPHER_OBERON`  |
++-----------------------+---------------------------------------------------------------------+----------------------------------------------------------------------+
 
 .. note::
    * The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell cc310.
