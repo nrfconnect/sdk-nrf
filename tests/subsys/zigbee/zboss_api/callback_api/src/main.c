@@ -63,7 +63,14 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-void test_zboss_startup_signals(void)
+static bool zboss_api_signals_predicate(const void *state)
+{
+	return *((const bool *)state) == false;
+}
+
+ZTEST_SUITE(zboss_api_signals, zboss_api_signals_predicate, NULL, NULL, NULL, NULL);
+
+ZTEST(zboss_api_signals, test_zboss_startup_signals)
 {
 	zboss_signals_collected = 0;
 
@@ -136,7 +143,15 @@ K_THREAD_DEFINE(THREAD_2, STACKSIZE, thread_2, NULL, NULL, NULL,
 K_THREAD_DEFINE(THREAD_3, STACKSIZE, thread_3, NULL, NULL, NULL,
 		PRIORITY, 0, -1);
 
-void test_zboss_app_callbacks(void)
+
+static bool zboss_api_callback_predicate(const void *state)
+{
+	return *((const bool *)state) == true;
+}
+
+ZTEST_SUITE(zboss_api_callback, zboss_api_callback_predicate, NULL, NULL, NULL, NULL);
+
+ZTEST(zboss_api_callback, test_zboss_app_callbacks)
 {
 	k_tid_t thread_id_array[N_THREADS] = {THREAD_0, THREAD_1,
 					      THREAD_2, THREAD_3};
@@ -168,15 +183,20 @@ void test_zboss_app_callbacks(void)
 
 void test_main(void)
 {
+	bool zboss_startup_finished = false;
+
 	/* Erase NVRAM to have repeatability of test runs. */
 	zigbee_erase_persistent_storage(ZB_TRUE);
 
 	/* Start Zigbee default thread */
 	zigbee_enable();
 
-	ztest_test_suite(zboss_api_callback,
-			 ztest_unit_test(test_zboss_startup_signals),
-			 ztest_unit_test(test_zboss_app_callbacks));
+	/* Only zboss_api_signals test suite should run now. */
+	ztest_run_all(&zboss_startup_finished);
 
-	ztest_run_test_suite(zboss_api_callback);
+	/* Only zboss_api_alarm test suite should run now. */
+	zboss_startup_finished = true;
+	ztest_run_all(&zboss_startup_finished);
+
+	ztest_verify_all_test_suites_ran();
 }
