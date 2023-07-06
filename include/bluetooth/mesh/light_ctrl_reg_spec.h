@@ -43,11 +43,13 @@ struct bt_mesh_light_ctrl_reg_spec {
 	float i;
 	/** Regulator enabled flag. */
 	bool enabled;
+	/* If true, internal integral sum can be negative until it becomes positive. */
+	bool neg;
 };
 
 /** @cond INTERNAL_HIDDEN */
 void bt_mesh_light_ctrl_reg_spec_init(struct bt_mesh_light_ctrl_reg *reg);
-void bt_mesh_light_ctrl_reg_spec_start(struct bt_mesh_light_ctrl_reg *reg);
+void bt_mesh_light_ctrl_reg_spec_start(struct bt_mesh_light_ctrl_reg *reg, uint16_t lightness);
 void bt_mesh_light_ctrl_reg_spec_stop(struct bt_mesh_light_ctrl_reg *reg);
 /** @endcond */
 
