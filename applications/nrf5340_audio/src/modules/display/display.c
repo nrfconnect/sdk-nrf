@@ -17,7 +17,6 @@
 #include <zephyr/logging/log.h>
 #include <stdint.h>
 #include "button_tab.h"
-#include "log_tab.h"
 #include <nrf5340_audio_common.h>
 #include <hw_codec.h>
 #define MY_PRIORITY 5
@@ -95,7 +94,6 @@ int display_init()
 	display_blanking_off(display_dev);
 	button_tab_create(button_tab);
 	volume_label_create(button_tab);
-	log_tab_create(log_tab);
 
 	display_thread = k_thread_create(&display_data, display_thread_STACK,
 					 K_THREAD_STACK_SIZEOF(display_thread_STACK), update_thread,

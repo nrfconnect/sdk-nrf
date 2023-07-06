@@ -15,7 +15,6 @@ target_sources(app PRIVATE
 	       ${CMAKE_CURRENT_SOURCE_DIR}/sd_card.c
 		   ${CMAKE_CURRENT_SOURCE_DIR}/display/display.c
 		   ${CMAKE_CURRENT_SOURCE_DIR}/display/button_tab.c
-		   ${CMAKE_CURRENT_SOURCE_DIR}/display/log_tab.c
 )
 
 if (CONFIG_AUDIO_DFU_ENABLE)
