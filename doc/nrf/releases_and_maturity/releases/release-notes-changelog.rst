@@ -561,6 +561,7 @@ Modem libraries
     * The :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
     * The trace backends can now return ``-EAGAIN`` if the write operation can be retried.
     * Fixed a rare bug that caused a deadlock between two threads when one thread sent data while the other received a lot of data quickly.
+    * The ``SO_IP_ECHO_REPLY``, ``SO_IPV6_ECHO_REPLY``, ``SO_TCP_SRV_SESSTIMEO`` and ``SO_SILENCE_ALL`` socket option levels to align with the modem option levels.
 
 * :ref:`lib_location` library:
 

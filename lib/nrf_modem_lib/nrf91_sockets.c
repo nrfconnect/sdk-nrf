@@ -17,6 +17,7 @@
 #include <zephyr/init.h>
 #include <zephyr/net/socket_offload.h>
 #include <zephyr/net/offloaded_netdev.h>
+#include <zephyr/net/net_ip.h>
 #include <nrf_socket.h>
 #include <nrf_errno.h>
 #include <nrf_gai_errors.h>
@@ -208,18 +209,6 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_REUSEADDR:
 			*nrf_out_optname = NRF_SO_REUSEADDR;
 			break;
-		case SO_SILENCE_ALL:
-			*nrf_out_optname = NRF_SO_SILENCE_ALL;
-			break;
-		case SO_IP_ECHO_REPLY:
-			*nrf_out_optname = NRF_SO_IP_ECHO_REPLY;
-			break;
-		case SO_IPV6_ECHO_REPLY:
-			*nrf_out_optname = NRF_SO_IPV6_ECHO_REPLY;
-			break;
-		case SO_TCP_SRV_SESSTIMEO:
-			*nrf_out_optname = NRF_SO_TCP_SRV_SESSTIMEO;
-			break;
 		case SO_RAI_LAST:
 			*nrf_out_optname = NRF_SO_RAI_LAST;
 			break;
@@ -234,6 +223,50 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			break;
 		case SO_RAI_WAIT_MORE:
 			*nrf_out_optname = NRF_SO_RAI_WAIT_MORE;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
+		break;
+
+	case IPPROTO_IP:
+		switch (z_in_optname) {
+		case SO_IP_ECHO_REPLY:
+			*nrf_out_optname = NRF_SO_IP_ECHO_REPLY;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
+		break;
+
+	case IPPROTO_IPV6:
+		switch (z_in_optname) {
+		case SO_IPV6_ECHO_REPLY:
+			*nrf_out_optname = NRF_SO_IPV6_ECHO_REPLY;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
+		break;
+
+	case IPPROTO_TCP:
+		switch (z_in_optname) {
+		case SO_TCP_SRV_SESSTIMEO:
+			*nrf_out_optname = NRF_SO_TCP_SRV_SESSTIMEO;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
+		break;
+
+	case IPPROTO_ALL:
+		switch (z_in_optname) {
+		case SO_SILENCE_ALL:
+			*nrf_out_optname = NRF_SO_SILENCE_ALL;
 			break;
 		default:
 			retval = -1;
