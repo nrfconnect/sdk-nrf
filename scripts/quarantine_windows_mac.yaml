@@ -33,3 +33,21 @@
 - scenarios:
     - applications.asset_tracker_v2.nrf7002ek_wifi-debug
   comment: "FLASH overflow issue under investigation"
+
+- scenarios:
+    - sample.net.mqtt.nrf9160.tls
+    - sample.net.mqtt
+    - applications.asset_tracker_v2.carrier.nrf9161dk
+    - applications.asset_tracker_v2.carrier.nrf9160dk
+    - applications.asset_tracker_v2.lwm2m.memfault
+    - applications.asset_tracker_v2.memfault-low-power
+    - applications.asset_tracker_v2.nrf7002ek_wifi.nrf9161dk
+    - applications.asset_tracker_v2.aws
+    - applications.asset_tracker_v2.aws-all
+    - applications.asset_tracker_v2.aws-pgps
+    - applications.asset_tracker_v2.debug
+    - applications.asset_tracker_v2.debug-memfault
+    - applications.asset_tracker_v2.low-power
+    - applications.asset_tracker_v2.lwm2m.debug
+    - applications.asset_tracker_v2.lwm2m.debug-modem_trace
+  comment: "build failure on Windows after Zephyr upmerge - NCSIDB-1039"
