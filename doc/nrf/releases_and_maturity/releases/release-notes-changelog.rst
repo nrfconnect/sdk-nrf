@@ -522,6 +522,12 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
+* :ref:`caf_buttons`:
+
+  * Added selective wakeup functionality.
+    The module's configuration file can specify a subset of buttons that is not used to trigger an application wakeup.
+    Each row and column specifies an additional flag (:c:member:`gpio_pin.wakeup_blocked`) that can be set to prevent an entire row or column of buttons from acting as a wakeup source.
+
 * :ref:`caf_ble_adv`:
 
   * Updated the dependencies of the :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option so that it can be used when the Bluetooth controller is running on the network core.
