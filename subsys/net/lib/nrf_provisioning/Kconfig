@@ -38,6 +38,11 @@ config NRF_PROVISIONING_WITH_CERT
 	help
 	  Includes the root certificate used by the server side and provisions it if needed.
 
+config NRF_PROVISIONING_SAVE_CMD_ID
+	bool "Save the latest command id to storage"
+	help
+	  Saves the latest command id to storage after successful Finished command.
+
 rsource "Kconfig.nrf_provisioning_http"
 
 rsource "Kconfig.nrf_provisioning_at"
