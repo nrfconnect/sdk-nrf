@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+mainmenu "Matter Thermostat sample application"
+
+config THERMOSTAT_EXTERNAL_SENSOR
+	bool "Select if the temperature measurement is provided directly from external sensor"
+	help
+	 Set to true to enable the temperature measurement from phisical external sensor, false to mock temperature measurement
+
+config THERMOSTAT_TEMPERATURE_STEP
+	int "Defines mocked temperature step. Use 0 for random"
+	default 0
+	help 
+	  A temperature step defining differences between consecutive mocked temperature measurements, if 0 then the step is random
+
+config THERMOSTAT_MAXIMUM_MOCKED_TEMPERATURE
+	int "Maximum mocked temperature value"
+	default 3000
+
+config THERMOSTAT_MINIMUM_MOCKED_TEMPERATURE
+	int "Minimum mocked temperature value"
+	default 1500
+
+config THERMOSTAT_MOCKED_TEMPERATURE_RAISE
+	bool "If this option is set to 'true' temperature raise"
+	default y
+	help
+	  Specify whether the mocked temperature is rising (true) or falling (false)
+
+
+# Sample configuration used for Thread networking
+if NET_L2_OPENTHREAD
+
+choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
+	default OPENTHREAD_NORDIC_LIBRARY_MTD
+endchoice
+
+choice OPENTHREAD_DEVICE_TYPE
+	default OPENTHREAD_MTD
+endchoice
+
+endif # NET_L2_OPENTHREAD
+
+source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
+source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
+source "Kconfig.zephyr"
