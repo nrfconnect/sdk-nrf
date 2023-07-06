@@ -341,6 +341,7 @@ Matter samples
     Previously, it was set incorrectly.
   * Fixed the cluster revision for basic information cluster.
     Previously, it was set incorrectly.
+  * Added :ref:`Matter thermostat <matter_thermostat_sample>` sample.
 
 NFC samples
 -----------

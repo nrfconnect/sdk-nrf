@@ -18,13 +18,16 @@ The following table lists variants and extensions available out of the box for e
       - Door lock
       - Template
       - Window covering
+      - Thermostat
     * - FEM support
       - ✔
       - ✔
       - ✔
       - ✔
       - ✔
+      -
     * - DFU support
+      - ✔
       - ✔
       - ✔
       - ✔
@@ -36,22 +39,26 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       - ✔
+      - ✔
     * - :ref:`Thread role <thread_ot_device_types>`
       - Router
       - SED
       - SED
       - MED
       - SSED
+      -
     * - Wi-Fi support
       - ✔
       - ✔
       - ✔
       - ✔
       -
+      - ✔
     * - Thread and Wi-Fi switching
       -
       -
       - ✔
+      -
       -
       -
     * - Low power configuration by default
@@ -60,6 +67,7 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       -
       - ✔
+      -
 
 See the sample documentation pages for instructions about how to enable these variants and extensions.
 

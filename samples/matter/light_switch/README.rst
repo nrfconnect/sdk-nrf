@@ -91,13 +91,19 @@ This allows the light switch more than one lighting devices at the same time.
 Binding
 =======
 
+.. matter_light_switch_sample_binding_start
+
 Binding refers to establishing a relationship between endpoints on the local and remote nodes.
 With binding, local endpoints are pointed and bound to the corresponding remote endpoints.
 Both must belong to the same cluster type.
 Binding lets the local endpoint know which endpoints are going to be the target for the client-generated actions on one or more remote nodes.
 
+.. matter_light_switch_sample_binding_end
+
 In this sample, the light switch controls one or more lighting devices, but does not know the remote endpoints of the lights (on remote nodes).
 Using binding, the light switch device updates its Binding cluster with all relevant information about the lighting devices, such as their IPv6 address, node ID, and the IDs of the remote endpoints that contains the On/Off cluster and the LevelControl cluster, respectively.
+
+
 
 Configuration
 *************

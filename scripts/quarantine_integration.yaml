@@ -20,6 +20,7 @@
     - sample.matter.template.no_dfu
     - sample.matter.window_cover.release
     - sample.matter.window_cover.smp_dfu
+    - sample.matter.thermostat.release
   platforms:
     - nrf52840dk_nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -51,6 +52,8 @@
     - sample.matter.template.no_dfu
     - sample.matter.window_cover.release
     - sample.matter.window_cover.smp_dfu
+    - sample.matter.thermostat.debug
+    - sample.matter.thermostat.release
   platforms:
     - nrf5340dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -68,6 +71,7 @@
     - sample.matter.light_switch.smp_dfu
     - sample.matter.light_switch.no_dfu
     - sample.matter.template.release
+    - sample.matter.thermostat.debug
   platforms:
     - nrf7002dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
