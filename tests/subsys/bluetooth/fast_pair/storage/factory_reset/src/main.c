@@ -40,7 +40,6 @@ enum reset_test_stage {
 };
 
 enum reset_test_finished {
-	RESET_TEST_FINISHED_SECTION_PLACEMENT_BIT_POS,
 	RESET_TEST_FINISHED_STORE_BIT_POS,
 	RESET_TEST_FINISHED_NORMAL_RESET_BIT_POS,
 	RESET_TEST_FINISHED_INTERRUPTED_RESET_BEGIN_BIT_POS,
@@ -132,7 +131,7 @@ static void test_fp_storage_reset_prepare(void) {}
 FP_STORAGE_MANAGER_MODULE_REGISTER(_0_test_reset, test_fp_storage_reset_perform,
 				   test_fp_storage_reset_prepare);
 
-static void test_section_placement(void)
+static void *setup_fn(void)
 {
 	struct fp_storage_manager_module *module;
 
@@ -143,7 +142,7 @@ static void test_section_placement(void)
 	zassert_equal_ptr(test_fp_storage_reset_prepare, module->module_reset_prepare,
 			  "Invalid order of elements in section");
 
-	mark_test_as_finished(RESET_TEST_FINISHED_SECTION_PLACEMENT_BIT_POS);
+	return NULL;
 }
 
 static int settings_validate(settings_load_direct_cb cb)
@@ -204,8 +203,10 @@ static void fp_storage_validate_unloaded(void)
 	zassert_equal(err, -ENODATA, "Expected error before settings load");
 }
 
-static void setup_fn(void)
+static void before_fn(void *f)
 {
+	ARG_UNUSED(f);
+
 	int err;
 
 	err = settings_validate(settings_validate_empty_cb);
@@ -267,8 +268,10 @@ static int all_settings_delete(void)
 	return 0;
 }
 
-static void teardown_fn(void)
+static void after_fn(void *f)
 {
+	ARG_UNUSED(f);
+
 	int err;
 
 	err = all_settings_delete();
@@ -344,7 +347,7 @@ static void fp_storage_self_test_run(void)
 	personalized_name_validate_loaded(name);
 }
 
-static void test_store(void)
+ZTEST(suite_fast_pair_storage_factory_reset_01, test_01_store)
 {
 	fp_storage_self_test_run();
 
@@ -368,7 +371,7 @@ static void store_data_and_factory_reset(void)
 	zassert_ok(err, "Unexpected error in factory reset");
 }
 
-static void test_normal_reset(void)
+ZTEST(suite_fast_pair_storage_factory_reset_01, test_02_normal_reset)
 {
 	store_data_and_factory_reset();
 
@@ -377,7 +380,7 @@ static void test_normal_reset(void)
 	mark_test_as_finished(RESET_TEST_FINISHED_NORMAL_RESET_BIT_POS);
 }
 
-static void test_interrupted_reset_begin(void)
+ZTEST(suite_fast_pair_storage_factory_reset_02, test_interrupted_reset_begin)
 {
 	storage_reset_pass = true;
 
@@ -387,21 +390,25 @@ static void test_interrupted_reset_begin(void)
 	zassert_unreachable();
 }
 
-static void test_interrupted_reset_finish_setup_fn(void)
+static void before_continue_fn(void *f)
 {
+	ARG_UNUSED(f);
+
 	int err;
 
 	err = settings_load();
 	zassert_ok(err, "Unexpected error in settings load");
 }
 
-static void test_interrupted_reset_finish(void)
+ZTEST(suite_fast_pair_storage_factory_reset_03, test_interrupted_reset_finish)
 {
 	fp_storage_self_test_run();
 }
 
-static void normal_test_stage_finalize(void)
+static void teardown_fn(void *f)
 {
+	ARG_UNUSED(f);
+
 	int err;
 
 	for (size_t i = 0; i < RESET_TEST_FINISHED_COUNT; i++) {
@@ -428,6 +435,27 @@ static void normal_test_stage_finalize(void)
 	fp_ram_clear();
 }
 
+static bool predicate_fn(const void *global_state)
+{
+	ARG_UNUSED(global_state);
+
+	return (test_stage == RESET_TEST_STAGE_NORMAL);
+}
+
+static bool predicate_continue_fn(const void *global_state)
+{
+	ARG_UNUSED(global_state);
+
+	return (test_stage == RESET_TEST_STAGE_INTERRUPTED);
+}
+
+ZTEST_SUITE(suite_fast_pair_storage_factory_reset_01,
+	    predicate_fn, setup_fn, before_fn, after_fn, NULL);
+ZTEST_SUITE(suite_fast_pair_storage_factory_reset_02,
+	    predicate_fn, setup_fn, before_fn, NULL, teardown_fn);
+ZTEST_SUITE(suite_fast_pair_storage_factory_reset_03,
+	    predicate_continue_fn, setup_fn, before_continue_fn, after_fn, NULL);
+
 void test_main(void)
 {
 	int err;
@@ -442,32 +470,5 @@ void test_main(void)
 		 (test_stage == RESET_TEST_STAGE_INTERRUPTED),
 		 "Invalid test stage");
 
-	if (test_stage == RESET_TEST_STAGE_NORMAL) {
-		/* The test_interrupted_reset_begin test must be placed last in the suite, it
-		 * prepares storage data for the test_interrupted_reset_finish test.
-		 */
-		ztest_test_suite(fast_pair_storage_factory_reset_normal_tests,
-				 ztest_unit_test(test_section_placement),
-				 ztest_unit_test_setup_teardown(test_store, setup_fn, teardown_fn),
-				 ztest_unit_test_setup_teardown(test_normal_reset, setup_fn,
-								teardown_fn),
-				 ztest_unit_test_setup_teardown(test_interrupted_reset_begin,
-								setup_fn, unit_test_noop)
-				 );
-
-		ztest_run_test_suite(fast_pair_storage_factory_reset_normal_tests);
-
-		normal_test_stage_finalize();
-	}
-
-	if (test_stage == RESET_TEST_STAGE_INTERRUPTED) {
-		ztest_test_suite(fast_pair_storage_factory_reset_interrupted_tests_continue,
-				 ztest_unit_test_setup_teardown(
-							test_interrupted_reset_finish,
-							test_interrupted_reset_finish_setup_fn,
-							teardown_fn)
-				 );
-
-		ztest_run_test_suite(fast_pair_storage_factory_reset_interrupted_tests_continue);
-	}
+	ztest_run_all(NULL);
 }
