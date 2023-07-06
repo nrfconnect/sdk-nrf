@@ -544,7 +544,10 @@ int nrf_provisioning_req(void)
 			LOG_ERR("Provisioning failed, error: %d", ret);
 		} else if (ret > 0) {
 			/* Provisioning finished */
-			commit_latest_cmd_id();
+			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SAVE_CMD_ID)) {
+				LOG_DBG("Saving the latest command id");
+				commit_latest_cmd_id();
+			}
 			dm.cb(dm.user_data);
 		}
 
