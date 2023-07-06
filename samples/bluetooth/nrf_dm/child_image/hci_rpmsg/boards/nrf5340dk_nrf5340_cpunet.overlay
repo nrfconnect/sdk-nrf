@@ -7,6 +7,11 @@
 #include <zephyr/dt-bindings/ipc_service/static_vrings.h>
 
 / {
+	/* The timer instance to use. */
+	chosen {
+		ncs,dm-timer = &timer2;
+	};
+
 	chosen {
 		/delete-property/ zephyr,ipc_shm;
 	};
