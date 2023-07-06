@@ -362,6 +362,19 @@ static int trace_deinit(void)
 		return err;
 	}
 
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	k_work_cancel(&backend_bps_avg_update_work);
+#endif
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+	k_work_cancel(&backend_bps_log_work);
+#endif
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_BITRATE_LOG
+	k_work_cancel(&bps_log_work);
+#endif
+
 	k_sem_give(&trace_done_sem);
 
 	return 0;

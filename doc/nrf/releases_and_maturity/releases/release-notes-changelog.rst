@@ -424,7 +424,9 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
-  Updated:
+  * Added CEREG event tracking to ``lte_connectivity``.
+
+  * Updated:
 
     * The :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
     * The trace backends can now return ``-EAGAIN`` if the write operation can be retried.
@@ -438,10 +440,9 @@ Modem libraries
 
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
 
-* :ref:`nrf_modem_lib_readme`:
+* :ref:`modem_key_mgmt`:
 
    * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
-   * Added CEREG event tracking to ``lte_connectivity``.
 
 Libraries for networking
 ------------------------
