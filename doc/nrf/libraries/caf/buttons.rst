@@ -60,6 +60,37 @@ The following Kconfig options are available for this module:
 By default, a button press is indicated by a pin switch from the low to the high state.
 You can change this with :kconfig:option:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`, which will cause the application to react to an opposite pin change (from the high to the low state).
 
+.. _caf_buttons_pm_configuration:
+
+Power management configuration
+==============================
+
+If the :kconfig:option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module interacts with power management events (:c:struct:`power_down_event` and :c:struct:`wake_up_event`).
+
+The module can be used to trigger an application wakeup event.
+By default, pressing any button wakes up the application.
+In the configuration file, you can specify which subset of rows and columns of the keyboard matrix should not trigger an application wakeup.
+Such rows and columns must be marked by setting :c:member:`gpio_pin.wakeup_blocked` to ``true``.
+See an example of the modified configuration file:
+
+.. code-block:: c
+
+	#include <caf/gpio_pins.h>
+
+	static const struct gpio_pin col[] = {
+		{ .port = 0, .pin = 31, .wakeup_blocked = true },
+		{ .port = 0, .pin = 24 },
+	};
+
+	static const struct gpio_pin row[] = {
+		{ .port = 0, .pin = 9, .wakeup_blocked = true },
+		{ .port = 0, .pin = 8, .wakeup_blocked = true },
+		{ .port = 1, .pin = 15 },
+		{ .port = 1, .pin = 14 },
+	};
+
+After the change is applied to the configuration file, a button that belongs to the marked row or column is still handled by the module, but no longer triggers the application wakeup.
+
 Implementation details
 **********************
 
@@ -77,7 +108,7 @@ By default, the module uses the following states:
 
 After initialization, the module starts in ``STATE_SCANNING`` and performs initial scan of configured pins.
 If no buttons are pressed the module switches to ``STATE_ACTIVE``.
-In this state, the module enables the GPIO interrupts and waits for the pin state to change.
+In this state, the module enables the GPIO interrupts for all of the handled buttons and waits for the pin state to change.
 
 Whenever a button is pressed, the module switches to ``STATE_SCANNING``.
 When the switch occurs, the module submits a work with a delay set to :kconfig:option:`CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL`.
@@ -130,9 +161,10 @@ The power management events that module can react to are the following:
 * :c:struct:`power_down_event`
 * :c:struct:`wake_up_event`
 
-If a :c:struct:`power_down_event` comes while the module is in the ``STATE_SCANNING`` state, the module switches to ``STATE_SUSPENDING`` and remains in this state until no button is pressed.
+If :c:struct:`power_down_event` comes while the module is in the ``STATE_SCANNING`` state, the module switches to ``STATE_SUSPENDING`` and remains in this state until no button is pressed.
 Then, it switches to ``STATE_IDLE``.
+If :c:struct:`power_down_event` comes while the module is in the ``STATE_ACTIVE`` state, the module immediately switches to ``STATE_IDLE``.
 
-If a :c:struct:`power_down_event` comes while the module is in the ``STATE_ACTIVE`` state, the module switches to ``STATE_IDLE`` immediately.
 Similarly, as in ``STATE_ACTIVE``, in ``STATE_IDLE`` the module enables the GPIO interrupts and waits for the pin state to change.
-However, in ``STATE_IDLE`` the module can also invoke :c:struct:`wake_up_event` and send it to all subscribing modules.
+However, in ``STATE_IDLE`` the interrupts are enabled only for the subset of buttons that are configured to wake up the application.
+Pressing any of these buttons also invokes :c:struct:`wake_up_event` and sends it to all subscribing modules.
