@@ -13,9 +13,3 @@
   platforms:
     - all
   comment: "Temporary disable till the issue is fixed"
-
-- scenarios:
-    - fast_pair.storage.factory_reset.*
-  platforms:
-    - all
-  comment: "Excluded due to the old Ztest API  - issue: NCSDK-21698"
