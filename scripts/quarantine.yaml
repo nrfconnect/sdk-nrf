@@ -19,10 +19,3 @@
   platforms:
     - all
   comment: "Excluded due to the old Ztest API  - issue: NCSDK-21698"
-
-- scenarios:
-    - zigbee.osif.*
-    - zigbee.zboss_api.*
-  platforms:
-    - all
-  comment: "Excluded due to the old Ztest API  - issue: KRKNWK-16665"
