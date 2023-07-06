@@ -648,13 +648,6 @@ ZTEST(light_ctrl_test, test_default_cfg)
  */
 ZTEST(light_ctrl_pi_reg_test, test_pi_regulator_shall_not_wrap_around)
 {
-	/* Increase On state time so that the test can toggle regulator the required amount of
-	 * times.
-	 */
-	teardown_pi_reg(NULL);
-	light_ctrl_srv.cfg.on = 65600 * 2 * 1000;
-	setup_pi_reg(NULL);
-
 	light_ctrl_srv.reg->cfg.ki.up = 10;
 	light_ctrl_srv.reg->cfg.ki.down = 10;
 	light_ctrl_srv.reg->cfg.kp.up = 5;
@@ -665,7 +658,10 @@ ZTEST(light_ctrl_pi_reg_test, test_pi_regulator_shall_not_wrap_around)
 	 */
 	start_reg(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON -
 		  REG_ACCURACY(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON) - 1);
-	trigger_pi_reg(65529, true);
+	/* Tweak internal sum of the regulator to avoid long execution time.*/
+	((struct bt_mesh_light_ctrl_reg_spec *)light_ctrl_srv.reg)->i = 65528 *
+		SUMMATION_STEP(light_ctrl_srv.reg->cfg.ki.up);
+	trigger_pi_reg(1, true);
 	/* Expected lightness = 65529 * U * T * Kiu + U * Kpu = 65529 + 5 = 65534. */
 	zassert_equal(pi_reg_test_ctx.lightness, 65534, "Incorrect lightness value: %d",
 		      pi_reg_test_ctx.lightness);
@@ -690,7 +686,10 @@ ZTEST(light_ctrl_pi_reg_test, test_pi_regulator_shall_not_wrap_around)
 		      pi_reg_test_ctx.lightness);
 
 	/* Drive lightness value to 0 and check that it stops changing. */
-	trigger_pi_reg(65528, true);
+	/* Tweak internal sum of the regulator to avoid long execution time.*/
+	((struct bt_mesh_light_ctrl_reg_spec *)light_ctrl_srv.reg)->i = 65535 - 65528 *
+		SUMMATION_STEP(light_ctrl_srv.reg->cfg.ki.up);
+	trigger_pi_reg(1, true);
 	/* Expected lightness = 65535 - 65529 * U * T * Kid - U * Kpd = 1. */
 	zassert_equal(pi_reg_test_ctx.lightness, 1, "Incorrect lightness value: %d",
 		      pi_reg_test_ctx.lightness);
