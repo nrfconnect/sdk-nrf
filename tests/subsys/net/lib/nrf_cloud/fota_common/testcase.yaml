@@ -1,0 +1,25 @@
+common:
+  platform_allow: nrf9160dk_nrf9160_ns
+  integration_platforms:
+    - nrf9160dk_nrf9160_ns
+  tags: ci_build nrf_cloud_test nrf_cloud_lib
+tests:
+  net.lib.nrf_cloud.fota_common:
+    timeout: 60
+    extra_configs:
+      # CONFIG_NRF_CLOUD_FOTA and CONFIG_FOTA_DOWNLOAD are implicitly enabled
+      # in the prj.conf with CONFIG_NRF_CLOUD_MQTT=y
+      - CONFIG_MCUBOOT_IMG_MANAGER=y
+      - CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_IMG_MANAGER=y
+      - CONFIG_STREAM_FLASH_ERASE=y
+      - CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE=y
+  net.lib.nrf_cloud.fota_common.no_img_mngr:
+    timeout: 60
+    extra_configs:
+      - CONFIG_NRF_CLOUD_FOTA=n
+      - CONFIG_FOTA_DOWNLOAD=n
+      - CONFIG_NRF_CLOUD_REST=n
+      - CONFIG_MCUBOOT_IMG_MANAGER=n
+      - CONFIG_IMG_MANAGER=n
+      - CONFIG_STREAM_FLASH_ERASE=n
