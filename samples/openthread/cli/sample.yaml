@@ -8,7 +8,8 @@ tests:
       nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
       nrf52840dongle_nrf52840 nrf21540dk_nrf52840
     tags: ci_build
-    extra_args: SNIPPET="ci;multiprotocol;tcp"
+    extra_args: >
+      SNIPPET="ci;multiprotocol;tcp"
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
@@ -75,3 +76,15 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
+  sample.openthread.cli.tcat:
+    build_only: true
+    platform_allow: >
+      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf21540dk_nrf52840
+    tags: ci_build
+    extra_args: >
+      SNIPPET="ci;tcat;tcp"
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf52840dk_nrf52840
+      - nrf21540dk_nrf52840

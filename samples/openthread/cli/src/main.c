@@ -7,7 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#if defined(CONFIG_BT)
+#if defined(CONFIG_CLI_SAMPLE_MULTIPROTOCOL)
 #include "ble.h"
 #endif
 
@@ -70,7 +70,7 @@ int main(void)
 
 	LOG_INF(WELLCOME_TEXT);
 
-#if defined(CONFIG_BT)
+#if defined(CONFIG_CLI_SAMPLE_MULTIPROTOCOL)
 	ble_enable();
 #endif
 

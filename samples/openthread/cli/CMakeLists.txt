@@ -13,5 +13,10 @@ project(openthread_cli)
 target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
 
-target_sources_ifdef(CONFIG_BT app PRIVATE src/ble.c)
+target_sources_ifdef(CONFIG_CLI_SAMPLE_MULTIPROTOCOL app PRIVATE src/ble.c)
 target_sources_ifdef(CONFIG_CLI_SAMPLE_LOW_POWER app PRIVATE src/low_power.c)
+
+
+if (CONFIG_CLI_SAMPLE_MULTIPROTOCOL AND CONFIG_OPENTHREAD_BLE_TCAT)
+        message( FATAL_ERROR "Multiprotocol support and TCAT functionality are not compatible." )
+endif()

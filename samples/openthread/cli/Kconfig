@@ -14,3 +14,6 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 config CLI_SAMPLE_LOW_POWER
 	bool "Enable low power mode for the CLI sample"
+
+config CLI_SAMPLE_MULTIPROTOCOL
+	bool "Enable multiprotocol for the CLI sample"

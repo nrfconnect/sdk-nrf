@@ -392,6 +392,8 @@ Thread samples
 
   All mentioned features are still available in the master variant.
 
+* Added experimental support for Thread Over Authenticated TLS.
+
 Sensor samples
 --------------
 
