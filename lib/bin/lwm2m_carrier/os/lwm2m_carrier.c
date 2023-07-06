@@ -43,6 +43,11 @@ __weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN:
 		err = nrf_modem_lib_shutdown();
 		break;
+	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
+		/* Workaround a known issue in modem 1.3.4 and 1.3.5. */
+		nrf_modem_lib_shutdown();
+		err = nrf_modem_lib_init();
+		break;
 	default:
 		break;
 	}
@@ -83,6 +88,11 @@ __weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN:
 		err = nrf_modem_lib_shutdown();
+		break;
+	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
+		/* Workaround a known issue in modem 1.3.4 and 1.3.5. */
+		nrf_modem_lib_shutdown();
+		err = nrf_modem_lib_init();
 		break;
 	default:
 		break;
