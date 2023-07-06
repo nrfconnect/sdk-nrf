@@ -27,8 +27,8 @@
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
-#define INTERVAL_MIN    0x50     /* 80 units,  100 ms */
-#define INTERVAL_MAX    0x50     /* 80 units,  100 ms */
+#define INTERVAL_MIN    0x6     /* 6 units,  7.5 ms */
+#define INTERVAL_MAX    0x6     /* 6 units,  7.5 ms */
 #define INTERVAL_LLPM   0x0D01   /* Proprietary  1 ms */
 #define INTERVAL_LLPM_US 1000
 
@@ -195,18 +195,16 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		bt_scan_stop();
 	} else {
 		bt_le_adv_stop();
+		err = bt_conn_set_security(conn, BT_SECURITY_L2);
+		if (err) {
+			printk("Failed to set security: %d\n", err);
+		}
 	}
 
 	printk("Connected as %s\n",
 	       conn_info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
 	printk("Conn. interval is %u units (1.25 ms/unit)\n",
 	       conn_info.le.interval);
-
-	err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb,
-			       &latency_client);
-	if (err) {
-		printk("Discover failed (err %d)\n", err);
-	}
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
@@ -414,10 +412,29 @@ static void test_run(void)
 	}
 }
 
+void security_changed(struct bt_conn *conn, bt_security_t level,
+				 enum bt_security_err err)
+{
+	printk("Security changed: level %i, err: %i\n", level, err);
+
+	if (err != 0) {
+		printk("Failed to encrypt link\n");
+		bt_conn_disconnect(conn, BT_HCI_ERR_PAIRING_NOT_SUPPORTED);
+		return;
+	}
+	/*Start service discovery when link is encrypted*/
+	err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb,
+			       &latency_client);
+	if (err) {
+		printk("Discover failed (err %d)\n", err);
+	}
+}
+
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
 	.le_param_updated = le_param_updated,
+	.security_changed = security_changed,
 };
 
 int main(void)
