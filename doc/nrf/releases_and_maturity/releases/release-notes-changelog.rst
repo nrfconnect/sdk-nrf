@@ -424,8 +424,11 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
-  * Fixed a rare bug that caused a deadlock between two threads when one thread sent data while the other received a lot of data quickly.
-  * Updated the :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
+  Updated:
+
+    * The :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
+    * The trace backends can now return ``-EAGAIN`` if the write operation can be retried.
+    * Fixed a rare bug that caused a deadlock between two threads when one thread sent data while the other received a lot of data quickly.
 
 * :ref:`lib_location` library:
 
