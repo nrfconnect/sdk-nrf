@@ -58,6 +58,8 @@ struct nrf_modem_lib_trace_backend {
 	 *          -ENOSPC if no space is available and the backend has to be cleared before
 	 *                  tracing can continue. For some trace backends, space is also cleared
 	 *                  when performing the read operation.
+	 *          -EAGAIN if no data were written due to e.g. flow control and the operation
+	 *                  should be retried.
 	 */
 	int (*write)(const void *data, size_t len);
 

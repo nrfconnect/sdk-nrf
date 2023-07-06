@@ -158,6 +158,11 @@ int trace_backend_write(const void *data, size_t len)
 	ret = len - remaining_bytes;
 out:
 	k_sem_give(&tx_sem);
+
+	if (ret == 0) {
+		return -EAGAIN;
+	}
+
 	return ret;
 }
 

@@ -204,6 +204,21 @@ static int trace_fragment_write(struct nrf_modem_trace_data *frag)
 
 		__ASSERT(ret != 0, "Trace backend wrote 0 bytes");
 
+		/* We handle this here and not in the trace_thread_handler as we might not write the
+		 * entire trace fragment in the same write operation. If we get EAGAIN on the
+		 * second, third, ..., we would repeat sending the first section of the trace
+		 * fragment.
+		 */
+		if (ret == -EAGAIN) {
+			/* We don't allow retrying if the modem is shut down as that can block
+			 * a new modem init.
+			 */
+			if (!nrf_modem_is_initialized()) {
+				return -ESHUTDOWN;
+			}
+			continue;
+		}
+
 		if (ret < 0) {
 			LOG_ERR("trace_backend.write failed with err: %d", ret);
 			return ret;
