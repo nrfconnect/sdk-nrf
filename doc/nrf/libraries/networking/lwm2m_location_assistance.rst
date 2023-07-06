@@ -132,7 +132,10 @@ It can have three different values:
 The library has a resend handler for the temporary error code.
 You can initialize it with the :c:func:`location_assistance_init_resend_handler` function.
 It uses an exponential backoff for scheduling the resends.
-You can also set your own callbacks for the result code for better control of the application.
+
+The library has a callback handler for the result code.
+You can set your own callback with the :c:func:`location_assistance_set_result_code_cb` function.
+It is called whenever the request has been handled.
 
 Using A-GPS and P-GPS simultaneously
 ====================================
