@@ -139,6 +139,7 @@ Wi-Fi
   * Integration of Wi-Fi connectivity with Connection Manager connectivity API.
   * The :kconfig:option:`CONFIG_NRF_WIFI_IF_AUTO_START` Kconfig option to enable an application to set/unset AUTO_START on an interface.
     This can be done by using the ``NET_IF_NO_AUTO_START`` flag.
+  * Support for sending TWT sleep/wake events to applications.
 
 Applications
 ============
