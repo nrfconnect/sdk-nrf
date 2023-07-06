@@ -39,11 +39,22 @@ struct bt_mesh_light_ctrl_reg_cfg {
 
 /** Common regulator context */
 struct bt_mesh_light_ctrl_reg {
-	/** Initialize the regulator. */
+	/** Initialize the regulator.
+	 *
+	 *  @param[in] reg           Illuminance regulator instance.
+	 */
 	void (*init)(struct bt_mesh_light_ctrl_reg *reg);
-	/** Start the regulator. */
-	void (*start)(struct bt_mesh_light_ctrl_reg *reg);
-	/** Stop the regulator. */
+	/** Start the regulator.
+	 *
+	 *  @param[in] reg           Illuminance regulator instance.
+	 *  @param[in] lightness     Current lightness level
+	 *                           value equal to @c lightness.
+	 */
+	void (*start)(struct bt_mesh_light_ctrl_reg *reg, uint16_t lightness);
+	/** Stop the regulator.
+	 *
+	 *  @param[in] reg           Illuminance regulator instance.
+	 */
 	void (*stop)(struct bt_mesh_light_ctrl_reg *reg);
 	/** Regulator configuration. */
 	struct bt_mesh_light_ctrl_reg_cfg cfg;

@@ -56,25 +56,6 @@ static void restart_timer(struct bt_mesh_light_ctrl_srv *srv, uint32_t delay)
 	k_work_reschedule(&srv->timer, K_MSEC(delay));
 }
 
-static void reg_start(struct bt_mesh_light_ctrl_srv *srv)
-{
-#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	if (srv->reg && srv->reg->start) {
-		srv->reg->start(srv->reg);
-	}
-#endif
-}
-
-static void reg_stop(struct bt_mesh_light_ctrl_srv *srv)
-{
-#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	if (srv->reg && srv->reg->stop) {
-		srv->reg->stop(srv->reg);
-	}
-#endif
-}
-
-
 static inline uint32_t to_centi_lux(const struct sensor_value *lux)
 {
 	return lux->val1 * 100L + lux->val2 / 10000L;
@@ -539,6 +520,24 @@ static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 	/* Regulator remains stopped until fresh LuxLevel is received. */
 }
 
+static void reg_start(struct bt_mesh_light_ctrl_srv *srv)
+{
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	if (srv->reg && srv->reg->start) {
+		srv->reg->start(srv->reg, to_linear(light_get(srv)));
+	}
+#endif
+}
+
+static void reg_stop(struct bt_mesh_light_ctrl_srv *srv)
+{
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	if (srv->reg && srv->reg->stop) {
+		srv->reg->stop(srv->reg);
+	}
+#endif
+}
+
 static void ctrl_disable(struct bt_mesh_light_ctrl_srv *srv)
 {
 	/* Do not change the light level, disabling the control server just
@@ -589,7 +588,7 @@ static void timeout(struct k_work *work)
 	 * of the transition:
 	 */
 	if (atomic_test_and_clear_bit(&srv->flags, FLAG_TRANSITION)) {
-		LOG_DBG("Transition complete");
+		LOG_DBG("Transition complete. State: %d", srv->state);
 
 		/* If the fade wasn't instant, we've already published the
 		 * steady state in the state change function.

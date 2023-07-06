@@ -186,7 +186,7 @@ struct bt_mesh_light_ctrl_srv {
 	struct bt_mesh_light_ctrl_reg *reg;
 	/** Previous regulator value */
 	uint16_t reg_prev;
-#endif
+#endif /* CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG */
 	/** Lightness server instance */
 	struct bt_mesh_lightness_srv *lightness;
 	/** Extended Generic OnOff server */
