@@ -99,6 +99,9 @@ The following snippets are available:
 * ``debug`` - Enables debugging the Thread sample with GDB thread awareness.
 * ``ci`` - Disables boot banner and shell prompt.
 * ``multiprotocol`` - Enables Bluetooth LE support in this sample.
+  Not compatible with the ``tcat`` snippet.
+* ``tcat`` - Enables support for Thread comissioning over authenticated TLS.
+  Not compatible with the ``multiprotocol`` snippet.
 * ``tcp`` - Enables experimental TCP support in this sample.
 * ``low_power`` - Enables low power consumption mode in this sample.
 
