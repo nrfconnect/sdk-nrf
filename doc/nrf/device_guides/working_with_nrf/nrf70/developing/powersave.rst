@@ -354,6 +354,9 @@ DTIM-based power save performs better in high throughput applications compared t
 As the device sleeps longer and does not wake up to receive DTIM beacons, it misses all multicast or broadcast frames.
 The TWT session is expected to be set up by the application after the network level negotiation, after which it is not expected to receive any multicast or broadcast frames.
 
+Additionally, by using the ``NET_EVENT_WIFI_TWT_SLEEP_STATE``, the application layer can subscribe to TWT events
+to be notified of beginning and end of service period, so as to be able to send or receive data.
+
 .. _ug_nrf70_developing_powersave_api:
 
 Power Save API
@@ -365,7 +368,7 @@ The following shell commands and network management APIs are provided for power 
    :header-rows: 1
 
    * - Network management APIs
-     - Command
+     - Wi-Fi shell command
      - Description
      - Expected output
    * - net_mgmt(NET_REQUEST_WIFI_PS)
@@ -414,6 +417,10 @@ The following shell commands and network management APIs are provided for power 
      - wifi twt teardown_all
      - Tear down all sessions
      - TWT operation TWT teardown all flows
+   * - net_mgmt_event_notify_with_info(NET_EVENT_WIFI_TWT_SLEEP_STATE)
+     - N/A
+     - Application can register to this event to be notified about TWT sleep/wake events.
+     -
 
 See the :ref:`wifi_shell_sample` sample for more information.
 
