@@ -47,7 +47,7 @@ void create_timestamp_label(lv_obj_t *current_screen)
 	}
 }
 
-K_THREAD_STACK_DEFINE(display_thread_STACK, 4096);
+K_THREAD_STACK_DEFINE(display_thread_STACK, 8000);
 
 void update_thread(void *arg1, void *arg2, void *arg3)
 {
@@ -85,7 +85,6 @@ int display_init()
 
 	lv_obj_t *button_tab = lv_tabview_add_tab(tabview, "Button Tab");
 	lv_obj_t *log_tab = lv_tabview_add_tab(tabview, "Log Tab");
-
 	const struct device *display_dev;
 	display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 
@@ -93,7 +92,6 @@ int display_init()
 		LOG_ERR("Device not ready, aborting test");
 		return -ENODEV;
 	}
-
 	display_blanking_off(display_dev);
 	button_tab_create(button_tab);
 	volume_label_create(button_tab);

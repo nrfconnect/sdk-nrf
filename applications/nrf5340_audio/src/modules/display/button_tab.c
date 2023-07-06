@@ -153,5 +153,4 @@ void button_tab_create(lv_obj_t *current_screen)
 	button_create(current_screen, "Vol-", LV_ALIGN_BOTTOM_RIGHT, volume_down_button_event_cb);
 	button_create(current_screen, "Mute", LV_ALIGN_BOTTOM_LEFT, btn5_button_event_cb);
 	devicetype_label_create(current_screen);
-	/* 	volume_label_create(current_screen); */
 }
