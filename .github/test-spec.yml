@@ -341,6 +341,7 @@
   - "modules/nrfxlib/nrf_802154/**/*"
   - "modules/mcuboot/**/*"
   - "samples/matter/**/*"
+  - "applications/matter_bridge/**/*"
   - "applications/matter_weather_station/**/*"
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
 

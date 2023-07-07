@@ -49,4 +49,6 @@ MIT: "^nrf/ext/"
 BSD-3-CLAUSE: |
   ^nrf/ext/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
-GPL-2.0: "/matter_weather_station/.clang-format"
+GPL-2.0: |
+  /matter_weather_station/.clang-format
+  /matter_bridge/.clang-format

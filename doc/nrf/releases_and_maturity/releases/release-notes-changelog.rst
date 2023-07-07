@@ -228,6 +228,11 @@ Thingy:53: Matter weather station
 
 * Added support for the nRF7002 Wi-Fi expansion board.
 
+Matter Bridge
+-------------
+
+* Added the :ref:`Matter bridge <matter_bridge_app>` application.
+
 Samples
 =======
 
@@ -348,7 +353,10 @@ Matter samples
     Previously, it was set incorrectly.
   * Fixed the cluster revision for basic information cluster.
     Previously, it was set incorrectly.
-  * Added :ref:`Matter thermostat <matter_thermostat_sample>` sample.
+
+* :ref:`matter_thermostat_sample`:
+
+  * Added the :ref:`Matter thermostat <matter_thermostat_sample>` sample.
 
 NFC samples
 -----------

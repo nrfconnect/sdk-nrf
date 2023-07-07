@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+mainmenu "Matter nRF Connect Bridge Example Application"
+
+config BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+	bool "OnOff Light Bridged Device support"
+	default y
+
+config BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+	bool "Temperature Sensor Bridged Device support"
+	default y
+
+config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+	bool "Humidity Sensor Bridged Device support"
+	default y
+
+if BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+
+config BRIDGE_TEMPERATURE_SENSOR_MIN_MEASURED_VALUE
+	int "Default minimum measured value allowed by the bridged temperature sensor device."
+	default -20
+
+config BRIDGE_TEMPERATURE_SENSOR_MAX_MEASURED_VALUE
+	int "Default maximum measured value allowed by the bridged temperature sensor device."
+	default 60
+
+endif
+
+if BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+
+config BRIDGE_HUMIDITY_SENSOR_MIN_MEASURED_VALUE
+	int "Default minimum measured value allowed by the bridged humidity sensor device."
+	default 0
+
+config BRIDGE_HUMIDITY_SENSOR_MAX_MEASURED_VALUE
+	int "Default maximum measured value allowed by the bridged humidity sensor device."
+	default 100
+
+endif
+
+source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
+source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
+source "${ZEPHYR_BASE}/../nrf/samples/matter/common/src/bridge/Kconfig"
+source "Kconfig.zephyr"

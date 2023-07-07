@@ -23,3 +23,4 @@ You can also run them on different hardware like a generic development kit, but 
    ../../applications/machine_learning/README
    ../../applications/matter_weather_station/README
    ../../applications/zigbee_weather_station/README
+   ../../applications/matter_bridge/README
