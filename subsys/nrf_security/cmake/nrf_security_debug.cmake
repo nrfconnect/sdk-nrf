@@ -3,12 +3,12 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-# The purpose of this file is to provice a set of debug commands to nrf security
-# module.
+# The purpose of this file is to provide a set of debug commands to nRF Security
+# subsystem.
 
 
 #
-# Internal macro that shows debug output in for nrf_security related
+# Internal macro that shows debug output in for nRF Security related
 # configurations when Cmake is run with -DDEBUG_NRF_SECURITY=1
 #
 macro(nrf_security_debug)

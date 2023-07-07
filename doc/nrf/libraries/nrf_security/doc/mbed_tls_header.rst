@@ -3,7 +3,7 @@
 User-provided Mbed TLS config header
 ####################################
 
-The Nordic Security Module provides a Kconfig interface to control compilation and linking of Mbed TLS and the :ref:`nrf_cc3xx_mbedcrypto_readme` or :ref:`nrf_oberon_readme` libraries.
+The nRF Security subsystem provides a Kconfig interface to control compilation and linking of Mbed TLS and the :ref:`nrf_cc3xx_mbedcrypto_readme` or :ref:`nrf_oberon_readme` libraries.
 
 The Kconfig interface and build system ensures that the configuration of nrf_security is valid and working.
 It also ensures that dependencies between different cryptographic APIs are met.
