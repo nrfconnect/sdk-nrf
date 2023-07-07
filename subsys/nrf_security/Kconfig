@@ -4,19 +4,19 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "nrf_security module"
+menu "nRF Security"
 
 config NORDIC_SECURITY_PROMPTLESS
 	bool
 	help
-	  Internal setting to disable the Nordic security backend
+	  Internal setting to disable the Nordic security backend.
 	  This setting is Kconfig internal that must be used by subsystems that
-	  provides nRF Security selection groups.
+	  provide nRF Security selection groups.
 
 
 config NORDIC_SECURITY_BACKEND
 	bool
-	prompt "Use nrf_security with Mbed TLS legacy crypto APIs support" \
+	prompt "Use nRF Security with Mbed TLS legacy crypto APIs support" \
 		if !NORDIC_SECURITY_PROMPTLESS
 	default y if BUILD_WITH_TFM
 	depends on SOC_FAMILY_NRF
@@ -32,13 +32,13 @@ config NORDIC_SECURITY_BACKEND
 
 config NRF_SECURITY
 	bool
-	prompt "Use nrf_security module" if !PSA_PROMPTLESS
+	prompt "Enable nRF Security" if !PSA_PROMPTLESS
 	depends on SOC_FAMILY_NRF
 	default y if BUILD_WITH_TFM
 	select ENTROPY_GENERATOR
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	help
-	  Set this configuration to enable nrf_security module. This provides
+	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).
 
 config PSA_PROMPTLESS

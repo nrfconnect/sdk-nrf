@@ -143,7 +143,7 @@ Building and running
 .. include:: /includes/build_and_run_test.txt
 
 There are multiple ways to build the tests.
-See :ref:`nrf_security` for additional information about configuring the Nordic Security Module.
+See :ref:`nrf_security` for additional information about configuring the nRF Security subsystem.
 You can use the following configuration files to build the test in a specific setup:
 
 * :file:`overlay-cc3xx.conf` uses hardware acceleration using the Arm CryptoCell accelerator (for cryptography and entropy for random number generation).

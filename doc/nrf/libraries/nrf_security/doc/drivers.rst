@@ -1,13 +1,13 @@
 .. _nrf_security_drivers:
 
-nrf_security drivers
+nRF Security drivers
 ####################
 
 .. contents::
    :local:
    :depth: 2
 
-The nrf_security module supports multiple enabled PSA drivers at the same time.
+The nRF Security subsystem supports multiple enabled PSA drivers at the same time.
 This mechanism is intended to extend the available feature set of hardware-accelerated cryptography or to provide alternative implementations of the PSA Crypto APIs.
 
 You can enable a cryptographic feature or algorithm using PSA Crypto API configurations that follow the format ``PSA_WANT_ALG_XXXX``.
@@ -16,7 +16,7 @@ Enabling more than one PSA driver might add support for additional key sizes or 
 
 It is possible to disable specific features on the PSA driver level to optimize the code size.
 
-The nrf_security module supports the following PSA drivers:
+The nRF Security supports the following PSA drivers:
 
 * Arm CryptoCell cc3xx binary
 * nrf_oberon binary

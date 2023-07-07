@@ -2822,7 +2822,7 @@ NCSDK-5546: Oberon missing symbols for HKDF
 
 .. rst-class:: v1-3-1 v1-3-0
 
-Limited support for Nordic Security Module
+Limited support for nRF Security subsystem (previously called Nordic Security Module)
   The :ref:`nrf_security` is currently only fully supported on nRF52840 and nRF9160 devices.
   It gives compile errors on nRF52832, nRF52833, nRF52820, nRF52811, and nRF52810.
 

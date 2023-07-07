@@ -771,15 +771,19 @@ Libraries for NFC
   * Fixed the ISO-DEP error recovery process in case where the R(ACK) frame is received in response to the R(NAK) frame from the poller device.
     The poller device raised a false semantic error instead of resending the last I-block.
 
-Nordic Security Module
-----------------------
+nRF Security
+------------
 
-* :ref:`nrf_security` library:
+The following changes are applied to :ref:`nrf_security` library:
 
-  * Removed:
+* Updated:
 
-    * Option to build Mbed TLS builtin PSA core (:kconfig:option:`CONFIG_PSA_CORE_BUILTIN`).
-    * Option to build Mbed TLS builtin PSA crypto driver (:kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_BUILTIN`) and all its associated algorithms (``CONFIG_MBEDTLS_PSA_BUILTIN_ALG_xxx``).
+  * The subsystem and its library are renamed from Nordic Security Module to nRF Security.
+
+* Removed:
+
+  * Option to build Mbed TLS builtin PSA core (:kconfig:option:`CONFIG_PSA_CORE_BUILTIN`).
+  * Option to build Mbed TLS builtin PSA crypto driver (:kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_BUILTIN`) and all its associated algorithms (``CONFIG_MBEDTLS_PSA_BUILTIN_ALG_xxx``).
 
 Other libraries
 ---------------
