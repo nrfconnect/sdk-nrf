@@ -34,6 +34,12 @@ endforeach()
 # Standard extensions of Zephyr included in the TF-M build
 list(APPEND CMAKE_MODULE_PATH ${ZEPHYR_BASE}/cmake/modules)
 include(extensions)
+
+# Force a re-run of TF-M configuration if zephyr configuration has changed.
+# Since we import these configurations we need to re-run when they have changed.
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ZEPHYR_AUTOCONF})
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ZEPHYR_DOTCONFIG})
+
 import_kconfig(CONFIG_ ${ZEPHYR_DOTCONFIG})
 
 # Additional TF-M build only settings:
