@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
+	int "Maximum number of dynamic endpoints supported by the Bridge"
+	default 16
+
+config BRIDGE_MAX_BRIDGED_DEVICES_NUMBER
+	int "Maximum number of physical non-Matter devices supported by the Bridge"
+	default 16
