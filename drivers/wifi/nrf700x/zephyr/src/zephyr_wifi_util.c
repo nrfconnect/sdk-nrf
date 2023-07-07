@@ -64,46 +64,6 @@ static bool check_valid_data_rate(const struct shell *shell,
 }
 
 
-static struct wifi_nrf_vif_ctx_zep *net_if_get_vif_ctx(const struct shell *shell,
-						       int indx)
-{
-	struct net_if *iface = NULL;
-	const struct device *dev;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-
-	iface = net_if_get_by_index(indx);
-
-	if (!iface) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "No such interface in index %d\n",
-			      indx);
-		goto err;
-	}
-
-	dev = net_if_get_device(iface);
-
-	if (!dev) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "No such device\n");
-		goto err;
-	}
-
-	vif_ctx_zep = dev->data;
-
-	if (!vif_ctx_zep) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "No such vif interface in index %d\n",
-			      indx);
-		goto err;
-	}
-err:
-	return vif_ctx_zep;
-}
-
-
 int nrf_wifi_util_conf_init(struct rpu_conf_params *conf_params)
 {
 	if (!conf_params) {
@@ -291,37 +251,6 @@ static int nrf_wifi_util_set_uapsd_queue(const struct shell *shell,
 }
 
 
-static int nrf_wifi_util_set_passive_scan(const struct shell *shell,
-					  size_t argc,
-					  const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long val = 0;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-
-	vif_ctx_zep = net_if_get_vif_ctx(shell, atoi(argv[1]));
-
-	if (!vif_ctx_zep) {
-		return -ENOEXEC;
-	}
-
-	val = strtoul(argv[2], &ptr, 10);
-
-	if (val > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid value(%lu).\n",
-			      val);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	vif_ctx_zep->passive_scan = val;
-
-	return 0;
-}
-
-
 static int nrf_wifi_util_show_cfg(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
@@ -361,11 +290,6 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "uapsd_queue = %d\n",
 		      conf_params->uapsd_queue);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "passive_scan = %d\n",
-		      (&ctx->vif_ctx_zep[0])->passive_scan);
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
@@ -998,13 +922,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Display the current configuration values",
 		      nrf_wifi_util_show_cfg,
 		      1,
-		      0),
-	SHELL_CMD_ARG(passive_scan,
-		      NULL,
-		      "<intf indx> <0 - Passive scan off>\n"
-		      "<intf indx> <1 - Passive scan on>\n",
-		      nrf_wifi_util_set_passive_scan,
-		      3,
 		      0),
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
