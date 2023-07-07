@@ -197,6 +197,11 @@ static int suspend(void)
 
 static void resume(void)
 {
+	if (state == STATE_SUSPENDING) {
+		state = STATE_SCANNING;
+		return;
+	}
+
 	if (state != STATE_IDLE) {
 		/* Already activated. */
 		return;
