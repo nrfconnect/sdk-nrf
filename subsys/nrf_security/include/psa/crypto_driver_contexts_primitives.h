@@ -31,14 +31,14 @@
 /* Include the context structure definitions for those drivers that were
  * declared during the autogeneration process.
  */
-#if defined(PSA_CRYPTO_DRIVER_CC3XX)
+#if defined(PSA_NEED_CC3XX_CIPHER_DRIVER) || defined(PSA_NEED_CC3XX_HASH_DRIVER)
 #include "cc3xx_crypto_primitives.h"
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
 
-#if defined(PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_OBERON)
+#if defined(PSA_NEED_OBERON_CIPHER_DRIVER)
 #include "oberon_cipher.h"
 #endif
-#if defined(PSA_CRYPTO_DRIVER_HAS_HASH_SUPPORT_OBERON)
+#if defined(PSA_NEED_OBERON_HASH_DRIVER)
 #include "oberon_hash.h"
 #endif
 
@@ -52,22 +52,22 @@
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
-#if defined(PSA_CRYPTO_DRIVER_CC3XX)
+#if defined(PSA_NEED_CC3XX_HASH_DRIVER)
 	cc3xx_hash_operation_t cc3xx_driver_ctx;
 #endif
-#if defined(PSA_CRYPTO_DRIVER_HAS_HASH_SUPPORT_OBERON)
+#if defined(PSA_NEED_OBERON_HASH_DRIVER)
 	oberon_hash_operation_t oberon_driver_ctx;
 #endif
 } psa_driver_hash_context_t;
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
-#if defined(PSA_CRYPTO_DRIVER_CC3XX)
+#if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
 	cc3xx_cipher_operation_t cc3xx_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
-#if defined(PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_OBERON)
+#if defined(PSA_NEED_OBERON_CIPHER_DRIVER)
 	oberon_cipher_operation_t oberon_driver_ctx;
-#endif /* PSA_CRYPTO_DRIVER_CC3XX */
+#endif
 
 } psa_driver_cipher_context_t;
 

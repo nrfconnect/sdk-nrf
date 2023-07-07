@@ -76,12 +76,6 @@ set(CONFIG_MBEDTLS_USE_PSA_CRYPTO                   False)
 # complete build with all libraries and a full mbedcrypto library for linking.
 set(CONFIG_BUILD_WITH_TFM                           False)
 
-if (NOT CONFIG_TFM_PROFILE_TYPE_MINIMAL)
-  set(CONFIG_PSA_CRYPTO_DRIVER_OBERON                 True)
-  set(CONFIG_PSA_CRYPTO_DRIVER_HAS_KDF_SUPPORT_OBERON True)
-  set(CONFIG_PSA_CRYPTO_DRIVER_ALG_HKDF_OBERON        True)
-endif()
-
 # TF-M build require that PSA Crypto APIs are compiled
 set(COMPILE_PSA_APIS True)
 

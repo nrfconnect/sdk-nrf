@@ -4,56 +4,210 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config MBEDTLS_PSA_ACCEL_KEY_TYPE_SUPPORT
+# Legacy config that needs to be removed later. The Oberon PSA driver is now the fallback option
+# for all the crypto operations when hardware acceleration is not available.
+config PSA_CRYPTO_DRIVER_OBERON
+	# The Oberon driver is required to provide HKDF needed for protected storage and bultin keys
+	prompt "Oberon PSA driver" if !(TFM_PARTITION_PROTECTED_STORAGE || TFM_CRYPTO_BUILTIN_KEYS)
 	bool
 	default y
-	depends on MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR || \
-		   MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY || \
-		   MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_KEY_PAIR || \
-		   MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_PUBLIC_KEY || \
-		   MBEDTLS_PSA_ACCEL_KEY_TYPE_AES || \
-		   MBEDTLS_PSA_ACCEL_KEY_TYPE_CHACHA20
+	help
+	  This configuration enables the usage of the Oberon PSA driver.
 
-config MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR
+config PSA_CRYPTO_DRIVER_CC3XX
+	prompt "CryptoCell PSA driver"
+	bool
+	help
+	  This configuration enables the usage of CryptoCell for the supported operations.
+	  Disabling this option will result in all crypto operations being handled by
+	  the Oberon PSA driver. However, please note that disabling this option does not
+	  affect the DRBG algorithms; even when disabled, DRBG will still be provided by CryptoCell.
+	  The CryptoCell PSA driver does not support key size configurations. When enabled,
+	  all supported key sizes are included in the build.
+
+menu "Choose DRBG algorithm"
+config PSA_WANT_ALG_CTR_DRBG
+	prompt "Enable CTR_DRBG"
+	bool
+	default y if !PSA_WANT_ALG_HMAC_DRBG
+	depends on PSA_WANT_GENERATE_RANDOM
+
+config PSA_WANT_ALG_HMAC_DRBG
+	prompt "Enable HMAC_DRBG"
+	bool
+	depends on PSA_WANT_GENERATE_RANDOM
+
+# The Oberon PSA core requires the USE symbols to choose a DRBG algorithm.
+config PSA_USE_CTR_DRBG_DRIVER
+	bool
+	default y if PSA_WANT_ALG_CTR_DRBG
+
+config PSA_USE_HMAC_DRBG_DRIVER
+	bool
+	default y if PSA_WANT_ALG_HMAC_DRBG
+
+endmenu
+
+menu "CryptoCell PSA Driver Configuration"
+if PSA_CRYPTO_DRIVER_CC3XX
+
+config PSA_USE_CC3XX_CIPHER_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA cipher APIs"
 	bool
 	default y
-	depends on PSA_WANT_KEY_TYPE_ECC_KEY_PAIR && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+	help
+	  Enable CryptoCell for the PSA Cipher APIs. Enabling this
+	  will provide support for AES with modes CTR,CBC PKCS7,
+	  CBC no padding, ECB no padding and Chacha20.
 
-config MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY
+config PSA_USE_CC3XX_AEAD_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA AEAD APIs"
 	bool
 	default y
-	depends on PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+	help
+	  Enable CryptoCell for the PSA AEAD APIs. Enabling this
+	  will provide support for AES CCM, AES GCM (only available on CC312)
+	  and Chacha20Poly1305.
 
-config MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_KEY_PAIR
+config PSA_USE_CC3XX_HASH_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA hash APIs"
 	bool
 	default y
-	depends on PSA_WANT_KEY_TYPE_RSA_KEY_PAIR && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+	help
+	  Enable CryptoCell for the PSA hash APIs. Enabling this
+	  will provide support for SHA1, SHA224 and SHA256.
 
-config MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_PUBLIC_KEY
+config PSA_USE_CC3XX_MAC_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA mac APIs"
 	bool
 	default y
-	depends on PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+	help
+	  Enable CryptoCell for the PSA mac APIs. Enabling this
+	  will provide support for HMAC and CMAC.
 
-config MBEDTLS_PSA_ACCEL_KEY_TYPE_AES
+config PSA_USE_CC3XX_ECDH_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA key agreement APIs"
 	bool
 	default y
-	depends on PSA_WANT_KEY_TYPE_AES && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+	help
+	  Enable CryptoCell for the PSA key agreement APIs. Enabling this
+	  will provide support for key agreement with ECDH.
 
-config MBEDTLS_PSA_ACCEL_KEY_TYPE_CHACHA20
+config PSA_USE_CC3XX_SIGNATURE_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA asymmetric signature APIs"
 	bool
 	default y
-	depends on PSA_WANT_KEY_TYPE_CHACHA20 && \
-		   (PSA_CRYPTO_DRIVER_CC3XX || PSA_CRYPTO_DRIVER_OBERON)
+	help
+	  Enable CryptoCell for the PSA asymmetric signature APIs. Enabling this
+	  will provide support signing/verification with ECDSA in deterministic
+	  and randomized modes and RSA in PKCS1V15 and PSS modes.
 
+config PSA_USE_CC3XX_ASYMMETRIC_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA asymmetric encryption APIs"
+	bool
+	default y
+	help
+	  Enable CryptoCell for the PSA asymmetric encryption APIs. Enabling this
+	  will provide support for assymetric encryption with RSA
+	  in PKCS1V15 and OAEP modes.
+
+config PSA_USE_CC3XX_KEY_PAIR_DRIVER
+	prompt "Enable CryptoCell driver support for the PSA key management APIs"
+	bool
+	default y
+	depends on PSA_USE_CC3XX_ASYMMETRIC_DRIVER || \
+		   PSA_USE_CC3XX_SIGNATURE_DRIVER  || \
+		   PSA_USE_CC3XX_ECDH_DRIVER
+	help
+	  Enabling this will provide support for key generation, key importing and
+	  public exporting for asymmetric keys. ECC and RSA keys are supported.
+
+endif
+
+config PSA_USE_CC3XX_CTR_DRBG_DRIVER
+	bool
+	default y
+	depends on PSA_USE_CTR_DRBG_DRIVER
+	depends on CRYPTOCELL_USABLE
+
+config PSA_USE_CC3XX_HMAC_DRBG_DRIVER
+	bool
+	default y
+	depends on PSA_USE_HMAC_DRBG_DRIVER
+	depends on CRYPTOCELL_USABLE
+
+endmenu
+
+menu "AES key size configuration"
+
+config PSA_WANT_AES_KEY_SIZE_128
+	prompt "AES 128 bits key"
+	bool
+
+config PSA_WANT_AES_KEY_SIZE_192
+	prompt "AES 192 bits key"
+	bool
+
+config PSA_WANT_AES_KEY_SIZE_256
+	prompt "AES 256 bits key"
+	bool
+
+endmenu
+
+menu "RSA key size configuration"
+
+config PSA_WANT_RSA_KEY_SIZE_1024
+	prompt "RSA 1024 bits key (weak)"
+	bool
+	default y
+	help
+	  RSA with 1024 bit keys are not recommended for new designs.
+	  Please see https://www.keylength.com/
+
+config PSA_WANT_RSA_KEY_SIZE_1536
+	prompt "RSA 1536 bits key (weak)"
+	bool
+	help
+	  RSA with 1536 bit keys are not recommended for new designs.
+	  Please see https://www.keylength.com/
+
+config PSA_WANT_RSA_KEY_SIZE_2048
+	prompt "RSA 2048 bits key"
+	bool
+
+config PSA_WANT_RSA_KEY_SIZE_3072
+	prompt "RSA 3072 bits key"
+	bool
+
+config PSA_WANT_RSA_KEY_SIZE_4096
+	prompt "RSA 4096 bits key"
+	bool
+
+config PSA_WANT_RSA_KEY_SIZE_6144
+	prompt "RSA 6144 bits key"
+	bool
+
+config PSA_WANT_RSA_KEY_SIZE_8192
+	prompt "RSA 8192 bits key"
+	bool
+
+config PSA_MAX_RSA_KEY_BITS
+	int
+	default 8192 if PSA_WANT_RSA_KEY_SIZE_8192
+	default 6144 if PSA_WANT_RSA_KEY_SIZE_6144
+	default 4096 if PSA_WANT_RSA_KEY_SIZE_4096
+	default 3072 if PSA_WANT_RSA_KEY_SIZE_3072
+	default 2048 if PSA_WANT_RSA_KEY_SIZE_2048
+	default 1536 if PSA_WANT_RSA_KEY_SIZE_1536
+	default 1024 if PSA_WANT_RSA_KEY_SIZE_1024
+	default 0
+
+endmenu
+
+
+rsource "Kconfig.psa_accel"
 
 rsource "nrf_cc3xx/Kconfig"
-
-rsource "nrf_cc3xx_platform/Kconfig"
 
 rsource "nrf_oberon/Kconfig"
 

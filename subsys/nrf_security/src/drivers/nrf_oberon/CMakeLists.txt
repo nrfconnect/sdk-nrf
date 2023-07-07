@@ -25,30 +25,24 @@ if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
 endif()
 
 if (COMPILE_PSA_APIS)
-  list(APPEND                                                                     src_crypto_oberon ${drivers_path}/oberon_helpers.c)
+  list(APPEND src_crypto_oberon
+       ${drivers_path}/oberon_helpers.c
+  )
 
-  # The mapping from CONFIG_ to source file comes from the header file
-  # includes in psa_crypto_driver_wrappers.c
-
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_ACCEL_KEY_TYPES_OBERON    src_crypto_oberon ${drivers_path} oberon_key_pair.c)
-
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_AEAD_SUPPORT_OBERON       src_crypto_oberon ${drivers_path} oberon_aead.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_KDF_SUPPORT_OBERON        src_crypto_oberon ${drivers_path} oberon_kdf.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_MAC_SUPPORT_OBERON        src_crypto_oberon ${drivers_path} oberon_mac.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_CIPHER_SUPPORT_OBERON     src_crypto_oberon ${drivers_path} oberon_cipher.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_RSA_SUPPORT_OBERON        src_crypto_oberon ${drivers_path} oberon_rsa.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_HASH_SUPPORT_OBERON       src_crypto_oberon ${drivers_path} oberon_hash.c)
-
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_HAS_ASYM_SIGN_SUPPORT_OBERON  src_crypto_oberon ${drivers_path} oberon_ecdsa.c)
-
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_ECDH_OBERON               src_crypto_oberon ${drivers_path} oberon_ecdh.c)
-
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_JPAKE_OBERON              src_crypto_oberon ${drivers_path} oberon_jpake.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON            src_crypto_oberon ${drivers_path} oberon_spake2p.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_SRP_OBERON                src_crypto_oberon ${drivers_path} oberon_srp.c)
-
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_CTR_DRBG_OBERON           src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
-  append_with_prefix_ifdef(CONFIG_PSA_CRYPTO_DRIVER_ALG_HMAC_DRBG_OBERON          src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_PAIR_DRIVER     src_crypto_oberon ${drivers_path} oberon_key_pair.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_AEAD_DRIVER         src_crypto_oberon ${drivers_path} oberon_aead.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KDF_DRIVER          src_crypto_oberon ${drivers_path} oberon_kdf.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_MAC_DRIVER          src_crypto_oberon ${drivers_path} oberon_mac.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CIPHER_DRIVER       src_crypto_oberon ${drivers_path} oberon_cipher.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_RSA_DRIVER          src_crypto_oberon ${drivers_path} oberon_rsa.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HASH_DRIVER         src_crypto_oberon ${drivers_path} oberon_hash.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ECDSA_DRIVER        src_crypto_oberon ${drivers_path} oberon_ecdsa.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ECDH_DRIVER         src_crypto_oberon ${drivers_path} oberon_ecdh.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_JPAKE_DRIVER        src_crypto_oberon ${drivers_path} oberon_jpake.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_SPAKE2P_DRIVER      src_crypto_oberon ${drivers_path} oberon_spake2p.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_SRP_DRIVER          src_crypto_oberon ${drivers_path} oberon_srp.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CTR_DRBG_DRIVER     src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HMAC_DRBG_DRIVER    src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
 
   target_sources(${mbedcrypto_target} PRIVATE ${src_crypto_oberon})
 endif()
