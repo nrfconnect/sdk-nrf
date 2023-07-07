@@ -11,8 +11,10 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
-#include <nrfx_clock.h>
 #include <zephyr/kernel.h>
+#if defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M
+#include <nrfx_clock.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <zephyr/shell/shell.h>
@@ -217,7 +219,7 @@ int main(void)
 
 	net_mgmt_add_event_callback(&wifi_shell_mgmt_cb);
 
-#ifdef CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT
+#if defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M
 	/* For now hardcode to 128MHz */
 	nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK,
 			       NRF_CLOCK_HFCLK_DIV_1);
