@@ -10,5 +10,10 @@ choice PSA_CORE
 
 config PSA_CORE_OBERON
 	bool "PSA Core implementation - Oberon"
+	select PSA_WANT_AES_KEY_SIZE_128
+	select PSA_WANT_AES_KEY_SIZE_192
+	select PSA_WANT_AES_KEY_SIZE_256
+	select PSA_WANT_RSA_KEY_SIZE_2048
+	select PSA_WANT_RSA_KEY_SIZE_3072
 
 endchoice

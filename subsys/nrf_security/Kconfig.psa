@@ -19,14 +19,6 @@ config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 
 osource "modules/mbedtls/Kconfig.psa"
 
-config PSA_WANT_ALG_CTR_DRBG
-	bool
-	default y if ENTROPY_GENERATOR
-
-config PSA_WANT_ALG_HMAC_DRBG
-	bool
-	default y if PSA_WANT_ALG_DETERMINISTIC_ECDSA
-
 config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 	bool
 	default y

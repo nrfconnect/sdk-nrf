@@ -251,9 +251,9 @@ config TFM_CRYPTO_ENGINE_BUF_SIZE
 	int
 	prompt "TF-M Crypto - Engine buffer size" if !TFM_PROFILE_TYPE_MINIMAL
 	default 1 if TFM_PROFILE_TYPE_MINIMAL
-	default 12288 if PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_CC3XX || \
-		PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_CC3XX || \
-		PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_CC3XX
+	default 12288 if PSA_NEED_CC3XX_RSA_OAEP || \
+		PSA_NEED_CC3XX_RSA_PKCS1V15_CRYPT || \
+		PSA_NEED_CC3XX_RSA_PKCS1V15_SIGN
 	default 8320
 	help
 	  Buffer used by Mbed Crypto for its own allocations at runtime.
