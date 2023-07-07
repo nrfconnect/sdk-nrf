@@ -22,6 +22,15 @@
 int hw_codec_volume_set(uint8_t set_val);
 
 /**
+ * @brief  Get volume on HW_CODEC
+ *
+ * @details Range 0-128
+ *
+ * @return Previous volume level registered
+ */
+uint32_t hw_codec_volume_get(void);
+
+/**
  * @brief  Adjust volume on HW_CODEC
  *
  * @details Also unmute the volume on HW_CODEC

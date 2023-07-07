@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF5340_AUDIO_DK_DISPLAY
+	bool "Display for nRF5340 Audio DK [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	default n
+
+if NRF5340_AUDIO_DK_DISPLAY
+
+rsource "Kconfig.defaults"
+
+module = NRF5340_AUDIO_DK_DISPLAY
+module-str = nrf5340_audio_dk_display
+source "subsys/logging/Kconfig.template.log_config"
+
+config NRF5340_AUDIO_DK_DISPLAY_TAB_LOG
+	bool "Enable the log tab on the display"
+	depends on LOG
+	default y
+
+if NRF5340_AUDIO_DK_DISPLAY_TAB_LOG
+
+config NRF5340_AUDIO_DK_DISPLAY_TAB_LOG_LEVEL
+	int "Log level for message displayed on screen"
+	default 2
+
+config NRF5340_AUDIO_DK_DISPLAY_TAB_LOG_TIMESTAMP
+	bool "Display timestamp in us in front of log message"
+	default n
+
+config NRF5340_AUDIO_DK_DISPLAY_TAB_LOG_MAX_LEN
+	int "Number of messages to be stored"
+	default 10
+
+endif # NRF5340_AUDIO_DK_DISPLAY_TAB_LOG
+
+config NRF5340_AUDIO_DK_DISPLAY_TAB_MENU_UPDATE_INTERVAL_MS
+	int "Update interval for the menu tab, in milliseconds"
+	default 500
+
+endif # NRF5340_AUDIO_DK_DISPLAY

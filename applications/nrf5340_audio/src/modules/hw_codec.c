@@ -123,6 +123,7 @@ static void volume_msg_sub_thread(void)
 /**
  * @brief Write to multiple registers in CS47L63.
  */
+
 static int cs47l63_comm_reg_conf_write(const uint32_t config[][2], uint32_t num_of_regs)
 {
 	int ret;
@@ -173,6 +174,11 @@ int hw_codec_volume_set(uint8_t set_val)
 	LOG_DBG("Volume: %" PRId32 " dB", (volume_reg_val / 2) - MAX_VOLUME_DB);
 
 	return 0;
+}
+
+uint32_t hw_codec_volume_get(void)
+{
+	return prev_volume_reg_val;
 }
 
 int hw_codec_volume_adjust(int8_t adjustment_db)

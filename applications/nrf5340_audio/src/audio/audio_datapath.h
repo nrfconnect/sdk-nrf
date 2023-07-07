@@ -98,4 +98,17 @@ int audio_datapath_stop(void);
  */
 int audio_datapath_init(void);
 
+/**
+ * @brief Get pointers to the decoded audio data frame
+ *
+ * @note The decoded audio data frame lives statically in this module, and can be accessed at
+ *       any time after the module has been initialized. The buffer can be updated by other the
+ *       decoder thread at any time, and hence it is never guaranteed that the buffer data is not
+ *       updated while the buffer is being accessed.
+ *
+ * @param p_buf Pointer to variable where the audio data buffer pointer will be stored
+ * @param p_size Pointer to variable where the size of the audio data buffer will be stored
+ */
+void audio_datapath_buffer_ptr_get(void **p_buf, size_t **p_size);
+
 #endif /* _AUDIO_DATAPATH_H_ */

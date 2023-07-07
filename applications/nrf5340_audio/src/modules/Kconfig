@@ -5,6 +5,7 @@
 #
 
 rsource "Kconfig.defaults"
+rsource "display/Kconfig"
 
 menu "Modules"
 

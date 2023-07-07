@@ -114,6 +114,7 @@ static struct {
 	bool datapath_initialized;
 	bool stream_started;
 	void *decoded_data;
+	size_t decoded_size;
 
 	struct {
 		struct data_fifo *fifo;
@@ -861,6 +862,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		/* Discard frame */
 		return;
 	}
+	ctrl_blk.decoded_size = pcm_size;
 
 	/*** Add audio data to FIFO buffer ***/
 
@@ -945,6 +947,12 @@ int audio_datapath_init(void)
 	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
 
 	return 0;
+}
+
+void audio_datapath_buffer_ptr_get(void **p_buf, size_t **p_size)
+{
+	*p_buf = ctrl_blk.decoded_data;
+	*p_size = &ctrl_blk.decoded_size;
 }
 
 static int cmd_i2s_tone_play(const struct shell *shell, size_t argc, const char **argv)

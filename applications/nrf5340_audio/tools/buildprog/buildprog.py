@@ -109,6 +109,10 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
         if options.nrf21540:
             device_flag += " -DSHIELD=nrf21540ek_fwd"
 
+        if options.display:
+            device_flag += " -DSHIELD=nrf5340_audio_display"
+            device_flag += " -DCONFIG_NRF5340_AUDIO_DK_DISPLAY=y"
+
         if os.name == 'nt':
             release_flag = release_flag.replace('\\', '/')
 
@@ -292,14 +296,22 @@ def __main():
         choices=["external", "internal"],
         default='',
         help="MCUBOOT with external, internal flash",
-        )
+    )
     parser.add_argument(
         "--nrf21540",
         action="store_true",
         dest="nrf21540",
         default=False,
         help="Set when using nRF21540 for extra TX power",
-        )
+    )
+    parser.add_argument(
+        "--display",
+        action="store_true",
+        dest="display",
+        default=False,
+        help="Set when using adafruit display for the audio application",
+    )
+
     options = parser.parse_args(args=sys.argv[1:])
 
     # Post processing for Enums
@@ -352,7 +364,8 @@ def __main():
     # Reboot step start
 
     if options.only_reboot == SelectFlags.TBD:
-        program_threads_run(device_list, options.mcuboot, sequential=options.sequential_prog)
+        program_threads_run(device_list, options.mcuboot,
+                            sequential=options.sequential_prog)
         __finish(device_list)
 
     # Reboot step finished
@@ -393,7 +406,8 @@ def __main():
         for dev in device_list:
             if dev.snr_connected:
                 __populate_hex_paths(dev, options)
-        program_threads_run(device_list, options.mcuboot, sequential=options.sequential_prog)
+        program_threads_run(device_list, options.mcuboot,
+                            sequential=options.sequential_prog)
 
     # Program step finished
 

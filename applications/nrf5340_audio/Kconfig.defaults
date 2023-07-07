@@ -51,7 +51,7 @@ config ZBUS
 	default y
 
 config ZBUS_RUNTIME_OBSERVERS_POOL_SIZE
-	default 6
+	default 7
 
 config SENSOR
 	default y

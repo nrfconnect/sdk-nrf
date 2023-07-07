@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SHIELD_NRF5340_AUDIO_DISPLAY
+	def_bool $(shields_list_contains,nrf5340_audio_display)
