@@ -29,7 +29,7 @@ config PSA_WANT_ALG_HMAC_DRBG
 
 config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 	bool
-	default y if CRYPTOCELL_USABLE
+	default y
 
 rsource "src/core/Kconfig"
 

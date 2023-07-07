@@ -33,9 +33,6 @@ if(CONFIG_BUILD_WITH_TFM)
   # NS-build: PSA APIs are already compiled in TF-M image
   set(COMPILE_PSA_APIS                          False)
 
-  # Disable external RNG build as it is part of TF-M image
-  set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG    False)
-
   # Execute Cmake logic to forward configurations to TF-M build
   include(${NRF_SECURITY_ROOT}/cmake/config_to_tf-m.cmake)
 

@@ -347,12 +347,7 @@ config MBEDTLS_HMAC_DRBG_C
 
 config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 	bool
-	prompt "External RNG"
-	default y if CRYPTOCELL_USABLE
-	help
-	  Convenience layer for handling entropy before it is fully supported in
-	  PSA Crypto APIs and drivers. This is set by default for legacy and PSA
-	  modes.
+	default y
 
 config MBEDTLS_ENTROPY_C
 	bool

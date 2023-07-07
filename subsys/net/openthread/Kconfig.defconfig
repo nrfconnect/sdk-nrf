@@ -146,10 +146,6 @@ config OPENTHREAD_PING_SENDER
 	bool
 	default y
 
-config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
-	bool
-	default n
-
 if !OPENTHREAD_THREAD_VERSION_1_1
 
 # Thread 1.2 dependencies
