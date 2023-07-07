@@ -48,30 +48,22 @@ static int entropy_func(void *ctx, unsigned char *buf, size_t len)
 
 #if defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
 
-mbedtls_psa_external_random_context_t drbg_ctx;
+/* Dummy context since we don't use it in the external_rng function */
+char drbg_ctx;
 
 int init_drbg(const unsigned char *p_optional_seed, size_t len)
 {
-	static const unsigned char ncs_seed[] = "ncs_drbg_seed";
-
-	const unsigned char *p_seed;
-
-	if (p_optional_seed == NULL) {
-		p_seed = ncs_seed;
-		len = sizeof(ncs_seed);
-	} else {
-		p_seed = p_optional_seed;
+	if (p_optional_seed != NULL) {
+		return -EINVAL;
 	}
 
-	int ret = nrf_cc3xx_platform_ctr_drbg_init(
-		(nrf_cc3xx_platform_ctr_drbg_context_t *)&drbg_ctx, p_seed, len);
-	return ret;
+	return 0;
 }
 
 int external_rng(void *ctx, unsigned char *output, size_t len)
 {
 	int out_len;
-	int ret = mbedtls_psa_external_get_random(NULL, output, len, &out_len);
+	int ret = nrf_cc3xx_platform_ctr_drbg_get(NULL, output, len, &out_len);
 	return ret;
 }
 

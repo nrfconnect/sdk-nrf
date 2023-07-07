@@ -53,9 +53,6 @@ set(CONFIG_MBEDTLS_LEGACY_CRYPTO_C                  False)
 set(CONFIG_MBEDTLS_NO_PLATFORM_ENTROPY              False)
 set(CONFIG_MBEDTLS_MD_C                             False)
 
-# Additional setting ensuring that external RNG is enabled inside TF-M image
-set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG          True)
-
 # Platform cannot be selected when building for TF-M, because TF-M itself has
 # control of the CryptoCell. Therefore, specifically for building TF-M we
 # enable it manually.

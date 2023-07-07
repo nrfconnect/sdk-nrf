@@ -53,7 +53,7 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
 endif()
 
 # Legacy files should only be added in certain configurations
-if(NOT (MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG OR CONFIG_MBEDTLS_PSA_CRYPTO_SPM))
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
     ctr_drbg.c
     entropy.c

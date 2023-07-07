@@ -56,7 +56,7 @@ size_t hex2bin_safe(const char *hex, uint8_t *buf, size_t buflen);
 #include "psa/crypto.h"
 #include "nrf_cc3xx_platform_ctr_drbg.h"
 
-extern mbedtls_psa_external_random_context_t drbg_ctx;
+extern char drbg_ctx;
 
 #elif defined(MBEDTLS_CTR_DRBG_C)
 
