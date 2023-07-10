@@ -105,19 +105,25 @@ static int buf_status_add(struct bt_mesh_sensor_srv *srv,
 			  struct net_buf_simple *buf)
 {
 	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
+	struct net_buf_simple_state state;
 	int err;
 
 	err = value_get(srv, sensor, ctx, value);
 	if (err) {
-		sensor_status_id_encode(buf, 0, sensor->type->id);
+		LOG_WRN("Unable to get value for 0x%04x: %d", sensor->type->id, err);
 		return err;
 	}
 
+	net_buf_simple_save(buf, &state);
+
 	err = sensor_status_encode(buf, sensor, value);
 	if (err) {
-		LOG_WRN("Sensor value encode for 0x%04x: %d", sensor->type->id,
-			err);
-		sensor_status_id_encode(buf, 0, sensor->type->id);
+		LOG_WRN("Sensor value encode for 0x%04x: %d", sensor->type->id, err);
+		/* sensor_status_encode() could have encoded a part of Marshaled Sensor Data into
+		 * buf, for example, Marshaled Property ID, but not the Raw Value. Restore the
+		 * buf's state to not send corrupted data.
+		 */
+		net_buf_simple_restore(buf, &state);
 	}
 
 	return err;
@@ -881,6 +887,7 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 			struct bt_mesh_sensor *s, uint8_t period_div,
 			uint32_t base_period)
 {
+	struct net_buf_simple_state state;
 	uint16_t min_int = min_int_get(s, period_div, base_period);
 	uint16_t delta = srv->seq - s->state.seq;
 	int err;
@@ -913,8 +920,11 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 		}
 	}
 
+	net_buf_simple_save(srv->pub.msg, &state);
 	err = sensor_status_encode(srv->pub.msg, s, value);
 	if (err) {
+		LOG_WRN("Pub sensor value encode for 0x%04x: %d", s->type->id, err);
+		net_buf_simple_restore(srv->pub.msg, &state);
 		return;
 	}
 
