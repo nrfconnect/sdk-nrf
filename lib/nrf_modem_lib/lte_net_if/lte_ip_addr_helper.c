@@ -18,7 +18,7 @@
 
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(ip_addr_helper, CONFIG_LTE_CONNECTIVITY_LOG_LEVEL);
+LOG_MODULE_REGISTER(ip_addr_helper, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
 
 /* Structure that keeps track of the current IP addresses in use. */
 static struct ip_addr_helper_data {

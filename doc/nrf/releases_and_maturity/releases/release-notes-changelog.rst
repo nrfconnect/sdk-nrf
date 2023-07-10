@@ -362,6 +362,8 @@ Modem libraries
 * :ref:`nrf_modem_lib_readme`:
 
    * Added a mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
+   * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
+     All related Kconfig options have been renamed accordingly.
 
 |no_changes_yet_note|
 
