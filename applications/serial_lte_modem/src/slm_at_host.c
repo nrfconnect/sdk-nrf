@@ -791,6 +791,9 @@ int slm_at_host_init(void)
 		return err;
 	}
 
+	/* This is here and not earlier because in case of firmware
+	 * update it will send an AT response so the UART must be up.
+	 */
 	slm_fota_post_process();
 
 	LOG_INF("at_host init done");

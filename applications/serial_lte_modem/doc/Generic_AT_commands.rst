@@ -293,6 +293,63 @@ Test command
 
 The test command is not supported.
 
+Modem reset #XMODEMRESET
+========================
+
+The ``#XMODEMRESET`` command performs a reset of the modem.
+
+The modem is set to minimal function mode (via ``+CFUN=0``) before being reset.
+The SLM application is not restarted.
+After the command returns, the modem will be in minimal function mode.
+
+Set command
+-----------
+
+The set command resets the modem.
+
+Syntax
+~~~~~~
+
+::
+
+   #XMODEMRESET
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XMODEMRESET: <result>[,<error_code>]
+
+* The ``<result>`` parameter is an integer indicating the result of the command.
+  It can have the following values:
+
+  * ``0`` - Success.
+  * *Positive value* - On failure, indicates the step that failed.
+
+* The ``<error_code>`` parameter is an integer.
+  It is only printed when the modem reset was not successful and is the error code indicating the reason for the failure.
+
+Example
+~~~~~~~~
+
+::
+
+   AT#XMODEMRESET
+
+   #XMODEMRESET: 0
+
+   OK
+
+Read command
+------------
+
+The read command is not supported.
+
+Test command
+------------
+
+The test command is not supported.
 
 SLM UART #XSLMUART
 ==================

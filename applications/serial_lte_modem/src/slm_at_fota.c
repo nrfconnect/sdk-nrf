@@ -5,8 +5,8 @@
  */
 #include <stdint.h>
 #include <stdio.h>
+#include <modem/nrf_modem_lib.h>
 #include <nrf_modem_delta_dfu.h>
-#include <zephyr/dfu/mcuboot.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/tls_credentials.h>
@@ -37,9 +37,7 @@ enum slm_fota_operation {
 	SLM_FOTA_START_APP = 1,
 	SLM_FOTA_START_MFW = 2,
 	SLM_FOTA_PAUSE_RESUME = 4,
-	SLM_FOTA_APP_READ = 6,
 	SLM_FOTA_MFW_READ = 7,
-	SLM_FOTA_ERASE_APP = 8,
 	SLM_FOTA_ERASE_MFW = 9
 };
 
@@ -48,40 +46,6 @@ static char hostname[URI_HOST_MAX];
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-
-static int do_fota_erase_app(void)
-{
-	int ret;
-
-	LOG_INF("Erasing mcuboot secondary");
-
-	ret = boot_erase_img_bank(PM_MCUBOOT_SECONDARY_ID);
-	if (ret) {
-		LOG_ERR("boot_erase_img_bank error: %d", ret);
-	} else {
-		LOG_INF("Erase completed");
-	}
-
-	return ret;
-}
-
-static void do_fota_app_read(uint8_t area_id)
-{
-	int err;
-	struct mcuboot_img_header header;
-
-	err = boot_read_bank_header(area_id, &header, sizeof(header));
-	if (err) {
-		LOG_WRN("failed in area %d banker header: %d", area_id, err);
-		return;
-	}
-
-	rsp_send("\r\n#XFOTA: %d,%d,%d,\"%d.%d.%d+%d\"\r\n", area_id,
-		header.mcuboot_version,
-		header.h.v1.image_size,
-		header.h.v1.sem_ver.major, header.h.v1.sem_ver.minor,
-		header.h.v1.sem_ver.revision, header.h.v1.sem_ver.build_num);
-}
 
 static int do_fota_mfw_read(void)
 {
@@ -110,7 +74,7 @@ static int do_fota_erase_mfw(void)
 {
 	int err;
 	size_t offset = 0;
-	int in_progress = false;
+	bool in_progress = false;
 
 	err = nrf_modem_delta_dfu_offset(&offset);
 	if (err) {
@@ -122,8 +86,8 @@ static int do_fota_erase_mfw(void)
 		}
 	}
 
-	if (offset == 0 && !in_progress) {
-		/* no need of erasing */
+	if (offset != NRF_MODEM_DELTA_DFU_OFFSET_DIRTY && !in_progress) {
+		/* No need to erase. */
 		return 0;
 	}
 
@@ -261,17 +225,20 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		fota_stage = FOTA_STAGE_ACTIVATE;
 		fota_info = 0;
-		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		/* Save, in case reboot by reset */
 		slm_settings_fota_save();
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		fota_stage = FOTA_STAGE_DOWNLOAD_ERASE_PENDING;
 		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
-		fota_stage = FOTA_STAGE_DOWNLOAD_ERASED;
-		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", FOTA_STAGE_DOWNLOAD_ERASED, fota_status);
+		/* Back to init now that the erasure is complete so that potential pre-start
+		 * error codes are printed with the same stage than if there had been no erasure.
+		 */
+		fota_stage = FOTA_STAGE_INIT;
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		fota_status = FOTA_STATUS_ERROR;
@@ -293,8 +260,8 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 	}
 }
 
-/**@brief handle AT#XFOTA commands
- *  AT#XFOTA=<op>,<file_uri>[,<sec_tag>[,<pdn_id>]]
+/** @brief Handles AT#XFOTA commands.
+ *  AT#XFOTA=<op>[,<file_url>[,<sec_tag>[,<pdn_id>]]]
  *  AT#XFOTA? TEST command not supported
  *  AT#XFOTA=?
  */
@@ -350,14 +317,8 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			}
 			err = 0;
 #endif
-		} else if (op == SLM_FOTA_APP_READ) {
-			do_fota_app_read(PM_MCUBOOT_PRIMARY_ID);
-			do_fota_app_read(PM_MCUBOOT_SECONDARY_ID);
-			err = 0;
 		} else if (op == SLM_FOTA_MFW_READ) {
 			err = do_fota_mfw_read();
-		} else if (op == SLM_FOTA_ERASE_APP) {
-			err = do_fota_erase_app();
 		} else if (op == SLM_FOTA_ERASE_MFW) {
 			err = do_fota_erase_mfw();
 		} else {
@@ -365,10 +326,9 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XFOTA: (%d,%d,%d,%d,%d,%d,%d),<file_uri>,<sec_tag>,<apn>\r\n",
+		rsp_send("\r\n#XFOTA: (%d,%d,%d,%d,%d)[,<file_url>[,<sec_tag>[,<pdn_id>]]]\r\n",
 			SLM_FOTA_STOP, SLM_FOTA_START_APP, SLM_FOTA_START_MFW,
-			SLM_FOTA_APP_READ, SLM_FOTA_MFW_READ,
-			SLM_FOTA_ERASE_APP, SLM_FOTA_ERASE_MFW);
+			SLM_FOTA_MFW_READ, SLM_FOTA_ERASE_MFW);
 		err = 0;
 		break;
 
@@ -400,8 +360,42 @@ void slm_fota_post_process(void)
 			rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status,
 				fota_info);
 		}
+
+		/* This condition might not be true in case of
+		 * NRF_MODEM_DFU_RESULT_VOLTAGE_LOW. In that case we want to remember
+		 * that a firmware update is still ongoing when a reset is next done.
+		 */
+		if (fota_stage != FOTA_STAGE_ACTIVATE) {
+			/* FOTA session completed */
+			slm_settings_fota_init();
+		}
+		slm_settings_fota_save();
 	}
-	/* FOTA session completed */
-	slm_settings_fota_init();
-	slm_settings_fota_save();
+}
+
+void slm_finish_modem_fota(int modem_lib_init_ret)
+{
+	if (handle_nrf_modem_lib_init_ret(modem_lib_init_ret)) {
+		char buf[40];
+
+		LOG_INF("Re-initializing the modem due to"
+				" ongoing modem firmware update.");
+
+		/* The second init needs to be done regardless of the return value.
+		 * Refer to the below link for more information on the procedure.
+		 * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/delta_dfu.html#reinitializing-the-modem-to-run-the-new-firmware
+		 */
+		modem_lib_init_ret = nrf_modem_lib_init();
+		handle_nrf_modem_lib_init_ret(modem_lib_init_ret);
+
+		nrf_modem_at_cmd(buf, sizeof(buf), "%s", "AT%SHORTSWVER");
+		if (strstr(buf, "1.3.4") || strstr(buf, "1.3.5")) {
+			/* Those versions suffer from a bug that provokes UICC failure (+CEREG: 90)
+			 * after the update, preventing the modem from registering to the network.
+			 */
+			LOG_INF("Applying the workaround to a modem firmware update issue...");
+			nrf_modem_lib_shutdown();
+			nrf_modem_lib_init();
+		}
+	}
 }

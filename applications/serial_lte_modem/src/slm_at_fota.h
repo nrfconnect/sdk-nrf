@@ -13,6 +13,7 @@
  * @{
  */
 
+#include <stdbool.h>
 #include <stdint.h>
 
 enum fota_stage {
@@ -55,6 +56,22 @@ int slm_at_fota_uninit(void);
  * @brief FOTA post-process after reboot.
  */
 void slm_fota_post_process(void);
+
+/**
+ * @brief Finishes the modem firmware update.
+ *
+ * This is to be called after the application or modem
+ * has been rebooted and a modem firmware update is ongoing.
+ */
+void slm_finish_modem_fota(int modem_lib_init_ret);
+
+/**
+ * @brief Handles @ref nrf_modem_lib_init() return values
+ * relating to modem firmware update.
+ *
+ * @return Whether the modem must be re-initialized.
+ */
+bool handle_nrf_modem_lib_init_ret(int modem_lib_init_ret);
 
 /** @} */
 #endif /* SLM_AT_FOTA_ */

@@ -9,12 +9,15 @@
 #include <zephyr/init.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
-#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/types.h>
+#include <dfu/dfu_target.h>
 #include <modem/at_cmd_parser.h>
+#include <modem/lte_lc.h>
 #include <modem/modem_jwt.h>
+#include <modem/nrf_modem_lib.h>
 #include "nrf_modem.h"
 #include "ncs_version.h"
 
@@ -89,28 +92,26 @@ int slm_uart_configure(void);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
 
+/** @return Whether the modem is in the given functional mode. */
+static bool is_modem_functional_mode(enum lte_lc_func_mode mode)
+{
+	int cfun;
+	int rc = nrf_modem_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun);
+
+	return (rc == 1 && cfun == mode);
+}
+
 static void modem_power_off(void)
 {
-	int rc;
-	int cfun;
+	/* First check whether the modem has already been turned off by the MCU. */
+	if (!is_modem_functional_mode(LTE_LC_FUNC_MODE_POWER_OFF)) {
 
-	/*
-	 * First check if the modem has already been put in Flight
-	 * or OFF mode by the MCU
-	 */
-	rc = nrf_modem_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun);
-	if (rc != 1 || (cfun != 0 && cfun != 4)) {
-	/*
-	 * The LTE modem also needs to be stopped by issuing AT command
-	 * through the modem API, before entering System OFF mode.
-	 * Once the command is issued, one should wait for the modem
-	 * to respond that it actually has stopped as there may be a
-	 * delay until modem is disconnected from the network.
-	 * Refer to https://infocenter.nordicsemi.com/topic/ps_nrf9160/
-	 * pmu.html?cp=2_0_0_4_0_0_1#system_off_mode
-	 */
-		(void)nrf_modem_at_printf("AT+CFUN=0");
-		k_sleep(K_SECONDS(1));
+		/* "[...] there may be a delay until modem is disconnected from the network."
+		 * https://infocenter.nordicsemi.com/topic/ps_nrf9160/chapters/pmu/doc/operationmodes/system_off_mode.html
+		 * This will return once the modem responds, which means it has actually
+		 * stopped. This has been observed to take between 1 and 2 seconds.
+		 */
+		nrf_modem_at_printf("AT+CFUN=0");
 	}
 }
 
@@ -145,7 +146,13 @@ static void go_sleep_wk(struct k_work *work)
 		}
 	} else if (slm_work.data == SLEEP_MODE_DEEP) {
 		slm_at_host_uninit();
-		modem_power_off();
+
+		/* Only power off the modem if it has not been put
+		 * in flight mode to allow reducing NVM wear.
+		 */
+		if (!is_modem_functional_mode(LTE_LC_FUNC_MODE_OFFLINE)) {
+			modem_power_off();
+		}
 		enter_sleep();
 	}
 }
@@ -211,13 +218,60 @@ static int handle_at_reset(enum at_cmd_type type)
 		k_sleep(K_MSEC(SLM_UART_RESPONSE_DELAY));
 		slm_at_host_uninit();
 		modem_power_off();
+		LOG_PANIC();
 		sys_reboot(SYS_REBOOT_COLD);
 	}
 
 	return ret;
 }
 
-/**@brief handle AT#XUUID commands
+/** @brief Handles AT#XMODEMRESET command.
+ *  AT#XMODEMRESET
+ *  AT#XMODEMRESET? not supported
+ *  AT#XMODEMRESET=? not supported
+ */
+static int handle_at_modemreset(enum at_cmd_type type)
+{
+	if (type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
+	}
+
+	/* The modem must be put in minimal function mode before being shut down. */
+	modem_power_off();
+
+	unsigned int step = 1;
+	int ret;
+
+	do {
+		ret = nrf_modem_lib_shutdown();
+		if (ret != 0) {
+			break;
+		}
+		++step;
+
+		ret = nrf_modem_lib_init();
+		if (ret < 0) {
+			break;
+		}
+		++step;
+
+		if (ret > 0 || (fota_stage != FOTA_STAGE_INIT
+					&& fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA)) {
+			slm_finish_modem_fota(ret);
+			slm_fota_post_process();
+		}
+
+		/* Success. */
+		rsp_send("\r\n#XMODEMRESET: 0\r\n");
+		return 0;
+	} while (0);
+
+	/* Error; print the step that failed and its error code. */
+	rsp_send("\r\n#XMODEMRESET: %u,%d\r\n", step, ret);
+	return 0;
+}
+
+/** @brief Handles AT#XUUID command.
  *  AT#XUUID
  *  AT#XUUID? not supported
  *  AT#XUUID=? not supported
@@ -463,6 +517,7 @@ static struct slm_at_cmd {
 	{"AT#XSLEEP", handle_at_sleep},
 	{"AT#XSHUTDOWN", handle_at_shutdown},
 	{"AT#XRESET", handle_at_reset},
+	{"AT#XMODEMRESET", handle_at_modemreset},
 	{"AT#XUUID", handle_at_uuid},
 	{"AT#XCLAC", handle_at_clac},
 	{"AT#XSLMUART", handle_at_slmuart},

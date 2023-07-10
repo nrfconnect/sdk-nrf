@@ -168,18 +168,28 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
+* Added:
+
+  * ``#XMODEMRESET`` AT command to reset the modem while keeping the application running.
+    It is expected to be used during modem firmware update, which now only requires a reset of the modem.
+
 * Updated:
 
   * The configuration to enable support for nRF Cloud A-GPS service and nRF Cloud Location service by default.
   * UART receive refactored to utilize hardware flow control (HWFC) instead of disabling and enabling UART receiving between commands.
   * UART transmit has been refactored to utilize buffering.
     Multiple responses can now be received in a single transmission.
+  * Modem FOTA to only need a modem reset to apply the firmware update.
+    The full chip reset (using the ``#XRESET`` AT command) remains supported.
 
 * Removed:
 
   * DFU AT commands ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` because they were not usable without a custom application in the target (nRF52 series) device.
   * Support for bootloader FOTA update because it is not needed for Serial LTE modem.
   * Option to set or get HWFC setting from ``#XSLMUART`` AT command.
+  * Operations to read or erase the MCUboot secondary slot from the ``#XFOTA`` AT command because
+    the application update process overwrites the slot in any case.
+
 
 nRF5340 Audio
 -------------
