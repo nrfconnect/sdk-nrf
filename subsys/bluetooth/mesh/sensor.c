@@ -343,10 +343,24 @@ int sensor_column_decode(
 		return err;
 	}
 
-	err = sensor_ch_decode(buf, col_format, &col->end);
+	if (buf->len == 0) {
+		LOG_WRN("The requested column didn't exist: %s",
+			bt_mesh_sensor_ch_str(&col->start));
+		return -ENOENT;
+	}
+
+	struct sensor_value width;
+
+	err = sensor_ch_decode(buf, col_format, &width);
 	if (err) {
 		return err;
 	}
+
+	uint64_t end_mill = (col->start.val1 + width.val1) * 1000000ULL +
+			 (col->start.val2 + width.val2);
+
+	col->end.val1 = end_mill / 1000000ULL;
+	col->end.val2 = end_mill % 1000000ULL;
 
 	return sensor_value_decode(buf, type, value);
 }
