@@ -11,6 +11,7 @@
 #include <zephyr/drivers/uart.h>
 #include <dfu/dfu_target.h>
 #include "slm_at_fota.h"
+#include "slm_settings.h"
 
 LOG_MODULE_REGISTER(slm_config, CONFIG_SLM_LOG_LEVEL);
 
@@ -18,8 +19,8 @@ LOG_MODULE_REGISTER(slm_config, CONFIG_SLM_LOG_LEVEL);
  * Serial LTE Modem setting page for persistent data
  */
 uint8_t fota_type;		/* FOTA: image type */
-uint8_t fota_stage;		/* FOTA: stage of FOTA process */
-uint8_t fota_status;		/* FOTA: OK/Error status */
+enum fota_stage fota_stage = FOTA_STAGE_INIT;		/* FOTA: stage of FOTA process */
+enum fota_status fota_status;		/* FOTA: OK/Error status */
 int32_t fota_info;		/* FOTA: failure cause in case of error or download percentage*/
 
 bool uart_configured;		/* UART: first-time configured */
@@ -109,7 +110,7 @@ int slm_settings_init(void)
 	return ret;
 }
 
-int slm_setting_fota_save(void)
+int slm_settings_fota_save(void)
 {
 	int ret;
 
@@ -138,7 +139,7 @@ int slm_setting_fota_save(void)
 	return 0;
 }
 
-void slm_setting_fota_init(void)
+void slm_settings_fota_init(void)
 {
 	fota_type = DFU_TARGET_IMAGE_TYPE_ANY;
 	fota_stage = FOTA_STAGE_INIT;
@@ -146,7 +147,7 @@ void slm_setting_fota_init(void)
 	fota_info = 0;
 }
 
-int slm_setting_uart_save(void)
+int slm_settings_uart_save(void)
 {
 	int ret;
 

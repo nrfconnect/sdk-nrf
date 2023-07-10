@@ -7,12 +7,15 @@
 #ifndef SLM_AT_FOTA_
 #define SLM_AT_FOTA_
 
-/**@file slm_at_fota.h
+/** @file slm_at_fota.h
  *
  * @brief Vendor-specific AT command for FOTA service.
  * @{
  */
-enum fota_stages {
+
+#include <stdint.h>
+
+enum fota_stage {
 	FOTA_STAGE_INIT,
 	FOTA_STAGE_DOWNLOAD,
 	FOTA_STAGE_DOWNLOAD_ERASE_PENDING,
@@ -26,6 +29,11 @@ enum fota_status {
 	FOTA_STATUS_ERROR,
 	FOTA_STATUS_CANCELLED
 };
+
+extern uint8_t fota_type;
+extern enum fota_stage fota_stage;
+extern enum fota_status fota_status;
+extern int32_t fota_info;
 
 /**
  * @brief Initialize FOTA AT command parser.
@@ -45,9 +53,8 @@ int slm_at_fota_uninit(void);
 
 /**
  * @brief FOTA post-process after reboot.
- *
  */
 void slm_fota_post_process(void);
-/** @} */
 
+/** @} */
 #endif /* SLM_AT_FOTA_ */

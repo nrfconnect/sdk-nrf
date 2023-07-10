@@ -12,6 +12,7 @@
 #include <zephyr/sys/ring_buffer.h>
 #include <zephyr/pm/device.h>
 #include <pm_config.h>
+#include "slm_settings.h"
 #include "slm_uart_handler.h"
 
 #include <zephyr/logging/log.h>
@@ -66,7 +67,6 @@ extern bool uart_configured;
 extern struct uart_config slm_uart;
 
 /* global functions defined in different files */
-int slm_setting_uart_save(void);
 int indicate_start(void);
 
 static inline struct rx_buf_t *block_start_get(uint8_t *buf)
@@ -409,9 +409,9 @@ int slm_uart_handler_init(slm_uart_rx_callback_t callback_t)
 			LOG_ERR("uart_config_get: %d", err);
 			return err;
 		}
-		err = slm_setting_uart_save();
+		err = slm_settings_uart_save();
 		if (err != 0) {
-			LOG_ERR("slm_setting_uart_save: %d", err);
+			LOG_ERR("slm_settings_uart_save: %d", err);
 			return err;
 		}
 	} else {

@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <zephyr/net/socket.h>
-#include <modem/modem_info.h>
 #include <modem/modem_key_mgmt.h>
 #include "slm_util.h"
 #include "slm_native_tls.h"

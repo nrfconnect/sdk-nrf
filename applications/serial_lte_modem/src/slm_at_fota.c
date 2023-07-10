@@ -3,17 +3,17 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr/logging/log.h>
-
 #include <stdint.h>
-#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <nrf_modem_delta_dfu.h>
 #include <zephyr/dfu/mcuboot.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/net/http/parser_url.h>
 #include <net/fota_download.h>
 #include "slm_util.h"
+#include "slm_settings.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 #include "pm_config.h"
@@ -46,16 +46,8 @@ enum slm_fota_operation {
 static char path[FILE_URI_MAX];
 static char hostname[URI_HOST_MAX];
 
-/* global functions defined in different files */
-int slm_setting_fota_init(void);
-int slm_setting_fota_save(void);
-
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
-extern uint8_t fota_type;
-extern uint8_t fota_stage;
-extern uint8_t fota_status;
-extern int32_t fota_info;
 
 static int do_fota_erase_app(void)
 {
@@ -271,7 +263,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		fota_info = 0;
 		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		/* Save, in case reboot by reset */
-		slm_setting_fota_save();
+		slm_settings_fota_save();
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		fota_stage = FOTA_STAGE_DOWNLOAD_ERASE_PENDING;
@@ -286,15 +278,14 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		fota_info = evt->cause;
 		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status, fota_info);
 		/* FOTA session terminated */
-		slm_setting_fota_init();
+		slm_settings_fota_init();
 		break;
-
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
 		fota_status = FOTA_STATUS_CANCELLED;
 		fota_info = 0;
 		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
 		/* FOTA session terminated */
-		slm_setting_fota_init();
+		slm_settings_fota_init();
 		break;
 
 	default:
@@ -388,22 +379,16 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief API to initialize FOTA AT commands handler
- */
 int slm_at_fota_init(void)
 {
 	return fota_download_init(fota_dl_handler);
 }
 
-/**@brief API to uninitialize FOTA AT commands handler
- */
 int slm_at_fota_uninit(void)
 {
 	return 0;
 }
 
-/**@brief API to handle post-FOTA processing
- */
 void slm_fota_post_process(void)
 {
 	LOG_DBG("FOTA result %d,%d,%d", fota_stage, fota_status, fota_info);
@@ -417,6 +402,6 @@ void slm_fota_post_process(void)
 		}
 	}
 	/* FOTA session completed */
-	slm_setting_fota_init();
-	slm_setting_fota_save();
+	slm_settings_fota_init();
+	slm_settings_fota_save();
 }
