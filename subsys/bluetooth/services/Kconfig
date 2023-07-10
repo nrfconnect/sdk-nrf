@@ -35,5 +35,7 @@ rsource "Kconfig.mds"
 rsource "cgms/Kconfig.cgms"
 rsource "fast_pair/Kconfig.fast_pair"
 rsource "wifi_prov/Kconfig.wifi_prov"
+rsource "esl/Kconfig.esl"
+rsource "esl/Kconfig.esl_client"
 
 endmenu

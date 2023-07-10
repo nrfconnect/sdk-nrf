@@ -1,0 +1,221 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_ESL
+	bool "Nordic ESL service"
+	select EXPERIMENTAL
+	select BT_EAD
+	select SETTINGS
+	select BT_GATT_POOL
+	help
+	  Enable Nordic ESL service.
+
+if BT_ESL
+rsource "Kconfig.esl.defaults"
+
+config BT_ESL_DISPLAY_MAX
+	int "Maximum number of display elements"
+	default 0
+	range 0 255
+	help
+	  Maximum number of display element device.
+
+config BT_ESL_IMAGE_AVAILABLE
+	bool "ESL peripheral can display image"
+	help
+	  ESL has capability to display image, should expose characteristic
+
+config ESL_DISPLAY_WIDTH
+	int "Display witdh"
+	default 240
+	range 0 65535
+	help
+		pixels each row could be displayed
+
+config ESL_DISPLAY_HEIGHT
+	int "Display height"
+	default 240
+	range 0 65535
+	help
+		how many columns could be displayed
+
+config ESL_DISPLAY_COLOR_DEPTH
+	int "Display depth of bytes"
+	default 2
+	range 0 3
+
+config ESL_DISPLAY_TYPE
+	int "Display Type assigned number"
+	default 1
+	range 1 12
+	help
+		SIG Assigned number https://bitbucket.org/bluetooth-SIG/registry/pull-requests/132/request-for-assigned-numbers-for-published?link_source=email
+		* display_types:
+		- name: black white
+			value: 0x01
+		- name: three gray scale
+			value: 0x02
+		- name: four gray scale
+			value: 0x03
+		- name: eight gray scale
+			value: 0x04
+		- name: sixteen gray scale
+			value: 0x05
+		- name: red black white
+			value: 0x06
+		- name: yellow black white
+			value: 0x07
+		- name: red yellow black white
+			value: 0x08
+		- name: seven color
+			value: 0x09
+		- name: sixteen color
+			value: 0x0A
+		- name: full RGB
+			value: 0x0B"
+
+config ESL_IMAGE_FILE_SIZE
+	int "Image object max size"
+	default 4096
+	range 0 102400
+	help
+	  how many bytes of each image, width x height x color bit depth
+
+config ESL_IMAGE_BUFFER_SIZE
+	int "Buffer size to store image data from OTS or storage backend"
+	default 1024
+	range 0 16484
+	  help
+	   The size should be choose depending on BT_ESL_STORAGE_BACKEND.
+	   Should be the same size of ESL_IMAGE_FILE_SIZE if choose fs which is capiable to read/write offset. e.g.:ESL_OTS_NVS.
+	   Should be equal or large than L2CAP RX MTU or width of panel if choose fs which is capable to read/write offset. e.g.:ESL_OTS_LFS.
+
+config BT_ESL_IMAGE_MAX
+	int "Maximum number of image could be stored and displayed"
+	default 0
+	range 0 255
+	help
+	  Maximum number of image could be stored and displayed, equal to Max_Image_Index + 1
+
+config BT_ESL_SENSOR_MAX
+	int "Maximum number of sensor elements"
+	default 0
+	range 0 255
+	help
+	  Maximum number of sensor element device.
+
+config BT_ESL_VENDOR_SPECIFIC_SUPPORT
+	bool "ESL TAG has vendor-specific sensor or OP support"
+	select BT_DIS
+
+config BT_ESL_LED_MAX
+	int "Maximum number of led elements"
+	default 0
+	range 0 255
+	help
+	  Maximum number of led element device.
+
+config BT_ESL_LED_INDICATION
+	bool "Use last LED as Tag state indication"
+	help
+	  Use last LED as indication, fast blink while advertising, one blink while receiving sync packet, on while ACL
+
+choice BT_ESL_STORAGE_BACKEND
+	prompt "Default storage backend for image store"
+	default ESL_OTS_NVS
+	help
+	  Default filesystem or flash storage to store image
+	config ESL_OTS_NVS
+		bool "Use Non-Volatile Storage (NVS) with internal flash to store Image"
+
+	config ESL_OTS_LFS
+		bool "Use Littlefs with external flash to store Image"
+		select FILE_SYSTEM
+		select FILE_SYSTEM_LITTLEFS
+
+endchoice # BT_ESL_STORAGE_BACKEND
+
+config BT_ESL_COND_SERVICE_REQUIRED
+	bool "Service Needed for sensor support"
+	help
+		Enable service needed bit in basic state. For IOP test.
+
+config BT_ESL_ATTR_MAX
+	int "Maximum number of GATT attribute descriptors"
+	default 50
+	range 0 255
+	help
+	  Maximum number of GATT attribute descriptors that can be set for HIDS.
+
+choice BT_ESL_PERM
+	prompt "Default permissions used for ESL attributes"
+	default BT_ESL_DEFAULT_PERM_RW_ENCRYPT
+	help
+	  Default permissions for ESL characteristic attributes
+	  used when no permission is set for the report.
+	  Used also for boot reports.
+
+	config BT_ESL_DEFAULT_PERM_RW
+		bool "Read and write allowed"
+
+	config BT_ESL_DEFAULT_PERM_RW_ENCRYPT
+		bool "Require encryption for access"
+
+	config BT_ESL_DEFAULT_PERM_RW_AUTHEN
+		bool "Require encryption using authenticated link-key for access"
+
+endchoice # BT_ESL_PERM
+
+config BT_ESL_MAX_QUEUED_TIMED_COMMANDS
+	int "The maximum number of queued timed commands for an instance in the future."
+	default 1
+	range 0 255
+	help
+		Equal to TSPX_max_queued_timed_commands
+
+config ESL_SHELL
+	bool "Enable ESL Shell"
+	select SHELL
+	help
+	  Enable ESL Shell for testing.
+
+config ESL_SYNC_COUNT
+	int "Number of PA sync or receive count before entering synced mode"
+	range 1 20
+	help
+	  Count before entering synced mode.
+
+config BT_ESL_DEMO_SECURITY
+	bool "DEMO security level"
+	help
+	  Enable this, bonding data will be auto clear after disconnect
+
+config BT_ESL_FORGET_PROVISION_DATA
+	bool "Not to save data provsion by AP"
+	help
+	  Enable this, AP key, Response Key, ESL address won't be saved
+
+config BT_ESL_UNSYNCHRONIZED_TIMEOUT
+	int "Seconds before entering unsynchronized state"
+	range 1 3600
+	default 3600
+	help
+	  ESL Service 2.7.3.3 Synchronized state defines 60 minutes before ESL transitions to the Unsynchronized state if an ESL does not receive a valid ESL message in a synchronization.
+	  For development purpose change this value.
+
+config BT_ESL_UNASSOCIATED_TIMEOUT
+	int "Secondes before entering unassociated state"
+	range 1 3600
+	default 3600
+	help
+	  ESL Service 2.7.3.5 Unsynchronized state defines 60 minutes if the ESL is not moved to the Updating state for 60 minutes, then the ESL shall transition to the Unassociated state.
+	  For development purpose change this value.
+
+module = BT_ESL
+module-str = ESL
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_ESL

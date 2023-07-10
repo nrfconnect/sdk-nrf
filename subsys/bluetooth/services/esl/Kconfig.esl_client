@@ -1,0 +1,137 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+
+menuconfig BT_ESL_CLIENT
+	bool "Nordic ESL service client"
+	select EXPERIMENTAL
+	select BT_EAD
+	select SETTINGS
+	help
+	  Enable BLE GATT Nordic ESL service client.
+
+if BT_ESL_CLIENT
+rsource "Kconfig.esl_client.defaults"
+
+config BT_ESL_PERIPHERAL_MAX
+	int "How many ESL devices can be ACL connected at the same time by this AP"
+	default BT_MAX_CONN
+	help
+	  Specify Max ESL peripheral can be connected.
+
+config ESL_IMAGE_FILE_SIZE
+	int "Image object max size"
+	default 20480
+	range 0 102400
+	help
+	  how many bytes of each image, should align to 4KB if lfs in internal flash
+
+config BT_ESL_MAX_PAIRED
+	int "How many ESL devices can be bonded by this AP"
+	default BT_MAX_PAIRED
+
+config ESL_CLIENT_SHELL
+	bool "Enable ESL client Shell"
+	default y
+	select SHELL
+	help
+	  Enable ESL client Shell for testing.
+
+config ESL_PAWR_INTERVAL_MIN
+	int "Minimum advertising interval for periodic advertising."
+	range 6 65535
+	help
+	  Periodic_Advertising_Interval_Min of 7.8.61 LE Set Periodic Advertising Parameters command[V2]
+
+config ESL_PAWR_INTERVAL_MAX
+	int "Maximum advertising interval for periodic advertising."
+	range 6 65535
+	help
+	  Periodic_Advertising_Interval_Max of 7.8.61 LE Set Periodic Advertising Parameters command[V2]
+
+config ESL_CLIENT_MAX_GROUP
+	int "Number of subevents. How many groups of ESL in AP."
+	range 1 128
+	help
+	  Num_Subevents of 7.8.61 LE Set Periodic Advertising Parameters command[V2]
+
+config ESL_SUBEVENT_INTERVAL
+	int "Time between the subevents of PAwR"
+	range 6 255
+	help
+	  Subevent_Interval of 7.8.61 LE Set Periodic Advertising Parameters command[V2]
+
+config ESL_RESPONSE_SLOT_DELAY
+	int "Time between the advertising packet in a subevent and the first response slot"
+	range 1 254
+	help
+	  Response_Slot_Delay of 7.8.61 LE Set Periodic Advertising Parameters command[V2]
+
+config ESL_RESPONSE_SLOT_SPACING
+	int "Time between response slots"
+	range 2 255
+	help
+	  Response_Slot_Spacing of 7.8.61 LE Set Periodic Advertising Parameters command[V2]
+
+config ESL_NUM_RESPONSE_SLOTS
+	int "Number of subevent response slots."
+	range 1 128
+	help
+	  Num_Response_Slots of 7.8.61 LE Set Periodic Advertising Parameters command[V2]
+
+config ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER
+	int "buffer how many response data single subevent"
+	range 1 23
+	help
+	  Maximun response of ESL is floor((48-1)/2) = 23
+
+config ESL_CLIENT_DEFAULT_ESL_ID
+	hex "default ESL_ID for IOP. Equal to TSPX_esl_id."
+	default 0
+	range 0 0xFE
+
+config ESL_CLIENT_DEFAULT_GROUP_ID
+	hex "default ESL_ID for IOP. Equal to TSPX_group_id."
+	default 0
+	range 0 0x7F
+
+config BT_ESL_MAX_QUEUED_TIMED_COMMANDS
+	int "The maximum number of queued timed commands for an instant in the future."
+	default 1
+	range 1 1
+	help
+	  Equal to TSPX_max_queued_timed_commands
+
+config BT_ESL_SCAN_REPORT_INTERVAL
+	int "The interval AP report scanned TAG list"
+	range 10 120
+	help
+	  Periodic send URC message to show list of advertising TAG scanned.
+
+config BT_ESL_TAG_STORAGE
+	bool "Save tag information to storage"
+	help
+	  Save tag information to flash when connected can search tag information.
+	  TODO:Encrypt filename and content.
+
+config BT_ESL_DEMO_SECURITY
+	bool "DEMO security level"
+	help
+	  Enable this, bonding data will be auto clear after disconnect
+
+config BT_ESL_LED_INDICATION
+	bool "Use LEDs as AP state indication"
+	help
+	  Use LEDs as indication.
+	  LED1 solid on when AP is powered up.
+	  LED1 blinks when AP is scanning and onboarding tag.
+	  LED2 solid on when AP connect to a tag.
+	  LED3 blinks when AP is sending ESL PAwR command to tag.
+
+module = BT_ESL_CLIENT
+module-str = ESL Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endif # BT_ESL_CLIENT

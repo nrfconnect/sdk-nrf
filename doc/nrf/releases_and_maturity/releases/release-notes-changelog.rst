@@ -92,6 +92,11 @@ Bluetooth® LE
   The previous :file:`hci_err.h` header has been merged into the new :file:`hci_types.h` header.
   This can break builds that were directly including :file:`hci_err.h`.
 
+* Added:
+
+  * :ref:`esl_service_readme` library.
+  * :ref:`esl_service_client_readme` library.
+
 Bluetooth mesh
 --------------
 
@@ -283,6 +288,11 @@ Bluetooth samples
 * :ref:`peripheral_hids_keyboard` sample:
 
   * Fixed an interoperability issue with iOS devices by setting the report IDs of HID input and output reports to zero.
+
+* Added:
+
+  * :ref:`central_esl` sample.
+  * :ref:`peripheral_esl` sample.
 
 * :ref:`peripheral_fast_pair` sample:
 
