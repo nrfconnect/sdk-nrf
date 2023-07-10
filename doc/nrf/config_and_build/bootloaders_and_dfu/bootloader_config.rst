@@ -20,9 +20,9 @@ However, there are other ways to customize your application using Kconfig option
 Using custom project configurations
 ***********************************
 
-You can also use custom project configuration files to set permanent options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`.
+You can use custom project configuration options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`, either temporarily until you clean the build pristinely or permamently.
 
-For example, you can assign custom project configurations for both the bootloaders and a sample application as follows:
+For example, you can temporarily assign custom project configurations for both the bootloaders and a sample application as follows:
 
 .. code-block:: console
 
@@ -32,6 +32,10 @@ For example, you can assign custom project configurations for both the bootloade
    -DCONF_FILE=prj_app.conf
 
 In the example above, :file:`prj_app.conf` includes :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` to enable the immutable and upgradable bootloaders by default.
+The configuration applied during the command execution is taken into account until you clean the build pristinely.
+
+Alternatively, you can follow :ref:`ug_multi_image_permanent_changes` and store configuration options for child images in separate files in the application source directory.
+For example, in the |NCS| applications and samples that use different :ref:`build types for configuration <gs_modifying_build_types>`, the :file:`child_image` folder in the application source directory is often used to apply :ref:`permanent configuration changes <configuration_permanent_change>`.
 
 You can use custom project configuration files in combination with temporary configuration options associated with a single build, set using either the command line or Kconfig fragments.
 

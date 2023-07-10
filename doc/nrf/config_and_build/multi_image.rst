@@ -83,7 +83,7 @@ When building the parent image, you can configure how the child image should be 
 When building the child image from the source or using a prebuilt HEX file, the build system merges the HEX files of both the parent and child image, so that they can be programmed in one single step.
 This means that you can enable and integrate an additional image just by using the default configuration.
 
-To change the default configuration and configure how a child image is handled, locate the BUILD_STRATEGY configuration options for the child image in the parent image configuration.
+To change the default configuration and configure how a child image is handled, locate the ``BUILD_STRATEGY`` Kconfig options for the child image in the parent image configuration.
 For example, to use a prebuilt HEX file of the MCUboot instead of building it, select :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE` instead of the default :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE`, and specify the HEX file in :kconfig:option:`CONFIG_MCUBOOT_HEX_FILE`.
 To ignore an MCUboot child image, select :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` instead of :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE`.
 
@@ -215,9 +215,20 @@ The child and parent images are executed in different CMake processes and thus h
 Variables in the parent image are not propagated to the child image, with the following exceptions:
 
 * Any variable named ``<IMAGE_NAME>_VARIABLEONE`` in a parent image is propagated to the child image named ``<IMAGE_NAME>`` as ``VARIABLEONE``.
+  See `Temporary variables in child images`_ for more information.
 * CMake build settings, such as ``BOARD_DIR``, build type, toolchain info, partition manager info, and similar are always passed to child images.
+  See `Permanent configuration changes to child images`_ for more information.
 
-With these two mechanisms, you can set variables in child images from either parent images or the command line, and you can also set variables globally across all images.
+Using these two exceptions, you can set variables in child images from either parent images or the command line, and you can also set variables globally across all images.
+
+.. _ug_multi_image_variables_fragments:
+
+Temporary variables in child images
+-----------------------------------
+
+It is possible to provide variables to the child images.
+These variables will be valid until you :ref:`clean the build directory pristinely <configuration_temporary_change>`.
+
 For example, to change the ``VARIABLEONE`` variable for the ``childimageone`` child image and the parent image, specify the CMake command as follows:
 
   .. parsed-literal::
@@ -230,25 +241,19 @@ For example, add ``--trace-expand`` to that variable to output more debug inform
 
 With west, you can pass these configuration variables into CMake by using the ``--`` separator:
 
-.. code-block:: console
+  .. code-block:: console
 
-   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
-   -Dmcuboot_CONF_FILE=prj_a.conf \
-   -DCONF_FILE=app_prj.conf
+     west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
+     -Dmcuboot_CONF_FILE=prj_a.conf \
+     -DCONF_FILE=app_prj.conf
 
-You can make a project pass Kconfig configuration files, fragments, and devicetree overlays to child images by placing them in the :file:`child_image` folder in the application source directory.
-The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
+Child image Kconfig modification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. literalinclude:: ../../../cmake/multi_image.cmake
-    :language: c
-    :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
-    :end-before: set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
-
-Variables in child images
--------------------------
-
-It is possible to provide configuration settings for child images, either as individual settings or using Kconfig fragments.
+It is possible to provide Kconfig configuration for child images, either as individual settings or using Kconfig fragments.
 Each child image is referenced using its image name.
+
+These temporary settings will be valid until you :ref:`clean the build directory pristinely <configuration_temporary_change>`.
 
 The following example sets the configuration option ``CONFIG_VARIABLEONE=val`` in the child image ``childimageone``:
 
@@ -309,8 +314,8 @@ When the build system finds the fragment, it outputs their merge during the CMak
    Merged configuration '\ *abc.conf*\'
    ...
 
-Child image devicetree overlays
-===============================
+Child image devicetree modification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can provide devicetree overlays for a child image using ``*.overlay`` files.
 
@@ -333,6 +338,21 @@ The build system does also automatically apply any devicetree overlay located in
 
    The build system grabs the devicetree overlay files specified in a CMake argument relative to that image's application directory.
    For example, the build system uses ``nrf/samples/bootloader/my-dts.overlay`` when building with the ``-Db0_DTC_OVERLAY_FILE=my-dts.overlay`` option, whereas ``-DDTC_OVERLAY_FILE=my-dts.overlay`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-dts.overlay``.
+
+.. _ug_multi_image_permanent_changes:
+
+Permanent configuration changes to child images
+-----------------------------------------------
+
+You can make a project automatically pass Kconfig configuration files, fragments, and devicetree overlays to child images by placing them under a predefined path.
+For example, in the |NCS| applications and samples that use different :ref:`build types for configuration <gs_modifying_build_types>`, the :file:`child_image` folder in the application source directory is often used to apply :ref:`permanent configuration changes <configuration_permanent_change>`.
+
+The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
+
+.. literalinclude:: ../../../cmake/multi_image.cmake
+    :language: c
+    :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
+    :end-before: set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
 
 Child image targets
 ===================
