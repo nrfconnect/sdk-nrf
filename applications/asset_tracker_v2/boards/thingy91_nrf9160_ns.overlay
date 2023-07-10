@@ -22,4 +22,10 @@
 	adxl362: adxl362@0 {
 		autosleep;
 	};
+
+	adxl372: adxl372@1 {
+		odr = <4>;
+		bw = <4>;
+		hpf = <0>;
+	};
 };
