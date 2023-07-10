@@ -244,12 +244,11 @@ void enter_shutdown(void)
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
 }
 
-static void handle_nrf_modem_lib_init_ret(int ret)
+bool handle_nrf_modem_lib_init_ret(int ret)
 {
-	/* Handle return values relating to modem firmware update */
 	switch (ret) {
 	case 0:
-		return; /* Initialization successful, no action required. */
+		return false; /* Initialization successful, no action required. */
 	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
 		fota_stage = FOTA_STAGE_COMPLETE;
@@ -271,23 +270,28 @@ static void handle_nrf_modem_lib_init_ret(int ret)
 	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
 		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
 		LOG_ERR("Please reboot once you have sufficient power for the DFU");
+		fota_stage = FOTA_STAGE_ACTIVATE;
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = ret;
 		break;
 	default:
+		if (ret >= 0) {
+			LOG_WRN("Unhandled nrf_modem_lib_init() return code %d.", ret);
+			break;
+		}
 		/* All non-zero return codes other than DFU result codes are
 		 * considered irrecoverable and a reboot is needed.
 		 */
 		LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = ret;
+		slm_settings_fota_save();
+		LOG_WRN("Rebooting...");
+		LOG_PANIC();
+		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	}
-
-	slm_settings_fota_save();
-	LOG_WRN("Rebooting...");
-	LOG_PANIC();
-	sys_reboot(SYS_REBOOT_COLD);
+	return true;
 }
 
 static void handle_mcuboot_swap_ret(void)
@@ -327,9 +331,6 @@ static void handle_mcuboot_swap_ret(void)
 	default:
 		break;
 	}
-
-	/* Save fota status */
-	slm_settings_fota_save();
 }
 
 int start_execute(void)
@@ -388,7 +389,7 @@ int main(void)
 	/* Post-FOTA handling */
 	if (fota_stage != FOTA_STAGE_INIT) {
 		if (fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
-			handle_nrf_modem_lib_init_ret(ret);
+			slm_finish_modem_fota(ret);
 		} else if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
 			handle_mcuboot_swap_ret();
 		} else {

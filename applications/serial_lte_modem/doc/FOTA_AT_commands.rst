@@ -17,110 +17,92 @@ The ``#XFOTA`` command sends various types of FOTA requests, based on specific o
 Set command
 -----------
 
-The set command allows you to send a FOTA request.
+The set command performs FOTA-related operations.
 
 Syntax
 ~~~~~~
 
 ::
 
-   AT#XFOTA=<op>,<file_url>[,<sec_tag>[,<pdn_id>]]
+   AT#XFOTA=<op>[,<file_url>[,<sec_tag>[,<pdn_id>]]]
 
-* The ``<op>`` parameter can accept one of the following values:
+* The ``<op>`` parameter must be one of the following values:
 
   * ``0`` - Cancel FOTA (during download only).
   * ``1`` - Start FOTA for application update.
   * ``2`` - Start FOTA for modem delta update.
-  * ``6`` - Read application image size and version (optional for application FOTA).
-  * ``7`` - Read modem scratch space size and offset (optional for modem FOTA).
-  * ``8`` - Erase MCUboot secondary slot (optional for application FOTA).
-  * ``9`` - Erase modem scratch space (optional for modem FOTA).
+  * ``7`` - Read modem DFU area size and firmware image offset.
+  * ``9`` - Erase modem DFU area.
 
 * The ``<file url>`` parameter is a string.
   It represents the full HTTP or HTTPS path of the target image to download.
+  It must be provided to the start operations.
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag used for establishing a secure connection for downloading the image.
   It is associated with the certificate or PSK.
-  Specifying the ``<sec_tag>`` is mandatory when using HTTPS.
+  It must be provided to the start operations when using HTTPS.
 * The ``<pdn_id>`` parameter is an integer.
   It represents the Packet Data Network (PDN) ID that can be used instead of the default PDN for downloading.
+  It can be provided to the start operations.
+
+.. note::
+
+   When doing modem FOTA, erasing the modem DFU area is optional since the update process will automatically erase the area if needed.
+
+   However, this leads to the command starting the update taking longer to complete, and also leaves the connection to the FOTA server idle while the area is being erased, which can provoke issues.
 
 Response syntax
 ~~~~~~~~~~~~~~~
 
 ::
 
-  #XFOTA: <primary_partition_id>,<MCUBOOT_version>,<img_size>,<img_version>
-  #XFOTA: <secondary_partition_id>,<MCUBOOT_version>,<img_size>,<img_version>
-
-* The ``<primary_partition_id>`` and ``<secondary_partition_id>`` integers give the partition ID.
-* The ``<MCUBOOT_version>`` major version integer. Value 1 corresponds to MCUboot versions 1.x.y.
-* The ``<img_size>`` integer gives the size of the application image in this partition in bytes.
-* The ``<img_version>`` string gives the version of the application image as "<major>.<minor>.<revision>+<build_number>".
-
-::
-
+  AT#XFOTA=7
   #XFOTA: <size>,<offset>
 
 * The ``<size>`` integer gives the size of the modem DFU area in bytes.
 * The ``<offset>`` integer gives the offset of the firmware image in the modem DFU area.
+  It is ``0`` if no image is in the modem DFU area, and ``2621440`` (:c:macro:`NRF_MODEM_DELTA_DFU_OFFSET_DIRTY`) if the modem DFU area needs to be erased before a new firmware update can be received.
 
 Example
 ~~~~~~~
 
 ::
 
-   Read image size and version
-   at#xfota=6
-   #XFOTA: 3,1,295288,"0.0.0+0"
-   #XFOTA: 7,1,294376,"0.0.0+0"
-   OK
-
-   Application download and activate
+   application firmware download and update
    AT#XFOTA=1,"http://remote.host/fota/slm_app_update.bin"
-   OK
-   #XFOTA: 1,0,0
-   ...
-   #XFOTA:4,0
-   AT#XRESET
-   OK
-   READY
-   #XFOTA: 5,0
-
-   Erase previous image after FOTA
-   AT#XFOTA=8
-   OK
-
-   Read modem scratch space size and offset
-   at#xfota=7
-   #XFOTA: 368640,0
-   OK
-
-   Erase modem scratch space before FOTA
-   AT#XFOTA=9
-   OK
-
-   Modem download and activate
-   AT#XFOTA=2,"http://remote.host/fota/mfw_nrf9160_update_from_1.3.0_to_1.3.0-FOTA-TEST.bin"
    OK
    #XFOTA: 1,0,0
    ...
    #XFOTA: 4,0
    AT#XRESET
    OK
-   READY
+   Ready
    #XFOTA: 5,0
 
-   Application download and activate if NSIB is enabled
-   AT#XFOTA=1,"http://remote.host/fota/slm_app_update.bin+slm_app_update.bin"
+   read modem DFU info
+   AT#XFOTA=7
+   #XFOTA: 294912,0
+   OK
+
+   modem firmware download and update
+   AT#XFOTA=2,"http://remote.host/fota/mfw_nrf9160_update_from_1.3.4_to_1.3.5.bin"
    OK
    #XFOTA: 1,0,0
    ...
-   #XFOTA:4,0
-   AT#XRESET
-   OK
-   READY
+   #XFOTA: 4,0
+   AT#XMODEMRESET
    #XFOTA: 5,0
+   #XMODEMRESET: 0
+   OK
+
+   read modem DFU info
+   AT#XFOTA=7
+   #XFOTA: 294912,2621440
+   OK
+
+   erase modem DFU area for next modem FOTA (optional)
+   AT#XFOTA=9
+   OK
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,9 +138,9 @@ Unsolicited notification
   +-------------------------+----------------------------+-------------------------------------------------------------------------------+
   |``1`` (namely *Download*)| ``1`` (namely *ERROR*)     | Error Code                                                                    |
   +-------------------------+----------------------------+-------------------------------------------------------------------------------+
-  |``5`` (namely *Complete*)| ``1`` (namely *ERROR*)     | Error Code                                                                    |
-  +-------------------------+----------------------------+-------------------------------------------------------------------------------+
   |``1`` (namely *Download*)| ``2`` (namely *CANCELLED*) | ``0`` - Downloading is cancelled before completion                            |
+  +-------------------------+----------------------------+-------------------------------------------------------------------------------+
+  |``5`` (namely *Complete*)| ``1`` (namely *ERROR*)     | Error Code                                                                    |
   +-------------------------+------------------------+---+-------------------------------------------------------------------------------+
 
   The error codes can be the following:
@@ -169,10 +151,11 @@ Unsolicited notification
 
   For modem FOTA, the error codes can be the following:
 
-  * ``0x4400001u`` - The modem encountered a fatal internal error during firmware update.
-  * ``0x4400002u`` - The modem encountered a fatal hardware error during firmware update.
-  * ``0x4400003u`` - Modem firmware update failed, due to an authentication error.
-  * ``0x4400004u`` - Modem firmware update failed, due to UUID mismatch.
+  * ``71303169`` (:c:macro:`NRF_MODEM_DFU_RESULT_INTERNAL_ERROR`) - The modem encountered a fatal internal error during firmware update.
+  * ``71303170`` (:c:macro:`NRF_MODEM_DFU_RESULT_HARDWARE_ERROR`) - The modem encountered a fatal hardware error during firmware update.
+  * ``71303171`` (:c:macro:`NRF_MODEM_DFU_RESULT_AUTH_ERROR`) - Modem firmware update failed due to an authentication error.
+  * ``71303172`` (:c:macro:`NRF_MODEM_DFU_RESULT_UUID_ERROR`) - Modem firmware update failed due to UUID mismatch.
+  * ``71303173`` (:c:macro:`NRF_MODEM_DFU_RESULT_VOLTAGE_LOW`) - Modem firmware update not executed due to low voltage. The modem will retry the update on reboot.
 
 Read command
 ------------
