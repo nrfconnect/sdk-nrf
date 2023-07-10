@@ -1014,6 +1014,7 @@ struct nrf_wifi_connect_common_info {
 	unsigned char control_port_no_encrypt;
 	signed char control_port;
 	unsigned char prev_bssid[NRF_WIFI_ETH_ADDR_LEN];
+	unsigned short maxidle_insec;
 
 } __NRF_WIFI_PKD;
 
