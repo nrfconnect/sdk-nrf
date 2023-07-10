@@ -10,4 +10,4 @@ zephyr_library_sources(
 )
 zephyr_include_directories(./include)
 zephyr_include_directories_ifdef(CONFIG_SECURE_BOOT
-  ${ZEPHYR_BASE}/../nrf/subsys/dfu/include)
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/include)

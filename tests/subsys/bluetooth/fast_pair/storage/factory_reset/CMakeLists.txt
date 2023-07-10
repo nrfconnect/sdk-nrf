@@ -17,6 +17,6 @@ target_sources(app PRIVATE
 target_include_directories(app PRIVATE ../common/include)
 
 # Add Fast Pair storage as part of the test
-set(NCS_FAST_PAIR_BASE ${NRF_DIR}/subsys/bluetooth/services/fast_pair)
+set(NCS_FAST_PAIR_BASE ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/services/fast_pair)
 add_subdirectory(${NCS_FAST_PAIR_BASE}/fp_storage fp_storage)
 target_link_libraries(app PRIVATE fp_storage)

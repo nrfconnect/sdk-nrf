@@ -8,11 +8,11 @@ set(common_dir ${CMAKE_CURRENT_SOURCE_DIR}/../common/src)
 
 include_directories(
 	${common_dir}
-	${NRF_DIR}/samples/bluetooth/mesh/common
+	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common
 )
 
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources}
-	${NRF_DIR}/samples/bluetooth/mesh/common/smp_bt.c
+	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt.c
 	${common_dir}/dfu_target.c
 )

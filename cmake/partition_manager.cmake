@@ -278,7 +278,7 @@ set(pm_out_dotconf_file ${APPLICATION_BINARY_DIR}/pm${UNDERSCORE_DOMAIN}.config)
 
 set(pm_cmd
   ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/partition_manager.py
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/partition_manager.py
   --input-files ${input_files}
   --regions ${regions}
   --output-partitions ${pm_out_partition_file}
@@ -290,7 +290,7 @@ set(pm_cmd
 
 set(pm_output_cmd
   ${PYTHON_EXECUTABLE}
-  ${NRF_DIR}/scripts/partition_manager_output.py
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/partition_manager_output.py
   --input-partitions ${pm_out_partition_file}
   --input-regions ${pm_out_region_file}
   --config-file ${pm_out_dotconf_file}
@@ -613,7 +613,7 @@ to the external flash")
   # available. Generate the global pm_config.h, and provide it to all images.
   set(pm_global_output_cmd
     ${PYTHON_EXECUTABLE}
-    ${NRF_DIR}/scripts/partition_manager_output.py
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/partition_manager_output.py
     --input-partitions ${pm_out_partition_file}
     --input-regions ${pm_out_region_file}
     --header-files ${header_files}

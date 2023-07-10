@@ -28,7 +28,7 @@ file(WRITE
 execute_process(
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMAND ${Python3_EXECUTABLE}
-    ${NRF_DIR}/scripts/bootloader/dfu_multi_image_tool.py
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/dfu_multi_image_tool.py
     create
     --image -1 update1.bin
     --image 1000000 update2.bin

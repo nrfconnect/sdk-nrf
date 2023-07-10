@@ -9,7 +9,7 @@ zephyr_library_sources(l2_wifi_conn.c)
 
 zephyr_library_include_directories(
     ${ZEPHYR_BASE}/include
-    ${ZEPHYR_BASE}/../nrf/include
-    ${ZEPHYR_BASE}/../modules/lib/hostap
+    ${ZEPHYR_NRF_MODULE_DIR}/include
+    ${ZEPHYR_HOSTAP_MODULE_DIR}
     ${ZEPHYR_BASE}/subsys/net/conn_mgr
     )

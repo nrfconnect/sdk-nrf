@@ -191,7 +191,7 @@ function(add_child_image_from_source)
   # Pass information that the partition manager is enabled to Kconfig.
   add_overlay_config(
     ${ACI_NAME}
-    ${NRF_DIR}/subsys/partition_manager/partition_manager_enabled.conf
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/partition_manager_enabled.conf
     )
 
   if (${ACI_NAME}_BOARD)

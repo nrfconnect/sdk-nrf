@@ -35,7 +35,7 @@ target_include_directories(platform_s
   ${partition_includes}
   ${board_includes}
   services/include
-  ${NRF_DIR}/include
+  ${ZEPHYR_NRF_MODULE_DIR}/include
   )
 
 target_sources(platform_s
@@ -84,8 +84,8 @@ if (${TFM_PARTITION_CRYPTO})
 
     target_sources(platform_s
       PRIVATE
-        ${NRF_DIR}/lib/hw_unique_key/hw_unique_key.c
-        ${NRF_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key.c
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
     )
   endif()
 
@@ -141,8 +141,8 @@ if(TFM_PARTITION_PLATFORM)
   target_include_directories(platform_s
     PUBLIC
     include
-    ${NRF_DIR}/include/tfm
-    ${NRF_DIR}/include
+    ${ZEPHYR_NRF_MODULE_DIR}/include/tfm
+    ${ZEPHYR_NRF_MODULE_DIR}/include
     )
 
   target_sources(platform_s
@@ -154,8 +154,8 @@ if(TFM_PARTITION_PLATFORM)
   target_include_directories(platform_ns
     PUBLIC
     include
-    ${NRF_DIR}/include/tfm
-    ${NRF_DIR}/include
+    ${ZEPHYR_NRF_MODULE_DIR}/include/tfm
+    ${ZEPHYR_NRF_MODULE_DIR}/include
     )
 
   target_compile_definitions(platform_ns

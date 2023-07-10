@@ -40,7 +40,7 @@ function(dfu_multi_image_package TARGET_NAME)
     add_custom_target(${TARGET_NAME} ALL
         COMMAND
         ${Python3_EXECUTABLE}
-        ${NRF_DIR}/scripts/bootloader/dfu_multi_image_tool.py
+        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/dfu_multi_image_tool.py
         @${ARG_OUTPUT}.args
         BYPRODUCTS
         ${ARG_OUTPUT}

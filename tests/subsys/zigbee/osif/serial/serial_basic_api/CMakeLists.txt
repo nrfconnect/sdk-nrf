@@ -23,7 +23,7 @@ zephyr_compile_definitions(CONFIG_ZIGBEE_UART_PARTIAL_TX_TIMEOUT=10)
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_RX_BUF_LEN=16)
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_TX_BUF_LEN=128)
 
-zephyr_include_directories(${ZEPHYR_BASE}/../nrf/subsys/zigbee/osif)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/zigbee/osif)
 zephyr_include_directories(${NRFXLIB_DIR}/zboss/production/include)
 zephyr_include_directories(${NRFXLIB_DIR}/zboss/production/include/osif)
 

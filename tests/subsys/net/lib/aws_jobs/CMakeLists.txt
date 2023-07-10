@@ -16,5 +16,5 @@ target_sources(app PRIVATE ${app_sources})
 
 target_include_directories(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/include/net/
+  ${ZEPHYR_NRF_MODULE_DIR}/include/net/
   )

@@ -19,7 +19,7 @@ target_sources(app PRIVATE ${app_sources})
 target_include_directories(app PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/
-	${NRF_DIR}/../nrfxlib/nrf_modem/include/)
+	${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 
 target_sources(app PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/mock/date_time_mock.c

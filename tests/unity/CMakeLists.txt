@@ -16,7 +16,7 @@ macro(configure_unity_conf_file mock_name exclude_fn_list exclude_word_list out_
   set(out_dir ${APPLICATION_BINARY_DIR}/mocks)
 
   if("${mock_name}" STREQUAL "")
-    configure_file(${NRF_DIR}/tests/unity/${unity_config_template}
+    configure_file(${ZEPHYR_NRF_MODULE_DIR}/tests/unity/${unity_config_template}
                    ${out_dir}/${unity_config_file_name}
     )
     set(${out_config_file} ${out_dir}/${unity_config_file_name})
@@ -34,7 +34,7 @@ macro(configure_unity_conf_file mock_name exclude_fn_list exclude_word_list out_
       set(CMOCK_STRIPPABLES "${CMOCK_STRIPPABLES}${strip_word}")
     endforeach()
     set(${out_config_file} ${out_dir}/${mock_name}.${unity_config_file_name})
-    configure_file(${NRF_DIR}/tests/unity/${unity_config_template} ${${out_config_file}})
+    configure_file(${ZEPHYR_NRF_MODULE_DIR}/tests/unity/${unity_config_template} ${${out_config_file}})
     set(CMOCK_STRIPPABLES)
   endif()
 endmacro()
@@ -159,7 +159,7 @@ function(cmock_linker_wrap_trick header_file_path)
   execute_process(
     COMMAND
     ${PYTHON_EXECUTABLE}
-    ${NRF_DIR}/scripts/unity/func_name_list.py
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/unity/func_name_list.py
     --input ${header_file_path}
     --output ${flist_file}
     ${exclude_arg}
@@ -184,7 +184,7 @@ function(cmock_headers_prepare in_header out_header wrap_header)
   execute_process(
     COMMAND
     ${PYTHON_EXECUTABLE}
-    ${NRF_DIR}/scripts/unity/header_prepare.py
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/unity/header_prepare.py
     "--input" ${in_header}
     "--output" ${out_header}
     "--wrap" ${wrap_header}

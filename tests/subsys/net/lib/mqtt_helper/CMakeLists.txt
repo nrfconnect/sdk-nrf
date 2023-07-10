@@ -18,14 +18,14 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/socket.h zephyr/net)
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE
-        ${NRF_DIR}/subsys/net/lib/mqtt_helper/mqtt_helper.c
+        ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/mqtt_helper/mqtt_helper.c
 )
 
 # Add test source file
 target_sources(app PRIVATE src/mqtt_helper_test.c)
 
 # Include paths
-target_include_directories(app PRIVATE ${NRF_DIR}/include/zephyr/net/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/zephyr/net/)
 
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE

@@ -14,14 +14,14 @@ target_sources(app PRIVATE ${app_sources})
 
 target_include_directories(app
         PRIVATE
-        ${ZEPHYR_BASE}/../nrf/include/net/
+        ${ZEPHYR_NRF_MODULE_DIR}/include/net/
         ${ZEPHYR_BASE}/subsys/net/ip/
         src/
         )
 
 add_library(download_client STATIC
-        ${ZEPHYR_BASE}/../nrf/subsys/net/lib/download_client/src/download_client.c
-        ${ZEPHYR_BASE}/../nrf/subsys/net/lib/download_client/src/parse.c
+        ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/src/download_client.c
+        ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/src/parse.c
         )
 
 target_link_libraries(download_client PUBLIC zephyr_interface)

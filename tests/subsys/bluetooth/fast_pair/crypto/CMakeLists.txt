@@ -13,6 +13,6 @@ project("Fast Pair crypto unit test")
 target_sources(app PRIVATE src/main.c)
 
 # Add Fast Pair crypto as part of the test
-set(NCS_FAST_PAIR_BASE ${NRF_DIR}/subsys/bluetooth/services/fast_pair)
+set(NCS_FAST_PAIR_BASE ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/services/fast_pair)
 add_subdirectory(${NCS_FAST_PAIR_BASE}/fp_crypto fp_crypto)
 target_link_libraries(app PRIVATE fp_crypto)

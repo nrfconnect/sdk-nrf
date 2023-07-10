@@ -9,15 +9,15 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(bt_mesh_sensor_subsystem_test)
 
 target_include_directories(app PUBLIC
-  ${NRF_DIR}/subsys/bluetooth/mesh
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh
   ${ZEPHYR_BASE}/subsys/bluetooth
   )
 
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE
   ${app_sources}
-  ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.c
-  ${NRF_DIR}/subsys/bluetooth/mesh/sensor.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/sensor_types.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/sensor.c
   ${ZEPHYR_BASE}/subsys/bluetooth/mesh/msg.c
   )
 

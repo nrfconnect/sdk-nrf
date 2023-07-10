@@ -17,9 +17,9 @@ set(ASSET_TRACKER_V2_DIR ../..)
 
 # Create mocks
 cmock_handle(${ASSET_TRACKER_V2_DIR}/src/modules/modules_common.h)
-cmock_handle(${NRF_DIR}/include/app_event_manager.h)
-cmock_handle(${NRF_DIR}/subsys/app_event_manager/app_event_manager_priv.h)
-cmock_handle(${NRF_DIR}/include/dk_buttons_and_leds.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/app_event_manager.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/app_event_manager/app_event_manager_priv.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/dk_buttons_and_leds.h)
 
 # Include target sources
 target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/modules/ui_module.c)
@@ -29,8 +29,8 @@ target_include_directories(app PRIVATE .)
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/)
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/modules/)
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/events/)
-target_include_directories(app PRIVATE ${NRF_DIR}/subsys/app_event_manager)
-target_include_directories(app PRIVATE ${NRF_DIR}/modules/cjson/include)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/app_event_manager)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/modules/cjson/include)
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 
 # Options that cannot be passed through Kconfig fragments

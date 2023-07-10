@@ -13,16 +13,16 @@ FILE(GLOB app_sources src/*.c)
 target_sources(app
   PRIVATE
   ${app_sources}
-  ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_srv.c
-  ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_reg.c
-  ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_reg_spec.c
-  ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.c
-  ${NRF_DIR}/subsys/bluetooth/mesh/sensor.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/light_ctrl_srv.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/light_ctrl_reg.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/light_ctrl_reg_spec.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/sensor_types.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/sensor.c
   )
 
 target_include_directories(app
   PRIVATE
-  ${NRF_DIR}/subsys/bluetooth/mesh
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh
   ${ZEPHYR_BASE}/subsys/bluetooth
   )
 
@@ -61,7 +61,7 @@ target_compile_options(app
   -DCONFIG_BT_MESH_USES_TINYCRYPT
 )
 
-zephyr_linker_sources(SECTIONS ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.ld)
+zephyr_linker_sources(SECTIONS ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/sensor_types.ld)
 
 zephyr_ld_options(
     ${LINKERFLAGPREFIX},--allow-multiple-definition

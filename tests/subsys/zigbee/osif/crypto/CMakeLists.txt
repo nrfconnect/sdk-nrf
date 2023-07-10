@@ -27,7 +27,7 @@ if (${BOARD} STREQUAL "nrf5340dk_nrf5340_cpuapp")
 endif()
 
 target_include_directories(app PRIVATE
-  ${NRF_DIR}/subsys/zigbee/osif
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/zigbee/osif
   ${NRFXLIB_DIR}/zboss/production/include
   ${NRFXLIB_DIR}/zboss/production/include/osif
 )
@@ -36,5 +36,5 @@ project(osif_crypto)
 
 target_sources(app PRIVATE
   src/main.c
-  ${NRF_DIR}/subsys/zigbee/osif/zb_nrf_crypto.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/zigbee/osif/zb_nrf_crypto.c
 )
