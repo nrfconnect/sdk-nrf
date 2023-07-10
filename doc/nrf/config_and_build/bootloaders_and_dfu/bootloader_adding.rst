@@ -7,7 +7,7 @@ Adding a bootloader chain
    :local:
    :depth: 2
 
-You can add bootloader chains to an application in the following ways:
+You can add a bootloader chain to an application in the following ways:
 
 * Permanently:
 
@@ -16,8 +16,8 @@ You can add bootloader chains to an application in the following ways:
 
 * Temporarily (for a single build):
 
-   * Using :ref:`one-time CMake arguments <zephyr:west-building-cmake-args>`.
-   * Using :ref:`zephyr:menuconfig`.
+  * Using :ref:`one-time CMake arguments <zephyr:west-building-cmake-args>`.
+  * Using :ref:`zephyr:menuconfig`.
 
 
 While you can use temporary configurations for quickly experimenting with different configurations from build to build, the recommended method is to implement your bootloader chain with permanent configurations.
@@ -26,6 +26,7 @@ Both Kconfig fragments and Kconfig project configuration files use the same Kcon
 You can add bootloader chains to nearly any sample in |NCS| or Zephyr for rapid testing and experimentation.
 
 Choose the bootloader type depending on your application needs.
+For detailed information about the bootloader support in the |NCS| and the general architecture, see :ref:`ug_bootloader`.
 
 .. _ug_bootloader_adding_immutable:
 
@@ -59,10 +60,15 @@ To ensure that the immutable bootloader occupies as little flash memory as possi
 
 See :ref:`ug_bootloader_config` for more information about using Kconfig fragments.
 
+Configuring |NSIB| as an immutable bootloader
+---------------------------------------------
+
+The following sections describe different configuration options available for |NSIB| as an immutable bootloader.
+
 .. _ug_bootloader_adding_immutable_keys:
 
 Adding a custom signature key file
-----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To add a signature key file to this bootloader, set the :kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE` option in the application's :file:`prj.conf` file, in an associated Kconfig fragment, or using the command line:
 
@@ -158,7 +164,7 @@ If there is no file diff output, then the private key has been successfully incl
 .. _ug_bootloader_adding_immutable_b0_custom_signing:
 
 Custom signing commands
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want complete control over the key handling of a project, you can use a custom signing command with |NSIB|.
 Using a custom signing command removes the need to use of a private key from the build system.
@@ -214,7 +220,7 @@ See the description of :kconfig:option:`CONFIG_SB_SIGNING_COMMAND` for which arg
 Adding MCUboot as an immutable bootloader
 =========================================
 
-To build :doc:`mcuboot:index-ncs` with a Zephyr or |NCS| sample, enable the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` in the application's :file:`prj.conf` file, an associated Kconfig fragment, or using the command line:
+To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enable the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` in the application's :file:`prj.conf` file, an associated Kconfig fragment, or using the command line:
 
 .. code-block:: console
 
@@ -223,10 +229,15 @@ To build :doc:`mcuboot:index-ncs` with a Zephyr or |NCS| sample, enable the :kco
 |how_to_configure|
 Like other child images, you can assign :ref:`image-specific configurations <ug_multi_image_variables>` at build time to further customize the bootloader's functionality.
 
+Configuring MCUboot as an immutable bootloader
+----------------------------------------------
+
+The following sections describe different configuration options available for MCUboot as an immutable bootloader.
+
 .. _ug_bootloader_adding_immutable_mcuboot_keys:
 
 Adding a custom signature key file
-----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To pass the signature key file into the MCUboot image, set its :kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE` option to the selected private key file.
 You can set the option in :file:`bootloader/mcuboot/boot/zephyr/prj.conf`, an associated Kconfig fragment, or using the command line:
@@ -286,35 +297,39 @@ The following section describes how to add it to your secure bootloader chain.
 Adding MCUboot as an upgradable bootloader
 ==========================================
 
-To use MCUboot as an upgradable bootloader, the application must already use the |NSIB| as the immutable bootloader.
-MCUboot is added to its boot chain by including the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option with either the build command or in the application's :file:`prj.conf` file:
+To use MCUboot as an upgradable bootloader to your application, complete the following steps:
 
-.. code-block::
+1. :ref:`Add |NSIB| as the immutable bootloader <ug_bootloader_adding_immutable_b0>`.
+#. Add MCUboot to the boot chain by including the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option with either the build command or in the application's :file:`prj.conf` file:
 
-   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
-   -DCONFIG_SECURE_BOOT=y \
-   -DCONFIG_BOOTLOADER_MCUBOOT=y
+   .. code-block::
 
-|how_to_configure|
+      west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
+      -DCONFIG_SECURE_BOOT=y \
+      -DCONFIG_BOOTLOADER_MCUBOOT=y
 
-MCUboot can use the cryptographic functionality exposed by the immutable bootloader, reducing the flash memory usage for MCUboot to less than 16 kB.
-To enable this configuration, apply both the :file:`prj_minimal.conf` Kconfig project file and the :file:`external_crypto.conf` Kconfig fragment for the MCUboot image:
+   |how_to_configure|
 
-.. code-block::
+#. Optionally, you can configure MCUboot to use the cryptographic functionality exposed by the immutable bootloader and reduce the flash memory usage for MCUboot to less than 16 kB.
+   To enable this configuration, apply both the :file:`prj_minimal.conf` Kconfig project file and the :file:`external_crypto.conf` Kconfig fragment for the MCUboot image:
 
-   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
-   -DCONFIG_BOOTLOADER_MCUBOOT=y \
-   -DCONFIG_SECURE_BOOT=y \
-   -Dmcuboot_CONF_FILE=prj_minimal.conf \
-   -Dmcuboot_OVERLAY_CONFIG=external_crypto.conf
+   .. code-block::
 
-See :ref:`ug_bootloader_config` for more information about using Kconfig fragments with bootloaders.
+      west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
+      -DCONFIG_BOOTLOADER_MCUBOOT=y \
+      -DCONFIG_SECURE_BOOT=y \
+      -Dmcuboot_CONF_FILE=prj_minimal.conf \
+      -Dmcuboot_OVERLAY_CONFIG=external_crypto.conf
 
-Adding an upgradable bootloader to an application changes its flash memory partition layout to accommodate first and second image slots for both immutable and upgradable bootloaders.
-See :ref:`ug_bootloader_flash_mcuboot` for more information about how this bootloader organizes its flash memory layout.
+   See :ref:`ug_bootloader_config` for more information about using Kconfig fragments with bootloaders.
+
+Configuring MCUboot as an upgradable bootloader
+-----------------------------------------------
+
+The following sections describe different configuration options available for MCUboot as an upgradable bootloader.
 
 Adding a custom signature key file
-----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The process to use specific signature keys with MCUboot used as the upgradable bootloader is the same as when it is used :ref:`as the immutable one <ug_bootloader_adding_immutable_mcuboot_keys>`.
 
@@ -326,7 +341,7 @@ The process to use specific signature keys with MCUboot used as the upgradable b
 .. _ug_bootloader_adding_presigned_variants:
 
 Generating pre-signed variants
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Enable the :kconfig:option:`CONFIG_BUILD_S1_VARIANT` Kconfig option when building the upgradable bootloader to automatically generate :ref:`pre-signed variants <upgradable_bootloader_presigned_variants>` of the image for both slots:
 

@@ -65,23 +65,43 @@ There are two implementations currently supported:
   .. figure:: images/bootloader_memory_layout.svg
      :alt: Memory layout
 
-For detailed information about the memory layout, see the partition configuration in the :file:`partitions.yml` file, located in the build folder directory, or run ``ninja partition_manager_report``.
+By default, building an application with any bootloader configuration creates a :ref:`multi-image build <ug_multi_image>`, where the :ref:`partition_manager` manages its memory partitions.
+In this case, bootloaders are built as child images.
+When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, then :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is built with the image automatically.
+From the bootloader perspective, the TF-M is part of the booted application image.
+
+.. _ug_bootloader_flash_static_requirement:
+
+Static partition requirement for DFU
+====================================
+
+By default, the Partition Manager generates the partition map dynamically.
+As long as you are not using Device Firmware Updates (DFU), you can use the dynamic generation of memory partitions.
+
+However, if you want to perform DFU, you must :ref:`define a static partition map <ug_pm_static>` because the dynamically generated partitions can change between builds.
+This is important also when you use a precompiled HEX file as a child image instead of building it.
+In such cases, the newly generated application images may no longer use a partition map that is compatible with the partition map used by the bootloader.
+As a result, the newly built application image may not be bootable by the bootloader.
 
 .. note::
+   For detailed information about the memory layout used for the build, see the partition configuration in the :file:`partitions.yml` file, located in the build folder directory, or run ``ninja partition_manager_report``.
    You must enable the Partition Manager to make the :file:`partitions.yml` file and the ``partition_manager_report`` target available.
-   See :ref:`partition_manager` and :ref:`ug_multi_image` for details.
 
-By default, building an application with any bootloader configuration creates a :ref:`multi-image build <ug_multi_image>`, where the :ref:`partition_manager` manages its memory partitions.
-When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, then :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is also built with the image automatically.
+   The :file:`partitions.yml` file is present also if the Partition Manager generates the partition map dynamically.
+   You can use this file as a base for your static partition map.
+
+The memory partitions that must be defined in the static partition map depend on the selected bootloader chain.
+For details, see :ref:`ug_bootloader_flash`.
 
 .. _immutable_bootloader:
 
-First-stage immutable bootloader
-================================
+Immutable bootloader
+====================
 
-The first step in the chain of trust is a secure, immutable, first-stage bootloader.
+The first step in the chain of trust is a secure, immutable bootloader.
+This bootloader can be used alone (as a single-stage bootloader) or together with a `Second-stage upgradable bootloader`_ (as a first-stage bootloader).
 
-This immutable bootloader runs after every reset and establishes the root of trust by verifying the signature and metadata of the next image in the boot sequence.
+The immutable bootloader runs after every reset and establishes the root of trust by verifying the signature and metadata of the next image in the boot sequence.
 If the verification fails, the boot process stops.
 This way, the immutable bootloader can guarantee that the next image in the boot sequence will not start up if it has been tampered with in any way.
 For example, if an attacker attempts to take over the device by altering the firmware, the device will not boot, and thus not run the infected code.
@@ -103,7 +123,7 @@ The :ref:`bootloader capabilities table <app_bootloaders_support_table>` indicat
 
 .. _upgradable_bootloader:
 
-Second-stage Upgradable bootloader
+Second-stage upgradable bootloader
 ==================================
 
 If you also need the capability of updating the bootloader, you can add a second-stage upgradable bootloader to the bootloader chain.
