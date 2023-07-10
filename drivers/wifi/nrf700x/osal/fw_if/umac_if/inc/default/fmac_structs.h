@@ -77,8 +77,8 @@ enum wifi_nrf_fmac_if_carr_state {
 /**
  * @brief Callback functions to be invoked by UMAC IF layer when a particular event occurs.
  *
- * This structure contains function pointers to all the callback functions that
- * the UMAC IF layer needs to invoked for various events.
+ * This structure contains function pointers to the callback functions that
+ * the UMAC IF layer needs to invoke for various events.
  */
 struct wifi_nrf_fmac_callbk_fns {
 	/** Callback function to be called when an interface association state changes. */
@@ -146,17 +146,17 @@ struct wifi_nrf_fmac_callbk_fns {
 					      struct nrf_wifi_umac_event_mlme *unprot_mlme_event,
 					      unsigned int event_len);
 
-	/** Callback function to be called when a TX power get response is received. */
+	/** Callback function to be called when a get TX power response is received. */
 	void (*tx_pwr_get_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_get_tx_power *info,
 				     unsigned int event_len);
 
-	/** Callback function to be called when a channel get response is received. */
+	/** Callback function to be called when a get channel response is received. */
 	void (*chnl_get_callbk_fn)(void *os_vif_ctx,
 				   struct nrf_wifi_umac_event_get_channel *info,
 				   unsigned int event_len);
 
-	/** Callback function to be called when a station get response is received. */
+	/** Callback function to be called when a get station response is received. */
 	void (*sta_get_callbk_fn)(void *os_vif_ctx,
 				  struct nrf_wifi_umac_event_new_station *info,
 				  unsigned int event_len);
@@ -171,7 +171,7 @@ struct wifi_nrf_fmac_callbk_fns {
 				    struct nrf_wifi_umac_event_mlme *tx_status_event,
 				    unsigned int event_len);
 
-	/** Callback function to be called when an interface set response is received. */
+	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
 				 struct nrf_wifi_umac_event_set_interface *set_if_event,
 				 unsigned int event_len);
@@ -186,12 +186,12 @@ struct wifi_nrf_fmac_callbk_fns {
 				     struct nrf_wifi_event_remain_on_channel *roc_cancel_event,
 				     unsigned int event_len);
 
-	/** Callback function to be called when a station get response is received. */
+	/** Callback function to be called when a get station response is received. */
 	void (*get_station_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_new_station *info,
 				     unsigned int event_len);
 
-	/** Callback function to be called when an interface get response is received. */
+	/** Callback function to be called when an get interface response is received. */
 	void (*get_interface_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_interface_info *info,
 				     unsigned int event_len);
@@ -375,8 +375,8 @@ enum wifi_nrf_fmac_twt_state {
 /**
  * @brief Structure to hold per device context information for the UMAC IF layer.
  *
- * This structure maintains the context information necessary for the
- * a single instance of an FullMAC based RPU.
+ * This structure maintains the context information necessary for a single instance
+ * of a FullMAC based RPU.
  */
 struct wifi_nrf_fmac_dev_ctx {
 	/** Handle to the FMAC IF abstraction layer. */
@@ -431,8 +431,8 @@ struct wifi_nrf_fmac_dev_ctx {
 /**
  * @brief Structure to hold per VIF context information for the UMAC IF layer.
  *
- * This structure maintains the context information necessary for the
- * a single instance of an VIF.
+ * This structure maintains the context information necessary for a single
+ * instance of a VIF.
  */
 struct wifi_nrf_fmac_vif_ctx {
 	/** Handle to the FMAC IF abstraction layer. */
