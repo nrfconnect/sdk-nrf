@@ -311,7 +311,7 @@ static int time_since_presence_detected_get(struct bt_mesh_sensor_srv *srv,
 	if (pres_detect) {
 		rsp->val1 = 0;
 	} else if (prev_detect) {
-		rsp->val1 = (k_uptime_get_32() - prev_detect) / MSEC_PER_SEC;
+		rsp->val1 = MIN((k_uptime_get_32() - prev_detect) / MSEC_PER_SEC, 0xFFFF);
 	} else {
 		/* Before first detection, the time since last detection is unknown. Returning
 		 * unknown value until a detection is done. Value is defined in specification.
