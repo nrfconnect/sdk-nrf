@@ -5,7 +5,6 @@
  */
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/drivers/uart.h>
@@ -25,6 +24,7 @@
 #include <net/fota_download.h>
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
+#include "slm_settings.h"
 
 LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 
@@ -39,16 +39,8 @@ static struct k_work_delayable indicate_work;
 /* global variable used across different files */
 struct k_work_q slm_work_q;
 
-/* global variable defined in different files */
-extern uint8_t fota_type;
-extern uint8_t fota_stage;
-extern uint8_t fota_status;
-extern int32_t fota_info;
-
 /* global functions defined in different files */
 int poweron_uart(void);
-int slm_settings_init(void);
-int slm_setting_fota_save(void);
 
 /* Forward declarations */
 static void indicate_wk(struct k_work *work);
@@ -292,13 +284,13 @@ static void handle_nrf_modem_lib_init_ret(int ret)
 		break;
 	}
 
-	slm_setting_fota_save();
+	slm_settings_fota_save();
 	LOG_WRN("Rebooting...");
 	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
-void handle_mcuboot_swap_ret(void)
+static void handle_mcuboot_swap_ret(void)
 {
 	int err;
 
@@ -337,7 +329,7 @@ void handle_mcuboot_swap_ret(void)
 	}
 
 	/* Save fota status */
-	slm_setting_fota_save();
+	slm_settings_fota_save();
 }
 
 int start_execute(void)
@@ -371,8 +363,6 @@ static void indicate_wk(struct k_work *work)
 
 int main(void)
 {
-	int err;
-
 	uint32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
 
 	nrf_power_resetreas_clear(NRF_POWER_NS, 0x70017);
@@ -388,16 +378,17 @@ int main(void)
 		LOG_WRN("Failed to init slm settings");
 	}
 
-	err = nrf_modem_lib_init();
-	if (err < 0) {
-		LOG_ERR("Modem library init failed, err: %d", err);
-		return err;
+	const int ret = nrf_modem_lib_init();
+
+	if (ret < 0) {
+		LOG_ERR("Modem library init failed, err: %d", ret);
+		return ret;
 	}
 
 	/* Post-FOTA handling */
 	if (fota_stage != FOTA_STAGE_INIT) {
 		if (fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
-			handle_nrf_modem_lib_init_ret(err);
+			handle_nrf_modem_lib_init_ret(ret);
 		} else if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
 			handle_mcuboot_swap_ret();
 		} else {
@@ -405,17 +396,17 @@ int main(void)
 			fota_status = FOTA_STATUS_ERROR;
 			fota_info = -EAGAIN;
 		}
-		return start_execute();
 	}
-
 #if defined(CONFIG_SLM_START_SLEEP)
-	if ((rr & NRF_POWER_RESETREAS_OFF_MASK) ||     /* DETECT signal from GPIO*/
-	    (rr & NRF_POWER_RESETREAS_DIF_MASK)) {     /* Entering debug interface mode */
-		return start_execute();
+	else {
+		if ((rr & NRF_POWER_RESETREAS_OFF_MASK) ||  /* DETECT signal from GPIO*/
+			(rr & NRF_POWER_RESETREAS_DIF_MASK)) {  /* Entering debug interface mode */
+			return start_execute();
+		}
+		enter_sleep();
+		return 0;
 	}
-	enter_sleep();
-	return 0;
-#else
-	return start_execute();
 #endif /* CONFIG_SLM_START_SLEEP */
+
+	return start_execute();
 }

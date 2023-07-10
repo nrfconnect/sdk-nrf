@@ -91,7 +91,7 @@ Example
 
 ::
 
-   at#xclac
+   AT#XCLAC
    AT#XSLMVER
    AT#XSLEEP
    AT#XCLAC
@@ -238,7 +238,7 @@ Syntax
 
    In this case the nRF9160 SiP cannot be woken up using the :ref:`CONFIG_SLM_WAKEUP_PIN <CONFIG_SLM_WAKEUP_PIN>`..
 
-Examples
+Example
 ~~~~~~~~
 
 ::
@@ -260,7 +260,7 @@ The test command is not supported.
 Reset #XRESET
 =============
 
-The ``#XRESET`` command performs a soft reset to the nRF9160 SiP.
+The ``#XRESET`` command performs a soft reset of the nRF9160 SiP.
 
 Set command
 -----------
@@ -274,7 +274,7 @@ Syntax
 
    #XRESET
 
-Examples
+Example
 ~~~~~~~~
 
 ::
@@ -356,7 +356,7 @@ Syntax
 
 ::
 
-   AT#XSLMUART?
+   #XSLMUART?
 
 Response syntax
 ~~~~~~~~~~~~~~~

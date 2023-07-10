@@ -3,32 +3,33 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr/types.h>
-#include <zephyr/sys/util.h>
-#include <zephyr/kernel.h>
-#include <stdio.h>
 #include <ctype.h>
-#include <zephyr/logging/log.h>
-#include <zephyr/drivers/uart.h>
+#include <stdio.h>
 #include <string.h>
 #include <zephyr/init.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/types.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/modem_jwt.h>
-#include <zephyr/sys/reboot.h>
 #include "nrf_modem.h"
 #include "ncs_version.h"
 
 #include "slm_util.h"
+#include "slm_settings.h"
 #include "slm_at_host.h"
 #include "slm_at_tcp_proxy.h"
 #include "slm_at_udp_proxy.h"
 #include "slm_at_socket.h"
-#if defined(CONFIG_SLM_NATIVE_TLS)
-#include "slm_at_cmng.h"
-#endif
 #include "slm_at_icmp.h"
 #include "slm_at_sms.h"
 #include "slm_at_fota.h"
+#if defined(CONFIG_SLM_NATIVE_TLS)
+#include "slm_at_cmng.h"
+#endif
 #if defined(CONFIG_SLM_NRF_CLOUD)
 #include "slm_at_nrfcloud.h"
 #endif
@@ -59,14 +60,14 @@ LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 /* This delay is necessary for at_host to send response message in low baud rate. */
 #define SLM_UART_RESPONSE_DELAY 50
 
-/**@brief Shutdown modes. */
+/** @brief Shutdown modes. */
 enum sleep_modes {
 	SLEEP_MODE_INVALID,
 	SLEEP_MODE_DEEP,
 	SLEEP_MODE_IDLE
 };
 
-/**@brief AT command handler type. */
+/** @brief AT command handler type. */
 typedef int (*slm_at_handler_t) (enum at_cmd_type);
 
 static struct slm_work_info {
@@ -87,7 +88,6 @@ void enter_shutdown(void);
 int slm_uart_configure(void);
 int poweroff_uart(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
-extern int slm_setting_uart_save(void);
 
 static void modem_power_off(void)
 {
@@ -114,8 +114,8 @@ static void modem_power_off(void)
 	}
 }
 
-/**@brief handle AT#XSLMVER commands
- *  #XSLMVER
+/** @brief Handles AT#XSLMVER command.
+ *  AT#XSLMVER
  *  AT#XSLMVER? not supported
  *  AT#XSLMVER=? not supported
  */
@@ -132,6 +132,7 @@ static int handle_at_slmver(enum at_cmd_type type)
 
 	return ret;
 }
+
 static void go_sleep_wk(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -149,7 +150,7 @@ static void go_sleep_wk(struct k_work *work)
 	}
 }
 
-/**@brief handle AT#XSLEEP commands
+/** @brief Handles AT#XSLEEP commands.
  *  AT#XSLEEP=<sleep_mode>
  *  AT#XSLEEP? not supported
  *  AT#XSLEEP=?
@@ -176,7 +177,7 @@ static int handle_at_sleep(enum at_cmd_type type)
 	return ret;
 }
 
-/**@brief handle AT#XSHUTDOWN commands
+/** @brief Handles AT#XSHUTDOWN command.
  *  AT#XSHUTDOWN
  *  AT#XSHUTDOWN? not supported
  *  AT#XSHUTDOWN=? not supported
@@ -196,7 +197,7 @@ static int handle_at_shutdown(enum at_cmd_type type)
 	return ret;
 }
 
-/**@brief handle AT#XRESET commands
+/** @brief Handles AT#XRESET command.
  *  AT#XRESET
  *  AT#XRESET? not supported
  *  AT#XRESET=? not supported
@@ -250,13 +251,13 @@ static void set_uart_wk(struct k_work *work)
 		LOG_ERR("slm_uart_configure: %d", err);
 		return;
 	}
-	err = slm_setting_uart_save();
+	err = slm_settings_uart_save();
 	if (err != 0) {
-		LOG_ERR("uart_config_set: %d", err);
+		LOG_ERR("slm_settings_uart_save: %d", err);
 	}
 }
 
-/**@brief handle AT#XSLMUART commands
+/** @brief Handles AT#XSLMUART commands.
  *  AT#XSLMUART[=<baud_rate>]
  *  AT#XSLMUART?
  *  AT#XSLMUART=?
@@ -310,7 +311,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
 	return ret;
 }
 
-/**@brief handle AT#XDATACTRL commands
+/** @brief Handles AT#XDATACTRL commands.
  *  AT#XDATACTRL=<time_limit>
  *  AT#XDATACTRL?
  *  AT#XDATACTRL=?
@@ -349,7 +350,7 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 	return ret;
 }
 
-/**@brief handle AT#XCLAC commands
+/** @brief Handles AT#XCLAC command.
  *  AT#XCLAC
  *  AT#XCLAC? not supported
  *  AT#XCLAC=? not supported
