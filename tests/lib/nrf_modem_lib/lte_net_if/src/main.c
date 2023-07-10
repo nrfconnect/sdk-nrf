@@ -11,7 +11,7 @@
 #include <zephyr/device.h>
 
 /* UUT header file */
-#include "lte_connectivity.h"
+#include "lte_net_if.h"
 
 /* Mocked libraries */
 #include "cmock_lte_lc.h"
@@ -56,13 +56,13 @@ static void bring_network_interface_up(void)
 	TEST_ASSERT_EQUAL(0, net_if_up(net_if));
 }
 
-static void network_interface_down_option_set(enum lte_connectivity_if_down_options value,
+static void network_interface_down_option_set(enum nrf_modem_lib_net_if_down_options value,
 					      int retval_expected)
 {
 	uint8_t option = value;
 
 	int ret = conn_mgr_if_set_opt(net_if_get_default(),
-				      LTE_CONNECTIVITY_IF_DOWN,
+				      NRF_MODEM_LIB_NET_IF_DOWN,
 				      (const void *)&option,
 				      sizeof(option));
 
@@ -114,8 +114,8 @@ void setUp(void)
 	conn_mgr_if_set_flag(net_if, CONN_MGR_IF_PERSISTENT, false);
 
 	/* Reset options */
-	uint8_t option = LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT;
-	(void)conn_mgr_if_set_opt(net_if, LTE_CONNECTIVITY_IF_DOWN,
+	uint8_t option = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
+	(void)conn_mgr_if_set_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN,
 					  (const void *)&option,
 					  sizeof(option));
 
@@ -140,7 +140,7 @@ void tearDown(void)
 	mock_nrf_modem_at_Verify();
 }
 
-/* Verify lte_connectivity_init().
+/* Verify nrf_modem_lib_netif_init().
  * This function is called at SYS init by the Connection Manager.
  */
 
@@ -154,7 +154,7 @@ void test_init_should_set_network_interface_as_dormant(void)
 void test_init_should_set_timeout(void)
 {
 	struct net_if *net_if = net_if_get_default();
-	int timeout_desired = CONFIG_LTE_CONNECTIVITY_CONNECT_TIMEOUT_SECONDS;
+	int timeout_desired = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
 
 	TEST_ASSERT_EQUAL(timeout_desired, conn_mgr_if_get_timeout(net_if));
 }
@@ -163,19 +163,19 @@ void test_init_should_set_timeout(void)
 void test_initial_settings_should_match_kconfig(void)
 {
 	TEST_ASSERT_EQUAL(
-		IS_ENABLED(CONFIG_LTE_CONNECTIVITY_CONNECTION_PERSISTENCE),
+		IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE),
 		initial_persistence
 	);
 	TEST_ASSERT_EQUAL(
-		IS_ENABLED(CONFIG_LTE_CONNECTIVITY_AUTO_CONNECT),
+		IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT),
 		initial_auto_connect
 	);
 	TEST_ASSERT_EQUAL(
-		IS_ENABLED(CONFIG_LTE_CONNECTIVITY_AUTO_DOWN),
+		IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN),
 		initial_auto_down
 	);
 	TEST_ASSERT_EQUAL(
-		CONFIG_LTE_CONNECTIVITY_CONNECT_TIMEOUT_SECONDS,
+		CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS,
 		initial_connect_timeout
 	);
 }
@@ -236,7 +236,7 @@ void test_enable_should_return_error_upon_dfu_error(void)
 	TEST_ASSERT_EQUAL(-EIO, net_if_up(net_if));
 }
 
-/* Verify lte_connectivity_disable() */
+/* Verify nrf_modem_lib_netif_disable() */
 
 /* Verify taking the iface down also shuts down the modem if
  * the IF_DOWN mode is configured as such
@@ -244,7 +244,7 @@ void test_enable_should_return_error_upon_dfu_error(void)
 void test_disable_should_shutdown_modem(void)
 {
 	/* Set the IF_DOWN mode to SHUTDOWN_MODEM */
-	network_interface_down_option_set(LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN, 0);
+	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
 
 	/* Bring the interface up */
 	bring_network_interface_up();
@@ -264,7 +264,7 @@ void test_disable_should_shutdown_modem(void)
 void test_disable_should_return_error_if_shutdown_of_modem_fails(void)
 {
 	/* Set the IF_DOWN mode to SHUTDOWN_MODEM */
-	network_interface_down_option_set(LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN, 0);
+	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
 
 	/* Bring the interface up */
 	bring_network_interface_up();
@@ -296,7 +296,7 @@ void test_disable_should_return_error_if_lte_disconnect_fails(void)
 	TEST_ASSERT_EQUAL(-1, net_if_down(net_if_get_default()));
 }
 
-/* Verify lte_connectivity_connect() */
+/* Verify nrf_modem_lib_netif_connect() */
 
 void test_connect_should_set_functional_mode(void)
 {
@@ -316,7 +316,7 @@ void test_connect_should_return_error_if_setting_of_functional_mode_fails(void)
 	TEST_ASSERT_EQUAL(-1, conn_mgr_if_connect(net_if_get_default()));
 }
 
-/* Verify lte_connectivity_disconnect() */
+/* Verify nrf_modem_lib_netif_disconnect() */
 
 void test_disconnect_should_set_functional_mode(void)
 {
@@ -336,18 +336,18 @@ void test_disconnect_should_return_error_if_setting_of_functional_mode_fails(voi
 	TEST_ASSERT_EQUAL(-1, conn_mgr_if_disconnect(net_if_get_default()));
 }
 
-/* Verify lte_connectivity_options_set() */
+/* Verify nrf_modem_lib_netif_options_set() */
 
 void test_options_set_should_return_success_when_setting_option_to_modem_shutdown(void)
 {
-	network_interface_down_option_set(LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN, 0);
+	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
 }
 
 void test_options_set_should_return_error_upon_unsupported_option_name(void)
 {
 	struct net_if *net_if = net_if_get_default();
 
-	uint8_t option = LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT;
+	uint8_t option = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
 
 	int ret = conn_mgr_if_set_opt(net_if,
 				      UINT8_MAX,
@@ -366,17 +366,17 @@ void test_options_set_should_return_error_on_too_large_input(void)
 {
 	struct net_if *net_if = net_if_get_default();
 
-	uint32_t option = LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT;
+	uint32_t option = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
 
 	int ret = conn_mgr_if_set_opt(net_if,
-				      LTE_CONNECTIVITY_IF_DOWN,
+				      NRF_MODEM_LIB_NET_IF_DOWN,
 				      (const void *)&option,
 				      sizeof(option));
 
 	TEST_ASSERT_EQUAL(-ENOBUFS, ret);
 }
 
-/* Verify lte_connectivity_options_get() */
+/* Verify nrf_modem_lib_netif_options_get() */
 
 void test_options_get_should_return_success(void)
 {
@@ -384,7 +384,7 @@ void test_options_get_should_return_success(void)
 	uint8_t option;
 	size_t len = sizeof(option);
 
-	int ret = conn_mgr_if_get_opt(net_if, LTE_CONNECTIVITY_IF_DOWN, (void *)&option, &len);
+	int ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -401,17 +401,17 @@ void test_options_set_should_change_connectivity_if_down_to_modem_shutdown(void)
 
 	/* Verify that the IF_DOWN option starts out as LTE_DISCONNECT */
 	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, LTE_CONNECTIVITY_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT, option);
+	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
+	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT, option);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Attempt to change the IF_DOWN option to MODEM_SHUTDOWN */
-	network_interface_down_option_set(LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN, 0);
+	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
 
 	/* Verify that the IF_DOWN option was successfully changed  */
 	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, LTE_CONNECTIVITY_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN, option);
+	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
+	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, option);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
@@ -426,21 +426,21 @@ void test_options_set_should_change_connectivity_if_down_to_lte_disconnect(void)
 	int ret;
 
 	/* Set up initial conditions by setting IF_DOWN option to MODEM_SHUTDOWN */
-	network_interface_down_option_set(LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN, 0);
+	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
 
 	/* Verify that the IF_DOWN option is MODEM_SHUTDOWN */
 	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, LTE_CONNECTIVITY_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN, option);
+	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
+	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, option);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Attempt to change the IF_DOWN option to LTE_DISCONNECT */
-	network_interface_down_option_set(LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT, 0);
+	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT, 0);
 
 	/* Verify that the IF_DOWN option was successfully changed  */
 	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, LTE_CONNECTIVITY_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT, option);
+	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
+	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT, option);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 

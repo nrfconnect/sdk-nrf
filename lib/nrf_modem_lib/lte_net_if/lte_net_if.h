@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef LTE_CONNECTIVITY_H__
-#define LTE_CONNECTIVITY_H__
+#ifndef NRF_MODEM_LIB_NETIF_H__
+#define NRF_MODEM_LIB_NETIF_H__
 
 #include <zephyr/types.h>
 #include <zephyr/net/conn_mgr_connectivity_impl.h>
@@ -28,24 +28,24 @@ extern "C" {
 /** @brief Options used to specify desired behavior when the network interface is brough down by
  *	   calling net_if_down().
  */
-enum lte_connectivity_if_down_options {
+enum nrf_modem_lib_net_if_down_options {
 	/** Shutdown modem - GNSS functionality will not be preserved. */
-	LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN = 1,
+	NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN = 1,
 
 	/** Disconnect from LTE - GNSS functionality will be preserved. */
-	LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT
+	NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT
 };
 
 /** @brief Option types used to specify library behavior. */
-enum lte_connectivity_options {
-	/** Sets desired behavior when lte_connectivity_disable() / net_if_down() is called. */
-	LTE_CONNECTIVITY_IF_DOWN = 1,
+enum nrf_modem_lib_net_if_options {
+	/** Sets desired behavior when net_if_down() is called. */
+	NRF_MODEM_LIB_NET_IF_DOWN = 1,
 };
 
 /** @brief Macro used to define a private Connection Manager connectivity context type.
  *         Required but not implemented.
  */
-#define LTE_CONNECTIVITY_CTX_TYPE void *
+#define NRF_MODEM_LIB_NET_IF_CTX_TYPE void *
 
 /** @brief Initialize the LTE Connectivity layer.
  *
@@ -55,7 +55,7 @@ enum lte_connectivity_options {
  *
  *  @param if_conn Pointer to the Connection Manager binding structure.
  */
-void lte_connectivity_init(struct conn_mgr_conn_binding * const if_conn);
+void lte_net_if_init(struct conn_mgr_conn_binding * const if_conn);
 
 /** @brief Enable the LTE Connectivity layer.
  *
@@ -67,19 +67,19 @@ void lte_connectivity_init(struct conn_mgr_conn_binding * const if_conn);
  *
  *  @returns 0 on success, nonzero value on failure.
  */
-int lte_connectivity_enable(void);
+int lte_net_if_enable(void);
 
 /** @brief Disable the LTE Connectivity layer.
  *
  *  @details The behavior of this function changes depending on library options:
  *
- *	     If LTE_CONNECTIVITY_IF_DOWN_MODEM_SHUTDOWN is set:
+ *	     If NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN is set:
  *
  *	     Modem is completely shutdown and no modem functionality is preserved.
  *	     This is useful after modem DFU when the modem needs to be reinitialized which requires
  *	     that the modem is shutdown first. Default option.
  *
- *	     If LTE_CONNECTIVITY_IF_DOWN_LTE_DISCONNECT is set:
+ *	     If NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT is set:
  *
  *	     Deactivates the LTE stack on the modem and cancels any ongoing LTE connection attempts.
  *	     The network interface will be marked as dormant if a pre-existing
@@ -90,7 +90,7 @@ int lte_connectivity_enable(void);
  *
  *  @returns 0 on success, negative value on failure.
  */
-int lte_connectivity_disable(void);
+int lte_net_if_disable(void);
 
 /** @brief Connect to LTE. This is a non-blocking function.
  *
@@ -110,7 +110,7 @@ int lte_connectivity_disable(void);
  *
  *  @returns 0 on success, negative value on failure.
  */
-int lte_connectivity_connect(struct conn_mgr_conn_binding * const if_conn);
+int lte_net_if_connect(struct conn_mgr_conn_binding * const if_conn);
 
 /** @brief Disconnect from LTE.
  *
@@ -125,7 +125,7 @@ int lte_connectivity_connect(struct conn_mgr_conn_binding * const if_conn);
  *
  *  @returns 0 on success, negative value on failure.
  */
-int lte_connectivity_disconnect(struct conn_mgr_conn_binding * const if_conn);
+int lte_net_if_disconnect(struct conn_mgr_conn_binding * const if_conn);
 
 /** @brief Set connectivity options.
  *
@@ -139,10 +139,10 @@ int lte_connectivity_disconnect(struct conn_mgr_conn_binding * const if_conn);
  *  @retval -ENOPROTOOPT if name is not recognized.
  *  @retval -EBADF if the passed in option value is not recognized.
  */
-int lte_connectivity_options_set(struct conn_mgr_conn_binding * const if_conn,
-				   int name,
-				   const void *value,
-				   size_t length);
+int lte_net_if_options_set(struct conn_mgr_conn_binding * const if_conn,
+			   int name,
+			   const void *value,
+			   size_t length);
 
 /** @brief Get connectivity options.
  *
@@ -154,10 +154,10 @@ int lte_connectivity_options_set(struct conn_mgr_conn_binding * const if_conn,
  *  @returns 0 on success, negative value on failure.
  *  @retval -ENOPROTOOPT if name is not recognized.
  */
-int lte_connectivity_options_get(struct conn_mgr_conn_binding * const if_conn,
-				   int name,
-				   void *value,
-				   size_t *length);
+int lte_net_if_options_get(struct conn_mgr_conn_binding * const if_conn,
+			   int name,
+			   void *value,
+			   size_t *length);
 
 #ifdef __cplusplus
 }
@@ -167,4 +167,4 @@ int lte_connectivity_options_get(struct conn_mgr_conn_binding * const if_conn,
  *@}
  */
 
-#endif /* LTE_CONNECTIVITY_H__ */
+#endif /* NRF_MODEM_LIB_NETIF_H__ */
