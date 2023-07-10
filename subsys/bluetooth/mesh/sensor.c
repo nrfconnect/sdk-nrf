@@ -190,6 +190,9 @@ int sensor_value_encode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
 			const struct sensor_value *values)
 {
+	/* The API assumes that `values` array size is always CONFIG_BT_MESH_SENSOR_CHANNELS_MAX. */
+	__ASSERT_NO_MSG(type->channel_count <= CONFIG_BT_MESH_SENSOR_CHANNELS_MAX);
+
 	for (uint32_t i = 0; i < type->channel_count; ++i) {
 		int err;
 
@@ -208,6 +211,9 @@ int sensor_value_decode(struct net_buf_simple *buf,
 			struct sensor_value *values)
 {
 	int err;
+
+	/* The API assumes that `values` array size is always CONFIG_BT_MESH_SENSOR_CHANNELS_MAX. */
+	__ASSERT_NO_MSG(type->channel_count <= CONFIG_BT_MESH_SENSOR_CHANNELS_MAX);
 
 	for (uint32_t i = 0; i < type->channel_count; ++i) {
 		err = sensor_ch_decode(buf, type->channels[i].format,
