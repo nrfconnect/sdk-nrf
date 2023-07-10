@@ -624,7 +624,8 @@ enum op_band {
  * @rx_buf_pools: LMAC Rx buffs pool params, see struct rx_buf_pool_params
  * @data_config_params: Data configuration params, see struct nrf_wifi_data_config_params
  * @tcp_ip_checksum_offload: 0:umac checksum disable 1: umac checksum enable
- * @op_band: operating band see &enum op_band
+ * @op_band: operating band see enum op_band
+ * @mgmt_buff_offload: Target selection for management buffers deallocation 0:HOST 1:UMAC.
  * After host driver bringup host sends the NRF_WIFI_CMD_INIT to the RPU.
  * then RPU initializes and responds with NRF_WIFI_EVENT_BUFF_CONFIG.
  */
@@ -640,7 +641,7 @@ struct nrf_wifi_cmd_sys_init {
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN];
 	unsigned int op_band;
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
-	unsigned short maxidle_insec;
+	unsigned char mgmt_buff_offload;
 } __NRF_WIFI_PKD;
 
 /**
