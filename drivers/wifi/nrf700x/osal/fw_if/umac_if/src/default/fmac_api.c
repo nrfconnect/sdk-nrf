@@ -881,6 +881,10 @@ enum wifi_nrf_status wifi_nrf_fmac_assoc(void *dev_ctx,
 		connect_common_info->nrf_wifi_flags |= NRF_WIFI_CONNECT_COMMON_INFO_PREV_BSSID;
 	}
 
+	if (assoc_info->bss_max_idle_time) {
+		connect_common_info->maxidle_insec = assoc_info->bss_max_idle_time;
+	}
+
 	status = umac_cmd_cfg(fmac_dev_ctx,
 			      assoc_cmd,
 			      sizeof(*assoc_cmd));

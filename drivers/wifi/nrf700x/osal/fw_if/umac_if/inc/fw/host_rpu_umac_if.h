@@ -1529,6 +1529,7 @@ struct nrf_wifi_umac_assoc_info {
 	signed char control_port;
 	unsigned int prev_bssid_flag;
 	unsigned char prev_bssid[NRF_WIFI_ETH_ADDR_LEN];
+	unsigned short bss_max_idle_time;
 } __NRF_WIFI_PKD;
 
 /**

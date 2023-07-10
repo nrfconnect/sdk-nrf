@@ -822,6 +822,10 @@ int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 		assoc_info.use_mfp = NRF_WIFI_MFP_REQUIRED;
 	}
 
+	if (params->bss_max_idle_period) {
+		assoc_info.bss_max_idle_time = params->bss_max_idle_period;
+	}
+
 	status = wifi_nrf_fmac_assoc(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &assoc_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
