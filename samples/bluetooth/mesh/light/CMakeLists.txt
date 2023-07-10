@@ -9,7 +9,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
 include_directories(
-	${NRF_DIR}/samples/bluetooth/mesh/common
+	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common
 )
 
 # NORDIC SDK APP START
@@ -18,13 +18,13 @@ target_sources(app PRIVATE
 	src/model_handler.c)
 target_include_directories(app PRIVATE
 	include
-	${NRF_DIR}/samples/bluetooth/mesh/common
+	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common
 )
 
 # Preinitialization related to DFU over SMP for nRF52 series
 if(CONFIG_SOC_SERIES_NRF52X)
   target_sources_ifdef(CONFIG_MCUMGR_TRANSPORT_BT app PRIVATE
-    ${NRF_DIR}/samples/bluetooth/mesh/common/smp_bt.c)
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt.c)
 endif()
 
 # NORDIC SDK APP END

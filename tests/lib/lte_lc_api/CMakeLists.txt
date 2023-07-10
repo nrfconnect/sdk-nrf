@@ -18,7 +18,7 @@ cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
 # When mocking nrf_modem_at then nrf_modem/include must manually be added
 # because CONFIG_NRF_MODEM_LINK_BINARY=n
 zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
-zephyr_include_directories(${NRF_DIR}/lib/lte_link_control/)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/lib/lte_link_control/)
 
 # add test file
 target_sources(app PRIVATE src/lte_lc_api_test.c)

@@ -15,7 +15,7 @@ cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_socket.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_os.h)
 
 # add unit under test
-target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf91_sockets.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf91_sockets.c)
 
 # manually add Kconfig definitions introduced by NRF_MODEM_LIB and used
 # by the unit under test, but not included since we aren't enabling

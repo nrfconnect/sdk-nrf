@@ -15,12 +15,12 @@ FILE(GLOB app_sources src/*.c)
 target_sources(app
   PRIVATE
   ${app_sources}
-  ${NRF_DIR}/subsys/zigbee/osif/zb_nrf_timer_counter.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/zigbee/osif/zb_nrf_timer_counter.c
 )
 
 target_include_directories(app
   PRIVATE
-  ${NRF_DIR}/tests/subsys/zigbee/osif/timer_counter/mock
-  ${NRF_DIR}/tests/subsys/zigbee/osif/timer_counter/stubs
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/subsys/zigbee/osif/timer_counter/mock
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/subsys/zigbee/osif/timer_counter/stubs
   ${NRFXLIB_DIR}/zboss/production/include/osif
 )

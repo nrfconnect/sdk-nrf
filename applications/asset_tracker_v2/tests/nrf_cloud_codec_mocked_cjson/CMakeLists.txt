@@ -16,8 +16,8 @@ test_runner_generate(src/nrf_cloud_codec_mocked_test.c)
 
 # create mock
 cmock_handle(${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/json_helpers.h)
-cmock_handle(${NRF_DIR}/include/date_time.h)
-cmock_handle(${NRF_DIR}/include/net/nrf_cloud.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud.h)
 cmock_handle(src/cJSON_to_mock.h)
 
 # add test file
@@ -26,16 +26,16 @@ target_include_directories(app PRIVATE src/)
 
 target_include_directories(app PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR} ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/
-	${CMAKE_CURRENT_SOURCE_DIR} ${NRF_DIR}/../nrfxlib/nrf_modem/include/)
+	${CMAKE_CURRENT_SOURCE_DIR} ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 
-target_include_directories(app PRIVATE ${NRF_DIR}/../modules/lib/cjson/)
-target_include_directories(app PRIVATE ${NRF_DIR}/modules/cjson/include/)
-target_include_directories(app PRIVATE ${NRF_DIR}/subsys/net/lib/nrf_cloud/include/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/../modules/lib/cjson/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/modules/cjson/include/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/include/)
 
 # Add cloud codec module (unit under test)
 target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/nrf_cloud/nrf_cloud_codec.c)
 target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/cloud_codec_ringbuffer.c)
-target_sources(app PRIVATE ${NRF_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_codec_internal.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_codec_internal.c)
 
 target_compile_options(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20

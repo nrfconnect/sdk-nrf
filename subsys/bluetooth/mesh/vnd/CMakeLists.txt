@@ -6,7 +6,7 @@
 
 zephyr_library()
 
-zephyr_library_include_directories(${NRF_DIR}/subsys/bluetooth/mesh)
+zephyr_library_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh)
 
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SILVAIR_ENOCEAN_SRV silvair_enocean_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_DM_SRV dm_srv.c)

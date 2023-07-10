@@ -49,7 +49,7 @@ add_custom_command(
   DEPENDS
   "${CMAKE_BINARY_DIR}/pm.config"
   COMMAND
-  ${PYTHON_EXECUTABLE} ${NRF_DIR}/scripts/nrf_provision/fast_pair/fp_provision_cli.py
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_NRF_MODULE_DIR}/scripts/nrf_provision/fast_pair/fp_provision_cli.py
                        -o ${FP_PROVISIONING_DATA_HEX} -a ${FP_PROVISIONING_DATA_ADDRESS}
                        -m ${FP_MODEL_ID} -k ${FP_ANTI_SPOOFING_KEY}
   COMMENT

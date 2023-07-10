@@ -14,12 +14,12 @@ test_runner_generate(src/location_module_test.c)
 
 # create mock
 cmock_handle(../../src/modules/modules_common.h )
-cmock_handle(${ZEPHYR_BASE}/../nrf/include/app_event_manager.h )
-cmock_handle(${ZEPHYR_BASE}/../nrf/subsys/app_event_manager/app_event_manager_priv.h )
-cmock_handle(${ZEPHYR_BASE}/../nrf/include/date_time.h )
-cmock_handle(${ZEPHYR_BASE}/../nrf/include/modem/location.h )
-cmock_handle(${ZEPHYR_BASE}/../nrf/include/modem/lte_lc.h )
-cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_gnss.h )
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/app_event_manager.h )
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/app_event_manager/app_event_manager_priv.h )
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h )
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/location.h )
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h )
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_gnss.h )
 
 # add location_module (the unit under test)
 target_sources(app PRIVATE ../../src/modules/location_module.c)
@@ -31,8 +31,8 @@ target_include_directories(app PRIVATE .)
 target_include_directories(app PRIVATE ../../src/)
 target_include_directories(app PRIVATE ../../src/modules/)
 target_include_directories(app PRIVATE ../../src/events/)
-target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/subsys/app_event_manager)
-target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/modules/cjson/include)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/app_event_manager)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/modules/cjson/include)
 
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE

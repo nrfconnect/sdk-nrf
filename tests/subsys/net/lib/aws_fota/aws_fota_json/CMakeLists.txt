@@ -16,12 +16,12 @@ target_sources(app PRIVATE ${app_sources})
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/aws_fota/src/aws_fota_json.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/aws_fota/src/aws_fota_json.c
   )
 
 target_include_directories(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/aws_fota/include/
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/aws_fota/include/
   )
 
 # Do this in a non-standard way as the Kconfig options of "aws_jobs/Kconfig"

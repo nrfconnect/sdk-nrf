@@ -13,12 +13,12 @@ project(azure_iot_hub_dps_test)
 test_runner_generate(src/azure_iot_hub_dps_test.c)
 
 # Create mock
-cmock_handle(${NRF_DIR}/include/net/mqtt_helper.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/mqtt_helper.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/settings/settings.h)
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE
-        ${NRF_DIR}/subsys/net/lib/azure_iot_hub/src/azure_iot_hub_dps.c
+        ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/azure_iot_hub/src/azure_iot_hub_dps.c
 
 	# Azure SDK for C - CORE lib
 	${ZEPHYR_AZURE_SDK_FOR_C_MODULE_DIR}/sdk/src/azure/core/az_context.c
@@ -39,8 +39,8 @@ target_sources(app PRIVATE
 target_sources(app PRIVATE src/azure_iot_hub_dps_test.c)
 
 # Include paths
-target_include_directories(app PRIVATE ${NRF_DIR}/include/net/)
-target_include_directories(app PRIVATE ${NRF_DIR}/subsys/net/lib/azure_iot_hub/include/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/net/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/azure_iot_hub/include/)
 target_include_directories(app PRIVATE ${ZEPHYR_AZURE_SDK_FOR_C_MODULE_DIR}/sdk/inc/)
 
 # Options that cannot be passed through Kconfig fragments.

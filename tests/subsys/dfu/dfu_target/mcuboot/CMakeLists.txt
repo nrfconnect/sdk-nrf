@@ -14,12 +14,12 @@ target_sources(app PRIVATE ${app_sources})
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/subsys/dfu/dfu_target/src/dfu_target.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/dfu_target/src/dfu_target.c
   )
 
 target_include_directories(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/subsys/dfu/include
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/include
   )
 
 target_compile_options(app

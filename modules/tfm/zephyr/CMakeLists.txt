@@ -107,7 +107,7 @@ set_property(GLOBAL PROPERTY
   )
 
 set_property(TARGET zephyr_property_target
-  APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_DIR=${ZEPHYR_NRF_MODULE_DIR}
+  APPEND PROPERTY TFM_CMAKE_OPTIONS -DZEPHYR_NRF_MODULE_DIR=${ZEPHYR_NRF_MODULE_DIR}
   )
 
 set_property(TARGET zephyr_property_target
@@ -183,7 +183,7 @@ set_property(TARGET zephyr_property_target
     -DPYTHON_PREFER=${Python3_EXECUTABLE}
 )
 
-zephyr_include_directories(${NRF_DIR}/include/tfm)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/tfm)
 
 # Default values from config_base.h in TF-M.
 set(PLATFORM_SERVICE_INPUT_BUFFER_SIZE     ${CONFIG_TFM_PLATFORM_SERVICE_INPUT_BUFFER_SIZE})

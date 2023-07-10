@@ -16,13 +16,13 @@ test_runner_generate(src/main.c)
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/lib/hw_id/hw_id.c
+  ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_id/hw_id.c
 )
 
 zephyr_include_directories(src/)
-zephyr_include_directories(${ZEPHYR_BASE}/../nrf/include/)
-zephyr_include_directories(${ZEPHYR_BASE}/../nrf/include/net)
-zephyr_include_directories(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/net)
+zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 zephyr_include_directories(${ZEPHYR_BASE}/include/zephyr/)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
 

@@ -16,12 +16,12 @@ test_runner_generate(src/main.c)
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/wifi_credentials/wifi_credentials_backend_settings.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/wifi_credentials/wifi_credentials_backend_settings.c
 )
 
-zephyr_include_directories(${ZEPHYR_BASE}/../nrf/include/net/)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/net/)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
-zephyr_include_directories(${ZEPHYR_BASE}/../nrf/subsys/net/lib/wifi_credentials/)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/wifi_credentials/)
 
 target_compile_options(app
   PRIVATE

@@ -13,10 +13,10 @@ project(lte_connectivity)
 zephyr_compile_options(-Wno-deprecated-declarations)
 
 # Create mocks
-cmock_handle(${NRF_DIR}/include/modem/lte_lc.h)
-cmock_handle(${NRF_DIR}/include/modem/nrf_modem_lib.h FUNC_EXCLUDE ".*nrf_modem_lib_shutdown_wait")
-cmock_handle(${NRF_DIR}/include/modem/pdn.h)
-cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_at.h FUNC_EXCLUDE ".*nrf_modem_at_scanf")
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/nrf_modem_lib.h FUNC_EXCLUDE ".*nrf_modem_lib_shutdown_wait")
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/pdn.h)
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h FUNC_EXCLUDE ".*nrf_modem_at_scanf")
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_socket.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_errno.h)
@@ -33,11 +33,11 @@ target_include_directories(app PRIVATE src)
 target_sources(app PRIVATE src/lte_connectivity_test.c)
 
 # Add UUT
-target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/lte_connectivity/lte_connectivity.c)
-target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/lte_connectivity/lte_ip_addr_helper.c)
-target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf91_sockets.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_connectivity/lte_connectivity.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_connectivity/lte_ip_addr_helper.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf91_sockets.c)
 
-target_include_directories(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/lte_connectivity)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_connectivity)
 
 add_compile_definitions(CONFIG_NRF_MODEM_LIB_MEM_DIAG)
 add_compile_definitions(CONFIG_LTE_CONNECTIVITY_CONNECT_TIMEOUT_SECONDS=30)

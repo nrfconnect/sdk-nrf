@@ -19,8 +19,8 @@ zephyr_include_directories(${NRFXLIB_DIR}/zboss/production/include/osif)
 target_include_directories(app BEFORE PRIVATE mock)
 
 target_sources(app PRIVATE
-  ${NRF_DIR}/subsys/zigbee/osif/zb_nrf_logger.c
-  ${NRF_DIR}/subsys/zigbee/osif/zb_nrf_serial.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/zigbee/osif/zb_nrf_logger.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/zigbee/osif/zb_nrf_serial.c
   src/main.c
   mock/log_mock.c
 )

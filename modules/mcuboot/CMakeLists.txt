@@ -45,8 +45,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     return()
   endif()
 
-  include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
-  include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_multi_image.cmake)
 
   function(sign)
     # Signs a hex image
@@ -682,7 +682,7 @@ if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
   add_custom_target(zigbee_ota_image ALL
     COMMAND
     ${PYTHON_EXECUTABLE}
-      ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
+      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/zb_add_ota_header.py
       --application ${firmware_binary}
       --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
       --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}

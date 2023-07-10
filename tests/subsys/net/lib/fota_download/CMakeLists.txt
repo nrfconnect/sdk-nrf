@@ -15,16 +15,16 @@ target_sources(app PRIVATE ${app_sources})
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/src/fota_download.c
-  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/src/fota_download_util.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/fota_download/src/fota_download.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/fota_download/src/fota_download_util.c
   )
 
 target_include_directories(app
   PRIVATE
   src
-  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/include
-  ${ZEPHYR_BASE}/../nrf/include/net/
-  ${ZEPHYR_BASE}/../nrf/subsys/dfu/include
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/fota_download/include
+  ${ZEPHYR_NRF_MODULE_DIR}/include/net/
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/include
   . # To get 'pm_config.h'
   )
 

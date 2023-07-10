@@ -27,12 +27,12 @@ target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE trace_backend_mock.c)
 
 # add unit under test
-target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib_trace.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf_modem_lib_trace.c)
 
 # include paths
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
-target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/modem/)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
 
 # Required for calling libmodem hooks
-zephyr_linker_sources(RODATA ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib.ld)
+zephyr_linker_sources(RODATA ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf_modem_lib.ld)

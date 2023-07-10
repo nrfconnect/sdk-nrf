@@ -7,7 +7,7 @@ zephyr_library()
 
 set(PROTOC_OPTIONS "-I${CMAKE_CURRENT_SOURCE_DIR}")
 set(NANOPB_OPTIONS "nanopb_BUILD_RUNTIME OFF")
-set(CMAKE_MODULE_PATH ${ZEPHYR_BASE}/../modules/lib/nanopb/extra)
+set(CMAKE_MODULE_PATH ${ZEPHYR_NANOPB_MODULE_DIR}/extra)
 find_package(Nanopb REQUIRED)
 set(NANOPB_GENERATE_CPP_STANDALONE FALSE)
 nanopb_generate_cpp(proto_sources proto_headers

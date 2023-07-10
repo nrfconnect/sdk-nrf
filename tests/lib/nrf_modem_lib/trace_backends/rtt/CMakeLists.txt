@@ -21,8 +21,8 @@ target_include_directories(app PRIVATE src)
 target_sources(app PRIVATE src/main.c)
 
 # add unit under test
-target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/trace_backends/rtt/rtt.c)
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/trace_backends/rtt/rtt.c)
 
 # include paths
 target_include_directories(app PRIVATE ${ZEPHYR_SEGGER_MODULE_DIR}/Config/)
-target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/modem/)

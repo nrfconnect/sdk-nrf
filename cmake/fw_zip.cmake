@@ -28,7 +28,7 @@ function(generate_dfu_zip)
     OUTPUT ${GENZIP_OUTPUT}
     COMMAND
     ${PYTHON_EXECUTABLE}
-    ${NRF_DIR}/scripts/bootloader/generate_zip.py
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/generate_zip.py
     --bin-files ${GENZIP_BIN_FILES}
     --output ${GENZIP_OUTPUT}
     --name "${APPNAME}"

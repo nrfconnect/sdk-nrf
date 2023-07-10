@@ -16,11 +16,11 @@ test_runner_generate(src/main.c)
 
 target_sources(app
   PRIVATE
-  ${NRF_DIR}/lib/modem_battery/modem_battery.c
+  ${ZEPHYR_NRF_MODULE_DIR}/lib/modem_battery/modem_battery.c
 )
 
 zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
-zephyr_include_directories(${NRF_DIR}/include/modem/)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/modem/)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
 
 target_compile_options(app

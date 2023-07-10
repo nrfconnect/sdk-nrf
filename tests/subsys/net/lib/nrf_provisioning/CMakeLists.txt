@@ -16,14 +16,14 @@ set(options
   -DCONFIG_NRF_MODEM_LIB_MEM_DIAG=y
 )
 
-cmock_handle(${NRF_DIR}/include/date_time.h)
-cmock_handle(${NRF_DIR}/include/modem/lte_lc.h)
-cmock_handle(${NRF_DIR}/include/modem/modem_key_mgmt.h)
-cmock_handle(${NRF_DIR}/include/modem/modem_info.h)
-cmock_handle(${NRF_DIR}/include/modem/nrf_modem_lib.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_key_mgmt.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_info.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/nrf_modem_lib.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/settings/settings.h)
-cmock_handle(${NRF_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_at.h)
-cmock_handle(${NRF_DIR}/include/net/rest_client.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_at.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(include/nrf_modem_at.h)
 
 if(CONFIG_NRF_PROVISIONING_JWT)
@@ -33,7 +33,7 @@ if(CONFIG_NRF_PROVISIONING_JWT)
     -DCONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S=300
     -DCONFIG_MODEM_JWT_MAX_LEN=850
   )
-  cmock_handle(${NRF_DIR}/include/modem/modem_jwt.h)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_jwt.h)
 
 elseif(CONFIG_NRF_PROVISIONING_ATTESTTOKEN)
   test_runner_generate(src/main.c)
@@ -58,8 +58,8 @@ target_compile_options(..__nrf__subsys__net__lib__nrf_provisioning
 
 set(includes
   "include/" # Must be included first to redefine functions as non-static-inline
-  "${NRF_DIR}/include/"
-  "${NRF_DIR}/subsys/net/lib/nrf_provisioning/include/"
+  "${ZEPHYR_NRF_MODULE_DIR}/include/"
+  "${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/"
   "${NRFXLIB_DIR}/nrf_modem/include/"
   "${ZEPHYR_BASE}/include/"
   "src/"

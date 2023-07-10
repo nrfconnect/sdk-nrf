@@ -24,10 +24,10 @@ set(ASSET_TRACKER_V2_DIR ../..)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/socket.h net)
 cmock_handle(${ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_engine.h lwm2m)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/lwm2m.h lwm2m)
-cmock_handle(${NRF_DIR}/include/net/lwm2m_client_utils.h lwm2m_client_utils)
-cmock_handle(${NRF_DIR}/include/net/lwm2m_client_utils_location.h lwm2m_client_utils)
-cmock_handle(${NRF_DIR}/include/modem/lte_lc.h lte_lc)
-cmock_handle(${NRF_DIR}/include/date_time.h date_time)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/lwm2m_client_utils.h lwm2m_client_utils)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/lwm2m_client_utils_location.h lwm2m_client_utils)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h lte_lc)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h date_time)
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/lwm2m/lwm2m_codec_helpers.c)
@@ -40,7 +40,7 @@ target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_c
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/cloud_codec/lwm2m/)
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/subsys/net/lib/lwm2m/)
-target_include_directories(app PRIVATE ${NRF_DIR}/modules/cjson/include/)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/modules/cjson/include/)
 
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE

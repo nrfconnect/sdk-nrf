@@ -33,8 +33,8 @@ set(types_h_name modem_update_types.h)
 set(decode_c ${src_out}/${decode_c_name})
 set(decode_h ${include_out}/${decode_h_name})
 set(types_h ${include_out}/${types_h_name})
-set(src_install_dir ${NRF_DIR}/subsys/dfu/fmfu_fdev/src)
-set(include_install_dir ${NRF_DIR}/subsys/dfu/fmfu_fdev/include)
+set(src_install_dir ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/fmfu_fdev/src)
+set(include_install_dir ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/fmfu_fdev/include)
 set(license ${CMAKE_CURRENT_LIST_DIR}/license.cmake)
 
 # The .clang-format in this repo states support for >= version 4

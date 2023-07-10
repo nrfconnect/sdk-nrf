@@ -16,13 +16,13 @@ target_sources(app PRIVATE ${app_sources})
 
 target_sources(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/lib/lte_link_control/lte_lc_helpers.c
+  ${ZEPHYR_NRF_MODULE_DIR}/lib/lte_link_control/lte_lc_helpers.c
 )
 
 target_include_directories(app
   PRIVATE
-  ${ZEPHYR_BASE}/../nrf/lib/lte_link_control/
-  ${ZEPHYR_BASE}/../nrf/include/modem/
+  ${ZEPHYR_NRF_MODULE_DIR}/lib/lte_link_control/
+  ${ZEPHYR_NRF_MODULE_DIR}/include/modem/
 )
 
 target_compile_options(app
