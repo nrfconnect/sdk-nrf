@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic ESL BLE GATT service sample"
+
+config BT_ESL_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 1024
+	help
+	  Stack size used in each of the two threads
+
+config BT_ESL_SECURITY_ENABLED
+	bool "Enable security"
+	select BT_SMP
+	select BT_BONDABLE
+	select BT_BONDING_REQUIRED
+	help
+	  "Enable BLE security for the ESL service"
+
+config ESL_SIMULATE_DISPLAY
+	bool "Use LED2 on DK board to simulate display"
+	help
+	  "LED2 on DK will blink few times when receive display image ECP command"
+
+config ESL_SIMULATE_DISPLAY_BLINK_TIMES
+	int "LED blinking times to indicate display image change"
+	default 5
+	help
+	  "How many times to blink"
+
+config BT_ESL_PTS
+	bool "ESL peripheral for PTS test"
+	help
+	  Enable PTS test for ESL peripheral
+
+config ESL_POWER_PROFILE
+	bool "Minimize power cunsumption for measure current"
+	help
+	  Turn off SPI and EPD power when not in use
+
+module = PERIPHERAL_ESL
+module-str = peripheral esl
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endmenu

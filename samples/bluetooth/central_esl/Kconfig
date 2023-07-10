@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic ESL BLE GATT service client sample"
+
+config BT_ESL_CLIENT_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 1024
+	help
+	  Stack size used in each of the two threads
+
+config BT_ESL_SECURITY_ENABLED
+	bool "Enable security"
+	select BT_SMP
+	select BT_BONDABLE
+	select BT_BONDING_REQUIRED
+	help
+	  "Enable BLE security for the ESL service"
+
+config BT_ESL_AP_AUTO_MODE
+	bool "AP auto onboarding Tag mode"
+	help
+	  "When enabled, AP auto scans and configures the tag. When disabled, AP only accepts shell commands"
+
+if BT_ESL_AP_AUTO_MODE
+config BT_ESL_AP_AUTO_TAG_PER_GROUP
+	int "Tag per group"
+	default ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER
+	help
+	  "The number of tags to be kept in same group for auto onboarding.
+	   Tags exceeding this number are placed in next group.
+	   Otherwise, response key is not enough for all tags in same group.
+	   How to select this number depends on the desired scenario.
+	   Less or equal to ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER decrypts the response EAD on the fly.
+	   Greater than ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER enables the ESL AP to control large amount of tags at the same time."
+
+config BT_ESL_AP_GROUP_PER_BUTTON
+	int "Groups for one button"
+	default 3
+	help
+	  "The number of groups controlled by one button.
+	   If this number is greater than 1, an AP can control multiple groups by one button.
+	   Otherwise, an AP controls one group by one button."
+endif
+
+config BT_ESL_AP_AUTO_PAST_TAG
+	bool "AP auto past mode"
+	help
+	  "When enabled, the AP sends automatic update complete command and PAST to an unsynchronized tag. When disabled, the AP only accepts shell commands."
+
+config BT_ESL_AP_PTS
+	bool "ESL access point for PTS test"
+	help
+	  Enable PTS test for ESL access point
+
+module = CENTRAL_ESL
+module-str = central esl
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endmenu
