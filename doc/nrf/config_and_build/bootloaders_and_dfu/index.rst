@@ -9,8 +9,8 @@ Bootloaders and Device Firmware Updates
 
 There are two types of bootloaders used by the |NCS|:
 
-* :ref:`Immutable first-stage bootloaders <immutable_bootloader>`.
-* :ref:`Upgradable second-stage bootloaders <upgradable_bootloader>` that can perform device firmware updates to both themselves and the application.
+* :ref:`Immutable first-stage bootloaders <immutable_bootloader>` that cannot be upgraded through device firmware update (DFU) and run after each reset.
+* :ref:`Upgradable second-stage bootloaders <upgradable_bootloader>` that can perform DFU to both themselves and the application, and are booted by the first-stage bootloader.
 
 The bootloaders support two types of updates:
 

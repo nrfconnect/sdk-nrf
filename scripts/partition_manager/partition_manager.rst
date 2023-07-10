@@ -718,10 +718,11 @@ Static configuration
 ********************
 
 By default, the Partition Manager dynamically places the partitions in memory.
-However, if you have a deployed product that consists of multiple images, where only a subset of the included images can be upgraded through a firmware update mechanism, the upgradable images must be statically configured.
+However, there are cases where a deployed product can consist of multiple images, and only a subset of these images can be upgraded through a firmware update mechanism.
+In such cases, the upgradable images must have partitions that are static and are matching the partition map used by the bootloader programmed onto the device.
 For example, if a device includes a non-upgradable first-stage bootloader and an upgradable application, the application image to be upgraded must be linked to the same address as the one that is deployed.
+For this purpose, the Partition Manager provides the static configuration to define static partitions.
 
-For this purpose, the Partition Manager provides static configuration to define static partitions.
 The area used by the static partitions is called the *static area*.
 The static area comes in addition to the *dynamic area*, which consists of the ``app`` partition and all memory adjacent to the ``app`` partition that is not occupied by a static partition.
 Note that there is only one dynamic area.
