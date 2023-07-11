@@ -8,7 +8,7 @@
 
 #include "mpsl_fem_power_model_interface.h"
 
-#include <mpsl_fem_power_model.h>
+#include <mpsl_fem_nrf21540_power_model_builtin.h>
 #include <mpsl_temp.h>
 
 #include <zephyr/kernel.h>
