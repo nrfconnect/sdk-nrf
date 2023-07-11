@@ -67,10 +67,6 @@ config NRF700X_REG_DOMAIN
 config NET_MGMT_EVENT_STACK_SIZE
 	default 2048 if !WPA_SUPP
 
-# Wi-Fi interface will be operationally UP only after Wi-Fi connection.
-config NET_CONFIG_INIT_TIMEOUT
-	default 0 if NET_CONFIG_SETTINGS
-
 config NRF700X_ON_QSPI
 	def_bool NRF7000_ON_QSPI || NRF7001_ON_QSPI || NRF7002_ON_QSPI
 	select NRFX_QSPI
