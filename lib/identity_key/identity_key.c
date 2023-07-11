@@ -112,6 +112,7 @@ int identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
 	return IDENTITY_KEY_SUCCESS;
 }
 
+#if defined(CONFIG_IDENTITY_KEY_DUMMY)
 /* This key is used by the TF-M regression tests and it is taken from the TF-M
  * repository. It should ONLY be used for testing and debugging purposes.
  *
@@ -134,6 +135,7 @@ int identity_key_write_dummy(void)
 	LOG_WRN("WARNING: Using a dummy identity key not meant for production!");
 	return identity_key_write_key(dummy_identity_secp256r1_private_key);
 }
+#endif /* defined(CONFIG_IDENTITY_KEY_DUMMY) */
 
 bool identity_key_mkek_is_written(void)
 {
