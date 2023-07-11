@@ -283,8 +283,10 @@ void nrf_802154_cca_failed(nrf_802154_cca_error_t error)
 	k_work_submit(&rf_cca_failed_wq);
 }
 
-void nrf_802154_energy_detected(uint8_t result)
+void nrf_802154_energy_detected(const nrf_802154_energy_detected_t *p_result)
 {
+	uint8_t result = nrf_802154_energy_level_from_dbm_calculate(p_result->ed_dbm);
+
 	LOG_INF("ED finished with result %d", result);
 
 	rf_ed_detected_info.result = result;
