@@ -89,6 +89,13 @@ if (${TFM_PARTITION_CRYPTO})
     )
   endif()
 
+  if (${TFM_PARTITION_INITIAL_ATTESTATION})
+    target_sources(platform_s
+      PRIVATE
+        ${NRF_DIR}/lib/identity_key/identity_key.c
+    )
+  endif()
+
   target_link_libraries(platform_crypto_keys PUBLIC platform_s)
 endif()
 

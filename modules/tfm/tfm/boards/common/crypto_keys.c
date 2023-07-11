@@ -15,9 +15,7 @@
 #include "tfm_spm_log.h"
 
 #include <hw_unique_key.h>
-#include <nrf_cc3xx_platform_kmu.h>
-#include <nrf_cc3xx_platform_identity_key.h>
-#include <nrf_cc3xx_platform_defines.h>
+#include <identity_key.h>
 
 #define TFM_NS_PARTITION_ID (-1)
 
@@ -69,22 +67,21 @@ static enum tfm_plat_err_t tfm_plat_get_iak(uint8_t *buf, size_t buf_len,
 					    psa_algorithm_t *algorithm,
 					    psa_key_type_t *type)
 {
-	if (buf_len < 32) {
+	int err;
+
+	if (buf_len < IDENTITY_KEY_SIZE_BYTES) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-	int err = nrf_cc3xx_platform_identity_key_retrieve(
-		NRF_KMU_SLOT_KIDENT,
-		buf);
-
-	if (err != NRF_CC3XX_PLATFORM_SUCCESS) {
-		SPMLOG_DBGMSGVAL("nrf_cc3xx_platform_identity_key_retrieve err: ", err);
+	err = identity_key_read(buf);
+	if (err != IDENTITY_KEY_SUCCESS) {
+		SPMLOG_DBGMSGVAL("identity_key_read err: ", err);
 
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-	*key_len = 32;
-	*key_bits = *key_len * 8;
+	*key_len = IDENTITY_KEY_SIZE_BYTES;
+	*key_bits = IDENTITY_KEY_SIZE_BYTES * 8;
 	*algorithm = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
 	*type = PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1);
 
