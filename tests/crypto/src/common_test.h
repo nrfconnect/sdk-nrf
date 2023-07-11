@@ -52,26 +52,12 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len);
 size_t hex2bin_safe(const char *hex, uint8_t *buf, size_t buflen);
 
 #if defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
-
 #include "psa/crypto.h"
 #include "nrf_cc3xx_platform_ctr_drbg.h"
-
 extern char drbg_ctx;
 
-#elif defined(MBEDTLS_CTR_DRBG_C)
-
-#include <mbedtls/ctr_drbg.h>
-
-/* This context will be populated by init_drbg.
- * If the initialization is successful it can be used in subsequent calls to
- * mbedtls drbg APIs.
- */
-extern mbedtls_ctr_drbg_context drbg_ctx;
-
-#elif defined(MBEDTLS_HMAC_DRBG_C)
-
-#include <mbedtls/hmac_drbg.h>
-extern mbedtls_hmac_drbg_context drbg_ctx;
+#else
+#error "No RNG is enabled, MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG needs to be defined in nrf-config.h"
 
 #endif
 
