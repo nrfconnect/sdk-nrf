@@ -78,7 +78,7 @@ enum wifi_nrf_fmac_if_carr_state {
  * @brief Callback functions to be invoked by UMAC IF layer when a particular event occurs.
  *
  * This structure contains function pointers to all the callback functions that
- * the UMAC IF layer needs to invoked for various events.
+ * the UMAC IF layer needs to invoke for various events.
  */
 struct wifi_nrf_fmac_callbk_fns {
 	/** Callback function to be called when an interface association state changes. */
@@ -146,17 +146,17 @@ struct wifi_nrf_fmac_callbk_fns {
 					      struct nrf_wifi_umac_event_mlme *unprot_mlme_event,
 					      unsigned int event_len);
 
-	/** Callback function to be called when a TX power get response is received. */
+	/** Callback function to be called when a get TX power response is received. */
 	void (*tx_pwr_get_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_get_tx_power *info,
 				     unsigned int event_len);
 
-	/** Callback function to be called when a channel get response is received. */
+	/** Callback function to be called when a get channel response is received. */
 	void (*chnl_get_callbk_fn)(void *os_vif_ctx,
 				   struct nrf_wifi_umac_event_get_channel *info,
 				   unsigned int event_len);
 
-	/** Callback function to be called when a station get response is received. */
+	/** Callback function to be called when a get station response is received. */
 	void (*sta_get_callbk_fn)(void *os_vif_ctx,
 				  struct nrf_wifi_umac_event_new_station *info,
 				  unsigned int event_len);
@@ -171,7 +171,7 @@ struct wifi_nrf_fmac_callbk_fns {
 				    struct nrf_wifi_umac_event_mlme *tx_status_event,
 				    unsigned int event_len);
 
-	/** Callback function to be called when an interface set response is received. */
+	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
 				 struct nrf_wifi_umac_event_set_interface *set_if_event,
 				 unsigned int event_len);
@@ -186,12 +186,12 @@ struct wifi_nrf_fmac_callbk_fns {
 				     struct nrf_wifi_event_remain_on_channel *roc_cancel_event,
 				     unsigned int event_len);
 
-	/** Callback function to be called when a station get response is received. */
+	/** Callback function to be called when a get station response is received. */
 	void (*get_station_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_new_station *info,
 				     unsigned int event_len);
 
-	/** Callback function to be called when an interface get response is received. */
+	/** Callback function to be called when a get interface response is received. */
 	void (*get_interface_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_interface_info *info,
 				     unsigned int event_len);
@@ -246,7 +246,7 @@ struct wifi_nrf_fmac_callbk_fns {
 					  signed short signal);
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 
-	/** Callback function to be called when to process rssi of the received frame. */
+	/** Callback function to be called when rssi is to be processed from the received frame. */
 	void (*process_rssi_from_rx)(void *os_vif_ctx,
 				     signed short signal);
 };
@@ -297,17 +297,17 @@ struct peers_info {
 struct tx_config {
 	/** Lock used to make code portions in the TX path atomic. */
 	void *tx_lock;
-	/** Context information about peers that the RPU is connected to. */
+	/** Context information about peers that the RPU firmware is connected to. */
 	struct peers_info peers[MAX_SW_PEERS];
 	/** Coalesce count of TX frames. */
 	unsigned int *send_pkt_coalesce_count_p;
-	/** per-peer/per-AC Queue for frames waiting to be passed to the RPU for TX. */
+	/** per-peer/per-AC Queue for frames waiting to be passed to the RPU firmware for TX. */
 	void *data_pending_txq[MAX_SW_PEERS][WIFI_NRF_FMAC_AC_MAX];
 	/** Queue for peers which have woken up from 802.11 power save. */
 	void *wakeup_client_q;
 	/** Used to store tx descs(buff pool ids). */
 	unsigned long *buf_pool_bmp_p;
-	/** TX descriptors which have been queued to the RPU. */
+	/** TX descriptors which have been queued to the RPU firmware. */
 	unsigned int outstanding_descs[WIFI_NRF_FMAC_AC_MAX];
 	/** Peer who will be get the next opportunity for TX. */
 	unsigned int curr_peer_opp[WIFI_NRF_FMAC_AC_MAX];
