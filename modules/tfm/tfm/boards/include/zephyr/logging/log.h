@@ -20,9 +20,9 @@
 #define LOG_MODULE_DECLARE(...)
 #define LOG_MODULE_REGISTER(...)
 
-#define LOG_ERR(...) LOG_ERRFMT(__VA_ARGS__)
-#define LOG_WRN(...) LOG_WRNFMT(__VA_ARGS__)
-#define LOG_INF(...) LOG_INFFMT(__VA_ARGS__)
-#define LOG_DBG(...) LOG_DBGFMT(__VA_ARGS__)
+#define LOG_ERR(fmt, ...) LOG_ERRFMT(fmt "\r\n", ##__VA_ARGS__)
+#define LOG_WRN(fmt, ...) LOG_WRNFMT(fmt "\r\n", ##__VA_ARGS__)
+#define LOG_INF(fmt, ...) LOG_INFFMT(fmt "\r\n", ##__VA_ARGS__)
+#define LOG_DBG(fmt, ...) LOG_DBGFMT(fmt "\r\n", ##__VA_ARGS__)
 
 #endif /* __ZEPHYR_LOGGING_LOG_H__ */
