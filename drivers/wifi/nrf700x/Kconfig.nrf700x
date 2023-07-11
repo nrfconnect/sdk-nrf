@@ -302,4 +302,27 @@ config NRF700X_RSSI_STALE_TIMEOUT_MS
 	  value as driver does not store it and requires RPU to provide the
 	  info.
 
+if NETWORKING
+
+# Finetune defaults for certain system components used by the driver
+config HEAP_MEM_POOL_SIZE
+	default 153000
+
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	default 4096
+
+config POSIX_MAX_FDS
+	default 16
+
+config NET_TX_STACK_SIZE
+	default 4096
+
+config NET_RX_STACK_SIZE
+	default 4096
+
+config NET_TC_TX_COUNT
+	default 1
+
+endif # NETWORKING
+
 endif
