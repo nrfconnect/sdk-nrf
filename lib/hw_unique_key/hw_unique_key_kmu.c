@@ -12,9 +12,11 @@
 #include <nrfx_nvmc.h>
 
 #include <mdk/nrf_erratas.h>
-#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 #define KMU_KEYSLOT_SIZE_WORDS 4
+
+LOG_MODULE_DECLARE(hw_unique_key);
 
 /* Check whether a Hardware Unique Key has been written to the KMU. */
 static bool key_written(enum hw_unique_key_slot kmu_slot)
@@ -61,7 +63,7 @@ int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)
 #endif
 
 	if (err != 0) {
-		printk("The HUK writing to: %d failed with error code: %d\r\n", key_slot, err);
+		LOG_ERR("The HUK writing to: %d failed with error code: %d", key_slot, err);
 		return -HW_UNIQUE_KEY_ERR_WRITE_FAILED;
 	}
 
