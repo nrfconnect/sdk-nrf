@@ -201,9 +201,15 @@ config TFM_EXPERIMENTAL
 config TFM_PARTITION_INITIAL_ATTESTATION
 	bool
 	default y if !TFM_PROFILE_TYPE_MINIMAL
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_ECDSA
+	select PSA_WANT_ECC_SECP_R1_256
 	help
 	   We select "implementation ID" because it is a mandatory claim
 	   in the IAT.
+	   The initial attestation partition requires ECDSA algorithm with
+	   SHA-256 and and uses the Identity Key stored in the KMU.
+	   The identity key is a secp256r1 key pair.
 
 config TFM_QCBOR_PATH
 	string
