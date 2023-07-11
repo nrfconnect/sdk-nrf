@@ -266,6 +266,7 @@ Bluetooth mesh samples
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
   * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+  * Added a getter for the :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` sensor.
   * Fixed an issue where the :c:var:`bt_mesh_sensor_time_since_presence_detected` sensor could report an invalid value when the time delta would exceed the range of the characteristic.
 
 * Fixed an issue where some samples copied using the `nRF Connect for Visual Studio Code`_ extension would not compile due to relative paths in :file:`CMakeLists.txt`, which were referencing files outside of the applications folder.
