@@ -8,6 +8,7 @@ config WIFI_MGMT_EXT
 	bool "Extended commands for Wi-Fi management"
 	depends on WPA_SUPP
 	depends on WIFI_CREDENTIALS
+	default y
 	help
 	  Extends Wi-Fi L2 stack by commands to handle
 	  automatic connection management.
