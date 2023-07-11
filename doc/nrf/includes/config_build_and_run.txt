@@ -1,4 +1,4 @@
 This sample can be found under |sample path| in the |NCS| folder structure.
 
-See :ref:`configure_application` and :ref:`gs_programming` for information about how to configure and how to build and program the application.
-Also check :ref:`gs_testing` for general information about testing and debugging in the |NCS|.
+See :ref:`configure_application` and :ref:`programming` for information about how to configure and how to build and program the application.
+Also check :ref:`testing` for general information about testing and debugging in the |NCS|.

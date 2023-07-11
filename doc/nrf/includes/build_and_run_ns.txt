@@ -5,4 +5,4 @@ Because of this, it automatically includes the :ref:`Trusted Firmware-M (TF-M) <
 To read more about CMSE, see :ref:`app_boards_spe_nspe`.
 
 To build the sample with |VSC|, follow the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.
-See :ref:`gs_programming` for other building and programming scenarios and :ref:`gs_testing` for general information about testing and debugging in the |NCS|.
+See :ref:`programming` for other building and programming scenarios and :ref:`testing` for general information about testing and debugging in the |NCS|.
