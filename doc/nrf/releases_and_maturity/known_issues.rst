@@ -279,9 +279,9 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
-.. rst-class:: v2-4-1 v2-4-0 v2-3-0
+.. rst-class:: v2-4-0 v2-3-0
 
-KRKNWK-12467: Application core can crash on nRF5340 when there is a high load on Zephyr's main thread
+KRKNWK-17151: Application core can crash on nRF5340 when there is a high load on Zephyr's main thread
   The priority of Zephyr's main thread is set to the same value as the IPC thread's priority (``0``).
   Because of this setting, when Zephyr's main thread is working for a long time, an interrupt related to the IEEE 802.15.4 radio driver can occur and the application core can crash due to a lack of communication with the network core.
   To avoid blocking the communication between cores, the main thread priority should have a lower priority than the IPC priority.
@@ -2882,16 +2882,6 @@ KRKNWK-16976: multiprotocol_rpmsg application on nRF5340 network core occasional
   **Affected platforms:** nRF5340
 
   **Workaround:** Implement own mechanism to allow detection on nRF5340 application core a reset or crash of nRF5340 network core and react according to own requirements.
-
-.. rst-class:: v2-4-1
-
-KRKNWK-16976: multiprotocol_rpmsg application on nRF5340 network core occasionally crashes when Matter weather station application is stress tested
-  The root cause of this issue is not known.
-  When nRF5340 network core crashes it can hang or silently reset (see :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR`).
-
-  **Affected platforms:** nRF5340
-
-  **Workaround:** Use Kconfig options ``CONFIG_IEEE802154_NRF5_CALLOUT_TIMEOUT_MS`` and ``IEEE802154_NRF5_RX_THREAD_HEARTBEAT_PERIOD_MS``.
 
 .. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
 
