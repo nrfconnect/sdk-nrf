@@ -631,7 +631,10 @@ Common Application Framework (CAF)
 Shell libraries
 ---------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`shell_nfc_readme` library.
+    It adds shell backend using the NFC T4T ISO-DEP protocol for data exchange.
 
 Libraries for Zigbee
 --------------------

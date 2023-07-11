@@ -153,3 +153,91 @@ default-size = 10
 source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
 
 endif #SHELL_IPC
+
+menuconfig SHELL_NFC
+	bool "Shell NFC transport"
+	depends on NFC_T4T_NRFXLIB
+	help
+	  Enable NFC T4T ISO-DEP transport layer for shell interface.
+
+if SHELL_NFC
+
+config SHELL_NFC_INIT_PRIORITY
+	int "Initialization priority"
+	default 0
+	range 0 99
+	help
+	  Initialization priority for NFC backend.
+
+config SHELL_NFC_BACKEND_TX_BUFFER
+	int "NFC Tx buffer size"
+	default 255
+	help
+	  Set the NFC ISO-DEP response buffer size. The response buffer size might vary on the
+	  NFC Reader device maximum supported frame size. Its size can be
+	  SHELL_NFC_BACKEND_TX_RING_BUFFER_SIZE + 1. One byte is used for a packet header.
+
+config SHELL_NFC_BACKEND_TX_RING_BUFFER_SIZE
+	int "Shell Tx ring buffer size"
+	default 254
+	help
+	  Set the shell Tx ring buffer size. It collects data from the shell and passes it to the
+	  transport interface. It can be increased to transfer data in bigger chunks. To achieve the
+	  higher data throughput, the SHELL_NFC_BACKEND_TX_BUFFER Kconfig option must be increased
+	  together with it.
+
+config SHELL_NFC_BACKEND_RX_RING_BUFFER_SIZE
+	int "Shell Rx ring buffer size"
+	default 32
+	help
+	  RX ring buffer size impacts accepted latency of handling incoming
+	  bytes by shell. If shell input is coming from the keyboard then it is
+	  usually enough if ring buffer is few bytes (more than one due to
+	  escape sequences). However, if bulk data is transferred it may be
+	  required to increase it.
+
+choice
+	prompt "Initial log level limit"
+	default SHELL_NFC_INIT_LOG_LEVEL_NONE
+
+config SHELL_NFC_INIT_LOG_LEVEL_DEFAULT
+	bool "System limit (LOG_MAX_LEVEL)"
+
+config SHELL_NFC_INIT_LOG_LEVEL_DBG
+	bool "Debug"
+
+config SHELL_NFC_INIT_LOG_LEVEL_INF
+	bool "Info"
+
+config SHELL_NFC_INIT_LOG_LEVEL_WRN
+	bool "Warning"
+
+config SHELL_NFC_INIT_LOG_LEVEL_ERR
+	bool "Error"
+
+config SHELL_NFC_INIT_LOG_LEVEL_NONE
+	bool "None"
+
+endchoice
+
+config SHELL_NFC_INIT_LOG_LEVEL
+	int
+	default 0 if SHELL_NFC_INIT_LOG_LEVEL_NONE
+	default 1 if SHELL_NFC_INIT_LOG_LEVEL_ERR
+	default 2 if SHELL_NFC_INIT_LOG_LEVEL_WRN
+	default 3 if SHELL_NFC_INIT_LOG_LEVEL_INF
+	default 4 if SHELL_NFC_INIT_LOG_LEVEL_DBG
+	default 5 if SHELL_NFC_INIT_LOG_LEVEL_DEFAULT
+
+module = SHELL_NFC
+module-str = Shell over the NFC T4T ISO-DEP
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+default-timeout = 100
+source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
+
+default-size = 10
+source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
+
+
+endif # SHELL_NFC
