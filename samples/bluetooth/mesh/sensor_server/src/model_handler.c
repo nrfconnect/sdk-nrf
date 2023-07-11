@@ -47,6 +47,7 @@ static struct bt_mesh_sensor_column temp_range = {
 static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
+static uint32_t outside_temp_range;
 static struct sensor_value pres_mot_thres;
 static double amb_light_level_ref;
 static double amb_light_level_gain = 1.0;
@@ -72,18 +73,9 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 	}
 
 	if (!bt_mesh_sensor_value_in_column(rsp, &temp_range)) {
-		if (temp_range.start.val1 == temp_range.end.val1) {
-			if (rsp->val2 <= temp_range.start.val2) {
-				*rsp = temp_range.start;
-			} else {
-				*rsp = temp_range.end;
-			}
-		} else if (rsp->val1 <= temp_range.start.val1) {
-			*rsp = temp_range.start;
-		} else {
-			*rsp = temp_range.end;
-		}
+		outside_temp_range++;
 	}
+
 	for (int i = 0; i < ARRAY_SIZE(columns); ++i) {
 		if (bt_mesh_sensor_value_in_column(rsp, &columns[i])) {
 			col_samps[i]++;
@@ -183,7 +175,7 @@ static struct bt_mesh_sensor chip_temp = {
 	},
 };
 
-static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
+static int relative_runtime_in_chip_temp_series_get(struct bt_mesh_sensor_srv *srv,
 	struct bt_mesh_sensor *sensor,
 	struct bt_mesh_msg_ctx *ctx,
 	uint32_t column_index,
@@ -206,13 +198,36 @@ static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
 	return 0;
 }
 
+static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
+					     struct bt_mesh_sensor *sensor,
+					     struct bt_mesh_msg_ctx *ctx,
+					     struct sensor_value *rsp)
+{
+	if (tot_temp_samps) {
+		uint8_t percent_steps =
+			(200 * (tot_temp_samps - outside_temp_range)) / tot_temp_samps;
+
+		rsp[0].val1 = percent_steps / 2;
+		rsp[0].val2 = (percent_steps % 2) * 500000;
+	} else {
+		rsp[0].val1 = 100;
+		rsp[0].val2 = 0;
+	}
+
+	rsp[1] = temp_range.start;
+	rsp[2] = temp_range.end;
+
+	return 0;
+}
+
 static struct bt_mesh_sensor rel_chip_temp_runtime = {
 	.type = &bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range,
+	.get = relative_runtime_in_chip_temp_get,
 	.series = {
 		columns,
 		ARRAY_SIZE(columns),
-		relative_runtime_in_chip_temp_get,
-		},
+		relative_runtime_in_chip_temp_series_get,
+	},
 };
 
 static void presence_motion_threshold_get(struct bt_mesh_sensor_srv *srv,
