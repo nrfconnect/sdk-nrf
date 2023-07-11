@@ -19,6 +19,7 @@
 
 LOG_MODULE_REGISTER(identity_key);
 
+#if defined(CONFIG_IDENTITY_KEY_RANDOM)
 static int generate_random_secp256r1_private_key(uint8_t *key_buff)
 {
 	psa_status_t status;
@@ -91,6 +92,7 @@ int identity_key_write_random(void)
 
 	return IDENTITY_KEY_SUCCESS;
 }
+#endif /* defined(CONFIG_IDENTITY_KEY_RANDOM)*/
 
 int identity_key_write_key(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
 {
