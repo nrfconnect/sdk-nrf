@@ -120,6 +120,22 @@ jobs:
         working-directory: ncs/nrf/doc/_build/docsets/kconfig.docset/Contents/Resources/Documents
         run: python3 ../../../../../../_scripts/rebuild_kconfig_index.py
 
+      - name: Filter out group elements from Zephyr docset
+        working-directory: ncs/nrf/doc/_build/docsets/zephyr.docset/Contents/Resources/Documents
+        run: python3 ../../../../../../_scripts/filter_docset_index.py
+
+      - name: Filter out group elements from nrf docset
+        working-directory: ncs/nrf/doc/_build/docsets/nrf.docset/Contents/Resources/Documents
+        run: python3 ../../../../../../_scripts/filter_docset_index.py
+
+      - name: Filter out group elements from nrfx docset
+        working-directory: ncs/nrf/doc/_build/docsets/nrfx.docset/Contents/Resources/Documents
+        run: python3 ../../../../../../_scripts/filter_docset_index.py
+
+      - name: Filter out group elements from nrfxlib docset
+        working-directory: ncs/nrf/doc/_build/docsets/nrfxlib.docset/Contents/Resources/Documents
+        run: python3 ../../../../../../_scripts/filter_docset_index.py
+
       - name: Compress Docsets
         working-directory: ncs/nrf/doc/_build
         run: tar czf docsets.tar.xz docsets/
