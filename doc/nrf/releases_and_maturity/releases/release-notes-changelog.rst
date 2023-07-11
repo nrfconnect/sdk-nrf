@@ -260,6 +260,7 @@ Bluetooth samples
   * Updated:
 
     * Aligned timers' configurations to the new nrfx API.
+    * Extracted the DTM radio API from the transport layer.
 
 * :ref:`peripheral_hids_keyboard` sample:
 

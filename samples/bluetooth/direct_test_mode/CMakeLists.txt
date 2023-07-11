@@ -31,10 +31,14 @@ endif()
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
+target_include_directories(app PRIVATE ./src)
+
+target_sources_ifdef(CONFIG_DTM_TRANSPORT_TWOWIRE app PRIVATE src/transport/dtm_uart_twowire.c)
+
 # NORDIC SDK APP START
 target_sources(app PRIVATE
-  src/main.c
   src/dtm.c
   src/dtm_hw.c
+  src/main.c
 )
 # NORDIC SDK APP END

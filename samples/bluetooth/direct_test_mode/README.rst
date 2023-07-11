@@ -58,9 +58,10 @@ The driver maps two-octet commands and events to the DTM library, as specified b
 
 The implementation is self-contained and requires no Bluetooth Low Energy protocol stack for its operation.
 The MPU is initialized in the standard way.
-The DTM library function ``dtm_init`` configures all interrupts, timers, and the radio.
+The DTM library function :c:func:`dtm_init` configures all interrupts, timers, and the radio.
 
-The :file:`main.c` file may be replaced with other interface implementations, such as an HCI interface, USB, or another interface required by the Upper Tester.
+The :file:`main.c` file may be extended with other interface implementations, such as an HCI interface, USB, or another interface required by the Upper Tester.
+The extension should be done by adding an appropriate interface implementation in the :file:`transport` directory.
 
 The interface to the Lower Tester uses the antenna connector of the chosen development kit.
 While in principle an aerial connection might be used, conformance tests cover the reading of the transmission power delivered by the DUT.
@@ -69,20 +70,34 @@ For this reason, a coaxial connection between the DUT and the Lower Tester is em
 DTM module interface
 ====================
 
-The DTM function ``dtm_cmd_put`` implements the four commands defined by the Bluetooth Low Energy standard:
+The DTM module interface can be divided into the following three parts:
 
-* ``TEST SETUP`` (called ``RESET`` in Bluetooth 4.0)
-* ``RECEIVER_TEST``
-* ``TRANSMITTER_TEST``
-* ``TEST_END``
+* The :c:func:`dtm_init` initialization function
+* Setup functions:
 
-In the ``dtm_cmd_put`` interface, DTM commands are accepted in the 2-byte format.
-Parameters such as ``CMD code``, ``Frequency``, ``Length``, or ``Packet Type`` are encoded within this command.
+  * :c:func:`dtm_setup_reset`
+  * :c:func:`dtm_setup_set_phy`
+  * :c:func:`dtm_setup_set_modulation`
+  * :c:func:`dtm_setup_read_features`
+  * :c:func:`dtm_setup_read_max_supported_value`
+  * :c:func:`dtm_setup_set_cte_mode`
+  * :c:func:`dtm_setup_set_cte_slot`
+  * :c:func:`dtm_setup_set_antenna_params`
+  * :c:func:`dtm_setup_set_transmit_power`
 
-The following DTM events are polled using the ``dtm_event_get`` function:
+* Test functions:
 
-* ``PACKET_REPORTING_EVENT``
-* ``TEST_STATUS_EVENT`` [ ``SUCCESS`` | ``FAIL`` ]
+  * :c:func:`dtm_test_receive`
+  * :c:func:`dtm_test_transmit`
+  * :c:func:`dtm_test_end`
+
+The setup functions implement the DTM setup required by the Bluetooth Low Energy standard.
+The test functions implement the tests defined by the Bluetooth Low Energy standard.
+
+The sample is required to perform the following tasks:
+
+  *  To parse the relevant encoding format - UART or HCI - for the command, and to use the DTM module interface accordingly.
+  *  To interpret the return values of interface functions used in the DTM module, and to respond to the tester in the correct format.
 
 .. figure:: /images/bt_dtm_engine.svg
    :alt: State machine overview of the DTM
@@ -281,7 +296,7 @@ Vendor-specific commands can be divided into different categories as follows:
 
 .. note::
    Front-end module configuration parameters, such as ``antenna output``, ``gain``, and ``active delay``, are not set to their default values after the DTM reset command.
-   Testers, for example Anritsu MT885, issue a reset command in the beginning of every test.
+   Testers, for example Anritsu MT8852, issue a reset command at the beginning of every test.
    Therefore, you cannot run automated test scripts for front-end modules with other than the default parameters.
 
    If you have changed the default parameters of the front-end module, you can restore them.
@@ -299,7 +314,7 @@ Vendor-specific commands can be divided into different categories as follows:
 The DTM-to-Serial adaptation layer
 ==================================
 
-The :file:`main.c` file is an implementation of the UART interface specified in the `Bluetooth Core Specification`_: Vol. 6, Part F, Chap. 3.
+The :file:`dtm_uart_twowire.c` file is an implementation of the UART interface specified in the `Bluetooth Core Specification`_, Volume 6, Part F, Chapter 3.
 
 The default selection of UART pins is defined in :file:`zephyr/boards/arm/board_name/board_name.dts`.
 You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file of the child image at the project level.
