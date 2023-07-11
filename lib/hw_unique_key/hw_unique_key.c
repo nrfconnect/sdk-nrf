@@ -9,9 +9,9 @@
 #include <nrf_cc3xx_platform_ctr_drbg.h>
 #include <hw_unique_key.h>
 #include "hw_unique_key_internal.h"
-#include <zephyr/kernel.h>
-#include <zephyr/sys/util.h>
+#include <zephyr/logging/log.h>
 
+LOG_MODULE_REGISTER(hw_unique_key);
 
 #ifdef CONFIG_HW_UNIQUE_KEY_RANDOM
 int hw_unique_key_write_random(void)
@@ -24,13 +24,13 @@ int hw_unique_key_write_random(void)
 	nrf_cc3xx_platform_ctr_drbg_context_t ctx = {0};
 
 	if (hw_unique_key_are_any_written()) {
-		printk("One or more keys already set. Cannot overwrite\r\n");
+		LOG_ERR("One or more keys already set. Cannot overwrite");
 		return -HW_UNIQUE_KEY_ERR_WRITE_FAILED;
 	}
 
 	err = nrf_cc3xx_platform_ctr_drbg_init(&ctx, pers_str, sizeof(pers_str) - 1);
 	if (err != 0) {
-		printk("The RNG setup failed with error code: %d\r\n", err);
+		LOG_ERR("The RNG setup failed with error code: %d", err);
 		return -HW_UNIQUE_KEY_ERR_GENERATION_FAILED;
 	}
 
@@ -38,12 +38,12 @@ int hw_unique_key_write_random(void)
 	err2 = nrf_cc3xx_platform_ctr_drbg_free(&ctx);
 
 	if (err != 0 || olen != sizeof(rand_bytes)) {
-		printk("The RNG call failed with error code: %d or wrong size %d\r\n", err, olen);
+		LOG_ERR("The RNG call failed with error code: %d or wrong size %d", err, olen);
 		return -HW_UNIQUE_KEY_ERR_GENERATION_FAILED;
 	}
 
 	if (err2 != 0) {
-		printk("Could not free nrf_cc3xx_platform_ctr_drbg context: %d\r\n", err2);
+		LOG_ERR("Could not free nrf_cc3xx_platform_ctr_drbg context: %d", err2);
 		return -HW_UNIQUE_KEY_ERR_GENERATION_FAILED;
 	}
 
@@ -57,13 +57,13 @@ int hw_unique_key_write_random(void)
 	memset(rand_bytes, 0, sizeof(rand_bytes));
 
 	if (memcmp(rand_bytes, zeros, sizeof(rand_bytes)) != 0) {
-		printk("The key bytes weren't correctly deleted from RAM.\r\n");
+		LOG_ERR("The key bytes weren't correctly deleted from RAM.");
 		return -HW_UNIQUE_KEY_ERR_GENERATION_FAILED;
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {
 		if (!hw_unique_key_is_written(huk_slots[i])) {
-			printk("One or more keys not set correctly\r\n");
+			LOG_ERR("One or more keys not set correctly");
 			return -HW_UNIQUE_KEY_ERR_WRITE_FAILED;
 		}
 	}
@@ -96,7 +96,7 @@ int hw_unique_key_derive_key(enum hw_unique_key_slot key_slot, const uint8_t *co
 						       label_size, context, context_size, output,
 						       output_size);
 	if (err != 0) {
-		printk("nrf_cc3xx_platform_kmu_shadow_key_derive failed with error code: %d\r\n",
+		LOG_ERR("nrf_cc3xx_platform_kmu_shadow_key_derive failed with error code: %d",
 		       err);
 		return -HW_UNIQUE_KEY_ERR_DERIVE_FAILED;
 	};
