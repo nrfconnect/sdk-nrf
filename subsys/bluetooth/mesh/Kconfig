@@ -109,6 +109,21 @@ config BT_MESH_PROXY_FILTER_SIZE
 
 endif
 
+config BT_MESH_USES_TFM_PSA
+	bool
+	select PSA_WANT_GENERATE_RANDOM
+	select PSA_WANT_ALG_CCM
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_ALG_CMAC
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_ECDH
+	select PSA_WANT_ECC_SECP_R1_256
+
+choice TFM_PROFILE_TYPE
+	depends on BT_MESH_USES_TFM_PSA
+	default TFM_PROFILE_TYPE_NOT_SET
+endchoice
+
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"
 rsource "shell/Kconfig"

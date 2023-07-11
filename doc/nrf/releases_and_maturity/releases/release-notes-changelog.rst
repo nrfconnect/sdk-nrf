@@ -93,7 +93,7 @@ Bluetooth® LE
 Bluetooth mesh
 --------------
 
-|no_changes_yet_note|
+* Added support for Trusted Firmware-M (TF-M) PSA as the crypto backend for mesh security toolbox for the platforms with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>`.
 
 See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samples.
 
@@ -234,6 +234,26 @@ Bluetooth mesh samples
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
   * Fixed an issue with the sample not fitting into RAM size on the nrf52dk_nrf52832 board.
+
+* :ref:`bluetooth_mesh_light` sample:
+
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+
+* :ref:`bluetooth_mesh_light_dim` sample:
+
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+
+* :ref:`bluetooth_mesh_light_switch` sample:
+
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+
+* :ref:`bluetooth_mesh_sensor_server` sample:
+
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
 
 Cryptography samples
 --------------------
