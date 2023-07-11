@@ -54,6 +54,7 @@ jobs:
         run: |
           sudo pip3 install -U setuptools wheel pip
           pip3 install -r nrf/doc/requirements.txt
+          pip3 install git+https://github.com/maxd-nordic/doc-sphinx-ncs-theme.git@zeal --ignore-installed
 
       - name: West zephyr-export
         working-directory: ncs
