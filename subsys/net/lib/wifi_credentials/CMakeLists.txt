@@ -22,6 +22,10 @@ zephyr_library_sources_ifdef(
 	wifi_credentials_backend_psa.c)
 
 zephyr_library_sources_ifdef(
+	CONFIG_WIFI_CREDENTIALS_BACKEND_NONE
+	wifi_credentials_backend_none.c)
+
+zephyr_library_sources_ifdef(
 	CONFIG_WIFI_CREDENTIALS_SHELL
 	wifi_credentials_shell.c)
 

@@ -18,6 +18,7 @@ source "subsys/logging/Kconfig.template.log_config"
 choice WIFI_CREDENTIALS_BACKEND
 	prompt "WiFi credentials backend"
 	default WIFI_CREDENTIALS_BACKEND_SETTINGS
+	default WIFI_CREDENTIALS_BACKEND_NONE if WIFI_CREDENTIALS_STATIC
 	help
 	  Selects whether to use PSA Protected Storage or the Zephyr settings subsystem
 	  for credentials storage.
@@ -30,6 +31,10 @@ config WIFI_CREDENTIALS_BACKEND_SETTINGS
 config WIFI_CREDENTIALS_BACKEND_PSA
 	bool "PSA Protected Storage"
 	depends on BUILD_WITH_TFM && !TFM_PROFILE_TYPE_MINIMAL
+
+config WIFI_CREDENTIALS_BACKEND_NONE
+	bool "No credentials storage"
+	depends on WIFI_CREDENTIALS_STATIC
 
 endchoice
 
@@ -50,6 +55,7 @@ config WIFI_CREDENTIALS_SHELL
 	bool "Shell commands to manage Wi-Fi credentials"
 	default y
 	depends on SHELL
+	depends on !WIFI_CREDENTIALS_BACKEND_NONE
 
 endif # WIFI_CREDENTIALS
 
