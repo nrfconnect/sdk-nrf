@@ -101,6 +101,7 @@ Matter
 ------
 
 * Added a page about :ref:`ug_matter_device_optimizing_memory`.
+* Fixed an IPC crash on nRF5340 when Zephyr's main thread takes a long time.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -111,7 +112,9 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-|no_changes_yet_note|
+* Added the :kconfig:option:`CHIP_MALLOC_SYS_HEAP_WATERMARKS_SUPPORT` Kconfig option to manage watermark support.
+* Updated the factory data guide with an additional rotating ID information.
+* Fixed RAM and ROM reports.
 
 Thread
 ------
@@ -289,7 +292,12 @@ Thread samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`matter_lock_sample` sample:
+
+  * Fixed the feature map for software diagnostic cluster.
+    Previously, it was set incorrectly.
+  * Fixed the cluster revision for basic information cluster.
+    Previously, it was set incorrectly.
 
 NFC samples
 -----------
