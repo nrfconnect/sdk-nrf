@@ -23,12 +23,6 @@
 #error "MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be selected in Mbed TLS config file"
 #endif
 
-#ifdef NRF5340_XXAA_APPLICATION
-#define HUK_KEY_LEN_BYTES  32
-#elif defined(NRF91_SERIES)
-#define HUK_KEY_LEN_BYTES  16
-#endif
-
 #ifdef CONFIG_HW_UNIQUE_KEY
 static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len,
 					    size_t *key_len,
@@ -36,7 +30,7 @@ static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len,
 					    psa_algorithm_t *algorithm,
 					    psa_key_type_t *type)
 {
-	if (buf_len < HUK_KEY_LEN_BYTES) {
+	if (buf_len < HUK_SIZE_BYTES) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
@@ -51,8 +45,8 @@ static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len,
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-	*key_len = HUK_KEY_LEN_BYTES;
-	*key_bits = HUK_KEY_LEN_BYTES * 8;
+	*key_len = HUK_SIZE_BYTES;
+	*key_bits = HUK_SIZE_BYTES * 8;
 	*algorithm = PSA_ALG_HKDF(PSA_ALG_SHA_256);
 	*type = PSA_KEY_TYPE_DERIVE;
 
