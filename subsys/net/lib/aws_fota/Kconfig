@@ -17,14 +17,6 @@ config AWS_FOTA_PAYLOAD_SIZE
 	int "MQTT payload reception buffer size for AWS IoT Jobs messages"
 	default 1350
 
-config AWS_FOTA_HOSTNAME_MAX_LEN
-	int "Hostname buffer size"
-	default 255
-
-config AWS_FOTA_FILE_PATH_MAX_LEN
-	int "File path buffer size"
-	default 255
-
 config AWS_FOTA_DOWNLOAD_SECURITY_TAG
 	int "Security tag to be used for downloads"
 	default -1

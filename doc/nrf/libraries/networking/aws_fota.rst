@@ -116,9 +116,13 @@ Configuration
 
 Configure the following parameters when using this library:
 
-* :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`
-* :kconfig:option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`
-* :kconfig:option:`CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`
+* :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` - Sets the maximum payload size for AWS IoT job messages.
+* :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` - Sets the security tag to be used in case of HTTPS downloads.
+
+Additionally, configure the :ref:`lib_download_client` library:
+
+* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` - Sets the maximum length of the host name for the download client.
+* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` - Sets the maximum length of the file name for the download client.
 
 .. _aws_fota_implementation:
 
