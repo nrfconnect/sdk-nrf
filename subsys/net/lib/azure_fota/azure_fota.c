@@ -72,8 +72,8 @@ static enum fota_status {
 } current_status = REP_STATUS_CURRENT;
 
 static struct fota_object {
-	char host[CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN];
-	char path[CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN];
+	char host[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
+	char path[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 	char version[CONFIG_AZURE_FOTA_VERSION_MAX_LEN];
 	char job_id[CONFIG_AZURE_FOTA_JOB_ID_MAX_LEN];
 	size_t fragment_size;

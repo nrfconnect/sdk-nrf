@@ -14,14 +14,6 @@ menuconfig AZURE_FOTA
 
 if AZURE_FOTA
 
-config AZURE_FOTA_HOSTNAME_MAX_LEN
-	int "Hostname buffer size"
-	default 64
-
-config AZURE_FOTA_FILE_PATH_MAX_LEN
-	int "File path buffer size"
-	default 64
-
 config AZURE_FOTA_VERSION_MAX_LEN
 	int "Version string buffer size"
 	default 64
