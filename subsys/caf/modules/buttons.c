@@ -32,6 +32,11 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BUTTONS_LOG_LEVEL);
 /* For directly connected GPIO, scan rows once. */
 #define COLUMNS MAX(ARRAY_SIZE(col), 1)
 
+BUILD_ASSERT(ARRAY_SIZE(col) <= 32,
+	     "Implementation uses uint32_t for bitmasks and supports up to 32 columns");
+BUILD_ASSERT(ARRAY_SIZE(row) <= 32,
+	     "Implementation uses uint32_t for bitmasks and supports up to 32 rows");
+
 enum state {
 	STATE_IDLE,
 	STATE_ACTIVE,
