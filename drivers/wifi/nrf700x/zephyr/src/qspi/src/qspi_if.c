@@ -34,7 +34,57 @@ static unsigned int nonce_cnt;
 static nrfx_qspi_config_t QSPIconfig;
 
 #define INST_0_SCK_FREQUENCY DT_INST_PROP(0, sck_frequency)
-BUILD_ASSERT(INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 16), "Unsupported SCK frequency.");
+/*
+ * According to the respective specifications, the nRF52 QSPI supports clock
+ * frequencies 2 - 32 MHz and the nRF53 one supports 6 - 96 MHz.
+ */
+BUILD_ASSERT(INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 16),
+	     "Unsupported SCK frequency.");
+
+/*
+ * Determine a configuration value (INST_0_SCK_CFG) and, if needed, a divider
+ * (BASE_CLOCK_DIV) for the clock from which the SCK frequency is derived that
+ * need to be used to achieve the SCK frequency as close as possible (but not
+ * higher) to the one specified in DT.
+ */
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+/*
+ * On nRF53 Series SoCs, the default /4 divider for the HFCLK192M clock can
+ * only be used when the QSPI peripheral is idle. When a QSPI operation is
+ * performed, the divider needs to be changed to /1 or /2 (particularly,
+ * the specification says that the peripheral "supports 192 MHz and 96 MHz
+ * PCLK192M frequency"), but after that operation is complete, the default
+ * divider needs to be restored to avoid increased current consumption.
+ */
+/* Use divider /2 for HFCLK192M. */
+#define BASE_CLOCK_DIV NRF_CLOCK_HFCLK_DIV_2
+#if (INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 4))
+/* For requested SCK >= 24 MHz, use HFCLK192M / 2 / (2*2) = 24 MHz */
+#define INST_0_SCK_CFG NRF_QSPI_FREQ_DIV2
+#else
+/* For requested SCK < 24 MHz, calculate the configuration value. */
+#define INST_0_SCK_CFG (DIV_ROUND_UP(NRF_QSPI_BASE_CLOCK_FREQ / 2, \
+				     INST_0_SCK_FREQUENCY) - 1)
+#endif
+/* For 8 MHz, use HFCLK192M / 2 / (2*6) */
+#define INST_0_SCK_CFG_WAKE NRF_QSPI_FREQ_DIV6
+
+#else
+/*
+ * On nRF52 Series SoCs, the base clock divider is not configurable,
+ * so BASE_CLOCK_DIV is not defined.
+ */
+#if (INST_0_SCK_FREQUENCY >= NRF_QSPI_BASE_CLOCK_FREQ)
+#define INST_0_SCK_CFG NRF_QSPI_FREQ_DIV1
+#else
+#define INST_0_SCK_CFG (DIV_ROUND_UP(NRF_QSPI_BASE_CLOCK_FREQ, \
+					 INST_0_SCK_FREQUENCY) - 1)
+#endif
+
+/* For 8 MHz, use PCLK32M / 4 */
+#define INST_0_SCK_CFG_WAKE NRF_QSPI_FREQ_DIV4
+
+#endif /* defined(CONFIG_SOC_SERIES_NRF53X) */
 
 /* for accessing devicetree properties of the bus node */
 #define QSPI_NODE DT_BUS(DT_DRV_INST(0))
@@ -100,26 +150,6 @@ struct qspi_nor_data {
 	volatile bool ready;
 #endif /* CONFIG_MULTITHREADING */
 };
-
-static inline int qspi_freq_mhz_to_sckfreq(int freq_m)
-{
-	if (freq_m > (NRF_QSPI_BASE_CLOCK_FREQ / MHZ(1))) {
-		return NRF_QSPI_FREQ_DIV1;
-	}
-#if defined(CONFIG_SOC_SERIES_NRF53X)
-	/* QSPIM (6-96MHz) : 192MHz / (2*(SCKFREQ + 1)) */
-	return ((192 / freq_m) / 2) - 1;
-#else
-	/* QSPIM (2-32MHz): 32 MHz / (SCKFREQ + 1) */
-	return (32 / freq_m) - 1;
-#endif
-}
-
-static inline int qspi_dts_freq_to_sckfreq(void)
-{
-	/* DTS frequency is in HZ */
-	return qspi_freq_mhz_to_sckfreq(INST_0_SCK_FREQUENCY / MHZ(1));
-}
 
 static inline int qspi_get_mode(bool cpol, bool cpha)
 {
@@ -289,10 +319,25 @@ static inline void qspi_lock(const struct device *dev)
 #else /* CONFIG_MULTITHREADING */
 	ARG_UNUSED(dev);
 #endif /* CONFIG_MULTITHREADING */
+
+	/*
+	 * Change the base clock divider only for the time the driver is locked
+	 * to perform a QSPI operation, otherwise the power consumption would be
+	 * increased also when the QSPI peripheral is idle.
+	 */
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	nrf_clock_hfclk192m_div_set(NRF_CLOCK, BASE_CLOCK_DIV);
+#endif
 }
 
 static inline void qspi_unlock(const struct device *dev)
 {
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	/* Restore the default base clock divider to reduce power consumption.
+	 */
+	nrf_clock_hfclk192m_div_set(NRF_CLOCK, NRF_CLOCK_HFCLK_DIV_4);
+#endif
+
 #ifdef CONFIG_MULTITHREADING
 	struct qspi_nor_data *dev_data = get_dev_data(dev);
 
@@ -582,7 +627,7 @@ static inline void qspi_fill_init_struct(nrfx_qspi_config_t *initstruct)
 	initstruct->prot_if.dpmconfig = false;
 
 	/* Configure physical interface */
-	initstruct->phy_if.sck_freq = qspi_dts_freq_to_sckfreq();
+	initstruct->phy_if.sck_freq = INST_0_SCK_CFG;
 	/* Using MHZ fails checkpatch constant check */
 	if (INST_0_SCK_FREQUENCY >= 16000000) {
 		qspi_config->qspi_slave_latency = 1;
@@ -612,7 +657,22 @@ static int qspi_nrfx_configure(const struct device *dev)
 
 	qspi_fill_init_struct(&QSPIconfig);
 
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	/* When the QSPI peripheral is activated, during the nrfx_qspi driver
+	 * initialization, it reads the status of the connected flash chip.
+	 * Make sure this transaction is performed with a valid base clock
+	 * divider.
+	 */
+	nrf_clock_hfclk192m_div_set(NRF_CLOCK, BASE_CLOCK_DIV);
+#endif
+
 	nrfx_err_t res = _nrfx_qspi_init(&QSPIconfig, qspi_handler, dev_data);
+
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	/* Restore the default /4 divider after the QSPI initialization. */
+	nrf_clock_hfclk192m_div_set(NRF_CLOCK, NRF_CLOCK_HFCLK_DIV_4);
+#endif
+
 	int ret = qspi_get_zephyr_ret_code(res);
 
 	if (ret == 0) {
@@ -854,14 +914,6 @@ static int qspi_nor_configure(const struct device *dev)
  */
 static int qspi_nor_init(const struct device *dev)
 {
-#if NRF_CLOCK_HAS_HFCLK192M
-	/* Make sure the PCLK192M clock, from which the SCK frequency is
-	 * derived, is not prescaled (the default setting after reset is
-	 * "divide by 4").
-	 */
-	nrf_clock_hfclk192m_div_set(NRF_CLOCK, NRF_CLOCK_HFCLK_DIV_1);
-#endif
-
 #ifdef CONFIG_PINCTRL
 	int ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(QSPI_NODE), PINCTRL_STATE_DEFAULT);
 
@@ -993,7 +1045,7 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 	/* Configure DTS settings */
 	if (val & RPU_AWAKE_BIT) {
 		/* Restore QSPI clock frequency from DTS */
-		QSPIconfig.phy_if.sck_freq = qspi_dts_freq_to_sckfreq();
+		QSPIconfig.phy_if.sck_freq = INST_0_SCK_CFG;
 	}
 
 	return val;
@@ -1065,7 +1117,7 @@ int qspi_cmd_wakeup_rpu(const struct device *dev, uint8_t data)
 	int ret;
 
 	/* Waking RPU works reliably only with lowest frequency (8MHz) */
-	QSPIconfig.phy_if.sck_freq = qspi_freq_mhz_to_sckfreq(8);
+	QSPIconfig.phy_if.sck_freq = INST_0_SCK_CFG_WAKE;
 
 	ret = qspi_WRSR2(dev, data);
 
