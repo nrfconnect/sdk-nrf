@@ -57,9 +57,11 @@ Configure the following parameters when using this library:
 * :kconfig:option:`CONFIG_AZURE_FOTA_APP_VERSION_AUTO` - Automatically generates the application version. If enabled, :kconfig:option:`CONFIG_AZURE_FOTA_APP_VERSION` is ignored.
 * :kconfig:option:`CONFIG_AZURE_FOTA_TLS` - Enables HTTPS for downloads. By default, TLS is enabled and currently, the transport protocol must be configured at compile time.
 * :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG` - Sets the security tag for TLS credentials when using HTTPS as the transport layer. See :ref:`azure_iot_hub_flash_certs` for more details.
-* :kconfig:option:`CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN` - Sets the host name buffer size.
-* :kconfig:option:`CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN` - Sets the file path buffer size.
 
+Additionally, configure the :ref:`lib_download_client` library:
+
+* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` - Sets the maximum length of the host name for the download client.
+* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` - Sets the maximum length of the file name for the download client.
 
 Limitations
 ***********
