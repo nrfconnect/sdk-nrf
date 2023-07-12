@@ -43,6 +43,7 @@ class ConfigStatus(IntEnum):
     REJECT             = 10
     WRITE_FAIL         = 11
     DISCONNECTED       = 12
+    GET_PEERS_CACHE    = 13
     FAULT              = 99
 
 class NrfHidTransport():
@@ -66,7 +67,8 @@ class NrfHidTransport():
                         ConfigStatus.GET_HWID,
                         ConfigStatus.GET_BOARD_NAME,
                         ConfigStatus.INDEX_PEERS,
-                        ConfigStatus.GET_PEER):
+                        ConfigStatus.GET_PEER,
+                        ConfigStatus.GET_PEERS_CACHE):
             assert event_id == 0
             assert event_data_len == 0
         elif status == ConfigStatus.FETCH:
@@ -211,7 +213,18 @@ class NrfHidDevice():
                         dir_devs[hwid] = discovered_dev
                         dev_active = True
 
-                peers = NrfHidDevice._get_connected_peers(dev, LOCAL_RECIPIENT)
+                peers, peers_cache = NrfHidDevice._get_connected_peers(dev, LOCAL_RECIPIENT)
+
+                if peers_cache:
+                    if discovered_dev.initialized():
+                        cache_dev_descr = '{} (HW ID: {})'.format(discovered_dev.get_board_name(),
+                                                                  discovered_dev.get_hwid())
+                    else:
+                        # Use device path to identify dongles that cannot be configured over
+                        # configuration channel.
+                        cache_dev_descr = d['path']
+                    logging.debug('Peers cache of {}: {} '.format(cache_dev_descr, peers_cache))
+
                 for p in peers:
                     discovered_dev = NrfHidDevice(dev, peers[p])
                     if discovered_dev.initialized():
@@ -378,9 +391,22 @@ class NrfHidDevice():
         return board_name, hwid
 
     @staticmethod
+    def _get_peers_cache(dev, recipient):
+        success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
+                                                                   recipient,
+                                                                   0,
+                                                                   ConfigStatus.GET_PEERS_CACHE,
+                                                                   None)
+        if success:
+            return " ".join("0x{:02x}".format(b) for b in fetched_data)
+        else:
+            return None
+
+    @staticmethod
     def _get_connected_peers(dev, recipient):
         INVALID_PEER_ID = 0xff
 
+        peers_cache = None
         peers = {}
 
         success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
@@ -389,7 +415,9 @@ class NrfHidDevice():
                                                                         ConfigStatus.INDEX_PEERS,
                                                                         None)
         if not success:
-            return peers
+            return peers, peers_cache
+
+        peers_cache = NrfHidDevice._get_peers_cache(dev, recipient)
 
         while True:
             success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
@@ -417,7 +445,7 @@ class NrfHidDevice():
                 peers = {}
                 break
 
-        return peers
+        return peers, peers_cache
 
     def _config_operation(self, module_name, option_name, is_get, value, poll_interval):
         if not self.initialized():
