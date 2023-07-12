@@ -36,7 +36,8 @@ extern "C" {
 	X(TIMEOUT)			\
 	X(REJECT)			\
 	X(WRITE_FAIL)			\
-	X(DISCONNECTED)
+	X(DISCONNECTED)			\
+	X(GET_PEERS_CACHE)
 
 enum config_status {
 #define X(name) _CONCAT(CONFIG_STATUS_, name),

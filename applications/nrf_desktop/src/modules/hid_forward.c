@@ -85,6 +85,7 @@ struct hids_peripheral {
 static struct subscriber subscribers[CONFIG_USB_HID_DEVICE_COUNT];
 static bt_addr_le_t peripheral_address[CONFIG_BT_MAX_PAIRED];
 static struct hids_peripheral peripherals[CONFIG_BT_MAX_CONN];
+static uint8_t peripheral_cache[CONFIG_BT_MAX_CONN];
 static bool suspended;
 
 
@@ -568,6 +569,10 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
 	memcpy(per->hwid, hwid, hwid_len);
 
+	peripheral_cache[per_id]++;
+	/* An odd number is assigned to a connected peripheral. */
+	__ASSERT_NO_MSG(peripheral_cache[per_id] & 0x01);
+
 	LOG_INF("Peripheral %p registered and linked to %p", (void *)per,
 		(void *)get_subscriber(per));
 
@@ -807,6 +812,26 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 		break;
 	}
 
+	case CONFIG_STATUS_GET_PEERS_CACHE:
+	{
+		BUILD_ASSERT(ARRAY_SIZE(peripherals) <= CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
+		BUILD_ASSERT(ARRAY_SIZE(peripherals) == ARRAY_SIZE(peripheral_cache));
+
+		size_t pos = 0;
+		struct config_event *rsp = generate_response(event,
+							     CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
+
+		memcpy(&rsp->dyndata.data[pos], peripheral_cache, sizeof(peripheral_cache));
+		pos += sizeof(peripheral_cache);
+
+		memset(&rsp->dyndata.data[pos], 0x00, CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE - pos);
+		pos = CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE;
+
+		rsp->status = CONFIG_STATUS_SUCCESS;
+		APP_EVENT_SUBMIT(rsp);
+		break;
+	}
+
 	default:
 		/* Not supported by this function. */
 		__ASSERT_NO_MSG(false);
@@ -826,7 +851,8 @@ static bool handle_config_event(struct config_event *event)
 
 	if (event->recipient == CFG_CHAN_RECIPIENT_LOCAL) {
 		if ((event->status == CONFIG_STATUS_INDEX_PEERS) ||
-		    (event->status == CONFIG_STATUS_GET_PEER)) {
+		    (event->status == CONFIG_STATUS_GET_PEER) ||
+		    (event->status == CONFIG_STATUS_GET_PEERS_CACHE)) {
 			handle_config_channel_peers_req(event);
 			return true;
 		}
@@ -995,6 +1021,12 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	if (per->cfg_chan_rsp) {
 		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 	}
+
+	size_t per_id = per - &peripherals[0];
+
+	peripheral_cache[per_id]++;
+	/* An even number is assigned to a disconnected peripheral. */
+	__ASSERT_NO_MSG(!(peripheral_cache[per_id] & 0x01));
 }
 
 static void enable_subscription(struct subscriber *sub, uint8_t report_id)
