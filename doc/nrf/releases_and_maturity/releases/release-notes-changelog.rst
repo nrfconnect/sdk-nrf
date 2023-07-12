@@ -147,6 +147,7 @@ Wi-Fi
   * The :kconfig:option:`CONFIG_NRF_WIFI_IF_AUTO_START` Kconfig option to enable an application to set/unset AUTO_START on an interface.
     This can be done by using the ``NET_IF_NO_AUTO_START`` flag.
   * Support for sending TWT sleep/wake events to applications.
+  * The nRF5340 HFCLK192M clock divider is set to the default value ``Div4`` for lower power consumption when the QSPI peripheral is idle.
 
 Applications
 ============
