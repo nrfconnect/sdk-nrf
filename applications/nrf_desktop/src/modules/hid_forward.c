@@ -824,17 +824,21 @@ static bool handle_config_event(struct config_event *event)
 		return false;
 	}
 
-	if ((event->recipient == CFG_CHAN_RECIPIENT_LOCAL) &&
-	    ((event->status == CONFIG_STATUS_INDEX_PEERS) ||
-	     (event->status == CONFIG_STATUS_GET_PEER))) {
-		handle_config_channel_peers_req(event);
-		return true;
+	if (event->recipient == CFG_CHAN_RECIPIENT_LOCAL) {
+		if ((event->status == CONFIG_STATUS_INDEX_PEERS) ||
+		    (event->status == CONFIG_STATUS_GET_PEER)) {
+			handle_config_channel_peers_req(event);
+			return true;
+		}
+
+		/* Do not try to forward requests for local recipient. */
+		return false;
 	}
 
 	struct hids_peripheral *per = find_peripheral(event->recipient);
 
 	if (!per) {
-		LOG_INF("Recipent %02" PRIx8 "not found", event->recipient);
+		LOG_INF("Recipient %02" PRIx8 " not found", event->recipient);
 		return false;
 	}
 
