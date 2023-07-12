@@ -119,9 +119,9 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 	if ((cJSON_GetStringValue(hostname) != NULL)
 	   && (cJSON_GetStringValue(path) != NULL)) {
 		strncpy_nullterm(hostname_buf, hostname->valuestring,
-				CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN);
+				CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE);
 		strncpy_nullterm(file_path_buf, path->valuestring,
-				CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN);
+				CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE);
 	} else {
 		ret = -ENODATA;
 		goto cleanup;

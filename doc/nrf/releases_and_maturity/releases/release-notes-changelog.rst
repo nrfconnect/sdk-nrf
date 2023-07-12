@@ -553,6 +553,13 @@ Libraries for networking
     * Support for using pre-provisioned X.509 certificates.
     * Support for using DTLS Connection Identifier
 
+* :ref:`lib_aws_fota` library:
+
+  * Updated:
+
+    * The :kconfig:option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
+    * The :kconfig:option:`CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
+
 Libraries for NFC
 -----------------
 

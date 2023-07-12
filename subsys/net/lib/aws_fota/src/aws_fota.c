@@ -59,8 +59,8 @@ static uint8_t get_topic[AWS_JOBS_TOPIC_MAX_LEN];
 
 /* Allocated buffers for keeping hostname, json payload and file_path. */
 static uint8_t payload_buf[CONFIG_AWS_FOTA_PAYLOAD_SIZE];
-static uint8_t hostname[CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN];
-static uint8_t file_path[CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN];
+static uint8_t hostname[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
+static uint8_t file_path[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 
 /* Allocated buffer used to keep track the job ID currently being handled by the library. */
 static uint8_t job_id_handling[AWS_JOBS_JOB_ID_MAX_LEN] = AWS_JOB_ID_DEFAULT;
