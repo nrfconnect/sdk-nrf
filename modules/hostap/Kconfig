@@ -39,6 +39,7 @@ config WPA_SUPP_CRYPTO_PSA
 	bool "PSA Crypto support for WiFi"
 	select WEP
 	select NRF_SECURITY
+	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_CMAC
 	select PSA_WANT_ALG_CBC_PKCS7
 	select PSA_WANT_ALG_CTR
