@@ -156,11 +156,6 @@ struct wifi_nrf_fmac_callbk_fns {
 				   struct nrf_wifi_umac_event_get_channel *info,
 				   unsigned int event_len);
 
-	/** Callback function to be called when a get station response is received. */
-	void (*sta_get_callbk_fn)(void *os_vif_ctx,
-				  struct nrf_wifi_umac_event_new_station *info,
-				  unsigned int event_len);
-
 	/** Callback function to be called when a cookie response is received. */
 	void (*cookie_rsp_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp,
