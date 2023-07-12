@@ -756,7 +756,7 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 	BUILD_ASSERT(ARRAY_SIZE(peripherals) + CFG_CHAN_BASE_ID <=
 		     CFG_CHAN_UNUSED_PEER_ID);
 
-	static uint8_t cur_per;
+	static uint8_t cur_per_idx;
 
 	switch (event->status) {
 	case CONFIG_STATUS_INDEX_PEERS:
@@ -767,41 +767,35 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 			}
 		}
 
-		cur_per = 0;
+		cur_per_idx = 0;
 		send_nodata_response(event, CONFIG_STATUS_SUCCESS);
 		break;
 
 	case CONFIG_STATUS_GET_PEER:
 	{
-		struct hids_peripheral *per;
-
-		if (cur_per < ARRAY_SIZE(peripherals)) {
-			per = &peripherals[cur_per];
-		} else {
-			per = NULL;
-		}
-
-		while ((cur_per < ARRAY_SIZE(peripherals)) &&
-		       (per->cfg_chan_id == CFG_CHAN_UNUSED_PEER_ID)) {
-			cur_per++;
-			if (cur_per < ARRAY_SIZE(peripherals)) {
-				per = &peripherals[cur_per];
-			}
-		}
+		struct hids_peripheral *per = NULL;
 
 		BUILD_ASSERT(sizeof(per->hwid) == HWID_LEN);
+
+		while (cur_per_idx < ARRAY_SIZE(peripherals)) {
+			struct hids_peripheral *cur_per = &peripherals[cur_per_idx++];
+
+			if (cur_per->cfg_chan_id != CFG_CHAN_UNUSED_PEER_ID) {
+				per = cur_per;
+				break;
+			}
+		}
 
 		struct config_event *rsp = generate_response(event,
 						    HWID_LEN + sizeof(uint8_t));
 		size_t pos = 0;
 
-		if (cur_per < ARRAY_SIZE(peripherals)) {
+		if (per) {
 			memcpy(&rsp->dyndata.data[pos],
 			       per->hwid, sizeof(per->hwid));
 			pos += sizeof(per->hwid);
 
 			rsp->dyndata.data[pos] = per->cfg_chan_id;
-			cur_per++;
 		} else {
 			pos += HWID_LEN;
 
