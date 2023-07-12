@@ -20,8 +20,26 @@ Overview
 ********
 
 This sample can perform Wi-Fi scan operations in the 2.4GHz and 5GHz bands.
+The default scan type is active scan.
+However, you can configure the scan type to be either active or passive.
 
 Using this sample, the development kit can scan for available access points in :abbr:`STA (Station)` mode.
+
+Configuration
+*************
+
+|config|
+
+Select the scan type to be used by the sample.
+
+.. note::
+        You can also use ``menuconfig`` to enable the ``Scan type`` option.
+
+See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
+
+The following application-specific Kconfig option is used in this sample (located in :file:`samples/wifi/scan/Kconfig`):
+
+* Use the :kconfig:option:`CONFIG_WIFI_SCAN_TYPE_SELECT` Kconfig option to set the scan type to be used by the sample.
 
 Building and running
 ********************
