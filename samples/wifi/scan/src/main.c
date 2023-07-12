@@ -182,7 +182,15 @@ static int wifi_scan(void)
 {
 	struct net_if *iface = net_if_get_default();
 
-	if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, NULL, 0)) {
+	struct wifi_scan_params params = {0};
+
+	params.scan_type = WIFI_SCAN_TYPE_ACTIVE;
+
+#if defined(CONFIG_WIFI_MGMT_FORCED_PASSIVE_SCAN) || defined(CONFIG_WIFI_SCAN_TYPE_PASSIVE)
+	params.scan_type = WIFI_SCAN_TYPE_PASSIVE;
+#endif
+	if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
+		     sizeof(struct wifi_scan_params))) {
 		LOG_ERR("Scan request failed");
 
 		return -ENOEXEC;
