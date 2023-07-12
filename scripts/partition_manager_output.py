@@ -27,9 +27,14 @@ DEST_KCONFIG = 2
 
 def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=None):
     config_lines = list()
+    affiliations = dict()
 
     def string_of_strings(mlist):
         return '"{}"'.format(' '.join([str(elem) for elem in mlist]))
+
+    def foreach_fns(mlist):
+        ulist = [elem.upper() for elem in mlist]
+        return ''.join([f' fn({elem})' for elem in ulist])
 
     partition_id = 0
 
@@ -61,6 +66,23 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
             add_line(f'{name_upper}_END_ADDRESS', hex(partition['end_address']))
             add_line(f'{name_upper}_SIZE', hex(partition['size']))
             add_line(f'{name_upper}_NAME', name)
+
+            try:
+                for paf in partition['affiliation']:
+                    ptd = affiliations.get(paf)
+                    if not ptd:
+                        affiliations[paf] = list()
+
+                    if ptd not in affiliations[paf]:
+                        affiliations[paf].append(name)
+
+            except KeyError:
+                pass
+
+            extra_params = partition.get('extra_params')
+            if extra_params:
+                for epkey in extra_params.keys():
+                    add_line(f'{name_upper}_EXTRA_PARAM_{epkey}', extra_params[epkey])
 
             if partition_has_device(partition):
                 add_line(f'{name_upper}_ID', str(partition_id))
@@ -97,6 +119,9 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
         all_by_size = sorted(all_by_size, key=find_depth)
         all_by_size = sorted(all_by_size, key=lambda key: flash_partition_pm_config[key]['size'])
         add_line('ALL_BY_SIZE', string_of_strings(all_by_size))
+        for saf in affiliations:
+            add_line(f'FOREACH_AFFILIATED_TO_{saf}(fn)',
+                       foreach_fns(affiliations[saf]))
 
     return config_lines
 

@@ -249,6 +249,8 @@ def clean_sub_partitions(reqs, sub_partitions):
 
 def convert_str_to_list(with_str):
     for k, v in with_str.items():
+        if k == 'extra_params':
+            continue
         if isinstance(v, dict):
             convert_str_to_list(v)
         elif isinstance(v, str) and k not in PERMITTED_STR_KEYS:
