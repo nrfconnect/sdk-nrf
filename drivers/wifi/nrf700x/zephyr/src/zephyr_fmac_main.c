@@ -23,11 +23,15 @@
 #include <util.h>
 #include <fmac_api.h>
 #include <zephyr_fmac_main.h>
-#ifdef CONFIG_WPA_SUPP
-#include <zephyr_wpa_supp_if.h>
-#endif /* CONFIG_WPA_SUPP */
+
 #ifndef CONFIG_NRF700X_RADIO_TEST
+#ifdef CONFIG_WPA_SUPP
+#include <zephyr_wifi_mgmt_scan.h>
 #include <zephyr_wifi_mgmt.h>
+#include <zephyr_wpa_supp_if.h>
+#else
+#include <zephyr_wifi_mgmt_scan.h>
+#endif /* CONFIG_WPA_SPP */
 #include <zephyr/net/conn_mgr_connectivity.h>
 
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
@@ -147,6 +151,85 @@ void wifi_nrf_event_proc_scan_done_zep(void *vif_ctx,
 	}
 
 	status = WIFI_NRF_STATUS_SUCCESS;
+}
+
+void wifi_nrf_scan_timeout_work(struct k_work *work)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_scan_result res;
+	scan_result_cb_t disp_scan_cb = NULL;
+
+	vif_ctx_zep = CONTAINER_OF(work, struct wifi_nrf_vif_ctx_zep, scan_timeout_work);
+
+	disp_scan_cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
+
+	if (!vif_ctx_zep->scan_in_progress) {
+		LOG_INF("%s: Scan not in progress\n", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	if (disp_scan_cb) {
+		memset(&res, 0x0, sizeof(res));
+
+		disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, &res);
+		vif_ctx_zep->disp_scan_cb = NULL;
+	} else {
+#ifdef CONFIG_WPA_SUPP
+		/* WPA supplicant scan */
+		union wpa_event_data event;
+		struct scan_info *info = NULL;
+
+		memset(&event, 0, sizeof(event));
+
+		info = &event.scan_info;
+
+		info->aborted = 0;
+		info->external_scan = 0;
+		info->nl_scan_event = 1;
+
+		if (vif_ctx_zep->supp_drv_if_ctx &&
+			vif_ctx_zep->supp_callbk_fns.scan_done) {
+			vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
+				&event);
+		}
+#endif /* CONFIG_WPA_SUPP */
+	}
+
+	vif_ctx_zep->scan_in_progress = false;
+}
+
+
+static void wifi_nrf_process_rssi_from_rx(void *vif_ctx,
+				   signed short signal)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = vif_ctx;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		return;
+	}
+
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	vif_ctx_zep->rssi = MBM_TO_DBM(signal);
+	vif_ctx_zep->rssi_record_timestamp_us =
+		wifi_nrf_osal_time_get_curr_us(fmac_dev_ctx->fpriv->opriv);
 }
 
 void wifi_nrf_event_get_reg_zep(void *vif_ctx,
@@ -417,17 +500,17 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.scan_start_callbk_fn = wifi_nrf_event_proc_scan_start_zep;
 	callbk_fns.scan_done_callbk_fn = wifi_nrf_event_proc_scan_done_zep;
 	callbk_fns.disp_scan_res_callbk_fn = wifi_nrf_event_proc_disp_scan_res_zep;
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+	callbk_fns.rx_bcn_prb_resp_callbk_fn = wifi_nrf_rx_bcn_prb_resp_frm;
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
+#ifdef CONFIG_WPA_SUPP
 	callbk_fns.twt_config_callbk_fn = wifi_nrf_event_proc_twt_setup_zep;
 	callbk_fns.twt_teardown_callbk_fn = wifi_nrf_event_proc_twt_teardown_zep;
 	callbk_fns.twt_sleep_callbk_fn = wifi_nrf_event_proc_twt_sleep_zep;
 	callbk_fns.event_get_reg = wifi_nrf_event_get_reg_zep;
 	callbk_fns.event_get_ps_info = wifi_nrf_event_proc_get_power_save_info;
 	callbk_fns.cookie_rsp_callbk_fn = wifi_nrf_event_proc_cookie_rsp;
-#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
-	callbk_fns.rx_bcn_prb_resp_callbk_fn = wifi_nrf_rx_bcn_prb_resp_frm;
-#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 	callbk_fns.process_rssi_from_rx = wifi_nrf_process_rssi_from_rx;
-#ifdef CONFIG_WPA_SUPP
 	callbk_fns.scan_res_callbk_fn = wifi_nrf_wpa_supp_event_proc_scan_res;
 	callbk_fns.auth_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_auth_resp;
 	callbk_fns.assoc_resp_callbk_fn = wifi_nrf_wpa_supp_event_proc_assoc_resp;
@@ -497,10 +580,12 @@ static struct wifi_mgmt_ops wifi_nrf_mgmt_ops = {
 #ifdef CONFIG_NET_STATISTICS_WIFI
 	.get_stats = wifi_nrf_stats_get,
 #endif /* CONFIG_NET_STATISTICS_WIFI */
+#ifdef CONFIG_WPA_SUPP
 	.set_power_save = wifi_nrf_set_power_save,
 	.set_twt = wifi_nrf_set_twt,
 	.reg_domain = wifi_nrf_reg_domain,
 	.get_power_save_config = wifi_nrf_get_power_save_config,
+#endif /* CONFIG_WPA_SUPP */
 };
 
 
