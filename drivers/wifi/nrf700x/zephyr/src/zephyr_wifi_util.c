@@ -299,6 +299,7 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 	return 0;
 }
 
+#ifdef CONFIG_WPA_SUPP
 static int nrf_wifi_util_tx_stats(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
@@ -343,6 +344,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 
 	return 0;
 }
+#endif /* CONFIG_WPA_SUPP */
 
 
 static int nrf_wifi_util_tx_rate(const struct shell *shell,
@@ -923,6 +925,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_show_cfg,
 		      1,
 		      0),
+#ifdef CONFIG_WPA_SUPP
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
 		      "Displays transmit statistics\n"
@@ -930,6 +933,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_tx_stats,
 		      2,
 		      0),
+#endif /* CONFIG_WPA_SUPP */
 	SHELL_CMD_ARG(tx_rate,
 		      NULL,
 		      "Sets TX data rate to either a fixed value or AUTO\n"

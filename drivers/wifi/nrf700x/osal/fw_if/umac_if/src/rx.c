@@ -209,14 +209,18 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 	unsigned int desc_id = 0;
 	unsigned int i = 0;
 	unsigned int pkt_len = 0;
+#ifdef CONFIG_WPA_SUPP
 	struct wifi_nrf_fmac_ieee80211_hdr hdr;
 	unsigned short eth_type = 0;
 	unsigned int size = 0;
+#endif /* CONFIG_WPA_SUPP */
 
 	vif_ctx = fmac_dev_ctx->vif_ctx[config->wdev_id];
 
+#ifdef CONFIG_WPA_SUPP
 	fmac_dev_ctx->fpriv->callbk_fns.process_rssi_from_rx(vif_ctx->os_vif_ctx,
 							     config->signal);
+#endif /* CONFIG_WPA_SUPP */
 	num_pkts = config->rx_pkt_cnt;
 
 	for (i = 0; i < num_pkts; i++) {
@@ -271,6 +275,7 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 		rx_buf_info->mapped = false;
 
 		if (config->rx_pkt_type == NRF_WIFI_RX_PKT_DATA) {
+#ifdef CONFIG_WPA_SUPP
 			switch (config->rx_buff_info[i].pkt_type) {
 			case PKT_TYPE_MPDU:
 				wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
@@ -317,6 +322,7 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 			}
 			fmac_dev_ctx->fpriv->callbk_fns.rx_frm_callbk_fn(vif_ctx->os_vif_ctx,
 									 nwb);
+#endif /* CONFIG_WPA_SUPP */
 		} else if (config->rx_pkt_type == NRF_WIFI_RX_PKT_BCN_PRB_RSP) {
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 			fmac_dev_ctx->fpriv->callbk_fns.rx_bcn_prb_resp_callbk_fn(

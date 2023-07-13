@@ -78,7 +78,9 @@ struct wifi_nrf_hal_cfg_params {
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	unsigned char rx_buf_headroom_sz;
 	unsigned char tx_buf_headroom_sz;
+#ifdef CONFIG_NRF700X_DATA_TX
 	unsigned int max_tx_frms;
+#endif /* CONFIG_NRF700X_DATA_TX */
 	struct rx_buf_pool_params rx_buf_pool[MAX_NUM_OF_RX_QUEUES];
 	unsigned int max_tx_frm_sz;
 	unsigned int max_ampdu_len_per_token;
