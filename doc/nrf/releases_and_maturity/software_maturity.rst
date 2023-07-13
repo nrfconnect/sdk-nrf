@@ -104,9 +104,9 @@ nRF5340 Audio
 
 The following table indicates the software maturity levels of the support for the :ref:`nrf53_audio_app` application.
 
-.. _software_maturity_application_nrf5340audio_table:
-
 .. toggle::
+
+   .. _software_maturity_application_nrf5340audio_table:
 
    .. list-table:: nRF5340 Audio application feature support
       :header-rows: 1
