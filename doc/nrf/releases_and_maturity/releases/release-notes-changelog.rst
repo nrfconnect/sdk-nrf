@@ -195,7 +195,7 @@ nRF9160: Serial LTE modem
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Updated the :ref:`application documentation <nrf53_audio_app>` by splitting it into several pages.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
