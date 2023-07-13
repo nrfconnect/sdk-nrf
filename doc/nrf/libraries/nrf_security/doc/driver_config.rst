@@ -392,7 +392,7 @@ To configure the Hash algorithms, set one or more of the following Kconfig optio
 +-----------------------+---------------------------------------------------+
 | Hash algorithm        | Configuration option                              |
 +=======================+===================================================+
-| SHA-1                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`       |
+| SHA-1 (weak)          | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`       |
 +-----------------------+---------------------------------------------------+
 | SHA-224               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224`     |
 +-----------------------+---------------------------------------------------+
@@ -402,11 +402,14 @@ To configure the Hash algorithms, set one or more of the following Kconfig optio
 +-----------------------+---------------------------------------------------+
 | SHA-512               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512`     |
 +-----------------------+---------------------------------------------------+
-| MD5                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_MD5`         |
+| MD5 (weak)            | :kconfig:option:`CONFIG_PSA_WANT_ALG_MD5`         |
 +-----------------------+---------------------------------------------------+
 | RIPEMD-160            | :kconfig:option:`CONFIG_PSA_WANT_ALG_RIPEMD160`   |
 +-----------------------+---------------------------------------------------+
 
+.. note::
+   * The SHA-1 hash is weak and deprecated and is only recommended for use in legacy protocols.
+   * The MD5 hash is weak and deprecated and is only recommended for use in legacy protocols.
 
 Hash driver configurations
 ==========================
@@ -416,7 +419,7 @@ You can use the following PSA driver-specific configurations for fine-grained co
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
 | Hash algorithm        |  nrf_cc3xx driver support                                     | nrf_oberon driver support                                     |
 +=======================+===============================================================+===============================================================+
-| SHA-1                 | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_CC3XX`    | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_OBERON`   |
+| SHA-1 (weak)          | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_CC3XX`    | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_1_OBERON`   |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
 | SHA-224               | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_224_CC3XX`  | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_224_OBERON` |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
@@ -426,7 +429,7 @@ You can use the following PSA driver-specific configurations for fine-grained co
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
 | SHA-512               | Not supported                                                 | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SHA_512_OBERON` |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
-| MD5                   | Not supported                                                 | Not supported                                                 |
+| MD5 (weak)            | Not supported                                                 | Not supported                                                 |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
 | RIPEMD-160            | Not supported                                                 | Not supported                                                 |
 +-----------------------+---------------------------------------------------------------+---------------------------------------------------------------+
