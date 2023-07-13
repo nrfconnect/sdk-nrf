@@ -7,10 +7,77 @@ nRF Connect SDK code base
    :local:
    :depth: 2
 
-The source code, libraries, and tools that compose the |NCS| are entirely hosted in a set of `Git`_ repositories.
-Basic familiarity with Git is required to understand the architecture of the repository set and to work with the |NCS|.
-
+The source code, libraries, and tools that compose the |NCS| are entirely hosted in a set of :ref:`ncs_git_intro` repositories, which are managed using Zephyr's :ref:`ncs_west_intro` tool.
 All |NCS| repositories are publicly hosted on the `nrfconnect GitHub organization`_, and accessible to both individual users and companies.
+
+Some notable repositories include:
+
+* `sdk-nrf`_ repository - Contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
+* `sdk-nrfxlib`_ repository - Contains closed-source libraries and modules in binary format.
+  See the :doc:`nrfxlib documentation <nrfxlib:README>`.
+* `sdk-zephyr`_ repository - Contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
+  See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor's Zephyr fork.
+
+  .. note::
+
+     The `sdk-zephyr`_ repository is a :term:`soft fork` that Nordic Semiconductor maintains.
+     It is not the same as Zephyr SDK, which is a set of :ref:`installation tools <gs_installing_toolchain>` used while installing the |NCS|.
+
+* `sdk-mcuboot`_ repository - Contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
+  You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
+  See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor's MCUboot fork.
+
+All repositories with the prefix ``sdk`` contain the |NCS| firmware and code.
+See :ref:`dm_repo_types` for more information.
+
+Every |NCS| release consists of a combination of all included repositories at different revisions.
+See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
+The revision of each of those repositories is determined by the current revision of the main (manifest) repository ``sdk-nrf``.
+
+.. _ncs_west_git_intro:
+
+Git and west
+************
+
+Basic familiarity with Git and west is required to understand the architecture of the repository set and to work with the |NCS|.
+
+.. _ncs_git_intro:
+
+Git
+===
+
+`Git`_ is a free and open source distributed version control system that allows managing the changes in the code or other collections of information (set of files) over time.
+
+Git offers a lot of flexibility in how users manage changes, and repositories are easily duplicated.
+In the |NCS|, forking is the agreed-upon Git workflow.
+To contribute, the official public repository in GitHub is forked.
+
+A fork can be hosted on any server, including a public Git hosting site like `GitHub`_.
+It is, however, important to differentiate between the generic concept of a fork and GitHub's concept of a `GitHub fork`_.
+When you create a GitHub fork, GitHub copies the original repository and tags the downstream repository (the fork) with a flag that allows users to send pull requests from the fork to its upstream repository.
+GitHub also supports creating forks without linking them to the upstream repository.
+See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
+
+.. _ncs_west_intro:
+
+West
+====
+
+The Zephyr project includes a tool called west.
+The |NCS| uses :ref:`west <zephyr:west>` to manage the combination of multiple Git repositories and versions.
+
+Some of west's features are similar to those provided by :term:`submodules <Submodule>` of Git and Google's Repo tool.
+But west also includes custom features required by the Zephyr project that were not sufficiently supported by the existing tools.
+
+West's workspace contains exactly one :ref:`manifest repository <zephyr:west-basics>`, which is a main Git repository containing a `west manifest file`_.
+Additional Git repositories in the workspace managed by west are called projects.
+The manifest repository controls which commits to use from the different projects through the manifest file.
+In the |NCS|, the main repository `sdk-nrf`_ contains a west manifest file :file:`west.yml`, that determines the revision of all other repositories.
+This means that `sdk-nrf`_ acts as the manifest repository, while the other repositories are projects.
+
+When developing in the |NCS|, your application will use libraries and features from folders that are cloned from different repositories or projects.
+The west tool keeps control of which commits to use from the different projects.
+It also makes it fairly simple to add and remove modules.
 
 .. _dm_repo_types:
 
