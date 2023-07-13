@@ -30,6 +30,55 @@ If multiple drivers are enabled, the first ordered item in this table takes prec
 
 Enabling or disabling PSA driver specific configurations controls the support for a given algorithm, per driver.
 
+Key type configuration
+**********************
+
+To enable key types for cryptographic algorithms, set one or more of the following Kconfig options:
+
++-----------------------+-------------------------------------------------------------+
+| Key type              | Configuration option                                        |
++=======================+=============================================================+
+| AES                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`              |
++-----------------------+-------------------------------------------------------------+
+| Chacha20              | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`         |
++-----------------------+-------------------------------------------------------------+
+| ECC Key Pair          | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`     |
++-----------------------+-------------------------------------------------------------+
+| ECC Public Key        | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`   |
++-----------------------+-------------------------------------------------------------+
+| RSA Key Pair          | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`     |
++-----------------------+-------------------------------------------------------------+
+| RSA Public Key        | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`   |
++-----------------------+-------------------------------------------------------------+
+| DH Key Pair           | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_DH_KEY_PAIR`      |
++-----------------------+-------------------------------------------------------------+
+| DH Public key         | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_DH_PUBLIC_KEY`    |
++-----------------------+-------------------------------------------------------------+
+
+Key type support
+================
+
+Key type support for each driver:
+
++-----------------------+---------------------------+----------------------------+
+| Key type              | nrf_cc3xx driver support  | nrf_oberon driver support  |
++=======================+===========================+============================+
+| AES                   | Supported                 | Supported                  |
++-----------------------+---------------------------+----------------------------+
+| Chacha20              | Supported                 | Supported                  |
++-----------------------+---------------------------+----------------------------+
+| ECC Key Pair          | Supported                 | Supported                  |
++-----------------------+---------------------------+----------------------------+
+| ECC Public Key        | Supported                 | Supported                  |
++-----------------------+---------------------------+----------------------------+
+| RSA Key Pair          | Supported                 | Supported                  |
++-----------------------+---------------------------+----------------------------+
+| RSA Public Key        | Supported                 | Supported                  |
++-----------------------+---------------------------+----------------------------+
+| DH Key Pair           | Not supported             | Not supported              |
++-----------------------+---------------------------+----------------------------+
+| DH Public key         | Not supported             | Not supported              |
++-----------------------+---------------------------+----------------------------+
 
 Cipher configurations
 *********************
