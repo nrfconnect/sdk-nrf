@@ -25,7 +25,9 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
+#if defined(CONFIG_NRF700X_DATA_TX) || defined(CONFIG_WPA_SUPP)
 static struct wifi_nrf_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+#endif /* CONFIG_NRF700X_DATA_TX || CONFIG_WPA_SUPP */
 
 extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
 				    char *buf, int buflen);
@@ -35,6 +37,7 @@ static struct net_mgmt_event_callback ip_maddr4_cb;
 static struct net_mgmt_event_callback ip_maddr6_cb;
 #endif /* CONFIG_WPA_SUPP */
 
+#ifdef CONFIG_NRF700X_DATA_TX
 static void wifi_nrf_net_iface_work_handler(struct k_work *work)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
@@ -58,7 +61,6 @@ static void wifi_nrf_net_iface_work_handler(struct k_work *work)
 	}
 }
 
-#ifdef CONFIG_NRF700X_DATA_TX
 void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = os_vif_ctx;
@@ -394,8 +396,10 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 			     NET_EVENT_IPV6_MADDR_ADD | NET_EVENT_IPV6_MADDR_DEL);
 	net_mgmt_add_event_callback(&ip_maddr6_cb);
 #endif /* CONFIG_WPA_SUPP */
+#ifdef CONFIG_NRF700X_DATA_TX
 	k_work_init(&vif_ctx_zep->wifi_nrf_net_iface_work,
 		    wifi_nrf_net_iface_work_handler);
+#endif /* CONFIG_NRF700X_DATA_TX */
 
 #if !defined(CONFIG_NRF_WIFI_IF_AUTO_START)
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);
