@@ -30,8 +30,10 @@ static struct wifi_nrf_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 extern char *net_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,
 				    char *buf, int buflen);
 
+#ifdef CONFIG_WPA_SUPP
 static struct net_mgmt_event_callback ip_maddr4_cb;
 static struct net_mgmt_event_callback ip_maddr6_cb;
+#endif /* CONFIG_WPA_SUPP */
 
 static void wifi_nrf_net_iface_work_handler(struct k_work *work)
 {
@@ -173,6 +175,7 @@ out:
 	return ret;
 }
 
+#ifdef CONFIG_WPA_SUPP
 static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 				   uint32_t mgmt_event,
 				   struct net_if *iface)
@@ -259,6 +262,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 
 	k_free(mcast_info);
 }
+#endif /* CONFIG_WPA_SUPP */
 
 void wifi_nrf_if_init_zep(struct net_if *iface)
 {
@@ -379,7 +383,7 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 			     vif_ctx_zep->mac_addr.addr,
 			     WIFI_MAC_ADDR_LEN,
 			     NET_LINK_ETHERNET);
-
+#ifdef CONFIG_WPA_SUPP
 	net_mgmt_init_event_callback(&ip_maddr4_cb,
 		     ip_maddr_event_handler,
 		     NET_EVENT_IPV4_MADDR_ADD | NET_EVENT_IPV4_MADDR_DEL);
@@ -389,6 +393,7 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 			     ip_maddr_event_handler,
 			     NET_EVENT_IPV6_MADDR_ADD | NET_EVENT_IPV6_MADDR_DEL);
 	net_mgmt_add_event_callback(&ip_maddr6_cb);
+#endif /* CONFIG_WPA_SUPP */
 	k_work_init(&vif_ctx_zep->wifi_nrf_net_iface_work,
 		    wifi_nrf_net_iface_work_handler);
 
@@ -529,7 +534,6 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 
 #ifdef CONFIG_WPA_SUPP
 	wifi_nrf_wpa_supp_event_mac_chgd(vif_ctx_zep);
-#endif /* CONFIG_WPA_SUPP */
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
@@ -542,6 +546,7 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 		goto dev_rem;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_WPA_SUPP */
 
 	vif_ctx_zep->if_op_state = WIFI_NRF_FMAC_IF_OP_STATE_UP;
 
@@ -586,6 +591,7 @@ int wifi_nrf_if_stop_zep(const struct device *dev)
 		goto out;
 	}
 
+#ifdef CONFIG_WPA_SUPP
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
@@ -597,6 +603,7 @@ int wifi_nrf_if_stop_zep(const struct device *dev)
 		goto out;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_WPA_SUPP */
 
 	memset(&vif_info,
 	       0,

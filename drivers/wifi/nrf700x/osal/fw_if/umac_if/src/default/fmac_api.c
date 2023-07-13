@@ -2314,6 +2314,7 @@ out:
 	return status;
 }
 
+#ifdef CONFIG_WPA_SUPP
 enum wifi_nrf_status wifi_nrf_fmac_suspend(void *dev_ctx)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
@@ -3191,3 +3192,4 @@ out:
 
 	return status;
 }
+#endif /* CONFIG_WPA_SUPP */
