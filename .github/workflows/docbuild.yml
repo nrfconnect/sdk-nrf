@@ -100,9 +100,9 @@ jobs:
           cp doc/custom.properties doc/_build/html
           sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/custom.properties
 
-          # add zoomin tags file
-          cp doc/tags.yml doc/_build/html
-          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/tags.yml
+          # add zoomin tags (classification) file
+          cp doc/classification.xml doc/_build/html
+          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/classification.xml
 
           # compress
           cd doc/_build/html
