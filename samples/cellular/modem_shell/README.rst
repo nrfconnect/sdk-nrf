@@ -500,7 +500,7 @@ See the following figure, which shows how to download the modem trace data in th
    Modem trace download
 
 .. note::
-   The conversion of modem trace file to a Wireshark-compatible format will be available in one of the future releases of the Trace Collector tool.
+   The conversion of modem trace file to a Wireshark-compatible format is available in the Cellular Monitor tool of the nRF Connect for Desktop.
 
 To build the MoSh sample with the nRF9160 DK and modem traces with a flash backend, see :ref:`modem_shell_trace_support`.
 
