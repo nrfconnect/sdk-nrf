@@ -284,7 +284,7 @@ To clone the repositories, complete the following steps:
 
    * To work with a specific release, the identifier is the corresponding tag (for example, |release_tt|).
      You can find the tag in the :ref:`release_notes` of the release.
-   * To work with a :ref:`development tag <intro_vers_revs>`, the identifier is the corresponding tag (for example, ``v1.2.99-dev1``)
+   * To work with a :ref:`development tag <dm-revisions>`, the identifier is the corresponding tag (for example, ``v1.2.99-dev1``)
    * To work with a branch, the identifier is the branch name (for example, ``main`` to work with the latest state of development).
 
 #. On the command line, go to the :file:`ncs` folder (``cd ncs``) and initialize west with the revision of the |NCS| that you want to check out, replacing *nRFConnectSDK_revision* with the identifier:

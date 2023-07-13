@@ -3,7 +3,7 @@
 Scripts
 #######
 
-Nordic Semiconductor provides scripts that can be used with our libraries and sample applications.
+Nordic Semiconductor provides scripts that can be used with libraries, samples, and applications in the |NCS|.
 
 Here you can find documentation for these scripts.
 

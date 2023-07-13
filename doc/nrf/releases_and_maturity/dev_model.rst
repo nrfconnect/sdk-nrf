@@ -26,3 +26,4 @@ Contributions are welcome but entirely optional, as the licenses used by the |NC
    developing/managing_code
    developing/adding_code
    developing/ncs_distro
+   developing/licenses

@@ -15,6 +15,3 @@ If you are working with nRF53 Series or nRF91 Series devices, use :ref:`Trusted 
    security/security
    security/tfm
    security/ap_protect
-
-
-

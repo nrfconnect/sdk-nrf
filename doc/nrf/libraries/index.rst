@@ -3,7 +3,7 @@
 Libraries
 #########
 
-Nordic Semiconductor provides a variety of libraries and services that are used in our sample applications.
+Nordic Semiconductor provides a variety of libraries and services that are used in samples and applications in the |NCS|.
 
 Here you can find documentation for these libraries, including API documentation.
 

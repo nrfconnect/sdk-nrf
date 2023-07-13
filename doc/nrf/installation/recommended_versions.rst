@@ -122,7 +122,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`CMAKE_VERSION_WIN10`
          * - dtc
            - :ncs-tool-version:`DTC_VERSION_WIN10`
-         * - Git
+         * - :ref:`Git <ncs_git_intro>`
            - :ncs-tool-version:`GIT_VERSION_WIN10`
          * - gperf
            - :ncs-tool-version:`GPERF_VERSION_WIN10`
@@ -130,7 +130,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`NINJA_VERSION_WIN10`
          * - Python
            - :ncs-tool-version:`PYTHON_VERSION_WIN10`
-         * - West
+         * - :ref:`West <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_WIN10`
 
    .. group-tab:: Linux
@@ -146,7 +146,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`CMAKE_VERSION_LINUX`
          * - dtc
            - :ncs-tool-version:`DTC_VERSION_LINUX`
-         * - Git
+         * - :ref:`Git <ncs_git_intro>`
            - :ncs-tool-version:`GIT_VERSION_LINUX`
          * - gperf
            - :ncs-tool-version:`GPERF_VERSION_LINUX`
@@ -154,7 +154,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`NINJA_VERSION_LINUX`
          * - Python
            - :ncs-tool-version:`PYTHON_VERSION_LINUX`
-         * - West
+         * - :ref:`West <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_LINUX`
 
    .. group-tab:: macOS
@@ -170,7 +170,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`CMAKE_VERSION_DARWIN`
          * - dtc
            - :ncs-tool-version:`DTC_VERSION_DARWIN`
-         * - Git
+         * - :ref:`Git <ncs_git_intro>`
            - :ncs-tool-version:`GIT_VERSION_DARWIN`
          * - gperf
            - :ncs-tool-version:`GPERF_VERSION_DARWIN`
@@ -178,7 +178,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`NINJA_VERSION_DARWIN`
          * - Python
            - :ncs-tool-version:`PYTHON_VERSION_DARWIN`
-         * - West
+         * - :ref:`West <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_DARWIN`
 
 Required Python dependencies
