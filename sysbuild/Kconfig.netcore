@@ -12,12 +12,20 @@ config SUPPORT_NETCORE_HCI_RPMSG
 	bool
 	default y
 
+config SUPPORT_NETCORE_802154_RPMSG
+	bool
+	default y
+
 config NRF_DEFAULT_BLUETOOTH
+	bool
+
+config NRF_DEFAULT_802154
 	bool
 
 choice NETCORE
 	prompt "Netcore image"
 	default NETCORE_HCI_RPMSG if NRF_DEFAULT_BLUETOOTH && $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
 	default NETCORE_NONE
 	depends on SUPPORT_NETCORE
 
@@ -31,6 +39,12 @@ config NETCORE_HCI_RPMSG
 	depends on SUPPORT_NETCORE_HCI_RPMSG
 	help
 	  Include hci_rpmsg as the netcore image to use
+
+config NETCORE_802154_RPMSG
+	bool "802154_rpmsg"
+	depends on SUPPORT_NETCORE_802154_RPMSG
+	help
+	  Include 802154_rpmsg as the netcore image to use
 
 endchoice
 
@@ -56,5 +70,28 @@ config NETCORE_HCI_RPMSG_DOMAIN
 config NETCORE_HCI_RPMSG_DOMAIN_APP
 	bool
 	default y if NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet"
+
+config NETCORE_802154_RPMSG_NAME
+	string
+	default "802154_rpmsg"
+	depends on NETCORE_802154_RPMSG
+	help
+	  Image name of radio 802154 rpmsg.
+
+config NETCORE_802154_RPMSG_BOARD
+	string
+	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+	depends on NETCORE_802154_RPMSG
+	help
+	  Remote board when building this sample.
+	  If not set, the board given to sysbuild is used.
+
+config NETCORE_802154_RPMSG_DOMAIN
+	string
+	default "CPUNET" if NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet"
+
+config NETCORE_802154_RPMSG_DOMAIN_APP
+	bool
+	default y if NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet"
 
 endif
