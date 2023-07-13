@@ -23,16 +23,6 @@ struct twt_interval_float {
 	unsigned char exponent;
 };
 
-int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
-			   scan_result_cb_t cb);
-
-enum wifi_nrf_status wifi_nrf_disp_scan_res_get_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep);
-
-void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
-				struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
-				unsigned int event_len,
-				bool is_last);
-
 int wifi_nrf_set_power_save(const struct device *dev,
 			    struct wifi_ps_params *params);
 
@@ -67,6 +57,4 @@ void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
 				  unsigned short frequency,
 				  signed short signal);
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
-void wifi_nrf_process_rssi_from_rx(void *vif_ctx,
-				   signed short signal);
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */
