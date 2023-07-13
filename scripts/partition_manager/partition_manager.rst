@@ -311,6 +311,37 @@ region: string
    Specify the region where a partition should be placed.
    See :ref:`pm_regions`.
 
+affiliation: string or list
+   This property groups the partition with other partitions with the specified affiliation.
+   Affiliations are used to generate ``PM_FOREACH_AFFILIATED_TO_<affliation>(fn)`` macros, which let you invoke the macro ``fn`` on all definitions of the partitions with the specified affiliation.
+   The macro passes the partition name from the YAML file to the ``fn`` macro, using the upper-case formatting.
+   Currently, the ``disk`` affiliation is reserved by the flash disk driver in Zephyr to generate disk objects from partitions defined by the Partition Manager.
+
+extra_params: dict
+   This is a dictionary of extra ``<param_name>`` parameters for the partition.
+   The Partition Manager only uses them for generating ``PM_<uppercase_partition_name>_EXTRA_PARAM_<param_name>`` definitions, with the value taken from the YAML file, as assigned to the extra parameter.
+   The Partition Manager does not use or process these parameters in any other way.
+   Extra parameters can be used by other subsystems to add additional information to partitions.
+   Currently, this feature is only used by the flash disk driver in Zephyr to generate disk objects for use with the Disk Access API, with the following extra parameters: ``disk_sector_size``, ``disk_cache_size``, ``disk_name``, and ``disk_read_only``.
+   The following code snippet shows an example of the disk partition configuration using the ``extra_params`` dictionary:
+
+   .. code-block:: yaml
+      :caption: Example of disk partition
+
+      fatfs_storage:
+          affiliation: disk
+          extra_params: {
+              disk_name: "SD",
+              disk_cache_size: 4096,
+              disk_sector_size: 512,
+              disk_read_only: 0
+          }
+          placement:
+              before: [end]
+              align: {start: 4096}
+          inside: [nonsecure_storage]
+          size: 65536
+
 .. _partition_manager_ram_configuration:
 
 RAM partition configuration
