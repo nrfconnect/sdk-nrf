@@ -5,12 +5,12 @@
  */
 
 /**
- * @brief Header containing display scan specific declarations for the
- * Zephyr OS layer of the Wi-Fi driver.
+ * @brief Header containing WiFi management operation implementations
+ * for the Zephyr OS.
  */
 
-#ifndef __ZEPHYR_DISP_SCAN_H__
-#define __ZEPHYR_DISP_SCAN_H__
+#ifndef __ZEPHYR_WIFI_MGMT_H__
+#define __ZEPHYR_WIFI_MGMT_H__
 #include <math.h>
 
 #include <zephyr/device.h>
@@ -69,4 +69,4 @@ void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 void wifi_nrf_process_rssi_from_rx(void *vif_ctx,
 				   signed short signal);
-#endif /*  __ZEPHYR_DISP_SCAN_H__ */
+#endif /*  __ZEPHYR_WIFI_MGMT_H__ */

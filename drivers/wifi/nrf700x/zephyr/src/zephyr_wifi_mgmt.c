@@ -5,8 +5,8 @@
  */
 
 /**
- * @brief File containing display scan specific definitions for the
- * Zephyr OS layer of the Wi-Fi driver.
+ * @brief File containing WiFi management operation implementations
+ * for the Zephyr OS.
  */
 
 #include <stdlib.h>
