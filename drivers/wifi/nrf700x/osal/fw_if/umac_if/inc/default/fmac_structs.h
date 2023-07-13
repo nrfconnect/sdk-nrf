@@ -81,14 +81,6 @@ enum wifi_nrf_fmac_if_carr_state {
  * the UMAC IF layer needs to invoke for various events.
  */
 struct wifi_nrf_fmac_callbk_fns {
-	/** Callback function to be called when an interface association state changes. */
-	enum wifi_nrf_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
-							    enum wifi_nrf_fmac_if_carr_state cs);
-
-	/** Callback function to be called when a frame is received. */
-	void (*rx_frm_callbk_fn)(void *os_vif_ctx,
-				 void *frm);
-
 	/** Callback function to be called when a scan is started. */
 	void (*scan_start_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
@@ -115,6 +107,23 @@ struct wifi_nrf_fmac_callbk_fns {
 				  struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
 				  unsigned int event_len,
 				  bool more_res);
+
+#if defined(CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS) || defined(__DOXYGEN__)
+	/** Callback function to be called when a beacon/probe response is received. */
+	void (*rx_bcn_prb_resp_callbk_fn)(void *os_vif_ctx,
+					  void *frm,
+					  unsigned short frequency,
+					  signed short signal);
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
+
+#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+	/** Callback function to be called when an interface association state changes. */
+	enum wifi_nrf_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
+							    enum wifi_nrf_fmac_if_carr_state cs);
+
+	/** Callback function to be called when a frame is received. */
+	void (*rx_frm_callbk_fn)(void *os_vif_ctx,
+				 void *frm);
 
 	/** Callback function to be called when an authentication response is received. */
 	void (*auth_resp_callbk_fn)(void *os_vif_ctx,
@@ -233,28 +242,22 @@ struct wifi_nrf_fmac_callbk_fns {
 					struct nrf_wifi_umac_event_conn_info *info,
 					unsigned int event_len);
 
-#if defined(CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS) || defined(__DOXYGEN__)
-	/** Callback function to be called when a beacon/probe response is received. */
-	void (*rx_bcn_prb_resp_callbk_fn)(void *os_vif_ctx,
-					  void *frm,
-					  unsigned short frequency,
-					  signed short signal);
-#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
-
 	/** Callback function to be called when rssi is to be processed from the received frame. */
 	void (*process_rssi_from_rx)(void *os_vif_ctx,
 				     signed short signal);
+#endif /* CONFIG_WPA_SUPP */
 };
 
+#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
 /**
- * @brief Structure to hold TX/RX buffer pool configuration data.
+ * @brief The TWT sleep state of device.
  *
  */
-struct wifi_nrf_fmac_buf_map_info {
-	/** Flag indicating whether the buffer is mapped or not. */
-	bool mapped;
-	/** The number of words in the buffer. */
-	unsigned long nwb;
+enum wifi_nrf_fmac_twt_state {
+	/** RPU in TWT sleep state. */
+	WIFI_NRF_FMAC_TWT_STATE_SLEEP,
+	/** RPU in TWT awake state. */
+	WIFI_NRF_FMAC_TWT_STATE_AWAKE
 };
 
 /**
@@ -283,7 +286,6 @@ struct peers_info {
 	/** 802.11 power save token count. */
 	int ps_token_count;
 };
-
 
 /**
  * @brief Structure to hold transmit path context information.
@@ -320,7 +322,7 @@ struct tx_config {
 	void *tx_done_tasklet_event_q;
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 };
-
+#endif /* CONFIG_WPA_SUPP */
 
 /**
  * @brief Structure to hold context information for the UMAC IF layer.
@@ -333,39 +335,29 @@ struct wifi_nrf_fmac_priv {
 	struct wifi_nrf_osal_priv *opriv;
 	/** Handle to the HAL layer. */
 	struct wifi_nrf_hal_priv *hpriv;
+	/** Callback functions to be called on various events. */
+	struct wifi_nrf_fmac_callbk_fns callbk_fns;
 	/** Data path configuration parameters. */
 	struct nrf_wifi_data_config_params data_config;
-	/** Maximum number of tokens available for TX. */
-	unsigned char num_tx_tokens;
-	/** Maximum number of TX tokens available reserved per AC. */
-	unsigned char num_tx_tokens_per_ac;
-	/** Number of spare tokens (common to all ACs) available for TX. */
-	unsigned char num_tx_tokens_spare;
 	/** RX buffer pool configuration data. */
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
 	/** Starting RX descriptor number for a RX buffer pool. */
 	unsigned int rx_desc[MAX_NUM_OF_RX_QUEUES];
 	/** Maximum number of host buffers needed for RX frames. */
 	unsigned int num_rx_bufs;
+#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+	/** Maximum number of tokens available for TX. */
+	unsigned char num_tx_tokens;
+	/** Maximum number of TX tokens available reserved per AC. */
+	unsigned char num_tx_tokens_per_ac;
+	/** Number of spare tokens (common to all ACs) available for TX. */
+	unsigned char num_tx_tokens_spare;
 	/** Maximum supported AMPDU length per token. */
 	unsigned int max_ampdu_len_per_token;
 	/** Available (remaining) AMPDU length per token. */
 	unsigned int avail_ampdu_len_per_token;
-	/** Callback functions to be called on various events. */
-	struct wifi_nrf_fmac_callbk_fns callbk_fns;
+#endif /* CONFIG_WPA_SUPP */
 };
-
-/**
- * @brief The TWT sleep state of device.
- *
- */
-enum wifi_nrf_fmac_twt_state {
-	/** RPU in TWT sleep state. */
-	WIFI_NRF_FMAC_TWT_STATE_SLEEP,
-	/** RPU in TWT awake state. */
-	WIFI_NRF_FMAC_TWT_STATE_AWAKE
-};
-
 
 /**
  * @brief Structure to hold per device context information for the UMAC IF layer.
@@ -382,12 +374,12 @@ struct wifi_nrf_fmac_dev_ctx {
 	void *hal_dev_ctx;
 	/** Array of pointers to virtual interfaces created on this device. */
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
-	/** Queue for storing mapping info of TX buffers. */
-	struct wifi_nrf_fmac_buf_map_info *tx_buf_info;
-	/** Queue for storing mapping info of RX buffers. */
-	struct wifi_nrf_fmac_buf_map_info *rx_buf_info;
-	/** Context information related to TX path. */
-	struct tx_config tx_config;
+#if defined(CONFIG_NRF700X_RX_WQ_ENABLED) || defined(__DOXYGEN__)
+	/** Tasklet for RX. */
+	void *rx_tasklet;
+	/** Queue for RX tasklet. */
+	void *rx_tasklet_event_q;
+#endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
 	/** Host statistics. */
 	struct rpu_host_stats host_stats;
 	/** Number of interfaces in STA mode. */
@@ -408,18 +400,20 @@ struct wifi_nrf_fmac_dev_ctx {
 	bool alpha2_valid;
 	/** Alpha2 country code, last byte is reserved for null character. */
 	unsigned char alpha2[3];
+	/** Queue for storing mapping info of RX buffers. */
+	struct wifi_nrf_fmac_buf_map_info *rx_buf_info;
+#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+	/** Queue for storing mapping info of TX buffers. */
+	struct wifi_nrf_fmac_buf_map_info *tx_buf_info;
+	/** Context information related to TX path. */
+	struct tx_config tx_config;
 	/** TWT state of the RPU. */
 	enum wifi_nrf_fmac_twt_state twt_sleep_status;
 #if defined(CONFIG_NRF700X_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
 	/** Tasklet for TX done. */
 	void *tx_done_tasklet;
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
-#if defined(CONFIG_NRF700X_RX_WQ_ENABLED) || defined(__DOXYGEN__)
-	/** Tasklet for RX. */
-	void *rx_tasklet;
-	/** Queue for RX tasklet. */
-	void *rx_tasklet_event_q;
-#endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
+#endif /* CONFIG_WPA_SUPP */
 };
 
 
@@ -444,6 +438,17 @@ struct wifi_nrf_fmac_vif_ctx {
 	int if_type;
 	/** BSSID of the AP to which this VIF is connected (applicable only in STA mode). */
 	unsigned char bssid[NRF_WIFI_ETH_ADDR_LEN];
+};
+
+/**
+ * @brief Structure to hold TX/RX buffer pool configuration data.
+ *
+ */
+struct wifi_nrf_fmac_buf_map_info {
+	/** Flag indicating whether the buffer is mapped or not. */
+	bool mapped;
+	/** The number of words in the buffer. */
+	unsigned long nwb;
 };
 
 /**

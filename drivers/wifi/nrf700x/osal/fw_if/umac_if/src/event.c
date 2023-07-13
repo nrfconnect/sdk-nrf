@@ -231,6 +231,7 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 
 		vif_ctx->ifflags = true;
 		break;
+#ifdef CONFIG_WPA_SUPP
 	case NRF_WIFI_UMAC_EVENT_TWT_SLEEP:
 		if (callbk_fns->twt_sleep_callbk_fn)
 			callbk_fns->twt_sleep_callbk_fn(vif_ctx->os_vif_ctx,
@@ -242,7 +243,6 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 					      __func__,
 					      umac_hdr->cmd_evnt);
 		break;
-#ifdef CONFIG_WPA_SUPP
 	case NRF_WIFI_UMAC_EVENT_SCAN_RESULT:
 		if (umac_hdr->seq != 0)
 			more_res = true;

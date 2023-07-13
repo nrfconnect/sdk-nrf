@@ -51,21 +51,19 @@ struct wifi_nrf_vif_ctx_zep {
 	struct k_work_delayable scan_timeout_work;
 
 	struct net_eth_addr mac_addr;
-
-	unsigned int assoc_freq;
+	int if_type;
 	enum wifi_nrf_fmac_if_op_state if_op_state;
-	enum wifi_nrf_fmac_if_carr_state if_carr_state;
-	struct wpa_signal_info *signal_info;
-	struct wpa_conn_info *conn_info;
-#ifdef CONFIG_WPA_SUPP
-	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
-#endif /* CONFIG_WPA_SUPP */
-	unsigned char twt_flows_map;
-	unsigned char twt_flow_in_progress_map;
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
-	int if_type;
+#ifdef CONFIG_WPA_SUPP
+	unsigned int assoc_freq;
+	enum wifi_nrf_fmac_if_carr_state if_carr_state;
+	struct wpa_signal_info *signal_info;
+	struct wpa_conn_info *conn_info;
+	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
+	unsigned char twt_flows_map;
+	unsigned char twt_flow_in_progress_map;
 	struct wifi_ps_config *ps_info;
 	bool ps_config_info_evnt;
 	bool authorized;
@@ -80,6 +78,7 @@ struct wifi_nrf_vif_ctx_zep {
 #endif /* CONFIG_NRF700X_DATA_TX */
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
+#endif /* CONFIG_WPA_SUPP */
 };
 
 struct wifi_nrf_vif_ctx_map {

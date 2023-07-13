@@ -35,6 +35,7 @@ bool wifi_nrf_util_ether_addr_equal(const unsigned char *addr_1,
 }
 
 
+#ifdef CONFIG_WPA_SUPP
 unsigned short wifi_nrf_util_rx_get_eth_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					     void *nwb)
 {
@@ -333,6 +334,8 @@ unsigned char *wifi_nrf_util_get_src(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	return (unsigned char *)wifi_nrf_osal_nbuf_data_get(fmac_dev_ctx->fpriv->opriv,
 							    nwb) + WIFI_NRF_FMAC_ETH_ADDR_LEN;
 }
+
+#endif /* CONFIG_WPA_SUPP */
 
 
 bool wifi_nrf_util_is_arr_zero(unsigned char *arr,
