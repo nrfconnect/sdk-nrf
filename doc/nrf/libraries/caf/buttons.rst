@@ -119,7 +119,7 @@ For example, if the configuration file looks as described in the `Configuration`
 Power management states
 =======================
 
-If the :kconfig:option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and submit ``wake_up_event``.
+If the :kconfig:option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and submit :c:struct:`wake_up_event`.
 In that case, the following additional states are available:
 
 * ``STATE_SUSPENDING``
@@ -127,12 +127,12 @@ In that case, the following additional states are available:
 
 The power management events that module can react to are the following:
 
-* ``power_down_event``
-* ``wake_up_event``
+* :c:struct:`power_down_event`
+* :c:struct:`wake_up_event`
 
-If a ``power_down_event`` comes while the module is in the ``STATE_SCANNING`` state, the module switches to ``STATE_SUSPENDING`` and remains in this state until no button is pressed.
+If a :c:struct:`power_down_event` comes while the module is in the ``STATE_SCANNING`` state, the module switches to ``STATE_SUSPENDING`` and remains in this state until no button is pressed.
 Then, it switches to ``STATE_IDLE``.
 
-If a ``power_down_event`` comes while the module is in the ``STATE_ACTIVE`` state, the module switches to ``STATE_IDLE`` immediately.
+If a :c:struct:`power_down_event` comes while the module is in the ``STATE_ACTIVE`` state, the module switches to ``STATE_IDLE`` immediately.
 Similarly, as in ``STATE_ACTIVE``, in ``STATE_IDLE`` the module enables the GPIO interrupts and waits for the pin state to change.
-However, in ``STATE_IDLE`` the module can also invoke ``wake_up_event`` and send it to all subscribing modules.
+However, in ``STATE_IDLE`` the module can also invoke :c:struct:`wake_up_event` and send it to all subscribing modules.
