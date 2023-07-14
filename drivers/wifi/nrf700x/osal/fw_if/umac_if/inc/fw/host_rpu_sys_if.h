@@ -56,58 +56,6 @@
 
 #define NRF_WIFI_COUNTRY_CODE_LEN 2
 
-/*#define NRF_WIFI_PHY_CALIB_FLAG_RXDC 1*/
-/*#define NRF_WIFI_PHY_CALIB_FLAG_TXDC 2*/
-/*#define NRF_WIFI_PHY_CALIB_FLAG_TXPOW 4*/
-/*#define NRF_WIFI_PHY_CALIB_FLAG_TXIQ 8*/
-/*#define NRF_WIFI_PHY_CALIB_FLAG_RXIQ 16*/
-/*#define NRF_WIFI_PHY_CALIB_FLAG_DPD 32*/
-
-/**
- * enum nrf_wifi_sys_iftype - Interface types based on functionality.
- *
- * @NRF_WIFI_UMAC_IFTYPE_UNSPECIFIED: Unspecified type, driver decides.
- * @NRF_WIFI_UMAC_IFTYPE_ADHOC: Independent BSS member.
- * @NRF_WIFI_UMAC_IFTYPE_STATION: Managed BSS member.
- * @NRF_WIFI_UMAC_IFTYPE_AP: Access point.
- * @NRF_WIFI_UMAC_IFTYPE_AP_VLAN: VLAN interface for access points; VLAN interfaces
- *	are a bit special in that they must always be tied to a pre-existing
- *	AP type interface.
- * @NRF_WIFI_UMAC_IFTYPE_WDS: Wireless Distribution System.
- * @NRF_WIFI_UMAC_IFTYPE_MONITOR: Monitor interface receiving all frames.
- * @NRF_WIFI_UMAC_IFTYPE_MESH_POINT: Mesh point.
- * @NRF_WIFI_UMAC_IFTYPE_P2P_CLIENT: P2P client.
- * @NRF_WIFI_UMAC_IFTYPE_P2P_GO: P2P group owner.
- * @NRF_WIFI_UMAC_IFTYPE_P2P_DEVICE: P2P device interface type, this is not a netdev
- *	and therefore can't be created in the normal ways, use the
- *	%NRF_WIFI_UMAC_CMD_START_P2P_DEVICE and %NRF_WIFI_UMAC_CMD_STOP_P2P_DEVICE
- *	commands (Refer &enum nrf_wifi_umac_commands) to create and destroy one.
- * @NRF_WIFI_UMAC_IFTYPE_OCB: Outside Context of a BSS.
- *	This mode corresponds to the MIB variable dot11OCBActivated=true.
- * @NRF_WIFI_UMAC_IFTYPE_MAX: Highest interface type number currently defined.
- * @NRF_WIFI_UMAC_IFTYPES: Number of defined interface types.
- *
- * Lists the different interface types based on how they are configured
- * functionally.
- */
-enum nrf_wifi_sys_iftype {
-	NRF_WIFI_UMAC_IFTYPE_UNSPECIFIED,
-	NRF_WIFI_UMAC_IFTYPE_ADHOC,
-	NRF_WIFI_UMAC_IFTYPE_STATION,
-	NRF_WIFI_UMAC_IFTYPE_AP,
-	NRF_WIFI_UMAC_IFTYPE_AP_VLAN,
-	NRF_WIFI_UMAC_IFTYPE_WDS,
-	NRF_WIFI_UMAC_IFTYPE_MONITOR,
-	NRF_WIFI_UMAC_IFTYPE_MESH_POINT,
-	NRF_WIFI_UMAC_IFTYPE_P2P_CLIENT,
-	NRF_WIFI_UMAC_IFTYPE_P2P_GO,
-	NRF_WIFI_UMAC_IFTYPE_P2P_DEVICE,
-	NRF_WIFI_UMAC_IFTYPE_OCB,
-
-	/* keep last */
-	NRF_WIFI_UMAC_IFTYPES,
-	NRF_WIFI_UMAC_IFTYPE_MAX = NRF_WIFI_UMAC_IFTYPES - 1
-};
 
 /**
  * enum rpu_op_mode - operating modes.
@@ -464,34 +412,6 @@ struct nrf_wifi_sys_head {
 
 } __NRF_WIFI_PKD;
 
-/**
- * struct bgscan_params - Background Scan parameters.
- * @enabled: Enable/Disable background scan.
- * @channel_list: List of channels to scan.
- * @channel_flags: Channel flags for each of the channels which are to be
- *	scanned.
- * @scan_intval: Back ground scan is done at regular intervals. This
- *	value is set to the interval value (in ms).
- * @channel_dur: Time to be spent on each channel (in ms).
- * @serv_channel_dur: In "Connected State" scanning, we need to share the time
- *	between operating channel and non-operating channels.
- *	After scanning each channel, the firmware spends
- *	"serv_channel_dur" (in ms) on the operating channel.
- * @num_channels: Number of channels to be scanned.
- *
- * This structure specifies the parameters which will be used during a
- * Background Scan.
- */
-
-struct nrf_wifi_bgscan_params {
-	unsigned int enabled;
-	unsigned char channel_list[50];
-	unsigned char channel_flags[50];
-	unsigned int scan_intval;
-	unsigned int channel_dur;
-	unsigned int serv_channel_dur;
-	unsigned int num_channels;
-} __NRF_WIFI_PKD;
 
 /**
  * @NRF_WIFI_FEATURE_DISABLE: Feature Disable.
@@ -685,16 +605,6 @@ struct nrf_wifi_cmd_he_gi_ltf_config {
 	unsigned char enable;
 } __NRF_WIFI_PKD;
 
-/* host has to use nrf_wifi_data_buff_config_complete structure to inform rpu about
- * completin of buffers configuration. fill NRF_WIFI_CMD_BUFF_CONFIG_COMPLETE in cmd
- * field.
- */
-
-struct nrf_wifi_cmd_buff_config_complete {
-	struct nrf_wifi_sys_head sys_head;
-} __NRF_WIFI_PKD;
-
-
 #define		NRF_WIFI_DISABLE		0
 #define		NRF_WIFI_ENABLE		1
 
@@ -705,11 +615,6 @@ enum rpu_pkt_preamble {
 	RPU_PKT_PREAMBLE_MAX,
 };
 
-struct nrf_wifi_cmd_mode {
-	struct nrf_wifi_sys_head sys_head;
-	signed int mode;
-
-} __NRF_WIFI_PKD;
 
 
 struct rpu_conf_params {
@@ -966,47 +871,6 @@ struct nrf_wifi_umac_event_err_status {
 		unsigned int status;
 } __NRF_WIFI_PKD;
 
-#ifndef CONFIG_NRF700X_RADIO_TEST
-/**
- * struct nrf_wifi_event_buff_config_done - Buffers configuration done
- * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
- * @mac_addr: Mac address of the RPU
- *
- * RPU sends this event in response to NRF_WIFI_CMD_BUFF_CONFIG_COMPLETE informing
- * RPU is initialized
- */
-
-struct nrf_wifi_event_buff_config_done {
-	struct nrf_wifi_sys_head sys_head;
-	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-
-} __NRF_WIFI_PKD;
-
-/**
- * struct nrf_wifi_txrx_buffs_config - TX/RX buffers config event.
- * @sys_head: UMAC header, See &struct nrf_wifi_sys_head.
- * @max_tx_descs: Max number of tx descriptors.
- * @max_2k_rx_descs: Max number of 2k rx descriptors.
- * @num_8k_rx_descs: Max number of 2k rx descriptors.
- * @num_mgmt_descs: Max number of mgmt buffers.
- *
- * After initialization RPU sends NRF_WIFI_EVENT_BUFF_CONFIG
- * to inform host regarding descriptors.
- * 8K buffer are for internal purpose. At initialization time host
- * submits the 8K buffer and UMAC uses buffers to configure LMAC
- * for receiving AMSDU packets.
- */
-
-struct nrf_wifi_event_buffs_config {
-	struct nrf_wifi_sys_head sys_head;
-	unsigned int max_tx_descs;
-	unsigned int max_2k_rx_descs;
-	unsigned int num_8k_rx_descs;
-	unsigned int num_mgmt_descs;
-
-} __NRF_WIFI_PKD;
-
-#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 /**
  * struct nrf_wifi_event_init_done - UMAC initialization done

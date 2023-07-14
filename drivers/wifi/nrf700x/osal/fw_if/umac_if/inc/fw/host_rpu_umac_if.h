@@ -343,41 +343,7 @@ enum nrf_wifi_auth_type {
 	NRF_WIFI_AUTHTYPE_AUTOMATIC
 };
 
-/**
- * enum nrf_wifi_hidden_ssid - Hidden SSID usage.
- * @NRF_WIFI_HIDDEN_SSID_NOT_IN_USE: Do not hide SSID (i.e., broadcast it in
- *	Beacon frames).
- * @NRF_WIFI_HIDDEN_SSID_ZERO_LEN: Hide SSID by using zero-length SSID element
- *	in Beacon frames.
- * @NRF_WIFI_HIDDEN_SSID_ZERO_CONTENTS: Hide SSID by using correct length of SSID
- *	element in Beacon frames but zero out each byte in the SSID.
- *
- * Enable/Disable Hidden SSID feature and also lists the different mechanisms of
- * hiding the SSIDs.
- */
-enum nrf_wifi_hidden_ssid {
-	NRF_WIFI_HIDDEN_SSID_NOT_IN_USE,
-	NRF_WIFI_HIDDEN_SSID_ZERO_LEN,
-	NRF_WIFI_HIDDEN_SSID_ZERO_CONTENTS
-};
 
-/**
- * enum nrf_wifi_smps_mode - SMPS mode.
- * @NRF_WIFI_SMPS_OFF: SMPS off (use all antennas).
- * @NRF_WIFI_SMPS_STATIC: Static SMPS (use a single antenna).
- * @NRF_WIFI_SMPS_DYNAMIC: Dynamic smps (start with a single antenna and
- *	turn on other antennas after CTS/RTS).
- *
- * Requested SMPS mode (for AP mode).
- */
-enum nrf_wifi_smps_mode {
-	NRF_WIFI_SMPS_OFF,
-	NRF_WIFI_SMPS_STATIC,
-	NRF_WIFI_SMPS_DYNAMIC,
-
-	__NRF_WIFI_SMPS_AFTER_LAST,
-	NRF_WIFI_SMPS_MAX = __NRF_WIFI_SMPS_AFTER_LAST - 1
-};
 
 /**
  * enum nrf_wifi_bss_status - BSS status.
@@ -1269,24 +1235,7 @@ struct nrf_wifi_umac_key_info {
 	unsigned char key_idx;
 } __NRF_WIFI_PKD;
 
-#define NRF_WIFI_CMD_GET_KEY_MAC_ADDR_VALID (1 << 0)
-#define NRF_WIFI_CMD_GET_KEY_KEY_IDX_VALID (1 << 1)
 
-struct nrf_wifi_umac_cmd_get_key {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned int valid_fields;
-	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-	unsigned char key_idx;
-} __NRF_WIFI_PKD;
-
-#define NRF_WIFI_EVENT_GET_KEY_MAC_ADDR_VALID (1 << 0)
-
-struct nrf_wifi_umac_event_get_key {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned int valid_fields;
-	struct nrf_wifi_umac_key_info key_info;
-	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-} __NRF_WIFI_PKD;
 
 /**
  * enum scan_mode - scan operation mode
@@ -1825,21 +1774,7 @@ struct freq_params {
 
 } __NRF_WIFI_PKD;
 
-/**
- * struct nrf_wifi_umac_cmd_set_channel - Set channel configuration.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following structure parameters are valid.
- * @freq_params: Information related to channel parameters
- *
- * This structure represents the command to set the wireless channel configuration.
- */
 
-struct nrf_wifi_umac_cmd_set_channel {
-	struct nrf_wifi_umac_hdr umac_hdr;
-#define NRF_WIFI_CMD_SET_CHANNEL_FREQ_PARAMS_VALID (1 << 0)
-	unsigned int valid_fields;
-	struct freq_params freq_params;
-} __NRF_WIFI_PKD;
 /**
  * struct nrf_wifi_txq_params - TX queue parameter attributes.
  * @txop: Transmit oppurtunity.
@@ -2524,62 +2459,6 @@ struct nrf_wifi_umac_cmd_set_qos_map {
 	struct nrf_wifi_umac_qos_map_info info;
 } __NRF_WIFI_PKD;
 
-#define NRF_WIFI_SET_WOWLAN_FLAG_TRIG_ANY (1 << 0)
-#define NRF_WIFI_SET_WOWLAN_FLAG_TRIG_DISCONNECT (1 << 1)
-#define NRF_WIFI_SET_WOWLAN_FLAG_TRIG_MAGIC_PKT (1 << 2)
-#define NRF_WIFI_SET_WOWLAN_FLAG_TRIG_GTK_REKEY_FAILURE (1 << 3)
-#define NRF_WIFI_SET_WOWLAN_FLAG_TRIG_EAP_IDENT_REQUEST (1 << 4)
-#define NRF_WIFI_SET_WOWLAN_FLAG_TRIG_4WAY_HANDSHAKE (1 << 5)
-
-/**
- * struct nrf_wifi_umac_set_wowlan_info - Information about wowlan
- *	trigger settings.
- * @nrf_wifi_flags: Wakeup trigger conditions. NRF_WIFI_SET_WOWLAN_FLAG_TRIG_ANY,
- * NRF_WIFI_SET_WOWLAN_FLAG_TRIG_DISCONNECT and etc.
- *
- * This structure represents the information about wowlan settings.
- */
-
-struct nrf_wifi_umac_set_wowlan_info {
-	unsigned short nrf_wifi_flags;
-} __NRF_WIFI_PKD;
-
-/**
- * struct nrf_wifi_umac_cmd_set_wowlan - Setting Wake on WLAN configurations.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: WoWLAN wakeup trigger information.
- *
- * This structure represents the command to set the WoWLAN triger
- * configs before going to sleep(Host).
- */
-
-struct nrf_wifi_umac_cmd_set_wowlan {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	struct nrf_wifi_umac_set_wowlan_info info;
-} __NRF_WIFI_PKD;
-
-/**
- * struct nrf_wifi_umac_cmd_suspend - suspend the bus transactions.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- *
- * This structure represents the command to suspend the bus transactions.
- */
-
-struct nrf_wifi_umac_cmd_suspend {
-	struct nrf_wifi_umac_hdr umac_hdr;
-} __NRF_WIFI_PKD;
-
-/**
- * struct nrf_wifi_umac_cmd_resume - resume the bus transactions.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- *
- * This structure represents the command to resumes the bus transactions.
- */
-
-struct nrf_wifi_umac_cmd_resume {
-	struct nrf_wifi_umac_hdr umac_hdr;
-} __NRF_WIFI_PKD;
-
 /**
  * struct nrf_wifi_umac_cmd_get_tx_power - get tx power.
  * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
@@ -2956,39 +2835,6 @@ struct nrf_wifi_umac_event_mlme {
 	unsigned char req_ie[0];
 } __NRF_WIFI_PKD;
 
-#define NRF_WIFI_EVENT_CONNECT_STATUS_CODE_VALID (1 << 0)
-#define NRF_WIFI_EVENT_CONNECT_MAC_ADDR_VALID (1 << 1)
-#define NRF_WIFI_EVENT_CONNECT_REQ_IE_VALID (1 << 2)
-#define NRF_WIFI_EVENT_CONNECT_RESP_IE_VALID (1 << 3)
-#define NRF_WIFI_EVENT_CONNECT_AUTHORIZED_VALID (1 << 4)
-#define NRF_WIFI_EVENT_CONNECT_KEY_REPLAY_CTR_VALID (1 << 5)
-#define NRF_WIFI_EVENT_CONNECT_PTK_KCK_VALID (1 << 6)
-#define NRF_WIFI_EVENT_CONNECT_PTK_KEK_VALID (1 << 7)
-
-/*
- * struct nrf_wifi_umac_event_connect - Connection complete event.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @status_code: StatusCode for the %NRF_WIFI_CMD_CONNECT event.
- * @mac_addr: BSSID of the BSS (6 octets).
- * @req_ie: if TRUE connect_ie will be correspnding to req_ie
- * @resp_ie: if TRUE connect_ie will be correspnding to resp_ie
- * @connect_ie: (Re)association request/response information elements as sent by peer,
- *	for ROAM and successful CONNECT events.
- *
- */
-
-struct nrf_wifi_umac_event_connect {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned int valid_fields;
-	unsigned short status_code;
-	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-	unsigned char req_ie;
-	unsigned char resp_ie;
-	struct nrf_wifi_ie connect_ie;
-
-} __NRF_WIFI_PKD;
-
 #define NRF_WIFI_CMD_SEND_STATION_ASSOC_REQ_IES_VALID (1 << 0)
 
 /**
@@ -3146,26 +2992,7 @@ struct nrf_wifi_umac_event_get_channel {
 	struct nrf_wifi_chan_definition chan_def;
 } __NRF_WIFI_PKD;
 
-struct umac_cmd_ibss_join {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	struct nrf_wifi_ssid ssid;
-	struct freq_params freq_params;
-	unsigned char nrf_wifi_bssid[NRF_WIFI_ETH_ADDR_LEN];
-} __NRF_WIFI_PKD;
 
-struct nrf_wifi_cmd_leave_ibss {
-	struct nrf_wifi_umac_hdr umac_hdr;
-
-} __NRF_WIFI_PKD;
-
-struct nrf_wifi_umac_cmd_win_sta_connect {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned int center_frequency;
-	signed int auth_type;
-	struct nrf_wifi_ie wpa_ie;
-	struct nrf_wifi_ssid ssid;
-	unsigned char nrf_wifi_bssid[NRF_WIFI_ETH_ADDR_LEN];
-} __NRF_WIFI_PKD;
 
 /* CMD_START_P2P_DEVICE */
 
@@ -3173,10 +3000,6 @@ struct nrf_wifi_cmd_start_p2p {
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_cmd_get_ifindex {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	signed char ifacename[IFACENAMSIZ];
-} __NRF_WIFI_PKD;
 
 struct nrf_wifi_umac_cmd_conn_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
@@ -3234,31 +3057,6 @@ struct nrf_wifi_umac_event_power_save_info {
 	unsigned short listen_interval;
 	unsigned char num_twt_flows;
 	struct nrf_wifi_umac_config_twt_info twt_flow_info[0];
-} __NRF_WIFI_PKD;
-
-#define NRF_WIFI_TX_BITRATE_MASK_LEGACY_MAX_LEN 8
-#define NRF_WIFI_IEEE80211_HT_MCS_MASK_LEN 10
-#define NRF_WIFI_VHT_NSS_MAX 8
-
-struct tx_rates {
-	unsigned int legacy_len;
-	unsigned int ht_mcs_len;
-	unsigned int vht_mcs_len;
-	unsigned char legacy[NRF_WIFI_TX_BITRATE_MASK_LEGACY_MAX_LEN];
-	unsigned char ht_mcs[NRF_WIFI_IEEE80211_HT_MCS_MASK_LEN];
-	unsigned short vht_mcs[NRF_WIFI_VHT_NSS_MAX];
-
-} __NRF_WIFI_PKD;
-
-#define NRF_WIFI_SET_TX_BITRATE_MASK_BAND_2GHZ_VALID (1 << 0)
-#define NRF_WIFI_SET_TX_BITRATE_MASK_BAND_5GHZ_VALID (1 << 1)
-#define NRF_WIFI_SET_TX_BITRATE_MASK_BAND_60GHZ_VALID (1 << 2)
-
-struct nrf_wifi_set_tx_bitrate_mask {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned int valid_fields;
-	struct tx_rates control[3];
-
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_EVENT_TRIGGER_SCAN_IE_VALID (1 << 0)
@@ -3550,34 +3348,10 @@ struct nrf_wifi_cmd_req_set_reg {
 	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_event_send_beacon_hint {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	struct nrf_wifi_event_channel channel_before;
-	struct nrf_wifi_event_channel channel_after;
-
-} __NRF_WIFI_PKD;
-
-#define NRF_WIFI_EVNT_WIPHY_SELF_MANAGED (1 << 0)
-
-struct nrf_wifi_event_regulatory_change {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned short nrf_wifi_flags;
-	signed int intr;
-	signed char regulatory_type;
-	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
-
-} __NRF_WIFI_PKD;
-
 struct nrf_wifi_umac_event_cmd_status {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	unsigned int cmd_id;
 	unsigned int cmd_status;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_umac_event_coalesce {
-	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned char sta_addr[NRF_WIFI_ETH_ADDR_LEN];
-	unsigned short tid;
-	unsigned char coalesce; /*1 = enable coalesce 0 = disable coalesce*/
-} __NRF_WIFI_PKD;
 #endif /* __HOST_RPU_UMAC_IF_H */

@@ -584,9 +584,6 @@ enum wifi_nrf_status tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	config->tx_desc_num = desc;
 
-	config->mac_hdr_info.umac_fill_flags =
-		ADDR2_POPULATED | ADDR3_POPULATED;
-
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      config->mac_hdr_info.dest,
 			      wifi_nrf_util_get_dest(fmac_dev_ctx, nwb),

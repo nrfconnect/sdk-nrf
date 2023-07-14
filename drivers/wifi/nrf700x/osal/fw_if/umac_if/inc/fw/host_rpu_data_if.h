@@ -77,57 +77,7 @@ struct nrf_wifi_umac_head {
 
 } __NRF_WIFI_PKD;
 
-/**
- * struct nrf_wifi_packet_info - Data packet frame pointers.
- * @head: Pointer to the start of headroom.
- * @data: Potiner to the start of data/actual frame data.
- * @tail: End of frame data.
- * @end: End of tailroom.
- *
- */
 
-struct nrf_wifi_packet_info {
-	unsigned int head;
-	unsigned int data;
-	unsigned int tail;
-	unsigned int end;
-} __NRF_WIFI_PKD;
-
-/**
- * struct nrf_wifi_mgmt_buff_config - Configure management buffers.
- * @umac_head: UMAC cmd header, See &struct nrf_wifi_umac_hdr.
- * @num_mgmt_bufs: Number of Mgmt buffers to be configured.
- * @ddr_ptrs: Management DDR buffer pointers.
- *
- * Management buffers once programmed will be used internally by UMAC.
- */
-
-struct nrf_wifi_mgmt_buff_config {
-	struct nrf_wifi_umac_head umac_head;
-	unsigned int num_mgmt_bufs;
-	unsigned int ddr_ptrs[MAX_MGMT_BUFS];
-} __NRF_WIFI_PKD;
-
-/**
- * HEADER_FILL_FLAGS - mac80211 header filled information.
- * @FC_POPULATED: Frame Control field is populated by Host Driver.
- * @DUR_POPULATED: Duration field is populated by Host Driver.
- * @ADDR1_POPULATED: Address 1 field is populated by Host Driver.
- * @ADDR2_POPULATED: Address 2 field is populated by Host Driver.
- * @ADDR3_POPULATED: Address 3 field is populated by Host Driver.
- * @SEQ_CTRL_POPULATED: Sequence Control field is populated by Host Driver.
- * @QOS_CTRL_POPULATED: Qos field is populated by Host Driver.
- *
- */
-enum HEADER_FILL_FLAGS {
-	FC_POPULATED	=	0x00000001 << 1,
-	DUR_POPULATED	=	0x00000001 << 2,
-	ADDR1_POPULATED =	0x00000001 << 3,
-	ADDR2_POPULATED =	0x00000001 << 4,
-	ADDR3_POPULATED =	0x00000001 << 5,
-	SEQ_CTRL_POPULATED =	0x00000001 << 6,
-	QOS_CTRL_POPULATED =	0x00000001 << 7,
-};
 
 /**
  * struct tx_mac_hdr_info - Tx mac80211 header information.

@@ -2425,39 +2425,6 @@ out:
 }
 
 #ifdef CONFIG_NRF700X_STA_MODE
-enum wifi_nrf_status wifi_nrf_fmac_suspend(void *dev_ctx)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_umac_cmd_suspend *suspend_cmd = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	suspend_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-					       sizeof(*suspend_cmd));
-
-	if (!suspend_cmd) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n", __func__);
-		goto out;
-	}
-
-	suspend_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SUSPEND;
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      suspend_cmd,
-			      sizeof(*suspend_cmd));
-out:
-	if (suspend_cmd) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       suspend_cmd);
-	}
-
-	return status;
-
-}
-
-
 enum wifi_nrf_status wifi_nrf_fmac_get_tx_power(void *dev_ctx,
 						unsigned int if_idx)
 {
@@ -2604,39 +2571,6 @@ out:
 	if (cmd) {
 		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
 				       cmd);
-	}
-
-	return status;
-}
-
-
-enum wifi_nrf_status wifi_nrf_fmac_resume(void *dev_ctx)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_umac_cmd_resume *resume_cmd = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	resume_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-					      sizeof(*resume_cmd));
-
-	if (!resume_cmd) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n",
-				      __func__);
-		goto out;
-	}
-
-	resume_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_RESUME;
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      resume_cmd,
-			      sizeof(*resume_cmd));
-out:
-	if (resume_cmd) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       resume_cmd);
 	}
 
 	return status;
@@ -2807,40 +2741,6 @@ out:
 	return status;
 }
 
-
-enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *dev_ctx,
-					      unsigned int var)
-{
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_umac_cmd_set_wowlan *set_wowlan = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-
-	fmac_dev_ctx = dev_ctx;
-
-	set_wowlan = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
-					      sizeof(*set_wowlan));
-
-	if (!set_wowlan) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Unable to allocate memory\n",
-				      __func__);
-		goto out;
-	}
-
-	set_wowlan->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_SET_WOWLAN;
-	set_wowlan->info.nrf_wifi_flags = var;
-
-	status = umac_cmd_cfg(fmac_dev_ctx,
-			      set_wowlan,
-			      sizeof(*set_wowlan));
-out:
-	if (set_wowlan) {
-		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-				       set_wowlan);
-	}
-
-	return status;
-}
 
 enum wifi_nrf_status wifi_nrf_fmac_get_wiphy(void *dev_ctx, unsigned char if_idx)
 {
