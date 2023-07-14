@@ -97,10 +97,10 @@ if (${TFM_PARTITION_CRYPTO})
   endif()
 
   target_link_libraries(platform_crypto_keys PUBLIC platform_s)
-endif()
 
-if (${TFM_PARTITION_CRYPTO})
-  target_link_libraries(platform_s PRIVATE platform_cc3xx)
+  if(EXISTS platform_cc3xx)
+	target_link_libraries(platform_s PRIVATE platform_cc3xx)
+  endif()
 
   # Needed in order to get crypto partition modules flags
   target_link_libraries(platform_s PRIVATE tfm_psa_rot_partition_crypto)
