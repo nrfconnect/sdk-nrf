@@ -13,6 +13,8 @@
 
 #include "nrf.h"
 
+#ifdef NRF_FICR_S_BASE
+
 #define FICR_BASE               NRF_FICR_S_BASE
 
 #define FICR_INFO_ADDR          (FICR_BASE + offsetof(NRF_FICR_Type, INFO))
@@ -37,20 +39,26 @@
 #define FICR_SIPINFO_SIZE       (sizeof(FICR_SIPINFO_Type))
 #endif
 
+#endif /* NRF_FICR_S_BASE */
+
 static const struct tfm_read_service_range ranges[] = {
 #ifdef PM_MCUBOOT_ADDRESS
 	/* Allow reads of mcuboot metadata */
 	{ .start = PM_MCUBOOT_PAD_ADDRESS, .size = PM_MCUBOOT_PAD_SIZE },
 #endif
+#if defined(FICR_INFO_ADDR)
 	{ .start = FICR_INFO_ADDR, .size = FICR_INFO_SIZE },
-#if defined(FICR_NFC_TAGHEADER0_MFGID_Msk)
+#endif
+#if defined(FICR_NFC_ADDR)
 	{ .start = FICR_NFC_ADDR, .size = FICR_NFC_SIZE },
 #endif
+#if defined(FICR_RESTRICTED_ADDR)
 	{ .start = FICR_RESTRICTED_ADDR, .size = FICR_RESTRICTED_SIZE },
-#if defined(FICR_XOSC32MTRIM_SLOPE_Msk)
+#endif
+#if defined(FICR_XOSC32MTRIM_ADDR)
 	{ .start = FICR_XOSC32MTRIM_ADDR, .size = FICR_XOSC32MTRIM_SIZE },
 #endif
-#if defined(FICR_SIPINFO_PARTNO_PARTNO_Pos)
+#if defined(FICR_SIPINFO_ADDR)
 	{ .start = FICR_SIPINFO_ADDR, .size = FICR_SIPINFO_SIZE },
 #endif
 };
