@@ -34,8 +34,8 @@ LOG_MODULE_REGISTER(rsa, LOG_LEVEL_DBG);
 /*				Global variables/defines for the RSA example			  */
 
 #define NRF_CRYPTO_EXAMPLE_RSA_TEXT_SIZE (100)
-#define NRF_CRYPTO_EXAMPLE_RSA_PUBLIC_KEY_SIZE (140)
-#define NRF_CRYPTO_EXAMPLE_RSA_SIGNATURE_SIZE (128)
+#define NRF_CRYPTO_EXAMPLE_RSA_PUBLIC_KEY_SIZE (PSA_KEY_EXPORT_RSA_PUBLIC_KEY_MAX_SIZE(2048))
+#define NRF_CRYPTO_EXAMPLE_RSA_SIGNATURE_SIZE  (PSA_BITS_TO_BYTES(2048))
 
 /* Below text is used as plaintext for signing using RSA . */
 static char m_plain_text[NRF_CRYPTO_EXAMPLE_RSA_TEXT_SIZE] = {
@@ -98,7 +98,7 @@ int generate_rsa_keypair(void)
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
 	psa_set_key_algorithm(&key_attributes, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256));
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_RSA_KEY_PAIR);
-	psa_set_key_bits(&key_attributes, 1024);
+	psa_set_key_bits(&key_attributes, 2048);
 
 	/* Generate a random keypair. The keypair is not exposed to the application,
 	 * we can use it to signing/verification the key handle.
@@ -135,7 +135,7 @@ int import_rsa_pub_key(void)
 	psa_set_key_lifetime(&key_attributes, PSA_KEY_LIFETIME_VOLATILE);
 	psa_set_key_algorithm(&key_attributes, PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_SHA_256));
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY);
-	psa_set_key_bits(&key_attributes, 1024);
+	psa_set_key_bits(&key_attributes, 2048);
 
 	status = psa_import_key(&key_attributes, m_pub_key, sizeof(m_pub_key), &pub_key_handle);
 	if (status != PSA_SUCCESS) {
