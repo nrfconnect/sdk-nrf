@@ -621,7 +621,7 @@ enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
 					   struct wifi_nrf_fmac_reg_info *reg_info)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct nrf_wifi_reg *get_reg_cmd = NULL;
+	struct nrf_wifi_umac_cmd_get_reg *get_reg_cmd = NULL;
 	unsigned int count = 0;
 
 	if (!fmac_dev_ctx || !reg_info) {
