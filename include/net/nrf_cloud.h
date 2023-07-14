@@ -246,6 +246,20 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_SENSOR_LIGHT,
 };
 
+/** @brief Data types for nrf_cloud_sensor_data. */
+enum nrf_cloud_data_type {
+	/** The struct nrf_cloud_data structure points to the data and indicates its length.
+	 *  The contents of the block are identified with the enum nrf_cloud_sensor type.
+	 */
+	NRF_CLOUD_DATA_TYPE_BLOCK,
+	/** The const char *str_val field points to a NULL-terminated string. */
+	NRF_CLOUD_DATA_TYPE_STR,
+	/** The double double_val field contains the data. */
+	NRF_CLOUD_DATA_TYPE_DOUBLE,
+	/** The int int_val field contains the data. */
+	NRF_CLOUD_DATA_TYPE_INT
+};
+
 /** @brief Topic types supported by nRF Cloud. */
 enum nrf_cloud_topic_type {
 	/** Endpoint used to update the cloud-side device shadow state . */
@@ -373,8 +387,15 @@ struct nrf_cloud_topic {
 struct nrf_cloud_sensor_data {
 	/** The sensor that is the source of the data. */
 	enum nrf_cloud_sensor type;
+	/** The data type to encode. */
+	enum nrf_cloud_data_type data_type;
 	/** Sensor data to be transmitted. */
-	struct nrf_cloud_data data;
+	union {
+		struct nrf_cloud_data data;
+		const char *str_val;
+		double double_val;
+		int int_val;
+	};
 	/** Unique tag to identify the sent data. Can be used to match
 	 * acknowledgment on the NRF_CLOUD_EVT_SENSOR_DATA_ACK event.
 	 * Valid range: NCT_MSG_ID_USER_TAG_BEGIN to NCT_MSG_ID_USER_TAG_END.

@@ -327,7 +327,9 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 
 bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type)
 {
-	if (!IS_ENABLED(CONFIG_NRF_CLOUD_FOTA) && !IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_FOTA) &&
+	    !IS_ENABLED(CONFIG_NRF_CLOUD_REST) &&
+	    !IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
 		return false;
 	}
 

@@ -241,7 +241,7 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
 	}
-	static uint8_t buffer[256];
+	static uint8_t buffer[1024];
 	size_t len = sizeof(buffer);
 	int err;
 
