@@ -173,14 +173,6 @@ extern "C" {
 #define TFM_PERIPHERAL_DPPI_CHANNEL_SECURE_MASK CONFIG_NRF_DPPI_CHANNEL_MASK_SECURE
 #endif
 
-#if defined(NRF5340_XXAA_APPLICATION)
-    #include <tfm_peripherals_config_nrf5340_application.h>
-#elif defined(NRF91_SERIES)
-    #include <tfm_peripherals_config_nrf91.h>
-#else
-    #error "Unknown device."
-#endif
-
 #ifdef __cplusplus
 }
 #endif
