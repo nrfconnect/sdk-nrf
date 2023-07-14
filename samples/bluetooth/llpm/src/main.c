@@ -27,9 +27,9 @@
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
-#define INTERVAL_MIN    0x6     /* 6 units,  7.5 ms */
-#define INTERVAL_MAX    0x6     /* 6 units,  7.5 ms */
-#define INTERVAL_LLPM   0x0D01   /* Proprietary  1 ms */
+#define INTERVAL_MIN      0x6    /* 6 units,  7.5 ms */
+#define INTERVAL_MIN_US  7500    /* 7.5 ms */
+#define INTERVAL_LLPM  0x0D01    /* Proprietary  1 ms */
 #define INTERVAL_LLPM_US 1000
 
 
@@ -39,7 +39,7 @@ static struct bt_conn *default_conn;
 static struct bt_latency latency;
 static struct bt_latency_client latency_client;
 static struct bt_le_conn_param *conn_param =
-	BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, 0, 400);
+	BT_LE_CONN_PARAM(INTERVAL_LLPM, INTERVAL_LLPM, 0, 400);
 static struct bt_conn_info conn_info = {0};
 
 static const struct bt_data ad[] = {
@@ -230,6 +230,9 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 {
 	if (interval == INTERVAL_LLPM) {
 		printk("Connection interval updated: LLPM (1 ms)\n");
+	} else {
+		__ASSERT_NO_MSG(interval == INTERVAL_MIN);
+		printk("Connection interval updated: 7.5 ms\n");
 	}
 }
 
@@ -259,7 +262,7 @@ static int enable_llpm_mode(void)
 	return 0;
 }
 
-static int enable_llpm_short_connection_interval(void)
+static int vs_change_connection_interval(uint16_t interval_us)
 {
 	int err;
 	struct net_buf *buf;
@@ -283,7 +286,7 @@ static int enable_llpm_short_connection_interval(void)
 
 	cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
 	cmd_conn_update->connection_handle   = conn_handle;
-	cmd_conn_update->conn_interval_us    = INTERVAL_LLPM_US;
+	cmd_conn_update->conn_interval_us    = interval_us;
 	cmd_conn_update->conn_latency        = 0;
 	cmd_conn_update->supervision_timeout = 300;
 
@@ -367,24 +370,12 @@ static const struct bt_latency_client_cb latency_client_cb = {
 static void test_run(void)
 {
 	int err;
-
 	if (!test_ready) {
 		/* disconnected while blocking inside _getchar() */
 		return;
 	}
 
 	test_ready = false;
-
-	/* Switch to LLPM short connection interval */
-	if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
-		printk("Press any key to set LLPM short connection interval (1 ms)\n");
-		console_getchar();
-
-		if (enable_llpm_short_connection_interval()) {
-			printk("Enable LLPM short connection interval failed\n");
-			return;
-		}
-	}
 
 	printk("Press any key to start measuring transmission latency\n");
 	console_getchar();
@@ -409,6 +400,27 @@ static void test_run(void)
 		}
 
 		memset(&llpm_latency, 0, sizeof(llpm_latency));
+		if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
+			static int counter;
+			static uint16_t interval_us = INTERVAL_LLPM_US;
+
+			counter++;
+			/* Arbitrarily chosen number of measurments
+			 * to do before switching interval
+			 */
+			if (counter == 20) {
+				counter = 0;
+				if (interval_us == INTERVAL_LLPM_US) {
+					interval_us = INTERVAL_MIN_US;
+				} else {
+					interval_us = INTERVAL_LLPM_US;
+				}
+				if (vs_change_connection_interval(interval_us)) {
+					printk("Enable LLPM short connection interval failed\n");
+					return;
+				}
+			}
+		}
 	}
 }
 
