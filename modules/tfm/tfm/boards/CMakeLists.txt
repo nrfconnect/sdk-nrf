@@ -92,7 +92,7 @@ if (${TFM_PARTITION_CRYPTO})
   if (${TFM_PARTITION_INITIAL_ATTESTATION})
     target_sources(platform_s
       PRIVATE
-        ${NRF_DIR}/lib/identity_key/identity_key.c
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/identity_key/identity_key.c
     )
   endif()
 
