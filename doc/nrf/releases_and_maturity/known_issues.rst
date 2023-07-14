@@ -962,6 +962,17 @@ HomeKit
 
 The issues in this section are related to the HomeKit protocol.
 
+.. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+KRKNWK-17343: Accessories become significantly slower when some data pairs in the non-volatile storage (NVS) change frequently
+  Accessing data pairs that rarely change can take a long time.
+  It might happen, for example, in case of long booting or paired/unpaired identify response time, which can lead to certification issues.
+  During the certification, the accessory is subjected to multiple resets and pair/unpair processes, which causes the NVS to store a large amount of new data pairs.
+  As a result, the accessory does not pass the certification test cases exceeding the maximum operation time (for example, TCT012, TCT022 and TCT023).
+
+  **Workaround:** Enable the NVS cache by setting the following Kconfig options: :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE` to ``y`` and :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
+    Additional optimization can be enabled by setting the following Kconfig options: :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE` to ``y`` and :kconfig:option:`SETTINGS_NVS_NAME_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
+
 .. rst-class:: v2-3-0 v2-2-0
 
 KRKNWK-16503: OTA DFU using the iOS Home app (over UARP) does not work on the nRF5340 SoC
