@@ -2331,7 +2331,7 @@ struct nrf_wifi_umac_event_vif_state {
  * This structure represents the command to start P2P mode on an interface.
  */
 
-struct nrf_wifi_umac_cmd_start_p2p_dev {
+struct nrf_wifi_cmd_start_p2p {
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
@@ -2469,7 +2469,15 @@ struct nrf_wifi_umac_cmd_set_qos_map {
 struct nrf_wifi_umac_cmd_get_tx_power {
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
+/**
+ * @brief This structure represents the command to get regulatory domain.
+ *
+ */
 
+struct nrf_wifi_umac_cmd_get_reg {
+	/** Header @ref nrf_wifi_umac_hdr */
+	struct nrf_wifi_umac_hdr umac_hdr;
+} __NRF_WIFI_PKD;
 /**
  * struct nrf_wifi_umac_cmd_get_channel - get channel info.
  * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
@@ -2991,15 +2999,6 @@ struct nrf_wifi_umac_event_get_channel {
 	struct nrf_wifi_umac_hdr umac_hdr;
 	struct nrf_wifi_chan_definition chan_def;
 } __NRF_WIFI_PKD;
-
-
-
-/* CMD_START_P2P_DEVICE */
-
-struct nrf_wifi_cmd_start_p2p {
-	struct nrf_wifi_umac_hdr umac_hdr;
-} __NRF_WIFI_PKD;
-
 
 struct nrf_wifi_umac_cmd_conn_info {
 	struct nrf_wifi_umac_hdr umac_hdr;
