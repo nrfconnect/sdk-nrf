@@ -6,9 +6,10 @@
  */
 
 /**
- *
- *@brief <Control interface between host and RPU>
+ * @file
+ * @brief Control interface between host and RPU
  */
+
 #ifndef __HOST_RPU_UMAC_IF_H
 #define __HOST_RPU_UMAC_IF_H
 
@@ -20,613 +21,554 @@
 #define MAX_NRF_WIFI_UMAC_CMD_SIZE 400
 
 /**
- * enum nrf_wifi_umac_commands - Commands that the host can send to the RPU.
+ * @brief The host can send the following commands to the RPU.
  *
- * @NRF_WIFI_UMAC_CMD_TRIGGER_SCAN: Trigger a new scan with the given parameters.
- *	See &struct nrf_wifi_umac_cmd_scan
- * @NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS: Request for scan results.
- *	See &struct nrf_wifi_umac_cmd_get_scan_results
- * @NRF_WIFI_UMAC_CMD_AUTHENTICATE: Send authentication request to AP.
- *	See &struct nrf_wifi_umac_cmd_auth
- * @NRF_WIFI_UMAC_CMD_ASSOCIATE: Send associate request to AP.
- *	See &struct nrf_wifi_umac_cmd_assoc
- * @NRF_WIFI_UMAC_CMD_DEAUTHENTICATE: Send deauthentication request to AP.
- *	See &struct nrf_wifi_umac_cmd_disconn
- * @NRF_WIFI_UMAC_CMD_SET_WIPHY: Set wiphy parameters.
- *	See &struct nrf_wifi_umac_cmd_set_wiphy
- * @NRF_WIFI_UMAC_CMD_NEW_KEY: Add new key.
- *	See &struct nrf_wifi_umac_cmd_key
- * @NRF_WIFI_UMAC_CMD_DEL_KEY: Delete crypto key.
- *	See &struct nrf_wifi_umac_cmd_key
- * @NRF_WIFI_UMAC_CMD_SET_KEY: Set default key to use.
- *	See &struct nrf_wifi_umac_cmd_set_key
- * @NRF_WIFI_UMAC_CMD_GET_KEY: Unused.
- * @NRF_WIFI_UMAC_CMD_NEW_BEACON: Set the beacon fields in AP mode.
- *	See &struct nrf_wifi_umac_cmd_start_ap
- * @NRF_WIFI_UMAC_CMD_SET_BEACON: Set the beacon fields in AP mode.
- *	See &struct nrf_wifi_umac_cmd_set_beacon
- * @NRF_WIFI_UMAC_CMD_SET_BSS: Set the BSS.
- *	See &struct nrf_wifi_umac_cmd_set_bss
- * @NRF_WIFI_UMAC_CMD_START_AP: Start the device as Soft AP.
- *	See &struct nrf_wifi_umac_cmd_start_ap
- * @NRF_WIFI_UMAC_CMD_STOP_AP: Stop the AP mode.
- *	See &struct nrf_wifi_umac_cmd_stop_ap
- * @NRF_WIFI_UMAC_CMD_NEW_INTERFACE: Adding interface.
- *	See &struct nrf_wifi_umac_cmd_add_vif
- * @NRF_WIFI_UMAC_CMD_SET_INTERFACE: Change interface configuration.
- *	See &struct nrf_wifi_umac_cmd_chg_vif_attr
- * @NRF_WIFI_UMAC_CMD_DEL_INTERFACE: Delete interface.
- *	See &struct nrf_wifi_umac_cmd_del_vif
- * @NRF_WIFI_UMAC_CMD_SET_IFFLAGS: Change interface flags.
- *	See &struct nrf_wifi_umac_cmd_chg_vif_state
- * @NRF_WIFI_UMAC_CMD_NEW_STATION: Add a new station.
- *	See &struct nrf_wifi_umac_cmd_add_sta
- * @NRF_WIFI_UMAC_CMD_DEL_STATION: Delete station.
- *	See &struct nrf_wifi_umac_cmd_del_sta
- * @NRF_WIFI_UMAC_CMD_SET_STATION: Change station info.
- *	See &struct nrf_wifi_umac_cmd_chg_sta
- * @NRF_WIFI_UMAC_CMD_GET_STATION: Get station info.
- *	See &struct nrf_wifi_umac_cmd_get_sta
- * @NRF_WIFI_UMAC_CMD_START_P2P_DEVICE: Start the P2P device.
- *	See &struct nrf_wifi_umac_cmd_start_p2p_dev
- * @NRF_WIFI_UMAC_CMD_STOP_P2P_DEVICE: Stop the P2P device.
- *	See &struct nrf_wifi_umac_cmd_stop_p2p_dev
- * @NRF_WIFI_UMAC_CMD_REMAIN_ON_CHANNEL: Unused.
- * @NRF_WIFI_UMAC_CMD_CANCEL_REMAIN_ON_CHANNEL: Unused.
- * @NRF_WIFI_UMAC_CMD_SET_CHANNEL: Unused.
- * @NRF_WIFI_UMAC_CMD_RADAR_DETECT: Unused.
- * @NRF_WIFI_UMAC_CMD_REGISTER_FRAME: Whitelist filter based on frame types.
- *	See &struct nrf_wifi_umac_cmd_mgmt_frame_reg
- * @NRF_WIFI_UMAC_CMD_FRAME: Send a management frame.
- *	See &struct nrf_wifi_umac_cmd_mgmt_tx
- * @NRF_WIFI_UMAC_CMD_JOIN_IBSS: Unused.
- * @NRF_WIFI_UMAC_CMD_WIN_STA_CONNECT: Connect to AP.
- *	See &struct nrf_wifi_umac_cmd_win_sta_connect
- * @NRF_WIFI_UMAC_CMD_SET_POWER_SAVE: Power save Enable/Disable
- *	See &struct nrf_wifi_umac_cmd_set_power_save
- * @NRF_WIFI_UMAC_CMD_SET_WOWLAN: Set the WoWLAN trigger configs
- *	See &struct nrf_wifi_umac_cmd_set_wowlan
- * @NRF_WIFI_UMAC_CMD_SUSPEND: Suspend the bus after WoWLAN configurations
- *	See &struct nrf_wifi_umac_cmd_suspend
- * @NRF_WIFI_UMAC_CMD_RESUME: Resume the bus activity before wakeup
- *	See &struct nrf_wifi_umac_cmd_resume
- * @NRF_WIFI_UMAC_CMD_GET_CHANNEL: Get Channel info
- *		See &struct nrf_wifi_umac_cmd_get_channel
- * @NRF_WIFI_UMAC_CMD_GET_TX_POWER: Get Tx power level
- *		See &struct nrf_wifi_umac_cmd_get_tx_power
- * @NRF_WIFI_UMAC_CMD_GET_REG : Get Regulatory info
- *		See &struct nrf_wifi_reg_t
- * @NRF_WIFI_UMAC_CMD_SET_REG : Set Regulatory info
- *		See &struct nrf_wifi_reg_t
- *
- * Lists the different ID's to be used to when sending a command to the RPU.
- * All the commands are to be encapsulated using struct host_rpu_msg.
  */
 enum nrf_wifi_umac_commands {
-
+	/** Trigger a new scan @ref nrf_wifi_umac_cmd_scan */
 	NRF_WIFI_UMAC_CMD_TRIGGER_SCAN,
+	/** Request for scan results @ref nrf_wifi_umac_cmd_get_scan_results */
 	NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS,
+	/** Send authentication request to AP @ref nrf_wifi_umac_cmd_auth */
 	NRF_WIFI_UMAC_CMD_AUTHENTICATE,
+	/** Send associate request to AP @ref nrf_wifi_umac_cmd_assoc */
 	NRF_WIFI_UMAC_CMD_ASSOCIATE,
+	/** Send deauthentication request to AP @ref nrf_wifi_umac_cmd_disconn */
 	NRF_WIFI_UMAC_CMD_DEAUTHENTICATE,
+	/** Set wiphy parameters @ref nrf_wifi_umac_cmd_set_wiphy */
 	NRF_WIFI_UMAC_CMD_SET_WIPHY,
+	/** Add new key @ref nrf_wifi_umac_cmd_key */
 	NRF_WIFI_UMAC_CMD_NEW_KEY,
+	/** Delete key @ref nrf_wifi_umac_cmd_key */
 	NRF_WIFI_UMAC_CMD_DEL_KEY,
+	/** Set default key to use @ref nrf_wifi_umac_cmd_set_key */
 	NRF_WIFI_UMAC_CMD_SET_KEY,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_GET_KEY,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_NEW_BEACON,
+	/** Change the beacon on an AP interface @ref nrf_wifi_umac_cmd_set_beacon */
 	NRF_WIFI_UMAC_CMD_SET_BEACON,
+	/** Set the BSS @ref nrf_wifi_umac_cmd_set_bss */
 	NRF_WIFI_UMAC_CMD_SET_BSS,
+	/** Start soft AP operation on an AP interface @ref nrf_wifi_umac_cmd_start_ap */
 	NRF_WIFI_UMAC_CMD_START_AP,
+	/** Stop soft AP operation @ref nrf_wifi_umac_cmd_stop_ap */
 	NRF_WIFI_UMAC_CMD_STOP_AP,
+	/** Create new interface @ref nrf_wifi_umac_cmd_add_vif */
 	NRF_WIFI_UMAC_CMD_NEW_INTERFACE,
+	/** Change interface configuration @ref nrf_wifi_umac_cmd_chg_vif_attr*/
 	NRF_WIFI_UMAC_CMD_SET_INTERFACE,
+	/** Delete interface @ref nrf_wifi_umac_cmd_del_vif */
 	NRF_WIFI_UMAC_CMD_DEL_INTERFACE,
+	/** Change interface flags @ref nrf_wifi_umac_cmd_chg_vif_state */
 	NRF_WIFI_UMAC_CMD_SET_IFFLAGS,
-	NRF_WIFI_UMAC_CMD_NEW_STATION, /*Add a STA in SoftAP mode*/
+	/** Add a new station @ref nrf_wifi_umac_cmd_add_sta */
+	NRF_WIFI_UMAC_CMD_NEW_STATION,
+	/** Delete station @ref nrf_wifi_umac_cmd_del_sta */
 	NRF_WIFI_UMAC_CMD_DEL_STATION,
+	/** Change station info @ref nrf_wifi_umac_cmd_chg_sta */
 	NRF_WIFI_UMAC_CMD_SET_STATION,
+	/** Get station info @ref nrf_wifi_umac_cmd_get_sta */
 	NRF_WIFI_UMAC_CMD_GET_STATION,
+	/** Start the P2P device @ref nrf_wifi_cmd_start_p2p */
 	NRF_WIFI_UMAC_CMD_START_P2P_DEVICE,
+	/** Stop the P2P device @ref nrf_wifi_umac_cmd_stop_p2p_dev */
 	NRF_WIFI_UMAC_CMD_STOP_P2P_DEVICE,
+	/** Remain awake on the specified channel @ref nrf_wifi_umac_cmd_remain_on_channel */
 	NRF_WIFI_UMAC_CMD_REMAIN_ON_CHANNEL,
+	/** Cancel a pending ROC duration @ref nrf_wifi_umac_cmd_cancel_remain_on_channel */
 	NRF_WIFI_UMAC_CMD_CANCEL_REMAIN_ON_CHANNEL,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_SET_CHANNEL,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_RADAR_DETECT,
+	/** Whitelist filter based on frame types @ref nrf_wifi_umac_cmd_mgmt_frame_reg */
 	NRF_WIFI_UMAC_CMD_REGISTER_FRAME,
+	/** Send a management frame @ref nrf_wifi_umac_cmd_mgmt_tx */
 	NRF_WIFI_UMAC_CMD_FRAME,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_JOIN_IBSS,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_WIN_STA_CONNECT,
+	/** Power save Enable/Disable @ref nrf_wifi_umac_cmd_set_power_save */
 	NRF_WIFI_UMAC_CMD_SET_POWER_SAVE,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_SET_WOWLAN,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_SUSPEND,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_RESUME,
+	/** QOS map @ref nrf_wifi_umac_cmd_set_qos_map */
 	NRF_WIFI_UMAC_CMD_SET_QOS_MAP,
+	/** Get Channel info @ref nrf_wifi_umac_cmd_get_channel */
 	NRF_WIFI_UMAC_CMD_GET_CHANNEL,
+	/** Get Tx power level @ref nrf_wifi_umac_cmd_get_tx_power */
 	NRF_WIFI_UMAC_CMD_GET_TX_POWER,
+	/** Get interface @ref nrf_wifi_cmd_get_interface */
 	NRF_WIFI_UMAC_CMD_GET_INTERFACE,
+	/** Get Wiphy info @ref nrf_wifi_cmd_get_wiphy */
 	NRF_WIFI_UMAC_CMD_GET_WIPHY,
+	/** Get hardware address @ref nrf_wifi_cmd_get_ifhwaddr */
 	NRF_WIFI_UMAC_CMD_GET_IFHWADDR,
+	/** Set hardware address @ref nrf_wifi_cmd_set_ifhwaddr */
 	NRF_WIFI_UMAC_CMD_SET_IFHWADDR,
+	/** Get regulatory domain @ref nrf_wifi_umac_cmd_get_reg */
 	NRF_WIFI_UMAC_CMD_GET_REG,
+	/** Unused */
 	NRF_WIFI_UMAC_CMD_SET_REG,
+	/** Set regulatory domain @ref  nrf_wifi_cmd_req_set_reg */
 	NRF_WIFI_UMAC_CMD_REQ_SET_REG,
+	/** Config UAPSD @ref nrf_wifi_umac_cmd_config_uapsd */
 	NRF_WIFI_UMAC_CMD_CONFIG_UAPSD,
+	/** Config TWT @ref nrf_wifi_umac_cmd_config_twt */
 	NRF_WIFI_UMAC_CMD_CONFIG_TWT,
+	/** Teardown TWT @ref nrf_wifi_umac_cmd_teardown_twt */
 	NRF_WIFI_UMAC_CMD_TEARDOWN_TWT,
+	/** Abort scan @ref nrf_wifi_umac_cmd_abort_scan */
 	NRF_WIFI_UMAC_CMD_ABORT_SCAN,
+	/** Multicast filter @ref nrf_wifi_umac_cmd_mcast_filter */
 	NRF_WIFI_UMAC_CMD_MCAST_FILTER,
+	/** Change macaddress @ref nrf_wifi_umac_cmd_change_macaddr */
 	NRF_WIFI_UMAC_CMD_CHANGE_MACADDR,
+	/** Set powersave timeout @ref nrf_wifi_umac_cmd_set_power_save_timeout */
 	NRF_WIFI_UMAC_CMD_SET_POWER_SAVE_TIMEOUT,
+	/** Get connection information @ref nrf_wifi_umac_cmd_conn_info */
 	NRF_WIFI_UMAC_CMD_GET_CONNECTION_INFO,
+	/** Get power save information @ref nrf_wifi_umac_cmd_get_power_save_info */
 	NRF_WIFI_UMAC_CMD_GET_POWER_SAVE_INFO,
+	/** Set listen interval @ref nrf_wifi_umac_cmd_set_listen_interval */
 	NRF_WIFI_UMAC_CMD_SET_LISTEN_INTERVAL,
+	/** Configure extended power save @ref nrf_wifi_umac_cmd_config_extended_ps */
 	NRF_WIFI_UMAC_CMD_CONFIG_EXTENDED_PS
 };
 
-
-/**
- * enum nrf_wifi_umac_events - Events that the RPU can send to the host.
- *
- * @NRF_WIFI_UMAC_EVENT_TRIGGER_SCAN_START: Unused.
- * @NRF_WIFI_UMAC_EVENT_SCAN_ABORTED: Indicate scan has been cancelled.
- *	See &struct nrf_wifi_umac_event_trigger_scan
- * @NRF_WIFI_UMAC_EVENT_SCAN_DONE: Indicate scan results are available.
- *	See &struct nrf_wifi_umac_event_trigger_scan
- * @NRF_WIFI_UMAC_EVENT_SCAN_RESULT: Scan result. We will receive one event for all
- *	the scan results until umac_hdr->seq == 0.
- *	See &struct nrf_wifi_umac_event_new_scan_results
- * @NRF_WIFI_UMAC_EVENT_AUTHENTICATE: Authentication status.
- *	See &struct nrf_wifi_umac_event_mlme
- * @NRF_WIFI_UMAC_EVENT_ASSOCIATE: Association status.
- *	See &struct nrf_wifi_umac_event_mlme
- * @NRF_WIFI_UMAC_EVENT_CONNECT: Connection complete event.
- *	See &struct nrf_wifi_umac_event_connect
- * @NRF_WIFI_UMAC_EVENT_DEAUTHENTICATE: Station deauth event.
- *	See &struct nrf_wifi_umac_event_mlme
- * @NRF_WIFI_UMAC_EVENT_NEW_STATION: Station added indication.
- *	See &struct nrf_wifi_umac_event_new_station
- * @NRF_WIFI_UMAC_EVENT_DEL_STATION: Station deleted indication.
- *	See &struct nrf_wifi_umac_event_new_station
- * @NRF_WIFI_UMAC_EVENT_GET_STATION: Station info indication.
- *	See &nrf_wifi_umac_event_station_t
- * @NRF_WIFI_UMAC_EVENT_REMAIN_ON_CHANNEL: Unused.
- * @NRF_WIFI_UMAC_EVENT_CANCEL_REMAIN_ON_CHANNEL: Unused.
- * @NRF_WIFI_UMAC_EVENT_DISCONNECT: Unused.
- * @NRF_WIFI_UMAC_EVENT_FRAME: RX management frame.
- *	See &struct nrf_wifi_umac_event_mlme
- * @NRF_WIFI_UMAC_EVENT_COOKIE_RESP: Cookie mapping for NRF_WIFI_UMAC_CMD_FRAME.
- *	See &struct nrf_wifi_umac_event_cookie_rsp
- * @NRF_WIFI_UMAC_EVENT_FRAME_TX_STATUS: TX management frame transmitted.
- *	See &struct nrf_wifi_umac_event_mlme
- * @NRF_WIFI_UMAC_EVENT_GET_CHANNEL: Send Channel info.
- *	See &struct nrf_wifi_umac_event_get_channel
- * @NRF_WIFI_UMAC_EVENT_GET_TX_POWER: Send Tx power.
- *	See &struct nrf_wifi_umac_event_get_tx_power
- * @NRF_WIFI_UMAC_EVENT_SET_INTERFACE: NRF_WIFI_UMAC_CMD_SET_INTERFACE status.
- *	See &struct nrf_wifi_umac_event_set_interface
- * @NRF_WIFI_UMAC_EVENT_GET_REG: NRF_WIFI_UMAC_CMD_GET_REG status
- *	See &struct nrf_wifi_reg_t
- * @NRF_WIFI_UMAC_EVENT_SET_REG: NRF_WIFI_UMAC_CMD_SET_REG status
- *	See &struct nrf_wifi_reg_t
- * @NRF_WIFI_UMAC_EVENT_REQ_SET_REG: NRF_WIFI_UMAC_CMD_REQ_SET_REG status
- *	See &struct nrf_wifi_reg_t
- * @NRF_WIFI_UMAC_EVENT_SCAN_DISPLAY_RESULT: Scan display result. We will receive one event for all
- *	the scan results until umac_hdr->seq == 0
- * Lists the ID's to used by the RPU when sending a Event to the Host. All the
- * events are encapsulated using struct host_rpu_msg.
- */
+ /**
+  * @brief The host can receive the following events from the RPU.
+  *
+  */
 
 enum nrf_wifi_umac_events {
 	NRF_WIFI_UMAC_EVENT_UNSPECIFIED = 256,
+	/** Indicate scan started @ref nrf_wifi_umac_event_trigger_scan */
 	NRF_WIFI_UMAC_EVENT_TRIGGER_SCAN_START,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_SCAN_ABORTED,
+	/** Indicate scan done @ref nrf_wifi_umac_event_scan_done */
 	NRF_WIFI_UMAC_EVENT_SCAN_DONE,
+	/** Scan result event @ref nrf_wifi_umac_event_new_scan_results */
 	NRF_WIFI_UMAC_EVENT_SCAN_RESULT,
+	/** Authentication status @ref nrf_wifi_umac_event_mlme */
 	NRF_WIFI_UMAC_EVENT_AUTHENTICATE,
+	/** Association status @ref nrf_wifi_umac_event_mlme*/
 	NRF_WIFI_UMAC_EVENT_ASSOCIATE,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_CONNECT,
+	/** Station deauth event @ref nrf_wifi_umac_event_mlme */
 	NRF_WIFI_UMAC_EVENT_DEAUTHENTICATE,
+	/** Station disassoc event @ref nrf_wifi_umac_event_mlme */
 	NRF_WIFI_UMAC_EVENT_DISASSOCIATE,
+	/** Station added indication @ref nrf_wifi_umac_event_new_station */
 	NRF_WIFI_UMAC_EVENT_NEW_STATION,
+	/** Station added indication @ref nrf_wifi_umac_event_new_station */
 	NRF_WIFI_UMAC_EVENT_DEL_STATION,
+	/** Station info indication @ref nrf_wifi_umac_event_new_station */
 	NRF_WIFI_UMAC_EVENT_GET_STATION,
+	/** remain on channel event @ref nrf_wifi_event_remain_on_channel */
 	NRF_WIFI_UMAC_EVENT_REMAIN_ON_CHANNEL,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_CANCEL_REMAIN_ON_CHANNEL,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_DISCONNECT,
+	/** RX management frame @ref nrf_wifi_umac_event_mlme */
 	NRF_WIFI_UMAC_EVENT_FRAME,
+	/** Cookie mapping for NRF_WIFI_UMAC_CMD_FRAME @ref nrf_wifi_umac_event_cookie_rsp */
 	NRF_WIFI_UMAC_EVENT_COOKIE_RESP,
+	/** TX management frame transmitted @ref nrf_wifi_umac_event_mlme */
 	NRF_WIFI_UMAC_EVENT_FRAME_TX_STATUS,
+	/** @ref nrf_wifi_umac_event_vif_state */
 	NRF_WIFI_UMAC_EVENT_IFFLAGS_STATUS,
+	/** Send Tx power @ref nrf_wifi_umac_event_get_tx_power */
 	NRF_WIFI_UMAC_EVENT_GET_TX_POWER,
+	/** Send Channel info @ref nrf_wifi_umac_event_get_channel */
 	NRF_WIFI_UMAC_EVENT_GET_CHANNEL,
+	/** @ref nrf_wifi_umac_event_set_interface */
 	NRF_WIFI_UMAC_EVENT_SET_INTERFACE,
+	/** @ref nrf_wifi_umac_event_mlme */
 	NRF_WIFI_UMAC_EVENT_UNPROT_DEAUTHENTICATE,
+	/** @ref nrf_wifi_umac_event_mlme */
 	NRF_WIFI_UMAC_EVENT_UNPROT_DISASSOCIATE,
+	/** @ref nrf_wifi_interface_info */
 	NRF_WIFI_UMAC_EVENT_NEW_INTERFACE,
+	/** @ref nrf_wifi_event_get_wiphy */
 	NRF_WIFI_UMAC_EVENT_NEW_WIPHY,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_GET_IFHWADDR,
+	/** Get regulatory @ref nrf_wifi_reg */
 	NRF_WIFI_UMAC_EVENT_GET_REG,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_SET_REG,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_REQ_SET_REG,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_GET_KEY,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_BEACON_HINT,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_REG_CHANGE,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_WIPHY_REG_CHANGE,
+	/** Display scan result @ref nrf_wifi_umac_event_new_scan_display_results */
 	NRF_WIFI_UMAC_EVENT_SCAN_DISPLAY_RESULT,
+	/** @ref nrf_wifi_umac_event_cmd_status */
 	NRF_WIFI_UMAC_EVENT_CMD_STATUS,
+	/** @ref nrf_wifi_umac_event_new_scan_results */
 	NRF_WIFI_UMAC_EVENT_BSS_INFO,
+	/** Send TWT response information @ref nrf_wifi_umac_cmd_config_twt */
 	NRF_WIFI_UMAC_EVENT_CONFIG_TWT,
+	/** Send TWT teardown information @ref nrf_wifi_umac_cmd_teardown_twt */
 	NRF_WIFI_UMAC_EVENT_TEARDOWN_TWT,
+	/** Send block or unblock state @ref nrf_wifi_umac_event_twt_sleep */
 	NRF_WIFI_UMAC_EVENT_TWT_SLEEP,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_COALESCING,
+	/** Unused */
 	NRF_WIFI_UMAC_EVENT_MCAST_FILTER,
+	/** send connection information @ref nrf_wifi_umac_event_conn_info. */
 	NRF_WIFI_UMAC_EVENT_GET_CONNECTION_INFO,
+	/** @ref nrf_wifi_umac_event_power_save_info */
 	NRF_WIFI_UMAC_EVENT_GET_POWER_SAVE_INFO
 };
-#define	IMG_UMAC_EVENT_MCAST_FILTER 298
+
 /**
- * enum nrf_wifi_band - Frequency band.
+ * @brief Represents the values that can be used to specify the frequency band.
  *
- * @NRF_WIFI_BAND_2GHZ: 2.4 GHz ISM band.
- * @NRF_WIFI_BAND_5GHZ: Around 5 GHz band (4.9 - 5.7 GHz).
- * @NRF_WIFI_BAND_60GHZ: Unused.
- *
- * This enum represents the values that can be used to specify which frequency
- * band is used.
  */
+
 enum nrf_wifi_band {
+	/** 2.4 GHz ISM band */
 	NRF_WIFI_BAND_2GHZ,
+	/** Around 5 GHz band (4.9 - 5.7 GHz) */
 	NRF_WIFI_BAND_5GHZ,
+	/** Unused */
 	NRF_WIFI_BAND_60GHZ,
 };
 
 /**
- * enum nrf_wifi_mfp - Management frame protection state.
+ * @brief Enable or Disable Management Frame Protection.
  *
- * @NRF_WIFI_MFP_NO: Management frame protection not used.
- * @NRF_WIFI_MFP_REQUIRED: Management frame protection required.
- *
- * Enabling/Disabling of Management Frame Protection.
  */
 enum nrf_wifi_mfp {
+	/** Management frame protection not used */
 	NRF_WIFI_MFP_NO,
+	/** Management frame protection required */
 	NRF_WIFI_MFP_REQUIRED,
 };
 
 /**
- * enum nrf_wifi_key_type - Key Type
+ * @brief Enumerates the various categories of security keys.
  *
- * @NRF_WIFI_KEYTYPE_GROUP: Group (broadcast/multicast) key
- * @NRF_WIFI_KEYTYPE_PAIRWISE: Pairwise (unicast/individual) key
- * @NRF_WIFI_KEYTYPE_PEERKEY: Peer key (DLS)
- * @NUM_NRF_WIFI_KEYTYPES: Number of defined key types
- *
- * Lists the different categories of security keys.
  */
 enum nrf_wifi_key_type {
-
+	/** Group (broadcast/multicast) key */
 	NRF_WIFI_KEYTYPE_GROUP,
+	/** Pairwise (unicast/individual) key */
 	NRF_WIFI_KEYTYPE_PAIRWISE,
+	/** Peer key (DLS) */
 	NRF_WIFI_KEYTYPE_PEERKEY,
-
+	/** Number of defined key types */
 	NUM_NRF_WIFI_KEYTYPES
 };
 
 /**
- * enum nrf_wifi_auth_type - Authentication Type.
+ * @brief Enumerates the various types of authentication mechanisms.
  *
- * @NRF_WIFI_AUTHTYPE_OPEN_SYSTEM: Open System authentication.
- * @NRF_WIFI_AUTHTYPE_SHARED_KEY: Shared Key authentication (WEP only).
- * @NRF_WIFI_AUTHTYPE_FT: Fast BSS Transition (IEEE 802.11r).
- * @NRF_WIFI_AUTHTYPE_NETWORK_EAP: Network EAP (some Cisco APs and mainly LEAP).
- * @NRF_WIFI_AUTHTYPE_SAE: Simultaneous authentication of equals.
- * @__NRF_WIFI_AUTHTYPE_NUM: Internal.
- * @NRF_WIFI_AUTHTYPE_MAX: Maximum valid auth algorithm.
- * @NRF_WIFI_AUTHTYPE_AUTOMATIC: Determine automatically (if necessary by
- *	trying multiple times); this is invalid in netlink -- leave out
- *	the attribute for this on CONNECT commands.
- *
- * Lists the different types of authentication mechanisms.
  */
 enum nrf_wifi_auth_type {
-
+	/** Open System authentication */
 	NRF_WIFI_AUTHTYPE_OPEN_SYSTEM,
+	/** Shared Key authentication (WEP only) */
 	NRF_WIFI_AUTHTYPE_SHARED_KEY,
+	/** Fast BSS Transition (IEEE 802.11r) */
 	NRF_WIFI_AUTHTYPE_FT,
+	/** Network EAP (some Cisco APs and mainly LEAP) */
 	NRF_WIFI_AUTHTYPE_NETWORK_EAP,
+	/** Simultaneous authentication of equals */
 	NRF_WIFI_AUTHTYPE_SAE,
-
-	/* keep last */
+	/** Internal */
 	__NRF_WIFI_AUTHTYPE_NUM,
+	/** Maximum valid auth algorithm */
 	NRF_WIFI_AUTHTYPE_MAX = __NRF_WIFI_AUTHTYPE_NUM,
+	/** Determine automatically (if necessary by trying multiple times) */
 	NRF_WIFI_AUTHTYPE_AUTOMATIC
 };
 
-
-
 /**
- * enum nrf_wifi_bss_status - BSS status.
- * @NRF_WIFI_BSS_STATUS_AUTHENTICATED: Authenticated with this BSS.
- *	Note that this is no longer used since cfg80211 no longer
- *	keeps track of whether or not authentication was done with
- *	a given BSS.
- * @NRF_WIFI_BSS_STATUS_ASSOCIATED: Associated with this BSS.
- * @NRF_WIFI_BSS_STATUS_IBSS_JOINED: Joined to this IBSS.
+ * @brief Represents the interface's status concerning this BSS (Basic Service Set).
  *
- * The BSS status is a BSS attribute in scan dumps, which
- * indicates the status the interface has with respect to this BSS.
  */
 enum nrf_wifi_bss_status {
-
+	/**
+	 * Authenticated with this BSS
+	 * Note that this is no longer used since cfg80211 no longer
+	 * keeps track of whether or not authentication was done with
+	 * a given BSS.
+	 */
 	NRF_WIFI_BSS_STATUS_AUTHENTICATED,
+	/** Associated with this BSS */
 	NRF_WIFI_BSS_STATUS_ASSOCIATED,
+	/** Joined to this IBSS */
 	NRF_WIFI_BSS_STATUS_IBSS_JOINED,
 };
 
 /**
- * enum nrf_wifi_channel_type - Channel type.
- * @NRF_WIFI_CHAN_NO_HT: 20 MHz, non-HT channel.
- * @NRF_WIFI_CHAN_HT20: 20 MHz HT channel.
- * @NRF_WIFI_CHAN_HT40MINUS: HT40 channel, secondary channel
- *      below the control channel.
- * @NRF_WIFI_CHAN_HT40PLUS: HT40 channel, secondary channel
- *      above the control channel.
+ * @brief Enumerates the various categories of channels.
  *
- * Lists the different categories of channels.
  */
 enum nrf_wifi_channel_type {
+	/** 20 MHz, non-HT channel */
 	NRF_WIFI_CHAN_NO_HT,
+	/** 20 MHz HT channel */
 	NRF_WIFI_CHAN_HT20,
+	/** HT40 channel, secondary channel below the control channel */
 	NRF_WIFI_CHAN_HT40MINUS,
+	/** HT40 channel, secondary channel above the control channel */
 	NRF_WIFI_CHAN_HT40PLUS
 };
 
 /**
- * enum nrf_wifi_chan_width - Channel width definitions.
+ * @brief Enumerates the various channel widths available.
  *
- *
- * @NRF_WIFI_CHAN_WIDTH_20_NOHT: 20 MHz, non-HT channel.
- * @NRF_WIFI_CHAN_WIDTH_20: 20 MHz HT channel.
- * @NRF_WIFI_CHAN_WIDTH_40: 40 MHz channel, the %NRF_WIFI_ATTR_CENTER_FREQ1
- *	attribute must be provided as well.
- * @NRF_WIFI_CHAN_WIDTH_80: 80 MHz channel, the %NRF_WIFI_ATTR_CENTER_FREQ1
- *	attribute must be provided as well.
- * @NRF_WIFI_CHAN_WIDTH_80P80: 80+80 MHz channel, the %NRF_WIFI_ATTR_CENTER_FREQ1
- *	and %NRF_WIFI_ATTR_CENTER_FREQ2 attributes must be provided as well.
- * @NRF_WIFI_CHAN_WIDTH_160: 160 MHz channel, the %NRF_WIFI_ATTR_CENTER_FREQ1
- *	attribute must be provided as well.
- * @NRF_WIFI_CHAN_WIDTH_5: 5 MHz OFDM channel.
- * @NRF_WIFI_CHAN_WIDTH_10: 10 MHz OFDM channel.
- *
- * Lists the different channel widths.
  */
 enum nrf_wifi_chan_width {
+	/** 20 MHz, non-HT channel */
 	NRF_WIFI_CHAN_WIDTH_20_NOHT,
+	/** 20 MHz HT channel */
 	NRF_WIFI_CHAN_WIDTH_20,
+	/** 40 MHz channel, the @ref %NRF_WIFI_ATTR_CENTER_FREQ1 must be provided as well */
 	NRF_WIFI_CHAN_WIDTH_40,
+	/** 80 MHz channel, the @ref %NRF_WIFI_ATTR_CENTER_FREQ1 must be provided as well */
 	NRF_WIFI_CHAN_WIDTH_80,
+	/** 80+80 MHz channel, the @ref %NRF_WIFI_ATTR_CENTER_FREQ1 and
+	 *  @ref %NRF_WIFI_ATTR_CENTER_FREQ2 must be provided as well
+	 */
 	NRF_WIFI_CHAN_WIDTH_80P80,
+	/** 160 MHz channel, the %NRF_WIFI_ATTR_CENTER_FREQ1 must be provided as well */
 	NRF_WIFI_CHAN_WIDTH_160,
+	/**  5 MHz OFDM channel */
 	NRF_WIFI_CHAN_WIDTH_5,
+	/** 10 MHz OFDM channel */
 	NRF_WIFI_CHAN_WIDTH_10,
 };
 
 /**
- * enum nrf_wifi_iftype - Interface types based on functionality.
+ * @brief Interface types based on functionality.
  *
- * @NRF_WIFI_IFTYPE_UNSPECIFIED: Unspecified type, driver decides.
- * @NRF_WIFI_IFTYPE_ADHOC: Independent BSS member.
- * @NRF_WIFI_IFTYPE_STATION: Managed BSS member.
- * @NRF_WIFI_IFTYPE_AP: Access point.
- * @NRF_WIFI_IFTYPE_AP_VLAN: VLAN interface for access points; VLAN interfaces
- *      are a bit special in that they must always be tied to a pre-existing
- *      AP type interface.
- * @NRF_WIFI_IFTYPE_WDS: Wireless Distribution System.
- * @NRF_WIFI_IFTYPE_MONITOR: Monitor interface receiving all frames.
- * @NRF_WIFI_IFTYPE_MESH_POINT: Mesh point.
- * @NRF_WIFI_IFTYPE_P2P_CLIENT: P2P client.
- * @NRF_WIFI_IFTYPE_P2P_GO: P2P group owner.
- * @NRF_WIFI_IFTYPE_P2P_DEVICE: P2P device interface type, this is not a netdev
- *	and therefore can't be created in the normal ways, use the
- *	%NRF_WIFI_UMAC_CMD_START_P2P_DEVICE and %NRF_WIFI_UMAC_CMD_STOP_P2P_DEVICE
- *	commands (Refer &enum nrf_wifi_umac_commands) to create and destroy one.
- * @NRF_WIFI_IFTYPE_OCB: Outside Context of a BSS.
- *	This mode corresponds to the MIB variable dot11OCBActivated=true.
- * @NRF_WIFI_IFTYPE_MAX: Highest interface type number currently defined.
- * @NUM_NRF_WIFI_IFTYPES: Number of defined interface types.
- *
- * Lists the different interface types based on how they are configured
- * functionally.
  */
 enum nrf_wifi_iftype {
+	/** Unspecified type, driver decides */
 	NRF_WIFI_IFTYPE_UNSPECIFIED,
+	/** Not Supported */
 	NRF_WIFI_IFTYPE_ADHOC,
+	/** Managed BSS member */
 	NRF_WIFI_IFTYPE_STATION,
+	/** Access point */
 	NRF_WIFI_IFTYPE_AP,
+	/** Not Supported */
 	NRF_WIFI_IFTYPE_AP_VLAN,
+	/** Not Supported */
 	NRF_WIFI_IFTYPE_WDS,
+	/** Not Supported */
 	NRF_WIFI_IFTYPE_MONITOR,
+	/** Not Supported */
 	NRF_WIFI_IFTYPE_MESH_POINT,
+	/** P2P client */
 	NRF_WIFI_IFTYPE_P2P_CLIENT,
+	/** P2P group owner */
 	NRF_WIFI_IFTYPE_P2P_GO,
+	/** P2P device use the @ref %NRF_WIFI_UMAC_CMD_START_P2P_DEVICE &
+	 *  @ref %NRF_WIFI_UMAC_CMD_STOP_P2P_DEVICE commands to create and destroy one
+	 */
 	NRF_WIFI_IFTYPE_P2P_DEVICE,
+	/** Not Supported */
 	NRF_WIFI_IFTYPE_OCB,
-
-	/* keep last */
+	/** Highest interface type number currently defined */
 	NUM_NRF_WIFI_IFTYPES,
+	/** Number of defined interface types */
 	NRF_WIFI_IFTYPE_MAX = NUM_NRF_WIFI_IFTYPES - 1
 };
 
 /**
- * enum nrf_wifi_ps_state - powersave state
- * @NRF_WIFI_PS_DISABLED: powersave is disabled
- * @NRF_WIFI_PS_ENABLED: powersave is enabled
+ * @brief Powersave state.
+ *
  */
 enum nrf_wifi_ps_state {
+	/** powersave is disabled */
 	NRF_WIFI_PS_DISABLED,
+	/** powersave is enabled */
 	NRF_WIFI_PS_ENABLED,
 };
 
-/*Will add additional info if required*/
 /**
- * enum nrf_wifi_security_type - WLAN security type
- * @NRF_WIFI_WEP: WEP
- * @NRF_WIFI_WPA: WPA
- * @NRF_WIFI_WPA2: WPA2
- * @NRF_WIFI_WPA3: WPA3
- * @NRF_WIFI_WAPI: WAPI
+ * @brief WLAN security types.
+ *
  */
 enum nrf_wifi_security_type {
+	/** OPEN */
 	NRF_WIFI_OPEN,
+	/** WEP */
 	NRF_WIFI_WEP,
+	/** WPA */
 	NRF_WIFI_WPA,
+	/** WPA2 */
 	NRF_WIFI_WPA2,
+	/** WPA3 */
 	NRF_WIFI_WPA3,
+	/** WAPI */
 	NRF_WIFI_WAPI,
+	/** Enterprise mode */
 	NRF_WIFI_EAP,
+	/** WPA2 sha 256 */
 	NRF_WIFI_WPA2_256
 };
 
 /**
- * enum nrf_wifi_reg_initiator - Indicates the initiator of a reg domain request
- * @NL80211_REGDOM_SET_BY_CORE: Core queried CRDA for a dynamic world
- * regulatory domain.
- * @NL80211_REGDOM_SET_BY_USER: User asked the wireless core to set the
- * regulatory domain.
- * @NL80211_REGDOM_SET_BY_DRIVER: a wireless drivers has hinted to the
- * wireless core it thinks its knows the regulatory domain we should be in.
- * @NL80211_REGDOM_SET_BY_COUNTRY_IE: the wireless core has received an
- * 802.11 country information element with regulatory information it
- * thinks we should consider. cfg80211 only processes the country
- *	code from the IE, and relies on the regulatory domain information
- *	structure passed by userspace (CRDA) from our wireless-regdb.
- *	If a channel is enabled but the country code indicates it should
- *	be disabled we disable the channel and re-enable it upon disassociation.
+ * @brief Denotes the originator of a regulatory domain request.
+ *
  */
 enum nrf_wifi_reg_initiator {
+	/** Core queried CRDA for a dynamic world regulatory domain */
 	NRF_WIFI_REGDOM_SET_BY_CORE,
+	/** User asked the wireless core to set the regulatory domain */
 	NRF_WIFI_REGDOM_SET_BY_USER,
+	/**
+	 * A wireless drivers has hinted to the wireless core it thinks
+	 * its knows the regulatory domain we should be in
+	 */
 	NRF_WIFI_REGDOM_SET_BY_DRIVER,
+	/**
+	 * the wireless core has received an
+	 * 802.11 country information element with regulatory information it
+	 * thinks we should consider. cfg80211 only processes the country
+	 * code from the IE, and relies on the regulatory domain information
+	 * structure passed by userspace (CRDA) from our wireless-regdb
+	 * If a channel is enabled but the country code indicates it should
+	 * be disabled we disable the channel and re-enable it upon disassociation
+	 */
 	NRF_WIFI_REGDOM_SET_BY_COUNTRY_IE,
 };
 
 /**
- * enum nrf_wifi_reg_type - specifies the type of regulatory domain
- * @NL80211_REGDOM_TYPE_COUNTRY: the regulatory domain set is one that pertains
- *	to a specific country. When this is set you can count on the
- *	ISO / IEC 3166 alpha2 country code being valid.
- * @NL80211_REGDOM_TYPE_WORLD: the regulatory set domain is the world regulatory
- * domain.
- * @NL80211_REGDOM_TYPE_CUSTOM_WORLD: the regulatory domain set is a custom
- * driver specific world regulatory domain. These do not apply system-wide
- * and are only applicable to the individual devices which have requested
- * them to be applied.
- * @NL80211_REGDOM_TYPE_INTERSECTION: the regulatory domain set is the product
- *	of an intersection between two regulatory domains -- the previously
- *	set regulatory domain on the system and the last accepted regulatory
- *	domain request to be processed.
+ * @brief Specifies the type of regulatory domain.
+ *
  */
 enum nrf_wifi_reg_type {
+	/**
+	 * the regulatory domain set is one that pertains
+	 * to a specific country. When this is set you can count on the
+	 * ISO / IEC 3166 alpha2 country code being valid.
+	 *
+	 */
 	NRF_WIFI_REGDOM_TYPE_COUNTRY,
+	/** the regulatory set domain is the world regulatory domain */
 	NRF_WIFI_REGDOM_TYPE_WORLD,
+	/**
+	 * the regulatory domain set is a custom
+	 * driver specific world regulatory domain. These do not apply system-wide
+	 * and are only applicable to the individual devices which have requested
+	 * them to be applied.
+	 */
 	NRF_WIFI_REGDOM_TYPE_CUSTOM_WORLD,
+	/**
+	 * the regulatory domain set is the product
+	 * of an intersection between two regulatory domains -- the previously
+	 * set regulatory domain on the system and the last accepted regulatory
+	 * domain request to be processed.
+	 */
 	NRF_WIFI_REGDOM_TYPE_INTERSECTION,
 };
 
 #define NRF_WIFI_MAX_SSID_LEN 32
 
 /**
- * struct nrf_wifi_ssid - SSID list.
- * @nrf_wifi_ssid_len: Indicates the number of values in ssid parameter.
- * @nrf_wifi_ssid: SSID (binary attribute, 0..32 octets).
+ * @brief This structure provides details about the SSID.
  *
- * This structure describes the parameters to describe list of SSIDs
- * used by the @scan_common parameter in &struct nrf_wifi_umac_cmd_scan.
  */
 
 struct nrf_wifi_ssid {
+	/** length of SSID */
 	unsigned char nrf_wifi_ssid_len;
+	/** SSID string */
 	unsigned char nrf_wifi_ssid[NRF_WIFI_MAX_SSID_LEN];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_MAX_IE_LEN 400
 
 /**
- * struct nrf_wifi_ie - Information element(s) data.
- * @ie_len: Indicates the number of values in ie parameter.
- * @ie: Information element data.
+ * @brief This structure contains data related to the Information Elements (IEs).
  *
- * This structure describes the Information element(s) data being passed.
  */
 
 struct nrf_wifi_ie {
+	/** length of IE */
 	unsigned short ie_len;
+	/** Information element data */
 	signed char ie[NRF_WIFI_MAX_IE_LEN];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_MAX_SEQ_LENGTH 256
 
 /**
- * struct nrf_wifi_seq - Transmit key sequence number.
- * @nrf_wifi_seq_len: Length of the seq parameter.
- * @nrf_wifi_seq: Key sequence number data.
+ * @brief Transmit key sequence number.
  *
- * Transmit key sequence number (IV/PN) for TKIP and CCMP keys, each six bytes
- * in little endian.
  */
 
 struct nrf_wifi_seq {
+	/** Length of the seq parameter */
 	signed int nrf_wifi_seq_len;
+	/** Key sequence number data */
 	unsigned char nrf_wifi_seq[NRF_WIFI_MAX_SEQ_LENGTH];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_MAX_KEY_LENGTH 256
 
 /**
- * struct nrf_wifi_key - Key data.
+ * @brief This structure holds information related to a security key.
  *
- * @nrf_wifi_key_len: Length of the key data.
- * @nrf_wifi_key: Key data.
- *
- * This structure represents a security key data.
  */
 
 struct nrf_wifi_key {
+	/** Length of the key data */
 	unsigned int nrf_wifi_key_len;
+	/** Key data */
 	unsigned char nrf_wifi_key[NRF_WIFI_MAX_KEY_LENGTH];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_MAX_SAE_DATA_LENGTH 256
 
 /**
- * struct nrf_wifi_umac_sae - SAE element in auth frame.
- *
- * @sae_data_len: Length of SAE element data.
- * @sae_data: SAE element data.
- *
- * This structure represents SAE elements in Authentication frames.
+ * @brief This structure represents SAE elements in Authentication frame.
  *
  */
 
 struct nrf_wifi_sae {
+	/** Length of SAE element data */
 	signed int sae_data_len;
+	/** SAE element data */
 	unsigned char sae_data[NRF_WIFI_MAX_SAE_DATA_LENGTH];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_MAX_FRAME_LEN 400
 
 /**
- * struct nrf_wifi_umac_frame - Frame data.
+ * @brief This structure defines the frame that is intended for transmission.
  *
- * @frame_len: Length of the frame.
- * @frame: Frame data.
- *
- * This structure describes a frame being passed.
  */
 
 struct nrf_wifi_frame {
+	/** Length of the frame  */
 	signed int frame_len;
+	/** frame data */
 	signed char frame[NRF_WIFI_MAX_FRAME_LEN];
 } __NRF_WIFI_PKD;
 
@@ -635,21 +577,18 @@ struct nrf_wifi_frame {
 #define NRF_WIFI_INDEX_IDS_WIPHY_IDX_VALID (1 << 2)
 
 /**
- * struct nrf_wifi_index_ids - UMAC interface index.
+ * @brief This structure contains details about the interface information.
  *
- * @valid_fields: Indicate which properties below are set.
- * @wdev_id: wdev id.
- * @ifindex: Unused.
- * @wiphy_idx: Unused.
- *
- * Command header expected by UMAC. Legacy header in place to handle requests
- * from supplicant in RPU.
  */
 
 struct nrf_wifi_index_ids {
+	/** Indicate which properties below are set */
 	unsigned int valid_fields;
+	/** wdev id */
 	signed int ifaceindex;
+	/** Unused */
 	signed int nrf_wifi_wiphy_idx;
+	/** Unused */
 	unsigned long long wdev_id;
 } __NRF_WIFI_PKD;
 
@@ -657,60 +596,52 @@ struct nrf_wifi_index_ids {
 #define NRF_WIFI_MAX_SUPP_RATES 60
 
 /**
- * struct nrf_wifi_supp_rates - Scan request parameters.
- *
- * @valid_fields: Indicate which of the following parameters are valid.
- * @band: Frequency band, see enum nrf_wifi_umac_band.
- * @nrf_wifi_num_rates: Number of values in rates parameter.
- * @rates: Rates per to be advertised as supported in scan,
- *	 nested array attribute containing an entry for each band, with the
- *	 entry being a list of supported rates as defined by IEEE 802.11
- *	 7.3.2.2 but without the length restriction (at most
- *	 %NRF_WIFI_MAX_SUPP_RATES).
- *
- * This structure specifies the parameters to be used when sending
- * %NRF_WIFI_UMAC_CMD_TRIGGER_SCAN command (Refer &enum nrf_wifi_umac_commands).
+ * @brief This structure provides information about the rate parameters.
  *
  */
 
 struct nrf_wifi_supp_rates {
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Frequency band, see &enum nrf_wifi_band */
 	signed int band;
+	/** Number of values in rates parameter */
 	signed int nrf_wifi_num_rates;
+	/** List of supported rates as defined by IEEE 802.11 7.3.2.2 */
 	unsigned char rates[NRF_WIFI_MAX_SUPP_RATES];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_channel - channel definition
+ * @brief This structure contains details about a channel's information.
  *
- * This structure describes a single channel for use.
- *
- * @center_frequency: center frequency in MHz
- * @hw_value: hardware-specific value for the channel
- * @nrf_wifi_flags: channel flags from &enum nrf_wifi_channel_flags.
- * @nrf_wifi_orig_flags: channel flags at registration time, used by regulatory
- * code to support devices with additional restrictions
- * @band: band this channel belongs to.
- * @nrf_wifi_max_antenna_gain: maximum antenna gain in dBi
- * @nrf_wifi_max_power: maximum transmission power (in dBm)
- * @nrf_wifi_max_reg_power: maximum regulatory transmission power (in dBm)
- * @nrf_wifi_beacon_found: helper to regulatory code to indicate when a beacon
- * has been found on this channel. Use regulatory_hint_found_beacon()
- * to enable this, this is useful only on 5 GHz band.
- * @nrf_wifi_orig_mag: internal use
- * @nrf_wifi_orig_mpwr: internal use
  */
 struct nrf_wifi_channel {
+	/** band this channel belongs to */
 	signed int band;
+	/** center frequency in MHz */
 	unsigned int center_frequency;
+	/** channel flags from see &enum nrf_wifi_channel_flags */
 	unsigned int nrf_wifi_flags;
+	/** maximum antenna gain in dBi */
 	signed int nrf_wifi_max_antenna_gain;
+	/** maximum transmission power (in dBm) */
 	signed int nrf_wifi_max_power;
+	/** maximum regulatory transmission power (in dBm) */
 	signed int nrf_wifi_max_reg_power;
+	/** channel flags at registration time, used by regulatory
+	 *  code to support devices with additional restrictions
+	 */
 	unsigned int nrf_wifi_orig_flags;
+	/** internal use */
 	signed int nrf_wifi_orig_mag;
+	/** internal use */
 	signed int nrf_wifi_orig_mpwr;
+	/** hardware-specific value for the channel */
 	unsigned short hw_value;
+	/** helper to regulatory code to indicate when a beacon
+	 *  has been found on this channel. Use regulatory_hint_found_beacon()
+	 *  to enable this, this is useful only on 5 GHz band.
+	 */
 	signed char nrf_wifi_beacon_found;
 } __NRF_WIFI_PKD;
 
@@ -726,41 +657,6 @@ struct nrf_wifi_channel {
 #define NRF_WIFI_SCAN_MAX_NUM_FREQUENCIES 64
 #define MAX_NUM_CHANNELS 42
 
-/**
- * scan_flags -	scan request control flags
- *
- * Scan request control flags are used to control the handling
- * of CMD_TRIGGER_SCAN request.
- *
- * @#define NRF_WIFI_SCAN_FLAG_LOW_PRIORITY: scan request has low priority
- * @#define NRF_WIFI_SCAN_FLAG_FLUSH: flush cache before scanning
- * @#define NRF_WIFI_SCAN_FLAG_AP: force a scan even if the interface is configured
- *	as AP and the beaconing has already been configured. This attribute is
- *	dangerous because will destroy stations performance as a lot of frames
- *	will be lost while scanning off-channel, therefore it must be used only
- *	when really needed
- * @#define NRF_WIFI_SCAN_FLAG_RANDOM_ADDR: use a random MAC address for this scan (or
- *	for scheduled scan: a different one for every scan iteration). When the
- *	flag is set, depending on device capabilities the @MAC and
- *	@MAC_MASK attributes may also be given in which case only
- *	the masked bits will be preserved from the MAC address and the remainder
- *	randomised. If the attributes are not given full randomisation (46 bits,
- *	locally administered 1, multicast 0) is assumed.
- *	This flag must not be requested when the feature isn't supported, check
- *	the nl80211 feature flags for the device.
- * @#define NRF_WIFI_SCAN_FLAG_FILS_MAX_CHANNEL_TIME: fill the dwell time in the FILS
- *	request parameters IE in the probe request
- * @#define NRF_WIFI_SCAN_FLAG_ACCEPT_BCAST_PROBE_RESP: accept broadcast probe responses
- * @#define NRF_WIFI_SCAN_FLAG_OCE_PROBE_REQ_HIGH_TX_RATE: send probe request frames at
- *	rate of at least 5.5M. In case non OCE AP is dicovered in the channel,
- *	only the first probe req in the channel will be sent in high rate.
- * @#define NRF_WIFI_SCAN_FLAG_OCE_PROBE_REQ_DEFERRAL_SUPPRESSION: allow probe request
- *	tx deferral (dot11FILSProbeDelay shall be set to 15ms)
- *	and suppression (if it has received a broadcast Probe Response frame,
- *	Beacon frame or FILS Discovery frame from an AP that the STA considers
- *	a suitable candidate for (re-)association - suitable in terms of
- *	SSID and/or RSSI
- */
 #define NRF_WIFI_SCAN_FLAG_LOW_PRIORITY (1 << 0)
 #define NRF_WIFI_SCAN_FLAG_FLUSH (1 << 1)
 #define NRF_WIFI_SCAN_FLAG_AP (1 << 2)
@@ -776,43 +672,40 @@ struct nrf_wifi_channel {
 #define NRF_WIFI_SCAN_FLAG_MIN_PREQ_CONTENT (1 << 12)
 
 /**
- * struct nrf_wifi_scan_params - Scan request parameters.
+ * @brief This structure provides details about the parameters required for a scan request.
  *
- * @valid_fields: Indicate which of the following parameters are valid.
- * @num_scan_ssids: Number of elements in scan_ssids parameter.
- * @scan_ssids: Nested attribute with SSIDs, leave out for passive
- *	 scanning and include a zero-length SSID (wildcard) for wildcard scan.
- * @ie: Information element(s) data.
- * @num_scan_channels: Num of scan channels.
- * @scan_frequencies: Channel information.
- * @mac_addr: MAC address (various uses).
- * @mac_addr_mask: MAC address mask.
- * @scan_flags: Scan request control flags (u32). Bit values
- *	(NRF_WIFI_SCAN_FLAG_LOW_PRIORITY/NRF_WIFI_SCAN_FLAG_RANDOM_ADDR...)
- * @supp_rates: Supported rates.
- * @no_cck: used to send probe requests at non CCK rate in 2GHz band
- * @oper_ch__duration: Operating channel duration when STA is connected to AP
- * @scan_duration: Max scan duration in TU
- * @channels: See struct nrf_wifi_channel
- *
- * This structure specifies the parameters to be used when sending
- * %NRF_WIFI_UMAC_CMD_TRIGGER_SCAN command (Refer &enum nrf_wifi_umac_commands).
  */
 
 struct nrf_wifi_scan_params {
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Number of ssids valid in scan_ssids parameter */
 	unsigned char num_scan_ssids;
+	/** Number of channels to be scanned */
 	unsigned char num_scan_channels;
+	/** Scan request control flags (u32). Bit values
+	 *  (NRF_WIFI_SCAN_FLAG_LOW_PRIORITY/NRF_WIFI_SCAN_FLAG_RANDOM_ADDR...)
+	 */
 	unsigned int scan_flags;
+	/** ssid info @ref nrf_wifi_ssid */
 	struct nrf_wifi_ssid scan_ssids[NRF_WIFI_SCAN_MAX_NUM_SSIDS];
+	/** Information element(s) data @ref nrf_wifi_ie*/
 	struct nrf_wifi_ie ie;
+	/** Supported rates @ref nrf_wifi_supp_rates */
 	struct nrf_wifi_supp_rates supp_rates;
+	/** MAC address */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** MAC address mask */
 	unsigned char mac_addr_mask[NRF_WIFI_ETH_ADDR_LEN];
+	/** used to send probe requests at non CCK rate in 2GHz band */
 	unsigned char no_cck;
+	/** Operating channel duration when STA is connected to AP */
 	unsigned short oper_ch_duration;
+	/** Max scan duration in TU */
 	unsigned short scan_duration[MAX_NUM_CHANNELS];
+	/** Max probe count in channels */
 	unsigned char probe_cnt[MAX_NUM_CHANNELS];
+	/** channels to be scanned @ref nrf_wifi_channel */
 	struct nrf_wifi_channel channels[0];
 } __NRF_WIFI_PKD;
 
@@ -820,38 +713,30 @@ struct nrf_wifi_scan_params {
 #define NRF_WIFI_HT_CAPABILITY_MASK_VALID (1 << 1)
 #define NRF_WIFI_VHT_CAPABILITY_VALID (1 << 2)
 #define NRF_WIFI_VHT_CAPABILITY_MASK_VALID (1 << 3)
+
 #define NRF_WIFI_CMD_HT_VHT_CAPABILITY_DISABLE_HT (1 << 0)
 #define NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE 256
 
 /**
- * struct nrf_wifi_ht_vht_capabilities - VHT capability information.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @ht_capability: HT Capability information element (from
- *	association request when used with %NRF_WIFI_UMAC_CMD_NEW_STATION in
- *	&enum nrf_wifi_umac_commands).
- * @ht_capability_mask: Specify which bits of the
- *	ATTR_HT_CAPABILITY to which attention should be paid.
- *	The values that may be configured are:
- *	MCS rates, MAX-AMSDU, HT-20-40 and HT_CAP_SGI_40
- *	AMPDU density and AMPDU factor.
- *	All values are treated as suggestions and may be ignored
- *	by the driver as required.
- * @vht_capability: VHT Capability information element (from
- *	association request when used with %NRF_WIFI_UMAC_CMD_NEW_STATION in
- *	&enum nrf_wifi_umac_commands).
- * @vht_capability_mask: Specify which bits in vht_capability to which attention
- *	should be paid.
- * @nrf_wifi_flags: Indicate which capabilities have been specified.
+ * @brief This structure contains specific information about the VHT (Very High Throughput)
+ *  and HT ((High Throughput)) capabilities.
  *
- * This structure encapsulates the VHT capability information.
  */
 
 struct nrf_wifi_ht_vht_capabilities {
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Indicate which capabilities have been specified */
 	unsigned short nrf_wifi_flags;
+	/** HT Capability information element (from association request when
+	 *  used with NRF_WIFI_UMAC_CMD_NEW_STATION).
+	 */
 	unsigned char ht_capability[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
+	/** Specify which bits of the ht_capability are masked */
 	unsigned char ht_capability_mask[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
+	/** VHT Capability information element */
 	unsigned char vht_capability[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
+	/** Specify which bits in vht_capability to which attention should be paid */
 	unsigned char vht_capability_mask[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
 } __NRF_WIFI_PKD;
 
@@ -860,25 +745,27 @@ struct nrf_wifi_ht_vht_capabilities {
 #define NRF_WIFI_SIGNAL_TYPE_UNSPEC 3
 
 /**
- * struct nrf_wifi_signal - Signal information.
+ * @brief This structure represents information related to the signal strength.
  *
- * @signal_type: MBM or unspecified.
- * @signal: If MBM signal strength of probe response/beacon
- *	in mBm (100 * dBm) (s32)
- *	If unspecified signal strength of the probe response/beacon
- *	in unspecified units, scaled to 0..100 (u8).
- *
- * This structure represents signal information.
  */
 
 struct nrf_wifi_signal {
+	/** MBM or unspecified */
 	unsigned int signal_type;
 
+	/** signal */
 	union {
+		/** If MBM signal strength of probe response/beacon
+		 *  in mBm (100 * dBm) (s32)
+		 */
 		unsigned int mbm_signal;
+		/** If unspecified signal strength of the probe response/beacon
+		 *  in unspecified units, scaled to 0..100 (u8).
+		 */
 		unsigned char unspec_signal;
 	} __NRF_WIFI_PKD signal;
 } __NRF_WIFI_PKD;
+
 #define NRF_WIFI_WPA_VERSION_1 (1 << 0)
 #define NRF_WIFI_WPA_VERSION_2 (1 << 1)
 
@@ -903,83 +790,69 @@ struct nrf_wifi_signal {
 #define NRF_WIFI_CONNECT_COMMON_INFO_PREV_BSSID (1 << 15)
 
 /**
- * struct nrf_wifi_connect_common_info - Connection properties.
+ * @brief This structure contains parameters related to the connection.
  *
- * @valid_fields: Indicate which of the following parameters are valid.
- * @mac_addr: MAC address (various uses).
- * @mac_addr_hint: MAC address recommendation as initial BSS.
- * @frequency: Frequency of the selected channel in MHz, defines the channel
- *	together with the (deprecated) %NRF_WIFI_UMAC_ATTR_WIPHY_CHANNEL_TYPE
- *	attribute or the attributes %NRF_WIFI_UMAC_ATTR_CHANNEL_WIDTH and if needed
- *	%NRF_WIFI_UMAC_ATTR_CENTER_FREQ1 and %NRF_WIFI_UMAC_ATTR_CENTER_FREQ2.
- * @freq_hint: Frequency of the recommended initial BS.
- * @bg_scan_period: Background scan period in seconds or 0 to disable
- *	background scan.
- * @ssid: SSID (binary attribute, 0..32 octets).
- * @wpa_ie: Information element(s) data.
- * @wpa_versions: Used with CONNECT, ASSOCIATE, and NEW_BEACON to
- *	indicate which WPA version(s) the AP we want to associate with is using
- * @num_cipher_suites_pairwise: Number of pairwise cipher suites.
- * @cipher_suites_pairwise: For crypto settings for connect or
- *	other commands, indicates which pairwise cipher suites are used.
- * @cipher_suite_group: For crypto settings for connect or
- *	other commands, indicates which group cipher suite is used.
- * @num_akm_suites: Number of groupwise cipher suites.
- * @akm_suites: Used with CONNECT, ASSOCIATE, and NEW_BEACON to
- *	indicate which key management algorithm(s) to use (an array of u32).
- * @use_mfp: Whether management frame protection (IEEE 802.11w) is
- *	used for the association; this attribute can be used
- *	with %NRF_WIFI_UMAC_CMD_ASSOCIATE and %NRF_WIFI_UMAC_CMD_CONNECT requests (Refer
- *	&enum nrf_wifi_umac_commands).
- * @ht_vht_capabilitys: VHT Capability information element (from
- *	association request when used with %NRF_WIFI_UMAC_CMD_NEW_STATION in
- *	&enum nrf_wifi_umac_commands).
- * @nrf_wifi_flags: Flag for indicating whether the current connection
- *	shall support Radio Resource Measurements (11k). This attribute can be
- *	used with %NRF_WIFI_UMAC_CMD_ASSOCIATE and %NRF_WIFI_UMAC_CMD_CONNECT requests
- *	(Refer &enum nrf_wifi_umac_commands).
- *	User space applications are expected to use this flag only if the
- *	underlying device supports these minimal RRM features:
- *	%NRF_WIFI_UMAC_FEATURE_DS_PARAM_SET_IE_IN_PROBES,
- *	%NRF_WIFI_UMAC_FEATURE_QUIET,
- *	If this flag is used, driver must add the Power Capabilities IE to the
- *	association request. In addition, it must also set the RRM capability
- *	flag in the association request's Capability Info field.
- *	flag indicating whether user space controls
- *	IEEE 802.1X port, i.e., sets/clears %NRF_WIFI_UMAC_STA_FLAG_AUTHORIZED, in
- *	station mode. If the flag is included in %NRF_WIFI_UMAC_CMD_ASSOCIATE
- *	request, the driver will assume that the port is unauthorized until
- *	authorized by user space. Otherwise, port is marked authorized by
- *	default in station mode.
- *
- * This structure specifies the parameters to be used when building
- * connect_common_info when sending %NRF_WIFI_UMAC_CMD_ASSOCIATE command (Refer
- * &enum nrf_wifi_umac_commands).
  */
 
 struct nrf_wifi_connect_common_info {
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Frequency of the selected channel in MHz */
 	unsigned int frequency;
+	/** Frequency of the recommended initial BSS */
 	unsigned int freq_hint;
+	/** Indicates which WPA version(s) */
 	unsigned int wpa_versions;
+	/** Number of pairwise cipher suites */
 	signed int num_cipher_suites_pairwise;
+	/** For crypto settings, indicates which pairwise cipher suites are used */
 	unsigned int cipher_suites_pairwise[7];
+	/** For crypto settings, indicates which group cipher suite is used */
 	unsigned int cipher_suite_group;
+	/** Number of groupwise cipher suites */
 	unsigned int num_akm_suites;
+	/** Indicate which key management algorithm(s) to use */
 	unsigned int akm_suites[NRF_WIFI_MAX_NR_AKM_SUITES];
+	/** Whether management frame protection (IEEE 802.11w) is used for the association */
 	signed int use_mfp;
-
+	/** Flag for indicating whether the current connection
+	 *  shall support Radio Resource Measurements (11k)
+	 */
 	unsigned int nrf_wifi_flags;
+	/** Background scan period in seconds or 0 to disable background scan */
 	unsigned short bg_scan_period;
+	/** MAC address */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** MAC address recommendation as initial BSS */
 	unsigned char mac_addr_hint[NRF_WIFI_ETH_ADDR_LEN];
+	/** SSID (binary attribute, 0..32 octets) */
 	struct nrf_wifi_ssid ssid;
+	/** IE's @ref nrf_wifi_ie */
 	struct nrf_wifi_ie wpa_ie;
+	/** VHT Capability information element @ref nrf_wifi_ht_vht_capabilities */
 	struct nrf_wifi_ht_vht_capabilities ht_vht_capabilities;
+	/** A 16-bit value indicating the ethertype that will be used for key negotiation.
+	 *  If it is not specified, the value defaults to 0x888E.
+	 */
 	unsigned short control_port_ether_type;
+	/** When included along with control_port_ether_type, indicates that the custom
+	 *  ethertype frames used for key negotiation must not be encrypted.
+	 */
 	unsigned char control_port_no_encrypt;
+	/** Indicating whether user space controls IEEE 802.1X port, If set, the RPU will
+	 *  assume that the port is unauthorized until authorized by user space.
+	 *  Otherwise, port is marked authorized by default in station mode.
+	 */
 	signed char control_port;
+	/** previous BSSID, used to specify a request to reassociate
+	 *  within an ESS that is, to use Reassociate Request frame (with the value of
+	 *  this attribute in the Current AP address field) instead of Association
+	 *  Request frame which is used for the initial association to an ESS.
+	 */
 	unsigned char prev_bssid[NRF_WIFI_ETH_ADDR_LEN];
+	/** Bss max idle timeout value in sec which will be encapsulated into
+	 *  BSS MAX IDLE IE in assoc request frame.
+	 */
 	unsigned short maxidle_insec;
 
 } __NRF_WIFI_PKD;
@@ -989,34 +862,43 @@ struct nrf_wifi_connect_common_info {
 #define NRF_WIFI_BEACON_DATA_MAX_PROBE_RESP_LEN 400
 
 /**
- * struct nrf_wifi_beacon_data - beacon & probe data
- * @head_len: length of @head
- * @tail_len: length of @tail
- * @probe_resp_len: length of probe response template (@probe_resp)
- * @head: head portion of beacon (before TIM IE) or %NULL if not changed
- * @tail: tail portion of beacon (after TIM IE) or %NULL if not changed
- * @probe_resp: probe response template
+ * @brief This structure provides information about beacon and probe data.
+ *
  */
 
 struct nrf_wifi_beacon_data {
+	/** length of head */
 	unsigned int head_len;
+	/** length of tail */
 	unsigned int tail_len;
+	/** length of probe response template (probe_resp) */
 	unsigned int probe_resp_len;
+	/**  head portion of beacon (before TIM IE) or %NULL if not changed  */
 	unsigned char head[NRF_WIFI_BEACON_DATA_MAX_HEAD_LEN];
+	/** tail portion of beacon (after TIM IE) or %NULL if not changed */
 	unsigned char tail[NRF_WIFI_BEACON_DATA_MAX_TAIL_LEN];
+	/** probe response template */
 	unsigned char probe_resp[NRF_WIFI_BEACON_DATA_MAX_PROBE_RESP_LEN];
 } __NRF_WIFI_PKD;
 
-/*
- * struct nrf_wifi_sta_flag_update - Station flags mask/set.
- * @mask: Mask of station flags to set.
- * @set: Values to set them to.
+#define NRF_WIFI_STA_FLAG_INVALID (1 << 0)
+#define NRF_WIFI_STA_FLAG_AUTHORIZED (1 << 1)
+#define NRF_WIFI_STA_FLAG_SHORT_PREAMBLE (1 << 2)
+#define NRF_WIFI_STA_FLAG_WME (1 << 3)
+#define NRF_WIFI_STA_FLAG_MFP (1 << 4)
+#define NRF_WIFI_STA_FLAG_AUTHENTICATED (1 << 5)
+#define NRF_WIFI_STA_FLAG_TDLS_PEER (1 << 6)
+#define NRF_WIFI_STA_FLAG_ASSOCIATED (1 << 7)
+
+/**
+ * @brief This structure provides information regarding station flags.
  *
- * Both mask and set contain bits as per &enum nrf_wifi_sta_flags.
  */
 
 struct nrf_wifi_sta_flag_update {
+	/** Mask of station flags to set */
 	unsigned int nrf_wifi_mask;
+	/** Values to set them to. NRF_WIFI_STA_FLAG_AUTHORIZED */
 	unsigned int nrf_wifi_set;
 } __NRF_WIFI_PKD;
 
@@ -1025,6 +907,7 @@ struct nrf_wifi_sta_flag_update {
 #define NRF_WIFI_RATE_INFO_BITRATE_MCS_VALID (1 << 2)
 #define NRF_WIFI_RATE_INFO_BITRATE_VHT_MCS_VALID (1 << 3)
 #define NRF_WIFI_RATE_INFO_BITRATE_VHT_NSS_VALID (1 << 4)
+
 #define NRF_WIFI_RATE_INFO_0_MHZ_WIDTH (1 << 0)
 #define NRF_WIFI_RATE_INFO_5_MHZ_WIDTH (1 << 1)
 #define NRF_WIFI_RATE_INFO_10_MHZ_WIDTH (1 << 2)
@@ -1034,41 +917,44 @@ struct nrf_wifi_sta_flag_update {
 #define NRF_WIFI_RATE_INFO_SHORT_GI (1 << 6)
 #define NRF_WIFI_RATE_INFO_80P80_MHZ_WIDTH (1 << 7)
 
-/*
- * struct nrf_wifi_rate_info - Rate information.
- * @valid_fields: Valid fields with in this structure.
- * @bitrate: bitrate.
- * @bitrate_compat: Bitrate copmpatible.
- * @nrf_wifi_mcs: Modulation and Coding Scheme(MCS).
- * @vht_mcs: MCS related to VHT.
- * @vht_nss: NSS related to VHT .
- * @nrf_wifi_flags: Rate flags .
+/**
+ * @brief This structure contains information about rate parameters.
  *
- * Both mask and set contain bits as per &enum nrf_wifi_sta_flags.
  */
 
 struct nrf_wifi_rate_info {
+	/** Valid fields with in this structure */
 	unsigned int valid_fields;
+	/** bitrate */
 	unsigned int bitrate;
+	/** Bitrate compatible */
 	unsigned short bitrate_compat;
+	/** Modulation and Coding Scheme(MCS) */
 	unsigned char nrf_wifi_mcs;
+	/** MCS related to VHT */
 	unsigned char vht_mcs;
+	/** NSS related to VHT */
 	unsigned char vht_nss;
+	/** Rate flags NRF_WIFI_RATE_INFO_0_MHZ_WIDTH */
 	unsigned int nrf_wifi_flags;
 
 } __NRF_WIFI_PKD;
 
-/*
- * struct nrf_wifi_sta_bss_parameters - BSS parameters for the attached station
- * Information about the currently associated BSS
- * @flags: bitflag of flags (CTS_PROT, SHORT_PREAMBLE, SHORT_SLOT_TIME)
- * @dtim_period: DTIM period for the BSS
- * @beacon_interval: beacon interval
- */
+#define NRF_WIFI_BSS_PARAM_FLAGS_CTS_PROT (1<<0)
+#define NRF_WIFI_BSS_PARAM_FLAGS_SHORT_PREAMBLE (1<<1)
+#define NRF_WIFI_BSS_PARAM_FLAGS_SHORT_SLOT_TIME (1<<2)
 
+/**
+ * @brief This structure provides information about the Basic Service Set (BSS)
+ *  parameters for the attached station.
+ *
+ */
 struct nrf_wifi_sta_bss_parameters {
+	/** bitfields of flags NRF_WIFI_BSS_PARAM_FLAGS_CTS_PROT */
 	unsigned char nrf_wifi_flags;
+	/** DTIM period for the BSS */
 	unsigned char dtim_period;
+	/** beacon interval */
 	unsigned short beacon_interval;
 } __NRF_WIFI_PKD;
 
@@ -1103,96 +989,93 @@ struct nrf_wifi_sta_bss_parameters {
 #define NRF_WIFI_STA_INFO_STA_BSS_PARAMS_VALID (1 << 27)
 #define NRF_WIFI_IEEE80211_MAX_CHAINS 4
 
-/*
- * struct nrf_wifi_sta_info - STA information.
- * @valid_fields: Valid fields with in this structure.
- * @connected_time: time since the station is last connected.
- * @inactive_time: time since last activity, in msec.
- * @rx_bytes: total received bytes from this station.
- * @tx_bytes: total transmitted bytes to this station.
- * @chain_signal_mask: per-chain signal mask value.
- * @chain_signal: per-chain signal strength of last PPDU.
- * @chain_signal_avg_mask: per-chain signal strength average mask value.
- * @chain_signal_avg: per-chain signal strength average.
- * @tx_bitrate: see the struct nrf_wifi_rate_info.
- * @tx_bitrate: see the struct nrf_wifi_rate_info.
- * @llid: Not used.
- * @plid: Not used.
- * @plink_state: Not used.
- * @signal: signal strength of last received PPDU, in dbm.
- * @signal_avg: signal strength average, in dbm.
- * @rx_packets: total received packet from this station.
- * @tx_packets: total transmitted packets to this station.
- * @tx_retries: total retries to this station.
- * @tx_failed: total failed packets to this station.
- * @expected_throughput: expected throughput considering also the mac80211
- *	header, in kbps.
- * @beacon_loss_count: count of times beacon loss was detected.
- * @local_pm: Not used.
- * @peer_pm: Not used.
- * @nonpeer_pm: Not used.
- * @sta_flags: see struct nrf_wifi_sta_flag_update.
- * @t_offset: timing offset with respect to this STA.
- * @rx_dropped_misc: count of times other(non beacon) loss was detected.
- * @rx_beacon: count of times beacon.
- * @rx_beacon_signal_avg: average of beacon signal.
- * @bss_param: Station connected BSS params
+/**
+ * @brief This structure contains information about a Station (STA).
+ *
  */
 
 struct nrf_wifi_sta_info {
+	/** Valid fields with in this structure */
 	unsigned int valid_fields;
+	/** time since the station is last connected */
 	unsigned int connected_time;
+	/** time since last activity, in msec */
 	unsigned int inactive_time;
+	/** total received bytes from this station */
 	unsigned int rx_bytes;
+	/** total transmitted bytes to this station */
 	unsigned int tx_bytes;
+	/** per-chain signal mask value */
 	unsigned int chain_signal_mask;
+	/** per-chain signal strength of last PPDU */
 	unsigned char chain_signal[NRF_WIFI_IEEE80211_MAX_CHAINS];
+	/** per-chain signal strength average mask value */
 	unsigned int chain_signal_avg_mask;
+	/** per-chain signal strength average */
 	unsigned char chain_signal_avg[NRF_WIFI_IEEE80211_MAX_CHAINS];
+	/**@ref nrf_wifi_rate_info */
 	struct nrf_wifi_rate_info tx_bitrate;
+	/**@ref nrf_wifi_rate_info */
 	struct nrf_wifi_rate_info rx_bitrate;
+	/** Not used */
 	unsigned short llid;
+	/** Not used */
 	unsigned short plid;
+	/** Not used */
 	unsigned char plink_state;
+	/** signal strength of last received PPDU, in dbm */
 	signed int signal;
+	/** signal strength average, in dbm */
 	signed int signal_avg;
+	/** total received packet from this station */
 	unsigned int rx_packets;
+	/** total transmitted packets to this station */
 	unsigned int tx_packets;
+	/** total retries to this station */
 	unsigned int tx_retries;
+	/** total failed packets to this station */
 	unsigned int tx_failed;
+	/** expected throughput in kbps */
 	unsigned int expected_throughput;
+	/** count of times beacon loss was detected */
 	unsigned int beacon_loss_count;
+	/** Not used */
 	unsigned int local_pm;
+	/** Not used */
 	unsigned int peer_pm;
+	/** Not used */
 	unsigned int nonpeer_pm;
+	/** station flags @ref nrf_wifi_sta_flag_update */
 	struct nrf_wifi_sta_flag_update sta_flags;
+	/** timing offset with respect to this STA */
 	unsigned long long t_offset;
+	/** count of times other(non beacon) loss was detected */
 	unsigned long long rx_dropped_misc;
+	/** count of times beacon */
 	unsigned long long rx_beacon;
+	/** average of beacon signal */
 	long long rx_beacon_signal_avg;
+	/** Station connected BSS params. @ref nrf_wifi_sta_bss_parameters */
 	struct nrf_wifi_sta_bss_parameters bss_param;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_hdr - Common command/event header.
+ * @brief The command header expected by UMAC to handle requests from the control interface.
  *
- * @cmd_evnt: UMAC command/event value. (Refer	&enum nrf_wifi_umac_commands).
- * @ids: Interface properties.
- *
- * Command header expected by UMAC. Legacy header in place to handle requests
- * from supplicant in RPU.
  */
 
 struct nrf_wifi_umac_hdr {
-	/* private: presently unused */
+	/** unused */
 	unsigned int portid;
-	/* private: presently unused */
+	/** unused */
 	unsigned int seq;
-	/* public: */
+	/** UMAC command/event value see &enum nrf_wifi_umac_commands
+	 *  see &enum nrf_wifi_umac_events
+	 */
 	unsigned int cmd_evnt;
-	/* private: presently unused */
+	/** unused */
 	signed int rpu_ret_val;
-	/* public: */
+	/** Interface information @ref nrf_wifi_index_ids */
 	struct nrf_wifi_index_ids ids;
 } __NRF_WIFI_PKD;
 
@@ -1202,6 +1085,7 @@ struct nrf_wifi_umac_hdr {
 #define NRF_WIFI_SEQ_VALID (1 << 3)
 #define NRF_WIFI_CIPHER_SUITE_VALID (1 << 4)
 #define NRF_WIFI_KEY_INFO_VALID (1 << 5)
+
 #define NRF_WIFI_KEY_DEFAULT (1 << 0)
 #define NRF_WIFI_KEY_DEFAULT_TYPES (1 << 1)
 #define NRF_WIFI_KEY_DEFAULT_MGMT (1 << 2)
@@ -1209,128 +1093,111 @@ struct nrf_wifi_umac_hdr {
 #define NRF_WIFI_KEY_DEFAULT_TYPE_MULTICAST (1 << 4)
 
 /**
- * struct nrf_wifi_umac_key_info - Key information.
+ * @brief This structure contains information about a security key.
  *
- * @valid_fields: Indicate which of the following parameters are valid.
- * @key: Key data, see &struct nrf_wifi_key.
- * @key_type: Key Type,	see &enum nrf_wifi_key_type
- * @key_idx: Key ID (0-3).
- * @seq: Transmit key sequence number (IV/PN) for TKIP and
- *	CCMP keys, each six bytes in little endian.
- * @cipher_suite: Key cipher suite (as defined by IEEE 802.11
- *	section 7.3.2.25.1).
- * @nrf_wifi_flags: A nested attribute containing flags
- *	attributes, specifying what a key should be set as default as.
- *
- * This structure represents a security key.
  */
 
 struct nrf_wifi_umac_key_info {
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Key cipher suite (as defined by IEEE 802.11 section 7.3.2.25.1) */
 	unsigned int cipher_suite;
+	/** Specify what a key should be set as default as example NRF_WIFI_KEY_DEFAULT_MGMT */
 	unsigned short nrf_wifi_flags;
+	/** Key Type, see &enum nrf_wifi_key_type */
 	signed int key_type;
+	/** Key data @ref nrf_wifi_key */
 	struct nrf_wifi_key key;
+	/** Transmit key sequence number (IV/PN) for TKIP and CCMP keys,
+	 *  each six bytes in little endian @ref nrf_wifi_seq
+	 */
 	struct nrf_wifi_seq seq;
+	/** Key ID (0-3) */
 	unsigned char key_idx;
 } __NRF_WIFI_PKD;
 
-
-
 /**
- * enum scan_mode - scan operation mode
- * @AUTO: auto or legacy scan operation
- * @CHANNEL_MAPPING_SCAN: channel mapping mode. most of parameters will come from host.
+ * @brief This enum represents the various types of scanning operations.
  *
- * This enum represents the different types of scanning operations.
  */
 enum scan_mode {
+	/** auto or legacy scan operation */
 	AUTO_SCAN = 0,
+	/** Mapped scan. Host will control channels */
 	CHANNEL_MAPPING_SCAN
 };
 
 /**
- * enum scan_reason - scan reason
- * @SCAN_DISPLAY: scan for display purpose in user space
- * @SCAN_CONNECT: scan for connection purpose.
+ * @brief This enum describes the different types of scan.
  *
- * This enum represents the different types of scan reasons.
  */
 enum scan_reason {
+	/** scan for display purpose in user space */
 	SCAN_DISPLAY = 0,
+	/** scan for connection purpose */
 	SCAN_CONNECT
 };
 
 /**
- * struct nrf_wifi_umac_scan_info - Scan related information.
+ * @brief This structure contains details about scan request information.
  *
- * @scan_mode:see enum scan_mode .
- * @scan_reason:see enum scan_reason .
- * @scan_params: Refer to &struct nrf_wifi_umac_scan_params.
- *
- * Properties to be used when triggering a new scan request
  */
 
 struct nrf_wifi_umac_scan_info {
+	/** scan mode @ref scan_mode */
 	signed int scan_mode;
+	/** scan type see &enum scan_reason */
 	signed int scan_reason;
+	/** scan parameters @ref nrf_wifi_scan_params */
 	struct nrf_wifi_scan_params scan_params;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_scan - Scan request properties.
+ * @brief This structure defines a command scan request.
  *
- * @umac_hdr: Refer to &struct nrf_wifi_umac_hdr.
- * @info: Refer to &struct nrf_wifi_umac_scan_info.
- *
- * Properties to be used when triggering a new scan request
  */
 
 struct nrf_wifi_umac_cmd_scan {
-	/* public: */
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref nrf_wifi_umac_scan_info */
 	struct nrf_wifi_umac_scan_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_abort_scan - Abort Scan request.
- *
- * @umac_hdr: Refer to &struct nrf_wifi_umac_hdr.
+ * @brief This structure defines a command to abort a scan request.
  *
  */
 
 struct nrf_wifi_umac_cmd_abort_scan {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_get_scan_results - Get scan results.
+ * @brief TThis structure defines a command to request scan results.
+ * This command should be executed only if we have received a
+ * NRF_WIFI_UMAC_EVENT_SCAN_DONE event for a previous scan.
  *
- * @umac_hdr: Refer to &struct nrf_wifi_umac_hdr.
- * @scan_reason: Refer to &enum scan_reason.
- *
- * Properties to be used when requesting for scan results. This should be
- * allowed only if we received a %NRF_WIFI_UMAC_EVENT_SCAN_DONE for a
- * %NRF_WIFI_UMAC_CMD_TRIGGER_SCAN earlier.
  */
 
 struct nrf_wifi_umac_cmd_get_scan_results {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** scan type see &enum scan_reason */
 	signed int scan_reason;
 } __NRF_WIFI_PKD;
+
 /**
- * struct nrf_wifi_umac_event_scan_done - Scan Done event.
- *
- * @umac_hdr: Refer to &struct img_umac_hdr.
- * @status :	0->Scan successful
- *				1->Scan aborted
- * @scan_type:	0->display_scan
- *				1->connect_scan
+ * @brief This structure provides details about the "Scan Done" event.
  *
  */
 struct nrf_wifi_umac_event_scan_done {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** status, 0=Scan successful & 1=Scan aborted */
 	signed int status;
+	/** scan type see &enum scan_reason */
 	unsigned int scan_type;
 } __NRF_WIFI_PKD;
 
@@ -1339,44 +1206,46 @@ struct nrf_wifi_umac_event_scan_done {
 #define MCAST_ADDR_DEL 1
 
 /**
- * struct nrf_wifi_umac_mcast_cfg - mcast related information.
+ * @brief This structure represents the parameters used to configure the multicast address filter.
  *
- * @type: Add (0) or Delete (1)
- * @mac-addr: multicast address to be added/deleted.
  */
 struct nrf_wifi_umac_mcast_cfg {
+	/** Add (0) or Delete (1) */
 	unsigned int type;
+	/** multicast address to be added/deleted */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_mcast_filter - set mcast address
- *
- * @umac_hdr: Refer to &struct nrf_wifi_umac_hdr.
- * @info: Refer to &struct nrf_wifi_umac_mcast_cfg.
+ * @brief This structure defines a command used to set multicast (mcast) addresses.
  *
  */
 struct nrf_wifi_umac_cmd_mcast_filter {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref nrf_wifi_umac_mcast_cfg */
 	struct nrf_wifi_umac_mcast_cfg info;
 } __NRF_WIFI_PKD;
 
 
 /**
- * struct nrf_wifi_umac_cmd_change_macaddr - Change MAC Address
- *
- *    - This has to be used only when the interface is down.
- *
- * @umac_hdr: Refer to &struct img_umac_hdr.
- * @mac_addr : MAC address to be set
+ * @brief This structure represents the parameters used to change the MAC address.
  *
  */
+
 struct nrf_wifi_umac_change_macaddr_info {
+	/** MAC address to be set */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
-
+/**
+ * @brief This structure describes command to change MAC address.
+ *  This has to be used only when the interface is down.
+ *
+ */
 struct nrf_wifi_umac_cmd_change_macaddr {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref nrf_wifi_umac_change_macaddr_info */
 	struct nrf_wifi_umac_change_macaddr_info macaddr_info;
 } __NRF_WIFI_PKD;
 
@@ -1388,116 +1257,119 @@ struct nrf_wifi_umac_cmd_change_macaddr {
 #define NRF_WIFI_CMD_AUTHENTICATE_SSID_VALID (1 << 3)
 #define NRF_WIFI_CMD_AUTHENTICATE_IE_VALID (1 << 4)
 #define NRF_WIFI_CMD_AUTHENTICATE_SAE_VALID (1 << 5)
+
 #define NRF_WIFI_CMD_AUTHENTICATE_LOCAL_STATE_CHANGE (1 << 0)
 
-
 /**
- * struct nrf_wifi_umac_auth_info - Authentication command parameters.
+ * @brief This structure specifies the parameters to be used when sending an authentication request.
  *
- * @frequency: Frequency of the selected channel in MHz,
- *	 defines the channel together with the (deprecated)
- *	 %NRF_WIFI_UMAC_ATTR_WIPHY_CHANNEL_TYPE attribute or the attributes
- *	 %NRF_WIFI_UMAC_ATTR_CHANNEL_WIDTH and if needed %NRF_WIFI_UMAC_ATTR_CENTER_FREQ1
- *	 and %NRF_WIFI_UMAC_ATTR_CENTER_FREQ2.
- * @nrf_wifi_flags: Flag attribute to indicate that a command
- *	 is requesting a local authentication/association state change without
- *	 invoking actual management frame exchange. This can be used with
- *	 %NRF_WIFI_UMAC_CMD_AUTHENTICATE, %NRF_WIFI_UMAC_CMD_DEAUTHENTICATE
- *	 (Refer &enum nrf_wifi_umac_commands).
- * @auth_type: Authentication type.
- * @key_info: Key information in a nested attribute with
- *	 %NRF_WIFI_UMAC_KEY_* sub-attributes.
- * @ssid: SSID (binary attribute, 0..32 octets).
- * @ie: Information element(s) data.
- * @sae: SAE elements in Authentication frames. This starts
- *	 with the Authentication transaction sequence number field.
- * @nrf_wifi_bssid: MAC address (various uses).
- *
- * This structure specifies the parameters to be used when sending auth request.
  */
 
 struct nrf_wifi_umac_auth_info {
+	/** Frequency of the selected channel in MHz */
 	unsigned int frequency;
+	/** Flag attribute to indicate that a command is requesting a local
+	 *  authentication/association state change without invoking actual management
+	 *  frame exchange. This can be used with NRF_WIFI_UMAC_CMD_AUTHENTICATE
+	 *  NRF_WIFI_UMAC_CMD_DEAUTHENTICATE.
+	 */
 	unsigned short nrf_wifi_flags;
+	/** Authentication type. see &enum nrf_wifi_auth_type */
 	signed int auth_type;
+	/** Key information */
 	struct nrf_wifi_umac_key_info key_info;
+	/** SSID (binary attribute, 0..32 octets) */
 	struct nrf_wifi_ssid ssid;
+	/** Information element(s) data */
 	struct nrf_wifi_ie ie;
+	/** SAE elements in Authentication frames. This starts
+	 *  with the Authentication transaction sequence number field.
+	 */
 	struct nrf_wifi_sae sae;
+	/** MAC address (various uses) */
 	unsigned char nrf_wifi_bssid[NRF_WIFI_ETH_ADDR_LEN];
+	/** The following parameters will be used to construct bss database in case of
+	 * cfg80211 offload to host case.
+	 */
+	/** scanning width */
 	signed int scan_width;
+	/** Signal strength */
 	signed int nrf_wifi_signal;
+	/** Received elements from beacon or probe response */
 	signed int from_beacon;
+	/** BSS information element data */
 	struct nrf_wifi_ie bss_ie;
+	/** BSS capability */
 	unsigned short capability;
+	/** Beacon interval(ms) */
 	unsigned short beacon_interval;
+	/** Beacon tsf */
 	unsigned long long tsf;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_auth - Authentication command structure.
+ * @brief This structure defines a command used to send an authentication request.
  *
- * @umac_hdr: UMAC command header. See &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @info: Information to be passed along with the authentication command.
- *	See &struct nrf_wifi_umac_auth_info.
- *
- * This structure specifies the format to be used when sending an auth request.
  */
 
 struct nrf_wifi_umac_cmd_auth {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Information to be passed in the authentication command @ref nrf_wifi_umac_auth_info */
 	struct nrf_wifi_umac_auth_info info;
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_CMD_ASSOCIATE_MAC_ADDR_VALID (1 << 0)
 
 /**
- * struct nrf_wifi_umac_assoc_info - Association command parameters.
+ * @brief This structure specifies the parameters to be used when sending an association request.
  *
- * @center_frequency: Frequency of the selected channel in MHz, defines the channel
- *	together with the (deprecated)
- *	%NRF_WIFI_UMAC_ATTR_WIPHY_CHANNEL_TYPE attribute or the attributes
- *	%NRF_WIFI_UMAC_ATTR_CHANNEL_WIDTH and if needed
- *	%NRF_WIFI_UMAC_ATTR_CENTER_FREQ1 and %NRF_WIFI_UMAC_ATTR_CENTER_FREQ2.
- * @ssid: SSID (binary attribute, 0..32 octets).
- * @wpa_ie: WPA information element data.
- * @nrf_wifi_bssid: MAC address (various uses).
- *
- * This structure specifies the parameters to be used when sending an assoc
- * request.
  */
 
 struct nrf_wifi_umac_assoc_info {
+	/** Frequency of the selected channel in MHz */
 	unsigned int center_frequency;
+	/** ssid @ref nrf_wifi_ssid */
 	struct nrf_wifi_ssid ssid;
+	/** MAC address (various uses) */
 	unsigned char nrf_wifi_bssid[NRF_WIFI_ETH_ADDR_LEN];
+	/**  WPA information element data. @ref nrf_wifi_ie */
 	struct nrf_wifi_ie wpa_ie;
+	/** Whether management frame protection (IEEE 802.11w) is used for the association */
 	unsigned char use_mfp;
+	/** Indicating whether user space controls IEEE 802.1X port. If set, the RPU will
+	 *  assume that the port is unauthorized until authorized by user space.
+	 *  Otherwise, port is marked authorized by default in station mode.
+	 */
 	signed char control_port;
+	/** Previous BSSID used in flag */
 	unsigned int prev_bssid_flag;
+	/** Previous BSSID used in Re-assoc. */
 	unsigned char prev_bssid[NRF_WIFI_ETH_ADDR_LEN];
+	/** Bss max idle timeout value in sec wich will be encapsulated into
+	 *  BSS MAX IDLE IE in assoc request frame.
+	 */
 	unsigned short bss_max_idle_time;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_assoc - Association command parameters
+ * @brief This structure specifies the parameters to be used when sending an association request.
  *
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @connect_common_info: Connection attributes.
- * @mac_addr: Previous BSSID, to be used by in ASSOCIATE commands to specify
- *	using a reassociate frame.
- *
- * This structure specifies the parameters to be used when sending
- * %NRF_WIFI_UMAC_CMD_ASSOCIATE command.
  */
 
 struct nrf_wifi_umac_cmd_assoc {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** @ref nrf_wifi_connect_common_info */
 	struct nrf_wifi_connect_common_info connect_common_info;
+	/**
+	 * Previous BSSID, to be used by in ASSOCIATE commands to specify
+	 * using a reassociate frame.
+	 */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
@@ -1505,42 +1377,33 @@ struct nrf_wifi_umac_cmd_assoc {
 #define NRF_WIFI_CMD_MLME_LOCAL_STATE_CHANGE (1 << 0)
 
 /**
- * struct nrf_wifi_umac_disconn_info - Parameters to be used along with any of the
- *	disconnection commands.
+ * @brief This structure specifies the parameters to be passed while sending a
+ *  deauthentication request (NRF_WIFI_UMAC_CMD_DEAUTHENTICATE).
  *
- * @nrf_wifi_flags: Flag attribute to indicate that a command is requesting a local
- *	deauthentication/disassociation state change without invoking
- *	actual management frame exchange. This can be used with
- *	%NRF_WIFI_UMAC_CMD_DISASSOCIATE, %NRF_WIFI_UMAC_CMD_DEAUTHENTICATE
- *	(Refer &enum nrf_wifi_umac_commands).
- * @reason_code: ReasonCode for disassociation or deauthentication.
- * @mac_addr: MAC address (various uses).
- *
- * This structure specifies the parameters to be used when sending any of the
- * disconnection commands i.e. %NRF_WIFI_UMAC_CMD_DISCONNECT (or)
- * %NRF_WIFI_UMAC_CMD_DISASSOCIATE (or) %NRF_WIFI_UMAC_CMD_DEAUTHENTICATE.
  */
 
 struct nrf_wifi_umac_disconn_info {
+	/** Indicates that a command is requesting a local deauthentication/disassociation
+	 *  state change without invoking actual management frame exchange.
+	 */
 	unsigned short nrf_wifi_flags;
+	/** Reason code for disassociation or deauthentication */
 	unsigned short reason_code;
+	/** MAC address (various uses) */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_disconn - Disconnection command parameters
+ * @brief This structure specifies the parameters to be used when sending a disconnect request.
  *
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- *
- * This structure specifies the parameters to be used when sending
- * %NRF_WIFI_UMAC_CMD_DISCONNECT (or) %NRF_WIFI_UMAC_CMD_DISASSOCIATE (or)
- * %NRF_WIFI_UMAC_CMD_DEAUTHENTICATE.
  */
 
 struct nrf_wifi_umac_cmd_disconn {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** @ref nrf_wifi_umac_disconn_info */
 	struct nrf_wifi_umac_disconn_info info;
 } __NRF_WIFI_PKD;
 
@@ -1550,139 +1413,121 @@ struct nrf_wifi_umac_cmd_disconn {
 #define NRF_WIFI_CMD_NEW_INTERFACE_IFNAME_VALID (1 << 3)
 
 /**
- * struct nrf_wifi_umac_add_vif_info - Information for creating a new virtual
- *	interface.
+ * @brief This structure contains the information to be passed to the RPU
+ *  to create a new virtual interface using the NRF_WIFI_UMAC_CMD_NEW_INTERFACE command.
  *
- * @iftype: Interface type, see enum nrf_wifi_sys_iftype.
- * @nrf_wifi_use_4addr: Use 4-address frames on a virtual interface.
- * @mon_flags: Monitor configuration flags.
- * @mac_addr: MAC Address.
- * @ifacename: Interface name.
- *
- * This structure represents the information to be passed to the RPU to
- * create a new virtual interface using the %NRF_WIFI_UMAC_CMD_NEW_INTERFACE
- * command.
  */
-
 struct nrf_wifi_umac_add_vif_info {
+	/** Interface type, see enum nrf_wifi_sys_iftype */
 	signed int iftype;
+	/** Use 4-address frames on a virtual interface */
 	signed int nrf_wifi_use_4addr;
-	unsigned int mon_flags; /*	|| (1 << enum nrf_wifi_mntr_flags) */
+	/** Unused */
+	unsigned int mon_flags;
+	/** MAC Address */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** Interface name */
 	signed char ifacename[16];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_add_vif - Create a new virtual interface
+ * @brief This structure defines a command used to create a new virtual interface
+ *  using the NRF_WIFI_UMAC_CMD_NEW_INTERFACE command.
  *
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @info: VIF specific information to be passed to the RPU.
- *
- * This structure represents a command to be passed to inform the RPU to
- * create a new virtual interface.
  */
 
 struct nrf_wifi_umac_cmd_add_vif {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** VIF specific information to be passed to the RPU @ref nrf_wifi_umac_add_vif_info */
 	struct nrf_wifi_umac_add_vif_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_del_vif - Delete a virtual interface
+ * @brief This structure defines a command used to delete a virtual interface.
+ *  However, this command is not allowed on the default interface.
  *
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- *
- * This structure represents a command to be passed to inform the RPU to
- * delete a virtual interface. This cmd is not allowed on default interface.
  */
 
 struct nrf_wifi_umac_cmd_del_vif {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_FRAME_MATCH_MAX_LEN 8
 
 /**
- * struct nrf_wifi_umac_frame_match - Frame data to match for RX filter.
- * @frame_match_len: Length of data.
- * @frame_match: Data to match.
+ * @brief This structure represents the data of management frame that must be matched for
+ *  processing in userspace.
  *
- * This structure represents the frame data to match so that the RPU RX filter
- * can pass up the matching frames.
  */
 
 struct nrf_wifi_umac_frame_match {
+	/** Length of data */
 	unsigned int frame_match_len;
+	/** Data to match */
 	unsigned char frame_match[NRF_WIFI_FRAME_MATCH_MAX_LEN];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_mgmt_frame_info - Information regarding management frame to
- *	be registered to be received.
- * @frame_type: Frame type/subtype.
- * @frame_match: A binary attribute which typically must contain at least one
- *	byte.
+ * @brief This structure contains information about the type of management frame
+ *  that should be passed to the driver for processing in userspace.
  *
- * This structure represents information regarding a management frame which
- * should not be filtered by the RPU and passed up.
  */
 
 struct nrf_wifi_umac_mgmt_frame_info {
+	/** Frame type/subtype */
 	unsigned short frame_type;
+	/** Match information Refer &struct nrf_wifi_umac_frame_match */
 	struct nrf_wifi_umac_frame_match frame_match;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_mgmt_frame_reg - Register management frame type to be
- *	received.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr
- * @info: Management frame specific information to be passed to the RPU.
+ * @brief This structure defines a command to inform the RPU to register a management frame,
+ *  which must not be filtered by the RPU and should instead be passed to the host for
+ *  userspace processing.
  *
- * This structure represents a command to be passed to inform the RPU to
- * register a management frame which should not be filtered by the RPU and
- * passed up.
  */
 
 struct nrf_wifi_umac_cmd_mgmt_frame_reg {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/**
+	 * Management frame specific information to be passed to the RPU.
+	 * @ref nrf_wifi_umac_mgmt_frame_info
+	 */
 	struct nrf_wifi_umac_mgmt_frame_info info;
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_CMD_KEY_MAC_ADDR_VALID (1 << 0)
 
 /**
- * struct nrf_wifi_umac_cmd_key - Parameters when adding new key
+ * @brief This structure represents command to add a new key.
  *
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @key_info: Key information in a nested attribute with
- *	%NRF_WIFI_UMAC_KEY_* sub-attributes.
- * @mac_addr: MAC address associated with the key.
- *
- * This structure represents a command to add a new key.
  */
 
 struct nrf_wifi_umac_cmd_key {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Key information. @ref nrf_wifi_umac_key_info */
 	struct nrf_wifi_umac_key_info key_info;
+	/** MAC address associated with the key */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_set_key - Parameters when setting default key.
+ * @brief This structure defines a command that is used to add a new key.
  *
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @key_info: Key information in a nested attribute with
- *	%NRF_WIFI_UMAC_KEY_* sub-attributes.
- *
- * This structure represents a command to set a default key.
  */
 
 struct nrf_wifi_umac_cmd_set_key {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Key information , @ref nrf_wifi_umac_key_info */
 	struct nrf_wifi_umac_key_info key_info;
 } __NRF_WIFI_PKD;
 
@@ -1697,51 +1542,48 @@ struct nrf_wifi_umac_cmd_set_key {
 #define NRF_WIFI_BASIC_MAX_SUPP_RATES 32
 
 /**
- * struct nrf_wifi_umac_bss_info - BSS attributes.
- * @p2p_go_ctwindow: P2P GO Client Traffic Window, used with
- *	the START_AP and SET_BSS commands.
- * @p2p_opp_ps: P2P GO opportunistic PS, used with the
- *	START_AP and SET_BSS commands. This can have the values 0 or 1;
- *	if not given in START_AP 0 is assumed, if not given in SET_BSS
- *	no change is made.
- * @num_basic_rates: Number of basic rate elements.
- * @ht_opmode: HT operation mode.
- * @cts: Whether CTS protection is enabled (0 or 1).
- * @preamble: Whether short preamble is enabled (0 or 1).
- * @slot: Whether short slot time enabled (0 or 1).
- * @ap_isolate: (AP mode) Do not forward traffic between stations connected to
- *	this BSS.
- * @basic_rates: Basic rates, array of basic rates in format defined by
- *	IEEE 802.11 7.3.2.2 but without the length restriction
- *	(at most %NRF_WIFI_MAX_SUPP_RATES).
+ * @brief This structure contains parameters that describe the BSS (Basic Service Set) information.
  *
- * This structure represents the BSS attributes.
  */
 
 struct nrf_wifi_umac_bss_info {
+	/** P2P GO Client Traffic Window, used with
+	 *  the START_AP and SET_BSS commands.
+	 */
 	unsigned int p2p_go_ctwindow;
+	/** P2P GO opportunistic PS, used with the
+	 *  START_AP and SET_BSS commands. This can have the values 0 or 1;
+	 *  if not given in START_AP 0 is assumed, if not given in SET_BSS
+	 *  no change is made.
+	 */
 	unsigned int p2p_opp_ps;
+	/** Number of basic rate elements */
 	unsigned int num_basic_rates;
+	/** HT operation mode */
 	unsigned short ht_opmode;
+	/** Whether CTS protection is enabled (0 or 1) */
 	unsigned char nrf_wifi_cts;
+	/** Whether short preamble is enabled (0 or 1) */
 	unsigned char preamble;
+	/** Whether short slot time enabled (0 or 1) */
 	unsigned char nrf_wifi_slot;
+	/** (AP mode) Do not forward traffic between stations connected to this BSS */
 	unsigned char ap_isolate;
+	/** Basic rates, array of basic rates in format defined by IEEE 802.11 7.3.2.2 */
 	unsigned char basic_rates[NRF_WIFI_BASIC_MAX_SUPP_RATES];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_set_bss - Set BSS attributes.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid
- * @bss_info: BSS specific information to be passed to the RPU.
+ * @brief This structure represents a command used to set BSS (Basic Service Set) parameters.
  *
- * This structure represents a command to set BSS attributes.
  */
 
 struct nrf_wifi_umac_cmd_set_bss {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** BSS specific information to be passed to the RPU @ref nrf_wifi_umac_bss_info */
 	struct nrf_wifi_umac_bss_info bss_info;
 } __NRF_WIFI_PKD;
 
@@ -1752,61 +1594,55 @@ struct nrf_wifi_umac_cmd_set_bss {
 #define NRF_WIFI_SET_FREQ_PARAMS_CHANNEL_TYPE_VALID (1 << 4)
 
 /**
- * struct freq_params - Frequency configuration.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @frequency: Value in MHz.
- * @channel_width: Width of the channel (refer &enum nrf_wifi_chan_width).
- * @channel_type: Type of channel (refer &enum nrf_wifi_channel_type).
+ * @brief This structure contains information about frequency parameters.
  *
- * This structure represents a frequency parameters to be set.
  */
 
 struct freq_params {
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Value in MHz */
 	signed int frequency;
+	/** Width of the channel @see &enu nrf_wifi_chan_width */
 	signed int channel_width;
-	/* private : presently unused */
+	/** Unused */
 	signed int center_frequency1;
-	/* private : presently unused */
+	/** Unused */
 	signed int center_frequency2;
-	/* public: */
+	/** Type of channel see &enum nrf_wifi_channel_type */
 	signed int channel_type;
-
 } __NRF_WIFI_PKD;
 
-
 /**
- * struct nrf_wifi_txq_params - TX queue parameter attributes.
- * @txop: Transmit oppurtunity.
- * @cwmin: Minimum contention window.
- * @cwmax: Maximum contention window.
- * @aifs: Arbitration interframe spacing.
- * @ac: Access category.
+ * @brief This structure contains information about transmit queue parameters.
  *
- * This structure represents transmit queue parameters.
  */
 
 struct nrf_wifi_txq_params {
+	/** Transmit oppurtunity */
 	unsigned short txop;
+	/** Minimum contention window */
 	unsigned short cwmin;
+	/** Maximum contention window */
 	unsigned short cwmax;
+	/** Arbitration interframe spacing */
 	unsigned char aifs;
+	/** Access category */
 	unsigned char ac;
 
 } __NRF_WIFI_PKD;
 
 /**
- * enum nrf_wifi_tx_power_type - TX power adjustment.
- * @NRF_WIFI_TX_POWER_AUTOMATIC: Automatically determine transmit power.
- * @NRF_WIFI_TX_POWER_LIMITED: Limit TX power by the mBm parameter.
- * @NRF_WIFI_TX_POWER_FIXED: Fix TX power to the mBm parameter.
+ * @brief Types of transmit power settings.
  *
- * Types of transmit power settings.
  */
-enum nrf_wifi_tx_power_type {
 
+enum nrf_wifi_tx_power_type {
+	/** Automatically determine transmit power */
 	NRF_WIFI_TX_POWER_AUTOMATIC,
+	/** Limit TX power by the mBm parameter */
 	NRF_WIFI_TX_POWER_LIMITED,
+	/** Fix TX power to the mBm parameter */
 	NRF_WIFI_TX_POWER_FIXED,
 };
 
@@ -1814,17 +1650,16 @@ enum nrf_wifi_tx_power_type {
 #define NRF_WIFI_TX_POWER_SETTING_TX_POWER_LEVEL_VALID (1 << 1)
 
 /**
- * struct nrf_wifi_tx_power_setting - TX power configuration.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @type: Power value type, see nrf_wifi_tx_power_type.
- * @tx_power_level: Transmit power level in signed mBm units.
+ * @brief This structure contains the parameters related to the transmit power setting.
  *
- * This structure represents the transmit power setting parameters.
  */
 
 struct nrf_wifi_tx_power_setting {
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Power value type, see nrf_wifi_tx_power_type */
 	signed int type;
+	/** Transmit power level in signed mBm units */
 	signed int tx_power_level;
 
 } __NRF_WIFI_PKD;
@@ -1842,66 +1677,63 @@ struct nrf_wifi_tx_power_setting {
 #define NRF_WIFI_CMD_SET_WIPHY_WIPHY_NAME_VALID (1 << 10)
 
 /**
- * struct nrf_wifi_umac_set_wiphy_info - wiphy configuration.
- * @rts_threshold: RTS threshold (TX frames with length
- *	larger than or equal to this use RTS/CTS handshake); allowed range:
- *	0..65536, disable with (u32)-1.
- * @frag_threshold: Fragmentation threshold, i.e., maximum
- *	length in octets for frames; allowed range: 256..8000, disable
- *	fragmentation with (u32)-1.
- * @antenna_tx: Bitmap of allowed antennas for transmitting.
- *	This can be used to mask out antennas which are not attached or should
- *	not be used for transmitting. If an antenna is not selected in this
- *	bitmap the hardware is not allowed to transmit on this antenna.
- * @antenna_rx: Bitmap of allowed antennas for receiving.
- *	This can be used to mask out antennas which are not attached or should
- *	not be used for receiving. If an antenna is not selected in this bitmap
- *	the hardware should not be configured to receive on this antenna.
- * @freq_params: Frequency of the selected channel in MHz,
- *	defines the channel together with the (deprecated)
- *	%NRF_WIFI_ATTR_WIPHY_CHANNEL_TYPE attribute or the attributes
- *	%NRF_WIFI_ATTR_CHANNEL_WIDTH and if needed %NRF_WIFI_ATTR_CENTER_FREQ1
- *	and %NRF_WIFI_ATTR_CENTER_FREQ2.
- * @txq_params: A nested array of TX queue parameters.
- * @tx_power_setting: Transmit power setting type. See
- *	&enum nrf_wifi_tx_power_setting for possible values.
- * @retry_short: TX retry limit for frames whose length is
- *	less than or equal to the RTS threshold; allowed range: 1..255.
- * @retry_long: TX retry limit for frames whose length is
- *	greater than the RTS threshold; allowed range: 1..255.
- * @coverage_class:Coverage Class as defined by IEEE 802.11
- *	section 7.3.2.9.
- * @wiphy_name: WIPHY name (used for renaming).
+ * @brief This structure contains information about the configuration parameters
+ *  needed to set up and configure the wireless Physical Layer.
  *
- * This structure represents the wireless PHY configuration.
  */
 
 struct nrf_wifi_umac_set_wiphy_info {
+	/** RTS threshold, TX frames with length larger than or equal to this use RTS/CTS handshake
+	 *  allowed range: 0..65536, disable with -1.
+	 */
 	unsigned int rts_threshold;
+	/** Fragmentation threshold, maximum length in octets for frames.
+	 *  allowed range: 256..8000, disable fragmentation with (u32)-1.
+	 */
 	unsigned int frag_threshold;
+	/** Bitmap of allowed antennas for transmitting. This can be used to mask out
+	 *  antennas which are not attached or should not be used for transmitting.
+	 *  If an antenna is not selected in this bitmap the hardware is not allowed
+	 *  to transmit on this antenna.
+	 */
 	unsigned int antenna_tx;
+	/** Bitmap of allowed antennas for receiving. This can be used to mask out antennas
+	 *  which are not attached or should not be used for receiving. If an antenna is
+	 *  not selected in this bitmap the hardware should not be configured to receive
+	 *  on this antenna.
+	 */
 	unsigned int antenna_rx;
+	/** Frequency information of the a channel see &struct freq_params */
 	struct freq_params freq_params;
+	/** TX queue parameters @ref nrf_wifi_txq_params */
 	struct nrf_wifi_txq_params txq_params;
+	/** Tx power settings @ref nrf_wifi_tx_power_setting @ref nrf_wifi_tx_power_setting */
 	struct nrf_wifi_tx_power_setting tx_power_setting;
+	/** TX retry limit for frames whose length is less than or equal to the RTS threshold
+	 *  allowed range: 1..255.
+	 */
 	unsigned char retry_short;
+	/** TX retry limit for frames whose length is greater than the RTS threshold
+	 *  allowed range: 1..255.
+	 */
 	unsigned char retry_long;
+	/** Unused */
 	unsigned char coverage_class;
+	/** WIPHY name (used for renaming) */
 	signed char wiphy_name[32];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_set_wiphy - Set wiphy configuration.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following structure parameters are valid.
- * @info: Information related to wiphy parameters
+ * @brief This structure defines the command to set the wireless PHY configuration.
  *
- * This structure represents the command to set the wireless PHY configuration.
  */
 
 struct nrf_wifi_umac_cmd_set_wiphy {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicates which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** @ref nrf_wifi_umac_set_wiphy_info */
 	struct nrf_wifi_umac_set_wiphy_info info;
 } __NRF_WIFI_PKD;
 
@@ -1910,88 +1742,106 @@ struct nrf_wifi_umac_cmd_set_wiphy {
 #define NRF_WIFI_CMD_DEL_STATION_REASON_CODE_VALID (1 << 2)
 
 /**
- * struct nrf_wifi_umac_del_sta_info - Information regarding a station to be
- *	deleted.
- * @mac_addr: MAC address of the station.
- * @mgmt_subtype: Management frame subtype.
- * @reason_code: Reason code for DEAUTHENTICATION and DISASSOCIATION.
+ * @brief This structure contains the parameters to delete a station.
  *
- * This structure represents the information regarding a station to be deleted
- * from the RPU.
  */
 
 struct nrf_wifi_umac_del_sta_info {
+	/** MAC address of the station */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** Management frame subtype */
 	unsigned char mgmt_subtype;
+	/** Reason code for DEAUTHENTICATION and DISASSOCIATION */
 	unsigned short reason_code;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_del_sta - Delete a station entry.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @info: Information regarding the station to be deleted.
+ * @brief This structure defines the command to delete a station.
  *
- * This structure represents the command to delete a station.
  */
 
 struct nrf_wifi_umac_cmd_del_sta {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Information regarding the station to be deleted @ref nrf_wifi_umac_del_sta_info */
 	struct nrf_wifi_umac_del_sta_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_get_sta_info - Station information get.
- * @mac_addr: MAC address of the station.
- * This structure represents the information regarding a station info to be get.
+ * @brief This structure contains the information required for obtaining station details.
+ *
  */
 
 struct nrf_wifi_umac_get_sta_info {
+	/** MAC address of the station */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_get_sta - Get a station info.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: Information regarding the station to get.
+ * @brief This structure defines the command to get station information.
  *
- * This structure represents the command to get station info.
  */
 
 struct nrf_wifi_umac_cmd_get_sta {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Information regarding the station to get @ref nrf_wifi_umac_get_sta_info */
 	struct nrf_wifi_umac_get_sta_info info;
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_EXT_CAPABILITY_MAX_LEN 32
 
+/**
+ * @brief Extended capability information.
+ */
+
 struct nrf_wifi_ext_capability {
+	/** length */
 	unsigned int ext_capability_len;
+	/** Extended capability info*/
 	unsigned char ext_capability[NRF_WIFI_EXT_CAPABILITY_MAX_LEN];
 
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_SUPPORTED_CHANNELS_MAX_LEN 64
 
+/**
+ * @brief Supported channels.
+ */
+
 struct nrf_wifi_supported_channels {
+	/** number of channels */
 	unsigned int supported_channels_len;
+	/** channels info */
 	unsigned char supported_channels[NRF_WIFI_SUPPORTED_CHANNELS_MAX_LEN];
 
 } __NRF_WIFI_PKD;
 
-#define NRF_WIFI_SUPPORTED_OPER_CLASSES_MAX_LEN 64
+#define NRF_WIFI_OPER_CLASSES_MAX_LEN 64
 
+/**
+ * @brief Operating classes information.
+ */
 struct nrf_wifi_supported_oper_classes {
+	/** length */
 	unsigned int supported_oper_classes_len;
-	unsigned char supported_oper_classes[NRF_WIFI_SUPPORTED_OPER_CLASSES_MAX_LEN];
+	/** oper_class info*/
+	unsigned char supported_oper_classes[NRF_WIFI_OPER_CLASSES_MAX_LEN];
 
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_STA_FLAGS2_MAX_LEN 64
 
+/**
+ * @brief Station flags.
+ */
+
 struct nrf_wifi_sta_flags2 {
+	/** length */
 	unsigned int sta_flags2_len;
+	/** flags */
 	unsigned char sta_flags2[NRF_WIFI_STA_FLAGS2_MAX_LEN];
 
 } __NRF_WIFI_PKD;
@@ -2013,65 +1863,63 @@ struct nrf_wifi_sta_flags2 {
 #define NRF_WIFI_CMD_SET_STATION_LISTEN_INTERVAL_VALID (1 << 15)
 
 /**
- * struct nrf_wifi_umac_chg_sta_info - Information about station entry to be updated.
- * @nrf_wifi_listen_interval: Listen interval as defined by IEEE 802.11 7.3.1.6.
- * @sta_vlan: Vlan interface station should belong to.
- * @aid: AID or zero for no change.
- * @nrf_wifi_peer_aid: Unused.
- * @sta_capability: Station capability.
- * @spare: Unused.
- * @supp_rates: Supported rates in IEEE 802.11 format.
- * @ext_capability: Extended capabilities of the station.
- * @supported_channels: Supported channels in IEEE 802.11 format.
- * @supported_oper_classes: Supported oper classes in IEEE 802.11 format.
- * @sta_flags2: Unused.
- * @ht_capability: HT capabilities of station.
- * @vht_capability: VHT capabilities of station.
- * @mac_addr: Station mac address.
- * @opmode_notif: Information if operating mode field is used.
- * @wme_uapsd_queues: Bitmap of queues configured for uapsd. Same format
- *	as the AC bitmap in the QoS info field.
- * @wme_max_sp: Max Service Period. same format as the MAX_SP in the
- *	QoS info field (but already shifted down).
- *
- * This structure represents the information needed to update a station entry
+ * @brief This structure represents the information needed to update a station entry
  * in the RPU.
+ *
  */
 
 struct nrf_wifi_umac_chg_sta_info {
+	/** Listen interval as defined by IEEE 802.11 7.3.1.6 */
 	signed int nrf_wifi_listen_interval;
+	/** Unused */
 	unsigned int sta_vlan;
+	/** AID or zero for no change */
 	unsigned short aid;
+	/** Unused */
 	unsigned short nrf_wifi_peer_aid;
+	/** Station capability */
 	unsigned short sta_capability;
+	/** Unused */
 	unsigned short spare;
+	/** Supported rates in IEEE 802.11 format @ref nrf_wifi_supp_rates */
 	struct nrf_wifi_supp_rates supp_rates;
+	/** Extended capabilities of the station @ref nrf_wifi_ext_capability */
 	struct nrf_wifi_ext_capability ext_capability;
+	/** Supported channels in IEEE 802.11 format @ref nrf_wifi_supported_channels */
 	struct nrf_wifi_supported_channels supported_channels;
+	/** Supported oper classes in IEEE 802.11 format @ref nrf_wifi_supported_oper_classes */
 	struct nrf_wifi_supported_oper_classes supported_oper_classes;
-	/*struct nrf_wifi_sta_flags2 sta_flags2;*/
+	/** station flags mask/set @ref nrf_wifi_sta_flag_update @ref nrf_wifi_sta_flag_update */
 	struct nrf_wifi_sta_flag_update sta_flags2;
+	/** HT capabilities of station */
 	unsigned char ht_capability[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
+	/** VHT capabilities of station */
 	unsigned char vht_capability[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
+	/** Station mac address */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** Information if operating mode field is used */
 	unsigned char opmode_notif;
+	/** Bitmap of queues configured for uapsd. Same format
+	 *  as the AC bitmap in the QoS info field.
+	 */
 	unsigned char wme_uapsd_queues;
+	/** Max Service Period. same format as the MAX_SP in the
+	 *  QoS info field (but already shifted down).
+	 */
 	unsigned char wme_max_sp;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_chg_sta - Update station entry.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @info: Information about station entry to be updated.
+ * @brief This structure defines the command for updating the parameters of a station entry.
  *
- * This structure represents the command to update the parameters of a
- * station entry.
  */
 
 struct nrf_wifi_umac_cmd_chg_sta {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** @ref nrf_wifi_umac_chg_sta_info */
 	struct nrf_wifi_umac_chg_sta_info info;
 } __NRF_WIFI_PKD;
 
@@ -2092,63 +1940,62 @@ struct nrf_wifi_umac_cmd_chg_sta {
 #define NRF_WIFI_CMD_NEW_STATION_LISTEN_INTERVAL_VALID (1 << 15)
 
 /**
- * struct nrf_wifi_umac_add_sta_info - Information about a station entry to be added.
- * @nrf_wifi_listen_interval: Listen interval as defined by IEEE 802.11 7.3.1.6.
- * @sta_vlan: VLAN interface station should belong to.
- * @aid: AID or zero for no change.
- * @nrf_wifi_peer_aid: Unused.
- * @sta_capability: Station capability.
- * @spare: Unused.
- * @supp_rates: Supported rates in IEEE 802.11 format.
- * @ext_capability: Extended capabilities of the station.
- * @supported_channels: Supported channels in IEEE 802.11 format.
- * @supported_oper_classes: Supported oper classes in IEEE 802.11 format.
- * @sta_flags2: Unused.
- * @ht_capability: HT capabilities of station.
- * @vht_capability: VHT capabilities of station.
- * @mac_addr: Station mac address.
- * @opmode_notif: Information if operating mode field is used
- * @wme_uapsd_queues: Bitmap of queues configured for uapsd. same format
- *	as the AC bitmap in the QoS info field.
- * @wme_max_sp: Max Service Period. same format as the MAX_SP in the
- *	QoS info field (but already shifted down).
+ * @brief This structure describes the parameters for adding a new station entry to the RPU.
  *
- * This structure represents the information about a new station entry to be
- * added to the RPU.
  */
 
 struct nrf_wifi_umac_add_sta_info {
+	/** Listen interval as defined by IEEE 802.11 7.3.1.6 */
 	signed int nrf_wifi_listen_interval;
+	/** Unused */
 	unsigned int sta_vlan;
+	/** AID or zero for no change */
 	unsigned short aid;
+	/** Unused */
 	unsigned short nrf_wifi_peer_aid;
+	/** Station capability */
 	unsigned short sta_capability;
+	/** Unused */
 	unsigned short spare;
+	/** Supported rates in IEEE 802.11 format @ref nrf_wifi_supp_rates */
 	struct nrf_wifi_supp_rates supp_rates;
+	/** Extended capabilities of the station @ref nrf_wifi_ext_capability */
 	struct nrf_wifi_ext_capability ext_capability;
+	/** Supported channels in IEEE 802.11 format @ref nrf_wifi_supported_channels */
 	struct nrf_wifi_supported_channels supported_channels;
+	/** Supported oper classes in IEEE 802.11 format @ref nrf_wifi_supported_oper_classes */
 	struct nrf_wifi_supported_oper_classes supported_oper_classes;
-	/*struct nrf_wifi_sta_flags2 sta_flags2;*/
+	/** station flags mask/set @ref nrf_wifi_sta_flag_update */
 	struct nrf_wifi_sta_flag_update sta_flags2;
+	/** HT capabilities of station */
 	unsigned char ht_capability[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
+	/** VHT capabilities of station */
 	unsigned char vht_capability[NRF_WIFI_HT_VHT_CAPABILITY_MAX_SIZE];
+	/** Station mac address */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** Information if operating mode field is used */
 	unsigned char opmode_notif;
+	/** Bitmap of queues configured for uapsd. same format
+	 *  as the AC bitmap in the QoS info field.
+	 */
 	unsigned char wme_uapsd_queues;
+	/** Max Service Period. same format as the MAX_SP in the
+	 *  QoS info field (but already shifted down).
+	 */
 	unsigned char wme_max_sp;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_add_sta - Add station entry
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
+ * @brief This structure defines the command for adding a new station entry.
  *
- * This structure represents the commands to add a new station entry.
  */
 
 struct nrf_wifi_umac_cmd_add_sta {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** @ref nrf_wifi_umac_add_sta_info */
 	struct nrf_wifi_umac_add_sta_info info;
 } __NRF_WIFI_PKD;
 
@@ -2158,103 +2005,97 @@ struct nrf_wifi_umac_cmd_add_sta {
 #define NRF_WIFI_CMD_BEACON_INFO_CIPHER_SUITE_GROUP_VALID (1 << 3)
 #define NRF_WIFI_CMD_BEACON_INFO_INACTIVITY_TIMEOUT_VALID (1 << 4)
 #define NRF_WIFI_CMD_BEACON_INFO_FREQ_PARAMS_VALID (1 << 5)
+
 #define NRF_WIFI_CMD_BEACON_INFO_PRIVACY (1 << 0)
 #define NRF_WIFI_CMD_BEACON_INFO_CONTROL_PORT_NO_ENCRYPT (1 << 1)
 #define NRF_WIFI_CMD_BEACON_INFO_P2P_CTWINDOW_VALID (1 << 6)
 #define NRF_WIFI_CMD_BEACON_INFO_P2P_OPPPS_VALID (1 << 7)
 
 /**
- * struct nrf_wifi_umac_start_ap_info - Attributes needed to start SoftAP operation.
- * @beacon_interval: Beacon frame interval.
- * @dtim_period: DTIM count.
- * @hidden_ssid: Send beacons with wildcard sssid.
- * @auth_type: Authentication type, see nrf_wifi_auth_type.
- * @smps_mode: Unused.
- * @nrf_wifi_flags: Beacon info flags.
- * @beacon_data: Beacon frame, See &struct nrf_wifi_beacon_data.
- * @ssid: SSID string, See &struct nrf_wifi_ssid.
- * @connect_common_info: Connect params, See &struct nrf_wifi_connect_common_info.
- * @freq_params: Channel info, See &struct freq_params.
- * @inactivity_timeout: Time to stop ap after inactivity period.
- * @p2p_go_ctwindow: P2P GO Client Traffic Window.
- * @p2p_opp_ps: Opportunistic power save allows P2P Group Owner to save power
- *	when all its associated clients are sleeping.
+ * @brief This structure describes the parameters required to be passed to the RPU when
+ *  initiating a SoftAP (Soft Access Point).
  *
- * This structure represents the attributes that need to be passed to the RPU
- * when starting a SoftAP.
  */
 
 struct nrf_wifi_umac_start_ap_info {
+	/** Beacon frame interval */
 	unsigned short beacon_interval;
+	/** DTIM count */
 	unsigned char dtim_period;
+	/** Send beacons with wildcard sssid */
 	signed int hidden_ssid;
+	/** Authentication type, see &enum nrf_wifi_auth_type */
 	signed int auth_type;
+	/** Unused */
 	signed int smps_mode;
+	/** Beacon info flags */
 	unsigned int nrf_wifi_flags;
+	/** Beacon frame, @ref nrf_wifi_beacon_data */
 	struct nrf_wifi_beacon_data beacon_data;
+	/** SSID string, @ref nrf_wifi_ssid */
 	struct nrf_wifi_ssid ssid;
+	/** Connect params, @ref nrf_wifi_connect_common_info */
 	struct nrf_wifi_connect_common_info connect_common_info;
+	/** Channel info, see &struct freq_params */
 	struct freq_params freq_params;
+	/** Time to stop ap after inactivity period */
 	unsigned short inactivity_timeout;
+	/** P2P GO Client Traffic Window */
 	unsigned char p2p_go_ctwindow;
+	/** Opportunistic power save allows P2P Group Owner to save power
+	 *  when all its associated clients are sleeping.
+	 */
 	unsigned char p2p_opp_ps;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_start_ap - Start SoftAP
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @info: Attributes that need to be passed to the RPU when starting a SoftAP.
- *	*See &struct nrf_wifi_umac_start_ap_info)
+ * @brief This structure defines the command for starting the SoftAP using
+ *  NRF_WIFI_UMAC_CMD_NEW_BEACON and NRF_WIFI_UMAC_CMD_START_AP.
  *
- * The struct nrf_wifi_umac_cmd_start_ap is same for the following message types
- * %NRF_WIFI_UMAC_CMD_NEW_BEACON
- * %NRF_WIFI_UMAC_CMD_START_AP
- * (Refer &enum nrf_wifi_umac_commands).
  */
 
 struct nrf_wifi_umac_cmd_start_ap {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Parameters that need to be passed to the RPU when starting a SoftAP.
+	 *  @ref nrf_wifi_umac_start_ap_info
+	 */
 	struct nrf_wifi_umac_start_ap_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_stop_ap - Stop SoftAP
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
+ * @brief This structure defines the command used to stop Soft AP operation.
  *
- * This structure represents the command to stop the operation of a Soft AP.
  */
 
 struct nrf_wifi_umac_cmd_stop_ap {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_set_beacon_info - Attributes needed to set Beacon & Probe Rsp.
- * @beacon_data: Beacon frame, See &struct nrf_wifi_beacon_data.
+ * @brief This structure represents the parameters that must be passed to the RPU when
+ *  configuring Beacon and Probe response data.
  *
- * This structure represents the attributes that need to be passed to the RPU
- * when Beacon & Probe Rsp data settings.
  */
 
 struct nrf_wifi_umac_set_beacon_info {
+	/** Beacon frame, @ref nrf_wifi_beacon_data */
 	struct nrf_wifi_beacon_data beacon_data;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_set_beacon - Set beacon data
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: Attributes that need to be passed to the RPU when Beacon &
- *	Probe response data to set.
- *	See &struct nrf_wifi_umac_set_beacon_info)
+ * @brief This structure defines the command for setting the beacon data using
+ *  NRF_WIFI_UMAC_CMD_SET_BEACON.
  *
- * %NRF_WIFI_UMAC_CMD_SET_BEACON
- * (Refer &enum nrf_wifi_umac_commands).
  */
 
 struct nrf_wifi_umac_cmd_set_beacon {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref nrf_wifi_umac_set_beacon_info */
 	struct nrf_wifi_umac_set_beacon_info info;
 } __NRF_WIFI_PKD;
 
@@ -2262,87 +2103,86 @@ struct nrf_wifi_umac_cmd_set_beacon {
 #define NRF_WIFI_SET_INTERFACE_USE_4ADDR_VALID (1 << 1)
 
 /**
- * struct nrf_wifi_umac_chg_vif_attr_info - Interface attributes to be changed.
- * @iftype: Interface type, see &enum nrf_wifi_iftype.
- * @nrf_wifi_user_4addr: Unused.
+ * @brief This structure contains the information that needs to be provided to the RPU
+ *  when modifying the attributes of a virtual interface.
  *
- * This structure represents the information to be passed to the RPU when
- * changing the attributes of a virtual interface.
  */
 
 struct nrf_wifi_umac_chg_vif_attr_info {
+	/** Interface type, see &enum nrf_wifi_iftype */
 	signed int iftype;
+	/** Unused */
 	signed int nrf_wifi_use_4addr;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_chg_vif_attr - Change virtual interface attributes.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @info: Interface attributes to be changed.
+ * @brief This structure defines the command used to change the interface.
  *
- * This structure represents the command to change interface attributes.
  */
 
 struct nrf_wifi_umac_cmd_chg_vif_attr {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Interface attributes to be changed @ref nrf_wifi_umac_chg_vif_attr_info */
 	struct nrf_wifi_umac_chg_vif_attr_info info;
 } __NRF_WIFI_PKD;
 
 #define IFACENAMSIZ 16
 
 /**
- * struct nrf_wifi_umac_chg_vif_state_info- Interface state information.
- * @state: Interface state (1 = UP / 0 = DOWN).
- * @ifacename: Interface name.
+ * @brief This structure contains the information that needs to be passed to the RPU
+ *  when changing the interface state, specifically when bringing it up or down
  *
- * This structure represents the information to be passed the RPU when changing
- * the state (up/down) of a virtual interface.
  */
 
 struct nrf_wifi_umac_chg_vif_state_info {
+	/** Interface state (1 = UP / 0 = DOWN) */
 	signed int state;
+	/** Interface name */
 	signed char ifacename[IFACENAMSIZ];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_chg_vif_state- Change the interface state
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: Interface state information.
+ * @brief This structure defines the command used to change the interface state.
  *
- * This structure represents the command to change interface state.
  */
 
 struct nrf_wifi_umac_cmd_chg_vif_state {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref nrf_wifi_umac_chg_vif_state_info */
 	struct nrf_wifi_umac_chg_vif_state_info info;
 } __NRF_WIFI_PKD;
+/**
+ * @brief This structure defines an event-to-command mapping for NRF_WIFI_UMAC_CMD_SET_IFFLAGS.
+ *
+ */
 
 struct nrf_wifi_umac_event_vif_state {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Status to command NRF_WIFI_UMAC_CMD_SET_IFFLAGS */
 	signed int status;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_start_p2p_dev - Start P2P mode on an interface
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- *
- * This structure represents the command to start P2P mode on an interface.
+ * @brief This structure defines the command used to start P2P (Peer-to-Peer) mode on an interface.
  */
 
 struct nrf_wifi_cmd_start_p2p {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_stop_p2p_dev - stop p2p mode
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
+ * @brief This structure represents the command for stopping P2P mode on an interface.
  *
- * This structure represents the command to stop P2P mode on an interface.
  */
 
 struct nrf_wifi_umac_cmd_stop_p2p_dev {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
@@ -2355,122 +2195,119 @@ struct nrf_wifi_umac_cmd_stop_p2p_dev {
 #define NRF_WIFI_CMD_FRAME_DONT_WAIT_FOR_ACK (1 << 2)
 
 /**
- * struct nrf_wifi_umac_mgmt_tx_info - Information about a management frame to be
- *	transmitted.
- * @flags: OFFCHANNEL_TX_OK, NO_CCK_RATE, DONT_WAIT_FOR_ACK.
- * @dur: Duration field value.
- * @frame: Management frame to transmit.
- * @frequency: Channel.
- * @freq_params: Frequency configuration, See &struct freq_params.
- * @host_cookie: Identifier to be used for processing done event,
- *	see %NRF_WIFI_UMAC_EVENT_FRAME_TX_STATUS.
+ * @brief This structure describes the parameters required to transmit a
+ *  management frame from the host.
  *
- * This structure represents the information about a management frame to be
- * transmitted.
  */
 
 struct nrf_wifi_umac_mgmt_tx_info {
+	/** OFFCHANNEL_TX_OK, NO_CCK_RATE, DONT_WAIT_FOR_ACK */
 	unsigned int nrf_wifi_flags;
+	/** Channel frequency */
 	unsigned int frequency;
+	/** Duration field value */
 	unsigned int dur;
+	/** Management frame to transmit, @ref nrf_wifi_frame */
 	struct nrf_wifi_frame frame;
+	/** Frequency configuration, see &struct freq_params */
 	struct freq_params freq_params;
+	/** Identifier to be used for processing event,
+	 *  NRF_WIFI_UMAC_EVENT_FRAME_TX_STATUS.
+	 */
 	unsigned long long host_cookie;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_mgmt_tx - Tranmit a management frame.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @info: Information about the management frame to be transmitted.
+ * @brief This structure defines the command used to transmit a management frame.
  *
- * This structure represents the command to transmit a management frame.
  */
 
 struct nrf_wifi_umac_cmd_mgmt_tx {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Information about the management frame to be transmitted.
+	 *  @ref nrf_wifi_umac_mgmt_tx_info
+	 */
 	struct nrf_wifi_umac_mgmt_tx_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_set_power_save_info - Information about power save
- *	settings.
- * @ps_state: power save is disabled or enabled, see enum nrf_wifi_ps_state.
+ * @brief This structure represents the information regarding the power save state.
  *
- * This structure represents the information about power save state
  */
 
 struct nrf_wifi_umac_set_power_save_info {
+	/** power save is disabled or enabled, see enum nrf_wifi_ps_state */
 	signed int ps_state;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_set_power_save - Set power save enable or disbale.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: Power save parameters settings.
+ * @brief This structure represents the command used to enable or disable the power save
+ *  functionality.
  *
- * This structure represents the command to enable or disable the power
- * save functionality.
  */
 
 struct nrf_wifi_umac_cmd_set_power_save {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Power save setting parameters.
+	 * @ref nrf_wifi_umac_set_power_save_info
+	 */
 	struct nrf_wifi_umac_set_power_save_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_set_power_save_timeout - Set power save timeout.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @timeout: Timeout value in milli seconds.
- *     if timeout < 0 RPU will set timeout to 100ms.
+ * @brief This structure represents the command to configure power save timeout value.
  *
- * This structure represents the command to configure power save timeout value.
  */
 
 struct nrf_wifi_umac_cmd_set_power_save_timeout {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Timeout value in milli seconds
+	 * if timeout < 0 RPU will set timeout to 100ms
+	 */
 	signed int timeout;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_qos_map_info - qos map info.
- * @qos_map_info_len: length of qos_map info field.
- * @qos_map_info: contains qos_map info as received from stack.
+ * @brief This structure represents the information of qos_map.
  *
- * This structure represents the information of qos_map.
  */
 
 struct nrf_wifi_umac_qos_map_info {
+	/** length of qos_map info field */
 	unsigned int qos_map_info_len;
+	/** contains qos_map info as received from stack */
 	unsigned char qos_map_info[256];
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_set_qos_map - Set qos map info.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: qos map info.
+ * @brief This structure represents the information related to the Quality of Service (QoS) map.
  *
- * This structure represents the command to pass qos_map info.
  */
 
 struct nrf_wifi_umac_cmd_set_qos_map {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** qos map info. @ref nrf_wifi_umac_qos_map_info */
 	struct nrf_wifi_umac_qos_map_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_get_tx_power - get tx power.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
+ * @brief This structure defines the command used to retrieve the transmit power information.
  *
- * This structure represents the command to get tx power.
  */
 
 struct nrf_wifi_umac_cmd_get_tx_power {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
+
 /**
- * @brief This structure represents the command to get regulatory domain.
+ * @brief This structure defines the command used to obtain the regulatory domain information.
  *
  */
 
@@ -2478,14 +2315,14 @@ struct nrf_wifi_umac_cmd_get_reg {
 	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
+
 /**
- * struct nrf_wifi_umac_cmd_get_channel - get channel info.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
+ * @brief This structure defines the command used to retrieve channel information.
  *
- * This structure represents the command to get channel information.
  */
 
 struct nrf_wifi_umac_cmd_get_channel {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
@@ -2493,30 +2330,30 @@ struct nrf_wifi_umac_cmd_get_channel {
 #define NRF_WIFI_TWT_NEGOTIATION_TYPE_BROADCAST 2
 
 /**
- * enum nrf_wifi_twt_setup_cmd_type - TWT Setup command/Response type.
- * @NRF_WIFI_REQUEST_TWT:STA requests to join a TWT without specifying a target wake time.
- * @NRF_WIFI_SUGGEST_TWT:STA requests to join a TWT with specifying a target wake time and other
- *		params, these values can change during negotiation.
- * @NRF_WIFI_DEMAND_TWT:requests to join a TWT with demanded a target wake time and other params.
- *		STA rejects if AP not scheduling those params.
- * @NRF_WIFI_GROUPING_TWT:Response to the STA request(suggest/demand), these are may be different
- *		params.
- * @NRF_WIFI_ACCEPT_TWT: AP accept the STA requested params.
- * @NRF_WIFI_ALTERNATE_TWT:AP may suggest the params, these may be different from STA requested.
- * @NRF_WIFI_DICTATE_TWT:AP may suggest the params, these may be different from STA requested.
- * @NRF_WIFI_REJECT_TWT: AP may reject the STA requested params.
+ * @brief TWT setup commands and events.
  *
- * Types of TWT setup command/events.
  */
 
 enum nrf_wifi_twt_setup_cmd_type {
+	/** STA requests to join a TWT without specifying a target wake time */
 	NRF_WIFI_REQUEST_TWT,
+	/** STA requests to join a TWT with specifying a target wake time and
+	 *  other params, these values can change during negotiation.
+	 */
 	NRF_WIFI_SUGGEST_TWT,
+	/** requests to join a TWT with demanded a target wake time
+	 * and other params. STA rejects if AP not scheduling those params.
+	 */
 	NRF_WIFI_DEMAND_TWT,
+	/** Response to the STA request(suggest/demand), these may be different params */
 	NRF_WIFI_GROUPING_TWT,
+	/** AP accept the STA requested params */
 	NRF_WIFI_ACCEPT_TWT,
+	/** AP may suggest the params, these may be different from STA requested */
 	NRF_WIFI_ALTERNATE_TWT,
+	/** AP may suggest the params, these may be different from STA requested */
 	NRF_WIFI_DICTATE_TWT,
+	/** AP may reject the STA requested params */
 	NRF_WIFI_REJECT_TWT,
 };
 
@@ -2525,50 +2362,55 @@ enum nrf_wifi_twt_setup_cmd_type {
 
 #define NRF_WIFI_TWT_RESP_RECEIVED 0
 #define NRF_WIFI_TWT_RESP_NOT_RECEIVED 1
+
 /**
- * struct nrf_wifi_umac_config_twt_info - TWT params info.
- * @twt_flow_id: TWT flow Id.
- * @neg_type:NRF_WIFI_TWT_NEGOTIATION_TYPE_INDIVIDUAL/NRF_WIFI_TWT_NEGOTIATION_TYPE_BROADAST
- * @setup_cmd: see enum nrf_wifi_twt_setup_cmd_type
- * @ap_trigger_frame: indicating AP to initiate a trigger frame(ps_poll/Null) before data transfer
- * @is_implicit:1->implicit(same negotiated values to be used), 0->AP sends new calculated TWT
- *	values for every service period.
- * @twt_flow_type: Whether STA has to send the PS-Poll/Null frame
- *		indicating that it's in wake period(NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED)
- * @twt_target_wake_interval_exponent: wake interval exponent value
- * @twt_target_wake_interval_mantissa: wake interval mantissa value
- * @target_wake_time: start of the waketime value after successful TWT negotiation
- * @nominal_min_twt_wake_duration: min TWT wake duration
- * @dialog_token: dialog_token of twt frame.
- * @twt_resp_status: 0->not received 1->received.
- * This structure represents the command provides TWT information.
+ * @brief This structure describes the TWT information.
+ *
  */
 
 struct nrf_wifi_umac_config_twt_info {
+	/** TWT flow Id */
 	unsigned char twt_flow_id;
+	/** Negotiation type
+	 *  NRF_WIFI_TWT_NEGOTIATION_TYPE_INDIVIDUAL or
+	 *  NRF_WIFI_TWT_NEGOTIATION_TYPE_BROADAST
+	 */
 	unsigned char neg_type;
+	/** see &enum nrf_wifi_twt_setup_cmd_type  */
 	signed int setup_cmd;
+	/** indicating AP to initiate a trigger frame (ps_poll/Null) before data transfer */
 	unsigned char ap_trigger_frame;
+	/** 1->implicit(same negotiated values to be used),
+	 *  0->AP sends new calculated TWT values for every service period.
+	 */
 	unsigned char is_implicit;
+	/** Whether STA has to send the PS-Poll/Null frame
+	 *  indicating that it's in wake period(NRF_WIFI_TWT_FLOW_TYPE_ANNOUNCED)
+	 */
 	unsigned char twt_flow_type;
+	/** wake interval exponent value  */
 	unsigned char twt_target_wake_interval_exponent;
+	/** wake interval mantissa value */
 	unsigned short twt_target_wake_interval_mantissa;
-	/*unsigned char target_wake_time[8];*/
+	/** start of the waketime value after successful TWT negotiation */
 	unsigned long long target_wake_time;
+	/** min TWT wake duration */
 	unsigned int nominal_min_twt_wake_duration;
+	/** dialog_token of twt frame */
 	unsigned char dialog_token;
+	/** 0->not received 1->received */
 	unsigned char twt_resp_status;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_config_twt - configuring TWT params.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: refer to struct nrf_wifi_umac_config_twt_info.
- * This structure represents the command provides TWT information.
+ * @brief This structure defines the parameters required for setting up TWT session.
+ *
  */
 
 struct nrf_wifi_umac_cmd_config_twt {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** TWT configuration info @ref nrf_wifi_umac_config_twt_info */
 	struct nrf_wifi_umac_config_twt_info info;
 } __NRF_WIFI_PKD;
 
@@ -2576,92 +2418,102 @@ struct nrf_wifi_umac_cmd_config_twt {
 #define TRIGGER_NOT_RECEIVED 2
 
 /**
- * struct nrf_wifi_umac_teardown_twt_info - delete TWT params info.
- * @twt_flow_id: TWT flow Id.
- * @reason_code: reason for teardown.
- * This structure represents the command provides TWT delete information.
+ * @brief This structure represents the TWT delete information.
+ *
  */
 
 struct nrf_wifi_umac_teardown_twt_info {
+	/** TWT flow Id  */
 	unsigned char twt_flow_id;
+	/** reason for teardown */
 	unsigned char reason_code;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_del_twt - delete TWT establishment.
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: refer to struct nrf_wifi_umac_teardown_twt_info.
- * This structure represents the command provides TWT delete establishment.
+ * @brief This structure defines the command used to delete or remove a TWT session
+ *
  */
 
 struct nrf_wifi_umac_cmd_teardown_twt {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref nrf_wifi_umac_teardown_twt_info */
 	struct nrf_wifi_umac_teardown_twt_info info;
 } __NRF_WIFI_PKD;
 
 #define TWT_BLOCK_TX 0
 #define TWT_UNBLOCK_TX 1
 /**
- * struct twt_sleep_info- TWT sleep information
- * @type: value for blocking/unblocking TX
- * @info: refer to struct twt_sleep_info
+ * @brief This structure represents the information related to Tx (transmit) block/unblock.
+ *
  */
 struct twt_sleep_info {
+	/** value for blocking/unblocking TX
+	 *  (TWT_BLOCK_TX or TWT_UNBLOCK_TX)
+	 */
 	unsigned int type;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_event_twt_sleep- TWT sleep information
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: refer to struct twt_sleep_info
+ * @brief This structure defines an event used to indicate to the host whether to block or
+ *  unblock Tx (transmit) packets in TWT communication.
+ *
  */
 
 struct nrf_wifi_umac_event_twt_sleep {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref twt_sleep_info */
 	struct twt_sleep_info info;
 } __NRF_WIFI_PKD;
 
 #define UAPSD_Q_MIN 0
 #define UAPSD_Q_MAX 15
 /**
- * struct nrf_wifi_umac_uapsd_info - uaspd queues info
- * @uapsd_queue: UAPSD-Q value
- * This structure represents the information about UAPSD-Q.
+ * @brief This structure represents the information about UAPSD queues.
+ *
  */
 
 struct nrf_wifi_umac_uapsd_info {
+	/** UAPSD-Q value */
 	unsigned int uapsd_queue;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_cmd_config_uapsd - Config UAPSD-Q..
- * @umac_hdr: UMAC command header. Refer &struct nrf_wifi_umac_hdr.
- * @info: Refer &struct nrf_wifi_umac_uapsd_info
- * This structure represents the command to configure UAPSD-Q value.
+ * @brief This structure defines the command used to configure the UAPSD-Q value.
+ *
  */
 
 struct nrf_wifi_umac_cmd_config_uapsd {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** @ref nrf_wifi_umac_uapsd_info */
 	struct nrf_wifi_umac_uapsd_info info;
 } __NRF_WIFI_PKD;
 
 /**
- * struct nrf_wifi_umac_event_trigger_scan - Scan complete event
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
+ * @brief This structure represents the event used to indicate that a scan has started.
  *
- * This structure represents the event to indicate a scan complete and includes
- * the scan complete information.
  */
 
 struct nrf_wifi_umac_event_trigger_scan {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Scan request control flags (u32). Bit values
+	 * (NRF_WIFI_SCAN_FLAG_LOW_PRIORITY/NRF_WIFI_SCAN_FLAG_RANDOM_ADDR...)
+	 */
 	unsigned int nrf_wifi_scan_flags;
+	/** No.of ssids in scan request */
 	unsigned char num_scan_ssid;
+	/** No.of frequencies in scan request */
 	unsigned char num_scan_frequencies;
+	/** center frequencies */
 	unsigned short scan_frequencies[NRF_WIFI_SCAN_MAX_NUM_FREQUENCIES];
+	/** @ref nrf_wifi_ssid */
 	struct nrf_wifi_ssid scan_ssid[NRF_WIFI_SCAN_MAX_NUM_SSIDS];
+	/** @ref nrf_wifi_ie */
 	struct nrf_wifi_ie ie;
 } __NRF_WIFI_PKD;
 
@@ -2678,87 +2530,53 @@ struct nrf_wifi_umac_event_trigger_scan {
 #define NRF_WIFI_NEW_SCAN_RESULTS_BSS_PRESP_DATA (1 << 0)
 
 /**
- * struct nrf_wifi_umac_event_new_scan_results - Scan result
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid.
- * @generation: Used to indicate consistent snapshots for
- *	dumps. This number increases whenever the object list being
- *	dumped changes, and as such userspace can verify that it has
- *	obtained a complete and consistent snapshot by verifying that
- *	all dump messages contain the same generation number. If it
- *	changed then the list changed and the dump should be repeated
- *	completely from scratch.
- * @mac_addr: BSSID of the BSS (6 octets).
- * @ies_tsf: TSF of the received probe response/beacon (u64)
- *	(if @NRF_WIFI_BSS_PRESP_DATA is present then this is known to be
- *	from a probe response, otherwise it may be from the same beacon
- *	that the NRF_WIFI_BSS_BEACON_TSF will be from).
- * @ies: Binary attribute containing the
- *	raw information elements from the probe response/beacon (bin);
- *	if the %NRF_WIFI_BSS_BEACON_IES attribute is present and the data is
- *	different then the IEs here are from a Probe Response frame; otherwise
- *	they are from a Beacon frame.
- *	However, if the driver does not indicate the source of the IEs, these
- *	IEs may be from either frame subtype.
- *	If present, the @NRF_WIFI_BSS_PRESP_DATA attribute indicates that the
- *	data here is known to be from a probe response, without any heuristics.
- * @beacon_ies_tsf: TSF of the last received beacon
- *	(not present if no beacon frame has been received yet).
- * @beacon_ies: Binary attribute containing the raw information
- *	elements from a Beacon frame (bin); not present if no Beacon frame has
- *	yet been received.
- * @beacon_interval: Beacon interval of the (I)BSS.
- * @capability: Capability field (CPU order).
- * @frequency: Frequency in MHz.
- * @chan_width: Channel width of the control channel.
- * @seen_ms_ago: Age of this BSS entry in ms.
- * @signal: If MBMsignal strength of probe response/beacon
- *	in mBm (100 * dBm) (s32) or signal strength of the probe
- *	response/beacon in unspecified units, scaled to 0..100
- * @status: Status, if this BSS is "used".
+ * @brief This structure serves as a response to the command NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS.
+ *  It contains scan results for each entry. RPU sends multiple events of this type for every
+ *  scan entry, and when umac_hdr->seq == 0, it indicates the last scan entry.
  *
- * This structure is returned as a response for %NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS. It
- * contains a scan result entry.
  */
 
 struct nrf_wifi_umac_event_new_scan_results {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Unused */
 	unsigned int generation;
+	/** Frequency in MHz */
 	unsigned int frequency;
+	/** Channel width of the control channel */
 	unsigned int chan_width;
+	/** Age of this BSS entry in ms */
 	unsigned int seen_ms_ago;
+	/** Unused */
 	unsigned int nrf_wifi_flags;
+	/** Status, if this BSS is "used" */
 	signed int status;
+	/** TSF of the received probe response/beacon (u64) */
 	unsigned long long ies_tsf;
+	/** TSF of the last received beacon
+	 *  (not present if no beacon frame has been received yet).
+	 */
 	unsigned long long beacon_ies_tsf;
+	/** Beacon interval of BSS */
 	unsigned short beacon_interval;
+	/** Capability field */
 	unsigned short capability;
+	/** Signal strength, @ref nrf_wifi_signal */
 	struct nrf_wifi_signal signal;
+	/** BSSID of the BSS (6 octets) */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
-	unsigned int    ies_len;
-	unsigned int    beacon_ies_len;
-	unsigned char   ies[0];
+	/** Indicates length of IE's present at the starting of ies[0] */
+	unsigned int ies_len;
+	/** Indicates length of beacon_ies present after ies+ies_len */
+	unsigned int beacon_ies_len;
+	/** contains raw information elements from the probe response/beacon.
+	 * If beacon_ies are not present then the IEs here are from a Probe Response
+	 * frame; otherwise they are from a Beacon frame.
+	 */
+	unsigned char ies[0];
 } __NRF_WIFI_PKD;
-
-/**
- * struct nrf_wifi_umac_event_new_scan_display_results - Scan result for dispaly purpose
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @ssid: Network SSID.
- * @mac_addr: BSSID of the BSS (6 octets).
- * @nwk_band: Network band of operation, refer &enum nrf_wifi_band.
- * @nwk_channel: Network channel number.
- * @protocol: Network protocol, refer #defines NRF_WIFI_802_11*.
- * @security_type: Network security mode, refer &enum nrf_wifi_security_type.
- * @beacon_interval: Beacon interval of the (I)BSS.
- * @capability: Capability field (CPU order).
- * @signal: If MBMsignal strength of probe response/beacon
- *	in mBm (100 * dBm) (s32) or signal strength of the probe
- *	response/beacon in unspecified units, scaled to 0..100
- *
- * This structure is returned as a response for %NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS. It
- * contains a scan result entry.
- */
 
 #define NRF_WIFI_802_11A (1 << 0)
 #define NRF_WIFI_802_11B (1 << 1)
@@ -2769,31 +2587,57 @@ struct nrf_wifi_umac_event_new_scan_results {
 
 #define NRF_WIFI_MFP_REQUIRED (1 << 0)
 #define NRF_WIFI_MFP_CAPABLE  (1 << 1)
+/**
+ * @brief This structure represents the response for NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS.
+ *  It contains the displayed scan result.
+ *
+ */
 
 struct umac_display_results {
+	/** Network SSID @ref nrf_wifi_ssid */
 	struct nrf_wifi_ssid ssid;
+	/** BSSID of the BSS (6 octets) */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** Network band of operation, refer &enum nrf_wifi_band */
 	signed int nwk_band;
+	/** Network channel number */
 	unsigned int nwk_channel;
+	/**  Protocol type (NRF_WIFI_802_11A) */
 	unsigned char protocol_flags;
+	/** Network security mode, refer &enum nrf_wifi_security_type */
 	signed int security_type;
+	/** Beacon interval of the BSS */
 	unsigned short beacon_interval;
+	/** Capability field */
 	unsigned short capability;
+	/** Signal strength. Refer &struct nrf_wifi_signal */
 	struct nrf_wifi_signal signal;
+	/** TWT support */
 	unsigned char twt_support;
+	/** management frame protection NRF_WIFI_MFP_REQUIRED/NRF_WIFI_MFP_CAPABLE */
 	unsigned char mfp_flag;
+	/** reserved */
 	unsigned char reserved3;
+	/** reserved */
 	unsigned char reserved4;
 } __NRF_WIFI_PKD;
 
 #define DISPLAY_BSS_TOHOST_PEREVNT 8
 
+/**
+ * @brief This structure serves as a response to the command NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS
+ *  of display scan type. It contains a maximum of DISPLAY_BSS_TOHOST_PEREVENT scan results
+ *  in each event. When umac_hdr->seq == 0, it indicates the last scan event.
+ *
+ */
+
 struct nrf_wifi_umac_event_new_scan_display_results {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
-	/*Number of scan results in the current event*/
+	/** Number of scan results in the current event */
 	unsigned char event_bss_count;
+	/** Display scan results info @ref umac_display_results */
 	struct umac_display_results display_results[DISPLAY_BSS_TOHOST_PEREVNT];
-	/* struct umac_display_results display_results[10]; */
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_EVENT_MLME_FRAME_VALID (1 << 0)
@@ -2804,70 +2648,64 @@ struct nrf_wifi_umac_event_new_scan_display_results {
 #define NRF_WIFI_EVENT_MLME_WME_UAPSD_QUEUES_VALID (1 << 5)
 #define NRF_WIFI_EVENT_MLME_RXMGMT_FLAGS_VALID (1 << 6)
 #define NRF_WIFI_EVENT_MLME_IE_VALID   (1 << 7)
+
 #define NRF_WIFI_EVENT_MLME_TIMED_OUT (1 << 0)
 #define NRF_WIFI_EVENT_MLME_ACK (1 << 1)
 
 /**
- * struct nrf_wifi_umac_event_mlme - MLME event
- *
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate which of the following parameters are valid
- * @frame: Frame data (binary attribute), including frame header
- *	and body, but not FCS; used, e.g., with NRF_WIFI_UMAC_CMD_AUTHENTICATE and
- *	%NRF_WIFI_UMAC_CMD_ASSOCIATE events.
- * @mac_addr: BSSID of the BSS (6 octets)
- * @frequency: Frequency of the selected channel in MHz
- * @cookie: Generic 64-bit cookie to identify objects.
- * @rx_signal_dbm: Signal strength in dBm (as a 32-bit int);
- *	this attribute is (depending on the driver capabilities) added to
- *	received frames indicated with %NRF_WIFI_CMD_FRAME.
- * @wme_uapsd_queues: Bitmap of uapsd queues.
- * @nrf_wifi_flags: Indicate whether the frame was acked or timed out.
- *
- * This structure represents different STA MLME events for e.g. Authentication
- * Response received, Association Response received etc.
+ * @brief This structure represent different responses received from the access point during
+ *  various stages of the connection process like Authentication Response and Association Response.
  *
  */
 
 struct nrf_wifi_umac_event_mlme {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Frequency of the channel in MHz */
 	unsigned int frequency;
+	/** Signal strength in dBm */
 	unsigned int rx_signal_dbm;
+	/** Indicate whether the frame was acked or timed out */
 	unsigned int nrf_wifi_flags;
+	/** cookie identifier */
 	unsigned long long cookie;
+	/** Frame data, including frame header and body @ref nrf_wifi_frame */
 	struct nrf_wifi_frame frame;
+	/** BSSID of the BSS */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** Bitmap of uapsd queues */
 	unsigned char wme_uapsd_queues;
+	/** Request(AUTH/ASSOC) ie length */
 	unsigned int req_ie_len;
+	/** ie's */
 	unsigned char req_ie[0];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_CMD_SEND_STATION_ASSOC_REQ_IES_VALID (1 << 0)
 
 /**
- * struct nrf_wifi_umac_event_new_station - Station add event.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate if assoc_req ies is valid.
- * @is_sta_legacy: Set to 1 if STA is Legacy(a/b/g)
- * @wme: set to 1: STA supports QoS/WME
- * @mac_addr: Station mac address.
- * @generation: generation number
- * @sta_info: Station information.
- * @assoc_req_ies: Ies passed by station doing assoc request.
+ * @brief This structure represents an event that is generated when a station is added or removed.
  *
- * This structure represents an event which is generated when a station is
- * added or deleted.
  */
 
 struct nrf_wifi_umac_event_new_station {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate if assoc_req ies is valid */
 	unsigned int valid_fields;
+	/** set to 1: STA supports QoS/WME */
 	unsigned char wme;
+	/** Set to 1 if STA is Legacy(a/b/g) */
 	unsigned char is_sta_legacy;
+	/** Station mac address */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** generation number */
 	unsigned int generation;
+	/** Station information @ref nrf_wifi_sta_info */
 	struct nrf_wifi_sta_info sta_info;
+	/** @ref nrf_wifi_ie */
 	struct nrf_wifi_ie assoc_req_ies;
 
 } __NRF_WIFI_PKD;
@@ -2876,131 +2714,132 @@ struct nrf_wifi_umac_event_new_station {
 #define NRF_WIFI_CMD_COOKIE_RSP_MAC_ADDR_VALID (1 << 1)
 
 /**
- * struct	nrf_wifi_umac_event_cookie_rsp - Cookie for management frame.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @valid_fields: Indicate if assoc_req ies is valid.
- * @host_cookie: Identifier passed during %NRF_WIFI_UMAC_CMD_FRAME.
- * @cookie: Cookie used to indicate TX done in %NRF_WIFI_UMAC_EVENT_FRAME_TX_STATUS
+ * @brief This structure specifies the cookie response event, which is used to receive an
+ *  RPU cookie associated with the host cookie passed during NRF_WIFI_UMAC_CMD_FRAME.
  *
- * We receive an RPU cookie that is associated with the host cookie
- * passed during NRF_WIFI_UMAC_CMD_FRAME
  */
 
 struct nrf_wifi_umac_event_cookie_rsp {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate if assoc_req ies is valid */
 	unsigned int valid_fields;
+	/** Identifier passed during NRF_WIFI_UMAC_CMD_FRAME */
 	unsigned long long host_cookie;
+	/** Cookie used to indicate TX done in NRF_WIFI_UMAC_EVENT_FRAME_TX_STATUS */
 	unsigned long long cookie;
+	/** Mac address */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 
 } __NRF_WIFI_PKD;
 
 /**
- * struct	nrf_wifi_umac_event_get_txpwr - Tx power.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @txpwr_level: Tx power level
+ * @brief This structure represents the event that corresponds to the command
+ *  NRF_WIFI_UMAC_CMD_GET_TX_POWER. It is used to retrieve the transmit power
+ *  information from the device
  *
- * Tx power information in dbm
  */
 
 struct nrf_wifi_umac_event_get_tx_power {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Tx power in dbm */
 	signed int txpwr_level;
 
 } __NRF_WIFI_PKD;
 
 /**
- * struct	nrf_wifi_umac_event_set_interface - set interface status.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @return_value: return value
+ * @brief This structure represents the response to the command NRF_WIFI_UMAC_CMD_SET_INTERFACE.
+ *  It contains the necessary information indicating the result or status of the interface
+ *  configuration operation after the command has been executed.
  *
- * NRF_WIFI_UMAC_CMD_SET_INTERFACE status
  */
 
 struct nrf_wifi_umac_event_set_interface {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** return value */
 	signed int return_value;
 } __NRF_WIFI_PKD;
 
 /**
- * enum nrf_wifi_channel_flags - channel flags
+ * @brief channel flags.
  *
  * Channel flags set by the regulatory control code.
- *
- * @CHAN_DISABLED: This channel is disabled.
- * @CHAN_NO_IR: do not initiate radiation, this includes
- * sending probe requests or beaconing.
- * @CHAN_RADAR: Radar detection is required on this channel.
- * @CHAN_NO_HT40PLUS: extension channel above this channel
- *	is not permitted.
- * @CHAN_NO_HT40MINUS: extension channel below this channel
- *	is not permitted.
- * @CHAN_NO_OFDM: OFDM is not allowed on this channel.
- * @CHAN_NO_80MHZ: If the driver supports 80 MHz on the band,
- *	this flag indicates that an 80 MHz channel cannot use this
- *	channel as the control or any of the secondary channels.
- *	This may be due to the driver or due to regulatory bandwidth
- *	restrictions.
- * @CHAN_NO_160MHZ: If the driver supports 160 MHz on the band,
- *	this flag indicates that an 160 MHz channel cannot use this
- *	channel as the control or any of the secondary channels.
- *	This may be due to the driver or due to regulatory bandwidth
- *	restrictions.
- * @CHAN_INDOOR_ONLY: see %NL80211_FREQUENCY_ATTR_INDOOR_ONLY
- * @CHAN_GO_CONCURRENT: see %NL80211_FREQUENCY_ATTR_GO_CONCURRENT
- * @CHAN_NO_20MHZ: 20 MHz bandwidth is not permitted
- *	on this channel.
- * @CHAN_NO_10MHZ: 10 MHz bandwidth is not permitted
- *	on this channel.
  *
  */
 
 enum nrf_wifi_channel_flags {
+	/** This channel is disabled */
 	CHAN_DISABLED     = 1<<0,
+	/** do not initiate radiation, this includes sending probe requests or beaconing */
 	CHAN_NO_IR        = 1<<1,
-	/* hole at 1<<2 */
+	/** Radar detection is required on this channel hole at 1<<2 */
 	CHAN_RADAR        = 1<<3,
+	/** extension channel above this channel is not permitted */
 	CHAN_NO_HT40PLUS  = 1<<4,
+	/** extension channel below this channel is not permitted */
 	CHAN_NO_HT40MINUS = 1<<5,
+	/** OFDM is not allowed on this channel */
 	CHAN_NO_OFDM      = 1<<6,
+	/** If the driver supports 80 MHz on the band,
+	 * this flag indicates that an 80 MHz channel cannot use this
+	 * channel as the control or any of the secondary channels.
+	 * This may be due to the driver or due to regulatory bandwidth
+	 * restrictions.
+	 */
 	CHAN_NO_80MHZ     = 1<<7,
+	/** If the driver supports 160 MHz on the band,
+	 * this flag indicates that an 160 MHz channel cannot use this
+	 * channel as the control or any of the secondary channels.
+	 * This may be due to the driver or due to regulatory bandwidth
+	 * restrictions.
+	 */
 	CHAN_NO_160MHZ    = 1<<8,
+	/** @ref NL80211_FREQUENCY_ATTR_INDOOR_ONLY */
 	CHAN_INDOOR_ONLY  = 1<<9,
+	/** @ref NL80211_FREQUENCY_ATTR_GO_CONCURRENT */
 	CHAN_GO_CONCURRENT    = 1<<10,
+	/** 20 MHz bandwidth is not permitted on this channel */
 	CHAN_NO_20MHZ     = 1<<11,
+	/** 10 MHz bandwidth is not permitted on this channel */
 	CHAN_NO_10MHZ     = 1<<12,
 };
 
 /**
- * struct nrf_wifi_chan_def - channel definition
- * @chan: the (control) channel
- * @width: channel width
- * @center_frequency1: center frequency of first segment
- * @center_frequency2: center frequency of second segment
- * (only with 80+80 MHz)
+ * @brief channel definition.
+ *
  */
 
 struct nrf_wifi_chan_definition {
+	/** Frequency of the selected channel in MHz */
 	struct nrf_wifi_channel chan;
+	/** channel width */
 	signed int width;
+	/** center frequency of first segment */
 	unsigned int center_frequency1;
+	/** center frequency of second segment (only with 80+80 MHz) */
 	unsigned int center_frequency2;
 } __NRF_WIFI_PKD;
 
 /**
- * struct	nrf_wifi_umac_event_get_channel - Get channel info.
- * @umac_hdr: UMAC event header. Refer &struct nrf_wifi_umac_hdr.
- * @chan_def: Channel definition.
+ * @brief This structure represents channel information and serves as the event for the
+ *  command NRF_WIFI_UMAC_CMD_GET_CHANNEL.
  *
- * The structure gives Channel information.
  */
-
 struct nrf_wifi_umac_event_get_channel {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Channel information.@ref nrf_wifi_chan_definition */
 	struct nrf_wifi_chan_definition chan_def;
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents the command used to retrieve connection information.
+ *
+ */
 struct nrf_wifi_umac_cmd_conn_info {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
@@ -3013,27 +2852,63 @@ enum link_mode {
 	NRF_WIFI_MODE_11AX
 };
 
+/**
+ * @brief This structure represents the information related to the connection of a station.
+ *
+ */
+
 struct nrf_wifi_umac_event_conn_info {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Beacon interval */
 	unsigned short beacon_interval;
+	/** DTIM interval */
 	unsigned char dtim_interval;
+	/** Station association state */
 	unsigned char associated;
+	/** TWT supported or not */
 	unsigned char twt_capable;
+	/** Refer &enum link_mode */
 	unsigned char linkmode;
 } __NRF_WIFI_PKD;
 
+
+/**
+ * @brief This structure defines the command used to retrieve power save information.
+ *
+ */
 struct nrf_wifi_umac_cmd_get_power_save_info {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure defines the command used to set the listen interval period.
+ *  It determines how frequently a device wakes up to check for any pending data or traffic
+ *  from the access point. By setting the listen interval, devices can adjust their power-saving
+ *  behavior to balance power efficiency and responsiveness to incoming data.
+ *
+ */
 struct nrf_wifi_umac_cmd_set_listen_interval {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** listen interval */
 	unsigned short listen_interval;
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents the command used to enable or disable extended power save mode.
+ *  When enabled, the RPU wakes up based on the listen interval, allowing the device to spend more
+ *  time in a lower power state. When disabled, the RPU wakes up based on the DTIM period, which
+ *  may require more frequent wake-ups but can provide better responsiveness for receiving
+ *  multicast/broadcast traffic.
+ *
+ */
 struct nrf_wifi_umac_cmd_config_extended_ps {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
-	unsigned char enable_extended_ps; /*1= enable 0=disable*/
+	/** 1=enable 0=disable */
+	unsigned char enable_extended_ps;
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_MAX_TWT_FLOWS 8
@@ -3041,103 +2916,185 @@ struct nrf_wifi_umac_cmd_config_extended_ps {
 #define NRF_WIFI_PS_MODE_WMM 1
 
 /**
- * Most APs have a DTIM value of 3, so we are expecting
- * a minimum listen interval of 3 beacon intervals.
+ * @brief Given that most APs typically use a DTIM value of 3,
+ *  we anticipate a minimum listen interval of 3 beacon intervals.
+ *
  */
 #define NRF_WIFI_LISTEN_INTERVAL_MIN 3
 
+/**
+ * @brief This structure represents an event that provides information about the RPU power save
+ *  mode. It contains details regarding the current power save mode and its settings.
+ *
+ */
 struct nrf_wifi_umac_event_power_save_info {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Power save mode. NRF_WIFI_PS_MODE_LEGACY/NRF_WIFI_PS_MODE_WMM */
 	unsigned char ps_mode;
+	/** Power save enable flag */
 	unsigned char enabled;
-	unsigned char extended_ps; /*1= ONN 0=OFF*/
+	/** Extended power save ON(1)/OFF(0) */
+	unsigned char extended_ps;
+	/** Is TWT responder */
 	unsigned char twt_responder;
+	/** Power save timed out value */
 	signed int ps_timeout;
+	/** Listen interval value */
 	unsigned short listen_interval;
+	/** Number TWT flows */
 	unsigned char num_twt_flows;
+	/** TWT info of each flow @ref nrf_wifi_umac_config_twt_info */
 	struct nrf_wifi_umac_config_twt_info twt_flow_info[0];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_EVENT_TRIGGER_SCAN_IE_VALID (1 << 0)
 #define NRF_WIFI_EVENT_TRIGGER_SCAN_SCAN_FLAGS_VALID (1 << 1)
+/**
+ * @brief This structure contains information relevant to the "Remain on Channel" operation.
+ *  It is used to specify the details related to the duration and channel on which a device
+ *  needs to stay without regular data transmission or reception.
+ *
+ */
 
 struct remain_on_channel_info {
+	/** Amount of time to remain on specified channel */
 	unsigned int dur;
+	/** Frequency configuration, see &struct freq_params */
 	struct freq_params nrf_wifi_freq_params;
+	/** Identifier to be used for processing NRF_WIFI_UMAC_EVENT_COOKIE_RESP event */
 	unsigned long long host_cookie;
+	/** Unused */
 	unsigned long long cookie;
 
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_CMD_ROC_FREQ_PARAMS_VALID (1 << 0)
 #define NRF_WIFI_CMD_ROC_DURATION_VALID (1 << 1)
+/**
+ * @brief This structure represents the command used to keep the device awake on the specified
+ *  channel for a designated period. The command initiates the "Remain on Channel" operation.
+ *
+ */
 
 struct nrf_wifi_umac_cmd_remain_on_channel {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Information about channel parameters.@ref remain_on_channel_info */
 	struct remain_on_channel_info info;
 
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_CMD_CANCEL_ROC_COOKIE_VALID (1 << 0)
-
+/**
+ * @brief This structure represents the command to cancel "Remain on Channel" operation.
+ *
+ */
 struct nrf_wifi_umac_cmd_cancel_remain_on_channel {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** cookie to identify remain on channel */
 	unsigned long long cookie;
-
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_EVENT_ROC_FREQ_VALID (1 << 0)
 #define NRF_WIFI_EVENT_ROC_COOKIE_VALID (1 << 1)
 #define NRF_WIFI_EVENT_ROC_DURATION_VALID (1 << 2)
 #define NRF_WIFI_EVENT_ROC_CH_TYPE_VALID (1 << 3)
+/**
+ * @brief This structure represents the response to command "Remain on Channel".
+ *
+ */
 
 struct nrf_wifi_event_remain_on_channel {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Frequency of the channel */
 	unsigned int frequency;
+	/** duration that can be requested with the remain-on-channel operation(ms) */
 	unsigned int dur;
+	/** see &enum nrf_wifi_channel_type */
 	unsigned int ch_type;
+	/** cookie to identify remain on channel */
 	unsigned long long cookie;
-
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure defines the command used to retrieve interface information.
+ *
+ */
 struct nrf_wifi_cmd_get_interface {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_interface_info {
-	struct nrf_wifi_umac_hdr umac_hdr;
 #define NRF_WIFI_INTERFACE_INFO_CHAN_DEF_VALID (1 << 0)
 #define NRF_WIFI_INTERFACE_INFO_SSID_VALID (1 << 1)
 #define NRF_WIFI_INTERFACE_INFO_IFNAME_VALID (1 << 2)
+
+/**
+ * @brief This structure represents an event that contains information about a network interface.
+ *
+ */
+
+struct nrf_wifi_interface_info {
+	/** Header @ref nrf_wifi_umac_hdr */
+	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Interface type, see &enum nrf_wifi_iftype */
 	signed int nrf_wifi_iftype;
+	/** Interface name */
 	signed char ifacename[IFACENAMSIZ];
+	/** Mac address */
 	unsigned char nrf_wifi_eth_addr[NRF_WIFI_ETH_ADDR_LEN];
+	/** @ref nrf_wifi_chan_definition */
 	struct nrf_wifi_chan_definition chan_def;
+	/** @ref nrf_wifi_ssid */
 	struct nrf_wifi_ssid ssid;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_event_mcs_info {
 #define NRF_WIFI_HT_MCS_MASK_LEN 10
 #define NRF_WIFI_HT_MCS_RES_LEN 3
+
+/**
+ * @brief MCS information.
+ *
+ */
+struct nrf_wifi_event_mcs_info {
+	/** Highest supported RX rate */
 	unsigned short nrf_wifi_rx_highest;
+	/** RX mask */
 	unsigned char nrf_wifi_rx_mask[NRF_WIFI_HT_MCS_MASK_LEN];
+	/** TX parameters */
 	unsigned char nrf_wifi_tx_params;
+	/** reserved */
 	unsigned char nrf_wifi_reserved[NRF_WIFI_HT_MCS_RES_LEN];
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents HT capability parameters.
+ *
+ */
 struct nrf_wifi_event_sta_ht_cap {
+	/** 1 indicates HT Supported */
 	signed int nrf_wifi_ht_supported;
+	/** HT capabilities, as in the HT information IE */
 	unsigned short nrf_wifi_cap;
+	/** MCS information. @ref nrf_wifi_event_mcs_info */
 	struct nrf_wifi_event_mcs_info mcs;
+	/** A-MPDU factor, as in 11n */
 	unsigned char nrf_wifi_ampdu_factor;
+	/** A-MPDU density, as in 11n */
 	unsigned char nrf_wifi_ampdu_density;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_event_channel {
 #define NRF_WIFI_CHAN_FLAG_FREQUENCY_ATTR_NO_IR (1 << 0)
 #define NRF_WIFI_CHAN_FLAG_FREQUENCY_ATTR_NO_IBSS (1 << 1)
 #define NRF_WIFI_CHAN_FLAG_FREQUENCY_ATTR_RADAR (1 << 2)
@@ -3153,82 +3110,132 @@ struct nrf_wifi_event_channel {
 
 #define NRF_WIFI_CHAN_DFS_VALID (1 << 12)
 #define NRF_WIFI_CHAN_DFS_CAC_TIME_VALID (1 << 13)
+
+/**
+ * @brief This structure represents channel parameters.
+ */
+struct nrf_wifi_event_channel {
+	/** channel flags NRF_WIFI_CHAN_FLAG_FREQUENCY_ATTR_NO_IBSS */
 	unsigned short nrf_wifi_flags;
+	/** maximum transmission power (in dBm) */
 	signed int nrf_wifi_max_power;
+	/** DFS state time */
 	unsigned int nrf_wifi_time;
+	/** DFS CAC time in ms */
 	unsigned int dfs_cac_msec;
+	/** Channel parameters are valid or not 1=valid */
 	signed char ch_valid;
+	/** Channel center frequency */
 	unsigned short center_frequency;
+	/** Current dfs state */
 	signed char dfs_state;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_event_rate {
 #define NRF_WIFI_EVENT_GET_WIPHY_FLAG_RATE_SHORT_PREAMBLE (1 << 0)
+/**
+ * @brief This structure represents rate information.
+ */
+struct nrf_wifi_event_rate {
+	/** NRF_WIFI_EVENT_GET_WIPHY_FLAG_RATE_SHORT_PREAMBLE */
 	unsigned short nrf_wifi_flags;
+	/** Bitrate in units of 100 kbps */
 	unsigned short nrf_wifi_bitrate;
 } __NRF_WIFI_PKD;
+/**
+ * @brief VHT MCS information.
+ *
+ */
 
 struct nrf_wifi_event_vht_mcs_info {
+	/** RX MCS map 2 bits for each stream, total 8 streams */
 	unsigned short rx_mcs_map;
+	/** Indicates highest long GI VHT PPDU data rate
+	 *  STA can receive. Rate expressed in units of 1 Mbps.
+	 *  If this field is 0 this value should not be used to
+	 *  consider the highest RX data rate supported.
+	 */
 	unsigned short rx_highest;
+	/** TX MCS map 2 bits for each stream, total 8 streams */
 	unsigned short tx_mcs_map;
+	/** Indicates highest long GI VHT PPDU data rate
+	 *  STA can transmit. Rate expressed in units of 1 Mbps.
+	 *  If this field is 0 this value should not be used to
+	 *  consider the highest TX data rate supported.
+	 */
 	unsigned short tx_highest;
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents VHT capability parameters.
+ *
+ */
 struct nrf_wifi_event_sta_vht_cap {
+	/** 1 indicates VHT Supported */
 	signed char nrf_wifi_vht_supported;
+	/** VHT capability info */
 	unsigned int nrf_wifi_cap;
+	/** Refer @ref nrf_wifi_event_vht_mcs_info */
 	struct nrf_wifi_event_vht_mcs_info vht_mcs;
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief Frequency band information.
+ *
+ */
 struct nrf_wifi_event_supported_band {
+	/** No.of channels */
 	unsigned short nrf_wifi_n_channels;
+	/** No.of bitrates */
 	unsigned short nrf_wifi_n_bitrates;
+	/** Array of channels the hardware can operate in this band */
 	struct nrf_wifi_event_channel channels[29];
+	/** Array of bitrates the hardware can operate with in this band */
 	struct nrf_wifi_event_rate bitrates[13];
+	/** HT capabilities in this band */
 	struct nrf_wifi_event_sta_ht_cap ht_cap;
+	/** VHT capabilities in this band */
 	struct nrf_wifi_event_sta_vht_cap vht_cap;
+	/** the band this structure represents */
 	signed char band;
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief Interface limits.
+ *
+ */
 struct nrf_wifi_event_iface_limit {
+	/** max interface limits */
 	unsigned short nrf_wifi_max;
+	/** types */
 	unsigned short nrf_wifi_types;
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_event_iface_combination {
-	unsigned int nrf_wifi_num_different_channels;
-	signed int beacon_int_infra_match;
-	struct nrf_wifi_event_iface_limit limits[2];
-	unsigned short nrf_wifi_max_interfaces;
-	unsigned char nrf_wifi_radar_detect_widths;
-	unsigned char nrf_wifi_n_limits;
-	unsigned char nrf_wifi_radar_detect_regions;
 
 #define NRF_WIFI_EVENT_GET_WIPHY_VALID_RADAR_DETECT_WIDTHS (1 << 0)
 #define NRF_WIFI_EVENT_GET_WIPHY_VALID_RADAR_DETECT_REGIONS (1 << 1)
 #define NRF_WIFI_EVENT_GET_WIPHY_VALID_ (1 << 2)
+/**
+ * @brief This structure defines an event that represents interface combinations.
+ *
+ */
+struct nrf_wifi_event_iface_combination {
+	/** channels count */
+	unsigned int nrf_wifi_num_different_channels;
+	/** Unused */
+	signed int beacon_int_infra_match;
+	/** @ref nrf_wifi_event_iface_limit */
+	struct nrf_wifi_event_iface_limit limits[2];
+	/** Max interfaces */
+	unsigned short nrf_wifi_max_interfaces;
+	/** Not used */
+	unsigned char nrf_wifi_radar_detect_widths;
+	/** Not used */
+	unsigned char nrf_wifi_n_limits;
+	/** Not used */
+	unsigned char nrf_wifi_radar_detect_regions;
+	/** Not used */
 	unsigned char comb_valid;
 } __NRF_WIFI_PKD;
-
-struct nrf_wifi_event_get_wiphy {
-	struct nrf_wifi_umac_hdr umac_hdr;
-
-	unsigned int nrf_wifi_frag_threshold;
-	unsigned int nrf_wifi_rts_threshold;
-	unsigned int nrf_wifi_available_antennas_tx;
-	unsigned int nrf_wifi_available_antennas_rx;
-	unsigned int nrf_wifi_probe_resp_offload;
-	unsigned int tx_ant;
-	unsigned int rx_ant;
-	unsigned int split_start2_flags;
-	unsigned int max_remain_on_channel_duration;
-	unsigned int ap_sme_capa;
-	unsigned int features;
-	unsigned int max_acl_mac_addresses;
-	unsigned int max_ap_assoc_sta;
-#define NRF_WIFI_EVENT_GET_WIPHY_MAX_CIPHER_COUNT 30
-	unsigned int cipher_suites[NRF_WIFI_EVENT_GET_WIPHY_MAX_CIPHER_COUNT];
 
 #define NRF_WIFI_EVENT_GET_WIPHY_IBSS_RSN (1 << 0)
 #define NRF_WIFI_EVENT_GET_WIPHY_MESH_AUTH (1 << 1)
@@ -3238,7 +3245,6 @@ struct nrf_wifi_event_get_wiphy {
 #define NRF_WIFI_EVENT_GET_WIPHY_TDLS_EXTERNAL_SETUP (1 << 5)
 #define NRF_WIFI_EVENT_GET_WIPHY_CONTROL_PORT_ETHERTYPE (1 << 6)
 #define NRF_WIFI_EVENT_GET_WIPHY_OFFCHANNEL_TX_OK (1 << 7)
-	unsigned int get_wiphy_flags;
 
 #define NRF_WIFI_GET_WIPHY_VALID_PROBE_RESP_OFFLOAD (1 << 0)
 #define NRF_WIFI_GET_WIPHY_VALID_TX_ANT (1 << 1)
@@ -3252,104 +3258,235 @@ struct nrf_wifi_event_get_wiphy {
 #define NRF_WIFI_GET_WIPHY_VALID_MAX_AP_ASSOC_STA (1 << 9)
 #define NRF_WIFI_GET_WIPHY_VALID_WIPHY_NAME (1 << 10)
 #define NRF_WIFI_GET_WIPHY_VALID_EXTENDED_FEATURES (1 << 11)
-	unsigned int params_valid;
 
-	unsigned short int max_scan_ie_len;
-	unsigned short int max_sched_scan_ie_len;
-	unsigned short int interface_modes;
-	struct nrf_wifi_event_iface_combination iface_com[6];
+#define NRF_WIFI_EVENT_GET_WIPHY_MAX_CIPHER_COUNT 30
 
-	signed char supp_commands[40];
-	unsigned char retry_short;
-	unsigned char retry_long;
-	unsigned char coverage_class;
-	unsigned char max_scan_ssids;
-	unsigned char max_sched_scan_ssids;
-	unsigned char max_match_sets;
-	unsigned char n_cipher_suites;
-	unsigned char max_num_pmkids;
-	unsigned char extended_capabilities_len;
-	unsigned char extended_capabilities[10];
-	unsigned char extended_capabilities_mask[10];
+#define NRF_WIFI_INDEX_IDS_WIPHY_NAME 32
+#define NRF_WIFI_EVENT_GET_WIPHY_NUM_BANDS 2
+
 #define EXTENDED_FEATURE_LEN 60
 #define DIV_ROUND_UP_NL(n, d) (((n) + (d)-1) / (d))
 
+/**
+ * @brief This structure represents wiphy parameters.
+ *
+ */
+struct nrf_wifi_event_get_wiphy {
+	/** Header @ref nrf_wifi_umac_hdr */
+	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Unused */
+	unsigned int nrf_wifi_frag_threshold;
+	/** RTS threshold value */
+	unsigned int nrf_wifi_rts_threshold;
+	/** Unused */
+	unsigned int nrf_wifi_available_antennas_tx;
+	/** Unused */
+	unsigned int nrf_wifi_available_antennas_rx;
+	/** Unused */
+	unsigned int nrf_wifi_probe_resp_offload;
+	/** Unused */
+	unsigned int tx_ant;
+	/** Unused */
+	unsigned int rx_ant;
+	/** Unused */
+	unsigned int split_start2_flags;
+	/** Maximum ROC duration */
+	unsigned int max_remain_on_channel_duration;
+	/** Unused */
+	unsigned int ap_sme_capa;
+	/** Unused */
+	unsigned int features;
+	/** Unused */
+	unsigned int max_acl_mac_addresses;
+	/** maximum number of associated stations supported in AP mode */
+	unsigned int max_ap_assoc_sta;
+	/** supported cipher suites */
+	unsigned int cipher_suites[NRF_WIFI_EVENT_GET_WIPHY_MAX_CIPHER_COUNT];
+	/** wiphy flags NRF_WIFI_EVENT_GET_WIPHY_AP_UAPSD */
+	unsigned int get_wiphy_flags;
+	/** valid parameters NRF_WIFI_GET_WIPHY_VALID_WIPHY_NAME */
+	unsigned int params_valid;
+	/** Maximum scan IE length */
+	unsigned short int max_scan_ie_len;
+	/** Unused */
+	unsigned short int max_sched_scan_ie_len;
+	/** bit mask of interface value of see &enum nrf_wifi_iftype */
+	unsigned short int interface_modes;
+	/** Unused */
+	struct nrf_wifi_event_iface_combination iface_com[6];
+	/** Unused */
+	signed char supp_commands[40];
+	/** Retry limit for short frames */
+	unsigned char retry_short;
+	/** Retry limit for long frames */
+	unsigned char retry_long;
+	/** Unused */
+	unsigned char coverage_class;
+	/** Maximum ssids supported in scan */
+	unsigned char max_scan_ssids;
+	/** Unused */
+	unsigned char max_sched_scan_ssids;
+	/** Unused */
+	unsigned char max_match_sets;
+	/** Unused */
+	unsigned char n_cipher_suites;
+	/** Unused */
+	unsigned char max_num_pmkids;
+	/** length of the extended capabilities */
+	unsigned char extended_capabilities_len;
+	/** Extended capabilities */
+	unsigned char extended_capabilities[10];
+	/** Extended capabilities mask */
+	unsigned char extended_capabilities_mask[10];
+	/** Unused */
 	unsigned char ext_features[DIV_ROUND_UP_NL(EXTENDED_FEATURE_LEN, 8)];
+	/** Unused */
 	unsigned char ext_features_len;
+	/** Unused */
 	signed char num_iface_com;
-#define NRF_WIFI_INDEX_IDS_WIPHY_NAME 32
+	/** Wiphy name */
 	signed char wiphy_name[NRF_WIFI_INDEX_IDS_WIPHY_NAME];
-
-#define NRF_WIFI_EVENT_GET_WIPHY_NUM_BANDS 2
+	/** Supported bands info. @ref nrf_wifi_event_supported_band */
 	struct nrf_wifi_event_supported_band sband[NRF_WIFI_EVENT_GET_WIPHY_NUM_BANDS];
 } __NRF_WIFI_PKD;
-
-/* NL80211_CMD_GET_WIPHY */
-
+/**
+ * @brief This structure represents the command used to retrieve Wireless PHY (wiphy) information.
+ *
+ */
 struct nrf_wifi_cmd_get_wiphy {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents the command to get hardware address.
+ *
+ */
 struct nrf_wifi_cmd_get_ifhwaddr {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Interface name */
 	signed char ifacename[IFACENAMSIZ];
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents the command used to retrieve the hardware address or
+ *  MAC address of the device.
+ *
+ */
 struct nrf_wifi_cmd_set_ifhwaddr {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Interface name */
 	signed char ifacename[IFACENAMSIZ];
+	/** Hardware address to be set */
 	unsigned char nrf_wifi_hwaddr[NRF_WIFI_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
-struct nrf_wifi_reg_rules {
 #define REG_RULE_FLAGS_VALID (1 << 0)
 #define FREQ_RANGE_START_VALID (1 << 1)
 #define FREQ_RANGE_END_VALID (1 << 2)
 #define FREQ_RANGE_MAX_BW_VALID (1 << 3)
 #define POWER_RULE_MAX_EIRP_VALID (1 << 4)
-	unsigned int valid_fields;
 
+#define NRF_WIFI_RULE_FLAGS_NO_OFDM (1<<0)
+#define NRF_WIFI_RULE_FLAGS_NO_CCK (1<<1)
+#define NRF_WIFI_RULE_FLAGS_NO_INDOOR (1<<2)
+#define NRF_WIFI_RULE_FLAGS_NO_OUTDOOR (1<<3)
+#define NRF_WIFI_RULE_FLAGS_DFS (1<<4)
+#define NRF_WIFI_RULE_FLAGS_PTP_ONLY  (1<<5)
+#define NRF_WIFI_RULE_FLAGS_PTMP_ONLY (1<<6)
+#define NRF_WIFI_RULE_FLAGS_NO_IR (1<<7)
+#define NRF_WIFI_RULE_FLAGS_IBSS (1<<8)
+#define NRF_WIFI_RULE_FLAGS_AUTO_BW (1<<11)
+#define NRF_WIFI_RULE_FLAGS_IR_CONCURRENT (1<<12)
+#define NRF_WIFI_RULE_FLAGS_NO_HT40MINUS (1<<13)
+#define NRF_WIFI_RULE_FLAGS_NO_HT40PLUS (1<<14)
+#define NRF_WIFI_RULE_FLAGS_NO_80MHZ (1<<15)
+#define NRF_WIFI_RULE_FLAGS_NO_160MHZ (1<<16)
+
+/**
+ * @brief This structure represents the information related to the regulatory domain
+ *  of a wireless device. The regulatory domain defines the specific rules and regulations
+ *  that govern the usage of radio frequencies in a particular geographical region.
+ *
+ */
+
+struct nrf_wifi_reg_rules {
+	/** Indicate which of the following parameters are valid */
+	unsigned int valid_fields;
+	/** NRF_WIFI_RULE_FLAGS_NO_CCK and NRF_WIFI_RULE_FLAGS_NO_INDOOR */
 	unsigned int rule_flags;
+	/** starting frequencry for the regulatory rule in KHz */
 	unsigned int freq_range_start;
+	/** ending frequency for the regulatory rule in KHz */
 	unsigned int freq_range_end;
+	/** maximum allowed bandwidth for this frequency range */
 	unsigned int freq_range_max_bw;
+	/** maximum allowed EIRP mBm (100 * dBm) */
 	unsigned int pwr_max_eirp;
 
 } __NRF_WIFI_PKD;
 
-/* NL80211_CMD_SET_REG , NL80211_CMD_GET_REG*/
-
-struct nrf_wifi_reg {
-	struct nrf_wifi_umac_hdr umac_hdr;
-
 #define NRF_WIFI_CMD_SET_REG_ALPHA2_VALID (1 << 0)
 #define NRF_WIFI_CMD_SET_REG_RULES_VALID (1 << 1)
 #define NRF_WIFI_CMD_SET_REG_DFS_REGION_VALID (1 << 2)
-	unsigned int valid_fields;
-	unsigned int dfs_region;
+
 #define MAX_NUM_REG_RULES 32
+
+/**
+ * @brief This structure represents an event that contains regulatory domain information.
+ *
+ */
+
+struct nrf_wifi_reg {
+	/** Header @ref nrf_wifi_umac_hdr */
+	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
+	unsigned int valid_fields;
+	/** region for regulatory */
+	unsigned int dfs_region;
+	/** No.of regulatory rules */
 	unsigned int num_reg_rules;
+	/** rules info. @ref nrf_wifi_reg_rules */
 	struct nrf_wifi_reg_rules nrf_wifi_reg_rules[MAX_NUM_REG_RULES];
+	/** Country code */
 	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 } __NRF_WIFI_PKD;
-
-/* NL80211_CMD_REQ_SET_REG */
-
-struct nrf_wifi_cmd_req_set_reg {
-	struct nrf_wifi_umac_hdr umac_hdr;
 
 #define NRF_WIFI_CMD_REQ_SET_REG_ALPHA2_VALID (1 << 0)
 #define NRF_WIFI_CMD_REQ_SET_REG_USER_REG_HINT_TYPE_VALID (1 << 1)
-/* This bit in valid_fields indicates user settings are forced (1) or not (0) */
 #define NRF_WIFI_CMD_REQ_SET_REG_USER_REG_FORCE (1 << 2)
+/**
+ * @brief This structure represents the command used to set the regulatory domain
+ *  for a wireless device. It allows configuring the device to adhere to the rules
+ *  and regulations specific to the geographical region in which it is operating.
+ *
+ */
+struct nrf_wifi_cmd_req_set_reg {
+	/** Header @ref nrf_wifi_umac_hdr */
+	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Indicate which of the following parameters are valid */
 	unsigned int valid_fields;
+	/** Type of regulatory hint passed from userspace */
 	unsigned int nrf_wifi_user_reg_hint_type;
+	/** Country code */
 	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents the status code for a command. It is used to indicate
+ *  the outcome or result of executing a specific command. The status code provides valuable
+ *  information about the success, failure, or any errors encountered during the execution
+ *  of the command, helping to understand the current state of the device.
+ *
+ */
 struct nrf_wifi_umac_event_cmd_status {
+	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Command id. see &enum nrf_wifi_umac_commands */
 	unsigned int cmd_id;
+	/** Status codes */
 	unsigned int cmd_status;
 } __NRF_WIFI_PKD;
 
