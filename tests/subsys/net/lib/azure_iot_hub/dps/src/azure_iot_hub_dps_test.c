@@ -235,7 +235,7 @@ void test_azure_iot_hub_dps_device_id_delete(void)
 	TEST_ASSERT_EQUAL_MEMORY(az_span_ptr(dps_reg_ctx.assigned_device_id),
 				 TEST_EXPECTED_DEVICE_ID, TEST_EXPECTED_DEVICE_ID_LEN);
 	TEST_ASSERT_EQUAL(0, azure_iot_hub_dps_device_id_delete());
-	TEST_ASSERT_EQUAL(NULL, az_span_ptr(dps_reg_ctx.assigned_device_id));
+	TEST_ASSERT_EQUAL_PTR(NULL, az_span_ptr(dps_reg_ctx.assigned_device_id));
 	TEST_ASSERT_EQUAL(0, az_span_size(dps_reg_ctx.assigned_device_id));
 	TEST_ASSERT_EQUAL(AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED, dps_reg_ctx.status);
 	TEST_ASSERT_EQUAL(DPS_STATE_UNINIT, dps_state);
@@ -254,8 +254,8 @@ void test_azure_iot_hub_dps_reset_connected(void)
 	TEST_ASSERT_EQUAL_MEMORY(az_span_ptr(dps_reg_ctx.assigned_device_id),
 				 TEST_EXPECTED_DEVICE_ID, TEST_EXPECTED_DEVICE_ID_LEN);
 	TEST_ASSERT_EQUAL(0, azure_iot_hub_dps_reset());
-	TEST_ASSERT_EQUAL(NULL, az_span_ptr(dps_reg_ctx.assigned_hub));
-	TEST_ASSERT_EQUAL(NULL, az_span_ptr(dps_reg_ctx.assigned_device_id));
+	TEST_ASSERT_EQUAL_PTR(NULL, az_span_ptr(dps_reg_ctx.assigned_hub));
+	TEST_ASSERT_EQUAL_PTR(NULL, az_span_ptr(dps_reg_ctx.assigned_device_id));
 	TEST_ASSERT_EQUAL(0, az_span_size(dps_reg_ctx.assigned_hub));
 	TEST_ASSERT_EQUAL(0, az_span_size(dps_reg_ctx.assigned_device_id));
 	TEST_ASSERT_EQUAL(AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED, dps_reg_ctx.status);

@@ -24,12 +24,11 @@ static uint8_t callback_count;
 /* Function used to verify internal context variables. */
 static void ctx_verify(struct ctx *expected)
 {
-	TEST_ASSERT_EQUAL(ctx.app_evt_handler,
-			  expected->app_evt_handler);
-	TEST_ASSERT_EQUAL(ctx.timeout_handler_work.work.handler,
-			  expected->timeout_handler_work.work.handler);
-	TEST_ASSERT_EQUAL(ctx.pending_list.head, expected->pending_list.head);
-	TEST_ASSERT_EQUAL(ctx.pending_list.tail, expected->pending_list.tail);
+	TEST_ASSERT_EQUAL_PTR(ctx.app_evt_handler, expected->app_evt_handler);
+	TEST_ASSERT_EQUAL_PTR(ctx.timeout_handler_work.work.handler,
+			      expected->timeout_handler_work.work.handler);
+	TEST_ASSERT_EQUAL_PTR(ctx.pending_list.head, expected->pending_list.head);
+	TEST_ASSERT_EQUAL_PTR(ctx.pending_list.tail, expected->pending_list.tail);
 	TEST_ASSERT_EQUAL(ctx.initialized, expected->initialized);
 	TEST_ASSERT_EQUAL(ctx.message_id_next, expected->message_id_next);
 }

@@ -187,7 +187,7 @@ void test_enc_cloud_location_empty(void)
 	ret = cloud_codec_encode_cloud_location(&codec, &data);
 
 	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
-	TEST_ASSERT_EQUAL(NULL, codec.buf);
+	TEST_ASSERT_EQUAL_PTR(NULL, codec.buf);
 	TEST_ASSERT_EQUAL(true, data.queued);
 }
 
@@ -199,7 +199,7 @@ void test_enc_agps_req(void)
 	ret = cloud_codec_encode_agps_request(&codec, &data);
 
 	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
-	TEST_ASSERT_EQUAL(NULL, codec.buf);
+	TEST_ASSERT_EQUAL_PTR(NULL, codec.buf);
 	TEST_ASSERT_EQUAL(false, data.queued);
 }
 
@@ -211,7 +211,7 @@ void test_enc_pgps_req(void)
 	ret = cloud_codec_encode_pgps_request(&codec, &data);
 
 	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
-	TEST_ASSERT_EQUAL(NULL, codec.buf);
+	TEST_ASSERT_EQUAL_PTR(NULL, codec.buf);
 	TEST_ASSERT_EQUAL(false, data.queued);
 }
 
@@ -392,7 +392,7 @@ void test_enc_data_empty(void)
 				&impact_buf,
 				&bat_buf);
 	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
-	TEST_ASSERT_EQUAL(NULL, codec.buf);
+	TEST_ASSERT_EQUAL_PTR(NULL, codec.buf);
 }
 
 /* tests batch encoding zero-length buffers */
@@ -417,7 +417,7 @@ void test_enc_batch_data_empty(void)
 				0, 0, 0, 0, 0, 0, 0);
 
 	TEST_ASSERT_EQUAL(-ENODATA, ret);
-	TEST_ASSERT_EQUAL(NULL, codec.buf);
+	TEST_ASSERT_EQUAL_PTR(NULL, codec.buf);
 }
 
 /* tests batch encoding single-element empty buffers */
@@ -441,7 +441,7 @@ void test_enc_batch_data_single_empty_element(void)
 				&bat_buf,
 				1, 1, 1, 1, 1, 1, 1);
 	TEST_ASSERT_EQUAL(-ENODATA, ret);
-	TEST_ASSERT_EQUAL(NULL, codec.buf);
+	TEST_ASSERT_EQUAL_PTR(NULL, codec.buf);
 }
 
 /* tests batch encoding typical battery data */
