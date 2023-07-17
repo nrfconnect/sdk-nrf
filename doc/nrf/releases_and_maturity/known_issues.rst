@@ -3550,6 +3550,25 @@ Trusted Firmware-M (TF-M)
 
 The issues in this section are related to the TF-M implementation in the |NCS|.
 
+.. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
+
+NCSDK-22629: TF-M might fail to reset when using nrfjprog version 10.22.x on nRF9160 platforms
+  Issuing a reset command using nrfjprog for nRF9160 platforms using the following command might fail to successfully complete and might cause a TF-M core panic:
+
+  .. code-block::
+
+     nrfjprog -f nrf91 --reset
+
+  **Workaround:** Use an nrfjprog version that is not affected or do not use the --reset option, for example use --pinreset or --debugreset instead:
+
+  .. code-block::
+
+     nrfjprog -f nrf91 --pinreset
+
+  .. code-block::
+
+     nrfjprog -f nrf91 --debugreset
+
 .. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-18321: TF-M PSA architecture tests do not build with CMake v3.25.x
