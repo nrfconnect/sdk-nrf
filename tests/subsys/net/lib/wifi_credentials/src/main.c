@@ -244,7 +244,7 @@ void verify_ssid_cache_cb(void *cb_arg, const char *ssid, size_t ssid_len)
 	static const char *const ssids[] = {SSID3, SSID2};
 
 	TEST_ASSERT_EQUAL(0, strncmp(ssids[call_count++], ssid, ssid_len));
-	TEST_ASSERT_EQUAL(NULL, cb_arg);
+	TEST_ASSERT_EQUAL_PTR(NULL, cb_arg);
 }
 
 /* Verify that wifi_credentials behaves correctly when the storage limit is reached. */

@@ -104,15 +104,15 @@ void test_add(void)
 	TEST_ASSERT_EQUAL(0 + CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET,
 			  psa_ps_set_fake.arg0_val);
 	TEST_ASSERT_EQUAL(sizeof(struct wifi_credentials_personal), psa_ps_set_fake.arg1_val);
-	TEST_ASSERT_EQUAL(&example1, psa_ps_set_fake.arg2_val);
+	TEST_ASSERT_EQUAL_PTR(&example1, psa_ps_set_fake.arg2_val);
 	TEST_ASSERT_EQUAL(0, psa_ps_set_fake.arg3_val);
 
 	ret = wifi_credentials_store_entry(1, &example2, sizeof(struct wifi_credentials_personal));
 	TEST_ASSERT_EQUAL(1 + CONFIG_WIFI_CREDENTIALS_BACKEND_PSA_UID_OFFSET,
 			  psa_ps_set_fake.arg0_val);
 	TEST_ASSERT_EQUAL(sizeof(struct wifi_credentials_personal), psa_ps_set_fake.arg1_val);
-	TEST_ASSERT_EQUAL(&example2, psa_ps_set_fake.arg2_val);
-	TEST_ASSERT_EQUAL(0, psa_ps_set_fake.arg3_val);
+	TEST_ASSERT_EQUAL_PTR(&example2, psa_ps_set_fake.arg2_val);
+	TEST_ASSERT_EQUAL_PTR(0, psa_ps_set_fake.arg3_val);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	TEST_ASSERT_EQUAL(2, psa_ps_set_fake.call_count);
@@ -131,7 +131,7 @@ void test_get(void)
 			  psa_ps_get_fake.arg0_val);
 	TEST_ASSERT_EQUAL(0, psa_ps_get_fake.arg1_val);
 	TEST_ASSERT_EQUAL(sizeof(struct wifi_credentials_personal), psa_ps_get_fake.arg2_val);
-	TEST_ASSERT_EQUAL(buf, psa_ps_get_fake.arg3_val);
+	TEST_ASSERT_EQUAL_PTR(buf, psa_ps_get_fake.arg3_val);
 
 	ret = wifi_credentials_load_entry(1, buf, ARRAY_SIZE(buf));
 
@@ -140,7 +140,7 @@ void test_get(void)
 			  psa_ps_get_fake.arg0_val);
 	TEST_ASSERT_EQUAL(0, psa_ps_get_fake.arg1_val);
 	TEST_ASSERT_EQUAL(sizeof(struct wifi_credentials_personal), psa_ps_get_fake.arg2_val);
-	TEST_ASSERT_EQUAL(buf, psa_ps_get_fake.arg3_val);
+	TEST_ASSERT_EQUAL_PTR(buf, psa_ps_get_fake.arg3_val);
 
 	TEST_ASSERT_EQUAL(2, psa_ps_get_fake.call_count);
 }

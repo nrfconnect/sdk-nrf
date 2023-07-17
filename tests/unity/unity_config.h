@@ -5,6 +5,10 @@
 #ifndef UNITY_CONFIG_H__
 #define UNITY_CONFIG_H__
 
+#ifdef CONFIG_BOARD_NATIVE_POSIX
+#define UNITY_SUPPORT_64 1
+#endif
+
 #ifndef CONFIG_BOARD_NATIVE_POSIX
 #include <stddef.h>
 #include <stdio.h>
