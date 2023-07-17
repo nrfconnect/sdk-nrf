@@ -117,6 +117,12 @@ static bool persistent_session;
  */
 static bool c2d_topic_modified;
 
+/* Flag to indicate if the device status has been added to the shadow.
+ * This only needs to be done once per boot.
+ * The user application is responsible for keeping dynamic data up to date.
+ */
+static bool add_dev_status = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS);
+
 #if defined(CONFIG_NRF_CLOUD_LOCATION) && defined(CONFIG_NRF_CLOUD_MQTT)
 static nrf_cloud_location_response_t location_cb;
 void nfsm_set_location_response_cb(nrf_cloud_location_response_t cb)
@@ -165,11 +171,13 @@ static int state_ua_pin_wait(void)
 	};
 
 	/* Publish report to the cloud on current status. */
-	err = nrf_cloud_state_encode(STATE_UA_PIN_WAIT, false, &msg.data);
+	err = nrf_cloud_state_encode(STATE_UA_PIN_WAIT, false, add_dev_status, &msg.data);
 	if (err) {
 		LOG_ERR("nrf_cloud_state_encode failed %d", err);
 		return err;
 	}
+
+	add_dev_status = false;
 
 	err = nct_cc_send(&msg);
 
@@ -311,11 +319,14 @@ static int state_ua_pin_complete(void)
 		.message_id = NCT_MSG_ID_PAIR_STATUS_REPORT,
 	};
 
-	err = nrf_cloud_state_encode(STATE_UA_PIN_COMPLETE, c2d_topic_modified, &msg.data);
+	err = nrf_cloud_state_encode(STATE_UA_PIN_COMPLETE, c2d_topic_modified,
+				     add_dev_status, &msg.data);
 	if (err) {
 		LOG_ERR("nrf_cloud_state_encode failed %d", err);
 		return err;
 	}
+
+	add_dev_status = false;
 
 	c2d_topic_modified = false;
 
