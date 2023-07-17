@@ -99,7 +99,7 @@ int nrf_cloud_data_endpoint_decode(const struct nrf_cloud_data *input,
 
 /** @brief Encode state information. */
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
-			   struct nrf_cloud_data *output);
+			   const bool add_dev_status, struct nrf_cloud_data *output);
 
 /** @brief Search input for config and encode response if necessary. */
 int nrf_cloud_shadow_config_response_encode(struct nrf_cloud_data const *const input,

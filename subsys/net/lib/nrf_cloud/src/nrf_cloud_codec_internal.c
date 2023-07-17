@@ -611,49 +611,29 @@ end:
 	return err;
 }
 
-static int add_device_status(cJSON * const reported_obj)
+static int device_status_encode(cJSON * const reported_obj)
 {
-	/* Only add device status once.
-	 * The application is responsible for keeping dynamic data up to date.
-	 */
-	static bool status_added;
-	int err = 0;
+	struct nrf_cloud_modem_info mdm_inf = {
+		.device = NRF_CLOUD_INFO_SET,
+		.application_version = application_version
+	};
+	cJSON *device_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_DEVICE);
 
-	if (!status_added && IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS)) {
-
-		if (status_added) {
-			return 0;
-		}
-
-		struct nrf_cloud_modem_info mdm_inf = {
-			.device = NRF_CLOUD_INFO_SET,
-			.application_version = application_version
-		};
-		cJSON *device_obj = cJSON_AddObjectToObjectCS(reported_obj,
-							      NRF_CLOUD_JSON_KEY_DEVICE);
-
-		if (!device_obj) {
-			return -ENOMEM;
-		}
-
-		mdm_inf.network = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK) ?
-					     NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
-
-		mdm_inf.sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
-					 NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
-
-		err = info_encode(device_obj, &mdm_inf, NULL);
-
-		if (!err) {
-			status_added = true;
-		}
+	if (!device_obj) {
+		return -ENOMEM;
 	}
 
-	return err;
+	mdm_inf.network = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK) ?
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+
+	mdm_inf.sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+
+	return info_encode(device_obj, &mdm_inf, NULL);
 }
 
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
-			   struct nrf_cloud_data *output)
+			   const bool add_dev_status, struct nrf_cloud_data *output)
 {
 	__ASSERT_NO_MSG(output != NULL);
 
@@ -726,7 +706,9 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 					       rx_endp.ptr);
 		}
 
-		ret += add_device_status(reported_obj);
+		if (add_dev_status) {
+			ret += device_status_encode(reported_obj);
+		}
 
 		if (ret != 0) {
 			cJSON_Delete(root_obj);
