@@ -13,3 +13,10 @@
   platforms:
     - all
   comment: "Temporary disable till the issue is fixed"
+
+- scenarios:
+    - applications.nrf_desktop.zrelease
+  platforms:
+    - nrf52833dk_nrf52820
+    - nrf52820dongle_nrf52820
+  comment: "Temporary disabled due to flash overflow"
