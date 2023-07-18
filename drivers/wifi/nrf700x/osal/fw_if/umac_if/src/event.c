@@ -73,7 +73,7 @@ out:
 }
 #endif /* CONFIG_NRF700X_DATA_TX */
 
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 static void umac_event_connect(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			       void *event_data)
 {
@@ -130,7 +130,7 @@ static void umac_event_connect(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	return;
 
 }
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
 static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
@@ -231,7 +231,7 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 
 		vif_ctx->ifflags = true;
 		break;
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	case NRF_WIFI_UMAC_EVENT_TWT_SLEEP:
 		if (callbk_fns->twt_sleep_callbk_fn)
 			callbk_fns->twt_sleep_callbk_fn(vif_ctx->os_vif_ctx,
@@ -463,13 +463,13 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 					      __func__,
 					      umac_hdr->cmd_evnt);
 		break;
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	case NRF_WIFI_UMAC_EVENT_NEW_STATION:
 	case NRF_WIFI_UMAC_EVENT_DEL_STATION:
 		umac_event_connect(fmac_dev_ctx,
 				   event_data);
 		break;
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 #ifdef CONFIG_NRF700X_P2P_MODE
 	case NRF_WIFI_UMAC_EVENT_REMAIN_ON_CHANNEL:
 		if (callbk_fns->roc_callbk_fn)
@@ -508,7 +508,7 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 	case NRF_WIFI_UMAC_EVENT_REG_CHANGE:
 		/* TODO: Inform the user space about the regulatory change */
 		break;
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 	default:
 		wifi_nrf_osal_log_dbg(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No callback registered for event %d\n",

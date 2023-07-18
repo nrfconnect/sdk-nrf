@@ -123,7 +123,7 @@ enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *fmac_dev_ctx,
 enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *fmac_dev_ctx,
 						unsigned char if_idx);
 
-#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
 /**
  * @brief Issue a 802.11 authentication request to the RPU firmware.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -486,7 +486,7 @@ enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 /**
  * @brief Get unused MAC address from base mac address.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.

@@ -35,7 +35,7 @@ bool wifi_nrf_util_ether_addr_equal(const unsigned char *addr_1,
 }
 
 
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 unsigned short wifi_nrf_util_rx_get_eth_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					     void *nwb)
 {
@@ -335,7 +335,7 @@ unsigned char *wifi_nrf_util_get_src(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 							    nwb) + WIFI_NRF_FMAC_ETH_ADDR_LEN;
 }
 
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 
 bool wifi_nrf_util_is_arr_zero(unsigned char *arr,

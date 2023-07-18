@@ -79,7 +79,7 @@ zephyr_library_sources_ifdef(CONFIG_NRF700X_DATA_TX
 	osal/fw_if/umac_if/src/fmac_peer.c
 )
 
-zephyr_library_sources_ifdef(CONFIG_WPA_SUPP
+zephyr_library_sources_ifdef(CONFIG_NRF700X_STA_MODE
 	zephyr/src/zephyr_wpa_supp_if.c
 	zephyr/src/zephyr_wifi_mgmt.c
 	osal/fw_if/umac_if/src/fmac_peer.c
@@ -92,7 +92,7 @@ zephyr_library_sources_ifdef(CONFIG_NRF700X_AP_MODE
 
 
 # Without WPA supplicant we only support scan
-zephyr_library_sources_ifdef(CONFIG_WPA_SUPP
+zephyr_library_sources_ifdef(CONFIG_NRF700X_STA_MODE
 	zephyr/src/zephyr_wpa_supp_if.c
 	osal/fw_if/umac_if/src/fmac_peer.c
 	osal/fw_if/umac_if/src/fmac_util.c

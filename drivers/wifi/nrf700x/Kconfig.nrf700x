@@ -22,6 +22,10 @@ module-str = Log level for Wi-Fi nRF700x bus layers
 module-help = Sets log level for Wi-Fi nRF700x bus layers
 source "subsys/net/Kconfig.template.log_config.net"
 
+config NRF700X_STA_MODE
+	bool
+	default y if WPA_SUPP
+
 config NRF_WIFI_IF_AUTO_START
 	bool
 	default y
@@ -92,7 +96,7 @@ config NRF700X_MAX_TX_PENDING_QLEN
 
 config NRF700X_RADIO_TEST
 	bool "Radio test mode of the nRF700x driver"
-	depends on !NRF700X_AP_MODE && !NRF700X_P2P_MODE && !NRF700X_DATA_TX
+	depends on !NRF700X_STA_MODE && !NRF700X_AP_MODE && !NRF700X_P2P_MODE && !NRF700X_DATA_TX
 
 config NRF700X_AP_MODE
 	bool "Enable Access point mode"
@@ -104,7 +108,7 @@ config NRF700X_P2P_MODE
 
 config NRF700X_DATA_TX
 	bool "Enable TX data path in the driver"
-	default y if WPA_SUPP || NRF700X_AP_MODE || NRF700X_P2P_MODE
+	default y if NRF700X_STA_MODE || NRF700X_AP_MODE || NRF700X_P2P_MODE
 
 config NRF700X_UTIL
 	depends on SHELL

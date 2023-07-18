@@ -212,7 +212,7 @@ static int nrf_wifi_util_set_rts_threshold(const struct shell *shell,
 	return 0;
 }
 
-
+#ifdef CONFIG_NRF700X_STA_MODE
 static int nrf_wifi_util_set_uapsd_queue(const struct shell *shell,
 					 size_t argc,
 					 const char *argv[])
@@ -249,6 +249,7 @@ static int nrf_wifi_util_set_uapsd_queue(const struct shell *shell,
 
 	return 0;
 }
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 
 static int nrf_wifi_util_show_cfg(const struct shell *shell,
@@ -299,7 +300,7 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 	return 0;
 }
 
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 static int nrf_wifi_util_tx_stats(const struct shell *shell,
 				  size_t argc,
 				  const char *argv[])
@@ -344,7 +345,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 
 	return 0;
 }
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 
 static int nrf_wifi_util_tx_rate(const struct shell *shell,
@@ -913,19 +914,21 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_set_rts_threshold,
 		      2,
 		      0),
+#ifdef CONFIG_NRF700X_STA_MODE
 	SHELL_CMD_ARG(uapsd_queue,
 		      NULL,
 		      "<val> - 0 to 15",
 		      nrf_wifi_util_set_uapsd_queue,
 		      2,
 		      0),
+#endif /* CONFIG_NRF700X_STA_MODE */
 	SHELL_CMD_ARG(show_config,
 		      NULL,
 		      "Display the current configuration values",
 		      nrf_wifi_util_show_cfg,
 		      1,
 		      0),
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
 		      "Displays transmit statistics\n"
@@ -933,7 +936,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_tx_stats,
 		      2,
 		      0),
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 	SHELL_CMD_ARG(tx_rate,
 		      NULL,
 		      "Sets TX data rate to either a fixed value or AUTO\n"
