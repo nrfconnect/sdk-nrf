@@ -21,9 +21,9 @@
 #ifdef CONFIG_NETWORKING
 #include <zephyr_net_if.h>
 #endif /* CONFIG_NETWORKING */
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 #include <drivers/driver_zephyr.h>
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 #include <fmac_api.h>
@@ -56,7 +56,7 @@ struct wifi_nrf_vif_ctx_zep {
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	unsigned int assoc_freq;
 	enum wifi_nrf_fmac_if_carr_state if_carr_state;
 	struct wpa_signal_info *signal_info;
@@ -78,7 +78,7 @@ struct wifi_nrf_vif_ctx_zep {
 #endif /* CONFIG_NRF700X_DATA_TX */
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 };
 
 struct wifi_nrf_vif_ctx_map {

@@ -25,7 +25,7 @@
 #include <zephyr_fmac_main.h>
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 #include <zephyr_wifi_mgmt_scan.h>
 #include <zephyr_wifi_mgmt.h>
 #include <zephyr_wpa_supp_if.h>
@@ -111,9 +111,9 @@ void wifi_nrf_event_proc_scan_start_zep(void *if_priv,
 		return;
 	}
 
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	wifi_nrf_wpa_supp_event_proc_scan_start(if_priv);
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 }
 
 
@@ -138,13 +138,13 @@ void wifi_nrf_event_proc_scan_done_zep(void *vif_ctx,
 			LOG_ERR("%s: wifi_nrf_disp_scan_res_get_zep failed\n", __func__);
 			return;
 		}
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	} else if (vif_ctx_zep->scan_type == SCAN_CONNECT) {
 		wifi_nrf_wpa_supp_event_proc_scan_done(vif_ctx_zep,
 						       scan_done_event,
 						       event_len,
 						       0);
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 	} else {
 		LOG_ERR("%s: Scan type = %d not supported yet\n", __func__, vif_ctx_zep->scan_type);
 		return;
@@ -179,7 +179,7 @@ void wifi_nrf_scan_timeout_work(struct k_work *work)
 		disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, &res);
 		vif_ctx_zep->disp_scan_cb = NULL;
 	} else {
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 		/* WPA supplicant scan */
 		union wpa_event_data event;
 		struct scan_info *info = NULL;
@@ -197,13 +197,13 @@ void wifi_nrf_scan_timeout_work(struct k_work *work)
 			vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
 				&event);
 		}
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 	}
 
 	vif_ctx_zep->scan_in_progress = false;
 }
 
-
+#ifdef CONFIG_NRF700X_STA_MODE
 static void wifi_nrf_process_rssi_from_rx(void *vif_ctx,
 				   signed short signal)
 {
@@ -231,6 +231,8 @@ static void wifi_nrf_process_rssi_from_rx(void *vif_ctx,
 	vif_ctx_zep->rssi_record_timestamp_us =
 		wifi_nrf_osal_time_get_curr_us(fmac_dev_ctx->fpriv->opriv);
 }
+#endif /* CONFIG_NRF700X_STA_MODE */
+
 
 void wifi_nrf_event_get_reg_zep(void *vif_ctx,
 				struct nrf_wifi_reg *get_reg_event,
@@ -311,7 +313,7 @@ int wifi_nrf_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 err:
 	return ret;
 }
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 void wifi_nrf_event_proc_cookie_rsp(void *vif_ctx,
 				    struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp_event,
 				    unsigned int event_len)
@@ -345,7 +347,7 @@ void wifi_nrf_event_proc_cookie_rsp(void *vif_ctx,
 	 * here to use the cookie and host_cookie to map requests to responses.
 	 */
 }
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep)
@@ -503,7 +505,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 	callbk_fns.rx_bcn_prb_resp_callbk_fn = wifi_nrf_rx_bcn_prb_resp_frm;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	callbk_fns.twt_config_callbk_fn = wifi_nrf_event_proc_twt_setup_zep;
 	callbk_fns.twt_teardown_callbk_fn = wifi_nrf_event_proc_twt_teardown_zep;
 	callbk_fns.twt_sleep_callbk_fn = wifi_nrf_event_proc_twt_sleep_zep;
@@ -523,7 +525,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	callbk_fns.event_get_wiphy = wifi_nrf_wpa_supp_event_get_wiphy;
 	callbk_fns.mgmt_rx_callbk_fn = wifi_nrf_wpa_supp_event_mgmt_rx_callbk_fn;
 	callbk_fns.get_conn_info_callbk_fn = wifi_nrf_supp_event_proc_get_conn_info;
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 	rpu_drv_priv_zep.fmac_priv = wifi_nrf_fmac_init(&data_config,
 							rx_buf_pools,
@@ -580,12 +582,12 @@ static struct wifi_mgmt_ops wifi_nrf_mgmt_ops = {
 #ifdef CONFIG_NET_STATISTICS_WIFI
 	.get_stats = wifi_nrf_stats_get,
 #endif /* CONFIG_NET_STATISTICS_WIFI */
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 	.set_power_save = wifi_nrf_set_power_save,
 	.set_twt = wifi_nrf_set_twt,
 	.reg_domain = wifi_nrf_reg_domain,
 	.get_power_save_config = wifi_nrf_get_power_save_config,
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 };
 
 
@@ -602,7 +604,7 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.wifi_mgmt_api = &wifi_nrf_mgmt_ops,
 };
 
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.init = wifi_nrf_wpa_supp_dev_init,
 	.deinit = wifi_nrf_wpa_supp_dev_deinit,
@@ -621,7 +623,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.get_capa = wifi_nrf_supp_get_capa,
 	.get_conn_info = wifi_nrf_supp_get_conn_info,
 };
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
@@ -631,11 +633,11 @@ ETH_NET_DEVICE_INIT(wlan0, /* name - token */
 		    wifi_nrf_drv_main_zep, /* init_fn */
 		    NULL, /* pm_action_cb */
 		    &rpu_drv_priv_zep.rpu_ctx_zep.vif_ctx_zep[0], /* data */
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 		    &wpa_supp_ops, /* cfg */
-#else /* CONFIG_WPA_SUPP */
+#else /* CONFIG_NRF700X_STA_MODE */
 		    NULL, /* cfg */
-#endif /* !CONFIG_WPA_SUPP */
+#endif /* !CONFIG_NRF700X_STA_MODE */
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
 		    &wifi_offload_ops, /* api */
 		    1500); /*mtu */
@@ -653,7 +655,7 @@ DEVICE_DEFINE(wlan0, /* name - token */
 	      POST_KERNEL,
 	      CONFIG_WIFI_INIT_PRIORITY, /* prio */
 	      NULL); /* api */
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 #ifdef CONFIG_L2_WIFI_CONNECTIVITY
 CONN_MGR_BIND_CONN(wlan0, L2_CONN_WLAN0);

@@ -116,7 +116,7 @@ struct wifi_nrf_fmac_callbk_fns {
 					  signed short signal);
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 
-#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
 	/** Callback function to be called when an interface association state changes. */
 	enum wifi_nrf_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
 							    enum wifi_nrf_fmac_if_carr_state cs);
@@ -245,10 +245,10 @@ struct wifi_nrf_fmac_callbk_fns {
 	/** Callback function to be called when rssi is to be processed from the received frame. */
 	void (*process_rssi_from_rx)(void *os_vif_ctx,
 				     signed short signal);
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 };
 
-#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
 /**
  * @brief The TWT sleep state of device.
  *
@@ -322,7 +322,7 @@ struct tx_config {
 	void *tx_done_tasklet_event_q;
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 };
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 /**
  * @brief Structure to hold context information for the UMAC IF layer.
@@ -345,7 +345,7 @@ struct wifi_nrf_fmac_priv {
 	unsigned int rx_desc[MAX_NUM_OF_RX_QUEUES];
 	/** Maximum number of host buffers needed for RX frames. */
 	unsigned int num_rx_bufs;
-#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
 	/** Maximum number of tokens available for TX. */
 	unsigned char num_tx_tokens;
 	/** Maximum number of TX tokens available reserved per AC. */
@@ -356,7 +356,7 @@ struct wifi_nrf_fmac_priv {
 	unsigned int max_ampdu_len_per_token;
 	/** Available (remaining) AMPDU length per token. */
 	unsigned int avail_ampdu_len_per_token;
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 };
 
 /**
@@ -402,7 +402,7 @@ struct wifi_nrf_fmac_dev_ctx {
 	unsigned char alpha2[3];
 	/** Queue for storing mapping info of RX buffers. */
 	struct wifi_nrf_fmac_buf_map_info *rx_buf_info;
-#if defined(CONFIG_WPA_SUPP) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
 	/** Queue for storing mapping info of TX buffers. */
 	struct wifi_nrf_fmac_buf_map_info *tx_buf_info;
 	/** Context information related to TX path. */
@@ -413,7 +413,7 @@ struct wifi_nrf_fmac_dev_ctx {
 	/** Tasklet for TX done. */
 	void *tx_done_tasklet;
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 };
 
 

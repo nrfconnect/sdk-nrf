@@ -684,7 +684,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_WPA_SUPP
+#ifdef CONFIG_NRF700X_STA_MODE
 enum wifi_nrf_status wifi_nrf_fmac_auth(void *dev_ctx,
 					unsigned char if_idx,
 					struct nrf_wifi_umac_auth_info *auth_info)
@@ -1847,7 +1847,7 @@ out:
 }
 
 #endif /* CONFIG_NRF700X_P2P_MODE */
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
 
 enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *dev_ctx,
 					   unsigned char if_idx,
@@ -3193,4 +3193,4 @@ out:
 
 	return status;
 }
-#endif /* CONFIG_WPA_SUPP */
+#endif /* CONFIG_NRF700X_STA_MODE */
