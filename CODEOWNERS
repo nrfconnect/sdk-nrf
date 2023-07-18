@@ -162,7 +162,7 @@ Kconfig*                                  @tejlmand
 /samples/cellular/azure_*                 @jtguggedal @simensrostad @coderbyheart
 /samples/cellular/battery/                @MirkoCovizzi
 /samples/cellular/location/               @trantanen @jhirsi @tokangas
-/samples/cellular/lwm2m_client/           @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
+/samples/cellular/lwm2m_client/           @rlubos @SeppoTakalo @jheiskan81 @juhaylinen
 /samples/cellular/modem_shell/            @trantanen @jhirsi @tokangas
 /samples/cellular/nidd/                   @stig-bjorlykke
 /samples/cellular/nrf_cloud_*             @plskeggs @jayteemo @glarsennordic
@@ -228,7 +228,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/aws_*                     @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/ftp_client/               @junqingzou
 /subsys/net/lib/icalendar_parser/         @lats1980
-/subsys/net/lib/lwm2m_client_utils/       @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
+/subsys/net/lib/lwm2m_client_utils/       @rlubos @SeppoTakalo @jheiskan81 @juhaylinen
 /subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
 /subsys/net/lib/nrf_provisioning/         @SeppoTakalo @juhaylinen
 /subsys/net/lib/zzhc/                     @junqingzou
@@ -296,7 +296,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/aws_*/              @simensrostad
 /tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
-/tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
+/tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jheiskan81 @juhaylinen
 /tests/subsys/net/lib/nrf_cloud/          @tony-le-24
 /tests/subsys/net/lib/nrf_provisioning/   @SeppoTakalo @juhaylinen
 /tests/subsys/net/lib/wifi_credentials*/  @maxd-nordic
