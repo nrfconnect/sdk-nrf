@@ -15,6 +15,7 @@
 #include <stdio.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/net/net_if.h>
 #ifndef CONFIG_NRF700X_RADIO_TEST
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/ethernet.h>
@@ -117,5 +118,6 @@ const char *wifi_nrf_get_drv_version(void);
 enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);
 enum wifi_nrf_status wifi_nrf_fmac_dev_rem_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);
 enum wifi_nrf_status wifi_nrf_fw_load(void *rpu_ctx);
+struct wifi_nrf_vif_ctx_zep *wifi_nrf_get_vif_ctx(struct net_if *iface);
 
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */

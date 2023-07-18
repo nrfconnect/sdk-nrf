@@ -99,6 +99,26 @@ const char *wifi_nrf_get_drv_version(void)
 	return NRF700X_DRIVER_VERSION;
 }
 
+/* If the interface is not Wi-Fi then errors are expected, so, fail silently */
+struct wifi_nrf_vif_ctx_zep *wifi_nrf_get_vif_ctx(struct net_if *iface)
+{
+	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+
+	if (!iface || !rpu_ctx) {
+		return NULL;
+	}
+
+	for (int i = 0; i < ARRAY_SIZE(rpu_ctx->vif_ctx_zep); i++) {
+		if (rpu_ctx->vif_ctx_zep[i].zep_net_if_ctx == iface) {
+			vif_ctx_zep = &rpu_ctx->vif_ctx_zep[i];
+			break;
+		}
+	}
+
+	return vif_ctx_zep;
+}
+
 void wifi_nrf_event_proc_scan_start_zep(void *if_priv,
 					struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
 					unsigned int event_len)
