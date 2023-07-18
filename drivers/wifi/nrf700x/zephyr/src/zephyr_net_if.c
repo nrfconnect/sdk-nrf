@@ -188,6 +188,13 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	enum wifi_nrf_status status;
 	uint8_t mac_string_buf[sizeof("xx:xx:xx:xx:xx:xx")];
 
+	if (mgmt_event != NET_EVENT_IPV4_MADDR_ADD &&
+	    mgmt_event != NET_EVENT_IPV4_MADDR_DEL &&
+	    mgmt_event != NET_EVENT_IPV6_MADDR_ADD &&
+	    mgmt_event != NET_EVENT_IPV6_MADDR_DEL) {
+		return;
+	}
+
 	vif_ctx_zep = wifi_nrf_get_vif_ctx(iface);
 	if (!vif_ctx_zep) {
 		return;
