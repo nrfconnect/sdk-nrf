@@ -33,9 +33,9 @@ tests:
       - nrf21540dk_nrf52840
     platform_allow: >
       nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-  sample.matter.lock.release.nrf21540_ek:
+  sample.matter.lock.release.nrf21540ek:
     build_only: true
-    extra_args: CONF_FILE=prj_release.conf SHIELD=nrf21540_ek
+    extra_args: CONF_FILE=prj_release.conf SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp

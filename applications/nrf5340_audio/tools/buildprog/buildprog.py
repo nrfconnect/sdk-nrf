@@ -107,7 +107,7 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
             device_flag += " -DCONFIG_B0N_MINIMAL=y"
 
         if options.nrf21540:
-            device_flag += " -DSHIELD=nrf21540_ek_fwd"
+            device_flag += " -DSHIELD=nrf21540ek_fwd"
 
         if os.name == 'nt':
             release_flag = release_flag.replace('\\', '/')

@@ -135,7 +135,7 @@ The following boards are defined in the :file:`nrf/boards/arm/` folder.
 |                   |            |                                                          | ``nrf7002dk_nrf5340_cpuapp_ns``       |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 
-The :ref:`nRF21540 EK shield <ug_radio_fem_nrf21540_ek>` is defined in the :file:`nrf/boards/shields` folder.
+The :ref:`nRF21540 EK shield <ug_radio_fem_nrf21540ek>` is defined in the :file:`nrf/boards/shields` folder.
 
 Custom boards
 *************
