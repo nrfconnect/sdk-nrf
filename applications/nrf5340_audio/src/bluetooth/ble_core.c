@@ -112,7 +112,7 @@ static void on_bt_ready(int err)
 	ble_core_le_lost_notify_enable();
 
 #if (CONFIG_NRF_21540_ACTIVE)
-	/* Indexes for the pins gotten from nrf21540_ek_fwd.overlay */
+	/* Indexes for the pins gotten from nrf21540ek_fwd.overlay */
 	uint8_t tx_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),
 						     gpios, 0);
 	uint8_t rx_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_PATH(nrf_gpio_forwarder, nrf21540_gpio_if),

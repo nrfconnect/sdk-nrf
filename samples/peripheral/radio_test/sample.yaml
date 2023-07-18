@@ -14,7 +14,7 @@ tests:
     tags: ci_build
   sample.peripheral.radio_test.nrf5340_nrf21540:
     build_only: true
-    extra_args: SHIELD=nrf21540_ek
+    extra_args: SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet
     platform_allow: nrf5340dk_nrf5340_cpunet
@@ -29,7 +29,7 @@ tests:
     tags: ci_build
   sample.peripheral.radio_test.nrf5340_nrf21540_usb:
     build_only: true
-    extra_args: SHIELD=nrf21540_ek
+    extra_args: SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_RADIO_TEST_USB=y
     integration_platforms:
@@ -38,7 +38,7 @@ tests:
     tags: ci_build
   sample.peripheral.radio_test.nrf5340_nrf21540.no_automatic_power:
     build_only: true
-    extra_args: SHIELD=nrf21540_ek
+    extra_args: SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC=n
     integration_platforms:

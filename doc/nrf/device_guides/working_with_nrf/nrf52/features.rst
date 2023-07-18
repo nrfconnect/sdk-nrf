@@ -72,7 +72,7 @@ Devices in the nRF52 Series are supported by these boards in the Zephyr open sou
      - ``nrf21540dk_nrf52840``
      - `Product Specification <nRF21540 Product Specification_>`_
 
-See :ref:`ug_radio_fem_nrf21540_ek` to learn how to use this RF front-end module (FEM) with the nRF52 Series devices.
+See :ref:`ug_radio_fem_nrf21540ek` to learn how to use this RF front-end module (FEM) with the nRF52 Series devices.
 
 Secure bootloader chain
 ***********************

@@ -4,5 +4,5 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config SHIELD_NRF21540_EK
-	def_bool $(shields_list_contains,nrf21540_ek)
+config SHIELD_NRF21540EK
+	def_bool $(shields_list_contains,nrf21540ek)

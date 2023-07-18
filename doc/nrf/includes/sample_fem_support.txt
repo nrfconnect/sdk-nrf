@@ -3,8 +3,8 @@ You can add support for the nRF21540 front-end module to this sample by using on
 * Build the sample for one board that contains the nRF21540 FEM, such as :ref:`nrf21540dk_nrf52840 <zephyr:nrf21540dk_nrf52840>`.
 * Manually create a devicetree overlay file that describes how FEM is connected to the nRF5 SoC in your device.
   See :ref:`zephyr:set-devicetree-overlays` for different ways of adding the overlay file.
-* Provide nRF21540 FEM capabilities by using a :ref:`shield <zephyr:shields>`, for example the :ref:`ug_radio_fem_nrf21540_ek` shield that is available in the |NCS|.
-  In this case, build the project for a board connected to the shield you are using with an appropriate variable included in the build command, for example ``SHIELD=nrf21540_ek``.
+* Provide nRF21540 FEM capabilities by using a :ref:`shield <zephyr:shields>`, for example the :ref:`ug_radio_fem_nrf21540ek` shield that is available in the |NCS|.
+  In this case, build the project for a board connected to the shield you are using with an appropriate variable included in the build command, for example ``SHIELD=nrf21540ek``.
   This variable instructs the build system to append the appropriate devicetree overlay file.
 
   .. tabs::
@@ -12,7 +12,7 @@ You can add support for the nRF21540 front-end module to this sample by using on
      .. group-tab:: nRF Connect for VS Code
 
         To build the sample in the nRF Connect for VS Code IDE for an nRF52840 DK with the nRF21540 EK attached, add the shield variable in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
-        For example: ``-DSHIELD=nrf21540_ek``.
+        For example: ``-DSHIELD=nrf21540ek``.
 
         See `nRF Connect for VS Code extension pack <How to work with build configurations_>`_ documentation for more information.
 
@@ -22,9 +22,9 @@ You can add support for the nRF21540 front-end module to this sample by using on
 
         .. code-block:: console
 
-           west build -b nrf52840dk_nrf52840 -- -DSHIELD=nrf21540_ek
+           west build -b nrf52840dk_nrf52840 -- -DSHIELD=nrf21540ek
 
-  See :ref:`Programming nRF21540 EK <ug_radio_fem_nrf21540_ek_programming>` for information about how to program when you are using a board with a network core, for example nRF5340 DK.
+  See :ref:`Programming nRF21540 EK <ug_radio_fem_nrf21540ek_programming>` for information about how to program when you are using a board with a network core, for example nRF5340 DK.
 
 Each of these options adds the description of the nRF21540 FEM to the devicetree.
 See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.

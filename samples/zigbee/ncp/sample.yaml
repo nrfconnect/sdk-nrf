@@ -54,7 +54,7 @@ tests:
 
   sample.zigbee.ncp.with_nrf21540ek:
     build_only: true
-    extra_args: SHIELD=nrf21540_ek
+    extra_args: SHIELD=nrf21540ek
     integration_platforms:
       - nrf52840dk_nrf52840
     platform_allow: nrf52840dk_nrf52840

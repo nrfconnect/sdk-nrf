@@ -362,7 +362,7 @@ Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek -DCONFIG_DTM_USB=y
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek -DCONFIG_DTM_USB=y
 
 .. _dtm_testing:
 

@@ -187,7 +187,7 @@ You can use the following command:
 
 .. code-block:: console
 
-  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540_ek -DCONFIG_RADIO_TEST_USB=y
+  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DSHIELD=nrf21540ek -DCONFIG_RADIO_TEST_USB=y
 
 .. note::
     You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk_nrf5340_cpunet`` build target in the commands.

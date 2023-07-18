@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* This file matches the contents of nrf21540_ek.overlay and is intended to be applied to nRF5340
- * application core when nrf21540_ek shield is provided to the network core's image build.
+/* This file matches the contents of nrf21540ek.overlay and is intended to be applied to nRF5340
+ * application core when nrf21540ek shield is provided to the network core's image build.
  *
  * For instance, consider an application targeted for nRF5340 application core that specifies
  * a child image targeted for nRF5340 network core, which drives the nRF21540 Front-End Module.
  * The shield overlays could be provided to the build using the following command:
  *
- * west build -p -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek_fwd -D<child_image>_SHIELD=nrf21540_ek
+ * west build -p -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540ek_fwd -D<child_image>_SHIELD=nrf21540ek
  */
 &gpio_fwd {
 	nrf21540-gpio-if {

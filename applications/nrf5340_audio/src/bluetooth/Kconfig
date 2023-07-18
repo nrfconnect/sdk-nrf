@@ -211,12 +211,12 @@ config BLE_ADV_TX_POWER_DBM
 	default -40 if BLE_ADV_TX_POWER_NEG_40DBM
 
 config NRF_21540_ACTIVE
-	def_bool $(shields_list_contains,nrf21540_ek_fwd)
+	def_bool $(shields_list_contains,nrf21540ek_fwd)
 	select EXPERIMENTAL
 	help
 	  The front end module can help boost the TX power as high as 20 dBm.
 	  Usually set through buildprog, if not set there, remember to add
-	  -DSHIELD=nrf21540_ek_fwd when building app core to include the shield
+	  -DSHIELD=nrf21540ek_fwd when building app core to include the shield
 	  overlay file.
 
 choice NRF_21540_MAIN_TX_POWER

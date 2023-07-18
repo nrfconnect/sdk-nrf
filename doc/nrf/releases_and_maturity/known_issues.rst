@@ -2021,7 +2021,7 @@ NCSDK-16338: Setting gain for nRF21540 Front-end module does not work in the :re
 .. rst-class:: v1-9-0
 
 NCSDK-13925: Build warning in the RF test samples when the nRF21540 EK support is enabled
-  :ref:`radio_test` and :ref:`direct_test_mode` build with warnings for nRF5340 with the :ref:`ug_radio_fem_nrf21540_ek` support.
+  :ref:`radio_test` and :ref:`direct_test_mode` build with warnings for nRF5340 with the :ref:`ug_radio_fem_nrf21540ek` support.
 
   **Affected platforms:** nRF5340, nRF21540
 

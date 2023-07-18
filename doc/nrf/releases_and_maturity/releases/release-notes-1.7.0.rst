@@ -23,7 +23,7 @@ Highlights
 
   * :ref:`direct_test_mode` and :ref:`radio_test` sample support.
   * Support for Bluetooth® LE, Thread, Zigbee, and multiprotocol applications and samples using :ref:`nrfxlib:mpsl`.
-  * Support for :ref:`nRF21540 development kit (DK) <nrf21540dk_nrf52840>`, :ref:`nRF21540 evaluation kit (EK) <ug_radio_fem_nrf21540_ek>` and custom board configurations.
+  * Support for :ref:`nRF21540 development kit (DK) <nrf21540dk_nrf52840>`, :ref:`nRF21540 evaluation kit (EK) <ug_radio_fem_nrf21540ek>` and custom board configurations.
 
 * Added Wi-Fi coexistence feature supported for development for Thread and Zigbee.
 * Added support for NFC and *pair before use* type of accessories to the Apple Find My add-on.
@@ -226,7 +226,7 @@ Front-end module (FEM)
 * Added support for the nRF21540 GPIO interface to the nRF5340 network core.
 * Added support for RF front-end Modules (FEM) for nRF5340 in the :ref:`mpsl` library.
   The front-end module feature for nRF5340 in MPSL currently supports nRF21540, but does not support the SKY66112-11 device.
-* Added a device tree shield definition for the nRF21540 Evaluation Kit with the :ref:`related documentation <ug_radio_fem_nrf21540_ek>`.
+* Added a device tree shield definition for the nRF21540 Evaluation Kit with the :ref:`related documentation <ug_radio_fem_nrf21540ek>`.
 
 Matter
 ------

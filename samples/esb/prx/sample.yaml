@@ -35,7 +35,7 @@ tests:
     tags: esb ci_build
   sample.esb.prx.nrf5340_nrf21540:
     build_only: true
-    extra_args: SHIELD=nrf21540_ek
+    extra_args: SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet
     platform_allow: nrf5340dk_nrf5340_cpunet

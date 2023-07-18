@@ -531,7 +531,7 @@ Hardware support
 Two nRF21540 boards are available, showcasing the possibilities of the nRF21540 FEM:
 
 * :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
-* :ref:`ug_radio_fem_nrf21540_ek`
+* :ref:`ug_radio_fem_nrf21540ek`
 
 Also, various Skyworks front-end modules are supported.
 For example, SKY66112-11EK has a 2-pin PA/LNA interface.
@@ -551,7 +551,7 @@ Shields
 
 Shields are add-ons that you can attach to the development kit to extend its feature and functionalities.
 
-.. _ug_radio_fem_nrf21540_ek:
+.. _ug_radio_fem_nrf21540ek:
 
 nRF21540 EK
 -----------
@@ -572,10 +572,10 @@ GPIO and SPI are accessible through the Arduino Uno Rev3 compatible headers.
 The shield also features two additional SMA connectors hooked to the dual antenna ports from the RF FEM, to monitor the performance of the RF FEM using any equipment desired.
 The FEM SMA input can be connected to the nRF52 or nRF53 Series SoC RF output with a coaxial RF cable with SMA\SWF connectors.
 
-.. figure:: images/nrf21540_ek.png
+.. figure:: images/nrf21540ek.png
    :width: 350px
    :align: center
-   :alt: nRF21540_EK
+   :alt: nRF21540EK
 
    nRF21540 EK shield
 
@@ -604,31 +604,31 @@ Pin assignment
 | D13                   | SPI SCK  | Serial Clock    |
 +-----------------------+----------+-----------------+
 
-.. _ug_radio_fem_nrf21540_ek_programming:
+.. _ug_radio_fem_nrf21540ek_programming:
 
 Programming
 ^^^^^^^^^^^
 
-Set ``-DSHIELD=nrf21540_ek`` when you invoke ``west build`` or ``cmake`` in your Zephyr application.
+Set ``-DSHIELD=nrf21540ek`` when you invoke ``west build`` or ``cmake`` in your Zephyr application.
 
 Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 
 .. code-block:: none
 
-   set(SHIELD nrf21540_ek)
+   set(SHIELD nrf21540ek)
 
-To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540_ek`` in the **Extra Cmake arguments** field.
+To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540ek`` in the **Extra Cmake arguments** field.
 See :ref:`cmake_options`.
 
 When building for a board with an additional network core, like the nRF5340, add the ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core.
 In this case, the application core is only responsible for forwarding to the network core the pins needed to control the nRF21540 .
-The application core can be set up to forward the needed pins using the ``-DSHIELD=nrf21540_ek_fwd`` setting.
+The application core can be set up to forward the needed pins using the ``-DSHIELD=nrf21540ek_fwd`` setting.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek_fwd -Dmultiprotocol_rpmsg_SHIELD=nrf21540_ek
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540ek_fwd -Dmultiprotocol_rpmsg_SHIELD=nrf21540ek
 
 In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
 The *childImageName_* parameter can take the following values:
