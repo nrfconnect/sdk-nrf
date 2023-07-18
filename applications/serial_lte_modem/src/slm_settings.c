@@ -23,6 +23,8 @@ enum fota_stage fota_stage = FOTA_STAGE_INIT;		/* FOTA: stage of FOTA process */
 enum fota_status fota_status;		/* FOTA: OK/Error status */
 int32_t fota_info;		/* FOTA: failure cause in case of error or download percentage*/
 
+int32_t auto_connect = 1;	/* Auto connect network at startup or after FOTA update */
+
 bool uart_configured;		/* UART: first-time configured */
 struct uart_config slm_uart;	/* UART: config */
 
@@ -47,6 +49,11 @@ static int settings_set(const char *name, size_t len, settings_read_cb read_cb, 
 		if (len != sizeof(fota_info))
 			return -EINVAL;
 		if (read_cb(cb_arg, &fota_info, len) > 0)
+			return 0;
+	} else if (!strcmp(name, "auto_connect")) {
+		if (len != sizeof(auto_connect))
+			return -EINVAL;
+		if (read_cb(cb_arg, &auto_connect, len) > 0)
 			return 0;
 	} else if (!strcmp(name, "uart_configured")) {
 		if (len != sizeof(uart_configured))
@@ -145,6 +152,20 @@ void slm_settings_fota_init(void)
 	fota_stage = FOTA_STAGE_INIT;
 	fota_status = FOTA_STATUS_OK;
 	fota_info = 0;
+}
+
+int slm_settings_auto_connect_save(void)
+{
+	int ret;
+
+	/* Write a single serialized value to persisted storage (if it has changed value). */
+	ret = settings_save_one("slm/auto_connect", &(auto_connect), sizeof(auto_connect));
+	if (ret) {
+		LOG_ERR("save slm/auto_connect failed: %d", ret);
+		return ret;
+	}
+
+	return 0;
 }
 
 int slm_settings_uart_save(void)

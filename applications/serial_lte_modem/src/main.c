@@ -39,6 +39,9 @@ static struct k_work_delayable indicate_work;
 /* global variable used across different files */
 struct k_work_q slm_work_q;
 
+/* global variable defined in different files */
+extern int32_t auto_connect;
+
 /* global functions defined in different files */
 int poweron_uart(void);
 
@@ -46,6 +49,18 @@ int poweron_uart(void);
 static void indicate_wk(struct k_work *work);
 
 BUILD_ASSERT(CONFIG_SLM_WAKEUP_PIN >= 0, "Wake up pin not configured");
+
+NRF_MODEM_LIB_ON_INIT(lwm2m_init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	/** ret: Zero on success, a positive value @em nrf_modem_dfu when executing
+	 *  Modem firmware updates, and negative errno on other failures.
+	 */
+	LOG_INF("lib_modem init: %d", ret);
+}
 
 #if defined(CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC)
 static void on_modem_failure_shutdown(struct k_work *item);
@@ -333,6 +348,39 @@ static void handle_mcuboot_swap_ret(void)
 	}
 }
 
+int lte_auto_connect(void)
+{
+	int err = 0;
+
+#if defined(CONFIG_SLM_CARRIER)
+	int stat;
+
+	if (!auto_connect) {
+		return 0;
+	}
+	err = nrf_modem_at_scanf("AT+CEREG?", "+CEREG: %d", &stat);
+	if (err != 1 || (stat == 1 || stat == 5)) {
+		return 0;
+	}
+
+	LOG_INF("auto connect");
+#if defined(CONFIG_LWM2M_CARRIER_SERVER_BINDING_N)
+	err = nrf_modem_at_printf("AT%%XSYSTEMMODE=0,1,0,0");
+	if (err) {
+		LOG_ERR("Failed to configure RAT: %d", err);
+		return err;
+	}
+#endif /* CONFIG_LWM2M_CARRIER_SERVER_BINDING_N */
+	err = nrf_modem_at_printf("AT+CFUN=1");
+	if (err) {
+		LOG_ERR("Failed to turn on radio: %d", err);
+		return err;
+	}
+#endif /* CONFIG_SLM_CARRIER */
+
+	return err;
+}
+
 int start_execute(void)
 {
 	int err;
@@ -351,6 +399,7 @@ int start_execute(void)
 	k_work_queue_start(&slm_work_q, slm_wq_stack_area,
 			   K_THREAD_STACK_SIZEOF(slm_wq_stack_area),
 			   SLM_WQ_PRIORITY, NULL);
+	(void)lte_auto_connect();
 
 	return 0;
 }

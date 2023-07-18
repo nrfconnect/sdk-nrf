@@ -10,12 +10,15 @@
 #include <zephyr/logging/log.h>
 #include <modem/nrf_modem_lib.h>
 #include "slm_at_host.h"
+#include "slm_settings.h"
 #include "slm_util.h"
 
 LOG_MODULE_REGISTER(slm_carrier, CONFIG_SLM_LOG_LEVEL);
 
 /**@brief LwM2M Carrier operations. */
 enum slm_carrier_operation {
+	/* LTE auto-connect operation for LwM2M Carrier */
+	CARRIER_OP_AUTO_CONNECT,
 	/* Carrier AppData Operation */
 	CARRIER_OP_APPDATA_SEND,
 	/* Carrier Device Operation */
@@ -54,6 +57,7 @@ struct carrier_op_list {
 static int m_mem_free;
 
 /** forward declaration of cmd handlers **/
+static int do_carrier_auto_connect(void);
 static int do_carrier_appdata_send(void);
 static int do_carrier_device_battery_level(void);
 static int do_carrier_device_battery_status(void);
@@ -76,6 +80,7 @@ static int do_carrier_request_link_up(void);
 
 /**@brief SLM AT Command list type. */
 static struct carrier_op_list op_list[CARRIER_OP_MAX] = {
+	{CARRIER_OP_AUTO_CONNECT, "auto_connect", do_carrier_auto_connect},
 	{CARRIER_OP_APPDATA_SEND, "app_data", do_carrier_appdata_send},
 	{CARRIER_OP_DEVICE_BATTERY_LEVEL, "battery_level", do_carrier_device_battery_level},
 	{CARRIER_OP_DEVICE_BATTERY_STATUS, "battery_status", do_carrier_device_battery_status},
@@ -99,10 +104,16 @@ static struct carrier_op_list op_list[CARRIER_OP_MAX] = {
 
 #define SLM_CARRIER_OP_STR_MAX (sizeof("battery_status") + 1)
 
-/* Global variables and functions defined in different files. */
+struct k_work_delayable reconnect_work;
+
+/* Global variables defined in different files. */
+extern int32_t auto_connect;
 extern struct k_work_q slm_work_q;
 extern struct at_param_list at_param_list;
 extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
+
+/* Global functions defined in different files. */
+int lte_auto_connect(void);
 
 static void print_err(const lwm2m_carrier_event_t *evt)
 {
@@ -178,15 +189,26 @@ static void on_event_app_data(const lwm2m_carrier_event_t *event)
 	data_send(data_buf, app_data->buffer_len);
 }
 
+static void reconnect_wk(struct k_work *work)
+{
+	(void)lte_auto_connect();
+}
+
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
 	int err = 0;
+	static bool fota_started;
 
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_LINK_UP");
-		/* AT+CFUN=1 to be issued. */
-		err = -1;
+		if (fota_started) {
+			fota_started = false;
+			k_work_reschedule(&reconnect_work, K_MSEC(100));
+		} else {
+			/* AT+CFUN=1 to be issued. */
+			err = -1;
+		}
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
 		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_LINK_DOWN");
@@ -209,6 +231,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_FOTA_START:
 		LOG_DBG("LWM2M_CARRIER_EVENT_FOTA_START");
+		fota_started = true;
 		break;
 	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
 		LOG_DBG("LWM2M_CARRIER_EVENT_FOTA_SUCCESS");
@@ -759,6 +782,37 @@ static int do_carrier_request_link_up(void)
 	return lwm2m_carrier_request(LWM2M_CARRIER_REQUEST_LINK_UP);
 }
 
+/* AT#XCARRIER="auto_connect","read|write"[,<auto-connect-flag>] */
+static int do_carrier_auto_connect(void)
+{
+	int ret = 0;
+	int flag;
+	char operation[6];
+	size_t size = sizeof(operation);
+
+	ret = util_string_get(&at_param_list, 2, operation, &size);
+	if (ret) {
+		return ret;
+	}
+
+	if (slm_util_cmd_casecmp(operation, "READ")) {
+		rsp_send("\r\n#XCARRIER: auto_connect %d\r\n", auto_connect);
+	} else if (slm_util_cmd_casecmp(operation, "WRITE")) {
+		ret = at_params_int_get(&at_param_list, 3, &flag);
+		if (ret) {
+			return ret;
+		}
+		if (flag == 0 || flag == 1) {
+			auto_connect = flag;
+			(void)slm_settings_auto_connect_save();
+		} else {
+			ret = -EINVAL;
+		}
+	}
+
+	return ret;
+}
+
 /**@brief API to handle Carrier AT command
  */
 int handle_at_carrier(enum at_cmd_type cmd_type)
@@ -787,6 +841,8 @@ int handle_at_carrier(enum at_cmd_type cmd_type)
 
 int slm_at_carrier_init(void)
 {
+	k_work_init_delayable(&reconnect_work, reconnect_wk);
+
 	return 0;
 }
 
