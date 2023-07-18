@@ -212,7 +212,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 	    (mgmt_event == NET_EVENT_IPV4_MADDR_DEL)) {
 		if ((cb->info == NULL) ||
 		    (cb->info_length != sizeof(struct in_addr))) {
-			return;
+			goto out;
 		}
 
 		net_eth_ipv4_mcast_to_mac_addr((const struct in_addr *)cb->info,
@@ -228,7 +228,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 		   (mgmt_event == NET_EVENT_IPV6_MADDR_DEL)) {
 		if ((cb->info == NULL) ||
 		    (cb->info_length != sizeof(struct in6_addr))) {
-			return;
+			goto out;
 		}
 
 		net_eth_ipv6_mcast_to_mac_addr(
@@ -258,7 +258,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 					       WIFI_MAC_ADDR_LEN, mac_string_buf,
 					       sizeof(mac_string_buf)));
 	}
-
+out:
 	k_free(mcast_info);
 }
 #endif /* CONFIG_NRF700X_STA_MODE */
