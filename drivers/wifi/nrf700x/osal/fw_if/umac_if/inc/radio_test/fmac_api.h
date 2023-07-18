@@ -38,10 +38,11 @@
  *     It does the following:
  *
  *		- Creates and initializes the context for the UMAC IF layer.
+ *		- Initializes the OS abstraction Layer
  *		- Initializes the HAL layer.
- *		- Registers the driver to the underlying OS.
+ *		- Registers the driver to the underlying Operating System.
  *
- * @return Pointer to the context of the UMAC IF layer.
+ * @return	Pointer to the context of the UMAC IF layer.
  */
 struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init_rt(void);
 
@@ -51,10 +52,11 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init_rt(void);
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param params Parameters necessary for the initialization.
  *
- * This function is used to send a command to RPU to initialize it
- *	    for the radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to initialize it for radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						   struct rpu_conf_params *params);
@@ -64,10 +66,11 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_init(struct wifi_nrf_fmac_dev_ctx 
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param params Parameters necessary for the TX tests.
  *
- * This function is used to send a command to RPU to start
- *	    the TX tests in radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to start the TX tests in radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						      struct rpu_conf_params *params);
@@ -77,10 +80,11 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_c
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param params Parameters necessary for the RX tests.
  *
- * This function is used to send a command to RPU to start
- *	    the RX tests in radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to start the RX tests in radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						      struct rpu_conf_params *params);
@@ -95,10 +99,11 @@ enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_c
  * @param lna_gain LNA gain value.
  * @param bb_gain Baseband gain value.
  *
- * This function is used to send a command to RPU to start
- *	    the RF test capture in radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to start the RF test capture in radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  enum nrf_wifi_rf_test rf_test_type,
@@ -115,10 +120,11 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_rx_cap(struct wifi_nrf_fmac_dev_ctx *
  * @param tone_freq Desired tone frequency in MHz in steps of 1 MHz from -10 MHz to +10 MHz.
  * @param tx_power Desired TX power in the range -16dBm to +24dBm.
  *
- * This function is used to send a command to RPU to start the RF TX tone test
- *     in radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to start the RF TX tone test in radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 						  unsigned char enable,
@@ -132,10 +138,11 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_tx_tone(struct wifi_nrf_fmac_dev_ctx 
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param enable Enable/Disable DPD test.
  *
- * This function is used to send a command to RPU to start
- *	    the RF DPD test in radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to start the RF DPD test in radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char enable);
@@ -146,10 +153,11 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_dpd(struct wifi_nrf_fmac_dev_ctx *fma
  * @brief Get temperature in Fahrenheit using temperature sensor.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  *
- * This function is used to send a command to RPU to get the current temperature.
- *	    using the radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to get the current temperature using the radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_get_temp(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
@@ -159,10 +167,11 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_temp(struct wifi_nrf_fmac_dev_ctx *fma
  * @brief Get RF RSSI status.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  *
- * This function is used to send a command to RPU to get
- *	    RF RSSI status in radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to get RF RSSI status in radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
@@ -172,10 +181,11 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_get_rf_rssi(struct wifi_nrf_fmac_dev_ctx *
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param value XO adjustment value.
  *
- * This function is used to send a command to RPU to set XO adjustment
- *	    value in radio test mode.
+ * This function is used to send a command to:
+ *	- The RPU firmware to set XO adjustment value in radio test mode.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					      unsigned char value);
@@ -184,10 +194,12 @@ enum wifi_nrf_status nrf_wifi_fmac_set_xo_val(struct wifi_nrf_fmac_dev_ctx *fmac
  * @brief Get XO calibrated value.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  *
- * This function is used to send a command to RPU. RPU estimates and
- *	    returns optimal XO value.
+ * This function is used to send a command to:
+ *	- The RPU firmware wherein the RPU firmware estimates and
+ *	  returns optimal XO value.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
@@ -199,8 +211,8 @@ enum wifi_nrf_status nrf_wifi_fmac_rf_test_compute_xo(struct wifi_nrf_fmac_dev_c
  * This function de-initializes the UMAC IF layer of the RPU WLAN FullMAC
  *	    driver. It does the following:
  *
- *		- De-initializes the HAL layer.
- *		- Frees the context for the UMAC IF layer.
+ *	- De-initializes the HAL layer.
+ *	- Frees the context for the UMAC IF layer.
  *
  * @return None
  */
@@ -228,7 +240,8 @@ void wifi_nrf_fmac_dev_rem_rt(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  *
  * This function initializes the firmware of an RPU instance.
  *
- * @return Command execution status
+ * @retval WIFI_NRF_STATUS_SUCCESS On Success
+ * @retval WIFI_NRF_STATUS_FAIL On failure to execute command
  */
 enum wifi_nrf_status wifi_nrf_fmac_dev_init_rt(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 #if defined(CONFIG_NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
