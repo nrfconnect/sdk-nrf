@@ -17,11 +17,14 @@ static const char * const status_name[] = {
 static void log_config_event(const struct app_event_header *aeh)
 {
 	const struct config_event *event = cast_config_event(aeh);
+	const char *status_str = "UNKNOWN";
 
-	__ASSERT_NO_MSG(event->status < ARRAY_SIZE(status_name));
+	if (event->status < ARRAY_SIZE(status_name)) {
+		status_str = status_name[event->status];
+	}
 
 	APP_EVENT_MANAGER_LOG(aeh, "%s %s rcpt: %02x id: %02x",
-			status_name[event->status],
+			status_str,
 			event->is_request ? "req" : "rsp",
 			event->recipient,
 			event->event_id);
