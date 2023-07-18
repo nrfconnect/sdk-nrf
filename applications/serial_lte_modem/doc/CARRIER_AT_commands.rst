@@ -76,6 +76,7 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
+* ``AT#XCARRIER="auto_connect","read|write"[,<auto-connect-flag>]``
 * ``AT#XCARRIER="app_data"[,<data>]``
 * ``AT#XCARRIER="battery_level",<battery_level>``
 * ``AT#XCARRIER="battery_status",<battery_status>``
@@ -106,6 +107,19 @@ The response syntax depends on the commands used.
 
 Examples
 ~~~~~~~~
+
+::
+
+   AT#XCARRIER="auto_connect","read"
+   #XCARRIER: auto_connect 1
+   OK
+
+   AT#XCARRIER="auto_connect","write",0
+   OK
+
+   AT#XCARRIER="auto_connect","read"
+   #XCARRIER: auto_connect 0
+   OK
 
 ::
 
