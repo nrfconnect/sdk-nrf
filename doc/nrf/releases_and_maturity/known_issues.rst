@@ -475,10 +475,17 @@ Thread
 
 The issues in this section are related to the :ref:`ug_thread` protocol.
 
-.. rst-class:: v2-4-1 v2-4-0
+.. rst-class:: v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
-CVE-2023-2626: Security vulnerability
-  Due to this issue, |NCS| v2.4.0 will not undergo the certification process, and is not intended to be used in final Thread products.
+CVE-2023-2626: OpenThread KeyID Mode 2 Security Vulnerability
+  This vulnerability impacts all Thread devices using OpenThread and allows an attacker in physical proximity to compromise non-router-capable devices and the entire Thread network in the case of router-capable devices.
+  The vulnerability allows an attacker in physical proximity to inject arbitrary IPv6 packets into the Thread network via IEEE 802.15.4 frame transmissions.
+  Because the Thread Management Framework (TMF) protocol does not have any additional layer of security, the attacker could exploit this vulnerability to update the Thread Network Key and gain full access to the Thread network.
+  There is no known exploitation of vulnerability.
+
+  Due to this issue, the Thread certifications for OpenThread libraries in all |NCS| releases up to v2.4.0 are deprecated.
+  OpenThread libraries for selected |NCS| releases were patched with the OpenThread KeyID Mode 2 Security Vulnerability fix and re-certified by inheritance.
+  The libraries are available through a DevZone request.
 
 .. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1
 
@@ -501,7 +508,7 @@ KRKNWK-9094: Possible deadlock in shell subsystem
 
   **Workaround:** If possible, avoid invoking a new command before execution of the previous one has completed.
 
-.. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+.. rst-class:: v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-6848: Reduced throughput
   Performance testing for the :ref:`ot_coprocessor_sample` sample shows a decrease of throughput of around 10-20% compared with the standard OpenThread.
