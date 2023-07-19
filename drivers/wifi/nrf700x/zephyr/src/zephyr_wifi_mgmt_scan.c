@@ -62,7 +62,6 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 	memset(&scan_info, 0, sizeof(scan_info));
 
-	scan_info.scan_mode = AUTO_SCAN;
 	scan_info.scan_reason = SCAN_DISPLAY;
 
 	if (!params || params->scan_type == WIFI_SCAN_TYPE_ACTIVE) {
