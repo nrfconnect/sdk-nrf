@@ -465,6 +465,7 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_LE_POWER_CONTROL)
 	cmds->write_remote_tx_power = 1;
 	cmds->set_auto_power_control_request_param = 1;
+	cmds->set_power_control_apr_handling = 1;
 #endif
 }
 #endif	/* CONFIG_BT_HCI_VS */
@@ -1219,6 +1220,8 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_write_remote_tx_power((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_SET_AUTO_POWER_CONTROL_REQUEST_PARAM:
 		return sdc_hci_cmd_vs_set_auto_power_control_request_param((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_SET_POWER_CONTROL_APR_HANDLING:
+		return sdc_hci_cmd_vs_set_power_control_apr_handling((void *)cmd_params);
 #endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
