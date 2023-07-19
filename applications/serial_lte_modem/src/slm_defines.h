@@ -13,6 +13,9 @@
 #define INVALID_SOCKET       -1
 #define INVALID_SEC_TAG      -1
 #define INVALID_ROLE         -1
+#define INVALID_DTLS_CID     -1
+
+#define UNKNOWN_AT_COMMAND_RET __ELASTERROR
 
 /** The maximum allowed length of an AT command/response passed through the SLM */
 #define SLM_AT_MAX_CMD_LEN   4096

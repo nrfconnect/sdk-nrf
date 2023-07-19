@@ -36,7 +36,7 @@ The modem-specific AT commands are documented in the `nRF91 AT Commands Referenc
 
    Generic_AT_commands
    SOCKET_AT_commands
-   TCPIP_AT_commands
+   TCPUDP_AT_commands
    ICMP_AT_commands
    FOTA_AT_commands
    SMS_AT_commands

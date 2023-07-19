@@ -642,7 +642,7 @@ int handle_at_clac(enum at_cmd_type cmd_type)
 
 int slm_at_parse(const char *at_cmd)
 {
-	int ret = -ENOENT;
+	int ret = UNKNOWN_AT_COMMAND_RET;
 	int total = ARRAY_SIZE(slm_at_cmd_list);
 
 	for (int i = 0; i < total; i++) {

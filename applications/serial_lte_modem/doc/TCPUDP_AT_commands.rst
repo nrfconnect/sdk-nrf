@@ -120,7 +120,7 @@ Response syntax
 
 ::
 
-   #XTCPSVR: (list of op value),<port>,<sec_tag>
+   #XTCPSVR: <list of ops>,<port>,<sec_tag>
 
 Examples
 ~~~~~~~~
@@ -169,14 +169,14 @@ Response syntax
 
 ::
 
-   #XTCPCLI: <handle>, "connected"
+   #XTCPCLI: <handle>,"connected"
 
-   #XTCPCLI: <error>, "not connected"
+   #XTCPCLI: <error>,"not connected"
 
 * The ``<handle>`` value is an integer.
   When positive, it indicates the handle of the successfully opened socket.
 * The ``<error>`` value is an integer.
-  It represents the error value according to the standard POSIX *errno*.
+  It is either an *errno* code or one of the :c:enum:`dns_resolve_status` values defined in :file:`zephyr/net/dns_resolve.h`.
 
 Examples
 ~~~~~~~~
@@ -232,7 +232,7 @@ Response syntax
 
 ::
 
-   #XTCPCLI: (op list),<url>,<port>,<sec_tag>
+   #XTCPCLI: <list of ops>,<url>,<port>,<sec_tag>
 
 Examples
 ~~~~~~~~
@@ -260,7 +260,7 @@ Syntax
 
 ::
 
-   #XTCPSEND=<data>
+   #XTCPSEND[=<data>]
 
 * The ``<data>`` parameter is a string that contains the data to be sent.
   The maximum size of the data is 1024 bytes.
@@ -386,7 +386,9 @@ UDP server #XUDPSVR
 ===================
 
 The ``#XUDPSVR`` command allows you to start and stop the UDP server.
-NOTE DTLS server is not supported by nRF9160.
+
+.. note::
+   DTLS server functionality is not supported by the nRF9160.
 
 Set command
 -----------
@@ -474,7 +476,7 @@ Response syntax
 
 ::
 
-   #XUDPSVR: (list of op value),<port>
+   #XUDPSVR: <list of ops>,<port>
 
 Examples
 ~~~~~~~~
@@ -489,7 +491,9 @@ UDP/DTLS client #XUDPCLI
 ========================
 
 The ``#XUDPCLI`` command allows you to create a UDP/DTLS client and to connect to a server.
-NOTE the UDP/DTLS client always works in a connection-oriented way.
+
+.. note::
+   The UDP/DTLS client always works in a connection-oriented way.
 
 Set command
 -----------
@@ -501,7 +505,7 @@ Syntax
 
 ::
 
-   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>]
+   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<cid>]]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -518,6 +522,11 @@ Syntax
 * The ``<sec_tag>`` parameter is an integer.
   If it is given, a DTLS client will be started.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
+* The ``<cid>`` parameter is an integer.
+  It indicates whether to use DTLS's connection identifier.
+  This parameter is only supported with modem firmware 1.3.5 and newer.
+  See :ref:`SLM_AT_SSOCKETOPT` for more details regarding the allowed values.
+  The command will fail (with ``<error>`` equal to ``-134`` (``-ENOTSUP``) if the requested connection identifier is not accepted by the server.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -526,12 +535,12 @@ Response syntax
 
    #XUDPCLI: <handle>,"connected"
 
-   #XUDPCLI: <handle>,"not connected"
+   #XUDPCLI: <error>,"not connected"
 
 * The ``<handle>`` value is an integer.
   When positive, it indicates the handle of the successfully opened socket.
 * The ``<error>`` value is an integer.
-  It represents the error value according to the standard POSIX *errno*.
+  It is either an *errno* code or one of the :c:enum:`dns_resolve_status` values defined in :file:`zephyr/net/dns_resolve.h`.
 
 Examples
 ~~~~~~~~
@@ -580,7 +589,7 @@ Syntax
 
 ::
 
-   #XUDPCLI: (op list),<url>,<port>,<sec_tag>
+   #XUDPCLI: <list of ops>,<url>,<port>,<sec_tag>,<cid>
 
 Examples
 ~~~~~~~~
@@ -588,7 +597,7 @@ Examples
 ::
 
    AT#XUDPCLI=?
-   #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>
+   #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>,<cid>
    OK
 
 UDP send data #XUDPSEND
@@ -606,7 +615,7 @@ Syntax
 
 ::
 
-   #XUDPSEND=<data>
+   #XUDPSEND[=<data>]
 
 * The ``<data>`` parameter is a string that contains the data to be sent.
   The maximum size of the data is 1024 bytes.

@@ -294,9 +294,9 @@ static int do_http_connect(void)
 	}
 
 	/* Connect to HTTP server */
-	ret = util_resolve_host(0, httpc.host, httpc.port, httpc.family, &sa);
+	ret = util_resolve_host(0, httpc.host, httpc.port, httpc.family,
+		Z_LOG_OBJECT_PTR(slm_httpc), &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));
 		goto exit_cli;
 	}
 	if (sa.sa_family == AF_INET) {

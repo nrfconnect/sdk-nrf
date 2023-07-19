@@ -457,7 +457,7 @@ static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 	if (err == 0) {
 		rsp_send_ok();
 		return;
-	} else if (err != -ENOENT) {
+	} else if (err != UNKNOWN_AT_COMMAND_RET) {
 		rsp_send_error();
 		return;
 	}

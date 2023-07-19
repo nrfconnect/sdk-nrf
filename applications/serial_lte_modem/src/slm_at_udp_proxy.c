@@ -47,6 +47,7 @@ static struct udp_proxy {
 	int sock;		/* Socket descriptor. */
 	int family;		/* Socket address family */
 	sec_tag_t sec_tag;	/* Security tag of the credential */
+	int dtls_cid;		/* DTLS connection identifier. */
 	enum slm_udp_role role;	/* Client or Server proxy */
 	union {			/* remote host */
 		struct sockaddr_in remote;   /* IPv4 host */
@@ -152,7 +153,7 @@ static int do_udp_server_stop(void)
 		} else {
 			memset(&proxy.remote6, 0, sizeof(struct sockaddr_in6));
 		}
-		(void)slm_at_udp_proxy_init();
+		slm_at_udp_proxy_init();
 	}
 	if (ret == 0 &&
 	    k_thread_join(&udp_thread, K_SECONDS(CONFIG_SLM_UDP_POLL_TIME * 2)) != 0) {
@@ -167,21 +168,30 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 {
 	int ret;
 	struct sockaddr sa;
+	struct timeval timeout;
+	const bool using_cid = (proxy.dtls_cid != INVALID_DTLS_CID);
+	const bool using_dtls = (proxy.sec_tag != INVALID_SEC_TAG);
 
 	/* Open socket */
-	if (proxy.sec_tag == INVALID_SEC_TAG) {
-		ret = socket(proxy.family, SOCK_DGRAM, IPPROTO_UDP);
-	} else {
-		ret = socket(proxy.family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
-
-	}
+	ret = socket(proxy.family, SOCK_DGRAM, using_dtls ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
 		return -errno;
 	}
 	proxy.sock = ret;
 
-	if (proxy.sec_tag != INVALID_SEC_TAG) {
+	/* Set a timeout shorter than the default one which makes the SLM
+	 * irresponsive for too long when the connection to a server fails.
+	 */
+	timeout = (struct timeval){ .tv_sec = 10 };
+	ret = setsockopt(proxy.sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+	if (ret) {
+		ret = -errno;
+		LOG_ERR("Setting timeout failed: %d", ret);
+		goto cli_exit;
+	}
+
+	if (using_dtls) {
 		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
 
 		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST,
@@ -191,23 +201,60 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 			ret = -errno;
 			goto cli_exit;
 		}
+
+		if (using_cid) {
+			if (setsockopt(proxy.sock, SOL_TLS, TLS_DTLS_CID,
+							&proxy.dtls_cid, sizeof(proxy.dtls_cid))) {
+				ret = -errno;
+				LOG_WRN("Setting DTLS CID (%d) failed: %d", proxy.dtls_cid, ret);
+				goto cli_exit;
+			}
+		}
 	}
 
 	/* Connect to remote host */
-	ret = util_resolve_host(0, url, port, proxy.family, &sa);
+	ret = util_resolve_host(0, url, port, proxy.family, Z_LOG_OBJECT_PTR(slm_udp), &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));
 		goto cli_exit;
 	}
-	if (sa.sa_family == AF_INET) {
-		ret = connect(proxy.sock, &sa, sizeof(struct sockaddr_in));
-	} else {
-		ret = connect(proxy.sock, &sa, sizeof(struct sockaddr_in6));
-	}
+
+	LOG_INF("Connecting to %s:%d (%s)...", url, port, using_dtls ? "DTLS" : "UDP");
+	const size_t size = (sa.sa_family == AF_INET) ?
+		sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
+
+	ret = connect(proxy.sock, &sa, size);
 	if (ret < 0) {
 		LOG_ERR("connect() failed: %d", -errno);
 		ret = -errno;
 		goto cli_exit;
+	}
+	LOG_INF("Connected.");
+
+	if (using_cid) {
+		int cid_status;
+		socklen_t cid_status_size = sizeof(cid_status);
+
+		/* Check the connection identifier status, and fail
+		 * if it does not correspond to what was requested.
+		 */
+		ret = getsockopt(proxy.sock, SOL_TLS, TLS_DTLS_CID_STATUS,
+							&cid_status, &cid_status_size);
+		if (ret) {
+			LOG_ERR("Getting DTLS CID status failed: %d", ret);
+			ret = -errno;
+			goto cli_exit;
+		} else {
+			if (proxy.dtls_cid == TLS_DTLS_CID_ENABLED
+				&& !(cid_status == TLS_DTLS_CID_STATUS_BIDIRECTIONAL
+					|| cid_status == TLS_DTLS_CID_STATUS_DOWNLINK)) {
+				LOG_ERR("DTLS CID status (%d) not satisfactory for"
+					" requested DTLS CID (%d).", cid_status, proxy.dtls_cid);
+				ret = -ENOTSUP;
+				goto cli_exit;
+			} else {
+				LOG_INF("DTLS CID status: %d", cid_status);
+			}
+		}
 	}
 
 	udp_thread_id = k_thread_create(&udp_thread, udp_thread_stack,
@@ -255,11 +302,6 @@ static int do_udp_send(const uint8_t *data, int datalen)
 {
 	int ret = 0;
 	uint32_t offset = 0;
-
-	if (proxy.sock == INVALID_SOCKET) {
-		LOG_ERR("Not connected yet");
-		return -EINVAL;
-	}
 
 	while (offset < datalen) {
 		if (proxy.role == UDP_ROLE_SERVER) {
@@ -401,10 +443,10 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	} while (true);
 
 	if (in_datamode()) {
-		(void)exit_datamode_handler(ret);
+		exit_datamode_handler(ret);
 	}
 	if (proxy.sock != INVALID_SOCKET) {
-		(void)close(proxy.sock);
+		close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
 		if (proxy.role == UDP_ROLE_CLIENT) {
 			rsp_send("\r\n#XUDPCLI: %d,\"disconnected\"\r\n", ret);
@@ -423,7 +465,7 @@ static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
 	if (op == DATAMODE_SEND) {
 		if ((flags & SLM_DATAMODE_FLAGS_MORE_DATA) != 0) {
 			LOG_ERR("Datamode buffer overflow");
-			(void)exit_datamode_handler(-EOVERFLOW);
+			exit_datamode_handler(-EOVERFLOW);
 			return -EOVERFLOW;
 		}
 		ret = do_udp_send_datamode(data, len);
@@ -433,6 +475,16 @@ static int udp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
 	}
 
 	return ret;
+}
+
+static bool socket_is_in_use(void)
+{
+	if (proxy.sock == INVALID_SOCKET) {
+		return false;
+	}
+	LOG_ERR("The UDP socket is already in use by the %s it first.",
+		(proxy.role == UDP_ROLE_CLIENT) ? "client. Disconnect" : "server. Stop");
+	return true;
 }
 
 /**@brief handle AT#XUDPSVR commands
@@ -453,8 +505,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (op == SERVER_START || op == SERVER_START6) {
-			if (proxy.sock != INVALID_SOCKET) {
-				LOG_WRN("Server is running");
+			if (socket_is_in_use()) {
 				return -EINVAL;
 			}
 			err = at_params_unsigned_short_get(&at_param_list, 2, &port);
@@ -486,7 +537,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XUDPCLI commands
- *  AT#XUDPCLI=<op>[,<url>,<port>[,<sec_tag>]
+ *  AT#XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<cid>]]]
  *  AT#XUDPCLI? READ command not supported
  *  AT#XUDPCLI=?
  */
@@ -506,8 +557,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			char url[SLM_MAX_URL];
 			int size = SLM_MAX_URL;
 
-			if (proxy.sock != INVALID_SOCKET) {
-				LOG_ERR("Client is connected.");
+			if (socket_is_in_use()) {
 				return -EINVAL;
 			}
 			err = util_string_get(&at_param_list, 2, url, &size);
@@ -518,9 +568,23 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			proxy.sec_tag  = INVALID_SEC_TAG;
-			if (at_params_valid_count_get(&at_param_list) > 4) {
-				at_params_unsigned_int_get(&at_param_list, 4, &proxy.sec_tag);
+			proxy.sec_tag = INVALID_SEC_TAG;
+			proxy.dtls_cid = INVALID_DTLS_CID;
+			const uint32_t param_count = at_params_valid_count_get(&at_param_list);
+
+			if (param_count > 4) {
+				if (at_params_int_get(&at_param_list, 4, &proxy.sec_tag)
+				|| proxy.sec_tag == INVALID_SEC_TAG || proxy.sec_tag < 0) {
+					return -EINVAL;
+				}
+				if (param_count > 5) {
+					if (at_params_int_get(&at_param_list, 5, &proxy.dtls_cid)
+					|| !(proxy.dtls_cid == TLS_DTLS_CID_DISABLED
+						|| proxy.dtls_cid == TLS_DTLS_CID_SUPPORTED
+						|| proxy.dtls_cid == TLS_DTLS_CID_ENABLED)) {
+						return -EINVAL;
+					}
+				}
 			}
 			proxy.family = (op == CLIENT_CONNECT) ? AF_INET : AF_INET6;
 			err = do_udp_client_connect(url, port);
@@ -534,7 +598,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XUDPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
+		rsp_send("\r\n#XUDPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>,<cid>\r\n",
 			CLIENT_DISCONNECT, CLIENT_CONNECT, CLIENT_CONNECT6);
 		err = 0;
 		break;
@@ -559,6 +623,10 @@ int handle_at_udp_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
+		if (proxy.sock == INVALID_SOCKET) {
+			LOG_ERR("Not connected yet");
+			return -ENOTCONN;
+		}
 		if (at_params_valid_count_get(&at_param_list) > 1) {
 			size = sizeof(data);
 			err = util_string_get(&at_param_list, 1, data, &size);
