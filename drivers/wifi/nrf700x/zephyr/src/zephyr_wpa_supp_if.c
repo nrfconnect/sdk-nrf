@@ -496,14 +496,14 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 			num_freqs++;
 	}
 
-	scan_info = k_calloc(sizeof(*scan_info) + (num_freqs * sizeof(struct nrf_wifi_channel)),
+	scan_info = k_calloc(sizeof(*scan_info) + (num_freqs * sizeof(unsigned int)),
 			     sizeof(char));
 
 	memset(scan_info, 0x0, sizeof(*scan_info));
 
 	if (params->freqs) {
 		for (indx = 0; params->freqs[indx]; indx++) {
-			scan_info->scan_params.channels[indx].center_frequency =
+			scan_info->scan_params.center_frequency[indx] =
 				params->freqs[indx];
 		}
 		scan_info->scan_params.num_scan_channels = indx;
@@ -522,8 +522,6 @@ int wifi_nrf_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 		}
 	}
 
-
-	scan_info->scan_mode = 0;
 	scan_info->scan_reason = SCAN_CONNECT;
 
 	/* Copy extra_ies */
