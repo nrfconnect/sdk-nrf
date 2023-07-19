@@ -43,7 +43,7 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim]
+  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -185,6 +185,12 @@ manifest:
           upstream-url: https://github.com/DaveGamble/cJSON
           upstream-sha: d2735278ed1c2e4556f53a7a782063b31331dbf7
           compare-by-default: false
+    - name: sidewalk
+      repo-path: sdk-sidewalk
+      revision: 9673888fabffd6d556c932007abd2cdb87a2add5
+      submodules: true
+      groups:
+        - sidewalk
     - name: homekit
       repo-path: sdk-homekit
       revision: 77828c53c0753083e27f702801ac34cc56bc5c7b
