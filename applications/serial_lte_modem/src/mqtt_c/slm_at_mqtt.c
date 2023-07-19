@@ -269,9 +269,9 @@ static int broker_init(void)
 		.sa_family = AF_UNSPEC
 	};
 
-	err = util_resolve_host(0, mqtt_broker_url, mqtt_broker_port, ctx.family, &sa);
+	err = util_resolve_host(0, mqtt_broker_url, mqtt_broker_port, ctx.family,
+		Z_LOG_OBJECT_PTR(slm_mqtt), &sa);
 	if (err) {
-		LOG_ERR("getaddrinfo() error: %s", gai_strerror(err));
 		return -EAGAIN;
 	}
 	if (sa.sa_family == AF_INET) {

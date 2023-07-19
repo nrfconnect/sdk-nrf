@@ -12,7 +12,7 @@
  * @brief Utility functions for serial LTE modem
  * @{
  */
-
+#include <zephyr/logging/log.h>
 #include <zephyr/types.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -151,12 +151,15 @@ int util_str_to_int(const char *str, int base, int *output);
  * @param[in] host Name or IP address of remote host.
  * @param[in] port Service port of remote host.
  * @param[in] family Desired address family for the returned address.
+ * @param[in] log_inst The log instance of the module calling this function.
  * @param[out] sa The returned address.
  *
  * @retval 0 If the operation was successful.
- *           Otherwise, EAI error code as defined by getaddrinfo().
+ *           Otherwise, an errno code or a dns_resolve_status enum value
+ *           (defined in `zephyr/net/dns_resolve.h`).
  */
-int util_resolve_host(int cid, const char *host, uint16_t port, int family, struct sockaddr *sa);
+int util_resolve_host(int cid, const char *host, uint16_t port, int family,
+	Z_LOG_INSTANCE_STRUCT *log_inst, struct sockaddr *sa);
 /** @} */
 
 #endif /* SLM_UTIL_ */

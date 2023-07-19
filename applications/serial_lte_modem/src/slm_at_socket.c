@@ -431,6 +431,7 @@ static int do_secure_socketopt_set_str(int option, const char *value)
 		break;
 
 	default:
+		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
 		LOG_WRN("Unknown option %d", option);
 		break;
 	}
@@ -447,20 +448,15 @@ static int do_secure_socketopt_set_int(int option, int value)
 	case TLS_SESSION_CACHE:
 	case TLS_SESSION_CACHE_PURGE:
 	case TLS_DTLS_HANDSHAKE_TIMEO:
-		ret = setsockopt(sock.fd, SOL_TLS, option, &value, sizeof(int));
+	case TLS_DTLS_CID:
+		ret = setsockopt(sock.fd, SOL_TLS, option, &value, sizeof(value));
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
 		break;
 
-	case TLS_DTLS_HANDSHAKE_TIMEOUT_MIN:
-	case TLS_DTLS_HANDSHAKE_TIMEOUT_MAX:
-	case TLS_CIPHERSUITE_LIST:
-	case TLS_ALPN_LIST:
-		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
-		break;
-
 	default:
+		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
 		LOG_WRN("Unknown option %d", option);
 		break;
 	}
@@ -470,25 +466,28 @@ static int do_secure_socketopt_set_int(int option, int value)
 
 static int do_secure_socketopt_get(int option)
 {
-	int ret = 0;
-
 	switch (option) {
-	case TLS_CIPHERSUITE_USED: {
-		int value;
-		socklen_t len = sizeof(int);
-
-		ret = getsockopt(sock.fd, SOL_SOCKET, option, &value, &len);
-		if (ret) {
-			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
-		} else {
-			rsp_send("\r\n#XSSOCKETOPT: %d\r\n", value);
-		}
-	} break;
-
-	default:
+	case TLS_CIPHERSUITE_USED: /* MFW >= 2.0.0 */
+	case TLS_DTLS_CID_STATUS:
 		break;
+	default:
+		rsp_send("\r\n#XSSOCKETOPT: \"not supported\"\r\n");
+		return -1;
 	}
 
+	int ret;
+	int value;
+	socklen_t len = sizeof(value);
+
+	ret = getsockopt(sock.fd, SOL_TLS, option, &value, &len);
+	if (ret) {
+		/* The modem doesn't distinguish between unsupported and
+		 * invalid arguments. EINVAL is returned in both cases.
+		 */
+		LOG_ERR("getsockopt(%d) error: %d", option, -errno);
+	} else {
+		rsp_send("\r\n#XSSOCKETOPT: %d\r\n", value);
+	}
 	return ret;
 }
 
@@ -560,9 +559,8 @@ static int do_connect(const char *url, uint16_t port)
 	};
 
 	LOG_DBG("connect %s:%d", url, port);
-	ret = util_resolve_host(sock.cid, url, port, sock.family, &sa);
+	ret = util_resolve_host(sock.cid, url, port, sock.family, Z_LOG_OBJECT_PTR(slm_sock), &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));
 		return -EAGAIN;
 	}
 	if (sa.sa_family == AF_INET) {
@@ -760,9 +758,8 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 	};
 
 	LOG_DBG("sendto %s:%d", url, port);
-	ret = util_resolve_host(sock.cid, url, port, sock.family, &sa);
+	ret = util_resolve_host(sock.cid, url, port, sock.family, Z_LOG_OBJECT_PTR(slm_sock), &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));
 		return -EAGAIN;
 	}
 
@@ -803,9 +800,9 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 	};
 
 	LOG_DBG("sendto %s:%d", udp_url, udp_port);
-	ret = util_resolve_host(sock.cid, udp_url, udp_port, sock.family, &sa);
+	ret = util_resolve_host(sock.cid, udp_url, udp_port, sock.family,
+		Z_LOG_OBJECT_PTR(slm_sock), &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));
 		return -EAGAIN;
 	}
 
@@ -1102,7 +1099,7 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		rsp_send("\r\n#XSSOCKET: (%d,%d,%d),(%d,%d),(%d,%d),"
-			 "<sec-tag>,<peer_verify>,<cid>\r\n",
+			 "<sec_tag>,<peer_verify>,<cid>\r\n",
 			AT_SOCKET_CLOSE, AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
 			SOCK_STREAM, SOCK_DGRAM,
 			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
@@ -1267,7 +1264,8 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XSSOCKETOPT: (%d),<name>,<value>\r\n", AT_SOCKETOPT_SET);
+		rsp_send("\r\n#XSSOCKETOPT: (%d,%d),<name>,<value>\r\n",
+			AT_SOCKETOPT_GET, AT_SOCKETOPT_SET);
 		err = 0;
 		break;
 

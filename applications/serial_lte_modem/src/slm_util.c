@@ -10,6 +10,8 @@
 #include "slm_util.h"
 #include "slm_at_host.h"
 
+LOG_LEVEL_SET(CONFIG_SLM_LOG_LEVEL);
+
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 
@@ -252,7 +254,8 @@ int util_str_to_int(const char *str_buf, int base, int *output)
 #define PORT_MAX_SIZE    5 /* 0xFFFF = 65535 */
 #define PDN_ID_MAX_SIZE  2 /* 0..10 */
 
-int util_resolve_host(int cid, const char *host, uint16_t port, int family, struct sockaddr *sa)
+int util_resolve_host(int cid, const char *host, uint16_t port, int family,
+	LOG_INSTANCE_PTR_DECLARE(log_inst), struct sockaddr *sa)
 {
 	int err;
 	char service[PORT_MAX_SIZE + PDN_ID_MAX_SIZE + 2];
@@ -269,16 +272,25 @@ int util_resolve_host(int cid, const char *host, uint16_t port, int family, stru
 	/* "service" shall be formatted as follows: "port:pdn_id" */
 	snprintf(service, sizeof(service), "%hu:%d", port, cid);
 	err = getaddrinfo(host, service, &hints, &ai);
+	if (!err) {
+		*sa = *(ai->ai_addr);
+		freeaddrinfo(ai);
+
+		if (sa->sa_family != AF_INET && sa->sa_family != AF_INET6) {
+			err = DNS_EAI_ADDRFAMILY;
+		}
+	}
+
 	if (err) {
-		return err;
+		const char *errstr;
+
+		if (err == DNS_EAI_SYSTEM) {
+			errstr = strerror(errno);
+			err = errno;
+		} else {
+			errstr = gai_strerror(err);
+		}
+		LOG_INST_ERR(log_inst, "getaddrinfo() error (%d): %s", err, errstr);
 	}
-
-	*sa = *(ai->ai_addr);
-	freeaddrinfo(ai);
-
-	if (sa->sa_family != AF_INET && sa->sa_family != AF_INET6) {
-		return DNS_EAI_ADDRFAMILY;
-	}
-
-	return 0;
+	return err;
 }
