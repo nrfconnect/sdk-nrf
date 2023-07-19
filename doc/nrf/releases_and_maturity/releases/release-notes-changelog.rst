@@ -48,7 +48,8 @@ Application development
 RF Front-End Modules
 --------------------
 
-|no_changes_yet_note|
+* Updated:
+  * Change the name of the nrf21540_ek shield to nrf21540ek.
 
 Build system
 ------------
