@@ -978,7 +978,8 @@ KRKNWK-17343: Accessories become significantly slower when some data pairs in th
   As a result, the accessory does not pass the certification test cases exceeding the maximum operation time (for example, TCT012, TCT022 and TCT023).
 
   **Workaround:** Enable the NVS cache by setting the following Kconfig options: :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE` to ``y`` and :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
-    Additional optimization can be enabled by setting the following Kconfig options: :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE` to ``y`` and :kconfig:option:`SETTINGS_NVS_NAME_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
+  Additional optimization can be enabled by setting the following Kconfig options: :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE` to ``y`` and :kconfig:option:`SETTINGS_NVS_NAME_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
+  Alternatively, you can manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``216d6588d069390d2c5291560002ca47684fbfc0``).
 
 .. rst-class:: v2-3-0 v2-2-0
 
