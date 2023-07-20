@@ -147,7 +147,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 2b5d2df45c8a4e83df7179f04fbd0c8cd084b5a3
+      revision: 08ae0cfe93cc766119547b3000a0419b81802ef8
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -222,11 +222,11 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 5beae143700db54c6e9bd4b15a568abe2f305723
+      revision: 650e30f81ccfd798409d459a86fb1ed575b5144a
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
-          upstream-sha: d9abe3071c0131a4adb5d7e7451319b735e6d855
+          upstream-sha: 650e30f81ccfd798409d459a86fb1ed575b5144a
           compare-by-default: false
 
     # Other third-party repositories.
