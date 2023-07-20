@@ -158,6 +158,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
 		mosh_print("LwM2M carrier event: fota success");
+		/* Workaround for a known issue NRF91-1702. */
+		nrf_modem_lib_shutdown();
+		err = nrf_modem_lib_init();
 		break;
 	case LWM2M_CARRIER_EVENT_REBOOT:
 		mosh_print("LwM2M carrier event: reboot");

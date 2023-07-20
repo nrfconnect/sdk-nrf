@@ -425,6 +425,9 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 	}
 	case LWM2M_CARRIER_EVENT_FOTA_SUCCESS:
 		LOG_INF("LWM2M_CARRIER_EVENT_FOTA_SUCCESS");
+		/* Workaround for a known issue NRF91-1702. */
+		nrf_modem_lib_shutdown();
+		err = nrf_modem_lib_init();
 		break;
 	case LWM2M_CARRIER_EVENT_REBOOT: {
 		LOG_INF("LWM2M_CARRIER_EVENT_REBOOT");
