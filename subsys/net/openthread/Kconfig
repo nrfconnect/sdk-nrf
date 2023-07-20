@@ -19,11 +19,44 @@ config NORDIC_SECURITY_PROMPTLESS
 choice OPENTHREAD_SECURITY
 	depends on !OPENTHREAD_SECURITY_INTERNAL
 
+config OPENTHREAD_NRF_SECURITY_PSA_CHOICE
+	bool "nRF Security with PSA crypto enabled"
+	select OPENTHREAD_NRF_SECURITY_PSA
+
 config OPENTHREAD_NRF_SECURITY_CHOICE
 	bool "nRF Security"
 	select OPENTHREAD_NRF_SECURITY
 
 endchoice
+
+config OPENTHREAD_NRF_SECURITY_PSA
+	bool
+	select EXPERIMENTAL
+	select NRF_SECURITY
+	select MBEDTLS_ENABLE_HEAP
+	select MBEDTLS_TLS_LIBRARY
+	select MBEDTLS_PSA_CRYPTO_STORAGE_C if !BUILD_WITH_TFM
+	select PSA_NATIVE_ITS if !BUILD_WITH_TFM
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_CCM
+	select PSA_WANT_ALG_CMAC
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_JPAKE
+	select PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS
+	select PSA_WANT_ALG_DETERMINISTIC_ECDSA if OPENTHREAD_ECDSA
+	select PSA_WANT_ALG_ECDSA if OPENTHREAD_ECDSA
+	select PSA_WANT_ALG_ECDH if OPENTHREAD_ECDSA
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_GENERATE_RANDOM
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR
+	imply OPENTHREAD_CRYPTO_PSA
+	help
+	  Enables nrf_security module for use by OpenThread with PSA Crypto enabled.
+	  This allows OpenThread to make use of hardware accelerated cryptography
+	  functions if available as well as fast oberon backend for software encryption.
 
 config OPENTHREAD_NRF_SECURITY
 	bool
@@ -50,7 +83,7 @@ config OPENTHREAD_NRF_SECURITY
 	  if available as well as fast oberon backend for software encryption.
 
 config OPENTHREAD_MBEDTLS_LIB_NAME
-	default "mbedtls_external" if OPENTHREAD_NRF_SECURITY
+	default "mbedtls_external" if OPENTHREAD_NRF_SECURITY || OPENTHREAD_NRF_SECURITY_PSA
 
 config OPENTHREAD_MBEDTLS_DEBUG
 	bool "MbedTLS logs for OpenThread"
