@@ -89,6 +89,7 @@ static bool is_connected_to_lte(void)
 int date_time_ntp_get(int64_t *date_time_ms)
 {
 	int err;
+	uint32_t milliseconds;
 
 #if defined(CONFIG_LTE_LINK_CONTROL)
 	if (!is_connected_to_lte()) {
@@ -108,7 +109,9 @@ int date_time_ntp_get(int64_t *date_time_ms)
 			continue;
 		}
 		LOG_DBG("Time obtained from NTP server %s", servers[i]);
-		*date_time_ms = (int64_t)sntp_time.seconds * 1000;
+
+		milliseconds = (uint32_t)(((double) sntp_time.fraction / UINT32_MAX) * 1000);
+		*date_time_ms = (int64_t)sntp_time.seconds * 1000 + milliseconds;
 		return 0;
 	}
 
