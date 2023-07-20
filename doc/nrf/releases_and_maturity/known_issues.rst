@@ -1090,9 +1090,11 @@ KRKNWK-14081: HomeKit SDK light bulb example does not work with MTD
 .. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
 NCSDK-13947: Net core downgrade prevention does not work on nRF5340
-  HAP certification requirements are not met because of this issue.
+  When updating firmware via SMP protocol (Nordic DFU), the downgrade prevention mechanism does not work for the network core.
 
   **Affected platforms:** nRF5340
+
+  **Workaround:** Prevention mechanism can be implemented in the mobile application layer.
 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
