@@ -53,6 +53,21 @@ tests:
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf21540dk_nrf52840
+  # Experimental PSA crypto API support
+  sample.openthread.cli.psa_crypto_api:
+    build_only: true
+    platform_allow: >
+      nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      nrf52840dongle_nrf52840 nrf21540dk_nrf52840
+    tags: ci_build
+    extra_args: >
+      OVERLAY_CONFIG=overlay-ci.conf;overlay-multiprotocol.conf;overlay-tcp.conf
+      CONFIG_OPENTHREAD_NRF_SECURITY_PSA_CHOICE=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+      - nrf52840dongle_nrf52840
+      - nrf21540dk_nrf52840
   # Build integration regression protection.
   sample.nrf_security.openthread.integration:
     build_only: true
