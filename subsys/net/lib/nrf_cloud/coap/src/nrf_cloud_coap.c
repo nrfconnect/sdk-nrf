@@ -179,8 +179,10 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms)
 	}
 	err = nrf_cloud_coap_post("msg/d2c", NULL, buffer, len,
 				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
-	if (err) {
+	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
+	} else if (err > 0) {
+		LOG_RESULT_CODE_ERR("Error from server:", err);
 	}
 	return err;
 }
@@ -208,8 +210,10 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss)
 	}
 	err = nrf_cloud_coap_post("msg/d2c", NULL, buffer, len,
 				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
-	if (err) {
+	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
+	} else if (err > 0) {
+		LOG_RESULT_CODE_ERR("Error from server:", err);
 	}
 	return err;
 }
@@ -390,14 +394,22 @@ int nrf_cloud_coap_shadow_get(char *buf, size_t buf_len, bool delta)
 
 int nrf_cloud_coap_shadow_state_update(const char * const shadow_json)
 {
+	int err;
+
 	__ASSERT_NO_MSG(shadow_json != NULL);
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
 	}
 
-	return nrf_cloud_coap_patch("state", NULL, (uint8_t *)shadow_json,
-				    strlen(shadow_json),
-				    COAP_CONTENT_FORMAT_APP_JSON, true, NULL, NULL);
+	err = nrf_cloud_coap_patch("state", NULL, (uint8_t *)shadow_json,
+				   strlen(shadow_json),
+				   COAP_CONTENT_FORMAT_APP_JSON, true, NULL, NULL);
+	if (err < 0) {
+		LOG_ERR("Failed to send PATCH request: %d", err);
+	} else if (err > 0) {
+		LOG_RESULT_CODE_ERR("Error from server:", err);
+	}
+	return err;
 }
 
 int nrf_cloud_coap_shadow_device_status_update(const struct nrf_cloud_device_status
@@ -418,9 +430,6 @@ int nrf_cloud_coap_shadow_device_status_update(const struct nrf_cloud_device_sta
 	}
 
 	ret = nrf_cloud_coap_shadow_state_update(data_out.ptr);
-	if (ret) {
-		LOG_ERR("Failed to update device shadow, error: %d", ret);
-	}
 
 	nrf_cloud_device_status_free(&data_out);
 

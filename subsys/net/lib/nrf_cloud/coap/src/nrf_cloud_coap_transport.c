@@ -366,6 +366,9 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 		LOG_DBG("Calling user's callback %p", user_cb->cb);
 		user_cb->cb(result_code, offset, payload, len, last_block, user_cb->user_data);
 	}
+	if ((user_cb->cb == NULL) && (user_cb->user_data != NULL)) {
+		*((uint16_t *)(user_cb->user_data)) = result_code;
+	}
 	if (last_block || (result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
 		LOG_DBG("End of client transfer");
 		k_sem_give(&cb_sem);
@@ -382,6 +385,7 @@ static int client_transfer(enum coap_method method,
 			   coap_client_response_cb_t cb, void *user)
 {
 	__ASSERT_NO_MSG(resource != NULL);
+	__ASSERT_NO_MSG(!((cb == NULL) && (user != NULL))); /* Must provide cb if user provided */
 
 	k_sem_take(&serial_sem, K_FOREVER);
 
@@ -407,6 +411,7 @@ static int client_transfer(enum coap_method method,
 		.cb = client_callback,
 		.user_data = &user_cb
 	};
+	uint16_t local_result_code = 0;
 
 	if (response_expected) {
 		request.options = options;
@@ -414,6 +419,11 @@ static int client_transfer(enum coap_method method,
 	} else {
 		request.options = NULL;
 		request.num_options = 0;
+	}
+
+	if ((cb == NULL) && (user == NULL)) {
+		/* No way to return result code from callback, so grab it this way. */
+		user_cb.user_data = &local_result_code;
 	}
 
 	if (!query) {
@@ -455,6 +465,11 @@ static int client_transfer(enum coap_method method,
 			LOG_HEXDUMP_DBG(buf, MIN(64, buf_len), "Sent");
 		}
 		(void)k_sem_take(&cb_sem, K_FOREVER); /* Wait for coap_client to exhaust retries */
+		if ((cb == NULL) && (user == NULL)) {
+			if (local_result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) {
+				err = local_result_code;
+			}
+		}
 	}
 
 	k_sem_give(&serial_sem);
