@@ -43,7 +43,7 @@ ZTEST(cpu_load, test_cpu_load)
 						NRF_POWER_EVENT_SLEEPENTER);
 	uint32_t tsk = nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT);
 
-	config.frequency = NRF_TIMER_FREQ_1MHz;
+	config.frequency = NRFX_MHZ_TO_HZ(1);
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
 
 	err = nrfx_timer_init(&timer, &config, timer_handler);

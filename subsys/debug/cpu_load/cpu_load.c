@@ -140,7 +140,7 @@ int cpu_load_init(void)
 		return 0;
 	}
 
-	config.frequency = NRF_TIMER_FREQ_1MHz;
+	config.frequency = NRFX_MHZ_TO_HZ(1);
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
 
 	if (IS_ENABLED(CONFIG_CPU_LOAD_ALIGNED_CLOCKS)) {

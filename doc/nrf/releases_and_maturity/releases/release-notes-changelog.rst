@@ -240,6 +240,10 @@ Bluetooth samples
 
     * Support for the nRF52840 DK.
 
+  * Updated:
+
+    * Aligned timers' configurations to the new nrfx API.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -389,6 +393,10 @@ Other samples
 * Removed the random hardware unique key sample.
   The sample is redundant since its functionality is presented as part of the :ref:`hw_unique_key_usage` sample.
 
+* :ref:`radio_test` sample:
+
+  * Aligned the timer's configuration to the new nrfx API.
+
 Drivers
 =======
 
@@ -409,6 +417,10 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 * Added:
 
   * :ref:`nrf_security` library, relocated from the sdk-nrfxlib repository to the :file:`subsys/nrf_security` directory.
+
+* Updated:
+
+  * :ref:`cpu_load` library by aligning the timer's configuration to the new nrfx API.
 
 Binary libraries
 ----------------
