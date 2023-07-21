@@ -204,5 +204,6 @@
 #endif
 
 #if defined(PSA_CRYPTO_DRIVER_ALG_TLS12_ECJPAKE_TO_PMS_OBERON)
+#define PSA_NEED_OBERON_KDF_DRIVER                             1
 #define PSA_NEED_OBERON_ECJPAKE_TO_PMS                         1
 #endif
