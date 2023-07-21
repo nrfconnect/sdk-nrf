@@ -601,7 +601,7 @@ static int timer_init(void)
 {
 	nrfx_err_t err;
 	nrfx_timer_config_t timer_cfg = {
-		.frequency = NRF_TIMER_FREQ_1MHz,
+		.frequency = NRFX_MHZ_TO_HZ(1),
 		.mode = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
@@ -622,7 +622,7 @@ static int wait_timer_init(void)
 {
 	nrfx_err_t err;
 	nrfx_timer_config_t timer_cfg = {
-		.frequency = NRF_TIMER_FREQ_1MHz,
+		.frequency = NRFX_MHZ_TO_HZ(1),
 		.mode = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
@@ -649,7 +649,7 @@ static int anomaly_timer_init(void)
 {
 	nrfx_err_t err;
 	nrfx_timer_config_t timer_cfg = {
-		.frequency = NRF_TIMER_FREQ_125kHz,
+		.frequency = NRFX_KHZ_TO_HZ(125),
 		.mode = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
