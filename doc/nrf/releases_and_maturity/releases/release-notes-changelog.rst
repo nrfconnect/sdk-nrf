@@ -222,6 +222,7 @@ nRF Desktop
     This is done to prevent the device from powering down and waking up multiple times when an USB cable is connected.
   * Disabled ``CONFIG_BOOT_SERIAL_IMG_GRP_HASH`` in MCUboot bootloader release configurations of boards that use nRF52820 SoC.
     This is done to reduce the memory consumption.
+  * To improve the accuracy, the generation of simulated movement data in the :ref:`nrf_desktop_motion` now uses a timestamp in microseconds based on the cycle count (either :c:func:`k_cycle_get_32` or :c:func:`k_cycle_get_64` function depending on the :kconfig:option:`CONFIG_TIMER_HAS_64BIT_CYCLE_COUNTER` Kconfig option).
 
 Thingy:53: Matter weather station
 ---------------------------------

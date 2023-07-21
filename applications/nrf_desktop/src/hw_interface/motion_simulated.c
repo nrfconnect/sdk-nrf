@@ -72,12 +72,22 @@ static void motion_event_send(int16_t dx, int16_t dy)
 	APP_EVENT_SUBMIT(event);
 }
 
+static uint64_t get_timestamp(void)
+{
+	/* Use higher resolution if available. */
+	if (IS_ENABLED(CONFIG_TIMER_HAS_64BIT_CYCLE_COUNTER)) {
+		return k_cyc_to_us_near64(k_cycle_get_64());
+	} else {
+		return k_cyc_to_us_near64(k_cycle_get_32());
+	}
+}
+
 static void generate_motion_event(void)
 {
 	BUILD_ASSERT((edge_time & (edge_time - 1)) == 0,
 			 "Edge time must be power of 2");
 
-	uint32_t t = k_uptime_get_32();
+	uint64_t t = get_timestamp();
 	size_t v1_id = (t / edge_time) % ARRAY_SIZE(coords);
 	size_t v2_id = (v1_id + 1) % ARRAY_SIZE(coords);
 

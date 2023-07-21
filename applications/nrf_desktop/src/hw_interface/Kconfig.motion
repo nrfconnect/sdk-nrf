@@ -80,13 +80,14 @@ config DESKTOP_MOTION_RIGHT_KEY_ID
 	  ID of key use for generating right motion.
 
 config DESKTOP_MOTION_SIMULATED_EDGE_TIME
-	int "Time for transition between two points in a trajectory [ms]"
+	int "Time for transition between two points in a trajectory [us]"
 	depends on DESKTOP_MOTION_SIMULATED_ENABLE
-	range 8 1000000
-	default 16
+	range 8 1000000000
+	default 16384
 	help
 	  The simulated movement data will be tracing predefined path, an eight-sided polygon.
 	  Must be power of two (calculations speedup).
+	  The resolution may be limited by the precision of the system's hardware clock.
 
 config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
 	int "Scale factor for given shape"
