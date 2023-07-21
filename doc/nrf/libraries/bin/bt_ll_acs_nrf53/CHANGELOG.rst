@@ -9,6 +9,21 @@ Changelog
 
 Notable changes to this controller are documented in this file.
 
+
+Controller v3393
+****************
+
+The following changes have been introduced in the v3393 of the controller:
+
+Changes
+=======
+
+* Updated the controller code with major changes that improve performance on many levels.
+* Fixed all failing EBQ tests for claiming the QDID.
+* Fixed an issue where the timing of the TXEN FEM pin was wrong and would cause unwanted radio noise.
+* Fixed timestamps that are returned when using the LE_READ_ISO_TX_SYNC HCI command.
+
+
 Controller v3357
 ****************
 
@@ -46,6 +61,7 @@ Changes
 
 * Fixed issue where resetting one headset caused the other to disconnect.
 
+
 Controller v3322
 ****************
 
@@ -58,10 +74,12 @@ Changes
 * Changes to accommodate BIS + ACL combinations.
 * Basic support for interleaved broadcasts.
 
+
 Known issues
 ************
 
 See the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` for the list of known issues for the controller.
+
 
 Limitations
 ***********
