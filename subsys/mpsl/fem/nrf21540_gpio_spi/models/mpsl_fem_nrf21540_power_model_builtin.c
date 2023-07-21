@@ -31,6 +31,7 @@ static void model_update_work_handler(struct k_work *work)
 		external_conditions.temperature = mpsl_temperature_get() / 4;
 		external_conditions.voltage = MPSL_FEM_NRF21540_SUPPLY_VOLTAGE_MV / 100;
 		mpsl_fem_nrf21540_power_model_builtin_update(&external_conditions);
+		last_temperature = current_temperature;
 	}
 }
 
