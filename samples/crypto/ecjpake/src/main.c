@@ -216,8 +216,15 @@ int main(void)
 	uint8_t server_secret[32];
 	uint8_t client_secret[32];
 
-	do_key_derivation(&server, server_secret, sizeof(server_secret));
-	do_key_derivation(&client, client_secret, sizeof(client_secret));
+	status = do_key_derivation(&server, server_secret, sizeof(server_secret));
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
+
+	status = do_key_derivation(&client, client_secret, sizeof(client_secret));
+	if (status != PSA_SUCCESS) {
+		goto error;
+	}
 
 	PRINT_HEX("server_secret", server_secret, sizeof(server_secret));
 	PRINT_HEX("client_secret", client_secret, sizeof(client_secret));
