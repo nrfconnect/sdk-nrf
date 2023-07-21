@@ -196,6 +196,7 @@ nRF5340 Audio
 -------------
 
 * Updated the :ref:`application documentation <nrf53_audio_app>` by splitting it into several pages.
+* Added back the QDID number to the documentation.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
