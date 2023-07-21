@@ -8,5 +8,5 @@ settings_storage:
 #else
     align: {start: CONFIG_PM_PARTITION_ALIGN_SETTINGS_STORAGE}
   inside: [nonsecure_storage]
-  size: CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE
 #endif
+  size: CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE
