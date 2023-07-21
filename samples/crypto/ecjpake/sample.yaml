@@ -3,7 +3,7 @@ sample:
   name: EC J-PAKE example
 tests:
   sample.ecjpake:
-    tags: introduction psa
+    tags: introduction psa oberon
     platform_allow: >
       nrf5340dk_nrf5340_cpuapp
       nrf9160dk_nrf9160 nrf52840dk_nrf52840
