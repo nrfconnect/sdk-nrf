@@ -74,7 +74,7 @@ A known issue can list one or both of the following entries:
    When adding a new version, add it to the dropdown list above and move the "selected" option next to it.
    Once "selected" is moved, only issues that are valid for the new version will be displayed when entering the page.
 
-   Known issues process is described at https://projecttools.nordicsemi.no/confluence/pages/viewpage.action?pageId=82556815
+   Known issues process is described at https://nordicsemi.atlassian.net/wiki/spaces/NCS/pages/108237688/Known+Issues+process
 
    When updating this file, add entries in the following format:
 
@@ -2807,6 +2807,19 @@ NCSDK-6073: ``nrf_send`` is blocking
   **Affected platforms:** nRF9160
 
   **Workaround:** For |NCS| v1.4.0, set the non-blocking mode for a partial workaround for non-blocking operation.
+
+.. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0
+
+NRF91-1702: The modem may fail to attach to the network after a modem firmware update if the application core was not rebooted
+  Performing a modem delta update without rebooting the application core (to reinitialize the modem and run the new firmware) may lead to a UICC initialization failure.
+  The UICC failure can be confirmed by issuing the ``AT+CEREG?`` AT command to read the current network registration status after attempting a UICC activation.
+  In case of the failure, the returned network registration status is ``90``.
+
+  **Affected platforms:** nRF9160
+  **Affect modem firmware versions:** v1.3.4 and v1.3.5
+
+  **Workaround:** Reinitialize the :ref:`nrfxlib:nrf_modem` by calling :c:func:`nrf_modem_lib_shutdown` followed by :c:func:`nrf_modem_lib_init`,
+  or reboot the application core as done in the existing |NCS| samples and applications.
 
 Multiprotocol Service Layer (MPSL)
 ==================================
