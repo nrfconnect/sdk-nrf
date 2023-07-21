@@ -9,3 +9,4 @@ Wi-Fi samples
    :glob:
 
    ../../../samples/wifi/*/README
+   wifi_zephyr
