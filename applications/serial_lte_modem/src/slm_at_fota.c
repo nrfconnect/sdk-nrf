@@ -376,10 +376,7 @@ void slm_fota_post_process(void)
 void slm_finish_modem_fota(int modem_lib_init_ret)
 {
 	if (handle_nrf_modem_lib_init_ret(modem_lib_init_ret)) {
-		char buf[40];
-
-		LOG_INF("Re-initializing the modem due to"
-				" ongoing modem firmware update.");
+		LOG_INF("Re-initializing the modem due to ongoing modem firmware update.");
 
 		/* The second init needs to be done regardless of the return value.
 		 * Refer to the below link for more information on the procedure.
@@ -388,14 +385,9 @@ void slm_finish_modem_fota(int modem_lib_init_ret)
 		modem_lib_init_ret = nrf_modem_lib_init();
 		handle_nrf_modem_lib_init_ret(modem_lib_init_ret);
 
-		nrf_modem_at_cmd(buf, sizeof(buf), "%s", "AT%SHORTSWVER");
-		if (strstr(buf, "1.3.4") || strstr(buf, "1.3.5")) {
-			/* Those versions suffer from a bug that provokes UICC failure (+CEREG: 90)
-			 * after the update, preventing the modem from registering to the network.
-			 */
-			LOG_INF("Applying the workaround to a modem firmware update issue...");
-			nrf_modem_lib_shutdown();
-			nrf_modem_lib_init();
-		}
+		/* Workaround for a known issue NRF91-1702. */
+		LOG_INF("Applying the workaround to a modem firmware update issue...");
+		nrf_modem_lib_shutdown();
+		nrf_modem_lib_init();
 	}
 }
