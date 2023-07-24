@@ -88,12 +88,16 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 		scan_info.scan_params.bands = params->bands;
 		scan_info.scan_params.dwell_time_active = params->dwell_time_active;
 		scan_info.scan_params.dwell_time_passive = params->dwell_time_passive;
+
+		vif_ctx_zep->max_bss_cnt = params->max_bss_cnt;
 	} else {
 		scan_info.scan_params.num_scan_ssids = 1;
 	}
 
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid_len = 0;
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid[0] = 0;
+
+	vif_ctx_zep->scan_res_cnt = 0;
 
 	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
 
@@ -104,7 +108,6 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 	vif_ctx_zep->scan_type = SCAN_DISPLAY;
 	vif_ctx_zep->scan_in_progress = true;
-	vif_ctx_zep->scan_res_cnt = 0;
 
 	k_work_schedule(&vif_ctx_zep->scan_timeout_work, WIFI_NRF_SCAN_TIMEOUT);
 
@@ -177,6 +180,7 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct umac_display_results *r = NULL;
 	struct wifi_scan_result res;
+	uint16_t max_bss_cnt = 0;
 	unsigned int i = 0;
 	scan_result_cb_t cb = NULL;
 
@@ -184,10 +188,13 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 
 	cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
 
+	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
+		vif_ctx_zep->max_bss_cnt : CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT;
+
 	for (i = 0; i < scan_res->event_bss_count; i++) {
 		/* Limit the scan results to the configured maximum */
-		if ((CONFIG_NRF700X_SCAN_LIMIT >= 0) &&
-		    (vif_ctx_zep->scan_res_cnt >= CONFIG_NRF700X_SCAN_LIMIT)) {
+		if ((max_bss_cnt > 0) &&
+		    (vif_ctx_zep->scan_res_cnt >= max_bss_cnt)) {
 			break;
 		}
 
