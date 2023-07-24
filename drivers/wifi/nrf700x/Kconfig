@@ -337,4 +337,8 @@ config NET_TC_TX_COUNT
 
 endif # NETWORKING
 
+# Override the Wi-Fi subsytems WIFI_MGMT_SCAN_SSID_FILT_MAX parameter,
+# since we support a maximum of 2 SSIDs for scan result filtering.
+config WIFI_MGMT_SCAN_SSID_FILT_MAX
+	default 2
 endif
