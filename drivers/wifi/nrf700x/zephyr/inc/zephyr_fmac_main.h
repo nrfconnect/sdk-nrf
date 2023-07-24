@@ -49,6 +49,7 @@ struct wifi_nrf_vif_ctx_zep {
 	scan_result_cb_t disp_scan_cb;
 	bool scan_in_progress;
 	int scan_type;
+	uint16_t max_bss_cnt;
 	unsigned int scan_res_cnt;
 	struct k_work_delayable scan_timeout_work;
 

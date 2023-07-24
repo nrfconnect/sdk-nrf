@@ -226,10 +226,6 @@ config NRF700X_RX_MAX_DATA_SIZE
 	int "Maximum size of RX data"
 	default 1600
 
-config NRF700X_SCAN_LIMIT
-	int "Maximum number of scan results returned to application. Use negative values for unlimited scan results."
-	default -1
-
 config NRF700X_TX_DONE_WQ_ENABLED
 	bool "Enable TX done workqueue (impacts performance negatively)"
 
