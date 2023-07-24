@@ -5,6 +5,9 @@
 
 #include <zephyr/kernel.h>
 #include <net/nrf_cloud.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif
 #include <date_time.h>
 #include <zephyr/logging/log.h>
 #include <net/nrf_cloud_codec.h>
@@ -14,7 +17,7 @@
 
 #include "led_control.h"
 
-LOG_MODULE_REGISTER(message_queue, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(message_queue, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 /* Message Queue for enqueing outgoing messages during offline periods. */
 K_MSGQ_DEFINE(device_message_queue,
@@ -113,6 +116,7 @@ static int consume_device_message(void)
 	 */
 	LOG_DBG("Attempting to transmit enqueued device message");
 
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 	struct nrf_cloud_tx_data mqtt_msg = {
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
@@ -121,6 +125,11 @@ static int consume_device_message(void)
 
 	/* Send message */
 	ret = nrf_cloud_send(&mqtt_msg);
+
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	ret = nrf_cloud_coap_obj_send(queued_msg);
+
+#endif /* CONFIG_NRF_CLOUD_COAP */
 
 	if (ret) {
 		LOG_ERR("Transmission of enqueued device message failed, nrf_cloud_send "

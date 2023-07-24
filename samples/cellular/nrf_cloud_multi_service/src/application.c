@@ -5,16 +5,19 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <modem/location.h>
+#include <date_time.h>
+#include <stdio.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_alert.h>
-#include <date_time.h>
-#include <stdio.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif
 
 #include "application.h"
-
 #include "temperature.h"
 #include "cloud_connection.h"
 #include "message_queue.h"
@@ -22,8 +25,7 @@
 #include "led_control.h"
 #include "at_commands.h"
 
-
-LOG_MODULE_REGISTER(application, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(application, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 /* Timer used to time the sensor sampling rate. */
 static K_TIMER_DEFINE(sensor_sample_timer, NULL, NULL);
@@ -67,7 +69,8 @@ static int create_timestamped_device_message(struct nrf_cloud_obj *const msg,
 	}
 
 	/* Create message object */
-	err = nrf_cloud_obj_msg_init(msg, appid, msg_type);
+	err = nrf_cloud_obj_msg_init(msg, appid,
+				     IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ? NULL : msg_type);
 	if (err) {
 		LOG_ERR("Failed to initialize message with appid %s and msg type %s",
 			appid, msg_type);
@@ -97,7 +100,7 @@ static int send_sensor_sample(const char *const sensor, double value)
 {
 	int ret;
 
-	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
+	MSG_OBJ_DEFINE(msg_obj);
 
 	/* Create a timestamped message container object for the sensor sample. */
 	ret = create_timestamped_device_message(&msg_obj, sensor,
@@ -127,11 +130,12 @@ static int send_sensor_sample(const char *const sensor, double value)
  */
 static int send_gnss(const struct location_event_data * const loc_gnss)
 {
+	int ret;
+
 	if (!loc_gnss || (loc_gnss->method != LOCATION_METHOD_GNSS)) {
 		return -EINVAL;
 	}
 
-	int ret = 0;
 	struct nrf_cloud_gnss_data gnss_pvt = {
 		.type = NRF_CLOUD_GNSS_TYPE_PVT,
 		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
@@ -144,7 +148,7 @@ static int send_gnss(const struct location_event_data * const loc_gnss)
 			.has_heading	= 0
 		}
 	};
-	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
+	MSG_OBJ_DEFINE(msg_obj);
 
 	/* Add the timestamp */
 	(void)date_time_now(&gnss_pvt.ts_ms);
@@ -320,10 +324,20 @@ void main_application_thread_fn(void)
 		LOG_INF("Current date and time determined");
 	}
 
+	const char *protocol = "";
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		protocol = "MQTT";
+	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
+		protocol = "CoAP";
+	}
 	nrf_cloud_log_init();
+	nrf_cloud_log_control_set(CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL);
 	/* Send a direct log to the nRF Cloud web portal indicating the sample has started up. */
-	nrf_cloud_log_send(LOG_LEVEL_INF, "nRF Cloud MQTT multi-service sample v%s",
-			   CONFIG_APP_VERSION);
+	(void)nrf_cloud_log_send(LOG_LEVEL_INF,
+				 "nRF Cloud multi-service sample has started, "
+				 "version: %s, protocol: %s",
+				 CONFIG_APP_VERSION, protocol);
 
 	/* Begin tracking location at the configured interval. */
 	(void)start_location_tracking(on_location_update,

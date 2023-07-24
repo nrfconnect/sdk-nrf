@@ -13,7 +13,7 @@
 
 #include "location_tracking.h"
 
-LOG_MODULE_REGISTER(location_tracking, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(location_tracking, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 static location_update_cb_t location_update_handler;
 static bool location_initialized;
@@ -101,6 +101,13 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval)
 
 	/* Load default settings accordingly */
 	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
+
+	/* Set the mode to walk through all methods. This ensures all methods
+	 * are tested and demonstrated.
+	 * In a real product, the default is the better option to use, since the location
+	 * library will try them in priority order.
+	 */
+	config.mode = LOCATION_REQ_MODE_ALL;
 
 	/* Set the location report interval. */
 	config.interval = interval;

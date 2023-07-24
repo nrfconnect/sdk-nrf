@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "MQTT Multi Service Sample Settings"
+menu "Multi Service Sample Settings"
 
 config APP_VERSION
-	string "MQTT Multi Service Sample version"
+	string "Multi Service Sample version"
 	default "1.0.0"
 
 config POWER_SAVING_MODE_ENABLE
@@ -209,6 +209,7 @@ config TEST_COUNTER
 	bool "Sets whether the test counter is enabled"
 
 config AT_CMD_REQUESTS
+	depends on !NRF_CLOUD_COAP
 	bool "Enables remote execution of AT commands using device messages"
 	default y
 
@@ -220,10 +221,96 @@ config AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH
 	  error code sent in its place (-NRF_E2BIG). Cannot be less than 40 bytes.
 	default 200
 
+if NRF_CLOUD_COAP
+
+menuconfig NRF_CLOUD_COAP_FOTA
+	bool "Enable FOTA service when using CoAP to connect to nRF Cloud"
+	select FOTA_DOWNLOAD
+	select FOTA_DOWNLOAD_PROGRESS_EVT
+	select IMG_ERASE_PROGRESSIVELY
+	select DFU_TARGET
+	select DOWNLOAD_CLIENT
+	select REBOOT
+	select CJSON_LIB
+	select SETTINGS
+	default y
+
+if NRF_CLOUD_COAP_FOTA
+
+config COAP_FOTA_DL_TIMEOUT_MIN
+	int "The time (minutes) allotted for a FOTA download to complete"
+	default 15
+	help
+	  If the FOTA download does not complete in the allotted time,
+	  the download will be cancelled and the job status will be
+	  set as failed.
+
+config COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	bool "Use the same settings area as the nRF Cloud FOTA library"
+	default y
+	help
+	  Using the same settings area as the nRF Cloud FOTA library will
+	  allow this sample to perform application-FOTA updates to applications
+	  built with CONFIG_NRF_CLOUD_FOTA enabled.
+
+config COAP_FOTA_SETTINGS_NAME
+	depends on !COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	string "Settings identifier for the COAP FOTA sample"
+	default "coap_fota_sample"
+	help
+	  The root settings identifier for this application.
+	  For application-FOTA, this value should also be found in your target application
+	  so that the FOTA status can be properly reported to nRF Cloud.
+
+config COAP_FOTA_SETTINGS_KEY_PENDING_JOB
+	depends on !COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	string "Settings item key for pending FOTA job info"
+	default "pending_job"
+	help
+	  The settings item key where pending FOTA job info will be stored.
+	  For application-FOTA, this value should also be found in your target application
+	  so that the FOTA status can be properly reported to nRF Cloud.
+
+config COAP_FOTA_JOB_CHECK_RATE_MINUTES
+	int "FOTA job check interval (minutes)"
+	default 60
+	help
+	  Sets the time to wait between each request to get any pending FOTA job.
+
+config COAP_FOTA_THREAD_STACK_SIZE
+	int "CoAP FOTA Thread Stack Size (bytes)"
+	default 2048
+	help
+	  Sets the stack size (in bytes) for the CoAP FOTA thread of the
+	  sample.
+
+endif
+
+config COAP_SHADOW_CHECK_RATE_SECONDS
+	int "Shadow job check interval (seconds)"
+	default 300
+	help
+	  Sets the time to wait between each request to get any change to the
+	  device shadow.
+
+config COAP_SHADOW_THREAD_STACK_SIZE
+	int "CoAP Shadow Thread Stack Size (bytes)"
+	default 2048
+	help
+	  Sets the stack size (in bytes) for the CoAP shadow thread of the
+	  sample.
+
+endif
+
 endmenu
 
-module = MQTT_MULTI_SERVICE
+if NRF_CLOUD_MQTT
 module-str = MQTT Multi Service
+endif
+if NRF_CLOUD_COAP
+module-str = CoAP Multi Service
+endif
+module = MULTI_SERVICE
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 menu "Zephyr Kernel"

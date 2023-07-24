@@ -8,6 +8,20 @@
 
 #include <zephyr/kernel.h>
 
+/* Time in seconds to wait before rebooting after a FOTA update. */
+#define FOTA_REBOOT_DELAY_S	5
+#define PENDING_REBOOT_S	10
+#define ERROR_REBOOT_S		30
+#define FOTA_REBOOT_S		10
+
+/**
+ * @brief De-init LTE if error is true.
+ *
+ * Reboot after specified delay.
+ *
+ */
+void fota_reboot(const unsigned int delay_s, const bool error);
+
 /**
  * @brief Notify fota_support that a FOTA download has finished.
  *
