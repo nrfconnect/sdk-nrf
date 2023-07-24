@@ -15,7 +15,7 @@
 #include "cloud_connection.h"
 #include "at_commands.h"
 
-LOG_MODULE_REGISTER(at_cmd_execution, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(at_cmd_execution, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 /* AT command request error handling */
 #define AT_CMD_REQUEST_ERR_FORMAT "Error while processing AT command request: %d"

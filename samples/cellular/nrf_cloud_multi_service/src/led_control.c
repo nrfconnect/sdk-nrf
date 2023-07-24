@@ -17,7 +17,7 @@
  * thingy91_nrf9160_common.dts.
  */
 
-LOG_MODULE_REGISTER(led_control, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(led_control, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 /* Find a Device Tree node compatible with either the pwm_leds or gpio_leds driver, depending on
  * what has been configured.

@@ -4,20 +4,24 @@
  */
 
 #include <zephyr/kernel.h>
-#include <stdio.h>
 #include <zephyr/net/socket.h>
-#include <net/nrf_cloud.h>
-#include <date_time.h>
 #include <zephyr/logging/log.h>
 #include <modem/nrf_modem_lib.h>
+#include <stdio.h>
+#include <date_time.h>
+#include <net/nrf_cloud.h>
+#include <net/nrf_cloud_log.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#include "fota_support_coap.h"
+#endif
 
 #include "cloud_connection.h"
-
 #include "fota_support.h"
 #include "location_tracking.h"
 #include "led_control.h"
 
-LOG_MODULE_REGISTER(cloud_connection, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
+LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 /* Internal state */
 
@@ -30,6 +34,9 @@ static K_EVENT_DEFINE(cloud_events);
 
 /* Atomic status flag tracking whether an initial association is in progress. */
 atomic_t initial_association;
+
+static void cloud_ready(void);
+static void update_shadow(void);
 
 /* Helper functions for pending on pendable events. */
 bool await_network_ready(k_timeout_t timeout)
@@ -115,8 +122,13 @@ void disconnect_cloud(void)
 	 * Will no-op and return -EACCES if already disconnected.
 	 */
 	LOG_INF("Disconnecting from nRF Cloud");
-	int err = nrf_cloud_disconnect();
+	int err;
 
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	err = nrf_cloud_disconnect();
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	err = nrf_cloud_coap_disconnect();
+#endif
 	/* nrf_cloud_uninit returns -EACCES if we are not currently in a connected state. */
 	if (err == -EACCES) {
 		LOG_DBG("Already disconnected from nRF Cloud");
@@ -143,8 +155,20 @@ static bool connect_cloud(void)
 	/* Clear the disconnected flag, no longer accurate. */
 	k_event_clear(&cloud_events, CLOUD_DISCONNECTED);
 
+	int err;
+
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* Connect to nRF Cloud -- Non-blocking. State updates are handled in callbacks. */
-	int err = nrf_cloud_connect();
+	err = nrf_cloud_connect();
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	/* Connect via CoAP -- blocking. */
+	err = nrf_cloud_coap_connect();
+	if (!err) {
+		cloud_ready();
+		update_shadow();
+		return true;
+	}
+#endif
 
 	/* If we were already connected, treat as a successful connection, but do nothing. */
 	if (err == NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED) {
@@ -182,6 +206,7 @@ static void cloud_ready(void)
  */
 static void update_shadow(void)
 {
+	static bool updated;
 	int err;
 	struct nrf_cloud_svc_info_fota fota_info = {
 		.application = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
@@ -189,32 +214,51 @@ static void update_shadow(void)
 		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA),
 		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
 	};
-
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gnss = location_tracking_enabled(),
 		.temperature = IS_ENABLED(CONFIG_TEMP_TRACKING),
-		.log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
-		       IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT),
-		.dictionary_log = IS_ENABLED(CONFIG_NRF_CLOUD_LOG_BACKEND) &&
-				  IS_ENABLED(CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY)
+		.log = nrf_cloud_is_text_logging_enabled(),
+		.dictionary_log = nrf_cloud_is_dict_logging_enabled()
 	};
 	struct nrf_cloud_svc_info service_info = {
 		.fota = &fota_info,
 		.ui = &ui_info
 	};
+#if defined(CONFIG_NRF_MODEM)
+	struct nrf_cloud_modem_info modem_info = {
+		.device = NRF_CLOUD_INFO_SET,
+		.network = NRF_CLOUD_INFO_SET,
+		.sim = IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM) ? NRF_CLOUD_INFO_SET : 0,
+		.mpi = NULL,
+		/* Include the application version */
+		.application_version = CONFIG_APP_VERSION
+	};
+	struct nrf_cloud_modem_info *mdm = &modem_info;
+#else
+	struct nrf_cloud_modem_info *mdm = NULL;
+#endif
 	struct nrf_cloud_device_status device_status = {
-		.modem = NULL,
+		.modem = mdm,
 		.svc = &service_info
 	};
 
+	if (updated) {
+		return; /* It is not necessary to do this more than once per boot. */
+	}
 	LOG_DBG("Updating shadow");
-
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 	err = nrf_cloud_shadow_device_status_update(&device_status);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	err = nrf_cloud_coap_shadow_device_status_update(&device_status);
+#endif
+
 	if (err) {
 		LOG_ERR("Failed to update device shadow, error: %d", err);
+	} else {
+		LOG_DBG("Updated shadow");
+		updated = true;
 	}
 }
-
 
 /* External event handlers */
 
@@ -255,6 +299,7 @@ static void date_time_event_handler(const struct date_time_evt *date_time_evt)
 	}
 }
 
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 /* Handler for events from nRF Cloud Lib. */
 static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 {
@@ -377,6 +422,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		break;
 	}
 }
+#endif /* CONFIG_NRF_CLOUD_MQTT */
 
 /**
  * @brief Set up for the nRF Cloud connection (without connecting)
@@ -387,6 +433,8 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
  */
 static int setup_cloud(void)
 {
+	int err;
+
 	/* Register to be notified of network availability changes.
 	 *
 	 * If the chosen connectivity layer becomes ready instantaneously, it is possible that
@@ -408,6 +456,7 @@ static int setup_cloud(void)
 	/* Register to be notified when the modem has figured out the current time. */
 	date_time_register_handler(date_time_event_handler);
 
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* Initialize nrf_cloud library. */
 	struct nrf_cloud_init_param params = {
 		.event_handler = cloud_event_handler,
@@ -415,12 +464,31 @@ static int setup_cloud(void)
 		.application_version = CONFIG_APP_VERSION
 	};
 
-	int err = nrf_cloud_init(&params);
-
+	err = nrf_cloud_init(&params);
 	if (err) {
 		LOG_ERR("nRF Cloud library could not be initialized, error: %d", err);
 		return err;
 	}
+
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+#if defined(CONFIG_NRF_CLOUD_COAP_FOTA)
+	err = coap_fota_init();
+	if (err) {
+		LOG_ERR("Error initializing FOTA: %d", err);
+		return err;
+	}
+	err = coap_fota_begin();
+	if (err) {
+		LOG_ERR("Error starting FOTA: %d", err);
+		return err;
+	}
+#endif /* CONFIG_NRF_CLOUD_COAP_FOTA */
+	err = nrf_cloud_coap_init();
+	if (err) {
+		LOG_ERR("Failed to initialize CoAP client: %d", err);
+		return err;
+	}
+#endif /* CONFIG_NRF_CLOUD_COAP */
 
 	return 0;
 }
