@@ -241,8 +241,3 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
       mbedcrypto_common
   )
 endif()
-
-if(CONFIG_PSA_NATIVE_ITS_BACKEND_ZEPHYR)
-  # Include EITS in Zephyr build
-  add_subdirectory(psa)
-endif()

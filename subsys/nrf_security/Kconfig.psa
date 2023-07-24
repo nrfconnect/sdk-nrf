@@ -84,48 +84,6 @@ config PSA_CRYPTO_DRIVER_ALG_PRNG_TEST
 	  Internal option used for testing. User provided function will be called
 	  to get random bytes.
 
-menuconfig PSA_NATIVE_ITS
-	bool "PSA native Internal Trusted Storage"
-	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
-	depends on !BUILD_WITH_TFM
-
-if PSA_NATIVE_ITS
-
-choice
-	prompt "Backend selection for PSA native ITS"
-	# Please move this depends to the specific choice configuration when more
-	# than one choice is available
-	depends on SETTINGS && !SETTINGS_NONE
-	help
-	  Select backend for PSA native Internal Trusted Storage
-
-config CHOICE_PSA_NATIVE_ITS_BACKEND_ZEPHYR_SETTINGS
-	bool "Zephyr Settings"
-	select PSA_NATIVE_ITS_BACKEND_ZEPHYR
-
-endchoice
-
-menuconfig PSA_NATIVE_ITS_BACKEND_ZEPHYR
-	bool "Native ITS backend based on Zephyr Settings subsystem"
-	depends on CHOICE_PSA_NATIVE_ITS_BACKEND_ZEPHYR_SETTINGS
-	help
-	  Enable to get access for flashing operation based on Zephyr Settings
-	  subsystem.
-
-if PSA_NATIVE_ITS_BACKEND_ZEPHYR
-
-config PSA_NATIVE_ITS_READ_BUFF_SIZE
-	int "The size of the buffer used when reading with an offset"
-	default 2048
-
-module = PSA_NATIVE_ITS_BACKEND_ZEPHYR
-module-str = PSA NATIVE ITS Zephyr backend
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
-
-endif # PSA_NATIVE_ITS_BACKEND_ZEPHYR
-
-endif # PSA_NATIVE_ITS
-
 endmenu # PSA API support
 
 endif # MBEDTLS_PSA_CRYPTO_C
