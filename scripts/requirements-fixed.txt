@@ -7,7 +7,7 @@ Jinja2==2.11.3
 MarkupSafe==1.1.1
 Pillow==9.4.0
 PyYAML==5.4.1
-Pygments==2.7.4
+Pygments==2.15.0
 Sphinx==3.4.3
 aenum==3.0.0
 alabaster==0.7.12
