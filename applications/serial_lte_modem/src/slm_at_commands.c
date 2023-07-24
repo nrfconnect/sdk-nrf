@@ -6,12 +6,14 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include <zephyr/init.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/sys/timeutil.h>
 #include <zephyr/types.h>
 #include <dfu/dfu_target.h>
 #include <modem/at_cmd_parser.h>
@@ -296,6 +298,56 @@ static int handle_at_uuid(enum at_cmd_type type)
 	return ret;
 }
 
+/** @brief Handles AT#XCCLK command.
+ *  AT#XCCLK
+ *  AT#XCCLK? not supported
+ *  AT#XCCLK=? not supported
+ */
+static int handle_at_cclk(enum at_cmd_type type)
+{
+	int ret;
+	struct tm tm_time = {
+		.tm_sec = 0,
+		.tm_min = 0,
+		.tm_hour = 0,
+		.tm_mday = 0,
+		.tm_mon = 0,
+		.tm_year = 0};
+	time_t utc_time;
+	int16_t time_zone = 0;
+	uint16_t daylight_saving = 0;
+
+	if (type != AT_CMD_TYPE_SET_COMMAND) {
+		return -EINVAL;
+	}
+
+	/** parse %CCLK: <time>[,<daylight_saving_time>]
+	 * <time> = "yy/MM/dd,hh:mm:ss+/-z"
+	 * <daylight_saving_time> is 0, 1, 2
+	 */
+	ret = nrf_modem_at_scanf("AT%CCLK?", "%%CCLK: \"%2d/%2d/%2d,%2d:%2d:%2d%+2hd\",%hu",
+				 &tm_time.tm_year, &tm_time.tm_mon, &tm_time.tm_mday,
+				 &tm_time.tm_hour, &tm_time.tm_min, &tm_time.tm_sec,
+				 &time_zone, &daylight_saving);
+	if (ret <= 0) {
+		return -EAGAIN;
+	}
+
+	/* calculate local datetime */
+	utc_time = timeutil_timegm(&tm_time);
+	if (time_zone != 99) {
+		utc_time += time_zone * 15 * 60;
+	}
+	utc_time += daylight_saving * 60 * 60;
+	(void)gmtime_r(&utc_time, &tm_time);
+
+	rsp_send("\r\n#XCCLK: \"%02d/%02d/%02d,%02d:%02d:%02d\",%+2hd,%hu\r\n",
+		 tm_time.tm_year, tm_time.tm_mon, tm_time.tm_mday,
+		 tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec,
+		 time_zone, daylight_saving);
+	return 0;
+}
+
 static void set_uart_wk(struct k_work *work)
 {
 	int err;
@@ -522,6 +574,7 @@ static struct slm_at_cmd {
 	{"AT#XCLAC", handle_at_clac},
 	{"AT#XSLMUART", handle_at_slmuart},
 	{"AT#XDATACTRL", handle_at_datactrl},
+	{"AT#XCCLK", handle_at_cclk},
 
 	/* TCP proxy commands */
 	{"AT#XTCPSVR", handle_at_tcp_server},

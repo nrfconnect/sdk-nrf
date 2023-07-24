@@ -505,6 +505,61 @@ Test command
 
 The test command is not supported.
 
+Device local time #XCCLK
+========================
+
+The ``#XCCLK`` command gets the real-time clock of the device.
+
+Set command
+-----------
+
+The set command returns the local time, the time zone and daylight-saving time info.
+
+Syntax
+~~~~~~
+
+::
+
+   #XCCLK
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XCCLK: <time>,<time_zone>,<daylight_saving_time>
+
+The ``<time>`` value returns a string indicating local time in the format "yy/MM/dd,hh:mm:ss+zz", where the characters, from left to right, indicate year, month, day, hour, minutes, seconds.
+
+The ``<time_zone>`` value returns an integer indicating the difference, expressed in quarters of an hour, between the local time and GMT (value range from -48 to +48 and 99 for "not set").
+
+The ``<daylight_saving_time>`` value returns an integer indicating below:
+
+* ``0`` - No adjustment of daylight-saving time.
+* ``1`` - +1 hour adjustment of daylight-saving time.
+* ``2`` - +2 hours adjustment of daylight-saving time.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XCCLK
+
+  #XCCLK: "23/07/24,12:27:43",+36,0
+
+  OK
+
+Read command
+------------
+
+The read command is not supported.
+
+Test command
+------------
+
+The test command is not supported.
+
 Native TLS CMNG #XCMNG
 ======================
 
