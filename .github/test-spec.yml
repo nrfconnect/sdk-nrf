@@ -104,7 +104,7 @@
 "CI-lwm2m-test":
   - "include/modem/lte_lc*.h"
   - "include/modem/nrf_modem_lib.h"
-  - "lib/bin/**/*"
+  - "lib/bin/lwm2m_carrier/**/*"
   - "lib/lte_link_control/**/*"
   - "lib/nrf_modem_lib/**/*"
   - "samples/cellular/lwm2m_carrier/**/*"
