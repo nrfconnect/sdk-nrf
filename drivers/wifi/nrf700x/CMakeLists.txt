@@ -20,14 +20,17 @@ zephyr_include_directories(
 	${ZEPHYR_BASE}/subsys/net/ip
 	osal/hw_if/hal/inc/fw
 	osal/fw_if/umac_if/inc/fw
+	${ZEPHYR_BASE}/../nrf/include/drivers/nrf700x/fw
 )
 
 zephyr_include_directories_ifdef(CONFIG_NRF700X_RADIO_TEST
 	osal/fw_if/umac_if/inc/radio_test
+	${ZEPHYR_BASE}/../nrf/include/drivers/nrf700x/radio_test
 )
 
 zephyr_include_directories_ifndef(CONFIG_NRF700X_RADIO_TEST
 	osal/fw_if/umac_if/inc/default
+	${ZEPHYR_BASE}/../nrf/include/drivers/nrf700x/default
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_BT_COEX
