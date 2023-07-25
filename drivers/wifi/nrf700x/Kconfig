@@ -279,6 +279,22 @@ config NRF700X_RPU_PS_IDLE_TIMEOUT_MS
 	int "RPU power save idle timeout in milliseconds"
 	default 10
 
+config NRF700X_RPU_EXTEND_TWT_SP
+	bool "Enable extending TWT service period"
+	help
+	  In case frames accepted before beginning of SP are not
+	  transmitted before the SP completes then typically they are
+	  dropped to conform to SP window as per specification i.e., no
+	  transmission outside SP window.
+
+	  This feature mitigates the frame loss by transmitting even after SP
+	  completion by using standard contention mechanism which is allowed
+	  in specification but not recommended. As the device is actively transmitting
+	  beyond SP, the power consumption increases depending on the amount
+	  of traffic available at the start of SP.
+
+	  Please note that if a frame is sent after SP starts it will be queued and this
+	  mechanism is not used.
 endif
 
 config WIFI_FIXED_MAC_ADDRESS
