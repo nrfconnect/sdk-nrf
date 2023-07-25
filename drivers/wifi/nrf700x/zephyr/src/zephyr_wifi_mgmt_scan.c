@@ -83,6 +83,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	}
 
 	scan_info.scan_params.bands = params->bands;
+	scan_info.scan_params.dwell_time_active = params->dwell_time_active;
 
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid_len = 0;
 	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid[0] = 0;
