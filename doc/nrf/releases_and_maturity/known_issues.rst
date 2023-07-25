@@ -2609,6 +2609,13 @@ Crypto
 
 The issues in this section are related to :ref:`nrfxlib:crypto`.
 
+.. rst-class:: v2-4-1 v2-4-0
+
+NCSDK-22593: Selecting :kconfig:option:`PSA_WANT_ALG_CCM` without :kconfig:option:`MBEDTLS_AES_C` causes a build failure
+  Selecting :kconfig:option:`PSA_WANT_ALG_CCM` without :kconfig:option:`MBEDTLS_AES_C` results in a build failure due to unsatisfied dependencies in :file:`check_config.h`.
+
+  **Workaround:** Manually define ``MBEDTLS_AES_C`` in the file :file:`nrf_security/configs/nrf-config.h` or enable :kconfig:option:`PSA_WANT_ALG_GCM`.
+
 .. rst-class:: v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
 NCSDK-21430: For ChaCha20/Poly1305 using nrf_cc3xx, incorrect tag will be produced if plaintext is empty
