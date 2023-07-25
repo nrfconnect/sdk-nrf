@@ -32,6 +32,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_scan_info scan_info;
 	uint8_t band_flags = 0xFF;
+	uint8_t i = 0;
 	int ret = -1;
 
 	vif_ctx_zep = dev->data;
@@ -77,17 +78,24 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 	scan_info.scan_reason = SCAN_DISPLAY;
 
-	if (params->scan_type == WIFI_SCAN_TYPE_ACTIVE) {
-		/* Wildcard SSID to trigger active scan */
-		scan_info.scan_params.num_scan_ssids = 1;
+	scan_info->scan_params.bands = params->bands;
+	scan_info->scan_params.dwell_time_active = params->dwell_time_active;
+	scan_info->scan_params.dwell_time_passive = params->dwell_time_passive;
+
+	for (i = 0; i < NRF_WIFI_SCAN_MAX_NUM_SSIDS; i++) {
+		if (!strlen(params->ssids[i])) {
+			break;
+		}
+
+		memcpy(scan_info->scan_params.scan_ssids[i].nrf_wifi_ssid,
+		       params->ssids[i],
+		       sizeof(scan_info->scan_params.scan_ssids[i].nrf_wifi_ssid));
+
+		scan_info->scan_params.scan_ssids[i].nrf_wifi_ssid_len =
+			strlen(scan_info->scan_params.scan_ssids[i].nrf_wifi_ssid);
+
+		scan_info->scan_params.num_scan_ssids++;
 	}
-
-	scan_info.scan_params.bands = params->bands;
-	scan_info.scan_params.dwell_time_active = params->dwell_time_active;
-	scan_info.scan_params.dwell_time_passive = params->dwell_time_passive;
-
-	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid_len = 0;
-	scan_info.scan_params.scan_ssids[0].nrf_wifi_ssid[0] = 0;
 
 	vif_ctx_zep->max_bss_cnt = params->max_bss_cnt;
 	vif_ctx_zep->scan_res_cnt = 0;
