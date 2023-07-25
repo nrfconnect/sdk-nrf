@@ -950,20 +950,20 @@
 
 .. _`nRF Cloud documentation`:
 .. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/
-.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Devices/Messages/DeviceMessages/
-.. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Devices/Properties/Shadows/
-.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/Security/Security/
-.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning#just-in-time-provisioning
-.. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning/
-.. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTA/
-.. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTA/#mqtt-job-execution-notifications
-.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTATutorial/
-.. _`Securely generating credentials on the nRF9160`: https://docs.nrfcloud.com/Devices/Security/Credentials/
+.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Devices/MessagesAndAlerts/DeviceMessages.html
+.. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Devices/Properties/Shadows.html
+.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/Security/Security.html
+.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#just-in-time-provisioning
+.. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html
+.. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html
+.. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html#mqtt-job-execution-notifications
+.. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTATutorial.html
+.. _`Securely generating credentials on the nRF9160`: https://docs.nrfcloud.com/Devices/Security/Credentials.html
 .. _`nRF Cloud REST API`:
-.. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/APIs/REST/RESTIntro/
-.. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/LocationServices/LocationServicesOverview/
-.. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/APIs/MQTT/MQTTIntro/
-.. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/APIs/MQTT/Topics/
+.. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/APIs/REST/RESTOverview.html
+.. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/LocationServices/LSOverview.html
+.. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/APIs/MQTT/MQTTOverview.html
+.. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/APIs/MQTT/Topics.html
 
 .. _`nRF Cloud REST API (v1)`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud Patch Device State`:
