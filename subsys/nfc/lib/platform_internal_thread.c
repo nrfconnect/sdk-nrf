@@ -30,12 +30,29 @@ struct nfc_item_header {
 };
 
 #ifdef CONFIG_NFC_OWN_THREAD
-static K_SEM_DEFINE(cb_sem, 0, 1);
+/* By using a counting semaphore, NFC events interrupt can go faster than the processing thread.
+ * All events must be processed.
+ */
+static K_SEM_DEFINE(cb_sem, 0, K_SEM_MAX_LIMIT);
 #endif /* CONFIG_NFC_OWN_THREAD */
 
 static bool buf_full;
 static nfc_lib_cb_resolve_t nfc_cb_resolve;
 RING_BUF_DECLARE(nfc_cb_ring, CONFIG_NFC_RING_SIZE);
+
+static void work_resubmit(struct k_work *work, struct ring_buf *buf)
+{
+	if (!IS_ENABLED(CONFIG_NFC_OWN_THREAD)) {
+		if (!ring_buf_is_empty(buf)) {
+			int ret = k_work_submit(work);
+			/* In this case, work can be scheduled either from IRQ or to the queue
+			 * running work items during the run.
+			 */
+			__ASSERT_NO_MSG(((ret == 0) || (ret == 2)));
+			ARG_UNUSED(ret);
+		}
+	}
+}
 
 static int ring_buf_get_data(struct ring_buf *buf, uint8_t **data, uint32_t size, bool *is_alloc)
 {
@@ -120,6 +137,7 @@ static void cb_work(struct k_work *work)
 	nfc_cb_resolve(ctx, data);
 
 	if (header.data_size == 0) {
+		work_resubmit(work, &nfc_cb_ring);
 		return;
 	}
 
@@ -132,6 +150,8 @@ static void cb_work(struct k_work *work)
 									header.data_size, err);
 		}
 	}
+
+	work_resubmit(work, &nfc_cb_ring);
 
 	return;
 

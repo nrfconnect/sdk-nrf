@@ -602,7 +602,8 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+  * Fixed the potential issue where the NFC interrupt context switching could loose interrupts data.
+    This could happen if interrupts would be executed much faster than the NFC workqueue or thread.
 
 Nordic Security Module
 ----------------------
