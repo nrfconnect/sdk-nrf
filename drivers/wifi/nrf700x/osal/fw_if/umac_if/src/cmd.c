@@ -180,7 +180,11 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					CONFIG_NRF700X_REG_DOMAIN,
 					NRF_WIFI_COUNTRY_CODE_LEN);
 
-	status = wifi_nrf_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
+#ifdef CONFIG_NRF700X_RPU_EXTEND_TWT_SP
+	 umac_cmd_data->feature_flags |= TWT_EXTEND_SP_EDCA;
+#endif
+
+	 status = wifi_nrf_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
 					    umac_cmd,
 					    (sizeof(*umac_cmd) + len));
 
