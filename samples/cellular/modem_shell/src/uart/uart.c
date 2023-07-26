@@ -13,12 +13,20 @@
 #include "uart.h"
 
 /* Utility function to enable/disable UART1.
- * This function uses direct register accesses to enable/disable UART1.
- * The device management API and power management APIs can not be used because the zephyr driver
- * is not used for accessing UART1. NRFX driver is used instead by the modem trace handling code.
+ * This function selects the used API based on the enabled UART trace backend.
  */
 static void uart1_set_enable(bool enable)
 {
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR)
+	const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart1));
+
+	if (!device_is_ready(uart_dev)) {
+		return;
+	}
+
+	pm_device_action_run(uart_dev, enable ? PM_DEVICE_ACTION_RESUME : PM_DEVICE_ACTION_SUSPEND);
+#elif defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC) || \
+	defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC)
 	if (!IS_ENABLED(CONFIG_NRFX_UARTE1)) {
 		return;
 	}
@@ -26,13 +34,19 @@ static void uart1_set_enable(bool enable)
 	if (enable) {
 		NRF_UARTE1_NS->ENABLE = UARTE_ENABLE_ENABLE_Enabled;
 	} else {
-		/* Stop any ongoing transmission.*/
-		NRF_UARTE1_NS->TASKS_STOPTX = 1;
-		while (NRF_UARTE1_NS->EVENTS_TXSTOPPED == 0) {
-			/* Wait until TX Stopped event is raised. */
+		/* Check if transmission is ongoing, otherwise there will never be a
+		 * TX Stopped event.
+		 */
+		if (NRF_UARTE1_NS->EVENTS_TXSTARTED == 1) {
+			/* Transmission ongoing, stop it.*/
+			NRF_UARTE1_NS->TASKS_STOPTX = 1;
+			while (NRF_UARTE1_NS->EVENTS_TXSTOPPED == 0) {
+				/* Wait until TX Stopped event is raised. */
+			}
 		}
 		NRF_UARTE1_NS->ENABLE = UARTE_ENABLE_ENABLE_Disabled;
 	}
+#endif
 }
 
 /* Utility function to enable/disable UART0.
