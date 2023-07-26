@@ -2611,6 +2611,13 @@ The issues in this section are related to :ref:`nrfxlib:crypto`.
 
 .. rst-class:: v2-4-1 v2-4-0
 
+NCSDK-22091: Selecting both :kconfig:option:`NORDIC_SECURITY_BACKEND` and :kconfig:option:`PSA_CORE_BUILTIN` causes a build failure
+  Selecting both :kconfig:option:`NORDIC_SECURITY_BACKEND` and :kconfig:option:`PSA_CORE_BUILTIN` results in a build failure due to undefined references to different structs.
+
+  **Workaround:** Manually define ``PSA_CORE_BUILTIN`` in the file :file:`nrf_security/configs/legacy_crypto_config.h.template`.
+
+.. rst-class:: v2-4-1 v2-4-0
+
 NCSDK-22593: Selecting :kconfig:option:`PSA_WANT_ALG_CCM` without :kconfig:option:`MBEDTLS_AES_C` causes a build failure
   Selecting :kconfig:option:`PSA_WANT_ALG_CCM` without :kconfig:option:`MBEDTLS_AES_C` results in a build failure due to unsatisfied dependencies in :file:`check_config.h`.
 
