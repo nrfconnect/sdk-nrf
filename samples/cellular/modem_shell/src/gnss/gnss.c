@@ -102,7 +102,7 @@ static bool agps_inject_int = true;
 #if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
 	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 static char agps_data_buf[3500];
-#endif /* CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_MQTT */
+#endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static bool pgps_enabled;
@@ -115,12 +115,18 @@ static struct k_work get_pgps_data_work;
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
-#if ((defined(CONFIG_NRF_CLOUD_AGPS) && \
-	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)) || \
-	(defined(CONFIG_NRF_CLOUD_PGPS) && \
-	 !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS))) && \
-	!defined(CONFIG_NRF_CLOUD_MQTT) && \
-	defined(CONFIG_NRF_CLOUD_REST)
+#if defined(CONFIG_NRF_CLOUD_AGPS) && defined(CONFIG_NRF_CLOUD_REST) && \
+	!defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#define AGPS_USES_REST
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_NRF_CLOUD_REST) && \
+	!defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+#define PGPS_USES_REST
+#endif
+
+#if defined(AGPS_USES_REST) || defined(PGPS_USES_REST)
+/* JWT and receive buffers will be needed if either A-GPS or P-GPS uses REST. */
 static char jwt_buf[600];
 static char rx_buf[2048];
 #endif
