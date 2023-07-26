@@ -2,6 +2,7 @@ sample:
   description: Zigbee Light control - light bulb sample
   name: Zigbee Light control
 tests:
+
   sample.zigbee.light_bulb:
     build_only: true
     integration_platforms:
