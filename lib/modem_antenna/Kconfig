@@ -35,8 +35,8 @@ config MODEM_ANTENNA_AT_MAGPIO
 
 config MODEM_ANTENNA_AT_COEX0
 	string "AT%XCOEX0 command"
-	default "AT\%XCOEX0=1,1,1565,1586" if (SOC_SERIES_NRF91X && MODEM_ANTENNA_GNSS_ONBOARD)
-	default "AT\%XCOEX0" if (SOC_SERIES_NRF91X && MODEM_ANTENNA_GNSS_EXTERNAL)
+	default "AT\%XCOEX0=1,1,1565,1586" if MODEM_ANTENNA_GNSS_ONBOARD
+	default "AT\%XCOEX0" if MODEM_ANTENNA_GNSS_EXTERNAL
 	help
 	  Defines the AT%XCOEX0 command to be sent to the modem. Leave
 	  empty if this command should not be sent.
