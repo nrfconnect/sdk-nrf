@@ -65,6 +65,11 @@ if (NOT ${PLATFORM_DEFAULT_PROVISIONING})
     )
 endif()
 
+target_sources(tfm_sprt
+    PRIVATE
+        $<$<NOT:$<BOOL:${TFM_SP_LOG_RAW_ENABLED}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_tfm_sp_log_raw.c>
+)
+
 # Disabling UART stdout not supported in NS Image, which is always built even when not needed.
 target_sources(platform_ns
   PRIVATE
