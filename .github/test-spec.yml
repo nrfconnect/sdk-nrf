@@ -464,3 +464,12 @@
   - "include/net/nrf_cloud*"
   - "samples/cellular/nrf_cloud_*/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
+
+"CI-sidewalk-test":
+  - "subsys/bootloader/**/*"
+  - "subsys/partition_manager/**/*"
+  - "subsys/dfu/**/*"
+  - "modules/mcuboot/**/*"
+  - "subsys/fw_info/*"
+  - "subsys/pcd/**/*"
+  - "subsys/bluetooth/controller/*"
