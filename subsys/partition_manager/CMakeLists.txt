@@ -122,18 +122,14 @@ endif()
 
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
-set(using_partition_manager
-  $<OR:$<BOOL:${IMAGE_NAME}>,$<TARGET_EXISTS:partition_manager>>
-  )
-zephyr_compile_definitions(
-  USE_PARTITION_MANAGER=${using_partition_manager}
-  )
+if($<OR:$<BOOL:${IMAGE_NAME}>,$<TARGET_EXISTS:partition_manager>>)
+  zephyr_compile_definitions(USE_PARTITION_MANAGER=1)
 
-# TODO: check how this patch got lost and if more are missing
-set_property(GLOBAL APPEND PROPERTY
+  set_property(GLOBAL APPEND PROPERTY
   PROPERTY_LINKER_SCRIPT_DEFINES
-  -DUSE_PARTITION_MANAGER=${using_partition_manager}
+  -DUSE_PARTITION_MANAGER=1
   )
+endif()
 
 if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND IMAGE_NAME)
   # Only preprocess pm.yml when being built as sub image.
