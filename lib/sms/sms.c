@@ -11,6 +11,9 @@
 #include <errno.h>
 #include <modem/at_monitor.h>
 #include <nrf_modem_at.h>
+#if defined(CONFIG_LTE_LINK_CONTROL)
+#include <modem/lte_lc.h>
+#endif
 
 #include "sms_submit.h"
 #include "sms_deliver.h"
@@ -144,9 +147,7 @@ static void sms_at_cmd_handler_cmt(const char *at_notif)
 {
 	int err;
 
-	if (at_notif == NULL) {
-		return;
-	}
+	__ASSERT_NO_MSG(at_notif != NULL);
 
 	memset(&sms_data_info, 0, sizeof(struct sms_data));
 
@@ -241,6 +242,10 @@ static int sms_init(void)
 	}
 	/* Parameters 1 to 4 should be 0 if no client is registered. */
 	if (cnmi_value1 != 0 || cnmi_value2 != 0 || cnmi_value3 != 0 || cnmi_value4 != 0) {
+		if (sms_client_registered) {
+			LOG_DBG("SMS client is already registered");
+			return 0;
+		}
 		LOG_ERR("Only one SMS client can be registered");
 		return -EBUSY;
 	}
@@ -372,3 +377,28 @@ int sms_send_text(const char *number, const char *text)
 {
 	return sms_submit_send(number, text);
 }
+
+#if defined(CONFIG_LTE_LINK_CONTROL)
+LTE_LC_ON_CFUN(sms_cfun_hook, sms_on_cfun, NULL);
+
+static void sms_on_cfun(enum lte_lc_func_mode mode, void *ctx)
+{
+	int err;
+
+	/* When LTE is activated, reinitialize SMS registration with the LTE network
+	 * if it had been registered earlier.
+	 */
+	if (sms_client_registered) {
+		if (mode == LTE_LC_FUNC_MODE_NORMAL ||
+		    mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+
+			LOG_DBG("Reinitialize SMS subscription when LTE is set ON");
+
+			err = sms_init();
+			if (err != 0) {
+				sms_client_registered = false;
+			}
+		}
+	}
+}
+#endif /* CONFIG_LTE_LINK_CONTROL */
