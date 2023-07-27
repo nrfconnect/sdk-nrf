@@ -156,6 +156,38 @@ int zephyr_supp_connect(const struct device *dev,
 	ssid->disabled = 1;
 	ssid->key_mgmt = WPA_KEY_MGMT_NONE;
 
+	if (params->channel != WIFI_CHANNEL_ANY) {
+		/* We use global channel list here and also use the widest
+		 * op_class for 5GHz channels as there is no user input
+		 * for these.
+		 */
+		int freq  = ieee80211_chan_to_freq(NULL, 81, params->channel);
+
+		if (freq <= 0) {
+			freq  = ieee80211_chan_to_freq(NULL, 128, params->channel);
+		}
+
+		if (freq <= 0) {
+			wpa_printf(MSG_ERROR, "Invalid channel %d", params->channel);
+			return -EINVAL;
+		}
+
+		ssid->scan_freq = os_zalloc(2 * sizeof(int));
+		if (!ssid->scan_freq) {
+			return -ENOMEM;
+		}
+		ssid->scan_freq[0] = freq;
+		ssid->scan_freq[1] = 0;
+
+		ssid->freq_list = os_zalloc(2 * sizeof(int));
+		if (!ssid->freq_list) {
+			os_free(ssid->scan_freq);
+			return -ENOMEM;
+		}
+		ssid->freq_list[0] = freq;
+		ssid->freq_list[1] = 0;
+	}
+
 	wpa_s->conf->filter_ssids = 1;
 	wpa_s->conf->ap_scan = 1;
 
