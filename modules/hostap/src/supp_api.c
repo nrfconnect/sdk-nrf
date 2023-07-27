@@ -171,7 +171,6 @@ static inline int chan_to_freq(int chan)
 	return freq;
 }
 
-
 int z_wpa_supplicant_connect(const struct device *dev,
 						struct wifi_connect_req_params *params)
 {

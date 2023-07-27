@@ -14,6 +14,7 @@ config WPA_SUPP
 	select NET_SOCKETS_PACKET
 	select NET_SOCKETPAIR
 	select NET_L2_WIFI_MGMT
+	select WIFI_NM
 	select EXPERIMENTAL if !SOC_SERIES_NRF53X && !SOC_SERIES_NRF91X
 	help
 	  WPA supplicant implements 802.1X related functions.
