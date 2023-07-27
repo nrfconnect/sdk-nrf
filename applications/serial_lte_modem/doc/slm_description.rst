@@ -250,6 +250,9 @@ The following configuration files are provided:
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
   See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
 
+* :file:`overlay-full_fota.conf` - Configuration file that adds full modem FOTA support.
+  See :ref:`SLM_AT_FOTA` for more information on how to use full modem FOTA functionality.
+
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 

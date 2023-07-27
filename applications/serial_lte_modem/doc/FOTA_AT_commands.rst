@@ -31,8 +31,10 @@ Syntax
   * ``0`` - Cancel FOTA (during download only).
   * ``1`` - Start FOTA for application update.
   * ``2`` - Start FOTA for modem delta update.
-  * ``7`` - Read modem DFU area size and firmware image offset.
-  * ``9`` - Erase modem DFU area.
+  * ``3`` - Start FOTA for full modem update.
+    Can only be used when the :file:`overlay-full_fota.conf` configuration file is used.
+  * ``7`` - Read modem DFU area size and firmware image offset (for modem delta update).
+  * ``9`` - Erase modem DFU area (for modem delta update).
 
 * The ``<file url>`` parameter is a string.
   It represents the full HTTP or HTTPS path of the target image to download.
@@ -47,9 +49,16 @@ Syntax
 
 .. note::
 
-   When doing modem FOTA, erasing the modem DFU area is optional since the update process will automatically erase the area if needed.
+   During a delta update to the modem, the modem DFU area is automatically erased as needed as part of the update process. Erasing this area manually is optional.
 
    However, this leads to the command starting the update taking longer to complete, and also leaves the connection to the FOTA server idle while the area is being erased, which can provoke issues.
+
+.. note::
+
+   The firmware image is stored in external flash memory during a full modem update.
+   The external flash is erased automatically after a new firmware activation.
+
+    Activating the new full modem firmware is done identically to a modem delta update, by resetting either the whole device or only the modem.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -188,6 +197,6 @@ Examples
 
    AT#XFOTA=?
 
-   #XFOTA: (0,1,2,6,7,8,9),<file_url>,<sec_tag>,<apn>
+   #XFOTA: (0,1,2,3,7,9),<file_url>,<sec_tag>,<apn>
 
    OK

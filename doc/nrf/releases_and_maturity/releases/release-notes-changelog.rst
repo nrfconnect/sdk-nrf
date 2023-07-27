@@ -206,6 +206,7 @@ Serial LTE modem
   * ``#XMODEMRESET`` AT command to reset the modem while keeping the application running.
     It is expected to be used during modem firmware update, which now only requires a reset of the modem.
   * DTLS connection identifier support to the ``#XSSOCKETOPT`` and ``#XUDPCLI`` AT commands.
+  * Full modem FOTA support to the ``#XFOTA`` AT command.
   * An ``auto_connect`` operation in the ``#XCARRIER`` carrier command.
     The operation controls automatic registration of UE to LTE network.
   * ``#XNRFCLOUDPOS`` AT command to send location requests to nRF Cloud using cellular or Wi-Fi positioning, or both.

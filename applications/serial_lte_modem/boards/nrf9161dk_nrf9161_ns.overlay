@@ -53,3 +53,10 @@
 		};
 	};
 };
+
+/* Enable external flash */
+&spi3 {
+	gd25lb256: gd25lb256e3ir@1 {
+		status = "okay";
+	};
+};

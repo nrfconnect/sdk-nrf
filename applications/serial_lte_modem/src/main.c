@@ -442,8 +442,9 @@ int main(void)
 	}
 
 	/* Post-FOTA handling */
-	if (slm_fota_stage != FOTA_STAGE_INIT) {
-		if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
+	if (slm_fota_stage == FOTA_STAGE_ACTIVATE) {
+		if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
+		    slm_fota_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
 			slm_finish_modem_fota(ret);
 		} else if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
 			handle_mcuboot_swap_ret();
