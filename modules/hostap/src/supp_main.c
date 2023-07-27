@@ -115,7 +115,7 @@ static int z_wpas_init_match(struct wpa_global *global)
 }
 #endif /* CONFIG_MATCH_IFACE */
 
-struct wpa_supplicant *z_wpas_get_handle_by_ifname(const char* ifname)
+struct wpa_supplicant *z_wpas_get_handle_by_ifname(const char *ifname)
 {
 	struct wpa_supplicant *wpa_s = NULL;
 	int ret = k_sem_take(&z_wpas_ready_sem, K_SECONDS(2));
@@ -140,10 +140,10 @@ struct wpa_supplicant *z_wpas_get_handle_by_ifname(const char* ifname)
 static int z_wpas_get_iface_count(void)
 {
 	struct wpa_supplicant *wpa_s;
-	unsigned count = 0;
+	unsigned int count = 0;
 
 	for (wpa_s = global->ifaces; wpa_s; wpa_s = wpa_s->next) {
-			count += 1;
+		count += 1;
 	}
 	return count;
 }
@@ -151,7 +151,7 @@ static int z_wpas_get_iface_count(void)
 #define Z_WPA_S_IFACE_NOTIFY_TIMEOUT_MS 1000
 #define Z_WPA_S_IFACE_NOTIFY_RETRY_MS 10
 
-static int z_wpas_add_interface(const char* ifname)
+static int z_wpas_add_interface(const char *ifname)
 {
 	struct wpa_supplicant *wpa_s;
 	struct net_if *iface;
@@ -174,7 +174,7 @@ static int z_wpas_add_interface(const char* ifname)
 	}
 
 	/* This cannot be through control interface as need the handle */
-	while (retry ++ < count && !wpa_supplicant_get_iface(global, ifname)) {
+	while (retry++ < count && !wpa_supplicant_get_iface(global, ifname)) {
 		k_sleep(K_MSEC(Z_WPA_S_IFACE_NOTIFY_RETRY_MS));
 	}
 
@@ -185,7 +185,7 @@ static int z_wpas_add_interface(const char* ifname)
 	}
 
 	wpa_s->conf->filter_ssids = 1;
-	wpa_s->conf->ap_scan= 1;
+	wpa_s->conf->ap_scan = 1;
 
 	/* Default interface, kick start wpa_supplicant */
 	if (z_wpas_get_iface_count() == 1) {
@@ -217,7 +217,7 @@ err:
 	return ret;
 }
 
-static int z_wpas_remove_interface(const char* ifname)
+static int z_wpas_remove_interface(const char *ifname)
 {
 	int ret = -1;
 	union wpa_event_data *event = os_zalloc(sizeof(*event));
@@ -302,8 +302,7 @@ static void iface_event_handler(struct net_mgmt_event_callback *cb,
 {
 	const char *ifname = iface->if_dev->dev->name;
 
-	if (strncmp(ifname, IFACE_MATCHING_PREFIX, sizeof(IFACE_MATCHING_PREFIX) - 1) != 0)
-	{
+	if (strncmp(ifname, IFACE_MATCHING_PREFIX, sizeof(IFACE_MATCHING_PREFIX) - 1) != 0) {
 		return;
 	}
 
@@ -325,7 +324,7 @@ static void register_iface_events(void)
 	net_mgmt_add_event_callback(&cb);
 }
 
-static void wait_for_interface_up(const char* iface_name)
+static void wait_for_interface_up(const char *iface_name)
 {
 	if (z_wpas_get_iface_count() == 0) {
 		k_mutex_lock(&iface_up_mutex, K_FOREVER);
@@ -341,8 +340,7 @@ static void iface_cb(struct net_if *iface, void *user_data)
 		return;
 	}
 
-	if (strncmp(ifname, DEFAULT_IFACE_NAME, strlen(ifname)) != 0)
-	{
+	if (strncmp(ifname, DEFAULT_IFACE_NAME, strlen(ifname)) != 0) {
 		return;
 	}
 
@@ -360,6 +358,7 @@ static void z_wpas_iface_work_handler(struct k_work *item)
 	ARG_UNUSED(item);
 
 	int ret = k_sem_take(&z_wpas_ready_sem, K_SECONDS(5));
+
 	if (ret) {
 		wpa_printf(MSG_ERROR, "Timed out waiting for wpa_supplicant");
 		return;
@@ -374,6 +373,7 @@ static void z_wpas_iface_work_handler(struct k_work *item)
 static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 {
 	int ret;
+
 	ARG_UNUSED(eloop_ctx);
 	ARG_UNUSED(sock_ctx);
 	struct wpa_supplicant_event_msg msg;
@@ -540,5 +540,4 @@ out:
 	os_free(params.pid_file);
 
 	wpa_printf(MSG_INFO, "z_wpas_start: exitcode %d", exitcode);
-	return;
 }

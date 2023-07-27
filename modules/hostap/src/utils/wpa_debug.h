@@ -50,7 +50,7 @@ enum { MSG_EXCESSIVE, MSG_MSGDUMP, MSG_DEBUG, MSG_INFO, MSG_WARNING, MSG_ERROR }
 #ifdef CONFIG_NO_STDOUT_DEBUG
 
 #define wpa_printf(args...) do { } while (0)
-#define wpa_hexdump(l ,t ,b ,le) do { } while (0)
+#define wpa_hexdump(l, t, b, e) do { } while (0)
 #define wpa_hexdump_buf(l, t, b) do { } while (0)
 #define wpa_hexdump_key(l, t, b, le) do { } while (0)
 #define wpa_hexdump_buf_key(l, t, b) do { } while (0)
@@ -383,7 +383,7 @@ static inline void wpa_debug_close_linux_tracing(void) {}
 #endif
 
 
-const char * debug_level_str(int level);
+const char *debug_level_str(int level);
 int str_to_debug_level(const char *s);
 
 #endif /* WPA_DEBUG_H */

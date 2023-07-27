@@ -32,6 +32,7 @@ int generate_supp_state_event(const char *ifname, enum net_event_wpa_supp_cmd ev
 {
 	/* TODO: Replace device_get_binding. */
 	const struct device *dev = device_get_binding(ifname);
+
 	if (!dev) {
 		wpa_printf(MSG_ERROR, "Could not find device for %s", ifname);
 		return -ENODEV;
