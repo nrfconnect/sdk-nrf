@@ -121,15 +121,6 @@ static void supp_shell_connect_status(struct k_work *work)
 		return;
 	}
 out:
-	if (ctrl->requested_op == CONNECT) {
-		wifi_mgmt_raise_connect_result_event(net_if_lookup_by_dev(ctrl->dev), status);
-	} else if (ctrl->requested_op == DISCONNECT) {
-		/* Disconnect is a synchronous operation i.e., we are already disconnected
-		 * we are just using this to post net_mgmt event asynchronously.
-		 */
-		wifi_mgmt_raise_disconnect_result_event(net_if_lookup_by_dev(ctrl->dev), 0);
-	}
-	/* The connection handling is done, so reset the counter (connection timeout) */
 	seconds_counter = 0;
 
 	ctrl->status_thread_state = STATUS_THREAD_STOPPED;
