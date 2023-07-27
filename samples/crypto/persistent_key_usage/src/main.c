@@ -15,16 +15,18 @@
 #include <tfm_ns_interface.h>
 #endif
 
-#define APP_SUCCESS		(0)
-#define APP_ERROR		(-1)
-#define APP_SUCCESS_MESSAGE "Example finished successfully!"
-#define APP_ERROR_MESSAGE "Example exited with error!"
+#include "secure_storage_init.h"
 
-#define PRINT_HEX(p_label, p_text, len)\
-	({\
-		LOG_INF("---- %s (len: %u): ----", p_label, len);\
-		LOG_HEXDUMP_INF(p_text, len, "Content:");\
-		LOG_INF("---- %s end  ----", p_label);\
+#define APP_SUCCESS	    (0)
+#define APP_ERROR	    (-1)
+#define APP_SUCCESS_MESSAGE "Example finished successfully!"
+#define APP_ERROR_MESSAGE   "Example exited with error!"
+
+#define PRINT_HEX(p_label, p_text, len)                                                            \
+	({                                                                                         \
+		LOG_INF("---- %s (len: %u): ----", p_label, len);                                  \
+		LOG_HEXDUMP_INF(p_text, len, "Content:");                                          \
+		LOG_INF("---- %s end  ----", p_label);                                             \
 	})
 
 LOG_MODULE_REGISTER(persistent_key_usage, LOG_LEVEL_DBG);
@@ -37,7 +39,6 @@ LOG_MODULE_REGISTER(persistent_key_usage, LOG_LEVEL_DBG);
  */
 #define SAMPLE_PERS_KEY_ID PSA_KEY_ID_USER_MIN
 
-
 static psa_key_id_t key_id;
 /* ====================================================================== */
 
@@ -45,10 +46,15 @@ int crypto_init(void)
 {
 	psa_status_t status;
 
+#ifdef CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+	write_huk();
+#endif /* CONFIG_SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */
+
 	/* Initialize PSA Crypto */
 	status = psa_crypto_init();
-	if (status != PSA_SUCCESS)
+	if (status != PSA_SUCCESS) {
 		return APP_ERROR;
+	}
 
 	return APP_SUCCESS;
 }
