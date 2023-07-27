@@ -94,6 +94,7 @@ zephyr_library_sources(
 	src/supp_main.c
 	src/utils/wpa_debug.c
 	src/supp_api.c
+	src/supp_events.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_WPA_CLI
