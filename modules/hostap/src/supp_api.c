@@ -138,7 +138,7 @@ int zephyr_supp_connect(const struct device *dev,
 	struct wpa_ssid *ssid = NULL;
 	bool pmf = true;
 	struct wpa_supplicant *wpa_s;
-	int ret = -1;
+	int ret = 0;
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
@@ -244,12 +244,12 @@ int zephyr_supp_connect(const struct device *dev,
 	wpa_supp_api_ctrl.requested_op = CONNECT;
 	wpa_supp_api_ctrl.connection_timeout = params->timeout;
 
-	wpa_supp_restart_status_work();
-
-	ret = 0;
-
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
+
+	if (!ret) {
+		wpa_supp_restart_status_work();
+	}
 
 	return ret;
 }
@@ -257,24 +257,25 @@ out:
 int zephyr_supp_disconnect(const struct device *dev)
 {
 	struct wpa_supplicant *wpa_s;
-	int ret = -1;
+	int ret = 0;
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
+		ret = -EINVAL;
 		goto out;
 	}
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = DISCONNECT;
 	wpas_request_disconnection(wpa_s);
 
-	wpa_supp_restart_status_work();
-
-	ret = 0;
-
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
+
+	if (!ret) {
+		wpa_supp_restart_status_work();
+	}
 
 	return ret;
 }
