@@ -21,7 +21,7 @@
  *
  * @return: 0 for OK; -1 for ERROR
  */
-int zephyr_supp_connect(const struct device *dev,
+int z_wpa_supplicant_connect(const struct device *dev,
 						struct wifi_connect_req_params *params);
 /**
  * @brief Forces station to disconnect and stops any subsequent scan
@@ -31,7 +31,7 @@ int zephyr_supp_connect(const struct device *dev,
  *
  * @return: 0 for OK; -1 for ERROR
  */
-int zephyr_supp_disconnect(const struct device *dev);
+int z_wpa_supplicant_disconnect(const struct device *dev);
 
 /**
  * @brief
@@ -41,6 +41,6 @@ int zephyr_supp_disconnect(const struct device *dev);
  *
  * @return: 0 for OK; -1 for ERROR
  */
-int zephyr_supp_status(const struct device *dev,
+int z_wpa_supplicant_status(const struct device *dev,
 	struct wifi_iface_status *status);
 #endif /* ZEPHYR_SUPP_MGMT_H */
