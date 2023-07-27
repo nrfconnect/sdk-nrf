@@ -72,6 +72,9 @@ config WPA_CLI
 	bool "CLI support for wpa_supplicant"
 	default n
 
+config NET_SOCKETPAIR_BUFFER_SIZE
+    default 4096 if WPA_CLI
+
 module = WPA_SUPP
 module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
