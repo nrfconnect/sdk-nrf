@@ -18,6 +18,7 @@ A "99" at the end of the version number of this documentation indicates continuo
 
    introduction
    installation
+   create_application
    config_and_build
    test_and_optimize
    device_guides

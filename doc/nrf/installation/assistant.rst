@@ -90,7 +90,7 @@ To build on the |nRFVSC|, complete the following steps:
 #. Click **Install missing extensions**.
 #. Once the extensions are installed, click **Open VS Code** button again.
 
-You can then follow the instructions in :ref:`programming_vsc`.
+You can then follow the instructions in :ref:`creating_vsc`.
 
 .. _auto_installation_choose_building_method_cl:
 
@@ -110,4 +110,4 @@ To build on the command line, complete the following steps:
 
 #. Select :guilabel:`Open command prompt`.
 
-You can then follow the instructions in :ref:`programming_cmd`.
+You can then follow the instructions in :ref:`creating_cmd`.
