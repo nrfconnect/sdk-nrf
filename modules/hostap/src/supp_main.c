@@ -28,7 +28,6 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 struct wpa_supplicant *wpa_s_0;
 
 static void start_wpa_supplicant(void);
-static struct k_sem quit_lock;
 
 K_THREAD_DEFINE(wpa_s_tid,
 			CONFIG_WPA_SUPP_THREAD_STACK_SIZE,
@@ -184,6 +183,5 @@ out:
 #endif /* CONFIG_MATCH_IFACE */
 	os_free(params.pid_file);
 
-	k_sem_give(&quit_lock);
 	wpa_printf(MSG_INFO, "wpa_supplicant_main: exitcode %d", exitcode);
 }
