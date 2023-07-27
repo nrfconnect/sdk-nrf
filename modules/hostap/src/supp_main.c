@@ -122,10 +122,17 @@ static int z_wpas_get_iface_count(void)
 	return count;
 }
 
+#define Z_WPA_S_IFACE_NOTIFY_TIMEOUT_MS 1000
+#define Z_WPA_S_IFACE_NOTIFY_RETRY_MS 10
+
 static int z_wpas_add_interface(const char* ifname)
 {
 	struct wpa_supplicant *wpa_s;
 	int ret;
+	union wpa_event_data *event;
+	int retry = 0, count = Z_WPA_S_IFACE_NOTIFY_TIMEOUT_MS / Z_WPA_S_IFACE_NOTIFY_RETRY_MS;
+
+	wpa_printf(MSG_DEBUG, "Adding interface %s\n", ifname);
 
 	ret = z_wpa_cli_global_cmd_v("interface_add %s %s %s %s",
 				ifname, "zephyr", "zephyr", "zephyr");
@@ -135,6 +142,10 @@ static int z_wpas_add_interface(const char* ifname)
 	}
 
 	/* This cannot be through control interface as need the handle */
+	while (retry ++ < count && !wpa_supplicant_get_iface(global, ifname)) {
+		k_sleep(K_MSEC(Z_WPA_S_IFACE_NOTIFY_RETRY_MS));
+	}
+
 	wpa_s = wpa_supplicant_get_iface(global, ifname);
 	if (wpa_s == NULL) {
 		wpa_printf(MSG_ERROR, "Failed to add iface: %s", ifname);
@@ -156,12 +167,47 @@ static int z_wpas_add_interface(const char* ifname)
 static int z_wpas_remove_interface(const char* ifname)
 {
 	int ret;
+	union wpa_event_data *event = os_zalloc(sizeof(*event));
+	struct wpa_supplicant *wpa_s = wpa_supplicant_get_iface(global, ifname);
+	int retry = 0, count = Z_WPA_S_IFACE_NOTIFY_TIMEOUT_MS / Z_WPA_S_IFACE_NOTIFY_RETRY_MS;
 
-	wpa_printf(MSG_INFO, "Remove interface %s\n", ifname);
+	if (!event) {
+		wpa_printf(MSG_ERROR, "Failed to allocate event data");
+		return -1;
+	}
+
+	if (!wpa_s) {
+		wpa_printf(MSG_ERROR, "Failed to get wpa_s handle for %s", ifname);
+		return -1;
+	}
+
+	wpa_printf(MSG_DEBUG, "Remove interface %s\n", ifname);
+
+	os_memcpy(event->interface_status.ifname, ifname, IFNAMSIZ);
+	event->interface_status.ievent = EVENT_INTERFACE_REMOVED;
+
+	struct wpa_supplicant_event_msg msg = {
+		.global = true,
+		.ctx = global,
+		.event = EVENT_INTERFACE_STATUS,
+		.data = event,
+	};
+
+	z_wpas_send_event(&msg);
+
+	while (retry++ < count &&
+		   wpa_s->wpa_state != WPA_INTERFACE_DISABLED) {
+		k_sleep(K_MSEC(Z_WPA_S_IFACE_NOTIFY_RETRY_MS));
+	}
+
+	if (wpa_s->wpa_state != WPA_INTERFACE_DISABLED) {
+		wpa_printf(MSG_ERROR, "Failed to notify remove interface: %s", ifname);
+		return -1;
+	}
 
 	ret = z_wpa_cli_global_cmd_v("interface_remove %s", ifname);
 	if (ret) {
-		wpa_printf(MSG_ERROR, "Failed to add interface: %s", ifname);
+		wpa_printf(MSG_ERROR, "Failed to remove interface: %s", ifname);
 		return -1;
 	}
 
