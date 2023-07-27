@@ -532,6 +532,7 @@ Bluetooth libraries and services
   * Updated:
 
     * The :kconfig:option:`BT_MESH_MODEL_SRV_STORE_TIMEOUT` Kconfig option, that is controlling timeout for storing of model states, is replaced by the :kconfig:option:`BT_MESH_STORE_TIMEOUT` Kconfig option.
+    * The Light Lightness Actual and Generic Power Level states of the :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_plvl_srv_readme` models cannot dim to off. This is due to binding with Generic Level state when receiving Generic Delta Set and Generic Move Set messages.
 
   * Fixed an issue where the :ref:'bt_mesh_dtt_srv_readme' model could not be found for models spanning multiple elements.
   * Fixed an issue where the :ref:'bt_mesh_sensor_srv_readme' model would add a corrupted marshalled sensor data into the Sensor Status message because the fetched sensor value was outside of range.

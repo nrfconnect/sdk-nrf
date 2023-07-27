@@ -463,10 +463,10 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	}
 
 	struct bt_mesh_plvl_set set = {
-		/* Clamp the target value before storing it in a uint16_t to
-		 * avoid overflow:
+		/* Clamp the value to the power level range to prevent it be moved back to zero in
+		 * binding with Generic Level state.
 		 */
-		.power_lvl = CLAMP(start_lvl + delta_set->delta, 0, UINT16_MAX),
+		.power_lvl = CLAMP(start_lvl + delta_set->delta, srv->range.min, srv->range.max),
 		.transition = delta_set->transition,
 	};
 
