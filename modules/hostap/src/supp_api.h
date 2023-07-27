@@ -48,11 +48,13 @@ int z_wpa_supplicant_status(const struct device *dev,
  * @brief Request a scan
  *
  * @param dev Wi-Fi interface name to use
+ * @param params Scan parameters
  * @param cb Callback to be called for each scan result
  *
  * @return 0 for OK; -1 for ERROR
  */
-int z_wpa_supplicant_scan(const struct device *dev,scan_result_cb_t cb);
+int z_wpa_supplicant_scan(const struct device *dev, struct wifi_scan_params *params,
+				scan_result_cb_t cb);
 
 #if defined(CONFIG_NET_STATISTICS_WIFI) || defined(__DOXYGEN__)
 /**
