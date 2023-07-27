@@ -11,6 +11,7 @@
 #include <zephyr/device.h>
 #include <modem/sms.h>
 #include <modem/at_monitor.h>
+#include <modem/lte_lc.h>
 
 #include "cmock_nrf_modem_at.h"
 
@@ -281,6 +282,108 @@ void test_sms_reregister_unknown_cms_error_code(void)
 	at_monitor_dispatch("+CMS ERROR: 515\r\n");
 
 	sms_unreg_helper();
+}
+
+/* Test lte_lc callback handling SMS re-registration.
+ * Tests the following:
+ * - SMS registration
+ * - modem offline
+ * - modem online
+ * - SMS re-registered automatically
+ */
+void test_sms_lte_lc_cb_reregisteration(void)
+{
+	char cnmi_reg_nok[] = "+CNMI: 0,0,0,0,1\r\n";
+
+	sms_reg_helper();
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", 0);
+	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", 0);
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CNMI?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(cnmi_reg_nok, sizeof(cnmi_reg_nok));
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,1", 0);
+
+	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
+
+	sms_unreg_helper();
+}
+
+/* Test lte_lc callback handling SMS re-registration.
+ * Tests the following:
+ * - SMS registration
+ * - modem online (SMS library kind of assumes it was already online because SMS is registered)
+ * - SMS re-registeration not done because it exists
+ */
+void test_sms_lte_lc_cb_registration_already_exists(void)
+{
+	char cnmi_reg_ok[] = "+CNMI: 3,2,0,1,1\r\n";
+
+	sms_reg_helper();
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", 0);
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CNMI?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(cnmi_reg_ok, sizeof(cnmi_reg_ok));
+	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+
+	sms_unreg_helper();
+}
+
+/* Test lte_lc callback handling SMS re-registration.
+ * Tests the following:
+ * - SMS registration
+ * - modem offline
+ * - modem online, SMS re-registeration failing
+ */
+void test_sms_lte_lc_cb_reregisteration_fail(void)
+{
+	sms_reg_helper();
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", 0);
+	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", 0);
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CNMI?", -EINVAL);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+
+	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+
+	/* Unregister listener. SMS got unregistered already above */
+	sms_unregister_listener(test_handle);
+	test_handle = -1;
+}
+
+/* Test lte_lc callback handling SMS re-registration.
+ * Tests the following:
+ * - modem offline
+ * - modem online
+ * - no SMS (re)registration
+ */
+void test_sms_lte_lc_cb_registeration_not_exists(void)
+{
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", 0);
+	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", 0);
+	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
 }
 
 /********* SMS SEND TESTS ***********************/

@@ -33,10 +33,6 @@
 #include "mosh_print.h"
 #include "mosh_defines.h"
 
-#if defined(CONFIG_MOSH_SMS)
-#include "sms.h"
-#endif
-
 #include <nrf_modem_at.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
@@ -649,9 +645,6 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 
 	switch (fun) {
 	case LTE_LC_FUNC_MODE_POWER_OFF:
-#if defined(CONFIG_MOSH_SMS)
-		sms_unregister();
-#endif
 		return_value = lte_lc_power_off();
 		break;
 	case LTE_LC_FUNC_MODE_OFFLINE:
