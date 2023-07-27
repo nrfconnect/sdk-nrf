@@ -56,7 +56,7 @@ struct wpa_supp_api_ctrl {
 	const struct device *dev;
 	enum requested_ops requested_op;
 	enum status_thread_state status_thread_state;
-	int connection_timeout; // in seconds
+	int connection_timeout; /* in seconds */
 	struct k_work_sync sync;
 	bool terminate;
 };
@@ -68,7 +68,7 @@ static void supp_shell_connect_status(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(wpa_supp_status_work,
 		supp_shell_connect_status);
 
-static inline struct wpa_supplicant * get_wpa_s_handle(const struct device *dev)
+static inline struct wpa_supplicant *get_wpa_s_handle(const struct device *dev)
 {
 	return z_wpas_get_handle_by_ifname(dev->name);
 }
@@ -100,7 +100,7 @@ out:
 
 static void supp_shell_connect_status(struct k_work *work)
 {
-	static int seconds_counter = 0;
+	static int seconds_counter;
 	int status = CONNECTION_SUCCESS;
 	struct wpa_supplicant *wpa_s;
 	struct wpa_supp_api_ctrl *ctrl = &wpa_supp_api_ctrl;
@@ -121,7 +121,8 @@ static void supp_shell_connect_status(struct k_work *work)
 	if (ctrl->requested_op == CONNECT && wpa_s->wpa_state != WPA_COMPLETED) {
 		if (ctrl->connection_timeout > 0 && seconds_counter++ > ctrl->connection_timeout) {
 			_wpa_cli_cmd_v("disconnect");
-			send_wifi_mgmt_event(wpa_s->ifname, NET_EVENT_WIFI_CMD_CONNECT_RESULT, -ETIMEDOUT);
+			send_wifi_mgmt_event(wpa_s->ifname, NET_EVENT_WIFI_CMD_CONNECT_RESULT,
+				-ETIMEDOUT);
 			status = CONNECTION_FAILURE;
 			goto out;
 		}
@@ -173,29 +174,29 @@ static inline int chan_to_freq(int chan)
 
 static inline enum wifi_frequency_bands wpas_band_to_zephyr(enum wpa_radio_work_band band)
 {
-	switch(band) {
-		case BAND_2_4_GHZ:
-			return WIFI_FREQ_BAND_2_4_GHZ;
-		case BAND_5_GHZ:
-			return WIFI_FREQ_BAND_5_GHZ;
-		default:
-			return WIFI_FREQ_BAND_UNKNOWN;
+	switch (band) {
+	case BAND_2_4_GHZ:
+		return WIFI_FREQ_BAND_2_4_GHZ;
+	case BAND_5_GHZ:
+		return WIFI_FREQ_BAND_5_GHZ;
+	default:
+		return WIFI_FREQ_BAND_UNKNOWN;
 	}
 }
 
 static inline enum wifi_security_type wpas_key_mgmt_to_zephyr(int key_mgmt)
 {
-	switch(key_mgmt) {
-		case WPA_KEY_MGMT_NONE:
-			return WIFI_SECURITY_TYPE_NONE;
-		case WPA_KEY_MGMT_PSK:
-			return WIFI_SECURITY_TYPE_PSK;
-		case WPA_KEY_MGMT_PSK_SHA256:
-			return WIFI_SECURITY_TYPE_PSK_SHA256;
-		case WPA_KEY_MGMT_SAE:
-			return WIFI_SECURITY_TYPE_SAE;
-		default:
-			return WIFI_SECURITY_TYPE_UNKNOWN;
+	switch (key_mgmt) {
+	case WPA_KEY_MGMT_NONE:
+		return WIFI_SECURITY_TYPE_NONE;
+	case WPA_KEY_MGMT_PSK:
+		return WIFI_SECURITY_TYPE_PSK;
+	case WPA_KEY_MGMT_PSK_SHA256:
+		return WIFI_SECURITY_TYPE_PSK_SHA256;
+	case WPA_KEY_MGMT_SAE:
+		return WIFI_SECURITY_TYPE_SAE;
+	default:
+		return WIFI_SECURITY_TYPE_UNKNOWN;
 	}
 }
 
@@ -253,7 +254,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-SHA256",
 				resp.network_id);
 		} else if (params->security == WIFI_SECURITY_TYPE_PSK) {
-			_wpa_cli_cmd_v( "set_network %d psk \"%s\"",
+			_wpa_cli_cmd_v("set_network %d psk \"%s\"",
 			resp.network_id, params->psk);
 			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK",
 				resp.network_id);
@@ -275,6 +276,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 
 	if (params->channel != WIFI_CHANNEL_ANY) {
 		int freq = chan_to_freq(params->channel);
+
 		if (freq < 0) {
 			ret = -1;
 			wpa_printf(MSG_ERROR, "Invalid channel %d",
@@ -402,7 +404,8 @@ int z_wpa_supplicant_status(const struct device *dev,
 								wpa_s->connection_ht ? WIFI_4 :
 								wpa_s->connection_g ? WIFI_3 :
 								wpa_s->connection_a ? WIFI_2 :
-								wpa_s->connection_b ? WIFI_1 : WIFI_0;
+								wpa_s->connection_b ? WIFI_1 :
+								WIFI_0;
 			} else {
 				status->link_mode = WIFI_LINK_MODE_UNKNOWN;
 			}
