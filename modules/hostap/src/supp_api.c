@@ -26,6 +26,11 @@ enum requested_ops {
 	DISCONNECT
 };
 
+enum status_thread_state {
+	STATUS_THREAD_STOPPED = 0,
+	STATUS_THREAD_RUNNING,
+};
+
 #define OP_STATUS_POLLING_INTERVAL 1
 
 K_MUTEX_DEFINE(wpa_supplicant_mutex);
@@ -34,6 +39,7 @@ K_MUTEX_DEFINE(wpa_supplicant_mutex);
 struct wpa_supp_api_ctrl {
 	const struct device *dev;
 	enum requested_ops requested_op;
+	enum status_thread_state status_thread_state;
 	int connection_timeout;
 	struct k_work_sync sync;
 	bool terminate;
@@ -86,7 +92,7 @@ static void supp_shell_connect_status(struct k_work *work)
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
-	if (ctrl->terminate) {
+	if (ctrl->status_thread_state == STATUS_THREAD_RUNNING &&  ctrl->terminate) {
 		status = 2;
 		goto out;
 	}
@@ -105,6 +111,7 @@ static void supp_shell_connect_status(struct k_work *work)
 			k_work_reschedule(&wpa_supp_status_work,
 				K_SECONDS(OP_STATUS_POLLING_INTERVAL));
 			k_mutex_unlock(&wpa_supplicant_mutex);
+			ctrl->status_thread_state = STATUS_THREAD_RUNNING;
 			return;
 		}
 
@@ -126,6 +133,7 @@ out:
 		wifi_mgmt_raise_disconnect_result_event(net_if_lookup_by_dev(ctrl->dev), 0);
 	}
 
+	ctrl->status_thread_state = STATUS_THREAD_STOPPED;
 	k_mutex_unlock(&wpa_supplicant_mutex);
 }
 
