@@ -163,7 +163,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		} else if (params->security == 2) {
 			z_wpa_cli_cmd_v("set_network %d psk \"%s\"",
 				resp.network_id, params->psk);
-			z_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-256",
+			z_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-SHA256",
 				resp.network_id);
 		} else {
 			z_wpa_cli_cmd_v( "set_network %d psk \"%s\"",
