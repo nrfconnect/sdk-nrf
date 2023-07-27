@@ -238,8 +238,10 @@ int zephyr_supp_connect(const struct device *dev,
 
 		wpa_config_update_psk(ssid);
 
-		if (pmf)
-			ssid->ieee80211w = 1;
+		if (pmf) {
+			/* 1-1 Mapping */
+			ssid->ieee80211w = params->mfp;
+		}
 
 	}
 
