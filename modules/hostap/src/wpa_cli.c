@@ -129,6 +129,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  NULL,
 		  "\"\"",
 		  cmd_supplicant),
+	SHELL_CMD(list_networks,
+		  NULL,
+		  "\"\"",
+		  cmd_supplicant),
 	SHELL_SUBCMD_SET_END);
 
 /* Persisting with "wpa_cli" naming for compatibility with Wi-Fi
