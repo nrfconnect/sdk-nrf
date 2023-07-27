@@ -12,7 +12,7 @@
  * See README for more details.
  */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <sys/fcntl.h>
 LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 
