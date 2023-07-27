@@ -257,10 +257,6 @@ static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 		return;
 	}
 
-	if (msg.ignore_msg) {
-		return;
-	}
-
 	wpa_printf(MSG_DEBUG, "Passing message %d to wpa_supplicant", msg.event);
 
 	wpa_supplicant_event(msg.ctx, msg.event, msg.data);
@@ -305,12 +301,12 @@ retry_send:
 			if (retry++ < 3) {
 				goto retry_send;
 			} else {
-				wpa_printf(MSG_WARNING, "Dummy socket send fail (max retries): %s",
+				wpa_printf(MSG_WARNING, "Event send fail (max retries): %s",
 					strerror(errno));
 				goto err;
 			}
 		} else {
-			wpa_printf(MSG_WARNING, "Dummy socket send fail: %s",
+			wpa_printf(MSG_WARNING, "Event send fail: %s",
 				strerror(errno));
 			goto err;
 		}
