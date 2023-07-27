@@ -324,8 +324,8 @@ For this sample, you can use one of the following :ref:`onboarding information f
             :width: 200px
             :alt: QR code for commissioning the thermostat device
 
-       - MT:O4CT3KQS02ZZ
-       - 548G00
+       - MT:O4CT342C00KA0648G00
+       - 34970112332
 
 Upgrading the device firmware
 =============================
