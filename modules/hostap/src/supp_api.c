@@ -439,6 +439,7 @@ int z_wpa_supplicant_status(const struct device *dev,
 				status->twt_capable = false;
 				ret = 0;
 		}
+		os_free(conn_info);
 	} else {
 		ret = 0;
 	}
