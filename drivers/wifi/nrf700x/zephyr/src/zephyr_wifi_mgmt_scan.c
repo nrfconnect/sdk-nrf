@@ -24,15 +24,32 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
+static enum nrf_wifi_band nrf_wifi_map_zep_band_to_rpu(enum wifi_frequency_bands zep_band)
+{
+	switch (zep_band) {
+	case WIFI_FREQ_BAND_2_4_GHZ:
+		return NRF_WIFI_BAND_2GHZ;
+	case WIFI_FREQ_BAND_5_GHZ:
+		return NRF_WIFI_BAND_5GHZ;
+	default:
+		return NRF_WIFI_BAND_INVALID;
+	}
+}
+
 int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
 			   scan_result_cb_t cb)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_umac_scan_info scan_info;
+	struct nrf_wifi_umac_scan_info *scan_info = NULL;
+	enum nrf_wifi_band band = NRF_WIFI_BAND_INVALID;
 	uint8_t band_flags = 0xFF;
 	uint8_t i = 0;
+	uint8_t j = 0;
+	uint8_t k = 0;
+	uint16_t num_scan_channels = 0;
 	int ret = -1;
 
 	vif_ctx_zep = dev->data;
@@ -48,6 +65,7 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
@@ -72,13 +90,34 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 			ret = -EBUSY;
 			goto out;
 		}
+
+		for (i = 0; i <= WIFI_FREQ_BAND_MAX; i++) {
+			for (j = 0; j < WIFI_CHANNEL_MAX; j++) {
+				if (!params->chan[i][j]) {
+					break;
+				}
+
+				num_scan_channels++;
+			}
+		}
 	}
 
 	vif_ctx_zep->disp_scan_cb = cb;
 
-	memset(&scan_info, 0, sizeof(scan_info));
+	scan_info = k_calloc(sizeof(*scan_info) +
+			     (num_scan_channels *
+			      sizeof(scan_info->scan_params.center_frequency[0])),
+			     sizeof(char));
 
-	scan_info.scan_reason = SCAN_DISPLAY;
+	if (!scan_info) {
+		LOG_ERR("%s: Unable to allocate memory for scan_info (size: %d bytes)\n",
+			__func__,
+		       sizeof(*scan_info) + (num_scan_channels *
+					     sizeof(scan_info->scan_params.center_frequency[0])));
+		goto out;
+	}
+
+	scan_info->scan_reason = SCAN_DISPLAY;
 
 	if (params) {
 		if (params->scan_type == WIFI_SCAN_TYPE_ACTIVE) {
@@ -106,13 +145,44 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 			scan_info->scan_params.num_scan_ssids++;
 		}
+
+		for (i = 0; i <= WIFI_FREQ_BAND_MAX; i++) {
+			for (j = 0; j < WIFI_CHANNEL_MAX; j++) {
+				if (!params->chan[i][j]) {
+					break;
+				}
+
+				band = nrf_wifi_map_zep_band_to_rpu(i);
+
+				if (band == NRF_WIFI_BAND_INVALID) {
+					LOG_ERR("%s: Unsupported band %d\n",
+						__func__,
+						i);
+					goto out;
+				}
+
+				scan_info->scan_params.center_frequency[k++] =
+					nrf_wifi_utils_chan_to_freq(fmac_dev_ctx->fpriv->opriv,
+								    band,
+								    params->chan[i][j]);
+
+				if (scan_info->scan_params.center_frequency[k-1] == -1) {
+					LOG_ERR("%s: Invalid channel %d\n",
+						__func__,
+						params->chan[i][j]);
+					goto out;
+				}
+			}
+		}
+
+		scan_info->scan_params.num_scan_channels = k;
 	} else {
 		scan_info.scan_params.num_scan_ssids = 1;
 	}
 
 	vif_ctx_zep->scan_res_cnt = 0;
 
-	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &scan_info);
+	status = wifi_nrf_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_scan failed\n", __func__);
@@ -126,6 +196,10 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 	ret = 0;
 out:
+	if (scan_info) {
+		k_free(scan_info);
+	}
+
 	return ret;
 }
 
