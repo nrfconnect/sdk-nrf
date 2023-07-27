@@ -33,7 +33,6 @@ zephyr_library_compile_definitions(
 	CONFIG_NO_CONFIG_WRITE
 	CONFIG_NO_CONFIG_BLOBS
 	CONFIG_WPA_S_ZEPHYR_L2_WIFI_MGMT
-	#CONFIG_NO_STDOUT_DEBUG
 	CONFIG_CTRL_IFACE
 	CONFIG_CTRL_IFACE_ZEPHYR
 	CONFIG_NO_RANDOM_POOL
@@ -44,6 +43,10 @@ zephyr_library_compile_definitions(
 
 zephyr_library_compile_definitions_ifndef(CONFIG_WPA_SUPP_CRYPTO
 	CONFIG_NO_PBKDF2
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_NO_DEBUG
+	CONFIG_NO_STDOUT_DEBUG
 )
 
 zephyr_library_include_directories(
