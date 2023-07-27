@@ -66,6 +66,7 @@ static struct k_work_q z_wpas_iface_wq;
 static K_WORK_DEFINE(z_wpas_iface_work,
 	z_wpas_iface_work_handler);
 
+K_MUTEX_DEFINE(z_wpas_event_mutex);
 
 #ifdef CONFIG_MATCH_IFACE
 static int z_wpas_init_match(struct wpa_global *global)
@@ -290,8 +291,10 @@ int z_wpas_send_event(const struct wpa_supplicant_event_msg *msg)
 	int ret;
 	unsigned int retry = 0;
 
+	k_mutex_lock(&z_wpas_event_mutex, K_FOREVER);
+
 	if (z_wpas_event_sockpair[1] < 0) {
-		return -1;
+		goto err;
 	}
 
 retry_send:
@@ -304,16 +307,19 @@ retry_send:
 			} else {
 				wpa_printf(MSG_WARNING, "Dummy socket send fail (max retries): %s",
 					strerror(errno));
-				return -1;
+				goto err;
 			}
 		} else {
 			wpa_printf(MSG_WARNING, "Dummy socket send fail: %s",
 				strerror(errno));
-			return -1;
+			goto err;
 		}
 	}
 
-	return 0;
+	ret = 0;
+err:
+	k_mutex_unlock(&z_wpas_event_mutex);
+	return -1;
 }
 
 static void z_wpas_start(void)
