@@ -6,14 +6,14 @@
 #
 
 config WPA_SUPP
-	bool "WPA WPA_SUPP"
+	bool "WPA supplicant support"
 	depends on  NET_SOCKETS
 	depends on  NET_SOCKETS_POSIX_NAMES || POSIX_API
 	select NET_SOCKETS_PACKET
 	select NET_SOCKETPAIR
 	select NET_L2_NRF_WIFI_MGMT
 	help
-	  WPA WPA_SUPP
+	  WPA supplicant implements 802.1X related functions.
 
 if WPA_SUPP
 
