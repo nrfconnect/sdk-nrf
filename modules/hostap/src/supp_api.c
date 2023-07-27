@@ -14,7 +14,6 @@
 #include "wpa_supplicant_i.h"
 #include "driver_i.h"
 
-#include "zephyr_fmac_main.h"
 #include "supp_main.h"
 #include "supp_api.h"
 
@@ -105,14 +104,6 @@ out:
 	}
 }
 
-int zephyr_supp_scan(const struct device *dev, scan_result_cb_t cb)
-{
-	const struct wifi_nrf_dev_ops *dev_ops = dev->api;
-
-	return dev_ops->off_api.disp_scan(dev, cb);
-}
-
-
 static inline void wpa_supp_restart_status_work(void)
 {
 	k_work_cancel_delayable_sync(&wpa_supp_status_work,
@@ -120,6 +111,7 @@ static inline void wpa_supp_restart_status_work(void)
 	k_work_reschedule(&wpa_supp_status_work,
 		K_MSEC(10));
 }
+
 
 int zephyr_supp_connect(const struct device *dev,
 						struct wifi_connect_req_params *params)

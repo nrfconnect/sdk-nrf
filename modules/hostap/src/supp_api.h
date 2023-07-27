@@ -14,17 +14,6 @@
 #define MAC_ADDR_LEN 6
 
 /**
- * @brief Request a scan
- *
- * @param iface_name: Wi-Fi interface name to use
- * @param scan_result_cb_t: Application specific callback when the scan
- * 			attempt is completed.
- *
- * @return: 0 for OK; -1 for ERROR
- */
-int zephyr_supp_scan(const struct device *dev, scan_result_cb_t cb);
-
-/**
  * @brief Request a connection
  *
  * @param iface_name: Wi-Fi interface name to use
