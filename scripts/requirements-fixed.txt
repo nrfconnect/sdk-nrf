@@ -21,7 +21,7 @@ breathe==4.26.1
 canopen==1.2.0
 cbor2==5.4.3
 cbor==1.0.0
-certifi==2023.5.7
+certifi==2023.7.22
 cffi==1.14.4
 chardet==4.0.0
 charset-normalizer==3.1.0
@@ -30,7 +30,7 @@ cmsis-pack-manager==0.2.10
 colorama==0.4.6
 commonmark==0.9.1
 coverage==5.4
-cryptography==41.0.1
+cryptography==41.0.2
 docopt==0.6.2
 docutils==0.16
 ecdsa==0.16.1
