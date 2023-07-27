@@ -80,9 +80,8 @@ static void iface_cb(struct net_if *iface, void *user_data)
 
 	ifindex = net_if_get_by_iface(iface);
 	link_addr = &iface->if_dev->link_addr;
+	/* 802.15.4 interface, ignore */
 	if (link_addr->len > NET_LINK_ADDR_MAX_LENGTH) {
-		wpa_printf(MSG_ERROR, "Invalid link address length, %d max %d",
-			   link_addr->len, NET_LINK_ADDR_MAX_LENGTH);
 		return;
 	}
 	os_memcpy(own_addr, link_addr->addr, link_addr->len);
