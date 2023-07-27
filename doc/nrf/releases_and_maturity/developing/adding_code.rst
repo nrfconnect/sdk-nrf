@@ -28,7 +28,9 @@ All workflows are described under the following basic assumptions:
 * Additional board definitions might be required by the user.
 * Additional libraries might be required by the user.
 * The term *application* refers to the application code and any board definitions and libraries it requires.
-* The application(s) will require updates of the |NCS| revision.
+* The application will require updates of the |NCS| revision.
+
+.. _dm_workflow_1:
 
 Workflow 1: Avoid Git and west
 ==============================
@@ -36,25 +38,36 @@ Workflow 1: Avoid Git and west
 If you have your own version control tools, you might want to simply not use Git or west at all, and instead rely on your own toolset.
 In such case, you must obtain a copy of the |NCS| on your file system and then manage the source code of both the SDK and your application yourself.
 
-Since no downloadable packages of the |NCS| are currently available, the simplest path to obtain the source code is to follow the instructions in the :ref:`corresponding section <dm-wf-get-ncs>` of the documentation.
-This requires you to install Git and west, but you can then ignore them from that point onwards.
-If you need to update the copy of the |NCS| you are working with, you can :ref:`obtain the source code <dm-wf-get-ncs>` again, or, if you have kept the original set of repositories, :ref:`update it instead <dm-wf-update-ncs>`.
+To obtain a copy of the |NCS|, you can use one of the following methods:
+
+* :ref:`auto_installation_tcm_setup` from nRF Connect for Desktop and download the desired |NCS| version.
+  This corresponds to steps 2 and 3 on the linked page.
+* Follow the instructions in the :ref:`dm-wf-get-ncs` section of the documentation.
+  This requires you to install Git and west, but you can then ignore them from that point onwards.
+
+If you need to update the copy of the |NCS| you are working with, you can obtain the source code again, or, if you have kept the original set of repositories, update it in the Toolchain Manager or by following steps in :ref:`dm-wf-update-ncs`.
+
 Once you have obtained a copy of the |NCS| source code, which is self-contained in a single folder, you can then proceed to manage that code in any way you see fit.
 
 Unless you take some :ref:`additional steps <zephyr:no-west>`, west itself must still be installed in order to build applications.
 
-Workflow 2: Out-of-tree application repository
-==============================================
+.. _dm_workflow_2:
+
+Workflow 2: Freestanding application repository
+===============================================
 
 Another approach to maintaining your application is to completely decouple it from the |NCS| repositories and instead host it wherever you prefer - in Git, another version control system, or simply on your hard drive.
-This is typically also known as "out-of-tree" application, meaning that the application, board definitions, and any other libraries are actually outside any of the repositories provided by the |NCS| and can be placed anywhere at all.
-As long as you do not need to make any changes to any of the repositories of the |NCS|, you can use the procedures to :ref:`get the source code <dm-wf-get-ncs>` and later :ref:`update it <dm-wf-update-ncs>`, and manage your application separately, inside or outside the top folder of the |NCS|.
+This is typically also known as a :ref:`freestanding <zephyr:zephyr-app-types>` or "out-of-tree" application, meaning that the application, board definitions, and any other libraries are actually outside any of the repositories provided by the |NCS| and can be placed anywhere at all.
 
+As long as you do not need to make changes to any of the repositories of the |NCS|, you can use either the :ref:`Toolchain Manager <auto_installation_tcm_setup>` or :ref:`command line <dm-wf-get-ncs>` to get the source code and update it later.
+This allows you to manage your application separately, whether it is inside or outside the top folder of the |NCS|.
 If you choose to have your application outside of the folder hierarchy of the |NCS|, the build system will find the location of the SDK through the :makevar:`ZEPHYR_BASE` environment variable, which is set either through a script or manually in an IDE.
 More information about application development and the |NCS| build and configuration system can be found in the :ref:`app_build_system` documentation section.
 
 The drawback with this approach is that any changes you make to the set of |NCS| repositories are not directly trackable using Git, since you do not have any of the |NCS| repositories forked.
 If you are tracking the main branch of the |NCS|, you can instead send the changes you require to the official repositories as Pull Requests, so that they are incorporated into the codebase.
+
+.. _dm_workflow_3:
 
 Workflow 3: Application in a fork of sdk-nrf
 ============================================
@@ -63,7 +76,7 @@ Forking the `sdk-nrf`_ repository and adding the application to it is another va
 This approach also allows you to fork additional |NCS| repositories and point to those.
 This can be useful if you have to make changes to those repositories beyond adding your own application to the manifest repository.
 
-In order to use this approach, you first need to :ref:`get the source code <dm-wf-get-ncs>`, and then :ref:`fork the sdk-nrf repository <dm-wf-fork>`.
+In order to use this approach, you first need to get the source code (either through the :ref:`Toolchain Manager <auto_installation_tcm_setup>` or :ref:`command line <dm-wf-get-ncs>`), and then :ref:`fork the sdk-nrf repository <dm-wf-fork>`.
 Once you have your own fork, you can start adding your application to your fork's tree and push it to your own Git server.
 Every time you want to update the revision of the |NCS| that you want to use as a basis for your application, you must follow the :ref:`instructions to update <dm-wf-update-ncs>` on your own fork of ``sdk-nrf``.
 
@@ -71,8 +84,8 @@ If you have changes in additional repositories beyond `sdk-nrf`_ itself, you can
 
 .. _dm_workflow_4:
 
-Workflow 4: Application as the manifest repository
-==================================================
+Workflow 4: Workspace application repository (recommended)
+==========================================================
 
 An additional possibility is to take advantage of west to manage your own set of repositories.
 This workflow is particularly beneficial if your application is split among multiple repositories or, just like in the previous workflow, if you want to make changes to one or more |NCS| repositories, since it allows you to define the full set of repositories yourself.
@@ -80,9 +93,12 @@ This workflow is particularly beneficial if your application is split among mult
 In order to implement this approach, you first need to create a manifest repository of your own, which just means a repository that contains a :file:`west.yml` manifest file in its root.
 Next you must populate the manifest file with the list of repositories and their revisions.
 
-You have a couple of different options to create your own repository.
+You have two different options to create your own repository, as discussed in the following subsections:
 
-Once you have your new manifest repository hosted online, you can use it with west just like you use the `sdk-nrf`_  repository when :ref:`getting <dm-wf-get-ncs>` and later :ref:`updating <dm-wf-update-ncs>` the source code.
+* `Recommended: Using the example application repository`_
+* `Creating your own manifest repository from scratch`_
+
+Once you have your new manifest repository hosted online, you can use it with west just like you use the `sdk-nrf`_  repository when getting the source code (either through the :ref:`Toolchain Manager <auto_installation_tcm_setup>` or :ref:`command line <dm-wf-get-ncs>`) and later :ref:`updating it from command line <dm-wf-update-ncs>`.
 You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository (*your-name/your-application* and *your-app-workspace*, respectively), as shown in the following code:
 
 .. parsed-literal::
@@ -95,8 +111,12 @@ You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and pa
 After that, to modify the |NCS| version associated with your app, change the ``revision`` value in the manifest file to the `sdk-nrf`_ Git tag, SHA, or the branch you want to use, save the file, and run ``west update``.
 See :ref:`zephyr:west-basics` for more details.
 
+.. _dm_workflow_4_example_repo:
+
 Recommended: Using the example application repository
 -----------------------------------------------------
+
+.. example_app_start
 
 Nordic Semiconductor maintains a templated example repository as a reference for users that choose this workflow, `ncs-example-application`_.
 This repository showcases the following features of both the |NCS| and Zephyr:
@@ -111,6 +131,8 @@ This repository showcases the following features of both the |NCS| and Zephyr:
 * Example CI configuration (using Github Actions)
 * Custom :ref:`west extension <zephyr:west-extensions>`
 
+.. example_app_end
+
 It is highly recommended to use this templated repository as a starting point for your own application manifest repository.
 Click the :guilabel:`Use this template` button on the GitHub web user interface.
 Once you have your own copy of the repository, you can then modify it.
@@ -118,6 +140,8 @@ You can add your own projects to the manifest file, as well as your own boards, 
 
 The `ncs-example-application`_ repository is tagged every time a new release of the |NCS| is launched (starting with v2.3.0), using the same version number.
 This allows you to select the tag that matches the version of the |NCS| you intend to use.
+
+.. _dm_workflow_4_own_repo:
 
 Creating your own manifest repository from scratch
 --------------------------------------------------

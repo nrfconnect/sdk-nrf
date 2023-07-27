@@ -86,29 +86,37 @@ Repository types
 
 There are two main types of Git repositories in the |NCS| repository set:
 
-* nRF repositories
+nRF repositories
+  These repositories have the following characteristics:
 
   * Created, developed, and maintained by Nordic.
   * Usually licensed for use on Nordic products only.
 
-* OSS repositories
+  nRF repositories are stand-alone and have no upstreams, since they are unique to the |NCS|.
+  Some examples of repositories of this type are:
+
+  * `sdk-nrf`_: The main repository for Nordic-developed software.
+  * `sdk-nrfxlib`_: A repository containing linkable libraries developed by Nordic.
+
+OSS repositories
+  These repositories have the following characteristics:
 
   * Created and maintained by Nordic.
   * Soft forks of open-source projects.
   * Typically contain a small set of changes that are specific to |NCS|.
   * Updated ("upmerged") regularly with the latest changes from the open source project.
 
-nRF repositories are stand-alone and have no upstreams, since they are unique to the |NCS|.
-Some examples of repositories of this type are:
+  OSS repositories are typically soft forks of an upstream open source project, which Nordic maintains in order to keep a small set of changes that do not belong, or have not been merged, to the upstream official open-source repository.
+  For example:
 
-* `sdk-nrf`_: The main repository for Nordic-developed software.
-* `sdk-nrfxlib`_: A repository containing linkable libraries developed by Nordic.
+  * `sdk-zephyr`_ is a soft fork (and therefore a downstream) of the upstream official `Zephyr repository`_.
+  * `sdk-mcuboot`_ is a soft fork (and therefore a downstream) of the upstream official `MCUboot repository`_.
 
-OSS repositories, on the other hand, are typically soft forks of an upstream open source project, which Nordic maintains in order to keep a small set of changes that do not belong, or have not been merged, to the upstream official open-source repository.
-For example:
+  See also :ref:`dm-oss-downstreams` and :ref:`dm-oss-userdata` for more information about how these repositories are maintained.
 
-* `sdk-zephyr`_ is a soft fork (and therefore a downstream) of the upstream official `Zephyr repository`_.
-* `sdk-mcuboot`_ is a soft fork (and therefore a downstream) of the upstream official `MCUboot repository`_.
+From Zephyr perspective, all these repositories are considered :ref:`external modules <zephyr:modules>`.
+
+.. _dm_repo_structure:
 
 Repository structure
 ********************
@@ -128,6 +136,7 @@ The figure above depicts the |NCS| repository structure.
 A central concept with this repository structure is that each revision (in Git terms) of the `sdk-nrf`_ repository completely determines the revisions of all other
 repositories (that is, the west projects).
 This means that the linear Git history of this manifest repository also determines the history of the repository set in its entirety, thanks to the :file:`west.yml` `west manifest file`_ being part of the manifest repository.
+
 West reads the contents of the manifest file to find out which revisions of the project repositories are to be checked out every time ``west update`` is run.
 In this way, you can decide to work with a specific |NCS| release either by initializing a new west installation at a particular tag or by checking out the corresponding tag for a release in an existing installation and then updating your project repositories to the corresponding state with ``west update``.
 Alternatively, you can work with the latest state of development by using the main branch of the `sdk-nrf`_ repository, updating it with Git regularly and using ``west update`` to update the project repositories every time the manifest repository changes.

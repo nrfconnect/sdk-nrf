@@ -23,7 +23,7 @@ This repository is the manifest repository, because it contains the SDK's `west 
 To set up the |NCS|, use one of the following installation methods:
 
 * :ref:`Install the nRF Connect SDK automatically using nRF Connect for Desktop <auto_installation>`.
-  This will install all the :ref:`requirements <requirements>`, including the |VSC| and the `nRF Connect for Visual Studio Code`_ extension, which is recommended for building applications.
+  This will install all the :ref:`requirements <requirements>`, including the |VSC| and the `nRF Connect for Visual Studio Code`_ extension, which is recommended for creating and building applications.
 * :ref:`Install the nRF Connect SDK toolchain manually <manual_installation>`.
   This is an option if you have any issues when installing the |NCS| automatically.
 
