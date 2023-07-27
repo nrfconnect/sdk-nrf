@@ -171,6 +171,35 @@ static inline int chan_to_freq(int chan)
 	return freq;
 }
 
+static inline enum wifi_frequency_bands wpas_band_to_zephyr(enum wpa_radio_work_band band)
+{
+	switch(band) {
+		case BAND_2_4_GHZ:
+			return WIFI_FREQ_BAND_2_4_GHZ;
+		case BAND_5_GHZ:
+			return WIFI_FREQ_BAND_5_GHZ;
+		default:
+			return WIFI_FREQ_BAND_UNKNOWN;
+	}
+}
+
+static inline enum wifi_security_type wpas_key_mgmt_to_zephyr(int key_mgmt)
+{
+	switch(key_mgmt) {
+		case WPA_KEY_MGMT_NONE:
+			return WIFI_SECURITY_TYPE_NONE;
+		case WPA_KEY_MGMT_PSK:
+			return WIFI_SECURITY_TYPE_PSK;
+		case WPA_KEY_MGMT_PSK_SHA256:
+			return WIFI_SECURITY_TYPE_PSK_SHA256;
+		case WPA_KEY_MGMT_SAE:
+			return WIFI_SECURITY_TYPE_SAE;
+		default:
+			return WIFI_SECURITY_TYPE_UNKNOWN;
+	}
+}
+
+/* Public API */
 int z_wpa_supplicant_connect(const struct device *dev,
 						struct wifi_connect_req_params *params)
 {
@@ -313,36 +342,6 @@ out:
 
 	return ret;
 }
-
-
-static inline enum wifi_frequency_bands wpas_band_to_zephyr(enum wpa_radio_work_band band)
-{
-	switch(band) {
-		case BAND_2_4_GHZ:
-			return WIFI_FREQ_BAND_2_4_GHZ;
-		case BAND_5_GHZ:
-			return WIFI_FREQ_BAND_5_GHZ;
-		default:
-			return WIFI_FREQ_BAND_UNKNOWN;
-	}
-}
-
-static inline enum wifi_security_type wpas_key_mgmt_to_zephyr(int key_mgmt)
-{
-	switch(key_mgmt) {
-		case WPA_KEY_MGMT_NONE:
-			return WIFI_SECURITY_TYPE_NONE;
-		case WPA_KEY_MGMT_PSK:
-			return WIFI_SECURITY_TYPE_PSK;
-		case WPA_KEY_MGMT_PSK_SHA256:
-			return WIFI_SECURITY_TYPE_PSK_SHA256;
-		case WPA_KEY_MGMT_SAE:
-			return WIFI_SECURITY_TYPE_SAE;
-		default:
-			return WIFI_SECURITY_TYPE_UNKNOWN;
-	}
-}
-
 
 int z_wpa_supplicant_status(const struct device *dev,
 				struct wifi_iface_status *status)
