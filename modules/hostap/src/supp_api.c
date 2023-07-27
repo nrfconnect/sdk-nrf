@@ -141,7 +141,7 @@ static inline void wpa_supp_restart_status_work(void)
 }
 
 
-int zephyr_supp_connect(const struct device *dev,
+int z_wpa_supplicant_connect(const struct device *dev,
 						struct wifi_connect_req_params *params)
 {
 	struct wpa_ssid *ssid = NULL;
@@ -272,7 +272,7 @@ out:
 	return ret;
 }
 
-int zephyr_supp_disconnect(const struct device *dev)
+int z_wpa_supplicant_disconnect(const struct device *dev)
 {
 	struct wpa_supplicant *wpa_s;
 	int ret = 0;
@@ -328,7 +328,7 @@ static inline enum wifi_security_type wpas_key_mgmt_to_zephyr(int key_mgmt)
 }
 
 
-int zephyr_supp_status(const struct device *dev,
+int z_wpa_supplicant_status(const struct device *dev,
 				struct wifi_iface_status *status)
 {
 	struct wpa_supplicant *wpa_s;
