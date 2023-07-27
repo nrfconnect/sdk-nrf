@@ -36,6 +36,7 @@ struct wpa_supp_api_ctrl {
 	enum requested_ops requested_op;
 	int connection_timeout;
 	struct k_work_sync sync;
+	bool terminate;
 };
 
 static struct wpa_supp_api_ctrl wpa_supp_api_ctrl;
@@ -85,6 +86,11 @@ static void supp_shell_connect_status(struct k_work *work)
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
+	if (ctrl->terminate) {
+		status = 2;
+		goto out;
+	}
+
 	wpa_s = get_wpa_s_handle(ctrl->dev);
 	if (!wpa_s) {
 		status = 1;
@@ -125,8 +131,13 @@ out:
 
 static inline void wpa_supp_restart_status_work(void)
 {
-	k_work_cancel_delayable_sync(&wpa_supp_status_work,
-			&wpa_supp_api_ctrl.sync);
+	/* Terminate synchronously */
+	wpa_supp_api_ctrl.terminate = 1;
+	k_work_flush_delayable(&wpa_supp_status_work,
+		&wpa_supp_api_ctrl.sync);
+	wpa_supp_api_ctrl.terminate = 0;
+
+	/* Start afresh */
 	k_work_reschedule(&wpa_supp_status_work,
 		K_MSEC(10));
 }
