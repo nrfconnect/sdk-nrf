@@ -30,12 +30,9 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 
 #include "supp_main.h"
 
-
-#define DUMMY_SOCKET_PORT 9999
-
 struct wpa_global *global;
 
-static int wpa_event_sock = -1;
+static int wpa_event_sockpair[2];
 
 static void start_wpa_supplicant(void);
 
@@ -129,28 +126,16 @@ static void wpa_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 
 static int register_wpa_event_sock(void)
 {
-	struct sockaddr_in addr;
 	int ret;
 
-	wpa_event_sock = socket(PF_INET, SOCK_DGRAM, 0);
+	ret = socketpair(AF_UNIX, SOCK_STREAM, 0, wpa_event_sockpair);
 
-	if (wpa_event_sock < 0) {
+	if (ret != 0) {
 		wpa_printf(MSG_ERROR, "Failed to initialize socket: %s", strerror(errno));
 		return -1;
 	}
 
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_family = AF_INET;
-	addr.sin_port = DUMMY_SOCKET_PORT;
-
-	ret = bind(wpa_event_sock, (struct sockaddr *) &addr, sizeof(addr));
-	if (ret < 0) {
-		wpa_printf(MSG_ERROR, "Failed to bind socket: %s", strerror(errno));
-		return -1;
-	}
-
-	eloop_register_read_sock(wpa_event_sock, wpa_event_sock_handler, NULL, NULL);
+	eloop_register_read_sock(wpa_event_sockpair[0], wpa_event_sock_handler, NULL, NULL);
 
 	return 0;
 }
@@ -159,23 +144,13 @@ int send_wpa_supplicant_event(const struct wpa_supplicant_event_msg *msg)
 {
 	int ret;
 	unsigned int retry = 0;
-	struct sockaddr_in dst = {
-		.sin_addr = {
-			.s4_addr[0] = 127,
-			.s4_addr[1] = 0,
-			.s4_addr[2] = 0,
-			.s4_addr[3] = 2
-		 },
-		.sin_family = AF_INET,
-		.sin_port = DUMMY_SOCKET_PORT
-	};
 
-	if (wpa_event_sock < 0) {
+	if (wpa_event_sockpair[1] < 0) {
 		return -1;
 	}
 
 retry_send:
-	ret = sendto(wpa_event_sock, msg, sizeof(*msg), 0, (struct sockaddr *)&dst, sizeof(dst));
+	ret = send(wpa_event_sockpair[1], msg, sizeof(*msg), 0);
 	if (ret < 0) {
 		if (errno == EINTR || errno == EAGAIN || errno == EBUSY || errno == EWOULDBLOCK) {
 			k_msleep(2);
@@ -284,15 +259,14 @@ static void start_wpa_supplicant(void)
 		exitcode = wpa_supplicant_run(global);
 	}
 
-	eloop_unregister_read_sock(wpa_event_sock);
+	eloop_unregister_read_sock(wpa_event_sockpair[0]);
 
 	wpa_supplicant_deinit(global);
 
 	fst_global_deinit();
 
-	if (wpa_event_sock) {
-		close(wpa_event_sock);
-	}
+	close(wpa_event_sockpair[0]);
+	close(wpa_event_sockpair[1]);
 
 out:
 	os_free(ifaces);
