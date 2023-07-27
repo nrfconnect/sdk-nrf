@@ -259,7 +259,11 @@ static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 
 	wpa_printf(MSG_DEBUG, "Passing message %d to wpa_supplicant", msg.event);
 
-	wpa_supplicant_event(msg.ctx, msg.event, msg.data);
+	if (msg.global) {
+		wpa_supplicant_event_global(msg.ctx, msg.event, msg.data);
+	} else {
+		wpa_supplicant_event(msg.ctx, msg.event, msg.data);
+	}
 
 	if (msg.data) {
 		os_free(msg.data);

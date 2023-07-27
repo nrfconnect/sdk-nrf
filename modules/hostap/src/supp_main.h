@@ -10,6 +10,7 @@
 
 struct wpa_supplicant *z_wpas_get_handle_by_ifname(const char* ifname);
 struct wpa_supplicant_event_msg {
+	bool global;
 	void *ctx;
 	unsigned int event;
 	void *data;
