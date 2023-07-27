@@ -174,6 +174,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 	wpa_printf(MSG_DEBUG, "NET added: %d\n", resp.network_id);
 
 	_wpa_cli_cmd_v("set_network %d ssid \"%s\"", resp.network_id, params->ssid);
+	_wpa_cli_cmd_v("set_network %d scan_ssid 1", resp.network_id);
 	_wpa_cli_cmd_v("set_network %d key_mgmt NONE", resp.network_id);
 	_wpa_cli_cmd_v("set_network %d ieee80211w 0", resp.network_id);
 	if (params->security != WIFI_SECURITY_TYPE_NONE) {
