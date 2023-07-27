@@ -463,7 +463,8 @@ static const struct wifi_mgmt_ops *const get_wifi_mgmt_api(const struct device *
 	return off_api ? off_api->wifi_mgmt_api : NULL;
 }
 
-int z_wpa_supplicant_scan(const struct device *dev, scan_result_cb_t cb)
+int z_wpa_supplicant_scan(const struct device *dev, struct wifi_scan_params *params,
+				scan_result_cb_t cb)
 {
 	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
 
@@ -472,7 +473,7 @@ int z_wpa_supplicant_scan(const struct device *dev, scan_result_cb_t cb)
 		return -ENOTSUP;
 	}
 
-	return wifi_mgmt_api->scan(dev, cb);
+	return wifi_mgmt_api->scan(dev, params, cb);
 }
 
 #ifdef CONFIG_NET_STATISTICS_WIFI
