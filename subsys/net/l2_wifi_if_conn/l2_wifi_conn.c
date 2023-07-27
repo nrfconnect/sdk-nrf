@@ -12,7 +12,7 @@ LOG_MODULE_REGISTER(l2_wifi_mgr_conn);
 #include <net/wifi_mgmt_ext.h>
 #include <net/l2_wifi_connect.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/src/supp_events.h>
+#include <supp_events.h>
 #include "conn_mgr_private.h"
 
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT | \

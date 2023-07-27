@@ -7,3 +7,4 @@
 add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM tfm/zephyr)
 add_subdirectory_ifdef(CONFIG_MEMFAULT memfault-firmware-sdk)
 add_subdirectory_ifdef(CONFIG_MCUBOOT mcuboot/hooks)
+add_subdirectory(hostap)
