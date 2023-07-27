@@ -219,7 +219,7 @@ static void iface_event_handler(struct net_mgmt_event_callback *cb,
 {
 	const char *ifname = iface->if_dev->dev->name;
 
-	wpa_printf(MSG_INFO, "Event: %d", mgmt_event);
+	wpa_printf(MSG_DEBUG, "Event: %d", mgmt_event);
 	if (mgmt_event == NET_EVENT_IF_ADMIN_UP) {
 		z_wpas_add_interface(ifname);
 	} else if (mgmt_event == NET_EVENT_IF_ADMIN_DOWN) {
