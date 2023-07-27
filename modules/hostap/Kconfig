@@ -11,7 +11,7 @@ config WPA_SUPP
 	depends on  NET_SOCKETS_POSIX_NAMES || POSIX_API
 	select NET_SOCKETS_PACKET
 	select NET_SOCKETPAIR
-	select NET_L2_NRF_WIFI_MGMT
+	select NET_L2_WIFI_MGMT
 	help
 	  WPA supplicant implements 802.1X related functions.
 
