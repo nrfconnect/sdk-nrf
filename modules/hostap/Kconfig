@@ -147,4 +147,7 @@ config WPA_SUPP_DEBUG_LEVEL
 config LOG_BUFFER_SIZE
 	default 4096 if WPA_SUPP_LOG_LEVEL_DBG
 	default 2048
+
+config WPA_SUPP_NO_DEBUG
+	bool "Disable printing of debug messages, saves code size significantly"
 endif
