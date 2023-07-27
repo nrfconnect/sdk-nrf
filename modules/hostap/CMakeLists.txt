@@ -8,7 +8,7 @@ if(CONFIG_WPA_SUPP)
 
 zephyr_library()
 
-set(HOSTAP_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../)
+set(HOSTAP_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../../../modules/lib/hostap)
 set(WPA_SUPPLICANT_BASE ${HOSTAP_BASE}/wpa_supplicant)
 set(COMMON_SRC_BASE ${HOSTAP_BASE}/src)
 
