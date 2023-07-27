@@ -84,8 +84,8 @@ static void iface_cb(struct net_if *iface, void *user_data)
 	wpa_printf(
 		MSG_INFO,
 		"iface_cb: iface %s ifindex %d %02x:%02x:%02x:%02x:%02x:%02x",
-		ifname, ifindex, own_addr[0], own_addr[1], own_addr[2],
-		own_addr[3], own_addr[4], own_addr[5]);
+		ifname ? ifname: "Unknown", ifindex, own_addr[0], own_addr[1],
+		own_addr[2], own_addr[3], own_addr[4], own_addr[5]);
 
 	/* TODO : make this user configurable*/
 	ifaces[0].ifname = "wlan0";
