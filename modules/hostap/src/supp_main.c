@@ -89,6 +89,8 @@ static void iface_cb(struct net_if *iface, void *user_data)
 
 	/* TODO : make this user configurable*/
 	ifaces[0].ifname = "wlan0";
+
+	os_free(ifname);
 }
 
 static void wpa_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
