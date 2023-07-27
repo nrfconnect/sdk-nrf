@@ -161,6 +161,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
+		ret = -1;
 		goto out;
 	}
 
