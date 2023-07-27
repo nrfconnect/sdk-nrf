@@ -21,6 +21,7 @@ zephyr_compile_definitions(
 
 zephyr_include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/
+	${HOSTAP_BASE}/
 	${WPA_SUPPLICANT_BASE}/
 	${COMMON_SRC_BASE}/
 )
