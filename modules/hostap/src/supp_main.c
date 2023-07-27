@@ -75,11 +75,16 @@ static void iface_cb(struct net_if *iface, void *user_data)
 	struct wpa_interface *ifaces = user_data;
 	struct net_linkaddr *link_addr = NULL;
 	int ifindex;
-	char own_addr[6];
+	char own_addr[NET_LINK_ADDR_MAX_LENGTH];
 	char *ifname;
 
 	ifindex = net_if_get_by_iface(iface);
 	link_addr = &iface->if_dev->link_addr;
+	if (link_addr->len > NET_LINK_ADDR_MAX_LENGTH) {
+		wpa_printf(MSG_ERROR, "Invalid link address length, %d max %d",
+			   link_addr->len, NET_LINK_ADDR_MAX_LENGTH);
+		return;
+	}
 	os_memcpy(own_addr, link_addr->addr, link_addr->len);
 	ifname = os_strdup(iface->if_dev->dev->name);
 
