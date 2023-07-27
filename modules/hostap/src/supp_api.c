@@ -18,6 +18,7 @@
 #include "supp_api.h"
 
 int cli_main(int, const char **);
+extern struct k_sem wpa_supplicant_ready_sem;
 extern struct wpa_global *global;
 
 enum requested_ops {
@@ -53,7 +54,17 @@ static int send_wpa_supplicant_dummy_event(void)
 
 static inline struct wpa_supplicant * get_wpa_s_handle(const struct device *dev)
 {
-	struct wpa_supplicant *wpa_s = wpa_supplicant_get_iface(global, dev->name);
+	struct wpa_supplicant *wpa_s = NULL;
+	int ret = k_sem_take(&wpa_supplicant_ready_sem, K_SECONDS(2));
+
+	if (ret) {
+		wpa_printf(MSG_ERROR, "%s: WPA supplicant not ready: %d", __func__, ret);
+		return NULL;
+	}
+
+	k_sem_give(&wpa_supplicant_ready_sem);
+
+	wpa_s = wpa_supplicant_get_iface(global, dev->name);
 	if (!wpa_s) {
 		wpa_printf(MSG_ERROR,
 		"%s: Unable to get wpa_s handle for %s\n", __func__, dev->name);
