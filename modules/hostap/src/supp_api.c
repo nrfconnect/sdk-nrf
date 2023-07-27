@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <stdarg.h>
 
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
@@ -16,6 +17,7 @@
 
 #include "supp_main.h"
 #include "supp_api.h"
+#include "wpa_cli_zephyr.h"
 
 int cli_main(int, const char **);
 extern struct k_sem wpa_supplicant_ready_sem;
@@ -56,36 +58,9 @@ static void supp_shell_connect_status(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(wpa_supp_status_work,
 		supp_shell_connect_status);
 
-static int send_wpa_supplicant_dummy_event(void)
-{
-	struct wpa_supplicant_event_msg msg = { 0 };
-
-	msg.ignore_msg = true;
-
-	return send_wpa_supplicant_event(&msg);
-}
-
-
 static inline struct wpa_supplicant * get_wpa_s_handle(const struct device *dev)
 {
-	struct wpa_supplicant *wpa_s = NULL;
-	int ret = k_sem_take(&wpa_supplicant_ready_sem, K_SECONDS(2));
-
-	if (ret) {
-		wpa_printf(MSG_ERROR, "%s: WPA supplicant not ready: %d", __func__, ret);
-		return NULL;
-	}
-
-	k_sem_give(&wpa_supplicant_ready_sem);
-
-	wpa_s = wpa_supplicant_get_iface(global, dev->name);
-	if (!wpa_s) {
-		wpa_printf(MSG_ERROR,
-		"%s: Unable to get wpa_s handle for %s\n", __func__, dev->name);
-		return NULL;
-	}
-
-	return wpa_s;
+	return get_wpa_s_handle_ifname(dev->name);
 }
 
 static void supp_shell_connect_status(struct k_work *work)
@@ -110,7 +85,7 @@ static void supp_shell_connect_status(struct k_work *work)
 
 	if (ctrl->requested_op == CONNECT && wpa_s->wpa_state != WPA_COMPLETED) {
 		if (ctrl->connection_timeout > 0 && seconds_counter++ > ctrl->connection_timeout) {
-			wpas_request_disconnection(wpa_s);
+			z_wpa_cli_cmd_v("disconnect");
 			status = CONNECTION_FAILURE;
 			goto out;
 		}
@@ -144,10 +119,9 @@ static inline void wpa_supp_restart_status_work(void)
 int z_wpa_supplicant_connect(const struct device *dev,
 						struct wifi_connect_req_params *params)
 {
-	struct wpa_ssid *ssid = NULL;
-	bool pmf = true;
 	struct wpa_supplicant *wpa_s;
 	int ret = 0;
+	struct add_network_resp resp = {0};
 
 	if (!net_if_is_up(net_if_lookup_by_dev(dev))) {
 		wpa_printf(MSG_ERROR,
@@ -163,100 +137,51 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		goto out;
 	}
 
-	wpa_supplicant_remove_all_networks(wpa_s);
-
-	ssid = wpa_supplicant_add_network(wpa_s);
-	ssid->ssid = os_zalloc(sizeof(u8) * MAX_SSID_LEN);
-
-	memcpy(ssid->ssid, params->ssid, params->ssid_length);
-	ssid->ssid_len = params->ssid_length;
-	ssid->disabled = 1;
-	ssid->key_mgmt = WPA_KEY_MGMT_NONE;
-
-	if (params->channel != WIFI_CHANNEL_ANY) {
-		/* We use global channel list here and also use the widest
-		 * op_class for 5GHz channels as there is no user input
-		 * for these.
-		 */
-		int freq  = ieee80211_chan_to_freq(NULL, 81, params->channel);
-
-		if (freq <= 0) {
-			freq  = ieee80211_chan_to_freq(NULL, 128, params->channel);
-		}
-
-		if (freq <= 0) {
-			wpa_printf(MSG_ERROR, "Invalid channel %d", params->channel);
-			ret = -EINVAL;
-			goto out;
-		}
-
-		ssid->scan_freq = os_zalloc(2 * sizeof(int));
-		if (!ssid->scan_freq) {
-			ret = -ENOMEM;
-			goto out;
-		}
-		ssid->scan_freq[0] = freq;
-		ssid->scan_freq[1] = 0;
-
-		ssid->freq_list = os_zalloc(2 * sizeof(int));
-		if (!ssid->freq_list) {
-			os_free(ssid->scan_freq);
-			ret = -ENOMEM;
-			goto out;
-		}
-		ssid->freq_list[0] = freq;
-		ssid->freq_list[1] = 0;
+	z_wpa_cli_cmd_v("remove_network all");
+	ret = z_wpa_ctrl_add_network(&resp);
+	if (ret) {
+		goto out;
 	}
 
-	wpa_s->conf->filter_ssids = 1;
-	wpa_s->conf->ap_scan = 1;
+	wpa_printf(MSG_DEBUG, "NET added: %d\n", resp.network_id);
 
+	z_wpa_cli_cmd_v("set_network %d ssid \"%s\"", resp.network_id, params->ssid);
+	z_wpa_cli_cmd_v("set_network %d key_mgmt NONE", resp.network_id);
+	z_wpa_cli_cmd_v("set_network %d ieee80211w 0", resp.network_id);
 	if (params->psk) {
-		// TODO: Extend enum wifi_security_type
+		/* WPA3 */
 		if (params->security == 3) {
-			ssid->key_mgmt = WPA_KEY_MGMT_SAE;
-			str_clear_free(ssid->sae_password);
-			ssid->sae_password = dup_binstr(params->psk, params->psk_length);
-
-			if (ssid->sae_password == NULL) {
-				wpa_printf(MSG_ERROR, "%s:Failed to copy sae_password\n",
-					      __func__);
-				ret = -ENOMEM;
-				goto out;
+			if (params->sae_password) {
+				z_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
+					resp.network_id, params->sae_password);
+			} else {
+				z_wpa_cli_cmd_v("set_network %d sae_password \"%s\"",
+					resp.network_id, params->psk);
 			}
+			z_wpa_cli_cmd_v("set_network %d key_mgmt SAE",
+				resp.network_id);
+		} else if (params->security == 2) {
+			z_wpa_cli_cmd_v("set_network %d psk \"%s\"",
+				resp.network_id, params->psk);
+			z_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-256",
+				resp.network_id);
 		} else {
-			if (params->security == 2)
-				ssid->key_mgmt = WPA_KEY_MGMT_PSK_SHA256;
-			else
-				ssid->key_mgmt = WPA_KEY_MGMT_PSK;
-
-			str_clear_free(ssid->passphrase);
-			ssid->passphrase = dup_binstr(params->psk, params->psk_length);
-
-			if (ssid->passphrase == NULL) {
-				wpa_printf(MSG_ERROR, "%s:Failed to copy passphrase\n",
-				__func__);
-				ret = -ENOMEM;
-				goto out;
-			}
+			z_wpa_cli_cmd_v( "set_network %d psk \"%s\"",
+			resp.network_id, params->psk);
+			z_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK",
+				resp.network_id);
 		}
 
-		wpa_config_update_psk(ssid);
-
-		if (pmf) {
-			/* 1-1 Mapping */
-			ssid->ieee80211w = params->mfp;
+		if (params->mfp) {
+			z_wpa_cli_cmd_v("set_network %d ieee80211w %d",
+				resp.network_id, params->mfp);
 		}
-
 	}
 
-	wpa_supplicant_enable_network(wpa_s,
-				      ssid);
+	/* enable and select network */
+	z_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 
-	wpa_supplicant_select_network(wpa_s,
-				      ssid);
-
-	send_wpa_supplicant_dummy_event();
+	z_wpa_cli_cmd_v("select_network %d", resp.network_id);
 
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = CONNECT;
@@ -286,7 +211,7 @@ int z_wpa_supplicant_disconnect(const struct device *dev)
 	}
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = DISCONNECT;
-	wpas_request_disconnection(wpa_s);
+	z_wpa_cli_cmd_v("disconnect");
 
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
@@ -352,6 +277,7 @@ int z_wpa_supplicant_status(const struct device *dev,
 	if (wpa_s->wpa_state >= WPA_ASSOCIATED) {
 		struct wpa_ssid *ssid = wpa_s->current_ssid;
 		u8 channel;
+		struct signal_poll_resp signal_poll;
 
 		os_memcpy(status->bssid, wpa_s->bssid, WIFI_MAC_ADDR_LEN);
 		status->band = wpas_band_to_zephyr(wpas_freq_to_band(wpa_s->assoc_freq));
@@ -363,16 +289,16 @@ int z_wpa_supplicant_status(const struct device *dev,
 		if (ssid) {
 			u8 *_ssid = ssid->ssid;
 			size_t ssid_len = ssid->ssid_len;
-			u8 ssid_buf[SSID_MAX_LEN] = {0};
+			struct status_resp cli_status;
 
 			if (ssid_len == 0) {
-				int _res = wpa_drv_get_ssid(wpa_s, ssid_buf);
+				int _res = z_wpa_ctrl_status(&cli_status);
 
 				if (_res < 0)
 					ssid_len = 0;
 				else
-					ssid_len = _res;
-				_ssid = ssid_buf;
+					ssid_len = cli_status.ssid_len;
+				_ssid = cli_status.ssid;
 			}
 			os_memcpy(status->ssid, _ssid, ssid_len);
 			status->ssid_len = ssid_len;
@@ -388,9 +314,9 @@ int z_wpa_supplicant_status(const struct device *dev,
 				status->link_mode = WIFI_LINK_MODE_UNKNOWN;
 			}
 		}
-		ret = wpa_drv_signal_poll(wpa_s, si);
+		ret = z_wpa_ctrl_signal_poll(&signal_poll);
 		if (!ret) {
-			status->rssi = si->current_signal;
+			status->rssi = signal_poll.rssi;
 		} else {
 			wpa_printf(MSG_ERROR, "%s:Failed to read RSSI\n",
 				__func__);

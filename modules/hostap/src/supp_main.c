@@ -25,10 +25,10 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 #include "fst/fst.h"
 #include "includes.h"
 #include "p2p_supplicant.h"
-#include "wpa_supplicant_i.h"
 #include "driver_i.h"
 
 #include "supp_main.h"
+#include "wpa_cli_zephyr.h"
 
 K_SEM_DEFINE(wpa_supplicant_ready_sem, 0, 1);
 
@@ -68,6 +68,28 @@ static int wpa_supplicant_init_match(struct wpa_global *global)
 	return 0;
 }
 #endif /* CONFIG_MATCH_IFACE */
+
+struct wpa_supplicant *get_wpa_s_handle_ifname(const char* ifname)
+{
+	struct wpa_supplicant *wpa_s = NULL;
+	int ret = k_sem_take(&wpa_supplicant_ready_sem, K_SECONDS(2));
+
+	if (ret) {
+		wpa_printf(MSG_ERROR, "%s: WPA supplicant not ready: %d", __func__, ret);
+		return NULL;
+	}
+
+	k_sem_give(&wpa_supplicant_ready_sem);
+
+	wpa_s = wpa_supplicant_get_iface(global, ifname);
+	if (!wpa_s) {
+		wpa_printf(MSG_ERROR,
+		"%s: Unable to get wpa_s handle for %s\n", __func__, ifname);
+		return NULL;
+	}
+
+	return wpa_s;
+}
 
 #include "config.h"
 static void iface_cb(struct net_if *iface, void *user_data)
@@ -223,8 +245,8 @@ static void start_wpa_supplicant(void)
 
 	net_if_foreach(iface_cb, ifaces);
 
-	ifaces[0].ctrl_interface = "test_ctrl";
-	params.ctrl_interface = "test_ctrl";
+	ifaces[0].ctrl_interface = "zephyr";
+	params.ctrl_interface = "zephyr";
 	wpa_printf(MSG_INFO, "Using interface %s\n", ifaces[0].ifname);
 
 	for (i = 0; exitcode == 0 && i < iface_count; i++) {
@@ -251,6 +273,7 @@ static void start_wpa_supplicant(void)
 			exitcode = -1;
 			break;
 		}
+		z_wpa_ctrl_init(wpa_s);
 		wpa_s->conf->filter_ssids = 1;
 		wpa_s->conf->ap_scan = 1;
 	}
@@ -270,6 +293,7 @@ static void start_wpa_supplicant(void)
 
 	eloop_unregister_read_sock(wpa_event_sockpair[0]);
 
+	z_wpa_ctrl_deinit();
 	wpa_supplicant_deinit(global);
 
 	fst_global_deinit();

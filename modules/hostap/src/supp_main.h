@@ -6,6 +6,9 @@
 #ifndef __SUPP_MAIN_H_
 #define __SUPP_MAIN_H_
 
+#include "wpa_supplicant_i.h"
+
+struct wpa_supplicant *get_wpa_s_handle_ifname(const char* ifname);
 struct wpa_supplicant_event_msg {
 	/* Dummy messages to unblock select */
 	bool ignore_msg;
