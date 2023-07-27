@@ -252,7 +252,7 @@ static void z_wpas_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
 	}
 
 	if (ret != sizeof(msg)) {
-		wpa_printf(MSG_ERROR, "Recieved incomplete message: got: %d, expected:%d",
+		wpa_printf(MSG_ERROR, "Received incomplete message: got: %d, expected:%d",
 			ret, sizeof(msg));
 		return;
 	}
