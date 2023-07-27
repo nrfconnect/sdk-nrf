@@ -24,7 +24,6 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 #include "includes.h"
 #include "p2p_supplicant.h"
 #include "wpa_supplicant_i.h"
-#include "wifi_mgmt.h"
 
 struct wpa_supplicant *wpa_s_0;
 
