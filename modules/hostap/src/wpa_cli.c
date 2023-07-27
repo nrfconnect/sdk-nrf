@@ -12,15 +12,15 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/init.h>
 
-#include <net/net_if.h>
-#include <net/wifi_mgmt.h>
-#include <net/net_event.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/net_event.h>
 
-#include <src/utils/common.h>
+#include <zephyr/src/utils/common.h>
 #include <wpa_supplicant/config.h>
 #include <wpa_supplicant/wpa_supplicant_i.h>
 
