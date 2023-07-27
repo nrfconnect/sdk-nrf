@@ -39,6 +39,7 @@ K_SEM_DEFINE(z_wpas_ready_sem, 0, 1);
 
 /* Should match with the driver name */
 #define DEFAULT_IFACE_NAME "wlan0"
+#define IFACE_MATCHING_PREFIX "wlan"
 
 static struct net_mgmt_event_callback cb;
 struct k_mutex iface_up_mutex;
@@ -221,6 +222,11 @@ static void iface_event_handler(struct net_mgmt_event_callback *cb,
 							uint32_t mgmt_event, struct net_if *iface)
 {
 	const char *ifname = iface->if_dev->dev->name;
+
+	if (strncmp(ifname, IFACE_MATCHING_PREFIX, sizeof(IFACE_MATCHING_PREFIX) - 1) != 0)
+	{
+		return;
+	}
 
 	wpa_printf(MSG_DEBUG, "Event: %d", mgmt_event);
 	if (mgmt_event == NET_EVENT_IF_ADMIN_UP) {
