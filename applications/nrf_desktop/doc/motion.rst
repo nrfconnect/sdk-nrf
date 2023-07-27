@@ -31,7 +31,8 @@ The motion module selects the source of movement based on the following configur
 * :ref:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE <config_desktop_app_options>` - Movement data is obtained from the gaming-grade ``PMW3360`` motion sensor.
 * :ref:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE <config_desktop_app_options>` - Movement data is obtained from ``PAW3212`` motion sensor.
 * :ref:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE <config_desktop_app_options>` - Movement data is generated using buttons.
-* :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE <config_desktop_app_options>` - Movement data is simulated (controlled from Zephyr's :ref:`zephyr:shell_api`).
+* :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE <config_desktop_app_options>` - Movement data is simulated.
+  The movement data generation can be controlled from Zephyr's :ref:`zephyr:shell_api`.
 
 See the following sections for more information.
 
@@ -67,18 +68,27 @@ Simulated movement data
 
 Selecting the :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE <config_desktop_app_options>` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
 
-If the shell is available (the :kconfig:option:`CONFIG_SHELL` option is set), the motion module registers a shell module ``motion_sim`` and links to it two commands: ``start`` and ``stop``.
-If the shell is not available, motion generation starts automatically when the device is connected to USB or Bluetooth®.
-
-When started, the module will generate simulated motion events.
-The movement data in each event will be tracing the predefined path, an eight-sided polygon.
+The generated movement data traces a predefined octagon path.
+As soon as the HID subscriber connects, the motion data is sent to it automatically.
+The X and Y coordinates of subsequent vertexes of the octagon are defined as the ``coords`` array in the module's source code.
 
 You can configure the path with the following options:
 
 * :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME <config_desktop_app_options>` - Sets how long each edge is traced.
-* :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR <config_desktop_app_options>` - Scales the size of the polygon.
+  To speed up calculations, this Kconfig option value must be set to a power of two.
+* :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR <config_desktop_app_options>` - Scales the size of the octagon.
+  The Kconfig option's value is used as the ``SCALE`` factor in the ``coords`` array.
 
-The ``stop`` command will cause the module to stop generating new events.
+Shell integration
+-----------------
+
+If the Zephyr shell is enabled (meaning the :kconfig:option:`CONFIG_SHELL` Kconfig option is set), the motion module registers a ``motion_sim`` shell module and links to it two commands:
+
+* ``start`` - Start sending simulated movement data to the HID subscriber.
+* ``stop``- Stop sending simulated movement data to the HID subscriber.
+
+If the shell is enabled, motion generation no longer starts automatically when the HID subscriber connects and after system wakeup (when :c:struct:`wake_up_event` is received).
+The simulated movement data generation needs to be triggered using a shell command.
 
 Configuration channel
 *********************
@@ -106,10 +116,15 @@ In these configurations, the module is a configuration channel listener and it p
 Implementation details
 **********************
 
+Implementation details depend on the selected implementation.
+
+Movement data from motion sensors
+=================================
+
 This section describes the motion module implementation for motion sensors.
 
 Motion sensor
-=============
+-------------
 
 The motion module samples movement data from the motion sensor using the motion sensor driver.
 
@@ -118,7 +133,7 @@ The same is true for the names of sensor configuration options.
 The nRF Desktop application aggregates the sensor-specific information and translates them to the application abstracts in the :file:`configuration/common/motion_sensor.h` header file.
 
 Sampling thread
-===============
+---------------
 
 The motion module uses a dedicated sampling thread to sample data from the motion sensor.
 The reason for using the sampling thread is the long time required for data to be ready.
@@ -129,7 +144,7 @@ The sampling thread stays in the unready state blocked on a semaphore.
 The semaphore is triggered when the motion sensor trigger sends a notification that the data is available or when other application event requires the module interaction with the sensor (for example, when configuration is submitted from the host).
 
 Sampling pipeline
-=================
+-----------------
 
 The motion module starts in ``STATE_DISABLED`` and after initialization enters ``STATE_DISCONNECTED``.
 When disconnected, the module is not generating motion events, but the motion sensor is sampled to make sure its registers are cleared.
@@ -150,3 +165,14 @@ Upon connection, the following happens:
 The module continues to sample data until disconnection or when there is no motion detected.
 The ``motion`` module assumes no motion when a number of consecutive samples equal to :ref:`CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT <config_desktop_app_options>` returns zero on both axis.
 In such case, the module will switch back to ``STATE_IDLE`` and wait for the motion sensor trigger.
+
+Simulated movement data
+=======================
+
+Current position in the generated trajectory is determined by a hardware clock.
+If available, the module uses the :c:func:`k_cycle_get_64` function to read the hardware clock when generating motion.
+Otherwise, the :c:func:`k_cycle_get_32` function is used for that purpose.
+
+When a HID subscriber connects, that is when the device is connected either over USB or Bluetooth LE, the module submits the first :c:struct:`motion_event` containing motion calculated from the previously reported position.
+The subsequent :c:struct:`motion_event` is submitted when the previously generated motion data is sent to the subscriber, that is when :c:struct:`hid_report_sent_event` is received by the module.
+The values of motion for X and Y axes are generated from an updated timestamp and the previously reported position.
