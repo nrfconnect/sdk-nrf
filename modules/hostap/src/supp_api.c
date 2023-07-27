@@ -138,12 +138,13 @@ int zephyr_supp_connect(const struct device *dev,
 	struct wpa_ssid *ssid = NULL;
 	bool pmf = true;
 	struct wpa_supplicant *wpa_s;
+	int ret = -1;
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
-		return -1;
+		goto out;
 	}
 
 	wpa_supplicant_remove_all_networks(wpa_s);
@@ -169,12 +170,14 @@ int zephyr_supp_connect(const struct device *dev,
 
 		if (freq <= 0) {
 			wpa_printf(MSG_ERROR, "Invalid channel %d", params->channel);
-			return -EINVAL;
+			ret = -EINVAL;
+			goto out;
 		}
 
 		ssid->scan_freq = os_zalloc(2 * sizeof(int));
 		if (!ssid->scan_freq) {
-			return -ENOMEM;
+			ret = -ENOMEM;
+			goto out;
 		}
 		ssid->scan_freq[0] = freq;
 		ssid->scan_freq[1] = 0;
@@ -182,7 +185,8 @@ int zephyr_supp_connect(const struct device *dev,
 		ssid->freq_list = os_zalloc(2 * sizeof(int));
 		if (!ssid->freq_list) {
 			os_free(ssid->scan_freq);
-			return -ENOMEM;
+			ret = -ENOMEM;
+			goto out;
 		}
 		ssid->freq_list[0] = freq;
 		ssid->freq_list[1] = 0;
@@ -199,9 +203,10 @@ int zephyr_supp_connect(const struct device *dev,
 			ssid->sae_password = dup_binstr(params->psk, params->psk_length);
 
 			if (ssid->sae_password == NULL) {
-				wpa_printf(MSG_ERROR, "%s:Failed t copy sae_password\n",
+				wpa_printf(MSG_ERROR, "%s:Failed to copy sae_password\n",
 					      __func__);
-				return -1;
+				ret = -ENOMEM;
+				goto out;
 			}
 		} else {
 			if (params->security == 2)
@@ -213,9 +218,10 @@ int zephyr_supp_connect(const struct device *dev,
 			ssid->passphrase = dup_binstr(params->psk, params->psk_length);
 
 			if (ssid->passphrase == NULL) {
-				wpa_printf(MSG_ERROR, "%s:Failed t copy passphrase\n",
+				wpa_printf(MSG_ERROR, "%s:Failed to copy passphrase\n",
 				__func__);
-				return -1;
+				ret = -ENOMEM;
+				goto out;
 			}
 		}
 
@@ -240,20 +246,24 @@ int zephyr_supp_connect(const struct device *dev,
 
 	wpa_supp_restart_status_work();
 
+	ret = 0;
+
+out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 
-	return 0;
+	return ret;
 }
 
 int zephyr_supp_disconnect(const struct device *dev)
 {
 	struct wpa_supplicant *wpa_s;
+	int ret = -1;
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
-		return -1;
+		goto out;
 	}
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = DISCONNECT;
@@ -261,9 +271,12 @@ int zephyr_supp_disconnect(const struct device *dev)
 
 	wpa_supp_restart_status_work();
 
+	ret = 0;
+
+out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 
-	return 0;
+	return ret;
 }
 
 
