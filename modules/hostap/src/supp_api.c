@@ -28,6 +28,9 @@ enum requested_ops {
 
 #define OP_STATUS_POLLING_INTERVAL 1
 
+K_MUTEX_DEFINE(wpa_supplicant_mutex);
+
+
 struct wpa_supp_api_ctrl {
 	const struct device *dev;
 	enum requested_ops requested_op;
@@ -80,6 +83,8 @@ static void supp_shell_connect_status(struct k_work *work)
 	struct wpa_supplicant *wpa_s;
 	struct wpa_supp_api_ctrl *ctrl = &wpa_supp_api_ctrl;
 
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
+
 	wpa_s = get_wpa_s_handle(ctrl->dev);
 	if (!wpa_s) {
 		status = 1;
@@ -93,6 +98,7 @@ static void supp_shell_connect_status(struct k_work *work)
 		{
 			k_work_reschedule(&wpa_supp_status_work,
 				K_SECONDS(OP_STATUS_POLLING_INTERVAL));
+			k_mutex_unlock(&wpa_supplicant_mutex);
 			return;
 		}
 
@@ -113,6 +119,8 @@ out:
 		 */
 		wifi_mgmt_raise_disconnect_result_event(net_if_lookup_by_dev(ctrl->dev), 0);
 	}
+
+	k_mutex_unlock(&wpa_supplicant_mutex);
 }
 
 static inline void wpa_supp_restart_status_work(void)
@@ -130,6 +138,8 @@ int zephyr_supp_connect(const struct device *dev,
 	struct wpa_ssid *ssid = NULL;
 	bool pmf = true;
 	struct wpa_supplicant *wpa_s;
+
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
@@ -198,12 +208,16 @@ int zephyr_supp_connect(const struct device *dev,
 
 	wpa_supp_restart_status_work();
 
+	k_mutex_unlock(&wpa_supplicant_mutex);
+
 	return 0;
 }
 
 int zephyr_supp_disconnect(const struct device *dev)
 {
 	struct wpa_supplicant *wpa_s;
+
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
@@ -214,6 +228,8 @@ int zephyr_supp_disconnect(const struct device *dev)
 	wpas_request_disconnection(wpa_s);
 
 	wpa_supp_restart_status_work();
+
+	k_mutex_unlock(&wpa_supplicant_mutex);
 
 	return 0;
 }
@@ -252,12 +268,19 @@ int zephyr_supp_status(const struct device *dev,
 				struct wifi_iface_status *status)
 {
 	struct wpa_supplicant *wpa_s;
-	struct wpa_signal_info si;
 	int ret = -1;
+	struct wpa_signal_info *si = NULL;
+
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	wpa_s = get_wpa_s_handle(dev);
 	if (!wpa_s) {
-		return -1;
+		goto out;
+	}
+
+	si = os_zalloc(sizeof(struct wpa_signal_info));
+	if (!si) {
+		goto out;
 	}
 
 	status->state = wpa_s->wpa_state; /* 1-1 Mapping */
@@ -293,15 +316,19 @@ int zephyr_supp_status(const struct device *dev,
 			/* TODO: Derive this based on association IEs */
 			status->link_mode = WIFI_6;
 		}
-		ret = wpa_drv_signal_poll(wpa_s, &si);
+		ret = wpa_drv_signal_poll(wpa_s, si);
 		if (!ret) {
-			status->rssi = si.current_signal;
+			status->rssi = si->current_signal;
 		} else {
 			wpa_printf(MSG_ERROR, "%s:Failed to read RSSI\n",
 				__func__);
 			status->rssi = -WPA_INVALID_NOISE;
 		}
+	} else {
+		ret = 0;
 	}
-
-	return 0;
+out:
+	os_free(si);
+	k_mutex_unlock(&wpa_supplicant_mutex);
+	return ret;
 }
