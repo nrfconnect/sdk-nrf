@@ -46,6 +46,10 @@ config WPA_SUPP_P2P
 	select WPA_SUPP_AP
 	select WPA_SUPP_WPS
 
+config WPA_CLI
+    bool "CLI support for wpa_supplicant"
+    default n
+
 module = WPA_SUPP
 module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
