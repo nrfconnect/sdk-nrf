@@ -30,6 +30,8 @@ LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 
 #include "supp_main.h"
 
+K_SEM_DEFINE(wpa_supplicant_ready_sem, 0, 1);
+
 struct wpa_global *global;
 
 static int wpa_event_sockpair[2];
@@ -258,6 +260,7 @@ static void start_wpa_supplicant(void)
 #endif /* CONFIG_MATCH_IFACE */
 
 	if (exitcode == 0) {
+		k_sem_give(&wpa_supplicant_ready_sem);
 		exitcode = wpa_supplicant_run(global);
 	}
 
