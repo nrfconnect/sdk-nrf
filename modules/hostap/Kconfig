@@ -20,8 +20,12 @@ config WPA_SUPP_THREAD_STACK_SIZE
 	int "Stack size for wpa_supplicant thread"
 	default 8192
 
+config WEP
+	bool "WEP (Legacy crypto) support"
+
 config WPA_SUPP_CRYPTO
 	bool "Crypto support for WiFi"
+	select WEP
 	default y
 
 config WPA_SUPP_CRYPTO_ENTERPRISE
