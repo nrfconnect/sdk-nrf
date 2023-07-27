@@ -259,7 +259,7 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_P2P
 
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_WPS
 	CONFIG_WPS
-	CONFIG_EAP_WSC
+	EAP_WSC
 )
 
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
