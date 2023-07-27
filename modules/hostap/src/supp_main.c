@@ -13,19 +13,29 @@
  */
 
 #include <logging/log.h>
+#include <sys/fcntl.h>
 LOG_MODULE_REGISTER(wpa_supplicant, LOG_LEVEL_DBG);
 
 #include "includes.h"
 #include "common.h"
+#include "eloop.h"
 #include "wpa_supplicant/config.h"
 #include "wpa_supplicant_i.h"
-#include "driver_i.h"
+
 #include "fst/fst.h"
 #include "includes.h"
 #include "p2p_supplicant.h"
 #include "wpa_supplicant_i.h"
+#include "driver_i.h"
 
-struct wpa_supplicant *wpa_s_0;
+#include "supp_main.h"
+
+
+#define DUMMY_SOCKET_PORT 9999
+
+struct wpa_global *global;
+
+static int wpa_event_sock = -1;
 
 static void start_wpa_supplicant(void);
 
@@ -82,6 +92,108 @@ static void iface_cb(struct net_if *iface, void *user_data)
 
 	/* TODO : make this user configurable*/
 	ifaces[0].ifname = "wlan0";
+}
+
+static void wpa_event_sock_handler(int sock, void *eloop_ctx, void *sock_ctx)
+{
+	int ret;
+	ARG_UNUSED(eloop_ctx);
+	ARG_UNUSED(sock_ctx);
+	struct wpa_supplicant_event_msg msg;
+
+	ret = recv(sock, &msg, sizeof(msg), 0);
+
+	if (ret < 0) {
+		wpa_printf(MSG_ERROR, "Failed to recv the message: %s", strerror(errno));
+		return;
+	}
+
+	if (ret != sizeof(msg)) {
+		wpa_printf(MSG_ERROR, "Recieved incomplete message: got: %d, expected:%d",
+			ret, sizeof(msg));
+		return;
+	}
+
+	if (msg.ignore_msg) {
+		return;
+	}
+
+	wpa_printf(MSG_DEBUG, "Passing message %d to wpa_supplicant", msg.event);
+
+	wpa_supplicant_event(msg.ctx, msg.event, msg.data);
+
+	if (msg.data) {
+		os_free(msg.data);
+	}
+}
+
+static int register_wpa_event_sock(void)
+{
+	struct sockaddr_in addr;
+	int ret;
+
+	wpa_event_sock = socket(PF_INET, SOCK_DGRAM, 0);
+
+	if (wpa_event_sock < 0) {
+		wpa_printf(MSG_ERROR, "Failed to initialize socket: %s", strerror(errno));
+		return -1;
+	}
+
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_family = AF_INET;
+	addr.sin_port = DUMMY_SOCKET_PORT;
+
+	ret = bind(wpa_event_sock, (struct sockaddr *) &addr, sizeof(addr));
+	if (ret < 0) {
+		wpa_printf(MSG_ERROR, "Failed to bind socket: %s", strerror(errno));
+		return -1;
+	}
+
+	eloop_register_read_sock(wpa_event_sock, wpa_event_sock_handler, NULL, NULL);
+
+	return 0;
+}
+
+int send_wpa_supplicant_event(const struct wpa_supplicant_event_msg *msg)
+{
+	int ret;
+	unsigned int retry = 0;
+	struct sockaddr_in dst = {
+		.sin_addr = {
+			.s4_addr[0] = 127,
+			.s4_addr[1] = 0,
+			.s4_addr[2] = 0,
+			.s4_addr[3] = 2
+		 },
+		.sin_family = AF_INET,
+		.sin_port = DUMMY_SOCKET_PORT
+	};
+
+	if (wpa_event_sock < 0) {
+		return -1;
+	}
+
+retry_send:
+	ret = sendto(wpa_event_sock, msg, sizeof(*msg), 0, (struct sockaddr *)&dst, sizeof(dst));
+	if (ret < 0) {
+		if (errno == EINTR || errno == EAGAIN || errno == EBUSY || errno == EWOULDBLOCK) {
+			k_msleep(2);
+			if (retry++ < 3) {
+				goto retry_send;
+			} else {
+				wpa_printf(MSG_WARNING, "Dummy socket send fail (max retries): %s",
+					strerror(errno));
+				return -1;
+			}
+		} else {
+			wpa_printf(MSG_WARNING, "Dummy socket send fail: %s",
+				strerror(errno));
+			return -1;
+		}
+	}
+
+	return 0;
 }
 
 static void start_wpa_supplicant(void)
@@ -162,6 +274,8 @@ static void start_wpa_supplicant(void)
 		wpa_s_0->conf->ap_scan = 1;
 	}
 
+	register_wpa_event_sock();
+
 #ifdef CONFIG_MATCH_IFACE
 	if (exitcode == 0) {
 		exitcode = wpa_supplicant_init_match(global);
@@ -172,9 +286,15 @@ static void start_wpa_supplicant(void)
 		exitcode = wpa_supplicant_run(global);
 	}
 
+	eloop_unregister_read_sock(wpa_event_sock);
+
 	wpa_supplicant_deinit(global);
 
 	fst_global_deinit();
+
+	if (wpa_event_sock) {
+		close(wpa_event_sock);
+	}
 
 out:
 	os_free(ifaces);
