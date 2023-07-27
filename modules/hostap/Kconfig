@@ -70,4 +70,9 @@ config WPA_SUPP_DEBUG_LEVEL
 	  available levels and functions for emitting the messages. Note that
 	  runtime filtering can also be configured in addition to the compile-time
 	  filtering.
+
+# Debug logs need more buffer space
+config LOG_BUFFER_SIZE
+	default 4096 if WPA_SUPP_LOG_LEVEL_DBG
+	default 2048
 endif
