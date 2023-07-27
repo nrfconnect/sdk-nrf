@@ -559,13 +559,6 @@ enum wifi_nrf_status wifi_nrf_fmac_scan(void *dev_ctx,
 		goto out;
 	}
 
-	if (scan_info->scan_params.num_scan_channels > MAX_NUM_CHANNELS) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-				      "%s: Num of channels in scan list more than supported\n",
-				      __func__);
-		goto out;
-	}
-
 	scan_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
 					    (sizeof(*scan_cmd) + channel_info_len));
 
