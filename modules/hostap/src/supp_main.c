@@ -79,9 +79,17 @@ static K_WORK_DEFINE(z_wpas_iface_work,
 K_MUTEX_DEFINE(z_wpas_event_mutex);
 
 static const struct wifi_mgmt_ops wpa_supp_ops = {
+	.scan = z_wpa_supplicant_scan,
 	.connect = z_wpa_supplicant_connect,
 	.disconnect = z_wpa_supplicant_disconnect,
 	.iface_status = z_wpa_supplicant_status,
+#ifdef CONFIG_NET_STATISTICS_WIFI
+	.get_stats = z_wpa_supplicant_get_stats,
+#endif
+	.set_power_save = z_wpa_supplicant_set_power_save,
+	.set_twt = z_wpa_supplicant_set_twt,
+	.get_power_save_config = z_wpa_supplicant_get_power_save_config,
+	.reg_domain = z_wpa_supplicant_reg_domain,
 };
 
 DEFINE_WIFI_NM_INSTANCE(wpa_supplicant, &wpa_supp_ops);

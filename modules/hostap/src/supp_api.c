@@ -446,3 +446,98 @@ out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 	return ret;
 }
+
+/* Below APIs are not natively supported by WPA supplicant, so,
+ * these are just wrappers around driver offload APIs. But it is
+ * transparent to the user.
+ *
+ * In the future these might be implemented natively by the WPA
+ * supplicant.
+ */
+
+static const struct wifi_mgmt_ops *const get_wifi_mgmt_api(const struct device *dev)
+{
+	struct net_wifi_mgmt_offload *off_api =
+			(struct net_wifi_mgmt_offload *) dev->api;
+
+	return off_api ? off_api->wifi_mgmt_api : NULL;
+}
+
+int z_wpa_supplicant_scan(const struct device *dev, scan_result_cb_t cb)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->scan) {
+		wpa_printf(MSG_ERROR, "Scan not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->scan(dev, cb);
+}
+
+#ifdef CONFIG_NET_STATISTICS_WIFI
+int z_wpa_supplicant_get_stats(const struct device *dev,
+				struct net_stats_wifi *stats)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->get_stats) {
+		wpa_printf(MSG_ERROR, "Get stats not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->get_stats(dev, stats);
+}
+#endif /* CONFIG_NET_STATISTICS_WIFI */
+
+int z_wpa_supplicant_set_power_save(const struct device *dev,
+				struct wifi_ps_params *params)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->set_power_save) {
+		wpa_printf(MSG_ERROR, "Set power save not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->set_power_save(dev, params);
+}
+
+int z_wpa_supplicant_set_twt(const struct device *dev,
+				struct wifi_twt_params *params)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->set_twt) {
+		wpa_printf(MSG_ERROR, "Set TWT not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->set_twt(dev, params);
+}
+
+int z_wpa_supplicant_get_power_save_config(const struct device *dev,
+				struct wifi_ps_config *config)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->get_power_save_config) {
+		wpa_printf(MSG_ERROR, "Get power save config not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->get_power_save_config(dev, config);
+}
+
+int z_wpa_supplicant_reg_domain(const struct device *dev,
+				struct wifi_reg_domain *reg_domain)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->reg_domain) {
+		wpa_printf(MSG_ERROR, "Regulatory domain not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->reg_domain(dev, reg_domain);
+}
