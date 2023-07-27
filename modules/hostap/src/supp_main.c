@@ -129,7 +129,6 @@ static int z_wpas_add_interface(const char* ifname)
 {
 	struct wpa_supplicant *wpa_s;
 	int ret;
-	union wpa_event_data *event;
 	int retry = 0, count = Z_WPA_S_IFACE_NOTIFY_TIMEOUT_MS / Z_WPA_S_IFACE_NOTIFY_RETRY_MS;
 
 	wpa_printf(MSG_DEBUG, "Adding interface %s\n", ifname);
