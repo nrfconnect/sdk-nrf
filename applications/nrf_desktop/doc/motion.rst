@@ -141,11 +141,11 @@ Upon connection, the following happens:
 
     a. Switches to ``STATE_FETCHING``.
     #. Samples the motion data.
-    #. Submits the ``motion_event``.
-    #. Waits for the indication that the ``motion_event`` data was transmitted to the host.
-       This is done when the module receives the ``hid_report_sent_event`` event.
+    #. Submits the :c:struct:`motion_event`.
+    #. Waits for the indication that the :c:struct:`motion_event` data was transmitted to the host.
+       This is done when the module receives the :c:struct:`hid_report_sent_event` event.
 
-#. At that point, a next motion sampling is performed and the next ``motion_event`` sent.
+#. At this point, a next motion sampling is performed and the next :c:struct:`motion_event` sent.
 
 The module continues to sample data until disconnection or when there is no motion detected.
 The ``motion`` module assumes no motion when a number of consecutive samples equal to :ref:`CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT <config_desktop_app_options>` returns zero on both axis.
