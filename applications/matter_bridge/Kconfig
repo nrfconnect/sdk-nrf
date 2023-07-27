@@ -6,16 +6,62 @@
 mainmenu "Matter nRF Connect Bridge Example Application"
 
 config BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-	bool "OnOff Light Bridged Device support"
+	bool "Support for OnOff Light bridged device"
 	default y
 
 config BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
-	bool "Temperature Sensor Bridged Device support"
-	default y
+	bool "Support for Temperature Sensor bridged device"
+	default y if BRIDGED_DEVICE_SIMULATED
 
 config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-	bool "Humidity Sensor Bridged Device support"
+	bool "Support for Humidity Sensor bridged device"
+	default y if BRIDGED_DEVICE_SIMULATED
+
+choice BRIDGED_DEVICE_IMPLEMENTATION
+	prompt "Bridged Device implementation"
+	default BRIDGED_DEVICE_SIMULATED
+
+	config BRIDGED_DEVICE_SIMULATED
+		bool "Simulated Bridged Device"
+		help
+		  Enables using simulated bridged devices that do not perform
+		  real operations, but emulate exemplary data to imitate the real
+		  device behavior.
+
+	config BRIDGED_DEVICE_BT
+		bool "Bluetooth LE Bridged Device"
+		help
+		  Enables using real bridged devices that communicate with the Matter bridge device
+		  over Bluetooth LE.
+
+endchoice
+
+if BRIDGED_DEVICE_BT
+
+config BT_CENTRAL
 	default y
+
+config BT_SCAN
+	default y
+
+# Configure how many Bluetooth LE devices the Matter bridge can support (the final number is given value - 1, as 1 connection is used for the Matter Bluetooth LE service).
+config BT_MAX_CONN
+	default 2
+
+config BT_SCAN_FILTER_ENABLE
+	default y
+
+# Configure how many Bluetooth LE service UUIDs the Matter bridge can scan.
+config BT_SCAN_UUID_CNT
+	default 1
+
+config BT_GATT_CLIENT
+	default y
+
+config BT_GATT_DM
+	default y
+
+endif
 
 if BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 

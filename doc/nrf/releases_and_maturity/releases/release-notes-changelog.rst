@@ -244,6 +244,7 @@ Matter Bridge
 -------------
 
 * Added the :ref:`Matter bridge <matter_bridge_app>` application.
+* Added support for the Bluetooth LE bridged devices.
 
 Samples
 =======
