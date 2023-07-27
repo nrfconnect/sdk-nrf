@@ -50,29 +50,42 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/led_widget.cpp
 )
 
-if(CONFIG_CHIP_OTA_REQUESTOR)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/ota_util.cpp)
-endif()
+if(CONFIG_BRIDGED_DEVICE_BT)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/bridge/ble_connectivity_manager.cpp)
 
 if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/onoff_light.cpp
-        src/bridged_device_types/onoff_light_data_provider.cpp
+        src/bridged_device_types/ble_onoff_light_data_provider.cpp
     )
-endif()
+endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+
+else()
+if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
+    target_sources(app PRIVATE
+        src/bridged_device_types/onoff_light.cpp
+        src/bridged_device_types/simulated_onoff_light_data_provider.cpp
+    )
+endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
     target_sources(app PRIVATE
             src/bridged_device_types/temperature_sensor.cpp
-            src/bridged_device_types/temperature_sensor_data_provider.cpp
+            src/bridged_device_types/simulated_temperature_sensor_data_provider.cpp
     )
-endif()
+endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/humidity_sensor.cpp
-        src/bridged_device_types/humidity_sensor_data_provider.cpp
+        src/bridged_device_types/simulated_humidity_sensor_data_provider.cpp
     )
+endif() # CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+
+endif() # CONFIG_BRIDGED_DEVICE_BT
+
+if(CONFIG_CHIP_OTA_REQUESTOR)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/ota_util.cpp)
 endif()
 
 chip_configure_data_model(app

@@ -13,26 +13,41 @@
 
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 #include "humidity_sensor.h"
-#include "humidity_sensor_data_provider.h"
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
+#include "simulated_humidity_sensor_data_provider.h"
+#endif
 #endif
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 #include "onoff_light.h"
-#include "onoff_light_data_provider.h"
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
+#include "simulated_onoff_light_data_provider.h"
+#endif
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+#include "ble_onoff_light_data_provider.h"
+#endif
 #endif
 
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 #include "temperature_sensor.h"
-#include "temperature_sensor_data_provider.h"
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
+#include "simulated_temperature_sensor_data_provider.h"
+#endif
 #endif
 
 namespace BridgeFactory
 {
-
 using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
 using DeviceType = BridgedDevice::DeviceType;
 using BridgedDeviceFactory = DeviceFactory<BridgedDevice, const char *>;
-using DataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, UpdateAttributeCallback>;
+
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
+using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, UpdateAttributeCallback>;
+#endif
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+using BleDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, UpdateAttributeCallback>;
+#endif
 
 auto checkLabel = [](const char *nodeLabel) {
 	/* If node label is provided it must fit the maximum defined length */
@@ -76,23 +91,44 @@ inline BridgedDeviceFactory &GetBridgedDeviceFactory()
 	return sBridgedDeviceFactory;
 }
 
-inline DataProviderFactory &GetDataProviderFactory()
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
+inline SimulatedDataProviderFactory &GetSimulatedDataProviderFactory()
 {
-	static DataProviderFactory sDeviceDataProvider{
+	static SimulatedDataProviderFactory sDeviceDataProvider{
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 		{ DeviceType::HumiditySensor,
-		  [](UpdateAttributeCallback clb) { return chip::Platform::New<HumiditySensorDataProvider>(clb); } },
+		  [](UpdateAttributeCallback clb) {
+			  return chip::Platform::New<SimulatedHumiditySensorDataProvider>(clb);
+		  } },
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ DeviceType::OnOffLight,
-		  [](UpdateAttributeCallback clb) { return chip::Platform::New<OnOffLightDataProvider>(clb); } },
+		  [](UpdateAttributeCallback clb) {
+			  return chip::Platform::New<SimulatedOnOffLightDataProvider>(clb);
+		  } },
 #endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ DeviceType::TemperatureSensor,
-		  [](UpdateAttributeCallback clb) { return chip::Platform::New<TemperatureSensorDataProvider>(clb); } },
+		  [](UpdateAttributeCallback clb) {
+			  return chip::Platform::New<SimulatedTemperatureSensorDataProvider>(clb);
+		  } },
 #endif
 	};
 	return sDeviceDataProvider;
 }
+#endif
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+inline BleDataProviderFactory &GetBleDataProviderFactory()
+{
+	static BleDataProviderFactory sDeviceDataProvider{
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+		{ DeviceType::OnOffLight,
+		  [](UpdateAttributeCallback clb) { return chip::Platform::New<BleOnOffLightDataProvider>(clb); } },
+#endif
+	};
+	return sDeviceDataProvider;
+}
+#endif
 
 } // namespace BridgeFactory

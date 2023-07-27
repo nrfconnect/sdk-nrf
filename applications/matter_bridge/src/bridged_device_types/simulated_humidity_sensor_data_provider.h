@@ -8,14 +8,14 @@
 
 #include "bridged_device_data_provider.h"
 
-class HumiditySensorDataProvider : public BridgedDeviceDataProvider {
+class SimulatedHumiditySensorDataProvider : public BridgedDeviceDataProvider {
 public:
 	static constexpr uint16_t kMeasurementsIntervalMs = 10000;
 	static constexpr uint16_t kMinRandomTemperature = 30;
 	static constexpr uint16_t kMaxRandomTemperature = 50;
 
-	HumiditySensorDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
-	~HumiditySensorDataProvider() { k_timer_stop(&mTimer); }
+	SimulatedHumiditySensorDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	~SimulatedHumiditySensorDataProvider() { k_timer_stop(&mTimer); }
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,

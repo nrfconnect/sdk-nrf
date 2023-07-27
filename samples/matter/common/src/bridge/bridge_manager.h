@@ -23,6 +23,12 @@ public:
 	static void HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
 				 chip::AttributeId attributeId, void *data, size_t dataSize);
 
+	static BridgeManager &Instance()
+	{
+		static BridgeManager sInstance;
+		return sInstance;
+	}
+
 private:
 	static constexpr uint8_t kMaxBridgedDevices = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT;
 	static constexpr uint8_t kMaxDataProviders = CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER;
@@ -55,12 +61,4 @@ private:
 
 	chip::EndpointId mFirstDynamicEndpointId;
 	chip::EndpointId mCurrentDynamicEndpointId;
-
-	friend BridgeManager &GetBridgeManager();
-	static BridgeManager sBridgeManager;
 };
-
-inline BridgeManager &GetBridgeManager()
-{
-	return BridgeManager::sBridgeManager;
-}

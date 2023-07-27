@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "temperature_sensor_data_provider.h"
+#include "simulated_temperature_sensor_data_provider.h"
 
 #include <zephyr/logging/log.h>
 
@@ -13,15 +13,15 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace ::chip;
 using namespace ::chip::app;
 
-void TemperatureSensorDataProvider::Init()
+void SimulatedTemperatureSensorDataProvider::Init()
 {
-	k_timer_init(&mTimer, TemperatureSensorDataProvider::TimerTimeoutCallback, nullptr);
+	k_timer_init(&mTimer, SimulatedTemperatureSensorDataProvider::TimerTimeoutCallback, nullptr);
 	k_timer_user_data_set(&mTimer, this);
 	k_timer_start(&mTimer, K_MSEC(kMeasurementsIntervalMs), K_MSEC(kMeasurementsIntervalMs));
 }
 
-void TemperatureSensorDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
-						      void *data, size_t dataSize)
+void SimulatedTemperatureSensorDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
+							       void *data, size_t dataSize)
 {
 	if (mUpdateAttributeCallback) {
 		mUpdateAttributeCallback(*this, Clusters::TemperatureMeasurement::Id,
@@ -30,34 +30,36 @@ void TemperatureSensorDataProvider::NotifyUpdateState(chip::ClusterId clusterId,
 	}
 }
 
-CHIP_ERROR TemperatureSensorDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
-						      uint8_t *buffer)
+CHIP_ERROR SimulatedTemperatureSensorDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
+							       uint8_t *buffer)
 {
-	LOG_INF("Updating state of the TemperatureSensorDataProvider, cluster ID: %u, attribute ID: %u. Dropping, currently not supported.",
+	LOG_INF("Updating state of the SimulatedTemperatureSensorDataProvider, cluster ID: %u, attribute ID: %u. Dropping, currently not supported.",
 		clusterId, attributeId);
 	return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 }
 
-void TemperatureSensorDataProvider::TimerTimeoutCallback(k_timer *timer)
+void SimulatedTemperatureSensorDataProvider::TimerTimeoutCallback(k_timer *timer)
 {
 	if (!timer || !timer->user_data) {
 		return;
 	}
 
-	TemperatureSensorDataProvider *provider = reinterpret_cast<TemperatureSensorDataProvider *>(timer->user_data);
+	SimulatedTemperatureSensorDataProvider *provider =
+		reinterpret_cast<SimulatedTemperatureSensorDataProvider *>(timer->user_data);
 
 	/* Get some random data to emulate sensor measurements. */
 	provider->mTemperature =
 		chip::Crypto::GetRandU16() % (kMaxRandomTemperature - kMinRandomTemperature) + kMinRandomTemperature;
 
-	LOG_INF("TemperatureSensorDataProvider: Updated temperature value to %d", provider->mTemperature);
+	LOG_INF("SimulatedTemperatureSensorDataProvider: Updated temperature value to %d", provider->mTemperature);
 
 	DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
 }
 
-void TemperatureSensorDataProvider::NotifyAttributeChange(intptr_t context)
+void SimulatedTemperatureSensorDataProvider::NotifyAttributeChange(intptr_t context)
 {
-	TemperatureSensorDataProvider *provider = reinterpret_cast<TemperatureSensorDataProvider *>(context);
+	SimulatedTemperatureSensorDataProvider *provider =
+		reinterpret_cast<SimulatedTemperatureSensorDataProvider *>(context);
 
 	provider->NotifyUpdateState(Clusters::TemperatureMeasurement::Id,
 				    Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id,

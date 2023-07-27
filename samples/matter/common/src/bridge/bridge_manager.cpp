@@ -18,8 +18,6 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace ::chip;
 using namespace ::chip::app;
 
-BridgeManager BridgeManager::sBridgeManager;
-
 void BridgeManager::Init()
 {
 	/* The first dynamic endpoint is the last fixed endpoint + 1. */
@@ -130,9 +128,9 @@ CHIP_ERROR BridgeManager::HandleRead(uint16_t index, ClusterId clusterId,
 				     uint16_t maxReadLength)
 {
 	VerifyOrReturnError(attributeMetadata && buffer, CHIP_ERROR_INVALID_ARGUMENT);
-	VerifyOrReturnValue(sBridgeManager.mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
+	VerifyOrReturnValue(Instance().mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
 
-	auto &device = sBridgeManager.mDevicesMap[index]->mDevice;
+	auto &device = Instance().mDevicesMap[index]->mDevice;
 	return device->HandleRead(clusterId, attributeMetadata->attributeId, buffer, maxReadLength);
 }
 
@@ -140,15 +138,15 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t index, ClusterId clusterId,
 				      const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer)
 {
 	VerifyOrReturnError(attributeMetadata && buffer, CHIP_ERROR_INVALID_ARGUMENT);
-	VerifyOrReturnValue(sBridgeManager.mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
+	VerifyOrReturnValue(Instance().mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
 
-	auto &device = sBridgeManager.mDevicesMap[index]->mDevice;
+	auto &device = Instance().mDevicesMap[index]->mDevice;
 	CHIP_ERROR err = device->HandleWrite(clusterId, attributeMetadata->attributeId, buffer);
 
 	/* After updating Matter BridgedDevice state, forward request to the non-Matter device. */
 	if (err == CHIP_NO_ERROR) {
-		return sBridgeManager.mDevicesMap[index]->mProvider->UpdateState(
-			clusterId, attributeMetadata->attributeId, buffer);
+		return Instance().mDevicesMap[index]->mProvider->UpdateState(clusterId, attributeMetadata->attributeId,
+									     buffer);
 	}
 	return err;
 }
@@ -161,7 +159,7 @@ void BridgeManager::HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::
 	/* The state update was triggered by non-Matter device, find related Matter Bridged Device to update it as
 	well.
 	 */
-	for (auto &item : sBridgeManager.mDevicesMap.mMap) {
+	for (auto &item : Instance().mDevicesMap.mMap) {
 		if (item.value.mProvider.get() == &dataProvider) {
 			/* If the Bridged Device state was updated successfully, schedule sending Matter data report. */
 			if (CHIP_NO_ERROR ==
@@ -180,7 +178,7 @@ EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterI
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
 	if (CHIP_NO_ERROR ==
-	    GetBridgeManager().HandleRead(endpointIndex, clusterId, attributeMetadata, buffer, maxReadLength)) {
+	    BridgeManager::Instance().HandleRead(endpointIndex, clusterId, attributeMetadata, buffer, maxReadLength)) {
 		return EMBER_ZCL_STATUS_SUCCESS;
 	} else {
 		return EMBER_ZCL_STATUS_FAILURE;
@@ -192,7 +190,8 @@ EmberAfStatus emberAfExternalAttributeWriteCallback(EndpointId endpoint, Cluster
 {
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 
-	if (CHIP_NO_ERROR == GetBridgeManager().HandleWrite(endpointIndex, clusterId, attributeMetadata, buffer)) {
+	if (CHIP_NO_ERROR ==
+	    BridgeManager::Instance().HandleWrite(endpointIndex, clusterId, attributeMetadata, buffer)) {
 		return EMBER_ZCL_STATUS_SUCCESS;
 	} else {
 		return EMBER_ZCL_STATUS_FAILURE;
