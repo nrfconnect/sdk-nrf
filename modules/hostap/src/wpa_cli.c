@@ -20,11 +20,9 @@
 #include <net/wifi_mgmt.h>
 #include <net/net_event.h>
 
-#ifdef CONFIG_WPA_SUPP
 #include <src/utils/common.h>
 #include <wpa_supplicant/config.h>
 #include <wpa_supplicant/wpa_supplicant_i.h>
-#endif /* CONFIG_WPA_SUPP */
 
 static struct {
 	const struct shell *shell;
@@ -48,7 +46,6 @@ extern struct wpa_global *global;
 const char if_name[] = "wlan0";
 
 
-#ifdef CONFIG_WPA_SUPP
 static int cmd_supplicant(const struct shell *shell,
 			  size_t argc,
 			  const char *argv[])
@@ -66,16 +63,9 @@ static int cmd_supplicant(const struct shell *shell,
 	return cli_main(argc,
 			argv);
 }
-#endif /* CONFIG_WPA_SUPP */
-
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	wpa_cli_cmds,
-	SHELL_CMD(scan,
-		  NULL,
-		  "Scan AP",
-		  cmd_wifi_scan),
-#ifdef CONFIG_WPA_SUPP
 	SHELL_CMD(add_network,
 		  NULL,
 		  "\"Add Network network id/number\"",
@@ -135,7 +125,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  NULL,
 		  "\"\"",
 		  cmd_supplicant),
-#endif /* CONFIG_WPA_SUPP */
 	SHELL_SUBCMD_SET_END);
 
 /* Persisting with "wpa_cli" naming for compatibility with Wi-Fi
@@ -153,7 +142,6 @@ static int wifi_shell_init(const struct device *unused)
 
 	context.shell = NULL;
 	context.all = 0U;
-	scan_result = 0U;
 
 	return 0;
 }
