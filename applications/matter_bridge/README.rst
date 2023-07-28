@@ -1,7 +1,7 @@
 .. _matter_bridge_app:
 
-Matter: Bridge
-################
+Matter bridge
+#############
 
 .. contents::
    :local:
@@ -139,7 +139,7 @@ You can use the following commands to control the bridge device:
          I: Adding OnOff Light bridged device
          I: Added device to dynamic endpoint 3 (index=0)
 
-* For removes a new bridged device from the bridge:
+* For removing a bridged device from the bridge:
 
    .. code-block:: console
 

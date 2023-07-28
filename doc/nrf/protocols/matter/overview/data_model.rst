@@ -294,7 +294,7 @@ HVAC device types
 |                   | (for example, the device may just heat but not cool). It may be an indoor    |                     |                                       |
 |                   | air handler.                                                                 |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Thermostat        | A Thermostat device is capable of having either built-in or separate sensors | Certifiable         |                                       |
+| Thermostat        | A Thermostat device is capable of having either built-in or separate sensors | Certifiable         | :ref:`matter_thermostat_sample`       |
 |                   | for temperature, humidity or occupancy. It allows the desired temperature to |                     |                                       |
 |                   | be set either remotely or locally. The thermostat is capable of sending      |                     |                                       |
 |                   | heating and/or cooling requirement notifications to a heating/cooling unit   |                     |                                       |
@@ -302,4 +302,18 @@ HVAC device types
 |                   | to control a heating or cooling unit directly.                               |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 | Fan               | A Fan device capable of controlling a fan in a heating or cooling system.    | Provisional         |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_utility:
+
+Utility device types
+====================
+
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type       | Description                                                                  | State of the device | Dedicated sample in the |NCS|         |
++===================+==============================================================================+=====================+=======================================+
+| Bridged node      | The Matter bridge node is a device capable of representing non-Matter        | Certifiable         | :ref:`matter_bridge_app`              |
+|                   | bridged devices those are connected to a foreign network as dynamic          |                     |                                       |
+|                   | endpoints. The bridge node represents the functionalities of bridged devices |                     |                                       |
+|                   | according to adequate Matter device type.                                    |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
