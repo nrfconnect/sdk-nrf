@@ -75,19 +75,19 @@ static enum dir key_to_dir(uint16_t key_id)
 {
 	enum dir dir = DIR_COUNT;
 	switch (key_id) {
-	case CONFIG_DESKTOP_MOTION_UP_KEY_ID:
+	case CONFIG_DESKTOP_MOTION_BUTTONS_UP_KEY_ID:
 		dir = DIR_UP;
 		break;
 
-	case CONFIG_DESKTOP_MOTION_DOWN_KEY_ID:
+	case CONFIG_DESKTOP_MOTION_BUTTONS_DOWN_KEY_ID:
 		dir = DIR_DOWN;
 		break;
 
-	case CONFIG_DESKTOP_MOTION_LEFT_KEY_ID:
+	case CONFIG_DESKTOP_MOTION_BUTTONS_LEFT_KEY_ID:
 		dir = DIR_LEFT;
 		break;
 
-	case CONFIG_DESKTOP_MOTION_RIGHT_KEY_ID:
+	case CONFIG_DESKTOP_MOTION_BUTTONS_RIGHT_KEY_ID:
 		dir = DIR_RIGHT;
 		break;
 
