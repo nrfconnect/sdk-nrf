@@ -6,6 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/hash_function.h>
 #include <net/fota_download.h>
 #include <net/download_client.h>
 #include <pm_config.h>
@@ -29,6 +30,8 @@ LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 static fota_download_callback_t callback;
 static const char *dl_host;
 static const char *dl_file;
+static uint32_t dl_host_hash;
+static uint32_t dl_file_hash;
 static struct download_client dlc;
 static struct k_work_delayable  dlc_with_offset_work;
 static int socket_retries_left;
@@ -415,6 +418,8 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	const enum dfu_target_image_type expected_type)
 {
 	static int sec_tag_list[1];
+	uint32_t host_hash = 0;
+	uint32_t file_hash = 0;
 	int err = -1;
 
 	struct download_client_cfg config = {
@@ -434,12 +439,19 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	atomic_clear_bit(&flags, FLAG_RESUME);
 	set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR);
 
+	host_hash = sys_hash32(host, strlen(host));
+	file_hash = sys_hash32(file, strlen(file));
+	LOG_DBG("URI checksums %d,%d,%d,%d\r\n", host_hash, file_hash,
+						 dl_host_hash, dl_file_hash);
+
 	/* Verify if the URI is same as last time, if not, prevent resuming. */
-	if ((!dl_host || strcmp(dl_host, host) != 0) || (!dl_file || strcmp(dl_file, file) != 0)) {
+	if (dl_host_hash != host_hash || dl_file_hash != file_hash) {
 		atomic_set_bit(&flags, FLAG_NEW_URI);
 	} else {
 		atomic_clear_bit(&flags, FLAG_NEW_URI);
 	}
+	dl_host_hash = host_hash;
+	dl_file_hash = file_hash;
 	dl_host = host;
 	dl_file = file;
 
