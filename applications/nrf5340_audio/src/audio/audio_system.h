@@ -65,7 +65,14 @@ void audio_system_stop(void);
 int audio_system_fifo_rx_block_drop(void);
 
 /**
- * @brief Initialize the audio_system.
+ * @brief Get number of decoder channels
+ *
+ * @return Number of decoder channels
+ */
+int audio_system_decoder_num_ch_get(void);
+
+/**
+ * @brief Initialize the audio_system
  *
  * @return 0 on success, error otherwise.
  */

@@ -21,6 +21,7 @@
 #include "board_version.h"
 #include "channel_assignment.h"
 #include "streamctrl.h"
+#include "sd_card_playback.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
@@ -154,4 +155,8 @@ int main(void)
 
 	ret = streamctrl_start();
 	ERR_CHK(ret);
+
+	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
+		sd_card_playback_init();
+	}
 }

@@ -53,7 +53,7 @@ static void audio_gateway_configure(void)
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
 	sw_codec_cfg.decoder.enabled = true;
-	sw_codec_cfg.decoder.num_ch = SW_CODEC_MONO;
+	sw_codec_cfg.decoder.num_ch = 1;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
@@ -63,11 +63,13 @@ static void audio_gateway_configure(void)
 	}
 
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
-		sw_codec_cfg.encoder.num_ch = SW_CODEC_MONO;
+		sw_codec_cfg.encoder.num_ch = 1;
 	} else {
-		sw_codec_cfg.encoder.num_ch = SW_CODEC_STEREO;
+		sw_codec_cfg.encoder.num_ch = 2;
 	}
 
+	sw_codec_cfg.encoder.channel_mode =
+		(sw_codec_cfg.encoder.num_ch == 1) ? SW_CODEC_MONO : SW_CODEC_STEREO;
 	sw_codec_cfg.encoder.enabled = true;
 }
 
@@ -81,7 +83,8 @@ static void audio_headset_configure(void)
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
 	sw_codec_cfg.encoder.enabled = true;
-	sw_codec_cfg.encoder.num_ch = SW_CODEC_MONO;
+	sw_codec_cfg.encoder.num_ch = 1;
+	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
@@ -90,7 +93,14 @@ static void audio_headset_configure(void)
 	}
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
-	sw_codec_cfg.decoder.num_ch = SW_CODEC_MONO;
+	sw_codec_cfg.decoder.num_ch = 1;
+	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+
+	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
+		/* Need an extra decoder channel to decode data from SD card */
+		sw_codec_cfg.decoder.num_ch++;
+	}
+
 	sw_codec_cfg.decoder.enabled = true;
 }
 
@@ -401,6 +411,11 @@ int audio_system_fifo_rx_block_drop(void)
 
 	LOG_DBG("Block dropped");
 	return 0;
+}
+
+int audio_system_decoder_num_ch_get(void)
+{
+	return sw_codec_cfg.decoder.num_ch;
 }
 
 int audio_system_init(void)

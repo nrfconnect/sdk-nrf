@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(sd_card, CONFIG_MODULE_SD_CARD_LOG_LEVEL);
 #define SD_ROOT_PATH	      "/SD:/"
 /* Maximum length for path support by Windows file system */
 #define PATH_MAX_LEN	      260
-#define K_SEM_OPER_TIMEOUT_MS 500
+#define K_SEM_OPER_TIMEOUT_MS 100
 
 K_SEM_DEFINE(m_sem_sd_oper_ongoing, 1, 1);
 
@@ -42,12 +42,11 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 	size_t used_buf_size = 0;
 
-	if (k_sem_count_get(&m_sem_sd_oper_ongoing) <= 0) {
-		LOG_ERR("SD operation ongoing");
-		return -EPERM;
+	ret = k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
+	if (ret) {
+		LOG_ERR("Sem take failed. Ret: %d", ret);
+		return ret;
 	}
-
-	k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
 
 	if (!sd_init_success) {
 		k_sem_give(&m_sem_sd_oper_ongoing);
@@ -127,12 +126,11 @@ int sd_card_open_write_close(char const *const filename, char const *const data,
 	struct fs_file_t f_entry;
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 
-	if (k_sem_count_get(&m_sem_sd_oper_ongoing) <= 0) {
-		LOG_ERR("SD operation ongoing");
-		return -EPERM;
+	ret = k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
+	if (ret) {
+		LOG_ERR("Sem take failed. Ret: %d", ret);
+		return ret;
 	}
-
-	k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
 
 	if (!sd_init_success) {
 		k_sem_give(&m_sem_sd_oper_ongoing);
@@ -189,12 +187,11 @@ int sd_card_open_read_close(char const *const filename, char *const buf, size_t 
 	struct fs_file_t f_entry;
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 
-	if (k_sem_count_get(&m_sem_sd_oper_ongoing) <= 0) {
-		LOG_ERR("SD operation ongoing");
-		return -EPERM;
+	ret = k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
+	if (ret) {
+		LOG_ERR("Sem take failed. Ret: %d", ret);
+		return ret;
 	}
-
-	k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
 
 	if (!sd_init_success) {
 		k_sem_give(&m_sem_sd_oper_ongoing);
@@ -219,7 +216,7 @@ int sd_card_open_read_close(char const *const filename, char *const buf, size_t 
 
 	ret = fs_read(&f_entry, buf, *size);
 	if (ret < 0) {
-		LOG_ERR("Read file failed");
+		LOG_ERR("Read file failed. Ret: %d", ret);
 		k_sem_give(&m_sem_sd_oper_ongoing);
 		return ret;
 	}
@@ -246,12 +243,11 @@ int sd_card_open(char const *const filename, struct fs_file_t *f_seg_read_entry)
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 	size_t avilable_path_space = PATH_MAX_LEN - strlen(SD_ROOT_PATH);
 
-	if (k_sem_count_get(&m_sem_sd_oper_ongoing) <= 0) {
-		LOG_ERR("SD operation not ongoing");
-		return -EPERM;
+	ret = k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
+	if (ret) {
+		LOG_ERR("Sem take failed. Ret: %d", ret);
+		return ret;
 	}
-
-	k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
 
 	if (!sd_init_success) {
 		k_sem_give(&m_sem_sd_oper_ongoing);
@@ -297,7 +293,7 @@ int sd_card_read(char *buf, size_t *size, struct fs_file_t *f_seg_read_entry)
 
 	ret = fs_read(f_seg_read_entry, buf, *size);
 	if (ret < 0) {
-		LOG_ERR("Read file failed: %d", ret);
+		LOG_ERR("Read file failed. Ret: %d", ret);
 		k_sem_give(&m_sem_sd_oper_ongoing);
 		return ret;
 	}

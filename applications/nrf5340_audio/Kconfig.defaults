@@ -11,6 +11,7 @@ config MAIN_THREAD_PRIORITY
 	default 10
 
 config MAIN_STACK_SIZE
+	default 1800 if SD_CARD_PLAYBACK
 	default 1600
 
 config SYSTEM_WORKQUEUE_STACK_SIZE

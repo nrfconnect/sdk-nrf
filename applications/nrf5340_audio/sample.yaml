@@ -41,3 +41,9 @@ tests:
     platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
     tags: ci_build
     extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=2 CONFIG_AUDIO_DFU=2
+  applications.nrf5340_audio.headset_sd_card_playback:
+    build_only: true
+    platform_allow: nrf5340_audio_dk_nrf5340_cpuapp
+    platform_exclude: nrf5340_audio_dk_nrf5340_cpuapp_ns
+    tags: ci_build
+    extra_args: CONF_FILE="prj_release.conf" CONFIG_AUDIO_DEV=1 CONFIG_SD_CARD_PLAYBACK=y
