@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdint.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys_clock.h>
+#include <zephyr/sys/util.h>
 
 #include <app_event_manager.h>
 #include <caf/events/button_event.h>
@@ -17,6 +20,11 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
+#ifdef CONFIG_TIMER_HAS_64BIT_CYCLE_COUNTER
+	typedef uint64_t motion_ts;
+#else
+	typedef uint32_t motion_ts;
+#endif
 
 enum state {
 	STATE_IDLE,
@@ -33,10 +41,25 @@ enum dir {
 	DIR_COUNT
 };
 
+BUILD_ASSERT(DIR_COUNT <= 8);
+static uint8_t active_dir_bm;
 
-static uint32_t timestamp[DIR_COUNT];
+static motion_ts timestamp[DIR_COUNT];
+static int32_t x_remainder;
+static int32_t y_remainder;
+
 static enum state state;
 
+
+static motion_ts get_timestamp(void)
+{
+	/* Use higher resolution if available. */
+	if (IS_ENABLED(CONFIG_TIMER_HAS_64BIT_CYCLE_COUNTER)) {
+		return k_cycle_get_64();
+	} else {
+		return k_cycle_get_32();
+	}
+}
 
 static void motion_event_send(int16_t dx, int16_t dy)
 {
@@ -75,33 +98,63 @@ static enum dir key_to_dir(uint16_t key_id)
 	return dir;
 }
 
-static int16_t update_motion_dir(enum dir dir, uint32_t ts)
+static int16_t ts_diff_to_motion(int64_t diff, int32_t *reminder)
 {
-	uint32_t time_diff = ts - timestamp[dir];
+	int64_t res = diff * CONFIG_DESKTOP_MOTION_BUTTONS_MOTION_PER_SEC + *reminder;
 
-	if (time_diff > UCHAR_MAX) {
-		time_diff = UCHAR_MAX;
+	*reminder = res % sys_clock_hw_cycles_per_sec();
+	res /= sys_clock_hw_cycles_per_sec();
+
+	return CLAMP(res, INT16_MIN, INT16_MAX);
+}
+
+static int64_t motion_to_ts_diff(int16_t m)
+{
+	return m * sys_clock_hw_cycles_per_sec() / CONFIG_DESKTOP_MOTION_BUTTONS_MOTION_PER_SEC;
+}
+
+static int64_t update_motion_ts(enum dir dir, motion_ts ts)
+{
+	if (!(active_dir_bm & BIT(dir))) {
+		return 0;
 	}
 
-	if (timestamp[dir] > 0) {
-		timestamp[dir] = ts;
-		return time_diff;
-	}
+	int64_t ts_diff = ts - timestamp[dir];
 
-	return 0;
+	timestamp[dir] = ts;
+
+	return ts_diff;
+}
+
+static void generate_motion(int16_t *x, int16_t *y)
+{
+	motion_ts ts = get_timestamp();
+
+	int64_t up = update_motion_ts(DIR_UP, ts);
+	int64_t down = update_motion_ts(DIR_DOWN, ts);
+	int64_t left = update_motion_ts(DIR_LEFT, ts);
+	int64_t right = update_motion_ts(DIR_RIGHT, ts);
+
+	*x = ts_diff_to_motion(right - left, &x_remainder);
+	*y = ts_diff_to_motion(up - down, &y_remainder);
+}
+
+static void clear_accumulated_motion(void)
+{
+	int16_t x;
+	int16_t y;
+
+	generate_motion(&x, &y);
+	x_remainder = 0;
+	y_remainder = 0;
 }
 
 static void send_motion(void)
 {
-	uint32_t ts = k_uptime_get();
-	int16_t x = 0;
-	int16_t y = 0;
+	int16_t x;
+	int16_t y;
 
-	y += update_motion_dir(DIR_UP, ts);
-	y -= update_motion_dir(DIR_DOWN, ts);
-	x += update_motion_dir(DIR_RIGHT, ts);
-	x -= update_motion_dir(DIR_LEFT, ts);
-
+	generate_motion(&x, &y);
 	motion_event_send(x, y);
 }
 
@@ -110,20 +163,22 @@ static bool handle_button_event(const struct button_event *event)
 	enum dir dir = key_to_dir(event->key_id);
 
 	if (dir == DIR_COUNT) {
+		/* Unhandled button. */
 		return false;
 	}
 
-	uint32_t *ts = &timestamp[dir];
+	WRITE_BIT(active_dir_bm, dir, event->pressed);
 
-	if (!event->pressed) {
-		*ts = 0;
-	} else {
-		*ts = k_uptime_get() - 1;
-	}
+	if (event->pressed) {
+		/* Ensure motion is generated right after button press. */
+		motion_ts ts_shift = motion_to_ts_diff(1) + 1;
 
-	if (state == STATE_CONNECTED) {
-		send_motion();
-		state = STATE_PENDING;
+		update_motion_ts(dir, get_timestamp() - ts_shift);
+
+		if (state == STATE_CONNECTED) {
+			send_motion();
+			state = STATE_PENDING;
+		}
 	}
 
 	return false;
@@ -141,13 +196,7 @@ static bool handle_module_state_event(const struct module_state_event *event)
 
 static bool is_motion_active(void)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(timestamp); i++) {
-		if (timestamp[i] > 0) {
-			return true;
-		}
-	}
-
-	return false;
+	return active_dir_bm != 0;
 }
 
 static bool handle_hid_report_sent_event(const struct hid_report_sent_event *event)
@@ -184,6 +233,7 @@ static bool handle_hid_report_subscription_event(const struct hid_report_subscri
 
 		if ((state == STATE_IDLE) && is_connected) {
 			if (is_motion_active()) {
+				clear_accumulated_motion();
 				send_motion();
 				state = STATE_PENDING;
 			} else {
