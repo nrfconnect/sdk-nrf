@@ -20,4 +20,8 @@ else()
   list(APPEND SRCS ${CMAKE_CURRENT_SOURCE_DIR}/audio_sync_timer.c)
 endif()
 
+if (CONFIG_SD_CARD_PLAYBACK)
+  list(APPEND SRCS ${CMAKE_CURRENT_SOURCE_DIR}/sd_card_playback.c)
+endif()
+
 target_sources(app PRIVATE ${SRCS})

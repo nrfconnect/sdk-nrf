@@ -446,19 +446,17 @@ static const int16_t sample_sine_100hz[] = {
 	0xD051, 0xD184, 0xD2B5, 0xD3EA, 0xD524, 0xD656, 0xD796, 0xD8CF, 0xDA0F, 0xDB4E, 0xDC8E,
 	0xDDD1, 0xDF18, 0xE057, 0xE1A7, 0xE2E7, 0xE437, 0xE57E, 0xE6CB, 0xE818, 0xE968, 0xEAB4,
 	0xEC07, 0xED56, 0xEEA9, 0xEFFB, 0xF14E, 0xF2A3, 0xF3F7, 0xF54A, 0xF6A5, 0xF7F2, 0xF953,
-	0xFA9F, 0xFBFF, 0xFD50, 0xFEA8
-};
+	0xFA9F, 0xFBFF, 0xFD50, 0xFEA8};
 
-#define ENC_BUF_SIZE 120
-#define DEC_BUF_SIZE 960
-#define PCM_SAMPLE_RATE 48000
-#define PCM_BIT_DEPTH 16
-#define LC3_BITRATE 96000
+#define ENC_BUF_SIZE	  120
+#define DEC_BUF_SIZE	  960
+#define PCM_SAMPLE_RATE	  48000
+#define PCM_BIT_DEPTH	  16
+#define LC3_BITRATE	  96000
 #define LC3_FRAME_SIZE_US 10000
-#define LC3_NUM_CHANNELS 2
-#define AUDIO_CH_L 0
-#define AUDIO_CH_R 1
-#define SW_CODEC_STEREO 2
+#define LC3_NUM_CHANNELS  2
+#define AUDIO_CH_L	  0
+#define AUDIO_CH_R	  1
 
 static uint8_t audio_encoded_l[ENC_BUF_SIZE];
 static uint8_t audio_encoded_r[ENC_BUF_SIZE];
@@ -478,11 +476,11 @@ static void *test_sw_codec_lc3_init(void)
 	sw_codec_lc3_init(NULL, NULL, LC3_FRAME_SIZE_US);
 
 	ret = sw_codec_lc3_enc_init(PCM_SAMPLE_RATE, PCM_BIT_DEPTH, LC3_FRAME_SIZE_US, LC3_BITRATE,
-				    SW_CODEC_STEREO, &pcm_bytes_req_enc);
+				    LC3_NUM_CHANNELS, &pcm_bytes_req_enc);
 	zassert_equal(ret, 0, "lc3_enc_init did not return zero");
 
 	ret = sw_codec_lc3_dec_init(PCM_SAMPLE_RATE, PCM_BIT_DEPTH, LC3_FRAME_SIZE_US,
-				    SW_CODEC_STEREO);
+				    LC3_NUM_CHANNELS);
 	zassert_equal(ret, 0, "lc3_dec_init did not return zero");
 
 	return NULL;

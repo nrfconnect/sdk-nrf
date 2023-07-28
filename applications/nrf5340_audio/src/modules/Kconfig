@@ -85,6 +85,10 @@ module = MODULE_SD_CARD
 module-str = module-sd-card
 source "subsys/logging/Kconfig.template.log_config"
 
+module = MODULE_SD_CARD_PLAYBACK
+module-str = module-sd-card-playback
+source "subsys/logging/Kconfig.template.log_config"
+
 endmenu # Log levels
 
 #----------------------------------------------------------------------------#
@@ -137,4 +141,28 @@ config VOLUME_MSG_SUB_QUEUE_SIZE
 	default 4
 
 endmenu # Zbus
+
+#----------------------------------------------------------------------------#
+menuconfig SD_CARD_PLAYBACK
+	bool "Enable playback from SD card"
+	select EXPERIMENTAL
+	default n
+	select RING_BUFFER
+
+if SD_CARD_PLAYBACK
+
+config SD_CARD_PLAYBACK_STACK_SIZE
+	int "Stack size for the SD card playback thread"
+	default 4096
+
+config SD_CARD_PLAYBACK_RING_BUF_SIZE
+	int "Size of the ring buffer for the SD card playback module"
+	default 960
+
+config SD_CARD_PLAYBACK_THREAD_PRIORITY
+	int "Priority for the SD card playback thread"
+	default 7
+
+endif # SD_CARD_PLAYBACK
+
 endmenu # Modules
