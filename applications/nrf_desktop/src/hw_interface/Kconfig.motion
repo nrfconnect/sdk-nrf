@@ -51,28 +51,28 @@ config DESKTOP_MOTION_SENSOR_TYPE
 	default "pmw3360" if DESKTOP_MOTION_SENSOR_PMW3360_ENABLE
 	default "paw3212" if DESKTOP_MOTION_SENSOR_PAW3212_ENABLE
 
-config DESKTOP_MOTION_UP_KEY_ID
+config DESKTOP_MOTION_BUTTONS_UP_KEY_ID
 	int "Up key ID"
 	depends on DESKTOP_MOTION_BUTTONS_ENABLE
 	default 0
 	help
 	  ID of key use for generating up motion.
 
-config DESKTOP_MOTION_DOWN_KEY_ID
+config DESKTOP_MOTION_BUTTONS_DOWN_KEY_ID
 	int "Down key ID"
 	depends on DESKTOP_MOTION_BUTTONS_ENABLE
 	default 0
 	help
 	  ID of key use for generating down motion.
 
-config DESKTOP_MOTION_LEFT_KEY_ID
+config DESKTOP_MOTION_BUTTONS_LEFT_KEY_ID
 	int "Left key ID"
 	depends on DESKTOP_MOTION_BUTTONS_ENABLE
 	default 0
 	help
 	  ID of key use for generating left motion.
 
-config DESKTOP_MOTION_RIGHT_KEY_ID
+config DESKTOP_MOTION_BUTTONS_RIGHT_KEY_ID
 	int "Right key ID"
 	depends on DESKTOP_MOTION_BUTTONS_ENABLE
 	default 0
