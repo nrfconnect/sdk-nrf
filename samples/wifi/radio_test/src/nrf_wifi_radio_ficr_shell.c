@@ -112,6 +112,38 @@ static int nrf_wifi_radio_test_otp_read_params(const struct shell *shell,
 	shell_fprintf(shell, SHELL_INFO, "REGION_PROTECT3 = 0x%08x\n", val[REGION_PROTECT + 3]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_FT_PROGVERSION1 = 0x%08x\n",
+		val[PRODTEST_FT_PROGVERSION1]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_FT_PROGVERSION2 = 0x%08x\n",
+		val[PRODTEST_FT_PROGVERSION2]);
+	shell_fprintf(shell, SHELL_INFO, "\n");
+
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM0: Reg0 = 0x%08x\n", val[PRODTEST_TRIM0]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM1: Reg1 = 0x%08x\n", val[PRODTEST_TRIM1]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM2: Reg2 = 0x%08x\n", val[PRODTEST_TRIM2]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM3: Reg3 = 0x%08x\n", val[PRODTEST_TRIM3]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM4: Reg4 = 0x%08x\n", val[PRODTEST_TRIM4]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM5: Reg5 = 0x%08x\n", val[PRODTEST_TRIM5]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM6: Reg6 = 0x%08x\n", val[PRODTEST_TRIM6]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM7: Reg7 = 0x%08x\n", val[PRODTEST_TRIM7]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM8: Reg8 = 0x%08x\n", val[PRODTEST_TRIM8]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM9: Reg9 = 0x%08x\n", val[PRODTEST_TRIM9]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM10: Reg10 = 0x%08x\n",
+		val[PRODTEST_TRIM10]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM11: Reg11 = 0x%08x\n",
+		val[PRODTEST_TRIM11]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM12: Reg12 = 0x%08x\n",
+		val[PRODTEST_TRIM12]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM13: Reg13 = 0x%08x\n",
+		val[PRODTEST_TRIM13]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM14: Reg14 = 0x%08x\n",
+		val[PRODTEST_TRIM14]);
+	shell_fprintf(shell, SHELL_INFO, "\n");
+
+	shell_fprintf(shell, SHELL_INFO, "PRODCTRL.DISABLE5GHZ = 0x%08x\n",
+		val[PRODCTRL_DISABLE5GHZ]);
+	shell_fprintf(shell, SHELL_INFO, "\n");
+
 	shell_fprintf(shell, SHELL_INFO, "MAC0: Reg0 = 0x%08x\n", val[MAC0_ADDR]);
 	shell_fprintf(shell, SHELL_INFO, "MAC0: Reg1 = 0x%08x\n", val[MAC0_ADDR + 1]);
 	shell_fprintf(shell, SHELL_INFO, "MAC0 Addr  = %02x:%02x:%02x:%02x:%02x:%02x\n",
@@ -128,7 +160,8 @@ static int nrf_wifi_radio_test_otp_read_params(const struct shell *shell,
 		(uint8_t)(val[MAC1_ADDR + 1]), (uint8_t)(val[MAC1_ADDR + 1] >> 8));
 	shell_fprintf(shell, SHELL_INFO, "\n");
 	shell_fprintf(shell, SHELL_INFO, "CALIB_XO = 0x%02x\n", val[CALIB_XO] & 0xFF);
-	shell_fprintf(shell, SHELL_INFO, "\n");
+
+
 	shell_fprintf(shell, SHELL_INFO, "REGION_DEFAULTS = 0x%08x\n",
 		val[REGION_DEFAULTS]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
