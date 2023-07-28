@@ -13,6 +13,7 @@ public:
 	static constexpr uint16_t kOnOffIntervalMs = 30000;
 
 	OnOffLightDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	~OnOffLightDataProvider() { k_timer_stop(&mTimer); }
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,

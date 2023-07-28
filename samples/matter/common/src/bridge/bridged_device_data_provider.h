@@ -14,6 +14,7 @@ public:
 						 chip::AttributeId attributeId, void *data, size_t dataSize);
 
 	explicit BridgedDeviceDataProvider(UpdateAttributeCallback callback) { mUpdateAttributeCallback = callback; }
+	virtual ~BridgedDeviceDataProvider() = default;
 
 	virtual void Init() = 0;
 	virtual void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,

@@ -33,6 +33,8 @@ void HumiditySensorDataProvider::NotifyUpdateState(chip::ClusterId clusterId, ch
 CHIP_ERROR HumiditySensorDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 						   uint8_t *buffer)
 {
+	LOG_INF("Updating state of the HumiditySensorDataProvider, cluster ID: %u, attribute ID: %u. Dropping, currently not supported.",
+		clusterId, attributeId);
 	return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 }
 

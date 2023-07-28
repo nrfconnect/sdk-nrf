@@ -36,6 +36,9 @@ CHIP_ERROR OnOffLightDataProvider::UpdateState(chip::ClusterId clusterId, chip::
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
+	LOG_INF("Updating state of the OnOffLightDataProvider, cluster ID: %u, attribute ID: %u.", clusterId,
+		attributeId);
+
 	switch (attributeId) {
 	case Clusters::OnOff::Attributes::OnOff::Id: {
 		mOnOff = *buffer;
