@@ -17,6 +17,7 @@ public:
 	static constexpr int16_t kMaxRandomTemperature = 10;
 
 	TemperatureSensorDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	~TemperatureSensorDataProvider() { k_timer_stop(&mTimer); }
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,

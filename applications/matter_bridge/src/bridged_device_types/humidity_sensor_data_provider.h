@@ -15,6 +15,7 @@ public:
 	static constexpr uint16_t kMaxRandomTemperature = 50;
 
 	HumiditySensorDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	~HumiditySensorDataProvider() { k_timer_stop(&mTimer); }
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
