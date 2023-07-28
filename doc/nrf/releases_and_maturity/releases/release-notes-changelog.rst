@@ -599,6 +599,12 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option's default value to ``255``.
     * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option's default value to ``255``.
 
+* :ref:`lib_fota_download` library:
+
+  * Updated:
+
+    * The library now verifies whether the download started with the same URI and resumes the interrupted download.
+
 Libraries for NFC
 -----------------
 

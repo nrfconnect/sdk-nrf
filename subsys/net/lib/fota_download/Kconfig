@@ -8,6 +8,7 @@ menuconfig FOTA_DOWNLOAD
 	bool "FOTA Download"
 	depends on DOWNLOAD_CLIENT
 	depends on DFU_TARGET
+	select SYS_HASH_FUNC32
 	imply FW_INFO
 
 if (FOTA_DOWNLOAD)
