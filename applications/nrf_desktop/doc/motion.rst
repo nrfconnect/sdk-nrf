@@ -133,6 +133,8 @@ Implementation details
 **********************
 
 Implementation details depend on the selected implementation.
+See the following sections for details specific to a given implementation.
+The :ref:`nrf_desktop_motion_report_rate` section is common for all implementations and contains information useful for the HID report rate measurements.
 
 Movement data from motion sensors
 =================================
@@ -204,3 +206,27 @@ Otherwise, the :c:func:`k_cycle_get_32` function is used for that purpose.
 When a HID subscriber connects, that is when the device is connected either over USB or Bluetooth LE, the module submits the first :c:struct:`motion_event` containing motion calculated from the previously reported position.
 The subsequent :c:struct:`motion_event` is submitted when the previously generated motion data is sent to the subscriber, that is when :c:struct:`hid_report_sent_event` is received by the module.
 The values of motion for X and Y axes are generated from an updated timestamp and the previously reported position.
+
+.. _nrf_desktop_motion_report_rate:
+
+Motion report rate
+==================
+
+If the device is polled for HID data with high frequency, that is when the :c:struct:`hid_report_sent_event` is received often by the module, the generated :c:struct:`motion_event` may contain value of ``0`` for both X and Y axes.
+
+.. note::
+   A HID report with reporting motion of ``0`` for both axes may be ignored by host computer's tools that analyze the HID report rate.
+
+You can perform the following actions to ensure that non-zero motion is reported by the motion module:
+
+* ``Movement data from motion sensors``
+  By constantly moving your mouse, you can ensure that the used motion sensor always reports motion for at least one of the axes.
+  You can also increase the motion sensor's CPI to make the sensor report bigger values of motion per every inch of distance covered by the mouse.
+* ``Movement data from buttons``
+  Increase a motion generated per second during a button press.
+* ``Simulated movement data``
+  Increase the value of the used scale factor or reduce time for transition between two points in the trajectory to increase the generated motion values.
+  Keep in mind that the generated shape is periodically repeated, so the transition time between two points in the trajectory should not be too short.
+  If it is, it might cause the same point to generate twice which would also result in submitting a :c:struct:`motion_event` with values set to ``0`` for both axes.
+
+See the :ref:`nrf_desktop_motion_configuration` section for details on how to modify configuration for a given implementation of the module.
