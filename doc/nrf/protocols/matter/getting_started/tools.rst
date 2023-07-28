@@ -234,7 +234,7 @@ To install the chip-cert tool, complete the following steps:
 Generating custom certificates in factory data
 ==============================================
 
-Adding the chip-cert tool to the system :envvar:`PATH` allows you to build :ref:`matter_samples` and the :ref:`Matter weather station <matter_weather_station_app>` application with custom certificates included in the factory data.
+Adding the chip-cert tool to the system :envvar:`PATH` allows you to build :ref:`matter_samples`, the :ref:`Matter weather station <matter_weather_station_app>`, and the :ref:`Matter bridge <matter_bridge_app>` applications with custom certificates included in the factory data.
 This lets you for example change the test Vendor ID, Product ID, or other data.
 
 To build a Matter application in the |NCS| with custom certification data, make sure to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_USE_DEFAULT_CERTS` to ``n`` when :doc:`building an example with factory data <matter:nrfconnect_factory_data_configuration>`.

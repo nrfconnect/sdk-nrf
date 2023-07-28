@@ -71,7 +71,10 @@ The following table lists variants and extensions available out of the box for e
 
 See the sample documentation pages for instructions about how to enable these variants and extensions.
 
-In addition to these samples, check also the :ref:`Thingy:53 Matter weather station <matter_weather_station_app>` application.
+In addition to these samples, check also the following Matter applications:
+
+* :ref:`Thingy:53 Matter weather station <matter_weather_station_app>`
+* :ref:`Matter bridge <matter_bridge_app>`
 
 .. toctree::
    :maxdepth: 1
