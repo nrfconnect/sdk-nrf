@@ -79,6 +79,12 @@ config DESKTOP_MOTION_RIGHT_KEY_ID
 	help
 	  ID of key use for generating right motion.
 
+config DESKTOP_MOTION_BUTTONS_MOTION_PER_SEC
+	int "Motion generated per second during a button press"
+	depends on DESKTOP_MOTION_BUTTONS_ENABLE
+	range 1 100000
+	default 1000
+
 config DESKTOP_MOTION_SIMULATED_EDGE_TIME
 	int "Time for transition between two points in a trajectory [us]"
 	depends on DESKTOP_MOTION_SIMULATED_ENABLE
