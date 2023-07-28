@@ -40,6 +40,8 @@ Depending on the selected configuration option, a different implementation file 
 
 You can use the :ref:`CONFIG_DESKTOP_MOTION_PM_EVENTS <config_desktop_app_options>` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
 The option is enabled by default and depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
+The option is unavailable for the motion module implementation that generates movement data using buttons (:ref:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE <config_desktop_app_options>`).
+The implementation does not react to the power management events.
 
 Movement data from motion sensors
 =================================
@@ -62,6 +64,20 @@ Movement data from buttons
 ==========================
 
 Selecting the :ref:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE <config_desktop_app_options>` option adds the :file:`src/hw_interface/motion_buttons.c` file to the compilation.
+
+The movement data is generated when pressing a button.
+The module detects the button presses by relying on the received :c:struct:`button_event`.
+Generating motion for every direction is triggered using a separate button.
+Key ID (:c:member:`button_event.key_id`) of the button used to generate motion for a given direction can be configured with a dedicated Kconfig option:
+
+* Up (:ref:`CONFIG_DESKTOP_MOTION_BUTTONS_UP_KEY_ID <config_desktop_app_options>`)
+* Down (:ref:`CONFIG_DESKTOP_MOTION_BUTTONS_DOWN_KEY_ID <config_desktop_app_options>`)
+* Left (:ref:`CONFIG_DESKTOP_MOTION_BUTTONS_LEFT_KEY_ID <config_desktop_app_options>`)
+* Right (:ref:`CONFIG_DESKTOP_MOTION_BUTTONS_RIGHT_KEY_ID <config_desktop_app_options>`)
+
+Pressing and holding one of the mentioned buttons results in generating data for movement in a given direction.
+The :ref:`CONFIG_DESKTOP_MOTION_BUTTONS_MOTION_PER_SEC <config_desktop_app_options>` can be used to control a motion generated per second during a button press.
+By default, ``1000`` of motion is generated per second during a button press.
 
 Simulated movement data
 =======================
@@ -165,6 +181,18 @@ Upon connection, the following happens:
 The module continues to sample data until disconnection or when there is no motion detected.
 The ``motion`` module assumes no motion when a number of consecutive samples equal to :ref:`CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT <config_desktop_app_options>` returns zero on both axis.
 In such case, the module will switch back to ``STATE_IDLE`` and wait for the motion sensor trigger.
+
+Movement data from buttons
+==========================
+
+Motion is generated based on the total time a button is pressed.
+The time measurements rely on the hardware clock.
+If available, the module uses the :c:func:`k_cycle_get_64` function to read the hardware clock.
+Otherwise, the :c:func:`k_cycle_get_32` function is used for that purpose.
+
+When a HID subscriber is connected, that is when the device is connected either over USB or Bluetooth LE, the module forwards the generated motion to the subscriber using :c:struct:`motion_event`.
+The first :c:struct:`motion_event` is generated when a button is pressed.
+The subsequent :c:struct:`motion_event` is submitted when the previously generated motion data is sent to the subscriber, that is when :c:struct:`hid_report_sent_event` is received by the module.
 
 Simulated movement data
 =======================
