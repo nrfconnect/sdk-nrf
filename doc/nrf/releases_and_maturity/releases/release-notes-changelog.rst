@@ -287,6 +287,7 @@ Bluetooth mesh samples
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
+  * Fixed an issue where the sample could return an invalid Light Lightness Status message if the transition time was evaluated to zero.
   * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
 
 * :ref:`bluetooth_mesh_light_dim` sample:

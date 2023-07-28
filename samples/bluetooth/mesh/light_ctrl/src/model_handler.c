@@ -132,7 +132,7 @@ static void light_set(struct bt_mesh_lightness_srv *srv,
 		CONTAINER_OF(srv, struct lightness_ctx, lightness_srv);
 
 	start_new_light_trans(set, l_ctx);
-	rsp->current = l_ctx->current_lvl;
+	rsp->current = l_ctx->rem_time ? l_ctx->current_lvl : l_ctx->target_lvl;
 	rsp->target = l_ctx->target_lvl;
 	rsp->remaining_time = set->transition ? set->transition->time : 0;
 }
