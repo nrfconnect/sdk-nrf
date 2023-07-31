@@ -567,6 +567,13 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
     * The :kconfig:option:`CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
 
+* :ref:`lib_download_client` library:
+
+  * Updated:
+
+    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option's default value to ``255``.
+    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option's default value to ``255``.
+
 Libraries for NFC
 -----------------
 
