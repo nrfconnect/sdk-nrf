@@ -44,7 +44,9 @@ tests:
     timeout: 120
   tfm.psa_test_initial_attestation_lvl1:
     tags: tfm_lvl1
-    extra_args: "CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y CONFIG_TFM_ISOLATION_LEVEL=1"
+    extra_args: >
+      CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y CONFIG_TFM_ISOLATION_LEVEL=1
+      CONFIG_TFM_NRF_PROVISIONING=y
   tfm.psa_test_initial_attestation_lvl2:
     tags: tfm_lvl2
-    extra_args: "CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y"
+    extra_args: "CONFIG_TFM_PSA_TEST_INITIAL_ATTESTATION=y CONFIG_TFM_NRF_PROVISIONING=y"
