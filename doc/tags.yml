@@ -2,8 +2,28 @@
 
 # Tags for all topics:
 mapping_global:
+  - ncs
   - ncs-__VERSION__
+  - cluster-ncs-__VERSION__
 
 # Tags for individual topics:
 mapping_topics:
-# - filename.md ["tag1","tag2","keyword"]
+  - nrf/applications/*/README.html: ["applications"]
+  - nrf/applications/*/doc/*.html: ["applications"]
+  - nrf/samples/nrf9160/modem_shell/README.html: ["at-commands"]
+  - nrf/drivers/*.html: ["drivers"]
+  - nrf/libraries/*/*.html: ["libraries"]
+  - nrf/libraries/*/*/*.html: ["libraries"]
+  - nrf/external_comp/nrf_cloud.html: ["nrf-cloud"]
+  - nrf/protocols/*/*.html: ["protocols"]
+  - nrf/protocols/*/*/*.html: ["protocols"]
+  - nrf/protocols/*/*/*/*.html: ["protocols"]
+  - nrf/releases_and_maturity/release_notes.html: ["release-notes"]
+  - nrf/releases_and_maturity/releases/*.html: ["release-notes"]
+  - nrf/samples/*/README.html: ["samples"]
+  - nrf/samples/*/*/README.html: ["samples"]
+  - nrf/samples/*/*/*/README.html: ["samples"]
+  - nrf/samples/*/*/*/*/README.html: ["samples"]
+  - nrf/scripts/*/*.html: ["scripts"]
+  - nrf/scripts/*/*/*.html: ["scripts"]
+  - kconfig/index.html: ["kconfig"]
