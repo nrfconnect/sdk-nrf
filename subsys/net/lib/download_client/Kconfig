@@ -99,12 +99,12 @@ config DOWNLOAD_CLIENT_STACK_SIZE
 config DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 	int "Maximum hostname length (stack)"
 	range 8 256
-	default 64
+	default 255
 
 config DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 	int "Maximum filename length (stack)"
 	range 8 2048
-	default 192
+	default 255
 
 config DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS
 	int "Receive timeout on TCP sockets, in milliseconds"
