@@ -448,10 +448,10 @@ struct nrf_cloud_svc_info_ui {
 	uint8_t log:1;
 	/** Dictionary (binary) Logs */
 	uint8_t dictionary_log:1;
-
-	/* Items without UI support on nRF Cloud */
 	/** Air Quality */
 	uint8_t air_quality:1;
+
+	/* Items without UI support on nRF Cloud */
 	/** Light sensor */
 	uint8_t light_sensor:1;
 	/** Button */
