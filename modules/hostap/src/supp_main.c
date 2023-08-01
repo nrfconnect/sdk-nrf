@@ -56,15 +56,9 @@ static int z_wpas_event_sockpair[2];
 static void z_wpas_start(void);
 static void z_wpas_iface_work_handler(struct k_work *item);
 
-K_THREAD_DEFINE(z_wpa_s_tid,
-				CONFIG_WPA_SUPP_THREAD_STACK_SIZE,
-				z_wpas_start,
-				NULL,
-				NULL,
-				NULL,
-				0,
-				0,
-				0);
+static K_THREAD_STACK_DEFINE(z_wpa_s_thread_stack,
+			     CONFIG_WPA_SUPP_THREAD_STACK_SIZE);
+static struct k_thread z_wpa_s_tid;
 
 static K_THREAD_STACK_DEFINE(z_wpas_iface_wq_stack,
 	CONFIG_WPA_SUPP_IFACE_WQ_STACK_SIZE);
@@ -541,3 +535,16 @@ out:
 
 	wpa_printf(MSG_INFO, "z_wpas_start: exitcode %d", exitcode);
 }
+
+static int z_wpas_init(void)
+{
+	k_thread_create(&z_wpa_s_tid, z_wpa_s_thread_stack,
+			CONFIG_WPA_SUPP_THREAD_STACK_SIZE,
+			(k_thread_entry_t)z_wpas_start,
+			NULL, NULL, NULL,
+			0, 0, K_NO_WAIT);
+
+	return 0;
+}
+
+SYS_INIT(z_wpas_init, APPLICATION, 0);
