@@ -19,9 +19,11 @@ void fota_reboot(const unsigned int delay_s, const bool error)
 {
 	LOG_INF("Rebooting in %us%s", delay_s, error ? " due to error" : "...");
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 	if (error) {
 		(void)lte_lc_deinit();
 	}
+#endif
 
 	LOG_PANIC();
 	k_sleep(K_SECONDS(delay_s));

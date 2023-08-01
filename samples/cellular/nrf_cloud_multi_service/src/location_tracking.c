@@ -47,6 +47,19 @@ static void location_event_handler(const struct location_event_data *event_data)
 	}
 }
 
+static void enable_modem_gnss(void)
+{
+	if (IS_ENABLED(CONFIG_LTE_LINK_CONTROL)) {
+		int err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
+
+		if (err) {
+			LOG_ERR("Activating GNSS failed, error: %d. Continuing without GNSS", err);
+		}
+	} else {
+		LOG_WRN("CONFIG_LTE_LINK_CONTROL must be enabled in order to use GNSS");
+	}
+}
+
 int start_location_tracking(location_update_cb_t handler_cb, int interval)
 {
 	int err;
@@ -57,10 +70,9 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval)
 		LOG_WRN("Date and time unknown. Location Services results may suffer");
 	}
 
-	/* Enable GNSS on the modem */
-	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
-	if (err) {
-		LOG_ERR("Activating GNSS failed, error: %d. Continuing without GNSS", err);
+	/* Enable GNSS on the modem if appropriate */
+	if (IS_ENABLED(CONFIG_LOCATION_TRACKING_GNSS)) {
+		enable_modem_gnss();
 	}
 
 	/* Update the location update handler. */
