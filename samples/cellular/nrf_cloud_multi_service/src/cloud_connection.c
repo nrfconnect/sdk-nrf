@@ -326,6 +326,10 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR: %d", nrf_cloud_evt->status);
+
+		/* Disconnect from cloud immediately rather than wait for retry timeout. */
+		disconnect_cloud();
+
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
