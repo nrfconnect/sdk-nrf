@@ -749,24 +749,10 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 	switch (obj->type) {
 	case NRF_CLOUD_OBJ_TYPE_JSON:
 	{
-		if (cells_inf) {
-			err = nrf_cloud_cell_pos_req_json_encode(cells_inf, data_obj.json);
-			if ((err == -ENODATA) && (wifi_inf != NULL)) {
-				LOG_WRN("No GCI cells, excluding cellular data from request");
-			} else if (err) {
-				LOG_ERR("Failed to add cell info to location request, error: %d",
-					err);
-				goto cleanup;
-			}
-		}
-
-		if (wifi_inf) {
-			err = nrf_cloud_wifi_req_json_encode(wifi_inf, data_obj.json);
-			if (err) {
-				LOG_ERR("Failed to add Wi-Fi info to location request, error: %d",
-					err);
-				goto cleanup;
-			}
+		/* Add cell/wifi info */
+		err = nrf_cloud_obj_location_request_payload_add(&data_obj, cells_inf, wifi_inf);
+		if (err) {
+			goto cleanup;
 		}
 
 		/* Add data object to the location request object */

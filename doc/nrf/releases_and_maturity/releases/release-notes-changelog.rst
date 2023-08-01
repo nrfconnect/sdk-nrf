@@ -569,16 +569,25 @@ Libraries for networking
 
     * :c:struct:`nrf_cloud_obj` structure and functions for encoding and decoding nRF Cloud data.
     * :c:func:`nrf_cloud_obj_pgps_request_create` function that creates a P-GPS request for nRF Cloud.
+    * A new internal codec function :c:func:`nrf_cloud_obj_location_request_payload_add`, which excludes local Wi-Fi access point MAC addresses from the location request.
 
   * Updated:
 
     * Moved JSON manipulation from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
     * Fixed a build issue that occurred when MQTT and P-GPS are enabled and A-GPS is disabled.
+    * :c:func:`nrf_cloud_obj_location_request_create` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
 
   * Removed:
 
     * Unused internal codec function ``nrf_cloud_format_single_cell_pos_req_json()``.
     * ``nrf_cloud_location_request_msg_json_encode()`` function and replaced with :c:func:`nrf_cloud_obj_location_request_create`.
+    * ``nrf_cloud_location_req_json_encode()`` internal codec function.
+
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Updated:
+
+    * :c:func:`nrf_cloud_rest_location_get` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
 
 * Added the :ref:`lib_nrf_cloud_coap` library for accessing nRF Cloud services using CoAP.
 
