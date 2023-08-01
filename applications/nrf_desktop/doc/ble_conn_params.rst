@@ -29,7 +29,7 @@ Configuration
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
 The |ble_conn_params| is enabled by the :ref:`CONFIG_DESKTOP_BLE_CONN_PARAMS_ENABLE <config_desktop_app_options>` option.
-The option is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` together with other features used by an HID dongle that forwards the HID reports received over Bluetooth LE.
+The option is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` together with other features used by a HID dongle that forwards the HID reports received over Bluetooth LE.
 
 Enable :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` to manage Bluetooth connections' parameters reacting on the USB state change.
 The connection intervals for all of the Bluetooth connected peripherals are set to :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE <config_desktop_app_options>` (100 ms by default) while USB is suspended.
