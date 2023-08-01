@@ -507,6 +507,9 @@ static int nct_provision(void)
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
+	LOG_WRN("CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES is not secure and should be used only for "
+		"testing purposes");
+
 #if defined(CONFIG_NRF_MODEM_LIB)
 	{
 		int err;
