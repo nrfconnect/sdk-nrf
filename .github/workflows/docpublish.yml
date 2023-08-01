@@ -55,7 +55,7 @@ jobs:
           # upload files
           for file in docs/*.zip; do
             sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
-            cd /nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
+            cd /home/sftp/nordic/nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
             put ${file}
             quit
           EOF
