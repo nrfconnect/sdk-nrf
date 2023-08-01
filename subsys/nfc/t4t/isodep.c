@@ -303,6 +303,15 @@ static void isodep_chunk_send(void)
 	__ASSERT_NO_MSG(data);
 	__ASSERT_NO_MSG(tx_data);
 
+	/* New block, clear retransmission and error counters. */
+	t4t_isodep.retransmit_cnt = 0;
+	t4t_isodep.err_status.frame_retry_cnt = 0;
+
+	/* Restore last frame type in case nfc_t4t_isodep_transmit() was called
+	 * as it clears the transmission status.
+	 */
+	t4t_isodep.err_status.last_frame = ISODEP_FRAME_I;
+
 	/* Prepare first chunk. */
 	tx_data[index] = ISODEP_I_BLOCK | (t4t_isodep.block_num & 1);
 
@@ -319,11 +328,6 @@ static void isodep_chunk_send(void)
 		data_len = t4t_isodep.transmit_len - t4t_isodep.transmitted_len;
 		t4t_isodep.chaining = false;
 	}
-
-	/* Restore last frame type in case nfc_t4t_isodep_transmit() was called
-	 * as it clears the transmission status.
-	 */
-	t4t_isodep.err_status.last_frame = ISODEP_FRAME_I;
 
 	memcpy(&tx_data[index], &data[t4t_isodep.transmitted_len], data_len);
 
@@ -452,11 +456,67 @@ static int isodep_s_frame_handle(const uint8_t *data, size_t len)
 	return 0;
 }
 
+static int last_i_block_retransmit(void)
+{
+	uint32_t fdt;
+	uint8_t *tx_data = t4t_isodep.tx_data.data;
+
+	/* Retransmit last data block */
+	if (t4t_isodep.retransmit_cnt > ISODEP_MAX_RETRANSMIT_CNT) {
+		/* If to much retransmission, return error. */
+		return -NFC_T4T_ISODEP_SEMANTIC_ERROR;
+	}
+
+	fdt = t4t_isodep.tag.fwt + T4T_FWT_DELTA + NFCA_T4T_FWT_T_FC;
+
+	/* Restore last I-block context. The rest of the data is still in tx_data buffer. */
+	tx_data[0] = ISODEP_I_BLOCK | (t4t_isodep.block_num & 1);
+
+	if (t4t_isodep.chaining) {
+		tx_data[0] |= I_BLOCK_CHAINING_BIT;
+	}
+
+	if (t4t_isodep_cb->ready_to_send) {
+		t4t_isodep_cb->ready_to_send(t4t_isodep.tx_data.data,
+					     t4t_isodep.tx_data.len, fdt);
+
+		t4t_isodep.retransmit_cnt++;
+	}
+
+	return 0;
+}
+
+static int r_frame_ack_handle(uint8_t r_block)
+{
+	/* R(ACK) receipt in response to R(NAK). */
+	if (t4t_isodep.err_status.last_frame == ISODEP_FRAME_I) {
+		if ((r_block & ISODEP_BLOCK_NUM_MASK) != t4t_isodep.block_num) {
+			return last_i_block_retransmit();
+		}
+	}
+
+	/* Check if Reader/Writer is in chaining state. */
+	if (!t4t_isodep.chaining) {
+		return -NFC_T4T_ISODEP_SEMANTIC_ERROR;
+	}
+
+	/* ACK Received. Check if current block number is equal to the received one. */
+	if ((r_block & ISODEP_BLOCK_NUM_MASK) == t4t_isodep.block_num) {
+		/* Toggle block number and continue chaining. */
+		block_num_toggle();
+		isodep_chunk_send();
+	} else {
+		/* Retransmit last data block */
+		return last_i_block_retransmit();
+	}
+
+	return 0;
+}
+
 static int isodep_r_frame_handle(const uint8_t *data, size_t len)
 {
 	size_t index = 0;
 	uint8_t r_block;
-	uint32_t fdt;
 
 	__ASSERT_NO_MSG(len >= 1);
 
@@ -479,35 +539,8 @@ static int isodep_r_frame_handle(const uint8_t *data, size_t len)
 
 	LOG_DBG("R-frame ACK received.");
 
-	/* Check if Reader/Writer is in chaining state. */
-	if (!t4t_isodep.chaining) {
-		return -NFC_T4T_ISODEP_SEMANTIC_ERROR;
-	}
-
-	/* ACK Received. Check if current block number is equal to receieved. */
-	if ((r_block & ISODEP_BLOCK_NUM_MASK) == t4t_isodep.block_num) {
-		/* Toggle block number */
-		block_num_toggle();
-
-		isodep_chunk_send();
-	} else {
-		/* Retransmit last data block */
-		if (t4t_isodep.retransmit_cnt > ISODEP_MAX_RETRANSMIT_CNT) {
-			/* If to much retransmission, return error. */
-			return -NFC_T4T_ISODEP_SEMANTIC_ERROR;
-		}
-
-		fdt = t4t_isodep.tag.fwt + T4T_FWT_DELTA + NFCA_T4T_FWT_T_FC;
-
-		if (t4t_isodep_cb->ready_to_send) {
-			t4t_isodep_cb->ready_to_send(t4t_isodep.tx_data.data,
-						     t4t_isodep.tx_data.len, fdt);
-
-			t4t_isodep.retransmit_cnt++;
-		}
-	}
-
-	return 0;
+	/* ACK Received. */
+	return r_frame_ack_handle(r_block);
 }
 
 static int isodep_i_frame_handle(const uint8_t *data, size_t len)

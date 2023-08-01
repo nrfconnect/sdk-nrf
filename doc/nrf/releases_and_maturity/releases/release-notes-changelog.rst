@@ -617,6 +617,11 @@ Libraries for NFC
   * Fixed the potential issue where the NFC interrupt context switching could loose interrupts data.
     This could happen if interrupts would be executed much faster than the NFC workqueue or thread.
 
+* :ref:`nfc_t4t_isodep_readme` library:
+
+  * Fixed the ISO-DEP error recovery process in case where the R(ACK) frame is received in response to the R(NAK) frame from the poller device.
+    The poller device raised a false semantic error instead of resending the last I-block.
+
 Nordic Security Module
 ----------------------
 
