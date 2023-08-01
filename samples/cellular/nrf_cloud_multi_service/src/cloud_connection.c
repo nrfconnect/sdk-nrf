@@ -277,6 +277,19 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		/* Set the network ready flag */
 		k_event_post(&cloud_events, NETWORK_READY);
 
+		/* If LTE-event-driven date_time updates are disabled, manually trigger a date_time
+		 * timestamp refresh.
+		 *
+		 * Note: The CONFIG_DATE_TIME_AUTO_UPDATE setting controls specifically whether
+		 * LTE-event-driven date_time updates are enabled. The date_time library will still
+		 * periodically refresh its timestamp if CONFIG_DATE_TIME_AUTO_UPDATE is disabled,
+		 * but this refresh is infrequent, so we are manually requesting a refresh
+		 * whenever internet access becomes available so that we get a timestamp
+		 * immediately.
+		 */
+		if (!IS_ENABLED(CONFIG_DATE_TIME_AUTO_UPDATE)) {
+			date_time_update_async(NULL);
+		}
 
 	} else if (event == NET_EVENT_L4_DISCONNECTED) {
 		LOG_INF("Network connectivity lost!");
