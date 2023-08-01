@@ -20,20 +20,24 @@ enum sock_recv_print_format {
 	SOCK_RECV_PRINT_FORMAT_HEX,
 };
 
-int sock_open_and_connect(int family, int type, char *address, int port,
-			  int bind_port, int pdn_cid, bool secure, int sec_tag,
-			  bool session_cache, int peer_verify,
-			  char *peer_hostname);
+int sock_open_and_connect(
+	int family, int type, char *address, int port,
+	int bind_port, int pdn_cid, bool secure, int sec_tag,
+	bool session_cache, int peer_verify,
+	char *peer_hostname);
 
-int sock_send_data(int socket_id, char *data, int data_length, int interval,
-		   bool blocking, int buffer_size, bool data_format_hex);
+int sock_send_data(
+	int socket_id, char *data, int data_length, int interval, bool packet_number_prefix,
+	bool blocking, int buffer_size, bool data_format_hex);
 
-int sock_recv(int socket_id, bool receive_start, int data_length, bool blocking,
-	      enum sock_recv_print_format print_format);
+int sock_recv(
+	int socket_id, bool receive_start, int data_length, bool blocking,
+	enum sock_recv_print_format print_format);
 
 int sock_close(int socket_id);
-int sock_rai(int socket_id, bool rai_last, bool rai_no_data, bool rai_one_resp,
-	     bool rai_ongoing, bool rai_wait_more);
+int sock_rai(
+	int socket_id, bool rai_last, bool rai_no_data, bool rai_one_resp,
+	bool rai_ongoing, bool rai_wait_more);
 int sock_list(void);
 
 #endif /* MOSH_SOCK_H */

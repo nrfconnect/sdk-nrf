@@ -80,6 +80,12 @@ static const char sock_usage_str[] =
 	"                            used with -d or -e option.\n"
 	"  -e, --period, [int]       Data sending interval in seconds. You must also\n"
 	"                            specify -d.\n"
+	"      --packet_number_prefix\n"
+	"                            Add a 4 digit packet number into the beginning of each\n"
+	"                            packet.\n"
+	"                            The number is between 0001..9999 and it can roll over.\n"
+	"                            Must be used with -d and -e options and without\n"
+	"                            -l and -x options.\n"
 	"  -B, --blocking, [int]     Blocking (1) or non-blocking (0) mode. This is only\n"
 	"                            valid when -l is given. Default value is 1.\n"
 	"  -s, --buffer_size, [int]  Send buffer size. This is only valid when -l is\n"
@@ -91,7 +97,7 @@ static const char sock_usage_str[] =
 	"                            of hexadecimal characters and each pair of two\n"
 	"                            characters form a single byte. Any spaces will be\n"
 	"                            removed before processing.\n"
-	"                            Examples of hexadecimal data strings:\n"
+	"                            Examples of equivalent hexadecimal data strings:\n"
 	"                                010203040506070809101112\n"
 	"                                01 02 03 04 05 06 07 08 09 10 11 12\n"
 	"                                01020304 05060708 09101112\n"
@@ -138,6 +144,7 @@ static const char sock_usage_str[] =
 #define SOCK_SHELL_OPT_RAI_ONE_RESP 202
 #define SOCK_SHELL_OPT_RAI_ONGOING 203
 #define SOCK_SHELL_OPT_RAI_WAIT_MORE 204
+#define SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX 205
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options[] = {
@@ -161,6 +168,7 @@ static struct option long_options[] = {
 	{ "start",          no_argument,       0, 'r' },
 	{ "blocking",       required_argument, 0, 'B' },
 	{ "print_format",   required_argument, 0, 'P' },
+	{ "packet_number_prefix", no_argument, 0, SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX },
 	{ "rai_last",       no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
 	{ "rai_no_data",    no_argument,       0, SOCK_SHELL_OPT_RAI_NO_DATA },
 	{ "rai_one_resp",   no_argument,       0, SOCK_SHELL_OPT_RAI_ONE_RESP },
@@ -224,6 +232,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 	char arg_send_data[SOCK_MAX_SEND_DATA_LEN + 1];
 	int arg_data_length = 0;
 	int arg_data_interval = SOCK_SEND_DATA_INTERVAL_NONE;
+	bool arg_packet_number_prefix = false;
 	int arg_buffer_size = SOCK_BUFFER_SIZE_NONE;
 	bool arg_data_format_hex = false;
 	bool arg_receive_start = false;
@@ -415,6 +424,10 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		/* Options without short option: */
+		case SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX:
+			arg_packet_number_prefix = true;
+			break;
+
 		case SOCK_SHELL_OPT_RAI_LAST:
 			arg_rai_last = true;
 			break;
@@ -457,6 +470,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			arg_send_data,
 			arg_data_length,
 			arg_data_interval,
+			arg_packet_number_prefix,
 			arg_blocking_send,
 			arg_buffer_size,
 			arg_data_format_hex);
