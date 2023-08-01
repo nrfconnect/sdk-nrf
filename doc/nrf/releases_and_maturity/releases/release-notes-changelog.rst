@@ -629,6 +629,9 @@ Other libraries
     * :c:func:`hw_unique_key_derive_key` function to always return an error code from the library-defined codes.
     * The defined error code names with prefix HW_UNIQUE_KEY_ERR_*.
 
+* :ref:`st25r3911b_nfc_readme` library:
+
+  * Fixed an issue where the :c:func:`st25r3911b_nfca_process` function returns an error in case the Rx complete event is received together with FIFO water level event.
 
 Common Application Framework (CAF)
 ----------------------------------

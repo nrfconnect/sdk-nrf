@@ -615,7 +615,7 @@ static int rx_fifo_water(void)
 
 static int on_fifo_water_lvl(uint32_t state)
 {
-	int err;
+	int err = 0;
 
 	switch (state) {
 
@@ -625,6 +625,12 @@ static int on_fifo_water_lvl(uint32_t state)
 
 	case RX_STATE_START:
 		err = rx_fifo_water();
+		break;
+
+	case RX_STATE_COMPLETE:
+		/* FIFO water level occurs together with Rx complete.
+		 * FIFO data will be read during processing Rx complete event
+		 */
 		break;
 
 	default:
