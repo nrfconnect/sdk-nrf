@@ -6,7 +6,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/logging/log.h>
-#include <modem/nrf_modem_lib.h>
 #include <stdio.h>
 #include <date_time.h>
 #include <net/nrf_cloud.h>
@@ -273,6 +272,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 {
 	if (event == NET_EVENT_L4_CONNECTED) {
 		LOG_INF("Network connectivity gained!");
+
+		k_sleep(K_MSEC(1000));
 
 		/* Set the network ready flag */
 		k_event_post(&cloud_events, NETWORK_READY);
