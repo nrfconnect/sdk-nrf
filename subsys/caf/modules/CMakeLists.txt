@@ -37,4 +37,7 @@ zephyr_library_sources_ifdef(CONFIG_CAF_SENSOR_DATA_AGGREGATOR sensor_data_aggre
 zephyr_library_sources_ifdef(CONFIG_CAF_SETTINGS_LOADER settings_loader.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_BLE_SMP ble_smp.c)
+
+zephyr_library_sources_ifdef(CONFIG_CAF_SHELL caf_shell.c)
+
 zephyr_library_link_libraries_ifdef(CONFIG_MCUMGR mgmt_mcumgr)
