@@ -104,7 +104,7 @@ Kconfig*                                  @tejlmand
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
 /lib/location/                            @trantanen @jhirsi @tokangas
-/lib/lte_link_control/                    @jtguggedal @tokangas @simensrostad @trantanen
+/lib/lte_link_control/                    @tokangas @trantanen @jhirsi
 /lib/modem_antenna/                       @tokangas
 /lib/modem_battery/                       @MirkoCovizzi
 /lib/modem_info/                          @rlubos
@@ -157,17 +157,17 @@ Kconfig*                                  @tejlmand
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
 /samples/nrf5340/empty_app_core/          @doki-nordic
-/samples/cellular/                         @rlubos @lemrey
-/samples/cellular/azure_*                  @jtguggedal @simensrostad @coderbyheart
-/samples/cellular/battery/                 @MirkoCovizzi
-/samples/cellular/location/                @trantanen @jhirsi @tokangas
-/samples/cellular/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
-/samples/cellular/modem_shell/             @trantanen @jhirsi @tokangas
-/samples/cellular/nidd/                    @stig-bjorlykke
-/samples/cellular/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
-/samples/cellular/nrf_provisioning/        @SeppoTakalo @juhaylinen
-/samples/cellular/modem_trace_flash/       @gregersrygg @balaji-nordic
-/samples/cellular/sms/                     @trantanen @tokangas
+/samples/cellular/                        @rlubos @lemrey
+/samples/cellular/azure_*                 @jtguggedal @simensrostad @coderbyheart
+/samples/cellular/battery/                @MirkoCovizzi
+/samples/cellular/location/               @trantanen @jhirsi @tokangas
+/samples/cellular/lwm2m_client/           @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen
+/samples/cellular/modem_shell/            @trantanen @jhirsi @tokangas
+/samples/cellular/nidd/                   @stig-bjorlykke
+/samples/cellular/nrf_cloud_*             @plskeggs @jayteemo @glarsennordic
+/samples/cellular/nrf_provisioning/       @SeppoTakalo @juhaylinen
+/samples/cellular/modem_trace_flash/      @gregersrygg @balaji-nordic
+/samples/cellular/sms/                    @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
@@ -258,9 +258,9 @@ Kconfig*                                  @tejlmand
 /tests/lib/gcf_sms/                       @eivindj-nordic
 /tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /tests/lib/hw_id/                         @maxd-nordic
-/tests/lib/location/                      @trantanen @jhirsi @tokangas
-/tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad @trantanen
-/tests/lib/lte_lc_api/                    @maxd-nordic @trantanen @tokangas
+/tests/lib/location/                      @trantanen @tokangas
+/tests/lib/lte_lc/                        @trantanen @tokangas
+/tests/lib/lte_lc_api/                    @trantanen @tokangas
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/modem_battery/                 @MirkoCovizzi
 /tests/lib/modem_info/                    @maxd-nordic
