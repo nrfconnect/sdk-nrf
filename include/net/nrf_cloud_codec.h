@@ -105,7 +105,8 @@ struct nrf_cloud_obj {
  * @retval false Type is invalid.
  */
 #define NRF_CLOUD_OBJ_TYPE_VALID(_obj_ptr) \
-	(bool)((_obj_ptr->type > NRF_CLOUD_OBJ_TYPE__UNDEFINED) && \
+	(bool)((_obj_ptr != NULL) && \
+	       (_obj_ptr->type > NRF_CLOUD_OBJ_TYPE__UNDEFINED) && \
 	       (_obj_ptr->type < NRF_CLOUD_OBJ_TYPE__LAST))
 
 /**

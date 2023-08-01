@@ -119,7 +119,11 @@ struct nrf_cloud_rest_context {
 struct nrf_cloud_rest_location_request {
 	/** Cellular network information used in request */
 	struct lte_lc_cells_info *cell_info;
-	/** Wi-Fi network information used in request */
+	/** Wi-Fi network information used in request.
+	 * The minimum number of access points required by nRF Cloud is
+	 * defined by NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN. Access points with
+	 * a local MAC address will not be included in the request.
+	 */
 	struct wifi_scan_info *wifi_info;
 	/** If true, nRF Cloud will not send the location data to the device
 	 * in the REST response body. The location will still be recorded in the cloud.

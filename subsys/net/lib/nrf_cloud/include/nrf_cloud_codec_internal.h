@@ -226,16 +226,17 @@ int nrf_cloud_cell_info_json_encode(cJSON * const data_obj,
 int nrf_cloud_cell_pos_req_json_encode(struct lte_lc_cells_info const *const inf,
 				       cJSON * const req_obj_out);
 
-/** @brief Build a location request string using the provided info.
- * If successful, memory will be allocated for the output string and the user is
- * responsible for freeing it using @ref cJSON_free.
- */
-int nrf_cloud_location_req_json_encode(struct lte_lc_cells_info const *const cell_info,
-				       struct wifi_scan_info const *const wifi_info,
-				       char **string_out);
+/** @brief Add the location request data payload to the provided initialized object */
+int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
+					       struct lte_lc_cells_info const *const cells_inf,
+					       struct wifi_scan_info const *const wifi_inf);
 
-/** @brief Build a WiFi positioning request in the provided cJSON object
- * using the provided WiFi info
+/** @brief Build a Wi-Fi positioning request in the provided cJSON object using the provided
+ * Wi-Fi info. Local MAC addresses are not included in the request.
+ *
+ * @retval 0 Success.
+ * @retval -ENODATA Access point (non-local) count less than NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
+ * @return -ENOMEM Out of memory.
  */
 int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 				   cJSON *const req_obj_out);

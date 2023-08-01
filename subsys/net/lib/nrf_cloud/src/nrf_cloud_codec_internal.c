@@ -2540,6 +2540,69 @@ cleanup:
 	return err;
 }
 
+int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
+	struct lte_lc_cells_info const *const cells_inf,
+	struct wifi_scan_info const *const wifi_inf)
+{
+	if (!obj || (!cells_inf && !wifi_inf)) {
+		return -EINVAL;
+	}
+
+	if (!NRF_CLOUD_OBJ_TYPE_VALID(obj)) {
+		return -EBADF;
+	}
+
+	/* Currently, only JSON is supported */
+	if (obj->type != NRF_CLOUD_OBJ_TYPE_JSON) {
+		return -ENOTSUP;
+	}
+
+	int err = 0;
+	bool cell_inf_added = false;
+
+	if (cells_inf) {
+		err = nrf_cloud_cell_pos_req_json_encode(cells_inf, obj->json);
+		if ((err == -ENODATA) && (wifi_inf != NULL)) {
+			LOG_WRN("No GCI cells, excluding cellular data from request");
+		} else if (err) {
+			LOG_ERR("Failed to add cell info to location request, error: %d", err);
+			return err;
+		}
+
+		cell_inf_added = (err == 0);
+	}
+
+	if (wifi_inf) {
+		err = nrf_cloud_wifi_req_json_encode(wifi_inf, obj->json);
+		if (err == -ENODATA) {
+			LOG_WRN("At least %d APs (with a non-local MAC address) are required",
+				NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN);
+
+			if (cell_inf_added) {
+				LOG_WRN("Excluding Wi-Fi data, request is cellular only");
+				err = 0;
+			} else {
+				LOG_ERR("Wi-Fi request not created");
+			}
+		} else if (err) {
+			LOG_ERR("Failed to add Wi-Fi info to location request, error: %d", err);
+		}
+	}
+
+	return err;
+}
+
+/* A local MAC is an address with:
+ * - The U/L bit set (the second-least-significant bit of the first octet of the address).
+ *  or
+ * - An address in the reserved IANA Unicast range: 00:00:5E:00:00:00 - 00:00:5E:FF:FF:FF.
+ */
+static bool is_local_mac(const uint8_t *const mac)
+{
+	return ((mac[0] & 0x02) ||
+		((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x5E)));
+}
+
 int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 	cJSON *const req_obj_out)
 {
@@ -2547,10 +2610,12 @@ int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 		return -EINVAL;
 	}
 
-	LOG_DBG("Encoding wifi_scan_info with count: %u", wifi->cnt);
-
+	int err = -ENOMEM;
+	int encoded_cnt = 0;
 	cJSON *wifi_obj = NULL;
 	cJSON *ap_array = NULL;
+
+	LOG_DBG("Encoding wifi_scan_info with count: %u", wifi->cnt);
 
 	wifi_obj = cJSON_AddObjectToObjectCS(req_obj_out, NRF_CLOUD_LOCATION_JSON_KEY_WIFI);
 	ap_array = cJSON_AddArrayToObjectCS(wifi_obj, NRF_CLOUD_LOCATION_JSON_KEY_APS);
@@ -2561,8 +2626,16 @@ int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 	for (uint8_t cnt = 0; cnt < wifi->cnt; ++cnt) {
 		char str_buf[MAX(WIFI_MAC_ADDR_STR_LEN, WIFI_SSID_MAX_LEN) + 1];
 		struct wifi_scan_result const *const ap = (wifi->ap_info + cnt);
-		cJSON *ap_obj = cJSON_CreateObject();
+		cJSON *ap_obj;
 		int ret;
+
+		if (is_local_mac(ap->mac)) {
+			LOG_DBG("Skipping local MAC %02x:%02x:%02x:...",
+				ap->mac[0], ap->mac[1], ap->mac[2]);
+			continue;
+		}
+
+		ap_obj = cJSON_CreateObject();
 
 		if (!cJSON_AddItemToArray(ap_array, ap_obj)) {
 			cJSON_Delete(ap_obj);
@@ -2601,6 +2674,15 @@ int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 					ap->channel)) {
 			goto cleanup;
 		}
+
+		++encoded_cnt;
+	}
+
+	LOG_DBG("Encoded %d access points", encoded_cnt);
+
+	if (encoded_cnt < NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN) {
+		err = -ENODATA;
+		goto cleanup;
 	}
 
 	return 0;
@@ -2608,43 +2690,9 @@ int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 cleanup:
 	/* Only need to delete the WiFi object since all items (if any) were added to it */
 	cJSON_DeleteItemFromObject(req_obj_out, NRF_CLOUD_LOCATION_JSON_KEY_WIFI);
-	LOG_ERR("Failed to format WiFi location request, out of memory");
-	return -ENOMEM;
-}
-
-int nrf_cloud_location_req_json_encode(struct lte_lc_cells_info const *const cell_info,
-	struct wifi_scan_info const *const wifi_info, char **string_out)
-{
-	if ((!cell_info && !wifi_info) || !string_out) {
-		return -EINVAL;
+	if (err == -ENOMEM) {
+		LOG_ERR("Failed to format Wi-Fi location request, out of memory");
 	}
-
-	int err = 0;
-	cJSON *req_obj = cJSON_CreateObject();
-
-	if (cell_info) {
-		err = nrf_cloud_cell_pos_req_json_encode(cell_info, req_obj);
-		if (err) {
-			goto cleanup;
-		}
-	}
-
-	if (wifi_info) {
-		err = nrf_cloud_wifi_req_json_encode(wifi_info, req_obj);
-		if (err) {
-			goto cleanup;
-		}
-	}
-
-	*string_out = cJSON_PrintUnformatted(req_obj);
-	if (*string_out == NULL) {
-		err = -ENOMEM;
-	} else {
-		LOG_DBG("JSON: %s", *string_out);
-	}
-
-cleanup:
-	cJSON_Delete(req_obj);
 
 	return err;
 }

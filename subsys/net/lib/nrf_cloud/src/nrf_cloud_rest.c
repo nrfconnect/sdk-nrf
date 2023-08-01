@@ -506,9 +506,9 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	int ret;
 	char *auth_hdr = NULL;
-	char *payload = NULL;
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
+	NRF_CLOUD_OBJ_JSON_DEFINE(payload_obj);
 
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_POST);
@@ -531,14 +531,30 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	req.header_fields = (const char **)headers;
 
-	/* Get payload */
-	ret = nrf_cloud_location_req_json_encode(request->cell_info, request->wifi_info, &payload);
+	/* Init the payload object */
+	ret = nrf_cloud_obj_init(&payload_obj);
 	if (ret) {
-		LOG_ERR("Failed to generate location request, err: %d", ret);
 		goto clean_up;
 	}
 
-	req.body = payload;
+	/* Add the location request payload */
+	ret = nrf_cloud_obj_location_request_payload_add(&payload_obj,
+							 request->cell_info,
+							 request->wifi_info);
+	if (ret) {
+		LOG_ERR("Failed to create location request payload, err: %d", ret);
+		goto clean_up;
+	}
+
+	/* Encode the payload to be sent to the cloud */
+	ret = nrf_cloud_obj_cloud_encode(&payload_obj);
+	if (ret) {
+		LOG_ERR("Failed to encode location request, err: %d", ret);
+		goto clean_up;
+	}
+
+	/* Add the encoded payload to the REST request */
+	req.body = payload_obj.encoded_data.ptr;
 
 	/* Make REST call */
 	ret = do_rest_client_request(rest_ctx, &req, &resp, true, !request->disable_response);
@@ -562,9 +578,9 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 clean_up:
 	nrf_cloud_free(auth_hdr);
-	if (payload) {
-		cJSON_free(payload);
-	}
+	/* Free the object and the encoded data */
+	(void)nrf_cloud_obj_free(&payload_obj);
+	(void)nrf_cloud_obj_cloud_encoded_free(&payload_obj);
 
 	if (result) {
 		/* Add the nRF Cloud error to the response */
