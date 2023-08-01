@@ -749,6 +749,8 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
+* Added :ref:`caf_shell` for triggering CAF events.
+
 * :ref:`caf_buttons`:
 
   * Added selective wakeup functionality.
