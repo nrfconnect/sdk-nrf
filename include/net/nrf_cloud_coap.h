@@ -136,6 +136,18 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms);
 
 /**
+ * @brief Send raw bytes to nRF Cloud.
+ * @param[in]     app_id The app_id identifying the type of data.
+ * @param[in]     buf buffer with binary string.
+ * @param[in]     buf_len  length of buf in bytes.
+ * @param[in]     ts_ms  Timestamp the data was measured, or NRF_CLOUD_NO_TIMESTAMP.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_coap_bytes_send(const char *app_id, uint8_t *buf, size_t buf_len, int64_t ts_ms);
+
+/**
  * @brief Send the device location in the @ref nrf_cloud_gnss_data PVT field to nRF Cloud.
  *
  *  The CoAP message is sent as a non-confirmable CoAP message. Only

@@ -123,22 +123,27 @@ static bool encode_message_out(zcbor_state_t *state, const struct message_out *i
 		(((((zcbor_uint32_put(state, (1)))) &&
 		   (zcbor_tstr_encode(state, (&(*input)._message_out_appId)))) &&
 		  (((zcbor_uint32_put(state, (2)))) &&
-		   (((*input)._message_out_data_choice == _message_out_data_tstr)
-			    ? ((zcbor_tstr_encode(state, (&(*input)._message_out_data_tstr))))
-			    : (((*input)._message_out_data_choice == _message_out_data_float)
-				       ? ((zcbor_float64_encode(
-						 state, (&(*input)._message_out_data_float))))
+		   (((*input)._message_out_data_choice == _message_out_data_bstr)
+			    ? ((zcbor_bstr_encode(state, (&(*input)._message_out_data_bstr))))
+			    : (((*input)._message_out_data_choice == _message_out_data_tstr)
+				       ? ((zcbor_tstr_encode(state,
+							     (&(*input)._message_out_data_tstr))))
 				       : (((*input)._message_out_data_choice ==
-					   _message_out_data_int)
-						  ? ((zcbor_int32_encode(
+					   _message_out_data_float)
+						  ? ((zcbor_float64_encode(
 							    state,
-							    (&(*input)._message_out_data_int))))
+							    (&(*input)._message_out_data_float))))
 						  : (((*input)._message_out_data_choice ==
-						      _message_out_data__pvt)
-							     ? ((encode_pvt(
+						      _message_out_data_int)
+							     ? ((zcbor_int32_encode(
 								       state,
-							       (&(*input)._message_out_data__pvt))))
-							     : false))))) &&
+								       (&(*input)._message_out_data_int))))
+							     : (((*input)._message_out_data_choice ==
+								 _message_out_data__pvt)
+									? ((encode_pvt(
+										  state,
+										  (&(*input)._message_out_data__pvt))))
+									: false)))))) &&
 		  zcbor_present_encode(&((*input)._message_out_ts_present),
 				       (zcbor_encoder_t *)encode_repeated_message_out_ts, state,
 				       (&(*input)._message_out_ts))) ||

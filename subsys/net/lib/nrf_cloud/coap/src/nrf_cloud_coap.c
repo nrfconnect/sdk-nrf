@@ -20,6 +20,7 @@
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
 #include "coap_codec.h"
+#include "msg_encode.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
@@ -159,6 +160,43 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */
+
+int nrf_cloud_coap_bytes_send(const char *app_id, uint8_t *buf, size_t buf_len, int64_t ts_ms)
+{
+	__ASSERT_NO_MSG(app_id != NULL);
+	if (buf_len > CONFIG_NRF_CLOUD_COAP_BYTES_MESSAGE_MAX_LEN) {
+		return -EINVAL;
+	}
+	if (!nrf_cloud_coap_is_connected()) {
+		return -EACCES;
+	}
+	int64_t ts = (ts_ms == NRF_CLOUD_NO_TIMESTAMP) ? get_ts() : ts_ms;
+	static uint8_t buffer[CONFIG_NRF_CLOUD_COAP_BYTES_MESSAGE_MAX_LEN];
+	int err;
+	size_t out_len;
+	struct message_out input = {0};
+
+	input._message_out_appId.value = app_id;
+	input._message_out_appId.len = strlen(app_id);
+	input._message_out_data_choice = _message_out_data_bstr;
+	input._message_out_data_bstr.value = buf;
+	input._message_out_data_bstr.len = buf_len;
+	input._message_out_ts._message_out_ts = ts;
+	input._message_out_ts_present = true;
+
+	err = cbor_encode_message_out(buffer, sizeof(buffer), &input, &out_len);
+
+	if (err) {
+		LOG_ERR("Error %d encoding message", err);
+		return -EINVAL;
+	}
+	err = nrf_cloud_coap_post("msg/d2c", NULL, buffer, out_len,
+				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
+	if (err) {
+		LOG_ERR("Failed to send POST request: %d", err);
+	}
+	return err;
+}
 
 int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms)
 {

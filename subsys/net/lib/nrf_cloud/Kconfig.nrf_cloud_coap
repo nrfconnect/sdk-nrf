@@ -36,6 +36,10 @@ config NON_RESP_RETRIES
 	  result in up to this number of retransmissions of the request followed
 	  by waits for a response.
 
+config NRF_CLOUD_COAP_BYTES_MESSAGE_MAX_LEN
+	int "Maximum length of message encoded in nrf_cloud_coap_bytes_send"
+	default 64
+
 if WIFI
 
 config NRF_CLOUD_COAP_SEND_SSIDS

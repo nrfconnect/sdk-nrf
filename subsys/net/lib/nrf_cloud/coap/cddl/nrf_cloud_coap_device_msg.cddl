@@ -22,7 +22,7 @@ pvt = {
 
 message_out = {
 	appId => tstr,
-	data => tstr/float/int/pvt,
+	data => bstr/tstr/float/int/pvt,
 	? ts => uint .size 8
 }
 

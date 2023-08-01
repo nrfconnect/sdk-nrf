@@ -59,12 +59,14 @@ struct message_out_ts {
 struct message_out {
 	struct zcbor_string _message_out_appId;
 	union {
+		struct zcbor_string _message_out_data_bstr;
 		struct zcbor_string _message_out_data_tstr;
 		double _message_out_data_float;
 		int32_t _message_out_data_int;
 		struct pvt _message_out_data__pvt;
 	};
 	enum {
+		_message_out_data_bstr,
 		_message_out_data_tstr,
 		_message_out_data_float,
 		_message_out_data_int,
