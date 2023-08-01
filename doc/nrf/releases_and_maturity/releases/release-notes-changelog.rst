@@ -218,6 +218,7 @@ nRF Desktop
     All listed Kconfig options are enabled by default and depend on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
   * Kconfig option to configure a motion generated per second during a button press (:ref:`CONFIG_DESKTOP_MOTION_BUTTONS_MOTION_PER_SEC <config_desktop_app_options>`) in the :ref:`nrf_desktop_motion`.
     The implementation relies on the hardware clock instead of system uptime to improve accuracy of the motion data generated when pressing a button.
+  * The :ref:`nrf_desktop_measuring_hid_report_rate` section in the nRF Desktop documentation.
 
 * Updated:
 

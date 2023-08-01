@@ -941,6 +941,85 @@ After building the application with or without :ref:`specifying the build type <
 
 After the connection is established and the device is bonded, you can use the mouse with the connected device.
 
+.. _nrf_desktop_measuring_hid_report_rate:
+
+Measuring HID report rate
+-------------------------
+
+You can measure a HID report rate of your application to assess the performance of your HID device.
+This measurement allows you to check how often the host computer can get user's input from the HID device.
+
+Prerequsites
+~~~~~~~~~~~~
+
+The HID report rate can be measured by using either browser-based or platform-specific tools.
+You can use any preferred HID report rate tool.
+
+.. note::
+   The host computer controls polling a HID peripheral for HID reports.
+   The HID peripheral cannot trigger sending a HID report even if the report is prepared in time.
+   Polling inaccuracies and missing polls on the host side can negatively affect the measured report rate.
+   Make sure to close all unnecessary PC applications to mitigate negative impact of these applications on polling HID devices.
+   If you are using a browser-based tool, leave open only the tab with HID report rate measurement tool to ensure that no other tab influences the measurement.
+
+Building information
+~~~~~~~~~~~~~~~~~~~~
+
+Use the :file:`prj_release.conf` configuration for the HID report rate measurement.
+Debug features, such as logging or assertions, decrease the application performance.
+
+Use the nRF Desktop configuration that acts as a HID mouse reference design for the report rate measurement, as the motion data polling is synchronized with sending HID reports.
+
+Make sure your chosen motion data source will generate movement in each poll interval.
+Without a need for user's input, you can generate HID reports that contain mouse movement data.
+To do this, use the :ref:`Motion simulated module <nrf_desktop_motion_report_rate>`.
+
+To build an application for evaluating HID report rate, run the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      west build -p -b <target> -- \
+      -DCONF_FILE=prj_release.conf \
+      -DCONFIG_DESKTOP_MOTION_SIMULATED_ENABLE=y \
+
+Report rate measuring tips
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See the following list of possible scenarios and best practices:
+
+* If two or more peripherals are connected through the dongle, and all of the devices support LLPM, then the Bluetooth LE LLPM connection events split evenly among all of the peripherals connected through that dongle.
+  It results in decreased HID report rate.
+  For example, you should observe a 500 Hz HID report rate when both mouse and keyboard are connected through the dongle and a 1000 Hz rate when only the mouse is connected.
+* If a HID peripheral is connected through a dongle, the dongle's performance must be taken into account when measuring the report rate.
+  Delays related to data forwarding on the dongle also result in reduced report rate.
+* If the device is connected through Bluetooth LE directly to the HID host, then the host sets the Bluetooth LE connection interval.
+  A Bluetooth LE peripheral can suggest the preferred connection parameters.
+  The suggested connection interval can be set using the :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MIN_INT` and :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT` Kconfig options.
+  Set parameters are not enforced, meaning that the HID host may still eventually use a value greater than the maximum connection interval requested by a peripheral.
+* Radio frequency (RF) noise can negatively affect the HID report rate for wireless connections.
+  If a HID report fails to be delivered in a given Bluetooth LE LLPM connection event, it is retransmitted in the subsequent connection event which effectively reduces the report rate.
+  By avoiding congested RF channels, the :ref:`nrf_desktop_ble_qos` helps to achieve better connection quality and a higher report rate.
+* For the USB device connected directly, you can configure your preferred USB HID poll interval using the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option.
+  By default, the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option is set to ``1`` to request the lowest possible poll interval.
+  Set parameters are not enforced, meaning that the HID host may still eventually use a value greater than the USB polling interval requested by a peripheral.
+
+Testing steps
+~~~~~~~~~~~~~
+
+After building the application, test the nRF Desktop by performing the following steps:
+
+1. Program the device with the built firmware.
+#. Connect the device to the computer using a preferred transport (Bluetooth LE, USB, dongle).
+#. Turn on the device.
+   If you use the motion simulated module to generate the mouse movement, the device should automatically start to draw an octagon shape on the screen.
+   Otherwise, you need to constantly keep generating motion manually, for example, by moving your mouse.
+#. Turn off the device to finalize test preparations.
+#. Launch selected HID report rate measurement tool.
+#. Turn back on the device.
+#. Run measurement.
+#. Verify the average HID report rate reported by tool.
+
 Windows Hardware Lab Kit tests
 ------------------------------
 
