@@ -7,10 +7,10 @@
 
 config WPA_SUPP
 	bool "WPA supplicant support"
-	depends on  NET_SOCKETS
 	# Need full POSIX from libc, Zephyr's POSIX support is only partial
 	depends on !POSIX_API
 	select POSIX_CLOCK
+	select NET_SOCKETS
 	select NET_SOCKETS_PACKET
 	select NET_SOCKETPAIR
 	select NET_L2_WIFI_MGMT
@@ -20,6 +20,10 @@ config WPA_SUPP
 	  WPA supplicant implements 802.1X related functions.
 
 if WPA_SUPP
+
+choice LIBC_IMPLEMENTATION
+	default NEWLIB_LIBC
+endchoice
 
 config WPA_SUPP_THREAD_STACK_SIZE
 	int "Stack size for wpa_supplicant thread"
