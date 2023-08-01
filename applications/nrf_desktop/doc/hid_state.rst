@@ -267,7 +267,7 @@ The :c:struct:`report_data` structure is passed as an argument to this function.
 Handling HID keyboard LED state
 ===============================
 
-When the |hid_state| receives a :c:struct:`hid_report_event` that contains an HID output report, it updates the remembered information about the state of the HID output report of the appropriate subscriber.
+When the |hid_state| receives a :c:struct:`hid_report_event` that contains a HID output report, it updates the remembered information about the state of the HID output report of the appropriate subscriber.
 
 By default, nRF Desktop supports only HID keyboard LED output report.
 The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the HID subscriber that subscribed for keyboard key HID input report.

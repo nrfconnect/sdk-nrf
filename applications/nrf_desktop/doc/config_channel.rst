@@ -381,7 +381,7 @@ Depending on the connection method:
   From the script user perspective, the device can be identified using type, board name or Hardware ID.
 
 .. note::
-   If the Low Latency Packet Mode (LLPM) connection interval is in use, the Bluetooth Peripheral can provide either an HID input report or a GATT write response during a single connection event.
+   If the Low Latency Packet Mode (LLPM) connection interval is in use, the Bluetooth Peripheral can provide either a HID input report or a GATT write response during a single connection event.
 
    To prevent HID input report rate drop while forwarding config channel report set operation, nRF Desktop Dongle can forward the data using GATT write without response.
    In that case, the peripheral does not have to provide the GATT write response instead of sending the HID input report.

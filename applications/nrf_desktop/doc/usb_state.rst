@@ -151,5 +151,5 @@ Upon data delivery, :c:struct:`hid_report_sent_event` is submitted by the module
 
 The |usb_state| is a transport for :ref:`nrf_desktop_config_channel` when the channel is enabled.
 
-The module also handles an HID keyboard LED output report received through USB from the connected host.
+The module also handles a HID keyboard LED output report received through USB from the connected host.
 The module sends the report using :c:struct:`hid_report_event`, that is handled either by :ref:`nrf_desktop_hid_state` (for peripheral) or by the :ref:`nrf_desktop_hid_forward` (for dongle).

@@ -70,7 +70,7 @@ The HID Service application module sends the report over Bluetooth LE and submit
 HID keyboard LED output report
 ==============================
 
-The module can receive an HID output report setting state of the keyboard LEDs, for example, state of the Caps Lock.
+The module can receive a HID output report setting state of the keyboard LEDs, for example, state of the Caps Lock.
 The report is received from the Bluetooth connected host.
 The module forwards the report using ``hid_report_event`` that is handled by |hid_state|.
 
