@@ -8,6 +8,7 @@
 #include <string.h>
 #include <cJSON.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/net/http/parser_url.h>
 #include <net/aws_jobs.h>
 
 #include "aws_fota_json.h"
@@ -60,7 +61,9 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 					   uint32_t payload_len,
 					   char *job_id_buf,
 					   char *hostname_buf,
+					   size_t hostname_buf_size,
 					   char *file_path_buf,
+					   size_t file_path_buf_size,
 					   int *execution_version_number)
 {
 	if (job_document == NULL
@@ -115,13 +118,38 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 
 	cJSON *hostname = cJSON_GetObjectItemCaseSensitive(location, "host");
 	cJSON *path = cJSON_GetObjectItemCaseSensitive(location, "path");
+	cJSON *url = cJSON_GetObjectItemCaseSensitive(location, "url");
 
-	if ((cJSON_GetStringValue(hostname) != NULL)
+	if (cJSON_GetStringValue(url) != NULL) {
+		struct http_parser_url u;
+
+		http_parser_url_init(&u);
+		http_parser_parse_url(url->valuestring, strlen(url->valuestring), false, &u);
+
+		/* Determine size of hostname and clamp to buffer size.
+		 * Length increased by one to get null termination at right spot when copying.
+		 */
+		uint16_t parsed_host_len =
+			MIN(hostname_buf_size, u.field_data[UF_HOST].len + 1);
+		strncpy_nullterm(hostname_buf,
+				url->valuestring + u.field_data[UF_HOST].off,
+				parsed_host_len);
+
+		/* Determine size of file path, consisting of the path and query parts of the URL.
+		 * Length increased by one for proper null termination and clamped to buffer size.
+		 * Copy starting from the path offset, increased by one to omit the initial slash.
+		 */
+		uint16_t parsed_file_len =
+			MIN(file_path_buf_size,
+			    u.field_data[UF_PATH].len + u.field_data[UF_QUERY].len + 1);
+		strncpy_nullterm(file_path_buf,
+				url->valuestring + u.field_data[UF_PATH].off + 1,
+				parsed_file_len);
+
+	} else if ((cJSON_GetStringValue(hostname) != NULL)
 	   && (cJSON_GetStringValue(path) != NULL)) {
-		strncpy_nullterm(hostname_buf, hostname->valuestring,
-				CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE);
-		strncpy_nullterm(file_path_buf, path->valuestring,
-				CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE);
+		strncpy_nullterm(hostname_buf, hostname->valuestring, hostname_buf_size);
+		strncpy_nullterm(file_path_buf, path->valuestring, file_path_buf_size);
 	} else {
 		ret = -ENODATA;
 		goto cleanup;

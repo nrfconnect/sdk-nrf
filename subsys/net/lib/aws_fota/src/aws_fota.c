@@ -243,8 +243,9 @@ static int get_job_execution(struct mqtt_client *const client,
 
 	/* Check if message received is a job. */
 	err = aws_fota_parse_DescribeJobExecution_rsp(payload_buf, payload_len,
-						      job_id_incoming, hostname,
-						      file_path,
+						      job_id_incoming,
+						      hostname, sizeof(hostname),
+						      file_path, sizeof(file_path),
 						      &execution_version_number);
 
 	if (err < 0) {
