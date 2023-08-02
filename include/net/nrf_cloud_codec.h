@@ -34,6 +34,10 @@ enum nrf_cloud_obj_type {
 	NRF_CLOUD_OBJ_TYPE__UNDEFINED,
 
 	NRF_CLOUD_OBJ_TYPE_JSON,
+	/** This object type is to be used to store only one of enum nrf_cloud_data_type
+	 *  using the corresponding field in the union in struct nrf_cloud_obj_coap_cbor.
+	 */
+	NRF_CLOUD_OBJ_TYPE_COAP_CBOR,
 
 	NRF_CLOUD_OBJ_TYPE__LAST,
 };
@@ -48,12 +52,41 @@ enum nrf_cloud_enc_src {
 	NRF_CLOUD_ENC_SRC_PRE_ENCODED,
 };
 
+/** @brief Data types for nrf_cloud_sensor_data. */
+enum nrf_cloud_data_type {
+	NRF_CLOUD_DATA_TYPE_NONE,
+	/** The struct nrf_cloud_gnss_pvt *pvt field points to the data. */
+	NRF_CLOUD_DATA_TYPE_PVT,
+	/** The const char *str_val field points to a NULL-terminated string. */
+	NRF_CLOUD_DATA_TYPE_STR,
+	/** The double double_val field contains the data. */
+	NRF_CLOUD_DATA_TYPE_DOUBLE,
+	/** The int int_val field contains the data. */
+	NRF_CLOUD_DATA_TYPE_INT
+};
+
+/** @brief Object to support nRF Cloud CoAP CBOR messages */
+struct nrf_cloud_obj_coap_cbor {
+	char *app_id;
+	/** type indicates which one of the fields in the union is valid. */
+	enum nrf_cloud_data_type type;
+	union {
+		struct nrf_cloud_data data;
+		char *str_val;
+		struct nrf_cloud_gnss_pvt *pvt;
+		double double_val;
+		int int_val;
+	};
+	int64_t ts;
+};
+
 /** @brief Object used for building nRF Cloud messages. */
 struct nrf_cloud_obj {
 
 	enum nrf_cloud_obj_type type;
 	union {
 		cJSON *json;
+		struct nrf_cloud_obj_coap_cbor *coap_cbor;
 	};
 
 	/** Source of encoded data */
@@ -70,6 +103,12 @@ struct nrf_cloud_obj {
  */
 #define NRF_CLOUD_OBJ_JSON_DEFINE(_name) \
 	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE_JSON, .json = NULL, \
+				       .enc_src = NRF_CLOUD_ENC_SRC_NONE, \
+				       .encoded_data = { .ptr = NULL, .len = 0 } }
+
+#define NRF_CLOUD_OBJ_COAP_CBOR_DEFINE(_name) \
+	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE_COAP_CBOR, \
+				       .coap_cbor = NULL, \
 				       .enc_src = NRF_CLOUD_ENC_SRC_NONE, \
 				       .encoded_data = { .ptr = NULL, .len = 0 } }
 

@@ -18,6 +18,7 @@ extern "C" {
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
+#include <net/nrf_cloud_codec.h>
 #include <zephyr/net/coap_client.h>
 
 /**
@@ -244,6 +245,17 @@ int nrf_cloud_coap_shadow_device_status_update(const struct nrf_cloud_device_sta
  * or a negative error number.
  */
 int nrf_cloud_coap_shadow_service_info_update(const struct nrf_cloud_svc_info * const svc_inf);
+
+/**
+ * @brief Send an nRF Cloud Object
+ *
+ * @param[in]     obj An nRF Cloud object. Will be encoded first if obj->enc_src is
+ * NRF_CLOUD_ENC_SRC_NONE.
+ *
+ * @return 0 if the request succeeded, a positive value indicating a CoAP result code,
+ * or a negative error number.
+ */
+int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj);
 
 /** @} */
 

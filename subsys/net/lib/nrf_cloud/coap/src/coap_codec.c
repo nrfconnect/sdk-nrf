@@ -37,10 +37,7 @@ LOG_MODULE_REGISTER(coap_codec, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
  */
 #define DEFAULT_MASK_ANGLE 5
 
-static int encode_message(const char *app_id, const char *str,
-			  const struct nrf_cloud_gnss_pvt *pvt,
-			  double float_val, int int_val,
-			  int64_t ts, uint8_t *buf, size_t *len,
+static int encode_message(struct nrf_cloud_obj_coap_cbor *msg, uint8_t *buf, size_t *len,
 			  enum coap_content_format fmt)
 {
 	int err;
@@ -50,37 +47,46 @@ static int encode_message(const char *app_id, const char *str,
 		size_t out_len;
 
 		memset(&input, 0, sizeof(struct message_out));
-		input._message_out_appId.value = app_id;
-		input._message_out_appId.len = strlen(app_id);
-		if (str) {
+		input._message_out_appId.value = msg->app_id;
+		input._message_out_appId.len = strlen(msg->app_id);
+
+		switch (msg->type) {
+		case NRF_CLOUD_DATA_TYPE_NONE:
+			LOG_ERR("Cannot encode unknown type.");
+			return -EINVAL;
+		case NRF_CLOUD_DATA_TYPE_STR:
 			input._message_out_data_choice = _message_out_data_tstr;
-			input._message_out_data_tstr.value = str;
-			input._message_out_data_tstr.len = strlen(str);
-		} else if (pvt) {
+			input._message_out_data_tstr.value = msg->str_val;
+			input._message_out_data_tstr.len = strlen(msg->str_val);
+			break;
+		case NRF_CLOUD_DATA_TYPE_PVT:
 			input._message_out_data_choice = _message_out_data__pvt;
-			input._message_out_data__pvt._pvt_lat = pvt->lat;
-			input._message_out_data__pvt._pvt_lng = pvt->lon;
-			input._message_out_data__pvt._pvt_acc = pvt->accuracy;
-			if (pvt->has_speed) {
-				input._message_out_data__pvt._pvt_spd._pvt_spd = pvt->speed;
+			input._message_out_data__pvt._pvt_lat = msg->pvt->lat;
+			input._message_out_data__pvt._pvt_lng = msg->pvt->lon;
+			input._message_out_data__pvt._pvt_acc = msg->pvt->accuracy;
+			if (msg->pvt->has_speed) {
+				input._message_out_data__pvt._pvt_spd._pvt_spd = msg->pvt->speed;
 				input._message_out_data__pvt._pvt_spd_present = true;
 			}
-			if (pvt->has_heading) {
-				input._message_out_data__pvt._pvt_hdg._pvt_hdg = pvt->heading;
+			if (msg->pvt->has_heading) {
+				input._message_out_data__pvt._pvt_hdg._pvt_hdg = msg->pvt->heading;
 				input._message_out_data__pvt._pvt_hdg_present = true;
 			}
-			if (pvt->has_alt) {
-				input._message_out_data__pvt._pvt_alt._pvt_alt = pvt->alt;
+			if (msg->pvt->has_alt) {
+				input._message_out_data__pvt._pvt_alt._pvt_alt = msg->pvt->alt;
 				input._message_out_data__pvt._pvt_alt_present = true;
 			}
-		} else if (!isnan(float_val)) {
-			input._message_out_data_choice = _message_out_data_float;
-			input._message_out_data_float = float_val;
-		} else {
+			break;
+		case NRF_CLOUD_DATA_TYPE_INT:
 			input._message_out_data_choice = _message_out_data_int;
-			input._message_out_data_int = int_val;
+			input._message_out_data_int = msg->int_val;
+			break;
+		case NRF_CLOUD_DATA_TYPE_DOUBLE:
+			input._message_out_data_choice = _message_out_data_float;
+			input._message_out_data_float = msg->double_val;
+			break;
 		}
-		input._message_out_ts._message_out_ts = ts;
+		input._message_out_ts._message_out_ts = msg->ts;
 		input._message_out_ts_present = true;
 		err = cbor_encode_message_out(buf, *len, &input, &out_len);
 		if (err) {
@@ -93,7 +99,8 @@ static int encode_message(const char *app_id, const char *str,
 	} else if (fmt == COAP_CONTENT_FORMAT_APP_JSON) {
 		struct nrf_cloud_data out;
 
-		err = nrf_cloud_encode_message(app_id, float_val, str, NULL, ts, &out);
+		err = nrf_cloud_encode_message(msg->app_id, msg->double_val, msg->str_val, NULL,
+					       msg->ts, &out);
 		if (err) {
 			*len = 0;
 		} else if (*len <= out.len) {
@@ -112,15 +119,15 @@ static int encode_message(const char *app_id, const char *str,
 	return err;
 }
 
-int coap_codec_message_encode(const char *app_id,
-			      const char *str_val, double float_val, int int_val,
-			      int64_t ts, uint8_t *buf, size_t *len, enum coap_content_format fmt)
+int coap_codec_message_encode(struct nrf_cloud_obj_coap_cbor *msg, uint8_t *buf, size_t *len,
+			      enum coap_content_format fmt)
 {
-	__ASSERT_NO_MSG(app_id != NULL);
+	__ASSERT_NO_MSG(msg != NULL);
+	__ASSERT_NO_MSG(msg->app_id != NULL);
 	__ASSERT_NO_MSG(buf != NULL);
 	__ASSERT_NO_MSG(len != NULL);
 
-	return encode_message(app_id, str_val, NULL, float_val, int_val, ts, buf, len, fmt);
+	return encode_message(msg, buf, len, fmt);
 }
 
 int coap_codec_sensor_encode(const char *app_id, double float_val,
@@ -130,7 +137,14 @@ int coap_codec_sensor_encode(const char *app_id, double float_val,
 	__ASSERT_NO_MSG(buf != NULL);
 	__ASSERT_NO_MSG(len != NULL);
 
-	return encode_message(app_id, NULL, NULL, float_val, 0, ts, buf, len, fmt);
+	struct nrf_cloud_obj_coap_cbor msg = {
+		.app_id		= (char *)app_id,
+		.type		= NRF_CLOUD_DATA_TYPE_DOUBLE,
+		.double_val	= float_val,
+		.ts		= ts
+	};
+
+	return encode_message(&msg, buf, len, fmt);
 }
 
 int coap_codec_pvt_encode(const char *app_id, const struct nrf_cloud_gnss_pvt *pvt,
@@ -141,7 +155,14 @@ int coap_codec_pvt_encode(const char *app_id, const struct nrf_cloud_gnss_pvt *p
 	__ASSERT_NO_MSG(buf != NULL);
 	__ASSERT_NO_MSG(len != NULL);
 
-	return encode_message(app_id, NULL, pvt, 0, 0, ts, buf, len, fmt);
+	struct nrf_cloud_obj_coap_cbor msg = {
+		.app_id		= (char *)app_id,
+		.type		= NRF_CLOUD_DATA_TYPE_PVT,
+		.pvt		= (struct nrf_cloud_gnss_pvt *)pvt,
+		.ts		= ts
+	};
+
+	return encode_message(&msg, buf, len, fmt);
 }
 
 static void copy_cell(struct cell *dst, struct lte_lc_cell const *const src)
