@@ -157,6 +157,7 @@ Wi-Fi
     This can be done by using the ``NET_IF_NO_AUTO_START`` flag.
   * Support for sending TWT sleep/wake events to applications.
   * The nRF5340 HFCLK192M clock divider is set to the default value ``Div4`` for lower power consumption when the QSPI peripheral is idle.
+  * Extensions to the scan command to provide better control over some scan parameters.
 
 Applications
 ============

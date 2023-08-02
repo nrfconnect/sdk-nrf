@@ -71,7 +71,28 @@ Supported CLI commands
    * - Subcommands
      - Description
    * - scan
-     - Scan for Wi-Fi APs
+     - | Scan for Wi-Fi APs
+       | OPTIONAL PARAMETERS:
+       | [-t, --type <active/passive>] : Preferred mode of scan. The actual mode
+       | of scan can depend on factors such as the Wi-Fi chip implementation,
+       | regulatory domain restrictions. Default type is active.
+       | [-b, --bands <Comma separated list of band values (2/5/6)>] : Bands to be
+       | scanned where 2: 2.4 GHz, 5: 5 GHz, 6: 6 GHz.
+       | [-a, --dwell_time_active <val_in_ms>] : Active scan dwell time (in ms) on
+       | a channel. Range 5 ms to 1000 ms.
+       | [-p, --dwell_time_passive <val_in_ms>] : Passive scan dwell time (in ms)
+       | on a channel. Range 10 ms to 1000 ms.
+       | [-s, --ssids <Comma separate list of SSIDs>] : SSID list to scan for.
+       | [-m, --max_bss <val>] : Maximum BSSes to scan for. Range 1 - 65535.
+       | [-c, --chans <Comma separated list of channel ranges>] : Channels to be
+       | scanned. The channels must be specified in the form
+       | band1:chan1,chan2_band2:chan3,..etc. band1, band2 must be valid band
+       | values and chan1, chan2, chan3 must be specified as a list of comma
+       | separated values where each value is either a single channel or a channel
+       | range specified as chan_start-chan_end. Each band channel set has to be
+       | separated by a _. For example, a valid channel specification can be
+       | 2:1,6-11,14_5:36,149-165,44
+       | [-h, --help] : Print out the help for the scan command.
    * - connect
      - | Connect to a Wi-Fi AP with the following parameters:
        | <SSID>
