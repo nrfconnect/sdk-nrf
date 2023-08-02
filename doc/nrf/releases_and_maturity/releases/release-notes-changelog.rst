@@ -347,6 +347,18 @@ Cellular samples (renamed from nRF9160 samples)
 
     * The sample to use the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
 
+* :ref:`lwm2m_client` sample:
+
+  * Added:
+
+    * An overlay for using DTLS Connection Identifier.
+      This significantly reduces the DTLS handshake overhead when doing the LwM2M Update operation.
+
+  * Updated:
+
+    * The sample now uses tickless operating mode from Zephyr's LwM2M engine which does not cause device wake-up in 500 ms interval anymore.
+      This allows the device to achieve 2 uA of current usage while in PSM sleep mode.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
@@ -554,6 +566,10 @@ Libraries for networking
 
     * Support for using pre-provisioned X.509 certificates.
     * Support for using DTLS Connection Identifier
+
+  * Updated:
+
+    * Zephyr's LwM2M Connectivity Monitor object now uses a 16-bit value for radio signal strength so it does not roll over on values smaller than -126 dBm.
 
 * :ref:`lib_aws_fota` library:
 
