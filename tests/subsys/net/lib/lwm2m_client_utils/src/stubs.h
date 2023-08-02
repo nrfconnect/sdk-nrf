@@ -81,7 +81,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_create_res_inst, const struct lwm2m_obj_path 
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_res_buf, const struct lwm2m_obj_path *, void *, uint16_t,
 			uint16_t, uint8_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_u32, const struct lwm2m_obj_path *, uint32_t);
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_s8, const struct lwm2m_obj_path *, int8_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_s16, const struct lwm2m_obj_path *, int16_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_s32, const struct lwm2m_obj_path *, int32_t);
 DECLARE_FAKE_VALUE_FUNC(int, modem_info_rsrp_register, rsrp_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_register_exec_callback, const struct lwm2m_obj_path *,
@@ -113,7 +113,7 @@ DECLARE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t
 	FUNC(lwm2m_get_res_buf)                         \
 	FUNC(lwm2m_get_u8)                              \
 	FUNC(lwm2m_get_bool)                            \
-	FUNC(lwm2m_set_s8)                              \
+	FUNC(lwm2m_set_s16)                             \
 	FUNC(lwm2m_set_s32)                             \
 	FUNC(lwm2m_set_opaque)                          \
 	FUNC(lwm2m_set_string)                          \

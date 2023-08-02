@@ -86,7 +86,7 @@ DEFINE_FAKE_VALUE_FUNC(int, lwm2m_create_res_inst, const struct lwm2m_obj_path *
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_res_buf, const struct lwm2m_obj_path *, void *, uint16_t,
 			     uint16_t, uint8_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_u32, const struct lwm2m_obj_path *, uint32_t);
-DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_s8, const struct lwm2m_obj_path *, int8_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_s16, const struct lwm2m_obj_path *, int16_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_set_s32, const struct lwm2m_obj_path *, int32_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_register_exec_callback, const struct lwm2m_obj_path *,
 		       lwm2m_engine_execute_cb_t);

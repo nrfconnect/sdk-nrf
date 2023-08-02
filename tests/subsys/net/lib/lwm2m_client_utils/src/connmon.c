@@ -23,7 +23,7 @@ static rsrp_cb_t modem_info_rsrp_cb;
 
 static uint8_t connmon_mode;
 
-static int8_t modem_rsrp_resource;
+static int16_t modem_rsrp_resource;
 
 static enum lte_lc_lte_mode lte_mode;
 
@@ -61,10 +61,10 @@ static int set_string_custom_fake(const struct lwm2m_obj_path *path, const char 
 	return 0;
 }
 
-static int set_s8_custom_fake(const struct lwm2m_obj_path *path, int8_t value)
+static int set_s16_custom_fake(const struct lwm2m_obj_path *path, int16_t value)
 {
 	if (path->obj_id == 4 && path->obj_inst_id == 0 && path->res_id == 2) {
-		zassert_equal((int8_t)RSRP_IDX_TO_DBM(modem_rsrp_resource), value);
+		zassert_equal((int16_t)RSRP_IDX_TO_DBM(modem_rsrp_resource), value);
 	} else {
 		zassert(0, "Invalid path");
 		return -EINVAL;
@@ -162,7 +162,7 @@ ZTEST(lwm2m_client_utils_connmon, test_connected)
 	modem_rsrp_resource = 50;
 	lte_lc_register_handler_fake.custom_fake = copy_event_handler;
 	lwm2m_set_string_fake.custom_fake = set_string_custom_fake;
-	lwm2m_set_s8_fake.custom_fake = set_s8_custom_fake;
+	lwm2m_set_s16_fake.custom_fake = set_s16_custom_fake;
 	modem_info_params_get_fake.custom_fake = copy_modem_info;
 	modem_info_rsrp_register_fake.custom_fake = copy_rsrp_handler;
 	lwm2m_init_connmon();
@@ -174,7 +174,7 @@ ZTEST(lwm2m_client_utils_connmon, test_connected)
 	zassert_equal(lwm2m_set_string_fake.call_count, 3, "Strings not set");
 	modem_info_rsrp_cb(modem_rsrp_resource);
 	k_sleep(K_MSEC(100));
-	zassert_equal(lwm2m_set_s8_fake.call_count, 1, "RSRP not set");
+	zassert_equal(lwm2m_set_s16_fake.call_count, 1, "RSRP not set");
 	evt.nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
 	handler(&evt);
 	k_sleep(K_MSEC(100));
