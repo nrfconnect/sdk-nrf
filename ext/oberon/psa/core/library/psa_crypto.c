@@ -30,6 +30,8 @@
 #include "check_crypto_config.h"
 #endif
 
+#include <zephyr/settings/settings.h>
+
 #include "psa/crypto.h"
 #include "psa_crypto_core.h"
 //#include "psa_crypto_invasive.h"
@@ -4831,6 +4833,8 @@ psa_status_t psa_crypto_init( void )
     status = psa_driver_wrapper_init( );
     if( status != PSA_SUCCESS )
         goto exit;
+
+    status = settings_subsys_init();
 
 #if defined(PSA_CRYPTO_STORAGE_HAS_TRANSACTIONS)
     status = psa_crypto_load_transaction( );
