@@ -1,0 +1,67 @@
+/ {
+	chosen {
+		zephyr,display = &ssd16xx;
+	};
+};
+
+&uart0 {
+	status = "disabled";
+};
+&i2c0 {
+	status = "disabled";
+};
+&uart1 {
+	status = "disabled";
+};
+&spi1 {
+	status = "disabled";
+};
+&adc {
+	status = "disabled";
+};
+&usbd {
+	status = "disabled";
+};
+&arduino_spi {
+	status = "okay";
+	cs-gpios = <&arduino_header 16 GPIO_ACTIVE_LOW>;	/* D10 */
+
+	ssd16xx: ssd16xxfb@0 {
+		compatible = "gooddisplay,gdeh0213b72", "solomon,ssd1675a", "solomon,ssd16xxfb";
+		spi-max-frequency = <4000000>;
+		reg = <0>;
+		width = <250>;
+		height = <122>;
+		dc-gpios = <&arduino_header 15 GPIO_ACTIVE_LOW>;	/* D9 */
+		reset-gpios = <&arduino_header 14 GPIO_ACTIVE_LOW>;	/* D8 */
+		busy-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;	/* D7 */
+
+		full {
+
+			gdv = [17]; //15
+			sdv = [41 00 32]; //41 a8 32
+			vcom = <0x36>; //0x26
+			border-waveform = <0x05>; //0x03
+			lut = [
+			80 4A 40 00 00 00 00 00 00 00 00 00
+			40 4A 80 00 00 00 00 00 00 00 00 00
+			80 4A 40 00 00 00 00 00 00 00 00 00
+			40 4A 80 00 00 00 00 00 00 00 00 00
+			00 00 00 00 00 00 00 00 00 00 00 00
+			0f 00 00 00 00 00 00
+			0f 00 00 0f 00 00 02
+			0f 00 00 00 00 00 00
+			01 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			00 00 00 00 00 00 00
+			22 22 22 22 22 22 00 00 00
+			];
+		};
+	};
+};

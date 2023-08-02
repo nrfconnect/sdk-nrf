@@ -1,0 +1,38 @@
+/ {
+	chosen {
+		zephyr,display = &ssd16xx;
+	};
+};
+
+&arduino_spi {
+	status = "okay";
+	cs-gpios = <&arduino_header 16 GPIO_ACTIVE_LOW>;
+
+	ssd16xx: ssd16xxfb@0 {
+		compatible = "gooddisplay,gdeh0213b72", "solomon,ssd1675a", "solomon,ssd16xxfb";
+		spi-max-frequency = <4000000>;
+		reg = <0>;
+		width = <250>;
+		height = <122>;
+		dc-gpios = <&arduino_header 15 GPIO_ACTIVE_LOW>;	/* D9 */
+		reset-gpios = <&arduino_header 14 GPIO_ACTIVE_LOW>;	/* D8 */
+		busy-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;	/* D7 */
+	};
+};
+
+// / {
+// 	fstab {
+// 		compatible = "zephyr,fstab";
+// 		lfs1: lfs1 {
+// 			compatible = "zephyr,fstab,littlefs";
+// 			mount-point = "/lfs1";
+// 			partition = <&lfs1_part>;
+// 			automount;
+// 			read-size = <16>;
+// 			prog-size = <16>;
+// 			cache-size = <64>;
+// 			lookahead-size = <32>;
+// 			block-cycles = <512>;
+// 		};
+// 	};
+// };

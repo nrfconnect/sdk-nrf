@@ -1,0 +1,115 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if BT_ESL_CLIENT
+
+config BT_NRF_SERVICES
+	bool
+	default y
+
+config BT_EXT_ADV
+	bool
+	default y
+
+config BT_EXT_ADV_MAX_ADV_SET
+	int
+	default 3
+
+config BT_PER_ADV
+	bool
+	default y
+
+config BT_PER_ADV_SYNC
+	bool
+	default y
+
+config BT_PER_ADV_RSP
+	bool
+	default y
+
+config BT_CTLR_SYNC_TRANSFER_SENDER_SUPPORT
+	bool
+	default y
+
+config BT_CTLR_SYNC_TRANSFER_SENDER
+	bool
+	default y
+
+config BT_PER_ADV_SYNC_TRANSFER_SENDER
+	bool
+	default y
+
+config BT_CTLR_SDC_PAWR_ADV
+	bool
+	default y
+
+config BT_CTLR_ADV_EXT
+	bool
+	default y
+
+config BT_BROADCASTER
+	bool
+	default y
+
+config BT_OTS_CLIENT
+	bool
+	default y
+
+config BT_OTS_OACP_CHECKSUM_SUPPORT
+	bool
+	default y
+
+config BT_L2CAP_TX_BUF_COUNT
+	int
+	default 8
+
+config BT_SHELL
+	default n
+
+endif # BT_ESL_CLIENT
+
+config BT_ESL_PERIPHERAL_MAX
+	int
+	default BT_MAX_CONN
+
+config BT_ESL_SCAN_REPORT_INTERVAL
+	default 120
+
+config BT_ESL_LED_INDICATION
+	default y
+
+# PAWR timing
+config ESL_PAWR_INTERVAL_MIN
+	int
+	default 1408
+
+config ESL_PAWR_INTERVAL_MAX
+	int
+	default 1408
+
+config ESL_CLIENT_MAX_GROUP
+	int
+	default 128
+
+config ESL_SUBEVENT_INTERVAL
+	int
+	default 11
+
+config ESL_RESPONSE_SLOT_DELAY
+	int
+	default 8
+
+config ESL_RESPONSE_SLOT_SPACING
+	int
+	default 3
+
+config ESL_NUM_RESPONSE_SLOTS
+	int
+	default 8
+
+config ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER
+	int
+	default 8

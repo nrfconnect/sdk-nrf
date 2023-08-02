@@ -1,0 +1,21 @@
+&uart0 {
+	status = "disabled";
+};
+&i2c0 {
+	status = "disabled";
+};
+&uart1 {
+	status = "disabled";
+};
+&spi1 {
+	status = "disabled";
+};
+&spi3 {
+	status = "disabled";
+};
+&adc {
+	status = "disabled";
+};
+&usbd {
+	status = "disabled";
+};

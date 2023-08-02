@@ -1,0 +1,147 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_NRF_SERVICES
+	bool
+	default y
+
+config SMF
+	bool
+	default y
+
+# Periodic Sync
+config BT_OBSERVER
+	bool
+	default y
+
+config BT_EXT_ADV
+	bool
+	default y
+
+config BT_PER_ADV_SYNC
+	bool
+	default y
+
+config BT_CTLR_SYNC_TRANSFER_RECEIVER_SUPPORT
+	bool
+	default y
+
+config BT_CTLR_SYNC_TRANSFER_RECEIVER
+	bool
+	default y
+
+config BT_PER_ADV_SYNC_TRANSFER_RECEIVER
+	bool
+	default y
+
+config BT_CTLR_SDC_PAWR_SYNC
+	bool
+	default y
+
+config BT_PER_ADV_SYNC_RSP
+	bool
+	default y
+
+config BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT
+	int
+	default 1
+
+# Display and Image
+if BT_ESL_DISPLAY_MAX > 0
+	config BT_ESL_IMAGE_AVAILABLE
+	bool
+	default y
+
+# BT Object Transfer service
+	config BT_OTS
+	bool
+	default y
+
+	config BT_L2CAP_DYNAMIC_CHANNEL
+	bool
+	default y
+
+	config BT_OTS_DIR_LIST_OBJ
+	bool
+	default y
+
+	config BT_OTS_OBJ_NAME_WRITE_SUPPORT
+	bool
+	default n
+
+	config BT_OTS_OACP_WRITE_SUPPORT
+	bool
+	default y
+
+	config BT_OTS_OACP_PATCH_SUPPORT
+	bool
+	default y
+
+	config BT_OTS_OLCP_GO_TO_SUPPORT
+	bool
+	default y
+
+	config BT_OTS_OACP_CHECKSUM_SUPPORT
+	bool
+	default y
+
+	choice BT_OTS_LOG_LEVEL_CHOICE
+		default BT_OTS_LOG_LEVEL_INF
+	endchoice
+
+	config FILE_SYSTEM
+	default n
+
+	config FILE_SYSTEM_LITTLEFS
+	default n
+
+	config FILE_SYSTEM_SHELL
+	default n
+
+endif
+
+# LED
+if BT_ESL_LED_MAX > 0
+	config LED
+	bool
+	default y
+
+	config PWM
+	bool
+	default n
+
+	config LED_PWM
+	bool
+	default n
+endif
+
+config BT_SHELL
+	default n
+
+config ESL_SYNC_COUNT
+	default 1
+
+choice BT_ESL_PERM
+	default BT_ESL_DEFAULT_PERM_RW
+endchoice # BT_ESL_PERM
+
+config NRFX_TEMP
+	bool
+	default y
+
+# Device Information Service
+config BT_DIS
+	default y
+
+config BT_DIS_PNP
+	default y
+
+config BT_DIS_FW_REV
+	default y
+
+config BT_DIS_FW_REV_STR
+	default MCUBOOT_IMAGE_VERSION if BOOTLOADER_MCUBOOT
+	default "0.0.0"

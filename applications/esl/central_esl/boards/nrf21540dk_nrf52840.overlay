@@ -1,0 +1,54 @@
+ / {
+	chosen {
+		zephyr,uart-mcumgr = &cdc_acm_uart1;
+		zephyr,console = &cdc_acm_uart0;
+		zephyr,shell-uart = &cdc_acm_uart0;
+	};
+};
+
+/delete-node/ &storage_partition;
+/ {
+	fstab {
+		compatible = "zephyr,fstab";
+		lfs1: lfs1 {
+			compatible = "zephyr,fstab,littlefs";
+			mount-point = "/ots_image";
+			partition = <&lfs1_part>;
+			read-size = <16>;
+			prog-size = <16>;
+			cache-size = <64>;
+			lookahead-size = <32>;
+			block-cycles = <512>;
+		};
+	};
+};
+
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		storage_partition: partition@d8000 {
+			label = "storage";
+			reg = < 0xd8000 0x8000 >;
+		};
+		lfs1_part: partition@e0000 {
+			label = "littlefs_storage";
+			reg = <0xe0000 0x20000>;
+		};
+	};
+};
+
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+
+	cdc_acm_uart1: cdc_acm_uart1 {
+		current-speed=<1000000>;
+		compatible = "zephyr,cdc-acm-uart";
+	};
+
+};
