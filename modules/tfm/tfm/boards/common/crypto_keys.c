@@ -204,13 +204,7 @@ enum tfm_plat_err_t tfm_plat_load_builtin_keys(void)
 	plat_err = tfm_plat_get_iak(buf, sizeof(buf), &key_len, &key_bits,
 				    &algorithm, &type);
 	if (plat_err != TFM_PLAT_ERR_SUCCESS) {
-#ifdef NRF_PROVISIONING
 		return TFM_PLAT_ERR_SYSTEM_ERR;
-#else
-		/* NCSDK-19927: Let the system boot without an IAK provisioned */
-		SPMLOG_ERRMSG("No initial attestation key (IAK) provisioned\r\n");
-		return TFM_PLAT_ERR_SUCCESS;
-#endif
 	}
 
 	key_id.MBEDTLS_PRIVATE(key_id) = TFM_BUILTIN_KEY_ID_IAK;
