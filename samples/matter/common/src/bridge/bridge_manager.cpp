@@ -6,21 +6,6 @@
 
 #include "bridge_manager.h"
 
-#if CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-#include "onoff_light.h"
-#include "onoff_light_data_provider.h"
-#endif
-
-#if CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
-#include "temperature_sensor.h"
-#include "temperature_sensor_data_provider.h"
-#endif
-
-#if CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-#include "humidity_sensor.h"
-#include "humidity_sensor_data_provider.h"
-#endif
-
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/reporting/reporting.h>
 #include <app/util/generic-callbacks.h>
@@ -48,57 +33,10 @@ void BridgeManager::Init()
 				     false);
 }
 
-CHIP_ERROR BridgeManager::AddBridgedDevice(BridgedDevice::DeviceType bridgedDeviceType, const char *nodeLabel)
+CHIP_ERROR BridgeManager::AddBridgedDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider)
 {
-	Platform::UniquePtr<BridgedDevice> device(nullptr);
-	Platform::UniquePtr<BridgedDeviceDataProvider> dataProvider(nullptr);
-
-	if (nodeLabel && (strlen(nodeLabel) >= BridgedDevice::kNodeLabelSize)) {
-		return CHIP_ERROR_INVALID_STRING_LENGTH;
-	}
-
-	switch (bridgedDeviceType) {
-#if CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-	case BridgedDevice::DeviceType::OnOffLight: {
-		LOG_INF("Adding OnOff Light bridged device");
-		dataProvider.reset(Platform::New<OnOffLightDataProvider>(BridgeManager::HandleUpdate));
-		device.reset(Platform::New<OnOffLightDevice>(nodeLabel));
-		break;
-	}
-#endif /* CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE */
-#if CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
-	case BridgedDevice::DeviceType::TemperatureSensor: {
-		LOG_INF("Adding TemperatureSensor bridged device");
-		dataProvider.reset(Platform::New<TemperatureSensorDataProvider>(BridgeManager::HandleUpdate));
-		device.reset(Platform::New<TemperatureSensorDevice>(nodeLabel));
-		break;
-	}
-#endif /* CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE */
-#if CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-	case BridgedDevice::DeviceType::HumiditySensor: {
-		LOG_INF("Adding HumiditySensor bridged device");
-		dataProvider.reset(Platform::New<HumiditySensorDataProvider>(BridgeManager::HandleUpdate));
-		device.reset(Platform::New<HumiditySensorDevice>(nodeLabel));
-		break;
-	}
-#endif /* CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE */
-	default:
-		return CHIP_ERROR_INVALID_ARGUMENT;
-	}
-
-	if (device == nullptr || device->mDataVersion == nullptr) {
-		return CHIP_ERROR_NO_MEMORY;
-	}
-
-	dataProvider->Init();
-	CHIP_ERROR err = AddDevice(device.get());
-
-	/* In case adding succedeed map the objects relationship and release the ownership. */
-	if (err == CHIP_NO_ERROR) {
-		mDevicesMap[device.get()] = dataProvider.get();
-		device.release();
-		dataProvider.release();
-	}
+	aDataProvider->Init();
+	CHIP_ERROR err = AddDevices(aDevice, aDataProvider);
 
 	return err;
 }
@@ -108,46 +46,68 @@ CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint)
 	uint8_t index = 0;
 
 	while (index < kMaxBridgedDevices) {
-		if (nullptr != mBridgedDevices[index]) {
-			if (mBridgedDevices[index]->GetEndpointId() == endpoint) {
+		if (mDevicesMap.Contains(index)) {
+			const DevicePair *devicesPtr = mDevicesMap[index];
+			if (devicesPtr->mDevice->GetEndpointId() == endpoint) {
 				LOG_INF("Removed dynamic endpoint %d (index=%d)", endpoint, index);
 				/* Free dynamically allocated memory */
 				emberAfClearDynamicEndpoint(index);
-				Platform::Delete(mDevicesMap[mBridgedDevices[index]]);
-				Platform::Delete(mBridgedDevices[index]);
-				mBridgedDevices[index] = nullptr;
-				return CHIP_NO_ERROR;
+				if (mDevicesMap.Erase(index)) {
+					mNumberOfProviders--;
+					return CHIP_NO_ERROR;
+				} else {
+					LOG_ERR("Cannot remove bridged devices under index=%d", index);
+					return CHIP_ERROR_NOT_FOUND;
+				}
 			}
 		}
 		index++;
 	}
-
 	return CHIP_ERROR_NOT_FOUND;
 }
 
-CHIP_ERROR BridgeManager::AddDevice(BridgedDevice *device)
+CHIP_ERROR BridgeManager::AddDevices(BridgedDevice *aDevice, BridgedDeviceDataProvider *aDataProvider)
 {
 	uint8_t index = 0;
 
+	Platform::UniquePtr<BridgedDevice> device(aDevice);
+	Platform::UniquePtr<BridgedDeviceDataProvider> provider(aDataProvider);
+	VerifyOrReturnError(device && provider, CHIP_ERROR_INTERNAL);
+
+	/* Maximum number of Matter bridged devices is controlled inside mDevicesMap,
+	   but the data providers may be created independently, so let's ensure we do not
+	   violate the maximum number of supported instances. */
+	VerifyOrReturnError(!mDevicesMap.IsFull(), CHIP_ERROR_INTERNAL);
+	VerifyOrReturnError(mNumberOfProviders + 1 <= kMaxDataProviders, CHIP_ERROR_INTERNAL);
+	mNumberOfProviders++;
+
 	while (index < kMaxBridgedDevices) {
-		/* Find the first empty index in the brdiged devices list */
-		if (nullptr == mBridgedDevices[index]) {
+		/* Find the first empty index in the bridged devices list */
+		if (!mDevicesMap.Contains(index)) {
+			mDevicesMap.Insert(index, DevicePair(std::move(device), std::move(provider)));
 			EmberAfStatus ret;
 			while (true) {
+				if (!mDevicesMap[index]) {
+					LOG_ERR("Cannot retrieve bridged device from index %d", index);
+					return CHIP_ERROR_INTERNAL;
+				}
+				auto &storedDevice = mDevicesMap[index]->mDevice;
 				ret = emberAfSetDynamicEndpoint(
-					index, mCurrentDynamicEndpointId, device->mEp,
-					Span<DataVersion>(device->mDataVersion, device->mDataVersionSize),
-					Span<const EmberAfDeviceType>(device->mDeviceTypeList,
-								      device->mDeviceTypeListSize));
+					index, mCurrentDynamicEndpointId, storedDevice->mEp,
+					Span<DataVersion>(storedDevice->mDataVersion, storedDevice->mDataVersionSize),
+					Span<const EmberAfDeviceType>(storedDevice->mDeviceTypeList,
+								      storedDevice->mDeviceTypeListSize));
 
 				if (ret == EMBER_ZCL_STATUS_SUCCESS) {
 					LOG_INF("Added device to dynamic endpoint %d (index=%d)",
 						mCurrentDynamicEndpointId, index);
-					mBridgedDevices[index] = device;
-					device->Init(mCurrentDynamicEndpointId);
+					storedDevice->Init(mCurrentDynamicEndpointId);
 					return CHIP_NO_ERROR;
 				} else if (ret != EMBER_ZCL_STATUS_DUPLICATE_EXISTS) {
 					LOG_ERR("Failed to add dynamic endpoint: Internal error!");
+					RemoveBridgedDevice(mCurrentDynamicEndpointId); // TODO: check if this is ok, we
+											// need to cleanup the unused
+											// devices
 					return CHIP_ERROR_INTERNAL;
 				}
 
@@ -165,48 +125,30 @@ CHIP_ERROR BridgeManager::AddDevice(BridgedDevice *device)
 	return CHIP_ERROR_NO_MEMORY;
 }
 
-BridgedDevice *BridgeManager::GetBridgedDevice(uint16_t endpoint, const EmberAfAttributeMetadata *attributeMetadata,
-					       uint8_t *buffer)
-{
-	if (endpoint >= kMaxBridgedDevices) {
-		return nullptr;
-	}
-
-	BridgedDevice *device = sBridgeManager.mBridgedDevices[endpoint];
-	if ((device == nullptr) || !buffer || !attributeMetadata) {
-		return nullptr;
-	}
-	return device;
-}
-
-CHIP_ERROR BridgeManager::HandleRead(uint16_t endpoint, ClusterId clusterId,
+CHIP_ERROR BridgeManager::HandleRead(uint16_t index, ClusterId clusterId,
 				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 				     uint16_t maxReadLength)
 {
-	BridgedDevice *device = GetBridgedDevice(endpoint, attributeMetadata, buffer);
+	VerifyOrReturnError(attributeMetadata && buffer, CHIP_ERROR_INVALID_ARGUMENT);
+	VerifyOrReturnValue(sBridgeManager.mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
 
-	if (!device) {
-		return CHIP_ERROR_INVALID_ARGUMENT;
-	}
-
+	auto &device = sBridgeManager.mDevicesMap[index]->mDevice;
 	return device->HandleRead(clusterId, attributeMetadata->attributeId, buffer, maxReadLength);
 }
 
-CHIP_ERROR BridgeManager::HandleWrite(uint16_t endpoint, ClusterId clusterId,
+CHIP_ERROR BridgeManager::HandleWrite(uint16_t index, ClusterId clusterId,
 				      const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer)
 {
-	BridgedDevice *device = GetBridgedDevice(endpoint, attributeMetadata, buffer);
+	VerifyOrReturnError(attributeMetadata && buffer, CHIP_ERROR_INVALID_ARGUMENT);
+	VerifyOrReturnValue(sBridgeManager.mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
 
-	if (!device) {
-		return CHIP_ERROR_INVALID_ARGUMENT;
-	}
-
+	auto &device = sBridgeManager.mDevicesMap[index]->mDevice;
 	CHIP_ERROR err = device->HandleWrite(clusterId, attributeMetadata->attributeId, buffer);
 
 	/* After updating Matter BridgedDevice state, forward request to the non-Matter device. */
 	if (err == CHIP_NO_ERROR) {
-		return sBridgeManager.mDevicesMap[device]->UpdateState(clusterId, attributeMetadata->attributeId,
-								       buffer);
+		return sBridgeManager.mDevicesMap[index]->mProvider->UpdateState(
+			clusterId, attributeMetadata->attributeId, buffer);
 	}
 	return err;
 }
@@ -214,18 +156,17 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t endpoint, ClusterId clusterId,
 void BridgeManager::HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
 				 chip::AttributeId attributeId, void *data, size_t dataSize)
 {
-	if (!data) {
-		return;
-	}
+	VerifyOrReturn(data);
 
-	/* The state update was triggered by non-Matter device, find related Matter Bridged Device to update it as well.
+	/* The state update was triggered by non-Matter device, find related Matter Bridged Device to update it as
+	well.
 	 */
-	for (auto &item : sBridgeManager.mDevicesMap) {
-		if (item.second == &dataProvider) {
+	for (auto &item : sBridgeManager.mDevicesMap.mMap) {
+		if (item.value.mProvider.get() == &dataProvider) {
 			/* If the Bridged Device state was updated successfully, schedule sending Matter data report. */
 			if (CHIP_NO_ERROR ==
-			    item.first->HandleAttributeChange(clusterId, attributeId, data, dataSize)) {
-				MatterReportingAttributeChangeCallback(item.first->GetEndpointId(), clusterId,
+			    item.value.mDevice->HandleAttributeChange(clusterId, attributeId, data, dataSize)) {
+				MatterReportingAttributeChangeCallback(item.value.mDevice->GetEndpointId(), clusterId,
 								       attributeId);
 			}
 		}

@@ -34,6 +34,7 @@ target_include_directories(app PRIVATE
     src/bridged_device_types
     ${COMMON_ROOT}/src
     ${COMMON_ROOT}/src/bridge/
+    ${COMMON_ROOT}/src/bridge/util
     ${NLIO_ROOT}/include
     ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/zzz_generated/app-common
 )
@@ -41,8 +42,8 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
     src/app_task.cpp
     src/main.cpp
+    src/bridge_shell.cpp
     ${COMMON_ROOT}/src/bridge/bridge_manager.cpp
-    ${COMMON_ROOT}/src/bridge/bridge_shell.cpp
     ${COMMON_ROOT}/src/bridge/bridged_device.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
