@@ -38,7 +38,7 @@
 
 class BridgedDevice {
 public:
-	enum class DeviceType : uint16_t {
+	enum DeviceType : uint16_t {
 		BridgedNode = 0x0013,
 		OnOffLight = 0x0100,
 		TemperatureSensor = 0x0302,
