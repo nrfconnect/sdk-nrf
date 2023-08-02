@@ -137,6 +137,35 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms);
 
 /**
+ * @brief Send a message string to nRF Cloud.
+ *
+ *  The CoAP message is sent as a non-confirmable CoAP message.
+ *
+ * @param[in]     app_id     The app_id identifying the type of data. See the values in
+ *                           nrf_cloud_defs.h that begin with  NRF_CLOUD_JSON_APPID_.
+ *                           You may also use custom names.
+ * @param[in]     message    The string to send.
+ * @param[in]     json       Set true if the data should be sent in JSON format, otherwise CBOR.
+ * @param[in]     ts_ms      Timestamp the data was measured, or NRF_CLOUD_NO_TIMESTAMP.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool json, int64_t ts_ms);
+
+/**
+ * @brief Send a preencoded JSON message to nRF Cloud.
+ *
+ *  The CoAP message is sent as a non-confirmable CoAP message.
+ *
+ * @param[in]     message    The string to send.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_coap_json_message_send(const char *message);
+
+/**
  * @brief Send the device location in the @ref nrf_cloud_gnss_data PVT field to nRF Cloud.
  *
  *  The CoAP message is sent as a non-confirmable CoAP message. Only
@@ -247,7 +276,9 @@ int nrf_cloud_coap_shadow_device_status_update(const struct nrf_cloud_device_sta
 int nrf_cloud_coap_shadow_service_info_update(const struct nrf_cloud_svc_info * const svc_inf);
 
 /**
- * @brief Send an nRF Cloud Object
+ * @brief Send an nRF Cloud object
+ *
+ * This only supports sending of the CoAP CBOR or JSON type or a pre-encoded CBOR buffer.
  *
  * @param[in]     obj An nRF Cloud object. Will be encoded first if obj->enc_src is
  * NRF_CLOUD_ENC_SRC_NONE.

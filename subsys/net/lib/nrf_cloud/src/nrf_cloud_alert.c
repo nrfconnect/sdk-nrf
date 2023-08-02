@@ -13,6 +13,9 @@
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
 #include <net/nrf_cloud_rest.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif
 #include <net/nrf_cloud_alert.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_alert, CONFIG_NRF_CLOUD_ALERT_LOG_LEVEL);
@@ -143,6 +146,49 @@ int nrf_cloud_rest_alert_send(struct nrf_cloud_rest_context *const rest_ctx,
 #endif /* CONFIG_NRF_CLOUD_ALERT */
 }
 #endif /* CONFIG_NRF_CLOUD_REST */
+
+#if defined(CONFIG_NRF_CLOUD_COAP)
+int nrf_cloud_alert_send(enum nrf_cloud_alert_type type,
+			 float value,
+			 const char *description)
+{
+#if defined(CONFIG_NRF_CLOUD_ALERT)
+	struct nrf_cloud_data data;
+	int err;
+
+	if (!alerts_enabled) {
+		return 0;
+	}
+	(void)nrf_cloud_codec_init(NULL);
+	err = alert_prepare(&data, type, value, description);
+	if (!err) {
+		LOG_DBG("Encoded alert: %s", (const char *)data.ptr);
+	} else {
+		LOG_ERR("Error encoding alert: %d", err);
+		return err;
+	}
+
+	/* send to d2c topic */
+	err = nrf_cloud_coap_json_message_send(data.ptr);
+	if (!err) {
+		LOG_DBG("Send alert via CoAP");
+	} else {
+		LOG_ERR("Error sending alert via CoAP: %d", err);
+	}
+
+	if (data.ptr != NULL) {
+		cJSON_free((void *)data.ptr);
+	}
+	return err;
+#else
+	ARG_UNUSED(type);
+	ARG_UNUSED(value);
+	ARG_UNUSED(description);
+
+	return 0;
+#endif /* CONFIG_NRF_CLOUD_ALERT */
+}
+#endif /* CONFIG_NRF_CLOUD_COAP */
 
 void nrf_cloud_alert_control_set(bool enable)
 {

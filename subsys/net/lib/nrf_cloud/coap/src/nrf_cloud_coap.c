@@ -170,6 +170,13 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
 		return -EINVAL;
 	}
 
+	/* Only support sending of the CoAP CBOR or JSON type or a pre-encoded CBOR buffer. */
+	if ((obj->type != NRF_CLOUD_OBJ_TYPE_COAP_CBOR) &&
+	    (obj->type != NRF_CLOUD_OBJ_TYPE_JSON) &&
+	    (obj->enc_src != NRF_CLOUD_ENC_SRC_PRE_ENCODED)) {
+		return -ENOTSUP;
+	}
+
 	int err = 0;
 	bool enc = false;
 
@@ -183,7 +190,9 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
 	}
 
 	err = nrf_cloud_coap_post("msg/d2c", NULL, obj->encoded_data.ptr, obj->encoded_data.len,
-				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
+				  (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR) ?
+				   COAP_CONTENT_FORMAT_APP_CBOR : COAP_CONTENT_FORMAT_APP_JSON,
+				  false, NULL, NULL);
 	if (err) {
 		LOG_ERR("Failed to send POST request: %d", err);
 	}

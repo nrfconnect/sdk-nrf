@@ -374,7 +374,7 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 
 static int client_transfer(enum coap_method method,
 			   const char *resource, const char *query,
-			   uint8_t *buf, size_t buf_len,
+			   const uint8_t *buf, size_t buf_len,
 			   enum coap_content_format fmt_out,
 			   enum coap_content_format fmt_in,
 			   bool response_expected,
@@ -402,7 +402,7 @@ static int client_transfer(enum coap_method method,
 		.confirmable = reliable,
 		.path = path,
 		.fmt = fmt_out,
-		.payload = buf,
+		.payload = (uint8_t *)buf,
 		.len = buf_len,
 		.cb = client_callback,
 		.user_data = &user_cb
@@ -462,7 +462,7 @@ static int client_transfer(enum coap_method method,
 }
 
 int nrf_cloud_coap_get(const char *resource, const char *query,
-		       uint8_t *buf, size_t len,
+		       const uint8_t *buf, size_t len,
 		       enum coap_content_format fmt_out,
 		       enum coap_content_format fmt_in, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
@@ -472,7 +472,7 @@ int nrf_cloud_coap_get(const char *resource, const char *query,
 }
 
 int nrf_cloud_coap_post(const char *resource, const char *query,
-			uint8_t *buf, size_t len,
+			const uint8_t *buf, size_t len,
 			enum coap_content_format fmt, bool reliable,
 			coap_client_response_cb_t cb, void *user)
 {
@@ -481,7 +481,7 @@ int nrf_cloud_coap_post(const char *resource, const char *query,
 }
 
 int nrf_cloud_coap_put(const char *resource, const char *query,
-		       uint8_t *buf, size_t len,
+		       const uint8_t *buf, size_t len,
 		       enum coap_content_format fmt, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
 {
@@ -490,7 +490,7 @@ int nrf_cloud_coap_put(const char *resource, const char *query,
 }
 
 int nrf_cloud_coap_delete(const char *resource, const char *query,
-			  uint8_t *buf, size_t len,
+			  const uint8_t *buf, size_t len,
 			  enum coap_content_format fmt, bool reliable,
 			  coap_client_response_cb_t cb, void *user)
 {
@@ -499,7 +499,7 @@ int nrf_cloud_coap_delete(const char *resource, const char *query,
 }
 
 int nrf_cloud_coap_fetch(const char *resource, const char *query,
-			 uint8_t *buf, size_t len,
+			 const uint8_t *buf, size_t len,
 			 enum coap_content_format fmt_out,
 			 enum coap_content_format fmt_in, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
@@ -509,7 +509,7 @@ int nrf_cloud_coap_fetch(const char *resource, const char *query,
 }
 
 int nrf_cloud_coap_patch(const char *resource, const char *query,
-			 uint8_t *buf, size_t len,
+			 const uint8_t *buf, size_t len,
 			 enum coap_content_format fmt, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
 {
