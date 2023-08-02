@@ -581,6 +581,11 @@ Libraries for networking
 
 * :ref:`lib_aws_fota` library:
 
+  * Added:
+
+    * Support for a single ``url`` field in job documents.
+      Previously the host name and path of the download URL could only be specified separately.
+
   * Updated:
 
     * The :kconfig:option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.

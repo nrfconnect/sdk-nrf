@@ -82,6 +82,7 @@ Creating a FOTA job
          }
       }
 
+   To use a single URL, such as when using presigned AWS S3 URLs, see :ref:`aws_iot_jobs`.
    See `AWS IoT Developer Guide: Jobs`_ for more information about AWS jobs.
 #. In the `AWS S3 console`_ Select the bucket, click :guilabel:`Upload`, and upload your job document.
    You must now have two files in your bucket, the uploaded image and the job document.
@@ -142,6 +143,8 @@ The following sequence diagram shows how a firmware over-the-air update is imple
    * The other device has valid (but different) certificates that use the same AWS IoT policy as the original device.
    * The other device is subscribed to the same MQTT topic as the original device.
 
+.. _aws_iot_jobs:
+
 AWS IoT jobs
 ============
 
@@ -161,12 +164,26 @@ The implementation uses a job document like the following (where *bucket_name* i
       }
    }
 
-The current implementation uses information from the ``host`` and ``path`` fields only.
+Alternatively, to use a single URL, a document like the following can be used:
+
+.. parsed-literal::
+   :class: highlight
+
+   {
+     "operation": "app_fw_update",
+     "fwversion": "v1.0.2",
+     "size": 181124,
+     "location": {
+       "url": "*url*"
+      }
+   }
+
+For information on how to use presigned AWS S3 URLs, refer to `AWS IoT Developer Guide: Managing Jobs`_.
 
 Limitations
 ***********
 
-* Currently, the library uses HTTP for downloading the firmware.
+* The current implementation ignores the value specified in the ``protocol`` field and uses HTTP by default.
   To use HTTPS instead, apply the changes described in :ref:`the HTTPS section of the download client documentation <download_client_https>` to the :ref:`lib_fota_download` library.
 * The library requires a Content-Range header to be present in the HTTP response from the server.
   This limitation is inherited from the :ref:`lib_download_client` library.

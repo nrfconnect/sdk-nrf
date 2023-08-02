@@ -48,8 +48,10 @@ extern "C" {
  *			   JobExecution data type.
  * @param[out] hostname_buf  Output buffer for the "host" field from the Job
  *			     Document
+ * @param[in] hostname_buf_size  Size of the output buffer for the "host" field
  * @param[out] file_path_buf  Output buffer for the "file" field from the Job
  *			      Document
+ * @param[in] file_path_buf_size  Size of the output buffer for the "file" field
  * @param[out] version_number  Version number from the Job Execution data type.
  *
  * @return 0 if the Job Execution object is empty, 1 if Job Execution object was
@@ -60,7 +62,9 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 					    uint32_t payload_len,
 					    char *job_id_buf,
 					    char *hostname_buf,
+					    size_t hostname_buf_size,
 					    char *file_path_buf,
+					    size_t file_path_buf_size,
 					    int *version_number);
 
 /**
