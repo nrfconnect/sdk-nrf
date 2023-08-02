@@ -111,6 +111,16 @@ This will result in a new full handshake of the DTLS connection and the need to 
 Due to the same limitations in the modem, a call to :c:func:`nrf_cloud_coap_disconnect` followed by a subsequent call to :c:func:`nrf_cloud_coap_connect` will require a full DTLS handshake and reauthentication.
 This is true whether or not the LTE connection is intact.
 
+References
+**********
+
+`RFC 7252 - The Constrained Application Protocol`_
+`RFC 7959 - Block-Wise Transfer in CoAP`_
+`RFC 7049 - Concise Binary Object Representation`_
+`RFC 8610 - Concise Data Definition Language (CDDL)`_
+`RFC 8132 - PATCH and FETCH Methods for CoAP`_
+`RFC 9146 - Connection Identifier for DTLS 1.2`_
+
 Dependencies
 ************
 

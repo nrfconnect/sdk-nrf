@@ -772,6 +772,11 @@
 .. _`CoAP response codes`: https://datatracker.ietf.org/doc/html/rfc7252#section-12.1.2
 
 .. _`RFC 7252 - The Constrained Application Protocol`: https://datatracker.ietf.org/doc/html/rfc7252
+.. _`RFC 7959 - Block-Wise Transfer in CoAP`: https://datatracker.ietf.org/doc/html/rfc7959
+.. _`RFC 7049 - Concise Binary Object Representation`: https://datatracker.ietf.org/doc/html/rfc7049
+.. _`RFC 8610 - Concise Data Definition Language (CDDL)`: https://datatracker.ietf.org/doc/html/rfc8610
+.. _`RFC 8132 - PATCH and FETCH Methods for CoAP`: https://datatracker.ietf.org/doc/html/rfc8132
+.. _`RFC 9146 - Connection Identifier for DTLS 1.2`: https://datatracker.ietf.org/doc/html/rfc9146
 
 .. _`Content-Range requests (IETF RFC 7233)`: https://datatracker.ietf.org/doc/html/rfc7233
 
@@ -951,6 +956,7 @@
 
 .. _`nRF Cloud`:
 .. _`nRF Connect for Cloud`: https://nrfcloud.com/
+.. _`Provision Devices`: http://nrfcloud.com/#/provision-devices
 
 .. _`nRF Cloud documentation`:
 .. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/

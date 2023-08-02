@@ -2008,9 +2008,9 @@ NCSDK-18847: :ref:`radio_test` sample does not build with support for Skyworks f
 
 .. rst-class:: v2-3-0
 
-NCSDK-19858: :ref:`at_monitor_readme` library and :ref:`nrf_cloud_mqtt_multi_service` sample heap overrun
+NCSDK-19858: :ref:`at_monitor_readme` library and :ref:`nrf_cloud_multi_service` sample heap overrun
   Occasionally, the :ref:`at_monitor_readme` library heap becomes overrun, presumably due to one of the registered AT event listeners becoming stalled.
-  This has only been observed with the :ref:`nrf_cloud_mqtt_multi_service` sample.
+  This has only been observed with the :ref:`nrf_cloud_multi_service` sample.
 
 .. rst-class:: v2-3-0 v2-2-0
 

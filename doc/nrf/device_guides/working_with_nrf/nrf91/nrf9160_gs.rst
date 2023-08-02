@@ -73,7 +73,7 @@ Application firmware
   For the iBasis SIM card provided with the nRF9160 DK, see `iBasis IoT network coverage`_.
   If your location has support for both, you can choose either one.
 
-  Alternatively, for a more concise nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_mqtt_multi_service` sample.
+  Alternatively, for a more concise nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
   See :ref:`gs_programming` for details on building a firmware sample application.
 
 Application firmware for Device Firmware Update (DFU)

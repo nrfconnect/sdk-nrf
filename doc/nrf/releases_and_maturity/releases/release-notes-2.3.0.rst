@@ -525,7 +525,7 @@ nRF9160 samples
 
   * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
-* :ref:`nrf_cloud_mqtt_multi_service` sample:
+* :ref:`nrf_cloud_multi_service` sample:
 
   * Added:
 
