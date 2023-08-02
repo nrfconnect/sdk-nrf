@@ -134,7 +134,7 @@ static void modem_signal_update(struct k_work *work)
 		return;
 	}
 
-	lwm2m_set_s8(&LWM2M_OBJ(4, 0, 2), modem_rsrp);
+	lwm2m_set_s16(&LWM2M_OBJ(4, 0, 2), modem_rsrp);
 	timestamp_prev = k_uptime_get_32();
 }
 
