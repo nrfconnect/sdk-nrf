@@ -24,6 +24,7 @@ General information about samples in the |NCS|
    :glob:
    :caption: Subpages:
 
+   samples/amazon_sidewalk
    samples/bl
    samples/cellular
    samples/crypto

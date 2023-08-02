@@ -1287,3 +1287,9 @@
 .. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
 
 .. _`Wireshark`: https://www.wireshark.org
+
+.. _`Amazon license`: https://raw.githubusercontent.com/nrfconnect/sdk-sidewalk/main/LICENSE.txt
+
+.. _`Sidewalk documentation`: https://nrfconnect.github.io/sdk-sidewalk/
+
+.. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnect.github.io/sdk-sidewalk/setting_up_sidewalk_environment/setting_up_sdk.html

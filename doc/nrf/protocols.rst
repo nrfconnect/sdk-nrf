@@ -10,6 +10,7 @@ They introduce you to concepts that are important to work with the protocol and 
    :maxdepth: 1
    :caption: Subpages:
 
+   protocols/amazon_sidewalk/index
    protocols/ble/index
    protocols/bt_mesh/index
    protocols/esb/index
