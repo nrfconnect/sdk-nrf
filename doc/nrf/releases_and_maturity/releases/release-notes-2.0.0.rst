@@ -355,7 +355,7 @@ nRF9160 samples
 
   * :ref:`nrf_cloud_rest_device_message` sample, demonstrating how to send an arbitrary device message with the nRF Cloud REST API.
   * :ref:`modem_callbacks_sample` sample, showcasing initialization and de-initialization callbacks.
-  * :ref:`nrf_cloud_mqtt_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
+  * :ref:`nrf_cloud_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
   * Shell functionality to HTTP Update samples.
   * :ref:`nrf_cloud_rest_cell_pos_sample` sample, demonstrating how to use the :ref:`lib_nrf_cloud_rest` library to perform cellular positioning requests.
   * :ref:`ciphersuites` sample, demonstrating how to use TLS cipher suites.

@@ -318,14 +318,16 @@ Cellular samples (renamed from nRF9160 samples)
   * The :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
   * The :ref:`nrf_provisioning_sample` sample that demonstrates how to use the :ref:`lib_nrf_provisioning` service.
 
-* :ref:`nrf_cloud_mqtt_multi_service` sample:
+* :ref:`nrf_cloud_multi_service` sample:
 
+  * Renamed Cellular: nRF Cloud MQTT multi-service to Cellular: nRF Cloud multi-service.
   * Added documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
   * Changed the :file:`overlay_nrfcloud_logging.conf` file to enable JSON logs by default.
   * The :c:struct:`nrf_cloud_obj` structure and associated functions are now used to encode and decode nRF Cloud data.
   * Cleaned up and simplified connection logic.
   * Switched from using the :ref:`lte_lc_readme` library directly to using Zephyr's ``conn_mgr`` and the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kconfig option.
   * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
+  * Added the :file:`overlay_coap.conf` file and made changes to the sample to enable the use of CoAP instead of MQTT to connect with nRF Cloud.
 
 * :ref:`http_application_update_sample` sample:
 
@@ -576,17 +578,19 @@ Libraries for networking
     * :c:struct:`nrf_cloud_obj` structure and functions for encoding and decoding nRF Cloud data.
     * :c:func:`nrf_cloud_obj_pgps_request_create` function that creates a P-GPS request for nRF Cloud.
     * A new internal codec function :c:func:`nrf_cloud_obj_location_request_payload_add`, which excludes local Wi-Fi access point MAC addresses from the location request.
+    * Support for CoAP CBOR type handling to nrf_cloud_obj.
 
   * Updated:
 
     * Moved JSON manipulation from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
     * :c:func:`nrf_cloud_obj_location_request_create` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
-    * Fixed a bug that prevented an MQTT FOTA job from being started.
+    * Retry handling for P-GPS data download errors to retry ``ECONNREFUSED`` errors.
 
   * Fixed:
 
     * A build issue that occurred when MQTT and P-GPS are enabled and A-GPS is disabled.
     * A bug preventing ``AIR_QUAL`` from being enabled in shadow UI service info.
+    * A bug that prevented an MQTT FOTA job from being started.
 
   * Removed:
 
@@ -644,6 +648,24 @@ Libraries for networking
   * Updated:
 
     * The library now verifies whether the download started with the same URI and resumes the interrupted download.
+
+* :ref:`lib_nrf_cloud_log` library:
+
+  * Added:
+
+    * Functions to query whether text-based or dictionary (binary-based) logging is enabled.
+    * Support for sending direct log messages using CoAP.
+
+  * Fixed:
+
+    * Memory leak.
+
+* :ref:`lib_nrf_cloud_alert` library:
+
+  * Added:
+
+    * Support for sending alerts using CoAP.
+
 
 Libraries for NFC
 -----------------

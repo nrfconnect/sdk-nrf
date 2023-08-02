@@ -589,7 +589,7 @@ nRF9160 samples
 
   * Updated the sample to show how to get interface address information using the :c:func:`nrf_getifaddrs` function.
 
-* :ref:`nrf_cloud_mqtt_multi_service` sample:
+* :ref:`nrf_cloud_multi_service` sample:
 
   * Updated:
 

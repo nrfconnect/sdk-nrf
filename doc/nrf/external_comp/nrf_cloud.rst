@@ -150,11 +150,12 @@ The following application uses the :ref:`lib_nrf_cloud` for services in |NCS|:
 
 The following sample demonstrates nRF Cloud-specific functionality using CoAP:
 
+* :ref:`nrf_cloud_multi_service`
 * :ref:`modem_shell_application`
 
 The following sample demonstrates nRF Cloud-specific functionality using MQTT:
 
-* :ref:`nrf_cloud_mqtt_multi_service`
+* :ref:`nrf_cloud_multi_service`
 
 The following samples demonstrate nRF Cloud-specific functionality using REST:
 

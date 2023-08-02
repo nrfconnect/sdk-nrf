@@ -516,7 +516,7 @@ nRF9160 samples
     * The conversions of RSRP and RSRQ.
       These now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
 
-* :ref:`nrf_cloud_mqtt_multi_service` sample:
+* :ref:`nrf_cloud_multi_service` sample:
 
   * Added:
 

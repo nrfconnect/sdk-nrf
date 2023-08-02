@@ -80,7 +80,7 @@ Samples using the library
 
 The following |NCS| samples use this library:
 
-* :ref:`nrf_cloud_mqtt_multi_service`
+* :ref:`nrf_cloud_multi_service`
 * :ref:`nrf_cloud_rest_device_message`
 
 Limitations

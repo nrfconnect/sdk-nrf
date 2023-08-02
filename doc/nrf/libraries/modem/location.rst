@@ -254,7 +254,7 @@ The following |NCS| applications and samples use this library:
 * :ref:`asset_tracker_v2`
 * :ref:`location_sample`
 * :ref:`modem_shell_application`
-* :ref:`nrf_cloud_mqtt_multi_service`
+* :ref:`nrf_cloud_multi_service`
 
 Limitations
 ***********
