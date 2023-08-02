@@ -71,7 +71,6 @@ struct nrf_cloud_obj_coap_cbor {
 	/** type indicates which one of the fields in the union is valid. */
 	enum nrf_cloud_data_type type;
 	union {
-		struct nrf_cloud_data data;
 		char *str_val;
 		struct nrf_cloud_gnss_pvt *pvt;
 		double double_val;

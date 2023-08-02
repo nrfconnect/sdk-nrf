@@ -52,7 +52,7 @@ bool nrf_cloud_coap_is_connected(void);
  * or a negative error number.
  */
 int nrf_cloud_coap_get(const char *resource, const char *query,
-		       uint8_t *buf, size_t len,
+		       const uint8_t *buf, size_t len,
 		       enum coap_content_format fmt_out,
 		       enum coap_content_format fmt_in, bool reliable,
 		       coap_client_response_cb_t cb, void *user);
@@ -75,7 +75,7 @@ int nrf_cloud_coap_get(const char *resource, const char *query,
  * or a negative error number.
  */
 int nrf_cloud_coap_post(const char *resource, const char *query,
-			uint8_t *buf, size_t len,
+			const uint8_t *buf, size_t len,
 			enum coap_content_format fmt, bool reliable,
 			coap_client_response_cb_t cb, void *user);
 
@@ -95,7 +95,7 @@ int nrf_cloud_coap_post(const char *resource, const char *query,
  * or a negative error number.
  */
 int nrf_cloud_coap_put(const char *resource, const char *query,
-		       uint8_t *buf, size_t len,
+		       const uint8_t *buf, size_t len,
 		       enum coap_content_format fmt, bool reliable,
 		       coap_client_response_cb_t cb, void *user);
 
@@ -115,7 +115,7 @@ int nrf_cloud_coap_put(const char *resource, const char *query,
  * or a negative error number.
  */
 int nrf_cloud_coap_delete(const char *resource, const char *query,
-			  uint8_t *buf, size_t len,
+			  const uint8_t *buf, size_t len,
 			  enum coap_content_format fmt, bool reliable,
 			  coap_client_response_cb_t cb, void *user);
 
@@ -136,7 +136,7 @@ int nrf_cloud_coap_delete(const char *resource, const char *query,
  * or a negative error number.
  */
 int nrf_cloud_coap_fetch(const char *resource, const char *query,
-			 uint8_t *buf, size_t len,
+			 const uint8_t *buf, size_t len,
 			 enum coap_content_format fmt_out,
 			 enum coap_content_format fmt_in, bool reliable,
 			 coap_client_response_cb_t cb, void *user);
@@ -157,7 +157,7 @@ int nrf_cloud_coap_fetch(const char *resource, const char *query,
  * or a negative error number.
  */
 int nrf_cloud_coap_patch(const char *resource, const char *query,
-			 uint8_t *buf, size_t len,
+			 const uint8_t *buf, size_t len,
 			 enum coap_content_format fmt, bool reliable,
 			 coap_client_response_cb_t cb, void *user);
 

@@ -48,7 +48,7 @@ zephyr_library_sources_ifdef(
 	src/nrf_cloud_rest.c)
 zephyr_compile_definitions_ifdef(
 	CONFIG_NRF_CLOUD_COAP
-	nrf_cloud_coap CDDL_CBOR_CANONICAL)
+	CDDL_CBOR_CANONICAL)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_COAP
 	coap/src/agps_encode.c
