@@ -16,6 +16,13 @@
 #define RC_FMT "%u.%02u"
 #define RC_PARAM(rc) (rc) / 32u, (rc) & 0x1f
 
+#define LOCATION_GET_CBOR_MAX_SIZE 1024
+#define LOCATION_SEND_CBOR_MAX_SIZE 64
+#define AGPS_GET_CBOR_MAX_SIZE 64
+#define PGPS_URL_GET_CBOR_MAX_SIZE 64
+#define SENSOR_SEND_CBOR_MAX_SIZE 32
+#define MESSAGE_SEND_CBOR_MAX_SIZE 256
+
 #define LOG_CB_DBG(result_code, offset, len, last_block) { \
 		LOG_DBG("result_code:" RC_FMT ", offset:0x%X, len:0x%X, last_block:%d", \
 			RC_PARAM(result_code), (offset), (len), (last_block)); \
@@ -27,9 +34,8 @@
 		LOG_INF("%s " RC_FMT, (msg), RC_PARAM(result_code)); \
 }
 
-int coap_codec_message_encode(const char *app_id,
-			      const char *str_val, double float_val, int int_val,
-			      int64_t ts, uint8_t *buf, size_t *len, enum coap_content_format fmt);
+int coap_codec_message_encode(struct nrf_cloud_obj_coap_cbor *msg, uint8_t *buf, size_t *len,
+			      enum coap_content_format fmt);
 
 int coap_codec_sensor_encode(const char *app_id, double float_val,
 			     int64_t ts, uint8_t *buf, size_t *len,

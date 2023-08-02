@@ -4,9 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <math.h>
 #include <net/nrf_cloud_codec.h>
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_codec_internal.h"
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <zephyr/net/coap.h>
+#include "../coap/include/coap_codec.h"
+#endif
 
 LOG_MODULE_REGISTER(nrf_cloud_codec, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -157,6 +162,33 @@ int nrf_cloud_obj_msg_init(struct nrf_cloud_obj *const obj, const char *const ap
 		obj->json = new_obj;
 		return 0;
 	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+		if (obj->coap_cbor) {
+			return -ENOTEMPTY;
+		}
+
+		size_t app_id_sz = strlen(app_id) + 1;
+		struct nrf_cloud_obj_coap_cbor *msg = nrf_cloud_calloc(1, sizeof(*msg));
+
+		if (!msg) {
+			return -ENOMEM;
+		}
+
+		msg->type = NRF_CLOUD_DATA_TYPE_NONE;
+
+		/* Add the app_id */
+		msg->app_id = nrf_cloud_calloc(1, app_id_sz);
+		memcpy(msg->app_id, app_id, app_id_sz);
+
+		if (msg_type) {
+			LOG_WRN("msg_type is not used for NRF_CLOUD_OBJ_TYPE_COAP_CBOR");
+		}
+
+		obj->coap_cbor = msg;
+
+		return 0;
+	}
 	default:
 		break;
 	}
@@ -256,11 +288,39 @@ int nrf_cloud_obj_cloud_encoded_free(struct nrf_cloud_obj *const obj)
 		obj->enc_src = NRF_CLOUD_ENC_SRC_NONE;
 		return 0;
 	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+		if (obj->encoded_data.ptr) {
+			nrf_cloud_free((void *)obj->encoded_data.ptr);
+			obj->encoded_data.ptr = NULL;
+		}
+
+		obj->encoded_data.len = 0;
+		obj->enc_src = NRF_CLOUD_ENC_SRC_NONE;
+		return 0;
+	}
 	default:
 		break;
 	}
 
 	return -ENOTSUP;
+}
+
+static void free_obj_coap_cbor(struct nrf_cloud_obj_coap_cbor *coap_cbor)
+{
+	nrf_cloud_free(coap_cbor->app_id);
+
+	switch (coap_cbor->type) {
+	case NRF_CLOUD_DATA_TYPE_STR:
+		nrf_cloud_free(coap_cbor->str_val);
+		break;
+	case NRF_CLOUD_DATA_TYPE_PVT:
+		nrf_cloud_free(coap_cbor->pvt);
+		break;
+	default:
+		break;
+	}
+	nrf_cloud_free(coap_cbor);
 }
 
 int nrf_cloud_obj_free(struct nrf_cloud_obj *const obj)
@@ -274,6 +334,14 @@ int nrf_cloud_obj_free(struct nrf_cloud_obj *const obj)
 	{
 		cJSON_Delete(obj->json);
 		obj->json = NULL;
+		return 0;
+	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+		if (obj->coap_cbor) {
+			free_obj_coap_cbor(obj->coap_cbor);
+			obj->coap_cbor = NULL;
+		}
 		return 0;
 	}
 	default:
@@ -326,6 +394,15 @@ int nrf_cloud_obj_ts_add(struct nrf_cloud_obj *const obj, const int64_t time_ms)
 		return cJSON_AddNumberToObjectCS(obj->json, NRF_CLOUD_MSG_TIMESTAMP_KEY,
 						 time_ms) ? 0 : -ENOMEM;
 	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+		if (!obj->coap_cbor) {
+			return -ENOENT;
+		}
+
+		obj->coap_cbor->ts = time_ms;
+		return 0;
+	}
 	default:
 		break;
 	}
@@ -366,6 +443,26 @@ int nrf_cloud_obj_num_add(struct nrf_cloud_obj *const obj, const char *const key
 		return cJSON_AddNumberToObjectCS(dest_json_get(obj, data_child),
 						 key, val) ? 0 : -ENOMEM;
 	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+		if (!obj->coap_cbor) {
+			return -ENOENT;
+		}
+
+		if (obj->coap_cbor->type != NRF_CLOUD_DATA_TYPE_NONE) {
+			return -ENOTEMPTY;
+		}
+
+		if (ceil(val) == val) {
+			obj->coap_cbor->type = NRF_CLOUD_DATA_TYPE_INT;
+			obj->coap_cbor->int_val = (int)val;
+		} else {
+			obj->coap_cbor->type = NRF_CLOUD_DATA_TYPE_DOUBLE;
+			obj->coap_cbor->double_val = val;
+		}
+
+		return 0;
+	}
 	default:
 		break;
 	}
@@ -376,18 +473,45 @@ int nrf_cloud_obj_num_add(struct nrf_cloud_obj *const obj, const char *const key
 int nrf_cloud_obj_str_add(struct nrf_cloud_obj *const obj, const char *const key,
 			  const char *const val, const bool data_child)
 {
-	if (!obj || !key || !val) {
+	if (!obj || !val) {
 		return -EINVAL;
 	}
 
 	switch (obj->type) {
 	case NRF_CLOUD_OBJ_TYPE_JSON:
 	{
+		if (!key) {
+			return -EINVAL;
+		}
+
 		if (!obj->json) {
 			return -ENOENT;
 		}
 		return cJSON_AddStringToObjectCS(dest_json_get(obj, data_child),
 						 key, val) ? 0 : -ENOMEM;
+	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+		if (!obj->coap_cbor) {
+			return -ENOENT;
+		}
+
+		if (obj->coap_cbor->type != NRF_CLOUD_DATA_TYPE_NONE) {
+			return -ENOTEMPTY;
+		}
+
+		size_t str_sz = strlen(val) + 1;
+
+		obj->coap_cbor->str_val = nrf_cloud_calloc(1, str_sz);
+
+		if (!obj->coap_cbor->str_val) {
+			return -ENOMEM;
+		}
+
+		obj->coap_cbor->type = NRF_CLOUD_DATA_TYPE_STR;
+		memcpy(obj->coap_cbor->str_val, val, str_sz);
+
+		return 0;
 	}
 	default:
 		break;
@@ -534,6 +658,38 @@ int nrf_cloud_obj_cloud_encode(struct nrf_cloud_obj *const obj)
 
 		return 0;
 	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+#if defined(CONFIG_NRF_CLOUD_COAP)
+		if (!obj->coap_cbor) {
+			return -ENOENT;
+		}
+
+		int ret;
+
+		obj->encoded_data.len = 64;
+		obj->encoded_data.ptr = nrf_cloud_calloc(1, obj->encoded_data.len);
+
+		if (obj->encoded_data.ptr == NULL) {
+			return -ENOMEM;
+		}
+
+		obj->enc_src = NRF_CLOUD_ENC_SRC_CLOUD_ENCODED;
+
+		ret = coap_codec_message_encode(obj->coap_cbor,
+						(uint8_t *)obj->encoded_data.ptr,
+						&obj->encoded_data.len,
+						COAP_CONTENT_FORMAT_APP_CBOR);
+
+		if (ret) {
+			nrf_cloud_obj_cloud_encoded_free(obj);
+		}
+
+		return ret;
+#else
+		return -ENOSYS;
+#endif
+	}
 	default:
 		break;
 	}
@@ -569,6 +725,18 @@ int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
 			ret = -ENOMEM;
 			goto cleanup;
 		}
+	}
+
+	/* Handle CoAP CBOR only if PVT, otherwise JSON is only supported */
+	if (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR) {
+		if (gnss->type != NRF_CLOUD_GNSS_TYPE_PVT) {
+			ret = -ENOTSUP;
+			goto cleanup;
+		}
+		return nrf_cloud_obj_pvt_add(obj, &gnss->pvt);
+	} else if (obj->type != NRF_CLOUD_OBJ_TYPE_JSON) {
+		ret = -ENOTSUP;
+		goto cleanup;
 	}
 
 	/* Add the specified GNSS data type */
@@ -672,6 +840,27 @@ int nrf_cloud_obj_pvt_add(struct nrf_cloud_obj *const obj,
 		}
 
 		return nrf_cloud_pvt_data_encode(pvt, obj->json);
+	}
+	case NRF_CLOUD_OBJ_TYPE_COAP_CBOR:
+	{
+		if (!obj->coap_cbor) {
+			return -ENOENT;
+		}
+
+		if (obj->coap_cbor->type != NRF_CLOUD_DATA_TYPE_NONE) {
+			return -ENOTEMPTY;
+		}
+
+		obj->coap_cbor->pvt = nrf_cloud_calloc(1, sizeof(*obj->coap_cbor->pvt));
+
+		if (!obj->coap_cbor->pvt) {
+			return -ENOMEM;
+		}
+
+		obj->coap_cbor->type = NRF_CLOUD_DATA_TYPE_PVT;
+		*obj->coap_cbor->pvt = *pvt;
+
+		return 0;
 	}
 	default:
 		break;
