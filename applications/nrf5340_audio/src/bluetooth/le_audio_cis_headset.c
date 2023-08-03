@@ -64,7 +64,10 @@ static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
-	BT_CSIP_DATA_RSI(csip_rsi)};
+#if CONFIG_BT_CSIP_SET_MEMBER
+	BT_CSIP_DATA_RSI(csip_rsi),
+#endif /* CONFIG_BT_CSIP_SET_MEMBER */
+};
 
 static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn *conn)
 {
@@ -217,6 +220,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 			else if (dir == BT_AUDIO_DIR_SOURCE) {
 				LOG_DBG("BT_AUDIO_DIR_SOURCE");
 				print_codec(codec, dir);
+				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn);
 
 				/* CIS headset only supports one source stream for now */
 				sources[0].stream = audio_stream;
@@ -526,13 +530,13 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 		bt_bap_stream_cb_register(&audio_streams[i], &stream_ops);
 	}
 
-	ret = bt_cap_acceptor_register(&csip_param, &csip);
-	if (ret) {
-		LOG_ERR("Failed to register CAP acceptor");
-		return ret;
-	}
-
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER)) {
+		ret = bt_cap_acceptor_register(&csip_param, &csip);
+		if (ret) {
+			LOG_ERR("Failed to register CAP acceptor");
+			return ret;
+		}
+
 		ret = bt_csip_set_member_generate_rsi(csip, csip_rsi);
 		if (ret) {
 			LOG_ERR("Failed to generate RSI (ret %d)", ret);

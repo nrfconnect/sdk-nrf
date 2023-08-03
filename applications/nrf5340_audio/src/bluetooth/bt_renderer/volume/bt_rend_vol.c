@@ -17,9 +17,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_rend_vol, CONFIG_BT_REND_VOL_LOG_LEVEL);
 
-#define VOLUME_DEFAULT 195
-#define VOLUME_STEP    16
-
 static struct bt_vcp_vol_ctlr *vcs_client_peer[CONFIG_BT_MAX_CONN];
 
 /**
@@ -91,16 +88,21 @@ static void vcs_state_ctlr_cb_handler(struct bt_vcp_vol_ctlr *vcs, int err, uint
 	for (int i = 0; i < ARRAY_SIZE(vcs_client_peer); i++) {
 		if (vcs == vcs_client_peer[i]) {
 			LOG_DBG("VCS state from remote device %d:", i);
-		} else {
-			LOG_DBG("Sync with other devices %d", i);
-			if (vcs_client_peer[i] != NULL) {
-				ret = bt_vcp_vol_ctlr_set_vol(vcs_client_peer[i], volume);
-				if (ret) {
-					LOG_DBG("Failed to sync volume to remote device %d, err = "
-						"%d",
-						i, ret);
-				}
-			}
+			continue;
+		}
+
+		LOG_DBG("Sync with other devices %d", i);
+
+		if (vcs_client_peer[i] == NULL) {
+			/* Skip */
+			continue;
+		}
+
+		ret = bt_vcp_vol_ctlr_set_vol(vcs_client_peer[i], volume);
+		if (ret) {
+			LOG_DBG("Failed to sync volume to remote device %d, err = "
+				"%d",
+				i, ret);
 		}
 	}
 }
@@ -357,8 +359,8 @@ int bt_rend_vol_rend_init(void)
 	vcs_server_callback.flags = vcs_flags_rend_cb_handler;
 	vcs_param.cb = &vcs_server_callback;
 	vcs_param.mute = BT_VCP_STATE_UNMUTED;
-	vcs_param.step = VOLUME_STEP;
-	vcs_param.volume = VOLUME_DEFAULT;
+	vcs_param.step = CONFIG_BT_AUDIO_VOL_STEP_SIZE;
+	vcs_param.volume = CONFIG_BT_AUDIO_VOL_DEFAULT;
 
 	ret = bt_vcp_vol_rend_register(&vcs_param);
 	if (ret) {

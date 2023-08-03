@@ -26,7 +26,7 @@ static void media_control_cb(bool play)
 	if (play) {
 		msg.event = MEDIA_PLAY;
 	} else {
-		msg.event = MEDIA_PAUSE;
+		msg.event = MEDIA_STOP;
 	}
 
 	ret = zbus_chan_pub(&cont_media_chan, &msg, K_NO_WAIT);
@@ -71,7 +71,7 @@ int bt_content_ctrl_stop(struct bt_conn *conn)
 		return 0;
 	}
 
-	msg.event = MEDIA_PAUSE;
+	msg.event = MEDIA_STOP;
 
 	ret = zbus_chan_pub(&cont_media_chan, &msg, K_NO_WAIT);
 	ERR_CHK_MSG(ret, "zbus publication failed");

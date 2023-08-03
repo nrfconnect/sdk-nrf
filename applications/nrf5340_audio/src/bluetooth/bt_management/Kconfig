@@ -15,8 +15,7 @@ config BLE_LE_POWER_CONTROL_ENABLED
 	default n
 	help
 	  The Bluetooth LE power control feature makes devices be able to change TX power
-	  dynamically and automatically during connection, which provides effective
-	  communication.
+	  dynamically and automatically during connection, which may reduce power consumption.
 
 choice	BLE_CONN_TX_POWER
 	prompt "Default TX power for the Bluetooth LE connections"

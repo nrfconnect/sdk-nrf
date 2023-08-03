@@ -97,7 +97,8 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
  * @param[in]	data		Advertising data to check and parse.
  * @param[out]	user_data	Will contain pointer to broadcast_source struct to be populated.
  *
- * @return	Will always return true to make sure we find all relevant data.
+ * @retval	true	Continue to parse LTVs.
+ * @retval	false	Stop parsing LTVs.
  */
 static bool scan_check_broadcast_source(struct bt_data *data, void *user_data)
 {

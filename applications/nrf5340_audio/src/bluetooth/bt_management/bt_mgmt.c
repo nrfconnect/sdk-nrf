@@ -109,6 +109,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	LOG_INF("Connected: %s", addr);
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL) && (num_conn < MAX_CONN_NUM)) {
+		/* Room for more connections, start scanning again */
 		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL);
 		if (ret) {
 			LOG_ERR("Failed to resume scanning: %d", ret);
@@ -325,12 +326,13 @@ int bt_mgmt_pa_sync_delete(struct bt_le_per_adv_sync *pa_sync)
 		}
 	} else {
 		LOG_WRN("Periodic advertisement sync not enabled");
+		return -ENOTSUP;
 	}
 
 	return 0;
 }
 
-void bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
+int bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 {
 	if (IS_ENABLED(CONFIG_BT_CONN)) {
 		int ret;
@@ -338,10 +340,14 @@ void bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 		ret = bt_conn_disconnect(conn, reason);
 		if (ret) {
 			LOG_ERR("Failed to disconnect connection %p (%d)", (void *)conn, ret);
+			return ret;
 		}
 	} else {
 		LOG_WRN("BT conn not enabled");
+		return -ENOTSUP;
 	}
+
+	return 0;
 }
 
 int bt_mgmt_init(void)

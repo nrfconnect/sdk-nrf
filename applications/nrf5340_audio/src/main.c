@@ -35,7 +35,7 @@ ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 ZBUS_CHAN_DECLARE(volume_chan);
 ZBUS_CHAN_DECLARE(cont_media_chan);
 
-ZBUS_OBS_DECLARE(button_sub);
+ZBUS_OBS_DECLARE(button_evt_sub);
 ZBUS_OBS_DECLARE(le_audio_evt_sub);
 ZBUS_OBS_DECLARE(bt_mgmt_evt_sub);
 ZBUS_OBS_DECLARE(volume_evt_sub);
@@ -65,7 +65,7 @@ static int zbus_init(void)
 	int ret;
 
 	if (IS_ENABLED(CONFIG_ZBUS) && (CONFIG_ZBUS_RUNTIME_OBSERVERS_POOL_SIZE > 0)) {
-		ret = zbus_chan_add_obs(&button_chan, &button_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+		ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
 		if (ret) {
 			LOG_ERR("Failed to add button sub");
 			return ret;

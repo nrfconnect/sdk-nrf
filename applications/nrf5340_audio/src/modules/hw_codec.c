@@ -112,7 +112,7 @@ static void volume_msg_sub_thread(void)
 			}
 			break;
 		default:
-			LOG_WRN("Unexpected/unhandled event: %d", event);
+			LOG_WRN("Unexpected/unhandled volume event: %d", event);
 			break;
 		}
 

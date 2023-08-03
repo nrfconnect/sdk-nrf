@@ -58,7 +58,7 @@ enum bt_mgmt_scan_type {
  * @param[in]	name		Name to search for. Depending on @p type of search,
  *				device name or broadcast name. Can be max
  *				BLE_SEARCH_NAME_MAX_LEN long; everything beyond that value
- *				will be cropped. Can be NULL.
+ *				will be cropped. Can be NULL. Shall be '\0' terminated.
  *
  * @note	To restart scanning, call this function with all 0s and NULL, except for @p type.
  *		The same scanning parameters as when bt_mgmt_scan_start was last called will then
@@ -108,8 +108,10 @@ int bt_mgmt_pa_sync_delete(struct bt_le_per_adv_sync *pa_sync);
  * @param[in]	conn	Connection to disconnect.
  * @param[in]	reason	Reason code for the disconnection, as specified in
  *			HCI Error Codes, BT Core Spec v5.4 [Vol 1, Part F].
+ *
+ * @return	0 if success, error otherwise.
  */
-void bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason);
+int bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason);
 
 /**
  * @brief	Initialize the Bluetooth management module.
