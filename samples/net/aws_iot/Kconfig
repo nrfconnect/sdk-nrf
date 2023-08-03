@@ -26,6 +26,7 @@ config AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
 
 config AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
 	bool "Use HW ID as device ID"
+	select AWS_IOT_CLIENT_ID_APP
 	depends on HW_ID_LIBRARY
 	help
 	  Use the devices's hardware ID as device ID when connecting to AWS IOT
