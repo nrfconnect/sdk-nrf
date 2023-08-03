@@ -260,13 +260,18 @@ static int update_sink_stream_qos(struct le_audio_headset *headset, uint32_t pre
 {
 	int ret;
 
+	if (headset->sink_stream.ep == NULL) {
+		return -ESRCH;
+	}
+
 	if (headset->sink_stream.qos == NULL) {
 		LOG_WRN("No QoS found for %p", &headset->sink_stream);
 		return -ENXIO;
 	}
 
 	if (headset->sink_stream.qos->pd != pres_delay_us) {
-		if (playing_state) {
+		if (playing_state &&
+		    ep_state_check(headset->sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
 			LOG_DBG("Update streaming %s headset, connection %p, stream %p",
 				headset->ch_name, &headset->headset_conn, &headset->sink_stream);
 
@@ -285,7 +290,10 @@ static int update_sink_stream_qos(struct le_audio_headset *headset, uint32_t pre
 			headset->sink_stream.qos->pd = pres_delay_us;
 
 			ret = bt_bap_stream_qos(headset->headset_conn, unicast_group);
-			if (ret) {
+			if (ret && ret != -EINVAL) {
+				/* ret == -EINVAL means that the stream is not ready to
+				 * be configured yet
+				 */
 				LOG_ERR("Unable to configure %s headset: %d", headset->ch_name,
 					ret);
 				return ret;
@@ -492,7 +500,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream, const struct bt_c
 		for (int i = 0; i < ARRAY_SIZE(headsets); i++) {
 			if (i != channel_index && headsets[i].headset_conn != NULL) {
 				ret = update_sink_stream_qos(&headsets[i], new_pres_dly_us);
-				if (ret) {
+				if (ret && ret != -ESRCH) {
 					LOG_ERR("Presentation delay not set for %s "
 						"headset: %d",
 						headsets[channel_index].ch_name, ret);
