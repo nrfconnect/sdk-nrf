@@ -281,6 +281,7 @@
   - "subsys/ieee802154/**/*"
   - "subsys/nrf_rpc/**/*"
   - "drivers/mpsl/**/*"
+  - "boards/shields/**/*"
   - "dts/bindings/radio_fem/**/*"
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
