@@ -37,6 +37,8 @@ manifest:
       url-base: https://github.com/ant-nrfconnect
     - name: babblesim
       url-base: https://github.com/BabbleSim
+    - name: ahasztag
+      url-base: https://github.com/ahasztag
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -139,7 +141,8 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d53459c4d9c3fc3beeff75814e421f8e26a7139e
+      revision: common_includes_doc_test
+      remote: ahasztag
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
