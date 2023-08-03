@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_MCUMGR_SMP_CLIENT
+	bool "MCUMGR SMP client library"
+	select BASE64
+	select DFU_TARGET
+	select DFU_TARGET_SMP
+	select DOWNLOAD_CLIENT
+	select FOTA_DOWNLOAD
+	select NET_BUF
+	select ZCBOR
+	select CRC
+	select MCUMGR
+	select SMP_CLIENT
+	select MCUMGR_GRP_IMG_CLIENT
+	select MCUMGR_GRP_OS_CLIENT
+	select MCUMGR_GRP_OS_CLIENT_ECHO
+	select MCUMGR_GRP_OS_CLIENT_RESET
+
+if NRF_MCUMGR_SMP_CLIENT
+
+config NRF_MCUMGR_SMP_CLIENT_SHELL
+	bool "MCUmg SMP client shell"
+	depends on SHELL
+
+module = NRF_MCUMGR_SMP_CLIENT
+module-dep = LOG
+module-str = NRF_MCUmgr_smp_client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_MCUMGR_SMP_CLIENT
