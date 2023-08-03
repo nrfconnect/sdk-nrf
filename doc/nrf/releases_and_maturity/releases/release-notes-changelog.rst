@@ -230,6 +230,9 @@ nRF Desktop
   * To improve the accuracy, the generation of simulated movement data in the :ref:`nrf_desktop_motion` now uses a timestamp in microseconds based on the cycle count (either :c:func:`k_cycle_get_32` or :c:func:`k_cycle_get_64` function depending on the :kconfig:option:`CONFIG_TIMER_HAS_64BIT_CYCLE_COUNTER` Kconfig option).
   * Aligned Kconfig option names in the :ref:`nrf_desktop_motion` implementation that generates motion from button presses.
     The Kconfig options defining used key IDs are prefixed with ``CONFIG_MOTION_BUTTONS_`` instead of ``CONFIG_MOTION_`` to ensure consistency with configuration of other implementations of the motion module.
+  * The :ref:`nrf_desktop_ble_scan` no longer stops Bluetooth LE scanning when it receives :c:struct:`hid_report_event` related to a HID output report.
+    Sending HID output report is triggered by a HID host.
+    Scanning stop may lead to an edge case where the scanning is stopped, but there are no peripherals connected to the dongle.
 
 Thingy:53: Matter weather station
 ---------------------------------
