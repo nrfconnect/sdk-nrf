@@ -516,6 +516,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	static bool ble_bond_ready;
 
 	if (is_hid_report_event(aeh)) {
+		const struct hid_report_event *event = cast_hid_report_event(aeh);
+
+		/* Ignore HID output reports. Subscriber is NULL for a HID output report. */
+		if (!event->subscriber) {
+			return false;
+		}
+
 		/* Do not scan when devices are in use. */
 		scan_counter = 0;
 
