@@ -5,6 +5,7 @@ tests:
   # Excluded in quarantine.yaml to limit resources usage in integration builds
   sample.matter.lock.debug:
     build_only: true
+    extra_args: CONFIG_CHIP_CRYPTO_PSA=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
