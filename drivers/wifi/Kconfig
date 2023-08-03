@@ -6,6 +6,6 @@
 
 if WIFI
 
-rsource "nrf700x/Kconfig.nrf700x"
+rsource "nrf700x/Kconfig"
 
 endif # WIFI

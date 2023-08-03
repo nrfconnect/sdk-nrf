@@ -55,7 +55,7 @@ The following features are in the driver code but not yet supported:
 
 Except for scan only mode, the driver uses host access point daemon (hostapd) to implement AP Media Access Control (MAC) Sublayer Management Entity (AP MLME) and wpa_supplicant to implement 802.1X supplicant.
 
-Radio test mode
+Radio Test mode
 ^^^^^^^^^^^^^^^
 The nRF700X Wi-Fi driver supports Radio Test mode, which you can use to test the RF performance of the nRF700X device.
 This is a build time option that you can enable using the :kconfig:option:`CONFIG_NRF700X_RADIO_TEST` Kconfig option.
@@ -70,6 +70,14 @@ The driver uses the QSPI/SPI interface to send commands to the nRF700X device, a
 The nRF7002 DK uses QSPI whereas the nRF7002 EK uses SPI.
 
 To connect the nRF7002 EK to the SoC, the ``nrf7002ek`` shield is required.
+
+Configuration
+*************
+
+The nRF700X Wi-Fi driver has the following configuration options:
+
+.. options-from-kconfig::
+   :show-type:
 
 
 API documentation
@@ -89,4 +97,4 @@ This is typically intended for customers who want to use the nRF700X device in a
    :caption: Modules:
    :glob:
 
-   nrf700x/*
+   subpages/*
