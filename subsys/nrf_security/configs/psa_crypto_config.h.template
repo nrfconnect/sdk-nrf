@@ -354,8 +354,16 @@
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
 
 /* Controlling some MPI sizes */
-#cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
-#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
+//#cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
+//#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
+
+#if defined(CONFIG_MBEDTLS_OPENTHREAD_OPTIMIZATIONS_ENABLED)
+#define MBEDTLS_MPI_WINDOW_SIZE            1 /**< Maximum windows size used. */
+#define MBEDTLS_MPI_MAX_SIZE              32 /**< Maximum number of bytes for usable MPIs. */
+#define MBEDTLS_ECP_WINDOW_SIZE            2 /**< Maximum window size used */
+#define MBEDTLS_ECP_FIXED_POINT_OPTIM      0 /**< Enable fixed-point speed-up */
+#define MBEDTLS_ECP_NIST_OPTIM
+#endif
 
 #include "psa/psa_crypto_config_oberon.h"
 
