@@ -2,30 +2,9 @@ sample:
   description: Matter Window Covering example
   name: Matter Window Covering
 tests:
-  # Excluded in quarantine.yaml to limit resources usage in integration builds
-  sample.matter.window_cover.release:
-    build_only: true
-    extra_args: CONF_FILE=prj_release.conf
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-  sample.matter.window_cover.smp_dfu:
-    build_only: true
-    extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-  # ---------------
   sample.matter.window_cover.debug:
     build_only: true
     integration_platforms:
+      - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-  sample.matter.window_cover.no_dfu:
-    build_only: true
-    extra_args: CONF_FILE=prj_no_dfu.conf
-    integration_platforms:
-      - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp

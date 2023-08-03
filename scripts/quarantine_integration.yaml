@@ -2,66 +2,22 @@
 # To use with "quarantine-list" twister argument.
 
 - scenarios:
-    - sample.matter.lock.debug
     - sample.matter.lock.release
-    - sample.matter.lock.no_dfu
-    - sample.matter.light_bulb.release
-    - sample.matter.light_bulb.smp_dfu
-    - sample.matter.light_bulb.ffs
-    - sample.matter.light_bulb.no_dfu
-    - sample.matter.light_switch.release
-    - sample.matter.light_switch.smp_dfu
-    - sample.matter.template.debug
-    - sample.matter.template.release
-    - sample.matter.template.no_dfu
-    - sample.matter.window_cover.release
-    - sample.matter.window_cover.smp_dfu
-    - sample.matter.thermostat.release
+    - sample.matter.lock.factory_data
+    - sample.matter.light_switch.debug
+    - sample.matter.thermostat.debug
   platforms:
     - nrf52840dk_nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.matter.light_bulb.*
-    - sample.matter.light_switch.*
-    - sample.matter.template.*
-    - sample.matter.lock.*
-  platforms:
-    - nrf21540dk_nrf52840
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.matter.lock.debug
-    - sample.matter.lock.release
-    - sample.matter.lock.no_dfu
-    - sample.matter.light_bulb.release
-    - sample.matter.light_bulb.smp_dfu
+    - sample.matter.lock.nus
+    - sample.matter.lock.factory_data
+    - sample.matter.window_cover.debug
+    - sample.matter.template.debug
     - sample.matter.light_bulb.ffs
-    - sample.matter.light_bulb.no_dfu
-    - sample.matter.light_switch.release
-    - sample.matter.light_switch.smp_dfu
-    - sample.matter.template.release
-    - sample.matter.template.no_dfu
-    - sample.matter.window_cover.release
-    - sample.matter.window_cover.smp_dfu
-    - sample.matter.thermostat.debug
-    - sample.matter.thermostat.release
   platforms:
     - nrf5340dk_nrf5340_cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.matter.lock.debug
-    - sample.matter.lock.release
-    - sample.matter.lock.no_dfu
-    - sample.matter.light_bulb.*
-    - sample.matter.light_switch.release
-    - sample.matter.light_switch.smp_dfu
-    - sample.matter.light_switch.no_dfu
-    - sample.matter.template.release
-    - sample.matter.thermostat.debug
-  platforms:
-    - nrf7002dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -69,4 +25,10 @@
     - applications.matter_weather_station.release
   platforms:
     - thingy53_nrf5340_cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.matter.lock.release
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"

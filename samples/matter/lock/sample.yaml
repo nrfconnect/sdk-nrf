@@ -2,14 +2,6 @@ sample:
   description: Matter Lock example
   name: Matter Lock
 tests:
-  # Excluded in quarantine.yaml to limit resources usage in integration builds
-  sample.matter.lock.debug:
-    build_only: true
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.lock.release:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
@@ -33,9 +25,9 @@ tests:
       - nrf21540dk_nrf52840
     platform_allow: >
       nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-  sample.matter.lock.release.nrf21540ek:
+  sample.matter.lock.debug.nrf21540ek:
     build_only: true
-    extra_args: CONF_FILE=prj_release.conf SHIELD=nrf21540ek
+    extra_args: SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
@@ -58,6 +50,7 @@ tests:
     extra_args: CONFIG_CHIP_NUS=y CONFIG_BT_FIXED_PASSKEY=y CONFIG_CHIP_NUS_FIXED_PASSKEY=112233
     integration_platforms:
       - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
   sample.matter.lock.factory_data:
     build_only: true
@@ -67,4 +60,6 @@ tests:
       CONFIG_CHIP_FACTORY_DATA_GENERATE_ONBOARDING_CODES=y
     integration_platforms:
       - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
