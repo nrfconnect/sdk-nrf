@@ -15,7 +15,8 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns
     tags: ci_build
   sample.nrf7000_eks.scan:
     build_only: true
@@ -23,7 +24,8 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns
     tags: ci_build
   sample.nrf7001_eks.scan:
     build_only: true
@@ -31,7 +33,8 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf52840dk_nrf52840
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns
     tags: ci_build
   sample.nrf7002_eb.thingy53.scan:
     build_only: true
