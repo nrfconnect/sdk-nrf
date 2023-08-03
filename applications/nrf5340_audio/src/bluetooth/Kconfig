@@ -127,7 +127,7 @@ config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
 	default "NRF5340_BIS_DEMO"
 	help
 	  Key to use for encryption and decryption; max BT_ISO_BROADCAST_CODE_SIZE characters.
-	  Encryption keys larger than BT_ISO_BROADCAST_CODE_SIZE characters will be cropped to
+	  Encryption keys larger than BT_ISO_BROADCAST_CODE_SIZE characters will be truncated to
 	  BT_ISO_BROADCAST_CODE_SIZE.
 
 config BT_AUDIO_USE_BROADCAST_ID_RANDOM

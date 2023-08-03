@@ -43,7 +43,7 @@ struct ble_iso_data {
 
 DATA_FIFO_DEFINE(ble_fifo_rx, CONFIG_BUF_BLE_RX_PACKET_NUM, WB_UP(sizeof(struct ble_iso_data)));
 
-ZBUS_SUBSCRIBER_DEFINE(button_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 ZBUS_SUBSCRIBER_DEFINE(le_audio_evt_sub, CONFIG_LE_AUDIO_MSG_SUB_QUEUE_SIZE);
 ZBUS_SUBSCRIBER_DEFINE(content_control_evt_sub, CONFIG_CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE);
 
@@ -226,7 +226,7 @@ void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t n
 
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
-static int test_tone_button_press(void)
+static int test_tone_start(void)
 {
 	int ret;
 	static uint32_t test_tone_hz;
@@ -263,10 +263,10 @@ static void button_msg_sub_thread(void)
 {
 	int ret;
 	const struct zbus_channel *chan;
-	bool alternate = true;
+	bool broadcast_alt = true;
 
 	while (1) {
-		ret = zbus_sub_wait(&button_sub, &chan, K_FOREVER);
+		ret = zbus_sub_wait(&button_evt_sub, &chan, K_FOREVER);
 		ERR_CHK(ret);
 
 		struct button_msg msg;
@@ -328,7 +328,7 @@ static void button_msg_sub_thread(void)
 					break;
 				}
 
-				ret = test_tone_button_press();
+				ret = test_tone_start();
 				if (ret) {
 					LOG_WRN("Failed to play test tone, ret: %d", ret);
 				}
@@ -354,15 +354,15 @@ static void button_msg_sub_thread(void)
 			} else if (IS_ENABLED(CONFIG_BT_BAP_BROADCAST_SINK)) {
 				/* Will eventually be handled by different applications */
 				le_audio_disable();
-				if (alternate) {
+				if (broadcast_alt) {
 					ret = bt_mgmt_scan_start(
 						0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
 						CONFIG_BT_AUDIO_BROADCAST_NAME_ALT);
-					alternate = false;
+					broadcast_alt = false;
 				} else {
 					ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
 								 CONFIG_BT_AUDIO_BROADCAST_NAME);
-					alternate = true;
+					broadcast_alt = true;
 				}
 
 				if (ret) {
@@ -487,7 +487,10 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_NO_VALID_CFG:
 			LOG_WRN("No valid configurations found, will disconnect");
 
-			bt_mgmt_conn_disconnect(msg.conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			ret = bt_mgmt_conn_disconnect(msg.conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			if (ret) {
+				LOG_ERR("Failed to disconnect: %d", ret);
+			}
 
 			break;
 
@@ -530,7 +533,7 @@ static void content_control_msg_sub_thread(void)
 
 			break;
 
-		case MEDIA_PAUSE:
+		case MEDIA_STOP:
 			ret = le_audio_pause();
 			if (ret) {
 				LOG_ERR("Failed to pause: %d", ret);
@@ -539,7 +542,7 @@ static void content_control_msg_sub_thread(void)
 			break;
 
 		default:
-			LOG_WRN("Unexpected/unhandled event: %d", event);
+			LOG_WRN("Unexpected/unhandled content control event: %d", event);
 
 			break;
 		}

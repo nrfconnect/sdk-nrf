@@ -19,7 +19,6 @@ extern const nrfx_timer_t audio_sync_timer_instance;
 
 enum button_action {
 	BUTTON_PRESS = 1,
-	BUTTON_ACTION_NUM,
 };
 
 struct button_msg {
@@ -72,7 +71,7 @@ struct volume_msg {
 
 enum content_control_evt_type {
 	MEDIA_PLAY = 1,
-	MEDIA_PAUSE,
+	MEDIA_STOP,
 };
 
 struct content_control_msg {

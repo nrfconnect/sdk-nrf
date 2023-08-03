@@ -19,7 +19,7 @@ LOG_MODULE_DECLARE(bt_mgmt_scan);
 			 CONFIG_BLE_ACL_SLAVE_LATENCY, CONFIG_BLE_ACL_SUP_TIMEOUT)
 
 static uint8_t bonded_num;
-struct bt_le_scan_cb scan_callback;
+static struct bt_le_scan_cb scan_callback;
 static bool cb_registered;
 static char const *srch_name;
 

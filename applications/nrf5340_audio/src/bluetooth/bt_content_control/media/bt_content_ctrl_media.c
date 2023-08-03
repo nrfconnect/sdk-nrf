@@ -97,8 +97,8 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 
 	if (err) {
 		if (err == BT_ATT_ERR_UNLIKELY) {
-			/* BT_ATT_ERR_UNLIKELY may occur in normal operating conditions, hence it
-			 * will be treated as a warning.
+			/* BT_ATT_ERR_UNLIKELY may occur in normal operating conditions if there is
+			 * a disconnect while discovering, hence it will be treated as a warning.
 			 */
 			LOG_WRN("Discovery of MCS failed (%d)", err);
 		} else {
@@ -131,7 +131,7 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
  * @brief	Callback handler for sent MCS commands.
  *
  * @note	This callback will be triggered when MCS commands have been sent.
- *		Only for debugging, used by the client.
+ *		Used by the client.
  */
 static void mcc_send_command_cb(struct bt_conn *conn, int err, const struct mpl_cmd *cmd)
 {
@@ -147,7 +147,7 @@ static void mcc_send_command_cb(struct bt_conn *conn, int err, const struct mpl_
  * @brief  Callback handler for received notifications.
  *
  * @note	This callback will be triggered when a notification has been received.
- *		Only for debugging, used by the client.
+ *		Used by the client.
  */
 static void mcc_cmd_notification_cb(struct bt_conn *conn, int err, const struct mpl_cmd_ntf *ntf)
 {
@@ -226,6 +226,7 @@ static void mcs_media_state_cb(struct media_player *plr, int err, uint8_t state)
  */
 static void mcs_local_player_instance_cb(struct media_player *player, int err)
 {
+	int ret;
 	struct mpl_cmd cmd;
 
 	if (err) {
@@ -242,7 +243,10 @@ static void mcs_local_player_instance_cb(struct media_player *player, int err)
 	/* Since the media player is default paused when initialized, we
 	 * send a play command when the first stream is enabled
 	 */
-	(void)media_proxy_ctrl_send_command(local_player, &cmd);
+	ret = media_proxy_ctrl_send_command(local_player, &cmd);
+	if (ret) {
+		LOG_WRN("Failed to set media proxy state to play: %d", ret);
+	}
 }
 
 /**
@@ -256,7 +260,7 @@ static void mcs_local_player_instance_cb(struct media_player *player, int err)
 static int mpl_cmd_send(struct bt_conn *conn, struct mpl_cmd *cmd)
 {
 	int ret;
-	int failed_ret = 0;
+	int any_failures = 0;
 
 	if (IS_ENABLED(CONFIG_BT_MCS)) {
 		ret = media_proxy_ctrl_send_command(local_player, cmd);
@@ -297,19 +301,19 @@ static int mpl_cmd_send(struct bt_conn *conn, struct mpl_cmd *cmd)
 					ret = bt_mcc_send_cmd(mcc_peer[i].conn, cmd);
 					if (ret) {
 						LOG_WRN("Failed to send command: %d", ret);
-						failed_ret = ret;
+						any_failures = ret;
 					}
 				} else {
 					LOG_WRN("MCS discovery has not finished: %d",
 						mcc_peer[i].mcp_mcs_disc_status);
-					failed_ret = -EBUSY;
+					any_failures = -EBUSY;
 				}
 			}
 		}
 	}
 
-	if (failed_ret) {
-		return failed_ret;
+	if (any_failures) {
+		return any_failures;
 	}
 
 	return 0;
@@ -317,6 +321,8 @@ static int mpl_cmd_send(struct bt_conn *conn, struct mpl_cmd *cmd)
 
 int bt_content_ctrl_media_discover(struct bt_conn *conn)
 {
+	int ret;
+
 	if (!IS_ENABLED(CONFIG_BT_MCC)) {
 		LOG_ERR("MCC not enabled");
 		return -ECANCELED;
@@ -327,7 +333,6 @@ int bt_content_ctrl_media_discover(struct bt_conn *conn)
 		return -EINVAL;
 	}
 
-	int ret;
 	int idx = mcc_peer_index_get(conn);
 
 	if (idx == -ESRCH) {
@@ -465,12 +470,13 @@ int bt_content_ctrl_media_client_init(void)
 
 int bt_content_ctrl_media_server_init(bt_content_ctrl_media_play_pause_cb play_pause)
 {
+	int ret;
+
 	if (!IS_ENABLED(CONFIG_BT_MCS)) {
 		LOG_ERR("MCS not enabled");
 		return -ECANCELED;
 	}
 
-	int ret;
 	static struct media_proxy_ctrl_cbs mcs_cb;
 
 	play_pause_cb = play_pause;

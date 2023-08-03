@@ -137,7 +137,7 @@ Since the application architecture is uniform and the firmware code is shared, t
 Communications between modules
 ==============================
 
-Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are no dependencies between them. Each of the buses used by the application has their message structures described in :file:`nrf5340_audio_common.h`.
+Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are as few dependencies as possible. Each of the buses used by the application has their message structures described in :file:`nrf5340_audio_common.h`.
 
 The application uses the following buses:
 
