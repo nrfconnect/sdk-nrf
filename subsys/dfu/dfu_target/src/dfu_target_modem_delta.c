@@ -149,6 +149,11 @@ int dfu_target_modem_delta_write(const void *const buf, size_t len)
 	} else if (err > 0) {
 		LOG_ERR("Write failed, modem error %d", err);
 		switch (err) {
+		case NRF_MODEM_DELTA_DFU_RECEIVER_OUT_OF_MEMORY:
+			return -ENOMEM;
+		case NRF_MODEM_DELTA_DFU_RECEIVER_BLOCK_TOO_LARGE:
+			return -E2BIG;
+		case NRF_MODEM_DELTA_DFU_INVALID_DATA:
 		case NRF_MODEM_DELTA_DFU_INVALID_UUID:
 			return -EINVAL;
 		case NRF_MODEM_DELTA_DFU_INVALID_FILE_OFFSET:
@@ -191,13 +196,16 @@ int dfu_target_modem_delta_schedule_update(int img_num)
 
 	err = nrf_modem_delta_dfu_update();
 
-	if (err != 0) {
+	if (err == NRF_MODEM_DELTA_DFU_INCOMPLETE_DATA) {
+		LOG_ERR("Modem firmware upgrade scheduling failed, incomplete data");
+		return -EINVAL;
+	} else if (err != 0) {
 		LOG_ERR("Modem firmware upgrade scheduling failed, error %d", err);
 		return -EFAULT;
 	}
 	LOG_INF("Scheduling modem firmware upgrade at next boot");
 
-	return err;
+	return 0;
 }
 
 int dfu_target_modem_delta_reset(void)
