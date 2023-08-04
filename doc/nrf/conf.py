@@ -202,7 +202,7 @@ ncs_tool_versions_host_deps = [
 ]
 ncs_tool_versions_python_deps = [
     ZEPHYR_BASE / "scripts" / "requirements-base.txt",
-    ZEPHYR_BASE / "scripts" / "requirements-doc.txt",
+    ZEPHYR_BASE / "doc" / "requirements.txt",
     MCUBOOT_BASE / "scripts" / "requirements.txt",
     NRF_BASE / "scripts" / "requirements-base.txt",
     NRF_BASE / "scripts" / "requirements-doc.txt",
