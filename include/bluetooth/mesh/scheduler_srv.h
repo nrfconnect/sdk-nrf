@@ -72,6 +72,8 @@ struct bt_mesh_scheduler_srv {
 		sched_tai[BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT];
 		/* Index of the ongoing action. */
 		uint8_t idx;
+		/* Index of the last executed action. */
+		uint8_t last_idx;
 		/* Bit field indicating active entries
 		 * in the Schedule Register.
 		 */
