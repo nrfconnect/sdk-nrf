@@ -205,7 +205,7 @@ ncs_tool_versions_python_deps = [
     ZEPHYR_BASE / "doc" / "requirements.txt",
     MCUBOOT_BASE / "scripts" / "requirements.txt",
     NRF_BASE / "scripts" / "requirements-base.txt",
-    NRF_BASE / "scripts" / "requirements-doc.txt",
+    NRF_BASE / "doc" / "requirements.txt",
     NRF_BASE / "scripts" / "requirements-build.txt",
 ]
 

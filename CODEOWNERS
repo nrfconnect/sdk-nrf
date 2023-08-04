@@ -64,6 +64,7 @@ Kconfig*                                  @tejlmand
 /doc/versions.json                        @carlescufi
 /doc/custom.properties                    @gmarull
 /doc/tags.yml                             @gmarull
+/doc/requirements.txt                     @gmarull
 # All subfolders
 /drivers/                                 @anangl
 /drivers/serial/                          @nordic-krch @anangl
