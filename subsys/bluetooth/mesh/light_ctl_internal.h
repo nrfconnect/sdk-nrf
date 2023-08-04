@@ -30,9 +30,10 @@ static inline int16_t temp_to_lvl(struct bt_mesh_light_temp_srv *srv,
 {
 	uint16_t temp = CLAMP(raw_temp, srv->range.min, srv->range.max);
 
-	return ROUNDED_DIV((temp - srv->range.min) * UINT16_MAX,
-				(srv->range.max - srv->range.min)) -
-				LIGHT_TEMP_LVL_OFFSET;
+	return srv->range.max == srv->range.min ? 0
+						: ROUNDED_DIV((temp - srv->range.min) * UINT16_MAX,
+							      (srv->range.max - srv->range.min)) -
+							  LIGHT_TEMP_LVL_OFFSET;
 }
 
 void bt_mesh_light_temp_srv_set(struct bt_mesh_light_temp_srv *srv,
