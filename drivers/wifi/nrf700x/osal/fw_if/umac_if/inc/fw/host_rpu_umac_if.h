@@ -2939,7 +2939,7 @@ struct nrf_wifi_umac_event_power_save_info {
 	/** Is TWT responder */
 	unsigned char twt_responder;
 	/** Power save timed out value */
-	signed int ps_timeout;
+	unsigned int ps_timeout;
 	/** Listen interval value */
 	unsigned short listen_interval;
 	/** Number TWT flows */
