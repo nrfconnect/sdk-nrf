@@ -123,7 +123,7 @@ manifest:
         ncs:
           upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
           upstream-sha: 1225729e8d84075f03bf9fc51eee85d84dfb0091
-          compare-by-default: false
+          compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: 54319b44950463936e75b4cf898ba5222083a497
