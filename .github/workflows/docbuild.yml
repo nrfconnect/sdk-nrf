@@ -69,7 +69,7 @@ jobs:
       - name: Build documentation
         working-directory: ncs/nrf
         run: |
-          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-W"
+          cmake -GNinja -Bdoc/_build -Sdoc
           ninja -C doc/_build
 
       - name: Prepare archive

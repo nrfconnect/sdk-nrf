@@ -20,10 +20,10 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 #-------------------------------------------------------------------------------
 # Options
 
-set(SPHINXOPTS_DEFAULT "-j auto" CACHE STRING "Default Sphinx Options")
+set(SPHINXOPTS "-j auto -W --keep-going -T" CACHE STRING "Default Sphinx Options")
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
 
-separate_arguments(SPHINXOPTS_DEFAULT)
+separate_arguments(SPHINXOPTS)
 separate_arguments(SPHINXOPTS_EXTRA)
 
 #-------------------------------------------------------------------------------
@@ -54,9 +54,9 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 #
 # Args:
 # - name: Docset name.
-# - DODGY: Enable/disable "dodgy" mode. If enabled, the ${SPHINXOPTS_EXTRA}
-#   option (used to enable things like -W) will not be passed to Sphinx. It can
-#   be useful for external docsets that are likely to generate build warnings.
+# - DODGY: Enable/disable "dodgy" mode. If enabled "-W" (warnings as errors)
+#   option will be disabled. It can be useful for external docsets that are
+#   likely to generate build warnings.
 #
 # This function configures multiple targets which can be used to build a docset.
 # The docset configuration (conf.py) is expected to be at the ${name} folder
@@ -85,8 +85,8 @@ function(add_docset name)
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
   set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE})
 
-  if(NOT ${DOCSET_DODGY})
-    set(EXTRA_ARGS ${SPHINXOPTS_EXTRA})
+  if(${DOCSET_DODGY})
+    list(REMOVE_ITEM SPHINXOPTS "-W" "--keep-going")
   endif()
 
   add_doc_target(
@@ -98,7 +98,8 @@ function(add_docset name)
       -c ${DOCSET_CFG_DIR}
       -d ${DOCSET_DOCTREE_DIR}
       -w ${DOCSET_BUILD_DIR}/inventory.log
-      ${SPHINXOPTS_DEFAULT}
+      ${SPHINXOPTS}
+      ${SPHINXOPTS_EXTRA}
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
     USES_TERMINAL
@@ -114,7 +115,8 @@ function(add_docset name)
       -c ${DOCSET_CFG_DIR}
       -d ${DOCSET_DOCTREE_DIR}
       -w ${DOCSET_BUILD_DIR}/html.log
-      ${SPHINXOPTS_DEFAULT}
+      ${SPHINXOPTS}
+      ${SPHINXOPTS_EXTRA}
       ${EXTRA_ARGS}
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
@@ -131,7 +133,8 @@ function(add_docset name)
       -c ${DOCSET_CFG_DIR}
       -d ${DOCSET_DOCTREE_DIR}
       -w ${DOCSET_BUILD_DIR}/linkcheck.log
-      ${SPHINXOPTS_DEFAULT}
+      ${SPHINXOPTS}
+      ${SPHINXOPTS_EXTRA}
       ${EXTRA_ARGS}
       ${DOCSET_SRC_DIR}
       ${DOCSET_BUILD_DIR}
