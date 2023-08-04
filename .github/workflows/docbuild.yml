@@ -13,7 +13,7 @@ on:
       - '**/sample.yaml'
       - 'doc/**'
       - 'include/**'
-      - 'scripts/requirements-doc.txt'
+      - 'doc/requirements.txt'
       - 'scripts/tools-versions-*.yml'
       - 'west.yml'
   push:
@@ -64,7 +64,7 @@ jobs:
       - name: Install documentation dependencies
         working-directory: ncs
         run: |
-          pip3 install -r zephyr/doc/requirements.txt -r nrf/scripts/requirements-doc.txt
+          pip3 install -r zephyr/doc/requirements.txt -r nrf/doc/requirements.txt
 
       - name: Build documentation
         working-directory: ncs/nrf
