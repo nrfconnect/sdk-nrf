@@ -52,7 +52,7 @@ Connection interval
 
 Physical layer (PHY) data rate
    Starting with Bluetooth 5, the over-the-air data rate in Bluetooth Low Energy can exceed 1 Ms/s (mega symbols per second), which allows for faster transmission.
-   In addition, you can use coded PHY (available on the nRF52840 SoC only) for long-range transmission.
+   In addition, you can use coded PHY (available on select nRF SoCs) for long-range transmission.
 
 By default, the following connection parameter values are used:
 
