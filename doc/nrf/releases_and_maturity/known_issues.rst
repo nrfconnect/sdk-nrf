@@ -1300,6 +1300,14 @@ NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth® L
 
   **Workaround:** Use BlueZ in version 5.56 or higher.
 
+.. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
+
+NCSDK-22953: A HID output report interrupts scanning in the :ref:`nrf_desktop_ble_scan` even if there are no peripherals connected
+  Connecting a HID dongle over USB to a HID host might lead to submitting a HID output report and stopping Bluetooth LE scanning even if there are no peripherals connected through the dongle.
+  In this case, scanning stop delays establishing a connection with peripherals.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``b4860f7c9475ff8e61a4c3b907968987bb6311bd``).
+
 .. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-22810: Assertion fail when logging :c:struct:`config_event` with an unknown status
