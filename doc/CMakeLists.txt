@@ -238,7 +238,7 @@ add_docset(matter DODGY)
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
 
-add_docset(nrfxlib)
+add_docset(nrfxlib DODGY)
 
 #-------------------------------------------------------------------------------
 # docset: kconfig
