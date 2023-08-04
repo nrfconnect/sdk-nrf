@@ -536,10 +536,9 @@ static void scheduled_action_handle(struct k_work *work)
 
 	} while (elem != NULL && next_sched_mod == NULL);
 
-	uint8_t tmp_idx = srv->idx;
-
+	srv->last_idx = srv->idx;
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
-	schedule_action(srv, tmp_idx);
+	schedule_action(srv, srv->last_idx);
 	run_scheduler(srv);
 }
 
@@ -731,7 +730,11 @@ static int update_handler(struct bt_mesh_model *model)
 {
 	struct bt_mesh_scheduler_srv *srv = model->user_data;
 
-	encode_status(srv, srv->pub.msg);
+	if (srv->last_idx == BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+		encode_status(srv, srv->pub.msg);
+	} else {
+		encode_action_status(srv, srv->pub.msg, srv->last_idx, false);
+	}
 	return 0;
 }
 
@@ -751,6 +754,7 @@ static int scheduler_srv_init(struct bt_mesh_model *model)
 	srv->active_bitmap = 0;
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
+	srv->last_idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 	k_work_init_delayable(&srv->delayed_work, scheduled_action_handle);
 
 	for (int i = 0; i < BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT; i++) {
@@ -765,6 +769,7 @@ static void scheduler_srv_reset(struct bt_mesh_model *model)
 	struct bt_mesh_scheduler_srv *srv = model->user_data;
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
+	srv->last_idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 	srv->active_bitmap = 0;
 	/* If this cancellation fails, we'll exit early from the timer handler,
 	 * as srv->idx is out of bounds.
