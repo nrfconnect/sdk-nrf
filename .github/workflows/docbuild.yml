@@ -64,7 +64,7 @@ jobs:
       - name: Install documentation dependencies
         working-directory: ncs
         run: |
-          pip3 install -r zephyr/scripts/requirements-doc.txt -r nrf/scripts/requirements-doc.txt
+          pip3 install -r zephyr/doc/requirements.txt -r nrf/scripts/requirements-doc.txt
 
       - name: Build documentation
         working-directory: ncs/nrf
