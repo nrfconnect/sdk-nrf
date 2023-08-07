@@ -41,7 +41,7 @@ Hardware unique key
 
 Nordic Semiconductor devices featuring the CryptoCell cryptographic accelerator allow the usage of a hardware unique key (HUK) for key derivation.
 A HUK is a unique symmetric cryptographic key which is loaded in special hardware registers allowing the application to use the key by reference, without any access to the key material.
-To enable the HUK in an application, enable the :kconfig:option:`CONFIG_HW_UNIQUE_KEY` option.
+To enable the HUK in an application, enable the :kconfig:option:`CONFIG_HW_UNIQUE_KEY_USE` option.
 
 For more information, see the hardware unique key :ref:`library <lib_hw_unique_key>` and :ref:`sample <hw_unique_key_usage>`.
 

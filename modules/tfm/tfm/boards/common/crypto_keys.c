@@ -23,7 +23,7 @@
 #error "MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be selected in Mbed TLS config file"
 #endif
 
-#ifdef CONFIG_HW_UNIQUE_KEY
+#ifdef CONFIG_HW_UNIQUE_KEY_USE
 static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len,
 					    size_t *key_len,
 					    size_t *key_bits,
@@ -52,7 +52,7 @@ static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len,
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
-#endif /* CONFIG_HW_UNQUE_KEY */
+#endif /* CONFIG_HW_UNIQUE_KEY_USE */
 
 #ifdef TFM_PARTITION_INITIAL_ATTESTATION
 static enum tfm_plat_err_t tfm_plat_get_iak(uint8_t *buf, size_t buf_len,

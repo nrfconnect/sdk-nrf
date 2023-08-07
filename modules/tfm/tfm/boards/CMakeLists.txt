@@ -84,7 +84,7 @@ if (${TFM_PARTITION_CRYPTO})
 
   if (${CONFIG_HW_UNIQUE_KEY})
     target_compile_definitions(platform_s PUBLIC
-      CONFIG_HW_UNIQUE_KEY
+      CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_USE
       $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>)
 
     target_sources(platform_s

@@ -78,7 +78,7 @@ Additionally, you can enable the :kconfig:option:`CONFIG_HW_UNIQUE_KEY_RANDOM` o
 See :ref:`configure_application` for information on how to enable the required configuration options.
 
 You can then use the HUKs through the APIs in the :ref:`CC3xx platform libraries<nrf_cc3xx_platform_readme>`.
-You can also derive a key using :c:func:`hw_unique_key_derive_key`.
+You can also enable the :kconfig:option:`CONFIG_HW_UNIQUE_KEY_USE` option to derive a key using :c:func:`hw_unique_key_derive_key`.
 
 .. caution::
    It is strongly recommended to generate random keys on-chip to avoid any outside knowledge of the keys.

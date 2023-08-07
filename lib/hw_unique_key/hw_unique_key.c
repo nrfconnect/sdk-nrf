@@ -82,6 +82,7 @@ bool hw_unique_key_are_any_written(void)
 	return false;
 }
 
+#ifdef CONFIG_HW_UNIQUE_KEY_USE
 int hw_unique_key_derive_key(enum hw_unique_key_slot key_slot, const uint8_t *context,
 			     size_t context_size, uint8_t const *label, size_t label_size,
 			     uint8_t *output, uint32_t output_size)
@@ -103,3 +104,4 @@ int hw_unique_key_derive_key(enum hw_unique_key_slot key_slot, const uint8_t *co
 
 	return HW_UNIQUE_KEY_SUCCESS;
 }
+#endif /* HW_UNIQUE_KEY_USE */

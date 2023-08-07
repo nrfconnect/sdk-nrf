@@ -25,4 +25,5 @@ set(CONFIG_NFCT_PINS_AS_GPIOS           OFF         CACHE BOOL      "Use NFCT pi
 set(CONFIG_NRF_TRACE_PORT               OFF         CACHE BOOL      "Enable trace port.")
 
 set(CONFIG_HW_UNIQUE_KEY                ON          CACHE BOOL      "Enable Hardware Unique Key")
+set(CONFIG_HW_UNIQUE_KEY_USE            ON          CACHE BOOL      "Enable use of Hardware Unique Key")
 set(CONFIG_HW_UNIQUE_KEY_RANDOM         ON          CACHE BOOL      "Write a new Hardware Unique Key if none exists")

@@ -6,7 +6,7 @@
 
 config HW_UNIQUE_KEY_SRC
 	bool
-	default y if HW_UNIQUE_KEY || HW_UNIQUE_KEY_LOAD
+	default y if HW_UNIQUE_KEY || HW_UNIQUE_KEY_LOAD || HW_UNIQUE_KEY_USE
 	depends on !ARM_NONSECURE_FIRMWARE
 	help
 	  This is true whenever hw_unique_key source files are included in the
@@ -63,3 +63,16 @@ config HW_UNIQUE_KEY_PARTITION_SIZE
 	help
 	  Size of the flash page for storing the HUK.
 	  Only needed when there is no KMU for storing keys (nRF52840).
+
+config HW_UNIQUE_KEY_USE
+	bool "Enable the usage of the HUK to derive keys"
+	select SECURE_BOOT if HAS_HW_NRF_ACL
+	select FPROTECT if HAS_HW_NRF_ACL
+	default y if BUILD_WITH_TFM && HW_UNIQUE_KEY
+	help
+	  This option will allow the usage of the HUK to derive the user keys.
+	  It will require an immutable bootloader with the CONFIG_HW_UNIQUE_KEY_LOAD
+	  option set on devices without a KMU.
+	  Note that the key has to be written before it can be read.
+	  Check CONFIG_HW_UNIQUE_KEY and CONFIG_HW_UNIQUE_KEY_RANDOM for creating
+	  and writing the HUK to the device.
