@@ -238,6 +238,13 @@ config SB_BPROT_IN_DEBUG
 endif # SECURE_BOOT_DEBUG
 endif # IS_SECURE_BOOTLOADER
 
+config IS_BOOTLOADER_IMG
+	bool
+	default y if IS_SECURE_BOOTLOADER || MCUBOOT
+	help
+	  Helper symbol which is set when the current image is a bootloader. This includes mcuboot
+	  and the secure bootloader.
+
 config NRF53_UPGRADE_NETWORK_CORE
 	bool "Support updating nRF53 Network Core application"
 	default y

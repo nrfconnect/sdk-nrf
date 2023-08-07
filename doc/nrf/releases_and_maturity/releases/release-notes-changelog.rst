@@ -599,7 +599,9 @@ nRF Security
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lib_adp536x` library:
+
+  * Fixed issue where the adp536x driver was included in the immutable bootloader on Thingy:91 when :kconfig:option:`CONFIG_SECURE_BOOT` was enabled.
 
 Common Application Framework (CAF)
 ----------------------------------
