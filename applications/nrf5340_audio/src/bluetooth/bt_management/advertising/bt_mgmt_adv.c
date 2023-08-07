@@ -41,6 +41,7 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
 	int ret;
 	struct bt_conn *conn;
+
 	if (!IS_ENABLED(CONFIG_BT_BONDABLE)) {
 		return;
 	}
