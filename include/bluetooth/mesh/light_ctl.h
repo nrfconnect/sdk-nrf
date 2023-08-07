@@ -24,6 +24,8 @@ extern "C" {
 #define BT_MESH_LIGHT_TEMP_MIN 800
 /** Maximum permitted Temperature level */
 #define BT_MESH_LIGHT_TEMP_MAX 20000
+/** Unknown Temperature range boundaries */
+#define BT_MESH_LIGHT_TEMP_UNKNOWN 0xFFFF
 
 /** All Light CTL parameters */
 struct bt_mesh_light_ctl {

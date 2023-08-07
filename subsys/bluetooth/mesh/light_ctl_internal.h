@@ -16,24 +16,34 @@
 
 #define LIGHT_TEMP_LVL_OFFSET (-INT16_MIN)
 
-static inline uint16_t lvl_to_temp(struct bt_mesh_light_temp_srv *srv,
-				   int16_t lvl)
+static inline uint16_t get_range_min(uint16_t min)
 {
-	return srv->range.min +
-	       ROUNDED_DIV((int32_t)(lvl + LIGHT_TEMP_LVL_OFFSET) *
-				(srv->range.max - srv->range.min),
-				(int32_t)UINT16_MAX);
+	return min == BT_MESH_LIGHT_TEMP_UNKNOWN ? BT_MESH_LIGHT_TEMP_MIN : min;
 }
 
-static inline int16_t temp_to_lvl(struct bt_mesh_light_temp_srv *srv,
-				  uint16_t raw_temp)
+static inline uint16_t get_range_max(uint16_t max)
 {
-	uint16_t temp = CLAMP(raw_temp, srv->range.min, srv->range.max);
+	return max == BT_MESH_LIGHT_TEMP_UNKNOWN ? BT_MESH_LIGHT_TEMP_MAX : max;
+}
 
-	return srv->range.max == srv->range.min ? 0
-						: ROUNDED_DIV((temp - srv->range.min) * UINT16_MAX,
-							      (srv->range.max - srv->range.min)) -
-							  LIGHT_TEMP_LVL_OFFSET;
+static inline uint16_t lvl_to_temp(struct bt_mesh_light_temp_srv *srv, int16_t lvl)
+{
+	uint16_t min = get_range_min(srv->range.min);
+	uint16_t max = get_range_max(srv->range.max);
+
+	return min + ROUNDED_DIV((int32_t)(lvl + LIGHT_TEMP_LVL_OFFSET) * (max - min),
+				 (int32_t)UINT16_MAX);
+}
+
+static inline int16_t temp_to_lvl(struct bt_mesh_light_temp_srv *srv, uint16_t raw_temp)
+{
+	uint16_t min = get_range_min(srv->range.min);
+	uint16_t max = get_range_max(srv->range.max);
+	uint16_t temp = CLAMP(raw_temp, min, max);
+
+	return max == min ? 0
+			  : ROUNDED_DIV((temp - min) * UINT16_MAX, (max - min)) -
+				    LIGHT_TEMP_LVL_OFFSET;
 }
 
 void bt_mesh_light_temp_srv_set(struct bt_mesh_light_temp_srv *srv,
