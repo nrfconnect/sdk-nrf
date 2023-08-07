@@ -311,9 +311,6 @@ config HEAP_MEM_POOL_SIZE
 config SYSTEM_WORKQUEUE_STACK_SIZE
 	default 4096
 
-config POSIX_MAX_FDS
-	default 16
-
 config NET_TX_STACK_SIZE
 	default 4096
 

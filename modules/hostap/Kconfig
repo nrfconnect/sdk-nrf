@@ -121,7 +121,8 @@ config POSIX_MAX_FDS
 	# l2_packet - 1
 	# ctrl_iface - 2 * socketpairs = 4(local and global)
 	# z_wpa_event_sock - 1 socketpair = 2
-	default 7 if !POSIX_API
+	# Remaining left for the applications running in default configuration
+	default 16 if !POSIX_API
 
 config BSS_MAX_IDLE_TIME
 	int "BSS max idle timeout in seconds"
