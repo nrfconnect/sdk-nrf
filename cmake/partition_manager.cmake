@@ -339,7 +339,7 @@ endif()
 add_custom_target(partition_manager)
 
 # Make Partition Manager configuration available in CMake
-import_kconfig(PM_ ${pm_out_dotconf_file} pm_var_names)
+import_pm_config(${pm_out_dotconf_file} pm_var_names)
 
 foreach(name ${pm_var_names})
   set_property(
@@ -510,13 +510,13 @@ else()
       list(APPEND global_hex_depends    ${${d}_PM_DOMAIN_DYNAMIC_PARTITION}_subimage)
 
       # Add domain prefix cmake variables for all partitions
-      # Here, we actually overwrite the already imported kconfig values
+      # Here, we actually overwrite the already imported pm.config values
       # for our own domain. This is not an issue since all of these variables
       # are accessed through the 'partition_manager' target, and most likely
       # through generator expression, as this file is one of the last
       # cmake files executed in the configure stage.
       get_shared(conf_file IMAGE ${d} PROPERTY PM_DOTCONF_FILES)
-      import_kconfig(PM_ ${conf_file} ${d}_pm_var_names)
+      import_pm_config(${conf_file} ${d}_pm_var_names)
 
       foreach(name ${${d}_pm_var_names})
         set_property(

@@ -148,7 +148,7 @@ function(partition_manager)
 
   add_custom_target(partition_manager${underscore}${PM_DOMAIN})
   set(pm_var_names)
-  import_kconfig(PM_ ${pm_out_dotconf_file} pm_var_names)
+  import_pm_config(${pm_out_dotconf_file} pm_var_names)
 
   if(DEFINED PM_MCUBOOT_PAD_SIZE AND
      (NOT "${PM_MCUBOOT_PAD_SIZE}" STREQUAL "${SB_CONFIG_PM_MCUBOOT_PAD}")
@@ -642,12 +642,12 @@ else()
       list(APPEND pm_out_region_file    ${APPLICATION_BINARY_DIR}/regions_${d}.yml)
 
       # Add domain prefix cmake variables for all partitions
-      # Here, we actually overwrite the already imported kconfig values
+      # Here, we actually overwrite the already imported pm.config values
       # for our own domain. This is not an issue since all of these variables
       # are accessed through the 'partition_manager' target, and most likely
       # through generator expression, as this file is one of the last
       # cmake files executed in the configure stage.
-      import_kconfig(PM_ ${APPLICATION_BINARY_DIR}/pm_${d}.config ${d}_pm_var_names)
+      import_pm_config(${APPLICATION_BINARY_DIR}/pm_${d}.config ${d}_pm_var_names)
 
       foreach(name ${${d}_pm_var_names})
         set_property(
