@@ -261,9 +261,9 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	srv->handlers->get(srv, NULL, &status);
 
 	if (move_set->delta > 0) {
-		set.params.temp = srv->range.max;
+		set.params.temp = get_range_max(srv->range.max);
 	} else if (move_set->delta < 0) {
-		set.params.temp = srv->range.min;
+		set.params.temp = get_range_min(srv->range.min);
 	} else {
 		set.params.temp = status.current.temp;
 	}
@@ -326,7 +326,10 @@ static void temp_srv_set(struct bt_mesh_light_temp_srv *srv,
 			 struct bt_mesh_light_temp_set *set,
 			 struct bt_mesh_light_temp_status *status)
 {
-	set->params.temp = MIN(MAX(set->params.temp, srv->range.min), srv->range.max);
+	uint16_t min = get_range_min(srv->range.min);
+	uint16_t max = get_range_max(srv->range.max);
+
+	set->params.temp = CLAMP(set->params.temp, min, max);
 
 	srv->transient.last = set->params;
 	if (!IS_ENABLED(CONFIG_EMDS)) {
@@ -466,20 +469,23 @@ void bt_mesh_light_temp_srv_set(struct bt_mesh_light_temp_srv *srv,
 	(void)bt_mesh_lvl_srv_pub(&srv->lvl, NULL, &lvl_status);
 }
 
-enum bt_mesh_model_status
-bt_mesh_light_temp_srv_range_set(struct bt_mesh_light_temp_srv *srv,
-				 struct bt_mesh_msg_ctx *ctx,
-				 struct bt_mesh_light_temp_range *range)
+enum bt_mesh_model_status bt_mesh_light_temp_srv_range_set(struct bt_mesh_light_temp_srv *srv,
+							   struct bt_mesh_msg_ctx *ctx,
+							   struct bt_mesh_light_temp_range *range)
 {
 	const struct bt_mesh_light_temp_range old = srv->range;
 
-	if ((range->min < BT_MESH_LIGHT_TEMP_MIN) ||
-	    (range->min > range->max)) {
+	if (range->min < BT_MESH_LIGHT_TEMP_MIN) {
 		return BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN;
 	}
 
-	if (range->max > BT_MESH_LIGHT_TEMP_MAX) {
+	if (range->max > BT_MESH_LIGHT_TEMP_MAX && range->max != BT_MESH_LIGHT_TEMP_UNKNOWN) {
 		return BT_MESH_MODEL_ERROR_INVALID_RANGE_MAX;
+	}
+
+	if (range->max != BT_MESH_LIGHT_TEMP_UNKNOWN && range->min != BT_MESH_LIGHT_TEMP_UNKNOWN &&
+	    range->min > range->max) {
+		return BT_MESH_MODEL_ERROR_INVALID_RANGE_MIN;
 	}
 
 	srv->range = *range;
