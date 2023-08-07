@@ -401,7 +401,7 @@ int bt_mgmt_init(void)
 		bt_mgmt_dfu_start();
 	}
 #endif
-	ret = bt_mgmt_ctlr_cfg_init(true);
+	ret = bt_mgmt_ctlr_cfg_init(IS_ENABLED(CONFIG_WDT_CTLR));
 	if (ret) {
 		return ret;
 	}

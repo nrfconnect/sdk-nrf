@@ -527,7 +527,7 @@ static void content_control_msg_sub_thread(void)
 		switch (event) {
 		case MEDIA_PLAY:
 			ret = le_audio_play();
-			if (ret) {
+			if (ret && (ret != -EALREADY)) {
 				LOG_ERR("Failed to play: %d", ret);
 			}
 
@@ -535,7 +535,7 @@ static void content_control_msg_sub_thread(void)
 
 		case MEDIA_STOP:
 			ret = le_audio_pause();
-			if (ret) {
+			if (ret && (ret != -EALREADY)) {
 				LOG_ERR("Failed to pause: %d", ret);
 			}
 

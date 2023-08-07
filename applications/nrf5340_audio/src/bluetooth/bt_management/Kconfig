@@ -17,6 +17,14 @@ config BLE_LE_POWER_CONTROL_ENABLED
 	  The Bluetooth LE power control feature makes devices be able to change TX power
 	  dynamically and automatically during connection, which may reduce power consumption.
 
+config WDT_CTLR
+	bool "Enable watchdog for controller"
+	default y
+	help
+	  When true, the controller will be polled at regular intervals to check that it is alive.
+	  Turn off to reduce overhead, or HCI traffic.
+	  The watchdog will be deactivated automatically for DFU procedures.
+
 choice	BLE_CONN_TX_POWER
 	prompt "Default TX power for the Bluetooth LE connections"
 	default BLE_CONN_TX_POWER_0DBM
