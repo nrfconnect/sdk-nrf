@@ -392,3 +392,31 @@ function(get_shared var)
     set(${var} ${${var}} PARENT_SCOPE)
   endif()
 endfunction()
+
+#
+# Usage
+#   import_pm_config(<dotconf_file> <keys>)
+#
+# Import variables from a partition manager output .config file
+# (usually pm.config or pm_<DOMAIN>.config) into the CMake namespace.
+#
+# <dotconf_file>: Absolute path to the file.
+# <keys_out>:     Output variable, which will be populated with a list
+#                 of variable names loaded from <dotconf_file>.
+#
+function(import_pm_config dotconf_file keys_out)
+  file(STRINGS ${dotconf_file} DOTCONF_LIST ENCODING "UTF-8")
+  foreach(LINE ${DOTCONF_LIST})
+    # Parse `key=value` assignments, where every key is prefixed with `PM_`.
+    if("${LINE}" MATCHES "(^PM_[^=]+)=(.*$)")
+      set(key "${CMAKE_MATCH_1}")
+
+      # If the value is surrounded by quotation marks, strip them out.
+      string(REGEX REPLACE "\"(.*)\"" "\\1" value "${CMAKE_MATCH_2}")
+
+      list(APPEND keys "${key}")
+      set("${key}" "${value}" PARENT_SCOPE)
+    endif()
+  endforeach()
+  set("${keys_out}" "${keys}" PARENT_SCOPE)
+endfunction()
