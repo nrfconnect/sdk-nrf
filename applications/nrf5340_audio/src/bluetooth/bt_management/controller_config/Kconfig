@@ -12,7 +12,7 @@ menu "Controller config"
 menu "nRF21540"
 
 config NRF_21540_ACTIVE
-	def_bool $(shields_list_contains,nrf21540_ek_fwd)
+	def_bool $(shields_list_contains,nrf21540ek_fwd)
 	select EXPERIMENTAL
 	help
 	  The front end module can help boost the TX power as high as 20 dBm.
