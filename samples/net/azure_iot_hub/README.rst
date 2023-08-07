@@ -1,13 +1,13 @@
 .. _azure_iot_hub:
 
-Cellular: Azure IoT Hub
-#######################
+Azure IoT Hub
+#############
 
 .. contents::
    :local:
    :depth: 2
 
-The Azure IoT Hub sample shows the communication of an nRF9160-based device with an `Azure IoT Hub`_ instance.
+The Azure IoT Hub sample shows the communication of an Internet-connected device with an `Azure IoT Hub`_ instance.
 This sample uses the :ref:`lib_azure_iot_hub` library to communicate with the IoT hub.
 
 
@@ -94,7 +94,7 @@ As an example, the following compiles with DPS for nRF9160DK:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/azure_iot_hub`
+.. |sample path| replace:: :file:`samples/net/azure_iot_hub`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -133,13 +133,16 @@ When the sample runs, the device boots, and the sample displays the following ou
 .. code-block:: console
 
 	*** Booting Zephyr OS build v2.3.0-rc1-ncs1-1453-gf41496cd30d5  ***
+	<inf> azure_iot_hub_sample: Bringing network interface up
 	<inf> azure_iot_hub_sample: Azure IoT Hub sample started
-	<inf> azure_iot_hub_sample: Connecting to LTE network
-	<inf> azure_iot_hub_sample: Connected to LTE network
+	<inf> azure_iot_hub_sample: Device ID: nrf91dk-dev
+	<inf> azure_iot_hub_sample: Connecting...
+	<inf> azure_iot_hub_sample: IP Up
+	<inf> azure_iot_hub_sample: Azure IoT Hub library initialized
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_CONNECTING
+	<inf> azure_iot_hub_sample: Connection request sent to IoT Hub
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_CONNECTED
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_READY
-	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RECEIVED
 	<inf> azure_iot_hub_sample: Sending event:
 	<inf> azure_iot_hub_sample: {"temperature":25.9,"timestamp":16849}
 	<inf> azure_iot_hub_sample: Event was successfully sent
@@ -164,13 +167,11 @@ Dependencies
 
 This sample uses the following |NCS| libraries and drivers:
 
-* :ref:`lib_azure_iot_hub`
+* :ref:`lib_azure_iot_hub
+
+It uses the following libraries and secure firmware component for nRF9160 DK and Thingy:91 builds:
+
 * :ref:`lte_lc_readme`
-
-It uses the following `sdk-nrfxlib`_ library:
-
 * :ref:`nrfxlib:nrf_modem`
-
-In addition, it uses the following secure firmware component:
-
 * :ref:`Trusted Firmware-M <ug_tfm>`
+* :ref:`net_if_interface`
