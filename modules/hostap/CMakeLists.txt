@@ -186,7 +186,6 @@ zephyr_library_sources_ifndef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	${COMMON_SRC_BASE}/crypto/crypto_mbedtls-bignum.c
 	${COMMON_SRC_BASE}/crypto/crypto_mbedtls-ec.c
 	${COMMON_SRC_BASE}/crypto/crypto_mbedtls.c
-	${COMMON_SRC_BASE}/crypto/tls_mbedtls.c
 	${COMMON_SRC_BASE}/crypto/aes-wrap.c
 	${COMMON_SRC_BASE}/crypto/aes-unwrap.c
 	${COMMON_SRC_BASE}/crypto/rc4.c
@@ -197,6 +196,9 @@ zephyr_library_sources_ifndef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	${COMMON_SRC_BASE}/crypto/sha384-prf.c
 )
 
+zephyr_library_sources_ifndef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
+	${COMMON_SRC_BASE}/crypto/tls_none.c
+)
 
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_WPA3
 	${COMMON_SRC_BASE}/common/sae.c
@@ -263,6 +265,8 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_WPS
 )
 
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO_ENTERPRISE
+	${COMMON_SRC_BASE}/crypto/tls_mbedtls.c
+
 	${COMMON_SRC_BASE}/eap_peer/eap_tls.c
 	${COMMON_SRC_BASE}/eap_peer/eap_tls_common.c
 
