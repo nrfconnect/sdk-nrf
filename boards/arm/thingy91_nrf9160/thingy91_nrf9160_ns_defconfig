@@ -24,14 +24,8 @@ CONFIG_SERIAL=y
 CONFIG_CONSOLE=y
 CONFIG_UART_CONSOLE=y
 
-# Enable I2C
-CONFIG_I2C=y
-
 # Enable SPI
 CONFIG_SPI=y
-
-# Enable power management IC ADP536x
-CONFIG_ADP536X=y
 
 # Disable entropy driver, as it's not yet implemented for nRF9160
 CONFIG_ENTROPY_NRF5_RNG=n
