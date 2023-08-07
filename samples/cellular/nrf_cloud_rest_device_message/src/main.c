@@ -14,9 +14,16 @@
 #include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_alert.h>
 #include <zephyr/logging/log.h>
-#include <dk_buttons_and_leds.h>
 #include <date_time.h>
 #include <zephyr/random/rand32.h>
+
+#include <app_event_manager.h>
+#include <caf/events/button_event.h>
+#include <caf/events/led_event.h>
+#define MODULE main
+#include <caf/events/module_state_event.h>
+
+#include "leds_def.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
 		    CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
@@ -58,9 +65,30 @@ static struct nrf_cloud_rest_context rest_ctx = {
 /* Flag to indicate if the user requested JITP to be performed */
 static bool jitp_requested;
 
+/* Register a listener for application events, specifically a button event */
+static bool app_event_handler(const struct app_event_header *aeh);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, button_event);
+
+static int send_led_event(enum led_id led_idx, const int state)
+{
+	if (led_idx >= LED_ID_COUNT) {
+		LOG_ERR("Invalid LED ID: %d", led_idx);
+		return -EINVAL;
+	}
+
+	struct led_event *event = new_led_event();
+
+	event->led_id = led_idx;
+	event->led_effect = state != 0 ? &led_effect_on : &led_effect_off;
+	APP_EVENT_SUBMIT(event);
+
+	return 0;
+}
+
 static int set_led(const int led, const int state)
 {
-	int err = dk_set_led(led, state);
+	int err = send_led_event(led, state);
 
 	if (err) {
 		LOG_ERR("Failed to set LED %d, error: %d", led, err);
@@ -69,16 +97,10 @@ static int set_led(const int led, const int state)
 	return 0;
 }
 
-static int init_leds(void)
+static int set_leds_off(void)
 {
-	int err = dk_leds_init();
+	int err = set_led(LTE_LED_NUM, 0);
 
-	if (err) {
-		LOG_ERR("LED init failed, error: %d", err);
-		return err;
-	}
-
-	err = set_led(LTE_LED_NUM, 0);
 	if (err) {
 		return err;
 	}
@@ -88,15 +110,25 @@ static int init_leds(void)
 		return err;
 	}
 
-	return err;
+	return 0;
 }
 
-static void button_handler(uint32_t button_states, uint32_t has_changed)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (has_changed & button_states & BIT(BTN_NUM - 1)) {
-		LOG_DBG("Button %d pressed", BTN_NUM);
+	struct button_event *event = is_button_event(aeh) ? cast_button_event(aeh) : NULL;
+
+	if (!event) {
+		return false;
+	} else if (!event->pressed) {
+		return true;
+	}
+
+	LOG_DBG("Button %d pressed", BTN_NUM);
+	if (event->key_id == (uint16_t)(BTN_NUM - 1)) {
 		k_sem_give(&button_press_sem);
 	}
+
+	return true;
 }
 
 static int send_message(const char *const msg)
@@ -303,10 +335,12 @@ static int init(void)
 {
 	int err;
 
-	/* Init the LEDs */
-	err = init_leds();
+	/* Application event manager is used for button press and LED
+	 * events from the common application framework (CAF) library
+	 */
+	err = app_event_manager_init();
 	if (err) {
-		LOG_ERR("LED initialization failed");
+		LOG_ERR("Application Event Manager could not be initialized, error: %d", err);
 		return err;
 	}
 
@@ -317,10 +351,13 @@ static int init(void)
 		return -EFAULT;
 	}
 
-	/* Init the button */
-	err = dk_buttons_init(button_handler);
+	/* Inform the app event manager that this module is ready to receive events */
+	module_set_state(MODULE_STATE_READY);
+
+	/* Set the LEDs off after all modules are ready */
+	err = set_leds_off();
 	if (err) {
-		LOG_ERR("Failed to initialize button: error: %d", err);
+		LOG_ERR("Failed to set LEDs off");
 		return err;
 	}
 
@@ -397,8 +434,12 @@ int main(void)
 	}
 
 	rest_ctx.keep_alive = true;
-	(void)nrf_cloud_rest_alert_send(&rest_ctx, device_id,
+	err = nrf_cloud_rest_alert_send(&rest_ctx, device_id,
 					ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
+
+	if (err) {
+		LOG_ERR("Error sending alert to cloud: %d", err);
+	}
 
 	err = nrf_cloud_rest_log_send(&rest_ctx, device_id, LOG_LEVEL_INF,
 				      SAMPLE_SIGNON_FMT,

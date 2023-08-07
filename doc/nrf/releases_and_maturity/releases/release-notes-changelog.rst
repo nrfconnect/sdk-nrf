@@ -407,6 +407,18 @@ Cellular samples (renamed from nRF9160 samples)
 
    * Added reporting of device and connection info to the device shadow.
 
+* :ref:`nrf_cloud_rest_device_message` sample:
+
+  * Added:
+
+    * A DTS overlay file for LEDs on the nRF9160 DK to be compatible with the :ref:`caf_leds` module.
+    * Header files for buttons and LEDs definition required by the :ref:`lib_caf` library.
+
+  * Updated:
+
+    * The sample to use the :ref:`lib_caf` library instead of the :ref:`dk_buttons_and_leds_readme` library.
+    * Displaying an error message when the sample fails to send an alert to nRF Cloud.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
