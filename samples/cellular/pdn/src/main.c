@@ -163,6 +163,10 @@ int main(void)
 	ifaddrs_print();
 
 	lte_lc_power_off();
+	err = nrf_modem_lib_shutdown();
+	if (err) {
+		printk("Failed to shutdown modem lib, err %d\n", err);
+	}
 	printk("Bye\n");
 
 	return 0;

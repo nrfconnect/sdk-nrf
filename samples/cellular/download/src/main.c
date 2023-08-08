@@ -152,6 +152,11 @@ static int callback(const struct download_client_evt *event)
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
 		lte_lc_power_off();
+		int err = nrf_modem_lib_shutdown();
+
+		if (err) {
+			printk("Failed to shutdown modem lib, err %d\n", err);
+		}
 		printk("Bye\n");
 		return 0;
 
@@ -162,6 +167,11 @@ static int callback(const struct download_client_evt *event)
 		} else {
 			lte_lc_power_off();
 			/* Stop download */
+			int err = nrf_modem_lib_shutdown();
+
+			if (err) {
+				printk("Failed to shutdown modem lib, err %d\n", err);
+			}
 			return -1;
 		}
 		break;

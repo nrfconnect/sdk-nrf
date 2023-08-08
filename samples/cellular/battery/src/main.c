@@ -424,6 +424,10 @@ int main(void)
 
 		k_sleep(K_SECONDS(refresh_interval));
 	}
+	err = nrf_modem_lib_shutdown();
+	if (err) {
+		printk("Failed to shutdown modem lib, err %d\n", err);
+	}
 
 	return 0;
 }
