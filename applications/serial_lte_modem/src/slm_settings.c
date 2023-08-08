@@ -20,8 +20,8 @@ LOG_MODULE_REGISTER(slm_config, CONFIG_SLM_LOG_LEVEL);
  */
 uint8_t fota_type;		/* FOTA: image type */
 enum fota_stage fota_stage = FOTA_STAGE_INIT;		/* FOTA: stage of FOTA process */
-enum fota_status fota_status;		/* FOTA: OK/Error status */
-int32_t fota_info;		/* FOTA: failure cause in case of error or download percentage*/
+enum fota_status fota_status;	/* FOTA: OK/Error status */
+int32_t fota_info;		/* FOTA: failure cause in case of error or download percentage */
 
 int32_t auto_connect = 1;	/* Auto connect network at startup or after FOTA update */
 

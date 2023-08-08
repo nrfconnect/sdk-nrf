@@ -54,9 +54,6 @@ static struct k_work raw_send_scheduled_work;
 /* global variable used across different files */
 struct at_param_list at_param_list;           /* For AT parser */
 
-/* global variable defined in different files */
-extern struct uart_config slm_uart;
-
 /* global functions defined in different files */
 int slm_at_parse(const char *at_cmd);
 int slm_at_init(void);

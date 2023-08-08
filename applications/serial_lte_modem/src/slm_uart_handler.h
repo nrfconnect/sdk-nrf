@@ -7,13 +7,15 @@
 #ifndef SLM_UART_HANDLER_
 #define SLM_UART_HANDLER_
 
-#define UART_RX_MARGIN_MS	10
-
 /**@file slm_uart_handler.h
  *
  * @brief UART handler for serial LTE modem
  * @{
  */
+#define UART_RX_MARGIN_MS	10
+
+extern bool uart_configured;
+extern struct uart_config slm_uart;
 
 /**@brief UART RX data callback type.
  *
@@ -21,6 +23,30 @@
  * @param len Length of data
  */
 typedef void (*slm_uart_rx_callback_t)(const uint8_t *data, size_t len);
+
+/**
+ * @brief Switch UART power on.
+ *
+ * @retval 0 If the UART was successfully powered on.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int slm_uart_power_on(void);
+
+/**
+ * @brief Switch UART power off.
+ *
+ * @retval 0 If the UART was successfully powered off.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int slm_uart_power_off(void);
+
+/**
+ * @brief Configure UART.
+ *
+ * @retval 0 If the UART was successfully configured.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int slm_uart_configure(void);
 
 /**
  * @brief Write the data to TX buffer and trigger sending.

@@ -62,10 +62,6 @@ K_SEM_DEFINE(tx_done_sem, 0, 1);
 
 slm_uart_rx_callback_t rx_callback_t;
 
-/* global variable defined in different files */
-extern bool uart_configured;
-extern struct uart_config slm_uart;
-
 /* global functions defined in different files */
 int indicate_start(void);
 
@@ -293,7 +289,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 	}
 }
 
-int poweron_uart(void)
+int slm_uart_power_on(void)
 {
 	int err;
 
@@ -317,7 +313,7 @@ int poweron_uart(void)
 	return 0;
 }
 
-int poweroff_uart(void)
+int slm_uart_power_off(void)
 {
 	int err;
 
@@ -401,8 +397,8 @@ int slm_uart_handler_init(slm_uart_rx_callback_t callback_t)
 		LOG_ERR("UART device not ready");
 		return -ENODEV;
 	}
-	/* Save UART configuration to setting page */
 	if (!uart_configured) {
+		/* Save UART configuration to settings page */
 		uart_configured = true;
 		err = uart_config_get(uart_dev, &slm_uart);
 		if (err != 0) {
@@ -415,7 +411,7 @@ int slm_uart_handler_init(slm_uart_rx_callback_t callback_t)
 			return err;
 		}
 	} else {
-		/* else re-config UART based on setting page */
+		/* Configure UART based on settings page */
 		err = slm_uart_configure();
 		if (err != 0) {
 			LOG_ERR("Fail to set UART baudrate: %d", err);

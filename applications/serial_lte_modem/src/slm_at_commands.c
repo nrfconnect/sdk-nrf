@@ -30,6 +30,7 @@
 #include "slm_at_icmp.h"
 #include "slm_at_sms.h"
 #include "slm_at_fota.h"
+#include "slm_uart_handler.h"
 #if defined(CONFIG_SLM_NATIVE_TLS)
 #include "slm_at_cmng.h"
 #endif
@@ -82,14 +83,11 @@ static struct slm_work_info {
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
 extern uint16_t datamode_time_limit;
-extern struct uart_config slm_uart;
 
 /* global functions defined in different files */
 void enter_idle(void);
 void enter_sleep(void);
 void enter_shutdown(void);
-int slm_uart_configure(void);
-int poweroff_uart(void);
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
 
 /** @return Whether the modem is in the given functional mode. */
@@ -139,7 +137,7 @@ static void go_sleep_wk(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (slm_work.data == SLEEP_MODE_IDLE) {
-		if (poweroff_uart() == 0) {
+		if (slm_uart_power_off() == 0) {
 			enter_idle();
 		} else {
 			LOG_ERR("failed to power off UART");
@@ -354,7 +352,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
 		}
 	}
 	if (type == AT_CMD_TYPE_READ_COMMAND) {
-		rsp_send("\r\n#XSLMUART: %d,%d\r\n", slm_uart.baudrate, slm_uart.flow_ctrl);
+		rsp_send("\r\n#XSLMUART: %d\r\n", slm_uart.baudrate);
 		ret = 0;
 	}
 	if (type == AT_CMD_TYPE_TEST_COMMAND) {

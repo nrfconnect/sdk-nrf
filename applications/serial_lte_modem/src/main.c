@@ -25,6 +25,7 @@
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 #include "slm_settings.h"
+#include "slm_uart_handler.h"
 
 LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 
@@ -41,9 +42,6 @@ struct k_work_q slm_work_q;
 
 /* global variable defined in different files */
 extern int32_t auto_connect;
-
-/* global functions defined in different files */
-int poweron_uart(void);
 
 /* Forward declarations */
 static void indicate_wk(struct k_work *work);
@@ -202,7 +200,7 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_ca
 	if (err < 0) {
 		LOG_WRN("Failed to enable ext XTAL: %d", err);
 	}
-	err = poweron_uart();
+	err = slm_uart_power_on();
 	if (err) {
 		LOG_ERR("Failed to power on uart: %d", err);
 		return;
