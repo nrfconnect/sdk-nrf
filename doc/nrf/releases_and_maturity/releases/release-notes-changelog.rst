@@ -124,6 +124,7 @@ The following list summarizes the most important changes inherited from the upst
 * Added the :kconfig:option:`CHIP_MALLOC_SYS_HEAP_WATERMARKS_SUPPORT` Kconfig option to manage watermark support.
 * Updated the factory data guide with an additional rotating ID information.
 * Fixed RAM and ROM reports.
+* Set onboarding code generation to be enabled by default if the :kconfig:option:`CHIP_FACTORY_DATA_BUILD` Kconfig is set.
 
 Thread
 ------
@@ -436,6 +437,7 @@ Matter samples
 --------------
 
 * Disabled OpenThread shell by default in Matter over Thread samples.
+* Enabled build with factory data enabled for all samples.
 
 * :ref:`matter_lock_sample` sample:
 

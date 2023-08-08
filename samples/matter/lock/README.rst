@@ -238,6 +238,23 @@ The PIN code is different depending on the build type:
 
 See `Testing door lock using Bluetooth LE with Nordic UART Service`_ for more information about how to test this feature.
 
+Factory data support
+====================
+
+.. matter_door_lock_sample_factory_data_start
+
+In this sample, the factory data support is enabled by default for all build types except for the ``no_dfu`` build type.
+This means that a new factory data set will be automatically generated when building for the target board.
+
+To disable factory data support, set the following Kconfig options to ``n``:
+
+   * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA`
+   * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD`
+
+To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
+
+.. matter_door_lock_sample_factory_data_end
+
 User interface
 **************
 
@@ -441,6 +458,15 @@ For this sample, you can use one of the following :ref:`onboarding information f
 
        - MT:8IXS142C00KA0648G00
        - 34970112332
+
+.. matter_door_lock_sample_onboarding_start
+
+When the factory data support is enabled, the onboarding information will be stored in the build directory in the following files:
+
+   * The :file:`factory_data.png` file includes the generated QR code.
+   * The :file:`factory_data.txt` file includes the QR Code Payload and the manual pairing code.
+
+.. matter_door_lock_sample_onboarding_end
 
 |matter_cd_info_note_for_samples|
 
