@@ -12,6 +12,10 @@
 #include <nrf_modem_at.h>
 #include <string.h>
 
+#ifdef CONFIG_POSIX_API
+#include <arpa/inet.h>
+#endif
+
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(ip_addr_helper, CONFIG_LTE_CONNECTIVITY_LOG_LEVEL);
