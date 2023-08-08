@@ -65,6 +65,8 @@ struct nrf_wifi_umac_head {
 
 } __NRF_WIFI_PKD;
 
+#define DSCP_TOS_MASK  0xFFFF
+#define EMERGENCY_TX BIT(31)
 
 /**
  * @brief Tx mac80211 header information.
