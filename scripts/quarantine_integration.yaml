@@ -3,7 +3,6 @@
 
 - scenarios:
     - sample.matter.lock.release
-    - sample.matter.lock.factory_data
     - sample.matter.light_switch.debug
     - sample.matter.thermostat.debug
     - sample.matter.light_bulb.persistent_subscriptions
@@ -19,7 +18,6 @@
 
 - scenarios:
     - sample.matter.lock.nus
-    - sample.matter.lock.factory_data
     - sample.matter.window_cover.debug
     - sample.matter.template.debug
     - sample.matter.light_bulb.ffs
@@ -35,7 +33,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - applications.matter_weather_station.debug
     - applications.matter_weather_station.release
   platforms:
     - thingy53_nrf5340_cpuapp

@@ -129,6 +129,13 @@ Device Firmware Upgrade support
     :start-after: matter_door_lock_sample_build_with_dfu_start
     :end-before: matter_door_lock_sample_build_with_dfu_end
 
+Factory data support
+====================
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_factory_data_start
+    :end-before: matter_door_lock_sample_factory_data_end
+
 .. _matter_light_switch_sample_ui:
 
 User interface
@@ -466,6 +473,10 @@ For this sample, you can use one of the following :ref:`onboarding information f
 
        - MT:4CT9142C00KA0648G00
        - 34970112332
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_onboarding_start
+    :end-before: matter_door_lock_sample_onboarding_end
 
 |matter_cd_info_note_for_samples|
 
