@@ -1960,7 +1960,6 @@ PREDEFINED             =  __DOXYGEN__ \
                          "CONFIG_THREAD_STACK_INFO=y" \
                          "CONFIG_UART_INTERRUPT_DRIVEN=y" \
                          "CONFIG_UART_DRV_CMD=y" \
-                         "CONFIG_PM=y" \
                          "CONFIG_PM_DEVICE=y" \
                          "CONFIG_BT_SMP=y" \
                          "CONFIG_USERSPACE=y" \
