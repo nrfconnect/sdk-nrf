@@ -7,8 +7,7 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
-#include <zephyr/pm/pm.h>
-#include <zephyr/pm/policy.h>
+#include <zephyr/sys/poweroff.h>
 #include <zephyr/sys/atomic.h>
 #include <zephyr/settings/settings.h>
 
@@ -582,14 +581,6 @@ static int nfc_init(void)
 	return err;
 }
 
-/* Override default policy next state function to avoid putting device into system off state on
- * long wait time in the idle task.
- */
-const struct pm_state_info *pm_policy_next_state(uint8_t cpu, int32_t ticks)
-{
-	return NULL;
-}
-
 static void reset_reason_print(void)
 {
 	uint32_t reason;
@@ -618,19 +609,14 @@ static void reset_reason_print(void)
 
 static void system_off(void)
 {
-	const struct pm_state_info info = {PM_STATE_SOFT_OFF, 0, 0, 0};
-
-	printk("Entering system off mode\n");
+	printk("Powering off\n");
 
 	/* Clear the reset reason if it didn't do previously. */
 	nrfx_reset_reason_clear(nrfx_reset_reason_get());
 
 	dk_set_led_off(RUN_STATUS_LED);
 
-	if (!pm_state_force(0, &info)) {
-		dk_set_led_on(RUN_STATUS_LED);
-		printk("Failed to switch to system off state\n");
-	}
+	sys_poweroff();
 }
 
 static void system_off_work_handler(struct k_work *work)
