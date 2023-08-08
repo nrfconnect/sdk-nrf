@@ -602,7 +602,7 @@ static int handle_store(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	}
 
 	status = scene_store(srv, scene_number);
-	scene_register_status_send(model, ctx, status);
+	scene_register_status_send(srv->model, ctx, status);
 
 	return 0;
 }
@@ -647,7 +647,7 @@ static int handle_delete(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		return err;
 	}
 
-	scene_register_status_send(model, ctx, BT_MESH_SCENE_SUCCESS);
+	scene_register_status_send(srv->model, ctx, BT_MESH_SCENE_SUCCESS);
 
 	return 0;
 }
