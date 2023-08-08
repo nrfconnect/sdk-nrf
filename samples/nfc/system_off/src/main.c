@@ -6,8 +6,7 @@
 
 #include <stdio.h>
 #include <zephyr/kernel.h>
-#include <zephyr/pm/pm.h>
-#include <zephyr/pm/policy.h>
+#include <zephyr/sys/poweroff.h>
 
 #include <nrfx.h>
 #include <hal/nrf_power.h>
@@ -133,28 +132,11 @@ static int start_nfc(void)
  */
 static void system_off(struct k_work *work)
 {
-	printk("Entering system off.\nApproach a NFC reader to restart.\n");
-
-	/* Before we disabled entry to deep sleep. Here we need to override
-	 * that, then force a sleep so that the deep sleep takes effect.
-	 */
-	const struct pm_state_info si = {PM_STATE_SOFT_OFF, 0, 0};
-
-	pm_state_force(0, &si);
+	printk("Powering off.\nApproach a NFC reader to restart.\n");
 
 	dk_set_led_off(SYSTEM_ON_LED);
 
-	/* Going into sleep will actually go to system off mode, because we
-	 * forced it above.
-	 */
-	k_sleep(K_MSEC(1));
-
-	/* k_sleep will never exit, so below two lines will never be executed
-	 * if system off was correct. On the other hand if someting gone wrong
-	 * we will see it on terminal and LED.
-	 */
-	dk_set_led_on(SYSTEM_ON_LED);
-	printk("ERROR: System off failed\n");
+	sys_poweroff();
 }
 
 
@@ -223,9 +205,6 @@ int main(void)
 		printk("ERROR: NFC configuration failed\n");
 		return 0;
 	}
-
-	/* Prevent deep sleep (system off) from being entered */
-	pm_policy_state_lock_get(PM_STATE_SOFT_OFF, PM_ALL_SUBSTATES);
 
 	/* Exit main function - the rest will be done by the callbacks */
 	return 0;
