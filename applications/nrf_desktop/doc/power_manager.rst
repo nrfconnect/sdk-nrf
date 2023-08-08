@@ -29,7 +29,6 @@ The :ref:`CONFIG_DESKTOP_POWER_MANAGER <config_desktop_app_options>` Kconfig opt
 The :ref:`CONFIG_DESKTOP_POWER_MANAGER <config_desktop_app_options>` Kconfig option is implied by the :ref:`CONFIG_DESKTOP_COMMON_MODULES <config_desktop_app_options>` Kconfig option.
 The :ref:`CONFIG_DESKTOP_COMMON_MODULES <config_desktop_app_options>` option is enabled by default and is not user-assignable.
 
-By default, the nRF Desktop enables the :kconfig:option:`CONFIG_PM_POLICY_CUSTOM` option.
 Additionally, the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` option is automatically enabled for nRF Desktop dongles (:ref:`CONFIG_DESKTOP_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`).
 
 Implementation details
