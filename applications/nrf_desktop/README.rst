@@ -364,7 +364,8 @@ Depending on what development kit you use, you need to select the respective con
          :header: heading
          :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf5340dk_nrf5340_cpuapp
 
-      In nRF52840 DK, the application is configured to work as gaming mouse (with motion emulated by using DK buttons) and in nRF52833 DK, the application is configured to work as HID dongle.
+      Depending on the configuration, a DK may act either as mouse, keyboard or dongle.
+      You can check supported configurations for each board in the :ref:`nrf_desktop_board_configuration_files` section.
 
 ..
 
