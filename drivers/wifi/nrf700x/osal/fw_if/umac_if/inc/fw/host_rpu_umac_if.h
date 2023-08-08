@@ -2362,6 +2362,7 @@ enum nrf_wifi_twt_setup_cmd_type {
 
 #define NRF_WIFI_TWT_RESP_RECEIVED 0
 #define NRF_WIFI_TWT_RESP_NOT_RECEIVED 1
+#define NRF_WIFI_INVALID_TWT_WAKE_INTERVAL 3
 
 /**
  * @brief This structure describes the TWT information.
