@@ -11,6 +11,9 @@ set(NRF_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "NCS root directory")
 # is cached.
 set(CONF_FILE_BUILD_TYPE ${CONF_FILE_BUILD_TYPE} CACHE INTERNAL "The build type")
 
+# Customize the Zephyr kernel version.h using nRF Connect SDK ncs_version.h.
+set(KERNEL_VERSION_CUSTOMIZATION \#include;<ncs_version.h> PARENT_SCOPE)
+
 include(cmake/extensions.cmake)
 include(cmake/version.cmake)
 include(cmake/multi_image.cmake)
