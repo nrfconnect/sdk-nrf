@@ -11,7 +11,7 @@ config CAF_POWER_MANAGER
 	select PM_DEVICE
 	select CAF_PM_EVENTS
 	select CAF_POWER_MANAGER_EVENTS
-	depends on PM_POLICY_CUSTOM
+	select POWEROFF
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
