@@ -117,6 +117,10 @@ int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 	scan_info->scan_reason = SCAN_DISPLAY;
 
+	if (params->scan_type == WIFI_SCAN_TYPE_PASSIVE) {
+		scan_info->scan_params.passive_scan = 1;
+	}
+
 	scan_info->scan_params.bands = params->bands;
 	scan_info->scan_params.dwell_time_active = params->dwell_time_active;
 	scan_info->scan_params.dwell_time_passive = params->dwell_time_passive;
