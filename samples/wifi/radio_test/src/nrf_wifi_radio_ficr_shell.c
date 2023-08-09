@@ -144,6 +144,16 @@ static int nrf_wifi_radio_test_otp_read_params(const struct shell *shell,
 		val[PRODCTRL_DISABLE5GHZ]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 
+	shell_fprintf(shell, SHELL_INFO, "INFO_PART = 0x%08x\n", val[INFO_PART]);
+	shell_fprintf(shell, SHELL_INFO, "INFO_VARIANT = 0x%08x\n", val[INFO_VARIANT]);
+	shell_fprintf(shell, SHELL_INFO, "\n");
+
+	shell_fprintf(shell, SHELL_INFO, "INFO_UUID0 = 0x%08x\n", val[INFO_UUID + 0]);
+	shell_fprintf(shell, SHELL_INFO, "INFO_UUID1 = 0x%08x\n", val[INFO_UUID + 1]);
+	shell_fprintf(shell, SHELL_INFO, "INFO_UUID2 = 0x%08x\n", val[INFO_UUID + 2]);
+	shell_fprintf(shell, SHELL_INFO, "INFO_UUID3 = 0x%08x\n", val[INFO_UUID + 3]);
+	shell_fprintf(shell, SHELL_INFO, "\n");
+
 	shell_fprintf(shell, SHELL_INFO, "MAC0: Reg0 = 0x%08x\n", val[MAC0_ADDR]);
 	shell_fprintf(shell, SHELL_INFO, "MAC0: Reg1 = 0x%08x\n", val[MAC0_ADDR + 1]);
 	shell_fprintf(shell, SHELL_INFO, "MAC0 Addr  = %02x:%02x:%02x:%02x:%02x:%02x\n",
