@@ -2435,24 +2435,28 @@ psa_status_t psa_driver_wrapper_init_random(psa_driver_random_context_t *context
 psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context, uint8_t *output,
 					   size_t output_size)
 {
+	psa_status_t status;
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
-	return prng_test_generate_random(output, output_size);
+	status = prng_test_generate_random(output, output_size);
+
+	if (status != PSA_ERROR_NOT_SUPPORTED) {
+		return status;
+	}
 #endif
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM)
-	int err;
 	size_t output_length;
 
 	/* Using internal context. */
 	(void)context;
 
 #if defined(PSA_CRYPTO_DRIVER_ALG_CTR_DRBG_CC3XX_PLATFORM)
-	err = nrf_cc3xx_platform_ctr_drbg_get(NULL, output, output_size, &output_length);
+	status = nrf_cc3xx_platform_ctr_drbg_get(NULL, output, output_size, &output_length);
 #elif defined(PSA_CRYPTO_DRIVER_ALG_HMAC_DRBG_CC3XX_PLATFORM)
-	err = nrf_cc3xx_platform_hmac_drbg_get(NULL, output, output_size, &output_length);
+	status = nrf_cc3xx_platform_hmac_drbg_get(NULL, output, output_size, &output_length);
 #else
 #error "Enable CONFIG_PSA_WANT_ALG_CTR_DRBG or CONFIG_PSA_WANT_ALG_HMAC_DRBG"
 #endif
-	if (err != NRF_CC3XX_PLATFORM_SUCCESS) {
+	if (status != NRF_CC3XX_PLATFORM_SUCCESS) {
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
 
@@ -2464,6 +2468,7 @@ psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context,
 #endif /* defined(PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM) */
 
 #if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_OBERON)
+	(void)status;
 #if defined(PSA_CRYPTO_DRIVER_ALG_CTR_DRBG_OBERON)
 	return oberon_ctr_drbg_get_random(&context->oberon_ctr_drbg_ctx, output, output_size);
 #elif defined(PSA_CRYPTO_DRIVER_ALG_HMAC_DRBG_OBERON)
