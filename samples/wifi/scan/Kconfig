@@ -26,7 +26,8 @@ choice  WIFI_SCAN_TYPE_SELECT
 config WIFI_SCAN_TYPE_ACTIVE
 	bool "Active scan"
 	help
-	  Enable active scan
+	  Enable this to do active scan for all channels where active scan is
+	  permitted by regulatory domain restrictions.
 
 config WIFI_SCAN_TYPE_PASSIVE
 	bool "Passive scan"
