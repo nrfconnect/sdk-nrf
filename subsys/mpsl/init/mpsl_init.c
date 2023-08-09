@@ -25,6 +25,9 @@ LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
  */
 const uint32_t z_mpsl_used_nrf_ppi_channels = MPSL_RESERVED_PPI_CHANNELS;
 const uint32_t z_mpsl_used_nrf_ppi_groups;
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
+static struct k_timer mpsl_calibartion_timer;
+#endif
 
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X)
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
@@ -194,6 +197,13 @@ static uint8_t m_config_clock_source_get(void)
 #endif
 }
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
+static void mpsl_calibartion_timer_expiry_fn(struct k_timer *timer)
+{
+	mpsl_calibration_timer_handle();
+}
+#endif
+
 static int32_t mpsl_lib_init_internal(void)
 {
 	int err = 0;
@@ -223,6 +233,14 @@ static int32_t mpsl_lib_init_internal(void)
 	if (err) {
 		return err;
 	}
+
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
+	k_timer_init(&mpsl_calibartion_timer,
+			mpsl_calibartion_timer_expiry_fn, NULL);
+	k_timer_start(&mpsl_calibartion_timer,
+			      K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD),
+			      K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
+#endif
 
 #if MPSL_TIMESLOT_SESSION_COUNT > 0
 	err = mpsl_timeslot_session_count_set((void *) timeslot_context,
