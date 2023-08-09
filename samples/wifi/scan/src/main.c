@@ -43,6 +43,12 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
 static uint32_t scan_result;
 
+const struct wifi_scan_params tests[] = {
+	{
+	.scan_type = WIFI_SCAN_TYPE_ACTIVE
+	},
+};
+
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 
 K_SEM_DEFINE(scan_sem, 0, 1);
@@ -182,23 +188,17 @@ static int wifi_scan(void)
 {
 	struct net_if *iface = net_if_get_default();
 
-	struct wifi_scan_params params = {0};
+	for (int i = 0; i < ARRAY_SIZE(tests); i++) {
+		struct wifi_scan_params params = tests[i];
+		if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
+				sizeof(struct wifi_scan_params))) {
+			LOG_ERR("Scan request failed");
+			return -ENOEXEC;
+		}
+		printk("Scan requested\n");
 
-	params.scan_type = WIFI_SCAN_TYPE_ACTIVE;
-
-#if defined(CONFIG_WIFI_MGMT_FORCED_PASSIVE_SCAN) || defined(CONFIG_WIFI_SCAN_TYPE_PASSIVE)
-	params.scan_type = WIFI_SCAN_TYPE_PASSIVE;
-#endif
-	if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
-		     sizeof(struct wifi_scan_params))) {
-		LOG_ERR("Scan request failed");
-
-		return -ENOEXEC;
+		k_sem_take(&scan_sem, K_MSEC(SCAN_TIMEOUT_MS));
 	}
-
-	printk("Scan requested\n");
-
-	k_sem_take(&scan_sem, K_MSEC(SCAN_TIMEOUT_MS));
 
 	return 0;
 }
