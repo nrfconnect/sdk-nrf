@@ -1794,13 +1794,12 @@ void nrf_cloud_fota_job_free(struct nrf_cloud_fota_job_info *const job)
 	}
 
 	nrf_cloud_free(job->id);
-	job->id = NULL;
-
 	nrf_cloud_free(job->host);
-	job->host = NULL;
-
 	nrf_cloud_free(job->path);
-	job->path = NULL;
+
+	/* Reset entire struct since info is no longer valid */
+	memset(job, 0, sizeof(*job));
+	job->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 }
 
 /* FOTA job format via MQTT:
@@ -2254,8 +2253,6 @@ err_cleanup:
 	}
 
 	nrf_cloud_fota_job_free(job);
-	memset(job, 0, sizeof(*job));
-	job->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 
 	return ret;
 }

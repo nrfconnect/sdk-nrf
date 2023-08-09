@@ -168,7 +168,7 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
  *
  * @param[out]    job Parsed job info. If no job exists, type will
  *                    be set to invalid. If a job exists, user must call
- *                    @ref nrf_cloud_rest_fota_job_free to free the memory
+ *                    @ref nrf_cloud_coap_fota_job_free to free the memory
  *                    allocated by this function.
  *
  * @return 0 if the request succeeded, a positive value indicating a CoAP result code,
