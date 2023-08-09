@@ -86,6 +86,8 @@ struct bt_mesh_time_srv_data {
 	struct bt_mesh_time_tai_utc_change tai_utc_change;
 	/* The Time Role of the Server instance */
 	enum bt_mesh_time_role role;
+	/* The timestamp of the last published Time Status. */
+	int64_t timestamp;
 };
 
 /** Time Server instance.
@@ -103,6 +105,8 @@ struct bt_mesh_time_srv {
 	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Model state structure */
 	struct bt_mesh_time_srv_data data;
+	/** Delayable work to randomize status relaying. */
+	struct k_work_delayable status_delay;
 
 	/** @brief Update callback.
 	 *

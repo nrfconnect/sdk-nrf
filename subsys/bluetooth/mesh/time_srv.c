@@ -10,6 +10,7 @@
 #include "time_util.h"
 
 #define SUBSEC_STEPS 256U
+#define STATUS_INTERVAL_MIN 30000ll
 
 struct bt_mesh_time_srv_settings_data {
 	uint8_t role;
@@ -186,6 +187,14 @@ static int send_time_status(struct bt_mesh_model *model,
 	return bt_mesh_msg_send(model, ctx, &msg);
 }
 
+static void time_status_send_after_delay(struct k_work *work)
+{
+	struct k_work_delayable *tmp = k_work_delayable_from_work(work);
+	struct bt_mesh_time_srv *srv = CONTAINER_OF(tmp, struct bt_mesh_time_srv, status_delay);
+
+	(void)bt_mesh_time_srv_time_status_send(srv, NULL);
+}
+
 static int handle_time_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
@@ -217,7 +226,22 @@ static int handle_time_status(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 	}
 
 	if (srv->data.role == BT_MESH_TIME_RELAY) {
-		(void)bt_mesh_time_srv_time_status_send(srv, NULL);
+		/* The time server shouldn't send out statuses more often than every 30 seconds. */
+		if (srv->data.sync.uptime < (srv->data.timestamp + STATUS_INTERVAL_MIN)) {
+			return 0;
+		}
+
+		/* Random delay has been already scheduled. */
+		if (k_work_delayable_is_pending(&srv->status_delay)) {
+			return 0;
+		}
+
+		uint8_t rnd;
+
+		bt_rand(&rnd, sizeof(uint8_t));
+		rnd = 20 + rnd % 30;
+		srv->data.sync.status.uncertainty += rnd;
+		k_work_schedule(&srv->status_delay, K_MSEC(rnd));
 	}
 
 	return 0;
@@ -242,6 +266,9 @@ static int handle_time_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	if (srv->time_update_cb != NULL) {
 		srv->time_update_cb(srv, ctx, BT_MESH_TIME_SRV_SET_UPDATE);
 	}
+
+	/* publish state changing */
+	(void)bt_mesh_time_srv_time_status_send(srv, NULL);
 
 	send_time_status(model, ctx, srv->data.sync.uptime);
 
@@ -387,7 +414,10 @@ static int bt_mesh_time_srv_init(struct bt_mesh_model *model)
 	struct bt_mesh_time_srv *srv = model->user_data;
 
 	srv->model = model;
+	srv->data.timestamp = -STATUS_INTERVAL_MIN;
 	net_buf_simple_init(srv->pub.msg, 0);
+
+	k_work_init_delayable(&srv->status_delay, time_status_send_after_delay);
 
 	return 0;
 }
@@ -395,10 +425,11 @@ static int bt_mesh_time_srv_init(struct bt_mesh_model *model)
 static void bt_mesh_time_srv_reset(struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
-	struct bt_mesh_time_srv_data data = { 0 };
+	struct bt_mesh_time_srv_data data = { .timestamp = -STATUS_INTERVAL_MIN };
 
 	srv->data = data;
 	net_buf_simple_reset(srv->pub.msg);
+	(void)k_work_cancel_delayable(&srv->status_delay);
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		(void)bt_mesh_model_data_store(srv->model, false, NULL, NULL,
@@ -452,6 +483,7 @@ int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 	struct bt_mesh_time_status status;
+	int64_t uptime;
 	int err;
 
 	if (srv->data.role != BT_MESH_TIME_AUTHORITY &&
@@ -459,11 +491,13 @@ int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
 		return -EPERM;
 	}
 
-	err = bt_mesh_time_srv_status(srv, k_uptime_get(), &status);
+	uptime = k_uptime_get();
+	err = bt_mesh_time_srv_status(srv, uptime, &status);
 	if (err) {
 		return err;
 	}
 
+	srv->data.timestamp = uptime;
 	/* Account for delay in TX processing: */
 	status.uncertainty += CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY;
 
@@ -476,7 +510,8 @@ int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
 int bt_mesh_time_srv_time_status_send(struct bt_mesh_time_srv *srv,
 				      struct bt_mesh_msg_ctx *ctx)
 {
-	srv->model->pub->ttl = 0;
+	int64_t uptime = k_uptime_get();
+	int err;
 
 	/** Mesh Model Specification 5.3.1.2.2:
 	 * The message (Time Status) may be sent as an unsolicited message at any time
@@ -486,7 +521,14 @@ int bt_mesh_time_srv_time_status_send(struct bt_mesh_time_srv *srv,
 		return -EOPNOTSUPP;
 	}
 
-	return send_time_status(srv->model, ctx, k_uptime_get());
+	srv->model->pub->ttl = 0;
+
+	err = send_time_status(srv->model, ctx, uptime);
+	if (!err) {
+		srv->data.timestamp = uptime;
+	}
+
+	return err;
 }
 
 int bt_mesh_time_srv_status(struct bt_mesh_time_srv *srv, uint64_t uptime,
