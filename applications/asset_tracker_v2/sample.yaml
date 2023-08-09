@@ -204,7 +204,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9161dk_nrf9161_ns
-    platform_allow: ns nrf9161dk_nrf9161_ns
+    platform_allow: nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
                 DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay;nrf9161dk_with_ext_flash.overlay"
     tags: ci_build
