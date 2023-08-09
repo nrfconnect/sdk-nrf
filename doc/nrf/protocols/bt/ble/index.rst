@@ -25,6 +25,8 @@ See `Usage in samples`_ for more information.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
 
+.. _ug_ble_controller_softdevice:
+
 SoftDevice Controller
 *********************
 

@@ -50,14 +50,14 @@ To make sure that your Bluetooth mesh device advertises the SMP service UUID, in
 
 1. Add the following code to your application:
 
-   .. literalinclude:: ../../../../samples/bluetooth/mesh/common/smp_bt.c
+   .. literalinclude:: ../../../../../samples/bluetooth/mesh/common/smp_bt.c
       :language: c
       :start-after: include_startingpoint_mesh_smp_dfu_rst_1
       :end-before: include_endpoint_mesh_smp_dfu_rst_1
 
 #. Register Bluetooth connection callbacks and call ``smp_service_adv_init`` after Bluetooth is initialized:
 
-   .. literalinclude:: ../../../../samples/bluetooth/mesh/common/smp_bt.c
+   .. literalinclude:: ../../../../../samples/bluetooth/mesh/common/smp_bt.c
       :language: c
       :start-after: include_startingpoint_mesh_smp_dfu_rst_2
       :end-before: include_endpoint_mesh_smp_dfu_rst_2

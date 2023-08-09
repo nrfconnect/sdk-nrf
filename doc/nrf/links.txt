@@ -702,6 +702,15 @@
 .. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
 
 .. _`Bluetooth SIG's Qualification Process`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/
+.. _`Launch Studio`: https://www.bluetooth.com/develop-with-bluetooth/build/test-tools/launch-studio/
+.. _`Profile Tuning Suite (PTS)`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-test-tools/profile-tuning-suite/
+.. _`Bluetooth Qualification Listing`: https://launchstudio.bluetooth.com/Listings/Search/
+.. _`Qualification process with no required testing`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-process-with-no-required-testing/
+.. _`Qualification process with required testing`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-process-with-required-testing/
+.. _`Qualifications and listings`: https://support.bluetooth.com/hc/en-us/categories/360004202331-Qualifications-and-Listings/
+.. _`Bluetooth Qualification Consultants`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-consultants/
+.. _`Bluetooth product types`: https://support.bluetooth.com/hc/en-us/articles/360049018712/
+.. _`PRD and DPD`: https://www.bluetooth.com/download/prd_dpd_resolutions/
 
 .. _`Bluetooth mesh model specification`:
 .. _`Bluetooth mesh profile specification`: https://www.bluetooth.com/specifications/specs/

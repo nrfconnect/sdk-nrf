@@ -11,8 +11,7 @@ They introduce you to concepts that are important to work with the protocol and 
    :caption: Subpages:
 
    protocols/amazon_sidewalk/index
-   protocols/ble/index
-   protocols/bt_mesh/index
+   protocols/bt/index
    protocols/esb/index
    protocols/gazell/index
    protocols/matter/index
