@@ -232,6 +232,9 @@ static const struct rpu_addr_map RPU_ADDR_MAP_MCU[] = {
 #define PRODTEST_TRIM13 45
 #define PRODTEST_TRIM14 46
 #define PRODCTRL_DISABLE5GHZ 47
+#define INFO_PART 48
+#define INFO_VARIANT 49
+#define INFO_UUID 52
 #define QSPI_KEY 68
 #define MAC0_ADDR 72
 #define MAC1_ADDR 74
