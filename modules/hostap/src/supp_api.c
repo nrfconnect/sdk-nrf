@@ -102,6 +102,7 @@ static void supp_shell_connect_status(struct k_work *work)
 {
 	static int seconds_counter;
 	int status = CONNECTION_SUCCESS;
+	int conn_result = CONNECTION_FAILURE;
 	struct wpa_supplicant *wpa_s;
 	struct wpa_supp_api_ctrl *ctrl = &wpa_supp_api_ctrl;
 
@@ -121,8 +122,9 @@ static void supp_shell_connect_status(struct k_work *work)
 	if (ctrl->requested_op == CONNECT && wpa_s->wpa_state != WPA_COMPLETED) {
 		if (ctrl->connection_timeout > 0 && seconds_counter++ > ctrl->connection_timeout) {
 			_wpa_cli_cmd_v("disconnect");
+			conn_result = -ETIMEDOUT;
 			send_wifi_mgmt_event(wpa_s->ifname, NET_EVENT_WIFI_CMD_CONNECT_RESULT,
-				-ETIMEDOUT);
+					     (void *)&conn_result, sizeof(int));
 			status = CONNECTION_FAILURE;
 			goto out;
 		}

@@ -143,7 +143,7 @@ config NET_MGMT_EVENT_STACK_SIZE
 	default 4096
 
 config NET_SOCKETS_POLL_MAX
-	default 4
+	default 6
 
 # Supplicant API is stack heavy (buffers + snprintfs) and control interface
 # uses socketpair which pushes the stack usage causing overflow for 2048 bytes.
