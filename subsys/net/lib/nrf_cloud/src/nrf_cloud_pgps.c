@@ -628,7 +628,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 
 	if ((start_day == 0) && (start_time == 0)) {
 		if (nrf_cloud_pgps_loading()) {
-			LOG_WRN("Predictions not loaded yet");
+			LOG_INF("Predictions not loaded yet");
 			return -ELOADING;
 		}
 		index.cur_pnum = 0xff;

@@ -524,6 +524,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		 * or non-zero to stop
 		 */
 		if ((socket_retries_left) && ((event->error == -ENOTCONN) ||
+					      (event->error == -ECONNREFUSED) ||
 					      (event->error == -ECONNRESET))) {
 			LOG_WRN("Download socket error. %d retries left...",
 				socket_retries_left);
