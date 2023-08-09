@@ -35,14 +35,12 @@ int aws_fota_parse_UpdateJobExecution_rsp(const char *update_rsp_document,
 	int ret;
 
 	cJSON *update_response = cJSON_Parse(update_rsp_document);
-
 	if (update_response == NULL) {
 		ret = -ENODATA;
 		goto cleanup;
 	}
 
-	cJSON *status = cJSON_GetObjectItemCaseSensitive(update_response,
-							  "status");
+	cJSON *status = cJSON_GetObjectItemCaseSensitive(update_response, "status");
 	if (cJSON_IsString(status) && status->valuestring != NULL) {
 		strncpy_nullterm(status_buf, status->valuestring,
 				 STATUS_MAX_LEN);
@@ -71,7 +69,7 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 	    || hostname_buf == NULL
 	    || file_path_buf == NULL
 	    || execution_version_number == NULL) {
-		return -EINVAL;
+		return AWS_FOTA_JSON_RES_INVALID_PARAMS;
 	}
 
 	int ret;
@@ -79,40 +77,46 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 	cJSON *json_data = cJSON_Parse(job_document);
 
 	if (json_data == NULL) {
-		ret = -ENODATA;
+		ret = AWS_FOTA_JSON_RES_INVALID_JOB;
 		goto cleanup;
 	}
 
-	cJSON *execution = cJSON_GetObjectItemCaseSensitive(json_data,
-							    "execution");
+	cJSON *execution = cJSON_GetObjectItemCaseSensitive(json_data, "execution");
+
 	if (execution == NULL) {
-		ret = 0;
+		ret = AWS_FOTA_JSON_RES_SKIPPED;
 		goto cleanup;
 	}
 
 	cJSON *job_id = cJSON_GetObjectItemCaseSensitive(execution, "jobId");
 
 	if (cJSON_GetStringValue(job_id) != NULL) {
-		strncpy_nullterm(job_id_buf, job_id->valuestring,
-				AWS_JOBS_JOB_ID_MAX_LEN);
+		strncpy_nullterm(job_id_buf, job_id->valuestring, AWS_JOBS_JOB_ID_MAX_LEN);
 	} else {
-		ret = -ENODATA;
+		ret = AWS_FOTA_JSON_RES_INVALID_JOB;
 		goto cleanup;
 	}
 
-	cJSON *job_data = cJSON_GetObjectItemCaseSensitive(execution,
-							   "jobDocument");
+	cJSON *version_number = cJSON_GetObjectItemCaseSensitive(execution, "versionNumber");
+
+	if (cJSON_IsNumber(version_number)) {
+		*execution_version_number = version_number->valueint;
+	} else {
+		ret = AWS_FOTA_JSON_RES_INVALID_JOB;
+		goto cleanup;
+	}
+
+	cJSON *job_data = cJSON_GetObjectItemCaseSensitive(execution, "jobDocument");
 
 	if (!cJSON_IsObject(job_data)) {
-		ret = -ENODATA;
+		ret = AWS_FOTA_JSON_RES_INVALID_DOCUMENT;
 		goto cleanup;
 	}
 
-	cJSON *location = cJSON_GetObjectItemCaseSensitive(job_data,
-							    "location");
+	cJSON *location = cJSON_GetObjectItemCaseSensitive(job_data, "location");
 
 	if (!cJSON_IsObject(location)) {
-		ret = -ENODATA;
+		ret = AWS_FOTA_JSON_RES_INVALID_DOCUMENT;
 		goto cleanup;
 	}
 
@@ -126,46 +130,45 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 		http_parser_url_init(&u);
 		http_parser_parse_url(url->valuestring, strlen(url->valuestring), false, &u);
 
-		/* Determine size of hostname and clamp to buffer size.
+		/* Determine size of hostname and path (consisting of path + query).
 		 * Length increased by one to get null termination at right spot when copying.
 		 */
-		uint16_t parsed_host_len =
-			MIN(hostname_buf_size, u.field_data[UF_HOST].len + 1);
+		uint16_t parsed_host_len = u.field_data[UF_HOST].len + 1;
+		uint16_t parsed_file_len = u.field_data[UF_PATH].len
+					 + u.field_data[UF_QUERY].len + 1;
+
+		if (parsed_host_len > hostname_buf_size || parsed_file_len > file_path_buf_size) {
+			ret = AWS_FOTA_JSON_RES_URL_TOO_LONG;
+			goto cleanup;
+		}
+
+		/* Copy slices of the hostname and path (url path + query) to the
+		 * respective buffers. Increase path offset by one to omit initial slash.
+		 */
 		strncpy_nullterm(hostname_buf,
 				url->valuestring + u.field_data[UF_HOST].off,
 				parsed_host_len);
-
-		/* Determine size of file path, consisting of the path and query parts of the URL.
-		 * Length increased by one for proper null termination and clamped to buffer size.
-		 * Copy starting from the path offset, increased by one to omit the initial slash.
-		 */
-		uint16_t parsed_file_len =
-			MIN(file_path_buf_size,
-			    u.field_data[UF_PATH].len + u.field_data[UF_QUERY].len + 1);
 		strncpy_nullterm(file_path_buf,
 				url->valuestring + u.field_data[UF_PATH].off + 1,
 				parsed_file_len);
 
 	} else if ((cJSON_GetStringValue(hostname) != NULL)
 	   && (cJSON_GetStringValue(path) != NULL)) {
+
+		if (strlen(hostname->valuestring) >= hostname_buf_size
+		    || strlen(path->valuestring) >= file_path_buf_size) {
+			ret = AWS_FOTA_JSON_RES_URL_TOO_LONG;
+			goto cleanup;
+		}
+
 		strncpy_nullterm(hostname_buf, hostname->valuestring, hostname_buf_size);
 		strncpy_nullterm(file_path_buf, path->valuestring, file_path_buf_size);
 	} else {
-		ret = -ENODATA;
+		ret = AWS_FOTA_JSON_RES_INVALID_DOCUMENT;
 		goto cleanup;
 	}
 
-	cJSON *version_number = cJSON_GetObjectItemCaseSensitive(
-					execution, "versionNumber");
-
-	if (cJSON_IsNumber(version_number)) {
-		*execution_version_number = version_number->valueint;
-	} else {
-		ret = -ENODATA;
-		goto cleanup;
-	}
-
-	ret = 1;
+	ret = AWS_FOTA_JSON_RES_SUCCESS;
 cleanup:
 	cJSON_Delete(json_data);
 	return ret;

@@ -34,7 +34,7 @@ void test_parse_job_execution(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(1, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_SUCCESS, ret);
 	TEST_ASSERT_EQUAL_STRING(expected_job_id, job_id);
 	TEST_ASSERT_EQUAL(expected_version_number, version_number);
 	TEST_ASSERT_EQUAL_STRING(expected_hostname, hostname);
@@ -76,7 +76,7 @@ void test_parse_job_execution_single_url(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(1, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_SUCCESS, ret);
 	TEST_ASSERT_EQUAL_STRING(expected_job_id, job_id);
 	TEST_ASSERT_EQUAL(expected_version_number, version_number);
 	TEST_ASSERT_EQUAL_STRING(expected_hostname, hostname);
@@ -98,7 +98,7 @@ void test_parse_malformed_job_execution(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_JOB, ret);
 }
 
 void test_parse_job_execution_missing_host_field(void)
@@ -117,7 +117,7 @@ void test_parse_job_execution_missing_host_field(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_DOCUMENT, ret);
 }
 
 void test_parse_job_execution_missing_path_field(void)
@@ -135,7 +135,7 @@ void test_parse_job_execution_missing_path_field(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_DOCUMENT, ret);
 }
 
 void test_parse_job_execution_missing_job_id_field(void)
@@ -153,7 +153,7 @@ void test_parse_job_execution_missing_job_id_field(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_JOB, ret);
 }
 
 void test_parse_job_execution_missing_location_obj(void)
@@ -171,7 +171,7 @@ void test_parse_job_execution_missing_location_obj(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_DOCUMENT, ret);
 }
 
 void test_update_job_longer_than_max(void)
@@ -206,7 +206,7 @@ void test_timestamp_only(void)
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
 						      &version_number);
-	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_SKIPPED, ret);
 }
 
 void test_update_job_exec_rsp_minimal(void)
