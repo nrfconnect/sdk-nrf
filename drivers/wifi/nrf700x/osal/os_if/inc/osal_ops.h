@@ -72,6 +72,8 @@
  * @llist_init: Initialize a linked list allocated by @llist_alloc.
  * @llist_add_node_tail: Add a linked list node allocated by @llist_node_alloc
  *                       to the tail of a linked list allocated by @llist_alloc.
+ * @llist_add_node_head: Add a linked list node allocated by @llist_node_alloc
+ * 					 to the head of a linked list allocated by @llist_alloc.
  * @llist_get_node_head: Return the head node from a linked list while still
  *                       leaving the node as part of the linked list. If the
  *                       linked list is empty return NULL.
@@ -209,6 +211,7 @@ struct wifi_nrf_osal_ops {
 	void (*llist_free)(void *llist);
 	void (*llist_init)(void *llist);
 	void (*llist_add_node_tail)(void *llist, void *llist_node);
+	void (*llist_add_node_head)(void *llist, void *llist_node);
 	void *(*llist_get_node_head)(void *llist);
 	void *(*llist_get_node_nxt)(void *llist, void *llist_node);
 	void (*llist_del_node)(void *llist, void *llist_node);

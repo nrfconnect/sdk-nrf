@@ -431,6 +431,19 @@ static void zep_shim_llist_add_node_tail(void *llist, void *llist_node)
 	zep_llist->len += 1;
 }
 
+static void zep_shim_llist_add_node_head(void *llist, void *llist_node)
+{
+	struct zep_shim_llist *zep_llist = NULL;
+	struct zep_shim_llist_node *zep_node = NULL;
+
+	zep_llist = (struct zep_shim_llist *)llist;
+	zep_node = (struct zep_shim_llist_node *)llist_node;
+
+	sys_dlist_prepend(&zep_llist->head, &zep_node->head);
+
+	zep_llist->len += 1;
+}
+
 static void *zep_shim_llist_get_node_head(void *llist)
 {
 	struct zep_shim_llist_node *zep_head_node = NULL;
@@ -767,6 +780,7 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.llist_free = zep_shim_llist_free,
 	.llist_init = zep_shim_llist_init,
 	.llist_add_node_tail = zep_shim_llist_add_node_tail,
+	.llist_add_node_head = zep_shim_llist_add_node_head,
 	.llist_get_node_head = zep_shim_llist_get_node_head,
 	.llist_get_node_nxt = zep_shim_llist_get_node_nxt,
 	.llist_del_node = zep_shim_llist_del_node,
