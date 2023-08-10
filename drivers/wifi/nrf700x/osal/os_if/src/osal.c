@@ -303,6 +303,14 @@ void wifi_nrf_osal_llist_add_node_tail(struct wifi_nrf_osal_priv *opriv,
 					       llist_node);
 }
 
+void wifi_nrf_osal_llist_add_node_head(struct wifi_nrf_osal_priv *opriv,
+				       void *llist,
+				       void *llist_node)
+{
+	return opriv->ops->llist_add_node_head(llist,
+					       llist_node);
+}
+
 
 void *wifi_nrf_osal_llist_get_node_head(struct wifi_nrf_osal_priv *opriv,
 					void *llist)

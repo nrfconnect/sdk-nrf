@@ -24,6 +24,10 @@ enum wifi_nrf_status wifi_nrf_utils_q_enqueue(struct wifi_nrf_osal_priv *opriv,
 					      void *q,
 					      void *q_node);
 
+enum wifi_nrf_status wifi_nrf_utils_q_enqueue_head(struct wifi_nrf_osal_priv *opriv,
+						   void *q,
+						   void *q_node);
+
 void *wifi_nrf_utils_q_dequeue(struct wifi_nrf_osal_priv *opriv,
 			       void *q);
 

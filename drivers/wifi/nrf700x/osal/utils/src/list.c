@@ -68,6 +68,32 @@ enum wifi_nrf_status wifi_nrf_utils_list_add_tail(struct wifi_nrf_osal_priv *opr
 	return WIFI_NRF_STATUS_SUCCESS;
 }
 
+enum wifi_nrf_status wifi_nrf_utils_list_add_head(struct wifi_nrf_osal_priv *opriv,
+						  void *list,
+						  void *data)
+{
+	void *list_node = NULL;
+
+	list_node = wifi_nrf_osal_llist_node_alloc(opriv);
+
+	if (!list_node) {
+		wifi_nrf_osal_log_err(opriv,
+				      "%s: Unable to allocate list node\n",
+				      __func__);
+		return WIFI_NRF_STATUS_FAIL;
+	}
+
+	wifi_nrf_osal_llist_node_data_set(opriv,
+					  list_node,
+					  data);
+
+	wifi_nrf_osal_llist_add_node_head(opriv,
+					  list,
+					  list_node);
+
+	return WIFI_NRF_STATUS_SUCCESS;
+}
+
 void wifi_nrf_utils_list_del_node(struct wifi_nrf_osal_priv *opriv,
 				  void *list,
 				  void *data)

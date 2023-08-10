@@ -24,6 +24,10 @@ enum wifi_nrf_status wifi_nrf_utils_list_add_tail(struct wifi_nrf_osal_priv *opr
 						  void *list,
 						  void *data);
 
+enum wifi_nrf_status wifi_nrf_utils_list_add_head(struct wifi_nrf_osal_priv *opriv,
+						  void *list,
+						  void *data);
+
 void wifi_nrf_utils_list_del_node(struct wifi_nrf_osal_priv *opriv,
 				  void *list,
 				  void *data);

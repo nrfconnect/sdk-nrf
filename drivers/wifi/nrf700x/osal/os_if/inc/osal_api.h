@@ -484,6 +484,20 @@ void wifi_nrf_osal_llist_add_node_tail(struct wifi_nrf_osal_priv *opriv,
 
 
 /**
+ * wifi_nrf_osal_llist_add_node_head() - Add a node to the head of a linked list.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @llist: Pointer to a linked list.
+ * @llist_node: Pointer to a linked list node.
+ *
+ * Adds a linked list node(@llist_node) allocated by @wifi_nrf_osal_llist_node_alloc
+ * to the head of a linked list(@llist) allocated by @wifi_nrf_osal_llist_alloc.
+ *
+ * Return: None.
+*/
+void wifi_nrf_osal_llist_add_node_head(struct wifi_nrf_osal_priv *opriv,
+					void *llist,
+					void *llist_node);
+/**
  * wifi_nrf_osal_llist_get_node_head() - Get the head of a linked list.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
  * @llist: Pointer to a linked list.
