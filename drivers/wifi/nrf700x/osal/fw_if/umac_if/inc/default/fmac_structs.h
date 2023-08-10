@@ -24,6 +24,7 @@
 
 #define MAX_PEERS 5
 #define MAX_SW_PEERS (MAX_PEERS + 1)
+#define WIFI_NRF_AC_TWT_PRIORITY_EMERGENCY 0xFF
 
 
 /**

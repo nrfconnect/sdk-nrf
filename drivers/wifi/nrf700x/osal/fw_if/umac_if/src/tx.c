@@ -19,6 +19,25 @@
 #include "hal_mem.h"
 #include "fmac_util.h"
 
+static bool is_twt_emergency_pkt(struct wifi_nrf_osal_priv *opriv, void *nwb)
+{
+	unsigned char priority = wifi_nrf_osal_nbuf_get_priority(opriv, nwb);
+
+	return  priority == WIFI_NRF_AC_TWT_PRIORITY_EMERGENCY;
+}
+
+/* Can be extended for other cases as well */
+static bool can_xmit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+			       void *nwb)
+{
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
+	return is_twt_emergency_pkt(fmac_dev_ctx->fpriv->opriv, nwb) ||
+	    def_dev_ctx->twt_sleep_status == WIFI_NRF_FMAC_TWT_STATE_AWAKE;
+}
+
 /* Set the coresponding bit of access category.
  * First 4 bits(0 to 3) represenst first spare desc access cateogories
  * Second 4 bits(4 to 7) represenst second spare desc access cateogories and so on
@@ -467,10 +486,8 @@ size_t _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			break;
 		}
 
-		if (!tx_aggr_check(fmac_dev_ctx,
-				    first_nwb,
-				    ac,
-				    peer_id) ||
+		if (!can_xmit(fmac_dev_ctx, nwb) ||
+			(!tx_aggr_check(fmac_dev_ctx, first_nwb, ac, peer_id)) ||
 			(wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv,
 					      txq) >= max_txq_len)) {
 			break;
@@ -487,10 +504,13 @@ size_t _tx_pending_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	/* If our criterion rejects all pending frames, or
 	 * pend_q is empty, send only 1
 	 */
-	if (!wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv,
-				  txq)) {
+	if (!wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, txq)) {
 		nwb = wifi_nrf_utils_q_dequeue(fmac_dev_ctx->fpriv->opriv,
 					       pend_pkt_q);
+
+		if (!can_xmit(fmac_dev_ctx, nwb)) {
+			return 0;
+		}
 
 		wifi_nrf_utils_list_add_tail(fmac_dev_ctx->fpriv->opriv,
 					     txq,
@@ -663,6 +683,10 @@ enum wifi_nrf_status tx_cmd_prepare(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	config->mac_hdr_info.dscp_or_tos =
 		wifi_nrf_util_get_tid(fmac_dev_ctx, nwb);
 
+	if (is_twt_emergency_pkt(fmac_dev_ctx->fpriv->opriv, nwb)) {
+		config->mac_hdr_info.dscp_or_tos |= DSCP_OR_TOS_TWT_EMERGENCY_TX;
+	}
+
 	config->num_tx_pkts = 0;
 
 	info.fmac_dev_ctx = fmac_dev_ctx;
@@ -816,9 +840,15 @@ enum wifi_nrf_status tx_enqueue(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	wifi_nrf_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
-				 queue,
-				 nwb);
+	if (is_twt_emergency_pkt(fmac_dev_ctx->fpriv->opriv, nwb)) {
+		wifi_nrf_utils_q_enqueue_head(fmac_dev_ctx->fpriv->opriv,
+					      queue,
+					      nwb);
+	} else {
+		wifi_nrf_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
+					 queue,
+					 nwb);
+	}
 
 	status = update_pend_q_bmp(fmac_dev_ctx, ac, peer_id);
 
@@ -952,35 +982,26 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		end_ac = WIFI_NRF_FMAC_AC_BK;
 	}
 
-	if (def_dev_ctx->twt_sleep_status ==
-	    WIFI_NRF_FMAC_TWT_STATE_SLEEP) {
-		tx_desc_free(fmac_dev_ctx,
-			     desc,
-			     tx_done_q);
-		goto out;
-	} else {
-		for (cnt = start_ac; cnt >= end_ac; cnt--) {
-			pkts_pend = _tx_pending_process(fmac_dev_ctx, desc, cnt);
+	for (cnt = start_ac; cnt >= end_ac; cnt--) {
+		pkts_pend = _tx_pending_process(fmac_dev_ctx, desc, cnt);
 
-			if (pkts_pend) {
-				*ac = (unsigned char)cnt;
+		if (pkts_pend) {
+			*ac = (unsigned char)cnt;
 
-				/* Spare Token Case*/
-				if (tx_done_q != *ac) {
-					/* Adjust the counters */
-					def_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
-					def_dev_ctx->tx_config.outstanding_descs[*ac]++;
+			/* Spare Token Case*/
+			if (tx_done_q != *ac) {
+				/* Adjust the counters */
+				def_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
+				def_dev_ctx->tx_config.outstanding_descs[*ac]++;
 
-					/* Update the queue_map */
-					/* Clear the last access category. */
-					clear_spare_desc_q_map(fmac_dev_ctx, desc, tx_done_q);
-					/* Set the new access category. */
-					set_spare_desc_q_map(fmac_dev_ctx, desc, *ac);
-				}
-				break;
+				/* Update the queue_map */
+				/* Clear the last access category. */
+				clear_spare_desc_q_map(fmac_dev_ctx, desc, tx_done_q);
+				/* Set the new access category. */
+				set_spare_desc_q_map(fmac_dev_ctx, desc, *ac);
 			}
+			break;
 		}
-
 	}
 
 	if (!pkts_pend) {
@@ -990,7 +1011,6 @@ unsigned int tx_buff_req_free(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			     tx_done_q);
 	}
 
-out:
 	return pkts_pend;
 }
 
@@ -1209,8 +1229,7 @@ enum wifi_nrf_fmac_tx_status wifi_nrf_fmac_tx(struct wifi_nrf_fmac_dev_ctx *fmac
 
 	status = WIFI_NRF_FMAC_TX_STATUS_QUEUED;
 
-	if (def_dev_ctx->twt_sleep_status ==
-	    WIFI_NRF_FMAC_TWT_STATE_SLEEP) {
+	if (!can_xmit(fmac_dev_ctx, nbuf)) {
 		goto out;
 	}
 
