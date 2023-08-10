@@ -217,6 +217,7 @@ def init_logs(cli_arg):
 def parse_args():
     default_range = 'HEAD~1..HEAD'
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         description="Check for CODEOWNERS file ownership.")
     parser.add_argument('-c', '--commits', default=default_range,
                         help=f'''Commit range in the form: a..[b], default is
