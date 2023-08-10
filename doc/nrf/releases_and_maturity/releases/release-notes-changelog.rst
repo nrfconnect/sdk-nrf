@@ -597,6 +597,7 @@ Libraries for networking
 
     * Support for using pre-provisioned X.509 certificates.
     * Support for using DTLS Connection Identifier
+    * Configurable delay after bootstrap. See :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SLEEP_AFTER_CREDENTIAL_WRITE`.
 
   * Updated:
 

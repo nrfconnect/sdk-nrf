@@ -45,6 +45,14 @@ config LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG
 	  may write credentials into first LwM2M security instance "0/0/5".
 	  Client utilities only write to this security tag if it is empty.
 
+config LWM2M_CLIENT_UTILS_SLEEP_AFTER_CREDENTIAL_WRITE
+	int "Time to sleep after security credential have been written. (seconds)"
+	default 15
+	help
+	  This is a workaround for some Bootstrap servers that might not be fast enough
+	  to send generated credentials into the target servers.
+	  To disable this, set to zero.
+
 endif # LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT

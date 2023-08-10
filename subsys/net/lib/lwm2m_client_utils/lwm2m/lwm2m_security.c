@@ -351,6 +351,11 @@ out:
 		k_sleep(K_SECONDS(ret));
 	}
 
+	if (CONFIG_LWM2M_CLIENT_UTILS_SLEEP_AFTER_CREDENTIAL_WRITE > 0) {
+		LOG_INF("Delay after credentials have been changed.");
+		k_sleep(K_SECONDS(CONFIG_LWM2M_CLIENT_UTILS_SLEEP_AFTER_CREDENTIAL_WRITE));
+	}
+
 	return ret;
 }
 
