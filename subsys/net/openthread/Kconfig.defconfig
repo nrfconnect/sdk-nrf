@@ -200,6 +200,86 @@ endif
 
 endif
 
+if MBEDTLS_PSA_CRYPTO_C
+
+config PSA_WANT_GENERATE_RANDOM
+	bool
+	default y
+
+config PSA_WANT_ALG_CCM
+	bool
+	default y
+
+config PSA_WANT_ALG_GCM
+	bool
+	default y
+
+config PSA_WANT_ALG_CHACHA20_POLY1305
+	bool
+	default y
+
+config PSA_WANT_ALG_CMAC
+	bool
+	default y
+
+config PSA_WANT_ALG_HMAC
+	bool
+	default y
+
+config PSA_WANT_ALG_SHA_256
+	bool
+	default y
+
+config PSA_WANT_ALG_ECB_NO_PADDING
+	bool
+	default y
+
+config PSA_WANT_ALG_CBC_NO_PADDING
+	bool
+	default y
+
+config PSA_WANT_ALG_CBC_PKCS7
+	bool
+	default y
+
+config PSA_WANT_ALG_CTR
+	bool
+	default y
+
+config PSA_WANT_ALG_HKDF
+	bool
+	default y
+
+config PSA_WANT_ALG_TLS12_PRF
+	bool
+	default y
+
+config PSA_WANT_ALG_ECDH
+	bool
+	default y
+
+config PSA_WANT_ALG_ECDSA
+	bool
+	default y
+
+config PSA_WANT_ALG_DETERMINISTIC_ECDSA
+	bool
+	default y
+
+config PSA_WANT_ECC_SECP_R1_256
+	bool
+	default y
+
+config PSA_WANT_ALG_STREAM_CIPHER
+	bool
+	default y
+
+config PSA_WANT_ALG_TLS12_PSK_TO_MS
+	bool
+	default y
+
+endif
+
 config OPENTHREAD_TCP_ENABLE
 	select EXPERIMENTAL
 
