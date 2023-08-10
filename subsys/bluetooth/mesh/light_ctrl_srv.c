@@ -1621,6 +1621,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 
 	switch (srv->lightness->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
+	case BT_MESH_ON_POWER_UP_ON:
 		if (atomic_test_bit(&srv->flags,
 				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
 			ctrl_enable(srv);
@@ -1636,17 +1637,6 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 		 * restarts, we'll restore to On even though we were off in the
 		 * previous power cycle, unless we store the Off state here.
 		 */
-		store(srv, FLAG_STORE_STATE);
-		break;
-	case BT_MESH_ON_POWER_UP_ON:
-		if (atomic_test_bit(&srv->flags,
-				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
-			ctrl_enable(srv);
-		} else {
-			lightness_on_power_up(srv->lightness);
-			ctrl_disable(srv);
-			schedule_resume_timer(srv);
-		}
 		store(srv, FLAG_STORE_STATE);
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
