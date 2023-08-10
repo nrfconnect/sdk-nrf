@@ -99,11 +99,18 @@ struct bt_mesh_light_ctrl_srv;
 
 /** Light Lightness Control Server state */
 enum bt_mesh_light_ctrl_srv_state {
-	/** Standby state */
+	/** Standby state, merges the Light LC State Machine states of OFF,
+	 * STANDBY, FADE_STANDBY_AUTO and FADE_STANDBY_MANUAL in the Mesh Model
+	 * Specification section 6.2.5.
+	 */
 	LIGHT_CTRL_STATE_STANDBY,
-	/** On state */
+	/** On state, merges the Light LC State Machine states of FADE_ON and
+	 * RUN in the Mesh Model Specification section 6.2.5.
+	 */
 	LIGHT_CTRL_STATE_ON,
-	/** Prolong state */
+	/** Prolong state, merges the Light LC State Machine states of FADE and
+	 * PROLONG in the Mesh Model Specification section 6.2.5.
+	 */
 	LIGHT_CTRL_STATE_PROLONG,
 
 	/** The number of states. */
