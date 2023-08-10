@@ -62,6 +62,8 @@ enum aws_fota_json_result {
  * @param[out] file_path_buf  Output buffer for the "file" field from the Job
  *			      Document
  * @param[in] file_path_buf_size  Size of the output buffer for the "file" field
+ * @param[out] protocol_buf  Output buffer for the "protocol" field from the Job Document
+ * @param[in] protocol_buf_size  Size of the output buffer for the "protocol" field
  * @param[out] version_number  Version number from the Job Execution data type.
  *
  * @return aws_fota_json_result specifying the result of the parse operation.
@@ -73,6 +75,8 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 					    size_t hostname_buf_size,
 					    char *file_path_buf,
 					    size_t file_path_buf_size,
+					    char *protocol_buf,
+					    size_t protocol_buf_size,
 					    int *version_number);
 
 /**

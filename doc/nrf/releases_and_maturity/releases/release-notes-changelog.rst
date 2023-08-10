@@ -680,6 +680,7 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
     * The :kconfig:option:`CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
     * AWS FOTA jobs are now marked as failed if the job document for the update is invalid.
+    * The protocol (HTTP or HTTPS) is now automatically chosen based on the `protocol` or `url` fields in the job document for the update.
 
 * :ref:`lib_azure_fota` library:
 

@@ -62,12 +62,15 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 					   size_t hostname_buf_size,
 					   char *file_path_buf,
 					   size_t file_path_buf_size,
+					   char *protocol_buf,
+					   size_t protocol_buf_size,
 					   int *execution_version_number)
 {
 	if (job_document == NULL
 	    || job_id_buf == NULL
 	    || hostname_buf == NULL
 	    || file_path_buf == NULL
+	    || protocol_buf == NULL
 	    || execution_version_number == NULL) {
 		return AWS_FOTA_JSON_RES_INVALID_PARAMS;
 	}
@@ -122,6 +125,7 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 
 	cJSON *hostname = cJSON_GetObjectItemCaseSensitive(location, "host");
 	cJSON *path = cJSON_GetObjectItemCaseSensitive(location, "path");
+	cJSON *protocol = cJSON_GetObjectItemCaseSensitive(location, "protocol");
 	cJSON *url = cJSON_GetObjectItemCaseSensitive(location, "url");
 
 	if (cJSON_GetStringValue(url) != NULL) {
@@ -130,14 +134,17 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 		http_parser_url_init(&u);
 		http_parser_parse_url(url->valuestring, strlen(url->valuestring), false, &u);
 
-		/* Determine size of hostname and path (consisting of path + query).
+		/* Determine size of protocol, hostname and path (consisting of path + query).
 		 * Length increased by one to get null termination at right spot when copying.
 		 */
+		uint16_t parsed_prot_len = u.field_data[UF_SCHEMA].len + 1;
 		uint16_t parsed_host_len = u.field_data[UF_HOST].len + 1;
 		uint16_t parsed_file_len = u.field_data[UF_PATH].len
 					 + u.field_data[UF_QUERY].len + 1;
 
-		if (parsed_host_len > hostname_buf_size || parsed_file_len > file_path_buf_size) {
+		if ((parsed_prot_len > protocol_buf_size) ||
+		    (parsed_host_len > hostname_buf_size) ||
+		    (parsed_file_len > file_path_buf_size)) {
 			ret = AWS_FOTA_JSON_RES_URL_TOO_LONG;
 			goto cleanup;
 		}
@@ -145,6 +152,9 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 		/* Copy slices of the hostname and path (url path + query) to the
 		 * respective buffers. Increase path offset by one to omit initial slash.
 		 */
+		strncpy_nullterm(protocol_buf,
+				url->valuestring + u.field_data[UF_SCHEMA].off,
+				parsed_prot_len);
 		strncpy_nullterm(hostname_buf,
 				url->valuestring + u.field_data[UF_HOST].off,
 				parsed_host_len);
@@ -152,15 +162,18 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 				url->valuestring + u.field_data[UF_PATH].off + 1,
 				parsed_file_len);
 
-	} else if ((cJSON_GetStringValue(hostname) != NULL)
-	   && (cJSON_GetStringValue(path) != NULL)) {
+	} else if ((cJSON_GetStringValue(hostname) != NULL) &&
+		   (cJSON_GetStringValue(path) != NULL) &&
+		   (cJSON_GetStringValue(protocol) != NULL)) {
 
-		if (strlen(hostname->valuestring) >= hostname_buf_size
-		    || strlen(path->valuestring) >= file_path_buf_size) {
+		if ((strlen(protocol->valuestring) >= protocol_buf_size) ||
+		    (strlen(hostname->valuestring) >= hostname_buf_size) ||
+		    (strlen(path->valuestring) >= file_path_buf_size)) {
 			ret = AWS_FOTA_JSON_RES_URL_TOO_LONG;
 			goto cleanup;
 		}
 
+		strncpy_nullterm(protocol_buf, protocol->valuestring, protocol_buf_size);
 		strncpy_nullterm(hostname_buf, hostname->valuestring, hostname_buf_size);
 		strncpy_nullterm(file_path_buf, path->valuestring, file_path_buf_size);
 	} else {
