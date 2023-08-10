@@ -92,7 +92,7 @@ static int dtls_setup(int fd)
 		TLS_SEC_TAG,
 	};
 
-	LOG_INF("TLS setup");
+	LOG_INF("DTLS setup");
 
 	/* Set up TLS peer verification */
 	verify = TLS_PEER_VERIFY_REQUIRED;
@@ -563,6 +563,7 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 			break;
 		}
 
+		LOG_INF("Requesting commands");
 		ret = request_commands(&client, coap_ctx);
 		if (ret < 0) {
 			break;
@@ -585,6 +586,7 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 			cdc_ctx.opkt = tx_buf.coap;
 			cdc_ctx.opkt_sz = sizeof(tx_buf);
 
+			LOG_INF("Processing commands");
 			ret = nrf_provisioning_codec_process_commands();
 			if (ret < 0) {
 				LOG_ERR("ret %d", ret);
@@ -606,6 +608,7 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 				break;
 			}
 
+			LOG_INF("Sending response to server");
 			ret = send_response(&client, coap_ctx, &cdc_ctx);
 			if (ret < 0) {
 				break;

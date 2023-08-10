@@ -258,6 +258,7 @@ int filter_cme_error(struct command *cmd, int cme_error)
 
 	for (int i = 0;	i < at_cmd->_at_command_ignore_cme_errors_uint_count; i++) {
 		if (at_cmd->_at_command_ignore_cme_errors_uint[i] == cme_error) {
+			LOG_DBG("Filtered CME error %d", cme_error);
 			filtered = true;
 		}
 	}
@@ -312,10 +313,14 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		} else if (ret < 0) {
 			LOG_ERR("AT cmd failed, error: %d", ret);
 		} else if (ret > 0) {
-			ret = filter_cme_error(cmd_req, nrf_modem_at_err(ret));
 			/* 'ERROR' or '+CME ERROR'. Doesn't matter which */
-			LOG_INF("AT cmd failed, type %d, err %d",
+			LOG_DBG("AT cmd failed, type %d, err %d",
 				nrf_modem_at_err_type(ret), nrf_modem_at_err(ret));
+			ret = filter_cme_error(cmd_req, nrf_modem_at_err(ret));
+			if (ret) {
+				/* ERROR was not filtered */
+				LOG_ERR("AT cmd failed, error: %d", ret);
+			}
 		}
 		break;
 	}
