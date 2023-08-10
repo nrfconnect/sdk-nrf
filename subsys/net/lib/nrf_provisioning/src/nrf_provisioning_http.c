@@ -496,6 +496,7 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 
 		print_req_info(&req, sizeof(headers) / sizeof(*headers) - 1);
 
+		LOG_INF("Requesting commands");
 		ret = rest_client_request(&req, &resp);
 		k_free(auth_hdr);
 		auth_hdr = NULL;
@@ -543,6 +544,7 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 			cdc_ctx.opkt = tx_buf.http;
 			cdc_ctx.opkt_sz = sizeof(tx_buf);
 
+			LOG_INF("Processing commands");
 			ret = nrf_provisioning_codec_process_commands();
 			if (ret < 0) {
 				break;
@@ -551,6 +553,7 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 				finished = true;
 			}
 
+			LOG_INF("Sending response to server");
 			ret = nrf_provisioning_responses_req(rest_ctx, &req, &resp, &cdc_ctx);
 			if (ret < 0) {
 				finished = false;
