@@ -60,6 +60,7 @@ static uint8_t get_topic[AWS_JOBS_TOPIC_MAX_LEN];
 
 /* Allocated buffers for keeping hostname, json payload and file_path. */
 static uint8_t payload_buf[CONFIG_AWS_FOTA_PAYLOAD_SIZE];
+static uint8_t protocol[sizeof("https://")];
 static uint8_t hostname[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
 static uint8_t file_path[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 
@@ -274,6 +275,7 @@ static int parse_job_execution(struct mqtt_client *const client, uint32_t payloa
 						      job_id_incoming,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &execution_version_number);
 
 	if (err == AWS_FOTA_JSON_RES_SKIPPED) {
@@ -308,6 +310,7 @@ static int parse_job_execution(struct mqtt_client *const client, uint32_t payloa
 
 	/* Valid update */
 	LOG_DBG("Job ID: %s", (char *)job_id_handling);
+	LOG_DBG("protocol: %s", (char *)protocol);
 	LOG_DBG("hostname: %s", (char *)hostname);
 	LOG_DBG("file_path %s", (char *)file_path);
 	LOG_DBG("execution_version_number: %d ", execution_version_number);
@@ -366,9 +369,17 @@ static int job_update_accepted(struct mqtt_client *const client, uint32_t payloa
 		LOG_DBG("Start downloading firmware from %s/%s",
 			(char *)hostname, (char *)file_path);
 
-#if defined(CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG)
-		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
-#endif
+		/* If the protocol is https set the sec_tag. This instructs the download client
+		 * to use https. Fail if the protocol is https but no sec tag is configured.
+		 */
+		if (strncmp(protocol, "https", 5) == 0) {
+			if (CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG == -1) {
+				LOG_ERR("Trying to use https without sec tag configured.");
+				return set_current_job_failed(client);
+			}
+
+			sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
+		}
 
 		err = fota_download_start(hostname, file_path, sec_tag, 0, 0);
 		if (err) {

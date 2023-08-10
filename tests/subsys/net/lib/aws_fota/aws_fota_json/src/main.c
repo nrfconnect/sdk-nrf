@@ -21,10 +21,12 @@ void test_parse_job_execution(void)
 	int version_number;
 	int expected_version_number = 1;
 	char expected_job_id[] = "9b5caac6-3e8a-45dd-9273-c1b995762f4a";
+	char expected_protocol[] = "https:";
 	char expected_hostname[] = "fota-update-bucket.s3.eu-central-1.amazonaws.com";
 	char expected_file_path[] = "/update.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWXEL53DXIU7W72AE%2F20190606%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20190606T081505Z&X-Amz-Expires=604800&X-Amz-Signature=913e00b97efe5565a901df4ff0b87e4878a406941d711f59d45915035989adcc&X-Amz-SignedHeaders=host";
 	char encoded[] = "{\"timestamp\":1559808907,\"execution\":{\"jobId\":\"9b5caac6-3e8a-45dd-9273-c1b995762f4a\",\"status\":\"QUEUED\",\"queuedAt\":1559808906,\"lastUpdatedAt\":1559808906,\"versionNumber\":1,\"executionNumber\":1,\"jobDocument\":{\"operation\":\"app_fw_update\",\"fwversion\":\"2\",\"size\":181124,\"location\":{\"protocol\":\"https:\",\"host\":\"fota-update-bucket.s3.eu-central-1.amazonaws.com\",\"path\":\"/update.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWXEL53DXIU7W72AE%2F20190606%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20190606T081505Z&X-Amz-Expires=604800&X-Amz-Signature=913e00b97efe5565a901df4ff0b87e4878a406941d711f59d45915035989adcc&X-Amz-SignedHeaders=host\"}}}}";
 	char job_id[100];
+	char protocol[10];
 	char hostname[100];
 	char file_path[1000];
 
@@ -33,10 +35,12 @@ void test_parse_job_execution(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_SUCCESS, ret);
 	TEST_ASSERT_EQUAL_STRING(expected_job_id, job_id);
 	TEST_ASSERT_EQUAL(expected_version_number, version_number);
+	TEST_ASSERT_EQUAL_STRING(expected_protocol, protocol);
 	TEST_ASSERT_EQUAL_STRING(expected_hostname, hostname);
 	TEST_ASSERT_EQUAL_STRING(expected_file_path, file_path);
 }
@@ -47,6 +51,7 @@ void test_parse_job_execution_single_url(void)
 	int version_number;
 	int expected_version_number = 1;
 	char expected_job_id[] = "9b5caac6-3e8a-45dd-9273-c1b995762f4a";
+	char expected_protocol[] = "https";
 	char expected_hostname[] = "fota-update-bucket.s3.eu-central-1.amazonaws.com";
 	char expected_file_path[] = "update.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential="
 								"AKIAWXEL53DXIU7W72AE%2F20190606%2Feu-central-1%2Fs3%2Faws4_request"
@@ -67,6 +72,7 @@ void test_parse_job_execution_single_url(void)
 					 "913e00b97efe5565a901df4ff0b87e4878a406941d711f59d45915035989adcc"
 					 "&X-Amz-SignedHeaders=host\"}}}}";
 	char job_id[100];
+	char protocol[10];
 	char hostname[100];
 	char file_path[1000];
 
@@ -75,10 +81,12 @@ void test_parse_job_execution_single_url(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_SUCCESS, ret);
 	TEST_ASSERT_EQUAL_STRING(expected_job_id, job_id);
 	TEST_ASSERT_EQUAL(expected_version_number, version_number);
+	TEST_ASSERT_EQUAL_STRING(expected_protocol, protocol);
 	TEST_ASSERT_EQUAL_STRING(expected_hostname, hostname);
 	TEST_ASSERT_EQUAL_STRING(expected_file_path, file_path);
 }
@@ -87,6 +95,7 @@ void test_parse_malformed_job_execution(void)
 {
 	int ret;
 	char job_id[100];
+	char protocol[5];
 	char hostname[100];
 	char file_path[1000];
 	int version_number;
@@ -97,6 +106,7 @@ void test_parse_malformed_job_execution(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_JOB, ret);
 }
@@ -106,6 +116,7 @@ void test_parse_job_execution_missing_host_field(void)
 	int ret;
 	int version_number;
 	char job_id[100];
+	char protocol[5];
 	char hostname[100];
 	char file_path[1000];
 
@@ -116,6 +127,7 @@ void test_parse_job_execution_missing_host_field(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_DOCUMENT, ret);
 }
@@ -125,6 +137,7 @@ void test_parse_job_execution_missing_path_field(void)
 	int ret;
 	int version_number;
 	char job_id[100];
+	char protocol[5];
 	char hostname[100];
 	char file_path[1000];
 	char encoded[] = "{\"timestamp\":1559808907,\"execution\":{\"jobId\":\"9b5caac6-3e8a-45dd-9273-c1b995762f4a\",\"status\":\"QUEUED\",\"queuedAt\":1559808906,\"lastUpdatedAt\":1559808906,\"versionNumber\":1,\"executionNumber\":1,\"jobDocument\":{\"operation\":\"app_fw_update\",\"fwversion\":\"2\",\"size\":181124,\"location\":{\"protocol\":\"https:\",\"host\":\"fota-update-bucket.s3.eu-central-1.amazonaws.com\"}}}}";
@@ -134,6 +147,7 @@ void test_parse_job_execution_missing_path_field(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_DOCUMENT, ret);
 }
@@ -143,6 +157,7 @@ void test_parse_job_execution_missing_job_id_field(void)
 	int ret;
 	int version_number;
 	char job_id[100];
+	char protocol[5];
 	char hostname[100];
 	char file_path[1000];
 	char encoded[] = "{\"timestamp\":1559808907,\"execution\":{\"status\":\"QUEUED\",\"queuedAt\":1559808906,\"lastUpdatedAt\":1559808906,\"versionNumber\":1,\"executionNumber\":1,\"jobDocument\":{\"operation\":\"app_fw_update\",\"fwversion\":\"2\",\"size\":181124,\"location\":{\"protocol\":\"https:\",\"host\":\"fota-update-bucket.s3.eu-central-1.amazonaws.com\",\"path\":\"/update.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWXEL53DXIU7W72AE%2F20190606%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20190606T081505Z&X-Amz-Expires=604800&X-Amz-Signature=913e00b97efe5565a901df4ff0b87e4878a406941d711f59d45915035989adcc&X-Amz-SignedHeaders=host\"}}}}";
@@ -152,6 +167,7 @@ void test_parse_job_execution_missing_job_id_field(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_JOB, ret);
 }
@@ -161,6 +177,7 @@ void test_parse_job_execution_missing_location_obj(void)
 	int ret;
 	int version_number;
 	char job_id[100];
+	char protocol[5];
 	char hostname[100];
 	char file_path[1000];
 	char encoded[] = "{\"timestamp\":1559808907,\"execution\":{\"jobId\":\"9b5caac6-3e8a-45dd-9273-c1b995762f4a\",\"status\":\"QUEUED\",\"queuedAt\":1559808906,\"lastUpdatedAt\":1559808906,\"versionNumber\":1,\"executionNumber\":1,\"jobDocument\":{\"operation\":\"app_fw_update\",\"fwversion\":\"2\",\"size\":181124}}}}";
@@ -170,6 +187,7 @@ void test_parse_job_execution_missing_location_obj(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_INVALID_DOCUMENT, ret);
 }
@@ -195,6 +213,7 @@ void test_timestamp_only(void)
 {
 	int ret;
 	char job_id[100];
+	char protocol[5];
 	char hostname[100];
 	char file_path[100];
 	char encoded[] = "{\"timestamp\":1559808907}";
@@ -205,6 +224,7 @@ void test_timestamp_only(void)
 						      job_id,
 						      hostname, sizeof(hostname),
 						      file_path, sizeof(file_path),
+						      protocol, sizeof(protocol),
 						      &version_number);
 	TEST_ASSERT_EQUAL(AWS_FOTA_JSON_RES_SKIPPED, ret);
 }
