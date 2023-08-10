@@ -998,13 +998,29 @@ static int handle_sensor_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 
 		/* Occupancy sensor */
 
-		/* OCC_MODE must be enabled for the occupancy sensors to be
-		 * able to turn on the light:
-		 */
-		if (srv->state == LIGHT_CTRL_STATE_STANDBY &&
-		    !atomic_test_bit(&srv->flags, FLAG_OCC_MODE) &&
-		    !(atomic_test_bit(&srv->flags, FLAG_TRANSITION) &&
-		      !atomic_test_bit(&srv->flags, FLAG_MANUAL))) {
+		if ((srv->state == LIGHT_CTRL_STATE_STANDBY &&
+			/* According to the Mesh Model Specification section
+			 * 6.2.5.6: When in the specifications STANDBY state,
+			 * and the Auto Occupancy condition is false, the
+			 * Occupancy On event should not be processed.
+			 */
+			((!atomic_test_bit(&srv->flags, FLAG_OCC_MODE) &&
+			  !atomic_test_bit(&srv->flags, FLAG_TRANSITION) &&
+			  !atomic_test_bit(&srv->flags, FLAG_MANUAL))
+			  ||
+			/* According to the Mesh Model Specification section
+			 * 6.2.5.12: When in the specifications FADE STANDBY
+			 * MANUAL state, the Occupancy On event should not be
+			 * processed.
+			 */
+			  (atomic_test_bit(&srv->flags, FLAG_TRANSITION) &&
+			   atomic_test_bit(&srv->flags, FLAG_MANUAL)))) ||
+		    /* According to the Mesh Model Specification section
+		     * 6.2.5.7: When in the specifications FADE ON state, the
+		     * Occupancy On event should not be processed.
+		     */
+		    (srv->state == LIGHT_CTRL_STATE_ON &&
+		     atomic_test_bit(&srv->flags, FLAG_TRANSITION))) {
 			continue;
 		}
 
