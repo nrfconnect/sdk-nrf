@@ -131,8 +131,15 @@ struct bt_mesh_loc_srv {
 		BT_MESH_MODEL_BUF_LEN(BT_MESH_LOC_OP_GLOBAL_STATUS,
 				      BT_MESH_LOC_MSG_LEN_GLOBAL_STATUS))];
 
-	/** Current opcode being published. */
-	uint16_t pub_op;
+	/** Location publishing state. */
+	struct {
+		/** Global location is available for publishing. */
+		uint8_t is_global_available: 1;
+		/** Local location is available for publishing. */
+		uint8_t is_local_available: 1;
+		/** The last published location over periodic publication. */
+		uint8_t was_last_local: 1;
+	} pub_state;
 	/** Pointer to a handler structure. */
 	const struct bt_mesh_loc_srv_handlers *const handlers;
 };
