@@ -51,7 +51,8 @@ const struct wifi_scan_params tests[] = {
 	},
 #ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
 	{
-	.scan_type = WIFI_SCAN_TYPE_PASSIVE
+	.scan_type = WIFI_SCAN_TYPE_PASSIVE,
+	.dwell_time_passive = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE
 	},
 #endif
 #ifdef CONFIG_WIFI_SCAN_BAND_2_4_GHZ
