@@ -57,6 +57,11 @@ const struct wifi_scan_params tests[] = {
 	.bands = (1 << WIFI_FREQ_BAND_2_4_GHZ)
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_BAND_5GHZ
+	{
+	.bands = (1 << WIFI_FREQ_BAND_5_GHZ)
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
