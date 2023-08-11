@@ -62,6 +62,11 @@ const struct wifi_scan_params tests[] = {
         .bands = (1 << WIFI_FREQ_BAND_5_GHZ)
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_SSID
+	{
+	.ssids[0] = "Myssid"
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;

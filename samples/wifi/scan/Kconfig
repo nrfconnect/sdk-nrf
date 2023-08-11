@@ -44,4 +44,8 @@ config WIFI_SCAN_BAND_5GHZ
        help
          Enable to perform scan only in 5GHZ band.
 
+config WIFI_SCAN_SSID
+       bool "Scan based on ssid(s)"
+       help
+        Enable this to perform scan only for paticluar ssid(s).
 endmenu
