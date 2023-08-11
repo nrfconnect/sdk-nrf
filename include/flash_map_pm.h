@@ -24,6 +24,8 @@
 #define image_3 mcuboot_secondary_1
 #define slot2_partition mcuboot_primary_1
 #define slot3_partition mcuboot_secondary_1
+#define slot4_partition mcuboot_primary_2
+#define slot5_partition mcuboot_secondary_2
 #define image_scratch mcuboot_scratch
 #define image_scratch mcuboot_scratch
 
