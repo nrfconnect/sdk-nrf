@@ -32,6 +32,6 @@ config WIFI_SCAN_TYPE_ACTIVE
 config WIFI_SCAN_TYPE_PASSIVE
 	bool "Passive scan"
 	help
-	  Enable passive scan
+	  Enable this to force passive scan on all channels.
 endchoice
 endmenu
