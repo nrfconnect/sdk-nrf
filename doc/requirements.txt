@@ -1,12 +1,24 @@
-recommonmark==0.6.0
-CommonMark>=0.9.1
-sphinxcontrib-mscgen>=0.6
-sphinx-ncs-theme>=1.0.3,<1.1
-m2r2>=0.3.2
-sphinxcontrib-plantuml
-pyyaml
-azure-storage-blob
-sphinx_markdown_tables
-breathe>=4.34
-sphinx-togglebutton
-sphinx-notfound-page
+# This file lists all the dependencies required to build the documentation.
+# To update this file, follow these basic rules:
+#   - Keep it sorted alphabetically
+#   - Mark which docsets are using each dependency
+#   - Only specify version information if strictly required
+#   - Keep nrf/installation/recommended_versions.rst up to date
+
+# Extension                 | NCS | Kconfig | Matter | MCUboot | nrfx | nrfxlib | TF-M | Zephyr |
+azure-storage-blob        # |  X  |         |        |         |      |         |      |        |
+breathe                   # |  X  |         |        |         |      |    X    |      |   X    |
+m2r2                      # |     |         |        |         |  X   |         |      |        |
+PyYAML                    # |  X  |         |        |         |      |         |      |   X    |
+pykwalify                 # |     |         |        |         |      |         |      |   X    |
+recommonmark              # |     |         |   X    |    X    |      |         |      |        |
+sphinx~=6.2               # |  X  |    X    |   X    |    X    |   X  |    X    |  X   |   X    |
+sphinx-copybutton         # |  X  |         |        |         |      |         |      |   X    |
+sphinx-ncs-theme<1.1      # |  X  |         |        |         |      |         |      |        |
+sphinx-notfound-page      # |  X  |         |        |         |      |         |      |   X    |
+sphinx-tabs>=3.4          # |  X  |         |        |         |      |         |      |   X    |
+sphinx-togglebutton       # |  X  |         |        |         |      |         |      |        |
+sphinx_markdown_tables    # |     |         |   X    |         |      |         |      |        |
+sphinxcontrib-mscgen      # |  X  |         |        |         |      |    X    |      |        |
+sphinxcontrib-plantuml    # |     |         |        |         |      |         |  X   |        |
+west>=1.0.0               # |     |         |        |         |      |         |      |   X    |
