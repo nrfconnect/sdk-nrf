@@ -114,6 +114,7 @@ void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state)
 		LOG_DBG("Already at state %d", state);
 		return;
 	}
+	lwm2m_registry_lock();
 
 	path = LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, obj_inst_id, FIRMWARE_UPDATE_RESULT_ID);
 
@@ -147,6 +148,7 @@ void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state)
 		break;
 	default:
 		LOG_ERR("Unhandled state: %u", state);
+		lwm2m_registry_unlock();
 		return;
 	}
 
@@ -161,6 +163,7 @@ void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state)
 	now = time(NULL);
 	path.res_id = FIRMWARE_LAST_STATE_CHANGE_TIME_ID;
 	lwm2m_set_time(&path, now);
+	lwm2m_registry_unlock();
 }
 
 uint8_t lwm2m_adv_firmware_get_update_result(uint16_t obj_inst_id)
@@ -173,6 +176,7 @@ void lwm2m_adv_firmware_set_update_result(uint16_t obj_inst_id, uint8_t result)
 	uint8_t state;
 	bool error = false;
 	struct lwm2m_obj_path path;
+	lwm2m_registry_lock();
 
 	switch (result) {
 	case RESULT_DEFAULT:
@@ -228,6 +232,7 @@ void lwm2m_adv_firmware_set_update_result(uint16_t obj_inst_id, uint8_t result)
 		break;
 	default:
 		LOG_ERR("Unhandled result: %u", result);
+		lwm2m_registry_unlock();
 		return;
 	}
 
@@ -237,6 +242,7 @@ void lwm2m_adv_firmware_set_update_result(uint16_t obj_inst_id, uint8_t result)
 
 	path = LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, obj_inst_id, FIRMWARE_UPDATE_RESULT_ID);
 	lwm2m_set_u8(&path, result);
+	lwm2m_registry_unlock();
 
 	LOG_DBG("Update result = %d", result);
 }
