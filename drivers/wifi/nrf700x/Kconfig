@@ -5,6 +5,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+DT_COMPAT_NORDIC_NRF700X_QSPI := nordic,nrf700x-qspi
+DT_COMPAT_NORDIC_NRF700X_SPI := nordic,nrf700x-spi
+
 config WIFI_NRF700X
 	bool "nRF700x driver"
 	depends on WIFI
@@ -68,11 +71,11 @@ config NET_MGMT_EVENT_STACK_SIZE
 	default 2048 if !WPA_SUPP
 
 config NRF700X_ON_QSPI
-	def_bool NRF7000_ON_QSPI || NRF7001_ON_QSPI || NRF7002_ON_QSPI
+	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF700X_QSPI))
 	select NRFX_QSPI
 
 config NRF700X_ON_SPI
-	def_bool NRF7000_ON_SPI || NRF7001_ON_SPI || NRF7002_ON_SPI
+	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF700X_SPI))
 	select SPI
 
 # RF switch based coexistence
