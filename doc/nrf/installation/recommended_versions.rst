@@ -235,22 +235,43 @@ Building and running applications, samples, and tests
 Building documentation
 ----------------------
 
+Python documentation dependencies are listed in the following table. They can
+all be installed using the ``doc/requirements.txt`` file using ``pip``.
+
 .. list-table::
    :header-rows: 1
 
    * - Package
      - Version
-   * - recommonmark
-     - :ncs-tool-version:`RECOMMONMARK_VERSION`
-   * - sphinxcontrib-mscgen
-     - :ncs-tool-version:`SPHINXCONTRIB_MSCGEN_VERSION`
+   * - azure-storage-blob
+     - :ncs-tool-version:`AZURE_STORAGE_BLOB_VERSION`
    * - breathe
      - :ncs-tool-version:`BREATHE_VERSION`
+   * - m2r2
+     - :ncs-tool-version:`M2R2_VERSION`
+   * - PyYAML
+     - :ncs-tool-version:`PYYAML_VERSION`
+   * - pykwalify
+     - :ncs-tool-version:`PYKWALIFY_VERSION`
+   * - recommonmark
+     - :ncs-tool-version:`RECOMMONMARK_VERSION`
    * - sphinx
      - :ncs-tool-version:`SPHINX_VERSION`
+   * - sphinx-copybutton
+     - :ncs-tool-version:`SPHINX_COPYBUTTON_VERSION`
    * - sphinx-ncs-theme
      - :ncs-tool-version:`SPHINX_NCS_THEME_VERSION`
+   * - sphinx-notfound-page
+     - :ncs-tool-version:`SPHINX_NOTFOUND_PAGE_VERSION`
    * - sphinx-tabs
      - :ncs-tool-version:`SPHINX_TABS_VERSION`
-   * - sphinxcontrib-svg2pdfconverter
-     - :ncs-tool-version:`SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION`
+   * - sphinx-togglebutton
+     - :ncs-tool-version:`SPHINX_TOGGLEBUTTON_VERSION`
+   * - sphinx_markdown_tables
+     - :ncs-tool-version:`SPHINX_MARKDOWN_TABLES_VERSION`
+   * - sphinxcontrib-mscgen
+     - :ncs-tool-version:`SPHINXCONTRIB_MSCGEN_VERSION`
+   * - sphinxcontrib-plantuml
+     - :ncs-tool-version:`SPHINXCONTRIB_PLANTUML_VERSION`
+   * - west
+     - :ncs-tool-version:`WEST_VERSION`
