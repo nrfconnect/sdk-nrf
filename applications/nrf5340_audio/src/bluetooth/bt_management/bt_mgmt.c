@@ -75,7 +75,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 {
 	int ret;
 	char addr[BT_ADDR_LE_STR_LEN];
-	uint8_t num_conn;
+	uint8_t num_conn = 0;
 	uint16_t conn_handle;
 	enum ble_hci_vs_tx_power conn_tx_pwr;
 	struct bt_mgmt_msg msg;
