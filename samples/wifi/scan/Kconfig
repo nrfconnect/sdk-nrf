@@ -59,4 +59,16 @@ config WIFI_SCAN_SSID_FILT
 	  String of comma separated SSID values to scan for. The number of SSID’s
 	  that can be specified depends on WIFI_MGMT_SCAN_MAX_SSIDS.
 	  Use "" to disable SSID filtering.
+
+config WIFI_SCAN_CHAN
+	bool "Scan based on channel"
+	help
+	  Enable to perform scan in particular channel(s).
+
+config WIFI_SCAN_CHAN_LIST
+	string "Channel list for scan"
+	depends on WIFI_SCAN_CHAN
+	help
+	  List of channels used to perform scan.
+
 endmenu

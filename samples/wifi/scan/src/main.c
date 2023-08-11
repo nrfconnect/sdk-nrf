@@ -68,6 +68,11 @@ const struct wifi_scan_params tests[] = {
 	.ssids = {}
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_CHAN
+	{
+	.chan = { {0, 0} }
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
@@ -228,6 +233,13 @@ static int wifi_scan(void)
 						CONFIG_WIFI_SCAN_SSID_FILT);
 				return -EINVAL;
 			}
+		}
+#endif
+#ifdef CONFIG_WIFI_SCAN_CHAN
+		if (wifi_utils_parse_scan_chan(CONFIG_WIFI_SCAN_CHAN_LIST,
+				params.chan)) {
+			LOG_ERR("Chan Parse failed");
+			return -ENOEXEC;
 		}
 #endif
 		if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
