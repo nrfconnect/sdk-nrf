@@ -23,6 +23,7 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi_utils.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/ethernet.h>
 #include <zephyr/net/ethernet_mgmt.h>
@@ -60,6 +61,11 @@ const struct wifi_scan_params tests[] = {
 #ifdef CONFIG_WIFI_SCAN_BAND_5GHZ
 	{
 	.bands = (1 << WIFI_FREQ_BAND_5_GHZ)
+	},
+#endif
+#ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
+	{
+	.ssids = {}
 	},
 #endif
 };
@@ -205,6 +211,25 @@ static int wifi_scan(void)
 
 	for (int i = 0; i < ARRAY_SIZE(tests); i++) {
 		struct wifi_scan_params params = tests[i];
+#ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
+		if (!strlen(params.ssids[0])) {
+			char *buf = NULL;
+
+			buf = malloc(strlen(CONFIG_WIFI_SCAN_SSID_FILT) + 1);
+			if (!buf) {
+				LOG_ERR("Malloc Failed");
+				return -EINVAL;
+			}
+
+			strcpy(buf, CONFIG_WIFI_SCAN_SSID_FILT);
+			if (wifi_utils_parse_scan_ssids(buf,
+							params.ssids)) {
+				LOG_ERR("Incorrect value(s) in CONFIG_WIFI_SCAN_SSID_FILT: %s",
+						CONFIG_WIFI_SCAN_SSID_FILT);
+				return -EINVAL;
+			}
+		}
+#endif
 		if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
 				sizeof(struct wifi_scan_params))) {
 			LOG_ERR("Scan request failed");

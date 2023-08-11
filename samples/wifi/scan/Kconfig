@@ -45,4 +45,18 @@ config WIFI_SCAN_BAND_5GHZ
 	help
 	  Enable to perform scan only in 5GHZ band.
 
+config WIFI_SCAN_SSID_FILT_MAX
+	int "Maximum number of SSIDs that can be specified for SSID filtering"
+	default 1
+	help
+	  Maximum number of SSIDs that can be specified for SSID filtering.
+	  This can be set based on the underlying chipsets limitations.
+
+config WIFI_SCAN_SSID_FILT
+	string "Scan for specific SSIDs"
+	default ""
+	help
+	  String of comma separated SSID values to scan for. The number of SSID’s
+	  that can be specified depends on WIFI_MGMT_SCAN_MAX_SSIDS.
+	  Use "" to disable SSID filtering.
 endmenu
