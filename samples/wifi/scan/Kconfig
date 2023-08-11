@@ -40,4 +40,9 @@ config WIFI_SCAN_BAND_2_4_GHZ
 	help
 	  Enable to perform scan only in 2.4GHZ band
 
+config WIFI_SCAN_BAND_5GHZ
+	bool "Scan in 5GHZ band"
+	help
+	  Enable to perform scan only in 5GHZ band.
+
 endmenu
