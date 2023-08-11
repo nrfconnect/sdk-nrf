@@ -47,6 +47,11 @@ const struct wifi_scan_params tests[] = {
 	{
 	.scan_type = WIFI_SCAN_TYPE_ACTIVE
 	},
+#ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
+	{
+	.scan_type = WIFI_SCAN_TYPE_PASSIVE
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
