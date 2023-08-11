@@ -383,12 +383,14 @@
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
 
 .. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
+.. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
 
 .. _`nRF52833 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52833-DK/Download#infotabs
 
 .. _`nRF52 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52-DK/Download#infotabs
 
 .. _`nRF5340 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/Download?lang=en#infotabs
+.. _`nRF5340 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/
 
 .. _`Nordic Thingy:53`:
 .. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
@@ -525,9 +527,13 @@
 .. _`nRF21540`: https://infocenter.nordicsemi.com/topic/struct_fem/struct/nrf21540.html
 .. _`nRF21540 Product Specification`: https://infocenter.nordicsemi.com/topic/struct_fem/struct/nrf21540_ps.html
 
+.. _`nRF7001 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf7001/keyfeatures_html5.html
+.. _`nRF7002 Product Specification`:
 .. _`Product specification for nRF70 Series devices`: https://infocenter.nordicsemi.com/topic/ps_nrf7002/keyfeatures_html5.html
 .. _`nRF7002 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_dk/UG/nrf7002_DK/intro.html
+.. _`nRF70 Series hardware documentation`:
 .. _`nRF70 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf70/struct/nrf70.html
+.. _`nRF70 Series product page`: https://www.nordicsemi.com/Products/WiFi/Products#infotabs
 .. _`Measuring current`: https://infocenter.nordicsemi.com/topic/ug_nrf7002_dk/UG/nrf7002_DK/hw_measure_current.html
 
 .. _`Guidelines and application notes for nRF70 Series devices`: https://infocenter.nordicsemi.com/topic/struct_nrf70/struct/nrf70_guidelines.html
