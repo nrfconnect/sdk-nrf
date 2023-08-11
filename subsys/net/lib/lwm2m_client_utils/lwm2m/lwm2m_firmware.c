@@ -373,7 +373,7 @@ static void set_state(uint16_t id, uint8_t state)
 		LOG_WRN("Set state blocked by id, state %d", state);
 		return;
 	}
-
+	lwm2m_registry_lock();
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)) {
 		lwm2m_adv_firmware_set_update_state(id, state);
 	} else {
@@ -381,6 +381,7 @@ static void set_state(uint16_t id, uint8_t state)
 		lwm2m_firmware_set_update_state_inst(id, state);
 #endif
 	}
+	lwm2m_registry_unlock();
 }
 
 static void set_result(uint16_t id, uint8_t result)
@@ -389,7 +390,7 @@ static void set_result(uint16_t id, uint8_t result)
 		LOG_WRN("Set result blocked by id,  result %d", result);
 		return;
 	}
-
+	lwm2m_registry_lock();
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)) {
 		lwm2m_adv_firmware_set_update_result(id, result);
 	} else {
@@ -397,6 +398,7 @@ static void set_result(uint16_t id, uint8_t result)
 		lwm2m_firmware_set_update_result_inst(id, result);
 #endif
 	}
+	lwm2m_registry_unlock();
 }
 
 static int firmware_target_prepare(int dfu_image_type)
@@ -605,6 +607,7 @@ static void update_work_handler(struct k_work *work)
 		}
 	}
 
+	lwm2m_registry_lock();
 	if (update_data.type == MODEM_DELTA) {
 		result = apply_firmware_delta_modem_update();
 		if (result == RESULT_SUCCESS) {
@@ -623,6 +626,7 @@ static void update_work_handler(struct k_work *work)
 	}
 
 	firmware_update_check_linked_instances(instance_id);
+	lwm2m_registry_unlock();
 	reboot_work_handler();
 }
 
