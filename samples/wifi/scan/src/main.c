@@ -23,6 +23,7 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi_utils.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/ethernet.h>
 #include <zephyr/net/ethernet_mgmt.h>
@@ -66,6 +67,11 @@ const struct wifi_scan_params tests[] = {
 	{
 	.ssids[0] = "Myssid"
 	},
+#endif
+#ifdef CONFIG_WIFI_SCAN_CHAN
+	{
+	.chan = { {0, 0} }
+        },
 #endif
 };
 
@@ -210,6 +216,13 @@ static int wifi_scan(void)
 
 	for (int i = 0; i < ARRAY_SIZE(tests); i++) {
 		struct wifi_scan_params params = tests[i];
+#ifdef CONFIG_WIFI_SCAN_CHAN
+		if (wifi_utils_parse_scan_chan(CONFIG_WIFI_SCAN_CHAN_LIST,
+				params.chan)) {
+			LOG_ERR("Chan Parse failed");
+			return -ENOEXEC;
+		}
+#endif
 		if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
 				sizeof(struct wifi_scan_params))) {
 			LOG_ERR("Scan request failed");

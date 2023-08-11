@@ -48,4 +48,16 @@ config WIFI_SCAN_SSID
        bool "Scan based on ssid(s)"
        help
         Enable this to perform scan only for paticluar ssid(s).
+
+config WIFI_SCAN_CHAN
+       bool "Scan based on channel"
+       help
+         Enable to perform scan in particular channel(s).
+
+config WIFI_SCAN_CHAN_LIST
+       string "Channel list for scan"
+       depends on WIFI_SCAN_CHAN
+       help
+        List of channels used to perform scan.
+
 endmenu
