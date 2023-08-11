@@ -77,7 +77,7 @@ static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn 
 	msg.event = event;
 	msg.conn = conn;
 
-	ret = zbus_chan_pub(&le_audio_chan, &msg, K_NO_WAIT);
+	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
 	ERR_CHK(ret);
 }
 

@@ -11,6 +11,7 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <audio_defines.h>
 
+#define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
 #define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
 
 #if (CONFIG_AUDIO_SAMPLE_RATE_48000_HZ)
