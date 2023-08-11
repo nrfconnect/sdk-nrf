@@ -52,6 +52,11 @@ const struct wifi_scan_params tests[] = {
 	.scan_type = WIFI_SCAN_TYPE_PASSIVE
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_BAND_2_4_GHZ
+	{
+	.bands = (1 << WIFI_FREQ_BAND_2_4_GHZ)
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;

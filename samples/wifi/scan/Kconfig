@@ -34,4 +34,10 @@ config WIFI_SCAN_TYPE_PASSIVE
 	help
 	  Enable this to force passive scan on all channels.
 endchoice
+
+config WIFI_SCAN_BAND_2_4_GHZ
+	bool "Scan in 2.4GHZ band"
+	help
+	  Enable to perform scan only in 2.4GHZ band
+
 endmenu
