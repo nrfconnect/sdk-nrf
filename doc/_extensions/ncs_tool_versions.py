@@ -63,7 +63,7 @@ def parse_pip_requirements(lines: List[str]) -> Dict[str, str]:
             continue
 
         # Conditionals (;) are ignored.
-        tool, version = re.match(r"([^~><=!;]*)([^;]*)", line).groups()
+        tool, version = re.match(r"([^~><=!;#\s]*)([^;#]*)", line).groups()
         tool = tool.upper().replace("-", "_")
         version = remove_prefix(version.strip(), "==")
         versions[f"{tool}_VERSION"] = version
