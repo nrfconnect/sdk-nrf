@@ -2432,6 +2432,9 @@ psa_status_t psa_driver_wrapper_init_random(psa_driver_random_context_t *context
 	return PSA_SUCCESS;
 }
 
+#if defined(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST) ||	\
+	defined(PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM) || \
+	defined(PSA_CRYPTO_DRIVER_ALG_PRNG_OBERON)
 psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context, uint8_t *output,
 					   size_t output_size)
 {
@@ -2483,6 +2486,7 @@ psa_status_t psa_driver_wrapper_get_random(psa_driver_random_context_t *context,
 	(void)output_size;
 	return PSA_ERROR_NOT_SUPPORTED;
 }
+#endif
 
 psa_status_t psa_driver_wrapper_free_random(psa_driver_random_context_t *context)
 {
