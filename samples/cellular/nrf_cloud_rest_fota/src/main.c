@@ -368,7 +368,8 @@ static void send_device_status(void)
 
 	struct nrf_cloud_device_status dev_status = {
 		.modem = &mdm_inf,
-		.svc = &svc_inf
+		.svc = &svc_inf,
+		.conn_inf = NRF_CLOUD_INFO_SET
 	};
 
 	err = generate_jwt();
