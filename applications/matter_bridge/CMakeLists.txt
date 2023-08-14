@@ -45,9 +45,11 @@ target_sources(app PRIVATE
     src/bridge_shell.cpp
     ${COMMON_ROOT}/src/bridge/bridge_manager.cpp
     ${COMMON_ROOT}/src/bridge/bridged_device.cpp
+    ${COMMON_ROOT}/src/bridge/bridge_storage_manager.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
+    ${COMMON_ROOT}/src/persistent_storage_util.cpp
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)

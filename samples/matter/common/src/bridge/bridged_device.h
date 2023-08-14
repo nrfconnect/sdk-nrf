@@ -58,8 +58,9 @@ public:
 	virtual ~BridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
 
 	void Init(chip::EndpointId endpoint) { mEndpointId = endpoint; }
-	chip::EndpointId GetEndpointId() { return mEndpointId; }
+	chip::EndpointId GetEndpointId() const { return mEndpointId; }
 
+	virtual DeviceType GetDeviceType() const = 0;
 	virtual CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 				      uint16_t maxReadLength) = 0;
 	virtual CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) = 0;
@@ -70,8 +71,8 @@ public:
 							   uint16_t maxReadLength);
 	CHIP_ERROR HandleReadDescriptor(chip::AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength);
 
-	bool GetIsReachable() { return mIsReachable; }
-	const char *GetNodeLabel() { return mNodeLabel; }
+	bool GetIsReachable() const { return mIsReachable; }
+	const char *GetNodeLabel() const { return mNodeLabel; }
 	uint16_t GetBridgedDeviceBasicInformationClusterRevision()
 	{
 		return kBridgedDeviceBasicInformationClusterRevision;
