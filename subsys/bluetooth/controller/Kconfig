@@ -103,7 +103,7 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 config BT_CTLR_SDC_LLPM
 	bool "Enable Low Latency Packet Mode support"
 	depends on SOC_SERIES_NRF52X
-	select BT_CONN_PARAM_ANY
+	select BT_CONN_PARAM_ANY if !BT_HCI_RAW
 	help
 	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
 	  which lets the application use connection intervals down to 1 ms.
