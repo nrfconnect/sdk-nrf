@@ -184,6 +184,9 @@
 #define NRF_CLOUD_JSON_KEY_KEEPALIVE		"keepalive"
 #define NRF_CLOUD_JSON_KEY_CONN			"connection"
 #define NRF_CLOUD_JSON_KEY_APP_VER		"appVersion"
+#define NRF_CLOUD_JSON_KEY_CONN_INFO		"connectionInfo"
+#define NRF_CLOUD_JSON_KEY_PROTOCOL		"protocol"
+#define NRF_CLOUD_JSON_KEY_METHOD		"method"
 #define NRF_CLOUD_JSON_VAL_NOT_ASSOC		"not_associated"
 #define NRF_CLOUD_JSON_VAL_PAIRED		"paired"
 /* Current FOTA version string used in device shadow */
@@ -211,6 +214,11 @@
 #define NRF_CLOUD_JSON_VAL_TOPIC_RCV		"/r"
 #define NRF_CLOUD_JSON_VAL_TOPIC_WILDCARD	"/+"
 #define NRF_CLOUD_JSON_VAL_TOPIC_BIN		"/bin"
+#define NRF_CLOUD_JSON_VAL_PROTO_MQTT		"MQTT"
+#define NRF_CLOUD_JSON_VAL_PROTO_COAP		"CoAP"
+#define NRF_CLOUD_JSON_VAL_PROTO_REST		"REST"
+#define NRF_CLOUD_JSON_VAL_METHOD_LTE		"LTE"
+#define NRF_CLOUD_JSON_VAL_METHOD_WIFI		"Wi-Fi"
 
 /** @} */
 #endif /* NRF_CLOUD_DEFS_H__ */
