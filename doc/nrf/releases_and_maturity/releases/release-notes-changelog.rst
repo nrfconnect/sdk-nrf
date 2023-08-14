@@ -279,6 +279,10 @@ Bluetooth samples
 
     * Fixed an interoperability issue with iOS devices by setting the report IDs of HID input and output reports to zero.
 
+* :ref:`peripheral_fast_pair` sample:
+
+  * Disabled the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option as a workaround fix for the `Zephyr issue #61033`_.
+
 Bluetooth mesh samples
 ----------------------
 
