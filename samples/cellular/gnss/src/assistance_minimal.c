@@ -14,7 +14,8 @@
 #include <nrf_modem_gnss.h>
 
 #include "assistance.h"
-#include "factory_almanac.h"
+#include "factory_almanac_v2.h"
+#include "factory_almanac_v3.h"
 #include "mcc_location_table.h"
 
 LOG_MODULE_DECLARE(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
@@ -31,7 +32,12 @@ LOG_MODULE_DECLARE(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
 #define DAYS_PER_WEEK			(7UL)
 #define PLMN_STR_MAX_LEN		8 /* MCC + MNC + quotes */
 
-static char almanac_checksum[64];
+enum almanac_version {
+	FACTORY_ALMANAC_V2 = 2,
+	FACTORY_ALMANAC_V3 = 3
+};
+
+static char current_alm_checksum[64];
 
 static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg)
 {
@@ -46,8 +52,8 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	key_len = settings_name_next(key, &next);
 
 	if (!strncmp(key, "almanac_checksum", key_len)) {
-		len = read_cb(cb_arg, &almanac_checksum, sizeof(almanac_checksum));
-		if (len < sizeof(almanac_checksum)) {
+		len = read_cb(cb_arg, &current_alm_checksum, sizeof(current_alm_checksum));
+		if (len < sizeof(current_alm_checksum)) {
 			LOG_ERR("Failed to read almanac checksum from settings");
 		}
 
@@ -62,20 +68,51 @@ static struct settings_handler assistance_settings = {
 	.h_set = set,
 };
 
+static enum almanac_version factory_almanac_version_get(void)
+{
+	char resp[32];
+
+	if (nrf_modem_at_cmd(resp, sizeof(resp), "AT+CGMM") == 0) {
+		/* nRF9160 uses factory almanac file format version 2, while nRF91x1 uses
+		 * version 3.
+		 */
+		if (strstr(resp, "nRF9160") != NULL) {
+			return FACTORY_ALMANAC_V2;
+		}
+	}
+
+	return FACTORY_ALMANAC_V3;
+}
+
 static void factory_almanac_write(void)
 {
 	int err;
+	enum almanac_version alm_version;
+	const char *alm_data;
+	const char *alm_checksum;
+
+	/* Get the supported factory almanac version. */
+	alm_version = factory_almanac_version_get();
+	LOG_DBG("Supported factory almanac version: %d", alm_version);
+
+	if (alm_version == 3) {
+		alm_data = FACTORY_ALMANAC_DATA_V3;
+		alm_checksum = FACTORY_ALMANAC_CHECKSUM_V3;
+	} else {
+		alm_data = FACTORY_ALMANAC_DATA_V2;
+		alm_checksum = FACTORY_ALMANAC_CHECKSUM_V2;
+	}
 
 	/* Check if the same almanac has already been written to prevent unnecessary writes
 	 * to flash memory.
 	 */
-	if (!strncmp(almanac_checksum, FACTORY_ALMANAC_CHECKSUM, sizeof(almanac_checksum))) {
+	if (!strncmp(current_alm_checksum, alm_checksum, sizeof(current_alm_checksum))) {
 		LOG_INF("Factory almanac has already been written, skipping writing");
 		return;
 	}
 
 	err = nrf_modem_at_printf("AT%%XFILEWRITE=1,\"%s\",\"%s\"",
-				  FACTORY_ALMANAC, FACTORY_ALMANAC_CHECKSUM);
+				  alm_data, alm_checksum);
 	if (err != 0) {
 		LOG_ERR("Failed to write factory almanac");
 		return;
@@ -84,8 +121,8 @@ static void factory_almanac_write(void)
 	LOG_INF("Wrote factory almanac");
 
 	err = settings_save_one("assistance/almanac_checksum",
-				FACTORY_ALMANAC_CHECKSUM,
-				sizeof(almanac_checksum));
+				alm_checksum,
+				sizeof(current_alm_checksum));
 	if (err) {
 		LOG_ERR("Failed to write almanac checksum to settings, error %d", err);
 	}
