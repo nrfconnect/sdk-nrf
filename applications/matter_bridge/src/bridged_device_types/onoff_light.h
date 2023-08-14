@@ -20,6 +20,7 @@ public:
 	uint16_t GetOnOffClusterRevision() { return kOnOffClusterRevision; }
 	uint32_t GetOnOffFeatureMap() { return kOnOffFeatureMap; }
 
+	BridgedDevice::DeviceType GetDeviceType() const override { return BridgedDevice::DeviceType::OnOffLight; }
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadOnOff(chip::AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength);

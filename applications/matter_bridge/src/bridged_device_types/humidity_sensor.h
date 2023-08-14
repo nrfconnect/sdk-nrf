@@ -21,6 +21,7 @@ public:
 	uint16_t GetRelativeHumidityMeasurementClusterRevision() { return kRelativeHumidityMeasurementClusterRevision; }
 	uint32_t GetRelativeHumidityMeasurementFeatureMap() { return kRelativeHumidityMeasurementFeatureMap; }
 
+	BridgedDevice::DeviceType GetDeviceType() const override { return BridgedDevice::DeviceType::HumiditySensor; }
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadRelativeHumidityMeasurement(chip::AttributeId attributeId, uint8_t *buffer,

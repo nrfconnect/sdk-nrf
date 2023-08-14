@@ -21,6 +21,10 @@ public:
 	uint16_t GetTemperatureMeasurementClusterRevision() { return kTemperatureMeasurementClusterRevision; }
 	uint32_t GetTemperatureMeasurementFeatureMap() { return kTemperatureMeasurementFeatureMap; }
 
+	BridgedDevice::DeviceType GetDeviceType() const override
+	{
+		return BridgedDevice::DeviceType::TemperatureSensor;
+	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadTemperatureMeasurement(chip::AttributeId attributeId, uint8_t *buffer,
