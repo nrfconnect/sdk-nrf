@@ -36,11 +36,10 @@ static bool modem_inf_initd;
 static int init_modem_info(void);
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-#ifdef CONFIG_NRF_CLOUD_GATEWAY
+#if defined(CONFIG_NRF_CLOUD_MQTT) && defined(CONFIG_NRF_CLOUD_GATEWAY)
 static gateway_state_handler_t gateway_state_handler;
 #endif
-#endif
+static int shadow_connection_info_update(cJSON * device_obj);
 
 static const char *const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_GNSS] = NRF_CLOUD_JSON_APPID_VAL_GNSS,
@@ -97,6 +96,26 @@ static const char *const job_status_strings[] = {
 };
 #define JOB_STATUS_STRING_COUNT (sizeof(job_status_strings) / \
 				 sizeof(*job_status_strings))
+
+/* Define a string representing the network protocol we are using. */
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+#define NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL NRF_CLOUD_JSON_VAL_PROTO_MQTT
+#elif defined(CONFIG_NRF_CLOUD_REST)
+#define NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL NRF_CLOUD_JSON_VAL_PROTO_REST
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+#define NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL NRF_CLOUD_JSON_VAL_PROTO_COAP
+#else
+#define NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL "Unknown"
+#endif
+
+/* Define a string represention what connection method we are using. */
+#if defined(CONFIG_NRF_MODEM_LIB)
+#define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_LTE
+#elif defined(CONFIG_WIFI)
+#define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_WIFI
+#else
+#define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL "Unknown"
+#endif
 
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks)
 {
@@ -233,7 +252,7 @@ static int get_error_code_value(cJSON *const obj, enum nrf_cloud_error * const e
 }
 
 static int info_encode(cJSON * const root_obj, const struct nrf_cloud_modem_info * const mdm_inf,
-	const struct nrf_cloud_svc_info * const svc_inf)
+	const struct nrf_cloud_svc_info * const svc_inf, const enum nrf_cloud_shadow_info conn_inf)
 {
 	int ret = 0;
 
@@ -255,6 +274,15 @@ static int info_encode(cJSON * const root_obj, const struct nrf_cloud_modem_info
 		}
 
 		ret = nrf_cloud_service_info_json_encode(svc_inf, svc_inf_obj);
+		if (ret) {
+			return -ENOMEM;
+		}
+	}
+
+	if (conn_inf == NRF_CLOUD_INFO_SET) {
+		ret = shadow_connection_info_update(root_obj);
+	} else if (conn_inf == NRF_CLOUD_INFO_CLEAR) {
+		ret = json_add_null_cs(root_obj, NRF_CLOUD_JSON_KEY_CONN_INFO);
 	}
 
 	return ret;
@@ -650,6 +678,7 @@ end:
 
 static int device_status_encode(cJSON * const reported_obj)
 {
+	enum nrf_cloud_shadow_info conn_inf;
 	struct nrf_cloud_modem_info mdm_inf = {
 		.device = NRF_CLOUD_INFO_SET,
 		.application_version = application_version
@@ -666,7 +695,10 @@ static int device_status_encode(cJSON * const reported_obj)
 	mdm_inf.sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
 					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
 
-	return info_encode(device_obj, &mdm_inf, NULL);
+	conn_inf = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF) ?
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+
+	return info_encode(device_obj, &mdm_inf, NULL, conn_inf);
 }
 
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
@@ -968,7 +1000,25 @@ int json_send_to_cloud(cJSON *const request)
 
 	return err;
 }
+
 #endif /* CONFIG_NRF_CLOUD_MQTT */
+
+static int shadow_connection_info_update(cJSON *device_obj)
+{
+	int ret = 0;
+	cJSON *connection_obj = cJSON_AddObjectToObjectCS(device_obj, NRF_CLOUD_JSON_KEY_CONN_INFO);
+
+	if (!connection_obj) {
+		return -ENOMEM;
+	}
+
+	ret += json_add_str_cs(connection_obj, NRF_CLOUD_JSON_KEY_PROTOCOL,
+			       NRF_CLOUD_JSON_VAL_CFGD_PROTO_VAL);
+	ret += json_add_str_cs(connection_obj, NRF_CLOUD_JSON_KEY_METHOD,
+			       NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL);
+
+	return ret;
+}
 
 int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
 			      cJSON * const pvt_data_obj)
@@ -1701,7 +1751,7 @@ int nrf_cloud_shadow_dev_status_encode(const struct nrf_cloud_device_status *con
 		goto cleanup;
 	}
 
-	err = info_encode(device_obj, dev_status->modem, dev_status->svc);
+	err = info_encode(device_obj, dev_status->modem, dev_status->svc, dev_status->conn_inf);
 	if (err) {
 		goto cleanup;
 	}
@@ -1787,7 +1837,7 @@ int nrf_cloud_dev_status_json_encode(const struct nrf_cloud_device_status *const
 		}
 	}
 
-	err = info_encode(data_obj, dev_status->modem, dev_status->svc);
+	err = info_encode(data_obj, dev_status->modem, dev_status->svc, dev_status->conn_inf);
 
 	return err;
 }

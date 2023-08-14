@@ -63,6 +63,11 @@ config NRF_CLOUD_SEND_DEVICE_STATUS_SIM
 	depends on NRF_CLOUD_SEND_DEVICE_STATUS
 	depends on MODEM_INFO_ADD_SIM
 
+config NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF
+	bool "Include connection information with device status"
+	depends on NRF_CLOUD_SEND_DEVICE_STATUS
+	default y
+
 config NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE
 	bool "Include the (battery) voltage when encoding device status"
 	depends on MODEM_INFO

@@ -504,6 +504,8 @@ struct nrf_cloud_device_status {
 	struct nrf_cloud_modem_info *modem;
 	/** Specify which service info components to include, set to NULL to skip */
 	struct nrf_cloud_svc_info *svc;
+	/** Specify how the connection info data should be handled */
+	enum nrf_cloud_shadow_info conn_inf;
 };
 
 /** @brief GNSS data type contained in @ref nrf_cloud_gnss_data */
