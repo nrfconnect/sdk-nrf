@@ -375,6 +375,11 @@ Cellular samples (renamed from nRF9160 samples)
     * The sample now uses tickless operating mode from Zephyr's LwM2M engine which does not cause device wake-up in 500 ms interval anymore.
       This allows the device to achieve 2 uA of current usage while in PSM sleep mode.
 
+* :ref:`gnss_sample` sample:
+
+  * Added support for nRF91x1 factory almanac.
+    The new almanac file format also supports QZSS satellites.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
