@@ -9,6 +9,7 @@ import yaml
 from os import path
 import sys
 from pprint import pformat
+from io import StringIO
 
 PERMITTED_STR_KEYS = ['size', 'region']
 END_TO_START = 'end_to_start'
@@ -278,8 +279,10 @@ def resolve_ambiguous_requirements(reqs, unsolved):
             # requirements to ensure explicit order.
             partitions = sorted(partitions)
             for i in range(len(partitions) - 1):
-                reqs[partitions[i]]['placement'] \
-                    = {'before': [partitions[i + 1]]}
+                reqs[partitions[i]].setdefault('placement', {})['before'] = [partitions[i + 1]]
+                # Remove any 'after' specs so there are not both a 'before' and 'after', since that
+                # causes one of them to be ignored, in this case the 'before'.
+                reqs[partitions[i]]['placement'].pop('after', None)
 
 
 def resolve(reqs, dp, system_reqs = None):
@@ -1991,6 +1994,48 @@ def test():
                'region5': None}
     sorted_regions = sort_regions(td, regions)
     assert list(sorted_regions.keys()) == ['region2', 'region5', 'region4', 'region3', 'region1']
+
+    # Regression test for alignment spec being deleted (NCSIDB-1032)
+    td = yaml.safe_load(StringIO("""
+        tfm:
+            placement: {before: [app]}
+            size: 0x40000
+        tfm_secure:
+            span: [mcuboot_pad, tfm]
+        tfm_nonsecure:
+            span: [app]
+        tfm_storage:
+            span: []
+        tfm_ps:
+            placement:
+                before: end
+                align: {start: 0x8000}
+            inside: tfm_storage
+            size: 0x4000
+        tfm_its:
+            placement:
+                before: end
+                align: {start: 0x8000}
+            inside: tfm_storage
+            size: 0x4000
+        app: {}"""))
+
+    fix_syntactic_sugar(td)
+    s, sub_partitions = resolve(td, 'app')
+    set_addresses_and_align(td, {}, s, 0x100000, 'app')
+    set_sub_partition_address_and_size(td, sub_partitions)
+    calculate_end_address(td)
+
+    expect_addr_size(td, 'tfm', 0, None)
+    expect_addr_size(td, 'tfm_secure', 0, None)
+    expect_addr_size(td, 'tfm_nonsecure', 0x40000, None)
+    expect_addr_size(td, 'app', 0x40000, None)
+    expect_addr_size(td, 'tfm_storage', 0xF0000, None)
+    expect_addr_size(td, 'tfm_its', 0xF0000, None)
+    expect_addr_size(td, 'EMPTY_1', 0xF4000, None)
+    expect_addr_size(td, 'tfm_ps', 0xF8000, None)
+    expect_addr_size(td, 'EMPTY_0', 0xFC000, None)
+
 
     print('All tests passed!')
 
