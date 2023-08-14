@@ -310,15 +310,17 @@ static int sms_submit_concat(
 	return err;
 }
 
-int sms_submit_send(const char *number, const char *text)
+int sms_submit_send(
+	const char *number,
+	const uint8_t *data,
+	uint16_t data_len,
+	enum sms_data_type type)
 {
-	static const char empty_string[] = "";
 	int err;
 	uint8_t encoded_number[SMS_MAX_ADDRESS_LEN_CHARS + 1];
 	uint8_t encoded_number_size;
 	uint8_t encoded_number_size_octets = SMS_MAX_ADDRESS_LEN_CHARS + 1;
 	uint8_t size = 0;
-	uint16_t text_size;
 	uint8_t encoded_data_size_octets = 0;
 	uint8_t encoded_data_size_septets = 0;
 	uint8_t concat_msg_count = 0;
@@ -327,11 +329,13 @@ int sms_submit_send(const char *number, const char *text)
 		LOG_ERR("SMS number not given but NULL");
 		return -EINVAL;
 	}
-	if (text == NULL) {
-		text = empty_string;
-	}
+	__ASSERT_NO_MSG(data != NULL);
 
-	LOG_DBG("Sending SMS to number=%s, text='%s'", number, text);
+	if (type == SMS_DATA_TYPE_ASCII) {
+		LOG_DBG("Sending SMS to number=%s, text='%s', data_len=%d", number, data, data_len);
+	} else {
+		LOG_DBG("Sending SMS to number=%s, data_len=%d", number, data_len);
+	}
 
 	/* Encode number into format required in SMS header */
 	encoded_number_size = strlen(number);
@@ -341,23 +345,38 @@ int sms_submit_send(const char *number, const char *text)
 		return err;
 	}
 
-	/* Encode text into GSM 7bit encoding */
-	text_size = strlen(text);
-	size = string_conversion_ascii_to_gsm7bit(
-		text, text_size, sms_payload_tmp,
-		&encoded_data_size_octets, &encoded_data_size_septets, true);
+	/* Encode data into GSM 7bit encoding */
+
+	if (type == SMS_DATA_TYPE_ASCII) {
+		size = string_conversion_ascii_to_gsm7bit(
+			data, data_len, sms_payload_tmp,
+			&encoded_data_size_octets, &encoded_data_size_septets, true);
+	} else {
+		__ASSERT_NO_MSG(type == SMS_DATA_TYPE_GSM7BIT);
+		if (data_len > SMS_MAX_PAYLOAD_LEN_CHARS) {
+			LOG_ERR("Maximum length (%d) for GMS 7bit encoded message exceeded %d",
+				SMS_MAX_PAYLOAD_LEN_CHARS, data_len);
+			return -E2BIG;
+		}
+
+		memcpy(sms_payload_tmp, data, data_len);
+		encoded_data_size_octets = string_conversion_7bit_sms_packing(
+			sms_payload_tmp, data_len);
+		encoded_data_size_septets = data_len;
+		size = data_len;
+	}
 
 	/* Check if this should be sent as concatenated SMS */
-	if (size < text_size) {
+	if (size < data_len) {
 		LOG_DBG("Entire message doesn't fit into one SMS message. Using concatenated SMS.");
 
 		/* Encode messages to get number of message parts required to send given text */
-		err = sms_submit_concat(text,
+		err = sms_submit_concat(data,
 			encoded_number, encoded_number_size, encoded_number_size_octets,
 			false, &concat_msg_count);
 
 		/* Then, encode and send message parts */
-		err = sms_submit_concat(text,
+		err = sms_submit_concat(data,
 			encoded_number, encoded_number_size, encoded_number_size_octets,
 			true, &concat_msg_count);
 	} else {

@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <modem/sms.h>
 
 #include "sms.h"
 #include "mosh_defines.h"
@@ -38,6 +39,20 @@ static const char sms_usage_str[] =
 	"  -m, --message, <str> Text to be sent.\n"
 	"  -n, --number, <str>  Number in international format including country number.\n"
 	"                       Leading '+' can be present or left out.\n"
+	"  -t, --type, <str>    The type, format or character set of given message (-m):\n"
+	"                       'ascii' or 'gsm7bit'. By default, the type is 'ascii'.\n"
+	"                       'ascii':\n"
+	"                         Each character is treated as ASCII string with\n"
+	"                         ISO-8859-15 extension.\n"
+	"                       'gsm7bit':\n"
+	"                         String of hexadecimal characters where each pair of two\n"
+	"                         characters form a single byte. Those bytes are treated as\n"
+	"                         GSM 7 bit Default Alphabet as specified in 3GPP TS 23.038\n"
+	"                         Section 6.2. Any spaces will be removed before processing.\n"
+	"                         Examples of equivalent hexadecimal data strings:\n"
+	"                             010203040506070809101112\n"
+	"                             01 02 03 04 05 06 07 08 09 10 11 12\n"
+	"                             01020304 05060708 09101112\n"
 	"\n"
 	"Options for 'recv' command:\n"
 	"  -r, --start,         Reset SMS counter to zero\n";
@@ -47,6 +62,7 @@ static struct option long_options[] = {
 	{ "message",    required_argument, 0, 'm' },
 	{ "number",     required_argument, 0, 'n' },
 	{ "start",      no_argument,       0, 'r' },
+	{ "type",       no_argument,       0, 't' },
 	{ 0,            0,                 0, 0   }
 };
 
@@ -86,6 +102,7 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 	char arg_number[SMS_MAX_MESSAGE_LEN + 1];
 	char arg_message[SMS_MAX_MESSAGE_LEN + 1];
 	bool arg_receive_start = false;
+	enum sms_data_type arg_message_type = SMS_DATA_TYPE_ASCII;
 
 	memset(arg_number, 0, SMS_MAX_MESSAGE_LEN + 1);
 	memset(arg_message, 0, SMS_MAX_MESSAGE_LEN + 1);
@@ -93,7 +110,7 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 	/* Parse command line */
 	int flag = 0;
 
-	while ((flag = getopt_long(argc, argv, "m:n:r", long_options, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "m:n:rt:", long_options, NULL)) != -1) {
 		int send_data_len = 0;
 
 		switch (flag) {
@@ -115,6 +132,19 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'r': /* Start monitoring received messages */
 			arg_receive_start = true;
 			break;
+		case 't': /* Message data type */
+			if (!strcmp(optarg, "ascii")) {
+				arg_message_type = SMS_DATA_TYPE_ASCII;
+			} else if (!strcmp(optarg, "gsm7bit")) {
+				arg_message_type = SMS_DATA_TYPE_GSM7BIT;
+			} else {
+				mosh_error(
+					"Unsupported message type=%s. Supported values are: "
+					"'ascii' or 'gsm7bit'",
+					optarg);
+				return -EINVAL;
+			}
+			break;
 		}
 	}
 
@@ -127,7 +157,7 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 		err = sms_unregister();
 		break;
 	case SMS_CMD_SEND:
-		err = sms_send_msg(arg_number, arg_message);
+		err = sms_send_msg(arg_number, arg_message, arg_message_type);
 		break;
 	case SMS_CMD_RECV:
 		err = sms_recv(arg_receive_start);

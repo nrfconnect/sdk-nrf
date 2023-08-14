@@ -11,7 +11,7 @@
 
 int sms_register(void);
 int sms_unregister(void);
-int sms_send_msg(char *number, char *data);
+int sms_send_msg(char *number, char *text, enum sms_data_type type);
 int sms_recv(bool arg_receive_start);
 
 #endif /* MOSH_SMS_H */

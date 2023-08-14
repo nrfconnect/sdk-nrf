@@ -14,6 +14,7 @@
 #include "sms.h"
 #include "mosh_defines.h"
 #include "mosh_print.h"
+#include "str_utils.h"
 
 #define PAYLOAD_BUF_SIZE 160
 #define SMS_HANDLE_NONE -1
@@ -99,27 +100,58 @@ int sms_unregister(void)
 }
 
 /* Function name is not sms_send() because it's reserved by SMS library. */
-int sms_send_msg(char *number, char *text)
+int sms_send_msg(char *number, char *data, enum sms_data_type type)
 {
 	int ret;
+	uint16_t data_len;
+	uint16_t data_bin_len;
+	uint8_t *data_bin;
 
 	if (number == NULL || strlen(number) == 0) {
 		mosh_error("Number not given");
 		return -EINVAL;
 	}
-	if (text == NULL || strlen(text) == 0) {
+	if (data == NULL || strlen(data) == 0) {
 		mosh_error("Text not given");
 		return -EINVAL;
 	}
 
-	mosh_print("Sending SMS to number=%s, text='%s'", number, text);
+	mosh_print("Sending SMS to number=%s, text='%s'", number, data);
+	if (type == SMS_DATA_TYPE_GSM7BIT) {
+		mosh_print("Input text is in GSM 7bit format");
+	}
 
 	ret = sms_register();
 	if (ret != 0) {
 		return ret;
 	}
 
-	ret = sms_send_text(number, text);
+	if (type == SMS_DATA_TYPE_GSM7BIT) {
+		/* Process data to be sent if it's in hex format */
+		data_len = strlen(data);
+		if (data_len % 2 != 0) {
+			mosh_error(
+				"Input data for 'gsm7bit' must be divisible by two in length (%d)",
+				data_len);
+			return -EINVAL;
+		}
+		data_bin_len = data_len / 2;
+		data_bin = k_malloc(data_bin_len);
+		if (data_bin != NULL) {
+			data_bin_len = str_hex_to_bytes(
+				data, strlen(data), data_bin, data_bin_len);
+
+			ret = sms_send(number, data_bin, data_bin_len, SMS_DATA_TYPE_GSM7BIT);
+			k_free(data_bin);
+		} else {
+			mosh_error("Out of memory when reserving buffer for hex data");
+			return -ENOMEM;
+		}
+	} else {
+		__ASSERT_NO_MSG(type == SMS_DATA_TYPE_ASCII);
+		ret = sms_send_text(number, data);
+	}
+
 	if (ret) {
 		mosh_error("Sending SMS failed with error: %d", ret);
 	}
