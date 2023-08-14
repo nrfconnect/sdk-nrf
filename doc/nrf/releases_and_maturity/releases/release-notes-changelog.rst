@@ -326,8 +326,9 @@ Cellular samples (renamed from nRF9160 samples)
   * Added:
 
     * Documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
-    * An overlay that allows the sample to be used with Wi-Fi instead of LTE.
     * The :file:`overlay_coap.conf` file and made changes to the sample to enable the use of CoAP instead of MQTT to connect with nRF Cloud.
+    * An overlay that allows the sample to be used with Wi-Fi instead of LTE (MQTT only).
+    * Reporting of device and connection info to the device shadow.
 
   * Updated:
 
@@ -357,6 +358,7 @@ Cellular samples (renamed from nRF9160 samples)
     * The ``disable_response`` parameter to the :c:struct:`nrf_cloud_rest_location_request` structure.
       If set to true, no location data is returned to the device when the :c:func:`nrf_cloud_rest_location_get` function is called.
     * A Kconfig option :kconfig:option:`REST_CELL_LOCATION_SAMPLE_VERSION` for the sample version.
+    * Reporting of device and connection info to the device shadow.
 
   * Updated the sample to print its version when started.
 
@@ -386,6 +388,10 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Added support for nRF91x1 factory almanac.
     The new almanac file format also supports QZSS satellites.
+
+* :ref:`nrf_cloud_rest_fota` sample:
+
+   * Added reporting of device and connection info to the device shadow.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -594,6 +600,7 @@ Libraries for networking
     * A new internal codec function :c:func:`nrf_cloud_obj_location_request_payload_add`, which excludes local Wi-Fi access point MAC addresses from the location request.
     * Support for CoAP CBOR type handling to nrf_cloud_obj.
     * Warning message discouraging use of :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` for purposes other than testing.
+    * Reporting of protocol (MQTT, REST, or CoAP) as well as method (LTE or Wi-Fi) to the device shadow.
 
   * Updated:
 
