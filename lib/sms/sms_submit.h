@@ -13,11 +13,17 @@
  * SMS-SUBMIT message format is specified in 3GPP TS 23.040 chapter 9.2.2.2.
  *
  * @param[in] number Recipient number.
- * @param[in] text Text to be sent.
+ * @param[in] data Data to be sent.
+ * @param[in] data_len Data length.
+ * @param[in] type Input data type.
  *
  * @retval -EINVAL Invalid parameter.
  * @return Zero on success, otherwise error code.
  */
-int sms_submit_send(const char *number, const char *text);
+int sms_submit_send(
+	const char *number,
+	const uint8_t *data,
+	uint16_t data_len,
+	enum sms_data_type type);
 
 #endif

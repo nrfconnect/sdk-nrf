@@ -35,6 +35,16 @@ enum sms_type {
 };
 
 /**
+ * @brief SMS data type.
+ */
+enum sms_data_type {
+	/** @brief ASCII string with ISO-8859-15 extension. */
+	SMS_DATA_TYPE_ASCII,
+	/** @brief GSM 7 bit Default Alphabet as specified in 3GPP TS 23.038 Section 6.2. */
+	SMS_DATA_TYPE_GSM7BIT,
+};
+
+/**
  * @brief Maximum length of SMS in number of characters
  * as specified in 3GPP TS 23.038 Section 4 and Section 6.1.2.1.1.
  */
@@ -189,15 +199,18 @@ int sms_register_listener(sms_callback_t listener, void *context);
 void sms_unregister_listener(int handle);
 
 /**
- * @brief Send SMS message.
+ * @brief Send SMS message as ASCII string with ISO-8859-15 extension.
  *
  * @details Sending is done with GSM 7bit encoding used to encode textual SMS messages.
  * SMS-SUBMIT message is specified in 3GPP TS 23.040 Section 9.2.2.2 and data encoding
  * in 3GPP TS 23.038 Section 4 and Section 6.2.
- * This function doesn't support sending of 8bit binary data messages or UCS2 encoded text.
+ *
+ * This function does the same as if @c sms_send would be called with SMS_DATA_TYPE_ASCII type.
+ *
+ * This function doesn't support sending of 8 bit binary data messages or UCS2 encoded text.
  *
  * @param[in] number Recipient number in international format.
- * @param[in] text Text to be sent.
+ * @param[in] text Text to be sent as ASCII string with ISO-8859-15 extension.
  *
  * @retval -EINVAL Invalid parameter.
  * @return 0 on success, otherwise error code.
@@ -206,6 +219,35 @@ void sms_unregister_listener(int handle);
  *         the error value with @c nrf_modem_at_err.
  */
 int sms_send_text(const char *number, const char *text);
+
+/**
+ * @brief Send SMS message in given message type.
+ *
+ * @details The message is sent with GSM 7bit encoding used to encode textual SMS messages.
+ * SMS-SUBMIT message is specified in 3GPP TS 23.040 Section 9.2.2.2 and data encoding
+ * in 3GPP TS 23.038 Section 4 and Section 6.2.
+ *
+ * If @c type is set to SMS_DATA_TYPE_GSM7BIT, input data is treated as string of hexadecimal
+ * characters where each pair of two characters form a single byte. Those bytes are treated as
+ * GSM 7 bit Default Alphabet as specified in 3GPP TS 23.038 Section 6.2.
+ *
+ * This function does not support sending of 8 bit binary data messages or UCS2 encoded text.
+ *
+ * Concatenated messages are not supported in this function.
+ *
+ * @param[in] number Recipient number in international format.
+ * @param[in] data Data to be sent.
+ * @param[in] data_len Data length.
+ * @param[in] type Input data type.
+ *
+ * @retval -EINVAL Invalid parameter.
+ * @retval -E2BIG Too much data.
+ * @return 0 on success, otherwise error code.
+ *         A positive value on AT error with "ERROR", "+CME ERROR", and "+CMS ERROR" responses.
+ *         The type can be resolved with @c nrf_modem_at_err_type and
+ *         the error value with @c nrf_modem_at_err.
+ */
+int sms_send(const char *number, const uint8_t *data, uint16_t data_len, enum sms_data_type type);
 
 /** @} */
 

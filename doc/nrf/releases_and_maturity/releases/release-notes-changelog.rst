@@ -381,6 +381,7 @@ Cellular samples (renamed from nRF9160 samples)
   * Added:
 
     * Support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
+    * Support for GSM 7bit encoded hexadecimal string in SMS messages.
 
   * Updated:
 
@@ -604,6 +605,12 @@ Modem libraries
 * :ref:`modem_key_mgmt`:
 
    * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
+
+* :ref:`sms_readme`:
+
+  * Added:
+
+    * Support for providing input text as a GSM 7bit encoded hexadecimal string to send some special characters that cannot be sent using ASCII string.
 
 Libraries for networking
 ------------------------

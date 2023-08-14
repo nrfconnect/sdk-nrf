@@ -1,13 +1,15 @@
 .. _sms_readme:
 
-SMS subscriber
-##############
+SMS
+###
 
 .. contents::
    :local:
    :depth: 2
 
-The SMS subscriber module acts as a unique and global client in the system that can dispatch SMS notifications to many subscribers, which makes it possible for more than one module to receive SMS messages.
+The SMS library acts as a unique and global client in the system that can dispatch SMS notifications to many subscribers,
+which makes it possible for more than one module to receive SMS messages.
+In addition, the library has functions for sending SMS messages.
 
 The module provides functions to register and unregister SMS listeners, which are the modules that need to send or receive SMS messages.
 Each listener is identified by a unique handle and receives the SMS data and metadata through a callback function.

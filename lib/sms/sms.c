@@ -14,6 +14,7 @@
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
+#include <modem/sms.h>
 
 #include "sms_submit.h"
 #include "sms_deliver.h"
@@ -375,7 +376,18 @@ void sms_unregister_listener(int handle)
 
 int sms_send_text(const char *number, const char *text)
 {
-	return sms_submit_send(number, text);
+	if (text == NULL) {
+		return -EINVAL;
+	}
+	return sms_send(number, text, strlen(text), SMS_DATA_TYPE_ASCII);
+}
+
+int sms_send(const char *number, const uint8_t *data, uint16_t data_len, enum sms_data_type type)
+{
+	if (data == NULL) {
+		return -EINVAL;
+	}
+	return sms_submit_send(number, data, data_len, type);
 }
 
 #if defined(CONFIG_LTE_LINK_CONTROL)
