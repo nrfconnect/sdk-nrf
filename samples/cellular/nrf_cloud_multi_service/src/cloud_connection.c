@@ -238,7 +238,8 @@ static void update_shadow(void)
 #endif
 	struct nrf_cloud_device_status device_status = {
 		.modem = mdm,
-		.svc = &service_info
+		.svc = &service_info,
+		.conn_inf = NRF_CLOUD_INFO_SET
 	};
 
 	if (updated) {

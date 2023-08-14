@@ -390,13 +390,32 @@ static void do_location_card_enable(void)
 		.ui = &ui
 	};
 
+	struct nrf_cloud_modem_info mdm_inf = {
+		/* Include all available modem info. Change to NRF_CLOUD_INFO_NO_CHANGE to
+		 * reduce the volume of data transmitted.
+		 */
+		.device = NRF_CLOUD_INFO_SET,
+		.network = NRF_CLOUD_INFO_SET,
+		.sim = NRF_CLOUD_INFO_SET,
+		/* Use the modem info already obtained */
+		.mpi = &mdm_param,
+		/* Include the application version */
+		.application_version = CONFIG_REST_CELL_LOCATION_SAMPLE_VERSION
+	};
+
+	struct nrf_cloud_device_status dev_status = {
+		.modem = &mdm_inf,
+		.svc = &svc_inf,
+		.conn_inf = NRF_CLOUD_INFO_SET
+	};
+
 	/* Keep the connection alive so it can be used by the initial cellular
 	 * positioning request.
 	 */
 	rest_ctx.keep_alive = true;
 
 	LOG_INF("Enabling location card...");
-	err = nrf_cloud_rest_shadow_service_info_update(&rest_ctx, device_id, &svc_inf);
+	err = nrf_cloud_rest_shadow_device_status_update(&rest_ctx, device_id, &dev_status);
 	if (err) {
 		LOG_ERR("Failed to enable location card, error: %d", err);
 	} else {
