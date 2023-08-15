@@ -484,9 +484,9 @@ Program the nRF9160 SiP application
 
       #. Select the appropriate Asset Tracker v2 firmware file.
 
-      .. note::
+         .. note::
 
-         If you are connecting over NB-IoT and your operator does not support extended Protocol Configuration Options (ePCO), select the file that has legacy Protocol Configuration Options (PCO) mode enabled.
+            If you are connecting over NB-IoT and your operator does not support extended Protocol Configuration Options (ePCO), select the file that has legacy Protocol Configuration Options (PCO) mode enabled.
 
       #. Click :guilabel:`Open`.
       #. Scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Erase & write`.

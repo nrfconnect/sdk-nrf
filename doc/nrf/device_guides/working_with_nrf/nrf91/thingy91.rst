@@ -213,7 +213,7 @@ Building and programming on the command line
 
 .. include:: ../../../includes/cmd_build_and_run.txt
 
-#. Program the application:
+6. Program the application:
 
 .. include:: thingy91.rst
    :start-after: prog_extdebugprobe_start
