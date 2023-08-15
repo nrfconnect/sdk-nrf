@@ -10,7 +10,8 @@
 #include <stddef.h>
 #include <zephyr/fs/fs.h>
 
-/**@brief	Print out the contents under SD card root path and write the content to buffer.
+/**
+ * @brief	Print out the contents under SD card root path and write the content to buffer.
  *
  * @param[in]		path		Path of the folder which is going to be listed.
  *					If assigned path is null, then listing the contents under
@@ -29,7 +30,8 @@
  */
 int sd_card_list_files(char const *const path, char *buf, size_t *buf_size);
 
-/**@brief	Write data from buffer into the file.
+/**
+ * @brief	Write data from buffer into the file.
  *
  * @note	If the file already exists, data will be appended to the end of the file.
  *
@@ -47,7 +49,8 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size);
  */
 int sd_card_open_write_close(char const *const filename, char const *const data, size_t *size);
 
-/**@brief	Read data from file into the buffer.
+/**
+ * @brief	Read data from file into the buffer.
  *
  * @param[in]		filename	Name of the target file for reading, the default location is
  *					the root directoy of SD card, accept absolute path under
@@ -65,7 +68,8 @@ int sd_card_open_write_close(char const *const filename, char const *const data,
  */
 int sd_card_open_read_close(char const *const filename, char *const buf, size_t *size);
 
-/**@brief	Open file on SD card.
+/**
+ * @brief	Open file on SD card.
  *
  * @param[in]		filename		Name of file to open. Default
  *						location is the root directoy of SD card.
@@ -81,7 +85,8 @@ int sd_card_open_read_close(char const *const filename, char *const buf, size_t 
  */
 int sd_card_open(char const *const filename, struct fs_file_t *f_seg_read_entry);
 
-/**@brief	Read segment on the open file on the SD card.
+/**
+ * @brief	Read segment on the open file on the SD card.
  *
  * @param[out]		buf			Pointer to the buffer to write the read data into.
  * @param[in, out]	size			Number of bytes to be read from file.
@@ -100,7 +105,8 @@ int sd_card_open(char const *const filename, struct fs_file_t *f_seg_read_entry)
  */
 int sd_card_read(char *buf, size_t *size, struct fs_file_t *f_seg_read_entry);
 
-/**@brief	Close the file opened by the sd_card_segment_read_open function.
+/**
+ * @brief	Close the file opened by the sd_card_segment_read_open function.
  *
  * @param[in, out]	f_seg_read_entry	Pointer to a file object. After call to this
  *						function, the pointer is reset and can be used for
@@ -114,7 +120,8 @@ int sd_card_read(char *buf, size_t *size, struct fs_file_t *f_seg_read_entry);
  */
 int sd_card_close(struct fs_file_t *f_seg_read_entry);
 
-/**@brief	Initialize the SD card interface and print out SD card details.
+/**
+ * @brief	Initialize the SD card interface and print out SD card details.
  *
  * @retval	0 on success.
  * @retval	-ENODEV SD init failed. SD card likely not inserted.

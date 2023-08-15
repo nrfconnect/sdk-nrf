@@ -19,13 +19,15 @@
 LOG_MODULE_REGISTER(sd_card, CONFIG_MODULE_SD_CARD_LOG_LEVEL);
 
 #define SD_ROOT_PATH	      "/SD:/"
-#define PATH_MAX_LEN	      260 /* Maximum length for path support by Windows file system*/
+/* Maximum length for path support by Windows file system */
+#define PATH_MAX_LEN	      260
 #define K_SEM_OPER_TIMEOUT_MS 500
+
+K_SEM_DEFINE(m_sem_sd_oper_ongoing, 1, 1);
 
 static const char *sd_root_path = "/SD:";
 static FATFS fat_fs;
 static bool sd_init_success;
-K_SEM_DEFINE(m_sem_sd_oper_ongoing, 1, 1);
 
 static struct fs_mount_t mnt_pt = {
 	.type = FS_FATFS,
@@ -51,6 +53,7 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 		k_sem_give(&m_sem_sd_oper_ongoing);
 		return -ENODEV;
 	}
+
 	fs_dir_t_init(&dirp);
 
 	if (path == NULL) {
@@ -87,6 +90,7 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 		if (entry.name[0] == 0) {
 			break;
 		}
+
 		if (buf != NULL) {
 			size_t remaining_buf_size = *buf_size - used_buf_size;
 			ssize_t len = snprintk(
@@ -101,6 +105,7 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 
 			used_buf_size += len;
 		}
+
 		LOG_INF("[%s] %s", entry.type == FS_DIR_ENTRY_DIR ? "DIR " : "FILE", entry.name);
 	}
 
