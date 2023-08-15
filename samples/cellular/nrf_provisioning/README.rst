@@ -61,30 +61,72 @@ CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG
    Root CA security tag for the nRF Cloud Provisioning Service.
    Needs to be set explicitly and if not, the compilation fails.
 
+.. _CONFIG_RF_PROVISIONING_RX_BUF_S:
+
+CONFIG_RF_PROVISIONING_RX_BUF_S
+   Configures the response payload buffer size.
+
+.. _CONFIG_NRF_PROVISIONING_TX_BUF_SZ:
+
+CONFIG_NRF_PROVISIONING_TX_BUF_SZ
+   Configures the command request buffer size.
+
+.. _CONFIG_NRF_PROVISIONING_ATTESTTOKEN:
+
+CONFIG_NRF_PROVISIONING_ATTESTTOKEN
+   Configures attestation token for client authentication.
+
+.. _CONFIG_NRF_PROVISIONING_JWT:
+
+CONFIG_NRF_PROVISIONING_JWT
+   Configures JWT for client authentication.
+
+HTTP options
+------------
+
 .. _CONFIG_NRF_PROVISIONING_HTTP_HOSTNAME:
 
 CONFIG_NRF_PROVISIONING_HTTP_HOSTNAME
-   Configures the hostname of the nRF Device provisioning service.
+   Configures the hostname of the nRF Cloud Provisioning Service.
 
 .. _CONFIG_NRF_PROVISIONING_HTTP_PORT:
 
 CONFIG_NRF_PROVISIONING_HTTP_PORT
-   Configures the HTTP port of the nRF Device provisioning service.
+   Configures the HTTP port of the nRF Cloud Provisioning Service.
 
 .. _CONFIG_NRF_PROVISIONING_HTTP_TIMEOUT_MS:
 
 CONFIG_NRF_PROVISIONING_HTTP_TIMEOUT_MS
    Configures the HTTP timeout.
 
-.. _CONFIG_RF_PROVISIONING_HTTP_RX_BUF_S:
+CoAP options
+------------
 
-CONFIG_RF_PROVISIONING_HTTP_RX_BUF_S
-   Configures the response payload buffer size.
+.. _CONFIG_NRF_PROVISIONING_COAP_HOSTNAME:
 
-.. _CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ:
+CONFIG_NRF_PROVISIONING_COAP_HOSTNAME
+   Configures the hostname of the nRF Cloud Provisioning Service.
 
-CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ
-   Configures the command request body size.
+.. _CONFIG_NRF_PROVISIONING_COAP_PORT:
+
+CONFIG_NRF_PROVISIONING_COAP_PORT
+   Configures the CoAP port of the nRF Cloud Provisioning Service.
+
+.. _CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE:
+
+CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE
+   Enables DTLS session cache.
+
+Configuration files
+===================
+
+The sample provides predefined configuration files for typical use cases.
+
+The following files are available:
+
+* :file:`prj.conf` - Standard default configuration file.
+* :file:`overlay-coap.conf` - Enables CoAP transfer protocol support.
+* :file:`overlay-jwt.conf` - Enables authentication with JWT.
 
 Building and running
 ********************
@@ -114,6 +156,7 @@ The following is an example output of the sample when there is no provisioning c
 .. code-block:: console
 
 	<inf> nrf_provisioning_sample: Establishing LTE link ...
+	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: No more commands to process on server side
 
@@ -122,12 +165,16 @@ The following is an example output when the sample is processing commands from t
 .. code-block:: console
 
 	<inf> nrf_provisioning_sample: Establishing LTE link ...
+	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
+	<inf> nrf_provisioning_http: Processing commands
 	<inf> nrf_provisioning: Disconnected from network - provisioning paused
 	<inf> nrf_provisioning: Connected; home network - provisioning resumed
 	<inf> nrf_provisioning_sample: Modem connection restored
 	<inf> nrf_provisioning_sample: Waiting for modem to acquire network time...
 	<inf> nrf_provisioning_sample: Network time obtained
+	<inf> nrf_provisioning_http: Sending response to server
+	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: No more commands to process on server side
 
@@ -137,5 +184,8 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`lte_lc_readme`
-* :ref:`modem_info_readme`
 * :ref:`lib_nrf_provisioning`
+
+It uses the following `sdk-nrfxlib`_ library:
+
+* :ref:`nrfxlib:nrf_modem`

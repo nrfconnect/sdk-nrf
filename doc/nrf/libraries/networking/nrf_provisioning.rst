@@ -14,6 +14,7 @@ The current implementation supports the following technologies:
 * AT-command based provisioning commands
 * Writing key-value pair based settings to the :ref:`settings_api` storage
 * TLS-secured HTTP as the communication protocol
+* DTLS-secured CoAP as the communication protocol
 * Client authentication with attestation token
 * Client authentication with JWT token
 * CBOR as the data format
@@ -23,20 +24,30 @@ Configuration
 
 To enable the library, set the :kconfig:option:`CONFIG_NRF_PROVISIONING` Kconfig option to ``y``.
 
-Configuration options for transport protocol
-============================================
-
-Currently, HTTP is the only supported transport protocol.
-
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_SYS_INIT` - Initializes the client in the system initialization phase
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_AUTO_INIT` - Initializes the client in the system initialization phase
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG` - Root CA security tag for the Provisioning Service
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_HOSTNAME` - HTTP API hostname for the Provisioning Service
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_INTERVAL_S` - Maximum provisioning interval, in seconds
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_WITH_CERT` - Provisions the root CA certificate to the security tag if the tag is empty
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_JWT` - Chooses JWT for client authentication
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_ATTESTTOKEN` - Chooses identity attestation token for client authentication
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_RX_BUF_SZ` - Response buffer size
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_TX_BUF_SZ` - Request buffer size
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_SHELL` - Enables shell module, which allows you to control the client over UART
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH` - Sets the path for provisioning settings storage
+
+Configuration options for HTTP
+==============================
+
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_HOSTNAME` - HTTP API hostname for the Provisioning Service, default ``provisioning-http.nrfcloud.com``
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_PORT` - Port number for the Provisioning Service
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_TIMEOUT_MS` - Timeout in milliseconds for HTTP connection of the Provisioning Service
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ` - HTTP response payload buffer size
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ` - HTTP request body size
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_JWT` - Chooses JWT token for client authentication
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_ATTESTTOKEN` - Chooses attestation token for client authentication
+
+Configuration options for CoAP
+==============================
+
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_HOSTNAME` - CoAP API hostname for the Provisioning Service, default ``coap.nrfcloud.com``
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_PORT` - Port number for the Provisioning Service
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE` - Chooses DTLS session cache
 
 .. _lib_nrf_provisioning_start:
 
@@ -152,6 +163,25 @@ The feature is enabled by selecting :kconfig:option:`CONFIG_NRF_PROVISIONING_SHE
      now    :Do provisioning now
      token  :Get the attestation token
      uuid   :Get device UUID
+
+Dependencies
+************
+
+This library uses the following |NCS| libraries:
+
+* :ref:`lte_lc_readme`
+* :ref:`modem_info_readme`
+* :ref:`modem_key_mgmt`
+* :ref:`lib_rest_client`
+
+It uses the following `sdk-nrfxlib`_ library:
+
+* :ref:`nrfxlib:nrf_modem`
+
+It uses the following Zephyr libraries:
+
+* :ref:`CoAP <zephyr:networking_api>`
+* :ref:`CoAP Client <zephyr:coap_client_interface>`
 
 .. _nrf_provisioning_api:
 
