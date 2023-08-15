@@ -23,7 +23,6 @@
 #include "audio_system.h"
 #include "button_handler.h"
 #include "data_fifo.h"
-#include "board.h"
 #include "le_audio.h"
 #include "bt_mgmt.h"
 #include "bt_rend.h"

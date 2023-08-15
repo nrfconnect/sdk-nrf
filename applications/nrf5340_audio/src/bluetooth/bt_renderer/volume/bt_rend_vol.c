@@ -244,9 +244,9 @@ int bt_rend_vol_down(void)
 						i, ret);
 				}
 			}
-
-			return 0;
 		}
+
+		return 0;
 	} else if (IS_ENABLED(CONFIG_BT_VCP_VOL_REND)) {
 		return bt_vcp_vol_rend_unmute_vol_down();
 	}

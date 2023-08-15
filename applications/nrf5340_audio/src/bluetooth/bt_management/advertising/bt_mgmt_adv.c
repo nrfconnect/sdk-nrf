@@ -52,6 +52,11 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 		struct bt_conn_info conn_info;
 
 		ret = bt_conn_get_info(conn, &conn_info);
+		if (ret) {
+			LOG_WRN("Could not get conn info");
+			bt_conn_unref(conn);
+			return;
+		}
 
 		if (conn_info.state == BT_CONN_STATE_CONNECTED) {
 			LOG_WRN("Already connected");
