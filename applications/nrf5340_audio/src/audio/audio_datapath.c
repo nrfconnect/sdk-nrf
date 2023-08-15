@@ -15,7 +15,6 @@
 
 #include "nrf5340_audio_common.h"
 #include "macros_common.h"
-#include "board.h"
 #include "led.h"
 #include "audio_i2s.h"
 #include "sw_codec_select.h"

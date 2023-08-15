@@ -9,7 +9,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
-#include <hal/nrf_gpio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <zephyr/device.h>
@@ -19,19 +18,19 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(led, CONFIG_MODULE_LED_LOG_LEVEL);
 
-#define BLINK_FREQ_MS 1000
+#define BLINK_FREQ_MS			    1000
 /* Maximum number of LED_UNITS. 1 RGB LED = 1 UNIT of 3 LEDS */
-#define LED_UNIT_MAX 10
-#define NUM_COLORS_RGB 3
-#define BASE_10 10
-#define DT_LABEL_AND_COMMA(node_id) DT_PROP(node_id, label),
+#define LED_UNIT_MAX			    10
+#define NUM_COLORS_RGB			    3
+#define BASE_10				    10
+#define DT_LABEL_AND_COMMA(node_id)	    DT_PROP(node_id, label),
 #define GPIO_DT_SPEC_GET_AND_COMMA(node_id) GPIO_DT_SPEC_GET(node_id, gpios),
 
 /* The following arrays are populated compile time from the .dts*/
-static const char *const led_labels[] = { DT_FOREACH_CHILD(DT_PATH(leds), DT_LABEL_AND_COMMA) };
+static const char *const led_labels[] = {DT_FOREACH_CHILD(DT_PATH(leds), DT_LABEL_AND_COMMA)};
 
-static const struct gpio_dt_spec leds[] = { DT_FOREACH_CHILD(DT_PATH(leds),
-							     GPIO_DT_SPEC_GET_AND_COMMA) };
+static const struct gpio_dt_spec leds[] = {
+	DT_FOREACH_CHILD(DT_PATH(leds), GPIO_DT_SPEC_GET_AND_COMMA)};
 
 enum led_type {
 	LED_MONOCHROME,

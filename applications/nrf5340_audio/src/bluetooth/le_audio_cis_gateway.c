@@ -19,7 +19,6 @@
 
 #include "macros_common.h"
 #include "nrf5340_audio_common.h"
-#include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_BLE_LOG_LEVEL);
@@ -375,7 +374,7 @@ static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir, const str
 	}
 
 	/* num_caps is an increasing index that starts at 0 */
-	if (temp_cap[temp_cap_index].num_caps <= ARRAY_SIZE(temp_cap[temp_cap_index].codec)) {
+	if (temp_cap[temp_cap_index].num_caps < ARRAY_SIZE(temp_cap[temp_cap_index].codec)) {
 		struct bt_codec *codec_loc =
 			&temp_cap[temp_cap_index].codec[temp_cap[temp_cap_index].num_caps];
 
@@ -1021,7 +1020,7 @@ static int discover_source(struct bt_conn *conn)
 	return ret;
 }
 
-static int iso_stream_send(uint8_t const *const data, size_t size, struct le_audio_headset headset)
+static int iso_stream_send(uint8_t const *const data, size_t size, struct le_audio_headset *headset)
 {
 	int ret;
 	struct net_buf *buf;
@@ -1034,18 +1033,18 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 	 * Data will be discarded if allocation becomes too high, to avoid audio delays.
 	 * If the NET and APP core operates in clock sync, discarding should not occur.
 	 */
-	if (atomic_get(&headset.iso_tx_pool_alloc) >= HCI_ISO_BUF_ALLOC_PER_CHAN) {
-		if (!headset.hci_wrn_printed) {
-			LOG_WRN("HCI ISO TX overrun on %s ch - Single print", headset.ch_name);
-			headset.hci_wrn_printed = true;
+	if (atomic_get(&headset->iso_tx_pool_alloc) >= HCI_ISO_BUF_ALLOC_PER_CHAN) {
+		if (!headset->hci_wrn_printed) {
+			LOG_WRN("HCI ISO TX overrun on %s ch - Single print", headset->ch_name);
+			headset->hci_wrn_printed = true;
 		}
 
 		return -ENOMEM;
 	}
 
-	headset.hci_wrn_printed = false;
+	headset->hci_wrn_printed = false;
 
-	buf = net_buf_alloc(headset.iso_tx_pool, K_NO_WAIT);
+	buf = net_buf_alloc(headset->iso_tx_pool, K_NO_WAIT);
 	if (buf == NULL) {
 		/* This should never occur because of the iso_tx_pool_alloc check above */
 		LOG_WRN("Out of TX buffers");
@@ -1055,14 +1054,15 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 	net_buf_add_mem(buf, data, size);
 
-	atomic_inc(&headset.iso_tx_pool_alloc);
+	atomic_inc(&headset->iso_tx_pool_alloc);
 
-	ret = bt_bap_stream_send(&headset.sink_stream, buf,
-				 get_and_incr_seq_num(&headset.sink_stream), BT_ISO_TIMESTAMP_NONE);
+	ret = bt_bap_stream_send(&headset->sink_stream, buf,
+				 get_and_incr_seq_num(&headset->sink_stream),
+				 BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
-		LOG_WRN("Failed to send audio data to %s: %d", headset.ch_name, ret);
+		LOG_WRN("Failed to send audio data to %s: %d", headset->ch_name, ret);
 		net_buf_unref(buf);
-		atomic_dec(&headset.iso_tx_pool_alloc);
+		atomic_dec(&headset->iso_tx_pool_alloc);
 	}
 
 	return 0;
@@ -1349,7 +1349,7 @@ int le_audio_send(struct encoded_audio enc_audio)
 	}
 
 	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, headsets[AUDIO_CH_L]);
+		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, &headsets[AUDIO_CH_L]);
 		if (ret) {
 			LOG_DBG("Failed to send data to left channel");
 		}
@@ -1358,10 +1358,10 @@ int le_audio_send(struct encoded_audio enc_audio)
 	if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
 		if (enc_audio.num_ch == 1) {
 			ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
-					      headsets[AUDIO_CH_R]);
+					      &headsets[AUDIO_CH_R]);
 		} else {
 			ret = iso_stream_send(&enc_audio.data[data_size_pr_stream],
-					      data_size_pr_stream, headsets[AUDIO_CH_R]);
+					      data_size_pr_stream, &headsets[AUDIO_CH_R]);
 		}
 		if (ret) {
 			LOG_DBG("Failed to send data to right channel");

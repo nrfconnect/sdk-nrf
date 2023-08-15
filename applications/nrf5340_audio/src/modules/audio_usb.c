@@ -75,7 +75,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 		return;
 	}
 
-	if (!buffer || !size) {
+	if (buffer == NULL || size == 0) {
 		/* This should never happen */
 		ERR_CHK(-EINVAL);
 	}
