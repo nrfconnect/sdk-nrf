@@ -3,9 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-#include <getopt.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include <ctype.h>
 #include <unistd.h>
 
@@ -199,12 +198,15 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 	static uint32_t counts_fail;
 	static uint32_t counts_success;
 
-	if (buf->len == sizeof(count)) {
-		count = sys_get_le32(buf->data);
-	}
-
 	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
 		LOG_ERR("bad frame");
+	}
+
+	if (buf->len >= sizeof(count)) {
+		count = sys_get_le32(buf->data);
+	} else {
+		LOG_WRN("Received too few bytes: %d", buf->len);
+		return;
 	}
 
 	/* Wrapping not considered. Overflow will take over a year.*/
@@ -481,7 +483,7 @@ static struct option long_options[] = {{"num_bis:", required_argument, NULL, 'n'
 
 static const char short_options[] = "n:";
 
-static int set_param(const struct shell *shell, size_t argc, char **argv)
+static int param_set(const struct shell *shell, size_t argc, char **argv)
 {
 	int long_index = 0;
 	int opt;
@@ -524,7 +526,7 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 SHELL_STATIC_SUBCMD_SET_CREATE(broadcast_sink_cmd,
 			       SHELL_CMD(start, NULL, "Start ISO broadcast sink.",
 					 iso_broadcast_sink_start),
-			       SHELL_CMD_ARG(set, NULL, "set", set_param, 3, 0),
+			       SHELL_CMD_ARG(set, NULL, "set", param_set, 3, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(brcast_sink, &broadcast_sink_cmd, "ISO Broadcast sink commands", NULL);

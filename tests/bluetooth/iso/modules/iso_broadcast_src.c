@@ -65,8 +65,8 @@ static struct bt_iso_chan_ops iso_ops = {
 };
 
 static struct bt_iso_chan_io_qos iso_tx_qos = {
-	.sdu = sizeof(uint32_t), /* bytes */
-	.rtn = 1,
+	.sdu = 120,
+	.rtn = 2,
 	.phy = BT_GAP_LE_PHY_2M,
 };
 
@@ -102,7 +102,7 @@ static struct bt_iso_big_create_param big_create_param = {
 static struct bt_le_ext_adv *adv;
 static struct bt_iso_big *big;
 static uint32_t iso_send_count;
-static uint8_t iso_data[sizeof(iso_send_count)] = { 0 };
+static uint8_t iso_data[CONFIG_BT_ISO_TX_MTU] = { 0 };
 
 static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 {
@@ -135,7 +135,7 @@ static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 
 			net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 			sys_put_le32(iso_send_count, iso_data);
-			net_buf_add_mem(buf, iso_data, sizeof(iso_data));
+			net_buf_add_mem(buf, iso_data, iso_tx_qos.sdu);
 			ret = bt_iso_chan_send(&bis_iso_chan[chan], buf, seq_num,
 					       BT_ISO_TIMESTAMP_NONE);
 			if (ret < 0) {
@@ -338,7 +338,7 @@ static struct option long_options[] = { { "sdu_size", required_argument, NULL, '
 
 static const char short_options[] = "s:p:r:n:S:l:P:f:";
 
-static int set_param(const struct shell *shell, size_t argc, char **argv)
+static int param_set(const struct shell *shell, size_t argc, char **argv)
 {
 	int result = argument_check(shell, argv[2]);
 	int long_index = 0;
@@ -409,6 +409,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	broadcaster_cmd, SHELL_CMD(start, NULL, "Start ISO broadcaster.", iso_broadcast_src_start),
 	SHELL_CMD(stop, NULL, "Stop ISO broadcaster.", iso_broadcaster_stop),
 	SHELL_CMD(cfg, NULL, "Print config.", broadcaster_print_cfg),
-	SHELL_CMD_ARG(set, NULL, "set", set_param, 3, 0), SHELL_SUBCMD_SET_END);
+	SHELL_CMD_ARG(set, NULL, "set", param_set, 3, 0), SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(brcast_src, &broadcaster_cmd, "ISO Broadcast source commands", NULL);
