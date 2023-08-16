@@ -15,7 +15,6 @@
 class BleOnOffLightDataProvider : public BLEBridgedDeviceProvider {
 public:
 	explicit BleOnOffLightDataProvider(UpdateAttributeCallback callback) : BLEBridgedDeviceProvider(callback) {}
-	~BleOnOffLightDataProvider() = default;
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
@@ -28,17 +27,6 @@ public:
 					  uint16_t length);
 
 	bt_uuid *GetServiceUuid() override;
-	int MatchBleDevice(BLEBridgedDevice *device) override
-	{
-		if (!device) {
-			return -EINVAL;
-		}
-
-		mDevice = device;
-		mDevice->mProvider = this;
-
-		return 0;
-	}
 	int ParseDiscoveredData(bt_gatt_dm *discoveredData) override;
 
 private:

@@ -48,6 +48,7 @@ private:
 	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void FunctionTimerTimeoutCallback(k_timer *timer);
 	static void UpdateStatusLED();
+	static CHIP_ERROR RestoreBridgedDevices();
 
 	FunctionEvent mFunction = FunctionEvent::NoneSelected;
 	bool mFunctionTimerActive = false;

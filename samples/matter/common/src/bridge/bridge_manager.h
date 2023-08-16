@@ -12,7 +12,20 @@
 
 class BridgeManager {
 public:
-	void Init();
+	static constexpr uint8_t kMaxBridgedDevices = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT;
+
+	using LoadStoredBridgedDevicesCallback = CHIP_ERROR (*)();
+
+	/**
+	 * @brief Initialize BridgeManager instance.
+	 *
+	 * @param loadStoredBridgedDevicesCb callback to method capable of loading and adding bridged devices stored in
+	 * persistent storage
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR Init(LoadStoredBridgedDevicesCallback loadStoredBridgedDevicesCb);
+
 	/**
 	 * @brief Add devices which are supposed to be bridged to the Bridge Manager
 	 *
@@ -20,11 +33,66 @@ public:
 	 * application and can be memory constrained)
 	 * @param dataProvider data provider which is going to be bridged with Matter devices
 	 * @param deviceListSize number of Matter devices which are going to be bridged with data provider
-	 * @return CHIP_NO_ERROR in case of success, specific CHIP_ERROR code otherwise
+	 * @param devicesPairIndexes array of the indexes that will be filled with pairs' indexes
+	 * assigned by the bridge
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
 	 */
 	CHIP_ERROR AddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
-				     uint8_t deviceListSize);
-	CHIP_ERROR RemoveBridgedDevice(uint16_t endpoint);
+				     uint8_t deviceListSize, uint8_t devicesPairIndexes[]);
+
+	/**
+	 * @brief Add devices which are supposed to be bridged to the Bridge Manager using specific index and endpoint
+	 * id.
+	 *
+	 * @param devices Matter devices to be bridged (the maximum size of this array may depend on the
+	 * application and can be memory constrained)
+	 * @param dataProvider data provider which is going to be bridged with Matter devices
+	 * @param deviceListSize number of Matter devices which are going to be bridged with data provider
+	 * @param devicesPairIndexes array of the indexes that contain index value required to be
+	 * assigned and that will be filled with pairs' indexes finally assigned by the bridge
+	 * @param endpointIds values of endpoint ids required to be assigned
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR AddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
+				     uint8_t deviceListSize, uint8_t devicesPairIndexes[], uint16_t endpointIds[]);
+
+	/**
+	 * @brief Remove bridged device.
+	 *
+	 * @param endpoint value of endpoint id specifying the bridged device to be removed
+	 * @param devicesPairIndex reference to the index that will be filled with pair's index obtained by the
+	 * bridge
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR RemoveBridgedDevice(uint16_t endpoint, uint8_t &devicesPairIndex);
+
+	/**
+	 * @brief Get bridged devices indexes.
+	 *
+	 * @param indexes array address to be filled with bridged devices indexes
+	 * @param maxSize maximum size that can be used for indexes array
+	 * @param count reference to the count object to be filled with size of actually saved data
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR GetDevicesIndexes(uint8_t *indexes, uint8_t maxSize, uint8_t &count)
+	{
+		if (!indexes) {
+			return CHIP_ERROR_INVALID_ARGUMENT;
+		}
+
+		if (maxSize < mDevicesIndexesCounter) {
+			return CHIP_ERROR_BUFFER_TOO_SMALL;
+		}
+
+		memcpy(indexes, mDevicesIndexes, mDevicesIndexesCounter);
+		count = mDevicesIndexesCounter;
+		return CHIP_NO_ERROR;
+	}
+
 	static CHIP_ERROR HandleRead(uint16_t index, chip::ClusterId clusterId,
 				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 				     uint16_t maxReadLength);
@@ -90,17 +158,68 @@ private:
 		BridgedDeviceDataProvider *mProvider;
 	};
 
-	static constexpr uint8_t kMaxBridgedDevices = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT;
 	static constexpr uint8_t kMaxDataProviders = CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER;
 
 	using DeviceMap = FiniteMap<BridgedDevicePair, kMaxBridgedDevices>;
 
-	bool AddSingleDevice(MatterBridgedDevice *device, BridgedDeviceDataProvider *dataProvider);
+	CHIP_ERROR AddSingleDevice(MatterBridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
+				   chip::Optional<uint8_t> &devicesPairIndex, uint16_t endpointId);
 	CHIP_ERROR SafelyRemoveDevice(uint8_t index);
+
+	/**
+	 * @brief Add pair of bridged devices and their data provider using optional index and endpoint id. This is a
+	 * wrapper method invoked by public AddBridgedDevices methods that maps integer indexes to optionals are assigns
+	 * output index values.
+	 *
+	 * @param device address of valid bridged device object
+	 * @param dataProvider address of valid data provider object
+	 * @param devicesPairIndexes array of the index objects that will be filled with pairs' indexes
+	 * assigned by the bridge
+	 * @param endpointIds values of endpoint ids required to be assigned
+	 * @param indexes array of pointers to the optional index objects that shall have a valid value set if the value
+	 * is meant to be used to index assignment, or shall not have a value set if the default index assignment should
+	 * be used.
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR AddBridgedDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
+				     uint8_t deviceListSize, uint8_t devicesPairIndexes[], uint16_t endpointIds[],
+				     chip::Optional<uint8_t> indexes[]);
+
+	/**
+	 * @brief Add pair of bridged devices and their data provider using optional index and endpoint id. The method
+	 * creates a map entry, matches the bridged device object with the data provider object and creates Matter
+	 * dynamic endpoint.
+	 *
+	 * @param device address of valid bridged device object
+	 * @param dataProvider address of valid data provider object
+	 * @param devicesPairIndex array of optional index objects that shall have a valid value set if
+	 * the value is meant to be used to index assignment, or shall not have a value set if the default index
+	 * assignment should be used.
+	 * @param endpointIds values of endpoint ids required to be assigned
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR AddDevices(MatterBridgedDevice *devices[], BridgedDeviceDataProvider *dataProvider,
+			      uint8_t deviceListSize, chip::Optional<uint8_t> devicesPairIndexes[],
+			      uint16_t endpointIds[]);
+
+	/**
+	 * @brief Create Matter dynamic endpoint.
+	 *
+	 * @param index index in Matter Data Model's (ember) array to store the endpoint
+	 * @param endpointId value of endpoint id to be created
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR CreateEndpoint(uint8_t index, uint16_t endpointId);
 
 	DeviceMap mDevicesMap;
 	uint16_t mNumberOfProviders{ 0 };
+	uint8_t mDevicesIndexes[BridgeManager::kMaxBridgedDevices] = { 0 };
+	uint8_t mDevicesIndexesCounter;
 
 	chip::EndpointId mFirstDynamicEndpointId;
 	chip::EndpointId mCurrentDynamicEndpointId;
+	bool mIsInitialized = false;
 };

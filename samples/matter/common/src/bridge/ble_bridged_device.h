@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "ble_connectivity_manager.h"
 #include "bridged_device_data_provider.h"
 
 #include <bluetooth/gatt_dm.h>
@@ -13,29 +14,41 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 
-struct BLEBridgedDevice;
+struct BLEBridgedDeviceProvider;
+
+struct BLEBridgedDevice {
+	bt_addr_le_t mAddr;
+	BLEConnectivityManager::DeviceConnectedCallback mFirstConnectionCallback;
+	void *mFirstConnectionCallbackContext;
+	bt_conn *mConn;
+	BLEBridgedDeviceProvider *mProvider;
+};
 
 class BLEBridgedDeviceProvider : public BridgedDeviceDataProvider {
 public:
 	explicit BLEBridgedDeviceProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
-	virtual ~BLEBridgedDeviceProvider() = default;
+	~BLEBridgedDeviceProvider()
+	{
+		BLEConnectivityManager::Instance().RemoveBLEProvider(GetBtAddress());
+	}
 
 	virtual bt_uuid *GetServiceUuid() = 0;
-	virtual int MatchBleDevice(BLEBridgedDevice *device) = 0;
 	virtual int ParseDiscoveredData(bt_gatt_dm *discoveredData) = 0;
 
+	void InitializeBridgedDevice(bt_addr_le_t address, BLEConnectivityManager::DeviceConnectedCallback callback,
+				     void *context)
+	{
+		mDevice.mAddr = address;
+		mDevice.mFirstConnectionCallback = callback;
+		mDevice.mFirstConnectionCallbackContext = context;
+		mDevice.mProvider = this;
+	}
+
+	BLEBridgedDevice &GetBLEBridgedDevice() { return mDevice; }
+	void SetConnectionObject(bt_conn *conn) { mDevice.mConn = conn; }
+
+	bt_addr_le_t GetBtAddress() { return mDevice.mAddr; }
+
 protected:
-	BLEBridgedDevice *mDevice{ nullptr };
-};
-
-struct BLEBridgedDevice {
-	using DeviceConnectedCallback = void (*)(BLEBridgedDevice *device, bt_gatt_dm *discoveredData,
-						 bool discoverySucceeded, void *context);
-
-	bt_addr_le_t mAddr;
-	DeviceConnectedCallback mFirstConnectionCallback;
-	void *mFirstConnectionCallbackContext;
-	bt_uuid *mServiceUuid;
-	bt_conn *mConn;
-	BLEBridgedDeviceProvider *mProvider;
+	BLEBridgedDevice mDevice = { 0 };
 };
