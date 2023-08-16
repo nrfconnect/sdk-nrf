@@ -93,14 +93,14 @@ static void data_sample_timer_handler(struct k_timer *timer);
 /* Data fetching timeouts */
 #define DATA_FETCH_TIMEOUT_DEFAULT 2
 
-K_MSGQ_DEFINE(msgq_app, sizeof(struct app_msg_data), APP_QUEUE_ENTRY_COUNT,
+K_MSGQ_DEFINE(msgq_app, sizeof(struct  app_msg_data), APP_QUEUE_ENTRY_COUNT,
 	      APP_QUEUE_BYTE_ALIGNMENT);
 
 /* Data sample timer used in active mode. */
-K_TIMER_DEFINE(data_sample_timer, data_sample_timer_handler, NULL);
+K_TIMER_DEFINE(data_sample_timer,  data_sample_timer_handler, NULL);
 
 /* Movement timer used to detect movement timeouts in passive mode. */
-K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
+K_TIMER_DEFINE(movement_timeout_timer,  data_sample_timer_handler, NULL);
 
 /* Movement resolution timer decides the period after movement that consecutive
  * movements are ignored and do not cause data collection. This is used to
@@ -119,13 +119,13 @@ static struct module_data self = {
 };
 
 /* Convenience functions used in internal state handling. */
-static char *state2str(enum state_type new_state)
+static char *state2str(enum state_type  new_state)
 {
 	switch (new_state) {
 	case STATE_INIT:
 		return "STATE_INIT";
 	case STATE_RUNNING:
-		return "STATE_RUNNING";
+		return "sasd";
 	case STATE_SHUTDOWN:
 		return "STATE_SHUTDOWN";
 	default:
@@ -512,6 +512,35 @@ static void on_all_events(struct app_msg_data *msg)
 	}
 }
 
+/* Message handler for all states. */
+void on_all_events2(struct app_msg_data *msg)
+{
+	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
+		k_timer_stop(&data_sample_timer);
+		k_timer_stop(&movement_timeout_timer);
+		k_timer_stop(&movement_resolution_timer);
+
+		SEND_SHUTDOWN_ACK(app, APP_EVT_SHUTDOWN_READY, self.id);
+		state_set(STATE_SHUTDOWN);
+	}
+
+	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_STATIC_DATA_READY)) {
+		modem_static_sampled = true;
+	}
+
+	if (IS_EVENT(msg, app, APP_EVT_DATA_GET)) {
+		sample_request_ongoing = true;
+	}
+
+	if (IS_EVENT(msg, data, DATA_EVT_DATA_READY)) {
+		sample_request_ongoing = false;
+	}
+
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_IMPACT_DETECTED)) {
+		SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
+	}
+}
+
 int main(void)
 {
 	int err;
@@ -554,7 +583,7 @@ int main(void)
 				on_sub_state_active(&msg);
 				break;
 			case SUB_STATE_PASSIVE_MODE:
-				on_sub_state_passive(&msg);
+				 on_sub_state_passive(&msg);
 				break;
 			default:
 				LOG_ERR("Unknown sub state");
