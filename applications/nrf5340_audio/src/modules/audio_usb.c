@@ -42,6 +42,7 @@ static void data_write(const struct device *dev)
 
 	ret = data_fifo_pointer_last_filled_get(fifo_tx, &data_out, &data_out_size, K_NO_WAIT);
 	if (ret) {
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_WRN("USB TX underrun");
 		net_buf_unref(buf_out);
 		return;

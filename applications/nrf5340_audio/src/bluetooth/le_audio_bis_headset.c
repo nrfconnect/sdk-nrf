@@ -136,6 +136,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 {
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream index %d started", active_stream_index);
 	print_codec(&audio_codec_info[active_stream_index]);
 }
@@ -144,6 +145,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream index %d stopped. Reason: %d", active_stream_index, reason);
 }
 
@@ -325,6 +327,7 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, bool encrypted)
 		return;
 	}
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Syncing to broadcast stream index %d", active_stream_index);
 
 	if (bis_index_bitfields[active_stream_index] == 0) {

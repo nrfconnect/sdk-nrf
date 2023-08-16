@@ -22,7 +22,7 @@
 LOG_MODULE_REGISTER(broadcast_sink, CONFIG_ISO_TEST_LOG_LEVEL);
 
 #define TIMEOUT_SYNC_CREATE K_SECONDS(10)
-#define NAME_LEN 30
+#define NAME_LEN	    30
 
 #define BT_LE_SCAN_CUSTOM                                                                          \
 	BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_ACTIVE, BT_LE_SCAN_OPT_NONE, BT_GAP_SCAN_FAST_INTERVAL,   \
@@ -168,6 +168,7 @@ static void biginfo_cb(struct bt_le_per_adv_sync *sync, const struct bt_iso_bigi
 
 	bt_addr_le_to_str(biginfo->addr, le_addr, sizeof(le_addr));
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_DBG("BIG INFO[%u]: [DEVICE]: %s, sid 0x%02x, "
 		"num_bis %u, nse %u, interval 0x%04x (%u ms), "
 		"bn %u, pto %u, irc %u, max_pdu %u, "
@@ -218,6 +219,7 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 	last_count = count;
 
 	if ((count % CONFIG_PRINT_CONN_INTERVAL) == 0) {
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("RX. Count: %d, Failed: %d, Success: %d", count, counts_fail,
 			counts_success);
 
@@ -475,8 +477,7 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 	return arg_val;
 }
 
-static struct option long_options[] = { { "num_bis:", required_argument, NULL, 'n' },
-					{ 0, 0, 0, 0 } };
+static struct option long_options[] = {{"num_bis:", required_argument, NULL, 'n'}, {0, 0, 0, 0}};
 
 static const char short_options[] = "n:";
 

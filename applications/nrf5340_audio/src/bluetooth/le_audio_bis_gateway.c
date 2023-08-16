@@ -140,6 +140,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Broadcast source %p started", (void *)stream);
 }
 

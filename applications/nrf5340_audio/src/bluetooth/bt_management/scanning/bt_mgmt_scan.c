@@ -58,6 +58,7 @@ int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan
 		return ret;
 	}
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Scanning successfully started");
 	return 0;
 }

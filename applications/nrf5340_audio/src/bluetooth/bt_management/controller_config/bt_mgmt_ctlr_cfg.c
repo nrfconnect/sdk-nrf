@@ -176,6 +176,7 @@ int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("Controller: LL_ACS_NRF53. Version: %d", ctlr_version);
 		ret = bt_ll_acs_nrf53_cfg();
 		if (ret) {

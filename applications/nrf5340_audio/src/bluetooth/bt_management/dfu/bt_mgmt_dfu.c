@@ -44,6 +44,7 @@ static void smp_adv(void)
 		return;
 	}
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Regular SMP_SVR advertising started");
 }
 
