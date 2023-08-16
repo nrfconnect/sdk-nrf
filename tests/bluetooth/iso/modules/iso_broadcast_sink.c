@@ -3,9 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-#include <getopt.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include <ctype.h>
 #include <unistd.h>
 
@@ -22,7 +21,7 @@
 LOG_MODULE_REGISTER(broadcast_sink, CONFIG_ISO_TEST_LOG_LEVEL);
 
 #define TIMEOUT_SYNC_CREATE K_SECONDS(10)
-#define NAME_LEN 30
+#define NAME_LEN	    30
 
 #define BT_LE_SCAN_CUSTOM                                                                          \
 	BT_LE_SCAN_PARAM(BT_LE_SCAN_TYPE_ACTIVE, BT_LE_SCAN_OPT_NONE, BT_GAP_SCAN_FAST_INTERVAL,   \
@@ -198,12 +197,15 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 	static uint32_t counts_fail;
 	static uint32_t counts_success;
 
-	if (buf->len == sizeof(count)) {
-		count = sys_get_le32(buf->data);
-	}
-
 	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
 		LOG_ERR("bad frame");
+	}
+
+	if (buf->len >= sizeof(count)) {
+		count = sys_get_le32(buf->data);
+	} else {
+		LOG_WRN("Received too few bytes: %d", buf->len);
+		return;
 	}
 
 	/* Wrapping not considered. Overflow will take over a year.*/
@@ -475,12 +477,11 @@ static int argument_check(const struct shell *shell, uint8_t const *const input)
 	return arg_val;
 }
 
-static struct option long_options[] = { { "num_bis:", required_argument, NULL, 'n' },
-					{ 0, 0, 0, 0 } };
+static struct option long_options[] = {{"num_bis:", required_argument, NULL, 'n'}, {0, 0, 0, 0}};
 
 static const char short_options[] = "n:";
 
-static int set_param(const struct shell *shell, size_t argc, char **argv)
+static int param_set(const struct shell *shell, size_t argc, char **argv)
 {
 	int long_index = 0;
 	int opt;
@@ -523,7 +524,7 @@ static int set_param(const struct shell *shell, size_t argc, char **argv)
 SHELL_STATIC_SUBCMD_SET_CREATE(broadcast_sink_cmd,
 			       SHELL_CMD(start, NULL, "Start ISO broadcast sink.",
 					 iso_broadcast_sink_start),
-			       SHELL_CMD_ARG(set, NULL, "set", set_param, 3, 0),
+			       SHELL_CMD_ARG(set, NULL, "set", param_set, 3, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(brcast_sink, &broadcast_sink_cmd, "ISO Broadcast sink commands", NULL);

@@ -14,4 +14,8 @@ config ISO_TEST_LOG_LEVEL
 	int "Default log level for ISO test module"
 	default 3
 
+config ACL_TEST_LOG_LEVEL
+	int "Default log level for ACL test module"
+	default 3
+
 source "Kconfig.zephyr"

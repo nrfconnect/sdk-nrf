@@ -12,5 +12,7 @@ project(broadcaster_and_central)
 target_sources(app PRIVATE
     src/main.c
     modules/iso_broadcast_src.c
-    modules/iso_broadcast_sink.c)
+    modules/iso_broadcast_sink.c
+    modules/central.c
+    modules/peripheral.c)
 zephyr_include_directories(modules)
