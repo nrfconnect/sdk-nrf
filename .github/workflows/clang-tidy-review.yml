@@ -1,0 +1,110 @@
+name: Clang-tidy review
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: Clang tidy review
+    runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci-base:v0.26.4
+    env:
+      CMAKE_PREFIX_PATH: /opt/toolchains
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          path: nrf
+          fetch-depth: 0
+
+      - name: Install deps
+        run: |
+          apt-get update
+          apt-get install -y jq clang clang-tidy ruby-full
+
+      - name: West init and update
+        working-directory: nrf
+        run: |
+          west init -l .
+          west update --narrow -o=--depth=1
+
+      - name: Build for native_posix
+        shell: bash
+        working-directory: nrf
+        continue-on-error: true # The llvm build fails with a non-zero exit code due to link stage error. But we still want to run clang-tidy. The clang-tidy will catch compile errors anyway. The point here is to get the compile_commands.json file and all the necessary headerfiles generated with clang as the compiler.
+        run: |
+          export ZEPHYR_TOOLCHAIN_VARIANT=llvm
+          ../zephyr/scripts/twister -b -v -i -T ./ -p native_posix --quarantine-list scripts/quarantine_downstream.yaml
+
+      - name: Use jq to combine compile_commands.json files
+        shell: bash
+        working-directory: nrf
+        run: |
+          jq -s 'map(.[])' `find . -name compile_commands.json` > compile_commands.json
+
+      - name: Analyze
+        shell: bash
+        working-directory: nrf
+        run: |
+          mkdir clang-tidy-result
+          git fetch origin ${{ github.event.pull_request.base.sha }}
+          git diff -U0  ${{ github.event.pull_request.base.sha }} | clang-tidy-diff -p1 -path . -export-fixes clang-tidy-result/fixes.yml
+
+      - name: Print clang tidy results (yml format))
+        shell: bash
+        working-directory: nrf
+        run: |
+          ls clang-tidy-result
+          cat clang-tidy-result/fixes.yml
+
+      - name: Strip docker path so that the publisher workflow can find the files without being in a container
+        shell: bash
+        working-directory: nrf
+        run: |
+          sed -i "s/\/__w\/sdk-nrf\/sdk-nrf\/nrf\///g" clang-tidy-result/fixes.yml
+
+      - name: Upload clang tidy result as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: clang-tidy-result
+          path: nrf/clang-tidy-result
+
+      - name: Upload compile_commands.json as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: compile_commands.json
+          path: nrf/compile_commands.json
+
+  publish-review:
+    name: Publish clang tidy review
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: clang-tidy-result
+          path: clang-tidy-result
+
+      - name: Debug
+        shell: bash
+        run: |
+          ls clang-tidy-result
+          cat clang-tidy-result/fixes.yml
+
+      - name: Run clang-tidy-pr-comments action
+        uses: platisd/clang-tidy-pr-comments@master
+        with:
+          # The GitHub token (or a personal access token)
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # The path to the clang-tidy fixes generated previously
+          clang_tidy_fixes: clang-tidy-result/fixes.yml
+          # Optionally set the number of comments per review
+          # to avoid GitHub API timeouts for heavily loaded
+          # pull requests
+          suggestions_per_comment: 10
+
