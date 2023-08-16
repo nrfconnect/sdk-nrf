@@ -483,19 +483,26 @@ static void broadcast_module_state(enum state prev_state, enum state new_state)
 	bool submit_ready = false;
 	bool submit_off = false;
 
-	if (is_module_state_off(prev_state) && !is_module_state_off(new_state)) {
-		submit_ready = true;
-	}
+	__ASSERT_NO_MSG(is_module_state_disabled(prev_state) ||
+			!is_module_state_disabled(new_state));
 
-	if (!is_module_state_off(prev_state) && is_module_state_off(new_state)) {
-		submit_off = true;
-	}
+	if (is_module_state_disabled(prev_state)) {
+		if (!is_module_state_disabled(new_state)) {
+			submit_ready = true;
 
-	if (is_module_state_disabled(prev_state) && !is_module_state_disabled(new_state)) {
-		submit_ready = true;
-	}
+			if (is_module_state_off(new_state)) {
+				submit_off = true;
+			}
+		}
+	} else {
+		if (is_module_state_off(prev_state) && !is_module_state_off(new_state)) {
+			submit_ready = true;
+		}
 
-	__ASSERT_NO_MSG(!submit_ready || !submit_off);
+		if (!is_module_state_off(prev_state) && is_module_state_off(new_state)) {
+			submit_off = true;
+		}
+	}
 
 	if (submit_ready) {
 		module_set_state(MODULE_STATE_READY);

@@ -751,6 +751,8 @@ Common Application Framework (CAF)
 * :ref:`caf_ble_adv`:
 
   * Updated the dependencies of the :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option so that it can be used when the Bluetooth controller is running on the network core.
+  * Improved broadcast of :c:struct:`module_state_event`.
+    The event informing about entering either :c:enum:`MODULE_STATE_READY` or :c:enum:`MODULE_STATE_OFF` is not submitted until the CAF Bluetooth LE advertising module is initialized and ready.
 
 * :ref:`caf_power_manager`:
 
