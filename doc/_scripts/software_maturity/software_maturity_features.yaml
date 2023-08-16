@@ -1,5 +1,6 @@
 top_table:
   Bluetooth: BT_CTLR
+  Bluetooth mesh: BT_MESH
   Zigbee: ZIGBEE
   Thread: NET_L2_OPENTHREAD
   LTE: LTE_LINK_CONTROL
@@ -19,7 +20,6 @@ features:
     Bluetooth LE Peripheral/Central: BT_CTLR && (BT_CENTRAL || BT_PERIPHERAL)
     LLPM: BT_CTLR_SDC_LLPM
     LE Coded PHY: BT_CTLR_PHY_CODED_SUPPORT
-    Bluetooth Mesh: BT_MESH
     Connectionless/Connected CTE Transmitter: BT_CTLR_DF_CTE_TX_SUPPORT
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
