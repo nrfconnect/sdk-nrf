@@ -25,14 +25,11 @@ static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 uint8_t BleOnOffLightDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
 						      uint16_t length)
 {
-	BLEBridgedDevice *dev = BLEConnectivityManager::Instance().FindBLEBridgedDevice(conn);
-	BleOnOffLightDataProvider *provider;
+	BleOnOffLightDataProvider *provider = static_cast<BleOnOffLightDataProvider *>(
+		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
 
-	VerifyOrExit(dev, );
 	VerifyOrExit(data, );
 	VerifyOrExit(length == sizeof(mOnOff), );
-
-	provider = reinterpret_cast<BleOnOffLightDataProvider *>(dev->mProvider);
 	VerifyOrExit(provider, );
 
 	/* Save data received in notification. */
@@ -66,9 +63,7 @@ void BleOnOffLightDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chi
 
 void BleOnOffLightDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_write_params *params)
 {
-	BLEBridgedDevice *dev = BLEConnectivityManager::Instance().FindBLEBridgedDevice(conn);
-
-	if (!dev || !params) {
+	if (!params) {
 		return;
 	}
 
@@ -76,11 +71,12 @@ void BleOnOffLightDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt
 		return;
 	}
 
-	if (!dev->mProvider) {
+	BleOnOffLightDataProvider *provider = static_cast<BleOnOffLightDataProvider *>(
+		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
+
+	if (!provider) {
 		return;
 	}
-
-	BleOnOffLightDataProvider *provider = reinterpret_cast<BleOnOffLightDataProvider *>(dev->mProvider);
 
 	/* Save data received in GATT write response. */
 	memcpy(&provider->mOnOff, params->data, params->length);
@@ -91,12 +87,12 @@ void BleOnOffLightDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt
 CHIP_ERROR BleOnOffLightDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 						  uint8_t *buffer)
 {
-	if (!mDevice) {
-		return CHIP_ERROR_INCORRECT_STATE;
-	}
-
 	if (clusterId != Clusters::OnOff::Id) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (!mDevice.mConn) {
+		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
 	LOG_INF("Updating state of the BleOnOffLightDataProvider, cluster ID: %u, attribute ID: %u.", clusterId,
@@ -112,7 +108,7 @@ CHIP_ERROR BleOnOffLightDataProvider::UpdateState(chip::ClusterId clusterId, chi
 		mGattWriteParams.handle = mLedCharacteristicHandle;
 		mGattWriteParams.func = BleOnOffLightDataProvider::GattWriteCallback;
 
-		int err = bt_gatt_write(mDevice->mConn, &mGattWriteParams);
+		int err = bt_gatt_write(mDevice.mConn, &mGattWriteParams);
 		if (err) {
 			LOG_ERR("GATT write operation failed");
 			return CHIP_ERROR_INTERNAL;

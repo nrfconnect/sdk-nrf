@@ -26,9 +26,8 @@ bt_gatt_read_params BleEnvironmentalDataProvider::sHumidityReadParams{};
 
 BleEnvironmentalDataProvider *GetProvider(bt_conn *conn)
 {
-	BLEBridgedDevice *device = BLEConnectivityManager::Instance().FindBLEBridgedDevice(conn);
-	VerifyOrReturnValue(device, nullptr);
-	return reinterpret_cast<BleEnvironmentalDataProvider *>(device->mProvider);
+	return static_cast<BleEnvironmentalDataProvider *>(
+		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
 }
 
 bt_uuid *BleEnvironmentalDataProvider::GetServiceUuid()
@@ -40,6 +39,7 @@ uint8_t BleEnvironmentalDataProvider::GattTemperatureNotifyCallback(bt_conn *con
 								    const void *data, uint16_t length)
 {
 	BleEnvironmentalDataProvider *provider = GetProvider(conn);
+
 	VerifyOrExit(provider, );
 	VerifyOrExit(data, );
 	VerifyOrExit(length == sizeof(mTemperatureValue), );
@@ -148,10 +148,10 @@ CHIP_ERROR BleEnvironmentalDataProvider::ParseHumidityCharacteristic(bt_gatt_dm 
 
 void BleEnvironmentalDataProvider::Subscribe()
 {
-	VerifyOrReturn(mDevice && mDevice->mConn, LOG_ERR("Invalid connection object"));
+	VerifyOrReturn(mDevice.mConn, LOG_ERR("Invalid connection object"));
 
 	if (CheckSubscriptionParameters(&mGattTemperatureSubscribeParams)) {
-		int err = bt_gatt_subscribe(mDevice->mConn, &mGattTemperatureSubscribeParams);
+		int err = bt_gatt_subscribe(mDevice.mConn, &mGattTemperatureSubscribeParams);
 		if (err) {
 			LOG_ERR("Subscribe to temperature characteristic failed with error %d", err);
 		}
@@ -160,7 +160,7 @@ void BleEnvironmentalDataProvider::Subscribe()
 	}
 
 	if (CheckSubscriptionParameters(&mGattHumiditySubscribeParams)) {
-		int err = bt_gatt_subscribe(mDevice->mConn, &mGattHumiditySubscribeParams);
+		int err = bt_gatt_subscribe(mDevice.mConn, &mGattHumiditySubscribeParams);
 		if (err) {
 			LOG_ERR("Subscribe to humidity characteristic failed with error %d", err);
 		}
@@ -178,14 +178,14 @@ void BleEnvironmentalDataProvider::Subscribe()
 
 void BleEnvironmentalDataProvider::Unsubscribe()
 {
-	VerifyOrReturn(mDevice && mDevice->mConn, LOG_ERR("Invalid connection object"));
+	VerifyOrReturn(mDevice.mConn, LOG_ERR("Invalid connection object"));
 
-	int err = bt_gatt_unsubscribe(mDevice->mConn, &mGattTemperatureSubscribeParams);
+	int err = bt_gatt_unsubscribe(mDevice.mConn, &mGattTemperatureSubscribeParams);
 	if (err) {
 		LOG_INF("Cannot unsubscribe from temperature characteristic (error %d)", err);
 	}
 
-	err = bt_gatt_unsubscribe(mDevice->mConn, &mGattHumiditySubscribeParams);
+	err = bt_gatt_unsubscribe(mDevice.mConn, &mGattHumiditySubscribeParams);
 	if (err) {
 		LOG_INF("Cannot unsubscribe from humidity characteristic (error %d)", err);
 	}
@@ -233,7 +233,7 @@ void BleEnvironmentalDataProvider::HumidityTimerTimeoutCallback(k_timer *timer)
 
 	BleEnvironmentalDataProvider *provider = reinterpret_cast<BleEnvironmentalDataProvider *>(timer->user_data);
 	VerifyOrReturn(provider, LOG_ERR("Invalid provider  object"));
-	VerifyOrReturn(provider->mDevice && provider->mDevice->mConn, LOG_ERR("Invalid connection object"));
+	VerifyOrReturn(provider->mDevice.mConn, LOG_ERR("Invalid connection object"));
 
 	DeviceLayer::PlatformMgr().ScheduleWork(ReadGATTHumidity, reinterpret_cast<intptr_t>(provider));
 }
@@ -242,7 +242,7 @@ void BleEnvironmentalDataProvider::ReadGATTHumidity(intptr_t context)
 {
 	BleEnvironmentalDataProvider *provider = reinterpret_cast<BleEnvironmentalDataProvider *>(context);
 
-	int err = bt_gatt_read(provider->mDevice->mConn, &sHumidityReadParams);
+	int err = bt_gatt_read(provider->mDevice.mConn, &sHumidityReadParams);
 	if (err) {
 		LOG_INF("GATT read failed (err %d)", err);
 	}

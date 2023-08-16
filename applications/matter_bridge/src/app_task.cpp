@@ -7,6 +7,8 @@
 #include "app_task.h"
 #include "app_config.h"
 #include "bridge_manager.h"
+#include "bridge_storage_manager.h"
+#include "bridged_devices_creator.h"
 #include "led_util.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
@@ -154,12 +156,22 @@ CHIP_ERROR AppTask::Init()
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
-	/* Initialize bridge manager */
-	BridgeManager::Instance().Init();
-
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-	BLEConnectivityManager::Instance().Init(sUuidServices, kUuidServicesNumber);
+	/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover devices loaded
+	 * from persistent storaged during the bridge init. */
+	err = BLEConnectivityManager::Instance().Init(sUuidServices, kUuidServicesNumber);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("BLEConnectivityManager initialization failed");
+		return err;
+	}
 #endif
+
+	/* Initialize bridge manager */
+	err = BridgeManager::Instance().Init(RestoreBridgedDevices);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("BridgeManager initialization failed");
+		return err;
+	}
 
 	/*
 	 * Add CHIP event handler and start CHIP thread.
@@ -359,4 +371,58 @@ void AppTask::DispatchEvent(const AppEvent &event)
 	} else {
 		LOG_INF("Event received with no handler. Dropping event.");
 	}
+}
+
+CHIP_ERROR AppTask::RestoreBridgedDevices()
+{
+	uint8_t count;
+	uint8_t indexes[BridgeManager::kMaxBridgedDevices] = { 0 };
+	size_t indexesCount = 0;
+
+	if (!BridgeStorageManager::Instance().LoadBridgedDevicesCount(count)) {
+		LOG_INF("No bridged devices to load from the storage.");
+		return CHIP_NO_ERROR;
+	}
+
+	if (!BridgeStorageManager::Instance().LoadBridgedDevicesIndexes(indexes, BridgeManager::kMaxBridgedDevices,
+									indexesCount)) {
+		return CHIP_NO_ERROR;
+	}
+
+	/* Load all devices based on the read count number. */
+	for (size_t i = 0; i < indexesCount; i++) {
+		uint16_t endpointId;
+		char label[MatterBridgedDevice::kNodeLabelSize] = { 0 };
+		size_t labelSize;
+		uint16_t deviceType;
+
+		if (!BridgeStorageManager::Instance().LoadBridgedDeviceEndpointId(endpointId, indexes[i])) {
+			return CHIP_ERROR_NOT_FOUND;
+		}
+
+		/* Ignore an error, as node label is optional, so it may not be found. */
+		BridgeStorageManager::Instance().LoadBridgedDeviceNodeLabel(label, sizeof(label), labelSize,
+									    indexes[i]);
+
+		if (!BridgeStorageManager::Instance().LoadBridgedDeviceType(deviceType, indexes[i])) {
+			return CHIP_ERROR_NOT_FOUND;
+		}
+
+		LOG_INF("Loaded bridged device on endpoint id %d from the storage", endpointId);
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+		bt_addr_le_t addr;
+
+		if (!BridgeStorageManager::Instance().LoadBtAddress(addr, indexes[i])) {
+			return CHIP_ERROR_NOT_FOUND;
+		}
+
+		BridgedDeviceCreator::CreateDevice(deviceType, label, addr, chip::Optional<uint8_t>(indexes[i]),
+						   chip::Optional<uint16_t>(endpointId));
+#else
+		BridgedDeviceCreator::CreateDevice(deviceType, label, chip::Optional<uint8_t>(indexes[i]),
+						   chip::Optional<uint16_t>(endpointId));
+#endif
+	}
+	return CHIP_NO_ERROR;
 }

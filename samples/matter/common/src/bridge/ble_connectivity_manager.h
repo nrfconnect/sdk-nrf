@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "ble_bridged_device.h"
 #include "bridged_device_data_provider.h"
 
+#include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 #include <zephyr/bluetooth/addr.h>
 #include <zephyr/bluetooth/conn.h>
@@ -16,12 +16,16 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/ring_buffer.h>
 
+/* Forward declarations. */
+struct BLEBridgedDevice;
+struct BLEBridgedDeviceProvider;
+
 class BLEConnectivityManager {
 public:
 	static constexpr uint16_t kScanTimeoutMs = 10000;
 	static constexpr uint16_t kMaxScannedDevices = 16;
 	/* One BT connection is reserved for the Matter service purposes. */
-	static constexpr uint16_t kMaxCreatedDevices = CONFIG_BT_MAX_CONN - 1;
+	static constexpr uint16_t kMaxConnectedDevices = CONFIG_BT_MAX_CONN - 1;
 	static constexpr uint8_t kMaxServiceUuids = CONFIG_BT_SCAN_UUID_CNT;
 
 private:
@@ -33,20 +37,20 @@ private:
 	public:
 		Recovery();
 		~Recovery() { CancelTimer(); }
-		void NotifyLostDevice(BLEBridgedDevice *device);
+		void NotifyProviderToRecover(BLEBridgedDeviceProvider *provider);
 
 	private:
-		BLEBridgedDevice *GetDevice();
-		bool PutDevice(BLEBridgedDevice *device);
+		BLEBridgedDeviceProvider *GetProvider();
+		bool PutProvider(BLEBridgedDeviceProvider *provider);
 		bool IsNeeded() { return !ring_buf_is_empty(&mRingBuf); }
 		void StartTimer() { k_timer_start(&mRecoveryTimer, K_MSEC(kRecoveryIntervalMs), K_NO_WAIT); }
 		void CancelTimer() { k_timer_stop(&mRecoveryTimer); }
-		size_t GetCurrentAmount() { return ring_buf_size_get(&mRingBuf) / sizeof(BLEBridgedDevice *); }
+		size_t GetCurrentAmount() { return ring_buf_size_get(&mRingBuf) / sizeof(BLEBridgedDeviceProvider *); }
 
 		static void TimerTimeoutCallback(k_timer *timer);
 
-		BLEBridgedDevice *mDevicesToRecover[BLEConnectivityManager::kMaxCreatedDevices];
-		BLEBridgedDevice *mCurrentDevice = nullptr;
+		BLEBridgedDeviceProvider *mProvidersToRecover[BLEConnectivityManager::kMaxConnectedDevices];
+		BLEBridgedDeviceProvider *mCurrentProvider = nullptr;
 		bool mRecoveryInProgress = false;
 		ring_buf mRingBuf;
 		uint8_t mIndexToRecover;
@@ -54,6 +58,8 @@ private:
 	};
 
 public:
+	using DeviceConnectedCallback = void (*)(bt_gatt_dm *discoveredData, bool discoverySucceeded, void *context);
+
 	struct ScannedDevice {
 		bt_addr_le_t mAddr;
 		bt_le_conn_param mConnParam;
@@ -61,13 +67,98 @@ public:
 
 	using ScanDoneCallback = void (*)(ScannedDevice *devices, uint8_t count, void *context);
 
+	/**
+	 * @brief Initialize BLEConnectivityManager instance.
+	 *
+	 * @param serviceUuids the address of array containing all Bluetooth service UUIDs to be handled by manager
+	 * @param serviceUuidsCount the number of services on the serviceUuids list
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
 	CHIP_ERROR Init(bt_uuid **serviceUuids, uint8_t serviceUuidsCount);
+
+	/**
+	 * @brief Start scanning for Bluetooth LE peripheral devices advertising service UUIDs passed in @ref Init
+	 * method.
+	 *
+	 * @param callback callback with results to be called once scan is done
+	 * @param context context that will be passed as an argument once calling @ref callback
+	 * @param scanTimeoutMs optional timeout on scan operation in ms (by default 10 s)
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
 	CHIP_ERROR Scan(ScanDoneCallback callback, void *context, uint32_t scanTimeoutMs = kScanTimeoutMs);
+
+	/**
+	 * @brief Stop scanning operation.
+	 *
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
 	CHIP_ERROR StopScan();
-	CHIP_ERROR Connect(uint8_t index, BLEBridgedDevice::DeviceConnectedCallback callback, void *context,
-			   bt_uuid *serviceUuid);
-	CHIP_ERROR Reconnect();
-	BLEBridgedDevice *FindBLEBridgedDevice(bt_conn *conn);
+
+	/**
+	 * @brief Create connection to the Bluetooth LE device, managed by BLEBridgedDeviceProvider object. It is
+	 * necessary to first add the provider to the manager's list using @ref AddBLEProvider method.
+	 *
+	 * @param provider address of a valid provider object
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR Connect(BLEBridgedDeviceProvider *provider);
+
+	/**
+	 * @brief Create connection to the first Bluetooth LE device on the @ref mProvidersToRecover recovery list.
+	 *
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR Reconnect(BLEBridgedDeviceProvider *provider);
+
+	/**
+	 * @brief Get BLE provider that uses the specified connection object.
+	 *
+	 * @param address Bluetooth LE address used by the provider.
+	 * @return address of provider on success
+	 * @return nullptr on failure
+	 */
+	BLEBridgedDeviceProvider *FindBLEProvider(bt_addr_le_t address);
+
+	/**
+	 * @brief Add the BLE provider's address to the manager's list.
+	 *
+	 * @param provider address of a valid provider object to be added
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR AddBLEProvider(BLEBridgedDeviceProvider *provider);
+
+	/**
+	 * @brief Remove the BLE provider from the manager's list.
+	 *
+	 * @param address Bluetooth LE address used by the provider.
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
+	CHIP_ERROR RemoveBLEProvider(bt_addr_le_t address);
+
+	/**
+	 * @brief Gets Bluetooth LE address of a device that was scanned before.
+	 *
+	 * @param address Bluetooth LE address to store the obtained address
+	 * @param index index of Bluetooth LE device on the scanned devices list
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code if device is not present or argument is invalid
+	 */
+	CHIP_ERROR GetScannedDeviceAddress(bt_addr_le_t *address, uint8_t index);
+
+	/**
+	 * @brief Recover connection with the specified BLE provider. It is
+	 * necessary to first add the provider to the manager's list using @ref AddBLEProvider method.
+	 *
+	 * @param provider address of a valid provider object to be recovered.
+	 */
+	void Recover(BLEBridgedDeviceProvider *provider) { mRecovery.NotifyProviderToRecover(provider); }
 
 	static void FilterMatch(bt_scan_device_info *device_info, bt_scan_filter_match *filter_match, bool connectable);
 	static void ScanTimeoutCallback(k_timer *timer);
@@ -86,12 +177,14 @@ public:
 	static void ReScanCallback(ScannedDevice *devices, uint8_t count, void *context);
 
 private:
+	bt_le_conn_param *GetScannedDeviceConnParams(bt_addr_le_t address);
+
 	bool mScanActive;
 	k_timer mScanTimer;
 	uint8_t mScannedDevicesCounter;
-	uint8_t mCreatedDevicesCounter;
+	uint8_t mConnectedProvidersCounter;
 	ScannedDevice mScannedDevices[kMaxScannedDevices];
-	BLEBridgedDevice mCreatedDevices[kMaxCreatedDevices];
+	BLEBridgedDeviceProvider *mConnectedProviders[kMaxConnectedDevices];
 	bt_uuid *mServicesUuid[kMaxServiceUuids];
 	uint8_t mServicesUuidCount;
 	ScanDoneCallback mScanDoneCallback;

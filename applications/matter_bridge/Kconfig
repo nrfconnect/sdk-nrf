@@ -46,7 +46,7 @@ config BT_SCAN
 
 # Configure how many Bluetooth LE devices the Matter bridge can support (the final number is given value - 1, as 1 connection is used for the Matter Bluetooth LE service).
 config BT_MAX_CONN
-	default 2
+	default 3
 
 config BT_SCAN_FILTER_ENABLE
 	default y
