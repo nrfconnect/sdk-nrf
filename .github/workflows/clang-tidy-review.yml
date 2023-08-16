@@ -12,23 +12,15 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
-        if: github.event_name == 'pull_request_target'
-        with:
-          ref: ${{ github.event.pull_request.head.sha  }} # Checkout the PR's head sha instead of the target branch's sha
-          path: ncs/nrf
-          fetch-depth: 0
-
-      - name: Checkout the code
-        uses: actions/checkout@v2
-        if: github.event_name != 'pull_request_target'
         with:
           path: ncs/nrf
-          fetch-depth: 0
+          fetch-depth: 2
 
-      - name: Install jq
+      - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install jq
+          sudo apt-get install -y jq
+          sudo apt-get install -y clang-tidy
 
       # The docker image comes pre-initialized with west dependencies. We want to do west update ourselves to to be sure that we get the latest changes in all repos.
       # The docker image is built nightly. So it may contain slightly out of date repos.
@@ -40,24 +32,30 @@ jobs:
           cd ncs
           west update --narrow -o=--depth=1
 
-      # Download the quarantine file base branch. This is needed to build and run the tests.
-      - name: Download quarentine file from nrf (PR only)
-        if: github.event_name == 'pull_request_target'
-        run: |
-          wget https://raw.githubusercontent.com/balaji-nordic/sdk-nrf/master/scripts/quarantine_downstream.yaml -P ncs/nrf/scripts/
-
       - name: Build native_posix tests (via sonarcloud build wrapper)
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
           ncs/zephyr/scripts/twister -b -v -i -T ncs/nrf/applications/asset_tracker_v2 -p native_posix --quarantine-list ncs/nrf/scripts/quarantine_downstream.yaml
 
-      - name: Use jq to combine compile_commands.json files
+      #- name: Use jq to combine compile_commands.json files
+      #  run: |
+      #    jq -s 'map(.[])' twister-out/**/compile_commands.json > compile_commands.json
+
+      - name: Analyze
+        shell: bash
+        working-directory: ncs/nrf/
         run: |
-          jq -s 'map(.[])' twister-out/**/compile_commands.json > compile_commands.json
+          git diff -U0 HEAD^ | clang-tidy-diff -p1 -path ../../nrf/twister-out/native_posix/applications.asset_tracker_v2.aws -export-fixes clang-tidy-result/fixes.yml
 
-      - uses: ZedThree/clang-tidy-review@v0.12.0
+      - name: Run clang-tidy-pr-comments action
+        uses: platisd/clang-tidy-pr-comments@master
         with:
-          split_workflow: true
-
-      - uses: ZedThree/clang-tidy-review/upload@v0.12.0
+          # The GitHub token (or a personal access token)
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # The path to the clang-tidy fixes generated previously
+          clang_tidy_fixes: ncs/nrf/clang-tidy-result/fixes.yml
+          # Optionally set the number of comments per review
+          # to avoid GitHub API timeouts for heavily loaded
+          # pull requests
+          suggestions_per_comment: 10
