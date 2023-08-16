@@ -18,9 +18,8 @@ jobs:
 
       - name: Install deps
         run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-          sudo apt-get install -y clang-tidy
+          apt-get update
+          apt-get install -y jq clang-tidy ruby-full
 
       # The docker image comes pre-initialized with west dependencies. We want to do west update ourselves to to be sure that we get the latest changes in all repos.
       # The docker image is built nightly. So it may contain slightly out of date repos.
