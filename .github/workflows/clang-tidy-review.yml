@@ -45,6 +45,7 @@ jobs:
         shell: bash
         working-directory: ncs/nrf/
         run: |
+          mkdir clang-tidy-result
           git diff -U0 HEAD^ | clang-tidy-diff -p1 -path ../../twister-out/native_posix/applications.asset_tracker_v2.aws -export-fixes clang-tidy-result/fixes.yml
 
       - name: Run clang-tidy-pr-comments action
