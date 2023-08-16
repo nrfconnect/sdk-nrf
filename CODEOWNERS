@@ -247,7 +247,7 @@ Kconfig*                                  @tejlmand
 /tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @ludvigsj
 /tests/bluetooth/iso/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey @Frodevan
-/tests/crypto/                            @torsteingrindvik @magnev
+/tests/crypto/                            @stephen-nordic @magnev
 /tests/drivers/flash_patch/               @oyvindronningstad
 /tests/drivers/fprotect/                  @oyvindronningstad
 /tests/drivers/lpuart/                    @nordic-krch
@@ -305,6 +305,6 @@ Kconfig*                                  @tejlmand
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
-/tests/tfm/                               @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky @torsteingrindvik @magnev
+/tests/tfm/                               @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi
