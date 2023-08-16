@@ -9,9 +9,10 @@ jobs:
   build:
     name: Sonar cloud analysis
     runs-on: ubuntu-latest
-    container: nordicplayground/nrfconnect-sdk:main
+    container: zephyrprojectrtos/ci:v0.26.4
     env:
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
+      CMAKE_PREFIX_PATH: /opt/toolchains
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -31,7 +32,9 @@ jobs:
       # Install more dependencies that are not part of the docker image but are needed by the workflow
       - name: Install more deps
         run: |
-          apt install -y lcov curl
+          apt-get update
+          apt install -y lcov curl ruby-full
+          pip3 install zcbor==0.5.1
 
       - name: Install sonar-scanner and build-wrapper
         uses: sonarsource/sonarcloud-github-c-cpp@v1.3.2
