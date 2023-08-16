@@ -179,6 +179,7 @@ static void advertising_process(struct k_work *work)
 	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
 	ERR_CHK(ret);
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Advertising successfully started");
 }
 

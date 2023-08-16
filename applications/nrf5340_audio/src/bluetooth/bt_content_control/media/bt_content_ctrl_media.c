@@ -119,6 +119,7 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
 	}
 
 	mcc_peer[idx].mcp_mcs_disc_status = FINISHED;
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Discovery of MCS finished");
 
 	ret = bt_content_ctrl_media_state_update(conn);

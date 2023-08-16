@@ -171,6 +171,7 @@ int bt_mgmt_scan_for_conn_start(struct bt_le_scan_param *scan_param, char const 
 	bt_foreach_bond(BT_ID_DEFAULT, bond_check, NULL);
 
 	if (bonded_num >= CONFIG_BT_MAX_PAIRED) {
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("All bonded slots filled, will not accept new devices");
 	}
 

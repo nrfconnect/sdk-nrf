@@ -355,6 +355,7 @@ static void stream_start_cb(struct bt_bap_stream *stream)
 
 static void stream_released_cb(struct bt_bap_stream *stream)
 {
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream %p released", stream);
 }
 

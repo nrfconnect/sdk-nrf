@@ -476,6 +476,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream, const struct bt_c
 	}
 
 	if (stream->ep->dir == BT_AUDIO_DIR_SINK) {
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("%s sink stream configured", headsets[channel_index].ch_name);
 	} else if (stream->ep->dir == BT_AUDIO_DIR_SOURCE) {
 		LOG_INF("%s source stream configured", headsets[channel_index].ch_name);
@@ -621,6 +622,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 		headsets[channel_index].seq_num = 0;
 	}
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream %p started", (void *)stream);
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn);
@@ -641,6 +643,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	int ret;
 	uint8_t channel_index;
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream %p stopped. Reason %d", (void *)stream, reason);
 
 	ret = channel_index_get(stream->conn, &channel_index);
@@ -888,6 +891,7 @@ static void discover_sink_cb(struct bt_conn *conn, int err, enum bt_audio_dir di
 			LOG_ERR("Could not configure sink stream");
 		}
 	} else {
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_WRN("No valid codec capability found for %s headset sink",
 			headsets[channel_index].ch_name);
 	}

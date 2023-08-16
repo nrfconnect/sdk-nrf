@@ -18,10 +18,12 @@
 LOG_MODULE_REGISTER(fw_info, CONFIG_FW_INFO_LOG_LEVEL);
 
 static const char COMPILE_DATE[] = "@NRF5340_AUDIO_CORE_APP_COMP_DATE@";
+/* NOTE: The string below is used by the Nordic CI system */
 static const char NRF5340_CORE[] = "nRF5340 Audio nRF5340 Audio DK cpuapp";
 
 int fw_info_app_print(void)
 {
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF(COLOR_GREEN "\r\n\t %s \
 			    \r\n\t NCS base version: %s \
 			    \r\n\t Cmake run : %s" COLOR_RESET,
@@ -41,12 +43,14 @@ int fw_info_app_print(void)
 		if (ret) {
 			return ret;
 		}
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF(COLOR_CYAN "HEADSET left device" COLOR_RESET);
 	} else if (channel == AUDIO_CH_R) {
 		ret = log_set_tag(CH_R_TAG);
 		if (ret) {
 			return ret;
 		}
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF(COLOR_CYAN "HEADSET right device" COLOR_RESET);
 	} else {
 		__ASSERT(false, "Unknown channel");

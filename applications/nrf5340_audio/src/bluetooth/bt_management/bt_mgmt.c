@@ -106,6 +106,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 
 	/* ACL connection established */
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Connected: %s", addr);
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL) && (num_conn < MAX_CONN_NUM)) {
@@ -157,6 +158,7 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
+	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Disconnected: %s (reason 0x%02x)", addr, reason);
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {

@@ -98,6 +98,7 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 	}
 
 	if ((rx_stats[channel_index].recv_cnt % 100) == 0 && rx_stats[channel_index].recv_cnt) {
+		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_DBG("ISO RX SDUs: Ch: %d Total: %d Bad: %d Size mismatch %d", channel_index,
 			rx_stats[channel_index].recv_cnt, rx_stats[channel_index].bad_frame_cnt,
 			rx_stats[channel_index].data_size_mismatch_cnt);
@@ -479,6 +480,7 @@ static void le_audio_msg_sub_thread(void)
 					break;
 				}
 
+				/* NOTE: The string below is used by the Nordic CI system */
 				LOG_INF("Restarted scanning for broadcaster");
 			}
 
