@@ -351,6 +351,10 @@ Cellular samples (renamed from nRF9160 samples)
 
    * Updated credentials for the HTTPS connection.
 
+* :ref:`https_client` sample:
+
+   * Updated the TF-M Mbed TLS overlay to fix an issue when connecting to the server.
+
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
   * Added:
