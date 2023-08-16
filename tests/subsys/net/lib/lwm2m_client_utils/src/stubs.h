@@ -103,6 +103,7 @@ DECLARE_FAKE_VALUE_FUNC(int, at_params_unsigned_short_get, const struct at_param
 DECLARE_FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd_async, nrf_modem_at_resp_handler_t,
 			       const char *, ...);
 DECLARE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void *, socklen_t);
 
 /* List of fakes used by this unit tester */
 #define DO_FOREACH_FAKE(FUNC) do { \
@@ -175,6 +176,7 @@ DECLARE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t
 	FUNC(at_params_unsigned_short_get)              \
 	FUNC(nrf_modem_at_cmd_async)                    \
 	FUNC(at_params_list_init)                       \
+	FUNC(z_impl_zsock_setsockopt)                   \
 	} while (0)
 
 #endif

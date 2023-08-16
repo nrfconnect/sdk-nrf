@@ -108,3 +108,4 @@ DEFINE_FAKE_VALUE_FUNC(int, at_params_unsigned_short_get, const struct at_param_
 DEFINE_FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd_async, nrf_modem_at_resp_handler_t,
 			      const char *, ...);
 DEFINE_FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);
+DEFINE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void *, socklen_t);
