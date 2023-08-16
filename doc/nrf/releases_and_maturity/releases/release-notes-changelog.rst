@@ -101,11 +101,16 @@ See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samp
 Matter
 ------
 
-* Added a page about :ref:`ug_matter_device_optimizing_memory`.
 * Fixed an IPC crash on nRF5340 when Zephyr's main thread takes a long time.
 * Disabled OpenThread shell by default in Matter over Thread samples.
 * Enabled :kconfig:option:`CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option by default, including for builds without factory data support.
   The firmware now erases all flash pages in the non-volatile storage during a factory reset, instead of just clearing Matter-related settings.
+
+* Added:
+
+  * Page about :ref:`ug_matter_device_optimizing_memory`.
+  * Shell commands for printing and resetting the peak usage of critical system resources used by Matter.
+    These shell commands are available when both :kconfig:option:`CHIP_LIB_SHELL` and :kconfig:option:`CHIP_STATISTICS` Kconfig options are set.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
