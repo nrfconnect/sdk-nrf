@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           source ncs/zephyr/zephyr-env.sh
-          ncs/zephyr/scripts/twister -b -v -i -T ncs/nrf/applications/asset_tracker_v2 -p native_posix --quarantine-list ncs/nrf/scripts/quarantine_downstream.yaml
+          ncs/zephyr/scripts/twister -b -v -i -s applications.asset_tracker_v2.aws -T ncs/nrf/applications/asset_tracker_v2 -p native_posix
 
       #- name: Use jq to combine compile_commands.json files
       #  run: |
@@ -45,7 +45,7 @@ jobs:
         shell: bash
         working-directory: ncs/nrf/
         run: |
-          git diff -U0 HEAD^ | clang-tidy-diff -p1 -path ../../nrf/twister-out/native_posix/applications.asset_tracker_v2.aws -export-fixes clang-tidy-result/fixes.yml
+          git diff -U0 HEAD^ | clang-tidy-diff -p1 -path ../../twister-out/native_posix/applications.asset_tracker_v2.aws -export-fixes clang-tidy-result/fixes.yml
 
       - name: Run clang-tidy-pr-comments action
         uses: platisd/clang-tidy-pr-comments@master
