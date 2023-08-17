@@ -28,6 +28,15 @@ NRF_RPC_GROUP_DEFINE(entropy_group, "nrf_sample_entropy", &entropy_group_tr, NUL
 
 static const struct device *entropy = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 
+static void entropy_print(const uint8_t *buffer, size_t length)
+{
+	for (size_t i = 0; i < length; i++) {
+		printk("  0x%02x", buffer[i]);
+	}
+
+	printk("\n");
+}
+
 static void rsp_error_code_send(const struct nrf_rpc_group *group, int err_code)
 {
 	struct nrf_rpc_cbor_ctx ctx;
@@ -117,6 +126,9 @@ static void entropy_get_handler(const struct nrf_rpc_group *group, struct nrf_rp
 	}
 
 	err = entropy_get_entropy(entropy, buf, length);
+	if (!err) {
+		entropy_print(buf, length);
+	}
 
 	switch (type) {
 	case CALL_TYPE_STANDARD:

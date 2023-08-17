@@ -14,20 +14,23 @@
 
 static uint8_t buffer[BUFFER_LENGTH];
 
+static void entropy_print(const uint8_t *buffer, size_t length)
+{
+	for (size_t i = 0; i < length; i++) {
+		printk("  0x%02x", buffer[i]);
+	}
+
+	printk("\n");
+}
+
 static void result_callback(int result, uint8_t *buffer, size_t length)
 {
-	size_t i;
-
 	if (result) {
 		printk("Entropy remote get failed: %d\n", result);
 		return;
 	}
 
-	for (i = 0; i < length; i++) {
-		printk("  0x%02x", buffer[i]);
-	}
-
-	printk("\n");
+	entropy_print(buffer, length);
 }
 
 int main(void)
@@ -53,11 +56,7 @@ int main(void)
 			continue;
 		}
 
-		for (int i = 0; i < BUFFER_LENGTH; i++) {
-			printk("  0x%02x", buffer[i]);
-		}
-
-		printk("\n");
+		entropy_print(buffer, ARRAY_SIZE(buffer));
 
 		k_sleep(K_MSEC(2000));
 
@@ -67,11 +66,7 @@ int main(void)
 			continue;
 		}
 
-		for (int i = 0; i < BUFFER_LENGTH; i++) {
-			printk("  0x%02x", buffer[i]);
-		}
-
-		printk("\n");
+		entropy_print(buffer, ARRAY_SIZE(buffer));
 
 		k_sleep(K_MSEC(2000));
 
