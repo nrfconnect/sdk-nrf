@@ -1,0 +1,6 @@
+tests:
+  bluetooth.mesh.light_hue:
+    platform_allow: native_posix qemu_cortex_m3
+    tags: bluetooth ci_build
+    integration_platforms:
+      - qemu_cortex_m3

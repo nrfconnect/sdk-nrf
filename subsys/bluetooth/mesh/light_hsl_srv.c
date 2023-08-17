@@ -288,10 +288,6 @@ static int range_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 	hue.min = net_buf_simple_pull_le16(buf);
 	hue.max = net_buf_simple_pull_le16(buf);
-	if (hue.max < hue.min) {
-		return -EINVAL;
-	}
-
 
 	sat.min = net_buf_simple_pull_le16(buf);
 	sat.max = net_buf_simple_pull_le16(buf);

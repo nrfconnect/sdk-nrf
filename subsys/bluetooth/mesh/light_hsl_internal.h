@@ -53,7 +53,7 @@ light_hue_sat_range_buf_pull(struct net_buf_simple *buf,
 
 void bt_mesh_light_hue_srv_set(struct bt_mesh_light_hue_srv *srv,
 				   struct bt_mesh_msg_ctx *ctx,
-				   const struct bt_mesh_light_hue *set,
+				   struct bt_mesh_light_hue *set,
 				   struct bt_mesh_light_hue_status *status);
 
 void bt_mesh_light_hue_srv_default_set(struct bt_mesh_light_hue_srv *srv,

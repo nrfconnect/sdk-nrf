@@ -19,6 +19,9 @@ LOG_MODULE_REGISTER(bt_mesh_light_hue_srv);
 #define LVL_TO_HUE(_lvl) ((_lvl) + 32768)
 #define HUE_TO_LVL(_hue) ((_hue) - 32768)
 
+#define AVG(a, b) (abs((a) - (b)) / 2)
+#define CLAMP_INV(val, low, high) (((val) < AVG(low, high)) ? MIN(val, high) : MAX(val, low))
+
 struct settings_data {
 	struct bt_mesh_light_hsl_range range;
 	uint16_t dflt;
@@ -65,6 +68,40 @@ static void encode_status(struct net_buf_simple *buf,
 	}
 }
 
+static uint16_t hue_clamp(struct bt_mesh_light_hue_srv *srv, uint16_t target)
+{
+	if (srv->range.max < srv->range.min) {
+		return CLAMP_INV(target, srv->range.min, srv->range.max);
+	} else {
+		return CLAMP(target, srv->range.min, srv->range.max);
+	}
+}
+
+static struct bt_mesh_model_transition *transition_get(struct bt_mesh_light_hue_srv *srv,
+						       struct bt_mesh_model_transition *transition,
+						       struct net_buf_simple *buf)
+{
+	if (buf->len == 2) {
+		model_transition_buf_pull(buf, transition);
+		return transition;
+	} else if (srv->hsl && bt_mesh_dtt_srv_transition_get(srv->hsl->model, transition)) {
+		/* According to the Bluetooth Mesh Model specification,
+		 * section 6.4.7.2.2: The Hue Server shall use the Default
+		 * Transition Time server on the HSL element if no transition
+		 * time is set.
+		 */
+		return transition;
+	} else if (bt_mesh_dtt_srv_transition_get(srv->model, transition)) {
+		/* Unspecified behavior in spec: We'll fall back to the
+		 * transition server on the server's own element, if any, to
+		 * stay consistent with other models.
+		 */
+		return transition;
+	}
+
+	return NULL;
+}
+
 static int hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		   struct net_buf_simple *buf, bool ack)
 {
@@ -76,9 +113,7 @@ static int hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 	struct bt_mesh_light_hue_status status = { 0 };
 	struct bt_mesh_model_transition transition;
-	struct bt_mesh_light_hue set = {
-		.transition = &transition,
-	};
+	struct bt_mesh_light_hue set;
 
 	uint8_t tid;
 
@@ -86,34 +121,21 @@ static int hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	 * in macro:
 	 */
 	set.lvl = net_buf_simple_pull_le16(buf);
-	set.lvl = CLAMP(set.lvl, srv->range.min, srv->range.max);
 	tid = net_buf_simple_pull_u8(buf);
 
 	if (tid_check_and_update(&srv->prev_transaction, tid, ctx) != 0) {
-		/* If this is the same transaction, we don't need to send it
-		 * to the app, but we still have to respond with a status.
-		 */
-		srv->handlers->get(srv, NULL, &status);
-		(void)bt_mesh_light_hue_srv_pub(srv, ctx, &status);
+		if (ack) {
+			/* If this is the same transaction, we don't need to send it
+			 * to the app, but we still have to respond with a status.
+			 */
+			srv->handlers->get(srv, NULL, &status);
+			(void)bt_mesh_light_hue_srv_pub(srv, ctx, &status);
+		}
+
 		return 0;
 	}
 
-	if (buf->len == 2) {
-		model_transition_buf_pull(buf, &transition);
-	} else if (srv->hsl) {
-		/* According to the Bluetooth Mesh Model specification,
-		 * section 6.4.7.2.2: The Hue Server shall use the Default
-		 * Transition Time server on the HSL element if no transition
-		 * time is set.
-		 */
-		bt_mesh_dtt_srv_transition_get(srv->hsl->model, &transition);
-	} else {
-		/* Unspecified behavior in spec: We'll fall back to the
-		 * transition server on the server's own element, if any, to
-		 * stay consistent with other models.
-		 */
-		bt_mesh_dtt_srv_transition_get(srv->model, &transition);
-	}
+	set.transition = transition_get(srv, &transition, buf);
 
 	bt_mesh_light_hue_srv_set(srv, ctx, &set, &status);
 
@@ -201,21 +223,19 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 {
 	struct bt_mesh_light_hue_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_light_hue_srv, lvl);
-	struct bt_mesh_light_hue set;
+	struct bt_mesh_light_hue set = {
+		.lvl = LVL_TO_HUE(lvl_set->lvl),
+		.transition = lvl_set->transition,
+	};
 	struct bt_mesh_light_hue_status status = { 0 };
 
-	uint16_t hue = LVL_TO_HUE(lvl_set->lvl);
+	if (lvl_set->new_transaction) {
+		bt_mesh_light_hue_srv_set(srv, ctx, &set, &status);
 
-	set.lvl = hue;
-	set.transition = lvl_set->transition;
-	srv->handlers->set(srv, NULL, &set, &status);
-	srv->transient.last = hue;
-
-	if (!IS_ENABLED(CONFIG_EMDS)) {
-		store(srv);
+		(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
+	} else if (rsp) {
+		srv->handlers->get(srv, NULL, &status);
 	}
-
-	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
 	if (rsp) {
 		rsp->current = HUE_TO_LVL(status.current);
@@ -232,18 +252,31 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_light_hue_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_light_hue_srv, lvl);
 	struct bt_mesh_light_hue_status status = { 0 };
-	struct bt_mesh_light_hue_delta delta = {
-		.delta = lvl_delta->delta,
-		.new_transaction = lvl_delta->new_transaction,
+	struct bt_mesh_light_hue set = {
 		.transition = lvl_delta->transition,
 	};
+	uint16_t start;
 
-	srv->handlers->delta_set(srv, ctx, &delta, &status);
-	srv->transient.last = status.target;
-
-	if (!IS_ENABLED(CONFIG_EMDS)) {
-		store(srv);
+	if (lvl_delta->new_transaction) {
+		srv->handlers->get(srv, NULL, &status);
+		start = status.current;
+	} else {
+		start = srv->transient.last;
 	}
+
+	int32_t lvl = (int32_t)start + lvl_delta->delta;
+
+	if ((srv->range.min == BT_MESH_LIGHT_HSL_MIN &&
+	     srv->range.max == BT_MESH_LIGHT_HSL_MAX) ||
+	    srv->range.max < srv->range.min) {
+		/* Use arithmetic conversion rules for wrapping around the target value. */
+		set.lvl = (uint16_t)lvl;
+	} else {
+		/* Because `lvl` is int32_t, do clamping here. */
+		set.lvl = CLAMP(lvl, srv->range.min, srv->range.max);
+	}
+
+	bt_mesh_light_hue_srv_set(srv, ctx, &set, &status);
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
@@ -254,6 +287,74 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	}
 }
 
+static void move_set_infinite(struct bt_mesh_light_hue_srv *srv,
+			      struct bt_mesh_msg_ctx *ctx,
+			      const struct bt_mesh_lvl_move_set *lvl_move,
+			      struct bt_mesh_light_hue_status *status)
+{
+	const struct bt_mesh_light_hue_move move = {
+		.delta = lvl_move->delta,
+		.transition = lvl_move->transition,
+	};
+
+	srv->handlers->move_set(srv, ctx, &move, status);
+	srv->transient.last = status->target;
+
+	if (!IS_ENABLED(CONFIG_EMDS)) {
+		store(srv);
+	}
+}
+
+static void move_set_finite(struct bt_mesh_light_hue_srv *srv,
+			    struct bt_mesh_msg_ctx *ctx,
+			    const struct bt_mesh_lvl_move_set *lvl_move,
+			    struct bt_mesh_light_hue_status *status)
+{
+	uint32_t target;
+	struct bt_mesh_light_hue set = {};
+	struct bt_mesh_model_transition transition;
+
+	srv->handlers->get(srv, NULL, status);
+
+	if (lvl_move->delta > 0) {
+		target = srv->range.max;
+	} else if (lvl_move->delta < 0) {
+		target = srv->range.min;
+	} else {
+		target = status->current;
+	}
+
+	set.lvl = target;
+
+	if (lvl_move->delta != 0 && lvl_move->transition) {
+		uint32_t current;
+
+		current = status->current;
+
+		if (srv->range.max < srv->range.min) {
+			target += target <= srv->range.max ? (BT_MESH_LIGHT_HSL_MAX + 1) : 0;
+			current += current <= srv->range.max ? (BT_MESH_LIGHT_HSL_MAX + 1) : 0;
+		}
+
+		uint32_t distance = abs(target - current);
+		uint32_t time_to_edge = ((uint64_t)distance *
+					 (uint64_t)lvl_move->transition->time) /
+					abs(lvl_move->delta);
+
+		LOG_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
+		       (uint32_t)distance, lvl_move->delta,
+		       lvl_move->transition->time, time_to_edge);
+
+		if (time_to_edge > 0) {
+			transition.delay = lvl_move->transition->delay;
+			transition.time = time_to_edge;
+			set.transition = &transition;
+		}
+	}
+
+	bt_mesh_light_hue_srv_set(srv, ctx, &set, status);
+}
+
 static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 			 struct bt_mesh_msg_ctx *ctx,
 			 const struct bt_mesh_lvl_move_set *lvl_move,
@@ -262,16 +363,14 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_light_hue_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_light_hue_srv, lvl);
 	struct bt_mesh_light_hue_status status = { 0 };
-	const struct bt_mesh_light_hue_move move = {
-		.delta = lvl_move->delta,
-		.transition = lvl_move->transition,
-	};
 
-	srv->handlers->move_set(srv, ctx, &move, &status);
-	srv->transient.last = status.target;
-
-	if (!IS_ENABLED(CONFIG_EMDS)) {
-		store(srv);
+	/* If Range is [0, 0xFFFF], the move continues until stopped by Generic Move Set message
+	 * with Delta value set to 0.
+	 */
+	if (srv->range.min == BT_MESH_LIGHT_HSL_MIN && srv->range.max == BT_MESH_LIGHT_HSL_MAX) {
+		move_set_infinite(srv, ctx, lvl_move, &status);
+	} else {
+		move_set_finite(srv, ctx, lvl_move, &status);
 	}
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
@@ -419,9 +518,36 @@ const struct bt_mesh_model_cb _bt_mesh_light_hue_srv_cb = {
 
 void bt_mesh_light_hue_srv_set(struct bt_mesh_light_hue_srv *srv,
 			       struct bt_mesh_msg_ctx *ctx,
-			       const struct bt_mesh_light_hue *set,
+			       struct bt_mesh_light_hue *set,
 			       struct bt_mesh_light_hue_status *status)
 {
+	set->lvl = hue_clamp(srv, set->lvl);
+
+	if (set->transition) {
+		/* Pull current value if it is not pulled yet. */
+		srv->handlers->get(srv, NULL, status);
+
+		uint32_t target = set->lvl;
+		uint32_t current = status->current;
+		int sign;
+
+		if (srv->range.max < srv->range.min) {
+			target += target <= srv->range.max ? (BT_MESH_LIGHT_HSL_MAX + 1) : 0;
+			current += current <= srv->range.max ? (BT_MESH_LIGHT_HSL_MAX + 1) : 0;
+		}
+
+		sign = target >= current ? 1 : (-1);
+
+		/* Use the shortest path when range is [0, 0xFFFF]. */
+		if (srv->range.min == BT_MESH_LIGHT_HSL_MIN &&
+		    srv->range.max == BT_MESH_LIGHT_HSL_MAX &&
+		    abs(target - current) >= 32768) {
+			sign *= (-1);
+		}
+
+		set->direction = sign;
+	}
+
 	srv->transient.last = set->lvl;
 	srv->handlers->set(srv, ctx, set, status);
 
