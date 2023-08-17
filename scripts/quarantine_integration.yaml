@@ -8,6 +8,11 @@
     - sample.matter.thermostat.debug
     - sample.matter.light_bulb.persistent_subscriptions
     - sample.matter.light_switch.persistent_subscriptions
+    - sample.matter.light_bulb.release
+    - sample.matter.light_switch.release
+    - sample.matter.template.release
+    - sample.matter.thermostat.release
+    - sample.matter.window_cover.release
   platforms:
     - nrf52840dk_nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -20,6 +25,11 @@
     - sample.matter.light_bulb.ffs
     - sample.matter.light_bulb.persistent_subscriptions
     - sample.matter.light_switch.persistent_subscriptions
+    - sample.matter.light_bulb.release
+    - sample.matter.light_switch.release
+    - sample.matter.template.release
+    - sample.matter.thermostat.release
+    - sample.matter.window_cover.release
   platforms:
     - nrf5340dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -35,6 +45,10 @@
     - sample.matter.lock.release
     - sample.matter.light_bulb.persistent_subscriptions
     - sample.matter.light_switch.persistent_subscriptions
+    - sample.matter.light_bulb.release
+    - sample.matter.light_switch.release
+    - sample.matter.template.release
+    - sample.matter.thermostat.release
   platforms:
     - nrf7002dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
