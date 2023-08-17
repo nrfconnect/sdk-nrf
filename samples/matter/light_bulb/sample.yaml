@@ -2,6 +2,14 @@ sample:
   description: Matter Light Bulb example
   name: Matter Light Bulb
 tests:
+  sample.matter.light_bulb.release:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf7002dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
   sample.matter.light_bulb.ffs:
     build_only: true
     extra_args: >
