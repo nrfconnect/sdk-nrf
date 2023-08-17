@@ -364,6 +364,8 @@
 .. _`Dictionary-based Logging`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/services/logging/index.html#dictionary-based-logging
 .. _`Run-time Filtering`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/services/logging/index.html#run-time-filtering
 
+.. _`Capabilities for the LE Audio Controller Subsystem for nRF5340`: https://developer.nordicsemi.com/nRF_Connect_SDK/nrf5340_audio/bt_ll_acs_nrf53/bt_ll_acs_nrf53_capabilities.pdf
+
 .. ### Source: www.nordicsemi.com
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
