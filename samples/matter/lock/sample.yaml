@@ -29,6 +29,7 @@ tests:
     build_only: true
     extra_args: SHIELD=nrf21540ek
     integration_platforms:
+      - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
   sample.matter.lock.switchable_thread.nrf7002_ek:
