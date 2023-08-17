@@ -74,7 +74,7 @@ Kconfig*                                  @tejlmand
 /drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @rado17 @rlubos
 /drivers/wifi/nrf700x/osal/fw_if/umac_if/inc/fw/  @udaynordic @srkanordic
 /drivers/wifi/nrf700x/osal/hw_if/hal/inc/fw/  @udaynordic @srkanordic
-/dts/                                     @mbolivar-nordic @anangl
+/dts/                                     @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
@@ -187,7 +187,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/sta/                        @D-Triveni @bama-nordic
 /samples/wifi/sr_coex/                    @muraliThokala @bama-nordic
 /samples/wifi/twt/                        @chiranjeevi2776 @krish2718
-/scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
+/scripts/                                 @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @MarekPieta
 /scripts/tools-versions-*.txt             @tejlmand @grho @shanthanordic @ihansse
 /scripts/requirements-*.txt               @tejlmand @grho @shanthanordic @ihansse
