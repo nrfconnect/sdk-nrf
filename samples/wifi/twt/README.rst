@@ -156,6 +156,19 @@ Testing
     [00:00:07.720,245] <inf> sta: MFP: UNKNOWN
     [00:00:07.720,245] <inf> sta: RSSI: -57
     [00:00:07.720,245] <inf> sta: Static IP address:
+    [00:01:14.217,224] <inf> twt: == TWT negotiated parameters ==
+    [00:01:14.217,224] <inf> twt: TWT Dialog token: 1
+    [00:01:14.217,224] <inf> twt: TWT flow ID: 1
+    [00:01:14.217,254] <inf> twt: TWT negotiation type: TWT individual negotiation
+    [00:01:14.217,285] <inf> twt: TWT responder: true
+    [00:01:14.217,315] <inf> twt: TWT implicit: true
+    [00:01:14.217,315] <inf> twt: TWT announce: true
+    [00:01:14.217,346] <inf> twt: TWT trigger: true
+    [00:01:14.217,376] <inf> twt: TWT wake interval: 65024 us
+    [00:01:14.217,376] <inf> twt: TWT interval: 524000 us
+    [00:01:14.217,376] <inf> twt: ========================
+    [00:01:14.439,270] <inf> twt: TWT Setup Success
+    [00:01:17.061,767] <inf> twt: TWT teardown success
 
 Power management testing
 ************************
