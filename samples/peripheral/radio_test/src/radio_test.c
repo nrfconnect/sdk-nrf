@@ -212,8 +212,7 @@ static int fem_configure(bool rx, nrf_radio_mode_t mode,
 static void radio_start(bool rx, bool force_egu)
 {
 	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
-		nrf_egu_task_trigger(RADIO_TEST_EGU,
-				     nrf_egu_task_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_TASK));
+		nrf_egu_task_trigger(RADIO_TEST_EGU, RADIO_TEST_EGU_TASK);
 	} else {
 		nrf_radio_task_trigger(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
 	}
