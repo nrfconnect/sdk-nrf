@@ -8,6 +8,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
+#include <bluetooth/gatt_dm.h>
 #include <zephyr/settings/settings.h>
 
 #include <string.h>
@@ -52,6 +53,79 @@ static bool scanning;
 static bool scan_blocked;
 static bool ble_bond_ready;
 
+static void store_subscribed_peers(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		char key[] = MODULE_NAME "/" SUBSCRIBED_PEERS_STORAGE_NAME;
+		int err = settings_save_one(key, subscribed_peers, sizeof(subscribed_peers));
+
+		if (err) {
+			LOG_ERR("Problem storing subscribed_peers (err %d)", err);
+		}
+	}
+}
+
+static void reset_subscribers(bool settings_store)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		struct subscribed_peer *sub = &subscribed_peers[i];
+
+		bt_addr_le_copy(&sub->addr, BT_ADDR_LE_NONE);
+		sub->peer_type = PEER_TYPE_COUNT;
+		sub->llpm_support = false;
+	}
+
+	if (settings_store) {
+		store_subscribed_peers();
+	}
+}
+
+static void add_subscriber(const struct ble_discovery_complete_event *event)
+{
+	const bt_addr_le_t *peer_addr = bt_conn_get_dst(bt_gatt_dm_conn_get(event->dm));
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		struct subscribed_peer *sub = &subscribed_peers[i];
+
+		/* Already saved. */
+		if (!bt_addr_le_cmp(&sub->addr, peer_addr)) {
+			break;
+		}
+
+		/* Save data about new subscriber. */
+		if (!bt_addr_le_cmp(&sub->addr, BT_ADDR_LE_NONE)) {
+			bt_addr_le_copy(&sub->addr, peer_addr);
+			sub->peer_type = event->peer_type;
+			sub->llpm_support = event->peer_llpm_support;
+
+			store_subscribed_peers();
+			break;
+		}
+	}
+
+	/* Ensure peer was found. */
+	__ASSERT_NO_MSG(i < ARRAY_SIZE(subscribed_peers));
+}
+
+static void peer_discovery_start(struct bt_conn *conn)
+{
+	__ASSERT_NO_MSG(!discovering_peer_conn);
+	discovering_peer_conn = conn;
+	bt_conn_ref(discovering_peer_conn);
+}
+
+static void peer_discovery_end(const struct ble_discovery_complete_event *event)
+{
+	if (event) {
+		__ASSERT_NO_MSG(discovering_peer_conn == bt_gatt_dm_conn_get(event->dm));
+		add_subscriber(event);
+	}
+
+	__ASSERT_NO_MSG(discovering_peer_conn);
+	bt_conn_unref(discovering_peer_conn);
+	discovering_peer_conn = NULL;
+}
 
 static void verify_bond(const struct bt_bond_info *info, void *user_data)
 {
@@ -431,40 +505,15 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
 	LOG_INF("Connecting done");
-	__ASSERT_NO_MSG(!discovering_peer_conn);
-	discovering_peer_conn = conn;
-	bt_conn_ref(discovering_peer_conn);
-}
 
-static int store_subscribed_peers(void)
-{
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		char key[] = MODULE_NAME "/" SUBSCRIBED_PEERS_STORAGE_NAME;
-		int err = settings_save_one(key, subscribed_peers, sizeof(subscribed_peers));
-
-		if (err) {
-			LOG_ERR("Problem storing subscribed_peers (err %d)", err);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
-static void reset_subscribers(void)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-		bt_addr_le_copy(&subscribed_peers[i].addr, BT_ADDR_LE_NONE);
-		subscribed_peers[i].peer_type = PEER_TYPE_COUNT;
-		subscribed_peers[i].llpm_support = false;
-	}
+	peer_discovery_start(conn);
 }
 
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
 
 static void scan_init(void)
 {
-	reset_subscribers();
+	reset_subscribers(false);
 
 	static const struct bt_le_scan_param sp = {
 		.type = BT_LE_SCAN_TYPE_ACTIVE,
@@ -551,9 +600,9 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 	case PEER_STATE_CONN_FAILED:
 	case PEER_STATE_DISCONNECTED:
 		if (discovering_peer_conn == event->id) {
-			bt_conn_unref(discovering_peer_conn);
-			discovering_peer_conn = NULL;
+			peer_discovery_end(NULL);
 		}
+
 		/* ble_state keeps reference to connection object.
 		 * Cannot create new connection now.
 		 */
@@ -573,8 +622,7 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 {
 	switch (event->op) {
 	case PEER_OPERATION_ERASED:
-		reset_subscribers();
-		store_subscribed_peers();
+		reset_subscribers(true);
 		/* Fall-through */
 
 	case PEER_OPERATION_SCAN_REQUEST:
@@ -604,31 +652,7 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 
 static bool handle_ble_discovery_complete_event(const struct ble_discovery_complete_event *event)
 {
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-		/* Already saved. */
-		if (!bt_addr_le_cmp(&subscribed_peers[i].addr,
-			bt_conn_get_dst(discovering_peer_conn))) {
-			break;
-		}
-
-		/* Save data about new subscriber. */
-		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
-			bt_addr_le_copy(&subscribed_peers[i].addr,
-				bt_conn_get_dst(discovering_peer_conn));
-			subscribed_peers[i].peer_type =
-				event->peer_type;
-			subscribed_peers[i].llpm_support = event->peer_llpm_support;
-			store_subscribed_peers();
-			break;
-		}
-	}
-
-	__ASSERT_NO_MSG(i < ARRAY_SIZE(subscribed_peers));
-
-	bt_conn_unref(discovering_peer_conn);
-	discovering_peer_conn = NULL;
+	peer_discovery_end(event);
 
 	/* Cannot start scanning right after discovery - problems
 	 * establishing security - using delayed work as workaround.
