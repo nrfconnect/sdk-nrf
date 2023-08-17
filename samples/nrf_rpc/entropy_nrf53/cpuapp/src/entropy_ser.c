@@ -236,6 +236,7 @@ static void entropy_get_result_handler(const struct nrf_rpc_group *group,
 	}
 
 	memcpy(buf, zst.value, zst.len);
+	length = zst.len;
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
