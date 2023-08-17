@@ -29,12 +29,14 @@ LOG_MODULE_REGISTER(twt, CONFIG_LOG_DEFAULT_LEVEL);
 #define WIFI_SHELL_MODULE "wifi"
 
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT |		\
-				NET_EVENT_WIFI_DISCONNECT_RESULT)
+				NET_EVENT_WIFI_DISCONNECT_RESULT|	\
+				NET_EVENT_WIFI_TWT)
 
 #define MAX_SSID_LEN        32
 #define DHCP_TIMEOUT        70
 #define CONNECTION_TIMEOUT  100
 #define STATUS_POLLING_MS   300
+#define TWT_RESP_TIMEOUT_S    20
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
@@ -51,6 +53,77 @@ static struct {
 		uint8_t all;
 	};
 } context;
+
+static bool twt_supported, twt_resp_received;
+
+static int wait_for_twt_resp_received(void)
+{
+	int i, timeout_polls = (TWT_RESP_TIMEOUT_S * 1000) / STATUS_POLLING_MS;
+
+	for (i = 0; i < timeout_polls; i++) {
+		k_sleep(K_MSEC(STATUS_POLLING_MS));
+		if (twt_resp_received) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+static int setup_twt(void)
+{
+	struct net_if *iface = net_if_get_first_wifi();
+	struct wifi_twt_params params = { 0 };
+	int ret;
+
+	params.operation = WIFI_TWT_SETUP;
+	params.negotiation_type = WIFI_TWT_INDIVIDUAL;
+	params.setup_cmd = WIFI_TWT_SETUP_CMD_REQUEST;
+	params.dialog_token = 1;
+	params.flow_id = 1;
+	params.setup.responder = 0;
+	params.setup.trigger = IS_ENABLED(CONFIG_TWT_TRIGGER_ENABLE);
+	params.setup.implicit = 1;
+	params.setup.announce = IS_ENABLED(CONFIG_TWT_ANNOUNCED_MODE);
+	params.setup.twt_wake_interval = CONFIG_TWT_WAKE_INTERVAL;
+	params.setup.twt_interval = CONFIG_TWT_INTERVAL;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_TWT, iface, &params, sizeof(params));
+	if (ret) {
+		LOG_INF("TWT setup failed: %d", ret);
+		return ret;
+	}
+
+	LOG_INF("TWT setup requested");
+
+	return 0;
+}
+
+static int teardown_twt(void)
+{
+	struct net_if *iface = net_if_get_first_wifi();
+	struct wifi_twt_params params = { 0 };
+	int ret;
+
+	params.operation = WIFI_TWT_TEARDOWN;
+	params.negotiation_type = WIFI_TWT_INDIVIDUAL;
+	params.setup_cmd = WIFI_TWT_TEARDOWN;
+	params.dialog_token = 1;
+	params.flow_id = 1;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_TWT, iface, &params, sizeof(params));
+	if (ret) {
+		LOG_ERR("%s with %s failed, reason : %s",
+			wifi_twt_operation2str[params.operation],
+			wifi_twt_negotiation_type2str[params.negotiation_type],
+			get_twt_err_code_str(params.fail_reason));
+		return ret;
+	}
+
+	LOG_INF("TWT teardown success");
+
+	return 0;
+}
 
 static int cmd_wifi_status(void)
 {
@@ -86,7 +159,12 @@ static int cmd_wifi_status(void)
 		LOG_INF("MFP: %s", wifi_mfp_txt(status.mfp));
 		LOG_INF("RSSI: %d", status.rssi);
 		LOG_INF("TWT: %s", status.twt_capable ? "Supported" : "Not supported");
+
+		if (status.twt_capable) {
+			twt_supported = 1;
+		}
 	}
+
 	return 0;
 }
 
@@ -131,6 +209,63 @@ static void handle_wifi_disconnect_result(struct net_mgmt_event_callback *cb)
 	cmd_wifi_status();
 }
 
+static void print_twt_params(uint8_t dialog_token, uint8_t flow_id,
+			     enum wifi_twt_negotiation_type negotiation_type,
+			     bool responder, bool implicit, bool announce,
+			     bool trigger, uint32_t twt_wake_interval,
+			     uint64_t twt_interval)
+{
+	LOG_INF("TWT Dialog token: %d",
+	      dialog_token);
+	LOG_INF("TWT flow ID: %d",
+	      flow_id);
+	LOG_INF("TWT negotiation type: %s",
+	      wifi_twt_negotiation_type2str[negotiation_type]);
+	LOG_INF("TWT responder: %s",
+	       responder ? "true" : "false");
+	LOG_INF("TWT implicit: %s",
+	      implicit ? "true" : "false");
+	LOG_INF("TWT announce: %s",
+	      announce ? "true" : "false");
+	LOG_INF("TWT trigger: %s",
+	      trigger ? "true" : "false");
+	LOG_INF("TWT wake interval: %d us",
+	      twt_wake_interval);
+	LOG_INF("TWT interval: %lld us",
+	      twt_interval);
+	LOG_INF("========================");
+}
+
+static void handle_wifi_twt_event(struct net_mgmt_event_callback *cb)
+{
+	const struct wifi_twt_params *resp =
+		(const struct wifi_twt_params *)cb->info;
+
+	if (resp->operation == WIFI_TWT_TEARDOWN) {
+		LOG_INF("TWT teardown received for flow ID %d\n",
+		      resp->flow_id);
+		return;
+	}
+
+	if (resp->resp_status == WIFI_TWT_RESP_RECEIVED) {
+		twt_resp_received = 1;
+		LOG_INF("TWT response: %s",
+		      wifi_twt_setup_cmd2str[resp->setup_cmd]);
+		LOG_INF("== TWT negotiated parameters ==");
+		print_twt_params(resp->dialog_token,
+				 resp->flow_id,
+				 resp->negotiation_type,
+				 resp->setup.responder,
+				 resp->setup.implicit,
+				 resp->setup.announce,
+				 resp->setup.trigger,
+				 resp->setup.twt_wake_interval,
+				 resp->setup.twt_interval);
+	} else {
+		LOG_INF("TWT response timed out\n");
+	}
+}
+
 static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 				     uint32_t mgmt_event, struct net_if *iface)
 {
@@ -140,6 +275,9 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 		break;
 	case NET_EVENT_WIFI_DISCONNECT_RESULT:
 		handle_wifi_disconnect_result(cb);
+		break;
+	case NET_EVENT_WIFI_TWT:
+		handle_wifi_twt_event(cb);
 		break;
 	default:
 		break;
@@ -248,7 +386,6 @@ int main(void)
 		CONFIG_NET_CONFIG_MY_IPV4_GW);
 
 	while (1) {
-
 		wifi_connect();
 
 		for (i = 0; i < CONNECTION_TIMEOUT; i++) {
@@ -258,8 +395,39 @@ int main(void)
 				break;
 			}
 		}
+
 		if (context.connected) {
-			k_sleep(K_FOREVER);
+			int ret;
+
+			k_sleep(K_SECONDS(2));
+
+			if (!twt_supported) {
+				LOG_INF("AP is not TWT capable, exiting the sample\n");
+				return 1;
+			}
+
+			LOG_INF("AP is TWT capable, establishing TWT");
+
+			ret = setup_twt();
+			if (ret) {
+				LOG_ERR("Failed to establish TWT flow: %d\n", ret);
+				return 1;
+			}
+
+			if (wait_for_twt_resp_received()) {
+				LOG_INF("TWT Setup success");
+			} else {
+				LOG_INF("TWT Setup timed out\n");
+			}
+
+			/* Wait for few service periods before tearing down */
+			k_sleep(K_USEC(5 * CONFIG_TWT_INTERVAL));
+			ret = teardown_twt();
+			if (ret) {
+				LOG_ERR("Failed to teardown TWT flow: %d\n", ret);
+				return 1;
+			}
+			return 0;
 		} else if (!context.connect_result) {
 			LOG_ERR("Connection Timed Out");
 		}
