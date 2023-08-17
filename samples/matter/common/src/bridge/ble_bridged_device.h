@@ -33,8 +33,8 @@ struct BLEBridgedDevice {
 						 bool discoverySucceeded, void *context);
 
 	bt_addr_le_t mAddr;
-	DeviceConnectedCallback mConnectedCallback;
-	void *mConnectedCallbackContext;
+	DeviceConnectedCallback mFirstConnectionCallback;
+	void *mFirstConnectionCallbackContext;
 	bt_uuid *mServiceUuid;
 	bt_conn *mConn;
 	BLEBridgedDeviceProvider *mProvider;

@@ -21,6 +21,14 @@ public:
 				       size_t dataSize) = 0;
 	virtual CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) = 0;
 
+	CHIP_ERROR NotifyReachableStatusChange(bool isReachable);
+
 protected:
 	UpdateAttributeCallback mUpdateAttributeCallback;
+
+private:
+	struct ReachableContext {
+		bool mIsReachable;
+		BridgedDeviceDataProvider *mProvider;
+	};
 };

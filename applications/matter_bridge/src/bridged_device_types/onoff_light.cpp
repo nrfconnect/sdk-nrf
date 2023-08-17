@@ -112,28 +112,37 @@ CHIP_ERROR OnOffLightDevice::HandleWrite(ClusterId clusterId, AttributeId attrib
 CHIP_ERROR OnOffLightDevice::HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 						   size_t dataSize)
 {
-	if (clusterId != Clusters::OnOff::Id || !data) {
+	if (!data) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
-	CHIP_ERROR err;
+	switch (clusterId) {
+	case Clusters::BridgedDeviceBasicInformation::Id:
+		HandleWriteDeviceBasicInformation(clusterId, attributeId, data, dataSize);
+		return CHIP_NO_ERROR;
+	case Clusters::OnOff::Id: {
+		switch (attributeId) {
+		case Clusters::OnOff::Attributes::OnOff::Id: {
+			CHIP_ERROR err;
 
-	switch (attributeId) {
-	case Clusters::OnOff::Attributes::OnOff::Id: {
-		bool value;
+			bool value;
 
-		err = CopyAttribute(data, dataSize, &value, sizeof(value));
+			err = CopyAttribute(data, dataSize, &value, sizeof(value));
 
-		if (err != CHIP_NO_ERROR) {
-			return err;
+			if (err != CHIP_NO_ERROR) {
+				return err;
+			}
+
+			SetOnOff(value);
+			break;
 		}
-
-		SetOnOff(value);
-		break;
+		default:
+			return CHIP_ERROR_INVALID_ARGUMENT;
+		}
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 
-	return err;
+	return CHIP_ERROR_INVALID_ARGUMENT;
 }

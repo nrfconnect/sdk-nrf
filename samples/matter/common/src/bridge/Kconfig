@@ -11,3 +11,15 @@ config BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
 config BRIDGE_MAX_BRIDGED_DEVICES_NUMBER
 	int "Maximum number of physical non-Matter devices supported by the Bridge"
 	default 16
+
+if BRIDGED_DEVICE_BT
+
+config BRIDGE_BT_RECOVERY_INTERVAL_MS
+	int "Time (in ms) between recovery attempts when the BLE connection to the bridged device is lost"
+	default 1000
+
+config BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS
+	int "Time (in ms) within which the Bridge will try to re-establish a connection to the lost BT LE device"
+	default 2000
+
+endif

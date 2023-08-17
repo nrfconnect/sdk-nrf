@@ -67,12 +67,15 @@ public:
 	virtual CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 						 size_t dataSize) = 0;
 	CHIP_ERROR CopyAttribute(void *attribute, size_t attributeSize, void *buffer, uint16_t maxBufferSize);
+	CHIP_ERROR HandleWriteDeviceBasicInformation(chip::ClusterId clusterId, chip::AttributeId attributeId,
+						     void *data, size_t dataSize);
 	CHIP_ERROR HandleReadBridgedDeviceBasicInformation(chip::AttributeId attributeId, uint8_t *buffer,
 							   uint16_t maxReadLength);
 	CHIP_ERROR HandleReadDescriptor(chip::AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength);
 
 	bool GetIsReachable() const { return mIsReachable; }
 	const char *GetNodeLabel() const { return mNodeLabel; }
+	void SetIsReachable(bool isReachable) { mIsReachable = isReachable; }
 	uint16_t GetBridgedDeviceBasicInformationClusterRevision()
 	{
 		return kBridgedDeviceBasicInformationClusterRevision;
@@ -80,6 +83,8 @@ public:
 	uint32_t GetBridgedDeviceBasicInformationFeatureMap() { return kBridgedDeviceBasicInformationFeatureMap; }
 	uint16_t GetDescriptorClusterRevision() { return kDescriptorClusterRevision; }
 	uint32_t GetDescriptorFeatureMap() { return kDescrtiptorFeatureMap; }
+
+	static void NotifyAttributeChange(intptr_t context);
 
 	EmberAfEndpointType *mEp;
 	const EmberAfDeviceType *mDeviceTypeList;
