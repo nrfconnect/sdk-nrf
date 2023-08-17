@@ -16,7 +16,7 @@ Assistance data is downloaded from nRF Cloud using `nRF Cloud's REST-based devic
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -180,7 +180,7 @@ Testing
 
 After programming the sample and all the prerequisites to the development kit, test it by performing the following steps:
 
-1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset your nRF9160 DK.
+1. Connect your nRF91 Series DK to the PC using a USB cable and power on or reset your nRF91 Series DK.
 #. Open a terminal emulator.
 #. Test the sample by performing the following steps:
 

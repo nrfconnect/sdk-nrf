@@ -7,7 +7,7 @@ Cellular: NIDD
    :local:
    :depth: 2
 
-The NIDD sample demonstrates how to use Non-IP Data Delivery (NIDD) on an nRF9160 device.
+The NIDD sample demonstrates how to use Non-IP Data Delivery (NIDD) on an nRF91 Series device.
 
 Requirements
 ************

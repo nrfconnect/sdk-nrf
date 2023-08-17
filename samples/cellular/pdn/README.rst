@@ -12,7 +12,7 @@ The PDN sample demonstrates how to create and configure a Packet Data Protocol (
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -51,7 +51,7 @@ Testing
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Power on or reset your nRF9160 DK.
+#. Power on or reset your nRF91 Series DK.
 #. Observe that the sample starts, creates and configures a PDP context, and then activates a PDN connection.
 
 Sample output

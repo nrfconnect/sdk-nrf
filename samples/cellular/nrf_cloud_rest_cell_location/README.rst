@@ -26,7 +26,7 @@ It requires one of the following:
 * A private key installed on the device and its associated public key registered with an `nRF Cloud`_ account.
 
 .. note::
-   This sample requires modem firmware v1.3.x or later.
+   This sample requires modem firmware v1.3.x or later for an nRF9160 DK, or modem firmware v2.x.x for an nRF9161 DK.
 
 Overview
 ********

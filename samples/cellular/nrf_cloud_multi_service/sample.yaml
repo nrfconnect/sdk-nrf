@@ -1,7 +1,7 @@
 sample:
   name: nRF Cloud Multi Service Sample
 tests:
-  sample.nrf9160.nrf_cloud_multi_service.mqtt:
+  sample.cellular.nrf_cloud_multi_service.mqtt:
     build_only: true
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
@@ -9,12 +9,28 @@ tests:
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
     tags: ci_build
-  sample.nrf9160.nrf_cloud_multi_service.coap:
+  sample.cellular.nrf_cloud_multi_service.coap:
     build_only: true
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
-    extra_args: OVERLAY_CONFIG=overlay_coap.conf
+    extra_args: EXTRA_CONF_FILE=overlay_coap.conf
+    tags: ci_build
+  sample.cellular.nrf7002ek_wifi.nrf9160dk:
+    build_only: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
+    tags: ci_build
+  sample.cellular.nrf7002ek_wifi.nrf9161dk:
+    build_only: true
+    integration_platforms:
+      - nrf9161dk_nrf9161_ns
+    platform_allow: nrf9161dk_nrf9161_ns
+    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build

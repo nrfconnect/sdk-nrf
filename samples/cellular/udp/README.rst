@@ -32,7 +32,7 @@ These parameters can be set through the sample configuration file :file:`prj.con
 You can configure the frequency with which the packets are transmitted and the size of the UDP payload through the Kconfig system.
 In addition to setting of the above options, you can also set the various LTE parameters that are related to current consumption for adding low power behavior to the device.
 
-The UDP sample can be used to characterize the current consumption of the nRF9160 SiP.
+The UDP sample can be used to characterize the current consumption of the nRF91 Series SiP.
 This is due to the simple UDP/IP behavior demonstrated by the sample, which makes it suitable for current measurement.
 
 .. note::

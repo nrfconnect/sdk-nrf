@@ -7,7 +7,7 @@ Cellular: Battery
    :local:
    :depth: 2
 
-The Battery sample demonstrates how to obtain the following battery related information from the modem of an nRF9160 DK:
+The Battery sample demonstrates how to obtain the following battery related information from the modem of an nRF91 Series DK:
 
 * Modem battery voltage
 * Modem battery voltage low level notifications
@@ -18,7 +18,7 @@ The sample uses the :ref:`modem_battery_readme` library.
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -83,10 +83,10 @@ Testing
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Connect the nRF9160 DK to the `Power Profiler Kit II (PPK2)`_ and set up for external power output.
+#. Connect the nRF91 Series DK to the `Power Profiler Kit II (PPK2)`_ and set up for external power output.
 #. `Install the Power Profiler app`_ in the `nRF Connect for Desktop`_.
 #. Connect the Power Profiler Kit II (PPK2) to the PC using a micro-USB cable and `connect to it using the App <Using the Power Profiler app_>`_.
-#. Power on or reset your nRF9160 DK.
+#. Power on or reset your nRF91 Series DK.
 #. Observe that the sample starts, initializes the modem, and changes functional mode depending on the external voltage.
 
 Sample output

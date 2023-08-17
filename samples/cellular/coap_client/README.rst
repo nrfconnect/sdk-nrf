@@ -7,12 +7,12 @@ Cellular: nRF CoAP Client
    :local:
    :depth: 2
 
-The nRF CoAP Client sample demonstrates the communication between a public CoAP server and an nRF9160 SiP that acts as the CoAP client.
+The nRF CoAP Client sample demonstrates the communication between a public CoAP server and an nRF91 Series SiP that acts as the CoAP client.
 
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -31,7 +31,7 @@ The nRF CoAP Client sample performs the following actions:
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
 This server runs Eclipse Californium, which is an open source implementation of the CoAP protocol that is targeted at the development and testing of IoT applications.
-An nRF9160 DK is used as the CoAP client.
+An nRF91 Series DK is used as the CoAP client.
 
 This sample uses the resource **obs** (Californium observable resource) in the communication between the CoAP client and the public CoAP server.
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
@@ -87,7 +87,7 @@ Testing
 
        The nRF CoAP client sample started
 #. Observe that the discovered IP address of the public CoAP server is displayed on the terminal emulator.
-#. Observe that the nRF9160 DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE connection.
+#. Observe that the nRF91 Series DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE connection.
 #. Observe that the sample either displays the response data received from the server or indicates a timeout on the terminal.
    For more information on the response codes, see `COAP response codes`_.
 

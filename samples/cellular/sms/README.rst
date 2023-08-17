@@ -7,12 +7,12 @@ Cellular: SMS
    :local:
    :depth: 2
 
-The SMS sample demonstrates how you can send and receive SMS messages with your nRF9160-based device.
+The SMS sample demonstrates how you can send and receive SMS messages with your nRF91 Series device.
 
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -21,7 +21,7 @@ The sample supports the following development kit:
 Overview
 ********
 
-The SMS sample registers the nRF9160-based device for SMS service within the nRF9160 modem using the :ref:`sms_readme` library.
+The SMS sample registers your nRF91 Series device for SMS service within the cellular modem using the :ref:`sms_readme` library.
 The sample requires an LTE connection.
 
 When the sample starts, it sends an SMS if a recipient phone number is set in the configuration.
@@ -78,7 +78,7 @@ After programming the sample to your development kit, test it by performing the 
 #. |connect_terminal|
 #. Observe that the sample shows the :ref:`UART output <sms_uart_output>` from the device.
    Note that this is an example, and the output need not be identical to your observed output.
-#. Send an SMS message to the number associated with the SIM card that you have placed into your nRF9160-based device.
+#. Send an SMS message to the number associated with the SIM card that you have placed into your nRF91 Series device.
 
    .. note::
 

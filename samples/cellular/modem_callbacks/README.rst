@@ -12,7 +12,7 @@ The Modem callbacks sample demonstrates how to set up callbacks for Modem librar
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -49,7 +49,7 @@ Testing
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Power on or reset your nRF9160 DK.
+#. Power on or reset your nRF91 Series DK.
 #. Observe that the sample starts, initializes the modem, changes functional mode and shuts down the modem.
 
 Sample output

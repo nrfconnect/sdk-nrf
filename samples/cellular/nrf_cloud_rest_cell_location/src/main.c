@@ -147,7 +147,8 @@ static void check_modem_fw_version(void)
 
 	LOG_INF("Modem FW version: %s", mfwv_str);
 
-	if (sscanf(mfwv_str, "mfw_nrf9160_%u.%u.%u", &major, &minor, &rev) != 3) {
+	if ((sscanf(mfwv_str, "mfw_nrf9160_%u.%u.%u", &major, &minor, &rev) != 3) &&
+	    (sscanf(mfwv_str, "mfw_nrf91x1_%u.%u.%u", &major, &minor, &rev) != 3)) {
 		LOG_WRN("Unable to parse modem FW version number");
 		return;
 	}

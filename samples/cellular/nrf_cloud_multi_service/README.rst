@@ -24,7 +24,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/external_flash_nrf91.txt
 
-When using `CoAP`_, use modem firmware version 1.3.5 or above to benefit from the power savings provided by `DTLS Connection ID <RFC 9146 - Connection Identifier for DTLS 1.2_>`_.
+For the nRF9160 DK, when using `CoAP`_, use modem firmware version 1.3.5 or above to benefit from the power savings provided by `DTLS Connection ID <RFC 9146 - Connection Identifier for DTLS 1.2_>`_.
 
 .. _nrf_cloud_multi_service_features:
 
@@ -40,7 +40,7 @@ This sample implements or demonstrates the following features:
 * Support for `modem AT commands <AT Commands Reference Guide_>`_ over UART using the :ref:`lib_at_host` library.
 * Support for remote execution of modem AT commands using application-specific device messages.
 * Periodic cellular, Wi-Fi, and GNSS location tracking using the :ref:`lib_location` library.
-* Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9160 DK`_.
+* Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9161 DK`_, or `Nordic nRF9160 DK`_.
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
 * Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
 * Minimal LED status indication using the `Zephyr LED API`_.
@@ -174,16 +174,18 @@ Reboot after download completion is handled by the :file:`src/fota_support.c` fi
 In a real-world setting, these two behaviors could be directly implemented in the :file:`src/cloud_connection.c` file.
 In this sample, they are separated for clarity.
 
-This sample supports full modem FOTA for the nRF9160 development kit version 0.14.0 and higher.
+This sample supports full modem FOTA for the nRF91 Series development kit.
+Version 0.14.0 or higher is required for nRF9160 DK.
 To enable full modem FOTA, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
 
-Also, specify your development kit version by appending it to the board name. For example, if your development kit version is 1.0.1, use the following board name in your build command:
+Also, specify your development kit version by appending it to the board name.
+For example, if you are using an nRF9160 DK version 1.0.1, use the following board name in your build command:
 
 ``nrf9160dk_nrf9160_ns@1_0_1``
 
-This sample also supports placement of the MCUboot secondary partition in external flash for the nRF9160 development kit version 0.14.0 and higher.
+This sample also supports placement of the MCUboot secondary partition in external flash for the nRF9161 DK, and for nRF9160 DK version 0.14.0 and higher.
 To enable this, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_mcuboot_ext_flash.conf``
@@ -196,7 +198,7 @@ Temperature sensing
 ===================
 
 Temperature sensing is mostly implemented in the :file:`src/temperature.c` file.
-This includes generation of false temperature readings on the `Nordic nRF9160 DK`_, which does not have a built-in temperature sensor.
+This includes generation of false temperature readings on your nRF91 Series DK, which does not have a built-in temperature sensor.
 
 Using the built-in temperature sensor of the `Nordic Thingy:91`_ requires a `devicetree overlay <Zephyr Devicetree Overlays_>`_ file, namely the :file:`boards/thingy91_nrf9160_ns.overlay` file, as well as enabling the Kconfig options :kconfig:option:`CONFIG_SENSOR` and :kconfig:option:`CONFIG_BME680`.
 The devicetree overlay file is automatically applied during compilation whenever the ``thingy91_nrf9160_ns`` target is selected.
@@ -219,7 +221,7 @@ This is performed by the :file:`src/cloud_connection.c` file.
 
 Each enabled location method is tried in the following order until one succeeds: GNSS, Wi-Fi, then cellular.
 
-The GNSS and cellular location tracking methods are enabled by default and will work on both Thingy:91 and nRF9160 DK targets.
+The GNSS and cellular location tracking methods are enabled by default and will work on both Thingy:91 and nRF91 Series DK targets.
 
 .. _nrf_cloud_multi_service_wifi_location_tracking:
 
@@ -229,13 +231,14 @@ When enabled, this location method scans the MAC addresses of nearby access poin
 
 See :ref:`nrf_cloud_multi_service_building_wifi_scan` for details on how to enable Wi-Fi location tracking.
 
-This sample supports placing P-GPS data in external flash for the nRF9160 development kit version 0.14.0 and later.
+This sample supports placing P-GPS data in external flash for the nRF91 Series development kit.
+Version 0.14.0 or later is required for the nRF9160 DK.
 To enable this, add the following parameter to your build command:
 
 ``-DOVERLAY_CONFIG=overlay_pgps_ext_flash.conf``
 
 Also, specify your development kit version by appending it to the board name.
-For example, if your development kit version is 1.0.1, use the following board name in your build command:
+For example, if you are using an nRF9160 development kit version 1.0.1, use the following board name in your build command:
 
 ``nrf9160dk_nrf9160_ns@1_0_1``
 
@@ -254,7 +257,7 @@ For example, if you send the following device message to a device running this s
 
    {"appId":"MODEM", "messageType":"CMD", "data":"AT+CGMR"}
 
-It executes the modem AT command ``AT+CGMR`` and sends a device message similar to the following back to nRF Cloud:
+It executes the modem AT command ``AT+CGMR`` and sends a device message similar to the following back to nRF Cloud (an example of nRF9160, modem firmware v1.3.2):
 
 .. code-block:: json
 
@@ -280,12 +283,12 @@ This is performed by a background thread implemented in the :file:`src/led_contr
 Other threads may request either a temporary or indefinite LED pattern.
 This wakes up the ``led_thread``, which begins animating the requested pattern, sleeping for 100 milliseconds at a time between animation frames, until the requested pattern has completed (if it is temporary), or until a new pattern is requested in its place.
 
-This feature is enabled by default for the ``thingy91_nrf9160_ns`` (Thingy:91) and ``nrf9160dk_nrf9160_ns`` (nRF9160 DK) targets.
+This feature is enabled by default for the ``thingy91_nrf9160_ns`` (Thingy:91), ``nrf9161dk_nrf9161_ns`` (nRF9161 DK), and ``nrf9160dk_nrf9160_ns`` (nRF9160 DK) targets.
 
 The patterns displayed, the states they describe, and the options required for them to appear are as follows:
 
 +------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| Status                                               | Thingy:91                            | nRF9160 DK                                                                                             | Conditions                                                                                                |
+| Status                                               | Thingy:91                            | nRF91 Series DK                                                                                        | Conditions                                                                                                |
 +======================================================+======================================+========================================================================================================+===========================================================================================================+
 | Trying to connect to nRF Cloud (for the first time)  | Pulsating orange LED                 | Single LED lit, spinning around the square of LEDs                                                     | LED status indication is enabled                                                                          |
 +------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
@@ -365,7 +368,7 @@ If you disable GNSS, Wi-Fi-based, and cellular-based location tracking, location
 Customizing GNSS antenna configuration
 ======================================
 
-This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for builds targeting either the ``nrf9160dk_nrf9160_ns`` or ``thingy91_nrf9160_ns`` board names.
+This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for builds targeting the ``nrf9161dk_nrf9161_ns``, ``nrf9160dk_nrf9160_ns``, or ``thingy91_nrf9160_ns`` board names.
 
 If you are using a different board or build target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
 
@@ -401,7 +404,7 @@ To add your own LED indication implementations, you can add values to the ``LED_
 
 To disable LED indication, enable the :ref:`CONFIG_LED_INDICATION_DISABLED <CONFIG_LED_INDICATION_DISABLED>` option.
 
-For examples of how to set up devicetree entries compatible with the Zephyr ``gpio-leds`` and ``pwm-leds`` drivers, see the files :file:`zephyr/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_common.dts` and :file:`zephyr/boards/arm/thingy91_nrf9160/thingy91_nrf9160_common.dts`.
+For examples of how to set up devicetree entries compatible with the Zephyr ``gpio-leds`` and ``pwm-leds`` drivers, see the files :file:`zephyr/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_common.dts`, :file:`zephyr/boards/arm/nrf9161dk_nrf9161/nrf9161dk_nrf9161_common.dts` and :file:`zephyr/boards/arm/thingy91_nrf9160/thingy91_nrf9160_common.dts`.
 Search for nodes with ``compatible = "gpio-leds";`` and ``compatible = "pwm-leds";`` respectively.
 
 Useful debugging options
@@ -742,7 +745,7 @@ CONFIG_LED_INDICATION_PWM - PWM LED indication
 CONFIG_LED_INDICATION_GPIO - GPIO LED indication
    Use the `Zephyr gpio-leds`_ driver for LED indication.
    Defaults to enabled if there is a compatible devicetree entry, and the Thingy:91 is not the target.
-   Defaults to enabled on the nRF9160DK.
+   Defaults to enabled on the nRF91 Series DKs.
 
 .. _CONFIG_LED_INDICATION_DISABLED:
 
@@ -913,29 +916,42 @@ Building with CoAP Support
 
 To build the sample to use CoAP instead of MQTT, use the ``-DOVERLAY_CONFIG=overlay_coap.conf`` option.
 
-For example:
+.. tabs::
 
-.. code-block:: console
+   .. group-tab:: nRF9161 DK
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay_coap.conf"
+      .. code-block:: console
 
+          west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG="overlay_coap.conf"
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay_coap.conf"
 
 .. _nrf_cloud_multi_service_building_wifi_scan:
 
-Building with nRF7002 EK Wi-Fi scanning support (for nRF9160 DK)
-================================================================
+Building with nRF7002 EK Wi-Fi scanning support (for nRF91 Series DK)
+=====================================================================
 
-To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek``, ``-DDTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek``, ``-DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay`` and  ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
 
 This enables the Wi-Fi location tracking method automatically.
 
-For example:
+.. tabs::
 
-.. code-block:: console
+   .. group-tab:: nRF9161 DK
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DDTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay" -DOVERLAY_CONFIG="overlay-nrf7002ek-wifi-scan-only.conf"
+      .. code-block:: console
 
-This is only supported on the `Nordic nRF9160 DK`_ with an attached nRF7002 EK.
+         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 

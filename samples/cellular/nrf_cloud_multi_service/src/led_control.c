@@ -12,9 +12,9 @@
 /* We implement, here, both 4-led and RGB LED control, but you may feel free to implement
  * whatever your board can support. You must make sure your board Device Tree Source or overlays
  * include a device marked as compatible with either the pwm-leds or gpio-leds driver in order to
- * use the LED driver provided by Zephyr, as we do here. Both the nRF9160dk and thingy91 have such
- * devices defined in their default Device Tree Sources. See nrf9160dk_nrf9160_common.dts and
- * thingy91_nrf9160_common.dts.
+ * use the LED driver provided by Zephyr, as we do here. Both the nRF9160dk, nRF9161dk and thingy91
+ * have such devices defined in their default Device Tree Sources. See nrf9160dk_nrf9160_common.dts
+ * nrf9161dk_nrf9161_common.dts and thingy91_nrf9160_common.dts.
  */
 
 LOG_MODULE_REGISTER(led_control, CONFIG_MULTI_SERVICE_LOG_LEVEL);
@@ -125,7 +125,7 @@ static void led_pattern_idle(int frame_number)
 		bool blink = (frame_number % 40) < 20;
 
 		/* Blink between two LEDs on opposite sides of a diagonal, of the 4LED square,
-		 * namely "LED1" and "LED4" on 9160dk boards
+		 * namely "LED1" and "LED4" on 91 Series DK boards
 		 */
 		led_set_4led(blink, false, false, !blink);
 	}
