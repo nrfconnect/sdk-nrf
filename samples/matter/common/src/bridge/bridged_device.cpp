@@ -10,8 +10,7 @@
 using namespace ::chip;
 using namespace ::chip::app;
 
-CHIP_ERROR BridgedDevice::CopyAttribute(void *attribute, size_t attributeSize, void *buffer,
-					      uint16_t maxBufferSize)
+CHIP_ERROR BridgedDevice::CopyAttribute(void *attribute, size_t attributeSize, void *buffer, uint16_t maxBufferSize)
 {
 	if (maxBufferSize < attributeSize) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
@@ -20,6 +19,20 @@ CHIP_ERROR BridgedDevice::CopyAttribute(void *attribute, size_t attributeSize, v
 	memcpy(buffer, attribute, attributeSize);
 
 	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR BridgedDevice::HandleWriteDeviceBasicInformation(chip::ClusterId clusterId, chip::AttributeId attributeId,
+							    void *data, size_t dataSize)
+{
+	switch (attributeId) {
+	case Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id:
+		if (data && dataSize == sizeof(bool)) {
+			SetIsReachable(*reinterpret_cast<bool*>(data));
+			return CHIP_NO_ERROR;
+		}
+		default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
 }
 
 CHIP_ERROR BridgedDevice::HandleReadBridgedDeviceBasicInformation(AttributeId attributeId, uint8_t *buffer,

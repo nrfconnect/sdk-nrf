@@ -60,8 +60,7 @@ void BleOnOffLightDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chi
 						  size_t dataSize)
 {
 	if (mUpdateAttributeCallback) {
-		mUpdateAttributeCallback(*this, Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id, data,
-					 dataSize);
+		mUpdateAttributeCallback(*this, clusterId, attributeId, data, dataSize);
 	}
 }
 

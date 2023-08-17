@@ -46,6 +46,7 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/bridge/bridge_manager.cpp
     ${COMMON_ROOT}/src/bridge/bridged_device.cpp
     ${COMMON_ROOT}/src/bridge/bridge_storage_manager.cpp
+    ${COMMON_ROOT}/src/bridge/bridged_device_data_provider.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
