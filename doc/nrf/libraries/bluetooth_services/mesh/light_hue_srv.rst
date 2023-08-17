@@ -13,12 +13,21 @@ It should be instantiated in the light fixture node.
 The Light Hue Server adds a single model instance to the composition data, in addition to the extended :ref:`bt_mesh_lvl_srv_readme`.
 Although the Light Hue Server contains ``range`` and ``default`` states like other lighting models, the states cannot be accessed directly by other nodes without a :ref:`bt_mesh_light_hsl_srv_readme`.
 
-Unlike the other Lightness models, the Hue Server model's Hue state will wrap around when reaching its maximum or minimum values as defined in :c:member:`bt_mesh_light_hue_srv.range`.
-To be able to handle this effectively in the application, the Light Hue Server model exposes the underlying Generic Level Server's Move and Delta Set messages, which must be implemented.
-If the application gets a call to the :c:member:`bt_mesh_light_hue_srv_handlers.delta_set` callback, it must move the Hue relative to its current value, in the direction determined by the ``delta_set`` message.
-Note that this may cause the Hue state to wrap around.
-Similarly, if the application gets a call to the :c:member:`bt_mesh_light_hue_srv_handlers.move_set` callback, it must start a continuous transition of the Hue state in the direction and rate determined by the ``move_set`` message.
-This move transition continues until the Hue Server receives a new ``set``, ``delta_set`` or ``move_set`` message, or the device reboots.
+The Light Hue Server model's Hue state has certain rules for the wrap-around behavior that need to be considered when writing the application.
+Unlike the other Lightness models, the Hue state's change structure :c:struct:`bt_mesh_light_hue` has an additional field :c:member:`bt_mesh_light_hue.direction`.
+This field tells whether the current Hue state should increase or decrease in order to reach the target value, when the Hue state transition is not instantaneous.
+
+When the Hue state is not limited by the Hue Range state (the minimum value of the hue range is ``0`` and the maximum value is ``65535``), the Hue state can wrap around.
+This, for example, can happen when the target value is lower than the current one, but the Hue state should increment as claimed by the :c:member:`bt_mesh_light_hue.direction` field.
+This is because the :c:member:`bt_mesh_light_hue.direction` field points to the shortest path towards the target value.
+
+The Hue state also wraps around when the minimum value of the Hue state is greater than the maximum value.
+In this case, the state wraps around when the value reaches the end of the type range.
+This happens because the :c:member:`bt_mesh_light_hue.direction` field points to the direction of the allowed range of the Hue state values.
+
+When the application gets a call to the :c:member:`bt_mesh_light_hue_srv_handlers.set` callback, the transition always stops at the target value represented by the :c:member:`bt_mesh_light_hue.lvl` field.
+But, if the application gets a call to the :c:member:`bt_mesh_light_hue_srv_handlers.move_set` callback, it must start a continuous transition of the Hue state in the direction and rate determined by the :c:struct:`bt_mesh_light_hue_move` structure.
+This move transition continues until the Light Hue Server receives a new ``set`` or ``move_set`` message, or the device reboots.
 
 States
 ******
@@ -37,12 +46,13 @@ Hue: ``uint16_t``
     Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_hue_srv_handlers` handler structure.
 
     .. note::
-        If the Hue Server is part of an HSL Server, the application must publish the HSL status using :c:func:`bt_mesh_light_hsl_srv_pub` whenever the Hue state changes.
-        This is not handled automatically by the HSL Server.
+        If the Light Hue Server is part of a Light HSL Server, the application must publish the HSL status using :c:func:`bt_mesh_light_hsl_srv_pub` whenever the Hue state changes.
+        This is not handled automatically by the Light HSL Server.
 
 Hue Range: :c:struct:`bt_mesh_light_hsl_range`
     The Hue Range is a meta state that defines the valid range for the Hue state.
     The Hue should never go outside the Hue Range.
+    The maximum value can be less than the minimum value.
 
     The memory for the Hue Range state is held by the model, and the application may receive updates on state changes through the :c:member:`bt_mesh_light_hue_handlers.range_update` callback.
 

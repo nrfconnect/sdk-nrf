@@ -66,6 +66,13 @@ struct bt_mesh_light_hue_srv_handlers {
 	 * @ref bt_mesh_model_transition_time returns a nonzero value, the application is
 	 * responsible for publishing a value of the Hue state at the end of the transition.
 	 *
+	 * When a state change is not-instantaneous, the @ref bt_mesh_light_hue::direction field
+	 * represents a direction in which the value of the Hue state should change. When the target
+	 * value of the Hue state is less than the current value and the direction field is
+	 * positive, or when the target value is greater than the current value and the direction
+	 * field is negative, the application is responsible for wrapping the value of the Hue
+	 * state around when the value reaches the end of the type range.
+	 *
 	 *  @note This handler is mandatory.
 	 *
 	 *  @param[in] srv Server to set the Hue state of.
@@ -77,36 +84,6 @@ struct bt_mesh_light_hue_srv_handlers {
 			  struct bt_mesh_msg_ctx *ctx,
 			  const struct bt_mesh_light_hue *set,
 			  struct bt_mesh_light_hue_status *rsp);
-
-	/**
-	 * @brief Change the hue relative to its current value.
-	 *
-	 * If @c delta_set::new_transaction is false, the state transition
-	 * should use the same start point as the previous delta_set message,
-	 * effectively overriding the previous message. If it's true, the level
-	 * transition should start from the current level, stopping any
-	 * ongoing transitions.
-	 *
-	 *  When reaching the border values for the state, the value should wrap
-	 *  around. While the server is executing a move command, it should
-	 *  report its @c target value as @ref BT_MESH_LIGHT_HSL_MIN or
-	 *  @ref BT_MESH_LIGHT_HSL_MAX, depending on whether it's moving up or
-	 *  down.
-	 *
-	 * @note This handler is mandatory.
-	 *
-	 * @param[in] srv       Light Hue server.
-	 * @param[in] ctx       Message context, or NULL if the callback was not
-	 *                      triggered by a mesh message.
-	 * @param[in] delta_set Parameters of the state change. Note that the
-	 *                      transition will always be non-NULL.
-	 * @param[out] rsp      Response structure to be filled.
-	 */
-	void (*const delta_set)(
-		struct bt_mesh_light_hue_srv *srv,
-		struct bt_mesh_msg_ctx *ctx,
-		const struct bt_mesh_light_hue_delta *delta_set,
-		struct bt_mesh_light_hue_status *rsp);
 
 	/** @brief Move the hue continuously at a certain rate.
 	 *

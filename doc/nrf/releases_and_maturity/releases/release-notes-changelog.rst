@@ -556,19 +556,29 @@ Bluetooth libraries and services
 
 * :ref:`bt_mesh` library:
 
-  * Added the :kconfig:option:`BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT` Kconfig option that configures a timeout before resetting the ambient light level to zero.
+  * Added:
+
+    * The :kconfig:option:`BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT` Kconfig option that configures a timeout before resetting the ambient light level to zero.
+    * The :c:member:`bt_mesh_light_hue.direction` field that specifies direction of the Hue state transition.
 
   * Updated:
 
     * The :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT` Kconfig option, that is controlling timeout for storing of model states, is replaced by the :kconfig:option:`CONFIG_BT_MESH_STORE_TIMEOUT` Kconfig option.
     * The Light Lightness Actual and Generic Power Level states of the :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_plvl_srv_readme` models cannot dim to off.
       This is due to binding with Generic Level state when receiving Generic Delta Set and Generic Move Set messages.
+    * The :c:member:`bt_mesh_light_hue_srv_handlers.move_set` callback of the :ref:`bt_mesh_light_hue_srv_readme` model is only called for a continuous transition.
+      All other transitions are now handled by the :c:member:`bt_mesh_light_hue_srv_handlers.set` callback.
+    * The Hue Range state of the :ref:`bt_mesh_light_hue_srv_readme` model now allows :c:member:`bt_mesh_light_hsl_range.max` to be lower than :c:member:`bt_mesh_light_hsl_range.min`.
 
   * Fixed:
 
     * An issue where the :ref:`bt_mesh_dtt_srv_readme` model could not be found for models spanning multiple elements.
     * An issue where the :ref:`bt_mesh_sensor_srv_readme` model would add a corrupted marshalled sensor data into the Sensor Status message, because the fetched sensor value was outside the range.
       If the fetched sensor value is out of range, the marshalled sensor data for that sensor is not added to the Sensor Status message.
+
+  * Removed:
+
+    * The `bt_mesh_light_hue_srv_handlers.delta_set` callback of the :ref:`bt_mesh_light_hue_srv_readme` model is removed and replaced with the :c:member:`bt_mesh_light_hue_srv_handlers.set` callback.
 
 Bootloader libraries
 --------------------

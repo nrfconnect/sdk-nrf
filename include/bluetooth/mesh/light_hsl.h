@@ -59,26 +59,6 @@ struct bt_mesh_light_hsl_params {
 	const struct bt_mesh_model_transition *transition;
 };
 
-/** Hue delta set parameters */
-struct bt_mesh_light_hue_delta {
-	/** Translation from original value. */
-	int32_t delta;
-	/**
-	 * Whether this is a new transaction. If true, the delta should be
-	 * relative to the current value. If false, the delta should be
-	 * relative to the original value in the previous delta_set command.
-	 */
-	bool new_transaction;
-	/**
-	 * Transition time parameters for the state change, or NULL.
-	 *
-	 * When sending, setting the transition to NULL makes the receiver use
-	 * its default transition time parameters, or 0 if no default transition
-	 * time is set.
-	 */
-	const struct bt_mesh_model_transition *transition;
-};
-
 /** Hue move set parameters */
 struct bt_mesh_light_hue_move {
 	/** Translation to make for every transition step. */
@@ -115,6 +95,17 @@ struct bt_mesh_light_hue {
 	 * time is set.
 	 */
 	const struct bt_mesh_model_transition *transition;
+	/**
+	 * Direction of the Hue state change, if @c transition is present.
+	 *
+	 * If positive, the current value should be incremented even if the target value is less
+	 * than the current value. If negative, the current value should be decremented even if the
+	 * target value is greater than the current value. The application is responsible for
+	 * wrapping the Hue state around when the value reaches the end of the type range.
+	 *
+	 * @note Set by the Light Hue Server model.
+	 */
+	int direction;
 };
 
 /** Common Light Saturation set message parameters. */
