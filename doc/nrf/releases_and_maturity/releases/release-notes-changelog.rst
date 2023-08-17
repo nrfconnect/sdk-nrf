@@ -480,6 +480,7 @@ Wi-Fi samples
 * Added :ref:`wifi_wfa_qt_app_sample` that demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance QuickTrack certification.
 * Added :ref:`wifi_shutdown_sample` that demonstrates how to configure the Wi-Fi driver to shut down the Wi-Fi hardware when the Wi-Fi interface is not in use.
 * Added support for the Wi-Fi driver to several upstream Zephyr networking samples.
+* Added :ref:`wifi_twt_sample` that demonstrates how to establish TWT flow and transfer data conserving power.
 
 Other samples
 -------------
