@@ -204,7 +204,11 @@ static void sync_rest_client_data(struct nrf_cloud_rest_context *const rest_ctx,
 	rest_ctx->response_len		= resp->response_len;
 	rest_ctx->total_response_len	= resp->total_response_len;
 
-	rest_ctx->connect_socket	= req->connect_socket;
+	if (resp->used_socket_is_alive) {
+		rest_ctx->connect_socket = resp->used_socket_id;
+	} else {
+		rest_ctx->connect_socket = -1;
+	}
 }
 
 static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
@@ -665,6 +669,12 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_POST);
 
+	/* Usually more than one HTTP request is needed to fetch A-GNSS data, so the socket is
+	 * always re-used. After all A-GNSS data has been downloaded, the socket is automatically
+	 * closed, unless the caller has enabled rest_ctx->keep_alive.
+	 */
+	req.keep_alive = true;
+
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
 	filtered = request->filtered;
 	mask_angle = request->mask_angle;
@@ -967,13 +977,12 @@ int nrf_cloud_rest_disconnect(struct nrf_cloud_rest_context *const rest_ctx)
 	}
 
 	int err = close(rest_ctx->connect_socket);
-
 	if (err) {
 		LOG_ERR("Failed to close socket, error: %d", errno);
 		err = -EIO;
-	} else {
-		rest_ctx->connect_socket = -1;
 	}
+
+	rest_ctx->connect_socket = -1;
 
 	return err;
 }
