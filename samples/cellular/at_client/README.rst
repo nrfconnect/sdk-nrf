@@ -7,13 +7,13 @@ Cellular: AT Client
    :local:
    :depth: 2
 
-The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the nRF9160 modem.
-The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF9160 device.
+The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the cellular modem.
+The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF91 Series device.
 
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -22,8 +22,8 @@ The sample supports the following development kit:
 Overview
 ********
 
-The AT Client sample acts as a proxy for sending directives to the nRF9160 modem using AT commands.
-This facilitates the reading of responses or analyzing of events related to the nRF9160 modem.
+The AT Client sample acts as a proxy for sending directives to the cellular modem using AT commands.
+This facilitates the reading of responses or analyzing of events related to the cellular modem.
 You can initiate the commands from a terminal or the `LTE Link Monitor`_, which is an application implemented as part of `nRF Connect for Desktop`_.
 
 For more information on the AT commands, see the `AT Commands Reference Guide`_.
@@ -45,8 +45,8 @@ Testing
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Press the reset button on the nRF9160 DK to reboot the kit and start the AT Client sample.
-#. :ref:`Connect to the nRF9160 DK with LTE Link Monitor<lte_connect>`.
+1. Press the reset button on the nRF91 Series DK to reboot the kit and start the AT Client sample.
+#. :ref:`Connect to the DK with LTE Link Monitor<lte_connect>`.
 
    .. note::
 

@@ -6,7 +6,8 @@ tests:
     extra_args: OVERLAY_CONFIG="overlay-tfm.conf"
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     tags: ci_build
   sample.cellular.download_client:
     build_only: true
@@ -17,5 +18,6 @@ tests:
       - CONFIG_SAMPLE_COMPUTE_HASH=y
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     tags: ci_build

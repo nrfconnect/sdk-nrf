@@ -12,7 +12,7 @@ The LwM2M carrier sample demonstrates how to run the :ref:`liblwm2m_carrier_read
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -122,11 +122,21 @@ Building with overlay
 
 To build with a Kconfig overlay, pass it to the build system using the ``OVERLAY_CONFIG`` CMake variable, as shown in the following example:
 
-.. code-block:: console
+.. tabs::
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-shell.conf
+   .. group-tab:: nRF9161 DK
 
-This command builds for the nRF9160 DK using the configurations found in the :file:`overlay-shell.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
+      .. code-block:: console
+
+         west build -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG=overlay-shell.conf
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-shell.conf
+
+This command builds for your nRF91 Series DK using the configurations found in the :file:`overlay-shell.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
 If some options are defined in both files, the options set in the overlay take precedence.
 
 Testing
@@ -134,7 +144,7 @@ Testing
 
 After programming the sample and all prerequisites to the development kit, test it by performing the following steps:
 
-1. Connect the USB cable and power on or reset your nRF9160 DK.
+1. Connect the USB cable and power on or reset your nRF91 Series DK.
 #. Open a terminal emulator and observe that the kit prints the following information::
 
         LWM2M Carrier library sample.

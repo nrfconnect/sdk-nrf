@@ -14,7 +14,7 @@ For more information about mcumgr and SMP, see :ref:`device_mgmt`.
 Requirements
 ************
 
-This sample supports the following development kit:
+This sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -51,35 +51,65 @@ Building and running
 
 To use the UART overlay for increasing the transfer speed, add the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag to your build.
 See :ref:`cmake_options` for instructions on how to add this flag.
-For example, when building on the command line, add the UART overlay for nRF9160 DK in the following way:
+When building on the command line add the UART overlay in the following way, depending on the DK you are using:
 
-  .. code-block:: console
+   .. tabs::
 
-     west build -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=uart.overlay
+      .. group-tab:: nRF9161 DK
+
+         .. code-block:: console
+
+            west build -b nrf9161dk_nrf9161_ns -- -DDTC_OVERLAY_FILE=uart.overlay
+
+      .. group-tab:: nRF9160 DK
+
+         .. code-block:: console
+
+            west build -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=uart.overlay
 
 Testing
 =======
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Connect the USB cable and power on or reset your nRF9160 DK.
+1. Connect the USB cable and power on or reset your nRF91 Series DK.
 #. Open a terminal emulator, observe that the sample starts, and then close the terminal emulator.
 #. Call the provided :file:`update_modem.py` script specifying the COM port, the firmware ZIP file, and the UART baud rate shown in the following examples.
 
-   * If you used the default baud rate:
+   .. tabs::
 
-     .. parsed-literal::
-        :class: highlight
+      .. group-tab:: nRF9161 DK
 
-        python update_modem.py mfw_nrf9160_1.2.2.zip /dev/ttyACM0 *115200*
+         * If you used the default baud rate:
 
-   * If you used the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag:
+         .. parsed-literal::
+            :class: highlight
 
-     .. parsed-literal::
-        :class: highlight
+            python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *115200*
 
-        python update_modem.py mfw_nrf9160_1.2.2.zip /dev/ttyACM0 *1000000*
+         * If you used the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag:
 
+         .. parsed-literal::
+            :class: highlight
+
+            python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *1000000*
+
+
+      .. group-tab:: nRF9160 DK
+
+         * If you used the default baud rate:
+
+         .. parsed-literal::
+            :class: highlight
+
+            python update_modem.py mfw_nrf9160_1.3.5.zip /dev/ttyACM0 *115200*
+
+         * If you used the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag:
+
+         .. parsed-literal::
+            :class: highlight
+
+            python update_modem.py mfw_nrf9160_1.3.5.zip /dev/ttyACM0 *1000000*
 
 
 Sample output
@@ -89,7 +119,7 @@ The python script should print the following output:
 
 .. code-block:: console
 
-   # nrf9160 modem firmware upgrade over serial port example started.
+   # nrf91 Series modem firmware upgrade over serial port example started.
    {
    "duration": 406,
    "error_code": "Ok",

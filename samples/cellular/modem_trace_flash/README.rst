@@ -12,9 +12,11 @@ This sample demonstrates how to add a modem trace backend that stores the trace 
 Requirements
 ************
 
-The sample supports the following development kit, version 0.14.0 or higher:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
+
+For the nRF9160 DK, version 0.14.0 or higher is supported by the sample.
 
 .. include:: /includes/tfm.txt
 
@@ -24,7 +26,7 @@ Overview
 ********
 
 You can use this sample to implement storing and reading of modem traces on an external flash device.
-The sample contains an implementation of a custom trace backend that writes modem traces on the external flash chip of the nRF9160 DK.
+The sample contains an implementation of a custom trace backend that writes modem traces on the external flash chip of the nRF91 Series DK.
 In addition, it reads out the traces from the external flash and writes them out to UART1 on a button press.
 
 You can use the sample for creating a trace backend for your own flash device.
@@ -38,7 +40,8 @@ Write performance
 
 A modem trace backend must be able to handle the trace data as fast as they are produced to avoid dropping traces.
 It is recommended to handle the trace data at approximately 1 Mbps.
-The Macronix MX25R6435 Ultra Low Power Flash on the nRF9160DK is optimized for low power consumption rather than write speed, but it features a high performance mode.
+
+The Macronix MX25R6435 Ultra Low Power Flash on the nRF9160 DK is optimized for low power consumption rather than write speed, but it features a high performance mode.
 The high-performance mode consumes more power but is able to erase and write at roughly double the speed.
 Use the device tree property ``mxicy,mx25r-power-mode`` to configure MX25R6435 in either high-performance or low-power mode.
 In this sample, the MX25R6435 is configured in high-performance mode.

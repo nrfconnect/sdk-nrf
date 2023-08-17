@@ -13,7 +13,7 @@ This sample shows the cipher suites and lists them as supported or not supported
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -53,7 +53,11 @@ Check and configure the following Kconfig options:
 .. _CONFIG_EXTENDED_CIPHERSUITE_LIST:
 
 CONFIG_EXTENDED_CIPHERSUITE_LIST
-   The sample configuration extends the cipher suite list with extra cipher suites that are only supported by modem firmware v1.3.x, where x is greater than or equal to 1 and modem firmware v1.2.x, where x is greater than or equal to 7.
+   The sample configuration extends the cipher suite list with extra cipher suites that are only supported for the following modem firmware versions:
+
+   * Modem firmware v1.3.x, where x is greater than or equal to 1
+   * Modem firmware v1.2.x, where x is greater than or equal to 7
+   * Modem firmware v2.0.0
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

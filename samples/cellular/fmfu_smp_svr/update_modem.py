@@ -34,7 +34,7 @@ def run(uart, modem_firmware_zip, baudrate):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("firmware", default=None,
-            help="Path to nrf9160 modem firmware zip folder")
+            help="Path to nRF modem firmware zip folder")
     parser.add_argument("uart", default=None,
             help="Serial device name for UART")
     parser.add_argument("baudrate", default=115200,

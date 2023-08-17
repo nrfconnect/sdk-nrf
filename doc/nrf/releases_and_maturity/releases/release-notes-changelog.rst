@@ -358,6 +358,7 @@ Cellular samples (renamed from nRF9160 samples)
 
 * Added:
 
+  * Support for the nRF9161 DK in all cellular samples except for the :ref:`lte_sensor_gateway` sample.
   * The :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
   * The :ref:`nrf_provisioning_sample` sample that demonstrates how to use the :ref:`lib_nrf_provisioning` service.
 
@@ -378,6 +379,7 @@ Cellular samples (renamed from nRF9160 samples)
     * The connection logic by cleaning and simplifying it.
     * From using the :ref:`lte_lc_readme` library directly to using Zephyr's ``conn_mgr`` and the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kconfig option.
     * The sample to remove redundant shadow updates for nRF Cloud.
+    * Build instructions, board files, and DTC overlay file so that Wi-Fi scanning works for the nRF9161 DK and the nRF9160 DK.
 
   * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
 

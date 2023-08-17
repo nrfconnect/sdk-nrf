@@ -6,10 +6,10 @@ This sample uses the `nRF Cloud REST API`_, which requires that your device has 
 
 (See `nRF Cloud REST API`_ and `Securely generating credentials on the nRF9160`_ for more details on this requirement).
 
-Modem version v1.3.x or later is also required.
+If you are using nRF9160 DK, modem version v1.3.x or later is required.
+Your nRF9160 DK may ship with modem firmware older than v1.3.x, so verify that you have the latest installed.
 
-* Your device may ship with modem firmware older than v1.3.x, so verify that you have the latest installed.
-* For instructions on updating your device's modem firmware, see the following documents:
+For instructions on updating your device's modem firmware, see the following documents:
 
   * :ref:`Updating modem firmware on nRF9160 DK <nrf9160_gs_updating_fw_modem>`
   * :ref:`Updating modem firmware on Thingy:91 <programming_thingy>`
@@ -25,7 +25,7 @@ To obtain and register a valid signing key, you can do one of the following:
 To provision your device on nRF Cloud using JITP, complete the following steps:
 
 1. :ref:`Ensure valid nRF Cloud credentials are installed <nrf9160_ug_updating_cloud_certificate>`.
-   nRF9160 DK and Thingy:91 have credentials pre-installed, but some may be shipped with RSA256 credentials; JWT signing requires ES256 credentials.
+   nRF91 Series DK and Thingy:91 have credentials pre-installed, but some may be shipped with RSA256 credentials; JWT signing requires ES256 credentials.
    These devices need new credentials to be installed before they can perform REST requests.
 
 #. Install a sample or application that supports JITP.

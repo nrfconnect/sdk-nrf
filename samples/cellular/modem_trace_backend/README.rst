@@ -12,7 +12,7 @@ The Modem trace backend sample demonstrates how to add a user-defined modem trac
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -23,7 +23,7 @@ The sample supports the following development kit:
 Overview
 ********
 
-The Modem trace backend sample implements and selects a custom trace backend to receive traces from the nRF9160 modem.
+The Modem trace backend sample implements and selects a custom trace backend to receive traces from the cellular modem.
 For demonstration purposes, the custom trace backend counts the number of bytes received and calculates the data rate of modem traces received.
 The CPU utilization is also measured.
 The byte count, data rate, and CPU load are periodically printed to terminal using a delayable work item and the system workqueue.
@@ -45,7 +45,7 @@ Testing
 
 #. |connect_kit|
 #. |connect_terminal|
-#. Power on or reset your nRF9160 DK.
+#. Power on or reset your nRF91 Series DK.
 #. Observe that the sample starts and connects to the network.
 #. Observe that the sample displays the amount of received trace data bytes, throughput, and percentage of CPU load.
 #. Observe that the sample completes with a message on the terminal.
