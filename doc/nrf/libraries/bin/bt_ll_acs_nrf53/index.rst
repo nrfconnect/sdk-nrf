@@ -13,12 +13,17 @@ This controller is compatible with the HCI RPMsg driver provided by the |NCS| Bl
 When the communication between the application and the network core on a device is handled by the HCI RPMsg driver, this link layer controller can be used to handle time critical low level communication and the radio.
 
 .. note::
-   The LE Audio controller for nRF5340 associated with this version of the |NCS| comes with the QDID 181316.
+   The LE Audio controller for nRF5340 associated with this version of the |NCS| comes with the QDID ``#181316``.
 
 Configuration
 *************
 
 The controller can be enabled with the :Kconfig:option:`CONFIG_BT_LL_ACS_NRF53` set to ``y``.
+
+The number of Connected Isochronous Streams (CIS) you can use in a Connected Isochronous Group (CIG) and the number of Broadcast Isochronous Streams (BIS) you can use in a Broadcast Isochronous Group (BIG) are dependent on which configurations you use.
+The most relevant configurations are bitrate and number of retransmissions.
+See the `Capabilities for the LE Audio Controller Subsystem for nRF5340`_ document for matrix tables listing the supported CIS in a CIG and the supported BIS in a BIG.
+These matrix tables are based on the Basic Audio Profile (BAP) tables.
 
 The controller has the following methods of configuration:
 
