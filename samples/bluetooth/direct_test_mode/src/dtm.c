@@ -1100,8 +1100,7 @@ static void errata_191_handle(bool enable)
 static void radio_ppi_clear(void)
 {
 	nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
-	nrf_egu_event_clear(DTM_EGU,
-			    nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+	nrf_egu_event_clear(DTM_EGU, DTM_EGU_EVENT);
 
 	/* Break connection from timer to radio to stop transmit loop */
 	nrfx_gppi_event_endpoint_clear(dtm_inst.ppi_radio_start,
@@ -1184,10 +1183,8 @@ static void dtm_test_done(void)
 static void radio_start(bool rx, bool force_egu)
 {
 	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
-		nrf_egu_event_clear(DTM_EGU,
-			    nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
-		nrf_egu_task_trigger(DTM_EGU,
-			     nrf_egu_task_address_get(DTM_EGU, DTM_EGU_TASK));
+		nrf_egu_event_clear(DTM_EGU, DTM_EGU_EVENT);
+		nrf_egu_task_trigger(DTM_EGU, DTM_EGU_TASK);
 	} else {
 		/* Shorts will start radio in RX mode when it is ready */
 		nrf_radio_task_trigger(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
