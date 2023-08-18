@@ -56,6 +56,9 @@ Build system
 * Removed the ``CONFIG_MCUBOOT_IMAGE_VERSION`` Kconfig option in favor of using a dedicated :ref:`application VERSION file <zephyr:app-version-details>` to set the version.
    You can alternatively set the version by using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option, but using a :file:`VERSION` file is the recommended approach.
 
+* The |NCS| name and version is now displayed instead of the Zephyr version as the default boot banner when applications boot.
+  This can be customized in user applications.
+
 Working with nRF91 Series
 =========================
 
