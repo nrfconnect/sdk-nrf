@@ -23,6 +23,16 @@ LOG_MODULE_REGISTER(slm_gnss, CONFIG_SLM_LOG_LEVEL);
 
 #define LOCATION_REPORT_MS 5000
 
+#define SEC_PER_MIN	(60UL)
+#define MIN_PER_HOUR	(60UL)
+#define SEC_PER_HOUR	(MIN_PER_HOUR * SEC_PER_MIN)
+#define HOURS_PER_DAY	(24UL)
+#define SEC_PER_DAY	(HOURS_PER_DAY * SEC_PER_HOUR)
+/* (6.1.1980 UTC - 1.1.1970 UTC) */
+#define GPS_TO_UNIX_UTC_OFFSET_SECONDS	(315964800UL)
+/* UTC/GPS time offset as of 1st of January 2017. */
+#define GPS_TO_UTC_LEAP_SECONDS	(18UL)
+
 /**@brief GNSS operations. */
 enum slm_gnss_operation {
 	GPS_STOP,
@@ -65,6 +75,17 @@ extern bool nrf_cloud_location_signify;
 extern struct k_work_q slm_work_q;
 extern struct at_param_list at_param_list;
 extern uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
+
+static int64_t utc_to_gps_sec(const int64_t utc_sec)
+{
+	return (utc_sec - GPS_TO_UNIX_UTC_OFFSET_SECONDS) + GPS_TO_UTC_LEAP_SECONDS;
+}
+
+static void gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day)
+{
+	*gps_day = (uint16_t)(gps_sec / SEC_PER_DAY);
+	*gps_time_of_day = (uint32_t)(gps_sec % SEC_PER_DAY);
+}
 
 static bool is_gnss_activated(void)
 {
@@ -160,6 +181,10 @@ static int read_agps_req(struct nrf_modem_gnss_agps_data_frame *req)
 		LOG_ERR("Failed to read GNSS AGPS req, error %d", err);
 		return -EAGAIN;
 	}
+
+	LOG_DBG("AGPS_REQ.sv_mask_ephe = 0x%08x", req->sv_mask_ephe);
+	LOG_DBG("AGPS_REQ.sv_mask_alm  = 0x%08x", req->sv_mask_alm);
+	LOG_DBG("AGPS_REQ.data_flags   = 0x%08x", req->data_flags);
 
 	return 0;
 }
@@ -565,6 +590,7 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 	uint16_t op;
 	uint16_t interval;
 	uint16_t timeout;
+	int64_t utc_now_ms;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -612,6 +638,27 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 					return err;
 				}
 			} /* else leave it to default or previously configured timeout */
+
+			/* Inject current GPS time. If there is cached A-GPS data before expiry,
+			 * modem will not request new almanac and/or ephemerides from cloud.
+			 */
+			err = date_time_now(&utc_now_ms);
+			if (err == 0) {
+				int64_t gps_sec = utc_to_gps_sec(utc_now_ms/1000);
+				struct nrf_modem_gnss_agps_data_system_time_and_sv_tow gps_time
+					= { 0 };
+
+				gps_sec_to_day_time(gps_sec, &gps_time.date_day,
+						    &gps_time.time_full_s);
+				err = nrf_modem_gnss_agps_write(&gps_time, sizeof(gps_time),
+						NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
+				if (err) {
+					LOG_WRN("Fail to inject time, error %d", err);
+				} else {
+					LOG_DBG("Inject time (GPS day %u, GPS time of day %u)",
+						gps_time.date_day, gps_time.time_full_s);
+				}
+			}
 
 			err = gnss_startup(RUN_TYPE_AGPS);
 		} else if (op == AGPS_STOP && run_type == RUN_TYPE_AGPS) {
