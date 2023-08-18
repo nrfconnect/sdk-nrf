@@ -12,6 +12,7 @@
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_location.h>
+#include <net/nrf_cloud_rest.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_nrfcloud.h"
@@ -23,6 +24,10 @@ LOG_MODULE_REGISTER(slm_nrfcloud, CONFIG_SLM_LOG_LEVEL);
 
 #define MODEM_AT_RSP \
 	"{\"appId\":\"MODEM\", \"messageType\":\"RSP\", \"data\":\"%s\"}"
+
+/* Pseudo-APPID used to send D2C arbitrary messages */
+#define CLOUD_D2C_MSG \
+	"{\"appId\":\"MESSAGE\", \"msg\":\"%.*s\"}"
 
 /**@brief nRF Cloud operations. */
 enum slm_nrfcloud_operation {
@@ -91,6 +96,7 @@ bool nrf_cloud_location_signify;
 extern struct k_work_q slm_work_q;
 extern struct at_param_list at_param_list;
 extern uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
+extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
 
 #if defined(CONFIG_NRF_CLOUD_LOCATION)
 AT_MONITOR(ncell_meas, "NCELLMEAS", ncell_meas_mon, PAUSED);
@@ -312,6 +318,38 @@ static int do_cloud_send_msg(const char *message, int len)
 	if (err) {
 		LOG_ERR("nrf_cloud_send failed, error: %d", err);
 	}
+
+	return err;
+}
+
+static int do_cloud_send_generic_msg(const char *message, int len)
+{
+	int err;
+	char *d2c_msg;
+	size_t buflen;
+	struct nrf_cloud_rest_context rest_ctx = {
+		.connect_socket = -1,
+		.keep_alive = false,
+		.rx_buf = data_buf,
+		.rx_buf_len = sizeof(data_buf),
+		.fragment_size = 0
+	};
+
+	/* format a JSON message */
+	buflen =  sizeof(CLOUD_D2C_MSG) + len + 1;
+	d2c_msg = k_malloc(buflen);
+	if (d2c_msg == NULL) {
+		LOG_WRN("Unable to allocate buffer");
+		return -ENOMEM;
+	}
+	snprintf(d2c_msg, buflen, CLOUD_D2C_MSG, len, message);
+
+	/* send by REST API */
+	err = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, d2c_msg, false, NULL);
+	if (err) {
+		LOG_ERR("nrf_cloud_rest_send_device_message failed, error: %d", err);
+	}
+	k_free(d2c_msg);
 
 	return err;
 }
@@ -584,7 +622,7 @@ static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len,
 			(void)exit_datamode_handler(-EOVERFLOW);
 			return -EOVERFLOW;
 		}
-		ret = do_cloud_send_msg(data, len);
+		ret = do_cloud_send_generic_msg(data, len);
 		LOG_INF("datamode send: %d", ret);
 		if (ret < 0) {
 			(void)exit_datamode_handler(ret);

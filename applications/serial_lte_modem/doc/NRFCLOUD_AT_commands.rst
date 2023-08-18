@@ -37,7 +37,7 @@ The ``<op>`` parameter accepts the following integer values:
 
 * ``0`` - Disconnect from the nRF Cloud service.
 * ``1`` - Connect to the nRF Cloud service.
-* ``2`` - Send a message in the JSON format to the nRF Cloud service.
+* ``2`` - Send an arbitrary message to the nRF Cloud service in ``slm_data_mode``.
 
 When ``<op>`` is ``2``, SLM enters ``slm_data_mode``.
 
@@ -103,10 +103,8 @@ Example
 
   AT#XNRFCLOUD=2
   OK
-  {"msg":"Hello, nRF Cloud"}+++
+  Hello, nRF Cloud+++
   #XDATAMODE: 0
-
-  #XNRFCLOUD: {"msg":"Hello"}
 
   AT#XNRFCLOUD=0
 
