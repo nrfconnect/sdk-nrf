@@ -128,9 +128,9 @@ config MBEDTLS_SSL_EXTENDED_MASTER_SECRET
 	bool
 	default y
 	help
-	  This setting enables support for RFC: 7627: Session Has and Extended Master
-	  Secret Extension.This was introduced as the "proper fix" tot the Triple
-	  Handshake attacks, but is recommended to always be used.
+	  This setting enables support for RFC 7627: Session Hash and Extended
+	  Master Secret Extension. This was introduced as the "proper fix" to
+	  the Triple Handshake attacks, but is recommended to always be used.
 	  Corresponds to MBEDTLS_SSL_EXTENDED_MASTER_SECRET in mbed TLS config file.
 
 config MBEDTLS_SSL_COOKIE_C
