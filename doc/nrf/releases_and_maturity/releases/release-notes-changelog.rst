@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.4.99
-###########################
+Changelog for |NCS| v2.4.99-dev1
+################################
 
 .. contents::
    :local:
@@ -48,8 +48,7 @@ Application development
 RF Front-End Modules
 --------------------
 
-* Updated:
-  * Change the name of the nrf21540_ek shield to nrf21540ek.
+* Updated the name of the ``nrf21540_ek`` shield to ``nrf21540ek``.
 
 Build system
 ------------
@@ -85,11 +84,11 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth® LE
 -------------
 * Updated the Bluetooth HCI headers.
-  The ``hci.h`` header now contains only the function prototypes, and the new
-  ``hci_types.h`` header defines all HCI-related macros and structs.
+  The :file:`hci.h` header now contains only the function prototypes, and the new
+  :file:`hci_types.h` header defines all HCI-related macros and structs.
 
-  The previous ``hci_err.h`` header has been merged into the new ``hci_types.h`` header.
-  This can break builds that were directly including ``hci_err.h``.
+  The previous :file:`hci_err.h` header has been merged into the new :file:`hci_types.h` header.
+  This can break builds that were directly including :file:`hci_err.h`.
 
 Bluetooth mesh
 --------------
@@ -102,7 +101,7 @@ Matter
 ------
 
 * Disabled OpenThread shell by default in Matter over Thread samples.
-* Enabled :kconfig:option:`CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option by default, including for builds without factory data support.
+* Enabled :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option by default, including for builds without factory data support.
   The firmware now erases all flash pages in the non-volatile storage during a factory reset, instead of just clearing Matter-related settings.
 
 * Fixed:
@@ -129,7 +128,7 @@ The following list summarizes the most important changes inherited from the upst
 * Added the :kconfig:option:`CHIP_MALLOC_SYS_HEAP_WATERMARKS_SUPPORT` Kconfig option to manage watermark support.
 * Updated the factory data guide with an additional rotating ID information.
 * Fixed RAM and ROM reports.
-* Set onboarding code generation to be enabled by default if the :kconfig:option:`CHIP_FACTORY_DATA_BUILD` Kconfig is set.
+* Set onboarding code generation to be enabled by default if the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig is set.
 
 Thread
 ------
@@ -206,9 +205,7 @@ nRF9160: Serial LTE modem
   * DFU AT commands ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` because they were not usable without a custom application in the target (nRF52 series) device.
   * Support for bootloader FOTA update because it is not needed for Serial LTE modem.
   * Option to set or get HWFC setting from ``#XSLMUART`` AT command.
-  * Operations to read or erase the MCUboot secondary slot from the ``#XFOTA`` AT command because
-    the application update process overwrites the slot in any case.
-
+  * Operations to read or erase the MCUboot secondary slot from the ``#XFOTA`` AT command because the application update process overwrites the slot in any case.
 
 nRF5340 Audio
 -------------
@@ -260,9 +257,9 @@ Thingy:53: Matter weather station
 Matter Bridge
 -------------
 
-* Added the :ref:`Matter bridge <matter_bridge_app>` application.
 * Added:
 
+  * The :ref:`Matter bridge <matter_bridge_app>` application.
   * Support for the Bluetooth LE bridged devices.
   * Support for bridging of the Bluetooth LE Environmental Sensor (ESP).
 
@@ -274,9 +271,7 @@ Bluetooth samples
 
 * :ref:`direct_test_mode` sample:
 
-  * Added:
-
-    * Support for the nRF52840 DK.
+  * Added support for the nRF52840 DK.
 
   * Updated:
 
@@ -285,20 +280,18 @@ Bluetooth samples
 
 * :ref:`peripheral_hids_keyboard` sample:
 
-  * Changed:
-
-    * Fixed an interoperability issue with iOS devices by setting the report IDs of HID input and output reports to zero.
+  * Fixed an interoperability issue with iOS devices by setting the report IDs of HID input and output reports to zero.
 
 * :ref:`peripheral_fast_pair` sample:
 
-  * Disabled the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option as a workaround fix for the `Zephyr issue #61033`_.
+  * Updated by disabling the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option as a workaround fix for the `Zephyr issue #61033`_.
 
 Bluetooth mesh samples
 ----------------------
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
-  * Fixed an issue with the sample not fitting into RAM size on the nrf52dk_nrf52832 board.
+  * Fixed an issue with the sample not fitting into RAM size on the ``nrf52dk_nrf52832`` board.
 
 * :ref:`bluetooth_mesh_light` sample:
 
@@ -319,8 +312,8 @@ Bluetooth mesh samples
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
-  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
   * Added a getter for the :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` sensor.
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
   * Fixed an issue where the :c:var:`bt_mesh_sensor_time_since_presence_detected` sensor could report an invalid value when the time delta would exceed the range of the characteristic.
 
 * Fixed an issue where some samples copied using the `nRF Connect for Visual Studio Code`_ extension would not compile due to relative paths in :file:`CMakeLists.txt`, which were referencing files outside of the applications folder.
@@ -333,7 +326,7 @@ Cryptography samples
 Cellular samples (renamed from nRF9160 samples)
 -----------------------------------------------
 
-* Renamed nRF9160 samples to cellular samples and are now found in the :file:`samples/cellular` folder.
+* Renamed nRF9160 samples to :ref:`cellular_samples` and relocated them to the :file:`samples/cellular` folder.
 
 * Added:
 
@@ -342,7 +335,7 @@ Cellular samples (renamed from nRF9160 samples)
 
 * :ref:`nrf_cloud_multi_service` sample:
 
-  * Renamed Cellular: nRF Cloud MQTT multi-service to Cellular: nRF Cloud multi-service.
+  * Renamed Cellular: nRF Cloud MQTT multi-service to :ref:`nrf_cloud_multi_service`.
   * Added:
 
     * Documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
@@ -392,10 +385,7 @@ Cellular samples (renamed from nRF9160 samples)
 
     * Support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
     * Support for GSM 7bit encoded hexadecimal string in SMS messages.
-
-  * Updated:
-
-    * The sample to use the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
+  * Updated the sample to use the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
 
 * :ref:`lwm2m_client` sample:
 
@@ -502,10 +492,12 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-* Added :ref:`wifi_wfa_qt_app_sample` that demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance QuickTrack certification.
-* Added :ref:`wifi_shutdown_sample` that demonstrates how to configure the Wi-Fi driver to shut down the Wi-Fi hardware when the Wi-Fi interface is not in use.
-* Added support for the Wi-Fi driver to several upstream Zephyr networking samples.
-* Added :ref:`wifi_twt_sample` that demonstrates how to establish TWT flow and transfer data conserving power.
+* Added:
+
+  * :ref:`wifi_wfa_qt_app_sample` sample that demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance QuickTrack certification.
+  * :ref:`wifi_shutdown_sample` sample that demonstrates how to configure the Wi-Fi driver to shut down the Wi-Fi hardware when the Wi-Fi interface is not in use.
+  * :ref:`wifi_twt_sample` sample that demonstrates how to establish TWT flow and transfer data conserving power.
+  * Support for the Wi-Fi driver to several upstream Zephyr networking samples.
 
 Other samples
 -------------
@@ -538,13 +530,14 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
-* Added:
+* Added :ref:`nrf_security` library, relocated from the sdk-nrfxlib repository to the :file:`subsys/nrf_security` directory.
 
-  * :ref:`nrf_security` library, relocated from the sdk-nrfxlib repository to the :file:`subsys/nrf_security` directory.
+Debug libraries
+---------------
 
-* Updated:
+* :ref:`cpu_load` library:
 
-  * :ref:`cpu_load` library by aligning the timer's configuration to the new nrfx API.
+  * Updated by aligning the timer's configuration to the new nrfx API.
 
 Binary libraries
 ----------------
@@ -556,31 +549,27 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Deleted reset in progress flag from settings storage instead of storing it as ``false`` on factory reset operation.
+  * Updated by deleting reset in progress flag from settings storage instead of storing it as ``false`` on factory reset operation.
     This is done to ensure that no Fast Pair data is left in the settings storage after the factory reset.
 
 * :ref:`bt_mesh` library:
 
-  * Added:
-
-    * The :kconfig:option:`BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT` Kconfig option that configures a timeout before resetting the ambient light level to zero.
+  * Added the :kconfig:option:`BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT` Kconfig option that configures a timeout before resetting the ambient light level to zero.
 
   * Updated:
 
-    * The :kconfig:option:`BT_MESH_MODEL_SRV_STORE_TIMEOUT` Kconfig option, that is controlling timeout for storing of model states, is replaced by the :kconfig:option:`BT_MESH_STORE_TIMEOUT` Kconfig option.
-    * The Light Lightness Actual and Generic Power Level states of the :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_plvl_srv_readme` models cannot dim to off. This is due to binding with Generic Level state when receiving Generic Delta Set and Generic Move Set messages.
+    * The :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT` Kconfig option, that is controlling timeout for storing of model states, is replaced by the :kconfig:option:`CONFIG_BT_MESH_STORE_TIMEOUT` Kconfig option.
+    * The Light Lightness Actual and Generic Power Level states of the :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_plvl_srv_readme` models cannot dim to off.
+      This is due to binding with Generic Level state when receiving Generic Delta Set and Generic Move Set messages.
 
-  * Fixed an issue where the :ref:'bt_mesh_dtt_srv_readme' model could not be found for models spanning multiple elements.
-  * Fixed an issue where the :ref:'bt_mesh_sensor_srv_readme' model would add a corrupted marshalled sensor data into the Sensor Status message because the fetched sensor value was outside of range.
-    If the fetched sensor value is outside of range, the marshalled sensor data for that sensor will not be added to the Sensor Status message.
+  * Fixed:
+
+    * An issue where the :ref:`bt_mesh_dtt_srv_readme` model could not be found for models spanning multiple elements.
+    * An issue where the :ref:`bt_mesh_sensor_srv_readme` model would add a corrupted marshalled sensor data into the Sensor Status message, because the fetched sensor value was outside the range.
+      If the fetched sensor value is out of range, the marshalled sensor data for that sensor is not added to the Sensor Status message.
 
 Bootloader libraries
 --------------------
-
-|no_changes_yet_note|
-
-Debug libraries
----------------
 
 |no_changes_yet_note|
 
@@ -592,7 +581,6 @@ Modem libraries
 * :ref:`nrf_modem_lib_readme`:
 
   * Added CEREG event tracking to ``lte_connectivity``.
-
   * Updated:
 
     * The :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.
@@ -602,42 +590,38 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * Added:
-
-    * Support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
-
-  * Updated:
-
-    * Neighbor cell search to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
+  * Added support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
+  * Updated the neighbor cell search to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
 
 * :ref:`pdn_readme` library:
 
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
 
-* :ref:`modem_key_mgmt`:
+* :ref:`modem_key_mgmt` library:
 
-   * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
+  * Updated the :c:func:`modem_key_mgmt_cmp` function to return ``1`` if the buffer length does not match the certificate length.
 
-* :ref:`sms_readme`:
+* :ref:`sms_readme` library:
 
-  * Added:
-
-    * Support for providing input text as a GSM 7bit encoded hexadecimal string to send some special characters that cannot be sent using ASCII string.
+  * Added support for providing input text as a GSM 7bit encoded hexadecimal string to send some special characters that cannot be sent using ASCII string.
 
 Libraries for networking
 ------------------------
 
-* Added
+* Added:
 
-  * The :ref:`lib_nrf_provisioning` library for device provisioning.
-
-* Multicell location library:
-
-  * This library is now removed and relevant functionality is available through the :ref:`lib_location` library.
+  * :ref:`lib_nrf_provisioning` library for device provisioning.
+  * :ref:`lib_nrf_cloud_coap` library for accessing nRF Cloud services using CoAP.
 
 * :ref:`lib_nrf_cloud_log` library:
 
-  * Added explanation of text versus dictionary logs.
+  * Added:
+
+    * An explanation of text versus dictionary logs.
+    * Functions to query whether text-based or dictionary (binary-based) logging is enabled.
+    * Support for sending direct log messages using CoAP.
+
+  * Fixed the memory leak.
 
 * :ref:`lib_nrf_cloud` library:
 
@@ -646,14 +630,14 @@ Libraries for networking
     * :c:struct:`nrf_cloud_obj` structure and functions for encoding and decoding nRF Cloud data.
     * :c:func:`nrf_cloud_obj_pgps_request_create` function that creates a P-GPS request for nRF Cloud.
     * A new internal codec function :c:func:`nrf_cloud_obj_location_request_payload_add`, which excludes local Wi-Fi access point MAC addresses from the location request.
-    * Support for CoAP CBOR type handling to nrf_cloud_obj.
+    * Support for CoAP CBOR type handling to :c:struct:`nrf_cloud_obj`.
     * Warning message discouraging use of :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` for purposes other than testing.
     * Reporting of protocol (MQTT, REST, or CoAP) as well as method (LTE or Wi-Fi) to the device shadow.
-    * Kconfig choice :kconfig:option:`NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT` for selecting the data that is encoded in Wi-Fi location requests.
+    * Kconfig choice :kconfig:option:`CONFIG_NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT` for selecting the data that is encoded in Wi-Fi location requests.
 
   * Updated:
 
-    * Moved JSON manipulation from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
+    * JSON manipulation moved from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
     * :c:func:`nrf_cloud_obj_location_request_create` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
     * Retry handling for P-GPS data download errors to retry ``ECONNREFUSED`` errors.
     * By default, Wi-Fi location requests include only the MAC address and RSSI value.
@@ -672,11 +656,7 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_rest` library:
 
-  * Updated:
-
-    * :c:func:`nrf_cloud_rest_location_get` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
-
-* Added the :ref:`lib_nrf_cloud_coap` library for accessing nRF Cloud services using CoAP.
+  * Updated the :c:func:`nrf_cloud_rest_location_get` function to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
 
 * :ref:`lib_lwm2m_client_utils` library:
 
@@ -701,7 +681,7 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
     * The :kconfig:option:`CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
     * AWS FOTA jobs are now marked as failed if the job document for the update is invalid.
-    * The protocol (HTTP or HTTPS) is now automatically chosen based on the `protocol` or `url` fields in the job document for the update.
+    * The protocol (HTTP or HTTPS) is now automatically chosen based on the ``protocol`` or ``url`` fields in the job document for the update.
 
 * :ref:`lib_azure_fota` library:
 
@@ -723,32 +703,20 @@ Libraries for networking
 
     * The library now verifies whether the download started with the same URI and resumes the interrupted download.
 
-* :ref:`lib_nrf_cloud_log` library:
-
-  * Added:
-
-    * Functions to query whether text-based or dictionary (binary-based) logging is enabled.
-    * Support for sending direct log messages using CoAP.
-
-  * Fixed:
-
-    * Memory leak.
-
 * :ref:`lib_nrf_cloud_alert` library:
 
-  * Added:
+  * Added support for sending alerts using CoAP.
 
-    * Support for sending alerts using CoAP.
-
+* Removed the Multicell location library as the relevant functionality is available through the :ref:`lib_location` library.
 
 Libraries for NFC
 -----------------
 
-  * Fixed the potential issue where the NFC interrupt context switching could loose interrupts data.
-    This could happen if interrupts would be executed much faster than the NFC workqueue or thread.
+* Fixed a potential issue where the NFC interrupt context switching could result in loss of interrupt data.
+  This could happen if interrupts would be executed much faster than the NFC workqueue or thread.
 
-  * Fixed an issue where an assertion could be triggered when requesting clock from the NFC platform interrupt context.
-    The NFC interrupt is no longer a zero latency interrupt.
+* Fixed an issue where an assertion could be triggered when requesting clock from the NFC platform interrupt context.
+  The NFC interrupt is no longer a zero latency interrupt.
 
 * :ref:`nfc_t4t_isodep_readme` library:
 
@@ -758,7 +726,7 @@ Libraries for NFC
 Nordic Security Module
 ----------------------
 
-:ref:`nrf_security` library:
+* :ref:`nrf_security` library:
 
   * Removed:
 
@@ -782,7 +750,7 @@ Other libraries
 
     * :c:func:`hw_unique_key_write`, :c:func:`hw_unique_key_write_random` and :c:func:`hw_unique_key_load_kdr` functions to return an error code and not panic on error.
     * :c:func:`hw_unique_key_derive_key` function to always return an error code from the library-defined codes.
-    * The defined error code names with prefix HW_UNIQUE_KEY_ERR_*.
+    * The defined error code names with prefix ``HW_UNIQUE_KEY_ERR_*``.
 
 * :ref:`st25r3911b_nfc_readme` library:
 
@@ -801,9 +769,11 @@ Common Application Framework (CAF)
 
 * :ref:`caf_ble_adv`:
 
-  * Updated the dependencies of the :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option so that it can be used when the Bluetooth controller is running on the network core.
-  * Improved broadcast of :c:struct:`module_state_event`.
-    The event informing about entering either :c:enum:`MODULE_STATE_READY` or :c:enum:`MODULE_STATE_OFF` is not submitted until the CAF Bluetooth LE advertising module is initialized and ready.
+  * Updated:
+
+    * The dependencies of the :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option so that it can be used when the Bluetooth controller is running on the network core.
+    * The library by improving broadcast of :c:struct:`module_state_event`.
+      The event informing about entering either :c:enum:`MODULE_STATE_READY` or :c:enum:`MODULE_STATE_OFF` is not submitted until the CAF Bluetooth LE advertising module is initialized and ready.
 
 * :ref:`caf_power_manager`:
 
@@ -832,9 +802,7 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 DFU libraries
 -------------
 
-* Added:
-
-  * A new DFU SMP target for the image update to an external MCU by using the MCUmgr SMP Client.
+* Added a new DFU SMP target for the image update to an external MCU by using the MCUmgr SMP Client.
 
 
 Scripts
@@ -844,7 +812,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`partition_manager`:
 
-  * The size of the span partitions was changed to include the alignment paritions (``EMPTY_x``) appearing between other partitions, but not alignment partitions at the beginning or end of the span partition.
+  * The size of the span partitions was changed to include the alignment partitions (``EMPTY_x``) appearing between other partitions, but not alignment partitions at the beginning or end of the span partition.
     The size of the span partitions now reflects the memory space taken from the start of the first of its elements to the end of the last, not just the sum of the sizes of the included partitions.
 
 * :ref:`west_sbom`:
