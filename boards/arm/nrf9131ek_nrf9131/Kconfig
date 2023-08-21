@@ -1,0 +1,18 @@
+# Thingy:91 nRF9161 board configuration
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if BOARD_NRF9131EK_NRF9131 || BOARD_NRF9131EK_NRF9131_NS
+
+config BOARD_INIT_PRIORITY
+	int "Initialization priority for board configuration"
+	default 80
+
+endif # BOARD_NRF9131EK_NRF9131 || BOARD_NRF9131EK_NRF9131_NS
+
+module=BOARD
+module-dep=LOG
+module-str=Log level for board
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
