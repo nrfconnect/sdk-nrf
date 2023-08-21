@@ -655,3 +655,7 @@ Configure the partition layout using one of the following configuration options:
   A debugger is needed to program Thingy:91 for the first time.
   This is an :ref:`experimental <software_maturity>` feature.
 * :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER` - This option uses a partition layout, including a storage partition needed for the :ref:`liblwm2m_carrier_readme` library.
+* :kconfig:option:`CONFIG_THINGY91_NO_PREDEFINED_LAYOUT` - Enabling this option disables Thingy:91 pre-defined static partitions.
+  This allows the application to use a dynamic layout or define a custom static partition layout for the application.
+  A debugger is needed to program Thingy:91 for the first time.
+  This is an :ref:`experimental <software_maturity>` feature.
