@@ -77,7 +77,7 @@ Cloud connection loop
 
 The cloud connection loop (implemented in :file:`src/cloud_connection.c`) monitors network availability.
 It starts a connection with `nRF Cloud`_ whenever the Internet becomes reachable, and closes that connection whenever Internet access is lost.
-It has error handling and timeout features to ensure that failed or lost connections are re-established after a waiting period (:kconfig:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
+It has error handling and timeout features to ensure that failed or lost connections are re-established after a waiting period (:ref:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS <CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS>`).
 
 Since the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kcofig option is enabled, Zephyr's ``conn_mgr`` automatically enables and connects to LTE.
 
@@ -104,9 +104,10 @@ Any thread may submit `device messages <nRF Cloud Device Messages_>`_ to the dev
 Once this happens, the message thread transmits all enqueued device messages, one at a time and in fast succession, to nRF Cloud.
 If an enqueued message fails to send, it will be sent back to the queue and tried again later.
 Transmission is paused whenever connection to nRF Cloud is lost.
-If more than :ref:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES <CONFIG_MAX_CONSECUTIVE_SEND_FAILURES>` messages in a row fail to send, the connection to nRF Cloud is reset, and then reconnected after a delay (:kconfig:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
+If more than :ref:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES <CONFIG_MAX_CONSECUTIVE_SEND_FAILURES>` messages in a row fail to send, the connection to nRF Cloud is reset, and then reconnected after a delay (:ref:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS <CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS>`).
 
 Most messages sent to nRF Cloud by this sample are sent using the message queue, but the following are sent directly:
+
 * Alerts using the :ref:`lib_nrf_cloud_alert` library.
 * Logs using the :ref:`lib_nrf_cloud_log` library.
 * `Device shadow <nRF Cloud Device Shadows_>`_ updates.
@@ -582,9 +583,9 @@ Next, complete the following steps for each device you wish to provision:
 
 #. Build the sample with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option enabled and the device ID you created configured.
 
-  This is required for provisioning to succeed.
+   This is required for provisioning to succeed.
 
-   Do this by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and setting the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` Kconfig option to the device ID.
+   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` Kconfig option to the device ID.
 
    For example, if the device ID is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
 
@@ -1011,12 +1012,12 @@ See `Dictionary-based Logging`_ to learn how dictionary-based logging works, how
 References
 **********
 
-`RFC 7252 - The Constrained Application Protocol`_
-`RFC 7959 - Block-Wise Transfer in CoAP`_
-`RFC 7049 - Concise Binary Object Representation`_
-`RFC 8610 - Concise Data Definition Language (CDDL)`_
-`RFC 8132 - PATCH and FETCH Methods for CoAP`_
-`RFC 9146 - Connection Identifier for DTLS 1.2`_
+* `RFC 7252 - The Constrained Application Protocol`_
+* `RFC 7959 - Block-Wise Transfer in CoAP`_
+* `RFC 7049 - Concise Binary Object Representation`_
+* `RFC 8610 - Concise Data Definition Language (CDDL)`_
+* `RFC 8132 - PATCH and FETCH Methods for CoAP`_
+* `RFC 9146 - Connection Identifier for DTLS 1.2`_
 
 Dependencies
 ************
