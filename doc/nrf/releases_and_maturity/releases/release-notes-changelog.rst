@@ -53,7 +53,8 @@ nRF Front-End Modules
 Working with nRF91 Series
 =========================
 
-|no_changes_yet_note|
+* Added new partition layout configuration options for Thingy:91.
+  See :ref:`thingy91_partition_layout` for more details.
 
 Working with nRF52 Series
 =========================
