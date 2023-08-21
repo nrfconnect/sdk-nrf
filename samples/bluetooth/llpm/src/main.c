@@ -203,8 +203,8 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	printk("Connected as %s\n",
 	       conn_info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	printk("Conn. interval is %u units (1.25 ms/unit)\n",
-	       conn_info.le.interval);
+	__ASSERT_NO_MSG(conn_info.le.interval == INTERVAL_LLPM);
+	printk("Conn. interval is 1 ms\n");
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
