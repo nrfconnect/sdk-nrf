@@ -39,7 +39,7 @@ DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
 config RPMSG_NRF53_SRAM_SIZE
 	hex "RPMsg shared memory size"
 	default "$(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_IPC_SHM))"
-	depends on IPC_SERVICE && SOC_NRF5340_CPUAPP
+	depends on SOC_NRF5340_CPUAPP
 	depends on PARTITION_MANAGER_ENABLED
 	help
 	  This option specifies size of the memory region to be used

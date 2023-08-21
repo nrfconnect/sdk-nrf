@@ -80,7 +80,10 @@ if (CONFIG_NRF_MODEM_LIB)
   ncs_add_partition_manager_config(pm.yml.libmodem)
 endif()
 
-if (CONFIG_IPC_SERVICE AND CONFIG_SOC_NRF5340_CPUAPP)
+# The default DTS configuration for the nRF5340 CPUAPP includes the
+# the shared SRAM region, so, inform the partition manager about this
+# region.
+if (CONFIG_SOC_NRF5340_CPUAPP)
   ncs_add_partition_manager_config(pm.yml.rpmsg_nrf53)
 endif()
 
