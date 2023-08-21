@@ -12,4 +12,38 @@ config BOARD_THINGY91_NRF9160
 config BOARD_THINGY91_NRF9160_NS
 	bool "nRF9160 THINGY91 non-secure"
 
+if BOARD_THINGY91_NRF9160_NS
+
+choice
+	prompt "Thingy:91 partition layout"
+	default THINGY91_STATIC_PARTITIONS_SECURE_BOOT if SECURE_BOOT
+	default THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER if LWM2M_CARRIER
+	default THINGY91_STATIC_PARTITIONS_FACTORY
+
+config THINGY91_STATIC_PARTITIONS_FACTORY
+	bool "Factory Thingy:91 partition layout"
+	help
+	   The default Thingy:91 partition layout used in the factory firmware. This ensures
+	   firmware updates are compatible with Thingy:91 when flashing firmware over USB or over
+	   the air.
+
+config THINGY91_STATIC_PARTITIONS_SECURE_BOOT
+	bool "Secure boot Thingy:91 partition layout [EXPERIMENTAL]"
+	depends on SECURE_BOOT
+	select EXPERIMENTAL
+	help
+	   Similar to the factory partition layout, but also has space for the Immutable Bootloader
+	   and two MCUboot slots. A debugger is needed to flash Thingy:91 the first time.
+	   This layout is still under development and should not be used in production.
+
+config THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER
+	bool "LWM2M Carrier  partition layout"
+	depends on LWM2M_CARRIER
+	help
+	  Use a partition layout including a storage partition needed for the lwm2m carrier library.
+
+endchoice
+
+endif # BOARD_THINGY91_NRF9160_NS
+
 endif # SOC_NRF9160_SICA

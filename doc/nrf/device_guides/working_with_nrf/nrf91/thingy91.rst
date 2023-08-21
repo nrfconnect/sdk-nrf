@@ -634,3 +634,24 @@ Building and programming on the command line
           west flash
 
       The device resets and runs the programmed sample or application.
+
+.. _thingy91_partition_layout:
+
+Partition layout
+================
+
+When building firmware on the Thingy:91 board, a static partition layout matching the factory layout is used.
+This ensures that programming firmware through USB works.
+In this case, the MCUboot bootloader will not be updated.
+So, to maintain compatibility, it is important that the image partitions do not get moved.
+When programming the Thingy:91 through an external debug probe, all partitions, including MCUboot, are programmed.
+This enables the possibility of using an updated bootloader or defining an application-specific partition layout.
+
+Configure the partition layout using one of the following configuration options:
+
+* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_FACTORY` - This option is the default Thingy:91 partition layout used in the factory firmware.
+  This ensures firmware updates are compatible with Thingy:91 when programming firmware through USB.
+* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_SECURE_BOOT` - This option is similar to the factory partition layout, but also has space for the immutable bootloader and two MCUboot slots.
+  A debugger is needed to program Thingy:91 for the first time.
+  This is an :ref:`experimental <software_maturity>` feature.
+* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER` - This option uses a partition layout, including a storage partition needed for the :ref:`liblwm2m_carrier_readme` library.
