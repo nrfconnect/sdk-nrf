@@ -9,6 +9,9 @@
 #include <string.h>
 
 #include <zephyr/shell/shell.h>
+#ifdef CONFIG_GETOPT
+#include <zephyr/posix/unistd.h>
+#endif
 #include <getopt.h>
 #include <net/nrf_cloud.h>
 #if defined(CONFIG_NRF_CLOUD_REST)

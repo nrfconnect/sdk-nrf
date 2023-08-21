@@ -8,6 +8,9 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/shell/shell.h>
+#ifdef CONFIG_GETOPT
+#include <zephyr/posix/unistd.h>
+#endif
 #include <getopt.h>
 
 #include "link_api.h"

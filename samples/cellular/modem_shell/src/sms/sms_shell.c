@@ -8,6 +8,9 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#ifdef CONFIG_GETOPT
+#include <zephyr/posix/unistd.h>
+#endif
 #include <getopt.h>
 #include <modem/sms.h>
 
