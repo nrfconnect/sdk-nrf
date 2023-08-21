@@ -38,6 +38,9 @@ config NRF_PROVISIONING_WITH_CERT
 	help
 	  Includes the root certificate used by the server side and provisions it if needed.
 
+config NRF_PROVISIONING_ROOT_CA_SEC_TAG
+	int "Root CA for nRF Cloud Identity Service - security tag"
+
 config NRF_PROVISIONING_SAVE_CMD_ID
 	bool "Save the latest command id to storage"
 	help
@@ -52,6 +55,39 @@ config NRF_PROVISIONING_CUSTOM_AT
 config NRF_PROVISIONING_SETTINGS_STORAGE_PATH
 	string "Settings storage path for provisioning"
 	default "provisioning"
+
+config NRF_PROVISIONING_RX_BUF_SZ
+	int "RX buffer size"
+	default 1024
+
+config NRF_PROVISIONING_TX_BUF_SZ
+	int "TX buffer size"
+	default 2048
+
+choice
+	prompt "Authentication token"
+
+config NRF_PROVISIONING_JWT
+	depends on MODEM_JWT
+	bool "Authenticate with JWT"
+
+config NRF_PROVISIONING_ATTESTTOKEN
+	bool "Authenticate with Attestation token"
+
+endchoice
+
+if NRF_PROVISIONING_JWT
+
+config NRF_PROVISIONING_JWT_SEC_TAG
+	int "Provision Service's security tag, private Device Identity key used by default"
+	default 0
+
+config NRF_PROVISIONING_JWT_MAX_VALID_TIME_S
+	int "Maximum JWT valid lifetime (seconds)"
+	range 0 604800
+	default 300
+
+endif
 
 rsource "Kconfig.nrf_provisioning_http"
 

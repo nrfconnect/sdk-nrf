@@ -112,7 +112,7 @@ static int dtls_setup(int fd)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_COAP_TLS_SESSION_CACHE)) {
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE)) {
 		session_cache = TLS_SESSION_CACHE_ENABLED;
 	} else {
 		session_cache = TLS_SESSION_CACHE_DISABLED;
@@ -468,8 +468,8 @@ static int request_commands(struct coap_client *client,
 {
 	int ret;
 	char after[NRF_PROVISIONING_CORRELATION_ID_SIZE];
-	char *rx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_COAP_RX_BUF_SZ);
-	char *tx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_COAP_TX_BUF_SZ);
+	char *rx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ);
+	char *tx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ);
 	char cmd[sizeof(CMDS_API_TEMPLATE) + NRF_PROVISIONING_CORRELATION_ID_SIZE +
 		 strlen(rx_buf_sz) + strlen(tx_buf_sz)];
 
@@ -532,10 +532,10 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 
 	/* Only one provisioning ongoing at a time*/
 	static union {
-		char coap[CONFIG_NRF_PROVISIONING_COAP_TX_BUF_SZ];
+		char coap[CONFIG_NRF_PROVISIONING_TX_BUF_SZ];
 		char at[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	} tx_buf;
-	static char rx_buf[CONFIG_NRF_PROVISIONING_COAP_RX_BUF_SZ];
+	static char rx_buf[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 
 	int ret;
 	char *auth_token = NULL;

@@ -312,8 +312,8 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 {
 	char *url;
 	size_t buff_sz;
-	char *rx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ);
-	char *tx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ);
+	char *rx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ);
+	char *tx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ);
 	char mver[128];
 	char *cver = STRINGIFY(1);
 	int ret;
@@ -454,10 +454,10 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 
 	/* Only one provisioning ongoing at a time*/
 	static union {
-		char http[CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ];
+		char http[CONFIG_NRF_PROVISIONING_TX_BUF_SZ];
 		char at[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	} tx_buf;
-	static char rx_buf[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
+	static char rx_buf[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 
 	char *auth_hdr = NULL;
 	struct rest_client_req_context req;

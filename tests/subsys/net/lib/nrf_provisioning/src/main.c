@@ -389,11 +389,11 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 		} else if (strncmp(query_items[idx], "txMaxSize=", strlen("txMaxSize=")) == 0) {
 			info.txMaxSize = &(query_items[idx][strlen("txMaxSize=")]);
 			TEST_ASSERT_EQUAL_INT(
-				CONFIG_NRF_PROVISIONING_HTTP_TX_BUF_SZ, atoi(info.txMaxSize));
+				CONFIG_NRF_PROVISIONING_TX_BUF_SZ, atoi(info.txMaxSize));
 		} else if (strncmp(query_items[idx], "rxMaxSize=", strlen("rxMaxSize=")) == 0) {
 			info.rxMaxSize = &(query_items[idx][strlen("rxMaxSize=")]);
 			TEST_ASSERT_EQUAL_INT(
-				CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ, atoi(info.rxMaxSize));
+				CONFIG_NRF_PROVISIONING_RX_BUF_SZ, atoi(info.rxMaxSize));
 		} else if (strncmp(query_items[idx], "after=", strlen("after=")) == 0) {
 			;
 		} else {
@@ -641,7 +641,7 @@ void test_codec_finished_valid(void)
 {
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
-	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
 	struct nrf_provisioning_mm_change dummy_cb = {
@@ -680,7 +680,7 @@ void test_codec_priv_keygen_valid(void)
 {
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
-	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
 	struct nrf_provisioning_mm_change dummy_cb = {
@@ -733,7 +733,7 @@ void test_codec_priv_keygen_rejected_invalid(void)
 {
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
-	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
 	struct nrf_provisioning_mm_change dummy_cb = {
@@ -779,7 +779,7 @@ void test_codec_endorsement_keygen_valid(void)
 {
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
-	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
 	struct nrf_provisioning_mm_change dummy_cb = {
@@ -822,7 +822,7 @@ void test_codec_endorsement_keygen_invalid(void)
 {
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
-	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
 	struct nrf_provisioning_mm_change dummy_cb = {
@@ -866,7 +866,7 @@ void test_codec_config_store1_valid(void)
 {
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
-	char tx_buff[CONFIG_NRF_PROVISIONING_HTTP_RX_BUF_SZ];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
 	int mm_cb_ret = 0;
 
 	struct nrf_provisioning_mm_change dummy_cb = {
