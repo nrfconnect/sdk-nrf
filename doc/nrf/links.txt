@@ -1237,6 +1237,7 @@
 
 .. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
+.. _`Python virtual environments`: https://docs.python.org/3/library/venv.html
 .. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
 .. _`Python's Path.glob`: https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
 
