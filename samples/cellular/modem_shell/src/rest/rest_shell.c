@@ -9,6 +9,9 @@
 #include <assert.h>
 
 #include <zephyr/shell/shell.h>
+#ifdef CONFIG_GETOPT
+#include <zephyr/posix/unistd.h>
+#endif
 #include <getopt.h>
 
 #include <zephyr/net/http/parser.h>
