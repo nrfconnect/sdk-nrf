@@ -138,6 +138,19 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  microseconds. The event length and the connection interval are the
 	  primary parameters for setting the throughput of a connection.
 
+config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
+	bool "Override periodic adv event length default"
+
+config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
+	int "Default periodic advertising event length [us]"
+	default 7500 if !BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
+	range 0 4000000
+	help
+	  The time set aside for periodic advertising each periodic advertising
+	  interval in microseconds. The event length is the primary parameter for
+	  how much data can be transmitted by the periodic advertiser without
+	  scheduling conflicts occurring.
+
 config BT_CTLR_SDC_TX_PACKET_COUNT
 	int "Number of Link Layer ACL TX buffers"
 	default 3

@@ -965,6 +965,17 @@ static int hci_driver_open(void)
 		return err;
 	}
 
+	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
+		sdc_hci_cmd_vs_periodic_adv_event_length_set_t params = {
+			.event_length_us = CONFIG_BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
+		};
+		err = sdc_hci_cmd_vs_periodic_adv_event_length_set(&params);
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return -ENOTSUP;
+		}
+	}
+
 	MULTITHREADING_LOCK_RELEASE();
 
 	return 0;
