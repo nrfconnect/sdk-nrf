@@ -7,7 +7,6 @@
 
 &arduino_spi {
 	status = "okay";
-	cs-gpios = <&arduino_header 16 GPIO_ACTIVE_LOW>; /* D10 */
 
 	nrf700x: nrf7000@0 {
 		compatible = "nordic,nrf700x-spi";
