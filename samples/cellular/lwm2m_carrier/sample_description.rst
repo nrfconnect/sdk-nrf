@@ -64,7 +64,7 @@ Before building and running the sample, complete the following steps:
 Set the server address and PSK
 ------------------------------
 
-a. Open :file:`prj.conf` (see :ref:`lwm2m_carrier_config_files` for more information).
+1. Open :file:`prj.conf` (see :ref:`lwm2m_carrier_config_files` for more information).
 #. Set :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` to the correct server URL:
 
    * For `Leshan Demo Server`_ - ``coaps://leshan.eclipseprojects.io:5684`` (`public Leshan Demo Server`_).
