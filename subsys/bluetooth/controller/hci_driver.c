@@ -755,16 +755,6 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 
-	cfg.event_length.event_length_us =
-		CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT;
-	required_memory =
-		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-				       SDC_CFG_TYPE_EVENT_LENGTH,
-				       &cfg);
-	if (required_memory < 0) {
-		return required_memory;
-	}
-
 #if defined(CONFIG_BT_BROADCASTER) || defined(CONFIG_BT_LL_SOFTDEVICE_MULTIROLE)
 	cfg.adv_count.count = SDC_ADV_SET_COUNT;
 
@@ -970,6 +960,17 @@ static int hci_driver_open(void)
 			.event_length_us = CONFIG_BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
 		};
 		err = sdc_hci_cmd_vs_periodic_adv_event_length_set(&params);
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CONN)) {
+		sdc_hci_cmd_vs_event_length_set_t params = {
+			.event_length_us = CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
+		};
+		err = sdc_hci_cmd_vs_event_length_set(&params);
 		if (err) {
 			MULTITHREADING_LOCK_RELEASE();
 			return -ENOTSUP;
