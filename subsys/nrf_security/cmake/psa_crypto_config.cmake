@@ -191,6 +191,7 @@ kconfig_check_and_set_base_to_one(PSA_NATIVE_ITS)
 kconfig_check_and_set_base_to_one(PSA_EITS_BACKEND_ZEPHYR)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_SECURE)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
+kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ENTROPY_TEST)
 
 # PSA and Drivers
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_C)

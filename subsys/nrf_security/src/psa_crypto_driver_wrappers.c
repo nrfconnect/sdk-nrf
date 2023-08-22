@@ -140,6 +140,11 @@
 psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_ENTROPY_TEST)
+psa_status_t test_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
+					    size_t output_size);
+#endif
+
 psa_status_t psa_driver_wrapper_init(void)
 {
 	return PSA_SUCCESS;
@@ -2508,15 +2513,22 @@ psa_status_t psa_driver_wrapper_free_random(psa_driver_random_context_t *context
 psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
 					    size_t output_size)
 {
+	psa_status_t status;
+#if defined(PSA_CRYPTO_DRIVER_ENTROPY_TEST)
+	status = test_get_entropy(flags, estimate_bits, output, output_size);
+	if (status != PSA_ERROR_NOT_SUPPORTED) {
+		return status;
+	}
+#endif
 #if defined(PSA_CRYPTO_DRIVER_ENTROPY_ZEPHYR)
-	return zephyr_get_entropy(flags, estimate_bits, output, output_size);
+	status = zephyr_get_entropy(flags, estimate_bits, output, output_size);
 #endif
 
 	(void)flags;
 	(void)output;
 	(void)output_size;
 	*estimate_bits = 0;
-	return PSA_ERROR_INSUFFICIENT_ENTROPY;
+	return status;
 }
 
 #endif /* MBEDTLS_PSA_CRYPTO_C */
