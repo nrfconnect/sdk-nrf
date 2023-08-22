@@ -165,26 +165,53 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
      - Profile
      - Configuration Options
      - Use cases
+     - Throughputs
    * - STA scan only
      - Scan only
      - ``CONFIG_WPA_SUPP=n``
        ``CONFIG_NRF700X_AP_MODE=n``
        ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NET_PKT_TX_COUNT=1``
+       ``CONFIG_NET_PKT_RX_COUNT=1``
+       ``CONFIG_NET_BUF_TX_COUNT=1``
+       ``CONFIG_NET_BUF_RX_COUNT=1``
      - Location services
+     - ``TCP-TX: 1.5 Mbps``
+       ``TCP-RX: 1.5 Mbps``
+       ``UDP-TX: 1.5 Mbps``
+       ``UDP-RX: 1.5 Mbps``
    * - :abbr:`STA (Station)` mode
      - IoT devices
      - ``CONFIG_WPA_SUPP=y``
        ``CONFIG_NRF700X_AP_MODE=n``
        ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NET_PKT_TX_COUNT=8``
+       ``CONFIG_NET_PKT_RX_COUNT=8``
+       ``CONFIG_NET_BUF_TX_COUNT=16``
+       ``CONFIG_NET_BUF_RX_COUNT=8``
+       ``CONFIG_NET_BUF_DATA_SIZE=128``
      - IoT devices
+     - ``TCP-TX: 1.5 Mbps``
+       ``TCP-RX: 1.5 Mbps``
+       ``UDP-TX: 1.5 Mbps``
+       ``UDP-RX: 1.5 Mbps``
    * - :abbr:`STA (Station)` mode
      - Memory optimized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
        ``CONFIG_NRF700X_MAX_TX_AGGREGATION=1``
        ``CONFIG_NRF700X_RX_NUM_BUFS=4``
-       ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=512``
-       ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=512``
+       ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=256``
+       ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=256``
+       ``CONFIG_NET_PKT_TX_COUNT=4``
+       ``CONFIG_NET_PKT_RX_COUNT=4``
+       ``CONFIG_NET_BUF_TX_COUNT=8``
+       ``CONFIG_NET_BUF_RX_COUNT=4``
+       ``CONFIG_NET_BUF_DATA_SIZE=256``
      - Sensors with low data requirements
+     - ``TCP-TX: 1.5 Mbps``
+       ``TCP-RX: 1.5 Mbps``
+       ``UDP-TX: 1.5 Mbps``
+       ``UDP-RX: 1.5 Mbps``
    * - :abbr:`STA (Station)` mode
      - High performance :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
@@ -192,7 +219,16 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``CONFIG_NRF700X_RX_NUM_BUFS=63``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=1600``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=1600``
+       ``CONFIG_NET_PKT_TX_COUNT=16``
+       ``CONFIG_NET_PKT_RX_COUNT=16``
+       ``CONFIG_NET_BUF_TX_COUNT=32``
+       ``CONFIG_NET_BUF_RX_COUNT=16``
+       ``CONFIG_NET_BUF_DATA_SIZE=1500``
      - High data rate IoT devices
+     - ``TCP-TX: 10 Mbps``
+       ``TCP-RX: 10 Mbps``
+       ``UDP-TX: 10 Mbps``
+       ``UDP-RX: 10 Mbps``
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
@@ -200,11 +236,29 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``CONFIG_NRF700X_RX_NUM_BUFS=4``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=1600``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=512``
+       ``CONFIG_NET_PKT_TX_COUNT=32``
+       ``CONFIG_NET_PKT_RX_COUNT=4``
+       ``CONFIG_NET_BUF_TX_COUNT=64``
+       ``CONFIG_NET_BUF_RX_COUNT=4``
+       ``CONFIG_NET_BUF_DATA_SIZE=1500``
      - Sensors with high data rate
+     - ``TCP-TX: 8 Mbps``
+       ``TCP-RX: 1 Mbps``
+       ``UDP-TX: 10 Mbps``
+       ``UDP-RX: 2 Mbps``
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
        ``CONFIG_NRF700X_RX_NUM_BUFS=63``
        ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=512``
        ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=1600``
+       ``CONFIG_NET_PKT_TX_COUNT=8``
+       ``CONFIG_NET_PKT_RX_COUNT=64``
+       ``CONFIG_NET_BUF_TX_COUNT=16``
+       ``CONFIG_NET_BUF_RX_COUNT=64``
+       ``CONFIG_NET_BUF_DATA_SIZE=1500``
      - Display devices streaming data
+     - ``TCP-TX: 4 Mbps``
+       ``TCP-RX: 7 Mbps``
+       ``UDP-TX: 1 Mbps``
+       ``UDP-RX: 10 Mbps``
