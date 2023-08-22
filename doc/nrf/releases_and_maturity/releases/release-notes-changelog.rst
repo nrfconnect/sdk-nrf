@@ -726,6 +726,9 @@ Libraries for NFC
   * Fixed the potential issue where the NFC interrupt context switching could loose interrupts data.
     This could happen if interrupts would be executed much faster than the NFC workqueue or thread.
 
+  * Fixed an issue where an assertion could be triggered when requesting clock from the NFC platform interrupt context.
+    The NFC interrupt is no longer a zero latency interrupt.
+
 * :ref:`nfc_t4t_isodep_readme` library:
 
   * Fixed the ISO-DEP error recovery process in case where the R(ACK) frame is received in response to the R(NAK) frame from the poller device.

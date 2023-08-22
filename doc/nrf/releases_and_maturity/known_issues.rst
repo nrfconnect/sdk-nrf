@@ -2596,6 +2596,17 @@ Problems with RTT Viewer/Logger
   **Workaround:** Set the RTT Control Block address to 0 and it will try to search from address 0 and upwards.
   If this does not work, look in the :file:`builddir/zephyr/zephyr.map` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.
 
+NFC
+===
+
+.. rst-class:: v2-4-1 v2-4-0 v2-3-0
+
+NCSDK-22799: Assert when requesting clock from the NFC interrupt context.
+  The NFC interrupt is a low latency interrupt.
+  It calls the Zephyr subsystem API that can rarely cause undefined behavior.
+
+  **Workaround** To fix the issue, disable the :kconfig:option:`CONFIG_NFC_ZERO_LATENCY_IRQ` Kconfig option.
+
 MCUboot
 *******
 
