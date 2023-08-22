@@ -192,6 +192,8 @@ Bootloader firmware update
 To upload a new bootloader image, build a bootloader targeting the correct bootloader slot with an updated firmware image version.
 The bootloader is placed in slot 0 by default, so enable building of the slot 1 bootloader.
 
+.. code-block:: console
+
     west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template \
     -DCONFIG_BUILD_S1_VARIANT=y \
     -Dmcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
@@ -219,14 +221,8 @@ The verification of the image will happen during the update process.
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM2,baud=115200,mtu=512 reset
 
-
 Dependencies
 *************
 
-This sample uses the TF-M module that can be found in the following location in the |NCS| folder structure:
-
-* :file:`modules/tee/tfm/`
-
-This sample uses the following libraries:
-
-* :ref:`lib_tfm_ioctl_api`
+* This sample uses the TF-M module found in the :file:`modules/tee/tfm/` folder of the |NCS|.
+* This sample uses the :ref:`lib_tfm_ioctl_api` library.
