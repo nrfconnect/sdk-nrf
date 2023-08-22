@@ -77,7 +77,7 @@ int hash_singlepart_sha256(void)
 	}
 
 	LOG_INF("Hashing successful!");
-	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
+	PRINT_HEX("SHA256 shash", m_hash, sizeof(m_hash));
 
 	return APP_SUCCESS;
 }
