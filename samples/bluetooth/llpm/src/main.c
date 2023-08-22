@@ -285,7 +285,7 @@ static int vs_change_connection_interval(uint16_t interval_us)
 	}
 
 	cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
-	cmd_conn_update->connection_handle   = conn_handle;
+	cmd_conn_update->conn_handle         = conn_handle;
 	cmd_conn_update->conn_interval_us    = interval_us;
 	cmd_conn_update->conn_latency        = 0;
 	cmd_conn_update->supervision_timeout = 300;

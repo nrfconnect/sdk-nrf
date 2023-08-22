@@ -113,7 +113,7 @@ static int set_llpm_conn_param(struct bt_conn *conn, uint16_t latency)
 	}
 
 	cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
-	cmd_conn_update->connection_handle = conn_handle;
+	cmd_conn_update->conn_handle = conn_handle;
 	cmd_conn_update->conn_interval_us = CONN_INTERVAL_LLPM_US;
 	cmd_conn_update->conn_latency = latency;
 	cmd_conn_update->supervision_timeout = CONN_SUPERVISION_TIMEOUT;
