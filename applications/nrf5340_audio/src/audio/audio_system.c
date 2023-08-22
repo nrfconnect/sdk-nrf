@@ -369,19 +369,30 @@ int audio_system_fifo_rx_block_drop(void)
 	return 0;
 }
 
-void audio_system_init(void)
+int audio_system_init(void)
 {
 	int ret;
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
 	ret = audio_usb_init();
-	ERR_CHK(ret);
+	if (ret) {
+		LOG_ERR("Failed to initialize USB: %d", ret);
+		return ret;
+	}
 #else
 	ret = audio_datapath_init();
-	ERR_CHK(ret);
+	if (ret) {
+		LOG_ERR("Failed to initialize audio datapath: %d", ret);
+		return ret;
+	}
+
 	ret = hw_codec_init();
-	ERR_CHK(ret);
+	if (ret) {
+		LOG_ERR("Failed to initialize HW codec: %d", ret);
+		return ret;
+	}
 #endif
+	return 0;
 }
 
 static int cmd_audio_system_start(const struct shell *shell, size_t argc, const char **argv)

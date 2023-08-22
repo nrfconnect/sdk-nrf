@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+zephyr_library_include_directories(
+    broadcast
+    unicast
+)
+
+if (CONFIG_TRANSPORT_BIS)
+	target_sources(app PRIVATE
+			${CMAKE_CURRENT_SOURCE_DIR}/broadcast/broadcast_source.c)
+endif()

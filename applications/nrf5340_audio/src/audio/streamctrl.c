@@ -26,8 +26,8 @@
 #include "le_audio.h"
 #include "bt_mgmt.h"
 #include "bt_rend.h"
-#include "audio_datapath.h"
 #include "bt_content_ctrl.h"
+#include "audio_datapath.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(streamctrl, CONFIG_STREAMCTRL_LOG_LEVEL);
@@ -210,7 +210,7 @@ void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t n
 	struct encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
 
 	if (strm_state == STATE_STREAMING) {
-		ret = le_audio_send(enc_audio);
+		ret = le_audio_send(enc_audio, BROADCAST_SOURCE);
 
 		if (ret != 0 && ret != prev_ret) {
 			if (ret == -ECANCELED) {
@@ -336,10 +336,11 @@ static void button_msg_sub_thread(void)
 				break;
 			}
 
-			ret = le_audio_user_defined_button_press(LE_AUDIO_USER_DEFINED_ACTION_1);
-			if (ret) {
-				LOG_WRN("Failed button 4 press, ret: %d", ret);
-			}
+			/* ret = le_audio_user_defined_button_press(LE_AUDIO_USER_DEFINED_ACTION_1);
+			 * if (ret) {
+			 *	LOG_WRN("Failed button 4 press, ret: %d", ret);
+			 * }
+			 */
 
 			break;
 
@@ -353,7 +354,11 @@ static void button_msg_sub_thread(void)
 				break;
 			} else if (IS_ENABLED(CONFIG_BT_BAP_BROADCAST_SINK)) {
 				/* Will eventually be handled by different applications */
-				le_audio_disable();
+				ret = le_audio_disable();
+				if (ret) {
+					LOG_ERR("Failed to disable the broadcast receiver");
+				}
+
 				if (broadcast_alt) {
 					ret = bt_mgmt_scan_start(
 						0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
@@ -387,9 +392,10 @@ static void button_msg_sub_thread(void)
 static void le_audio_msg_sub_thread(void)
 {
 	int ret;
-	uint32_t pres_delay_us;
-	uint32_t bitrate_bps;
-	uint32_t sampling_rate_hz;
+	/* uint32_t pres_delay_us;
+	 * uint32_t bitrate_bps;
+	 * uint32_t sampling_rate_hz;
+	 */
 	const struct zbus_channel *chan;
 
 	while (1) {
@@ -439,33 +445,34 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_CONFIG_RECEIVED:
 			LOG_DBG("Config received");
 
-			ret = le_audio_config_get(&bitrate_bps, &sampling_rate_hz, NULL);
-			if (ret) {
-				LOG_WRN("Failed to get config: %d", ret);
-				break;
-			}
-
-			LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
-			LOG_DBG("Bitrate: %d bps", bitrate_bps);
-
+			/* ret = le_audio_config_get(&bitrate_bps, &sampling_rate_hz, NULL);
+			 * if (ret) {
+			 *	LOG_WRN("Failed to get config: %d", ret);
+			 *	break;
+			 * }
+			 *
+			 * LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
+			 *LOG_DBG("Bitrate: %d bps", bitrate_bps);
+			 */
 			break;
 
 		case LE_AUDIO_EVT_PRES_DELAY_SET:
 			LOG_DBG("Set presentation delay");
 
-			ret = le_audio_config_get(NULL, NULL, &pres_delay_us);
-			if (ret) {
-				LOG_ERR("Failed to get config: %d", ret);
-				break;
-			}
-
-			ret = audio_datapath_pres_delay_us_set(pres_delay_us);
-			if (ret) {
-				LOG_ERR("Failed to set presentation delay to %d", pres_delay_us);
-				break;
-			}
-
-			LOG_INF("Presentation delay %d us is set by initiator", pres_delay_us);
+			/* ret = le_audio_config_get(NULL, NULL, &pres_delay_us);
+			 * if (ret) {
+			 *	LOG_ERR("Failed to get config: %d", ret);
+			 *	break;
+			 * }
+			 *
+			 * ret = audio_datapath_pres_delay_us_set(pres_delay_us);
+			 * if (ret) {
+			 *	LOG_ERR("Failed to set presentation delay to %d", pres_delay_us);
+			 *	break;
+			 * }
+			 *
+			 * LOG_INF("Presentation delay %d us is set by initiator", pres_delay_us);
+			 */
 
 			break;
 
@@ -527,7 +534,7 @@ static void content_control_msg_sub_thread(void)
 
 		switch (event) {
 		case MEDIA_PLAY:
-			ret = le_audio_play();
+			ret = le_audio_start(BROADCAST_SOURCE);
 			if (ret && (ret != -EALREADY)) {
 				LOG_ERR("Failed to play: %d", ret);
 			}
@@ -535,7 +542,7 @@ static void content_control_msg_sub_thread(void)
 			break;
 
 		case MEDIA_STOP:
-			ret = le_audio_pause();
+			ret = le_audio_stop(BROADCAST_SOURCE);
 			if (ret && (ret != -EALREADY)) {
 				LOG_ERR("Failed to pause: %d", ret);
 			}
@@ -553,86 +560,53 @@ static void content_control_msg_sub_thread(void)
 	}
 }
 
-/**
- * @brief	Zbus listener to receive events from bt_mgmt
- *
- * @note	Will in most cases be called from BT_RX context,
- *		so there should not be too much processing done here
- */
-static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
+static int zbus_subscribers_create(void)
 {
 	int ret;
-	const struct bt_mgmt_msg *msg;
 
-	msg = zbus_chan_const_msg(chan);
-	uint8_t event = msg->event;
-
-	switch (event) {
-	case BT_MGMT_CONNECTED:
-		LOG_INF("Connected");
-
-		break;
-
-	case BT_MGMT_DISCONNECTED:
-		LOG_INF("Disconnected");
-		le_audio_conn_disconnected(msg->conn);
-
-		ret = bt_content_ctrl_conn_disconnected(msg->conn);
-		if (ret) {
-			LOG_ERR("bt_content_ctrl_disconnected failed with %d", ret);
-		}
-
-		break;
-
-	case BT_MGMT_EXT_ADV_READY:
-		LOG_INF("Ext adv ready");
-		if (IS_ENABLED(CONFIG_TRANSPORT_BIS)) {
-			ret = le_audio_ext_adv_set(msg->ext_adv);
-			if (ret) {
-				LOG_WRN("Failed to set extended advertisement data");
-			}
-		}
-
-		break;
-
-	case BT_MGMT_SECURITY_CHANGED:
-		LOG_INF("Security changed");
-
-		if (CONFIG_AUDIO_DEV == GATEWAY) {
-			le_audio_conn_set(msg->conn);
-		}
-
-		ret = bt_rend_discover(msg->conn);
-		if (ret) {
-			LOG_WRN("Failed to discover rendering services");
-		}
-
-		ret = bt_content_ctrl_discover(msg->conn);
-		if (ret == -EALREADY) {
-			LOG_DBG("Discovery in progress or already done");
-		} else if (ret) {
-			LOG_ERR("Failed to start discovery of content control: %d", ret);
-		}
-
-		break;
-
-	case BT_MGMT_PA_SYNC_OBJECT_READY:
-		LOG_INF("PA sync object ready");
-		ret = le_audio_pa_sync_set(msg->pa_sync, msg->broadcast_id);
-		if (ret) {
-			LOG_WRN("Failed to set PA sync");
-		}
-
-		break;
-
-	default:
-		LOG_WRN("Unexpected/unhandled bt_mgmt event: %d", event);
-
-		break;
+	button_msg_sub_thread_id = k_thread_create(
+		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
+		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(button_msg_sub_thread_id, "BUTTON_MSG_SUB");
+	if (ret) {
+		LOG_ERR("Failed to create button_msg thread");
+		return ret;
 	}
-}
 
-ZBUS_LISTENER_DEFINE(bt_mgmt_evt_sub, bt_mgmt_evt_handler);
+	le_audio_msg_sub_thread_id = k_thread_create(
+		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
+	if (ret) {
+		LOG_ERR("Failed to create le_audio_msg thread");
+		return ret;
+	};
+
+	content_control_msg_sub_thread_id = k_thread_create(
+		&content_control_msg_sub_thread_data, content_control_msg_sub_thread_stack,
+		CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE,
+		(k_thread_entry_t)content_control_msg_sub_thread, NULL, NULL, NULL,
+		K_PRIO_PREEMPT(CONFIG_CONTENT_CONTROL_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(content_control_msg_sub_thread_id, "CONTENT_CONTROL_MSG_SUB");
+	if (ret) {
+		LOG_ERR("Failed to create content_control_msg thread");
+		return ret;
+	}
+
+	audio_datapath_thread_id = k_thread_create(
+		&audio_datapath_thread_data, audio_datapath_thread_stack,
+		CONFIG_AUDIO_DATAPATH_STACK_SIZE, (k_thread_entry_t)audio_datapath_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(CONFIG_AUDIO_DATAPATH_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(audio_datapath_thread_id, "AUDIO DATAPATH");
+	if (ret) {
+		LOG_ERR("Failed to create audio_datapath thread");
+		return ret;
+	}
+
+	return 0;
+}
 
 int streamctrl_start(void)
 {
@@ -645,42 +619,14 @@ int streamctrl_start(void)
 		return -EALREADY;
 	}
 
-	audio_system_init();
+	ret = audio_system_init();
+	ERR_CHK_MSG(ret, "Failed to initialize the audio system");
 
 	ret = data_fifo_init(&ble_fifo_rx);
 	ERR_CHK_MSG(ret, "Failed to set up ble_rx FIFO");
 
-	button_msg_sub_thread_id = k_thread_create(
-		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
-		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(button_msg_sub_thread_id, "BUTTON_MSG_SUB");
-	ERR_CHK(ret);
-
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
-	ERR_CHK(ret);
-
-	content_control_msg_sub_thread_id = k_thread_create(
-		&content_control_msg_sub_thread_data, content_control_msg_sub_thread_stack,
-		CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE,
-		(k_thread_entry_t)content_control_msg_sub_thread, NULL, NULL, NULL,
-		K_PRIO_PREEMPT(CONFIG_CONTENT_CONTROL_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(content_control_msg_sub_thread_id, "CONTENT_CONTROL_MSG_SUB");
-	ERR_CHK(ret);
-
-	audio_datapath_thread_id = k_thread_create(
-		&audio_datapath_thread_data, audio_datapath_thread_stack,
-		CONFIG_AUDIO_DATAPATH_STACK_SIZE, (k_thread_entry_t)audio_datapath_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_AUDIO_DATAPATH_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(audio_datapath_thread_id, "AUDIO DATAPATH");
-	ERR_CHK(ret);
-
-	ret = le_audio_enable(le_audio_rx_data_handler, audio_datapath_sdu_ref_update);
-	ERR_CHK_MSG(ret, "Failed to enable LE Audio");
+	ret = zbus_subscribers_create();
+	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
 
 	ret = bt_rend_init();
 	ERR_CHK(ret);
@@ -688,33 +634,10 @@ int streamctrl_start(void)
 	ret = bt_content_ctrl_init();
 	ERR_CHK(ret);
 
-	if ((CONFIG_AUDIO_DEV == HEADSET) && IS_ENABLED(CONFIG_TRANSPORT_CIS)) {
-		size_t ext_adv_size = 0;
-		const struct bt_data *ext_adv = NULL;
+	ARG_UNUSED(le_audio_rx_data_handler);
 
-		le_audio_adv_get(&ext_adv, &ext_adv_size, false);
-
-		ret = bt_mgmt_adv_start(ext_adv, ext_adv_size, NULL, 0, true);
-		ERR_CHK(ret);
-	} else if ((CONFIG_AUDIO_DEV == GATEWAY) && IS_ENABLED(CONFIG_TRANSPORT_BIS)) {
-		size_t ext_adv_size = 0;
-		size_t per_adv_size = 0;
-		const struct bt_data *ext_adv = NULL;
-		const struct bt_data *per_adv = NULL;
-
-		le_audio_adv_get(&ext_adv, &ext_adv_size, false);
-		le_audio_adv_get(&per_adv, &per_adv_size, true);
-
-		ret = bt_mgmt_adv_start(ext_adv, ext_adv_size, per_adv, per_adv_size, false);
-		ERR_CHK(ret);
-	} else if ((CONFIG_AUDIO_DEV == GATEWAY) && IS_ENABLED(CONFIG_TRANSPORT_CIS)) {
-		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME);
-		ERR_CHK_MSG(ret, "Failed to start scanning");
-	} else if ((CONFIG_AUDIO_DEV == HEADSET) && IS_ENABLED(CONFIG_TRANSPORT_BIS)) {
-		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
-					 CONFIG_BT_AUDIO_BROADCAST_NAME);
-		ERR_CHK_MSG(ret, "Failed to start scanning");
-	}
+	ret = le_audio_enable(LE_AUDIO_BROADCASTER, NULL);
+	ERR_CHK_MSG(ret, "Failed to enable LE Audio");
 
 	started = true;
 

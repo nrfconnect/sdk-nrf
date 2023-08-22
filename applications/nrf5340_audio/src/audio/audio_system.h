@@ -55,7 +55,9 @@ int audio_system_fifo_rx_block_drop(void);
 
 /**
  * @brief Initialize the audio_system
+ *
+ * @return 0 on success, error otherwise
  */
-void audio_system_init(void);
+int audio_system_init(void);
 
 #endif /* _AUDIO_SYSTEM_H_ */

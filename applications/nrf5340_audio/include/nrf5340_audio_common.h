@@ -40,12 +40,17 @@ struct le_audio_msg {
 	struct bt_conn *conn;
 };
 
+struct sdu_ref_msg {
+	uint32_t timestamp;
+	bool adjust;
+};
+
 enum bt_mgmt_evt_type {
-	BT_MGMT_CONNECTED = 1,
-	BT_MGMT_DISCONNECTED,
+	BT_MGMT_EXT_ADV_READY = 1,
+	BT_MGMT_CONNECTED,
 	BT_MGMT_SECURITY_CHANGED,
-	BT_MGMT_EXT_ADV_READY,
 	BT_MGMT_PA_SYNC_OBJECT_READY,
+	BT_MGMT_DISCONNECTED,
 };
 
 struct bt_mgmt_msg {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,7 +7,6 @@
 #ifndef _LE_AUDIO_H_
 #define _LE_AUDIO_H_
 
-#include <zephyr/kernel.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <audio_defines.h>
 
@@ -34,70 +33,26 @@
 					     CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,             \
 					     CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
 
-#if CONFIG_TRANSPORT_CIS
-#if CONFIG_BT_BAP_UNICAST_CONFIGURABLE
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA,  \
-				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
+enum audio_roles {
+	UNICAST_SERVER_SINK = BIT(0),
+	UNICAST_SERVER_SOURCE = BIT(1),
+	UNICAST_SERVER_BIDIR = (BIT(0) | BIT(1)),
+	UNICAST_CLIENT_SINK = BIT(2),
+	UNICAST_CLIENT_SOURCE = BIT(3),
+	UNICAST_CLIENT_BIDIR = (BIT(2) | BIT(3)),
+	BROADCAST_SINK = BIT(4),
+	BROADCAST_SOURCE = BIT(5),
+};
 
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA,  \
-				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
-
-#elif CONFIG_BT_BAP_UNICAST_16_2_1
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_BAP_UNICAST_24_2_1
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#else
-#error Unsupported LC3 codec preset for unicast
-#endif /* CONFIG_BT_BAP_UNICAST_CONFIGURABLE */
-#endif /* CONFIG_TRANSPORT_CIS */
-
-#if CONFIG_TRANSPORT_BIS
-#if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(                                                            \
-		BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT,                      \
-		BT_AUDIO_CONTEXT_TYPE_MEDIA, CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
-
-#elif CONFIG_BT_BAP_BROADCAST_16_2_1
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_BAP_BROADCAST_24_2_1
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_BAP_BROADCAST_16_2_2
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_16_2_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#elif CONFIG_BT_BAP_BROADCAST_24_2_2
-#define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_BAP_LC3_BROADCAST_PRESET_24_2_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
-						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
-					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-
-#else
-#error Unsupported LC3 codec preset for broadcast
-#endif /* CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE */
-#endif /* CONFIG_TRANSPORT_BIS */
+/* Some pre-defined use cases */
+enum le_audio_device_type {
+	LE_AUDIO_RECEIVER = (UNICAST_SERVER_SINK | BROADCAST_SINK),
+	LE_AUDIO_HEADSET = (UNICAST_SERVER_BIDIR | BROADCAST_SINK),
+	LE_AUDIO_MICROPHONE = (UNICAST_SERVER_SOURCE),
+	LE_AUDIO_SENDER = (UNICAST_CLIENT_SOURCE | BROADCAST_SOURCE),
+	LE_AUDIO_BROADCASTER = (BROADCAST_SOURCE),
+	LE_AUDIO_GATEWAY = (UNICAST_CLIENT_BIDIR | BROADCAST_SOURCE),
+};
 
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.
@@ -113,24 +68,9 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
 				    size_t desired_size);
 
 /**
- * @brief	Callback for using the timestamp of the previously sent audio packet.
- *
- * @note	Can be used for drift calculation or compensation.
- *
- * @param[in]	timestamp	The timestamp of the previously sent audio packet.
- * @param[in]	adjust		Indicate if the sdu_ref should be used to adjust timing.
- */
-typedef void (*le_audio_timestamp_cb)(uint32_t timestamp, bool adjust);
-
-enum le_audio_user_defined_action {
-	LE_AUDIO_USER_DEFINED_ACTION_1,
-	LE_AUDIO_USER_DEFINED_ACTION_2,
-	LE_AUDIO_USER_DEFINED_ACTION_NUM
-};
-
-/**
  * @brief	Encoded audio data and information.
- * Container for SW codec (typically LC3) compressed audio data.
+ *
+ * @note	Container for SW codec (typically LC3) compressed audio data.
  */
 struct encoded_audio {
 	uint8_t const *const data;
@@ -139,115 +79,48 @@ struct encoded_audio {
 };
 
 /**
- * @brief	Generic function for a user defined button press.
+ * @brief	Stop the LE Audio role given by @p role.
  *
- * @param[in]	action	User defined action.
- *
- * @return	0 for success, error otherwise.
- */
-int le_audio_user_defined_button_press(enum le_audio_user_defined_action action);
-
-/**
- * @brief	Get configuration for audio stream.
- *
- * @param[out]	bitrate		Pointer to the bitrate used; can be NULL.
- * @param[out]	sampling_rate	Pointer to the sampling rate used; can be NULL.
- * @param[out]	pres_delay	Pointer to the presentation delay used; can be NULL.
- *
- * @retval	0		Operation successful.
- * @retval	-ENXIO		The feature is disabled.
- * @retval	-ENOTSUP	The feature is not supported,
- * @retval	error		Otherwise
- */
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay);
-
-/**
- * @brief	Set pointer to the connection.
- *
- * @note	Used by CIS.
- *
- * @param[in]	conn	The connection pointer.
- */
-void le_audio_conn_set(struct bt_conn *conn);
-
-/**
- * @brief	Set periodic advertising sync.
- *
- * @param[in]	pa_sync		Pointer to the periodic advertising sync.
- * @param[in]	broadcast_id	Broadcast ID of the periodic advertising.
+ * @param[in]	role	Type of role to stop, can only specify one at a time.
  *
  * @return	0 for success, error otherwise.
  */
-int le_audio_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broadcast_id);
+int le_audio_stop(enum audio_roles role);
 
 /**
- * @brief	Notify about disconnected connection.
+ * @brief	Start the LE Audio role given by @p role.
  *
- * @note	Used by CIS.
+ * @param[in]	role	Type of role to start, can only specify one at a time.
  *
- * @param[in]	conn	The connection pointer.
+ * @retval	0 for success, error otherwise.
  */
-void le_audio_conn_disconnected(struct bt_conn *conn);
-
-/**
- * @brief	Set pointer to extended advertisement with periodic adv configured
- *
- * @note	Used by BIS.
- *
- * @note	Will also start the broadcast_source.
- *
- * @param[in]	ext_adv	Pointer to the extended advertisement.
- *
- * @return	0 for success, error otherwise.
- */
-int le_audio_ext_adv_set(struct bt_le_ext_adv *ext_adv);
-
-/**
- * @brief	Get bt_data containing the data to advertise.
- *
- * @param[out]	adv		Pointer to the pointer of bt_data to advertise.
- * @param[out]	adv_size	Pointer to size of @p adv.
- * @param[in]	periodic	Specify if the data is for periodic advertisement.
- */
-void le_audio_adv_get(const struct bt_data **adv, size_t *adv_size, bool periodic);
-
-/**
- * @brief	Resume the Bluetooth LE Audio stream.
- *
- * @return	0 for success, error otherwise.
- */
-int le_audio_play(void);
-
-/**
- * @brief	Pause the Bluetooth LE Audio stream.
- *
- * @return	0 for success, error otherwise.
- */
-int le_audio_pause(void);
+int le_audio_start(enum audio_roles role);
 
 /**
  * @brief	Send the Bluetooth LE Audio data.
  *
  * @param[in]	enc_audio	Encoded audio struct.
+ * @param[in]	role		Specify what role to send through, can send to multiple roles.
  *
- * @retval	0	Operation successful
- * @retval	-ENXIO	The feature is disabled,
- * @retval	error	Otherwise.
+ * @retval	0		Operation successful.
+ * @retval	-ENXIO		The feature is disabled.
+ * @retval	error		Otherwise.
  */
-int le_audio_send(struct encoded_audio enc_audio);
+int le_audio_send(struct encoded_audio enc_audio, enum audio_roles role);
 
 /**
- * @brief	Enable Bluetooth LE Audio.
+ * @brief	Enable the LE Audio device.
  *
- * @param[in]	recv_cb			Callback for receiving Bluetooth LE Audio data.
- * @param[in]	timestmp_cb		Callback for using timestamp.
+ * @param[in]	type		Type of LE Audio device to enable, can either be a
+ *				single device type or a selection of audio_roles.
+ * @param[in]	recv_cb		Callback for receiving Bluetooth LE Audio data.
  *
  * @return	0 for success, error otherwise.
  */
-int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_cb);
+int le_audio_enable(enum le_audio_device_type type, le_audio_receive_cb recv_cb);
 
 /**
- * @brief	Disable Bluetooth LE Audio.
+ * @brief	Disable the LE Audio device.
  *
  * @return	0 for success, error otherwise.
  */

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <zephyr/zbus/zbus.h>
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
 #include <nrfx_clock.h>
@@ -752,6 +753,40 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 	}
 }
 
+/**
+ * @brief Update sdu_ref_us so that drift compensation can work correctly.
+ *
+ * @note This function is only valid for gateway using I2S as audio source
+ *       and unidirectional audio stream (gateway to headset(s)).
+ *
+ * @param sdu_ref_us    ISO timestamp reference from BLE controller.
+ * @param adjust        Indicate if the sdu_ref should be used to adjust timing.
+ */
+static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
+{
+	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_I2S)) {
+		uint32_t sdu_ref_us;
+		bool adjust;
+		const struct sdu_ref_msg *msg;
+
+		msg = zbus_chan_const_msg(chan);
+		sdu_ref_us = msg->timestamp;
+		adjust = msg->adjust;
+
+		if (ctrl_blk.stream_started) {
+			ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
+
+			if (adjust) {
+				audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
+			}
+		} else {
+			LOG_WRN("Stream not startet - Can not update sdu_ref_us");
+		}
+	}
+}
+
+ZBUS_LISTENER_DEFINE(sdu_ref_msg_listen, audio_datapath_sdu_ref_update);
+
 int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 {
 	if (!IN_RANGE(delay_us, CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US)) {
@@ -769,21 +804,6 @@ int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 {
 	*delay_us = ctrl_blk.pres_comp.pres_delay_us;
-}
-
-void audio_datapath_sdu_ref_update(uint32_t sdu_ref_us, bool adjust)
-{
-	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_I2S)) {
-		if (ctrl_blk.stream_started) {
-			ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
-
-			if (adjust) {
-				audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
-			}
-		} else {
-			LOG_WRN("Stream not startet - Can not update sdu_ref_us");
-		}
-	}
 }
 
 void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame,
