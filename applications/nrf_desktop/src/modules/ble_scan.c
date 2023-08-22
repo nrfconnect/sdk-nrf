@@ -27,11 +27,13 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCAN_LOG_LEVEL);
 #define SCAN_START_CHECK_MS	(1 * MSEC_PER_SEC)
 #define SCAN_START_TIMEOUT_MS	(CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S * MSEC_PER_SEC)
 #define SCAN_DURATION_MS	(CONFIG_DESKTOP_BLE_SCAN_DURATION_S * MSEC_PER_SEC)
+#define FORCED_SCAN_DURATION_MS	(CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S * MSEC_PER_SEC)
 #define SCAN_START_DELAY_MS	15
 
 BUILD_ASSERT(SCAN_START_CHECK_MS > 0);
 BUILD_ASSERT(SCAN_START_TIMEOUT_MS > 0);
 BUILD_ASSERT(SCAN_DURATION_MS > 0, "");
+BUILD_ASSERT(FORCED_SCAN_DURATION_MS >= 0, "");
 BUILD_ASSERT(SCAN_START_DELAY_MS > 0, "");
 
 #define SUBSCRIBED_PEERS_STORAGE_NAME "subscribers"
@@ -42,6 +44,7 @@ enum state {
 	STATE_INITIALIZED,
 	STATE_INITIALIZED_OFF,
 	STATE_ACTIVE,
+	STATE_FORCED_ACTIVE,
 	STATE_DELAYED_ACTIVE,
 	STATE_INACTIVE,
 	STATE_OFF,
@@ -534,6 +537,9 @@ static const char *state2str(enum state s)
 	case STATE_ACTIVE:
 		return "ACTIVE";
 
+	case STATE_FORCED_ACTIVE:
+		return "FORCED_ACTIVE";
+
 	case STATE_DELAYED_ACTIVE:
 		return "DELAYED_ACTIVE";
 
@@ -557,7 +563,12 @@ static enum state update_state_transition(enum state prev_state, enum state new_
 	size_t conn_count = count_conn();
 	size_t bond_count = count_bond();
 
-	if (new_state == STATE_ACTIVE) {
+	/* Skip forced active state if disabled in configuration. */
+	if ((new_state == STATE_FORCED_ACTIVE) && (FORCED_SCAN_DURATION_MS == 0)) {
+		new_state = STATE_ACTIVE;
+	}
+
+	if ((new_state == STATE_ACTIVE) || (new_state == STATE_FORCED_ACTIVE)) {
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST) &&
 		   (conn_count == bond_count) && peers_only) {
 			if (verbose) {
@@ -626,6 +637,7 @@ static int update_scan_control(enum state prev_state, enum state new_state)
 
 	switch (new_state) {
 	case STATE_ACTIVE:
+	case STATE_FORCED_ACTIVE:
 		err = scan_start();
 		break;
 
@@ -654,6 +666,10 @@ static void update_work(enum state prev_state, enum state new_state)
 		} else {
 			(void)k_work_cancel_delayable(&update_state_work);
 		}
+		break;
+
+	case STATE_FORCED_ACTIVE:
+		(void)k_work_reschedule(&update_state_work, K_MSEC(FORCED_SCAN_DURATION_MS));
 		break;
 
 	case STATE_DELAYED_ACTIVE:
@@ -723,8 +739,12 @@ static void update_state_work_fn(struct k_work *w)
 		update_state(STATE_INACTIVE);
 		break;
 
-	case STATE_DELAYED_ACTIVE:
+	case STATE_FORCED_ACTIVE:
 		update_state(STATE_ACTIVE);
+		break;
+
+	case STATE_DELAYED_ACTIVE:
+		update_state(STATE_FORCED_ACTIVE);
 		break;
 
 	case STATE_INACTIVE:
@@ -757,7 +777,7 @@ static bool handle_hid_report_event(const struct hid_report_event *event)
 		 * avoid negatively affecting HID report rate.
 		 */
 		scan_start_counter = 0;
-	} else if ((state == STATE_ACTIVE) || (state == STATE_DELAYED_ACTIVE)) {
+	} else if (state == STATE_ACTIVE) {
 		update_state(STATE_INACTIVE);
 	}
 
@@ -790,7 +810,7 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		 */
 		switch (state) {
 		case STATE_INITIALIZED:
-			update_state(STATE_ACTIVE);
+			update_state(STATE_FORCED_ACTIVE);
 			break;
 
 		case STATE_INITIALIZED_OFF:
@@ -857,7 +877,7 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 		}
 
 		if (state != STATE_OFF) {
-			update_state(STATE_ACTIVE);
+			update_state(STATE_FORCED_ACTIVE);
 		}
 		break;
 
@@ -909,6 +929,7 @@ static bool handle_power_down_event(const struct power_down_event *event)
 	case STATE_ACTIVE:
 	case STATE_DELAYED_ACTIVE:
 	case STATE_INACTIVE:
+	case STATE_FORCED_ACTIVE:
 		update_state(STATE_OFF);
 		break;
 
@@ -932,7 +953,7 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 		break;
 
 	case STATE_OFF:
-		update_state(STATE_ACTIVE);
+		update_state(STATE_FORCED_ACTIVE);
 		break;
 
 	default:
