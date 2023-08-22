@@ -97,6 +97,7 @@ Samples using the library
 The following |NCS| samples use this library:
 
 * :ref:`modem_shell_application`
+* :ref:`nrf_cloud_multi_service`
 
 Limitations
 ***********
