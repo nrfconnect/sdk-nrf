@@ -257,8 +257,15 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
+* The whole application architecture for handling Bluetooth LE Audio has changed. New modules have been added:
+
+  * Management - This module handles scanning and advertising, in addition to general initialization, controller configuration, and transfer of DFU images.
+  * Stream - This module handles the setup and transfer of audio in the Bluetooth LE Audio context.
+  * Renderer - This module handles rendering, such as volume up and down.
+  * Content Control - This module handles content control, such as play and pause.
+
+* Added back the QDID number for the :ref:`lib_bt_ll_acs_nrf53_readme` to the documentation.
 * Updated the :ref:`application documentation <nrf53_audio_app>` by splitting it into several pages.
-* Added back the QDID number to the documentation.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

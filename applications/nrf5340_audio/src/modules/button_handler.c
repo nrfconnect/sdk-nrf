@@ -22,6 +22,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);
 
+ZBUS_CHAN_DEFINE(button_chan, struct button_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
+		 ZBUS_MSG_INIT(0));
+
 /* How many buttons does the module support. Increase at memory cost */
 #define BUTTONS_MAX 5
 #define BASE_10	    10
@@ -32,6 +35,7 @@ K_MSGQ_DEFINE(button_queue, sizeof(struct button_msg), 1, 4);
 static bool debounce_is_ongoing;
 static struct gpio_callback btn_callback[BUTTONS_MAX];
 
+/* clang-format off */
 const static struct btn_config btn_cfg[] = {
 	{
 		.btn_name = STRINGIFY(BUTTON_VOLUME_DOWN),
@@ -59,6 +63,7 @@ const static struct btn_config btn_cfg[] = {
 		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw4), gpios),
 	}
 };
+/* clang-format on */
 
 static const struct device *gpio_53_dev;
 
@@ -117,9 +122,6 @@ static int pin_msk_to_pin(uint32_t pin_msk, uint32_t *pin_out)
 
 	return 0;
 }
-
-ZBUS_CHAN_DEFINE(button_chan, struct button_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
-		 ZBUS_MSG_INIT(0));
 
 static void button_publish_thread(void)
 {

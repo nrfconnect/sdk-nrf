@@ -46,6 +46,17 @@ int bt_content_ctrl_conn_disconnected(struct bt_conn *conn);
 int bt_content_ctrl_discover(struct bt_conn *conn);
 
 /**
+ * @brief	Put the UUIDs from this module into the buffer.
+ *
+ * @note	This partial data is used to build a complete extended advertising packet.
+ *
+ * @param[out]	uuid_buf	Buffer being populated with UUIDs.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int bt_content_ctrl_uuid_populate(struct net_buf_simple *uuid_buf);
+
+/**
  * @brief	Initialize the content control module.
  *
  * @return	0 for success, error otherwise.

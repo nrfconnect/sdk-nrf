@@ -292,6 +292,10 @@ module = AUDIO_SYNC_TIMER
 module-str = audio-sync-timer
 source "subsys/logging/Kconfig.template.log_config"
 
+module = LE_AUDIO_RX
+module-str = le-audio-rx
+source "subsys/logging/Kconfig.template.log_config"
+
 endmenu # Log levels
 
 #----------------------------------------------------------------------------#

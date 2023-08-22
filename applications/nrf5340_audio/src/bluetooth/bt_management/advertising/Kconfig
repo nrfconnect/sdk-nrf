@@ -46,6 +46,14 @@ config BLE_ACL_EXT_ADV_INT_MAX
 	  lowest interval if using BIS.
 	  For ms, multiply the provided value by 0.625.
 
+config EXT_ADV_BUF_MAX
+	int "Maximum number of extended advertising data parameters"
+	default 10
+
+config EXT_ADV_UUID_BUF_MAX
+	int "Maximum number of UUIDs to add to extended advertisements"
+	default 10
+
 #----------------------------------------------------------------------------#
 menu "Log level"
 

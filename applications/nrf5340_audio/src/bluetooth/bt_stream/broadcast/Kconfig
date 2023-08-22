@@ -1,0 +1,143 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.defaults"
+
+menu "Broadcast"
+
+choice BT_AUDIO_BROADCAST_BAP_CONFIGURATION
+	prompt "Broadcast codec configuration"
+	depends on TRANSPORT_BIS
+	default BT_AUDIO_BROADCAST_CONFIGURABLE
+	help
+	  Select the broadcast codec configuration as given
+	  in Table 6.4 of the Bluetooth Audio Profile specification.
+	  USB only supports 48-kHz sampling rate.
+
+config BT_AUDIO_BROADCAST_CONFIGURABLE
+	bool "Configurable broadcast settings"
+	depends on TRANSPORT_BIS
+	help
+	  Configurable option that doesn't follow any preset. Allows for more flexibility.
+
+config BT_BAP_BROADCAST_16_2_1
+	bool "16_2_1"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast mandatory codec capability 16_2_1.
+	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_24_2_1
+	bool "24_2_1"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 24_2_1.
+	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_16_2_2
+	bool "16_2_2"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast mandatory codec capability 16_2_2.
+	  16kHz, 32kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_BROADCAST_24_2_2
+	bool "24_2_2"
+	depends on TRANSPORT_BIS
+	help
+	  Broadcast codec capability 24_2_2.
+	  24kHz, 48kbps, 4 retransmits, 60ms transport latency, and 40ms presentation delay.
+endchoice
+
+config BT_AUDIO_BROADCAST_NAME
+	string "Broadcast name"
+	default "NRF5340_BROADCASTER"
+	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
+	help
+	  Name of the broadcast; not the same as BT_DEVICE_NAME.
+
+config BT_AUDIO_BROADCAST_NAME_ALT
+	string "Alternative broadcast name"
+	default "NRF5340_BROADCASTER_ALT"
+	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
+	help
+	  Alternative name of the broadcast.
+
+config BT_AUDIO_USE_BROADCAST_NAME_ALT
+	bool "Use the alternative broadcast name"
+	default n
+	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
+	help
+	  Use the alternative broadcast name.
+
+config BT_AUDIO_BROADCAST_ENCRYPTED
+	bool "Encrypted broadcast"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  Encrypt the broadcast to limit the connection possibilities.
+
+config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
+	string "Broadcast encryption key"
+	depends on TRANSPORT_BIS
+	default "NRF5340_BIS_DEMO"
+	help
+	  Key to use for encryption and decryption, with maximum BT_ISO_BROADCAST_CODE_SIZE
+	  characters. Encryption keys larger than BT_ISO_BROADCAST_CODE_SIZE will be truncated to
+	  BT_ISO_BROADCAST_CODE_SIZE.
+
+config BT_AUDIO_USE_BROADCAST_ID_RANDOM
+	bool "Use a random broadcast ID"
+	depends on TRANSPORT_BIS
+	default y
+	help
+	  Use a randomly generated broadcast ID.
+
+config BT_AUDIO_BROADCAST_ID_FIXED
+	hex "Fixed broadcast ID"
+	depends on TRANSPORT_BIS
+	default 0x123456
+	help
+	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_RANDOM=n.
+	  Only use for debugging.
+
+config BT_AUDIO_BROADCAST_IMMEDIATE_FLAG
+	bool "Immediate rendering flag"
+	depends on TRANSPORT_BIS
+	default n
+	help
+	  Set the immediate rendering flag.
+
+config AURACAST
+	bool "Enable Auracast"
+	depends on TRANSPORT_BIS
+	default y
+	help
+	  When Auracast is enabled, a Public Broadcast Announcement will be included
+	  when advertising.
+
+config BT_AUDIO_BITRATE_BROADCAST_SRC
+	int "ISO stream bitrate"
+	depends on TRANSPORT_BIS
+	default 96000 if BT_AUDIO_BROADCAST_CONFIGURABLE
+	default 32000 if BT_BAP_BROADCAST_16_2_1 || BT_BAP_BROADCAST_16_2_2
+	default 48000 if BT_BAP_BROADCAST_24_2_1 || BT_BAP_BROADCAST_24_2_2
+	help
+	  Bitrate for the broadcast source ISO stream.
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = BROADCAST_SOURCE
+module-str = broadcast_source
+source "subsys/logging/Kconfig.template.log_config"
+
+module = BROADCAST_SINK
+module-str = broadcast_sink
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+endmenu # Broadcast

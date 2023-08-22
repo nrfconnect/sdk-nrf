@@ -5,12 +5,12 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/debug/stack.h>
 #include <zephyr/device.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/zbus/zbus.h>
 
 #include "macros_common.h"
+#include "nrf5340_audio_common.h"
 #include "fw_info_app.h"
 #include "led.h"
 #include "button_handler.h"
@@ -27,20 +27,6 @@ LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
 static struct board_version board_rev;
 
-#define ZBUS_ADD_OBS_TIMEOUT_MS K_MSEC(200)
-
-ZBUS_CHAN_DECLARE(button_chan);
-ZBUS_CHAN_DECLARE(le_audio_chan);
-ZBUS_CHAN_DECLARE(bt_mgmt_chan);
-ZBUS_CHAN_DECLARE(volume_chan);
-ZBUS_CHAN_DECLARE(cont_media_chan);
-
-ZBUS_OBS_DECLARE(button_evt_sub);
-ZBUS_OBS_DECLARE(le_audio_evt_sub);
-ZBUS_OBS_DECLARE(bt_mgmt_evt_sub);
-ZBUS_OBS_DECLARE(volume_evt_sub);
-ZBUS_OBS_DECLARE(content_control_evt_sub);
-
 static int hfclock_config_and_start(void)
 {
 	int ret;
@@ -55,46 +41,6 @@ static int hfclock_config_and_start(void)
 
 	nrfx_clock_hfclk_start();
 	while (!nrfx_clock_hfclk_is_running()) {
-	}
-
-	return 0;
-}
-
-static int zbus_init(void)
-{
-	int ret;
-
-	if (IS_ENABLED(CONFIG_ZBUS) && (CONFIG_ZBUS_RUNTIME_OBSERVERS_POOL_SIZE > 0)) {
-		ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add button sub");
-			return ret;
-		}
-
-		ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add le_audio sub");
-			return ret;
-		}
-
-		ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add bt_mgmt sub");
-			return ret;
-		}
-
-		ret = zbus_chan_add_obs(&volume_chan, &volume_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add volume sub");
-			return ret;
-		}
-
-		ret = zbus_chan_add_obs(&cont_media_chan, &content_control_evt_sub,
-					ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add content control sub");
-			return ret;
-		}
 	}
 
 	return 0;
@@ -199,9 +145,6 @@ int main(void)
 			ERR_CHK(ret);
 		}
 	}
-
-	ret = zbus_init();
-	ERR_CHK(ret);
 
 	ret = bt_mgmt_init();
 	ERR_CHK(ret);

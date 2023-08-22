@@ -34,5 +34,4 @@ module-str = cs47l63
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels
-
 endmenu # Drivers

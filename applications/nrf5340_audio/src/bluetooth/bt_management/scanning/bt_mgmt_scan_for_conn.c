@@ -38,6 +38,7 @@ static void bond_connect(const struct bt_bond_info *info, void *user_data)
 	int ret;
 	const bt_addr_le_t *adv_addr = user_data;
 	struct bt_conn *conn;
+	char addr_string[BT_ADDR_LE_STR_LEN];
 
 	if (!bt_addr_le_cmp(&info->addr, adv_addr)) {
 		LOG_DBG("Found bonded device");
@@ -49,6 +50,10 @@ static void bond_connect(const struct bt_bond_info *info, void *user_data)
 		if (ret) {
 			LOG_WRN("Stop scan failed: %d", ret);
 		}
+
+		bt_addr_le_to_str(adv_addr, addr_string, BT_ADDR_LE_STR_LEN);
+
+		LOG_INF("Creating connection to bonded device: %s", addr_string);
 
 		ret = bt_conn_le_create(adv_addr, BT_CONN_LE_CREATE_CONN, CONNECTION_PARAMETERS,
 					&conn);
@@ -77,6 +82,7 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 	int ret;
 	bt_addr_le_t *addr = user_data;
 	struct bt_conn *conn;
+	char addr_string[BT_ADDR_LE_STR_LEN];
 
 	/* We only care about LTVs with name */
 	if (data->type == BT_DATA_NAME_COMPLETE) {
@@ -93,6 +99,10 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 			if (ret) {
 				LOG_ERR("Stop scan failed: %d", ret);
 			}
+
+			bt_addr_le_to_str(addr, addr_string, BT_ADDR_LE_STR_LEN);
+
+			LOG_INF("Creating connection to device: %s", addr_string);
 
 			ret = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, CONNECTION_PARAMETERS,
 						&conn);
