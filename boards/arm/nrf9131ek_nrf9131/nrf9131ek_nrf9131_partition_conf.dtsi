@@ -5,9 +5,9 @@
  */
 
 /*
- * Default Flash planning for nRF9161dk_nrf9161.
+ * Default Flash planning for nRF9131ek_nrf9131.
  *
- * Zephyr build for nRF9161 with ARM TrustZone-M support,
+ * Zephyr build for nRF9131 with ARM TrustZone-M support,
  * implies building Secure and Non-Secure Zephyr images.
  *
  * Secure image will be placed, by default, in flash0
@@ -37,7 +37,7 @@
 	reg = <0x000c0000 0x30000>;
 };
 
-/* Default SRAM planning when building for nRF9161 with
+/* Default SRAM planning when building for nRF9131 with
  * ARM TrustZone-M support
  * - Lowest 88 kB SRAM allocated to Secure image (sram0_s).
  * - 40 kB SRAM reserved for and used by the modem library

@@ -1,5 +1,5 @@
 identifier: nrf9131ek_nrf9131_ns
-name: nRF9161-DK-NRF9161-Non-Secure
+name: nRF9131-EK-NRF9131-Non-Secure
 type: mcu
 arch: arm
 toolchain:
