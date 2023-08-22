@@ -45,6 +45,16 @@ config DESKTOP_BLE_SCAN_DURATION_S
 	help
 	  After this time scan is disabled if any peripheral is connected.
 
+config DESKTOP_BLE_FORCED_SCAN_DURATION_S
+	int "Forced scan duration [s]"
+	default 4
+	help
+	  Duration of the forced scan operation in seconds. The module enters a
+	  forced scan state right after boot or wakeup, on successful peripheral
+	  discovery, on peripheral disconnection and on connection failure.
+
+	  Setting forced scan duration to 0 disables the feature.
+
 config DESKTOP_BLE_SCAN_MOUSE_LIMIT
 	int "Maximum number of bonded mice"
 	default 1
