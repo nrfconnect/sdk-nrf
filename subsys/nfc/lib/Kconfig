@@ -80,15 +80,14 @@ config NFC_THREAD_PRIORITY
 
 endif# NFC_OWN_THREAD
 
-config NFC_ZERO_LATENCY_IRQ
-	bool "Use Zero Latency IRQ for NFC"
+config NFC_LOW_LATENCY_IRQ
+	bool "Use low latency IRQ for NFC"
 	default y
-	select ZERO_LATENCY_IRQS
 	help
 	  Using this option ensures fast NFC interrupt
 	  execution on the cost of using additional interrupt (SWI).
 
-if NFC_ZERO_LATENCY_IRQ
+if NFC_LOW_LATENCY_IRQ
 
 config NFC_SWI_NUMBER
 	int
