@@ -11,7 +11,7 @@
 
 LOG_MODULE_DECLARE(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 
-#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
 #define SWI_NAME(number)	SWI_NAME2(number)
 #ifdef CONFIG_SOC_SERIES_NRF53X
 #define SWI_NAME2(number)	EGU ## number ## _IRQn
@@ -20,7 +20,7 @@ LOG_MODULE_DECLARE(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 #endif
 
 #define NFC_SWI_IRQN		SWI_NAME(CONFIG_NFC_SWI_NUMBER)
-#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
 
 #define NFC_LIB_CTX_SIZE CONFIG_NFC_LIB_CTX_MAX_SIZE
 
@@ -185,7 +185,7 @@ static void schedule_callback(void)
 #endif /* CONFIG_NFC_OWN_THREAD */
 }
 
-#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
 ISR_DIRECT_DECLARE(nfc_swi_handler)
 {
 	schedule_callback();
@@ -194,7 +194,7 @@ ISR_DIRECT_DECLARE(nfc_swi_handler)
 
 	return 1;
 }
-#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
 
 int nfc_platform_internal_init(nfc_lib_cb_resolve_t cb_rslv)
 {
@@ -202,11 +202,11 @@ int nfc_platform_internal_init(nfc_lib_cb_resolve_t cb_rslv)
 		return -EINVAL;
 	}
 
-#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
 	IRQ_DIRECT_CONNECT(NFC_SWI_IRQN, CONFIG_NFCT_IRQ_PRIORITY,
 			   nfc_swi_handler, 0);
 	irq_enable(NFC_SWI_IRQN);
-#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
 
 	nfc_cb_resolve = cb_rslv;
 	buf_full = false;
@@ -253,9 +253,9 @@ void nfc_platform_cb_request(const void *ctx,
 	}
 
 end:
-#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
 	NVIC_SetPendingIRQ(NFC_SWI_IRQN);
 #else
 	schedule_callback();
-#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
 }
