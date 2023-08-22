@@ -195,7 +195,7 @@ manifest:
         - sidewalk
     - name: homekit
       repo-path: sdk-homekit
-      revision: dab84f0edf31be784e96df490c43a7301a6a0e64
+      revision: d78df42e5faaf44946cfb5a29fbf282d9912b28b
       groups:
         - homekit
     - name: find-my
