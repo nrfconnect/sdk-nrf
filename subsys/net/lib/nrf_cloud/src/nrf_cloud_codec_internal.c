@@ -2930,12 +2930,12 @@ int nrf_cloud_location_response_decode(const char *const buf,
 	/* Check for error code */
 	ret = get_error_code_value(loc_obj, &result->err);
 	if (ret) {
-		/* Indicate that an nRF Cloud error code was found */
-		ret = -EFAULT;
-	} else {
 		/* No data or error was found */
 		LOG_ERR("Expected data not found in location message");
 		ret = -EBADMSG;
+	} else {
+		/* Indicate that an nRF Cloud error code was found */
+		ret = -EFAULT;
 	}
 
 cleanup:
