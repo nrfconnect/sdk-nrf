@@ -30,6 +30,9 @@ Configuration
 
 |config|
 
+Configuration options
+=====================
+
 Select the scan type to be used by the sample.
 
 .. note::
@@ -37,9 +40,12 @@ Select the scan type to be used by the sample.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
-The following application-specific Kconfig option is used in this sample (located in :file:`samples/wifi/scan/Kconfig`):
+The following sample-specific Kconfig option is used in this sample (located in :file:`samples/wifi/scan/Kconfig`):
 
-* Use the :kconfig:option:`CONFIG_WIFI_SCAN_TYPE_SELECT` Kconfig option to set the scan type to be used by the sample.
+.. _CONFIG_WIFI_SCAN_TYPE_SELECT:
+
+CONFIG_WIFI_SCAN_TYPE_SELECT
+   This option sets the scan type to be used by the sample.
 
 Building and running
 ********************
