@@ -96,6 +96,7 @@ kconfig_check_and_set_base(MBEDTLS_PKCS5_C)
 kconfig_check_and_set_base(MBEDTLS_PK_PARSE_C)
 kconfig_check_and_set_base(MBEDTLS_PK_WRITE_C)
 kconfig_check_and_set_base(MBEDTLS_DEBUG_C)
+kconfig_check_and_set_base(MBEDTLS_MEMORY_DEBUG)
 
 kconfig_check_and_set_base(MBEDTLS_PSA_CRYPTO_SPM)
 
