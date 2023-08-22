@@ -297,23 +297,24 @@ To build with the |nRFVSC|, specify ``-DSNIPPET="nrf91-modem-trace-uart" [...]``
 
 See :ref:`cmake_options` for more details.
 
+.. _nrf9160_board_revisions:
+
 Board revisions
 ***************
 
-nRF9160 DK v0.14.0 and later has additional hardware features that are not available on earlier versions of the DK:
+nRF9160 DK v0.13.0 and earlier has following hardware features missing that are available on later versions of the DK:
 
 * External flash memory
 * I/O expander
 
-To make use of these features, specify the board revision when building your application.
+To build without these features, specify the board revision when building your application.
 
 .. note::
-   You must specify the board revision only if you use features that are not available in all board revisions.
-   If you do not specify a board revision, the firmware is built for the default revision (v0.7.0).
-   Newer revisions are compatible with the default revision.
+   If you do not specify a board revision, the firmware is built for the default revision (v0.14.0).
 
-To specify the board revision, append it to the build target when building.
-For example, when building a non-secure application for nRF9160 DK v1.0.0, use ``nrf9160dk_nrf9106_ns@1.0.0`` as build target.
+To specify the board revision, append it to the board argument when building.
+The board revision is printed on the label of your DK, just below the PCA number.
+For example, when building a non-secure application for nRF9160 DK v0.9.0, use ``nrf9160dk_nrf9106_ns@0.9.0`` as build target.
 
 See :ref:`zephyr:application_board_version` and :ref:`zephyr:nrf9160dk_additional_hardware` for more information.
 
