@@ -61,6 +61,17 @@ int bt_rend_volume_unmute(void);
 int bt_rend_discover(struct bt_conn *conn);
 
 /**
+ * @brief	Put the UUIDs from this module into the buffer.
+ *
+ * @note	This partial data is used to build a complete extended advertising packet.
+ *
+ * @param[out]	uuid_buf	Buffer being populated with UUIDs.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int bt_rend_uuid_populate(struct net_buf_simple *uuid_buf);
+
+/**
  * @brief	Initialize the rendering services or profiles, or both.
  *
  * @return	0 if success, error otherwise.

@@ -28,6 +28,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
 
+ZBUS_CHAN_DEFINE(bt_mgmt_chan, struct bt_mgmt_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
+		 ZBUS_MSG_INIT(0));
+
 /* The bt_enable should take less than 15 ms.
  * Buffer added as this will not add to bootup time
  */
@@ -40,9 +43,6 @@ LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
 #endif
 
 K_SEM_DEFINE(sem_bt_enabled, 0, 1);
-
-ZBUS_CHAN_DEFINE(bt_mgmt_chan, struct bt_mgmt_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
-		 ZBUS_MSG_INIT(0));
 
 static struct bt_le_oob _oob = {.addr = 0};
 

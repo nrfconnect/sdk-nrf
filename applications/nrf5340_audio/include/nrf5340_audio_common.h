@@ -12,6 +12,7 @@
 #define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
 #define AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL	     1
 #define ZBUS_READ_TIMEOUT_MS				     K_MSEC(100)
+#define ZBUS_ADD_OBS_TIMEOUT_MS				     K_MSEC(200)
 
 extern const nrfx_timer_t audio_sync_timer_instance;
 
@@ -40,13 +41,18 @@ struct le_audio_msg {
 	struct bt_conn *conn;
 };
 
+struct sdu_ref_msg {
+	uint32_t timestamp;
+	bool adjust;
+};
+
 enum bt_mgmt_evt_type {
-	BT_MGMT_CONNECTED = 1,
-	BT_MGMT_DISCONNECTED,
+	BT_MGMT_EXT_ADV_WITH_PA_READY = 1,
+	BT_MGMT_CONNECTED,
 	BT_MGMT_SECURITY_CHANGED,
-	BT_MGMT_EXT_ADV_READY,
 	BT_MGMT_PA_SYNCED,
 	BT_MGMT_PA_SYNC_LOST,
+	BT_MGMT_DISCONNECTED,
 };
 
 struct bt_mgmt_msg {
@@ -71,7 +77,7 @@ struct volume_msg {
 };
 
 enum content_control_evt_type {
-	MEDIA_PLAY = 1,
+	MEDIA_START = 1,
 	MEDIA_STOP,
 };
 

@@ -7,6 +7,8 @@
 #include "bt_rend.h"
 
 #include <zephyr/zbus/zbus.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/uuid.h>
 
 #include "bt_rend_vol_internal.h"
 #include "nrf5340_audio_common.h"
@@ -110,6 +112,19 @@ int bt_rend_discover(struct bt_conn *conn)
 		if (ret) {
 			LOG_WRN("Failed to discover VCS: %d", ret);
 			return ret;
+		}
+	}
+
+	return 0;
+}
+
+int bt_rend_uuid_populate(struct net_buf_simple *uuid_buf)
+{
+	if (IS_ENABLED(CONFIG_BT_VCP_VOL_REND)) {
+		if (net_buf_simple_tailroom(uuid_buf) >= BT_UUID_SIZE_16) {
+			net_buf_simple_add_le16(uuid_buf, BT_UUID_VCS_VAL);
+		} else {
+			return -ENOMEM;
 		}
 	}
 

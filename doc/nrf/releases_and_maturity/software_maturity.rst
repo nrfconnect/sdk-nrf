@@ -123,9 +123,9 @@ The following table indicates the software maturity levels of the support for th
           Play and pause emulated by disabling and enabling stream, respectively.
         - The following limitations apply:
 
-          * Basic Audio Profile (BAP) broadcast, one BIG with two BIS streams.
+          * One BIG with two BIS streams.
           * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
-          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
 
         - Experimental
       * - **Broadcast sink**
@@ -134,35 +134,35 @@ The following table indicates the software maturity levels of the support for th
           Synchronizes and unsynchronizes with the stream.
         - The following limitations apply:
 
-          * BAP broadcast, one BIG, one of the two BIS streams (selectable).
+          * One BIG, one of the two BIS streams (selectable).
           * Audio output: I2S/Analog headset output.
-          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
 
         - Experimental
       * - **Unicast client**
-        - BAP unicast, one Connected Isochronous Group (CIG) with two Connected Isochronous Streams (CIS).
+        - One Connected Isochronous Group (CIG) with two Connected Isochronous Streams (CIS).
 
           Transmitting unidirectional or transceiving bidirectional audio using CIG and CIS.
         - The following limitations apply:
 
-          * BAP unicast, one CIG with two CIS.
+          * One CIG with two CIS.
           * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
           * Audio output: USB or I2S/Analog headset output.
-          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
 
         - Experimental
       * - **Unicast server**
-        - BAP unicast, 1 CIG with 2 CIS streams.
+        - One CIG with two CIS streams.
 
           Receiving unidirectional or transceiving bidirectional audio using CIG and CIS.
 
           Coordinated Set Identification Service (CSIS) is implemented on the server side.
         - The following limitations apply:
 
-          * BAP unicast, one CIG, one of the two CIS streams (selectable).
+          * One CIG, one of the two CIS streams (selectable).
           * Audio output: I2S/Analog headset output.
           * Audio input: PDM microphone over I2S.
-          * Configuration: 16 bit, several bit rates ranging from 24 kbps to 160 kbps.
+          * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
 
         - Experimental
 

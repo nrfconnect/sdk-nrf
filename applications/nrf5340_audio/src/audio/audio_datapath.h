@@ -47,17 +47,6 @@ int audio_datapath_pres_delay_us_set(uint32_t delay_us);
 void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
 
 /**
- * @brief Update sdu_ref_us so that drift compensation can work correctly
- *
- * @note This function is only valid for gateway using I2S as audio source
- *       and unidirectional audio stream (gateway to headset(s))
- *
- * @param sdu_ref_us    ISO timestamp reference from BLE controller
- * @param adjust        Indicate if the sdu_ref should be used to adjust timing
- */
-void audio_datapath_sdu_ref_update(uint32_t sdu_ref_us, bool adjust);
-
-/**
  * @brief Input an audio data frame which is processed and outputted over I2S
  *
  * @note A frame of raw encoded audio data is inputted, and this data then is decoded

@@ -10,29 +10,32 @@
 #include <stddef.h>
 #include <zephyr/kernel.h>
 
-/* State machine states for peer/stream */
+/* State machine states for peer or stream. */
 enum stream_state {
 	STATE_STREAMING,
 	STATE_PAUSED,
 };
 
-/** @brief Get current streaming state
+/**
+ * @brief Get the current streaming state.
  *
- * @return      strm_state enum value
+ * @return      strm_state enum value.
  */
 uint8_t stream_state_get(void);
 
-/** @brief Send encoded data over the stream
+/**
+ * @brief Send audio data over the stream.
  *
- * @param data		Data to send
- * @param size		Size of data
- * @param num_ch	Number of audio channels
+ * @param data		Data to send.
+ * @param size		Size of data.
+ * @param num_ch	Number of audio channels.
  */
-void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t num_ch);
+void streamctrl_send(void const *const data, size_t size, uint8_t num_ch);
 
-/** @brief Init internal functionality and start streamctrl
+/**
+ * @brief Initialize the internal functionality and start streamctrl.
  *
- *  @return 0 if successful.
+ * @return 0 if successful.
  */
 int streamctrl_start(void);
 

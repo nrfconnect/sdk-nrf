@@ -114,16 +114,23 @@ These modules include the following major ones:
 
 * Application-specific Bluetooth modules for handling the Bluetooth connection:
 
-  * :file:`le_audio_cis_gateway.c` or :file:`le_audio_cis_headset.c` - One of these ``cis`` modules is used by default.
-  * :file:`le_audio_bis_gateway.c` or :file:`le_audio_bis_headset.c` - One of these ``bis`` modules is selected automatically when you :ref:`switch to the BIS configuration <nrf53_audio_app_configuration_select_bis>`.
-
-  Only one of these files is used at compile time.
-  Each of these files handles the Bluetooth connection and Bluetooth events and funnels the data to the relevant audio modules.
+  * Management - This module handles scanning and advertising, in addition to general initialization, controller configuration, and transfer of DFU images.
+  * Stream - This module handles the setup and transfer of audio in the Bluetooth LE Audio context.
+    It includes submodules for CIS (unicast) and BIS (broadcast).
+  * Renderer - This module handles rendering, such as volume up and down.
+  * Content Control - This module handles content control, such as play and pause.
 
 * Application-specific custom modules:
 
-  * Stream Control - This module implements a simple state machine for the application (``STREAMING`` or ``PAUSED``).
-    It also handles events from Bluetooth LE and buttons, receives audio from the host, and forwards the audio data to the next module.
+  * Stream Control - This module handles events from the Bluetooth modules and buttons, receives audio from one module, and forwards the audio data to the next module.
+
+    * Currently, each of the four main device types uses a separate stream control file:
+
+      *  CIS gateway (unicast client) - :file:`streamctrl_unicast_client.c`
+      *  CIS headset (unicast server) - :file:`streamctrl_unicast_server.c`
+      *  BIS gateway (broadcast source) - :file:`streamctrl_broadcast_source.c`
+      *  BIS headset (broadcast sink) - :file:`streamctrl_broadcast_sink.c`
+
   * FIFO buffers
   * Synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
 
@@ -141,13 +148,15 @@ Communication between modules is primarily done through Zephyr's :ref:`zephyr:zb
 
 The application uses the following buses:
 
-  * ``le_audio_chan`` - For handling LE Audio events from :file:`le_audio_cis_headset.c`, :file:`le_audio_bis_headset.c`, :file:`le_audio_cis_gateway.c`, or :file:`le_audio_bis_gateway.c`.
+  * ``le_audio_chan`` - For handling LE Audio events from the Bluetooth stream modules, specifically :file:`unicast_client.c`, :file:`unicast_server.c`, :file:`broadcast_source.c`, and :file:`broadcast_sink.c`.
   * ``button_chan`` - For handling button events from :file:`button_handler.c`.
-  * ``bt_mgmt_chan`` - For handling ACL events from :file:`bt_mmgmt.c`.
+  * ``bt_mgmt_chan`` - For handling ACL events from :file:`bt_mgmt.c`.
   * ``volume_chan`` - For handling volume events from :file:`bt_rend.c`.
   * ``cont_media_chan`` - For handling media events from :file:`content_ctrl.c`.
 
-The consumer functions for each of these buses are residing, for the most part, in :file:`streamctrl.c`. ``volume_chan`` is an exception, with its consumer residing directly in :file:`hw_codec.c`. The linking of producers and consumers is done in :file:`main.c` and will potentially be different between different user applications..
+The consumer functions for each of these buses are residing, for the most part, in the stream control files.
+``volume_chan`` is an exception, with its consumer functions residing directly in :file:`hw_codec.c`.
+The linking of producers and consumers is done in the stream control files.
 
 .. _nrf53_audio_app_overview_architecture_usb:
 
@@ -177,7 +186,7 @@ The following figure shows an overview of the modules currently included in the 
    nRF5340 Audio modules on the gateway and the headsets using I2S
 
 The Bluetooth LE RX FIFO is mainly used to make :file:`audio_datapath.c` (synchronization module) run in a separate thread.
-After encoding the audio data received from I2S, the frames are sent by the encoder thread using a function located in :file:`streamctrl.c`.
+After encoding the audio data received from I2S, the frames are sent by the encoder thread using a function located in :file:`streamctrl_unicast_client.c`, :file:`streamctrl_unicast_server.c`, :file:`streamctrl_broadcast_source.c`, or :file:`streamctrl_broadcast_sink.c`.
 
 .. _nrf53_audio_app_overview_architecture_sync_module:
 
@@ -211,7 +220,7 @@ See the following figure for an overview of the synchronization module.
 
 Both synchronization methods use the SDU reference timestamps (:c:type:`sdu_ref`) as the reference variable.
 If the device is a gateway that is :ref:`using I2S as audio source <nrf53_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
-The extraction happens inside the :file:`le_audio_cis_gateway.c` and :file:`le_audio_bis_gateway.c` files' send function.
+The extraction happens inside the :file:`unicast_client.c` and :file:`broadcast_source.c` files' send function.
 The :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used to do drift compensation.
 
 .. note::
@@ -255,7 +264,7 @@ The received audio data in the I2S-based firmware devices follows the following 
 
 1. The LE Audio Controller Subsystem for nRF53 running on the network core receives the compressed audio data.
 #. The controller subsystem sends the audio data to the Zephyr Bluetooth LE host similarly to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
-#. The host sends the data to the stream control module (:file:`streamctrl.c`).
+#. The host sends the data to the stream control module.
 #. The data is sent to a FIFO buffer.
 #. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.
    The :file:`audio_datapath.c` module performs the audio synchronization based on the SDU reference timestamps.

@@ -175,14 +175,13 @@ static void advertising_process(struct k_work *work)
 			LOG_ERR("Failed to enable periodic advertising: %d", ret);
 			return;
 		}
+
+		msg.event = BT_MGMT_EXT_ADV_WITH_PA_READY;
+		msg.ext_adv = ext_adv;
+
+		ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+		ERR_CHK(ret);
 	}
-
-	/* Publish ext_adv */
-	msg.event = BT_MGMT_EXT_ADV_READY;
-	msg.ext_adv = ext_adv;
-
-	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
-	ERR_CHK(ret);
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Advertising successfully started");
