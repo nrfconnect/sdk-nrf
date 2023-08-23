@@ -196,3 +196,5 @@
 .. |Supported OS| replace:: The operating system versions that support the |NCS| tools are listed in the :ref:`supported_OS` section.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
+
+.. |serial_port_sec_tag| replace:: where ``<serial port>`` is the serial port of your device and ``<sec tag>`` is the previously chosen unused security tag.
