@@ -15,6 +15,9 @@
 #include <stdarg.h>
 #include "osal_structs.h"
 
+#ifndef CONFIG_NRF700X_LOG_VERBOSE
+#define __func__ ""
+#endif /* CONFIG_NRF700X_LOG_VERBOSE */
 /**
  * wifi_nrf_osal_init() - Initialize the OSAL layer.
  *
@@ -314,6 +317,9 @@ void wifi_nrf_osal_spinlock_irq_rel(struct wifi_nrf_osal_priv *opriv,
 				     unsigned long *flags);
 
 
+#if CONFIG_NRF700X_LOG_LEVEL  > 0
+#define wifi_nrf_osal_log_dbg(level, fmt, ...)
+#else
 /**
  * wifi_nrf_osal_log_dbg() - Log a debug message.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
@@ -326,8 +332,12 @@ void wifi_nrf_osal_spinlock_irq_rel(struct wifi_nrf_osal_priv *opriv,
  */
 int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
 			   const char *fmt, ...);
+#endif
 
 
+#if CONFIG_NRF700X_LOG_LEVEL > 3
+#define wifi_nrf_osal_log_info(level, fmt, ...)
+#else
 /**
  * wifi_nrf_osal_log_info() - Log a informational message.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
@@ -340,8 +350,12 @@ int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
  */
 int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
 			    const char *fmt, ...);
+#endif
 
 
+#if CONFIG_NRF700X_LOG_LEVEL > 5
+#define wifi_nrf_osal_log_err(level, fmt, ...)
+#else  /* > 5 */
 /**
  * wifi_nrf_osal_log_err() - Logs an error message.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
@@ -354,6 +368,7 @@ int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
  */
 int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
 			   const char *fmt, ...);
+#endif
 
 
 /**

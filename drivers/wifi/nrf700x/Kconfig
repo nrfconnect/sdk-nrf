@@ -70,6 +70,22 @@ config NRF700X_REG_DOMAIN
 config NET_MGMT_EVENT_STACK_SIZE
 	default 2048 if !WPA_SUPP
 
+config NRF700X_LOG_VERBOSE
+	bool "Maintains the verbosity of information in logs"
+
+module = WIFI_NRF700X
+module-dep = LOG
+module-str = Log level for Wi-Fi nRF700x driver
+module-help = Sets log level for Wi-Fi nRF700x driver
+source "subsys/logging/Kconfig.template.log_config"
+
+config NRF700X_LOG_LEVEL
+	int "Sets the log level of Wi-Fi driver"
+	default 0 if WIFI_NRF700X_LOG_LEVEL_DBG # MSG_EXCESSIVE
+	default 3 if WIFI_NRF700X_LOG_LEVEL_INF # MSG_INFO
+	default 5 if WIFI_NRF700X_LOG_LEVEL_ERR # MSG_ERROR
+	default 6
+
 config NRF700X_ON_QSPI
 	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF700X_QSPI))
 	select NRFX_QSPI
