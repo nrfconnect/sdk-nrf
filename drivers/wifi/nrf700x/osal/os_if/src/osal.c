@@ -189,6 +189,7 @@ void wifi_nrf_osal_spinlock_irq_rel(struct wifi_nrf_osal_priv *opriv,
 }
 
 
+#if CONFIG_NRF700X_LOG_LEVEL < 1
 int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
 			  const char *fmt,
 			  ...)
@@ -204,8 +205,10 @@ int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
 
 	return ret;
 }
+#endif /* CONFIG_NRF700X_LOG_LEVEL < 1 */
 
 
+#if CONFIG_NRF700X_LOG_LEVEL <= 3
 int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
 			   const char *fmt,
 			   ...)
@@ -221,8 +224,10 @@ int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
 
 	return ret;
 }
+#endif /* CONFIG_NRF700X_LOG_LEVEL <=3 */
 
 
+#if CONFIG_NRF700X_LOG_LEVEL <= 5
 int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
 			  const char *fmt,
 			  ...)
@@ -238,6 +243,7 @@ int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
 
 	return ret;
 }
+#endif /* CONFIG_NRF700X_LOG_LEVEL <=5 */
 
 
 void *wifi_nrf_osal_llist_node_alloc(struct wifi_nrf_osal_priv *opriv)
