@@ -388,6 +388,8 @@
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
 
+.. _`nRF9161 Objective Product Specification`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/SiP/nRF91x1-SiP/nRF9161_OPS_v0.7.pdf
+
 .. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
 .. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
 

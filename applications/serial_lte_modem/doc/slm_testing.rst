@@ -578,11 +578,11 @@ You must register the same PSK and PSK identity on the server side.
 TCP server
 ==========
 
-.. |global_private_address| replace:: the nRF9160 DK must have a global private address.
-   The radio network must be configured to route incoming IP packets to the nRF9160 DK.
+.. |global_private_address| replace:: the nRF91 Series DK must have a global private address.
+   The radio network must be configured to route incoming IP packets to the nRF91 Series DK.
 
 .. |global_private_address_check| replace::    To check if the setup is correct, use the ``AT+CGDCONT?`` command to check if the local IP address allocated by the network is a reserved private address of class A, B, or C (see `Private addresses`_).
-   If it is not, ping your nRF9160 DK from the destination server.
+   If it is not, ping your nRF91 Series DK from the destination server.
 
 
 To act as a TCP server, |global_private_address|
@@ -911,7 +911,7 @@ To act as a UDP server, |global_private_address|
          OK
 
       Note that you will get an error message if a UDP packet is lost.
-      For example, this error indicates that a packet is lost in the downlink to the nRF9160 DK:
+      For example, this error indicates that a packet is lost in the downlink to the nRF91 Series DK:
 
       .. parsed-literal::
          :class: highlight

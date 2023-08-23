@@ -7,7 +7,7 @@ User Interface module
    :local:
    :depth: 2
 
-The User Interface module controls and monitors the UI elements on the nRF9160 DK and Thingy:91.
+The User Interface module controls and monitors the UI elements on nRF91 Series development kits and Thingy:91.
 
 Features
 ********
@@ -22,13 +22,13 @@ The buttons used by the module and their functionality are listed in the followi
 
 .. _button_behavior:
 
-+--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
-| Button | Thingy:91                           | nRF9160 DK                                                                                                       |
-+========+=====================================+==================================================================================================================+
-| 1      | Send a message to the cloud service | Send message to the cloud service.                                                                               |
-+--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
-| 2      |                                     | Send message to the cloud service.                                                                               |
-+--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
++--------+-------------------------------------+------------------------------------+
+| Button | Thingy:91                           | nRF91 Series DK                    |
++========+=====================================+====================================+
+| 1      | Send a message to the cloud service | Send message to the cloud service. |
++--------+-------------------------------------+------------------------------------+
+| 2      |                                     | Send message to the cloud service. |
++--------+-------------------------------------+------------------------------------+
 
 .. _led_indication:
 
@@ -39,7 +39,7 @@ The module supports multiple LED patterns to visualize the operating state of th
 The following table describes the supported LED states:
 
 +---------------------------+------------------------------+----------------------------+
-| State                     | Thingy:91 RGB LED            | nRF9160 DK solid LEDs      |
+| State                     | Thingy:91 RGB LED            | nRF91 Series DK solid LEDs |
 +===========================+==============================+============================+
 | LTE connection search     | Yellow, blinking             | LED1 blinking              |
 +---------------------------+------------------------------+----------------------------+

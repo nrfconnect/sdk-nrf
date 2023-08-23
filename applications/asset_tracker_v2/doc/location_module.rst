@@ -18,8 +18,7 @@ This section documents the various features implemented by the module.
 Location control
 ================
 
-The module uses the :ref:`lib_location` library to communicate with the nRF9160 modem and
-control its GNSS and LTE neighbor cell measurement functionalities as well as with the nRF7002 Wi-Fi positioning functionality.
+The module uses the :ref:`lib_location` library to communicate with the nRF91 Series modem and control its GNSS and LTE neighbor cell measurement functionalities as well as with the nRF7002 Wi-Fi positioning functionality.
 A location request starts when the module receives an ``APP_EVT_DATA_GET`` event and
 the ``APP_DATA_LOCATION`` type is listed in the event's ``data_list`` member containing the data types that shall be sampled.
 
@@ -53,7 +52,7 @@ GNSS LNA configuration
 
 Different devices have different GNSS antenna and LNA setups depending on the antenna type (onboard or external).
 The application uses the :ref:`lib_modem_antenna` library for configuring the LNA.
-The library has Kconfig options to control the LNA using either the COEX0 or MAGPIO interface of the nRF9160.
+The library has Kconfig options to control the LNA using either the COEX0 or MAGPIO interface of the nRF91 Series device.
 See the library documentation for more details on how to configure the antenna and LNA.
 
 GPS assistance data
@@ -66,17 +65,28 @@ Providing the requested A-GPS data typically reduces significantly the time it t
 Wi-Fi positioning
 =================
 
-Wi-Fi positioning is supported with an nRF7002 EK on the nRF9160 DK.
-To enable Wi-Fi positioning and especially nRF7002 functionality, use a
-special DTC overlay with the compiler option ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay`` and a
-configuration overlay ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf``.
+Wi-Fi positioning is supported with an nRF7002 EK on the nRF91 Series DK.
+To enable Wi-Fi positioning and especially nRF7002 functionality, use a special DTC overlay with the compiler option ``-DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay`` and a configuration overlay ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf``.
 
-To build for the nRF9160 DK with nRF7002 EK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
-The following is an example of the CLI command:
+.. tabs::
 
-.. code-block:: console
+   .. group-tab:: nRF9161 DK
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_with_nrf7002ek.overlay -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+      To build for the nRF9161 DK with nRF7002 EK, use the ``nrf9161dk_nrf9161_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
+      The following is an example of the CLI command:
+
+      .. code-block:: console
+
+         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+
+   .. group-tab:: nRF9160 DK
+
+      To build for the nRF9160 DK with nRF7002 EK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
+      The following is an example of the CLI command:
+
+      .. code-block:: console
+
+         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
 Wi-Fi positioning has the following limitations:
 

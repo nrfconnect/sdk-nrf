@@ -38,7 +38,7 @@ The module implements a watchdog library that monitors the system workqueue usin
 To configure the watchdog timeout that is used, set the :ref:`CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC <CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC>` Kconfig option.
 The header file of the library is located at :file:`asset_tracker_v2/src/watchdog/watchdog_app.h`.
 
-If the watchdog is not fed within the timeout indicated by :ref:`CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC <CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC>`, a watchdog timeout occurs, causing a reboot that is initiated by the watchdog peripheral hardware unit on the nRF9160 DK.
+If the watchdog is not fed within the timeout indicated by :ref:`CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC <CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC>`, a watchdog timeout occurs, causing a reboot that is initiated by the watchdog peripheral hardware unit on the nRF91 Series DK.
 The watchdog library is set up to feed the :ref:`Zephyr Watchdog driver <watchdog_api>` with the system workqueue constantly at a time interval that equals half of the value specified by :ref:`CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC <CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC>`.
 This means that if the watchdog timeout is set to 60 seconds, the system workqueue feeds the watchdog every 30 seconds.
 A reboot caused by a watchdog timeout occurs if the system workqueue is blocked and it is unable to feed the watchdog.
