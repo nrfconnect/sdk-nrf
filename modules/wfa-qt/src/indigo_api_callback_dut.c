@@ -1344,8 +1344,10 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 		goto done;
 #endif /* End Of CONFIG_P2P */
 	} else {
+#ifdef CONFIG_AP
 		wlan = get_wireless_interface_info(bss_info.band, bss_info.identifier);
 		w = wpa_ctrl_open(get_hapd_ctrl_path_by_id(wlan));
+#endif /* End Of CONFIG_AP */
 	}
 
 	if (!w) {
