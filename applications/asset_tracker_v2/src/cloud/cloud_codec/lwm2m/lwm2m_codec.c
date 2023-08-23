@@ -86,7 +86,7 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 }
 
 int cloud_codec_encode_cloud_location(struct cloud_codec_data *output,
-				 struct cloud_data_cloud_location *cloud_location)
+				      struct cloud_data_cloud_location *cloud_location)
 {
 	ARG_UNUSED(output);
 
@@ -99,6 +99,12 @@ int cloud_codec_encode_cloud_location(struct cloud_codec_data *output,
 
 	cloud_location->queued = false;
 	return 0;
+}
+
+int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
+				      struct location_data *location)
+{
+	return -ENOTSUP;
 }
 
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,

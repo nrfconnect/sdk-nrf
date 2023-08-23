@@ -768,6 +768,29 @@ exit:
 	return -ENOTSUP;
 }
 
+int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
+				      struct location_data *location)
+{
+	ARG_UNUSED(input_len);
+
+	int err;
+	struct nrf_cloud_location_result result;
+
+	err = nrf_cloud_location_process(input, &result);
+	if (err == 0) {
+#if defined(CONFIG_LOCATION)
+		location->latitude = result.lat;
+		location->longitude = result.lon;
+		location->accuracy = result.unc;
+#endif
+		/* Date and time are not filled because they are not used anyway */
+	} else if (err == 1) {
+		/* Unexpected response from cloud is treated similarly to error from cloud */
+		err = -EFAULT;
+	}
+	return err;
+}
+
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request)
 {

@@ -324,6 +324,47 @@ static void pgps_data_handle(const uint8_t *buf, const size_t len)
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 }
 
+#if defined(CONFIG_LOCATION)
+void submit_cloud_module_event(
+	enum cloud_module_event_type type,
+	struct location_data *location,
+	int error)
+{
+	struct cloud_module_event *cloud_module_event = new_cloud_module_event();
+
+	__ASSERT(cloud_module_event, "Not enough heap left to allocate event");
+
+	cloud_module_event->type = type;
+	if (type == CLOUD_EVT_CLOUD_LOCATION_RECEIVED) {
+		cloud_module_event->data.cloud_location = *location;
+	} else if (type == CLOUD_EVT_ERROR) {
+		cloud_module_event->data.err = error;
+	}
+
+	APP_EVENT_SUBMIT(cloud_module_event);
+}
+#endif
+
+static void cloud_location_data_handle(uint8_t *buf, const size_t len)
+{
+#if defined(CONFIG_LOCATION)
+	int err;
+	struct location_data location;
+
+	err = cloud_codec_decode_cloud_location(buf, len, &location);
+	if (err == 0) {
+		submit_cloud_module_event(CLOUD_EVT_CLOUD_LOCATION_RECEIVED, &location, 0);
+	} else if (err == -EFAULT) {
+		submit_cloud_module_event(CLOUD_EVT_CLOUD_LOCATION_ERROR, NULL, err);
+	} else if (err == -ENOTSUP) {
+		submit_cloud_module_event(CLOUD_EVT_CLOUD_LOCATION_UNKNOWN, NULL, 0);
+	} else {
+		LOG_ERR("Decoding of cloud location response, error: %d", err);
+		SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
+	}
+#endif
+}
+
 static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 {
 	switch (evt->type) {
@@ -353,6 +394,10 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 	case CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED:
 		LOG_DBG("CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED");
 		agps_data_handle(evt->data.buf, evt->data.len);
+		break;
+	case CLOUD_WRAP_EVT_CLOUD_LOCATION_RESULT_RECEIVED:
+		LOG_DBG("CLOUD_WRAP_EVT_CLOUD_LOCATION_RESULT_RECEIVED");
+		cloud_location_data_handle(evt->data.buf, evt->data.len);
 		break;
 	case CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST: {
 		LOG_DBG("CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST");
@@ -818,6 +863,17 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				CLOUD_LOCATION,
 				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
 				true);
+
+		/* Check if the configured cloud service will return the resolved location back
+		 * to the device. If it does not, indicate that location result is unknown.
+		 */
+		if (!cloud_wrap_cloud_location_response_wait()) {
+			struct cloud_module_event *cloud_module_event = new_cloud_module_event();
+
+			__ASSERT(cloud_module_event, "Not enough heap left to allocate event");
+			cloud_module_event->type = CLOUD_EVT_CLOUD_LOCATION_UNKNOWN;
+			APP_EVENT_SUBMIT(cloud_module_event);
+		}
 	}
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_SEND_QOS)) {

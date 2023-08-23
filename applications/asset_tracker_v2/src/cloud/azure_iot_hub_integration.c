@@ -509,6 +509,11 @@ int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
+bool cloud_wrap_cloud_location_response_wait(void)
+{
+	return false;
+}
+
 int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
