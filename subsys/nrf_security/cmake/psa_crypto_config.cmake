@@ -125,7 +125,6 @@ kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ECC_SECP_R1_192_CC3XX)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ECC_SECP_R1_224_CC3XX)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ECC_SECP_R1_256_CC3XX)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ECC_SECP_R1_384_CC3XX)
-kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ECC_SECP_R1_521_CC3XX)
 
 # Convert nrf_oberon driver configurations
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_OBERON)
@@ -262,9 +261,7 @@ kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_ALT)
 
 # Set the max curve bits for the PSA APIs without using MBEDTLS defines
-if (CONFIG_PSA_CRYPTO_DRIVER_ECC_SECP_R1_521_CC3XX)
-  set(PSA_VENDOR_ECC_MAX_CURVE_BITS 521)
-elseif(CONFIG_PSA_CRYPTO_DRIVER_ECC_SECP_R1_384_CC3XX)
+if(CONFIG_PSA_CRYPTO_DRIVER_ECC_SECP_R1_384_CC3XX)
   set(PSA_VENDOR_ECC_MAX_CURVE_BITS 384)
 elseif(CONFIG_PSA_CRYPTO_DRIVER_ECC_SECP_R1_256_CC3XX
        OR CONFIG_PSA_CRYPTO_DRIVER_ECC_SECP_R1_256
