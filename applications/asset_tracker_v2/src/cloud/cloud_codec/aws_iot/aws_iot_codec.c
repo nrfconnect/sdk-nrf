@@ -75,25 +75,23 @@ int cloud_codec_encode_cloud_location(
 		return -ENOMEM;
 	}
 
-	if (!cloud_location->neighbor_cells_valid) {
-		err = -ENODATA;
-		goto exit;
-	}
-
-	err = json_common_neighbor_cells_data_add(root_obj, &cloud_location->neighbor_cells,
-						  JSON_COMMON_ADD_DATA_TO_OBJECT);
-	if (err) {
-		goto exit;
+	if (cloud_location->neighbor_cells_valid) {
+		err = json_common_neighbor_cells_data_add(root_obj, &cloud_location->neighbor_cells,
+							  JSON_COMMON_ADD_DATA_TO_OBJECT);
+		if (err) {
+			goto exit;
+		}
 	}
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
-	err = json_common_wifi_ap_data_add(root_obj, &cloud_location->wifi_access_points,
-					   JSON_COMMON_ADD_DATA_TO_OBJECT);
-	if (err) {
-		goto exit;
+	if (cloud_location->wifi_access_points_valid) {
+		err = json_common_wifi_ap_data_add(root_obj, &cloud_location->wifi_access_points,
+						   JSON_COMMON_ADD_DATA_TO_OBJECT);
+		if (err) {
+			goto exit;
+		}
 	}
 #endif
-
 
 	buffer = cJSON_PrintUnformatted(root_obj);
 	if (buffer == NULL) {
@@ -113,6 +111,12 @@ int cloud_codec_encode_cloud_location(
 exit:
 	cJSON_Delete(root_obj);
 	return err;
+}
+
+int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
+				      struct location_data *location)
+{
+	return -ENOTSUP;
 }
 
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,

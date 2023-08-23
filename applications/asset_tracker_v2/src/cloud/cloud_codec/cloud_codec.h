@@ -15,6 +15,9 @@
 #include <cJSON_os.h>
 #include <zephyr/net/net_ip.h>
 #include <modem/lte_lc.h>
+#if defined(CONFIG_LOCATION)
+#include <modem/location.h>
+#endif
 #include <net/wifi_location_common.h>
 #include <nrf_modem_gnss.h>
 
@@ -318,6 +321,25 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 int cloud_codec_encode_cloud_location(
 	struct cloud_codec_data *output,
 	struct cloud_data_cloud_location *cloud_location);
+
+/* Foward declaration */
+struct location_data;
+
+/**
+ * @brief Decode received cloud location data.
+ *
+ * @param[in] input String buffer with encoded cloud location data.
+ * @param[in] input_len Length of input.
+ * @param[out] location Storage for the decoded cloud location data.
+ *
+ * @retval 0 on success.
+ * @retval -EFAULT if cloud returned with error to the location request.
+ * @retval -ENOMEM if codec could not allocate memory.
+ * @retval -ENOTSUP if the function is not supported by the backend.
+ * @return 0 on success or negative error value on failure.
+ */
+int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
+				      struct location_data *location);
 
 /**
  * @brief Encode cloud codec A-GPS request.

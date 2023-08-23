@@ -18,6 +18,7 @@
 #include "location_module_event.h"
 #include "data_module_event.h"
 #include "modem_module_event.h"
+#include "cloud_module_event.h"
 
 extern struct event_listener __event_listener_location_module;
 
@@ -28,8 +29,19 @@ static struct app_module_event app_module_event_memory;
 static struct modem_module_event modem_module_event_memory;
 static struct location_module_event location_module_event_memory;
 static struct data_module_event data_module_event_memory;
+static struct cloud_module_event cloud_module_event_memory;
 
 #define LOCATION_MODULE_EVT_HANDLER(aeh) __event_listener_location_module.notification(aeh)
+
+/* Macro used to submit module events of a specific type to the Location module. */
+#define TEST_SEND_EVENT(_mod, _type, _event)							\
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);	\
+	__cmock_app_event_manager_free_ExpectAnyArgs();						\
+	_event = new_##_mod##_module_event();							\
+	_event->type = _type;									\
+	TEST_ASSERT_FALSE(LOCATION_MODULE_EVT_HANDLER(						\
+		(struct app_event_header *)_event));					\
+	app_event_manager_free(_event)
 
 /* location_event_handler() is implemented in location module and we'll call it directly
  * to fake received location library events.
@@ -68,6 +80,7 @@ struct event_type __event_type_app_module_event;
 struct event_type __event_type_data_module_event;
 struct event_type __event_type_util_module_event;
 struct event_type __event_type_modem_module_event;
+struct event_type __event_type_cloud_module_event;
 
 /* Dummy functions and objects - End.  */
 
@@ -243,39 +256,23 @@ static int module_start_stub(struct module_data *module, int num_calls)
 
 static void setup_location_module_in_init_state(void)
 {
-	/* Send APP_EVT_START. */
-	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__cmock_app_event_manager_free_ExpectAnyArgs();
-	struct app_module_event *app_module_event = new_app_module_event();
+	struct app_module_event *app_module_event;
 
 	__cmock_module_start_Stub(&module_start_stub);
-
-	app_module_event->type = APP_EVT_START;
-
 	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
-	bool ret = LOCATION_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
-
-	app_event_manager_free(app_module_event);
-
-	TEST_ASSERT_EQUAL(0, ret);
+	TEST_SEND_EVENT(app, APP_EVT_START, app_module_event);
 }
 
 static void setup_location_module_in_running_state(void)
 {
+	bool ret;
+	struct modem_module_event *modem_module_event;
+
 	setup_location_module_in_init_state();
 
 	/* Send MODEM_EVT_INITIALIZED. */
 	__cmock_location_init_ExpectAndReturn(&location_event_handler, 0);
-
-	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&modem_module_event_memory);
-	__cmock_app_event_manager_free_ExpectAnyArgs();
-	struct modem_module_event *modem_module_event = new_modem_module_event();
-
-	modem_module_event->type = MODEM_EVT_INITIALIZED;
-
-	bool ret = LOCATION_MODULE_EVT_HANDLER((struct app_event_header *)modem_module_event);
-
-	app_event_manager_free(modem_module_event);
+	TEST_SEND_EVENT(modem, MODEM_EVT_INITIALIZED, modem_module_event);
 
 	/* Send DATA_EVT_CONFIG_INIT. */
 	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
@@ -288,9 +285,7 @@ static void setup_location_module_in_running_state(void)
 	data_module_event->data.cfg.no_data.neighbor_cell = false;
 
 	ret = LOCATION_MODULE_EVT_HANDLER((struct app_event_header *)data_module_event);
-
 	app_event_manager_free(data_module_event);
-
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
@@ -298,6 +293,9 @@ static void setup_location_module_in_running_state(void)
  */
 static void setup_location_module_in_active_state(void)
 {
+	bool ret;
+	struct location_module_event *location_module_event;
+
 	/* Pre-condition. */
 	setup_location_module_in_running_state();
 
@@ -331,11 +329,18 @@ static void setup_location_module_in_active_state(void)
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_LOCATION;
 
-	__cmock_app_event_manager_alloc_IgnoreAndReturn(&location_module_event_memory);
-	bool ret = LOCATION_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
-
+	ret = LOCATION_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
 	app_event_manager_free(app_module_event);
+	TEST_ASSERT_EQUAL(0, ret);
 
+	/* Send LOCATION_MODULE_EVT_ACTIVE */
+	__cmock_app_event_manager_alloc_IgnoreAndReturn(&location_module_event_memory);
+	__cmock_app_event_manager_free_ExpectAnyArgs();
+	location_module_event = new_location_module_event();
+
+	location_module_event->type = LOCATION_MODULE_EVT_ACTIVE;
+	ret = LOCATION_MODULE_EVT_HANDLER((struct app_event_header *)location_module_event);
+	app_event_manager_free(location_module_event);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
@@ -346,6 +351,8 @@ static void setup_location_module_in_active_state(void)
  */
 void test_location_gnss_with_agps(void)
 {
+	struct location_module_event *location_module_event;
+
 	/* Set expected location module events. */
 	expected_location_module_event_count = 4;
 	expected_location_module_events[0].type = LOCATION_MODULE_EVT_ACTIVE;
@@ -400,6 +407,8 @@ void test_location_gnss_with_agps(void)
 		.location.details.gnss.satellites_tracked = 8
 	};
 	location_event_handler(&event_data_gnss_location);
+
+	TEST_SEND_EVENT(location, LOCATION_MODULE_EVT_INACTIVE, location_module_event);
 }
 
 /* Test whether the location module generates an event for neighbor cell measurements
@@ -407,6 +416,9 @@ void test_location_gnss_with_agps(void)
  */
 void test_location_cellular(void)
 {
+	struct cloud_module_event *cloud_module_event;
+	struct location_module_event *location_module_event;
+
 	struct lte_lc_ncell neighbor_cells[2] = {
 		{2300, 0, 8, 60, 29},
 		{2400, 184, 11, 55, 26}
@@ -437,11 +449,6 @@ void test_location_cellular(void)
 	/* Set location module into state where location_request() has been called. */
 	setup_location_module_in_active_state();
 
-	/* Location module indicates that it has handled neighbor cells
-	 * but the location is undefined.
-	 */
-	__cmock_location_cloud_location_ext_result_set_Expect(LOCATION_EXT_RESULT_UNKNOWN, NULL);
-
 	/* Location request is responded with location library events. */
 	struct location_event_data event_data_cellular = {
 		.id = LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST,
@@ -449,17 +456,29 @@ void test_location_cellular(void)
 	};
 	location_event_handler(&event_data_cellular);
 
+	/* Location module indicates that it has handled neighbor cells
+	 * but the location is undefined.
+	 */
+	__cmock_location_cloud_location_ext_result_set_Expect(LOCATION_EXT_RESULT_UNKNOWN, NULL);
+
+	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&location_module_event_memory);
+	TEST_SEND_EVENT(cloud, CLOUD_EVT_CLOUD_LOCATION_UNKNOWN, cloud_module_event);
+
 	/* Location library responds with and undefined status. */
 	struct location_event_data event_data_undefined = {
 		.id = LOCATION_EVT_RESULT_UNKNOWN,
 	};
 	location_event_handler(&event_data_undefined);
+
+	TEST_SEND_EVENT(location, LOCATION_MODULE_EVT_INACTIVE, location_module_event);
 }
 
 /* Test timeout for location request.
  */
 void test_location_fail_timeout(void)
 {
+	struct location_module_event *location_module_event;
+
 	/* Set expected location module events. */
 	expected_location_module_event_count = 3;
 	expected_location_module_events[0].type = LOCATION_MODULE_EVT_ACTIVE;
@@ -474,12 +493,16 @@ void test_location_fail_timeout(void)
 		.id = LOCATION_EVT_TIMEOUT,
 	};
 	location_event_handler(&event_data);
+
+	TEST_SEND_EVENT(location, LOCATION_MODULE_EVT_INACTIVE, location_module_event);
 }
 
 /* Test error while processing for location request.
  */
 void test_location_fail_error(void)
 {
+	struct location_module_event *location_module_event;
+
 	/* Set expected location module events. */
 	expected_location_module_event_count = 3;
 	expected_location_module_events[0].type = LOCATION_MODULE_EVT_ACTIVE;
@@ -494,12 +517,16 @@ void test_location_fail_error(void)
 		.id = LOCATION_EVT_ERROR,
 	};
 	location_event_handler(&event_data);
+
+	TEST_SEND_EVENT(location, LOCATION_MODULE_EVT_INACTIVE, location_module_event);
 }
 
 /* Test that an error event is sent when location library initialization fails.
  */
 void test_location_fail_init(void)
 {
+	struct modem_module_event *modem_module_event;
+
 	setup_location_module_in_init_state();
 
 	__cmock__event_submit_Stub(&validate_location_module_evt);
@@ -510,17 +537,7 @@ void test_location_fail_init(void)
 	expected_location_module_events[0].type = LOCATION_MODULE_EVT_ERROR_CODE;
 	expected_location_module_events[0].data.err = -1;
 
-	__cmock_app_event_manager_alloc_ExpectAnyArgsAndReturn(&modem_module_event_memory);
-	__cmock_app_event_manager_free_ExpectAnyArgs();
-	struct modem_module_event *modem_module_event = new_modem_module_event();
-
-	modem_module_event->type = MODEM_EVT_INITIALIZED;
-
-	bool ret = LOCATION_MODULE_EVT_HANDLER((struct app_event_header *)modem_module_event);
-
-	app_event_manager_free(modem_module_event);
-
-	TEST_ASSERT_EQUAL(0, ret);
+	TEST_SEND_EVENT(modem, MODEM_EVT_INITIALIZED, modem_module_event);
 }
 
 int main(void)

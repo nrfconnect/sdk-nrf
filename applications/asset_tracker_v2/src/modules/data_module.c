@@ -855,10 +855,15 @@ static void data_send_work_fn(struct k_work *work)
 static void requested_data_status_set(enum app_module_data_type data_type)
 {
 	if (!k_work_delayable_is_pending(&data_send_work)) {
-		/* If the data_send_work is not pending it means that the module has already
-		 * triggered an data encode/send.
-		 */
-		LOG_DBG("Data already encoded and sent, abort.");
+		if (data_type == APP_DATA_LOCATION) {
+			/* We may get location related data when a fallback to next method occurs */
+			data_send_work_fn(NULL);
+		} else {
+			/* If the data_send_work is not pending it means that the module has already
+			 * triggered an data encode/send.
+			 */
+			LOG_DBG("Data already encoded and sent, abort.");
+		}
 		return;
 	}
 
@@ -1411,6 +1416,8 @@ static void on_all_states(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY)) {
+		cloud_location.neighbor_cells_valid = false;
+		cloud_location.neighbor_cells.queued = false;
 		if (msg->module.location.data.cloud_location.neighbor_cells_valid) {
 			BUILD_ASSERT(sizeof(cloud_location.neighbor_cells.cell_data) ==
 				     sizeof(msg->module.location.data.cloud_location
@@ -1435,6 +1442,9 @@ static void on_all_states(struct data_msg_data *msg)
 			       sizeof(cloud_location.neighbor_cells.neighbor_cells));
 		}
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
+		cloud_location.wifi_access_points_valid = false;
+		cloud_location.wifi_access_points.queued = false;
+
 		if (msg->module.location.data.cloud_location.wifi_access_points_valid) {
 			BUILD_ASSERT(sizeof(cloud_location.wifi_access_points.ap_info) ==
 				     sizeof(msg->module.location.data.cloud_location

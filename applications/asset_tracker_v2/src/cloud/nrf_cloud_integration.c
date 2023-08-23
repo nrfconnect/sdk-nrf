@@ -233,7 +233,16 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		notify = true;
 		break;
 	case NRF_CLOUD_EVT_RX_DATA_LOCATION:
-		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_LOCATION");
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_LOCATION: %s", (char *)evt->data.ptr);
+
+		/* If GNSS is NOT the first priority, we'll handle the cloud response */
+		if (!IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS)) {
+			cloud_wrap_evt.type = CLOUD_WRAP_EVT_CLOUD_LOCATION_RESULT_RECEIVED;
+			cloud_wrap_evt.data.buf = (char *)evt->data.ptr;
+			cloud_wrap_evt.data.len = evt->data.len;
+
+			notify = true;
+		}
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_WRN("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
@@ -438,6 +447,16 @@ int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id)
 	}
 
 	return 0;
+}
+
+bool cloud_wrap_cloud_location_response_wait(void)
+{
+	/* If GNSS is the first priority, then we can ignore the location response from the cloud */
+	if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS)) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)

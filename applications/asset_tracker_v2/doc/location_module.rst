@@ -88,6 +88,7 @@ Wi-Fi positioning has the following limitations:
 
    The Wi-Fi configuration uses both flash and SRAM extensively.
    You can configure the number of scan results with the :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT` Kconfig option to reduce SRAM consumption.
+   Align the :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT` Kconfig option with :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT`.
    You can also change the value of the :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option.
 
 Module internals
@@ -100,7 +101,19 @@ All incoming events from other modules are handled in the context of the Applica
 
 The :ref:`lib_location` library handles cellular and Wi-Fi positioning together when the location request method list has them next to each other.
 This means that LTE neighbor cell measurements and Wi-Fi scanning results are combined into the same :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event.
-The location module responds to the :ref:`lib_location` library with unknown location resolution, because it does not request the location back from cloud service.
+
+The location module sends the cellular and Wi-Fi positioning request forward with :c:enum:`LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY` event,
+and waits for an event from the cloud module on the result of the positioning.
+This result is forwarded to the :ref:`lib_location` library.
+Depending on the cloud integration, positioning result from the cloud service might be requested or not.
+The result must be indicated with one of the following events:
+
+* :c:enum:`CLOUD_EVT_CLOUD_LOCATION_RECEIVED`: Location has been resolved successfully.
+  The :ref:`lib_location` library does not continue to use other positioning methods and the location request completes quickly.
+* :c:enum:`CLOUD_EVT_CLOUD_LOCATION_ERROR`: Location resolution failed.
+  The :ref:`lib_location` library performs a fallback to the next positioning method in the priority list.
+* :c:enum:`CLOUD_EVT_CLOUD_LOCATION_UNKNOWN`: Location resolution result is unknown, that is, cloud integration is not capable of or configured to resolve it.
+  The :ref:`lib_location` library performs a fallback to the next positioning method.
 
 Configuration options
 *********************

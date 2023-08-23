@@ -21,6 +21,7 @@
 #include "events/data_module_event.h"
 #include "events/util_module_event.h"
 #include "events/modem_module_event.h"
+#include "events/cloud_module_event.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_LOCATION_MODULE_LOG_LEVEL);
@@ -43,6 +44,7 @@ struct location_msg_data {
 		struct data_module_event data;
 		struct util_module_event util;
 		struct modem_module_event modem;
+		struct cloud_module_event cloud;
 		struct location_module_event location;
 	} module;
 };
@@ -193,6 +195,15 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		message_handler(&msg);
 	}
+
+	if (is_cloud_module_event(aeh)) {
+		struct cloud_module_event *event = cast_cloud_module_event(aeh);
+		struct location_msg_data msg = {
+			.module.cloud = *event
+		};
+
+		message_handler(&msg);
+	}
 	return false;
 }
 
@@ -328,6 +339,7 @@ static void send_cloud_location_update(const struct location_data_cloud *cloud_l
 	struct location_module_event *evt = new_location_module_event();
 	struct location_module_neighbor_cells *evt_ncells =
 		&evt->data.cloud_location.neighbor_cells;
+	evt->data.cloud_location.neighbor_cells_valid = false;
 
 	if (cloud_location_info->cell_data != NULL) {
 		BUILD_ASSERT(sizeof(evt_ncells->cell_data) == sizeof(struct lte_lc_cells_info));
@@ -357,6 +369,7 @@ static void send_cloud_location_update(const struct location_data_cloud *cloud_l
 	}
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
+	evt->data.cloud_location.wifi_access_points_valid = false;
 	if (cloud_location_info->wifi_data != NULL) {
 		BUILD_ASSERT(sizeof(evt->data.cloud_location.wifi_access_points.ap_info) >=
 			     sizeof(struct wifi_scan_result) *
@@ -488,7 +501,6 @@ void location_event_handler(const struct location_event_data *event_data)
 	case LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST:
 		LOG_DBG("Getting cloud location request");
 		send_cloud_location_update(&event_data->cloud_location_request);
-		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 		break;
 #endif
 
@@ -543,6 +555,21 @@ static void on_state_running_location_search(struct location_msg_data *msg)
 {
 	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_INACTIVE)) {
 		sub_state_set(SUB_STATE_IDLE);
+	}
+
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CLOUD_LOCATION_RECEIVED)) {
+#if defined(CONFIG_LOCATION)
+		location_cloud_location_ext_result_set(
+			LOCATION_EXT_RESULT_SUCCESS,
+			&msg->module.cloud.data.cloud_location);
+#endif
+	}
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CLOUD_LOCATION_ERROR)) {
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_ERROR, NULL);
+	}
+
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CLOUD_LOCATION_UNKNOWN)) {
+		location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN, NULL);
 	}
 
 	if (IS_EVENT(msg, app, APP_EVT_DATA_GET)) {
@@ -638,4 +665,5 @@ APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, modem_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, cloud_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, location_module_event);

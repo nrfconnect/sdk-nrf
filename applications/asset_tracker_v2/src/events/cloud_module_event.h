@@ -16,6 +16,9 @@
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
 #include <qos.h>
+#if defined(CONFIG_LOCATION)
+#include <modem/location.h>
+#endif
 
 #include "cloud/cloud_codec/cloud_codec.h"
 
@@ -67,6 +70,17 @@ enum cloud_module_event_type {
 	 */
 	CLOUD_EVT_CONFIG_RECEIVED,
 
+	/** Cloud location data has been received from cloud.
+	 *  The payload associated with this event is of type @ref location_data.
+	 */
+	CLOUD_EVT_CLOUD_LOCATION_RECEIVED,
+
+	/** Cloud location response has been received but location could not be resolved. */
+	CLOUD_EVT_CLOUD_LOCATION_ERROR,
+
+	/** Cloud location resolution is unknown. */
+	CLOUD_EVT_CLOUD_LOCATION_UNKNOWN,
+
 	/** An empty device configuration has been received from cloud. */
 	CLOUD_EVT_CONFIG_EMPTY,
 
@@ -115,13 +129,17 @@ struct cloud_module_event {
 	enum cloud_module_event_type type;
 
 	union {
-		/** Variable that contains a new configuration received from the cloud service. */
+		/** New configuration received from the cloud service. */
 		struct cloud_data_cfg config;
-		/** Variable that contains data that was attempted to be sent. Could be used
+#if defined(CONFIG_LOCATION)
+		/** Cloud location data received from the cloud service. */
+		struct location_data cloud_location;
+#endif
+		/** Data that was attempted to be sent. Could be used
 		 *  to free allocated data post transmission.
 		 */
 		struct cloud_module_data_ack ack;
-		/** Variable that contains the message that should be sent to cloud. */
+		/** The message that should be sent to cloud. */
 		struct qos_data message;
 		/** Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;

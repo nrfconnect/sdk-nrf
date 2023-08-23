@@ -57,6 +57,10 @@ enum cloud_wrap_event_type {
 	 *  Payload is of type @ref cloud_wrap_event_data.
 	 */
 	CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED,
+	/** Data received from cloud integration layer.
+	 *  Payload is of type @ref cloud_wrap_event_data.
+	 */
+	CLOUD_WRAP_EVT_CLOUD_LOCATION_RESULT_RECEIVED,
 	/** Reboot request received from cloud. */
 	CLOUD_WRAP_EVT_REBOOT_REQUEST,
 	/** Request to connect to LTE. */
@@ -209,6 +213,14 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id,
  * @return 0 on success, or a negative error code on failure.
  */
 int cloud_wrap_cloud_location_send(char *buf, size_t len, bool ack, uint32_t id);
+
+/**
+ * @brief Indicates whether cloud implementation can and is configured to return the resolved
+ *        location back to the device.
+ *
+ * @return Indicates whether resolved location is sent back to the device.
+ */
+bool cloud_wrap_cloud_location_response_wait(void);
 
 /**
  * @brief Send A-GPS request to cloud.
