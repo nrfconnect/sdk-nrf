@@ -45,9 +45,9 @@ Response syntax
 
 ::
 
-   #XHTTPCCON=<state>
+   #XHTTPCCON: <state>
 
-* The ``<state>`` value can return one of the following:
+* ``<state>`` is one of the following:
 
   * ``0`` - Disconnected
   * ``1`` - Connected
@@ -78,7 +78,7 @@ Response syntax
 
 ::
 
-   XHTTPCCON: <state>,<host>,<port>[,<sec_tag>]]
+   XHTTPCCON: <state>,<host>,<port>[,<sec_tag>]
 
 Example
 ~~~~~~~
@@ -151,9 +151,9 @@ Response syntax
 
 ::
 
-   #XHTTPCREQ:<state>
+   #XHTTPCREQ: <state>
 
-The ``<state>`` value can return one of the following:
+``<state>`` is one of the following:
 
 * ``0`` - Request sent successfully
 * ``1`` - Wait for payload data
@@ -245,13 +245,12 @@ Syntax
 
 ::
 
-   #XHTTPCRSP=<byte_received>,<state><CR><LF><response>
+   <response><CR><LF>#XHTTPCRSP:<received_byte_count>,<state>
 
-* The ``<byte_received>`` is an integer.
+* ``<response>`` is the raw data of the HTTP response, including headers and body.
+* ``<received_byte_count>`` is an integer.
   It represents the length of a partially received HTTP response.
-* The ``<state>`` value can return one of the following:
+* ``<state>`` is one of the following:
 
   * ``0`` - There is more HTTP response data to come.
   * ``1`` - The entire HTTP response has been received.
-
-* The ``<response>`` is the raw data of the HTTP response, including headers and body.
