@@ -11,7 +11,7 @@ The Amazon Web Services Internet-of-Things (AWS IoT) sample demonstrates how to 
 This sample showcases the use of the :ref:`lib_aws_iot` library, which includes support for FOTA using the :ref:`lib_aws_fota` library.
 
 Before this sample can be used, an AWS IoT server instance needs to be setup in order for the device to connect to it.
-Refer to :ref:`aws_iot_sample_server_setup` to complete the nessecary steps.
+Refer to :ref:`aws_iot_sample_server_setup` to complete the necessary steps.
 
 Requirements
 ************
@@ -80,8 +80,9 @@ Configuration
 Setup
 =====
 
-To run this sample and connect to AWS IoT, complete the steps described in the :ref:`lib_aws_iot` documentation.
-This documentation retrieves the AWS IoT broker *hostname*, *security tag*, and *client ID*.
+To run this sample and connect to AWS IoT, complete the steps described in the :ref:`aws_setup_and_configuration` section of the AWS IoT library documentation.
+This is to obtain the AWS IoT broker *hostname* and the *client ID* of the device and provision a device certificate to a *security tag*.
+
 The corresponding options that must be set for each of these values are:
 
 * :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
@@ -90,6 +91,10 @@ The corresponding options that must be set for each of these values are:
 
 Set these options in the project configuration file located at :file:`samples/nrf9160/aws_iot/prj.conf`.
 For documentation related to FOTA DFU, see :ref:`lib_aws_fota`.
+
+.. note::
+   For nRF70 Series devices, certificates must be provisioned at runtime.
+   This is achieved by pasting the PEM content into the respective files in the :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_AWS_IOT_PROVISION_CERTIFICATES` Kconfig option is enabled.
 
 Configuration options
 =====================
