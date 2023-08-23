@@ -9,7 +9,7 @@ Application description
 
 The Asset Tracker v2 application is built on the following principles:
 
-* Ultra-low power by design - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.
+* Ultra-low power by design - The application highlights the power saving features of the nRF91 Series SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.
 * Offline first - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
 * Timestamping on the device - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
 * Batching of data - Data is batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
@@ -57,7 +57,7 @@ To set up a cloud service to work with the application firmware, complete the st
    This value is printed on the development kit.
 
 * nRF Cloud - :ref:`Connecting your device to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`.
-  The default configuration of the firmware is to communicate with `nRF Cloud`_ using the factory-provisioned certificates on the Thingy:91 and nRF9160 DK.
+  The default configuration of the firmware is to communicate with `nRF Cloud`_ using the factory-provisioned certificates on nRF91 Series DKs and Thingy:91.
   This means that no additional configuration of the firmware is needed to connect to nRF Cloud.
   It is recommended to build and run the firmware on the device before completing the steps listed in :ref:`Connecting your device to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`.
   See :ref:`Building and running <building_and_running>`.
@@ -104,11 +104,15 @@ The application provides predefined configuration files for typical use cases.
 
 Following are the available configuration files:
 
-* :file:`prj.conf` - Configuration file common for ``thingy91_nrf9160_ns`` and ``nrf9160dk_nrf9160_ns`` build targets.
+* :file:`prj.conf` - Configuration file common for ``nrf9161dk_nrf9161_ns``, ``thingy91_nrf9160_ns``, and ``nrf9160dk_nrf9160_ns`` build targets.
 * :file:`prj_qemu_x86.conf` - Configuration file common for ``qemu_x86`` build target.
 * :file:`prj_native_posix.conf` - Configuration file common for ``native_posix`` build target.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
+* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file specific for nRF9161 DK.
+  This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9161dk_nrf9161_ns`` build target.
+* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91.
+  This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
+* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK.
+  This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 * :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
 
 Overlay configurations files that enable specific features:
@@ -126,7 +130,7 @@ Overlay configurations files that enable specific features:
 
 Custom DTC overlay file for enabling a specific feature:
 
-* :file:`nrf9160dk_with_nrf7002ek.overlay` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
+* :file:`nrf91xxdk_with_nrf7002ek` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
 
 Multiple overlay files can be included to enable multiple features at the same time.
 
@@ -144,10 +148,14 @@ Optional library configurations
 
 You can add the following optional configurations to configure the heap or to provide additional information such as Access Point Name (APN) to the modem for registering with an LTE network:
 
-* :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` - Configures the size of the heap that is used by the application when encoding and sending data to the cloud. More information can be found in :ref:`memory_allocation`.
-* :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN. Set the option to ``y`` to override the default PDP context configuration.
-* :kconfig:option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
-* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna. For nRF9160 DK v0.15.0 and later, it is recommended to set this option to achieve the best external antenna performance.
+* :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` - Configures the size of the heap that is used by the application when encoding and sending data to the cloud.
+  More information can be found in :ref:`memory_allocation`.
+* :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN.
+  Set the option to ``y`` to override the default PDP context configuration.
+* :kconfig:option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN.
+  An example is ``apn.example.com``.
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+  For nRF9160 DK v0.15.0 and later, it is recommended to set this option to achieve the best external antenna performance.
 
 .. note::
    This application supports the :ref:`ug_bootloader` (also called immutable bootloader), which has been enabled by default since the |NCS| v2.0.0 release.

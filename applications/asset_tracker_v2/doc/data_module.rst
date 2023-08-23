@@ -72,7 +72,7 @@ Options that alter the default values of the application's real-time configurati
 
 CONFIG_DATA_DEVICE_MODE_ACTIVE
    This configuration sets the device in active mode.
-   Default mode for the nRF9160 DK.
+   Default mode for nRF91 Series devices.
 
 .. _CONFIG_DATA_DEVICE_MODE_PASSIVE:
 

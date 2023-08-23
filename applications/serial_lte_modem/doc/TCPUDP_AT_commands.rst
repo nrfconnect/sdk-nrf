@@ -388,7 +388,7 @@ UDP server #XUDPSVR
 The ``#XUDPSVR`` command allows you to start and stop the UDP server.
 
 .. note::
-   DTLS server functionality is not supported by the nRF9160.
+   DTLS server functionality is not supported by nRF91 Series devices.
 
 Set command
 -----------

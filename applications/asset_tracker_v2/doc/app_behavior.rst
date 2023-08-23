@@ -12,7 +12,7 @@ This section describes the general functioning of the Asset Tracker v2 applicati
 Data types
 **********
 
-Data from multiple sensor sources are collected to construct information about the location, environment, and the health of the nRF9160-based device.
+Data from multiple sensor sources are collected to construct information about the location, environment, and the health of nRF91 Series devices.
 The data types that are collected by the application are listed in the following table:
 
 .. _app_data_types:

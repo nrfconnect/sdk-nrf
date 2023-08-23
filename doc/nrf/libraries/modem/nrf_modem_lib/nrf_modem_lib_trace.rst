@@ -91,10 +91,10 @@ If the modem buffer is full, the modem drops modem traces until the buffer has s
 
 .. modem_lib_sending_traces_UART_start
 
-Sending traces over UART on the nRF9160 DK
-==========================================
+Sending traces over UART on an nRF91 Series DK
+==============================================
 
-To send modem traces over UART on the nRF9160 DK, configuration must be added for the UART device in the devicetree and Kconfig.
+To send modem traces over UART on an nRF91 Series DK, configuration must be added for the UART device in the devicetree and Kconfig.
 This is done by adding the :ref:`modem trace UART snippet <nrf91_modem_trace_uart_snippet>` when building and programming.
 
 .. modem_lib_sending_traces_UART_end

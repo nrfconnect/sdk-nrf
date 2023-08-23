@@ -13,7 +13,7 @@ It shows how to set up a TLS session towards an HTTPS server and how to send an 
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -78,7 +78,7 @@ Testing
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Connect the USB cable and power on or reset your nRF9160 DK.
+1. Connect the USB cable and power on or reset your DK.
 #. Open a terminal emulator and observe that the sample starts, provisions certificates, connects to the LTE network and to example.com, and then sends an HTTP HEAD request.
 #. Observe that the HTTP HEAD request returns ``HTTP/1.1 200 OK``.
 

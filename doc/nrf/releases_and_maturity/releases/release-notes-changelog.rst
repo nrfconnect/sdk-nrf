@@ -171,8 +171,10 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
-nRF9160: Asset Tracker v2
--------------------------
+Asset Tracker v2
+----------------
+
+* Added support for the nRF9161 development kit.
 
 * Updated:
 
@@ -183,11 +185,12 @@ nRF9160: Asset Tracker v2
   * Possibility for the cloud integration to request the location back to the device for Wi-Fi or cellular positioning.
   * Fixed an issue with movement timeout handling in passive mode.
 
-nRF9160: Serial LTE modem
--------------------------
+Serial LTE modem
+----------------
 
 * Added:
 
+  * Support for the nRF9161 development kit.
   * ``#XMODEMRESET`` AT command to reset the modem while keeping the application running.
     It is expected to be used during modem firmware update, which now only requires a reset of the modem.
   * DTLS connection identifier support to the ``#XSSOCKETOPT`` and ``#XUDPCLI`` AT commands.

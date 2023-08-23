@@ -8,7 +8,7 @@ Memfault
    :depth: 2
 
 The Memfault sample shows how to use the `Memfault SDK`_ in an |NCS| application to collect coredumps and metrics.
-The sample connects to an LTE network using the nRF9160 DK or Thingy:91, or to Wi-Fi using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
+The sample connects to an LTE network using an nRF91 Series DK or Thingy:91, or to Wi-Fi using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
 
 To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
 
@@ -56,7 +56,6 @@ This metric is defined in :file:`samples/debug/memfault/config/memfault_metrics_
 
 *  ``Switch1ToggleCount`` - The number of times **Switch 1** has been toggled on an nRF9160 DK.
 
-
 Error Tracking with trace events
 ================================
 
@@ -64,7 +63,6 @@ The sample implements a user-defined trace reason for demonstration purposes.
 The trace reason is called ``Switch2Toggled``, and is collected every time **Switch 2** is toggled on an nRF9160 DK.
 In addition to detection of the event, the trace includes the current switch state.
 See `Memfault: Error Tracking with Trace Events`_ for information on how to configure and use trace events.
-
 
 Coredumps
 =========
@@ -126,7 +124,7 @@ Check and configure the following options in Memfault SDK that are used by the s
 * :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE`
 * :kconfig:option:`CONFIG_MEMFAULT_COREDUMP_COLLECT_BSS_REGIONS`
 
-If :kconfig:option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM` is enabled, TLS certificates used for HTTP uploads are provisioned to the nRF9160 modem when :c:func:`memfault_zephyr_port_install_root_certs` is called.
+If :kconfig:option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM` is enabled, TLS certificates used for HTTP uploads are provisioned to the cellular modem when :c:func:`memfault_zephyr_port_install_root_certs` is called.
 
 Check and configure the following options for Memfault that are specific to |NCS|:
 

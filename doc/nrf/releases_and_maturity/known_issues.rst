@@ -1173,8 +1173,8 @@ Applications
 
 The issues in this section are related to :ref:`applications`.
 
-nRF9160: Asset Tracker v2
-=========================
+Asset Tracker v2
+================
 
 The issues in this section are related to the :ref:`asset_tracker_v2` application.
 
@@ -1302,8 +1302,8 @@ IRIS-2676: Missing support for FOTA on nRF Cloud
 					* 156d4cf3a568869adca445d43a786d819ae10250
 					* f520159f0415f011ae66efb816384a8f7bade83d
 
-nRF9160: Serial LTE Modem
-=========================
+Serial LTE Modem
+================
 
 The issues in this section are related to the :ref:`serial_lte_modem` application.
 

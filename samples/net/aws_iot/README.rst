@@ -89,7 +89,7 @@ The corresponding options that must be set for each of these values are:
 * :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-Set these options in the project configuration file located at :file:`samples/nrf9160/aws_iot/prj.conf`.
+Set these options in the project configuration file located at :file:`samples/net/aws_iot/prj.conf`.
 For documentation related to FOTA DFU, see :ref:`lib_aws_fota`.
 
 .. note::
@@ -105,7 +105,7 @@ General options
 ---------------
 
 The following lists the application-specific configurations used in the sample.
-They are located in :file:`samples/nrf9160/aws_iot/Kconfig`.
+They are located in :file:`samples/net/aws_iot/Kconfig`.
 
 .. _CONFIG_AWS_IOT_SAMPLE_APP_VERSION:
 
