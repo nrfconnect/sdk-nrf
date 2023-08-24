@@ -1374,3 +1374,5 @@
 .. _`Community Best Practice for Copyright Notice`: https://www.linuxfoundation.org/blog/copyright-notices-in-open-source-software-projects/
 
 .. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
+
+.. _`HTTPie`: https://httpie.io/

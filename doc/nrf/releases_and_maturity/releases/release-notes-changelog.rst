@@ -475,6 +475,8 @@ Multicore samples
 Networking samples
 ------------------
 
+* Added a new sample :ref:`http_server`.
+
 * :ref:`net_coap_client_sample` sample:
 
   * Added support for Wi-Fi and LTE connectivity through the connection manager API.
