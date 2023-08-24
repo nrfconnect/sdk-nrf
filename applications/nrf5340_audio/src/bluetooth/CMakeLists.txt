@@ -15,6 +15,3 @@ zephyr_library_include_directories(
     bt_content_control
     bt_stream
 )
-
-target_sources(app PRIVATE
-		${CMAKE_CURRENT_SOURCE_DIR}/le_audio.c)

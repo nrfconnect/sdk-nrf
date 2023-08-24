@@ -22,13 +22,13 @@ enum stream_state {
  */
 uint8_t stream_state_get(void);
 
-/** @brief Send encoded data over the stream
+/** @brief Send audio data over the stream
  *
  * @param data		Data to send
  * @param size		Size of data
  * @param num_ch	Number of audio channels
  */
-void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t num_ch);
+void streamctrl_send(void const *const data, size_t size, uint8_t num_ch);
 
 /** @brief Init internal functionality and start streamctrl
  *

@@ -12,6 +12,7 @@
 #define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
 #define AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL	     1
 #define ZBUS_READ_TIMEOUT_MS				     K_MSEC(100)
+#define ZBUS_ADD_OBS_TIMEOUT_MS				     K_MSEC(200)
 
 extern const nrfx_timer_t audio_sync_timer_instance;
 

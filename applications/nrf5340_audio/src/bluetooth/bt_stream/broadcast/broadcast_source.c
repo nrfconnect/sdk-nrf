@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "broadcast_internal.h"
+#include "broadcast_source.h"
 
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -31,10 +31,6 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 
 ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
-
-#define STANDARD_QUALITY_16KHZ 16000
-#define STANDARD_QUALITY_24KHZ 24000
-#define HIGH_QUALITY_48KHZ     48000
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 /* For being able to dynamically define iso_tx_pools */

@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if AUDIO_DEV = 2 && TRANSPORT_BIS
+
+config BT_CAP_INITIATOR
+	default y
+
+config BT_AUDIO_BROADCAST_NAME
+	default BT_AUDIO_BROADCAST_NAME_ALT if BT_AUDIO_USE_BROADCAST_NAME_ALT
+
+config BT_DEVICE_APPEARANCE
+	# Broadcasting Device - 0x0885
+	default 2181
+
+config BT_ISO_BROADCASTER
+	default y
+
+config BT_BAP_BROADCAST_SOURCE
+	default y
+
+config BT_ISO_TX_BUF_COUNT
+	default 2
+
+config BT_BAP_BROADCAST_SRC_STREAM_COUNT
+	default 2
+
+config BT_ISO_MAX_CHAN
+	default 2
+
+config BT_AUDIO_TX
+	default y
+
+endif # AUDIO_DEV = 2 (GATEWAY) && TRANSPORT_BIS

@@ -9,7 +9,7 @@ zephyr_library_include_directories(
     unicast
 )
 
-if (CONFIG_TRANSPORT_BIS)
+if (CONFIG_BT_BAP_BROADCAST_SOURCE)
 	target_sources(app PRIVATE
 			${CMAKE_CURRENT_SOURCE_DIR}/broadcast/broadcast_source.c)
 endif()

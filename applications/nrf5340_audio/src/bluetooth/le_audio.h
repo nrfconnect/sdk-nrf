@@ -33,27 +33,6 @@
 					     CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,             \
 					     CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
 
-enum audio_roles {
-	UNICAST_SERVER_SINK = BIT(0),
-	UNICAST_SERVER_SOURCE = BIT(1),
-	UNICAST_SERVER_BIDIR = (BIT(0) | BIT(1)),
-	UNICAST_CLIENT_SINK = BIT(2),
-	UNICAST_CLIENT_SOURCE = BIT(3),
-	UNICAST_CLIENT_BIDIR = (BIT(2) | BIT(3)),
-	BROADCAST_SINK = BIT(4),
-	BROADCAST_SOURCE = BIT(5),
-};
-
-/* Some pre-defined use cases */
-enum le_audio_device_type {
-	LE_AUDIO_RECEIVER = (UNICAST_SERVER_SINK | BROADCAST_SINK),
-	LE_AUDIO_HEADSET = (UNICAST_SERVER_BIDIR | BROADCAST_SINK),
-	LE_AUDIO_MICROPHONE = (UNICAST_SERVER_SOURCE),
-	LE_AUDIO_SENDER = (UNICAST_CLIENT_SOURCE | BROADCAST_SOURCE),
-	LE_AUDIO_BROADCASTER = (BROADCAST_SOURCE),
-	LE_AUDIO_GATEWAY = (UNICAST_CLIENT_BIDIR | BROADCAST_SOURCE),
-};
-
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.
  *
@@ -77,53 +56,5 @@ struct encoded_audio {
 	size_t size;
 	uint8_t num_ch;
 };
-
-/**
- * @brief	Stop the LE Audio role given by @p role.
- *
- * @param[in]	role	Type of role to stop, can only specify one at a time.
- *
- * @return	0 for success, error otherwise.
- */
-int le_audio_stop(enum audio_roles role);
-
-/**
- * @brief	Start the LE Audio role given by @p role.
- *
- * @param[in]	role	Type of role to start, can only specify one at a time.
- *
- * @retval	0 for success, error otherwise.
- */
-int le_audio_start(enum audio_roles role);
-
-/**
- * @brief	Send the Bluetooth LE Audio data.
- *
- * @param[in]	enc_audio	Encoded audio struct.
- * @param[in]	role		Specify what role to send through, can send to multiple roles.
- *
- * @retval	0		Operation successful.
- * @retval	-ENXIO		The feature is disabled.
- * @retval	error		Otherwise.
- */
-int le_audio_send(struct encoded_audio enc_audio, enum audio_roles role);
-
-/**
- * @brief	Enable the LE Audio device.
- *
- * @param[in]	type		Type of LE Audio device to enable, can either be a
- *				single device type or a selection of audio_roles.
- * @param[in]	recv_cb		Callback for receiving Bluetooth LE Audio data.
- *
- * @return	0 for success, error otherwise.
- */
-int le_audio_enable(enum le_audio_device_type type, le_audio_receive_cb recv_cb);
-
-/**
- * @brief	Disable the LE Audio device.
- *
- * @return	0 for success, error otherwise.
- */
-int le_audio_disable(void);
 
 #endif /* _LE_AUDIO_H_ */
