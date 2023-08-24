@@ -1,0 +1,33 @@
+sample:
+  name: HTTP server sample
+tests:
+  sample.net.http_server.wifi:
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp_ns
+    platform_allow: nrf7002dk_nrf5340_cpuapp_ns
+    tags: ci_build
+  sample.net.http_server.wifi.tls:
+    build_only: true
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp_ns
+    platform_allow: nrf7002dk_nrf5340_cpuapp_ns
+    extra_args: OVERLAY_CONFIG=overlay-tls-nrf7002dk.conf
+    tags: ci_build
+  sample.net.http_server.lte:
+    build_only: true
+    integration_platforms:
+      - nrf9161dk_nrf9161_ns
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+    platform_allow: nrf9161dk_nrf9161_ns nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    tags: ci_build
+  sample.net.http_server.lte.tls:
+    build_only: true
+    integration_platforms:
+      - nrf9161dk_nrf9161_ns
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+    platform_allow: nrf9161dk_nrf9161_ns nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-tls-nrf91.conf
+    tags: ci_build

@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "HTTP server sample"
+
+config HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE
+	bool "Peer verification"
+	help
+	  Enable this option to make the server sample require TLS peer verification.
+	  Enabling peer verification ensures that the server validates the authenticity
+	  of the client during TLS/SSL handshake. This helps enhance the security of
+	  communications by verifying the identity of the connecting peer.
+
+config HTTP_SERVER_SAMPLE_PORT
+	int "Server Port"
+	default 443 if NET_SOCKETS_SOCKOPT_TLS
+	default 80
+
+config HTTP_SERVER_SAMPLE_CLIENTS_MAX
+	int "Maximum clients"
+	default 2
+	help
+	  This option sets the maximum number of concurrent clients.
+	  Increasing this option will impact the performance of the server and increase the
+	  total memory footprint as each client instance has its own thread with a dedicated stack.
+	  This option sets the number of maximum concurrecnt clients per IP family, meaning that
+	  if both IPv4 and IPv6 is enabled, a total of 4 clients can be connected at the same time.
+
+config HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG
+	int "Server Certificate Security Tag"
+	default 1
+	help
+	  This option sets the security tag for the credentials used in TLS.
+
+config HTTP_SERVER_SAMPLE_STACK_SIZE
+	int "Thread Stack Size"
+	default 4096
+	help
+	  This option sets the stack size for the threads used in the sample.
+
+config HTTP_SERVER_SAMPLE_RECEIVE_BUFFER_SIZE
+	int "Receive Buffer Size"
+	default 1024
+	help
+	  This option sets the receive buffer size for the sockets used in the sample.
+
+module = HTTP_SERVER_SAMPLE
+module-str = HTTP server sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+endmenu
