@@ -475,6 +475,7 @@ Networking samples
 * :ref:`azure_iot_hub` sample:
 
   * Added support for Wi-Fi and LTE connectivity through the connection manager API.
+  * Added support for the nRF9161 development kit.
   * Moved the sample from :file:`nrf9160/azure_iot_hub` folder to :file:`net/azure_iot_hub`.
     The documentation is now found in the :ref:`networking_samples` section.
 
