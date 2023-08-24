@@ -5,7 +5,7 @@
 #
 
 config PSA_CRYPTO_DRIVER_ALG_PRNG_CC3XX_PLATFORM
-	bool
+	bool ""
 	default y
 	depends on CRYPTOCELL_USABLE
 	depends on PSA_WANT_GENERATE_RANDOM
