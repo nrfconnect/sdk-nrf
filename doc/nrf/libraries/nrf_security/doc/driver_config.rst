@@ -496,7 +496,7 @@ To enable password-authenticated key agreement support, configure the related pa
 +-----------------------+-----------------------------------------------+
 | SPAKE2+               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P` |
 +-----------------------+-----------------------------------------------+
-| SRP                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP`     |
+| SRP-6                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`   |
 +-----------------------+-----------------------------------------------+
 
 .. note::
@@ -515,5 +515,5 @@ You can use the following PSA driver-specific configurations for fine-grained co
 +-----------------------+--------------------------+---------------------------------------------------------------+
 | SPAKE2+               | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SPAKE2P_OBERON` |
 +-----------------------+--------------------------+---------------------------------------------------------------+
-| SRP                   | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SRP_OBERON`     |
+| SRP-6                 | Not supported            | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_ALG_SRP_OBERON`     |
 +-----------------------+--------------------------+---------------------------------------------------------------+
