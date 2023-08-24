@@ -356,7 +356,7 @@ int slm_uart_tx_write(const uint8_t *data, size_t len)
 		if (ret) {
 			sent += ret;
 		} else {
-			/* Buffer full, block and and start TX. */
+			/* Buffer full, block and start TX. */
 			k_sem_take(&tx_done_sem, K_FOREVER);
 			err = tx_start();
 			if (err) {

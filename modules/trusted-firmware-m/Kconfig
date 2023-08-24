@@ -210,7 +210,7 @@ config TFM_PARTITION_INITIAL_ATTESTATION
 	   We select "implementation ID" because it is a mandatory claim
 	   in the IAT.
 	   The initial attestation partition requires ECDSA algorithm with
-	   SHA-256 and and uses the Identity Key stored in the KMU.
+	   SHA-256 and uses the Identity Key stored in the KMU.
 	   The identity key is a secp256r1 key pair.
 
 config TFM_QCBOR_PATH
