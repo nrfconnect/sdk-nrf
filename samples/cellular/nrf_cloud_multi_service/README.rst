@@ -126,7 +126,7 @@ It performs the following major tasks:
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
 * Sends sensor sample and location device messages to the :ref:`nrf_cloud_multi_service_device_message_queue`.
 * Checks for and executes :ref:`remote modem AT command requests <nrf_cloud_multi_service_remote_at>`.
-* Sends temperature alerts and sample startup alerts using the the :ref:`lib_nrf_cloud_alert` library.
+* Sends temperature alerts and sample startup alerts using the :ref:`lib_nrf_cloud_alert` library.
 
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
