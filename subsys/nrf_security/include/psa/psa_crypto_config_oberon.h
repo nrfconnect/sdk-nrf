@@ -42,6 +42,11 @@
 #endif
 
 #if defined(PSA_CRYPTO_DRIVER_ALG_DETERMINISTIC_ECDSA_OBERON)
+#define PSA_NEED_OBERON_ECDSA_DRIVER                           1
+#define PSA_NEED_OBERON_ECDSA_P224                             1
+#define PSA_NEED_OBERON_ECDSA_P256                             1
+#define PSA_NEED_OBERON_ECDSA_P384                             1
+#define PSA_NEED_OBERON_ECDSA_ED25519                          1
 #define PSA_NEED_OBERON_DETERMINISTIC_ECDSA                    1
 #endif
 
@@ -63,7 +68,6 @@
 #define PSA_NEED_OBERON_ECDSA_P256                             1
 #define PSA_NEED_OBERON_ECDSA_P384                             1
 #define PSA_NEED_OBERON_ECDSA_ED25519                          1
-#define PSA_NEED_OBERON_DETERMINISTIC_ECDSA                    1
 #define PSA_NEED_OBERON_RANDOMIZED_ECDSA                       1
 #endif
 
