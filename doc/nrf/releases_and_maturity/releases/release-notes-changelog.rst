@@ -643,12 +643,14 @@ Libraries for networking
     * Support for CoAP CBOR type handling to nrf_cloud_obj.
     * Warning message discouraging use of :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` for purposes other than testing.
     * Reporting of protocol (MQTT, REST, or CoAP) as well as method (LTE or Wi-Fi) to the device shadow.
+    * Kconfig choice :kconfig:option:`NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT` for selecting the data that is encoded in Wi-Fi location requests.
 
   * Updated:
 
     * Moved JSON manipulation from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
     * :c:func:`nrf_cloud_obj_location_request_create` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
     * Retry handling for P-GPS data download errors to retry ``ECONNREFUSED`` errors.
+    * By default, Wi-Fi location requests include only the MAC address and RSSI value.
 
   * Fixed:
 

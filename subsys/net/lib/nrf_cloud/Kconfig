@@ -74,6 +74,27 @@ config NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE
 	depends on MODEM_INFO_ADD_DEVICE
 	default y
 
+choice NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT
+	prompt "Encoding options for Wi-Fi location requests"
+	default NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_RSSI
+
+config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_ONLY
+	bool "Encode only the MAC address"
+	help
+		The MAC address is the only required parameter.
+
+config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_RSSI
+	bool "Encode the MAC address and the RSSI value"
+	help
+		The RSSI value may improve location accuracy.
+
+config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_ALL
+	bool "Encode all available parameters"
+	help
+		This option increases the memory required for creating requests.
+		It also increases the amount of data sent to nRF Cloud.
+endchoice
+
 endif
 
 if NRF_CLOUD_AGPS || NRF_CLOUD_PGPS

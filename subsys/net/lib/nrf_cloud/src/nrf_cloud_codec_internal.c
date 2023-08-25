@@ -2666,6 +2666,9 @@ int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 	int encoded_cnt = 0;
 	cJSON *wifi_obj = NULL;
 	cJSON *ap_array = NULL;
+	const bool add_all = IS_ENABLED(CONFIG_NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_ALL);
+	const bool add_rssi = (add_all ||
+			       IS_ENABLED(CONFIG_NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_RSSI));
 
 	LOG_DBG("Encoding wifi_scan_info with count: %u", wifi->cnt);
 
@@ -2705,28 +2708,29 @@ int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 		}
 
 		/* Optional parameters for the API call */
-		memset(str_buf, 0, sizeof(str_buf));
-		if ((ap->ssid_length > 0) && (ap->ssid_length <= WIFI_SSID_MAX_LEN)) {
-			memcpy(str_buf, ap->ssid, ap->ssid_length);
-		}
-
-		if ((str_buf[0] != '\0') &&
-		    json_add_str_cs(ap_obj, NRF_CLOUD_LOCATION_JSON_KEY_WIFI_SSID, str_buf)) {
+		if (add_rssi && (ap->rssi != NRF_CLOUD_LOCATION_WIFI_OMIT_RSSI) &&
+		    json_add_num_cs(ap_obj, NRF_CLOUD_LOCATION_JSON_KEY_WIFI_RSSI, ap->rssi)) {
 			goto cleanup;
 		}
 
-		if ((ap->rssi != NRF_CLOUD_LOCATION_WIFI_OMIT_RSSI) &&
-		    json_add_num_cs(ap_obj, NRF_CLOUD_LOCATION_JSON_KEY_WIFI_RSSI,
-					ap->rssi)) {
-			goto cleanup;
-		}
+		if (add_all) {
+			memset(str_buf, 0, sizeof(str_buf));
+			if ((ap->ssid_length > 0) && (ap->ssid_length <= WIFI_SSID_MAX_LEN)) {
+				memcpy(str_buf, ap->ssid, ap->ssid_length);
+			}
 
-		if ((ap->channel != NRF_CLOUD_LOCATION_WIFI_OMIT_CHAN) &&
-		    json_add_num_cs(ap_obj, NRF_CLOUD_LOCATION_JSON_KEY_WIFI_CH,
-					ap->channel)) {
-			goto cleanup;
-		}
+			if ((str_buf[0] != '\0') &&
+			    json_add_str_cs(ap_obj, NRF_CLOUD_LOCATION_JSON_KEY_WIFI_SSID,
+					    str_buf)) {
+				goto cleanup;
+			}
 
+			if ((ap->channel != NRF_CLOUD_LOCATION_WIFI_OMIT_CHAN) &&
+			    json_add_num_cs(ap_obj, NRF_CLOUD_LOCATION_JSON_KEY_WIFI_CH,
+					    ap->channel)) {
+				goto cleanup;
+			}
+		}
 		++encoded_cnt;
 	}
 
