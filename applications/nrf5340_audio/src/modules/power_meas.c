@@ -14,6 +14,7 @@
 LOG_MODULE_REGISTER(power_meas, CONFIG_MODULE_POWER_LOG_LEVEL);
 
 #define POWER_RAIL_NUM 4U
+static k_tid_t pwr_meas_thread_id;
 
 struct power_rail_config {
 	const char *name;
@@ -21,10 +22,10 @@ struct power_rail_config {
 };
 
 static const struct power_rail_config rail_config[POWER_RAIL_NUM] = {
-	{ "VBAT", DEVICE_DT_GET(DT_NODELABEL(vbat_sensor)) },
-	{ "VDD1_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd1_codec_sensor)) },
-	{ "VDD2_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd2_codec_sensor)) },
-	{ "VDD2_NRF", DEVICE_DT_GET(DT_NODELABEL(vdd2_nrf_sensor)) },
+	{"VBAT", DEVICE_DT_GET(DT_NODELABEL(vbat_sensor))},
+	{"VDD1_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd1_codec_sensor))},
+	{"VDD2_CODEC", DEVICE_DT_GET(DT_NODELABEL(vdd2_codec_sensor))},
+	{"VDD2_NRF", DEVICE_DT_GET(DT_NODELABEL(vdd2_nrf_sensor))},
 };
 static bool rail_enabled[POWER_RAIL_NUM];
 
@@ -104,6 +105,7 @@ static void meas_thread_fn(void *dummy1, void *dummy2, void *dummy3)
 
 static int power_meas_init(void)
 {
+	int ret;
 
 	/* check if all sensors are ready */
 	for (size_t i = 0U; i < POWER_RAIL_NUM; i++) {
@@ -123,9 +125,13 @@ static int power_meas_init(void)
 	}
 
 	/* start measurement thread */
-	(void)k_thread_create(&meas_thread, meas_stack, CONFIG_POWER_MEAS_STACK_SIZE,
-			      meas_thread_fn, NULL, NULL, NULL,
-			      K_PRIO_PREEMPT(CONFIG_POWER_MEAS_THREAD_PRIO), 0, K_NO_WAIT);
+	pwr_meas_thread_id = k_thread_create(
+		&meas_thread, meas_stack, CONFIG_POWER_MEAS_STACK_SIZE, meas_thread_fn, NULL, NULL,
+		NULL, K_PRIO_PREEMPT(CONFIG_POWER_MEAS_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(pwr_meas_thread_id, "pwr_meas");
+	if (ret) {
+		return ret;
+	}
 
 	return 0;
 }
