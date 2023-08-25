@@ -217,6 +217,21 @@ CHIP_ERROR AppTask::Init()
 		return chip::System::MapErrorZephyr(ret);
 	}
 
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+	/* OTA image confirmation must be done before the factory data init. */
+	err = OtaConfirmNewImage();
+	if (err != CHIP_NO_ERROR) {
+		return err;
+	}
+#endif
+
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+	/* Initialize DFU over SMP */
+	GetDFUOverSMP().Init();
+	GetDFUOverSMP().ConfirmNewImage();
+	GetDFUOverSMP().StartServer();
+#endif
+
 /* Get factory data */
 #ifdef CONFIG_CHIP_FACTORY_DATA
 	ReturnErrorOnFailure(mFactoryDataProvider.Init());
@@ -233,13 +248,6 @@ CHIP_ERROR AppTask::Init()
 #else
 	SetDeviceInstanceInfoProvider(&DeviceInstanceInfoProviderMgrImpl());
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
-#endif
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init();
-	GetDFUOverSMP().ConfirmNewImage();
-	GetDFUOverSMP().StartServer();
 #endif
 
 	/* Initialize timers */

@@ -170,6 +170,14 @@ CHIP_ERROR AppTask::Init()
 	k_timer_user_data_set(&sDimmerPressKeyTimer, this);
 	k_timer_user_data_set(&sFunctionTimer, this);
 
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+	/* OTA image confirmation must be done before the factory data init. */
+	err = OtaConfirmNewImage();
+	if (err != CHIP_NO_ERROR) {
+		return err;
+	}
+#endif
+
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
 	/* Initialize DFU over SMP */
 	GetDFUOverSMP().Init();

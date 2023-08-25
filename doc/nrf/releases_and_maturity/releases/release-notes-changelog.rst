@@ -101,10 +101,15 @@ See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samp
 Matter
 ------
 
-* Fixed an IPC crash on nRF5340 when Zephyr's main thread takes a long time.
 * Disabled OpenThread shell by default in Matter over Thread samples.
 * Enabled :kconfig:option:`CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option by default, including for builds without factory data support.
   The firmware now erases all flash pages in the non-volatile storage during a factory reset, instead of just clearing Matter-related settings.
+
+* Fixed:
+
+  * An IPC crash on nRF5340 when Zephyr's main thread takes a long time.
+  * An application core crash on nRF5340 targets with the factory data module enabled.
+    The crash would happen after the OTA firmware update finishes and the image is confirmed.
 
 * Added:
 
