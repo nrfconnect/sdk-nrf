@@ -23,8 +23,12 @@ The application supports the following development kits:
 
 To test the Matter bridge application with the :ref:`Bluetooth LE bridged device <matter_bridge_app_bridged_support>`, you also need the following:
 
-* An additional development kit compatible with the :ref:`peripheral_lbs` sample.
-* A micro USB cable to connect the development kit to the PC.
+* An additional development kit compatible with one of the following Bluetooth LE samples:
+
+  * :ref:`peripheral_lbs`
+  * :ref:`peripheral_esp`
+
+* A micro-USB cable to connect the development kit to the PC.
 
 To commission the Matter bridge device and control it remotely through a Wi-Fi network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on your setup.
@@ -182,6 +186,7 @@ Adding a Bluetooth LE bridged device to the Matter bridge
      The argument is mandatory and accepts the following values:
 
      * ``256`` - On/Off Light.
+     * ``291`` - Environmental Sensor (a combination of Temperature Sensor and Humidity Sensor).
 
    * *<ble_device_index>* is the Bluetooth LE device index on the list returned by the ``scan`` command.
      The argument is mandatory and accepts only the values returned by the ``scan`` command.
@@ -329,8 +334,12 @@ After building the sample and programming it to your development kit, complete t
 
       .. group-tab:: Testing with Bluetooth LE bridged devices
 
-         a. Build and program the :ref:`peripheral_lbs` sample to an additional development kit compatible with the sample.
-         #. Connect the development kit that is running the :ref:`peripheral_lbs` sample to the PC.
+         a. Build and program the one of the following Bluetooth LE samples to an additional development kit compatible with the sample:
+
+            * :ref:`peripheral_lbs`
+            * :ref:`peripheral_esp`
+
+         #. Connect the development kit that is running the Bluetooth LE sample to the PC.
          #. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to scan for available Bluetooth LE devices:
 
             .. code-block:: console
@@ -373,6 +382,8 @@ After building the sample and programming it to your development kit, complete t
                I: Adding OnOff Light bridged device
                I: Added device to dynamic endpoint 3 (index=0)
 
+            For the Environmental Sensor, two endpoints are created: one implements the Temperature Sensor, and the other implements the Humidity Sensor.
+
          #. Write down the value for the bridged device dynamic endpoint ID.
             This is going to be used in the next steps (*<bridged_device_endpoint_ID>*).
          #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` to read the value of an attribute from the bridged device endpoint.
@@ -382,6 +393,22 @@ After building the sample and programming it to your development kit, complete t
                :class: highlight
 
                ./chip-tool onoff read on-off *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
+            In case of the Environmental Sensor, the current temperature and humidity measurements forwarded by the Bluetooth LE Environmental Sensor can be read as follows:
+
+              * temperature:
+
+                .. parsed-literal::
+                   :class: highlight
+
+                   ./chip-tool temperaturemeasurement read measured-value *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
+              * humidity:
+
+                .. parsed-literal::
+                   :class: highlight
+
+                    ./chip-tool relativehumiditymeasurement read measured-value *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
 
 Enabling remote control
 =======================

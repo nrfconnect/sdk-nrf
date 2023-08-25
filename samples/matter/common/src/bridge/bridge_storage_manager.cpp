@@ -121,7 +121,7 @@ bool BridgeStorageManager::RemoveBridgedDeviceType(uint8_t bridgedDeviceIndex)
 	return PersistentStorage::Instance().Remove(&id);
 }
 
-bool BridgeStorageManager::StoreBridgedDevice(const BridgedDevice *device, uint8_t index)
+bool BridgeStorageManager::StoreBridgedDevice(const MatterBridgedDevice *device, uint8_t index)
 {
 	if (!device) {
 		return false;

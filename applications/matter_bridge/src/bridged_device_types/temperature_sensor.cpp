@@ -31,15 +31,15 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::TemperatureMeasurement::Id, tempSensorAttrs, n
 DECLARE_DYNAMIC_ENDPOINT(bridgedTemperatureEndpoint, bridgedTemperatureClusters);
 
 static constexpr EmberAfDeviceType kBridgedTemperatureDeviceTypes[] = {
-	{ static_cast<chip::DeviceTypeId>(BridgedDevice::DeviceType::TemperatureSensor),
-	  BridgedDevice::kDefaultDynamicEndpointVersion },
-	{ static_cast<chip::DeviceTypeId>(BridgedDevice::DeviceType::BridgedNode),
-	  BridgedDevice::kDefaultDynamicEndpointVersion }
+	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::TemperatureSensor),
+	  MatterBridgedDevice::kDefaultDynamicEndpointVersion },
+	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::BridgedNode),
+	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };
 
 static constexpr uint8_t kTemperatureDataVersionSize = ArraySize(bridgedTemperatureClusters);
 
-TemperatureSensorDevice::TemperatureSensorDevice(const char *nodeLabel) : BridgedDevice(nodeLabel)
+TemperatureSensorDevice::TemperatureSensorDevice(const char *nodeLabel) : MatterBridgedDevice(nodeLabel)
 {
 	mDataVersionSize = kTemperatureDataVersionSize;
 	mEp = &bridgedTemperatureEndpoint;

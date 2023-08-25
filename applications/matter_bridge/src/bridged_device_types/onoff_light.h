@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "bridged_device.h"
+#include "matter_bridged_device.h"
 
-class OnOffLightDevice : public BridgedDevice {
+class OnOffLightDevice : public MatterBridgedDevice {
 public:
 	static constexpr uint16_t kOnOffClusterRevision = 1;
 	static constexpr uint32_t kOnOffFeatureMap = 0;
@@ -20,7 +20,10 @@ public:
 	uint16_t GetOnOffClusterRevision() { return kOnOffClusterRevision; }
 	uint32_t GetOnOffFeatureMap() { return kOnOffFeatureMap; }
 
-	BridgedDevice::DeviceType GetDeviceType() const override { return BridgedDevice::DeviceType::OnOffLight; }
+	MatterBridgedDevice::DeviceType GetDeviceType() const override
+	{
+		return MatterBridgedDevice::DeviceType::OnOffLight;
+	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadOnOff(chip::AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength);

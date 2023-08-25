@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "bridged_device.h"
+#include "matter_bridged_device.h"
 #include "persistent_storage_util.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
@@ -217,7 +217,7 @@ public:
 	 * @return true if key has been written successfully
 	 * @return false an error occurred
 	 */
-	bool StoreBridgedDevice(const BridgedDevice *device, uint8_t index);
+	bool StoreBridgedDevice(const MatterBridgedDevice *device, uint8_t index);
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 

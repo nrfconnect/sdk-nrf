@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "bridged_device.h"
+#include "matter_bridged_device.h"
 
-class HumiditySensorDevice : public BridgedDevice {
+class HumiditySensorDevice : public MatterBridgedDevice {
 public:
 	static constexpr uint16_t kRelativeHumidityMeasurementClusterRevision = 1;
 	static constexpr uint32_t kRelativeHumidityMeasurementFeatureMap = 0;
@@ -21,7 +21,10 @@ public:
 	uint16_t GetRelativeHumidityMeasurementClusterRevision() { return kRelativeHumidityMeasurementClusterRevision; }
 	uint32_t GetRelativeHumidityMeasurementFeatureMap() { return kRelativeHumidityMeasurementFeatureMap; }
 
-	BridgedDevice::DeviceType GetDeviceType() const override { return BridgedDevice::DeviceType::HumiditySensor; }
+	MatterBridgedDevice::DeviceType GetDeviceType() const override
+	{
+		return MatterBridgedDevice::DeviceType::HumiditySensor;
+	}
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 			      uint16_t maxReadLength) override;
 	CHIP_ERROR HandleReadRelativeHumidityMeasurement(chip::AttributeId attributeId, uint8_t *buffer,

@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "bridged_device.h"
+#include "matter_bridged_device.h"
 #include <lib/support/ZclString.h>
 
 using namespace ::chip;
 using namespace ::chip::app;
 
-CHIP_ERROR BridgedDevice::CopyAttribute(void *attribute, size_t attributeSize, void *buffer, uint16_t maxBufferSize)
+CHIP_ERROR MatterBridgedDevice::CopyAttribute(void *attribute, size_t attributeSize, void *buffer,
+					      uint16_t maxBufferSize)
 {
 	if (maxBufferSize < attributeSize) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
@@ -21,22 +22,23 @@ CHIP_ERROR BridgedDevice::CopyAttribute(void *attribute, size_t attributeSize, v
 	return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR BridgedDevice::HandleWriteDeviceBasicInformation(chip::ClusterId clusterId, chip::AttributeId attributeId,
-							    void *data, size_t dataSize)
+CHIP_ERROR MatterBridgedDevice::HandleWriteDeviceBasicInformation(chip::ClusterId clusterId,
+								  chip::AttributeId attributeId, void *data,
+								  size_t dataSize)
 {
 	switch (attributeId) {
 	case Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id:
 		if (data && dataSize == sizeof(bool)) {
-			SetIsReachable(*reinterpret_cast<bool*>(data));
+			SetIsReachable(*reinterpret_cast<bool *>(data));
 			return CHIP_NO_ERROR;
 		}
-		default:
+	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
 }
 
-CHIP_ERROR BridgedDevice::HandleReadBridgedDeviceBasicInformation(AttributeId attributeId, uint8_t *buffer,
-								  uint16_t maxReadLength)
+CHIP_ERROR MatterBridgedDevice::HandleReadBridgedDeviceBasicInformation(AttributeId attributeId, uint8_t *buffer,
+									uint16_t maxReadLength)
 {
 	switch (attributeId) {
 	case Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id: {
@@ -60,7 +62,7 @@ CHIP_ERROR BridgedDevice::HandleReadBridgedDeviceBasicInformation(AttributeId at
 	}
 }
 
-CHIP_ERROR BridgedDevice::HandleReadDescriptor(AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength)
+CHIP_ERROR MatterBridgedDevice::HandleReadDescriptor(AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength)
 {
 	switch (attributeId) {
 	case Clusters::Descriptor::Attributes::ClusterRevision::Id: {
