@@ -173,6 +173,12 @@ if (CONFIG_TFM_NRF_PROVISIONING)
     APPEND PROPERTY TFM_CMAKE_OPTIONS
     -DNRF_PROVISIONING=ON
     )
+
+  message("
+  TF-M Provisioning has been enabled
+  The device must be correctly provisioned in order to boot.
+  See TF-M: Provisioning image sample on how to provision the device for TF-M.
+  ")
 endif()
 
 if (CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC)
