@@ -21,6 +21,10 @@ config TFM_BL2
 	bool
 	default n
 
+config TFM_DUMMY_PROVISIONING
+	bool
+	default n
+
 config TFM_REGRESSION_NS
 	bool
 	select NRF_TIMER0_SECURE
@@ -52,8 +56,6 @@ config TFM_PARTITION_INITIAL_ATTESTATION
 	# SHA-256 and uses the Identity Key stored in the KMU.
 	# The identity key is a secp256r1 key pair.
 	# The ECDSA algorithm and the cc3xx boot seed requires RNG.
-	default y if !TFM_PROFILE_TYPE_MINIMAL
-	depends on TFM_NRF_PROVISIONING
 	select PSA_WANT_ALG_SHA_256
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR
 	select PSA_WANT_ALG_ECDSA
