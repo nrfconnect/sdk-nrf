@@ -418,6 +418,7 @@ config TFM_S_CODE_VECTOR_TABLE_SIZE
 config TFM_NRF_PROVISIONING
 	bool "Provision the device"
 	depends on !TFM_PROFILE_TYPE_MINIMAL
+	select TFM_INITIAL_ATTESTATION_KEY
 	help
 	  Provision the TF-M image. When enabled, TF-M must be in the PSA
 	  provisioning lifecycle state in order to boot. See provisioning
