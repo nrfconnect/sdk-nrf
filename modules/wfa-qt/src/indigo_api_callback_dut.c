@@ -1998,7 +1998,47 @@ done:
 
 static int associate_sta_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
-	/* TODO: Implement this for zephyr */
+	struct wpa_ctrl *w = NULL;
+	struct wpa_supplicant *wpa_s = NULL;
+	size_t resp_len;
+	char buffer[32], response[16];
+	int status = TLV_VALUE_STATUS_OK;
+	char *message = TLV_VALUE_WPA_S_START_UP_OK;
+
+	wpa_s = z_wpas_get_handle_by_ifname(WIRELESS_INTERFACE_DEFAULT);
+	if (!wpa_s) {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "%s: Unable to get wpa_s handle for %s\n",
+			      __func__, WIRELESS_INTERFACE_DEFAULT);
+		status = TLV_VALUE_STATUS_NOT_OK;
+		message = TLV_VALUE_WPA_S_START_UP_NOT_OK;
+		goto done;
+	}
+
+	w = wpa_ctrl_open(wpa_s->ctrl_iface->sock_pair[0]);
+	if (!w) {
+		indigo_logger(LOG_LEVEL_ERROR, "Failed to connect to wpa_supplicant");
+		status = TLV_VALUE_STATUS_NOT_OK;
+		message = TLV_VALUE_WPA_S_START_UP_NOT_OK;
+		goto done;
+	}
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf(buffer, "SELECT_NETWORK 0");
+	memset(response, 0, sizeof(response));
+	resp_len = sizeof(response) - 1;
+	wpa_ctrl_request(w, buffer, strlen(buffer), response, &resp_len, NULL);
+	if (strncmp(response, WPA_CTRL_OK, strlen(WPA_CTRL_OK)) != 0) {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "Failed to execute the command. Response: %s", response);
+		goto done;
+	}
+	k_sleep(K_SECONDS(2));
+
+done:
+	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
+	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
+	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
 
 	return 0;
 }
