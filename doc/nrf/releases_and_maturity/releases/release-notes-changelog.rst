@@ -337,7 +337,10 @@ Bluetooth samples
 
 * :ref:`direct_test_mode` sample:
 
-  * Added support for the nRF52840 DK.
+  * Added:
+
+    * Support for the nRF52840 DK.
+    * Experimental support for the HCI interface.
 
   * Updated:
 

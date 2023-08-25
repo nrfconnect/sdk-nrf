@@ -15,7 +15,9 @@
 extern "C" {
 #endif
 
-/** @brief DTM PHY mode. */
+#define NRF_IQ_SAMPLE_INVALID -32768
+
+/** @brief DTM PHY mode */
 enum dtm_phy {
 	/** Bluetooth Low Energy 1 Mbps PHY. */
 	DTM_PHY_1M,
@@ -104,13 +106,25 @@ enum dtm_packet {
 	/** Packet with 0x55 bytes as payload. */
 	DTM_PACKET_55,
 
+	/** Packet filled with PRBS15 stream as payload. */
+	DTM_PACKET_PRBS15,
+
 	/** Packet with 0xFF bytes as payload or vendor specific packet. */
 	DTM_PACKET_FF_OR_VENDOR,
 
 	/** Packet with 0xFF bytes as payload. */
 	DTM_PACKET_FF,
 
-	/** Vendor specific packet. */
+	/** Packet with 0x00 bytes as payload. */
+	DTM_PACKET_00,
+
+	/** Packet with 0xF0 bytes as payload. */
+	DTM_PACKET_F0,
+
+	/** Packet with 0xAA bytes as payload. */
+	DTM_PACKET_AA,
+
+	/** Vendor-specific packet. */
 	DTM_PACKET_VENDOR
 };
 
@@ -156,11 +170,81 @@ struct dtm_tx_power {
 	bool max;
 };
 
-/** @brief Function for initializing DTM module.
+/** @brief DTM Packet status for IQ Sample report. */
+enum dtm_packet_status {
+	/** Packet received with proper CRC. */
+	DTM_PACKET_STATUS_CRC_OK,
+
+	/** Packet received with invalid CRC.
+	 *  The Length and CTEInfo was used to calculate sampling points.
+	 */
+	DTM_PACKET_STATUS_CRC_ERR_TIME,
+
+	/** Packet received with invalid CRC.
+	 *  The sampling points were calculated in another way.
+	 */
+	DTM_PACKET_STATUS_CRC_ERR_OTHER,
+
+	/** Packet received with invalid CRC.
+	 *  Insufficient resources to sample.
+	 */
+	DTM_PACKET_STATUS_CRC_ERR_INSUFFICIENT
+};
+
+/** @brief IQ sample format. */
+struct dtm_iq_sample {
+	/** I sample value. */
+	int16_t i;
+
+	/** Q sample value. */
+	int16_t q;
+};
+
+/** @brief DTM IQ sampling data with additional information. */
+struct dtm_iq_data {
+	/** Channel number. */
+	uint8_t channel;
+
+	/** RSSI value of received packet. */
+	int16_t rssi;
+
+	/** Antenna number used to measure RSSI. */
+	uint8_t rssi_ant;
+
+	/** CTE type. */
+	enum dtm_cte_type type;
+
+	/** CTE slot duration. */
+	enum dtm_cte_slot_duration slot;
+
+	/** Packet status. */
+	enum dtm_packet_status status;
+
+	/** IQ sample count. */
+	uint8_t sample_cnt;
+
+	/** IQ samples. */
+	struct dtm_iq_sample *samples;
+};
+
+/** @brief Callback to report received IQ samples.
+ *
+ * @note The callback is used only with direction finding.
+ *
+ * @param[in] data Pointer to dtm_iq_data structure.
+ */
+typedef void (*dtm_iq_report_callback_t)(struct dtm_iq_data *data);
+
+/** @brief Initialize the DTM module.
+ *
+ * This function initializes the DTM module and registers the IQ sampling callback.
+ * If the callback is not needed, the pointer can be NULL.
+ *
+ * @param[in] iq_callback Function pointer to the IQ report callback, can be NULL.
  *
  * @return 0 in case of success or negative value in case of error.
  */
-int dtm_init(void);
+int dtm_init(dtm_iq_report_callback_t callback);
 
 /** @brief Prepare DTM for setup.
  *

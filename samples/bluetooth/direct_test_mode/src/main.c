@@ -7,26 +7,26 @@
 #include <zephyr/device.h>
 #include <zephyr/sys/printk.h>
 
-#include "transport/dtm_uart_twowire.h"
+#include "transport/dtm_transport.h"
 
 int main(void)
 {
 	int err;
-	uint16_t cmd;
+	union dtm_tr_packet cmd;
 
 	printk("Starting Direct Test Mode example\n");
 
-	err = dtm_uart_twowire_init();
+	err = dtm_tr_init();
 	if (err) {
-		printk("Error initializing DTM Two Wire Uart transport: %d\n", err);
+		printk("Error initializing DTM transport: %d\n", err);
 		return err;
 	}
 
 	for (;;) {
-		cmd = dtm_uart_twowire_get();
-		err = dtm_uart_twowire_process(cmd);
+		cmd = dtm_tr_get();
+		err = dtm_tr_process(cmd);
 		if (err) {
-			printk("Error processing command(%x): %d\n", cmd, err);
+			printk("Error processing command: %d\n", err);
 			return err;
 		}
 	}

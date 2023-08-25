@@ -28,12 +28,30 @@ if(CONFIG_DTM_USB)
   set(remote_shell_CONF_FILE ${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell/prj_usb.conf)
 endif()
 
+if("${BOARD}" STREQUAL "nrf5340dk_nrf5340_cpunet")
+  if(NOT "${EXTRA_CONF_FILE}" STREQUAL "overlay-hci-nrf53.conf")
+    set(EXTRA_DTC_OVERLAY_FILE "${CMAKE_CURRENT_LIST_DIR}/conf/remote_shell_nrf53.overlay")
+  endif()
+endif()
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
 target_include_directories(app PRIVATE ./src)
 
-target_sources_ifdef(CONFIG_DTM_TRANSPORT_TWOWIRE app PRIVATE src/transport/dtm_uart_twowire.c)
+target_sources_ifdef(CONFIG_DTM_TRANSPORT_TWOWIRE app PRIVATE
+  src/transport/dtm_uart_twowire.c
+  src/transport/dtm_uart_wait.c
+)
+
+target_sources_ifdef(CONFIG_DTM_TRANSPORT_HCI app PRIVATE src/transport/dtm_hci.c)
+
+if(CONFIG_NCS_SAMPLE_DTM_REMOTE_HCI_CHILD_IMAGE)
+  target_sources(app PRIVATE src/transport/hci_uart_remote.c)
+  target_include_directories(app PRIVATE ./rpc)
+else()
+  target_sources_ifdef(CONFIG_DTM_TRANSPORT_HCI app PRIVATE src/transport/hci_uart.c)
+endif()
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE

@@ -50,8 +50,10 @@ The DTM sample includes two parts:
 
 You can find the source code of both parts in :file:`samples/bluetooth/direct_test_mode/src`.
 
-The DTM sample contains a driver for a 2-wire UART interface.
-The driver maps two-octet commands and events to the DTM library, as specified by the Bluetooth Low Energy DTM specification.
+This sample contains a driver for a 2-wire UART interface and an experimental HCI UART interface.
+Unless otherwise stated, all following commands and references describe the 2-wire interface.
+The 2-wire driver maps two-octet commands and events to the DTM library, as specified by the Bluetooth Low Energy DTM specification.
+The HCI driver accepts HCI commands in H4 format and implements a minimal set of HCI commands usually sufficient to run DTM testing.
 
 .. figure:: /images/bt_dtm_dut.svg
    :alt: nRF5 with DTM as a DUT
@@ -60,8 +62,9 @@ The implementation is self-contained and requires no Bluetooth Low Energy protoc
 The MPU is initialized in the standard way.
 The DTM library function :c:func:`dtm_init` configures all interrupts, timers, and the radio.
 
-The :file:`main.c` file may be extended with other interface implementations, such as an HCI interface, USB, or another interface required by the Upper Tester.
+This sample may be extended with other interface implementations, such as an HCI interface, USB, or another interface required by the Upper Tester.
 The extension should be done by adding an appropriate interface implementation in the :file:`transport` directory.
+The transports must conform to the interface specified in the :file:`transport/dtm_transport.h` file.
 
 The interface to the Lower Tester uses the antenna connector of the chosen development kit.
 While in principle an aerial connection might be used, conformance tests cover the reading of the transmission power delivered by the DUT.
@@ -316,9 +319,12 @@ The DTM-to-Serial adaptation layer
 
 The :file:`dtm_uart_twowire.c` file is an implementation of the UART interface specified in the `Bluetooth Core Specification`_, Volume 6, Part F, Chapter 3.
 
+The :file:`dtm_hci.c` and :file:`hci_uart.c` files are an implementation of the HCI UART interface specified in the `Bluetooth Core Specification`_, Volume 4, Part A (the flow control can be configured by an overlay file).
+
 The default selection of UART pins is defined in :file:`zephyr/boards/arm/board_name/board_name.dts`.
 You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file of the child image at the project level.
 The overlay files for the :ref:`nrf5340_remote_shell` child image are located in the :file:`child_image/remote_shell` directory.
+The HCI interface allows for a custom ``remote_hci`` image to be used with |nRF5340DKnoref|.
 
 .. note::
    On the nRF5340 development kit, the physical UART interface of the application core is used for communication with the tester device.
@@ -361,6 +367,21 @@ Building and running
    On the nRF5340 development kit, this sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
    The Remote IPC shell sample is built and programmed automatically by default.
    If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
+
+Experimental HCI interface
+==========================
+
+To build the sample with an HCI interface, use the following command:
+
+.. code-block:: console
+
+   west build samples/bluetooth/direct_test_mode -b board_name -- --DEXTRA_CONF_FILE=overlay-hci.conf
+
+On the |nRF5340DKnoref| the sample with HCI interface can also be built with the `remote_hci` image using the following command:
+
+.. code-block:: console
+
+   west build samples/bluetooth/direct_test_mode -b board_name -- --DEXTRA_CONF_FILE=overlay-hci-nrf53.conf
 
 USB CDC ACM transport variant
 =============================
@@ -455,7 +476,7 @@ The Bluetooth Low Energy DTM UART interface standard specifies the following con
 .. note::
    The default bit rate of the DTM UART driver is 19200 bps, which is supported by most certified testers.
 
-You must send all commands as two-byte HEX numbers.
+When using a 2-wire interface, you must send all commands as two-byte HEX numbers.
 The responses must have the same format.
 
 Connect with RealTerm (Windows)
