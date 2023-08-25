@@ -7,7 +7,7 @@ Secure bootloader chain
    :local:
    :depth: 2
 
-The |NCS| (NCS) secure bootloader solutions are built on the *chain of trust* concept.
+The |NCS| secure bootloader solutions are built on the *chain of trust* concept.
 
 By using this secure bootloader chain, you can ensure that all code being executed has been authorized and that your application is protected against running altered code.
 If, for example, an attacker tries to modify your application, or you have a bug in your code that overwrites parts of the application firmware image, the secure bootloader chain detects that the firmware has been altered and your application does not start.
@@ -46,7 +46,7 @@ After all of the images in the bootloader chain have been verified successfully,
 Architecture
 ************
 
-The |NCS| (NCS) currently supports two implementations:
+The |NCS| currently supports two implementations:
 
 * The first implementation provides the first stage in the chain, the immutable :ref:`bootloader`, which could be either |NSIB| or :doc:`MCUboot <mcuboot:index-ncs>`.
   It does not support bootloader upgradability, but it is useful if you need just the capability to update your application.
