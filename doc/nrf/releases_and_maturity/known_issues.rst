@@ -279,6 +279,56 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2.4.1 v2-4-0 v2-3-0 v2-2-0
+
+KRKNWK-17535: The application core can crash on nRF5340 after the OTA firmware update finishes if the factory data module is enabled.
+  In the initialization method of the factory data module, the factory data partition and a part of the application image is restricted by Fprotect, which makes it impossible to confirm the new image in the Matter thread.
+  Instead, the confirmation must be performed before the factory data module is initialized.
+
+  **Affected platforms:** nRF5340
+
+  **Workaround:** Complete the following steps:
+
+  1. Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``TODO``).
+  #. Add the following lines to the :file:`samples/matter/common/src/ota_util.cpp`:
+
+     .. code-block::
+
+        #include <platform/CHIPDeviceLayer.h>
+        #include <zephyr/dfu/mcuboot.h>
+
+        CHIP_ERROR OtaConfirmNewImage()
+        {
+          CHIP_ERROR err = CHIP_NO_ERROR;
+          OTAImageProcessorImpl &imageProcessor = GetOTAImageProcessor();
+          if (imageProcessor.IsFirstImageRun()) {
+            CHIP_ERROR err = System::MapErrorZephyr(boot_write_img_confirmed());
+            if (CHIP_NO_ERROR == err) {
+              imageProcessor.SetImageConfirmed();
+            }
+          }
+          ChipLogError(SoftwareUpdate, "Failed to confirm firmware image, it will be reverted on the next boot");
+          return err;
+        }
+
+  #. Add the following line to the :file:`samples/matter/common/src/ota_util.h`:
+
+     .. code-block::
+
+        CHIP_ERROR OtaConfirmNewImage();
+
+  #. Add the following lines to the ``AppTask::Init()`` method in the :file:`app_task.cpp` file located in a sample directory before initialization of the factory data module (``mFactoryDataProvider.Init()``):
+
+     .. code-block::
+
+        #ifdef CONFIG_CHIP_OTA_REQUESTOR
+          /* OTA image confirmation must be done before the factory data init. */
+          err = OtaConfirmNewImage();
+          if (err != CHIP_NO_ERROR) {
+            return err;
+          }
+        #endif
+
 .. rst-class:: v2-4-0 v2-3-0
 
 KRKNWK-17151: Application core can crash on nRF5340 when there is a high load on Zephyr's main thread

@@ -196,12 +196,6 @@ CHIP_ERROR AppTask::Init()
 	k_timer_init(&sSwitchImagesTimer, &AppTask::SwitchImagesTimerTimeoutCallback, nullptr);
 #endif
 
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init();
-	GetDFUOverSMP().ConfirmNewImage();
-#endif
-
 #ifdef CONFIG_CHIP_NUS
 	/* Initialize Nordic UART Service for Lock purposes */
 	if (!GetNUSService().Init(kLockNUSPriority, kAdvertisingIntervalMin, kAdvertisingIntervalMax)) {
@@ -216,6 +210,20 @@ CHIP_ERROR AppTask::Init()
 
 	/* Initialize lock manager */
 	BoltLockMgr().Init(LockStateChanged);
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+	/* OTA image confirmation must be done before the factory data init. */
+	err = OtaConfirmNewImage();
+	if (err != CHIP_NO_ERROR) {
+		return err;
+	}
+#endif
+
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+	/* Initialize DFU over SMP */
+	GetDFUOverSMP().Init();
+	GetDFUOverSMP().ConfirmNewImage();
+#endif
 
 	/* Initialize CHIP server */
 #if CONFIG_CHIP_FACTORY_DATA
