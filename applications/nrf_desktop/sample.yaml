@@ -96,6 +96,25 @@ tests:
       - nrf52840dk_nrf52840
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_keyboard.conf
+  applications.nrf_desktop.zdebug_nrf21540ek:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    tags: bluetooth ci_build
+    extra_args: SHIELD=nrf21540ek
+    extra_configs:
+      - CONFIG_CAF_BLE_USE_LLPM=n
+  applications.nrf_desktop.zdebug_nrf21540ek_multicore:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: bluetooth ci_build
+    extra_args: SHIELD=nrf21540ek_fwd
+                hci_rpmsg_SHIELD=nrf21540ek
+    extra_configs:
+      - CONFIG_CAF_BLE_USE_LLPM=n
   applications.nrf_desktop.zrelease:
     build_only: true
     platform_allow: >
