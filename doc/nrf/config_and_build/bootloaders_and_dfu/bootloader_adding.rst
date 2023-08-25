@@ -299,7 +299,7 @@ Adding MCUboot as an upgradable bootloader
 
 To use MCUboot as an upgradable bootloader to your application, complete the following steps:
 
-1. :ref:`Add |NSIB| as the immutable bootloader <ug_bootloader_adding_immutable_b0>`.
+1. :ref:`Add nRF Secure Immutable Bootloader as the immutable bootloader <ug_bootloader_adding_immutable_b0>`.
 #. Add MCUboot to the boot chain by including the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option with either the build command or in the application's :file:`prj.conf` file:
 
    .. code-block::
