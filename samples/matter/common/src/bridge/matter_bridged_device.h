@@ -14,20 +14,20 @@
 #define DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs)                                                                 \
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrs)                                                          \
 	DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::DeviceTypeList::Id, ARRAY,              \
-				  BridgedDevice::kDescriptorAttributeArraySize, 0), /* device list */                  \
+				  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* device list */            \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::ServerList::Id, ARRAY,          \
-					  BridgedDevice::kDescriptorAttributeArraySize, 0), /* server list */          \
+					  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* server list */    \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::ClientList::Id, ARRAY,          \
-					  BridgedDevice::kDescriptorAttributeArraySize, 0), /* client list */          \
+					  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* client list */    \
 		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Descriptor::Attributes::PartsList::Id, ARRAY,           \
-					  BridgedDevice::kDescriptorAttributeArraySize, 0), /* parts list */           \
+					  MatterBridgedDevice::kDescriptorAttributeArraySize, 0), /* parts list */     \
 		DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 /* Declare Bridged Device Basic Information cluster attributes */
 #define BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs)                                   \
 	DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(bridgedDeviceBasicAttrs)                                                  \
 	DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id,       \
-				  CHAR_STRING, BridgedDevice::kNodeLabelSize, 0), /* NodeLabel */                      \
+				  CHAR_STRING, MatterBridgedDevice::kNodeLabelSize, 0), /* NodeLabel */                \
 		DECLARE_DYNAMIC_ATTRIBUTE(                                                                             \
 			chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id, BOOLEAN, 1,     \
 			0), /* Reachable */                                                                            \
@@ -36,26 +36,27 @@
 			0), /* feature map */                                                                          \
 		DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
-class BridgedDevice {
+class MatterBridgedDevice {
 public:
 	enum DeviceType : uint16_t {
 		BridgedNode = 0x0013,
 		OnOffLight = 0x0100,
 		TemperatureSensor = 0x0302,
 		HumiditySensor = 0x0307,
+		EnvironmentalSensor = 0x123
 	};
 
 	static constexpr uint8_t kDefaultDynamicEndpointVersion = 1;
 	static constexpr uint8_t kNodeLabelSize = 32;
 	static constexpr uint8_t kDescriptorAttributeArraySize = 254;
 
-	explicit BridgedDevice(const char *nodeLabel)
+	explicit MatterBridgedDevice(const char *nodeLabel)
 	{
 		if (nodeLabel) {
 			memcpy(mNodeLabel, nodeLabel, strlen(nodeLabel));
 		}
 	}
-	virtual ~BridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
+	virtual ~MatterBridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
 
 	void Init(chip::EndpointId endpoint) { mEndpointId = endpoint; }
 	chip::EndpointId GetEndpointId() const { return mEndpointId; }

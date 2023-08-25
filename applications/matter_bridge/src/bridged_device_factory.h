@@ -7,8 +7,8 @@
 #pragma once
 
 #include "bridge_util.h"
-#include "bridged_device.h"
 #include "bridged_device_data_provider.h"
+#include "matter_bridged_device.h"
 #include <lib/support/CHIPMem.h>
 
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
@@ -35,11 +35,17 @@
 #endif
 #endif
 
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+#if defined(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
+#include "ble_environmental_data_provider.h"
+#endif
+#endif
+
 namespace BridgeFactory
 {
 using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
-using DeviceType = BridgedDevice::DeviceType;
-using BridgedDeviceFactory = DeviceFactory<BridgedDevice, const char *>;
+using DeviceType = MatterBridgedDevice::DeviceType;
+using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, const char *>;
 
 #ifdef CONFIG_BRIDGED_DEVICE_SIMULATED
 using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, UpdateAttributeCallback>;
@@ -51,7 +57,7 @@ using BleDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, UpdateAt
 
 auto checkLabel = [](const char *nodeLabel) {
 	/* If node label is provided it must fit the maximum defined length */
-	if (!nodeLabel || (nodeLabel && (strlen(nodeLabel) < BridgedDevice::kNodeLabelSize))) {
+	if (!nodeLabel || (nodeLabel && (strlen(nodeLabel) < MatterBridgedDevice::kNodeLabelSize))) {
 		return true;
 	}
 	return false;
@@ -62,7 +68,7 @@ inline BridgedDeviceFactory &GetBridgedDeviceFactory()
 	static BridgedDeviceFactory sBridgedDeviceFactory{
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 		{ DeviceType::HumiditySensor,
-		  [](const char *nodeLabel) -> BridgedDevice * {
+		  [](const char *nodeLabel) -> MatterBridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
@@ -71,7 +77,7 @@ inline BridgedDeviceFactory &GetBridgedDeviceFactory()
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ DeviceType::OnOffLight,
-		  [](const char *nodeLabel) -> BridgedDevice * {
+		  [](const char *nodeLabel) -> MatterBridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
@@ -79,8 +85,8 @@ inline BridgedDeviceFactory &GetBridgedDeviceFactory()
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
-		{ BridgedDevice::DeviceType::TemperatureSensor,
-		  [](const char *nodeLabel) -> BridgedDevice * {
+		{ MatterBridgedDevice::DeviceType::TemperatureSensor,
+		  [](const char *nodeLabel) -> MatterBridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
@@ -121,10 +127,16 @@ inline SimulatedDataProviderFactory &GetSimulatedDataProviderFactory()
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 inline BleDataProviderFactory &GetBleDataProviderFactory()
 {
-	static BleDataProviderFactory sDeviceDataProvider{
+	static BleDataProviderFactory sDeviceDataProvider
+	{
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ DeviceType::OnOffLight,
 		  [](UpdateAttributeCallback clb) { return chip::Platform::New<BleOnOffLightDataProvider>(clb); } },
+#endif
+#if defined(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
+			{ DeviceType::EnvironmentalSensor, [](UpdateAttributeCallback clb) {
+				 return chip::Platform::New<BleEnvironmentalDataProvider>(clb);
+			 } },
 #endif
 	};
 	return sDeviceDataProvider;

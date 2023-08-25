@@ -33,8 +33,6 @@ void SimulatedTemperatureSensorDataProvider::NotifyUpdateState(chip::ClusterId c
 CHIP_ERROR SimulatedTemperatureSensorDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
 							       uint8_t *buffer)
 {
-	LOG_INF("Updating state of the SimulatedTemperatureSensorDataProvider, cluster ID: %u, attribute ID: %u. Dropping, currently not supported.",
-		clusterId, attributeId);
 	return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 }
 

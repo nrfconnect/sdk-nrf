@@ -21,7 +21,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 static BridgedDeviceDataProvider *CreateSimulatedProvider(int deviceType)
 {
 	return BridgeFactory::GetSimulatedDataProviderFactory().Create(
-		static_cast<BridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate);
+		static_cast<MatterBridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate);
 }
 #endif /* CONFIG_BRIDGED_DEVICE_SIMULATED */
 
@@ -29,14 +29,14 @@ static BridgedDeviceDataProvider *CreateSimulatedProvider(int deviceType)
 
 static BridgedDeviceDataProvider *CreateBleProvider(int deviceType)
 {
-	return BridgeFactory::GetBleDataProviderFactory().Create(static_cast<BridgedDevice::DeviceType>(deviceType),
-								 BridgeManager::HandleUpdate);
+	return BridgeFactory::GetBleDataProviderFactory().Create(
+		static_cast<MatterBridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate);
 }
 
 struct BluetoothConnectionContext {
 	const struct shell *shell;
 	int deviceType;
-	char nodeLabel[BridgedDevice::kNodeLabelSize];
+	char nodeLabel[MatterBridgedDevice::kNodeLabelSize];
 	BLEBridgedDeviceProvider *provider;
 };
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
@@ -44,21 +44,43 @@ struct BluetoothConnectionContext {
 static void AddDevice(const struct shell *shell, int deviceType, const char *nodeLabel,
 		      BridgedDeviceDataProvider *provider)
 {
-	VerifyOrReturn(provider != nullptr,
-		       shell_fprintf(shell, SHELL_INFO, "Cannot allocate data provider of given type\n"));
+	VerifyOrReturn(provider != nullptr, shell_fprintf(shell, SHELL_INFO, "No valid data provider!\n"));
 
-	auto *newBridgedDevice = BridgeFactory::GetBridgedDeviceFactory().Create(
-		static_cast<BridgedDevice::DeviceType>(deviceType), nodeLabel);
+	CHIP_ERROR err;
+	if (deviceType == MatterBridgedDevice::DeviceType::EnvironmentalSensor) {
+		/* Handle special case for environmental sensor */
+		auto *temperatureBridgedDevice = BridgeFactory::GetBridgedDeviceFactory().Create(
+			MatterBridgedDevice::DeviceType::TemperatureSensor, nodeLabel);
 
-	VerifyOrReturn(newBridgedDevice != nullptr, delete provider,
-		       shell_fprintf(shell, SHELL_INFO, "Cannot allocate Matter device of given type\n"));
+		VerifyOrReturn(temperatureBridgedDevice != nullptr, delete provider,
+			       shell_fprintf(shell, SHELL_INFO, "Cannot allocate Matter device of given type\n"));
 
-	CHIP_ERROR err = BridgeManager::Instance().AddBridgedDevices(newBridgedDevice, provider);
+		auto *humidityBridgedDevice = BridgeFactory::GetBridgedDeviceFactory().Create(
+			MatterBridgedDevice::DeviceType::HumiditySensor, nodeLabel);
+
+		VerifyOrReturn(humidityBridgedDevice != nullptr, delete provider, delete temperatureBridgedDevice,
+			       shell_fprintf(shell, SHELL_INFO, "Cannot allocate Matter device of given type\n"));
+
+		MatterBridgedDevice *newBridgedDevices[] = { temperatureBridgedDevice, humidityBridgedDevice };
+		err = BridgeManager::Instance().AddBridgedDevices(newBridgedDevices, provider,
+								  ARRAY_SIZE(newBridgedDevices));
+
+	} else {
+		auto *newBridgedDevice = BridgeFactory::GetBridgedDeviceFactory().Create(
+			static_cast<MatterBridgedDevice::DeviceType>(deviceType), nodeLabel);
+
+		MatterBridgedDevice *newBridgedDevices[] = { newBridgedDevice };
+		VerifyOrReturn(newBridgedDevice != nullptr, delete provider,
+			       shell_fprintf(shell, SHELL_INFO, "Cannot allocate Matter device of given type\n"));
+		err = BridgeManager::Instance().AddBridgedDevices(newBridgedDevices, provider,
+								  ARRAY_SIZE(newBridgedDevices));
+	}
+
 	if (err == CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_INFO, "Done\n");
 	} else if (err == CHIP_ERROR_INVALID_STRING_LENGTH) {
 		shell_fprintf(shell, SHELL_ERROR, "Error: too long node label (max %d)\n",
-			      BridgedDevice::kNodeLabelSize);
+			      MatterBridgedDevice::kNodeLabelSize);
 	} else if (err == CHIP_ERROR_NO_MEMORY) {
 		shell_fprintf(shell, SHELL_ERROR, "Error: no memory\n");
 	} else if (err == CHIP_ERROR_INVALID_ARGUMENT) {
@@ -119,6 +141,7 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 	BridgedDeviceDataProvider *provider = CreateBleProvider(contextPtr->deviceType);
 
 	if (!provider) {
+		shell_fprintf(shell, SHELL_INFO, "Cannot allocate data provider of given type\n");
 		return -ENOMEM;
 	}
 
@@ -193,13 +216,14 @@ static int ScanBridgedDeviceHandler(const struct shell *shell, size_t argc, char
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_matter_bridge,
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-	SHELL_CMD_ARG(add, NULL,
-		      "Adds bridged device. \n"
-		      "Usage: add <bridged_device_type> <ble_device_index> [node_label]\n"
-		      "* bridged_device_type - the bridged device's type, e.g. 256 - OnOff Light\n"
-		      "* ble_device_index - the Bluetooth LE device's index on the list returned by the scan command\n"
-		      "* node_label - the optional bridged device's node label\n",
-		      AddBridgedDeviceHandler, 3, 1),
+	SHELL_CMD_ARG(
+		add, NULL,
+		"Adds bridged device. \n"
+		"Usage: add <bridged_device_type> <ble_device_index> [node_label]\n"
+		"* bridged_device_type - the bridged device's type, e.g. 256 - OnOff Light, 291 - EnvironmentalSensor\n"
+		"* ble_device_index - the Bluetooth LE device's index on the list returned by the scan command\n"
+		"* node_label - the optional bridged device's node label\n",
+		AddBridgedDeviceHandler, 3, 1),
 #else
 	SHELL_CMD_ARG(
 		add, NULL,

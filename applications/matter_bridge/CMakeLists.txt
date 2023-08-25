@@ -44,7 +44,7 @@ target_sources(app PRIVATE
     src/main.cpp
     src/bridge_shell.cpp
     ${COMMON_ROOT}/src/bridge/bridge_manager.cpp
-    ${COMMON_ROOT}/src/bridge/bridged_device.cpp
+    ${COMMON_ROOT}/src/bridge/matter_bridged_device.cpp
     ${COMMON_ROOT}/src/bridge/bridge_storage_manager.cpp
     ${COMMON_ROOT}/src/bridge/bridged_device_data_provider.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
@@ -62,6 +62,25 @@ if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
         src/bridged_device_types/ble_onoff_light_data_provider.cpp
     )
 endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+
+if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
+    target_sources(app PRIVATE
+        src/bridged_device_types/humidity_sensor.cpp
+    )
+endif() # CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+
+if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
+    target_sources(app PRIVATE
+        src/bridged_device_types/temperature_sensor.cpp
+    )
+endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+
+# Assume it makes no sense to support BLE environmental sensor without all Matter counterparts
+if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE AND CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
+    target_sources(app PRIVATE
+        src/bridged_device_types/ble_environmental_data_provider.cpp
+    )
+endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE AND CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 else()
 if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)

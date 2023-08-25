@@ -6,7 +6,9 @@
 
 #pragma once
 
-#include "bridged_device.h"
+#include "matter_bridged_device.h"
+
+#include <lib/support/CHIPMem.h>
 
 #include <cstdint>
 #include <functional>
@@ -14,10 +16,10 @@
 
 /*
    DeviceFactory template container allows to instantiate a map which
-   binds supported BridgedDevice::DeviceType types with corresponding
+   binds supported MatterBridgedDevice::DeviceType types with corresponding
    creation method (e.g. constructor invocation). DeviceFactory can
    only be constructed by passing a user-defined initialized list with
-   <BridgedDevice::DeviceType, ConcreteDeviceCreator> pairs.
+   <MatterBridgedDevice::DeviceType, ConcreteDeviceCreator> pairs.
    Then, Create() method can be used to obtain an instance of demanded
    device type with all passed arguments forwarded to the underlying
    ConcreteDeviceCreator.
@@ -25,9 +27,9 @@
 template <typename T, typename... Args> class DeviceFactory {
 public:
 	using ConcreteDeviceCreator = std::function<T *(Args...)>;
-	using CreationMap = std::map<BridgedDevice::DeviceType, ConcreteDeviceCreator>;
+	using CreationMap = std::map<MatterBridgedDevice::DeviceType, ConcreteDeviceCreator>;
 
-	DeviceFactory(std::initializer_list<std::pair<BridgedDevice::DeviceType, ConcreteDeviceCreator>> init)
+	DeviceFactory(std::initializer_list<std::pair<MatterBridgedDevice::DeviceType, ConcreteDeviceCreator>> init)
 	{
 		for (auto &pair : init) {
 			mCreationMap.insert(pair);
@@ -41,7 +43,7 @@ public:
 	DeviceFactory &operator=(DeviceFactory &&) = delete;
 	~DeviceFactory() = default;
 
-	T *Create(BridgedDevice::DeviceType deviceType, Args... params)
+	T *Create(MatterBridgedDevice::DeviceType deviceType, Args... params)
 	{
 		if (mCreationMap.find(deviceType) == mCreationMap.end()) {
 			return nullptr;
@@ -54,73 +56,94 @@ private:
 };
 
 /*
-   FiniteMap template container allows to wrap mappings between uint16_t type key and T type value.
+   FiniteMap template container allows to wrap mappings between uint16_t-type key and T-type value.
    The size or the container is predefined at compilation time, therefore
    the maximum number of stored elements must be well known. FiniteMap owns
    inserted values, meaning that once the user inserts a value it will not longer
    be valid outside of the container, i.e. FiniteMap cannot return stored object by copy.
    FiniteMap's API offers basic operations like:
-     * inserting a new value under provided key (Insert)
-     * erasing existing item under given key (Erase)
-     * retrieving value stored under provided key ([] operator)
+     * inserting new values under provided key (Insert)
+     * erasing existing item under given key (Erase) - this operation takes care about the duplicated items,
+       meaning that pointer under given key is released only if the same address is not present elsewhere in the map
+     * retrieving values stored under provided key ([] operator)
      * checking if the map contains a non-null value under given key (Contains)
+	 * retrieving a number of free slots available in the map (FreeSlots)
      * iterating though stored item via publicly available mMap member
-   Prerequisites:
-     * T must have =operator(&&) and bool()operator implemented
+	Prerequisites:
+     * T must have move semantics and bool()/==operators implemented
 */
 template <typename T, std::size_t N> struct FiniteMap {
-	struct Pair {
-		uint16_t key;
+	static constexpr uint16_t kInvalidKey{ N + 1 };
+	struct Item {
+		/* Initialize with invalid key (0 is a valid key) */
+		uint16_t key{ kInvalidKey };
 		T value;
 	};
 
-	void Insert(uint16_t key, T &&value)
+	bool Insert(uint16_t key, T &&value)
 	{
 		if (Contains(key)) {
 			/* The key with sane value already exists in the map, return prematurely. */
-			return;
+			return false;
 		} else if (mElementsCount < N) {
 			mMap[key].key = key;
 			mMap[key].value = std::move(value);
 			mElementsCount++;
 		}
+		return true;
 	}
 
 	bool Erase(uint16_t key)
 	{
 		const auto &it = std::find_if(std::begin(mMap), std::end(mMap),
-					      [key](const Pair &pair) { return pair.key == key; });
+					      [key](const Item &item) { return item.key == key; });
 		if (it != std::end(mMap) && it->value) {
-			/* Invalidate the value but leave the key unchanged */
-			it->value = T{};
+			it->value.~T();
+			it->key = kInvalidKey;
 			mElementsCount--;
 			return true;
 		}
 		return false;
 	}
 
-	/* TODO: refactor to return a reference (Constains() check will be always needed) */
-	const T *operator[](uint16_t key) const
+	/* Always use Constains() before using operator[]. */
+	T &operator[](uint16_t key)
 	{
+		static T dummyObject;
 		for (auto &it : mMap) {
 			if (key == it.key)
-				return &(it.value);
+				return it.value;
 		}
-		return nullptr;
+		return dummyObject;
 	}
 
 	bool Contains(uint16_t key)
 	{
-		const T *stored = (*this)[key];
-		if (stored && *stored) {
-			/* The key with sane value found in the map */
-			return true;
+		for (auto &it : mMap) {
+			if (key == it.key)
+				return true;
 		}
 		return false;
 	}
+	std::size_t FreeSlots() { return N - mElementsCount; }
 
-	bool IsFull() { return mElementsCount >= N; }
+	bool ValueDuplicated(const T &value, uint16_t *key, uint8_t &numberOfDuplicates)
+	{
+		/* Find the first duplicated item and return its key,
+		 so that the application can handle the duplicate by itself. */
+		*key = kInvalidKey;
+		numberOfDuplicates = 0;
+		for (auto it = std::begin(mMap); it != std::end(mMap); ++it) {
+			if (it->value == value) {
+				*(key++) = it->key;
+				numberOfDuplicates++;
+			}
+		}
 
-	Pair mMap[N];
+		/* We must find at least two matching items. */
+		return (numberOfDuplicates > 1) ? true : false;
+	}
+
+	Item mMap[N];
 	uint16_t mElementsCount{ 0 };
 };

@@ -11,11 +11,11 @@ config BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 
 config BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 	bool "Support for Temperature Sensor bridged device"
-	default y if BRIDGED_DEVICE_SIMULATED
+	default y
 
 config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 	bool "Support for Humidity Sensor bridged device"
-	default y if BRIDGED_DEVICE_SIMULATED
+	default y
 
 choice BRIDGED_DEVICE_IMPLEMENTATION
 	prompt "Bridged Device implementation"
@@ -53,13 +53,17 @@ config BT_SCAN_FILTER_ENABLE
 
 # Configure how many Bluetooth LE service UUIDs the Matter bridge can scan.
 config BT_SCAN_UUID_CNT
-	default 1
+	default 2
 
 config BT_GATT_CLIENT
 	default y
 
 config BT_GATT_DM
 	default y
+
+config BRIDGE_BLE_DEVICE_POLLING_INTERVAL
+	int "BLE humidity measurement readout polling interval in ms"
+	default 3000
 
 endif
 
