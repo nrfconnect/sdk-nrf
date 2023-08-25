@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);
 
 /* How many buttons does the module support. Increase at memory cost */
 #define BUTTONS_MAX 5
-#define BASE_10 10
+#define BASE_10	    10
 
 /* Only allow one button msg at a time, as a mean of debounce */
 K_MSGQ_DEFINE(button_queue, sizeof(struct button_msg), 1, 4);
@@ -136,8 +136,8 @@ static void button_publish_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(button_publish_thread_id, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread,
-		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_PUBLISH_THREAD_PRIO), 0, 0);
+K_THREAD_DEFINE(button_publish, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread, NULL, NULL,
+		NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_PUBLISH_THREAD_PRIO), 0, 0);
 
 /*  ISR triggered by GPIO when assigned button(s) are pushed */
 static void button_isr(const struct device *port, struct gpio_callback *cb, uint32_t pin_msk)
