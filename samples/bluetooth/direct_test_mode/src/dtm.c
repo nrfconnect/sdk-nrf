@@ -78,6 +78,9 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 #define RFPHY_TEST_0X0F_REF_PATTERN  0x0F
 #define RFPHY_TEST_0X55_REF_PATTERN  0x55
 #define RFPHY_TEST_0XFF_REF_PATTERN  0xFF
+#define RFPHY_TEST_0X00_REF_PATTERN  0x00
+#define RFPHY_TEST_0XF0_REF_PATTERN  0xF0
+#define RFPHY_TEST_0XAA_REF_PATTERN  0xAA
 
 /* Time between start of TX packets (in us). */
 #define TX_INTERVAL 625
@@ -135,7 +138,7 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 /* Base address length in bytes. */
 #define PACKET_BA_LEN             3
 /* CTE IQ sample data size. */
-#define DTM_CTE_SAMPLE_DATA_SIZE  128
+#define DTM_CTE_SAMPLE_DATA_SIZE  0x52
 /* Vendor specific packet type for internal use. */
 #define DTM_PKT_TYPE_VENDORSPECIFIC  0xFE
 /* 1111111 bit pattern packet type for internal use. */
@@ -233,8 +236,20 @@ enum dtm_pdu_type {
 	/* 10101010 bit pattern (LSB is the leftmost bit). */
 	DTM_PDU_TYPE_0X55 = 0x02,
 
-	/* 11111111 bit pattern (Used only for coded PHY). */
+	/* PRBS15 bit pattern */
+	DTM_PDU_TYPE_PRBS15 = 0x03,
+
+	/* 11111111 bit pattern */
 	DTM_PDU_TYPE_0XFF = 0x04,
+
+	/* 00000000 bit pattern */
+	DTM_PDU_TYPE_0X00 = 0x05,
+
+	/* 00001111 bit pattern  (LSB is the leftmost bit). */
+	DTM_PDU_TYPE_0XF0 = 0x06,
+
+	/* 01010101 bit pattern (LSB is the leftmost bit). */
+	DTM_PDU_TYPE_0XAA = 0x07
 };
 
 /* Vendor Specific DTM subcommand for Transmitter Test command.
@@ -298,6 +313,9 @@ struct dtm_cte_info {
 
 	/* CTEInfo. */
 	uint8_t info;
+
+	/* IQ Report callback */
+	dtm_iq_report_callback_t iq_rep_cb;
 };
 
 struct fem_parameters {
@@ -389,7 +407,7 @@ static struct dtm_instance {
  * in the array is reverse of that found by running the PRBS9 algorithm.
  * This is because of the endianness of the nRF5 radio.
  */
-static uint8_t const dtm_prbs_content[] = {
+static uint8_t const dtm_prbs9_content[] = {
 	0xFF, 0xC1, 0xFB, 0xE8, 0x4C, 0x90, 0x72, 0x8B,
 	0xE7, 0xB3, 0x51, 0x89, 0x63, 0xAB, 0x23, 0x23,
 	0x02, 0x84, 0x18, 0x72, 0xAA, 0x61, 0x2F, 0x3B,
@@ -422,6 +440,41 @@ static uint8_t const dtm_prbs_content[] = {
 	0x3C, 0xBE, 0x0B, 0xD6, 0x76, 0x83, 0xD6, 0x57,
 	0x05, 0x4A, 0x3D, 0xDD, 0x81, 0x73, 0xC9, 0xEB,
 	0x8A, 0x84, 0x39, 0xF4, 0x36, 0x0B, 0xF7
+};
+
+static uint8_t const dtm_prbs15_content[] = {
+	0xFF, 0x7F, 0x00, 0x20, 0x00, 0x18, 0x00, 0x0A,
+	0x80, 0x07, 0x20, 0x02, 0x98, 0x01, 0xAA, 0x80,
+	0x7F, 0x20, 0x20, 0x18, 0x18, 0x0A, 0x8A, 0x87,
+	0x27, 0x22, 0x9A, 0x99, 0xAB, 0x2A, 0xFF, 0x5F,
+	0x00, 0x38, 0x00, 0x12, 0x80, 0x0D, 0xA0, 0x05,
+	0xB8, 0x03, 0x32, 0x81, 0xD5, 0xA0, 0x5F, 0x38,
+	0x38, 0x12, 0x92, 0x8D, 0xAD, 0xA5, 0xBD, 0xBB,
+	0x31, 0xB3, 0x54, 0x75, 0xFF, 0x67, 0x00, 0x2A,
+	0x80, 0x1F, 0x20, 0x08, 0x18, 0x06, 0x8A, 0x82,
+	0xE7, 0x21, 0x8A, 0x98, 0x67, 0x2A, 0xAA, 0x9F,
+	0x3F, 0x28, 0x10, 0x1E, 0x8C, 0x08, 0x65, 0xC6,
+	0xAB, 0x12, 0xFF, 0x4D, 0x80, 0x35, 0xA0, 0x17,
+	0x38, 0x0E, 0x92, 0x84, 0x6D, 0xA3, 0x6D, 0xB9,
+	0xED, 0xB2, 0xCD, 0xB5, 0x95, 0xB7, 0x2F, 0x36,
+	0x9C, 0x16, 0xE9, 0xCE, 0xCE, 0xD4, 0x54, 0x5F,
+	0x7F, 0x78, 0x20, 0x22, 0x98, 0x19, 0xAA, 0x8A,
+	0xFF, 0x27, 0x00, 0x1A, 0x80, 0x0B, 0x20, 0x07,
+	0x58, 0x02, 0xBA, 0x81, 0xB3, 0x20, 0x75, 0xD8,
+	0x27, 0x1A, 0x9A, 0x8B, 0x2B, 0x27, 0x5F, 0x5A,
+	0xB8, 0x3B, 0x32, 0x93, 0x55, 0xAD, 0xFF, 0x3D,
+	0x80, 0x11, 0xA0, 0x0C, 0x78, 0x05, 0xE2, 0x83,
+	0x09, 0xA1, 0xC6, 0xF8, 0x52, 0xC2, 0xBD, 0x91,
+	0xB1, 0xAC, 0x74, 0x7D, 0xE7, 0x61, 0x8A, 0xA8,
+	0x67, 0x3E, 0xAA, 0x90, 0x7F, 0x2C, 0x20, 0x1D,
+	0xD8, 0x09, 0x9A, 0x86, 0xEB, 0x22, 0xCF, 0x59,
+	0x94, 0x3A, 0xEF, 0x53, 0x0C, 0x3D, 0xC5, 0xD1,
+	0x93, 0x1C, 0x6D, 0xC9, 0xED, 0x96, 0xCD, 0xAE,
+	0xD5, 0xBC, 0x5F, 0x31, 0xF8, 0x14, 0x42, 0x8F,
+	0x71, 0xA4, 0x24, 0x7B, 0x5B, 0x63, 0x7B, 0x69,
+	0xE3, 0x6E, 0xC9, 0xEC, 0x56, 0xCD, 0xFE, 0xD5,
+	0x80, 0x5F, 0x20, 0x38, 0x18, 0x12, 0x8A, 0x8D,
+	0xA7, 0x25, 0xBA, 0x9B, 0x33, 0x2B, 0x55
 };
 
 static const struct dtm_supp_features supported_features = {
@@ -833,7 +886,7 @@ static int radio_init(void)
 	return 0;
 }
 
-int dtm_init(void)
+int dtm_init(dtm_iq_report_callback_t callback)
 {
 	int err;
 
@@ -890,9 +943,56 @@ int dtm_init(void)
 
 	dtm_inst.state = STATE_IDLE;
 	dtm_inst.packet_len = 0;
+	dtm_inst.cte_info.iq_rep_cb = callback;
 
 	return 0;
 }
+
+#if DIRECTION_FINDING_SUPPORTED
+static void report_iq(void)
+{
+	struct dtm_iq_data iq_data;
+
+	iq_data.channel = dtm_inst.phys_ch;
+	iq_data.rssi = -nrf_radio_rssi_sample_get(NRF_RADIO);
+
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_RSSIEND);
+
+	iq_data.rssi_ant = dtm_hw_radio_pdu_antenna_get();
+
+	if (dtm_inst.cte_info.mode == DTM_CTE_MODE_AOD) {
+		if (dtm_inst.cte_info.slot == DTM_CTE_SLOT_1US) {
+			iq_data.type = DTM_CTE_TYPE_AOD_1US;
+		} else if (dtm_inst.cte_info.slot == DTM_CTE_SLOT_2US) {
+			iq_data.type = DTM_CTE_TYPE_AOD_2US;
+		} else {
+			/* Not possible - invalid value */
+			__ASSERT_NO_MSG(false);
+		}
+	} else if (dtm_inst.cte_info.mode == DTM_CTE_MODE_AOA) {
+		iq_data.type = DTM_CTE_TYPE_AOA;
+	} else {
+		/* Not possible - invalid value */
+		__ASSERT_NO_MSG(false);
+	}
+
+	if (dtm_inst.cte_info.slot == DTM_CTE_SLOT_1US) {
+		iq_data.slot = DTM_CTE_SLOT_DURATION_1US;
+	} else if (dtm_inst.cte_info.slot == DTM_CTE_SLOT_2US) {
+		iq_data.slot = DTM_CTE_SLOT_DURATION_2US;
+	} else {
+		/* Not possible - invalid value */
+		__ASSERT_NO_MSG(false);
+	}
+
+	/* There is no requirement to report iq samples with invalid CRC */
+	iq_data.status = DTM_PACKET_STATUS_CRC_OK;
+	iq_data.sample_cnt = nrf_radio_dfe_amount_get(NRF_RADIO);
+	iq_data.samples = (struct dtm_iq_sample *)dtm_inst.cte_info.data;
+
+	dtm_inst.cte_info.iq_rep_cb(&iq_data);
+}
+#endif /* DIRECTION_FINDING_SUPPORTED */
 
 /* Function for verifying that a received PDU has the expected structure and
  * content.
@@ -905,6 +1005,7 @@ static bool check_pdu(const struct dtm_pdu *pdu)
 	uint32_t pdu_packet_type;
 	uint32_t length = 0;
 	uint8_t header_len;
+	const uint8_t *payload;
 
 	pdu_packet_type = (uint32_t)
 			  (pdu->content[DTM_HEADER_OFFSET] & 0x0F);
@@ -912,6 +1013,8 @@ static bool check_pdu(const struct dtm_pdu *pdu)
 
 	header_len = (dtm_inst.cte_info.mode != DTM_CTE_MODE_OFF) ?
 		     DTM_HEADER_WITH_CTE_SIZE : DTM_HEADER_SIZE;
+
+	payload = pdu->content + header_len;
 
 	/* Check that the length is valid. */
 	if (length > DTM_PAYLOAD_MAX_SIZE) {
@@ -935,25 +1038,37 @@ static bool check_pdu(const struct dtm_pdu *pdu)
 		return false;
 	}
 
-	if (pdu_packet_type == DTM_PDU_TYPE_PRBS9) {
-		/* Payload does not consist of one repeated octet; must
-		 * compare it with entire block.
-		 */
-		const uint8_t *payload = pdu->content + header_len;
-
-		return (memcmp(payload, dtm_prbs_content, length) == 0);
-	}
-
 	switch (pdu_packet_type) {
+	case DTM_PDU_TYPE_PRBS9:
+		return (memcmp(payload, dtm_prbs9_content, length) == 0);
+
 	case DTM_PDU_TYPE_0X0F:
 		pattern = RFPHY_TEST_0X0F_REF_PATTERN;
 		break;
+
 	case DTM_PDU_TYPE_0X55:
 		pattern = RFPHY_TEST_0X55_REF_PATTERN;
 		break;
+
+	case DTM_PDU_TYPE_PRBS15:
+		return (memcmp(payload, dtm_prbs15_content, length) == 0);
+
 	case DTM_PDU_TYPE_0XFF:
 		pattern = RFPHY_TEST_0XFF_REF_PATTERN;
 		break;
+
+	case DTM_PDU_TYPE_0X00:
+		pattern = RFPHY_TEST_0X00_REF_PATTERN;
+		break;
+
+	case DTM_PDU_TYPE_0XF0:
+		pattern = RFPHY_TEST_0XF0_REF_PATTERN;
+		break;
+
+	case DTM_PDU_TYPE_0XAA:
+		pattern = RFPHY_TEST_0XAA_REF_PATTERN;
+		break;
+
 	default:
 		/* No valid packet type set. */
 		return false;
@@ -980,6 +1095,10 @@ static bool check_pdu(const struct dtm_pdu *pdu)
 			((dtm_inst.cte_info.time * 8)) /
 			((dtm_inst.cte_info.slot == DTM_CTE_SLOT_1US) ? 2 : 4);
 		cte_sample_cnt = NRF_RADIO->DFEPACKET.AMOUNT;
+
+		if (dtm_inst.cte_info.iq_rep_cb) {
+			report_iq();
+		}
 
 		memset(dtm_inst.cte_info.data, 0,
 		       sizeof(dtm_inst.cte_info.data));
@@ -1216,6 +1335,8 @@ static void radio_prepare(bool rx)
 #if DIRECTION_FINDING_SUPPORTED
 	nrf_radio_shorts_set(NRF_RADIO,
 		NRF_RADIO_SHORT_READY_START_MASK |
+		(dtm_inst.cte_info.iq_rep_cb ?
+		 NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK : 0) |
 		(dtm_inst.cte_info.mode == DTM_CTE_MODE_OFF ?
 		 NRF_RADIO_SHORT_END_DISABLE_MASK :
 		 NRF_RADIO_SHORT_PHYEND_DISABLE_MASK));
@@ -1241,6 +1362,7 @@ static void radio_prepare(bool rx)
 	nrf_radio_int_enable(NRF_RADIO,
 			NRF_RADIO_INT_READY_MASK |
 			NRF_RADIO_INT_ADDRESS_MASK |
+			NRF_RADIO_INT_RSSIEND_MASK |
 			NRF_RADIO_INT_END_MASK);
 
 	if (rx) {
@@ -1863,7 +1985,7 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 			DTM_PDU_TYPE_PRBS9;
 		/* Non-repeated, must copy entire pattern to PDU */
 		memcpy(dtm_inst.current_pdu->content + header_len,
-		       dtm_prbs_content, dtm_inst.packet_len);
+		       dtm_prbs9_content, dtm_inst.packet_len);
 		break;
 
 	case DTM_PACKET_0F:
@@ -1884,14 +2006,48 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 		       dtm_inst.packet_len);
 		break;
 
+	case DTM_PACKET_PRBS15:
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
+			DTM_PDU_TYPE_PRBS15;
+		/* Non-repeated, must copy entire pattern to PDU */
+		memcpy(dtm_inst.current_pdu->content + header_len,
+		       dtm_prbs15_content, dtm_inst.packet_len);
+		break;
+		break;
+
 	case DTM_PACKET_FF:
 		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
 			DTM_PDU_TYPE_0XFF;
-		/* Bit pattern 11111111 repeated. Only available in
-		 * coded PHY (Long range).
-		 */
+		/* Bit pattern 11111111 repeated. */
 		memset(dtm_inst.current_pdu->content + header_len,
 		       RFPHY_TEST_0XFF_REF_PATTERN,
+		       dtm_inst.packet_len);
+		break;
+
+	case DTM_PACKET_00:
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
+			DTM_PDU_TYPE_0X00;
+		/* Bit pattern 00000000 repeated */
+		memset(dtm_inst.current_pdu->content + header_len,
+		       RFPHY_TEST_0X00_REF_PATTERN,
+		       dtm_inst.packet_len);
+		break;
+
+	case DTM_PACKET_F0:
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
+			DTM_PDU_TYPE_0XF0;
+		/* Bit pattern 11110000 repeated */
+		memset(dtm_inst.current_pdu->content + header_len,
+		       RFPHY_TEST_0XF0_REF_PATTERN,
+		       dtm_inst.packet_len);
+		break;
+
+	case DTM_PACKET_AA:
+		dtm_inst.current_pdu->content[DTM_HEADER_OFFSET] =
+			DTM_PDU_TYPE_0XAA;
+		/* Bit pattern 10101010 repeated */
+		memset(dtm_inst.current_pdu->content + header_len,
+		       RFPHY_TEST_0XAA_REF_PATTERN,
 		       dtm_inst.packet_len);
 		break;
 
@@ -1955,11 +2111,6 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 
 int dtm_test_end(uint16_t *pack_cnt)
 {
-	if (dtm_inst.state == STATE_IDLE) {
-		/* Sequencing error, only rx or tx test may be ended */
-		return -EIO;
-	}
-
 	if (!pack_cnt) {
 		return -EINVAL;
 	}
@@ -2063,6 +2214,10 @@ static void radio_handler(const void *context)
 			}
 		}
 #endif /* NRF52_ERRATA_172_PRESENT */
+	}
+
+	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_RSSIEND)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_RSSIEND);
 	}
 }
 

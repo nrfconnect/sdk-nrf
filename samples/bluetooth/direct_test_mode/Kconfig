@@ -36,7 +36,7 @@ config ANOMALY_172_TIMER_IRQ_PRIORITY
 
 config DTM_USB
 	bool "DTM over USB CDC ACM class"
-	depends on SOC_NRF5340_CPUNET
+	depends on SOC_NRF5340_CPUNET && DTM_TRANSPORT_TWOWIRE
 	select EXPERIMENTAL
 	help
 	  Use USB instead of UART as the DTM interface. For nRF5340 the USB from application core
@@ -54,14 +54,50 @@ config DTM_TRANSPORT_TWOWIRE
 	help
 	  Use the Two Wire transport interface as the DTM transport layer.
 
+config DTM_TRANSPORT_HCI
+	bool "DTM over HCI UART [EXPERIMENTAL]"
+	depends on SERIAL
+	depends on NET_BUF
+	select EXPERIMENTAL
+	help
+	  Use the HCI UART transport interface as the DTM transport layer.
+
 endchoice # DTM_TRANSPORT
+
+if DTM_TRANSPORT_HCI
+
+config DTM_HCI_QUEUE_COUNT
+	int "Count of HCI RX/TX queues"
+	default 16
+	help
+	  Maximum depth of the HCI RX/TX queues.
+
+config DTM_HCI_QUEUE_SIZE
+	int "Size of HCI RX/TX queue buffer"
+	default 1024
+	help
+	  Maximum size of the HCI RX/TX queue element.
+
+config DTM_HCI_TX_THREAD_STACK_SIZE
+	int "Stack size of TX thread"
+	default 2048
+	help
+	  Stack size of the TX thread.
+
+config DTM_HCI_TX_THREAD_PRIORITY
+	int "TX thread priority"
+	default 7
+	help
+	  Priority of the TX thread.
+
+endif # DTM_TRANSPORT_HCI
 
 config DTM_POWER_CONTROL_AUTOMATIC
 	bool "Automatic power control"
 	depends on FEM
 	default y
 	help
-	  Set the SoC output power and the front-end module gain to achieve the Tx output power
+	  Set the SoC output power and the front-end module gain to achieve the TX output power
 	  requested by user. If the exact value cannot be achieved, power is set to the closest
 	  possible value. If this option is disabled, user can set the SoC output power and the
 	  front-end module gain with the separate vendor specific commands.

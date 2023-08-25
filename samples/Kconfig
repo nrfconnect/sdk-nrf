@@ -60,6 +60,14 @@ config NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE
 	  Add remote_shell as a child image (application core).
 	  Used by samples that run on the network core only.
 
+config NCS_SAMPLE_DTM_REMOTE_HCI_CHILD_IMAGE
+	bool "Add remote_hci child image for DTM"
+	depends on SOC_NRF5340_CPUNET
+	select PARTITION_MANAGER_ENABLED
+	help
+	  Add remote_hci as a child image (application core).
+	  Used by the DTM sample to pass HCI commands from
+	  application core UART peripheral.
 
 if NCS_INCLUDE_RPMSG_CHILD_IMAGE
 

@@ -8,10 +8,10 @@
 #include <zephyr/drivers/uart.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
-#include <nrfx_timer.h>
 #include <dtm.h>
 
-#include "dtm_uart_twowire.h"
+#include "dtm_uart_wait.h"
+#include "dtm_transport.h"
 
 LOG_MODULE_REGISTER(dtm_tw_tr, CONFIG_DTM_TRANSPORT_LOG_LEVEL);
 
@@ -67,37 +67,8 @@ LOG_MODULE_REGISTER(dtm_tw_tr, CONFIG_DTM_TRANSPORT_LOG_LEVEL);
 #define DTM_LE_AOD_1US_RECEPTION            BIT(8)
 #define DTM_LE_AOA_1US_RECEPTION            BIT(9)
 
-/* Timer used for measuring UART poll cycle wait time. */
-#define WAIT_TIMER_INSTANCE        1
-#define WAIT_TIMER_IRQ             NRFX_CONCAT_3(TIMER,			 \
-						 WAIT_TIMER_INSTANCE,    \
-						 _IRQn)
-#define WAIT_TIMER_IRQ_HANDLER     NRFX_CONCAT_3(nrfx_timer_,		 \
-						 WAIT_TIMER_INSTANCE,    \
-						 _irq_handler)
-
-BUILD_ASSERT(NRFX_CONCAT_3(CONFIG_, NRFX_TIMER, WAIT_TIMER_INSTANCE) == 1,
-	     "Wait DTM timer needs additional KConfig configuration");
-
-#define DTM_UART DT_CHOSEN(ncs_dtm_uart)
-
 /* The DTM maximum wait time in milliseconds for the UART command second byte. */
 #define DTM_UART_SECOND_BYTE_MAX_DELAY 5
-
-#if DT_NODE_HAS_PROP(DTM_UART, current_speed)
-/* UART Baudrate used to communicate with the DTM library. */
-#define DTM_UART_BAUDRATE DT_PROP(DTM_UART, current_speed)
-
-/* The UART poll cycle in micro seconds.
- * A baud rate of e.g. 19200 bits / second, and 8 data bits, 1 start/stop bit,
- * no flow control, give the time to transmit a byte:
- * 10 bits * 1/19200 = approx: 520 us. To ensure no loss of bytes,
- * the UART should be polled every 260 us.
- */
-#define DTM_UART_POLL_CYCLE ((uint32_t) (10 * 1e6 / DTM_UART_BAUDRATE / 2))
-#else
-#error "DTM UART node not found"
-#endif /* DT_NODE_HAS_PROP(DTM_UART, currrent_speed) */
 
 static const struct device *dtm_uart = DEVICE_DT_GET(DTM_UART);
 
@@ -363,12 +334,6 @@ enum dtm_evt {
 
 /** Upper bits of packet length */
 static uint8_t upper_len;
-
-/* Timer to be used for measuring UART poll cycle wait time. */
-static const nrfx_timer_t wait_timer = NRFX_TIMER_INSTANCE(WAIT_TIMER_INSTANCE);
-
-/* Semaphore for synchronizing UART poll cycle wait time.*/
-static K_SEM_DEFINE(wait_sem, 0, 1);
 
 static int reset_dtm(uint8_t parameter)
 {
@@ -749,53 +714,7 @@ static uint16_t dtm_cmd_put(uint16_t cmd)
 	}
 }
 
-static void wait_timer_handler(nrf_timer_event_t event_type, void *context)
-{
-	nrfx_timer_disable(&wait_timer);
-	nrfx_timer_clear(&wait_timer);
-
-	k_sem_give(&wait_sem);
-}
-
-static int wait_timer_init(void)
-{
-	nrfx_err_t err;
-	nrfx_timer_config_t timer_cfg = {
-		.frequency = NRFX_MHZ_TO_HZ(1),
-		.mode = NRF_TIMER_MODE_TIMER,
-		.bit_width = NRF_TIMER_BIT_WIDTH_16,
-	};
-
-	err = nrfx_timer_init(&wait_timer, &timer_cfg, wait_timer_handler);
-	if (err != NRFX_SUCCESS) {
-		LOG_ERR("nrfx_timer_init failed with: %d", err);
-		return -EAGAIN;
-	}
-
-	IRQ_CONNECT(WAIT_TIMER_IRQ, CONFIG_DTM_TIMER_IRQ_PRIORITY,
-		    WAIT_TIMER_IRQ_HANDLER, NULL, 0);
-
-	nrfx_timer_compare(&wait_timer,
-		NRF_TIMER_CC_CHANNEL0,
-		nrfx_timer_us_to_ticks(&wait_timer, DTM_UART_POLL_CYCLE),
-		true);
-
-	return 0;
-}
-
-static void uart_wait(void)
-{
-	int err;
-
-	nrfx_timer_enable(&wait_timer);
-
-	err = k_sem_take(&wait_sem, K_FOREVER);
-	if (err) {
-		LOG_ERR("UART wait error: %d", err);
-	}
-}
-
-int dtm_uart_twowire_init(void)
+int dtm_tr_init(void)
 {
 	int err;
 
@@ -804,13 +723,13 @@ int dtm_uart_twowire_init(void)
 		return -EIO;
 	}
 
-	err = dtm_init();
+	err = dtm_init(NULL);
 	if (err) {
 		LOG_ERR("Error during DTM initialization: %d", err);
 		return err;
 	}
 
-	err = wait_timer_init();
+	err = dtm_uart_wait_init();
 	if (err) {
 		return err;
 	}
@@ -818,16 +737,17 @@ int dtm_uart_twowire_init(void)
 	return 0;
 }
 
-uint16_t dtm_uart_twowire_get(void)
+union dtm_tr_packet dtm_tr_get(void)
 {
 	bool is_msb_read = false;
+	union dtm_tr_packet tmp;
 	uint8_t rx_byte;
 	uint16_t dtm_cmd = 0;
 	int64_t msb_time = 0;
 	int err;
 
 	for (;;) {
-		uart_wait();
+		dtm_uart_wait();
 
 		err = uart_poll_in(dtm_uart, &rx_byte);
 		if (err) {
@@ -866,18 +786,20 @@ uint16_t dtm_uart_twowire_get(void)
 		} else {
 			dtm_cmd |= rx_byte;
 			LOG_INF("Received 0x%04x command", dtm_cmd);
-			return dtm_cmd;
+			tmp.twowire = dtm_cmd;
+			return tmp;
 		}
 	}
 }
 
-int dtm_uart_twowire_process(uint16_t cmd)
+int dtm_tr_process(union dtm_tr_packet cmd)
 {
+	uint16_t tmp = cmd.twowire;
 	uint16_t ret;
 
-	LOG_INF("Processing 0x%04x command", cmd);
+	LOG_INF("Processing 0x%04x command", tmp);
 
-	ret = dtm_cmd_put(cmd);
+	ret = dtm_cmd_put(tmp);
 	LOG_INF("Sending 0x%04x response", ret);
 
 	uart_poll_out(dtm_uart, (ret >> 8) & 0xFF);
