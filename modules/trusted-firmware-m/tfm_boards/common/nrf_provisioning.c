@@ -72,10 +72,12 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
+#ifdef TFM_PARTITION_INITIAL_ATTESTATION
 	/* The Initial Attestation key should be already written */
-	if (!nrf_cc3xx_platform_identity_key_is_stored(NRF_KMU_SLOT_KIDENT)) {
+	if (!identity_key_is_written()) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
+#endif
 
 	/*
 	 * We don't need to make sure that the validation key is written here since we assume
@@ -111,10 +113,11 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 
 static bool dummy_key_is_present(void)
 {
+#ifdef TFM_PARTITION_INITIAL_ATTESTATION
 	uint8_t key[IDENTITY_KEY_SIZE_BYTES];
+	int err;
 
-	int err = nrf_cc3xx_platform_identity_key_retrieve(NRF_KMU_SLOT_KIDENT, key);
-
+	err = identity_key_read(key);
 	if (err < 0) {
 		/* Unable to read out the key. Then it is likely not present. */
 		return false;
@@ -132,6 +135,9 @@ static bool dummy_key_is_present(void)
 
 	/* The first 8 bytes matched the dummy key, so it is most likely the dummy key */
 	return true;
+#else
+	return false;
+#endif
 }
 
 
