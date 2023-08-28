@@ -829,7 +829,7 @@ static bool valid_codec_cap_check(struct bt_codec cap_array[], size_t size)
 	/* Only the sampling frequency is checked */
 	for (int i = 0; i < size; i++) {
 		if (bt_codec_get_val(&cap_array[i], BT_CODEC_LC3_FREQ, &element)) {
-			if (element->data.data[0] & BT_AUDIO_CODEC_CAPABILIY_FREQ) {
+			if (element->data.data[0] & (BT_AUDIO_CODEC_CAPABILIY_FREQ)) {
 				return true;
 			}
 		}

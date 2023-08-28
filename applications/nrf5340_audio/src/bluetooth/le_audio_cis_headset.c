@@ -10,6 +10,8 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
+#include <zephyr/bluetooth/audio/bap.h>
+#include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include <zephyr/bluetooth/audio/pacs.h>
 #include <zephyr/bluetooth/audio/csip.h>
 #include <zephyr/bluetooth/audio/cap.h>
@@ -30,6 +32,18 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 #define CHANNEL_COUNT_1	    BIT(0)
 #define BLE_ISO_LATENCY_MS  10
 #define BLE_ISO_RETRANSMITS 2
+
+#if CONFIG_BT_PACS_SRC_CONTEXT
+#define AVAILABLE_SINK_CONTEXT CONFIG_BT_PACS_SNK_CONTEXT
+#else
+#define AVAILABLE_SINK_CONTEXT 0
+#endif
+
+#if CONFIG_BT_PACS_SRC_CONTEXT
+#define AVAILABLE_SOURCE_CONTEXT CONFIG_BT_PACS_SRC_CONTEXT
+#else
+#define AVAILABLE_SOURCE_CONTEXT 0
+#endif
 
 #if (CONFIG_BT_AUDIO_TX)
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
@@ -112,35 +126,59 @@ struct bt_csip_set_member_register_param csip_param = {
 	.cb = &csip_callbacks,
 };
 
-static struct bt_codec lc3_codec = BT_CODEC_LC3(
-	BT_AUDIO_CODEC_CAPABILIY_FREQ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
-	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
+static struct bt_bap_lc3_preset codec_cfg_snk_16_2_1 =
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
 
-static enum bt_audio_dir caps_dirs[] = {
-	BT_AUDIO_DIR_SINK,
-#if (CONFIG_BT_AUDIO_TX)
-	BT_AUDIO_DIR_SOURCE,
-#endif /* (CONFIG_BT_AUDIO_TX) */
+static struct bt_bap_lc3_preset codec_cfg_src_16_2_1 =
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SOURCE_CONTEXT);
+
+static struct bt_bap_lc3_preset codec_cfg_snk_24_2_1 =
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
+
+static struct bt_bap_lc3_preset codec_cfg_src_24_2_1 =
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SOURCE_CONTEXT);
+
+static struct bt_bap_lc3_preset codec_cfg_snk_48_2_1 =
+	BT_BAP_LC3_UNICAST_PRESET_48_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
+
+static struct bt_bap_lc3_preset codec_cfg_snk_48_4_1 =
+	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
+
+static struct bt_bap_lc3_preset codec_cfg_snk_48_6_1 =
+	BT_BAP_LC3_UNICAST_PRESET_48_6_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
+
+static struct bt_pacs_cap cap_sink_16_2_1 = {
+	.codec = &codec_cfg_snk_16_2_1.codec,
+};
+
+static struct bt_pacs_cap cap_source_16_2_1 = {
+	.codec = &codec_cfg_src_16_2_1.codec,
+};
+
+static struct bt_pacs_cap cap_sink_24_2_1 = {
+	.codec = &codec_cfg_snk_24_2_1.codec,
+};
+
+static struct bt_pacs_cap cap_source_24_2_1 = {
+	.codec = &codec_cfg_src_24_2_1.codec,
+};
+
+static struct bt_pacs_cap cap_sink_48_2_1 = {
+	.codec = &codec_cfg_snk_48_2_1.codec,
+};
+
+static struct bt_pacs_cap cap_sink_48_4_1 = {
+	.codec = &codec_cfg_snk_48_4_1.codec,
+};
+
+static struct bt_pacs_cap cap_sink_48_6_1 = {
+	.codec = &codec_cfg_snk_48_6_1.codec,
 };
 
 static const struct bt_codec_qos_pref qos_pref = BT_CODEC_QOS_PREF(
 	true, BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS, BLE_ISO_LATENCY_MS,
 	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
 	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
-
-/* clang-format off */
-static struct bt_pacs_cap caps[] = {
-				{
-					 .codec = &lc3_codec,
-				},
-#if (CONFIG_BT_AUDIO_TX)
-				{
-					 .codec = &lc3_codec,
-				}
-#endif /* (CONFIG_BT_AUDIO_TX) */
-};
-/* clang-format on */
 
 static struct bt_bap_stream
 	audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
@@ -425,107 +463,86 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 
 	channel_assignment_get(&channel);
 
-	for (int i = 0; i < ARRAY_SIZE(caps); i++) {
-		ret = bt_pacs_cap_register(caps_dirs[i], &caps[i]);
+	/* Register capabilities */
+	if (IS_ENABLED(CONFIG_BT_PAC_SNK)) {
+		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_16_2_1);
+		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_24_2_1);
+		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_48_2_1);
+		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_48_4_1);
+		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_48_6_1);
+
+		if (channel == AUDIO_CH_L) {
+			csip_param.rank = CSIP_HL_RANK;
+
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
+		} else if (channel == AUDIO_CH_R) {
+			csip_param.rank = CSIP_HR_RANK;
+
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
+						   BT_AUDIO_LOCATION_FRONT_RIGHT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
+		} else {
+			LOG_ERR("Channel not supported");
+			return -ECANCELED;
+		}
+
+		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+
 		if (ret) {
-			LOG_ERR("Capability register failed");
+			LOG_ERR("Supported context set failed. Err: %d", ret);
+			return ret;
+		}
+
+		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+		if (ret) {
+			LOG_ERR("Available context set failed. Err: %d", ret);
 			return ret;
 		}
 	}
 
-	if (channel == AUDIO_CH_L) {
-		csip_param.rank = CSIP_HL_RANK;
+	if (IS_ENABLED(CONFIG_BT_PAC_SRC)) {
+		bt_pacs_cap_register(BT_AUDIO_DIR_SOURCE, &cap_source_16_2_1);
+		bt_pacs_cap_register(BT_AUDIO_DIR_SOURCE, &cap_source_24_2_1);
 
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
+		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
+
 		if (ret) {
-			LOG_ERR("Location set failed");
+			LOG_ERR("Supported context set failed. Err: %d", ret);
 			return ret;
 		}
-	} else if (channel == AUDIO_CH_R) {
-		csip_param.rank = CSIP_HR_RANK;
 
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_RIGHT);
+		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
 		if (ret) {
-			LOG_ERR("Location set failed");
+			LOG_ERR("Available context set failed. Err: %d", ret);
 			return ret;
 		}
-	} else {
-		LOG_ERR("Channel not supported");
-		return -ECANCELED;
-	}
-#if CONFIG_STREAM_BIDIRECTIONAL
-	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK,
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA |
-						     BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
-						     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 
-	if (ret) {
-		LOG_ERR("Supported context set failed. Err: %d", ret);
-		return ret;
-	}
-
-	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK,
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA |
-						     BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
-						     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-	if (ret) {
-		LOG_ERR("Available context set failed. Err: %d", ret);
-		return ret;
-	}
-
-	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE,
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA |
-						     BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
-						     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-
-	if (ret) {
-		LOG_ERR("Supported context set failed. Err: %d", ret);
-		return ret;
-	}
-
-	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SOURCE,
-					     BT_AUDIO_CONTEXT_TYPE_MEDIA |
-						     BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |
-						     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-	if (ret) {
-		LOG_ERR("Available context set failed. Err: %d", ret);
-		return ret;
-	}
-
-	if (channel == AUDIO_CH_L) {
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, BT_AUDIO_LOCATION_FRONT_LEFT);
-		if (ret) {
-			LOG_ERR("Location set failed");
-			return ret;
+		if (channel == AUDIO_CH_L) {
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE,
+						   BT_AUDIO_LOCATION_FRONT_LEFT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
+		} else if (channel == AUDIO_CH_R) {
+			ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE,
+						   BT_AUDIO_LOCATION_FRONT_RIGHT);
+			if (ret) {
+				LOG_ERR("Location set failed");
+				return ret;
+			}
+		} else {
+			LOG_ERR("Channel not supported");
+			return -ECANCELED;
 		}
-	} else if (channel == AUDIO_CH_R) {
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, BT_AUDIO_LOCATION_FRONT_RIGHT);
-		if (ret) {
-			LOG_ERR("Location set failed");
-			return ret;
-		}
-	} else {
-		LOG_ERR("Channel not supported");
-		return -ECANCELED;
 	}
-#else
-
-	ret = bt_pacs_set_supported_contexts(
-		BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-
-	if (ret) {
-		LOG_ERR("Supported context set failed. Err: %d ", ret);
-		return ret;
-	}
-
-	ret = bt_pacs_set_available_contexts(
-		BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-
-	if (ret) {
-		LOG_ERR("Available context set failed. Err: %d", ret);
-		return ret;
-	}
-#endif /* CONFIG_STREAM_BIDIRECTIONAL */
 
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		bt_bap_stream_cb_register(&audio_streams[i], &stream_ops);

@@ -22,7 +22,6 @@
 #include <zephyr/kernel.h>
 #include <audio_defines.h>
 
-
 /** @brief  Adds a 0 after every sample from *input
  *	   and writes it to *output.
  * @note Use to create stereo stream from a mono source where one
@@ -84,9 +83,8 @@ int pscm_combine(void const *const input_left, void const *const input_right, si
  *
  * @return	0 if success.
  */
-int pscm_one_channel_split(void const *const input, size_t input_size,
-			   enum audio_channel channel, uint8_t pcm_bit_depth, void *output,
-			   size_t *output_size);
+int pscm_one_channel_split(void const *const input, size_t input_size, enum audio_channel channel,
+			   uint8_t pcm_bit_depth, void *output, size_t *output_size);
 
 /** @brief  Splits a stereo stream to two separate mono streams.
  * @note Use to split stereo audio stream to two separate channels.
@@ -106,6 +104,9 @@ int pscm_one_channel_split(void const *const input, size_t input_size,
  */
 int pscm_two_channel_split(void const *const input, size_t input_size, uint8_t pcm_bit_depth,
 			   void *output_left, void *output_right, size_t *output_size);
+
+int sample_rate_convert(void *input, size_t input_size, uint32_t input_sample_rate, void **output,
+			size_t *output_size, uint32_t output_sample_rate);
 
 /**
  * @}

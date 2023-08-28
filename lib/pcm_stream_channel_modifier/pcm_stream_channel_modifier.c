@@ -87,6 +87,13 @@ int pscm_zero_pad(void const *const input, size_t input_size, enum audio_channel
 	*output_size = input_size * 2;
 	return 0;
 }
+int sample_rate_convert(void *input, size_t input_size, uint32_t input_sample_rate, void **output,
+			size_t *output_size, uint32_t output_sample_rate)
+{
+	*output = input;
+	*output_size = input_size;
+	return 0;
+}
 
 int pscm_copy_pad(void const *const input, size_t input_size, uint8_t pcm_bit_depth, void *output,
 		  size_t *output_size)
@@ -142,9 +149,8 @@ int pscm_combine(void const *const input_left, void const *const input_right, si
 	return 0;
 }
 
-int pscm_one_channel_split(void const *const input, size_t input_size,
-			   enum audio_channel channel, uint8_t pcm_bit_depth, void *output,
-			   size_t *output_size)
+int pscm_one_channel_split(void const *const input, size_t input_size, enum audio_channel channel,
+			   uint8_t pcm_bit_depth, void *output, size_t *output_size)
 {
 	uint8_t bytes_per_sample = pcm_bit_depth / 8;
 
