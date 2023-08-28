@@ -548,6 +548,7 @@ int main(void)
 		LOG_ERR("Failed to retrieve device ID");
 		return 0;
 	}
+	cfg.device_id.size = strlen(device_id);
 #endif
 
 	LOG_INF("Device ID: %s", device_id);
