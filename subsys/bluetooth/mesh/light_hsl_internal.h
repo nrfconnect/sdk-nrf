@@ -65,9 +65,9 @@ void bt_mesh_light_hue_srv_range_set(
 	const struct bt_mesh_light_hsl_range *range);
 
 void bt_mesh_light_sat_srv_set(struct bt_mesh_light_sat_srv *srv,
-				   struct bt_mesh_msg_ctx *ctx,
-				   const struct bt_mesh_light_sat *set,
-				   struct bt_mesh_light_sat_status *status);
+			       struct bt_mesh_msg_ctx *ctx,
+			       struct bt_mesh_light_sat *set,
+			       struct bt_mesh_light_sat_status *status);
 
 void bt_mesh_light_sat_srv_default_set(struct bt_mesh_light_sat_srv *srv,
 					   struct bt_mesh_msg_ctx *ctx,
