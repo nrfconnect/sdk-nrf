@@ -448,6 +448,8 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		LOG_DBG("Disconnected");
 		if (client_state != UPDATE_FIRMWARE) {
 			state_set_and_unlock(START);
+		} else {
+			k_mutex_unlock(&lte_mutex);
 		}
 		break;
 
@@ -681,9 +683,13 @@ int main(void)
 		switch (client_state) {
 		case START:
 			LOG_INF("Client connect to server");
-			state_set_and_unlock(CONNECTING);
-			lwm2m_rd_client_start(&client, endpoint_name, bootstrap_flags,
-					      rd_client_event, NULL);
+			ret = lwm2m_rd_client_start(&client, endpoint_name, bootstrap_flags,
+						    rd_client_event, NULL);
+			if (ret) {
+				state_set_and_unlock(NETWORK_ERROR);
+			} else {
+				state_set_and_unlock(CONNECTING);
+			}
 			break;
 
 		case BOOTSTRAP:
