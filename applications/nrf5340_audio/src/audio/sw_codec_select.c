@@ -23,10 +23,13 @@ static struct sw_codec_config m_config;
 int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, size_t *encoded_size)
 {
 	/* Temp storage for split stereo PCM signal */
+	char pcm_data_mono_system_sample_rate[AUDIO_CH_NUM][PCM_NUM_BYTES_MONO] = {0};
 	char pcm_data_mono[AUDIO_CH_NUM][PCM_NUM_BYTES_MONO] = {0};
+
 	/* Make sure we have enough space for two frames (stereo) */
 	static uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * AUDIO_CH_NUM];
 
+	size_t pcm_block_size_mono_system_sample_rate;
 	size_t pcm_block_size_mono;
 	int ret;
 
@@ -44,14 +47,30 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 		 * stereo PCM stream
 		 */
 		ret = pscm_two_channel_split(pcm_data, pcm_size, CONFIG_AUDIO_BIT_DEPTH_BITS,
-					     pcm_data_mono[AUDIO_CH_L], pcm_data_mono[AUDIO_CH_R],
-					     &pcm_block_size_mono);
+					     pcm_data_mono_system_sample_rate[AUDIO_CH_L],
+					     pcm_data_mono_system_sample_rate[AUDIO_CH_R],
+					     &pcm_block_size_mono_system_sample_rate);
 		if (ret) {
 			return ret;
 		}
 
 		switch (m_config.encoder.num_ch) {
 		case SW_CODEC_MONO: {
+			/* Convert sample rate if needed */
+			if (m_config.sw_codec.encoder.sample_rate_hz !=
+			    CONFIG_AUDIO_SAMPLE_RATE_HZ) {
+				ret = sample_rate_convert(
+					pcm_data_mono_system_sample_rate[m_config.encoder.audio_ch],
+					pcm_block_size_mono_system_sample_rate,
+					CONFIG_AUDIO_SAMPLE_RATE_HZ,
+					&pcm_data_mono[m_config.encoder.audio_ch],
+					&pcm_block_size_mono,
+					m_config.sw_codec.encoder.sample_rate_hz);
+				if (ret) {
+					LOG_ERR("Sample rate conversion failed: %d", ret);
+				}
+			}
+
 			ret = sw_codec_lc3_enc_run(pcm_data_mono[m_config.encoder.audio_ch],
 						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
 						   0, sizeof(m_encoded_data), m_encoded_data,
@@ -62,6 +81,29 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			break;
 		}
 		case SW_CODEC_STEREO: {
+			if (m_config.sw_codec.encoder.sample_rate_hz !=
+			    CONFIG_AUDIO_SAMPLE_RATE_HZ) {
+				ret = sample_rate_convert(
+					pcm_data_mono_system_sample_rate[AUDIO_CH_L],
+					pcm_block_size_mono_system_sample_rate,
+					CONFIG_AUDIO_SAMPLE_RATE_HZ, &pcm_data_mono[AUDIO_CH_L],
+					&pcm_block_size_mono,
+					m_config.sw_codec.encoder.sample_rate_hz);
+				if (ret) {
+					LOG_ERR("Sample rate conversion failed: %d", ret);
+				}
+
+				ret = sample_rate_convert(
+					pcm_data_mono_system_sample_rate[AUDIO_CH_R],
+					pcm_block_size_mono_system_sample_rate,
+					CONFIG_AUDIO_SAMPLE_RATE_HZ, &pcm_data_mono[AUDIO_CH_R],
+					&pcm_block_size_mono,
+					m_config.sw_codec.encoder.sample_rate_hz);
+				if (ret) {
+					LOG_ERR("Sample rate conversion failed: %d", ret);
+				}
+			}
+
 			ret = sw_codec_lc3_enc_run(pcm_data_mono[AUDIO_CH_L], pcm_block_size_mono,
 						   LC3_USE_BITRATE_FROM_INIT, AUDIO_CH_L,
 						   sizeof(m_encoded_data), m_encoded_data,
@@ -110,6 +152,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 
 	int ret;
 	char pcm_data_mono[PCM_NUM_BYTES_MONO] = {0};
+	char pcm_data_mono_system_sample_rate[PCM_NUM_BYTES_MONO] = {0};
 	static char pcm_data_stereo[PCM_NUM_BYTES_STEREO];
 
 	size_t pcm_size_stereo = 0;
@@ -120,6 +163,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 #if (CONFIG_SW_CODEC_LC3)
 		/* Typically used for right channel if stereo signal */
 		char pcm_data_mono_right[PCM_NUM_BYTES_MONO] = {0};
+		char pcm_data_mono_right_system_sample_rate[PCM_NUM_BYTES_MONO] = {0};
 
 		switch (m_config.decoder.num_ch) {
 		case SW_CODEC_MONO: {
@@ -133,15 +177,29 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 				if (ret) {
 					return ret;
 				}
+				/* Convert sample rate if needed */
+				if (m_config.sw_codec.decoder.sample_rate_hz !=
+				    CONFIG_AUDIO_SAMPLE_RATE_HZ) {
+					ret = sample_rate_convert(
+						pcm_data_mono, pcm_size_session,
+						m_config.sw_codec.decoder.sample_rate_hz,
+						&pcm_data_mono_system_sample_rate,
+						&pcm_size_system_sample_rate,
+						CONFIG_AUDIO_SAMPLE_RATE_HZ);
+					if (ret) {
+						LOG_ERR("Sample rate conversion failed: %d", ret);
+					}
+				}
 			}
 
 			/* For now, i2s is only stereo, so in order to send
 			 * just one channel, we need to insert 0 for the
 			 * other channel
 			 */
-			ret = pscm_zero_pad(pcm_data_mono, pcm_size_session,
-					    m_config.decoder.audio_ch, CONFIG_AUDIO_BIT_DEPTH_BITS,
-					    pcm_data_stereo, &pcm_size_stereo);
+			ret = pscm_zero_pad(pcm_data_mono_system_sample_rate,
+					    pcm_size_system_sample_rate, m_config.decoder.audio_ch,
+					    CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,
+					    &pcm_size_stereo);
 			if (ret) {
 				return ret;
 			}
@@ -161,6 +219,20 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 				if (ret) {
 					return ret;
 				}
+
+				/* Convert sample rate if needed */
+				if (m_config.sw_codec.decoder.sample_rate_hz !=
+				    CONFIG_AUDIO_SAMPLE_RATE_HZ) {
+					ret = sample_rate_convert(
+						pcm_data_mono, pcm_size_session,
+						m_config.sw_codec.decoder.sample_rate_hz,
+						&pcm_data_mono_system_sample_rate,
+						&pcm_size_system_sample_rate,
+						CONFIG_AUDIO_SAMPLE_RATE_HZ);
+					if (ret) {
+						LOG_ERR("Sample rate conversion failed: %d", ret);
+					}
+				}
 				/* Decode right channel */
 				ret = sw_codec_lc3_dec_run(
 					(encoded_data + (encoded_size / 2)), encoded_size / 2,
@@ -169,10 +241,25 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 				if (ret) {
 					return ret;
 				}
+
+				/* Convert sample rate if needed */
+				if (m_config.sw_codec.decoder.sample_rate_hz !=
+				    CONFIG_AUDIO_SAMPLE_RATE_HZ) {
+					ret = sample_rate_convert(
+						pcm_data_mono_right, pcm_size_session,
+						m_config.sw_codec.decoder.sample_rate_hz,
+						&pcm_data_mono_right_system_sample_rate,
+						&pcm_size_system_sample_rate,
+						CONFIG_AUDIO_SAMPLE_RATE_HZ);
+					if (ret) {
+						LOG_ERR("Sample rate conversion failed: %d", ret);
+					}
+				}
 			}
-			ret = pscm_combine(pcm_data_mono, pcm_data_mono_right, pcm_size_session,
-					   CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,
-					   &pcm_size_stereo);
+			ret = pscm_combine(pcm_data_mono_system_sample_rate,
+					   pcm_data_mono_right_system_sample_rate,
+					   pcm_size_system_sample_rate, CONFIG_AUDIO_BIT_DEPTH_BITS,
+					   pcm_data_stereo, &pcm_size_stereo);
 			if (ret) {
 				return ret;
 			}
@@ -261,12 +348,12 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			uint16_t pcm_bytes_req_enc;
 
 			LOG_DBG("Encode: %dHz %dbits %dus %dbps %d channel(s)",
-				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
+				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
 				sw_codec_cfg.encoder.num_ch);
 
 			ret = sw_codec_lc3_enc_init(
-				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
+				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
 				sw_codec_cfg.encoder.num_ch, &pcm_bytes_req_enc);
 
@@ -282,11 +369,11 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			}
 
 			LOG_DBG("Decode: %dHz %dbits %dus %d channel(s)",
-				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
+				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.num_ch);
 
 			ret = sw_codec_lc3_dec_init(
-				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
+				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.num_ch);
 
 			if (ret) {

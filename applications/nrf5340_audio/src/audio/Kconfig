@@ -45,11 +45,10 @@ config AUDIO_MAX_PRES_DLY_US
 
 choice AUDIO_SAMPLE_RATE
 	prompt "Audio sample rate"
-	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_BROADCAST_16_2_1 || BT_BAP_BROADCAST_16_2_2 || BT_BAP_UNICAST_16_2_1
-	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_BROADCAST_24_2_1 || BT_BAP_BROADCAST_24_2_2 || BT_BAP_UNICAST_24_2_1
 	default AUDIO_SAMPLE_RATE_48000_HZ
 	help
-	  This will be selected based on the BAP settings.
+	  The system sample rate is 48kHz, but the audio data may be resampled to
+	  another sample rate before encoding, and after decoding, to match the BAP settings.
 
 config AUDIO_SAMPLE_RATE_16000_HZ
 	bool "16 kHz"

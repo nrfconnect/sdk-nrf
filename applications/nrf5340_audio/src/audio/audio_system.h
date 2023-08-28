@@ -23,6 +23,16 @@
 int audio_encode_test_tone_set(uint32_t freq);
 
 /**
+ * @brief	Set the sample rate used by the encoder and decoder.
+ *
+ * @param[in]	encoder_sample_rate_hz	Sample rate to be used by the encoder.
+ * @param[in]	bitrate			Bitrate to be used by the encoder.
+ * @param[in]	decoder_sample_rate_hz	Sample rate to be used by the decoder.
+ */
+void audio_system_sample_rate_set(uint32_t encoder_sample_rate_hz, int bitrate,
+				  uint32_t decoder_sample_rate_hz);
+
+/**
  * @brief Decode data and then add it to TX FIFO buffer
  *
  * @param[in]	encoded_data		Pointer to encoded data

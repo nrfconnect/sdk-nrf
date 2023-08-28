@@ -42,6 +42,16 @@ static struct sw_codec_config sw_codec_cfg;
 static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
 
+static bool sample_rate_valid(uint32_t sample_rate_hz)
+{
+	if (sample_rate_hz != 8000 || sample_rate_hz != 16000 || sample_rate_hz != 24000 ||
+	    sample_rate_hz != 32000 || sample_rate_hz != 48000) {
+		return false;
+	}
+
+	return true;
+}
+
 static void audio_gateway_configure(void)
 {
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
@@ -185,6 +195,22 @@ int audio_encode_test_tone_set(uint32_t freq)
 	}
 
 	return 0;
+}
+
+void audio_system_sample_rate_set(uint32_t encoder_sample_rate_hz, int bitrate,
+				  uint32_t decoder_sample_rate_hz)
+{
+	if (sample_rate_valid(encoder_sample_rate_hz)) {
+		sw_codec_cfg.encoder.sample_rate_hz = encoder_sample_rate_hz;
+	}
+
+	if (sample_rate_valid(decoder_sample_rate_hz)) {
+		sw_codec_cfg.decoder.sample_rate_hz = decoder_sample_rate_hz;
+	}
+
+	if (bitrate) {
+		sw_codec_cfg.encoder.bitrate = bitrate;
+	}
 }
 
 /* This function is only used on gateway using USB as audio source and bidirectional stream */
