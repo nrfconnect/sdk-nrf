@@ -85,7 +85,6 @@ static int sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	 * in macro:
 	 */
 	set.lvl = net_buf_simple_pull_le16(buf);
-	set.lvl = CLAMP(set.lvl, srv->range.min, srv->range.max);
 	tid = net_buf_simple_pull_u8(buf);
 
 	if (tid_check_and_update(&srv->prev_transaction, tid, ctx) != 0) {
@@ -208,7 +207,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	uint16_t sat = LVL_TO_SAT(lvl_set->lvl);
 
-	set.lvl = MIN(MAX(sat, srv->range.min), srv->range.max);
+	set.lvl = sat;
 	set.transition = lvl_set->transition;
 	bt_mesh_light_sat_srv_set(srv, ctx, &set, &status);
 
@@ -450,9 +449,11 @@ const struct bt_mesh_model_cb _bt_mesh_light_sat_srv_cb = {
 
 void bt_mesh_light_sat_srv_set(struct bt_mesh_light_sat_srv *srv,
 			       struct bt_mesh_msg_ctx *ctx,
-			       const struct bt_mesh_light_sat *set,
+			       struct bt_mesh_light_sat *set,
 			       struct bt_mesh_light_sat_status *status)
 {
+	set->lvl = CLAMP(set->lvl, srv->range.min, srv->range.max);
+
 	srv->transient.last = set->lvl;
 	srv->handlers->set(srv, ctx, set, status);
 
