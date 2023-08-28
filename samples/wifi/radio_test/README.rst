@@ -1,5 +1,4 @@
 .. _wifi_radio_test:
-.. _wifi_test:
 
 Wi-Fi: Radio test
 #################

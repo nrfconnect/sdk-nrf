@@ -500,6 +500,7 @@ Wi-Fi samples
   * :ref:`wifi_shutdown_sample` sample that demonstrates how to configure the Wi-Fi driver to shut down the Wi-Fi hardware when the Wi-Fi interface is not in use.
   * :ref:`wifi_twt_sample` sample that demonstrates how to establish TWT flow and transfer data conserving power.
   * Support for the Wi-Fi driver to several upstream Zephyr networking samples.
+  * Enchancements to support device re-trimming process in the :ref:`wifi_radio_test` sample.
 
 Other samples
 -------------

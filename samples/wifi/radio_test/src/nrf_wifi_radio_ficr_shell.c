@@ -106,75 +106,123 @@ static int nrf_wifi_radio_test_otp_read_params(const struct shell *shell,
 							REGION_PROTECT + 2, REGION_PROTECT + 3);
 	disp_location_status(shell, "OTP", ret);
 
-	shell_fprintf(shell, SHELL_INFO, "REGION_PROTECT0 = 0x%08x\n", val[REGION_PROTECT + 0]);
-	shell_fprintf(shell, SHELL_INFO, "REGION_PROTECT1 = 0x%08x\n", val[REGION_PROTECT + 1]);
-	shell_fprintf(shell, SHELL_INFO, "REGION_PROTECT2 = 0x%08x\n", val[REGION_PROTECT + 2]);
-	shell_fprintf(shell, SHELL_INFO, "REGION_PROTECT3 = 0x%08x\n", val[REGION_PROTECT + 3]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.FT.PROGVERSION = 0x%08x\n",
+		val[PRODTEST_FT_PROGVERSION]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_FT_PROGVERSION1 = 0x%08x\n",
-		val[PRODTEST_FT_PROGVERSION1]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_FT_PROGVERSION2 = 0x%08x\n",
-		val[PRODTEST_FT_PROGVERSION2]);
-	shell_fprintf(shell, SHELL_INFO, "\n");
-
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM0: Reg0 = 0x%08x\n", val[PRODTEST_TRIM0]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM1: Reg1 = 0x%08x\n", val[PRODTEST_TRIM1]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM2: Reg2 = 0x%08x\n", val[PRODTEST_TRIM2]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM3: Reg3 = 0x%08x\n", val[PRODTEST_TRIM3]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM4: Reg4 = 0x%08x\n", val[PRODTEST_TRIM4]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM5: Reg5 = 0x%08x\n", val[PRODTEST_TRIM5]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM6: Reg6 = 0x%08x\n", val[PRODTEST_TRIM6]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM7: Reg7 = 0x%08x\n", val[PRODTEST_TRIM7]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM8: Reg8 = 0x%08x\n", val[PRODTEST_TRIM8]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM9: Reg9 = 0x%08x\n", val[PRODTEST_TRIM9]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM10: Reg10 = 0x%08x\n",
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM0 = 0x%08x\n", val[PRODTEST_TRIM0]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM1 = 0x%08x\n", val[PRODTEST_TRIM1]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM2 = 0x%08x\n", val[PRODTEST_TRIM2]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM3 = 0x%08x\n", val[PRODTEST_TRIM3]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM4 = 0x%08x\n", val[PRODTEST_TRIM4]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM5 = 0x%08x\n", val[PRODTEST_TRIM5]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM6 = 0x%08x\n", val[PRODTEST_TRIM6]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM7 = 0x%08x\n", val[PRODTEST_TRIM7]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM8 = 0x%08x\n", val[PRODTEST_TRIM8]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM9 = 0x%08x\n", val[PRODTEST_TRIM9]);
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM10 = 0x%08x\n",
 		val[PRODTEST_TRIM10]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM11: Reg11 = 0x%08x\n",
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM11 = 0x%08x\n",
 		val[PRODTEST_TRIM11]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM12: Reg12 = 0x%08x\n",
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM12 = 0x%08x\n",
 		val[PRODTEST_TRIM12]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM13: Reg13 = 0x%08x\n",
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM13 = 0x%08x\n",
 		val[PRODTEST_TRIM13]);
-	shell_fprintf(shell, SHELL_INFO, "PRODTEST_TRIM14: Reg14 = 0x%08x\n",
+	shell_fprintf(shell, SHELL_INFO, "PRODTEST.TRIM14 = 0x%08x\n",
 		val[PRODTEST_TRIM14]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 
-	shell_fprintf(shell, SHELL_INFO, "PRODCTRL.DISABLE5GHZ = 0x%08x\n",
-		val[PRODCTRL_DISABLE5GHZ]);
+	shell_fprintf(shell, SHELL_INFO, "INFO.PART = 0x%08x\n", val[INFO_PART]);
+	shell_fprintf(shell, SHELL_INFO, "INFO.VARIANT = 0x%08x\n", val[INFO_VARIANT]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 
-	shell_fprintf(shell, SHELL_INFO, "INFO_PART = 0x%08x\n", val[INFO_PART]);
-	shell_fprintf(shell, SHELL_INFO, "INFO_VARIANT = 0x%08x\n", val[INFO_VARIANT]);
+	shell_fprintf(shell, SHELL_INFO, "INFO.UUID0 = 0x%08x\n", val[INFO_UUID + 0]);
+	shell_fprintf(shell, SHELL_INFO, "INFO.UUID1 = 0x%08x\n", val[INFO_UUID + 1]);
+	shell_fprintf(shell, SHELL_INFO, "INFO.UUID2 = 0x%08x\n", val[INFO_UUID + 2]);
+	shell_fprintf(shell, SHELL_INFO, "INFO.UUID3 = 0x%08x\n", val[INFO_UUID + 3]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 
-	shell_fprintf(shell, SHELL_INFO, "INFO_UUID0 = 0x%08x\n", val[INFO_UUID + 0]);
-	shell_fprintf(shell, SHELL_INFO, "INFO_UUID1 = 0x%08x\n", val[INFO_UUID + 1]);
-	shell_fprintf(shell, SHELL_INFO, "INFO_UUID2 = 0x%08x\n", val[INFO_UUID + 2]);
-	shell_fprintf(shell, SHELL_INFO, "INFO_UUID3 = 0x%08x\n", val[INFO_UUID + 3]);
+	shell_fprintf(shell, SHELL_INFO, "REGION.PROTECT0 = 0x%08x\n", val[REGION_PROTECT + 0]);
+	shell_fprintf(shell, SHELL_INFO, "REGION.PROTECT1 = 0x%08x\n", val[REGION_PROTECT + 1]);
+	shell_fprintf(shell, SHELL_INFO, "REGION.PROTECT2 = 0x%08x\n", val[REGION_PROTECT + 2]);
+	shell_fprintf(shell, SHELL_INFO, "REGION.PROTECT3 = 0x%08x\n", val[REGION_PROTECT + 3]);
 	shell_fprintf(shell, SHELL_INFO, "\n");
 
-	shell_fprintf(shell, SHELL_INFO, "MAC0: Reg0 = 0x%08x\n", val[MAC0_ADDR]);
-	shell_fprintf(shell, SHELL_INFO, "MAC0: Reg1 = 0x%08x\n", val[MAC0_ADDR + 1]);
-	shell_fprintf(shell, SHELL_INFO, "MAC0 Addr  = %02x:%02x:%02x:%02x:%02x:%02x\n",
-		(uint8_t)(val[MAC0_ADDR]), (uint8_t)(val[MAC0_ADDR] >> 8),
-		(uint8_t)(val[MAC0_ADDR] >> 16), (uint8_t)(val[MAC0_ADDR] >> 24),
-		(uint8_t)(val[MAC0_ADDR + 1]), (uint8_t)(val[MAC0_ADDR + 1] >> 8));
-	shell_fprintf(shell, SHELL_INFO, "\n");
+	if (val[REGION_PROTECT + 0] != OTP_FRESH_FROM_FAB) {
+		shell_fprintf(shell, SHELL_INFO, "MAC0.ADDRESS0 = 0x%08x\n", val[MAC0_ADDR]);
+		shell_fprintf(shell, SHELL_INFO, "MAC0.ADDRESS1 = 0x%08x\n", val[MAC0_ADDR + 1]);
+		shell_fprintf(shell, SHELL_INFO, "MAC0.ADDRESS = %02x:%02x:%02x:%02x:%02x:%02x\n",
+			(uint8_t)(val[MAC0_ADDR]), (uint8_t)(val[MAC0_ADDR] >> 8),
+			(uint8_t)(val[MAC0_ADDR] >> 16), (uint8_t)(val[MAC0_ADDR] >> 24),
+			(uint8_t)(val[MAC0_ADDR + 1]), (uint8_t)(val[MAC0_ADDR + 1] >> 8));
+		shell_fprintf(shell, SHELL_INFO, "\n");
 
-	shell_fprintf(shell, SHELL_INFO, "MAC1 : Reg0 = 0x%08x\n", val[MAC1_ADDR]);
-	shell_fprintf(shell, SHELL_INFO, "MAC1 : Reg1 = 0x%08x\n", val[MAC1_ADDR + 1]);
-	shell_fprintf(shell, SHELL_INFO, "MAC1 Addr   = %02x:%02x:%02x:%02x:%02x:%02x\n",
-		(uint8_t)(val[MAC1_ADDR]), (uint8_t)(val[MAC1_ADDR] >> 8),
-		(uint8_t)(val[MAC1_ADDR] >> 16), (uint8_t)(val[MAC1_ADDR] >> 24),
-		(uint8_t)(val[MAC1_ADDR + 1]), (uint8_t)(val[MAC1_ADDR + 1] >> 8));
-	shell_fprintf(shell, SHELL_INFO, "\n");
-	shell_fprintf(shell, SHELL_INFO, "CALIB_XO = 0x%02x\n", val[CALIB_XO] & 0xFF);
+		shell_fprintf(shell, SHELL_INFO, "MAC1.ADDRESS0 = 0x%08x\n", val[MAC1_ADDR]);
+		shell_fprintf(shell, SHELL_INFO, "MAC1.ADDRESS1 = 0x%08x\n", val[MAC1_ADDR + 1]);
+		shell_fprintf(shell, SHELL_INFO, "MAC1.ADDRESS = %02x:%02x:%02x:%02x:%02x:%02x\n",
+			(uint8_t)(val[MAC1_ADDR]), (uint8_t)(val[MAC1_ADDR] >> 8),
+			(uint8_t)(val[MAC1_ADDR] >> 16), (uint8_t)(val[MAC1_ADDR] >> 24),
+			(uint8_t)(val[MAC1_ADDR + 1]), (uint8_t)(val[MAC1_ADDR + 1] >> 8));
+		shell_fprintf(shell, SHELL_INFO, "\n");
 
+		shell_fprintf(shell, SHELL_INFO, "CALIB.XO = 0x%02x\n", val[CALIB_XO] & 0xFF);
 
-	shell_fprintf(shell, SHELL_INFO, "REGION_DEFAULTS = 0x%08x\n",
-		val[REGION_DEFAULTS]);
-	shell_fprintf(shell, SHELL_INFO, "\n");
+		shell_fprintf(shell, SHELL_INFO, "REGION_DEFAULTS = 0x%08x\n",
+			val[REGION_DEFAULTS]);
+		shell_fprintf(shell, SHELL_INFO, "\n");
+	}
+	return 0;
+}
+
+static int nrf_wifi_radio_test_otp_read_retrim_version(const struct shell *shell,
+					size_t argc,
+					char  *argv[])
+{
+	unsigned int val[1];
+	unsigned int err;
+
+	err = read_otp_memory(REGION_PROTECT, &val[0], 1);
+	if (err) {
+		shell_fprintf(shell, SHELL_ERROR, "FAILED reading otp memory......\n");
+		return -ENOEXEC;
+	}
+
+	if (val[0] == OTP_FRESH_FROM_FAB) {
+		shell_fprintf(shell, SHELL_ERROR,
+				"Region is unprogrammed - program to enable R/W\n");
+	} else {
+		err = read_otp_memory(PRODRETEST_PROGVERSION, &val[0], 1);
+		shell_fprintf(shell, SHELL_INFO, "\nPRODRETEST.PROGVERSION = 0x%08x\n",
+		val[0]);
+		shell_fprintf(shell, SHELL_INFO, "\n");
+	}
+	return 0;
+}
+
+static int nrf_wifi_radio_test_otp_read_retrim_params(const struct shell *shell,
+					size_t argc,
+					char  *argv[])
+{
+	unsigned int val[RETRIM_LEN];
+	unsigned int err;
+
+	err = read_otp_memory(REGION_PROTECT, val, 1);
+	if (err) {
+		shell_fprintf(shell, SHELL_ERROR, "FAILED reading otp memory......\n");
+		return -ENOEXEC;
+	}
+
+	if (val[0] == OTP_FRESH_FROM_FAB) {
+		shell_fprintf(shell, SHELL_ERROR,
+				"Region is unprogrammed - program to enable R/W\n");
+	} else {
+		shell_fprintf(shell, SHELL_INFO, "\n");
+		err = read_otp_memory(PRODRETEST_TRIM0, val, RETRIM_LEN);
+		for (int i = 0; i < RETRIM_LEN; i++) {
+			shell_fprintf(shell, SHELL_INFO, "PRODRETEST.TRIM%d = 0x%08x\n", i, val[i]);
+		}
+		shell_fprintf(shell, SHELL_INFO, "\n");
+	}
 
 	return 0;
 }
@@ -199,6 +247,11 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 	field >>= 2;
 
 	if (field < REGION_PROTECT) {
+		shell_fprintf(shell, SHELL_ERROR, "INVALID Address 0x%x......\n", field << 2);
+		return -ENOEXEC;
+	}
+
+	if ((field >= PRODRETEST_PROGVERSION) && (field <= PRODRETEST_TRIM14)) {
 		shell_fprintf(shell, SHELL_ERROR, "INVALID Address 0x%x......\n", field << 2);
 		return -ENOEXEC;
 	}
@@ -284,6 +337,117 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 	return 0;
 }
 
+static int nrf_wifi_radio_test_otp_write_retrim_version(const struct shell *shell,
+					size_t argc,
+					char  *argv[])
+{
+	unsigned int field;
+	unsigned int write_val;
+	unsigned int val[OTP_MAX_WORD_LEN];
+	unsigned int ret, err;
+	int status = 0;
+
+	field = PRODRETEST_PROGVERSION;
+
+	if (argc != 2) {
+		shell_fprintf(shell, SHELL_ERROR,
+		  "invalid # of args for field %d (expected 2) : %d\n", field, argc);
+		return -ENOEXEC;
+	}
+
+	err = read_otp_memory(REGION_PROTECT, &val[REGION_PROTECT], 4);
+	if (err) {
+		shell_fprintf(shell, SHELL_ERROR, "FAILED reading otp memory......\n");
+		return -ENOEXEC;
+	}
+
+	ret = check_protection(&val[0], REGION_PROTECT, REGION_PROTECT + 1,
+						REGION_PROTECT + 2, REGION_PROTECT + 3);
+	disp_location_status(shell, "OTP", ret);
+	if (ret != OTP_ENABLE_PATTERN && ret != OTP_FRESH_FROM_FAB) {
+		shell_fprintf(shell, SHELL_ERROR, "USER Region is not Writeable\n");
+		return -ENOEXEC;
+	}
+
+	write_val  = strtoul(argv[1], NULL, 0);
+	status = write_otp_memory(field, &write_val);
+
+	if (!status) {
+		shell_fprintf(shell, SHELL_INFO, "Finished Writing Retrim version\n");
+	}
+
+	return 0;
+}
+
+static int nrf_wifi_radio_test_otp_write_retrim_params(const struct shell *shell,
+					size_t argc,
+					char  *argv[])
+{
+	unsigned int index;
+	unsigned int field;
+	unsigned int write_val;
+	unsigned int val[OTP_MAX_WORD_LEN];
+	unsigned int ret, err;
+	int status = 0;
+
+	index = strtoul(argv[1], NULL, 0);
+	field = index+PRODRETEST_TRIM0;
+
+	if ((field < PRODRETEST_TRIM0) || (field > PRODRETEST_TRIM14)) {
+		shell_fprintf(shell, SHELL_ERROR, "INVALID Index %d......\n", index);
+		return -ENOEXEC;
+	}
+
+	err = read_otp_memory(REGION_PROTECT, &val[REGION_PROTECT], 4);
+	if (err) {
+		shell_fprintf(shell, SHELL_ERROR, "FAILED reading otp memory......\n");
+		return -ENOEXEC;
+	}
+
+	ret = check_protection(&val[0], REGION_PROTECT, REGION_PROTECT + 1,
+						REGION_PROTECT + 2, REGION_PROTECT + 3);
+	disp_location_status(shell, "OTP", ret);
+	if (ret != OTP_ENABLE_PATTERN && ret != OTP_FRESH_FROM_FAB) {
+		shell_fprintf(shell, SHELL_ERROR, "USER Region is not Writeable\n");
+		return -ENOEXEC;
+	}
+
+	switch (field) {
+	case PRODRETEST_TRIM0:
+	case PRODRETEST_TRIM1:
+	case PRODRETEST_TRIM2:
+	case PRODRETEST_TRIM3:
+	case PRODRETEST_TRIM4:
+	case PRODRETEST_TRIM5:
+	case PRODRETEST_TRIM6:
+	case PRODRETEST_TRIM7:
+	case PRODRETEST_TRIM8:
+	case PRODRETEST_TRIM9:
+	case PRODRETEST_TRIM10:
+	case PRODRETEST_TRIM11:
+	case PRODRETEST_TRIM12:
+	case PRODRETEST_TRIM13:
+	case PRODRETEST_TRIM14:
+		if (argc != 3) {
+			shell_fprintf(shell, SHELL_ERROR,
+				"invalid # of args for field %d (expected 3) : %d\n", field, argc);
+			return -ENOEXEC;
+		}
+		write_val  = strtoul(argv[2], NULL, 0);
+		status = write_otp_memory(field, &write_val);
+		break;
+	default:
+		shell_fprintf(shell, SHELL_ERROR, "unsupported field %d\n", field);
+		return -ENOEXEC;
+	}
+
+	if (!status) {
+		shell_fprintf(shell, SHELL_INFO, "Finished Writing Retrim param\n");
+	}
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_radio_otp_subcmds,
 	SHELL_CMD_ARG(otp_get_status,
@@ -298,6 +462,18 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 			  nrf_wifi_radio_test_otp_read_params,
 			  1,
 			  0),
+	SHELL_CMD_ARG(otp_read_retrim_version,
+			  NULL,
+			  "Read Retrim Version",
+			  nrf_wifi_radio_test_otp_read_retrim_version,
+			  1,
+			  0),
+	SHELL_CMD_ARG(otp_read_retrim_params,
+			  NULL,
+			  "Read Retrim Params",
+			  nrf_wifi_radio_test_otp_read_retrim_params,
+			  1,
+			  0),
 	SHELL_CMD_ARG(otp_write_params,
 			  NULL,
 			  "Write OTP Params\n"
@@ -305,6 +481,20 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 			  nrf_wifi_radio_test_otp_write_params,
 			  2,
 			  16),
+	SHELL_CMD_ARG(otp_write_retrim_version,
+			  NULL,
+			  "Write OTP Retrim Version\n"
+			  "otp_write_retrim_version <retrim version>",
+			  nrf_wifi_radio_test_otp_write_retrim_version,
+			  2,
+			  0),
+	SHELL_CMD_ARG(otp_write_retrim_params,
+			  NULL,
+			  "Write OTP Retrim Params\n"
+			  "otp_write_params <retrim index> [retrim data]",
+			  nrf_wifi_radio_test_otp_write_retrim_params,
+			  3,
+			  0),
 	SHELL_SUBCMD_SET_END);
 
 
