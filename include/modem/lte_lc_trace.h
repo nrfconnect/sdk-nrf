@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#ifndef ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_
-#define ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_
+#ifndef LTE_LC_TRACE_H__
+#define LTE_LC_TRACE_H__
 
 #include <zephyr/sys/util.h>
 
@@ -54,4 +54,4 @@ void lte_lc_trace_capture(enum lte_lc_trace_type type);
 }
 #endif
 
-#endif /* ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_ */
+#endif /* LTE_LC_TRACE_H__ */
