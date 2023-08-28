@@ -214,8 +214,7 @@ static const struct rpu_addr_map RPU_ADDR_MAP_MCU[] = {
 
 /* REGION PROTECT : OTP Address offsets (word offsets) */
 #define REGION_PROTECT 64
-#define PRODTEST_FT_PROGVERSION1 28
-#define PRODTEST_FT_PROGVERSION2 29
+#define PRODTEST_FT_PROGVERSION 29
 #define PRODTEST_TRIM0 32
 #define PRODTEST_TRIM1 33
 #define PRODTEST_TRIM2 34

@@ -33,6 +33,16 @@ Wi-Fi radio FICR subcommands
      - N/A
      - N/A
      - Reads out all the OTP parameters (excluding QSPI_KEY which cannot be read).
+   * - otp_read_retrim_version
+     - PRODRETEST.PROGVERSION
+     - N/A
+     - N/A
+     - Reads out program version of Retrim parameters.
+   * - otp_read_retrim_params
+     - PRODRETEST.TRIM[n]
+     - N/A
+     - N/A
+     - Reads out all the Retrim parameters.
    * - otp_write_params
      - REGION_PROTECT
      - 0x100
@@ -82,3 +92,13 @@ Wi-Fi radio FICR subcommands
        | bit 10 : Reserved
        | bit 11 : Reserved
        | bit 12-31 : Reserved
+   * - otp_write_retrim_version
+     - PRODRETEST.PROGVERSION
+     - N/A
+     - arg
+     - arg is 32-bit data.
+   * - otp_write_retrim_params
+     - PRODRETEST.TRIM[n]
+     - index between (0-14)
+     - arg
+     - arg is 32-bit data. When index = 5, PRODRETEST.TRIM[5] is written with 32-bit argument.
