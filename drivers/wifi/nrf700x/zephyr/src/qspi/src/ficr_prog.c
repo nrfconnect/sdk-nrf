@@ -201,6 +201,7 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 	int err = 0;
 	int	mask_val;
 	int ret = 0;
+	int retrim_loc = 0;
 
 	err = poll_otp_ready();
 	if (err) {
@@ -290,6 +291,42 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 						CALIB_XO << 2, write_val[0]);
 			LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
 						(REGION_DEFAULTS) << 2, mask_val);
+		}
+		break;
+	case PRODRETEST_PROGVERSION:
+		ret = write_otp_location(PRODRETEST_PROGVERSION, *write_val);
+
+		if (ret == -ENOEXEC) {
+			LOG_ERR("PRODRETEST.PROGVERSION_Update Exception");
+			goto _exit_otp_write;
+		} else {
+			LOG_INF("Written PRODRETEST.PROGVERSION 0x%04x", *write_val);
+		}
+		break;
+	case PRODRETEST_TRIM0:
+	case PRODRETEST_TRIM1:
+	case PRODRETEST_TRIM2:
+	case PRODRETEST_TRIM3:
+	case PRODRETEST_TRIM4:
+	case PRODRETEST_TRIM5:
+	case PRODRETEST_TRIM6:
+	case PRODRETEST_TRIM7:
+	case PRODRETEST_TRIM8:
+	case PRODRETEST_TRIM9:
+	case PRODRETEST_TRIM10:
+	case PRODRETEST_TRIM11:
+	case PRODRETEST_TRIM12:
+	case PRODRETEST_TRIM13:
+	case PRODRETEST_TRIM14:
+		retrim_loc = otp_addr - PRODRETEST_TRIM0;
+		ret = write_otp_location(otp_addr, *write_val);
+
+		if (ret == -ENOEXEC) {
+			LOG_ERR("PRODRETEST.TRIM_Update Exception");
+			goto _exit_otp_write;
+		} else {
+			LOG_INF("Written PRODRETEST.TRIM%d 0x%04x",
+						retrim_loc, *write_val);
 		}
 		break;
 	case REGION_DEFAULTS:
