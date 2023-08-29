@@ -646,7 +646,7 @@ psa_status_t psa_driver_wrapper_get_builtin_key(psa_drv_slot_number_t slot_numbe
 	switch (location) {
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
-		return tfm_builtin_key_loader_get_key_buffer(slot_number, attributes, key_buffer,
+		return tfm_builtin_key_loader_get_builtin_key(slot_number, attributes, key_buffer,
 							     key_buffer_size, key_buffer_length);
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
 	default:
