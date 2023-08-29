@@ -43,14 +43,20 @@ static const uint8_t empty_account_key_list;
 
 static int check_adv_config_range(struct bt_fast_pair_adv_config fp_adv_config)
 {
-	if ((fp_adv_config.adv_mode >= BT_FAST_PAIR_ADV_MODE_COUNT) ||
-	    (fp_adv_config.adv_mode < 0)) {
+	if ((fp_adv_config.mode >= BT_FAST_PAIR_ADV_MODE_COUNT) || (fp_adv_config.mode < 0)) {
 		return -EINVAL;
 	}
 
-	if ((fp_adv_config.adv_battery_mode >= BT_FAST_PAIR_ADV_BATTERY_MODE_COUNT) ||
-	    (fp_adv_config.adv_battery_mode < 0)) {
-		return -EINVAL;
+	if (fp_adv_config.mode == BT_FAST_PAIR_ADV_MODE_NOT_DISC) {
+		if ((fp_adv_config.not_disc.type >= BT_FAST_PAIR_NOT_DISC_ADV_TYPE_COUNT) ||
+		    (fp_adv_config.not_disc.type < 0)) {
+			return -EINVAL;
+		}
+
+		if ((fp_adv_config.not_disc.battery_mode >= BT_FAST_PAIR_ADV_BATTERY_MODE_COUNT) ||
+		    (fp_adv_config.not_disc.battery_mode < 0)) {
+			return -EINVAL;
+		}
 	}
 
 	return 0;
@@ -104,11 +110,11 @@ size_t bt_fast_pair_adv_data_size(struct bt_fast_pair_adv_config fp_adv_config)
 
 	res += sizeof(fast_pair_uuid);
 
-	if (fp_adv_config.adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
+	if (fp_adv_config.mode == BT_FAST_PAIR_ADV_MODE_DISC) {
 		res += bt_fast_pair_adv_data_size_discoverable();
 	} else {
 		res += bt_fast_pair_adv_data_size_non_discoverable(account_key_cnt,
-								   fp_adv_config.adv_battery_mode);
+							fp_adv_config.not_disc.battery_mode);
 	}
 
 	return res;
@@ -236,12 +242,10 @@ int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t
 		return -EINVAL;
 	}
 
-	if (fp_adv_config.adv_battery_mode != BT_FAST_PAIR_ADV_BATTERY_MODE_NONE) {
-		if (fp_adv_config.adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
-			LOG_INF("Battery data can't be included in Discoverable Advertising");
-		} else if (account_key_cnt == 0) {
-			LOG_INF("Battery data can't be included when Account Key List is empty");
-		}
+	if ((fp_adv_config.mode == BT_FAST_PAIR_ADV_MODE_NOT_DISC) &&
+	    (fp_adv_config.not_disc.battery_mode != BT_FAST_PAIR_ADV_BATTERY_MODE_NONE) &&
+	    (account_key_cnt == 0)) {
+		LOG_INF("Battery data can't be included when Account Key List is empty");
 	}
 
 	net_buf_simple_init_with_data(&nb, buf, buf_size);
@@ -249,16 +253,16 @@ int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t
 
 	net_buf_simple_add_le16(&nb, fast_pair_uuid);
 
-	if (fp_adv_config.adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
+	if (fp_adv_config.mode == BT_FAST_PAIR_ADV_MODE_DISC) {
 		err = fp_adv_data_fill_discoverable(&nb);
 	} else {
-		if (fp_adv_config.adv_mode == BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND) {
+		if (fp_adv_config.not_disc.type == BT_FAST_PAIR_NOT_DISC_ADV_TYPE_SHOW_UI_IND) {
 			ak_filter_type = FP_FIELD_TYPE_SHOW_PAIRING_UI_INDICATION;
 		} else {
 			ak_filter_type = FP_FIELD_TYPE_HIDE_PAIRING_UI_INDICATION;
 		}
 		err = fp_adv_data_fill_non_discoverable(&nb, account_key_cnt, ak_filter_type,
-							fp_adv_config.adv_battery_mode);
+							fp_adv_config.not_disc.battery_mode);
 	}
 
 	if (!err) {

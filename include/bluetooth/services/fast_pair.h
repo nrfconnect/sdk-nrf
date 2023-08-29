@@ -23,30 +23,36 @@ extern "C" {
 /** Value that denotes unknown battery level (see @ref bt_fast_pair_battery). */
 #define BT_FAST_PAIR_BATTERY_LEVEL_UNKNOWN	0x7f
 
-/** @brief Fast Pair advertising mode. Used to generate advertising packet.
- *
- * According to Fast Pair specification, when no Account Key has been saved on the device both Fast
- * Pair not discoverable advertising modes result in the same advertising data.
- */
+/** @brief Fast Pair advertising mode. Used to generate advertising packet. */
 enum bt_fast_pair_adv_mode {
 	/** Fast Pair discoverable advertising. */
-	BT_FAST_PAIR_ADV_MODE_DISCOVERABLE,
+	BT_FAST_PAIR_ADV_MODE_DISC,
 
-	/** Fast Pair not discoverable advertising, show UI indication. */
-	BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND,
-
-	/** Fast Pair not discoverable advertising, hide UI indication. */
-	BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_HIDE_UI_IND,
+	/** Fast Pair not discoverable advertising. */
+	BT_FAST_PAIR_ADV_MODE_NOT_DISC,
 
 	/** Number of Fast Pair advertising modes. */
 	BT_FAST_PAIR_ADV_MODE_COUNT
 };
 
+/** @brief Fast Pair not discoverable advertising type. Used to generate advertising packet. */
+enum bt_fast_pair_not_disc_adv_type {
+	/** Show UI indication. */
+	BT_FAST_PAIR_NOT_DISC_ADV_TYPE_SHOW_UI_IND,
+
+	/** Hide UI indication. */
+	BT_FAST_PAIR_NOT_DISC_ADV_TYPE_HIDE_UI_IND,
+
+	/** Number of Fast Pair not discoverable advertising types. */
+	BT_FAST_PAIR_NOT_DISC_ADV_TYPE_COUNT
+};
+
 /** @brief Fast Pair advertising battery mode. Used to generate advertising packet.
  *
  * Battery data can be included in advertising packet only if the Fast Pair Provider is in Fast Pair
- * not discoverable advertising mode. To prevent tracking, the Fast Pair Provider should not include
- * battery data in the advertising packet all the time.
+ * not discoverable advertising mode and is in possesion of at least one Account Key. To prevent
+ * tracking, the Fast Pair Provider should not include battery data in the advertising packet
+ * all the time.
  */
 enum bt_fast_pair_adv_battery_mode {
 	/** Do not advertise battery data. */
@@ -77,13 +83,41 @@ enum bt_fast_pair_battery_comp {
 	BT_FAST_PAIR_BATTERY_COMP_COUNT
 };
 
+/** @brief Fast Pair discoverable advertising info. Currently empty. */
+struct bt_fast_pair_disc_adv_info {};
+
+/** @brief Fast Pair not discoverable advertising info. */
+struct bt_fast_pair_not_disc_adv_info {
+	/** Advertising type. According to Fast Pair specification, when no Account Key has been
+	 *  saved on the device, this field has no effect on the advertising data.
+	 */
+	enum bt_fast_pair_not_disc_adv_type type;
+
+	/** Fast Pair advertising battery mode. Battery values can be set using
+	 *  @ref bt_fast_pair_battery_set.
+	 */
+	enum bt_fast_pair_adv_battery_mode battery_mode;
+};
+
 /** @brief Fast Pair advertising config. Used to generate advertising packet. */
 struct bt_fast_pair_adv_config {
 	/** Fast Pair advertising mode. */
-	enum bt_fast_pair_adv_mode adv_mode;
+	enum bt_fast_pair_adv_mode mode;
 
-	/** Fast Pair advertising battery mode. */
-	enum bt_fast_pair_adv_battery_mode adv_battery_mode;
+	/** Fast Pair advertising info. Content depends on Fast Pair advertising mode
+	 *  (see @ref mode field).
+	 */
+	union {
+		/** Fast Pair discoverable advertising info. Relevant if @ref mode field set to
+		 *  @ref BT_FAST_PAIR_ADV_MODE_DISC.
+		 */
+		struct bt_fast_pair_disc_adv_info disc;
+
+		/** Fast Pair not discoverable advertising info. Relevant if @ref mode field set to
+		 *  @ref BT_FAST_PAIR_ADV_MODE_NOT_DISC.
+		 */
+		struct bt_fast_pair_not_disc_adv_info not_disc;
+	};
 };
 
 /** @brief Fast Pair battery component descriptor. */
