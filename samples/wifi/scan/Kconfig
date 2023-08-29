@@ -71,4 +71,11 @@ config WIFI_SCAN_CHAN_LIST
 	help
 	  List of channels used to perform scan.
 
+config WIFI_SCAN_MAX_BSS_CNT
+	int "Maximum number of scan results to return."
+	default 0
+	range 0 65535
+	help
+	  Maximum number of scan results to return. 0 represents unlimited number of BSSes.
+
 endmenu

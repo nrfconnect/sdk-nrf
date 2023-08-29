@@ -47,22 +47,26 @@ static uint32_t scan_result;
 const struct wifi_scan_params tests[] = {
 	{
 	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
-	.dwell_time_active = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE
+	.dwell_time_active = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE,
+	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
 	{
 	.scan_type = WIFI_SCAN_TYPE_PASSIVE,
-	.dwell_time_passive = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE
+	.dwell_time_passive = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE,
+	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
 #ifdef CONFIG_WIFI_SCAN_BAND_2_4_GHZ
 	{
-	.bands = (1 << WIFI_FREQ_BAND_2_4_GHZ)
+	.bands = (1 << WIFI_FREQ_BAND_2_4_GHZ),
+	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
 #ifdef CONFIG_WIFI_SCAN_BAND_5GHZ
 	{
-	.bands = (1 << WIFI_FREQ_BAND_5_GHZ)
+	.bands = (1 << WIFI_FREQ_BAND_5_GHZ),
+	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
 #ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
@@ -72,7 +76,8 @@ const struct wifi_scan_params tests[] = {
 #endif
 #ifdef CONFIG_WIFI_SCAN_CHAN
 	{
-	.chan = { {0, 0} }
+	.chan = { {0, 0} },
+	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
 };
