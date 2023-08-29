@@ -19,9 +19,14 @@ The sample supports the following development kits:
 Overview
 ********
 
-This sample can perform Wi-Fi scan operations in the 2.4GHz and 5GHz bands.
-The default scan type is active scan.
+The sample demonstrates Wi-Fi scan operations in the 2.4 GHz and 5 GHz bands.
+The default scan type is active.
 However, you can configure the scan type to be either active or passive.
+Also, you can perform scan operation based on
+
+* Frequency band(s)
+* Specific SSID(s)
+* Specific channel(s)
 
 Using this sample, the development kit can scan for available access points in :abbr:`STA (Station)` mode.
 
@@ -30,9 +35,6 @@ Configuration
 
 |config|
 
-Configuration options
-=====================
-
 Select the scan type to be used by the sample.
 
 .. note::
@@ -40,12 +42,18 @@ Select the scan type to be used by the sample.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
-The following sample-specific Kconfig option is used in this sample (located in :file:`samples/wifi/scan/Kconfig`):
+Configuration options
+=====================
+
+The following sample-specific Kconfig option is used in this sample (located in :file:`samples/wifi/scan/Kconfig`) :
 
 .. _CONFIG_WIFI_SCAN_TYPE_SELECT:
 
 CONFIG_WIFI_SCAN_TYPE_SELECT
    This option sets the scan type to be used by the sample.
+
+.. options-from-kconfig::
+   :show-type:
 
 Building and running
 ********************
@@ -121,4 +129,63 @@ Testing
       4    | abcdef                           6     | 1    | -37  | WPA/WPA2 | aa:aa:aa:aa:aa:aa
       5    | pqrst                            5     | 1    | -65  | WPA/WPA2 | xx:xx:xx:xx:xx:xx
       6    | AZBYCXD                          7     | 1    | -41  | WPA/WPA2 | yy:yy:yy:yy:yy:yy
+      Scan request done
+
+* Default (Active) scan results:
+
+  .. code-block:: console
+
+      Scan requested
+      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
+      1    |                                  0   | 11   | -39  | Open     | C2:A5:11:A2:B1:E2
+      2    | abcdefg                          7   | 11   | -39  | Open     | BC:A5:11:A2:B1:E2
+      3    | hijklmno                         8   | 48   | -43  | Open     | 00:22:CF:E6:AE:99
+      Scan request done
+
+* Passive scan results:
+
+  .. code-block:: console
+
+      Scan requested
+      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
+      1    |                                  0   | 11   | -39  | Open     | C2:A5:11:A2:B1:E2
+      2    | abcdefg                          7   | 11   | -39  | Open     | BC:A5:11:A2:B1:E2
+      3    | hijklmno                         8   | 48   | -43  | Open     | 00:22:CF:E6:AE:99
+      Scan request done
+
+* 2.4 GHz scan only results:
+
+  .. code-block:: console
+
+      Scan requested
+      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
+      1    | abcdefg                          7   | 11   | -39  | Open     | BC:A5:11:A2:B1:E2
+      Scan request done
+
+* 5 GHz scan only results:
+
+  .. code-block:: console
+
+      Scan requested
+      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
+      1    | pqrst                             5  | 48   | -43  | Open     | 00:22:CF:E6:AE:99
+      Scan request done
+
+* SSID based scan results:
+
+  .. code-block:: console
+
+      Scan requested
+      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
+      1    | pqrst                             5  | 48   | -43  | Open     | 00:22:CF:E6:AE:99
+      Scan request done
+
+* Channel based scan results:
+
+  .. code-block:: console
+
+      Scan requested
+      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
+      1    | abcdefg                          7   | 11   | -39  | Open     | BC:A5:11:A2:B1:E2
+      1    | pqrst                            5   | 48   | -43  | Open     | 00:22:CF:E6:AE:99
       Scan request done
