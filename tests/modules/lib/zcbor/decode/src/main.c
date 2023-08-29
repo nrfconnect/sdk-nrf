@@ -6,6 +6,7 @@
 #include <zephyr/ztest.h>
 #include "test_decode.h"
 #include "zcbor_encode.h"
+#include "zcbor_decode.h"
 
 ZTEST(lib_zcbor_test1, test_decode)
 {
