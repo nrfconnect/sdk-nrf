@@ -1262,15 +1262,15 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 	char *message = TLV_VALUE_NOT_OK;
 
 	char cmd[16];
-	char response[L_BUFFER_LEN];
+	char response[64];
 
-	char band[S_BUFFER_LEN];
-	char ssid[S_BUFFER_LEN];
-	char role[S_BUFFER_LEN];
+	char band[32];
+	char ssid[32];
+	char role[32];
 
-	char connected_freq[S_BUFFER_LEN];
-	char connected_ssid[S_BUFFER_LEN];
-	char mac_addr[S_BUFFER_LEN];
+	char connected_freq[32];
+	char connected_ssid[32];
+	char mac_addr[32];
 	int bss_identifier = 0;
 	struct interface_info *wlan = NULL;
 	char bss_identifier_str[16];
