@@ -290,6 +290,7 @@ Bluetooth samples
 
 * :ref:`peripheral_fast_pair` sample:
 
+  * Added automatic switching to the Fast Pair not discoverable advertising mode with the hide UI indication instead of removing the Fast Pair advertising payload when all bond slots are taken.
   * Updated by disabling the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option as a workaround fix for the `Zephyr issue #61033`_.
   * Fixed an issue where the sample was unable to advertise in Fast Pair not discoverable advertising mode when it had five Account Keys written.
 
@@ -564,6 +565,7 @@ Bluetooth libraries and services
 
   * Updated by deleting reset in progress flag from settings storage instead of storing it as ``false`` on factory reset operation.
     This is done to ensure that no Fast Pair data is left in the settings storage after the factory reset.
+  * Changed the :c:struct:`bt_fast_pair_adv_config` structure and the :c:enum:`bt_fast_pair_adv_mode` enumerator to separate advertising mode from show or hide UI indication advertising information.
 
 * :ref:`bt_le_adv_prov_readme` library:
 

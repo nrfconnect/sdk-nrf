@@ -124,7 +124,7 @@ Button 1:
        * After a Bluetooth Central successfully pairs.
 
        After the device reaches the maximum number of paired devices (:kconfig:option:`CONFIG_BT_MAX_PAIRED`), the device stops looking for new peers.
-       Therefore, the device no longer advertises in the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`), and only the Fast Pair not discoverable advertising with hide UI indication mode includes the Fast Pair payload.
+       Therefore, the device no longer advertises in the pairing mode (:c:member:`bt_le_adv_prov_adv_state.pairing_mode`), and the Fast Pair advertising mode is automatically set to the Fast Pair not discoverable advertising with the hide UI indication on every advertising start.
 
 Button 2:
    Increases audio volume of the connected Bluetooth Central.

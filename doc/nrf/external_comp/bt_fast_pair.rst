@@ -93,7 +93,7 @@ The Fast Pair service implementation provides API to generate the advertising da
   To use this extension, ensure the following:
 
   #. Call :c:func:`bt_fast_pair_battery_set` to provide battery information.
-  #. Set :c:member:`bt_fast_pair_adv_config.adv_battery_mode` to either :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND` or :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_HIDE_UI_IND` to include the battery notification in the generated advertising payload.
+  #. Set :c:member:`bt_fast_pair_not_disc_adv_info.battery_mode` in :c:struct:`bt_fast_pair_adv_config` to either :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND` or :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_HIDE_UI_IND` to include the battery notification in the generated advertising payload.
 
   See the `Fast Pair Battery Notification extension`_ documentation for more details about this extension.
 
