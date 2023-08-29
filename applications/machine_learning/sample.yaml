@@ -1,5 +1,5 @@
 sample:
-  name: Machine learning
+  name: nRF Machine Learning
   description: Machine learning application reference design
 tests:
   applications.machine_learning.zdebug:
