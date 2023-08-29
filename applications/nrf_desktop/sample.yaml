@@ -1,6 +1,6 @@
 sample:
-  name: nRF52 Desktop
-  description: BLE HID device reference design
+  name: nRF Desktop
+  description: HID device reference design
 tests:
   applications.nrf_desktop.zdebug:
     build_only: true
