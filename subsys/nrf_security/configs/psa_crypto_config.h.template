@@ -225,7 +225,10 @@
 
 /* TF-M */
 #cmakedefine MBEDTLS_PSA_CRYPTO_SPM
+/* Avoid redefinition as TF-M defines this on the command line */
+#ifndef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 #cmakedefine MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+#endif
 
 /* Platform */
 #cmakedefine MBEDTLS_PLATFORM_C

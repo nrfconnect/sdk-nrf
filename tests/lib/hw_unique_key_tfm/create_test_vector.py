@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 # The label used in the function tfm_plat_get_huk.
 common_huk_label = b"TFM_HW_UNIQ_KEY\0"
 
-# The function tfm_builtin_key_loader_get_key_buffer
+# The function tfm_builtin_key_loader_get_builtin_key
 # uses the owner ID as label when the HUK is being
 # used for key derivation.
 label_owner_id = b"\xff\xff\xff\xff"
@@ -51,7 +51,7 @@ cmac_53_2 = cmac.CMAC(alg.AES(bytes(key_nrf53)), backend=None)
 cmac_53_2.update(b'\x02' + bytes(common_huk_label) + b'\x00' + bytes(context_53) + b'\x01\x00')
 derived_huk_53 += cmac_53_2.finalize()
 
-# This is equivalent HKDF derivation in tfm_builtin_key_loader_get_key_buffer
+# This is equivalent HKDF derivation in tfm_builtin_key_loader_get_builtin_key
 hkdf = HKDF(
     algorithm=hashes.SHA256(),
     length=32,
