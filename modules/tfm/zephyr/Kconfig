@@ -61,11 +61,19 @@ config TFM_ATTEST_INCLUDE_COSE_KEY_ID
 	default n
 
 # Only the PSA_IOT_1 profile is supported
-config TFM_ATTEST_TOKEN_PROFILE_PSA_IOT_1_ENABLED
-	bool
-	default y
-	help
-	  Set the PSA_IOT_1 initial attestation token profile
+choice TFM_ATTEST_TOKEN_PROFILE
+	prompt "Token profile"
+	default TFM_ATTEST_TOKEN_PROFILE_PSA_IOT_1
+
+config TFM_ATTEST_TOKEN_PROFILE_PSA_IOT_1
+	bool "PSA_IOT_1"
+
+config TFM_ATTEST_TOKEN_PROFILE_PSA_2_0_0
+	bool "PSA_2_0_0"
+
+config TFM_ATTEST_TOKEN_PROFILE_ARM_CCA
+	bool "ARM_CCA"
+endchoice
 
 config TFM_ATTEST_STACK_SIZE
 	hex "Attestation service stack size"

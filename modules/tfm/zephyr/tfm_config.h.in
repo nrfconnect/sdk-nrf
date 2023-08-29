@@ -95,7 +95,16 @@
 #cmakedefine ATTEST_STACK_SIZE @ATTEST_STACK_SIZE@
 
 /* Set the initial attestation token profile */
+/* The TF-M config_base.h configuration will do
+ * #define ATTEST_TOKEN_PROFILE_PSA_IOT_1 1, if non of the token profiles are
+ * chosen. While #cmakedefine01 will define it with value 0 if the variables are
+ * not set. This causes a redefine warning, so ignoring the token profile if
+ * initial attestation is not enabled */
+#ifdef TFM_PARTITION_INITIAL_ATTESTATION
 #cmakedefine01 ATTEST_TOKEN_PROFILE_PSA_IOT_1
+#cmakedefine01 ATTEST_TOKEN_PROFILE_PSA_2_0_0
+#cmakedefine01 ATTEST_TOKEN_PROFILE_ARM_CCA
+#endif
 
 /* ITS Partition Configs */
 
