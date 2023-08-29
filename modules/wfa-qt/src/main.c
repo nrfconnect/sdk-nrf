@@ -42,6 +42,9 @@ void qt_main(void)
 	/* Welcome message */
 	print_welcome();
 
+	/* Set default wireless interface information */
+	set_wireless_interface(WIRELESS_INTERFACE_DEFAULT);
+
 	/* Print the run-time information */
 	LOG_INF("QuickTrack control app running at: %d", get_service_port());
 	LOG_INF("Wireless Interface: %s", WIRELESS_INTERFACE_DEFAULT);
