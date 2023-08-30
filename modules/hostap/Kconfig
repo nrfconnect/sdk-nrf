@@ -145,6 +145,11 @@ config NET_MGMT_EVENT_STACK_SIZE
 config NET_SOCKETS_POLL_MAX
 	default 4
 
+# Supplicant API is stack heavy (buffers + snprintfs) and control interface
+# uses socketpair which pushes the stack usage causing overflow for 2048 bytes.
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	default 2560
+
 module = WPA_SUPP
 module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
