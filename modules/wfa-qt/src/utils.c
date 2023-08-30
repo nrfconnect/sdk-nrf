@@ -722,6 +722,26 @@ void set_netmask(char *ifname)
 
 int find_interface_ip(char *ipaddr, int ipaddr_len, char *name)
 {
+	char tmp[32];
+
+	if (strcmp(name, get_wireless_interface()))
+		return 0;
+
+	const struct device *dev = device_get_binding(name);
+	struct net_if *wifi_iface = net_if_lookup_by_dev(dev);
+
+	if (net_if_is_wifi(wifi_iface)) {
+		struct net_if_ipv4 *ipv4;
+
+		ipv4 = wifi_iface->config.ip.ipv4;
+		memcpy(ipaddr, net_addr_ntop(AF_INET,
+		       &ipv4->unicast[0].address.in_addr.s_addr,
+		       tmp, sizeof(tmp)), ipaddr_len);
+		indigo_logger(LOG_LEVEL_INFO, "%s - %d: IPv4 address:%s",
+			      __func__, __LINE__, ipaddr);
+		return 1;
+	}
+
 	return 0;
 }
 
