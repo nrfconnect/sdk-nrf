@@ -3,16 +3,6 @@
 Welcome to the |NCS|!
 #####################
 
-.. important::
-
-   |NCS| v2.4.99-dev1 is a development tag and will be replaced by v2.5.0 in the future.
-
-   The development tag contains the following major updates:
-
-   * New :ref:`lib_nrf_cloud_coap` library for nRF Cloud service's CoAP API, enabling low power devices to gain savings from short sleep times and efficient communication.
-   * Added CoAP support to :ref:`nrf_cloud_multi_service` (called previously Cellular: nRF Cloud MQTT multi-service).
-
-
 The |NCS| is where you begin building low-power wireless applications with Nordic Semiconductor nRF52, nRF53, nRF70, and nRF91 Series devices.
 
 The SDK contains optimized cellular IoT (LTE-M and NB-IoT), Bluetooth® Low Energy, Thread, Zigbee, Wi-Fi®, and Bluetooth mesh stacks, a range of applications, samples, and reference implementations, as well as a full suite of drivers for Nordic Semiconductor's devices.
