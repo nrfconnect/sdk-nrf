@@ -297,9 +297,11 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 			resp = NULL;
 			if (sscanf(out->at_buff, "AT%%KEYGEN=%d,%d,%*s", &tag, &type) == 2) {
 				LOG_DBG("Clear sec_tag %d, type %d", tag, type);
-				ret = nrf_provisioning_at_del_credential(tag, type);
-				if (ret < 0) {
-					LOG_ERR("AT cmd failed, error: %d", ret);
+				int err;
+
+				err = nrf_provisioning_at_del_credential(tag, type);
+				if (err < 0) {
+					LOG_ERR("AT cmd failed, error: %d", err);
 				}
 			}
 			resp_sz *= 2; /* Previous size wasn't sufficient */
