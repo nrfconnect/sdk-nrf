@@ -137,7 +137,7 @@ Multiple overlay files can be included to enable multiple features at the same t
    DTS overlay files are named the same as the build target and use the file extension :file:`.overlay`.
    When they are placed in the :file:`boards` folder and the DTS overlay filename matches the build target,
    the build system automatically selects and applies the overlay.
-   You can give the custom DTS overlay files as a compiler option ``-DDTC_OVERLAY_FILE=<dtc_filename>.overlay``.
+   You can give the custom DTS overlay files as a compiler option ``-DEXTRA_DTC_OVERLAY_FILE=<dtc_filename>.overlay``.
 
 Optional library configurations
 ===============================
