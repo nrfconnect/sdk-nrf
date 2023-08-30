@@ -14,6 +14,8 @@
  */
 #define UART_RX_MARGIN_MS	10
 
+#define HEXDUMP_LIMIT		16
+
 extern bool uart_configured;
 extern struct uart_config slm_uart;
 
@@ -53,11 +55,12 @@ int slm_uart_configure(void);
  *
  * @param data Data to write
  * @param len Length of data
+ * @param print_full_debug Print full debug traces (if enabled)
  *
  * @retval 0 If the data was successfully written to buffer.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_uart_tx_write(const uint8_t *data, size_t len);
+int slm_uart_tx_write(const uint8_t *data, size_t len, bool print_full_debug);
 
 /**
  * @brief Initialize SLM UART handler for serial LTE modem
