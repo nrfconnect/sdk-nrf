@@ -196,9 +196,9 @@ config OPENTHREAD_CSL_TIMEOUT
 	int
 	default 20
 
-endif
+endif # OPENTHREAD_CSL_RECEIVER
 
-endif
+endif # !OPENTHREAD_THREAD_VERSION_1_1
 
 if MBEDTLS_PSA_CRYPTO_C
 
@@ -278,9 +278,14 @@ config PSA_WANT_ALG_TLS12_PSK_TO_MS
 	bool
 	default y
 
-endif
+endif # MBEDTLS_PSA_CRYPTO_C
 
 config OPENTHREAD_TCP_ENABLE
 	select EXPERIMENTAL
 
-endif
+config OPENTHREAD_NUM_MESSAGE_BUFFERS
+	int
+	default 64 if OPENTHREAD_NORDIC_LIBRARY_MTD
+	default 96
+
+endif # NET_L2_OPENTHREAD
