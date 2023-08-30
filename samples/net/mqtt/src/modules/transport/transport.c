@@ -225,7 +225,11 @@ static void disconnected_entry(void *o)
 	 * disconnected state.
 	 */
 	if (user_object->status == NETWORK_CONNECTED) {
-		k_work_reschedule_for_queue(&transport_queue, &connect_work, K_NO_WAIT);
+		LOG_INF("Disconnected from the MQTT broker, reconnecting in %d seconds",
+			CONFIG_MQTT_SAMPLE_TRANSPORT_RECONNECTION_TIMEOUT_SECONDS);
+
+		k_work_reschedule_for_queue(&transport_queue, &connect_work,
+			K_SECONDS(CONFIG_MQTT_SAMPLE_TRANSPORT_RECONNECTION_TIMEOUT_SECONDS));
 	}
 }
 
@@ -236,13 +240,12 @@ static void disconnected_run(void *o)
 
 	if ((user_object->status == NETWORK_DISCONNECTED) && (user_object->chan == &NETWORK_CHAN)) {
 		/* If NETWORK_DISCONNECTED is received after the MQTT connection is closed,
-		 * we cancel the connect work if it is onging.
+		 * we cancel the connect work if it is ongoing.
 		 */
 		k_work_cancel_delayable(&connect_work);
 	}
 
 	if ((user_object->status == NETWORK_CONNECTED) && (user_object->chan == &NETWORK_CHAN)) {
-
 		/* Wait for 5 seconds to ensure that the network stack is ready before
 		 * attempting to connect to MQTT. This delay is only needed when building for
 		 * Wi-Fi.
