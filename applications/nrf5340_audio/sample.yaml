@@ -1,9 +1,9 @@
 sample:
-  name: nRF5340 Audio
-  description: LE Audio sample
+  name: nRF5340 Audio application
+  description: LE Audio implementation example
 common:
   integration_platforms:
-      - nrf5340_audio_dk_nrf5340_cpuapp
+    - nrf5340_audio_dk_nrf5340_cpuapp
 tests:
   applications.nrf5340_audio.headset:
     build_only: true
