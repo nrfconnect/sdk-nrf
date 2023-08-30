@@ -32,6 +32,19 @@ static void on_modem_init(int err, void *ctx)
 		return;
 	}
 
+	if (IS_ENABLED(CONFIG_LTE_PROPRIETARY_PSM_REQ)) {
+		err = lte_lc_proprietary_psm_req(true);
+		if (err) {
+			LOG_ERR("Failed to configure proprietary PSM, err %d", err);
+			return;
+		}
+	} else {
+		/* Return value is ignored because this feature is not supported by all MFW
+		 * versions.
+		 */
+		(void)lte_lc_proprietary_psm_req(false);
+	}
+
 	err = lte_lc_edrx_req(IS_ENABLED(CONFIG_LTE_EDRX_REQ));
 	if (err) {
 		LOG_ERR("Failed to configure eDRX, err %d", err);

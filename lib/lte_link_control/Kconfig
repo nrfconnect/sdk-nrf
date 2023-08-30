@@ -85,6 +85,13 @@ config LTE_PSM_REQ_RAT
 	  See 3GPP 27.007 Ch. 7.38.
 	  And 3GPP 24.008 Ch. 10.5.7.3 for data format.
 
+config LTE_PROPRIETARY_PSM_REQ
+	bool "Enable use of proprietary PSM"
+	help
+	  Enable use of proprietary PSM using AT%FEACONF. To use this feature, also PSM request
+	  must be enabled using CONFIG_LTE_PSM_REQ or lte_lc_psm_req().
+	  Refer to the AT command guide for guidance and limitations of this feature.
+
 config LTE_EDRX_REQ
 	bool "Enable eDRX request"
 	help

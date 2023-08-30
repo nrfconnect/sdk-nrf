@@ -666,7 +666,10 @@ Modem libraries
 
 * :ref:`lte_lc_readme` library:
 
-  * Added the function :c:func:`lte_lc_edrx_get` for reading eDRX parameters currently provided by the network.
+  * Added:
+
+    * The function :c:func:`lte_lc_edrx_get` for reading eDRX parameters currently provided by the network.
+    * Support for proprietary Power Saving Mode (PSM).
 
   * Updated:
 
