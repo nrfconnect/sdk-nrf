@@ -34,7 +34,6 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
 
 #define MAX_SSID_LEN        32
-#define CONNECTION_TIMEOUT_S  100
 #define STATUS_POLLING_MS   300
 
 /* 1000 msec = 1 sec */
@@ -210,7 +209,12 @@ static void net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 
 static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 {
-	params->timeout = SYS_FOREVER_MS;
+
+	params->timeout =  CONFIG_STA_CONN_TIMEOUT_SEC * MSEC_PER_SEC;
+
+	if (params->timeout == 0) {
+		params->timeout = SYS_FOREVER_MS;
+	}
 
 	/* SSID */
 	params->ssid = CONFIG_STA_SAMPLE_SSID;
@@ -281,7 +285,6 @@ int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 
 int main(void)
 {
-	int i;
 	memset(&context, 0, sizeof(context));
 
 	net_mgmt_init_event_callback(&wifi_shell_mgmt_cb,
@@ -337,17 +340,13 @@ int main(void)
 	while (1) {
 		wifi_connect();
 
-		for (i = 0; i < CONNECTION_TIMEOUT; i++) {
-			k_sleep(K_MSEC(STATUS_POLLING_MS));
+		while (!context.connect_result) {
 			cmd_wifi_status();
-			if (context.connect_result) {
-				break;
-			}
+			k_sleep(K_MSEC(STATUS_POLLING_MS));
 		}
+
 		if (context.connected) {
 			k_sleep(K_FOREVER);
-		} else if (!context.connect_result) {
-			LOG_ERR("Connection Timed Out");
 		}
 	}
 

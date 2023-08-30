@@ -52,4 +52,15 @@ config NRF700X_QSPI_ENCRYPTION_KEY
 	depends on BOARD_NRF7002DK_NRF5340_CPUAPP
 	help
 	  Specify the QSPI encryption key
+
+config STA_CONN_TIMEOUT_SEC
+	int "Overall Connection timeout i.e., time to be waited for a station to connect and get an IP address"
+	# Zephyr DHCP retry is 1 minute, so set the default to 70 seconds
+	default 70
+	# 512 has no special meaning, just a reasonable upper limit
+	range 0 512
+	help
+	  Specify the connection timeout, in seconds. This is the overall timeout i.e., time to be waited for
+	  a station to connect and get an IP address. DHCP retries should be taken into account when setting
+	  this value. If the timeout is set to 0, the connection will not timeout.
 endmenu
