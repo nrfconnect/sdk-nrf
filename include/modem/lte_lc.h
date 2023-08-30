@@ -1356,7 +1356,7 @@ int lte_lc_normal(void);
 int lte_lc_psm_param_set(const char *rptau, const char *rat);
 
 /**
- * Request modem to enable or disable power saving mode (PSM).
+ * Request modem to enable or disable Power Saving Mode (PSM).
  *
  * PSM parameters can be set using @kconfig{CONFIG_LTE_PSM_REQ_RPTAU} and
  * @kconfig{CONFIG_LTE_PSM_REQ_RAT}, or by calling lte_lc_psm_param_set().
@@ -1389,6 +1389,32 @@ int lte_lc_psm_req(bool enable);
  *         modem is not registered to network.
  */
 int lte_lc_psm_get(int *tau, int *active_time);
+
+/**
+ * Request modem to enable or disable proprietary Power Saving Mode (PSM).
+ *
+ * The purpose of the proprietary PSM feature is to perform a PSM-like sleep when network does not
+ * allow normal PSM usage. During proprietary PSM, modem will fall to sleep in the same way than it
+ * would do if network allowed to use PSM. Sending of MO data or MO SMS will automatically wake up
+ * the modem just like if modem was in normal PSM sleep.
+ *
+ * To use the feature, also PSM request must be enabled using @kconfig{CONFIG_LTE_PSM_REQ} or
+ * lte_lc_psm_req().
+ *
+ * Refer to the AT command guide for guidance and limitations of this feature.
+ *
+ * @note @kconfig{CONFIG_LTE_PROPRIETARY_PSM_REQ} can be set to enable proprietary PSM, which is
+ *       generally sufficient. This option allows to enable or disable proprietary PSM after modem
+ *       initialization. Calling this function for run-time control is possible, but it should be
+ *       noted that conflicts may arise with the value set by
+ *       @kconfig{CONFIG_LTE_PROPRIETARY_PSM_REQ} if it is called during modem initialization.
+ *
+ * @note This feature is only supported by modem firmware versions >= v2.0.0.
+ *
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_proprietary_psm_req(bool enable);
 
 /**
  * Set the Paging Time Window (PTW) value to be used with eDRX.

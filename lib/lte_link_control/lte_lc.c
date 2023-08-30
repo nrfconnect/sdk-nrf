@@ -43,6 +43,18 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 		LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS		: \
 	LTE_LC_SYSTEM_MODE_DEFAULT)
 
+/* Internal enums */
+
+enum feaconf_oper {
+	FEACONF_OPER_WRITE = 0,
+	FEACONF_OPER_READ  = 1,
+	FEACONF_OPER_LIST  = 2
+};
+
+enum feaconf_feat {
+	FEACONF_FEAT_PROPRIETARY_PSM = 0
+};
+
 /* Static variables */
 
 static bool is_initialized;
@@ -731,6 +743,11 @@ static int init_and_connect(void)
 	return connect_lte(true);
 }
 
+static int feaconf_write(enum feaconf_feat feat, bool state)
+{
+	return nrf_modem_at_printf("AT%%FEACONF=%d,%d,%u", FEACONF_OPER_WRITE, feat, state);
+}
+
 /* Public API */
 
 int lte_lc_init(void)
@@ -968,6 +985,15 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	*active_time = psm_cfg.active_time;
 
 	LOG_DBG("TAU: %d sec, active time: %d sec", *tau, *active_time);
+
+	return 0;
+}
+
+int lte_lc_proprietary_psm_req(bool enable)
+{
+	if (feaconf_write(FEACONF_FEAT_PROPRIETARY_PSM, enable) != 0) {
+		return -EFAULT;
+	}
 
 	return 0;
 }
