@@ -26,3 +26,4 @@ If an issue is found in a release after it has taken place, those issues are lis
    releases_and_maturity/release_notes
    releases_and_maturity/repository_revisions
    releases_and_maturity/software_maturity
+   releases_and_maturity/known_issues
