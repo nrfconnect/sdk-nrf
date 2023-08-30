@@ -24,6 +24,7 @@ enum nrf_cloud_fota_evt_id {
 	NRF_CLOUD_FOTA_EVT_ERASE_DONE,
 	NRF_CLOUD_FOTA_EVT_DL_PROGRESS,
 	NRF_CLOUD_FOTA_EVT_BLE_JOB_RCVD,
+	NRF_CLOUD_FOTA_EVT_JOB_RCVD
 };
 
 /** @brief FOTA error detail. */
@@ -174,6 +175,9 @@ int nrf_cloud_fota_update_check(void);
 
 /** @brief Check if the device is actively working on a FOTA job. */
 bool nrf_cloud_fota_is_active(void);
+
+/** @brief Check if the device has received FOTA job info. */
+bool nrf_cloud_fota_is_available(void);
 
 /**
  * @brief Set callback for BLE FOTA.
