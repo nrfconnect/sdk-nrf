@@ -324,7 +324,7 @@ int slm_uart_power_off(void)
 	}
 
 	/* Write sync str to buffer, so it is send first when we power UART.*/
-	(void)slm_uart_tx_write(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	(void)slm_uart_tx_write(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1, true);
 
 	return err;
 }
@@ -344,7 +344,7 @@ int slm_uart_configure(void)
 }
 
 /* Write the data to tx_buffer and trigger sending. */
-int slm_uart_tx_write(const uint8_t *data, size_t len)
+int slm_uart_tx_write(const uint8_t *data, size_t len, bool print_full_debug)
 {
 	size_t ret;
 	size_t sent = 0;
@@ -384,6 +384,8 @@ int slm_uart_tx_write(const uint8_t *data, size_t len)
 	} else {
 		/* TX already in progress. */
 	}
+
+	LOG_HEXDUMP_DBG(data, print_full_debug ? len : MIN(HEXDUMP_LIMIT, len), "TX");
 
 	return 0;
 }
@@ -452,7 +454,7 @@ int slm_uart_handler_init(slm_uart_rx_callback_t callback_t)
 
 	k_sem_give(&tx_done_sem);
 
-	err = slm_uart_tx_write(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	err = slm_uart_tx_write(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1, true);
 	if (err) {
 		return err;
 	}

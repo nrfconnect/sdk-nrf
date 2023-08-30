@@ -25,8 +25,6 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define CR		'\r'
 #define LF		'\n'
 
-#define HEXDUMP_DATAMODE_MAX    16
-
 const char *slm_quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
 
 /* Operation mode variables */
@@ -38,8 +36,8 @@ enum slm_operation_mode {
 static enum slm_operation_mode slm_mode;
 static slm_datamode_handler_t datamode_handler;
 static int datamode_handler_result;
-uint16_t datamode_time_limit;	/* Send trigger by time in data mode */
-K_MUTEX_DEFINE(mutex_mode);  /* Protects the operation mode variables. */
+uint16_t datamode_time_limit; /* Send trigger by time in data mode */
+K_MUTEX_DEFINE(mutex_mode); /* Protects the operation mode variables. */
 
 uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
 static char rsp_buf[SLM_AT_MAX_RSP_LEN];
@@ -52,13 +50,12 @@ K_MUTEX_DEFINE(mutex_data); /* Protects the data_rb and quit_str_partial_match. 
 static struct k_work raw_send_scheduled_work;
 
 /* global variable used across different files */
-struct at_param_list at_param_list;           /* For AT parser */
+struct at_param_list at_param_list; /* For AT parser */
 
 /* global functions defined in different files */
 int slm_at_parse(const char *at_cmd);
 int slm_at_init(void);
 void slm_at_uninit(void);
-
 
 static enum slm_operation_mode get_slm_mode(void)
 {
@@ -147,7 +144,7 @@ static void raw_send(uint8_t flags)
 			/* Raw data sending */
 			size_finish = 0;
 
-			LOG_HEXDUMP_DBG(data, MIN(size_send, HEXDUMP_DATAMODE_MAX), "RX-DATA");
+			LOG_HEXDUMP_DBG(data, MIN(size_send, HEXDUMP_LIMIT), "RX");
 			k_mutex_lock(&mutex_mode, K_FOREVER);
 			if (datamode_handler && size_send > 0) {
 				size_sent = datamode_handler(DATAMODE_SEND, data, size_send, flags);
@@ -392,7 +389,6 @@ static char *strrstr(const char *str1, const char *str2)
 	return NULL;
 }
 
-
 static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 {
 	static const char ok_str[] = "OK\r\n";
@@ -475,7 +471,7 @@ static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 	 */
 	if (strlen(buf) > strlen(CRLF_STR)) {
 		format_final_result(at_buf, strlen(at_buf), sizeof(at_buf));
-		err = slm_uart_tx_write(buf, strlen(buf));
+		err = slm_uart_tx_write(buf, strlen(buf), true);
 		if (err) {
 			LOG_ERR("AT command response failed: %d", err);
 		}
@@ -538,7 +534,6 @@ static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
 
 			prev_character = buf[processed];
 		}
-
 	}
 
 	if (send) {
@@ -616,7 +611,7 @@ static void rx_handler_callback(const uint8_t *buf, size_t len)
 			ret = null_handler(buf, len);
 		} else {
 			LOG_ERR("Internal error: Unknown SLM mode.");
-			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1);
+			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1, true);
 			break;
 		}
 
@@ -625,7 +620,7 @@ static void rx_handler_callback(const uint8_t *buf, size_t len)
 			len -= ret;
 		} else {
 			LOG_ERR("Internal error: Command overflow.");
-			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1);
+			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1, true);
 			break;
 		}
 	}
@@ -641,19 +636,19 @@ AT_MONITOR(at_notify, ANY, notification_handler);
 static void notification_handler(const char *notification)
 {
 	if (get_slm_mode() == SLM_AT_COMMAND_MODE) {
-		(void)slm_uart_tx_write(CRLF_STR, strlen(CRLF_STR));
-		(void)slm_uart_tx_write(notification, strlen(notification));
+		(void)slm_uart_tx_write(CRLF_STR, strlen(CRLF_STR), true);
+		(void)slm_uart_tx_write(notification, strlen(notification), true);
 	}
 }
 
 void rsp_send_ok(void)
 {
-	(void)slm_uart_tx_write(OK_STR, sizeof(OK_STR) - 1);
+	(void)slm_uart_tx_write(OK_STR, sizeof(OK_STR) - 1, true);
 }
 
 void rsp_send_error(void)
 {
-	(void)slm_uart_tx_write(ERROR_STR, sizeof(ERROR_STR) - 1);
+	(void)slm_uart_tx_write(ERROR_STR, sizeof(ERROR_STR) - 1, true);
 }
 
 void rsp_send(const char *fmt, ...)
@@ -664,15 +659,13 @@ void rsp_send(const char *fmt, ...)
 	vsnprintf(rsp_buf, sizeof(rsp_buf), fmt, arg_ptr);
 	va_end(arg_ptr);
 
-	(void)slm_uart_tx_write(rsp_buf, strlen(rsp_buf));
+	(void)slm_uart_tx_write(rsp_buf, strlen(rsp_buf), true);
 }
 
 void data_send(const uint8_t *data, size_t len)
 {
-	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATA");
-	(void)slm_uart_tx_write(data, len);
+	(void)slm_uart_tx_write(data, len, false);
 }
-
 
 int enter_datamode(slm_datamode_handler_t handler)
 {
