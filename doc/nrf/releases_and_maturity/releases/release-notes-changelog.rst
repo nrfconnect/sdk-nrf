@@ -179,6 +179,7 @@ nRF9160: Asset Tracker v2
   * Default value of the Kconfig option :kconfig:option:`CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS` is changed to 300 seconds.
   * Enabled link time optimization to reduce the flash size of the application.
     You can disable this using the Kconfig option :kconfig:option:`CONFIG_ASSET_TRACKER_V2_LTO`.
+  * Replaced overlay arguments ``OVERLAY_CONFIG`` and ``DTC_OVERLAY_FILE`` with the new Zephyr overlay arguments ``EXTRA_CONF_FILE`` and ``EXTRA_DTC_OVERLAY_FILE`` so as to avoid overriding of board overlay for the nRF9160 DK v0.14.0.
 
 * Fixed an issue with movement timeout handling in passive mode.
 
