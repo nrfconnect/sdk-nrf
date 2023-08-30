@@ -713,6 +713,17 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 		LOG_DBG("NRF_CLOUD_FOTA_EVT_DL_PROGRESS");
 		break;
 	}
+	case NRF_CLOUD_FOTA_EVT_JOB_RCVD: {
+		struct nrf_cloud_evt cloud_evt = {
+			.type = NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE
+		};
+
+		LOG_DBG("NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE");
+		cloud_evt.data.ptr = (const void *)&evt->type;
+		cloud_evt.data.len = sizeof(evt->type);
+		nct_send_event(&cloud_evt);
+		break;
+	}
 	default: {
 		break;
 	}

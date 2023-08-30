@@ -679,6 +679,9 @@ Libraries for networking
     * Warning message discouraging use of :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` for purposes other than testing.
     * Reporting of protocol (MQTT, REST, or CoAP) as well as method (LTE or Wi-Fi) to the device shadow.
     * Kconfig choice :kconfig:option:`CONFIG_NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT` for selecting the data that is encoded in Wi-Fi location requests.
+    * Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB` for controlling whether a FOTA update job is started automatically or at the request of the application.
+    * An event :c:enum:`NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE` that indicates a FOTA update job is available.
+    * :c:func:`nrf_cloud_fota_job_start` function that starts a FOTA update job.
 
   * Updated:
 

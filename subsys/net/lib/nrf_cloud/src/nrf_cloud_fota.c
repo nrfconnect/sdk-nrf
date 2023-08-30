@@ -58,7 +58,7 @@ static void http_fota_handler(const struct fota_download_evt *evt);
 static void send_event(const enum nrf_cloud_fota_evt_id id,
 		       const struct nrf_cloud_fota_job *const job);
 static void cleanup_job(struct nrf_cloud_fota_job *const job);
-static int start_job(struct nrf_cloud_fota_job *const job);
+static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt);
 static int send_job_update(struct nrf_cloud_fota_job *const job);
 static int publish(const struct mqtt_publish_param *const pub);
 static int save_validate_status(const char *const job_id,
@@ -594,6 +594,12 @@ int nrf_cloud_fota_unsubscribe(void)
 
 bool nrf_cloud_fota_is_active(void)
 {
+	return ((current_fota.info.type != NRF_CLOUD_FOTA_TYPE__INVALID) &&
+		(current_fota.status != NRF_CLOUD_FOTA_QUEUED));
+}
+
+bool nrf_cloud_fota_is_available(void)
+{
 	return current_fota.info.type != NRF_CLOUD_FOTA_TYPE__INVALID;
 }
 
@@ -792,7 +798,28 @@ static void send_event(const enum nrf_cloud_fota_evt_id id,
 
 }
 
-static int start_job(struct nrf_cloud_fota_job *const job)
+int nrf_cloud_fota_job_start(void)
+{
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB)) {
+		return -ENOTSUP;
+	}
+
+	/* No job is available */
+	if (current_fota.info.type == NRF_CLOUD_FOTA_TYPE__INVALID) {
+		LOG_INF("No pending FOTA job");
+		return -ENOENT;
+	}
+
+	/* Job is in progress */
+	if (current_fota.status != NRF_CLOUD_FOTA_QUEUED) {
+		LOG_INF("FOTA job already in progress");
+		return -EINPROGRESS;
+	}
+
+	return start_job(&current_fota, false);
+}
+
+static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt)
 {
 	__ASSERT_NO_MSG(job != NULL);
 	static const int sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
@@ -843,15 +870,28 @@ static int start_job(struct nrf_cloud_fota_job *const job)
 	ret = nrf_cloud_download_start(&dl);
 	if (ret) {
 		LOG_ERR("Failed to start FOTA download: %d", ret);
+		ret = -EPIPE;
 		job->status = NRF_CLOUD_FOTA_FAILED;
 		job->error = NRF_CLOUD_FOTA_ERROR_DOWNLOAD_START;
-		send_event(NRF_CLOUD_FOTA_EVT_ERROR, job);
+		if (send_evt) {
+			send_event(NRF_CLOUD_FOTA_EVT_ERROR, job);
+		}
 	} else {
 		LOG_INF("Downloading update");
 		job->dl_progress = 0;
 		job->sent_dl_progress = 0;
 		job->status = NRF_CLOUD_FOTA_DOWNLOADING;
-		send_event(NRF_CLOUD_FOTA_EVT_START, job);
+		if (send_evt) {
+			send_event(NRF_CLOUD_FOTA_EVT_START, job);
+		}
+	}
+
+	/* Send job status to the cloud */
+	(void)send_job_update(job);
+
+	/* Cleanup if the job failed to start */
+	if (ret) {
+		cleanup_job(job);
 	}
 
 	return ret;
@@ -869,6 +909,8 @@ static void cleanup_job(struct nrf_cloud_fota_job *const job)
 	/* Reset the struct */
 	memset(job, 0, sizeof(*job));
 	job->info.type = NRF_CLOUD_FOTA_TYPE__INVALID;
+	/* Initial status state */
+	job->status = NRF_CLOUD_FOTA_QUEUED;
 }
 
 #if defined(CONFIG_NRF_CLOUD_FOTA_BLE_DEVICES)
@@ -1046,8 +1088,8 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 		goto send_ack;
 	}
 
-	if (nrf_cloud_fota_is_active() && !ble_id) {
-		LOG_INF("Job in progress... skipping");
+	if (nrf_cloud_fota_is_available() && !ble_id) {
+		LOG_INF("A job is already available or in progress... skipping");
 		skip = true;
 		goto send_ack;
 	}
@@ -1116,13 +1158,12 @@ send_ack:
 			cleanup_ble_job(&ble_job);
 		}
 #endif
-	} else {
+	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB)) {
 		/* Start update */
-		ret = start_job(&current_fota);
-		(void)send_job_update(&current_fota);
-		if (ret) {
-			cleanup_job(&current_fota);
-		}
+		(void)start_job(&current_fota, true);
+	} else {
+		/* Inform application of job */
+		send_event(NRF_CLOUD_FOTA_EVT_JOB_RCVD, &current_fota);
 	}
 
 	return 0;
