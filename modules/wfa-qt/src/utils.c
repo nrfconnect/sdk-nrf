@@ -816,6 +816,26 @@ int control_interface(char *ifname, char *op)
 
 int set_interface_ip(char *ifname, char *ip)
 {
+	const struct device *dev = device_get_binding(ifname);
+	struct net_if *wlan_iface = net_if_lookup_by_dev(dev);
+	struct in_addr addr;
+
+	if (!wlan_iface) {
+		indigo_logger(LOG_LEVEL_ERROR, "Cannot find network interface: %s", dev->name);
+		return -1;
+	}
+
+	if (sizeof(ip) > 1) {
+		if (net_addr_pton(AF_INET, ip, &addr)) {
+			indigo_logger(LOG_LEVEL_ERROR, "Invalid address: %s", ip);
+			return -1;
+		}
+		net_if_ipv4_addr_add(wlan_iface, &addr, NET_ADDR_MANUAL, 0);
+	} else {
+		indigo_logger(LOG_LEVEL_ERROR, "Address not configured");
+		return -1;
+	}
+
 	return 0;
 }
 
