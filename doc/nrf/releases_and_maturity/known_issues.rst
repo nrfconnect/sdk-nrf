@@ -289,7 +289,7 @@ KRKNWK-17535: The application core can crash on nRF5340 after the OTA firmware u
 
   **Workaround:** Complete the following steps:
 
-  1. Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``TODO``).
+  1. Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``eeb7280620fff1e16a75cfa41338186fd952c432``).
   #. Add the following lines to the :file:`samples/matter/common/src/ota_util.cpp`:
 
      .. code-block::
