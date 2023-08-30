@@ -82,6 +82,16 @@ This patch release adds a workaround in the :ref:`nrfxlib:nrf_modem` for modem f
 
 For more information, see item NRF91-1702 in the `Known issues page <known issues page on the main branch_>`_.
 
+Samples
+=======
+
+Cellular samples
+----------------
+
+:ref:`lwm2m_client` sample:
+
+* Added missing ``lwm2m_rd_client_start()`` call error handling.
+
 Zephyr
 ======
 
