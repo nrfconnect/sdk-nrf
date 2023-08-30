@@ -74,6 +74,7 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 	struct le_audio_msg msg;
 
 	msg.event = event;
+	msg.dir = BT_AUDIO_DIR_SOURCE;
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
 	ERR_CHK(ret);
@@ -290,7 +291,8 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 	return -ENOTSUP;
 }
 
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay,
+			enum bt_audio_dir dir)
 {
 	ARG_UNUSED(bitrate);
 	ARG_UNUSED(sampling_rate);

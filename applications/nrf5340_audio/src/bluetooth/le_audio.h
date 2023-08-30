@@ -21,13 +21,14 @@
 	BT_CODEC_LC3_FREQ_48KHZ | BT_CODEC_LC3_FREQ_24KHZ | BT_CODEC_LC3_FREQ_16KHZ
 
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
-	BT_BAP_LC3_PRESET(                                                                         \
-		BT_CODEC_LC3_CONFIG(BT_AUDIO_CODEC_CONFIG_FREQ, BT_CODEC_CONFIG_LC3_DURATION_10,   \
-				    _loc, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1, _stream_context), \
-		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),                   \
-					     CONFIG_BT_AUDIO_RETRANSMITS,                          \
-					     CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,             \
-					     CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
+	BT_BAP_LC3_PRESET(BT_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,              \
+					      BT_CODEC_CONFIG_LC3_DURATION_10, _loc,               \
+					      LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,               \
+					      _stream_context),                                    \
+			  BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),         \
+						       CONFIG_BT_AUDIO_RETRANSMITS,                \
+						       CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,   \
+						       CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
 
 #if CONFIG_TRANSPORT_CIS
 #if CONFIG_BT_BAP_UNICAST_CONFIGURABLE
@@ -36,22 +37,39 @@
 				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA,  \
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                               \
+				       BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL,                       \
 				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
 
 #elif CONFIG_BT_BAP_UNICAST_16_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA |                             \
+						 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 
 #elif CONFIG_BT_BAP_UNICAST_24_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA |                             \
+						 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
+
+#elif CONFIG_BT_BAP_UNICAST_48_4_1
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
+	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA |                             \
+						 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
+
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
+	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 
 #else
 #error Unsupported LC3 codec preset for unicast
@@ -148,13 +166,15 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
  * @param[out]	bitrate		Pointer to the bitrate used; can be NULL.
  * @param[out]	sampling_rate	Pointer to the sampling rate used; can be NULL.
  * @param[out]	pres_delay	Pointer to the presentation delay used; can be NULL.
+ * @param[in]	dir		Direction to get the configuration from.
  *
  * @retval	0		Operation successful.
  * @retval	-ENXIO		The feature is disabled.
  * @retval	-ENOTSUP	The feature is not supported,
  * @retval	error		Otherwise
  */
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay);
+int le_audio_config_get(struct bt_conn *conn, uint32_t *bitrate, uint32_t *sampling_rate,
+			uint32_t *pres_delay, enum bt_audio_dir dir);
 
 /**
  * @brief	Set pointer to the connection.

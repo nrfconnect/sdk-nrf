@@ -33,14 +33,14 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 #define BLE_ISO_LATENCY_MS  10
 #define BLE_ISO_RETRANSMITS 2
 
-#if CONFIG_BT_PACS_SRC_CONTEXT
-#define AVAILABLE_SINK_CONTEXT CONFIG_BT_PACS_SNK_CONTEXT
+#if CONFIG_BT_PACS_SNK_CONTEXT
+#define AVAILABLE_SINK_CONTEXT (CONFIG_BT_PACS_SNK_CONTEXT)
 #else
 #define AVAILABLE_SINK_CONTEXT 0
 #endif
 
 #if CONFIG_BT_PACS_SRC_CONTEXT
-#define AVAILABLE_SOURCE_CONTEXT CONFIG_BT_PACS_SRC_CONTEXT
+#define AVAILABLE_SOURCE_CONTEXT (CONFIG_BT_PACS_SRC_CONTEXT)
 #else
 #define AVAILABLE_SOURCE_CONTEXT 0
 #endif
@@ -83,13 +83,15 @@ static const struct bt_data ad_peer[] = {
 #endif /* CONFIG_BT_CSIP_SET_MEMBER */
 };
 
-static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn *conn)
+static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn *conn,
+				   enum le_audio_direction dir)
 {
 	int ret;
 	struct le_audio_msg msg;
 
 	msg.event = event;
 	msg.conn = conn;
+	msg.dir = dir;
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
 	ERR_CHK(ret);
@@ -126,53 +128,22 @@ struct bt_csip_set_member_register_param csip_param = {
 	.cb = &csip_callbacks,
 };
 
-static struct bt_bap_lc3_preset codec_cfg_snk_16_2_1 =
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
+static struct bt_codec lc3_codec_sink = BT_CODEC_LC3(
+	BT_AUDIO_CODEC_CAPABILIY_FREQ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
+	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, AVAILABLE_SINK_CONTEXT);
 
-static struct bt_bap_lc3_preset codec_cfg_src_16_2_1 =
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SOURCE_CONTEXT);
+static struct bt_codec lc3_codec_source = BT_CODEC_LC3(
+	BT_AUDIO_CODEC_CAPABILIY_FREQ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
+	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, AVAILABLE_SOURCE_CONTEXT);
 
-static struct bt_bap_lc3_preset codec_cfg_snk_24_2_1 =
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
-
-static struct bt_bap_lc3_preset codec_cfg_src_24_2_1 =
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SOURCE_CONTEXT);
-
-static struct bt_bap_lc3_preset codec_cfg_snk_48_2_1 =
-	BT_BAP_LC3_UNICAST_PRESET_48_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
-
-static struct bt_bap_lc3_preset codec_cfg_snk_48_4_1 =
-	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
-
-static struct bt_bap_lc3_preset codec_cfg_snk_48_6_1 =
-	BT_BAP_LC3_UNICAST_PRESET_48_6_1(BT_AUDIO_LOCATION_FRONT_LEFT, AVAILABLE_SINK_CONTEXT);
-
-static struct bt_pacs_cap cap_sink_16_2_1 = {
-	.codec = &codec_cfg_snk_16_2_1.codec,
+static struct bt_pacs_cap cap_sink = {
+	.codec = &lc3_codec_sink,
 };
 
-static struct bt_pacs_cap cap_source_16_2_1 = {
-	.codec = &codec_cfg_src_16_2_1.codec,
-};
-
-static struct bt_pacs_cap cap_sink_24_2_1 = {
-	.codec = &codec_cfg_snk_24_2_1.codec,
-};
-
-static struct bt_pacs_cap cap_source_24_2_1 = {
-	.codec = &codec_cfg_src_24_2_1.codec,
-};
-
-static struct bt_pacs_cap cap_sink_48_2_1 = {
-	.codec = &codec_cfg_snk_48_2_1.codec,
-};
-
-static struct bt_pacs_cap cap_sink_48_4_1 = {
-	.codec = &codec_cfg_snk_48_4_1.codec,
-};
-
-static struct bt_pacs_cap cap_sink_48_6_1 = {
-	.codec = &codec_cfg_snk_48_6_1.codec,
+static struct bt_pacs_cap cap_source = {
+	.codec = &lc3_codec_source,
 };
 
 static const struct bt_codec_qos_pref qos_pref = BT_CODEC_QOS_PREF(
@@ -249,25 +220,15 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 				return -EINVAL;
 			}
 
-			if (dir == BT_AUDIO_DIR_SINK) {
-				LOG_DBG("BT_AUDIO_DIR_SINK");
-				print_codec(codec, dir);
-				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn);
-			}
-#if (CONFIG_BT_AUDIO_TX)
-			else if (dir == BT_AUDIO_DIR_SOURCE) {
-				LOG_DBG("BT_AUDIO_DIR_SOURCE");
-				print_codec(codec, dir);
-				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn);
+			print_codec(codec, dir);
+			le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn, dir);
 
+#if (CONFIG_BT_AUDIO_TX)
+			if (dir == BT_AUDIO_DIR_SOURCE) {
 				/* CIS headset only supports one source stream for now */
 				sources[0].stream = audio_stream;
 			}
 #endif /* (CONFIG_BT_AUDIO_TX) */
-			else {
-				LOG_ERR("UNKNOWN DIR");
-				return -EINVAL;
-			}
 
 			*stream = audio_stream;
 			*pref = qos_pref;
@@ -292,7 +253,7 @@ static int lc3_reconfig_cb(struct bt_bap_stream *stream, enum bt_audio_dir dir,
 static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *qos,
 		      struct bt_bap_ascs_rsp *rsp)
 {
-	le_audio_event_publish(LE_AUDIO_EVT_PRES_DELAY_SET, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_PRES_DELAY_SET, stream->conn, stream->ep->dir);
 
 	LOG_DBG("QoS: stream %p qos %p", (void *)stream, (void *)qos);
 
@@ -324,7 +285,7 @@ static int lc3_disable_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *
 {
 	LOG_DBG("Disable: stream %p", (void *)stream);
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, stream->ep->dir);
 
 	return 0;
 }
@@ -333,7 +294,7 @@ static int lc3_stop_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rsp
 {
 	LOG_DBG("Stop: stream %p", (void *)stream);
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, stream->ep->dir);
 
 	return 0;
 }
@@ -342,7 +303,7 @@ static int lc3_release_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *
 {
 	LOG_DBG("Release: stream %p", (void *)stream);
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, stream->ep->dir);
 
 	return 0;
 }
@@ -388,7 +349,7 @@ static void stream_start_cb(struct bt_bap_stream *stream)
 {
 	LOG_INF("Stream %p started", stream);
 
-	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn, stream->ep->dir);
 }
 
 static void stream_released_cb(struct bt_bap_stream *stream)
@@ -420,7 +381,7 @@ static void stream_stop_cb(struct bt_bap_stream *stream, uint8_t reason)
 	atomic_clear(&iso_tx_pool_alloc);
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, stream->ep->dir);
 }
 
 static struct bt_bap_stream_ops stream_ops = {
@@ -465,11 +426,7 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 
 	/* Register capabilities */
 	if (IS_ENABLED(CONFIG_BT_PAC_SNK)) {
-		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_16_2_1);
-		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_24_2_1);
-		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_48_2_1);
-		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_48_4_1);
-		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink_48_6_1);
+		bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap_sink);
 
 		if (channel == AUDIO_CH_L) {
 			csip_param.rank = CSIP_HL_RANK;
@@ -508,8 +465,7 @@ static int initialize(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestm
 	}
 
 	if (IS_ENABLED(CONFIG_BT_PAC_SRC)) {
-		bt_pacs_cap_register(BT_AUDIO_DIR_SOURCE, &cap_source_16_2_1);
-		bt_pacs_cap_register(BT_AUDIO_DIR_SOURCE, &cap_source_24_2_1);
+		bt_pacs_cap_register(BT_AUDIO_DIR_SOURCE, &cap_source);
 
 		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
 
@@ -575,7 +531,8 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 	return -ENOTSUP;
 }
 
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
+int le_audio_config_get(struct bt_conn *conn, uint32_t *bitrate, uint32_t *sampling_rate,
+			uint32_t *pres_delay, enum bt_audio_dir dir)
 {
 	if (bitrate == NULL && sampling_rate == NULL && pres_delay == NULL) {
 		LOG_ERR("No valid pointers received");

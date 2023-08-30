@@ -439,7 +439,8 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_CONFIG_RECEIVED:
 			LOG_DBG("Config received");
 
-			ret = le_audio_config_get(&bitrate_bps, &sampling_rate_hz, NULL);
+			ret = le_audio_config_get(msg.conn, &bitrate_bps, &sampling_rate_hz, NULL,
+						  msg.dir);
 			if (ret) {
 				LOG_WRN("Failed to get config: %d", ret);
 				break;
@@ -448,12 +449,26 @@ static void le_audio_msg_sub_thread(void)
 			LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
 			LOG_DBG("Bitrate: %d bps", bitrate_bps);
 
+			if (msg.dir == BT_AUDIO_DIR_SINK) {
+				if (CONFIG_AUDIO_DEV == GATEWAY) {
+					audio_system_config_set(sampling_rate_hz, bitrate_bps, 0);
+				} else if (CONFIG_AUDIO_DEV == HEADSET) {
+					audio_system_config_set(0, 0, sampling_rate_hz);
+				}
+			} else if (msg.dir == BT_AUDIO_DIR_SOURCE) {
+				if (CONFIG_AUDIO_DEV == GATEWAY) {
+					audio_system_config_set(0, 0, sampling_rate_hz);
+				} else if (CONFIG_AUDIO_DEV == HEADSET) {
+					audio_system_config_set(sampling_rate_hz, bitrate_bps, 0);
+				}
+			}
+
 			break;
 
 		case LE_AUDIO_EVT_PRES_DELAY_SET:
 			LOG_DBG("Set presentation delay");
 
-			ret = le_audio_config_get(NULL, NULL, &pres_delay_us);
+			ret = le_audio_config_get(NULL, NULL, NULL, &pres_delay_us, 0);
 			if (ret) {
 				LOG_ERR("Failed to get config: %d", ret);
 				break;

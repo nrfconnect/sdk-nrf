@@ -70,12 +70,13 @@ static bool paused;
 
 static int bis_headset_cleanup(void);
 
-static void le_audio_event_publish(enum le_audio_evt_type event)
+static void le_audio_event_publish(enum le_audio_evt_type event, enum le_audio_direction dir)
 {
 	int ret;
 	struct le_audio_msg msg;
 
 	msg.event = event;
+	msg.dir = BT_AUDIO_DIR_SINK;
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
 	ERR_CHK(ret);
@@ -478,7 +479,8 @@ int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
 	return ret;
 }
 
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay,
+			enum bt_audio_dir dir)
 {
 	if (active_stream.codec == NULL) {
 		LOG_WRN("No active stream to get config from");

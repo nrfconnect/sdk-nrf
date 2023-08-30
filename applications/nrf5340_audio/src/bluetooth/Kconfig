@@ -47,6 +47,43 @@ config BT_BAP_UNICAST_24_2_1
 	help
 	  Unicast codec capability 24_2_1
 	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
+
+config BT_BAP_UNICAST_48_4_1
+	bool "48_4_1"
+	depends on TRANSPORT_CIS
+	help
+	  Unicast codec capability 48_4_1
+	  48kHz, 96kbps, 5 retransmits, 20ms transport latency, and 40ms presentation delay.
+endchoice
+
+config BT_AUDIO_PREF_SAMPLE_RATE_VALUE
+	hex
+	default 0x08 if BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	default 0x05 if BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
+	default 0x03 if BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
+	default 0x08
+
+
+choice BT_AUDIO_PREF_SAMPLE_RATE
+	prompt "Preferred audio sample rate"
+	default BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	help
+	  Select the preferred sample rate if there are more to choose from.
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	bool "48 kHz"
+	help
+	  48000 Hz sample rate
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
+	bool "24 kHz"
+	help
+	  24000 Hz sample rate
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
+	bool "16 kHz"
+	help
+	  16000 Hz sample rate
 endchoice
 
 choice BT_AUDIO_BROADCAST_BAP_CONFIGURATION

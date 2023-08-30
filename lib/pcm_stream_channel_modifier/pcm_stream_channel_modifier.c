@@ -90,7 +90,7 @@ int pscm_zero_pad(void const *const input, size_t input_size, enum audio_channel
 int sample_rate_convert(void *input, size_t input_size, uint32_t input_sample_rate, void **output,
 			size_t *output_size, uint32_t output_sample_rate)
 {
-	*output = input;
+	memcpy(output, input, input_size);
 	*output_size = input_size;
 	return 0;
 }

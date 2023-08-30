@@ -44,12 +44,11 @@ static size_t test_tone_size;
 
 static bool sample_rate_valid(uint32_t sample_rate_hz)
 {
-	if (sample_rate_hz != 8000 || sample_rate_hz != 16000 || sample_rate_hz != 24000 ||
-	    sample_rate_hz != 32000 || sample_rate_hz != 48000) {
-		return false;
+	if (sample_rate_hz == 16000 || sample_rate_hz == 24000 || sample_rate_hz == 48000) {
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 static void audio_gateway_configure(void)
@@ -197,8 +196,8 @@ int audio_encode_test_tone_set(uint32_t freq)
 	return 0;
 }
 
-void audio_system_sample_rate_set(uint32_t encoder_sample_rate_hz, int bitrate,
-				  uint32_t decoder_sample_rate_hz)
+void audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bitrate,
+			     uint32_t decoder_sample_rate_hz)
 {
 	if (sample_rate_valid(encoder_sample_rate_hz)) {
 		sw_codec_cfg.encoder.sample_rate_hz = encoder_sample_rate_hz;
@@ -208,8 +207,8 @@ void audio_system_sample_rate_set(uint32_t encoder_sample_rate_hz, int bitrate,
 		sw_codec_cfg.decoder.sample_rate_hz = decoder_sample_rate_hz;
 	}
 
-	if (bitrate) {
-		sw_codec_cfg.encoder.bitrate = bitrate;
+	if (encoder_bitrate) {
+		sw_codec_cfg.encoder.bitrate = encoder_bitrate;
 	}
 }
 
