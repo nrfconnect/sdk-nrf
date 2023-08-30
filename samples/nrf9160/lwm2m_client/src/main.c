@@ -447,7 +447,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
 		LOG_DBG("Disconnected");
 		if (client_state != UPDATE_FIRMWARE) {
-			state_trigger_and_unlock(START);
+			state_set_and_unlock(START);
 		} else {
 			k_mutex_unlock(&lte_mutex);
 		}
