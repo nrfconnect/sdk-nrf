@@ -1,0 +1,18 @@
+# Copyright (c) 2023 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This allows to define the pin of the GPIO to be owned by the domain.
+  It does not provide any specyfic driver.
+  Its function is to allow us to use two functionalities:
+
+  1. Generate the right UICR marking the domain to own the selected pin.
+  2. Access to pins by the macros from zephyr/devicetree/gpio.h file
+     increasing the hardware abstraction this way.
+
+compatible: "nordic,gpio-pins"
+
+properties:
+  gpios:
+    type: phandle-array
+    required: true
