@@ -107,7 +107,9 @@ enum nrf_cloud_evt_type {
 	 *  be populated with a @ref nrf_cloud_disconnect_status value.
 	 */
 	NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
-	/** A FOTA update has started. */
+	/** A FOTA update has started.
+	 * This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is enabled.
+	 */
 	NRF_CLOUD_EVT_FOTA_START,
 	/** The device should be restarted to apply a firmware upgrade */
 	NRF_CLOUD_EVT_FOTA_DONE,
@@ -117,6 +119,12 @@ enum nrf_cloud_evt_type {
 	 *  struct will be populated with a @ref nrf_cloud_connect_result value.
 	 */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR,
+	/** FOTA update job information has been received.
+	 * When ready, the application should start the job by
+	 * calling @ref nrf_cloud_fota_job_start.
+	 * This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is disabled.
+	 */
+	NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE,
 	/** An error occurred. The status field in the event struct will
 	 *  be populated with a @ref nrf_cloud_error_status value.
 	 */
@@ -259,10 +267,10 @@ enum nrf_cloud_topic_type {
 	NRF_CLOUD_TOPIC_BULK,
 	/** Endpoint used to publish binary data to nRF Cloud for certain services.
 	 *  One example is dictionary formatted logs enabled by
-	 *  CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY, which enables the
-	 *  Zephyr option CONFIG_LOG_DICTIONARY_SUPPORT. Binary data published to
+	 *  @kconfig{CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY}, which enables the
+	 *  Zephyr option @kconfig{CONFIG_LOG_DICTIONARY_SUPPORT}. Binary data published to
 	 *  this topic should be prefixed by the binary header structure defined in
-	 *  nrf_cloud_codec.h -- struct nrf_cloud_bin_hdr.  A unique format value
+	 *  nrf_cloud_codec.h - struct nrf_cloud_bin_hdr.  A unique format value
 	 *  should be included to distinguish this data from binary logging.
 	 */
 	NRF_CLOUD_TOPIC_BIN
@@ -638,8 +646,8 @@ struct nrf_cloud_init_param {
 	 */
 	char *client_id;
 	/** Flash device information required for full modem FOTA updates.
-	 * Only used if CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE is enabled.
-	 * Ignored if CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION is
+	 * Only used if @kconfig{CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE} is enabled.
+	 * Ignored if @kconfig{CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION} is
 	 * enabled.
 	 */
 	struct dfu_target_fmfu_fdev *fmfu_dev_inf;
@@ -648,7 +656,7 @@ struct nrf_cloud_init_param {
 	 */
 	struct nrf_cloud_os_mem_hooks *hooks;
 	/** Optional application version that is reported to nRF Cloud if
-	 * CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS is enabled.
+	 * @kconfig{CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS} is enabled.
 	 */
 	const char *application_version;
 };
@@ -682,7 +690,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  * @retval 0        If successful.
  * @retval -EBUSY   If a FOTA job is in progress.
  * @retval -EISCONN If the expected disconnect event did not occur.
- * @retval -ETIME   If CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD is enabled and
+ * @retval -ETIME   If @kconfig{CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD} is enabled and
  *                  the connection poll thread did not become inactive.
  * @return A negative value indicates an error.
  */
@@ -788,7 +796,7 @@ int nrf_cloud_process(void);
  * @brief The application has handled reinit after a modem FOTA update and the
  *        LTE link has been reestablished.
  *        This function must be called in order to complete the modem update.
- *        Depends on CONFIG_NRF_CLOUD_FOTA.
+ *        Depends on @kconfig{CONFIG_NRF_CLOUD_FOTA}.
  *
  * @param[in] fota_success true if modem update was successful, false otherwise.
  *
@@ -840,7 +848,7 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char * const jwt_buf, size_t j
  * @brief Function to process/validate a pending FOTA update job. Typically the job
  *        information is read from non-volatile storage on startup. This function
  *        is intended to be used by custom REST-based FOTA implementations.
- *        It is called internally if CONFIG_NRF_CLOUD_FOTA is enabled.
+ *        It is called internally if @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled.
  *        For pending NRF_CLOUD_FOTA_MODEM_DELTA jobs the modem library must
  *        be initialized before calling this function, otherwise the job will
  *        be marked as completed without validation.
@@ -859,7 +867,7 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 /**
  * @brief Function to set the active bootloader (B1) slot flag which is needed
  *        to validate a bootloader FOTA update. For proper functionality,
- *        CONFIG_FOTA_DOWNLOAD must be enabled.
+ *        @kconfig{CONFIG_FOTA_DOWNLOAD} must be enabled.
  *
  * @param[in,out] job FOTA job state information.
  *
@@ -871,7 +879,7 @@ int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * cons
 /**
  * @brief Function to retrieve the FOTA type of a pending FOTA job. A value of
  *        NRF_CLOUD_FOTA_TYPE__INVALID indicates that there are no pending FOTA jobs.
- *        Depends on CONFIG_NRF_CLOUD_FOTA.
+ *        Depends on @kconfig{CONFIG_NRF_CLOUD_FOTA}.
  *
  * @param[out] pending_fota_type FOTA type of pending job.
  *
@@ -889,7 +897,7 @@ int nrf_cloud_fota_pending_job_type_get(enum nrf_cloud_fota_type * const pending
  *        For pending NRF_CLOUD_FOTA_MODEM_DELTA jobs the modem library must
  *        be initialized before calling this function, otherwise the job will
  *        be marked as completed without validation.
- *        Depends on CONFIG_NRF_CLOUD_FOTA.
+ *        Depends on @kconfig{CONFIG_NRF_CLOUD_FOTA}.
  *
  * @param[out] fota_type_out FOTA type of pending job.
  *                           NRF_CLOUD_FOTA_TYPE__INVALID if no pending job.
@@ -908,7 +916,7 @@ int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_ty
  * @brief Function to set the flash device used for full modem FOTA updates.
  *        This function is intended to be used by custom REST-based FOTA implementations.
  *        It is called internally when @ref nrf_cloud_init is executed if
- *        CONFIG_NRF_CLOUD_FOTA is enabled. It can be called before @ref nrf_cloud_init
+ *        @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled. It can be called before @ref nrf_cloud_init
  *        if required by the application.
  *
  * @param[in] fmfu_dev_inf Flash device information.
@@ -923,10 +931,11 @@ int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_de
  * @brief Function to install a full modem update from flash. If successful,
  *        reboot the device or reinit the modem to complete the update.
  *        This function is intended to be used by custom REST-based FOTA implementations.
- *        If CONFIG_NRF_CLOUD_FOTA is enabled, call @ref nrf_cloud_fota_pending_job_validate
+ *        If @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled,
+ *        call @ref nrf_cloud_fota_pending_job_validate
  *        to install a downloaded NRF_CLOUD_FOTA_MODEM_FULL update after the
  *        @ref NRF_CLOUD_EVT_FOTA_DONE event is received.
- *        Depends on CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE.
+ *        Depends on @kconfig{CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE}.
  *
  * @retval 0 Modem update installed successfully.
  * @retval -EACCES Flash device not set; see @ref nrf_cloud_fota_fmfu_dev_set or
@@ -944,8 +953,8 @@ bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
 
 /**
  * @brief Function to determine if the specified FOTA type is enabled by the
- *        configuration. This function returns false if both CONFIG_NRF_CLOUD_FOTA
- *        and CONFIG_NRF_CLOUD_REST are disabled.
+ *        configuration. This function returns false if both @kconfig{CONFIG_NRF_CLOUD_FOTA}
+ *        and @kconfig{CONFIG_NRF_CLOUD_REST} are disabled.
  *        REST-based applications are responsible for implementing FOTA updates
  *        for all configured types.
  *
@@ -955,6 +964,24 @@ bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
  * @retval false Specified FOTA type is not enabled by the configuration.
  */
 bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
+
+/**
+ * @brief Start the FOTA update job.
+ *        This function should be called after the NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE event
+ *        is received.
+ *        This function should only be called if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB}
+ *        is disabled.
+ *        Depends on @kconfig{CONFIG_NRF_CLOUD_FOTA}.
+ *
+ * @retval 0            FOTA update job started successfully.
+ * @retval -ENOTSUP     Error; @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is enabled.
+ * @retval -ENOENT      Error; FOTA update job information has not been received.
+ * @retval -EINPROGRESS Error; a FOTA update job is in progress.
+ * @retval -EPIPE       Error; failed to start FOTA download.
+ * @return A negative value indicates an error starting the job.
+ */
+int nrf_cloud_fota_job_start(void);
+
 /** @} */
 
 #ifdef __cplusplus

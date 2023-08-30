@@ -15,6 +15,14 @@ menuconfig NRF_CLOUD_FOTA
 	default y if NRF_CLOUD_MQTT
 
 if NRF_CLOUD_FOTA
+config NRF_CLOUD_FOTA_AUTO_START_JOB
+	bool "Start FOTA job automatically"
+	default y
+	help
+	  When enabled, the FOTA update job is started immediately upon receipt
+	  of the job information from nRF Cloud.
+	  When disabled, the application is responsible for starting the job.
+
 config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
 	int "Percentage increment at which FOTA download progress is reported"
 	range 0 100
