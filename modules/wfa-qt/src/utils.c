@@ -60,22 +60,6 @@ extern char *qt_inet_ntoa(struct in_addr in)
 	return net_addr_ntop(AF_INET, (const void *)&in, addr, NET_IPV4_ADDR_LEN);
 }
 
-extern int inet_aton(const char *cp, struct in_addr *addr)
-{
-	return net_addr_pton(AF_INET, cp, addr);
-}
-
-/* lifted from inet_addr.c */
-unsigned long inet_addr(register const char *cp)
-{
-	struct in_addr val;
-
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-
-	return INADDR_NONE;
-}
-
 void debug_print_timestamp(void)
 {
 	time_t rawtime;
@@ -271,7 +255,7 @@ int loopback_server_start(char *local_ip, char *local_port, int timeout)
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	if (local_ip) {
-		addr.sin_addr.s_addr = inet_addr(local_ip);
+		net_addr_pton(AF_INET, local_ip, &addr.sin_addr.s_addr);
 	}
 
 	if (bind(s, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
@@ -357,7 +341,7 @@ void send_one_loopback_icmp_packet(struct loopback_info *info)
 
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr(info->target_ip);
+	net_addr_pton(AF_INET, info->target_ip, &addr.sin_addr.s_addr);
 
 
 	info->pkt_sent++;
@@ -513,7 +497,7 @@ int send_udp_data(char *target_ip, int target_port, int packet_count, int packet
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	if (target_ip) {
-		addr.sin_addr.s_addr = inet_addr(target_ip);
+		net_addr_pton(AF_INET, target_ip, &addr.sin_addr.s_addr);
 	}
 	addr.sin_port = htons(target_port);
 
@@ -598,7 +582,7 @@ int send_icmp_data(char *target_ip, int packet_count, int packet_size, double ra
 
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr(target_ip);
+	net_addr_pton(AF_INET, target_ip, &addr.sin_addr.s_addr);
 
 	if (rate < 1) {
 		timeout.tv_sec = 0;
