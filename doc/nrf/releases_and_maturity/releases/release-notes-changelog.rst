@@ -288,6 +288,7 @@ Bluetooth samples
 * :ref:`peripheral_fast_pair` sample:
 
   * Updated by disabling the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option as a workaround fix for the `Zephyr issue #61033`_.
+  * Fixed an issue where the sample was unable to advertise in Fast Pair not discoverable advertising mode when it had five Account Keys written.
 
 Bluetooth mesh samples
 ----------------------
@@ -560,6 +561,12 @@ Bluetooth libraries and services
 
   * Updated by deleting reset in progress flag from settings storage instead of storing it as ``false`` on factory reset operation.
     This is done to ensure that no Fast Pair data is left in the settings storage after the factory reset.
+
+* :ref:`bt_le_adv_prov_readme` library:
+
+  * Changed the allowed range of the :kconfig:option:`CONFIG_CONFIG_BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE` Kconfig option and set its default value to 26.
+    This is done to align the buffer size to the new Fast Pair not discoverable advertising data size after the size of the salt included in the data was increased from 1 byte to 2 bytes.
+    The default value has been set to maximum to mitigate buffer overflow issues in the future.
 
 * :ref:`bt_mesh` library:
 

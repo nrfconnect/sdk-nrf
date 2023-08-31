@@ -21,11 +21,23 @@ if BT_ADV_PROV_FAST_PAIR
 
 config BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE
 	int "Size of buffer used for advertising data"
-	range 10 25
-	default 19
+	range 11 26
+	default 26
 	help
-	  Size of the buffer must be big enough to fit Fast Pair advertising
-	  packet.
+	  Size of the buffer must be big enough to fit Fast Pair advertising packet.
+
+	  (10 + 1.2 * maximum number of Account Keys encoded in the advertising packet) - truncated
+	  bytes are needed. Additional 4 bytes are needed when battery data is included in Fast Pair
+	  advertising.
+
+	  11 bytes are needed when battery data is not included in Fast Pair advertising
+	  and only 1 Account Key has been written.
+
+	  20 bytes are needed when battery data is included in Fast Pair advertising
+	  and 5 Account Keys have been written.
+
+	  26 bytes are needed when battery data is included in Fast Pair advertising
+	  and 10 Account Keys have been written.
 
 config BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING
 	bool "Show UI indication in Fast Pair not discoverable advertising"
