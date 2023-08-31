@@ -8,10 +8,9 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
-      - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
-      nrf52833dk_nrf52833 nrf21540dk_nrf52840
+      nrf21540dk_nrf52840
     tags: ci_build
   sample.openthread.coap_client.mtd.multiprotocol_ble:
     build_only: true
@@ -22,5 +21,5 @@ tests:
       - nrf52840dk_nrf52840
       - nrf21540dk_nrf52840
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
-      nrf52833dk_nrf52833 nrf21540dk_nrf52840
+      nrf21540dk_nrf52840
     tags: ci_build

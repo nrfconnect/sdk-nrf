@@ -84,9 +84,6 @@ Complete the following steps to prepare for the certification tests:
       The configuration option selects the precompiled OpenThread libraries.
       The :file:`overlay-multiprotocol.conf` overlay file enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
 
-   .. note::
-      The :file:`overlay-multiprotocol.conf` overlay file is not supported with ``nrf52833dk_nrf52833``.
-
 #. Prepare Thread Test Harness.
 
    a. Copy the provided :file:`ncs/modules/lib/openthread/tools/harness-thci/OpenThread.py` file into :file:`C:\\GRL\\Thread1.2\\Thread_Harness\\THCI\\nRF_Connect_SDK.py`.
