@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "le_audio.h"
+#include "broadcast_sink.h"
 
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -16,12 +16,12 @@
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include "macros_common.h"
+#include "le_audio.h"
 #include "nrf5340_audio_common.h"
-#include "hw_codec.h"
 #include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bis_headset, CONFIG_BLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(broadcast_sink, CONFIG_BLE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT <= 2,
 	     "A maximum of two broadcast streams are currently supported");
@@ -170,9 +170,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 static struct bt_bap_stream_ops stream_ops = {
 	.started = stream_started_cb,
 	.stopped = stream_stopped_cb,
-#if (CONFIG_BT_AUDIO_RX)
 	.recv = stream_recv_cb,
-#endif /* (CONFIG_BT_AUDIO_RX) */
 };
 
 static void pa_synced_cb(struct bt_bap_broadcast_sink *sink, struct bt_le_per_adv_sync *sync,
@@ -216,9 +214,11 @@ static void pa_sync_lost_cb(struct bt_bap_broadcast_sink *sink)
 
 /**
  * @brief	Function which overwrites BIS specific codec information.
- *			I.e. level 3 specific information overwrites general level 2 information.
+ *		I.e. level 3 specific information overwrites general level 2 information.
  *
- * @note: This will change when new host APIs are available.
+ * @note	This will change when new host APIs are available.
+ *
+ * @return	0 for success, error otherwise.
  */
 static int bis_specific_codec_config(struct bt_bap_base_bis_data bis_data,
 				     struct audio_codec_info *codec)
@@ -297,7 +297,8 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 			((active_stream_index == AUDIO_CH_L) ? CH_L_TAG : CH_R_TAG));
 		LOG_DBG("Waiting for syncable");
 	} else {
-		LOG_WRN("Found no suitable stream");
+		LOG_DBG("Found no suitable stream");
+		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG);
 	}
 }
 
@@ -430,7 +431,7 @@ static int bis_headset_cleanup(void)
 	return 0;
 }
 
-static int change_active_audio_stream(void)
+int broadcast_sink_change_active_audio_stream(void)
 {
 	int ret;
 
@@ -461,24 +462,7 @@ static int change_active_audio_stream(void)
 	return 0;
 }
 
-int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
-{
-	int ret = 0;
-
-	if (action == LE_AUDIO_USER_DEFINED_ACTION_1) {
-		LOG_DBG("User defined action 1");
-		ret = change_active_audio_stream();
-	} else if (action == LE_AUDIO_USER_DEFINED_ACTION_2) {
-		LOG_DBG("User defined action 2");
-	} else {
-		LOG_WRN("User defined action not recognized (%d)", action);
-		ret = -ECANCELED;
-	}
-
-	return ret;
-}
-
-int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
+int broadcast_sink_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)
 {
 	if (active_stream.codec == NULL) {
 		LOG_WRN("No active stream to get config from");
@@ -503,20 +487,14 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pr
 			LOG_WRN("No active stream");
 			return -ENXIO;
 		}
+
 		*pres_delay = active_stream.stream->qos->pd;
 	}
 
 	return 0;
 }
 
-void le_audio_conn_set(struct bt_conn *conn)
-{
-	ARG_UNUSED(conn);
-
-	LOG_WRN("%s not supported", __func__);
-}
-
-int le_audio_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broadcast_id)
+int broadcast_sink_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broadcast_id)
 {
 	int ret;
 
@@ -548,31 +526,7 @@ int le_audio_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broadcast_
 	return 0;
 }
 
-void le_audio_conn_disconnected(struct bt_conn *conn)
-{
-	ARG_UNUSED(conn);
-
-	LOG_WRN("%s not supported", __func__);
-}
-
-int le_audio_ext_adv_set(struct bt_le_ext_adv *ext_adv)
-{
-	ARG_UNUSED(ext_adv);
-
-	LOG_WRN("%s not supported", __func__);
-	return -ENOTSUP;
-}
-
-void le_audio_adv_get(const struct bt_data **adv, size_t *adv_size, bool periodic)
-{
-	ARG_UNUSED(adv);
-	ARG_UNUSED(adv_size);
-	ARG_UNUSED(periodic);
-
-	LOG_WRN("%s not supported", __func__);
-}
-
-int le_audio_play(void)
+int broadcast_sink_start(void)
 {
 	if (!paused) {
 		LOG_WRN("Already playing");
@@ -583,7 +537,7 @@ int le_audio_play(void)
 	return 0;
 }
 
-int le_audio_pause(void)
+int broadcast_sink_stop(void)
 {
 	int ret;
 
@@ -612,19 +566,9 @@ int le_audio_pause(void)
 	return 0;
 }
 
-int le_audio_send(struct encoded_audio enc_audio)
-{
-	ARG_UNUSED(enc_audio);
-
-	LOG_WRN("Not possible to send audio data from broadcast sink");
-	return -ENXIO;
-}
-
-int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_cb)
+int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
-
-	ARG_UNUSED(timestmp_cb);
 
 	ret = initialize(recv_cb);
 	if (ret) {
@@ -632,12 +576,12 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 		return ret;
 	}
 
-	LOG_DBG("LE Audio enabled");
+	LOG_DBG("Broadcast sink enabled");
 
 	return 0;
 }
 
-int le_audio_disable(void)
+int broadcast_sink_disable(void)
 {
 	int ret;
 
@@ -656,7 +600,7 @@ int le_audio_disable(void)
 		return ret;
 	}
 
-	LOG_DBG("LE Audio disabled");
+	LOG_DBG("Broadcast sink disabled");
 
 	return 0;
 }

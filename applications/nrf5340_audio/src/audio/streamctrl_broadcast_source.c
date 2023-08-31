@@ -6,12 +6,7 @@
 
 #include "streamctrl.h"
 
-#include <stddef.h>
-#include <string.h>
-#include <errno.h>
-
 #include <zephyr/kernel.h>
-#include <zephyr/device.h>
 #include <zephyr/debug/stack.h>
 #include <zephyr/zbus/zbus.h>
 
@@ -34,7 +29,6 @@ ZBUS_CHAN_DECLARE(le_audio_chan);
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 ZBUS_CHAN_DECLARE(sdu_ref_chan);
 
-/* Used in audio_datapath.c */
 ZBUS_OBS_DECLARE(sdu_ref_msg_listen);
 
 static struct k_thread button_msg_sub_thread_data;
@@ -89,7 +83,7 @@ static int test_tone_start(void)
 }
 
 /**
- * @brief	Handle button activity
+ * @brief	Handle button activity.
  */
 static void button_msg_sub_thread(void)
 {
@@ -116,14 +110,14 @@ static void button_msg_sub_thread(void)
 		switch (msg.button_pin) {
 		case BUTTON_PLAY_PAUSE:
 			if (strm_state == STATE_STREAMING) {
-				ret = broadcast_source_start(NULL);
-				if (ret) {
-					LOG_WRN("Failed to start broadcaster: %d", ret);
-				}
-			} else if (strm_state == STATE_PAUSED) {
 				ret = broadcast_source_stop();
 				if (ret) {
 					LOG_WRN("Failed to stop broadcaster: %d", ret);
+				}
+			} else if (strm_state == STATE_PAUSED) {
+				ret = broadcast_source_start(NULL);
+				if (ret) {
+					LOG_WRN("Failed to start broadcaster: %d", ret);
 				}
 			} else {
 				LOG_WRN("In invalid state: %d", strm_state);
@@ -152,7 +146,7 @@ static void button_msg_sub_thread(void)
 }
 
 /**
- * @brief	Handle Bluetooth LE audio events
+ * @brief	Handle Bluetooth LE audio events.
  */
 static void le_audio_msg_sub_thread(void)
 {
@@ -214,7 +208,7 @@ static void le_audio_msg_sub_thread(void)
 }
 
 /**
- * @brief	Create zbus subscriber threads
+ * @brief	Create zbus subscriber threads.
  *
  * @return	0 for success, error otherwise.
  */
@@ -252,10 +246,10 @@ static int zbus_subscribers_create(void)
 }
 
 /**
- * @brief	Zbus listener to receive events from bt_mgmt
+ * @brief	Zbus listener to receive events from bt_mgmt.
  *
  * @note	Will in most cases be called from BT_RX context,
- *		so there should not be too much processing done here
+ *		so there should not be too much processing done here.
  */
 static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 {
@@ -279,7 +273,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 ZBUS_LISTENER_DEFINE(bt_mgmt_evt_listen, bt_mgmt_evt_handler);
 
 /**
- * @brief	Link zbus producers and observers
+ * @brief	Link zbus producers and observers.
  *
  * @return	0 for success, error otherwise.
  */
@@ -287,25 +281,26 @@ static int zbus_link(void)
 {
 	int ret;
 
-	if (IS_ENABLED(CONFIG_ZBUS) && (CONFIG_ZBUS_RUNTIME_OBSERVERS_POOL_SIZE > 0)) {
-		ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add button sub");
-			return ret;
-		}
+	if (!IS_ENABLED(CONFIG_ZBUS) || (CONFIG_ZBUS_RUNTIME_OBSERVERS_POOL_SIZE <= 0)) {
+		return -ENOTSUP;
+	}
 
-		ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add le_audio sub");
-			return ret;
-		}
+	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add button sub");
+		return ret;
+	}
 
-		ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen,
-					ZBUS_ADD_OBS_TIMEOUT_MS);
-		if (ret) {
-			LOG_ERR("Failed to add bt_mgmt listener");
-			return ret;
-		}
+	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add le_audio sub");
+		return ret;
+	}
+
+	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add bt_mgmt listener");
+		return ret;
 	}
 
 	return 0;

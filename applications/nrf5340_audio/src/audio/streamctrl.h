@@ -16,23 +16,26 @@ enum stream_state {
 	STATE_PAUSED,
 };
 
-/** @brief Get current streaming state
+/**
+ * @brief Get current streaming state.
  *
- * @return      strm_state enum value
+ * @return      strm_state enum value.
  */
 uint8_t stream_state_get(void);
 
-/** @brief Send audio data over the stream
+/**
+ * @brief Send audio data over the stream.
  *
- * @param data		Data to send
- * @param size		Size of data
- * @param num_ch	Number of audio channels
+ * @param data		Data to send.
+ * @param size		Size of data.
+ * @param num_ch	Number of audio channels.
  */
 void streamctrl_send(void const *const data, size_t size, uint8_t num_ch);
 
-/** @brief Init internal functionality and start streamctrl
+/**
+ * @brief Init internal functionality and start streamctrl.
  *
- *  @return 0 if successful.
+ * @return 0 if successful.
  */
 int streamctrl_start(void);
 

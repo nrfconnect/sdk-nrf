@@ -1,32 +1,24 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include "streamctrl.h"
 
-#include <stddef.h>
-#include <string.h>
-#include <errno.h>
-
 #include <zephyr/kernel.h>
-#include <zephyr/drivers/gpio.h>
-#include <zephyr/device.h>
 #include <zephyr/debug/stack.h>
 #include <zephyr/zbus/zbus.h>
 
 #include "nrf5340_audio_common.h"
+#include "broadcast_sink.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
 #include "audio_system.h"
-#include "button_handler.h"
 #include "data_fifo.h"
-#include "le_audio.h"
 #include "bt_mgmt.h"
 #include "bt_rend.h"
-#include "bt_content_ctrl.h"
 #include "audio_datapath.h"
 
 #include <zephyr/logging/log.h>
@@ -44,23 +36,25 @@ DATA_FIFO_DEFINE(ble_fifo_rx, CONFIG_BUF_BLE_RX_PACKET_NUM, WB_UP(sizeof(struct 
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 ZBUS_SUBSCRIBER_DEFINE(le_audio_evt_sub, CONFIG_LE_AUDIO_MSG_SUB_QUEUE_SIZE);
-ZBUS_SUBSCRIBER_DEFINE(content_control_evt_sub, CONFIG_CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE);
+
+ZBUS_CHAN_DECLARE(button_chan);
+ZBUS_CHAN_DECLARE(le_audio_chan);
+ZBUS_CHAN_DECLARE(bt_mgmt_chan);
+ZBUS_CHAN_DECLARE(volume_chan);
+
+ZBUS_OBS_DECLARE(volume_evt_sub);
 
 static struct k_thread audio_datapath_thread_data;
 static struct k_thread button_msg_sub_thread_data;
 static struct k_thread le_audio_msg_sub_thread_data;
-static struct k_thread content_control_msg_sub_thread_data;
 
 static k_tid_t audio_datapath_thread_id;
 static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
-static k_tid_t content_control_msg_sub_thread_id;
 
 K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_SIZE);
 K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(content_control_msg_sub_thread_stack,
-		      CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE);
 
 static enum stream_state strm_state = STATE_PAUSED;
 
@@ -197,68 +191,9 @@ static void stream_state_set(enum stream_state stream_state_new)
 	strm_state = stream_state_new;
 }
 
-uint8_t stream_state_get(void)
-{
-	return strm_state;
-}
-
-void streamctrl_encoded_data_send(void const *const data, size_t size, uint8_t num_ch)
-{
-	int ret;
-	static int prev_ret;
-
-	struct encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
-
-	if (strm_state == STATE_STREAMING) {
-		ret = le_audio_send(enc_audio, BROADCAST_SOURCE);
-
-		if (ret != 0 && ret != prev_ret) {
-			if (ret == -ECANCELED) {
-				LOG_WRN("Sending operation cancelled");
-			} else {
-				LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
-			}
-		}
-
-		prev_ret = ret;
-	}
-}
-
-#define TEST_TONE_BASE_FREQ_HZ 1000
-
-static int test_tone_start(void)
-{
-	int ret;
-	static uint32_t test_tone_hz;
-
-	if (CONFIG_AUDIO_BIT_DEPTH_BITS != 16) {
-		LOG_WRN("Tone gen only supports 16 bits");
-		return -ECANCELED;
-	}
-
-	if (strm_state == STATE_STREAMING) {
-		if (test_tone_hz == 0) {
-			test_tone_hz = TEST_TONE_BASE_FREQ_HZ;
-		} else if (test_tone_hz >= TEST_TONE_BASE_FREQ_HZ * 4) {
-			test_tone_hz = 0;
-		} else {
-			test_tone_hz = test_tone_hz * 2;
-		}
-
-		if (test_tone_hz != 0) {
-			LOG_INF("Test tone set at %d Hz", test_tone_hz);
-		} else {
-			LOG_INF("Test tone off");
-		}
-
-		ret = audio_encode_test_tone_set(test_tone_hz);
-		ERR_CHK_MSG(ret, "Failed to generate test tone");
-	}
-
-	return 0;
-}
-
-/* Handle button activity */
+/**
+ * @brief	Handle button activity.
+ */
 static void button_msg_sub_thread(void)
 {
 	int ret;
@@ -284,20 +219,15 @@ static void button_msg_sub_thread(void)
 
 		switch (msg.button_pin) {
 		case BUTTON_PLAY_PAUSE:
-			if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-				LOG_DBG("Play/pause not supported in walkie-talkie mode");
-				return;
-			}
-
 			if (strm_state == STATE_STREAMING) {
-				ret = bt_content_ctrl_stop(NULL);
+				ret = broadcast_sink_stop();
 				if (ret) {
-					LOG_WRN("Could not stop: %d", ret);
+					LOG_WRN("Failed to stop broadcast sink: %d", ret);
 				}
 			} else if (strm_state == STATE_PAUSED) {
-				ret = bt_content_ctrl_start(NULL);
+				ret = broadcast_sink_start();
 				if (ret) {
-					LOG_WRN("Could not start: %d", ret);
+					LOG_WRN("Failed to start broadcast sink: %d", ret);
 				}
 			} else {
 				LOG_WRN("In invalid state: %d", strm_state);
@@ -322,25 +252,10 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_4:
-			if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
-				if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-					LOG_DBG("Test tone is disabled in walkie-talkie mode");
-					break;
-				}
-
-				ret = test_tone_start();
-				if (ret) {
-					LOG_WRN("Failed to play test tone, ret: %d", ret);
-				}
-
-				break;
+			ret = broadcast_sink_change_active_audio_stream();
+			if (ret) {
+				LOG_WRN("Failed to change active audio stream: %d", ret);
 			}
-
-			/* ret = le_audio_user_defined_button_press(LE_AUDIO_USER_DEFINED_ACTION_1);
-			 * if (ret) {
-			 *	LOG_WRN("Failed button 4 press, ret: %d", ret);
-			 * }
-			 */
 
 			break;
 
@@ -352,11 +267,11 @@ static void button_msg_sub_thread(void)
 				}
 
 				break;
-			} else if (IS_ENABLED(CONFIG_BT_BAP_BROADCAST_SINK)) {
-				/* Will eventually be handled by different applications */
-				ret = le_audio_disable();
+			} else {
+				ret = broadcast_sink_disable();
 				if (ret) {
-					LOG_ERR("Failed to disable the broadcast receiver");
+					LOG_ERR("Failed to disable the broadcast sink");
+					break;
 				}
 
 				if (broadcast_alt) {
@@ -388,14 +303,16 @@ static void button_msg_sub_thread(void)
 	}
 }
 
-/* Handle Bluetooth LE audio events */
+/**
+ * @brief	Handle Bluetooth LE audio events.
+ */
 static void le_audio_msg_sub_thread(void)
 {
 	int ret;
-	/* uint32_t pres_delay_us;
-	 * uint32_t bitrate_bps;
-	 * uint32_t sampling_rate_hz;
-	 */
+	uint32_t pres_delay_us;
+	uint32_t bitrate_bps;
+	uint32_t sampling_rate_hz;
+
 	const struct zbus_channel *chan;
 
 	while (1) {
@@ -445,34 +362,23 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_CONFIG_RECEIVED:
 			LOG_DBG("Config received");
 
-			/* ret = le_audio_config_get(&bitrate_bps, &sampling_rate_hz, NULL);
-			 * if (ret) {
-			 *	LOG_WRN("Failed to get config: %d", ret);
-			 *	break;
-			 * }
-			 *
-			 * LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
-			 *LOG_DBG("Bitrate: %d bps", bitrate_bps);
-			 */
-			break;
+			ret = broadcast_sink_config_get(&bitrate_bps, &sampling_rate_hz,
+							&pres_delay_us);
+			if (ret) {
+				LOG_WRN("Failed to get config: %d", ret);
+				break;
+			}
 
-		case LE_AUDIO_EVT_PRES_DELAY_SET:
-			LOG_DBG("Set presentation delay");
+			LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
+			LOG_DBG("Bitrate: %d bps", bitrate_bps);
 
-			/* ret = le_audio_config_get(NULL, NULL, &pres_delay_us);
-			 * if (ret) {
-			 *	LOG_ERR("Failed to get config: %d", ret);
-			 *	break;
-			 * }
-			 *
-			 * ret = audio_datapath_pres_delay_us_set(pres_delay_us);
-			 * if (ret) {
-			 *	LOG_ERR("Failed to set presentation delay to %d", pres_delay_us);
-			 *	break;
-			 * }
-			 *
-			 * LOG_INF("Presentation delay %d us is set by initiator", pres_delay_us);
-			 */
+			ret = audio_datapath_pres_delay_us_set(pres_delay_us);
+			if (ret) {
+				LOG_ERR("Failed to set presentation delay to %d", pres_delay_us);
+				break;
+			}
+
+			LOG_INF("Presentation delay %d us is set", pres_delay_us);
 
 			break;
 
@@ -493,11 +399,12 @@ static void le_audio_msg_sub_thread(void)
 			break;
 
 		case LE_AUDIO_EVT_NO_VALID_CFG:
-			LOG_WRN("No valid configurations found, will disconnect");
+			LOG_WRN("No valid configurations found, disabling the broadcast sink");
 
-			ret = bt_mgmt_conn_disconnect(msg.conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			ret = broadcast_sink_disable();
 			if (ret) {
-				LOG_ERR("Failed to disconnect: %d", ret);
+				LOG_ERR("Failed to disable the broadcast sink");
+				break;
 			}
 
 			break;
@@ -512,54 +419,11 @@ static void le_audio_msg_sub_thread(void)
 	}
 }
 
-/* Handle content control events */
-static void content_control_msg_sub_thread(void)
-{
-	int ret;
-
-	const struct zbus_channel *chan;
-
-	while (1) {
-		ret = zbus_sub_wait(&content_control_evt_sub, &chan, K_FOREVER);
-		ERR_CHK(ret);
-
-		struct content_control_msg msg;
-
-		ret = zbus_chan_read(chan, &msg, ZBUS_READ_TIMEOUT_MS);
-		ERR_CHK(ret);
-
-		uint8_t event = msg.event;
-
-		LOG_DBG("Received event = %d, current state = %d", event, strm_state);
-
-		switch (event) {
-		case MEDIA_PLAY:
-			ret = le_audio_start(BROADCAST_SOURCE);
-			if (ret && (ret != -EALREADY)) {
-				LOG_ERR("Failed to play: %d", ret);
-			}
-
-			break;
-
-		case MEDIA_STOP:
-			ret = le_audio_stop(BROADCAST_SOURCE);
-			if (ret && (ret != -EALREADY)) {
-				LOG_ERR("Failed to pause: %d", ret);
-			}
-
-			break;
-
-		default:
-			LOG_WRN("Unexpected/unhandled content control event: %d", event);
-
-			break;
-		}
-
-		STACK_USAGE_PRINT("content_control_msg_thread",
-				  &content_control_msg_sub_thread_data);
-	}
-}
-
+/**
+ * @brief	Create zbus subscriber threads.
+ *
+ * @return	0 for success, error otherwise.
+ */
 static int zbus_subscribers_create(void)
 {
 	int ret;
@@ -584,16 +448,79 @@ static int zbus_subscribers_create(void)
 		return ret;
 	};
 
-	content_control_msg_sub_thread_id = k_thread_create(
-		&content_control_msg_sub_thread_data, content_control_msg_sub_thread_stack,
-		CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE,
-		(k_thread_entry_t)content_control_msg_sub_thread, NULL, NULL, NULL,
-		K_PRIO_PREEMPT(CONFIG_CONTENT_CONTROL_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(content_control_msg_sub_thread_id, "CONTENT_CONTROL_MSG_SUB");
+	return 0;
+}
+
+/**
+ * @brief	Zbus listener to receive events from bt_mgmt.
+ *
+ * @note	Will in most cases be called from BT_RX context,
+ *		so there should not be too much processing done here.
+ */
+static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
+{
+	int ret;
+	const struct bt_mgmt_msg *msg;
+
+	msg = zbus_chan_const_msg(chan);
+	uint8_t event = msg->event;
+
+	if (event == BT_MGMT_PA_SYNC_OBJECT_READY) {
+		LOG_INF("PA sync object ready");
+		ret = broadcast_sink_pa_sync_set(msg->pa_sync, msg->broadcast_id);
+		if (ret) {
+			LOG_WRN("Failed to set PA sync");
+		}
+	} else {
+		LOG_WRN("Unexpected/unhandled bt_mgmt event: %d", event);
+	}
+}
+
+ZBUS_LISTENER_DEFINE(bt_mgmt_evt_listen, bt_mgmt_evt_handler);
+
+/**
+ * @brief	Link zbus producers and observers.
+ *
+ * @return	0 for success, error otherwise.
+ */
+static int zbus_link(void)
+{
+	int ret;
+
+	if (!IS_ENABLED(CONFIG_ZBUS) || (CONFIG_ZBUS_RUNTIME_OBSERVERS_POOL_SIZE <= 0)) {
+		return -ENOTSUP;
+	}
+
+	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
-		LOG_ERR("Failed to create content_control_msg thread");
+		LOG_ERR("Failed to add button sub");
 		return ret;
 	}
+
+	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add le_audio sub");
+		return ret;
+	}
+
+	ret = zbus_chan_add_obs(&volume_chan, &volume_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add add volume sub");
+		return ret;
+	}
+
+	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add bt_mgmt listener");
+		return ret;
+	}
+
+	return 0;
+}
+
+static int audio_datapath_thread_create(void)
+{
+	int ret;
 
 	audio_datapath_thread_id = k_thread_create(
 		&audio_datapath_thread_data, audio_datapath_thread_stack,
@@ -608,10 +535,21 @@ static int zbus_subscribers_create(void)
 	return 0;
 }
 
+uint8_t stream_state_get(void)
+{
+	return strm_state;
+}
+
+void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
+{
+	ARG_UNUSED(data);
+	ARG_UNUSED(size);
+	ARG_UNUSED(num_ch);
+}
+
 int streamctrl_start(void)
 {
 	int ret;
-
 	static bool started;
 
 	if (started) {
@@ -628,16 +566,23 @@ int streamctrl_start(void)
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
 
-	ret = bt_rend_init();
-	ERR_CHK(ret);
+	ret = zbus_link();
+	ERR_CHK_MSG(ret, "Failed to link zbus producers and observers");
 
-	ret = bt_content_ctrl_init();
-	ERR_CHK(ret);
+	ret = audio_datapath_thread_create();
+	ERR_CHK_MSG(ret, "Failed to create audio datapath thread");
 
-	ARG_UNUSED(le_audio_rx_data_handler);
+	ret = broadcast_sink_enable(le_audio_rx_data_handler);
+	if (ret) {
+		LOG_WRN("Failed to enable broadcast sink");
+		return ret;
+	}
 
-	ret = le_audio_enable(LE_AUDIO_BROADCASTER, NULL);
-	ERR_CHK_MSG(ret, "Failed to enable LE Audio");
+	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, CONFIG_BT_AUDIO_BROADCAST_NAME);
+	if (ret) {
+		LOG_WRN("Failed to start scanning");
+		return ret;
+	}
 
 	started = true;
 

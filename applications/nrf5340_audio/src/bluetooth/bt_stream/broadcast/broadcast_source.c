@@ -522,7 +522,7 @@ int broadcast_source_enable(void)
 
 	initialized = true;
 
-	LOG_DBG("LE Audio enabled");
+	LOG_DBG("Broadcast source enabled");
 
 	return 0;
 }
@@ -550,7 +550,7 @@ int broadcast_source_disable(void)
 
 	initialized = false;
 
-	LOG_DBG("LE Audio disabled");
+	LOG_DBG("Broadcast source disabled");
 
 	return 0;
 }
