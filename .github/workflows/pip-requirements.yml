@@ -1,0 +1,81 @@
+name: Validate pip requirements-fixed.txt
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - 'v*-branch'
+    paths:
+      - 'scripts/requirements*.txt'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: ncs/nrf
+          fetch-depth: 0
+
+      - name: Get python version
+        id: pyv
+        run: |
+          sudo snap install --channel=v4 yq
+          PYTHON_VERSION=$(yq '.python.version' ./ncs/nrf/scripts/tools-versions-linux.yml)
+          echo "python_version=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Setup python version
+        uses: actions/setup-python@v4
+        with:
+          python-version: '${{ steps.pyv.outputs.python_version }}'
+
+      - name: Setup environment
+        working-directory: ncs
+        run: |
+          pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
+          pip3 install -r nrf/scripts/requirements-base.txt
+          west init -l nrf
+          west update mcuboot zephyr
+
+      - name: Generate new requirements-fixed.txt
+        working-directory: ncs
+        run: nrf/scripts/compile-requirements.sh requirements-fixed.txt
+
+      - name: Store requirements-fixed
+        uses: actions/upload-artifact@v3
+        with:
+          name: requirements-fixed
+          path: ncs/requirements-fixed.txt
+
+      - name: Compare requirements-fixed
+        id: diff
+        run: |
+          NEW=ncs/requirements-fixed.txt
+          OLD=ncs/nrf/scripts/requirements-fixed.txt
+          echo -e "$NEW\t\t\t\t\t"$OLD
+          diff -y $NEW $OLD
+
+      - name: Post summary
+        if: ${{ !cancelled() }}
+        run: |
+          if [[ "failure" == "${{ steps.diff.outcome }}" ]]; then
+            echo -e 'New requirements-fixed.txt file differs from the current file.
+            Please add the newly created file to the PR.' >> $GITHUB_STEP_SUMMARY
+
+          fi
+          if [[ -e ncs/requirements-fixed.txt ]]; then
+            echo -e '
+            <details>
+              <summary>requirements-fixed.txt</summary>
+
+            ```' >> $GITHUB_STEP_SUMMARY
+            cat ncs/requirements-fixed.txt >> $GITHUB_STEP_SUMMARY
+            echo -e '```
+
+            </details>' >> $GITHUB_STEP_SUMMARY
+          else
+            echo -e 'Error during workflow, requirements-fixed file was not created' >> GITHUB_STEP_SUMMARY
+          fi
