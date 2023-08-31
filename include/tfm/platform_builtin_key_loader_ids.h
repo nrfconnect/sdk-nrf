@@ -11,7 +11,8 @@
 extern "C" {
 #endif
 
-#define TFM_BUILTIN_MAX_KEY_LEN 96
+/* HUK and IAK are max 32-byte on nordic platforms */
+#define TFM_BUILTIN_MAX_KEY_LEN 32
 
 enum psa_drv_slot_number_t {
 	TFM_BUILTIN_KEY_SLOT_HUK = 0,
