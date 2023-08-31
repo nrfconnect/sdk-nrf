@@ -150,7 +150,6 @@ const char *link_shell_redmob_mode_to_string(int funmode, char *out_str_buff)
 const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {
-		{ LTE_LC_SYSTEM_MODE_NONE, "None" },
 		{ LTE_LC_SYSTEM_MODE_LTEM, "LTE-M" },
 		{ LTE_LC_SYSTEM_MODE_NBIOT, "NB-IoT" },
 		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT, "LTE-M - NB-IoT" },
@@ -158,6 +157,7 @@ const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff)
 		{ LTE_LC_SYSTEM_MODE_LTEM_GPS, "LTE-M - GNSS" },
 		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS, "LTE-M - NB-IoT - GNSS" },
 		{ LTE_LC_SYSTEM_MODE_NBIOT_GPS, "NB-IoT - GNSS" },
+		{ LINK_SYSMODE_NONE, "None" },
 		{ -1, NULL }
 	};
 
