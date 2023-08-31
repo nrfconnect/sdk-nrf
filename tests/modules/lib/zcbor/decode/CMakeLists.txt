@@ -12,8 +12,8 @@ project(test_zcbor_decode)
 find_program(ZCBOR zcbor REQUIRED)
 
 set(zcbor_args
-  code
   -c ${CMAKE_CURRENT_LIST_DIR}/../cddl/test.cddl
+  code
   --output-c ${PROJECT_BINARY_DIR}/src/test_decode.c
   --output-h ${PROJECT_BINARY_DIR}/include/test_decode.h
   -t Test
