@@ -17,6 +17,7 @@
 #include "mosh_defines.h"
 #include "mosh_print.h"
 
+#include "link.h"
 #include "link_shell_print.h"
 #include "link_shell_pdn.h"
 #include "link_settings.h"
@@ -576,8 +577,7 @@ int link_sett_sysmode_lte_preference_get(void)
 
 int link_sett_sysmode_default_set(void)
 {
-	return link_sett_sysmode_save(LTE_LC_SYSTEM_MODE_NONE,
-				       CONFIG_LTE_MODE_PREFERENCE);
+	return link_sett_sysmode_save(LINK_SYSMODE_NONE, CONFIG_LTE_MODE_PREFERENCE);
 }
 
 /* ****************************************************************************/
@@ -754,7 +754,7 @@ static void link_sett_ram_data_init(void)
 	memset(&link_settings, 0, sizeof(link_settings));
 
 	link_settings.normal_mode_autoconn_enabled = true;
-	link_settings.sysmode = LTE_LC_SYSTEM_MODE_NONE;
+	link_settings.sysmode = LINK_SYSMODE_NONE;
 	link_settings.pdn_family = PDN_FAM_IPV4V6;
 
 	strcpy(link_settings.defcont_apn_str, LINK_SETT_DEFCONT_DEFAULT_APN);

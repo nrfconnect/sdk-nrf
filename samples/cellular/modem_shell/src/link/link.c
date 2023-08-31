@@ -666,7 +666,7 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 		/* Set saved system mode (if set) from settings (by link sysmode -mosh command) */
 		sysmode = link_sett_sysmode_get();
 		lte_pref = link_sett_sysmode_lte_preference_get();
-		if (sysmode != LTE_LC_SYSTEM_MODE_NONE) {
+		if (sysmode != LINK_SYSMODE_NONE) {
 			return_value = lte_lc_system_mode_set(sysmode, lte_pref);
 			if (return_value < 0) {
 				mosh_warn("lte_lc_system_mode_set returned error %d", return_value);

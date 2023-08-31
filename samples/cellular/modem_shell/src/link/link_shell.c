@@ -518,7 +518,7 @@ static void link_shell_print_usage(enum link_shell_command command)
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT                   :	   \
 	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)     ? \
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS               :	   \
-	 LTE_LC_SYSTEM_MODE_NONE)
+	 LINK_SYSMODE_NONE)
 
 static void link_shell_sysmode_set(int sysmode, int lte_pref)
 {
@@ -1814,7 +1814,10 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 		   mreset_type != LTE_LC_FACTORY_RESET_INVALID) {
 		if (common_option == LINK_COMMON_RESET) {
 			link_sett_defaults_set();
-			link_shell_sysmode_set(SYS_MODE_PREFERRED, CONFIG_LTE_MODE_PREFERENCE);
+			if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
+				link_shell_sysmode_set(SYS_MODE_PREFERRED,
+						       CONFIG_LTE_MODE_PREFERENCE);
+			}
 		}
 		if (mreset_type == LTE_LC_FACTORY_RESET_ALL) {
 			link_sett_modem_factory_reset(LTE_LC_FACTORY_RESET_ALL);
@@ -1862,7 +1865,7 @@ static int link_shell_status(const struct shell *shell, size_t argc, char **argv
 static int link_shell_sysmode(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum lte_lc_system_mode sysmode_option = LTE_LC_SYSTEM_MODE_NONE;
+	enum lte_lc_system_mode sysmode_option = LINK_SYSMODE_NONE;
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 
@@ -1933,7 +1936,7 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 			link_sett_sysmode_print();
 			sett_sys_mode = link_sett_sysmode_get();
 			sett_lte_pref = link_sett_sysmode_lte_preference_get();
-			if (sett_sys_mode != LTE_LC_SYSTEM_MODE_NONE &&
+			if (sett_sys_mode != LINK_SYSMODE_NONE &&
 				sett_sys_mode != sys_mode_current &&
 				sett_lte_pref != sys_mode_pref_current) {
 				mosh_warn(
@@ -1944,14 +1947,16 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 					"next time when going to normal mode");
 			}
 		}
-	} else if (sysmode_option != LTE_LC_SYSTEM_MODE_NONE) {
+	} else if (sysmode_option != LINK_SYSMODE_NONE) {
 		link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
 
 		/* Save system modem to link settings: */
 		(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
 
 	} else if (common_option == LINK_COMMON_RESET) {
-		link_shell_sysmode_set(SYS_MODE_PREFERRED, CONFIG_LTE_MODE_PREFERENCE);
+		if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
+			link_shell_sysmode_set(SYS_MODE_PREFERRED, CONFIG_LTE_MODE_PREFERENCE);
+		}
 
 		(void)link_sett_sysmode_default_set();
 	} else {
