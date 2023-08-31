@@ -18,6 +18,13 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns
     tags: ci_build
+  sample.nrf7002_eks.raw_scan:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    tags: ci_build
   sample.nrf7000_eks.scan:
     build_only: true
     extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
