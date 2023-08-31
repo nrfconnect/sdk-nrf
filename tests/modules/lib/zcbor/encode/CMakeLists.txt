@@ -12,8 +12,8 @@ project(test_zcbor_encode)
 find_program(ZCBOR zcbor REQUIRED)
 
 set(zcbor_args
-  code
   -c ${CMAKE_CURRENT_LIST_DIR}/../cddl/test.cddl
+  code
   --output-c ${PROJECT_BINARY_DIR}/src/test_encode.c
   --output-h ${PROJECT_BINARY_DIR}/include/test_encode.h
   -t Test

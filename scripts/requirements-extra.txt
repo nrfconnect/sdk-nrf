@@ -1,3 +1,4 @@
 pygit2<=1.10
 editdistance>=0.5.0
 PyGithub
+zcbor>=0.5.1
