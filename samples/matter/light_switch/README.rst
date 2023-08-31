@@ -103,8 +103,6 @@ Binding lets the local endpoint know which endpoints are going to be the target 
 In this sample, the light switch controls one or more lighting devices, but does not know the remote endpoints of the lights (on remote nodes).
 Using binding, the light switch device updates its Binding cluster with all relevant information about the lighting devices, such as their IPv6 address, node ID, and the IDs of the remote endpoints that contains the On/Off cluster and the LevelControl cluster, respectively.
 
-
-
 Configuration
 *************
 
@@ -113,9 +111,9 @@ Configuration
 Matter light switch build types
 ===============================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_configuration_file_types_start
-    :end-before: matter_door_lock_sample_configuration_file_types_end
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_configuration_file_types_start
+    :end-before: matter_light_bulb_sample_configuration_file_types_end
 
 FEM support
 ===========

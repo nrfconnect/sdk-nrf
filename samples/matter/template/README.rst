@@ -102,9 +102,9 @@ Configuration
 Matter template build types
 ===========================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_configuration_file_types_start
-    :end-before: matter_door_lock_sample_configuration_file_types_end
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_configuration_file_types_start
+    :end-before: matter_light_bulb_sample_configuration_file_types_end
 
 Device Firmware Upgrade support
 ===============================
