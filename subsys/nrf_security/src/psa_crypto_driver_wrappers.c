@@ -150,6 +150,15 @@ psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
 
 psa_status_t psa_driver_wrapper_init(void)
 {
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+#if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
+	status = tfm_builtin_key_loader_init();
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+#endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
+
 	return PSA_SUCCESS;
 }
 
