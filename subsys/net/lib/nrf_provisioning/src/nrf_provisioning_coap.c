@@ -34,7 +34,13 @@ LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define AUTH_MVER "mver=%s"
 #define AUTH_CVER "cver=%s"
 #define AUTH_PATH "p/auth"
+#define AUTH_PATH_JWT "p/auth-jwt"
+
+#if defined(CONFIG_NRF_PROVISIONING_ATTESTTOKEN)
 #define AUTH_API_TEMPLATE (AUTH_PATH "?" AUTH_MVER "&" AUTH_CVER)
+#else
+#define AUTH_API_TEMPLATE (AUTH_PATH_JWT "?" AUTH_MVER "&" AUTH_CVER)
+#endif
 
 #define CMDS_PATH "p/cmd"
 #define CMDS_AFTER "after=%s"
@@ -284,6 +290,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 			     struct nrf_provisioning_coap_context *const coap_ctx)
 {
 	int retries = 0;
+
 	struct coap_client_request client_request = {
 		.method = method,
 		.confirmable = true,
@@ -476,7 +483,7 @@ static int request_commands(struct coap_client *client,
 	LOG_DBG("Get commands");
 
 	memcpy(after, nrf_provisioning_codec_get_latest_cmd_id(),
-	NRF_PROVISIONING_CORRELATION_ID_SIZE);
+	       NRF_PROVISIONING_CORRELATION_ID_SIZE);
 
 	ret = snprintk(cmd, sizeof(cmd), CMDS_API_TEMPLATE, after, rx_buf_sz, tx_buf_sz);
 
