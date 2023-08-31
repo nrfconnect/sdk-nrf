@@ -122,7 +122,6 @@ void date_time_lte_ind_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_NW_REG_STATUS:
 
 		switch (evt->nw_reg_status) {
-		case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
 		case LTE_LC_NW_REG_REGISTERED_HOME:
 		case LTE_LC_NW_REG_REGISTERED_ROAMING:
 			if (!date_time_is_valid()) {

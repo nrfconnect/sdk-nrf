@@ -76,8 +76,7 @@ static bool is_connected_to_lte(void)
 		return false;
 	}
 
-	if (reg_status == LTE_LC_NW_REG_REGISTERED_EMERGENCY ||
-	    reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
+	if (reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
 	    reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
 		return true;
 	}
