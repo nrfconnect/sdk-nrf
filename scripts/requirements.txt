@@ -1,2 +1,4 @@
 -r requirements-base.txt
 -r requirements-build.txt
+-r requirements-ci.txt
+-r requirements-extra.txt
