@@ -109,7 +109,7 @@ requests==2.31.0
 rpds-py==0.10.0
 ruamel.yaml.clib==0.2.7
 ruamel.yaml==0.17.32
-setuptools==68.0.0
+setuptools==68.1.2
 sh==1.14.2
 six==1.16.0
 sortedcontainers==2.4.0
@@ -123,7 +123,7 @@ urllib3==2.0.4
 wcwidth==0.2.6
 west==1.1.0
 wget==3.2
-wheel==0.41.1
+wheel==0.41.2
 wrapt==1.15.0
 yamllint==1.32.0
 zcbor==0.6.0
