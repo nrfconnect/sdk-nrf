@@ -25,6 +25,9 @@
 
 LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
+/* Internal system mode value used when CONFIG_LTE_NETWORK_DEFAULT is enabled. */
+#define LTE_LC_SYSTEM_MODE_DEFAULT 0xff
+
 #define SYS_MODE_PREFERRED \
 	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)		? \
 		LTE_LC_SYSTEM_MODE_LTEM				: \
@@ -38,7 +41,7 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 		LTE_LC_SYSTEM_MODE_LTEM_NBIOT			: \
 	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)	? \
 		LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS		: \
-	LTE_LC_SYSTEM_MODE_NONE)
+	LTE_LC_SYSTEM_MODE_DEFAULT)
 
 /* Static variables */
 
@@ -95,13 +98,12 @@ static const enum lte_lc_system_mode sys_mode_fallback =
 	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)	?
 		LTE_LC_SYSTEM_MODE_LTEM_GPS		:
 #endif
-	LTE_LC_SYSTEM_MODE_NONE;
+	LTE_LC_SYSTEM_MODE_DEFAULT;
 
-static enum lte_lc_system_mode sys_mode_current = LTE_LC_SYSTEM_MODE_NONE;
+static enum lte_lc_system_mode sys_mode_current = LTE_LC_SYSTEM_MODE_DEFAULT;
 
 /* Parameters to be passed using AT%XSYSTEMMMODE=<params>,<preference> */
 static const char *const system_mode_params[] = {
-	[LTE_LC_SYSTEM_MODE_NONE]		= "0,0,0",
 	[LTE_LC_SYSTEM_MODE_LTEM]		= "1,0,0",
 	[LTE_LC_SYSTEM_MODE_NBIOT]		= "0,1,0",
 	[LTE_LC_SYSTEM_MODE_GPS]		= "0,0,1",
@@ -1170,7 +1172,6 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 	int err;
 
 	switch (mode) {
-	case LTE_LC_SYSTEM_MODE_NONE:
 	case LTE_LC_SYSTEM_MODE_LTEM:
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 	case LTE_LC_SYSTEM_MODE_NBIOT:
@@ -1239,9 +1240,6 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 		       (gps_mode ? BIT(AT_XSYSTEMMODE_READ_GPS_INDEX) : 0);
 
 	switch (mode_bitmask) {
-	case 0:
-		*mode = LTE_LC_SYSTEM_MODE_NONE;
-		break;
 	case BIT(AT_XSYSTEMMODE_READ_LTEM_INDEX):
 		*mode = LTE_LC_SYSTEM_MODE_LTEM;
 		break;

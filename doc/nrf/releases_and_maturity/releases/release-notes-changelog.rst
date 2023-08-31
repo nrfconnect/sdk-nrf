@@ -610,7 +610,11 @@ Modem libraries
 * :ref:`lte_lc_readme` library:
 
   * Updated the CE level enum names for :c:enum:`lte_lc_ce_level` to not include the number of repetitions.
-  * Removed obsolete registration status :c:enum:`LTE_LC_NW_REG_REGISTERED_EMERGENCY`.
+
+  * Removed:
+
+    * Obsolete registration status :c:enum:`LTE_LC_NW_REG_REGISTERED_EMERGENCY`.
+    * Invalid system mode :c:enum:`LTE_LC_SYSTEM_MODE_NONE`.
 
 * :ref:`lib_location` library:
 

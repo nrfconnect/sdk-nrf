@@ -57,10 +57,8 @@ enum lte_lc_nw_reg_status {
 
 /** System mode. */
 enum lte_lc_system_mode {
-	LTE_LC_SYSTEM_MODE_NONE,
-
 	/** LTE-M only. */
-	LTE_LC_SYSTEM_MODE_LTEM,
+	LTE_LC_SYSTEM_MODE_LTEM = 1,
 
 	/** NB-IoT only. */
 	LTE_LC_SYSTEM_MODE_NBIOT,
