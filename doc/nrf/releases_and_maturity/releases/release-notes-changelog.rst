@@ -468,6 +468,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
+* Removed support for the ``nrf52833dk_nrf52833`` build target in the :ref:`ot_cli_sample`, :ref:`coap_client_sample` and :ref:`coap_server_sample` samples.
 * Updated the build target ``nrf52840dongle_nrf52840`` to use USB CDC ACM as serial transport as default.
   Samples for this target can now be built without providing extra configuration arguments.
 
