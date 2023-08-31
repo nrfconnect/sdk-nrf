@@ -298,25 +298,26 @@ KRKNWK-17535: The application core can crash on nRF5340 after the OTA firmware u
         #include <platform/CHIPDeviceLayer.h>
         #include <zephyr/dfu/mcuboot.h>
 
-        CHIP_ERROR OtaConfirmNewImage()
-        {
-          CHIP_ERROR err = CHIP_NO_ERROR;
-          OTAImageProcessorImpl &imageProcessor = GetOTAImageProcessor();
-          if (imageProcessor.IsFirstImageRun()) {
-            CHIP_ERROR err = System::MapErrorZephyr(boot_write_img_confirmed());
-            if (CHIP_NO_ERROR == err) {
-              imageProcessor.SetImageConfirmed();
-            }
+        #ifndef CONFIG_SOC_SERIES_NRF53X
+          VerifyOrReturn(mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT);
+        #endif
+
+        OTAImageProcessorImpl &imageProcessor = GetOTAImageProcessor();
+        if(!boot_is_img_confirmed()){
+          CHIP_ERROR err = System::MapErrorZephyr(boot_write_img_confirmed());
+          if (CHIP_NO_ERROR == err) {
+            imageProcessor.SetImageConfirmed();
+            ChipLogProgress(SoftwareUpdate, "New firmware image confirmed");
+          } else {
+            ChipLogError(SoftwareUpdate, "Failed to confirm firmware image, it will be reverted on the next boot");
           }
-          ChipLogError(SoftwareUpdate, "Failed to confirm firmware image, it will be reverted on the next boot");
-          return err;
         }
 
   #. Add the following line to the :file:`samples/matter/common/src/ota_util.h`:
 
      .. code-block::
 
-        CHIP_ERROR OtaConfirmNewImage();
+        void OtaConfirmNewImage();
 
   #. Add the following lines to the ``AppTask::Init()`` method in the :file:`app_task.cpp` file located in a sample directory before initialization of the factory data module (``mFactoryDataProvider.Init()``):
 
@@ -324,10 +325,7 @@ KRKNWK-17535: The application core can crash on nRF5340 after the OTA firmware u
 
         #ifdef CONFIG_CHIP_OTA_REQUESTOR
           /* OTA image confirmation must be done before the factory data init. */
-          err = OtaConfirmNewImage();
-          if (err != CHIP_NO_ERROR) {
-            return err;
-          }
+          OtaConfirmNewImage();
         #endif
 
 .. rst-class:: v2-4-0 v2-3-0

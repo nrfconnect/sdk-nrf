@@ -48,7 +48,7 @@ CHIP_ERROR OTAMultiImageProcessorImpl::PrepareMultiDownload()
 
 CHIP_ERROR OTAMultiImageProcessorImpl::ConfirmCurrentImage()
 {
-	CHIP_ERROR err = System::MapErrorZephyr(boot_write_img_confirmed());
+	CHIP_ERROR err = mImageConfirmed ? CHIP_NO_ERROR : CHIP_ERROR_INCORRECT_STATE;
 	if (err == CHIP_NO_ERROR) {
 		err = System::MapErrorZephyr(OTAMultiImageDownloaders::Apply());
 	}

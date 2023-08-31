@@ -22,7 +22,11 @@ public:
 
 	CHIP_ERROR PrepareDownload() override;
 	CHIP_ERROR ConfirmCurrentImage() override;
+	void SetImageConfirmed() { mImageConfirmed = true; }
 
 protected:
 	CHIP_ERROR PrepareMultiDownload();
+
+private:
+    bool mImageConfirmed = false;
 };
