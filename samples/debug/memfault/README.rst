@@ -15,6 +15,10 @@ To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
 Requirements
 ************
 
+Before using this sample, make sure to sign up in the `Memfault registration page`_ and `create a new project in Memfault`_.
+You will be directed to the Integration guide for Memfault.
+You will receive the ``project key`` here to set in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
+
 The sample supports the following development kits:
 
 .. table-from-sample-yaml::
@@ -133,13 +137,6 @@ Check and configure the following options for Memfault that are specific to |NCS
 
 If :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, :kconfig:option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE` can be used to set the flash partition size for the flash storage.
 
-
-Configuration files
-===================
-
-.. include:: ../../../doc/nrf/libraries/debug/memfault_ncs.rst
-   :start-after: memfault_config_files_start
-   :end-before: memfault_config_files_end
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
