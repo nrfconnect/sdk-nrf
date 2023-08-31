@@ -32,7 +32,7 @@
 .. |connect_terminal_both| replace:: Connect to both kits with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 
-.. |connect_terminal_ANSI| replace:: Connect to the kit with a terminal emulator that supports VT100/ANSI escape characters (for example, PuTTY).
+.. |connect_terminal_ANSI| replace:: Open a serial port connection to the kit using a terminal emulator that supports VT100/ANSI escape characters (for example, PuTTY).
    See :ref:`putty` for the required settings.
 
 .. |connect_terminal_specific_ANSI| replace:: Connect to the kit that runs this sample with a terminal emulator that supports VT100/ANSI escape characters (for example, PuTTY).
