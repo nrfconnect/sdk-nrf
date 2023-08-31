@@ -86,9 +86,6 @@ static void lte_lc_evt_nw_reg_status_handler(enum lte_lc_nw_reg_status evt)
 		registered = true;
 		break;
 
-	case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
-		/* Fall-through */
-
 	case LTE_LC_NW_REG_REGISTRATION_DENIED:
 		LOG_WRN("LTE registration denied");
 		registered = false;

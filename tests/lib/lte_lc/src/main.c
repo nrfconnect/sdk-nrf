@@ -75,7 +75,6 @@ void test_parse_cereg(void)
 	char *at_response_3 = "+CEREG: 5,3,\"0A0B\",\"01020304\",9,0,0,,";
 	char *at_response_4 = "+CEREG: 5,4,\"0A0B\",\"FFFFFFFF\",9,0,0,,";
 	char *at_response_5 = "+CEREG: 5,5,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"11100000\"";
-	char *at_response_8 = "+CEREG: 5,8,\"0A0B\",\"01020304\",9,0,0,,";
 	char *at_response_90 = "+CEREG: 5,90,,\"FFFFFFFF\",,,,,";
 	char *at_response_wrong = "+CEREG: 5,10,,\"FFFFFFFF\",,,,,";
 	char *at_notif_0 = "+CEREG: 0,\"FFFF\",\"FFFFFFFF\",9,0,0,,";
@@ -84,7 +83,6 @@ void test_parse_cereg(void)
 	char *at_notif_3 = "+CEREG: 3,\"0A0B\",\"01020304\",9,0,0,,";
 	char *at_notif_4 = "+CEREG: 4,\"FFFF\",\"FFFFFFFF\",9,0,0,,";
 	char *at_notif_5 = "+CEREG: 5,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"00011111\"";
-	char *at_notif_8 = "+CEREG: 8,\"0A0B\",\"01020304\",9,0,0,,";
 	char *at_notif_90 = "+CEREG: 90,,\"FFFFFFFF\",,,,,";
 	char *at_notif_wrong = "+CEREG: 10,,\"FFFFFFFF\",,,,,";
 
@@ -116,10 +114,6 @@ void test_parse_cereg(void)
 	err = parse_cereg(at_response_5, false, &status, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
-
-	err = parse_cereg(at_response_8, false, &status, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_EMERGENCY, status);
 
 	err = parse_cereg(at_response_90, false, &status, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, err);
@@ -166,13 +160,6 @@ void test_parse_cereg(void)
 	err = parse_cereg(at_notif_5, true, &status, &cell, &mode);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
-	TEST_ASSERT_EQUAL(0x01020304, cell.id);
-	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
-
-	err = parse_cereg(at_notif_8, true, &status, &cell, &mode);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_EMERGENCY, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
 	TEST_ASSERT_EQUAL(9, mode);

@@ -1850,9 +1850,8 @@ static int link_shell_status(const struct shell *shell, size_t argc, char **argv
 	} else {
 		mosh_error("Cannot get current registration status (%d)", ret);
 	}
-	if (current_reg_status == LTE_LC_NW_REG_REGISTERED_EMERGENCY ||
-		current_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
-		current_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
+	if (current_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
+	    current_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
 		connected = true;
 	}
 

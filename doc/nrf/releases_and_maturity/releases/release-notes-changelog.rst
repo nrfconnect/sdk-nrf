@@ -602,6 +602,10 @@ Modem libraries
     * Fixed a rare bug that caused a deadlock between two threads when one thread sent data while the other received a lot of data quickly.
     * The ``SO_IP_ECHO_REPLY``, ``SO_IPV6_ECHO_REPLY``, ``SO_TCP_SRV_SESSTIMEO`` and ``SO_SILENCE_ALL`` socket option levels to align with the modem option levels.
 
+* :ref:`lte_lc_readme` library:
+
+  * Removed obsolete registration status :c:enum:`LTE_LC_NW_REG_REGISTERED_EMERGENCY`.
+
 * :ref:`lib_location` library:
 
   * Added support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.

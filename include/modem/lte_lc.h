@@ -51,8 +51,6 @@ enum lte_lc_nw_reg_status {
 	/** Registered, roaming. */
 	LTE_LC_NW_REG_REGISTERED_ROAMING	= 5,
 
-	LTE_LC_NW_REG_REGISTERED_EMERGENCY	= 8,
-
 	/** Not registered due to UICC failure. */
 	LTE_LC_NW_REG_UICC_FAIL			= 90
 };

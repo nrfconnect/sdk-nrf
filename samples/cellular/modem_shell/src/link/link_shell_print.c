@@ -216,9 +216,6 @@ void link_shell_print_reg_status(enum lte_lc_nw_reg_status reg_status)
 	case LTE_LC_NW_REG_UICC_FAIL:
 		mosh_print("Network registration status: UICC fail");
 		break;
-	case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
-		mosh_print("Network registration status: Connected - emergency");
-		break;
 	case LTE_LC_NW_REG_REGISTERED_HOME:
 	case LTE_LC_NW_REG_REGISTERED_ROAMING:
 		mosh_print(

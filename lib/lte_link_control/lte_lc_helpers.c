@@ -273,7 +273,6 @@ static int get_nw_reg_status(struct at_param_list *list, bool is_notif)
 	case LTE_LC_NW_REG_REGISTRATION_DENIED:
 	case LTE_LC_NW_REG_UNKNOWN:
 	case LTE_LC_NW_REG_REGISTERED_ROAMING:
-	case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
 	case LTE_LC_NW_REG_UICC_FAIL:
 		break;
 	default:
