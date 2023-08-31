@@ -21,65 +21,26 @@ A known issue can list one or both of the following entries:
   Some known issues have a workaround.
   Sometimes, they are discovered later and added over time.
 
-.. raw:: html
-   :file: ../includes/filter.js
+.. version-filter::
+  :default: v2-4-2
+  :container: dl/dt
+  :tags: [("wontfix", "Won't fix")]
 
-.. raw:: html
+.. page-filter::
+  :name: issues
 
-   Filter by versions:
-
-   <select name="versions" id="versions-select">
-     <option value="all">All versions</option>
-     <option value="v2-4-2" selected>v2.4.2</option>
-     <option value="v2-4-1">v2.4.1</option>
-     <option value="v2-4-0">v2.4.0</option>
-     <option value="v2-3-0">v2.3.0</option>
-     <option value="v2-2-0">v2.2.0</option>
-     <option value="v2-1-4">v2.1.4</option>
-     <option value="v2-1-3">v2.1.3</option>
-     <option value="v2-1-2">v2.1.2</option>
-     <option value="v2-1-1">v2.1.1</option>
-     <option value="v2-1-0">v2.1.0</option>
-     <option value="v2-0-2">v2.0.2</option>
-     <option value="v2-0-1">v2.0.1</option>
-     <option value="v2-0-0">v2.0.0</option>
-     <option value="v1-9-2">v1.9.2</option>
-     <option value="v1-9-1">v1.9.1</option>
-     <option value="v1-9-0">v1.9.0</option>
-     <option value="v1-8-0">v1.8.0</option>
-     <option value="v1-7-1">v1.7.1</option>
-     <option value="v1-7-0">v1.7.0</option>
-     <option value="v1-6-1">v1.6.1</option>
-     <option value="v1-6-0">v1.6.0</option>
-     <option value="v1-5-2">v1.5.2</option>
-     <option value="v1-5-1">v1.5.1</option>
-     <option value="v1-5-0">v1.5.0</option>
-     <option value="v1-4-2">v1.4.2</option>
-     <option value="v1-4-1">v1.4.1</option>
-     <option value="v1-4-0">v1.4.0</option>
-     <option value="v1-3-2">v1.3.2</option>
-     <option value="v1-3-1">v1.3.1</option>
-     <option value="v1-3-0">v1.3.0</option>
-     <option value="v1-2-1">v1.2.1</option>
-     <option value="v1-2-0">v1.2.0</option>
-     <option value="v1-1-0">v1.1.0</option>
-     <option value="v1-0-0">v1.0.0</option>
-     <option value="v0-4-0">v0.4.0</option>
-     <option value="v0-3-0">v0.3.0</option>
-   </select>
-
-..
+  wontfix    Won't fix
 
 .. HOWTO
 
-   When adding a new version, add it to the dropdown list above and move the "selected" option next to it.
-   Once "selected" is moved, only issues that are valid for the new version will be displayed when entering the page.
+   When adding a new version, set it as the default value of the version-filter directive.
+   Once the version is updated, only issues that are valid for the new version will be displayed when entering the page.
 
    Known issues process is described at https://nordicsemi.atlassian.net/wiki/spaces/NCS/pages/108237688/Known+Issues+process
 
    When updating this file, add entries in the following format:
 
-   .. rst-class:: vXXX vYYY
+   .. rst-class:: wontfix vXXX vYYY
 
    JIRA-XXXX: Title of the issue (with mandatory JIRA issue number since nRF Connect SDK v1.7.0)
      Description of the issue.
