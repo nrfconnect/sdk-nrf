@@ -161,13 +161,14 @@ void link_api_coneval_read_for_shell(void)
 	};
 
 	struct mapping_tbl_item const coneval_ce_level_strs[] = {
-		{ LTE_LC_CE_LEVEL_0_NO_REPETITION,
+		{ LTE_LC_CE_LEVEL_0,
 		  "0: CE level 0, No repetitions or small nbr of repetitions" },
-		{ LTE_LC_CE_LEVEL_1_LOW_REPETITION,
+		{ LTE_LC_CE_LEVEL_1,
 		  "1: CE level 1, Medium nbr of repetitions" },
-		{ LTE_LC_CE_LEVEL_2_MEDIUM_REPETITION,
+		{ LTE_LC_CE_LEVEL_2,
 		  "2: CE level 2, Large nbr of repetitions" },
-		{ 3, "3: CE level 3, Very large nbr of repetitions" },
+		{ LTE_LC_CE_LEVEL_3,
+		  "3: CE level 3, Very large nbr of repetitions" },
 		{ LTE_LC_CE_LEVEL_UNKNOWN, "Unknown" },
 		{ -1, NULL }
 	};
