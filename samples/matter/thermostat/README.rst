@@ -51,6 +51,11 @@ The sample can operate in one of the following modes:
 * Real temperature sensor mode - In this mode, the thermostat sample is bound to a remote Matter temperature sensor, which provides real temperature measurements.
   This mode requires :ref:`matter_thermostat_sample_sensor`.
 
+  .. figure:: ../../../doc/nrf/images/matter_external_thermostat_setup.png
+     :alt: Real temperature sensor mode setup
+
+     Real temperature sensor mode setup
+
 The sample automatically logs the temperature measurements with a defined interval and it uses buttons for printing the measurement results to the terminal.
 
 You can test the sample in the following ways:
