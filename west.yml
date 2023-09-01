@@ -195,12 +195,12 @@ manifest:
         - sidewalk
     - name: homekit
       repo-path: sdk-homekit
-      revision: 216d6588d069390d2c5291560002ca47684fbfc0
+      revision: f4f12b5c84353ea58411e57a7d2dc51eef7eac08
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: f968100b88cdbef87665011caea4cb2b577b7e71
+      revision: a66c426563a1b28acd848993313f47025c51e3d1
       groups:
         - find-my
     - name: azure-sdk-for-c

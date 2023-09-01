@@ -228,7 +228,7 @@ Complete the following steps to test the advanced FOTA firmware update with the 
    #. Flash the compiled sample using the erase flash option.
    #. Wait for the device registration to be complete.
    #. Open the :file:`src/prj.conf` file.
-   #. Change :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` to ``1.0.1`` and rebuild the sample.
+   #. Change :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to ``1.0.1`` and rebuild the sample.
    #. Update the application and modem firmware by using the :file:`/scripts/fota.py` script:
 
       .. code-block:: console

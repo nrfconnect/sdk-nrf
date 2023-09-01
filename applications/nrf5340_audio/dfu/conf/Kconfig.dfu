@@ -126,10 +126,6 @@ config STATS_NAMES
 	bool
 	default y
 
-config MCUBOOT_IMAGE_VERSION
-	string
-	default "0.0.0+0"
-
 config BT_DEVICE_NAME_DYNAMIC
 	bool
 	default y

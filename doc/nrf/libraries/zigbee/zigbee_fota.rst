@@ -45,7 +45,7 @@ After the OTA Upgrade Client downloads the Zigbee OTA image header, the stack ve
 * Manufacturer ID - Defined by the :kconfig:option:`CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID` Kconfig option.
 * Image type - Defined by the :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_TYPE` Kconfig option; it may be different than the MCUboot image type value.
 * Hardware version - Defined by the :kconfig:option:`CONFIG_ZIGBEE_FOTA_HW_VERSION` Kconfig option.
-* Firmware version - Defined by the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option; see :ref:`ug_zigbee_configuring_components_ota` for details.
+* Firmware version - Defined by the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option; see :ref:`ug_zigbee_configuring_components_ota` for details.
 
 If all values are accepted, the OTA Upgrade Client downloads the first fragment of the firmware image.
 
@@ -105,7 +105,7 @@ Additionally, the following limitations apply on the nRF5340 SoCs:
   The call to the :c:func:`boot_write_img_confirmed()` will have no effect.
 * The current DFU limitations and dependencies are enforced by the :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` Kconfig option.
 * The version of the network core image is always set to the same value as the application core image.
-  Its value can be configured using the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option.
+  Its value can be configured using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
 * The MCUboot header is not stored inside the network core flash memory.
   As a result, it is impossible to read the version of the currently running network core image.
 

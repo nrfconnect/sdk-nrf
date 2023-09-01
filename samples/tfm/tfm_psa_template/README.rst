@@ -153,7 +153,7 @@ Application and TF-M firmware update
 ====================================
 
 Use firmware update to update the application and TF-M firmware.
-For the image to be updatable, the firmware image version :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` has to be updated to a higher version.
+For the image to be updatable, the firmware image version :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` has to be updated to a higher version.
 See :ref:`ug_fw_update_image_versions_mcuboot_downgrade` for information on downgrade protection in MCUboot.
 
 To upload a new application image, build an application with an updated image version.
@@ -161,7 +161,7 @@ To upload a new application image, build an application with an updated image ve
 .. code-block:: console
 
     west build -b nrf5340dk_nrf5340_cpuapp_ns nrf/samples/tfm/tfm_psa_template -d build_update \
-    -DCONFIG_MCUBOOT_IMAGE_VERSION=\"1.2.3\"
+    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.3\"
 
 Then upload the new application image to the device.
 

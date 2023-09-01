@@ -61,7 +61,7 @@ Other :ref:`Zigbee FOTA Kconfig options <lib_zigbee_fota_options>` can be used w
 
 Because the Zigbee OTA DFU performs the upgrade using the :ref:`lib_dfu_target` library, the are several non-Zigbee options that must be set to configure the update process:
 
-* :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` - This option specifies the current image version.
+* :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` - This option specifies the current image version.
 * :kconfig:option:`CONFIG_DFU_TARGET_MCUBOOT` - This option enables updates that are performed by MCUboot.
 * :kconfig:option:`CONFIG_IMG_MANAGER` - This option enables the support for managing the DFU image downloaded using MCUboot.
 * :kconfig:option:`CONFIG_IMG_ERASE_PROGRESSIVELY` - This option instructs MCUboot to erase the flash memory progressively.

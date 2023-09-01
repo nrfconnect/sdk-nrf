@@ -230,7 +230,7 @@ When using the |NCS| to build the MCUboot bootloader for the Thingy:53, the conf
 The MCUboot bootloader supports serial recovery and a custom command to erase the settings storage partition.
 Erasing the settings partition is needed to ensure that an application is not booted with incompatible content loaded from the settings partition.
 
-In addition, you can set an image version, such as ``"2.3.0+0"``, using the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option.
+In addition, you can set an image version, such as ``"2.3.0+0"``, using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
 
 .. _thingy53_app_usb:
 

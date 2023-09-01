@@ -364,7 +364,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --key ${mcuboot_key_file}
       --header-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PAD_SIZE>
       --align       ${CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE}
-      --version     ${CONFIG_MCUBOOT_IMAGE_VERSION}
+      --version     ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}
       --pad-header
       ${imgtool_security_counter}
       ${imgtool_extra}
@@ -378,7 +378,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       set(NETWORK_IMAGE_PAIR_IDX 1)
 
       # Add dependency inside application core image to require the latest network core image.
-      set(sign_dependencies IMAGE_DEPENDENCIES "(${NETWORK_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMAGE_VERSION})")
+      set(sign_dependencies IMAGE_DEPENDENCIES "(${NETWORK_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})")
     endif()
 
     if (CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
@@ -473,7 +473,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
       if (CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY)
         # Add dependency inside network core image to require the latest application core image.
-        set(sign_dependencies IMAGE_DEPENDENCIES "(${APPLICATION_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMAGE_VERSION})")
+        set(sign_dependencies IMAGE_DEPENDENCIES "(${APPLICATION_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})")
       endif()
 
       sign(
@@ -512,7 +512,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         "${app_core_binary_name}image_index=0"
         "${app_core_binary_name}slot_index_primary=1"
         "${app_core_binary_name}slot_index_secondary=2"
-        "${app_core_binary_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+        "${app_core_binary_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
         "${net_core_binary_name}image_index=1"
         "${net_core_binary_name}slot_index_primary=3"
         "${net_core_binary_name}slot_index_secondary=4"
@@ -531,10 +531,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
           )
         set(generate_script_params
           "${app_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_APP_ADDRESS>"
-          "${app_core_binary_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+          "${app_core_binary_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
           "${app_core_binary_name}slot=0"
           "${secondary_app_core_binary_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_APP_ADDRESS>"
-          "${secondary_app_core_binary_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+          "${secondary_app_core_binary_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
           "${secondary_app_core_binary_name}slot=1"
           )
       else()
@@ -543,7 +543,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
           )
         set(generate_script_params
           "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
-          "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+          "version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
           )
       endif()
     endif()
@@ -629,7 +629,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         SCRIPT_PARAMS
         "${s0_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
         "${s1_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>"
-        "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+        "version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
         "version_B0=${CONFIG_FW_INFO_FIRMWARE_VERSION}"
         )
     endif()
@@ -684,7 +684,7 @@ if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
     ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/zb_add_ota_header.py
       --application ${firmware_binary}
-      --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
+      --application-version-string ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}
       --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
       --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
       --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}

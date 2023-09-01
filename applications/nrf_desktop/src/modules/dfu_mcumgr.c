@@ -134,7 +134,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				}
 			}
 
-			LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMAGE_VERSION);
+			LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION);
 			k_work_init_delayable(&dfu_timeout, dfu_timeout_handler);
 
 			mgmt_callback_register(&img_mgmt_callback);
