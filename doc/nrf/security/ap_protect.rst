@@ -9,7 +9,7 @@ Enabling access port protection mechanism
 
 .. app_approtect_info_start
 
-Several Nordic Semiconductor SoCs supported in the |NCS| offer an implementation of the access port protection mechanism (AP-Protect).
+Several Nordic Semiconductor SoCs or SiPs supported in the |NCS| offer an implementation of the access port protection mechanism (AP-Protect).
 When enabled, this mechanism blocks the debugger from read and write access to all CPU registers and memory-mapped addresses.
 Accessing these registers and addresses again requires disabling the mechanism and erasing the flash.
 
@@ -45,16 +45,16 @@ For detailed information, refer to the hardware documentation.
 
        To keep the AP-Protect disabled, ``UICR.APPROTECT`` must be programmed to ``HwDisabled`` and the firmware must write ``SwDisable`` to ``APPROTECT.DISABLE``.
 
-The following table lists related SoCs with information about the AP-Protect mechanism they support.
-For some SoCs, the AP-Protect implementation is different depending on the build code of the device.
+The following table lists related SoCs or SiPs with information about the AP-Protect mechanism they support.
+For some SoCs or SiPs, the AP-Protect implementation is different depending on the build code of the device.
 See the related hardware documentation for more information about which implementation is supported for which build code and about the differences between the supported implementations.
 
-.. list-table:: SoC AP-Protect matrix
+.. list-table:: SoC or SiP AP-Protect matrix
    :header-rows: 1
    :align: center
    :widths: auto
 
-   * - SoC
+   * - SoC or SiP
      - Hardware AP-Protect support
      - Hardware and software AP-Protect support
      - Related hardware documentation
@@ -106,7 +106,7 @@ See the related hardware documentation for more information about which implemen
      -
 
 .. note::
-    The SoCs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe` (nRF5340 and nRF9160) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
+    The SoCs or SiPs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe` (nRF5340 and nRF9160) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
     While AP-Protect blocks access to all CPU registers and memories, Secure AP-Protect limits access to the CPU to only non-secure accesses.
     This means that the CPU is entirely unavailable while it is running the code in the Secure Processing Environment, and only non-secure registers and address-mapped resources can be accessed.
 
@@ -158,7 +158,7 @@ Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option 
 This option in fact does not touch the mechanism and keeps it closed.
 
 You can use this option for example to implement the authenticated debug and lock.
-See the SoC hardware documentation for more information.
+See the SoC or SiP hardware documentation for more information.
 
 .. _app_approtect_ncs_use_uicr:
 
