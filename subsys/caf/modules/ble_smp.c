@@ -56,7 +56,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			initialized = true;
 
 			LOG_INF("Service initialized");
-			LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMAGE_VERSION);
+			LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION);
 			module_set_state(MODULE_STATE_READY);
 		}
 

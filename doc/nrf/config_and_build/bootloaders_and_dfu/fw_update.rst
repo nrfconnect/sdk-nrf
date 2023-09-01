@@ -297,11 +297,11 @@ This feature offers protection against any outdated firmware that is uploaded to
 
 To enable this feature, set the configuration options ``CONFIG_MCUBOOT_DOWNGRADE_PREVENTION`` and ``CONFIG_BOOT_UPGRADE_ONLY`` for the MCUboot image.
 
-To assign a semantic version number to your application, pass the version string into the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` option for the application:
+To assign a semantic version number to your application, pass the version string into the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` option for the application:
 
 .. code-block:: console
 
-   CONFIG_MCUBOOT_IMAGE_VERSION="0.1.2+3"
+   CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="0.1.2+3"
 
 See the `Semantic versioning`_ webpage or :doc:`mcuboot:imgtool` for details on version syntax.
 
@@ -317,7 +317,7 @@ You can compile your application with this feature as follows:
 
    west build -b *board* *application* -- \\
    -DCONFIG_BOOTLOADER_MCUBOOT=y \\
-   -DCONFIG_MCUBOOT_IMAGE_VERSION=\\"0.1.2\\+3\\" \\
+   -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\\"0.1.2\\+3\\" \\
    -Dmcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y \\
    -Dmcuboot_CONFIG_BOOT_UPGRADE_ONLY=y
 

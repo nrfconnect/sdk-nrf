@@ -66,7 +66,7 @@ def sign(orig_hex, build_dir):
         mcuboot_rsa_key = ZEPHYR_BASE + '/../bootloader/mcuboot/' + mcuboot_rsa_key
 
     # IMAGE_VERSION="0.0.0+1"
-    image_version = awklike('CONFIG_MCUBOOT_IMAGE_VERSION=',
+    image_version = awklike('CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=',
                             build_dir + '/zephyr/.config')
     # VALIDATION_MAGIC_VALUE="0x281ee6de,0x86518483,79106"
     fw_info_magic_common = awklike('CONFIG_FW_INFO_MAGIC_COMMON=', build_dir +
@@ -120,7 +120,7 @@ def sign(orig_hex, build_dir):
     # CONFIG_BOARD="nrf5340_audio_nrf5340_cpuapp"
     config_board = awklike('CONFIG_BOARD=', build_dir + '/zephyr/.config')
 
-    net_core_fw_info_address = (pm_net_app_address + fw_info_offset)
+    net_core_fw_info_address = pm_net_app_address + fw_info_offset
     net_core_fw_info_address = f'0x{net_core_fw_info_address:08X}'
 
     # Inject FW_INFO from .config
@@ -233,7 +233,7 @@ def sign(orig_hex, build_dir):
     # "${app_core_binary_name}image_index=0"
     # "${app_core_binary_name}slot_index_primary=1"
     # "${app_core_binary_name}slot_index_secondary=2"
-    # "${app_core_binary_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
+    # "${app_core_binary_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
     # "${net_core_binary_name}image_index=1"
     # "${net_core_binary_name}slot_index_primary=3"
     # "${net_core_binary_name}slot_index_secondary=4"
