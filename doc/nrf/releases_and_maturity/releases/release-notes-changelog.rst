@@ -501,6 +501,7 @@ Wi-Fi samples
   * :ref:`wifi_twt_sample` sample that demonstrates how to establish TWT flow and transfer data conserving power.
   * Support for the Wi-Fi driver to several upstream Zephyr networking samples.
   * Enchancements to support device re-trimming process in the :ref:`wifi_radio_test` sample.
+  * Changes to the :ref:`wifi_scan_sample` sample to demonstrate usage of new scan APIs.
 
 Other samples
 -------------
