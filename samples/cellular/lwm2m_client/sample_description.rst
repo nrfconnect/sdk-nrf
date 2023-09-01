@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-The LwM2M Client sample demonstrates the usage of the :term:`Lightweight Machine to Machine (LwM2M)` protocol to connect a Thingy:91 or an nRF9160 DK to an LwM2M server through LTE.
+The LwM2M Client sample demonstrates the usage of the :term:`Lightweight Machine to Machine (LwM2M)` protocol to connect a Thingy:91 or an nRF91 Series DK to an LwM2M server through LTE.
 To achieve this, the sample uses the Zephyr's :ref:`lwm2m_interface` client and |NCS| :ref:`lib_lwm2m_client_utils` library.
 The former provides a device vendor agnostic client implementation, whereas the latter includes all the Nordic specific bits and pieces.
 
@@ -50,7 +50,7 @@ The sample implements the following LwM2M objects:
    *  - LwM2M objects
       - Object ID
       - Thingy:91
-      - nRF9160 DK
+      - nRF91 Series DK
    *  - LwM2M Server
       - 1
       - Yes
@@ -193,7 +193,7 @@ Sensor simulation
 =================
 
 If a sensor simulator is defined in devicetree with the ``sensor_sim`` node label, it will be used over real devices.
-This is useful, for example, on the nRF9160 DK, where only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
+This is useful, for example, on an nRF91 Series DK, where only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
 
 Configuration
 *************
@@ -432,7 +432,7 @@ Check and configure the following LwM2M options that are used by the sample:
 * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS` - Enables notifications before Tracking Area Update (TAU). Notification triggers LWM2M registration update and TAU will be sent together with the user data. This decreases power consumption.
 
 .. note::
-   The nRF9160 modem negotiates PSM and eDRX modes with the network it is trying to connect.
+   The cellular modem negotiates PSM and eDRX modes with the network it is trying to connect.
    The network can either accept the values, assign different values or reject them.
 
 For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one of the following options (default value is |plusminus| 2 g):
@@ -537,9 +537,19 @@ See :ref:`Registering your device to an LwM2M boot strap server <bootstrap_serve
 
 To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOVERLAY_CONFIG=overlay-bootstrap.conf`` option:
 
-.. code-block:: console
+   .. tabs::
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-bootstrap.conf
+      .. group-tab:: nRF9161 DK
+
+         .. code-block:: console
+
+            west build -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG=overlay-bootstrap.conf
+
+      .. group-tab:: nRF9160 DK
+
+         .. code-block:: console
+
+            west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-bootstrap.conf
 
 See :ref:`cmake_options` for instructions on how to add this option.
 Keep in mind that the used bootstrap port is set in the aforementioned configuration file.
@@ -553,7 +563,7 @@ Testing
    #. |connect_terminal|
    #. Observe that the sample starts in the terminal window.
    #. Check that the device is connected to the chosen LwM2M server.
-   #. Press **Button 1** on nRF9160 DK or **SW3** on Thingy:91 and confirm that the button event appears in the terminal.
+   #. Press **Button 1** on nRF91 Series DK or **SW3** on Thingy:91 and confirm that the button event appears in the terminal.
    #. Check that the button press event has been registered on the LwM2M server by confirming that the press count has been updated.
    #. Retrieve sensor data from various sensors and check if values are reasonable.
    #. Test GNSS module:
