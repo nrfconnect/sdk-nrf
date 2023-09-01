@@ -619,19 +619,19 @@ enum lte_lc_tau_triggered {
 /** CE level. */
 enum lte_lc_ce_level {
 	/** No repetitions or a small number of repetitions. */
-	LTE_LC_CE_LEVEL_0_NO_REPETITION		= 0,
+	LTE_LC_CE_LEVEL_0	= 0,
 
 	/** Medium number of repetitions. */
-	LTE_LC_CE_LEVEL_1_LOW_REPETITION	= 1,
+	LTE_LC_CE_LEVEL_1	= 1,
 
 	/** Large number of repetitions. */
-	LTE_LC_CE_LEVEL_2_MEDIUM_REPETITION	= 2,
+	LTE_LC_CE_LEVEL_2	= 2,
 
 	/** Very large number of repetitions. */
-	LTE_LC_CE_LEVEL_3_LARGE_REPETITION	= 3,
+	LTE_LC_CE_LEVEL_3	= 3,
 
 	/** Not known. */
-	LTE_LC_CE_LEVEL_UNKNOWN			= UINT8_MAX,
+	LTE_LC_CE_LEVEL_UNKNOWN	= UINT8_MAX,
 };
 
 /** Reduced mobility mode. */
