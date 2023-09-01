@@ -115,17 +115,17 @@ This is true whether or not the LTE connection is intact.
 References
 **********
 
-`RFC 7252 - The Constrained Application Protocol`_
-`RFC 7959 - Block-Wise Transfer in CoAP`_
-`RFC 7049 - Concise Binary Object Representation`_
-`RFC 8610 - Concise Data Definition Language (CDDL)`_
-`RFC 8132 - PATCH and FETCH Methods for CoAP`_
-`RFC 9146 - Connection Identifier for DTLS 1.2`_
+* `RFC 7252 - The Constrained Application Protocol`_
+* `RFC 7959 - Block-Wise Transfer in CoAP`_
+* `RFC 7049 - Concise Binary Object Representation`_
+* `RFC 8610 - Concise Data Definition Language (CDDL)`_
+* `RFC 8132 - PATCH and FETCH Methods for CoAP`_
+* `RFC 9146 - Connection Identifier for DTLS 1.2`_
 
 Dependencies
 ************
 
-This library uses the following |NCS| libraries:
+This library uses the following |NCS| library:
 
 * :ref:`lib_nrf_cloud`
 
