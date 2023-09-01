@@ -70,7 +70,7 @@ Wiring
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/npm1300_fuel_gauge`
+.. |sample path| replace:: :file:`samples/pmic/native/npm1300_fuel_gauge`
 
 .. include:: /includes/build_and_run.txt
 
