@@ -352,6 +352,7 @@ Cellular samples (renamed from nRF9160 samples)
     * The connection logic by cleaning and simplifying it.
     * From using the :ref:`lte_lc_readme` library directly to using Zephyr's ``conn_mgr`` and the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kconfig option.
 
+  * Fixed build instructions, board files, and DTC overlay file, so that Wi-Fi scanning works with the nRF9160DK and the nRF9161DK.
   * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
 
 * :ref:`http_application_update_sample` sample:

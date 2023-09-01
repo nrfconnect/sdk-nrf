@@ -9,3 +9,9 @@
 &uart1 {
 	status = "disabled";
 };
+
+/* Disabled because the io expander is not being properly enabled, resulting
+ * in I2C errors. */
+&pcal6408a {
+	status = "disabled";
+};
