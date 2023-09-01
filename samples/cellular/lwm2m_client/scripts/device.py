@@ -18,6 +18,7 @@ import re
 from serial.tools.list_ports import comports
 
 NRF91_VID = 4966
+SEGGER_HEADER_9161 = "10"
 
 class Device:
     """Generate requests for device using AT commands"""
@@ -40,12 +41,20 @@ class Device:
 
     def build_at_client(self):
         logging.info("Building AT client")
-        cmd = f"west build --board nrf9160dk_nrf9160_ns --build-dir build --pristine always {self.sample_path}"
+        if str(self.sid).startswith(SEGGER_HEADER_9161):
+            cmd = f"west build --board nrf9161dk_nrf9161_ns --build-dir build --pristine always {self.sample_path}"
+        else:
+            cmd = f"west build --board nrf9160dk_nrf9160_ns --build-dir build --pristine always {self.sample_path}"
+        logging.info(f"{cmd}")
         subprocess.run(cmd.split(), cwd=self.sample_path, check=True, capture_output=True)
         logging.info("Done!")
 
     def flash_at_client(self):
         logging.info(f"Erasing device {self.sid}")
+        if str(self.sid).startswith(SEGGER_HEADER_9161):
+            logging.info("Recover")
+            cmd = f"nrfjprog --snr {self.sid} --recover"
+            subprocess.run(cmd.split(), check=True)
         cmd = f"nrfjprog --snr {self.sid} --eraseall"
         subprocess.run(cmd.split(), check=True, capture_output=True)
         logging.info("Done!")

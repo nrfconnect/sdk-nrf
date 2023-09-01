@@ -377,6 +377,8 @@
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
 
+.. _`nRF9161 DK Downloads`: https://www.nordicsemi.com/Products/nRF9161/Download?lang=en#infotabs
+
 .. _`Nordic nRF9160 DK`:
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
 .. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs

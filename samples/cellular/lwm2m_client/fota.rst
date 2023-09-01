@@ -88,6 +88,7 @@ Enable the following Kconfig options to use advanced FOTA:
    CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT=y
    CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT=n
    CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE=n
+   CONFIG_LWM2M_RW_OMA_TLV_SUPPORT=y
 
 The :file:`overlay-adv-firmware.conf` configuration file includes these options.
 
@@ -142,21 +143,35 @@ The following example output shows the allocation of a resource id ``lwm2m_clien
 .. code-block:: console
 
    [INFO] fota.py - Upload app_update.bin with instance 0 to Coiote
-   [INFO] fota.py - Binary app_update.bin, Size 336032 (bytes)
+   [INFO] fota.py - Binary app_update.bin, Size 364747 (bytes)
    [INFO] coiote.py - Creating fota resource for binary app_update.bin with id lwm2m_client_fota_instance_0
    [INFO] fota.py - Allocated Resource id lwm2m_client_fota_instance_0 for instance 0
 
+.. tabs::
+
+   .. group-tab:: nRF9161 DK
+
+      .. code-block:: console
+
+         ./scripts/fota.py upload 1 mfw_nrf91x1_update_from_2.x.x_to_2.x.x-FOTA-TEST.bin
+
+      where 2.x.x is the latest modem release version.
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         ./scripts/fota.py upload 1 mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin
+
+      where 1.x.x is the latest modem release version.
+
+The following is an example output that shows the allocation of a resource id ``lwm2m_client_fota_instance_0`` on the server side for the nRF9160 DK:
+
 .. code-block:: console
 
-   ./scripts/fota.py upload 1 mfw_nrf9160_update_from_1.3.4_to_1.3.4-FOTA-TEST.bin
-
-The following example output shows the allocation of a resource id ``lwm2m_client_fota_instance_0`` on the server side:
-
-.. code-block:: console
-
-   [INFO] fota.py - Upload mfw_nrf9160_update_from_1.3.4_to_1.3.4-FOTA-TEST.bin with instance 1 to Coiote
-   [INFO] fota.py - Binary mfw_nrf9160_update_from_1.3.4_to_1.3.4-FOTA-TEST.bin, Size 14472 (bytes)
-   [INFO] coiote.py - Creating fota resource for binary mfw_nrf9160_update_from_1.3.4_to_1.3.4-FOTA-TEST.bin with id lwm2m_client_fota_instance_1
+   [INFO] fota.py - Upload mfw_nrf9160_update_from_1.3.5_to_1.3.5-FOTA-TEST.bin with instance 1 to Coiote
+   [INFO] fota.py - Binary mfw_nrf9160_update_from_1.3.5_to_1.3.5-FOTA-TEST.bin, Size 14312 (bytes)
+   [INFO] coiote.py - Creating fota resource for binary mfw_nrf9160_update_from_1.3.5_to_1.3.5-FOTA-TEST.bin with id lwm2m_client_fota_instance_1
    [INFO] fota.py - Allocated Resource id lwm2m_client_fota_instance_1 for instance 1
 
 FOTA update command
@@ -176,9 +191,23 @@ The update default task timeout is 800 seconds.
 
 Following is an example of updating a modem instance by giving a binary file:
 
-.. code-block:: console
+.. tabs::
 
-   ./scripts/fota.py -id urn:imei:351358811331351 update 1 file mfw_nrf9160_update_from_1.3.4_to_1.3.4-FOTA-TEST.bin
+   .. group-tab:: nRF9161 DK
+
+      .. code-block:: console
+
+         ./scripts/fota.py -id urn:imei:359746166785274 update 1 file mfw_nrf91x1_update_from_2.x.x_to_2.x.x-FOTA-TEST.bin
+
+      where 2.x.x is the latest modem release version.
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         ./scripts/fota.py -id urn:imei:351358811331351 update 1 file mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin
+
+      where 1.x.x is the latest modem release version.
 
 To use existing resource IDs, run the script with the following parameters:
 
@@ -188,11 +217,25 @@ To use existing resource IDs, run the script with the following parameters:
 
 Following is an example of uploading a binary and updating a modem by referring to the uploaded resource ID:
 
-.. code-block:: console
+.. tabs::
 
-   ./scripts/fota.py upload 1 mfw_nrf9160_update_from_1.3.4-FOTA-TEST_to_1.3.4.bin
-   ./scripts/fota.py -id urn:imei:351358811331351 update 1 resource lwm2m_client_fota_instance_1
+      .. group-tab:: nRF9161 DK
 
+         .. code-block:: console
+
+            ./scripts/fota.py upload 1 mfw_nrf91x1_update_from_2.x.x-FOTA-TEST_to_2.x.x.bin
+            ./scripts/fota.py -id urn:imei:359746166785274 update 1 resource lwm2m_client_fota_instance_1
+
+         where 2.x.x is the latest modem release version.
+
+      .. group-tab:: nRF9160 DK
+
+         .. code-block:: console
+
+            ./scripts/fota.py upload 1 mfw_nrf9160_update_from_1.x.x-FOTA-TEST_to_1.x.x.bin
+            ./scripts/fota.py -id urn:imei:351358811331351 update 1 resource lwm2m_client_fota_instance_1
+
+         where 1.x.x is the latest modem release version.
 
 Testing advanced FOTA
 **********************
@@ -200,14 +243,25 @@ Testing advanced FOTA
 Complete the following steps to test the advanced FOTA firmware update with the lwM2M client sample and the :file:`/scripts/fota.py` file.
 
 
-   #. Download the latest released modem zip file from `nRF9160 DK Downloads`_.
+   #. Download the latest released modem zip file from `nRF9160 DK Downloads`_ or `nRF9161 DK Downloads`_.
    #. Update the modem firmware using the nRF Programmer app of `nRF Connect for Desktop`_.
    #. Copy the binaries with the following naming format from the zip file to the folder :file:`/nrf/samples/cellular/lwm2m_client`:
 
-      * :file:`mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin`
-      * :file:`mfw_nrf9160_update_from_1.x.x-FOTA-TEST_to_1.x.x.bin`
+   .. tabs::
 
-      where 1.x.x is the latest modem release version.
+      .. group-tab:: nRF9161 DK
+
+         * :file:`mfw_nrf91x1_update_from_2.x.x_to_2.x.x-FOTA-TEST.bin`
+         * :file:`mfw_nrf91x1_update_from_2.x.x-FOTA-TEST_to_2.x.x.bin`
+
+         where 2.x.x is the latest modem release version.
+
+      .. group-tab:: nRF9160 DK
+
+         * :file:`mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin`
+         * :file:`mfw_nrf9160_update_from_1.x.x-FOTA-TEST_to_1.x.x.bin`
+
+         where 1.x.x is the latest modem release version.
 
    #. To set up the script, you must set the username and password that you used in AVSystem's Coiote Device Management server as the environment variables.
 
@@ -231,20 +285,30 @@ Complete the following steps to test the advanced FOTA firmware update with the 
    #. Change :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to ``1.0.1`` and rebuild the sample.
    #. Update the application and modem firmware by using the :file:`/scripts/fota.py` script:
 
-      .. code-block:: console
+      .. tabs::
 
-         ./scripts/fota.py -id urn:imei:351358811331351 update 0 file app_update.bin update 1 file mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin
+         .. group-tab:: nRF9160 DK
 
-      Following is an example output of the command:
+            .. code-block:: console
+
+               ./scripts/fota.py -id urn:imei:359746166785274 update 0 file app_update.bin update 1 file mfw_nrf91x1_update_from_2.x.x_to_2.x.x-FOTA-TEST.bin
+
+         .. group-tab:: nRF9160 DK
+
+            .. code-block:: console
+
+               ./scripts/fota.py -id urn:imei:351358811331351 update 0 file app_update.bin update 1 file mfw_nrf9160_update_from_1.x.x_to_1.x.x-FOTA-TEST.bin
+
+      Following is an example output of the command for the nRF9160 DK:
 
       .. code-block:: console
 
          [INFO] fota.py - Client identity: urn:imei:351358811331351
-         [INFO] fota.py - Binary app_update.bin, Size 336032 (bytes)
+         [INFO] fota.py - Binary app_update.bin, Size 364747 (bytes)
          [INFO] coiote.py - Creating fota resource for binary app_update.bin with id lwm2m_client_fota_instance_0
          [INFO] fota.py - Init setup for instance 0 firmware Update resource:lwm2m_client_fota_instance_0
-         [INFO] fota.py - Binary mfw_nrf9160_update_from_1.3.4_to_1.3.4-FOTA-TEST.bin, Size 14472 (bytes)
-         [INFO] coiote.py - Creating fota resource for binary mfw_nrf9160_update_from_1.3.4_to_1.3.4-FOTA-TEST.bin with id lwm2m_client_fota_instance_1
+         [INFO] fota.py - Binary mfw_nrf9160_update_from_1.3.5_to_1.3.5-FOTA-TEST.bin, Size 14312 (bytes)
+         [INFO] coiote.py - Creating fota resource for binary mfw_nrf9160_update_from_1.3.5_to_1.3.5-FOTA-TEST.bin with id lwm2m_client_fota_instance_1
          [INFO] fota.py - Init setup for instance 1 firmware Update resource:lwm2m_client_fota_instance_1
          [INFO] fota.py - Start Firmware Update
          [INFO] fota.py - Delete Observation Advanced Firmware Update
@@ -264,23 +328,33 @@ Complete the following steps to test the advanced FOTA firmware update with the 
          [INFO] fota.py - Firmware Update Successfully instance: 0
          [INFO] fota.py - From:1.0.0-0 to 1.0.1-0
          [INFO] fota.py - Firmware Update Successfully instance: 1
-         [INFO] fota.py - From:mfw_nrf9160_1.3.4 to mfw_nrf9160_1.3.4-FOTA-TEST
+         [INFO] fota.py - From:mfw_nrf9160_1.3.5 to mfw_nrf9160_1.3.5-FOTA-TEST
          [INFO] fota.py - Firmware update process finished
          [INFO] fota.py - Delete Observation Advanced Firmware Update
 
    #. Update the modem firmware back to the original released version:
 
-      .. code-block:: console
+      .. tabs::
 
-         ./scripts/fota.py -id urn:imei:351358811331351 update 1 file mfw_nrf9160_update_from_1.x.x-FOTA-TEST_to_1.x.x.bin
+         .. group-tab:: nRF9161 DK
 
-      Following is an example output of the command:
+            .. code-block:: console
+
+               ./scripts/fota.py -id urn:imei:359746166785274 update 1 mfw_nrf91x1_update_from_2.x.x-FOTA-TEST_to_2.x.x.bin
+
+         .. group-tab:: nRF9160 DK
+
+            .. code-block:: console
+
+               ./scripts/fota.py -id urn:imei:351358811331351 update 1 file mfw_nrf9160_update_from_1.x.x-FOTA-TEST_to_1.x.x.bin
+
+      Following is an example output of the command for the nRF9160 DK:
 
       .. code-block:: console
 
          [INFO] fota.py - Client identity: urn:imei:351358811331351
-         [INFO] fota.py - Binary mfw_nrf9160_update_from_1.3.4-FOTA-TEST_to_1.3.4.bin, Size 14504 (bytes)
-         [INFO] coiote.py - Creating fota resource for binary mfw_nrf9160_update_from_1.3.4-FOTA-TEST_to_1.3.4.bin with id lwm2m_client_fota_instance_1
+         [INFO] fota.py - Binary mfw_nrf9160_update_from_1.3.5-FOTA-TEST_to_1.3.5.bin, Size 14312 (bytes)
+         [INFO] coiote.py - Creating fota resource for binary mfw_nrf9160_update_from_1.3.5-FOTA-TEST_to_1.3.5.bin with id lwm2m_client_fota_instance_1
          [INFO] fota.py - Init setup for instance 1 firmware Update resource:lwm2m_client_fota_instance_1
          [INFO] fota.py - Start Firmware Update
          [INFO] fota.py - Delete Observation Advanced Firmware Update
@@ -294,6 +368,6 @@ Complete the following steps to test the advanced FOTA firmware update with the 
          [INFO] coiote.py - Device is Queuemode Coiote have to wait next Registration Update
          [INFO] fota.py - Update started instance: 1
          [INFO] fota.py - Firmware Update Successfully instance: 1
-         [INFO] fota.py - From:mfw_nrf9160_1.3.4-FOTA-TEST to mfw_nrf9160_1.3.4
+         [INFO] fota.py - From:mfw_nrf9160_1.3.5-FOTA-TEST to mfw_nrf9160_1.3.5
          [INFO] fota.py - Firmware update process finished
          [INFO] fota.py - Delete Observation Advanced Firmware Update

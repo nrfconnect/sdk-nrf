@@ -25,7 +25,7 @@ Programming the AT Client sample
 
 You must program the :ref:`at_client_sample` sample to your device to control the security tags in the modem.
 See `nRF91 AT Commands Reference Guide <AT Commands Reference Guide_>`_ for documentation on each AT command.
-Also, you must provision the bootstrap credentials for the security tag (that you have specified in :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG` Kconfig option) to the nRF9160 modem.
+Also, you must provision the bootstrap credentials for the security tag (that you have specified in :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG` Kconfig option) to the cellular modem.
 
 Provisioning the identity and security credentials
 **************************************************
@@ -101,5 +101,5 @@ To configure and program the sample, complete the following steps:
 1. Make the sample programmable to multiple devices by removing all hard coded credentials. This can be done by setting the :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` Kconfig option to empty value.
 #. Enable bootstrapping using the configuration overlay file :file:`overlay-avsystem-bootstrap.conf`.
    Bootstrapping is required for an LwM2M client to rotate security credentials.
-#. Prepare the production script or steps for your nRF9160-based device.
+#. Prepare the production script or steps for your nRF91 Series device.
 #. Program the sample.

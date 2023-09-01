@@ -41,7 +41,7 @@ if __name__ == "__main__":
     if args.f:
         dev.build_at_client()
         dev.flash_at_client()
-        dev.wait_for_uart_string("The AT host sample started")
+        dev.wait_for_uart_string("Ready")
 
     dev.at_client = ATclient(dev.com_port)
 
