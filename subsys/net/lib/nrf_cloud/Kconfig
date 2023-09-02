@@ -45,7 +45,7 @@ config NRF_CLOUD_SEC_TAG
 
 config NRF_CLOUD_SEND_DEVICE_STATUS
 	bool "Send device status on initial connection"
-	depends on NRF_CLOUD_MQTT
+	depends on NRF_CLOUD_MQTT || NRF_CLOUD_COAP
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_DEVICE
 	default y if NRF_CLOUD_FOTA

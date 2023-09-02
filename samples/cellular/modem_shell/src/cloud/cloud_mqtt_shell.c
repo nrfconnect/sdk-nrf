@@ -124,15 +124,10 @@ static void shadow_update_work_fn(struct k_work *work)
 	struct nrf_cloud_svc_info service_info = {
 		.ui = &ui_info
 	};
-	struct nrf_cloud_modem_info modem_info = {
-		.device = NRF_CLOUD_INFO_SET,
-		.network = NRF_CLOUD_INFO_SET,
-		.sim = NRF_CLOUD_INFO_SET,
-		.mpi = NULL /* Modem data will be fetched */
-	};
 	struct nrf_cloud_device_status device_status = {
-		.modem = &modem_info,
-		.svc = &service_info
+		.modem = NULL,
+		.svc = &service_info,
+		.conn_inf = NRF_CLOUD_INFO_NO_CHANGE
 	};
 
 	ARG_UNUSED(work);

@@ -43,7 +43,7 @@ static void coap_connect_work_fn(struct k_work *item)
 		return;
 	}
 
-	err = nrf_cloud_coap_connect();
+	err = nrf_cloud_coap_connect(NULL);
 	if (err) {
 		mosh_error("Connecting to nRF Cloud failed, error: %d", err);
 		return;
@@ -110,15 +110,10 @@ static void cmd_cloud_coap_shadow_update(const struct shell *shell, size_t argc,
 	struct nrf_cloud_svc_info service_info = {
 		.ui = &ui_info
 	};
-	struct nrf_cloud_modem_info modem_info = {
-		.device = NRF_CLOUD_INFO_SET,
-		.network = NRF_CLOUD_INFO_SET,
-		.sim = NRF_CLOUD_INFO_SET,
-		.mpi = NULL /* Modem data will be fetched */
-	};
 	struct nrf_cloud_device_status device_status = {
-		.modem = &modem_info,
-		.svc = &service_info
+		.modem = NULL,
+		.svc = &service_info,
+		.conn_inf = NRF_CLOUD_INFO_NO_CHANGE
 	};
 
 	err = nrf_cloud_coap_shadow_device_status_update(&device_status);

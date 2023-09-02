@@ -161,7 +161,7 @@ static bool connect_cloud(void)
 	err = nrf_cloud_connect();
 #elif defined(CONFIG_NRF_CLOUD_COAP)
 	/* Connect via CoAP -- blocking. */
-	err = nrf_cloud_coap_connect();
+	err = nrf_cloud_coap_connect(CONFIG_APP_VERSION);
 	if (!err) {
 		cloud_ready();
 		update_shadow();
@@ -223,23 +223,13 @@ static void update_shadow(void)
 		.fota = &fota_info,
 		.ui = &ui_info
 	};
-#if defined(CONFIG_NRF_MODEM)
-	struct nrf_cloud_modem_info modem_info = {
-		.device = NRF_CLOUD_INFO_SET,
-		.network = NRF_CLOUD_INFO_SET,
-		.sim = IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM) ? NRF_CLOUD_INFO_SET : 0,
-		.mpi = NULL,
-		/* Include the application version */
-		.application_version = CONFIG_APP_VERSION
-	};
-	struct nrf_cloud_modem_info *mdm = &modem_info;
-#else
-	struct nrf_cloud_modem_info *mdm = NULL;
-#endif
 	struct nrf_cloud_device_status device_status = {
-		.modem = mdm,
+		/* Modem info is sent automatically since CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS
+		 * is enabled, so it can be skipped here.
+		 */
+		.modem = NULL,
 		.svc = &service_info,
-		.conn_inf = NRF_CLOUD_INFO_SET
+		.conn_inf = NRF_CLOUD_INFO_NO_CHANGE
 	};
 
 	if (updated) {

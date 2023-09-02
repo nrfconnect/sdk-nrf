@@ -39,9 +39,11 @@ int nrf_cloud_coap_init(void);
  * This function must return 0 indicating success so that the other functions below,
  * other than nrf_cloud_coap_disconnect(), will not immediately return an error when called.
  *
+ * @param app_ver Version to report to the shadow; can be NULL.
+ *
  * @return 0 if authorized successfully, otherwise, a negative error number.
  */
-int nrf_cloud_coap_connect(void);
+int nrf_cloud_coap_connect(const char * const app_ver);
 
 /**
  * @brief Pause CoAP connection.

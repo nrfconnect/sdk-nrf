@@ -357,6 +357,7 @@ Cellular samples (renamed from nRF9160 samples)
     * The encoding and decoding of nRF Cloud data to use the :c:struct:`nrf_cloud_obj` structure and associated functions.
     * The connection logic by cleaning and simplifying it.
     * From using the :ref:`lte_lc_readme` library directly to using Zephyr's ``conn_mgr`` and the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kconfig option.
+    * The sample to remove redundant shadow updates for nRF Cloud.
 
   * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
 
@@ -396,8 +397,9 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Updated:
 
-    * The :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` is now used to create a P-GPS request.
+    * The sample to use the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
     * The modem system mode is now used when the sample starts, if the mode has not been set using the ``link sysmode`` command.
+    * The sample to remove redundant shadow updates for nRF Cloud.
 
 * :ref:`lwm2m_client` sample:
 
