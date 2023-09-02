@@ -175,7 +175,39 @@ int nrf_cloud_coap_init(void)
 	return 0;
 }
 
-int nrf_cloud_coap_connect(void)
+static int update_device_status(const char * const app_ver)
+{
+	int err;
+
+#if defined(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS)
+	struct nrf_cloud_modem_info mdm_inf = {
+		.device = NRF_CLOUD_INFO_SET,
+		.application_version = app_ver,
+		.mpi = NULL
+	};
+	struct nrf_cloud_device_status dev_status = {
+		.modem = &mdm_inf,
+		.svc = NULL
+	};
+
+	mdm_inf.network = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK) ?
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+
+	mdm_inf.sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+
+	dev_status.conn_inf = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF) ?
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+
+	err = nrf_cloud_coap_shadow_device_status_update(&dev_status);
+#else
+	ARG_UNUSED(app_ver);
+	err = 0;
+#endif
+	return err;
+}
+
+int nrf_cloud_coap_connect(const char * const app_ver)
 {
 	struct sockaddr_storage server;
 	int err;
@@ -214,7 +246,8 @@ int nrf_cloud_coap_connect(void)
 	if (err < 0) {
 		goto fail;
 	}
-	return 0;
+
+	return update_device_status(app_ver);
 
 fail:
 	(void)nrf_cloud_coap_disconnect();

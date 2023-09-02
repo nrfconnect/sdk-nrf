@@ -70,11 +70,15 @@ Additionally, the following Kconfig options are available:
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_RESPONSE_TIMEOUT_MS`
 * :kconfig:option:`CONFIG_NON_RESP_RETRIES`
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SEND_SSIDS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK`
+* :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM`
+* :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF`
 
 Finally, configure these recommended additional options:
 
 * :kconfig:option:`CONFIG_COAP_CLIENT_BLOCK_SIZE` set to ``1024``.
-* :kconfig:option:`CONFIG_COAP_CLIENT_STACK_SIZE` set to ``6144``..`
+* :kconfig:option:`CONFIG_COAP_CLIENT_STACK_SIZE` set to ``6144``.
 * :kconfig:option:`CONFIG_COAP_CLIENT_THREAD_PRIORITY` set to ``0``.
 * :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` set to ``32``.
 
