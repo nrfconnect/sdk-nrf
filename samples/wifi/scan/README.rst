@@ -35,6 +35,9 @@ Configuration
 
 |config|
 
+Configuration options
+=====================
+
 Select the scan type to be used by the sample.
 
 .. note::
@@ -42,10 +45,7 @@ Select the scan type to be used by the sample.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
-Configuration options
-=====================
-
-The following sample-specific Kconfig option is used in this sample (located in :file:`samples/wifi/scan/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/scan/Kconfig`) :
 
 .. _CONFIG_WIFI_SCAN_TYPE_SELECT:
 
@@ -131,7 +131,7 @@ Testing
       6    | AZBYCXD                          7     | 1    | -41  | WPA/WPA2 | yy:yy:yy:yy:yy:yy
       Scan request done
 
-* Default (Active) scan results:
+* Scan type (Active/Passive) based scan results:
 
   .. code-block:: console
 
@@ -142,33 +142,14 @@ Testing
       3    | hijklmno                         8   | 48   | -43  | Open     | 00:22:CF:E6:AE:99
       Scan request done
 
-* Passive scan results:
-
-  .. code-block:: console
-
-      Scan requested
-      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
-      1    |                                  0   | 11   | -39  | Open     | C2:A5:11:A2:B1:E2
-      2    | abcdefg                          7   | 11   | -39  | Open     | BC:A5:11:A2:B1:E2
-      3    | hijklmno                         8   | 48   | -43  | Open     | 00:22:CF:E6:AE:99
-      Scan request done
-
-* 2.4 GHz scan only results:
+* Frequency band based scan results:
 
   .. code-block:: console
 
       Scan requested
       Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
       1    | abcdefg                          7   | 11   | -39  | Open     | BC:A5:11:A2:B1:E2
-      Scan request done
-
-* 5 GHz scan only results:
-
-  .. code-block:: console
-
-      Scan requested
-      Num  | SSID                           (len) | Chan | RSSI | Security | BSSID
-      1    | pqrst                             5  | 48   | -43  | Open     | 00:22:CF:E6:AE:99
+      2    | pqrst                            5  | 48   | -43  | Open     | 00:22:CF:E6:AE:99
       Scan request done
 
 * SSID based scan results:
