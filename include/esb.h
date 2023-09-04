@@ -46,7 +46,6 @@ extern "C" {
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
 		.selective_auto_ack = false,                                   \
-		.use_fast_ramp_up = false                                      \
 	}
 
 /** @brief Default legacy radio parameters.
@@ -66,7 +65,6 @@ extern "C" {
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
 		.selective_auto_ack = false,                                   \
-		.use_fast_ramp_up = false                                      \
 	}
 
 /** @brief Macro to create an initializer for a TX data packet.
@@ -245,15 +243,6 @@ struct esb_config {
 				   *  will be acknowledged ignoring the noack
 				   *  field.
 				   */
-	bool use_fast_ramp_up; /**<  When this feature is enabled, radio TXEN and
-				 *  RXEN delays are reduced from 130 µs to 40 µs.
-				 *  The radio peripheral needs some time to start up
-				 *  analog components of the radio. On the nRF51 and
-				 *  nRF24L Series devices, a hard-coded 130 µs delay is
-				 *  implemented. If ESB connection is achieved only
-				 *  between nRF52 and/or nRF53 Series devices, this delay can
-				 *  be reduced to 40 µs.
-				 */
 };
 
 /** @brief Initialize the Enhanced ShockBurst module.

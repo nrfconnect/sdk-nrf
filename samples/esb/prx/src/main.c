@@ -181,6 +181,10 @@ int main(void)
 
 	LOG_INF("Enhanced ShockBurst prx sample");
 
+#ifndef CONFIG_ESB_FAST_RAMP_UP
+	LOG_INF("Fast ramp up disabled. Consider enabling this for improved performance.");
+#endif
+
 	err = clocks_start();
 	if (err) {
 		return 0;

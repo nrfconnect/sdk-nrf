@@ -45,6 +45,16 @@ config ESB_PIPE_COUNT
 	  accidental use of additional pipes, but it's not a problem leaving
 	  this at 8 even if fewer pipes are used.
 
+config ESB_FAST_RAMP_UP
+	bool "Ramp up time configuration for the radio"
+	default n
+	help
+	  Enable fast ramp up to reduce the time it takes to enable the radio in
+	  TX or RX mode, from around 130us to 40us. This will reduce latency and
+	  increase throughput, but will break interoperability with devices using
+	  normal ramp up mode, either because they don't support fast ramp up
+	  (the nRF24L or nRF51 series) or use an older version of the ESB library.
+
 config ESB_RADIO_IRQ_PRIORITY
 	int "Radio interrupt priority"
 	range 0 5 if ZERO_LATENCY_IRQS

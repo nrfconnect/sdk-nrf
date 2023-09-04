@@ -47,14 +47,19 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 /* Minimum retransmit time */
 #define RETRANSMIT_DELAY_MIN 435
 
+#ifdef CONFIG_ESB_FAST_RAMP_UP
+/* Radio Rx fast ramp-up time in microseconds. */
+#define TX_RAMP_UP_TIME_US 40
+
+/* Radio Rx ramp-up time in microseconds. */
+#define RX_RAMP_UP_TIME_US 40
+#else
 /* Radio Tx ramp-up time in microseconds. */
 #define TX_RAMP_UP_TIME_US 129
 
-/* Radio Rx fast ramp-up time in microseconds. */
-#define TX_FAST_RAMP_UP_TIME_US 40
-
 /* Radio Rx ramp-up time in microseconds. */
 #define RX_RAMP_UP_TIME_US 124
+#endif
 
 /* Interrupt flags */
 /* Interrupt mask value for TX success. */
@@ -990,9 +995,8 @@ static void on_radio_disabled_tx(void)
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0,
 			   (wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US), false);
 
-	uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1,
-			   (esb_cfg.retransmit_delay - ramp_up), false);
+			   (esb_cfg.retransmit_delay - TX_RAMP_UP_TIME_US), false);
 
 	nrf_timer_shorts_set(esb_timer.p_reg,
 		(NRF_TIMER_SHORT_COMPARE1_STOP_MASK | NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK));
@@ -1436,8 +1440,9 @@ int esb_init(const struct esb_config *config)
 
 	disable_event.event.generic.event = esb_ppi_radio_disabled_get();
 
-	nrf_radio_modecnf0_set(NRF_RADIO, esb_cfg.use_fast_ramp_up,
-		nrf_radio_modecnf0_dtx_get(NRF_RADIO));
+#if CONFIG_ESB_FAST_RAMP_UP
+	nrf_radio_modecnf0_set(NRF_RADIO, true, nrf_radio_modecnf0_dtx_get(NRF_RADIO));
+#endif
 
 #if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
 
