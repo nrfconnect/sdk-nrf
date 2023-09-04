@@ -22,6 +22,22 @@ Overview
 The sample can perform Wi-Fi operations such as connect and disconnect in the 2.4 GHz and 5 GHz bands depending on the capabilities of an access point.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode and setup TWT flow with the access point.
+By default once the TWT flow is setup, the sample will use the traffic generator module to send and receive TCP data packets to and from the traffic generator server running on a PC connected to the same access point (typically through Ethernet).
+
+Traffic generator server
+************************
+
+When the traffic generator module is used with this sample, the traffic generator server must be running on a PC connected to the same access point.
+The server source is available in the :file:`scripts/traffic_gen_server` file.
+This is a `python3` based server, so you must make sure that `python3` is installed on your PC.
+
+To start the server, run the following command:
+
+.. code-block:: console
+
+   python3 traffic_gen_server.py
+
+Use the ``-h`` option to display the help message for how to use the server.
 
 Configuration
 *************
@@ -168,7 +184,15 @@ Testing
     [00:01:14.217,376] <inf> twt: TWT interval: 524000 us
     [00:01:14.217,376] <inf> twt: ========================
     [00:01:14.439,270] <inf> twt: TWT Setup Success
-    [00:01:17.061,767] <inf> twt: TWT teardown success
+    [00:00:15.230,773] <inf> traffic_gen: Sending TCP uplink Traffic
+    [00:00:45.846,374] <inf> traffic_gen: Sent TCP uplink traffic for 30 sec
+    [00:00:45.501,892] <inf> traffic_gen: Server Report:
+    [00:00:45.501,922] <inf> traffic_gen:    Total Bytes Received  : 904192
+    [00:00:45.501,922] <inf> traffic_gen:    Total Packets Received: 1045
+    [00:00:45.501,922] <inf> traffic_gen:    Elapsed Time          : 33
+    [00:00:45.501,953] <inf> traffic_gen:    Throughput (Kbps)     : 214
+    [00:00:45.501,953] <inf> traffic_gen:    Average Jitter (ms)   : 0
+    [00:00:45.061,767] <inf> twt: TWT teardown success
 
 Power management testing
 ************************
