@@ -402,7 +402,7 @@ int main(void)
 
 			if (!twt_supported) {
 				LOG_INF("AP is not TWT capable, exiting the sample\n");
-				return 1;
+				return -1;
 			}
 
 			LOG_INF("AP is TWT capable, establishing TWT");
@@ -410,7 +410,7 @@ int main(void)
 			ret = setup_twt();
 			if (ret) {
 				LOG_ERR("Failed to establish TWT flow: %d\n", ret);
-				return 1;
+				return -1;
 			}
 
 			if (wait_for_twt_resp_received()) {
@@ -424,7 +424,7 @@ int main(void)
 			ret = teardown_twt();
 			if (ret) {
 				LOG_ERR("Failed to teardown TWT flow: %d\n", ret);
-				return 1;
+				return -1;
 			}
 
                         k_sleep(K_FOREVER);
