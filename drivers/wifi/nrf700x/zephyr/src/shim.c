@@ -52,6 +52,13 @@ static void *zep_shim_mem_set(void *start, int val, size_t size)
 	return memset(start, val, size);
 }
 
+static int zep_shim_mem_cmp(const void *addr1,
+			    const void *addr2,
+			    size_t size)
+{
+	return memcmp(addr1, addr2, size);
+}
+
 static unsigned int zep_shim_qspi_read_reg32(void *priv, unsigned long addr)
 {
 	unsigned int val;
@@ -794,6 +801,7 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.mem_free = k_free,
 	.mem_cpy = zep_shim_mem_cpy,
 	.mem_set = zep_shim_mem_set,
+	.mem_cmp = zep_shim_mem_cmp,
 
 	.qspi_read_reg32 = zep_shim_qspi_read_reg32,
 	.qspi_write_reg32 = zep_shim_qspi_write_reg32,

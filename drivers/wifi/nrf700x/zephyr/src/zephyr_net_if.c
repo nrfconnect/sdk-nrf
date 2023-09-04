@@ -358,7 +358,8 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 			goto dev_rem;
 		}
 
-		if (nrf_wifi_utils_is_mac_addr_valid(fixed_mac_addr)) {
+		if (nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
+						     fixed_mac_addr)) {
 			memcpy(vif_ctx_zep->mac_addr.addr,
 				fixed_mac_addr,
 				WIFI_MAC_ADDR_LEN);
@@ -503,7 +504,8 @@ int wifi_nrf_if_start_zep(const struct device *dev)
 	mac_addr = net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->addr;
 	mac_addr_len = net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->len;
 
-	if (!nrf_wifi_utils_is_mac_addr_valid(mac_addr)) {
+	if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
+					      mac_addr)) {
 		LOG_ERR("%s: Invalid MAC address: %s\n",
 			__func__,
 			net_sprint_ll_addr(mac_addr,
@@ -660,6 +662,7 @@ int wifi_nrf_if_set_config_zep(const struct device *dev,
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	int ret = -1;
 
 	if (!dev) {
@@ -684,8 +687,17 @@ int wifi_nrf_if_set_config_zep(const struct device *dev,
 		goto out;
 	}
 
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
+	if (!fmac_dev_ctx) {
+		LOG_ERR("%s: fmac_dev_ctx is NULL\n",
+			__func__);
+		goto out;
+	}
+
 	if (type == ETHERNET_CONFIG_TYPE_MAC_ADDRESS) {
-		if (!nrf_wifi_utils_is_mac_addr_valid(config->mac_address.addr)) {
+		if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
+						      config->mac_address.addr)) {
 			LOG_ERR("%s: Invalid MAC address %s\n",
 				__func__,
 				net_sprint_ll_addr(config->mac_address.addr,

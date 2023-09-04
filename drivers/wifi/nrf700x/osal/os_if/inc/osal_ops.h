@@ -31,6 +31,8 @@
  *           location in memory.
  * @mem_set: Fill a block of memory of @size bytes starting at @start with a
  *           particular value represented by @val.
+ * @mem_cmp: Compares @size bytes starting at @addr1 with @addr2 location in
+ *	     memory.
  *
  * @iomem_mmap: Map IO memory of @size pointed to by @addr into CPU
  *              space.
@@ -182,6 +184,7 @@ struct wifi_nrf_osal_ops {
 	void (*mem_free)(void *buf);
 	void *(*mem_cpy)(void *dest, const void *src, size_t count);
 	void *(*mem_set)(void *start, int val, size_t size);
+	int (*mem_cmp)(const void *addr1, const void *addr2, size_t size);
 
 	void *(*iomem_mmap)(unsigned long addr, unsigned long size);
 	void (*iomem_unmap)(volatile void *addr);

@@ -1361,4 +1361,22 @@ void wifi_nrf_osal_assert(struct wifi_nrf_osal_priv *opriv,
  */
 unsigned int wifi_nrf_osal_strlen(struct wifi_nrf_osal_priv *opriv,
 				  const void *str);
+
+/**
+ * wifi_nrf_osal_mem_cmp() - Compare contents from one memory location to another.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @addr1: Pointer to the memory location of first address.
+ * @addr2: Pointer to the memory location of second address.
+ * @count: Number of bytes to be compared.
+ *
+ * Compares @count number of bytes from @addr1 location in memory to @addr2
+ * location in memory.
+ *
+ * Return:
+ *              returns an integer less than, equal to, or greater than zero
+ */
+int wifi_nrf_osal_mem_cmp(struct wifi_nrf_osal_priv *opriv,
+			  const void *addr1,
+			  const void *addr2,
+			  size_t count);
 #endif /* __OSAL_API_H__ */

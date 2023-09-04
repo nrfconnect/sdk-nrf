@@ -9,7 +9,6 @@
  * Wi-Fi driver.
  */
 
-#include <string.h>
 #include <util.h>
 #include "host_rpu_data_if.h"
 
@@ -80,13 +79,16 @@ out:
 }
 
 
-bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr)
+bool nrf_wifi_utils_is_mac_addr_valid(struct wifi_nrf_osal_priv *opriv,
+				      const char *mac_addr)
 {
 	unsigned char zero_addr[NRF_WIFI_ETH_ADDR_LEN] = {0};
 
-	return (mac_addr && (memcmp(mac_addr,
-			zero_addr,
-			sizeof(zero_addr)) != 0) &&
+	return (mac_addr &&
+		(wifi_nrf_osal_mem_cmp(opriv,
+				       mac_addr,
+				       zero_addr,
+				       sizeof(zero_addr)) != 0) &&
 		!(mac_addr[0] & 0x1));
 }
 

@@ -14,6 +14,11 @@
 #include <nrf_wifi_radio_test_shell.h>
 #include "ficr_prog.h"
 
+#include "fmac_api_common.h"
+
+extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
+static struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+
 LOG_MODULE_REGISTER(otp_prog, CONFIG_WIFI_LOG_LEVEL);
 
 static void disp_location_status(const struct shell *shell, char *region, unsigned int ret)
@@ -284,6 +289,13 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 		break;
 	case MAC0_ADDR:
 	case MAC1_ADDR:
+		struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = ctx->rpu_ctx;
+
+		if (!fmac_dev_ctx) {
+			shell_fprintf(shell, SHELL_ERROR, "Driver not initialized\n");
+			return -ENOEXEC;
+		}
+
 		if (argc != 4) {
 			shell_fprintf(shell, SHELL_ERROR,
 				   "invalid # of args for MAC ADDR write (expected 4) : %d\n",
@@ -293,7 +305,8 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 		write_val[0] = strtoul(argv[2], NULL, 0);
 		write_val[1] = strtoul(argv[3], NULL, 0) & 0xFFFF;
 
-		if (!nrf_wifi_utils_is_mac_addr_valid((const char *)write_val)) {
+		if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
+				(const char *)&write_val[0])) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Invalid MAC address. MAC address cannot be all 0's, broadcast or multicast address\n");

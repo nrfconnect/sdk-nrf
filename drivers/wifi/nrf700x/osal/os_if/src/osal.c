@@ -84,6 +84,17 @@ void *wifi_nrf_osal_mem_set(struct wifi_nrf_osal_priv *opriv,
 }
 
 
+int wifi_nrf_osal_mem_cmp(struct wifi_nrf_osal_priv *opriv,
+			  const void *addr1,
+			  const void *addr2,
+			  size_t size)
+{
+	return opriv->ops->mem_cmp(addr1,
+				   addr2,
+				   size);
+}
+
+
 void *wifi_nrf_osal_iomem_mmap(struct wifi_nrf_osal_priv *opriv,
 			       unsigned long addr,
 			       unsigned long size)
