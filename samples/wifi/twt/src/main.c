@@ -308,11 +308,11 @@ static void net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 
 static int __wifi_args_to_params(struct wifi_connect_req_params *params)
 {
-        params->timeout =  CONFIG_STA_CONN_TIMEOUT_SEC * MSEC_PER_SEC;
+	params->timeout =  CONFIG_STA_CONN_TIMEOUT_SEC * MSEC_PER_SEC;
 
-        if (params->timeout == 0) {
-                params->timeout = SYS_FOREVER_MS;
-        }
+	if (params->timeout == 0) {
+		params->timeout = SYS_FOREVER_MS;
+	}
 
 	/* SSID */
 	params->ssid = CONFIG_TWT_SAMPLE_SSID;
@@ -350,7 +350,7 @@ static int wifi_connect(void)
 	__wifi_args_to_params(&cnx_params);
 
 	if (net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
-		     &cnx_params, sizeof(struct wifi_connect_req_params))) {
+				&cnx_params, sizeof(struct wifi_connect_req_params))) {
 		LOG_ERR("Connection request failed");
 
 		return -ENOEXEC;
@@ -366,14 +366,14 @@ int main(void)
 	memset(&context, 0, sizeof(context));
 
 	net_mgmt_init_event_callback(&wifi_shell_mgmt_cb,
-				     wifi_mgmt_event_handler,
-				     WIFI_SHELL_MGMT_EVENTS);
+			wifi_mgmt_event_handler,
+			WIFI_SHELL_MGMT_EVENTS);
 
 	net_mgmt_add_event_callback(&wifi_shell_mgmt_cb);
 
 	net_mgmt_init_event_callback(&net_shell_mgmt_cb,
-				     net_mgmt_event_handler,
-				     NET_EVENT_IPV4_DHCP_BOUND);
+			net_mgmt_event_handler,
+			NET_EVENT_IPV4_DHCP_BOUND);
 
 	net_mgmt_add_event_callback(&net_shell_mgmt_cb);
 
@@ -381,17 +381,17 @@ int main(void)
 	k_sleep(K_SECONDS(1));
 
 	LOG_INF("Static IP address (overridable): %s/%s -> %s",
-		CONFIG_NET_CONFIG_MY_IPV4_ADDR,
-		CONFIG_NET_CONFIG_MY_IPV4_NETMASK,
-		CONFIG_NET_CONFIG_MY_IPV4_GW);
+			CONFIG_NET_CONFIG_MY_IPV4_ADDR,
+			CONFIG_NET_CONFIG_MY_IPV4_NETMASK,
+			CONFIG_NET_CONFIG_MY_IPV4_GW);
 
 	while (1) {
 		wifi_connect();
 
-                while (!context.connect_result) {
-                        cmd_wifi_status();
-                        k_sleep(K_MSEC(STATUS_POLLING_MS));
-                }
+		while (!context.connect_result) {
+			cmd_wifi_status();
+			k_sleep(K_MSEC(STATUS_POLLING_MS));
+		}
 
 		cmd_wifi_status();
 
@@ -428,7 +428,7 @@ int main(void)
 				return -1;
 			}
 
-                        k_sleep(K_FOREVER);
+			k_sleep(K_FOREVER);
 		}
 	}
 
