@@ -38,6 +38,7 @@ future==0.18.3
 gcovr==4.2
 gitlint==0.15.0
 grpcio-tools==1.51.1
+protobuf==4.21.9
 idna==2.10
 imagesize==1.2.0
 imgtool==1.7.0
