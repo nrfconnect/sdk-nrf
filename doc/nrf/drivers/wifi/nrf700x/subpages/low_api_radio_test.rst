@@ -1,7 +1,7 @@
 Radio Test mode
 ---------------
 
-This mode is used for testing the RF performance of the nRF700X device, mainly to characterize the RF.
+This mode is used for testing the RF performance of the nRF70 Series device, mainly to characterize the RF.
 
 .. note::
 

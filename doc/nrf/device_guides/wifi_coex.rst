@@ -91,20 +91,20 @@ The following are the implementations supported by the MPSL-provided Bluetooth-o
 
 .. _ug_radio_mpsl_cx_nrf700x:
 
-nRF700x Wi-Fi coexistence
-=========================
+nRF70 Series Wi-Fi coexistence
+==============================
 
 Refer to :ref:`ug_radio_coex_mpsl_cx_based` for the general requirements of this implementation.
 
 Hardware description
 --------------------
 
-The nRF700x interface consists of the signals listed in the table below.
-The *Pin* is the pin name of the nRF700x device.
+The nRF70 Series device interface consists of the signals listed in the table below.
+The *Pin* is the pin name of the nRF70 Series device.
 The *Direction* is from the point of view of the SoC running the SR protocol.
-The *DT property* is the name of the devicetree node property that configures the connection between the SoC running the SR protocol and the nRF700x.
+The *DT property* is the name of the devicetree node property that configures the connection between the SoC running the SR protocol and the nRF70 Series device.
 
-.. table:: nRF700x coexistence protocol pins
+.. table:: nRF70 Series device coexistence protocol pins
 
    ============  =========  =================================  ==============
    Pin           Direction  Description                        DT property
@@ -115,10 +115,10 @@ The *DT property* is the name of the devicetree node property that configures th
    ============  =========  =================================  ==============
 
 
-Enabling nRF700x Wi-Fi coexistence
-----------------------------------
+Enabling nRF70 Series Wi-Fi coexistence
+---------------------------------------
 
-To enable Wi-Fi coexistence on the nRF700x, complete the following steps:
+To enable Wi-Fi coexistence on the nRF70 Series device, complete the following steps:
 
 1. Add the following node to the devicetree source file:
 
@@ -137,9 +137,9 @@ To enable Wi-Fi coexistence on the nRF700x, complete the following steps:
 #. Optionally, replace the node name ``nrf7002-coex`` with a custom one.
 #. Replace the pin numbers provided for each of the required properties:
 
-   * ``req-gpios`` - GPIO characteristic of the device that controls the ``COEX_REQ`` signal of the nRF700x.
-   * ``status0-gpios`` - GPIO characteristic of the device that controls the ``COEX_STATUS0`` signal of the nRF700x.
-   * ``grant-gpios`` - GPIO characteristic of the device that controls the ``COEX_GRANT`` signal of the nRF700x.
+   * ``req-gpios`` - GPIO characteristic of the device that controls the ``COEX_REQ`` signal of the nRF70 Series device.
+   * ``status0-gpios`` - GPIO characteristic of the device that controls the ``COEX_STATUS0`` signal of the nRF70 Series device.
+   * ``grant-gpios`` - GPIO characteristic of the device that controls the ``COEX_GRANT`` signal of the nRF70 Series device.
 
    .. note::
       ``GPIO_PULL_UP`` is added to avoid a floating input pin and is required on some boards only.
@@ -180,7 +180,7 @@ Hardware description
 The generic three wire interface consists of the signals listed in the table below.
 The *Pin* is a generic pin name of a PTA, identified rather by its function.
 The *Direction* is from the point of view of the SoC running the SR protocol.
-The *DT property* is the name of the devicetree node property that configures the connection between the SoC running SR protocol and the nRF700x.
+The *DT property* is the name of the devicetree node property that configures the connection between the SoC running SR protocol and the nRF70 Series device.
 
 .. table:: Generic three wire coexistence protocol pins
 

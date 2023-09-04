@@ -46,10 +46,10 @@ The following table explains the configuration options:
 |                                          | (based on available memory) | so this has to be equal to the number of packets.                                                                        |
 +------------------------------------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------+
 
-nRF700X driver performance and memory fine-tuning controls
-**********************************************************
+nRF70 Series driver performance and memory fine-tuning controls
+***************************************************************
 
-The nRF700x driver provides the following software configurations to fine-tune memory and performance based on the use case:
+The nRF70 Series driver provides the following software configurations to fine-tune memory and performance based on the use case:
 
 .. list-table::
    :header-rows: 1
@@ -64,19 +64,19 @@ The nRF700x driver provides the following software configurations to fine-tune m
      - Enable or disable Wi-Fi Protected Access (WPA) supplicant
      - Memory savings
      - This specifies the inclusion of the WPA supplicant module.
-       Disabling this flag restricts the nRF700x driver's functionality to STA scan only.
+       Disabling this flag restricts the nRF70 Series driver's functionality to STA scan only.
    * - :kconfig:option:`CONFIG_NRF700X_AP_MODE`
      - ``y`` or ``n``
      - Enable or disable Access Point (AP) mode
      - Memory savings
      - This specifies the inclusion of the AP mode module.
-       Disabling this flag restricts the nRF700x driver's functionality to :term:`Station mode (STA)` only.
+       Disabling this flag restricts the nRF70 Series driver's functionality to :term:`Station mode (STA)` only.
    * - :kconfig:option:`CONFIG_NRF700X_P2P_MODE`
      - ``y`` or ``n``
      - Enable or disable Wi-Fi direct mode
      - Memory Savings
      - This specifies the inclusion of the P2P mode module.
-       Disabling this flag restricts the nRF700x driver's functionality to STA or AP mode only.
+       Disabling this flag restricts the nRF70 Series driver's functionality to STA or AP mode only.
    * - :kconfig:option:`CONFIG_NRF700X_MAX_TX_TOKENS`
      - ``5``, ``10``, ``11``, ``12``
      - Maximum number of TX tokens.
@@ -87,17 +87,17 @@ The nRF700x driver provides the following software configurations to fine-tune m
        if the pipeline is not saturated. But to saturate the pipeline, a greater number of networking stack buffers,
        or queue depth, is required.
    * - :kconfig:option:`CONFIG_NRF700X_MAX_TX_AGGREGATION`
-     - ``1`` to ``Unlimited`` (based on available memory in nRF700x)
+     - ``1`` to ``Unlimited`` (based on available memory in nRF70 Series device)
      - Maximum number of frames that are coalesced into a single Wi-Fi frame (e.g., MPDU's in an A-MPDU, or MSDU's in an A-MSDU).
        The coalescing greatly improves the throughput for small frames or under high traffic load.
      - Performance tuning and Memory savings
      - This specifies the maximum number of frames that can be coalesced into a single Wi-Fi frame.
        More frames imply more coalescing opportunities but can add latency to the TX path as we wait for more frames to arrive.
    * - :kconfig:option:`CONFIG_NRF700X_RX_NUM_BUFS`
-     - ``1`` to ``Unlimited`` (based on available memory in nRF700x)
+     - ``1`` to ``Unlimited`` (based on available memory in nRF70 Series device)
      - Number of RX buffers
      - Memory savings
-     - This specifies the number of RX buffers that can be used by the nRF700x driver.
+     - This specifies the number of RX buffers that can be used by the nRF70 Series driver.
        The number of buffers must be enough to keep up with the RX traffic, otherwise packets might be dropped.
    * - :kconfig:option:`CONFIG_NRF700X_TX_MAX_DATA_SIZE`
      - ``64`` to ``1600``
@@ -118,9 +118,9 @@ The configuration options must be used in conjunction with the Zephyr networking
 These options form a staged pipeline all the way to the nRF7002 chip, any change in one stage of the pipeline will impact the performance and memory usage of the next stage.
 For example, solving bottleneck in one stage of the pipeline might lead to a bottleneck in the next stage.
 
-nRF700X packet memory
-*********************
-The nRF700x chipset has a special memory called the packet memory to store the Wi-Fi protocol frames for both TX and RX.
+nRF70 Series packet memory
+**************************
+The nRF70 Series device chipset has a special memory called the packet memory to store the Wi-Fi protocol frames for both TX and RX.
 The various configuration options that control the size of the packet memory are listed below:
 
 * :kconfig:option:`CONFIG_NRF700X_TX_MAX_DATA_SIZE`
@@ -156,7 +156,7 @@ There is a build time check to ensure that the total packet memory size does not
 Usage profiles
 **************
 
-The nRF700x driver can be used in the following profiles (not an exhaustive list):
+The nRF70 Series driver can be used in the following profiles (not an exhaustive list):
 
 .. list-table::
    :header-rows: 1
