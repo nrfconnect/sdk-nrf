@@ -4,6 +4,5 @@ ecdsa
 cryptography
 imagesize>=1.2.0
 intelhex
-protobuf
 pylint
 zcbor>=0.7.0
