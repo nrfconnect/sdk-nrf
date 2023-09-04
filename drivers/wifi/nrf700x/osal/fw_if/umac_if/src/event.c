@@ -18,7 +18,6 @@
 #include "fmac_cmd.h"
 #include "fmac_ap.h"
 #include "fmac_util.h"
-#include <string.h>
 
 #ifdef CONFIG_NRF700X_DATA_TX
 static enum wifi_nrf_status
