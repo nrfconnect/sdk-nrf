@@ -8,6 +8,9 @@ source "Kconfig.zephyr"
 
 menu "Nordic TWT sample"
 
+# Traffic gen
+rsource "modules/traffic_gen/Kconfig"
+
 config CONNECTION_IDLE_TIMEOUT
 	int "Time to be waited for a station to connect"
 	default 30

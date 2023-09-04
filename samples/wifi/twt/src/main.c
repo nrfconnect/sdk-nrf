@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(twt, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/drivers/gpio.h>
 
 #include "net_private.h"
+#include "traffic_gen.h"
 
 #define WIFI_SHELL_MODULE "wifi"
 
@@ -35,6 +36,8 @@ LOG_MODULE_REGISTER(twt, CONFIG_LOG_DEFAULT_LEVEL);
 #define MAX_SSID_LEN        32
 #define STATUS_POLLING_MS   300
 #define TWT_RESP_TIMEOUT_S    20
+
+struct traffic_gen_config tg_config;
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
@@ -420,8 +423,26 @@ int main(void)
 				return -1;
 			}
 
+#ifdef CONFIG_TRAFFIC_GEN
+			traffic_gen_init(&tg_config);
+
+			ret = traffic_gen_start(&tg_config);
+			if (ret < 0) {
+				LOG_ERR("Failed to start traffic role ");
+				return -1;
+			}
+
+			ret = traffic_gen_wait_for_report(&tg_config);
+			if (ret < 0) {
+				LOG_ERR("Failed to get traffic report ");
+				return -1;
+			}
+			traffic_gen_get_report(&tg_config);
+#endif /* CONFIG_TRAFFIC_GEN */
+
 			/* Wait for few service periods before tearing down */
 			k_sleep(K_USEC(5 * CONFIG_TWT_INTERVAL));
+
 			ret = teardown_twt();
 			if (ret) {
 				LOG_ERR("Failed to teardown TWT flow: %d\n", ret);

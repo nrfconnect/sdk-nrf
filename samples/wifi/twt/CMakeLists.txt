@@ -10,6 +10,9 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_wifi_twt)
 
 target_include_directories(app PUBLIC ${ZEPHYR_BASE}/subsys/net/ip)
+target_include_directories(app PRIVATE modules/traffic_gen/inc)
+
+add_subdirectory(modules/traffic_gen)
 
 target_sources(app PRIVATE
 	src/main.c
