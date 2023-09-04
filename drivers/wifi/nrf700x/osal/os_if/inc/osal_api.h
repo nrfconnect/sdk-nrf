@@ -1348,4 +1348,17 @@ void wifi_nrf_osal_assert(struct wifi_nrf_osal_priv *opriv,
 			  int val,
 			  enum wifi_nrf_assert_op_type op,
 			  char *msg);
+
+/**
+ * wifi_nrf_osal_strlen() - Gives the length of the string @str.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @str: Pointer to the memory location of the string.
+ *
+ * Calculates the length of the string pointed to by @str
+ *
+ * Return:
+ *              returns the number of bytes of the string @str.
+ */
+unsigned int wifi_nrf_osal_strlen(struct wifi_nrf_osal_priv *opriv,
+				  const void *str);
 #endif /* __OSAL_API_H__ */

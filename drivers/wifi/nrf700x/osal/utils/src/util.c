@@ -26,7 +26,7 @@ int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
 	unsigned int len = 0;
 	int ret = -1;
 
-	len = strlen(str);
+	len = wifi_nrf_osal_strlen(opriv, str);
 
 	if (len / 2 > hex_arr_sz) {
 		wifi_nrf_osal_log_err(opriv,

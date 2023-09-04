@@ -779,3 +779,9 @@ void wifi_nrf_osal_assert(struct wifi_nrf_osal_priv *opriv,
 {
 	return opriv->ops->assert(test_val, val, op, msg);
 }
+
+unsigned int wifi_nrf_osal_strlen(struct wifi_nrf_osal_priv *opriv,
+				  const void *str)
+{
+	return opriv->ops->strlen(str);
+}

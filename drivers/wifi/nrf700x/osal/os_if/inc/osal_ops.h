@@ -167,6 +167,8 @@
  * @assert: Asserts a @test_val with the @val for operation @op.
  *	    If true prints @assert_msg.
  *
+ * @strlen: Calculate the length of the string @str.
+ *
  * This structure exposes Ops which need to be implemented by the underlying OS
  * in order for the WLAN driver to work. The Ops can be directly mapped to OS
  * primitives where a one-to-one mapping is available. In case a mapping is not
@@ -307,6 +309,8 @@ struct wifi_nrf_osal_ops {
 		       int val,
 		       enum wifi_nrf_assert_op_type op,
 		       char *assert_msg);
+
+	unsigned int (*strlen)(const void *str);
 };
 
 

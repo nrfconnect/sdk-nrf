@@ -783,6 +783,11 @@ static void zep_shim_assert(int test_val, int val, enum wifi_nrf_assert_op_type 
 	}
 }
 
+static unsigned int zep_shim_strlen(const void *str)
+{
+	return strlen(str);
+}
+
 static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.mem_alloc = zep_shim_mem_alloc,
 	.mem_zalloc = zep_shim_mem_zalloc,
@@ -868,6 +873,7 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	.assert = zep_shim_assert,
+	.strlen = zep_shim_strlen,
 };
 
 const struct wifi_nrf_osal_ops *get_os_ops(void)
