@@ -812,7 +812,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_config_qzss_nmea,
 	SHELL_CMD_ARG(standard, NULL, "Standard NMEA reporting.",
 		      cmd_gnss_config_qzss_nmea_standard, 1, 0),
-	SHELL_CMD_ARG(custom, NULL, "Custom NMEA reporting.",
+	SHELL_CMD_ARG(custom, NULL, "Custom NMEA reporting (default).",
 		      cmd_gnss_config_qzss_nmea_custom, 1, 0),
 	SHELL_SUBCMD_SET_END
 );

@@ -1015,6 +1015,7 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 
 static void gnss_api_init(void)
 {
+	int err;
 	static bool gnss_api_initialized;
 
 	/* Reset event handler in case some other handler was set in the meantime. */
@@ -1022,6 +1023,13 @@ static void gnss_api_init(void)
 
 	if (gnss_api_initialized) {
 		return;
+	}
+
+	/* Make QZSS satellites visible in the NMEA output. */
+	err = nrf_modem_gnss_qzss_nmea_mode_set(NRF_MODEM_GNSS_QZSS_NMEA_MODE_CUSTOM);
+	if (err) {
+		mosh_warn("GNSS: Failed to enable custom QZSS NMEA mode, error: %d (%s)",
+			  err, gnss_err_to_str(err));
 	}
 
 	gnss_api_initialized = true;
