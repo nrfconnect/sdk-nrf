@@ -33,32 +33,50 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 
 /* Constants */
 
+#ifdef CONFIG_ESB_FAST_RAMP_UP
 /* 2 Mb RX wait for acknowledgment time-out value.
- * Smallest reliable value: 160.
+ * Smallest reliable value: 59. Adding 4 us margin.
  */
-#define RX_ACK_TIMEOUT_US_2MBPS 160
-/* 1 Mb RX wait for acknowledgment time-out value. */
-#define RX_ACK_TIMEOUT_US_1MBPS 300
+#define RX_ACK_TIMEOUT_US_2MBPS 63
+/* 1 Mb RX wait for acknowledgment time-out value. Smallest: 89 */
+#define RX_ACK_TIMEOUT_US_1MBPS 93
 /* 250 Kb RX wait for acknowledgment time-out value. */
 #define RX_ACK_TIMEOUT_US_250KBPS 300
-/* 1 Mb RX wait for acknowledgment time-out (combined with BLE). */
-#define RX_ACK_TIMEOUT_US_1MBPS_BLE 300
+/* 1 Mb BLE RX wait for acknowledgment time-out. Smallest: 89 */
+#define RX_ACK_TIMEOUT_US_1MBPS_BLE 93
 
-/* Minimum retransmit time */
-#define RETRANSMIT_DELAY_MIN 435
-
-#ifdef CONFIG_ESB_FAST_RAMP_UP
 /* Radio Rx fast ramp-up time in microseconds. */
 #define TX_RAMP_UP_TIME_US 40
 
 /* Radio Rx ramp-up time in microseconds. */
 #define RX_RAMP_UP_TIME_US 40
+
+/* Minimum retransmit time
+ * Tested for 1M and 2M radio modes only
+ */
+#define RETRANSMIT_DELAY_MIN 180
 #else
+/* 2 Mb RX wait for acknowledgment time-out value.
+ * Smallest reliable value: 148. Adding 4 us margin.
+ */
+#define RX_ACK_TIMEOUT_US_2MBPS 152
+/* 1 Mb RX wait for acknowledgment time-out value. Smallest: 178 */
+#define RX_ACK_TIMEOUT_US_1MBPS 182
+/* 250 Kb RX wait for acknowledgment time-out value. */
+#define RX_ACK_TIMEOUT_US_250KBPS 300
+/* 1 Mb BLE RX wait for acknowledgment time-out. Smallest: 178 */
+#define RX_ACK_TIMEOUT_US_1MBPS_BLE 182
+
 /* Radio Tx ramp-up time in microseconds. */
 #define TX_RAMP_UP_TIME_US 129
 
 /* Radio Rx ramp-up time in microseconds. */
 #define RX_RAMP_UP_TIME_US 124
+
+/* Minimum retransmit time
+ * Tested for 1M and 2M radio modes only
+ */
+#define RETRANSMIT_DELAY_MIN 180
 #endif
 
 /* Interrupt flags */
