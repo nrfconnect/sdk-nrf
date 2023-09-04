@@ -275,7 +275,7 @@ static void gnss_carrier_location(struct nrf_modem_gnss_pvt_data_frame *pvt)
 		lwm2m_carrier_location_set(pvt->latitude,
 					   pvt->longitude,
 					   pvt->altitude,
-					   gnss_mktime(&pvt->datetime),
+					   (uint32_t)gnss_mktime(&pvt->datetime),
 					   pvt->accuracy);
 		lwm2m_carrier_velocity_set(pvt->heading,
 					   pvt->speed,
