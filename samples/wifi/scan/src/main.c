@@ -66,7 +66,8 @@ const struct wifi_scan_params tests[] = {
 #endif
 #ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
 	{
-	.ssids = {}
+	.ssids = {},
+	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
 #ifdef CONFIG_WIFI_SCAN_CHAN
