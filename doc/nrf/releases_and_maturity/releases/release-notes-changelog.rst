@@ -944,6 +944,7 @@ Documentation
   * Pages on :ref:`thread_device_types` and :ref:`thread_sed_ssed` to the :ref:`ug_thread` documentation.
   * A new section :ref:`ug_pmic`, containing :ref:`ug_npm1300_features` and :ref:`ug_npm1300_gs`.
   * A section about :ref:`nrf70_gs_shields_expansion_boards` in :ref:`nrf7002dk_nrf5340` user guide.
+  * A page on :ref:`ug_nrf70_developing_scan_operation` in the :ref:`ug_nrf70_developing` user guide.
 
 * Updated:
 

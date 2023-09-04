@@ -12,3 +12,4 @@ The |NCS| provides support for development on the nRF70 Series, using the nRF700
    powersave
    constrained
    regulatory_support
+   scan_operation
