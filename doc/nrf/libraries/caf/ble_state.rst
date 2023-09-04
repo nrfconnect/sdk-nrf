@@ -85,11 +85,7 @@ The |ble_state| keeps references to :c:struct:`bt_conn` objects to ensure that t
 When a new connection is established, the module calls :c:func:`bt_conn_ref` to increase the object reference counter.
 After :c:struct:`ble_peer_event` about disconnection or connection failure is received by all other application modules, the |ble_state| decrements the :c:struct:`bt_conn` object by using :c:func:`bt_conn_unref`.
 
-Behavior with SoftDevice Link Layer
-===================================
+Low Latency Packet Mode
+=======================
 
 If Nordic Semiconductor's SoftDevice Bluetooth LE Link Layer is selected (:kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`) and the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` option is enabled, the |ble_state| sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
-
-If the SoftDevice Link Layer is selected, the |ble_state| also sets the TX power for connections.
-The TX power is set according to Zephyr's Kconfig options related to selecting the default TX power.
-This is necessary because the mentioned Kconfig options are not automatically applied by the Bluetooth stack if the SoftDevice Link Layer is selected.

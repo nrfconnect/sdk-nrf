@@ -8,12 +8,12 @@ menuconfig CAF_BLE_STATE
 	bool "Bluetooth LE state module"
 	depends on BT
 	depends on BT_SMP
-	select BT_CTLR_TX_PWR_DYNAMIC_CONTROL if BT_LL_SOFTDEVICE
 	select CAF_BLE_COMMON_EVENTS
 	help
-	  Module that enables Bluetooth, handles Zephyr's connection callbacks, propagates
-	  information about the connection state and parameters by using Application Event Manager events
-	  and exchanges GATT MTU on GATT Client.
+	  Module that enables Bluetooth, handles Zephyr's connection callbacks,
+	  propagates information about the connection state and parameters by
+	  using Application Event Manager events and exchanges GATT MTU on GATT
+	  Client.
 
 if CAF_BLE_STATE
 
@@ -66,27 +66,6 @@ config CAF_BLE_USE_LLPM
 	  applications in which the interface response time is critical for the user. It introduces
 	  the possibility to reduce the connection interval to 1 ms for one link. LLPM parameters
 	  can be used for a given connection only if it's supported by both peripheral and central.
-
-config CAF_BLE_STATE_TX_PWR
-	int
-	default 8 if BT_CTLR_TX_PWR_PLUS_8
-	default 7 if BT_CTLR_TX_PWR_PLUS_7
-	default 6 if BT_CTLR_TX_PWR_PLUS_6
-	default 5 if BT_CTLR_TX_PWR_PLUS_5
-	default 4 if BT_CTLR_TX_PWR_PLUS_4
-	default 3 if BT_CTLR_TX_PWR_PLUS_3
-	default 2 if BT_CTLR_TX_PWR_PLUS_2
-	default 0 if BT_CTLR_TX_PWR_0
-	default -4 if BT_CTLR_TX_PWR_MINUS_4
-	default -8 if BT_CTLR_TX_PWR_MINUS_8
-	default -12 if BT_CTLR_TX_PWR_MINUS_12
-	default -16 if BT_CTLR_TX_PWR_MINUS_16
-	default -20 if BT_CTLR_TX_PWR_MINUS_20
-	default -30 if BT_CTLR_TX_PWR_MINUS_30
-	default -40 if BT_CTLR_TX_PWR_MINUS_40
-	help
-	  For nrfxlib LL TX power has to be set using HCI commands.
-	  Zephyr Kconfig options are ignored.
 
 module = CAF_BLE_STATE
 module-str = caf module BLE state
