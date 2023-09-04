@@ -417,6 +417,7 @@ int main(void)
 				LOG_INF("TWT Setup success");
 			} else {
 				LOG_INF("TWT Setup timed out\n");
+				return -1;
 			}
 
 			/* Wait for few service periods before tearing down */
