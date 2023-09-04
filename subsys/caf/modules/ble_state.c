@@ -20,12 +20,6 @@
 #include "sdc_hci_vs.h"
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
 
-#ifdef CONFIG_BT_CTLR
-#define TX_PWR CONFIG_CAF_BLE_STATE_TX_PWR
-#else
-#define TX_PWR 0
-#endif /* CONFIG_BT_CTLR */
-
 #define MODULE ble_state
 #include <caf/events/module_state_event.h>
 
@@ -71,47 +65,6 @@ static void disconnect_peer(struct bt_conn *conn)
 	}
 }
 
-static void set_tx_power(struct bt_conn *conn)
-{
-	uint16_t conn_handle;
-
-	int err = bt_hci_get_conn_handle(conn, &conn_handle);
-
-	if (err) {
-		LOG_ERR("No connection handle (err %d)", err);
-	} else {
-		struct bt_hci_cp_vs_write_tx_power_level *cp;
-		struct bt_hci_rp_vs_write_tx_power_level *rp;
-		struct net_buf *buf;
-		struct net_buf *rsp = NULL;
-
-		buf = bt_hci_cmd_create(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL, sizeof(*cp));
-		if (!buf) {
-			LOG_ERR("Cannot allocate buffer to set TX power");
-			return;
-		}
-
-		cp = net_buf_add(buf, sizeof(*cp));
-		cp->handle = sys_cpu_to_le16(conn_handle);
-		cp->handle_type = BT_HCI_VS_LL_HANDLE_TYPE_CONN;
-		cp->tx_power_level = TX_PWR;
-
-		LOG_INF("Setting TX power to: %" PRId8, cp->tx_power_level);
-
-		err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL, buf, &rsp);
-		if (err) {
-			LOG_ERR("Cannot set TX power (err: %d)", err);
-		} else {
-			rp = (struct bt_hci_rp_vs_write_tx_power_level *)rsp->data;
-			LOG_INF("TX power returned by command: %" PRId8, rp->selected_tx_power);
-		}
-
-		if (rsp) {
-			net_buf_unref(rsp);
-		}
-	}
-}
-
 static void broadcast_init_conn_params(struct bt_conn *conn)
 {
 	struct bt_conn_info info;
@@ -153,13 +106,6 @@ static void connected(struct bt_conn *conn, uint8_t error)
 		}
 
 		return;
-	}
-
-	/* For nrfxlib LL TX power level has to be set using HCI command.
-	 * The default value set in Kconfig has no effect.
-	 */
-	if (IS_ENABLED(CONFIG_BT_LL_SOFTDEVICE)) {
-		set_tx_power(conn);
 	}
 
 	if (IS_ENABLED(CONFIG_LOG)) {

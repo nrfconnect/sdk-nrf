@@ -794,6 +794,11 @@ Common Application Framework (CAF)
     * The library by improving broadcast of :c:struct:`module_state_event`.
       The event informing about entering either :c:enum:`MODULE_STATE_READY` or :c:enum:`MODULE_STATE_OFF` is not submitted until the CAF Bluetooth LE advertising module is initialized and ready.
 
+* :ref:`caf_ble_state`:
+
+   * Removed TX power update using a Bluetooth HCI command for SoftDevice Bluetooth LE Link Layer (:kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`) right after a connection has been established.
+     The :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig option can be used to set the TX power for advertising and connections also for the SoftDevice Link Layer.
+
 * :ref:`caf_power_manager`:
 
   * Reduced verbosity of logs denoting allowed power states from ``info`` to ``debug``.
