@@ -164,6 +164,9 @@
  *		initialized with @timer_init.
  * @timer_kill: Kills a timer that has been scheduled @timer_schedule.
  *
+ * @assert: Asserts a @test_val with the @val for operation @op.
+ *	    If true prints @assert_msg.
+ *
  * This structure exposes Ops which need to be implemented by the underlying OS
  * in order for the WLAN driver to work. The Ops can be directly mapped to OS
  * primitives where a one-to-one mapping is available. In case a mapping is not
@@ -299,6 +302,11 @@ struct wifi_nrf_osal_ops {
 	int (*bus_qspi_ps_wake)(void *os_qspi_priv);
 	int (*bus_qspi_ps_status)(void *os_qspi_priv);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
+	void (*assert)(int test_val,
+		       int val,
+		       enum wifi_nrf_assert_op_type op,
+		       char *assert_msg);
 };
 
 

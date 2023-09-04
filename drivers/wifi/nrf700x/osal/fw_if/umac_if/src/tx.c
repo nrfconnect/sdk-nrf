@@ -9,7 +9,6 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include <zephyr/sys/__assert.h>
 #include "list.h"
 #include "queue.h"
 #include "hal_api.h"
@@ -53,7 +52,11 @@ static void set_spare_desc_q_map(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	__ASSERT(def_priv->num_tx_tokens_per_ac != 0, "num_tx_tokens_per_ac is zero");
+	wifi_nrf_osal_assert(fmac_dev_ctx->fpriv->opriv,
+			     def_priv->num_tx_tokens_per_ac,
+			     0,
+			     WIFI_NRF_ASSERT_NOT_EQUAL_TO,
+			     "num_tx_tokens_per_ac is zero");
 
 	spare_desc_indx = (desc % (def_priv->num_tx_tokens_per_ac *
 				   WIFI_NRF_FMAC_AC_MAX));
@@ -78,7 +81,11 @@ static void clear_spare_desc_q_map(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	__ASSERT(def_priv->num_tx_tokens_per_ac != 0, "num_tx_tokens_per_ac is zero");
+	wifi_nrf_osal_assert(fmac_dev_ctx->fpriv->opriv,
+			     def_priv->num_tx_tokens_per_ac,
+			     0,
+			     WIFI_NRF_ASSERT_NOT_EQUAL_TO,
+			     "num_tx_tokens_per_ac is zero");
 
 	spare_desc_indx = (desc % (def_priv->num_tx_tokens_per_ac *
 				   WIFI_NRF_FMAC_AC_MAX));

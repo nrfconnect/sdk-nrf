@@ -770,3 +770,12 @@ int wifi_nrf_osal_bus_qspi_ps_status(struct wifi_nrf_osal_priv *opriv,
 	return opriv->ops->bus_qspi_ps_status(os_qspi_priv);
 }
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
+void wifi_nrf_osal_assert(struct wifi_nrf_osal_priv *opriv,
+			  int test_val,
+			  int val,
+			  enum wifi_nrf_assert_op_type op,
+			  char *msg)
+{
+	return opriv->ops->assert(test_val, val, op, msg);
+}

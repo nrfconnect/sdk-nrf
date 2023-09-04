@@ -18,6 +18,7 @@
 #ifndef CONFIG_NRF700X_LOG_VERBOSE
 #define __func__ ""
 #endif /* CONFIG_NRF700X_LOG_VERBOSE */
+
 /**
  * wifi_nrf_osal_init() - Initialize the OSAL layer.
  *
@@ -1328,4 +1329,23 @@ int wifi_nrf_osal_bus_qspi_ps_wake(struct wifi_nrf_osal_priv *opriv,
 int wifi_nrf_osal_bus_qspi_ps_status(struct wifi_nrf_osal_priv *opriv,
 				     void *os_qspi_priv);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
+/**
+ * wifi_nrf_osal_assert() - Assert a condition with a value.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @test: Variable to be tested.
+ * @val: Value to be checked for the @test
+ * @op: type of operation to be done during assertion check.
+ * @msg: Assertion message.
+ *
+ * Compares @test aith @val. If true prints assert message.
+ *
+ * Return:
+ *              None
+ */
+void wifi_nrf_osal_assert(struct wifi_nrf_osal_priv *opriv,
+			  int test,
+			  int val,
+			  enum wifi_nrf_assert_op_type op,
+			  char *msg);
 #endif /* __OSAL_API_H__ */

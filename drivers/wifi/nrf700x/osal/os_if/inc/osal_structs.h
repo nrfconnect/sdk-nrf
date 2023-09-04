@@ -78,4 +78,28 @@ struct wifi_nrf_osal_host_map {
 struct wifi_nrf_osal_priv {
 	const struct wifi_nrf_osal_ops *ops;
 };
+
+/**
+ * enum wifi_nrf_assert_type - The type of assertion operation has to be done
+ * @WIFI_NRF_ASSERT_EQUAL_TO: The assetion check for equality.
+ * @WIFI_NRF_ASSERT_NOT_EQUAL_TO: The assetion check for non-equality.
+ * @WIFI_NRF_ASSERT_LESS_THAN: The assetion check for lesser value.
+ * @WIFI_NRF_ASSERT_LESS_THAN_OR_EQUAL_TO: The assetion check
+ *		for equal or lesser.
+ * @WIFI_NRF_ASSERT_MORE_THAN: The assetion check for condition
+ *		of more than value.
+ * @WIFI_NRF_ASSERT_MORE_THAN_OR_EQUAL_TO: The assetion check for condition
+ *		equal or more than value.
+ *
+ * This enum listd the possible type of operation in the assertion
+ * check should be taken.
+ */
+enum wifi_nrf_assert_op_type {
+	WIFI_NRF_ASSERT_EQUAL_TO,
+	WIFI_NRF_ASSERT_NOT_EQUAL_TO,
+	WIFI_NRF_ASSERT_LESS_THAN,
+	WIFI_NRF_ASSERT_LESS_THAN_EQUAL_TO,
+	WIFI_NRF_ASSERT_GREATER_THAN,
+	WIFI_NRF_ASSERT_GREATHER_THAN_EQUAL_TO,
+};
 #endif /* __OSAL_STRUCTS_H__ */
