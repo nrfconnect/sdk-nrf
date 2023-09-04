@@ -58,15 +58,9 @@ const struct wifi_scan_params tests[] = {
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
-#ifdef CONFIG_WIFI_SCAN_BAND_2_4_GHZ
+#ifdef CONFIG_WIFI_SCAN_BAND
 	{
-	.bands = (1 << WIFI_FREQ_BAND_2_4_GHZ),
-	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_BAND_5GHZ
-	{
-	.bands = (1 << WIFI_FREQ_BAND_5_GHZ),
+	.bands = 0,
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
@@ -224,6 +218,27 @@ static int wifi_scan(void)
 
 	for (int i = 0; i < ARRAY_SIZE(tests); i++) {
 		struct wifi_scan_params params = tests[i];
+#ifdef CONFIG_WIFI_SCAN_BAND
+		if (!params.bands) {
+			char *buf = NULL;
+
+			buf = malloc(strlen(CONFIG_WIFI_SCAN_BANDS_LIST) + 1);
+			if (!buf) {
+				LOG_ERR("Malloc Failed");
+				return -EINVAL;
+			}
+
+			strcpy(buf, CONFIG_WIFI_SCAN_BANDS_LIST);
+			if (wifi_utils_parse_scan_bands(buf,
+							&params.bands)) {
+				LOG_ERR("Incorrect value(s) in CONFIG_WIFI_SCAN_BANDS_LIST: %s",
+					CONFIG_WIFI_SCAN_BANDS_LIST);
+				free(buf);
+				return -EINVAL;
+			}
+			free(buf);
+		}
+#endif
 #ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
 		if (!strlen(params.ssids[0])) {
 			char *buf = NULL;

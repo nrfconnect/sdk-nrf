@@ -35,15 +35,22 @@ config WIFI_SCAN_TYPE_PASSIVE
 	  Enable this to force passive scan on all channels.
 endchoice
 
-config WIFI_SCAN_BAND_2_4_GHZ
-	bool "Scan in 2.4GHZ band"
+config WIFI_SCAN_BAND
+	bool "Scan in particular frequency band"
 	help
-	  Enable to perform scan only in 2.4GHZ band
+	  Enable to perform scan based on frequency bands.
 
-config WIFI_SCAN_BAND_5GHZ
-	bool "Scan in 5GHZ band"
+config WIFI_SCAN_BANDS_LIST
+	string "Frequency bands to scan"
+	default ""
 	help
-	  Enable to perform scan only in 5GHZ band.
+	  Specifies the frequency bands to scan, as follows:
+	  2 - 2.4 GHz
+	  5 - 5 GHz
+	  6 - 6 GHz
+	  "" - All bands allowed by the regulatory domain.
+	  Multiple bands can be specified as comma separated band values.
+	  Only regulatory domain permitted values are allowed.
 
 config WIFI_SCAN_SSID_FILT_MAX
 	int "Maximum number of SSIDs that can be specified for SSID filtering"
