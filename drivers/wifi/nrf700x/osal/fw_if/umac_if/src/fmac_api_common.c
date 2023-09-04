@@ -423,7 +423,8 @@ enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx
 				      otp_mac_addr,
 				      NRF_WIFI_ETH_ADDR_LEN);
 
-		if (!nrf_wifi_utils_is_mac_addr_valid((const char *)mac_addr)) {
+		if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
+						      (const char *)mac_addr)) {
 			wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 					       "%s:  Invalid OTP MAC addr: %02X%02X%02X%02X%02X%02X\n",
 					       __func__,

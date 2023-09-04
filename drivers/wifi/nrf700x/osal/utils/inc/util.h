@@ -29,7 +29,8 @@ int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
 				  unsigned int hex_arr_sz,
 				  unsigned char *str);
 
-bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr);
+bool nrf_wifi_utils_is_mac_addr_valid(struct wifi_nrf_osal_priv *opriv,
+				      const char *mac_addr);
 
 int nrf_wifi_utils_chan_to_freq(struct wifi_nrf_osal_priv *opriv,
 				enum nrf_wifi_band band,
