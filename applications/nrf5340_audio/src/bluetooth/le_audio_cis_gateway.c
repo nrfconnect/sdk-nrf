@@ -8,6 +8,7 @@
 
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/bap.h>
@@ -48,10 +49,10 @@ struct le_audio_headset {
 	uint8_t num_eps;
 	struct bt_bap_stream sink_stream;
 	struct bt_bap_ep *sink_ep;
-	struct bt_codec sink_codec_cap[CONFIG_CODEC_CAP_COUNT_MAX];
+	struct bt_audio_codec_cap sink_codec_cap[CONFIG_CODEC_CAP_COUNT_MAX];
 	struct bt_bap_stream source_stream;
 	struct bt_bap_ep *source_ep;
-	struct bt_codec source_codec_cap[CONFIG_CODEC_CAP_COUNT_MAX];
+	struct bt_audio_codec_cap source_codec_cap[CONFIG_CODEC_CAP_COUNT_MAX];
 	struct bt_conn *headset_conn;
 	struct net_buf_pool *iso_tx_pool;
 	atomic_t iso_tx_pool_alloc;
@@ -71,7 +72,7 @@ struct temp_cap_storage {
 	struct bt_conn *conn;
 	uint8_t num_caps;
 	/* Must be the same size as sink_codec_cap and source_codec_cap */
-	struct bt_codec codec[CONFIG_CODEC_CAP_COUNT_MAX];
+	struct bt_audio_codec_cap codec[CONFIG_CODEC_CAP_COUNT_MAX];
 };
 
 static struct le_audio_headset headsets[CONFIG_BT_MAX_CONN];
@@ -357,7 +358,8 @@ static int temp_cap_index_get(struct bt_conn *conn, uint8_t *index)
 	return -ECANCELED;
 }
 
-static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir, const struct bt_codec *codec)
+static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
+			  const struct bt_audio_codec_cap *codec)
 {
 	int ret;
 	uint8_t temp_cap_index;
@@ -368,25 +370,17 @@ static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir, const str
 		return;
 	}
 
-	if (codec->id != BT_CODEC_LC3_ID) {
+	if (codec->id != BT_AUDIO_CODEC_LC3_ID) {
 		LOG_DBG("Only the LC3 codec is supported");
 		return;
 	}
 
 	/* num_caps is an increasing index that starts at 0 */
 	if (temp_cap[temp_cap_index].num_caps < ARRAY_SIZE(temp_cap[temp_cap_index].codec)) {
-		struct bt_codec *codec_loc =
+		struct bt_audio_codec_cap *codec_loc =
 			&temp_cap[temp_cap_index].codec[temp_cap[temp_cap_index].num_caps];
 
-		memcpy(codec_loc, codec, sizeof(struct bt_codec));
-
-		for (int i = 0; i < codec->data_count; i++) {
-			codec_loc->data[i].data.data = codec_loc->data[i].value;
-		}
-
-		for (int i = 0; i < codec->meta_count; i++) {
-			codec_loc->meta[i].data.data = codec_loc->meta[i].value;
-		}
+		memcpy(codec_loc, codec, sizeof(struct bt_audio_codec_cap));
 
 		temp_cap[temp_cap_index].num_caps++;
 	} else {
@@ -462,7 +456,8 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 	}
 }
 
-static void stream_configured_cb(struct bt_bap_stream *stream, const struct bt_codec_qos_pref *pref)
+static void stream_configured_cb(struct bt_bap_stream *stream,
+				 const struct bt_audio_codec_qos_pref *pref)
 {
 	int ret;
 	uint8_t channel_index;
@@ -546,8 +541,8 @@ static void stream_qos_set_cb(struct bt_bap_stream *stream)
 		LOG_DBG("Set %s to PD: %d", headsets[channel_index].ch_name, stream->qos->pd);
 
 		if (playing_state) {
-			ret = bt_bap_stream_enable(stream, lc3_preset_sink.codec.meta,
-						   lc3_preset_sink.codec.meta_count);
+			ret = bt_bap_stream_enable(stream, lc3_preset_sink.codec_cfg.meta,
+						   lc3_preset_sink.codec_cfg.meta_len);
 			if (ret) {
 				LOG_ERR("Unable to enable stream: %d", ret);
 				return;
@@ -713,7 +708,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 	}
 
 	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel_index,
-		   bt_codec_cfg_get_octets_per_frame(stream->codec));
+		   bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg));
 }
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
@@ -791,25 +786,40 @@ static void work_stream_start(struct k_work *work)
 	}
 }
 
-/**
- * @brief Set the allocation to a preset codec configuration.
- *
- * @param codec The preset codec configuration.
- * @param loc   Location bitmask setting.
- *
- */
-static void bt_codec_allocation_set(struct bt_codec *codec, enum bt_audio_location loc)
+static int bt_audio_codec_allocation_set(struct bt_audio_codec_cfg *codec_cfg,
+					 enum bt_audio_location loc)
 {
-	for (size_t i = 0; i < codec->data_count; i++) {
-		if (codec->data[i].data.type == BT_CODEC_CONFIG_LC3_CHAN_ALLOC) {
-			codec->data[i].value[0] = loc & 0xff;
-			codec->data[i].value[1] = (loc >> 8) & 0xFFU;
-			codec->data[i].value[2] = (loc >> 16) & 0xFFU;
-			codec->data[i].value[3] = (loc >> 24) & 0xFFU;
-			codec->data[i].data.data = codec->data[i].value;
-			return;
+	for (size_t i = 0U; i < codec_cfg->data_len;) {
+		const uint8_t len = codec_cfg->data[i++];
+		const uint8_t type = codec_cfg->data[i++];
+		uint8_t *value = &codec_cfg->data[i];
+		const uint8_t value_len = len - sizeof(type);
+
+		if (type == BT_AUDIO_CODEC_CONFIG_LC3_CHAN_ALLOC) {
+			const uint32_t loc_32 = loc;
+
+			sys_put_le32(loc_32, value);
+
+			return 0;
 		}
+		i += value_len;
 	}
+
+	return -ENODATA;
+}
+
+static bool parse_cb(struct bt_data *data, void *user_data)
+{
+	if (data->type == BT_AUDIO_CODEC_LC3_FREQ) {
+		uint16_t temp = sys_get_le16(data->data);
+
+		if (temp & BT_AUDIO_CODEC_CAPABILIY_FREQ) {
+			*(bool *)user_data = true;
+		}
+		return false;
+	}
+
+	return true;
 }
 
 /**
@@ -818,24 +828,26 @@ static void bt_codec_allocation_set(struct bt_codec *codec, enum bt_audio_locati
  * @note   Currently only the sampling frequency is checked
  *
  * @param  cap_array  The array of pointers to codec capabilities
- * @param  size       The size of cap_array
- *
+ * @param  num_caps   Number of caps
  * @return True if valid codec capability found, false otherwise
  */
-static bool valid_codec_cap_check(struct bt_codec cap_array[], size_t size)
+static bool valid_codec_cap_check(struct bt_audio_codec_cap cap_array[], uint8_t num_caps)
 {
-	const struct bt_codec_data *element;
+	int ret;
+	bool valid_result = false;
 
 	/* Only the sampling frequency is checked */
-	for (int i = 0; i < size; i++) {
-		if (bt_codec_get_val(&cap_array[i], BT_CODEC_LC3_FREQ, &element)) {
-			if (element->data.data[0] & BT_AUDIO_CODEC_CAPABILIY_FREQ) {
-				return true;
-			}
+	for (int i = 0; i < num_caps; i++) {
+
+		ret = bt_audio_data_parse(cap_array[i].data, cap_array[i].data_len, parse_cb,
+					  &valid_result);
+
+		if (ret != 0 || ret != -ECANCELED) {
+			/* TODO: Don't care */
 		}
 	}
 
-	return false;
+	return valid_result;
 }
 
 static void discover_sink_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
@@ -867,7 +879,7 @@ static void discover_sink_cb(struct bt_conn *conn, int err, enum bt_audio_dir di
 	/* At this point the location/channel index of the headset is always known */
 	for (int i = 0; i < CONFIG_CODEC_CAP_COUNT_MAX; i++) {
 		memcpy(&headsets[channel_index].sink_codec_cap[i],
-		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_codec));
+		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_audio_codec_cap));
 	}
 
 	LOG_DBG("Sink discover complete");
@@ -875,17 +887,18 @@ static void discover_sink_cb(struct bt_conn *conn, int err, enum bt_audio_dir di
 	if (valid_codec_cap_check(headsets[channel_index].sink_codec_cap,
 				  temp_cap[temp_cap_index].num_caps)) {
 		if (conn == headsets[AUDIO_CH_L].headset_conn) {
-			bt_codec_allocation_set(&lc3_preset_sink.codec,
-						BT_AUDIO_LOCATION_FRONT_LEFT);
+			bt_audio_codec_allocation_set(&lc3_preset_sink.codec_cfg,
+						      BT_AUDIO_LOCATION_FRONT_LEFT);
 		} else if (conn == headsets[AUDIO_CH_R].headset_conn) {
-			bt_codec_allocation_set(&lc3_preset_sink.codec,
-						BT_AUDIO_LOCATION_FRONT_RIGHT);
+			bt_audio_codec_allocation_set(&lc3_preset_sink.codec_cfg,
+						      BT_AUDIO_LOCATION_FRONT_RIGHT);
 		} else {
 			LOG_ERR("Unknown connection, cannot set allocation");
 		}
 
 		ret = bt_bap_stream_config(conn, &headsets[channel_index].sink_stream,
-					   headsets[channel_index].sink_ep, &lc3_preset_sink.codec);
+					   headsets[channel_index].sink_ep,
+					   &lc3_preset_sink.codec_cfg);
 		if (ret) {
 			LOG_ERR("Could not configure sink stream");
 		}
@@ -937,7 +950,7 @@ static void discover_source_cb(struct bt_conn *conn, int err, enum bt_audio_dir 
 	/* At this point the location/channel index of the headset is always known */
 	for (int i = 0; i < temp_cap[temp_cap_index].num_caps; i++) {
 		memcpy(&headsets[channel_index].source_codec_cap[i],
-		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_codec));
+		       &temp_cap[temp_cap_index].codec[i], sizeof(struct bt_audio_codec_cap));
 	}
 
 	LOG_DBG("Source discover complete");
@@ -945,18 +958,18 @@ static void discover_source_cb(struct bt_conn *conn, int err, enum bt_audio_dir 
 	if (valid_codec_cap_check(headsets[channel_index].source_codec_cap,
 				  temp_cap[temp_cap_index].num_caps)) {
 		if (conn == headsets[AUDIO_CH_L].headset_conn) {
-			bt_codec_allocation_set(&lc3_preset_source.codec,
-						BT_AUDIO_LOCATION_FRONT_LEFT);
+			bt_audio_codec_allocation_set(&lc3_preset_source.codec_cfg,
+						      BT_AUDIO_LOCATION_FRONT_LEFT);
 		} else if (conn == headsets[AUDIO_CH_R].headset_conn) {
-			bt_codec_allocation_set(&lc3_preset_source.codec,
-						BT_AUDIO_LOCATION_FRONT_RIGHT);
+			bt_audio_codec_allocation_set(&lc3_preset_source.codec_cfg,
+						      BT_AUDIO_LOCATION_FRONT_RIGHT);
 		} else {
 			LOG_ERR("Unknown connection, cannot set allocation");
 		}
 
 		ret = bt_bap_stream_config(conn, &headsets[channel_index].source_stream,
 					   headsets[channel_index].source_ep,
-					   &lc3_preset_source.codec);
+					   &lc3_preset_source.codec_cfg);
 		if (ret) {
 			LOG_WRN("Could not configure stream");
 		}
@@ -1247,8 +1260,8 @@ int le_audio_play(void)
 
 	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED)) {
 		ret_left = bt_bap_stream_enable(&headsets[AUDIO_CH_L].sink_stream,
-						lc3_preset_sink.codec.meta,
-						lc3_preset_sink.codec.meta_count);
+						lc3_preset_sink.codec_cfg.meta,
+						lc3_preset_sink.codec_cfg.meta_len);
 
 		if (ret_left) {
 			LOG_WRN("Failed to enable left stream: %d", ret_left);
@@ -1257,8 +1270,8 @@ int le_audio_play(void)
 
 	if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED)) {
 		ret_right = bt_bap_stream_enable(&headsets[AUDIO_CH_R].sink_stream,
-						 lc3_preset_sink.codec.meta,
-						 lc3_preset_sink.codec.meta_count);
+						 lc3_preset_sink.codec_cfg.meta,
+						 lc3_preset_sink.codec_cfg.meta_len);
 
 		if (ret_right) {
 			LOG_WRN("Failed to enable right stream: %d", ret_right);

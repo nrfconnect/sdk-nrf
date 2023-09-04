@@ -179,7 +179,7 @@ static struct bt_bap_stream_ops stream_ops = {
 #if (CONFIG_AURACAST)
 static void public_broadcast_features_set(uint8_t *features)
 {
-	int freq = bt_codec_cfg_get_freq(&lc3_preset.codec);
+	int freq = bt_audio_codec_cfg_get_freq(&lc3_preset.codec_cfg);
 
 	if (features == NULL) {
 		LOG_ERR("No pointer to features");
@@ -271,15 +271,16 @@ static int adv_create(void)
 /**
  * @brief Set the channel allocation to a preset codec configuration.
  *
- * @param codec The preset codec configuration.
- * @param loc   Location bitmask setting.
+ * @param	data		The preset codec configuration.
+ * @param	data_len	Length of @p data
+ * @param	loc		Location bitmask setting.
  */
-static void bt_codec_allocation_set(struct bt_codec_data *codec, enum bt_audio_location loc)
+static void bt_audio_codec_allocation_set(uint8_t *data, uint8_t data_len,
+					  enum bt_audio_location loc)
 {
-	codec->data.type = BT_CODEC_CONFIG_LC3_CHAN_ALLOC;
-	sys_put_le32(loc, codec->value);
-	codec->data.data = codec->value;
-	codec->data.data_len = 4;
+	data[0] = data_len - 1;
+	data[1] = BT_AUDIO_CODEC_CONFIG_LC3_CHAN_ALLOC;
+	sys_put_le32((const uint32_t)loc, &data[2]);
 }
 
 int le_audio_user_defined_button_press(enum le_audio_user_defined_action action)
@@ -483,8 +484,9 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 {
 	int ret;
 
+	ARG_UNUSED(recv_cb);
 	struct bt_bap_broadcast_source_stream_param stream_params[ARRAY_SIZE(audio_streams)];
-	struct bt_codec_data bis_codec_data[ARRAY_SIZE(stream_params)];
+	uint8_t bis_codec_data[ARRAY_SIZE(stream_params)][6];
 	struct bt_bap_broadcast_source_subgroup_param
 		subgroup_params[CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
 	struct bt_bap_broadcast_source_create_param create_param;
@@ -493,8 +495,6 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 		LOG_WRN("Already initialized");
 		return -EALREADY;
 	}
-
-	ARG_UNUSED(recv_cb);
 
 	LOG_INF("Enabling broadcast gateway %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
 
@@ -510,21 +510,22 @@ int le_audio_enable(le_audio_receive_cb recv_cb, le_audio_timestamp_cb timestmp_
 	for (size_t i = 0; i < ARRAY_SIZE(stream_params); i++) {
 		stream_params[i].stream = &audio_streams[i];
 		bt_bap_stream_cb_register(stream_params[i].stream, &stream_ops);
-		stream_params[i].data_count = 1U;
-		stream_params[i].data = &bis_codec_data[i];
+		stream_params[i].data_len = ARRAY_SIZE(bis_codec_data[i]);
+		stream_params[i].data = bis_codec_data[i];
+
 		/* The channel allocation is set incrementally */
-		bt_codec_allocation_set(stream_params[i].data, BIT(i));
+		bt_audio_codec_allocation_set(stream_params[i].data, stream_params[i].data_len,
+					      BIT(i));
 	}
 
 	for (size_t i = 0U; i < ARRAY_SIZE(subgroup_params); i++) {
 		subgroup_params[i].params_count = ARRAY_SIZE(stream_params);
 		subgroup_params[i].params = &stream_params[i];
-		subgroup_params[i].codec = &lc3_preset.codec;
+		subgroup_params[i].codec_cfg = &lc3_preset.codec_cfg;
 #if (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG)
 		/* Immediate rendering flag */
-		subgroup_params[i].codec->meta[0].data.type = 0x09;
-		subgroup_params[i].codec->meta[0].data.data_len = 0;
-		subgroup_params[i].codec->meta_count = 1;
+		subgroup_params[i].codec_cfg->meta_len++;
+		subgroup_params[i].codec_cfg->meta[subgroup_params[i].codec_cfg->meta_len] = 0x09;
 #endif /* (CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG) */
 	}
 

@@ -32,7 +32,10 @@ ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
 struct bt_le_scan_cb scan_callback;
 static bool cb_registered;
+static bool sync_cb_registered;
 static char const *srch_name;
+static struct bt_le_per_adv_sync *pa_sync;
+static uint32_t broadcaster_broadcast_id;
 
 struct broadcast_source {
 	char name[BLE_SEARCH_NAME_MAX_LEN];
@@ -59,9 +62,6 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
 {
 	int ret;
 	struct bt_le_per_adv_sync_param param;
-	struct bt_le_per_adv_sync *pa_sync;
-
-	struct bt_mgmt_msg msg;
 
 	bt_le_scan_cb_unregister(&scan_callback);
 	cb_registered = false;
@@ -77,18 +77,13 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
 	param.skip = PA_SYNC_SKIP;
 	param.timeout = interval_to_sync_timeout(info->interval);
 
+	broadcaster_broadcast_id = broadcast_id;
+
 	ret = bt_le_per_adv_sync_create(&param, &pa_sync);
 	if (ret) {
 		LOG_ERR("Could not sync to PA: %d", ret);
 		return;
 	}
-
-	msg.event = BT_MGMT_PA_SYNC_OBJECT_READY;
-	msg.broadcast_id = broadcast_id;
-	msg.pa_sync = pa_sync;
-
-	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
-	ERR_CHK(ret);
 }
 
 /**
@@ -164,17 +159,64 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 	}
 }
 
+static void pa_synced_cb(struct bt_le_per_adv_sync *sync,
+			 struct bt_le_per_adv_sync_synced_info *info)
+{
+	int ret;
+	struct bt_mgmt_msg msg;
+
+	if (sync != pa_sync) {
+		LOG_WRN("Synced to unknown source");
+		return;
+	}
+
+	LOG_DBG("PA synced");
+
+	msg.event = BT_MGMT_PA_SYNCED;
+	msg.pa_sync = sync;
+	msg.broadcast_id = broadcaster_broadcast_id;
+
+	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
+
+static void pa_sync_terminated_cb(struct bt_le_per_adv_sync *sync,
+				  const struct bt_le_per_adv_sync_term_info *info)
+{
+	int ret;
+	struct bt_mgmt_msg msg;
+
+	LOG_DBG("Periodic advertising sync lost");
+
+	msg.event = BT_MGMT_PA_SYNC_LOST;
+	msg.pa_sync = sync;
+
+	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
+
+static struct bt_le_per_adv_sync_cb sync_callbacks = {
+	.synced = pa_synced_cb,
+	.term = pa_sync_terminated_cb,
+};
+
 int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char const *const name)
 {
 	int ret;
 
-	srch_name = name;
+	if (!sync_cb_registered) {
+		bt_le_per_adv_sync_cb_register(&sync_callbacks);
+		sync_cb_registered = true;
+	}
 
 	if (!cb_registered) {
 		scan_callback.recv = scan_recv_cb;
 		bt_le_scan_cb_register(&scan_callback);
 		cb_registered = true;
 	} else {
+		if (name == srch_name) {
+			return -EALREADY;
+		}
 		/* Already scanning, stop current scan to update param in case it has changed */
 		ret = bt_le_scan_stop();
 		if (ret) {
@@ -183,8 +225,10 @@ int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char c
 		}
 	}
 
+	srch_name = name;
+
 	ret = bt_le_scan_start(scan_param, NULL);
-	if (ret && ret != -EALREADY) {
+	if (ret) {
 		return ret;
 	}
 

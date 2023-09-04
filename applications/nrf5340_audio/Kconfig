@@ -32,6 +32,10 @@ config TRANSPORT_CIS
 
 endchoice
 
+config ZBUS_RUNTIME_OBSERVERS_POOL_SIZE
+	int "Number of zbus observers"
+	default 6
+
 #----------------------------------------------------------------------------#
 rsource "Kconfig.defaults"
 rsource "src/audio/Kconfig"

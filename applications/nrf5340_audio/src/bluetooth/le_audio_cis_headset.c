@@ -13,6 +13,7 @@
 #include <zephyr/bluetooth/audio/pacs.h>
 #include <zephyr/bluetooth/audio/csip.h>
 #include <zephyr/bluetooth/audio/cap.h>
+#include <zephyr/bluetooth/audio/lc3.h>
 
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
@@ -27,7 +28,6 @@ LOG_MODULE_REGISTER(cis_headset, CONFIG_BLE_LOG_LEVEL);
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#define CHANNEL_COUNT_1	    BIT(0)
 #define BLE_ISO_LATENCY_MS  10
 #define BLE_ISO_RETRANSMITS 2
 
@@ -112,9 +112,10 @@ struct bt_csip_set_member_register_param csip_param = {
 	.cb = &csip_callbacks,
 };
 
-static struct bt_codec lc3_codec = BT_CODEC_LC3(
-	BT_AUDIO_CODEC_CAPABILIY_FREQ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
-	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
+static struct bt_audio_codec_cap lc3_codec = BT_AUDIO_CODEC_CAP_LC3(
+	BT_AUDIO_CODEC_CAPABILIY_FREQ,
+	(BT_AUDIO_CODEC_LC3_DURATION_10 | BT_AUDIO_CODEC_LC3_DURATION_PREFER_10),
+	BT_AUDIO_CODEC_LC3_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
 static enum bt_audio_dir caps_dirs[] = {
@@ -124,7 +125,7 @@ static enum bt_audio_dir caps_dirs[] = {
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
 
-static const struct bt_codec_qos_pref qos_pref = BT_CODEC_QOS_PREF(
+static const struct bt_audio_codec_qos_pref qos_pref = BT_AUDIO_CODEC_QOS_PREF(
 	true, BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS, BLE_ISO_LATENCY_MS,
 	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
 	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
@@ -132,11 +133,11 @@ static const struct bt_codec_qos_pref qos_pref = BT_CODEC_QOS_PREF(
 /* clang-format off */
 static struct bt_pacs_cap caps[] = {
 				{
-					 .codec = &lc3_codec,
+					 .codec_cap = &lc3_codec,
 				},
 #if (CONFIG_BT_AUDIO_TX)
 				{
-					 .codec = &lc3_codec,
+					 .codec_cap = &lc3_codec,
 				}
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
@@ -157,9 +158,9 @@ static struct bt_audio_source {
 /* Left or right channel headset */
 static enum audio_channel channel;
 
-static void print_codec(const struct bt_codec *codec, enum bt_audio_dir dir)
+static void print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir)
 {
-	if (codec->id == BT_CODEC_LC3_ID) {
+	if (codec->id == BT_AUDIO_CODEC_LC3_ID) {
 		/* LC3 uses the generic LTV format - other codecs might do as well */
 		enum bt_audio_location chan_allocation;
 
@@ -171,26 +172,27 @@ static void print_codec(const struct bt_codec *codec, enum bt_audio_dir dir)
 			LOG_INF("LC3 codec config for <unknown dir>:");
 		}
 
-		LOG_INF("\tFrequency: %d Hz", bt_codec_cfg_get_freq(codec));
-		LOG_INF("\tFrame Duration: %d us", bt_codec_cfg_get_frame_duration_us(codec));
-		if (bt_codec_cfg_get_chan_allocation_val(codec, &chan_allocation) == 0) {
+		LOG_INF("\tFrequency: %d Hz", bt_audio_codec_cfg_get_freq(codec));
+		LOG_INF("\tFrame Duration: %d us", bt_audio_codec_cfg_get_frame_duration_us(codec));
+		if (bt_audio_codec_cfg_get_chan_allocation_val(codec, &chan_allocation) == 0) {
 			LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
 		}
 
-		uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
-		uint32_t bitrate =
-			octets_per_sdu * 8 * (1000000 / bt_codec_cfg_get_frame_duration_us(codec));
+		uint32_t octets_per_sdu = bt_audio_codec_cfg_get_octets_per_frame(codec);
+		uint32_t bitrate = octets_per_sdu * 8 *
+				   (1000000 / bt_audio_codec_cfg_get_frame_duration_us(codec));
 
 		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
-		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
+		LOG_INF("\tFrames per SDU: %d",
+			bt_audio_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
 	}
 }
 
 static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum bt_audio_dir dir,
-			 const struct bt_codec *codec, struct bt_bap_stream **stream,
-			 struct bt_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
+			 const struct bt_audio_codec_cfg *codec, struct bt_bap_stream **stream,
+			 struct bt_audio_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("LC3 config callback");
 
@@ -200,7 +202,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 		if (!audio_stream->conn) {
 			LOG_DBG("ASE Codec Config stream %p", (void *)audio_stream);
 
-			uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
+			uint32_t octets_per_sdu = bt_audio_codec_cfg_get_octets_per_frame(codec);
 
 			if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
 				LOG_WRN("Too high bitrate");
@@ -243,15 +245,15 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 }
 
 static int lc3_reconfig_cb(struct bt_bap_stream *stream, enum bt_audio_dir dir,
-			   const struct bt_codec *codec, struct bt_codec_qos_pref *const pref,
-			   struct bt_bap_ascs_rsp *rsp)
+			   const struct bt_audio_codec_cfg *codec,
+			   struct bt_audio_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("ASE Codec Reconfig: stream %p", (void *)stream);
 
 	return 0;
 }
 
-static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *qos,
+static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_audio_codec_qos *qos,
 		      struct bt_bap_ascs_rsp *rsp)
 {
 	le_audio_event_publish(LE_AUDIO_EVT_PRES_DELAY_SET, stream->conn);
@@ -261,10 +263,10 @@ static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_codec_qos *q
 	return 0;
 }
 
-static int lc3_enable_cb(struct bt_bap_stream *stream, const struct bt_codec_data *meta,
-			 size_t meta_count, struct bt_bap_ascs_rsp *rsp)
+static int lc3_enable_cb(struct bt_bap_stream *stream, const uint8_t *meta, size_t meta_len,
+			 struct bt_bap_ascs_rsp *rsp)
 {
-	LOG_DBG("Enable: stream %p meta_count %d", (void *)stream, meta_count);
+	LOG_DBG("Enable: stream %p meta_len %d", (void *)stream, meta_len);
 
 	return 0;
 }
@@ -275,10 +277,10 @@ static int lc3_start_cb(struct bt_bap_stream *stream, struct bt_bap_ascs_rsp *rs
 	return 0;
 }
 
-static int lc3_metadata_cb(struct bt_bap_stream *stream, const struct bt_codec_data *meta,
-			   size_t meta_count, struct bt_bap_ascs_rsp *rsp)
+static int lc3_metadata_cb(struct bt_bap_stream *stream, const uint8_t *meta, size_t meta_len,
+			   struct bt_bap_ascs_rsp *rsp)
 {
-	LOG_DBG("Metadata: stream %p meta_count %d", (void *)stream, meta_count);
+	LOG_DBG("Metadata: stream %p meta_len %d", (void *)stream, meta_len);
 	return 0;
 }
 
@@ -343,7 +345,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 	}
 
 	receive_cb(buf->data, buf->len, bad_frame, info->ts, channel,
-		   bt_codec_cfg_get_octets_per_frame(stream->codec));
+		   bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg));
 }
 
 static void stream_start_cb(struct bt_bap_stream *stream)
@@ -565,17 +567,19 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pr
 		return -ENXIO;
 	}
 
-	if (audio_streams[0].codec == NULL) {
+	if (audio_streams[0].codec_cfg == NULL) {
 		LOG_ERR("No codec found for the stream");
 		return -ENXIO;
 	}
 
 	/* Get the configuration for the sink stream */
-	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(audio_streams[0].codec);
-	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(audio_streams[0].codec) * 8;
+	int frames_per_sec =
+		1000000 / bt_audio_codec_cfg_get_frame_duration_us(audio_streams[0].codec_cfg);
+	int bits_per_frame =
+		bt_audio_codec_cfg_get_octets_per_frame(audio_streams[0].codec_cfg) * 8;
 
 	if (sampling_rate != NULL) {
-		*sampling_rate = bt_codec_cfg_get_freq(audio_streams[0].codec);
+		*sampling_rate = bt_audio_codec_cfg_get_freq(audio_streams[0].codec_cfg);
 	}
 
 	if (bitrate != NULL) {

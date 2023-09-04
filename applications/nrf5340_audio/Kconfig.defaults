@@ -50,8 +50,8 @@ config NFCT_PINS_AS_GPIOS
 config ZBUS
 	default y
 
-config ZBUS_RUNTIME_OBSERVERS_POOL_SIZE
-	default 6
+config ZBUS_RUNTIME_OBSERVERS
+	default y
 
 config SENSOR
 	default y

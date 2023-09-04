@@ -16,12 +16,12 @@ config BT_ECC
 config BT_EXT_ADV
 	default y
 
-config BT_DEVICE_NAME
-	default "NRF5340_AUDIO"
-
 # Mandatory to support at least 1 for ASCS
 config BT_ATT_PREPARE_COUNT
 	default 1
+
+config ZBUS_RUNTIME_OBSERVERS
+	default y
 
 if TRANSPORT_CIS # Depends on TRANSPORT_CIS
 
@@ -225,10 +225,16 @@ config BT_ISO_SYNC_RECEIVER
 config BT_BAP_BROADCAST_SINK
 	default y
 
+config BT_ISO_MAX_BIG
+	default 2
+
 config BT_BAP_SCAN_DELEGATOR
 	default y
 
 config BT_BAP_BROADCAST_SNK_STREAM_COUNT
+	default 2
+
+config BT_BAP_BROADCAST_SNK_COUNT
 	default 2
 
 config BT_ISO_MAX_CHAN
@@ -242,6 +248,9 @@ config BT_PAC_SNK
 
 config BT_AUDIO_RX
 	default y
+
+config BT_PER_ADV_SYNC_MAX
+	default 2
 
 endif # AUDIO_DEV = 1 (HEADSET)
 
