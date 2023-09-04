@@ -790,6 +790,7 @@ static int radio_init(void)
 
 	radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower);
 	nrf_radio_mode_set(NRF_RADIO, dtm_inst.radio_mode);
+	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, IS_ENABLED(CONFIG_DTM_FAST_RAMP_UP));
 
 	/* Set the access address, address0/prefix0 used for both Rx and Tx
 	 * address.
@@ -1324,7 +1325,7 @@ static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
 		 */
 		radio_prepare(TX_MODE);
 
-		nrf_radio_modecnf0_set(NRF_RADIO, false,
+		nrf_radio_modecnf0_set(NRF_RADIO, IS_ENABLED(CONFIG_DTM_FAST_RAMP_UP),
 				       RADIO_MODECNF0_DTX_Center);
 
 		/* Shortcut between READY event and START task */
