@@ -54,18 +54,18 @@ static struct {
 
 static bool twt_supported, twt_resp_received;
 
-static int wait_for_twt_resp_received(void)
+static bool wait_for_twt_resp_received(void)
 {
 	int i, timeout_polls = (TWT_RESP_TIMEOUT_S * 1000) / STATUS_POLLING_MS;
 
 	for (i = 0; i < timeout_polls; i++) {
 		k_sleep(K_MSEC(STATUS_POLLING_MS));
 		if (twt_resp_received) {
-			return 1;
+			return true;
 		}
 	}
 
-	return 0;
+	return false;
 }
 
 static int setup_twt(void)
