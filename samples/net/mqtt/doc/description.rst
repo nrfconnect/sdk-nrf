@@ -275,7 +275,7 @@ Troubleshooting
 To enable more verbose logging from the MQTT helper library, enable the :kconfig:option:`CONFIG_MQTT_HELPER_LOG_LEVEL_DBG` option.
 
 * If you are having issues with connectivity on nRF91 Series devices, see the `Trace Collector`_ documentation to learn how to capture modem traces in order to debug network traffic in Wireshark.
-  The sample enables modem traces by default, as set by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` option.
+  The sample enables modem traces by default.
 * Public MQTT brokers might be unstable.
   If you have trouble connecting to the MQTT broker, try switching to another broker by changing the value of the :ref:`CONFIG_MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME <CONFIG_MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME>` configuration option.
   If you are switching to another broker, remember to update the CA certificate. To know more on certificates and provisioning, see :ref:`mqtt_sample_provisioning`.

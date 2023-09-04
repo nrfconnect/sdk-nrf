@@ -67,7 +67,10 @@ Working with nRF91 Series
 
   * :ref:`asset_tracker_v2`
   * :ref:`serial_lte_modem`
-  * All samples that use nRF9160 DK except for nRF9160: SLM Shell, nRF9160: Modem trace external flash backend, and nRF9160: Modem trace backend samples
+  * All samples that use nRF91 Series DK except for :ref:`slm_shell_sample`, :ref:`modem_trace_flash`, :ref:`modem_trace_backend_sample`.
+
+  For samples where the UART trace backend is enabled by default, the configuration is added to the sample overlays and project configuration.
+
 * The default board revision for nRF9160 DK has changed to v0.14.0.
   See :ref:`nrf9160_board_revisions` for more details.
 

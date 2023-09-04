@@ -27,7 +27,7 @@ tests:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
-    extra_args: OVERLAY_CONFIG=overlay-tls-nrf70.conf
+    extra_args: EXTRA_CONF_FILE=overlay-tls-nrf70.conf
     extra_configs:
       - CONFIG_WIFI_CREDENTIALS_STATIC_SSID="ssid"
       - CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD="psk"
@@ -44,10 +44,10 @@ tests:
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
     tags: ci_build
-    extra_args: OVERLAY_CONFIG=overlay-tls-nrf91.conf
+    extra_args: EXTRA_CONF_FILE=overlay-tls-nrf91.conf
   sample.net.mqtt.native_posix.tls:
     build_only: true
     build_on_all: true
     platform_allow: native_posix
     tags: ci_build
-    extra_args: OVERLAY_CONFIG=overlay-tls-native_posix.conf
+    extra_args: EXTRA_CONF_FILE=overlay-tls-native_posix.conf
