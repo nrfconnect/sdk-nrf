@@ -306,6 +306,8 @@ Bluetooth samples
 
     * Aligned timers' configurations to the new nrfx API.
     * Extracted the DTM radio API from the transport layer.
+    * Added support for the radio fast ramp-up feature.
+      This feature is enabled by default.
 
 * :ref:`peripheral_hids_keyboard` sample:
 

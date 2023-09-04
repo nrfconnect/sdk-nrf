@@ -66,6 +66,13 @@ config DTM_POWER_CONTROL_AUTOMATIC
 	  possible value. If this option is disabled, user can set the SoC output power and the
 	  front-end module gain with the separate vendor specific commands.
 
+config DTM_FAST_RAMP_UP
+	bool "Enable radio fast ramp up mode"
+	default y
+	help
+	  Do fast ramp up when starting the radio peripheral. This mode will significancy reduce
+	  the ramp up time and makes it almost the same on all supported chips.
+
 module = DTM_TRANSPORT
 module-str = "DTM_transport"
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
