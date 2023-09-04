@@ -45,11 +45,12 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 static uint32_t scan_result;
 
 const struct wifi_scan_params tests[] = {
+#ifdef CONFIG_WIFI_SCAN_TYPE_ACTIVE
 	{
-	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
 	.dwell_time_active = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE,
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
+#endif
 #ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
 	{
 	.scan_type = WIFI_SCAN_TYPE_PASSIVE,
