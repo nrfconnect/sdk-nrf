@@ -197,7 +197,8 @@ static int rest_client_sckt_connect(int *const fd,
 		/* Check if timeout has already elapsed */
 		if (time_used >= *timeout_ms) {
 			LOG_WRN("Timeout occurred during DNS query");
-			return -ETIMEDOUT;
+			ret = -ETIMEDOUT;
+			goto clean_up;
 		}
 	}
 
@@ -244,7 +245,8 @@ static int rest_client_sckt_connect(int *const fd,
 		/* Check if timeout has already elapsed */
 		if (time_used >= *timeout_ms) {
 			LOG_WRN("Timeout occurred during socket connect");
-			return -ETIMEDOUT;
+			ret = -ETIMEDOUT;
+			goto clean_up;
 		}
 		*timeout_ms -= time_used;
 	}
