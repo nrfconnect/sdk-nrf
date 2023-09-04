@@ -156,7 +156,7 @@ Modem trace
 
 The modem traces of the nRF9160 modem can be captured using the nRF Connect Trace Collector.
 For more information on how to collect traces using nRF Connect Trace Collector, see the `Trace Collector`_ documentation.
-When the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the :ref:`modem_trace_module`.
+To enable the modem traces in the modem and to forward them to the :ref:`modem_trace_module` over UART, include the ``nrf91-modem-trace-uart`` snippet while building your application as described in :ref:`nrf91_modem_trace_uart_snippet`.
 
 .. note::
    For the :ref:`serial_lte_modem` application and the :ref:`at_client_sample` sample, you must also run ``AT%xmodemtrace=1,2`` to manually activate the predefined trace set.
@@ -164,9 +164,8 @@ When the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option is enabled,
 You can set the trace level using the AT command ``%XMODEMTRACE``.
 See `modem trace AT command documentation`_ for more information.
 
+See :ref:`modem_trace_module` for other backend options.
 If the existing trace backends are not sufficient, it is possible to implement custom trace backends.
-You can implement your own custom modem traces to store the traces on an external flash.
-You can then upload the traces to the cloud for remote analysis when needed.
 For more information on the implementation of a custom trace backend, see :ref:`adding_custom_modem_trace_backends`.
 
 .. _nrf9160_fota:
