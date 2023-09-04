@@ -47,6 +47,17 @@ config TWT_SAMPLE_PASSWORD
 	help
 	  Specify the Password to connect
 
+config STA_CONN_TIMEOUT_SEC
+	int "Overall Connection timeout (time to be waited for a station to connect and get an IP address)"
+	# Zephyr DHCP retry is 1 minute, so set the default to 70 seconds
+	default 70
+	# 512 has no special meaning, just a reasonable upper limit
+	range 0 512
+	help
+	  Specify the connection timeout, in seconds. This is the overall timeout (time to be waited for
+	  a station to connect and get an IP address). DHCP retries should be taken into account when setting
+	  this value. If the timeout is set to 0, the connection will not timeout.
+
 config TWT_TRIGGER_ENABLE
 	bool "Enable trigger mode"
 	help
