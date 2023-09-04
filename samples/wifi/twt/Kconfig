@@ -65,13 +65,11 @@ config TWT_TRIGGER_ENABLE
 	bool "Enable trigger mode"
 	help
 	  STA expects AP to send triggers for start of every service period.
-	default y
 
 config TWT_ANNOUNCED_MODE
 	bool "Enable announced mode"
 	help
 	  STA announces its wakeup to AP for every service period start.
-	default y
 
 config TWT_WAKE_INTERVAL
 	int "TWT awake interval"
