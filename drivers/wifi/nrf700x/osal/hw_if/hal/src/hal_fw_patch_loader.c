@@ -36,8 +36,9 @@ static enum wifi_nrf_status hal_fw_patch_load(struct wifi_nrf_hal_dev_ctx *hal_d
 	int last_chunk_size = fw_patch_size % MAX_PATCH_CHUNK_SIZE;
 	int num_chunks = fw_patch_size / MAX_PATCH_CHUNK_SIZE +
 					(last_chunk_size ? 1 : 0);
+	int chunk = 0;
 
-	for (int chunk = 0; chunk < num_chunks; chunk++) {
+	for (chunk = 0; chunk < num_chunks; chunk++) {
 		unsigned char *patch_data_ram;
 		unsigned int patch_chunk_size =
 			((chunk == num_chunks - 1) ? last_chunk_size : MAX_PATCH_CHUNK_SIZE);
@@ -115,6 +116,7 @@ enum wifi_nrf_status wifi_nrf_hal_fw_patch_load(struct wifi_nrf_hal_dev_ctx *hal
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned int pri_dest_addr = 0;
 	unsigned int sec_dest_addr = 0;
+	int patch = 0;
 
 	if (!fw_pri_patch_data) {
 		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
@@ -160,7 +162,7 @@ enum wifi_nrf_status wifi_nrf_hal_fw_patch_load(struct wifi_nrf_hal_dev_ctx *hal
 		{ "bin", fw_sec_patch_data, fw_sec_patch_size, sec_dest_addr },
 	};
 
-	for (int patch = 0; patch < ARRAY_SIZE(patches); patch++) {
+	for (patch = 0; patch < ARRAY_SIZE(patches); patch++) {
 		status = hal_fw_patch_load(hal_dev_ctx,
 					   rpu_proc,
 					   patches[patch].id_str,
