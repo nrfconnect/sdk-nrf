@@ -484,6 +484,11 @@ static int gnss_init_and_start(void)
 		return -1;
 	}
 
+	/* Make QZSS satellites visible in the NMEA output. */
+	if (nrf_modem_gnss_qzss_nmea_mode_set(NRF_MODEM_GNSS_QZSS_NMEA_MODE_CUSTOM) != 0) {
+		LOG_WRN("Failed to enable custom QZSS NMEA mode");
+	}
+
 	/* This use case flag should always be set. */
 	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 
