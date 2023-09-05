@@ -20,6 +20,7 @@ menuconfig DESKTOP_DFU_MCUMGR_ENABLE
 	select ZCBOR
 	select CRC
 	select IMG_MANAGER
+	select MCUBOOT_BOOTUTIL_LIB
 	select STREAM_FLASH
 	select FLASH_MAP
 	select FLASH
