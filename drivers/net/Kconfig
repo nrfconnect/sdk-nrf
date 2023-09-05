@@ -11,6 +11,7 @@ if HAS_SEGGER_RTT
 menuconfig ETH_RTT
 	select USE_SEGGER_RTT
 	select NET_L2_ETHERNET
+	select CRC
 	bool "Ethernet over RTT driver"
 	help
 	  This option enables network interface driver that sends and receives
