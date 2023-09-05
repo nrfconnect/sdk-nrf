@@ -199,6 +199,7 @@ struct nwb {
 	int hostbuffer;
 	void *cleanup_ctx;
 	void (*cleanup_cb)();
+	unsigned char priority;
 };
 
 static void *zep_shim_nbuf_alloc(unsigned int size)
@@ -294,6 +295,13 @@ static void *zep_shim_nbuf_data_pull(void *nbuf, unsigned int size)
 	return nwb->data;
 }
 
+static unsigned char zep_shim_nbuf_get_priority(void *nbuf)
+{
+	struct nwb *nwb = (struct nwb *)nbuf;
+
+	return nwb->priority;
+}
+
 #include <zephyr/net/ethernet.h>
 #include <zephyr/net/net_core.h>
 
@@ -316,6 +324,8 @@ void *net_pkt_to_nbuf(struct net_pkt *pkt)
 	data = zep_shim_nbuf_data_put(nwb, len);
 
 	net_pkt_read(pkt, data, len);
+
+	nwb->priority = net_pkt_priority(pkt);
 
 	return nwb;
 }
@@ -795,6 +805,7 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.nbuf_data_put = zep_shim_nbuf_data_put,
 	.nbuf_data_push = zep_shim_nbuf_data_push,
 	.nbuf_data_pull = zep_shim_nbuf_data_pull,
+	.nbuf_get_priority = zep_shim_nbuf_get_priority,
 
 	.tasklet_alloc = zep_shim_work_alloc,
 	.tasklet_free = zep_shim_work_free,

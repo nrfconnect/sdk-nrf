@@ -709,6 +709,18 @@ void *wifi_nrf_osal_nbuf_data_pull(struct wifi_nrf_osal_priv *opriv,
 
 
 /**
+ * wifi_nrf_osal_nbuf_get_priority() - Get the priority of a network buffer.
+ *
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @nbuf: Pointer to a network buffer.
+ *
+ * Gets the priority of a network buffer(@nbuf).
+ *
+ * Return: Priority of the network buffer.
+ */
+unsigned char wifi_nrf_osal_nbuf_get_priority(struct wifi_nrf_osal_priv *opriv,
+					       void *nbuf);
+/**
  * wifi_nrf_osal_tasklet_alloc() - Allocate a tasklet.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
  * @type: Type of tasklet.

@@ -101,6 +101,7 @@
  * @nbuf_data_pull: Decrease the data area of a network buffer(@nbuf) by @size
  *                  bytes at the start of the area and return the pointer to the
  *                  beginning of the data area.
+ * @nbuf_get_priority: Get the priority of a network buffer(@nbuf).
  *
  * @tasklet_alloc: Allocate a tasklet structure and return a pointer to it.
  * @tasklet_free: Free a tasklet structure that had been allocated using
@@ -226,6 +227,7 @@ struct wifi_nrf_osal_ops {
 	void *(*nbuf_data_put)(void *nbuf, unsigned int size);
 	void *(*nbuf_data_push)(void *nbuf, unsigned int size);
 	void *(*nbuf_data_pull)(void *nbuf, unsigned int size);
+	unsigned char (*nbuf_get_priority)(void *nbuf);
 
 	void *(*tasklet_alloc)(int type);
 	void (*tasklet_free)(void *tasklet);

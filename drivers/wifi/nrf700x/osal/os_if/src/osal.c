@@ -414,6 +414,12 @@ void *wifi_nrf_osal_nbuf_data_pull(struct wifi_nrf_osal_priv *opriv,
 					  size);
 }
 
+unsigned char wifi_nrf_osal_nbuf_get_priority(struct wifi_nrf_osal_priv *opriv,
+					      void *nbuf)
+{
+	return opriv->ops->nbuf_get_priority(nbuf);
+}
+
 
 void *wifi_nrf_osal_tasklet_alloc(struct wifi_nrf_osal_priv *opriv, int type)
 {
