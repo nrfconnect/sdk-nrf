@@ -12,7 +12,7 @@ config WIFI_MAC_ADDRESS
 	string "WiFi MAC address"
 	default "F6:CE:36:00:00:01"
 	help
-		WiFi MAC address to be used by the sample. If not set, the sample will
+		Specifies the WiFi MAC address to be used by the sample. If not set, the sample will
 		use the default MAC address (locally administrative). This is only used
 		when the nRF7002 OTP is not programmed with a MAC address.
 
@@ -20,7 +20,7 @@ choice  WIFI_SCAN_TYPE_SELECT
 	prompt "Scan type"
 	default WIFI_SCAN_TYPE_ACTIVE
 	help
-		Wi-Fi scan type to be used to perform current scan operation.
+		Specifies the Wi-Fi scan type to be used to perform current scan operation.
 		If this is not set default action is to do active scan.
 
 config WIFI_SCAN_TYPE_ACTIVE
@@ -38,7 +38,7 @@ endchoice
 config WIFI_SCAN_BAND
 	bool "Scan in particular frequency band"
 	help
-	  Enable to perform scan based on frequency bands.
+	  Enable this to perform scan based on frequency bands.
 
 config WIFI_SCAN_BANDS_LIST
 	string "Frequency bands to scan"
@@ -56,33 +56,34 @@ config WIFI_SCAN_SSID_FILT_MAX
 	int "Maximum number of SSIDs that can be specified for SSID filtering"
 	default 1
 	help
-	  Maximum number of SSIDs that can be specified for SSID filtering.
+	  Configures the maximum number of SSIDs that can be specified for SSID filtering.
 	  This can be set based on the underlying chipsets limitations.
 
 config WIFI_SCAN_SSID_FILT
 	string "Scan for specific SSIDs"
 	default ""
 	help
-	  String of comma separated SSID values to scan for. The number of SSID’s
-	  that can be specified depends on WIFI_MGMT_SCAN_MAX_SSIDS.
+	  Configures the string of comma separated SSID values to scan for.
+	  The number of SSID’s that can be specified depends on WIFI_MGMT_SCAN_MAX_SSIDS.
 	  Use "" to disable SSID filtering.
 
 config WIFI_SCAN_CHAN
 	bool "Scan based on channel"
 	help
-	  Enable to perform scan in particular channel(s).
+	  Enable this to perform scan in particular channel(s).
 
 config WIFI_SCAN_CHAN_LIST
 	string "Channel list for scan"
 	depends on WIFI_SCAN_CHAN
 	help
-	  List of channels used to perform scan.
+	  Configures the list of channels used to perform scan.
 
 config WIFI_SCAN_MAX_BSS_CNT
 	int "Maximum number of scan results to return."
 	default 0
 	range 0 65535
 	help
-	  Maximum number of scan results to return. 0 represents unlimited number of BSSes.
+	  Configures the maximum number of scan results to return.
+	  0 represents unlimited number of BSSes.
 
 endmenu
