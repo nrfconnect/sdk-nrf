@@ -45,6 +45,11 @@ CONFIG_SLM_CUSTOMIZED - Flag for customized functionality
    This flag can be used to enable customized functionality.
    To add your own custom logic, enclose the code by ``#if defined(CONFIG_SLM_CUSTOMIZED)`` and enable this flag.
 
+.. _CONFIG_SLM_AT_MAX_PARAM:
+
+CONFIG_SLM_AT_MAX_PARAM - AT command parameter count limit
+   This defines the maximum number of parameters allowed in an AT command, including the command name.
+
 .. _CONFIG_SLM_NATIVE_TLS:
 
 CONFIG_SLM_NATIVE_TLS - Use Zephyr mbedTLS

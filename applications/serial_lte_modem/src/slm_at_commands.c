@@ -452,14 +452,6 @@ int handle_at_sms(enum at_cmd_type cmd_type);
 /* FOTA commands */
 int handle_at_fota(enum at_cmd_type cmd_type);
 
-#if defined(CONFIG_SLM_NRF_CLOUD)
-int handle_at_nrf_cloud(enum at_cmd_type cmd_type);
-#if defined(CONFIG_NRF_CLOUD_LOCATION)
-int handle_at_cellpos(enum at_cmd_type cmd_type);
-int handle_at_wifipos(enum at_cmd_type cmd_type);
-#endif
-#endif
-
 #if defined(CONFIG_SLM_GNSS)
 int handle_at_gps(enum at_cmd_type cmd_type);
 int handle_at_gps_delete(enum at_cmd_type cmd_type);
@@ -566,8 +558,7 @@ static struct slm_at_cmd {
 #if defined(CONFIG_SLM_NRF_CLOUD)
 	{"AT#XNRFCLOUD", handle_at_nrf_cloud},
 #if defined(CONFIG_NRF_CLOUD_LOCATION)
-	{"AT#XCELLPOS", handle_at_cellpos},
-	{"AT#XWIFIPOS", handle_at_wifipos},
+	{"AT#XNRFCLOUDPOS", handle_at_nrf_cloud_pos},
 #endif
 #endif
 

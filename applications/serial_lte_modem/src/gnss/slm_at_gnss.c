@@ -9,11 +9,13 @@
 #include <zephyr/logging/log.h>
 #include <date_time.h>
 #include <nrf_modem_gnss.h>
+
 #if defined(CONFIG_SLM_NRF_CLOUD)
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
+#include "slm_at_nrfcloud.h"
 #endif
 #include "slm_util.h"
 #include "slm_at_host.h"
@@ -67,25 +69,9 @@ static enum {
 	RUN_STATUS_MAX
 } run_status;
 
-/* global variable defined in different files */
-#if defined(CONFIG_SLM_NRF_CLOUD)
-extern bool nrf_cloud_ready;
-extern bool nrf_cloud_location_signify;
-#endif
 extern struct k_work_q slm_work_q;
 extern struct at_param_list at_param_list;
 extern uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
-
-static int64_t utc_to_gps_sec(const int64_t utc_sec)
-{
-	return (utc_sec - GPS_TO_UNIX_UTC_OFFSET_SECONDS) + GPS_TO_UTC_LEAP_SECONDS;
-}
-
-static void gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day)
-{
-	*gps_day = (uint16_t)(gps_sec / SEC_PER_DAY);
-	*gps_time_of_day = (uint32_t)(gps_sec % SEC_PER_DAY);
-}
 
 static bool is_gnss_activated(void)
 {
@@ -170,6 +156,8 @@ static int gnss_shutdown(void)
 	return ret;
 }
 
+#if defined(CONFIG_SLM_NRF_CLOUD)
+
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static int read_agps_req(struct nrf_modem_gnss_agps_data_frame *req)
 {
@@ -209,7 +197,7 @@ static void agps_req_wk(struct k_work *work)
 	}
 	LOG_INF("A-GPS requested");
 }
-#endif  /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static void pgps_req_wk(struct k_work *work)
@@ -277,7 +265,9 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_PGPS) */
+#endif /* CONFIG_NRF_CLOUD_PGPS */
+
+#endif /* CONFIG_SLM_NRF_CLOUD */
 
 static void on_gnss_evt_nmea(void)
 {
@@ -329,14 +319,14 @@ static int do_cloud_send_obj(struct nrf_cloud_obj *const obj)
 	return err;
 }
 
-static void send_location(struct nrf_modem_gnss_nmea_data_frame * const nmea_data)
+static void send_location(struct nrf_modem_gnss_pvt_data_frame * const pvt_data)
 {
 	static int64_t last_ts_ms = NRF_CLOUD_NO_TIMESTAMP;
 	int err;
 	struct nrf_cloud_gnss_data gnss = {
 		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
-		.type = NRF_CLOUD_GNSS_TYPE_MODEM_NMEA,
-		.mdm_nmea = nmea_data
+		.type = NRF_CLOUD_GNSS_TYPE_MODEM_PVT,
+		.mdm_pvt = pvt_data
 	};
 	NRF_CLOUD_OBJ_JSON_DEFINE(msg_obj);
 
@@ -394,29 +384,11 @@ static void fix_rep_wk(struct k_work *work)
 	}
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
-	if (IS_ENABLED(CONFIG_SLM_LOG_LEVEL_DBG)) {
-		goto update_pgps;
-	}
-
-	struct nrf_modem_gnss_nmea_data_frame nmea;
-
-	/* Read $GPGGA NMEA message */
-	err = nrf_modem_gnss_read((void *)&nmea, sizeof(nmea), NRF_MODEM_GNSS_DATA_NMEA);
-	if (err) {
-		LOG_WRN("Failed to read GNSS NMEA data, error %d", err);
-	} else {
+	if (nrf_cloud_send_location && nrf_cloud_ready) {
 		/* Report to nRF Cloud by best-effort */
-		if (nrf_cloud_ready && nrf_cloud_location_signify) {
-			send_location(&nmea);
-		}
-
-		/* GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx \r\n */
-		if (nrf_cloud_location_signify) {
-			rsp_send("\r\n#XGPS: %s", nmea.nmea_str);
-		}
+		send_location(&pvt);
 	}
 
-update_pgps:
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	if (run_type == RUN_TYPE_PGPS) {
 		struct tm gps_time = {
@@ -579,6 +551,18 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 }
 
 #if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
+
+static int64_t utc_to_gps_sec(const int64_t utc_sec)
+{
+	return (utc_sec - GPS_TO_UNIX_UTC_OFFSET_SECONDS) + GPS_TO_UTC_LEAP_SECONDS;
+}
+
+static void gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day, uint32_t *gps_time_of_day)
+{
+	*gps_day = (uint16_t)(gps_sec / SEC_PER_DAY);
+	*gps_time_of_day = (uint32_t)(gps_sec % SEC_PER_DAY);
+}
+
 /**@brief handle AT#XAGPS commands
  *  AT#XAGPS=<op>[,<interval>[,<timeout>]]
  *  AT#XAGPS?
@@ -814,13 +798,14 @@ int slm_at_gnss_init(void)
 		LOG_ERR("Could set GNSS event handler, error: %d", err);
 		return err;
 	}
-
+#if defined(CONFIG_SLM_NRF_CLOUD)
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	k_work_init(&agps_req, agps_req_wk);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	k_work_init(&pgps_req, pgps_req_wk);
 #endif
+#endif /* CONFIG_SLM_NRF_CLOUD */
 	k_work_init(&fix_rep, fix_rep_wk);
 
 	return err;
