@@ -1,6 +1,6 @@
 .. _index:
 
-Welcome to the |NCS|!
+Welcome to the TEST |NCS|!
 #####################
 
 The |NCS| is where you begin building low-power wireless applications with Nordic Semiconductor nRF52, nRF53, nRF70, and nRF91 Series devices.
