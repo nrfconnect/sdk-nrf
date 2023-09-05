@@ -64,7 +64,7 @@ const struct wifi_scan_params tests[] = {
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
 #endif
-#ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
+#ifdef CONFIG_WIFI_SCAN_SSID_FILT_SELECT
 	{
 	.ssids = {},
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
@@ -240,7 +240,7 @@ static int wifi_scan(void)
 			free(buf);
 		}
 #endif
-#ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
+#ifdef CONFIG_WIFI_SCAN_SSID_FILT_SELECT
 		if (!strlen(params.ssids[0])) {
 			char *buf = NULL;
 
@@ -255,8 +255,10 @@ static int wifi_scan(void)
 							params.ssids)) {
 				LOG_ERR("Incorrect value(s) in CONFIG_WIFI_SCAN_SSID_FILT: %s",
 						CONFIG_WIFI_SCAN_SSID_FILT);
+				free(buf);
 				return -EINVAL;
 			}
+			free(buf);
 		}
 #endif
 #ifdef CONFIG_WIFI_SCAN_CHAN

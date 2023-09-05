@@ -52,12 +52,10 @@ config WIFI_SCAN_BANDS_LIST
 	  Multiple bands can be specified as comma separated band values.
 	  Only regulatory domain permitted values are allowed.
 
-config WIFI_SCAN_SSID_FILT_MAX
-	int "Maximum number of SSIDs that can be specified for SSID filtering"
-	default 1
+config WIFI_SCAN_SSID_FILT_SELECT
+	bool "Scan based on SSID(s)"
 	help
-	  Configures the maximum number of SSIDs that can be specified for SSID filtering.
-	  This can be set based on the underlying chipsets limitations.
+	  Enable this to perform scan based on SSID(s)"
 
 config WIFI_SCAN_SSID_FILT
 	string "Scan for specific SSIDs"
