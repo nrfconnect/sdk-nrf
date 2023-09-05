@@ -117,7 +117,7 @@ static int teardown_twt(void)
 		LOG_ERR("%s with %s failed, reason : %s",
 			wifi_twt_operation2str[params.operation],
 			wifi_twt_negotiation_type2str[params.negotiation_type],
-			get_twt_err_code_str(params.fail_reason));
+			wifi_twt_get_err_code_str(params.fail_reason));
 		return ret;
 	}
 
