@@ -105,6 +105,24 @@ int nrf_modem_lib_trace_read(uint8_t *buf, size_t len);
  */
 int nrf_modem_lib_trace_clear(void);
 
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_DEFERRED)
+/** @brief Start receiving modem trace
+ *
+ * This function activates modem trace with defined set of CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_XXX.
+ *
+ * @return 0 on success, negative errno on failure.
+ */
+int nrf_modem_lib_trace_start(void);
+
+/** @brief Stop receiving modem trace
+ *
+ * This function de-activates modem trace.
+ *
+ * @return 0 on success, negative errno on failure.
+ */
+int nrf_modem_lib_trace_stop(void);
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE_DEFERRED */
+
 #if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE) || defined(__DOXYGEN__)
 /** @brief Get the last measured rolling average bitrate of the trace backend.
  *

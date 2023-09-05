@@ -33,6 +33,7 @@ static bool has_space = true;
 
 static int trace_init(void);
 static int trace_deinit(void);
+static bool trace_initialized;
 
 #if CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
 static uint32_t backend_bps_avg;
@@ -298,6 +299,10 @@ static int trace_init(void)
 {
 	int err;
 
+	if (trace_initialized) {
+		return 0;
+	}
+
 	if (!trace_backend.init || !trace_backend.deinit || !trace_backend.write) {
 		LOG_ERR("trace backend must implement init, deinit and write");
 		return -ENOTSUP;
@@ -326,6 +331,7 @@ static int trace_init(void)
 	k_work_schedule(&bps_log_work, BPS_LOG_PERIOD);
 #endif
 
+	trace_initialized = true;
 	return 0;
 }
 
@@ -335,6 +341,9 @@ static void trace_init_callback(int err, void *ctx)
 		return;
 	}
 
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_DEFERRED)
+	(void)nrf_modem_lib_trace_stop();
+#else
 	err = trace_init();
 	if (err) {
 		LOG_ERR("Failed to initialize trace backend, err: %d", err);
@@ -343,18 +352,22 @@ static void trace_init_callback(int err, void *ctx)
 
 #if CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
 	err = nrf_modem_lib_trace_level_set(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
-	LOG_INF("Trace level override: %d", CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
 	if (err) {
 		LOG_ERR("Failed to start tracing, err %d", err);
 	}
 #else
 	LOG_INF("Trace level untouched");
-#endif
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE */
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE_DEFERRED */
 }
 
 static int trace_deinit(void)
 {
 	int err;
+
+	if (!trace_initialized) {
+		return 0;
+	}
 
 	err = trace_backend.deinit();
 	if (err) {
@@ -377,6 +390,7 @@ static int trace_deinit(void)
 
 	k_sem_give(&trace_done_sem);
 
+	trace_initialized = false;
 	return 0;
 }
 
@@ -399,6 +413,7 @@ int nrf_modem_lib_trace_level_set(enum nrf_modem_lib_trace_level trace_level)
 		return -ENOEXEC;
 	}
 
+	LOG_INF("Trace level set: %d", trace_level);
 	return 0;
 }
 
@@ -448,6 +463,45 @@ int nrf_modem_lib_trace_clear(void)
 
 	return 0;
 }
+
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_DEFERRED)
+int nrf_modem_lib_trace_start(void)
+{
+	int err;
+
+	err = trace_init();
+	if (err) {
+		LOG_ERR("Failed to initialize trace backend, err: %d", err);
+		return err;
+	}
+
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE)
+	err = nrf_modem_lib_trace_level_set(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
+	if (err) {
+		LOG_ERR("Failed to start tracing, err %d", err);
+	}
+#else
+	LOG_INF("Trace level untouched");
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE */
+
+	return err;
+}
+int nrf_modem_lib_trace_stop(void)
+{
+	int err;
+
+	/* Deactivate modem trace */
+	err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_OFF);
+	if (err) {
+		LOG_WRN("Failed to stop tracing, err %d", err);
+	}
+
+	(void)nrf_modem_lib_trace_clear();
+
+	return trace_deinit();
+}
+
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE_DEFERRED */
 
 K_THREAD_DEFINE(trace_thread, CONFIG_NRF_MODEM_LIB_TRACE_STACK_SIZE, trace_thread_handler,
 	       NULL, NULL, NULL, TRACE_THREAD_PRIORITY, 0, 0);

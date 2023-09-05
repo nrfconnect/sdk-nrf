@@ -130,6 +130,12 @@ menuconfig NRF_MODEM_LIB_TRACE
 
 if NRF_MODEM_LIB_TRACE
 
+config NRF_MODEM_LIB_TRACE_DEFERRED
+	bool "Defer modem trace"
+	help
+	  Defer the modem trace function until the application explicitly start receiving the traces.
+	  By default modem trace is not deferred.
+
 # Add trace backends
 rsource "trace_backends/Kconfig"
 
