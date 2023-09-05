@@ -144,7 +144,7 @@ Syntax
   * ``1`` - chunked mode
 
   If ``<content_length>`` is greater than ``0`` or ``<chunked_transfer>`` is not ``0``, the SLM application enters ``slm_data_mode``.
-  The SLM sends the payload to the HTTP server until the terminator string defined in :kconfig:option:`CONFIG_SLM_DATAMODE_TERMINATOR` is received.
+  The SLM sends the payload to the HTTP server until the terminator string defined in :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` is received.
 
 Response syntax
 ~~~~~~~~~~~~~~~

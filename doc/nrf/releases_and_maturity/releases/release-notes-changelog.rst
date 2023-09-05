@@ -193,6 +193,7 @@ nRF9160: Serial LTE modem
   * DTLS connection identifier support to the ``#XSSOCKETOPT`` and ``#XUDPCLI`` AT commands.
   * An ``auto_connect`` operation in the ``#XCARRIER`` carrier command.
     The operation controls automatic registration of UE to LTE network.
+  * ``#XNRFCLOUDPOS`` AT command to send location requests to nRF Cloud using cellular or Wi-Fi positioning, or both.
 
 * Updated:
 
@@ -209,6 +210,8 @@ nRF9160: Serial LTE modem
   * Support for bootloader FOTA update because it is not needed for Serial LTE modem.
   * Option to set or get HWFC setting from ``#XSLMUART`` AT command.
   * Operations to read or erase the MCUboot secondary slot from the ``#XFOTA`` AT command because the application update process overwrites the slot in any case.
+  * AT commands ``#XCELLPOS`` and ``#XWIFIPOS``.
+    They are replaced by the ``#XNRFCLOUDPOS`` command that allows to combine cellular and Wi-Fi data to determine the device location.
 
 nRF5340 Audio
 -------------

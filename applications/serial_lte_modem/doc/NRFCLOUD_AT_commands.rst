@@ -31,9 +31,9 @@ Syntax
 
 ::
 
-   #XNRFCLOUD=<op>[,<signify>]
+   #XNRFCLOUD=<op>[,<send_location>]
 
-The ``<op>`` parameter accepts the following integer values:
+The ``<op>`` parameter can have the following integer values:
 
 * ``0`` - Disconnect from the nRF Cloud service.
 * ``1`` - Connect to the nRF Cloud service.
@@ -41,20 +41,20 @@ The ``<op>`` parameter accepts the following integer values:
 
 When ``<op>`` is ``2``, SLM enters ``slm_data_mode``.
 
-The ``<signify>`` parameter is used only when the ``<op>`` value is ``1``
-It accepts the following integer values:
+The ``<send_location>`` parameter is used only when the value of ``<op>`` is ``1``.
+It can have the following integer values:
 
-* ``0`` - It does not signify the location info to nRF Cloud.
-* ``1`` - It does signify the location info to nRF Cloud.
-
-When the ``<signify>`` parameter is not specified, it does not signify the location info to nRF Cloud.
+* ``0`` - The device location is not sent to nRF Cloud.
+  This is the default behavior if the parameter is omitted.
+* ``1`` - The device location is sent to nRF Cloud.
 
 .. note::
-   The application signifies the location info to nRF Cloud in a best-effort way.
+   Sending the device location to nRF Cloud is done in a best-effort way.
+   For it to happen, the device must have :ref:`GNSS <SLM_AT_GNSS>` enabled and it must be acquiring fixes.
    The minimal report interval is 5 seconds.
 
 .. note::
-   The application supports nRF Cloud cloud2device appId ``MODEM`` to send AT command from cloud:
+   The application supports the nRF Cloud cloud2device appId ``MODEM`` to send an AT command from the cloud:
 
    * cloud2device schema::
 
@@ -67,23 +67,23 @@ When the ``<signify>`` parameter is not specified, it does not signify the locat
    The application executes the AT command in a best-effort way.
 
 .. note::
-   The application supports nRF Cloud cloud2device appId ``DEVICE`` to gracefully disconnect from cloud:
+   The application supports the nRF Cloud cloud2device appId ``DEVICE`` to gracefully disconnect from the cloud:
 
    * cloud2device schema::
 
        {"appId":"DEVICE", "messageType":"DISCON"}.
 
-   There is no response sending to nRF Cloud for this appId.
+   There is no response sent to nRF Cloud for this appId.
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
-   #XNRFCLOUD: <ready>,<signify>
+   #XNRFCLOUD: <ready>,<send_location>
 
-* The ``<ready>`` value indicates whether the nRF Cloud connection is ready or not.
-* The ``<signify>`` value indicates whether the location info will be signified to nRF Cloud or not.
+* The ``<ready>`` value indicates whether the connection to nRF Cloud is established or not.
+* The ``<send_location>`` value indicates whether the device location will be sent to nRF Cloud or not.
 
 ::
 
@@ -126,7 +126,7 @@ Example
 Read command
 ------------
 
-The read command checks if nRF Cloud is connected or not.
+The read command checks whether the connection to nRF Cloud is established or not.
 
 Syntax
 ~~~~~~
@@ -140,10 +140,10 @@ Response syntax
 
 ::
 
-   #XNRFCLOUD: <ready>,<signify>,<sec_tag>,<device_id>
+   #XNRFCLOUD: <ready>,<send_location>,<sec_tag>,<device_id>
 
-* The ``<ready>`` value indicates whether the nRF Cloud connection is ready or not.
-* The ``<signify>`` value indicates whether the location info will be signified to nRF Cloud or not.
+* The ``<ready>`` value indicates whether the connection to nRF Cloud is established or not.
+* The ``<send_location>`` value indicates whether the device location will be sent to nRF Cloud or not.
 * The ``<sec_tag>`` value indicates the ``sec_tag`` used for accessing nRF Cloud.
 * The ``<device_id>`` value indicates the device ID used for accessing nRF Cloud.
 
@@ -183,57 +183,90 @@ Example
 
 ::
 
-  AT#XXNRFCLOUD=?
+  AT#XNRFCLOUD=?
 
-  #XNRFCLOUD: (0,1,2),<signify>
+  #XNRFCLOUD: (0,1,2),<send_location>
 
   OK
 
-nRF Cloud cellular location
-===========================
+nRF Cloud location
+==================
 
-The ``#XCELLPOS`` command runs the nRF Cloud cellular location service for location information.
+The ``#XNRFCLOUDPOS`` command sends a request to nRF Cloud to determine the device's location.
+The request uses information from the cellular network, Wi-Fi access points, or both.
 
 .. note::
-   To use ``#XCELLPOS``, the following preconditions apply:
+   To use ``#XNRFCLOUDPOS``, the following preconditions apply:
 
    * You must define :ref:`CONFIG_SLM_NRF_CLOUD <CONFIG_SLM_NRF_CLOUD>` and :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION <CONFIG_NRF_CLOUD_LOCATION>`.
-   * You must have access to nRF Cloud through the LTE network.
+   * You must be connected to nRF Cloud (using ``#XNRFCLOUD``).
 
 Set command
 -----------
 
-The set command allows you to start and stop the nRF Cloud cellular location service.
+The set command allows sending a location request to nRF Cloud.
 
 Syntax
 ~~~~~~
 
 ::
 
-   #XCELLPOS=<op>
+   #XNRFCLOUDPOS=<cell_pos>,<wifi_pos>[,<MAC 1>[,<RSSI 1>],<MAC 2>[,<RSSI 2>][,<MAC 3>[...]]]
 
-The ``<op>`` parameter accepts the following integer values:
+The ``<cell_pos>`` parameter can have the following integer values:
 
-* ``0`` - Stop cellular location.
-* ``1`` - Start cellular location in single-cell mode.
-* ``2`` - Start cellular location in multi-cell mode.
-  To use ``2``, you must issue the ``AT%NCELLMEAS`` command first.
+* ``0`` - Do not include cellular network information in the location request.
+* ``1`` - Use single-cell cellular network information (only the serving cell).
+* ``2`` - Use multi-cell cellular network information (the serving and possibly neighboring cells).
+  To use this option, you must first issue the ``AT%NCELLMEAS`` command and wait for its result notification.
+
+  The cellular network information included in the location request will be the one received from the ``AT%NCELLMEAS`` command.
+  This means that, for the most up-to-date location information, you should use the command as close to sending the location request as possible.
+  Also, keep in mind that whenever you send a location request in single-cell mode, any previously saved multi-cell cellular network information is invalidated.
+
+The ``<wifi_pos>`` parameter can have the following integer values:
+
+* ``0`` - Do not include Wi-Fi access point information in the location request.
+* ``1`` - Use Wi-Fi access point information.
+  The access points must be given as additional parameters to the command.
+  The minimum number of access points to provide is two (:c:macro:`NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN`), and the maximum is limited by the AT command parameter count limit (:ref:`CONFIG_SLM_AT_MAX_PARAM <CONFIG_SLM_AT_MAX_PARAM>`).
+
+The ``<MAC x>`` parameter is a string.
+It indicates the MAC address of a Wi-Fi access point and must be formatted as ``%02x:%02x:%02x:%02x:%02x:%02x`` (:c:macro:`WIFI_MAC_ADDR_TEMPLATE`).
+
+The ``<RSSI x>`` parameter is an optional integer.
+It indicates the signal strength of a Wi-Fi access point in dBm, between ``-128`` and ``0``.
+If provided, it must follow the MAC address parameter of the access point.
+Providing the RSSI parameters helps improve the accuracy of the Wi-Fi location.
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
-   #XCELLPOS: <type>,<latitude>,<longitude>,<uncertainty>
+   #XNRFCLOUDPOS: <error>
 
-* The ``<type>`` value indicates in which mode the cellular location service is running:
+This is emitted when the location request failed, either when sending it or receiving its response.
+No notification containing location data will be emitted.
 
-  * ``0`` - The service is running in single-cell mode
-  * ``1`` - The service is running in multi-cell mode
+* The ``<error>`` value indicates the error that happened.
+  It is either a negative *errno* code or one of the :c:enum:`nrf_cloud_error` values.
+
+::
+
+   #XNRFCLOUDPOS: <type>,<latitude>,<longitude>,<uncertainty>
+
+This is emitted when a successful response to a sent location request is received.
+
+* The ``<type>`` value indicates the service used to fulfill the location request.
+
+  * ``0`` (:c:enumerator:`LOCATION_TYPE_SINGLE_CELL`) - Single-cell cellular location.
+  * ``1`` (:c:enumerator:`LOCATION_TYPE_MULTI_CELL`) - Multi-cell cellular location.
+  * ``2`` (:c:enumerator:`LOCATION_TYPE_WIFI`) - Wi-Fi location.
 
 * The ``<latitude>`` value represents the latitude in degrees.
 * The ``<longitude>`` value represents the longitude in degrees.
-* The ``<uncertainty>`` value represents the certainty of the result.
+* The ``<uncertainty>`` value represents the radius of the uncertainty circle around the location in meters, also known as Horizontal Positioning Error (HPE).
 
 Example
 ~~~~~~~
@@ -249,211 +282,40 @@ Example
   AT#XNRFCLOUD=1
 
   OK
+
   #XNRFCLOUD: 1,0
-  AT#XCELLPOS=1
+  AT#XNRFCLOUDPOS=1,0
 
   OK
 
-  #XCELLPOS: 0,35.455833,139.626111,1094
-
+  #XNRFCLOUDPOS: 0,35.455833,139.626111,1094
   AT%NCELLMEAS
 
   OK
 
   %NCELLMEAS: 0,"0199F10A","44020","107E",65535,3750,5,49,27,107504,3750,251,33,4,0,475,107,26,14,25,475,58,26,17,25,475,277,24,9,25,475,51,18,1,25
+  AT#XNRFCLOUDPOS=2,0
 
-  AT#XCELLPOS=2
+  OK
+
+  #XNRFCLOUDPOS: 1,35.455833,139.626111,1094
+  AT#XNRFCLOUDPOS=0,1,"40:9b:cd:c1:5a:40","00:90:fe:eb:4f:42"
 
   OK
 
-  #XCELLPOS: 1,35.534999,139.722362,1801
-  AT#XCELLPOS=0
+  #XNRFCLOUDPOS: 2,35.457335,139.624443,60
+  AT#XNRFCLOUDPOS=0,1,"40:9b:cd:c1:5a:40",-40,"00:90:fe:eb:4f:42",-69
 
   OK
+
+  #XNRFCLOUDPOS: 2,35.457346,139.624449,20
 
 Read command
 ------------
 
-The read command allows you to check the cellular location service status.
-
-Syntax
-~~~~~~
-
-::
-
-   #XCELLPOS?
-
-Response syntax
-~~~~~~~~~~~~~~~
-
-::
-
-   #XCELLPOS: <cellpos_status>
-
-* The ``<cellpos_status>`` value is an integer.
-  When it returns the value of ``1``, it means that the cellular location service is started.
-
-Example
-~~~~~~~
-
-::
-
-  AT#XCELLPOS?
-
-  #XCELLPOS: 1
-
-  OK
+The read command is not supported.
 
 Test command
 ------------
 
-The test command tests the existence of the command and provides information about the type of its subparameters.
-
-Syntax
-~~~~~~
-
-::
-
-   #XCELLPOS=?
-
-Example
-~~~~~~~
-
-::
-
-  AT#XCELLPOS=?
-
-  #XCELLPOS: (0,1,2)
-
-  OK
-
-nRF Cloud Wi-Fi location
-========================
-
-The ``#XWIFIPOS`` command runs the nRF Cloud Wi-Fi location service to receive location information.
-
-.. note::
-   To use ``#XWIFIPOS``, the following preconditions apply:
-
-   * You must define :ref:`CONFIG_SLM_NRF_CLOUD <CONFIG_SLM_NRF_CLOUD>` and :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION <CONFIG_NRF_CLOUD_LOCATION>`.
-   * You must have access to nRF Cloud through the LTE network.
-
-Set command
------------
-
-The set command allows you to start and stop the nRF Cloud Wi-Fi location service.
-
-Syntax
-~~~~~~
-
-::
-
-   #XWIFIPOS=<op>[,<ssid0>,<mac0>[,<ssid1>,<mac1>[...]]]
-
-The ``<op>`` parameter accepts the following integer values:
-
-* ``0`` - Stop Wi-Fi location.
-* ``1`` - Start Wi-Fi location.
-
-* The ``<ssidX>`` parameter is a string.
-  It indicates the SSID of the Wi-Fi access point.
-
-* The ``<macX>`` parameter is a string.
-  It indicates the MAC address of the Wi-Fi access point and should be formatted as ``%02x:%02x:%02x:%02x:%02x:%02x``.
-
-The command accepts the ``<ssidX>`` and ``<macX>`` values of up to 5 access points.
-
-Unsolicited notification
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-   #XWIFIPOS: <type>,<latitude>,<longitude>,<uncertainty>
-
-* The ``<type>`` value indicates in which mode the Wi-Fi location service is running:
-
-  * ``2`` - The service is running in Wi-Fi mode
-
-* The ``<latitude>`` value represents the latitude in degrees.
-* The ``<longitude>`` value represents the longitude in degrees.
-* The ``<uncertainty>`` value represents the certainty of the result.
-
-Example
-~~~~~~~
-
-::
-
-  AT%XSYSTEMMODE=1,0,0,0
-
-  OK
-  AT+CFUN=1
-
-  OK
-  AT#XNRFCLOUD=1
-
-  OK
-  #XNRFCLOUD: 1,0
-  AT#XWIFIPOS=1,"Nordic_WLAN_5GHz","40:9b:cd:c1:5a:40","Nordic_Guest","00:90:fe:eb:4f:42"
-
-  OK
-
-  #XWIFIPOS: 2,35.457272,139.624395,60
-  AT#XWIFIPOS=0
-
-  OK
-
-Read command
-------------
-
-The read command allows you to check the Wi-Fi location service status.
-
-Syntax
-~~~~~~
-
-::
-
-   #XWIFIPOS?
-
-Response syntax
-~~~~~~~~~~~~~~~
-
-::
-
-   #XWIFIPOS: <wifipos_status>
-
-* The ``<wifipos_status>`` value is an integer.
-  When it returns the value of ``1``, it means that the Wi-Fi location service is started.
-
-Example
-~~~~~~~
-
-::
-
-  AT#XWIFIPOS?
-
-  #XWIFIPOS: 0
-
-  OK
-
-Test command
-------------
-
-The test command tests the existence of the command and provides information about the type of its subparameters.
-
-Syntax
-~~~~~~
-
-::
-
-   #XWIFIPOS=?
-
-Example
-~~~~~~~
-
-::
-
-  AT#XWIFIPOS=?
-
-  #XWIFIPOS: (0,1)
-
-  OK
+The test command is not supported.

@@ -53,7 +53,9 @@ When not specified, it defaults to a timeout value of 60 seconds.
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+.. gps_pos_notif_start
+
+.. code-block::
 
    #XGPS: <latitude>,<longitude>,<altitude>,<accuracy>,<speed>,<heading>,<datetime>
 
@@ -65,17 +67,26 @@ Unsolicited notification
 * The ``<heading>`` value represents the heading of the movement of the user in degrees.
 * The ``<datetime>`` value represents the UTC date-time.
 
-::
+.. gps_pos_notif_end
 
-   #XGPS: <NMEA message>
+.. gps_status_notif_start
 
-The ``<NMEA message>`` is the ``$GPGGA`` (Global Positioning System Fix Data) NMEA sentence.
-
-::
+.. code-block::
 
    #XGPS: <gnss_service>,<gnss_status>
 
-Refer to the READ command.
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
+
+* The ``<gnss_status>`` value is an integer.
+
+  * ``0`` - GNSS is stopped.
+  * ``1`` - GNSS is started.
+  * ``2`` - GNSS wakes up in periodic mode.
+  * ``3`` - GNSS enters sleep because of timeout.
+  * ``4`` - GNSS enters sleep because a fix is acquired.
+
+.. gps_status_notif_end
 
 Example
 ~~~~~~~
@@ -118,20 +129,9 @@ Syntax
 Response syntax
 ~~~~~~~~~~~~~~~
 
-::
-
-   #XGPS: <gnss_service>,<gnss_status>
-
-* The ``<gnss_service>`` value is an integer.
-  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
-
-* The ``<gnss_status>`` value is an integer.
-
-* ``0`` - GNSS is stopped.
-* ``1`` - GNSS is started.
-* ``2`` - GNSS wakes up in periodic mode.
-* ``3`` - GNSS enters sleep because of timeout.
-* ``4`` - GNSS enters sleep because a fix is achieved.
+.. include:: GNSS_AT_commands.rst
+   :start-after: gps_status_notif_start
+   :end-before: gps_status_notif_end
 
 Example
 ~~~~~~~
@@ -217,29 +217,28 @@ When not specified, it defaults to a timeout value of 60 seconds.
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+.. include:: GNSS_AT_commands.rst
+   :start-after: gps_pos_notif_start
+   :end-before: gps_pos_notif_end
 
-   #XGPS: <latitude>,<longitude>,<altitude>,<accuracy>,<speed>,<heading>,<datetime>
+.. agps_status_notif_start
 
-* The ``<latitude>`` value represents the latitude in degrees.
-* The ``<longitude>`` value represents the longitude in degrees.
-* The ``<altitude>`` value represents the altitude above the WGS-84 ellipsoid in meters.
-* The ``<accuracy>`` value represents the accuracy (2D 1-sigma) in meters.
-* The ``<speed>`` value represents the horizontal speed in meters.
-* The ``<heading>`` value represents the heading of the movement of the user in degrees.
-* The ``<datetime>`` value represents the UTC date-time.
-
-::
-
-   #XGPS: <NMEA message>
-
-The ``<NMEA message>`` is the ``$GPGGA`` (Global Positioning System Fix Data) NMEA sentence.
-
-::
+.. code-block::
 
    #XAGPS: <gnss_service>,<agps_status>
 
-Refer to the READ command.
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
+
+* The ``<agps_status>`` value is an integer.
+
+  * ``0`` - AGPS is stopped.
+  * ``1`` - AGPS is started.
+  * ``2`` - GNSS wakes up in periodic mode.
+  * ``3`` - GNSS enters sleep because of timeout.
+  * ``4`` - GNSS enters sleep because a fix is acquired.
+
+.. agps_status_notif_end
 
 Example
 ~~~~~~~
@@ -291,20 +290,9 @@ Syntax
 Response syntax
 ~~~~~~~~~~~~~~~
 
-::
-
-   #XAGPS: <gnss_service>,<agps_status>
-
-* The ``<gnss_service>`` value is an integer.
-  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
-
-* The ``<agps_status>`` value is an integer.
-
-* ``0`` - AGPS is stopped.
-* ``1`` - AGPS is started.
-* ``2`` - GNSS wakes up in periodic mode.
-* ``3`` - GNSS enters sleep because of timeout.
-* ``4`` - GNSS enters sleep because a fix is achieved.
+.. include:: GNSS_AT_commands.rst
+   :start-after: agps_status_notif_start
+   :end-before: agps_status_notif_end
 
 Example
 ~~~~~~~
@@ -388,29 +376,28 @@ When not specified, it defaults to a timeout value of 60 seconds.
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+.. include:: GNSS_AT_commands.rst
+   :start-after: gps_pos_notif_start
+   :end-before: gps_pos_notif_end
 
-   #XGPS: <latitude>,<longitude>,<altitude>,<accuracy>,<speed>,<heading>,<datetime>
+.. pgps_status_notif_start
 
-* The ``<latitude>`` value represents the latitude in degrees.
-* The ``<longitude>`` value represents the longitude in degrees.
-* The ``<altitude>`` value represents the altitude above the WGS-84 ellipsoid in meters.
-* The ``<accuracy>`` value represents the accuracy (2D 1-sigma) in meters.
-* The ``<speed>`` value represents the horizontal speed in meters.
-* The ``<heading>`` value represents the heading of the movement of the user in degrees.
-* The ``<datetime>`` value represents the UTC date-time.
-
-::
-
-   #XGPS: <NMEA message>
-
-The ``<NMEA message>`` is the ``$GPGGA`` (Global Positioning System Fix Data) NMEA sentence.
-
-::
+.. code-block::
 
    #XPGPS: <gnss_service>,<pgps_status>
 
-Refer to the READ command.
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
+
+* The ``<pgps_status>`` value is an integer.
+
+  * ``0`` - PGPS is stopped.
+  * ``1`` - PGPS is started.
+  * ``2`` - GNSS wakes up in periodic mode.
+  * ``3`` - GNSS enters sleep because of timeout.
+  * ``4`` - GNSS enters sleep because a fix is acquired.
+
+.. pgps_status_notif_end
 
 Example
 ~~~~~~~
@@ -462,20 +449,9 @@ Syntax
 Response syntax
 ~~~~~~~~~~~~~~~
 
-::
-
-   #XPGPS: <gnss_service>,<pgps_status>
-
-* The ``<gnss_service>`` value is an integer.
-  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
-
-* The ``<pgps_status>`` value is an integer.
-
-* ``0`` - PGPS is stopped.
-* ``1`` - PGPS is started.
-* ``2`` - GNSS wakes up in periodic mode.
-* ``3`` - GNSS enters sleep because of timeout.
-* ``4`` - GNSS enters sleep because a fix is achieved.
+.. include:: GNSS_AT_commands.rst
+   :start-after: pgps_status_notif_start
+   :end-before: pgps_status_notif_end
 
 Test command
 ------------
