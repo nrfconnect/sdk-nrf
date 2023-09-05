@@ -60,22 +60,31 @@ const struct wifi_scan_params tests[] = {
 #endif
 #ifdef CONFIG_WIFI_SCAN_BAND
 	{
+	#ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
+	.scan_type = CONFIG_WIFI_SCAN_TYPE_PASSIVE,
+	#endif
 	.bands = 0,
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
-#endif
+#endif /* END OF CONFIG_WIFI_SCAN_BAND */
 #ifdef CONFIG_WIFI_SCAN_SSID_FILT_SELECT
 	{
+	#ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
+	.scan_type = CONFIG_WIFI_SCAN_TYPE_PASSIVE,
+	#endif
 	.ssids = {},
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
-#endif
+#endif /* END OF CONFIG_WIFI_SCAN_SSID_FILT_SELECT */
 #ifdef CONFIG_WIFI_SCAN_CHAN
 	{
+	#ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
+	.scan_type = CONFIG_WIFI_SCAN_TYPE_PASSIVE,
+	#endif
 	.chan = { {0, 0} },
 	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
-#endif
+#endif /* END OF CONFIG_WIFI_SCAN_CHAN */
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
