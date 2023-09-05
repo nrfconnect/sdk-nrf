@@ -35,6 +35,7 @@ static K_THREAD_STACK_DEFINE(slm_wq_stack_area, SLM_WQ_STACK_SIZE);
 
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 static struct gpio_callback gpio_cb;
+static atomic_t gpio_cb_running; /* Protect the gpio_cb. */
 static struct k_work_delayable indicate_work;
 
 /* global variable used across different files */
@@ -190,6 +191,12 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_ca
 	if ((BIT(CONFIG_SLM_WAKEUP_PIN) & pins) == 0) {
 		return;
 	}
+
+	/* Prevent level triggered interrupt running this multiple times. */
+	if (!atomic_cas(&gpio_cb_running, false, true)) {
+		return;
+	}
+
 	LOG_INF("Exit idle");
 	if (k_work_delayable_is_pending(&indicate_work)) {
 		(void)k_work_cancel_delayable(&indicate_work);
@@ -202,12 +209,14 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_ca
 	}
 	err = slm_uart_power_on();
 	if (err) {
+		(void)atomic_set(&gpio_cb_running, false);
 		LOG_ERR("Failed to power on uart: %d", err);
 		return;
 	}
 
 	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_DISABLE);
 	gpio_remove_callback(gpio_dev, gpio_callback);
+	(void)atomic_set(&gpio_cb_running, false);
 }
 
 void enter_idle(void)
@@ -220,7 +229,7 @@ void enter_idle(void)
 		LOG_ERR("GPIO_0 add callback error: %d", err);
 		return;
 	}
-	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_EDGE_FALLING);
+	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN, GPIO_INT_LEVEL_LOW);
 	if (err) {
 		LOG_ERR("GPIO_0 enable callback error: %d", err);
 		return;
