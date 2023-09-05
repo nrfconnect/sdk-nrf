@@ -31,6 +31,7 @@ bool initialized;
 static const char *application_version;
 
 #if defined(CONFIG_MODEM_INFO)
+static K_MUTEX_DEFINE(modem_inf_mutex);
 static struct modem_param_info modem_inf;
 static bool modem_inf_initd;
 static int init_modem_info(void);
@@ -1278,7 +1279,10 @@ static int init_modem_info(void)
 			return err;
 		}
 
+		(void)k_mutex_lock(&modem_inf_mutex, K_FOREVER);
 		err = modem_info_params_init(&modem_inf);
+		(void)k_mutex_unlock(&modem_inf_mutex);
+
 		if (err) {
 			LOG_ERR("modem_info_params_init() failed: %d", err);
 			return err;
@@ -1298,7 +1302,10 @@ static int get_modem_info(void)
 		return err;
 	}
 
+	(void)k_mutex_lock(&modem_inf_mutex, K_FOREVER);
 	err = modem_info_params_get(&modem_inf);
+	(void)k_mutex_unlock(&modem_inf_mutex);
+
 	if (err) {
 		LOG_ERR("Could not obtain information from modem, error: %d", err);
 		return err;
@@ -1350,11 +1357,13 @@ int nrf_cloud_get_single_cell_modem_info(struct lte_lc_cell *const cell_inf)
 		return err;
 	}
 
+	(void)k_mutex_lock(&modem_inf_mutex, K_FOREVER);
 	cell_inf->mcc	= modem_inf.network.mcc.value;
 	cell_inf->mnc	= modem_inf.network.mnc.value;
 	cell_inf->tac	= modem_inf.network.area_code.value;
 	cell_inf->id	= modem_inf.network.cellid_dec;
 	cell_inf->rsrp	= modem_inf.network.rsrp.value;
+	(void)k_mutex_unlock(&modem_inf_mutex);
 
 	return 0;
 }
@@ -1637,6 +1646,7 @@ int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info *const mo
 	}
 
 	int err = 0;
+	bool locked = false;
 	cJSON *tmp = cJSON_CreateObject();
 
 	if (!tmp) {
@@ -1650,13 +1660,17 @@ int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info *const mo
 		/* No modem info provided, use local */
 		err = get_modem_info();
 		if (err < 0) {
-			LOG_ERR("modem_info_params_get() failed: %d", err);
+			LOG_ERR("get_modem_info() failed: %d", err);
 			goto cleanup;
 		}
+		locked = (k_mutex_lock(&modem_inf_mutex, K_FOREVER) == 0);
 		mpi = &modem_inf;
 	}
 
 	err = encode_modem_info_json_object(mpi, tmp, mod_inf->application_version);
+	if (locked) {
+		(void)k_mutex_unlock(&modem_inf_mutex);
+	}
 	if (err) {
 		LOG_ERR("Failed to encode modem info: %d", err);
 		goto cleanup;
