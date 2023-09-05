@@ -8,13 +8,6 @@
 #    - all
 
 - scenarios:
-    - applications.asset_tracker_v2.nrf7002ek_wifi-debug
-    - applications.asset_tracker_v2.nrf7002ek_wifi-release
-  platforms:
-    - all
-  comment: "Temporary disable till the issue is fixed"
-
-- scenarios:
     - applications.nrf_desktop.zrelease
   platforms:
     - nrf52833dk_nrf52820
