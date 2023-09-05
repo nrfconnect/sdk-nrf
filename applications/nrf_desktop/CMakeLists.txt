@@ -55,6 +55,10 @@ if(NOT SYSBUILD AND NOT CONFIG_NCS_IS_VARIANT_IMAGE)
   endif()
 endif()
 
+if (CONFIG_IMG_MANAGER)
+  zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+endif()
+
 if(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)
   zephyr_linker_sources(SECTIONS nrf_desktop.ld)
 endif()
