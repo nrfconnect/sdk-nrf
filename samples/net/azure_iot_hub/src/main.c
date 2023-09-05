@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2020-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
-#include <zephyr/net/conn_mgr.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
@@ -571,7 +571,7 @@ int main(void)
 	 * appropriate handler l4_event_handler() is registered.
 	 */
 	if (IS_ENABLED(CONFIG_BOARD_QEMU_X86)) {
-		conn_mgr_resend_status();
+		conn_mgr_mon_resend_status();
 	}
 
 	k_sem_take(&network_connected_sem, K_FOREVER);

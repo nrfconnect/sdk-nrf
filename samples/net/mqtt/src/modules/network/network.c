@@ -8,7 +8,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 
 #include "message_channel.h"
 
@@ -95,7 +95,7 @@ static void network_task(void)
 	 * appropriate handler l4_event_handler() is registered.
 	 */
 	if (IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
-		conn_mgr_resend_status();
+		conn_mgr_mon_resend_status();
 	}
 }
 

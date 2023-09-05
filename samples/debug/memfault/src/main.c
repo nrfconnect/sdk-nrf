@@ -7,7 +7,7 @@
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <memfault/metrics/metrics.h>
 #include <memfault/ports/zephyr/http.h>
 #include <memfault/core/data_packetizer.h>

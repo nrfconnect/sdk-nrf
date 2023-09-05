@@ -10,7 +10,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <net/aws_iot.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -395,7 +395,7 @@ int main(void)
 	 * appropriate handler l4_event_handler() is registered.
 	 */
 	if (IS_ENABLED(CONFIG_BOARD_QEMU_X86)) {
-		conn_mgr_resend_status();
+		conn_mgr_mon_resend_status();
 	}
 
 	return 0;
