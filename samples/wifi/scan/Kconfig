@@ -48,6 +48,11 @@ config WIFI_SCAN_PROFILE_ACTIVE
 	help
 	  Enable this profile to do active scan where allowed.
 
+config WIFI_SCAN_PROFILE_PASSIVE
+	bool "Passive scan"
+	help
+	  Enable this profile to do passive scan on all channels.
+
 endchoice
 
 endmenu
