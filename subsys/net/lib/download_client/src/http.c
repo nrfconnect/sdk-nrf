@@ -82,8 +82,7 @@ int http_get_request_send(struct download_client *client)
 		off = MIN(off, client->file_size - 1);
 	}
 
-	if (client->proto == IPPROTO_TLS_1_2
-	   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
+	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
 		len = snprintf(client->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 			HTTP_GET_RANGE, file, host, client->progress, off);

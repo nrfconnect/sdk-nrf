@@ -11,25 +11,30 @@ if DOWNLOAD_CLIENT
 
 config DOWNLOAD_CLIENT_BUF_SIZE
 	int "Buffer size (static)"
-	range 256 4096
-	default 2048
+	range 256 18432
+	default 2048 if NRF_MODEM_LIB
+	default 4096
 	help
 	  Size of the internal buffer used for incoming and
 	  outgoing packets. It must be large enough to
 	  acommodate for the largest between the HTTP fragment
-	  and CoAP block. In case of CoAP, the CoAP header
+	  and CoAP block plus respective headers. In case of CoAP, the CoAP header
 	  length of 20 bytes should be taken into account.
+	  For HTTP, the header size can not be known in advance in a generic way, and has to be
+	  accomodated for case-by-case.
 
 config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE
-	int
+	int "HTTP fragment size"
 	default 256 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_256
 	default 512 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_512
 	default 1024 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_1024
 	default 2048 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
 	default 4096 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
+	default 8192 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_8192
+	default 16384 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_16384
 
 choice
-	prompt "HTTP(S) fragment size"
+	prompt "Common HTTP fragment sizes"
 	default DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
 	help
 	  Size of the data fragments reported to the application when
@@ -38,6 +43,16 @@ choice
 	  sent for each fragment. When using the Modem library and TLS,
 	  the fragment size may not exceed 2 kB minus the largest HTTP header
 	  the application expects to receive.
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_16384
+	bool "16384"
+	depends on !NRF_MODEM_LIB
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 16384
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_8192
+	bool "8192"
+	depends on !NRF_MODEM_LIB
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 8192
 
 config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
 	bool "4096"
