@@ -99,6 +99,29 @@ struct nrf_modem_lib_trace_backend {
 	 * @return 0 on success, negative errno on failure.
 	 */
 	int (*clear)(void);
+
+	/**
+	 * @brief Suspend trace backend.
+	 *
+	 * This brings the backend to a power saving state. @c resume must be called before tracing
+	 * can continue.
+	 *
+	 * @note Set to @c NULL if this operation is not supported by the trace backend.
+	 *
+	 * @return 0 on success, negative errno on failure.
+	 */
+	int (*suspend)(void);
+
+	/**
+	 * @brief Resume trace backend.
+	 *
+	 * This wakes the backend from a power saving state.
+	 *
+	 * @note Set to @c NULL if this operation is not supported by the trace backend.
+	 *
+	 * @return 0 on success, negative errno on failure.
+	 */
+	int (*resume)(void);
 };
 
 /**@} */ /* defgroup trace_backend */
