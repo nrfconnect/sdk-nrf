@@ -45,8 +45,10 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 static uint32_t scan_result;
 
 const struct wifi_scan_params tests[] = {
+#ifdef CONFIG_WIFI_SCAN_PROFILE_DEFAULT
 	{
 	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
