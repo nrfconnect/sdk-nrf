@@ -249,6 +249,16 @@ static int start_role(struct traffic_gen_config *tg_config)
 	return 0;
 }
 
+void traffic_gen_pause(struct traffic_gen_config *tg_config)
+{
+	tg_config->pause_traffic = true;
+}
+
+void traffic_gen_resume(struct traffic_gen_config *tg_config)
+{
+	tg_config->pause_traffic = false;
+}
+
 int traffic_gen_start(struct traffic_gen_config *tg_config)
 {
 	int ret;
@@ -306,4 +316,5 @@ void traffic_gen_init(struct traffic_gen_config *tg_config)
 	tg_config->payload_len = CONFIG_TRAFFIC_GEN_PAYLOAD_SIZE;
 	tg_config->server_ip = CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR;
 	tg_config->port = CONFIG_TRAFFIC_GEN_REMOTE_PORT_NUM;
+	tg_config->pause_traffic = false;
 }
