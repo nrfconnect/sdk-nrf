@@ -493,7 +493,7 @@ void wifi_nrf_osal_llist_add_node_tail(struct wifi_nrf_osal_priv *opriv,
  * to the head of a linked list(@llist) allocated by @wifi_nrf_osal_llist_alloc.
  *
  * Return: None.
-*/
+ */
 void wifi_nrf_osal_llist_add_node_head(struct wifi_nrf_osal_priv *opriv,
 					void *llist,
 					void *llist_node);
