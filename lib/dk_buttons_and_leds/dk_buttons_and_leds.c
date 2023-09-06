@@ -129,7 +129,9 @@ static void buttons_scan_fn(struct k_work *work)
 	static bool initial_run = true;
 	uint32_t button_scan;
 
-	if (irq_enabled) {
+	__ASSERT_NO_MSG(!IS_ENABLED(CONFIG_DK_LIBRARY_BUTTON_NO_ISR) || !irq_enabled);
+
+	if (!IS_ENABLED(CONFIG_DK_LIBRARY_BUTTON_NO_ISR) && irq_enabled) {
 		/* Disable GPIO interrupts for edge triggered devices.
 		 * Devices that are configured with active high interrupts are already disabled.
 		 */
@@ -157,7 +159,7 @@ static void buttons_scan_fn(struct k_work *work)
 
 	last_button_scan = button_scan;
 
-	if (button_scan != 0) {
+	if (IS_ENABLED(CONFIG_DK_LIBRARY_BUTTON_NO_ISR) || (button_scan != 0)) {
 		k_work_reschedule(&buttons_scan,
 		  K_MSEC(CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL));
 	} else {
@@ -257,29 +259,31 @@ int dk_buttons_init(button_handler_t button_handler)
 		}
 	}
 
-	uint32_t pin_mask = 0;
+	if (!IS_ENABLED(CONFIG_DK_LIBRARY_BUTTON_NO_ISR)) {
+		uint32_t pin_mask = 0;
 
-	for (size_t i = 0; i < ARRAY_SIZE(buttons); i++) {
-		/* Module starts in scanning mode and will switch to
-		 * callback mode if no button is pressed.
-		 */
-		err = gpio_pin_interrupt_configure_dt(&buttons[i],
-						      GPIO_INT_DISABLE);
-		if (err) {
-			LOG_ERR("Cannot disable callbacks()");
-			return err;
+		for (size_t i = 0; i < ARRAY_SIZE(buttons); i++) {
+			/* Module starts in scanning mode and will switch to
+			 * callback mode if no button is pressed.
+			 */
+			err = gpio_pin_interrupt_configure_dt(&buttons[i],
+							      GPIO_INT_DISABLE);
+			if (err) {
+				LOG_ERR("Cannot disable callbacks()");
+				return err;
+			}
+
+			pin_mask |= BIT(buttons[i].pin);
 		}
 
-		pin_mask |= BIT(buttons[i].pin);
-	}
+		gpio_init_callback(&gpio_cb, button_pressed, pin_mask);
 
-	gpio_init_callback(&gpio_cb, button_pressed, pin_mask);
-
-	for (size_t i = 0; i < ARRAY_SIZE(buttons); i++) {
-		err = gpio_add_callback(buttons[i].port, &gpio_cb);
-		if (err) {
-			LOG_ERR("Cannot add callback");
-			return err;
+		for (size_t i = 0; i < ARRAY_SIZE(buttons); i++) {
+			err = gpio_add_callback(buttons[i].port, &gpio_cb);
+			if (err) {
+				LOG_ERR("Cannot add callback");
+				return err;
+			}
 		}
 	}
 
