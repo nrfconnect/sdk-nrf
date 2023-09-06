@@ -178,6 +178,10 @@ config NRF_MODEM_LIB_TRACE_THREAD_PRIO
 	depends on NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
 	default 0
 
+config NRF_MODEM_LIB_TRACE_BACKEND_SUSPEND_DELAY_MS
+	int "Time to wait before suspending trace backend"
+	default 5000
+
 config NRF_MODEM_LIB_TRACE_BITRATE_LOG
 	depends on NRF_MODEM_LIB_LOG_LEVEL_INF || NRF_MODEM_LIB_LOG_LEVEL_DBG
 	bool "Log trace bitrate"

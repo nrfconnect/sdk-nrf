@@ -8,6 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/trace_backend.h>
+#include <zephyr/pm/device.h>
 
 LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
@@ -30,6 +31,8 @@ static int tx_bytes;
 /* Callback to notify the trace library when trace data is processed. */
 static trace_backend_processed_cb trace_processed_callback;
 
+static bool suspended;
+
 static void uart_callback(const struct device *dev, struct uart_event *evt, void *user_data)
 {
 	ARG_UNUSED(dev);
@@ -40,6 +43,9 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 	case UART_TX_ABORTED:
 		tx_bytes = evt->data.tx.len;
 		k_sem_give(&tx_done_sem);
+		break;
+	case UART_RX_DISABLED:
+		LOG_INF("Disabled UART RX");
 		break;
 	default:
 		LOG_DBG("Unhandled UART event: %d", evt->type);
@@ -130,6 +136,10 @@ int trace_backend_write(const void *data, size_t len)
 	const size_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
 	size_t remaining_bytes = len;
 
+	if (suspended) {
+		return -EPERM;
+	}
+
 	k_sem_take(&tx_sem, K_FOREVER);
 
 	while (remaining_bytes) {
@@ -166,8 +176,43 @@ out:
 	return ret;
 }
 
+int trace_backend_suspend(void)
+{
+#if CONFIG_PM_DEVICE
+	int err;
+
+	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
+	if (err) {
+		LOG_ERR("pm_device_action_run() failed (%d)\n", err);
+	}
+
+	suspended = true;
+	LOG_DBG("suspended backend");
+#endif
+	return 0;
+}
+
+int trace_backend_resume(void)
+{
+#if CONFIG_PM_DEVICE
+	int err;
+
+	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
+	if (err) {
+		LOG_ERR("pm_device_action_run() failed (%d)\n", err);
+	}
+
+	suspended = false;
+	LOG_DBG("resumed backend");
+#endif
+
+	return 0;
+}
+
 struct nrf_modem_lib_trace_backend trace_backend = {
 	.init = trace_backend_init,
 	.deinit = trace_backend_deinit,
 	.write = trace_backend_write,
+	.suspend = trace_backend_suspend,
+	.resume = trace_backend_resume
 };
