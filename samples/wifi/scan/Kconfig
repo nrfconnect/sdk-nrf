@@ -35,4 +35,14 @@ config WIFI_SCAN_TYPE_PASSIVE
 	  Enable this to force passive scan on all channels.
 endchoice
 
+choice
+	prompt "Choose a WiFi Scan Profile"
+
+config WIFI_SCAN_PROFILE_DEFAULT
+	bool "Scan in all bands and channels"
+	help
+	  Enable this profile to do Wi-Fi scan in all supported bands and channels.
+
+endchoice
+
 endmenu
