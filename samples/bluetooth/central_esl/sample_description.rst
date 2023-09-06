@@ -1,4 +1,4 @@
-.. _central_esl_sample_desc:
+.. _central_esl_desc:
 
 Sample description
 ##################
@@ -7,101 +7,196 @@ Sample description
    :local:
    :depth: 2
 
-The Central ESL sample demonstrates how to use the :ref:`esl_service_client_readme`.
-The DK acts as central Access Point(AP) defined in `Electronic Shelf Label Profile <https://www.bluetooth.com/specifications/specs/electronic-shelf-label-profile-1-0/>`_.
-It uses the ESL Client to communicates with ESLs connectionlessly when one or more ESLs are in the Synchronized state.
+The Central ESL sample acts as Access Point(AP) defined in `Electronic Shelf Label Profile <https://www.bluetooth.com/specifications/specs/electronic-shelf-label-profile-1-0/>`_ which controls and manages numbers of ESL Tag.
+It uses the library :ref:`esl_service_client_readme` to communicates with ESLs connectionlessly when one or more ESLs are in the Synchronized state.
 
-Overview
-********
+.. include:: ./esl_experimental.txt
 
-In this sample, Nordic provides full set of shell commands to control the AP and auto onboarding feature.
-With the auto onboarding feature, Access Point starts periodic advertising with response(PAwR) after powered up.
-It will scan and connect one by one to devices with ESL service.
-When connected, AP will try to configure the ESL Tag and send periodic advertising sync info(PAST) to transition ESL Tag to synchronized state.
-
-Auto onboarding feature is meant to be used for small scale testing and development purposes. For larger scale, shell commands give more flexibility and control over the AP functionalities.
-
-.. _central_esl_debug:
-
-Debugging
-*********
-
-In this sample, debug messages are printed by the RTT logger.
-If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
 
 Requirements
 ************
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, thingy53_nrf5340_cpuapp, nrf52840dk_nrf52840
++--------------------+----------+--------------------------+------------------------------+
+| Hardware platforms | PCA      | Board name               | Build target                 |
++====================+==========+==========================+==============================+
+| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340_cpuapp | ``nrf5340dk_nrf5340_cpuapp`` |
++--------------------+----------+--------------------------+------------------------------+
+| Thingy:53          | PCA20053 | thingy53_nrf5340_cpuapp  | ``thingy53_nrf5340_cpuapp``  |
++--------------------+----------+--------------------------+------------------------------+
 
-The sample also requires another development kit running a compatible application (see :ref:`peripheral_esl`).
-
-Building and running
-********************
-.. |sample path| replace:: :file:`samples/bluetooth/central_esl`
-
-.. include:: /includes/build_and_run.txt
+The sample also requires another development kit running a compatible sample (see :ref:`peripheral_esl`).
 
 
+Overview
+********
 
-.. _central_esl_auto_onboarding:
+In this sample, Nordic provides host interface architecture and full set of :ref:`central_esl_subcommands` to control the AP and auto onboarding feature.
+   .. figure:: /images/esl_ap_architecture.png
 
-Auto onboarding
-===============
+This Sample is an easy-to-use Serialized Access Point which can be used as a development platform to help customers test and develop ESL Tags (:ref:`peripheral_esl`).
 
-To associatie an ESL Tag requires numbers of steps. Which includes configuring ESL Address, configuring key materials, reading ESL capability information, updating image. This could involve several shell commands input.
-The make developing process easier, this sample provides auto onboarding feature. Access Point will scan and connect to ESL Tag periodically. Then configure mandatory data and send image accodring PNPID defined in sample code.
+Beside this, this sample can  be used also in combination with more powerful hosts(e.g.: Linux PC) in order to develop/implement a full ESL AP application.
+The AP provides serial connection to the HOST (PC/Linux) via USB interface (nRF USB – J3 connector on :ref:`nRF5340 DK <ug_nrf5340>`; USB-C connector on `Nordic Thingy:53`_). Two virtual COMs are associated this the USB port:
 
-.. _central_esl_auto_past:
+   * Shell command COM port (used for shell commands)
 
-Auto PAST
-=========
+   * SMP/mcumgr COM port (used for transfer images from PC to AP)
 
-Every ESL Tag must transistion to synchronized through PAST(Periodic Advertising Syncinfo Transfer) procedure. The PAST procedure includes the following steps.
-
-1. AP scan and connect unsynchonrized ESL Tag.
-#. AP send Update complete OP command to connected ESL Tag.
-#. AP send PAST info to ESL Tag.
-
-This could involve several shell commands input. The make developing process easier, this sample provides auto PAST feature. The AP will store information of associated ESL Tags into non-volatile database. Access Point will send PAST automatically if connected ESL Tag is in database.
-
-.. _central_esl_testing:
-
-Testing with other DevKits
-==========================
-
-After programming the sample to your development kit, test this sample in combination with other DevKits, which are running :ref:`peripheral_esl`, by the following steps:
-
-1. Connect the computer to the connecter labeled **nRF USB** on DevKit or the USB connector on the Thingy:53 using a USB cable. Turn on the kit; the computer will assign to the kit two virtual COM ports (Windows) or ttyACM devices (Linux), which are visible in the Device Manager. One port is for shell commands. The other port is for EPD image transfer (SMP protocol).
-#. |connect_terminal_specific|
-
-.. note::
-
-   To know if the right port is selected, enter new line and “ESL_AP:~$” should show up.
+When booting up, the Access Point starts periodic advertising with response(PAwR) with predefined PAwR parameters.
+At this point, the AP is ready to scan for new tags, connect / configure / synchronize new tags, send encrypted commands, receive encrypted responses (refer to ESL Service and ESL profile). All such functionalities are exposed via :ref:`central_esl_subcommands`. However, since this process may involve many decisions and many shell commands inputs, in order to make testing / developing process easier, this sample provides also a :ref:`auto onboarding <bt_esl_ap_auto_mode>` feature.
 
 
-3. Optionally, connect the RTT console to display debug messages. See :ref:`central_esl_debug`.
-#. Test the sample either by by auto onboarding feature or using shell command manually:
+.. _central_esl_auto_onboarding_and_auto_past:
+
+Auto Onboarding and Auto PAST
+*****************************
+
+Auto Onboarding feature , which associates Tags automatically to the AP, by continuously & automatically performing the following tasks in the background:
+
+   1. Scan for new unsynchronized ESL Tags(new ones or previously associated)
+
+   2. Connect and configure them one by one: e.g. read/write characteristics (including AP sync maetiral, ESL Address, etc), send pre-loaded images (i.e. images previously transferred from the PC to the AP)
+
+   .. note::
+
+      Max number of devices that can be handled by the automatic onboarding feature is depending on these Kconfig.
+      :kconfig:option:`CONFIG_ESL_CLIENT_MAX_GROUP` (default **128**), :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_GROUP_ID` (default **0**), :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_ESL_ID` (default **0**), :kconfig:option:`CONFIG_BT_ESL_AP_AUTO_TAG_PER_GROUP` (default **8**).
+
+      | With default configuration, Tags are added from Group **0** with increasing ESL_ID (0,1,2,3,4,5,6,7) until reaching 8th. Then, the next Tag will be added to Group **1** with ESL_ID **0**, and so on. For handling more devices, shell commands should be used.
+
+   .. note::
+
+      The AP will store information of associated ESL Tags into non-volatile database (external SPI flash) with :kconfig:option:`CONFIG_BT_ESL_TAG_STORAGE` enabled. This option is mandatory reruired for auto onboarding feature.
+
+   .. note::
+
+      During association, the AP sends images only to those tags that are running the EPD variant :ref:`peripheral_esl` sample (AP reads characteristics of the new associated tags, and only if it is recognized as specific tag type , it will transfer the image)
+
+   .. note::
+
+      You can observe the output log of auto onboarding process on the shell terminal. Here an example of successful onboarding of ESL Tag (ESL Peripheral without EPD):
+
+         .. code-block:: console
+
+            #TAG_SCANNED: 1,C9:AC:AD:A6:E5:79 (random) to list
+            Connected:Conn_idx:00
+            #SCANNED_TAG:
+            #DISCOVERY: 1,0x00
+            #CONFIGURED: 1,0x0000,0x0001
+            #BASIC_STATE:1,0x0000
+            SERVICE_NEEDED:off
+            SYNCHRONIZED:off
+            ACTIVE_LED:off
+            PENDING_LED_UPDATE:off
+            PENDING_DISPLAY_UPDATE:off
+            BASIC_RFU:off
+            #PAST:1,00
+            Disconnected:Conn_idx:0x00 (reason 0x13)
+
+      Here an example of successful onboarding of ESL Tag (ESL Peripheral with EPD variant):
+
+         .. code-block:: console
+
+            #TAG_SCANNED: 1,C9:AC:AD:A6:E5:79 (random) to list
+            Connected:Conn_idx:00
+            #SCANNED_TAG:
+            #DISCOVERY: 1,0x00
+            #CONFIGURED: 1,0x0000,0x0001
+            #BASIC_STATE:1,0x0000
+            SERVICE_NEEDED:off
+            SYNCHRONIZED:off
+            ACTIVE_LED:off
+            PENDING_LED_UPDATE:off
+            PENDING_DISPLAY_UPDATE:off
+            BASIC_RFU:off
+            #OTS_WRITE:1,0,0,esl_image_09
+            #OTS_WRITTEN:1,00,0,15006,0x1754215a
+            #OTS_WRITE:1,0,1,esl_image_0A
+            #OTS_WRITTEN:1,00,1,15006,0xdf631601
+            #PAST:1,00
+            Disconnected:Conn_idx:0x00 (reason 0x13)
+
+      0000 Is the ESL Address in hexadecimal, where two MSB are the Group ID, and two LSB are ESL ID.
+
+   3. Sends PAST info to unsynchronized ESL Tag
+
+   .. note::
+
+      The ESL client provides :ref:`auto PAST <BT_ESL_AP_AUTO_PAST_TAG>` feature. If a previously associated Tag is scanned (i.e. if ESL Tag is in database), Access Point will connect using the previously stored Bluetooth bonding information and then configure the tag accordingly to previous settings stored in the database (note: EPD images will not transferred in this case – EPD images are transferred only the first time tag gets associated to the AP, if images are available in the AP).
+      Access Point then will send PAST automatically.
+
+   .. note::
+
+      if a previously associated tag is reset (i.e. it has erased also the bonding information with the AP), the AP will not be able to connect to that tag (because it will try to connect with the old bonding keys in the AP database).
+      Erase the AP database by using **Button 2** to clear all content of database or shell command to clear specified Tag to start the process again.
+
+
+Once tags are onboarded and synchronized to the AP, commands can be sent/received using the :ref:`central_esl_user_interface` (either using the DK buttons features in the DK and/or the :ref:`central_esl_subcommands` by shell commands ).
+Auto onboarding feature should be used only for testing/development or as a starting point for more complex applications. For production (ESL AP), shell commend is recommended.
+
+.. _central_esl_user_interface:
+
+User interface
+**************
+This sample provides two ways to control the AP. One is through buttons on the development kit, the other is through shell commands.
 
    .. tabs::
 
-      .. group-tab:: Auto onboarding feature
+      .. group-tab:: DK button feature
 
-         1. Reset the kit. (On Thingy:53 switch off and on)
-            **LED 1** on the Devkit/Thingy:53 should be stable on.
-         #. Press button 1 to let Auto onboarding AP feature start.
-            **LED 1** on th eDevKit/Thingy:53 should start blinking, signaling the AP is scanning for ESL tags, connecting one by one to them, configuring them and transferring synchronization (PAST).
-         #. Press button 3 of DK to let ESL Tag to change image on display.
-         #. Press button 4 of DK to let ESL Tag to flash LED in predefined pattern.
-         #. Press button 2 of DK to erase the database of associated ESL Tags which is used by :ref:`central_esl_auto_past` from the AP.
+         Such User Interface takes advantage of the Auto Onboarding feature
+
+         Button 1:
+            Press to start Auto onboarding AP feature.
+
+            1. AP scan and connect unsynchonrized ESL Tag.
+            2. AP configure unsynchronized ESL Tag.
+            3. AP send image file to unsynchronized ESL Tag.
+            4. AP send PAST info to unsynchronized ESL Tag.
+
+         Button 2: (only on :ref:`nRF5340 DK <ug_nrf5340>`, not available on the `Nordic Thingy:53`_)
+            Erase the database of associated ESL Tags which is used by :ref:`central_esl_auto_onboarding_and_auto_past` from the AP.
+
+            .. note::
+
+               If you push this button, you should also push **Button 1** on the ESL Tag as well to reset the ESL Tag.
+
+               This procedure will not erase the EPD images stored in the AP (if any transferred).
+
+
+         Button 3: (only on :ref:`nRF5340 DK <ug_nrf5340>`, not available on the `Nordic Thingy:53`_)
+            Change Image on the ESL Tag display.
+
+            By pressing this button, AP sends a :ref:`predefined_esl_packet` to a specific group.
+            Commands rotate at each press of the button, in the following order, starting from Group :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_GROUP_ID` (Default **0**) to Group 2 :kconfig:option:`CONFIG_BT_ESL_AP_GROUP_PER_BUTTON` (Default **3**)
+
+            e.g.:0x7 (display 0 image 0 broadcast) is sent to Group 0
+
+            0x8 (Display 0 image 1 broadcast) is sent to Group 0
+
+            0x12 (Tag default ESL_ID ~ ESL_ID+10 Display Img 0) is sent to Group 0
+
+            0x13 (Tag default ESL_ID ~ ESL_ID+10 Display img 1) is sent to Group 0
+
+            0x7 (display 0 image 0 broadcast) is sent to Group 1 and so on, until reaching Group :kconfig:option:`CONFIG_BT_ESL_AP_GROUP_PER_BUTTON` (Default **3**) then turning back :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_GROUP_ID` (Default **0**)
+
+         Button 4: (only on :ref:`nRF5340 DK <ug_nrf5340>`, not available on the `Nordic Thingy:53`_)
+            Flash ESL Tag LED in predefined pattern.
+
+            By pressing this button, AP sends a predefined :ref:`predefined_esl_packet` to a specific group.
+            Commands rotate at each press of the button, in the following order, starting from Group :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_GROUP_ID` (Default **0**) to Group :kconfig:option:`CONFIG_BT_ESL_AP_GROUP_PER_BUTTON` (Default **3**)
 
          .. note::
 
-            Button 3 and 4 will continually send ESL command through PAwR and cycles between group 0 to :kconfig:option:`CONFIG_BT_ESL_AP_GROUP_PER_BUTTON`
+            Button 3 and 4 will continually send ESL command through PAwR and cycles from group ``0`` to :ref:`CONFIG_BT_ESL_AP_GROUP_PER_BUTTON <bt_esl_ap_group_per_button>`
+
+
+         LED 1:
+            Stable on means AP is booted-up.
+
+            Start blinking, signaling the Auto Onboarding feature on the AP is activate: AP is scanning for ESL tags, connecting one by one to them, configuring them and transferring synchronization (PAST).
 
 
       .. group-tab:: Shell command
@@ -238,29 +333,29 @@ After programming the sample to your development kit, test this sample in combin
             PAST:1,00
             Disconnected:Conn_idx:0x00 (reason 0x13)
 
-         * Ping ESL Tag of ESL address `0x0201` with PAwR by raw ESL payload:
+         * Ping ESL Tag of ESL address `0x0101` with PAwR by raw ESL payload:
 
          .. code-block:: console
 
-            esl_c pawr push_sync_buf 2 0001
+            esl_c pawr push_sync_buf 1 0001
 
-         * Control LED 0 to flash to all ESL Tags of group `0` with PAwR with predefined command:
-
-         .. code-block:: console
-
-            esl_c pawr update_pawr 0 1
-
-         * Turn LED 0 off to all ESL Tags of group `0` with PAwR with predefined command:
+         * Control LED 0 to flash to all ESL Tags of group `0` with PAwR with :ref:`predefined_esl_packet`:
 
          .. code-block:: console
 
-            esl_c pawr update_pawr 0 4
+            esl_c pawr update_pawr 1 0
 
-         * Display image 0 to all ESL Tags of group `2` with PAwR with predefined command:
+         * Turn LED 0 off to all ESL Tags of group `0` with PAwR with :ref:`predefined_esl_packet`:
 
          .. code-block:: console
 
-            esl_c pawr update_pawr 2 7
+            esl_c pawr update_pawr 4 0
+
+         * Display image 0 to all ESL Tags of group `1` with PAwR with :ref:`predefined_esl_packet`:
+
+         .. code-block:: console
+
+            esl_c pawr update_pawr 7 1
 
          * See :ref:`central_esl_subcommands` for a list of available subcommands.
 
@@ -269,10 +364,10 @@ Setup - Transfer Images from PC to AP over USB
 ==============================================
 
 One of major task of Access Point is to provide images to ESL Tag in configuring and updating state.
-Before activating auto onboarding (**Button 1**) or, anytime before sending images using :ref:`Object Transfer Service <bluetooth_services>` via shell commands between AP and Tag, it is necessary to transfer the images from PC to the AP (in external flash) over USB.
-:ref:`mcumgr_smp_protocol_specification` is used over the other COM port available over USB. Here example:
+Before activating auto onboarding (**Button 1**) or, anytime before sending images using `Object Transfer Service <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/zephyr/connectivity/bluetooth/api/services.html>`_ via shell commands between AP and Tag, it is necessary to transfer the images from PC to the AP (in external flash) over USB.
+`mcumgr_smp_protocol_specification <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/zephyr/services/device_mgmt/smp_protocol.html>`_ is used over the other COM port available over USB. Here example:
 
-1. Install :ref:`mcu_mgr` tool
+1. Install `Mcumgr Command-line Tool <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/zephyr/services/device_mgmt/mcumgr.html>`_ tool
 #. Prepare the images to be transferred. The image format is depending on what EPD and color depth your are using.
 
 .. note::
@@ -281,7 +376,6 @@ Before activating auto onboarding (**Button 1**) or, anytime before sending imag
 
    * EPD format: Use this format on Access Point :download:`esl_image_bt <https://github.com/pirun/esl_sample_image/raw/main/esl_image_bt>` :download:`esl_image_nordic <https://github.com/pirun/esl_sample_image/raw/main/esl_image_nordic>`
    * BMP format: This format is only for reference :download:`esl_image_00_240x120_bt.BMP <https://github.com/pirun/esl_sample_image/blob/main/esl_image_00_240x120_bt.BMP>` :download:`esl_image_01_240x120_nordic_logo.BMP <https://github.com/pirun/esl_sample_image/blob/main/esl_image_01_240x120_nordic_logo.BMP>`
-
 
 3. Transfer images from the PC to the AP: run from cmd /command line
 
@@ -303,6 +397,91 @@ Before activating auto onboarding (**Button 1**) or, anytime before sending imag
 #. As an alternative, for demo purposes, Auto Onboarding feature can be used:
 If auto onboarding is started after the transfer of image (i.e. a new Tag is associated for the first time after transferring the image to the AP and after pushing **Button 1**), the AP will transfer automatically these images to the ESL Tag DevKit with EPD shield, during the associating procedure.
 
+
+.. _central_esl_config_options:
+
+Configuration options
+=====================
+
+Check and configure the following Kconfig options:
+
+.. _central_bt_esl_security_enabled:
+
+BT_ESL_SECURITY_ENABLED
+   This enables BT SMP and bonding which are security requirement of ESL Profile. Disable BLE security of the ESL service for debugging purposes.
+
+.. _bt_esl_ap_auto_mode:
+
+BT_ESL_AP_AUTO_MODE
+   Enable auto onboarding feature. With this feature AP will scan and connect unsynchonrized ESL Tag, configure and send predefined image to unsynchronized ESL Tag, send PAST info to unsynchronized ESL Tag automatically.
+   This feature also stores response key material for all of associated ESL tags. The key material will be used to decrypt response EAD from ESL Tag when using predefined ESL packet.
+
+   .. note::
+
+      Auto onboarding feature is meant to be used for small scale testing and development purposes. For larger scale, :ref:`central_esl_subcommands` give more flexibility and control over the AP functionalities.
+
+.. _bt_esl_ap_auto_tag_per_group:
+
+BT_ESL_AP_AUTO_TAG_PER_GROUP
+   How many tags should keep in same group for auto onboarding. Tag number exceeds this number should be in next group. Otherwise, response key material slot is not enough for all tags in same group.
+	How to choose this number depends on what scenario we want to show.
+	Less or equal to :kconfig:option:`CONFIG_ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER` demostrates decrypts response EAD on-the-fly.
+	Greater than :kconfig:option:`CONFIG_ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER` demostrates ESL AP able to control large amount of tags at the same time."
+
+.. _bt_esl_ap_group_per_button:
+
+BT_ESL_AP_GROUP_PER_BUTTON
+   **Button 3** and **Button 4** could be used as user interface. **Button 3** will send :ref:`predefined_esl_packet` to all tags in group `x` to change image on display. **Button 4** will send predefined command to all tags in group `x` to flash LED in predefined pattern.
+   This option defines how many groups should be used for this feature. For example, if this option is set to `2`, **Button 3** and **Button 4** will send :ref:`predefined_esl_packet` to all tags in group `0` and `1` alternatively.
+
+
+.. _bt_esl_ap_auto_past_tag:
+
+BT_ESL_AP_AUTO_PAST_TAG
+   Enable auto PAST feature. With this feature AP will send PAST automatically if connected ESL Tag is in database.
+
+   .. note::
+
+      Auto PAST feature is meant to be used for small scale testing and development purposes. For larger scale, :ref:`central_esl_subcommands` give more flexibility and control over the AP functionalities.
+
+.. _bt_esl_ap_pts:
+
+BT_ESL_AP_PTS
+   Enable PTS feature. With this feature AP will send PTS command to connected ESL Tag. This feature is used for PTS test only.
+
+
+Building and running
+********************
+
+.. |sample path| replace:: :file:`samples/central_esl`
+
+.. include:: /includes/build_and_run.txt
+
+
+Testing with other DevKits
+==========================
+
+After programming the sample to your development kit, complete the following steps to test it:
+
+1. Connect the computer to the connecter labeled **nRF USB** on DevKit or the USB connector on the Thingy:53 using a USB cable. Turn on the kit; the computer will assign to the kit two virtual COM ports (Windows) or ttyACM devices (Linux), which are visible in the Device Manager. One port is for :ref:`central_esl_subcommands`. The other port is for EPD image transfer (SMP protocol).
+#. |connect_terminal|
+
+.. note::
+
+   To know if the right port is selected, enter new line and “ESL_AP:~$” should show up.
+
+3. Optionally, connect the RTT console to display debug messages. See :ref:`central_esl_debug`.
+#. Optionally (required for out of the box testing in combination ESL Tag sample with EPD), transfer the images from PC to the AP.
+#. Test the sample either by by auto onboarding feature or using :ref:`central_esl_subcommands` manually as described in :ref:`central_esl_user_interface`.
+
+
+.. _central_esl_debug:
+
+Debugging
+*********
+
+In this application, debug messages are printed by the RTT logger.
+If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
 
 Dependencies
 ************

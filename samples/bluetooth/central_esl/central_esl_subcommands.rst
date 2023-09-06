@@ -169,15 +169,15 @@ PAWR subcommands
      - N/A
      - Stop pawr manually for development.
    * - update_pawr
-     - | <sync_packet type> (See predefinied table)
+     - | <sync_packet type> (See predefined table)
        | <esl group index> (0 ~ CONFIG_ESL_CLIENT_MAX_GROUP)
-     - Send predefinied ESL packet.
+     - Send predefined ESL packet.
 
 
-.. _predefined_esl_sync_packet:
+.. _predefined_esl_packet:
 
-Predefinied ESL sync packet
-***************************
+Predefined ESL sync packet
+**************************
 
 This sample contains a few predefined ESL sync packets.
 The following table shows their content.

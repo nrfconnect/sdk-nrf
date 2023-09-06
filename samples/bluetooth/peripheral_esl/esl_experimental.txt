@@ -1,0 +1,3 @@
+.. note::
+
+   This sample is experimental and currently in its testing phase. It has been primarily developed for estimation and experimental purposes and is not yet optimized or sufficiently tested for production use. While it provides valuable insight into potential features and functions, its current state may not reflect the final product's quality or stability. Therefore, it should not be used for production until further updates and refinements are made.
