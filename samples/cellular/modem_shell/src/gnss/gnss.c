@@ -568,6 +568,19 @@ static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 
 	serving_cell->tac = strtol(resp_buf, NULL, 16);
 
+	err = modem_info_short_get(MODEM_INFO_RSRP, &serving_cell->rsrp);
+	if (err < 0) {
+		return err;
+	}
+
+	if (serving_cell->rsrp == 255) {
+		/* No valid RSRP, modem is probably in PSM and the cell information might not be
+		 * valid anymore. %NCELLMEAS could be used to wake up the modem and perform a cell
+		 * search instead, but this is good enough for modem_shell.
+		 */
+		serving_cell->rsrp = 0; /* -140 dBm */
+	}
+
 	/* Request for MODEM_INFO_MNC returns both MNC and MCC in the same string. */
 	err = modem_info_string_get(MODEM_INFO_OPERATOR,
 				    resp_buf,
