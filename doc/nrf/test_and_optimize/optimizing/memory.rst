@@ -244,7 +244,7 @@ Besides applying `General recommendations`_, you can also complete the following
   The following configuration options affect the stack sizes of the Thread threads:
 
   * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_STACK_SIZE`
-  * :kconfig:option:`CONFIG_NET_CONNECTION_MANAGER_STACK_SIZE`
+  * :kconfig:option:`CONFIG_NET_CONNECTION_MANAGER_MONITOR_STACK_SIZE`
   * :kconfig:option:`CONFIG_NET_RX_STACK_SIZE`
   * :kconfig:option:`CONFIG_NET_TX_STACK_SIZE`
   * :kconfig:option:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`

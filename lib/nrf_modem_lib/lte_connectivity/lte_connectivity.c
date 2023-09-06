@@ -28,9 +28,9 @@ LOG_MODULE_REGISTER(lte_connectivity, CONFIG_LTE_CONNECTIVITY_LOG_LEVEL);
  */
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_IPV6) && IS_ENABLED(CONFIG_NET_IPV4), "IPv6 and IPv4 required");
 
-BUILD_ASSERT((CONFIG_NET_CONNECTION_MANAGER_STACK_SIZE >= 1024),
+BUILD_ASSERT((CONFIG_NET_CONNECTION_MANAGER_MONITOR_STACK_SIZE >= 1024),
 	     "Stack size of the connection manager internal thread is too low. "
-	     "Increase CONFIG_NET_CONNECTION_MANAGER_STACK_SIZE to a minimum of 1024");
+	     "Increase CONFIG_NET_CONNECTION_MANAGER_MONITOR_STACK_SIZE to a minimum of 1024");
 
 /* Forward declarations */
 static void connection_timeout_work_fn(struct k_work *work);
