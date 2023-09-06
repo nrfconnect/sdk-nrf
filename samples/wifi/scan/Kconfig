@@ -43,6 +43,11 @@ config WIFI_SCAN_PROFILE_DEFAULT
 	help
 	  Enable this profile to do Wi-Fi scan in all supported bands and channels.
 
+config WIFI_SCAN_PROFILE_ACTIVE
+	bool "Active scan"
+	help
+	  Enable this profile to do active scan where allowed.
+
 endchoice
 
 endmenu
