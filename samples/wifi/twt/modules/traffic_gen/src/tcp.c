@@ -88,14 +88,16 @@ int send_tcp_uplink_traffic(struct traffic_gen_config *tg_config)
 	start_time = k_uptime_get_32();
 
 	while ((k_uptime_get_32() - start_time) < total_duration) {
-		bytes = send(tg_config->data_sock_fd, tg_config->buffer, tg_config->payload_len, 0);
-		if (bytes < 0) {
-			LOG_INF("Failed to send TWT uplink traffic %d", errno);
-			break;
-		}
+		if (tg_config->pause_traffic == false) {
+			bytes = send(tg_config->data_sock_fd, tg_config->buffer, tg_config->payload_len, 0);
+			if (bytes < 0) {
+				LOG_INF("Failed to send TWT uplink traffic %d", errno);
+				break;
+			}
 
-		remote_report.bytes_received += bytes;
-		remote_report.packets_received++;
+			remote_report.bytes_received += bytes;
+			remote_report.packets_received++;
+		}
 
 		/* Calculate throughput */
 		current_time = k_uptime_get_32();

@@ -14,6 +14,7 @@
 
 struct traffic_gen_config {
 	/* global info */
+	volatile bool pause_traffic;
 	bool traffic_gen_report_received;
 	int ctrl_sock_fd;
 	int data_sock_fd;
@@ -50,5 +51,7 @@ void traffic_gen_init(struct traffic_gen_config *tg_config);
 int traffic_gen_start(struct traffic_gen_config *tg_config);
 int traffic_gen_wait_for_report(struct traffic_gen_config *tg_config);
 void traffic_gen_get_report(struct traffic_gen_config *tg_config);
+void traffic_gen_resume(struct traffic_gen_config *tg_config);
+void traffic_gen_pause(struct traffic_gen_config *tg_config);
 
 #endif /* __TRAFFIC_GEN_H__ */

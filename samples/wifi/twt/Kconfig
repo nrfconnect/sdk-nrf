@@ -84,4 +84,20 @@ config TWT_INTERVAL
 	  Please note higher intervals can be rejected by AP or cause interoperability issues.
 	default 524000
 
+choice TWT_TRAFFIC_PATTERN
+	prompt "Specifies the TWT traffic pattern either continous tx or scheduled tx"
+	default CONTINUOUS_TX
+
+config CONTINUOUS_TX
+	bool "Send traffic continuously"
+	help
+	  Send traffic continuously without any restrictions, irrespective of sleep and awake periods.
+
+config SCHEDULED_TX
+	bool "Send traffic based on TWT schedule"
+	help
+	  Send traffic based on the TWT schedule and only transmits during the awake periods.
+
+endchoice
+
 endmenu
