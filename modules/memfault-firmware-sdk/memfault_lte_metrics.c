@@ -10,6 +10,10 @@
 #include <modem/lte_lc.h>
 #include <modem/lte_lc_trace.h>
 
+#if defined(CONFIG_MODEM_INFO)
+#include <modem/modem_info.h>
+#endif
+
 #include <memfault/metrics/metrics.h>
 #include <memfault/core/platform/overrides.h>
 
@@ -160,6 +164,17 @@ void memfault_lte_metrics_init(void)
 {
 	lte_lc_trace_handler_set(lte_trace_cb);
 	lte_lc_register_handler(lte_handler);
+
+#if defined(CONFIG_MODEM_INFO)
+	char buf[MODEM_INFO_FWVER_SIZE];
+
+	modem_info_get_fw_version(buf, sizeof(buf));
+
+	/* Ensure null-termination */
+	buf[sizeof(buf) - 1] = '\0';
+
+	memfault_metrics_heartbeat_set_string(MEMFAULT_METRICS_KEY(Ncs_LteModemFwVersion), buf);
+#endif
 
 #if CONFIG_MEMFAULT_NCS_STACK_METRICS
 	int err;

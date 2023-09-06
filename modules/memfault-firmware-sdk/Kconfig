@@ -153,6 +153,7 @@ config MEMFAULT_NCS_LTE_METRICS
 	bool "Collect LTE metrics"
 	select LTE_LC_TRACE
 	depends on LTE_LINK_CONTROL
+	depends on MODEM_INFO
 	help
 	  Capture LTE metrics while the application is running. Supported
 	  metrics are time to connect and number of connection establishments.
