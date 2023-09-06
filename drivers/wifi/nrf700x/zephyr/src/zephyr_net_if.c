@@ -18,6 +18,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 #include "util.h"
 #include "fmac_api.h"
+#include "fmac_util.h"
 #include "shim.h"
 #include "zephyr_fmac_main.h"
 #include "zephyr_wpa_supp_if.h"
@@ -69,8 +70,11 @@ void wifi_nrf_if_rx_frm(void *os_vif_ctx, void *frm)
 	int status;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
-	struct rpu_host_stats *host_stats = &fmac_dev_ctx->host_stats;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct rpu_host_stats *host_stats = NULL;
 
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	host_stats = &def_dev_ctx->host_stats;
 	host_stats->total_rx_pkts++;
 
 	pkt = net_pkt_from_nbuf(iface, frm);

@@ -131,5 +131,10 @@ void wifi_nrf_util_rx_convert_amsdu_to_eth(struct wifi_nrf_fmac_dev_ctx *fmac_de
 
 bool wifi_nrf_util_is_arr_zero(unsigned char *arr,
 			       unsigned int arr_sz);
+
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
+
+void *wifi_fmac_priv(struct wifi_nrf_fmac_priv *def);
+void *wifi_dev_priv(struct wifi_nrf_fmac_dev_ctx *def);
+
 #endif /* __FMAC_UTIL_H__ */

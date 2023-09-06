@@ -17,6 +17,7 @@
 #include "util.h"
 #include "fmac_api.h"
 #include "fmac_tx.h"
+#include "fmac_util.h"
 #include "zephyr_fmac_main.h"
 #include "zephyr_wifi_mgmt.h"
 
@@ -607,6 +608,8 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 #ifdef CONFIG_NRF700X_DATA_TX
 	int desc = 0;
 	int ac = 0;
@@ -625,6 +628,8 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 	}
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 	if (!sleep_evnt) {
 		LOG_ERR("%s: sleep_evnt is NULL\n", __func__);
@@ -634,32 +639,32 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 	switch (sleep_evnt->info.type) {
 	case TWT_BLOCK_TX:
 		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
-					    fmac_dev_ctx->tx_config.tx_lock);
+					    def_dev_ctx->tx_config.tx_lock);
 
-		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_SLEEP;
+		def_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_SLEEP;
 
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_SLEEP);
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
-					    fmac_dev_ctx->tx_config.tx_lock);
+					    def_dev_ctx->tx_config.tx_lock);
 	break;
 	case TWT_UNBLOCK_TX:
 		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
-					    fmac_dev_ctx->tx_config.tx_lock);
-		fmac_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
+					    def_dev_ctx->tx_config.tx_lock);
+		def_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_AWAKE);
 #ifdef CONFIG_NRF700X_DATA_TX
 		for (ac = WIFI_NRF_FMAC_AC_BE;
 		     ac <= WIFI_NRF_FMAC_AC_MAX; ++ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);
-			if (desc < fmac_dev_ctx->fpriv->num_tx_tokens) {
+			if (desc < def_priv->num_tx_tokens) {
 				tx_pending_process(fmac_dev_ctx, desc, ac);
 			}
 		}
 #endif
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
-				fmac_dev_ctx->tx_config.tx_lock);
+				def_dev_ctx->tx_config.tx_lock);
 	break;
 	default:
 	break;

@@ -12,6 +12,7 @@
 #include "host_rpu_umac_if.h"
 #include "hal_api.h"
 #include "fmac_structs.h"
+#include "fmac_util.h"
 
 struct host_rpu_msg *umac_cmd_alloc(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				    int type,
@@ -102,6 +103,9 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 	struct host_rpu_msg *umac_cmd = NULL;
 	struct nrf_wifi_cmd_sys_init *umac_cmd_data = NULL;
 	unsigned int len = 0;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 	len = sizeof(*umac_cmd_data);
 
@@ -150,7 +154,7 @@ enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 #ifndef CONFIG_NRF700X_RADIO_TEST
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      umac_cmd_data->rx_buf_pools,
-			      fmac_dev_ctx->fpriv->rx_buf_pools,
+			      def_priv->rx_buf_pools,
 			      sizeof(umac_cmd_data->rx_buf_pools));
 
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,

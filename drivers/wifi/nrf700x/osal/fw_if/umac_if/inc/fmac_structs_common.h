@@ -98,6 +98,48 @@ struct wifi_nrf_fmac_reg_info {
 	 /** Forcefully set regulatory. */
 	bool force;
 };
+
+/**
+ * @brief Structure to hold common fmac priv parameter data.
+ *
+ */
+struct wifi_nrf_fmac_priv {
+	/** Handle to the OS abstraction layer. */
+	struct wifi_nrf_osal_priv *opriv;
+	/** Handle to the HAL layer. */
+	struct wifi_nrf_hal_priv *hpriv;
+	/** Data pointer to mode specific parameters */
+	char priv[];
+};
+
+/**
+ * @brief Structure to hold common fmac dev context parameter data.
+ *
+ */
+struct wifi_nrf_fmac_dev_ctx {
+	/** Handle to the FMAC IF abstraction layer. */
+	struct wifi_nrf_fmac_priv *fpriv;
+	/** Handle to the OS abstraction layer. */
+	void *os_dev_ctx;
+	/** Handle to the HAL layer. */
+	void *hal_dev_ctx;
+	/** Firmware statistics. */
+	struct rpu_fw_stats *fw_stats;
+	/** Firmware statistics requested. */
+	bool stats_req;
+	/** Firmware boot done. */
+	bool fw_boot_done;
+	/** Firmware init done. */
+	bool fw_init_done;
+	/** Firmware deinit done. */
+	bool fw_deinit_done;
+	/** Alpha2 valid. */
+	bool alpha2_valid;
+	/** Alpha2 country code, last byte is reserved for null character. */
+	unsigned char alpha2[3];
+	/** Data pointer to mode specific parameters */
+	char priv[];
+};
 /**
  * @}
  */

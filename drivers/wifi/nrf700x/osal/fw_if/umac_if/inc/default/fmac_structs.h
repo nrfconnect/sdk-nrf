@@ -330,11 +330,7 @@ struct tx_config {
  * This structure maintains the context information necessary for the
  * operation of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv {
-	/** Handle to the OS abstraction layer. */
-	struct wifi_nrf_osal_priv *opriv;
-	/** Handle to the HAL layer. */
-	struct wifi_nrf_hal_priv *hpriv;
+struct wifi_nrf_fmac_priv_def {
 	/** Callback functions to be called on various events. */
 	struct wifi_nrf_fmac_callbk_fns callbk_fns;
 	/** Data path configuration parameters. */
@@ -345,7 +341,7 @@ struct wifi_nrf_fmac_priv {
 	unsigned int rx_desc[MAX_NUM_OF_RX_QUEUES];
 	/** Maximum number of host buffers needed for RX frames. */
 	unsigned int num_rx_bufs;
-#if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_STA_MODE)
 	/** Maximum number of tokens available for TX. */
 	unsigned char num_tx_tokens;
 	/** Maximum number of TX tokens available reserved per AC. */
@@ -365,16 +361,10 @@ struct wifi_nrf_fmac_priv {
  * This structure maintains the context information necessary for the
  * a single instance of an FullMAC based RPU.
  */
-struct wifi_nrf_fmac_dev_ctx {
-	/** Handle to the FMAC IF abstraction layer. */
-	struct wifi_nrf_fmac_priv *fpriv;
-	/** Handle to the OS abstraction layer. */
-	void *os_dev_ctx;
-	/** Handle to the HAL layer. */
-	void *hal_dev_ctx;
+struct wifi_nrf_fmac_dev_ctx_def {
 	/** Array of pointers to virtual interfaces created on this device. */
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
-#if defined(CONFIG_NRF700X_RX_WQ_ENABLED) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_RX_WQ_ENABLED)
 	/** Tasklet for RX. */
 	void *rx_tasklet;
 	/** Queue for RX tasklet. */
@@ -386,36 +376,21 @@ struct wifi_nrf_fmac_dev_ctx {
 	unsigned char num_sta;
 	/** Number of interfaces in AP mode. */
 	unsigned char num_ap;
-	/** Firmware statistics. */
-	struct rpu_fw_stats *fw_stats;
-	/** Firmware statistics requested. */
-	bool stats_req;
-	/** Firmware boot done. */
-	bool fw_boot_done;
-	/** Firmware init done. */
-	bool fw_init_done;
-	/** Firmware deinit done. */
-	bool fw_deinit_done;
-	/** Alpha2 valid. */
-	bool alpha2_valid;
-	/** Alpha2 country code, last byte is reserved for null character. */
-	unsigned char alpha2[3];
 	/** Queue for storing mapping info of RX buffers. */
 	struct wifi_nrf_fmac_buf_map_info *rx_buf_info;
-#if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_STA_MODE)
 	/** Queue for storing mapping info of TX buffers. */
 	struct wifi_nrf_fmac_buf_map_info *tx_buf_info;
 	/** Context information related to TX path. */
 	struct tx_config tx_config;
 	/** TWT state of the RPU. */
 	enum wifi_nrf_fmac_twt_state twt_sleep_status;
-#if defined(CONFIG_NRF700X_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF700X_TX_DONE_WQ_ENABLED)
 	/** Tasklet for TX done. */
 	void *tx_done_tasklet;
 #endif /* CONFIG_NRF700X_TX_DONE_WQ_ENABLED */
 #endif /* CONFIG_NRF700X_STA_MODE */
 };
-
 
 /**
  * @brief Structure to hold per VIF context information for the UMAC IF layer.

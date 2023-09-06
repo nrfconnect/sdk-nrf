@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "host_rpu_umac_if.h"
 #include "fmac_api.h"
+#include "fmac_util.h"
 #include "zephyr_fmac_main.h"
 #include "zephyr_wifi_util.h"
 
@@ -311,6 +312,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	void *queue = NULL;
 	unsigned int tx_pending_pkts = 0;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	vif_index = atoi(argv[1]);
 	if ((vif_index < 0) || (vif_index >= max_vif_index)) {
@@ -323,6 +325,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 	}
 
 	fmac_dev_ctx = ctx->rpu_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	/* TODO: Get peer_index from shell once AP mode is supported */
 	shell_fprintf(shell,
@@ -331,7 +334,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 		vif_index);
 
 	for (int i = 0; i < WIFI_NRF_FMAC_AC_MAX ; i++) {
-		queue = fmac_dev_ctx->tx_config.data_pending_txq[peer_index][i];
+		queue = def_dev_ctx->tx_config.data_pending_txq[peer_index][i];
 		tx_pending_pkts = wifi_nrf_utils_q_len(fmac_dev_ctx->fpriv->opriv, queue);
 
 		shell_fprintf(
@@ -339,7 +342,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *shell,
 			SHELL_INFO,
 			"Outstanding tokens: ac: %d -> %d (pending_q_len: %d)\n",
 			i,
-			fmac_dev_ctx->tx_config.outstanding_descs[i],
+			def_dev_ctx->tx_config.outstanding_descs[i],
 			tx_pending_pkts);
 	}
 
