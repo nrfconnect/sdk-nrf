@@ -98,7 +98,7 @@ template <typename T, std::size_t N> struct FiniteMap {
 		const auto &it = std::find_if(std::begin(mMap), std::end(mMap),
 					      [key](const Item &item) { return item.key == key; });
 		if (it != std::end(mMap) && it->value) {
-			it->value.~T();
+			it->value = T{};
 			it->key = kInvalidKey;
 			mElementsCount--;
 			return true;
