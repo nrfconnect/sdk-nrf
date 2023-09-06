@@ -35,47 +35,4 @@ config WIFI_SCAN_TYPE_PASSIVE
 	  Enable this to force passive scan on all channels.
 endchoice
 
-config WIFI_SCAN_BAND_2_4_GHZ
-	bool "Scan in 2.4GHZ band"
-	help
-	  Enable to perform scan only in 2.4GHZ band
-
-config WIFI_SCAN_BAND_5GHZ
-	bool "Scan in 5GHZ band"
-	help
-	  Enable to perform scan only in 5GHZ band.
-
-config WIFI_SCAN_SSID_FILT_MAX
-	int "Maximum number of SSIDs that can be specified for SSID filtering"
-	default 1
-	help
-	  Maximum number of SSIDs that can be specified for SSID filtering.
-	  This can be set based on the underlying chipsets limitations.
-
-config WIFI_SCAN_SSID_FILT
-	string "Scan for specific SSIDs"
-	default ""
-	help
-	  String of comma separated SSID values to scan for. The number of SSID’s
-	  that can be specified depends on WIFI_MGMT_SCAN_MAX_SSIDS.
-	  Use "" to disable SSID filtering.
-
-config WIFI_SCAN_CHAN
-	bool "Scan based on channel"
-	help
-	  Enable to perform scan in particular channel(s).
-
-config WIFI_SCAN_CHAN_LIST
-	string "Channel list for scan"
-	depends on WIFI_SCAN_CHAN
-	help
-	  List of channels used to perform scan.
-
-config WIFI_SCAN_MAX_BSS_CNT
-	int "Maximum number of scan results to return."
-	default 0
-	range 0 65535
-	help
-	  Maximum number of scan results to return. 0 represents unlimited number of BSSes.
-
 endmenu

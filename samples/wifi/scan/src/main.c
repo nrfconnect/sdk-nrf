@@ -46,40 +46,7 @@ static uint32_t scan_result;
 
 const struct wifi_scan_params tests[] = {
 	{
-	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
-	.dwell_time_active = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE,
-	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
 	},
-#ifdef CONFIG_WIFI_SCAN_TYPE_PASSIVE
-	{
-	.scan_type = WIFI_SCAN_TYPE_PASSIVE,
-	.dwell_time_passive = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE,
-	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_BAND_2_4_GHZ
-	{
-	.bands = (1 << WIFI_FREQ_BAND_2_4_GHZ),
-	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_BAND_5GHZ
-	{
-	.bands = (1 << WIFI_FREQ_BAND_5_GHZ),
-	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
-	{
-	.ssids = {}
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_CHAN
-	{
-	.chan = { {0, 0} },
-	.max_bss_cnt = CONFIG_WIFI_SCAN_MAX_BSS_CNT
-	},
-#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
@@ -221,43 +188,16 @@ static int wifi_scan(void)
 {
 	struct net_if *iface = net_if_get_default();
 
-	for (int i = 0; i < ARRAY_SIZE(tests); i++) {
-		struct wifi_scan_params params = tests[i];
-#ifdef CONFIG_WIFI_SCAN_SSID_FILT_MAX
-		if (!strlen(params.ssids[0])) {
-			char *buf = NULL;
+	struct wifi_scan_params params = tests[0];
 
-			buf = malloc(strlen(CONFIG_WIFI_SCAN_SSID_FILT) + 1);
-			if (!buf) {
-				LOG_ERR("Malloc Failed");
-				return -EINVAL;
-			}
-
-			strcpy(buf, CONFIG_WIFI_SCAN_SSID_FILT);
-			if (wifi_utils_parse_scan_ssids(buf,
-							params.ssids)) {
-				LOG_ERR("Incorrect value(s) in CONFIG_WIFI_SCAN_SSID_FILT: %s",
-						CONFIG_WIFI_SCAN_SSID_FILT);
-				return -EINVAL;
-			}
-		}
-#endif
-#ifdef CONFIG_WIFI_SCAN_CHAN
-		if (wifi_utils_parse_scan_chan(CONFIG_WIFI_SCAN_CHAN_LIST,
-				params.chan)) {
-			LOG_ERR("Chan Parse failed");
-			return -ENOEXEC;
-		}
-#endif
-		if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
-				sizeof(struct wifi_scan_params))) {
-			LOG_ERR("Scan request failed");
-			return -ENOEXEC;
-		}
-		printk("Scan requested\n");
-
-		k_sem_take(&scan_sem, K_MSEC(SCAN_TIMEOUT_MS));
+	if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
+			sizeof(struct wifi_scan_params))) {
+		LOG_ERR("Scan request failed");
+		return -ENOEXEC;
 	}
+	printk("Scan requested\n");
+
+	k_sem_take(&scan_sem, K_MSEC(SCAN_TIMEOUT_MS));
 
 	return 0;
 }
