@@ -10,6 +10,7 @@
  */
 
 #include "osal_api.h"
+#include "fmac_api_common.h"
 #include "fmac_util.h"
 #include "host_rpu_umac_if.h"
 
@@ -288,11 +289,14 @@ int wifi_nrf_util_get_vif_indx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 {
 	int i = 0;
 	int vif_index = -1;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	for (i = 0; i < MAX_PEERS; i++) {
-		if (!wifi_nrf_util_ether_addr_equal(fmac_dev_ctx->tx_config.peers[i].ra_addr,
+		if (!wifi_nrf_util_ether_addr_equal(def_dev_ctx->tx_config.peers[i].ra_addr,
 						    mac_addr)) {
-			vif_index = fmac_dev_ctx->tx_config.peers[i].if_idx;
+			vif_index = def_dev_ctx->tx_config.peers[i].if_idx;
 			break;
 		}
 	}
@@ -350,4 +354,14 @@ bool wifi_nrf_util_is_arr_zero(unsigned char *arr,
 	}
 
 	return true;
+}
+
+void *wifi_fmac_priv(struct wifi_nrf_fmac_priv *def)
+{
+	return &def->priv;
+}
+
+void *wifi_dev_priv(struct wifi_nrf_fmac_dev_ctx *def)
+{
+	return &def->priv;
 }

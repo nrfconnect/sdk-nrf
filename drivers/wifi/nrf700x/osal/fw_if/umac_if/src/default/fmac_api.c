@@ -28,9 +28,12 @@
 unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
 	unsigned char i = 0;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	for (i = 0; i < MAX_NUM_VIFS; i++) {
-		if (fmac_dev_ctx->vif_ctx[i] == NULL) {
+		if (def_dev_ctx->vif_ctx[i] == NULL) {
 			break;
 		}
 	}
@@ -43,19 +46,24 @@ unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
 static enum wifi_nrf_status wifi_nrf_fmac_init_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned int size = 0;
 
 	fpriv = fmac_dev_ctx->fpriv;
 
-	size = (fpriv->num_tx_tokens *
-		fpriv->data_config.max_tx_aggregation *
+	def_priv = wifi_fmac_priv(fpriv);
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
+	size = (def_priv->num_tx_tokens *
+		def_priv->data_config.max_tx_aggregation *
 		sizeof(struct wifi_nrf_fmac_buf_map_info));
 
-	fmac_dev_ctx->tx_buf_info = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+	def_dev_ctx->tx_buf_info = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
 							     size);
 
-	if (!fmac_dev_ctx->tx_buf_info) {
+	if (!def_dev_ctx->tx_buf_info) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No space for TX buf info\n",
 				      __func__);
@@ -72,13 +80,16 @@ out:
 static void wifi_nrf_fmac_deinit_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	fpriv = fmac_dev_ctx->fpriv;
 
 	tx_deinit(fmac_dev_ctx);
 
 	wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-			       fmac_dev_ctx->tx_buf_info);
+			       def_dev_ctx->tx_buf_info);
 }
 
 #endif /* CONFIG_NRF700X_DATA_TX */
@@ -86,25 +97,29 @@ static void wifi_nrf_fmac_deinit_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 static enum wifi_nrf_status wifi_nrf_fmac_init_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned int size = 0;
 	unsigned int desc_id = 0;
 
 	fpriv = fmac_dev_ctx->fpriv;
+	def_priv = wifi_fmac_priv(fpriv);
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	size = (fpriv->num_rx_bufs * sizeof(struct wifi_nrf_fmac_buf_map_info));
+	size = (def_priv->num_rx_bufs * sizeof(struct wifi_nrf_fmac_buf_map_info));
 
-	fmac_dev_ctx->rx_buf_info = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+	def_dev_ctx->rx_buf_info = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
 							     size);
 
-	if (!fmac_dev_ctx->rx_buf_info) {
+	if (!def_dev_ctx->rx_buf_info) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No space for RX buf info\n",
 				      __func__);
 		goto out;
 	}
 
-	for (desc_id = 0; desc_id < fmac_dev_ctx->fpriv->num_rx_bufs; desc_id++) {
+	for (desc_id = 0; desc_id < def_priv->num_rx_bufs; desc_id++) {
 		status = wifi_nrf_fmac_rx_cmd_send(fmac_dev_ctx,
 						   WIFI_NRF_FMAC_RX_CMD_TYPE_INIT,
 						   desc_id);
@@ -118,9 +133,9 @@ static enum wifi_nrf_status wifi_nrf_fmac_init_rx(struct wifi_nrf_fmac_dev_ctx *
 		}
 	}
 #ifdef CONFIG_NRF700X_RX_WQ_ENABLED
-	fmac_dev_ctx->rx_tasklet = wifi_nrf_osal_tasklet_alloc(fmac_dev_ctx->fpriv->opriv,
+	def_dev_ctx->rx_tasklet = wifi_nrf_osal_tasklet_alloc(fmac_dev_ctx->fpriv->opriv,
 							       WIFI_NRF_TASKLET_TYPE_RX);
-	if (!fmac_dev_ctx->rx_tasklet) {
+	if (!def_dev_ctx->rx_tasklet) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No space for RX tasklet\n",
 				      __func__);
@@ -128,8 +143,8 @@ static enum wifi_nrf_status wifi_nrf_fmac_init_rx(struct wifi_nrf_fmac_dev_ctx *
 		goto out;
 	}
 
-	fmac_dev_ctx->rx_tasklet_event_q = wifi_nrf_utils_q_alloc(fpriv->opriv);
-	if (!fmac_dev_ctx->rx_tasklet_event_q) {
+	def_dev_ctx->rx_tasklet_event_q = wifi_nrf_utils_q_alloc(fpriv->opriv);
+	if (!def_dev_ctx->rx_tasklet_event_q) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: No space for RX tasklet event queue\n",
 				      __func__);
@@ -138,7 +153,7 @@ static enum wifi_nrf_status wifi_nrf_fmac_init_rx(struct wifi_nrf_fmac_dev_ctx *
 	}
 
 	wifi_nrf_osal_tasklet_init(fmac_dev_ctx->fpriv->opriv,
-				   fmac_dev_ctx->rx_tasklet,
+				   def_dev_ctx->rx_tasklet,
 				   wifi_nrf_fmac_rx_tasklet,
 				   (unsigned long)fmac_dev_ctx);
 #endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
@@ -151,18 +166,22 @@ static enum wifi_nrf_status wifi_nrf_fmac_deinit_rx(struct wifi_nrf_fmac_dev_ctx
 {
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 	unsigned int desc_id = 0;
 
 	fpriv = fmac_dev_ctx->fpriv;
+	def_priv = wifi_fmac_priv(fpriv);
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 #ifdef CONFIG_NRF700X_RX_WQ_ENABLED
 	wifi_nrf_osal_tasklet_free(fmac_dev_ctx->fpriv->opriv,
-				     fmac_dev_ctx->rx_tasklet);
+				     def_dev_ctx->rx_tasklet);
 	wifi_nrf_utils_q_free(fpriv->opriv,
-			      fmac_dev_ctx->rx_tasklet_event_q);
+			      def_dev_ctx->rx_tasklet_event_q);
 #endif /* CONFIG_NRF700X_RX_WQ_ENABLED */
 
-	for (desc_id = 0; desc_id < fpriv->num_rx_bufs; desc_id++) {
+	for (desc_id = 0; desc_id < def_priv->num_rx_bufs; desc_id++) {
 		status = wifi_nrf_fmac_rx_cmd_send(fmac_dev_ctx,
 						   WIFI_NRF_FMAC_RX_CMD_TYPE_DEINIT,
 						   desc_id);
@@ -177,9 +196,9 @@ static enum wifi_nrf_status wifi_nrf_fmac_deinit_rx(struct wifi_nrf_fmac_dev_ctx
 	}
 
 	wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
-			       fmac_dev_ctx->rx_buf_info);
+			       def_dev_ctx->rx_buf_info);
 
-	fmac_dev_ctx->rx_buf_info = NULL;
+	def_dev_ctx->rx_buf_info = NULL;
 out:
 	return status;
 }
@@ -197,6 +216,9 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 {
 	unsigned long start_time_us = 0;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 #ifdef CONFIG_NRF700X_DATA_TX
 	status = wifi_nrf_fmac_init_tx(fmac_dev_ctx);
@@ -224,7 +246,7 @@ static enum wifi_nrf_status wifi_nrf_fmac_fw_init(struct wifi_nrf_fmac_dev_ctx *
 	status = umac_cmd_init(fmac_dev_ctx,
 			       rf_params,
 			       rf_params_valid,
-			       &fmac_dev_ctx->fpriv->data_config,
+			       &def_priv->data_config,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 			       sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
@@ -425,13 +447,13 @@ void wifi_nrf_fmac_dev_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx)
 	wifi_nrf_fmac_fw_deinit(fmac_dev_ctx);
 }
 
-
 struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params *data_config,
 					      struct rx_buf_pool_params *rx_buf_pools,
 					      struct wifi_nrf_fmac_callbk_fns *callbk_fns)
 {
 	struct wifi_nrf_osal_priv *opriv = NULL;
 	struct wifi_nrf_fmac_priv *fpriv = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 	struct wifi_nrf_hal_cfg_params hal_cfg_params;
 	unsigned int pool_idx = 0;
 	unsigned int desc = 0;
@@ -443,7 +465,7 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 	}
 
 	fpriv = wifi_nrf_osal_mem_zalloc(opriv,
-					 sizeof(*fpriv));
+					 sizeof(*fpriv) + sizeof(*def_priv));
 
 	if (!fpriv) {
 		wifi_nrf_osal_log_err(opriv,
@@ -451,8 +473,9 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 				      __func__);
 		goto out;
 	}
-
 	fpriv->opriv = opriv;
+
+	def_priv = wifi_fmac_priv(fpriv);
 
 	wifi_nrf_osal_mem_set(opriv,
 			      &hal_cfg_params,
@@ -460,45 +483,45 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 			      sizeof(hal_cfg_params));
 
 	wifi_nrf_osal_mem_cpy(opriv,
-			      &fpriv->callbk_fns,
+			      &def_priv->callbk_fns,
 			      callbk_fns,
-			      sizeof(fpriv->callbk_fns));
+			      sizeof(def_priv->callbk_fns));
 
 	wifi_nrf_osal_mem_cpy(opriv,
-			      &fpriv->data_config,
+			      &def_priv->data_config,
 			      data_config,
-			      sizeof(fpriv->data_config));
+			      sizeof(def_priv->data_config));
 
 #ifdef CONFIG_NRF700X_DATA_TX
-	fpriv->num_tx_tokens = CONFIG_NRF700X_MAX_TX_TOKENS;
-	fpriv->num_tx_tokens_per_ac = (fpriv->num_tx_tokens / WIFI_NRF_FMAC_AC_MAX);
-	fpriv->num_tx_tokens_spare = (fpriv->num_tx_tokens % WIFI_NRF_FMAC_AC_MAX);
+	def_priv->num_tx_tokens = CONFIG_NRF700X_MAX_TX_TOKENS;
+	def_priv->num_tx_tokens_per_ac = (def_priv->num_tx_tokens / WIFI_NRF_FMAC_AC_MAX);
+	def_priv->num_tx_tokens_spare = (def_priv->num_tx_tokens % WIFI_NRF_FMAC_AC_MAX);
 #endif /* CONFIG_NRF700X_DATA_TX */
 	wifi_nrf_osal_mem_cpy(opriv,
-			      fpriv->rx_buf_pools,
+			      def_priv->rx_buf_pools,
 			      rx_buf_pools,
-			      sizeof(fpriv->rx_buf_pools));
+			      sizeof(def_priv->rx_buf_pools));
 
 	for (pool_idx = 0; pool_idx < MAX_NUM_OF_RX_QUEUES; pool_idx++) {
-		fpriv->rx_desc[pool_idx] = desc;
+		def_priv->rx_desc[pool_idx] = desc;
 
-		desc += fpriv->rx_buf_pools[pool_idx].num_bufs;
+		desc += def_priv->rx_buf_pools[pool_idx].num_bufs;
 	}
 
-	fpriv->num_rx_bufs = desc;
+	def_priv->num_rx_bufs = desc;
 
 	hal_cfg_params.rx_buf_headroom_sz = RX_BUF_HEADROOM;
 	hal_cfg_params.tx_buf_headroom_sz = TX_BUF_HEADROOM;
 #ifdef CONFIG_NRF700X_DATA_TX
-	hal_cfg_params.max_tx_frms = (fpriv->num_tx_tokens *
-				      fpriv->data_config.max_tx_aggregation);
+	hal_cfg_params.max_tx_frms = (def_priv->num_tx_tokens *
+				      def_priv->data_config.max_tx_aggregation);
 #endif /* CONFIG_NRF700X_DATA_TX */
 
 	for (pool_idx = 0; pool_idx < MAX_NUM_OF_RX_QUEUES; pool_idx++) {
 		hal_cfg_params.rx_buf_pool[pool_idx].num_bufs =
-			fpriv->rx_buf_pools[pool_idx].num_bufs;
+			def_priv->rx_buf_pools[pool_idx].num_bufs;
 		hal_cfg_params.rx_buf_pool[pool_idx].buf_sz =
-			fpriv->rx_buf_pools[pool_idx].buf_sz + RX_BUF_HEADROOM;
+			def_priv->rx_buf_pools[pool_idx].buf_sz + RX_BUF_HEADROOM;
 	}
 
 	hal_cfg_params.max_tx_frm_sz = CONFIG_NRF700X_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM;
@@ -517,6 +540,7 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
 		wifi_nrf_osal_mem_free(opriv,
 				       fpriv);
 		fpriv = NULL;
+		def_priv = NULL;
 		wifi_nrf_osal_deinit(opriv);
 		opriv = NULL;
 		goto out;
@@ -547,12 +571,14 @@ enum wifi_nrf_status wifi_nrf_fmac_scan(void *dev_ctx,
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_umac_cmd_scan *scan_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 	int channel_info_len = (sizeof(struct nrf_wifi_channel) *
 				scan_info->scan_params.num_scan_channels);
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	if (fmac_dev_ctx->vif_ctx[if_idx]->if_type == NRF_WIFI_IFTYPE_AP) {
+	if (def_dev_ctx->vif_ctx[if_idx]->if_type == NRF_WIFI_IFTYPE_AP) {
 		wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 				       "%s: Scan operation not supported in AP mode\n",
 				       __func__);
@@ -596,10 +622,12 @@ enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *dev_ctx,
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_umac_cmd_abort_scan *scan_abort_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	if (fmac_dev_ctx->vif_ctx[if_idx]->if_type == NRF_WIFI_IFTYPE_AP) {
+	if (def_dev_ctx->vif_ctx[if_idx]->if_type == NRF_WIFI_IFTYPE_AP) {
 		wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 				       "%s: Scan operation not supported in AP mode\n",
 				       __func__);
@@ -640,10 +668,12 @@ enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *dev_ctx,
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_umac_cmd_get_scan_results *scan_res_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	if (fmac_dev_ctx->vif_ctx[vif_idx]->if_type == NRF_WIFI_IFTYPE_AP) {
+	if (def_dev_ctx->vif_ctx[vif_idx]->if_type == NRF_WIFI_IFTYPE_AP) {
 		wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 				       "%s: Scan operation not supported in AP mode\n",
 				       __func__);
@@ -686,9 +716,11 @@ enum wifi_nrf_status wifi_nrf_fmac_auth(void *dev_ctx,
 	struct nrf_wifi_umac_cmd_auth *auth_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	auth_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
 					    sizeof(*auth_cmd));
@@ -797,11 +829,13 @@ enum wifi_nrf_status wifi_nrf_fmac_assoc(void *dev_ctx,
 	struct nrf_wifi_umac_cmd_assoc *assoc_cmd = NULL;
 	struct nrf_wifi_connect_common_info *connect_common_info = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      vif_ctx->bssid,
@@ -949,11 +983,13 @@ enum wifi_nrf_status wifi_nrf_fmac_add_key(void *dev_ctx,
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct nrf_wifi_umac_cmd_key *key_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
 	int peer_id = -1;
 
 	fmac_dev_ctx = dev_ctx;
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	key_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
 					   sizeof(*key_cmd));
@@ -995,7 +1031,7 @@ enum wifi_nrf_status wifi_nrf_fmac_add_key(void *dev_ctx,
 			goto out;
 		}
 
-		fmac_dev_ctx->tx_config.peers[peer_id].pairwise_cipher = key_info->cipher_suite;
+		def_dev_ctx->tx_config.peers[peer_id].pairwise_cipher = key_info->cipher_suite;
 	} else {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Invalid key type %d\n",
@@ -1029,7 +1065,6 @@ out:
 	return status;
 }
 
-
 enum wifi_nrf_status wifi_nrf_fmac_del_key(void *dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_key_info *key_info,
@@ -1039,8 +1074,10 @@ enum wifi_nrf_status wifi_nrf_fmac_del_key(void *dev_ctx,
 	struct nrf_wifi_umac_cmd_key *key_cmd = NULL;
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	key_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
 					   sizeof(*key_cmd));
@@ -1073,7 +1110,7 @@ enum wifi_nrf_status wifi_nrf_fmac_del_key(void *dev_ctx,
 	key_cmd->key_info.valid_fields |= NRF_WIFI_KEY_IDX_VALID;
 	key_cmd->key_info.valid_fields |= NRF_WIFI_KEY_TYPE_VALID;
 
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	if (key_info->key_type == NRF_WIFI_KEYTYPE_GROUP) {
 		vif_ctx->groupwise_cipher = 0;
@@ -1899,8 +1936,10 @@ enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_d
 					    unsigned char *addr)
 {
 	unsigned char vif_idx = 0;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	vif_idx = wifi_nrf_fmac_vif_idx_get(fmac_dev_ctx);
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	if (vif_idx == MAX_NUM_VIFS) {
 		return WIFI_NRF_STATUS_FAIL;
@@ -1908,7 +1947,7 @@ enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_d
 
 	wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 			      addr,
-			      fmac_dev_ctx->vif_ctx[vif_idx]->mac_addr,
+			      def_dev_ctx->vif_ctx[vif_idx]->mac_addr,
 			      NRF_WIFI_ETH_ADDR_LEN);
 
 	if (((unsigned short)addr[5] + vif_idx) > 0xff) {
@@ -1932,8 +1971,10 @@ unsigned char wifi_nrf_fmac_add_vif(void *dev_ctx,
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
 	unsigned char vif_idx = 0;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	switch (vif_info->iftype) {
 	case NRF_WIFI_IFTYPE_STATION:
@@ -2022,7 +2063,7 @@ unsigned char wifi_nrf_fmac_add_vif(void *dev_ctx,
 
 	}
 
-	fmac_dev_ctx->vif_ctx[vif_idx] = vif_ctx;
+	def_dev_ctx->vif_ctx[vif_idx] = vif_ctx;
 
 	wifi_nrf_fmac_vif_incr_if_type(fmac_dev_ctx,
 				       vif_ctx->if_type);
@@ -2053,10 +2094,12 @@ enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *dev_ctx,
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
 	struct nrf_wifi_umac_cmd_del_vif *del_vif_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	switch (fmac_dev_ctx->vif_ctx[if_idx]->if_type) {
+	switch (def_dev_ctx->vif_ctx[if_idx]->if_type) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
 	case NRF_WIFI_IFTYPE_AP:
@@ -2069,7 +2112,7 @@ enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *dev_ctx,
 		goto out;
 	}
 
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	if (!vif_ctx) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -2195,8 +2238,10 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
 	unsigned int count = RPU_CMD_TIMEOUT_MS;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	chg_vif_state_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
 						     sizeof(*chg_vif_state_cmd));
@@ -2218,7 +2263,7 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 			      vif_info,
 			      sizeof(chg_vif_state_cmd->info));
 
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	vif_ctx->ifflags = false;
 
@@ -2239,11 +2284,11 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *dev_ctx,
 #ifdef CONFIG_NRF700X_AP_MODE
 	if (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP) {
 		if (vif_info->state == 1) {
-			fmac_dev_ctx->tx_config.peers[MAX_PEERS].peer_id = MAX_PEERS;
-			fmac_dev_ctx->tx_config.peers[MAX_PEERS].if_idx = if_idx;
+			def_dev_ctx->tx_config.peers[MAX_PEERS].peer_id = MAX_PEERS;
+			def_dev_ctx->tx_config.peers[MAX_PEERS].if_idx = if_idx;
 		} else if (vif_info->state == 0) {
-			fmac_dev_ctx->tx_config.peers[MAX_PEERS].peer_id = -1;
-			fmac_dev_ctx->tx_config.peers[MAX_PEERS].if_idx = if_idx;
+			def_dev_ctx->tx_config.peers[MAX_PEERS].peer_id = -1;
+			def_dev_ctx->tx_config.peers[MAX_PEERS].if_idx = if_idx;
 		}
 	}
 #endif /* CONFIG_NRF700X_AP_MODE */

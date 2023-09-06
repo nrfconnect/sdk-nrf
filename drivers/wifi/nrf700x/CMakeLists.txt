@@ -72,6 +72,7 @@ zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_RADIO_TEST
 	osal/fw_if/umac_if/src/radio_test/fmac_api.c
+	osal/fw_if/umac_if/src/fmac_util.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_DATA_TX

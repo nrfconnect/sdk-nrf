@@ -22,6 +22,7 @@
 
 #include <util.h>
 #include <fmac_api.h>
+#include "fmac_util.h"
 #include <zephyr_fmac_main.h>
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
@@ -563,15 +564,18 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 	}
 
 #ifdef CONFIG_NRF700X_DATA_TX
-	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token =
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+
+	def_priv = wifi_fmac_priv(rpu_drv_priv_zep.fmac_priv);
+	def_priv->max_ampdu_len_per_token =
 		(RPU_PKTRAM_SIZE - (CONFIG_NRF700X_RX_NUM_BUFS * CONFIG_NRF700X_RX_MAX_DATA_SIZE)) /
 		CONFIG_NRF700X_MAX_TX_TOKENS;
 	/* Align to 4-byte */
-	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token &= ~0x3;
+	def_priv->max_ampdu_len_per_token &= ~0x3;
 
 	/* Alignment overhead for size based coalesce */
-	rpu_drv_priv_zep.fmac_priv->avail_ampdu_len_per_token =
-	rpu_drv_priv_zep.fmac_priv->max_ampdu_len_per_token -
+	def_priv->avail_ampdu_len_per_token =
+	def_priv->max_ampdu_len_per_token -
 		(MAX_PKT_RAM_TX_ALIGN_OVERHEAD * max_tx_aggregation);
 #endif /* CONFIG_NRF700X_DATA_TX */
 

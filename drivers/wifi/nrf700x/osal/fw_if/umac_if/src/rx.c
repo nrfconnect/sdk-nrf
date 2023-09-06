@@ -20,14 +20,19 @@ wifi_nrf_fmac_map_desc_to_pool(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 			       struct wifi_nrf_fmac_rx_pool_map_info *pool_info)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 	unsigned int pool_id = 0;
 
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+
 	for (pool_id = 0; pool_id < MAX_NUM_OF_RX_QUEUES; pool_id++) {
-		if ((desc_id >= fmac_dev_ctx->fpriv->rx_desc[pool_id]) &&
-		    (desc_id < (fmac_dev_ctx->fpriv->rx_desc[pool_id] +
-				fmac_dev_ctx->fpriv->rx_buf_pools[pool_id].num_bufs))) {
+		if ((desc_id >= def_priv->rx_desc[pool_id]) &&
+		    (desc_id < (def_priv->rx_desc[pool_id] +
+				def_priv->rx_buf_pools[pool_id].num_bufs))) {
 			pool_info->pool_id = pool_id;
-			pool_info->buf_id = (desc_id - fmac_dev_ctx->fpriv->rx_desc[pool_id]);
+			pool_info->buf_id = (desc_id - def_priv->rx_desc[pool_id]);
 			status = WIFI_NRF_STATUS_SUCCESS;
 			goto out;
 		}
@@ -45,10 +50,15 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_cmd_send(struct wifi_nrf_fmac_dev_ctx *fma
 	struct wifi_nrf_fmac_buf_map_info *rx_buf_info = NULL;
 	struct host_rpu_rx_buf_info rx_cmd;
 	struct wifi_nrf_fmac_rx_pool_map_info pool_info;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 	unsigned long nwb = 0;
 	unsigned long nwb_data = 0;
 	unsigned long phy_addr = 0;
 	unsigned int buf_len = 0;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 	status = wifi_nrf_fmac_map_desc_to_pool(fmac_dev_ctx,
 						desc_id,
@@ -61,9 +71,9 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_cmd_send(struct wifi_nrf_fmac_dev_ctx *fma
 		goto out;
 	}
 
-	rx_buf_info = &fmac_dev_ctx->rx_buf_info[desc_id];
+	rx_buf_info = &def_dev_ctx->rx_buf_info[desc_id];
 
-	buf_len = fmac_dev_ctx->fpriv->rx_buf_pools[pool_info.pool_id].buf_sz + RX_BUF_HEADROOM;
+	buf_len = def_priv->rx_buf_pools[pool_info.pool_id].buf_sz + RX_BUF_HEADROOM;
 
 	if (cmd_type == WIFI_NRF_FMAC_RX_CMD_TYPE_INIT) {
 		if (rx_buf_info->mapped) {
@@ -169,10 +179,13 @@ void wifi_nrf_fmac_rx_tasklet(void *data)
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = (struct wifi_nrf_fmac_dev_ctx *)data;
 	struct nrf_wifi_rx_buff *config = NULL;
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	config = (struct nrf_wifi_rx_buff *)wifi_nrf_utils_q_dequeue(
 		fmac_dev_ctx->fpriv->opriv,
-		fmac_dev_ctx->rx_tasklet_event_q);
+		def_dev_ctx->rx_tasklet_event_q);
 
 	if (!config) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -214,11 +227,16 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 	unsigned short eth_type = 0;
 	unsigned int size = 0;
 #endif /* CONFIG_NRF700X_STA_MODE */
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 
-	vif_ctx = fmac_dev_ctx->vif_ctx[config->wdev_id];
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+
+	vif_ctx = def_dev_ctx->vif_ctx[config->wdev_id];
 
 #ifdef CONFIG_NRF700X_STA_MODE
-	fmac_dev_ctx->fpriv->callbk_fns.process_rssi_from_rx(vif_ctx->os_vif_ctx,
+	def_priv->callbk_fns.process_rssi_from_rx(vif_ctx->os_vif_ctx,
 							     config->signal);
 #endif /* CONFIG_NRF700X_STA_MODE */
 	num_pkts = config->rx_pkt_cnt;
@@ -227,7 +245,7 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 		desc_id = config->rx_buff_info[i].descriptor_id;
 		pkt_len = config->rx_buff_info[i].rx_pkt_len;
 
-		if (desc_id >= fmac_dev_ctx->fpriv->num_rx_bufs) {
+		if (desc_id >= def_priv->num_rx_bufs) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 					      "%s: Invalid desc_id %d\n",
 					      __func__,
@@ -259,7 +277,7 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 			goto out;
 		}
 
-		rx_buf_info = &fmac_dev_ctx->rx_buf_info[desc_id];
+		rx_buf_info = &def_dev_ctx->rx_buf_info[desc_id];
 		nwb = (void *)rx_buf_info->nwb;
 
 		wifi_nrf_osal_nbuf_data_put(fmac_dev_ctx->fpriv->opriv,
@@ -320,12 +338,12 @@ enum wifi_nrf_status wifi_nrf_fmac_rx_event_process(struct wifi_nrf_fmac_dev_ctx
 				status = WIFI_NRF_STATUS_FAIL;
 				goto out;
 			}
-			fmac_dev_ctx->fpriv->callbk_fns.rx_frm_callbk_fn(vif_ctx->os_vif_ctx,
+			def_priv->callbk_fns.rx_frm_callbk_fn(vif_ctx->os_vif_ctx,
 									 nwb);
 #endif /* CONFIG_NRF700X_STA_MODE */
 		} else if (config->rx_pkt_type == NRF_WIFI_RX_PKT_BCN_PRB_RSP) {
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
-			fmac_dev_ctx->fpriv->callbk_fns.rx_bcn_prb_resp_callbk_fn(
+			def_priv->callbk_fns.rx_bcn_prb_resp_callbk_fn(
 							vif_ctx->os_vif_ctx,
 							nwb,
 							config->frequency,

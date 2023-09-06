@@ -85,6 +85,11 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 	int id = -1;
 	int ac = 0;
 	int desc = 0;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 	if (!fmac_dev_ctx || !config) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -94,7 +99,7 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 	}
 
 	wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
-				    fmac_dev_ctx->tx_config.tx_lock);
+				    def_dev_ctx->tx_config.tx_lock);
 
 	id = wifi_nrf_fmac_peer_get_id(fmac_dev_ctx,
 				       config->mac_addr);
@@ -106,17 +111,17 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 				      config->mac_addr);
 
 		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
-					   fmac_dev_ctx->tx_config.tx_lock);
+					   def_dev_ctx->tx_config.tx_lock);
 
 		goto out;
 	}
 
 
-	peer = &fmac_dev_ctx->tx_config.peers[id];
+	peer = &def_dev_ctx->tx_config.peers[id];
 	peer->ps_state = config->sta_ps_state;
 
 	if (peer->ps_state == NRF_WIFI_CLIENT_ACTIVE) {
-		wakeup_client_q = fmac_dev_ctx->tx_config.wakeup_client_q;
+		wakeup_client_q = def_dev_ctx->tx_config.wakeup_client_q;
 
 		if (wakeup_client_q) {
 			wifi_nrf_utils_q_enqueue(fmac_dev_ctx->fpriv->opriv,
@@ -127,7 +132,7 @@ enum wifi_nrf_status sap_client_update_pmmode(struct wifi_nrf_fmac_dev_ctx *fmac
 		for (ac = WIFI_NRF_FMAC_AC_VO; ac >= 0; --ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);
 
-			if (desc < fmac_dev_ctx->fpriv->num_tx_tokens) {
+			if (desc < def_priv->num_tx_tokens) {
 				tx_pending_process(fmac_dev_ctx, desc, ac);
 			}
 		}

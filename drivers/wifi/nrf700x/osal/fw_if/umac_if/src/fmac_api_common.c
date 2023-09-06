@@ -206,13 +206,18 @@ struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *f
 						    void *os_dev_ctx)
 {
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+#ifndef CONFIG_NRF700X_RADIO_TEST
+	struct wifi_nrf_fmac_dev_ctx_def *fmac_dev_priv = NULL;
+#else
+	struct wifi_nrf_fmac_dev_ctx_rt *fmac_dev_priv = NULL;
+#endif
 
 	if (!fpriv || !os_dev_ctx) {
 		return NULL;
 	}
 
 	fmac_dev_ctx = wifi_nrf_osal_mem_zalloc(fpriv->opriv,
-						sizeof(*fmac_dev_ctx));
+						sizeof(*fmac_dev_ctx) + sizeof(*fmac_dev_priv));
 
 	if (!fmac_dev_ctx) {
 		wifi_nrf_osal_log_err(fpriv->opriv,
@@ -238,7 +243,10 @@ struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *f
 		goto out;
 	}
 #ifdef CONFIG_NRF700X_DATA_TX
-	fpriv->hpriv->cfg_params.max_ampdu_len_per_token = fpriv->max_ampdu_len_per_token;
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+
+	def_priv = wifi_fmac_priv(fpriv);
+	fpriv->hpriv->cfg_params.max_ampdu_len_per_token = def_priv->max_ampdu_len_per_token;
 #endif /* CONFIG_NRF700X_DATA_TX */
 out:
 	return fmac_dev_ctx;
@@ -298,13 +306,17 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 		}
 	}
 
+
 #ifndef CONFIG_NRF700X_RADIO_TEST
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	if ((stats_type == RPU_STATS_TYPE_ALL) ||
 	    (stats_type == RPU_STATS_TYPE_HOST)) {
 		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv,
 				      &stats->host,
-				      &fmac_dev_ctx->host_stats,
-				      sizeof(fmac_dev_ctx->host_stats));
+				      &def_dev_ctx->host_stats,
+				      sizeof(def_dev_ctx->host_stats));
 	}
 #endif
 

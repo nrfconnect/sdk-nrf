@@ -11,15 +11,20 @@
 
 #include "fmac_vif.h"
 #include "host_rpu_umac_if.h"
+#include "fmac_util.h"
 
 
 int wifi_nrf_fmac_vif_check_if_limit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				     int if_type)
 {
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
 	switch (if_type) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-		if (fmac_dev_ctx->num_sta >= MAX_NUM_STAS) {
+		if (def_dev_ctx->num_sta >= MAX_NUM_STAS) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 					      "%s: Maximum STA Interface type exceeded\n",
 					      __func__);
@@ -28,7 +33,7 @@ int wifi_nrf_fmac_vif_check_if_limit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 		break;
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
-		if (fmac_dev_ctx->num_ap >= MAX_NUM_APS) {
+		if (def_dev_ctx->num_ap >= MAX_NUM_APS) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 					      "%s: Maximum AP Interface type exceeded\n",
 					      __func__);
@@ -49,14 +54,18 @@ int wifi_nrf_fmac_vif_check_if_limit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 void wifi_nrf_fmac_vif_incr_if_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				    int if_type)
 {
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
 	switch (if_type) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-		fmac_dev_ctx->num_sta++;
+		def_dev_ctx->num_sta++;
 		break;
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
-		fmac_dev_ctx->num_ap++;
+		def_dev_ctx->num_ap++;
 		break;
 	default:
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -69,14 +78,18 @@ void wifi_nrf_fmac_vif_incr_if_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 void wifi_nrf_fmac_vif_decr_if_type(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				    int if_type)
 {
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
 	switch (if_type) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-		fmac_dev_ctx->num_sta--;
+		def_dev_ctx->num_sta--;
 		break;
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
-		fmac_dev_ctx->num_ap--;
+		def_dev_ctx->num_ap--;
 		break;
 	default:
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -91,14 +104,16 @@ void wifi_nrf_fmac_vif_clear_ctx(void *dev_ctx,
 {
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
 			       vif_ctx);
-	fmac_dev_ctx->vif_ctx[if_idx] = NULL;
+	def_dev_ctx->vif_ctx[if_idx] = NULL;
 }
 
 
@@ -108,10 +123,12 @@ void wifi_nrf_fmac_vif_update_if_type(void *dev_ctx,
 {
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct wifi_nrf_fmac_vif_ctx *vif_ctx = NULL;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	vif_ctx = fmac_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = def_dev_ctx->vif_ctx[if_idx];
 
 	wifi_nrf_fmac_vif_decr_if_type(fmac_dev_ctx,
 				       vif_ctx->if_type);
@@ -125,6 +142,9 @@ void wifi_nrf_fmac_vif_update_if_type(void *dev_ctx,
 unsigned int wifi_nrf_fmac_get_num_vifs(void *dev_ctx)
 {
 	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = dev_ctx;
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	if (!fmac_dev_ctx) {
 		/* Don't return error here, as FMAC might be initialized based
@@ -133,5 +153,5 @@ unsigned int wifi_nrf_fmac_get_num_vifs(void *dev_ctx)
 		return 0;
 	}
 
-	return fmac_dev_ctx->num_sta + fmac_dev_ctx->num_ap;
+	return def_dev_ctx->num_sta + def_dev_ctx->num_ap;
 }
