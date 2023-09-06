@@ -33,3 +33,7 @@ zephyr_library_sources_ifdef(
 zephyr_include_directories_ifdef(
         CONFIG_MEMFAULT_METRICS_EXTRA_DEFS_FILE
         config)
+
+zephyr_include_directories_ifdef(
+        CONFIG_MEMFAULT_PLATFORM_EXTRA_CONFIG_FILE
+        config)
