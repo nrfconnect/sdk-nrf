@@ -26,7 +26,12 @@ static struct k_thread broadcaster_thread;
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 
-#define BUF_ALLOC_TIMEOUT_MS (10)
+#define BUF_ALLOC_TIMEOUT_MS	       (10)
+#define BROADCAST_PERIODIC_ADV_INT_MIN (32)	/* Periodic ADV min interval = 40ms */
+#define BROADCAST_PERIODIC_ADV_INT_MAX (32)	/* Periodic ADV max interval = 40ms */
+#define BROADCAST_PERIODIC_ADV                                                                     \
+	BT_LE_PER_ADV_PARAM(BROADCAST_PERIODIC_ADV_INT_MIN, BROADCAST_PERIODIC_ADV_INT_MAX,        \
+			    BT_LE_PER_ADV_OPT_NONE)
 
 NET_BUF_POOL_FIXED_DEFINE(bis_tx_pool, CONFIG_BIS_ISO_CHAN_COUNT_MAX,
 			  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
@@ -94,15 +99,16 @@ static struct bt_iso_big_create_param big_create_param = {
 	.num_bis = 1,
 	.bis_channels = bis,
 	.interval = 10000, /* in microseconds */
-	.latency = 10, /* in milliseconds */
-	.packing = 0, /* 0 - sequential, 1 - interleaved */
-	.framing = 0, /* 0 - unframed, 1 - framed */
+	.latency = 10,	   /* in milliseconds */
+	.packing = 0,	   /* 0 - sequential, 1 - interleaved */
+	.framing = 0,	   /* 0 - unframed, 1 - framed */
+	.encryption = false,
 };
 
 static struct bt_le_ext_adv *adv;
 static struct bt_iso_big *big;
 static uint32_t iso_send_count;
-static uint8_t iso_data[CONFIG_BT_ISO_TX_MTU] = { 0 };
+static uint8_t iso_data[CONFIG_BT_ISO_TX_MTU] = {0};
 
 static void broadcaster_t(void *arg1, void *arg2, void *arg3)
 {
@@ -226,7 +232,7 @@ int iso_broadcast_src_start(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	/* Set periodic advertising parameters */
-	ret = bt_le_per_adv_set_param(adv, BT_LE_PER_ADV_DEFAULT);
+	ret = bt_le_per_adv_set_param(adv, BROADCAST_PERIODIC_ADV);
 	if (ret) {
 		LOG_ERR("Failed to set periodic advertising parameters"
 			" (ret %d)",
@@ -326,15 +332,15 @@ int iso_broadcast_src_init(void)
 	return 0;
 }
 
-static struct option long_options[] = { { "sdu_size", required_argument, NULL, 's' },
-					{ "phy", required_argument, NULL, 'p' },
-					{ "rtn", required_argument, NULL, 'r' },
-					{ "num_bis:", required_argument, NULL, 'n' },
-					{ "sdu_int_us", required_argument, NULL, 'S' },
-					{ "latency_ms", required_argument, NULL, 'l' },
-					{ "packing", required_argument, NULL, 'P' },
-					{ "framing", required_argument, NULL, 'f' },
-					{ 0, 0, 0, 0 } };
+static struct option long_options[] = {{"sdu_size", required_argument, NULL, 's'},
+				       {"phy", required_argument, NULL, 'p'},
+				       {"rtn", required_argument, NULL, 'r'},
+				       {"num_bis:", required_argument, NULL, 'n'},
+				       {"sdu_int_us", required_argument, NULL, 'S'},
+				       {"latency_ms", required_argument, NULL, 'l'},
+				       {"packing", required_argument, NULL, 'P'},
+				       {"framing", required_argument, NULL, 'f'},
+				       {0, 0, 0, 0}};
 
 static const char short_options[] = "s:p:r:n:S:l:P:f:";
 
