@@ -55,61 +55,6 @@ bool location_utils_is_lte_available(void)
 	return is_active;
 }
 
-int location_utils_modem_params_read(struct location_utils_modem_params_info *modem_params)
-{
-	/* Parsed strings include double quotes */
-	char plmn_str[MODEM_PARAM_STR_MAX_LEN + 1] = { 0 };
-	char tac_str[MODEM_PARAM_STR_MAX_LEN + 1] = { 0 };
-	char cell_id_str[MODEM_PARAM_STR_MAX_LEN + 1] = { 0 };
-	int err = 0;
-
-	__ASSERT_NO_MSG(modem_params != NULL);
-
-	err = nrf_modem_at_scanf(
-		"AT%XMONITOR",
-		"%%XMONITOR: "
-		"%*d"                                 /* <reg_status>: ignored */
-		",%*[^,]"                             /* <full_name>: ignored */
-		",%*[^,]"                             /* <short_name>: ignored */
-		",%"L(MODEM_PARAM_STR_MAX_LEN)"[^,]"  /* <plmn> */
-		",%"L(MODEM_PARAM_STR_MAX_LEN)"[^,]"  /* <tac> */
-		",%*d"                                /* <AcT>: ignored */
-		",%*d"                                /* <band>: ignored */
-		",%"L(MODEM_PARAM_STR_MAX_LEN)"[^,]"  /* <cell_id> */
-		",%d",                                /* <phys_cell_id> */
-		plmn_str, tac_str, cell_id_str, &modem_params->phys_cell_id);
-
-	if (err <= 2) {
-		LOG_ERR("Cannot get modem parameters, err %d", err);
-	} else {
-		/* Indicate success to the caller with zero return value */
-		err = 0;
-
-		/* Read MNC and store as integer. The MNC starts as the fifth character
-		 * in the string, following double quote and three characters long MCC.
-		 */
-		modem_params->mnc = strtol(&plmn_str[4], NULL, 10);
-
-		/* Null-terminated MCC, read and store it. */
-		plmn_str[4] = '\0';
-
-		modem_params->mcc = strtol(plmn_str + 1, NULL, 10);
-
-		/* <tac> */
-		modem_params->tac = strtol(tac_str + 1, NULL, 16);
-
-		/* <cell_id> */
-		modem_params->cell_id = strtol(cell_id_str + 1, NULL, 16);
-
-		LOG_DBG("parsed modem parameters: "
-			"mcc %d, mnc %d, tac %d (string: %s), cell_id %d (string: %s) phys_cell_id %d",
-			modem_params->mcc, modem_params->mnc, modem_params->tac,
-			tac_str, modem_params->cell_id, cell_id_str,
-			modem_params->phys_cell_id);
-	}
-	return err;
-}
-
 #else /* CONFIG_NRF_MODEM_LIB */
 
 bool location_utils_is_lte_available(void)
@@ -117,12 +62,7 @@ bool location_utils_is_lte_available(void)
 	return false;
 }
 
-int location_utils_modem_params_read(struct location_utils_modem_params_info *modem_params)
-{
-	return 0;
-}
-
-#endif /* CONFIG_NRF_MODEM_LIB*/
+#endif /* CONFIG_NRF_MODEM_LIB */
 
 const char *location_utils_nrf_cloud_jwt_generate(void)
 {

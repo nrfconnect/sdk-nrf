@@ -9,24 +9,6 @@
 
 #include <modem/location.h>
 
-/** Modem parameters. */
-struct location_utils_modem_params_info {
-	/** Mobile Country Code. */
-	int mcc;
-
-	/** Mobile Network Code. */
-	int mnc;
-
-	/** E-UTRAN cell ID */
-	uint32_t cell_id;
-
-	/** Tracking area code. */
-	uint32_t tac;
-
-	/** Physical cell ID. */
-	uint16_t phys_cell_id;
-};
-
 /**
  * @brief Check if LTE networking is available.
  *
@@ -37,16 +19,6 @@ struct location_utils_modem_params_info {
  * @retval false     LTE networking is not available.
  */
 bool location_utils_is_lte_available(void);
-
-/**
- * @brief Read modem parameters.
- *
- * @param[out] modem_params Context where parameters are filled.
- *
- * @retval true      If modem parameters were received successfully.
- * @retval false     If modem parameters were not received successfully.
- */
-int location_utils_modem_params_read(struct location_utils_modem_params_info *modem_params);
 
 /**
  * @brief Generate JWT buffer to be used for nRF Cloud REST API use.

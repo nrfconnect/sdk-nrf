@@ -84,11 +84,11 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-int scan_cellular_start(uint8_t cell_count)
+void scan_cellular_start(uint8_t cell_count, bool light_search)
 {
-	struct location_utils_modem_params_info modem_params = { 0 };
 	struct lte_lc_ncellmeas_params ncellmeas_params = {
-		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE,
+		.search_type = light_search ? LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT :
+					      LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE,
 		.gci_count = 0
 	};
 	int err;
@@ -103,26 +103,7 @@ int scan_cellular_start(uint8_t cell_count)
 
 	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 	if (err) {
-		LOG_WRN("Failed to initiate neighbor cell measurements: %d, "
-			"next: fallback to get modem parameters",
-			err);
-
-		/* Doing fallback to get only the mandatory items manually:
-		 * cell id, mcc, mnc and tac
-		 */
-		err = location_utils_modem_params_read(&modem_params);
-		if (err < 0) {
-			LOG_ERR("Could not obtain modem parameters");
-		} else {
-			memset(&scan_cellular_info, 0, sizeof(struct lte_lc_cells_info));
-
-			/* Filling only the mandatory parameters */
-			scan_cellular_info.current_cell.mcc = modem_params.mcc;
-			scan_cellular_info.current_cell.mnc = modem_params.mnc;
-			scan_cellular_info.current_cell.tac = modem_params.tac;
-			scan_cellular_info.current_cell.id = modem_params.cell_id;
-			scan_cellular_info.current_cell.phys_cell_id = modem_params.phys_cell_id;
-		}
+		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
 		goto end;
 	}
 	err = k_sem_take(&scan_cellular_sem_ncellmeas_evt, K_FOREVER);
@@ -160,7 +141,6 @@ int scan_cellular_start(uint8_t cell_count)
 
 end:
 	running = false;
-	return err;
 }
 
 int scan_cellular_cancel(void)
