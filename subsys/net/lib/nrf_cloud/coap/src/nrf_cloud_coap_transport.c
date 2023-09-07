@@ -380,6 +380,7 @@ static K_SEM_DEFINE(cb_sem, 0, 1);
 struct user_cb {
 	coap_client_response_cb_t cb;
 	void *user_data;
+	int result_code;
 };
 
 static void client_callback(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
@@ -387,13 +388,21 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 {
 	struct user_cb *user_cb = (struct user_cb *)user_data;
 
-	LOG_CB_DBG(result_code, offset, len, last_block);
+	user_cb->result_code = result_code;
+	if (result_code >= 0) {
+		LOG_CB_DBG(result_code, offset, len, last_block);
+	} else {
+		LOG_DBG("Error from CoAP client:%d, offset:0x%X, len:0x%X, last_block:%d",
+			result_code, offset, len, last_block);
+	}
 	if (payload && len) {
 		LOG_HEXDUMP_DBG(payload, MIN(len, 96), "payload received");
 	}
 	if (result_code == COAP_RESPONSE_CODE_UNAUTHORIZED) {
 		LOG_ERR("Device not authenticated; reconnection required.");
 		authenticated = false; /* Lost authorization; need to reconnect. */
+	} else if ((result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && len) {
+		LOG_ERR("Unexpected response: %*s", len, payload);
 	}
 	if ((user_cb != NULL) && (user_cb->cb != NULL)) {
 		LOG_DBG("Calling user's callback %p", user_cb->cb);
@@ -488,6 +497,13 @@ static int client_transfer(enum coap_method method,
 			LOG_HEXDUMP_DBG(buf, MIN(64, buf_len), "Sent");
 		}
 		(void)k_sem_take(&cb_sem, K_FOREVER); /* Wait for coap_client to exhaust retries */
+	}
+
+	if (!reliable && !err && (user_cb.result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
+		/* NON transfers usually do not use a callback,
+		 * so make sure a bad result is not ignored.
+		 */
+		err = user_cb.result_code;
 	}
 
 	k_sem_give(&serial_sem);

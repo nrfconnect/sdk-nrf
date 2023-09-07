@@ -645,6 +645,43 @@ int nrf_cloud_error_msg_decode(const char * const buf,
 			       const char * const msg_type,
 			       enum nrf_cloud_error * const err);
 
+/**
+ *  @brief Encode the response to the shadow delta update.
+ *
+ *  A delta update occurs when the shadow's "desired" and "reported" sections do not match.
+ *  The JSON for a delta update contains the actual delta data in a "state" object, along
+ *  with some additional information.
+ *  Example:
+ *     {"version":123,"timestamp":1695404679, "state":{"myData":{"myValue":1}}, ...}
+ *
+ *  The application must inspect the delta and either accept or reject the changes.
+ *
+ *  If accepting, the delta should be passed unmodified into this function as
+ *  the input_obj parameter, with the accept flag set to true.
+ *  Example input_obj:
+ *      "myData":{"myValue":1}
+ *
+ *  If rejecting, the delta should be modified with the correct data and passed
+ *  into this function as the input_obj parameter, with the accept flag set to false.
+ *  Example input_obj:
+ *      "myData":{"myValue":3}
+ *
+ *  A value can be removed from the shadow by setting it to null.
+ *  Example input_obj:
+ *      "myData":{"myValue":null}
+ *  The output parameter can then be sent to nRF Cloud using nrf_cloud_coap_shadow_state_update()
+ *  when using CoAP or nrf_cloud_send() when using MQTT.
+ *
+ *  @param[in]  input_obj  Shadow fragment to encode for sending.
+ *  @param[in]  accept     Flag to indicate whether to accept (place in reported section) or reject
+ *                         (place in desired section).
+ *  @param[out] output     Pointer to and length of a buffer containing the JSON-formatted
+ *                         text to send.
+ */
+int nrf_cloud_shadow_delta_response_encode(cJSON *input_obj,
+					   bool accept,
+					   struct nrf_cloud_data *const output);
+
 /** @} */
 
 #ifdef __cplusplus

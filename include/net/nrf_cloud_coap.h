@@ -278,6 +278,19 @@ int nrf_cloud_coap_shadow_device_status_update(const struct nrf_cloud_device_sta
 int nrf_cloud_coap_shadow_service_info_update(const struct nrf_cloud_svc_info * const svc_inf);
 
 /**
+ * @brief Process any elements of the shadow relevant to this library.
+ *
+ * One such element is the control section, which specifies the log level and turns
+ * alerts on and off.
+ *
+ * @param[in] in_data A pointer to a structure with the length and a pointer to the delta received.
+ *
+ * @return 0 if the request succeeded, a positive value indicating a CoAP result code,
+ * or a negative error number.
+ */
+int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data);
+
+/**
  * @brief Send an nRF Cloud object
  *
  * This only supports sending of the CoAP CBOR or JSON type or a pre-encoded CBOR buffer.
