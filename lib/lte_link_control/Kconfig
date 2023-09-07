@@ -5,7 +5,7 @@
 #
 
 menuconfig LTE_LINK_CONTROL
-	bool "nRF91 LTE Link control library"
+	bool "LTE link control library"
 	select AT_CMD_PARSER
 	select AT_MONITOR
 
@@ -16,11 +16,10 @@ config LTE_AUTO_INIT_AND_CONNECT
 	bool "Auto Initialize and Connect for the LTE link [DEPRECATED]"
 	default y if NRF_MODEM_LIB_SYS_INIT
 	help
-		Turn on to make the LTE Link Controller to
-		automatically initialize and connect the modem
-		before the application starts.
-		This Kconfig option is deprecated. Instead, the application should call
-		lte_lc_init() and lte_lc_connect().
+	  Turn on to make the LTE link control to automatically initialize and connect the modem
+	  before the application starts.
+	  This Kconfig option is deprecated. Instead, the application should call
+	  lte_lc_init() and lte_lc_connect().
 
 config LTE_SHELL
 	bool "Enable LTE shell commands"
@@ -28,123 +27,123 @@ config LTE_SHELL
 	depends on SHELL
 
 config LTE_LOCK_BANDS
-	bool "Enable LTE bands lock"
+	bool "Enable LTE band lock"
 	help
-		Enable LTE band locks. Bands not enabled in LTE_LOCK_BAND_MASK
-		cannot be used when this setting is enabled.
+	  Enable LTE band lock. Bands not enabled in LTE_LOCK_BAND_MASK
+	  are not used when this setting is enabled.
 
 if LTE_LOCK_BANDS
 config LTE_LOCK_BAND_MASK
-	string "Band lock mask bit string"
+	string "LTE band lock mask bit string"
 	default "10000001000000001100"
 	help
-		Bit string of enabled bands. LSB is band 1. Leading zeroes
-		can be omitted. The maximum length is 88 characters.
+	  Bit string of enabled bands. LSB is band 1. Leading zeroes
+	  can be omitted. The maximum length is 88 characters.
 endif # LTE_LOCK_BANDS
 
 config LTE_LOCK_PLMN
 	bool "Enable LTE PLMN lock"
 	help
-		Enable PLMN locks for network selection.
+	  Enable PLMN lock for network selection.
 
 if LTE_LOCK_PLMN
 config LTE_LOCK_PLMN_STRING
-	string "PLMN string"
+	string "LTE PLMN lock string"
 	default "00101"
 	help
-		Mobile Country Code (MCC) and Mobile Network Code (MNC) values.
-		Only numeric string formats supported.
+	  Mobile Country Code (MCC) and Mobile Network Code (MNC) values.
+	  Only numeric string format supported.
 endif # LTE_LOCK_PLMN
 
 config LTE_UNLOCK_PLMN
 	bool "Disable LTE PLMN lock"
 	depends on !LTE_LOCK_PLMN
 	help
-		Disable PLMN locks for network selection.
+	  Disable PLMN lock for network selection.
 
 config LTE_PSM_REQ
-	bool "Enable requesting use of PSM"
+	bool "Enable PSM request"
 	help
-		Enable request for use of PSM using AT+CPSMS.
-		If this option is set the link controller will automatically request PSM when
-		the modem is initialized. This will cause the modem to include a PSM request in
-		every subsequent LTE attach packet.
+	  Enable request for use of PSM using AT+CPSMS.
+	  If this option is set the library will automatically request PSM when
+	  the modem is initialized. This will cause the modem to include a PSM request in
+	  every subsequent LTE attach request.
 
 config LTE_PSM_REQ_RPTAU
-	string "PSM setting requested periodic TAU"
+	string "Requested periodic TAU for PSM"
 	default "00000011"
 	help
-		Power saving mode setting for requested periodic TAU.
-		See 3GPP 27.007 Ch. 7.38.
-		And 3GPP 24.008 Ch. 10.5.7.4a for data format.
+	  Power saving mode setting for requested periodic TAU.
+	  See 3GPP 27.007 Ch. 7.38.
+	  And 3GPP 24.008 Ch. 10.5.7.4a for data format.
 
 config LTE_PSM_REQ_RAT
-	string "PSM setting requested active time"
+	string "Requested active time for PSM"
 	default "00100001"
 	help
-		Power saving mode setting for requested active time.
-		See 3GPP 27.007 Ch. 7.38.
-		And 3GPP 24.008 Ch. 10.5.7.3 for data format.
+	  Power saving mode setting for requested active time.
+	  See 3GPP 27.007 Ch. 7.38.
+	  And 3GPP 24.008 Ch. 10.5.7.3 for data format.
 
 config LTE_EDRX_REQ
-	bool "Enable requesting use of eDRX"
+	bool "Enable eDRX request"
 	help
-		Enable request for use of eDRX using AT+CEDRXS.
-		For reference, see 3GPP 27.007 Ch. 7.40.
+	  Enable request for use of eDRX using AT+CEDRXS.
+	  For reference, see 3GPP 27.007 Ch. 7.40.
 
 config LTE_EDRX_REQ_VALUE_LTE_M
 	string "Requested eDRX value for LTE-M"
 	default "1001"
 	help
-		Sets the eDRX value to request when LTE-M is used.
-		The format is half a byte in a four-bit format.
-		The eDRX value refers to bit 4 to 1 of octet 3 of the
-		Extended DRX parameters information element.
-		See 3GPP TS 24.008, subclause 10.5.5.32.
-		The value 1001 corresponds to 163.84 seconds.
+	  Sets the eDRX value to be requested when LTE-M is used.
+	  The format is half a byte in a four-bit format.
+	  The eDRX value refers to bit 4 to 1 of octet 3 of the
+	  Extended DRX parameters information element.
+	  See 3GPP TS 24.008, subclause 10.5.5.32.
+	  The value 1001 corresponds to 163.84 seconds.
 
 config LTE_EDRX_REQ_VALUE_NBIOT
 	string "Requested eDRX value for NB-IoT"
 	default "1001"
 	help
-		Sets the eDRX value to request when NB-IoT is used.
-		The format is half a byte in a four-bit format.
-		The eDRX value refers to bit 4 to 1 of octet 3 of the
-		Extended DRX parameters information element.
-		See 3GPP TS 24.008, subclause 10.5.5.32.
-		The value 1001 corresponds to 163.84 seconds.
+	  Sets the eDRX value to be requested when NB-IoT is used.
+	  The format is half a byte in a four-bit format.
+	  The eDRX value refers to bit 4 to 1 of octet 3 of the
+	  Extended DRX parameters information element.
+	  See 3GPP TS 24.008, subclause 10.5.5.32.
+	  The value 1001 corresponds to 163.84 seconds.
 
 config LTE_PTW_VALUE_LTE_M
 	string "Requested PTW value for LTE-M"
 	help
-		Sets the Paging Time Window value to be requested when enabling
-		eDRX. The value will apply to LTE-M.
-		The format is a string with half a byte in 4-bit format,
-		corresponding to bits 8 to 5 in octet 3 of eDRX information
-		element	according to 10.5.5.32 of 3GPP TS 24.008.
-		Requesting a specific PTW configuration should be done with
-		caution. The requested value must be compliant with the eDRX
-		value that is configured, and it's usually best to let the modem
-		use default PTW values.
+	  Sets the Paging Time Window value to be requested when enabling
+	  eDRX. The value applies to LTE-M.
+	  The format is a string with half a byte in 4-bit format,
+	  corresponding to bits 8 to 5 in octet 3 of eDRX information
+	  element according to 10.5.5.32 of 3GPP TS 24.008.
+	  Requesting a specific PTW configuration should be done with
+	  caution. The requested value must be compliant with the eDRX
+	  value that is configured, and it's usually best to let the modem
+	  use default PTW values.
 
 config LTE_PTW_VALUE_NBIOT
 	string "Requested PTW value for NB-IoT"
 	help
-		Sets the Paging Time Window value to be requested when enabling
-		eDRX. The value will apply to NB-IoT.
-		The format is a string with half a byte in 4-bit format,
-		corresponding to bits 8 to 5 in octet 3 of eDRX information
-		element	according to 10.5.5.32 of 3GPP TS 24.008.
-		Requesting a specific PTW configuration should be done with
-		caution. The requested value must be compliant with the eDRX
-		value that is configured, and it's usually best to let the modem
-		use default PTW values.
+	  Sets the Paging Time Window value to be requested when enabling
+	  eDRX. The value applies to NB-IoT.
+	  The format is a string with half a byte in 4-bit format,
+	  corresponding to bits 8 to 5 in octet 3 of eDRX information
+	  element according to 10.5.5.32 of 3GPP TS 24.008.
+	  Requesting a specific PTW configuration should be done with
+	  caution. The requested value must be compliant with the eDRX
+	  value that is configured, and it's usually best to let the modem
+	  use default PTW values.
 
 choice LTE_NETWORK_MODE
 	prompt "Select network mode"
 	default LTE_NETWORK_MODE_LTE_M_GPS
 	help
-		Select the modem system mode.
+	  Select the modem system mode.
 
 config LTE_NETWORK_DEFAULT
 	bool "Use default"
@@ -234,97 +233,98 @@ config LTE_RAI_REQ_VALUE
 	string "Requested RAI value"
 	default "0"
 	help
-		Sets Release Assistance Indication. Allowed values
-		are "0", "3" and "4" signifying disabled,
-		control plane one response, and control plane no response,
-		respectively. For reference see 3GPP 24.301 Ch. 9.9.4.25.
+	  Sets Release Assistance Indication. Allowed values
+	  are "0", "3" and "4" signifying disabled,
+	  control plane one response, and control plane no response,
+	  respectively. For reference see 3GPP 24.301 Ch. 9.9.4.25.
 
 config LTE_NETWORK_USE_FALLBACK
 	bool "Use fallback network mode if selected mode fails"
 	default y if !(LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)
 	help
-		When enabled, the network mode will be switched to the other
-		available if the preferred fails to establish connection within
-		specified timeout.
-		If LTE-M is selected as the network mode, NB-IoT will be the
-		fallback mode and vice versa.
-		Fallback should not be enabled if both LTE-M and NB-IoT are enabled.
-		Instead, the LTE preference configuration should be used to
-		instruct the modem on which network to use. This is more efficient
-		both in terms of time to connection establishment and energy
-		consumption.
+	  When enabled, the network mode will be switched to the other
+	  available if the preferred fails to establish connection within
+	  specified timeout.
+	  If LTE-M is selected as the network mode, NB-IoT will be the
+	  fallback mode and vice versa.
+	  Fallback should not be enabled if both LTE-M and NB-IoT are enabled.
+	  Instead, the LTE preference configuration should be used to
+	  instruct the modem on which network to use. This is more efficient
+	  both in terms of time to connection establishment and energy
+	  consumption.
 
 config LTE_NETWORK_TIMEOUT
-	int "Time period [s] to attempt establishing connection"
+	int "Time period to attempt establishing connection"
 	default 600
 	help
-		Time period in seconds to attempt establishing an LTE link, before timing
-		out. If fallback mode is enabled, the fallback mode will also be
-		tried for the same period.
+	  Time period in seconds to attempt establishing an LTE link, before timing
+	  out. If fallback mode is enabled, the fallback mode will also be
+	  tried for the same period.
 
 config LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS
 	bool "Get notifications prior to Tracking Area Updates"
 	help
-		TAU pre-warning notifications can be used to determine when it is optimal for the
-		application to send user data. If user data is sent prior to the schedueled TAU, the
-		TAU will be sent togheter with the user data, thus saving power and data transfer.
+	  TAU pre-warning notifications can be used to determine when it is optimal for the
+	  application to send user data. If user data is sent prior to the scheduled TAU, the
+	  TAU will be sent together with the user data, thus saving power and data transfer.
 
 config LTE_LC_TAU_PRE_WARNING_TIME_MS
 	int "TAU pre-warning time"
 	range 500 3600000
 	default 5000
 	help
-		Time before a TAU that a pre-warning is to be received.
+	  Time in milliseconds before a TAU that a pre-warning is to be received.
 
 config LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS
 	int "TAU pre-warning threshold"
 	range 10240 3456000000
 	default 1200000
 	help
-		Minimum value of the given T3412 timer that will trigger TAU pre-warnings.
+	  Minimum value of the given T3412 timer in milliseconds that will trigger TAU
+	  pre-warnings.
 
 config LTE_NEIGHBOR_CELLS_MAX
 	int "Max number of neighbor cells"
 	range 1 17
 	default 10
 	help
-		Maximum number of neighbor cells to allocate space for when
-		performing neighbor cell measurements.
-		Increasing the maximum number of neighbor cells requires
-		more heap space.
-		The modem can deliver information for a maximum of 17 neighbor
-		cells, so there's a trade-off between heap requirements and
-		the risk of not being able to parse all neighbor cell information.
+	  Maximum number of neighbor cells to allocate space for when
+	  performing neighbor cell measurements.
+	  Increasing the maximum number of neighbor cells requires
+	  more heap space.
+	  The modem can deliver information for a maximum of 17 neighbor
+	  cells, so there's a trade-off between heap requirements and
+	  the risk of not being able to parse all neighbor cell information.
 
 config LTE_LC_MODEM_SLEEP_NOTIFICATIONS
 	bool "Modem sleep notifications"
 	help
-		If this option is enabled the application will get notifications when the modem
-		enters and exits sleep. The application will also get pre-warning notifications
-		prior to when the modem exits sleep depending on the configured pre-warning time.
+	  If this option is enabled the application will get notifications when the modem
+	  enters and exits sleep. The application will also get pre-warning notifications
+	  prior to when the modem exits sleep depending on the configured pre-warning time.
 
 config LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS
 	int "Modem sleep pre-warning time"
 	range 500 3600000
 	default 5000
 	help
-		Time before modem exits sleep that a pre-warning is to be received.
+	  Time in milliseconds before modem exits sleep that a pre-warning is to be received.
 
 config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
 	int "Modem sleep notifications threshold"
 	range 10240 3456000000
 	default 1200000
 	help
-		Minimum value of the duration of the scheduled modem sleep that triggers a
-		notification.
+	  Minimum value of the duration of the scheduled modem sleep in milliseconds
+	  that triggers a notification.
 
 config LTE_LC_TRACE
 	bool "LTE link control tracing"
 	help
-		Enables tracing of LTE link control events. The tracing differs
-		from regular link controller events in that they only indicate
-		what has happened and has no associated payload.
-		It is intended to be used for debugging purposes.
+	  Enables tracing of LTE link control events. The tracing differs
+	  from regular link control events in that they only indicate
+	  what has happened and has no associated payload.
+	  It is intended to be used for debugging purposes.
 
 module = LTE_LINK_CONTROL
 module-dep = LOG
