@@ -38,6 +38,6 @@ endif()
 if(CONFIG_PSA_ITS_ENCRYPTED)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS
-      -DTFM_ITS_ENCRYPTED=1
+      -DITS_ENCRYPTION=1
   )
 endif()
