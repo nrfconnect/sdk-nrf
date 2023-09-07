@@ -326,6 +326,7 @@
   - "drivers/mpsl/**/*"
   - "drivers/hw_cc310/*"
   - "drivers/wifi/**/*"
+  - "modules/hostap/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/ieee802154/**/*"
   - "subsys/bootloader/**/*"
