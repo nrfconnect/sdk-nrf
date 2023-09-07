@@ -19,7 +19,7 @@ config WIFI_MAC_ADDRESS
 config WIFI_SCAN_BANDS_LIST
 	string "Frequency bands to scan"
 	default "2" if WIFI_SCAN_PROFILE_2_4GHz_ACTIVE || WIFI_SCAN_PROFILE_2_4GHz_PASSIVE
-	default "5" if WIFI_SCAN_PROFILE_5GHz_ACTIVE
+	default "5" if WIFI_SCAN_PROFILE_5GHz_ACTIVE || WIFI_SCAN_PROFILE_5GHz_PASSIVE
 	default ""
 	help
 	  Specifies the frequency bands to scan, as follows:
@@ -62,6 +62,11 @@ config WIFI_SCAN_PROFILE_5GHz_ACTIVE
 	bool "Scan in the 5 GHz band using active scan"
 	help
 	  Enable this profile to scan in the 5 GHz band using active scanning where allowed.
+
+config WIFI_SCAN_PROFILE_5GHz_PASSIVE
+	bool "Scan in the 5 GHz band using passive scan"
+	help
+	  Enable this profile to scan in the 5 GHz band using passive scanning on all channels.
 
 endchoice
 
