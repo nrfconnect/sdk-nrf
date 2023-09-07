@@ -9,7 +9,7 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sample_rate_conv_naive, CONFIG_DATA_FIFO_LOG_LEVEL);
+LOG_MODULE_REGISTER(sample_rate_conv_naive, 4);
 
 int sample_rate_conv_naive(void *input, size_t input_size, uint32_t input_sample_rate, void *output,
 			   size_t *output_size, uint32_t output_sample_rate, uint8_t pcm_bit_depth)
