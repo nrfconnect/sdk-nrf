@@ -970,7 +970,7 @@ cleanup:
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_obj_pgps_request_create(struct nrf_cloud_obj *const obj,
-					  const struct gps_pgps_request * const request)
+				      const struct gps_pgps_request * const request)
 {
 	if (!request || !obj) {
 		return -EINVAL;
@@ -1029,3 +1029,39 @@ cleanup:
 	return err;
 }
 #endif
+
+int nrf_cloud_shadow_delta_response_encode(cJSON *input_obj,
+					   bool accept,
+					   struct nrf_cloud_data *const output)
+{
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(input_obj != NULL);
+
+	char *buffer = NULL;
+	cJSON *root_obj = NULL;
+	cJSON *state_obj = NULL;
+
+	if (input_obj == NULL) {
+		LOG_ERR("No input_obj");
+		return -ESRCH; /* invalid input */
+	}
+
+	root_obj = cJSON_CreateObject();
+	state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
+	if (cJSON_AddItemToObjectCS(state_obj,
+				    accept ? NRF_CLOUD_JSON_KEY_REP : NRF_CLOUD_JSON_KEY_DES,
+				    input_obj)) {
+		buffer = cJSON_PrintUnformatted(root_obj);
+	}
+	cJSON_Delete(root_obj);
+
+	if (buffer == NULL) {
+		return -ENOMEM;
+	}
+
+	LOG_DBG("Response to the delta: %s", buffer);
+	output->ptr = buffer;
+	output->len = strlen(buffer);
+
+	return 0;
+}

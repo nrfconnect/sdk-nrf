@@ -118,11 +118,6 @@ int nrf_cloud_data_endpoint_decode(const struct nrf_cloud_data *input,
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
 			   const bool add_dev_status, struct nrf_cloud_data *output);
 
-/** @brief Search input for config and encode response if necessary. */
-int nrf_cloud_shadow_config_response_encode(struct nrf_cloud_data const *const input,
-					    struct nrf_cloud_data *const output,
-					    bool *const has_config);
-
 /** @brief Parse input for control section, and return contents and status of it. */
 int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
 				    enum nrf_cloud_ctrl_status *status,
@@ -130,7 +125,15 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
 
 /** @brief Encode response that we have accepted a shadow delta. */
 int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *const data,
+					     bool accept,
 					     struct nrf_cloud_data *const output);
+
+/** @brief Parse shadow delta for control section. Act on any changes to logging or alerts.
+ * If needed, generate output JSON to send back to cloud to confirm change.
+ */
+int nrf_cloud_device_control_update(const struct nrf_cloud_data *const in_data,
+				    struct nrf_cloud_data *out_data,
+				    enum nrf_cloud_ctrl_status *status);
 
 /** @brief Encode the device status data into a JSON formatted buffer to be saved to
  * the device shadow.

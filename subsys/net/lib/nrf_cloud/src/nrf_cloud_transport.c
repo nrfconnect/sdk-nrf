@@ -1205,8 +1205,10 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 
 	publish.message_id = get_message_id(cc_data->message_id);
 
-	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d", publish.message_id,
-		cc_data->opcode, cc_data->data.len);
+	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d, topic: %*s", publish.message_id,
+		cc_data->opcode, cc_data->data.len,
+		publish.message.topic.topic.size,
+		publish.message.topic.topic.utf8);
 
 	int err = mqtt_publish(&nct.client, &publish);
 
