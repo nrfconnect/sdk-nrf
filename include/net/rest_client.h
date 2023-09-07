@@ -21,6 +21,10 @@
 #include <zephyr/net/http/client.h>
 #include <zephyr/net/http/parser.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @brief TLS is not used. */
 #define REST_CLIENT_SEC_TAG_NO_SEC -1
 
@@ -159,6 +163,10 @@ int rest_client_request(struct rest_client_req_context *req_ctx,
  * @param[in,out] req_ctx Request context for communicating with REST client API.
  */
 void rest_client_request_defaults_set(struct rest_client_req_context *req_ctx);
+
+#ifdef __cplusplus
+}
+#endif
 
 /** @} */
 
