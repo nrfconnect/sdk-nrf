@@ -21,7 +21,7 @@ config THREAD_NAME
 	default y
 
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
-	default n
+	default !BT_LL_ACS_NRF53
 
 # Workaround to not use fatal_error.c in NCS. Note that the system may still
 # reset on error depending on the build configuraion
