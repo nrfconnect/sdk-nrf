@@ -72,7 +72,7 @@ It is optimized for low power operation on the ``nrf9160dk_nrf9160_ns`` build ta
 Verify idle current due to other peripherals
 ********************************************
 
-Peripherals other than the serial ports can cause elevated currents.
+Peripherals other than the serial ports can also cause elevated currents.
 
 The power management of the Nordic SoCs automatically switches in and out the resources that are needed by the active peripherals.
 Peripherals that need a high frequency clock like UART, PWM, PDM or high frequency timers will show similar currents if enabled.
