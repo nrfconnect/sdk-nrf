@@ -10,11 +10,12 @@ config SLM_CARRIER
 
 if SLM_CARRIER
 
-config SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN
+config SLM_CARRIER_APP_DATA_BUFFER_LEN
 	int "Size of the buffer for sending application data"
 	default 512
 	help
-	  Specifies maximum application data size to be sent through the
-	  "UL data" resource of the App Data Container object.
+	  Specifies maximum application data size to be sent to the server
+	  through the App Data Container, the Binary App Data Container or
+	  the Event Log objects.
 
 endif # SLM_CARRIER

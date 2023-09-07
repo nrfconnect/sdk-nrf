@@ -49,7 +49,7 @@ extern "C" {
 #define LWM2M_CARRIER_EVENT_REBOOT	   9
 /** Modem domain event received. */
 #define LWM2M_CARRIER_EVENT_MODEM_DOMAIN   10
-/** Data received through the App Data Container object */
+/** Data received through the App Data Container object or the Binary App Data Container object. */
 #define LWM2M_CARRIER_EVENT_APP_DATA       11
 /** Request to initialize the modem. */
 #define LWM2M_CARRIER_EVENT_MODEM_INIT     12
@@ -109,6 +109,16 @@ typedef struct {
 typedef uint32_t lwm2m_carrier_event_modem_domain_t;
 
 /**
+ * @name LwM2M carrier library app data container objects.
+ * @{
+ */
+/** Binary App Data Container Object. */
+#define LWM2M_CARRIER_OBJECT_BINARY_APP_DATA_CONTAINER 19
+/** App Data Container Object. */
+#define LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER        10250
+/** @} */
+
+/**
  * @brief LwM2M carrier library app data event structure.
  */
 typedef struct {
@@ -116,6 +126,13 @@ typedef struct {
 	const uint8_t *buffer;
 	/** Number of bytes received. */
 	size_t buffer_len;
+	/** Path to the resource or resource instance that received the data. The first value must
+	 *  be either \c LWM2M_CARRIER_OBJECT_BINARY_APP_DATA_CONTAINER or
+	 *  \c LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER
+	 */
+	uint16_t path[4];
+	/** Length of the path. */
+	uint8_t path_len;
 } lwm2m_carrier_event_app_data_t;
 
 /**
@@ -312,7 +329,7 @@ typedef struct {
  */
 #define LWM2M_CARRIER_GENERIC		0x00000001
 #define LWM2M_CARRIER_VERIZON		0x00000002
-#define LWM2M_CARRIER_ATT		0x00000004
+#define LWM2M_CARRIER_ATT		0x00000004  /* AT&T specific support is deprecated. */
 #define LWM2M_CARRIER_LG_UPLUS		0x00000008
 #define LWM2M_CARRIER_T_MOBILE		0x00000010
 #define LWM2M_CARRIER_SOFTBANK		0x00000020
@@ -322,7 +339,9 @@ typedef struct {
  * @brief Structure holding LwM2M carrier library initialization parameters.
  */
 typedef struct {
-	/** Configure enabled carriers. All carriers are enabled when no bits are set. */
+	/** Configure enabled carriers. All carriers except AT&T are enabled when no bits are set
+	 *  or if all bits are set.
+	 */
 	uint32_t carriers_enabled;
 	/** Disable bootstrap from Smartcard mode when this is enabled by the carrier. */
 	bool disable_bootstrap_from_smartcard;
@@ -727,14 +746,39 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
 			       float uncertainty_v);
 
 /**
- * @brief Schedule application data to be sent using the App Data Container object.
+ * @brief Schedule application data to be set using either the Binary App Data Container object
+ *        or the App Data Container object.
  *
- * @details This function sets the "UL data" (uplink) resource of this object to the desired value,
- *          which can then be read by, or reported to, the LwM2M server.
+ * @details This function sets the resource given by the path to the desired value. The resource
+ *          can then be read by, or reported to, the LwM2M server.
  *
- * @note The App Data Container object will not be initialized for every carrier.
+ * @note Both the Binary App Data Container object and the App Data Container object will not be
+ *       initialized for every carrier.
  *
- * @param[in]  buffer     Buffer containing the application data to be sent.
+ * @param[in]  path       The path of the resource or resource instance to be sent to. The path
+ *                        contains the object id, object instance id, resource id and resource
+ *                        instance id in order. The resource instance id is not needed for the
+ *                        App Data Container object.
+ * @param[in]  path_len   The length of the path. Must be 3 or 4.
+ * @param[in]  buffer     Buffer containing the application data to be sent. If this is set to null
+ *                        the resource instance is deleted instead when using the Binary App Data
+ *                        Container object.
+ * @param[in]  buffer_len Number of bytes in the buffer.
+ *
+ * @retval  0      If the resource has been set successfully.
+ * @retval -ENOENT If the object is not yet initialized.
+ * @retval -EINVAL If at least one input argument is incorrect.
+ * @retval -ENOMEM If there is not enough memory to copy the buffer contents to the resource model.
+ */
+int lwm2m_carrier_app_data_send(const uint16_t *path, uint16_t path_len, const uint8_t *buffer,
+				size_t buffer_len);
+
+/**
+ * @brief Send log data using the Event Log object.
+ *
+ * @note The Event Log object will not be initialized for every carrier.
+ *
+ * @param[in]  buffer     Buffer containing the log data to be set.
  * @param[in]  buffer_len Number of bytes in the buffer.
  *
  * @retval  0      If the resource has been set successfully.
@@ -742,7 +786,7 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
  * @retval -EINVAL If the buffer is NULL.
  * @retval -ENOMEM If there is not enough memory to copy the buffer contents to the resource model.
  */
-int lwm2m_carrier_app_data_send(const uint8_t *buffer, size_t buffer_len);
+int lwm2m_carrier_log_data_set(const uint8_t *buffer, size_t buffer_len);
 
 /**
  *

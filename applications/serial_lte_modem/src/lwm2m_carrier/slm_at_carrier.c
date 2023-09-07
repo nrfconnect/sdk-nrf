@@ -35,6 +35,8 @@ enum slm_carrier_operation {
 	CARRIER_OP_DEVICE_UTC_OFFSET,
 	CARRIER_OP_DEVICE_UTC_TIME,
 	CARRIER_OP_DEVICE_VOLTAGE,
+	/* Carrier Event Log Operation */
+	CARRIER_OP_EVENT_LOG_LOG_DATA,
 	/* Carrier Location Operation */
 	CARRIER_OP_LOCATION_POSITION,
 	CARRIER_OP_LOCATION_VELOCITY,
@@ -72,6 +74,7 @@ static int do_carrier_device_time(void);
 static int do_carrier_device_utc_offset(void);
 static int do_carrier_device_utc_time(void);
 static int do_carrier_device_voltage(void);
+static int do_carrier_event_log_log_data(void);
 static int do_carrier_location_position(void);
 static int do_carrier_location_velocity(void);
 static int do_carrier_portfolio(void);
@@ -95,6 +98,7 @@ static struct carrier_op_list op_list[CARRIER_OP_MAX] = {
 	{CARRIER_OP_DEVICE_UTC_OFFSET, "utc_offset", do_carrier_device_utc_offset},
 	{CARRIER_OP_DEVICE_UTC_TIME, "utc_time", do_carrier_device_utc_time},
 	{CARRIER_OP_DEVICE_VOLTAGE, "voltage", do_carrier_device_voltage},
+	{CARRIER_OP_EVENT_LOG_LOG_DATA, "log_data", do_carrier_event_log_log_data},
 	{CARRIER_OP_LOCATION_POSITION, "position", do_carrier_location_position},
 	{CARRIER_OP_LOCATION_VELOCITY, "velocity", do_carrier_location_velocity},
 	{CARRIER_OP_PORTFOLIO, "portfolio", do_carrier_portfolio},
@@ -269,7 +273,10 @@ static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, u
 			(void)exit_datamode_handler(-EOVERFLOW);
 			return -EOVERFLOW;
 		}
-		ret = lwm2m_carrier_app_data_send(data, len);
+		uint16_t path[3] = { LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER, 0, 0 };
+		uint8_t path_len = 3;
+
+		ret = lwm2m_carrier_app_data_send(path, path_len, data, len);
 		LOG_INF("datamode send: %d", ret);
 		if (ret < 0) {
 			(void)exit_datamode_handler(ret);
@@ -281,27 +288,67 @@ static int carrier_datamode_callback(uint8_t op, const uint8_t *data, int len, u
 	return ret;
 }
 
-/* AT#XCARRIER="app_data"[,<data>] */
+/* AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>] */
 static int do_carrier_appdata_send(void)
 {
-	int ret;
+	int ret = 0;
 
-	if (at_params_valid_count_get(&slm_at_param_list) == 2) {
+	uint32_t param_count = at_params_valid_count_get(&slm_at_param_list);
+
+	if (param_count == 2) {
 		/* enter data mode */
 		ret = enter_datamode(carrier_datamode_callback);
 		if (ret) {
 			return ret;
 		}
-	} else {
-		char data[CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN] = {0};
-		int size = CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN;
+	} else if (param_count == 3) {
+		char data[CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN] = {0};
+		int size = CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN;
+
+		uint16_t path[3] = { LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER, 0, 0 };
+		uint8_t path_len = 3;
 
 		ret = util_string_get(&slm_at_param_list, 2, data, &size);
 		if (ret) {
 			return ret;
 		}
 
-		ret = lwm2m_carrier_app_data_send(data, size);
+		ret = lwm2m_carrier_app_data_send(path, path_len, data, size);
+	} else if (param_count == 4 || param_count == 5) {
+		uint8_t *data = NULL;
+		char buffer[CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN] = {0};
+		int size = 0;
+
+		uint16_t inst_id;
+		uint16_t res_inst_id;
+
+		ret = at_params_unsigned_short_get(&slm_at_param_list, param_count - 2, &inst_id);
+		if (ret) {
+			return ret;
+		}
+
+		ret = at_params_unsigned_short_get(&slm_at_param_list, param_count - 1,
+						   &res_inst_id);
+		if (ret) {
+			return ret;
+		}
+
+		uint16_t path[4] = { LWM2M_CARRIER_OBJECT_BINARY_APP_DATA_CONTAINER, inst_id, 0,
+				     res_inst_id };
+		uint8_t path_len = 4;
+
+		if (param_count == 5) {
+			size = CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN;
+
+			ret = util_string_get(&slm_at_param_list, 2, buffer, &size);
+			if (ret) {
+				return ret;
+			}
+
+			data = buffer;
+		}
+
+		ret = lwm2m_carrier_app_data_send(path, path_len, data, size);
 	}
 
 	return ret;
@@ -621,6 +668,21 @@ static int do_carrier_device_voltage(void)
 	}
 
 	return lwm2m_carrier_power_source_voltage_set((uint8_t)power_source, voltage);
+}
+
+/* AT#XCARRIER="log_data",<data> */
+static int do_carrier_event_log_log_data(void)
+{
+	char data[CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN] = {0};
+	int size = CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN;
+
+	int ret = util_string_get(&slm_at_param_list, 2, data, &size);
+
+	if (ret) {
+		return ret;
+	}
+
+	return lwm2m_carrier_log_data_set(data, size);
 }
 
 /* AT#XCARRIER="position",<latitude>,<longitude>,<altitude>,<timestamp>,<uncertainty> */

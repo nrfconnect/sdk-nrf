@@ -1211,9 +1211,6 @@
 
 .. _`Verizon's Get certified program`: https://opendevelopment.verizonwireless.com/get-certified
 
-.. _`AT&T's Get network ready program`: https://iotdevices.att.com/networkready.aspx
-.. _`AT&T's IoT Platform`: https://iotdevices.att.com/default.aspx
-
 .. _`T-Mobile's IoT certification program`: https://www.t-mobile.com/business/solutions/iot/device-certification
 
 .. _`LG U+ certification program`: https://iotportal.uplus.co.kr/cnts/web/DEV_PRCS?gIdx=M0003&mIdx=M00031

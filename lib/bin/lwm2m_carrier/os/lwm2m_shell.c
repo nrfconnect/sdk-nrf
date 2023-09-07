@@ -701,30 +701,89 @@ static int cmd_device_memory_free_write(const struct shell *shell, size_t argc, 
 	return 0;
 }
 
-static int cmd_app_data_send(const struct shell *shell, size_t argc, char **argv)
+static int cmd_log_data_send(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc != 2) {
-		shell_print(shell, "%s <hex_string>", argv[0]);
+		shell_print(shell, "%s <data>", argv[0]);
 		return 0;
 	}
 
-	/* Convert hex in place. */
 	int err;
 	size_t len = strlen(argv[1]);
 
-	if (len & 1) {
-		shell_print(shell, "Invalid hex string length");
-		return 0;
-	}
-
-	err = lwm2m_carrier_app_data_send(argv[1], len);
+	err = lwm2m_carrier_log_data_set(argv[1], len);
 
 	switch (err) {
 	case 0:
-		shell_print(shell, "%u bytes scheduled to send", len);
+		shell_print(shell, "Sent log data");
 		break;
 	case -ENOENT:
-		shell_print(shell, "App Data Container not initialized");
+		shell_print(shell, "Event Log not initialized");
+		break;
+	case -EINVAL:
+		shell_print(shell, "Invalid argument");
+		break;
+	case -ENOMEM:
+		shell_print(shell, "Not enough memory");
+		break;
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+static int cmd_app_data_send(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2 || argc > 4) {
+		shell_print(shell, "%s <data> | [<instance_id> <resource_instance_id> [data]]",
+			    argv[0]);
+		shell_print(shell, " The data argument is required if using the App Data "
+			    "Container.");
+		shell_print(shell, " When using the Binary App Data Container it is optional,");
+		shell_print(shell, "   not defining it clears the resource instance.");
+		shell_print(shell, " The instance_id and resource_instance_id arguments are");
+		shell_print(shell, "   only used when using the Binary App Data Container. ");
+		return 0;
+	}
+
+	uint16_t path[4];
+	uint8_t path_len;
+	uint8_t *buffer = NULL;
+	size_t buffer_len = 0;
+
+	if (argc == 2) {
+		/* Using the App Data Container object.*/
+		path[0] = LWM2M_CARRIER_OBJECT_APP_DATA_CONTAINER;
+		path[1] = 0;
+		path[2] = 0;
+		path_len = 3;
+		buffer = argv[1];
+		buffer_len = strlen(argv[1]);
+	} else {
+		/* Using the Binary App Data Container object. */
+		path[0] = LWM2M_CARRIER_OBJECT_BINARY_APP_DATA_CONTAINER;
+		path[1] = (uint16_t)atoi(argv[1]);
+		path[2] = 0;
+		path[3] = (uint16_t)atoi(argv[2]);
+		path_len = 4;
+		if (argc == 4) {
+			buffer = argv[3];
+			buffer_len = strlen(argv[3]);
+		}
+	}
+
+	int err = lwm2m_carrier_app_data_send(path, path_len, buffer, buffer_len);
+
+	switch (err) {
+	case 0:
+		shell_print(shell, "Wrote app data successfully");
+		break;
+	case -ENOENT:
+		shell_print(shell, "Object not initialized or invalid instance");
+		break;
+	case -EINVAL:
+		shell_print(shell, "Invalid resource instance");
 		break;
 	case -ENOMEM:
 		shell_print(shell, "Not enough memory");
@@ -852,6 +911,7 @@ static int cmd_carriers_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2) {
 		shell_print(shell, "%s all", argv[0]);
+		shell_print(shell, "  All carriers except AT&T");
 		shell_print(shell, "%s <id1> <id2> ...", argv[0]);
 		for (int i = 0; i < ARRAY_SIZE(carriers_enabled_map); i++) {
 			shell_print(shell, "  %d = %s", i, carriers_enabled_map[i].name);
@@ -1428,8 +1488,13 @@ static int cmd_settings_print(const struct shell *shell, size_t argc, char **arg
 	return 0;
 }
 
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_event_log,
+		SHELL_CMD(send, NULL, "Send log data using the event log object",
+			  cmd_log_data_send),
+		SHELL_SUBCMD_SET_END);
+
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_app_data,
-		SHELL_CMD(send, NULL, "Send hex data using the app data container object",
+		SHELL_CMD(send, NULL, "Send data using an app data container object",
 			  cmd_app_data_send),
 		SHELL_SUBCMD_SET_END);
 
@@ -1488,6 +1553,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_api,
 			  NULL),
 		SHELL_CMD(device, &sub_carrier_api_device, "Update or retrieve device information",
 			  NULL),
+		SHELL_CMD(event_log, &sub_carrier_event_log, "Event log object operations", NULL),
 		SHELL_CMD(location, &sub_carrier_location, "Location object operations",
 			  NULL),
 		SHELL_CMD(portfolio, &sub_carrier_portfolio, "Portfolio object operations",

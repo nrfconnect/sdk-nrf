@@ -9,6 +9,56 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 3.3.0
+**********************
+
+Release for modem firmware version 1.3.5 and 2.0.0
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 78059         | 17288      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 98024         | 40416      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added the Binary App Data Container object. The object is enabled for the SoftBank subscriber ID :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`, or if the LwM2M carrier library is operating in generic mode :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`.
+
+* Added the Event Log object. The object is enabled for the SoftBank subscriber ID :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`, or if the LwM2M carrier library is operating in generic mode :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`.
+
+* FOTA procedure now only requires a single modem library initialization.
+  For more information see the modem library :ref:`nrf_modem_changelog`.
+
+  * Old successful event flow: :c:member:`LWM2M_CARRIER_EVENT_FOTA_START` > :c:member:`LWM2M_CARRIER_EVENT_LTE_POWER_OFF` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS` > :c:member:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`.
+  * New successful event flow: :c:member:`LWM2M_CARRIER_EVENT_FOTA_START` > :c:member:`LWM2M_CARRIER_EVENT_LTE_POWER_OFF` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS` > :c:member:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`.
+
+AT&T support has been deprecated
+--------------------------------
+
+The application must no longer connect to the AT&T Device Management server.
+Consequently, the LwM2M carrier library is no longer required to certify with AT&T.
+
+* Automatic connection and handling of custom AT&T logic by the LwM2M carrier library is deprecated.
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT` is now to be disabled by default, and might be removed in a future release.
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT` must be explicitly enabled to apply the library's AT&T configurations.
+
+    * In previous releases, AT&T support could be enabled together with all other applicable carriers by initializing :c:macro:`lwm2m_carrier_config_t` with an empty ``carriers_enabled`` parameter.
+
 liblwm2m_carrier 3.2.0
 **********************
 

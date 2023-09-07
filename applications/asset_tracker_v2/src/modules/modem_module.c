@@ -405,9 +405,11 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		SEND_EVENT(modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST);
 		break;
 	}
-	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
+	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF: {
 		LOG_INF("LWM2M_CARRIER_EVENT_LTE_POWER_OFF");
+		SEND_EVENT(modem, MODEM_EVT_CARRIER_EVENT_LTE_POWER_OFF_REQUEST);
 		break;
+	}
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		LOG_INF("LWM2M_CARRIER_EVENT_BOOTSTRAPPED");
 		break;
@@ -767,6 +769,19 @@ static void on_state_connected(struct modem_msg_data *msg)
 		err = lte_lc_offline();
 		if (err) {
 			LOG_ERR("LTE disconnect failed, error: %d", err);
+			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+			return;
+		}
+
+		state_set(STATE_DISCONNECTED);
+	}
+
+	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_EVENT_LTE_POWER_OFF_REQUEST)) {
+		int err;
+
+		err = lte_lc_power_off();
+		if (err) {
+			LOG_ERR("LTE power off failed, error: %d", err);
 			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
 			return;
 		}

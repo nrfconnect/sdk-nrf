@@ -50,9 +50,9 @@ Syntax
 
   * ``0`` - Success or nothing to report.
   * *Negative value* - Failure or request to defer an application reboot or modem functional mode change.
-  * *Positive value* - Number of bytes received through the App Data Container object.
+  * *Positive value* - Number of bytes received through the App Data Container object or the Binary App Data Container object.
 
-* The ``<data>`` parameter is a string that contains the data received through the App Data Container object.
+* The ``<data>`` parameter is a string that contains the data received through the App Data Container object or the Binary App Data container object.
 
 The events of type ``1``, ``2`` and ``3`` will typically be followed by an error event of type ``20``.
 This indicates to the application that the library is waiting for the appropriate modem functional mode change.
@@ -72,18 +72,19 @@ Syntax
 
 ::
 
-   AT#XCARRIER=<cmd>[,<param1>[<param2]..]]
+   AT#XCARRIER=<cmd>[,<param1>[,<param2>]..]
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
 * ``AT#XCARRIER="auto_connect","read|write"[,<auto-connect-flag>]``
-* ``AT#XCARRIER="app_data"[,<data>]``
+* ``AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>]``
 * ``AT#XCARRIER="battery_level",<battery_level>``
 * ``AT#XCARRIER="battery_status",<battery_status>``
 * ``AT#XCARRIER="current",<power_source>,<current>``
 * ``AT#XCARRIER="error","add|remove",<error>``
 * ``AT#XCARRIER="link_down"``
 * ``AT#XCARRIER="link_up"``
+* ``AT#XCARRIER="log_data",<data>``
 * ``AT#XCARRIER="memory_free","read|write"[,<memory>]``
 * ``AT#XCARRIER="memory_total",<memory>``
 * ``AT#XCARRIER="portfolio","create|read|write",<instance_id>[,<identity_type>[,<identity>]]``
@@ -98,7 +99,9 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIER="voltage",<power_source>,<voltage>``
 
 The values of the parameters depend on the command string used.
-When using the ``app_data`` command, if the ``<data>`` attribute is not specified, SLM enters ``slm_data_mode``.
+Specifying ``instance_id`` and ``resource_instance_id`` in the ``app_data`` command sends the data to the Binary App Data Container object instead of the App Data Container object.
+When using the ``app_data`` command, if no attributes are specified, SLM enters ``slm_data_mode``.
+``slm_data_mode`` is only supported when using the App Data Container object.
 
 Response syntax
 ~~~~~~~~~~~~~~~

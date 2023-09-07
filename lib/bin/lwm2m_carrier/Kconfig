@@ -58,7 +58,7 @@ config LWM2M_CARRIER_VERIZON
 
 config LWM2M_CARRIER_ATT
 	bool "AT&T"
-	default y
+	default n
 	help
 	  Enable Carrier Library when the SIM Subscriber ID is AT&T.
 
