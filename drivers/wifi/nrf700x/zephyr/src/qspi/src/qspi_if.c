@@ -56,18 +56,18 @@ BUILD_ASSERT(INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 16),
  * PCLK192M frequency"), but after that operation is complete, the default
  * divider needs to be restored to avoid increased current consumption.
  */
-/* Use divider /2 for HFCLK192M. */
-#define BASE_CLOCK_DIV NRF_CLOCK_HFCLK_DIV_2
+/* Use divider /1 for HFCLK192M. */
+#define BASE_CLOCK_DIV NRF_CLOCK_HFCLK_DIV_1
 #if (INST_0_SCK_FREQUENCY >= (NRF_QSPI_BASE_CLOCK_FREQ / 4))
-/* For requested SCK >= 24 MHz, use HFCLK192M / 2 / (2*2) = 24 MHz */
-#define INST_0_SCK_CFG NRF_QSPI_FREQ_DIV2
+/* For requested SCK >= 24 MHz, use HFCLK192M / 1 / (2*4) = 24 MHz */
+#define INST_0_SCK_CFG NRF_QSPI_FREQ_DIV4
 #else
 /* For requested SCK < 24 MHz, calculate the configuration value. */
-#define INST_0_SCK_CFG (DIV_ROUND_UP(NRF_QSPI_BASE_CLOCK_FREQ / 2, \
+#define INST_0_SCK_CFG (DIV_ROUND_UP(NRF_QSPI_BASE_CLOCK_FREQ, \
 				     INST_0_SCK_FREQUENCY) - 1)
 #endif
-/* For 8 MHz, use HFCLK192M / 2 / (2*6) */
-#define INST_0_SCK_CFG_WAKE NRF_QSPI_FREQ_DIV6
+/* For 8 MHz, use HFCLK192M / 1 / (2*12) */
+#define INST_0_SCK_CFG_WAKE NRF_QSPI_FREQ_DIV12
 
 #else
 /*
@@ -327,6 +327,8 @@ static inline void qspi_lock(const struct device *dev)
 	 */
 #if defined(CONFIG_SOC_SERIES_NRF53X)
 	nrf_clock_hfclk192m_div_set(NRF_CLOCK, BASE_CLOCK_DIV);
+
+	k_busy_wait(5);
 #endif
 }
 
@@ -664,6 +666,8 @@ static int qspi_nrfx_configure(const struct device *dev)
 	 * divider.
 	 */
 	nrf_clock_hfclk192m_div_set(NRF_CLOCK, BASE_CLOCK_DIV);
+
+	k_busy_wait(5);
 #endif
 
 	nrfx_err_t res = _nrfx_qspi_init(&QSPIconfig, qspi_handler, dev_data);
