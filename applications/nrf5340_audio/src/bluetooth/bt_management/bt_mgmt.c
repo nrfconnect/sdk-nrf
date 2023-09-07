@@ -17,13 +17,16 @@
 #include "nrf5340_audio_common.h"
 #include "button_handler.h"
 #include "button_assignments.h"
-#include "ble_hci_vsc.h"
 #include "bt_mgmt_ctlr_cfg_internal.h"
 #include "bt_mgmt_adv_internal.h"
 
 #if defined(CONFIG_AUDIO_DFU_ENABLE)
 #include "bt_mgmt_dfu_internal.h"
 #endif
+
+#if (CONFIG_BT_LL_ACS_NRF53)
+#include "ble_hci_vsc.h"
+#endif /* (CONFIG_BT_LL_ACS_NRF53) */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
@@ -74,8 +77,6 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	int ret;
 	char addr[BT_ADDR_LE_STR_LEN] = {0};
 	uint8_t num_conn = 0;
-	uint16_t conn_handle;
-	enum ble_hci_vs_tx_power conn_tx_pwr;
 	struct bt_mgmt_msg msg;
 
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
@@ -117,6 +118,10 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		}
 	}
 
+#if (CONFIG_BT_LL_ACS_NRF53)
+	enum ble_hci_vs_tx_power conn_tx_pwr;
+	uint16_t conn_handle;
+
 	ret = bt_hci_get_conn_handle(conn, &conn_handle);
 	if (ret) {
 		LOG_ERR("Unable to get conn handle");
@@ -135,6 +140,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 				(void *)conn);
 		}
 	}
+#endif /* (CONFIG_BT_LL_ACS_NRF53) */
 
 	msg.event = BT_MGMT_CONNECTED;
 	msg.conn = conn;

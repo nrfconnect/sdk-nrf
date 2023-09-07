@@ -12,11 +12,14 @@
 #include <zephyr/task_wdt/task_wdt.h>
 
 #include "macros_common.h"
+#if (CONFIG_BT_LL_ACS_NRF53)
 #include "ble_hci_vsc.h"
+#endif /* (CONFIG_BT_LL_ACS_NRF53) */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt_ctlr_cfg, CONFIG_BT_MGMT_CTLR_CFG_LOG_LEVEL);
 
+#define COMPANY_ID_NORDIC	0x0059
 #define COMPANY_ID_PACKETCRAFT	0x07E8
 
 #define WDT_TIMEOUT_MS	      1200
@@ -144,6 +147,20 @@ static void wdt_timeout_cb(int channel_id, void *user_data)
 	ERR_CHK_MSG(-ETIMEDOUT, "Controller not responsive");
 }
 
+static const char *bt_spec_ver_str(uint8_t version_number)
+{
+	const char * const bt_ver_str[] = {
+		"1.0b", "1.1", "1.2", "2.0", "2.1", "3.0", "4.0", "4.1", "4.2",
+		"5.0", "5.1", "5.2", "5.3", "5.4"
+	};
+
+	if (version_number < ARRAY_SIZE(bt_ver_str)) {
+		return bt_ver_str[version_number];
+	}
+
+	return "unknown";
+}
+
 int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version, uint16_t *manufacturer)
 {
 	int ret;
@@ -160,6 +177,12 @@ int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version, uint16_t *manufacturer
 		if (rp->manufacturer == COMPANY_ID_PACKETCRAFT) {
 			/* NOTE: The string below is used by the Nordic CI system */
 			LOG_INF("Controller: LL_ACS_NRF53. Version: %d", rp->hci_revision);
+		} else if (rp->manufacturer == COMPANY_ID_NORDIC) {
+			/* NOTE: The string below is used by the Nordic CI system */
+			LOG_INF("Controller: SoftDevice: Version %s (0x%02x), Revision %d",
+				bt_spec_ver_str(rp->hci_version),
+				rp->hci_version,
+				rp->hci_revision);
 		} else {
 			LOG_ERR("Unsupported controller");
 			return -EPERM;
