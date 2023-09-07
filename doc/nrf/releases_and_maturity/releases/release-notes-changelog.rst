@@ -619,7 +619,10 @@ Modem libraries
 
 * :ref:`lte_lc_readme` library:
 
-  * Updated the CE level enum names for :c:enum:`lte_lc_ce_level` to not include the number of repetitions.
+  * Updated:
+
+    * The CE level enum names for :c:enum:`lte_lc_ce_level` to not include the number of repetitions.
+    * The default network mode from :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M` to :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_GPS`.
 
   * Removed:
 

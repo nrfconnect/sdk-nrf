@@ -142,9 +142,9 @@ config LTE_PTW_VALUE_NBIOT
 
 choice LTE_NETWORK_MODE
 	prompt "Select network mode"
-	default LTE_NETWORK_MODE_LTE_M
+	default LTE_NETWORK_MODE_LTE_M_GPS
 	help
-		Select either LTE-M or Narrowband-IOT (NB-IoT) network mode
+		Select the modem system mode.
 
 config LTE_NETWORK_DEFAULT
 	bool "Use default"
