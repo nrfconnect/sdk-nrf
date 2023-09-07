@@ -51,7 +51,8 @@ const struct wifi_scan_params tests[] = {
 #endif
 #ifdef CONFIG_WIFI_SCAN_PROFILE_ACTIVE
 	{
-	.scan_type = WIFI_SCAN_TYPE_ACTIVE
+	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
+	.dwell_time_active = CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE
 	},
 #endif
 #ifdef CONFIG_WIFI_SCAN_PROFILE_PASSIVE
