@@ -95,6 +95,12 @@ const struct wifi_scan_params tests[] = {
 	.chan = { {0, 0} }
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_AND_5GHz_NON_DFS_CHAN
+	{
+	.bands = 0,
+	.chan = { {0, 0} }
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
