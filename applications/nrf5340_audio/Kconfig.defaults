@@ -150,3 +150,6 @@ config WATCHDOG
 
 config TASK_WDT
 	default y
+
+config SAMPLE_RATE_CONV_NAIVE
+	default y

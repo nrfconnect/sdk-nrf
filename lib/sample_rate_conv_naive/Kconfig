@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SAMPLE_RATE_CONV_NAIVE
+	bool "Very basic sample rate conversion library"
+	help
+	  Enable the simple/naive sample rate conversion library.
+	  This uses an extremely basic approach for integer sample rate conversion
+	  which prioritizes speed over quality.
+	  16k, 24k and 48k are supported.
+
+if SAMPLE_RATE_CONV_NAIVE
+
+module = SAMPLE_RATE_CONV_NAIVE
+module-str = Data first-in first-out
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #SAMPLE_RATE_CONV_NAIVE
