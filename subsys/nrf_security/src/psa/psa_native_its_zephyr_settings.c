@@ -10,11 +10,11 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/storage/flash_map.h>
 
-#include "psa_eits_backend.h"
+#include "psa_native_its_backend.h"
 
-LOG_MODULE_REGISTER(psa_eits_zephyr_settings, CONFIG_PSA_EITS_BACKEND_ZEPHYR_LOG_LEVEL);
+LOG_MODULE_REGISTER(psa_native_its_zephyr_settings, CONFIG_PSA_NATIVE_ITS_BACKEND_ZEPHYR_LOG_LEVEL);
 
-#define ROOT_KEY     "EITS"
+#define ROOT_KEY     "NATIVE_ITS"
 #define MAX_PATH_LEN 32
 
 struct read_info_ctx {
@@ -165,7 +165,7 @@ static psa_status_t read_data_with_offset(psa_storage_uid_t uid, uint32_t data_o
 					  uint32_t data_length, void *p_data, size_t *p_data_length,
 					  struct read_data_ctx *read_data_ctx)
 {
-	uint8_t buff[CONFIG_PSA_EITS_READ_BUFF_SIZE];
+	uint8_t buff[CONFIG_PSA_NATIVE_ITS_READ_BUFF_SIZE];
 
 	struct psa_storage_info_t info = {
 		.size = 0,
@@ -186,8 +186,8 @@ static psa_status_t read_data_with_offset(psa_storage_uid_t uid, uint32_t data_o
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	__ASSERT(info.size <= CONFIG_PSA_EITS_READ_BUFF_SIZE,
-		 "CONFIG_PSA_EITS_READ_BUFF_SIZE too small");
+	__ASSERT(info.size <= CONFIG_PSA_NATIVE_ITS_READ_BUFF_SIZE,
+		 "CONFIG_PSA_NATIVE_ITS_READ_BUFF_SIZE too small");
 
 	read_data_ctx->buff = buff;
 	read_data_ctx->buff_len = sizeof(buff);

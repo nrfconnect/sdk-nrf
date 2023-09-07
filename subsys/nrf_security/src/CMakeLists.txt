@@ -241,7 +241,7 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
   endif()
 endif()
 
-if(CONFIG_PSA_EITS_BACKEND_ZEPHYR)
+if(CONFIG_PSA_NATIVE_ITS_BACKEND_ZEPHYR)
   # Include EITS in Zephyr build
   add_subdirectory(psa)
 endif()

@@ -206,7 +206,7 @@
 
 /* Nordic specific */
 #cmakedefine PSA_NATIVE_ITS                                     @PSA_NATIVE_ITS@
-#cmakedefine PSA_EITS_BACKEND_ZEPHYR                            @PSA_EITS_BACKEND_ZEPHYR@
+#cmakedefine PSA_NATIVE_ITS_BACKEND_ZEPHYR                      @PSA_NATIVE_ITS_BACKEND_ZEPHYR@
 #cmakedefine PSA_CRYPTO_SECURE                                  @PSA_CRYPTO_SECURE@
 #cmakedefine PSA_CRYPTO_DRIVER_ALG_PRNG_TEST                    @PSA_CRYPTO_DRIVER_ALG_PRNG_TEST@
 
