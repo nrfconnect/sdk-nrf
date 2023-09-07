@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#ifndef PSA_EITS_BACKEND_H
-#define PSA_EITS_BACKEND_H
+#ifndef PSA_NATIVE_ITS_BACKEND_H
+#define PSA_NATIVE_ITS_BACKEND_H
 
 #include <psa/internal_trusted_storage.h>
 
@@ -120,4 +120,4 @@ psa_status_t psa_its_get_info_backend(psa_storage_uid_t uid, struct psa_storage_
  */
 psa_status_t psa_its_remove_backend(psa_storage_uid_t uid);
 
-#endif /* PSA_EITS_BACKEND_H */
+#endif /* PSA_NATIVE_ITS_BACKEND_H */

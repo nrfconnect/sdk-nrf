@@ -7,10 +7,10 @@
 #
 # Create a zephyr library adding the EITS
 #
-zephyr_library_named(mbedcrypto_eits)
+zephyr_library_named(psa_native_its)
 zephyr_library_sources(
-  ${CMAKE_CURRENT_LIST_DIR}/psa_eits.c
-  ${CMAKE_CURRENT_LIST_DIR}/psa_eits_zephyr_settings.c
+  ${CMAKE_CURRENT_LIST_DIR}/psa_native_its.c
+  ${CMAKE_CURRENT_LIST_DIR}/psa_native_its_zephyr_settings.c
 )
 
 zephyr_library_include_directories(.)
@@ -23,4 +23,4 @@ zephyr_library_link_libraries(
   ${mbedcrypto_target}
 )
 
-nrf_security_debug_list_target_files(mbedcrypto_eits)
+nrf_security_debug_list_target_files(psa_native_its)

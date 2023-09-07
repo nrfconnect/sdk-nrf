@@ -101,30 +101,30 @@ choice
 	help
 	  Select backend for PSA native Internal Trusted Storage
 
-config CHOICE_PSA_EITS_BACKEND_ZEPHYR_SETTINGS
+config CHOICE_PSA_NATIVE_ITS_BACKEND_ZEPHYR_SETTINGS
 	bool "Zephyr Settings"
-	select PSA_EITS_BACKEND_ZEPHYR
+	select PSA_NATIVE_ITS_BACKEND_ZEPHYR
 
 endchoice
 
-menuconfig PSA_EITS_BACKEND_ZEPHYR
+menuconfig PSA_NATIVE_ITS_BACKEND_ZEPHYR
 	bool "Native ITS backend based on Zephyr Settings subsystem"
-	depends on CHOICE_PSA_EITS_BACKEND_ZEPHYR_SETTINGS
+	depends on CHOICE_PSA_NATIVE_ITS_BACKEND_ZEPHYR_SETTINGS
 	help
 	  Enable to get access for flashing operation based on Zephyr Settings
 	  subsystem.
 
-if PSA_EITS_BACKEND_ZEPHYR
+if PSA_NATIVE_ITS_BACKEND_ZEPHYR
 
-config PSA_EITS_READ_BUFF_SIZE
+config PSA_NATIVE_ITS_READ_BUFF_SIZE
 	int "The size of the buffer used when reading with an offset"
 	default 2048
 
-module = PSA_EITS_BACKEND_ZEPHYR
-module-str = PSA EITS Zephyr backend
+module = PSA_NATIVE_ITS_BACKEND_ZEPHYR
+module-str = PSA NATIVE ITS Zephyr backend
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # PSA_EITS_BACKEND_ZEPHYR
+endif # PSA_NATIVE_ITS_BACKEND_ZEPHYR
 
 endif # PSA_NATIVE_ITS
 

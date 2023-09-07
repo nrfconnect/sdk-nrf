@@ -178,7 +178,7 @@ kconfig_check_and_set_base_to_one(PSA_NEED_ZEPHYR_ENTROPY_DRIVER)
 
 # Nordic specific
 kconfig_check_and_set_base_to_one(PSA_NATIVE_ITS)
-kconfig_check_and_set_base_to_one(PSA_EITS_BACKEND_ZEPHYR)
+kconfig_check_and_set_base_to_one(PSA_NATIVE_ITS_BACKEND_ZEPHYR)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_SECURE)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
 
