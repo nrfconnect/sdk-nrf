@@ -184,6 +184,11 @@ Bluetooth samples
 
 |no_changes_yet_note|
 
+* :ref:`ble_throughput` sample:
+
+  * Enabled encryption in the sample.
+    The measured throughput is calculated over the encrypted data, which is how most of the Bluetooth products use this protocol.
+
 Bluetooth mesh samples
 ----------------------
 
