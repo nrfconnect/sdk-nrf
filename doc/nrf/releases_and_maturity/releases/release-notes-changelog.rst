@@ -53,7 +53,8 @@ RF Front-End Modules
 Build system
 ------------
 
-|no_changes_yet_note|
+* Removed the ``CONFIG_MCUBOOT_IMAGE_VERSION`` Kconfig option in favor of using a dedicated :ref:`application VERSION file <zephyr:app-version-details>` to set the version.
+   You can alternatively set the version by using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option, but using a :file:`VERSION` file is the recommended approach.
 
 Working with nRF91 Series
 =========================
