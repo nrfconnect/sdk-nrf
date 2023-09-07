@@ -438,7 +438,7 @@ int nrf_cloud_requested_state_decode(const struct nrf_cloud_data *input,
 	pairing_obj = json_object_decode(desired_obj, NRF_CLOUD_JSON_KEY_PAIRING);
 	pairing_state_obj = json_object_decode(pairing_obj, NRF_CLOUD_JSON_KEY_STATE);
 
-	if (!pairing_state_obj || pairing_state_obj->type != cJSON_String) {
+	if (!pairing_state_obj || (pairing_state_obj->type != cJSON_String)) {
 #ifndef CONFIG_NRF_CLOUD_GATEWAY
 		if ((cJSON_HasObjectItem(desired_obj, NRF_CLOUD_JSON_KEY_CFG) == false) &&
 		    (cJSON_HasObjectItem(desired_obj, NRF_CLOUD_JSON_KEY_CTRL) == false)) {
@@ -464,217 +464,6 @@ int nrf_cloud_requested_state_decode(const struct nrf_cloud_data *input,
 	cJSON_Delete(root_obj);
 
 	return 0;
-}
-
-int nrf_cloud_shadow_config_response_encode(struct nrf_cloud_data const *const input,
-					    struct nrf_cloud_data *const output,
-					    bool *const has_config)
-{
-	__ASSERT_NO_MSG(output != NULL);
-	__ASSERT_NO_MSG(input != NULL);
-
-	char *buffer = NULL;
-	cJSON *root_obj = NULL;
-	cJSON *desired_obj = NULL;
-	cJSON *reported_obj = NULL;
-	cJSON *state_obj = NULL;
-	cJSON *config_obj = NULL;
-	cJSON *input_obj = input ? cJSON_Parse(input->ptr) : NULL;
-
-	if (input_obj == NULL) {
-		return -ESRCH; /* invalid input or no JSON parsed */
-	}
-
-	/* A delta update will have the config inside of state */
-	state_obj = cJSON_DetachItemFromObject(input_obj, NRF_CLOUD_JSON_KEY_STATE);
-	config_obj = cJSON_DetachItemFromObject(
-		state_obj ? state_obj : input_obj, NRF_CLOUD_JSON_KEY_CFG);
-	cJSON_Delete(input_obj);
-
-	if (has_config) {
-		*has_config = (config_obj != NULL);
-	}
-
-	/* If this is not a delta update, no response data is required */
-	if ((state_obj == NULL) || (config_obj == NULL)) {
-		cJSON_Delete(state_obj);
-		cJSON_Delete(config_obj);
-		output->ptr = NULL;
-		output->len = 0;
-		return 0;
-	}
-
-	/* Prepare JSON response for the delta */
-	root_obj = cJSON_CreateObject();
-	desired_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_DES);
-	reported_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_REP);
-
-	/* Add a null config to desired and add the delta config to reported */
-	if (json_add_null_cs(desired_obj, NRF_CLOUD_JSON_KEY_CFG) ||
-	    json_add_obj_cs(reported_obj, NRF_CLOUD_JSON_KEY_CFG, config_obj)) {
-		cJSON_Delete(root_obj);
-		cJSON_Delete(config_obj);
-		cJSON_Delete(state_obj);
-		return -ENOMEM;
-	}
-
-	/* Cleanup received state obj and re-use for the response */
-	cJSON_Delete(state_obj);
-	state_obj = cJSON_CreateObject();
-	if (state_obj) {
-		if (json_add_obj_cs(state_obj, NRF_CLOUD_JSON_KEY_STATE, root_obj)) {
-			cJSON_Delete(root_obj);
-		} else {
-			buffer = cJSON_PrintUnformatted(state_obj);
-		}
-		cJSON_Delete(state_obj);
-	} else {
-		cJSON_Delete(root_obj);
-	}
-
-	if (buffer == NULL) {
-		return -ENOMEM;
-	}
-
-	output->ptr = buffer;
-	output->len = strlen(buffer);
-
-	return 0;
-}
-
-int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
-				    enum nrf_cloud_ctrl_status *status,
-				    struct nrf_cloud_ctrl_data *data)
-{
-	__ASSERT_NO_MSG(input != NULL);
-	__ASSERT_NO_MSG(status != NULL);
-	__ASSERT_NO_MSG(data != NULL);
-
-	cJSON *state_obj = NULL;
-	cJSON *control_obj = NULL;
-	cJSON *alert_obj = NULL;
-	cJSON *log_obj = NULL;
-	cJSON *input_obj = cJSON_Parse(input->ptr);
-
-	if (input_obj == NULL) {
-		return -ESRCH; /* invalid input or no JSON parsed */
-	}
-
-	/* A delta update will have the control inside of state. */
-	state_obj = cJSON_GetObjectItem(input_obj, NRF_CLOUD_JSON_KEY_STATE);
-	if (state_obj) {
-		control_obj = cJSON_GetObjectItem(state_obj, NRF_CLOUD_JSON_KEY_CTRL);
-		if (control_obj) {
-			LOG_DBG("Control inside of state");
-		}
-	}
-	/* A shadow/get/accepted on initial connect will have control inside of desired. */
-	if (control_obj == NULL) {
-		state_obj = cJSON_GetObjectItem(input_obj, NRF_CLOUD_JSON_KEY_DES);
-		if (state_obj) {
-			control_obj = cJSON_GetObjectItem(state_obj, NRF_CLOUD_JSON_KEY_CTRL);
-			if (control_obj) {
-				LOG_DBG("Control inside of desired");
-			}
-		}
-	}
-	/* If there is no delta and no desired, but there is reported, use that. */
-	if (control_obj == NULL) {
-		state_obj = cJSON_GetObjectItem(input_obj, NRF_CLOUD_JSON_KEY_REP);
-		if (state_obj) {
-			control_obj = cJSON_GetObjectItem(state_obj, NRF_CLOUD_JSON_KEY_CTRL);
-			if (control_obj) {
-				LOG_DBG("Control inside of reported");
-			}
-		}
-	}
-	if (control_obj == NULL) {
-		LOG_DBG("Shadow delta does not have control section");
-		*status = NRF_CLOUD_CTRL_NOT_PRESENT;
-		goto end;
-	}
-
-	bool differs = false;
-
-	alert_obj = cJSON_GetObjectItem(control_obj, NRF_CLOUD_JSON_KEY_ALERT);
-	if (alert_obj == NULL) {
-		LOG_DBG(NRF_CLOUD_JSON_KEY_ALERT " not found");
-	} else if (cJSON_IsBool(alert_obj)) {
-		if (data->alerts_enabled != cJSON_IsTrue(alert_obj)) {
-			differs = true;
-			data->alerts_enabled = cJSON_IsTrue(alert_obj);
-			LOG_INF("AlertsEn changed to %u", data->alerts_enabled);
-		}
-	} else {
-		LOG_WRN(NRF_CLOUD_JSON_KEY_ALERT " is not a bool");
-	}
-
-	log_obj = cJSON_GetObjectItem(control_obj, NRF_CLOUD_JSON_KEY_LOG);
-	if (log_obj == NULL) {
-		LOG_DBG(NRF_CLOUD_JSON_KEY_LOG " not found");
-	} else if (cJSON_IsNumber(log_obj)) {
-		if (data->log_level != (int)cJSON_GetNumberValue(log_obj)) {
-			differs = true;
-			data->log_level = (int)cJSON_GetNumberValue(log_obj);
-			LOG_INF("LogLvl changed to %u", data->log_level);
-		}
-	} else {
-		LOG_WRN(NRF_CLOUD_JSON_KEY_LOG " is not a number");
-	}
-
-	if ((state_obj == NULL) && !differs) {
-		/* If this is not a delta update, and our settings match,
-		 * then no shadow update is required.
-		 */
-		LOG_DBG("No response needed. Got shadow: %s", (const char *)input->ptr);
-		*status = NRF_CLOUD_CTRL_NO_REPLY;
-	} else {
-		LOG_DBG("Got delta: %s", (const char *)input->ptr);
-		*status = NRF_CLOUD_CTRL_REPLY;
-	}
-
-end:
-	cJSON_Delete(input_obj);
-	return 0;
-}
-
-int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *const data,
-					     struct nrf_cloud_data *const output)
-{
-	__ASSERT_NO_MSG(data != NULL);
-	__ASSERT_NO_MSG(output != NULL);
-
-	char *buffer = NULL;
-	int err = 0;
-
-	/* Prepare JSON response for the delta */
-	cJSON *root_obj = cJSON_CreateObject();
-	cJSON *state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
-	cJSON *reported_obj = cJSON_AddObjectToObjectCS(state_obj, NRF_CLOUD_JSON_KEY_REP);
-	cJSON *control_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_CTRL);
-	int alert_ret = json_add_bool_cs(control_obj, NRF_CLOUD_JSON_KEY_ALERT,
-					 data->alerts_enabled);
-	int log_ret = json_add_num_cs(control_obj, NRF_CLOUD_JSON_KEY_LOG, data->log_level);
-
-	/* If any object could not be created, we ran out of memory */
-	if (!(root_obj && state_obj && reported_obj && control_obj &&
-	      !alert_ret && !log_ret)) {
-		err = -ENOMEM;
-		goto end;
-	}
-	buffer = cJSON_PrintUnformatted(root_obj);
-	if (!buffer) {
-		err = -ENOMEM;
-		goto end;
-	}
-	LOG_DBG("Sending shadow back: %s", buffer);
-
-	output->ptr = buffer;
-	output->len = strlen(buffer);
-
-end:
-	cJSON_Delete(root_obj);
-	return err;
 }
 
 static int device_status_encode(cJSON * const reported_obj)
@@ -1003,6 +792,272 @@ int json_send_to_cloud(cJSON *const request)
 }
 
 #endif /* CONFIG_NRF_CLOUD_MQTT */
+
+int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
+				    enum nrf_cloud_ctrl_status *status,
+				    struct nrf_cloud_ctrl_data *data)
+{
+	__ASSERT_NO_MSG(input != NULL);
+	__ASSERT_NO_MSG(status != NULL);
+	__ASSERT_NO_MSG(data != NULL);
+
+	cJSON *state_obj = NULL;
+	cJSON *desired_obj = NULL;
+	cJSON *reported_obj = NULL;
+	cJSON *control_obj = NULL;
+	cJSON *alert_obj = NULL;
+	cJSON *log_obj = NULL;
+	cJSON *input_obj = cJSON_Parse(input->ptr);
+	bool is_delta = false;
+	bool differs = false;
+
+	if (input_obj == NULL) {
+		return -ESRCH; /* invalid input or no JSON parsed */
+	}
+
+	/* A delta update will have the control inside of state. */
+	state_obj = cJSON_GetObjectItem(input_obj, NRF_CLOUD_JSON_KEY_STATE);
+	if (state_obj) {
+		control_obj = cJSON_GetObjectItem(state_obj, NRF_CLOUD_JSON_KEY_CTRL);
+		if (control_obj) {
+			LOG_DBG("Control inside of state");
+			is_delta = true;
+		}
+	}
+	/* A shadow/get/accepted on initial connect will have control inside of desired
+	 * and/or reported.
+	 */
+	if (control_obj == NULL) {
+		desired_obj = cJSON_GetObjectItem(input_obj, NRF_CLOUD_JSON_KEY_DES);
+		if (desired_obj) {
+			control_obj = cJSON_GetObjectItem(desired_obj, NRF_CLOUD_JSON_KEY_CTRL);
+			if (control_obj) {
+				LOG_DBG("Control inside of desired");
+			}
+		}
+	}
+	/* If there is no delta and no desired, but there is reported, use that. */
+	if (control_obj == NULL) {
+		reported_obj = cJSON_GetObjectItem(input_obj, NRF_CLOUD_JSON_KEY_REP);
+		if (reported_obj) {
+			control_obj = cJSON_GetObjectItem(reported_obj, NRF_CLOUD_JSON_KEY_CTRL);
+			if (control_obj) {
+				LOG_DBG("Control inside of reported");
+			}
+		}
+	}
+	/* If not found in any of those locations, we might be processing a delta from CoAP,
+	 * which omits the state element.
+	 */
+	if (control_obj == NULL) {
+		control_obj = cJSON_GetObjectItem(input_obj, NRF_CLOUD_JSON_KEY_CTRL);
+		if (control_obj) {
+			LOG_DBG("Control is the delta; using CoAP");
+			is_delta = true;
+			/* We need to respond since we do not receive and parse prior reported
+			 * shadow values, which might differ from current compiled values
+			 */
+			differs = true;
+		} else {
+			LOG_DBG("Shadow delta does not have control section");
+			*status = NRF_CLOUD_CTRL_NOT_PRESENT;
+			goto end;
+		}
+	}
+
+	alert_obj = cJSON_GetObjectItem(control_obj, NRF_CLOUD_JSON_KEY_ALERT);
+	if (alert_obj == NULL) {
+		LOG_DBG(NRF_CLOUD_JSON_KEY_ALERT " not found");
+	} else if (cJSON_IsBool(alert_obj)) {
+		if (data->alerts_enabled != cJSON_IsTrue(alert_obj)) {
+			differs = true;
+			data->alerts_enabled = cJSON_IsTrue(alert_obj);
+			LOG_INF("AlertsEn changed to %u", data->alerts_enabled);
+		}
+	} else {
+		LOG_WRN(NRF_CLOUD_JSON_KEY_ALERT " is not a bool");
+		*status = NRF_CLOUD_CTRL_REJECT;
+		goto end;
+	}
+
+	log_obj = cJSON_GetObjectItem(control_obj, NRF_CLOUD_JSON_KEY_LOG);
+	if (log_obj == NULL) {
+		LOG_DBG(NRF_CLOUD_JSON_KEY_LOG " not found");
+	} else if (cJSON_IsNumber(log_obj)) {
+		if (data->log_level != (int)cJSON_GetNumberValue(log_obj)) {
+			int val;
+
+			val = (int)cJSON_GetNumberValue(log_obj);
+			if (!IS_ENABLED(CONFIG_NRF_CLOUD_COAP) &&
+			    ((val < ((int)LOG_LEVEL_NONE)) || (val > LOG_LEVEL_DBG))) {
+				LOG_WRN("Invalid value specified for log_level: %d",
+					val);
+				*status = NRF_CLOUD_CTRL_REJECT;
+				goto end;
+			} else {
+				data->log_level = val;
+				differs = true;
+			}
+			LOG_INF("LogLvl changed to %u", data->log_level);
+		}
+	} else {
+		LOG_WRN(NRF_CLOUD_JSON_KEY_LOG " is not a number");
+		*status = NRF_CLOUD_CTRL_REJECT;
+		goto end;
+	}
+
+	if (is_delta && differs) {
+		LOG_DBG("Got delta: %s", (const char *)input->ptr);
+		*status = NRF_CLOUD_CTRL_REPLY;
+	} else {
+		/* If this is not a delta update, and our settings match,
+		 * then no shadow update is required.
+		 */
+		LOG_DBG("No response needed. Got shadow: %s", (const char *)input->ptr);
+		*status = NRF_CLOUD_CTRL_NO_REPLY;
+	}
+
+end:
+	cJSON_Delete(input_obj);
+	return 0;
+}
+
+int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *const data,
+					     bool accept,
+					     struct nrf_cloud_data *const output)
+{
+	__ASSERT_NO_MSG(data != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
+	char *buffer = NULL;
+	int err = 0;
+	int alert_ret;
+	int log_ret;
+
+	/* Prepare JSON response for the delta */
+	cJSON *root_obj = cJSON_CreateObject();
+	cJSON *state_obj = NULL;
+	cJSON *reported_obj = NULL;
+	cJSON *desired_obj = NULL;
+	cJSON *rep_ctrl_obj = NULL;
+	cJSON *des_ctrl_obj = NULL;
+
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
+		state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
+		if (!accept) {
+			desired_obj = cJSON_AddObjectToObjectCS(state_obj, NRF_CLOUD_JSON_KEY_DES);
+			des_ctrl_obj = cJSON_AddObjectToObjectCS(desired_obj,
+								 NRF_CLOUD_JSON_KEY_CTRL);
+			alert_ret = json_add_null_cs(des_ctrl_obj, NRF_CLOUD_JSON_KEY_ALERT);
+			log_ret = json_add_null_cs(des_ctrl_obj, NRF_CLOUD_JSON_KEY_LOG);
+			if (alert_ret || log_ret) {
+				err = -ENOMEM;
+				goto end;
+			}
+		}
+		reported_obj = cJSON_AddObjectToObjectCS(state_obj, NRF_CLOUD_JSON_KEY_REP);
+	} else {
+		/* CoAP can currently only modify reported, not desired, so we need to simply
+		 * ignore invalid values.
+		 */
+		reported_obj = root_obj;
+	}
+	rep_ctrl_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_CTRL);
+	alert_ret = json_add_bool_cs(rep_ctrl_obj, NRF_CLOUD_JSON_KEY_ALERT,
+				     data->alerts_enabled);
+	log_ret = json_add_num_cs(rep_ctrl_obj, NRF_CLOUD_JSON_KEY_LOG, data->log_level);
+
+	/* If these objects could not be created, we ran out of memory */
+	if (alert_ret || log_ret) {
+		err = -ENOMEM;
+		goto end;
+	}
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	if (!buffer) {
+		err = -ENOMEM;
+		goto end;
+	}
+	LOG_DBG("Shadow response: %s", buffer);
+
+	output->ptr = buffer;
+	output->len = strlen(buffer);
+
+end:
+	cJSON_Delete(root_obj);
+	return err;
+}
+
+int nrf_cloud_device_control_update(const struct nrf_cloud_data *const in_data,
+				    struct nrf_cloud_data *out_data,
+				    enum nrf_cloud_ctrl_status *status)
+{
+	int err;
+	struct nrf_cloud_ctrl_data ctrl_data;
+
+	if ((in_data == NULL) || (out_data == NULL) || (status == NULL)) {
+		return -EINVAL;
+	}
+
+	out_data->ptr = NULL;
+	out_data->len = 0;
+	*status = NRF_CLOUD_CTRL_NOT_PRESENT;
+
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
+	ctrl_data.alerts_enabled = nrf_cloud_alert_control_get();
+#else
+	ctrl_data.alerts_enabled = false;
+#endif /* CONFIG_NRF_CLOUD_ALERT */
+
+	ctrl_data.log_level = nrf_cloud_log_control_get();
+
+	err = nrf_cloud_shadow_control_decode(in_data, status, &ctrl_data);
+	if (err) {
+		return (err == -ESRCH) ? 0 : err;
+	}
+
+	if ((*status == NRF_CLOUD_CTRL_REPLY) || (*status == NRF_CLOUD_CTRL_NO_REPLY)) {
+		/* shadow included a valid control section, so use what it sent */
+
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
+		nrf_cloud_alert_control_set(ctrl_data.alerts_enabled);
+#endif /* CONFIG_NRF_CLOUD_ALERT */
+		nrf_cloud_log_control_set(ctrl_data.log_level);
+
+	} else {
+		/* no control section in shadow, or values there were invalid,
+		 * so set reported to our current settings
+		 */
+
+#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
+		ctrl_data.alerts_enabled = nrf_cloud_alert_control_get();
+#else
+		ctrl_data.alerts_enabled = false;
+#endif
+		ctrl_data.log_level = nrf_cloud_log_control_get();
+		nrf_cloud_log_enable(ctrl_data.log_level != LOG_LEVEL_NONE);
+		/* First boot, so update shadow with our current settings. */
+		if (*status == NRF_CLOUD_CTRL_NOT_PRESENT) {
+			*status = NRF_CLOUD_CTRL_REPLY;
+		}
+		LOG_INF("Updating shadow with alertEn:%u and logLvl:%u",
+			ctrl_data.alerts_enabled, ctrl_data.log_level);
+
+	}
+
+	/* Acknowledge that shadow changes have been made. */
+	if ((*status == NRF_CLOUD_CTRL_REPLY) || (*status == NRF_CLOUD_CTRL_REJECT)) {
+		err = nrf_cloud_shadow_control_response_encode(&ctrl_data,
+							       (*status == NRF_CLOUD_CTRL_REPLY),
+							       out_data);
+		if (err) {
+			LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
+			return err;
+		}
+	}
+
+	return err;
+}
 
 static int shadow_connection_info_update(cJSON *device_obj)
 {
