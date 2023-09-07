@@ -10,7 +10,7 @@
 #include <modem/lte_lc.h>
 
 int scan_cellular_init(void);
-int scan_cellular_start(uint8_t cell_count);
+void scan_cellular_start(uint8_t cell_count, bool light_search);
 struct lte_lc_cells_info *scan_cellular_results_get(void);
 int scan_cellular_cancel(void);
 

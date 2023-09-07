@@ -15,6 +15,7 @@
 #include "location_core.h"
 #include "location_utils.h"
 #if defined(CONFIG_NRF_CLOUD_AGPS)
+#include "scan_cellular.h"
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_agps.h>
 #include <stdlib.h>
@@ -289,19 +290,20 @@ static void method_gnss_nrf_cloud_agps_request(void)
 	};
 
 	struct lte_lc_cells_info net_info = {0};
-	struct location_utils_modem_params_info modem_params = { 0 };
+	struct lte_lc_cells_info *scan_results;
 
 	/* Get network info for the A-GPS location request. */
-	err = location_utils_modem_params_read(&modem_params);
-
-	if (err < 0) {
+	scan_cellular_start(0, true);
+	scan_results = scan_cellular_results_get();
+	if (scan_results == NULL) {
 		LOG_WRN("Requesting A-GPS data without location assistance");
 	} else {
-		net_info.current_cell.id = modem_params.cell_id;
-		net_info.current_cell.tac = modem_params.tac;
-		net_info.current_cell.mcc = modem_params.mcc;
-		net_info.current_cell.mnc = modem_params.mnc;
-		net_info.current_cell.phys_cell_id = modem_params.phys_cell_id;
+		net_info.current_cell.mcc = scan_results->current_cell.mcc;
+		net_info.current_cell.mnc = scan_results->current_cell.mnc;
+		net_info.current_cell.id = scan_results->current_cell.id;
+		net_info.current_cell.tac = scan_results->current_cell.tac;
+		net_info.current_cell.phys_cell_id = scan_results->current_cell.phys_cell_id;
+		net_info.current_cell.rsrp = scan_results->current_cell.rsrp;
 		request.net_info = &net_info;
 	}
 
@@ -1201,5 +1203,14 @@ int method_gnss_init(void)
 	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);
 #endif
 	lte_lc_register_handler(method_gnss_lte_ind_handler);
+
+#if !defined(CONFIG_LOCATION_METHOD_CELLULAR)
+	/* Cellular location method is disabled, but GNSS method uses the cellular scan
+	 * functionality for A-GNSS request. The module needs to be initialized explicitly, because
+	 * init is not called by core.
+	 */
+	scan_cellular_init();
+#endif
+
 	return 0;
 }

@@ -46,7 +46,7 @@ struct wifi_scan_info *scan_wifi_results_get(void)
 	return &scan_wifi_info;
 }
 
-int scan_wifi_start(struct k_sem *wifi_scan_ready)
+void scan_wifi_start(struct k_sem *wifi_scan_ready)
 {
 	int ret;
 
@@ -64,7 +64,6 @@ int scan_wifi_start(struct k_sem *wifi_scan_ready)
 		k_sem_give(wifi_scan_ready);
 		wifi_scan_ready = NULL;
 	}
-	return ret;
 }
 
 static void scan_wifi_result_handle(struct net_mgmt_event_callback *cb)
