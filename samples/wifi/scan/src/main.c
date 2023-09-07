@@ -71,6 +71,12 @@ const struct wifi_scan_params tests[] = {
 	.bands = 0
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_PROFILE_5GHz_ACTIVE
+	{
+	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
+	.bands = 0
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
