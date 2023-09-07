@@ -91,7 +91,7 @@
   - "samples/cellular/at_client/**/*"
   - "samples/cellular/at_monitor/**/*"
   - "samples/cellular/ciphersuites/**/*"
-  - "samples/cellular/coap_client/**/*"
+  - "samples/net/coap_client/**/*"
   - "samples/net/download/**/*"
   - "samples/cellular/http_update/**/*"
   - "samples/net/https_client/**/*"

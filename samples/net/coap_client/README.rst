@@ -1,13 +1,13 @@
 .. _nrf_coap_client_sample:
 
-Cellular: nRF CoAP Client
-#########################
+nRF CoAP Client
+###############
 
 .. contents::
    :local:
    :depth: 2
 
-The nRF CoAP Client sample demonstrates the communication between a public CoAP server and an nRF91 Series SiP that acts as the CoAP client.
+The nRF CoAP Client sample demonstrates the communication between a public CoAP server and an nRF91 Series SiP or nRF70 Series SoC that acts as the CoAP client.
 
 Requirements
 ************
@@ -31,7 +31,7 @@ The nRF CoAP Client sample performs the following actions:
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
 This server runs Eclipse Californium, which is an open source implementation of the CoAP protocol that is targeted at the development and testing of IoT applications.
-An nRF91 Series DK is used as the CoAP client.
+An nRF91 Series DK or nRF7002 DK is used as the CoAP client.
 
 This sample uses the resource **obs** (Californium observable resource) in the communication between the CoAP client and the public CoAP server.
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
@@ -63,6 +63,8 @@ CONFIG_COAP_SERVER_HOSTNAME - CoAP server hostname
 CONFIG_COAP_SERVER_PORT - CoAP server port
    This option sets the port for the CoAP server. Default is ``5683``.
 
+.. include:: /includes/wifi_credentials_options.txt
+
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
@@ -87,7 +89,7 @@ Testing
 
        The nRF CoAP client sample started
 #. Observe that the discovered IP address of the public CoAP server is displayed on the terminal emulator.
-#. Observe that the nRF91 Series DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE connection.
+#. Observe that your DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE connection.
 #. Observe that the sample either displays the response data received from the server or indicates a timeout on the terminal.
    For more information on the response codes, see `COAP response codes`_.
 
@@ -118,7 +120,7 @@ References
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries:
+This sample uses the following |NCS| library:
 
 * :ref:`lte_lc_readme`
 

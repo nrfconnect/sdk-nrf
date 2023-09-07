@@ -23,3 +23,7 @@ endmenu
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
+
+module = COAP_CLIENT_SAMPLE
+module-str = CoAP client sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
