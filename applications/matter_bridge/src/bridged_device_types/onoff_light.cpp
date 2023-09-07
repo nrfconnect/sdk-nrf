@@ -51,7 +51,7 @@ OnOffLightDevice::OnOffLightDevice(const char *nodeLabel) : MatterBridgedDevice(
 	mDataVersionSize = kLightDataVersionSize;
 	mEp = &bridgedLightEndpoint;
 	mDeviceTypeList = kBridgedOnOffDeviceTypes;
-	mDeviceTypeListSize = sizeof(kBridgedOnOffDeviceTypes);
+	mDeviceTypeListSize = ARRAY_SIZE(kBridgedOnOffDeviceTypes);
 	mDataVersion = static_cast<DataVersion *>(chip::Platform::MemoryAlloc(sizeof(DataVersion) * mDataVersionSize));
 }
 

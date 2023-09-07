@@ -46,7 +46,7 @@ HumiditySensorDevice::HumiditySensorDevice(const char *nodeLabel) : MatterBridge
 	mDataVersionSize = kHumidityDataVersionSize;
 	mEp = &bridgedHumidityEndpoint;
 	mDeviceTypeList = kBridgedHumidityDeviceTypes;
-	mDeviceTypeListSize = sizeof(kBridgedHumidityDeviceTypes);
+	mDeviceTypeListSize = ARRAY_SIZE(kBridgedHumidityDeviceTypes);
 	mDataVersion = static_cast<DataVersion *>(chip::Platform::MemoryAlloc(sizeof(DataVersion) * mDataVersionSize));
 }
 

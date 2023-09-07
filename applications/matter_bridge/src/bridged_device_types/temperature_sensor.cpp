@@ -44,7 +44,7 @@ TemperatureSensorDevice::TemperatureSensorDevice(const char *nodeLabel) : Matter
 	mDataVersionSize = kTemperatureDataVersionSize;
 	mEp = &bridgedTemperatureEndpoint;
 	mDeviceTypeList = kBridgedTemperatureDeviceTypes;
-	mDeviceTypeListSize = sizeof(kBridgedTemperatureDeviceTypes);
+	mDeviceTypeListSize = ARRAY_SIZE(kBridgedTemperatureDeviceTypes);
 	mDataVersion = static_cast<DataVersion *>(chip::Platform::MemoryAlloc(sizeof(DataVersion) * mDataVersionSize));
 }
 
