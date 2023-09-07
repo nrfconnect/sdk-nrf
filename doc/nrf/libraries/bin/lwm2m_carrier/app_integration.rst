@@ -410,6 +410,8 @@ When connecting to a generic LwM2M server, the following objects are enabled:
 * Connectivity Statistics
 * Cellular Connectivity
 * APN Connection Profile
+* Binary App Data Container
+* Event Log
 
 Resources
 =========

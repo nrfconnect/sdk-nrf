@@ -231,6 +231,10 @@ Serial LTE modem
   * Full modem FOTA support to the ``#XFOTA`` AT command.
   * An ``auto_connect`` operation in the ``#XCARRIER`` carrier command.
     The operation controls automatic registration of UE to LTE network.
+  * A ``log_data`` operation in the ``#XCARRIER`` carrier command.
+    The operation sends log data using the Event Log object to be read by the LwM2M server.
+  * Support for the Binary App Data Container object as an alternative to the App Data Container object.
+    This can be used through the ``app_data`` operation in the ``#XCARRIER`` carrier command.
   * ``#XNRFCLOUDPOS`` AT command to send location requests to nRF Cloud using cellular or Wi-Fi positioning, or both.
   * Support for using A-GPS and P-GPS at the same time.
 
@@ -676,6 +680,11 @@ Binary libraries
 * :ref:`lib_bt_ll_acs_nrf53_readme` library:
 
   * Added a limitation about the lack of support for the +20 dBm setting when :ref:`building the nRF5340 Audio application with the nRF21540 FEM support <nrf53_audio_app_adding_FEM_support>`.
+
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated to 3.3.0.
+    See the :ref:`liblwm2m_carrier_changelog` for detailed information.
 
 Bluetooth libraries and services
 --------------------------------

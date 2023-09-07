@@ -17,7 +17,6 @@ Including the library in your application is one way to fulfill the device manag
 Note that some carriers accept different approaches for *end product certification*.
 For more information, see the device certification programs of your respective carrier:
 
- * `AT&T's Get network ready program`_
  * `T-Mobile's IoT certification program`_
  * `Verizon's Get certified program`_
  * `LG U+ certification program`_

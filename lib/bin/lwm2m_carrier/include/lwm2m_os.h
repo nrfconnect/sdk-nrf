@@ -416,8 +416,9 @@ int lwm2m_os_timer_start_on_q(lwm2m_os_work_q_t *work_q, lwm2m_os_timer_t *timer
  * @brief Cancel a timer run.
  *
  * @param timer Timer task.
+ * @param sync  If true, wait for active tasks to finish before canceling.
  */
-void lwm2m_os_timer_cancel(lwm2m_os_timer_t *timer);
+void lwm2m_os_timer_cancel(lwm2m_os_timer_t *timer, bool sync);
 
 /**
  * @brief Obtain the time remaining on a timer.

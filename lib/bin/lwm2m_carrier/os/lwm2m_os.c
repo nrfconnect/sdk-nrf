@@ -298,7 +298,7 @@ int lwm2m_os_timer_start_on_q(lwm2m_os_work_q_t *work_q, lwm2m_os_timer_t *timer
 	return 0;
 }
 
-void lwm2m_os_timer_cancel(lwm2m_os_timer_t *timer)
+void lwm2m_os_timer_cancel(lwm2m_os_timer_t *timer, bool sync)
 {
 	struct lwm2m_work *work = (struct lwm2m_work *)timer;
 
@@ -308,7 +308,11 @@ void lwm2m_os_timer_cancel(lwm2m_os_timer_t *timer)
 		return;
 	}
 
-	k_work_cancel_delayable_sync(&work->work_item, &work->work_sync);
+	if (sync) {
+		k_work_cancel_delayable_sync(&work->work_item, &work->work_sync);
+	} else {
+		k_work_cancel_delayable(&work->work_item);
+	}
 }
 
 int64_t lwm2m_os_timer_remaining(lwm2m_os_timer_t *timer)
