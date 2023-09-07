@@ -288,6 +288,11 @@ Bluetooth samples
 
   * Updated by disabling the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option as a workaround fix for the `Zephyr issue #61033`_.
 
+* :ref:`ble_throughput` sample:
+
+  * Enabled encryption in the sample.
+    The measured throughput is calculated over the encrypted data, which is how most of the Bluetooth products use this protocol.
+
 Bluetooth mesh samples
 ----------------------
 
