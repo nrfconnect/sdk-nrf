@@ -231,7 +231,7 @@ The following configuration files are provided:
 * :file:`prj.conf` - This configuration file contains the standard configuration for the serial LTE modem application.
 
 * :file:`overlay-native_tls.conf` - This configuration file contains additional configuration options that are required to use :ref:`slm_native_tls`.
-  You can include it by adding ``-DOVERLAY_CONFIG=overlay-native_tls.conf`` to your build command.
+  You can include it by adding ``-DEXTRA_CONF_FILE=overlay-native_tls.conf`` to your build command.
   See :ref:`cmake_options`.
 
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
