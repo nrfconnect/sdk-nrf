@@ -18,7 +18,7 @@ config WIFI_MAC_ADDRESS
 
 config WIFI_SCAN_BANDS_LIST
 	string "Frequency bands to scan"
-	default "2" if WIFI_SCAN_PROFILE_2_4GHz_ACTIVE || WIFI_SCAN_PROFILE_2_4GHz_PASSIVE
+	default "2" if WIFI_SCAN_PROFILE_2_4GHz_ACTIVE || WIFI_SCAN_PROFILE_2_4GHz_PASSIVE || WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
 	default "5" if WIFI_SCAN_PROFILE_5GHz_ACTIVE || WIFI_SCAN_PROFILE_5GHz_PASSIVE
 	default ""
 	help
@@ -29,6 +29,13 @@ config WIFI_SCAN_BANDS_LIST
 	  "" - All bands allowed by the regulatory domain.
 	  Multiple bands can be specified as comma separated band values.
 	  Only regulatory domain permitted values are allowed.
+
+config WIFI_SCAN_CHAN_LIST
+	string "Channel list for scan"
+	default "2:1,6,11" if WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
+	default ""
+	help
+	  Specifies the list of channels used to perform scan.
 
 choice
 	prompt "Choose a WiFi Scan Profile"
@@ -67,6 +74,12 @@ config WIFI_SCAN_PROFILE_5GHz_PASSIVE
 	bool "Scan in the 5 GHz band using passive scan"
 	help
 	  Enable this profile to scan in the 5 GHz band using passive scanning on all channels.
+
+config WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
+	bool "Scan only non-overlapping channels"
+	help
+	  Enable this profile to scan only non-overlapping channels (1, 6, 11)
+	  in the 2.4 GHz band.
 
 endchoice
 

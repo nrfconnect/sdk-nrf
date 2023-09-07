@@ -83,6 +83,12 @@ const struct wifi_scan_params tests[] = {
 	.bands = 0
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
+	{
+	.bands = 0,
+	.chan = { {0, 0} }
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
@@ -243,6 +249,15 @@ static int wifi_scan(void)
 			return -ENOEXEC;
 		}
 		free(buf);
+	}
+
+	if (sizeof(CONFIG_WIFI_SCAN_CHAN_LIST) - 1) {
+		if (wifi_utils_parse_scan_chan(CONFIG_WIFI_SCAN_CHAN_LIST,
+						params.chan)) {
+			LOG_ERR("Incorrect value(s) in CONFIG_WIFI_SCAN_CHAN_LIST: %s",
+					CONFIG_WIFI_SCAN_CHAN_LIST);
+			return -ENOEXEC;
+		}
 	}
 
 	if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
