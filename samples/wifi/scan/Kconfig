@@ -16,6 +16,19 @@ config WIFI_MAC_ADDRESS
 		use the default MAC address (locally administrative). This is only used
 		when the nRF7002 OTP is not programmed with a MAC address.
 
+config WIFI_SCAN_BANDS_LIST
+	string "Frequency bands to scan"
+	default "2" if WIFI_SCAN_PROFILE_2_4GHz_ACTIVE
+	default ""
+	help
+	  Specifies the frequency bands to scan, as follows:
+	  2 - 2.4 GHz,
+	  5 - 5 GHz,
+	  6 - 6 GHz,
+	  "" - All bands allowed by the regulatory domain.
+	  Multiple bands can be specified as comma separated band values.
+	  Only regulatory domain permitted values are allowed.
+
 choice
 	prompt "Choose a WiFi Scan Profile"
 
@@ -33,6 +46,11 @@ config WIFI_SCAN_PROFILE_PASSIVE
 	bool "Passive scan"
 	help
 	  Enable this profile to do passive scan on all channels.
+
+config WIFI_SCAN_PROFILE_2_4GHz_ACTIVE
+	bool "Scan in the 2.4 GHz band using active scan"
+	help
+	  Enable this profile to scan in the 2.4 GHz band using active scanning where allowed.
 
 endchoice
 

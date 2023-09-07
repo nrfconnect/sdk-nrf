@@ -59,6 +59,12 @@ const struct wifi_scan_params tests[] = {
 	.scan_type = WIFI_SCAN_TYPE_PASSIVE
 	},
 #endif
+#ifdef CONFIG_WIFI_SCAN_PROFILE_2_4GHz_ACTIVE
+	{
+	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
+	.bands = 0
+	},
+#endif
 };
 
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
@@ -199,14 +205,34 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 static int wifi_scan(void)
 {
 	struct net_if *iface = net_if_get_default();
+	int band_str_len;
 
 	struct wifi_scan_params params = tests[0];
+
+	band_str_len = sizeof(CONFIG_WIFI_SCAN_BANDS_LIST);
+	if (band_str_len - 1) {
+		char *buf = malloc(band_str_len);
+
+		if (!buf) {
+			LOG_ERR("Malloc Failed");
+			return -EINVAL;
+		}
+		strcpy(buf, CONFIG_WIFI_SCAN_BANDS_LIST);
+		if (wifi_utils_parse_scan_bands(buf, &params.bands)) {
+			LOG_ERR("Incorrect value(s) in CONFIG_WIFI_SCAN_BANDS_LIST: %s",
+					CONFIG_WIFI_SCAN_BANDS_LIST);
+			free(buf);
+			return -ENOEXEC;
+		}
+		free(buf);
+	}
 
 	if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
 			sizeof(struct wifi_scan_params))) {
 		LOG_ERR("Scan request failed");
 		return -ENOEXEC;
 	}
+
 	printk("Scan requested\n");
 
 	k_sem_take(&scan_sem, K_MSEC(SCAN_TIMEOUT_MS));
