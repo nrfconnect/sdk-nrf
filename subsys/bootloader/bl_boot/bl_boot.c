@@ -11,22 +11,29 @@
 #include <fprotect.h>
 #include <hal/nrf_clock.h>
 #ifdef CONFIG_UART_NRFX
-#ifdef CONFIG_UART_0_NRF_UART
+#ifdef CONFIG_UART_NRFX_UART
 #include <hal/nrf_uart.h>
-#else
+#endif
+#if CONFIG_UART_NRFX_UARTE
 #include <hal/nrf_uarte.h>
 #endif
 #endif
 
 static void uninit_used_peripherals(void)
 {
-#ifdef CONFIG_UART_0_NRF_UART
+#if defined(HAS_HW_NRF_UART0)
 	nrf_uart_disable(NRF_UART0);
-#elif defined(CONFIG_UART_0_NRF_UARTE)
+#elif defined(HAS_HW_NRF_UARTE0)
 	nrf_uarte_disable(NRF_UARTE0);
-#elif defined(CONFIG_UART_1_NRF_UARTE)
+#endif
+#if defined(HAS_HW_NRF_UART1)
+	nrf_uart_disable(NRF_UART1);
+#elif defined(HAS_HW_NRF_UARTE1)
 	nrf_uarte_disable(NRF_UARTE1);
-#elif defined(CONFIG_UART_2_NRF_UARTE)
+#endif
+#if defined(HAS_HW_NRF_UART2)
+	nrf_uart_disable(NRF_UART2);
+#elif defined(HAS_HW_NRF_UARTE2)
 	nrf_uarte_disable(NRF_UARTE2);
 #endif
 	nrf_clock_int_disable(NRF_CLOCK, 0xFFFFFFFF);
