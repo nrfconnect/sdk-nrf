@@ -13,7 +13,7 @@ ZTEST(lib_zcbor_test1, test_decode)
 	uint32_t payload_len;
 	uint8_t time[] = {1, 2, 3, 4, 5, 6, 7, 8};
 
-	ZCBOR_STATE_D(states, 4, payload, sizeof(payload), 1);
+	ZCBOR_STATE_E(states, 4, payload, sizeof(payload), 1);
 	struct Test test;
 	bool res;
 	int int_res;
