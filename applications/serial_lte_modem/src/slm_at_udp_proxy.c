@@ -487,11 +487,7 @@ static bool socket_is_in_use(void)
 	return true;
 }
 
-/**@brief handle AT#XUDPSVR commands
- *  AT#XUDPSVR=<op>[,<port>]
- *  AT#XUDPSVR? READ command not supported
- *  AT#XUDPSVR=?
- */
+/* Handles AT#XUDPSVR commands. */
 int handle_at_udp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -536,11 +532,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XUDPCLI commands
- *  AT#XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<cid>]]]
- *  AT#XUDPCLI? READ command not supported
- *  AT#XUDPCLI=?
- */
+/* Handles AT#XUDPCLI commands. */
 int handle_at_udp_client(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -598,7 +590,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XUDPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>,<cid>\r\n",
+		rsp_send("\r\n#XUDPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>,<use_dtls_cid>\r\n",
 			CLIENT_DISCONNECT, CLIENT_CONNECT, CLIENT_CONNECT6);
 		err = 0;
 		break;
@@ -610,11 +602,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XUDPSEND commands
- *  AT#XUDPSEND[=<data>]
- *  AT#XUDPSEND? READ command not supported
- *  AT#XUDPSEND=? TEST command not supported
- */
+/* Handles AT#XUDPSEND command. */
 int handle_at_udp_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
