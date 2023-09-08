@@ -22,7 +22,7 @@ config CODEC_CAP_COUNT_MAX
 choice BT_BAP_UNICAST_BAP_CONFIGURATION
 	prompt "Unicast codec configuration"
 	depends on TRANSPORT_CIS
-	default BT_BAP_UNICAST_CONFIGURABLE
+	default BT_BAP_UNICAST_16_2_1
 	help
 	  Select the unicast codec configuration as given in
 	  Table 5.2 of BAP Specification.

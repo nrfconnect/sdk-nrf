@@ -1163,6 +1163,7 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 		LOG_WRN("Failed to send audio data to %s: %d", headset->ch_name, ret);
 		net_buf_unref(buf);
 		atomic_dec(&headset->iso_tx_pool_alloc);
+		return ret;
 	}
 
 	return 0;
@@ -1480,7 +1481,8 @@ int le_audio_send(struct encoded_audio enc_audio)
 	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
 		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, &headsets[AUDIO_CH_L]);
 		if (ret) {
-			LOG_DBG("Failed to send data to left channel");
+			LOG_WRN("Failed to send data to left channel. Size: %d",
+				data_size_pr_stream);
 		}
 	}
 
@@ -1493,7 +1495,8 @@ int le_audio_send(struct encoded_audio enc_audio)
 					      data_size_pr_stream, &headsets[AUDIO_CH_R]);
 		}
 		if (ret) {
-			LOG_DBG("Failed to send data to right channel");
+			LOG_WRN("Failed to send data to right channel. Size: %d",
+				data_size_pr_stream);
 		}
 	}
 

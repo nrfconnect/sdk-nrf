@@ -9,7 +9,7 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sample_rate_conv_naive, 4);
+LOG_MODULE_REGISTER(sample_rate_conv_naive, 3);
 
 int valid_conversion_check(uint32_t input_sample_rate, uint32_t output_sample_rate)
 {
@@ -55,10 +55,32 @@ int sample_rate_conv_naive(void *input, size_t input_size, uint32_t input_sample
 	char *pointer_input = (char *)input;
 	char *pointer_output = (char *)output;
 	char *sample_input = NULL;
+	static uint32_t last_input_sample_rate;
+	static uint32_t last_output_sample_rate;
+
+	if (pcm_bit_depth % 8 != 0 || pcm_bit_depth == 0) {
+		LOG_ERR("invalid bit depth %d", pcm_bit_depth);
+		return -EINVAL;
+	}
 
 	ret = valid_conversion_check(input_sample_rate, output_sample_rate);
 	if (ret) {
 		return ret;
+	}
+
+	if ((last_input_sample_rate != input_sample_rate) ||
+	    (last_output_sample_rate != output_sample_rate)) {
+
+		if (input_sample_rate != output_sample_rate) {
+			LOG_WRN("Active. %d Hz in to %d Hz out", input_sample_rate,
+				output_sample_rate);
+		} else {
+			LOG_WRN("Inactive. %d Hz in to %d Hz out", input_sample_rate,
+				output_sample_rate);
+		}
+
+		last_input_sample_rate = input_sample_rate;
+		last_output_sample_rate = output_sample_rate;
 	}
 
 	if (input_sample_rate < output_sample_rate) {
@@ -91,7 +113,6 @@ int sample_rate_conv_naive(void *input, size_t input_size, uint32_t input_sample
 		*output_size = input_size / ratio;
 	} else {
 		/* unchanged */
-		LOG_ERR("1 to 1");
 		memcpy(output, input, input_size);
 		*output_size = input_size;
 	}

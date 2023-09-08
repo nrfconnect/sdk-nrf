@@ -14,11 +14,8 @@
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
 #define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
 
-#define BT_AUDIO_CODEC_CONFIG_FREQ                                                                 \
-	BT_CODEC_CONFIG_LC3_FREQ_48KHZ | BT_CODEC_CONFIG_LC3_FREQ_24KHZ |                          \
-		BT_CODEC_CONFIG_LC3_FREQ_16KHZ
-#define BT_AUDIO_CODEC_CAPABILIY_FREQ                                                              \
-	BT_CODEC_LC3_FREQ_48KHZ | BT_CODEC_LC3_FREQ_24KHZ | BT_CODEC_LC3_FREQ_16KHZ
+#define BT_AUDIO_CODEC_CONFIG_FREQ    BT_CODEC_CONFIG_LC3_FREQ_16KHZ
+#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_CODEC_LC3_FREQ_16KHZ
 
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
 	BT_BAP_LC3_PRESET(BT_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,              \
