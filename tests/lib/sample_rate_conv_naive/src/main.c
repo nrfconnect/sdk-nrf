@@ -52,6 +52,19 @@ ZTEST(suite_sample_rate_conv_naive, test_downsample_48_to_24_8bit)
 	zassert_mem_equal(output, expected_output, sizeof(expected_output));
 }
 
+ZTEST(suite_sample_rate_conv_naive, test_downsample_48_to_24_16bit)
+{
+	int ret;
+	uint8_t output[16];
+	uint8_t expected_output[] = {0, 1, 4, 5, 8, 9, 12, 13, 16, 17, 20, 21};
+	size_t output_size;
+
+	ret = sample_rate_conv_naive(input, sizeof(input), 48000, output, &output_size, 24000, 16);
+	zassert_equal(ret, 0, "Wrong ret code returned");
+	zassert_equal(output_size, sizeof(expected_output));
+	zassert_mem_equal(output, expected_output, sizeof(expected_output));
+}
+
 ZTEST(suite_sample_rate_conv_naive, test_downsample_48_to_16_8bit)
 {
 	int ret;
@@ -74,6 +87,34 @@ ZTEST(suite_sample_rate_conv_naive, test_upsample_16_to_48_8bit)
 
 	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 16000, output, &output_size,
 				     48000, 8);
+	zassert_equal(ret, 0, "Wrong ret code returned");
+	zassert_equal(output_size, sizeof(expected_output));
+	zassert_mem_equal(output, expected_output, sizeof(expected_output));
+}
+
+ZTEST(suite_sample_rate_conv_naive, test_upsample_24_to_48_8bit)
+{
+	int ret;
+	uint8_t output[16];
+	uint8_t expected_output[] = {0, 0, 1, 1, 2, 2, 3, 3};
+	size_t output_size;
+
+	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 24000, output, &output_size,
+				     48000, 8);
+	zassert_equal(ret, 0, "Wrong ret code returned");
+	zassert_equal(output_size, sizeof(expected_output));
+	zassert_mem_equal(output, expected_output, sizeof(expected_output));
+}
+
+ZTEST(suite_sample_rate_conv_naive, test_upsample_24_to_48_16bit)
+{
+	int ret;
+	uint8_t output[16];
+	uint8_t expected_output[] = {0, 1, 0, 1, 2, 3, 2, 3};
+	size_t output_size;
+
+	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 24000, output, &output_size,
+				     48000, 16);
 	zassert_equal(ret, 0, "Wrong ret code returned");
 	zassert_equal(output_size, sizeof(expected_output));
 	zassert_mem_equal(output, expected_output, sizeof(expected_output));

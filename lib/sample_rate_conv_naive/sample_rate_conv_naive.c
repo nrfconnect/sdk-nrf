@@ -11,27 +11,59 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sample_rate_conv_naive, 4);
 
+int valid_conversion_check(uint32_t input_sample_rate, uint32_t output_sample_rate)
+{
+	if (input_sample_rate > output_sample_rate) {
+		/* Downsampling */
+		if (input_sample_rate != 48000) {
+			LOG_ERR("Invalid input sample rate for downsampling %d", input_sample_rate);
+			return -EINVAL;
+		}
+
+		if ((output_sample_rate != 24000) && (output_sample_rate != 16000)) {
+			LOG_ERR("Invalid output sample rate for downsampling %d",
+				output_sample_rate);
+			return -EINVAL;
+		}
+	}
+
+	if (input_sample_rate < output_sample_rate) {
+		/* Upsampling */
+		if (output_sample_rate != 48000) {
+			LOG_ERR("Invalid output sample rate for downsampling: %d",
+				output_sample_rate);
+			return -EINVAL;
+		}
+
+		if ((input_sample_rate != 24000) && (input_sample_rate != 16000)) {
+			LOG_ERR("Invalid input sample rate for downsampling: %d",
+				input_sample_rate);
+			return -EINVAL;
+		}
+	}
+	return 0;
+}
+
 int sample_rate_conv_naive(void *input, size_t input_size, uint32_t input_sample_rate, void *output,
 			   size_t *output_size, uint32_t output_sample_rate, uint8_t pcm_bit_depth)
 
 {
-	memcpy(output, input, input_size);
+	int ret;
 	int ratio;
-	*output_size = input_size;
 	size_t i, j, k;
 	uint8_t bytes_per_sample = pcm_bit_depth / 8;
 	char *pointer_input = (char *)input;
 	char *pointer_output = (char *)output;
-	char *sample_input;
+	char *sample_input = NULL;
+
+	ret = valid_conversion_check(input_sample_rate, output_sample_rate);
+	if (ret) {
+		return ret;
+	}
 
 	if (input_sample_rate < output_sample_rate) {
 		/* up */
 		ratio = output_sample_rate / input_sample_rate;
-
-		if (ratio > 3 || *output_size < input_size * ratio) {
-			LOG_ERR("SRC error");
-			return -EINVAL;
-		}
 
 		for (i = 0; i < input_size; i += bytes_per_sample) {
 			for (j = 0; j < ratio; j++) {
@@ -48,11 +80,6 @@ int sample_rate_conv_naive(void *input, size_t input_size, uint32_t input_sample
 		/* down */
 		ratio = input_sample_rate / output_sample_rate;
 
-		if (ratio > 3 || *output_size < input_size / ratio) {
-			LOG_ERR("SRC error");
-			return -EINVAL;
-		}
-
 		for (i = 0; i < input_size; i += (bytes_per_sample * ratio)) {
 			for (j = 0; j < bytes_per_sample; j++) {
 				*pointer_output++ = *pointer_input++;
@@ -64,6 +91,7 @@ int sample_rate_conv_naive(void *input, size_t input_size, uint32_t input_sample
 		*output_size = input_size / ratio;
 	} else {
 		/* unchanged */
+		LOG_ERR("1 to 1");
 		memcpy(output, input, input_size);
 		*output_size = input_size;
 	}
