@@ -59,7 +59,7 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			/* Convert sample rate if needed */
 			ret = sample_rate_convert(
 				pcm_data_mono_system_sample_rate[m_config.encoder.audio_ch],
-				pcm_block_size_mono_system_sample_rate, CONFIG_AUDIO_SAMPLE_RATE_HZ,
+				pcm_block_size_mono_system_sample_rate, m_config.encoder.bitrate,
 				(void *)&pcm_data_mono[m_config.encoder.audio_ch],
 				&pcm_block_size_mono, m_config.encoder.sample_rate_hz,
 				CONFIG_AUDIO_BIT_DEPTH_BITS);
@@ -68,8 +68,8 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			}
 
 			ret = sw_codec_lc3_enc_run(pcm_data_mono[m_config.encoder.audio_ch],
-						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
-						   0, sizeof(m_encoded_data), m_encoded_data,
+						   pcm_block_size_mono, m_config.encoder.bitrate, 0,
+						   sizeof(m_encoded_data), m_encoded_data,
 						   &encoded_bytes_written);
 			if (ret) {
 				return ret;
@@ -96,7 +96,7 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			}
 
 			ret = sw_codec_lc3_enc_run(pcm_data_mono[AUDIO_CH_L], pcm_block_size_mono,
-						   LC3_USE_BITRATE_FROM_INIT, AUDIO_CH_L,
+						   m_config.encoder.bitrate, AUDIO_CH_L,
 						   sizeof(m_encoded_data), m_encoded_data,
 						   &encoded_bytes_written);
 			if (ret) {
@@ -104,7 +104,7 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			}
 
 			ret = sw_codec_lc3_enc_run(pcm_data_mono[AUDIO_CH_R], pcm_block_size_mono,
-						   LC3_USE_BITRATE_FROM_INIT, AUDIO_CH_R,
+						   m_config.encoder.bitrate, AUDIO_CH_R,
 						   sizeof(m_encoded_data) - encoded_bytes_written,
 						   m_encoded_data + encoded_bytes_written,
 						   &encoded_bytes_written);
@@ -330,7 +330,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			}
 			uint16_t pcm_bytes_req_enc;
 
-			LOG_DBG("Encode: %dHz %dbits %dus %dbps %d channel(s)",
+			LOG_WRN("Encode: %dHz %dbits %dus %dbps %d channel(s)",
 				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
 				sw_codec_cfg.encoder.num_ch);

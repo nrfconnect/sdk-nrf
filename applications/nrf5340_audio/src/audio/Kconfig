@@ -120,7 +120,7 @@ config AUDIO_MAX_PRES_DLY_US
 choice AUDIO_SOURCE_GATEWAY
 	prompt "Audio source for gateway"
 	default AUDIO_SOURCE_I2S if WALKIE_TALKIE_DEMO
-	default AUDIO_SOURCE_USB
+	default AUDIO_SOURCE_I2S
 	help
 	  Select audio source for the gateway.
 
@@ -210,16 +210,11 @@ visible if SW_CODEC_LC3
 
 config LC3_BITRATE_MAX
 	int "Max bitrate for LC3"
-	default 124000
+	default 96000
 
 config LC3_BITRATE_MIN
 	int "Min bitrate for LC3"
 	default 32000
-
-config LC3_BITRATE
-	int
-	range LC3_BITRATE_MIN LC3_BITRATE_MAX
-	default 96000
 
 osource "../nrfxlib/lc3/Kconfig"
 

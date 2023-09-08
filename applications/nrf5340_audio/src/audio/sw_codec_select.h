@@ -11,22 +11,22 @@
 #include "channel_assignment.h"
 
 #if (CONFIG_SW_CODEC_LC3)
-#define LC3_MAX_FRAME_SIZE_MS	10
-#define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
+#define LC3_MAX_FRAME_SIZE_MS	    10
+#define LC3_ENC_MONO_FRAME_SIZE_MAX (CONFIG_LC3_BITRATE_MAX * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
 
 #define LC3_PCM_NUM_BYTES_MONO                                                                     \
 	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * LC3_MAX_FRAME_SIZE_MS / 1000)
 #define LC3_ENC_TIME_US 3000
 #define LC3_DEC_TIME_US 1500
 #else
-#define LC3_ENC_MONO_FRAME_SIZE 0
-#define LC3_PCM_NUM_BYTES_MONO	0
-#define LC3_ENC_TIME_US		0
-#define LC3_DEC_TIME_US		0
+#define LC3_ENC_MONO_FRAME_SIZE_MAX 0
+#define LC3_PCM_NUM_BYTES_MONO	    0
+#define LC3_ENC_TIME_US		    0
+#define LC3_DEC_TIME_US		    0
 #endif /* CONFIG_SW_CODEC_LC3 */
 
 /* Max will be used when multiple codecs are supported */
-#define ENC_MAX_FRAME_SIZE   MAX(LC3_ENC_MONO_FRAME_SIZE, 0)
+#define ENC_MAX_FRAME_SIZE   MAX(LC3_ENC_MONO_FRAME_SIZE_MAX, 0)
 #define ENC_TIME_US	     MAX(LC3_ENC_TIME_US, 0)
 #define DEC_TIME_US	     MAX(LC3_DEC_TIME_US, 0)
 #define PCM_NUM_BYTES_MONO   MAX(LC3_PCM_NUM_BYTES_MONO, 0)

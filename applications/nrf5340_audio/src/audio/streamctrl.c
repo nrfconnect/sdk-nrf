@@ -105,6 +105,7 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 
 	if (data_size_mismatch) {
 		/* Return if sizes do not match */
+		LOG_ERR("mismatch. SIze is: %d, wants %d ", data_size, desired_data_size);
 		return;
 	}
 
@@ -446,8 +447,8 @@ static void le_audio_msg_sub_thread(void)
 				break;
 			}
 
-			LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
-			LOG_DBG("Bitrate: %d bps", bitrate_bps);
+			LOG_WRN("Sampling rate: %d Hz", sampling_rate_hz);
+			LOG_WRN("Bitrate: %d bps", bitrate_bps);
 
 			if (msg.dir == BT_AUDIO_DIR_SINK) {
 				if (CONFIG_AUDIO_DEV == GATEWAY) {

@@ -419,11 +419,6 @@ int le_audio_send(struct encoded_audio enc_audio)
 		return -EINVAL;
 	}
 
-	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE)) {
-		LOG_ERR("The encoded data size does not match the SDU size");
-		return -ECANCELED;
-	}
-
 	for (int i = 0; i < num_streams; i++) {
 		if (audio_streams[i].ep->status.state != BT_BAP_EP_STATE_STREAMING) {
 			LOG_DBG("Stream %d not in streaming state", i);

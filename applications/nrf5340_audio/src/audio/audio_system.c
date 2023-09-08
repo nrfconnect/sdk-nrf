@@ -64,12 +64,6 @@ static void audio_gateway_configure(void)
 	sw_codec_cfg.decoder.num_ch = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
-	} else {
-		ERR_CHK_MSG(-EINVAL, "No codec selected");
-	}
-
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
 		sw_codec_cfg.encoder.num_ch = SW_CODEC_MONO;
 	} else {
@@ -91,11 +85,6 @@ static void audio_headset_configure(void)
 	sw_codec_cfg.encoder.enabled = true;
 	sw_codec_cfg.encoder.num_ch = SW_CODEC_MONO;
 
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
-	} else {
-		ERR_CHK_MSG(-EINVAL, "No codec selected");
-	}
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
 	sw_codec_cfg.decoder.num_ch = SW_CODEC_MONO;
@@ -153,7 +142,6 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 			ret = sw_codec_encode(pcm_raw_data, FRAME_SIZE_BYTES, &encoded_data,
 					      &encoded_data_size);
-
 			ERR_CHK_MSG(ret, "Encode failed");
 		}
 
@@ -208,7 +196,9 @@ void audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_b
 	}
 
 	if (encoder_bitrate) {
+
 		sw_codec_cfg.encoder.bitrate = encoder_bitrate;
+		LOG_WRN("encoder bitrate set to: %d", sw_codec_cfg.encoder.bitrate);
 	}
 }
 

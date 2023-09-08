@@ -851,20 +851,37 @@ static bool sink_valid_codec_cap_check(struct bt_codec cap_array[], size_t size)
 	for (int i = 0; i < size; i++) {
 		if (bt_codec_get_val(&cap_array[i], BT_CODEC_LC3_FREQ, &element)) {
 			/* Try with the preferred sample rate first */
+
+			char supported[20] = "";
+
+			if (element->data.data[0] & BT_CODEC_LC3_FREQ_48KHZ) {
+				strcat(supported, "48, ");
+			}
+			if (element->data.data[0] & BT_CODEC_LC3_FREQ_24KHZ) {
+				strcat(supported, "24, ");
+			}
+			if (element->data.data[0] & BT_CODEC_LC3_FREQ_16KHZ) {
+				strcat(supported, "16, ");
+			}
+			LOG_WRN("Headset supports: %s kHz", supported);
+
 			if ((CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE ==
 			     BT_CODEC_CONFIG_LC3_FREQ_48KHZ) &&
 			    (element->data.data[0] & BT_CODEC_LC3_FREQ_48KHZ)) {
 				lc3_preset_sink = lc3_preset_sink_48_4_1;
+				LOG_WRN("Selected: lc3_preset_sink_48_4_1");
 				return true;
 			} else if ((CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE ==
 				    BT_CODEC_CONFIG_LC3_FREQ_24KHZ) &&
 				   (element->data.data[0] & BT_CODEC_LC3_FREQ_24KHZ)) {
 				lc3_preset_sink = lc3_preset_sink_24_2_1;
+				LOG_WRN("Selected: lc3_preset_sink_24_2_1");
 				return true;
 			} else if ((CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE ==
 				    BT_CODEC_CONFIG_LC3_FREQ_16KHZ) &&
 				   (element->data.data[0] & BT_CODEC_LC3_FREQ_16KHZ)) {
 				lc3_preset_sink = lc3_preset_sink_16_2_1;
+				LOG_WRN("Selected: lc3_preset_sink_16_2_1");
 				return true;
 			}
 
@@ -872,12 +889,15 @@ static bool sink_valid_codec_cap_check(struct bt_codec cap_array[], size_t size)
 			if (element->data.data[0] & BT_CODEC_LC3_FREQ_48KHZ) {
 				lc3_preset_sink = lc3_preset_sink_48_4_1;
 				any_valid_found = true;
+				LOG_WRN("Selected: lc3_preset_sink_48_4_1");
 			} else if (element->data.data[0] & BT_CODEC_LC3_FREQ_24KHZ) {
 				lc3_preset_sink = lc3_preset_sink_24_2_1;
 				any_valid_found = true;
+				LOG_WRN("Selected: lc3_preset_sink_24_2_1");
 			} else if (element->data.data[0] & BT_CODEC_LC3_FREQ_16KHZ) {
 				lc3_preset_sink = lc3_preset_sink_16_2_1;
 				any_valid_found = true;
+				LOG_WRN("Selected: lc3_preset_sink_16_2_1");
 			}
 		}
 	}
@@ -1444,13 +1464,15 @@ int le_audio_send(struct encoded_audio enc_audio)
 
 	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == ARRAY_SIZE(headsets))) {
 		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
+		static bool print = true;
+
+		if (print) {
+			LOG_WRN("to send, data size pr stream is %d", data_size_pr_stream);
+			print = false;
+		}
+
 	} else {
 		LOG_ERR("Num encoded channels must be 1 or equal to num headsets");
-		return -EINVAL;
-	}
-
-	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)) {
-		LOG_ERR("The encoded data size does not match the SDU size");
 		return -EINVAL;
 	}
 
