@@ -505,7 +505,7 @@ Syntax
 
 ::
 
-   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<cid>]]]
+   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<use_dtls_cid>]]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -522,7 +522,7 @@ Syntax
 * The ``<sec_tag>`` parameter is an integer.
   If it is given, a DTLS client will be started.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
-* The ``<cid>`` parameter is an integer.
+* The ``<use_dtls_cid>`` parameter is an integer.
   It indicates whether to use DTLS's connection identifier.
   This parameter is only supported with modem firmware 1.3.5 and newer.
   See :ref:`SLM_AT_SSOCKETOPT` for more details regarding the allowed values.
@@ -589,7 +589,7 @@ Syntax
 
 ::
 
-   #XUDPCLI: <list of ops>,<url>,<port>,<sec_tag>,<cid>
+   #XUDPCLI: <list of ops>,<url>,<port>,<sec_tag>,<use_dtls_cid>
 
 Examples
 ~~~~~~~~
@@ -597,7 +597,7 @@ Examples
 ::
 
    AT#XUDPCLI=?
-   #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>,<cid>
+   #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>,<use_dtls_cid>
    OK
 
 UDP send data #XUDPSEND
