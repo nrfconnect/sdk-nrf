@@ -120,4 +120,32 @@ ZTEST(suite_sample_rate_conv_naive, test_upsample_24_to_48_16bit)
 	zassert_mem_equal(output, expected_output, sizeof(expected_output));
 }
 
+ZTEST(suite_sample_rate_conv_naive, test_invalid_arguments)
+{
+	int ret;
+	uint8_t output[16];
+	size_t output_size;
+
+	/* Invalid bit depth */
+	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 24000, output, &output_size,
+				     48000, 17);
+	zassert_equal(ret, -EINVAL, "Wrong ret code returned");
+
+	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 24001, output, &output_size,
+				     48000, 16);
+	zassert_equal(ret, -EINVAL, "Wrong ret code returned");
+
+	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 24000, output, &output_size,
+				     48001, 16);
+	zassert_equal(ret, -EINVAL, "Wrong ret code returned");
+
+	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 16000, output, &output_size,
+				     24000, 16);
+	zassert_equal(ret, -EINVAL, "Wrong ret code returned");
+
+	ret = sample_rate_conv_naive(input_short, sizeof(input_short), 24000, output, &output_size,
+				     16000, 16);
+	zassert_equal(ret, -EINVAL, "Wrong ret code returned");
+}
+
 ZTEST_SUITE(suite_sample_rate_conv_naive, NULL, NULL, NULL, NULL, NULL);
