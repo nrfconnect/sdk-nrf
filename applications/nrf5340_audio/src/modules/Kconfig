@@ -17,6 +17,11 @@ config AUDIO_SYNC_TIMER_USES_RTC
 	default !BT_LL_ACS_NRF53
 	select NRFX_RTC0
 
+config AUDIO_SYNC_TIMER_USES_RTC_BT_LL_SW_SPLIT
+	bool "BT_LL_SW_SPLIT used NRF_RTC0 time sync"
+	depends on !BT_LL_ACS_NRF53
+	select NRFX_RTC0
+
 #----------------------------------------------------------------------------#
 menu "Power measurement"
 
