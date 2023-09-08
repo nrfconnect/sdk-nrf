@@ -1702,3 +1702,31 @@ enum wifi_nrf_status wifi_nrf_hal_otp_info_get(struct wifi_nrf_hal_dev_ctx *hal_
 out:
 	return status;
 }
+
+
+enum wifi_nrf_status wifi_nrf_hal_otp_ft_prog_ver_get(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+						      unsigned int *ft_prog_ver)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+
+	if (!hal_dev_ctx || !ft_prog_ver) {
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: Invalid parameters\n",
+				      __func__);
+		goto out;
+	}
+
+	status = hal_rpu_mem_read(hal_dev_ctx,
+				  ft_prog_ver,
+				  RPU_MEM_OTP_FT_PROG_VERSION,
+				  sizeof(*ft_prog_ver));
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		wifi_nrf_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: FT program version get failed\n",
+				      __func__);
+		goto out;
+	}
+out:
+	return status;
+}

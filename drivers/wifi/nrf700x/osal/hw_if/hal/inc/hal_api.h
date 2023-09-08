@@ -180,3 +180,6 @@ enum wifi_nrf_status wifi_nrf_hal_get_rpu_ps_state(
 enum wifi_nrf_status wifi_nrf_hal_otp_info_get(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 					       struct host_rpu_umac_info *otp_info,
 					       unsigned int *otp_flags);
+
+enum wifi_nrf_status wifi_nrf_hal_otp_ft_prog_ver_get(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
+						      unsigned int *ft_prog_ver);
