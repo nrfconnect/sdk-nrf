@@ -19,6 +19,8 @@
 #include <zephyr/net/socket.h>
 #include <modem/at_cmd_parser.h>
 
+extern struct k_work_q slm_work_q; /* SLM's work queue. */
+
 /**
  * @brief Compare string ignoring case
  *

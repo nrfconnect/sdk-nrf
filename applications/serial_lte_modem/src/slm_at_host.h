@@ -23,6 +23,12 @@
 #define SLM_DATAMODE_FLAGS_NONE		0
 #define SLM_DATAMODE_FLAGS_MORE_DATA	1 << 0
 
+extern struct at_param_list slm_at_param_list; /* For AT parser. */
+extern uint8_t slm_data_buf[SLM_MAX_MESSAGE_SIZE];  /* For socket data. */
+extern uint8_t slm_at_buf[SLM_AT_MAX_CMD_LEN]; /* AT command buffer. */
+
+extern uint16_t slm_datamode_time_limit; /* Send trigger by time in data mode. */
+
 /**@brief Operations in datamode. */
 enum slm_datamode_operation {
 	DATAMODE_SEND,  /* Send data in datamode */

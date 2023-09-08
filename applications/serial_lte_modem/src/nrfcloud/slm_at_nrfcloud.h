@@ -18,10 +18,10 @@
 #include <modem/at_cmd_parser.h>
 
 /* Whether the connection to nRF Cloud is ready. */
-extern bool nrf_cloud_ready;
+extern bool slm_nrf_cloud_ready;
 
 /* Whether to send the device's location to nRF Cloud. */
-extern bool nrf_cloud_send_location;
+extern bool slm_nrf_cloud_send_location;
 
 /* Handles the AT#XNRFCLOUD commands. */
 int handle_at_nrf_cloud(enum at_cmd_type cmd_type);

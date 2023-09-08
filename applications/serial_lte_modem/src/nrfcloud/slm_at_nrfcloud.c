@@ -87,14 +87,8 @@ static struct wifi_scan_info wifi_data;
 
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN];
 
-bool nrf_cloud_ready;
-bool nrf_cloud_send_location;
-
-
-/* global variable defined in different files */
-extern struct k_work_q slm_work_q;
-extern struct at_param_list at_param_list;
-extern uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
+bool slm_nrf_cloud_ready;
+bool slm_nrf_cloud_send_location;
 
 #if defined(CONFIG_NRF_CLOUD_LOCATION)
 AT_MONITOR(ncell_meas, "NCELLMEAS", ncell_meas_mon, PAUSED);
@@ -112,14 +106,14 @@ static void ncell_meas_mon(const char *notify)
 	unsigned int ncells_count = 0;
 
 	ncellmeas_done = false;
-	at_params_list_clear(&at_param_list);
-	err = at_parser_params_from_str(notify, NULL, &at_param_list);
+	at_params_list_clear(&slm_at_param_list);
+	err = at_parser_params_from_str(notify, NULL, &slm_at_param_list);
 	if (err) {
 		goto exit;
 	}
 
 	/* parse status, 0: success 1: fail */
-	err = at_params_int_get(&at_param_list, 1, &ncellmeas_status);
+	err = at_params_int_get(&slm_at_param_list, 1, &ncellmeas_status);
 	if (err) {
 		goto exit;
 	}
@@ -128,7 +122,7 @@ static void ncell_meas_mon(const char *notify)
 		err = -EAGAIN;
 		goto exit;
 	}
-	param_count = at_params_valid_count_get(&at_param_list);
+	param_count = at_params_valid_count_get(&slm_at_param_list);
 	if (param_count < MAX_PARAM_CELL) { /* at least current cell */
 		LOG_ERR("Missing param in NCELLMEAS notification");
 		err = -EAGAIN;
@@ -137,7 +131,7 @@ static void ncell_meas_mon(const char *notify)
 
 	/* parse Cell ID */
 	size = sizeof(cid);
-	err = util_string_get(&at_param_list, 2, cid, &size);
+	err = util_string_get(&slm_at_param_list, 2, cid, &size);
 	if (err) {
 		goto exit;
 	}
@@ -148,7 +142,7 @@ static void ncell_meas_mon(const char *notify)
 
 	/* parse PLMN */
 	size = sizeof(plmn);
-	err = util_string_get(&at_param_list, 3, plmn, &size);
+	err = util_string_get(&slm_at_param_list, 3, plmn, &size);
 	if (err) {
 		goto exit;
 	}
@@ -164,7 +158,7 @@ static void ncell_meas_mon(const char *notify)
 
 	/* parse TAC */
 	size = sizeof(tac);
-	err = util_string_get(&at_param_list, 4, tac, &size);
+	err = util_string_get(&slm_at_param_list, 4, tac, &size);
 	if (err) {
 		goto exit;
 	}
@@ -177,24 +171,24 @@ static void ncell_meas_mon(const char *notify)
 	cell_data.current_cell.timing_advance = NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV;
 
 	/* parse EARFCN */
-	err = at_params_unsigned_int_get(&at_param_list, 6, &cell_data.current_cell.earfcn);
+	err = at_params_unsigned_int_get(&slm_at_param_list, 6, &cell_data.current_cell.earfcn);
 	if (err) {
 		goto exit;
 	}
 
 	/* parse PCI */
-	err = at_params_unsigned_short_get(&at_param_list, 7,
+	err = at_params_unsigned_short_get(&slm_at_param_list, 7,
 					   &cell_data.current_cell.phys_cell_id);
 	if (err) {
 		goto exit;
 	}
 
 	/* parse RSRP and RSRQ */
-	err = at_params_short_get(&at_param_list, 8, &cell_data.current_cell.rsrp);
+	err = at_params_short_get(&slm_at_param_list, 8, &cell_data.current_cell.rsrp);
 	if (err < 0) {
 		goto exit;
 	}
-	err = at_params_short_get(&at_param_list, 9, &cell_data.current_cell.rsrq);
+	err = at_params_short_get(&slm_at_param_list, 9, &cell_data.current_cell.rsrq);
 	if (err < 0) {
 		goto exit;
 	}
@@ -206,27 +200,27 @@ static void ncell_meas_mon(const char *notify)
 		const unsigned int offset = MAX_PARAM_CELL + i * MAX_PARAM_NCELL;
 
 		/* parse n_earfcn */
-		err = at_params_unsigned_int_get(&at_param_list, offset,
+		err = at_params_unsigned_int_get(&slm_at_param_list, offset,
 						 &neighbor_cells[i].earfcn);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_phys_cell_id */
-		err = at_params_unsigned_short_get(&at_param_list, offset + 1,
+		err = at_params_unsigned_short_get(&slm_at_param_list, offset + 1,
 						   &neighbor_cells[i].phys_cell_id);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_rsrp */
-		err = at_params_short_get(&at_param_list, offset + 2, &neighbor_cells[i].rsrp);
+		err = at_params_short_get(&slm_at_param_list, offset + 2, &neighbor_cells[i].rsrp);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_rsrq */
-		err = at_params_short_get(&at_param_list, offset + 3, &neighbor_cells[i].rsrq);
+		err = at_params_short_get(&slm_at_param_list, offset + 3, &neighbor_cells[i].rsrq);
 		if (err < 0) {
 			goto exit;
 		}
@@ -304,7 +298,7 @@ static void on_cloud_evt_ready(void)
 {
 	int err;
 
-	if (nrf_cloud_send_location) {
+	if (slm_nrf_cloud_send_location) {
 		struct nrf_cloud_tx_data msg = {
 			.data.ptr = SERVICE_INFO_GNSS,
 			.data.len = strlen(SERVICE_INFO_GNSS),
@@ -319,8 +313,8 @@ static void on_cloud_evt_ready(void)
 		}
 	}
 
-	nrf_cloud_ready = true;
-	rsp_send("\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, nrf_cloud_send_location);
+	slm_nrf_cloud_ready = true;
+	rsp_send("\r\n#XNRFCLOUD: %d,%d\r\n", slm_nrf_cloud_ready, slm_nrf_cloud_send_location);
 #if defined(CONFIG_NRF_CLOUD_LOCATION)
 	at_monitor_resume(&ncell_meas);
 #endif
@@ -328,8 +322,8 @@ static void on_cloud_evt_ready(void)
 
 static void on_cloud_evt_disconnected(void)
 {
-	nrf_cloud_ready = false;
-	rsp_send("\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, nrf_cloud_send_location);
+	slm_nrf_cloud_ready = false;
+	rsp_send("\r\n#XNRFCLOUD: %d,%d\r\n", slm_nrf_cloud_ready, slm_nrf_cloud_send_location);
 #if defined(CONFIG_NRF_CLOUD_LOCATION)
 	at_monitor_pause(&ncell_meas);
 #endif
@@ -368,27 +362,27 @@ static void cloud_cmd_wk(struct k_work *work)
 	ARG_UNUSED(work);
 
 	/* Send AT command to modem */
-	ret = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
+	ret = nrf_modem_at_cmd(slm_at_buf, sizeof(slm_at_buf), "%s", slm_at_buf);
 	if (ret < 0) {
 		LOG_ERR("AT command failed: %d", ret);
 		return;
 	} else if (ret > 0) {
 		LOG_WRN("AT command error, type: %d", nrf_modem_at_err_type(ret));
 	}
-	LOG_INF("MODEM RSP %s", at_buf);
+	LOG_INF("MODEM RSP %s", slm_at_buf);
 	/* replace \" with \' in JSON string-type value */
-	for (int i = 0; i < strlen(at_buf); i++) {
-		if (at_buf[i] == '\"') {
-			at_buf[i] = '\'';
+	for (int i = 0; i < strlen(slm_at_buf); i++) {
+		if (slm_at_buf[i] == '\"') {
+			slm_at_buf[i] = '\'';
 		}
 	}
 	/* format JSON reply */
-	cmd_rsp = k_malloc(strlen(at_buf) + sizeof(MODEM_AT_RSP));
+	cmd_rsp = k_malloc(strlen(slm_at_buf) + sizeof(MODEM_AT_RSP));
 	if (cmd_rsp == NULL) {
 		LOG_WRN("Unable to allocate buffer");
 		return;
 	}
-	sprintf(cmd_rsp, MODEM_AT_RSP, at_buf);
+	sprintf(cmd_rsp, MODEM_AT_RSP, slm_at_buf);
 	/* Send AT response to cloud */
 	ret = do_cloud_send_msg(cmd_rsp, strlen(cmd_rsp));
 	if (ret) {
@@ -436,7 +430,7 @@ static bool handle_cloud_cmd(const char *buf_in)
 		at_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, NRF_CLOUD_JSON_DATA_KEY);
 		if (cJSON_GetStringValue(at_cmd) != NULL) {
 			LOG_INF("MODEM CMD %s", at_cmd->valuestring);
-			strcpy(at_buf, at_cmd->valuestring);
+			strcpy(slm_at_buf, at_cmd->valuestring);
 			k_work_submit_to_queue(&slm_work_q, &cloud_cmd);
 			ret = true;
 		}
@@ -463,7 +457,7 @@ end:
 
 static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
 {
-	if (nrf_cloud_ready) {
+	if (slm_nrf_cloud_ready) {
 		if (((char *)data->ptr)[0] == '{') {
 			/* Check if it's a cloud command sent from the cloud */
 			if (handle_cloud_cmd(data->ptr)) {
@@ -586,13 +580,13 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
-		if (op == SLM_NRF_CLOUD_CONNECT && !nrf_cloud_ready) {
-			if (at_params_valid_count_get(&at_param_list) > 2) {
-				err = at_params_unsigned_short_get(&at_param_list, 2,
+		if (op == SLM_NRF_CLOUD_CONNECT && !slm_nrf_cloud_ready) {
+			if (at_params_valid_count_get(&slm_at_param_list) > 2) {
+				err = at_params_unsigned_short_get(&slm_at_param_list, 2,
 					&send_location);
 				if (send_location != 0 && send_location != 1) {
 					err = -EINVAL;
@@ -605,17 +599,17 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 			if (err) {
 				LOG_ERR("Cloud connection failed, error: %d", err);
 			} else {
-				nrf_cloud_send_location = send_location;
+				slm_nrf_cloud_send_location = send_location;
 				/* A-GPS & P-GPS needs date_time, trigger to update current time */
 				date_time_update_async(date_time_event_handler);
 				if (k_sem_take(&sem_date_time, K_SECONDS(10)) != 0) {
 					LOG_WRN("Failed to get current time");
 				}
 			}
-		} else if (op == SLM_NRF_CLOUD_SEND && nrf_cloud_ready) {
+		} else if (op == SLM_NRF_CLOUD_SEND && slm_nrf_cloud_ready) {
 			/* enter data mode */
 			err = enter_datamode(nrf_cloud_datamode_callback);
-		} else if (op == SLM_NRF_CLOUD_DISCONNECT && nrf_cloud_ready) {
+		} else if (op == SLM_NRF_CLOUD_DISCONNECT && slm_nrf_cloud_ready) {
 			err = nrf_cloud_disconnect();
 			if (err) {
 				LOG_ERR("Cloud disconnection failed, error: %d", err);
@@ -625,8 +619,8 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND: {
-		rsp_send("\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", nrf_cloud_ready,
-			nrf_cloud_send_location, CONFIG_NRF_CLOUD_SEC_TAG, device_id);
+		rsp_send("\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", slm_nrf_cloud_ready,
+			slm_nrf_cloud_send_location, CONFIG_NRF_CLOUD_SEC_TAG, device_id);
 		err = 0;
 	} break;
 
@@ -649,14 +643,14 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 {
 	int err;
-	const uint32_t param_count = at_params_valid_count_get(&at_param_list);
+	const uint32_t param_count = at_params_valid_count_get(&slm_at_param_list);
 	uint16_t cell_pos, wifi_pos;
 
 	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
 		return -ENOTSUP;
 	}
 
-	if (!nrf_cloud_ready) {
+	if (!slm_nrf_cloud_ready) {
 		LOG_ERR("Not connected to nRF Cloud.");
 		return -ENOTCONN;
 	}
@@ -671,12 +665,12 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 		return -EINVAL;
 	}
 
-	err = at_params_unsigned_short_get(&at_param_list, 1, &cell_pos);
+	err = at_params_unsigned_short_get(&slm_at_param_list, 1, &cell_pos);
 	if (err) {
 		return err;
 	}
 
-	err = at_params_unsigned_short_get(&at_param_list, 2, &wifi_pos);
+	err = at_params_unsigned_short_get(&slm_at_param_list, 2, &wifi_pos);
 	if (err) {
 		return err;
 	}
@@ -720,7 +714,8 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 
 			/* Parse the MAC address. */
 			len = sizeof(mac_addr_str);
-			err = at_params_string_get(&at_param_list, param_idx, mac_addr_str, &len);
+			err = at_params_string_get(
+				&slm_at_param_list, param_idx, mac_addr_str, &len);
 			if (!err && (len != sizeof(mac_addr_str)
 				|| sscanf(mac_addr_str, WIFI_MAC_ADDR_TEMPLATE,
 						&mac_addr[0], &mac_addr[1], &mac_addr[2],
@@ -738,7 +733,7 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 			ap->mac_length = WIFI_MAC_ADDR_LEN;
 
 			/* Parse the RSSI, if present. */
-			if (!at_params_int_get(&at_param_list, param_idx + 1, &rssi)) {
+			if (!at_params_int_get(&slm_at_param_list, param_idx + 1, &rssi)) {
 				++param_idx;
 				const int rssi_min = -128;
 				const int rssi_max = 0;
@@ -803,7 +798,7 @@ int slm_at_nrfcloud_init(void)
 
 int slm_at_nrfcloud_uninit(void)
 {
-	if (nrf_cloud_ready) {
+	if (slm_nrf_cloud_ready) {
 		(void)nrf_cloud_disconnect();
 	}
 	(void)nrf_cloud_uninit();

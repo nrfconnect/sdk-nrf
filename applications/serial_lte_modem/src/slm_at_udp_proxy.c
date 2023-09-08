@@ -55,10 +55,6 @@ static struct udp_proxy {
 	};
 } proxy;
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
-
 /** forward declaration of thread function **/
 static void udp_thread_func(void *p1, void *p2, void *p3);
 
@@ -415,17 +411,19 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 				int size = sizeof(struct sockaddr_in);
 
 				memset(&proxy.remote, 0, sizeof(struct sockaddr_in));
-				ret = recvfrom(proxy.sock, (void *)data_buf, sizeof(data_buf), 0,
-					(struct sockaddr *)&(proxy.remote), &size);
+				ret = recvfrom(
+					proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
+					0, (struct sockaddr *)&(proxy.remote), &size);
 			} else {
 				int size = sizeof(struct sockaddr_in6);
 
 				memset(&proxy.remote6, 0, sizeof(struct sockaddr_in6));
-				ret = recvfrom(proxy.sock, (void *)data_buf, sizeof(data_buf), 0,
-					(struct sockaddr *)&(proxy.remote6), &size);
+				ret = recvfrom(
+					proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf),
+					0, (struct sockaddr *)&(proxy.remote6), &size);
 			}
 		} else {
-			ret = recv(proxy.sock, (void *)data_buf, sizeof(data_buf), 0);
+			ret = recv(proxy.sock, (void *)slm_data_buf, sizeof(slm_data_buf), 0);
 		}
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
@@ -435,10 +433,10 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 			continue;
 		}
 		if (in_datamode()) {
-			data_send(data_buf, ret);
+			data_send(slm_data_buf, ret);
 		} else {
 			rsp_send("\r\n#XUDPDATA: %d\r\n", ret);
-			data_send(data_buf, ret);
+			data_send(slm_data_buf, ret);
 		}
 	} while (true);
 
@@ -496,7 +494,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -504,7 +502,7 @@ int handle_at_udp_server(enum at_cmd_type cmd_type)
 			if (socket_is_in_use()) {
 				return -EINVAL;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 2, &port);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &port);
 			if (err) {
 				return err;
 			}
@@ -540,7 +538,7 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -552,25 +550,26 @@ int handle_at_udp_client(enum at_cmd_type cmd_type)
 			if (socket_is_in_use()) {
 				return -EINVAL;
 			}
-			err = util_string_get(&at_param_list, 2, url, &size);
+			err = util_string_get(&slm_at_param_list, 2, url, &size);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 3, &port);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &port);
 			if (err) {
 				return err;
 			}
 			proxy.sec_tag = INVALID_SEC_TAG;
 			proxy.dtls_cid = INVALID_DTLS_CID;
-			const uint32_t param_count = at_params_valid_count_get(&at_param_list);
+			const uint32_t param_count = at_params_valid_count_get(&slm_at_param_list);
 
 			if (param_count > 4) {
-				if (at_params_int_get(&at_param_list, 4, &proxy.sec_tag)
+				if (at_params_int_get(&slm_at_param_list, 4, &proxy.sec_tag)
 				|| proxy.sec_tag == INVALID_SEC_TAG || proxy.sec_tag < 0) {
 					return -EINVAL;
 				}
 				if (param_count > 5) {
-					if (at_params_int_get(&at_param_list, 5, &proxy.dtls_cid)
+					if (at_params_int_get(
+						&slm_at_param_list, 5, &proxy.dtls_cid)
 					|| !(proxy.dtls_cid == TLS_DTLS_CID_DISABLED
 						|| proxy.dtls_cid == TLS_DTLS_CID_SUPPORTED
 						|| proxy.dtls_cid == TLS_DTLS_CID_ENABLED)) {
@@ -615,9 +614,9 @@ int handle_at_udp_send(enum at_cmd_type cmd_type)
 			LOG_ERR("Not connected yet");
 			return -ENOTCONN;
 		}
-		if (at_params_valid_count_get(&at_param_list) > 1) {
+		if (at_params_valid_count_get(&slm_at_param_list) > 1) {
 			size = sizeof(data);
-			err = util_string_get(&at_param_list, 1, data, &size);
+			err = util_string_get(&slm_at_param_list, 1, data, &size);
 			if (err) {
 				return err;
 			}

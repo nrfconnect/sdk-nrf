@@ -44,9 +44,6 @@ enum slm_fota_operation {
 static char path[FILE_URI_MAX];
 static char hostname[URI_HOST_MAX];
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-
 static int do_fota_mfw_read(void)
 {
 	int err;
@@ -208,7 +205,7 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 			FOTA_STATUS_ERROR, ret);
 	}
 
-	fota_type = type;
+	slm_fota_type = type;
 
 	return ret;
 }
@@ -217,40 +214,42 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 {
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
-		fota_stage = FOTA_STAGE_DOWNLOAD;
-		fota_status = FOTA_STATUS_OK;
-		fota_info = evt->progress;
-		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status, fota_info);
+		slm_fota_stage = FOTA_STAGE_DOWNLOAD;
+		slm_fota_status = FOTA_STATUS_OK;
+		slm_fota_info = evt->progress;
+		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n",
+			slm_fota_stage, slm_fota_status, slm_fota_info);
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		fota_stage = FOTA_STAGE_ACTIVATE;
-		fota_info = 0;
+		slm_fota_stage = FOTA_STAGE_ACTIVATE;
+		slm_fota_info = 0;
 		/* Save, in case reboot by reset */
 		slm_settings_fota_save();
-		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
-		fota_stage = FOTA_STAGE_DOWNLOAD_ERASE_PENDING;
-		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		slm_fota_stage = FOTA_STAGE_DOWNLOAD_ERASE_PENDING;
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
-		rsp_send("\r\n#XFOTA: %d,%d\r\n", FOTA_STAGE_DOWNLOAD_ERASED, fota_status);
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", FOTA_STAGE_DOWNLOAD_ERASED, slm_fota_status);
 		/* Back to init now that the erasure is complete so that potential pre-start
 		 * error codes are printed with the same stage than if there had been no erasure.
 		 */
-		fota_stage = FOTA_STAGE_INIT;
+		slm_fota_stage = FOTA_STAGE_INIT;
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		fota_status = FOTA_STATUS_ERROR;
-		fota_info = evt->cause;
-		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status, fota_info);
+		slm_fota_status = FOTA_STATUS_ERROR;
+		slm_fota_info = evt->cause;
+		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n",
+			slm_fota_stage, slm_fota_status, slm_fota_info);
 		/* FOTA session terminated */
 		slm_settings_fota_init();
 		break;
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
-		fota_status = FOTA_STATUS_CANCELLED;
-		fota_info = 0;
-		rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		slm_fota_status = FOTA_STATUS_CANCELLED;
+		slm_fota_info = 0;
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
 		/* FOTA session terminated */
 		slm_settings_fota_init();
 		break;
@@ -275,7 +274,7 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
@@ -288,20 +287,20 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 			enum dfu_target_image_type type;
 
-			err = util_string_get(&at_param_list, 2, uri, &size);
+			err = util_string_get(&slm_at_param_list, 2, uri, &size);
 			if (err) {
 				return err;
 			}
-			if (at_params_valid_count_get(&at_param_list) > 3) {
-				at_params_unsigned_int_get(&at_param_list, 3, &sec_tag);
+			if (at_params_valid_count_get(&slm_at_param_list) > 3) {
+				at_params_unsigned_int_get(&slm_at_param_list, 3, &sec_tag);
 			}
 			if (op == SLM_FOTA_START_APP) {
 				type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 			} else {
 				type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 			}
-			if (at_params_valid_count_get(&at_param_list) > 4) {
-				at_params_unsigned_short_get(&at_param_list, 4, &pdn_id);
+			if (at_params_valid_count_get(&slm_at_param_list) > 4) {
+				at_params_unsigned_short_get(&slm_at_param_list, 4, &pdn_id);
 				err = do_fota_start(op, uri, sec_tag, pdn_id, type);
 			} else {
 				err = do_fota_start(op, uri, sec_tag, 0, type);
@@ -351,21 +350,21 @@ int slm_at_fota_uninit(void)
 
 void slm_fota_post_process(void)
 {
-	LOG_DBG("FOTA result %d,%d,%d", fota_stage, fota_status, fota_info);
-	if (fota_stage != FOTA_STAGE_INIT) {
+	LOG_DBG("FOTA result %d,%d,%d", slm_fota_stage, slm_fota_status, slm_fota_info);
+	if (slm_fota_stage != FOTA_STAGE_INIT) {
 		/* report final result of last fota */
-		if (fota_status == FOTA_STATUS_OK) {
-			rsp_send("\r\n#XFOTA: %d,%d\r\n", fota_stage, fota_status);
+		if (slm_fota_status == FOTA_STATUS_OK) {
+			rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
 		} else {
-			rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", fota_stage, fota_status,
-				fota_info);
+			rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", slm_fota_stage, slm_fota_status,
+				slm_fota_info);
 		}
 
 		/* This condition might not be true in case of
 		 * NRF_MODEM_DFU_RESULT_VOLTAGE_LOW. In that case we want to remember
 		 * that a firmware update is still ongoing when a reset is next done.
 		 */
-		if (fota_stage != FOTA_STAGE_ACTIVATE) {
+		if (slm_fota_stage != FOTA_STAGE_ACTIVATE) {
 			/* FOTA session completed */
 			slm_settings_fota_init();
 		}

@@ -12,53 +12,60 @@
 #include <dfu/dfu_target.h>
 #include "slm_at_fota.h"
 #include "slm_settings.h"
+#include "lwm2m_carrier/slm_at_carrier.h"
 
 LOG_MODULE_REGISTER(slm_config, CONFIG_SLM_LOG_LEVEL);
 
 /**
  * Serial LTE Modem setting page for persistent data
  */
-uint8_t fota_type;		/* FOTA: image type */
-enum fota_stage fota_stage = FOTA_STAGE_INIT;		/* FOTA: stage of FOTA process */
-enum fota_status fota_status;	/* FOTA: OK/Error status */
-int32_t fota_info;		/* FOTA: failure cause in case of error or download percentage */
 
-int32_t auto_connect = 1;	/* Auto connect network at startup or after FOTA update */
+#if defined(CONFIG_SLM_CARRIER)
+#include "slm_at_carrier.h"
+int32_t slm_carrier_auto_connect = 1;
+#endif
 
-bool uart_configured;		/* UART: first-time configured */
-struct uart_config slm_uart;	/* UART: config */
+uint8_t slm_fota_type;
+enum fota_stage slm_fota_stage = FOTA_STAGE_INIT;
+enum fota_status slm_fota_status;
+int32_t slm_fota_info;
+
+bool slm_uart_configured;
+struct uart_config slm_uart;
 
 static int settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
 	if (!strcmp(name, "fota_type")) {
-		if (len != sizeof(fota_type))
+		if (len != sizeof(slm_fota_type))
 			return -EINVAL;
-		if (read_cb(cb_arg, &fota_type, len) > 0)
+		if (read_cb(cb_arg, &slm_fota_type, len) > 0)
 			return 0;
 	} else if (!strcmp(name, "fota_stage")) {
-		if (len != sizeof(fota_stage))
+		if (len != sizeof(slm_fota_stage))
 			return -EINVAL;
-		if (read_cb(cb_arg, &fota_stage, len) > 0)
+		if (read_cb(cb_arg, &slm_fota_stage, len) > 0)
 			return 0;
 	} else if (!strcmp(name, "fota_status")) {
-		if (len != sizeof(fota_status))
+		if (len != sizeof(slm_fota_status))
 			return -EINVAL;
-		if (read_cb(cb_arg, &fota_status, len) > 0)
+		if (read_cb(cb_arg, &slm_fota_status, len) > 0)
 			return 0;
 	} else if (!strcmp(name, "fota_info")) {
-		if (len != sizeof(fota_info))
+		if (len != sizeof(slm_fota_info))
 			return -EINVAL;
-		if (read_cb(cb_arg, &fota_info, len) > 0)
+		if (read_cb(cb_arg, &slm_fota_info, len) > 0)
 			return 0;
+#if defined(CONFIG_SLM_CARRIER)
 	} else if (!strcmp(name, "auto_connect")) {
-		if (len != sizeof(auto_connect))
+		if (len != sizeof(slm_carrier_auto_connect))
 			return -EINVAL;
-		if (read_cb(cb_arg, &auto_connect, len) > 0)
+		if (read_cb(cb_arg, &slm_carrier_auto_connect, len) > 0)
 			return 0;
+#endif
 	} else if (!strcmp(name, "uart_configured")) {
-		if (len != sizeof(uart_configured))
+		if (len != sizeof(slm_uart_configured))
 			return -EINVAL;
-		if (read_cb(cb_arg, &uart_configured, len) > 0)
+		if (read_cb(cb_arg, &slm_uart_configured, len) > 0)
 			return 0;
 	} else if (!strcmp(name, "uart_baudrate")) {
 		if (len != sizeof(slm_uart.baudrate))
@@ -122,22 +129,22 @@ int slm_settings_fota_save(void)
 	int ret;
 
 	/* Write a single serialized value to persisted storage (if it has changed value). */
-	ret = settings_save_one("slm/fota_type", &(fota_type), sizeof(fota_type));
+	ret = settings_save_one("slm/fota_type", &(slm_fota_type), sizeof(slm_fota_type));
 	if (ret) {
 		LOG_ERR("save slm/fota_type failed: %d", ret);
 		return ret;
 	}
-	ret = settings_save_one("slm/fota_stage", &(fota_stage), sizeof(fota_stage));
+	ret = settings_save_one("slm/fota_stage", &(slm_fota_stage), sizeof(slm_fota_stage));
 	if (ret) {
 		LOG_ERR("save slm/fota_stage failed: %d", ret);
 		return ret;
 	}
-	ret = settings_save_one("slm/fota_status", &(fota_status), sizeof(fota_status));
+	ret = settings_save_one("slm/fota_status", &(slm_fota_status), sizeof(slm_fota_status));
 	if (ret) {
 		LOG_ERR("save slm/fota_status failed: %d", ret);
 		return ret;
 	}
-	ret = settings_save_one("slm/fota_info", &(fota_info), sizeof(fota_info));
+	ret = settings_save_one("slm/fota_info", &(slm_fota_info), sizeof(slm_fota_info));
 	if (ret) {
 		LOG_ERR("save slm/fota_info failed: %d", ret);
 		return ret;
@@ -148,18 +155,20 @@ int slm_settings_fota_save(void)
 
 void slm_settings_fota_init(void)
 {
-	fota_type = DFU_TARGET_IMAGE_TYPE_ANY;
-	fota_stage = FOTA_STAGE_INIT;
-	fota_status = FOTA_STATUS_OK;
-	fota_info = 0;
+	slm_fota_type = DFU_TARGET_IMAGE_TYPE_ANY;
+	slm_fota_stage = FOTA_STAGE_INIT;
+	slm_fota_status = FOTA_STATUS_OK;
+	slm_fota_info = 0;
 }
 
+#if defined(CONFIG_SLM_CARRIER)
 int slm_settings_auto_connect_save(void)
 {
 	int ret;
 
 	/* Write a single serialized value to persisted storage (if it has changed value). */
-	ret = settings_save_one("slm/auto_connect", &(auto_connect), sizeof(auto_connect));
+	ret = settings_save_one("slm/auto_connect",
+		&(slm_carrier_auto_connect), sizeof(slm_carrier_auto_connect));
 	if (ret) {
 		LOG_ERR("save slm/auto_connect failed: %d", ret);
 		return ret;
@@ -167,6 +176,7 @@ int slm_settings_auto_connect_save(void)
 
 	return 0;
 }
+#endif
 
 int slm_settings_uart_save(void)
 {
@@ -174,7 +184,7 @@ int slm_settings_uart_save(void)
 
 	/* Write a single serialized value to persisted storage (if it has changed value). */
 	ret = settings_save_one("slm/uart_configured",
-		&(uart_configured), sizeof(uart_configured));
+		&(slm_uart_configured), sizeof(slm_uart_configured));
 	if (ret) {
 		return ret;
 	}

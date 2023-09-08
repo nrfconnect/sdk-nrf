@@ -80,10 +80,6 @@ static struct slm_work_info {
 	uint32_t data;
 } slm_work;
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-extern uint16_t datamode_time_limit;
-
 /* global functions defined in different files */
 void enter_idle(void);
 void enter_sleep(void);
@@ -165,7 +161,7 @@ static int handle_at_sleep(enum at_cmd_type type)
 	int ret = -EINVAL;
 
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		ret = at_params_unsigned_int_get(&at_param_list, 1, &slm_work.data);
+		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &slm_work.data);
 		if (ret) {
 			return -EINVAL;
 		}
@@ -253,8 +249,8 @@ static int handle_at_modemreset(enum at_cmd_type type)
 		}
 		++step;
 
-		if (ret > 0 || (fota_stage != FOTA_STAGE_INIT
-					&& fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA)) {
+		if (ret > 0 || (slm_fota_stage != FOTA_STAGE_INIT
+					&& slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA)) {
 			slm_finish_modem_fota(ret);
 			slm_fota_post_process();
 		}
@@ -321,7 +317,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
 		uint32_t baudrate;
 
-		ret = at_params_unsigned_int_get(&at_param_list, 1, &baudrate);
+		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &baudrate);
 
 		if (ret == 0) {
 			switch (baudrate) {
@@ -375,20 +371,20 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		ret = at_params_unsigned_short_get(&at_param_list, 1, &time_limit);
+		ret = at_params_unsigned_short_get(&slm_at_param_list, 1, &time_limit);
 		if (ret) {
 			return ret;
 		}
 		if (time_limit > 0 && verify_datamode_control(time_limit, NULL)) {
-			datamode_time_limit = time_limit;
+			slm_datamode_time_limit = time_limit;
 		} else {
 			return -EINVAL;
 		}
 		break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		(void)verify_datamode_control(datamode_time_limit, &time_limit_min);
-		rsp_send("\r\n#XDATACTRL: %d,%d\r\n", datamode_time_limit, time_limit_min);
+		(void)verify_datamode_control(slm_datamode_time_limit, &time_limit_min);
+		rsp_send("\r\n#XDATACTRL: %d,%d\r\n", slm_datamode_time_limit, time_limit_min);
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
@@ -638,8 +634,8 @@ int slm_at_parse(const char *at_cmd)
 		if (slm_util_cmd_casecmp(at_cmd, slm_at_cmd_list[i].string)) {
 			enum at_cmd_type type = at_parser_cmd_type_get(at_cmd);
 
-			at_params_list_clear(&at_param_list);
-			ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
+			at_params_list_clear(&slm_at_param_list);
+			ret = at_parser_params_from_str(at_cmd, NULL, &slm_at_param_list);
 			if (ret) {
 				LOG_ERR("Failed to parse AT command %d", ret);
 				return -EINVAL;

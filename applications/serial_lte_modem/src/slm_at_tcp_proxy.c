@@ -49,10 +49,6 @@ static struct tcp_proxy {
 	enum slm_tcp_role role;	/* Client or Server proxy */
 } proxy;
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
-
 /** forward declaration of thread function **/
 static void tcpcli_thread_func(void *p1, void *p2, void *p3);
 static void tcpsvr_thread_func(void *p1, void *p2, void *p3);
@@ -543,7 +539,7 @@ client_events:
 			if ((fds[1].revents & POLLIN) != POLLIN) {
 				continue;
 			}
-			ret = recv(fds[1].fd, (void *)data_buf, sizeof(data_buf), 0);
+			ret = recv(fds[1].fd, (void *)slm_data_buf, sizeof(slm_data_buf), 0);
 			if (ret < 0) {
 				LOG_WRN("recv() error: %d", -errno);
 				continue;
@@ -552,10 +548,10 @@ client_events:
 				continue;
 			}
 			if (in_datamode()) {
-				data_send(data_buf, ret);
+				data_send(slm_data_buf, ret);
 			} else {
 				rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
-				data_send(data_buf, ret);
+				data_send(slm_data_buf, ret);
 			}
 		}
 	}
@@ -619,7 +615,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 		if ((fds.revents & POLLIN) != POLLIN) {
 			continue;
 		}
-		ret = recv(fds.fd, (void *)data_buf, sizeof(data_buf), 0);
+		ret = recv(fds.fd, (void *)slm_data_buf, sizeof(slm_data_buf), 0);
 		if (ret < 0) {
 			LOG_WRN("recv() error: %d", -errno);
 			continue;
@@ -628,10 +624,10 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			continue;
 		}
 		if (in_datamode()) {
-			data_send(data_buf, ret);
+			data_send(slm_data_buf, ret);
 		} else {
 			rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
-			data_send(data_buf, ret);
+			data_send(slm_data_buf, ret);
 		}
 	}
 
@@ -657,11 +653,11 @@ int handle_at_tcp_server(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	uint16_t op;
 	uint16_t port;
-	int param_count = at_params_valid_count_get(&at_param_list);
+	int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -670,13 +666,13 @@ int handle_at_tcp_server(enum at_cmd_type cmd_type)
 				LOG_ERR("Server is running.");
 				return -EINVAL;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 2, &port);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &port);
 			if (err) {
 				return err;
 			}
 			proxy.sec_tag = INVALID_SEC_TAG;
 			if (param_count > 3) {
-				err = at_params_int_get(&at_param_list, 3, &proxy.sec_tag);
+				err = at_params_int_get(&slm_at_param_list, 3, &proxy.sec_tag);
 				if (err) {
 					return err;
 				}
@@ -715,11 +711,11 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	uint16_t op;
-	int param_count = at_params_valid_count_get(&at_param_list);
+	int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -732,17 +728,17 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 				LOG_ERR("Client is connected.");
 				return -EINVAL;
 			}
-			err = util_string_get(&at_param_list, 2, url, &size);
+			err = util_string_get(&slm_at_param_list, 2, url, &size);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 3, &port);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &port);
 			if (err) {
 				return err;
 			}
 			proxy.sec_tag = INVALID_SEC_TAG;
 			if (param_count > 4) {
-				err = at_params_int_get(&at_param_list, 4, &proxy.sec_tag);
+				err = at_params_int_get(&slm_at_param_list, 4, &proxy.sec_tag);
 				if (err) {
 					return err;
 				}
@@ -784,9 +780,9 @@ int handle_at_tcp_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) > 1) {
+		if (at_params_valid_count_get(&slm_at_param_list) > 1) {
 			size = sizeof(data);
-			err = util_string_get(&at_param_list, 1, data, &size);
+			err = util_string_get(&slm_at_param_list, 1, data, &size);
 			if (err) {
 				return err;
 			}
@@ -818,7 +814,7 @@ int handle_at_tcp_hangup(enum at_cmd_type cmd_type)
 		if (proxy.role != TCP_ROLE_SERVER || proxy.sock_peer == INVALID_SOCKET) {
 			return -EINVAL;
 		}
-		err = at_params_int_get(&at_param_list, 1, &handle);
+		err = at_params_int_get(&slm_at_param_list, 1, &handle);
 		if (err) {
 			return err;
 		}

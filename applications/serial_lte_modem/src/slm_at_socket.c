@@ -60,10 +60,6 @@ static struct slm_socket {
 static struct pollfd fds[SLM_MAX_SOCKET_COUNT];
 static struct slm_socket sock;
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
-
 /* forward declarations */
 #define SOCKET_SEND_TMO_SEC      30
 static int socket_poll(int sock_fd, int event, int timeout);
@@ -747,7 +743,7 @@ static int do_recv(int timeout, int flags)
 	if (ret) {
 		return ret;
 	}
-	ret = recv(sockfd, (void *)data_buf, sizeof(data_buf), flags);
+	ret = recv(sockfd, (void *)slm_data_buf, sizeof(slm_data_buf), flags);
 	if (ret < 0) {
 		LOG_WRN("recv() error: %d", -errno);
 		return -errno;
@@ -763,7 +759,7 @@ static int do_recv(int timeout, int flags)
 		LOG_WRN("recv() return 0");
 	} else {
 		rsp_send("\r\n#XRECV: %d\r\n", ret);
-		data_send(data_buf, ret);
+		data_send(slm_data_buf, ret);
 		ret = 0;
 	}
 
@@ -861,7 +857,8 @@ static int do_recvfrom(int timeout, int flags)
 	if (ret) {
 		return ret;
 	}
-	ret = recvfrom(sock.fd, (void *)data_buf, sizeof(data_buf), flags, &remote, &addrlen);
+	ret = recvfrom(
+		sock.fd, (void *)slm_data_buf, sizeof(slm_data_buf), flags, &remote, &addrlen);
 	if (ret < 0) {
 		LOG_ERR("recvfrom() error: %d", -errno);
 		return -errno;
@@ -884,7 +881,7 @@ static int do_recvfrom(int timeout, int flags)
 			    peer_addr, sizeof(peer_addr));
 		}
 		rsp_send("\r\n#XRECVFROM: %d,\"%s\"\r\n", ret, peer_addr);
-		data_send(data_buf, ret);
+		data_send(slm_data_buf, ret);
 	}
 
 	return 0;
@@ -978,7 +975,7 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -988,17 +985,18 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 			INIT_SOCKET(sock);
-			err = at_params_unsigned_short_get(&at_param_list, 2, &sock.type);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &sock.type);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 3, &sock.role);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &sock.role);
 			if (err) {
 				return err;
 			}
 			sock.family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
-			if (at_params_valid_count_get(&at_param_list) > 4) {
-				err = at_params_unsigned_short_get(&at_param_list, 4, &sock.cid);
+			if (at_params_valid_count_get(&slm_at_param_list) > 4) {
+				err = at_params_unsigned_short_get(
+					&slm_at_param_list, 4, &sock.cid);
 				if (err) {
 					return err;
 				}
@@ -1048,7 +1046,7 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -1067,11 +1065,11 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 				return -EINVAL;
 			}
 			INIT_SOCKET(sock);
-			err = at_params_unsigned_short_get(&at_param_list, 2, &sock.type);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &sock.type);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 3, &sock.role);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &sock.role);
 			if (err) {
 				return err;
 			}
@@ -1082,20 +1080,21 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 			} else {
 				return -EINVAL;
 			}
-			err = at_params_unsigned_int_get(&at_param_list, 4, &sock.sec_tag);
+			err = at_params_unsigned_int_get(&slm_at_param_list, 4, &sock.sec_tag);
 			if (err) {
 				return err;
 			}
-			if (at_params_valid_count_get(&at_param_list) > 5) {
-				err = at_params_unsigned_short_get(&at_param_list, 5,
+			if (at_params_valid_count_get(&slm_at_param_list) > 5) {
+				err = at_params_unsigned_short_get(&slm_at_param_list, 5,
 								   &peer_verify);
 				if (err) {
 					return err;
 				}
 			}
 			sock.family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
-			if (at_params_valid_count_get(&at_param_list) > 6) {
-				err = at_params_unsigned_short_get(&at_param_list, 6, &sock.cid);
+			if (at_params_valid_count_get(&slm_at_param_list) > 6) {
+				err = at_params_unsigned_short_get(
+					&slm_at_param_list, 6, &sock.cid);
 				if (err) {
 					return err;
 				}
@@ -1146,7 +1145,7 @@ int handle_at_socket_select(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_int_get(&at_param_list, 1, &fd);
+		err = at_params_int_get(&slm_at_param_list, 1, &fd);
 		if (err) {
 			return err;
 		}
@@ -1199,18 +1198,18 @@ int handle_at_socketopt(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &name);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 2, &name);
 		if (err) {
 			return err;
 		}
 		if (op == AT_SOCKETOPT_SET) {
 			/* some options don't require a value */
-			if (at_params_valid_count_get(&at_param_list) > 3) {
-				err = at_params_int_get(&at_param_list, 3, &value);
+			if (at_params_valid_count_get(&slm_at_param_list) > 3) {
+				err = at_params_int_get(&slm_at_param_list, 3, &value);
 				if (err) {
 					return err;
 				}
@@ -1251,11 +1250,11 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 			LOG_ERR("Not secure socket");
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &name);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 2, &name);
 		if (err) {
 			return err;
 		}
@@ -1264,15 +1263,15 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 			char value_str[SLM_MAX_URL] = {0};
 			int size = SLM_MAX_URL;
 
-			type = at_params_type_get(&at_param_list, 3);
+			type = at_params_type_get(&slm_at_param_list, 3);
 			if (type == AT_PARAM_TYPE_NUM_INT) {
-				err = at_params_int_get(&at_param_list, 3, &value_int);
+				err = at_params_int_get(&slm_at_param_list, 3, &value_int);
 				if (err) {
 					return err;
 				}
 				err = do_secure_socketopt_set_int(name, value_int);
 			} else if (type == AT_PARAM_TYPE_STRING) {
-				err = util_string_get(&at_param_list, 3, value_str, &size);
+				err = util_string_get(&slm_at_param_list, 3, value_str, &size);
 				if (err) {
 					return err;
 				}
@@ -1309,7 +1308,7 @@ int handle_at_bind(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &port);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &port);
 		if (err < 0) {
 			return err;
 		}
@@ -1342,11 +1341,11 @@ int handle_at_connect(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(&at_param_list, 1, url, &size);
+		err = util_string_get(&slm_at_param_list, 1, url, &size);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &port);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 2, &port);
 		if (err) {
 			return err;
 		}
@@ -1403,7 +1402,7 @@ int handle_at_accept(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_int_get(&at_param_list, 1, &timeout);
+		err = at_params_int_get(&slm_at_param_list, 1, &timeout);
 		if (err) {
 			return err;
 		}
@@ -1439,9 +1438,9 @@ int handle_at_send(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) > 1) {
+		if (at_params_valid_count_get(&slm_at_param_list) > 1) {
 			size = sizeof(data);
-			err = util_string_get(&at_param_list, 1, data, &size);
+			err = util_string_get(&slm_at_param_list, 1, data, &size);
 			if (err) {
 				return err;
 			}
@@ -1471,12 +1470,12 @@ int handle_at_recv(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_int_get(&at_param_list, 1, &timeout);
+		err = at_params_int_get(&slm_at_param_list, 1, &timeout);
 		if (err) {
 			return err;
 		}
-		if (at_params_valid_count_get(&at_param_list) > 2) {
-			err = at_params_int_get(&at_param_list, 2, &flags);
+		if (at_params_valid_count_get(&slm_at_param_list) > 2) {
+			err = at_params_int_get(&slm_at_param_list, 2, &flags);
 			if (err) {
 				return err;
 			}
@@ -1504,19 +1503,19 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		size = sizeof(udp_url);
-		err = util_string_get(&at_param_list, 1, udp_url, &size);
+		err = util_string_get(&slm_at_param_list, 1, udp_url, &size);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &udp_port);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 2, &udp_port);
 		if (err) {
 			return err;
 		}
-		if (at_params_valid_count_get(&at_param_list) > 3) {
+		if (at_params_valid_count_get(&slm_at_param_list) > 3) {
 			char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 
 			size = sizeof(data);
-			err = util_string_get(&at_param_list, 3, data, &size);
+			err = util_string_get(&slm_at_param_list, 3, data, &size);
 			if (err) {
 				return err;
 			}
@@ -1546,12 +1545,12 @@ int handle_at_recvfrom(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_int_get(&at_param_list, 1, &timeout);
+		err = at_params_int_get(&slm_at_param_list, 1, &timeout);
 		if (err) {
 			return err;
 		}
-		if (at_params_valid_count_get(&at_param_list) > 2) {
-			err = at_params_int_get(&at_param_list, 2, &flags);
+		if (at_params_valid_count_get(&slm_at_param_list) > 2) {
+			err = at_params_int_get(&slm_at_param_list, 2, &flags);
 			if (err) {
 				return err;
 			}
@@ -1583,7 +1582,7 @@ int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(&at_param_list, 1, host, &size);
+		err = util_string_get(&slm_at_param_list, 1, host, &size);
 		if (err) {
 			return err;
 		}
@@ -1637,11 +1636,11 @@ int handle_at_poll(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	int timeout, handle;
-	int count = at_params_valid_count_get(&at_param_list);
+	int count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_int_get(&at_param_list, 1, &timeout);
+		err = at_params_int_get(&slm_at_param_list, 1, &timeout);
 		if (err) {
 			return err;
 		}
@@ -1658,7 +1657,7 @@ int handle_at_poll(enum at_cmd_type cmd_type)
 			for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 				fds[i].fd = INVALID_SOCKET;
 				if (count > 2 + i) {
-					err = at_params_int_get(&at_param_list, 2 + i, &handle);
+					err = at_params_int_get(&slm_at_param_list, 2 + i, &handle);
 					if (err) {
 						return err;
 					}

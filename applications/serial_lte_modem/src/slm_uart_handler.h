@@ -16,8 +16,8 @@
 
 #define HEXDUMP_LIMIT		16
 
-extern bool uart_configured;
-extern struct uart_config slm_uart;
+extern bool slm_uart_configured; /* UART: first-time configured */
+extern struct uart_config slm_uart; /* UART: config */
 
 /**@brief UART RX data callback type.
  *
