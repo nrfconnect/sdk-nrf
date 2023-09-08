@@ -47,7 +47,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define PREDICTION_INTERVAL_MIN				120
 #define PREDICTION_INTERVAL_MAX				480
 
-#define START_TIME_MAX					83699
+#define START_TIME_MAX					86399
 
 static int32_t assist_type;
 static uint32_t agps_mask;
