@@ -229,16 +229,6 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
     PUBLIC
       mbedcrypto_common
   )
-
-  if (CONFIG_MBEDTLS_DEBUG)
-    # Add Zephyr's mbedlts module include path because we need rely on their headers for debug logs.
-    target_include_directories(mbedcrypto_common
-        INTERFACE
-          ${ZEPHYR_BASE}/modules/mbedtls/include
-    )
-    zephyr_library_sources(${ZEPHYR_BASE}/modules/mbedtls/debug.c)
-    zephyr_library_sources(debug_init.c)
-  endif()
 endif()
 
 if(CONFIG_PSA_NATIVE_ITS_BACKEND_ZEPHYR)

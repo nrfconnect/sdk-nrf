@@ -9,10 +9,20 @@
 # Add mbedcrypto common includes and definitions to zephyr build
 target_link_libraries(zephyr_interface INTERFACE mbedcrypto_common)
 
+if (CONFIG_MBEDTLS_DEBUG)
+  # Add Zephyr's mbedlts module include path because we need rely on their headers for debug logs.
+  target_include_directories(mbedcrypto_common
+      INTERFACE
+        ${ZEPHYR_BASE}/modules/mbedtls/include
+  )
+  zephyr_library_sources(${ZEPHYR_BASE}/modules/mbedtls/debug.c)
+  zephyr_library_sources(debug_init.c)
+endif()
+
 # Add mbed TLS heap library - Not for TF-M build
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
   list(APPEND src_zephyr
-    ${NRF_SECURITY_ROOT}/src/legacy/mbedtls_heap.c
+    mbedtls_heap.c
   )
 endif()
 
@@ -21,7 +31,7 @@ endif()
 # from SPE image, using psa_generate_random
 if(NOT CONFIG_NRF_CC3XX_PLATFORM AND NOT CONFIG_BUILD_WITH_TFM)
   list(APPEND src_zephyr
-    ${NRF_SECURITY_ROOT}/src/legacy/entropy_poll.c
+    ${NRF_SECURITY_ROOT}/src/zephyr/entropy_poll.c
   )
 endif()
 
