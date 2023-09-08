@@ -292,7 +292,7 @@ class PatchLicenseChecker:
 
         files = self.generate_list_of_files()
         files = self.skip_files(files)
-        detected = self.detect_licenses(files) if files else []
+        detected = self.detect_licenses(files) if files else dict()
         success = self.show_results(detected)
         self.write_junit()
 
