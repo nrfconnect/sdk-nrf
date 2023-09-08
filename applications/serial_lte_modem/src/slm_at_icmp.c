@@ -38,13 +38,7 @@ static struct ping_argv_t {
 	uint16_t pdn;
 } ping_argv;
 
-/* global variable defined in different files */
-extern struct k_work_q slm_work_q;
-
 static struct k_work ping_work;
-
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
 
 static inline void setip(uint8_t *buffer, uint32_t ipaddr)
 {
@@ -539,35 +533,36 @@ int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(&at_param_list, 1, target, &size);
+		err = util_string_get(&slm_at_param_list, 1, target, &size);
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &ping_argv.len);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 2, &ping_argv.len);
 		if (err < 0) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 3, &ping_argv.waitms);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 3, &ping_argv.waitms);
 		if (err < 0) {
 			return err;
 		}
 		ping_argv.count = 1; /* default 1 */
-		if (at_params_valid_count_get(&at_param_list) > 4) {
-			err = at_params_unsigned_short_get(&at_param_list, 4, &ping_argv.count);
+		if (at_params_valid_count_get(&slm_at_param_list) > 4) {
+			err = at_params_unsigned_short_get(&slm_at_param_list, 4, &ping_argv.count);
 			if (err < 0) {
 				return err;
 			};
 		}
 		ping_argv.interval = 1000; /* default 1s */
-		if (at_params_valid_count_get(&at_param_list) > 5) {
-			err = at_params_unsigned_short_get(&at_param_list, 5, &ping_argv.interval);
+		if (at_params_valid_count_get(&slm_at_param_list) > 5) {
+			err = at_params_unsigned_short_get(
+				&slm_at_param_list, 5, &ping_argv.interval);
 			if (err < 0) {
 				return err;
 			};
 		}
 		ping_argv.pdn = 0; /* default 0 primary PDN */
-		if (at_params_valid_count_get(&at_param_list) > 6) {
-			err = at_params_unsigned_short_get(&at_param_list, 6, &ping_argv.pdn);
+		if (at_params_valid_count_get(&slm_at_param_list) > 6) {
+			err = at_params_unsigned_short_get(&slm_at_param_list, 6, &ping_argv.pdn);
 			if (err < 0) {
 				return err;
 			};

@@ -14,14 +14,8 @@
 
 LOG_MODULE_REGISTER(slm_gpio, CONFIG_SLM_LOG_LEVEL);
 
-/* global variable defined in different resources */
-extern struct at_param_list at_param_list;
-
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 static sys_slist_t slm_gpios = SYS_SLIST_STATIC_INIT(&slm_gpios);
-
-/* global variable defined in different files */
-extern struct k_work_q slm_work_q;
 
 struct slm_gpio_pin_node {
 	sys_snode_t node;
@@ -210,12 +204,12 @@ int handle_at_gpio_configure(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			LOG_ERR("Fail to get op: %d", err);
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &pin);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 2, &pin);
 		if (err < 0) {
 			LOG_ERR("Fail to get pin: %d", err);
 			return err;
@@ -245,7 +239,7 @@ int handle_at_gpio_operate(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			LOG_ERR("Fail to get OP code: %d", err);
 			return err;
@@ -254,7 +248,7 @@ int handle_at_gpio_operate(enum at_cmd_type cmd_type)
 			LOG_ERR("GPIO OP code is out of range: %d", op);
 			return -EINVAL;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 2, &pin);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 2, &pin);
 		if (err < 0) {
 			LOG_ERR("Fail to get pin: %d", err);
 			return err;
@@ -264,7 +258,7 @@ int handle_at_gpio_operate(enum at_cmd_type cmd_type)
 			return -EINVAL;
 		}
 		if (op == SLM_GPIO_OP_WRITE) {
-			err = at_params_unsigned_short_get(&at_param_list, 3, &value);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &value);
 			if (err < 0) {
 				LOG_ERR("Fail to get value: %d", err);
 				return err;

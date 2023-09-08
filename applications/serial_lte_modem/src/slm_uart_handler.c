@@ -399,9 +399,9 @@ int slm_uart_handler_init(slm_uart_rx_callback_t callback_t)
 		LOG_ERR("UART device not ready");
 		return -ENODEV;
 	}
-	if (!uart_configured) {
+	if (!slm_uart_configured) {
 		/* Save UART configuration to settings page */
-		uart_configured = true;
+		slm_uart_configured = true;
 		err = uart_config_get(uart_dev, &slm_uart);
 		if (err != 0) {
 			LOG_ERR("uart_config_get: %d", err);

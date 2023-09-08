@@ -26,6 +26,9 @@
 #include "slm_at_fota.h"
 #include "slm_settings.h"
 #include "slm_uart_handler.h"
+#if defined(CONFIG_SLM_CARRIER)
+#include "slm_at_carrier.h"
+#endif
 
 LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 
@@ -38,11 +41,7 @@ static struct gpio_callback gpio_cb;
 static atomic_t gpio_cb_running; /* Protect the gpio_cb. */
 static struct k_work_delayable indicate_work;
 
-/* global variable used across different files */
 struct k_work_q slm_work_q;
-
-/* global variable defined in different files */
-extern int32_t auto_connect;
 
 /* Forward declarations */
 static void indicate_wk(struct k_work *work);
@@ -273,28 +272,28 @@ bool handle_nrf_modem_lib_init_ret(int ret)
 		return false; /* Initialization successful, no action required. */
 	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
-		fota_stage = FOTA_STAGE_COMPLETE;
-		fota_status = FOTA_STATUS_OK;
-		fota_info = 0;
+		slm_fota_stage = FOTA_STAGE_COMPLETE;
+		slm_fota_status = FOTA_STATUS_OK;
+		slm_fota_info = 0;
 		break;
 	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
 	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
-		fota_status = FOTA_STATUS_ERROR;
-		fota_info = ret;
+		slm_fota_status = FOTA_STATUS_ERROR;
+		slm_fota_info = ret;
 		break;
 	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
-		fota_status = FOTA_STATUS_ERROR;
-		fota_info = ret;
+		slm_fota_status = FOTA_STATUS_ERROR;
+		slm_fota_info = ret;
 		break;
 	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
 		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
 		LOG_ERR("Please reboot once you have sufficient power for the DFU");
-		fota_stage = FOTA_STAGE_ACTIVATE;
-		fota_status = FOTA_STATUS_ERROR;
-		fota_info = ret;
+		slm_fota_stage = FOTA_STAGE_ACTIVATE;
+		slm_fota_status = FOTA_STATUS_ERROR;
+		slm_fota_info = ret;
 		break;
 	default:
 		if (ret >= 0) {
@@ -305,8 +304,8 @@ bool handle_nrf_modem_lib_init_ret(int ret)
 		 * considered irrecoverable and a reboot is needed.
 		 */
 		LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
-		fota_status = FOTA_STATUS_ERROR;
-		fota_info = ret;
+		slm_fota_status = FOTA_STATUS_ERROR;
+		slm_fota_info = ret;
 		slm_settings_fota_save();
 		LOG_WRN("Rebooting...");
 		LOG_PANIC();
@@ -328,24 +327,24 @@ static void handle_mcuboot_swap_ret(void)
 	 */
 	int type = mcuboot_swap_type();
 
-	fota_stage = FOTA_STAGE_COMPLETE;
+	slm_fota_stage = FOTA_STAGE_COMPLETE;
 	switch (type) {
 	/** Swap to slot 1. Absent a confirm command, revert back on next boot. */
 	case BOOT_SWAP_TYPE_TEST:
 	/** Swap to slot 1, and permanently switch to booting its contents. */
 	case BOOT_SWAP_TYPE_PERM:
-		fota_status = FOTA_STATUS_ERROR;
-		fota_info = -EBADF;
+		slm_fota_status = FOTA_STATUS_ERROR;
+		slm_fota_info = -EBADF;
 		break;
 	/** Swap back to alternate slot. A confirm changes this state to NONE. */
 	case BOOT_SWAP_TYPE_REVERT:
 		err = boot_write_img_confirmed();
 		if (err) {
-			fota_status = FOTA_STATUS_ERROR;
-			fota_info = err;
+			slm_fota_status = FOTA_STATUS_ERROR;
+			slm_fota_info = err;
 		} else {
-			fota_status = FOTA_STATUS_OK;
-			fota_info = 0;
+			slm_fota_status = FOTA_STATUS_OK;
+			slm_fota_info = 0;
 		}
 		break;
 	/** Swap failed because image to be run is not valid */
@@ -362,7 +361,7 @@ int lte_auto_connect(void)
 #if defined(CONFIG_SLM_CARRIER)
 	int stat;
 
-	if (!auto_connect) {
+	if (!slm_carrier_auto_connect) {
 		return 0;
 	}
 	err = nrf_modem_at_scanf("AT+CEREG?", "+CEREG: %d", &stat);
@@ -443,15 +442,15 @@ int main(void)
 	}
 
 	/* Post-FOTA handling */
-	if (fota_stage != FOTA_STAGE_INIT) {
-		if (fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
+	if (slm_fota_stage != FOTA_STAGE_INIT) {
+		if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
 			slm_finish_modem_fota(ret);
-		} else if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+		} else if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
 			handle_mcuboot_swap_ret();
 		} else {
-			LOG_ERR("Unknown DFU type: %d", fota_type);
-			fota_status = FOTA_STATUS_ERROR;
-			fota_info = -EAGAIN;
+			LOG_ERR("Unknown DFU type: %d", slm_fota_type);
+			slm_fota_status = FOTA_STATUS_ERROR;
+			slm_fota_info = -EAGAIN;
 		}
 	}
 #if defined(CONFIG_SLM_START_SLEEP)

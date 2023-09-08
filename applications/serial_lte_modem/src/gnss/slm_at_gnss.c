@@ -69,10 +69,6 @@ static enum {
 	RUN_STATUS_MAX
 } run_status;
 
-extern struct k_work_q slm_work_q;
-extern struct at_param_list at_param_list;
-extern uint8_t at_buf[SLM_AT_MAX_CMD_LEN];
-
 static bool is_gnss_activated(void)
 {
 	int gnss_support = 0;
@@ -384,7 +380,7 @@ static void fix_rep_wk(struct k_work *work)
 	}
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
-	if (nrf_cloud_send_location && nrf_cloud_ready) {
+	if (slm_nrf_cloud_send_location && slm_nrf_cloud_ready) {
 		/* Report to nRF Cloud by best-effort */
 		send_location(&pvt);
 	}
@@ -499,12 +495,12 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
 		if (op == GPS_START && run_type == RUN_TYPE_NONE) {
-			err = at_params_unsigned_short_get(&at_param_list, 2, &interval);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &interval);
 			if (err < 0) {
 				return err;
 			}
@@ -518,7 +514,7 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 				LOG_ERR("Failed to set fix interval, error: %d", err);
 				return err;
 			}
-			if (at_params_unsigned_short_get(&at_param_list, 3, &timeout) == 0) {
+			if (at_params_unsigned_short_get(&slm_at_param_list, 3, &timeout) == 0) {
 				err = nrf_modem_gnss_fix_retry_set(timeout);
 				if (err) {
 					LOG_ERR("Failed to set fix retry, error: %d", err);
@@ -578,12 +574,12 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
-		if (op == AGPS_START && nrf_cloud_ready && run_type == RUN_TYPE_NONE) {
-			err = at_params_unsigned_short_get(&at_param_list, 2, &interval);
+		if (op == AGPS_START && slm_nrf_cloud_ready && run_type == RUN_TYPE_NONE) {
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &interval);
 			if (err < 0) {
 				return err;
 			}
@@ -615,7 +611,7 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 				LOG_ERR("Failed to set fix interval, error: %d", err);
 				return err;
 			}
-			if (at_params_unsigned_short_get(&at_param_list, 3, &timeout) == 0) {
+			if (at_params_unsigned_short_get(&slm_at_param_list, 3, &timeout) == 0) {
 				err = nrf_modem_gnss_fix_retry_set(timeout);
 				if (err) {
 					LOG_ERR("Failed to set fix retry, error: %d", err);
@@ -688,7 +684,7 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 		if (err < 0) {
 			return err;
 		}
-		if (op == PGPS_START && nrf_cloud_ready && run_type == RUN_TYPE_NONE) {
+		if (op == PGPS_START && slm_nrf_cloud_ready && run_type == RUN_TYPE_NONE) {
 			err = at_params_unsigned_short_get(&at_param_list, 2, &interval);
 			if (err < 0) {
 				return err;
@@ -768,7 +764,7 @@ int handle_at_gps_delete(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_int_get(&at_param_list, 1, &mask);
+		err = at_params_unsigned_int_get(&slm_at_param_list, 1, &mask);
 		if (err < 0) {
 			return err;
 		}

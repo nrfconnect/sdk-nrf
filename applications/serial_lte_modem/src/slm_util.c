@@ -12,9 +12,6 @@
 
 LOG_LEVEL_SET(CONFIG_SLM_LOG_LEVEL);
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-
 /**
  * @brief Compare string ignoring case
  */

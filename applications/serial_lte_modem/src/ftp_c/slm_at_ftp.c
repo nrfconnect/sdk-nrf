@@ -106,10 +106,6 @@ static ftp_op_list_t ftp_op_list[FTP_OP_MAX] = {
 
 RING_BUF_DECLARE(ftp_data_buf, SLM_MAX_MESSAGE_SIZE);
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
-
 void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 {
 	char code_str[4];  /* Proprietary code 900 ~ 999 */
@@ -176,8 +172,8 @@ static int ftp_data_send(void)
 	uint32_t sz_send = 0;
 
 	if (ring_buf_is_empty(&ftp_data_buf) == 0) {
-		sz_send = ring_buf_get(&ftp_data_buf, data_buf, sizeof(data_buf));
-		data_send(data_buf, sz_send);
+		sz_send = ring_buf_get(&ftp_data_buf, slm_data_buf, sizeof(slm_data_buf));
+		data_send(slm_data_buf, sz_send);
 	}
 
 	return sz_send;
@@ -201,31 +197,31 @@ static int do_ftp_open(void)
 	int sz_hostname = sizeof(hostname);
 	uint16_t port = FTP_DEFAULT_PORT;
 	sec_tag_t sec_tag = INVALID_SEC_TAG;
-	int param_count = at_params_valid_count_get(&at_param_list);
+	int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	/* Parse AT command */
-	ret = util_string_get(&at_param_list, 2, username, &sz_username);
+	ret = util_string_get(&slm_at_param_list, 2, username, &sz_username);
 	if (ret || strlen(username) == 0) {
 		strcpy(username, FTP_USER_ANONYMOUS);
 		strcpy(password, FTP_PASSWORD_ANONYMOUS);
 	} else {
-		ret = util_string_get(&at_param_list, 3, password, &sz_password);
+		ret = util_string_get(&slm_at_param_list, 3, password, &sz_password);
 		if (ret) {
 			return -EINVAL;
 		}
 	}
-	ret = util_string_get(&at_param_list, 4, hostname, &sz_hostname);
+	ret = util_string_get(&slm_at_param_list, 4, hostname, &sz_hostname);
 	if (ret) {
 		return ret;
 	}
 	if (param_count > 5) {
-		ret = at_params_unsigned_short_get(&at_param_list, 5, &port);
+		ret = at_params_unsigned_short_get(&slm_at_param_list, 5, &port);
 		if (ret) {
 			return ret;
 		}
 	}
 	if (param_count > 6) {
-		ret = at_params_unsigned_int_get(&at_param_list, 6, &sec_tag);
+		ret = at_params_unsigned_int_get(&slm_at_param_list, 6, &sec_tag);
 		if (ret) {
 			return ret;
 		}
@@ -285,7 +281,7 @@ static int do_ftp_verbose(void)
 	char vb_mode[4];
 	int sz_mode = 4;
 
-	ret = util_string_get(&at_param_list, 2, vb_mode, &sz_mode);
+	ret = util_string_get(&slm_at_param_list, 2, vb_mode, &sz_mode);
 	if (ret) {
 		return ret;
 	}
@@ -317,10 +313,10 @@ static int do_ftp_ls(void)
 	int ret;
 	char options[FTP_MAX_OPTION] = "";
 	int sz_options = FTP_MAX_OPTION;
-	int param_count = at_params_valid_count_get(&at_param_list);
+	int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	if (param_count > 2) {
-		ret = util_string_get(&at_param_list, 2, options, &sz_options);
+		ret = util_string_get(&slm_at_param_list, 2, options, &sz_options);
 		if (ret) {
 			return ret;
 		}
@@ -328,7 +324,7 @@ static int do_ftp_ls(void)
 	memset(filepath, 0x00, SLM_MAX_FILEPATH);
 	sz_filepath = SLM_MAX_FILEPATH;
 	if (param_count > 3) {
-		ret = util_string_get(&at_param_list, 3, filepath, &sz_filepath);
+		ret = util_string_get(&slm_at_param_list, 3, filepath, &sz_filepath);
 		if (ret) {
 			return ret;
 		}
@@ -350,7 +346,7 @@ static int do_ftp_cd(void)
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -365,7 +361,7 @@ static int do_ftp_mkdir(void)
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -380,7 +376,7 @@ static int do_ftp_rmdir(void)
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -397,11 +393,11 @@ static int do_ftp_rename(void)
 	int sz_file_new = SLM_MAX_FILEPATH;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
-	ret = util_string_get(&at_param_list, 3, file_new, &sz_file_new);
+	ret = util_string_get(&slm_at_param_list, 3, file_new, &sz_file_new);
 	if (ret) {
 		return ret;
 	}
@@ -416,7 +412,7 @@ static int do_ftp_delete(void)
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -431,7 +427,7 @@ static int do_ftp_get(void)
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
@@ -488,12 +484,12 @@ static int do_ftp_put(void)
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
 
-	if (at_params_valid_count_get(&at_param_list) == 3) {
+	if (at_params_valid_count_get(&slm_at_param_list) == 3) {
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -505,7 +501,7 @@ static int do_ftp_put(void)
 		int size = sizeof(data);
 		int err;
 
-		err = util_string_get(&at_param_list, 3, data, &size);
+		err = util_string_get(&slm_at_param_list, 3, data, &size);
 		if (err) {
 			return err;
 		}
@@ -539,7 +535,7 @@ static int do_ftp_uput(void)
 {
 	int ret = -1;
 
-	if (at_params_valid_count_get(&at_param_list) == 2) {
+	if (at_params_valid_count_get(&slm_at_param_list) == 2) {
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -551,7 +547,7 @@ static int do_ftp_uput(void)
 		int size = sizeof(data);
 		int err;
 
-		err = util_string_get(&at_param_list, 2, data, &size);
+		err = util_string_get(&slm_at_param_list, 2, data, &size);
 		if (err) {
 			return err;
 		}
@@ -582,12 +578,12 @@ static int do_ftp_mput(void)
 	int ret;
 
 	sz_filepath = SLM_MAX_FILEPATH;
-	ret = util_string_get(&at_param_list, 2, filepath, &sz_filepath);
+	ret = util_string_get(&slm_at_param_list, 2, filepath, &sz_filepath);
 	if (ret) {
 		return ret;
 	}
 
-	if (at_params_valid_count_get(&at_param_list) == 3) {
+	if (at_params_valid_count_get(&slm_at_param_list) == 3) {
 		/* enter data mode */
 		ret = enter_datamode(ftp_datamode_callback);
 		if (ret) {
@@ -599,7 +595,7 @@ static int do_ftp_mput(void)
 		int size = sizeof(data);
 		int err;
 
-		err = util_string_get(&at_param_list, 3, data, &size);
+		err = util_string_get(&slm_at_param_list, 3, data, &size);
 		if (err) {
 			return err;
 		}
@@ -621,7 +617,7 @@ int handle_at_ftp(enum at_cmd_type cmd_type)
 	if (cmd_type != AT_CMD_TYPE_SET_COMMAND) {
 		return -EINVAL;
 	}
-	ret = util_string_get(&at_param_list, 1, op_str, &size);
+	ret = util_string_get(&slm_at_param_list, 1, op_str, &size);
 	if (ret) {
 		return ret;
 	}

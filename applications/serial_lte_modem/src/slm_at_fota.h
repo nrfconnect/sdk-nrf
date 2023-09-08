@@ -31,10 +31,10 @@ enum fota_status {
 	FOTA_STATUS_CANCELLED
 };
 
-extern uint8_t fota_type;
-extern enum fota_stage fota_stage;
-extern enum fota_status fota_status;
-extern int32_t fota_info;
+extern uint8_t slm_fota_type; /* FOTA image type. */
+extern enum fota_stage slm_fota_stage; /* Current stage of FOTA process. */
+extern enum fota_status slm_fota_status; /* FOTA process status. */
+extern int32_t slm_fota_info; /* FOTA download percentage or failure cause in case of error. */
 
 /**
  * @brief Initialize FOTA AT command parser.

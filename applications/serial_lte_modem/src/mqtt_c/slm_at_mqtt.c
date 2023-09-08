@@ -55,10 +55,6 @@ static char mqtt_password[SLM_MAX_PASSWORD + 1];
 static struct mqtt_publish_param pub_param;
 static uint8_t pub_topic[MQTT_MAX_TOPIC_LEN];
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
-
 #define THREAD_STACK_SIZE	KB(2)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
 
@@ -86,9 +82,9 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 		evt->param.publish.message.topic.topic.size);
 	data_send("\r\n", 2);
 	do {
-		ret = mqtt_read_publish_payload_blocking(c, data_buf, sizeof(data_buf));
+		ret = mqtt_read_publish_payload_blocking(c, slm_data_buf, sizeof(slm_data_buf));
 		if (ret > 0) {
-			data_send(data_buf, ret);
+			data_send(slm_data_buf, ret);
 			size_read += ret;
 		}
 	} while (ret >= 0 && size_read < evt->param.publish.message.payload.len);
@@ -449,7 +445,7 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
@@ -459,35 +455,37 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			size_t password_sz = sizeof(mqtt_password);
 			size_t url_sz = sizeof(mqtt_broker_url);
 
-			err = util_string_get(&at_param_list, 2, mqtt_clientid, &clientid_sz);
+			err = util_string_get(&slm_at_param_list, 2, mqtt_clientid, &clientid_sz);
 			if (err) {
 				return err;
 			}
-			err = util_string_get(&at_param_list, 3, mqtt_username, &username_sz);
+			err = util_string_get(&slm_at_param_list, 3, mqtt_username, &username_sz);
 			if (err) {
 				return err;
 			} else {
 				ctx.username.utf8 = mqtt_username;
 				ctx.username.size = strlen(mqtt_username);
 			}
-			err = util_string_get(&at_param_list, 4, mqtt_password, &password_sz);
+			err = util_string_get(&slm_at_param_list, 4, mqtt_password, &password_sz);
 			if (err) {
 				return err;
 			} else {
 				ctx.password.utf8 = mqtt_password;
 				ctx.password.size = strlen(mqtt_password);
 			}
-			err = util_string_get(&at_param_list, 5, mqtt_broker_url, &url_sz);
+			err = util_string_get(&slm_at_param_list, 5, mqtt_broker_url, &url_sz);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 6, &mqtt_broker_port);
+			err = at_params_unsigned_short_get(
+				&slm_at_param_list, 6, &mqtt_broker_port);
 			if (err) {
 				return err;
 			}
 			ctx.sec_tag = INVALID_SEC_TAG;
-			if (at_params_valid_count_get(&at_param_list) > 7) {
-				err = at_params_unsigned_int_get(&at_param_list, 7, &ctx.sec_tag);
+			if (at_params_valid_count_get(&slm_at_param_list) > 7) {
+				err = at_params_unsigned_int_get(
+					&slm_at_param_list, 7, &ctx.sec_tag);
 				if (err) {
 					return err;
 				}
@@ -559,29 +557,29 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 	size_t topic_sz = MQTT_MAX_TOPIC_LEN;
 	uint8_t pub_msg[SLM_MAX_PAYLOAD_SIZE];
 	size_t msg_sz = sizeof(pub_msg);
-	uint16_t param_count = at_params_valid_count_get(&at_param_list);
+	uint16_t param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = util_string_get(&at_param_list, 1, pub_topic, &topic_sz);
+		err = util_string_get(&slm_at_param_list, 1, pub_topic, &topic_sz);
 		if (err) {
 			return err;
 		}
 		pub_msg[0] = '\0';
 		if (param_count > 2) {
-			err = util_string_get(&at_param_list, 2, pub_msg, &msg_sz);
+			err = util_string_get(&slm_at_param_list, 2, pub_msg, &msg_sz);
 			if (err) {
 				return err;
 			}
 		}
 		if (param_count > 3) {
-			err = at_params_unsigned_short_get(&at_param_list, 3, &qos);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &qos);
 			if (err) {
 				return err;
 			}
 		}
 		if (param_count > 4) {
-			err = at_params_unsigned_short_get(&at_param_list, 4, &retain);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 4, &retain);
 			if (err) {
 				return err;
 			}
@@ -639,12 +637,12 @@ int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) == 3) {
-			err = util_string_get(&at_param_list, 1, topic, &topic_sz);
+		if (at_params_valid_count_get(&slm_at_param_list) == 3) {
+			err = util_string_get(&slm_at_param_list, 1, topic, &topic_sz);
 			if (err < 0) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 2, &qos);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &qos);
 			if (err < 0) {
 				return err;
 			}
@@ -679,8 +677,8 @@ int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) == 2) {
-			err = util_string_get(&at_param_list, 1,
+		if (at_params_valid_count_get(&slm_at_param_list) == 2) {
+			err = util_string_get(&slm_at_param_list, 1,
 							topic, &topic_sz);
 			if (err < 0) {
 				return err;

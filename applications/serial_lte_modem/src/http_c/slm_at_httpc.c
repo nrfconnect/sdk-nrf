@@ -62,10 +62,6 @@ static struct slm_httpc_ctx {
 	enum httpc_state state;		/* HTTPC state */
 } httpc;
 
-/* global variable defined in different resources */
-extern struct at_param_list at_param_list;
-extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
-
 static struct k_thread httpc_thread;
 #define HTTPC_THREAD_STACK_SIZE       KB(2)
 #define HTTPC_THREAD_PRIORITY         K_LOWEST_APPLICATION_THREAD_PRIO
@@ -391,7 +387,7 @@ static int do_http_request(void)
 	req.host = httpc.host;
 	req.protocol = "HTTP/1.1";
 	req.response = response_cb;
-	req.recv_buf = data_buf;
+	req.recv_buf = slm_data_buf;
 	req.recv_buf_len = HTTPC_BUF_LEN;
 	req.content_type_value = httpc.content_type;
 	if (httpc.chunked_transfer) {
@@ -429,22 +425,22 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
 		if (op == HTTPC_CONNECT || op == HTTPC_CONNECT6) {
-			err = util_string_get(&at_param_list, 2, httpc.host, &host_sz);
+			err = util_string_get(&slm_at_param_list, 2, httpc.host, &host_sz);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 3, &httpc.port);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &httpc.port);
 			if (err) {
 				return err;
 			}
 			httpc.sec_tag = INVALID_SEC_TAG;
-			if (at_params_valid_count_get(&at_param_list) > 4) {
-				err = at_params_unsigned_int_get(&at_param_list, 4,
+			if (at_params_valid_count_get(&slm_at_param_list) > 4) {
+				err = at_params_unsigned_int_get(&slm_at_param_list, 4,
 							&httpc.sec_tag);
 				if (err) {
 					return err;
@@ -569,33 +565,33 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		memset(data_buf, 0, sizeof(data_buf));
+		memset(slm_data_buf, 0, sizeof(slm_data_buf));
 		/* Get method string */
 		size = HTTPC_METHOD_LEN;
-		err = util_string_get(&at_param_list, 1, data_buf, &size);
+		err = util_string_get(&slm_at_param_list, 1, slm_data_buf, &size);
 		if (err < 0) {
 			LOG_ERR("Fail to get method string: %d", err);
 			return err;
 		}
-		httpc.method_str = (char *)data_buf;
+		httpc.method_str = (char *)slm_data_buf;
 		offset = size + 1;
 		/* Get resource path string */
 		size = HTTPC_RES_LEN;
-		err = util_string_get(&at_param_list, 2, data_buf + offset, &size);
+		err = util_string_get(&slm_at_param_list, 2, slm_data_buf + offset, &size);
 		if (err < 0) {
 			LOG_ERR("Fail to get resource string: %d", err);
 			return err;
 		}
-		httpc.resource = (char *)(data_buf + offset);
-		param_count = at_params_valid_count_get(&at_param_list);
+		httpc.resource = (char *)(slm_data_buf + offset);
+		param_count = at_params_valid_count_get(&slm_at_param_list);
 		httpc.headers = NULL;
 		if (param_count >= 4) {
 			/* Get headers string */
 			offset += size + 1;
 			size = HTTPC_HEADERS_LEN;
-			err = util_string_get(&at_param_list, 3, data_buf + offset, &size);
+			err = util_string_get(&slm_at_param_list, 3, slm_data_buf + offset, &size);
 			if (err == 0 && size > 0) {
-				httpc.headers = (char *)(data_buf + offset);
+				httpc.headers = (char *)(slm_data_buf + offset);
 				err = http_headers_preprocess(size);
 				if (err) {
 					return err;
@@ -609,12 +605,13 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 			/* Get content type string */
 			offset += size + 1;
 			size = HTTPC_CONTEN_TYPE_LEN;
-			err = util_string_get(&at_param_list, 4, data_buf + offset, &size);
+			err = util_string_get(&slm_at_param_list, 4, slm_data_buf + offset, &size);
 			if (err == 0 && size > 0) {
-				httpc.content_type = (char *)(data_buf + offset);
+				httpc.content_type = (char *)(slm_data_buf + offset);
 			}
 			/* Get content length */
-			err = at_params_unsigned_int_get(&at_param_list, 5, &httpc.content_length);
+			err = at_params_unsigned_int_get(
+				&slm_at_param_list, 5, &httpc.content_length);
 			if (err != 0) {
 				return err;
 			}
@@ -622,7 +619,7 @@ int handle_at_httpc_request(enum at_cmd_type cmd_type)
 				uint16_t tmp;
 
 				/* Get chunked transfer flag */
-				err = at_params_unsigned_short_get(&at_param_list, 6, &tmp);
+				err = at_params_unsigned_short_get(&slm_at_param_list, 6, &tmp);
 				if (err != 0) {
 					return err;
 				}

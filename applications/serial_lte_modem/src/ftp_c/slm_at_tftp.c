@@ -24,17 +24,13 @@ enum slm_ftp_operation {
 	TFTP_OP_MAX
 };
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-extern uint8_t data_buf[SLM_MAX_MESSAGE_SIZE];
-
 void tftp_callback(const struct tftp_evt *evt)
 {
 	switch (evt->type) {
 	case TFTP_EVT_DATA:
 		if (evt->param.data.len > 0) {
-			memcpy(data_buf, evt->param.data.data_ptr, evt->param.data.len);
-			data_send(data_buf, evt->param.data.len);
+			memcpy(slm_data_buf, evt->param.data.data_ptr, evt->param.data.len);
+			data_send(slm_data_buf, evt->param.data.len);
 		}
 		break;
 
@@ -148,32 +144,32 @@ int handle_at_tftp(enum at_cmd_type cmd_type)
 	char filepath[SLM_MAX_FILEPATH];
 	char mode[16];   /** "netascii", "octet", "mail" */
 	int size;
-	int param_count = at_params_valid_count_get(&at_param_list);
+	int param_count = at_params_valid_count_get(&slm_at_param_list);
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err) {
 			return err;
 		}
 
 		size = sizeof(url);
-		err = util_string_get(&at_param_list, 2, url, &size);
+		err = util_string_get(&slm_at_param_list, 2, url, &size);
 		if (err) {
 			return err;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 3, &port);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 3, &port);
 		if (err) {
 			return err;
 		}
 		size = sizeof(filepath);
-		err = util_string_get(&at_param_list, 4, filepath, &size);
+		err = util_string_get(&slm_at_param_list, 4, filepath, &size);
 		if (err) {
 			return err;
 		}
 		if (param_count > 5) {
 			size = sizeof(mode);
-			err = util_string_get(&at_param_list, 5, mode, &size);
+			err = util_string_get(&slm_at_param_list, 5, mode, &size);
 			if (err) {
 				return err;
 			}
@@ -194,7 +190,7 @@ int handle_at_tftp(enum at_cmd_type cmd_type)
 			uint8_t data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 
 			size = sizeof(data);
-			err = util_string_get(&at_param_list, 6, data, &size);
+			err = util_string_get(&slm_at_param_list, 6, data, &size);
 			if (err) {
 				return err;
 			}

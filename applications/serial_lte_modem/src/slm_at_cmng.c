@@ -33,9 +33,6 @@ enum slm_cmng_type {
 	AT_CMNG_TYPE_PSK_ID,
 };
 
-/* global variable defined in different files */
-extern struct at_param_list at_param_list;
-
 /**@brief handle AT#XCMNG commands
  *  AT#XCMNG=<opcode>[,<sec_tag>[,<type>[,<content>]]]
  *  AT#XCMNG? READ command not supported
@@ -51,11 +48,11 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 2) {
+		if (at_params_valid_count_get(&slm_at_param_list) < 2) {
 			LOG_ERR("Parameter missed");
 			return -EINVAL;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			LOG_ERR("Fail to get op parameter: %d", err);
 			return err;
@@ -69,12 +66,12 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 			LOG_ERR("XCMNG List is not supported");
 			return -EPERM;
 		}
-		if (at_params_valid_count_get(&at_param_list) < 4) {
+		if (at_params_valid_count_get(&slm_at_param_list) < 4) {
 			/* READ, WRITE, DELETE requires sec_tag and type */
 			LOG_ERR("Parameter missed");
 			return -EINVAL;
 		}
-		err = at_params_unsigned_int_get(&at_param_list, 2, &sec_tag);
+		err = at_params_unsigned_int_get(&slm_at_param_list, 2, &sec_tag);
 		if (err < 0) {
 			LOG_ERR("Fail to get sec_tag parameter: %d", err);
 			return err;
@@ -83,19 +80,19 @@ int handle_at_xcmng(enum at_cmd_type cmd_type)
 			LOG_ERR("Invalid security tag: %d", sec_tag);
 			return -EINVAL;
 		}
-		err = at_params_unsigned_short_get(&at_param_list, 3, &type);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 3, &type);
 		if (err < 0) {
 			LOG_ERR("Fail to get type parameter: %d", err);
 			return err;
 		};
 		if (op == AT_CMNG_OP_WRITE) {
-			if (at_params_valid_count_get(&at_param_list) < 5) {
+			if (at_params_valid_count_get(&slm_at_param_list) < 5) {
 				/* WRITE requires sec_tag, type and content */
 				LOG_ERR("Parameter missed");
 				return -EINVAL;
 			}
 			content = k_malloc(SLM_AT_MAX_RSP_LEN);
-			err = util_string_get(&at_param_list, 4, content,
+			err = util_string_get(&slm_at_param_list, 4, content,
 						   &len);
 			if (err != 0) {
 				LOG_ERR("Failed to get content");
