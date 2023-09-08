@@ -6,21 +6,28 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
-#include <zephyr/net/socket.h>
-#include <dk_buttons_and_leds.h>
-
+#include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr.h>
 #include <memfault/metrics/metrics.h>
 #include <memfault/ports/zephyr/http.h>
 #include <memfault/core/data_packetizer.h>
 #include <memfault/core/trace_event.h>
+#include <dk_buttons_and_leds.h>
 
 #include <zephyr/logging/log.h>
-
-#include "network_common.h"
+#include <zephyr/logging/log_ctrl.h>
 
 LOG_MODULE_REGISTER(memfault_sample, CONFIG_MEMFAULT_SAMPLE_LOG_LEVEL);
 
+/* Macros used to subscribe to specific Zephyr NET management events. */
+#define L4_EVENT_MASK	      (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
+
 static K_SEM_DEFINE(nw_connected_sem, 0, 1);
+
+/* Zephyr NET management event callback structures. */
+static struct net_mgmt_event_callback l4_cb;
+static struct net_mgmt_event_callback conn_cb;
 
 /* Recursive Fibonacci calculation used to trigger stack overflow. */
 static int fib(int n)
@@ -30,16 +37,6 @@ static int fib(int n)
 	}
 
 	return fib(n - 1) + fib(n - 2);
-}
-
-void network_connected(void)
-{
-	k_sem_give(&nw_connected_sem);
-}
-
-void network_disconnected(void)
-{
-	LOG_ERR("The network connection was lost");
 }
 
 /* Handle button presses and trigger faults that can be captured and sent to
@@ -68,9 +65,8 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		ARG_UNUSED(i);
 	} else if (has_changed & DK_BTN3_MSK) {
 		/* DK_BTN3_MSK is Switch 1 on nRF9160 DK. */
-		int err = memfault_metrics_heartbeat_add(
-			MEMFAULT_METRICS_KEY(Switch1ToggleCount), 1);
-
+		int err =
+			memfault_metrics_heartbeat_add(MEMFAULT_METRICS_KEY(Switch1ToggleCount), 1);
 		if (err) {
 			LOG_ERR("Failed to increment Switch1ToggleCount");
 		} else {
@@ -78,8 +74,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		}
 	} else if (has_changed & DK_BTN4_MSK) {
 		/* DK_BTN4_MSK is Switch 2 on nRF9160 DK. */
-		MEMFAULT_TRACE_EVENT_WITH_LOG(Switch2Toggled,
-					      "Switch state: %d",
+		MEMFAULT_TRACE_EVENT_WITH_LOG(Switch2Toggled, "Switch state: %d",
 					      buttons_pressed & DK_BTN4_MSK ? 1 : 0);
 		LOG_INF("Switch2Toggled event has been traced, button state: %d",
 			buttons_pressed & DK_BTN4_MSK ? 1 : 0);
@@ -92,9 +87,8 @@ static void on_connect(void)
 	uint32_t time_to_lte_connection;
 
 	/* Retrieve the LTE time to connect metric. */
-	memfault_metrics_heartbeat_timer_read(
-		MEMFAULT_METRICS_KEY(Ncs_LteTimeToConnect),
-		&time_to_lte_connection);
+	memfault_metrics_heartbeat_timer_read(MEMFAULT_METRICS_KEY(Ncs_LteTimeToConnect),
+					      &time_to_lte_connection);
 
 	LOG_INF("Time to connect: %d ms", time_to_lte_connection);
 #endif /* IS_ENABLED(MEMFAULT_NCS_LTE_METRICS) */
@@ -119,6 +113,32 @@ static void on_connect(void)
 	memfault_zephyr_port_post_data();
 }
 
+static void l4_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
+			     struct net_if *iface)
+{
+	switch (event) {
+	case NET_EVENT_L4_CONNECTED:
+		LOG_INF("Network connectivity established");
+		k_sem_give(&nw_connected_sem);
+		break;
+	case NET_EVENT_L4_DISCONNECTED:
+		LOG_INF("Network connectivity lost");
+		break;
+	default:
+		LOG_DBG("Unknown event: 0x%08X", event);
+		return;
+	}
+}
+
+static void connectivity_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
+				       struct net_if *iface)
+{
+	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
+		__ASSERT(false, "Failed to connect to a network");
+		return;
+	}
+}
+
 int main(void)
 {
 	int err;
@@ -129,10 +149,24 @@ int main(void)
 	if (err) {
 		LOG_ERR("dk_buttons_init, error: %d", err);
 	}
+	/* Setup handler for Zephyr NET Connection Manager events. */
+	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_cb);
 
-	network_init();
+	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
+	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
+	net_mgmt_add_event_callback(&conn_cb);
 
-	LOG_INF("Connecting to network");
+	/* Connecting to the configured connectivity layer.
+	 * Wi-Fi or LTE depending on the board that the sample was built for.
+	 */
+	LOG_INF("Bringing network interface up and connecting to the network");
+
+	err = conn_mgr_all_if_up(true);
+	if (err) {
+		__ASSERT(false, "conn_mgr_all_if_up, error: %d", err);
+		return err;
+	}
 
 	/* Performing in an infinite loop to be resilient against
 	 * re-connect bursts directly after boot, e.g. when connected
@@ -142,6 +176,7 @@ int main(void)
 	 * We post data here so as soon as a connection is available
 	 * the latest data will be pushed to Memfault.
 	 */
+
 	while (1) {
 		k_sem_take(&nw_connected_sem, K_FOREVER);
 		LOG_INF("Connected to network");

@@ -229,8 +229,12 @@ The sample requires the Memfault SDK, which is part of |NCS|'s West manifest, an
 This sample uses the following |NCS| libraries and drivers:
 
 * :ref:`dk_buttons_and_leds_readme`
-* :ref:`lte_lc_readme`
-* :ref:`nrf_security`
+* :ref:`ug_memfault`
+
+It uses the following Zephyr libraries:
+
+* :ref:`net_if_interface`
+* :ref:`net_mgmt_interface`
 
 It uses the following `sdk-nrfxlib`_ libraries:
 
@@ -239,8 +243,3 @@ It uses the following `sdk-nrfxlib`_ libraries:
 In addition, it uses the following secure firmware component:
 
 * :ref:`Trusted Firmware-M <ug_tfm>`
-
-For Wi-Fi, the sample also uses modules found in the following locations in the |NCS| folder structure:
-
-* :file:`modules/lib/hostap`
-* :file:`modules/mbedtls`
