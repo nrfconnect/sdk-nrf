@@ -544,3 +544,4 @@ The values in the tables show the maximum allowed transmit power (in dBm) for ea
 
 .. note::
    The maximum allowed transmit power values (shown in the table) may exceed the actual transmit power values for the nRF70 Series device.
+   In the world regulatory domain, the non-DFS passive channel becomes active in subsequent scan operations if it finds a beacon on the first scan.
