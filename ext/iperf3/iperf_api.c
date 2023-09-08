@@ -5745,6 +5745,7 @@ static int diskfile_recv(struct iperf_stream *sp)
 }
 #endif /* !defined(CONFIG_NRF_IPERF3_INTEGRATION) */
 
+#if !defined(CONFIG_NRF_IPERF3_INTEGRATION) /* No support for signals or setjmp */
 void iperf_catch_sigend(void (*handler)(int))
 {
 #ifdef SIGINT
@@ -5757,6 +5758,7 @@ void iperf_catch_sigend(void (*handler)(int))
 	signal(SIGHUP, handler);
 #endif
 }
+#endif
 
 /**
  * Called as a result of getting a signal.
