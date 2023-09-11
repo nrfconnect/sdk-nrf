@@ -108,7 +108,7 @@ static int16_t ts_diff_to_motion(int64_t diff, int32_t *reminder)
 	return CLAMP(res, INT16_MIN, INT16_MAX);
 }
 
-static int64_t motion_to_ts_diff(int16_t m)
+static int64_t motion_to_ts_diff(int64_t m)
 {
 	return m * sys_clock_hw_cycles_per_sec() / CONFIG_DESKTOP_MOTION_BUTTONS_MOTION_PER_SEC;
 }
