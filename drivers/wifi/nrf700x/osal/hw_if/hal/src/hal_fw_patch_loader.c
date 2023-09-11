@@ -157,20 +157,25 @@ enum wifi_nrf_status wifi_nrf_hal_fw_patch_load(struct wifi_nrf_hal_dev_ctx *hal
 		goto out;
 	}
 
-	const struct patch_contents patches[] = {
-		{ "bimg", fw_pri_patch_data, fw_pri_patch_size, pri_dest_addr },
-		{ "bin", fw_sec_patch_data, fw_sec_patch_size, sec_dest_addr },
-	};
+	/* This extra block is needed to avoid compilation error for inline
+	 * declaration but still keep using const data.
+	 */
+	{
+		const struct patch_contents patches[] = {
+			{ "bimg", fw_pri_patch_data, fw_pri_patch_size, pri_dest_addr },
+			{ "bin", fw_sec_patch_data, fw_sec_patch_size, sec_dest_addr },
+		};
 
-	for (patch = 0; patch < ARRAY_SIZE(patches); patch++) {
-		status = hal_fw_patch_load(hal_dev_ctx,
-					   rpu_proc,
-					   patches[patch].id_str,
-					   patches[patch].dest_addr,
-					   patches[patch].data,
-					   patches[patch].size);
-		if (status != WIFI_NRF_STATUS_SUCCESS)
-			goto out;
+		for (patch = 0; patch < ARRAY_SIZE(patches); patch++) {
+			status = hal_fw_patch_load(hal_dev_ctx,
+						rpu_proc,
+						patches[patch].id_str,
+						patches[patch].dest_addr,
+						patches[patch].data,
+						patches[patch].size);
+			if (status != WIFI_NRF_STATUS_SUCCESS)
+				goto out;
+		}
 	}
 out:
 	/* Reset the HAL RPU context to the LMAC context */
