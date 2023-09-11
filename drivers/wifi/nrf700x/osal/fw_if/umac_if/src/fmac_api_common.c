@@ -259,6 +259,9 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned char count = 0;
 	int stats_type;
+#ifndef CONFIG_NRF700X_RADIO_TEST
+	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 
 	#ifdef CONFIG_NRF700X_RADIO_TEST
 		stats_type = RPU_STATS_TYPE_PHY;
@@ -308,8 +311,6 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
 
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
-	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
-
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	if ((stats_type == RPU_STATS_TYPE_ALL) ||
 	    (stats_type == RPU_STATS_TYPE_HOST)) {
