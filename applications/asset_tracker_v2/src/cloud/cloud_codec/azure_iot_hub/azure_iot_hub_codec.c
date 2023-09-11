@@ -33,7 +33,7 @@ int cloud_codec_encode_cloud_location(
 	struct cloud_codec_data *output,
 	struct cloud_data_cloud_location *cloud_location)
 {
-	int err;
+	int err = -ENODATA;
 	char *buffer;
 
 	__ASSERT_NO_MSG(output != NULL);
