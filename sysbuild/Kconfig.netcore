@@ -12,8 +12,12 @@ config SUPPORT_NETCORE_HCI_RPMSG
 	bool
 	default y
 
+config NRF_DEFAULT_BLUETOOTH
+	bool
+
 choice NETCORE
 	prompt "Netcore image"
+	default NETCORE_HCI_RPMSG if NRF_DEFAULT_BLUETOOTH && $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
 	default NETCORE_NONE
 	depends on SUPPORT_NETCORE
 
