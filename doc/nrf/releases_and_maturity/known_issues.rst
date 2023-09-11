@@ -280,7 +280,23 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
-.. rst-class:: v2.4.1 v2-4-0 v2-3-0 v2-2-0
+.. rst-class:: v2-4-2 v2-4-1 v2-4-0
+
+KRKNWK-17699: Failure at TC-BINFO-1.1 Matter Certification test for the lock sample.
+  The issue happens due to a noncompliant Basic Information cluster revision for Matter 1.1.0 in the lock sample.
+
+  **Workaround:** Set the default value of the Basic Information cluster revision to 1 in :file:`samples/matter/lock/src/lock.zap` using the ZAP Tool and regenerate files.
+
+
+.. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0
+
+KRKNWK-17594: Application does not always respond when forcing fail-safe cleanup.
+  This can happen because of the Thread interface being unnecessarily reset and can result in the TC-CNET-4.10 Matter Certification test failing.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``3b2d8e1367d9055a78d72365323cfbf60e054975``).
+
+
+.. rst-class:: v2-4-2 v2.4.1 v2-4-0 v2-3-0 v2-2-0
 
 KRKNWK-17535: The application core can crash on nRF5340 after the OTA firmware update finishes if the factory data module is enabled.
   In the initialization method of the factory data module, the factory data partition and a part of the application image is restricted by Fprotect, which makes it impossible to confirm the new image in the Matter thread.
