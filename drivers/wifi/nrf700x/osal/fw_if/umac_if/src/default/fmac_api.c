@@ -2162,6 +2162,11 @@ out:
 				       del_vif_cmd);
 	}
 
+	if (vif_ctx) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       vif_ctx);
+	}
+
 	return status;
 }
 
