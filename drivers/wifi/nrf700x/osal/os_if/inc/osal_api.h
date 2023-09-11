@@ -318,7 +318,7 @@ void wifi_nrf_osal_spinlock_irq_rel(struct wifi_nrf_osal_priv *opriv,
 				     unsigned long *flags);
 
 
-#if CONFIG_NRF700X_LOG_LEVEL  > 0
+#ifndef CONFIG_WIFI_NRF700X_LOG_LEVEL_DBG
 #define wifi_nrf_osal_log_dbg(level, fmt, ...)
 #else
 /**
@@ -336,7 +336,7 @@ int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
 #endif
 
 
-#if CONFIG_NRF700X_LOG_LEVEL > 3
+#ifndef CONFIG_WIFI_NRF700X_LOG_LEVEL_INF
 #define wifi_nrf_osal_log_info(level, fmt, ...)
 #else
 /**
@@ -354,9 +354,9 @@ int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
 #endif
 
 
-#if CONFIG_NRF700X_LOG_LEVEL > 5
+#ifndef CONFIG_WIFI_NRF700X_LOG_LEVEL_ERR
 #define wifi_nrf_osal_log_err(level, fmt, ...)
-#else  /* > 5 */
+#else
 /**
  * wifi_nrf_osal_log_err() - Logs an error message.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
