@@ -12,6 +12,14 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
       nrf21540dk_nrf52840
     tags: ci_build shell
+  sample.zigbee.shell.sysbuild:
+    build_only: true
+    sysbuild: true
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build shell sysbuild
   sample.zigbee.shell.usb.nrf52840dk_nrf52840:
     build_only: true
     extra_args:
