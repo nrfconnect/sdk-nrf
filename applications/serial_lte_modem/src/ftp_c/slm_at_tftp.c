@@ -130,11 +130,7 @@ static int do_tftp_put(int family, const char *server, uint16_t port, const char
 	return ret;
 }
 
-/**@brief handle AT#XTFTP commands
- *  AT#XTFTP=<op>,<url>,<port>,<file_path>[,<mode>,<data>]
- *  AT#XTFTP? READ is not supported
- *  AT#XTFTP=?
- */
+/* Handles AT#XTFTP commands. */
 int handle_at_tftp(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

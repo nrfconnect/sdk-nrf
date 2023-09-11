@@ -146,11 +146,7 @@ static int do_twi_write_read(uint16_t index, uint16_t dev_addr, const uint8_t *t
 	return ret;
 }
 
-/**@brief handle AT#XTWILS commands
- *  AT#XTWILS
- *  AT#XTWILS? READ command not supported
- *  AT#XTWILS=? TEST command not supported
- */
+/* Handles AT#XTWILS command. */
 int handle_at_twi_list(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -168,11 +164,7 @@ int handle_at_twi_list(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XTWIW commands
- *  AT#XTWIW=<index>,<dev_addr>,<data>
- *  AT#XTWIW? READ command not supported
- *  AT#XTWIW=?
- */
+/* Handles AT#XTWIW commands. */
 int handle_at_twi_write(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -218,11 +210,7 @@ int handle_at_twi_write(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XTWIR commands
- *  AT#XTWIR=<index>,<dev_addr>,<num_read>
- *  AT#XTWIR? READ command not supported
- *  AT#XTWIR=?
- */
+/* Handles AT#XTWIR commands. */
 int handle_at_twi_read(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -270,11 +258,7 @@ int handle_at_twi_read(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XTWIWR commands
- *  AT#XTWIWR=<index>,<dev_addr>,<data>,<num_read>
- *  AT#XTWIWR? READ command not supported
- *  AT#XTWIWR=?
- */
+/* Handles AT#XTWIWR commands. */
 int handle_at_twi_write_read(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

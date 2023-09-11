@@ -412,11 +412,7 @@ static int do_http_request(void)
 	return err;
 }
 
-/**@brief handle AT#XHTTPCCON commands
- *  AT#XHTTPCCON=<op>[,<host>,<port>[,<sec_tag>]]
- *  AT#XHTTPCCON? READ command not supported
- *  AT#XHTTPCCON=?
- */
+/* Handles AT#XHTTPCCON commands. */
 int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -545,12 +541,7 @@ static int http_headers_preprocess(size_t size)
 	return 0;
 }
 
-/**@brief handle AT#XHTTPCREQ commands
- *  AT#XHTTPCREQ=<method>,<resource>[,<headers>[,<content_type>,<content_length>
- *    [,<chunked_transfer>]]]
- *  AT#XHTTPCREQ? READ command not supported
- *  AT#XHTTPCREQ=?
- */
+/* Handles AT#XHTTPCREQ commands. */
 int handle_at_httpc_request(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

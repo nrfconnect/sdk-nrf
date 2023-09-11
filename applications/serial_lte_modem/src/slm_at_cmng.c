@@ -33,11 +33,7 @@ enum slm_cmng_type {
 	AT_CMNG_TYPE_PSK_ID,
 };
 
-/**@brief handle AT#XCMNG commands
- *  AT#XCMNG=<opcode>[,<sec_tag>[,<type>[,<content>]]]
- *  AT#XCMNG? READ command not supported
- *  AT#XCMNG=? READ command not supported
- */
+/* Handles AT#XCMNG command. */
 int handle_at_xcmng(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

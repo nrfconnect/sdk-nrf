@@ -259,11 +259,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 	}
 }
 
-/** @brief Handles AT#XFOTA commands.
- *  AT#XFOTA=<op>[,<file_url>[,<sec_tag>[,<pdn_id>]]]
- *  AT#XFOTA? TEST command not supported
- *  AT#XFOTA=?
- */
+/* Handles AT#XFOTA commands. */
 int handle_at_fota(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

@@ -481,11 +481,7 @@ static void gnss_event_handler(int event)
 	}
 }
 
-/**@brief handle AT#XGPS commands
- *  AT#XGPS=<op>[,<interval>[,<timeout>]]
- *  AT#XGPS?
- *  AT#XGPS=?
- */
+/* Handles AT#XGPS commands. */
 int handle_at_gps(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -559,11 +555,7 @@ static void gps_sec_to_day_time(int64_t gps_sec, uint16_t *gps_day, uint32_t *gp
 	*gps_time_of_day = (uint32_t)(gps_sec % SEC_PER_DAY);
 }
 
-/**@brief handle AT#XAGPS commands
- *  AT#XAGPS=<op>[,<interval>[,<timeout>]]
- *  AT#XAGPS?
- *  AT#XAGPS=?
- */
+/* Handles AT#XAGPS commands. */
 int handle_at_agps(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -666,11 +658,7 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_PGPS)
-/**@brief handle AT#XPGPS commands
- *  AT#XPGPS=<op>[,<interval>[,<timeout>]]
- *  AT#XPGPS?
- *  AT#XPGPS=?
- */
+/* Handles AT#XPGPS commands. */
 int handle_at_pgps(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -752,11 +740,7 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
-/**@brief handle AT#XGPSDEL commands
- *  AT#XGPSDEL=<mask>
- *  AT#XGPSDEL? READ command not supported
- *  AT#XGPSDEL=?
- */
+/* Handles AT#XGPSDEL commands. */
 int handle_at_gps_delete(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
