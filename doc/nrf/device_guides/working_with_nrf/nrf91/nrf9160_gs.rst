@@ -49,155 +49,77 @@ Installing the required software
 
 To work with the nRF9160 DK firmware and certificates, install `nRF Connect for Desktop`_.
 
-After installing and starting the application, install the following apps:
-
-* Programmer
-* LTE Link Monitor
+After installing and starting the application, install the Cellular Monitor app.
 
 .. _nrf9160_gs_updating_fw:
 
 Updating the DK firmware
 ************************
 
-Download the latest application and modem firmware from the `nRF9160 DK Downloads`_ page and extract to a folder of your choice.
+To update the firmware on the nRF9160 DK, complete the following steps:
 
-The downloaded zip contains the following firmware:
-
-Application firmware
-  The :file:`img_app_bl` folder contains full firmware images for different applications.
-  When following this guide, use an image for the :ref:`asset_tracker_v2` application.
-  Asset Tracker v2 simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
-
-  Depending on where you are located, you need the image with either LTE-M or NB-IoT support.
-  Check with your SIM card provider for the mode they support at your location.
-  For the iBasis SIM card provided with the nRF9160 DK, see `iBasis IoT network coverage`_.
-  If your location has support for both, you can choose either one.
-
-  Alternatively, for a more concise nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
-  See :ref:`gs_programming` for details on building a firmware sample application.
-
-Application firmware for Device Firmware Update (DFU)
-  The images in the :file:`img_fota_dfu_bin` and :file:`img_fota_dfu_hex` folders contain firmware images for DFU.
-  When following this guide, you can ignore these images.
-
-Modem firmware
-  The modem firmware is in a zip archive instead of a folder.
-  The zip is named :file:`mfwnrf9160_` followed by the firmware version number.
-  Do not unzip this file.
-
-.. _nrf9160_gs_updating_fw_modem:
-
-Updating the modem firmware
-===========================
-
-To update the modem firmware, complete the following steps.
-If you experience any problems during the process, restart the Programmer app by pressing ``Ctrl+R`` (``command+R`` on macOS), and try again.
-
-.. note::
-
-   Updating the modem firmware erases the contents of the flash memory, so the application must be programmed again to the nRF9160 DK.
-
-1. Open the Programmer app.
+1. Open the Cellular Monitor app.
+#. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
 #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
    On DK v0.9.0 and earlier, this is the **SW5** switch.
 #. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
 #. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
-   You can identify the nRF9160 DK by the fact that it has three COM ports.
 
-   .. figure:: images/programmer_com_ports.png
-      :alt: Programmer - COM ports
+   .. figure:: images/cellularmonitor_selectdevice_nrf9160.png
+      :alt: Cellular Monitor - Select device
 
-      Programmer - COM ports
-
-   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+      Cellular Monitor - Select device
 
    The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
-   The Device Memory Layout section also changes its name to the device name, and indicates that the device is connected.
-   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section of the side panel, the memory layout will update.
-   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section of the side panel.
 
-#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
+#. Click :guilabel:`Program device` in the **ADVANCED OPTIONS** section.
 
-   .. figure:: images/programmer_addfile_nrf9160dk.png
-      :alt: Programmer - Add file
+   .. figure:: images/cellularmonitor_programdevice_nrf9160.png
+      :alt: Cellular Monitor - Program device
 
-      Programmer - Add file
+      Cellular Monitor - Program device
 
-#. Navigate to where you extracted the firmware, and choose the :file:`mfwnrf9160_<version-number>.zip` file.
-#. Click :guilabel:`Write` in the **DEVICE** section of the side panel.
+   The **Program sample app** window appears, displaying applications you can program to the DK.
 
-   .. figure:: images/programmer_write_nrf9160dk.png
-      :alt: Programmer - Write
+#. Click :guilabel:`Select` in the **Asset Tracker V2** section.
+   Asset Tracker v2 is an application that simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
 
-      Programmer - Write
+   .. figure:: images/cellularmonitor_selectassettracker.png
+      :alt: Cellular Monitor - Select Asset Tracker V2
 
-   The Modem DFU window appears.
+      Cellular Monitor - Select Asset Tracker V2
 
-   .. figure:: images/programmerapp_modemdfu.png
-      :alt: Modem DFU window
+   The **Program Asset Tracker V2** window appears.
 
-      The Modem DFU window
-
-#. Click the :guilabel:`Write` button in the **Modem DFU** window to update the firmware.
+#. Click :guilabel:`Program` to program the DK.
    Do not unplug or turn off the device during this process.
 
-When the update is complete, you see a success message.
-If you update the application firmware now, you can go directly to Step 5 of :ref:`nrf9160_gs_updating_fw_application`.
+   .. figure:: images/cellularmonitor_programassettracker_nrf9160.png
+      :alt: Cellular Monitor - Program Asset Tracker V2
 
-.. note::
+      Cellular Monitor - Program Asset Tracker V2
 
-   If you experience problems updating the modem firmware, click :guilabel:`Erase all` in the **DEVICE** section of the side panel and try updating again.
+   When the process is complete, you see a success message.
+   Click :guilabel:`Close` to close the **Program Asset Tracker V2** window.
 
-.. _nrf9160_gs_updating_fw_application:
+#. Copy the :term:`Integrated Circuit Card Identifier (ICCID)` of the inserted micro-SIM.
+   This is required for activating the iBasis SIM when :ref:`nrf9160_gs_connect_to_cloud`.
 
-Updating the application firmware
-=================================
+   If you have activated your iBasis SIM card before or are using a SIM card from a different provider, you can skip this step.
 
-To update the application firmware, complete the following steps.
-If you experience any problems during the process, restart the Programmer app by pressing ``Ctrl+R`` (``command+R`` in macOS), and try again.
+   a. Click :guilabel:`Start` to begin the modem trace.
+      The button changes to :guilabel:`Stop` and is greyed out.
+   #. Click :guilabel:`Refresh dashboard` to refresh the information.
+   #. Copy the ICCID by clicking on the **ICCID** label or the displayed ICCID number in the **Sim** section.
 
-1. Open the Programmer app.
-#. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
-   On DK v0.9.0 and earlier, this is the **SW5** switch.
-#. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
-#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
-   You can identify the nRF9160 DK by the fact that it has three COM ports when you expand its entry.
+      .. figure:: images/cellularmonitor_iccid.png
+         :alt: Cellular Monitor - ICCID
 
-   .. figure:: images/programmer_com_ports.png
-      :alt: Programmer - COM ports
+         Cellular Monitor - ICCID
 
-      Programmer - COM ports
-
-   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
-
-   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
-   The Device Memory Layout section also changes its name to the device name, and indicates that the device is connected.
-   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section, the memory layout will update.
-   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section.
-
-#. Click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
-
-   .. figure:: images/programmer_addfile_nrf9160dk.png
-      :alt: Programmer - Add file
-
-      Programmer - Add file
-
-#. Navigate to where you extracted the firmware, and then to the :file:`img_app_bl` folder there.
-#. Select either :file:`nrf9160dk_asset_tracker_v2_ltem_<version-number>.hex` (LTE-M mode) or :file:`nrf9160dk_asset_tracker_v2_nbiot_<version-number>.hex` (NB-IoT mode), depending on where you are located.
-   Check with your SIM card provider for the mode supported at your location.
-   If you are using the iBasis SIM card provided with the DK, you can see `iBasis IoT network coverage`_ .
-   You can use either mode if your location has support for both.
-
-   For NB-IoT, there is a second variant of the firmware in the :file:`nrf9160dk_asset_tracker_v2_nbiot_legacy_pco_<version-number>.hex` file.
-   Only use this legacy variant if your network does not support ePCO.
-
-#. Click the :guilabel:`Erase & write` button in the **DEVICE** section to program the DK.
-   Do not unplug or turn off the DK during this process.
-
-   .. figure:: images/programmer_erasewrite_nrf9160dk.png
-      :alt: Programmer - Erase & write
-
-      Programmer - Erase & write
+      .. note::
+         The ICCID copied here has 20 digits.
+         When activating the SIM, you need to remove the last two digits so that it is 18 digits.
 
 .. _nrf9160_gs_connecting_dk_to_cloud:
 
@@ -281,8 +203,10 @@ To activate the iBasis SIM card that comes shipped with the |DK| and add the |DK
 
    a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the **SIM ICCID/EID** text box.
 
+      If you followed the instructions in the :ref:`nrf9160_gs_updating_fw` section, paste the copied ICCID into the **SIM ICCID/EID** box and remove the last two digits.
+
       .. note::
-         The SIM cards can have either the EID or the ICCID printed on it.
+         The SIM cards can have either the EID, the ICCID, or neither printed on it.
 
    #. Enter the :term:`Personal Unblocking Key (PUK)` in the **PUK** text box.
 
@@ -296,8 +220,7 @@ To activate the iBasis SIM card that comes shipped with the |DK| and add the |DK
 
 .. nrf_cloud_connection_end
 
-5. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
-#. Connect the nRF9160 DK to the computer with a USB cable and turn it on, or reset the device if it is already turned on.
+5. Connect the nRF9160 DK to the computer with a USB cable and turn it on, or reset the device if it is already turned on.
 #. Wait up to three minutes for the device to find the cellular network and connect to the nRF Cloud server.
 
    At this stage, the device is provisioned on nRF Cloud, but not yet associated with your nRF Cloud account.
@@ -357,20 +280,6 @@ For a basic test, complete the following steps:
 
 If you experience problems and need to check the log messages, open nRF Connect for Desktop and launch the LTE Link Monitor app.
 After connecting to your DK, you can see the log messages in the terminal view.
-
-.. _nrf9160_gs_testing_cellular:
-
-Testing the cellular connection with the AT Client sample
-=========================================================
-
-The :ref:`at_client_sample` sample enables you to send AT commands to the modem of your nRF9160 DK to test and monitor the cellular connection.
-You can use it to troubleshoot and debug any connection problems.
-
-Complete the following steps to test the cellular connection using the AT Client sample:
-
-1. Follow the steps in :ref:`nrf9160_gs_updating_fw_application` to program the sample to the DK.
-   When choosing the HEX file, choose `nrf9160dk_at_client_<version-number>.hex` instead of one for Asset Tracker v2.
-#. Test the AT Client sample as described in the Testing section of the :ref:`at_client_sample` documentation.
 
 .. _ug_nrf9160_gs_testing_gnss:
 

@@ -118,8 +118,8 @@ in a separate plain AT command mode where also pipelining of AT commands is supp
    If you mix AT commands and MoSh commands, the internal state of MoSh might get out of synchronization and result in unexpected behavior.
 
 .. note::
-   When using ``at`` command, any quotation marks ("), apostrophes (') and backslashes (\) within the AT command syntax must be escaped with a backslash (\).
-   The percentage sign (%) is often needed and can be written as is.
+   When using ``at`` command, any quotation marks (``"``), apostrophes (``'``) and backslashes (``\``) within the AT command syntax must be escaped with a backslash (``\``).
+   The percentage sign (``%``) is often needed and can be written as is.
 
 Examples
 --------
@@ -1003,8 +1003,8 @@ Getting nRF91 Series DK out-of-the-box and to nRF Cloud
 To program the certificates and connect to nRF Cloud, complete the following steps:
 
 1. `Download nRF Connect for Desktop`_.
-#. Update the modem firmware on the on-board modem of an nRF91 Series DK to the latest version as instructed in :ref:`nrf9160_gs_updating_fw_modem`.
-#. Build and program the MoSh to your nRF91 Series DK using the default MoSh configuration (with REST as the transport):
+#. Update the modem firmware on the on-board modem of the nRF91 Series DK to the latest version as instructed in :ref:`nrf9160_updating_fw_modem`.
+#. Build and program the MoSh to the nRF91 Series DK using the default MoSh configuration (with REST as the transport):
 
    .. tabs::
 
