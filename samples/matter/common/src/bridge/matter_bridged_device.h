@@ -76,7 +76,6 @@ public:
 
 	bool GetIsReachable() const { return mIsReachable; }
 	const char *GetNodeLabel() const { return mNodeLabel; }
-	void SetIsReachable(bool isReachable) { mIsReachable = isReachable; }
 	uint16_t GetBridgedDeviceBasicInformationClusterRevision()
 	{
 		return kBridgedDeviceBasicInformationClusterRevision;
@@ -94,6 +93,8 @@ public:
 	size_t mDataVersionSize;
 
 protected:
+	void SetIsReachable(bool isReachable) { mIsReachable = isReachable; }
+
 	chip::EndpointId mEndpointId;
 
 private:

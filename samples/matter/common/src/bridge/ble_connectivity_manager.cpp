@@ -113,9 +113,10 @@ void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
 	/* Try to find provider matching the connection */
 	BLEBridgedDeviceProvider *provider = Instance().FindBLEProvider(*bt_conn_get_dst(conn));
 
-	bt_conn_unref(conn);
-
 	if (provider) {
+		bt_conn_unref(provider->GetBLEBridgedDevice().mConn);
+		provider->SetConnectionObject(nullptr);
+
 		/* Verify whether the device should be recovered. */
 		if (reason == BT_HCI_ERR_CONN_TIMEOUT) {
 			Instance().mRecovery.NotifyProviderToRecover(provider);
@@ -411,10 +412,8 @@ CHIP_ERROR BLEConnectivityManager::RemoveBLEProvider(bt_addr_le_t address)
 		return CHIP_ERROR_INTERNAL;
 	}
 
-	/* Release the connection immediately in case of disconnection failed, as callback will not be called. */
-	if (bt_conn_disconnect(provider->GetBLEBridgedDevice().mConn, BT_HCI_ERR_REMOTE_USER_TERM_CONN) != 0) {
-		bt_conn_unref(provider->GetBLEBridgedDevice().mConn);
-	}
+	bt_conn_disconnect(provider->GetBLEBridgedDevice().mConn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	bt_conn_unref(provider->GetBLEBridgedDevice().mConn);
 
 	return CHIP_NO_ERROR;
 }

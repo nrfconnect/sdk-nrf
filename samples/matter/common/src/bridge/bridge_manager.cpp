@@ -321,6 +321,10 @@ CHIP_ERROR BridgeManager::HandleRead(uint16_t index, ClusterId clusterId,
 	VerifyOrReturnValue(Instance().mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
 
 	auto *device = Instance().mDevicesMap[index].mDevice;
+
+	/* Verify if the device is reachable or we should return prematurely. */
+	VerifyOrReturnError(device->GetIsReachable(), CHIP_ERROR_INCORRECT_STATE);
+
 	return device->HandleRead(clusterId, attributeMetadata->attributeId, buffer, maxReadLength);
 }
 
@@ -331,6 +335,10 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t index, ClusterId clusterId,
 	VerifyOrReturnValue(Instance().mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
 
 	auto *device = Instance().mDevicesMap[index].mDevice;
+
+	/* Verify if the device is reachable or we should return prematurely. */
+	VerifyOrReturnError(device->GetIsReachable(), CHIP_ERROR_INCORRECT_STATE);
+
 	CHIP_ERROR err = device->HandleWrite(clusterId, attributeMetadata->attributeId, buffer);
 
 	/* After updating MatterBridgedDevice state, forward request to the non-Matter device. */

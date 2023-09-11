@@ -16,3 +16,8 @@
 #pragma once
 
 #define CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
+
+/* Disable handling only single connection to avoid stopping Matter service BLE advertising
+ * while other BLE bridge-related connections are open.
+ */
+#define CHIP_DEVICE_CONFIG_CHIPOBLE_SINGLE_CONNECTION 0
