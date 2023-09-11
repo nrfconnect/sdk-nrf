@@ -34,13 +34,13 @@ enum wifi_nrf_status wifi_nrf_fw_load(void *rpu_ctx)
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH */
 
 	memset(&fw_info, 0, sizeof(fw_info));
-	fw_info.lmac_patch_pri.data = wifi_nrf_lmac_patch_pri_bimg;
+	fw_info.lmac_patch_pri.data = (void *) wifi_nrf_lmac_patch_pri_bimg;
 	fw_info.lmac_patch_pri.size = sizeof(wifi_nrf_lmac_patch_pri_bimg);
-	fw_info.lmac_patch_sec.data = wifi_nrf_lmac_patch_sec_bin;
+	fw_info.lmac_patch_sec.data = (void *) wifi_nrf_lmac_patch_sec_bin;
 	fw_info.lmac_patch_sec.size = sizeof(wifi_nrf_lmac_patch_sec_bin);
-	fw_info.umac_patch_pri.data = wifi_nrf_umac_patch_pri_bimg;
+	fw_info.umac_patch_pri.data = (void *) wifi_nrf_umac_patch_pri_bimg;
 	fw_info.umac_patch_pri.size = sizeof(wifi_nrf_umac_patch_pri_bimg);
-	fw_info.umac_patch_sec.data = wifi_nrf_umac_patch_sec_bin;
+	fw_info.umac_patch_sec.data = (void *) wifi_nrf_umac_patch_sec_bin;
 	fw_info.umac_patch_sec.size = sizeof(wifi_nrf_umac_patch_sec_bin);
 
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
