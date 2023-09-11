@@ -12,7 +12,6 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/hci.h>
-#include <zephyr/bluetooth/hci_vs.h>
 
 #include <caf/events/ble_common_event.h>
 
