@@ -989,7 +989,9 @@ zcbor
 Trusted Firmware-M
 ==================
 
-|no_changes_yet_note|
+* Added:
+
+  * Section :ref:`tfm_encrypted_its` describing Internal Trusted Storage (ITS) with encryption.
 
 cJSON
 =====
