@@ -229,14 +229,22 @@ config LTE_MODE_PREFERENCE
 	default 3 if LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
 	default 4 if LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
 
+config LTE_RAI_REQ
+	bool "Release Assistance Indication (RAI) request"
+	help
+	  Request use of RAI using AT%RAI. When RAI is enabled, the application needs to use
+	  the RAI socket options (SO_RAI_*) to inform the modem when no more data is expected
+	  and the RRC connection can be released.
+
 config LTE_RAI_REQ_VALUE
-	string "Requested RAI value"
+	string "Requested RAI value [DEPRECATED]"
 	default "0"
 	help
 	  Sets Release Assistance Indication. Allowed values
 	  are "0", "3" and "4" signifying disabled,
 	  control plane one response, and control plane no response,
 	  respectively. For reference see 3GPP 24.301 Ch. 9.9.4.25.
+	  This Kconfig option is deprecated. Use CONFIG_LTE_RAI_REQ instead.
 
 config LTE_NETWORK_USE_FALLBACK
 	bool "Use fallback network mode if selected mode fails"

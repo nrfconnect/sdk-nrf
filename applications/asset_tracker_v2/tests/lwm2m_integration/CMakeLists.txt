@@ -23,7 +23,7 @@ cmock_handle(${ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_engine.h lwm2m)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/lwm2m.h lwm2m)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/lwm2m_client_utils.h lwm2m_client_utils)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/lwm2m_client_utils_location.h lwm2m_client_utils)
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h lte_lc)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h lte_lc FUNC_EXCLUDE ".*(lte_lc_rai_req|lte_lc_rai_param_set)")
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/cloud/lwm2m_integration/lwm2m_integration.c)

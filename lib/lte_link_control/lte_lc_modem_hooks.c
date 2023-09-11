@@ -68,6 +68,13 @@ static void on_modem_init(int err, void *ctx)
 	}
 #endif
 
+	/* Configure Release Assistance Indication (RAI). */
+	err = nrf_modem_at_printf("AT%%RAI=%d", IS_ENABLED(CONFIG_LTE_RAI_REQ) ? 1 : 0);
+	if (err) {
+		LOG_ERR("Failed to configure RAI, err %d", err);
+		return;
+	}
+
 #if IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
 	err = lte_lc_init_and_connect();
 	if (err) {
