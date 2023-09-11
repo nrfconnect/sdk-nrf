@@ -172,11 +172,7 @@ static int do_sms_send(const char *number, const char *message)
 }
 
 
-/**@brief handle AT#XSMS commands
- *  AT#XSMS=<op>,[<number>,<message>]
- *  AT#XSMS? READ command not supported
- *  AT#XSMS=?
- */
+/* Handles AT#XSMS commands. */
 int handle_at_sms(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

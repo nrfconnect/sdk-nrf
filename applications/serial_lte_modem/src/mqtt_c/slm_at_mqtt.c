@@ -433,11 +433,7 @@ static int do_mqtt_subscribe(uint16_t op,
 	return err;
 }
 
-/**@brief handle AT#XMQTTCON commands
- *  AT#XMQTTCON=<op>[,<cid>,<username>,<password>,<url>,<port>[,<sec_tag>]]
- *  AT#XMQTTCON?
- *  AT#XMQTTCON=?
- */
+/* Handles AT#XMQTTCON commands. */
 int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -543,11 +539,7 @@ static int mqtt_datamode_callback(uint8_t op, const uint8_t *data, int len, uint
 	return ret;
 }
 
-/**@brief handle AT#XMQTTPUB commands
- *  AT#XMQTTPUB=<topic>[,<msg>[,<qos>[,<retain>]]]
- *  AT#XMQTTPUB? READ command not supported
- *  AT#XMQTTPUB=?
- */
+/* Handles AT#XMQTTPUB commands. */
 int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -623,11 +615,7 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XMQTTSUB commands
- *  AT#XMQTTSUB=<topic>,<qos>
- *  AT#XMQTTSUB? READ command not supported
- *  AT#XMQTTSUB=?
- */
+/* Handles AT#XMQTTSUB commands. */
 int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -664,11 +652,7 @@ int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XMQTTUNSUB commands
- *  AT#XMQTTUNSUB=<topic>
- *  AT#XMQTTUNSUB? READ command not supported
- *  AT#XMQTTUNSUB=?
- */
+/* Handles AT#XMQTTUNSUB commands. */
 int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

@@ -520,11 +520,7 @@ static int ping_test_handler(const char *target)
 	return 0;
 }
 
-/**@brief handle AT#XPING commands
- *  AT#XPING=<url>,<length>,<timeout>[,<count>[,<interval>[,<pdn>]]]
- *  AT#XPING? READ command not supported
- *  AT#XPING=? TEST command not supported
- */
+/* Handles AT#XPING command. */
 int handle_at_icmp_ping(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

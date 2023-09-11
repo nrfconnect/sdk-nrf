@@ -963,11 +963,7 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 	return ret;
 }
 
-/**@brief handle AT#XSOCKET commands
- *  AT#XSOCKET=<op>[,<type>,<role>[,<cid>]]
- *  AT#XSOCKET?
- *  AT#XSOCKET=?
- */
+/* Handles AT#XSOCKET commands. */
 int handle_at_socket(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1034,11 +1030,7 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XSOCKET commands
- *  AT#XSSOCKET=<op>[,<type>,<role>,<sec_tag>[,<peer_verify>[,<cid>]]]
- *  AT#XSSOCKET?
- *  AT#XSSOCKET=?
- */
+/* Handles AT#XSOCKET commands. */
 int handle_at_secure_socket(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1133,11 +1125,7 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XSOCKETSELECT commands
- *  AT#XSOCKETSELECT=<fd>
- *  AT#XSOCKETSELECT?
- *  AT#XSOCKETSELECT=?
- */
+/* Handles AT#XSOCKETSELECT commands. */
 int handle_at_socket_select(enum at_cmd_type cmd_type)
 {
 	int err = 0;
@@ -1184,11 +1172,7 @@ int handle_at_socket_select(enum at_cmd_type cmd_type)
 
 }
 
-/**@brief handle AT#XSOCKETOPT commands
- *  AT#XSOCKETOPT=<op>,<name>[,<value>]
- *  AT#XSOCKETOPT? READ command not supported
- *  AT#XSOCKETOPT=?
- */
+/* Handles AT#XSOCKETOPT commands. */
 int handle_at_socketopt(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1232,11 +1216,7 @@ int handle_at_socketopt(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XSSOCKETOPT commands
- *  AT#XSSOCKETOPT=<op>,<name>[,<value>]
- *  AT#XSSOCKETOPT? READ command not supported
- *  AT#XSSOCKETOPT=?
- */
+/* Handles AT#XSSOCKETOPT commands. */
 int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1296,11 +1276,7 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XBIND commands
- *  AT#XBIND=<port>
- *  AT#XBIND?
- *  AT#XBIND=? TEST command not supported
- */
+/* Handles AT#XBIND commands. */
 int handle_at_bind(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1322,11 +1298,7 @@ int handle_at_bind(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XCONNECT commands
- *  AT#XCONNECT=<url>,<port>
- *  AT#XCONNECT?
- *  AT#XCONNECT=? TEST command not supported
- */
+/* Handles AT#XCONNECT commands. */
 int handle_at_connect(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1359,11 +1331,7 @@ int handle_at_connect(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XLISTEN commands
- *  AT#XLISTEN
- *  AT#XLISTEN? READ command not supported
- *  AT#XLISTEN=? TEST command not supported
- */
+/* Handles AT#XLISTEN commands. */
 int handle_at_listen(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1385,11 +1353,7 @@ int handle_at_listen(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XACCEPT commands
- *  AT#XACCEPT=<timeout>
- *  AT#XACCEPT? READ command not supported
- *  AT#XACCEPT=? TEST command not supported
- */
+/* Handles AT#XACCEPT command. */
 int handle_at_accept(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1425,11 +1389,7 @@ int handle_at_accept(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XSEND commands
- *  AT#XSEND[=<data>]
- *  AT#XSEND? READ command not supported
- *  AT#XSEND=? TEST command not supported
- */
+/* Handles AT#XSEND command. */
 int handle_at_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1457,11 +1417,7 @@ int handle_at_send(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XRECV commands
- *  AT#XRECV=<timeout>
- *  AT#XRECV? READ command not supported
- *  AT#XRECV=? TEST command not supported
- */
+/* Handles AT#XRECV command. */
 int handle_at_recv(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1490,11 +1446,7 @@ int handle_at_recv(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XSENDTO commands
- *  AT#XSENDTO=<url>,<port>[<data>]
- *  AT#XSENDTO? READ command not supported
- *  AT#XSENDTO=? TEST command not supported
- */
+/* Handles AT#XSENDTO command. */
 int handle_at_sendto(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1532,11 +1484,7 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XRECVFROM commands
- *  AT#XRECVFROM=<timeout>[,<flags>]
- *  AT#XRECVFROM? READ command not supported
- *  AT#XRECVFROM=? TEST command not supported
- */
+/* Handles AT#XRECVFROM command. */
 int handle_at_recvfrom(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1565,11 +1513,7 @@ int handle_at_recvfrom(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XGETADDRINFO commands
- *  AT#XGETADDRINFO=<url>
- *  AT#XGETADDRINFO? READ command not supported
- *  AT#XGETADDRINFO=? TEST command not supported
- */
+/* Handles AT#XGETADDRINFO command. */
 int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1627,11 +1571,7 @@ int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XPOLL commands
- *  AT#XPOLL=<timeout>[,<handle1>[,<handle2> ...<handle8>]
- *  AT#XPOLL? READ command not support
- *  AT#XPOLL=? TEST command not support
- */
+/* Handles AT#XPOLL command. */
 int handle_at_poll(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

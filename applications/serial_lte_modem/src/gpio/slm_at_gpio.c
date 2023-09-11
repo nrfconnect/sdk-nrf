@@ -192,11 +192,7 @@ static int do_gpio_pin_operate(uint16_t op, gpio_pin_t pin, uint16_t value)
 	return 0;
 }
 
-/**@brief handle AT#XGPIOCFG commands
- *  AT#XGPIOCFG=<op>,<pin>
- *  AT#XGPIOCFG?
- *  AT#XGPIOCFG=? Test command not supported
- */
+/* Handles AT#XGPIOCFG commands. */
 int handle_at_gpio_configure(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -227,11 +223,7 @@ int handle_at_gpio_configure(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XGPIO commands
- *  AT#XGPIO=<pin>,<op>[,<value>]
- *  AT#XGPIO? READ command not supported
- *  AT#XGPIO=? TEST command not supported
- */
+/* Handles AT#XGPIO command. */
 int handle_at_gpio_operate(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

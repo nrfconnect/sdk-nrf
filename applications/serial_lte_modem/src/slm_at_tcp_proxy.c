@@ -643,11 +643,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 	LOG_INF("TCP client thread terminated");
 }
 
-/**@brief handle AT#XTCPSVR commands
- *  AT#XTCPSVR=<op>[,<port>[,[sec_tag]]
- *  AT#XTCPSVR?
- *  AT#XTCPSVR=?
- */
+/* Handles AT#XTCPSVR commands. */
 int handle_at_tcp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -702,11 +698,7 @@ int handle_at_tcp_server(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XTCPCLI commands
- *  AT#XTCPCLI=<op>[,<url>,<port>[,[sec_tag]]
- *  AT#XTCPCLI?
- *  AT#XTCPCLI=?
- */
+/* Handles AT#XTCPCLI commands. */
 int handle_at_tcp_client(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -767,11 +759,7 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XTCPSEND commands
- *  AT#XTCPSEND[=<data>]
- *  AT#XTCPSEND? READ command not supported
- *  AT#XTCPSEND=? TEST command not supported
- */
+/* Handles AT#XTCPSEND command. */
 int handle_at_tcp_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -799,11 +787,7 @@ int handle_at_tcp_send(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/**@brief handle AT#XTCPHANGUP commands
- *  AT#XTCPHANGUP=<handle>
- *  AT#XTCPHANGUP? READ command not supported
- *  AT#XTCPHANGUP=?
- */
+/* Handles AT#XTCPHANGUP commands. */
 int handle_at_tcp_hangup(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;

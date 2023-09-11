@@ -109,11 +109,7 @@ static void modem_power_off(void)
 	}
 }
 
-/** @brief Handles AT#XSLMVER command.
- *  AT#XSLMVER
- *  AT#XSLMVER? not supported
- *  AT#XSLMVER=? not supported
- */
+/* Handles AT#XSLMVER command. */
 static int handle_at_slmver(enum at_cmd_type type)
 {
 	int ret = -EINVAL;
@@ -151,11 +147,7 @@ static void go_sleep_wk(struct k_work *work)
 	}
 }
 
-/** @brief Handles AT#XSLEEP commands.
- *  AT#XSLEEP=<sleep_mode>
- *  AT#XSLEEP? not supported
- *  AT#XSLEEP=?
- */
+/* Handles AT#XSLEEP commands. */
 static int handle_at_sleep(enum at_cmd_type type)
 {
 	int ret = -EINVAL;
@@ -178,11 +170,7 @@ static int handle_at_sleep(enum at_cmd_type type)
 	return ret;
 }
 
-/** @brief Handles AT#XSHUTDOWN command.
- *  AT#XSHUTDOWN
- *  AT#XSHUTDOWN? not supported
- *  AT#XSHUTDOWN=? not supported
- */
+/* Handles AT#XSHUTDOWN command. */
 static int handle_at_shutdown(enum at_cmd_type type)
 {
 	int ret = -EINVAL;
@@ -198,11 +186,7 @@ static int handle_at_shutdown(enum at_cmd_type type)
 	return ret;
 }
 
-/** @brief Handles AT#XRESET command.
- *  AT#XRESET
- *  AT#XRESET? not supported
- *  AT#XRESET=? not supported
- */
+/* Handles AT#XRESET command. */
 static int handle_at_reset(enum at_cmd_type type)
 {
 	int ret = -EINVAL;
@@ -219,11 +203,7 @@ static int handle_at_reset(enum at_cmd_type type)
 	return ret;
 }
 
-/** @brief Handles AT#XMODEMRESET command.
- *  AT#XMODEMRESET
- *  AT#XMODEMRESET? not supported
- *  AT#XMODEMRESET=? not supported
- */
+/* Handles AT#XMODEMRESET command. */
 static int handle_at_modemreset(enum at_cmd_type type)
 {
 	if (type != AT_CMD_TYPE_SET_COMMAND) {
@@ -265,11 +245,7 @@ static int handle_at_modemreset(enum at_cmd_type type)
 	return 0;
 }
 
-/** @brief Handles AT#XUUID command.
- *  AT#XUUID
- *  AT#XUUID? not supported
- *  AT#XUUID=? not supported
- */
+/* Handles AT#XUUID command. */
 static int handle_at_uuid(enum at_cmd_type type)
 {
 	int ret;
@@ -305,11 +281,7 @@ static void set_uart_wk(struct k_work *work)
 	}
 }
 
-/** @brief Handles AT#XSLMUART commands.
- *  AT#XSLMUART[=<baud_rate>]
- *  AT#XSLMUART?
- *  AT#XSLMUART=?
- */
+/* Handles AT#XSLMUART commands. */
 static int handle_at_slmuart(enum at_cmd_type type)
 {
 	int ret = -EINVAL;
@@ -359,11 +331,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
 	return ret;
 }
 
-/** @brief Handles AT#XDATACTRL commands.
- *  AT#XDATACTRL=<time_limit>
- *  AT#XDATACTRL?
- *  AT#XDATACTRL=?
- */
+/* Handles AT#XDATACTRL commands. */
 static int handle_at_datactrl(enum at_cmd_type cmd_type)
 {
 	int ret = 0;
@@ -398,11 +366,6 @@ static int handle_at_datactrl(enum at_cmd_type cmd_type)
 	return ret;
 }
 
-/** @brief Handles AT#XCLAC command.
- *  AT#XCLAC
- *  AT#XCLAC? not supported
- *  AT#XCLAC=? not supported
- */
 int handle_at_clac(enum at_cmd_type cmd_type);
 
 /* TCP proxy commands */
@@ -609,6 +572,7 @@ static struct slm_at_cmd {
 
 };
 
+/* Handles AT#XCLAC command. */
 int handle_at_clac(enum at_cmd_type cmd_type)
 {
 	int ret = -EINVAL;
