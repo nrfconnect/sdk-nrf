@@ -918,7 +918,7 @@ enum lte_lc_neighbor_search_type {
 	 * bands that are valid for the area of the current ITU-T region. If RPLMN is not found
 	 * based on previous cell history, the modem accepts any found PLMN.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= v1.3.1.
+	 * @note This search type is only supported by modem firmware versions >= 1.3.1.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT = 2,
 
@@ -927,14 +927,14 @@ enum lte_lc_neighbor_search_type {
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT, but will continue to perform a complete
 	 * search instead of a light search, and the search is performed for all supported bands.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= v1.3.1.
+	 * @note This search type is only supported by modem firmware versions >= 1.3.1.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 3,
 
 	/**
 	 * GCI search, option 1. Modem searches EARFCNs based on previous cell history.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= v1.3.4.
+	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT = 4,
 
@@ -944,7 +944,7 @@ enum lte_lc_neighbor_search_type {
 	 * the modem performs a light search on bands that are valid for the area of the current
 	 * ITU-T region.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= v1.3.4.
+	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT = 5,
 
@@ -953,7 +953,7 @@ enum lte_lc_neighbor_search_type {
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
 	 * the modem performs a complete search on all supported bands.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= v1.3.4.
+	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE = 6,
 };
@@ -969,7 +969,7 @@ struct lte_lc_ncellmeas_params {
 	 * Current cell is counted as one cell. Mandatory with the GCI search types, ignored with
 	 * other search types.
 	 *
-	 * @note GCI search types are only supported by modem firmware versions >= v1.3.4.
+	 * @note GCI search types are only supported by modem firmware versions >= 1.3.4.
 	 */
 	uint8_t gci_count;
 };
@@ -1457,12 +1457,16 @@ int lte_lc_edrx_req(bool enable);
  *
  * For reference see 3GPP 24.301 Ch. 9.9.4.25.
  *
+ * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket options SO_RAI_* instead.
+ *
+ * @note This feature is only supported by modem firmware versions < 2.0.0.
+ *
  * @param[in] value RAI value as a null-terminated string.
  *
  * @retval 0 if successful.
  * @retval -EINVAL if an input parameter was invalid.
  */
-int lte_lc_rai_param_set(const char *value);
+__deprecated int lte_lc_rai_param_set(const char *value);
 
 /**
  * Request modem to enable or disable use of RAI.
@@ -1470,13 +1474,17 @@ int lte_lc_rai_param_set(const char *value);
  * Used RAI value can be set using @kconfig{CONFIG_LTE_RAI_REQ_VALUE} or by calling
  * lte_lc_rai_param_set().
  *
+ * @deprecated Use @kconfig{CONFIG_LTE_RAI_REQ} and socket options SO_RAI_* instead.
+ *
+ * @note This feature is only supported by modem firmware versions < 2.0.0.
+ *
  * @param[in] enable @c true to enable RAI, @c false to disable RAI.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
  * @retval -EOPNOTSUPP if RAI is not supported in the current system mode.
  */
-int lte_lc_rai_req(bool enable);
+__deprecated int lte_lc_rai_req(bool enable);
 
 /**
  * Get the current network registration status.
@@ -1558,7 +1566,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  * type, it may take a while before the measurement result is ready and reported back. After the
  * event is received, the neighbor cell measurements are automatically stopped.
  *
- * @note This feature is only supported by modem firmware versions >= v1.3.0.
+ * @note This feature is only supported by modem firmware versions >= 1.3.0.
  *
  * @param[in] params Search type parameters or @c NULL to initiate a measurement with the default
  *                   parameters. See @ref lte_lc_ncellmeas_params for more information.
@@ -1610,7 +1618,7 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
  * See @ref lte_lc_modem_evt for more information on which events may be received.
  * An event handler must be registered to receive events.
  *
- * @note This feature is only supported by modem firmware versions >= v1.3.0.
+ * @note This feature is only supported by modem firmware versions >= 1.3.0.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
@@ -1679,7 +1687,7 @@ int lte_lc_periodic_search_request(void);
 /**
  * Read the current reduced mobility mode.
  *
- * @note This feature is only supported by modem firmware versions >= v1.3.2.
+ * @note This feature is only supported by modem firmware versions >= 1.3.2.
  *
  * @param[out] mode Reduced mobility mode.
  *
@@ -1692,7 +1700,7 @@ int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
 /**
  * Set reduced mobility mode.
  *
- * @note This feature is only supported by modem firmware versions >= v1.3.2.
+ * @note This feature is only supported by modem firmware versions >= 1.3.2.
  *
  * @param[in] mode Reduced mobility mode.
  *
@@ -1706,7 +1714,7 @@ int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
  *
  * This operation is allowed only when the modem is not activated.
  *
- * @note This feature is only supported by modem firmware versions >= v1.3.0.
+ * @note This feature is only supported by modem firmware versions >= 1.3.0.
  *
  * @param[in] type Factory reset type.
  *

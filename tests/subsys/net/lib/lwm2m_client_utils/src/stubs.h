@@ -56,8 +56,6 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_get, enum lte_lc_func_mode *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_ptw_set, enum lte_lc_lte_mode, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_param_set, const char *, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_req, bool);
-DECLARE_FAKE_VALUE_FUNC(int, lte_lc_rai_param_set, const char *);
-DECLARE_FAKE_VALUE_FUNC(int, lte_lc_rai_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
@@ -147,8 +145,6 @@ DECLARE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void 
 	FUNC(lte_lc_ptw_set)                            \
 	FUNC(lte_lc_psm_param_set)                      \
 	FUNC(lte_lc_psm_req)                            \
-	FUNC(lte_lc_rai_param_set)                      \
-	FUNC(lte_lc_rai_req)                            \
 	FUNC(lte_lc_edrx_param_set)                     \
 	FUNC(lte_lc_edrx_req)                           \
 	FUNC(lte_lc_neighbor_cell_measurement)          \
