@@ -100,7 +100,7 @@ After downloading the certificate, you must provision it to your nRF9160 DK.
 .. note::
 
    The application firmware on the nRF9160 DK must support long AT commands up to 3 kB to provision the certificate.
-   If you have :ref:`updated the application firmware <nrf9160_gs_updating_fw_application>`, this requirement is fulfilled.
+   If you have updated the application firmware using the instructions in either the :ref:`Getting started <nrf9160_gs_updating_fw>` documentation or the :ref:`build_pgm_nrf9160` section, this requirement is fulfilled.
 
 Complete the following steps to provision the certificate:
 
@@ -182,6 +182,152 @@ In Zephyr, the firmware for the application core of :ref:`zephyr:nrf9160dk_nrf91
 
 For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
+.. _nrf9160_ug_updating_fw_programmer:
+
+Updating the DK firmware using Programmer
+*****************************************
+
+Download the latest application and modem firmware from the `nRF9160 DK Downloads`_ page.
+
+The downloaded ZIP archive contains the following firmware:
+
+Application firmware
+  The :file:`img_app_bl` folder contains full firmware images for different applications.
+  The guides in this section use the image for the :ref:`asset_tracker_v2` application as an example.
+  Asset Tracker v2 simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
+
+  The data is transmitted using either LTE-M or NB-IoT.
+  Asset Tracker v2 first attempts to use LTE-M, then NB-IoT.
+  Check with your SIM card provider for the mode they support at your location.
+  For the iBasis SIM card provided with the nRF9160 DK, see `iBasis IoT network coverage`_.
+
+Application firmware for Device Firmware Update (DFU)
+  The images in the :file:`img_fota_dfu_bin` and :file:`img_fota_dfu_hex` folders contain firmware images for DFU.
+  These images are not used in the guides in this section.
+
+Modem firmware
+  The modem firmware is in a ZIP archive instead of a folder.
+  The archive is named :file:`mfw_nrf9160_` followed by the firmware version number.
+  Do not unzip this file.
+
+.. tip::
+   For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
+   See :ref:`gs_programming` for details on building a firmware sample application.
+
+Complete the following steps to program applications using the Programmer app from `nRF Connect for Desktop`_.
+
+.. _nrf9160_updating_fw_modem:
+.. _nrf9160_gs_updating_fw_modem:
+
+Updating the modem firmware
+===========================
+
+To update the modem firmware, complete the following steps.
+If you experience any problems during the process, press ``Ctrl+R`` (``command+R`` on macOS) to restart the Programmer app and try again.
+
+1. Open the Programmer app.
+#. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
+   On DK v0.9.0 and earlier, this is the **SW5** switch.
+#. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
+#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
+
+   .. figure:: images/programmer_selectdevice_nrf9160.png
+      :alt: Programmer - Select device
+
+      Programmer - Select device
+
+   If the DK is not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+
+   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+   The **Device memory layout** section also changes its name to the device name, and indicates that the device is connected.
+   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section of the side panel, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section of the side panel.
+
+#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
+
+   .. figure:: images/programmer_addfile_nrf9160dk.png
+      :alt: Programmer - Add file
+
+      Programmer - Add file
+
+#. Navigate to where you extracted the firmware, and select the :file:`mfw_nrf9160_<version-number>.zip` file.
+#. Click :guilabel:`Write` in the **DEVICE** section of the side panel.
+
+   .. figure:: images/programmer_write_nrf9160dk.png
+      :alt: Programmer - Write
+
+      Programmer - Write
+
+   The **Modem DFU** window appears.
+
+   .. figure:: images/programmerapp_modemdfu.png
+      :alt: Modem DFU window
+
+      The Modem DFU window
+
+#. Click the :guilabel:`Write` button in the **Modem DFU** window to update the firmware.
+   Do not unplug or turn off the device during this process.
+
+When the update is complete, you see a success message.
+If you update the application firmware now, you can go directly to Step 5 of :ref:`nrf9160_updating_fw_application`.
+
+.. note::
+
+   If you experience problems updating the modem firmware, click :guilabel:`Erase all` in the **DEVICE** section of the side panel and try updating again.
+
+.. _nrf9160_updating_fw_application:
+.. _nrf9160_gs_updating_fw_application:
+
+Updating the application firmware
+=================================
+
+To update the application firmware using the Programmer app, complete the following steps.
+If you experience any problems during the process, press ``Ctrl+R`` (``command+R`` in macOS) to restart the Programmer app and try again.
+
+1. Open the Programmer app.
+#. Make sure the **PROG/DEBUG SW10** switch (**SW5** on DK v0.9.0 and earlier) on the nRF9160 DK is set to **nRF91** or **nRF52** as appropriate for the application or sample you are programming.
+   See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
+
+   For the :ref:`asset_tracker_v2` application, the switch must be set to **nRF91**.
+
+#. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
+#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
+
+   .. figure:: images/programmer_selectdevice_nrf9160.png
+      :alt: Programmer - Select device
+
+      Programmer - Select device
+
+   If the DK is not visible, press ``Ctrl+R`` in Windows (``command+R`` in macOS) to restart the Programmer application.
+
+   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+   The **Device memory layout** section also changes its name to the device name, and indicates that the device is connected.
+   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section.
+
+#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
+
+   .. figure:: images/programmer_addfile_nrf9160dk.png
+      :alt: Programmer - Add file
+
+      Programmer - Add file
+
+#. Navigate to where you extracted the firmware, and then to the :file:`img_app_bl` folder there.
+#. Select the :file:`.hex` file for the application you are programming.
+
+   For Asset Tracker v2, select the :file:`nrf9160dk_asset_tracker_v2_<version-number>.hex` HEX file.
+
+   For NB-IoT, there is a second variant of the Asset Tracker v2 firmware in the :file:`nrf9160dk_asset_tracker_v2_nbiot_legacy_pco_<version-number>.hex` file.
+   Only use this legacy variant if your network does not support ePCO.
+
+#. Click the :guilabel:`Erase & write` button in the **DEVICE** section to program the DK.
+   Do not unplug or turn off the DK during this process.
+
+   .. figure:: images/programmer_erasewrite_nrf9160dk.png
+      :alt: Programmer - Erase & write
+
+      Programmer - Erase & write
+
 .. _build_pgm_nrf9160:
 
 Building and programming
@@ -189,15 +335,10 @@ Building and programming
 
 You can program applications and samples on the nRF9160 DK after obtaining the corresponding firmware images.
 
-Download the latest application and modem firmware from the `nRF9160 DK Downloads`_ page.
-
-To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instructions in :ref:`nrf9160_gs_updating_fw_application`.
-In Step 2, set the switch to **nRF91** or **nRF52** as appropriate for the application or sample you are programming.
-See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
-Likewise, in Step 7, choose the :file:`.hex` file for the application you are programming.
-
 .. note::
-   When you update the application firmware on an nRF9160 DK, you must also update the modem firmware as described in :ref:`nrf9160_gs_updating_fw_modem`.
+   When you update the application firmware on an nRF9160 DK, make sure the modem firmware and application firmware are compatible versions.
+
+To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instrutions in :ref:`nrf9160_updating_fw_application`.
 
 .. _build_pgm_nrf9160_vsc:
 
@@ -296,6 +437,21 @@ To add the modem trace UART snippet when building an application with cmake, add
 To build with the |nRFVSC|, specify ``-DSNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra Cmake arguments** field.
 
 See :ref:`cmake_options` for more details.
+
+.. _nrf9160_gs_testing_cellular:
+
+Testing the cellular connection with the AT Client sample
+*********************************************************
+
+The :ref:`at_client_sample` sample enables you to send AT commands to the modem of your nRF9160 DK to test and monitor the cellular connection.
+You can use it to troubleshoot and debug any connection problems.
+
+Complete the following steps to test the cellular connection using the AT Client sample:
+
+1. Follow the steps in :ref:`nrf9160_gs_updating_fw_application` to program the sample to the DK.
+   When selecting the HEX file, select :file:`nrf9160dk_at_client_<version-number>.hex` instead of the one for Asset Tracker v2.
+#. Test the AT Client sample as described in the Testing section of the :ref:`at_client_sample` documentation.
+
 
 .. _nrf9160_board_revisions:
 

@@ -122,7 +122,7 @@ Full upgrade
     Both methods use the Simple Management Protocol (SMP) to provide an interface over UART, which enables the device to perform the update.
 
     * You can use the nRF Connect Programmer to perform the update, regardless of the images that are part of the existing firmware of the device.
-      For example, you can update the modem on an nRF9160 DK using the instructions described in :ref:`nrf9160_gs_updating_fw_modem` in the nRF9160 DK Getting Started guide.
+      For example, you can update the modem on an nRF9160 DK using the instructions described in :ref:`nrf9160_updating_fw_modem` in the Developing with nRF9160 DK documentation.
 
     * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
       See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.
