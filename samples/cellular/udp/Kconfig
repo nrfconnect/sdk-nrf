@@ -23,14 +23,18 @@ config UDP_SERVER_PORT
 	default "2469"
 
 config UDP_PSM_ENABLE
-	bool "Enable LTE Power Saving Mode"
+	bool "Enable LTE Power Saving Mode (PSM)"
 	default y
+	select LTE_PSM_REQ
 
 config UDP_EDRX_ENABLE
-	bool "Enable LTE enhanced Discontinuous Reception"
+	bool "Enable LTE enhanced Discontinuous Reception (eDRX)"
+	select LTE_EDRX_REQ
 
 config UDP_RAI_ENABLE
-	bool "Enable LTE Release Assistance Indication"
+	bool "Enable LTE Release Assistance Indication (RAI)"
+	default y
+	select LTE_RAI_REQ
 
 endmenu
 
