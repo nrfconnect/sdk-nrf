@@ -756,7 +756,7 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 		break;
 
 	case NRF_WIFI_RF_TEST_GET_TEMPERATURE:
-		memcpy(&rf_test_get_temperature,
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv, &rf_test_get_temperature,
 			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 			sizeof(rf_test_get_temperature));
 
@@ -773,7 +773,7 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 		}
 		break;
 	case NRF_WIFI_RF_TEST_EVENT_RF_RSSI:
-		memcpy(&rf_get_rf_rssi,
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv, &rf_get_rf_rssi,
 			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 			sizeof(rf_get_rf_rssi));
 
@@ -782,7 +782,7 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 		rf_get_rf_rssi.agc_status_val);
 		break;
 	case NRF_WIFI_RF_TEST_EVENT_XO_CALIB:
-		memcpy(&xo_calib_params,
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv, &xo_calib_params,
 			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 			sizeof(xo_calib_params));
 
@@ -791,7 +791,7 @@ static enum wifi_nrf_status umac_event_rf_test_process(struct wifi_nrf_fmac_dev_
 		xo_calib_params.xo_val);
 		break;
 	case NRF_WIFI_RF_TEST_XO_TUNE:
-		memcpy(&rf_get_xo_value_params,
+		wifi_nrf_osal_mem_cpy(fmac_dev_ctx->fpriv->opriv, &rf_get_xo_value_params,
 			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 			sizeof(rf_get_xo_value_params));
 
