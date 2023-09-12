@@ -273,7 +273,7 @@ static int cloud_service_here_rest_pos_req_encode_cellular(
 	for (size_t i = 0; i < cell_data->ncells_count; i++) {
 		char element[NEIGHBOR_ELEMENT_SIZE];
 
-		len = snprintk(element, sizeof(element) - 1 /* ',' */,
+		len = snprintk(element, sizeof(element) - 2, /* Care for terminating '\0' and ',' */
 			       HTTP_REQUEST_BODY_NEIGHBOR_ELEMENT,
 			       cell_data->neighbor_cells[i].earfcn,
 			       cell_data->neighbor_cells[i].phys_cell_id,
@@ -295,7 +295,7 @@ static int cloud_service_here_rest_pos_req_encode_cellular(
 
 		/* Append ',' if this is not the last element in the array */
 		if (i < (cell_data->ncells_count - 1)) {
-			strncat(element, ",", sizeof(element) - strlen(element));
+			strncat(element, ",", sizeof(element) - strlen(element) - 1);
 		}
 
 		strncat(neighbors, element, NEIGHBOR_BUFFER_SIZE - strlen(neighbors));
