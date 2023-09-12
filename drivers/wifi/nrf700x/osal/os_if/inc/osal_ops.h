@@ -198,6 +198,11 @@ struct wifi_nrf_osal_ops {
 	void (*qspi_cpy_from)(void *priv, void *dest, unsigned long addr, size_t count);
 	void (*qspi_cpy_to)(void *priv, unsigned long addr, const void *src, size_t count);
 
+	unsigned int (*spi_read_reg32)(void *priv, unsigned long addr);
+	void (*spi_write_reg32)(void *priv, unsigned long addr, unsigned int val);
+	void (*spi_cpy_from)(void *priv, void *dest, unsigned long addr, size_t count);
+	void (*spi_cpy_to)(void *priv, unsigned long addr, const void *src, size_t count);
+
 	void *(*spinlock_alloc)(void);
 	void (*spinlock_free)(void *lock);
 	void (*spinlock_init)(void *lock);
@@ -294,7 +299,21 @@ struct wifi_nrf_osal_ops {
 	void (*bus_qspi_dev_intr_unreg)(void *os_qspi_dev_ctx);
 	void (*bus_qspi_dev_host_map_get)(void *os_qspi_dev_ctx,
 					  struct wifi_nrf_osal_host_map *host_map);
+	void *(*bus_spi_init)(void);
+	void (*bus_spi_deinit)(void *os_spi_priv);
+	void *(*bus_spi_dev_add)(void *spi_priv,
+				  void *osal_spi_dev_ctx);
+	void (*bus_spi_dev_rem)(void *os_spi_dev_ctx);
 
+	enum wifi_nrf_status (*bus_spi_dev_init)(void *os_spi_dev_ctx);
+	void (*bus_spi_dev_deinit)(void *os_spi_dev_ctx);
+
+	enum wifi_nrf_status (*bus_spi_dev_intr_reg)(void *os_spi_dev_ctx,
+						      void *callbk_data,
+						      int (*callback_fn)(void *callbk_data));
+	void (*bus_spi_dev_intr_unreg)(void *os_spi_dev_ctx);
+	void (*bus_spi_dev_host_map_get)(void *os_spi_dev_ctx,
+					  struct wifi_nrf_osal_host_map *host_map);
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	void *(*timer_alloc)(void);
 	void (*timer_free)(void *timer);

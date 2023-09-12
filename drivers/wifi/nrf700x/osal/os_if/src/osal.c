@@ -719,6 +719,120 @@ void wifi_nrf_osal_qspi_cpy_to(struct wifi_nrf_osal_priv *opriv,
 				count);
 }
 
+
+void *wifi_nrf_osal_bus_spi_init(struct wifi_nrf_osal_priv *opriv)
+{
+	return opriv->ops->bus_spi_init();
+}
+
+
+void wifi_nrf_osal_bus_spi_deinit(struct wifi_nrf_osal_priv *opriv,
+				   void *os_spi_priv)
+{
+	opriv->ops->bus_spi_deinit(os_spi_priv);
+}
+
+
+void *wifi_nrf_osal_bus_spi_dev_add(struct wifi_nrf_osal_priv *opriv,
+					 void *os_spi_priv,
+					 void *osal_spi_dev_ctx)
+{
+	return opriv->ops->bus_spi_dev_add(os_spi_priv,
+						osal_spi_dev_ctx);
+}
+
+
+void wifi_nrf_osal_bus_spi_dev_rem(struct wifi_nrf_osal_priv *opriv,
+					void *os_spi_dev_ctx)
+{
+	opriv->ops->bus_spi_dev_rem(os_spi_dev_ctx);
+}
+
+
+enum wifi_nrf_status wifi_nrf_osal_bus_spi_dev_init(struct wifi_nrf_osal_priv *opriv,
+							 void *os_spi_dev_ctx)
+{
+	return opriv->ops->bus_spi_dev_init(os_spi_dev_ctx);
+}
+
+
+void wifi_nrf_osal_bus_spi_dev_deinit(struct wifi_nrf_osal_priv *opriv,
+					   void *os_spi_dev_ctx)
+{
+	opriv->ops->bus_spi_dev_deinit(os_spi_dev_ctx);
+}
+
+
+enum wifi_nrf_status wifi_nrf_osal_bus_spi_dev_intr_reg(struct wifi_nrf_osal_priv *opriv,
+							 void *os_spi_dev_ctx,
+							 void *callbk_data,
+							 int (*callbk_fn)(void *callbk_data))
+{
+	return opriv->ops->bus_spi_dev_intr_reg(os_spi_dev_ctx,
+						 callbk_data,
+						 callbk_fn);
+}
+
+
+void wifi_nrf_osal_bus_spi_dev_intr_unreg(struct wifi_nrf_osal_priv *opriv,
+					   void *os_spi_dev_ctx)
+{
+	opriv->ops->bus_spi_dev_intr_unreg(os_spi_dev_ctx);
+}
+
+
+void wifi_nrf_osal_bus_spi_dev_host_map_get(struct wifi_nrf_osal_priv *opriv,
+						 void *os_spi_dev_ctx,
+						 struct wifi_nrf_osal_host_map *host_map)
+{
+	opriv->ops->bus_spi_dev_host_map_get(os_spi_dev_ctx,
+						  host_map);
+}
+
+unsigned int wifi_nrf_osal_spi_read_reg32(struct wifi_nrf_osal_priv *opriv,
+						void *os_spi_dev_ctx,
+						unsigned long addr)
+{
+		return opriv->ops->spi_read_reg32(os_spi_dev_ctx, addr);
+}
+
+
+void wifi_nrf_osal_spi_write_reg32(struct wifi_nrf_osal_priv *opriv,
+									void *os_spi_dev_ctx,
+									unsigned long addr,
+									unsigned int val)
+{
+		opriv->ops->spi_write_reg32(os_spi_dev_ctx,
+									 addr,
+									 val);
+}
+
+
+void wifi_nrf_osal_spi_cpy_from(struct wifi_nrf_osal_priv *opriv,
+								 void *os_spi_dev_ctx,
+								 void *dest,
+								 unsigned long addr,
+								 size_t count)
+{
+		opriv->ops->spi_cpy_from(os_spi_dev_ctx,
+								  dest,
+								  addr,
+								  count);
+}
+
+
+void wifi_nrf_osal_spi_cpy_to(struct wifi_nrf_osal_priv *opriv,
+							   void *os_spi_dev_ctx,
+							   unsigned long addr,
+							   const void *src,
+							   size_t count)
+{
+		opriv->ops->spi_cpy_to(os_spi_dev_ctx,
+								addr,
+								src,
+								count);
+}
+
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 void *wifi_nrf_osal_timer_alloc(struct wifi_nrf_osal_priv *opriv)
 {

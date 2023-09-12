@@ -1245,6 +1245,205 @@ void wifi_nrf_osal_qspi_cpy_to(struct wifi_nrf_osal_priv *opriv,
 				const void *src,
 				size_t count);
 
+/**
+ * wifi_nrf_osal_bus_spi_init() - Initialize a spi driver.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ *
+ * Registers a spi device driver to the OS's spi core.
+ *
+ * Return: OS specific spi device context.
+ */
+void *wifi_nrf_osal_bus_spi_init(struct wifi_nrf_osal_priv *opriv);
+
+/**
+ * wifi_nrf_osal_bus_spi_deinit() - Deinitialize a spi device driver.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @os_spi_priv: OS specific spi context.
+ *
+ * This API should be called when the spi device driver is
+ * to be unregistered from the OS's spi core.
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_bus_spi_deinit(struct wifi_nrf_osal_priv *opriv,
+				    void *os_spi_priv);
+
+
+/**
+ * wifi_nrf_osal_bus_spi_dev_add() - Add a spi device instance.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @osal_spi_dev_ctx: Pointer to the OSAL spi device context.
+ *
+ * Function to be invoked when a matching spi device is added to the system.
+ * It expects the pointer to a OS specific spi device context to be returned.
+ *
+ * Return: OS specific spi device context.
+ */
+void *wifi_nrf_osal_bus_spi_dev_add(struct wifi_nrf_osal_priv *opriv,
+				      void *os_spi_priv,
+				      void *osal_spi_dev_ctx);
+
+
+/**
+ * wifi_nrf_osal_bus_spi_dev_rem() - Remove a spi device instance.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @os_spi_dev_ctx: Pointer to the OS specific spi device context which was
+ *                   returned by @wifi_nrf_osal_bus_spi_dev_add.
+ *
+ * Function to be invoked when a matching spi device is removed from the system.
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_bus_spi_dev_rem(struct wifi_nrf_osal_priv *opriv,
+				     void *os_spi_dev_ctx);
+
+
+/**
+ * wifi_nrf_osal_bus_spi_dev_init() - Initialize a spi device instance.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @os_spi_dev_ctx: Pointer to the OS specific spi device context which was
+ *                   returned by @wifi_nrf_osal_bus_spi_dev_add.
+ *
+ * Function to be invoked when a spi device is to be initialized.
+ *
+ * Return:
+ *		Pass: wifi_nrf_STATUS_SUCCESS.
+ *		Fail: wifi_nrf_STATUS_FAIL.
+ */
+enum wifi_nrf_status wifi_nrf_osal_bus_spi_dev_init(struct wifi_nrf_osal_priv *opriv,
+						       void *os_spi_dev_ctx);
+
+
+/**
+ * wifi_nrf_osal_bus_spi_dev_deinit() - Deinitialize a spi device instance.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @os_spi_dev_ctx: Pointer to the OS specific spi device context which was
+ *                   returned by @wifi_nrf_osal_bus_spi_dev_add.
+ *
+ * Function to be invoked when a spi device is to be deinitialized.
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_bus_spi_dev_deinit(struct wifi_nrf_osal_priv *opriv,
+					void *os_spi_dev_ctx);
+
+
+/**
+ * wifi_nrf_osal_bus_spi_dev_intr_reg() - Register a interrupt handler for a spi device.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @os_spi_dev_ctx: OS specific spi device context.
+ * @callbk_data: Data to be passed to the ISR.
+ * @callbk_fn: ISR to be invoked on receiving an interrupt.
+ *
+ * Registers an interrupt handler to the OS. This API also passes the callback
+ * data to be passed to the ISR when an interrupt is received.
+ *
+ * Return:
+ *	    Pass: wifi_nrf_STATUS_SUCCESS.
+ *	    Fail: wifi_nrf_STATUS_FAIL.
+ */
+enum wifi_nrf_status wifi_nrf_osal_bus_spi_dev_intr_reg(struct wifi_nrf_osal_priv *opriv,
+							   void *os_spi_dev_ctx,
+							   void *callbk_data,
+							   int (*callbk_fn)(void *callbk_data));
+
+
+/**
+ * wifi_nrf_osal_bus_spi_dev_intr_unreg() - Unregister an interrupt handler for a spi device.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @os_spi_dev_ctx: OS specific spi device context.
+ *
+ * Unregisters the interrupt handler that was registered using
+ * @wifi_nrf_osal_bus_spi_dev_intr_reg.
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_bus_spi_dev_intr_unreg(struct wifi_nrf_osal_priv *opriv,
+					    void *os_spi_dev_ctx);
+
+
+/**
+ * wifi_nrf_osal_bus_spi_dev_host_map_get() - Get host mapped address for a spi device.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @os_spi_dev_ctx: OS specific spi device context.
+ * @host_map: Host map address information.
+ *
+ * Gets the host map address for a spi device.
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_bus_spi_dev_host_map_get(struct wifi_nrf_osal_priv *opriv,
+					      void *os_spi_dev_ctx,
+					      struct wifi_nrf_osal_host_map *host_map);
+
+/**
+ * wifi_nrf_osal_spi_read_reg32() - Read value from a 32 bit register on a
+ *                                  Linux SPI slave device.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @priv:
+ * @addr: Address of the register to read from.
+ *
+ * Reads value from a 32 bit device register at address(@addr) on
+ * a QSPI slave device.
+ *
+ * Return: 32 bit value read from register.
+ */
+unsigned int wifi_nrf_osal_spi_read_reg32(struct wifi_nrf_osal_priv *opriv,
+					    void *priv,
+					    unsigned long addr);
+
+/**
+ * wifi_nrf_osal_spi_write_reg32() -
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @priv:
+ * @addr: Address of the register to write to.
+ * @val: Value to be written to the register.
+ *
+ * Writes a 32 bit value (@val) to a 32 bit device register at address(@addr)
+ * on a Linux SPI slave device.
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_spi_write_reg32(struct wifi_nrf_osal_priv *opriv,
+				     void *priv,
+				     unsigned long addr,
+				     unsigned int val);
+
+/**
+ * wifi_nrf_osal_spi_cpy_from() -
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @priv:
+ * @dest:
+ * @src:
+ * @count:
+ *
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_spi_cpy_from(struct wifi_nrf_osal_priv *opriv,
+				  void *priv,
+				  void *dest,
+				  unsigned long addr,
+				  size_t count);
+
+/**
+ * wifi_nrf_osal_spi_cpy_to() -
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @priv:
+ * @dest:
+ * @src:
+ * @count:
+ *
+ *
+ * Return: None.
+ */
+void wifi_nrf_osal_spi_cpy_to(struct wifi_nrf_osal_priv *opriv,
+				void *priv,
+				unsigned long addr,
+				const void *src,
+				size_t count);
+
+
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 /**
  * wifi_nrf_osal_timer_alloc() - Allocate a timer.
