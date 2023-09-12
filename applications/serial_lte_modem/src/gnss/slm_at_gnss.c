@@ -668,12 +668,12 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(&at_param_list, 1, &op);
+		err = at_params_unsigned_short_get(&slm_at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
 		if (op == PGPS_START && slm_nrf_cloud_ready && run_type == RUN_TYPE_NONE) {
-			err = at_params_unsigned_short_get(&at_param_list, 2, &interval);
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &interval);
 			if (err < 0) {
 				return err;
 			}
@@ -694,7 +694,7 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 				LOG_ERR("Failed to set fix interval, error: %d", err);
 				return err;
 			}
-			if (at_params_unsigned_short_get(&at_param_list, 3, &timeout) == 0) {
+			if (at_params_unsigned_short_get(&slm_at_param_list, 3, &timeout) == 0) {
 				err = nrf_modem_gnss_fix_retry_set(timeout);
 				if (err) {
 					LOG_ERR("Failed to set fix retry, error: %d", err);
