@@ -55,6 +55,9 @@ config BT_SCAN_FILTER_ENABLE
 config BT_SCAN_UUID_CNT
 	default 2
 
+config BT_SCAN_ADDRESS_CNT
+	default 1
+
 config BT_GATT_CLIENT
 	default y
 

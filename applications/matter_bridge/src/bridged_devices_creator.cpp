@@ -242,6 +242,8 @@ CHIP_ERROR BridgedDeviceCreator::CreateDevice(int deviceType, const char *nodeLa
 	 * storage, the device has to be re-connected without confirming its existence by callback.
 	 */
 	if (index.HasValue() && endpointId.HasValue()) {
+		/* Confirm that the first connection was done and this will be only the device recovery. */
+		provider->ConfirmInitialConnection();
 		provider->InitializeBridgedDevice(btAddress, nullptr, nullptr);
 		BLEConnectivityManager::Instance().Recover(provider);
 		err = AddMatterDevice(deviceType, nodeLabel, provider, index, endpointId);
