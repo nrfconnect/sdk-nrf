@@ -66,6 +66,8 @@ static void ble_data_sent(struct bt_nus_client *nus, uint8_t err,
 					const uint8_t *const data, uint16_t len)
 {
 	ARG_UNUSED(nus);
+	ARG_UNUSED(data);
+	ARG_UNUSED(len);
 
 	k_sem_give(&nus_write_sem);
 
@@ -603,20 +605,40 @@ int main(void)
 
 	LOG_INF("Scanning successfully started");
 
+	struct uart_data_t nus_data = {
+		.len = 0,
+	};
+
 	for (;;) {
 		/* Wait indefinitely for data to be sent over Bluetooth */
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
 
-		err = bt_nus_client_send(&nus_client, buf->data, buf->len);
-		if (err) {
-			LOG_WRN("Failed to send data over BLE connection"
-				"(err %d)", err);
-		}
+		int plen = MIN(sizeof(nus_data.data) - nus_data.len, buf->len);
+		int loc = 0;
 
-		err = k_sem_take(&nus_write_sem, NUS_WRITE_TIMEOUT);
-		if (err) {
-			LOG_WRN("NUS send timeout");
+		while (plen > 0) {
+			memcpy(&nus_data.data[nus_data.len], &buf->data[loc], plen);
+			nus_data.len += plen;
+			loc += plen;
+			if (nus_data.len >= sizeof(nus_data.data) ||
+			   (nus_data.data[nus_data.len - 1] == '\n') ||
+			   (nus_data.data[nus_data.len - 1] == '\r')) {
+				err = bt_nus_client_send(&nus_client, nus_data.data, nus_data.len);
+				if (err) {
+					LOG_WRN("Failed to send data over BLE connection"
+						"(err %d)", err);
+				}
+
+				err = k_sem_take(&nus_write_sem, NUS_WRITE_TIMEOUT);
+				if (err) {
+					LOG_WRN("NUS send timeout");
+				}
+
+				nus_data.len = 0;
+			}
+
+			plen = MIN(sizeof(nus_data.data), buf->len - loc);
 		}
 
 		k_free(buf);
