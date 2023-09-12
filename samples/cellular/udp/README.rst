@@ -67,7 +67,7 @@ CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS - UDP data upload frequency configurati
 .. _CONFIG_UDP_SERVER_ADDRESS_STATIC:
 
 CONFIG_UDP_SERVER_ADDRESS_STATIC - UDP Server IP Address configuration
-   This configuration option sets the static IP address of the server.
+   This configuration option sets the IP address of the server.
 
 .. _CONFIG_UDP_SERVER_PORT:
 
@@ -77,12 +77,12 @@ CONFIG_UDP_SERVER_PORT - UDP server port configuration
 .. _CONFIG_UDP_PSM_ENABLE:
 
 CONFIG_UDP_PSM_ENABLE - PSM mode configuration
-   This configuration option, if set, allows the sample to request PSM from the modem or cellular network.
+   This configuration option, if set, allows the sample to request PSM from the modem and cellular network.
 
 .. _CONFIG_UDP_EDRX_ENABLE:
 
 CONFIG_UDP_EDRX_ENABLE - eDRX mode configuration
-   This configuration option, if set, allows the sample to request eDRX from the modem or cellular network.
+   This configuration option, if set, allows the sample to request eDRX from the modem and cellular network.
 
 .. _CONFIG_UDP_RAI_ENABLE:
 
@@ -90,19 +90,19 @@ CONFIG_UDP_RAI_ENABLE - RAI configuration
    This configuration option, if set, allows the sample to request RAI for transmitted messages.
 
 .. note::
-   PSM, eDRX and RAI value or timers are set using the configurable options for the :ref:`lte_lc_readme` library.
-
+   To configure PSM and eDRX timer values, use the options from the :ref:`lte_lc_readme` library.
 
 Additional configuration
 ========================
 
 The following configurations are recommended for low power behavior:
 
+* :kconfig:option:`CONFIG_SERIAL` disabled.
 * :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU` option set to a value greater than the value of :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>`.
 * :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` set to 0.
-* :kconfig:option:`CONFIG_SERIAL` disabled in :file:`prj.conf`.
-* :ref:`CONFIG_UDP_EDRX_ENABLE <CONFIG_UDP_EDRX_ENABLE>` set to false.
-* :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` set to true for NB-IoT. It is not supported for LTE-M.
+* :ref:`CONFIG_UDP_PSM_ENABLE <CONFIG_UDP_PSM_ENABLE>` enabled.
+* :ref:`CONFIG_UDP_EDRX_ENABLE <CONFIG_UDP_EDRX_ENABLE>` disabled.
+* :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` enabled.
 
 .. note::
    In applications where downlink messaging from the cloud to the device is expected, we recommend setting
@@ -149,16 +149,13 @@ After programming the sample to your device, test it by performing the following
 
    .. code-block:: console
 
-      *** Booting Zephyr OS build v2.3.0-rc1-ncs1-1451-gb160c8c5caa5  ***
+      *** Booting Zephyr OS build v3.3.99-ncs1-2938-gc7094146b5b4 ***
       UDP sample has started
-      LTE cell changed: Cell ID: 33703711, Tracking area: 2305
-      PSM parameter update: TAU: 110287, Active time: 61024
+      LTE cell changed: Cell ID: 37372427, Tracking area: 4020
       RRC mode: Connected
       Network registration status: Connected - roaming
-
-      PSM parameter update: TAU: -1, Active time: -1
+      PSM parameter update: TAU: 3600 s, Active time: 0 s
       Transmitting UDP/IP payload of 38 bytes to the IP address 8.8.8.8, port number 2469
-      PSM parameter update: TAU: 3600, Active time: 0
       RRC mode: Idle
 
       Transmitting UDP/IP payload of 38 bytes to the IP address 8.8.8.8, port number 2469
@@ -168,7 +165,6 @@ After programming the sample to your device, test it by performing the following
       Transmitting UDP/IP payload of 38 bytes to the IP address 8.8.8.8, port number 2469
       RRC mode: Connected
       RRC mode: Idle
-
 
 Dependencies
 ************

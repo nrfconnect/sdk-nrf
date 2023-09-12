@@ -449,6 +449,10 @@ Cellular samples (renamed from nRF9160 samples)
     * The sample to use the :ref:`lib_caf` library instead of the :ref:`dk_buttons_and_leds_readme` library.
     * Displaying an error message when the sample fails to send an alert to nRF Cloud.
 
+* :ref:`udp` sample:
+
+   * Updated the sample to use the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and socket options ``SO_RAI_*`` for Release Assistance Indication (RAI) functionality.
+
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
