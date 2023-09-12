@@ -121,24 +121,32 @@ static void on_cnec_esm(const char *notif)
 	}
 }
 
-static void on_cgev(const char *notif)
+static void parse_cgev(const char *notif)
 {
 	char *p;
 	int8_t cid;
 	struct pdn *pdn;
 
-	const struct {
+	/* we are on the system workqueue, let's not put this on the stack */
+	static const struct {
 		const char *notif;
 		const enum pdn_event event;
 	} map[] = {
-		{"ME PDN ACT",	 PDN_EVENT_ACTIVATED},	 /* +CGEV: ME PDN ACT <cid>[,<reason>] */
-		{"ME PDN DEACT", PDN_EVENT_DEACTIVATED}, /* +CGEV: ME PDN DEACT <cid> */
-		{"NW PDN DEACT", PDN_EVENT_DEACTIVATED}, /* +CGEV: NW PDN DEACT <cid> */
-		{"ME DETACH",	 PDN_EVENT_NETWORK_DETACH},	 /* +CGEV: ME DETACH */
-		{"NW DETACH",	 PDN_EVENT_NETWORK_DETACH},	 /* +CGEV: NW DETACH */
-		/* Order is important */
-		{"IPV6 FAIL",	 PDN_EVENT_IPV6_DOWN},	 /* +CGEV: IPV6 FAIL <cid> */
-		{"IPV6",	 PDN_EVENT_IPV6_UP},	 /* +CGEV: IPV6 <cid> */
+		/* +CGEV: ME PDN ACT <cid>[,<reason>] */
+		{"ME PDN ACT", PDN_EVENT_ACTIVATED},
+		/* +CGEV: ME PDN DEACT <cid> */
+		{"ME PDN DEACT", PDN_EVENT_DEACTIVATED},
+		/* +CGEV: NW PDN DEACT <cid> */
+		{"NW PDN DEACT", PDN_EVENT_DEACTIVATED},
+		/* +CGEV: ME DETACH */
+		{"ME DETACH",  PDN_EVENT_NETWORK_DETACH},
+		/* +CGEV: NW DETACH */
+		{"NW DETACH",  PDN_EVENT_NETWORK_DETACH},
+		/* --- Order is important from here --- */
+		/* +CGEV: IPV6 FAIL <cid> */
+		{"IPV6 FAIL",  PDN_EVENT_IPV6_DOWN},
+		/* +CGEV: IPV6 <cid> */
+		{"IPV6", PDN_EVENT_IPV6_UP},
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(map); i++) {
@@ -147,16 +155,18 @@ static void on_cgev(const char *notif)
 			continue;
 		}
 
+		/* parse <cid> */
 		p += strlen(map[i].notif);
 		if (*p == ' ') {
-			cid = strtoul(p, &p, 10);
+			cid = (uint8_t)strtoul(p, &p, 10);
 		} else {
 			cid = CID_UNASSIGNED;
 		}
 
-		if (cid == pdn_act_notif.cid && map[i].event == PDN_EVENT_ACTIVATED) {
+		if (map[i].event == PDN_EVENT_ACTIVATED && cid == pdn_act_notif.cid) {
+			/* parse <reason> */
 			if (*p == ',') {
-				pdn_act_notif.reason = strtol(p + 1, NULL, 10);
+				pdn_act_notif.reason = (int8_t)strtol(p + 1, NULL, 10);
 			} else {
 				pdn_act_notif.reason = PDN_ACT_REASON_NONE;
 			}
@@ -164,13 +174,51 @@ static void on_cgev(const char *notif)
 		}
 
 		SYS_SLIST_FOR_EACH_CONTAINER(&pdn_contexts, pdn, node) {
-			if ((pdn->context_id == cid || cid == CID_UNASSIGNED) && pdn->callback) {
+			if (pdn->callback && (pdn->context_id == cid || cid == CID_UNASSIGNED)) {
 				pdn->callback(pdn->context_id, map[i].event, 0);
 			}
 		}
-
 		return;
 	}
+}
+
+static void parse_cgev_apn_rate_ctrl(const char *notif)
+{
+	char *p;
+	int8_t cid;
+	struct pdn *pdn;
+	uint8_t apn_rate_ctrl_status;
+
+	/* +CGEV: APNRATECTRL STAT <cid>,<status>,[<time_remaining>] */
+	p = strstr(notif, "APNRATECTRL STAT");
+	if (!p) {
+		return;
+	}
+
+	/* parse <cid> */
+	p += strlen("APNRATECTRL STAT");
+	__ASSERT(*p == ' ', "Bad APNRATECTRL parsing");
+
+	cid = (uint8_t)strtoul(p, &p, 10);
+	__ASSERT(*p == ',', "Bad APNRATECTRL parsing");
+
+	/* parse <status> */
+	apn_rate_ctrl_status = (uint8_t)strtol(p + 1, NULL, 10);
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&pdn_contexts, pdn, node) {
+		if (pdn->callback && pdn->context_id == cid) {
+			pdn->callback(pdn->context_id,
+				      apn_rate_ctrl_status ? PDN_EVENT_APN_RATE_CONTROL_ON
+							   : PDN_EVENT_APN_RATE_CONTROL_OFF,
+				      0);
+		}
+	}
+}
+
+static void on_cgev(const char *notif)
+{
+	parse_cgev(notif);
+	parse_cgev_apn_rate_ctrl(notif);
 }
 
 NRF_MODEM_LIB_ON_INIT(modem_init_hook, on_modem_init, NULL);

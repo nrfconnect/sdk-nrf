@@ -776,6 +776,7 @@ Modem libraries
 
 * :ref:`pdn_readme` library:
 
+  * Added the :c:enumerator:`PDN_EVENT_APN_RATE_CONTROL_ON` and :c:enumerator:`PDN_EVENT_APN_RATE_CONTROL_OFF` events to report on the status of APN rate control.
   * Updated the library to allow a ``PDP_type``-only configuration in the :c:func:`pdn_ctx_configure` function.
 
 * :ref:`modem_key_mgmt` library:
