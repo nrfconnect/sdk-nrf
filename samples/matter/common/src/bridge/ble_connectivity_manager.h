@@ -28,6 +28,11 @@ public:
 	static constexpr uint16_t kMaxConnectedDevices = CONFIG_BT_MAX_CONN - 1;
 	static constexpr uint8_t kMaxServiceUuids = CONFIG_BT_SCAN_UUID_CNT;
 
+	struct ScannedDevice {
+		bt_addr_le_t mAddr;
+		bt_le_conn_param mConnParam;
+	};
+
 private:
 	class Recovery {
 		friend class BLEConnectivityManager;
@@ -43,6 +48,7 @@ private:
 		BLEBridgedDeviceProvider *GetProvider();
 		bool PutProvider(BLEBridgedDeviceProvider *provider);
 		bool IsNeeded() { return !ring_buf_is_empty(&mRingBuf); }
+		bt_addr_le_t *GetCurrentLostDeviceAddress();
 		void StartTimer() { k_timer_start(&mRecoveryTimer, K_MSEC(kRecoveryIntervalMs), K_NO_WAIT); }
 		void CancelTimer() { k_timer_stop(&mRecoveryTimer); }
 		size_t GetCurrentAmount() { return ring_buf_size_get(&mRingBuf) / sizeof(BLEBridgedDeviceProvider *); }
@@ -50,21 +56,15 @@ private:
 		static void TimerTimeoutCallback(k_timer *timer);
 
 		BLEBridgedDeviceProvider *mProvidersToRecover[BLEConnectivityManager::kMaxConnectedDevices];
-		BLEBridgedDeviceProvider *mCurrentProvider = nullptr;
-		bool mRecoveryInProgress = false;
+		ScannedDevice mScannedDevice;
+		bool mAddressMatched = false;
 		ring_buf mRingBuf;
-		uint8_t mIndexToRecover;
+		bt_addr_le_t mCurrentAddr;
 		k_timer mRecoveryTimer;
 	};
 
 public:
 	using DeviceConnectedCallback = void (*)(bt_gatt_dm *discoveredData, bool discoverySucceeded, void *context);
-
-	struct ScannedDevice {
-		bt_addr_le_t mAddr;
-		bt_le_conn_param mConnParam;
-	};
-
 	using ScanDoneCallback = void (*)(ScannedDevice *devices, uint8_t count, void *context);
 
 	/**
@@ -159,6 +159,9 @@ public:
 	 * @param provider address of a valid provider object to be recovered.
 	 */
 	void Recover(BLEBridgedDeviceProvider *provider) { mRecovery.NotifyProviderToRecover(provider); }
+
+	CHIP_ERROR PrepareFilterForUuid();
+	CHIP_ERROR PrepareFilterForAddress(bt_addr_le_t *addr);
 
 	static void FilterMatch(bt_scan_device_info *device_info, bt_scan_filter_match *filter_match, bool connectable);
 	static void ScanTimeoutCallback(k_timer *timer);
