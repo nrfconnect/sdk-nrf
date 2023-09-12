@@ -2,14 +2,7 @@
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 # To have an empty list use:
-# - scenarios:
-#    - None
-#  platforms:
-#    - all
-
 - scenarios:
-    - applications.nrf_desktop.zrelease
+    - None
   platforms:
-    - nrf52833dk_nrf52820
-    - nrf52820dongle_nrf52820
-  comment: "Temporary disabled due to flash overflow"
+    - all
