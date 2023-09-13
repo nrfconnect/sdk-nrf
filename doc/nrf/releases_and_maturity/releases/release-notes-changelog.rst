@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.4.99
-###########################
+Changelog for |NCS| v2.4.99-dev2
+################################
 
 .. contents::
    :local:
@@ -35,11 +35,6 @@ IDE and tool support
 
 |no_changes_yet_note|
 
-MCUboot
-=======
-
-|no_changes_yet_note|
-
 Application development
 =======================
 
@@ -54,7 +49,7 @@ Build system
 ------------
 
 * Removed the ``CONFIG_MCUBOOT_IMAGE_VERSION`` Kconfig option in favor of using a dedicated :ref:`application VERSION file <zephyr:app-version-details>` to set the version.
-   You can alternatively set the version by using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option, but using a :file:`VERSION` file is the recommended approach.
+  You can alternatively set the version by using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option, but using a :file:`VERSION` file is the recommended approach.
 
 * The |NCS| name and version is now displayed instead of the Zephyr version as the default boot banner when applications boot.
   This can be customized in user applications.
@@ -92,6 +87,7 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 
 Bluetooth® LE
 -------------
+
 * Updated the Bluetooth HCI headers.
   The :file:`hci.h` header now contains only the function prototypes, and the new
   :file:`hci_types.h` header defines all HCI-related macros and structs.
@@ -108,6 +104,12 @@ See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samp
 
 Matter
 ------
+
+* Added:
+
+  * Page about :ref:`ug_matter_device_optimizing_memory`.
+  * Shell commands for printing and resetting the peak usage of critical system resources used by Matter.
+    These shell commands are available when both :kconfig:option:`CHIP_LIB_SHELL` and :kconfig:option:`CHIP_STATISTICS` Kconfig options are set.
 
 * Updated:
 
@@ -130,12 +132,6 @@ Matter
   * An application core crash on nRF5340 targets with the factory data module enabled.
     The crash would happen after the OTA firmware update finishes and the image is confirmed.
 
-* Added:
-
-  * Page about :ref:`ug_matter_device_optimizing_memory`.
-  * Shell commands for printing and resetting the peak usage of critical system resources used by Matter.
-    These shell commands are available when both :kconfig:option:`CHIP_LIB_SHELL` and :kconfig:option:`CHIP_STATISTICS` Kconfig options are set.
-
 See `Matter samples`_ for the list of changes for the Matter samples.
 
 Matter fork
@@ -146,9 +142,13 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 The following list summarizes the most important changes inherited from the upstream Matter:
 
 * Added the :kconfig:option:`CHIP_MALLOC_SYS_HEAP_WATERMARKS_SUPPORT` Kconfig option to manage watermark support.
-* Updated the factory data guide with an additional rotating ID information.
+
+* Updated:
+
+  * The factory data guide with an additional rotating ID information.
+  * Set onboarding code generation to be enabled by default if the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig is set.
+
 * Fixed RAM and ROM reports.
-* Set onboarding code generation to be enabled by default if the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig is set.
 
 Thread
 ------
@@ -390,19 +390,19 @@ Cellular samples (renamed from nRF9160 samples)
 
 * :ref:`http_application_update_sample` sample:
 
-   * Updated credentials for the HTTPS connection.
+  * Updated credentials for the HTTPS connection.
 
 * :ref:`http_full_modem_update_sample` sample:
 
-   * Updated credentials for the HTTPS connection.
+  * Updated credentials for the HTTPS connection.
 
 * :ref:`http_modem_delta_update_sample` sample:
 
-   * Updated credentials for the HTTPS connection.
+  * Updated credentials for the HTTPS connection.
 
 * :ref:`https_client` sample:
 
-   * Updated the TF-M Mbed TLS overlay to fix an issue when connecting to the server.
+  * Updated the TF-M Mbed TLS overlay to fix an issue when connecting to the server.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
@@ -435,17 +435,16 @@ Cellular samples (renamed from nRF9160 samples)
 
 * :ref:`lwm2m_client` sample:
 
-  * Added:
+  * Added an overlay for using DTLS Connection Identifier.
+    This significantly reduces the DTLS handshake overhead when doing the LwM2M Update operation.
 
     * An overlay for using DTLS Connection Identifier.
       This significantly reduces the DTLS handshake overhead when doing the LwM2M Update operation.
     * Support for Hosting MCUmgr client for external MCU.
       Including a new overlay file for enabling this and devicetree overlay files for UART2 and MCUboot recovery mode.
 
-  * Updated:
-
-    * The sample now uses tickless operating mode from Zephyr's LwM2M engine which does not cause device wake-up in 500 ms interval anymore.
-      This allows the device to achieve 2 uA of current usage while in PSM sleep mode.
+  * Updated the sample to use tickless operating mode from Zephyr's LwM2M engine, which does not cause device wake-up in 500 ms interval anymore.
+    This allows the device to achieve 2 uA of current usage while in PSM sleep mode.
 
 * :ref:`gnss_sample` sample:
 
@@ -454,13 +453,13 @@ Cellular samples (renamed from nRF9160 samples)
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
-   * Added reporting of device and connection info to the device shadow.
+  * Added reporting of device and connection info to the device shadow.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
   * Added:
 
-    * A DTS overlay file for LEDs on the nRF9160 DK to be compatible with the :ref:`caf_leds` module.
+    * A DTS overlay file for LEDs on the nRF9160 DK to be compatible with the :ref:`caf_leds`.
     * Header files for buttons and LEDs definition required by the :ref:`lib_caf` library.
 
   * Updated:
@@ -556,7 +555,7 @@ Wi-Fi samples
   * :ref:`wifi_shutdown_sample` sample that demonstrates how to configure the Wi-Fi driver to shut down the Wi-Fi hardware when the Wi-Fi interface is not in use.
   * :ref:`wifi_twt_sample` sample that demonstrates how to establish TWT flow and transfer data conserving power.
   * Support for the Wi-Fi driver to several upstream Zephyr networking samples.
-  * Enchancements to support device re-trimming process in the :ref:`wifi_radio_test` sample.
+  * Enhancements to support device re-trimming process in the :ref:`wifi_radio_test` sample.
   * Changes to the :ref:`wifi_scan_sample` sample to demonstrate usage of new scan APIs.
 
 Other samples
@@ -583,9 +582,9 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 Wi-Fi drivers
 -------------
 
-* Added:
+* Updated:
 
-  * TCP/IP checksum offload is now enabled by default for the nRF70 Series.
+  * TCP/IP checksum offload to enable by default for the nRF70 Series.
   * Provision to change TX power ceilings using DTS file.
 
 Libraries
@@ -651,7 +650,7 @@ Bluetooth libraries and services
 
   * Removed:
 
-    * The `bt_mesh_light_hue_srv_handlers.delta_set` callback of the :ref:`bt_mesh_light_hue_srv_readme` model is removed and replaced with the :c:member:`bt_mesh_light_hue_srv_handlers.set` callback.
+    * The ``bt_mesh_light_hue_srv_handlers.delta_set`` callback of the :ref:`bt_mesh_light_hue_srv_readme` model is removed and replaced with the :c:member:`bt_mesh_light_hue_srv_handlers.set` callback.
 
 Bootloader libraries
 --------------------
@@ -781,16 +780,12 @@ Libraries for networking
     * Advanced LwM2M FOTA support for an external MCU with DFU SMP target.
     * FOTA download Utils API integrated to the library.
 
-  * Updated:
-
-    * Zephyr's LwM2M Connectivity Monitor object now uses a 16-bit value for radio signal strength so it does not roll over on values smaller than -126 dBm.
+  * Updated Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than -126 dBm.
 
 * :ref:`lib_aws_fota` library:
 
-  * Added:
-
-    * Support for a single ``url`` field in job documents.
-      Previously the host name and path of the download URL could only be specified separately.
+  * Added support for a single ``url`` field in job documents.
+    Previously, the host name and path of the download URL could only be specified separately.
 
   * Updated:
 
@@ -820,7 +815,7 @@ Libraries for networking
 * :ref:`lib_fota_download` library:
 
   * Added support for DFU SMP target with new Utils API that in turn supports downloading, scheduling and activating images in all FOTA DFU targets.
-  * Updated the library, which now verifies whether the download started with the same URI and resumes the interrupted download.
+  * Updated the library to verify whether the download started with the same URI and resumed the interrupted download.
 
 * :ref:`lib_nrf_cloud_alert` library:
 
@@ -847,14 +842,12 @@ nRF Security
 
 The following changes are applied to :ref:`nrf_security` library:
 
-* Updated:
-
-  * The subsystem and its library are renamed from Nordic Security Module to nRF Security.
+* Updated the subsystem and its library to be renamed from Nordic Security Module to nRF Security.
 
 * Removed:
 
-  * Option to build Mbed TLS builtin PSA core (:kconfig:option:`CONFIG_PSA_CORE_BUILTIN`).
-  * Option to build Mbed TLS builtin PSA crypto driver (:kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_BUILTIN`) and all its associated algorithms (``CONFIG_MBEDTLS_PSA_BUILTIN_ALG_xxx``).
+  * Option to build Mbed TLS built-in PSA core (:kconfig:option:`CONFIG_PSA_CORE_BUILTIN`).
+  * Option to build Mbed TLS built-in PSA crypto driver (:kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_BUILTIN`) and all its associated algorithms (``CONFIG_MBEDTLS_PSA_BUILTIN_ALG_xxx``).
 
 Other libraries
 ---------------
@@ -900,8 +893,8 @@ Common Application Framework (CAF)
 
 * :ref:`caf_ble_state`:
 
-   * Removed TX power update using a Bluetooth HCI command for SoftDevice Bluetooth LE Link Layer (:kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`) right after a connection has been established.
-     The :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig option can be used to set the TX power for advertising and connections also for the SoftDevice Link Layer.
+  * Removed TX power update using a Bluetooth HCI command for SoftDevice Bluetooth LE Link Layer (:kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`) right after a connection has been established.
+    The :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig option can be used to set the TX power for advertising and connections also for the SoftDevice Link Layer.
 
 * :ref:`caf_power_manager`:
 
@@ -910,10 +903,8 @@ Common Application Framework (CAF)
 Shell libraries
 ---------------
 
-* Added:
-
-  * The :ref:`shell_nfc_readme` library.
-    It adds shell backend using the NFC T4T ISO-DEP protocol for data exchange.
+* Added the :ref:`shell_nfc_readme` library.
+  It adds shell backend using the NFC T4T ISO-DEP protocol for data exchange.
 
 Libraries for Zigbee
 --------------------
