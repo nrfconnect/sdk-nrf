@@ -182,8 +182,10 @@ enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						 unsigned char *rf_params);
+enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(
+					struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					unsigned char *rf_params,
+					struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
 
 /**
  * @brief Set regulatory domain in RPU.

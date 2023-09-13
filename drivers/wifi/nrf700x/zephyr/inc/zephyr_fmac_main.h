@@ -116,6 +116,9 @@ struct wifi_nrf_drv_priv_zep {
 extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
 
 void wifi_nrf_scan_timeout_work(struct k_work *work);
+void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+				struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
+void set_tx_pwr_ceil_default(struct nrf_wifi_tx_pwr_ceil_params *pwr_ceil_params);
 const char *wifi_nrf_get_drv_version(void);
 enum wifi_nrf_status wifi_nrf_fmac_dev_add_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);
 enum wifi_nrf_status wifi_nrf_fmac_dev_rem_zep(struct wifi_nrf_drv_priv_zep *drv_priv_zep);

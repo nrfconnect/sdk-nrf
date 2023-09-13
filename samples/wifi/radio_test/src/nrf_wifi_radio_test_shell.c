@@ -289,6 +289,41 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned char country_code[NRF_WIFI_COUNTRY_CODE_LEN] = {0};
+	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
+
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
+defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || \
+defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
+	set_tx_pwr_ceil_default(&tx_pwr_ceil_params);
+	#if DT_NODE_EXISTS(DT_NODELABEL(nrf70_tx_power_ceiling))
+		tx_pwr_ceil_params.max_pwr_2g_dsss =
+				DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_dsss);
+		tx_pwr_ceil_params.max_pwr_2g_mcs7 =
+				DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs7);
+		tx_pwr_ceil_params.max_pwr_2g_mcs0 =
+				DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_2g_mcs0);
+		tx_pwr_ceil_params.rf_tx_pwr_ceil_params_override = 1;
+	#else
+		tx_pwr_ceil_params.rf_tx_pwr_ceil_params_override = 0;
+	#endif
+#endif
+
+#if defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
+	#if DT_NODE_EXISTS(DT_NODELABEL(nrf70_tx_power_ceiling))
+		tx_pwr_ceil_params.max_pwr_5g_low_mcs7 =
+			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs7);
+		tx_pwr_ceil_params.max_pwr_5g_mid_mcs7 =
+			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs7);
+		tx_pwr_ceil_params.max_pwr_5g_high_mcs7 =
+			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs7);
+		tx_pwr_ceil_params.max_pwr_5g_low_mcs0 =
+			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_low_mcs0);
+		tx_pwr_ceil_params.max_pwr_5g_mid_mcs0 =
+			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_mid_mcs0);
+		tx_pwr_ceil_params.max_pwr_5g_high_mcs0 =
+			DT_PROP(DT_NODELABEL(nrf70_tx_power_ceiling), max_pwr_5g_high_mcs0);
+	#endif
+#endif
 
 	/* Check and save regulatory country code currently set */
 	if (strlen(conf_params->country_code)) {
@@ -305,7 +340,8 @@ enum wifi_nrf_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->op_mode = RPU_OP_MODE_RADIO_TEST;
 
 	status = wifi_nrf_fmac_rf_params_get(ctx->rpu_ctx,
-					     conf_params->rf_params);
+					     conf_params->rf_params,
+					     &tx_pwr_ceil_params);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		goto out;
