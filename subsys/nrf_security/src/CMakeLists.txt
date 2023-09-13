@@ -64,6 +64,17 @@ if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
 )
 endif()
 
+if(CONFIG_MBEDTLS_ENABLE_HEAP)
+  if (CONFIG_BUILD_WITH_TFM)
+    # Add replacement for memory_buffer_alloc.c for NS build
+    list(APPEND src_crypto ${NRF_SECURITY_ROOT}/src/legacy/memory_buffer_alloc.c)
+  else()
+    # Both secure only builds and TF-M builds use the implementation from MbedTLS.
+    # This currently doesn't do a mutex on heap access.
+    list(APPEND src_crypto ${ARM_MBEDTLS_PATH}/library/memory_buffer_alloc.c)
+  endif()
+endif()
+
 if (COMPILE_PSA_APIS)
   # Add the local version of psa_crypto_driver_wrappers.c
   list(APPEND src_crypto

@@ -36,13 +36,6 @@ if(NOT CONFIG_NRF_CC3XX_PLATFORM AND NOT CONFIG_BUILD_WITH_TFM)
 endif()
 
 if(CONFIG_BUILD_WITH_TFM)
-  # Add replacement for memory_buffer_alloc.c for NS build
-  if(CONFIG_MBEDTLS_ENABLE_HEAP)
-    list(APPEND src_zephyr
-      ${NRF_SECURITY_ROOT}/src/legacy/memory_buffer_alloc.c
-    )
-  endif()
-
   # For some reason $<TARGET_PROPERTY:tfm,TFM_BINARY_DIR> does not work here
   set(TFM_BINARY_DIR ${CMAKE_BINARY_DIR}/tfm)
 
@@ -50,13 +43,6 @@ if(CONFIG_BUILD_WITH_TFM)
   zephyr_include_directories(
     ${TFM_BINARY_DIR}/install/interface/include
   )
-else()
-  # Use the standard memory_buffer_alloc.c
-  if (CONFIG_MBEDTLS_ENABLE_HEAP)
-    list(APPEND src_zephyr
-      ${ARM_MBEDTLS_PATH}/library/memory_buffer_alloc.c
-    )
-  endif()
 endif()
 
 # Add the zephyr-specific sources necessary for nrf_security
