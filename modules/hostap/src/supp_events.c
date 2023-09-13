@@ -27,6 +27,7 @@ static char *wpa_supp_event_map[] = {
 	"CTRL-EVENT-NETWORK-NOT-FOUND",
 	"CTRL-EVENT-NETWORK-ADDED",
 	"CTRL-EVENT-NETWORK-REMOVED",
+	"CTRL-EVENT-DSCP-POLICY",
 };
 
 static int wpa_supp_process_status(struct supp_int_event_data *event_data, char *wpa_supp_status)
@@ -120,6 +121,9 @@ static int wpa_supp_process_status(struct supp_int_event_data *event_data, char 
 		strncpy(data->supp_event_str, wpa_supp_event_map[event],
 				 sizeof(data->supp_event_str));
 		event_data->data_len = strlen(data->supp_event_str) + 1;
+	case WPA_SUPP_EVENT_DSCP_POLICY:
+		/* TODO */
+		break;
 	default:
 		break;
 	}
