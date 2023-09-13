@@ -52,14 +52,14 @@ config BT_FAST_PAIR_STORAGE_EXPOSE_PRIV_API
 	  Expose Fast Pair storage's private data structures, definitions and functionalities.
 	  The option could be used by unit tests to prepopulate settings with mocked data.
 
-config BT_FAST_PAIR_STORAGE_EXT_PN
+config BT_FAST_PAIR_STORAGE_PN
 	bool
 	help
 	  Add Fast Pair storage source files for Personalized Name extension.
 
-if BT_FAST_PAIR_STORAGE_EXT_PN
+if BT_FAST_PAIR_STORAGE_PN
 
-config BT_FAST_PAIR_STORAGE_EXT_PN_LEN_MAX
+config BT_FAST_PAIR_STORAGE_PN_LEN_MAX
 	int "Maximum length of stored Fast Pair Personalized Name"
 	range 64 1024
 	default 64
@@ -67,7 +67,7 @@ config BT_FAST_PAIR_STORAGE_EXT_PN_LEN_MAX
 	  Maximum length of stored Fast Pair Personalized Name. According to Fast Pair
 	  specification, it should be at least equal to 64.
 
-endif # BT_FAST_PAIR_STORAGE_EXT_PN
+endif # BT_FAST_PAIR_STORAGE_PN
 
 module = FP_STORAGE
 module-str = Fast Pair storage library

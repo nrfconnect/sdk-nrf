@@ -381,7 +381,7 @@ static int handle_key_based_pairing_req(struct bt_conn *conn,
 	}
 
 	if (parsed_req->fp_flags & FP_KBP_FLAG_NOTIFY_NAME) {
-		if (IS_ENABLED(CONFIG_BT_FAST_PAIR_EXT_PN)) {
+		if (IS_ENABLED(CONFIG_BT_FAST_PAIR_PN)) {
 			WRITE_BIT(*additional_actions, ADDITIONAL_ACTION_NOTIFY_PN_BIT_POS, 1);
 		} else {
 			/* The notification will not be sent, do not return error. */
@@ -422,7 +422,7 @@ static int handle_action_req(struct bt_conn *conn,
 
 	int err;
 
-	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_EXT_PN)) {
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_PN)) {
 		ARG_UNUSED(write_additional_data);
 		LOG_WRN("Action request not supported (Action request)");
 		return -ENOTSUP;

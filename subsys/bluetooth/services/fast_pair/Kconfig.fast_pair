@@ -13,11 +13,11 @@ menuconfig BT_FAST_PAIR
 
 if BT_FAST_PAIR
 
-config BT_FAST_PAIR_EXT_PN
+config BT_FAST_PAIR_PN
 	bool "Fast Pair Personalized Name extension"
 	default y
 	select BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
-	select BT_FAST_PAIR_STORAGE_EXT_PN
+	select BT_FAST_PAIR_STORAGE_PN
 	help
 	  Enable Fast Pair Personalized Name extension.
 

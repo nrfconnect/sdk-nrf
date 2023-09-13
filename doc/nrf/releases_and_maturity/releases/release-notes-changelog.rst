@@ -571,6 +571,11 @@ Bluetooth libraries and services
   * Updated by deleting reset in progress flag from settings storage instead of storing it as ``false`` on factory reset operation.
     This is done to ensure that no Fast Pair data is left in the settings storage after the factory reset.
   * Changed the :c:struct:`bt_fast_pair_adv_config` structure and the :c:enum:`bt_fast_pair_adv_mode` enumerator to separate advertising mode from show or hide UI indication advertising information.
+  * Renamed following Kconfig options:
+
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_EXT_PN` Kconfig option to the :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` Kconfig option.
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_EXT_PN` Kconfig option to the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN` Kconfig option.
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_EXT_PN_LEN_MAX` Kconfig option to the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX` Kconfig option.
 
 * :ref:`bt_le_adv_prov_readme` library:
 
