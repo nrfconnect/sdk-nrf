@@ -64,8 +64,11 @@ void BLEConnectivityManager::FilterMatch(bt_scan_device_info *device_info, bt_sc
 	scannedDevices[scannedDevicesCounter].mAddr = *device_info->recv_info->addr;
 	scannedDevices[scannedDevicesCounter].mConnParam = *device_info->conn_param;
 
-	/* TODO: obtain more information from advertising data to help user distinguish the devices (e.g. BT name). */
+	if (!filter_match->uuid.match) {
+		return;
+	}
 
+	scannedDevices[scannedDevicesCounter].mUuid = BT_UUID_16(filter_match->uuid.uuid[0])->val;
 	Instance().mScannedDevicesCounter++;
 }
 
@@ -491,6 +494,17 @@ CHIP_ERROR BLEConnectivityManager::GetScannedDeviceAddress(bt_addr_le_t *address
 	}
 
 	memcpy(address, &mScannedDevices[index].mAddr, sizeof(mScannedDevices[index].mAddr));
+
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR BLEConnectivityManager::GetScannedDeviceUuid(uint16_t &uuid, uint8_t index)
+{
+	if (index >= mScannedDevicesCounter) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	uuid = mScannedDevices[index].mUuid;
 
 	return CHIP_NO_ERROR;
 }

@@ -31,6 +31,7 @@ public:
 	struct ScannedDevice {
 		bt_addr_le_t mAddr;
 		bt_le_conn_param mConnParam;
+		uint16_t mUuid;
 	};
 
 private:
@@ -151,6 +152,16 @@ public:
 	 * @return other error code if device is not present or argument is invalid
 	 */
 	CHIP_ERROR GetScannedDeviceAddress(bt_addr_le_t *address, uint8_t index);
+
+	/**
+	 * @brief Gets Bluetooth LE service UUID of a device that was scanned before.
+	 *
+	 * @param uuid Bluetooth LE service UUID to store the obtained UUID
+	 * @param index index of Bluetooth LE device on the scanned devices list
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code if device is not present or argument is invalid
+	 */
+	CHIP_ERROR GetScannedDeviceUuid(uint16_t &uuid, uint8_t index);
 
 	/**
 	 * @brief Recover connection with the specified BLE provider. It is
