@@ -84,6 +84,7 @@ static const struct wifi_mgmt_ops wpa_supp_ops = {
 	.set_twt = z_wpa_supplicant_set_twt,
 	.get_power_save_config = z_wpa_supplicant_get_power_save_config,
 	.reg_domain = z_wpa_supplicant_reg_domain,
+	.mode = z_wpa_supplicant_mode,
 };
 
 DEFINE_WIFI_NM_INSTANCE(wpa_supplicant, &wpa_supp_ops);
