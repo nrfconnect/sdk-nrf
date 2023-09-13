@@ -70,7 +70,7 @@ static bool paused;
 
 static int bis_headset_cleanup(void);
 
-static void le_audio_event_publish(enum le_audio_evt_type event, enum le_audio_direction dir)
+static void le_audio_event_publish(enum le_audio_evt_type event)
 {
 	int ret;
 	struct le_audio_msg msg;

@@ -319,6 +319,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			/* Check if LC3 is already initialized */
 			ret = sw_codec_lc3_init(NULL, NULL, CONFIG_AUDIO_FRAME_DURATION_US);
 			if (ret) {
+				LOG_ERR("global codec init failed");
 				return ret;
 			}
 		}
@@ -341,6 +342,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 				sw_codec_cfg.encoder.num_ch, &pcm_bytes_req_enc);
 
 			if (ret) {
+				LOG_ERR("ENC codec init failed");
 				return ret;
 			}
 		}
@@ -360,6 +362,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.num_ch);
 
 			if (ret) {
+				LOG_ERR("DEC codec init failed");
 				return ret;
 			}
 		}

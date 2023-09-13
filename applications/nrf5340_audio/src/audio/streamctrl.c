@@ -104,8 +104,8 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 	}
 
 	if (data_size_mismatch) {
-		/* Return if sizes do not match */
-		LOG_ERR("mismatch. SIze is: %d, wants %d ", data_size, desired_data_size);
+		/* Return if sizes do not match. 0 data is allowed. */
+		LOG_WRN("mismatch. SIze is: %d, wants %d ", data_size, desired_data_size);
 		return;
 	}
 
@@ -415,7 +415,8 @@ static void le_audio_msg_sub_thread(void)
 				break;
 			}
 
-			audio_system_start();
+			audio_system_start(); // Audio system is started here, after the stream is
+					      // up.
 			stream_state_set(STATE_STREAMING);
 			ret = led_blink(LED_APP_1_BLUE);
 			ERR_CHK(ret);
@@ -447,10 +448,10 @@ static void le_audio_msg_sub_thread(void)
 				break;
 			}
 
-			LOG_WRN("Sampling rate: %d Hz", sampling_rate_hz);
-			LOG_WRN("Bitrate: %d bps", bitrate_bps);
+			LOG_WRN("Config received: Sampling rate: %d Hz", sampling_rate_hz);
+			LOG_WRN("Config received: Bitrate: %d bps", bitrate_bps);
 
-			if (msg.dir == BT_AUDIO_DIR_SINK) {
+			if (msg.dir == BT_AUDIO_DIR_SINK) { // TODO: What if we are bidir?
 				if (CONFIG_AUDIO_DEV == GATEWAY) {
 					audio_system_config_set(sampling_rate_hz, bitrate_bps, 0);
 				} else if (CONFIG_AUDIO_DEV == HEADSET) {

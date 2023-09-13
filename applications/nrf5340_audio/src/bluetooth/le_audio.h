@@ -14,8 +14,11 @@
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
 #define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
 
-#define BT_AUDIO_CODEC_CONFIG_FREQ   BT_CODEC_CONFIG_LC3_FREQ_24KHZ | BT_CODEC_CONFIG_LC3_FREQ_16KHZ
-#define BT_AUDIO_CODEC_CAPABILIY_FREQ BT_CODEC_LC3_FREQ_24KHZ | BT_CODEC_LC3_FREQ_16KHZ
+#define BT_AUDIO_CODEC_CONFIG_FREQ                                                                 \
+	BT_CODEC_CONFIG_LC3_FREQ_48KHZ | BT_CODEC_CONFIG_LC3_FREQ_24KHZ |                          \
+		BT_CODEC_CONFIG_LC3_FREQ_16KHZ
+#define BT_AUDIO_CODEC_CAPABILIY_FREQ                                                              \
+	BT_CODEC_LC3_FREQ_48KHZ | BT_CODEC_LC3_FREQ_24KHZ | BT_CODEC_LC3_FREQ_16KHZ
 
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
 	BT_BAP_LC3_PRESET(BT_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,              \
@@ -202,7 +205,8 @@ int le_audio_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broadcast_
 void le_audio_conn_disconnected(struct bt_conn *conn);
 
 /**
- * @brief	Set pointer to extended advertisement with periodic adv configured
+ * @brief	Set pointer to extended advertisement with periodic adv
+ * configured
  *
  * @note	Used by BIS.
  *
@@ -217,9 +221,11 @@ int le_audio_ext_adv_set(struct bt_le_ext_adv *ext_adv);
 /**
  * @brief	Get bt_data containing the data to advertise.
  *
- * @param[out]	adv		Pointer to the pointer of bt_data to advertise.
+ * @param[out]	adv		Pointer to the pointer of bt_data to
+ * advertise.
  * @param[out]	adv_size	Pointer to size of @p adv.
- * @param[in]	periodic	Specify if the data is for periodic advertisement.
+ * @param[in]	periodic	Specify if the data is for periodic
+ * advertisement.
  */
 void le_audio_adv_get(const struct bt_data **adv, size_t *adv_size, bool periodic);
 
@@ -251,7 +257,8 @@ int le_audio_send(struct encoded_audio enc_audio);
 /**
  * @brief	Enable Bluetooth LE Audio.
  *
- * @param[in]	recv_cb			Callback for receiving Bluetooth LE Audio data.
+ * @param[in]	recv_cb			Callback for receiving Bluetooth LE
+ * Audio data.
  * @param[in]	timestmp_cb		Callback for using timestamp.
  *
  * @return	0 for success, error otherwise.
