@@ -39,15 +39,15 @@ enum slm_nrfcloud_cellpos {
 	CELLPOS_COUNT /* Keep last. */
 };
 /* Whether cellular positioning is requested and if so, which. */
-static enum slm_nrfcloud_cellpos cell_pos = CELLPOS_NONE;
+static enum slm_nrfcloud_cellpos nrfcloud_cell_pos = CELLPOS_NONE;
 
 /* Whether Wi-Fi positioning is requested. */
-static bool wifi_pos;
+static bool nrfcloud_wifi_pos;
 
 /* Whether a location request is currently being sent to nRF Cloud. */
-static bool sending_location_request;
+static bool nrfcloud_sending_loc_req;
 
-static struct k_work loc_req;
+static struct k_work nrfcloud_loc_req;
 
 /** Definitions for %NCELLMEAS notification
  * %NCELLMEAS: status [,<cell_id>, <plmn>, <tac>, <timing_advance>, <current_earfcn>,
@@ -67,25 +67,25 @@ static struct k_work loc_req;
 BUILD_ASSERT(NCELL_CNT > 0, "CONFIG_SLM_AT_MAX_PARAM too small");
 
 /* Neighboring cell measurements. */
-static struct lte_lc_ncell neighbor_cells[NCELL_CNT];
+static struct lte_lc_ncell nrfcloud_ncells[NCELL_CNT];
 
 /* nRF Cloud location request cellular data. */
-static struct lte_lc_cells_info cell_data = {
-	.neighbor_cells = neighbor_cells,
+static struct lte_lc_cells_info nrfcloud_cell_data = {
+	.neighbor_cells = nrfcloud_ncells,
 	.gci_cells_count = 0
 };
-static bool ncellmeas_done;
+static bool nrfcloud_ncellmeas_done;
 
 #define WIFI_APS_BEGIN_IDX 3
 BUILD_ASSERT(WIFI_APS_BEGIN_IDX + NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN
 	< CONFIG_SLM_AT_MAX_PARAM, "CONFIG_SLM_AT_MAX_PARAM too small");
 
 /* nRF Cloud location request Wi-Fi data. */
-static struct wifi_scan_info wifi_data;
+static struct wifi_scan_info nrfcloud_wifi_data;
 
 #endif /* CONFIG_NRF_CLOUD_LOCATION */
 
-static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN];
+static char nrfcloud_device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN];
 
 bool slm_nrf_cloud_ready;
 bool slm_nrf_cloud_send_location;
@@ -105,7 +105,7 @@ static void ncell_meas_mon(const char *notify)
 	char tac[9] = {0};
 	unsigned int ncells_count = 0;
 
-	ncellmeas_done = false;
+	nrfcloud_ncellmeas_done = false;
 	at_params_list_clear(&slm_at_param_list);
 	err = at_parser_params_from_str(notify, NULL, &slm_at_param_list);
 	if (err) {
@@ -135,7 +135,7 @@ static void ncell_meas_mon(const char *notify)
 	if (err) {
 		goto exit;
 	}
-	err = util_str_to_int(cid, 16, (int *)&cell_data.current_cell.id);
+	err = util_str_to_int(cid, 16, (int *)&nrfcloud_cell_data.current_cell.id);
 	if (err) {
 		goto exit;
 	}
@@ -147,11 +147,11 @@ static void ncell_meas_mon(const char *notify)
 		goto exit;
 	}
 	strncpy(mcc, plmn, 3); /* MCC always 3-digit */
-	err = util_str_to_int(mcc, 10, &cell_data.current_cell.mcc);
+	err = util_str_to_int(mcc, 10, &nrfcloud_cell_data.current_cell.mcc);
 	if (err) {
 		goto exit;
 	}
-	err = util_str_to_int(&plmn[3], 10, &cell_data.current_cell.mnc);
+	err = util_str_to_int(&plmn[3], 10, &nrfcloud_cell_data.current_cell.mnc);
 	if (err) {
 		goto exit;
 	}
@@ -162,33 +162,34 @@ static void ncell_meas_mon(const char *notify)
 	if (err) {
 		goto exit;
 	}
-	err = util_str_to_int(tac, 16, (int *)&cell_data.current_cell.tac);
+	err = util_str_to_int(tac, 16, (int *)&nrfcloud_cell_data.current_cell.tac);
 	if (err) {
 		goto exit;
 	}
 
 	/* omit timing_advance */
-	cell_data.current_cell.timing_advance = NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV;
+	nrfcloud_cell_data.current_cell.timing_advance = NRF_CLOUD_LOCATION_CELL_OMIT_TIME_ADV;
 
 	/* parse EARFCN */
-	err = at_params_unsigned_int_get(&slm_at_param_list, 6, &cell_data.current_cell.earfcn);
+	err = at_params_unsigned_int_get(&slm_at_param_list, 6,
+		&nrfcloud_cell_data.current_cell.earfcn);
 	if (err) {
 		goto exit;
 	}
 
 	/* parse PCI */
 	err = at_params_unsigned_short_get(&slm_at_param_list, 7,
-					   &cell_data.current_cell.phys_cell_id);
+		&nrfcloud_cell_data.current_cell.phys_cell_id);
 	if (err) {
 		goto exit;
 	}
 
 	/* parse RSRP and RSRQ */
-	err = at_params_short_get(&slm_at_param_list, 8, &cell_data.current_cell.rsrp);
+	err = at_params_short_get(&slm_at_param_list, 8, &nrfcloud_cell_data.current_cell.rsrp);
 	if (err < 0) {
 		goto exit;
 	}
-	err = at_params_short_get(&slm_at_param_list, 9, &cell_data.current_cell.rsrq);
+	err = at_params_short_get(&slm_at_param_list, 9, &nrfcloud_cell_data.current_cell.rsrq);
 	if (err < 0) {
 		goto exit;
 	}
@@ -201,26 +202,26 @@ static void ncell_meas_mon(const char *notify)
 
 		/* parse n_earfcn */
 		err = at_params_unsigned_int_get(&slm_at_param_list, offset,
-						 &neighbor_cells[i].earfcn);
+						 &nrfcloud_ncells[i].earfcn);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_phys_cell_id */
 		err = at_params_unsigned_short_get(&slm_at_param_list, offset + 1,
-						   &neighbor_cells[i].phys_cell_id);
+						   &nrfcloud_ncells[i].phys_cell_id);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_rsrp */
-		err = at_params_short_get(&slm_at_param_list, offset + 2, &neighbor_cells[i].rsrp);
+		err = at_params_short_get(&slm_at_param_list, offset + 2, &nrfcloud_ncells[i].rsrp);
 		if (err < 0) {
 			goto exit;
 		}
 
 		/* parse n_rsrq */
-		err = at_params_short_get(&slm_at_param_list, offset + 3, &neighbor_cells[i].rsrq);
+		err = at_params_short_get(&slm_at_param_list, offset + 3, &nrfcloud_ncells[i].rsrq);
 		if (err < 0) {
 			goto exit;
 		}
@@ -228,8 +229,8 @@ static void ncell_meas_mon(const char *notify)
 	}
 
 	err = 0;
-	cell_data.ncells_count = ncells_count;
-	ncellmeas_done = true;
+	nrfcloud_cell_data.ncells_count = ncells_count;
+	nrfcloud_ncellmeas_done = true;
 
 exit:
 	LOG_INF("NCELLMEAS notification parse (err: %d)", err);
@@ -239,25 +240,25 @@ static void loc_req_wk(struct k_work *work)
 {
 	int err = 0;
 
-	if (cell_pos == CELLPOS_SINGLE_CELL) {
+	if (nrfcloud_cell_pos == CELLPOS_SINGLE_CELL) {
 		/* Obtain the single cell info from the modem */
-		err = nrf_cloud_location_scell_data_get(&cell_data.current_cell);
+		err = nrf_cloud_location_scell_data_get(&nrfcloud_cell_data.current_cell);
 		if (err) {
 			LOG_ERR("Failed to obtain single-cell cellular network information (%d).",
 				err);
 		} else {
-			cell_data.ncells_count = 0;
+			nrfcloud_cell_data.ncells_count = 0;
 			/* Invalidate the last neighboring cell measurements
 			 * because they have been partly overwritten.
 			 */
-			ncellmeas_done = false;
+			nrfcloud_ncellmeas_done = false;
 		}
 	}
 
 	if (!err) {
 		err = nrf_cloud_location_request(
-			cell_pos ? &cell_data : NULL,
-			wifi_pos ? &wifi_data : NULL, true, NULL);
+			nrfcloud_cell_pos ? &nrfcloud_cell_data : NULL,
+			nrfcloud_wifi_pos ? &nrfcloud_wifi_data : NULL, true, NULL);
 		if (err) {
 			LOG_ERR("Failed to request nRF Cloud location (%d).", err);
 		} else {
@@ -268,10 +269,10 @@ static void loc_req_wk(struct k_work *work)
 	if (err) {
 		rsp_send("\r\n#XNRFCLOUDPOS: %d\r\n", err);
 	}
-	if (wifi_pos) {
-		k_free(wifi_data.ap_info);
+	if (nrfcloud_wifi_pos) {
+		k_free(nrfcloud_wifi_data.ap_info);
 	}
-	sending_location_request = false;
+	nrfcloud_sending_loc_req = false;
 }
 
 #endif /* CONFIG_NRF_CLOUD_LOCATION */
@@ -620,7 +621,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND: {
 		rsp_send("\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", slm_nrf_cloud_ready,
-			slm_nrf_cloud_send_location, CONFIG_NRF_CLOUD_SEC_TAG, device_id);
+			slm_nrf_cloud_send_location, CONFIG_NRF_CLOUD_SEC_TAG, nrfcloud_device_id);
 		err = 0;
 	} break;
 
@@ -655,7 +656,7 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 		return -ENOTCONN;
 	}
 
-	if (sending_location_request) {
+	if (nrfcloud_sending_loc_req) {
 		/* Avoid potential concurrency issues writing to global variables. */
 		LOG_ERR("nRF Cloud location request sending already ongoing.");
 		return -EBUSY;
@@ -684,7 +685,7 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 		return -EINVAL;
 	}
 
-	if (cell_pos == CELLPOS_MULTI_CELL && !ncellmeas_done) {
+	if (cell_pos == CELLPOS_MULTI_CELL && !nrfcloud_ncellmeas_done) {
 		LOG_ERR("%s", "No neighboring cell measurement. Did you run `AT%NCELLMEAS`?");
 		return -EAGAIN;
 	}
@@ -695,22 +696,23 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 	}
 
 	if (wifi_pos) {
-		wifi_data.ap_info =
-			k_malloc(sizeof(*wifi_data.ap_info) * (param_count - WIFI_APS_BEGIN_IDX));
-		if (!wifi_data.ap_info) {
+		nrfcloud_wifi_data.ap_info = k_malloc(
+			sizeof(*nrfcloud_wifi_data.ap_info) * (param_count - WIFI_APS_BEGIN_IDX));
+		if (!nrfcloud_wifi_data.ap_info) {
 			return -ENOMEM;
 		}
 		/* Parse the AP parameters. */
-		wifi_data.cnt = 0;
+		nrfcloud_wifi_data.cnt = 0;
 		for (unsigned int param_idx = WIFI_APS_BEGIN_IDX; param_idx < param_count;
 		++param_idx) {
-			struct wifi_scan_result *const ap = &wifi_data.ap_info[wifi_data.cnt];
+			struct wifi_scan_result *const ap =
+				&nrfcloud_wifi_data.ap_info[nrfcloud_wifi_data.cnt];
 			char mac_addr_str[WIFI_MAC_ADDR_STR_LEN];
 			unsigned int mac_addr[WIFI_MAC_ADDR_LEN];
 			int32_t rssi = NRF_CLOUD_LOCATION_WIFI_OMIT_RSSI;
 			size_t len;
 
-			++wifi_data.cnt;
+			++nrfcloud_wifi_data.cnt;
 
 			/* Parse the MAC address. */
 			len = sizeof(mac_addr_str);
@@ -724,7 +726,8 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 				err = -EBADMSG; /* A different error code to differentiate. */
 			}
 			if (err) {
-				LOG_ERR("MAC address %u malformed (%d).", wifi_data.cnt, err);
+				LOG_ERR("MAC address %u malformed (%d).",
+					nrfcloud_wifi_data.cnt, err);
 				break;
 			}
 			for (unsigned int i = 0; i != WIFI_MAC_ADDR_LEN; ++i) {
@@ -741,7 +744,7 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 				if (rssi < rssi_min || rssi > rssi_max) {
 					err = -EINVAL;
 					LOG_ERR("RSSI %u out of bounds ([%d,%d]).",
-						wifi_data.cnt, rssi_min, rssi_max);
+						nrfcloud_wifi_data.cnt, rssi_min, rssi_max);
 					break;
 				}
 			}
@@ -753,22 +756,22 @@ int handle_at_nrf_cloud_pos(enum at_cmd_type cmd_type)
 			/* CONFIG_NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT excludes the other members. */
 		}
 
-		if (wifi_data.cnt < NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN) {
+		if (nrfcloud_wifi_data.cnt < NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN) {
 			err = -EINVAL;
 			LOG_ERR("Insufficient access point count (got %u, min %u).",
-				wifi_data.cnt, NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN);
+				nrfcloud_wifi_data.cnt, NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN);
 		}
 		if (err) {
-			k_free(wifi_data.ap_info);
+			k_free(nrfcloud_wifi_data.ap_info);
 			return err;
 		}
 	}
 
-	cell_pos = cell_pos;
-	wifi_pos = wifi_pos;
+	nrfcloud_cell_pos = cell_pos;
+	nrfcloud_wifi_pos = wifi_pos;
 
-	sending_location_request = true;
-	k_work_submit_to_queue(&slm_work_q, &loc_req);
+	nrfcloud_sending_loc_req = true;
+	k_work_submit_to_queue(&slm_work_q, &nrfcloud_loc_req);
 	return 0;
 }
 
@@ -789,9 +792,9 @@ int slm_at_nrfcloud_init(void)
 
 	k_work_init(&cloud_cmd, cloud_cmd_wk);
 #if defined(CONFIG_NRF_CLOUD_LOCATION)
-	k_work_init(&loc_req, loc_req_wk);
+	k_work_init(&nrfcloud_loc_req, loc_req_wk);
 #endif
-	nrf_cloud_client_id_get(device_id, sizeof(device_id));
+	nrf_cloud_client_id_get(nrfcloud_device_id, sizeof(nrfcloud_device_id));
 
 	return err;
 }
