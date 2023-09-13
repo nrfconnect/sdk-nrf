@@ -182,19 +182,25 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``UDP-RX: 1.5 Mbps``
    * - :abbr:`STA (Station)` mode
      - IoT devices
-     - ``CONFIG_WPA_SUPP=y``
+    - ``CONFIG_WPA_SUPP=y``
        ``CONFIG_NRF700X_AP_MODE=n``
        ``CONFIG_NRF700X_P2P_MODE=n``
-       ``CONFIG_NET_PKT_TX_COUNT=8``
-       ``CONFIG_NET_PKT_RX_COUNT=8``
-       ``CONFIG_NET_BUF_TX_COUNT=16``
-       ``CONFIG_NET_BUF_RX_COUNT=8``
-       ``CONFIG_NET_BUF_DATA_SIZE=128``
+       ``CONFIG_NET_PKT_TX_COUNT=6``
+       ``CONFIG_NET_PKT_RX_COUNT=6``
+       ``CONFIG_NET_BUF_TX_COUNT=12``
+       ``CONFIG_NET_BUF_RX_COUNT=6``
+       ``CONFIG_NRF700X_RX_NUM_BUFS=6``
+       ``CONFIG_NET_BUF_DATA_SIZE=800``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_SPEED_OPTIMIZATIONS=y``
+       ``CONFIG_NRF700X_UTIL=n``
+       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=1``
+       ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
      - IoT devices
-     - ``TCP-TX: 1.5 Mbps``
-       ``TCP-RX: 1.5 Mbps``
-       ``UDP-TX: 1.5 Mbps``
-       ``UDP-RX: 1.5 Mbps``
+     - ``TCP-TX: 5.2 Mbps``
+       ``TCP-RX: 3.4 Mbps``
+       ``UDP-TX: 5.5 Mbps``
+       ``UDP-RX: 4.1 Mbps``
    * - :abbr:`STA (Station)` mode
      - Memory optimized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
