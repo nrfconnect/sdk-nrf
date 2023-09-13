@@ -819,7 +819,7 @@ static void bt_le_ext_adv_create_rpc_handler(const struct nrf_rpc_group *group,
 		adv_index = bt_le_ext_adv_get_index(adv_data);
 		ext_adv_cb_cache_map[adv_index] = cb;
 	} else {
-		k_mem_slab_free(&bt_rpc_ext_adv_cb_cache, (void **)&cb);
+		k_mem_slab_free(&bt_rpc_ext_adv_cb_cache, (void *)cb);
 	}
 
 	{
@@ -838,7 +838,7 @@ decoding_error:
 	report_decoding_error(BT_LE_EXT_ADV_CREATE_RPC_CMD, handler_data);
 
 	if (result == 0) {
-		k_mem_slab_free(&bt_rpc_ext_adv_cb_cache, (void **)&cb);
+		k_mem_slab_free(&bt_rpc_ext_adv_cb_cache, (void *)cb);
 	}
 }
 
@@ -1002,7 +1002,7 @@ static void bt_le_ext_adv_delete_rpc_handler(const struct nrf_rpc_group *group,
 
 	if (adv_index <= CONFIG_BT_EXT_ADV_MAX_ADV_SET) {
 		cb = ext_adv_cb_cache_map[adv_index];
-		k_mem_slab_free(&bt_rpc_ext_adv_cb_cache, (void **)&cb);
+		k_mem_slab_free(&bt_rpc_ext_adv_cb_cache, (void *)cb);
 	}
 
 	ser_rsp_send_int(group, result);

@@ -103,7 +103,7 @@ int data_fifo_pointer_last_filled_get(struct data_fifo *data_fifo, void **data, 
 	return 0;
 }
 
-void data_fifo_block_free(struct data_fifo *data_fifo, void **data)
+void data_fifo_block_free(struct data_fifo *data_fifo, void *data)
 {
 	__ASSERT_NO_MSG(data_fifo != NULL);
 	__ASSERT_NO_MSG(data_fifo->initialized);
@@ -153,7 +153,7 @@ int data_fifo_empty(struct data_fifo *data_fifo)
 			return ret;
 		}
 
-		data_fifo_block_free(data_fifo, &old_data);
+		data_fifo_block_free(data_fifo, old_data);
 	}
 
 	/* Re-init k_mem_slab to reset the number of alloced slabs */

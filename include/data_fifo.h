@@ -122,9 +122,9 @@ int data_fifo_pointer_last_filled_get(struct data_fifo *data_fifo, void **data, 
  * Read has finished in the given data block.
  *
  * @param data_fifo Pointer to the data_fifo structure.
- * @param data Double pointer to the memory area which is to be freed.
+ * @param data Pointer to the memory area which is to be freed.
  */
-void data_fifo_block_free(struct data_fifo *data_fifo, void **data);
+void data_fifo_block_free(struct data_fifo *data_fifo, void *data);
 
 /**
  * @brief See how many alloced and locked blocks are in the system.

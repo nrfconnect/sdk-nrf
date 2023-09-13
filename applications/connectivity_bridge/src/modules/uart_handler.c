@@ -119,7 +119,7 @@ static void uart_rx_buf_unref(void *buf)
 
 	/* ref_counter is the uart_buf->ref_counter value prior to decrement */
 	if (ref_counter == 1) {
-		k_mem_slab_free(&uart_rx_slab, (void **)&uart_buf);
+		k_mem_slab_free(&uart_rx_slab, (void *)uart_buf);
 	}
 }
 

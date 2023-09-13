@@ -649,7 +649,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 								K_NO_WAIT);
 			ERR_CHK(ret);
 
-			data_fifo_block_free(ctrl_blk.in.fifo, &data);
+			data_fifo_block_free(ctrl_blk.in.fifo, data);
 
 			ret = data_fifo_pointer_first_vacant_get(ctrl_blk.in.fifo, (void **)&rx_buf,
 								 K_NO_WAIT);

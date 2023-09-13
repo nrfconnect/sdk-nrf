@@ -11,7 +11,7 @@ LOG_MODULE_REGISTER(bt_conn_ctx, CONFIG_BT_CONN_CTX_LOG_LEVEL);
 
 static void bt_conn_ctx_mem_free(struct k_mem_slab *mem_slab, void **data)
 {
-	k_mem_slab_free(mem_slab, data);
+	k_mem_slab_free(mem_slab, *data);
 	*data = NULL;
 }
 
@@ -95,7 +95,7 @@ void bt_conn_ctx_free_all(struct bt_conn_ctx_lib *ctx_lib)
 		struct bt_conn_ctx *ctx = &ctx_lib->ctx[i];
 
 		if (ctx->data != NULL) {
-			k_mem_slab_free(ctx_lib->mem_slab, &ctx->data);
+			k_mem_slab_free(ctx_lib->mem_slab, (void *)ctx->data);
 			ctx->conn = NULL;
 			ctx->data = NULL;
 		}

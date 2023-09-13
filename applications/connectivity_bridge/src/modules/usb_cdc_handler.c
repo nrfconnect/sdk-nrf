@@ -127,7 +127,7 @@ static void cdc_uart_interrupt_handler(const struct device *dev, void *user_data
 				event->len = data_length;
 				APP_EVENT_SUBMIT(event);
 			} else {
-				k_mem_slab_free(&cdc_rx_slab, &rx_buf);
+				k_mem_slab_free(&cdc_rx_slab, rx_buf);
 			}
 		}
 	}
@@ -207,7 +207,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			cast_cdc_data_event(aeh);
 
 		/* All subscribers have gotten a chance to copy data at this point */
-		k_mem_slab_free(&cdc_rx_slab, (void **) &event->buf);
+		k_mem_slab_free(&cdc_rx_slab, (void *)event->buf);
 
 		return true;
 	}

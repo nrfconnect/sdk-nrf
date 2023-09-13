@@ -152,7 +152,7 @@ static void clean_buffered_data(void)
 	while ((node = sys_slist_get(&send_queue))) {
 		struct ei_data_packet *packet = CONTAINER_OF(node, __typeof__(*packet), node);
 
-		k_mem_slab_free(&buf_slab, (void **)&packet);
+		k_mem_slab_free(&buf_slab, (void *)packet);
 	}
 }
 
@@ -205,7 +205,7 @@ static void send_queued_fn(struct k_work *w)
 			pipeline_cnt++;
 		}
 
-		k_mem_slab_free(&buf_slab, (void **)&packet);
+		k_mem_slab_free(&buf_slab, (void *)packet);
 	}
 }
 

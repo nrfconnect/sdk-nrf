@@ -123,7 +123,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			memcpy(pcm_raw_data + (i * BLOCK_SIZE_BYTES), tmp_pcm_raw_data[i],
 			       pcm_block_size);
 
-			data_fifo_block_free(&fifo_rx, &tmp_pcm_raw_data[i]);
+			data_fifo_block_free(&fifo_rx, tmp_pcm_raw_data[i]);
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
@@ -227,7 +227,7 @@ int audio_decode(void const *const encoded_data, size_t encoded_data_size, bool 
 				break;
 			}
 
-			data_fifo_block_free(&fifo_tx, &old_data);
+			data_fifo_block_free(&fifo_tx, old_data);
 		}
 	}
 
@@ -363,7 +363,7 @@ int audio_system_fifo_rx_block_drop(void)
 		return -ECANCELED;
 	}
 
-	data_fifo_block_free(&fifo_rx, &temp);
+	data_fifo_block_free(&fifo_rx, temp);
 
 	LOG_DBG("Block dropped");
 	return 0;

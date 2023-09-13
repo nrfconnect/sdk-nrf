@@ -85,7 +85,7 @@ static struct bt_hogp_rep_info *rep_alloc(void)
  */
 static void rep_free(struct bt_hogp_rep_info **repp)
 {
-	k_mem_slab_free(&bt_hogp_reports_mem, (void **)repp);
+	k_mem_slab_free(&bt_hogp_reports_mem, (void *)*repp);
 	*repp = NULL;
 }
 

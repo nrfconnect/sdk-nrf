@@ -99,7 +99,7 @@ ZTEST(suite_data_fifo, test_data_fifo_data_put_get_ok)
 
 	internal_test_remaining_elements(&data_fifo, 2, 1, __LINE__);
 
-	data_fifo_block_free(&data_fifo, &data_ptr_read);
+	data_fifo_block_free(&data_fifo, data_ptr_read);
 
 	internal_test_remaining_elements(&data_fifo, 1, 1, __LINE__);
 
@@ -111,7 +111,7 @@ ZTEST(suite_data_fifo, test_data_fifo_data_put_get_ok)
 
 	internal_test_remaining_elements(&data_fifo, 1, 0, __LINE__);
 
-	data_fifo_block_free(&data_fifo, &data_ptr_read);
+	data_fifo_block_free(&data_fifo, data_ptr_read);
 
 	internal_test_remaining_elements(&data_fifo, 0, 0, __LINE__);
 }

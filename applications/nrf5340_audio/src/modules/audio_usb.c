@@ -49,7 +49,7 @@ static void data_write(const struct device *dev)
 	}
 
 	memcpy(buf_out->data, data_out, data_out_size);
-	data_fifo_block_free(fifo_tx, &data_out);
+	data_fifo_block_free(fifo_tx, data_out);
 
 	if (data_out_size == usb_audio_get_in_frame_size(dev)) {
 		ret = usb_audio_send(dev, buf_out, data_out_size);
@@ -99,7 +99,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 		ret = data_fifo_pointer_last_filled_get(fifo_rx, &temp, &temp_size, K_NO_WAIT);
 		ERR_CHK(ret);
 
-		data_fifo_block_free(fifo_rx, &temp);
+		data_fifo_block_free(fifo_rx, temp);
 
 		ret = data_fifo_pointer_first_vacant_get(fifo_rx, &data_in, K_NO_WAIT);
 	}

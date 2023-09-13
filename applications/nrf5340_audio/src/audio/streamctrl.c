@@ -141,7 +141,7 @@ static void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_si
 							K_NO_WAIT);
 		ERR_CHK(ret);
 
-		data_fifo_block_free(&ble_fifo_rx, &stale_data);
+		data_fifo_block_free(&ble_fifo_rx, stale_data);
 	}
 
 	ret = data_fifo_pointer_first_vacant_get(&ble_fifo_rx, (void *)&iso_received, K_NO_WAIT);
@@ -185,7 +185,7 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 					  iso_received->sdu_ref, iso_received->bad_frame,
 					  iso_received->recv_frame_ts);
 #endif /* ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB)) */
-		data_fifo_block_free(&ble_fifo_rx, (void *)&iso_received);
+		data_fifo_block_free(&ble_fifo_rx, (void *)iso_received);
 
 		STACK_USAGE_PRINT("audio_datapath_thread", &audio_datapath_thread_data);
 	}

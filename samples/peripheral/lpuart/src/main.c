@@ -82,7 +82,7 @@ static void uart_callback(const struct device *dev,
 	}
 
 	case UART_RX_BUF_RELEASED:
-		k_mem_slab_free(&uart_slab, (void **)&evt->data.rx_buf.buf);
+		k_mem_slab_free(&uart_slab, (void *)evt->data.rx_buf.buf);
 		break;
 
 	case UART_RX_DISABLED:

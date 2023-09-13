@@ -323,7 +323,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			cast_ble_data_event(aeh);
 
 		/* All subscribers have gotten a chance to copy data at this point */
-		k_mem_slab_free(&ble_rx_slab, (void **) &event->buf);
+		k_mem_slab_free(&ble_rx_slab, (void *)event->buf);
 
 		return false;
 	}
