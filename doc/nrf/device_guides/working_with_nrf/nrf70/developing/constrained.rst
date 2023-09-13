@@ -244,21 +244,25 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``UDP-RX: 26.2 Mbps``
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
-     - ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
-       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=9``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=4``
-       ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=1600``
-       ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=512``
+     - ``CONFIG_WPA_SUPP=y``
+       ``CONFIG_NRF700X_AP_MODE=n``
+       ``CONFIG_NRF700X_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=32``
-       ``CONFIG_NET_PKT_RX_COUNT=4``
+       ``CONFIG_NET_PKT_RX_COUNT=10``
        ``CONFIG_NET_BUF_TX_COUNT=64``
-       ``CONFIG_NET_BUF_RX_COUNT=4``
-       ``CONFIG_NET_BUF_DATA_SIZE=1500``
+       ``CONFIG_NET_BUF_RX_COUNT=10``
+       ``CONFIG_NET_BUF_TX_COUNT=64``
+       ``CONFIG_NET_BUF_DATA_SIZE=1100``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_SPEED_OPTIMIZATIONS=y``
+       ``CONFIG_NRF700X_UTIL=n``
+       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=9``
+       ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
      - Sensors with high data rate
-     - ``TCP-TX: 8 Mbps``
-       ``TCP-RX: 1 Mbps``
-       ``UDP-TX: 10 Mbps``
-       ``UDP-RX: 2 Mbps``
+     - ``TCP-TX: 9.2  Mbps``
+       ``TCP-RX: 3.6  Mbps``
+       ``UDP-TX: 26.6 Mbps``
+       ``UDP-RX: 12.8 Mbps``
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
