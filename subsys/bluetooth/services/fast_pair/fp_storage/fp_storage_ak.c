@@ -23,9 +23,10 @@
 LOG_MODULE_DECLARE(fp_storage, CONFIG_FP_STORAGE_LOG_LEVEL);
 
 static struct fp_account_key account_key_list[ACCOUNT_KEY_CNT];
-static uint8_t account_key_loaded_ids[ACCOUNT_KEY_CNT];
-static uint8_t account_key_next_id;
+static uint8_t account_key_ids[ACCOUNT_KEY_CNT];
 static uint8_t account_key_count;
+
+static uint8_t account_key_order[ACCOUNT_KEY_CNT];
 
 static int settings_set_err;
 static bool reset_prepare;
@@ -75,12 +76,32 @@ static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb re
 		return -EINVAL;
 	}
 
-	if (account_key_loaded_ids[index] != 0) {
+	if (account_key_ids[index] != 0) {
 		return -EINVAL;
 	}
 
 	account_key_list[index] = data.account_key;
-	account_key_loaded_ids[index] = data.account_key_id;
+	account_key_ids[index] = data.account_key_id;
+
+	return 0;
+}
+
+static int fp_settings_load_ak_order(size_t len, settings_read_cb read_cb, void *cb_arg)
+{
+	int rc;
+
+	if (len != sizeof(account_key_order)) {
+		return -EINVAL;
+	}
+
+	rc = read_cb(cb_arg, account_key_order, len);
+	if (rc < 0) {
+		return rc;
+	}
+
+	if (rc != len) {
+		return -EINVAL;
+	}
 
 	return 0;
 }
@@ -88,10 +109,11 @@ static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb re
 static int fp_settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
 	int err = 0;
-	const char *key = SETTINGS_AK_NAME_PREFIX;
 
-	if (!strncmp(name, key, sizeof(SETTINGS_AK_NAME_PREFIX) - 1)) {
+	if (!strncmp(name, SETTINGS_AK_NAME_PREFIX, sizeof(SETTINGS_AK_NAME_PREFIX) - 1)) {
 		err = fp_settings_load_ak(name, len, read_cb, cb_arg);
+	} else if (!strncmp(name, SETTINGS_AK_ORDER_KEY_NAME, sizeof(SETTINGS_AK_ORDER_KEY_NAME))) {
+		err = fp_settings_load_ak_order(len, read_cb, cb_arg);
 	} else {
 		err = -ENOENT;
 	}
@@ -107,42 +129,108 @@ static int fp_settings_set(const char *name, size_t len, settings_read_cb read_c
 	return err;
 }
 
-static bool zero_id_check(uint8_t start_idx)
+static uint8_t bump_ak_id(uint8_t id)
 {
-	for (size_t i = start_idx; i < ACCOUNT_KEY_CNT; i++) {
-		if (account_key_loaded_ids[i] != 0) {
-			return false;
+	__ASSERT_NO_MSG((id >= ACCOUNT_KEY_MIN_ID) && (id <= ACCOUNT_KEY_MAX_ID));
+
+	return (id < ACCOUNT_KEY_MIN_ID + ACCOUNT_KEY_CNT) ? (id + ACCOUNT_KEY_CNT) :
+							     (id - ACCOUNT_KEY_CNT);
+}
+
+static uint8_t get_least_recent_key_id(void)
+{
+	/* The function can be used only if the Account Key List is full. */
+	__ASSERT_NO_MSG(account_key_count == ACCOUNT_KEY_CNT);
+
+	return account_key_order[ACCOUNT_KEY_CNT - 1];
+}
+
+static uint8_t next_account_key_id(void)
+{
+	if (account_key_count < ACCOUNT_KEY_CNT) {
+		return ACCOUNT_KEY_MIN_ID + account_key_count;
+	}
+
+	return bump_ak_id(get_least_recent_key_id());
+}
+
+static void ak_order_update_ram(uint8_t used_id)
+{
+	bool id_found = false;
+	size_t found_idx;
+
+	for (size_t i = 0; i < account_key_count; i++) {
+		if (account_key_order[i] == used_id) {
+			id_found = true;
+			found_idx = i;
+			break;
 		}
 	}
 
-	return true;
+	if (id_found) {
+		for (size_t i = found_idx; i > 0; i--) {
+			account_key_order[i] = account_key_order[i - 1];
+		}
+	} else {
+		for (size_t i = account_key_count - 1; i > 0; i--) {
+			account_key_order[i] = account_key_order[i - 1];
+		}
+	}
+	account_key_order[0] = used_id;
 }
 
-static bool id_sequence_check(uint8_t start_idx)
+static int commit_ak_order(void)
 {
-	__ASSERT_NO_MSG(start_idx > 0);
-	for (size_t i = start_idx; i < ACCOUNT_KEY_CNT; i++) {
-		if (account_key_loaded_ids[i] !=
-		    next_account_key_id(account_key_loaded_ids[i - 1])) {
-			return false;
+	int err;
+	size_t ak_order_update_count = 0;
+
+	for (size_t i = account_key_count; i < ACCOUNT_KEY_CNT; i++) {
+		if (account_key_order[i] != 0) {
+			return -EINVAL;
 		}
 	}
 
-	return true;
-}
+	for (int i = 0; i < account_key_count; i++) {
+		uint8_t id = account_key_ids[i];
+		bool id_found = false;
 
-static bool rollover_check(uint8_t cur_id, uint8_t prev_id)
-{
-	return ((cur_id == (prev_id - (ACCOUNT_KEY_CNT - 1))) ||
-		(cur_id == (prev_id + (ACCOUNT_KEY_CNT + 1))));
+		for (size_t j = 0; j < account_key_count; j++) {
+			if (account_key_order[j] == id) {
+				id_found = true;
+				break;
+			}
+		}
+		if (!id_found) {
+			if (ak_order_update_count >= account_key_count) {
+				__ASSERT_NO_MSG(false);
+				return -EINVAL;
+			}
+			ak_order_update_ram(id);
+			ak_order_update_count++;
+			/* Start loop again to check whether after update no existent AK has been
+			 * lost. Set iterator to -1 to start next iteration with iterator equal to 0
+			 * after i++ operation.
+			 */
+			i = -1;
+		}
+	}
+
+	if (ak_order_update_count > 0) {
+		err = settings_save_one(SETTINGS_AK_ORDER_FULL_NAME, account_key_order,
+					sizeof(account_key_order));
+		if (err) {
+			return err;
+		}
+	}
+
+	return 0;
 }
 
 static int fp_settings_commit(void)
 {
-	uint8_t prev_id;
-	uint8_t cur_id;
+	uint8_t id;
 	int first_zero_idx = -1;
-	int rollover_idx = -1;
+	int err;
 
 	if (reset_prepare) {
 		/* The module expects to be reset by Fast Pair storage manager. */
@@ -153,55 +241,41 @@ static int fp_settings_commit(void)
 		return settings_set_err;
 	}
 
-	cur_id = account_key_loaded_ids[0];
-	if ((cur_id != 0) && (account_key_id_to_idx(cur_id) != 0)) {
-		return -EINVAL;
-	}
-
-	if (cur_id == 0) {
-		first_zero_idx = 0;
-	}
-
-	for (size_t i = 1; (i < ACCOUNT_KEY_CNT) &&
-			   (first_zero_idx == -1); i++) {
-		prev_id = cur_id;
-		cur_id = account_key_loaded_ids[i];
-		if (cur_id == 0) {
-			if (prev_id != (i - 1 + ACCOUNT_KEY_MIN_ID)) {
-				return -EINVAL;
-			}
-
+	for (size_t i = 0; i < ACCOUNT_KEY_CNT; i++) {
+		id = account_key_ids[i];
+		if (id == 0) {
 			first_zero_idx = i;
 			break;
 		}
-		if (cur_id != next_account_key_id(prev_id)) {
-			if (!rollover_check(cur_id, prev_id)) {
-				return -EINVAL;
-			}
 
-			rollover_idx = i;
-			break;
+		if (account_key_id_to_idx(id) != i) {
+			return -EINVAL;
 		}
 	}
 
 	if (first_zero_idx != -1) {
-		if (!zero_id_check(first_zero_idx + 1)) {
-			return -EINVAL;
+		for (size_t i = 0; i < first_zero_idx; i++) {
+			id = account_key_ids[i];
+			if (id != ACCOUNT_KEY_MIN_ID + i) {
+				return -EINVAL;
+			}
+		}
+
+		for (size_t i = first_zero_idx + 1; i < ACCOUNT_KEY_CNT; i++) {
+			id = account_key_ids[i];
+			if (id != 0) {
+				return -EINVAL;
+			}
 		}
 
 		account_key_count = first_zero_idx;
-		account_key_next_id = first_zero_idx + ACCOUNT_KEY_MIN_ID;
-	} else if (rollover_idx != -1) {
-		if (!id_sequence_check(rollover_idx + 1)) {
-			return -EINVAL;
-		}
-
-		account_key_count = ACCOUNT_KEY_CNT;
-		account_key_next_id = next_account_key_id(account_key_loaded_ids[rollover_idx - 1]);
 	} else {
 		account_key_count = ACCOUNT_KEY_CNT;
-		account_key_next_id = next_account_key_id(
-					account_key_loaded_ids[ACCOUNT_KEY_CNT - 1]);
+	}
+
+	err = commit_ak_order();
+	if (err) {
+		return err;
 	}
 
 	atomic_set(&settings_loaded, true);
@@ -247,6 +321,18 @@ int fp_storage_ak_find(struct fp_account_key *account_key,
 
 	for (size_t i = 0; i < account_key_count; i++) {
 		if (account_key_check_cb(&account_key_list[i], context)) {
+			int err;
+
+			ak_order_update_ram(account_key_ids[i]);
+			err = settings_save_one(SETTINGS_AK_ORDER_FULL_NAME, account_key_order,
+						sizeof(account_key_order));
+			if (err) {
+				LOG_ERR("Unable to save new Account Key order in Settings. "
+					"Not propagating the error and keeping updated Account Key "
+					"order in RAM. After the Settings error the Account Key "
+					"order may change at reboot.");
+			}
+
 			if (account_key) {
 				*account_key = account_key_list[i];
 			}
@@ -277,6 +363,7 @@ int fp_storage_ak_save(const struct fp_account_key *account_key)
 		return -ENODATA;
 	}
 
+	uint8_t id;
 	uint8_t index;
 	struct account_key_data data;
 	char name[SETTINGS_AK_NAME_MAX_SIZE];
@@ -289,12 +376,13 @@ int fp_storage_ak_save(const struct fp_account_key *account_key)
 		}
 	}
 	if (account_key_count == ACCOUNT_KEY_CNT) {
-		LOG_INF("Account Key List full - erasing the oldest Account Key.");
+		LOG_INF("Account Key List full - erasing the least recently used Account Key.");
 	}
 
-	index = account_key_id_to_idx(account_key_next_id);
+	id = next_account_key_id();
+	index = account_key_id_to_idx(id);
 
-	data.account_key_id = account_key_next_id;
+	data.account_key_id = id;
 	data.account_key = *account_key;
 
 	err = ak_name_gen(name, index);
@@ -308,11 +396,20 @@ int fp_storage_ak_save(const struct fp_account_key *account_key)
 	}
 
 	account_key_list[index] = *account_key;
-
-	account_key_next_id = next_account_key_id(account_key_next_id);
+	account_key_ids[index] = id;
 
 	if (account_key_count < ACCOUNT_KEY_CNT) {
 		account_key_count++;
+	}
+
+	ak_order_update_ram(id);
+	err = settings_save_one(SETTINGS_AK_ORDER_FULL_NAME, account_key_order,
+				sizeof(account_key_order));
+	if (err) {
+		LOG_ERR("Unable to save new Account Key order in Settings. "
+			"Not propagating the error and keeping updated Account Key "
+			"order in RAM. After the Settings error the Account Key "
+			"order may change at reboot.");
 	}
 
 	return 0;
@@ -321,9 +418,10 @@ int fp_storage_ak_save(const struct fp_account_key *account_key)
 void fp_storage_ak_ram_clear(void)
 {
 	memset(account_key_list, 0, sizeof(account_key_list));
-	memset(account_key_loaded_ids, 0, sizeof(account_key_loaded_ids));
-	account_key_next_id = 0;
+	memset(account_key_ids, 0, sizeof(account_key_ids));
 	account_key_count = 0;
+
+	memset(account_key_order, 0, sizeof(account_key_order));
 
 	settings_set_err = 0;
 	atomic_set(&settings_loaded, false);
@@ -337,11 +435,10 @@ bool bt_fast_pair_has_account_key(void)
 
 static void fp_storage_ak_empty_init(void)
 {
-	account_key_next_id = ACCOUNT_KEY_MIN_ID;
 	atomic_set(&settings_loaded, true);
 }
 
-int fp_storage_ak_delete(uint8_t index)
+static int fp_storage_ak_delete(uint8_t index)
 {
 	int err;
 	char name[SETTINGS_AK_NAME_MAX_SIZE];
@@ -361,13 +458,18 @@ int fp_storage_ak_delete(uint8_t index)
 
 static int fp_storage_ak_reset(void)
 {
-	for (uint8_t index = 0; index < ACCOUNT_KEY_CNT; index++) {
-		int err;
+	int err;
 
+	for (uint8_t index = 0; index < ACCOUNT_KEY_CNT; index++) {
 		err = fp_storage_ak_delete(index);
 		if (err) {
 			return err;
 		}
+	}
+
+	err = settings_delete(SETTINGS_AK_ORDER_FULL_NAME);
+	if (err) {
+		return err;
 	}
 
 	fp_storage_ak_ram_clear();

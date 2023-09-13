@@ -629,6 +629,8 @@ Bluetooth libraries and services
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_EXT_PN` Kconfig option to the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN` Kconfig option.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_EXT_PN_LEN_MAX` Kconfig option to the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX` Kconfig option.
 
+  * Updated the Fast Pair storage module to overwrite the least recently used Account Key instead of the oldest Account Key on Account Key write.
+
 * :ref:`bt_le_adv_prov_readme` library:
 
   * Changed the allowed range of the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE` Kconfig option and set its default value to 26.
