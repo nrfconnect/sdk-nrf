@@ -52,6 +52,8 @@ int fp_storage_ak_save(const struct fp_account_key *account_key);
 int fp_storage_ak_count(void);
 
 /** Get stored Account Key List.
+ *  This function should not be used if only one key is about to be used, because it doesn't trigger
+ *  key usage order update. Use @ref fp_storage_ak_find instead.
  *
  * @param[out] buf Pointer to buffer used to store array of Account Keys. Array length has to be
  *		   greater than or equal to number of stored Account Keys.
@@ -66,6 +68,7 @@ int fp_storage_ak_get(struct fp_account_key *buf, size_t *key_count);
 
 /** Iterate over stored Account Keys to find a key that matches user-defined conditions.
  *  If such a key is found, the iteration process stops and this function returns.
+ *  Found key is marked as recently used by storage module.
  *
  * @param[out] account_key Found Account Key. It is possible to pass NULL pointer if the found
  *                         key value is irrelevant.
