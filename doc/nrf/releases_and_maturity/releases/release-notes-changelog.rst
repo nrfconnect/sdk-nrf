@@ -102,9 +102,20 @@ See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samp
 Matter
 ------
 
-* Disabled OpenThread shell by default in Matter over Thread samples.
-* Enabled :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option by default, including for builds without factory data support.
-  The firmware now erases all flash pages in the non-volatile storage during a factory reset, instead of just clearing Matter-related settings.
+* Updated:
+
+  * Matter over Thread samples so that the OpenThread shell is disabled by default.
+  * The :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option to be enabled by default, including for builds without factory data support.
+    The firmware now erases all flash pages in the non-volatile storage during a factory reset, instead of just clearing Matter-related settings.
+  * The RAM usage based on test measurements.
+    After the following optimizations, the RAM usage decreased by around 12-20% on all supported boards:
+
+    * Reduced the number of network and Matter stack buffers and packets.
+    * Disabled SSL server support.
+    * Reduced the Main, Matter and OpenThread stack sizes.
+    * Reduced the Mbed TLS heap size.
+    * Improved the buffer usage of the nRF700X driver for Matter.
+    * Reduced the size of the Matter event queue.
 
 * Fixed:
 
