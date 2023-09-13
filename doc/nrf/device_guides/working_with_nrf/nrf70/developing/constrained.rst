@@ -251,7 +251,7 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``CONFIG_NET_PKT_RX_COUNT=10``
        ``CONFIG_NET_BUF_TX_COUNT=64``
        ``CONFIG_NET_BUF_RX_COUNT=10``
-       ``CONFIG_NET_BUF_TX_COUNT=64``
+       ``CONFIG_NRF700X_RX_NUM_BUFS=10``
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
        ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
@@ -265,17 +265,22 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``UDP-RX: 12.8 Mbps``
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
-     - ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=63``
-       ``CONFIG_NRF700X_TX_MAX_DATA_SIZE=512``
-       ``CONFIG_NRF700X_RX_MAX_DATA_SIZE=1600``
-       ``CONFIG_NET_PKT_TX_COUNT=8``
+     - ``CONFIG_WPA_SUPP=y``
+       ``CONFIG_NRF700X_AP_MODE=n``
+       ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NET_PKT_TX_COUNT=5``
        ``CONFIG_NET_PKT_RX_COUNT=64``
-       ``CONFIG_NET_BUF_TX_COUNT=16``
+       ``CONFIG_NET_BUF_TX_COUNT=10``
        ``CONFIG_NET_BUF_RX_COUNT=64``
-       ``CONFIG_NET_BUF_DATA_SIZE=1500``
+       ``CONFIG_NRF700X_RX_NUM_BUFS=64``
+       ``CONFIG_NET_BUF_DATA_SIZE=1100``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_SPEED_OPTIMIZATIONS=y``
+       ``CONFIG_NRF700X_UTIL=n``
+       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=2``
+       ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
      - Display devices streaming data
-     - ``TCP-TX: 4 Mbps``
-       ``TCP-RX: 7 Mbps``
-       ``UDP-TX: 1 Mbps``
-       ``UDP-RX: 10 Mbps``
+     - ``TCP-TX: 5.3  Mbps``
+       ``TCP-RX: 7.9  Mbps``
+       ``UDP-TX: 8.6  Mbps``
+       ``UDP-RX: 12.7 Mbps``
