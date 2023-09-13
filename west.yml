@@ -172,7 +172,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 74f71ac6ba3b15026a037835d06d4e70c8997e1c
+      revision: b3e49e35ac268c0c596c91cfbc359fc7eca9cf24
       submodules: true
       groups:
         - dragoon
