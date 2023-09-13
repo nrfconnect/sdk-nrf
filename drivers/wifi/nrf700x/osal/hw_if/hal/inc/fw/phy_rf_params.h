@@ -16,11 +16,11 @@
 #define NRF_WIFI_RF_PARAMS_CONF_SIZE 42
 
 #ifdef CONFIG_NRF700X_RADIO_TEST
-#define NRF_WIFI_DEF_RF_PARAMS "0000000000002A00000000030303035440403838383838380000000050EC000000000000000000000000007077003F032424001000002800323500000C0008087D8105010071630300EED501001F6F00003B350100F52E0000E35E0000B7B6000066EFFEFFB5F60000896200007A840200E28FFCFF080808080408120100000000A1A10178000000080050003B020726181818181A120A140E0600"
+#define NRF_WIFI_DEF_RF_PARAMS "0000000000002A0000000003030303544040383838383838000000003C00FC00F8FCFCFC00FC00000000007077003F032424001000002800323500000C0008087D8105010071630300EED501001F6F00003B350100F52E0000E35E0000B7B6000066EFFEFFB5F60000896200007A840200E28FFCFF080808080408120100000000A1A10178000000080050003B020726181818181A120A140E0600"
 #define MAX_TX_PWR_SYS_TEST 30
 #define MAX_TX_PWR_RADIO_TEST 24
 #else
-#define NRF_WIFI_DEF_RF_PARAMS "0000000000002A00000000030303035440403838383838380000000050EC000000FCFCF8FCF800000000007077003F032424001000002800323500000CF008087D8105010071630300EED501001F6F00003B350100F52E0000E35E0000B7B6000066EFFEFFB5F60000896200007A840200E28FFCFF080808080408120100000000A1A10178000000080050003B020726181818181A120A140E0600"
+#define NRF_WIFI_DEF_RF_PARAMS "0000000000002A0000000003030303544040383838383838000000003C00FC00F8FCFCFC00FC00000000007077003F032424001000002800323500000CF008087D8105010071630300EED501001F6F00003B350100F52E0000E35E0000B7B6000066EFFEFFB5F60000896200007A840200E28FFCFF080808080408120100000000A1A10178000000080050003B020726181818181A120A140E0600"
 #endif
 
 #define NRF_WIFI_RF_PARAMS_OFF_RESV_1 0
@@ -84,9 +84,9 @@
 
 /* Battery voltage changes base calibrations and voltage thresholds */
 #define NRF_WIFI_DEF_PHY_VBAT_CALIB (NRF_WIFI_PHY_CALIB_FLAG_DPD)
-#define NRF_WIFI_VBAT_VERYLOW (3) /* Corresponds to (2.5+3*0.07)=2.71V */
-#define NRF_WIFI_VBAT_LOW  (6)  /* Correspond to (2.5+6*0.07)=2.92V */
-#define NRF_WIFI_VBAT_HIGH (12) /* Correspond to (2.5+12*0.07)=3.34V */
+#define NRF_WIFI_VBAT_VERYLOW (8) /* Corresponds to (2.5+8*0.07)=3.06V */
+#define NRF_WIFI_VBAT_LOW  (12)  /* Correspond to (2.5+12*0.07)=3.34V */
+#define NRF_WIFI_VBAT_HIGH (14) /* Correspond to (2.5+14*0.07)=3.48V */
 
 
 
@@ -186,10 +186,10 @@ struct nrf_wifi_rf_test_dpd_params {
 struct nrf_wifi_temperature_params {
 	unsigned char test;
 
-	/*! current measured temperature */
+	/** current measured temperature */
 	signed int temperature;
 
-	/*! Temperature measurment status.
+	/** Temperature measurment status.
 	 *0: Reading successful
 	 *1: Reading failed
 	 */
@@ -222,5 +222,80 @@ struct nrf_wifi_rf_get_xo_value {
 } __NRF_WIFI_PKD;
 
 #endif /* CONFIG_NRF700X_RADIO_TEST */
+
+/**
+ * @brief This structure defines the parameters used to control the max transmit (TX) power
+ * in both frequency bands for different data rates.
+ *
+ */
+
+struct nrf_wifi_tx_pwr_ceil_params {
+	/** Maximum power permitted while transmitting DSSS rates in 2.4G band.
+	 *  Resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_2g_dsss;
+	/** Maximum power permitted while transmitting MCS0 rate in 2.4G band.
+	 *  Resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_2g_mcs0;
+	/** Maximum power permitted while transmitting MCS7 rate in 2.4G band.
+	 *  Resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_2g_mcs7;
+	/** Maximum power permitted while transmitting MCS0 rate in 5G lowband.
+	 * Low band corresponds to ch: 36 to 64 Resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_5g_low_mcs0;
+	/** Maximum power permitted while transmitting MCS7 rate in 5G lowband.
+	 * Low band corresponds to ch: 36 to 64, resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_5g_low_mcs7;
+	/** Maximum power permitted while transmitting MCS0 rate in 5G midband.
+	 * Mid band corresponds to ch: 96 to 132, resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_5g_mid_mcs0;
+	/** Maximum power permitted while transmitting MCS7 rate in 5G midband.
+	 * Mid band corresponds to ch: 96 to 132, resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_5g_mid_mcs7;
+	/** Maximum power permitted while transmitting MCS0 rate in 5G highband.
+	 * High band corresponds to ch: 136 to 177, resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_5g_high_mcs0;
+	/** Maximum power permitted while transmitting MCS7 rate in 5G highband.
+	 * High band corresponds to ch: 136 to 177, resolution is 0.25dBm.
+	 */
+	unsigned char max_pwr_5g_high_mcs7;
+	/** Flag to determine presence of overriding, default parameters present
+	 * in RF parameters string.
+	 */
+	unsigned char rf_tx_pwr_ceil_params_override;
+} __NRF_WIFI_PKD;
+
+/* FT Prog version info */
+enum ft_prog_ver {
+	FT_PROG_VER1 = 1,
+	FT_PROG_VER2 = 2,
+	FT_PROG_VER3 = 3
+};
+
+/* FT Prog version dependent back off values
+ * from Max transmit power
+ */
+#define FT_PROG_VER1_2G_DSSS_TXCEIL_BKOFF 0
+#define FT_PROG_VER1_2G_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER1_5G_LOW_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER1_5G_MID_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER1_5G_HIGH_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER2_2G_DSSS_TXCEIL_BKOFF 0
+#define FT_PROG_VER2_2G_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER2_5G_LOW_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER2_5G_MID_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER2_5G_HIGH_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER3_2G_DSSS_TXCEIL_BKOFF 0
+#define FT_PROG_VER3_2G_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER3_5G_LOW_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER3_5G_MID_OFDM_TXCEIL_BKOFF 0
+#define FT_PROG_VER3_5G_HIGH_OFDM_TXCEIL_BKOFF 0
 
 #endif

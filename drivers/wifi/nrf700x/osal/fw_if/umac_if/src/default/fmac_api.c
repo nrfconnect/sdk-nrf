@@ -352,7 +352,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 					    unsigned int phy_calib,
 					    enum op_band op_band,
-					    struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params)
+					    struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+					    struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_otp_info otp_info;
@@ -411,7 +412,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 		}
 	} else {
 		status = wifi_nrf_fmac_rf_params_get(fmac_dev_ctx,
-						     rf_params);
+						     rf_params,
+						     tx_pwr_ceil_params);
 
 		if (status != WIFI_NRF_STATUS_SUCCESS) {
 			wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,

@@ -445,13 +445,21 @@ out:
 }
 
 
-enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-						 unsigned char *rf_params)
+enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(
+		struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+		unsigned char *rf_params,
+		struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_fmac_otp_info otp_info;
 	unsigned int ft_prog_ver;
 	int ret = -1;
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
+	unsigned char backoff_2g_dsss = 0, backoff_2g_ofdm = 0;
+	unsigned char backoff_5g_lowband = 0, backoff_5g_midband = 0, backoff_5g_highband = 0;
+#endif
 
 	if (!fmac_dev_ctx || !rf_params) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
@@ -478,7 +486,6 @@ enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *f
 
 	status = wifi_nrf_hal_otp_ft_prog_ver_get(fmac_dev_ctx->hal_dev_ctx,
 						  &ft_prog_ver);
-
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Fetching of FT program version failed\n",
@@ -513,6 +520,51 @@ enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(struct wifi_nrf_fmac_dev_ctx *f
 	}
 
 	ft_prog_ver = (ft_prog_ver & FT_PROG_VER_MASK) >> 16;
+
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP)
+	if (tx_pwr_ceil_params->rf_tx_pwr_ceil_params_override) {
+		if (ft_prog_ver == FT_PROG_VER1) {
+			backoff_2g_dsss = FT_PROG_VER1_2G_DSSS_TXCEIL_BKOFF;
+			backoff_2g_ofdm = FT_PROG_VER1_2G_OFDM_TXCEIL_BKOFF;
+			backoff_5g_lowband = FT_PROG_VER1_5G_LOW_OFDM_TXCEIL_BKOFF;
+			backoff_5g_midband = FT_PROG_VER1_5G_MID_OFDM_TXCEIL_BKOFF;
+			backoff_5g_highband = FT_PROG_VER1_5G_HIGH_OFDM_TXCEIL_BKOFF;
+		} else if (ft_prog_ver == FT_PROG_VER2) {
+			backoff_2g_dsss = FT_PROG_VER2_2G_DSSS_TXCEIL_BKOFF;
+			backoff_2g_ofdm = FT_PROG_VER2_2G_OFDM_TXCEIL_BKOFF;
+			backoff_5g_lowband = FT_PROG_VER2_5G_LOW_OFDM_TXCEIL_BKOFF;
+			backoff_5g_midband = FT_PROG_VER2_5G_MID_OFDM_TXCEIL_BKOFF;
+			backoff_5g_highband = FT_PROG_VER2_5G_HIGH_OFDM_TXCEIL_BKOFF;
+		} else if (ft_prog_ver == FT_PROG_VER3) {
+			backoff_2g_dsss = FT_PROG_VER3_2G_DSSS_TXCEIL_BKOFF;
+			backoff_2g_ofdm = FT_PROG_VER3_2G_OFDM_TXCEIL_BKOFF;
+			backoff_5g_lowband = FT_PROG_VER3_5G_LOW_OFDM_TXCEIL_BKOFF;
+			backoff_5g_midband = FT_PROG_VER3_5G_MID_OFDM_TXCEIL_BKOFF;
+			backoff_5g_highband = FT_PROG_VER3_5G_HIGH_OFDM_TXCEIL_BKOFF;
+		}
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2G] =
+			tx_pwr_ceil_params->max_pwr_2g_dsss-backoff_2g_dsss;
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2GM0M7] =
+			tx_pwr_ceil_params->max_pwr_2g_mcs7-backoff_2g_ofdm;
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR2GM0M7 + 1] =
+			tx_pwr_ceil_params->max_pwr_2g_mcs0-backoff_2g_ofdm;
+
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7] =
+			tx_pwr_ceil_params->max_pwr_5g_low_mcs7-backoff_5g_lowband;
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7 + 1] =
+			tx_pwr_ceil_params->max_pwr_5g_mid_mcs7-backoff_5g_midband;
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM7 + 2] =
+			tx_pwr_ceil_params->max_pwr_5g_high_mcs7-backoff_5g_highband;
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0] =
+			tx_pwr_ceil_params->max_pwr_5g_low_mcs0-backoff_5g_lowband;
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0 + 1] =
+			tx_pwr_ceil_params->max_pwr_5g_mid_mcs0-backoff_5g_midband;
+		rf_params[NRF_WIFI_RF_PARAMS_OFF_CALIB_PWR5GM0 + 2] =
+			tx_pwr_ceil_params->max_pwr_5g_high_mcs0-backoff_5g_highband;
+	}
+#endif
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 out:

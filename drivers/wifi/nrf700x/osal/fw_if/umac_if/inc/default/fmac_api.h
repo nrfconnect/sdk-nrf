@@ -933,7 +933,8 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 			unsigned int phy_calib,
 			enum op_band op_band,
-			struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params);
+			struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+			struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
 
 
 /**
