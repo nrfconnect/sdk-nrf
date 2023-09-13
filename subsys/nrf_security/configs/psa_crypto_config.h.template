@@ -77,6 +77,11 @@
 
 #cmakedefine PSA_WANT_KEY_TYPE_DERIVE                           @PSA_WANT_KEY_TYPE_DERIVE@
 #cmakedefine PSA_WANT_KEY_TYPE_HMAC                             @PSA_WANT_KEY_TYPE_HMAC@
+#cmakedefine PSA_WANT_KEY_TYPE_PASSWORD                         @PSA_WANT_KEY_TYPE_PASSWORD@
+#cmakedefine PSA_WANT_KEY_TYPE_PASSWORD_HASH                    @PSA_WANT_KEY_TYPE_PASSWORD_HASH@
+#cmakedefine PSA_WANT_KEY_TYPE_PEPPER                           @PSA_WANT_KEY_TYPE_PEPPER@
+#cmakedefine PSA_WANT_KEY_TYPE_RAW_DATA                         @PSA_WANT_KEY_TYPE_RAW_DATA@
+
 #cmakedefine PSA_WANT_KEY_TYPE_AES                              @PSA_WANT_KEY_TYPE_AES@
 #cmakedefine PSA_WANT_KEY_TYPE_ARIA                             @PSA_WANT_KEY_TYPE_ARIA@
 #cmakedefine PSA_WANT_KEY_TYPE_CAMELLIA                         @PSA_WANT_KEY_TYPE_CAMELLIA@
@@ -84,7 +89,6 @@
 #cmakedefine PSA_WANT_KEY_TYPE_DES                              @PSA_WANT_KEY_TYPE_DES@
 #cmakedefine PSA_WANT_KEY_TYPE_ECC_KEY_PAIR                     @PSA_WANT_KEY_TYPE_ECC_KEY_PAIR@
 #cmakedefine PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY                   @PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY@
-#cmakedefine PSA_WANT_KEY_TYPE_RAW_DATA                         @PSA_WANT_KEY_TYPE_RAW_DATA@
 #cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR                     @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR@
 #cmakedefine PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY                   @PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY@
 
