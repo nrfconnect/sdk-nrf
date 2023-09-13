@@ -561,3 +561,16 @@ int z_wpa_supplicant_mode(const struct device *dev,
 	wpa_printf(MSG_ERROR, "wpa supplicant mode setting being invoked");
 	return wifi_mgmt_api->mode(dev, mode);
 }
+
+int z_wpa_supplicant_filter(const struct device *dev,
+			    struct wifi_filter_info *filter)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->filter) {
+		wpa_printf(MSG_ERROR, "Setting filter not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->filter(dev, filter);
+}
