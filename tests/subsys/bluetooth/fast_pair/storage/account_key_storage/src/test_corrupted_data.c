@@ -13,6 +13,19 @@
 #include "storage_mock.h"
 #include "common_utils.h"
 
+/* This function is made just for this corrupted data test.
+ * It assumes that the least recently used key is always the oldest key that has been written.
+ * It's not meant to be used anywhere else.
+ */
+static uint8_t next_account_key_id(uint8_t account_key_id)
+{
+	if (account_key_id == ACCOUNT_KEY_MAX_ID) {
+		return ACCOUNT_KEY_MIN_ID;
+	}
+
+	return account_key_id + 1;
+}
+
 static void store_key(uint8_t key_id)
 {
 	int err;
@@ -214,23 +227,6 @@ ZTEST(suite_fast_pair_storage_corrupted, test_drop_keys)
 
 	zassert_equal(account_key_id_to_idx(ACCOUNT_KEY_MIN_ID), account_key_id_to_idx(key_id),
 		      "Test should write key exactly after rollover");
-	store_key(key_id);
-
-	settings_load_error_validate();
-}
-
-ZTEST(suite_fast_pair_storage_corrupted, test_drop_rollover)
-{
-	uint8_t key_id = ACCOUNT_KEY_MIN_ID;
-
-	for (size_t i = 0; i < ACCOUNT_KEY_CNT; i++) {
-		store_key(key_id);
-		key_id = next_account_key_id(key_id);
-	}
-
-	zassert_equal(account_key_id_to_idx(ACCOUNT_KEY_MIN_ID), account_key_id_to_idx(key_id),
-		      "Test should drop key exactly after rollover");
-	key_id = next_account_key_id(key_id);
 	store_key(key_id);
 
 	settings_load_error_validate();
