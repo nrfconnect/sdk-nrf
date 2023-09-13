@@ -15,3 +15,9 @@ config DESKTOP_COMMON_MODULES
 	default y
 	imply DESKTOP_SETTINGS_LOADER
 	imply DESKTOP_POWER_MANAGER
+
+choice LIBC_IMPLEMENTATION
+	default MINIMAL_LIBC
+	help
+	  Use minimal libc implementation to reduce memory footprint.
+endchoice
