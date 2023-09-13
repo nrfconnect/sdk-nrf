@@ -3,6 +3,16 @@
 Welcome to the |NCS|!
 #####################
 
+.. important::
+
+   |NCS| v2.4.99-dev2 is a development tag and will be replaced by v2.5.0 in the future.
+
+   The development tag contains the following major updates:
+
+   * Enhanced Wi-Fi scan APIs and corresponding changes to the :ref:`wifi_scan_sample` sample.
+   * Updated firmware to support device trim values.
+     This is to ensure consistent power transmission over device samples and operating channels.
+
 The |NCS| is where you begin building low-power wireless applications with Nordic Semiconductor nRF52, nRF53, nRF70, and nRF91 Series devices.
 
 The SDK contains optimized cellular IoT (LTE-M and NB-IoT), Bluetooth® Low Energy, Thread, Zigbee, Wi-Fi®, and Bluetooth mesh stacks, a range of applications, samples, and reference implementations, as well as a full suite of drivers for Nordic Semiconductor's devices.
