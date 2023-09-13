@@ -574,3 +574,16 @@ int z_wpa_supplicant_filter(const struct device *dev,
 
 	return wifi_mgmt_api->filter(dev, filter);
 }
+
+int z_wpa_supplicant_channel(const struct device *dev,
+			     struct wifi_channel_info *channel)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->channel) {
+		wpa_printf(MSG_ERROR, "Setting channel not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->channel(dev, channel);
+}
