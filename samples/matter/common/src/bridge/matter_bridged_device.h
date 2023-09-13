@@ -42,8 +42,7 @@ public:
 		BridgedNode = 0x0013,
 		OnOffLight = 0x0100,
 		TemperatureSensor = 0x0302,
-		HumiditySensor = 0x0307,
-		EnvironmentalSensor = 0x123
+		HumiditySensor = 0x0307
 	};
 
 	static constexpr uint8_t kDefaultDynamicEndpointVersion = 1;

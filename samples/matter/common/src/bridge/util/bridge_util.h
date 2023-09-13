@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include "matter_bridged_device.h"
-
 #include <lib/support/CHIPMem.h>
 
 #include <cstdint>
@@ -24,12 +22,12 @@
    device type with all passed arguments forwarded to the underlying
    ConcreteDeviceCreator.
 */
-template <typename T, typename... Args> class DeviceFactory {
+template <typename T, typename DeviceType, typename... Args> class DeviceFactory {
 public:
 	using ConcreteDeviceCreator = std::function<T *(Args...)>;
-	using CreationMap = std::map<MatterBridgedDevice::DeviceType, ConcreteDeviceCreator>;
+	using CreationMap = std::map<DeviceType, ConcreteDeviceCreator>;
 
-	DeviceFactory(std::initializer_list<std::pair<MatterBridgedDevice::DeviceType, ConcreteDeviceCreator>> init)
+	DeviceFactory(std::initializer_list<std::pair<DeviceType, ConcreteDeviceCreator>> init)
 	{
 		for (auto &pair : init) {
 			mCreationMap.insert(pair);
@@ -43,7 +41,7 @@ public:
 	DeviceFactory &operator=(DeviceFactory &&) = delete;
 	~DeviceFactory() = default;
 
-	T *Create(MatterBridgedDevice::DeviceType deviceType, Args... params)
+	T *Create(DeviceType deviceType, Args... params)
 	{
 		if (mCreationMap.find(deviceType) == mCreationMap.end()) {
 			return nullptr;

@@ -140,11 +140,12 @@ Getting a list of Bluetooth LE devices available to be added
 
    .. code-block:: console
 
-      I: Scan result:
-      I: -----------------------------
-      I: | Index |      Address      |
-      I: -----------------------------
-      I: | 0     | e6:11:40:96:a0:18 |
+      Scan result:
+      ---------------------------------------------------------------------
+      | Index |      Address      |                   UUID
+      ---------------------------------------------------------------------
+      | 0     | e6:11:40:96:a0:18 | 0x181a (Environmental Sensing Service)
+      | 1     | c7:44:0f:3e:bb:f0 | 0xbcd1 (Led Button Service)
 
 Adding a simulated bridged device to the Matter bridge
    Use the following command:
@@ -178,15 +179,9 @@ Adding a Bluetooth LE bridged device to the Matter bridge
    .. parsed-literal::
       :class: highlight
 
-      matter_bridge add *<device_type>* *<ble_device_index>* *["node label"]*
+      matter_bridge add *<ble_device_index>* *["node label"]*
 
    In this command:
-
-   * *<device_type>* is the Matter device type to use for the bridged device.
-     The argument is mandatory and accepts the following values:
-
-     * ``256`` - On/Off Light.
-     * ``291`` - Environmental Sensor (a combination of Temperature Sensor and Humidity Sensor).
 
    * *<ble_device_index>* is the Bluetooth LE device index on the list returned by the ``scan`` command.
      The argument is mandatory and accepts only the values returned by the ``scan`` command.
@@ -198,14 +193,14 @@ Adding a Bluetooth LE bridged device to the Matter bridge
 
    .. code-block:: console
 
-      uart:~$ matter_bridge add 256 0 "Kitchen Light"
+      uart:~$ matter_bridge add 0 "Kitchen Light"
 
    The terminal output is similar to the following one:
 
    .. code-block:: console
 
-      I: Adding OnOff Light bridged device
       I: Added device to dynamic endpoint 3 (index=0)
+      I: Created 0x100 device type on the endpoint 3
 
 Removing a bridged device from the Matter bridge
    Use the following command:
@@ -346,15 +341,16 @@ After building the sample and programming it to your development kit, complete t
 
                uart:~$ matter_bridge scan
 
-            The terminal output is similar to the following one:
+            The terminal output is similar to the following one, with an entry for each connected Bluetooth LE device:
 
             .. code-block:: console
 
-               I: Scan result:
-               I: -----------------------------
-               I: | Index |      Address      |
-               I: -----------------------------
-               I: | 0     | e6:11:40:96:a0:18 |
+               Scan result:
+               ---------------------------------------------------------------------
+               | Index |      Address      |                   UUID
+               ---------------------------------------------------------------------
+               | 0     | e6:11:40:96:a0:18 | 0x181a (Environmental Sensing Service)
+               | 1     | c7:44:0f:3e:bb:f0 | 0xbcd1 (Led Button Service)
 
          #. Write down the value for the desired Bluetooth LE device index.
             This is going to be used in the next steps (*<bluetooth_device_index>*).
@@ -363,24 +359,22 @@ After building the sample and programming it to your development kit, complete t
             .. parsed-literal::
                :class: highlight
 
-               uart:~$ matter_bridge add *<device_type>* *<bluetooth_device_index>*
+               uart:~$ matter_bridge add *<bluetooth_device_index>*
 
-            The *<device_type>* is a Matter device type that will be used to represent a new bridged device in the Matter Data Model.
-            See the description in :ref:`matter_bridge_cli` for the list of supported values.
             The *<bluetooth_device_index>* is a Bluetooth LE device index that was scanned in the previous step.
-            For example, if you want to add a new Bluetooth LE bridged device with index `0` that is exposed as an On/Off Light endpoint, use the following command:
+            For example, if you want to add a new Bluetooth LE bridged device with index ``1``, use the following command:
 
             .. code-block:: console
 
-               uart:~$ matter_bridge add 256 0
+               uart:~$ matter_bridge add 1
 
             The terminal output is similar to the following one:
 
             .. parsed-literal::
                :class: highlight
 
-               I: Adding OnOff Light bridged device
                I: Added device to dynamic endpoint 3 (index=0)
+               I: Created 0x100 device type on the endpoint 3
 
             For the Environmental Sensor, two endpoints are created: one implements the Temperature Sensor, and the other implements the Humidity Sensor.
 

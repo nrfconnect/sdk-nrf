@@ -6,32 +6,36 @@
 
 #pragma once
 
-#include <lib/core/CHIPError.h>
-#include <lib/core/Optional.h>
+#include "bridge_util.h"
+#include "bridged_device_data_provider.h"
+#include "matter_bridged_device.h"
+#include <lib/support/CHIPMem.h>
 
-#include <zephyr/bluetooth/addr.h>
+#ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+#include "humidity_sensor.h"
+#include "simulated_humidity_sensor_data_provider.h"
+#endif
 
-namespace BridgedDeviceCreator
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+#include "onoff_light.h"
+#include "simulated_onoff_light_data_provider.h"
+#endif
+
+#ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+#include "simulated_temperature_sensor_data_provider.h"
+#include "temperature_sensor.h"
+#endif
+
+namespace SimulatedBridgedDeviceFactory
 {
-#ifdef CONFIG_BRIDGED_DEVICE_BT
-/**
- * @brief Create a bridged device.
- *
- * @param deviceType the Matter device type of a bridged device to be created
- * @param nodeLabel node label of a Matter device to be created
- * @param btAddress the Bluetooth LE address of a device to be bridged with created Matter device
- * @param index optional index object that shall have a valid value set if the value is meant
- * to be used to index assignment, or shall not have a value set if the default index assignment should be used.
- * @param endpointId optional endpoint id object that shall have a valid value set if the value is meant
- * to be used to endpoint id assignment, or shall not have a value set if the default endpoint id assignment should be
- * used.
- * @return CHIP_NO_ERROR on success
- * @return other error code on failure
- */
-CHIP_ERROR CreateDevice(int deviceType, const char *nodeLabel, bt_addr_le_t btAddress,
-			chip::Optional<uint8_t> index = chip::Optional<uint8_t>(),
-			chip::Optional<uint16_t> endpointId = chip::Optional<uint16_t>());
-#else
+using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
+using DeviceType = MatterBridgedDevice::DeviceType;
+using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, DeviceType, const char *>;
+using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, DeviceType, UpdateAttributeCallback>;
+
+BridgedDeviceFactory &GetBridgedDeviceFactory();
+SimulatedDataProviderFactory &GetDataProviderFactory();
+
 /**
  * @brief Create a bridged device.
  *
@@ -48,7 +52,6 @@ CHIP_ERROR CreateDevice(int deviceType, const char *nodeLabel, bt_addr_le_t btAd
 CHIP_ERROR CreateDevice(int deviceType, const char *nodeLabel,
 			chip::Optional<uint8_t> index = chip::Optional<uint8_t>(),
 			chip::Optional<uint16_t> endpointId = chip::Optional<uint16_t>());
-#endif
 
 /**
  * @brief Remove bridged device.
@@ -58,4 +61,5 @@ CHIP_ERROR CreateDevice(int deviceType, const char *nodeLabel,
  * @return other error code on failure
  */
 CHIP_ERROR RemoveDevice(int endpointId);
-} /* namespace BridgedDeviceCreator */
+
+} /* namespace SimulatedBridgedDeviceFactory */

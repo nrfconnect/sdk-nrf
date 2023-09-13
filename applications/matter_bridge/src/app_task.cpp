@@ -8,14 +8,15 @@
 #include "app_config.h"
 #include "bridge_manager.h"
 #include "bridge_storage_manager.h"
-#include "bridged_devices_creator.h"
 #include "led_util.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
+#include "ble_bridged_device_factory.h"
 #include "ble_connectivity_manager.h"
 #include <bluetooth/services/lbs.h>
+#else
+#include "simulated_bridged_device_factory.h"
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
-
 #include <platform/CHIPDeviceLayer.h>
 
 #include <app-common/zap-generated/ids/Attributes.h>
@@ -417,11 +418,10 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 			return CHIP_ERROR_NOT_FOUND;
 		}
 
-		BridgedDeviceCreator::CreateDevice(deviceType, label, addr, chip::Optional<uint8_t>(indexes[i]),
-						   chip::Optional<uint16_t>(endpointId));
+		BleBridgedDeviceFactory::CreateDevice(deviceType, addr, label, indexes[i], endpointId);
 #else
-		BridgedDeviceCreator::CreateDevice(deviceType, label, chip::Optional<uint8_t>(indexes[i]),
-						   chip::Optional<uint16_t>(endpointId));
+		SimulatedBridgedDeviceFactory::CreateDevice(deviceType, label, chip::Optional<uint8_t>(indexes[i]),
+							    chip::Optional<uint16_t>(endpointId));
 #endif
 	}
 	return CHIP_NO_ERROR;

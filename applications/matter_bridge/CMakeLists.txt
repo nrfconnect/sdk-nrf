@@ -43,7 +43,6 @@ target_sources(app PRIVATE
     src/app_task.cpp
     src/main.cpp
     src/bridge_shell.cpp
-    src/bridged_devices_creator.cpp
     ${COMMON_ROOT}/src/bridge/bridge_manager.cpp
     ${COMMON_ROOT}/src/bridge/matter_bridged_device.cpp
     ${COMMON_ROOT}/src/bridge/bridge_storage_manager.cpp
@@ -55,12 +54,16 @@ target_sources(app PRIVATE
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/bridge/ble_connectivity_manager.cpp)
+    target_sources(app PRIVATE
+        ${COMMON_ROOT}/src/bridge/ble_connectivity_manager.cpp
+        src/ble_providers/ble_bridged_device_factory.cpp
+    )
+    target_include_directories(app PRIVATE src/ble_providers)
 
 if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/onoff_light.cpp
-        src/bridged_device_types/ble_onoff_light_data_provider.cpp
+        src/ble_providers/ble_onoff_light_data_provider.cpp
     )
 endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 
@@ -79,29 +82,34 @@ endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 # Assume it makes no sense to support BLE environmental sensor without all Matter counterparts
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE AND CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
     target_sources(app PRIVATE
-        src/bridged_device_types/ble_environmental_data_provider.cpp
+        src/ble_providers/ble_environmental_data_provider.cpp
     )
 endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE AND CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 else()
+    target_sources(app PRIVATE
+        src/simulated_providers/simulated_bridged_device_factory.cpp
+    )
+    target_include_directories(app PRIVATE src/simulated_providers)
+
 if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/onoff_light.cpp
-        src/bridged_device_types/simulated_onoff_light_data_provider.cpp
+        src/simulated_providers/simulated_onoff_light_data_provider.cpp
     )
 endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
     target_sources(app PRIVATE
             src/bridged_device_types/temperature_sensor.cpp
-            src/bridged_device_types/simulated_temperature_sensor_data_provider.cpp
+            src/simulated_providers/simulated_temperature_sensor_data_provider.cpp
     )
 endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/humidity_sensor.cpp
-        src/bridged_device_types/simulated_humidity_sensor_data_provider.cpp
+        src/simulated_providers/simulated_humidity_sensor_data_provider.cpp
     )
 endif() # CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 

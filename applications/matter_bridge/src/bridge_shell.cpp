@@ -5,25 +5,26 @@
  */
 
 #include "bridge_manager.h"
-#include "bridged_devices_creator.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
+#include "ble_bridged_device_factory.h"
 #include "ble_connectivity_manager.h"
+#else
+#include "simulated_bridged_device_factory.h"
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 
 #include <zephyr/shell/shell.h>
 
 static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	int deviceType = strtoul(argv[1], NULL, 0);
 	char *nodeLabel = nullptr;
 	CHIP_ERROR result = CHIP_NO_ERROR;
 
 #if defined(CONFIG_BRIDGED_DEVICE_BT)
-	int bleDeviceIndex = strtoul(argv[2], NULL, 0);
+	int bleDeviceIndex = strtoul(argv[1], NULL, 0);
 
-	if (argv[3]) {
-		nodeLabel = argv[3];
+	if (argv[2]) {
+		nodeLabel = argv[2];
 	}
 
 	bt_addr_le_t address;
@@ -33,15 +34,21 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 		shell_fprintf(shell, SHELL_ERROR, "Found device address\n");
 	}
 
-	result = BridgedDeviceCreator::CreateDevice(deviceType, nodeLabel, address);
+	uint16_t uuid;
+	if (BLEConnectivityManager::Instance().GetScannedDeviceUuid(uuid, bleDeviceIndex) != CHIP_NO_ERROR) {
+		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
+	}
+
+	result = BleBridgedDeviceFactory::CreateDevice(uuid, address, nodeLabel);
 
 #elif defined(CONFIG_BRIDGED_DEVICE_SIMULATED)
+	int deviceType = strtoul(argv[1], NULL, 0);
 
 	if (argv[2]) {
 		nodeLabel = argv[2];
 	}
 
-	result = BridgedDeviceCreator::CreateDevice(deviceType, nodeLabel);
+	result = SimulatedBridgedDeviceFactory::CreateDevice(deviceType, nodeLabel);
 
 #else
 	return -ENOTSUP;
@@ -61,9 +68,16 @@ static int RemoveBridgedDeviceHandler(const struct shell *shell, size_t argc, ch
 {
 	int endpointId = strtoul(argv[1], NULL, 0);
 
-	if (CHIP_NO_ERROR == BridgedDeviceCreator::RemoveDevice(endpointId)) {
+#if defined(CONFIG_BRIDGED_DEVICE_BT)
+	if (CHIP_NO_ERROR == BleBridgedDeviceFactory::RemoveDevice(endpointId)) {
 		shell_fprintf(shell, SHELL_INFO, "Done\n");
-	} else {
+	}
+#else
+	if (CHIP_NO_ERROR == SimulatedBridgedDeviceFactory::RemoveDevice(endpointId)) {
+		shell_fprintf(shell, SHELL_INFO, "Done\n");
+	}
+#endif
+	else {
 		shell_fprintf(shell, SHELL_ERROR, "Error: device remove failed\n");
 	}
 	return 0;
@@ -79,13 +93,14 @@ static void BluetoothScanResult(BLEConnectivityManager::ScannedDevice *devices, 
 	const struct shell *shell = reinterpret_cast<struct shell *>(context);
 
 	shell_fprintf(shell, SHELL_INFO, "Scan result:\n");
-	shell_fprintf(shell, SHELL_INFO, "-----------------------------\n");
-	shell_fprintf(shell, SHELL_INFO, "| Index |      Address      |\n");
-	shell_fprintf(shell, SHELL_INFO, "-----------------------------\n");
+	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
+	shell_fprintf(shell, SHELL_INFO, "| Index |      Address      |                   UUID                 \n");
+	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
 	for (int i = 0; i < count; i++) {
-		shell_fprintf(shell, SHELL_INFO, "| %d     | %02x:%02x:%02x:%02x:%02x:%02x |\n", i,
+		shell_fprintf(shell, SHELL_INFO, "| %d     | %02x:%02x:%02x:%02x:%02x:%02x | 0x%04x (%s)\n", i,
 			      devices[i].mAddr.a.val[5], devices[i].mAddr.a.val[4], devices[i].mAddr.a.val[3],
-			      devices[i].mAddr.a.val[2], devices[i].mAddr.a.val[1], devices[i].mAddr.a.val[0]);
+			      devices[i].mAddr.a.val[2], devices[i].mAddr.a.val[1], devices[i].mAddr.a.val[0],
+			      devices[i].mUuid, BleBridgedDeviceFactory::GetUuidString(devices[i].mUuid));
 	}
 }
 
@@ -102,14 +117,12 @@ static int ScanBridgedDeviceHandler(const struct shell *shell, size_t argc, char
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_matter_bridge,
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-	SHELL_CMD_ARG(
-		add, NULL,
-		"Adds bridged device. \n"
-		"Usage: add <bridged_device_type> <ble_device_index> [node_label]\n"
-		"* bridged_device_type - the bridged device's type, e.g. 256 - OnOff Light, 291 - EnvironmentalSensor\n"
-		"* ble_device_index - the Bluetooth LE device's index on the list returned by the scan command\n"
-		"* node_label - the optional bridged device's node label\n",
-		AddBridgedDeviceHandler, 3, 1),
+	SHELL_CMD_ARG(add, NULL,
+		      "Adds bridged device. \n"
+		      "Usage: add <ble_device_index> [node_label]\n"
+		      "* ble_device_index - the Bluetooth LE device's index on the list returned by the scan command\n"
+		      "* node_label - the optional bridged device's node label\n",
+		      AddBridgedDeviceHandler, 2, 1),
 #else
 	SHELL_CMD_ARG(
 		add, NULL,
