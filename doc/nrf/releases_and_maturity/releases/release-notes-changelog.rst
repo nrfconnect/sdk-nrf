@@ -574,7 +574,7 @@ Bluetooth libraries and services
 
 * :ref:`bt_le_adv_prov_readme` library:
 
-  * Changed the allowed range of the :kconfig:option:`CONFIG_CONFIG_BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE` Kconfig option and set its default value to 26.
+  * Changed the allowed range of the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE` Kconfig option and set its default value to 26.
     This is done to align the buffer size to the new Fast Pair not discoverable advertising data size after the size of the salt included in the data was increased from 1 byte to 2 bytes.
     The default value has been set to maximum to mitigate buffer overflow issues in the future.
 
