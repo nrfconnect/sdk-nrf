@@ -165,6 +165,10 @@ int wifi_nrf_if_send(const struct device *dev,
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
+	if (!rpu_ctx_zep->rpu_ctx) {
+		goto out;
+	}
+
 	if ((vif_ctx_zep->if_carr_state != WIFI_NRF_FMAC_IF_CARR_STATE_ON) ||
 	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
 		goto out;

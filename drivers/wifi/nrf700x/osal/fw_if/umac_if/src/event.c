@@ -156,13 +156,17 @@ static enum wifi_nrf_status umac_event_ctrl_process(struct wifi_nrf_fmac_dev_ctx
 	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
 	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 
-	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
-	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-
 	if (!fmac_dev_ctx || !event_data) {
 		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Invalid parameters\n",
 				      __func__);
+		goto out;
+	}
+
+	def_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+
+	if (!def_priv || !def_dev_ctx) {
 		goto out;
 	}
 

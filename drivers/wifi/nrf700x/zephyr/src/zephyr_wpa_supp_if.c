@@ -859,6 +859,13 @@ int wifi_nrf_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
+	/* Can happen in a positive case where "net if down" is completed, but WPA
+	 * supplicant is still deleting keys.
+	 */
+	if (!rpu_ctx_zep->rpu_ctx) {
+		goto out;
+	}
+
 	memset(&key_info, 0, sizeof(key_info));
 
 	if (alg != WPA_ALG_NONE) {
