@@ -46,6 +46,8 @@
     - sample.matter.light_switch.release
     - sample.matter.template.release
     - sample.matter.thermostat.release
+    - applications.matter_bridge.release
+    - applications.matter_bridge.release.br_ble
   platforms:
     - nrf7002dk_nrf5340_cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
