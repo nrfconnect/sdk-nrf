@@ -75,14 +75,14 @@ static int socket_ranking;
 	socket.ranking = 0;			\
 	socket.cid     = 0;
 
-static bool is_opened_socket(int fd)
+static bool is_opened_socket(int fd_test)
 {
 	if (fd == INVALID_SOCKET) {
 		return false;
 	}
 
 	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
-		if (socks[i].fd == fd) {
+		if (socks[i].fd == fd_test) {
 			return true;
 		}
 	}
