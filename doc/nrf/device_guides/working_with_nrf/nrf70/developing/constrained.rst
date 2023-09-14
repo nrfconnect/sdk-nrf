@@ -176,10 +176,7 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``CONFIG_NET_BUF_TX_COUNT=1``
        ``CONFIG_NET_BUF_RX_COUNT=1``
      - Location services
-     - ``TCP-TX: 1.5 Mbps``
-       ``TCP-RX: 1.5 Mbps``
-       ``UDP-TX: 1.5 Mbps``
-       ``UDP-RX: 1.5 Mbps``
+     - ``N/A``
    * - :abbr:`STA (Station)` mode
      - IoT devices
      - ``CONFIG_WPA_SUPP=y``
@@ -284,3 +281,7 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``TCP-RX: 7.9  Mbps``
        ``UDP-TX: 8.6  Mbps``
        ``UDP-RX: 12.7 Mbps``
+
+.. note::
+   The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002 DK (updating the configuration parameters corresponding to the selected profile in the :file:`overlay-zperf.conf` file).
+   The results represent the best throughput, averaged over three iterations, and were obtained with a good RSSI signal in a clean environment.
