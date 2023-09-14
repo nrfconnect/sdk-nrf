@@ -280,6 +280,14 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1
+
+KRKNWK-17718: Failure at TC-DGSW-1.1 Matter Certification test.
+  The issue happens due to a wrong Software Diagnostic cluster feature map with features enabled by default.
+
+  **Workaround:** Set the default value of the Software Diagnostic cluster feature map to 0 using the ZAP Tool and regenerate files.
+
+
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0
 
 KRKNWK-17699: Failure at TC-BINFO-1.1 Matter Certification test for the lock sample.
