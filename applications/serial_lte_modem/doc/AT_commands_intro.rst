@@ -1,6 +1,6 @@
 .. _SLM_AT_intro:
 
-Test CI pipeline. Do not merge. Test.
+Test CI pipeline. Do not merge.
 
 SLM-specific AT commands
 ########################
