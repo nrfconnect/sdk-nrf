@@ -262,6 +262,8 @@ static int z_wpas_remove_interface(const char *ifname)
 		goto err;
 	}
 
+	z_wpa_ctrl_deinit(wpa_s);
+
 	ret = z_wpa_cli_global_cmd_v("interface_remove %s", ifname);
 	if (ret) {
 		wpa_printf(MSG_ERROR, "Failed to remove interface: %s", ifname);
@@ -276,6 +278,7 @@ static int z_wpas_remove_interface(const char *ifname)
 			ifname, ret);
 		goto err;
 	}
+
 
 	if (z_wpas_get_iface_count() == 0) {
 		generate_supp_state_event(ifname, NET_EVENT_WPA_SUPP_CMD_NOT_READY, 0);
@@ -518,7 +521,6 @@ static void z_wpas_start(void)
 	generate_supp_state_event(DEFAULT_IFACE_NAME, NET_EVENT_WPA_SUPP_CMD_NOT_READY, 0);
 	eloop_unregister_read_sock(z_wpas_event_sockpair[0]);
 
-	z_wpa_ctrl_deinit();
 	z_global_wpa_ctrl_deinit();
 	wpa_supplicant_deinit(global);
 
