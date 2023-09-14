@@ -22,6 +22,12 @@
 				+ sizeof(struct bt_hci_evt_cmd_complete) \
 				+ sizeof(struct bt_hci_evt_cc_status))
 
+enum type_of_adv_cmd {
+	ADV_COMMAND_TYPE_NONE,
+	ADV_COMMAND_TYPE_LEGACY,
+	ADV_COMMAND_TYPE_EXTENDED,
+};
+
 static struct
 {
 	bool occurred; /**< Set in only one execution context */
@@ -55,111 +61,6 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	}
 }
 
-/* Return true if the host has been using both legacy and extended HCI commands
- * since last HCI reset.
- */
-static bool is_host_using_legacy_and_extended_commands(uint16_t hci_opcode)
-{
-#if defined(CONFIG_BT_HCI_HOST)
-	/* For a combined host and controller build, we know that the zephyr
-	 * host is used. For this case we know that the host is not
-	 * combining legacy and extended commands. Therefore we can
-	 * simplify this validation. */
-	return false;
-#else
-	/* A host is not allowed to use both legacy and extended HCI commands.
-	 * See Core v5.1, Vol2, Part E, 3.1.1 Legacy and extended advertising
-	 */
-	static enum {
-		ADV_COMMAND_TYPE_NONE,
-		ADV_COMMAND_TYPE_LEGACY,
-		ADV_COMMAND_TYPE_EXTENDED,
-	} type_of_adv_cmd_used_since_reset;
-
-	switch (hci_opcode) {
-#if defined(CONFIG_BT_BROADCASTER)
-	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_PARAMS:
-	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_DATA:
-	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_RESPONSE_DATA:
-	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_ENABLE:
-	case SDC_HCI_OPCODE_CMD_LE_READ_MAX_ADV_DATA_LENGTH:
-	case SDC_HCI_OPCODE_CMD_LE_READ_NUMBER_OF_SUPPORTED_ADV_SETS:
-	case SDC_HCI_OPCODE_CMD_LE_REMOVE_ADV_SET:
-	case SDC_HCI_OPCODE_CMD_LE_CLEAR_ADV_SETS:
-#if defined(CONFIG_BT_PER_ADV)
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS:
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_DATA:
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_ENABLE:
-#endif  /* CONFIG_BT_PER_ADV */
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS_V2:
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SUBEVENT_DATA:
-#endif /* CONFIG_BT_CTLR_SDC_PAWR_ADV */
-#endif  /* CONFIG_BT_BROADCASTER */
-#if defined(CONFIG_BT_OBSERVER)
-	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_PARAMS:
-	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_ENABLE:
-#endif  /* CONFIG_BT_OBSERVER */
-#if defined(CONFIG_BT_CENTRAL)
-	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN:
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
-	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN_V2:
-#endif /* CONFIG_BT_CTLR_SDC_PAWR_ADV */
-#endif /* CONFIG_BT_CENTRAL */
-#if defined(CONFIG_BT_PER_ADV_SYNC)
-	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC:
-	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC_CANCEL:
-	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_TERMINATE_SYNC:
-	case SDC_HCI_OPCODE_CMD_LE_ADD_DEVICE_TO_PERIODIC_ADV_LIST:
-	case SDC_HCI_OPCODE_CMD_LE_REMOVE_DEVICE_FROM_PERIODIC_ADV_LIST:
-	case SDC_HCI_OPCODE_CMD_LE_CLEAR_PERIODIC_ADV_LIST:
-	case SDC_HCI_OPCODE_CMD_LE_READ_PERIODIC_ADV_LIST_SIZE:
-#endif
-#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_SYNC_SUBEVENT:
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA:
-#endif
-#if defined(CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER)
-	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
-	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
-#endif /* CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER */
-		if (type_of_adv_cmd_used_since_reset == ADV_COMMAND_TYPE_NONE) {
-			type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_EXTENDED;
-			return false;
-		}
-		return type_of_adv_cmd_used_since_reset == ADV_COMMAND_TYPE_LEGACY;
-
-#if defined(CONFIG_BT_OBSERVER)
-	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_PARAMS:
-	case SDC_HCI_OPCODE_CMD_LE_READ_ADV_PHYSICAL_CHANNEL_TX_POWER:
-	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_DATA:
-	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_RESPONSE_DATA:
-	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_ENABLE:
-#endif  /* CONFIG_BT_OBSERVER */
-#if defined(CONFIG_BT_OBSERVER)
-	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_PARAMS:
-	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_ENABLE:
-#endif  /* CONFIG_BT_OBSERVER */
-#if defined(CONFIG_BT_CENTRAL)
-	case SDC_HCI_OPCODE_CMD_LE_CREATE_CONN:
-#endif  /* CONFIG_BT_CENTRAL */
-		if (type_of_adv_cmd_used_since_reset == ADV_COMMAND_TYPE_NONE) {
-			type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_LEGACY;
-			return false;
-		}
-		return type_of_adv_cmd_used_since_reset == ADV_COMMAND_TYPE_EXTENDED;
-	case SDC_HCI_OPCODE_CMD_CB_RESET:
-		type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_NONE;
-		break;
-	default:
-		/* Ignore command */
-		break;
-	}
-
-	return false;
-#endif /* CONFIG_BT_HCI */
-}
-
 static void encode_command_status(uint8_t * const event,
 				  uint16_t hci_opcode,
 				  uint8_t status_code)
@@ -191,6 +92,221 @@ static void encode_command_complete_header(uint8_t * const event,
 	evt_data->ncmd = 1;
 	evt_data->opcode = hci_opcode;
 	event[BT_HCI_EVT_HDR_SIZE + sizeof(struct bt_hci_evt_cmd_complete)] = status;
+}
+
+/* Return true if the host has been using both legacy and extended HCI commands
+ * since last HCI reset.
+ */
+static bool check_and_handle_is_host_using_legacy_and_extended_commands(uint8_t *cmd_in,
+									uint16_t opcode)
+{
+#if defined(CONFIG_BT_HCI_HOST)
+	/* For a combined host and controller build, we know that the zephyr
+	 * host is used. For this case we know that the host is not
+	 * combining legacy and extended commands. Therefore we can
+	 * simplify this validation.
+	 */
+	return false;
+#else
+	/* A host is not allowed to use both legacy and extended HCI commands.
+	 * See Core v5.1, Vol2, Part E, 3.1.1 Legacy and extended advertising
+	 */
+	static enum type_of_adv_cmd type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_NONE;
+	enum type_of_adv_cmd type_of_adv_cmd_needed = ADV_COMMAND_TYPE_NONE;
+
+	uint8_t command_complete_param_length =
+		sizeof(struct bt_hci_evt_cmd_complete) + sizeof(struct bt_hci_evt_cc_status);
+	uint8_t *const raw_event_out = &cmd_complete_or_status.raw_event[0];
+	uint8_t *const event_out_params = &raw_event_out[CMD_COMPLETE_MIN_SIZE];
+	uint8_t const *cmd_params = &cmd_in[BT_HCI_CMD_HDR_SIZE];
+	(void)cmd_params;
+
+	switch (opcode) {
+#if defined(CONFIG_BT_BROADCASTER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_READ_NUMBER_OF_SUPPORTED_ADV_SETS:
+#endif /* CONFIG_BT_BROADCASTER */
+#if defined(CONFIG_BT_PER_ADV_SYNC)
+	case SDC_HCI_OPCODE_CMD_LE_READ_PERIODIC_ADV_LIST_SIZE:
+#endif /* CONFIG_BT_PER_ADV_SYNC */
+#if defined(CONFIG_BT_PER_ADV_SYNC) || defined(CONFIG_BT_BROADCASTER)
+		/* Extended command which generates a command complete with exactly one byte
+		 * payload.
+		 */
+		command_complete_param_length += 1;
+		event_out_params[0] = 0;
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+#endif /* CONFIG_BT_PER_ADV_SYNC || CONFIG_BT_BROADCASTER */
+
+#if defined(CONFIG_BT_BROADCASTER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_DATA:
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_RESPONSE_DATA:
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_ENABLE:
+	case SDC_HCI_OPCODE_CMD_LE_REMOVE_ADV_SET:
+	case SDC_HCI_OPCODE_CMD_LE_CLEAR_ADV_SETS:
+#if defined(CONFIG_BT_PER_ADV)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_DATA:
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_ENABLE:
+#endif /* CONFIG_BT_PER_ADV */
+#endif /* CONFIG_BT_BROADCASTER */
+#if defined(CONFIG_BT_OBSERVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_SCAN_ENABLE:
+#endif /* CONFIG_BT_OBSERVER */
+#if defined(CONFIG_BT_CENTRAL)
+	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN:
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	case SDC_HCI_OPCODE_CMD_LE_EXT_CREATE_CONN_V2:
+#endif /* CONFIG_BT_CTLR_SDC_PAWR_ADV */
+#endif /* CONFIG_BT_CENTRAL */
+#if defined(CONFIG_BT_PER_ADV_SYNC)
+	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC:
+	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_CREATE_SYNC_CANCEL:
+	case SDC_HCI_OPCODE_CMD_LE_PERIODIC_ADV_TERMINATE_SYNC:
+	case SDC_HCI_OPCODE_CMD_LE_ADD_DEVICE_TO_PERIODIC_ADV_LIST:
+	case SDC_HCI_OPCODE_CMD_LE_REMOVE_DEVICE_FROM_PERIODIC_ADV_LIST:
+	case SDC_HCI_OPCODE_CMD_LE_CLEAR_PERIODIC_ADV_LIST:
+#endif /* CONFIG_BT_PER_ADV_SYNC */
+#if defined(CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+#endif /* CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER */
+#if defined(CONFIG_BT_BROADCASTER) || defined(CONFIG_BT_OBSERVER) || defined(CONFIG_BT_CENTRAL) || \
+	defined(CONFIG_BT_PER_ADV_SYNC) || defined(CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER)
+		/* Extended command which generates a command complete with no extra parameters
+		 * or that generates a command status.
+		 */
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+#endif
+
+#if defined(CONFIG_BT_BROADCASTER)
+	case SDC_HCI_OPCODE_CMD_LE_READ_MAX_ADV_DATA_LENGTH:
+		/* Extended command which generates a command complete with exactly two bytes of
+		 * payload.
+		 */
+		command_complete_param_length += 2;
+		event_out_params[0] = 0;
+		event_out_params[1] = 0;
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+#endif /* CONFIG_BT_BROADCASTER */
+
+#if defined(CONFIG_BT_BROADCASTER)
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_PARAMS_V2:
+		/* The command complete contains the handle (first argument in the command) */
+		command_complete_param_length +=
+			sizeof(sdc_hci_cmd_le_set_periodic_adv_params_v2_return_t);
+		memcpy(event_out_params, cmd_params,
+			   sizeof(sdc_hci_cmd_le_set_periodic_adv_params_v2_return_t));
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SUBEVENT_DATA:
+		/* The command complete contains the handle (first argument in the command) */
+		command_complete_param_length +=
+			sizeof(sdc_hci_cmd_le_set_periodic_adv_subevent_data_return_t);
+		memcpy(event_out_params, cmd_params,
+			   sizeof(sdc_hci_cmd_le_set_periodic_adv_subevent_data_return_t));
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+#endif /* CONFIG_BT_CTLR_SDC_PAWR_ADV */
+#endif /* CONFIG_BT_BROADCASTER */
+
+#if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_SYNC_SUBEVENT:
+		/* The command complete contains the handle (first argument in the command) */
+		command_complete_param_length +=
+			sizeof(sdc_hci_cmd_le_set_periodic_sync_subevent_return_t);
+		memcpy(event_out_params, cmd_params,
+			   sizeof(sdc_hci_cmd_le_set_periodic_sync_subevent_return_t));
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RESPONSE_DATA:
+		/* The command complete contains the handle (first argument in the command) */
+		command_complete_param_length +=
+			sizeof(sdc_hci_cmd_le_set_periodic_adv_response_data_return_t);
+		memcpy(event_out_params, cmd_params,
+			   sizeof(sdc_hci_cmd_le_set_periodic_adv_response_data_return_t));
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+#endif /* CONFIG_BT_CTLR_SDC_PAWR_SYNC */
+
+#if defined(CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_SYNC_TRANSFER_PARAMS:
+		/* The command complete contains the handle (first argument in the command) */
+		command_complete_param_length +=
+			sizeof(sdc_hci_cmd_le_periodic_adv_sync_transfer_return_t);
+		memcpy(event_out_params, cmd_params,
+			   sizeof(sdc_hci_cmd_le_periodic_adv_sync_transfer_return_t));
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_EXTENDED;
+		break;
+#endif /* CONFIG_BT_PER_ADV_SYNC_TRANSFER_RECEIVER */
+
+#if defined(CONFIG_BT_BROADCASTER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_DATA:
+	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_RESPONSE_DATA:
+	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_ENABLE:
+#endif /* CONFIG_BT_BROADASTER */
+#if defined(CONFIG_BT_OBSERVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_ENABLE:
+#endif /* CONFIG_BT_OBSERVER */
+#if defined(CONFIG_BT_CENTRAL)
+	case SDC_HCI_OPCODE_CMD_LE_CREATE_CONN:
+#endif /* CONFIG_BT_CENTRAL */
+#if defined(CONFIG_BT_BROADCASTER) || defined(CONFIG_BT_OBSERVER) || defined(CONFIG_BT_CENTRAL)
+		/* Legacy command which generates a command complete with no extra parameters
+		 * or that generates a command status.
+		 */
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_LEGACY;
+		break;
+#endif /* CONFIG_BT_BROADCASTER || CONFIG_BT_OBSERVER || CONFIG_BT_CENTRAL */
+
+#if defined(CONFIG_BT_OBSERVER)
+	case SDC_HCI_OPCODE_CMD_LE_READ_ADV_PHYSICAL_CHANNEL_TX_POWER:
+		/* Legacy command which generates a command complete with exactly one byte payload.
+		 */
+		command_complete_param_length += 1;
+		event_out_params[0] = 0;
+		type_of_adv_cmd_needed = ADV_COMMAND_TYPE_LEGACY;
+		break;
+#endif /* CONFIG_BT_OBSERVER */
+
+	case SDC_HCI_OPCODE_CMD_CB_RESET:
+		type_of_adv_cmd_used_since_reset = ADV_COMMAND_TYPE_NONE;
+		return false;
+	default:
+		/* Ignore command */
+		return false;
+	}
+
+	/* If this is the first extended/legacy command, store the type. */
+	if (type_of_adv_cmd_used_since_reset == ADV_COMMAND_TYPE_NONE) {
+		type_of_adv_cmd_used_since_reset = type_of_adv_cmd_needed;
+		return false;
+	}
+
+	/* If extended/legacy is mixed, generate a command complete / command status. */
+	if (type_of_adv_cmd_used_since_reset != type_of_adv_cmd_needed) {
+		/* The host is violating the specification
+		 * by mixing legacy and extended commands.
+		 */
+		if (command_generates_command_complete_event(opcode)) {
+			(void)encode_command_complete_header(raw_event_out, opcode,
+								 command_complete_param_length,
+								 BT_HCI_ERR_CMD_DISALLOWED);
+		} else {
+			(void)encode_command_status(cmd_complete_or_status.raw_event, opcode,
+							BT_HCI_ERR_CMD_DISALLOWED);
+		}
+		return true;
+	}
+
+	return false;
+#endif /* CONFIG_BT_HCI */
 }
 
 void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
@@ -1316,24 +1432,8 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 
 	if (!IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
 		cmd_put(cmd_in, &cmd_complete_or_status.raw_event[0]);
-	} else if (!is_host_using_legacy_and_extended_commands(opcode)) {
+	} else if (!check_and_handle_is_host_using_legacy_and_extended_commands(cmd_in, opcode)) {
 		cmd_put(cmd_in, &cmd_complete_or_status.raw_event[0]);
-	} else {
-		/* The host is violating the specification
-		 * by mixing legacy and extended commands.
-		 */
-		if (command_generates_command_complete_event(opcode)) {
-			uint8_t param_length = sizeof(struct bt_hci_evt_cmd_complete)
-					     + sizeof(struct bt_hci_evt_cc_status);
-			(void)encode_command_complete_header(cmd_complete_or_status.raw_event,
-							     opcode,
-							     param_length,
-							     BT_HCI_ERR_CMD_DISALLOWED);
-		} else {
-			(void)encode_command_status(cmd_complete_or_status.raw_event,
-						    opcode,
-						    BT_HCI_ERR_CMD_DISALLOWED);
-		}
 	}
 
 	cmd_complete_or_status.occurred = true;
