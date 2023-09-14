@@ -77,7 +77,7 @@ static int socket_ranking;
 
 static bool is_opened_socket(int fd_test)
 {
-	if (fd == INVALID_SOCKET) {
+	if (fd_test == INVALID_SOCKET) {
 		return false;
 	}
 
