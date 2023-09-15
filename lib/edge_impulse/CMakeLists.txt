@@ -20,7 +20,10 @@ if(CONFIG_EDGE_IMPULSE_URI STREQUAL "")
   message(FATAL_ERROR "CONFIG_EDGE_IMPULSE_URI must be specified")
 endif()
 
-set(EI_URI ${CONFIG_EDGE_IMPULSE_URI})
+set(EI_URIx ${CONFIG_EDGE_IMPULSE_URI})
+
+string(CONCAT EI_URI ${EI_URIx})
+
 
 if(NOT ${EI_URI} MATCHES "^[a-z]+://")
   string(CONFIGURE ${EI_URI} EI_URI)
