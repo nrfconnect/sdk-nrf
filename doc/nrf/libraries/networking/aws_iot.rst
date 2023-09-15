@@ -40,7 +40,7 @@ If you want to use AWS FOTA, the ``AmazonS3FullAccess`` policy can be used to ob
 
 .. note::
    These policies provide a large number of permissions to the user.
-   But for development purposes, you must operate on the least-privilege principle whenever possible.
+   Though this can be acceptable for development purposes, you should operate on a least-privilege principle whenever possible.
 
 To complete the steps described in this document, make sure that the following prerequisites are met:
 
