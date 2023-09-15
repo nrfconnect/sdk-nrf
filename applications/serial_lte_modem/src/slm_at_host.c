@@ -94,7 +94,7 @@ static bool set_slm_mode(enum slm_operation_mode mode)
 
 static bool exit_datamode(void)
 {
-	bool ret = false;
+	bool retu = false;
 
 	k_mutex_lock(&mutex_mode, K_FOREVER);
 
@@ -112,12 +112,12 @@ static bool exit_datamode(void)
 		datamode_handler_result = 0;
 
 		LOG_INF("Exit datamode");
-		ret = true;
+		retu = true;
 	}
 
 	k_mutex_unlock(&mutex_mode);
 
-	return ret;
+	return retu;
 }
 
 /* Lock mutex_data, before calling. */
