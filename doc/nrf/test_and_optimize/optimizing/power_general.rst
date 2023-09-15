@@ -13,6 +13,9 @@ However, working on a final design might require fine-tuning some areas of your 
 The following sections describe general recommendations for reducing power consumption of your application.
 These recommendations are valid regardless of the SoC you are using.
 
+See also the documentation for the Zephyr RTOS :ref:`zephyr:pm-guide` subsystem.
+The subsystem provides interfaces and APIs that enable power management implementations for different SoCs and architectures.
+
 Use power profiling tools
 *************************
 
