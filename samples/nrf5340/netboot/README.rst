@@ -55,6 +55,16 @@ During the boot process, the network core bootloader sample and MCUboot interact
 
 .. _net_bootloader_build_and_run:
 
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+To set the minimum partitioning size, use the Kconfig option :kconfig:option:`CONFIG_NETBOOT_MIN_PARTITION_SIZE`.
+
 Building and running
 ********************
 
