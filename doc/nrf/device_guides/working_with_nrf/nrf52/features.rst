@@ -133,7 +133,7 @@ Enhanced ShockBurst
    :end-before: esb_intro_end
 
 See the :ref:`ug_esb` user guide for information about how to work with Enhanced ShockBurst.
-To start developing, check out the :ref:`esb_prx_ptx` sample.
+To start developing, check out the :ref:`esb_ptx` and :ref:`esb_prx` samples.
 
 Gazell
 ======

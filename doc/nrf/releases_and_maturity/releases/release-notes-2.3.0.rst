@@ -636,7 +636,7 @@ Wi-Fi samples
 Other samples
 -------------
 
-* :ref:`esb_prx_ptx` sample:
+* :ref:`esb_ptx` and :ref:`esb_prx` samples:
 
   * Added support for front-end modules and :ref:`zephyr:nrf21540dk_nrf52840`.
 

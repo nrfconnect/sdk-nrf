@@ -29,6 +29,7 @@ General information about samples in the |NCS|
    samples/crypto
    samples/debug
    samples/edge
+   samples/esb
    samples/gazell
    samples/matter
    samples/multicore
