@@ -8,7 +8,7 @@
 #include <zephyr/device.h>
 #include <zephyr/types.h>
 #include <zephyr/net/offloaded_netdev.h>
-#include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr_connectivity_impl.h>
 #include <zephyr/logging/log.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>

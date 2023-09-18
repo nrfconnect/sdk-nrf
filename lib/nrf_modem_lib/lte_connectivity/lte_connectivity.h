@@ -8,7 +8,7 @@
 #define LTE_CONNECTIVITY_H__
 
 #include <zephyr/types.h>
-#include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr_connectivity_impl.h>
 
 /**
  * @defgroup lte_connectivity LTE Connectivity layer
