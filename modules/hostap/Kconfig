@@ -108,7 +108,7 @@ config WPA_SUPP_P2P
 	select WPA_SUPP_WPS
 
 config WPA_SUPP_EAPOL
-	bool "Enable EAPoL supplicant"
+	bool "EAPoL supplicant"
 
 config WPA_CLI
 	bool "CLI support for wpa_supplicant"
