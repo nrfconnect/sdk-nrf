@@ -17,7 +17,7 @@ gn:
 nanopb:
   version: 0.4.6
 zephyr-sdk:
-  version: 0.16.0
+  version: 0.16.1
   architectures: # https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.16.0
     - aarch64-zephyr-elf
     - x86_64-zephyr-elf
