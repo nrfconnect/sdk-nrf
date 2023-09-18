@@ -62,7 +62,8 @@ config NRF_MODEM_LIB_SHMEM_TX_SIZE
 
 config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	int "RX region size"
-	range 2488 32768
+	range 2488 32768 if SOC_NRF9160
+	range 2616 32768 if SOC_NRF9120
 	default 8192
 	help
 	  Size of the shared memory region owned by the modem.
