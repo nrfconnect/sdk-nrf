@@ -16,10 +16,12 @@
 #include <modem/nrf_modem_lib_trace.h>
 
 #include "uart_shell.h"
-#include "uart.h"
 #include "mosh_print.h"
 #include "link.h"
 
+#define UART_DEVICE_NODE DT_CHOSEN(zephyr_shell_uart)
+
+static const struct device *const shell_uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 
 bool uart_shell_disable_during_sleep_requested;
 extern bool link_shell_msleep_notifications_subscribed;
@@ -42,26 +44,30 @@ static void uart_disable_handler(struct k_work *work)
 {
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART
 	int err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_OFF);
-
 	if (err) {
-		mosh_print("nrf_modem_lib_trace_level_set failed with err = %d.", err);
-		return;
+		mosh_error("nrf_modem_lib_trace_level_set() failed with err = %d.", err);
 	}
 #endif
-	disable_uarts();
+
+	if (device_is_ready(shell_uart_dev)) {
+		pm_device_action_run(shell_uart_dev, PM_DEVICE_ACTION_SUSPEND);
+	}
 }
 
 static void uart_enable_handler(struct k_work *work)
 {
-	enable_uarts();
-	mosh_print("UARTs enabled\n");
+	if (device_is_ready(shell_uart_dev)) {
+		pm_device_action_run(shell_uart_dev, PM_DEVICE_ACTION_RESUME);
+	}
+
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART
 	int err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_FULL);
-
 	if (err) {
-		mosh_print("nrf_modem_lib_trace_level_set failed with err = %d.", err);
+		mosh_error("nrf_modem_lib_trace_level_set() failed with err = %d.", err);
 	}
 #endif
+
+	mosh_print("UARTs enabled\n");
 }
 
 static K_WORK_DEFINE(uart_disable_work, &uart_disable_handler);
@@ -105,23 +111,22 @@ void uart_toggle_power_state_at_event(const struct lte_lc_evt *const evt)
 
 void uart_toggle_power_state(void)
 {
-	const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
-	enum pm_device_state uart0_power_state;
+	enum pm_device_state shell_uart_power_state;
 	int err;
 
-	if (!device_is_ready(uart_dev)) {
-		mosh_print("UART device not ready");
+	if (!device_is_ready(shell_uart_dev)) {
+		mosh_print("Shell UART device not ready");
 		return;
 	}
 
-	err = pm_device_state_get(uart_dev, &uart0_power_state);
+	err = pm_device_state_get(shell_uart_dev, &shell_uart_power_state);
 	if (err) {
-		mosh_print("Failed to assess UART power state, pm_device_state_get: %d.",
+		mosh_error("Failed to assess shell UART power state, pm_device_state_get: %d.",
 			   err);
 		return;
 	}
 
-	if (uart0_power_state == PM_DEVICE_STATE_ACTIVE) {
+	if (shell_uart_power_state == PM_DEVICE_STATE_ACTIVE) {
 		k_work_submit(&uart_disable_work);
 	} else {
 		k_work_schedule(&uart_enable_work, K_NO_WAIT);
