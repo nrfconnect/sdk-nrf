@@ -81,7 +81,7 @@ jobs:
 
           Signed-off-by: Nordic Builder <NordicBuilder@nordicsemi.no>
           EOF
-          git remote set-url origin https://${{ secrets.NCS_GITHUB_TOKEN }}@github.com/nrfconnect/sdk-nrf-testing.git
+          git remote set-url origin https://${{ secrets.NCS_GITHUB_TOKEN }}@github.com/nrfconnect/sdk-nrf.git
           git push origin HEAD:${{ github.head_ref }}
 
       - name: Post summary
