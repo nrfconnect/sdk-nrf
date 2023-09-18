@@ -623,7 +623,9 @@ const char *bt_mesh_sensor_ch_str(const struct sensor_value *ch)
 {
 	static char str[BT_MESH_SENSOR_CH_STR_LEN];
 
-	bt_mesh_sensor_ch_to_str(ch, str, sizeof(str));
+	if (bt_mesh_sensor_ch_to_str(ch, str, BT_MESH_SENSOR_CH_STR_LEN) <= 0) {
+		strcpy(str, "Unknown format");
+	}
 
 	return str;
 }
