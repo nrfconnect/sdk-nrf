@@ -13,6 +13,7 @@ import logging
 
 from secrets import token_hex
 from coiote import Coiote
+from leshan import Leshan
 from device import Device
 from atclient import ATclient
 
@@ -29,6 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('-f', help='Build and flash the AT client', action='store_true')
     parser.add_argument('-d', help='Enable debug logs', action='store_true')
     parser.add_argument('-p', '--purge', dest='purge', help='Wipe the security tags and remove the device from the server', action='store_true')
+    parser.add_argument('--leshan', help='Provision to Leshan demo server', action='store_true')
     args = parser.parse_args()
 
     if args.d:
@@ -55,19 +57,35 @@ if __name__ == "__main__":
     dev.delete_sec_tag(35724861)
     dev.delete_sec_tag(35724862)
 
-    coiote = Coiote()
-    coiote.get_device(identity)
-    coiote.get_device(identity + '-bs')
+    if args.leshan:
+        leshan = Leshan('https://leshan.eclipseprojects.io/api')
+        bserver = Leshan('https://leshan.eclipseprojects.io/bs/api')
+        try:
+            leshan.delete_device(identity)
+        except RuntimeError:
+            pass
+        try:
+            leshan.delete_bs_device(identity)
+        except RuntimeError:
+            pass
+    else:
+        coiote = Coiote()
 
-    if coiote.get_device(identity):
-        coiote.delete_device(identity)
-    if coiote.get_device(identity + '-bs'):
-        coiote.delete_device(identity + '-bs')
+        if coiote.get_device(identity):
+            coiote.delete_device(identity)
+        if coiote.get_device(identity + '-bs'):
+            coiote.delete_device(identity + '-bs')
 
-    if not args.purge:
-        # Generate and store Bootstrap keys
-        psk = token_hex(16)
-        dev.store_psk(35724862, identity, psk)
+    if args.purge:
+        exit()
 
+    # Generate and store Bootstrap keys
+    psk = token_hex(16)
+    dev.store_psk(35724862, identity, psk)
+
+    if args.leshan:
+        leshan.create_psk_device(identity, psk)
+        bserver.create_bs_device(identity, 'coaps://leshan.eclipseprojects.io:5684', psk)
+    else:
         # Provision the device
         coiote.create_device(identity, psk)

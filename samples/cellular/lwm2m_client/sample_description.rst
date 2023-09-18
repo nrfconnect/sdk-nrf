@@ -535,7 +535,7 @@ To successfully run the bootstrap procedure, you must first register the device 
 
 See :ref:`Registering your device to an LwM2M boot strap server <bootstrap_server_reg>` for instructions.
 
-To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOVERLAY_CONFIG=overlay-bootstrap.conf`` option:
+To build the LwM2M Client with LwM2M bootstrap support, build it with the :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf` configuration overlays:
 
    .. tabs::
 
@@ -543,16 +543,18 @@ To build the LwM2M Client with LwM2M bootstrap support, build it with the ``-DOV
 
          .. code-block:: console
 
-            west build -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG=overlay-bootstrap.conf
+            west build -b nrf9161dk_nrf9161_ns -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
 
       .. group-tab:: nRF9160 DK
 
          .. code-block:: console
 
-            west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-bootstrap.conf
+            west build -b nrf9160dk_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
 
 See :ref:`cmake_options` for instructions on how to add this option.
-Keep in mind that the used bootstrap port is set in the aforementioned configuration file.
+Keep in mind that the used bootstrap URI is set in the aforementioned configuration file.
+In bootstrap mode, application does not overwrite the PSK key from the modem so :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` is not used.
+Please refer to :ref:`lwm2m_client_provisioning` for instructions how to provision bootstrap keys.
 
 Testing
 =======
