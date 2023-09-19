@@ -1,5 +1,3 @@
-.. _SLM_AT_NRFCLOUD:
-
 nRF Cloud AT commands
 *********************
 
@@ -7,7 +5,9 @@ nRF Cloud AT commands
    :local:
    :depth: 2
 
-The following commands list contains nRF Cloud-related AT commands.
+The following list contains nRF Cloud-related AT commands.
+
+.. _SLM_AT_NRFCLOUD:
 
 nRF Cloud access
 ================
@@ -18,8 +18,8 @@ The ``#XNRFCLOUD`` command controls the access to the nRF Cloud service.
    To use ``#XNRFCLOUD``, the following preconditions apply:
 
    * You must first provision the device to nRF Cloud, using the UUID from the modem firmware as device ID.
-   * You must define :ref:`CONFIG_SLM_NRF_CLOUD <CONFIG_SLM_NRF_CLOUD>`.
-   * You must have access to nRF Cloud through the LTE network.
+   * The :ref:`CONFIG_SLM_NRF_CLOUD <CONFIG_SLM_NRF_CLOUD>` Kconfig option must be enabled.
+   * The device must have access to nRF Cloud through the LTE network.
 
 Set command
 -----------
@@ -89,7 +89,7 @@ Unsolicited notification
 
    #XNRFCLOUD: <message>
 
-* The ``<message>`` value indicates the nRF Cloud data received when A-GPS, P-GPS, and Cell_Pos are not active.
+* The ``<message>`` value indicates data received from nRF Cloud that is not a supported cloud2device appId.
 
 Example
 ~~~~~~~
@@ -189,6 +189,8 @@ Example
 
   OK
 
+.. _SLM_AT_NRFCLOUDPOS:
+
 nRF Cloud location
 ==================
 
@@ -198,8 +200,8 @@ The request uses information from the cellular network, Wi-Fi access points, or 
 .. note::
    To use ``#XNRFCLOUDPOS``, the following preconditions apply:
 
-   * You must define :ref:`CONFIG_SLM_NRF_CLOUD <CONFIG_SLM_NRF_CLOUD>` and :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION <CONFIG_NRF_CLOUD_LOCATION>`.
-   * You must be connected to nRF Cloud (using ``#XNRFCLOUD``).
+   * The device must be connected to nRF Cloud using :ref:`#XNRFCLOUD <SLM_AT_NRFCLOUD>`.
+   * The :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION <CONFIG_NRF_CLOUD_LOCATION>` Kconfig option must be enabled.
 
 Set command
 -----------

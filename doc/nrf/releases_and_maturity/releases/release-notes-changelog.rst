@@ -225,6 +225,7 @@ Serial LTE modem
   * An ``auto_connect`` operation in the ``#XCARRIER`` carrier command.
     The operation controls automatic registration of UE to LTE network.
   * ``#XNRFCLOUDPOS`` AT command to send location requests to nRF Cloud using cellular or Wi-Fi positioning, or both.
+  * Support for using A-GPS and P-GPS at the same time.
 
 * Updated:
 
@@ -234,6 +235,7 @@ Serial LTE modem
     Multiple responses can now be received in a single transmission.
   * Modem FOTA to only need a modem reset to apply the firmware update.
     The full chip reset (using the ``#XRESET`` AT command) remains supported.
+  * ``#XGPSDEL`` AT command to disallow deleting local clock (TCXO) frequency offset data because it is an internal value that should not be deleted when simulating a cold start.
 
 * Removed:
 
@@ -243,6 +245,8 @@ Serial LTE modem
   * Operations to read or erase the MCUboot secondary slot from the ``#XFOTA`` AT command because the application update process overwrites the slot in any case.
   * AT commands ``#XCELLPOS`` and ``#XWIFIPOS``.
     They are replaced by the ``#XNRFCLOUDPOS`` command that allows to combine cellular and Wi-Fi data to determine the device location.
+  * The AT commands ``#XAGPS`` and ``#XPGPS``.
+    Their functionality is merged into the ``#XGPS`` AT command that now allows using A-GPS and P-GPS at the same time.
 
 nRF5340 Audio
 -------------

@@ -604,7 +604,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 				LOG_ERR("Cloud connection failed, error: %d", err);
 			} else {
 				slm_nrf_cloud_send_location = send_location;
-				/* A-GPS & P-GPS needs date_time, trigger to update current time */
+				/* A-GNSS & P-GPS needs date_time, trigger to update current time */
 				date_time_update_async(date_time_event_handler);
 				if (k_sem_take(&sem_date_time, K_SECONDS(10)) != 0) {
 					LOG_WRN("Failed to get current time");

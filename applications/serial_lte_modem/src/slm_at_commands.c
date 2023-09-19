@@ -415,12 +415,6 @@ int handle_at_fota(enum at_cmd_type cmd_type);
 #if defined(CONFIG_SLM_GNSS)
 int handle_at_gps(enum at_cmd_type cmd_type);
 int handle_at_gps_delete(enum at_cmd_type cmd_type);
-#if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
-int handle_at_agps(enum at_cmd_type cmd_type);
-#endif
-#if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_PGPS)
-int handle_at_pgps(enum at_cmd_type cmd_type);
-#endif
 #endif
 
 #if defined(CONFIG_SLM_FTPC)
@@ -526,12 +520,6 @@ static struct slm_at_cmd {
 	/* GNSS commands */
 	{"AT#XGPS", handle_at_gps},
 	{"AT#XGPSDEL", handle_at_gps_delete},
-#if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
-	{"AT#XAGPS", handle_at_agps},
-#endif
-#if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_PGPS)
-	{"AT#XPGPS", handle_at_pgps},
-#endif
 #endif
 
 #if defined(CONFIG_SLM_FTPC)
