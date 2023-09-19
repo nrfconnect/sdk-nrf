@@ -54,12 +54,6 @@ CHIP_ERROR HumiditySensorDevice::HandleRead(ClusterId clusterId, AttributeId att
 					    uint16_t maxReadLength)
 {
 	switch (clusterId) {
-	case Clusters::BridgedDeviceBasicInformation::Id:
-		return HandleReadBridgedDeviceBasicInformation(attributeId, buffer, maxReadLength);
-		break;
-	case Clusters::Descriptor::Id:
-		return HandleReadDescriptor(attributeId, buffer, maxReadLength);
-		break;
 	case Clusters::RelativeHumidityMeasurement::Id:
 		return HandleReadRelativeHumidityMeasurement(attributeId, buffer, maxReadLength);
 		break;
