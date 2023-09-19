@@ -84,11 +84,10 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-void scan_cellular_start(uint8_t cell_count, bool light_search)
+void scan_cellular_execute(uint8_t cell_count)
 {
 	struct lte_lc_ncellmeas_params ncellmeas_params = {
-		.search_type = light_search ? LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT :
-					      LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE,
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT,
 		.gci_count = 0
 	};
 	int err;
@@ -120,7 +119,7 @@ void scan_cellular_start(uint8_t cell_count, bool light_search)
 	 */
 	scan_cellular_cell_count = scan_cellular_cell_count - scan_cellular_info.ncells_count;
 
-	LOG_DBG("scan_cellular_start: scan_cellular_cell_count=%d", scan_cellular_cell_count);
+	LOG_DBG("scan_cellular_execute: scan_cellular_cell_count=%d", scan_cellular_cell_count);
 
 	if (scan_cellular_cell_count > 1) {
 

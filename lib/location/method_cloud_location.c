@@ -65,13 +65,13 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 	if (wifi_config != NULL) {
-		scan_wifi_start(&wifi_scan_ready);
+		scan_wifi_execute(&wifi_scan_ready);
 	}
 #endif
 
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	if (cell_config != NULL) {
-		scan_cellular_start(cell_config->cell_count, false);
+		scan_cellular_execute(cell_config->cell_count);
 		scan_cellular_info = scan_cellular_results_get();
 	}
 #endif
