@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, if you want to test the Enhanced ShockBurst Transmitter functionality, you need to build and run the :ref:`esb_prx` sample.
+Additionally, if you want to test the Enhanced ShockBurst Transmitter functionality, you need to build and run the :ref:`esb_ptx` sample.
 You can use any two of the listed development kits and mix different development kits.
 
 Overview
