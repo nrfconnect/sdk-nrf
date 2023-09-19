@@ -324,10 +324,12 @@ int main(void)
 		int ret;
 
 		/* Set a local MAC address with Nordic OUI */
-		ret = net_if_down(iface);
-		if (ret) {
-			LOG_ERR("Cannot bring down iface (%d)", ret);
-			return ret;
+		if (net_if_is_up(iface)) {
+			ret = net_if_down(iface);
+			if (ret) {
+				LOG_ERR("Cannot bring down iface (%d)", ret);
+				return ret;
+			}
 		}
 
 		net_mgmt(NET_REQUEST_ETHERNET_SET_MAC_ADDRESS, iface,
