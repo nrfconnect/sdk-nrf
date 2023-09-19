@@ -17,6 +17,10 @@
 #include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
 #endif
 
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#include "dfu_over_smp.h"
+#endif
+
 struct k_timer;
 
 class AppTask {
