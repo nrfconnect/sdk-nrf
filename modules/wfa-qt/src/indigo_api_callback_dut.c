@@ -2096,7 +2096,7 @@ static int send_sta_reconnect_handler(struct packet_wrapper *req, struct packet_
 {
 	struct wpa_ctrl *w = NULL;
 	char *message = TLV_VALUE_WPA_S_RECONNECT_NOT_OK;
-	char buffer[256], response[1024];
+	char buffer[256], response[8];
 	int status = TLV_VALUE_STATUS_NOT_OK;
 	size_t resp_len;
 	struct wpa_supplicant *wpa_s = NULL;
