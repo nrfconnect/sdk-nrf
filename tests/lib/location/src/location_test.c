@@ -372,7 +372,7 @@ void test_location_cellular(void)
 
 	location_callback_called_expected = true;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -410,7 +410,7 @@ void test_location_cellular_cancel_during_ncellmeas(void)
 	config.methods[0].cellular.cell_count = 2;
 	location_callback_called_expected = false;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -526,7 +526,7 @@ void test_location_request_default(void)
 
 	/***** Fallback to cellular *****/
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -583,7 +583,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 
 	/***** First cellular positioning *****/
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -696,7 +696,7 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	location_callback_called_expected = true;
 
 	/***** First cellular positioning *****/
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -883,7 +883,7 @@ void test_location_cellular_periodic(void)
 
 	location_callback_called_expected = true;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -928,7 +928,7 @@ void test_location_cellular_periodic(void)
 	rest_req_ctx.port = HTTPS_PORT;
 	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
