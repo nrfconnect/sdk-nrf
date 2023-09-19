@@ -286,7 +286,7 @@ LED 2:
 Button 1:
     Depending on how long you press the button:
 
-    * If pressed for less than three seconds, it initiates the SMP server (Security Manager Protocol).
+    * If pressed for less than three seconds, it initiates the SMP server (Simple Management Protocol).
       After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
       (See `Upgrading the device firmware`_.)
     * If pressed for more than three seconds, it initiates the factory reset of the device.

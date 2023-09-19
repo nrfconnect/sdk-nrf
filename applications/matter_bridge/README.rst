@@ -47,6 +47,38 @@ The application supports bridging the following Matter device types:
 * Temperature Sensor
 * Humidity Sensor
 
+The application supports over-the-air (OTA) device firmware upgrade (DFU) using either of the two following protocols:
+
+* Matter OTA update protocol.
+  Querying and downloading a new firmware image is done using the Matter operational network.
+* Simple Management Protocol (SMP) over Bluetooth LE.
+  The DFU is done using either a smartphone application or a PC command line tool.
+  Note that this protocol is not part of the Matter specification.
+
+In both cases, MCUboot secure bootloader is used to apply the new firmware image.
+
+Matter OTA update protocol is enabled by default.
+To configure the application to support the DFU over both Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
+
+See :ref:`cmake_options` for instructions on how to add these options to your build.
+
+
+When building on the command line, run the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *build_target* -- *dfu_build_flag*
+
+Replace *build_target* with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* with the desired DFU build flag.
+For example:
+
+.. code-block:: console
+
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+
+For information about how to upgrade the device firmware using a PC or a smartphone, see the :ref:`matter_bridge_app_dfu` section.
+
 .. _matter_bridge_app_bridged_support:
 
 Bridged device support
@@ -112,8 +144,13 @@ User interface
     :end-before: matter_door_lock_sample_led1_end
 
 Button 1:
-     If pressed for six seconds, it initiates the factory reset of the device.
-     Releasing the button within the six-second window cancels the factory reset procedure.
+    Depending on how long you press the button:
+
+    * If pressed for less than three seconds, it initiates the SMP server (Simple Management Protocol).
+      After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
+      (See `Updating the device firmware`_.)
+    * If pressed for more than three seconds, it initiates the factory reset of the device.
+      Releasing the button within a 3-second window of the initiation cancels the factory reset procedure.
 
 Button 2:
      Enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
@@ -448,6 +485,8 @@ For this application, you can use one of the following :ref:`onboarding informat
 
        - MT:06PS042C00KA0648G00
        - 34970112332
+
+.. _matter_bridge_app_dfu:
 
 Updating the device firmware
 ============================

@@ -287,6 +287,7 @@ Matter Bridge
   * The :ref:`Matter bridge <matter_bridge_app>` application.
   * Support for the Bluetooth LE bridged devices.
   * Support for bridging of the Bluetooth LE Environmental Sensor (ESP).
+  * Support for performing Device Firmware Upgrade (DFU) over Bluetooth LE using Simple Management Protocol (SMP).
 
 Samples
 =======
