@@ -52,12 +52,6 @@ CHIP_ERROR TemperatureSensorDevice::HandleRead(ClusterId clusterId, AttributeId 
 					       uint16_t maxReadLength)
 {
 	switch (clusterId) {
-	case Clusters::BridgedDeviceBasicInformation::Id:
-		return HandleReadBridgedDeviceBasicInformation(attributeId, buffer, maxReadLength);
-		break;
-	case Clusters::Descriptor::Id:
-		return HandleReadDescriptor(attributeId, buffer, maxReadLength);
-		break;
 	case Clusters::TemperatureMeasurement::Id:
 		return HandleReadTemperatureMeasurement(attributeId, buffer, maxReadLength);
 		break;

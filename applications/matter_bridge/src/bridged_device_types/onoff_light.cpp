@@ -59,12 +59,6 @@ CHIP_ERROR OnOffLightDevice::HandleRead(ClusterId clusterId, AttributeId attribu
 					uint16_t maxReadLength)
 {
 	switch (clusterId) {
-	case Clusters::BridgedDeviceBasicInformation::Id:
-		return HandleReadBridgedDeviceBasicInformation(attributeId, buffer, maxReadLength);
-		break;
-	case Clusters::Descriptor::Id:
-		return HandleReadDescriptor(attributeId, buffer, maxReadLength);
-		break;
 	case Clusters::OnOff::Id:
 		return HandleReadOnOff(attributeId, buffer, maxReadLength);
 		break;
