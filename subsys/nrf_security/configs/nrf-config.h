@@ -316,6 +316,8 @@ extern "C" {
 #define MBEDTLS_PK_C
 #define MBEDTLS_OID_C
 #define MBEDTLS_DHM_C
+#define MBEDTLS_BASE64_C
+#define MBEDTLS_PEM_PARSE_C
 #endif
 
 #if defined(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
