@@ -673,12 +673,12 @@ void test_location_request_mode_all_cellular_gnss(void)
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 }
 
-/* Test location request timeout:
- * - Use cellular and GNSS positioning and timeout occurs for both
+/* Test location request error/timeout with :
+ * - Use cellular and GNSS positioning and error and timeout occurs, respectively
  * - Use LOCATION_REQ_MODE_ALL so we can check timeout event ID for both methods
  * - Tests also case when all fallbacks are failing
  */
-void test_location_request_timeout_cellular_gnss_mode_all(void)
+void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 {
 	int err;
 
@@ -687,16 +687,15 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 
 	location_config_defaults_set(&config, 2, methods);
 	config.mode = LOCATION_REQ_MODE_ALL;
-	config.methods[0].cellular.timeout = 100;
 	config.methods[0].cellular.cell_count = 2;
 	config.methods[1].gnss.timeout = 100;
 
-	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
+	test_location_event_data.id = LOCATION_EVT_ERROR;
 
 	location_callback_called_expected = true;
 
 	/***** First cellular positioning *****/
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", -EFAULT);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -704,7 +703,6 @@ void test_location_request_timeout_cellular_gnss_mode_all(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", 0);
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);

@@ -721,7 +721,13 @@ Modem libraries
 * :ref:`lib_location` library:
 
   * Added support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
-  * Updated the neighbor cell search to use GCI search depending on :c:member:`location_cellular_config.cell_count` value.
+
+  * Updated:
+
+    * The neighbor cell search to use GCI search depending on the :c:member:`location_cellular_config.cell_count` value.
+    * The semantics of cellular and Wi-Fi timeouts to only apply to neighbor cell measurement and Wi-Fi scan, respectively.
+      Earlier, these timeouts applied also to the upcoming cloud connection to send the data to the cloud for position resolution.
+      Overall :c:func:`location_request()` timeout can still interrupt cloud data transfer.
 
 * :ref:`pdn_readme` library:
 
