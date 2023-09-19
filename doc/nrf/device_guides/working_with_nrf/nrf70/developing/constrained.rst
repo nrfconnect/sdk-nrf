@@ -237,8 +237,8 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
      - High data rate IoT devices
      - ``TCP-TX: 14.2 Mbps``
        ``TCP-RX: 7.4  Mbps``
-       ``UDP-TX: 12.4 Mbps``
-       ``UDP-RX: 26.2 Mbps``
+       ``UDP-TX: 26.2 Mbps``
+       ``UDP-RX: 12.4 Mbps``
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_WPA_SUPP=y``
