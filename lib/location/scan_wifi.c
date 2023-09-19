@@ -28,6 +28,12 @@ static struct wifi_scan_info scan_wifi_info = {
 };
 static struct k_sem *scan_wifi_ready;
 
+/** Handler for timeout. */
+static void scan_wifi_timeout_work_fn(struct k_work *work);
+
+/** Work item for timeout handler. */
+K_WORK_DELAYABLE_DEFINE(scan_wifi_timeout_work, scan_wifi_timeout_work_fn);
+
 struct wifi_scan_info *scan_wifi_results_get(void)
 {
 	if (scan_wifi_info.cnt  <= 1) {
@@ -46,7 +52,7 @@ struct wifi_scan_info *scan_wifi_results_get(void)
 	return &scan_wifi_info;
 }
 
-void scan_wifi_execute(struct k_sem *wifi_scan_ready)
+void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 {
 	int ret;
 
@@ -63,6 +69,11 @@ void scan_wifi_execute(struct k_sem *wifi_scan_ready)
 		ret = -EFAULT;
 		k_sem_give(wifi_scan_ready);
 		wifi_scan_ready = NULL;
+	}
+
+	if (timeout != SYS_FOREVER_MS && timeout > 0) {
+		LOG_DBG("Starting Wi-Fi timer with timeout=%d", timeout);
+		k_work_schedule(&scan_wifi_timeout_work, K_MSEC(timeout));
 	}
 }
 
@@ -103,6 +114,7 @@ static void scan_wifi_done_handle(struct net_mgmt_event_callback *cb)
 
 	k_sem_give(scan_wifi_ready);
 	scan_wifi_ready = NULL;
+	k_work_cancel_delayable(&scan_wifi_timeout_work);
 }
 
 void scan_wifi_net_mgmt_event_handler(
@@ -161,4 +173,13 @@ int scan_wifi_init(void)
 	net_mgmt_add_event_callback(&scan_wifi_net_mgmt_cb);
 
 	return 0;
+}
+
+static void scan_wifi_timeout_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	LOG_INF("Wi-Fi method specific timeout expired");
+
+	scan_wifi_cancel();
 }

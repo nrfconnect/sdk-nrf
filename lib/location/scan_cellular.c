@@ -23,11 +23,27 @@ static struct lte_lc_cells_info scan_cellular_info = {
 	.gci_cells = gci_cells
 };
 
-static bool running;
+static volatile bool running;
+static volatile bool timeout_occurred;
 /* Indicates when individual ncellmeas operation is completed. This is internal to this file. */
 static struct k_sem scan_cellular_sem_ncellmeas_evt;
 /* Requested number of cells to be searched. */
 static int8_t scan_cellular_cell_count;
+
+/** Handler for timeout. */
+static void scan_cellular_timeout_work_fn(struct k_work *work);
+
+/** Work item for timeout handler. */
+K_WORK_DELAYABLE_DEFINE(scan_cellular_timeout_work, scan_cellular_timeout_work_fn);
+
+/**
+ * Handler for backup timeout, which ensures we won't be waiting for LTE_LC_EVT_NEIGHBOR_CELL_MEAS
+ * event forever after lte_lc_neighbor_cell_measurement_cancel() in case it would never be sent.
+ */
+static void scan_cellular_timeout_backup_work_fn(struct k_work *work);
+
+/** Work item for backup timeout handler. */
+K_WORK_DELAYABLE_DEFINE(scan_cellular_timeout_backup_work, scan_cellular_timeout_backup_work_fn);
 
 struct lte_lc_cells_info *scan_cellular_results_get(void)
 {
@@ -41,18 +57,28 @@ struct lte_lc_cells_info *scan_cellular_results_get(void)
 
 void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
+	if (!running) {
+		return;
+	}
+
 	switch (evt->type) {
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
-		if (!running) {
-			return;
-		}
-		LOG_DBG("Cell measurements results received: ncells_count=%d, gci_cells_count=%d",
-			evt->cells_info.ncells_count, evt->cells_info.gci_cells_count);
+		k_work_cancel_delayable(&scan_cellular_timeout_backup_work);
 
-		/* Copy current cell information */
-		memcpy(&scan_cellular_info.current_cell,
-		       &evt->cells_info.current_cell,
-		       sizeof(struct lte_lc_cell));
+		LOG_DBG("Cell measurements results received: "
+			"ncells_count=%d, gci_cells_count=%d, current_cell.id=0x%08X",
+			evt->cells_info.ncells_count,
+			evt->cells_info.gci_cells_count,
+			evt->cells_info.current_cell.id);
+
+		if (evt->cells_info.current_cell.id != LTE_LC_CELL_EUTRAN_ID_INVALID) {
+			/* Copy current cell information. We are seeing this is not set for GCI
+			 * search sometimes but we have it for the previous normal neighbor search.
+			 */
+			memcpy(&scan_cellular_info.current_cell,
+			&evt->cells_info.current_cell,
+			sizeof(struct lte_lc_cell));
+		}
 
 		/* Copy neighbor cell information if present */
 		if (evt->cells_info.ncells_count > 0 && evt->cells_info.neighbor_cells) {
@@ -74,7 +100,6 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 			scan_cellular_info.gci_cells_count = evt->cells_info.gci_cells_count;
 		} else {
 			LOG_DBG("No surrounding cell information from modem");
-
 		}
 
 		k_sem_give(&scan_cellular_sem_ncellmeas_evt);
@@ -84,7 +109,7 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-void scan_cellular_execute(uint8_t cell_count)
+void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 {
 	struct lte_lc_ncellmeas_params ncellmeas_params = {
 		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT,
@@ -93,12 +118,18 @@ void scan_cellular_execute(uint8_t cell_count)
 	int err;
 
 	running = true;
+	timeout_occurred = false;
 	scan_cellular_cell_count = cell_count;
 	scan_cellular_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 	scan_cellular_info.ncells_count = 0;
 	scan_cellular_info.gci_cells_count = 0;
 
 	LOG_DBG("Triggering cell measurements");
+
+	if (timeout != SYS_FOREVER_MS && timeout > 0) {
+		LOG_DBG("Starting cellular timer with timeout=%d", timeout);
+		k_work_schedule(&scan_cellular_timeout_work, K_MSEC(timeout));
+	}
 
 	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 	if (err) {
@@ -109,6 +140,11 @@ void scan_cellular_execute(uint8_t cell_count)
 	if (err) {
 		/* Semaphore was reset so stop search procedure */
 		err = 0;
+		goto end;
+	}
+
+	if (timeout_occurred) {
+		LOG_DBG("Timeout occurred after 1st neighbor measurement");
 		goto end;
 	}
 
@@ -139,6 +175,7 @@ void scan_cellular_execute(uint8_t cell_count)
 	}
 
 end:
+	k_work_cancel_delayable(&scan_cellular_timeout_work);
 	running = false;
 }
 
@@ -164,4 +201,23 @@ int scan_cellular_init(void)
 	k_sem_init(&scan_cellular_sem_ncellmeas_evt, 0, 1);
 
 	return 0;
+}
+
+static void scan_cellular_timeout_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	LOG_INF("Cellular method specific timeout expired");
+
+	(void)lte_lc_neighbor_cell_measurement_cancel();
+	timeout_occurred = true;
+
+	k_work_schedule(&scan_cellular_timeout_backup_work, K_MSEC(2000));
+}
+
+static void scan_cellular_timeout_backup_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	k_sem_reset(&scan_cellular_sem_ncellmeas_evt);
 }

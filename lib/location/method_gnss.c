@@ -292,8 +292,10 @@ static void method_gnss_nrf_cloud_agps_request(void)
 	struct lte_lc_cells_info net_info = {0};
 	struct lte_lc_cells_info *scan_results;
 
-	/* Get network info for the A-GPS location request. */
-	scan_cellular_execute(0);
+	/* Get network info for the A-GPS location request.
+	 * Timeout value is just some number that should be big enough.
+	 */
+	scan_cellular_execute(5000, 0);
 	scan_results = scan_cellular_results_get();
 	if (scan_results == NULL) {
 		LOG_WRN("Requesting A-GPS data without location assistance");
