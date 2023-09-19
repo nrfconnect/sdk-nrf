@@ -44,34 +44,20 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	const struct location_cellular_config *cell_config = work_data->cell_config;
 	struct wifi_scan_info *scan_wifi_info = NULL;
 	struct lte_lc_cells_info *scan_cellular_info = NULL;
-	int32_t used_timeout_ms;
 	int err = 0;
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 	struct k_sem wifi_scan_ready;
 
 	k_sem_init(&wifi_scan_ready, 0, 1);
-#endif
 
-	if (wifi_config != NULL && cell_config != NULL) {
-		used_timeout_ms = MIN(cell_config->timeout, wifi_config->timeout);
-	} else if (cell_config != NULL) {
-		used_timeout_ms = cell_config->timeout;
-	} else {
-		__ASSERT_NO_MSG(wifi_config != NULL);
-		used_timeout_ms = wifi_config->timeout;
-	}
-
-	location_core_timer_start(used_timeout_ms);
-
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
 	if (wifi_config != NULL) {
-		scan_wifi_execute(&wifi_scan_ready);
+		scan_wifi_execute(wifi_config->timeout, &wifi_scan_ready);
 	}
 #endif
 
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	if (cell_config != NULL) {
-		scan_cellular_execute(cell_config->cell_count);
+		scan_cellular_execute(cell_config->timeout, cell_config->cell_count);
 		scan_cellular_info = scan_cellular_results_get();
 	}
 #endif
@@ -87,8 +73,6 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 		goto end;
 	}
 
-	location_core_timer_stop();
-
 	if (scan_cellular_info == NULL && scan_wifi_info == NULL) {
 		LOG_WRN("No cellular neighbor cells or Wi-Fi access points found");
 		err = -ENODATA;
@@ -96,6 +80,8 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	}
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	ARG_UNUSED(wifi_config);
+
 	struct location_data_cloud request = {
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 		.cell_data = scan_cellular_info,
@@ -149,21 +135,18 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 		location_result.latitude = location.latitude;
 		location_result.longitude = location.longitude;
 		location_result.accuracy = location.accuracy;
-		if (running) {
-			running = false;
-			location_core_event_cb(&location_result);
-		}
+		location_core_event_cb(&location_result);
 	}
+
 #endif /* defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
 
 end:
 	if (err == -ETIMEDOUT) {
 		location_core_event_cb_timeout();
-		running = false;
 	} else if (err) {
 		location_core_event_cb_error();
-		running = false;
 	}
+	running = false;
 }
 
 int method_cloud_location_cancel(void)
