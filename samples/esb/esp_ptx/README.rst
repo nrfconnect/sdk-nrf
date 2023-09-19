@@ -27,7 +27,6 @@ After building and programming each sample on an nRF52 Series development kit, y
 Successful communication is indicated by LED changes, which should be in sync on both kits.
 
 The Transmitter sends a packet, waits for a configurable time (50 milliseconds by default), and then sends another packet.
-In each packet, the four least significant bits of the first byte of the payload are incremented (or reset to zero when they reach 16).
 The LEDs indicate that packets were sent and acknowledged.
 Therefore, if packets are successfully received and acknowledged by the Receiver, the LED pattern changes every 50 milliseconds (with the default delay).
 
