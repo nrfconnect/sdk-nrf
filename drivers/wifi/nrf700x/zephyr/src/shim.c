@@ -782,7 +782,7 @@ static void zep_shim_assert(int test_val, int val, enum wifi_nrf_assert_op_type 
 	case WIFI_NRF_ASSERT_GREATER_THAN:
 		NET_ASSERT(test_val > val, "%s", msg);
 	break;
-	case WIFI_NRF_ASSERT_GREATHER_THAN_EQUAL_TO:
+	case WIFI_NRF_ASSERT_GREATER_THAN_EQUAL_TO:
 		NET_ASSERT(test_val >= val, "%s", msg);
 	break;
 	default:
