@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SLM_PGPS_INJECT_FIX_DATA
+	bool "Inject the data obtained when acquiring a fix"
+	default y
+	depends on SLM_GNSS
+	depends on SLM_NRF_CLOUD
+	depends on NRF_CLOUD_PGPS
+	help
+	  If activated, when a fix is acquired the current location and time will
+	  be passed to the P-GPS subsystem.
+	  It allows to speed up the time it takes to acquire the next fix when
+	  A-GNSS is disabled or unavailable.
+	  This can be detrimental to short TTFF if the device is expected to move
+	  distances longer than a few dozen kilometers between fix attempts.
+	  In that case this option should be disabled.
