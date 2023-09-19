@@ -313,6 +313,7 @@
 #cmakedefine MBEDTLS_SSL_CACHE_C
 #cmakedefine MBEDTLS_SSL_TICKET_C
 #cmakedefine MBEDTLS_SSL_CLI_C
+#cmakedefine MBEDTLS_SSL_COOKIE_C
 #cmakedefine MBEDTLS_SSL_SRV_C
 #cmakedefine MBEDTLS_SSL_TLS_C
 #cmakedefine MBEDTLS_SSL_IN_CONTENT_LEN                         @MBEDTLS_SSL_IN_CONTENT_LEN@
