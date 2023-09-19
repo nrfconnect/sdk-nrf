@@ -211,6 +211,9 @@ struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *f
 #else
 	struct wifi_nrf_fmac_dev_ctx_rt *fmac_dev_priv = NULL;
 #endif
+#ifdef CONFIG_NRF700X_DATA_TX
+	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+#endif /* CONFIG_NRF700X_DATA_TX */
 
 	if (!fpriv || !os_dev_ctx) {
 		return NULL;
@@ -243,7 +246,6 @@ struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *f
 		goto out;
 	}
 #ifdef CONFIG_NRF700X_DATA_TX
-	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
 
 	def_priv = wifi_fmac_priv(fpriv);
 	fpriv->hpriv->cfg_params.max_ampdu_len_per_token = def_priv->max_ampdu_len_per_token;
