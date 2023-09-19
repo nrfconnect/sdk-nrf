@@ -406,11 +406,9 @@ static void at_handler_ncellmeas(const char *response)
 
 	__ASSERT_NO_MSG(response != NULL);
 
-	if (event_handler_list_is_empty() || k_sem_count_get(&ncellmeas_idle_sem) > 0) {
+	if (event_handler_list_is_empty()) {
 		/* No need to parse the response if there is no handler
-		 * to receive the parsed data or
-		 * if a measurement is not going/started by using
-		 * lte_lc_neighbor_cell_measurement().
+		 * to receive the parsed data.
 		 */
 		goto exit;
 	}
