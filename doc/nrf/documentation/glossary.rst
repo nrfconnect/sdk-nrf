@@ -205,6 +205,9 @@ Glossary
    Evolved Node B (eNB)
       Base stations connected to the network that communicate wirelessly with mobile handsets in a 4G LTE network or 5G non-standalone (NSA) mode.
 
+   Expansion Board (EB)
+      A printed circuit board assembly that you can connect to other development hardware to give it added functionalities and features.
+
    Extended Discontinuous Reception (eDRX)
       A method to conserve the battery of an Internet of Things (IoT) device by allowing it to remain inactive for extended periods.
 
