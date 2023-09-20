@@ -688,6 +688,7 @@
 .. _`Current Time Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=292957
 .. _`Running Speed and Cadence Service Specification`: https://www.bluetooth.com/specifications/specs/running-speed-and-cadence-service-1-0/
 .. _`Continuous Glucose Monitoring Service Specification`: https://www.bluetooth.org/DocMan/handlers/DownloadDoc.ashx?doc_id=531249
+.. _`Electronic Shelf Label Profile 1.0`: https://www.bluetooth.com/specifications/specs/electronic-shelf-label-profile-1-0/
 
 .. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
 
