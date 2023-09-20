@@ -174,7 +174,7 @@ struct BluetoothConnectionContext {
 	bt_addr_le_t address;
 };
 
-void BluetoothDeviceConnected(bt_gatt_dm *discoveredData, bool discoverySucceeded, void *context)
+void BluetoothDeviceConnected(bool discoverySucceeded, void *context)
 {
 	if (!context) {
 		return;
@@ -182,8 +182,7 @@ void BluetoothDeviceConnected(bt_gatt_dm *discoveredData, bool discoverySucceede
 
 	BluetoothConnectionContext *ctx = reinterpret_cast<BluetoothConnectionContext *>(context);
 
-	VerifyOrExit(discoveredData && discoverySucceeded, );
-	VerifyOrExit(ctx->provider->ParseDiscoveredData(discoveredData) == 0, );
+	VerifyOrExit(discoverySucceeded, );
 
 	/* Schedule adding device to main thread to avoid overflowing the BT stack. */
 	VerifyOrExit(chip::DeviceLayer::PlatformMgr().ScheduleWork(

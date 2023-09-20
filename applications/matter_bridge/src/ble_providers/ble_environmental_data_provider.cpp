@@ -72,19 +72,7 @@ exit:
 
 void BleEnvironmentalDataProvider::Init()
 {
-	/* Configure subscription for the temperature characteristic */
-	mGattTemperatureSubscribeParams.ccc_handle = mCccTemperatureHandle;
-	mGattTemperatureSubscribeParams.value_handle = mTemperatureCharacteristicHandle;
-	mGattTemperatureSubscribeParams.value = BT_GATT_CCC_NOTIFY;
-	mGattTemperatureSubscribeParams.notify = BleEnvironmentalDataProvider::GattTemperatureNotifyCallback;
-
-	/* Configure subscription for the humidity characteristic */
-	mGattHumiditySubscribeParams.ccc_handle = mCccHumidityHandle;
-	mGattHumiditySubscribeParams.value_handle = mHumidityCharacteristicHandle;
-	mGattHumiditySubscribeParams.value = BT_GATT_CCC_NOTIFY;
-	mGattHumiditySubscribeParams.notify = BleEnvironmentalDataProvider::GattHumidityNotifyCallback;
-
-	Subscribe();
+	/* Do nothing in this case */
 }
 
 void BleEnvironmentalDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
@@ -92,6 +80,15 @@ void BleEnvironmentalDataProvider::NotifyUpdateState(chip::ClusterId clusterId, 
 {
 	if (mUpdateAttributeCallback) {
 		mUpdateAttributeCallback(*this, clusterId, attributeId, data, dataSize);
+	}
+
+	/* Unsubscribe when the connection has been lost. */
+	if (Clusters::BridgedDeviceBasicInformation::Id == clusterId &&
+	    Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id == attributeId &&
+	    sizeof(bool) == dataSize) {
+		if (!*reinterpret_cast<bool *>(data)) {
+			Unsubscribe();
+		}
 	}
 }
 
@@ -105,6 +102,9 @@ int BleEnvironmentalDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData
 {
 	VerifyOrReturnError(CHIP_NO_ERROR == ParseTemperatureCharacteristic(discoveredData), -ENXIO);
 	VerifyOrReturnError(CHIP_NO_ERROR == ParseHumidityCharacteristic(discoveredData), -ENXIO);
+
+	/* All characteristics are correct so start the new subscription */
+	Subscribe();
 
 	return 0;
 }
@@ -150,6 +150,18 @@ void BleEnvironmentalDataProvider::Subscribe()
 {
 	VerifyOrReturn(mDevice.mConn, LOG_ERR("Invalid connection object"));
 
+	/* Configure subscription for the temperature characteristic */
+	mGattTemperatureSubscribeParams.ccc_handle = mCccTemperatureHandle;
+	mGattTemperatureSubscribeParams.value_handle = mTemperatureCharacteristicHandle;
+	mGattTemperatureSubscribeParams.value = BT_GATT_CCC_NOTIFY;
+	mGattTemperatureSubscribeParams.notify = BleEnvironmentalDataProvider::GattTemperatureNotifyCallback;
+
+	/* Configure subscription for the humidity characteristic */
+	mGattHumiditySubscribeParams.ccc_handle = mCccHumidityHandle;
+	mGattHumiditySubscribeParams.value_handle = mHumidityCharacteristicHandle;
+	mGattHumiditySubscribeParams.value = BT_GATT_CCC_NOTIFY;
+	mGattHumiditySubscribeParams.notify = BleEnvironmentalDataProvider::GattHumidityNotifyCallback;
+
 	if (CheckSubscriptionParameters(&mGattTemperatureSubscribeParams)) {
 		int err = bt_gatt_subscribe(mDevice.mConn, &mGattTemperatureSubscribeParams);
 		if (err) {
@@ -178,7 +190,10 @@ void BleEnvironmentalDataProvider::Subscribe()
 
 void BleEnvironmentalDataProvider::Unsubscribe()
 {
-	VerifyOrReturn(mDevice.mConn, LOG_ERR("Invalid connection object"));
+	StopHumidityTimer();
+
+	/* In case of losing connection, we cannot unsubscribe so we should only stop the timer. */
+	VerifyOrReturn(mDevice.mConn, LOG_INF("Invalid connection object - Unsubscribe"));
 
 	int err = bt_gatt_unsubscribe(mDevice.mConn, &mGattTemperatureSubscribeParams);
 	if (err) {
@@ -189,7 +204,6 @@ void BleEnvironmentalDataProvider::Unsubscribe()
 	if (err) {
 		LOG_INF("Cannot unsubscribe from humidity characteristic (error %d)", err);
 	}
-	StopHumidityTimer();
 }
 
 bool BleEnvironmentalDataProvider::CheckSubscriptionParameters(bt_gatt_subscribe_params *params)

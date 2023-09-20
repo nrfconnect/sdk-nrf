@@ -158,12 +158,16 @@ void BLEConnectivityManager::DiscoveryCompletedHandler(bt_gatt_dm *dm, void *con
 	discoveryResult = true;
 exit:
 	if (provider) {
+		VerifyOrReturn(provider->ParseDiscoveredData(dm) == 0,
+			       LOG_ERR("Cannot parse the GATT discovered data."));
+
 		if (!provider->IsInitiallyConnected()) {
 			/* Provider is not initalized it so we need to call the first connection callback */
 			provider->GetBLEBridgedDevice().mFirstConnectionCallback(
-				dm, discoveryResult, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+				discoveryResult, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 			provider->ConfirmInitialConnection();
 		}
+
 		VerifyOrReturn(CHIP_NO_ERROR == provider->NotifyReachableStatusChange(true),
 			       LOG_WRN("The device has not been notified about the status change."));
 	}
@@ -179,7 +183,7 @@ void BLEConnectivityManager::DiscoveryNotFound(bt_conn *conn, void *context)
 	if (provider) {
 		if (!provider->IsInitiallyConnected()) {
 			provider->GetBLEBridgedDevice().mFirstConnectionCallback(
-				nullptr, false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+				false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 		} else {
 			Instance().mRecovery.NotifyProviderToRecover(provider);
 		}
@@ -194,7 +198,7 @@ void BLEConnectivityManager::DiscoveryError(bt_conn *conn, int err, void *contex
 
 	if (!provider->IsInitiallyConnected()) {
 		provider->GetBLEBridgedDevice().mFirstConnectionCallback(
-			nullptr, false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
+			false, provider->GetBLEBridgedDevice().mFirstConnectionCallbackContext);
 	}
 }
 
