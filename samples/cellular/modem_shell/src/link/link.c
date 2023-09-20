@@ -700,7 +700,8 @@ void link_rai_read(void)
 
 	err = link_api_rai_status(&rai_status);
 	if (err == 0) {
-		mosh_print("Release Assistance Indication status is enabled=%d", rai_status);
+		mosh_print("Release Assistance Indication is %s",
+			   rai_status ? "enabled" : "disabled");
 	} else {
 		mosh_error("Reading RAI failed with error code %d", err);
 	}
@@ -713,9 +714,9 @@ int link_rai_enable(bool enable)
 	err = nrf_modem_at_printf("AT%%RAI=%d", enable);
 	if (!err) {
 		mosh_print(
-			"Release Assistance Indication functionality set to enabled=%d.\n"
+			"Release Assistance Indication functionality %s.\n"
 			"The change will be applied when going to normal mode for the next time.",
-			enable);
+			enable ? "enabled" : "disabled");
 	} else {
 		mosh_error("RAI AT command failed, error: %d", err);
 		return -EFAULT;
@@ -761,4 +762,18 @@ int link_setdnsaddr(const char *ip_address)
 	}
 
 	return 0;
+}
+
+void link_propripsm_read(void)
+{
+	int ret;
+	uint16_t state;
+
+	ret = nrf_modem_at_scanf("AT%FEACONF=1,0", "%%FEACONF: %*u,%hu", &state);
+	if (ret == 1) {
+		mosh_print("Proprietary PSM is %s",
+			   state == 1 ? "enabled" : "disabled");
+	} else {
+		mosh_error("Reading proprietary PSM failed with error code %d", ret);
+	}
 }

@@ -37,5 +37,6 @@ int link_func_mode_get(void);
 void link_rai_read(void);
 int link_rai_enable(bool enable);
 int link_setdnsaddr(const char *ip_address);
+void link_propripsm_read(void);
 
 #endif /* MOSH_LINK_H */
