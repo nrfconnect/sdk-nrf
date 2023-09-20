@@ -857,6 +857,8 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 	unsigned char *sys_head = NULL;
 #ifdef CONFIG_NRF700X_RADIO_TEST
 	struct wifi_nrf_fmac_dev_ctx_rt *def_dev_ctx;
+	struct nrf_wifi_umac_event_err_status *umac_status =
+		((struct nrf_wifi_umac_event_err_status *)sys_head);
 
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 #endif /* CONFIG_NRF700X_RADIO_TEST */
@@ -886,8 +888,6 @@ static enum wifi_nrf_status umac_process_sys_events(struct wifi_nrf_fmac_dev_ctx
 						    sys_head);
 		break;
 	case NRF_WIFI_EVENT_RADIOCMD_STATUS:
-		struct nrf_wifi_umac_event_err_status *umac_status =
-			((struct nrf_wifi_umac_event_err_status *)sys_head);
 		def_dev_ctx->radio_cmd_status = umac_status->status;
 		def_dev_ctx->radio_cmd_done = true;
 		status = WIFI_NRF_STATUS_SUCCESS;
