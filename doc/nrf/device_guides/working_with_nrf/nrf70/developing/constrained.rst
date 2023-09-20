@@ -226,8 +226,8 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``CONFIG_NRF700X_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=30``
        ``CONFIG_NET_PKT_RX_COUNT=30``
-       ``CONFIG_NET_BUF_TX_COUNT=30``
-       ``CONFIG_NET_BUF_RX_COUNT=60``
+       ``CONFIG_NET_BUF_TX_COUNT=60``
+       ``CONFIG_NET_BUF_RX_COUNT=30``
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
        ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
@@ -283,5 +283,6 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``UDP-RX: 12.7 Mbps``
 
 .. note::
-   The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002 DK (updating the configuration parameters corresponding to the selected profile in the :file:`overlay-zperf.conf` file).
-   The results represent the best throughput, averaged over three iterations, and were obtained with a good RSSI signal in a clean environment.
+   The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002 DK. The results represent the best throughput, averaged over three iterations, and were obtained with a good RSSI signal in a clean environment.
+
+   The above configuration values can be passed using standard ways such as CMake arguments to west build (`Zephyr One Time Arguments`_ or `Zephyr Permanent Arguments`_), or by adding them in an :file:`overlay` file and passing to west build as CMake argument ``EXTRA_CONF_FILE``. See `Zephyr Application Configuration`_ for more details.
