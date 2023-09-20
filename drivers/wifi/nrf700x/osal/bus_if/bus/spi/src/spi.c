@@ -305,14 +305,14 @@ static unsigned long wifi_nrf_bus_spi_dma_unmap(void *dev_ctx,
 }
 
 
-#ifdef CONFIG_wifi_nrf_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 static void wifi_nrf_bus_spi_ps_sleep(void *dev_ctx)
 {
 	struct wifi_nrf_bus_spi_dev_ctx *spi_dev_ctx = NULL;
 
 	spi_dev_ctx = (struct wifi_nrf_bus_spi_dev_ctx *)dev_ctx;
 
-	wifi_nrf_osal_bus_spi_ps_sleep(spi_dev_ctx->spi_priv->opriv,
+	wifi_nrf_osal_bus_qspi_ps_sleep(spi_dev_ctx->spi_priv->opriv,
 					spi_dev_ctx->os_spi_dev_ctx);
 }
 
@@ -323,7 +323,7 @@ static void wifi_nrf_bus_spi_ps_wake(void *dev_ctx)
 
 	spi_dev_ctx = (struct wifi_nrf_bus_spi_dev_ctx *)dev_ctx;
 
-	wifi_nrf_osal_bus_spi_ps_wake(spi_dev_ctx->spi_priv->opriv,
+	wifi_nrf_osal_bus_qspi_ps_wake(spi_dev_ctx->spi_priv->opriv,
 				       spi_dev_ctx->os_spi_dev_ctx);
 }
 
@@ -334,10 +334,10 @@ static int wifi_nrf_bus_spi_ps_status(void *dev_ctx)
 
 	spi_dev_ctx = (struct wifi_nrf_bus_spi_dev_ctx *)dev_ctx;
 
-	return wifi_nrf_osal_bus_spi_ps_status(spi_dev_ctx->spi_priv->opriv,
+	return wifi_nrf_osal_bus_qspi_ps_status(spi_dev_ctx->spi_priv->opriv,
 						spi_dev_ctx->os_spi_dev_ctx);
 }
-#endif /* CONFIG_wifi_nrf_LOW_POWER */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
 static struct wifi_nrf_bal_ops wifi_nrf_bus_spi_ops = {
@@ -353,11 +353,11 @@ static struct wifi_nrf_bal_ops wifi_nrf_bus_spi_ops = {
 	.write_block = &wifi_nrf_bus_spi_write_block,
 	.dma_map = &wifi_nrf_bus_spi_dma_map,
 	.dma_unmap = &wifi_nrf_bus_spi_dma_unmap,
-#ifdef CONFIG_wifi_nrf_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	.rpu_ps_sleep = &wifi_nrf_bus_spi_ps_sleep,
 	.rpu_ps_wake = &wifi_nrf_bus_spi_ps_wake,
 	.rpu_ps_status = &wifi_nrf_bus_spi_ps_status,
-#endif /* CONFIG_wifi_nrf_LOW_POWER */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 };
 
 
