@@ -916,6 +916,7 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  * @param phy_calib PHY calibration flags to be passed to the RPU.
  * @param op_band Operating band of the RPU.
  * @param tx_pwr_ctrl_params TX power control parameters to be passed to the RPU.
+ * @param tx_pwr_ceil_params TX power ceil parameters for both frequency bands.
  *
  * This function initializes the firmware of an RPU instance. The following is addressed
  *              - BAL layer device initialization
