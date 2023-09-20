@@ -412,6 +412,7 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Added:
 
+    * Support for controlling proprietary Power Saving Mode (PSM).
     * Support for accessing nRF Cloud services using CoAP through the :ref:`lib_nrf_cloud_coap` library.
     * Support for GSM 7bit encoded hexadecimal string in SMS messages.
     * Support for reading the currently configured eDRX parameters using the ``link edrx`` command.

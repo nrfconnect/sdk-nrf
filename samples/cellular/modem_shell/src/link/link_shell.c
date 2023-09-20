@@ -48,6 +48,7 @@ enum link_shell_command {
 	LINK_CMD_RAI,
 	LINK_CMD_DNSADDR,
 	LINK_CMD_REDMOB,
+	LINK_CMD_PROPRIPSM
 };
 
 enum link_shell_common_options {
@@ -324,6 +325,13 @@ static const char link_redmob_usage_str[] =
 	"      --default,      Enable default reduced mobility mode\n"
 	"      --nordic,       Enable Nordic proprietary reduced mobility mode\n";
 
+static const char link_propripsm_usage_str[] =
+	"Usage: link propripsm --read | --disable | --enable\n"
+	"Options:\n"
+	"  -r, --read,         Read proprietary PSM status\n"
+	"  -d, --disable,      Disable proprietary PSM\n"
+	"  -e, --enable,       Enable proprietary PSM\n";
+
 /******************************************************************************/
 
 /* Following are not having short options: */
@@ -497,6 +505,9 @@ static void link_shell_print_usage(enum link_shell_command command)
 		break;
 	case LINK_CMD_REDMOB:
 		mosh_print_no_format(link_redmob_usage_str);
+		break;
+	case LINK_CMD_PROPRIPSM:
+		mosh_print_no_format(link_propripsm_usage_str);
 		break;
 	default:
 		break;
@@ -1394,6 +1405,36 @@ static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **a
 	return 0;
 }
 
+static int link_shell_propripsm(const struct shell *shell, size_t argc, char **argv)
+{
+	int err;
+	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+
+	common_option = link_shell_getopt_common(argc, argv);
+
+	if (common_option == LINK_COMMON_READ) {
+		link_propripsm_read();
+	} else if (common_option == LINK_COMMON_ENABLE) {
+		err = lte_lc_proprietary_psm_req(true);
+		if (!err) {
+			mosh_print("Proprietary PSM enabled");
+		} else {
+			mosh_error("Cannot enable proprietary PSM: %d", err);
+		}
+	} else if (common_option == LINK_COMMON_DISABLE) {
+		err = lte_lc_proprietary_psm_req(false);
+		if (!err) {
+			mosh_print("Proprietary PSM disabled");
+		} else {
+			mosh_error("Cannot disable proprietary PSM: %d", err);
+		}
+	} else {
+		link_shell_print_usage(LINK_CMD_PROPRIPSM);
+	}
+
+	return 0;
+}
+
 static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
@@ -2085,6 +2126,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		"Enabling/disabling of automatic connecting and going to normal mode after "
 		"the bootup. Persistent between the sessions. Has impact after the bootup.",
 		link_shell_nmodeauto, 0, 10),
+	SHELL_CMD_ARG(
+		propripsm, NULL,
+		"Enable/disable proprietary Power Saving Mode (PSM).",
+		link_shell_propripsm, 0, 10),
 	SHELL_CMD_ARG(
 		psm, NULL,
 		"Enable/disable Power Saving Mode (PSM) with default or with custom parameters.",
