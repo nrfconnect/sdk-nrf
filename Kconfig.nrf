@@ -30,7 +30,7 @@ menu "Nordic nRF Connect"
 
 # Override boot banner
 config BOOT_BANNER_STRING
-	default "Booting nRF Connect SDK version"
+	default "Booting nRF Connect SDK"
 
 # Override configuration from zephyr which sets this to 0x200 if MCUboot is
 # enabled (CONFIG_BOOTLOADER_MCUBOOT), since NCS use partition_manager to
