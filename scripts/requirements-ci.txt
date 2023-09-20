@@ -11,6 +11,7 @@ python-stdnum
 pytz
 pyusb
 qrcode
+stringcase==1.2.0
 typed-ast
 toml
 wget
