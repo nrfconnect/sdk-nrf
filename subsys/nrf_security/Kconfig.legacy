@@ -264,8 +264,10 @@ config MBEDTLS_MPI_WINDOW_SIZE
 
 config MBEDTLS_MPI_MAX_SIZE
 	int
-	default 256 if CRYPTOCELL_CC310_USABLE || !CRYPTOCELL_USABLE
-	default 384 if CRYPTOCELL_CC312_USABLE
+	prompt "Maximum number of bytes for usable MPIs." if !(CC312_BACKEND || CC310_BACKEND)
+	default 256 if CC310_BACKEND
+	default 384 if CC312_BACKEND
+	range 256 2048
 
 config MBEDTLS_LEGACY_CRYPTO_C
 	bool
