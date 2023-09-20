@@ -593,7 +593,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		struct location_config config = { 0 };
 		struct location_config *real_config = &config;
 
-		if (method_count == 0 && !interval_set && !timeout_set) {
+		if (method_count == 0 && !interval_set && !timeout_set &&
+		    req_mode == LOCATION_REQ_MODE_FALLBACK) {
 			/* No methods or top level config given. Use default config. */
 			real_config = NULL;
 		}
