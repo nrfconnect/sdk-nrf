@@ -36,7 +36,7 @@ The OS agnostic code is located in the :file:`drivers/wifi/nrf700x/osal/` folder
 The driver supports two modes of operations:
 
 Wi-Fi mode
-^^^^^^^^^^
+==========
 In this mode, the driver is designed to be used with the Zephyr networking stack.
 It is implemented as a network interface driver.
 
@@ -56,7 +56,7 @@ The following features are in the driver code but not yet supported:
 Except for scan only mode, the driver uses host access point daemon (hostapd) to implement AP Media Access Control (MAC) Sublayer Management Entity (AP MLME) and wpa_supplicant to implement 802.1X supplicant.
 
 Radio Test mode
-^^^^^^^^^^^^^^^
+===============
 The nRF70 Series Wi-Fi driver supports Radio Test mode, which you can use to test the RF performance of the nRF70 Series device.
 This is a build time option that you can enable using the :kconfig:option:`CONFIG_NRF700X_RADIO_TEST` Kconfig option.
 
@@ -76,8 +76,75 @@ Configuration
 
 The nRF70 Series Wi-Fi driver has the following configuration options:
 
+Kconfig configuration
+=====================
+
 .. options-from-kconfig::
    :show-type:
+
+Devicetree Specification configuration
+======================================
+
+The maximum transmit power achieved on a nRF70 Series device-based product depends on the frequency band and operating channel.
+This varies from chip to chip as well as over different :term:`Printed Circuit Board (PCB)` designs.
+
+Multiple calibrations and checks are implemented to ensure consistency across channels and devices.
+However, these values have a dependency on PCB design, which may result in Error Vector Magnitude (EVM) and spectral mask failures.
+To avoid this problem, you can specify the power ceiling at which the EVM and spectral mask are met for a given PCB design.
+Additionally, build-time parameters are made available to drivers through the DTS overlay file.
+
+The following code snippet shows an example of the DTS overlay file:
+
+.. code-block:: devicetree
+
+	/
+	{
+		nrf70_tx_power_ceiling: nrf70_tx_power_ceiling_node {
+			status = "okay";
+			compatible = "nordic,nrf700x-tx-power-ceiling";
+			max-pwr-2g-dsss = <0x54>;
+			max-pwr-2g-mcs0 = <0x40>;
+			max-pwr-2g-mcs7 = <0x40>;
+			max-pwr-5g-low-mcs0 = <0x38>;
+			max-pwr-5g-low-mcs7 = <0x38>;
+			max-pwr-5g-mid-mcs0 = <0x38>;
+			max-pwr-5g-mid-mcs7 = <0x38>;
+			max-pwr-5g-high-mcs0 = <0x38>;
+			max-pwr-5g-high-mcs7 = <0x38>;
+		};
+
+	};
+
+
+The following table lists the parameters (8-bit unsigned values) defined in the DTS overlay board files:
+
+.. list-table:: DTS file parameters
+   :header-rows: 1
+
+   * - DTS parameter
+     - Description
+   * - max-pwr-2g-dsss
+     - Transmit power ceiling for DSSS data rate in 0.25 dBm steps.
+       This is applicable for all DSSS data rates.
+   * - max-pwr-2g-mcs0
+     - Transmit power ceiling for MCS0 data rate in 2.4 GHz band in steps of 0.25 dBm steps.
+   * - max-pwr-2g-mcs7
+     - Transmit power ceiling for MCS7 data rate in 2.4 GHz band in steps of 0.25 dBm steps.
+   * - max-pwr-5g-low-mcs0
+     - Transmit power ceiling for MCS0 in lower 5 GHz frequency band in steps of 0.25 dBm.
+       Lower 5 GHz frequency band refers to channels from 36 to 64.
+   * - max-pwr-5g-low-mcs7
+     - Transmit power ceiling for MCS7 in lower 5 GHz frequency band in steps of 0.25 dBm.
+   * - max-pwr-5g-mid-mcs0
+     - Transmit power ceiling for MCS0 in mid 5 GHz frequency band in steps of 0.25 dBm.
+       Mid 5 GHz frequency band refers to channels from 100 to 132.
+   * - max-pwr-5g-mid-mcs7
+     - Transmit power ceiling for MCS7 in mid 5 GHz frequency band in steps of 0.25 dBm.
+   * - max-pwr-5g-high-mcs0
+     - Transmit power ceiling for MCS0 in high 5 GHz frequency band in steps of 0.25 dBm.
+       High 5 GHz frequency band refers to channels from 136 to 177.
+   * - max-pwr-5g-mid-mcs7
+     - Transmit power ceiling for MCS7 in mid 5 GHz frequency band in steps of 0.25 dBm.
 
 
 API documentation

@@ -576,6 +576,7 @@ Wi-Fi drivers
 * Added:
 
   * TCP/IP checksum offload is now enabled by default for the nRF70 Series.
+  * Provision to change TX power ceilings using DTS file.
 
 Libraries
 =========
