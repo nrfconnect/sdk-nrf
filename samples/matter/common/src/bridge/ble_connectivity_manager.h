@@ -65,7 +65,7 @@ private:
 	};
 
 public:
-	using DeviceConnectedCallback = void (*)(bt_gatt_dm *discoveredData, bool discoverySucceeded, void *context);
+	using DeviceConnectedCallback = void (*)(bool discoverySucceeded, void *context);
 	using ScanDoneCallback = void (*)(ScannedDevice *devices, uint8_t count, void *context);
 
 	/**

@@ -30,6 +30,8 @@ public:
 	int ParseDiscoveredData(bt_gatt_dm *discoveredData) override;
 
 private:
+	void Subscribe();
+
 	bool mOnOff = false;
 	uint16_t mLedCharacteristicHandle;
 	bt_gatt_write_params mGattWriteParams;

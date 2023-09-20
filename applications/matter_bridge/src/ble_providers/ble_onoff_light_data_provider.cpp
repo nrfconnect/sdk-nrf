@@ -43,14 +43,7 @@ exit:
 
 void BleOnOffLightDataProvider::Init()
 {
-	/* Configure subscription for the button characteristic */
-	mGattSubscribeParams.ccc_handle = mCccHandle;
-	mGattSubscribeParams.value_handle = mButtonCharacteristicHandle;
-	mGattSubscribeParams.value = BT_GATT_CCC_NOTIFY;
-	mGattSubscribeParams.notify = BleOnOffLightDataProvider::GattNotifyCallback;
-
-	/* TODO: Start GATT subscription to Button characteristic once the Matter Switch device type support will be in
-	 * place. */
+	/* Do nothing in this case */
 }
 
 void BleOnOffLightDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
@@ -58,6 +51,17 @@ void BleOnOffLightDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chi
 {
 	if (mUpdateAttributeCallback) {
 		mUpdateAttributeCallback(*this, clusterId, attributeId, data, dataSize);
+	}
+
+	/* Set the previous LED state on the ble device after retrieving the connection. */
+	if (Clusters::BridgedDeviceBasicInformation::Id == clusterId &&
+	    Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id == attributeId &&
+	    sizeof(bool) == dataSize) {
+		/* Set the LED state only if the reachable status is true */
+		if (*reinterpret_cast<bool *>(data)) {
+			UpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id,
+				    reinterpret_cast<uint8_t *>(&mOnOff));
+		}
 	}
 }
 
@@ -128,6 +132,18 @@ bt_uuid *BleOnOffLightDataProvider::GetServiceUuid()
 	return sServiceUuid;
 }
 
+void BleOnOffLightDataProvider::Subscribe()
+{
+	/* Configure subscription for the button characteristic */
+	mGattSubscribeParams.ccc_handle = mCccHandle;
+	mGattSubscribeParams.value_handle = mButtonCharacteristicHandle;
+	mGattSubscribeParams.value = BT_GATT_CCC_NOTIFY;
+	mGattSubscribeParams.notify = BleOnOffLightDataProvider::GattNotifyCallback;
+
+	/* TODO: Start GATT subscription to Button characteristic once the Matter Switch device type support will be in
+	 * place. */
+}
+
 int BleOnOffLightDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
 {
 	const bt_gatt_dm_attr *gatt_chrc;
@@ -165,6 +181,9 @@ int BleOnOffLightDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
 		return -EINVAL;
 	}
 	mCccHandle = gatt_desc->handle;
+
+	/* All characteristics are correct so start the new subscription */
+	Subscribe();
 
 	return 0;
 }
