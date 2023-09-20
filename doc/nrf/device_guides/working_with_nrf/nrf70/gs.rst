@@ -15,7 +15,7 @@ Supported development boards
 nRF7002 DK
 ==========
 
-The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the nRF7002, a Wi-Fi® companion IC to Nordic Semiconductor's nRF5340 System-on-Chip (SoC) host processor.
+The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the nRF7002, a Wi-Fi® companion :term:`Integrated Circuit (IC)` to Nordic Semiconductor's nRF5340 System-on-Chip (SoC) host processor.
 
 Overview
 --------
@@ -265,7 +265,7 @@ nRF7002 EK
 ==========
 
 The nRF7002 :term:`Evaluation Kit (EK)` is a versatile evaluation kit in the form of an Arduino shield.
-The kit can be used to provide Wi-Fi connectivity and Wi-Fi-based locationing to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion :term:`Integrated Circuit (IC)`.
+The kit can be used to provide Wi-Fi connectivity and Wi-Fi-based locationing to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
 
 The nRF7002 EK features the nRF7002 companion IC.
 In addition, the shield may be used to emulate the nRF7001 and nRF7000 companion IC variants.
@@ -283,11 +283,8 @@ This interface is used to connect the nRF7002 companion device to a host :term:`
 
    nRF7002 EK
 
-Pin assignment
---------------
-
-Arduino interface connector
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pin assignment for Arduino interface connector
+----------------------------------------------
 
 The Arduino interface of the nRF7002 EK is compatible with the Nordic nRF52840 DK, nRF5340 DK, and nRF9160 DK.
 The interface connectors are described in the following table:
@@ -355,7 +352,7 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file, spec
    set(SHIELD nrf7002ek_nrf7000)
 
 To build with the |nRFVSC|, specify ``-DSHIELD=nrf7002ek`` in the **Extra Cmake arguments** field.
-See :ref:`cmake_options`.
+See :ref:`cmake_options` for instructions on how to provide CMake options.
 
 To build for the nRF7002 EK and the nRF7002 IC with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002ek``.
 For example, you can use the following command when building on the command line:
@@ -366,8 +363,150 @@ For example, you can use the following command when building on the command line
 
 To build for the nRF7002 EK and the nRF7001 or nRF7000 ICs, you can use the corresponding shield name in the above command.
 
+nRF7002 EB
+==========
+
+The nRF7002 :term:`Expansion Board (EB)` can be used to provide Wi-Fi connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
+
+The nRF7002 EB has a :term:`Printed Circuit Board (PCB)` edge connector that can be used with a compatible development board such as the Nordic Thingy:53, an IoT prototyping platform from Nordic Semiconductor.
+There are also castellated holes on the side of the board that allow the EB to be used as a breakout board that can be soldered to other PCB assemblies.
+
+Overview
+--------
+
+The nRF7002 EB (PCA63561) features a PCB edge connector and castellated holes to provide Wi-Fi connectivity through the nRF7002 companion IC.
+
+The PCB edge connector is used to provide Wi-Fi connectivity to a development board with a compatible connector such as the Nordic Thingy:53, where it connects nRF7002 to nRF5340, which acts as a host.
+The EB can also be used to provide Wi-Fi capabilities to develop Wi-Fi applications with another System on Chip (SoC), MPU, or MCU host by using the castellated edge holes on the sides of the board.
+
+.. figure:: images/nRF7002eb.png
+   :alt: nRF7002 EB
+
+   nRF7002 EB
+
+Pin assignment for PCB edge connector
+-------------------------------------
+
+The pinout of the PCB edge connector is shown in the following table.
+
++------------------+-----------------------+-------------------------------------------+
+| Pin number       | Signal                | Function                                  |
++==================+=======================+===========================================+
+| 1                | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 2                | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 3                | VIO                   | IO Supply voltage                         |
++------------------+-----------------------+-------------------------------------------+
+| 4                | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 5                | GRT                   | Coexistence Interface Grant signal        |
++------------------+-----------------------+-------------------------------------------+
+| 6                | REQ                   | Coexistence Interface Request signal      |
++------------------+-----------------------+-------------------------------------------+
+| 7                | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 8                | CLK                   | SPI Clock signal                          |
++------------------+-----------------------+-------------------------------------------+
+| 9                | EN                    | Power Enable signal                       |
++------------------+-----------------------+-------------------------------------------+
+| 10               | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 11               | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 12               | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 13               | N.C.                  | Not used                                  |
++------------------+-----------------------+-------------------------------------------+
+| 14               | VBAT                  | Supply voltage                            |
++------------------+-----------------------+-------------------------------------------+
+| 15               | ST0                   | Coexistence Interface Status signal       |
++------------------+-----------------------+-------------------------------------------+
+| 16               | D0                    | SPI MOSI signal                           |
++------------------+-----------------------+-------------------------------------------+
+| 17               | D1                    | SPI MISO signal                           |
++------------------+-----------------------+-------------------------------------------+
+| 18               | CS                    | SPI Chip Select signal                    |
++------------------+-----------------------+-------------------------------------------+
+| 19               | IRQ                   | Host Interrupt signal                     |
++------------------+-----------------------+-------------------------------------------+
+| 20               | GND                   | Ground                                    |
++------------------+-----------------------+-------------------------------------------+
+
+Castellated edge holes
+--------------------------
+
+Castellated edge holes on the sides of the board connects the nRF7002 EB to the nRF7002 companion IC.
+The following figure and table show the pinout for the nRF7002 EB.
+
+.. figure:: images/nRF7002eb_Castellated_edge.png
+   :alt: Castellated edge hole numbering
+
+   Castellated edge hole numbering
+
++------------------+-----------------------+-------------------------------------------+
+| Pin number       | Signal                | Function                                  |
++==================+=======================+===========================================+
+| 1                | CLK                   | QSPI Clock/SPI Clock                      |
++------------------+-----------------------+-------------------------------------------+
+| 2                | SS                    | QSPI Slave select/SPI Slave select        |
++------------------+-----------------------+-------------------------------------------+
+| 3                | D0                    | QSPI DATA0/SPI_MOSI                       |
++------------------+-----------------------+-------------------------------------------+
+| 4                | D1                    | QSPI DATA1/ SPI_MISO                      |
++------------------+-----------------------+-------------------------------------------+
+| 5                | D2                    | QSPI DATA2                                |
++------------------+-----------------------+-------------------------------------------+
+| 6                | D3                    | QSPI DATA3                                |
++------------------+-----------------------+-------------------------------------------+
+| 7                | CTO                   | SW_CTRL0 (not supported on the nRF7002 EB)|
++------------------+-----------------------+-------------------------------------------+
+| 8                | ST1                   | SW_CTRL1                                  |
++------------------+-----------------------+-------------------------------------------+
+| 9                | GND                   | Ground                                    |
++------------------+-----------------------+-------------------------------------------+
+| 10               | VBAT                  | Supply voltage                            |
++------------------+-----------------------+-------------------------------------------+
+| 11               | GND                   | Ground                                    |
++------------------+-----------------------+-------------------------------------------+
+| 12               | VIO                   | IO Supply voltage                         |
++------------------+-----------------------+-------------------------------------------+
+| 13               | STO                   | Coexistence Interface Status signal       |
++------------------+-----------------------+-------------------------------------------+
+| 14               | EN                    | Power Enable signal                       |
++------------------+-----------------------+-------------------------------------------+
+| 15               | REQ                   | Coexistence Interface Request signal      |
++------------------+-----------------------+-------------------------------------------+
+| 16               | GRT                   | Coexistence Interface Grant signal        |
++------------------+-----------------------+-------------------------------------------+
+| 17               | IRQ                   | Host Interrupt signal                     |
++------------------+-----------------------+-------------------------------------------+
+| 18               | GND                   | Ground                                    |
++------------------+-----------------------+-------------------------------------------+
+
+Building
+--------
+
+To build for the nRF7002 EB with Thingy:53, use the ``thingy53_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002eb``.
+For example, you can use the following command when building on the command line:
+
+.. code-block:: console
+
+   west build -b thingy53_nrf5340_cpuapp -- -DSHIELD=nrf7002eb
+
+To build for a custom target, set ``-DSHIELD=nrf7002eb`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
+
+Alternatively, add the shield in the project's :file:`CMakeLists.txt` file by using the following command:
+
+.. code-block:: console
+
+   set(SHIELD nrf7002eb)
+
+To build with the |nRFVSC|, specify ``-DSHIELD=nrf7002eb`` in the **Extra Cmake arguments** field.
+See :ref:`cmake_options` for instructions on how to provide CMake options.
+
 References
-----------
+==========
 
 * `nRF70 Series product page`_
 * `nRF70 Series hardware documentation`_
