@@ -337,7 +337,7 @@ struct lte_lc_edrx_cfg {
 	/**
 	 * LTE mode for which the configuration is valid.
 	 *
-	 * If the mode is @ref LTE_LC_LTE_MODE_NONE, eDRX is not used by the current cell.
+	 * If the mode is @ref LTE_LC_LTE_MODE_NONE, access technology is not using eDRX.
 	 */
 	enum lte_lc_lte_mode mode;
 
@@ -1449,6 +1449,18 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
  * @retval -EFAULT if AT command failed.
  */
 int lte_lc_edrx_req(bool enable);
+
+/**
+ * Get the eDRX parameters currently provided by the network.
+ *
+ * @param[out] edrx_cfg eDRX configuration.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EBADMSG if parsing of the AT command response failed.
+ */
+int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg);
 
 /**
  * Set the RAI value to be used.
