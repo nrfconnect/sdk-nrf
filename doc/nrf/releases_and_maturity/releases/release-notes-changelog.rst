@@ -665,12 +665,16 @@ Modem libraries
 
 * :ref:`lte_lc_readme` library:
 
+  * Added the function :c:func:`lte_lc_edrx_get` for reading eDRX parameters currently provided by the network.
+
   * Updated:
 
     * The functions :c:func:`lte_lc_rai_req` and :c:func:`lte_lc_rai_param_set` and the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ_VALUE` are now deprecated.
       The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI_*`` socket options instead.
     * The CE level enum names for :c:enum:`lte_lc_ce_level` to not include the number of repetitions.
     * The default network mode from :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M` to :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_GPS`.
+
+  * Fixed a memory leak in +CEDRXS AT notification parser.
 
   * Removed:
 

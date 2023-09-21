@@ -1078,6 +1078,30 @@ int lte_lc_edrx_req(bool enable)
 	return 0;
 }
 
+int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg)
+{
+	int err;
+	char response[48];
+
+	if (edrx_cfg == NULL) {
+		return -EINVAL;
+	}
+
+	err = nrf_modem_at_cmd(response, sizeof(response), "AT+CEDRXRDP");
+	if (err) {
+		LOG_ERR("Failed to request eDRX parameters, error: %d", err);
+		return -EFAULT;
+	}
+
+	err = parse_edrx(response, edrx_cfg);
+	if (err) {
+		LOG_ERR("Failed to parse eDRX parameters, error: %d", err);
+		return -EBADMSG;
+	}
+
+	return 0;
+}
+
 int lte_lc_rai_req(bool enable)
 {
 	int err;
