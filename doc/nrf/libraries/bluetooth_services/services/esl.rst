@@ -180,9 +180,9 @@ You can also use the following Kconfig options for debugging purposes:
 
 * :kconfig:option:`CONFIG_BT_ESL_FORGET_PROVISION_DATA` enables removal of provisioning data after the tag device is disconnected.
 
-:kconfig:option:`CONFIG_BT_ESL_UNSYNCHRONIZED_TIMEOUT` enables overriding the mandatory 60 minutes unsynchronized timeout value defined by Bluetooth SIG.
+* :kconfig:option:`CONFIG_BT_ESL_UNSYNCHRONIZED_TIMEOUT` enables overriding the mandatory 60 minutes unsynchronized timeout value defined by Bluetooth SIG.
 
-:kconfig:option:`CONFIG_BT_ESL_UNASSOCIATED_TIMEOUT` enables overriding the mandatory 60 minutes unassociated timeout value defined by Bluetooth SIG.
+* :kconfig:option:`CONFIG_BT_ESL_UNASSOCIATED_TIMEOUT` enables overriding the mandatory 60 minutes unassociated timeout value defined by Bluetooth SIG.
 
 .. _esls_usage:
 
@@ -225,7 +225,7 @@ You need to implement the following callbacks for the LEDs:
 
   To implement this callback, you need to write a function that calls it.
 
-* The :c:func:`led_control` callback is used to change the LED state, for example on/off, brightness, or color (if SRGB LED used).
+* The :c:func:`led_control` callback is used to change the LED state, for example on/off, brightness, or color (if an SRGB LED is used).
 
   This function is called when the ESL tag device decides to change the LED flashing pattern.
   The function takes the following three arguments:
@@ -283,7 +283,7 @@ If you want to use a font library to print text on the display, you need to impl
   To implement this callback, you need to write a function that takes the index of the display device, the text to print, and the position to print the text.
   This callback should only change framebuffer and not update the display.
 
-* The :c:func:`display_update_font` callback is used to finalize the CFB (TODO: what is this? change/clear framebuffer?) or font library and check if the Electronic Paper Display (EPD) needs to be re-initialized.
+* The :c:func:`display_update_font` callback is used to finalize the Character Framebuffer (CFB) or font library and check if the Electronic Paper Display (EPD) needs to be re-initialized.
 
   This function updates the display by flushing any pending updates to the display buffer and checks if the EPD needs to be re-initialized.
   To implement this callback, you need to write a function that takes the index of the display device and write font framebuffer to display.
@@ -308,7 +308,7 @@ You need to implement the following callbacks if the tag device has a sensor:
 
   To implement this callback, you need to write a function that takes the index of the sensor and stores the sensor data to the :c:struct:`sensor_data` structure.
   If the sensor reading is successful, value ``0`` is returned.
-  If the sensor reading is not fast enough or fails, value `-EBUSY` is returned.
+  If the sensor reading is not fast enough or fails, value ``-EBUSY`` is returned.
   The ESL Service will generate a response based on the return value of this function.
 
 .. _esls_cb_image_storage:

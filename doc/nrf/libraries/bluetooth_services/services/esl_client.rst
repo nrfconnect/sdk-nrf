@@ -30,7 +30,7 @@ The AP shall support the PAwR feature specified in section 5.4 of the `Bluetooth
 The length of the Periodic Advertising Interval and Periodic Advertising Subevent Interval, as well as the number of subevents are left to the implementation.
 After the AP has been configured for a given installation, the timing information shall remain constant.
 ESLS client configures the timing compile time using Kconfig options.
-The AP should select values for subeventInterval, responseSlotDelay, and responseSlotSpacing, which result in sufficient response slots to service the maximum demand.
+The AP should select values for ``subeventInterval``, ``responseSlotDelay``, and ``responseSlotSpacing``, which result in sufficient response slots to serve the maximum demand.
 The maximum possible demand for response slots occurs when each command present in the ESL payload requires a response from a different ESL, and the number of commands contained in the ESL payload is the highest possible.
 
 Use the following Kconfig options to set the timing intervals and response slots:
@@ -43,24 +43,24 @@ Use the following Kconfig options to set the timing intervals and response slots
 
 * :kconfig:option:`CONFIG_ESL_RESPONSE_SLOT_DELAY` sets the time between the AP advertising ESL payload packet in a subevent and the first response slot.
 * :kconfig:option:`CONFIG_ESL_RESPONSE_SLOT_SPACING` sets the time between each response slot.
-* :kconfig:option:`CONFIG_ESL_NUM_RESPONSE_SLOTS` sets number of response slots.
+* :kconfig:option:`CONFIG_ESL_NUM_RESPONSE_SLOTS` sets the number of response slots.
 
-An ESL payload typically includes multiple commands as described in section 5.3.1.3. of the`Electronic Shelf Label Profile 1.0`_ specification.
+An ESL payload typically includes multiple commands as described in section 5.3.1.3. of the `Electronic Shelf Label Profile 1.0`_ specification.
 It specifies the number of response slots available for the access point to receive responses from the Electronic Shelf Labels during each subevent.
 The more response slots, the more ESLs can be controlled in a single subevent.
 However, more response slots also means longer subevent interval and more memory is required.
-The AP should select values for subeventInterval, responseSlotDelay, and responseSlotSpacing that result in sufficient response slots to service the maximum demand.
+The AP should select values for ``subeventInterval``, ``responseSlotDelay``, and ``responseSlotSpacing`` that result in sufficient response slots to serve the maximum demand.
 The maximum possible demand for response slots occurs when each command present in the ESL payload requires a response from a different ESL, and the number of commands contained in the ESL payload is the highest possible.
 
-Use the following Kconfig options to set the (TODO: what is the common denominator for these Kconfig options?):
+Use the following Kconfig options to set the auto onboarding features:
 
 * :kconfig:option:`CONFIG_ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER` sets the maximum number of response slots that can be buffered in ESLS client.
 
   This value should be equal to or less than the number of response slots.
 
 * :kconfig:option:`CONFIG_ESL_CLIENT_MAX_GROUP` sets the maximum number of ESL groups that can be controlled.
-* :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_ESL_ID` sets the default ESL ID to start with when :ref:`central_esl_auto_onboarding_and_auto_past` is enabled.
-* :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_GROUP_ID` sets the default group ID to start with when :ref:`central_esl_auto_onboarding_and_auto_past` is enabled.
+* :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_ESL_ID` sets the default ESL ID to start with.
+* :kconfig:option:`CONFIG_ESL_CLIENT_DEFAULT_GROUP_ID` sets the default group ID to start with.
 
 .. _esls_client_other_config:
 
@@ -98,10 +98,10 @@ Usage
 
 To use ESL client in your application, complete the following steps:
 
-   * Configure the APs.
-   * Declare the :c:struct:`bt_esl_client_init_param` structure.
-   * Implement the storage callback functions required.
-   * Call the :c:func:`bt_esl_client_init` function.
+1. Configure the APs.
+#. Declare he :c:struct:`bt_esl_client_init_param` structure.
+#. Implement the storage callback functions required.
+#. Call the :c:func:`bt_esl_client_init` function.
 
 Application integration
 ***********************
