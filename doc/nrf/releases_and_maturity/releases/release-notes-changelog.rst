@@ -1085,6 +1085,7 @@ Documentation
   * A page on :ref:`ug_nrf70_developing_scan_operation` in the :ref:`ug_nrf70_developing` user guide.
   * The :ref:`ug_bt_qualification` page in :ref:`protocols`.
   * A section on Wi-Fi in the :ref:`app_memory` page.
+  * Own page for :ref:`bt_mesh_samples`.
 
 * Updated:
 

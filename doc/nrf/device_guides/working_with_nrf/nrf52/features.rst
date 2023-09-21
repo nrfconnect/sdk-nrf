@@ -84,7 +84,7 @@ See :ref:`ug_bootloader` for more information and instructions on how to enable 
 Supported protocols
 *******************
 
-The nRF52 Series multiprotocol radio supports Bluetooth Low Energy (LE), proprietary protocols (including Enhanced ShockBurst and Gazell), ANT, Thread, Zigbee, and 802.15.4.
+The nRF52 Series multiprotocol radio supports Bluetooth Low Energy (LE) including Bluetooth mesh, proprietary protocols (including Enhanced ShockBurst and Gazell), ANT, Thread, Zigbee, and 802.15.4.
 Standard interface protocols like NFC and USB are supported on a range of the devices in the series and with supporting software.
 
 .. note::
@@ -119,7 +119,7 @@ It is optimized for creating large-scale device networks, and implemented accord
 
 Bluetooth mesh networking allows one-to-one, one-to-many, and many-to-many communication, using the Bluetooth LE protocol to exchange messages between the mesh nodes in the network.
 
-The |NCS| contains a variety of :ref:`Bluetooth mesh samples <ble_samples>` that target nRF52 Series devices.
+The |NCS| contains a variety of :ref:`bt_mesh_samples` that target nRF52 Series devices.
 In addition, you can run the :ref:`Bluetooth mesh samples <zephyr:bluetooth-samples>` that are included from Zephyr.
 
 For available libraries, see :ref:`bt_mesh` (|NCS|) and :ref:`zephyr:bluetooth_mesh` (Zephyr).

@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_silvair_enocean:
 
-Bluetooth: Mesh Silvair EnOcean
+Bluetooth mesh: Silvair EnOcean
 ###############################
 
 .. contents::

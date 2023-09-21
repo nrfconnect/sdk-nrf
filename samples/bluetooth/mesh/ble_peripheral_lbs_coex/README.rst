@@ -1,18 +1,18 @@
 .. _bluetooth_ble_peripheral_lbs_coex:
 
-Bluetooth: Mesh and peripheral coexistence
-##########################################
+Bluetooth mesh: Coexistence with other LE services
+##################################################
 
 .. contents::
    :local:
    :depth: 2
 
-This sample demonstrates how to combine Bluetooth® mesh and Bluetooth Low Energy features in a single application.
+This sample demonstrates how to combine Bluetooth® mesh and another Bluetooth Low Energy (LE) service in a single application.
 
 Requirements
 ************
 
-The mesh and peripheral coexistence sample supports the following development kits:
+This sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -24,7 +24,7 @@ The sample also requires a smartphone with `nRF Connect for Mobile`_ and one of 
 Overview
 ********
 
-The purpose of this sample is to showcase an application where a peripheral can operate independently of Bluetooth mesh.
+The purpose of this sample is to showcase an application where another Bluetooth LE service can operate independently of Bluetooth mesh.
 It combines the features of the :ref:`peripheral_lbs` sample and the :ref:`bluetooth_mesh_light` sample into a single application.
 
 The :ref:`lbs_readme` controls the state of a LED and monitors the state of a button on the device.
