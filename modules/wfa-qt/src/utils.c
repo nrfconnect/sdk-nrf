@@ -702,6 +702,24 @@ int send_broadcast_arp(char *target_ip, int *send_count, int rate)
 	return 0;
 }
 
+void set_netmask(char *ifname)
+{
+	const struct device *dev = device_get_binding(ifname);
+	struct net_if *iface = net_if_lookup_by_dev(dev);
+	struct in_addr addr;
+
+	if (sizeof(CONFIG_NET_CONFIG_MY_IPV4_NETMASK) > 1) {
+		/* If not empty */
+		if (net_addr_pton(AF_INET,
+		    CONFIG_NET_CONFIG_MY_IPV4_NETMASK, &addr)) {
+			indigo_logger(LOG_LEVEL_ERROR, "Invalid netmask: %s",
+				      CONFIG_NET_CONFIG_MY_IPV4_NETMASK);
+		} else {
+			net_if_ipv4_set_netmask(iface, &addr);
+		}
+	}
+}
+
 int find_interface_ip(char *ipaddr, int ipaddr_len, char *name)
 {
 	return 0;
