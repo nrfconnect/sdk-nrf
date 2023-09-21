@@ -16,6 +16,7 @@ import json
 import subprocess
 import re
 import glob
+import getpass
 from colorama import Fore, Style
 from prettytable import PrettyTable
 from nrf5340_audio_dk_devices import (
@@ -44,6 +45,8 @@ TARGET_DEV_GATEWAY_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_gateway"
 
 TARGET_RELEASE_FOLDER = "build_release"
 TARGET_DEBUG_FOLDER = "build_debug"
+
+MAX_USER_NAME_LEN = 248 - len('\0')
 
 
 def __print_add_color(status):
@@ -108,6 +111,20 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
 
         if options.nrf21540:
             device_flag += " -DSHIELD=nrf21540ek_fwd"
+
+        if options.custom_bt_name is not None and options.user_bt_name:
+            raise Exception(
+                "User BT name option is invalid when custom BT name is set")
+
+        if options.custom_bt_name is not None:
+            custom_bt_name = "_".join(options.custom_bt_name)[
+                :MAX_USER_NAME_LEN].upper()
+            device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + custom_bt_name + "\\\""
+
+        if options.user_bt_name:
+            user_specific_bt_name = (
+                "AUDIO_DEV_" + getpass.getuser())[:MAX_USER_NAME_LEN].upper()
+            device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + user_specific_bt_name + "\\\""
 
         if os.name == 'nt':
             release_flag = release_flag.replace('\\', '/')
@@ -292,14 +309,30 @@ def __main():
         choices=["external", "internal"],
         default='',
         help="MCUBOOT with external, internal flash",
-        )
+    )
     parser.add_argument(
         "--nrf21540",
         action="store_true",
         dest="nrf21540",
         default=False,
         help="Set when using nRF21540 for extra TX power",
-        )
+    )
+    parser.add_argument(
+        "-cn",
+        "--custom_bt_name",
+        nargs='*',
+        dest="custom_bt_name",
+        default=None,
+        help="Use custom Bluetooth device name.",
+    )
+    parser.add_argument(
+        "-u",
+        "--user_bt_name",
+        action="store_true",
+        dest="user_bt_name",
+        default=False,
+        help="Set to generate a user specific Bluetooth device name. Note that this will put the computer user name on air in clear text.",
+    )
     options = parser.parse_args(args=sys.argv[1:])
 
     # Post processing for Enums
@@ -352,7 +385,8 @@ def __main():
     # Reboot step start
 
     if options.only_reboot == SelectFlags.TBD:
-        program_threads_run(device_list, options.mcuboot, sequential=options.sequential_prog)
+        program_threads_run(device_list, options.mcuboot,
+                            sequential=options.sequential_prog)
         __finish(device_list)
 
     # Reboot step finished
@@ -393,7 +427,8 @@ def __main():
         for dev in device_list:
             if dev.snr_connected:
                 __populate_hex_paths(dev, options)
-        program_threads_run(device_list, options.mcuboot, sequential=options.sequential_prog)
+        program_threads_run(device_list, options.mcuboot,
+                            sequential=options.sequential_prog)
 
     # Program step finished
 
