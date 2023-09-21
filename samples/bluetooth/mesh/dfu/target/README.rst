@@ -1,6 +1,6 @@
 .. _ble_mesh_dfu_target:
 
-Bluetooth: Mesh Device Firmware Update (DFU) target
+Bluetooth mesh: Device Firmware Update (DFU) target
 ###################################################
 
 .. contents::

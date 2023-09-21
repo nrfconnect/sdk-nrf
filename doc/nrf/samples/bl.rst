@@ -9,6 +9,3 @@ Bluetooth samples
    :glob:
 
    ../../../samples/bluetooth/*/README
-   ../../../samples/bluetooth/mesh/*/README
-   ../../../samples/bluetooth/mesh/dfu/distributor/README
-   ../../../samples/bluetooth/mesh/dfu/target/README

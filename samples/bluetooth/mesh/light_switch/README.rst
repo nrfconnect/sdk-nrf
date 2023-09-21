@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_light_switch:
 
-Bluetooth: Mesh light switch
+Bluetooth mesh: Light switch
 ############################
 
 .. contents::

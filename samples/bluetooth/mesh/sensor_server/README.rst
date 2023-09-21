@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_sensor_server:
 
-Bluetooth: Mesh sensor
+Bluetooth mesh: Sensor
 ######################
 
 .. contents::

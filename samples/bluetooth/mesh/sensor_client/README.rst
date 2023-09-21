@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_sensor_client:
 
-Bluetooth: Mesh sensor observer
+Bluetooth mesh: Sensor observer
 ###############################
 
 .. contents::

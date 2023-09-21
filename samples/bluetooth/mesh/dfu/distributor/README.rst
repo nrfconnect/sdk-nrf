@@ -1,6 +1,6 @@
 .. _ble_mesh_dfu_distributor:
 
-Bluetooth: Mesh Device Firmware Update (DFU) distributor
+Bluetooth mesh: Device Firmware Update (DFU) distributor
 ########################################################
 
 .. contents::

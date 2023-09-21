@@ -205,7 +205,7 @@ Bluetooth mesh
 --------------
 
 Bluetooth mesh operates on Bluetooth Low Energy (LE), and is implemented according to Bluetooth Mesh Profile Specification v1.0.1 and Bluetooth Mesh Model Specification v1.0.1.
-For the application core, the |NCS| provides several Bluetooth mesh samples along with the :ref:`Bluetooth Low Energy samples <ble_samples>`.
+For the application core, the |NCS| provides several :ref:`bt_mesh_samples`.
 In addition, you can find Bluetooth mesh samples with :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
 
 IEEE 802.15.4 (Thread and Zigbee)

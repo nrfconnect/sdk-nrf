@@ -14,7 +14,7 @@ The messages are encrypted with two layers of 128-bit AES-CCM encryption, allowi
 The end-user applications are implemented as a set of mesh models.
 The Bluetooth SIG defines some generic and reusable models in the `Bluetooth mesh model specification`_, but vendors are free to define their own models.
 
-See :ref:`samples` for the list of available Bluetooth mesh samples.
+The |NCS| provides a number of :ref:`bt_mesh_samples` that demonstrate the Bluetooth mesh features and behavior.
 
 The Bluetooth mesh samples use the `nRF Mesh mobile app`_ to perform provisioning and configuration.
 

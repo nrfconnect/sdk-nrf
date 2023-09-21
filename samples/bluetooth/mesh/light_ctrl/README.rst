@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_light_lc:
 
-Bluetooth: Mesh light fixture
+Bluetooth mesh: Light fixture
 #############################
 
 .. contents::
