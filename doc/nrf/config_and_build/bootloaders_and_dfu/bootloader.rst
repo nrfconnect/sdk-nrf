@@ -17,6 +17,8 @@ Select the structure of the secure bootloader chain based on your firmware updat
 * If you want the bootloader to perform firmware updates for only upgrading an application, then use the :ref:`single-stage, immutable bootloader <immutable_bootloader>` solution.
 * If you want the bootloader to support firmware updates for both itself and the application, then use the :ref:`two-stage, upgradable bootloader <upgradable_bootloader>` solution.
 
+.. _ug_bootloader_chain_of_trust:
+
 Chain of trust
 **************
 
@@ -106,18 +108,38 @@ If the verification fails, the boot process stops.
 This way, the immutable bootloader can guarantee that the next image in the boot sequence will not start up if it has been tampered with in any way.
 For example, if an attacker attempts to take over the device by altering the firmware, the device will not boot, and thus not run the infected code.
 
-The immutable bootloader is locked to the flash memory and cannot be modified or deleted without erasing the entire device.
-For the |NSIB|, see :ref:`Locking the flash memory <bootloader_rot>` for more information.
+More specifically, the immutable bootloader always performs the following steps when it runs, regardless of any additional configuration:
+
+1. Locking of the flash memory.
+
+   To enable the RoT, the immutable bootloader locks the flash memory address range containing itself and its configuration using the hardware available on the given architecture.
+   (The immutable bootloader cannot be modified or deleted without erasing the entire device.)
+
+#. Selection of the next slot in the boot chain.
+
+   The next stage in the boot chain can either be an application or another bootloader.
+   Firmware images have a version number, and the bootloader will select the slot with the latest firmware.
+   For more information about creating a second-stage bootloader, see :ref:`ug_bootloader_adding_upgradable`.
+
+#. Verification of the next stage in the boot chain.
+
+   The verification provided by this bootloader is recommended and suitable for all the most common user scenarios and includes the following checks:
+
+   * Signature verification - Verifies that the key used for signing the next image in the boot sequence matches one of the provided public keys.
+
+     During this stage, the bootloader checks that the image is authentic (comes only from its original author) and integral (it was not changed by accident).
+
+   * Metadata verification - Checks that the images are compatible.
+
+   .. caution::
+      You must generate and use your own signing keys while in development and before deploying when using either MCUboot or the |NSIB| as an immutable bootloader.
+      See :ref:`ug_fw_update_development_keys` for more information.
+
+#. Booting of the next stage in the boot chain.
+
+   All peripherals that have been used are reset and the next stage is booted.
 
 Except for providing your own keys, there is no need to modify the immutable bootloader in any way before you program it.
-The verification provided by this bootloader is recommended and suitable for all the most common user scenarios and includes the following checks:
-
-* Signature verification - Verifies that the key used for signing the next image in the boot sequence matches one of the provided public keys.
-* Metadata verification - Checks that the images are compatible.
-
-.. caution::
-   You must generate and use your own signing keys while in development and before deploying when using either MCUboot or the |NSIB| as an immutable bootloader.
-   See :ref:`ug_fw_update_development_keys` for more information.
 
 The :ref:`bootloader capabilities table <app_bootloaders_support_table>` lists the bootloaders that you can use as an immutable bootloader.
 
