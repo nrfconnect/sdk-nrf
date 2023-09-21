@@ -28,7 +28,7 @@ Complete the following steps to install the required tools:
 1. If you have not done so already, install the |NCS| as described in :ref:`auto_installation` or :ref:`manual_installation`.
 #. Install or update all required :ref:`Python dependencies <additional_deps>`.
 #. Install the additional Python dependencies for building the documentation by entering the following command in a terminal window in the :file:`ncs` folder.
-   `Python virtual environment <Python virtual environments>`_ needs to be active for the command to work:
+   `Python virtual environment <Python virtual environments_>`_ needs to be active for the command to work:
 
    .. code-block:: bash
 
