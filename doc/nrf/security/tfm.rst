@@ -113,13 +113,25 @@ Logging
 *******
 
 TF-M employs two UART interfaces for logging: one for the secure part (MCUboot and TF-M), and one for the non-secure application.
-The logs arrive on different COM ports on the host PC.
+By default, the logs arrive on different COM ports on the host PC.
+See the :ref:`ug_tfm_manual_VCOM_connection` for more details.
 
+Alternatively, you can configure the TF-M to connect to the same UART as the application by using the :kconfig:option:`CONFIG_TFM_SECURE_UART0` Kconfig option.
+Setting this Kconfig option makes TF-M logs visible on the application's VCOM, without manual connection.
 
-Virtual COM ports on the nRF5340 DK
-===================================
+The UART instance used by the application is ``0`` by default, and the TF-M UART instance is ``1``.
+By using the :kconfig:option:`CONFIG_TFM_SECURE_UART0`. the TF-M UART instance becomes the same as that of the application's.
 
-On the nRF5340 DK v1.0.0, you must connect specific wires on the kit to receive secure logs on the host PC.
+.. note::
+
+  When the TF-M and application use the same UART, the TF-M will disable logging after it has booted and it will only re-enable it again to log a fatal error.
+
+.. _ug_tfm_manual_VCOM_connection:
+
+Manual connection to Virtual COM ports on the nRF5340 DK
+=========================================================
+
+By default, the nRF5340 DK v1.0.0 requires that you connect specific wires on the kit to receive secure logs on the host PC.
 Specifically, wire the pins **P0.25** and **P0.26** of the **P2** connector to **RxD** and **TxD** of the **P24** connector respectively.
 See :ref:`logging_cpunet` on the Working with nRF5340 DK page for more information.
 
