@@ -30,7 +30,7 @@ static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len, size_t
 	uint8_t label[] = "TFM_HW_UNIQ_KEY";
 
 	int err = hw_unique_key_derive_key(HUK_KEYSLOT_MEXT, NULL, 0, label, sizeof(label), buf,
-					   HUK_SIZE_BYTES);
+					   buf_len);
 
 	if (err != HW_UNIQUE_KEY_SUCCESS) {
 		SPMLOG_DBGMSGVAL("hw_unique_key_derive_key err: ", err);
