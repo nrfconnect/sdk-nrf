@@ -123,7 +123,7 @@ static int reset_device_handler(struct packet_wrapper *req, struct packet_wrappe
 {
 	int status = TLV_VALUE_STATUS_NOT_OK;
 	char *message = TLV_VALUE_RESET_NOT_OK;
-	char role[TLV_VALUE_SIZE], log_level[TLV_VALUE_SIZE], band[TLV_VALUE_SIZE];
+	char role[32], log_level[32], band[32];
 	struct tlv_hdr *tlv = NULL;
 
 	/* TLV: ROLE */
