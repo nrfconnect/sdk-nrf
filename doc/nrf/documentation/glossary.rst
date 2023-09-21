@@ -103,6 +103,7 @@ Glossary
       A sequence of properties identifying the trustworthiness of each layer in the system, all the way back to a property in the system referred to as :term:`Root of Trust (RoT)`.
       A secure system depends on building and maintaining a chain of trust through all the layers in the system.
       Each step in this chain guarantees that the next step can be trusted to have certain properties because any unauthorized modification of a subsequent step will be detected and the process halted.
+      You can read more about this concept in the :ref:`bootloader documentation <ug_bootloader_chain_of_trust>`.
 
    Clear to Send (CTS)
       In :term:`flow control <Hardware Flow Control (HWFC)>`, the receiving end is ready and telling the far end to start sending.
@@ -608,6 +609,7 @@ Glossary
 
    Root of Trust (RoT)
       The property or component in a secure system that provides the foundation of a :term:`Chain of Trust`.
+      You can read more about this concept in the :ref:`bootloader documentation <ug_bootloader_chain_of_trust>`.
 
    Sample
       An implementation example that showcases a single feature or library.
