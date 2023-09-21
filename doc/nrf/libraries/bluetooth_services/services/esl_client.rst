@@ -52,7 +52,7 @@ However, more response slots also means longer subevent interval and more memory
 The AP should select values for ``subeventInterval``, ``responseSlotDelay``, and ``responseSlotSpacing`` that result in sufficient response slots to serve the maximum demand.
 The maximum possible demand for response slots occurs when each command present in the ESL payload requires a response from a different ESL, and the number of commands contained in the ESL payload is the highest possible.
 
-Use the following Kconfig options to set the auto onboarding features:
+Use the following Kconfig options to set the :ref:`central_esl_auto_onboarding_and_auto_past` features:
 
 * :kconfig:option:`CONFIG_ESL_CLIENT_MAX_RESPONSE_SLOT_BUFFER` sets the maximum number of response slots that can be buffered in ESLS client.
 
