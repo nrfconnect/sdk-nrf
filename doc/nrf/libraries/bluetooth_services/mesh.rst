@@ -13,7 +13,7 @@ See the :ref:`Bluetooth mesh user guide <ug_bt_mesh>` for an overview of the tec
 
 The end-user applications (such as Luminaire control) are defined with the help of client-server Bluetooth mesh models defined in the `Bluetooth mesh model specification`_.
 Bluetooth mesh libraries contain modules, including the Bluetooth mesh models, provided by Nordic Semiconductor to aid in the development of Bluetooth mesh-based applications.
-They implement default behavior of a Bluetooth mesh device, and are used in :ref:`Bluetooth mesh samples <ble_samples>`.
+They implement default behavior of a Bluetooth mesh device, and are used in :ref:`bt_mesh_samples`.
 
 For information on how to use the supplied libraries for Bluetooth mesh, see :ref:`ug_bt_mesh_configuring`.
 

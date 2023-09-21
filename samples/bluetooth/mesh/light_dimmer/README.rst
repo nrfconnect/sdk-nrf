@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_light_dim:
 
-Bluetooth: Mesh light dimmer and scene selector
+Bluetooth mesh: Light dimmer and scene selector
 ###############################################
 
 .. contents::

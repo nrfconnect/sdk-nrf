@@ -26,6 +26,7 @@ General information about samples in the |NCS|
 
    samples/amazon_sidewalk
    samples/bl
+   samples/mesh
    samples/cellular
    samples/crypto
    samples/debug
