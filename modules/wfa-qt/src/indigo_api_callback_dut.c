@@ -28,6 +28,8 @@ extern struct sockaddr_in *tool_addr;
 int sta_configured;
 int sta_started;
 
+void set_netmask(char *ifname);
+
 void register_apis(void)
 {
 	/* Basic */
@@ -1229,8 +1231,8 @@ static int assign_static_ip_handler(struct packet_wrapper *req, struct packet_wr
 	reset_interface_ip(ifname);
 	/* Bring up interface */
 	control_interface(ifname, "up");
-	/* Set IP address with network mask */
-	strcat(buffer, "/24");
+	/* Set network mask */
+	set_netmask(ifname);
 	len = set_interface_ip(ifname, buffer);
 	if (len) {
 		message = TLV_VALUE_ASSIGN_STATIC_IP_NOT_OK;
