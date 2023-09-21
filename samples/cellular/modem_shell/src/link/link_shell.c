@@ -168,8 +168,9 @@ static const char link_normal_mode_auto_usage_str[] =
 	"  -d, --disable,         Disable autoconnect\n";
 
 static const char link_edrx_usage_str[] =
-	"Usage: link edrx --enable --ltem|--nbiot [options] | --disable\n"
+	"Usage: link edrx --enable --ltem|--nbiot [options] | --disable | --read\n"
 	"Options:\n"
+	"  -r, --read,             Read eDRX parameters currently provided by the network\n"
 	"  -d, --disable,          Disable eDRX\n"
 	"  -e, --enable,           Enable eDRX\n"
 	"  -m, --ltem,             Set for LTE-M (LTE Cat-M1) system mode\n"
@@ -1080,6 +1081,22 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			mosh_error("Cannot disable eDRX: %d", ret);
 		} else {
 			mosh_print("eDRX disabled");
+		}
+	} else if (common_option == LINK_COMMON_READ) {
+		struct lte_lc_edrx_cfg edrx_cfg;
+
+		ret = lte_lc_edrx_get(&edrx_cfg);
+		if (ret < 0) {
+			mosh_error("Cannot read eDRX parameters: %d", ret);
+		} else {
+			if (edrx_cfg.mode == LTE_LC_LTE_MODE_NONE) {
+				mosh_print("eDRX not in use");
+			} else {
+				mosh_print("eDRX LTE mode: %s, eDRX interval: %.2f s, PTW: %.2f s",
+					   edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM ?
+						"LTE-M" : "NB-IoT",
+					   edrx_cfg.edrx, edrx_cfg.ptw);
+			}
 		}
 	} else {
 		link_shell_print_usage(LINK_CMD_EDRX);
