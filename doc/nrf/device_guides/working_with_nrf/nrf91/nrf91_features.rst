@@ -154,8 +154,8 @@ For more information on the integration, see :ref:`nrf_modem_lib_readme`.
 Modem trace
 -----------
 
-The modem traces of the nRF9160 modem can be captured using the nRF Connect Trace Collector.
-For more information on how to collect traces using nRF Connect Trace Collector, see the `Trace Collector`_ documentation.
+The modem traces of the nRF9160 modem can be captured using the Cellular Monitor.
+For more information on how to collect traces using Cellular Monitor, see the `Cellular Monitor`_ documentation.
 To enable the modem traces in the modem and to forward them to the :ref:`modem_trace_module` over UART, include the ``nrf91-modem-trace-uart`` snippet while building your application as described in :ref:`nrf91_modem_trace_uart_snippet`.
 
 .. note::

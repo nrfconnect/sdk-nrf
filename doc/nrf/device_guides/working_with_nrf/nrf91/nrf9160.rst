@@ -104,31 +104,24 @@ After downloading the certificate, you must provision it to your nRF9160 DK.
 
 Complete the following steps to provision the certificate:
 
-1. Open the LTE Link Monitor app from nRF Connect for Desktop.
-#. In the **SETTINGS** section of the side panel, deselect the checkbox for :guilabel:`Automatic requests` if it is selected.
-
-   .. figure:: images/ltelinkmonitor_automaticrequests.png
-      :alt: LTE Link Monitor - Automatic requests check box
-
-#. If you have already inserted the SIM card into your DK, remove it before you continue.
+1. Open the `Cellular Monitor`_ app from nRF Connect for Desktop.
+#. Make sure that the DK is programmed as mentioned in the :ref:`nrf9160_gs_updating_fw` section.
 #. Connect the DK to the computer with a micro-USB cable, and turn it on.
 #. Click :guilabel:`Select device` and select the DK from the drop-down list.
 
-   .. figure:: images/ltelinkmonitor_selectdevice.png
-      :alt: LTE Link Monitor - Select the nRF9160 DK
+   .. figure:: images/cellularmonitor_selectdevice1_nrf9160.png
+      :alt: Cellular Monitor - Select device
 
-      LTE Link Monitor - Select the nRF9160 DK
-
-   If the DK is not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+      Cellular Monitor - Select device
 
    The drop-down text changes to the type of the selected device, with the SEGGER ID below the name.
 
-#. Click :guilabel:`TERMINAL` in the navigation bar to switch to the terminal view if it is not already selected.
+#. Click the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
 
-   .. figure:: images/ltelinkmonitor_navigationterminal.png
-      :alt: LTE Link Monitor - Terminal
+   .. figure:: images/cellularmonitor_open_serial_terminal.png
+      :alt: Cellular Monitor - Open Serial Terminal
 
-      LTE Link Monitor - Terminal
+      Cellular Monitor - Open Serial Terminal
 
 #. Enter ``AT+CFUN=4`` in the text field for AT commands and click :guilabel:`Send`.
    This AT command puts the modem to offline state.
@@ -137,28 +130,24 @@ Complete the following steps to provision the certificate:
 
    The command must return ``+CFUN: 4``, which indicates that the modem is in offline state.
    If it returns a different value, repeat the previous step.
+#. Open the Cellular Monitor app.
 #. Click :guilabel:`CERTIFICATE MANAGER` in the navigation bar to switch to the certificate manager view.
 
-   .. figure:: images/ltelinkmonitor_navigationcertificatemanager.png
-      :alt: LTE Link Monitor - Certificate Manager
+   .. figure:: images/cellularmonitor_navigationcertificatemanager.png
+      :alt: Cellular Monitor - Certificate Manager
 
-      LTE Link Monitor - Certificate Manager
+      Cellular Monitor - Certificate Manager
 
 #. Click :guilabel:`Load from JSON` and select the :file:`*.cert.json` file that you downloaded from nRF Cloud.
    Alternatively, you can drag and drop the file onto the GUI.
 
-   .. figure:: images/ltelinkmonitor_loadjson.png
-      :alt: LTE Link Monitor - Load from JSON
+   .. figure:: images/cellularmonitor_loadjson.png
+      :alt: Cellular Monitor - Load from JSON
 
-      LTE Link Monitor - Load from JSON
+      Cellular Monitor - Load from JSON
 
 #. Ensure that the **Security tag** is set to ``16842753``, which is the security tag for nRF Cloud credentials.
 #. Click :guilabel:`Update certificate`.
-
-   .. figure:: images/ltelinkmonitor_updatecertificates.png
-      :alt: LTE Link Monitor - Update certificates
-
-      LTE Link Monitor - Update certificates
 
    The log message "Certificate update completed" indicates that the certificate was provisioned successfully.
    If you encounter any errors, switch to the terminal view and check the output of the AT commands that were sent to the nRF9160 DK modem.
