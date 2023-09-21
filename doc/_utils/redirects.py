@@ -76,6 +76,7 @@ NRF = [
     ("ug_memfault", "external_comp/memfault"),
     ("ug_nrf_cloud", "external_comp/nrf_cloud"),
     ("gs_assistant", "installation/assistant"),
+    ("getting_started", "installation"),
     ("getting_started/assistant", "installation/assistant"),
     ("gs_installing", "installation/installing"),
     ("getting_started/installing", "installation/installing"),
