@@ -500,7 +500,7 @@ See the following figure, which shows how to download the modem trace data in th
    Modem trace download
 
 .. note::
-   The conversion of modem trace file to a Wireshark-compatible format is available in the Cellular Monitor tool of the nRF Connect for Desktop.
+   The conversion of modem trace file to a Wireshark-compatible format is available in the `Cellular Monitor`_ tool of the nRF Connect for Desktop.
 
 To build the MoSh sample with the nRF91 Series DK and modem traces with a flash backend, see :ref:`modem_shell_trace_support`.
 
@@ -1031,9 +1031,9 @@ To program the certificates and connect to nRF Cloud, complete the following ste
       mosh:~$ at at_cmd_mode start
 
 #. Disconnect the MoSh terminal.
-#. Connect and use `LTE Link Monitor`_ to store the certificates to the modem (default nRF Cloud security tag).
+#. Connect and use `Cellular Monitor`_  to store the certificates to the modem (default nRF Cloud security tag).
 
-   See `Managing credentials`_ in the LTE Link Monitor user guide for instructions.
+   See `Managing credentials`_ in the Cellular Monitor user guide for instructions.
 #. Reconnect the MoSh terminal and press ``ctrl-x`` and ``ctrl-q`` to exit the AT command mode.
 #. Set the modem to normal mode to activate LTE:
 

@@ -1034,5 +1034,6 @@ Documentation
     * :ref:`release_notes`, :ref:`software_maturity`, :ref:`known_issues`, :ref:`glossary`, and :ref:`dev-model` are now located under :ref:`releases_and_maturity`.
 
   * The :ref:`ug_thread` documentation to improve the overall presentation and add additional details where necessary.
-  * The :ref:`ug_nrf9160_gs` instructions to use Cellular Monitor instead of Programmer for :ref:`nrf9160_gs_updating_fw`.
+  * The :ref:`ug_nrf9160_gs` instructions to use `Cellular Monitor`_ instead of Programmer for :ref:`nrf9160_gs_updating_fw`.
     The instructions for using Programmer were moved to the :ref:`ug_nrf9160` page.
+  * Replaced LTE Link Monitor and Trace Collector apps with `nRF Connect Serial Terminal`_ and `Cellular Monitor`_ apps.

@@ -24,7 +24,7 @@ This guide gives you more information on the various aspects of Thingy:91.
 Connecting to Thingy:91
 ***********************
 
-You can connect to Thingy:91 wirelessly (using the `nRF Toolbox`_ app) or over a serial connection (using `LTE Link Monitor`_, `Trace Collector`_, or a serial terminal).
+You can connect to Thingy:91 wirelessly (using the `nRF Toolbox`_ app) or over a serial connection (using `nRF Connect Serial Terminal`_, `Cellular Monitor`_, or a serial terminal).
 
 Using nRF Toolbox
 =================
@@ -56,23 +56,23 @@ Thingy:91 uses the following UART baud rate configuration:
    * - UART_1
      - 1000000
 
-Using LTE Link Monitor
-======================
+Using nRF Connect Serial Terminal
+=================================
 
-You can use the `LTE Link Monitor`_ application to get debug output and send AT commands to the Thingy:91.
-In the case of LTE Link Monitor or Trace Collector, the baud rate for the communication is set automatically.
+You can use the `nRF Connect Serial Terminal`_ application to get debug output and send AT commands to the Thingy:91.
+In the case of nRF Connect Serial Terminal or Cellular Monitor, the baud rate for the communication is set automatically.
 
-To connect to the Thingy:91 using LTE Link Monitor, complete the following steps:
+To connect to the Thingy:91 using the nRF Connect Serial Terminal app, complete the following steps:
 
 1. Open `nRF Connect for Desktop`_.
-#. Find LTE Link Monitor in the list of applications and click :guilabel:`Install`.
+#. Find Serial Terminal in the list of applications and click :guilabel:`Install`.
 #. Connect the Thingy:91 to a computer with a micro-Universal Serial Bus (USB) cable.
 #. Make sure that the Thingy:91 is powered on.
-#. Launch the LTE Link Monitor application.
+#. Launch the Serial Terminal application.
 #. In the navigation bar, click :guilabel:`SELECT DEVICE`.
    A drop-down menu appears.
 #. In the menu, select Thingy:91.
-#. In the LTE Link Monitor terminal, send an AT command to the modem.
+#. In the terminal window, send an AT command to the modem.
    If the connection is working, the modem responds with OK.
 
 The terminal view shows all of the Asset Tracker v2 debug output as well as the AT commands and their results.
