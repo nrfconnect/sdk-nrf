@@ -40,6 +40,13 @@ The following is an example of the CLI command:
 
    west build -b nrf7002dk_nrf5340_cpuapp
 
+To build for the nRF7002 DK with the netusb support, use the ``nrf7002dk_nrf5340_cpuapp`` build target with the configuration overlay :file:`overlay-netusb.conf`.
+The following is an example of the CLI command:
+
+.. code-block:: console
+
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-netusb.conf
+
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
 
