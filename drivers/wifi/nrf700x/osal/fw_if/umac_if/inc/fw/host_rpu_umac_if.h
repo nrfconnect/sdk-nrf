@@ -3393,6 +3393,24 @@ struct nrf_wifi_reg_rules {
 
 } __NRF_WIFI_PKD;
 
+/**
+ * @brief This structure represents channels information like maximum power,
+ *  center frequency, channel supported and active or passive scan.
+ *
+ */
+struct nrf_wifi_get_reg_chn_info {
+	/** center frequency in MHz */
+	unsigned int center_frequency;
+	/** maximum transmission power (in dBm) */
+	unsigned int max_power;
+	/** Particular channel is supported or not */
+	char supported;
+	/** Particular channel is supports passive scanning or not */
+	char passive_channel;
+	/** Particular channel is dfs or not */
+	char dfs;
+} __NRF_WIFI_PKD;
+
 #define NRF_WIFI_CMD_SET_REG_ALPHA2_VALID (1 << 0)
 #define NRF_WIFI_CMD_SET_REG_RULES_VALID (1 << 1)
 #define NRF_WIFI_CMD_SET_REG_DFS_REGION_VALID (1 << 2)
@@ -3407,16 +3425,12 @@ struct nrf_wifi_reg_rules {
 struct nrf_wifi_reg {
 	/** Header @ref nrf_wifi_umac_hdr */
 	struct nrf_wifi_umac_hdr umac_hdr;
-	/** Indicate which of the following parameters are valid */
-	unsigned int valid_fields;
-	/** region for regulatory */
-	unsigned int dfs_region;
-	/** No.of regulatory rules */
-	unsigned int num_reg_rules;
-	/** rules info. @ref nrf_wifi_reg_rules */
-	struct nrf_wifi_reg_rules nrf_wifi_reg_rules[MAX_NUM_REG_RULES];
 	/** Country code */
 	unsigned char nrf_wifi_alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
+	/** Number of channel list information */
+	unsigned int num_channels;
+	/** channels list information */
+	struct nrf_wifi_get_reg_chn_info chn_info[0];
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_CMD_REQ_SET_REG_ALPHA2_VALID (1 << 0)
