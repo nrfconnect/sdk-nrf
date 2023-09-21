@@ -25,8 +25,13 @@ tests:
     extra_args: SHIELD=nrf21540ek
     integration_platforms:
       - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840
+  sample.matter.light_bulb.debug.nrf21540ek_fwd:
+    build_only: true
+    extra_args: SHIELD=nrf21540ek_fwd multiprotocol_rpmsg_SHIELD=nrf21540ek
+    integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
   # Sample to execute load tests
   sample.matter.light_bulb.persistent_subscriptions:
     build_only: true
