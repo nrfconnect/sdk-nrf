@@ -38,7 +38,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       #XSLMUART: 115200,0
       OK
 
-   You can change the used baud rate with the corresponding set command, but note that LTE Link Monitor requires 115200 bps for communication.
+   You can change the used baud rate with the corresponding set command, but note that nRF Connect Serial Terminal requires 115200 bps for communication.
 
 #. Retrieve a list of all supported proprietary AT commands.
 
@@ -389,8 +389,8 @@ TLS client
 Before completing this test, you must update the CA certificate, the client certificate, and the private key to be used for the TLS connection in the modem.
 The credentials must use the security tag 16842755.
 
-To store the credentials in the modem, use LTE Link Monitor.
-See `Managing credentials`_ in the LTE Link Monitor User Guide for instructions.
+To store the credentials in the modem, use the Cellular Monitor app.
+See `Managing credentials`_ in the Cellular Monitor User Guide for instructions.
 
 You must register the corresponding credentials on the server side.
 

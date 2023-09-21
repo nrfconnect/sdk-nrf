@@ -326,15 +326,17 @@ You can use either a PC or an external MCU as a client.
 Connecting with a PC
 --------------------
 
-To connect to an nRF91 Series DK with a PC
+To connect to an nRF91 Series DK with a PC:
 
 .. slm_connecting_91dk_pc_instr_start
 
 1. Verify that ``UART_0`` is selected in the application.
    It is defined in the default configuration.
 
-2. Use LTE Link Monitor to connect to the development kit.
-   See :ref:`lte_connect` for instructions.
+2. Use `nRF Connect Serial Terminal`_ to connect to the development kit.
+   See :ref:`serial_terminal_connect` for instructions.
+   You can also use the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
+   Using the Cellular Monitor app in combination with the nRF Connect Serial Terminal shows how the modem responds to the different modem commands.
    You can then use this connection to send or receive AT commands over UART, and to see the log output of the development kit.
 
    Alternatively, you can use a terminal emulator like `Termite`_, `Teraterm`_, or PuTTY to establish a terminal connection to the development kit, using the following settings:
@@ -348,7 +350,7 @@ To connect to an nRF91 Series DK with a PC
    .. note::
 
       The default AT command terminator is a carriage return followed by a line feed (``\r\n``).
-      LTE Link Monitor supports this format.
+      nRF Connect Serial Terminal supports this format.
       If you want to use another terminal emulator, make sure that the configured AT command terminator corresponds to the line terminator of your terminal.
 
       When using `Termite`_ and `Teraterm`_, configure the AT command terminator as follows:
@@ -539,13 +541,11 @@ If you have an nRF52 Series DK running a client application, you can also use th
 |test_sample|
 
 1. |connect_kit|
-#. :ref:`Connect to the kit with LTE Link Monitor <lte_connect>`.
-   If you want to use a different terminal emulator, see ref:`slm_connecting_91dk_pc`.
+#. :ref:`Connect to the kit with nRF Connect Serial Terminal <serial_terminal_connect>`.
+   You can also use the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
+   If you want to use a different terminal emulator, see :ref:`slm_connecting_91dk_pc`.
 #. Reset the kit.
 #. Observe that the development kit sends a ``Ready\r\n`` message on UART.
-#. Enter ``AT+CFUN=1`` to turn on the modem and connect to the network.
-#. Enter ``AT+CFUN?`` and observe that the connection indicators in the LTE Link Monitor side panel turn green.
-   This indicates that the modem is connected to the network.
 #. Send AT commands and observe the responses from the development kit.
 
    See :ref:`slm_testing` for typical test cases.

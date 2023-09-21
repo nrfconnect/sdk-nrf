@@ -49,7 +49,7 @@ Installing the required software
 
 To work with the nRF9160 DK firmware and certificates, install `nRF Connect for Desktop`_.
 
-After installing and starting the application, install the Cellular Monitor app.
+After installing and starting the application, install the `Cellular Monitor`_ app.
 
 .. _nrf9160_gs_updating_fw:
 
@@ -58,7 +58,7 @@ Updating the DK firmware
 
 To update the firmware on the nRF9160 DK, complete the following steps:
 
-1. Open the Cellular Monitor app.
+1. Open the `Cellular Monitor`_ app.
 #. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
 #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
    On DK v0.9.0 and earlier, this is the **SW5** switch.
@@ -278,7 +278,7 @@ For a basic test, complete the following steps:
 #. From the **Devices** view, open the entry for your device.
 #. Observe that the DK is sending data to nRF Cloud.
 
-If you experience problems and need to check the log messages, open nRF Connect for Desktop and launch the LTE Link Monitor app.
+If you experience problems and need to check the log messages, open nRF Connect for Desktop and launch the `nRF Connect Serial Terminal`_ app.
 After connecting to your DK, you can see the log messages in the terminal view.
 
 .. _ug_nrf9160_gs_testing_gnss:

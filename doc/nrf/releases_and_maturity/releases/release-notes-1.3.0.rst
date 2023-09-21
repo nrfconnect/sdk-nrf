@@ -425,7 +425,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`gs_assistant` - updated to recommend the use of the toolchain manager
 * :ref:`gs_installing` - updated to align the instructions for all operating systems, added :ref:`repo_move`
 * :ref:`gs_programming` - updated :ref:`programming_board_names`
-* :ref:`gs_testing` - added :ref:`lte_connect`
+* :ref:`gs_testing` - added How to connect with LTE Link Monitor
 * :ref:`gs_modifying`  - added :ref:`gs_modifying_build_types`
 * :ref:`app_build_system` - updated |NCS| additions
 * :ref:`ug_nrf9160` - added :ref:`Concurrent GPS and LTE <nrf9160_gps_lte>`

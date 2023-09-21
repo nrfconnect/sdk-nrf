@@ -99,6 +99,8 @@ Sending traces over UART on an nRF91 Series DK
 To send modem traces over UART on an nRF91 Series DK, configuration must be added for the UART device in the devicetree and Kconfig.
 This is done by adding the :ref:`modem trace UART snippet <nrf91_modem_trace_uart_snippet>` when building and programming.
 
+Use the `Cellular Monitor`_ app for capturing and analyzing modem traces.
+
 .. modem_lib_sending_traces_UART_end
 
 .. _modem_trace_backend_uart_custom_board:

@@ -475,9 +475,9 @@
 
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
 
-.. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
-.. _`Trace Collector`: https://infocenter.nordicsemi.com/topic/ug_trace_collector/UG/trace_collector/intro.html
-.. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_certificate_manager.html
+.. _`nRF Connect Serial Terminal`: https://infocenter.nordicsemi.com/topic/ug_serial_terminal/UG/serial_terminal/intro.html
+.. _`Cellular Monitor`: https://infocenter.nordicsemi.com/topic/ug_cellular_monitor/UG/cellular_monitor/intro.html
+.. _`Managing credentials`: https://infocenter.nordicsemi.com/topic/ug_cellular_monitor/UG/cellular_monitor/cellular_mon_cert_manager.html
 
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
 .. _`Programming the nRF52840 Dongle`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_dongle.html

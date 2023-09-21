@@ -180,7 +180,9 @@ Testing
 After programming the application and all the prerequisites to your development kit, test the application by performing the following steps:
 
 1. |connect_kit|
-#. Connect to the kit with a terminal emulator (for example, LTE Link Monitor). See :ref:`lte_connect` for more information.
+#. Connect to the kit with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+   You can also use the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
+   Using the Cellular Monitor app in combination with the nRF Connect Serial Terminal shows how the modem responds to the different modem commands.
 #. Reset the development kit.
 #. Observe in the terminal window that application boots as shown in the following output::
 

@@ -28,7 +28,7 @@ For detailed instructions, see `How to connect to the terminal`_ on the `nRF Con
 How to connect with PuTTY
 *************************
 
-To see the UART output, connect to the development kit with a terminal emulator, for example, PuTTY.
+To see the UART output, connect to the development kit (DK) with a terminal emulator, for example, PuTTY.
 
 Connect with the following settings:
 
@@ -89,31 +89,25 @@ To run RTT on your platform, complete the following steps:
 
 #. Click :guilabel:`OK` to view the logging output from the device.
 
-.. _lte_connect:
+.. _serial_terminal_connect:
 
-How to connect with LTE Link Monitor
-************************************
+How to connect with Serial Terminal
+***********************************
 
-To connect to nRF9160-based kits (for example, the nRF9160 DK or Nordic Thingy:91), you can also use `LTE Link Monitor`_, which is implemented in `nRF Connect for Desktop`_.
-This application is used to establish LTE communication with the nRF9160 modem through AT commands, and it also displays the UART output.
+You can also use the `nRF Connect Serial Terminal`_ app, which is part of `nRF Connect for Desktop`_ to send commands through UART.
 
-To connect to the nRF9160-based kit with LTE Link Monitor, perform the following steps:
+The nRF Connect Serial Terminal app is also used to establish LTE communication with the cellular modem through AT commands, and it also displays the UART output.
+To connect to an nRF91 Series DK with Serial Terminal, perform the following steps:
 
-1. Launch the LTE Link Monitor app.
-
-   .. note::
-
-      Make sure that :guilabel:`Automatic requests` (in the **SETTINGS** section) is enabled in LTE Link Monitor.
-
-#. Connect the nRF9160-based kit to the PC with a USB cable.
-#. Power on the nRF9160-based kit.
-#. Click :guilabel:`Select Device` and select the particular kit entry from the drop-down list in the LTE Link Monitor.
-#. Observe that the LTE Link monitor app starts AT communication with the modem of the nRF9160-based kit and shows the status of the communication in the display terminal.
+1. Launch the Serial Terminal app.
+#. Connect an nRF91 Series DK to the PC with a USB cable.
+#. Power on the DK.
+#. Click :guilabel:`Select Device` and select the particular kit entry from the drop-down list in the Serial Terminal.
+#. Observe that the Serial Terminal app starts AT communication with the modem of the nRF91 Series DK and shows the status of the communication in the display terminal.
    The app also displays any information that is logged on UART.
 
    .. note::
-
-      In the case of nRF9160 DK, the reset button must be pressed to restart the device and to start the application.
+      In the case of the nRF9160 DK, the reset button must be pressed to restart the device and start the application.
 
 .. _gs_debugging:
 .. _debugging:

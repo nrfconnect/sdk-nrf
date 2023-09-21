@@ -24,7 +24,8 @@ Overview
 
 The AT Client sample acts as a proxy for sending directives to the cellular modem using AT commands.
 This facilitates the reading of responses or analyzing of events related to the cellular modem.
-You can initiate the commands from a terminal or the `LTE Link Monitor`_, which is an application implemented as part of `nRF Connect for Desktop`_.
+You can initiate the commands manually from a terminal such as the `nRF Connect Serial Terminal`_, or visually using the `Cellular Monitor`_ app.
+Both apps are part of `nRF Connect for Desktop`_.
 
 For more information on the AT commands, see the `AT Commands Reference Guide`_.
 
@@ -46,30 +47,12 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Press the reset button on the nRF91 Series DK to reboot the kit and start the AT Client sample.
-#. :ref:`Connect to the DK with LTE Link Monitor<lte_connect>`.
-
-   .. note::
-
-      Make sure that **Automatic requests** is enabled in LTE Link Monitor.
-
-#. Observe that initially the command :command:`AT+CFUN?` is automatically sent to the modem, which returns a value 4, indicating that the modem is in the offline mode.
-#. Observe that the LTE Link Monitor terminal display also shows :command:`AT+CFUN=1` followed by ``OK`` indicating that the modem has changed to the normal mode.
-#. Run the following commands from the LTE Link Monitor terminal:
+#. :ref:`Connect to the nRF9160 DK with nRF Connect Serial Terminal <serial_terminal_connect>`.
+#. Run the following commands from the Serial Terminal:
 
    a. Enter the command: :command:`AT+CFUN?`.
 
       This command reads the current functional mode of the modem and triggers the command :command:`AT+CFUN=1` which sets the functional mode of the modem to normal.
-
-   #. Enter the command :command:`AT+CFUN?` into the LTE Link Monitor terminal again.
-
-      The UART/Modem/UICC/LTE/PDN indicators in the LTE Link Monitor side panel turn green.
-      This command also automatically launches a series of commands like:
-
-      * :command:`AT+CGSN=1`, which displays the product serial identification number (IMEI).
-      * :command:`AT+CGMI`, which displays the manufacturer name.
-      * :command:`AT+CGMM`, which displays the model identification name.
-      * :command:`AT+CGMR`, which displays the revision identification.
-      * :command:`AT+CEMODE`, which displays the current mode of operation.
 
    #. Enter the command: :command:`AT%XOPERID`.
 

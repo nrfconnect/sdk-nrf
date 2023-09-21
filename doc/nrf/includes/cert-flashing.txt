@@ -3,7 +3,7 @@ To provision the certificates and the private key to the cellular modem, complet
 1. `Download nRF Connect for Desktop`_.
 #. Update the modem firmware on the onboard modem of the nRF91 Series device to the latest version by following the steps in :ref:`nrf9160_gs_updating_fw_modem`.
 #. Build and program the :ref:`at_client_sample` sample to the nRF91 Series device as explained in :ref:`programming`.
-#. Launch the `LTE Link Monitor`_ application, which is part of `nRF Connect for Desktop`_.
+#. Launch the `Cellular Monitor`_ application, which is part of `nRF Connect for Desktop`_.
 #. Click :guilabel:`CERTIFICATE MANAGER` located at the upper right corner.
 #. Copy the server root certificate into the ``CA certificate`` entry.
 #. Copy and paste the device certificate and the private key into the respective entries (``Client certificate``, ``Private key``).
