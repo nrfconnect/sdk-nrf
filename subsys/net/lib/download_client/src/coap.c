@@ -154,10 +154,6 @@ int coap_parse(struct download_client *client, size_t len)
 		return -EBADMSG;
 	}
 
-	err = coap_block_update(client, &response, &blk_off, &more);
-	if (err) {
-		return -EBADMSG;
-	}
 
 	if (coap_header_get_id(&response) != client->coap.pending.id) {
 		LOG_ERR("Response is not pending");
@@ -175,6 +171,11 @@ int coap_parse(struct download_client *client, size_t len)
 	if (response_code != COAP_RESPONSE_CODE_OK &&
 	    response_code != COAP_RESPONSE_CODE_CONTENT) {
 		LOG_ERR("Server responded with code 0x%x", response_code);
+		return -EBADMSG;
+	}
+
+	err = coap_block_update(client, &response, &blk_off, &more);
+	if (err) {
 		return -EBADMSG;
 	}
 
