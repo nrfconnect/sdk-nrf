@@ -169,17 +169,19 @@ static const char link_normal_mode_auto_usage_str[] =
 	"  -d, --disable,         Disable autoconnect\n";
 
 static const char link_edrx_usage_str[] =
-	"Usage: link edrx --enable --ltem|--nbiot [options] | --disable | --read\n"
+	"Usage: link edrx --enable [options] | --disable | --read\n"
 	"Options:\n"
 	"  -r, --read,             Read eDRX parameters currently provided by the network\n"
 	"  -d, --disable,          Disable eDRX\n"
 	"  -e, --enable,           Enable eDRX\n"
-	"  -m, --ltem,             Set for LTE-M (LTE Cat-M1) system mode\n"
-	"  -n, --nbiot,            Set for NB-IoT (LTE Cat-NB1) system mode\n"
-	"  -x, --edrx_value, [str] Sets custom eDRX value to be requested when\n"
+	"      --ltem_edrx, [str]  Sets custom eDRX value for LTE-M to be requested when\n"
 	"                          enabling eDRX with -e option.\n"
-	"  -w, --ptw, [str]        Sets custom Paging Time Window value to be\n"
-	"                          requested when enabling eDRX -e option.\n";
+	"      --ltem_ptw, [str]   Sets custom Paging Time Window value for LTE-M to be\n"
+	"                          requested when enabling eDRX with -e option.\n"
+	"      --nbiot_edrx, [str] Sets custom eDRX value for NB-IoT to be requested when\n"
+	"                          enabling eDRX with -e option.\n"
+	"      --nbiot_ptw, [str]  Sets custom Paging Time Window value for NB-IoT to be\n"
+	"                          requested when enabling eDRX with -e option.\n";
 
 static const char link_psm_usage_str[] =
 	"Usage: link psm --enable [options] | --disable | --read\n"
@@ -371,6 +373,10 @@ enum {
 	LINK_SHELL_OPT_WRITE,
 	LINK_SHELL_OPT_REDMOB_DEFAULT,
 	LINK_SHELL_OPT_REDMOB_NORDIC,
+	LINK_SHELL_OPT_LTEM_EDRX,
+	LINK_SHELL_OPT_LTEM_PTW,
+	LINK_SHELL_OPT_NBIOT_EDRX,
+	LINK_SHELL_OPT_NBIOT_PTW
 };
 
 /* Specifying the expected options (both long and short): */
@@ -401,8 +407,10 @@ static struct option long_options[] = {
 	{ "enable", no_argument, 0, 'e' },
 	{ "enable_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
 	{ "disable", no_argument, 0, 'd' },
-	{ "edrx_value", required_argument, 0, 'x' },
-	{ "ptw", required_argument, 0, 'w' },
+	{ "ltem_edrx", required_argument, 0, LINK_SHELL_OPT_LTEM_EDRX },
+	{ "ltem_ptw", required_argument, 0, LINK_SHELL_OPT_LTEM_PTW },
+	{ "nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NBIOT_EDRX },
+	{ "nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NBIOT_PTW },
 	{ "prot", required_argument, 0, 'A' },
 	{ "pword", required_argument, 0, 'P' },
 	{ "uname", required_argument, 0, 'U' },
@@ -440,7 +448,7 @@ static struct option long_options[] = {
 	{ 0, 0, 0, 0 }
 };
 
-static const char short_options[] = "a:I:f:i:x:w:p:t:A:P:U:su014rmngMNed";
+static const char short_options[] = "a:I:f:i:p:t:A:P:U:su014rmngMNed";
 
 /******************************************************************************/
 
@@ -996,11 +1004,14 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
-	enum lte_lc_lte_mode lte_mode = LTE_LC_LTE_MODE_NONE;
-	char edrx_value_str[LINK_SHELL_EDRX_VALUE_STR_LENGTH + 1];
-	bool edrx_value_set = false;
-	char edrx_ptw_bit_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
-	bool edrx_ptw_set = false;
+	char ltem_edrx_str[LINK_SHELL_EDRX_VALUE_STR_LENGTH + 1];
+	bool ltem_edrx_set = false;
+	char ltem_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
+	bool ltem_ptw_set = false;
+	char nbiot_edrx_str[LINK_SHELL_EDRX_VALUE_STR_LENGTH + 1];
+	bool nbiot_edrx_set = false;
+	char nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
+	bool nbiot_ptw_set = false;
 
 	int long_index = 0;
 	int opt;
@@ -1011,17 +1022,11 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
-		case 'm':
-			lte_mode = LTE_LC_LTE_MODE_LTEM;
-			break;
-		case 'n':
-			lte_mode = LTE_LC_LTE_MODE_NBIOT;
-			break;
-		case 'x': /* drx_value */
+		case LINK_SHELL_OPT_LTEM_EDRX:
 			if (strlen(optarg) ==
 			    LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
-				strcpy(edrx_value_str, optarg);
-				edrx_value_set = true;
+				strcpy(ltem_edrx_str, optarg);
+				ltem_edrx_set = true;
 			} else {
 				mosh_error(
 					"eDRX value string length must be %d.",
@@ -1029,10 +1034,33 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
-		case 'w': /* Paging Time Window */
+		case LINK_SHELL_OPT_LTEM_PTW:
 			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
-				strcpy(edrx_ptw_bit_str, optarg);
-				edrx_ptw_set = true;
+				strcpy(ltem_ptw_str, optarg);
+				ltem_ptw_set = true;
+			} else {
+				mosh_error(
+					"PTW string length must be %d.",
+					LINK_SHELL_EDRX_PTW_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NBIOT_EDRX:
+			if (strlen(optarg) ==
+			    LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+				strcpy(nbiot_edrx_str, optarg);
+				nbiot_edrx_set = true;
+			} else {
+				mosh_error(
+					"eDRX value string length must be %d.",
+					LINK_SHELL_EDRX_VALUE_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NBIOT_PTW:
+			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
+				strcpy(nbiot_ptw_str, optarg);
+				nbiot_ptw_set = true;
 			} else {
 				mosh_error(
 					"PTW string length must be %d.",
@@ -1048,33 +1076,56 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 	if (common_option == LINK_COMMON_ENABLE) {
 		char *value = NULL; /* Set with the defaults if not given */
 
-		if (lte_mode == LTE_LC_LTE_MODE_NONE) {
-			mosh_error("LTE mode is mandatory to be given. See usage:");
-			link_shell_print_usage(LINK_CMD_EDRX);
-			return -EINVAL;
+		if (ltem_edrx_set) {
+			value = ltem_edrx_str;
 		}
 
-		if (edrx_value_set) {
-			value = edrx_value_str;
-		}
-
-		ret = lte_lc_edrx_param_set(lte_mode, value);
+		ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_LTEM, value);
 		if (ret < 0) {
 			mosh_error(
-				"Cannot set eDRX value %s, error: %d",
+				"Cannot set LTE-M eDRX value %s, error: %d",
 				((value == NULL) ? "NULL" : value),
 				ret);
 			return -EINVAL;
 		}
+
 		value = NULL; /* Set with the defaults if not given */
-		if (edrx_ptw_set) {
-			value = edrx_ptw_bit_str;
+		if (ltem_ptw_set) {
+			value = ltem_ptw_str;
 		}
 
-		ret = lte_lc_ptw_set(lte_mode, value);
+		ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_LTEM, value);
 		if (ret < 0) {
 			mosh_error(
-				"Cannot set PTW value %s, error: %d",
+				"Cannot set LTE-M PTW value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
+		value = NULL; /* Set with the defaults if not given */
+		if (nbiot_edrx_set) {
+			value = nbiot_edrx_str;
+		}
+
+		ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NB-IoT eDRX value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
+		value = NULL; /* Set with the defaults if not given */
+		if (nbiot_ptw_set) {
+			value = nbiot_ptw_str;
+		}
+
+		ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NB-IoT PTW value %s, error: %d",
 				((value == NULL) ? "NULL" : value),
 				ret);
 			return -EINVAL;
