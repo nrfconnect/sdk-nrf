@@ -427,6 +427,9 @@ Cellular samples (renamed from nRF9160 samples)
     * The sample to use the :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_obj_pgps_request_create` to create a P-GPS request.
     * The modem system mode is now used when the sample starts, if the mode has not been set using the ``link sysmode`` command.
     * The sample to remove redundant shadow updates for nRF Cloud.
+    * The ``link edrx`` command syntax.
+      Parameters ``--ltem``, ``--nbiot``, ``--edrx_value,`` and ``--ptw`` are removed.
+      Instead, use ``--ltem_edrx``, ``--ltem_ptw``, ``--nbiot_edrx``, and ``--nbiot_ptw`` to give eDRX and PTW values for LTE-M and NB-IoT.
 
 * :ref:`lwm2m_client` sample:
 
