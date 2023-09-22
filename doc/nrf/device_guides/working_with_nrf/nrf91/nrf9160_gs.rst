@@ -43,83 +43,31 @@ On your computer, one of the following operating systems:
 |Supported OS|
 
 .. _nrf9160_gs_installing_software:
-
-Installing the required software
-********************************
-
-To work with the nRF9160 DK firmware and certificates, install `nRF Connect for Desktop`_.
-
-After installing and starting the application, install the `Cellular Monitor`_ app.
-
 .. _nrf9160_gs_updating_fw:
 
-Updating the DK firmware
-************************
+Getting started using Quick Start
+*********************************
 
-To update the firmware on the nRF9160 DK, complete the following steps:
+To work with the nRF9160 DK firmware and certificates, complete the following steps:
 
-1. Open the `Cellular Monitor`_ app.
-#. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
-#. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
-   On DK v0.9.0 and earlier, this is the **SW5** switch.
-#. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
-#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
+1. Install `nRF Connect for Desktop`_.
+#. Start nRF Connect for Desktop and install the Quick Start application, a cross-platform tool for guided setup and installation procedures.
+#. Prepare your DK:
 
-   .. figure:: images/cellularmonitor_selectdevice_nrf9160.png
-      :alt: Cellular Monitor - Select device
+   a. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
+   #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
+      On DK v0.9.0 and earlier, this is the **SW5** switch.
+   #. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
 
-      Cellular Monitor - Select device
+#. Use the Quick Start app to update the DK firmware.
+   Follow the steps in the application and pay attention to the following actions:
 
-   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+   * When selecting which application to program, select the **Asset Tracking** option.
+   * In the SIM Setup step, read and copy the :term:`Integrated Circuit Card Identifier (ICCID)` of the inserted micro-SIM.
+     This is needed for connecting to nRF Cloud.
 
-#. Click :guilabel:`Program device` in the **ADVANCED OPTIONS** section.
-
-   .. figure:: images/cellularmonitor_programdevice_nrf9160.png
-      :alt: Cellular Monitor - Program device
-
-      Cellular Monitor - Program device
-
-   The **Program sample app** window appears, displaying applications you can program to the DK.
-
-#. Click :guilabel:`Select` in the **Asset Tracker V2** section.
-   Asset Tracker v2 is an application that simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
-
-   .. figure:: images/cellularmonitor_selectassettracker.png
-      :alt: Cellular Monitor - Select Asset Tracker V2
-
-      Cellular Monitor - Select Asset Tracker V2
-
-   The **Program Asset Tracker V2** window appears.
-
-#. Click :guilabel:`Program` to program the DK.
-   Do not unplug or turn off the device during this process.
-
-   .. figure:: images/cellularmonitor_programassettracker_nrf9160.png
-      :alt: Cellular Monitor - Program Asset Tracker V2
-
-      Cellular Monitor - Program Asset Tracker V2
-
-   When the process is complete, you see a success message.
-   Click :guilabel:`Close` to close the **Program Asset Tracker V2** window.
-
-#. Copy the :term:`Integrated Circuit Card Identifier (ICCID)` of the inserted micro-SIM.
-   This is required for activating the iBasis SIM when :ref:`nrf9160_gs_connect_to_cloud`.
-
-   If you have activated your iBasis SIM card before or are using a SIM card from a different provider, you can skip this step.
-
-   a. Click :guilabel:`Start` to begin the modem trace.
-      The button changes to :guilabel:`Stop` and is greyed out.
-   #. Click :guilabel:`Refresh dashboard` to refresh the information.
-   #. Copy the ICCID by clicking on the **ICCID** label or the displayed ICCID number in the **Sim** section.
-
-      .. figure:: images/cellularmonitor_iccid.png
-         :alt: Cellular Monitor - ICCID
-
-         Cellular Monitor - ICCID
-
-      .. note::
-         The ICCID copied here has 20 digits.
-         When activating the SIM, you need to remove the last two digits so that it is 18 digits.
+   If you have not yet installed the |NCS| and selected the preferred development environment, the application will point you to the related resources.
+   It will also provide you with links to the recommended learning materials from Nordic Semiconductor related to cellular development.
 
 .. _nrf9160_gs_connect_to_cloud:
 .. _nrf9160_gs_connecting_dk_to_cloud:
@@ -256,7 +204,41 @@ Make sure you are logged in to the `nRF Cloud`_ portal.
       nRF Cloud - Add New menu
 
 #. In the :guilabel:`Add New` menu, click :guilabel:`LTE Device`.
-#. Enter your device ID and ownership code (**PIN/HWID**) on the **Add LTE Device** page.
+   The **Add LTE Device** page opens in the **Verify SIM Info** view.
+
+   .. figure:: images/nrfcloud_activating_sim.png
+      :alt: nRF Cloud - Add LTE Device page, Verify SIM Info view
+
+      nRF Cloud - Add LTE Device page, Verify SIM Info view
+
+#. Complete the following steps in the **Activate SIM Card** view to activate your iBasis SIM card:
+
+   a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the **SIM ICCID/EID** text box.
+
+      If you followed the instructions in the |firmware_section_link| section, paste the copied ICCID into the **SIM ICCID/EID** box.
+
+      .. note::
+         The SIM cards can have either the EID, the ICCID, or neither printed on it.
+
+   #. Enter the :term:`Personal Unblocking Key (PUK)` in the **PUK** text box.
+
+      The PUK is printed on the SIM card.
+      Reveal the PUK by scratching off the area on the back of the SIM card.
+   #. Accept the Terms and the Privacy Policy.
+   #. Click the :guilabel:`Activate SIM` button.
+
+   After the SIM card is activated, you are taken to the **Add LTE Device** view.
+   Leave the browser window open and continue with the next step before you enter the information on this window.
+
+.. nrf_cloud_connection_end
+
+5. Connect the nRF9160 DK to the computer with a USB cable and turn it on, or reset the device if it is already turned on.
+#. Wait up to three minutes for the device to find the cellular network and connect to the nRF Cloud server.
+
+   At this stage, the device is provisioned on nRF Cloud, but not yet associated with your nRF Cloud account.
+   When the DK has connected, the **LED3** double pulse blinks to indicate that user association is required and you can move to the next step.
+
+#. In the **Add LTE Device** view from Step 4, enter your device ID and ownership code (**PIN/HWID**).
 
    .. figure:: images/nrfcloud_add_lte_device.png
       :alt: nRF Cloud - Add LTE Device
