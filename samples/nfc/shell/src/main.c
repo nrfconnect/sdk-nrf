@@ -14,7 +14,7 @@
 
 #define STATUS_LED_INTERVAL K_MSEC(1000)
 
-void main(void)
+int main(void)
 {
 	uint32_t blink_status = 0;
 	int err;
@@ -24,13 +24,14 @@ void main(void)
 	err = dk_leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
-		return;
+		return 1;
 	}
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(STATUS_LED_INTERVAL);
 	}
+	return 0;
 }
 
 static int led_on_handler(const struct shell *shell, size_t argc, char **argv)

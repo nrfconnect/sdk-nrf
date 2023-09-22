@@ -117,7 +117,7 @@ static void bt_ready(int err)
 	dfu_target_image_confirm();
 }
 
-void main(void)
+int main(void)
 {
 	int err;
 
@@ -127,7 +127,7 @@ void main(void)
 					 0);
 	if (err) {
 		printk("Failed to init BLOB IO Flash module: %d\n", err);
-		return;
+		return 1;
 	}
 
 	k_work_init_delayable(&attention_blink_work, attention_blink);
@@ -136,5 +136,8 @@ void main(void)
 	err = bt_enable(bt_ready);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
+		return 1;
 	}
+
+	return 0;
 }
