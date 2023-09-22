@@ -557,12 +557,11 @@ cJSON
 Documentation
 =============
 
-* :ref:`ug_nrf9160`:
-
-   *  Section :ref:tfm_enable_share_uart in the :ref:uge_nrf9160 page.
-
 * Updated:
 
   * The :ref:`installation` section: by replacing two separate pages about installing the |NCS| with just one (:ref:`install_ncs`).
   * The :ref:`requirements` page with new sections about :ref:`requirements_clt` and :ref:`toolchain_management_tools`.
-  * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages  so that instructions in the :ref:`nrf9160_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
+  * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages so that instructions in the :ref:`nrf9160_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
+  * The :ref:`ug_nrf9160_gs` by replacing the Updating the DK firmware section with a new :ref:`nrf9160_gs_installing_software` section.
+    This new section includes steps for using Quick Start, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF91 Series DKs.
+  * Updated the :ref:`tfm_enable_share_uart` section on :ref:`ug_nrf9160`.

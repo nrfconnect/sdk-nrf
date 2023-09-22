@@ -104,7 +104,8 @@ After downloading the certificate, you must provision it to your nRF9160 DK.
 
 Complete the following steps to provision the certificate:
 
-1. Open the `Cellular Monitor`_ app from nRF Connect for Desktop.
+1. Start nRF Connect for Desktop and install the `Cellular Monitor`_ app.
+#. Open the Cellular Monitor app.
 #. Make sure that the DK is programmed as mentioned in the :ref:`nrf9160_gs_updating_fw` section.
 #. Connect the DK to the computer with a micro-USB cable, and turn it on.
 #. Click :guilabel:`Select device` and select the DK from the drop-down list.
