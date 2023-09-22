@@ -49,7 +49,10 @@ Installing the required software
 
 To work with the nRF9160 DK firmware and certificates, install `nRF Connect for Desktop`_.
 
-After installing and starting the application, install the Cellular Monitor app.
+After installing the application, start it and install the following applications in nRF Connect for Desktop:
+
+* Cellular Monitor - A cross-platform tool for Nordic Semiconductor nRF91 Series devices, used for capturing and analyzing modem traces to evaluate communication and view network parameters.
+* Quick Start - A cross-platform tool for guided setup and installation procedures.
 
 .. _nrf9160_gs_updating_fw:
 
@@ -58,68 +61,112 @@ Updating the DK firmware
 
 To update the firmware on the nRF9160 DK, complete the following steps:
 
-1. Open the Cellular Monitor app.
-#. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
-#. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
-   On DK v0.9.0 and earlier, this is the **SW5** switch.
-#. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
-#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
+.. tabs::
 
-   .. figure:: images/cellularmonitor_selectdevice_nrf9160.png
-      :alt: Cellular Monitor - Select device
+   .. group-tab:: Using Quick Start (recommended)
 
-      Cellular Monitor - Select device
+      1. Open the Quick Start app.
+      #. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
+      #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
+         On DK v0.9.0 and earlier, this is the **SW5** switch.
+      #. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
+         The Quick Start app detects the DK you connect.
+      #. Follow the steps in the application and select the following values for the given step:
 
-   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+         * Program: **Cloud Connectivity** (Asset Tracker v2)
 
-#. Click :guilabel:`Program device` in the **ADVANCED OPTIONS** section.
+      #. In nRF Connect for Desktop, open the Cellular Monitor app.
+      #. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
 
-   .. figure:: images/cellularmonitor_programdevice_nrf9160.png
-      :alt: Cellular Monitor - Program device
+         .. figure:: images/cellularmonitor_selectdevice_nrf9160.png
+            :alt: Cellular Monitor - Select device
 
-      Cellular Monitor - Program device
+            Cellular Monitor - Select device
 
-   The **Program sample app** window appears, displaying applications you can program to the DK.
+         The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+      #. Copy the :term:`Integrated Circuit Card Identifier (ICCID)` of the inserted micro-SIM.
+         This is required for activating the iBasis SIM when :ref:`nrf9160_gs_connect_to_cloud`.
 
-#. Click :guilabel:`Select` in the **Asset Tracker V2** section.
-   Asset Tracker v2 is an application that simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
+         If you have activated your iBasis SIM card before or are using a SIM card from a different provider, you can skip this step.
 
-   .. figure:: images/cellularmonitor_selectassettracker.png
-      :alt: Cellular Monitor - Select Asset Tracker V2
+         a. Click :guilabel:`Start` to begin the modem trace.
+            The button changes to :guilabel:`Stop` and is greyed out.
+         #. Click :guilabel:`Refresh dashboard` to refresh the information.
+         #. Copy the ICCID by clicking on the **ICCID** label or the displayed ICCID number in the **Sim** section.
 
-      Cellular Monitor - Select Asset Tracker V2
+            .. figure:: images/cellularmonitor_iccid.png
+               :alt: Cellular Monitor - ICCID
 
-   The **Program Asset Tracker V2** window appears.
+               Cellular Monitor - ICCID
 
-#. Click :guilabel:`Program` to program the DK.
-   Do not unplug or turn off the device during this process.
+            .. note::
+               The ICCID copied here has 20 digits.
+               When activating the SIM, you need to remove the last two digits so that it is 18 digits.
 
-   .. figure:: images/cellularmonitor_programassettracker_nrf9160.png
-      :alt: Cellular Monitor - Program Asset Tracker V2
+   .. group-tab:: Manually
 
-      Cellular Monitor - Program Asset Tracker V2
+      1. Open the Cellular Monitor app.
+      #. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
+      #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
+         On DK v0.9.0 and earlier, this is the **SW5** switch.
+      #. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
+      #. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
 
-   When the process is complete, you see a success message.
-   Click :guilabel:`Close` to close the **Program Asset Tracker V2** window.
+         .. figure:: images/cellularmonitor_selectdevice_nrf9160.png
+            :alt: Cellular Monitor - Select device
 
-#. Copy the :term:`Integrated Circuit Card Identifier (ICCID)` of the inserted micro-SIM.
-   This is required for activating the iBasis SIM when :ref:`nrf9160_gs_connect_to_cloud`.
+            Cellular Monitor - Select device
 
-   If you have activated your iBasis SIM card before or are using a SIM card from a different provider, you can skip this step.
+         The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
 
-   a. Click :guilabel:`Start` to begin the modem trace.
-      The button changes to :guilabel:`Stop` and is greyed out.
-   #. Click :guilabel:`Refresh dashboard` to refresh the information.
-   #. Copy the ICCID by clicking on the **ICCID** label or the displayed ICCID number in the **Sim** section.
+      #. Click :guilabel:`Program device` in the **ADVANCED OPTIONS** section.
 
-      .. figure:: images/cellularmonitor_iccid.png
-         :alt: Cellular Monitor - ICCID
+         .. figure:: images/cellularmonitor_programdevice_nrf9160.png
+            :alt: Cellular Monitor - Program device
 
-         Cellular Monitor - ICCID
+            Cellular Monitor - Program device
 
-      .. note::
-         The ICCID copied here has 20 digits.
-         When activating the SIM, you need to remove the last two digits so that it is 18 digits.
+         The **Program sample app** window appears, displaying applications you can program to the DK.
+
+      #. Click :guilabel:`Select` in the **Asset Tracker V2** section.
+         Asset Tracker v2 is an application that simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
+
+         .. figure:: images/cellularmonitor_selectassettracker.png
+            :alt: Cellular Monitor - Select Asset Tracker V2
+
+            Cellular Monitor - Select Asset Tracker V2
+
+         The **Program Asset Tracker V2** window appears.
+
+      #. Click :guilabel:`Program` to program the DK.
+         Do not unplug or turn off the device during this process.
+
+         .. figure:: images/cellularmonitor_programassettracker_nrf9160.png
+            :alt: Cellular Monitor - Program Asset Tracker V2
+
+            Cellular Monitor - Program Asset Tracker V2
+
+         When the process is complete, you see a success message.
+         Click :guilabel:`Close` to close the **Program Asset Tracker V2** window.
+
+      #. Copy the :term:`Integrated Circuit Card Identifier (ICCID)` of the inserted micro-SIM.
+         This is required for activating the iBasis SIM when :ref:`nrf9160_gs_connect_to_cloud`.
+
+         If you have activated your iBasis SIM card before or are using a SIM card from a different provider, you can skip this step.
+
+         a. Click :guilabel:`Start` to begin the modem trace.
+            The button changes to :guilabel:`Stop` and is greyed out.
+         #. Click :guilabel:`Refresh dashboard` to refresh the information.
+         #. Copy the ICCID by clicking on the **ICCID** label or the displayed ICCID number in the **Sim** section.
+
+            .. figure:: images/cellularmonitor_iccid.png
+               :alt: Cellular Monitor - ICCID
+
+               Cellular Monitor - ICCID
+
+            .. note::
+               The ICCID copied here has 20 digits.
+               When activating the SIM, you need to remove the last two digits so that it is 18 digits.
 
 .. _nrf9160_gs_connecting_dk_to_cloud:
 

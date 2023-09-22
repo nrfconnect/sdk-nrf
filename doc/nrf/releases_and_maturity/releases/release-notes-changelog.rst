@@ -68,8 +68,11 @@ Working with nRF91 Series
   * :ref:`asset_tracker_v2`
   * :ref:`serial_lte_modem`
   * All samples that use nRF9160 DK except for nRF9160: SLM Shell, nRF9160: Modem trace external flash backend, and nRF9160: Modem trace backend samples
+
 * The default board revision for nRF9160 DK has changed to v0.14.0.
   See :ref:`nrf9160_board_revisions` for more details.
+* Added support for Quick Start, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF9160 DK.
+  The :ref:`ug_nrf9160_gs` page has been updated accordingly.
 
 Working with nRF52 Series
 =========================
