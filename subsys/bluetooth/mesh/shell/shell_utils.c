@@ -14,8 +14,6 @@
 #include "mesh/access.h"
 #include "shell_utils.h"
 
-extern int errno;
-
 struct shell_model_instance {
 	uint16_t addr;
 	uint8_t elem_idx;
