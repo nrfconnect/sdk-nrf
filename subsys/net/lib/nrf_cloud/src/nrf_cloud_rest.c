@@ -70,7 +70,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_LOCATION			"/location"
 #define API_GET_LOCATION		API_VER API_LOCATION "/ground-fix"
 #define API_GET_LOCATION_NO_REPLY	API_VER API_LOCATION "/ground-fix?doReply=0"
-#define API_GET_AGPS_BASE		API_VER API_LOCATION "/agps"
+#define API_GET_AGNSS_BASE		API_VER API_LOCATION "/agnss"
 #define API_GET_PGPS_BASE		API_VER API_LOCATION "/pgps"
 
 #define API_DEVICES_BASE		"/devices"
@@ -647,16 +647,14 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	int ret;
 	int type_count = 0;
-	size_t url_sz;
 	size_t total_bytes = 0;
 	size_t rcvd_bytes = 0;
 	size_t remain = 0;
 	size_t pos = 0;
 	size_t frag_size = (rest_ctx->fragment_size ? rest_ctx->fragment_size : RANGE_MAX_BYTES);
 	char *auth_hdr = NULL;
-	char *url = NULL;
 	cJSON *agps_obj;
-	enum nrf_cloud_agps_type types[NRF_CLOUD_AGPS__LAST];
+	enum nrf_cloud_agps_type types[NRF_CLOUD_AGPS__TYPES_COUNT];
 	char range_hdr[HDR_RANGE_BYTES_SZ];
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
@@ -665,7 +663,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	uint8_t mask_angle = NRF_CLOUD_AGPS_MASK_ANGLE_NONE;
 
 	memset(&resp, 0, sizeof(resp));
-	init_rest_client_request(rest_ctx, &req, HTTP_GET);
+	init_rest_client_request(rest_ctx, &req, HTTP_POST);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
 	filtered = request->filtered;
@@ -682,7 +680,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 	if ((request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) &&
-	    (request->agps_req == NULL)) {
+	    (request->agnss_req == NULL)) {
 		LOG_ERR("Custom request type requires A-GPS request data");
 		ret = -EINVAL;
 		goto clean_up;
@@ -710,7 +708,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	/* Get the A-GPS type array */
 	switch (request->type) {
 	case NRF_CLOUD_REST_AGPS_REQ_CUSTOM:
-		type_count = nrf_cloud_agps_type_array_get(request->agps_req,
+		type_count = nrf_cloud_agps_type_array_get(request->agnss_req,
 							   types, ARRAY_SIZE(types));
 		break;
 	case NRF_CLOUD_REST_AGPS_REQ_LOCATION:
@@ -718,9 +716,19 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		types[0] = NRF_CLOUD_AGPS_LOCATION;
 		break;
 	case NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE: {
-		struct nrf_modem_gnss_agps_data_frame assist;
-		/* Set all request flags */
-		memset(&assist, 0xFF, sizeof(assist));
+		struct nrf_modem_gnss_agnss_data_frame assist = { 0 };
+		/* Set all request flags for GPS */
+		assist.data_flags =
+			NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
+		assist.system_count = 1;
+		assist.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
+		assist.system[0].sv_mask_ephe = 0xFFFFFFFF;
+		assist.system[0].sv_mask_alm = 0xFFFFFFFF;
 		type_count = nrf_cloud_agps_type_array_get(&assist, types, ARRAY_SIZE(types));
 		break;
 	}
@@ -740,40 +748,18 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 						  filtered, mask_angle,
 						  agps_obj);
 
-	/* Create a parameterized URL from the JSON data to use for the GET request.
-	 * The HTTP request body is not used in GET requests.
-	 * Use the rx_buf temporarily.
-	 */
-	ret = nrf_cloud_json_to_url_params_convert(rest_ctx->rx_buf, rest_ctx->rx_buf_len,
-						   agps_obj);
-
-	/* Cleanup JSON obj */
+	/* Set payload */
+	req.body = cJSON_PrintUnformatted(agps_obj);
 	cJSON_Delete(agps_obj);
 	agps_obj = NULL;
 
-	if (ret) {
-		LOG_ERR("Could not create A-GPS request URL");
-		goto clean_up;
-	}
-
-	url_sz = sizeof(API_GET_AGPS_BASE) + strlen(rest_ctx->rx_buf);
-	url = nrf_cloud_malloc(url_sz);
-	if (!url) {
+	if (!req.body) {
 		ret = -ENOMEM;
 		goto clean_up;
 	}
 
-	ret = snprintk(url, url_sz, "%s%s", API_GET_AGPS_BASE, rest_ctx->rx_buf);
-	if (ret < 0 || ret >= url_sz) {
-		LOG_ERR("Could not format URL");
-		ret = -ETXTBSY;
-		goto clean_up;
-	}
-
 	/* Set the URL */
-	req.url = url;
-
-	LOG_DBG("URL: %s", url);
+	req.url = API_GET_AGNSS_BASE;
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -786,11 +772,14 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		HDR_ACCEPT_ALL,
 		(char *const)auth_hdr,
 		(char *const)range_hdr,
-		CONTENT_TYPE_APP_OCT_STR,
+		CONTENT_TYPE_APP_JSON,
 		NULL
 	};
 
 	req.header_fields = (const char **)headers;
+
+	LOG_DBG("URL: %s%s", req.host, req.url);
+	LOG_DBG("Body: %s", req.body);
 
 	/* Do as many REST calls as needed to receive entire payload */
 	do {
@@ -865,8 +854,10 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	last_request_timestamp = k_uptime_get();
 
 clean_up:
-	nrf_cloud_free(url);
 	nrf_cloud_free(auth_hdr);
+	if (req.body) {
+		cJSON_free((void *)req.body);
+	}
 
 	close_connection(rest_ctx);
 

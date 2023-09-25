@@ -124,14 +124,20 @@ static int set_lte_params(void)
 	return 0;
 }
 
-int supl_session(const struct nrf_modem_gnss_agps_data_frame *const agps_request)
+int supl_session(const struct nrf_modem_gnss_agnss_data_frame *const agnss_request)
 {
 	set_device_id();
 	set_lte_params();
 
-	supl_client_ctx.agps_types.data_flags = agps_request->data_flags;
-	supl_client_ctx.agps_types.sv_mask_alm = agps_request->sv_mask_alm;
-	supl_client_ctx.agps_types.sv_mask_ephe = agps_request->sv_mask_ephe;
+	/* GPS data need is always expected to be present and first in list. */
+	__ASSERT(agnss_request->system_count > 0,
+		 "GNSS system data need not found");
+	__ASSERT(agnss_request->system[0].system_id == NRF_MODEM_GNSS_SYSTEM_GPS,
+		 "GPS data need not found");
+
+	supl_client_ctx.agps_types.data_flags = agnss_request->data_flags;
+	supl_client_ctx.agps_types.sv_mask_alm = agnss_request->system[0].sv_mask_alm;
+	supl_client_ctx.agps_types.sv_mask_ephe = agnss_request->system[0].sv_mask_ephe;
 
 	return supl_client_session(&supl_client_ctx);
 }

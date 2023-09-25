@@ -215,12 +215,11 @@ void test_enable_should_init_modem_and_link_controller(void)
 	TEST_ASSERT_EQUAL(0, net_if_up(net_if));
 }
 
-void test_enable_should_init_modem_twice_upon_successful_dfu_result(void)
+void test_enable_should_init_modem_upon_successful_dfu_result(void)
 {
 	struct net_if *net_if = net_if_get_default();
 
 	__cmock_nrf_modem_is_initialized_ExpectAndReturn(0);
-	__cmock_nrf_modem_lib_init_ExpectAndReturn(NRF_MODEM_DFU_RESULT_OK);
 	__cmock_nrf_modem_lib_init_ExpectAndReturn(0);
 	__cmock_lte_lc_init_ExpectAndReturn(0);
 
@@ -232,9 +231,9 @@ void test_enable_should_return_error_upon_dfu_error(void)
 	struct net_if *net_if = net_if_get_default();
 
 	__cmock_nrf_modem_is_initialized_ExpectAndReturn(0);
-	__cmock_nrf_modem_lib_init_ExpectAndReturn(NRF_MODEM_DFU_RESULT_HARDWARE_ERROR);
+	__cmock_nrf_modem_lib_init_ExpectAndReturn(-EIO);
 
-	TEST_ASSERT_EQUAL(NRF_MODEM_DFU_RESULT_HARDWARE_ERROR, net_if_up(net_if));
+	TEST_ASSERT_EQUAL(-EIO, net_if_up(net_if));
 }
 
 /* Verify lte_connectivity_disable() */

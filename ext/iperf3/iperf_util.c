@@ -107,21 +107,19 @@ int getrusage(int who, struct rusage *usage)
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
 int iperf_util_socket_pdn_id_set(int fd, const char *pdn_id_str)
 {
-	int ret;
-	size_t len;
-	struct ifreq ifr = {0};
-    
-    snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "pdn%s", pdn_id_str);
-	len = strlen(ifr.ifr_name);
+    int ret;
+    int pdn_int;
 
-	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
-	if (ret < 0) {
-		printk("Failed to bind socket with PDN ID %s, error: %d, %s\n", 
+    pdn_int = atoi(pdn_id_str);
+
+    ret = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_int, sizeof(int));
+    if (ret < 0) {
+        printk("Failed to bind socket with PDN ID %s, error: %d, %s\n",
             pdn_id_str, ret, strerror(ret));
-		return -EINVAL;
-	}
+        return -EINVAL;
+    }
 
-	return 0;
+    return 0;
 }
 #endif
 /*
@@ -223,7 +221,7 @@ void make_cookie(const char *cookie)
 /* is_closed
  *
  * Test if the file descriptor fd is closed.
- * 
+ *
  * Iperf uses this function to test whether a TCP stream socket
  * is closed, because accepting and denying an invalid connection
  * in iperf_tcp_accept is not considered an error.
@@ -271,7 +269,7 @@ double
 timeval_diff(struct timeval * tv0, struct timeval * tv1)
 {
     double time1, time2;
-    
+
     time1 = tv0->tv_sec + (tv0->tv_usec / 1000000.0);
     time2 = tv1->tv_sec + (tv1->tv_usec / 1000000.0);
 
@@ -331,7 +329,7 @@ get_system_info(void)
     struct utsname  uts;
     memset(buf, 0, 1024);
     uname(&uts);
-    snprintf(buf, sizeof(buf), "%s %s %s %s %s", uts.sysname, uts.nodename, 
+    snprintf(buf, sizeof(buf), "%s %s %s %s %s", uts.sysname, uts.nodename,
 	     uts.release, uts.version, uts.machine);
 #endif
     return buf;
@@ -353,44 +351,44 @@ get_optional_features(void)
 #if !defined(CONFIG_NRF_IPERF3_INTEGRATION)  /* not supported */
 #if defined(HAVE_CPU_AFFINITY)
     if (numfeatures > 0) {
-	strncat(features, ", ", 
+	strncat(features, ", ",
 		sizeof(features) - strlen(features) - 1);
     }
-    strncat(features, "CPU affinity setting", 
+    strncat(features, "CPU affinity setting",
 	sizeof(features) - strlen(features) - 1);
     numfeatures++;
 #endif /* HAVE_CPU_AFFINITY */
-    
+
 #if defined(HAVE_FLOWLABEL)
     if (numfeatures > 0) {
-	strncat(features, ", ", 
+	strncat(features, ", ",
 		sizeof(features) - strlen(features) - 1);
     }
-    strncat(features, "IPv6 flow label", 
+    strncat(features, "IPv6 flow label",
 	sizeof(features) - strlen(features) - 1);
     numfeatures++;
 #endif /* HAVE_FLOWLABEL */
-    
+
 #if defined(HAVE_SCTP_H)
     if (numfeatures > 0) {
-	strncat(features, ", ", 
+	strncat(features, ", ",
 		sizeof(features) - strlen(features) - 1);
     }
-    strncat(features, "SCTP", 
+    strncat(features, "SCTP",
 	sizeof(features) - strlen(features) - 1);
     numfeatures++;
 #endif /* HAVE_SCTP_H */
-    
+
 #if defined(HAVE_TCP_CONGESTION)
     if (numfeatures > 0) {
-	strncat(features, ", ", 
+	strncat(features, ", ",
 		sizeof(features) - strlen(features) - 1);
     }
-    strncat(features, "TCP congestion algorithm setting", 
+    strncat(features, "TCP congestion algorithm setting",
 	sizeof(features) - strlen(features) - 1);
     numfeatures++;
 #endif /* HAVE_TCP_CONGESTION */
-    
+
 #if defined(HAVE_SENDFILE)
     if (numfeatures > 0) {
 	strncat(features, ", ",
@@ -422,7 +420,7 @@ get_optional_features(void)
 #endif /* HAVE_SSL */
 #endif
     if (numfeatures == 0) {
-	strncat(features, "None", 
+	strncat(features, "None",
 		sizeof(features) - strlen(features) - 1);
     }
 
@@ -561,8 +559,8 @@ int daemon(int nochdir, int noclose)
 
     /*
      * Fork again to avoid becoming a session leader.
-     * This might only matter on old SVr4-derived OSs. 
-     * Note in particular that glibc and FreeBSD libc 
+     * This might only matter on old SVr4-derived OSs.
+     * Note in particular that glibc and FreeBSD libc
      * only fork once.
      */
     pid = fork();

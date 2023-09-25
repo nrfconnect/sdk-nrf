@@ -456,9 +456,9 @@ static void handle_full_fota_activation_fail(int ret)
 }
 #endif
 
-void slm_finish_modem_fota(int modem_lib_init_ret)
-{
 #if defined(CONFIG_SLM_FULL_FOTA)
+void slm_finish_modem_full_dfu(void)
+{
 	int err;
 
 	if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
@@ -518,17 +518,6 @@ void slm_finish_modem_fota(int modem_lib_init_ret)
 		else
 			LOG_INF("External flash erase succeeded");
 	}
-#endif
-	if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA &&
-	    handle_nrf_modem_lib_init_ret(modem_lib_init_ret)) {
 
-		LOG_INF("Re-initializing the modem due to ongoing delta modem firmware update.");
-
-		/* The second init needs to be done regardless of the return value.
-		 * Refer to the below link for more information on the procedure.
-		 * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/delta_dfu.html#reinitializing-the-modem-to-run-the-new-firmware
-		 */
-		modem_lib_init_ret = nrf_modem_lib_init();
-		handle_nrf_modem_lib_init_ret(modem_lib_init_ret);
-	}
 }
+#endif

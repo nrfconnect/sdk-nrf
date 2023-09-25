@@ -22,17 +22,15 @@
 #include <net/nrf_cloud.h>
 
 #if defined(CONFIG_NRF_MODEM_LIB)
-NRF_MODEM_LIB_ON_INIT(nrf_cloud_fota_common_init_hook,
-		      on_modem_lib_init, NULL);
+static int dfu_result;
 
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-static void on_modem_lib_init(int ret, void *ctx)
+static void on_modem_lib_dfu(int dfu_res, void *ctx)
 {
-	modem_lib_init_result = ret;
+	dfu_result = dfu_res;
 }
-#endif
+
+NRF_MODEM_LIB_ON_DFU_RES(nrf_cloud_fota_dfu_hook, on_modem_lib_dfu, NULL);
+#endif /* CONFIG_NRF_MODEM_LIB*/
 
 LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -191,25 +189,28 @@ static enum nrf_cloud_fota_validate_status app_fota_validate_get(void)
 static enum nrf_cloud_fota_validate_status modem_delta_fota_validate_get(void)
 {
 #if defined(CONFIG_NRF_MODEM_LIB)
-	switch (modem_lib_init_result) {
+	switch (dfu_result) {
 	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem FOTA update confirmed");
 		return NRF_CLOUD_FOTA_VALIDATE_PASS;
-	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
 	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
 	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
+		LOG_ERR("Modem FOTA error: 0x%x. Running old firmware", dfu_result);
+		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
 	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
-		LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
+		LOG_ERR("Modem FOTA fatal error: 0x%x. Modem failure", dfu_result);
 		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
 	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
-		LOG_ERR("Modem FOTA cancelled: %d", modem_lib_init_result);
+		LOG_ERR("Modem FOTA cancelled: 0x%x.", dfu_result);
 		LOG_ERR("Please reboot once you have sufficient power for the DFU");
 		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
 	default:
-		LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
+		/* Unknown DFU result code */
+		LOG_WRN("Modem FOTA result unknown: 0x%x", dfu_result);
 		break;
 	}
-#endif
+#endif /* CONFIG_NRF_MODEM_LIB*/
 
 	return NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
 }
