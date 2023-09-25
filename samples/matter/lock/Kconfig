@@ -64,6 +64,11 @@ config THREAD_WIFI_SWITCHING_CLI_SUPPORT
 	default n
 	select CHIP_LIB_SHELL
 
+# We need more heap size for image swap buffers
+config CHIP_MALLOC_SYS_HEAP_SIZE
+	default 30720 if CHIP_WIFI
+	default 10240 if NET_L2_OPENTHREAD
+
 endif
 
 # Sample configuration used for Thread networking
