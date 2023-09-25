@@ -281,7 +281,7 @@ When the application receives the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` ev
 This event results in the callback of the application's :c:func:`pgps_event_handler_t` function when a valid P-GPS prediction set is available.
 It passes the :c:enum:`PGPS_EVT_AVAILABLE` event and a pointer to the :c:struct:`nrf_cloud_pgps_prediction` structure to the handler.
 
-The application must pass this prediction to the :c:func:`nrf_cloud_pgps_inject` function, along with either the :c:struct:`nrf_modem_gnss_agps_data_frame` structure read from the GNSS interface after the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event or NULL.
+The application must pass this prediction to the :c:func:`nrf_cloud_pgps_inject` function, along with either the :c:struct:`nrf_modem_gnss_agnss_data_frame` structure read from the GNSS interface after the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event or NULL.
 
 If the device does not move distances longer than a few dozen kilometers before it gets a new GNSS fix, it can pass the latitude and longitude read after the :c:enumerator:`NRF_MODEM_GNSS_EVT_FIX` event to the :c:func:`nrf_cloud_pgps_set_location` function.
 The P-GPS subsystem uses this stored location for the next GNSS request for position assistance when A-GPS assistance is not enabled or is unavailable.

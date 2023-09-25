@@ -20,7 +20,7 @@
 #define GROUND_FIX_ACCURACY		4
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agps_data_frame *agps_req)
+void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agnss_data_frame *agps_req)
 {
 	int err;
 

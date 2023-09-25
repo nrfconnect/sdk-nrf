@@ -321,13 +321,13 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	*
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 /** @brief Build A-GPS type array based on request.
  */
-int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame *const request,
+int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agnss_data_frame *const request,
 				  enum nrf_cloud_agps_type *array, const size_t array_size);
 
 /** @brief Encode an A-GPS request device message to be sent to nRF Cloud */
-int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame *const request,
+int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame *const request,
 				   cJSON * const agps_req_obj_out);
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 /** @brief Parse the PGPS response (REST and MQTT) from nRF Cloud */

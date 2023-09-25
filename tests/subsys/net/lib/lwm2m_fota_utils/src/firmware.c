@@ -17,7 +17,6 @@
 
 #include "stubs.h"
 
-extern void lwm2m_firmware_emulate_modem_lib_init(int modem_init_ret_val);
 static int write_fota_dynamic_url(uint8_t instance_id, const char *url, uint16_t len);
 static void tear_down_test(void *fixie);
 static void setup_tear_up(void *fixie);
@@ -59,6 +58,7 @@ static fota_download_callback_t firmware_fota_download_cb;
 
 static struct settings_handler *handler;
 static int fota_download_ret_val;
+static int fota_apply_ret_val;
 static bool boot_scheduled;
 static bool target_reset_done;
 static size_t target_offset;
@@ -216,6 +216,11 @@ static int fota_download_init_stub(fota_download_callback_t client_callback)
 	return fota_download_ret_val;
 }
 
+static int fota_download_util_apply_update_stub(enum dfu_target_image_type dfu_target_type)
+{
+	return fota_apply_ret_val;
+}
+
 static void fota_cb_simulate_event(enum fota_download_evt_id id)
 {
 	struct fota_download_evt evt;
@@ -270,6 +275,7 @@ static void setup_tear_up(void *fixie)
 	fota_download_start_with_image_type_fake.return_val = 0;
 	fota_download_target_fake.return_val = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 	fota_download_init_fake.custom_fake = fota_download_init_stub;
+	fota_download_util_apply_update_fake.custom_fake = fota_download_util_apply_update_stub;
 	fota_download_util_download_start_fake.custom_fake =
 		fota_download_util_download_start_stub;
 	settings_subsys_init_fake.return_val = 0;
@@ -641,8 +647,7 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_update)
 	printf("State %d\r\n", state);
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
 
-	lwm2m_firmware_emulate_modem_lib_init(NRF_MODEM_DFU_RESULT_AUTH_ERROR);
-	fota_download_util_apply_update_fake.return_val = -1;
+	fota_apply_ret_val = -1;
 	do_firmware_update(modem_instance);
 	result = get_modem_result();
 	state = get_app_state();
@@ -663,8 +668,7 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_update)
 	printf("State %d\r\n", state);
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
 
-	lwm2m_firmware_emulate_modem_lib_init(NRF_MODEM_DFU_RESULT_OK);
-	fota_download_util_apply_update_fake.return_val = 0;
+	fota_apply_ret_val = 0;
 	do_firmware_update(modem_instance);
 	result = get_modem_result();
 	zassert_equal(boot_scheduled, true, "Not scheduled");
@@ -785,7 +789,6 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_multinstace_download)
 	printf("Update %d\r\n", rc);
 	zassert_equal(rc, 0, "wrong result value");
 	/* Stub Linked write for update */
-	lwm2m_firmware_emulate_modem_lib_init(NRF_MODEM_DFU_RESULT_OK);
 	k_sleep(K_SECONDS(6));
 	state = get_modem_state();
 	zassert_equal(state, STATE_IDLE, "wrong result value");

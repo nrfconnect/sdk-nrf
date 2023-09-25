@@ -3209,6 +3209,8 @@ static int agps_types_array_json_encode(cJSON * const obj,
 		    (types[i] > NRF_CLOUD_AGPS__LAST)) {
 			LOG_INF("Ignoring unknown A-GPS type: %d", types[i]);
 			continue;
+		} else if (types[i] == NRF_CLOUD_AGPS__RSVD_PREDICTION_DATA) {
+			continue;
 		}
 
 		cJSON *num = cJSON_CreateNumber(types[i]);
@@ -3305,7 +3307,7 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	*
 #endif /* CONFIG_NRF_MODEM */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agps_data_frame * const request,
+int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame * const request,
 				   cJSON * const agps_req_obj_out)
 {
 	if (!agps_req_obj_out || !request) {
@@ -3363,15 +3365,33 @@ cleanup:
 	return err;
 }
 
-int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * const request,
+static const struct nrf_modem_gnss_agnss_system_data_need *system_data_need_get(
+	const struct nrf_modem_gnss_agnss_data_frame *request,
+	uint8_t system_id)
+{
+	const struct nrf_modem_gnss_agnss_system_data_need *system_data_need = NULL;
+
+	for (int i = 0; i < request->system_count; i++) {
+		if (request->system[i].system_id == system_id) {
+			system_data_need = &request->system[i];
+			break;
+		}
+	}
+
+	return system_data_need;
+}
+
+int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agnss_data_frame * const request,
 				  enum nrf_cloud_agps_type *array, const size_t array_size)
 {
+	const struct nrf_modem_gnss_agnss_system_data_need *system_data_need;
+
 	if (!request || !array || !array_size) {
 		return -EINVAL;
 	}
-	if (array_size < NRF_CLOUD_AGPS__LAST) {
+	if (array_size < NRF_CLOUD_AGPS__TYPES_COUNT) {
 		LOG_ERR("Array size (%d) too small, must be >= %d",
-			array_size, NRF_CLOUD_AGPS__LAST);
+			array_size, NRF_CLOUD_AGPS__TYPES_COUNT);
 		return -ERANGE;
 	}
 
@@ -3379,37 +3399,55 @@ int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * 
 
 	memset((void *)array, NRF_CLOUD_AGPS__TYPE_INVALID, array_size * sizeof(*array));
 
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST) {
 		array[cnt++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
 	}
 
-	if (request->sv_mask_ephe) {
-		array[cnt++] = NRF_CLOUD_AGPS_EPHEMERIDES;
+	system_data_need = system_data_need_get(request, NRF_MODEM_GNSS_SYSTEM_GPS);
+	if (system_data_need) {
+		if (system_data_need->sv_mask_ephe) {
+			array[cnt++] = NRF_CLOUD_AGPS_EPHEMERIDES;
+		}
+
+		if (system_data_need->sv_mask_alm) {
+			array[cnt++] = NRF_CLOUD_AGPS_ALMANAC;
+		}
+
+		if (request->data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
+			array[cnt++] = NRF_CLOUD_AGPS_INTEGRITY;
+		}
 	}
 
-	if (request->sv_mask_alm) {
-		array[cnt++] = NRF_CLOUD_AGPS_ALMANAC;
+	system_data_need = system_data_need_get(request, NRF_MODEM_GNSS_SYSTEM_QZSS);
+	if (system_data_need) {
+		if (system_data_need->sv_mask_ephe) {
+			array[cnt++] = NRF_CLOUD_AGNSS_QZSS_EPHEMERIDES;
+		}
+
+		if (system_data_need->sv_mask_alm) {
+			array[cnt++] = NRF_CLOUD_AGNSS_QZSS_ALMANAC;
+		}
+
+		if (request->data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
+			array[cnt++] = NRF_CLOUD_AGNSS_QZSS_INTEGRITY;
+		}
 	}
 
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST) {
 		array[cnt++] = NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION;
 	}
 
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST) {
 		array[cnt++] = NRF_CLOUD_AGPS_NEQUICK_CORRECTION;
 	}
 
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		array[cnt++] = NRF_CLOUD_AGPS_GPS_TOWS;
 		array[cnt++] = NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK;
 	}
 
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
 		array[cnt++] = NRF_CLOUD_AGPS_LOCATION;
-	}
-
-	if (request->data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_INTEGRITY;
 	}
 
 	if (cnt == 0) {
@@ -3418,7 +3456,7 @@ int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agps_data_frame * 
 
 	return cnt;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_pgps_response_decode(const char *const response,

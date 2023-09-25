@@ -66,7 +66,7 @@ void location_assistance_set_result_code_cb(location_assistance_result_code_cb_t
  * @return Returns a negative error code (errno.h) indicating
  *         reason of failure or 0 for success.
  */
-int location_assistance_agps_set_mask(const struct nrf_modem_gnss_agps_data_frame *agps_req);
+int location_assistance_agps_set_mask(const struct nrf_modem_gnss_agnss_data_frame *agps_req);
 
 /**
  * @brief Send the A-GPS assistance request to LwM2M server

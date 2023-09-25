@@ -45,10 +45,12 @@ void fake_lwm2m_register_obj(struct lwm2m_engine_obj *obj)
 	}
 }
 
-static struct nrf_modem_gnss_agps_data_frame agps_req = {
-	.sv_mask_ephe = 0xffffffff,
-	.sv_mask_alm = 0xffffffff,
+static struct nrf_modem_gnss_agnss_data_frame agps_req = {
 	.data_flags = 0xffffffff,
+	.system_count = 1,
+	.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+	.system[0].sv_mask_ephe = 0xffffffff,
+	.system[0].sv_mask_alm = 0xffffffff,
 };
 
 static struct lwm2m_ctx client_ctx;

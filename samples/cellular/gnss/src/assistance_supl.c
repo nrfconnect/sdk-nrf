@@ -51,14 +51,14 @@ static int inject_agps_type(void *agps, size_t agps_size, uint16_t type, void *u
 {
 	ARG_UNUSED(user_data);
 
-	int retval = nrf_modem_gnss_agps_write(agps, agps_size, type);
+	int retval = nrf_modem_gnss_agnss_write(agps, agps_size, type);
 
 	if (retval != 0) {
-		LOG_ERR("Failed to write A-GPS data, type: %d (errno: %d)", type, errno);
+		LOG_ERR("Failed to write A-GNSS data, type: %d (errno: %d)", type, errno);
 		return -1;
 	}
 
-	LOG_INF("Injected A-GPS data, type: %d, size: %d", type, agps_size);
+	LOG_INF("Injected A-GNSS data, type: %d, size: %d", type, agps_size);
 
 	return 0;
 }
@@ -194,7 +194,7 @@ int assistance_init(struct k_work_q *assistance_work_q)
 	return 0;
 }
 
-int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
+int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 {
 	int err;
 
@@ -206,7 +206,7 @@ int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
 	}
 
 	LOG_INF("Starting SUPL session");
-	err = supl_session(agps_request);
+	err = supl_session(agnss_request);
 	LOG_INF("Done");
 	close_supl_socket();
 

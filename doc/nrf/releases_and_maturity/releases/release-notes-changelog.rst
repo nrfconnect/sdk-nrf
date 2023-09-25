@@ -688,7 +688,14 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
-  * Added CEREG event tracking to ``lte_connectivity``.
+  * Added:
+
+    * CEREG event tracking to ``lte_connectivity``.
+    * The :c:macro:`NRF_MODEM_LIB_ON_DFU_RES` macro to add callbacks for modem DFU results.
+
+  * Replaced the use of :c:macro:`SO_BINDTODEVICE` socket option with :c:macro:`SO_BINDTOPDN` to bind the socket to a PDN.
+    The new option takes an integer for the PDN ID instead of a string.
+
   * Updated:
 
     * The :c:func:`nrf_modem_lib_shutdown` function to allow the modem to be in flight mode (``CFUN=4``) when shutting down the modem.

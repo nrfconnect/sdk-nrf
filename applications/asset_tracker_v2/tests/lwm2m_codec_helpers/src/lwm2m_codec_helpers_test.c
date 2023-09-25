@@ -208,8 +208,8 @@ void test_codec_helpers_set_agps_data(void)
 		.mcc = 242,
 		.area = 30601,
 		.cell = 52118273,
-		.request.sv_mask_ephe = 0xFFFFFFFFu,
-		.request.sv_mask_alm = 0xFFFFFFFFu,
+		.request.system[0].sv_mask_ephe = 0xFFFFFFFFu,
+		.request.system[0].sv_mask_alm = 0xFFFFFFFFu,
 		.request.data_flags = 0xFFFFFFFFu,
 		.queued = true,
 	};

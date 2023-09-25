@@ -27,6 +27,7 @@
 #include <zephyr/net/offloaded_netdev.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/net/net_if.h>
+#include <zephyr/sys/util_macro.h>
 
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/poll.h>
@@ -93,7 +94,6 @@ static void z_to_nrf_ipv4(const struct sockaddr *z_in,
 {
 	const struct sockaddr_in *ptr = (const struct sockaddr_in *)z_in;
 
-	nrf_out->sin_len = sizeof(struct nrf_sockaddr_in);
 	nrf_out->sin_port = ptr->sin_port;
 	nrf_out->sin_family = NRF_AF_INET;
 	nrf_out->sin_addr.s_addr = ptr->sin_addr.s_addr;
@@ -115,7 +115,6 @@ static void z_to_nrf_ipv6(const struct sockaddr *z_in,
 	const struct sockaddr_in6 *ptr = (const struct sockaddr_in6 *)z_in;
 
 	/* nrf_out->sin6_flowinfo field not used */
-	nrf_out->sin6_len = sizeof(struct nrf_sockaddr_in6);
 	nrf_out->sin6_port = ptr->sin6_port;
 	nrf_out->sin6_family = NRF_AF_INET6;
 	memcpy(nrf_out->sin6_addr.s6_addr, ptr->sin6_addr.s6_addr,
@@ -128,7 +127,7 @@ static void nrf_to_z_ipv6(struct sockaddr *z_out,
 {
 	struct sockaddr_in6 *ptr = (struct sockaddr_in6 *)z_out;
 
-	/* nrf_sockaddr_in6 fields .sin6_flowinfo and .sin6_len not used */
+	/* nrf_sockaddr_in6 field .sin6_flowinfo not used */
 	ptr->sin6_port = nrf_in->sin6_port;
 	ptr->sin6_family = AF_INET6;
 	memcpy(ptr->sin6_addr.s6_addr, nrf_in->sin6_addr.s6_addr,
@@ -197,14 +196,17 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_ERROR:
 			*nrf_out_optname = NRF_SO_ERROR;
 			break;
+		case SO_EXCEPTIONAL_DATA:
+			*nrf_out_optname = NRF_SO_EXCEPTIONAL_DATA;
+			break;
 		case SO_RCVTIMEO:
 			*nrf_out_optname = NRF_SO_RCVTIMEO;
 			break;
 		case SO_SNDTIMEO:
 			*nrf_out_optname = NRF_SO_SNDTIMEO;
 			break;
-		case SO_BINDTODEVICE:
-			*nrf_out_optname = NRF_SO_BINDTODEVICE;
+		case SO_BINDTOPDN:
+			*nrf_out_optname = NRF_SO_BINDTOPDN;
 			break;
 		case SO_REUSEADDR:
 			*nrf_out_optname = NRF_SO_REUSEADDR;
@@ -487,6 +489,18 @@ static int nrf91_socket_offload_setsockopt(void *obj, int level, int optname,
 	struct nrf_timeval nrf_timeo = { 0 };
 	void *nrf_optval = (void *)optval;
 	nrf_socklen_t nrf_optlen = optlen;
+
+	if ((level == SOL_SOCKET) && (optname == SO_BINDTODEVICE)) {
+		if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER)) {
+			/* This is used by socket dispatcher in zephyr and is forwarded to the
+			 * offloading layer afterwards. We don't have to do anything in this case.
+			 */
+			return 0;
+		}
+
+		errno = EOPNOTSUPP;
+		return -1;
+	}
 
 	if (z_to_nrf_optname(level, optname, &nrf_optname) < 0) {
 		errno = ENOPROTOOPT;

@@ -190,25 +190,16 @@ static void modem_configure(void)
 	}
 }
 
-int main(void)
+static void on_modem_lib_dfu(int32_t dfu_res, void *ctx)
 {
-	int err;
-
-	LOG_INF("Azure FOTA sample started");
-	LOG_INF("This may take a while if a modem firmware update is pending");
-
-	err = nrf_modem_lib_init();
-
-	switch (err) {
+	switch (dfu_res) {
 	case NRF_MODEM_DFU_RESULT_OK:
-		LOG_INF("Modem firmware update successful!");
-		LOG_INF("Modem will run the new firmware after reboot");
-		k_thread_suspend(k_current_get());
+		LOG_DBG("Modem firmware updated");
 		break;
 	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
 	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
 		LOG_INF("Modem firmware update failed");
-		LOG_INF("Modem will run non-updated firmware on reboot.");
+		LOG_INF("Modem is running old firmware.");
 		break;
 	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
@@ -219,12 +210,25 @@ int main(void)
 		LOG_INF("Modem firmware update failed");
 		LOG_INF("Please reboot once you have sufficient power for the DFU.");
 		break;
-	case -1:
+	default:
+		break;
+	}
+}
+
+NRF_MODEM_LIB_ON_DFU_RES(main_dfu_hook, on_modem_lib_dfu, NULL);
+
+int main(void)
+{
+	int err;
+
+	LOG_INF("Azure FOTA sample started");
+	LOG_INF("This may take a while if a modem firmware update is pending");
+
+	err = nrf_modem_lib_init();
+	if (err) {
 		LOG_INF("Could not initialize modem library");
 		LOG_INF("Fatal error.");
 		return 0;
-	default:
-		break;
 	}
 
 	k_work_init_delayable(&reboot_work, reboot_work_fn);

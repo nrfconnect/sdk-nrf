@@ -216,33 +216,37 @@ static int handle_at_modemreset(enum at_cmd_type type)
 	unsigned int step = 1;
 	int ret;
 
-	do {
-		ret = nrf_modem_lib_shutdown();
-		if (ret != 0) {
-			break;
-		}
-		++step;
+	/* The fota stage is updated in the dfu_callback during modem initialization.
+	 * We store it here to see if a fota was performed during this modem init.
+	 */
+	enum fota_stage fota_stage = slm_fota_stage;
 
-		ret = nrf_modem_lib_init();
-		if (ret < 0) {
-			break;
-		}
-		++step;
 
-		if (ret > 0 || (slm_fota_stage == FOTA_STAGE_ACTIVATE
-					&& (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
-					    slm_fota_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM))) {
-			slm_finish_modem_fota(ret);
-			slm_fota_post_process();
-		}
+	ret = nrf_modem_lib_shutdown();
+	if (ret != 0) {
+		goto out;
+	}
+	++step;
 
-		/* Success. */
-		rsp_send("\r\n#XMODEMRESET: 0\r\n");
+	ret = nrf_modem_lib_init();
+
+	if ((fota_stage == FOTA_STAGE_ACTIVATE &&
+	    (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
+	     slm_fota_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM))) {
+#if defined(CONFIG_SLM_FULL_FOTA)
+		slm_finish_modem_full_dfu();
+#endif
+		slm_fota_post_process();
+	}
+
+out:
+	if (ret) {
+		/* Error; print the step that failed and its error code. */
+		rsp_send("\r\n#XMODEMRESET: %u,%d\r\n", step, ret);
 		return 0;
-	} while (0);
+	}
 
-	/* Error; print the step that failed and its error code. */
-	rsp_send("\r\n#XMODEMRESET: %u,%d\r\n", step, ret);
+	rsp_send("\r\n#XMODEMRESET: 0\r\n");
 	return 0;
 }
 

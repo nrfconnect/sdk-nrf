@@ -18,13 +18,8 @@
 int net_utils_socket_pdn_id_set(int fd, uint32_t pdn_id)
 {
 	int ret;
-	size_t len;
-	struct ifreq ifr = { 0 };
 
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "pdn%d", pdn_id);
-	len = strlen(ifr.ifr_name);
-
-	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
+	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_id, sizeof(pdn_id));
 	if (ret < 0) {
 		mosh_error(
 			"Failed to bind socket with PDN ID %d, error: %d, %s",
