@@ -31,6 +31,7 @@ int SoftwareImagesSwapper::Swap(const ImageLocation &source, SoftwareImagesSwapD
 
 	uint8_t *dfuImageBuffer = (uint8_t *)malloc(kBufferSize);
 	if (!dfuImageBuffer) {
+		LOG_ERR("Cannot allocate application DFU image buffer");
 		return -ENOMEM;
 	}
 
@@ -79,6 +80,7 @@ int SoftwareImagesSwapper::SwapImage(uint32_t address, uint32_t size, uint8_t id
 
 	uint8_t *flashImageBuffer = (uint8_t *)malloc(kBufferSize);
 	if (!flashImageBuffer) {
+		LOG_ERR("Cannot allocate application flash image buffer");
 		return -ENOMEM;
 	}
 
