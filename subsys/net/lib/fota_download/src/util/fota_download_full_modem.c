@@ -43,7 +43,24 @@ int fota_download_full_modem_apply_update(void)
 		return ret;
 	}
 	LOG_INF("Modem firmware update completed");
-	return 0;
+
+	/* Shuttdown modem from bootloader mode */
+	ret = nrf_modem_lib_shutdown();
+	if (ret != 0) {
+		LOG_ERR("nrf_modem_lib_shutdown() failed: %d\n", ret);
+		return ret;
+	}
+
+	/* Initialize Modem with new Image */
+	ret = nrf_modem_lib_init();
+
+	LOG_INF("Modem init %d", ret);
+	if (ret != 0) {
+		LOG_ERR("nrf_modem_lib_init() failed: %d\n", ret);
+		return ret;
+	}
+
+	return ret;
 }
 
 int fota_download_full_modem_stream_params_init(void)
