@@ -34,7 +34,6 @@ This page is included only in the latest documentation, because it might contain
    releases/release-notes-2.0.2
    releases/release-notes-2.0.1
    releases/release-notes-2.0.0
-   migration/migration_guide_1.x_to_2.x
    releases/release-notes-1.9.2
    releases/release-notes-1.9.1
    releases/release-notes-1.9.0
