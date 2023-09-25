@@ -26,7 +26,6 @@ int fota_download_apply_delta_modem_update(void)
 	int ret;
 	int result;
 
-	lte_lc_deinit();
 	nrf_modem_lib_shutdown();
 	ret = nrf_modem_lib_init();
 
