@@ -12,7 +12,7 @@ This sample demonstrates how to use the WFA QuickTrack (WFA QT) library needed f
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -29,9 +29,7 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-Currently, the following configurations are supported:
-
-* 7002 DK + QSPI
+Currently, the nRF7002 DK + QSPI configuration is supported.
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
 The following is an example of the CLI command:
@@ -46,6 +44,19 @@ The following is an example of the CLI command:
 .. code-block:: console
 
    west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-netusb.conf
+
+To build for the nRF7002 DK with the Serial Line Internet Protocol (SLIP) support, use the ``nrf7002dk_nrf5340_cpuapp`` build target with the configuration overlay :file:`overlay-slip.conf` and DTC overlay :file:`nrf7002_uart_pipe.overlay`.
+The following is an example of the CLI command:
+
+.. code-block:: console
+
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-slip.conf -DDTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
+
+Also, run the following command to create a Serial Line Internet Protocol (SLIP) interface on the PC where the QT tool is running.
+
+.. code-block:: console
+
+   tunslip6 -s <serial_port> <IPv6_prefix>
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
