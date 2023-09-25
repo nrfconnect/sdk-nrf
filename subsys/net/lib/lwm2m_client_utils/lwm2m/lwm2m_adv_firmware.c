@@ -258,7 +258,7 @@ static int package_write_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 	if (state == STATE_IDLE) {
 		lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_DOWNLOADING);
 	} else if (data_len == 0U || (data_len == 1U && data[0] == '\0')) {
-		if (state == STATE_DOWNLOADED || STATE_DOWNLOADING) {
+		if (state == STATE_DOWNLOADED || state == STATE_DOWNLOADING) {
 			/* reset to state idle and result default */
 			lwm2m_adv_firmware_set_update_result(obj_inst_id, RESULT_DEFAULT);
 			LOG_DBG("Update canceled by writing %d bytes", data_len);

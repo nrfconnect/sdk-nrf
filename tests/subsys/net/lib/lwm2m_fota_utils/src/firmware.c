@@ -308,6 +308,9 @@ static int lwm2m_firmware_event(struct lwm2m_fota_event *event)
 		fota_event.failure.obj_inst_id = event->failure.obj_inst_id;
 		fota_event.failure.update_failure = event->failure.update_failure;
 		break;
+	case LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ:
+		fota_event.reconnect_req.obj_inst_id = event->reconnect_req.obj_inst_id;
+		break;
 	}
 
 	return 0;
@@ -766,7 +769,7 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_multinstace_download)
 	printf("State %d\r\n", state);
 	zassert_equal(state, STATE_DOWNLOADED, "wrong result value");
 
-	/* Test linkek update with unknown object link */
+	/* Test linked update with unknown object link */
 	rc = lwm2m_firmware_update(app_instance, link_modem_instance2,
 				   sizeof(link_modem_instance2));
 	printf("Update %d\r\n", rc);
