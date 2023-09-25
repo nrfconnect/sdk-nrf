@@ -707,6 +707,9 @@ Modem libraries
       The application uses the Kconfig option :kconfig:option:`CONFIG_LTE_RAI_REQ` and ``SO_RAI_*`` socket options instead.
     * The CE level enum names for :c:enum:`lte_lc_ce_level` to not include the number of repetitions.
     * The default network mode from :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M` to :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_GPS`.
+    * The ``CONFIG_LTE_MODE_PREFERENCE`` Kconfig option has been renamed to :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE_VALUE`.
+    * The ``CONFIG_LTE_NETWORK_DEFAULT`` Kconfig option has been renamed to :kconfig:option:`CONFIG_LTE_NETWORK_MODE_DEFAULT`.
+    * The LTE mode preference Kconfig choice has been named as :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE`.
 
   * Fixed a memory leak in +CEDRXS AT notification parser.
 
