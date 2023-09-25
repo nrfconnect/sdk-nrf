@@ -288,6 +288,10 @@ static int lwm2m_firmware_event_cb(struct lwm2m_fota_event *event)
 			event->failure.update_failure);
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_ERROR;
 		break;
+	case LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ:
+		/* FOTA requests modem re-initialization and client re-connection */
+		/* Return -1 to cause normal system reboot */
+		return -1;
 	}
 
 	cloud_wrapper_notify_event(&cloud_wrap_evt);
