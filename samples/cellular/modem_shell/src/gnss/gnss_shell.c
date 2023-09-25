@@ -427,7 +427,7 @@ static int cmd_gnss_agps_expiry(const struct shell *shell, size_t argc, char **a
 static int cmd_gnss_agps_ref_altitude(const struct shell *shell, size_t argc, char **argv)
 {
 	int altitude = 0;
-	struct nrf_modem_gnss_agps_data_location location = { 0 };
+	struct nrf_modem_gnss_agnss_data_location location = { 0 };
 
 	if (argc != 2) {
 		mosh_error("ref_altitude: wrong parameter count");
@@ -461,10 +461,10 @@ static int cmd_gnss_agps_ref_altitude(const struct shell *shell, size_t argc, ch
 	 */
 	location.unc_altitude = 0;
 
-	return nrf_modem_gnss_agps_write(
+	return nrf_modem_gnss_agnss_write(
 		&location,
 		sizeof(location),
-		NRF_MODEM_GNSS_AGPS_LOCATION) == 0 ? 0 : -ENOEXEC;
+		NRF_MODEM_GNSS_AGNSS_LOCATION) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_pgps(const struct shell *shell, size_t argc, char **argv)

@@ -1791,6 +1791,7 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option, va_list param)
     break;
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
   case CURLOPT_INTERFACE_PDN_ID:
+    /* Set what PDN to bind the socket to. */
     result = Curl_setstropt(&data->set.str[STRING_DEVICE_PDN_ID],
                             va_arg(param, char *));
     break;

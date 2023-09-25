@@ -11,14 +11,14 @@
 LOG_MODULE_REGISTER(fota_download_delta_modem, CONFIG_LOG_DEFAULT_LEVEL);
 
 /* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
+static int dfu_result = -1;
 
-NRF_MODEM_LIB_ON_INIT(fota_delta_modem_init_hook,
-		      on_modem_lib_init, NULL);
+NRF_MODEM_LIB_ON_DFU_RES(fota_delta_modem_dfu_res_hook,
+			 on_modem_dfu_res, NULL);
 
-static void on_modem_lib_init(int ret, void *ctx)
+static void on_modem_dfu_res(int dfu_res, void *ctx)
 {
-	modem_lib_init_result = ret;
+	dfu_result = dfu_res;
 }
 
 int fota_download_apply_delta_modem_update(void)
@@ -30,8 +30,7 @@ int fota_download_apply_delta_modem_update(void)
 	nrf_modem_lib_shutdown();
 	ret = nrf_modem_lib_init();
 
-	ret = modem_lib_init_result;
-	switch (ret) {
+	switch (dfu_result) {
 	case NRF_MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
 		result = 0;

@@ -26,12 +26,12 @@ int assistance_init(struct k_work_q *assistance_work_q);
  *
  * @details Fetches and injects assistance data to the GNSS.
  *
- * @param[in] agps_request A-GPS data requested by GNSS.
+ * @param[in] agnss_request A-GNSS data requested by GNSS.
  *
  * @retval 0 on success.
  * @retval <0 in case of an error.
  */
-int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request);
+int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request);
 
 /**
  * @brief Returns assistance module state.

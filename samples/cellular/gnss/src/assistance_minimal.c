@@ -147,7 +147,7 @@ static void time_inject(void)
 	struct tm date_time;
 	int64_t utc_sec;
 	int64_t gps_sec;
-	struct nrf_modem_gnss_agps_data_system_time_and_sv_tow gps_time = { 0 };
+	struct nrf_modem_gnss_agnss_gps_data_system_time_and_sv_tow gps_time = { 0 };
 
 	/* Read current UTC time from the modem. */
 	ret = nrf_modem_at_scanf("AT+CCLK?",
@@ -175,8 +175,8 @@ static void time_inject(void)
 
 	gps_sec_to_day_time(gps_sec, &gps_time.date_day, &gps_time.time_full_s);
 
-	ret = nrf_modem_gnss_agps_write(&gps_time, sizeof(gps_time),
-					NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
+	ret = nrf_modem_gnss_agnss_write(&gps_time, sizeof(gps_time),
+					 NRF_MODEM_GNSS_AGNSS_GPS_SYSTEM_CLOCK_AND_TOWS);
 	if (ret != 0) {
 		LOG_ERR("Failed to inject time, error %d", ret);
 		return;
@@ -192,7 +192,7 @@ static void location_inject(void)
 	char plmn_str[PLMN_STR_MAX_LEN + 1];
 	uint16_t mcc;
 	const struct mcc_table *mcc_info;
-	struct nrf_modem_gnss_agps_data_location location = { 0 };
+	struct nrf_modem_gnss_agnss_data_location location = { 0 };
 
 	/* Read PLMN string from modem to get the MCC. */
 	err = nrf_modem_at_scanf(
@@ -244,7 +244,8 @@ static void location_inject(void)
 		location.unc_altitude = 255; /* altitude not used */
 	}
 
-	err = nrf_modem_gnss_agps_write(&location, sizeof(location), NRF_MODEM_GNSS_AGPS_LOCATION);
+	err = nrf_modem_gnss_agnss_write(
+		&location, sizeof(location), NRF_MODEM_GNSS_AGNSS_LOCATION);
 	if (err) {
 		LOG_ERR("Failed to inject location for MCC %u, error %d", mcc, err);
 		return;
@@ -282,13 +283,13 @@ int assistance_init(struct k_work_q *assistance_work_q)
 	return 0;
 }
 
-int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
+int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 {
-	if (agps_request->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+	if (agnss_request->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		time_inject();
 	}
 
-	if (agps_request->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	if (agnss_request->data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
 		location_inject();
 	}
 

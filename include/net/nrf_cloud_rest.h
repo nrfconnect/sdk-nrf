@@ -48,7 +48,7 @@ enum nrf_cloud_rest_agps_req_type {
 	NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE,
 	/** Request only location (NRF_CLOUD_AGPS_LOCATION) */
 	NRF_CLOUD_REST_AGPS_REQ_LOCATION,
-	/** Request the data specified by nrf_modem_gnss_agps_data_frame */
+	/** Request the data specified by nrf_modem_gnss_agnss_data_frame */
 	NRF_CLOUD_REST_AGPS_REQ_CUSTOM
 };
 
@@ -135,7 +135,7 @@ struct nrf_cloud_rest_location_request {
 struct nrf_cloud_rest_agps_request {
 	enum nrf_cloud_rest_agps_req_type type;
 	/** Required for custom request type (NRF_CLOUD_REST_AGPS_REQ_CUSTOM) */
-	struct nrf_modem_gnss_agps_data_frame *agps_req;
+	struct nrf_modem_gnss_agnss_data_frame *agnss_req;
 	/** Optional; provide network info or set to NULL. The cloud cannot
 	 * provide location assistance data if network info is NULL.
 	 */

@@ -175,7 +175,7 @@ The various steps in the communication session are described below:
 #. In order to start a SUPL session, the application must first initialize the SUPL client library.
    This is done by calling the :c:func:`supl_init` function of the SUPL client OS integration library.
    The function sets up the API and the buffers required for initializing the SUPL client library and invokes the :c:func:`supl_client_init` function with these parameters.
-#. The application can then begin the SUPL session by calling the :c:func:`supl_session` function with a copy of the :c:type:`nrf_modem_gnss_agps_data_frame` data that was received through the A-GPS data request event from the GNSS module.
+#. The application can then begin the SUPL session by calling the :c:func:`supl_session` function with a copy of the :c:type:`nrf_modem_gnss_agnss_data_frame` data that was received through the A-GPS data request event from the GNSS module.
    The SUPL client OS integration library generates the following parameters that are necessary for the session:
 
    * ``supl_session_ctx_t`` structure from the A-GPS request event data

@@ -417,7 +417,7 @@ int coap_codec_agps_encode(struct nrf_cloud_rest_agps_request const *const reque
 	input._agps_req_mnc = request->net_info->current_cell.mnc;
 	input._agps_req_tac = request->net_info->current_cell.tac;
 	if (request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) {
-		cnt = nrf_cloud_agps_type_array_get(request->agps_req, types, ARRAY_SIZE(types));
+		cnt = nrf_cloud_agps_type_array_get(request->agnss_req, types, ARRAY_SIZE(types));
 		t->_agps_req_types_int_count = cnt;
 		input._agps_req_types_present = true;
 		LOG_DBG("num elements: %d", cnt);

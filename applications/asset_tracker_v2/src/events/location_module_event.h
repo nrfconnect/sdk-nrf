@@ -72,7 +72,7 @@ enum location_module_event_type {
 	LOCATION_MODULE_EVT_SHUTDOWN_READY,
 
 	/** The location library has reported that it needs GPS assistance data.
-	 *  The event has associated payload of the type ``struct nrf_modem_gnss_agps_data_frame``
+	 *  The event has associated payload of the type ``struct nrf_modem_gnss_agnss_data_frame``
 	 *  in the event struct member ``data.agps_request``, which contains the types
 	 *  of A-GPS data that the modem needs.
 	 */
@@ -184,7 +184,7 @@ struct location_module_event {
 		/** Data for event LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY. */
 		struct location_module_cloud_location cloud_location;
 		/** Data for event LOCATION_MODULE_EVT_AGPS_NEEDED. */
-		struct nrf_modem_gnss_agps_data_frame agps_request;
+		struct nrf_modem_gnss_agnss_data_frame agps_request;
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 		/** Data for event LOCATION_MODULE_EVT_PGPS_NEEDED. */
 		struct gps_pgps_request pgps_request;

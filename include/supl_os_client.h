@@ -22,13 +22,13 @@
  *
  * @brief Start a SUPL session
  *
- * @param[in] agps_request This contain the information about the AGPS data
- *                         that the GNSS module is requesting from the server.
+ * @param[in] agnss_request This contain the information about the A-GNSS data
+ *                          that the GNSS module is requesting from the server.
  *
  * @return 0  SUPL session was successful.
  *         <0 SUPL session failed.
  */
-int supl_session(const struct nrf_modem_gnss_agps_data_frame *const agps_request);
+int supl_session(const struct nrf_modem_gnss_agnss_data_frame *const agnss_request);
 
 /**
  * @brief Setup the API and the buffers required by

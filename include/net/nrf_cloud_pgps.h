@@ -15,7 +15,7 @@
 #if defined(CONFIG_NRF_MODEM)
 #include <nrf_modem_gnss.h>
 #else
-struct nrf_modem_gnss_agps_data_frame;
+struct nrf_modem_gnss_agnss_data_frame;
 #endif
 #include "nrf_cloud_agps_schema_v1.h"
 
@@ -340,7 +340,7 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location);
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
-			  const struct nrf_modem_gnss_agps_data_frame *request);
+			  const struct nrf_modem_gnss_agnss_data_frame *request);
 
 /** @brief Find out if P-GPS update is in progress
  *

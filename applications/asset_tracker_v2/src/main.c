@@ -174,41 +174,48 @@ static void sub_state_set(enum sub_state_type new_state)
 }
 
 #if defined(CONFIG_NRF_MODEM_LIB)
-/* Check the return code from nRF modem library initialization to ensure that
- * the modem is rebooted if a modem firmware update is ready to be applied or
- * an error condition occurred during firmware update or library initialization.
- */
-static void modem_init(void)
-{
-	int ret = nrf_modem_lib_init();
 
-	/* Handle return values relating to modem firmware update */
-	switch (ret) {
-	case 0:
-		/* Initialization successful, no action required. */
-		return;
+static void on_modem_lib_dfu(int dfu_res, void *ctx)
+{
+	switch (dfu_res) {
 	case NRF_MODEM_DFU_RESULT_OK:
-		LOG_DBG("MODEM UPDATE OK. Will run new modem firmware after reboot");
+		LOG_DBG("MODEM UPDATE OK. Running new firmware");
 		break;
 	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
 	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
-		LOG_ERR("MODEM UPDATE ERROR %d. Will run old firmware", ret);
+		LOG_ERR("MODEM UPDATE ERROR 0x%x. Running old firmware", dfu_res);
 		break;
 	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
-		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
+		LOG_ERR("MODEM UPDATE FATAL ERROR 0x%x. Modem failure", dfu_res);
 		break;
 	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
-		LOG_ERR("MODEM UPDATE CANCELLED %d.", ret);
+		LOG_ERR("MODEM UPDATE CANCELLED 0x%x.", dfu_res);
 		LOG_ERR("Please reboot once you have sufficient power for the DFU");
 		break;
 	default:
-		/* All non-zero return codes other than DFU result codes are
-		 * considered irrecoverable and a reboot is needed.
-		 */
-		LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
+		/* Unknown DFU result code */
+		LOG_ERR("nRF modem DFU failed, error: 0x%x", dfu_res);
 		break;
 	}
+}
+
+NRF_MODEM_LIB_ON_DFU_RES(main_dfu_hook, on_modem_lib_dfu, NULL);
+
+/* Check the return code from nRF modem library initialization to ensure that
+ * the modem is rebooted or an error condition occurred during library initialization.
+ */
+static void modem_init(void)
+{
+	int ret;
+
+	ret = nrf_modem_lib_init();
+	if (ret == 0) {
+		LOG_DBG("nRF Modem Library initialized successfully");
+		return;
+	}
+
+	LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
 
 #if defined(CONFIG_NRF_CLOUD_FOTA)
 	/* Ignore return value, rebooting below */

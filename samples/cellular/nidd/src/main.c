@@ -149,7 +149,6 @@ static void nidd_socket_close(int fd)
 
 static int nidd_socket_setup(int pdn_id)
 {
-	char pdn[8];
 	int fd, err;
 
 	fd = socket(AF_PACKET, SOCK_RAW, 0);
@@ -161,8 +160,7 @@ static int nidd_socket_setup(int pdn_id)
 	}
 
 	if (IS_ENABLED(CONFIG_NIDD_ALLOC_NEW_CID)) {
-		(void)snprintf(pdn, sizeof(pdn), "pdn%d", pdn_id);
-		err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, pdn, strlen(pdn));
+		err = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_id, sizeof(pdn_id));
 		if (err == 0) {
 			printk("Bound to PDN ID %d\n", pdn_id);
 		} else {

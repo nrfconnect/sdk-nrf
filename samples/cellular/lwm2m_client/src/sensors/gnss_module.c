@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(gnss_module, CONFIG_APP_LOG_LEVEL);
 static struct nrf_modem_gnss_pvt_data_frame pvt_data;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
 defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-static struct nrf_modem_gnss_agps_data_frame agps_req;
+static struct nrf_modem_gnss_agnss_data_frame agps_req;
 #endif
 static bool running;
 
@@ -94,12 +94,12 @@ static void gnss_event_handler(int event_id)
 		APP_EVENT_SUBMIT(event);
 		break;
 		}
-	case NRF_MODEM_GNSS_EVT_AGPS_REQ: {
+	case NRF_MODEM_GNSS_EVT_AGNSS_REQ: {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
 defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 		LOG_INF("GPS requests AGPS Data. Sending request to LwM2M server");
 		err = nrf_modem_gnss_read(&agps_req, sizeof(agps_req),
-					  NRF_MODEM_GNSS_DATA_AGPS_REQ);
+					  NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 		if (err) {
 			LOG_ERR("Error reading AGPS request (%d)", err);
 		}

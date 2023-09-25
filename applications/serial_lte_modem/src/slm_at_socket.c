@@ -108,9 +108,9 @@ static int bind_to_device(uint16_t cid)
 	if (cid > 0) {
 		int cid_int = cid;
 
-		ret = setsockopt(sock.fd, SOL_SOCKET, SO_BINDTODEVICE, &cid_int, sizeof(int));
+		ret = setsockopt(sock.fd, SOL_SOCKET, SO_BINDTOPDN, &cid_int, sizeof(int));
 		if (ret < 0) {
-			LOG_ERR("SO_BINDTODEVICE error: %d", -errno);
+			LOG_ERR("SO_BINDTOPDN error: %d", -errno);
 		}
 	}
 
@@ -306,7 +306,7 @@ static int do_socketopt_set(int option, int value)
 	int ret = 0;
 
 	switch (option) {
-	case SO_BINDTODEVICE:
+	case SO_BINDTOPDN:
 	case SO_REUSEADDR:
 		ret = setsockopt(sock.fd, SOL_SOCKET, option, &value, sizeof(int));
 		break;

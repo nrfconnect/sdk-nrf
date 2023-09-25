@@ -154,6 +154,7 @@ static int fmfu_get_memory_hash(struct smp_streamer *ctxt)
 	uint64_t start;
 	uint64_t end;
 	struct nrf_modem_bootloader_digest digest;
+	struct nrf_modem_bootloader_fw_segment segment;
 	struct zcbor_string zdigest;
 	bool ok;
 	size_t decoded = 0;
@@ -174,13 +175,14 @@ static int fmfu_get_memory_hash(struct smp_streamer *ctxt)
 	ok = zcbor_map_decode_bulk(zsd, mem_hash_decode,
 		ARRAY_SIZE(mem_hash_decode), &decoded) == 0;
 
-
 	if (!ok || start == 0 || end == 0) {
 		return MGMT_ERR_EINVAL;
 	}
 
-	rc = nrf_modem_bootloader_digest(start, end - start, &digest);
+	segment.start_addr = start;
+	segment.end_addr = end;
 
+	rc = nrf_modem_bootloader_digest(&segment, 1, &digest);
 	if (rc != 0) {
 		LOG_ERR("nrf_fmfu_hash_get failed, err: %d.", rc);
 		LOG_ERR("start:%d end: %d\n.", (uint32_t)start, (uint32_t)end);
@@ -188,8 +190,8 @@ static int fmfu_get_memory_hash(struct smp_streamer *ctxt)
 	}
 
 	/* Put the digest response in the response */
-	zdigest.value = digest.data;
-	zdigest.len = NRF_MODEM_BOOTLOADER_DIGEST_LEN;
+	zdigest.value = (uint8_t *)digest.data;
+	zdigest.len = NRF_MODEM_BOOTLOADER_DIGEST_LEN * sizeof(uint32_t);
 
 	ok = zcbor_tstr_put_lit(zse, "digest")			&&
 	     zcbor_bstr_encode(zse, &zdigest)			&&

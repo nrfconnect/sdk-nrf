@@ -505,13 +505,13 @@ void location_core_event_cb_timeout(void)
 }
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
-void location_core_event_cb_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
+void location_core_event_cb_agps_request(const struct nrf_modem_gnss_agnss_data_frame *request)
 {
 	struct location_event_data agps_request_event_data;
 
 	LOG_DBG("Request A-GPS data from application: ephe 0x%08x, alm 0x%08x, data_flags 0x%02x",
-		request->sv_mask_ephe,
-		request->sv_mask_alm,
+		(uint32_t)request->system[0].sv_mask_ephe,
+		(uint32_t)request->system[0].sv_mask_alm,
 		request->data_flags);
 
 	agps_request_event_data.id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;

@@ -789,6 +789,34 @@ void test_nrf91_socket_offload_setsockopt_ebadf(void)
 	TEST_ASSERT_EQUAL(errno, EBADF);
 }
 
+void test_nrf91_socket_offload_setsockopt_bindtodevice_eopnotsup(void)
+{
+	int ret;
+	int fd;
+	int nrf_fd = 2;
+	int family = AF_INET;
+	int type = SOCK_STREAM;
+	int proto = IPPROTO_TCP;
+	struct timeval data = { 0 };
+
+	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM,
+					  NRF_IPPROTO_TCP, nrf_fd);
+
+	fd = socket(family, type, proto);
+
+	TEST_ASSERT_EQUAL(fd, 0);
+
+	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &data, sizeof(data));
+
+	TEST_ASSERT_EQUAL(ret, -1);
+	TEST_ASSERT_EQUAL(errno, EOPNOTSUPP);
+
+	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
+	ret = close(fd);
+
+	TEST_ASSERT_EQUAL(ret, 0);
+}
+
 void test_nrf91_socket_offload_setsockopt_rcvtimeo_success(void)
 {
 	int ret;

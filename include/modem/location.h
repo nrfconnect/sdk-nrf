@@ -222,7 +222,7 @@ struct location_event_data {
 		 * A-GPS notification data frame used by GNSS to let the application know it
 		 * needs new assistance data, used with event LOCATION_EVT_GNSS_ASSISTANCE_REQUEST.
 		 */
-		struct nrf_modem_gnss_agps_data_frame agps_request;
+		struct nrf_modem_gnss_agnss_data_frame agps_request;
 #endif
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 		/**

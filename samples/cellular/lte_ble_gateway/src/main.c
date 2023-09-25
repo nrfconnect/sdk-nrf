@@ -165,11 +165,11 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 static void agps_request(struct k_work *work)
 {
 	int retval;
-	struct nrf_modem_gnss_agps_data_frame agps_data;
+	struct nrf_modem_gnss_agnss_data_frame agps_data;
 
 	if (!nrf_cloud_agps_request_in_progress()) {
 		retval = nrf_modem_gnss_read(&agps_data, sizeof(agps_data),
-					     NRF_MODEM_GNSS_DATA_AGPS_REQ);
+					     NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 		if (retval) {
 			LOG_ERR("Failed to read AGPS data, err %d", retval);
 			return;
@@ -223,7 +223,7 @@ static void gnss_event_handler(int event)
 		}
 		return;
 
-	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
+	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
 		LOG_INF("Requesting AGPS Data");
 		k_work_submit(&agps_request_work);
 		return;

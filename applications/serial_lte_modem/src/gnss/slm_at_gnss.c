@@ -214,11 +214,11 @@ static int gnss_startup(void)
 			 * the modem will not request new almanacs/ephemerides from the cloud.
 			 */
 			const int64_t gps_sec = utc_to_gps_sec(utc_now_ms / 1000);
-			struct nrf_modem_gnss_agps_data_system_time_and_sv_tow gps_time = { 0 };
+			struct nrf_modem_gnss_agnss_gps_data_system_time_and_sv_tow gps_time = {0};
 
 			gps_sec_to_day_time(gps_sec, &gps_time.date_day, &gps_time.time_full_s);
-			ret = nrf_modem_gnss_agps_write(&gps_time, sizeof(gps_time),
-					NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
+			ret = nrf_modem_gnss_agnss_write(&gps_time, sizeof(gps_time),
+					NRF_MODEM_GNSS_AGNSS_GPS_SYSTEM_CLOCK_AND_TOWS);
 			if (ret) {
 				LOG_WRN("Failed to inject GNSS time (%d).", ret);
 			} else {
@@ -298,18 +298,18 @@ static int gnss_shutdown(void)
 #if defined(CONFIG_SLM_NRF_CLOUD)
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-static int read_agnss_req(struct nrf_modem_gnss_agps_data_frame *req)
+static int read_agnss_req(struct nrf_modem_gnss_agnss_data_frame *req)
 {
 	int err;
 
 	err = nrf_modem_gnss_read((void *)req, sizeof(*req),
-					NRF_MODEM_GNSS_DATA_AGPS_REQ);
+					NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 	if (err) {
 		return err;
 	}
 
-	LOG_DBG("AGPS_REQ.sv_mask_ephe = 0x%08x", req->sv_mask_ephe);
-	LOG_DBG("AGPS_REQ.sv_mask_alm  = 0x%08x", req->sv_mask_alm);
+	LOG_DBG("AGPS_REQ.sv_mask_ephe = 0x%08x", (uint32_t)req->system[0].sv_mask_ephe);
+	LOG_DBG("AGPS_REQ.sv_mask_alm  = 0x%08x", (uint32_t)req->system[0].sv_mask_alm);
 	LOG_DBG("AGPS_REQ.data_flags   = 0x%08x", req->data_flags);
 
 	return 0;
@@ -320,7 +320,7 @@ static int read_agnss_req(struct nrf_modem_gnss_agps_data_frame *req)
 static void agnss_req_wk(struct k_work *work)
 {
 	int err;
-	struct nrf_modem_gnss_agps_data_frame req;
+	struct nrf_modem_gnss_agnss_data_frame req;
 
 	ARG_UNUSED(work);
 
@@ -379,10 +379,10 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	/* A P-GPS prediction is available now for the current date and time. */
 	case PGPS_EVT_AVAILABLE: {
-		LOG_INF("PGPS_EVT_AVAILABLE");
-		struct nrf_modem_gnss_agps_data_frame req;
+		struct nrf_modem_gnss_agnss_data_frame req;
 
-		/* read out previous NRF_MODEM_GNSS_EVT_AGPS_REQ */
+		LOG_INF("PGPS_EVT_AVAILABLE");
+		/* read out previous NRF_MODEM_GNSS_EVT_AGNSS_REQ */
 		err = read_agnss_req(&req);
 		if (err) {
 			LOG_INF("Failed to read back A-GNSS request (%d)."
@@ -588,9 +588,8 @@ static void gnss_event_handler(int event)
 		LOG_INF("GNSS_EVT_FIX");
 		on_gnss_evt_fix();
 		break;
-	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
-		LOG_INF("GNSS_EVT_AGPS_REQ");
-		/* This will send A-GNSS/P-GPS requests only if cloud assistance is enabled. */
+	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
+		LOG_INF("GNSS_EVT_AGNSS_REQ");
 		on_gnss_evt_agnss_req();
 		break;
 	case NRF_MODEM_GNSS_EVT_BLOCKED:

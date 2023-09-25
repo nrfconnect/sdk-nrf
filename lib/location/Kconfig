@@ -65,6 +65,13 @@ config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 	  when A-GPS is used. Without assistance, the value should probably be adjusted, because
 	  GNSS acquires satellites more slowly.
 
+config LOCATION_METHOD_GNSS_PRIORITIZE_QZSS_ASSISTANCE
+	bool "Allow A-GNSS data request when only QZSS assistance is needed"
+	help
+	  By default, QZSS assistance data is only requested when some other assistance data is
+	  needed at the same time. Enabling this option allows A-GNSS data request to be sent also
+	  when only QZSS assistance data (usually ephemerides) is needed.
+
 endif # LOCATION_METHOD_GNSS
 
 if LOCATION_METHOD_WIFI

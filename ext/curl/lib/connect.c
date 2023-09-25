@@ -242,20 +242,18 @@ timediff_t Curl_timeleft(struct Curl_easy *data,
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
 static int bind_with_pdn_id(int fd, const char *pdn_id_str)
 {
-	int ret;
-	size_t len;
-	struct ifreq ifr = {0};
-    
-  snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "pdn%s", pdn_id_str);
-	len = strlen(ifr.ifr_name);
+  int ret;
+  int pdn_int;
 
-	ret = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
-	if (ret < 0) {
-		printk("Failed to bind socket with PDN ID %s, error: %d, %s\n", 
+  pdn_int = atoi(pdn_id_str);
+
+  ret = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_int, sizeof(int));
+  if (ret < 0) {
+    printk("Failed to bind socket with PDN ID %s, error: %d, %s\n",
             pdn_id_str, ret, strerror(ret));
-		return -EINVAL;
-	}
-	return 0;
+    return -EINVAL;
+  }
+  return 0;
 }
 #endif
 
@@ -280,6 +278,7 @@ static CURLcode bindlocal(struct connectdata *conn,
   const char *dev = data->set.str[STRING_DEVICE];
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
   const char *pdn_id = data->set.str[STRING_DEVICE_PDN_ID];
+  int opt_retvalue = -1;
 #endif
   int error;
 
@@ -321,12 +320,9 @@ static CURLcode bindlocal(struct connectdata *conn,
     }
     /* interface */
     if(!is_host) {
-#ifdef SO_BINDTODEVICE
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-      struct ifreq ifr = {0};
-      int opt_retvalue = -1;
-      int len;
 
+#ifdef SO_BINDTOPDN
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
       /* Set PDN based on PDN ID or APN if requested */
       if (pdn_id != NULL) {
         /* Nordic specific --pdn_id option: */
@@ -334,14 +330,22 @@ static CURLcode bindlocal(struct connectdata *conn,
         if (opt_retvalue != 0) {
           printk("cannot bind socket with PDN ID %s\n", pdn_id);
           return CURLE_INTERFACE_FAILED;
-        }        
+        }
+
+        printf("bindpdn: \"%s\", opt_retvalue : %d\n", pdn_id, opt_retvalue);
       }
-      else {
+#endif /* defined(CONFIG_NRF_CURL_INTEGRATION) */
+#endif /* SO_BINDTOPDN */
+
+#ifdef SO_BINDTODEVICE
+#if defined(CONFIG_NRF_CURL_INTEGRATION)
+      struct ifreq ifr = {0};
+      int len;
+
         /* Normal --interface option: */
         len = strlen(dev);
         memcpy(ifr.ifr_name, dev, len);
         opt_retvalue = setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
-      }
 
       printf("bindlocal: dev if \"%s\", opt_retvalue : %d\n", ((pdn_id != NULL) ? pdn_id : dev), opt_retvalue);
       if(opt_retvalue == 0) {

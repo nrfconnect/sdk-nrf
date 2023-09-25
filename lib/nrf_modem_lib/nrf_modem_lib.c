@@ -36,6 +36,8 @@ BUILD_ASSERT(IPC_IRQn == NRF_MODEM_IPC_IRQ, "NRF_MODEM_IPC_IRQ mismatch");
  */
 #define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
 
+static void nrf_modem_lib_dfu_handler(uint32_t dfu_res);
+
 static const struct nrf_modem_init_params init_params = {
 	.ipc_irq_prio = CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 	.shmem.ctrl = {
@@ -57,7 +59,8 @@ static const struct nrf_modem_init_params init_params = {
 		.size = CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE,
 	},
 #endif
-	.fault_handler = nrf_modem_fault_handler
+	.fault_handler = nrf_modem_fault_handler,
+	.dfu_handler = nrf_modem_lib_dfu_handler,
 };
 
 static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
@@ -110,6 +113,15 @@ static void log_fw_version_uuid(void)
 	} else {
 		LOG_ERR("Unable to obtain modem FW UUID (ERR: %d, ERR TYPE: %d)\n",
 			nrf_modem_at_err(err), nrf_modem_at_err_type(err));
+	}
+}
+
+static void nrf_modem_lib_dfu_handler(uint32_t dfu_res)
+{
+	LOG_DBG("Modem library update result %d", dfu_res);
+	STRUCT_SECTION_FOREACH(nrf_modem_lib_dfu_cb, e) {
+		LOG_DBG("Modem dfu callback: %p", e->callback);
+		e->callback(dfu_res, e->context);
 	}
 }
 

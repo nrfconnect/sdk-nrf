@@ -820,7 +820,7 @@ int json_common_agps_request_data_add(cJSON *parent,
 		return -ENOMEM;
 	}
 
-	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_UTC_PARAMETERS);
 		if (err) {
@@ -829,7 +829,13 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
-	if (data->request.sv_mask_ephe) {
+	/* GPS data need is always expected to be present and first in list. */
+	__ASSERT(data->request.system_count > 0,
+		 "GNSS system data need not found");
+	__ASSERT(data->request.system[0].system_id == NRF_MODEM_GNSS_SYSTEM_GPS,
+		 "GPS data need not found");
+
+	if (data->request.system[0].sv_mask_ephe) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_EPHEMERIDES);
 		if (err) {
@@ -838,7 +844,7 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
-	if (data->request.sv_mask_alm) {
+	if (data->request.system[0].sv_mask_alm) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_ALMANAC);
 		if (err) {
@@ -847,7 +853,7 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
-	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_KLOBUCHAR_CORRECTION);
 		if (err) {
@@ -856,7 +862,7 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
-	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_NEQUICK_CORRECTION);
 		if (err) {
@@ -865,7 +871,7 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
-	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_GPS_TOWS);
 		if (err) {
@@ -881,7 +887,7 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
-	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_LOCATION);
 		if (err) {
@@ -890,7 +896,7 @@ int json_common_agps_request_data_add(cJSON *parent,
 		}
 	}
 
-	if (data->request.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+	if (data->request.data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
 		err = json_add_number_to_array(agps_types,
 					       DATA_AGPS_REQUEST_TYPE_INTEGRITY);
 		if (err) {

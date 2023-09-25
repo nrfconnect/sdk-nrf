@@ -15,7 +15,7 @@
 struct gnss_agps_request_event {
 	struct app_event_header header;
 
-	struct nrf_modem_gnss_agps_data_frame agps_req;
+	struct nrf_modem_gnss_agnss_data_frame agps_req;
 };
 
 APP_EVENT_TYPE_DECLARE(gnss_agps_request_event);

@@ -35,7 +35,7 @@ extern "C" {
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
  * @return A negative value indicates an error.
  */
-int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request);
+int nrf_cloud_agps_request(const struct nrf_modem_gnss_agnss_data_frame *request);
 
 /** @brief Requests all available A-GPS data from nRF Cloud via MQTT.
  *
@@ -63,7 +63,7 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len);
  * @param received_elements return copy of requested elements received
  * since A-GPS request was made
  */
-void nrf_cloud_agps_processed(struct nrf_modem_gnss_agps_data_frame *received_elements);
+void nrf_cloud_agps_processed(struct nrf_modem_gnss_agnss_data_frame *received_elements);
 
 /** @brief Query whether A-GPS data has been requested from cloud
  *

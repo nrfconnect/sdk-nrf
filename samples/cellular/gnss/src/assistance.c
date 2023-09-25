@@ -29,7 +29,7 @@ static char agps_data_buf[3500];
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-static struct nrf_modem_gnss_agps_data_frame agps_need;
+static struct nrf_modem_gnss_agnss_data_frame agnss_need;
 static struct gps_pgps_request pgps_request;
 static struct nrf_cloud_pgps_prediction *prediction;
 static struct k_work get_pgps_data_work;
@@ -158,7 +158,7 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 
 	LOG_INF("Injecting P-GPS ephemerides");
 
-	err = nrf_cloud_pgps_inject(prediction, &agps_need);
+	err = nrf_cloud_pgps_inject(prediction, &agnss_need);
 	if (err) {
 		LOG_ERR("Failed to inject P-GPS ephemerides");
 	}
@@ -203,6 +203,25 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+static const char *get_system_string(uint8_t system_id)
+{
+	switch (system_id) {
+	case NRF_MODEM_GNSS_SYSTEM_INVALID:
+		return "invalid";
+
+	case NRF_MODEM_GNSS_SYSTEM_GPS:
+		return "GPS";
+
+	case NRF_MODEM_GNSS_SYSTEM_QZSS:
+		return "QZSS";
+
+	default:
+		return "unknown";
+	}
+}
+#endif /* CONFIG_NRF_CLOUD_AGPS */
+
 int assistance_init(struct k_work_q *assistance_work_q)
 {
 	work_q = assistance_work_q;
@@ -227,25 +246,25 @@ int assistance_init(struct k_work_q *assistance_work_q)
 	return 0;
 }
 
-int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
+int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 {
 	int err = 0;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	/* Store the A-GPS data request for P-GPS use. */
-	memcpy(&agps_need, agps_request, sizeof(agps_need));
+	memcpy(&agnss_need, agnss_request, sizeof(agnss_need));
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-	if (!agps_request->data_flags) {
+	if (!agnss_request->data_flags) {
 		/* No assistance needed from A-GPS, skip directly to P-GPS. */
 		nrf_cloud_pgps_notify_prediction();
 		return 0;
 	}
 
-	/* P-GPS will handle ephemerides, so skip those. */
-	agps_request->sv_mask_ephe = 0;
-	/* Almanacs are not needed with P-GPS, so skip those. */
-	agps_request->sv_mask_alm = 0;
+	/* P-GPS will handle GPS ephemerides, so skip those. */
+	agnss_request->system[0].sv_mask_ephe = 0;
+	/* GPS almanacs are not needed with P-GPS, so skip those. */
+	agnss_request->system[0].sv_mask_alm = 0;
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 #if defined(CONFIG_NRF_CLOUD_AGPS)
@@ -273,7 +292,7 @@ int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
 
 	struct nrf_cloud_rest_agps_request request = {
 		.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
-		.agps_req = agps_request,
+		.agnss_req = agnss_request,
 		.net_info = NULL,
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
 		.filtered = true,
@@ -307,10 +326,13 @@ int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
 		request.net_info = &net_info;
 	}
 
-	LOG_INF("Requesting A-GPS data, ephe 0x%08x, alm 0x%08x, flags 0x%02x",
-		agps_request->sv_mask_ephe,
-		agps_request->sv_mask_alm,
-		agps_request->data_flags);
+	LOG_INF("Requesting A-GNSS data: data_flags: 0x%02x", agnss_request->data_flags);
+	for (int i = 0; i < agnss_request->system_count; i++) {
+		LOG_INF("Requesting A-GNSS data: %s ephe: 0x%llx, alm: 0x%llx",
+			get_system_string(agnss_request->system[i].system_id),
+			agnss_request->system[i].sv_mask_ephe,
+			agnss_request->system[i].sv_mask_alm);
+	}
 
 	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
 	if (err) {
