@@ -577,7 +577,7 @@ int link_sett_sysmode_lte_preference_get(void)
 
 int link_sett_sysmode_default_set(void)
 {
-	return link_sett_sysmode_save(LINK_SYSMODE_NONE, CONFIG_LTE_MODE_PREFERENCE);
+	return link_sett_sysmode_save(LINK_SYSMODE_NONE, CONFIG_LTE_MODE_PREFERENCE_VALUE);
 }
 
 /* ****************************************************************************/

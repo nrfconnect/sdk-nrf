@@ -1925,7 +1925,7 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 			link_sett_defaults_set();
 			if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
 				link_shell_sysmode_set(SYS_MODE_PREFERRED,
-						       CONFIG_LTE_MODE_PREFERENCE);
+						       CONFIG_LTE_MODE_PREFERENCE_VALUE);
 			}
 		}
 		if (mreset_type == LTE_LC_FACTORY_RESET_ALL) {
@@ -2064,7 +2064,8 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 
 	} else if (common_option == LINK_COMMON_RESET) {
 		if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
-			link_shell_sysmode_set(SYS_MODE_PREFERRED, CONFIG_LTE_MODE_PREFERENCE);
+			link_shell_sysmode_set(SYS_MODE_PREFERRED,
+					       CONFIG_LTE_MODE_PREFERENCE_VALUE);
 		}
 
 		(void)link_sett_sysmode_default_set();
