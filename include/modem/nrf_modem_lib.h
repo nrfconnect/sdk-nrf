@@ -38,8 +38,20 @@ extern "C" {
  * Use @ref nrf_modem_lib_init() to initialize in normal mode and
  * @ref nrf_modem_lib_bootloader_init() to initialize the Modem library in bootloader mode.
  *
- * @return int Zero on success, a positive value @em nrf_modem_dfu when executing
- *         Modem firmware updates, and negative errno on other failures.
+ * @retval Zero on success.
+ *
+ * @retval -NRF_EPERM The Modem library is already initialized.
+ * @retval -NRF_EFAULT @c init_params is @c NULL.
+ * @retval -NRF_ENOLCK Not enough semaphores.
+ * @retval -NRF_ENOMEM Not enough shared memory.
+ * @retval -NRF_EINVAL Control region size is incorrect or missing handlers in @c init_params.
+ * @retval -NRF_ENOTSUPP RPC version mismatch.
+ * @retval -NRF_ETIMEDOUT Operation timed out.
+ * @retval -NRF_ACCESS Modem firmware authentication failure.
+ * @retval -NRF_EAGAIN Modem device firmware upgrade failure.
+ *		       DFU is scheduled at next initialization.
+ * @retval -NRF_EIO Modem device firmware upgrade failure.
+ *		    Reprogramming the modem firmware is necessary to recover.
  */
 int nrf_modem_lib_init(void);
 
@@ -54,7 +66,17 @@ int nrf_modem_lib_init(void);
  * Use @ref nrf_modem_lib_init() to initialize in normal mode and
  * @ref nrf_modem_lib_bootloader_init() to initialize the Modem library in bootloader mode.
  *
- * @return int Zero on success, non-zero otherwise.
+ * @retval Zero on success.
+ *
+ * @retval -NRF_EPERM The Modem library is already initialized.
+ * @retval -NRF_EFAULT @c init_params is @c NULL.
+ * @retval -NRF_ENOLCK Not enough semaphores.
+ * @retval -NRF_ENOMEM Not enough shared memory.
+ * @retval -NRF_EINVAL Missing handler in @c init_params.
+ * @retval -NRF_EACCES Bad root digest.
+ * @retval -NRF_ETIMEDOUT Operation timed out.
+ * @retval -NRF_EIO Bootloader fault.
+ * @retval -NRF_ENOSYS Operation not available.
  */
 int nrf_modem_lib_bootloader_init(void);
 
@@ -66,6 +88,20 @@ int nrf_modem_lib_bootloader_init(void);
  * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_shutdown(void);
+
+/**
+ * @brief Modem library dfu callback struct.
+ */
+struct nrf_modem_lib_dfu_cb {
+	/**
+	 * @brief Callback function.
+	 * @param dfu_res The return value of nrf_modem_init()
+	 * @param ctx User-defined context
+	 */
+	void (*callback)(int dfu_res, void *ctx);
+	/** User defined context */
+	void *context;
+};
 
 /**
  * @brief Modem library initialization callback struct.
@@ -93,6 +129,25 @@ struct nrf_modem_lib_shutdown_cb {
 	/** User defined context */
 	void *context;
 };
+
+/**
+ * @brief Define a callback for DFU result @ref nrf_modem_lib_init calls.
+ *
+ * The callback function @p _callback is invoked after the library has been initialized.
+ *
+ * @note The @c NRF_MODEM_LIB_ON_DFU_RES callback can be used to subscribe to the result of a modem
+ * DFU operation.
+ *
+ * @param name Callback name
+ * @param _callback Callback function name
+ * @param _context User-defined context for the callback
+ */
+#define NRF_MODEM_LIB_ON_DFU_RES(name, _callback, _context)                                        \
+	static void _callback(int dfu_res, void *ctx);                                             \
+	STRUCT_SECTION_ITERABLE(nrf_modem_lib_dfu_cb, nrf_modem_dfu_hook_##name) = {               \
+		.callback = _callback,                                                             \
+		.context = _context,                                                               \
+	};
 
 /**
  * @brief Define a callback for @ref nrf_modem_lib_init calls.

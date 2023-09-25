@@ -14,6 +14,9 @@
 #define LWM2M_CARRIER_THREAD_STACK_SIZE 4096
 #define LWM2M_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
 
+static int nrf_modem_dfu_result;
+
+NRF_MODEM_LIB_ON_DFU_RES(lwm2m_carrier_dfu_hook, on_modem_lib_dfu, NULL);
 NRF_MODEM_LIB_ON_INIT(lwm2m_carrier_init_hook, on_modem_lib_init, NULL);
 NRF_MODEM_LIB_ON_SHUTDOWN(lwm2m_carrier_shutdown_hook, on_modem_lib_shutdown, NULL);
 
@@ -92,41 +95,59 @@ __weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 }
 #endif
 
+static void on_modem_lib_dfu(int32_t dfu_res, void *ctx)
+{
+	switch (dfu_res) {
+	case NRF_MODEM_DFU_RESULT_OK:
+		printk("Modem firmware update successful.\n");
+		printk("Modem is running the new firmware.\n");
+		nrf_modem_dfu_result = LWM2M_CARRIER_MODEM_INIT_UPDATED;
+		break;
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
+		printk("Modem firmware update failed.\n");
+		printk("Modem is running non-updated firmware.\n");
+		nrf_modem_dfu_result = LWM2M_CARRIER_MODEM_INIT_UPDATE_FAILED;
+		break;
+	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
+		printk("Modem firmware update failed.\n");
+		printk("Fatal error.\n");
+		nrf_modem_dfu_result = LWM2M_CARRIER_MODEM_INIT_UPDATE_FAILED;
+		break;
+	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
+		printk("Modem firmware update failed.\n");
+		printk("Low voltage.\n");
+		nrf_modem_dfu_result = LWM2M_CARRIER_MODEM_INIT_UPDATE_FAILED;
+		break;
+	default:
+		printk("Modem update result %d. Assuming failure\n", dfu_res);
+		nrf_modem_dfu_result = LWM2M_CARRIER_MODEM_INIT_UPDATE_FAILED;
+		break;
+	}
+}
+
 static void on_modem_lib_init(int ret, void *ctx)
 {
 	ARG_UNUSED(ctx);
 
 	int result;
 
-	switch (ret) {
-	case 0:
-		result = LWM2M_CARRIER_MODEM_INIT_SUCCESS;
-		break;
-	case NRF_MODEM_DFU_RESULT_OK:
-		printk("Modem firmware update successful.\n");
-		printk("Modem will run the new firmware after next initialization.\n");
-		result = LWM2M_CARRIER_MODEM_INIT_UPDATED;
-		break;
-	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
-	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
-		printk("Modem firmware update failed.\n");
-		printk("Modem will run non-updated firmware on next initialization.\n");
-		result = LWM2M_CARRIER_MODEM_INIT_UPDATE_FAILED;
-		break;
-	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
-		printk("Modem firmware update failed.\n");
-		printk("Fatal error.\n");
-		result = LWM2M_CARRIER_MODEM_INIT_UPDATE_FAILED;
-		break;
-	case -NRF_EPERM:
+	if (nrf_modem_dfu_result) {
+		result = nrf_modem_dfu_result;
+	} else if (ret == -NRF_EPERM) {
 		printk("Modem already initialized\n");
 		return;
-	default:
+	} else if (ret == 0) {
+		result = LWM2M_CARRIER_MODEM_INIT_SUCCESS;
+	} else {
 		printk("Could not initialize modem library.\n");
 		printk("Fatal error.\n");
 		result = -EIO;
 	}
+
+	/* Reset for a normal init without DFU. */
+	nrf_modem_dfu_result = 0;
 
 	lwm2m_carrier_on_modem_init(result);
 }

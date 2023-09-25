@@ -247,16 +247,13 @@ static uint32_t send_ping_wait_reply(void)
 	/* Use non-primary PDN if specified, fail if cannot proceed
 	 */
 	if (ping_argv.pdn != 0) {
-		size_t len;
-		struct ifreq ifr = { 0 };
+		int pdn = ping_argv.pdn;
 
-		snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "pdn%d", ping_argv.pdn);
-		len = strlen(ifr.ifr_name);
-		if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len) < 0) {
-			LOG_WRN("Unable to set socket SO_BINDTODEVICE, abort");
+		if (setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn, sizeof(int))) {
+			LOG_WRN("Unable to set socket SO_BINDTOPDN, abort");
 			goto close_end;
 		}
-		LOG_DBG("Use PDN: %d", ping_argv.pdn);
+		LOG_DBG("Use PDN: %d", pdn);
 	} else {
 		LOG_DBG("Use PDN: 0");
 	}

@@ -149,34 +149,40 @@ static void location_assist_ground_fix_result_cb(int32_t data)
 }
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-int location_assistance_agps_set_mask(const struct nrf_modem_gnss_agps_data_frame *agps_req)
+int location_assistance_agps_set_mask(const struct nrf_modem_gnss_agnss_data_frame *agps_req)
 {
 	uint32_t mask = 0;
 
-	if (agps_req->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+	/* GPS data need is always expected to be present and first in list. */
+	__ASSERT(agps_req->system_count > 0,
+		 "GNSS system data need not found");
+	__ASSERT(agps_req->system[0].system_id == NRF_MODEM_GNSS_SYSTEM_GPS,
+		 "GPS data need not found");
+
+	if (agps_req->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST) {
 		mask |= LOCATION_ASSIST_NEEDS_UTC;
 	}
-	if (agps_req->sv_mask_ephe) {
+	if (agps_req->system[0].sv_mask_ephe) {
 		mask |= LOCATION_ASSIST_NEEDS_EPHEMERIES;
 	}
-	if (agps_req->sv_mask_alm) {
+	if (agps_req->system[0].sv_mask_alm) {
 		mask |= LOCATION_ASSIST_NEEDS_ALMANAC;
 	}
-	if (agps_req->data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+	if (agps_req->data_flags & NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST) {
 
 		mask |= LOCATION_ASSIST_NEEDS_KLOBUCHAR;
 	}
-	if (agps_req->data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+	if (agps_req->data_flags & NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST) {
 		mask |= LOCATION_ASSIST_NEEDS_NEQUICK;
 	}
-	if (agps_req->data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+	if (agps_req->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		mask |= LOCATION_ASSIST_NEEDS_TOW;
 		mask |= LOCATION_ASSIST_NEEDS_CLOCK;
 	}
-	if (agps_req->data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	if (agps_req->data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
 		mask |= LOCATION_ASSIST_NEEDS_LOCATION;
 	}
-	if (agps_req->data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+	if (agps_req->data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
 		mask |= LOCATION_ASSIST_NEEDS_INTEGRITY;
 	}
 

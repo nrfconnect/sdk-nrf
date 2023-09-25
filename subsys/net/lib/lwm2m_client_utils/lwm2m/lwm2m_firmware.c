@@ -97,19 +97,6 @@ static struct update_data {
 
 void client_acknowledge(void);
 
-
-
-#ifdef CONFIG_ZTEST
-/* Initialized to value different than success (0) */
-static int modem_lib_init_result = -1;
-
-/* Only for unit test for emulate modem lib init hook */
-void lwm2m_firmware_emulate_modem_lib_init(int modem_init_ret_val)
-{
-	modem_lib_init_result = modem_init_ret_val;
-}
-#endif
-
 static void apply_firmware_update(enum dfu_target_image_type type, uint16_t instance_id)
 {
 	uint8_t result;

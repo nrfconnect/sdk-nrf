@@ -968,12 +968,12 @@ int nrf_cloud_pgps_preemptive_updates(void)
 }
 
 int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
-			  const struct nrf_modem_gnss_agps_data_frame *request)
+			  const struct nrf_modem_gnss_agnss_data_frame *request)
 {
 	int err;
 	int ret = 0;
-	struct nrf_modem_gnss_agps_data_frame remainder;
-	struct nrf_modem_gnss_agps_data_frame processed;
+	struct nrf_modem_gnss_agnss_data_frame remainder;
+	struct nrf_modem_gnss_agnss_data_frame processed;
 
 	if (state == PGPS_NONE) {
 		LOG_ERR("P-GPS subsystem is not initialized.");
@@ -985,33 +985,37 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 	} else {
 		/* no assistance request provided from modem; assume just ephemerides */
 		memset(&remainder, 0, sizeof(remainder));
-		remainder.sv_mask_ephe = 0xFFFFFFFFU;
+		remainder.system_count = 1;
+		remainder.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
+		remainder.system[0].sv_mask_ephe = 0xFFFFFFFFU;
 	}
+
 	nrf_cloud_agps_processed(&processed);
+
 	LOG_DBG("A-GPS has processed emask:0x%08X amask:0x%08X utc:%u "
 		"klo:%u neq:%u tow:%u pos:%u int:%u",
-		processed.sv_mask_ephe,
-		processed.sv_mask_alm,
-		processed.data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST ? 1 : 0,
-		processed.data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST ? 1 : 0,
-		processed.data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST ? 1 : 0,
-		processed.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0,
-		processed.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST ? 1 : 0,
-		processed.data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST ? 1 : 0);
+		(uint32_t)processed.system[0].sv_mask_ephe,
+		(uint32_t)processed.system[0].sv_mask_alm,
+		processed.data_flags & NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST ? 1 : 0,
+		processed.data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST ? 1 : 0);
 
 	/* we will get more accurate data from AGPS for these */
-	if (processed.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST &&
-	    remainder.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	if (processed.data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST &&
+	    remainder.data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
 		LOG_DBG("A-GPS already received position; skipping");
-		remainder.data_flags &= ~NRF_MODEM_GNSS_AGPS_POSITION_REQUEST;
+		remainder.data_flags &= ~NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST;
 	}
-	if (processed.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST &&
-	    remainder.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+	if (processed.data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST &&
+	    remainder.data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		LOG_DBG("A-GPS already received time; skipping");
-		remainder.data_flags &= ~NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST;
+		remainder.data_flags &= ~NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST;
 	}
 
-	if (remainder.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+	if (remainder.data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		struct pgps_sys_time sys_time;
 		uint16_t day;
 		uint32_t sec;
@@ -1049,7 +1053,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 
 	const struct gps_location *saved_location = npgps_get_saved_location();
 
-	if (remainder.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST &&
+	if (remainder.data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST &&
 	    saved_location->gps_sec) {
 		struct pgps_location location;
 
@@ -1077,13 +1081,13 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 				err);
 			ret = err;
 		}
-	} else if (remainder.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	} else if (remainder.data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
 		LOG_WRN("GPS unit needs location, but it is unknown!");
 	} else {
 		LOG_DBG("GPS unit does not need location assistance.");
 	}
 
-	if (remainder.sv_mask_ephe) {
+	if (remainder.system[0].sv_mask_ephe) {
 		LOG_INF("GPS unit needs ephemerides. Injecting %u.", p->ephemeris_count);
 
 		/* send ephemerii */

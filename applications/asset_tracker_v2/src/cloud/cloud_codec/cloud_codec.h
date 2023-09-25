@@ -254,7 +254,7 @@ struct cloud_data_agps_request {
 	/** Area Code. */
 	uint32_t area;
 	/** AGPS request types */
-	struct nrf_modem_gnss_agps_data_frame request;
+	struct nrf_modem_gnss_agnss_data_frame request;
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };

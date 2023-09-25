@@ -220,15 +220,12 @@ static int socket_tls_hostname_set(int fd, const char * const hostname)
 	return 0;
 }
 
-static int socket_pdn_id_set(int fd, uint8_t pdn_id)
+static int socket_pdn_id_set(int fd, int pdn_id)
 {
 	int err;
-	char buf[8] = {0};
 
-	(void) snprintf(buf, sizeof(buf), "pdn%d", pdn_id);
-
-	LOG_INF("Binding to PDN ID: %s", buf);
-	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &buf, strlen(buf));
+	LOG_INF("Binding to PDN ID: %d", pdn_id);
+	err = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_id, sizeof(pdn_id));
 	if (err) {
 		LOG_ERR("Failed to bind socket to PDN ID %d, err %d",
 			pdn_id, errno);

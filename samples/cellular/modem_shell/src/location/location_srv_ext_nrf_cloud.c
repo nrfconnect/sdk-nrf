@@ -20,7 +20,7 @@ static struct location_data nrf_cloud_location;
 static K_SEM_DEFINE(location_ready, 0, 1);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agps_data_frame *agps_req)
+void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agnss_data_frame *agps_req)
 {
 	int err;
 
