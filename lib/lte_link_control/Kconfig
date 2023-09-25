@@ -177,7 +177,7 @@ config LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 
 endchoice
 
-choice
+choice LTE_NETWORK_MODE_PREFERENCE
 	prompt "LTE mode preference"
 	default LTE_MODE_PREFERENCE_AUTO
 	help
