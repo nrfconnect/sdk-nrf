@@ -152,7 +152,7 @@ choice LTE_NETWORK_MODE
 	help
 	  Select the modem system mode.
 
-config LTE_NETWORK_DEFAULT
+config LTE_NETWORK_MODE_DEFAULT
 	bool "Use default"
 	help
 	  Use the system mode that is currently set in the modem.
@@ -177,7 +177,7 @@ config LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 
 endchoice
 
-choice
+choice LTE_MODE_PREFERENCE
 	prompt "LTE mode preference"
 	default LTE_MODE_PREFERENCE_AUTO
 	help
@@ -228,7 +228,7 @@ config LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
 
 endchoice
 
-config LTE_MODE_PREFERENCE
+config LTE_MODE_PREFERENCE_VALUE
 	int
 	default 0 if LTE_MODE_PREFERENCE_AUTO
 	default 1 if LTE_MODE_PREFERENCE_LTE_M

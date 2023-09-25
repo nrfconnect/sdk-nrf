@@ -25,7 +25,7 @@
 
 LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
-/* Internal system mode value used when CONFIG_LTE_NETWORK_DEFAULT is enabled. */
+/* Internal system mode value used when CONFIG_LTE_NETWORK_MODE_DEFAULT is enabled. */
 #define LTE_LC_SYSTEM_MODE_DEFAULT 0xff
 
 #define SYS_MODE_PREFERRED \
@@ -96,7 +96,7 @@ static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
 static enum lte_lc_system_mode sys_mode_target = SYS_MODE_PREFERRED;
 
 /* System mode preference to set when configuring system mode. */
-static enum lte_lc_system_mode_preference mode_pref_target = CONFIG_LTE_MODE_PREFERENCE;
+static enum lte_lc_system_mode_preference mode_pref_target = CONFIG_LTE_MODE_PREFERENCE_VALUE;
 static enum lte_lc_system_mode_preference mode_pref_current;
 
 static const enum lte_lc_system_mode sys_mode_fallback =
@@ -600,7 +600,7 @@ static int init_and_config(void)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT)) {
+	if (IS_ENABLED(CONFIG_LTE_NETWORK_MODE_DEFAULT)) {
 		sys_mode_target = sys_mode_current;
 
 		LOG_DBG("Default system mode is used: %d", sys_mode_current);
@@ -683,7 +683,7 @@ static int connect_lte(bool blocking)
 		}
 
 		/* Change the modem sys-mode only if it's not running or is meant to change */
-		if (!IS_ENABLED(CONFIG_LTE_NETWORK_DEFAULT) &&
+		if (!IS_ENABLED(CONFIG_LTE_NETWORK_MODE_DEFAULT) &&
 		    ((current_func_mode == LTE_LC_FUNC_MODE_POWER_OFF) ||
 		     (current_func_mode == LTE_LC_FUNC_MODE_OFFLINE))) {
 			err = lte_lc_system_mode_set(sys_mode_target, mode_pref_current);
