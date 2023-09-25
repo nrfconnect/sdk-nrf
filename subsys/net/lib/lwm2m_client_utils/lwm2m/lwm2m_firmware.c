@@ -39,6 +39,8 @@ LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
 #define FOTA_INSTANCE_COUNT CONFIG_LWM2M_CLIENT_UTILS_ADV_FOTA_INSTANCE_COUNT
 #define ENABLED_LWM2M_FIRMWARE_OBJECT LWM2M_OBJECT_ADV_FIRMWARE_ID
+static void lwm2m_adv_app_firmware_versions_set(void);
+static void lwm2m_adv_modem_firmware_versions_set(void);
 #else
 #define FOTA_INSTANCE_COUNT 1
 #define ENABLED_LWM2M_FIRMWARE_OBJECT LWM2M_OBJECT_FIRMWARE_ID
@@ -81,9 +83,10 @@ static int modem_obj_id;
 static int smp_obj_id;
 static int target_image_type[FOTA_INSTANCE_COUNT];
 
+
 static void dfu_target_cb(enum dfu_target_evt_id evt);
 static void start_pending_fota_download(struct k_work *work);
-static bool firmware_update_check_linked_instances(int instance_id);
+static bool firmware_update_check_linked_instances(int instance_id, bool *reconnect);
 static int target_image_type_get(uint16_t instance);
 static uint8_t get_state(uint16_t id);
 static void set_result(uint16_t id, uint8_t result);
@@ -163,6 +166,18 @@ static int fota_event_update_failure(uint16_t obj_inst_id, uint8_t failure_code)
 	event.id = LWM2M_FOTA_UPDATE_ERROR;
 	event.failure.obj_inst_id = obj_inst_id;
 	event.failure.update_failure = failure_code;
+	return firmware_fota_event_cb(&event);
+}
+
+static int fota_event_reconnect_request(void)
+{
+	struct lwm2m_fota_event event;
+
+	if (!firmware_fota_event_cb) {
+		return -1;
+	}
+	event.id = LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ;
+	event.reconnect_req.obj_inst_id = modem_obj_id;
 	return firmware_fota_event_cb(&event);
 }
 
@@ -427,25 +442,39 @@ static void update_process(void)
 	uint16_t instance_id = update_data.object_instance;
 	bool reset_needed = false;
 	bool reset_needed_by_linked = false;
+	bool reconnect = false;
 
 	lwm2m_registry_lock();
 	if (update_data.type == MODEM_DELTA) {
 		apply_firmware_update(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA, instance_id);
-		reset_needed = true;
+		reconnect = true;
 	} else if (update_data.type == MODEM_FULL) {
 		apply_firmware_update(DFU_TARGET_IMAGE_TYPE_FULL_MODEM, instance_id);
-		reset_needed = true;
+		reconnect = true;
 	} else if (update_data.type == APP) {
 		reset_needed = true;
 	} else if (update_data.type == SMP) {
 		apply_firmware_update(DFU_TARGET_IMAGE_TYPE_SMP, instance_id);
 	}
 
-	reset_needed_by_linked = firmware_update_check_linked_instances(instance_id);
-	lwm2m_registry_unlock();
+	reset_needed_by_linked = firmware_update_check_linked_instances(instance_id, &reconnect);
+
+	if (reconnect && !reset_needed && !reset_needed_by_linked) {
+		if (fota_event_reconnect_request() != 0) {
+			/* Modem Reconnect not supported */
+			reset_needed = true;
+		} else {
+#ifdef CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
+			/* Update Modem Version resource  */
+			lwm2m_adv_modem_firmware_versions_set();
+#endif
+		}
+	}
+
 	if (reset_needed || reset_needed_by_linked) {
 		reboot_work_handler();
 	}
+	lwm2m_registry_unlock();
 }
 
 static void update_work_handler(struct k_work *work)
@@ -1039,7 +1068,7 @@ static void lwm2m_firmware_register_write_callbacks(int instance_id)
 	lwm2m_register_post_write_callback(&path, firmware_update_result);
 }
 
-static bool firmware_update_check_linked_instances(int instance_id)
+static bool firmware_update_check_linked_instances(int instance_id, bool *reconnect)
 {
 	bool updated = false;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
@@ -1070,11 +1099,11 @@ static bool firmware_update_check_linked_instances(int instance_id)
 				if (update_data.type == MODEM_DELTA) {
 					apply_firmware_update(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA,
 							      modem_obj_id);
-					updated = true;
+					*reconnect = true;
 				} else if (update_data.type == MODEM_FULL) {
 					apply_firmware_update(DFU_TARGET_IMAGE_TYPE_FULL_MODEM,
 							      modem_obj_id);
-					updated = true;
+					*reconnect = true;
 				} else if (update_data.type == APP) {
 					updated = true;
 				} else if (update_data.type == SMP) {
@@ -1144,28 +1173,34 @@ static void firmware_object_state_check(void)
 	}
 #endif
 }
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
-static void lwm2m_adv_firmware_versions_set(void)
+#ifdef CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
+static void lwm2m_adv_app_firmware_versions_set(void)
 {
 	char buf[255];
 	struct lwm2m_obj_path path;
 	struct mcuboot_img_header header;
 
-	path = LWM2M_OBJ(ENABLED_LWM2M_FIRMWARE_OBJECT, modem_obj_id,
+	path = LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, application_obj_id,
 			 LWM2M_ADV_FOTA_CURRENT_VERSION_ID);
-	modem_info_string_get(MODEM_INFO_FW_VERSION, buf, sizeof(buf));
-	lwm2m_set_string(&path, buf);
-
-	path.obj_inst_id = application_obj_id;
-	path.res_id = LWM2M_ADV_FOTA_CURRENT_VERSION_ID;
 	boot_read_bank_header(PM_MCUBOOT_PRIMARY_ID, &header, sizeof(header));
 	snprintk(buf, sizeof(buf), "%d.%d.%d-%d", header.h.v1.sem_ver.major,
 		 header.h.v1.sem_ver.minor, header.h.v1.sem_ver.revision,
 		 header.h.v1.sem_ver.build_num);
 	lwm2m_set_string(&path, buf);
 }
+
+static void lwm2m_adv_modem_firmware_versions_set(void)
+{
+	char buf[255];
+	struct lwm2m_obj_path path;
+
+	path = LWM2M_OBJ(LWM2M_OBJECT_ADV_FIRMWARE_ID, modem_obj_id,
+			 LWM2M_ADV_FOTA_CURRENT_VERSION_ID);
+	modem_info_string_get(MODEM_INFO_FW_VERSION, buf, sizeof(buf));
+	lwm2m_set_string(&path, buf);
+}
 #endif
+
 #ifdef CONFIG_DFU_TARGET_SMP
 void update_thread(void *client, void *a, void *b)
 {
@@ -1232,7 +1267,9 @@ int lwm2m_init_firmware_cb(lwm2m_firmware_event_cb_t cb)
 	modem_obj_id = lwm2m_adv_firmware_create_inst(
 		"modem:" CONFIG_SOC, firmware_block_received_cb, firmware_update_cb);
 	lwm2m_firmware_object_setup_init(modem_obj_id);
-	lwm2m_adv_firmware_versions_set();
+
+	lwm2m_adv_modem_firmware_versions_set();
+	lwm2m_adv_app_firmware_versions_set();
 #if defined(CONFIG_DFU_TARGET_SMP)
 	smp_obj_id = lwm2m_adv_firmware_create_inst("smp", firmware_block_received_cb,
 						    firmware_update_cb);
