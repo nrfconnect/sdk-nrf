@@ -16,6 +16,14 @@
 #include <zephyr/device.h>
 #include <zephyr/net/net_config.h>
 
+#ifdef CONFIG_SLIP
+/* Fixed address as the static IP given from Kconfig will be
+ * applied to Wi-Fi interface.
+ */
+#define CONFIG_NET_CONFIG_SLIP_IPV4_ADDR "192.0.2.1"
+#define CONFIG_NET_CONFIG_SLIP_IPV4_MASK "255.255.255.0"
+#endif /* CONFIG_SLIP */
+
 #ifdef CONFIG_USB_DEVICE_STACK
 #include <zephyr/usb/usb_device.h>
 
@@ -70,6 +78,33 @@ int main(void)
 		}
 	}
 #endif /* CONFIG_USB_DEVICE_STACK */
+
+#ifdef CONFIG_SLIP
+	const struct device *slip_dev = device_get_binding(CONFIG_SLIP_DRV_NAME);
+	struct net_if *slip_iface = net_if_lookup_by_dev(slip_dev);
+
+	if (!slip_iface) {
+		printk("Cannot find network interface: %s", CONFIG_SLIP_DRV_NAME);
+		return -1;
+	}
+
+	if (sizeof(CONFIG_NET_CONFIG_SLIP_IPV4_ADDR) > 1) {
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_SLIP_IPV4_ADDR, &addr)) {
+			printk("Invalid address: %s", CONFIG_NET_CONFIG_SLIP_IPV4_ADDR);
+			return -1;
+		}
+		net_if_ipv4_addr_add(slip_iface, &addr, NET_ADDR_MANUAL, 0);
+	}
+
+	if (sizeof(CONFIG_NET_CONFIG_SLIP_IPV4_MASK) > 1) {
+		/* If not empty */
+		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_SLIP_IPV4_MASK, &addr)) {
+			printk("Invalid netmask: %s", CONFIG_NET_CONFIG_SLIP_IPV4_MASK);
+		} else {
+			net_if_ipv4_set_netmask(slip_iface, &addr);
+		}
+	}
+#endif /* CONFIG_SLIP */
 
 #ifdef CONFIG_NET_CONFIG_SETTINGS
 	/* Without this, DHCPv4 starts on first interface and if that is not Wi-Fi or
