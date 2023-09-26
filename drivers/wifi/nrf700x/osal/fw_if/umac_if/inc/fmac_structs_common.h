@@ -53,7 +53,7 @@ struct rpu_op_stats {
  * @brief Structure to hold FW patch information.
  *
  */
-struct wifi_nrf_fw_info {
+struct nrf_wifi_fw_info {
 	/** Pointer to the FW patch data. */
 	void *data;
 	/** Size of the FW patch data. */
@@ -65,15 +65,15 @@ struct wifi_nrf_fw_info {
  * @brief Structure to hold FW patch information for LMAC and UMAC.
  *
  */
-struct wifi_nrf_fmac_fw_info {
+struct nrf_wifi_fmac_fw_info {
 	/** Primary LMAC FW patch information. */
-	struct wifi_nrf_fw_info lmac_patch_pri;
+	struct nrf_wifi_fw_info lmac_patch_pri;
 	/** Secondary LMAC FW patch information. */
-	struct wifi_nrf_fw_info lmac_patch_sec;
+	struct nrf_wifi_fw_info lmac_patch_sec;
 	/** Primary UMAC FW patch information. */
-	struct wifi_nrf_fw_info umac_patch_pri;
+	struct nrf_wifi_fw_info umac_patch_pri;
 	/** Secondary UMAC FW patch information. */
-	struct wifi_nrf_fw_info umac_patch_sec;
+	struct nrf_wifi_fw_info umac_patch_sec;
 };
 
 
@@ -81,7 +81,7 @@ struct wifi_nrf_fmac_fw_info {
  * @brief Structure to hold OTP region information.
  *
  */
-struct wifi_nrf_fmac_otp_info {
+struct nrf_wifi_fmac_otp_info {
 	/** OTP region information. */
 	struct host_rpu_umac_info info;
 	/** Flags indicating which OTP regions are valid. */
@@ -92,7 +92,7 @@ struct wifi_nrf_fmac_otp_info {
  * @brief Structure to hold Regulatory parameter data.
  *
  */
-struct wifi_nrf_fmac_reg_info {
+struct nrf_wifi_fmac_reg_info {
 	/** ISO IEC Country code. */
 	unsigned char alpha2[NRF_WIFI_COUNTRY_CODE_LEN];
 	 /** Forcefully set regulatory. */
@@ -103,11 +103,11 @@ struct wifi_nrf_fmac_reg_info {
  * @brief Structure to hold common fmac priv parameter data.
  *
  */
-struct wifi_nrf_fmac_priv {
+struct nrf_wifi_fmac_priv {
 	/** Handle to the OS abstraction layer. */
-	struct wifi_nrf_osal_priv *opriv;
+	struct nrf_wifi_osal_priv *opriv;
 	/** Handle to the HAL layer. */
-	struct wifi_nrf_hal_priv *hpriv;
+	struct nrf_wifi_hal_priv *hpriv;
 	/** Data pointer to mode specific parameters */
 	char priv[];
 };
@@ -116,9 +116,9 @@ struct wifi_nrf_fmac_priv {
  * @brief Structure to hold common fmac dev context parameter data.
  *
  */
-struct wifi_nrf_fmac_dev_ctx {
+struct nrf_wifi_fmac_dev_ctx {
 	/** Handle to the FMAC IF abstraction layer. */
-	struct wifi_nrf_fmac_priv *fpriv;
+	struct nrf_wifi_fmac_priv *fpriv;
 	/** Handle to the OS abstraction layer. */
 	void *os_dev_ctx;
 	/** Handle to the HAL layer. */

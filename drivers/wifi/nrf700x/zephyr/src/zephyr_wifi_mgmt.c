@@ -23,14 +23,14 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
-extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
-int wifi_nrf_set_power_save(const struct device *dev,
+int nrf_wifi_set_power_save(const struct device *dev,
 			    struct wifi_ps_params *params)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	int ret = -1;
 	unsigned int uapsd_queue = UAPSD_Q_MIN; /* Legacy mode */
 
@@ -63,7 +63,7 @@ int wifi_nrf_set_power_save(const struct device *dev,
 				WIFI_PS_PARAM_LISTEN_INTERVAL_RANGE_INVALID;
 			return -EINVAL;
 		}
-		status = wifi_nrf_fmac_set_listen_interval(
+		status = nrf_wifi_fmac_set_listen_interval(
 						rpu_ctx_zep->rpu_ctx,
 						vif_ctx_zep->vif_idx,
 						params->listen_interval);
@@ -77,7 +77,7 @@ int wifi_nrf_set_power_save(const struct device *dev,
 			goto out;
 		}
 
-		status = wifi_nrf_fmac_set_power_save_timeout(
+		status = nrf_wifi_fmac_set_power_save_timeout(
 							rpu_ctx_zep->rpu_ctx,
 							vif_ctx_zep->vif_idx,
 							params->timeout_ms);
@@ -87,17 +87,17 @@ int wifi_nrf_set_power_save(const struct device *dev,
 			uapsd_queue = UAPSD_Q_MAX; /* WMM mode */
 		}
 
-		status = wifi_nrf_fmac_set_uapsd_queue(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_set_uapsd_queue(rpu_ctx_zep->rpu_ctx,
 						       vif_ctx_zep->vif_idx,
 						       uapsd_queue);
 	break;
 	case  WIFI_PS_PARAM_STATE:
-		status = wifi_nrf_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 						      vif_ctx_zep->vif_idx,
 						      params->enabled);
 	break;
 	case WIFI_PS_PARAM_WAKEUP_MODE:
-		status = wifi_nrf_fmac_set_ps_wakeup_mode(
+		status = nrf_wifi_fmac_set_ps_wakeup_mode(
 							rpu_ctx_zep->rpu_ctx,
 							vif_ctx_zep->vif_idx,
 							params->wakeup_mode);
@@ -108,7 +108,7 @@ int wifi_nrf_set_power_save(const struct device *dev,
 		return -ENOTSUP;
 	}
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: Confiuring PS param %d failed\n",
 			__func__, params->type);
 		params->fail_reason =
@@ -122,13 +122,13 @@ out:
 	return ret;
 }
 
-int wifi_nrf_get_power_save_config(const struct device *dev,
+int nrf_wifi_get_power_save_config(const struct device *dev,
 				   struct wifi_ps_config *ps_config)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	int ret = -1;
 	int count = 0;
 
@@ -161,24 +161,24 @@ int wifi_nrf_get_power_save_config(const struct device *dev,
 
 	vif_ctx_zep->ps_config_info_evnt = false;
 
-	status = wifi_nrf_fmac_get_power_save_info(rpu_ctx_zep->rpu_ctx,
+	status = nrf_wifi_fmac_get_power_save_info(rpu_ctx_zep->rpu_ctx,
 						   vif_ctx_zep->vif_idx);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_fmac_get_power_save_info failed\n",
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_get_power_save_info failed\n",
 			__func__);
 		goto out;
 	}
 
 	do {
-		wifi_nrf_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_sleep_ms(fmac_dev_ctx->fpriv->opriv,
 					1);
 		 count++;
 	} while ((vif_ctx_zep->ps_config_info_evnt == false) &&
-		 (count < WIFI_NRF_FMAC_PS_CONF_EVNT_RECV_TIMEOUT));
+		 (count < NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT));
 
-	if (count == WIFI_NRF_FMAC_PS_CONF_EVNT_RECV_TIMEOUT) {
-		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+	if (count == NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT) {
+		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 				      "%s: Timed out\n",
 				      __func__);
 		goto out;
@@ -190,7 +190,7 @@ out:
 }
 
 /* TWT interval conversion helpers: User <-> Protocol */
-static struct twt_interval_float wifi_nrf_twt_us_to_float(uint32_t twt_interval)
+static struct twt_interval_float nrf_wifi_twt_us_to_float(uint32_t twt_interval)
 {
 	double mantissa = 0.0;
 	int exponent = 0;
@@ -206,7 +206,7 @@ static struct twt_interval_float wifi_nrf_twt_us_to_float(uint32_t twt_interval)
 	return twt_interval_float;
 }
 
-static uint64_t wifi_nrf_twt_float_to_us(struct twt_interval_float twt_interval_float)
+static uint64_t nrf_wifi_twt_float_to_us(struct twt_interval_float twt_interval_float)
 {
 	/* Conversion to micro-seconds */
 	return floor(ldexp(twt_interval_float.mantissa, twt_interval_float.exponent) / (1000)) *
@@ -330,11 +330,11 @@ static signed int twt_wifi_mgmt_to_rpu_setup_cmd(enum wifi_twt_setup_cmd setup_c
 	return rpu_setup_cmd;
 }
 
-void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
+void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 					     struct nrf_wifi_umac_event_power_save_info *ps_info,
 					     unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	if (!vif_ctx || !ps_info) {
 		return;
@@ -364,14 +364,14 @@ void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
 		twt_zep->dialog_token = twt_rpu->dialog_token;
 		twt_interval_float.mantissa = twt_rpu->twt_target_wake_interval_mantissa;
 		twt_interval_float.exponent = twt_rpu->twt_target_wake_interval_exponent;
-		twt_zep->twt_interval = wifi_nrf_twt_float_to_us(twt_interval_float);
+		twt_zep->twt_interval = nrf_wifi_twt_float_to_us(twt_interval_float);
 		twt_zep->twt_wake_interval = twt_rpu->nominal_min_twt_wake_duration;
 	}
 
 	vif_ctx_zep->ps_config_info_evnt = true;
 }
 
-static void wifi_nrf_twt_update_internal_state(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
+static void nrf_wifi_twt_update_internal_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	bool setup, unsigned char flow_id)
 {
 	if (setup) {
@@ -382,12 +382,12 @@ static void wifi_nrf_twt_update_internal_state(struct wifi_nrf_vif_ctx_zep *vif_
 	}
 }
 
-int wifi_nrf_twt_teardown_flows(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
+int nrf_wifi_twt_teardown_flows(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 		unsigned char start_flow_id, unsigned char end_flow_id)
 {
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_umac_config_twt_info twt_info = {0};
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int ret = 0;
 
 	if (!vif_ctx_zep) {
@@ -409,29 +409,29 @@ int wifi_nrf_twt_teardown_flows(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
 			continue;
 		}
 		twt_info.twt_flow_id = flow_id;
-		status = wifi_nrf_fmac_twt_teardown(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_twt_teardown(rpu_ctx_zep->rpu_ctx,
 						vif_ctx_zep->vif_idx,
 						&twt_info);
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: TWT teardown for flow id %d failed\n",
 				__func__, flow_id);
 			ret = -1;
 			continue;
 		}
 		/* UMAC doesn't send TWT teardown event for host initiated teardown */
-		wifi_nrf_twt_update_internal_state(vif_ctx_zep, false, flow_id);
+		nrf_wifi_twt_update_internal_state(vif_ctx_zep, false, flow_id);
 	}
 
 out:
 	return ret;
 }
 
-int wifi_nrf_set_twt(const struct device *dev,
+int nrf_wifi_set_twt(const struct device *dev,
 		     struct wifi_twt_params *twt_params)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_config_twt_info twt_info = {0};
 	int ret = -1;
 
@@ -476,7 +476,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 		}
 
 		struct twt_interval_float twt_interval_float =
-			wifi_nrf_twt_us_to_float(twt_params->setup.twt_interval);
+			nrf_wifi_twt_us_to_float(twt_params->setup.twt_interval);
 
 		twt_info.twt_flow_id = twt_params->flow_id;
 		twt_info.neg_type = twt_wifi_mgmt_to_rpu_neg_type(twt_params->negotiation_type);
@@ -496,7 +496,7 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 		twt_info.dialog_token = twt_params->dialog_token;
 
-		status = wifi_nrf_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
+		status = nrf_wifi_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
 					   &twt_info);
 
@@ -515,10 +515,10 @@ int wifi_nrf_set_twt(const struct device *dev,
 			twt_info.twt_flow_id = twt_params->flow_id;
 		}
 
-		status = wifi_nrf_twt_teardown_flows(vif_ctx_zep,
+		status = nrf_wifi_twt_teardown_flows(vif_ctx_zep,
 						     start_flow_id,
 						     end_flow_id);
-		if (status != WIFI_NRF_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: TWT teardown failed: start_flow_id: %d, end_flow_id: %d\n",
 				__func__, start_flow_id, end_flow_id);
 			goto out;
@@ -527,12 +527,12 @@ int wifi_nrf_set_twt(const struct device *dev,
 
 	default:
 		LOG_ERR("Unknown TWT operation\n");
-		status = WIFI_NRF_STATUS_FAIL;
+		status = NRF_WIFI_STATUS_FAIL;
 		break;
 	}
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		LOG_ERR("%s: wifi_nrf_set_twt failed\n", __func__);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_set_twt failed\n", __func__);
 		goto out;
 	}
 
@@ -541,11 +541,11 @@ out:
 	return ret;
 }
 
-void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_setup_zep(void *vif_ctx,
 				       struct nrf_wifi_umac_cmd_config_twt *twt_setup_info,
 				       unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_twt_params twt_params;
 	struct twt_interval_float twt_interval_float;
 
@@ -567,24 +567,24 @@ void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
 			twt_setup_info->info.nominal_min_twt_wake_duration;
 	twt_interval_float.mantissa = twt_setup_info->info.twt_target_wake_interval_mantissa;
 	twt_interval_float.exponent = twt_setup_info->info.twt_target_wake_interval_exponent;
-	twt_params.setup.twt_interval = wifi_nrf_twt_float_to_us(twt_interval_float);
+	twt_params.setup.twt_interval = nrf_wifi_twt_float_to_us(twt_interval_float);
 	twt_params.dialog_token = twt_setup_info->info.dialog_token;
 	twt_params.resp_status = twt_setup_info->info.twt_resp_status;
 
 	if ((twt_setup_info->info.twt_resp_status == 0) ||
 	    (twt_setup_info->info.neg_type == NRF_WIFI_ACCEPT_TWT)) {
-		wifi_nrf_twt_update_internal_state(vif_ctx_zep, true, twt_params.flow_id);
+		nrf_wifi_twt_update_internal_state(vif_ctx_zep, true, twt_params.flow_id);
 	}
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
 
 
-void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_teardown_zep(void *vif_ctx,
 					  struct nrf_wifi_umac_cmd_teardown_twt *twt_teardown_info,
 					  unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_twt_params twt_params = {0};
 
 	if (!vif_ctx || !twt_teardown_info) {
@@ -596,20 +596,20 @@ void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
 	twt_params.operation = WIFI_TWT_TEARDOWN;
 	twt_params.flow_id = twt_teardown_info->info.twt_flow_id;
 	/* TODO: ADD reason code in the twt_params structure */
-	wifi_nrf_twt_update_internal_state(vif_ctx_zep, false, twt_params.flow_id);
+	nrf_wifi_twt_update_internal_state(vif_ctx_zep, false, twt_params.flow_id);
 
 	wifi_mgmt_raise_twt_event(vif_ctx_zep->zep_net_if_ctx, &twt_params);
 }
 
-void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 					struct nrf_wifi_umac_event_twt_sleep *sleep_evnt,
 					unsigned int event_len)
 {
-	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct wifi_nrf_fmac_dev_ctx_def *def_dev_ctx = NULL;
-	struct wifi_nrf_fmac_priv_def *def_priv = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+	struct nrf_wifi_fmac_priv_def *def_priv = NULL;
 #ifdef CONFIG_NRF700X_DATA_TX
 	int desc = 0;
 	int ac = 0;
@@ -638,32 +638,32 @@ void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
 
 	switch (sleep_evnt->info.type) {
 	case TWT_BLOCK_TX:
-		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    def_dev_ctx->tx_config.tx_lock);
 
-		def_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_SLEEP;
+		def_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_SLEEP;
 
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_SLEEP);
-		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 					    def_dev_ctx->tx_config.tx_lock);
 	break;
 	case TWT_UNBLOCK_TX:
-		wifi_nrf_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_take(fmac_dev_ctx->fpriv->opriv,
 					    def_dev_ctx->tx_config.tx_lock);
-		def_dev_ctx->twt_sleep_status = WIFI_NRF_FMAC_TWT_STATE_AWAKE;
+		def_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_AWAKE);
 #ifdef CONFIG_NRF700X_DATA_TX
-		for (ac = WIFI_NRF_FMAC_AC_BE;
-		     ac <= WIFI_NRF_FMAC_AC_MAX; ++ac) {
+		for (ac = NRF_WIFI_FMAC_AC_BE;
+		     ac <= NRF_WIFI_FMAC_AC_MAX; ++ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);
 			if (desc < def_priv->num_tx_tokens) {
 				tx_pending_process(fmac_dev_ctx, desc, ac);
 			}
 		}
 #endif
-		wifi_nrf_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_spinlock_rel(fmac_dev_ctx->fpriv->opriv,
 				def_dev_ctx->tx_config.tx_lock);
 	break;
 	default:

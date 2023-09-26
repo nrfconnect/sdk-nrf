@@ -25,33 +25,33 @@
 #include <zephyr_fmac_main.h>
 #include <rpu_fw_patches.h>
 
-enum wifi_nrf_status wifi_nrf_fw_load(void *rpu_ctx)
+enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wifi_nrf_fmac_fw_info fw_info;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_fw_info fw_info;
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
 	const struct device *flash_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH */
 
 	memset(&fw_info, 0, sizeof(fw_info));
-	fw_info.lmac_patch_pri.data = (void *) wifi_nrf_lmac_patch_pri_bimg;
-	fw_info.lmac_patch_pri.size = sizeof(wifi_nrf_lmac_patch_pri_bimg);
-	fw_info.lmac_patch_sec.data = (void *) wifi_nrf_lmac_patch_sec_bin;
-	fw_info.lmac_patch_sec.size = sizeof(wifi_nrf_lmac_patch_sec_bin);
-	fw_info.umac_patch_pri.data = (void *) wifi_nrf_umac_patch_pri_bimg;
-	fw_info.umac_patch_pri.size = sizeof(wifi_nrf_umac_patch_pri_bimg);
-	fw_info.umac_patch_sec.data = (void *) wifi_nrf_umac_patch_sec_bin;
-	fw_info.umac_patch_sec.size = sizeof(wifi_nrf_umac_patch_sec_bin);
+	fw_info.lmac_patch_pri.data = (void *) nrf_wifi_lmac_patch_pri_bimg;
+	fw_info.lmac_patch_pri.size = sizeof(nrf_wifi_lmac_patch_pri_bimg);
+	fw_info.lmac_patch_sec.data = (void *) nrf_wifi_lmac_patch_sec_bin;
+	fw_info.lmac_patch_sec.size = sizeof(nrf_wifi_lmac_patch_sec_bin);
+	fw_info.umac_patch_pri.data = (void *) nrf_wifi_umac_patch_pri_bimg;
+	fw_info.umac_patch_pri.size = sizeof(nrf_wifi_umac_patch_pri_bimg);
+	fw_info.umac_patch_sec.data = (void *) nrf_wifi_umac_patch_sec_bin;
+	fw_info.umac_patch_sec.size = sizeof(nrf_wifi_umac_patch_sec_bin);
 
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
 	nrf_qspi_nor_xip_enable(flash_dev, true);
 #endif /* CONFIG_NRF_WIFI */
 	/* Load the FW patches to the RPU */
-	status = wifi_nrf_fmac_fw_load(rpu_ctx,
+	status = nrf_wifi_fmac_fw_load(rpu_ctx,
 				       &fw_info);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
-		printf("%s: wifi_nrf_fmac_fw_load failed\n", __func__);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		printf("%s: nrf_wifi_fmac_fw_load failed\n", __func__);
 	}
 
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)

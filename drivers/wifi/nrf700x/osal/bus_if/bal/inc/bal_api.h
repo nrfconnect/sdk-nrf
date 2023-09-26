@@ -16,7 +16,7 @@
 #include "bal_structs.h"
 
 /**
- * wifi_nrf_bal_init() - Initialize the BAL layer.
+ * nrf_wifi_bal_init() - Initialize the BAL layer.
  *
  * @intr_callbk_fn: Pointer to the callback function which the user of this
  *                  layer needs to implement to handle interrupts from the
@@ -28,71 +28,71 @@
  *
  * Returns: Pointer to instance of BAL layer context.
  */
-struct wifi_nrf_bal_priv *wifi_nrf_bal_init(struct wifi_nrf_osal_priv *opriv,
-					    struct wifi_nrf_bal_cfg_params *cfg_params,
-					    enum wifi_nrf_status (*intr_callbk_fn)(void *hal_ctx));
+struct nrf_wifi_bal_priv *nrf_wifi_bal_init(struct nrf_wifi_osal_priv *opriv,
+					    struct nrf_wifi_bal_cfg_params *cfg_params,
+					    enum nrf_wifi_status (*intr_callbk_fn)(void *hal_ctx));
 
 
 /**
- * wifi_nrf_bal_deinit() - Deinitialize the BAL layer.
+ * nrf_wifi_bal_deinit() - Deinitialize the BAL layer.
  * @bpriv: Pointer to the BAL layer context returned by the
- *         @wifi_nrf_bal_init API.
+ *         @nrf_wifi_bal_init API.
  *
  * This API is used to deinitialize the BAL layer and is expected to be called
  * after done using the BAL layer.
  *
  * Returns: None.
  */
-void wifi_nrf_bal_deinit(struct wifi_nrf_bal_priv *bpriv);
+void nrf_wifi_bal_deinit(struct nrf_wifi_bal_priv *bpriv);
 
 
-struct wifi_nrf_bal_dev_ctx *wifi_nrf_bal_dev_add(struct wifi_nrf_bal_priv *bpriv,
+struct nrf_wifi_bal_dev_ctx *nrf_wifi_bal_dev_add(struct nrf_wifi_bal_priv *bpriv,
 						  void *hal_dev_ctx);
 
-void wifi_nrf_bal_dev_rem(struct wifi_nrf_bal_dev_ctx *bal_dev_ctx);
+void nrf_wifi_bal_dev_rem(struct nrf_wifi_bal_dev_ctx *bal_dev_ctx);
 
-enum wifi_nrf_status wifi_nrf_bal_dev_init(struct wifi_nrf_bal_dev_ctx *bal_dev_ctx);
+enum nrf_wifi_status nrf_wifi_bal_dev_init(struct nrf_wifi_bal_dev_ctx *bal_dev_ctx);
 
-void wifi_nrf_bal_dev_deinit(struct wifi_nrf_bal_dev_ctx *bal_dev_ctx);
+void nrf_wifi_bal_dev_deinit(struct nrf_wifi_bal_dev_ctx *bal_dev_ctx);
 
-unsigned int wifi_nrf_bal_read_word(void *ctx,
+unsigned int nrf_wifi_bal_read_word(void *ctx,
 				    unsigned long addr_offset);
 
-void wifi_nrf_bal_write_word(void *ctx,
+void nrf_wifi_bal_write_word(void *ctx,
 			     unsigned long addr_offset,
 			     unsigned int val);
 
-void wifi_nrf_bal_read_block(void *ctx,
+void nrf_wifi_bal_read_block(void *ctx,
 			     void *dest_addr,
 			     unsigned long src_addr_offset,
 			     size_t len);
 
-void wifi_nrf_bal_write_block(void *ctx,
+void nrf_wifi_bal_write_block(void *ctx,
 			      unsigned long dest_addr_offset,
 			      const void *src_addr,
 			      size_t len);
 
-unsigned long wifi_nrf_bal_dma_map(void *ctx,
+unsigned long nrf_wifi_bal_dma_map(void *ctx,
 				   unsigned long virt_addr,
 				   size_t len,
-				   enum wifi_nrf_osal_dma_dir dma_dir);
+				   enum nrf_wifi_osal_dma_dir dma_dir);
 
-unsigned long wifi_nrf_bal_dma_unmap(void *ctx,
+unsigned long nrf_wifi_bal_dma_unmap(void *ctx,
 				     unsigned long phy_addr,
 				     size_t len,
-				     enum wifi_nrf_osal_dma_dir dma_dir);
+				     enum nrf_wifi_osal_dma_dir dma_dir);
 
-void wifi_nrf_bal_bus_access_rec_enab(void *ctx);
+void nrf_wifi_bal_bus_access_rec_enab(void *ctx);
 
-void wifi_nrf_bal_bus_access_rec_disab(void *ctx);
+void nrf_wifi_bal_bus_access_rec_disab(void *ctx);
 
-void wifi_nrf_bal_bus_access_cnt_print(void *ctx);
+void nrf_wifi_bal_bus_access_cnt_print(void *ctx);
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-void wifi_nrf_bal_rpu_ps_sleep(void *ctx);
+void nrf_wifi_bal_rpu_ps_sleep(void *ctx);
 
-void wifi_nrf_bal_rpu_ps_wake(void *ctx);
+void nrf_wifi_bal_rpu_ps_wake(void *ctx);
 
-int wifi_nrf_bal_rpu_ps_status(void *ctx);
+int nrf_wifi_bal_rpu_ps_status(void *ctx);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif /* __BAL_API_H__ */

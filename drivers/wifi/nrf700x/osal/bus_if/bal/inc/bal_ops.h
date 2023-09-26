@@ -15,7 +15,7 @@
 #include <stdbool.h>
 
 /**
- * struct wifi_nrf_bal_ops - Ops to be provided by a particular bus
+ * struct nrf_wifi_bal_ops - Ops to be provided by a particular bus
  *                           implementation.
  * @init:
  * @deinit:
@@ -28,16 +28,16 @@
  * @dma_map:
  * @dma_unmap:
  */
-struct wifi_nrf_bal_ops {
-	void * (*init)(struct wifi_nrf_osal_priv *opriv,
+struct nrf_wifi_bal_ops {
+	void * (*init)(struct nrf_wifi_osal_priv *opriv,
 		       void *cfg_params,
-		       enum wifi_nrf_status (*intr_callbk_fn)(void *hal_ctx));
+		       enum nrf_wifi_status (*intr_callbk_fn)(void *hal_ctx));
 	void (*deinit)(void *bus_priv);
 	void * (*dev_add)(void *bus_priv,
 			  void *bal_dev_ctx);
 	void (*dev_rem)(void *bus_dev_ctx);
 
-	enum wifi_nrf_status (*dev_init)(void *bus_dev_ctx);
+	enum nrf_wifi_status (*dev_init)(void *bus_dev_ctx);
 	void (*dev_deinit)(void *bus_dev_ctx);
 	unsigned int (*read_word)(void *bus_dev_ctx,
 				  unsigned long addr_offset);
@@ -55,11 +55,11 @@ struct wifi_nrf_bal_ops {
 	unsigned long (*dma_map)(void *bus_dev_ctx,
 				 unsigned long virt_addr,
 				 size_t len,
-				 enum wifi_nrf_osal_dma_dir dma_dir);
+				 enum nrf_wifi_osal_dma_dir dma_dir);
 	unsigned long (*dma_unmap)(void *bus_dev_ctx,
 				   unsigned long phy_addr,
 				   size_t len,
-				   enum wifi_nrf_osal_dma_dir dma_dir);
+				   enum nrf_wifi_osal_dma_dir dma_dir);
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	void (*rpu_ps_sleep)(void *bus_dev_ctx);
 	void (*rpu_ps_wake)(void *bus_dev_ctx);
@@ -73,9 +73,9 @@ struct wifi_nrf_bal_ops {
  *                of Bus specific Ops.
  *
  * This Op is expected to be implemented by a specific Bus shim and is expected
- * to return a pointer to a initialized instance of struct wifi_nrf_bal_ops.
+ * to return a pointer to a initialized instance of struct nrf_wifi_bal_ops.
  *
  * Returns: Pointer to instance of Bus specific Ops.
  */
-struct wifi_nrf_bal_ops *get_bus_ops(void);
+struct nrf_wifi_bal_ops *get_bus_ops(void);
 #endif /* __BAL_OPS_H__ */

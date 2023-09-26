@@ -15,18 +15,18 @@
 #include <zephyr/net/wifi_mgmt.h>
 
 #include "osal_api.h"
-int wifi_nrf_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
+int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
 			   scan_result_cb_t cb);
 
-enum wifi_nrf_status wifi_nrf_disp_scan_res_get_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep);
+enum nrf_wifi_status nrf_wifi_disp_scan_res_get_zep(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep);
 
-void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
+void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 				struct nrf_wifi_umac_event_new_scan_display_results *scan_res,
 				unsigned int event_len,
 				bool is_last);
 
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
-void wifi_nrf_rx_bcn_prb_resp_frm(void *vif_ctx,
+void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 				  void *frm,
 				  unsigned short frequency,
 				  signed short signal);

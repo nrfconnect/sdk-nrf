@@ -16,8 +16,8 @@
 
 #include "fmac_api_common.h"
 
-extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
-static struct wifi_nrf_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+static struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
 LOG_MODULE_REGISTER(otp_prog, CONFIG_WIFI_LOG_LEVEL);
 
@@ -289,7 +289,7 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 		break;
 	case MAC0_ADDR:
 	case MAC1_ADDR:
-		struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = ctx->rpu_ctx;
+		struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = ctx->rpu_ctx;
 
 		if (!fmac_dev_ctx) {
 			shell_fprintf(shell, SHELL_ERROR, "Driver not initialized\n");

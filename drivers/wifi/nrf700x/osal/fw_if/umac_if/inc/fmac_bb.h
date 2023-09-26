@@ -19,6 +19,6 @@
 #define VIRT_TO_PHYS(addr) (HOST_PKTRAM_BB_START + (addr - fmac_ctx->base_addr_host_pktram_bb))
 #endif
 
-void bb_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+void bb_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 #endif /* __FMAC_BB_H__ */

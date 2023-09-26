@@ -51,9 +51,9 @@
  *
  * @return Pointer to the context of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params *data_config,
+struct nrf_wifi_fmac_priv *nrf_wifi_fmac_init(struct nrf_wifi_data_config_params *data_config,
 					      struct rx_buf_pool_params *rx_buf_pools,
-					      struct wifi_nrf_fmac_callbk_fns *callbk_fns);
+					      struct nrf_wifi_fmac_callbk_fns *callbk_fns);
 
 /**
  * @brief Issue a scan request to the RPU firmware.
@@ -80,10 +80,10 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct nrf_wifi_data_config_params
  *          the regulatory restrictions to be taken care by the invoker of the
  *          API.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_scan(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_scan(void *fmac_dev_ctx,
 					unsigned char if_idx,
 					struct nrf_wifi_umac_scan_info *scan_info);
 
@@ -100,10 +100,10 @@ enum wifi_nrf_status wifi_nrf_fmac_scan(void *fmac_dev_ctx,
  *	  connection request (SCAN_CONNECT) or to display the
  *	  scan results to user (SCAN_DISPLAY)
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_scan_res_get(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						int scan_type);
 
@@ -117,10 +117,10 @@ enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *fmac_dev_ctx,
  *	- The \p if_idx provides the interface index on which the ongoing scan is
  *	  to be aborted
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_abort_scan(void *fmac_dev_ctx,
 						unsigned char if_idx);
 
 #if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
@@ -136,10 +136,10 @@ enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to initiate an authentication
  *	      request to an AP on the interface identified with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_auth(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_auth(void *fmac_dev_ctx,
 					unsigned char if_idx,
 					struct nrf_wifi_umac_auth_info *auth_info);
 
@@ -155,10 +155,10 @@ enum wifi_nrf_status wifi_nrf_fmac_auth(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to initiate a de-authentication notification to an AP
  *	      on the interface identified with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_deauth(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_deauth(void *fmac_dev_ctx,
 					  unsigned char if_idx,
 					  struct nrf_wifi_umac_disconn_info *deauth_info);
 
@@ -175,10 +175,10 @@ enum wifi_nrf_status wifi_nrf_fmac_deauth(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to initiate a association request to an AP on the
  *	      interface identified with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_assoc(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_assoc(void *fmac_dev_ctx,
 					 unsigned char if_idx,
 					 struct nrf_wifi_umac_assoc_info *assoc_info);
 
@@ -194,10 +194,10 @@ enum wifi_nrf_status wifi_nrf_fmac_assoc(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to initiate a disassociation notification to an AP
  *	      on the interface identified with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_disassoc(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_disassoc(void *fmac_dev_ctx,
 					    unsigned char if_idx,
 					    struct nrf_wifi_umac_disconn_info *disassoc_info);
 
@@ -214,10 +214,10 @@ enum wifi_nrf_status wifi_nrf_fmac_disassoc(void *fmac_dev_ctx,
  *	      The key is for the peer identified by \p mac_addr on the
  *	      interface identified with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_add_key(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_add_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_key_info *key_info,
 					   const char *mac_addr);
@@ -235,10 +235,10 @@ enum wifi_nrf_status wifi_nrf_fmac_add_key(void *fmac_dev_ctx,
  *	    - The key is for the peer identified by \p mac_addr on the
  *	      interface identified with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_del_key(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_del_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_key_info *key_info,
 					   const char *mac_addr);
@@ -256,10 +256,10 @@ enum wifi_nrf_status wifi_nrf_fmac_del_key(void *fmac_dev_ctx,
  *	    - The key is either for data or management traffic and is classified based on
  *	      the flags element set in \p key_info parameter.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_key(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_key(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_key_info *key_info);
 
@@ -273,10 +273,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_key(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *	    - Instruct the RPU firmware to set the BSS parameter for an AP mode interface.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_bss(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_bss(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_bss_info *bss_info);
 
@@ -290,10 +290,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_bss(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *	    - Instruct the RPU firmware to update beacon template for an AP mode interface.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_bcn(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_bcn(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_set_beacon_info *data);
 
@@ -307,10 +307,10 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_bcn(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to start a SoftAP on an interface identified with
  *	      \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_start_ap(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_start_ap(void *fmac_dev_ctx,
 					    unsigned char if_idx,
 					    struct nrf_wifi_umac_start_ap_info *ap_info);
 
@@ -324,10 +324,10 @@ enum wifi_nrf_status wifi_nrf_fmac_start_ap(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to stop a SoftAP on an interface identified with
  *	      \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_stop_ap(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_stop_ap(void *fmac_dev_ctx,
 					   unsigned char if_idx);
 
 
@@ -340,10 +340,10 @@ enum wifi_nrf_status wifi_nrf_fmac_stop_ap(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to start P2P mode on an interface identified with
  *            \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_start(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_dev_start(void *fmac_dev_ctx,
 						 unsigned char if_idx);
 
 
@@ -356,10 +356,10 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_start(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to start P2P mode on an interface identified with
  *	     \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_stop(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_dev_stop(void *fmac_dev_ctx,
 						unsigned char if_idx);
 
 /**
@@ -372,10 +372,10 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_dev_stop(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to put p2p device in
  *	      listen state for a duration.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_start(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_roc_start(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct remain_on_channel_info *roc_info);
 
@@ -389,10 +389,10 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_start(void *fmac_dev_ctx,
  *          - Instruct the RPU firmware to put p2p device out
  *	      of listen state.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_stop(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_p2p_roc_stop(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						unsigned long long cookie);
 
@@ -407,10 +407,10 @@ enum wifi_nrf_status wifi_nrf_fmac_p2p_roc_stop(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *          - Instruct the RPU firmware to transmit a management frame.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_mgmt_tx(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_mgmt_tx_info *mgmt_tx_info);
 
@@ -425,10 +425,10 @@ enum wifi_nrf_status wifi_nrf_fmac_mgmt_tx(void *fmac_dev_ctx,
  *          - Instruct the RPU firmware to remove a station entry and send a
  *	      de-authentication/disassociation frame to the station.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_del_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_del_sta_info *del_sta_info);
 
@@ -442,10 +442,10 @@ enum wifi_nrf_status wifi_nrf_fmac_del_sta(void *fmac_dev_ctx,
  * This function is used to indicate to the RPU firmware that a new STA has
  *	    successfully connected to the AP.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_add_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_add_sta_info *add_sta_info);
 
@@ -458,10 +458,10 @@ enum wifi_nrf_status wifi_nrf_fmac_add_sta(void *fmac_dev_ctx,
  * This function is used to indicate changes in the connected STA parameters
  *	    to the RPU firmware.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_sta(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_chg_sta_info *chg_sta_info);
 
@@ -479,10 +479,10 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_sta(void *fmac_dev_ctx,
  *	    - Instruct the RPU firmware to pass frames matching that type/subtype to be
  *	    passed upto the host driver.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
@@ -492,10 +492,10 @@ enum wifi_nrf_status wifi_nrf_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param addr Memory to copy the mac address to.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_mac_addr(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					    unsigned char *addr);
 
 /**
@@ -507,7 +507,7 @@ enum wifi_nrf_status wifi_nrf_fmac_mac_addr(struct wifi_nrf_fmac_dev_ctx *fmac_d
  * @return Index to be used for the new VIF
  *         In case of error MAX_NUM_VIFS will be returned.
  */
-unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+unsigned char nrf_wifi_fmac_vif_idx_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 /**
  * @brief Add a new virtual interface.
@@ -524,7 +524,7 @@ unsigned char wifi_nrf_fmac_vif_idx_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
  * @return Index (maintained by the UMAC IF layer) of the VIF that was added.
  *         In case of error MAX_NUM_VIFS will be returned.
  */
-unsigned char wifi_nrf_fmac_add_vif(void *fmac_dev_ctx,
+unsigned char nrf_wifi_fmac_add_vif(void *fmac_dev_ctx,
 				    void *os_vif_ctx,
 				    struct nrf_wifi_umac_add_vif_info *vif_info);
 
@@ -536,12 +536,12 @@ unsigned char wifi_nrf_fmac_add_vif(void *fmac_dev_ctx,
  *
  * This function is used to send a command to:
  *     - Instruct the RPU firmware to delete an interface which was added using
- *       \p wifi_nrf_fmac_add_vif.
+ *       \p nrf_wifi_fmac_add_vif.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_del_vif(void *fmac_dev_ctx,
 					   unsigned char if_idx);
 
 /**
@@ -555,10 +555,10 @@ enum wifi_nrf_status wifi_nrf_fmac_del_vif(void *fmac_dev_ctx,
  * This function is used to change the attributes of an interface identified
  *     with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_vif(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_vif(void *fmac_dev_ctx,
 					   unsigned char if_idx,
 					   struct nrf_wifi_umac_chg_vif_attr_info *vif_info);
 
@@ -573,13 +573,13 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif(void *fmac_dev_ctx,
  *     - Instruct the RPU firmware to change the state of an interface identified by an index
  *       \p if_idx and parameters specified by \p vif_info.
  *     - The different states that can be configured are
- *         - WIFI_NRF_FMAC_IF_OP_STATE_DOWN
- *         - WIFI_NRF_FMAC_IF_OP_STATE_UP
+ *         - NRF_WIFI_FMAC_IF_OP_STATE_DOWN
+ *         - NRF_WIFI_FMAC_IF_OP_STATE_UP
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_chg_vif_state(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_chg_vif_state_info *vif_info);
 
@@ -593,10 +593,10 @@ enum wifi_nrf_status wifi_nrf_fmac_chg_vif_state(void *fmac_dev_ctx,
  * This function is used to set the MAC address of an interface identified
  *	    with \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_vif_macaddr(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_vif_macaddr(void *fmac_dev_ctx,
 						   unsigned char if_idx,
 						   unsigned char *mac_addr);
 
@@ -618,10 +618,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_vif_macaddr(void *fmac_dev_ctx,
  *	  transmitted/aborted.
  *	- The driver can cleanup the frame buffers after receiving this event.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_start_xmit(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_start_xmit(void *fmac_dev_ctx,
 					      unsigned char if_idx,
 					      void *netbuf);
 
@@ -632,10 +632,10 @@ enum wifi_nrf_status wifi_nrf_fmac_start_xmit(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *	    - Inform the RPU firmware that host is going to suspend state.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_suspend(void *fmac_dev_ctx);
+enum nrf_wifi_status nrf_wifi_fmac_suspend(void *fmac_dev_ctx);
 
 
 /**
@@ -645,10 +645,10 @@ enum wifi_nrf_status wifi_nrf_fmac_suspend(void *fmac_dev_ctx);
  * This function is used to send a command to:
  *	    - Inform the RPU firmware that host has resumed from a suspended state.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_resume(void *fmac_dev_ctx);
+enum nrf_wifi_status nrf_wifi_fmac_resume(void *fmac_dev_ctx);
 
 
 /**
@@ -661,10 +661,10 @@ enum wifi_nrf_status wifi_nrf_fmac_resume(void *fmac_dev_ctx);
  *	    - Get the transmit power on a particular interface given
  *	      by \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_tx_power(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_tx_power(void *fmac_dev_ctx,
 						unsigned int if_idx);
 
 /**
@@ -676,10 +676,10 @@ enum wifi_nrf_status wifi_nrf_fmac_get_tx_power(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *	    - Get the channel configured on a particular interface given by /p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_channel(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_channel(void *fmac_dev_ctx,
 					       unsigned int if_idx);
 
 /**
@@ -692,10 +692,10 @@ enum wifi_nrf_status wifi_nrf_fmac_get_channel(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *	    - Get station statistics using a MAC address.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_station(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_station(void *fmac_dev_ctx,
 					       unsigned int if_idx,
 					       unsigned char *mac);
 
@@ -708,10 +708,10 @@ enum wifi_nrf_status wifi_nrf_fmac_get_station(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *	    - Get interface statistics using interface index \p if_idx.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_interface(void *dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_interface(void *dev_ctx,
 					       unsigned int if_idx);
 
 
@@ -724,10 +724,10 @@ enum wifi_nrf_status wifi_nrf_fmac_get_interface(void *dev_ctx,
  * This function is used to send a command to:
  *	     - The RPU firmware to Enable/Disable WLAN Power management.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_power_save(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_power_save(void *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  bool state);
 
@@ -740,10 +740,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save(void *fmac_dev_ctx,
  * This function is used to send a command (%NRF_WIFI_UMAC_CMD_CONFIG_UAPSD) to:
  *	    - The RPU firmware to set a U-APSD queue value.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_uapsd_queue(void *fmac_dev_ctx,
 						   unsigned char if_idx,
 						   unsigned int uapsd_queue);
 
@@ -756,10 +756,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_uapsd_queue(void *fmac_dev_ctx,
  * This function is used to send a command (%NRF_WIFI_UMAC_CMD_SET_POWER_SAVE_TIMEOUT) to:
  *          - The RPU firmware to set power save inactivity time.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_power_save_timeout(void *fmac_dev_ctx,
 							  unsigned char if_idx,
 							  int ps_timeout);
 
@@ -772,10 +772,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_power_save_timeout(void *fmac_dev_ctx,
  * This function is used to send a command to:
  *	    - The RPU firmware to set QOS map information.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_qos_map(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_qos_map(void *fmac_dev_ctx,
 					       unsigned char if_idx,
 					       struct nrf_wifi_umac_qos_map_info *qos_info);
 
@@ -787,10 +787,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_qos_map(void *fmac_dev_ctx,
  * This function is used to send a command to the RPU firmware to:
  *	    - Configure wakeup trigger condition in RPU.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_wowlan(void *fmac_dev_ctx,
 					      unsigned int var);
 
 /**
@@ -800,10 +800,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *fmac_dev_ctx,
  *
  * This function is used to get PHY configuration from the RPU firmware.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_wiphy(void *fmac_dev_ctx, unsigned char if_idx);
+enum nrf_wifi_status nrf_wifi_fmac_get_wiphy(void *fmac_dev_ctx, unsigned char if_idx);
 
 /**
  * @brief Register to get MGMT frames.
@@ -813,10 +813,10 @@ enum wifi_nrf_status wifi_nrf_fmac_get_wiphy(void *fmac_dev_ctx, unsigned char i
  *
  * Register with the RPU firmware to receive specific MGMT frames from the RPU to the host side.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_register_frame(void *fmac_dev_ctx, unsigned char if_idx,
+enum nrf_wifi_status nrf_wifi_fmac_register_frame(void *fmac_dev_ctx, unsigned char if_idx,
 						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
 /**
@@ -829,11 +829,11 @@ enum wifi_nrf_status wifi_nrf_fmac_register_frame(void *fmac_dev_ctx, unsigned c
  *	    - Configure parameters interface specific parameters on an interface identified
  *	      by \p if_idx
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
 
-enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_wiphy_params(void *fmac_dev_ctx,
 						 unsigned char if_idx,
 						 struct nrf_wifi_umac_set_wiphy_info *wiphy_info);
 
@@ -846,10 +846,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *fmac_dev_ctx,
  * This function is used to send a command to the RPU firmware to:
  *	    - Configure TWT setup specific parameters.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_twt_setup(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_twt_setup(void *fmac_dev_ctx,
 					     unsigned char if_idx,
 					     struct nrf_wifi_umac_config_twt_info *twt_info);
 
@@ -862,10 +862,10 @@ enum wifi_nrf_status wifi_nrf_fmac_twt_setup(void *fmac_dev_ctx,
  * This function is used to send a command to the RPU firmware to:
  *	    - Tear down an existing TWT session.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_twt_teardown(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_twt_teardown(void *fmac_dev_ctx,
 						unsigned char if_idx,
 						struct nrf_wifi_umac_config_twt_info *twt_info);
 
@@ -877,10 +877,10 @@ enum wifi_nrf_status wifi_nrf_fmac_twt_teardown(void *fmac_dev_ctx,
  * This function is used to send a command to the RPU firmware to:
  *	    - Fetch connection information.
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_conn_info(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_conn_info(void *fmac_dev_ctx,
 						unsigned char if_idx);
 
 /**
@@ -894,7 +894,7 @@ enum wifi_nrf_status wifi_nrf_fmac_get_conn_info(void *fmac_dev_ctx,
  *
  * @return None
  */
-void wifi_nrf_fmac_deinit(struct wifi_nrf_fmac_priv *fpriv);
+void nrf_wifi_fmac_deinit(struct nrf_wifi_fmac_priv *fpriv);
 
 /**
  * @brief Removes a RPU instance.
@@ -905,7 +905,7 @@ void wifi_nrf_fmac_deinit(struct wifi_nrf_fmac_priv *fpriv);
  *
  * @return None.
  */
-void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+void nrf_wifi_fmac_dev_rem(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 
 /**
@@ -924,10 +924,10 @@ void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  *              - FW initialization and PHY calibration data is sent to PHY
  *              - RX and TX buffers are initialized, tasklets assigned
  *
- * @retval	WIFI_NRF_STATUS_SUCCESS On success
- * @retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ * @retval	NRF_WIFI_STATUS_SUCCESS On success
+ * @retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			unsigned char *rf_params_usr,
 #if defined(CONFIG_NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
 			int sleep_type,
@@ -948,7 +948,7 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_d
  *
  * @return None.
  */
-void wifi_nrf_fmac_dev_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+void nrf_wifi_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 /**
  * @brief Configure WLAN listen interval.
@@ -959,10 +959,10 @@ void wifi_nrf_fmac_dev_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
  * This function is used to send a command to RPU to configure listen interval.
  * Refer section 9.4.1.6 is 802.11-2020 standard for details on listen interval
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_listen_interval(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_listen_interval(void *fmac_dev_ctx,
 							unsigned char if_idx,
 							unsigned short listen_interval);
 
@@ -978,10 +978,10 @@ enum wifi_nrf_status wifi_nrf_fmac_set_listen_interval(void *fmac_dev_ctx,
  *            - Listen interval based PS mode
  *         Default mode is set to DTIM interval based PS mode
  *
- *@retval	WIFI_NRF_STATUS_SUCCESS On success
- *@retval	WIFI_NRF_STATUS_FAIL On failure to execute command
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_ps_wakeup_mode(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_ps_wakeup_mode(void *fmac_dev_ctx,
 							unsigned char if_idx,
 							bool ps_wakeup_mode);
 /**

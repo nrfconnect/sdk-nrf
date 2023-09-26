@@ -49,21 +49,21 @@ static const unsigned int SOC_MMAP_ADDR_OFFSETS_MCU[] = {
 
 #define RPU_MCU_CORE_INDIRECT_BASE 0xC0000000
 
-#define WIFI_NRF_FW_LMAC_PATCH_LOC_PRI "img/wlan/wifi_nrf_lmac_patch_pri.bimg"
-#define WIFI_NRF_FW_LMAC_PATCH_LOC_SEC "img/wlan/wifi_nrf_lmac_patch_sec.bin"
-#define WIFI_NRF_FW_UMAC_PATCH_LOC_PRI "img/wlan/wifi_nrf_umac_patch_pri.bimg"
-#define WIFI_NRF_FW_UMAC_PATCH_LOC_SEC "img/wlan/wifi_nrf_umac_patch_sec.bin"
+#define NRF_WIFI_FW_LMAC_PATCH_LOC_PRI "img/wlan/nrf_wifi_lmac_patch_pri.bimg"
+#define NRF_WIFI_FW_LMAC_PATCH_LOC_SEC "img/wlan/nrf_wifi_lmac_patch_sec.bin"
+#define NRF_WIFI_FW_UMAC_PATCH_LOC_PRI "img/wlan/nrf_wifi_umac_patch_pri.bimg"
+#define NRF_WIFI_FW_UMAC_PATCH_LOC_SEC "img/wlan/nrf_wifi_umac_patch_sec.bin"
 
-enum wifi_nrf_fw_type {
-	WIFI_NRF_FW_TYPE_LMAC_PATCH,
-	WIFI_NRF_FW_TYPE_UMAC_PATCH,
-	WIFI_NRF_FW_TYPE_MAX
+enum nrf_wifi_fw_type {
+	NRF_WIFI_FW_TYPE_LMAC_PATCH,
+	NRF_WIFI_FW_TYPE_UMAC_PATCH,
+	NRF_WIFI_FW_TYPE_MAX
 };
 
-enum wifi_nrf_fw_subtype {
-	WIFI_NRF_FW_SUBTYPE_PRI,
-	WIFI_NRF_FW_SUBTYPE_SEC,
-	WIFI_NRF_FW_SUBTYPE_MAX
+enum nrf_wifi_fw_subtype {
+	NRF_WIFI_FW_SUBTYPE_PRI,
+	NRF_WIFI_FW_SUBTYPE_SEC,
+	NRF_WIFI_FW_SUBTYPE_MAX
 };
 
 bool pal_check_rpu_mcu_regions(enum RPU_PROC_TYPE proc, unsigned int addr_val);
@@ -82,7 +82,7 @@ static inline enum RPU_MCU_ADDR_REGIONS pal_mem_type_to_region(enum HAL_RPU_MEM_
 	}
 }
 
-enum wifi_nrf_status pal_rpu_addr_offset_get(struct wifi_nrf_osal_priv *opriv,
+enum nrf_wifi_status pal_rpu_addr_offset_get(struct nrf_wifi_osal_priv *opriv,
 					     unsigned int rpu_addr,
 					     unsigned long *addr_offset,
 						 enum RPU_PROC_TYPE proc);
@@ -92,8 +92,8 @@ enum wifi_nrf_status pal_rpu_addr_offset_get(struct wifi_nrf_osal_priv *opriv,
 unsigned long pal_rpu_ps_ctrl_reg_addr_get(void);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
-char *pal_ops_get_fw_loc(struct wifi_nrf_osal_priv *opriv,
-			 enum wifi_nrf_fw_type fw_type,
-			 enum wifi_nrf_fw_subtype fw_subtype);
+char *pal_ops_get_fw_loc(struct nrf_wifi_osal_priv *opriv,
+			 enum nrf_wifi_fw_type fw_type,
+			 enum nrf_wifi_fw_subtype fw_subtype);
 
 #endif /* __PAL_H__ */

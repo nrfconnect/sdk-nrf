@@ -37,10 +37,10 @@ enum HAL_RPU_MEM_TYPE {
  * to the host memory pointed to by the host_addr parameter.
  *
  * Return: Status
- *		Pass : %WIFI_NRF_STATUS_SUCCESS
- *		Error: %WIFI_NRF_STATUS_FAIL
+ *		Pass : %NRF_WIFI_STATUS_SUCCESS
+ *		Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_mem_read(struct wifi_nrf_hal_dev_ctx *hal_ctx,
+enum nrf_wifi_status hal_rpu_mem_read(struct nrf_wifi_hal_dev_ctx *hal_ctx,
 				      void *host_addr,
 				      unsigned int rpu_mem_addr,
 				      unsigned int len);
@@ -58,10 +58,10 @@ enum wifi_nrf_status hal_rpu_mem_read(struct wifi_nrf_hal_dev_ctx *hal_ctx,
  * memory pointed to by the host_addr parameter.
  *
  * Return: Status
- *		Pass : %WIFI_NRF_STATUS_SUCCESS
- *		Error: %WIFI_NRF_STATUS_FAIL
+ *		Pass : %NRF_WIFI_STATUS_SUCCESS
+ *		Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_ctx,
+enum nrf_wifi_status hal_rpu_mem_write(struct nrf_wifi_hal_dev_ctx *hal_ctx,
 				       unsigned int rpu_mem_addr,
 				       void *host_addr,
 				       unsigned int len);
@@ -75,10 +75,10 @@ enum wifi_nrf_status hal_rpu_mem_write(struct wifi_nrf_hal_dev_ctx *hal_ctx,
  * This function fills the RPU memory with 0's.
  *
  * Return: Status
- *		Pass : %WIFI_NRF_STATUS_SUCCESS
- *		Error: %WIFI_NRF_STATUS_FAIL
+ *		Pass : %NRF_WIFI_STATUS_SUCCESS
+ *		Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_mem_clr(struct wifi_nrf_hal_dev_ctx *hal_ctx,
+enum nrf_wifi_status hal_rpu_mem_clr(struct nrf_wifi_hal_dev_ctx *hal_ctx,
 				     enum RPU_PROC_TYPE rpu_proc,
 				     enum HAL_RPU_MEM_TYPE mem_type);
 #endif /* __HAL_MEM_H__ */

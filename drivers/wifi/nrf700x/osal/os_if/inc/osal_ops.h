@@ -17,7 +17,7 @@
 
 
 /**
- * struct wifi_nrf_osal_ops - Ops to be provided by a specific OS implementation.
+ * struct nrf_wifi_osal_ops - Ops to be provided by a specific OS implementation.
  * @init: Initialize the OS shim. This is expected to return any OS Shim
  * specific context information that might be needed.
  *
@@ -144,9 +144,9 @@
  * @bus_pcie_dev_dma_map: Map host memory of size @size pointed to by the virtual address
  *			  @virt_addr to be used by the PCIe device for DMAing contents.
  *			  The contents are available for DMAing to the device if @dir has a
- *			  value of @WIFI_NRF_OSAL_DMA_DIR_TO_DEV. Conversely the device can DMA
+ *			  value of @NRF_WIFI_OSAL_DMA_DIR_TO_DEV. Conversely the device can DMA
  *			  contents to the host memory if @dir has a value of
- *			  @WIFI_NRF_OSAL_DMA_DIR_FROM_DEV. The function returns the DMA address
+ *			  @NRF_WIFI_OSAL_DMA_DIR_FROM_DEV. The function returns the DMA address
  *			  of the mapped memory.
  * @bus_pcie_dev_dma_unmap: Unmap the host memory which was mapped for DMA using
  *			    @bus_pcie_dev_dma_map.
@@ -178,7 +178,7 @@
  * function will then need to be mapped to the corresponding Op.
  *
  */
-struct wifi_nrf_osal_ops {
+struct nrf_wifi_osal_ops {
 	void *(*mem_alloc)(size_t size);
 	void *(*mem_zalloc)(size_t size);
 	void (*mem_free)(void *buf);
@@ -266,23 +266,23 @@ struct wifi_nrf_osal_ops {
 				  void *osal_pcie_dev_ctx);
 	void (*bus_pcie_dev_rem)(void *os_pcie_dev_ctx);
 
-	enum wifi_nrf_status (*bus_pcie_dev_init)(void *os_pcie_dev_ctx);
+	enum nrf_wifi_status (*bus_pcie_dev_init)(void *os_pcie_dev_ctx);
 	void (*bus_pcie_dev_deinit)(void *os_pcie_dev_ctx);
 
-	enum wifi_nrf_status (*bus_pcie_dev_intr_reg)(void *os_pcie_dev_ctx,
+	enum nrf_wifi_status (*bus_pcie_dev_intr_reg)(void *os_pcie_dev_ctx,
 						      void *callbk_data,
 						      int (*callback_fn)(void *callbk_data));
 	void (*bus_pcie_dev_intr_unreg)(void *os_pcie_dev_ctx);
 	void *(*bus_pcie_dev_dma_map)(void *os_pcie_dev_ctx,
 				      void *virt_addr,
 				      size_t size,
-				      enum wifi_nrf_osal_dma_dir dir);
+				      enum nrf_wifi_osal_dma_dir dir);
 	void (*bus_pcie_dev_dma_unmap)(void *os_pcie_dev_ctx,
 				       void *dma_addr,
 				       size_t size,
-				       enum wifi_nrf_osal_dma_dir dir);
+				       enum nrf_wifi_osal_dma_dir dir);
 	void (*bus_pcie_dev_host_map_get)(void *os_pcie_dev_ctx,
-					  struct wifi_nrf_osal_host_map *host_map);
+					  struct nrf_wifi_osal_host_map *host_map);
 
 	void *(*bus_qspi_init)(void);
 	void (*bus_qspi_deinit)(void *os_qspi_priv);
@@ -290,30 +290,30 @@ struct wifi_nrf_osal_ops {
 				  void *osal_qspi_dev_ctx);
 	void (*bus_qspi_dev_rem)(void *os_qspi_dev_ctx);
 
-	enum wifi_nrf_status (*bus_qspi_dev_init)(void *os_qspi_dev_ctx);
+	enum nrf_wifi_status (*bus_qspi_dev_init)(void *os_qspi_dev_ctx);
 	void (*bus_qspi_dev_deinit)(void *os_qspi_dev_ctx);
 
-	enum wifi_nrf_status (*bus_qspi_dev_intr_reg)(void *os_qspi_dev_ctx,
+	enum nrf_wifi_status (*bus_qspi_dev_intr_reg)(void *os_qspi_dev_ctx,
 						      void *callbk_data,
 						      int (*callback_fn)(void *callbk_data));
 	void (*bus_qspi_dev_intr_unreg)(void *os_qspi_dev_ctx);
 	void (*bus_qspi_dev_host_map_get)(void *os_qspi_dev_ctx,
-					  struct wifi_nrf_osal_host_map *host_map);
+					  struct nrf_wifi_osal_host_map *host_map);
 	void *(*bus_spi_init)(void);
 	void (*bus_spi_deinit)(void *os_spi_priv);
 	void *(*bus_spi_dev_add)(void *spi_priv,
 				  void *osal_spi_dev_ctx);
 	void (*bus_spi_dev_rem)(void *os_spi_dev_ctx);
 
-	enum wifi_nrf_status (*bus_spi_dev_init)(void *os_spi_dev_ctx);
+	enum nrf_wifi_status (*bus_spi_dev_init)(void *os_spi_dev_ctx);
 	void (*bus_spi_dev_deinit)(void *os_spi_dev_ctx);
 
-	enum wifi_nrf_status (*bus_spi_dev_intr_reg)(void *os_spi_dev_ctx,
+	enum nrf_wifi_status (*bus_spi_dev_intr_reg)(void *os_spi_dev_ctx,
 						      void *callbk_data,
 						      int (*callback_fn)(void *callbk_data));
 	void (*bus_spi_dev_intr_unreg)(void *os_spi_dev_ctx);
 	void (*bus_spi_dev_host_map_get)(void *os_spi_dev_ctx,
-					  struct wifi_nrf_osal_host_map *host_map);
+					  struct nrf_wifi_osal_host_map *host_map);
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	void *(*timer_alloc)(void);
 	void (*timer_free)(void *timer);
@@ -329,7 +329,7 @@ struct wifi_nrf_osal_ops {
 
 	void (*assert)(int test_val,
 		       int val,
-		       enum wifi_nrf_assert_op_type op,
+		       enum nrf_wifi_assert_op_type op,
 		       char *assert_msg);
 
 	unsigned int (*strlen)(const void *str);
@@ -341,9 +341,9 @@ struct wifi_nrf_osal_ops {
  *                of OS specific Ops.
  *
  * This Op is expected to be implemented by a specific OS shim and is expected
- * to return a pointer to a initialized instance of struct wifi_nrf_osal_ops.
+ * to return a pointer to a initialized instance of struct nrf_wifi_osal_ops.
  *
  * Returns: Pointer to instance of OS specific Ops.
  */
-const struct wifi_nrf_osal_ops *get_os_ops(void);
+const struct nrf_wifi_osal_ops *get_os_ops(void);
 #endif /* __OSAL_OPS_H__ */

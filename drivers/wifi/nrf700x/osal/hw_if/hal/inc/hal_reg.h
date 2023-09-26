@@ -28,10 +28,10 @@
  * to the host memory pointed to by the val parameter.
  *
  * Return: Status
- *		Pass : WIFI_NRF_STATUS_SUCCESS
- *		Error: WIFI_NRF_STATUS_FAIL
+ *		Pass : NRF_WIFI_STATUS_SUCCESS
+ *		Error: NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_ctx,
+enum nrf_wifi_status hal_rpu_reg_read(struct nrf_wifi_hal_dev_ctx *hal_ctx,
 				      unsigned int *val,
 				      unsigned int rpu_reg_addr);
 
@@ -45,10 +45,10 @@ enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_ctx,
  * This function writes a 4 byte value to a RPU register.
  *
  * Return: Status
- *		Pass : WIFI_NRF_STATUS_SUCCESS
- *		Error: WIFI_NRF_STATUS_FAIL
+ *		Pass : NRF_WIFI_STATUS_SUCCESS
+ *		Error: NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_reg_write(struct wifi_nrf_hal_dev_ctx *hal_ctx,
+enum nrf_wifi_status hal_rpu_reg_write(struct nrf_wifi_hal_dev_ctx *hal_ctx,
 				       unsigned int rpu_reg_addr,
 				       unsigned int val);
 #endif /* __HAL_REG_H__ */
