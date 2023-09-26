@@ -24,15 +24,15 @@
 /* Convert power from mBm to dBm */
 #define MBM_TO_DBM(gain) ((gain) / 100)
 
-int nrf_wifi_utils_hex_str_to_val(struct wifi_nrf_osal_priv *opriv,
+int nrf_wifi_utils_hex_str_to_val(struct nrf_wifi_osal_priv *opriv,
 				  unsigned char *hex_arr,
 				  unsigned int hex_arr_sz,
 				  unsigned char *str);
 
-bool nrf_wifi_utils_is_mac_addr_valid(struct wifi_nrf_osal_priv *opriv,
+bool nrf_wifi_utils_is_mac_addr_valid(struct nrf_wifi_osal_priv *opriv,
 				      const char *mac_addr);
 
-int nrf_wifi_utils_chan_to_freq(struct wifi_nrf_osal_priv *opriv,
+int nrf_wifi_utils_chan_to_freq(struct nrf_wifi_osal_priv *opriv,
 				enum nrf_wifi_band band,
 				unsigned short chan);
 #endif /* __UTIL_H__ */

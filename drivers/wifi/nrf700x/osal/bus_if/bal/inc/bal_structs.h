@@ -15,12 +15,12 @@
 #include "osal_ops.h"
 #include "bal_ops.h"
 
-struct wifi_nrf_bal_cfg_params {
+struct nrf_wifi_bal_cfg_params {
 	unsigned long addr_pktram_base;
 };
 
 /**
- * struct wifi_nrf_bal_priv - Structure to hold context information for the BAL
+ * struct nrf_wifi_bal_priv - Structure to hold context information for the BAL
  * @opriv: Pointer to the OSAL context.
  * @bus_priv: Pointer to a specific bus context.
  * @ops: Pointer to bus operations to be provided by a specific bus
@@ -31,21 +31,21 @@ struct wifi_nrf_bal_cfg_params {
  * initialized during the initialization of the BAL while others need to
  * be kept updated over the duration of the BAL operation.
  */
-struct wifi_nrf_bal_priv {
-	struct wifi_nrf_osal_priv *opriv;
+struct nrf_wifi_bal_priv {
+	struct nrf_wifi_osal_priv *opriv;
 	void *bus_priv;
-	struct wifi_nrf_bal_ops *ops;
+	struct nrf_wifi_bal_ops *ops;
 
-	enum wifi_nrf_status (*init_dev_callbk_fn)(void *ctx);
+	enum nrf_wifi_status (*init_dev_callbk_fn)(void *ctx);
 
 	void (*deinit_dev_callbk_fn)(void *ctx);
 
-	enum wifi_nrf_status (*intr_callbk_fn)(void *ctx);
+	enum nrf_wifi_status (*intr_callbk_fn)(void *ctx);
 };
 
 
-struct wifi_nrf_bal_dev_ctx {
-	struct wifi_nrf_bal_priv *bpriv;
+struct nrf_wifi_bal_dev_ctx {
+	struct nrf_wifi_bal_priv *bpriv;
 	void *hal_dev_ctx;
 	void *bus_dev_ctx;
 #ifdef CONFIG_NRF_WIFI_LOW_POWER

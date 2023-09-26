@@ -13,7 +13,7 @@
 #define __FMAC_EVENT_H__
 
 /**
- * wifi_nrf_fmac_event_callback() - RPU event classifier and handler.
+ * nrf_wifi_fmac_event_callback() - RPU event classifier and handler.
  * @data: Pointer to the device driver context.
  * @event_data: Pointer to event data.
  * @len: Length of event data pointed to by @event_data.
@@ -23,10 +23,10 @@
  * and invokes further handlers based on that.
  *
  * Return: Status
- *		Pass: WIFI_NRF_STATUS_SUCCESS
- *		Fail: WIFI_NRF_STATUS_FAIL
+ *		Pass: NRF_WIFI_STATUS_SUCCESS
+ *		Fail: NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status wifi_nrf_fmac_event_callback(void *data,
+enum nrf_wifi_status nrf_wifi_fmac_event_callback(void *data,
 						  void *event_data,
 						  unsigned int len);
 #endif /* __FMAC_EVENT_H__ */

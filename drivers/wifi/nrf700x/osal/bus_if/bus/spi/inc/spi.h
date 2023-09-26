@@ -16,7 +16,7 @@
 #include "bal_structs.h"
 
 /**
- * struct wifi_nrf_bus_spi_priv - Structure to hold context information for the Linux SPI bus.
+ * struct nrf_wifi_bus_spi_priv - Structure to hold context information for the Linux SPI bus.
  * @opriv: Pointer to the OSAL context.
  * @os_spi_priv:
  * @intr_callbk_fn:
@@ -27,19 +27,19 @@
  * during the initialization of the Linux SPI bus while others need to be kept
  * updated over the duration of the Linux SPI bus operation.
  */
-struct wifi_nrf_bus_spi_priv {
-	struct wifi_nrf_osal_priv *opriv;
+struct nrf_wifi_bus_spi_priv {
+	struct nrf_wifi_osal_priv *opriv;
 	void *os_spi_priv;
 
-	enum wifi_nrf_status (*intr_callbk_fn)(void *hal_ctx);
+	enum nrf_wifi_status (*intr_callbk_fn)(void *hal_ctx);
 
 	/* TODO: See if this can be removed by getting the information from PAL */
-	struct wifi_nrf_bal_cfg_params cfg_params;
+	struct nrf_wifi_bal_cfg_params cfg_params;
 };
 
 
-struct wifi_nrf_bus_spi_dev_ctx {
-	struct wifi_nrf_bus_spi_priv *spi_priv;
+struct nrf_wifi_bus_spi_dev_ctx {
+	struct nrf_wifi_bus_spi_priv *spi_priv;
 	void *bal_dev_ctx;
 	void *os_spi_dev_ctx;
 

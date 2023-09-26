@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_wifi_radio_test)
 
-set(WIFI_NRF_DRV_BASE ${WEST_TOPDIR}/nrf/drivers/wifi/nrf700x)
+set(NRF_WIFI_DRV_BASE ${WEST_TOPDIR}/nrf/drivers/wifi/nrf700x)
 
 target_include_directories(app PRIVATE
 	inc

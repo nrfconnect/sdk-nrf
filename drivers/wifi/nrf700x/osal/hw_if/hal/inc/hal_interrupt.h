@@ -21,10 +21,10 @@
  * This function enables the interrupts from the RPU.
  *
  * Return: Status
- *		Pass : %WIFI_NRF_STATUS_SUCCESS
- *		Error: %WIFI_NRF_STATUS_FAIL
+ *		Pass : %NRF_WIFI_STATUS_SUCCESS
+ *		Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_irq_enable(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
+enum nrf_wifi_status hal_rpu_irq_enable(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
 
 
 /**
@@ -34,10 +34,10 @@ enum wifi_nrf_status hal_rpu_irq_enable(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx
  * This function disables the interrupts from the RPU.
  *
  * Return: Status
- *		Pass : %WIFI_NRF_STATUS_SUCCESS
- *		Error: %WIFI_NRF_STATUS_FAIL
+ *		Pass : %NRF_WIFI_STATUS_SUCCESS
+ *		Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_irq_disable(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
+enum nrf_wifi_status hal_rpu_irq_disable(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
 
 
 /**
@@ -54,8 +54,8 @@ enum wifi_nrf_status hal_rpu_irq_disable(struct wifi_nrf_hal_dev_ctx *hal_dev_ct
  *    - Acknowledges the RPU interrupt.
  *
  * Return: Status
- *		Pass : %WIFI_NRF_STATUS_SUCCESS
- *		Error: %WIFI_NRF_STATUS_FAIL
+ *		Pass : %NRF_WIFI_STATUS_SUCCESS
+ *		Error: %NRF_WIFI_STATUS_FAIL
  */
-enum wifi_nrf_status hal_rpu_irq_process(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx);
+enum nrf_wifi_status hal_rpu_irq_process(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
 #endif /* __HAL_INTERRUPT_H__ */

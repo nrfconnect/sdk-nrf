@@ -12,58 +12,58 @@
 #include "list.h"
 #include "queue.h"
 
-void *wifi_nrf_utils_q_alloc(struct wifi_nrf_osal_priv *opriv)
+void *nrf_wifi_utils_q_alloc(struct nrf_wifi_osal_priv *opriv)
 {
-	return wifi_nrf_utils_list_alloc(opriv);
+	return nrf_wifi_utils_list_alloc(opriv);
 }
 
 
-void wifi_nrf_utils_q_free(struct wifi_nrf_osal_priv *opriv,
+void nrf_wifi_utils_q_free(struct nrf_wifi_osal_priv *opriv,
 			   void *q)
 {
-	wifi_nrf_utils_list_free(opriv,
+	nrf_wifi_utils_list_free(opriv,
 				 q);
 }
 
 
-enum wifi_nrf_status wifi_nrf_utils_q_enqueue(struct wifi_nrf_osal_priv *opriv,
+enum nrf_wifi_status nrf_wifi_utils_q_enqueue(struct nrf_wifi_osal_priv *opriv,
 					      void *q,
 					      void *data)
 {
-	return wifi_nrf_utils_list_add_tail(opriv,
+	return nrf_wifi_utils_list_add_tail(opriv,
 					    q,
 					    data);
 }
 
-enum wifi_nrf_status wifi_nrf_utils_q_enqueue_head(struct wifi_nrf_osal_priv *opriv,
+enum nrf_wifi_status nrf_wifi_utils_q_enqueue_head(struct nrf_wifi_osal_priv *opriv,
 						   void *q,
 						   void *data)
 {
-	return wifi_nrf_utils_list_add_head(opriv,
+	return nrf_wifi_utils_list_add_head(opriv,
 					    q,
 					    data);
 }
 
 
-void *wifi_nrf_utils_q_dequeue(struct wifi_nrf_osal_priv *opriv,
+void *nrf_wifi_utils_q_dequeue(struct nrf_wifi_osal_priv *opriv,
 			       void *q)
 {
-	return wifi_nrf_utils_list_del_head(opriv,
+	return nrf_wifi_utils_list_del_head(opriv,
 					    q);
 }
 
 
-void *wifi_nrf_utils_q_peek(struct wifi_nrf_osal_priv *opriv,
+void *nrf_wifi_utils_q_peek(struct nrf_wifi_osal_priv *opriv,
 			    void *q)
 {
-	return wifi_nrf_utils_list_peek(opriv,
+	return nrf_wifi_utils_list_peek(opriv,
 					q);
 }
 
 
-unsigned int wifi_nrf_utils_q_len(struct wifi_nrf_osal_priv *opriv,
+unsigned int nrf_wifi_utils_q_len(struct nrf_wifi_osal_priv *opriv,
 				  void *q)
 {
-	return wifi_nrf_utils_list_len(opriv,
+	return nrf_wifi_utils_list_len(opriv,
 				       q);
 }

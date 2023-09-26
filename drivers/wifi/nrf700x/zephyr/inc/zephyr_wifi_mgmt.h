@@ -23,31 +23,31 @@ struct twt_interval_float {
 	unsigned char exponent;
 };
 
-int wifi_nrf_set_power_save(const struct device *dev,
+int nrf_wifi_set_power_save(const struct device *dev,
 			    struct wifi_ps_params *params);
 
-int wifi_nrf_set_twt(const struct device *dev,
+int nrf_wifi_set_twt(const struct device *dev,
 	struct wifi_twt_params *twt_params);
 
-void wifi_nrf_event_proc_twt_setup_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_setup_zep(void *vif_ctx,
 		struct nrf_wifi_umac_cmd_config_twt *twt_setup_info,
 		unsigned int event_len);
 
-void wifi_nrf_event_proc_twt_teardown_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_teardown_zep(void *vif_ctx,
 		struct nrf_wifi_umac_cmd_teardown_twt *twt_teardown_info,
 		unsigned int event_len);
 
-void wifi_nrf_event_proc_twt_sleep_zep(void *vif_ctx,
+void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 		struct nrf_wifi_umac_event_twt_sleep *twt_sleep_info,
 		unsigned int event_len);
 
-int wifi_nrf_twt_teardown_flows(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
+int nrf_wifi_twt_teardown_flows(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 		unsigned char start_flow_id, unsigned char end_flow_id);
 
-int wifi_nrf_get_power_save_config(const struct device *dev,
+int nrf_wifi_get_power_save_config(const struct device *dev,
 		struct wifi_ps_config *ps_config);
 
-void wifi_nrf_event_proc_get_power_save_info(void *vif_ctx,
+void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 		struct nrf_wifi_umac_event_power_save_info *ps_info,
 		unsigned int event_len);
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */

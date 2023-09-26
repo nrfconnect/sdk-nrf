@@ -555,14 +555,14 @@ static unsigned int zep_shim_time_elapsed_us(unsigned long start_time_us)
 	return curr_time_us - start_time_us;
 }
 
-static enum wifi_nrf_status zep_shim_bus_qspi_dev_init(void *os_qspi_dev_ctx)
+static enum nrf_wifi_status zep_shim_bus_qspi_dev_init(void *os_qspi_dev_ctx)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct qspi_dev *dev = NULL;
 
 	dev = os_qspi_dev_ctx;
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 
 	return status;
 }
@@ -648,7 +648,7 @@ static int zep_shim_bus_qspi_ps_status(void *os_qspi_priv)
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 static void zep_shim_bus_qspi_dev_host_map_get(void *os_qspi_dev_ctx,
-					       struct wifi_nrf_osal_host_map *host_map)
+					       struct nrf_wifi_osal_host_map *host_map)
 {
 	if (!os_qspi_dev_ctx || !host_map) {
 		LOG_ERR("%s: Invalid parameters\n", __func__);
@@ -680,10 +680,10 @@ static void zep_shim_irq_handler(const struct device *dev, struct gpio_callback 
 	k_work_schedule_for_queue(&zep_wifi_intr_q, &intr_priv->work, K_NO_WAIT);
 }
 
-static enum wifi_nrf_status zep_shim_bus_qspi_intr_reg(void *os_dev_ctx, void *callbk_data,
+static enum nrf_wifi_status zep_shim_bus_qspi_intr_reg(void *os_dev_ctx, void *callbk_data,
 						       int (*callbk_fn)(void *callbk_data))
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int ret = -1;
 
 	ARG_UNUSED(os_dev_ctx);
@@ -709,7 +709,7 @@ static enum wifi_nrf_status zep_shim_bus_qspi_intr_reg(void *os_dev_ctx, void *c
 		goto out;
 	}
 
-	status = WIFI_NRF_STATUS_SUCCESS;
+	status = NRF_WIFI_STATUS_SUCCESS;
 
 out:
 	return status;
@@ -764,25 +764,25 @@ static void zep_shim_timer_kill(void *timer)
 }
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
-static void zep_shim_assert(int test_val, int val, enum wifi_nrf_assert_op_type op, char *msg)
+static void zep_shim_assert(int test_val, int val, enum nrf_wifi_assert_op_type op, char *msg)
 {
 	switch (op) {
-	case WIFI_NRF_ASSERT_EQUAL_TO:
+	case NRF_WIFI_ASSERT_EQUAL_TO:
 		NET_ASSERT(test_val == val, "%s", msg);
 	break;
-	case WIFI_NRF_ASSERT_NOT_EQUAL_TO:
+	case NRF_WIFI_ASSERT_NOT_EQUAL_TO:
 		NET_ASSERT(test_val != val, "%s", msg);
 	break;
-	case WIFI_NRF_ASSERT_LESS_THAN:
+	case NRF_WIFI_ASSERT_LESS_THAN:
 		NET_ASSERT(test_val < val, "%s", msg);
 	break;
-	case WIFI_NRF_ASSERT_LESS_THAN_EQUAL_TO:
+	case NRF_WIFI_ASSERT_LESS_THAN_EQUAL_TO:
 		NET_ASSERT(test_val <= val, "%s", msg);
 	break;
-	case WIFI_NRF_ASSERT_GREATER_THAN:
+	case NRF_WIFI_ASSERT_GREATER_THAN:
 		NET_ASSERT(test_val > val, "%s", msg);
 	break;
-	case WIFI_NRF_ASSERT_GREATER_THAN_EQUAL_TO:
+	case NRF_WIFI_ASSERT_GREATER_THAN_EQUAL_TO:
 		NET_ASSERT(test_val >= val, "%s", msg);
 	break;
 	default:
@@ -795,7 +795,7 @@ static unsigned int zep_shim_strlen(const void *str)
 	return strlen(str);
 }
 
-static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
+static const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.mem_alloc = zep_shim_mem_alloc,
 	.mem_zalloc = zep_shim_mem_zalloc,
 	.mem_free = k_free,
@@ -884,7 +884,7 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.strlen = zep_shim_strlen,
 };
 
-const struct wifi_nrf_osal_ops *get_os_ops(void)
+const struct nrf_wifi_osal_ops *get_os_ops(void)
 {
-	return &wifi_nrf_os_zep_ops;
+	return &nrf_wifi_os_zep_ops;
 }

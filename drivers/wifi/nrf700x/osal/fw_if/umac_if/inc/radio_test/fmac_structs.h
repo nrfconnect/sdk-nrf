@@ -32,7 +32,7 @@
  * This structure maintains the context information necessary for the
  * a single instance of an FullMAC based RPU.
  */
-struct wifi_nrf_fmac_dev_ctx_rt {
+struct nrf_wifi_fmac_dev_ctx_rt {
 	/** Firmware RF test command type. */
 	enum nrf_wifi_rf_test rf_test_type;
 	/** Firmware RF test capability data. */

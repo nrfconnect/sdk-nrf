@@ -24,26 +24,26 @@
 
 #define MAX_PEERS 5
 #define MAX_SW_PEERS (MAX_PEERS + 1)
-#define WIFI_NRF_AC_TWT_PRIORITY_EMERGENCY 0xFF
+#define NRF_WIFI_AC_TWT_PRIORITY_EMERGENCY 0xFF
 
 
 /**
  * @brief WLAN access categories.
  *
  */
-enum wifi_nrf_fmac_ac {
+enum nrf_wifi_fmac_ac {
 	/** Background access category. */
-	WIFI_NRF_FMAC_AC_BK,
+	NRF_WIFI_FMAC_AC_BK,
 	/** Best-effort access category. */
-	WIFI_NRF_FMAC_AC_BE,
+	NRF_WIFI_FMAC_AC_BE,
 	/** Video access category. */
-	WIFI_NRF_FMAC_AC_VI,
+	NRF_WIFI_FMAC_AC_VI,
 	/** Voice access category. */
-	WIFI_NRF_FMAC_AC_VO,
+	NRF_WIFI_FMAC_AC_VO,
 	/** Multicast access category. */
-	WIFI_NRF_FMAC_AC_MC,
+	NRF_WIFI_FMAC_AC_MC,
 	/** Maximum number of WLAN access categories. */
-	WIFI_NRF_FMAC_AC_MAX
+	NRF_WIFI_FMAC_AC_MAX
 };
 
 
@@ -51,13 +51,13 @@ enum wifi_nrf_fmac_ac {
  * @brief The operational state of an interface.
  *
  */
-enum wifi_nrf_fmac_if_op_state {
+enum nrf_wifi_fmac_if_op_state {
 	/** Interface is non-operational. */
-	WIFI_NRF_FMAC_IF_OP_STATE_DOWN,
+	NRF_WIFI_FMAC_IF_OP_STATE_DOWN,
 	/** Interface is operational. */
-	WIFI_NRF_FMAC_IF_OP_STATE_UP,
+	NRF_WIFI_FMAC_IF_OP_STATE_UP,
 	/** Invalid value. Used for error checks. */
-	WIFI_NRF_FMAC_IF_OP_STATE_INVALID
+	NRF_WIFI_FMAC_IF_OP_STATE_INVALID
 };
 
 
@@ -65,13 +65,13 @@ enum wifi_nrf_fmac_if_op_state {
  * @brief The carrier state of an interface.
  *
  */
-enum wifi_nrf_fmac_if_carr_state {
+enum nrf_wifi_fmac_if_carr_state {
 	/** Interface is not ready. */
-	WIFI_NRF_FMAC_IF_CARR_STATE_OFF,
+	NRF_WIFI_FMAC_IF_CARR_STATE_OFF,
 	/** Interface is ready. */
-	WIFI_NRF_FMAC_IF_CARR_STATE_ON,
+	NRF_WIFI_FMAC_IF_CARR_STATE_ON,
 	/** Invalid value. Used for error checks. */
-	WIFI_NRF_FMAC_IF_CARR_STATE_INVALID
+	NRF_WIFI_FMAC_IF_CARR_STATE_INVALID
 };
 
 
@@ -81,7 +81,7 @@ enum wifi_nrf_fmac_if_carr_state {
  * This structure contains function pointers to all the callback functions that
  * the UMAC IF layer needs to invoke for various events.
  */
-struct wifi_nrf_fmac_callbk_fns {
+struct nrf_wifi_fmac_callbk_fns {
 	/** Callback function to be called when a scan is started. */
 	void (*scan_start_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
@@ -119,8 +119,8 @@ struct wifi_nrf_fmac_callbk_fns {
 
 #if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
 	/** Callback function to be called when an interface association state changes. */
-	enum wifi_nrf_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
-							    enum wifi_nrf_fmac_if_carr_state cs);
+	enum nrf_wifi_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
+							    enum nrf_wifi_fmac_if_carr_state cs);
 
 	/** Callback function to be called when a frame is received. */
 	void (*rx_frm_callbk_fn)(void *os_vif_ctx,
@@ -254,11 +254,11 @@ struct wifi_nrf_fmac_callbk_fns {
  * @brief The TWT sleep state of device.
  *
  */
-enum wifi_nrf_fmac_twt_state {
+enum nrf_wifi_fmac_twt_state {
 	/** RPU in TWT sleep state. */
-	WIFI_NRF_FMAC_TWT_STATE_SLEEP,
+	NRF_WIFI_FMAC_TWT_STATE_SLEEP,
 	/** RPU in TWT awake state. */
-	WIFI_NRF_FMAC_TWT_STATE_AWAKE
+	NRF_WIFI_FMAC_TWT_STATE_AWAKE
 };
 
 /**
@@ -300,15 +300,15 @@ struct tx_config {
 	/** Coalesce count of TX frames. */
 	unsigned int *send_pkt_coalesce_count_p;
 	/** per-peer/per-AC Queue for frames waiting to be passed to the RPU firmware for TX. */
-	void *data_pending_txq[MAX_SW_PEERS][WIFI_NRF_FMAC_AC_MAX];
+	void *data_pending_txq[MAX_SW_PEERS][NRF_WIFI_FMAC_AC_MAX];
 	/** Queue for peers which have woken up from 802.11 power save. */
 	void *wakeup_client_q;
 	/** Used to store tx descs(buff pool ids). */
 	unsigned long *buf_pool_bmp_p;
 	/** TX descriptors which have been queued to the RPU firmware. */
-	unsigned int outstanding_descs[WIFI_NRF_FMAC_AC_MAX];
+	unsigned int outstanding_descs[NRF_WIFI_FMAC_AC_MAX];
 	/** Peer who will be get the next opportunity for TX. */
-	unsigned int curr_peer_opp[WIFI_NRF_FMAC_AC_MAX];
+	unsigned int curr_peer_opp[NRF_WIFI_FMAC_AC_MAX];
 	/** Access category which will get the next spare descriptor. */
 	unsigned int next_spare_desc_ac;
 	/** Frame context information. */
@@ -331,9 +331,9 @@ struct tx_config {
  * This structure maintains the context information necessary for the
  * operation of the UMAC IF layer.
  */
-struct wifi_nrf_fmac_priv_def {
+struct nrf_wifi_fmac_priv_def {
 	/** Callback functions to be called on various events. */
-	struct wifi_nrf_fmac_callbk_fns callbk_fns;
+	struct nrf_wifi_fmac_callbk_fns callbk_fns;
 	/** Data path configuration parameters. */
 	struct nrf_wifi_data_config_params data_config;
 	/** RX buffer pool configuration data. */
@@ -362,9 +362,9 @@ struct wifi_nrf_fmac_priv_def {
  * This structure maintains the context information necessary for the
  * a single instance of an FullMAC based RPU.
  */
-struct wifi_nrf_fmac_dev_ctx_def {
+struct nrf_wifi_fmac_dev_ctx_def {
 	/** Array of pointers to virtual interfaces created on this device. */
-	struct wifi_nrf_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
 #if defined(CONFIG_NRF700X_RX_WQ_ENABLED)
 	/** Tasklet for RX. */
 	void *rx_tasklet;
@@ -378,14 +378,14 @@ struct wifi_nrf_fmac_dev_ctx_def {
 	/** Number of interfaces in AP mode. */
 	unsigned char num_ap;
 	/** Queue for storing mapping info of RX buffers. */
-	struct wifi_nrf_fmac_buf_map_info *rx_buf_info;
+	struct nrf_wifi_fmac_buf_map_info *rx_buf_info;
 #if defined(CONFIG_NRF700X_STA_MODE)
 	/** Queue for storing mapping info of TX buffers. */
-	struct wifi_nrf_fmac_buf_map_info *tx_buf_info;
+	struct nrf_wifi_fmac_buf_map_info *tx_buf_info;
 	/** Context information related to TX path. */
 	struct tx_config tx_config;
 	/** TWT state of the RPU. */
-	enum wifi_nrf_fmac_twt_state twt_sleep_status;
+	enum nrf_wifi_fmac_twt_state twt_sleep_status;
 #if defined(CONFIG_NRF700X_TX_DONE_WQ_ENABLED)
 	/** Tasklet for TX done. */
 	void *tx_done_tasklet;
@@ -399,9 +399,9 @@ struct wifi_nrf_fmac_dev_ctx_def {
  * This structure maintains the context information necessary for the
  * a single instance of an VIF.
  */
-struct wifi_nrf_fmac_vif_ctx {
+struct nrf_wifi_fmac_vif_ctx {
 	/** Handle to the FMAC IF abstraction layer. */
-	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
 	/** Handle to the OS abstraction layer. */
 	void *os_vif_ctx;
 	/** MAC address of the VIF. */
@@ -420,7 +420,7 @@ struct wifi_nrf_fmac_vif_ctx {
  * @brief Structure to hold TX/RX buffer pool configuration data.
  *
  */
-struct wifi_nrf_fmac_buf_map_info {
+struct nrf_wifi_fmac_buf_map_info {
 	/** Flag indicating whether the buffer is mapped or not. */
 	bool mapped;
 	/** The number of words in the buffer. */

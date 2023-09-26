@@ -21,8 +21,8 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
-extern struct wifi_nrf_drv_priv_zep rpu_drv_priv_zep;
-static struct wifi_nrf_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+static struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
 #define CH_BASE_ADDRESS ABS_EXT_SYS_WLANSYSCOEX_CH_CONTROL
 #define COEX_CONFIG_FIXED_PARAMS 4
@@ -106,7 +106,7 @@ const uint32_t ch_config_sep[] = {
 
 int nrf_wifi_coex_config_non_pta(bool separate_antennas)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct coex_ch_configuration params  = { 0 };
 	const uint32_t *config_buffer_ptr = NULL;
 	uint32_t start_offset = 0;
@@ -139,10 +139,10 @@ int nrf_wifi_coex_config_non_pta(bool separate_antennas)
 
 	cmd_len = (COEX_CONFIG_FIXED_PARAMS + num_reg_to_config) * sizeof(uint32_t);
 
-	status = wifi_nrf_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
 					   (void *)(&params), cmd_len);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		return -1;
 	}
 
@@ -151,7 +151,7 @@ int nrf_wifi_coex_config_non_pta(bool separate_antennas)
 
 int nrf_wifi_coex_config_pta(enum nrf_wifi_pta_wlan_op_band wlan_band, bool separate_antennas)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct coex_ch_configuration params  = { 0 };
 	const uint16_t *config_buffer_ptr = NULL;
 	uint32_t start_offset = 0;
@@ -195,10 +195,10 @@ int nrf_wifi_coex_config_pta(enum nrf_wifi_pta_wlan_op_band wlan_band, bool sepa
 
 	cmd_len = (COEX_CONFIG_FIXED_PARAMS + num_reg_to_config) * sizeof(uint32_t);
 
-	status = wifi_nrf_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
 					   (void *)(&params), cmd_len);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		return -1;
 	}
 
@@ -238,7 +238,7 @@ int nrf_wifi_config_sr_switch(bool separate_antennas)
 
 int nrf_wifi_coex_hw_reset(void)
 {
-	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct coex_ch_configuration params  = { 0 };
 	uint32_t num_reg_to_config = 1;
 	uint32_t start_offset = 0;
@@ -258,10 +258,10 @@ int nrf_wifi_coex_hw_reset(void)
 
 	cmd_len = (COEX_CONFIG_FIXED_PARAMS + num_reg_to_config) * sizeof(uint32_t);
 
-	status = wifi_nrf_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
+	status = nrf_wifi_fmac_conf_btcoex(rpu_ctx->rpu_ctx,
 				(void *)(&params), cmd_len);
 
-	if (status != WIFI_NRF_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("CH reset configuration failed\n");
 		return -1;
 	}

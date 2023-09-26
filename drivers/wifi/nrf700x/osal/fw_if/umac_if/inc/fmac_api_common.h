@@ -36,11 +36,11 @@
  * This function adds an RPU instance. This function will return the
  *	    pointer to the context of the RPU instance. This pointer will need to be
  *	    supplied while invoking further device specific APIs,
- *	    for example, wifi_nrf_fmac_scan() etc.
+ *	    for example, nrf_wifi_fmac_scan() etc.
  *
  * @return Pointer to the context of the RPU instance.
  */
-struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *fpriv,
+struct nrf_wifi_fmac_dev_ctx *nrf_wifi_fmac_dev_add(struct nrf_wifi_fmac_priv *fpriv,
 						    void *os_dev_ctx);
 
 /**
@@ -55,7 +55,7 @@ struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *f
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					     enum rpu_op_mode op_mode,
 					     struct rpu_op_stats *stats);
 
@@ -71,8 +71,8 @@ enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_fw_info *fmac_fw);
+enum nrf_wifi_status nrf_wifi_fmac_fw_load(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					   struct nrf_wifi_fmac_fw_info *fmac_fw);
 
 
 /**
@@ -84,7 +84,7 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_ver_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					  unsigned int *fw_ver);
 
 /**
@@ -99,13 +99,13 @@ enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_de
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_conf_ltf_gi(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char he_ltf,
 					       unsigned char he_gi,
 					       unsigned char enabled);
 
 #if defined(CONFIG_NRF700X_UTIL) || defined(__DOXYGEN__)
-enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					       unsigned char rate_flag,
 					       int data_rate);
 #if defined(CONFIG_NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
@@ -120,7 +120,7 @@ enum wifi_nrf_status wifi_nrf_fmac_set_tx_rate(struct wifi_nrf_fmac_dev_ctx *fma
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx,
 							      int *rpu_ps_ctrl_state);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif /* CONFIG_NRF700X_UTIL */
@@ -135,7 +135,7 @@ enum wifi_nrf_status wifi_nrf_fmac_get_host_rpu_ps_ctrl_state(void *fmac_dev_ctx
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_conf_btcoex(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					       void *cmd, unsigned int cmd_len);
 
 
@@ -151,7 +151,7 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_btcoex(struct wifi_nrf_fmac_dev_ctx *fma
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_mcast_addr(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_set_mcast_addr(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  struct nrf_wifi_umac_mcast_cfg *mcast_info);
 
@@ -166,7 +166,7 @@ enum wifi_nrf_status wifi_nrf_fmac_set_mcast_addr(struct wifi_nrf_fmac_dev_ctx *
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_otp_mac_addr_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						    unsigned char vif_idx,
 						    unsigned char *mac_addr);
 
@@ -184,8 +184,8 @@ enum wifi_nrf_status wifi_nrf_fmac_otp_mac_addr_get(struct wifi_nrf_fmac_dev_ctx
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(
-					struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_rf_params_get(
+					struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					unsigned char *rf_params,
 					struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
 
@@ -198,8 +198,8 @@ enum wifi_nrf_status wifi_nrf_fmac_rf_params_get(
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_reg_info *reg_info);
+enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					   struct nrf_wifi_fmac_reg_info *reg_info);
 
 /**
  * @brief Get regulatory domain from RPU.
@@ -210,8 +210,8 @@ enum wifi_nrf_status wifi_nrf_fmac_set_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_reg_info *reg_info);
+enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					   struct nrf_wifi_fmac_reg_info *reg_info);
 
 /**
  * @brief Get the current power save information.
@@ -223,7 +223,7 @@ enum wifi_nrf_status wifi_nrf_fmac_get_reg(struct wifi_nrf_fmac_dev_ctx *fmac_de
  *
  * @return Command execution status
  */
-enum wifi_nrf_status wifi_nrf_fmac_get_power_save_info(void *fmac_dev_ctx,
+enum nrf_wifi_status nrf_wifi_fmac_get_power_save_info(void *fmac_dev_ctx,
 						       unsigned char if_idx);
 
 /**
