@@ -343,6 +343,20 @@ int slm_uart_configure(void)
 	return err;
 }
 
+bool slm_uart_can_context_send(const uint8_t *data, size_t len)
+{
+	if (!k_is_in_isr()) {
+		return true;
+	}
+	if (len >= 2 && data[0] == '\r' && data[1] == '\n') {
+		/* Make so that the message is on the same line as the log. */
+		data += 2;
+		len -= 2;
+	}
+	LOG_ERR("FIXME: Attempt to send UART message in ISR: %.*s", len, data);
+	return false;
+}
+
 /* Write the data to tx_buffer and trigger sending. */
 int slm_uart_tx_write(const uint8_t *data, size_t len, bool print_full_debug)
 {
@@ -350,6 +364,9 @@ int slm_uart_tx_write(const uint8_t *data, size_t len, bool print_full_debug)
 	size_t sent = 0;
 	int err;
 
+	if (!slm_uart_can_context_send(data, len)) {
+		return -EINTR;
+	}
 	k_mutex_lock(&mutex_tx_put, K_FOREVER);
 	while (sent < len) {
 		ret = ring_buf_put(&tx_buf, data + sent, len - sent);
