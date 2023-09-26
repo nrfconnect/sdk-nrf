@@ -36,15 +36,26 @@ extern "C" {
 enum fota_download_evt_id {
 	/** FOTA download progress report. */
 	FOTA_DOWNLOAD_EVT_PROGRESS,
-	/** FOTA download finished. */
+
+	/** FOTA download was completed successfully. */
 	FOTA_DOWNLOAD_EVT_FINISHED,
-	/** FOTA download erase pending. */
+
+	/** Deletion of the downloaded FOTA image is in progress (after upgrade success or failure).
+	 *
+	 * Not fired for all FOTA types.
+	 */
 	FOTA_DOWNLOAD_EVT_ERASE_PENDING,
-	/** FOTA download erase done. */
+
+	/** Deletion of the downloaded FOTA image is complete.
+	 *
+	 * Not fired for all FOTA types.
+	 */
 	FOTA_DOWNLOAD_EVT_ERASE_DONE,
-	/** FOTA download error. */
+
+	/** FOTA download abandoned due to an error. */
 	FOTA_DOWNLOAD_EVT_ERROR,
-	/** FOTA download cancelled. */
+
+	/** FOTA download abandoned due to a cancellation request. */
 	FOTA_DOWNLOAD_EVT_CANCELLED
 };
 
