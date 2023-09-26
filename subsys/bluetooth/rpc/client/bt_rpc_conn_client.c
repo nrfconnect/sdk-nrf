@@ -148,7 +148,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_foreach_cb_callback,
 			 BT_CONN_FOREACH_CB_CALLBACK_RPC_CMD,
 			 bt_conn_foreach_cb_callback_rpc_handler, NULL);
 
-void bt_conn_foreach(int type, void (*func)(struct bt_conn *conn, void *data),
+void bt_conn_foreach(enum bt_conn_type type, void (*func)(struct bt_conn *conn, void *data),
 		     void *data)
 {
 	struct nrf_rpc_cbor_ctx ctx;
