@@ -110,12 +110,21 @@ Matter
   * Page about :ref:`ug_matter_device_optimizing_memory`.
   * Shell commands for printing and resetting the peak usage of critical system resources used by Matter.
     These shell commands are available when both :kconfig:option:`CHIP_LIB_SHELL` and :kconfig:option:`CHIP_STATISTICS` Kconfig options are set.
+  * Reaction to removing the last fabric.
+    The user now decides what happens after the removal:
+
+    * Do nothing (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE`).
+    * Perform a factory reset of the device (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY`).
+    * Perform a factory reset of the device and start Bluetooth LE advertising (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START`).
+    * Perform a factory reset of the device and then reboot the device (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT`).
 
 * Updated:
 
   * Matter over Thread samples so that the OpenThread shell is disabled by default.
   * The :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option to be enabled by default, including for builds without factory data support.
     The firmware now erases all flash pages in the non-volatile storage during a factory reset, instead of just clearing Matter-related settings.
+  * The :kconfig:option:`CONFIG_CHIP_EXTENDED_DISCOVERY` Kconfig option to be disabled by default.
+    The commissionable node now does not advertise a commissioning service when it does not have the commissioning window open.
   * The RAM usage based on test measurements.
     After the following optimizations, the RAM usage decreased by around 12-20% on all supported boards:
 

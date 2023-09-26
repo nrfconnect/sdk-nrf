@@ -8,6 +8,7 @@
 #include "app_config.h"
 #include "bridge_manager.h"
 #include "bridge_storage_manager.h"
+#include "fabric_table_delegate.h"
 #include "led_util.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
@@ -164,6 +165,7 @@ CHIP_ERROR AppTask::Init()
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+	AppFabricTableDelegate::Init();
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 	/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover devices loaded

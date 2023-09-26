@@ -7,6 +7,7 @@
 #include "app_task.h"
 
 #include "app_config.h"
+#include "fabric_table_delegate.h"
 #include "led_util.h"
 #include "pwm_device.h"
 
@@ -219,6 +220,7 @@ CHIP_ERROR AppTask::Init()
 	app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+	AppFabricTableDelegate::Init();
 
 	/*
 	 * Add CHIP event handler and start CHIP thread.

@@ -25,9 +25,12 @@
 #endif
 
 struct k_timer;
+class AppFabricTableDelegate;
 
 class AppTask {
 public:
+	friend class AppFabricTableDelegate;
+
 	static AppTask &Instance()
 	{
 		static AppTask sAppTask;

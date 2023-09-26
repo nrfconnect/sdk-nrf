@@ -8,6 +8,7 @@
 
 #include "battery.h"
 #include "buzzer.h"
+#include "fabric_table_delegate.h"
 #include "led_widget.h"
 #include <platform/CHIPDeviceLayer.h>
 
@@ -267,6 +268,7 @@ CHIP_ERROR AppTask::Init()
 
 	gExampleDeviceInfoProvider.SetStorageDelegate(&Server::GetInstance().GetPersistentStorage());
 	chip::DeviceLayer::SetDeviceInfoProvider(&gExampleDeviceInfoProvider);
+	AppFabricTableDelegate::Init();
 
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
