@@ -332,7 +332,7 @@ Include 1:
      :end-line: 27
 
 Include 2:
-  .. include:: ../installation/installing.rst
+  .. include:: ../installation/install_ncs.rst
      :start-after: west-error-start
      :end-before: west-error-end
 
@@ -355,7 +355,7 @@ Include 4:
 You can also use ncs-include if you want to use the indentation options inside the nrf doc set:
 
 Include 5 (similar to include 2, but improved indentation):
-  .. ncs-include:: ../installation/installing.rst
+  .. ncs-include:: ../installation/install_ncs.rst
      :start-after: west-error-start
      :end-before: west-error-end
      :auto-dedent:
@@ -672,7 +672,7 @@ Numbered sections
 *****************
 
 This is a special type of headings that will be automatically turned into steps of a large procedure.
-For usage example, see :ref:`manual_installation`.
+For usage example, see :ref:`install_ncs`.
 
 .. rst-class:: numbered-step
 

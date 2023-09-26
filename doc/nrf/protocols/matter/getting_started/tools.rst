@@ -11,6 +11,8 @@ Matter tools
 Use tools listed on this page to test :ref:`matter_samples` and develop Matter applications in the |NCS|.
 
 .. _ug_matter_gs_tools_gn:
+.. _gs_installing_gn:
+.. _manual_installation_gn:
 
 GN tool
 *******
@@ -18,8 +20,101 @@ GN tool
 To build and develop Matter applications, you need the `GN`_ meta-build system.
 This system generates the Ninja files that the |NCS| uses.
 
-The GN is automatically installed with the |NCS|'s Toolchain Manager when you :ref:`install the SDK automatically <auto_installation>`.
-If you are updating from the |NCS| version earlier than v1.5.0 or you are installing the |NCS| manually, see the :ref:`GN installation instructions <manual_installation_gn>`.
+The GN is automatically installed with the |NCS|'s toolchain when you :ref:`install the |NCS| <install_ncs>`.
+If you are updating from the |NCS| version earlier than v1.5.0, see the following GN installation instructions.
+
+.. toggle:: GN installation instructions
+
+   If you want to build Matter applications with the |NCS| version earlier than v1.5.0, install the `GN`_ meta-build system.
+   This system generates the Ninja files that the |NCS| uses.
+
+   .. tabs::
+
+      .. group-tab:: Windows
+
+         To install the GN tool, complete the following steps:
+
+         1. Download the latest version of the GN binary archive for Windows from the `GN website`_.
+         2. Extract the :file:`zip` archive.
+         3. Ensure that the GN tool is added to your :envvar:`PATH` environment variable.
+            For the exact instructions, see :ref:`zephyr:env_vars`.
+
+      .. group-tab:: Linux
+
+         To install the GN tool, complete the following steps:
+
+         1. Create the directory for the GN tool:
+
+            .. code-block:: console
+
+               mkdir ${HOME}/gn && cd ${HOME}/gn
+
+         #. Download the GN binary archive and extract it by using the following commands:
+
+            .. code-block:: console
+
+               wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
+               unzip gn.zip
+               rm gn.zip
+
+            The wget tool is installed when installing the required tools on Linux.
+         #. Add the location of the GN tool to the system :envvar:`PATH`.
+            For example, if you are using ``bash``, run the following commands:
+
+            .. code-block:: console
+
+               echo 'export PATH=${HOME}/gn:"$PATH"' >> ${HOME}/.bashrc
+               source ${HOME}/.bashrc
+
+      .. group-tab:: macOS
+
+         To install the GN tool, complete the following steps:
+
+         1. Create the directory for the GN tool:
+
+            .. code-block:: console
+
+               mkdir ${HOME}/gn && cd ${HOME}/gn
+
+         #. Install the wget tool:
+
+            .. code-block:: console
+
+               brew install wget
+
+         #. Download the GN binary archive and extract it by using the following commands:
+
+            * For 64-bit ARM (M1 and M2) host architecture:
+
+            .. code-block:: console
+
+               wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/latest
+               unzip gn.zip
+               rm gn.zip
+
+            * For 64-bit AMD (Intel) host architecture:
+
+            .. code-block:: console
+
+               wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
+               unzip gn.zip
+               rm gn.zip
+
+         #. Add the location of the GN tool to the system :envvar:`PATH`.
+            For example, if you are using ``bash``, run the following commands:
+
+            a. Create the :file:`.bash_profile` file if you do not have it already:
+
+               .. code-block:: console
+
+                  touch ${HOME}/.bash_profile
+
+            #. Add the location of the GN tool to :file:`.bash_profile`:
+
+               .. code-block:: console
+
+                  echo 'export PATH=${HOME}/gn:"$PATH"' >> ${HOME}/.bash_profile
+                  source ${HOME}/.bash_profile
 
 .. _ug_matter_gs_tools_controller:
 

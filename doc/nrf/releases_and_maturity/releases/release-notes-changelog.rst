@@ -510,4 +510,6 @@ Documentation
 
 * Updated:
 
+  * The :ref:`installation` section: by replacing two separate pages about installing the |NCS| with just one (:ref:`install_ncs`).
+  * The :ref:`requirements` page with new sections about :ref:`requirements_clt` and :ref:`toolchain_management_tools`.
   * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages  so that instructions in the :ref:`nrf9160_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
