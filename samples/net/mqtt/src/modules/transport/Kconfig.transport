@@ -38,13 +38,13 @@ config MQTT_SAMPLE_TRANSPORT_USER_NAME
 	string "MQTT client user name"
 	default ""
 	help
-	  username used for password based authentication
+	  Username used for password based authentication.
 
 config MQTT_SAMPLE_TRANSPORT_PASSWORD
 	string "MQTT Client password"
 	default ""
 	help
-	  set password for password based authentication. If password is provided then 
+	  Set password for password based authentication. If password is provided then 
 	  username must also be provided.
 
 config MQTT_SAMPLE_TRANSPORT_CLIENT_ID

@@ -428,7 +428,6 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 		.utf8 = conn_params->user_name.ptr,
 		.size = conn_params->user_name.size,
 	};
-
 	struct mqtt_utf8 password = {
 		.utf8 = conn_params->password.ptr,
 		.size = conn_params->password.size,
