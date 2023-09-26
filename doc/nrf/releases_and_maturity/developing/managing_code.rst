@@ -36,8 +36,8 @@ Replace ``{revision}`` with any revision you wish to obtain.
 This can be ``main`` if you want the latest state, or any released version (for example, |release_tt|).
 If you omit the ``--mr`` parameter, west defaults to ``main``.
 
-This is the procedure used for :ref:`getting the nRF Connect SDK code <cloning_the_repositories>` when :ref:`manual_installation`.
-When :ref:`installing the nRF Connect SDK <auto_installation_ncs_tcm>` using the automatic installation method, this is handled by the Toolchain Manager in nRF Connect for Desktop.
+This is the procedure used for :ref:`getting the nRF Connect SDK code <cloning_the_repositories>` when :ref:`install_ncs` using the command line.
+When you install the |NCS| using the |nRFVSC|, this is handled by the extension.
 
 .. _dm-wf-update-ncs:
 
@@ -58,7 +58,7 @@ Where ``{remote}`` is the Git remote that points to the official Nordic reposito
 This is called ``origin`` by default for the `sdk-nrf`_ repository and ``ncs`` for most others, but :ref:`may have another name <dm-wf-fork>`.
 You can use ``git remote -v`` to list all your remotes.
 
-This is the procedure used for :ref:`updating_repos` after :ref:`gs_installing`.
+This is the procedure used for :ref:`updating_repos` after :ref:`installing from command line <install_ncs>`.
 However, using ``git checkout`` is one of multiple ways of achieving this.
 Git offers several commands and mechanisms to set the current working copy of a repository to a particular revision.
 Depending on how you manage the branches of your local clone of the `sdk-nrf`_ repository, you can also replace the use of ``git checkout`` with, among many others::

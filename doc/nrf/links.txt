@@ -185,7 +185,6 @@
 .. _`nRF Asset Tracker Memfault integration for Azure IoT Hub`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-azure-js
 .. _`nRF Asset Tracker Memfault integration`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.2.x/docs/memfault/Index.html
 
-
 .. _`latest release notes for nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect/release_notes/connect/2022.11.140.html
 .. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
 .. _`Configuring with nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/guides/work_with_kconfig.html
@@ -197,6 +196,7 @@
 .. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/install.html
 .. _`How to build an application`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/build_app_ncs.html
 .. _`Migrating IDE`: https://nrfconnect.github.io/vscode-nrf-connect/reference/ui_sidebar_welcome.html#open-an-existing-application
+.. _`How to change SDK and toolchain versions`: https://nrfconnect.github.io/vscode-nrf-connect/guides/extension_migrate_sdk.html
 .. _`How to debug an application`:
 .. _`How to connect to the terminal`: https://nrfconnect.github.io/vscode-nrf-connect/get_started/quick_debug.html
 .. _`Debugging overview`: https://nrfconnect.github.io/vscode-nrf-connect/guides/debug_concepts.html
@@ -458,6 +458,8 @@
 .. _`nRF5x Command Line Tools Windows 32`:
 .. _`nRF5x Command Line Tools Windows 64`:
 .. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools
+
+.. _`nRF Util development tool`: https://www.nordicsemi.com/Products/Development-tools/nrf-util
 
 .. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
 .. _`Download nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs
@@ -1174,6 +1176,12 @@
 .. _`mosquitto.org server CA`: https://test.mosquitto.org/ssl/mosquitto.org.crt
 .. _`test.mosquitto.org`: https://test.mosquitto.org
 
+.. ###: visualstudio.com
+
+.. _`nRF Connect for VS Code Extension Pack`: https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-connect-extension-pack
+.. _`VSMQTT`: https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt
+.. _`Visual Studio Code download page`: https://code.visualstudio.com/download
+
 .. ### Source: other (2 links or less from the same URL)
 
 .. _`MQTT getting started`: https://mqtt.org/getting-started/
@@ -1213,7 +1221,6 @@
 
 .. _`Azure Portal`: https://portal.azure.com/
 
-.. _`VSMQTT`: https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt
 
 .. _`Verizon's Thingspace`: https://thingspace.verizon.com
 

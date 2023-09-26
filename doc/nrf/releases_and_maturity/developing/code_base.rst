@@ -21,7 +21,7 @@ Some notable repositories include:
   .. note::
 
      The `sdk-zephyr`_ repository is a :term:`soft fork` that Nordic Semiconductor maintains.
-     It is not the same as Zephyr SDK, which is a set of :ref:`installation tools <gs_installing_toolchain>` used while installing the |NCS|.
+     It is not the same as Zephyr SDK, which is a set of installation tools that is part of the toolchain package used while :ref:`installing the |NCS|<install_ncs>`.
 
 * `sdk-mcuboot`_ repository - Contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
   You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.

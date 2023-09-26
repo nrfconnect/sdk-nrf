@@ -37,11 +37,11 @@ For information about how to flash and erase in the |nRFVSC|, read about the `Ap
 Building on the command line
 ****************************
 
-After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <auto_installation_choose_building_method_cl>` command-line build setup, use the following steps to build |NCS| projects on the command line.
+After completing the :ref:`command-line build setup <install_ncs>`, use the following steps to build |NCS| projects on the command line.
 
 1.    Open a terminal window.
 
-      If you have installed the |NCS| using the :ref:`Toolchain Manager <auto_installation>`, click the down arrow next to the version you installed and select :guilabel:`Open bash`.
+      If you have installed the |NCS| using the :ref:`legacy Toolchain Manager <gs_assistant>`, click the down arrow next to the version you installed and select :guilabel:`Open bash`.
 
       .. figure:: ../installation/images/gs-assistant_tm_dropdown.png
          :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
