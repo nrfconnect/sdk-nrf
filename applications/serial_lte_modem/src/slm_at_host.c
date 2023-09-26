@@ -43,8 +43,6 @@ struct at_param_list slm_at_param_list;
 uint8_t slm_at_buf[SLM_AT_MAX_CMD_LEN];
 uint8_t slm_data_buf[SLM_MAX_MESSAGE_SIZE];
 
-static char rsp_buf[SLM_AT_MAX_RSP_LEN];
-
 RING_BUF_DECLARE(data_rb, CONFIG_SLM_DATAMODE_BUF_SIZE);
 static uint8_t quit_str_partial_match;
 K_MUTEX_DEFINE(mutex_data); /* Protects the data_rb and quit_str_partial_match. */
@@ -653,6 +651,14 @@ void rsp_send_error(void)
 
 void rsp_send(const char *fmt, ...)
 {
+	static K_MUTEX_DEFINE(mutex_rsp_buf);
+	static char rsp_buf[SLM_AT_MAX_RSP_LEN];
+
+	if (!slm_uart_can_context_send(fmt, strlen(fmt))) {
+		return;
+	}
+	k_mutex_lock(&mutex_rsp_buf, K_FOREVER);
+
 	va_list arg_ptr;
 
 	va_start(arg_ptr, fmt);
@@ -660,6 +666,8 @@ void rsp_send(const char *fmt, ...)
 	va_end(arg_ptr);
 
 	(void)slm_uart_tx_write(rsp_buf, strlen(rsp_buf), true);
+
+	k_mutex_unlock(&mutex_rsp_buf);
 }
 
 void data_send(const uint8_t *data, size_t len)

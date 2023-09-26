@@ -50,6 +50,9 @@ int slm_uart_power_off(void);
  */
 int slm_uart_configure(void);
 
+/** @return Whether a UART message can be sent from the current context. */
+bool slm_uart_can_context_send(const uint8_t *data, size_t len);
+
 /**
  * @brief Write the data to TX buffer and trigger sending.
  *
