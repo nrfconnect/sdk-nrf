@@ -478,8 +478,26 @@ Multi-image build
 
 To build and program a multi-image HEX file, follow the instructions in :ref:`programming_cmd` for the application core sample.
 
-To program the multi-image HEX file, you must use west.
-Programming multi-image builds for different cores is not yet supported in nrfjprog.
+To program the multi-image HEX file, you can use west or nrfjprog.
+
+.. tabs::
+
+   .. group-tab:: west
+
+      Enter the following command to program multi-image builds for different cores::
+
+        west flash
+
+   .. group-tab:: nrfjprog
+
+      Enter the following commands to program multi-image builds for different cores::
+
+        nrfjprog -f NRF53 --program zephyr/merged_domains.hex --recover --verify
+
+      .. note::
+         The minimum supported version of nrfjprog for multi-image builds for different cores is 10.21.0.
+
+         Additionally, the ``--verify`` command confirms that the writing operation has succeeded.
 
 .. _readback_protection_error:
 
