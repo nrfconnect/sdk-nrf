@@ -6,6 +6,7 @@
 
 #include "app_task.h"
 #include "app_config.h"
+#include "fabric_table_delegate.h"
 #include "led_util.h"
 #include "temp_sensor_manager.h"
 #include "temperature_manager.h"
@@ -190,6 +191,7 @@ CHIP_ERROR AppTask::Init()
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+	AppFabricTableDelegate::Init();
 
 	err = TempSensorManager::Instance().Init();
 	if (err != CHIP_NO_ERROR) {

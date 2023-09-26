@@ -7,6 +7,7 @@
 #include "app_task.h"
 
 #include "app_config.h"
+#include "fabric_table_delegate.h"
 #include "led_util.h"
 #include "light_switch.h"
 
@@ -198,6 +199,7 @@ CHIP_ERROR AppTask::Init()
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+	AppFabricTableDelegate::Init();
 
 #ifdef CONFIG_CHIP_ICD_SUBSCRIPTION_HANDLING
 	chip::app::InteractionModelEngine::GetInstance()->RegisterReadHandlerAppCallback(&GetICDUtil());
