@@ -69,6 +69,18 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_CLIENT_ID - MQTT client ID
 	This configuration sets the MQTT client ID name.
 	If not set, the client ID will default to the modem's IMEI number for nRF91 Series devices, MAC address for nRF70 Series devices, or a random number for Native Posix.
 
+.. _CONFIG_MQTT_SAMPLE_TRANSPORT_USER_NAME:
+
+CONFIG_MQTT_SAMPLE_TRANSPORT_USER_NAME - MQTT client username
+	This configuration sets the MQTT client username for password based authentication. It must be provided if password is provided.
+   Not set by default.
+
+.. _CONFIG_MQTT_SAMPLE_TRANSPORT_PASSWORD:
+
+CONFIG_MQTT_SAMPLE_TRANSPORT_PASSWORD - MQTT client password
+	This configuration sets the MQTT client password for password based authentication. 
+   Not set by default.
+
 .. _CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC:
 
 CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC - MQTT publish topic
