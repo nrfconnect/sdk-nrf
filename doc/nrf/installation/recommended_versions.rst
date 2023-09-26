@@ -1,5 +1,7 @@
 .. _gs_recommended_versions:
 .. _requirements:
+.. _gs_supported_OS:
+.. _supported_OS:
 
 Requirements
 ############
@@ -9,24 +11,6 @@ Requirements
    :depth: 2
 
 The |NCS| supports Microsoft Windows, Linux, and macOS for development.
-However, there are some Zephyr features that are currently only available on Linux, including:
-
-* twister
-* BlueZ integration
-* net-tools integration
-* Native Port (native_posix)
-* BabbleSim
-
-.. note::
-
-   Before you start setting up the |NCS| toolchain, install available updates for your operating system.
-
-.. _gs_supported_OS:
-.. _supported_OS:
-
-Supported operating systems
-***************************
-
 The following table shows the operating system versions that support the |NCS| tools:
 
 .. list-table::
@@ -69,40 +53,58 @@ The following table shows the operating system versions that support the |NCS| t
      - Tier 3
      - Not supported
 
-The table uses the following tier definitions to categorize the level of operating system support:
+Tier definitions
+  The table uses several tier definitions to categorize the level of operating system support:
 
-Tier 1
-  The |NCS| tools will always work.
-  The automated build and automated testing ensure that the |NCS| tools build and successfully complete tests after each change.
+  .. toggle:: Support levels
 
-Tier 2
-  The |NCS| tools will always build.
-  The automated build ensures that the |NCS| tools build successfully after each change.
-  There is no guarantee that a build will work because the automation tests do not always run.
+     Tier 1
+       The |NCS| tools will always work.
+       The automated build and automated testing ensure that the |NCS| tools build and successfully complete tests after each change.
 
-Tier 3
-  The |NCS| tools are supported by design but are not built or tested after each change.
-  Therefore, the application may or may not work.
+     Tier 2
+       The |NCS| tools will always build.
+       The automated build ensures that the |NCS| tools build successfully after each change.
+       There is no guarantee that a build will work because the automation tests do not always run.
 
-Not supported
-  The |NCS| tools do not work, but it may be supported in the future.
+     Tier 3
+       The |NCS| tools are supported by design, but are not built or tested after each change.
+       Therefore, the application may or may not work.
 
-Not applicable
-  The specified architecture is not supported for the respective operating system.
+     Not supported
+       The |NCS| tools do not work, but it may be supported in the future.
 
-.. note::
-   The |NCS| tools are not supported by the older versions of the operating system.
+     Not applicable
+       The specified architecture is not supported for the respective operating system.
+
+Zephyr features only available on Linux
+  There are some Zephyr features that are currently only available on Linux, including:
+
+  * BlueZ integration
+  * net-tools integration
+  * Native Port (native_posix)
+  * BabbleSim
+
+.. _requirements_toolchain:
 
 |NCS| toolchain
 ***************
 
-The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds on top of it tools and modules required to build |NCS| samples and applications.
+The |NCS| :term:`toolchain` includes the Zephyr SDK and adds the necessary tools and modules to create |NCS| samples and applications on top of it.
+
+.. note::
+
+   Before you start setting up the |NCS| toolchain, install available updates for your operating system.
+   The |NCS| tools are not supported by the older versions of the operating system.
+
+.. _requirements_toolchain_tools:
 
 Required tools
 ==============
 
 The following table shows the tools that are required for working with |NCS| v\ |version|.
-It lists the versions that are used for testing and installed when using the :ref:`Toolchain Manager <auto_installation>`.
+
+The table lists the versions that are used for testing and are installed when using the :ref:`nRF Connect for VS Code extension or nRF Util <install_ncs>`.
 Other versions might also work, but are not verified.
 
 .. _req_tools_table:
@@ -115,12 +117,12 @@ Other versions might also work, but are not verified.
          :header-rows: 1
 
          * - Tool
-           - Toolchain Manager version
+           - Version
          * - Zephyr SDK
            - :ncs-tool-version:`ZEPHYR_SDK_VERSION_WIN10`
          * - CMake
            - :ncs-tool-version:`CMAKE_VERSION_WIN10`
-         * - dtc
+         * - Devicetree compiler (dtc)
            - :ncs-tool-version:`DTC_VERSION_WIN10`
          * - :ref:`Git <ncs_git_intro>`
            - :ncs-tool-version:`GIT_VERSION_WIN10`
@@ -130,7 +132,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`NINJA_VERSION_WIN10`
          * - Python
            - :ncs-tool-version:`PYTHON_VERSION_WIN10`
-         * - :ref:`West <ncs_west_intro>`
+         * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_WIN10`
 
    .. group-tab:: Linux
@@ -139,7 +141,7 @@ Other versions might also work, but are not verified.
          :header-rows: 1
 
          * - Tool
-           - Toolchain Manager version
+           - Version
          * - Zephyr SDK
            - :ncs-tool-version:`ZEPHYR_SDK_VERSION_LINUX`
          * - CMake
@@ -154,7 +156,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`NINJA_VERSION_LINUX`
          * - Python
            - :ncs-tool-version:`PYTHON_VERSION_LINUX`
-         * - :ref:`West <ncs_west_intro>`
+         * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_LINUX`
 
    .. group-tab:: macOS
@@ -163,7 +165,7 @@ Other versions might also work, but are not verified.
          :header-rows: 1
 
          * - Tool
-           - Toolchain Manager version
+           - Version
          * - Zephyr SDK
            - :ncs-tool-version:`ZEPHYR_SDK_VERSION_DARWIN`
          * - CMake
@@ -178,18 +180,46 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`NINJA_VERSION_DARWIN`
          * - Python
            - :ncs-tool-version:`PYTHON_VERSION_DARWIN`
-         * - :ref:`West <ncs_west_intro>`
+         * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_DARWIN`
+
+To check the list of installed packages and their versions, run the following command:
+
+.. tabs::
+
+   .. group-tab:: Windows
+
+      .. code-block:: console
+
+         choco list -lo
+
+   .. group-tab:: Linux
+
+      .. code-block:: console
+
+         apt list --installed
+
+      This command lists all packages installed on your system.
+      To list the version of a specific package, type its name and add ``--version``.
+
+   .. group-tab:: macOS
+
+      .. code-block:: console
+
+         brew list --versions
+
+
+
+.. _requirements_toolchain_python_deps:
 
 Required Python dependencies
 ============================
 
 The following table shows the Python packages that are required for working with |NCS| v\ |version|.
-If no version is specified, the default version provided with pip is recommended.
+If no version is specified, the default version provided with ``pip`` is recommended.
 If a version is specified, it is important that the installed version matches the required version.
 
-The :ref:`Toolchain Manager <auto_installation>` will install all Python dependencies into a local environment in the Toolchain Manager app, not the system.
-If you install manually, see :ref:`additional_deps` for instructions on how to install the Python dependencies and :ref:`updating` for information about how to keep them updated.
+When you :ref:`install the nRF Connect SDK <install_ncs>`, you will install all Python dependencies into a local environment, not the system.
 
 Building and running applications, samples, and tests
 -----------------------------------------------------
@@ -275,3 +305,45 @@ all be installed using the ``doc/requirements.txt`` file using ``pip``.
      - :ncs-tool-version:`SPHINXCONTRIB_PLANTUML_VERSION`
    * - west
      - :ncs-tool-version:`WEST_VERSION`
+
+.. _requirements_clt:
+
+nRF Command Line Tools
+**********************
+
+`nRF Command Line Tools`_ is a package of tools used for development, programming, and debugging of Nordic Semiconductor's nRF51, nRF52, nRF53 and nRF91 Series devices.
+Among others, this package includes the following prerequisites for the |NCS|:
+
+* The universal version of SEGGER J-Link, which is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
+* nrfjprog executable and library, which the west command uses by default to program the development kits.
+  For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
+
+.. _toolchain_management_tools:
+
+|NCS| toolchain management tools
+********************************
+
+Nordic Semiconductor provides proprietary |NCS| toolchain management tools that streamline the process of installing the |NCS| and its toolchain.
+
+|nRFVSC|
+========
+
+|vsc_extension_description|
+
+The extension follows its own `release cycle <latest release notes for nRF Connect for Visual Studio Code_>`_.
+Use the latest available release for development.
+
+See the :ref:`install_ncs` page for information about how to use the extension to manage |NCS| toolchain installations.
+For more information about the extension and what it offers, visit the `nRF Connect for Visual Studio Code`_ documentation.
+
+nRF Util
+========
+
+The `nRF Util development tool`_ is a unified command line utility for Nordic products.
+Its functionality is provided through installable and upgradeable commands that are served on a central package registry on the Internet.
+
+The utility follows its own release cycle.
+Use the latest available release for development.
+
+nRF Util provides |NCS| toolchain packages for each |NCS| release through the ``toolchain-manager`` command.
+See the :ref:`install_ncs` page for information about how to use this command.
