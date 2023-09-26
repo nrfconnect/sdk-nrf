@@ -280,14 +280,14 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	case NET_EVENT_WIFI_TWT:
 		handle_wifi_twt_event(cb);
 		break;
-#ifdef SCHEDULED_TX
+#ifdef CONFIG_SCHEDULED_TX
 	case NET_EVENT_WIFI_TWT_SLEEP_STATE: {
 		int *twt_state;
 
-		twt_state = ( int *)(cb->info);
+		twt_state = (int *)(cb->info);
 		if (*twt_state == WIFI_TWT_STATE_SLEEP) {
 			traffic_gen_pause(&tg_config);
-		} else if(*twt_state == WIFI_TWT_STATE_AWAKE)  {
+		} else if (*twt_state == WIFI_TWT_STATE_AWAKE)  {
 			traffic_gen_resume(&tg_config);
 		} else {
 			LOG_INF("UNKNOWN TWT STATE %d", *twt_state);
