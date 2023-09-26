@@ -165,7 +165,7 @@ Bluetooth Low Energy
      - | :ref:`Bluetooth Low Energy samples <ble_samples>`
        | :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`
    * - :ref:`ble_rpc_host` (supported for development)
-     - Some Bluetooth Low Energy samples, for example, :ref:`zephyr:bluetooth-beacon-sample`
+     - Some Bluetooth Low Energy samples, for example, :ref:`peripheral_hids_mouse`, :ref:`peripheral_uart` or :ref:`central_uart`
 
 When using Bluetooth® Low Energy on the nRF5340, you have two options:
 
@@ -199,7 +199,7 @@ To run the full Bluetooth LE stack on the network core, the |NCS| provides the :
    The :ref:`ble_rpc_host` sample is currently supported for development only.
    It does not support all Bluetooth Host APIs yet.
 
-For the application core, use a compatible Bluetooth LE sample, for example, the :ref:`zephyr:bluetooth-beacon-sample` sample.
+For the application core, use a compatible Bluetooth LE sample, for example, the :ref:`peripheral_hids_mouse`, :ref:`peripheral_uart` or :ref:`central_uart` sample.
 
 Bluetooth mesh
 --------------
