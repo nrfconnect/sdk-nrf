@@ -201,7 +201,11 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Asset Tracker v2
 ----------------
 
-* Added support for the nRF9161 development kit.
+* Added:
+
+  * Support for the nRF9161 development kit.
+  * A handler for a new LwM2M modem firmware callback event c:member:`LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ`.
+    The handler may return ``-1`` to keep the default behavior of system reset after the modem update.
 
 * Updated:
 
@@ -460,6 +464,9 @@ Cellular samples (renamed from nRF9160 samples)
     * An overlay for enabling proprietary Power Saving Mode (PSM).
       This will fix a case where a battery-operated device joins a network that does not support PSM.
       This fulfills the proprietary PSM requirements of modem firmware v2.0.0.
+      Including a new overlay file for enabling this and devicetree overlay files for UART2 and MCUboot recovery mode.
+    * A handler for a new LwM2M modem firmware callback event :c:member:`LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ` to request for reconnecting the modem and client after firmware update
+    * A new state :c:member:`RECONNECT_AFTER_UPDATE` that initializes the modem to trigger LwM2M client re-connection.
 
   * Updated:
 
@@ -826,6 +833,7 @@ Libraries for networking
     * Support for MCUmgr SMP client to perform a FOTA on an external SoC.
     * Advanced LwM2M FOTA support for an external MCU with DFU SMP target.
     * FOTA download Utils API integrated to the library.
+    * A new LwM2M modem firmware callback event type :c:member:`LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ` to request re-connection after modem firmware update.
 
   * Updated Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than -126 dBm.
 
@@ -861,8 +869,12 @@ Libraries for networking
 
 * :ref:`lib_fota_download` library:
 
-  * Added support for DFU SMP target with new Utils API that in turn supports downloading, scheduling and activating images in all FOTA DFU targets.
-  * Updated the library to verify whether the download started with the same URI and resumed the interrupted download.
+  * Added:
+
+    * Support for DFU SMP target with new Utils API that in turn supports downloading, scheduling and activating images in all FOTA DFU targets.
+    * Support for full and delta modem firmware update without a reboot.
+    * Added support for Delta Modem and Full modem firmware update without a reboot.
+    * Updated the library, which now verifies whether the download started with the same URI and resumes the interrupted download.
 
 * :ref:`lib_nrf_cloud_alert` library:
 
