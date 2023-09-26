@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2021-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,7 +10,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(CONFIG_ARCH_POSIX) && defined(CONFIG_EXTERNAL_LIBC)
+#include <time.h>
+#else
 #include <zephyr/posix/time.h>
+#endif
 
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
