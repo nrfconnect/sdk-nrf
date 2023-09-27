@@ -133,16 +133,26 @@ Response syntax
 
 ::
 
-   #XMQTTCON: <client_id>,<url>,<port>[,<sec_tag>]]
+   #XMQTTCON: <status>[,<client_id>,<url>,<port>[,<sec_tag>]]
+
+* The ``<status>`` value is an integer.
+  It can have one of the following values:
+
+    * ``0`` - MQTT is not connected.
+    * ``1`` - MQTT is connected.
 
 * The ``<client_id>`` value is a string.
   It indicates the MQTT client ID.
+  Present only when ``<status>`` is ``1``.
 * The ``<url>`` value is a string.
   It indicates the MQTT broker hostname.
+  Present only when ``<status>`` is ``1``.
 * The ``<port>`` value is an unsigned 16-bit integer (0 - 65535).
   It indicates the MQTT broker port.
+  Present only when ``<status>`` is ``1``.
 * The ``<sec_tag>`` value is an integer.
   It indicates the credential of the security tag used for establishing a secure connection.
+  Present only when ``<status>`` is ``1``.
 
 Examples
 ~~~~~~~~
@@ -150,13 +160,37 @@ Examples
 ::
 
    AT#XMQTTCON?
-   #XMQTTCON: "MyMQTT-Client-ID","","","mqtt.server.com",1883
+   #XMQTTCON: 1,"MyMQTT-Client-ID","","","mqtt.server.com",1883
    OK
 
 Test command
 ------------
 
-The test command is not supported.
+The test command tests the existence of the command and provides information about the type of its subparameters.
+
+Syntax
+~~~~~~
+
+::
+
+   #XMQTTCON=?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XMQTTCON: (list of op),<client_id>,<username>,<password>,<url>,<port>,<sec_tag>
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XMQTTCON=?
+   #XMQTTCON: (0,1,2),<client_id>,<username>,<password>,<url>,<port>,<sec_tag>
+   OK
+
 
 MQTT subscribe #XMQTTSUB
 ========================
