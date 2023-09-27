@@ -57,6 +57,21 @@ exit:
     return status;
 }
 
+static psa_status_t oberon_update_ids(
+    oberon_spake2p_operation_t *op)
+{
+    psa_status_t status;
+
+    // add prover, verifier, M, and N to TT
+    status = oberon_update_hash_with_prefix(&op->hash_op, op->prover, op->prover_len);
+    if (status) return status;
+    status = oberon_update_hash_with_prefix(&op->hash_op, op->verifier, op->verifier_len);
+    if (status) return status;
+    status = oberon_update_hash_with_prefix(&op->hash_op, M, sizeof M);
+    if (status) return status;
+    return oberon_update_hash_with_prefix(&op->hash_op, N, sizeof N);
+}
+
 static psa_status_t oberon_write_key_share(
     oberon_spake2p_operation_t *op,
     uint8_t *output, size_t output_size, size_t *output_length)
@@ -77,6 +92,10 @@ static psa_status_t oberon_write_key_share(
     memcpy(output, op->XY, P256_POINT_SIZE);
     *output_length = P256_POINT_SIZE;
 
+    if (op->role == PSA_PAKE_ROLE_CLIENT) {
+        oberon_update_ids(op);
+    }
+
     // add share to TT
     return oberon_update_hash_with_prefix(&op->hash_op, op->XY, P256_POINT_SIZE);
 }
@@ -87,6 +106,10 @@ static psa_status_t oberon_read_key_share(
 {
     if (input_length != P256_POINT_SIZE || input[0] != 0x04) return PSA_ERROR_INVALID_ARGUMENT;
     memcpy(op->YX, input, P256_POINT_SIZE);
+
+    if (op->role != PSA_PAKE_ROLE_CLIENT) {
+        oberon_update_ids(op);
+    }
 
     // add share to TT
     return oberon_update_hash_with_prefix(&op->hash_op, op->YX, P256_POINT_SIZE);
@@ -256,16 +279,38 @@ psa_status_t oberon_spake2p_set_user(
     oberon_spake2p_operation_t *operation,
     const uint8_t *user_id, size_t user_id_len)
 {
-    // add user id to TT
-    return oberon_update_hash_with_prefix(&operation->hash_op, user_id, user_id_len);
+    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
+        // prover = user
+        if (user_id_len > sizeof operation->prover) return PSA_ERROR_INSUFFICIENT_MEMORY;
+        memcpy(operation->prover, user_id, user_id_len);
+        operation->prover_len = (uint8_t)user_id_len;
+    } else {
+        // verifier = user
+        if (user_id_len > sizeof operation->verifier) return PSA_ERROR_INSUFFICIENT_MEMORY;
+        memcpy(operation->verifier, user_id, user_id_len);
+        operation->verifier_len = (uint8_t)user_id_len;
+    }
+
+    return PSA_SUCCESS;
 }
 
 psa_status_t oberon_spake2p_set_peer(
     oberon_spake2p_operation_t *operation,
     const uint8_t *peer_id, size_t peer_id_len)
 {
-    // add peer id to TT
-    return oberon_update_hash_with_prefix(&operation->hash_op, peer_id, peer_id_len);
+    if (operation->role == PSA_PAKE_ROLE_CLIENT) {
+        // verifier = peer
+        if (peer_id_len > sizeof operation->verifier) return PSA_ERROR_INSUFFICIENT_MEMORY;
+        memcpy(operation->verifier, peer_id, peer_id_len);
+        operation->verifier_len = (uint8_t)peer_id_len;
+    } else {
+        // prover = peer
+        if (peer_id_len > sizeof operation->prover) return PSA_ERROR_INSUFFICIENT_MEMORY;
+        memcpy(operation->prover, peer_id, peer_id_len);
+        operation->prover_len = (uint8_t)peer_id_len;
+    }
+
+    return PSA_SUCCESS;
 }
 
 psa_status_t oberon_spake2p_set_password_key(
@@ -273,7 +318,6 @@ psa_status_t oberon_spake2p_set_password_key(
     const psa_key_attributes_t *attributes,
     const uint8_t *password, size_t password_length)
 {
-    psa_status_t status;
     int res;
     (void)attributes;
 
@@ -293,10 +337,7 @@ psa_status_t oberon_spake2p_set_password_key(
         memcpy(operation->L, password, P256_POINT_SIZE);
     }
 
-    // add M & N to TT
-    status = oberon_update_hash_with_prefix(&operation->hash_op, M, sizeof M);
-    if (status) return status;
-    return oberon_update_hash_with_prefix(&operation->hash_op, N, sizeof N);
+    return PSA_SUCCESS;
 }
 psa_status_t oberon_spake2p_output(
     oberon_spake2p_operation_t *operation,
@@ -323,6 +364,9 @@ psa_status_t oberon_spake2p_input(
     const uint8_t *input, size_t input_length)
 {
     switch (step) {
+    case PSA_PAKE_STEP_CONTEXT:
+        // add context to TT
+        return oberon_update_hash_with_prefix(&operation->hash_op, input, input_length);
     case PSA_PAKE_STEP_KEY_SHARE:
         return oberon_read_key_share(
             operation,

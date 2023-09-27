@@ -996,6 +996,8 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(
  *
  * The key exchange flow for a SPAKE2+ client is as follows:
  * \code
+ * // get context (optional)
+ * psa_pake_input(operation, PSA_PAKE_STEP_CONTEXT, ...);
  * // send shareP
  * psa_pake_output(operation, #PSA_PAKE_STEP_KEY_SHARE, ...);
  * // receive shareV
@@ -1010,6 +1012,8 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(
  *
  * The key exchange flow for a SPAKE2+ server is as follows:
  * \code
+ * // get context (optional)
+ * psa_pake_input(operation, PSA_PAKE_STEP_CONTEXT, ...);
  * // receive shareP
  * psa_pake_input(operation, #PSA_PAKE_STEP_KEY_SHARE, ...);
  * // send shareV
@@ -1315,6 +1319,12 @@ typedef uint32_t psa_pake_primitive_t;
  * The format for both input and output at this step is plain binary data.
  */
 #define PSA_PAKE_STEP_SALT                      ((psa_pake_step_t)0x05)
+
+/** The context information.
+ *
+ * The format for this input step is plain binary data.
+ */
+#define PSA_PAKE_STEP_CONTEXT                   ((psa_pake_step_t)0x06)
 
 /** Retrieve the PAKE algorithm from a PAKE cipher suite.
  *

@@ -102,6 +102,7 @@ psa_status_t psa_validate_unstructured_key_bit_size( psa_key_type_t type,
         case PSA_KEY_TYPE_DERIVE:
         case PSA_KEY_TYPE_PASSWORD:
         case PSA_KEY_TYPE_PASSWORD_HASH:
+        case PSA_KEY_TYPE_PEPPER:
             break;
 #if defined(PSA_WANT_KEY_TYPE_AES)
         case PSA_KEY_TYPE_AES:
@@ -3842,6 +3843,10 @@ static int psa_key_derivation_check_input_type(
 {
     switch( step )
     {
+        case PSA_KEY_DERIVATION_INPUT_PASSWORD:
+            if( key_type == PSA_KEY_TYPE_PASSWORD )
+                return( PSA_SUCCESS );
+            // fall through
         case PSA_KEY_DERIVATION_INPUT_SECRET:
         case PSA_KEY_DERIVATION_INPUT_OTHER_SECRET:
             if( key_type == PSA_KEY_TYPE_DERIVE )
@@ -3849,12 +3854,14 @@ static int psa_key_derivation_check_input_type(
             if( key_type == PSA_KEY_TYPE_NONE )
                 return( PSA_SUCCESS );
             break;
-        case PSA_KEY_DERIVATION_INPUT_LABEL:
         case PSA_KEY_DERIVATION_INPUT_SALT:
+            if( key_type == PSA_KEY_TYPE_PEPPER )
+                return( PSA_SUCCESS );
+            // fall through
+        case PSA_KEY_DERIVATION_INPUT_LABEL:
         case PSA_KEY_DERIVATION_INPUT_INFO:
         case PSA_KEY_DERIVATION_INPUT_SEED:
         case PSA_KEY_DERIVATION_INPUT_COST:
-        case PSA_KEY_DERIVATION_INPUT_PASSWORD:
             if( key_type == PSA_KEY_TYPE_RAW_DATA )
                 return( PSA_SUCCESS );
             if( key_type == PSA_KEY_TYPE_NONE )
@@ -3919,7 +3926,7 @@ psa_status_t psa_key_derivation_input_key(
 
     /* Passing a key object as a SECRET input unlocks the permission
      * to output to a key object. */
-    if( step == PSA_KEY_DERIVATION_INPUT_SECRET )
+    if( step == PSA_KEY_DERIVATION_INPUT_SECRET || step == PSA_KEY_DERIVATION_INPUT_PASSWORD )
         operation->can_output_key = 1;
 
     status = psa_key_derivation_input_internal( operation,
@@ -4457,8 +4464,12 @@ psa_status_t psa_pake_input(psa_pake_operation_t *operation,
 #ifdef PSA_WANT_ALG_SPAKE2P
     case PSA_ALG_SPAKE2P:
         if (!operation->role_set || !operation->user_set || !operation->peer_set) return PSA_ERROR_BAD_STATE;
-        status = psa_check_spake2p_sequence(operation, step, operation->is_second);
-        if (status != PSA_SUCCESS) return status;
+        if (step == PSA_PAKE_STEP_CONTEXT) {
+            if (operation->sequence != 0 || operation->started) return PSA_ERROR_BAD_STATE;
+        } else {
+            status = psa_check_spake2p_sequence(operation, step, operation->is_second);
+            if (status != PSA_SUCCESS) return status;
+        }
         break;
 #endif
 #ifdef PSA_WANT_ALG_SRP_6
@@ -4479,7 +4490,13 @@ psa_status_t psa_pake_input(psa_pake_operation_t *operation,
 #endif
 
     if (operation->sequence == 0) operation->started = 1; 
-    operation->sequence++;
+#ifdef PSA_WANT_ALG_SPAKE2P
+    if (step != PSA_PAKE_STEP_CONTEXT) {
+#endif
+        operation->sequence++;
+#ifdef PSA_WANT_ALG_SPAKE2P
+    }
+#endif
 
     status = psa_driver_wrapper_pake_input(
         operation, step,
