@@ -217,6 +217,7 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 	while (true) {
 		if (!ctx.connected) {
 			LOG_WRN("MQTT disconnected");
+			err = 0;
 			break;
 		}
 		err = poll(&fds, 1, mqtt_keepalive_time_left(&client));
@@ -224,33 +225,61 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 			LOG_ERR("ERROR: poll %d", errno);
 			break;
 		}
-		/* timeout or revent, send KEEPALIVE */
-		(void)mqtt_live(&client);
 
 		if ((fds.revents & POLLIN) == POLLIN) {
 			err = mqtt_input(&client);
 			if (err != 0) {
 				LOG_ERR("ERROR: mqtt_input %d", err);
-				mqtt_abort(&client);
+				break;
+			}
+			/* MQTT v3.1.1: If a Client does not receive a PINGRESP Packet within a
+			 *  reasonable amount of time after it has sent a PINGREQ, it SHOULD close
+			 *  the Network Connection to the Server.
+			 */
+			if (client.unacked_ping > 1) {
+				LOG_ERR("ERROR: mqtt_ping nack %d", client.unacked_ping);
+				err = -ENETRESET;
 				break;
 			}
 		}
+
+		/* MQTT v3.1.1: Note that a Server is permitted to disconnect a Client that it
+		 * determines to be inactive or non-responsive at any time, regardless of the
+		 * Keep Alive value provided by that Client.
+		 */
 		if ((fds.revents & POLLERR) == POLLERR) {
 			LOG_ERR("POLLERR");
-			mqtt_abort(&client);
+			err = -EIO;
 			break;
 		}
 		if ((fds.revents & POLLHUP) == POLLHUP) {
 			LOG_ERR("POLLHUP");
-			mqtt_abort(&client);
+			err = -ECONNRESET;
 			break;
 		}
 		if ((fds.revents & POLLNVAL) == POLLNVAL) {
 			LOG_ERR("POLLNVAL");
-			mqtt_abort(&client);
+			err = -ENOTCONN;
+			break;
+		}
+
+		/* poll timeout or revent, send KEEPALIVE */
+		err = mqtt_live(&client);
+		if (err != 0 && err != -EAGAIN) {
+			LOG_ERR("ERROR: mqtt_live %d", err);
 			break;
 		}
 	}
+
+	if (ctx.connected && err != 0) {
+		LOG_ERR("Abort MQTT connection (error %d)", err);
+		(void)mqtt_abort(&client);
+	}
+
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.connected = false;
+	ctx.sec_tag = INVALID_SEC_TAG;
+	client.broker = NULL;
 
 	LOG_INF("MQTT thread terminated");
 }
@@ -305,7 +334,6 @@ static void client_init(void)
 		client.user_name = NULL;
 		/* ignore password if no user_name */
 	}
-	client.protocol_version = MQTT_VERSION_3_1_1;
 
 	/* MQTT buffers configuration */
 	client.rx_buf = rx_buffer;
@@ -356,12 +384,12 @@ static int do_mqtt_connect(void)
 		return err;
 	}
 
+	ctx.connected = true;
 	k_thread_create(&mqtt_thread, mqtt_thread_stack,
 			K_THREAD_STACK_SIZEOF(mqtt_thread_stack),
 			mqtt_thread_fn, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	ctx.connected = true;
 	return 0;
 }
 
@@ -382,8 +410,6 @@ static int do_mqtt_disconnect(void)
 	if (k_thread_join(&mqtt_thread, K_SECONDS(CONFIG_MQTT_KEEPALIVE)) != 0) {
 		LOG_WRN("Wait for thread terminate failed");
 	}
-
-	slm_at_mqtt_uninit();
 
 	return err;
 }
@@ -496,20 +522,26 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (ctx.sec_tag != INVALID_SEC_TAG) {
-			rsp_send("\r\n#XMQTTCON: %d,\"%s\",\"%s\",%d,%d\r\n",
-				ctx.connected, mqtt_clientid, mqtt_broker_url, mqtt_broker_port,
-				ctx.sec_tag);
+		if (ctx.connected) {
+			if (ctx.sec_tag != INVALID_SEC_TAG) {
+				rsp_send("\r\n#XMQTTCON: %d,\"%s\",\"%s\",%d,%d\r\n",
+					 ctx.connected, mqtt_clientid, mqtt_broker_url,
+					 mqtt_broker_port, ctx.sec_tag);
+			} else {
+				rsp_send("\r\n#XMQTTCON: %d,\"%s\",\"%s\",%d\r\n",
+					 ctx.connected, mqtt_clientid, mqtt_broker_url,
+					 mqtt_broker_port);
+			}
 		} else {
-			rsp_send("\r\n#XMQTTCON: %d,\"%s\",\"%s\",%d\r\n",
-				ctx.connected, mqtt_clientid, mqtt_broker_url, mqtt_broker_port);
+			rsp_send("\r\n#XMQTTCON: %d\r\n", ctx.connected);
 		}
 		err = 0;
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XMQTTCON: (0,1,2),<cid>,<username>,"
-			 "<password>,<url>,<port>,<sec_tag>\r\n");
+		rsp_send("\r\n#XMQTTCON: (%d,%d,%d),<client_id>,<username>,"
+			 "<password>,<url>,<port>,<sec_tag>\r\n",
+			 MQTTC_DISCONNECT, MQTTC_CONNECT, MQTTC_CONNECT6);
 		err = 0;
 		break;
 
@@ -550,6 +582,10 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 	uint8_t pub_msg[SLM_MAX_PAYLOAD_SIZE];
 	size_t msg_sz = sizeof(pub_msg);
 	uint16_t param_count = at_params_valid_count_get(&slm_at_param_list);
+
+	if (!ctx.connected) {
+		return -ENOTCONN;
+	}
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -623,6 +659,10 @@ int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 	char topic[MQTT_MAX_TOPIC_LEN];
 	int topic_sz = MQTT_MAX_TOPIC_LEN;
 
+	if (!ctx.connected) {
+		return -ENOTCONN;
+	}
+
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 		if (at_params_valid_count_get(&slm_at_param_list) == 3) {
@@ -658,6 +698,10 @@ int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	char topic[MQTT_MAX_TOPIC_LEN];
 	int topic_sz = MQTT_MAX_TOPIC_LEN;
+
+	if (!ctx.connected) {
+		return -ENOTCONN;
+	}
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
