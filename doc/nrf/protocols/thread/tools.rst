@@ -120,12 +120,7 @@ To program the nRF device with the RCP application, complete the following steps
 
       .. tab:: nRF52840 Development Kit (UART transport)
 
-         a. Program the image using :ref:`west`:
-
-            .. code-block:: console
-
-               west flash --erase
-
+         a. Program the image using the :ref:`regular command <programming>`.
          #. Disable the Mass Storage feature on the device, so that it does not interfere with the core RCP functionalities.
             Also, force Hardware Flow Control to avoid potential race conditions related to the auto-detection:
 
