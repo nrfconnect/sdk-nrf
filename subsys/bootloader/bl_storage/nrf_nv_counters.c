@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <bl_storage.h>
 #include "bootutil/fault_injection_hardening.h"
+#include "bootutil/bootutil_public.h"
 
 fih_int boot_nv_security_counter_init(void)
 {
@@ -24,29 +25,29 @@ fih_int boot_nv_security_counter_get(uint32_t image_id, fih_int *security_cnt)
 	uint16_t cur_sec_cnt;
 
 	if (security_cnt == NULL) {
-		return FIH_FAILURE;
+		FIH_RET(FIH_FAILURE);
 	}
 
 	/* We support only one counter in MCUBOOT */
 	if (image_id > 0) {
-		return FIH_FAILURE;
+		FIH_RET(FIH_FAILURE);
 	}
 
 	err = get_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0, &cur_sec_cnt);
 	if (err != 0) {
-		return FIH_FAILURE;
+		FIH_RET(FIH_FAILURE);
 	}
 
-	*security_cnt = cur_sec_cnt;
+	*security_cnt = fih_int_encode(cur_sec_cnt);
 
-	return FIH_SUCCESS;
+	FIH_RET(FIH_SUCCESS);
 }
 
 int32_t boot_nv_security_counter_update(uint32_t image_id, uint32_t img_security_cnt)
 {
 	/* We only support 16 bits image counters */
 	if ((img_security_cnt & 0xFFFF0000) > 0) {
-		return -1;
+		return -BOOT_EBADARGS;
 	}
 
 	/* MCUBoot permits calling this function with img_security_cnt
@@ -56,16 +57,20 @@ int32_t boot_nv_security_counter_update(uint32_t image_id, uint32_t img_security
 	 */
 	fih_int security_cnt;
 
-	fih_int fih_err = boot_nv_security_counter_get(image_id, &security_cnt);
+	fih_int fih_err;
+	int err;
 
-	if (fih_err != FIH_SUCCESS) {
-		return fih_err;
+	FIH_CALL(boot_nv_security_counter_get, fih_err, image_id, &security_cnt);
+	if (FIH_NOT_EQ(fih_err, FIH_SUCCESS)) {
+		return -BOOT_EBADSTATUS;
 	}
 
-	if (security_cnt == (uint16_t)img_security_cnt) {
-		return FIH_SUCCESS;
+	if (fih_int_decode(security_cnt) == img_security_cnt) {
+		return 0;
 	}
 
-	return set_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0,
-				     (uint16_t)img_security_cnt);
+	err = set_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0,
+				    (uint16_t)img_security_cnt);
+
+	return err == 0 ? 0 : -BOOT_EBADSTATUS;
 }
