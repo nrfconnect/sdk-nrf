@@ -713,10 +713,6 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	if (params->ie) {
 		memcpy(auth_info.bss_ie.ie, params->ie, params->ie_len);
 	} else {
-		memcpy(auth_info.bss_ie.ie,
-			   (const unsigned char *)(curr_bss + 1),
-			   NRF_WIFI_MAX_IE_LEN);
-		auth_info.bss_ie.ie_len = curr_bss->ie_len;
 		auth_info.scan_width = 0; /* hard coded */
 		auth_info.nrf_wifi_signal = curr_bss->level;
 		auth_info.capability = curr_bss->caps;
