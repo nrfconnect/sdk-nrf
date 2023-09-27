@@ -47,6 +47,13 @@ The application supports bridging the following Matter device types:
 * Temperature Sensor
 * Humidity Sensor
 
+All the listed Matter device types are enabled by default.
+To disable one of them, set any of the following configuration options:
+
+* :kconfig:option:`CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE` to ``n`` to disable On/Off Light.
+* :kconfig:option:`CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Temperature Sensor.
+* :kconfig:option:`CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Humidity Sensor.
+
 The application supports over-the-air (OTA) device firmware upgrade (DFU) using either of the two following protocols:
 
 * Matter OTA update protocol.
@@ -91,6 +98,7 @@ The application supports two bridged device configurations that are mutually exc
   The application supports the following Bluetooth LE services:
 
   * Nordic Semiconductor's :ref:`LED Button Service <lbs_readme>` - represented by the Matter On/Off Light device type.
+  * Zephyr's :ref:`Environmental Sensing Service <peripheral_esp>` - represented by the Matter Temperature Sensor and Humidity Sensor device types.
 
 Depending on the bridged device you want to support in your application, :ref:`enable it using the appropriate Kconfig option <matter_bridge_app_bridged_support_configs>`.
 The Matter bridge supports adding and removing bridged devices dynamically at application runtime using `Matter CLI commands`_ from a dedicated Matter bridge shell module.
@@ -269,6 +277,34 @@ You can enable the :ref:`matter_bridge_app_bridged_support` by using the followi
 
 * :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED` - For the simulated bridged device.
 * :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` - For the Bluetooth LE bridged device.
+
+Additionally, you can decide how many bridged devices the bridge application will support.
+The decision will make an impact on the flash and RAM memory usage, and is verified in the compilation stage.
+The application uses dynamic memory allocation and stores bridged device objects on the heap, so it may be necessary to increase the heap size using the :kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP_SIZE` Kconfig option.
+Use the following configuration options to customize the number of supported bridged devices:
+
+* :kconfig:option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER` - For changing the maximum number of non-Matter bridged devices supported by the bridge application
+* :kconfig:option:`CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER` - For changing the maximum number of Matter endpoints used for bridging devices by the bridge application.
+  This option does not have to be equal to :kconfig:option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER`, as it is possible to use non-Matter devices that are represented using more than one Matter endpoint.
+
+Configuring the number of Bluetooth LE bridged devices
+------------------------------------------------------
+
+You have to consider several factors to decide how many Bluetooth LE bridged devices to support.
+Every Bluetooth LE bridged device uses a separate Bluetooth LE connection, so you need to consider the number of supported Bluetooth LE connections (selected using the :kconfig:option:`CONFIG_BT_MAX_CONN` Kconfig option) when you configure the number of devices.
+Since the Matter stack uses one Bluetooth LE connection for commissioning, the maximum number of connections you can use for bridged devices is one less than is configured using the :kconfig:option:`CONFIG_BT_MAX_CONN` Kconfig option.
+
+Increasing the number of Bluetooth LE connections affects the RAM usage on both the application and network cores.
+The current maximum number of Bluetooth LE connections that can be selected using the default configuration is ``10``.
+You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
+Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DOVERLAY_CONFIG="overlay-bt_max_connections_app.conf" -Dhci_rpmsg_OVERLAY_CONFIG="*absoule_path*/overlay-bt_max_connections_net.conf"
+
+Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
 
 Building and running
 ********************
