@@ -395,10 +395,6 @@ static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 	static const char cms_error_str[] = "+CMS ERROR:";
 	char *result = NULL;
 
-	/* insert <CR><LF> before information response */
-	buf[0] = CR;
-	buf[1] = LF;
-
 	result = strrstr(buf, ok_str);
 	if (result == NULL) {
 		result = strrstr(buf, error_str);
@@ -435,16 +431,30 @@ static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 {
 	int err;
+	uint16_t offset = 0;
+	uint8_t *at_cmd = buf;
 
 	LOG_HEXDUMP_DBG(buf, cmd_length, "RX");
 
-	if (cmd_grammar_check(buf, cmd_length) != 0) {
+	/* UART can send additional characters when the device is powered on.
+	 * We ignore everything before the start of the AT-command.
+	 */
+	while (offset + 1 < cmd_length) {
+		if (toupper((int)buf[offset]) == 'A' && toupper((int)buf[offset + 1]) == 'T') {
+			at_cmd += offset;
+			cmd_length -= offset;
+			break;
+		}
+		offset++;
+	}
+
+	if (cmd_grammar_check(at_cmd, cmd_length) != 0) {
 		LOG_ERR("AT command invalid");
 		rsp_send_error();
 		return;
 	}
 
-	err = slm_at_parse((const char *)buf);
+	err = slm_at_parse((const char *)at_cmd);
 	if (err == 0) {
 		rsp_send_ok();
 		return;
@@ -455,7 +465,7 @@ static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 
 	/* Send to modem, reserve space for CRLF in response buffer */
 	err = nrf_modem_at_cmd((void *)(buf + strlen(CRLF_STR)),
-				buf_size - strlen(CRLF_STR), "%s", buf);
+				buf_size - strlen(CRLF_STR), "%s", at_cmd);
 	if (err < 0) {
 		LOG_ERR("AT command failed: %d", err);
 		rsp_send_error();
@@ -467,8 +477,10 @@ static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 	/** Format as TS 27.007 command V1 with verbose response format,
 	 *  based on current return of API nrf_modem_at_cmd() and MFWv1.3.x
 	 */
+	buf[0] = CR;
+	buf[1] = LF;
 	if (strlen(buf) > strlen(CRLF_STR)) {
-		format_final_result(slm_at_buf, strlen(slm_at_buf), sizeof(slm_at_buf));
+		format_final_result((char *)buf, strlen(buf), buf_size);
 		err = slm_uart_tx_write(buf, strlen(buf), true);
 		if (err) {
 			LOG_ERR("AT command response failed: %d", err);
