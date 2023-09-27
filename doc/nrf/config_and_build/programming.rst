@@ -23,7 +23,9 @@ Building with |VSC|
 *******************
 
 For instructions about building with the |nRFVSC|, see `How to build an application`_.
-If you want to build and program with custom options, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_.
+If you want to build and program with custom options, read about the advanced `Custom launch and debug configurations`_.
+
+For information about how to flash and erase in the |nRFVSC|, read about the `Application-specific flash options`_.
 
 .. note::
    |ncs_oot_sample_note|
@@ -88,7 +90,7 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <a
 
          west flash --erase
 
-      This command clears the full flash memory before programming, which is the recommended approach.
+      This command erases the full flash memory before programming, which is the recommended approach.
       If the application depends on other flash memory areas (for example, if it uses the :ref:`zephyr:settings_api` partition where bonding information is stored), erasing the full kit before programming ensures that these areas are updated with the new content.
 
       As an alternative, you can also clear only those flash memory pages that are to be overwritten with the new application.

@@ -86,36 +86,7 @@ Because of these design constraints, the following limitations apply:
 .. note::
    On the nRF9160 and nRF5340, the UICR can only be erased by erasing the entire flash memory.
 
-To erase the entire flash memory, do the following:
-
-.. tabs::
-
-   .. tab:: Command Line
-
-      Using west:
-
-      .. code-block:: console
-
-         west flash --erase
-
-      Using nrfjprog:
-
-      .. code-block:: console
-
-         nrfjprog -f NRF91 --eraseall
-
-   .. tab:: |VSC|
-
-      Using the :guilabel:`Actions View` in |nRFVSC|:
-
-         1. Go to the :guilabel:`Actions View`.
-         #. Move the cursor over the :guilabel:`Flash` action.
-         #. Click :guilabel:`Erase And Flash To Board` on the right side of the :guilabel:`Flash` action.
-
-      Using the |VSC| Command Palette:
-
-         1. Open the |VSC| Command Palette.
-         #. Type ``Erase and Flash to Board`` and select the highlighted option.
+For information how to erase the entire flash memory when flashing, see :ref:`programming`.
 
 .. _bootloader_flash_layout:
 
