@@ -30,7 +30,6 @@
 #define CON_STATUS_LED          DK_LED3
 #define RUN_LED_BLINK_INTERVAL  1000
 
-#define COMPANY_CODE            0x0059
 #define SUPPORT_DM_CODE         0xFF55AA5A
 
 struct adv_mfg_data {
@@ -316,7 +315,7 @@ static int bt_sync_init(void)
 
 	printk("DM Bluetooth LE Synchronization initialization\n");
 
-	mfg_data.company_code = sys_cpu_to_le16(COMPANY_CODE);
+	mfg_data.company_code = sys_cpu_to_le16(CONFIG_BT_COMPANY_ID_NORDIC);
 	mfg_data.support_dm_code = sys_cpu_to_le32(SUPPORT_DM_CODE);
 	mfg_data.rng_seed = sys_cpu_to_le32(peer_rng_seed_prepare());
 

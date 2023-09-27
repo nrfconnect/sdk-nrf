@@ -23,7 +23,7 @@ extern "C" {
 
 /* .. include_startingpoint_chat_cli_rst_1 */
 /** Company ID of the Bluetooth Mesh Chat Client model. */
-#define BT_MESH_CHAT_CLI_VENDOR_COMPANY_ID    0x0059
+#define BT_MESH_CHAT_CLI_VENDOR_COMPANY_ID    CONFIG_BT_COMPANY_ID_NORDIC
 
 /** Model ID of the Bluetooth Mesh Chat Client model. */
 #define BT_MESH_CHAT_CLI_VENDOR_MODEL_ID      0x000A
