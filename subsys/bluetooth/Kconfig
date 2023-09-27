@@ -8,6 +8,15 @@ menu "Bluetooth Low Energy"
 
 if BT
 
+config BT_COMPANY_ID_NORDIC
+	hex
+	# Will never change
+	default 0x0059
+
+config BT_COMPANY_ID
+	hex
+	default BT_COMPANY_ID_NORDIC
+
 # BT_MAX_CONN is declared in Zephyr, here we add the range and default for
 # BT_LL_SOFTDEVICE which is tested with 20 connections.
 # When both connection roles are enabled there has to be one for each role.
