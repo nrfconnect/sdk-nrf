@@ -684,6 +684,7 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	int ret = -1;
 	int type;
 	int count = 0;
+	int max_ie_len = 0;
 
 	if ((!if_priv) || (!params)) {
 		LOG_ERR("%s: Invalid params\n", __func__);
@@ -711,7 +712,10 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	}
 
 	if (params->ie) {
-		memcpy(auth_info.bss_ie.ie, params->ie, params->ie_len);
+		max_ie_len = (params->ie_len > NRF_WIFI_MAX_IE_LEN) ?
+			     NRF_WIFI_MAX_IE_LEN : params->ie_len;
+		memcpy(&auth_info.ie.ie, params->ie, max_ie_len);
+		auth_info.ie.ie_len = max_ie_len;
 	} else {
 		auth_info.scan_width = 0; /* hard coded */
 		auth_info.nrf_wifi_signal = curr_bss->level;
