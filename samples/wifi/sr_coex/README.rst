@@ -199,7 +199,7 @@ The following are examples of the CLI commands:
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=n -Dhci_rpmsg_CONFIG_MPSL_CX=n
+   west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=n -Dhci_rpmsg_CONFIG_MPSL_CX=n
 
 Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or concurrent Wi-Fi and Bluetooth LE throughput with coexistence disabled tests.
 
@@ -207,7 +207,7 @@ Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or con
 
 .. code-block:: console
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=y -Dhci_rpmsg_CONFIG_MPSL_CX=y
+   west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=y -Dhci_rpmsg_CONFIG_MPSL_CX=y
 
 Use this command for concurrent Wi-Fi and Bluetooth LE throughput with coexistence enabled test.
 
@@ -217,7 +217,7 @@ Build target for nRF7001 DK:
 
 .. code-block:: console
 
-   nrf7001dk_nrf5340_cpuapp
+   nrf7002dk_nrf7001_nrf5340_cpuapp
 
 Build target for nRF7002 EK and nRF7001 EK:
 
@@ -247,7 +247,7 @@ Use the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throug
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp
+   west build -p -b nrf5340dk_nrf5340_cpuapp
 
 The generated HEX file to be used is :file:`throughput/build/zephyr/merged_domains.hex`.
 
