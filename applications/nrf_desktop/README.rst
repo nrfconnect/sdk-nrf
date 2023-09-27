@@ -842,7 +842,7 @@ The command for ``nrf5340dk_nrf5340_cpuapp`` with ``nrf21540ek`` shield would lo
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540ek_fwd -Dhci_rpmsg_SHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek_fwd -Dhci_rpmsg_SHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
 
 For detailed information about building an application using the nRF21540 EK, see the :ref:`ug_radio_fem_nrf21540ek_programming` section in the Working with RF Front-end modules documentation.
 
