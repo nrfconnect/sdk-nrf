@@ -30,7 +30,7 @@ endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   cmake_parse_arguments(POST_CMAKE "" "" "IMAGES" ${ARGN})
 
-  set(DOMAIN_APP_APP ${DEFAULT_IMAGE})
+  set_property(GLOBAL PROPERTY DOMAIN_APP_APP ${DEFAULT_IMAGE})
 
   # Run partition manager for each image before running CMake.
   set(domain ${SB_CONFIG_SECURE_BOOT_DOMAIN})

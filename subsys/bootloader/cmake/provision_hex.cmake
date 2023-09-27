@@ -11,7 +11,7 @@ set_ifndef(partition_manager_target partition_manager)
 
 if(NCS_SYSBUILD_PARTITION_MANAGER)
   # Get the main app of the domain that secure boot should handle.
-  set(main_app ${DOMAIN_APP_${SB_CONFIG_SECURE_BOOT_DOMAIN}})
+  get_property(main_app GLOBAL PROPERTY DOMAIN_APP_${SB_CONFIG_SECURE_BOOT_DOMAIN})
   ExternalProject_Get_Property(${main_app} BINARY_DIR)
   import_kconfig(CONFIG_ ${BINARY_DIR}/zephyr/.config)
   sysbuild_get(APPLICATION_CONFIG_DIR IMAGE ${main_app} VAR APPLICATION_CONFIG_DIR CACHE)

@@ -37,11 +37,11 @@ function(partition_manager)
   cmake_parse_arguments(PM "" "DOMAIN" "IN_FILES;REGIONS" ${ARGN})
 
   if(DEFINED PM_DOMAIN)
-    set(image_name ${DOMAIN_APP_${PM_DOMAIN}})
+    get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
     set(user_def_pm_static ${${image_name}_PM_STATIC_YML_FILE})
   else()
     set(user_def_pm_static ${PM_STATIC_YML_FILE})
-    set(image_name ${DOMAIN_APP_APP})
+    get_property(image_name GLOBAL PROPERTY DOMAIN_APP_APP)
   endif()
 
   sysbuild_get(${image_name}_APPLICATION_CONFIG_DIR IMAGE ${image_name} VAR APPLICATION_CONFIG_DIR CACHE)
@@ -174,7 +174,7 @@ function(partition_manager)
   foreach(part ${PM_ALL_BY_SIZE})
     if(${part} STREQUAL "app")
       if(DEFINED PM_DOMAIN)
-        set(part "${DOMAIN_APP_${PM_DOMAIN}}")
+        get_property(part GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
       else()
         set(part "${DEFAULT_IMAGE}")
       endif()
@@ -268,7 +268,8 @@ function(partition_manager)
       )
 
     if (DEFINED PM_DOMAIN)
-      update_runner(IMAGE ${DOMAIN_APP_${PM_DOMAIN}} HEX ${PROJECT_BINARY_DIR}/${container}.hex)
+      get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
+      update_runner(IMAGE ${image_name} HEX ${PROJECT_BINARY_DIR}/${container}.hex)
     endif()
 
     if ("${container}" STREQUAL "merged")
@@ -311,6 +312,7 @@ endfunction()
 
 # APP is a special domain which is handled differently.
 # Remove it from the list.
+get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 list(REMOVE_ITEM PM_DOMAINS APP)
 
 ## Check if current image is the dynamic partition in its domain.
@@ -327,7 +329,6 @@ list(REMOVE_ITEM PM_DOMAINS APP)
 
 get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
 get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
-#get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 
 # This file is executed once per domain.
 #
@@ -392,6 +393,7 @@ foreach (image ${IMAGES})
   # Special handling of `app_image` as this must be added as `:app` for historic reasons.
   # `:app` is handled below.
   foreach (d ${PM_DOMAINS})
+    get_property(PM_${d}_IMAGES GLOBAL PROPERTY PM_${d}_IMAGES)
     if(${image} IN_LIST PM_${d}_IMAGES)
       set(domain ${d})
       break()
@@ -405,7 +407,8 @@ foreach (image ${IMAGES})
     list(APPEND prefixed_images ${domain}:${image})
     list(APPEND images ${image})
     list(APPEND header_files ${${image}_binary_dir}/${generated_path}/pm_config.h)
-    if(NOT DEFINED domain OR "${DOMAIN_APP_${domain}}" STREQUAL "${image}")
+    get_property(domain_app GLOBAL PROPERTY DOMAIN_APP_${domain})
+    if(NOT DEFINED domain OR "${domain_app}" STREQUAL "${image}")
       list(APPEND input_files  ${${image}_input_files})
     endif()
   endif()
@@ -425,7 +428,9 @@ endforeach()
 list(APPEND input_files  ${${DEFAULT_IMAGE}_binary_dir}/${generated_path}/pm.yml)
 
 foreach (d ${PM_DOMAINS})
+  get_property(PM_${d}_IMAGES GLOBAL PROPERTY PM_${d}_IMAGES)
   foreach (image ${PM_${d}_IMAGES})
+    get_property(DOMAIN_APP_${d} GLOBAL PROPERTY DOMAIN_APP_${d})
     if(NOT "${DOMAIN_APP_${d}}" STREQUAL "${image}")
       list(APPEND ${d}_input_files  ${${image}_input_files})
       list(APPEND ${d}_header_files ${${image}_binary_dir}/${generated_path}/pm_config.h)
@@ -442,7 +447,7 @@ list(APPEND input_files ${PM_SUBSYS_PREPROCESSED})
 
 foreach(d APP ${PM_DOMAINS})
   # CPUNET
-  set(image_name ${DOMAIN_APP_${d}})
+  get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${d})
   if(${d} STREQUAL "APP")
     set(d)
   endif()
@@ -561,7 +566,7 @@ endif()
 # Do per domain, end with main app domain.
 partition_manager(IN_FILES ${input_files} REGIONS ${regions})
 foreach(d ${PM_DOMAINS})
-  set(image_name ${DOMAIN_APP_${d}})
+  get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${d})
   partition_manager(DOMAIN ${d} IN_FILES ${${d}_input_files} REGIONS ${${d}_regions})
 
 #  foreach(d ${PM_DOMAINS})
