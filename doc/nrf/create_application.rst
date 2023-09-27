@@ -119,13 +119,16 @@ Use the following steps depending on the application placement:
       #. Open the |nRFVSC|.
       #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
-      #. Click **Create a blank application**.
-      #. Enter a location for the application.
-         This will be the *<west-workspace>/* directory mentioned in the :ref:`workspace application structure <create_application_types_workspace>`.
-      #. Enter the name of the application.
+      #. Choose one of the following options:
+
+         * :guilabel:`Create a blank application` - This will create an application with a code structure that you need to populate from scratch.
+         * :guilabel:`Browse a sample` - This will create an application from an |NCS| sample or an |NCS| application.
+
+      #. Enter the location and the name for the application.
+         The location will be the *<west-workspace>/* directory mentioned in the :ref:`workspace application structure <create_application_types_workspace>`.
          The application creation process starts after you enter the name.
          When the application is created, a VS Code prompt appears.
-      #. Click **Open**.
+      #. Click :guilabel:`Open`.
          This opens the new application and adds it to the :guilabel:`Applications View` in the extension.
       #. Add the :file:`west.yml` to create a west workspace around the application:
 
@@ -137,6 +140,8 @@ Use the following steps depending on the application placement:
             The west workspace is initialized and the :guilabel:`Manage SDKs` action changes to :guilabel:`Open west manifest`.
          #. In the :guilabel:`Applications View`, click the :guilabel:`Run West Update` button to update the workspace modules.
 
+      You can now start :ref:`configuring and building <configuration_and_build>` the application.
+
       See the `extension documentation <west module management_>`_ for more information about west workspace and workspace applications in the extension.
 
    .. group-tab:: Freestanding application
@@ -147,17 +152,20 @@ Use the following steps depending on the application placement:
       #. Open the |nRFVSC|.
       #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
-      #. Click **Create a blank application**.
-      #. Enter a location for the application.
-      #. Enter the name of the application.
+      #. Choose one of the following options:
+
+         * :guilabel:`Create a blank application` - This will create an application with a code structure that you need to populate from scratch.
+         * :guilabel:`Browse a sample` - This will create an application from an |NCS| sample or an |NCS| application.
+
+      #. Enter the location and the name for the application.
          The application creation process starts after you enter the name.
          When the application is created, a VS Code prompt appears.
-      #. Click **Open**.
+      #. Click :guilabel:`Open`.
          This opens the new application and adds it to the :guilabel:`Applications View` in the extension.
 
-      See the `extension documentation <Create a new application_>`_ for more information about creating freestanding applications in the extension.
+      You can now start :ref:`configuring and building <configuration_and_build>` the application.
 
-You can now start :ref:`configuring and building <configuration_and_build>` the application.
+      See the `extension documentation <Create a new application_>`_ for more information about creating freestanding applications in the extension.
 
 .. _creating_cmd:
 
