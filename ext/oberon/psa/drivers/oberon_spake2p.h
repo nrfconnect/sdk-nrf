@@ -31,6 +31,10 @@ typedef struct {
     uint8_t         shared[PSA_HASH_MAX_SIZE];
     uint8_t         KconfPV[PSA_HASH_MAX_SIZE];
     uint8_t         KconfVP[PSA_HASH_MAX_SIZE];
+    uint8_t         prover[32];
+    uint8_t         verifier[32];
+    uint8_t         prover_len;
+    uint8_t         verifier_len;
     const uint8_t   *MN;
     const uint8_t   *NM;
     psa_pake_role_t role;

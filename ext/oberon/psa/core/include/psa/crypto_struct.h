@@ -240,7 +240,6 @@ struct psa_pake_operation_s  /*!!OM*/
     psa_driver_pake_context_t MBEDTLS_PRIVATE(ctx);
 };
 
-/* This only zeroes out the first byte in the union, the rest is unspecified. */
 #define PSA_PAKE_OPERATION_INIT { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0 } }
 static inline struct psa_pake_operation_s psa_pake_operation_init(void)
 {
