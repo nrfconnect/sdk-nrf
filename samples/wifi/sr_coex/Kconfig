@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022 Nordic Semiconductor
+# Copyright (c) 2023 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -8,43 +8,10 @@ source "Kconfig.zephyr"
 
 menu "Nordic Coex sample"
 
-choice TEST_TYPE
-	prompt "Test type"
-	default TEST_TYPE_WLAN_BLE
-
-config TEST_TYPE_WLAN_ONLY
-	bool "WLAN only"
-	help
-	  Enable WLAN only
-
-config TEST_TYPE_BLE_ONLY
-	bool "BLE only"
-	help
-	  Enable BLE only
-
-config TEST_TYPE_WLAN_BLE
-	bool "WLAN and BLE"
-	help
-	  Enable WLAN and BLE
-
-endchoice
-
-config TEST_TYPE_WLAN
-	bool "WLAN"
-	default y if TEST_TYPE_WLAN_ONLY || TEST_TYPE_WLAN_BLE
-	select WIFI
-	help
-	  Enable WLAN
-
-config TEST_TYPE_BLE
-	bool "BLE"
-	default y if TEST_TYPE_BLE_ONLY || TEST_TYPE_WLAN_BLE
-	help
-	  Enable BLE
-
-config STA_SAMPLE_SSID
+#------------------------------ Wi-Fi configurations
+config STA_SSID
 	string "SSID"
-	default "coex_24"
+	default "wifi_sr_coex_24"
 	help
 	  Specify the SSID to connect
 
@@ -73,7 +40,7 @@ config STA_KEY_MGMT_WPA3
 	  Enable for WPA3 Security
 endchoice
 
-config STA_SAMPLE_PASSWORD
+config STA_PASSWORD
 	string "Passphrase (WPA2) or password (WPA3)"
 	help
 	  Specify the Password to connect
@@ -108,38 +75,48 @@ config WIFI_ZPERF_PKT_SIZE
 
 config WIFI_ZPERF_RATE
 	int "rate in kbps"
-	default 10000
+	default 15000
 
-config INTERVAL_MIN
-	int "BLE min connection interval. Each unit 1.25milliseconds"
-	default 80
-
-config INTERVAL_MAX
-	int "BLE max connection interval. Each unit 1.25milliseconds"
-	default 80
-
-config COEX_ENABLE
-	bool "Control if coexistence HW is enable"
-	default y
-
-config COEX_WLAN_2PT4G
+config WIFI_BAND_2PT4G
 	bool "Indicates if WLAN operating band is 2.4GHz or 5GHz"
 	default y
 
-config WIFI_TEST_DURATION
-	int "test duration in milliseconds"
-	default 20000
-
-config BLE_TEST_DURATION
-	int "test duration in milliseconds"
-	default 20000
-
-config COEX_BT_CENTRAL
+#------------------------------ BLE configurations
+config BT_ROLE_CENTRAL
 	bool "BT device role"
 	default y
 
-config COEX_SEP_ANTENNAS
-	bool "Control if the antennas are shared/serparate for BT and WLAN"
-	default y
+config BT_GAP_ADV_FAST_INT_MIN_2
+	int "BT GAP ADV interval min value. Each unit 0.625milliseconds"
+	default 160
 
+config BT_GAP_ADV_FAST_INT_MAX_2
+	int "BT GAP ADV interval max value. Each unit 0.625milliseconds"
+	default 240
+
+config BT_LE_SCAN_INTERVAL
+	int "BT LE Scan interval  value. Each unit is 0.625milliseconds."
+	default 16
+
+config BT_LE_SCAN_WINDOW
+	int "BT LE Scan Window value. Each unit is 0.625milliseconds."
+	default 16
+
+config BT_INTERVAL_MIN
+	int "BLE min connection interval. Each unit 1.25milliseconds"
+	default 80
+
+config BT_INTERVAL_MAX
+	int "BLE max connection interval. Each unit 1.25milliseconds"
+	default 80
+
+config BT_SUPERVISION_TIMEOUT
+	int "BT LE supervision timeout"
+	default 1000
+
+config BT_CONN_LATENCY
+	int "BT LE connection latency"
+	default 0
+
+rsource "test/Kconfig"
 endmenu

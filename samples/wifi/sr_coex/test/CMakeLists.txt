@@ -6,17 +6,11 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-set(DTC_OVERLAY_FILE "dts.overlay")
+#set(DTC_OVERLAY_FILE "dts.overlay")
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_wifi_ble_coex)
 
-add_subdirectory(test)
-target_sources(app PRIVATE
-	src/bt_utils.c
-	src/bt_coex_test_functions.c
-	src/main.c
-)
 
 # For net_private.h
 target_include_directories(app PUBLIC

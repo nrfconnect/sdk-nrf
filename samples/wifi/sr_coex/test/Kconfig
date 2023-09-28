@@ -1,0 +1,99 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Nordic Coex sample - test"
+
+#-------------------------------------- test parameters
+choice TEST_TYPE
+	prompt "Test type"
+	default TEST_TYPE_WLAN_BLE
+
+config TEST_TYPE_WLAN_ONLY
+	bool "WLAN only"
+	help
+	  Enable WLAN only
+
+config TEST_TYPE_BLE_ONLY
+	bool "BLE only"
+	help
+	  Enable BLE only
+
+config TEST_TYPE_WLAN_BLE
+	bool "WLAN and BLE"
+	help
+	  Enable WLAN and BLE
+endchoice
+
+config TEST_TYPE_WLAN
+	bool "WLAN"
+	default y if TEST_TYPE_WLAN_ONLY || TEST_TYPE_WLAN_BLE
+	select WIFI
+	help
+	  Enable WLAN
+
+config TEST_TYPE_BLE
+	bool "BLE"
+	default y if TEST_TYPE_BLE_ONLY || TEST_TYPE_WLAN_BLE
+	help
+	  Enable BLE
+
+config COEX_TEST_DURATION
+	int "test duration in milliseconds"
+	default 20000
+
+config COEX_SEP_ANTENNAS
+	bool "Control if the antennas are shared/serparate for BT and WLAN"
+	default y
+
+config DEBUG_PRINT_WIFI_SCAN_INFO
+	bool "Print Wi-Fi Scan info for debug purpose"
+	default n
+
+config DEBUG_PRINT_WIFI_DHCP_INFO
+	bool "Print Wi-Fi DHCP info for debug purpose"
+	default n
+
+config DEBUG_PRINT_WIFI_CONN_INFO
+	bool "Print Wi-Fi Connection info for debug purpose"
+	default n
+
+config PRINTS_FOR_AUTOMATION
+	bool "Print info required for automation."
+	default y
+
+#-------------------------------------- test cases
+config WIFI_TP_UDP_CLIENT_BLE_TP_CENTRAL
+	bool "Select to run UDP client and central test"
+	default n
+
+config WIFI_TP_UDP_CLIENT_BLE_TP_PERIPH
+	bool "Select to run UDP client and peripheral test"
+	default n
+
+config WIFI_TP_UDP_SERVER_BLE_TP_CENTRAL
+	bool "Select to run UDP server and central test"
+	default n
+
+config WIFI_TP_UDP_SERVER_BLE_TP_PERIPH
+	bool "Select to run UDP server and peripheral test"
+	default n
+
+config WIFI_TP_TCP_CLIENT_BLE_TP_CENTRAL
+	bool "Select to run TCP client and central test"
+	default n
+
+config WIFI_TP_TCP_CLIENT_BLE_TP_PERIPH
+	bool "Select to run TCP client and peripheral test"
+	default n
+
+config WIFI_TP_TCP_SERVER_BLE_TP_CENTRAL
+	bool "Select to run TCP server and central test"
+	default n
+
+config WIFI_TP_TCP_SERVER_BLE_TP_PERIPH
+	bool "Select to run TCP server and peripheral test"
+	default n
+endmenu
