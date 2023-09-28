@@ -73,11 +73,62 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 	}
 }
 
+/**
+ * @brief Prints the address of the local device and the remote device.
+ *
+ * @note The address of the remote device is only printed if directed advertisement is active.
+ */
+static int addr_print(bt_addr_le_t const *const local_addr, bt_addr_le_t const *const dir_adv_addr)
+{
+	char local_addr_str[BT_ADDR_LE_STR_LEN] = {'\0'};
+	char directed_to_addr_str[BT_ADDR_LE_STR_LEN] = {'\0'};
+
+	if (local_addr == NULL) {
+		return -EINVAL;
+	}
+
+	(void)bt_addr_le_to_str(local_addr, local_addr_str, BT_ADDR_LE_STR_LEN);
+	LOG_INF("Local addr: %s", local_addr_str);
+
+	if (dir_adv_addr != NULL) {
+		(void)bt_addr_le_to_str(dir_adv_addr, directed_to_addr_str, BT_ADDR_LE_STR_LEN);
+		LOG_INF("Adv directed to: %s.", directed_to_addr_str);
+	}
+
+	return 0;
+}
+
+#if defined(CONFIG_BT_PRIVACY)
+static bool adv_rpa_expired_cb(struct bt_le_ext_adv *adv)
+{
+	int ret;
+	struct bt_le_ext_adv_info ext_adv_info;
+
+	LOG_INF("RPA (Resolvable Private Address) expired.");
+
+	ret = bt_le_ext_adv_get_info(ext_adv, &ext_adv_info);
+	ERR_CHK_MSG(ret, "bt_le_ext_adv_get_info failed");
+
+	ret = addr_print(ext_adv_info.addr, NULL);
+	if (ret) {
+		LOG_ERR("addr_print failed");
+	}
+
+	return true;
+}
+#endif /* CONFIG_BT_PRIVACY */
+
+static const struct bt_le_ext_adv_cb adv_cb = {
+#if defined(CONFIG_BT_PRIVACY)
+	.rpa_expired = adv_rpa_expired_cb,
+#endif /* CONFIG_BT_PRIVACY */
+};
+
 static int direct_adv_create(bt_addr_le_t addr)
 {
 	int ret;
 	struct bt_le_adv_param adv_param;
-	char addr_buf[BT_ADDR_LE_STR_LEN];
+	struct bt_le_ext_adv_info ext_adv_info;
 
 	adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY(&addr);
 	adv_param.id = BT_ID_DEFAULT;
@@ -96,8 +147,15 @@ static int direct_adv_create(bt_addr_le_t addr)
 		return ret;
 	}
 
-	bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
-	LOG_INF("Set direct advertising to %s", addr_buf);
+	ret = bt_le_ext_adv_get_info(ext_adv, &ext_adv_info);
+	if (ret) {
+		return ret;
+	}
+
+	ret = addr_print(ext_adv_info.addr, &addr);
+	if (ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -105,6 +163,7 @@ static int direct_adv_create(bt_addr_le_t addr)
 static int extended_adv_create(void)
 {
 	int ret;
+	struct bt_le_ext_adv_info ext_adv_info;
 
 	if (adv_local == NULL) {
 		LOG_ERR("Adv_local not set");
@@ -130,6 +189,16 @@ static int extended_adv_create(void)
 			LOG_ERR("Failed to set periodic advertising data: %d", ret);
 			return ret;
 		}
+	}
+
+	ret = bt_le_ext_adv_get_info(ext_adv, &ext_adv_info);
+	if (ret) {
+		return ret;
+	}
+
+	ret = addr_print(ext_adv_info.addr, NULL);
+	if (ret) {
+		return ret;
 	}
 
 	return 0;
@@ -220,13 +289,13 @@ int bt_mgmt_adv_start(const struct bt_data *adv, size_t adv_size, const struct b
 	per_adv_local_size = per_adv_size;
 
 	if (connectable) {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, NULL, &ext_adv);
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb, &ext_adv);
 		if (ret) {
 			LOG_ERR("Unable to create a connectable extended advertising set: %d", ret);
 			return ret;
 		}
 	} else {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_NAME, NULL, &ext_adv);
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_NAME, &adv_cb, &ext_adv);
 		if (ret) {
 			LOG_ERR("Unable to create extended advertising set: %d", ret);
 			return ret;
