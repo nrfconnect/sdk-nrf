@@ -6,12 +6,15 @@
 
 #include <zephyr/toolchain.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/net/socket.h>
 #include <pm_config.h>
 #include <errno.h>
 #include <nrf_errno.h>
+
+#if defined(CONFIG_NET_SOCKETS_OFFLOAD)
+#include <zephyr/net/socket.h>
 #include <nrf_socket.h>
 #include <nrf_gai_errors.h>
+#endif
 
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/poll.h>
