@@ -38,3 +38,4 @@ Make sure to consider :ref:`app_bootloaders` already at this stage of the applic
    config_and_build/modifying
    config_and_build/multi_image
    config_and_build/bootloaders_and_dfu/index
+   config_and_build/use_gpio_pin_directly
