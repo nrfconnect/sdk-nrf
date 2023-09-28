@@ -140,8 +140,12 @@ For more information, see :ref:`emds_readme`.
 * :kconfig:option:`CONFIG_PM_PARTITION_SIZE_EMDS_STORAGE` =0x4000 - Defines the partition size for the Partition Manager.
 * :kconfig:option:`CONFIG_EMDS_SECTOR_COUNT` =4 - Defines the sector count of the emergency data storage area.
 
+.. _ug_bt_mesh_configuring_lpn:
+
 Low Power node (LPN)
 --------------------
+
+The Low Power node (LPN) is a :ref:`power optimization <app_power_opt>` feature specific to Bluetooth mesh.
 
 The following configuration options are relevant when using the LPN feature:
 
