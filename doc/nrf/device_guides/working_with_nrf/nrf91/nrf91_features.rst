@@ -285,13 +285,13 @@ Following are the various GNSS start modes:
 * Warm start - GNSS has some coarse knowledge of the time, location, or satellite orbits from a previous fix that is more than around 37 minutes old.
 * Hot start - GNSS fix is requested within an interval of around 37 minutes from the last successful fix.
 
-Each satellite transmits its own `Ephemeris`_ data and common `Almanac`_ data:
+Each satellite transmits its own `ephemeris`_ data and common `almanac`_ data:
 
 * Ephemeris data - Provides information about the orbit of the satellite transmitting it. This data is valid for four hours and becomes inaccurate after that.
-* Almanac data - Provides coarse orbit and status information for each satellite in the constellation. Each satellite broadcasts Almanac data for all satellites.
+* Almanac data - Provides coarse orbit and status information for each satellite in the constellation. Each satellite broadcasts almanac data for all satellites.
 
 The data transmission occurs at a slow data rate of 50 bps.
-The orbital data can be received faster using A-GPS.
+The orbital data can be received faster using A-GNSS.
 
 Due to the clock bias on the receiver, there are four unknowns when looking for a GNSS fix - latitude, longitude, altitude, and clock bias.
 This results in solving an equation system with four unknowns, and therefore a minimum of four satellites must be tracked to acquire a fix.
@@ -302,43 +302,46 @@ Enhancements to GNSS
 When GNSS has not been in use for a while or if the device is in relatively weak signaling conditions, it might take longer to acquire a fix.
 To improve this, Nordic Semiconductor has implemented the following methods for acquiring a fix in a shorter time:
 
-•	A-GPS or P-GPS or a combination of both
-•	Low accuracy mode
+* A-GNSS or P-GPS or a combination of both
+* Low accuracy mode
 
-Assisted GPS (A-GPS)
----------------------
+Assisted GNSS (A-GNSS)
+----------------------
 
-A-GPS is commonly used to improve the Time to first fix (TTFF) by utilizing a connection (for example, over cellular) to the internet to retrieve the Almanac and Ephemeris data.
-A connection to an internet server that has the Almanac and Ephemeris data is several times quicker than using the slow 50 bps data link to the GPS satellites.
-There are many options to retrieve this A-GPS data.
+A-GNSS is commonly used to improve the Time to first fix (TTFF) by using a connection (for example, over cellular) to the Internet to retrieve the almanac and ephemeris data.
+A connection to an Internet server that has the almanac and ephemeris data is several times quicker than using the slow 50 bps data link to the GNSS satellites.
+There are many options to retrieve this A-GNSS data.
 Two such options are using `nRF Cloud`_ and SUPL.
 |NCS| provides example implementations for both these options.
-The A-GPS solution available through nRF Cloud has been optimized for embedded devices to reduce protocol overhead and data usage.
+The A-GNSS solution available through nRF Cloud has been optimized for embedded devices to reduce protocol overhead and data usage.
 This, in turn, results in the download of reduced amount of data, thereby reducing data transfer time, power consumption, and data costs.
-See :ref:`nrfxlib:gnss_int_agps_data` for more information about the retrieval of A-GPS data.
+Starting from modem firmware v2.0.0, GNSS supports assistance data also for QZSS satellites.
+nRF Cloud can provide assistance data for both GPS and QZSS.
+See :ref:`nrfxlib:gnss_int_agps_data` for more information about the retrieval of A-GNSS data.
 
 Predicted GPS (P-GPS)
 ---------------------
 
-P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite Ephemerides data.
-Normally, devices connect to the cellular network approximately every two hours for up-to-date satellite Ephemeris information or they download the Ephemeris data from the acquired satellites.
+P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite ephemerides data.
+Normally, devices connect to the cellular network approximately every two hours for up-to-date satellite ephemeris information or they download the ephemeris data from the acquired satellites.
 P-GPS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
-Note that P-GPS requires more memory compared to regular A-GPS.
+Note that P-GPS requires more memory compared to regular A-GNSS.
 
-Also, note that due to satellite clock inaccuracies, not all functional satellites will have Ephemerides data valid for two weeks in the downloaded P-GPS package.
-This means that the number of satellites having valid predicted Ephemerides reduces in number roughly after ten days.
-Hence, the GNSS module needs to download the Ephemeris data from the satellite broadcast if no predicted Ephemeris is found for that satellite to be able to use the satellite.
+Also, note that due to satellite clock inaccuracies, not all functional satellites will have ephemerides data valid for two weeks in the downloaded P-GPS package.
+This means that the number of satellites having valid predicted ephemerides reduces in number roughly after ten days.
+Hence, the GNSS module needs to download the ephemeris data from the satellite broadcast if no predicted ephemeris is found for that satellite to be able to use the satellite.
 
 .. note::
    |gps_tradeoffs|
 
-nRF Cloud A-GPS compared with SUPL library
-------------------------------------------
+nRF Cloud compared with SUPL library
+------------------------------------
 
-The :ref:`lib_nrf_cloud_agps` library is more efficient to use when compared to the :ref:`SUPL <supl_client>` library, and the latter takes a bit more memory on the device.
-Another advantage of nRF Cloud A-GPS library is that the data is encrypted whereas SUPL uses plain socket.
-Also, no licenses are required from external vendors to use nRF Cloud A-GPS, whereas for commercial use of SUPL, you must obtain a license.
-The :ref:`lib_nrf_cloud_agps` library is also highly integrated into `Nordic Semiconductor's IoT cloud platform`_.
+* The :ref:`lib_nrf_cloud_agps` library is more efficient to use when compared to the :ref:`SUPL <supl_client>` library, and the latter takes a bit more memory on the device.
+* With nRF Cloud, the data is encrypted, whereas SUPL uses plain socket.
+* nRF Cloud also supports assistance for QZSS satellites, while SUPL is limited to GPS.
+* No licenses are required from external vendors to use nRF Cloud, whereas for commercial use of SUPL, you must obtain a license.
+* The :ref:`lib_nrf_cloud_agps` library is highly integrated into `Nordic Semiconductor's IoT cloud platform`_.
 
 Low Accuracy Mode
 -----------------
@@ -354,9 +357,12 @@ Samples using GNSS in |NCS|
 There are many examples in |NCS| that use GNSS.
 Following is a list of the samples and applications with some information about the GNSS usage:
 
-* :ref:`asset_tracker_v2` application - Uses nRF Cloud for A-GPS or P-GPS or a combination of both. The application obtains GNSS fixes and transmits them to nRF Cloud along with sensor data.
-* :ref:`serial_lte_modem` application - Uses AT commands to start and stop GNSS and has support for nRF Cloud A-GPS and P-GPS. The application displays tracking and GNSS fix information in the serial console.
-* :ref:`gnss_sample` sample - Does not use assistance by default but can be configured to use nRF Cloud A-GPS or P-GPS or a combination of both. The sample displays tracking and fix information as well as NMEA strings in the serial console.
+* The :ref:`asset_tracker_v2` application uses nRF Cloud for A-GNSS, P-GPS, or a combination of both.
+  The application obtains GNSS fixes and transmits them to nRF Cloud along with sensor data.
+* The :ref:`serial_lte_modem` application uses AT commands to start and stop GNSS and supports nRF Cloud A-GNSS and P-GPS.
+  The application displays tracking and GNSS fix information in the serial console.
+* The :ref:`gnss_sample` sample does not use assistance by default but can be configured to use nRF Cloud A-GNSS, P-GPS, or a combination of both.
+  The sample displays tracking and fix information as well as NMEA strings in the serial console.
 
 .. _nrf9160_gps_lte:
 
