@@ -16,6 +16,23 @@ LOG_MODULE_REGISTER(bt_mgmt_scan, CONFIG_BT_MGMT_SCAN_LOG_LEVEL);
 
 static char srch_name[BLE_SEARCH_NAME_MAX_LEN];
 
+static void addr_print(void)
+{
+	int ret;
+	char addr_str[BT_ADDR_LE_STR_LEN];
+	static struct bt_le_oob _oob = {.addr = 0};
+
+	/* This call will create a new RPA if CONFIG_BT_PRIVACY is enabled */
+	ret = bt_le_oob_get_local(BT_ID_DEFAULT, &_oob);
+	if (ret) {
+		LOG_ERR("bt_le_oob_get_local failed");
+		return;
+	}
+
+	(void)bt_addr_le_to_str(&_oob.addr, addr_str, BT_ADDR_LE_STR_LEN);
+	LOG_INF("Local addr: %s. May time out. Updates not printed", addr_str);
+}
+
 int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan_type type,
 		       char const *const name)
 {
@@ -57,6 +74,12 @@ int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan
 	if (ret) {
 		return ret;
 	}
+
+	/* As the scanning is started before addr_print, and due to host API limitations,
+	 * this call will create a new RPA if CONFIG_BT_PRIVACY is enabled:
+	 * There is a possibility that a device may connect using the previous RPA.
+	 */
+	addr_print();
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Scanning successfully started");

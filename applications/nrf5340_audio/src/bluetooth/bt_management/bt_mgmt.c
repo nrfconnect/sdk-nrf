@@ -44,8 +44,6 @@ ZBUS_CHAN_DEFINE(bt_mgmt_chan, struct bt_mgmt_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 
 K_SEM_DEFINE(sem_bt_enabled, 0, 1);
 
-static struct bt_le_oob _oob = {.addr = 0};
-
 /**
  * @brief	Iterative function used to find connected conns
  *
@@ -246,23 +244,6 @@ static int bonding_clear_check(void)
 	return 0;
 }
 
-static void mac_print(void)
-{
-	int ret;
-	char dev[BT_ADDR_LE_STR_LEN];
-
-	/* This call will create a new RPA */
-	ret = bt_le_oob_get_local(BT_ID_DEFAULT, &_oob);
-	ERR_CHK(ret);
-
-	(void)bt_addr_le_to_str(&_oob.addr, dev, BT_ADDR_LE_STR_LEN);
-	if (IS_ENABLED(CONFIG_BT_PRIVACY)) {
-		LOG_INF("MAC: %s - Valid until next RPA timeout", dev);
-	} else {
-		LOG_INF("MAC: %s", dev);
-	}
-}
-
 static int random_static_addr_cfg(void)
 {
 	int ret;
@@ -295,6 +276,29 @@ static int random_static_addr_cfg(void)
 	 * FICR), then a random address is created
 	 */
 	LOG_WRN("Unable to read from FICR");
+
+	return 0;
+}
+
+static int local_identity_addr_print(void)
+{
+	size_t num_ids;
+	bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
+	char addr_str[BT_ADDR_LE_STR_LEN];
+
+	bt_id_get(NULL, &num_ids);
+	if (num_ids != CONFIG_BT_ID_MAX) {
+		LOG_ERR("The default config supports %d ids, but %d was found", CONFIG_BT_ID_MAX,
+			num_ids);
+		return -ENOMEM;
+	}
+
+	bt_id_get(addrs, &num_ids);
+
+	for (int i = 0; i < num_ids; i++) {
+		(void)bt_addr_le_to_str(&(addrs[i]), addr_str, BT_ADDR_LE_STR_LEN);
+		LOG_INF("Local identity addr: %s", addr_str);
+	}
 
 	return 0;
 }
@@ -408,7 +412,10 @@ int bt_mgmt_init(void)
 		return ret;
 	}
 
-	mac_print();
+	ret = local_identity_addr_print();
+	if (ret) {
+		return ret;
+	}
 
 	if (IS_ENABLED(CONFIG_BT_CONN)) {
 		bt_conn_cb_register(&conn_callbacks);
