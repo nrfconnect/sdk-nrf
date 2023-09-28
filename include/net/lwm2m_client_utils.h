@@ -360,7 +360,6 @@ void lwm2m_utils_disable_conneval(void);
 /**
  * @brief Start connection pre-evaluation.
  *
- * This function should be called from an event handler registered to lwm2m_rd_client_start().
  * This evaluation may block or alter the ongoing event to prevent LwM2M engine from initiating
  * transfers when network conditions are poor.
  *
@@ -370,6 +369,18 @@ void lwm2m_utils_disable_conneval(void);
  * @return Zero if success, negative error code otherwise.
  */
 int lwm2m_utils_conneval(struct lwm2m_ctx *client, enum lwm2m_rd_client_event *client_event);
+
+/**
+ * @brief LwM2M utils connection event handler.
+ *
+ * This function should be called from an event handler registered to lwm2m_rd_client_start()
+ * before normal event handler part.
+ *
+ * @param client client A pointer to LwM2M context.
+ * @param client_event A pointer to LwM2M RD client events.
+ */
+void lwm2m_utils_connection_manage(struct lwm2m_ctx *client,
+				      enum lwm2m_rd_client_event *client_event);
 
 /* Advanced firmare object support */
 uint8_t lwm2m_adv_firmware_get_update_state(uint16_t obj_inst_id);
