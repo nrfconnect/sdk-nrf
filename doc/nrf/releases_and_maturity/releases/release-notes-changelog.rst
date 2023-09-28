@@ -834,6 +834,8 @@ Libraries for networking
     * Advanced LwM2M FOTA support for an external MCU with DFU SMP target.
     * FOTA download Utils API integrated to the library.
     * A new LwM2M modem firmware callback event type :c:member:`LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ` to request re-connection after modem firmware update.
+    * A Kconfig option :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CON_MANAGEMENT` for saving and loading the DTLS socket state.
+      Saving the session will free memory in the modem, which makes memory available for other connections.
 
   * Updated Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than -126 dBm.
 
