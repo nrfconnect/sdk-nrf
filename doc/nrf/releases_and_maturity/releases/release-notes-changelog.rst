@@ -459,6 +459,7 @@ Cellular samples (renamed from nRF9160 samples)
 
     * An overlay for using DTLS Connection Identifier.
       This significantly reduces the DTLS handshake overhead when doing the LwM2M Update operation.
+    * Support for saving and loading a modem DTLS session with a connection identifier.
     * Support for Hosting MCUmgr client for external MCU.
       An new overlay file for enabling this and devicetree overlay files for UART2 and MCUboot recovery mode.
     * An overlay for enabling proprietary Power Saving Mode (PSM).
