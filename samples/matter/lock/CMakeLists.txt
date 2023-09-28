@@ -58,6 +58,7 @@ if(CONFIG_CHIP_NUS)
 endif()
 
 if(CONFIG_MCUMGR_TRANSPORT_BT)
+    zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
 endif()
 
