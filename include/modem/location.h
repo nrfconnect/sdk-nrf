@@ -465,6 +465,11 @@ struct location_config {
 	 * Default value is 300000 (5 minutes). It is applied when
 	 * @ref location_config_defaults_set function is called and can be changed
 	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT configuration.
+	 *
+	 * This is intended to be a safety timer preventing location request from getting stuck
+	 * in any of its phases, because parts of the method-specific functionality are not
+	 * covered by method-specific timeouts. You should use a rather large value that
+	 * can be one minute or more larger than the sum of method-specific timeouts.
 	 */
 	int32_t timeout;
 
