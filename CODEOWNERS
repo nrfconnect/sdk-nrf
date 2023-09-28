@@ -77,6 +77,7 @@ Kconfig*                                  @tejlmand
 /drivers/wifi/nrf700x/osal/hw_if/hal/inc/fw/  @udaynordic @srkanordic
 /dts/                                     @anangl
 /ext/                                     @carlescufi
+/ext/oberon/                              @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /include/                                 @anangl @rlubos
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
 /include/net/wifi_credentials.h           @maxd-nordic
