@@ -108,7 +108,10 @@ static void ncell_meas_mon(const char *notify)
 	nrfcloud_ncellmeas_done = false;
 	at_params_list_clear(&slm_at_param_list);
 	err = at_parser_params_from_str(notify, NULL, &slm_at_param_list);
-	if (err) {
+	if (err == -E2BIG) {
+		LOG_WRN("%%NCELLMEAS result notification truncated"
+			" because its parameter count exceeds CONFIG_SLM_AT_MAX_PARAM.");
+	} else if (err) {
 		goto exit;
 	}
 
