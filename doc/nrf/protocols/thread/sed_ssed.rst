@@ -8,6 +8,8 @@ Unlike Full Thread Devices (FTDs), MTDs do not maintain a routing table and are 
 
 For more information, see the :ref:`thread_types_mtd` section in the :ref:`thread_device_types` documentation.
 
+The SEDs and SSEDs are often used as one of the measures to :ref:`optimize power consumption <app_power_opt>`.
+
 Sleepy End Device
 *****************
 

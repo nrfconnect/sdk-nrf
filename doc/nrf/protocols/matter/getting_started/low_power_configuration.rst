@@ -1,7 +1,7 @@
 .. _ug_matter_device_low_power_configuration:
 
-Reducing power consumption in Matter applications
-#################################################
+Reducing power consumption in Matter
+####################################
 
 .. contents::
    :local:
@@ -152,28 +152,18 @@ To disable the serial logging and the UART peripheral, complete the following st
 Disable unused pins and peripherals
 ***********************************
 
-Some of the pins and peripherals are enabled by default for some boards.
-Depending on the peripheral or the pin type, they can increase the device power consumption to a different extent.
-If the application does not use them, make sure they are disabled.
-
-To disable a particular peripheral, set its state in the board's :file:`dts` overlay to ``disabled``.
-For example, for **ADC**:
-
-.. code-block:: devicetree
-
-    &adc {
-        status = "disabled";
-    };
+.. include:: /test_and_optimize/optimizing/power_general.rst
+   :start-after: disable_unused_pins_start
+   :end-before: disable_unused_pins_end
 
 .. _ug_matter_enable_pm_module:
 
 Enable Device Power Management module
 *************************************
 
-The Device Power Management module provides an interface that the device drivers use to be informed about entering the suspend state or resuming from the suspend state.
-This allows the device drivers to do any necessary power management operations, such as turning off device clocks and peripherals, which lowers the power consumption.
-
-To enable suspending peripherals when CPU goes to sleep, set the :kconfig:option:`CONFIG_PM_DEVICE` Kconfig option to ``y``.
+.. include:: /test_and_optimize/optimizing/power_general.rst
+   :start-after: enable_device_pm_start
+   :end-before: enable_device_pm_end
 
 Put the external flash into sleep mode in inactivity periods
 ************************************************************
@@ -205,8 +195,8 @@ For example, to control the QSPI NOR external flash, you can use the following i
 Configure radio transmitter power
 *********************************
 
-The radio transmitter power (radio TX power) has a significant impact on the device power consumption.
-The higher the transmitting power, the greater the wireless communication range, which leads to higher power consumption.
-Make sure to choose the optimal configuration for your specific use case.
+.. include:: /test_and_optimize/optimizing/power_general.rst
+   :start-after: radio_power_start
+   :end-before: radio_power_end
 
 See :ref:`ug_matter_gs_transmission_power` for more information.
