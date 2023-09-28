@@ -393,16 +393,13 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 {
 	k_mutex_lock(&lte_mutex, K_FOREVER);
 
-	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LTE_CONNEVAL)) {
-		lwm2m_utils_conneval(client, &client_event);
-	}
-
-	if (client_state == LTE_OFFLINE &&
-	    client_event != LWM2M_RD_CLIENT_EVENT_ENGINE_SUSPENDED) {
+	if (client_state == LTE_OFFLINE && client_event != LWM2M_RD_CLIENT_EVENT_ENGINE_SUSPENDED) {
 		LOG_DBG("Drop network event %d at LTE offline state", client_event);
 		k_mutex_unlock(&lte_mutex);
 		return;
 	}
+
+	lwm2m_utils_connection_manage(client, &client_event);
 
 	switch (client_event) {
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER:
@@ -454,8 +451,11 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
 		LOG_DBG("Deregister failure!");
-		reconnect = true;
-		state_trigger_and_unlock(NETWORK_ERROR);
+		if (client_state != UPDATE_FIRMWARE) {
+			state_set_and_unlock(START);
+		} else {
+			k_mutex_unlock(&lte_mutex);
+		}
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
@@ -469,9 +469,6 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
 		LOG_DBG("Queue mode RX window closed");
-		if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
-			lwm2m_rai_last();
-		}
 		k_mutex_unlock(&lte_mutex);
 		break;
 
