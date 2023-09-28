@@ -115,8 +115,8 @@ static int teardown_twt(void)
 	ret = net_mgmt(NET_REQUEST_WIFI_TWT, iface, &params, sizeof(params));
 	if (ret) {
 		LOG_ERR("%s with %s failed, reason : %s",
-			wifi_twt_operation2str[params.operation],
-			wifi_twt_negotiation_type2str[params.negotiation_type],
+			wifi_twt_operation_txt(params.operation),
+			wifi_twt_negotiation_type_txt(params.negotiation_type),
 			wifi_twt_get_err_code_str(params.fail_reason));
 		return ret;
 	}
@@ -221,7 +221,7 @@ static void print_twt_params(uint8_t dialog_token, uint8_t flow_id,
 	LOG_INF("TWT flow ID: %d",
 	      flow_id);
 	LOG_INF("TWT negotiation type: %s",
-	      wifi_twt_negotiation_type2str[negotiation_type]);
+	      wifi_twt_negotiation_type_txt(negotiation_type));
 	LOG_INF("TWT responder: %s",
 	       responder ? "true" : "false");
 	LOG_INF("TWT implicit: %s",
@@ -251,7 +251,7 @@ static void handle_wifi_twt_event(struct net_mgmt_event_callback *cb)
 	if (resp->resp_status == WIFI_TWT_RESP_RECEIVED) {
 		twt_resp_received = 1;
 		LOG_INF("TWT response: %s",
-		      wifi_twt_setup_cmd2str[resp->setup_cmd]);
+		      wifi_twt_setup_cmd_txt(resp->setup_cmd));
 		LOG_INF("== TWT negotiated parameters ==");
 		print_twt_params(resp->dialog_token,
 				 resp->flow_id,
