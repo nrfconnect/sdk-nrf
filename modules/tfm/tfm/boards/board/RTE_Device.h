@@ -8,44 +8,45 @@
 #define __RTE_DEVICE_H
 
 #include <autoconf.h>
+/* ARRAY_SIZE causes a conflict as it is defined both by TF-M and indirectly by devicetree.h */
+#undef ARRAY_SIZE
+#include <zephyr/devicetree.h>
+#include <nrf-pinctrl.h>
+
+#define UART_PIN_INIT(node_id, prop, idx) \
+	DT_PROP_BY_IDX(node_id, prop, idx),
 
 /* Configuration settings for Driver_USART0. */
 #if defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U
 
-#define   RTE_USART0                    1
-/* Pin Selection (0xFFFFFFFF means Disconnected) */
-#define   RTE_USART0_TXD_PIN            CONFIG_TFM_UART0_TXD_PIN
-#define   RTE_USART0_RXD_PIN            CONFIG_TFM_UART0_RXD_PIN
-#define   RTE_USART0_RTS_PIN            CONFIG_TFM_UART0_RTS_PIN
-#define   RTE_USART0_CTS_PIN            CONFIG_TFM_UART0_CTS_PIN
+#define RTE_USART0 1
 
-#if defined(CONFIG_TFM_UART0_HWFC_ENABLED)
-#define   RTE_USART0_HWFC               NRF_UARTE_HWFC_ENABLED
-#else
-#define   RTE_USART0_HWFC               NRF_UARTE_HWFC_DISABLED
-#endif
+#define RTE_USART0_PINS \
+{ \
+	DT_FOREACH_CHILD_VARGS( \
+		DT_PINCTRL_BY_NAME(DT_NODELABEL(uart0), default, 0), \
+		DT_FOREACH_PROP_ELEM, psels, UART_PIN_INIT \
+	) \
+}
 
 #endif /* defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U */
 
 /* Configuration settings for Driver_USART1. */
-#if defined(CONFIG_TFM_SECURE_UART1)
+#if defined(CONFIG_TFM_SECURE_UART1) && DOMAIN_NS != 1U
 
-#define   RTE_USART1                    1
-/* Pin Selection (0xFFFFFFFF means Disconnected) */
-#define   RTE_USART1_TXD_PIN            CONFIG_TFM_UART1_TXD_PIN
-#define   RTE_USART1_RXD_PIN            CONFIG_TFM_UART1_RXD_PIN
-#define   RTE_USART1_RTS_PIN            CONFIG_TFM_UART1_RTS_PIN
-#define   RTE_USART1_CTS_PIN            CONFIG_TFM_UART1_CTS_PIN
+#define RTE_USART1 1
 
-#if defined(CONFIG_TFM_UART1_HWFC_ENABLED)
-#define   RTE_USART1_HWFC               NRF_UARTE_HWFC_ENABLED
-#else
-#define   RTE_USART1_HWFC               NRF_UARTE_HWFC_DISABLED
-#endif
+#define RTE_USART1_PINS \
+{ \
+	DT_FOREACH_CHILD_VARGS( \
+		DT_PINCTRL_BY_NAME(DT_NODELABEL(uart1), default, 0), \
+		DT_FOREACH_PROP_ELEM, psels, UART_PIN_INIT \
+	) \
+}
 
 #endif /* defined(CONFIG_TFM_SECURE_UART1) */
 
 /* Configuration settings for Driver_FLASH0. */
-#define   RTE_FLASH0                    1
+#define RTE_FLASH0 1
 
 #endif  /* __RTE_DEVICE_H */
