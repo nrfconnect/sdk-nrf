@@ -70,7 +70,7 @@ static atomic_val_t send_data_enable;
 static struct k_work_delayable leds_update_work;
 static struct k_work_delayable connect_work;
 struct k_work_delayable aggregated_work;
-static struct k_work agps_request_work;
+static struct k_work agnss_request_work;
 
 static struct nrf_modem_gnss_pvt_data_frame last_pvt;
 static bool nrf_modem_gnss_fix;
@@ -161,23 +161,23 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 	error_handler(ERROR_MODEM_RECOVERABLE, (int)fault_info->reason);
 }
 
-/**@brief Request assisted GPS data from nRF Cloud. */
-static void agps_request(struct k_work *work)
+/**@brief Request assisted GNSS data from nRF Cloud. */
+static void agnss_request(struct k_work *work)
 {
 	int retval;
-	struct nrf_modem_gnss_agnss_data_frame agps_data;
+	struct nrf_modem_gnss_agnss_data_frame agnss_data;
 
 	if (!nrf_cloud_agps_request_in_progress()) {
-		retval = nrf_modem_gnss_read(&agps_data, sizeof(agps_data),
+		retval = nrf_modem_gnss_read(&agnss_data, sizeof(agnss_data),
 					     NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 		if (retval) {
-			LOG_ERR("Failed to read AGPS data, err %d", retval);
+			LOG_ERR("Failed to read A-GNSS data request, err %d", retval);
 			return;
 		}
 
-		retval = nrf_cloud_agps_request(&agps_data);
+		retval = nrf_cloud_agps_request(&agnss_data);
 		if (retval) {
-			LOG_ERR("Failed to request AGPS data, err %d", retval);
+			LOG_ERR("Failed to request A-GNSS data, err %d", retval);
 			return;
 		}
 	}
@@ -224,8 +224,8 @@ static void gnss_event_handler(int event)
 		return;
 
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
-		LOG_INF("Requesting AGPS Data");
-		k_work_submit(&agps_request_work);
+		LOG_INF("Requesting A-GNSS Data");
+		k_work_submit(&agnss_request_work);
 		return;
 	case NRF_MODEM_GNSS_EVT_BLOCKED:
 		LOG_DBG("NRF_MODEM_GNSS_EVT_BLOCKED");
@@ -468,7 +468,7 @@ static void button_handler(uint32_t buttons, uint32_t has_changed)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
-	k_work_init(&agps_request_work, agps_request);
+	k_work_init(&agnss_request_work, agnss_request);
 	k_work_init_delayable(&leds_update_work, leds_update);
 	k_work_init_delayable(&connect_work, cloud_connect);
 	k_work_init_delayable(&aggregated_work, send_aggregated_data);
