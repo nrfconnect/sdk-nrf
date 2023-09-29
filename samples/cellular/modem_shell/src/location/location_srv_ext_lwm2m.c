@@ -20,16 +20,16 @@
 #define GROUND_FIX_ACCURACY		4
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agnss_data_frame *agps_req)
+void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame *agnss_req)
 {
 	int err;
 
 	if (!cloud_lwm2m_is_connected()) {
-		mosh_error("LwM2M not connected, can't request A-GPS data");
+		mosh_error("LwM2M not connected, can't request A-GNSS data");
 		return;
 	}
 
-	location_assistance_agps_set_mask(agps_req);
+	location_assistance_agps_set_mask(agnss_req);
 
 	while ((err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get())) ==
 	       -EAGAIN) {
@@ -39,7 +39,7 @@ void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agnss_data_frame *
 		k_sleep(K_SECONDS(1));
 	}
 	if (err) {
-		mosh_error("Failed to request A-GPS data, err: %d", err);
+		mosh_error("Failed to request A-GNSS data, err: %d", err);
 	}
 }
 #endif /* CONFIG_NRF_CLOUD_AGPS */
@@ -65,7 +65,7 @@ void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)
 
 	while ((err = location_assistance_pgps_request_send(cloud_lwm2m_client_ctx_get())) ==
 	       -EAGAIN) {
-		/* LwM2M client utils library is currently handling an A-GPS data request, need to
+		/* LwM2M client utils library is currently handling an A-GNSS data request, need to
 		 * wait until it has been completed.
 		 */
 		k_sleep(K_SECONDS(1));

@@ -21,7 +21,7 @@
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agnss_data_frame *agps_req);
+void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame *agnss_req);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req);

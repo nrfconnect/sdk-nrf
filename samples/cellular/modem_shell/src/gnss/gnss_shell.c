@@ -13,7 +13,7 @@
 #include "mosh_print.h"
 #include "gnss.h"
 
-#define AGPS_CMD_LINE_INJECT_MAX_LENGTH MIN(3500, CONFIG_SHELL_CMD_BUFF_SIZE)
+#define AGNSS_CMD_LINE_INJECT_MAX_LENGTH MIN(3500, CONFIG_SHELL_CMD_BUFF_SIZE)
 
 static int print_help(const struct shell *shell, size_t argc, char **argv)
 {
@@ -333,48 +333,48 @@ static int cmd_gnss_priority_disable(const struct shell *shell, size_t argc, cha
 	return gnss_set_priority_time_windows(false) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_agps_automatic(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_automatic(const struct shell *shell, size_t argc, char **argv)
 {
 	return print_help(shell, argc, argv);
 }
 
-static int cmd_gnss_agps_automatic_enable(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_automatic_enable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_set_agps_automatic(true) == 0 ? 0 : -ENOEXEC;
+	return gnss_set_agnss_automatic(true) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_agps_automatic_disable(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_automatic_disable(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_set_agps_automatic(false) == 0 ? 0 : -ENOEXEC;
+	return gnss_set_agnss_automatic(false) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_agps_filtered(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
-static int cmd_gnss_agps_filtered_enable(const struct shell *shell, size_t argc, char **argv)
-{
-	return gnss_set_agps_filtered_ephemerides(true) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_agps_filtered_disable(const struct shell *shell, size_t argc, char **argv)
-{
-	return gnss_set_agps_filtered_ephemerides(false) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_agps(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_filtered(const struct shell *shell, size_t argc, char **argv)
 {
 	return print_help(shell, argc, argv);
 }
 
-static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_filtered_enable(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_agnss_filtered_ephemerides(true) == 0 ? 0 : -ENOEXEC;
+}
+
+static int cmd_gnss_agnss_filtered_disable(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_agnss_filtered_ephemerides(false) == 0 ? 0 : -ENOEXEC;
+}
+
+static int cmd_gnss_agnss(const struct shell *shell, size_t argc, char **argv)
+{
+	return print_help(shell, argc, argv);
+}
+
+static int cmd_gnss_agnss_inject(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
 
 	if (argc == 1) {
 		/* Fetch assistance data from nRF cloud or from SUPL server and inject */
-		if (gnss_inject_agps_data() != 0) {
+		if (gnss_inject_agnss_data() != 0) {
 			ret = -ENOEXEC;
 		}
 	} else if (argc == 2) {
@@ -382,8 +382,8 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 		size_t bin_array_length = 0;
 
-		if (strlen(argv[1]) <= AGPS_CMD_LINE_INJECT_MAX_LENGTH) {
-			char *buf = k_malloc(sizeof(char) * AGPS_CMD_LINE_INJECT_MAX_LENGTH);
+		if (strlen(argv[1]) <= AGNSS_CMD_LINE_INJECT_MAX_LENGTH) {
+			char *buf = k_malloc(sizeof(char) * AGNSS_CMD_LINE_INJECT_MAX_LENGTH);
 
 			if (buf == NULL) {
 				mosh_error("Cannot allocate memory for the assistance data");
@@ -392,7 +392,7 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 			bin_array_length = hex2bin(argv[1],
 						   strlen(argv[1]),
 						   buf,
-						   AGPS_CMD_LINE_INJECT_MAX_LENGTH);
+						   AGNSS_CMD_LINE_INJECT_MAX_LENGTH);
 
 			if (bin_array_length) {
 				mosh_print("Injecting %d bytes", bin_array_length);
@@ -407,24 +407,24 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 		} else {
 			mosh_error("Assistance data length %d exceeds the maximum length of %d",
 				   strlen(argv[1]),
-				   AGPS_CMD_LINE_INJECT_MAX_LENGTH);
+				   AGNSS_CMD_LINE_INJECT_MAX_LENGTH);
 			ret = -EINVAL;
 		}
 #else
 		mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS to enable the processing of "
-			   "A-GPS data");
+			   "A-GNSS data");
 		ret = -ENOEXEC;
 #endif
 	}
 	return ret;
 }
 
-static int cmd_gnss_agps_expiry(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_expiry(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_get_agps_expiry() == 0 ? 0 : -ENOEXEC;
+	return gnss_get_agnss_expiry() == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_agps_ref_altitude(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_ref_altitude(const struct shell *shell, size_t argc, char **argv)
 {
 	int altitude = 0;
 	struct nrf_modem_gnss_agnss_data_location location = { 0 };
@@ -477,7 +477,7 @@ static int cmd_gnss_pgps_enable(const struct shell *shell, size_t argc, char **a
 	return gnss_enable_pgps() == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_agps_filter(const struct shell *shell, size_t argc, char **argv)
+static int cmd_gnss_agnss_filter(const struct shell *shell, size_t argc, char **argv)
 {
 	bool ephe_enabled;
 	bool alm_enabled;
@@ -511,9 +511,9 @@ static int cmd_gnss_agps_filter(const struct shell *shell, size_t argc, char **a
 	pos_enabled = atoi(argv[7]) == 1 ? true : false;
 	int_enabled = atoi(argv[8]) == 1 ? true : false;
 
-	return gnss_set_agps_data_enabled(ephe_enabled, alm_enabled, utc_enabled,
-					  klob_enabled, neq_enabled, time_enabled,
-					  pos_enabled, int_enabled) == 0 ? 0 : -ENOEXEC;
+	return gnss_set_agnss_data_enabled(ephe_enabled, alm_enabled, utc_enabled,
+					   klob_enabled, neq_enabled, time_enabled,
+					   pos_enabled, int_enabled) == 0 ? 0 : -ENOEXEC;
 }
 
 static int cmd_gnss_1pps(const struct shell *shell, size_t argc, char **argv)
@@ -869,44 +869,44 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_gnss_agps_automatic,
-	SHELL_CMD_ARG(enable, NULL, "Enable automatic fetching of AGPS data.",
-		      cmd_gnss_agps_automatic_enable, 1, 0),
-	SHELL_CMD_ARG(disable, NULL, "Disable automatic fetching of AGPS data (default).",
-		      cmd_gnss_agps_automatic_disable, 1, 0),
+	sub_gnss_agnss_automatic,
+	SHELL_CMD_ARG(enable, NULL, "Enable automatic fetching of A-GNSS data.",
+		      cmd_gnss_agnss_automatic_enable, 1, 0),
+	SHELL_CMD_ARG(disable, NULL, "Disable automatic fetching of A-GNSS data (default).",
+		      cmd_gnss_agnss_automatic_disable, 1, 0),
 	SHELL_SUBCMD_SET_END
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_gnss_agps_filtered,
-	SHELL_CMD_ARG(enable, NULL, "Enable AGPS filtered ephemerides.",
-		      cmd_gnss_agps_filtered_enable, 1, 0),
-	SHELL_CMD_ARG(disable, NULL, "Disable AGPS filtered ephemerides (default).",
-		      cmd_gnss_agps_filtered_disable, 1, 0),
+	sub_gnss_agnss_filtered,
+	SHELL_CMD_ARG(enable, NULL, "Enable A-GNSS filtered ephemerides.",
+		      cmd_gnss_agnss_filtered_enable, 1, 0),
+	SHELL_CMD_ARG(disable, NULL, "Disable A-GNSS filtered ephemerides (default).",
+		      cmd_gnss_agnss_filtered_disable, 1, 0),
 	SHELL_SUBCMD_SET_END
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_gnss_agps,
-	SHELL_CMD(automatic, &sub_gnss_agps_automatic,
-		  "Enable/disable automatic fetching of AGPS data.", cmd_gnss_agps_automatic),
-	SHELL_CMD_ARG(inject, NULL, "[assistance_data]\nFetch and inject AGPS data to GNSS. "
+	sub_gnss_agnss,
+	SHELL_CMD(automatic, &sub_gnss_agnss_automatic,
+		  "Enable/disable automatic fetching of A-GNSS data.", cmd_gnss_agnss_automatic),
+	SHELL_CMD_ARG(inject, NULL, "[assistance_data]\nFetch and inject A-GNSS data to GNSS. "
 				    "Assistance data can be provided on command line in "
 				    "hexadecimal format without spaces. If <assistance_data> is "
 				    "left empty, the data is fetched from either nRF cloud or SUPL "
 				    "server.",
-		      cmd_gnss_agps_inject, 1, 1),
+		      cmd_gnss_agnss_inject, 1, 1),
 	SHELL_CMD(filter, NULL,
 		  "<ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity>\nSet filter for "
-		  "allowed AGPS data. 0 = disabled, 1 = enabled (default all enabled).",
-		  cmd_gnss_agps_filter),
-	SHELL_CMD(filtephem, &sub_gnss_agps_filtered,
-		  "Enable/disable AGPS filtered ephemerides.", cmd_gnss_agps_filtered),
-	SHELL_CMD_ARG(expiry, NULL, "Query A-GPS data expiry information from GNSS.",
-		      cmd_gnss_agps_expiry, 1, 0),
+		  "allowed A-GNSS data. 0 = disabled, 1 = enabled (default all enabled).",
+		  cmd_gnss_agnss_filter),
+	SHELL_CMD(filtephem, &sub_gnss_agnss_filtered,
+		  "Enable/disable A-GNSS filtered ephemerides.", cmd_gnss_agnss_filtered),
+	SHELL_CMD_ARG(expiry, NULL, "Query A-GNSS data expiry information from GNSS.",
+		      cmd_gnss_agnss_expiry, 1, 0),
 	SHELL_CMD(ref_altitude, NULL, "Reference altitude for 3-sat fix in meters with regard to "
 				      "the reference ellipsoid surface.",
-		  cmd_gnss_agps_ref_altitude),
+		  cmd_gnss_agnss_ref_altitude),
 	SHELL_SUBCMD_SET_END
 );
 
@@ -938,7 +938,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD(config, &sub_gnss_config, "Set GNSS configuration.", cmd_gnss_config),
 	SHELL_CMD(priority, &sub_gnss_priority, "Enable/disable priority time window requests.",
 		  cmd_gnss_priority),
-	SHELL_CMD(agps, &sub_gnss_agps, "A-GPS configuration and commands.", cmd_gnss_agps),
+	SHELL_CMD(agnss, &sub_gnss_agnss, "A-GNSS configuration and commands.", cmd_gnss_agnss),
 	SHELL_CMD(pgps, &sub_gnss_pgps, "P-GPS commands.", cmd_gnss_pgps),
 	SHELL_CMD(1pps, &sub_gnss_1pps, "1PPS control.", cmd_gnss_1pps),
 	SHELL_CMD(output, NULL, "<pvt level> <nmea level> <event level>\nSet output levels.",
