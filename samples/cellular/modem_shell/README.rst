@@ -566,13 +566,13 @@ Examples
      gnss config powersave perf
      gnss start
 
-* Enable LTE PSM, only NMEA output, automatic A-GPS data fetching and start periodic fixes with 5 minute interval and 120 second timeout:
+* Enable LTE PSM, only NMEA output, automatic A-GNSS data fetching and start periodic fixes with 5 minute interval and 120 second timeout:
 
   .. code-block:: console
 
      link psm -e
      gnss output 0 1 0
-     gnss agps automatic enable
+     gnss agnss automatic enable
      gnss mode periodic 300 120
      gnss start
 

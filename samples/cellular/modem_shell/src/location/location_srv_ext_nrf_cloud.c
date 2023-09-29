@@ -20,17 +20,17 @@ static struct location_data nrf_cloud_location;
 static K_SEM_DEFINE(location_ready, 0, 1);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-void location_srv_ext_agps_handle(const struct nrf_modem_gnss_agnss_data_frame *agps_req)
+void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame *agnss_req)
 {
 	int err;
 
-	err = nrf_cloud_agps_request(agps_req);
+	err = nrf_cloud_agps_request(agnss_req);
 	if (err) {
-		mosh_error("nRF Cloud A-GPS request failed, error: %d", err);
+		mosh_error("nRF Cloud A-GNSS request failed, error: %d", err);
 		return;
 	}
 
-	mosh_print("A-GPS data requested");
+	mosh_print("A-GNSS data requested");
 }
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 
