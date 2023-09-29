@@ -71,7 +71,7 @@ static void location_event_handler(const struct location_event_data *event_data)
 		break;
 
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
-		printk("Getting location assistance requested (A-GPS). Not doing anything.\n\n");
+		printk("Getting location assistance requested (A-GNSS). Not doing anything.\n\n");
 		break;
 
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
@@ -265,7 +265,7 @@ int main(void)
 
 	k_sem_take(&lte_connected, K_FOREVER);
 
-	/* A-GPS/P-GPS needs to know the current time. */
+	/* A-GNSS/P-GPS needs to know the current time. */
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		printk("Waiting for current time\n");
 
