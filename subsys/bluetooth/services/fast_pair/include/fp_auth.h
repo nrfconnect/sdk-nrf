@@ -49,7 +49,7 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req);
  *
  * @param[in] conn		Pointer to Bluetooth connection (determines Fast Pair Seeker).
  * @param[in] gatt_passkey	Value providing passkey received over GATT.
- * @param[out] bt_aut_passkey	Pointer to value used to store Bluetooth authentication passkey.
+ * @param[out] bt_auth_passkey	Pointer to value used to store Bluetooth authentication passkey.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
