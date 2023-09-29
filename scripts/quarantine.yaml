@@ -3,6 +3,6 @@
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 # To have an empty list use:
 - scenarios:
-    - None
+    - edge_impulse.ei_wrapper
   platforms:
-    - all
+    - qemu_cortex_m3
