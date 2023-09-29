@@ -354,7 +354,7 @@ The following key features of this sample may be independently disabled:
 * Cellular-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>` option to disabled.
 * Wi-Fi-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_WIFI <CONFIG_LOCATION_TRACKING_WIFI>` option to disabled.
 * Temperature tracking - by setting the :ref:`CONFIG_TEMP_TRACKING <CONFIG_TEMP_TRACKING>` option to disabled.
-* GNSS assistance (A-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` option to disabled.
+* GNSS assistance (A-GNSS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` option to disabled.
 * Predictive GNSS assistance (P-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` option to disabled.
 * FOTA when using MQTT - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option to disabled.
 * FOTA when using CoAP - by setting the :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>` option to disabled.
@@ -417,7 +417,7 @@ Useful debugging options
 
 To see all debug output for this sample, enable the :ref:`CONFIG_MULTI_SERVICE_LOG_LEVEL_DBG <CONFIG_MULTI_SERVICE_LOG_LEVEL_DBG>` option.
 
-To monitor the GNSS module (for instance, to see whether A-GPS or P-GPS assistance data is being consumed), enable the :kconfig:option:`CONFIG_NRF_CLOUD_GPS_LOG_LEVEL_DBG` option.
+To monitor the GNSS module (for instance, to see whether A-GNSS or P-GPS assistance data is being consumed), enable the :kconfig:option:`CONFIG_NRF_CLOUD_GPS_LOG_LEVEL_DBG` option.
 
 See also the :ref:`nrf_cloud_multi_service_test_counter`.
 
@@ -680,7 +680,7 @@ CONFIG_SENSOR_SAMPLE_INTERVAL_SECONDS - Sensor sampling interval (seconds)
    This is because GNSS can operate only when the LTE connection is not active.
    Every time a sensor sample is sent, it interrupts any attempted GNSS fix.
    The exact time required to obtain a GNSS fix will vary depending on satellite visibility, time since last fix, the type of antenna used, and other environmental factors.
-   In good conditions, and with A-GPS data, one minute is a reasonable interval for reliably getting a location estimate.
+   In good conditions, and with A-GNSS data, one minute is a reasonable interval for reliably getting a location estimate.
    This allows using long enough value for :ref:`CONFIG_GNSS_FIX_TIMEOUT_SECONDS <CONFIG_GNSS_FIX_TIMEOUT_SECONDS>`, while still leaving enough time for falling back to cellular positioning if needed.
 
    The default sensor sampling interval, 60 seconds, will quickly consume cellular data, and should not be used in a production environment.
