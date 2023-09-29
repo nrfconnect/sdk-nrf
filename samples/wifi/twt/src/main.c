@@ -56,6 +56,7 @@ static struct {
 } context;
 
 static bool twt_supported, twt_resp_received;
+static uint32_t twt_flow_id = 1;
 
 static bool wait_for_twt_resp_received(void)
 {
@@ -77,11 +78,12 @@ static int setup_twt(void)
 	struct wifi_twt_params params = { 0 };
 	int ret;
 
+	twt_flow_id = 1;
 	params.operation = WIFI_TWT_SETUP;
 	params.negotiation_type = WIFI_TWT_INDIVIDUAL;
 	params.setup_cmd = WIFI_TWT_SETUP_CMD_REQUEST;
 	params.dialog_token = 1;
-	params.flow_id = 1;
+	params.flow_id = twt_flow_id;
 	params.setup.responder = 0;
 	params.setup.trigger = IS_ENABLED(CONFIG_TWT_TRIGGER_ENABLE);
 	params.setup.implicit = 1;
@@ -110,7 +112,7 @@ static int teardown_twt(void)
 	params.negotiation_type = WIFI_TWT_INDIVIDUAL;
 	params.setup_cmd = WIFI_TWT_TEARDOWN;
 	params.dialog_token = 1;
-	params.flow_id = 1;
+	params.flow_id = twt_flow_id;
 
 	ret = net_mgmt(NET_REQUEST_WIFI_TWT, iface, &params, sizeof(params));
 	if (ret) {
@@ -249,9 +251,12 @@ static void handle_wifi_twt_event(struct net_mgmt_event_callback *cb)
 	}
 
 	if (resp->resp_status == WIFI_TWT_RESP_RECEIVED) {
-		twt_resp_received = 1;
 		LOG_INF("TWT response: %s",
 		      wifi_twt_setup_cmd_txt(resp->setup_cmd));
+
+		twt_resp_received = true;
+		twt_flow_id = resp->flow_id;
+
 		LOG_INF("== TWT negotiated parameters ==");
 		print_twt_params(resp->dialog_token,
 				 resp->flow_id,
