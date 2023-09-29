@@ -306,12 +306,12 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
 		mosh_print(
-			"A-GPS request from Location library "
+			"A-GNSS request from Location library "
 			"(ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
 			(uint32_t)event_data->agps_request.system[0].sv_mask_ephe,
 			(uint32_t)event_data->agps_request.system[0].sv_mask_alm,
 			event_data->agps_request.data_flags);
-		location_srv_ext_agps_handle(&event_data->agps_request);
+		location_srv_ext_agnss_handle(&event_data->agps_request);
 		break;
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
