@@ -10,12 +10,12 @@
 #include "location_events.h"
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-static void log_gnss_agps_request_event(const struct app_event_header *eh)
+static void log_gnss_agnss_request_event(const struct app_event_header *eh)
 {
-	APP_EVENT_MANAGER_LOG(eh, "got agps request event");
+	APP_EVENT_MANAGER_LOG(eh, "got agnss request event");
 }
 
-APP_EVENT_TYPE_DEFINE(gnss_agps_request_event, log_gnss_agps_request_event, NULL,
+APP_EVENT_TYPE_DEFINE(gnss_agnss_request_event, log_gnss_agnss_request_event, NULL,
 		      APP_EVENT_FLAGS_CREATE());
 
 #endif

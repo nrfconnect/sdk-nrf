@@ -12,13 +12,13 @@
 #include <app_event_manager_profiler_tracer.h>
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-struct gnss_agps_request_event {
+struct gnss_agnss_request_event {
 	struct app_event_header header;
 
-	struct nrf_modem_gnss_agnss_data_frame agps_req;
+	struct nrf_modem_gnss_agnss_data_frame agnss_req;
 };
 
-APP_EVENT_TYPE_DECLARE(gnss_agps_request_event);
+APP_EVENT_TYPE_DECLARE(gnss_agnss_request_event);
 
 #endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS */
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
