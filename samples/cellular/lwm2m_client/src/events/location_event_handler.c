@@ -14,20 +14,12 @@
 
 static struct lwm2m_ctx *client_ctx;
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
-#define CELL_LOCATION_PATHS 7
-#else
-#define CELL_LOCATION_PATHS 6
-#endif
-
-#define AGPS_LOCATION_PATHS 7
-
 #define REQUEST_WAIT_INTERVAL K_SECONDS(5)
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-static bool handle_agps_request(const struct gnss_agps_request_event *event)
+static bool handle_agnss_request(const struct gnss_agnss_request_event *event)
 {
-	while (location_assistance_agps_set_mask(&event->agps_req) == -EAGAIN) {
+	while (location_assistance_agps_set_mask(&event->agnss_req) == -EAGAIN) {
 		k_sleep(REQUEST_WAIT_INTERVAL);
 	}
 	while (location_assistance_agps_request_send(client_ctx) == -EAGAIN) {
@@ -64,10 +56,10 @@ static bool event_handler(const struct app_event_header *eh)
 		return false;
 	}
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-	if (is_gnss_agps_request_event(eh)) {
-		struct gnss_agps_request_event *event = cast_gnss_agps_request_event(eh);
+	if (is_gnss_agnss_request_event(eh)) {
+		struct gnss_agnss_request_event *event = cast_gnss_agnss_request_event(eh);
 
-		handle_agps_request(event);
+		handle_agnss_request(event);
 		return true;
 	}
 #endif
@@ -92,7 +84,7 @@ static bool event_handler(const struct app_event_header *eh)
 
 APP_EVENT_LISTENER(location_handler, event_handler);
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-APP_EVENT_SUBSCRIBE(location_handler, gnss_agps_request_event);
+APP_EVENT_SUBSCRIBE(location_handler, gnss_agnss_request_event);
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)
 APP_EVENT_SUBSCRIBE(location_handler, ground_fix_location_request_event);
