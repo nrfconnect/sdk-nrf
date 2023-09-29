@@ -177,6 +177,9 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
 		notify = true;
 		break;
+	case LWM2M_RD_CLIENT_EVENT_DEREGISTER:
+		LOG_DBG("LWM2M_RD_CLIENT_EVENT_DEREGISTER");
+		break;
 	default:
 		LOG_ERR("Unknown event: %d", client_event);
 		break;
