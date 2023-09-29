@@ -122,7 +122,7 @@ defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 			LOG_INF("Starting GNSS");
 			start_gnss();
 #else
-			LOG_INF("A-GPS not enabled");
+			LOG_INF("A-GNSS not enabled");
 #endif
 			break;
 		case 2:

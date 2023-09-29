@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(gnss_module, CONFIG_APP_LOG_LEVEL);
 static struct nrf_modem_gnss_pvt_data_frame pvt_data;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
 defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-static struct nrf_modem_gnss_agnss_data_frame agps_req;
+static struct nrf_modem_gnss_agnss_data_frame agnss_req;
 #endif
 static bool running;
 
@@ -50,7 +50,7 @@ void pgps_handler(struct nrf_cloud_pgps_event *event)
 		break;
 	case PGPS_EVT_AVAILABLE:
 		LOG_DBG("PGPS_EVT_AVAILABLE");
-		err = nrf_cloud_pgps_inject(event->prediction, &agps_req);
+		err = nrf_cloud_pgps_inject(event->prediction, &agnss_req);
 		if (err) {
 			LOG_ERR("Unable to send prediction to modem: %d", err);
 		}
@@ -97,17 +97,17 @@ static void gnss_event_handler(int event_id)
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ: {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
 defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
-		LOG_INF("GPS requests AGPS Data. Sending request to LwM2M server");
-		err = nrf_modem_gnss_read(&agps_req, sizeof(agps_req),
+		LOG_INF("GPS requests A-GNSS Data. Sending request to LwM2M server");
+		err = nrf_modem_gnss_read(&agnss_req, sizeof(agnss_req),
 					  NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 		if (err) {
-			LOG_ERR("Error reading AGPS request (%d)", err);
+			LOG_ERR("Error reading A-GNSS request (%d)", err);
 		}
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-		struct gnss_agps_request_event *event = new_gnss_agps_request_event();
+		struct gnss_agnss_request_event *event = new_gnss_agnss_request_event();
 
-		event->agps_req = agps_req;
+		event->agnss_req = agnss_req;
 		APP_EVENT_SUBMIT(event);
 #endif
 		break;
@@ -137,7 +137,7 @@ int initialise_gnss(void)
 	/* This use case flag should always be set. */
 	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 
-	/* Disable GNSS scheduled downloads if A-GPS is used. */
+	/* Disable GNSS scheduled downloads if A-GNSS is used. */
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)) {
 		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
 	}
