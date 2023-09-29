@@ -458,6 +458,8 @@ Cellular samples (renamed from nRF9160 samples)
     * The ``link edrx`` command syntax.
       Parameters ``--ltem``, ``--nbiot``, ``--edrx_value,`` and ``--ptw`` are removed.
       Instead, use ``--ltem_edrx``, ``--ltem_ptw``, ``--nbiot_edrx``, and ``--nbiot_ptw`` to give eDRX and PTW values for LTE-M and NB-IoT.
+    * The ``gnss`` command syntax.
+      The ``agps`` subcommand has been renamed to ``agnss``.
 
 * :ref:`lwm2m_client` sample:
 

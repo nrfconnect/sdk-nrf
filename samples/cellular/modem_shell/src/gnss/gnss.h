@@ -180,9 +180,9 @@ int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy);
 int gnss_set_elevation_threshold(uint8_t elevation);
 
 /**
- * @brief Enables/disabled AGPS filtered ephemerides.
+ * @brief Enables/disabled A-GNSS filtered ephemerides.
  *
- * When enabled, the nRF Cloud AGPS service will be requested to reduce
+ * When enabled, the nRF Cloud A-GNSS service will be requested to reduce
  * the set of ephemerides returned to only include those satellites which
  * are at or above the most recently set elevation threshold angle.
  *
@@ -191,7 +191,7 @@ int gnss_set_elevation_threshold(uint8_t elevation);
  * @retval 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_set_agps_filtered_ephemerides(bool enable);
+int gnss_set_agnss_filtered_ephemerides(bool enable);
 
 /**
  * @brief Sets the GNSS use case configuration.
@@ -290,7 +290,7 @@ int gnss_set_1pps_mode(const struct gnss_1pps_mode *config);
 int gnss_set_timing_source(enum gnss_timing_source source);
 
 /**
- * @brief Sets which AGPS data is allowed to be injected to the modem (either
+ * @brief Sets which A-GNSS data is allowed to be injected to the modem (either
  *        automatically or manually). By default all types are enabled.
  *
  * @param ephe True if ephemerides are enabled, false if not.
@@ -305,27 +305,27 @@ int gnss_set_timing_source(enum gnss_timing_source source);
  * @retval 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_set_agps_data_enabled(bool ephe, bool alm, bool utc, bool klob,
-			       bool neq, bool time, bool pos, bool integrity);
+int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob,
+				bool neq, bool time, bool pos, bool integrity);
 
 /**
- * @brief Sets whether AGPS data is automatically fetched whenever requested
+ * @brief Sets whether A-GNSS data is automatically fetched whenever requested
  *        by GNSS.
  *
- * @param value True if AGPS data is fetched automatically, false if not.
+ * @param value True if A-GNSS data is fetched automatically, false if not.
  *
  * @retval 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_set_agps_automatic(bool value);
+int gnss_set_agnss_automatic(bool value);
 
 /**
- * @brief Fetches and injects AGPS data to GNSS.
+ * @brief Fetches and injects A-GNSS data to GNSS.
  *
  * @retval 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_inject_agps_data(void);
+int gnss_inject_agnss_data(void);
 
 /**
  * @brief Enables P-GPS. Once enabled, P-GPS remains enabled until reboot.
@@ -336,12 +336,12 @@ int gnss_inject_agps_data(void);
 int gnss_enable_pgps(void);
 
 /**
- * @brief Queries A-GPS data expiry information from GNSS.
+ * @brief Queries A-GNSS data expiry information from GNSS.
  *
  * @return 0 if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int gnss_get_agps_expiry(void);
+int gnss_get_agnss_expiry(void);
 
 /**
  * @brief Configures how much PVT information is printed out.
