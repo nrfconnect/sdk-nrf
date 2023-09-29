@@ -62,14 +62,14 @@ By default, the sample displays information from both PVT and NMEA strings.
 You can also configure the sample to run in NMEA-only output mode, where only the NMEA strings are displayed in the console.
 In the NMEA-only output mode, you can visualize the data from the GNSS using a third-party tool.
 
-A-GPS and P-GPS
-===============
+A-GNSS and P-GPS
+================
 
-When support for A-GPS or P-GPS, or both, is enabled, a :ref:`Zephyr workqueue <zephyr:workqueues_v2>` is used for downloading the assistance data.
+When support for A-GNSS or P-GPS, or both, is enabled, a :ref:`Zephyr workqueue <zephyr:workqueues_v2>` is used for downloading the assistance data.
 Downloading the data can take some time.
 The workqueue ensures that the main thread is not blocked during the operation.
 
-When assistance support is enabled, the sample receives an A-GPS data request notification from the GNSS module, and it starts downloading the assistance data requested by the GNSS module.
+When assistance support is enabled, the sample receives an A-GNSS data request notification from the GNSS module, and it starts downloading the assistance data requested by the GNSS module.
 The sample then displays the information in the terminal about the download process.
 Finally, after the download completes, the sample switches back to the previous display mode.
 
@@ -107,8 +107,8 @@ CONFIG_GNSS_SAMPLE_NMEA_ONLY - To enable NMEA-only output mode
 
 .. _CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD:
 
-CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD - To use nRF Cloud A-GPS
-   This configuration option enables A-GPS usage.
+CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD - To use nRF Cloud A-GNSS
+   This configuration option enables A-GNSS usage.
 
 .. _CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL:
 
@@ -299,7 +299,7 @@ After programming the sample and all the prerequisites to the development kit, t
 
    #. Observe that the samples displays the time to fix for each fix.
 
-   If A-GPS and/or P-GPS support is enabled:
+   If A-GNSS and/or P-GPS support is enabled:
 
    a. Observe that the following message is displayed in the terminal emulator immediately after the device boots:
 
