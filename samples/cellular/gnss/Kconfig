@@ -70,7 +70,7 @@ config GNSS_SAMPLE_ASSISTANCE_NONE
 	bool "Assistance not used"
 
 config GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD
-	bool "Use nRF Cloud A-GPS or P-GPS"
+	bool "Use nRF Cloud A-GNSS"
 	select NRF_CLOUD_REST
 	imply NRF_CLOUD_AGPS
 	select MODEM_JWT
@@ -78,7 +78,7 @@ config GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD
 	select DATE_TIME
 
 config GNSS_SAMPLE_ASSISTANCE_SUPL
-	bool "Use SUPL A-GPS"
+	bool "Use SUPL assistance"
 	select SUPL_CLIENT_LIB
 
 config GNSS_SAMPLE_ASSISTANCE_MINIMAL
@@ -94,10 +94,10 @@ endchoice
 if !GNSS_SAMPLE_ASSISTANCE_NONE
 
 config GNSS_SAMPLE_LTE_ON_DEMAND
-	bool "LTE is activated only when needed to fetch A-GPS data"
+	bool "LTE is activated only when needed to fetch A-GNSS data"
 	depends on !NRF_CLOUD_PGPS
 	help
-	  Activates LTE only when it is needed to fetch A-GPS data. This is not supported when
+	  Activates LTE only when it is needed to fetch A-GNSS data. This is not supported when
 	  P-GPS is enabled.
 
 endif # !GNSS_SAMPLE_ASSISTANCE_NONE

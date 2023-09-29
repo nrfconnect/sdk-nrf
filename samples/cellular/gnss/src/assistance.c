@@ -25,7 +25,7 @@ static char jwt_buf[600];
 static char rx_buf[2048];
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-static char agps_data_buf[3500];
+static char agnss_data_buf[3500];
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -251,12 +251,12 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 	int err = 0;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* Store the A-GPS data request for P-GPS use. */
+	/* Store the A-GNSS data request for P-GPS use. */
 	memcpy(&agnss_need, agnss_request, sizeof(agnss_need));
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	if (!agnss_request->data_flags) {
-		/* No assistance needed from A-GPS, skip directly to P-GPS. */
+		/* No assistance needed from A-GNSS, skip directly to P-GPS. */
 		nrf_cloud_pgps_notify_prediction();
 		return 0;
 	}
@@ -273,7 +273,7 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
 	if (err) {
 		LOG_ERR("Failed to generate JWT, error: %d", err);
-		goto agps_exit;
+		goto agnss_exit;
 	}
 
 	struct nrf_cloud_rest_context rest_ctx = {
@@ -311,8 +311,8 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 	};
 
 	struct nrf_cloud_rest_agps_result result = {
-		.buf = agps_data_buf,
-		.buf_sz = sizeof(agps_data_buf),
+		.buf = agnss_data_buf,
+		.buf_sz = sizeof(agnss_data_buf),
 		.agps_sz = 0
 	};
 
@@ -336,21 +336,21 @@ int assistance_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 
 	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
 	if (err) {
-		LOG_ERR("Failed to get A-GPS data, error: %d", err);
-		goto agps_exit;
+		LOG_ERR("Failed to get A-GNSS data, error: %d", err);
+		goto agnss_exit;
 	}
 
-	LOG_INF("Processing A-GPS data");
+	LOG_INF("Processing A-GNSS data");
 
 	err = nrf_cloud_agps_process(result.buf, result.agps_sz);
 	if (err) {
-		LOG_ERR("Failed to process A-GPS data, error: %d", err);
-		goto agps_exit;
+		LOG_ERR("Failed to process A-GNSS data, error: %d", err);
+		goto agnss_exit;
 	}
 
-	LOG_INF("A-GPS data processed");
+	LOG_INF("A-GNSS data processed");
 
-agps_exit:
+agnss_exit:
 	assistance_active = false;
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 

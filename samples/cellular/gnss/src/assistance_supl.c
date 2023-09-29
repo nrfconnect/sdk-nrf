@@ -47,18 +47,18 @@ static ssize_t supl_write(const void *p_buff, size_t nbytes, void *user_data)
 	return send(supl_fd, p_buff, nbytes, 0);
 }
 
-static int inject_agps_type(void *agps, size_t agps_size, uint16_t type, void *user_data)
+static int inject_agnss_type(void *agnss, size_t agnss_size, uint16_t type, void *user_data)
 {
 	ARG_UNUSED(user_data);
 
-	int retval = nrf_modem_gnss_agnss_write(agps, agps_size, type);
+	int retval = nrf_modem_gnss_agnss_write(agnss, agnss_size, type);
 
 	if (retval != 0) {
 		LOG_ERR("Failed to write A-GNSS data, type: %d (errno: %d)", type, errno);
 		return -1;
 	}
 
-	LOG_INF("Injected A-GNSS data, type: %d, size: %d", type, agps_size);
+	LOG_INF("Injected A-GNSS data, type: %d, size: %d", type, agnss_size);
 
 	return 0;
 }
@@ -181,7 +181,7 @@ int assistance_init(struct k_work_q *assistance_work_q)
 	static struct supl_api supl_api = {
 		.read       = supl_read,
 		.write      = supl_write,
-		.handler    = inject_agps_type,
+		.handler    = inject_agnss_type,
 		.logger     = supl_logger,
 		.counter_ms = k_uptime_get
 	};
