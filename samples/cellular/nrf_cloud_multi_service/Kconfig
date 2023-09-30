@@ -310,7 +310,7 @@ config COAP_SHADOW_CHECK_RATE_SECONDS
 
 config COAP_SHADOW_THREAD_STACK_SIZE
 	int "CoAP Shadow Thread Stack Size (bytes)"
-	default 2048
+	default 3072
 	help
 	  Sets the stack size (in bytes) for the CoAP shadow thread of the
 	  sample.
