@@ -131,7 +131,7 @@ static int consume_device_message(void)
 
 #endif /* CONFIG_NRF_CLOUD_COAP */
 
-	if (ret) {
+	if (ret < 0) {
 		LOG_ERR("Transmission of enqueued device message failed, nrf_cloud_send "
 			"gave error: %d. The message will be re-enqueued and tried again "
 			"later.", ret);

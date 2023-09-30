@@ -24,6 +24,9 @@ static int check_shadow(void)
 {
 	int err;
 	char buf[COAP_SHADOW_MAX_SIZE];
+	struct nrf_cloud_data in_data = {
+		.ptr = buf
+	};
 
 	/* Wait until we are able to communicate. */
 	LOG_DBG("Waiting for valid connection before checking shadow");
@@ -34,32 +37,20 @@ static int check_shadow(void)
 	err = nrf_cloud_coap_shadow_get(buf, sizeof(buf), true);
 	if (err == -EACCES) {
 		LOG_DBG("Not connected yet.");
+		return err;
 	} else if (err) {
 		LOG_ERR("Failed to request shadow delta: %d", err);
-	} else {
-		size_t len = strlen(buf);
-
-		if (len) {
-			LOG_INF("Shadow delta: len:%zd, %s", len, buf);
-			/* Do something with the shadow delta's JSON data, such
-			 * as parse it and use the decoded information to change a
-			 * behavior.
-			 */
-
-			/* Acknowledge it so we do not receive it again. */
-			err = nrf_cloud_coap_shadow_state_update(buf);
-			if (err) {
-				LOG_ERR("Failed to acknowledge delta: %d", err);
-			} else {
-				LOG_DBG("Delta acknowledged");
-			}
-		} else {
-			LOG_INF("Checking again in %d seconds",
-				CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS);
-			err = -EAGAIN;
-		}
+		return err;
 	}
-	return err;
+
+	in_data.len = strlen(buf);
+	if (!in_data.len) {
+		LOG_INF("Checking again in %d seconds",
+			CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS);
+		return -EAGAIN;
+	}
+	LOG_DBG("Shadow delta: len:%zd, %s", in_data.len, buf);
+	return nrf_cloud_coap_shadow_delta_process(&in_data);
 }
 
 #define SHADOW_THREAD_DELAY_S 10
