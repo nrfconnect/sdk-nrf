@@ -429,6 +429,19 @@ To build with the |nRFVSC|, specify ``-DSNIPPET="nrf91-modem-trace-uart" [...]``
 
 See :ref:`cmake_options` for more details.
 
+.. _tfm_enable_share_uart:
+
+Shared UART for application and TF-M logging
+============================================
+
+If you want to activate TF-M logging while having modem traces enabled, it can be useful to direct the TF-M logs to the UART (**UART0**) used by the application.
+To activate both modem traces and TF-M logs, use the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build --board *build target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart
+
 .. _nrf9160_gs_testing_cellular:
 
 Testing the cellular connection with the AT Client sample

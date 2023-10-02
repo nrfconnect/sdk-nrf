@@ -101,6 +101,9 @@ This is done by adding the :ref:`modem trace UART snippet <nrf91_modem_trace_uar
 
 Use the `Cellular Monitor`_ app for capturing and analyzing modem traces.
 
+TF-M logging must use the same UART as the application.
+For more details, see :ref:`shared TF-M logging <tfm_enable_share_uart>`.
+
 .. modem_lib_sending_traces_UART_end
 
 .. _modem_trace_backend_uart_custom_board:
