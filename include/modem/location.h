@@ -67,8 +67,8 @@ enum location_event_id {
 	 */
 	LOCATION_EVT_RESULT_UNKNOWN,
 	/**
-	 * GNSS is requesting A-GPS data. Application should obtain the data and send it to
-	 * location_agps_data_process().
+	 * GNSS is requesting A-GNSS data. Application should obtain the data and send it to
+	 * location_agnss_data_process().
 	 */
 	LOCATION_EVT_GNSS_ASSISTANCE_REQUEST,
 	/**
@@ -222,10 +222,10 @@ struct location_event_data {
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 		/**
-		 * A-GPS notification data frame used by GNSS to let the application know it needs
+		 * A-GNSS notification data frame used by GNSS to let the application know it needs
 		 * new assistance data, used with event @ref LOCATION_EVT_GNSS_ASSISTANCE_REQUEST.
 		 */
-		struct nrf_modem_gnss_agnss_data_frame agps_request;
+		struct nrf_modem_gnss_agnss_data_frame agnss_request;
 #endif
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 		/**
@@ -257,7 +257,7 @@ struct location_gnss_config {
 	 * Since GNSS cannot run while LTE is operating, the running time is counted from
 	 * the instant when GNSS is allowed to start. Library waits until RRC connection
 	 * is inactive before starting GNSS. If LTE power saving mode (PSM) is enabled
-	 * and A-GPS is disabled, library waits until modem enters PSM before starting GNSS,
+	 * and A-GNSS is disabled, library waits until modem enters PSM before starting GNSS,
 	 * thus maximizing uninterrupted operating window and minimizing power consumption.
 	 *
 	 * Default value is 120000 (2 minutes). It is applied when
@@ -315,7 +315,7 @@ struct location_gnss_config {
 	 *
 	 * @details If set to true, the library triggers GNSS priority mode if five consecutive PVT
 	 * messages indicate that GNSS is blocked by LTE idle mode operations. This is especially
-	 * helpful if A-GPS or P-GPS is not enabled or downloading assistance data fails and GNSS
+	 * helpful if A-GNSS or P-GPS is not enabled or downloading assistance data fails and GNSS
 	 * module has to decode navigation data from the satellite broadcast. Priority mode is
 	 * disabled automatically after the first fix or after 40 seconds.
 	 *
@@ -565,14 +565,14 @@ void location_config_defaults_set(
 const char *location_method_str(enum location_method method);
 
 /**
- * @brief Feed in A-GPS data to be processed by library.
+ * @brief Feed in A-GNSS data to be processed by library.
  *
- * @details If Location library is not receiving A-GPS assistance data directly from nRF Cloud,
+ * @details If Location library is not receiving A-GNSS assistance data directly from nRF Cloud,
  * it triggers the @ref LOCATION_EVT_GNSS_ASSISTANCE_REQUEST event when assistance is needed. Once
  * application has obtained the assistance data it can be handed over to Location library using this
  * function.
  *
- * Note that the data must be formatted similarly to the nRF Cloud A-GPS data, see for example
+ * Note that the data must be formatted similarly to the nRF Cloud A-GNSS data, see for example
  * nrf_cloud_agps_schema_v1.h.
  *
  * @param[in] buf Data received.
@@ -580,9 +580,9 @@ const char *location_method_str(enum location_method method);
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
- * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_GNSS_AGPS_EXTERNAL} is not set.
+ * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is not set.
  */
-int location_agps_data_process(const char *buf, size_t buf_len);
+int location_agnss_data_process(const char *buf, size_t buf_len);
 
 /**
  * @brief Feed in P-GPS data to be processed by library.
@@ -600,7 +600,7 @@ int location_agps_data_process(const char *buf, size_t buf_len);
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
- * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_GNSS_PGPS_EXTERNAL} is not set.
+ * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is not set.
  */
 int location_pgps_data_process(const char *buf, size_t buf_len);
 
