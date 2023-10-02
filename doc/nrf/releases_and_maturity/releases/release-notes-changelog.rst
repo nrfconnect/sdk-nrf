@@ -340,6 +340,10 @@ DFU libraries
 Modem libraries
 ---------------
 
+* :ref:`nrf_modem_lib_readme`:
+
+   * Added a mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
+
 |no_changes_yet_note|
 
 Libraries for networking
@@ -450,5 +454,9 @@ cJSON
 
 Documentation
 =============
+
+* :ref:`ug_nrf9160`:
+
+   *  Section :ref:tfm_enable_share_uart in the :ref:uge_nrf9160 page.
 
 |no_changes_yet_note|
