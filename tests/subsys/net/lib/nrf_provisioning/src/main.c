@@ -401,6 +401,7 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 		}
 	}
 
+	free(tokens);
 	return 0;
 }
 

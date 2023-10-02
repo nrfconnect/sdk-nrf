@@ -284,6 +284,7 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 			LOG_ERR("Unable to write response msg field");
 			return -ENOMEM;
 		}
+		memset(resp, 0, resp_sz);
 
 		LOG_DBG("command: \"%s\", input buff len: %d", out->at_buff, resp_sz);
 		ret = nrf_provisioning_at_cmd(resp, resp_sz, out->at_buff);
