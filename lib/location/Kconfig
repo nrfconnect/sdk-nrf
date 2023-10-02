@@ -51,7 +51,7 @@ config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME
 	default 3000
 	help
 	  Sets the time (in milliseconds) since GNSS start after which the obstructed visibility
-	  detection is performed. The default value is a good starting point when A-GPS is used.
+	  detection is performed. The default value is a good starting point when A-GNSS is used.
 	  Without assistance, the value should probably be adjusted, because GNSS acquires
 	  satellites more slowly.
 
@@ -62,7 +62,7 @@ config LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 	  Sets the minimum number of satellites which must have been acquired by GNSS when the
 	  obstructed visibility detection is performed. If less satellites have been acquired,
 	  GNSS is stopped immediately to save energy. The default value is a good starting point
-	  when A-GPS is used. Without assistance, the value should probably be adjusted, because
+	  when A-GNSS is used. Without assistance, the value should probably be adjusted, because
 	  GNSS acquires satellites more slowly.
 
 config LOCATION_METHOD_GNSS_PRIORITIZE_QZSS_ASSISTANCE
@@ -153,9 +153,9 @@ endif # LOCATION_SERVICE_HERE
 endif # LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
 
 config LOCATION_SERVICE_EXTERNAL
-	bool "Requesting A-GPS, P-GPS, LTE neighbor cell and Wi-Fi access point data is handled by the application outside of Location library"
+	bool "Requesting A-GNSS, P-GPS, LTE neighbor cell and Wi-Fi access point data is handled by the application outside of Location library"
 	help
-	  Allow application to download the A-GPS and P-GPS data and merely feed it to
+	  Allow application to download the A-GNSS and P-GPS data and merely feed it to
 	  Location library for processing.
 	  Also, allow application to send cellular neighbor cell and Wi-Fi access point information
 	  to a cloud service and respond to the Location library with the outcome.
