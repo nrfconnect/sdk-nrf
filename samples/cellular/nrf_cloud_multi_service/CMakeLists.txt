@@ -21,13 +21,16 @@ target_sources(app PRIVATE src/message_queue.c)
 target_sources(app PRIVATE src/temperature.c)
 target_sources(app PRIVATE src/fota_support.c)
 target_sources(app PRIVATE src/led_control.c)
-target_sources(app PRIVATE src/location_tracking.c)
 
-if(CONFIG_NRF_CLOUD_COAP)
+if(CONFIG_LOCATION_TRACKING)
+target_sources(app PRIVATE src/location_tracking.c)
+endif()
+
+if(CONFIG_COAP_SHADOW)
 target_sources(app PRIVATE src/shadow_support_coap.c)
 endif()
 
-if(CONFIG_NRF_CLOUD_COAP_FOTA)
+if(CONFIG_COAP_FOTA)
 target_sources(app PRIVATE src/fota_support_coap.c)
 endif()
 

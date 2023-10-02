@@ -205,6 +205,7 @@ static void cloud_ready(void)
  */
 static void update_shadow(void)
 {
+#if !defined(CONFIG_NRF_CLOUD_COAP) || defined(CONFIG_COAP_SHADOW)
 	static bool updated;
 	int err;
 	struct nrf_cloud_svc_info_fota fota_info = {
@@ -248,6 +249,7 @@ static void update_shadow(void)
 		LOG_DBG("Updated shadow");
 		updated = true;
 	}
+#endif /* !defined(CONFIG_NRF_CLOUD_COAP) || defined(CONFIG_COAP_SHADOW) */
 }
 
 /* External event handlers */
@@ -480,7 +482,7 @@ static int setup_cloud(void)
 	}
 
 #elif defined(CONFIG_NRF_CLOUD_COAP)
-#if defined(CONFIG_NRF_CLOUD_COAP_FOTA)
+#if defined(CONFIG_COAP_FOTA)
 	err = coap_fota_init();
 	if (err) {
 		LOG_ERR("Error initializing FOTA: %d", err);
@@ -491,7 +493,7 @@ static int setup_cloud(void)
 		LOG_ERR("Error starting FOTA: %d", err);
 		return err;
 	}
-#endif /* CONFIG_NRF_CLOUD_COAP_FOTA */
+#endif /* CONFIG_COAP_FOTA */
 	err = nrf_cloud_coap_init();
 	if (err) {
 		LOG_ERR("Failed to initialize CoAP client: %d", err);

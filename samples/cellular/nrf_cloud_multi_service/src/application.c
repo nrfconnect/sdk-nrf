@@ -6,7 +6,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#include <modem/location.h>
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
@@ -16,12 +15,14 @@
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
-
+#if defined(CONFIG_LOCATION_TRACKING)
+#include <modem/location.h>
+#include "location_tracking.h"
+#endif
 #include "application.h"
 #include "temperature.h"
 #include "cloud_connection.h"
 #include "message_queue.h"
-#include "location_tracking.h"
 #include "led_control.h"
 #include "at_commands.h"
 
@@ -122,6 +123,7 @@ static int send_sensor_sample(const char *const sensor, double value)
 	return send_device_message(&msg_obj);
 }
 
+#if defined(CONFIG_LOCATION_TRACKING)
 /**
  * @brief Transmit a collected GNSS sample to nRF Cloud.
  *
@@ -190,6 +192,7 @@ static void on_location_update(const struct location_event_data * const location
 		send_gnss(location_data);
 	}
 }
+#endif /* CONFIG_LOCATION_TRACKING */
 
 /**
  * @brief Receives general device messages from nRF Cloud, checks if they are AT command requests,
@@ -339,10 +342,11 @@ void main_application_thread_fn(void)
 				 "version: %s, protocol: %s",
 				 CONFIG_APP_VERSION, protocol);
 
+#if defined(CONFIG_LOCATION_TRACKING)
 	/* Begin tracking location at the configured interval. */
 	(void)start_location_tracking(on_location_update,
 					CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS);
-
+#endif
 	int counter = 0;
 
 	/* Begin sampling sensors. */
