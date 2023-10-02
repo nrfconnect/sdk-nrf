@@ -764,6 +764,8 @@ Modem libraries
     * The semantics of cellular and Wi-Fi timeouts to only apply to neighbor cell measurement and Wi-Fi scan, respectively.
       Earlier, these timeouts applied also to the upcoming cloud connection to send the data to the cloud for position resolution.
       Overall :c:func:`location_request()` timeout can still interrupt cloud data transfer.
+    * The ``agps_request`` member of the :c:struct:`location_event_data` structure has been renamed to :c:member:`location_event_data.agnss_request`.
+    * The ``location_agps_data_process()`` function has been renamed to :c:func:`location_agnss_data_process`.
 
 * :ref:`pdn_readme` library:
 
