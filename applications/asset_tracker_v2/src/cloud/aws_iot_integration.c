@@ -30,10 +30,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define MESSAGES_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
 #define GROUND_FIX_TOPIC "%s/ground-fix"
 #define GROUND_FIX_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 11)
-#define AGPS_REQUEST_TOPIC "%s/agps/get"
-#define AGPS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
-#define AGPS_RESPONSE_TOPIC "%s/agps"
-#define AGPS_RESPONSE_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 5)
+#define AGNSS_REQUEST_TOPIC "%s/agps/get"
+#define AGNSS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
+#define AGNSS_RESPONSE_TOPIC "%s/agps"
+#define AGNSS_RESPONSE_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 5)
 #define PGPS_REQUEST_TOPIC "%s/pgps/get"
 #define PGPS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
 #define PGPS_RESPONSE_TOPIC "%s/pgps"
@@ -48,13 +48,13 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #endif /* if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT) */
 
 #define APP_SUB_TOPIC_IDX_CFG			0
-#define APP_SUB_TOPIC_IDX_AGPS			1
+#define APP_SUB_TOPIC_IDX_AGNSS			1
 #define APP_SUB_TOPIC_IDX_PGPS			2
 
 #define APP_PUB_TOPIC_IDX_BATCH			0
 #define APP_PUB_TOPIC_IDX_UI			1
 #define APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS	2
-#define APP_PUB_TOPIC_IDX_AGPS			3
+#define APP_PUB_TOPIC_IDX_AGNSS			3
 #define APP_PUB_TOPIC_IDX_PGPS			4
 #define APP_PUB_TOPIC_IDX_MEMFAULT		5
 
@@ -68,8 +68,8 @@ static char batch_topic[BATCH_TOPIC_LEN + 1];
 static char cfg_topic[CFG_TOPIC_LEN + 1];
 static char messages_topic[MESSAGES_TOPIC_LEN + 1];
 static char ground_fix_topic[GROUND_FIX_TOPIC_LEN + 1];
-static char agps_request_topic[AGPS_REQUEST_TOPIC_LEN + 1];
-static char agps_response_topic[AGPS_RESPONSE_TOPIC_LEN + 1];
+static char agnss_request_topic[AGNSS_REQUEST_TOPIC_LEN + 1];
+static char agnss_response_topic[AGNSS_RESPONSE_TOPIC_LEN + 1];
 static char pgps_request_topic[PGPS_REQUEST_TOPIC_LEN + 1];
 static char pgps_response_topic[PGPS_RESPONSE_TOPIC_LEN + 1];
 static char memfault_topic[MEMFAULT_TOPIC_LEN + 1];
@@ -121,14 +121,14 @@ static int populate_app_endpoint_topics(void)
 	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].str = ground_fix_topic;
 	pub_topics[APP_PUB_TOPIC_IDX_NEIGHBOR_CELLS].len = GROUND_FIX_TOPIC_LEN;
 
-	err = snprintf(agps_request_topic, sizeof(agps_request_topic),
-		       AGPS_REQUEST_TOPIC, client_id_buf);
-	if (err != AGPS_REQUEST_TOPIC_LEN) {
+	err = snprintf(agnss_request_topic, sizeof(agnss_request_topic),
+		       AGNSS_REQUEST_TOPIC, client_id_buf);
+	if (err != AGNSS_REQUEST_TOPIC_LEN) {
 		return -ENOMEM;
 	}
 
-	pub_topics[APP_PUB_TOPIC_IDX_AGPS].str = agps_request_topic;
-	pub_topics[APP_PUB_TOPIC_IDX_AGPS].len = AGPS_REQUEST_TOPIC_LEN;
+	pub_topics[APP_PUB_TOPIC_IDX_AGNSS].str = agnss_request_topic;
+	pub_topics[APP_PUB_TOPIC_IDX_AGNSS].len = AGNSS_REQUEST_TOPIC_LEN;
 
 	err = snprintf(pgps_request_topic, sizeof(pgps_request_topic),
 		       PGPS_REQUEST_TOPIC, client_id_buf);
@@ -155,14 +155,14 @@ static int populate_app_endpoint_topics(void)
 	sub_topics[APP_SUB_TOPIC_IDX_CFG].str = cfg_topic;
 	sub_topics[APP_SUB_TOPIC_IDX_CFG].len = CFG_TOPIC_LEN;
 
-	err = snprintf(agps_response_topic, sizeof(agps_response_topic), AGPS_RESPONSE_TOPIC,
+	err = snprintf(agnss_response_topic, sizeof(agnss_response_topic), AGNSS_RESPONSE_TOPIC,
 		       client_id_buf);
-	if (err != AGPS_RESPONSE_TOPIC_LEN) {
+	if (err != AGNSS_RESPONSE_TOPIC_LEN) {
 		return -ENOMEM;
 	}
 
-	sub_topics[APP_SUB_TOPIC_IDX_AGPS].str = agps_response_topic;
-	sub_topics[APP_SUB_TOPIC_IDX_AGPS].len = AGPS_RESPONSE_TOPIC_LEN;
+	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].str = agnss_response_topic;
+	sub_topics[APP_SUB_TOPIC_IDX_AGNSS].len = AGNSS_RESPONSE_TOPIC_LEN;
 
 	err = snprintf(pgps_response_topic, sizeof(pgps_response_topic), PGPS_RESPONSE_TOPIC,
 		       client_id_buf);
@@ -197,10 +197,10 @@ static void incoming_message_handle(struct aws_iot_evt *event)
 		.type = CLOUD_WRAP_EVT_DATA_RECEIVED
 	};
 
-	/* Check if incoming topic is equal the subscribed A-GPS or P-GPS response topics. */
-	if (strncmp(event->data.msg.topic.str, agps_response_topic,
+	/* Check if incoming topic is equal the subscribed A-GNSS or P-GPS response topics. */
+	if (strncmp(event->data.msg.topic.str, agnss_response_topic,
 		    event->data.msg.topic.len) == 0) {
-		cloud_wrap_evt.type = CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED;
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_AGNSS_DATA_RECEIVED;
 	} else if (strncmp(event->data.msg.topic.str, pgps_response_topic,
 		    event->data.msg.topic.len) == 0) {
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED;
@@ -512,7 +512,7 @@ bool cloud_wrap_cloud_location_response_wait(void)
 	return false;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_agnss_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct aws_iot_data msg = {
@@ -521,7 +521,7 @@ int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		/* <imei>/agps/get */
-		.topic = pub_topics[APP_PUB_TOPIC_IDX_AGPS]
+		.topic = pub_topics[APP_PUB_TOPIC_IDX_AGNSS]
 	};
 
 	err = aws_iot_send(&msg);

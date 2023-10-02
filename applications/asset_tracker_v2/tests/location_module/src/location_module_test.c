@@ -112,7 +112,7 @@ static void validate_location_module_evt(struct app_event_header *aeh, int no_of
 	struct location_module_event *event = cast_location_module_event(aeh);
 
 	struct nrf_modem_gnss_agnss_data_frame *agnss_req_exp =
-		&expected_location_module_events[index].data.agps_request;
+		&expected_location_module_events[index].data.agnss_request;
 
 	/* Make sure we don't get more events than expected. */
 	TEST_ASSERT_LESS_THAN(expected_location_module_event_count, location_module_event_count);
@@ -213,16 +213,16 @@ static void validate_location_module_evt(struct app_event_header *aeh, int no_of
 	case LOCATION_MODULE_EVT_SHUTDOWN_READY:
 		TEST_FAIL();
 		break;
-	case LOCATION_MODULE_EVT_AGPS_NEEDED:
+	case LOCATION_MODULE_EVT_AGNSS_NEEDED:
 		TEST_ASSERT_EQUAL(
 			agnss_req_exp->system[0].sv_mask_ephe,
-			event->data.agps_request.system[0].sv_mask_ephe);
+			event->data.agnss_request.system[0].sv_mask_ephe);
 		TEST_ASSERT_EQUAL(
 			agnss_req_exp->system[0].sv_mask_alm,
-			event->data.agps_request.system[0].sv_mask_alm);
+			event->data.agnss_request.system[0].sv_mask_alm);
 		TEST_ASSERT_EQUAL(
 			agnss_req_exp->data_flags,
-			event->data.agps_request.data_flags);
+			event->data.agnss_request.data_flags);
 		break;
 	case LOCATION_MODULE_EVT_PGPS_NEEDED:
 		TEST_FAIL();
@@ -348,7 +348,7 @@ static void setup_location_module_in_active_state(void)
 }
 
 /* Test whether the location module generates an event
- * - for A-GPS data on receiving an A-GPS data request from the location library.
+ * - for A-GNSS data on receiving an A-GNSS data request from the location library.
  * - the location module generates an event with GNSS position on receiving a
  *   location from the location library.
  */
@@ -360,10 +360,10 @@ void test_location_gnss_with_agnss(void)
 	expected_location_module_event_count = 4;
 	expected_location_module_events[0].type = LOCATION_MODULE_EVT_ACTIVE;
 
-	expected_location_module_events[1].type = LOCATION_MODULE_EVT_AGPS_NEEDED;
-	expected_location_module_events[1].data.agps_request.system[0].sv_mask_ephe = 0xabbaabba,
-	expected_location_module_events[1].data.agps_request.system[0].sv_mask_alm = 0xdeaddead,
-	expected_location_module_events[1].data.agps_request.data_flags =
+	expected_location_module_events[1].type = LOCATION_MODULE_EVT_AGNSS_NEEDED;
+	expected_location_module_events[1].data.agnss_request.system[0].sv_mask_ephe = 0xabbaabba,
+	expected_location_module_events[1].data.agnss_request.system[0].sv_mask_alm = 0xdeaddead,
+	expected_location_module_events[1].data.agnss_request.data_flags =
 		NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
 		NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
 		NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST;

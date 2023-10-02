@@ -201,9 +201,9 @@ void test_codec_helpers_set_sensor_boundaries(void)
 	TEST_ASSERT_EQUAL(0, lwm2m_codec_helpers_setup_resources());
 }
 
-void test_codec_helpers_set_agps_data(void)
+void test_codec_helpers_set_agnss_data(void)
 {
-	struct cloud_data_agps_request agps = {
+	struct cloud_data_agnss_request agnss = {
 		.mnc = 1,
 		.mcc = 242,
 		.area = 30601,
@@ -214,23 +214,23 @@ void test_codec_helpers_set_agps_data(void)
 		.queued = true,
 	};
 
-	__cmock_location_assistance_agnss_set_mask_ExpectAndReturn(&agps.request, 0);
+	__cmock_location_assistance_agnss_set_mask_ExpectAndReturn(&agnss.request, 0);
 
 	__cmock_location_assist_agnss_set_elevation_mask_Expect(-1);
 
 	__cmock_lwm2m_set_u32_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID), agps.cell, 0);
+		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID), agnss.cell, 0);
 
 	__cmock_lwm2m_set_u16_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC), agps.mnc, 0);
+		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC), agnss.mnc, 0);
 
 	__cmock_lwm2m_set_u16_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC), agps.mcc, 0);
+		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC), agnss.mcc, 0);
 
 	__cmock_lwm2m_set_u16_ExpectAndReturn(
-		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC), agps.area, 0);
+		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC), agnss.area, 0);
 
-	TEST_ASSERT_EQUAL(0, lwm2m_codec_helpers_set_agps_data(&agps));
+	TEST_ASSERT_EQUAL(0, lwm2m_codec_helpers_set_agnss_data(&agnss));
 }
 
 void test_codec_helpers_set_pgps_data(void)
