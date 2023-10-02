@@ -191,12 +191,12 @@ void test_enc_cloud_location_empty(void)
 	TEST_ASSERT_EQUAL(true, data.queued);
 }
 
-/* tests encoding of APGS request (unsupported) */
-void test_enc_agps_req(void)
+/* tests encoding of A-GNSS request (unsupported) */
+void test_enc_agnss_req(void)
 {
-	struct cloud_data_agps_request data = {0};
+	struct cloud_data_agnss_request data = {0};
 
-	ret = cloud_codec_encode_agps_request(&codec, &data);
+	ret = cloud_codec_encode_agnss_request(&codec, &data);
 
 	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
 	TEST_ASSERT_EQUAL_PTR(NULL, codec.buf);

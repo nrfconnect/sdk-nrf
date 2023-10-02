@@ -119,14 +119,14 @@ int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
 	return -ENOTSUP;
 }
 
-int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
-				    struct cloud_data_agps_request *agps_request)
+int cloud_codec_encode_agnss_request(struct cloud_codec_data *output,
+				     struct cloud_data_agnss_request *agnss_request)
 {
 	int err;
 	char *buffer;
 
 	__ASSERT_NO_MSG(output != NULL);
-	__ASSERT_NO_MSG(agps_request != NULL);
+	__ASSERT_NO_MSG(agnss_request != NULL);
 
 	cJSON *root_obj = cJSON_CreateObject();
 
@@ -134,8 +134,8 @@ int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 		return -ENOMEM;
 	}
 
-	err = json_common_agps_request_data_add(root_obj, agps_request,
-						JSON_COMMON_ADD_DATA_TO_OBJECT);
+	err = json_common_agnss_request_data_add(root_obj, agnss_request,
+						 JSON_COMMON_ADD_DATA_TO_OBJECT);
 	if (err) {
 		goto exit;
 	}

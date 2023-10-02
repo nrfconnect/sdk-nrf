@@ -474,12 +474,12 @@ void location_event_handler(const struct location_event_data *event_data)
 		break;
 
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST: {
-		LOG_DBG("Requested A-GPS data");
+		LOG_DBG("Requested A-GNSS data");
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 		struct location_module_event *location_module_event = new_location_module_event();
 
-		location_module_event->data.agps_request = event_data->agnss_request;
-		location_module_event->type = LOCATION_MODULE_EVT_AGPS_NEEDED;
+		location_module_event->data.agnss_request = event_data->agnss_request;
+		location_module_event->type = LOCATION_MODULE_EVT_AGNSS_NEEDED;
 		APP_EVENT_SUBMIT(location_module_event);
 #endif
 		break;

@@ -132,13 +132,13 @@ enum coneval_supported_data_type {
 	COUNT,
 };
 
-/* Whether `agps_request_buffer` has A-GPS request buffered for sending when connection to
+/* Whether `agnss_request_buffer` has A-GNSS request buffered for sending when connection to
  * cloud has been re-established.
  */
-bool agps_request_buffered;
+bool agnss_request_buffered;
 
-/* Buffered A-GPS request. */
-struct nrf_modem_gnss_agnss_data_frame agps_request_buffer;
+/* Buffered A-GNSS request. */
+struct nrf_modem_gnss_agnss_data_frame agnss_request_buffer;
 
 /* Data module message queue. */
 #define DATA_QUEUE_ENTRY_COUNT		10
@@ -695,21 +695,21 @@ static int get_modem_info(struct modem_param_info *const modem_info)
 }
 
 /**
- * @brief Combine and encode modem network parameters together with the incoming A-GPS data request
- *	  types to form the A-GPS request.
+ * @brief Combine and encode modem network parameters together with the incoming A-GNSS data request
+ *	  types to form the A-GNSS request.
  *
- * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
- *			       requested by the modem. If incoming_request is NULL, all A-GPS data
+ * @param[in] incoming_request Pointer to a structure containing A-GNSS data types that has been
+ *			       requested by the modem. If incoming_request is NULL, all A-GNSS data
  *			       types are requested.
  *
  * @return 0 on success, otherwise a negative error code indicating reason of failure.
  */
-static int agps_request_encode(struct nrf_modem_gnss_agnss_data_frame *incoming_request)
+static int agnss_request_encode(struct nrf_modem_gnss_agnss_data_frame *incoming_request)
 {
 	int err;
 	struct cloud_codec_data codec = {0};
 	static struct modem_param_info modem_info = {0};
-	static struct cloud_data_agps_request cloud_agps_request = {0};
+	static struct cloud_data_agnss_request cloud_agnss_request = {0};
 
 	err = get_modem_info(&modem_info);
 	if (err) {
@@ -719,41 +719,41 @@ static int agps_request_encode(struct nrf_modem_gnss_agnss_data_frame *incoming_
 	if (incoming_request == NULL) {
 		const uint32_t mask = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0u : 0xFFFFFFFFu;
 
-		LOG_DBG("Requesting all A-GPS elements");
-		cloud_agps_request.request.data_flags =
+		LOG_DBG("Requesting all A-GNSS elements");
+		cloud_agnss_request.request.data_flags =
 					NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
 					NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |
 					NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
 					NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST |
 					NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
 					NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
-		cloud_agps_request.request.system_count = 1;
-		cloud_agps_request.request.system[0].sv_mask_ephe = mask;
-		cloud_agps_request.request.system[0].sv_mask_alm = mask;
+		cloud_agnss_request.request.system_count = 1;
+		cloud_agnss_request.request.system[0].sv_mask_ephe = mask;
+		cloud_agnss_request.request.system[0].sv_mask_alm = mask;
 	} else {
-		cloud_agps_request.request = *incoming_request;
+		cloud_agnss_request.request = *incoming_request;
 	}
 
-	cloud_agps_request.mcc = modem_info.network.mcc.value;
-	cloud_agps_request.mnc = modem_info.network.mnc.value;
-	cloud_agps_request.cell = modem_info.network.cellid_dec;
-	cloud_agps_request.area = modem_info.network.area_code.value;
-	cloud_agps_request.queued = true;
+	cloud_agnss_request.mcc = modem_info.network.mcc.value;
+	cloud_agnss_request.mnc = modem_info.network.mnc.value;
+	cloud_agnss_request.cell = modem_info.network.cellid_dec;
+	cloud_agnss_request.area = modem_info.network.area_code.value;
+	cloud_agnss_request.queued = true;
 
-	err = cloud_codec_encode_agps_request(&codec, &cloud_agps_request);
+	err = cloud_codec_encode_agnss_request(&codec, &cloud_agnss_request);
 	switch (err) {
 	case 0:
-		LOG_DBG("A-GPS request encoded successfully");
-		data_send(DATA_EVT_AGPS_REQUEST_DATA_SEND, &codec);
+		LOG_DBG("A-GNSS request encoded successfully");
+		data_send(DATA_EVT_AGNSS_REQUEST_DATA_SEND, &codec);
 		break;
 	case -ENOTSUP:
-		LOG_ERR("Encoding of A-GPS requests are not supported by the configured codec");
+		LOG_ERR("Encoding of A-GNSS requests are not supported by the configured codec");
 		break;
 	case -ENODATA:
-		LOG_DBG("No A-GPS request data to encode, error: %d", err);
+		LOG_DBG("No A-GNSS request data to encode, error: %d", err);
 		break;
 	default:
-		LOG_ERR("Error encoding A-GPS request: %d", err);
+		LOG_ERR("Error encoding A-GNSS request: %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		break;
 	}
@@ -1054,14 +1054,14 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 }
 
 /**
- * @brief Function that requests A-GPS and P-GPS data upon receiving a request from the
+ * @brief Function that requests A-GNSS and P-GPS data upon receiving a request from the
  *        location module.
  *
- * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
- *			       requested by the modem. If incoming_request is NULL, all A-GPS data
+ * @param[in] incoming_request Pointer to a structure containing A-GNSS data types that has been
+ *			       requested by the modem. If incoming_request is NULL, all A-GNSS data
  *			       types are requested.
  */
-static void agps_request_handle(struct nrf_modem_gnss_agnss_data_frame *incoming_request)
+static void agnss_request_handle(struct nrf_modem_gnss_agnss_data_frame *incoming_request)
 {
 	int err;
 
@@ -1073,34 +1073,34 @@ static void agps_request_handle(struct nrf_modem_gnss_agnss_data_frame *incoming
 	err = (incoming_request == NULL) ? nrf_cloud_agps_request_all() :
 					   nrf_cloud_agps_request(incoming_request);
 	if (err) {
-		LOG_WRN("Failed to request A-GPS data, error: %d", err);
+		LOG_WRN("Failed to request A-GNSS data, error: %d", err);
 		LOG_DBG("This is expected to fail if we are not in a connected state");
 	} else {
 		if (nrf_cloud_agps_request_in_progress()) {
-			LOG_DBG("A-GPS request sent");
+			LOG_DBG("A-GNSS request sent");
 			return;
 		}
-		LOG_DBG("No A-GPS data requested");
+		LOG_DBG("No A-GNSS data requested");
 		/* Continue so P-GPS, if enabled, can be requested. */
 	}
 #else
 	/* If the nRF Cloud MQTT transport library is not enabled, we will have to create an
-	 * A-GPS request and send out an event containing the request for the cloud module to pick
+	 * A-GNSS request and send out an event containing the request for the cloud module to pick
 	 * up and send to the cloud that is currently used.
 	 */
-	err = (incoming_request == NULL) ? agps_request_encode(NULL) :
-					   agps_request_encode(incoming_request);
+	err = (incoming_request == NULL) ? agnss_request_encode(NULL) :
+					   agnss_request_encode(incoming_request);
 	if (err) {
-		LOG_WRN("Failed to request A-GPS data, error: %d", err);
+		LOG_WRN("Failed to request A-GNSS data, error: %d", err);
 	} else {
-		LOG_DBG("A-GPS request sent");
+		LOG_DBG("A-GNSS request sent");
 		return;
 	}
 #endif
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* A-GPS data is not expected to be received. Proceed to schedule a callback when
+	/* A-GNSS data is not expected to be received. Proceed to schedule a callback when
 	 * P-GPS data for current time is available.
 	 */
 	err = nrf_cloud_pgps_notify_prediction();
@@ -1117,10 +1117,10 @@ static void on_cloud_state_disconnected(struct data_msg_data *msg)
 {
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED)) {
 		state_set(STATE_CLOUD_CONNECTED);
-		if (agps_request_buffered) {
-			LOG_DBG("Handle buffered A-GPS request");
-			agps_request_handle(&agps_request_buffer);
-			agps_request_buffered = false;
+		if (agnss_request_buffered) {
+			LOG_DBG("Handle buffered A-GNSS request");
+			agnss_request_handle(&agnss_request_buffer);
+			agnss_request_buffered = false;
 		}
 		return;
 	}
@@ -1130,10 +1130,10 @@ static void on_cloud_state_disconnected(struct data_msg_data *msg)
 		config_send();
 	}
 
-	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGPS_NEEDED)) {
-		LOG_DBG("A-GPS request buffered");
-		agps_request_buffered = true;
-		agps_request_buffer = msg->module.location.data.agps_request;
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGNSS_NEEDED)) {
+		LOG_DBG("A-GNSS request buffered");
+		agnss_request_buffered = true;
+		agnss_request_buffer = msg->module.location.data.agnss_request;
 		return;
 	}
 }
@@ -1171,8 +1171,8 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 		return;
 	}
 
-	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGPS_NEEDED)) {
-		agps_request_handle(&msg->module.location.data.agps_request);
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGNSS_NEEDED)) {
+		agnss_request_handle(&msg->module.location.data.agnss_request);
 		return;
 	}
 }

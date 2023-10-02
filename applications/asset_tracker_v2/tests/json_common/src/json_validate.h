@@ -140,7 +140,7 @@
 					"}"							\
 				"}"
 
-#define TEST_VALIDATE_AGPS_REQUEST_JSON_SCHEMA							\
+#define TEST_VALIDATE_AGNSS_REQUEST_JSON_SCHEMA							\
 				"{"								\
 					"\"mcc\":242,"						\
 					"\"mnc\":1,"						\

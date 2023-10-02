@@ -217,7 +217,7 @@ int json_common_wifi_ap_data_add(cJSON *parent,
 #endif
 
 /**
- * @brief Encode and add A-GPS request data to the parent object.
+ * @brief Encode and add A-GNSS request data to the parent object.
  *
  * @param[out] parent Pointer to object that the encoded data is added to.
  * @param[in] data Pointer to data that is to be encoded.
@@ -228,9 +228,9 @@ int json_common_wifi_ap_data_add(cJSON *parent,
  * @retval -EINVAL if the passed in input arguments does not match what is required by the OP code.
  * @retval -ENOMEM if the function fails to allocate memory.
  */
-int json_common_agps_request_data_add(cJSON *parent,
-				      struct cloud_data_agps_request *data,
-				      enum json_common_op_code op);
+int json_common_agnss_request_data_add(cJSON *parent,
+				       struct cloud_data_agnss_request *data,
+				       enum json_common_op_code op);
 
 /**
  * @brief Encode and add P-GPS request data to the parent object.
