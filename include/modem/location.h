@@ -63,7 +63,7 @@ enum location_event_id {
 	/**
 	 * Application has indicated that getting location has been completed,
 	 * the result is not known, and the Location library does not need to care about it.
-	 * This event can occur only if CONFIG_LOCATION_SERVICE_EXTERNAL is set.
+	 * This event can occur only if @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is set.
 	 */
 	LOCATION_EVT_RESULT_UNKNOWN,
 	/**
@@ -84,13 +84,16 @@ enum location_event_id {
 	LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST
 };
 
-/** Result of the external request. */
+/** Result of the external cloud location request. */
 enum location_ext_result {
-	/* Location result is successful. */
+	/** Cloud location request was successful. */
 	LOCATION_EXT_RESULT_SUCCESS,
-	/* Location result is unknown. */
+	/**
+	 * The result of the cloud location request is unknown. From the fallback functionality
+	 * perspective, this is handled similarly to @ref LOCATION_EXT_RESULT_ERROR.
+	 */
 	LOCATION_EXT_RESULT_UNKNOWN,
-	/* Location result is error. */
+	/** Cloud location request failed. */
 	LOCATION_EXT_RESULT_ERROR
 };
 
@@ -206,28 +209,28 @@ struct location_event_data {
 
 	/** Event specific data. */
 	union {
-		/** Current location, used with event LOCATION_EVT_LOCATION. */
+		/** Current location, used with event @ref LOCATION_EVT_LOCATION. */
 		struct location_data location;
 
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
 		/**
 		 * Relevant location data when a timeout or an error occurs.
-		 * Used with event LOCATION_EVT_TIMEOUT and LOCATION_EVT_ERROR.
+		 * Used with events @ref LOCATION_EVT_TIMEOUT and @ref LOCATION_EVT_ERROR.
 		 */
 		struct location_data_error error;
 #endif
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
 		/**
-		 * A-GPS notification data frame used by GNSS to let the application know it
-		 * needs new assistance data, used with event LOCATION_EVT_GNSS_ASSISTANCE_REQUEST.
+		 * A-GPS notification data frame used by GNSS to let the application know it needs
+		 * new assistance data, used with event @ref LOCATION_EVT_GNSS_ASSISTANCE_REQUEST.
 		 */
 		struct nrf_modem_gnss_agnss_data_frame agps_request;
 #endif
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)
 		/**
-		 * P-GPS notification data frame used by GNSS to let the application know it
-		 * needs new assistance data, used with event LOCATION_EVT_GNSS_PREDICTION_REQUEST.
+		 * P-GPS notification data frame used by GNSS to let the application know it needs
+		 * new assistance data, used with event @ref LOCATION_EVT_GNSS_PREDICTION_REQUEST.
 		 */
 		struct gps_pgps_request pgps_request;
 #endif
@@ -236,7 +239,7 @@ struct location_event_data {
 		/**
 		 * Cloud location information to let the application know it should send these
 		 * to a cloud service to resolve the location.
-		 * Used with event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST.
+		 * Used with event @ref LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST.
 		 */
 		struct location_data_cloud cloud_location_request;
 #endif
@@ -258,22 +261,22 @@ struct location_gnss_config {
 	 * thus maximizing uninterrupted operating window and minimizing power consumption.
 	 *
 	 * Default value is 120000 (2 minutes). It is applied when
-	 * @ref location_config_defaults_set function is called and can be changed
-	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT configuration.
+	 * location_config_defaults_set() function is called and can be changed at build time
+	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT} configuration.
 	 */
 	int32_t timeout;
 
 	/** @brief Desired accuracy level.
 	 *
-	 * @details If accuracy is set to LOCATION_ACCURACY_LOW, GNSS relaxes the
+	 * @details If accuracy is set to @ref LOCATION_ACCURACY_LOW, GNSS relaxes the
 	 * criteria for a qualifying fix and may produce fixes using only three satellites.
 	 *
-	 * If accuracy is set to LOCATION_ACCURACY_HIGH, instead of using the first fix, GNSS is
-	 * allowed to run for a longer time. This typically improves the location accuracy.
+	 * If accuracy is set to @ref LOCATION_ACCURACY_HIGH, instead of using the first fix,
+	 * GNSS is allowed to run for a longer time. This typically improves the location accuracy.
 	 *
-	 * Default value is LOCATION_ACCURACY_NORMAL. It is applied when
-	 * @ref location_config_defaults_set function is called and can be changed
-	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY choice configuration.
+	 * Default value is @ref LOCATION_ACCURACY_NORMAL. It is applied when
+	 * location_config_defaults_set() function is called and can be changed at build time
+	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY} choice configuration.
 	 */
 	enum location_accuracy accuracy;
 
@@ -284,9 +287,9 @@ struct location_gnss_config {
 	 * @details If accuracy is set to LOCATION_ACCURACY_NORMAL or LOCATION_ACCURACY_LOW this
 	 * parameter has no effect.
 	 *
-	 * Default value is 3. It is applied when @ref location_config_defaults_set
+	 * Default value is 3. It is applied when location_config_defaults_set()
 	 * function is called and can be changed at build time with
-	 * CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES configuration.
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES} configuration.
 	 */
 	uint8_t num_consecutive_fixes;
 
@@ -298,9 +301,9 @@ struct location_gnss_config {
 	 *
 	 * @details See Kconfig for related configuration options.
 	 *
-	 * Default value is false. It is applied when @ref location_config_defaults_set
+	 * Default value is false. It is applied when location_config_defaults_set()
 	 * function is called and can be changed at build time with
-	 * CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION configuration.
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION} configuration.
 	 *
 	 * @note Only supported with modem firmware v1.3.2 or later.
 	 */
@@ -322,9 +325,9 @@ struct location_gnss_config {
 	 * device once the priority time window ends. However, it is possible that the network drops
 	 * the data, or some protocol timer expires causing data transfer to fail.
 	 *
-	 * Default value is false. It is applied when @ref location_config_defaults_set
+	 * Default value is false. It is applied when location_config_defaults_set()
 	 * function is called and can be changed at build time with
-	 * CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE configuration.
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE} configuration.
 	 */
 	bool priority_mode;
 };
@@ -336,14 +339,14 @@ struct location_cellular_config {
 	 * SYS_FOREVER_MS means that the timer is disabled.
 	 *
 	 * @details Default value is 30000 (30 seconds). It is applied when
-	 * @ref location_config_defaults_set function is called and can be changed
-	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT configuration.
+	 * location_config_defaults_set() function is called and can be changed at build time
+	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT} configuration.
 	 *
 	 * Timeout only applies to neighbor cell search, not the cloud communication.
 	 * Timeout for the entire location request specified in @ref location_config structure
 	 * is still valid.
-	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
-	 * event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
+	 * When @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled, this timeout stops when
+	 * event @ref LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
 	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
@@ -351,10 +354,10 @@ struct location_cellular_config {
 	/**
 	 * @brief Used cellular positioning service.
 	 *
-	 * @details Default value is LOCATION_SERVICE_ANY. It is applied when
-	 * @ref location_config_defaults_set function is called.
+	 * @details Default value is @ref LOCATION_SERVICE_ANY. It is applied when
+	 * location_config_defaults_set() function is called.
 	 *
-	 * This parameter is ignored when CONFIG_LOCATION_SERVICE_EXTERNAL is enabled.
+	 * This parameter is ignored when @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled.
 	 */
 	enum location_service service;
 
@@ -362,8 +365,8 @@ struct location_cellular_config {
 	 * @brief Number of cells to be requested for cellular positioning.
 	 *
 	 * @details Default value is 4. It is applied when
-	 * @ref location_config_defaults_set function is called and can be changed
-	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT configuration.
+	 * location_config_defaults_set() function is called and can be changed at build time
+	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT} configuration.
 	 *
 	 * Maximum value is 15.
 	 *
@@ -388,15 +391,15 @@ struct location_wifi_config {
 	 * SYS_FOREVER_MS means that the timer is disabled.
 	 *
 	 * @details Default value is 30000 (30 seconds). It is applied when
-	 * @ref location_config_defaults_set function is called and can be changed
-	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT configuration.
+	 * location_config_defaults_set() function is called and can be changed at build time
+	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT} configuration.
 	 *
 	 * Timeout only applies to Wi-Fi scan, not the cloud communication.
 	 * Timeout for the entire location request specified in @ref location_config structure
 	 * is still valid.
 	 *
-	 * When CONFIG_LOCATION_SERVICE_EXTERNAL is enabled, this timeout stops when
-	 * event LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
+	 * When @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled, this timeout stops when
+	 * event @ref LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
 	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
@@ -404,10 +407,10 @@ struct location_wifi_config {
 	/**
 	 * @brief Used Wi-Fi positioning service.
 	 *
-	 * @details Default value is LOCATION_SERVICE_ANY. It is applied when
-	 * @ref location_config_defaults_set function is called.
+	 * @details Default value is @ref LOCATION_SERVICE_ANY. It is applied when
+	 * location_config_defaults_set() function is called.
 	 *
-	 * This parameter is ignored when CONFIG_LOCATION_SERVICE_EXTERNAL is enabled.
+	 * This parameter is ignored when @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled.
 	 */
 	enum location_service service;
 };
@@ -417,11 +420,11 @@ struct location_method_config {
 	/** Location method. */
 	enum location_method method;
 	union {
-		/** Configuration for LOCATION_METHOD_CELLULAR. */
+		/** Configuration for @ref LOCATION_METHOD_CELLULAR. */
 		struct location_cellular_config cellular;
-		/** Configuration for LOCATION_METHOD_GNSS. */
+		/** Configuration for @ref LOCATION_METHOD_GNSS. */
 		struct location_gnss_config gnss;
-		/** Configuration for LOCATION_METHOD_WIFI. */
+		/** Configuration for @ref LOCATION_METHOD_WIFI. */
 		struct location_wifi_config wifi;
 	};
 };
@@ -452,8 +455,8 @@ struct location_config {
 	 * the valid range is 1...65535 seconds.
 	 *
 	 * Default value is 0. It is applied when
-	 * @ref location_config_defaults_set function is called and can be changed
-	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL configuration.
+	 * location_config_defaults_set() function is called and can be changed at build time
+	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL} configuration.
 	 */
 	uint16_t interval;
 
@@ -463,8 +466,8 @@ struct location_config {
 	 * @details SYS_FOREVER_MS means that the timer is disabled.
 	 *
 	 * Default value is 300000 (5 minutes). It is applied when
-	 * @ref location_config_defaults_set function is called and can be changed
-	 * at build time with CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT configuration.
+	 * location_config_defaults_set() function is called and can be changed
+	 * at build time with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT} configuration.
 	 *
 	 * This is intended to be a safety timer preventing location request from getting stuck
 	 * in any of its phases, because parts of the method-specific functionality are not
@@ -476,8 +479,8 @@ struct location_config {
 	/**
 	 * @brief Location acquisition mode.
 	 *
-	 * @details Default value is LOCATION_REQ_MODE_FALLBACK. It is applied when
-	 * @ref location_config_defaults_set function is called.
+	 * @details Default value is @ref LOCATION_REQ_MODE_FALLBACK. It is applied when
+	 * location_config_defaults_set() function is called.
 	 */
 	enum location_req_mode mode;
 };
@@ -510,8 +513,8 @@ int location_init(location_event_handler_t event_handler);
  * @details Requests the current position using the given configuration. Depending on the
  * configuration, a single position or periodic position updates are given. If the position
  * request is successful, the results are delivered to the event handler function in
- * LOCATION_EVT_LOCATION event. Otherwise LOCATION_EVT_TIMEOUT or LOCATION_EVT_ERROR event is
- * triggered.
+ * @ref LOCATION_EVT_LOCATION event. Otherwise @ref LOCATION_EVT_TIMEOUT or
+ * @ref LOCATION_EVT_ERROR event is triggered.
  *
  * In periodic mode, position update is always attempted after the configured interval
  * regardless of the outcome of any previous attempt. Periodic position updates can be
@@ -542,7 +545,7 @@ int location_request_cancel(void);
  *
  * @param[in,out] config Configuration to be supplied with default values.
  * @param[in] methods_count Number of location methods. This must not exceed
- *                          CONFIG_LOCATION_METHODS_LIST_SIZE.
+ *                          @kconfig{CONFIG_LOCATION_METHODS_LIST_SIZE}.
  * @param[in] method_types List of location method types in priority order.
  *                         Location methods with these types are initialized with default values
  *                         into given configuration. List size must be as given in 'methods_count'.
@@ -565,7 +568,7 @@ const char *location_method_str(enum location_method method);
  * @brief Feed in A-GPS data to be processed by library.
  *
  * @details If Location library is not receiving A-GPS assistance data directly from nRF Cloud,
- * it triggers the LOCATION_EVT_GNSS_ASSISTANCE_REQUEST event when assistance is needed. Once
+ * it triggers the @ref LOCATION_EVT_GNSS_ASSISTANCE_REQUEST event when assistance is needed. Once
  * application has obtained the assistance data it can be handed over to Location library using this
  * function.
  *
@@ -577,7 +580,7 @@ const char *location_method_str(enum location_method method);
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
- * @retval -ENOTSUP CONFIG_LOCATION_GNSS_AGPS_EXTERNAL is not set.
+ * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_GNSS_AGPS_EXTERNAL} is not set.
  */
 int location_agps_data_process(const char *buf, size_t buf_len);
 
@@ -585,7 +588,7 @@ int location_agps_data_process(const char *buf, size_t buf_len);
  * @brief Feed in P-GPS data to be processed by library.
  *
  * @details If Location library is not receiving P-GPS assistance data directly from nRF Cloud,
- * it triggers the LOCATION_EVT_GNSS_PREDICTION_REQUEST event when assistance is needed. Once
+ * it triggers the @ref LOCATION_EVT_GNSS_PREDICTION_REQUEST event when assistance is needed. Once
  * application has obtained the assistance data it can be handed over to Location library using this
  * function.
  *
@@ -597,7 +600,7 @@ int location_agps_data_process(const char *buf, size_t buf_len);
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
- * @retval -ENOTSUP CONFIG_LOCATION_GNSS_PGPS_EXTERNAL is not set.
+ * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_GNSS_PGPS_EXTERNAL} is not set.
  */
 int location_pgps_data_process(const char *buf, size_t buf_len);
 
@@ -610,14 +613,15 @@ int location_pgps_data_process(const char *buf, size_t buf_len);
  * for location resolution. Then, the application responds with the result.
  *
  * In addition to 'success' and 'error' results, the application can indicate that the result is
- * unknown with @ref LOCATION_EXT_RESULT_UNKNOWN. This is useful when the application wants
+ * 'unknown' with @ref LOCATION_EXT_RESULT_UNKNOWN. This is useful when the application wants
  * the Location library to proceed irrespective of the outcome. The Location library will try to
  * perform a fallback to the next method, if available, just like in a failure case.
- * If there are no more methods, LOCATION_EVT_RESULT_UNKNOWN event will be sent to the application.
+ * If there are no more methods, @ref LOCATION_EVT_RESULT_UNKNOWN event will be sent to the
+ * application.
  *
  * @param[in] result Result of the external cloud location request.
  * @param[in] location Cloud location data. Will be used only if @p result is
- *                     LOCATION_EXT_RESULT_SUCCESS.
+ *                     @ref LOCATION_EXT_RESULT_SUCCESS.
  */
 void location_cloud_location_ext_result_set(
 	enum location_ext_result result,
