@@ -7,4 +7,4 @@
 config SUPL_CLIENT_LIB
 	bool "SUPL Client library"
 	help
-	  A library for accessing AGPS data using the SUPL protocol
+	  A library for accessing A-GNSS data using the SUPL protocol.
