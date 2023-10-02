@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include "lwm2m_object.h"
 #include "lwm2m_engine.h"
 #include <net/lwm2m_client_utils_location.h>
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 #include <net/nrf_cloud_agps.h>
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 /* Location Assistance resource IDs */
 #define GNSS_ASSIST_ASSIST_TYPE				0
-#define GNSS_ASSIST_AGPS_MASK				1
+#define GNSS_ASSIST_AGNSS_MASK				1
 #define GNSS_ASSIST_PGPS_PRED_COUNT			2
 #define GNSS_ASSIST_PGPS_PRED_INTERVAL			3
 #define GNSS_ASSIST_PGPS_START_GPS_DAY			4
@@ -50,7 +50,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define START_TIME_MAX					86399
 
 static int32_t assist_type;
-static uint32_t agps_mask;
+static uint32_t agnss_mask;
 static int32_t pgps_pred_count;
 static int32_t pgps_pred_interval;
 static int32_t pgps_start_gps_day;
@@ -64,7 +64,7 @@ bool request_ongoing;
 
 static gnss_assistance_get_result_code_cb_t result_code_cb;
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 char *assist_buf;
 #endif
 static char assist_data[CONFIG_LWM2M_COAP_BLOCK_SIZE];
@@ -79,7 +79,7 @@ static char assist_data[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 static struct lwm2m_engine_obj gnss_assistance;
 static struct lwm2m_engine_obj_field fields[] = {
 	OBJ_FIELD_DATA(GNSS_ASSIST_ASSIST_TYPE, R, S32),
-	OBJ_FIELD_DATA(GNSS_ASSIST_AGPS_MASK, R_OPT, U32),
+	OBJ_FIELD_DATA(GNSS_ASSIST_AGNSS_MASK, R_OPT, U32),
 	OBJ_FIELD_DATA(GNSS_ASSIST_PGPS_PRED_COUNT, R_OPT, S32),
 	OBJ_FIELD_DATA(GNSS_ASSIST_PGPS_PRED_INTERVAL, R_OPT, S32),
 	OBJ_FIELD_DATA(GNSS_ASSIST_PGPS_START_GPS_DAY, R_OPT, S32),
@@ -100,8 +100,8 @@ static void *get_assist_buf(uint16_t obj_inst_id, uint16_t res_id,
 	return assist_data;
 }
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-static int gnss_assist_write_agps(uint8_t *data, uint16_t data_len, bool last_block,
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
+static int gnss_assist_write_agnss(uint8_t *data, uint16_t data_len, bool last_block,
 				  uint32_t bytes_downloaded)
 {
 	int err;
@@ -115,9 +115,9 @@ static int gnss_assist_write_agps(uint8_t *data, uint16_t data_len, bool last_bl
 	if (last_block) {
 		err = nrf_cloud_agps_process(assist_buf, bytes_downloaded + data_len);
 		if (err) {
-			LOG_WRN("Unable to process A-GPS data, error: %d", err);
+			LOG_WRN("Unable to process A-GNSS data, error: %d", err);
 		} else {
-			LOG_INF("A-GPS data processed");
+			LOG_INF("A-GNSS data processed");
 		}
 		k_free(assist_buf);
 		assist_buf = NULL;
@@ -166,9 +166,9 @@ static int gnss_assist_write_cb(uint16_t obj_inst_id, uint16_t res_id,
 {
 	int err = 0;
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-	if (assist_type == ASSISTANCE_REQUEST_TYPE_AGPS) {
-		err = gnss_assist_write_agps(data, data_len, last_block, bytes_downloaded);
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
+	if (assist_type == ASSISTANCE_REQUEST_TYPE_AGNSS) {
+		err = gnss_assist_write_agnss(data, data_len, last_block, bytes_downloaded);
 	}
 #endif
 
@@ -187,7 +187,7 @@ static int gnss_assist_write_cb(uint16_t obj_inst_id, uint16_t res_id,
 
 	if (err) {
 		LOG_ERR("Error writing %s assistance data (%d)",
-			(assist_type == ASSISTANCE_REQUEST_TYPE_AGPS) ? "A-GPS" : "P-GPS", err);
+			(assist_type == ASSISTANCE_REQUEST_TYPE_AGNSS) ? "A-GNSS" : "P-GPS", err);
 	}
 
 	return err;
@@ -232,8 +232,8 @@ static int gnss_assistance_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 	return 0;
 }
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-int location_assist_agps_alloc_buf(size_t buf_size)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
+int location_assist_agnss_alloc_buf(size_t buf_size)
 {
 	/* Free the memory if it wasn't unallocated in the last final package */
 	if (assist_buf != NULL) {
@@ -250,23 +250,23 @@ int location_assist_agps_alloc_buf(size_t buf_size)
 	return 0;
 }
 
-void location_assist_agps_request_set(uint32_t request_mask)
+void location_assist_agnss_request_set(uint32_t request_mask)
 {
-	LOG_INF("Requesting A-GPS data, mask 0x%08x", request_mask);
+	LOG_INF("Requesting A-GNSS data, mask 0x%08x", request_mask);
 	/* Store mask to object resource */
-	agps_mask = request_mask;
+	agnss_mask = request_mask;
 }
 
-void location_assist_agps_set_elevation_mask(int32_t elevation_mask)
+void location_assist_agnss_set_elevation_mask(int32_t elevation_mask)
 {
 	satellite_elevation_mask = elevation_mask;
 }
 
-int32_t location_assist_agps_get_elevation_mask(void)
+int32_t location_assist_agnss_get_elevation_mask(void)
 {
 	return satellite_elevation_mask;
 }
-#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS*/
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS*/
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 int location_assist_pgps_set_prediction_count(int32_t predictions)
@@ -313,7 +313,7 @@ int location_assist_pgps_get_start_gps_day(void)
 
 int location_assist_gnss_type_set(int assistance_type)
 {
-	if (assistance_type != ASSISTANCE_REQUEST_TYPE_AGPS &&
+	if (assistance_type != ASSISTANCE_REQUEST_TYPE_AGNSS &&
 	    assistance_type != ASSISTANCE_REQUEST_TYPE_PGPS) {
 		return -EINVAL;
 	}
@@ -337,8 +337,8 @@ static struct lwm2m_engine_obj_inst *gnss_assist_create(uint16_t obj_inst_id)
 	int i = 0, j = 0;
 
 	init_res_instance(res_inst, ARRAY_SIZE(res_inst));
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-	satellite_elevation_mask = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_ELEVATION_MASK;
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
+	satellite_elevation_mask = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_ELEVATION_MASK;
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 	pgps_pred_count = CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_COUNT;
@@ -350,8 +350,8 @@ static struct lwm2m_engine_obj_inst *gnss_assist_create(uint16_t obj_inst_id)
 	/* initialize instance resource data */
 	INIT_OBJ_RES_DATA(GNSS_ASSIST_ASSIST_TYPE, res, i, res_inst, j,
 			  &assist_type, sizeof(assist_type));
-	INIT_OBJ_RES_DATA(GNSS_ASSIST_AGPS_MASK, res, i, res_inst, j,
-			  &agps_mask, sizeof(agps_mask));
+	INIT_OBJ_RES_DATA(GNSS_ASSIST_AGNSS_MASK, res, i, res_inst, j,
+			  &agnss_mask, sizeof(agnss_mask));
 	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGPS_PRED_COUNT, res, i, res_inst, j,
 			  &pgps_pred_count, sizeof(pgps_pred_count));
 	INIT_OBJ_RES_DATA(GNSS_ASSIST_PGPS_PRED_INTERVAL, res, i, res_inst, j,
