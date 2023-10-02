@@ -163,6 +163,60 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 
 #define SDC_FAL_MEM_SIZE SDC_MEM_FAL(CONFIG_BT_CTLR_FAL_SIZE)
 
+#if defined(CONFIG_BT_CTLR_CONN_ISO)
+#define SDC_MEM_CIG SDC_MEM_PER_CIG(CONFIG_BT_CTLR_CONN_ISO_GROUPS)
+#define SDC_MEM_CIS \
+	SDC_MEM_PER_CIS(CONFIG_BT_CTLR_CONN_ISO_STREAMS) + \
+	SDC_MEM_ISO_RX_SDU_POOL_SIZE(CONFIG_BT_CTLR_CONN_ISO_STREAMS)
+#define SDC_CIS_COUNT CONFIG_BT_CTLR_CONN_ISO_STREAMS
+#else
+#define SDC_MEM_CIG   0
+#define SDC_MEM_CIS   0
+#define SDC_CIS_COUNT 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_SYNC_ISO)
+#define SDC_MEM_BIS_SINK \
+	SDC_MEM_PER_BIG(CONFIG_BT_CTLR_SCAN_SYNC_ISO_SET) +					\
+		SDC_MEM_PER_BIS(CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT) +				\
+		SDC_MEM_ISO_RX_SDU_POOL_SIZE(CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT)
+#define SDC_BIS_SINK_COUNT CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT
+#else
+#define SDC_MEM_BIS_SINK   0
+#define SDC_BIS_SINK_COUNT 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_ADV_ISO)
+#define SDC_MEM_BIS_SOURCE									\
+	SDC_MEM_PER_BIG(CONFIG_BT_CTLR_ADV_ISO_SET) +			\
+	SDC_MEM_PER_BIS(CONFIG_BT_CTLR_ADV_ISO_STREAM_COUNT)
+#define SDC_BIS_SOURCE_COUNT CONFIG_BT_CTLR_ADV_ISO_STREAM_COUNT
+#else
+#define SDC_MEM_BIS_SOURCE   0
+#define SDC_BIS_SOURCE_COUNT 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)
+	#define SDC_MEM_ISO_RX_POOL \
+		SDC_MEM_ISO_RX_PDU_POOL_SIZE(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)
+#else
+	#define SDC_MEM_ISO_RX_POOL 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) && \
+	defined(CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT)
+#define SDC_MEM_ISO_TX_POOL                                                            \
+	SDC_MEM_ISO_TX_POOL_SIZE(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT,               \
+		CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT,                         \
+		SDC_CIS_COUNT,                                                                 \
+		(SDC_BIS_SINK_COUNT + SDC_BIS_SOURCE_COUNT))
+/* We should not have to allocate TX pool memory for CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT,
+ * but currently bis_count does not differentiate between ADV or SYNC streams.
+ */
+#else
+#define SDC_MEM_ISO_TX_POOL 0
+#endif
+
 #define MEMPOOL_SIZE ((PERIPHERAL_COUNT * PERIPHERAL_MEM_SIZE) + \
 		      (SDC_CENTRAL_COUNT * CENTRAL_MEM_SIZE) + \
 		      (SDC_ADV_SET_MEM_SIZE) + \
@@ -171,7 +225,13 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_PERIODIC_SYNC_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_LIST_MEM_SIZE) + \
 		      (SDC_SCAN_BUF_SIZE) + \
-		      (SDC_FAL_MEM_SIZE))
+		      (SDC_FAL_MEM_SIZE) + \
+		      (SDC_MEM_CIG) + \
+		      (SDC_MEM_CIS) + \
+		      (SDC_MEM_BIS_SINK) + \
+		      (SDC_MEM_BIS_SOURCE) + \
+		      (SDC_MEM_ISO_RX_POOL) + \
+		      (SDC_MEM_ISO_TX_POOL))
 
 #if defined(CONFIG_BT_SDC_ADDITIONAL_MEMORY)
 __aligned(8) uint8_t sdc_mempool[MEMPOOL_SIZE + CONFIG_BT_SDC_ADDITIONAL_MEMORY];
@@ -241,6 +301,27 @@ static int acl_handle(struct net_buf *acl)
 }
 #endif
 
+#if defined(CONFIG_BT_CTLR_ISO_TX_BUFFERS)
+static int iso_handle(struct net_buf *acl)
+{
+	LOG_DBG("");
+
+	int errcode = MULTITHREADING_LOCK_ACQUIRE();
+
+	if (!errcode) {
+		errcode = sdc_hci_iso_data_put(acl->data);
+		MULTITHREADING_LOCK_RELEASE();
+
+		if (errcode) {
+			/* Likely buffer overflow event */
+			receive_signal_raise();
+		}
+	}
+
+	return errcode;
+}
+#endif
+
 static int hci_driver_send(struct net_buf *buf)
 {
 	int err;
@@ -263,6 +344,11 @@ static int hci_driver_send(struct net_buf *buf)
 	case BT_BUF_CMD:
 		err = cmd_handle(buf);
 		break;
+#if defined(CONFIG_BT_CTLR_ISO_TX_BUFFERS)
+	case BT_BUF_ISO_OUT:
+		err = iso_handle(buf);
+		break;
+#endif
 	default:
 		LOG_DBG("Unknown HCI type %u", type);
 		return -EINVAL;
@@ -299,6 +385,18 @@ static void data_packet_process(uint8_t *hci_buf)
 	       pb, bc, len);
 
 	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+	bt_recv(data_buf);
+}
+
+static void iso_data_packet_process(uint8_t *hci_buf)
+{
+	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ISO_IN, K_FOREVER);
+	struct bt_hci_iso_hdr *hdr = (void *)hci_buf;
+
+	uint16_t len = sys_le16_to_cpu(hdr->len);
+
+	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
+
 	bt_recv(data_buf);
 }
 
@@ -409,6 +507,8 @@ static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 		event_packet_process(p_hci_buffer);
 	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
 		data_packet_process(p_hci_buffer);
+	} else if (msg_type == SDC_HCI_MSG_TYPE_ISO) {
+		iso_data_packet_process(p_hci_buffer);
 	} else {
 		if (!IS_ENABLED(CONFIG_BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE)) {
 			LOG_ERR("Unexpected msg_type: %u. This if-else needs a new branch",
@@ -700,6 +800,34 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_PERIPHERAL_ISO)) {
+		err = sdc_support_cis_peripheral();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_CENTRAL_ISO)) {
+		err = sdc_support_cis_central();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_ADV_ISO)) {
+		err = sdc_support_bis_source();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_ISO)) {
+		err = sdc_support_bis_sink();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	return 0;
 }
 
@@ -707,6 +835,10 @@ static int configure_memory_usage(void)
 {
 	int required_memory;
 	sdc_cfg_t cfg;
+
+#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)
+	uint8_t iso_rx_paths = 0;
+#endif
 
 #if !defined(CONFIG_BT_LL_SOFTDEVICE_PERIPHERAL)
 	cfg.central_count.count = SDC_CENTRAL_COUNT;
@@ -872,6 +1004,81 @@ static int configure_memory_usage(void)
 		CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT;
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 					  SDC_CFG_TYPE_PERIODIC_SYNC_RSP_TX_BUFFER_CFG, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif
+
+#if defined(CONFIG_BT_CTLR_CONN_ISO)
+	cfg.cig_count.count = CONFIG_BT_CTLR_CONN_ISO_GROUPS;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_CIG_COUNT, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+
+	iso_rx_paths = CONFIG_BT_CTLR_CONN_ISO_STREAMS;
+	cfg.cis_count.count = CONFIG_BT_CTLR_CONN_ISO_STREAMS;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_CIS_COUNT, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif /* CONFIG_BT_CTLR_CONN_ISO */
+
+#if defined(CONFIG_BT_CTLR_BROADCAST_ISO)
+	cfg.big_count.count = 0;
+#if defined(CONFIG_BT_CTLR_ADV_ISO)
+	cfg.big_count.count += CONFIG_BT_CTLR_ADV_ISO_SET;
+#endif /* CONFIG_BT_CTLR_ADV_ISO */
+#if defined(CONFIG_BT_CTLR_SYNC_ISO)
+	cfg.big_count.count += CONFIG_BT_CTLR_SCAN_SYNC_ISO_SET;
+#endif /* CONFIG_BT_CTLR_SYNC_ISO */
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_BIG_COUNT, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+
+	cfg.bis_count.count = 0;
+#if defined(CONFIG_BT_CTLR_ADV_ISO)
+	cfg.bis_count.count += CONFIG_BT_CTLR_ADV_ISO_STREAM_COUNT;
+
+#endif /* CONFIG_BT_CTLR_ADV_ISO */
+#if defined(CONFIG_BT_CTLR_SYNC_ISO)
+	cfg.bis_count.count += CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT;
+	iso_rx_paths += CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT;
+#endif /* CONFIG_BT_CTLR_SYNC_ISO */
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_BIS_COUNT, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif /* CONFIG_BT_CTLR_BROADCAST_ISO */
+
+#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)
+	cfg.iso_rx_pdu_buffer_cfg.count = CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_ISO_RX_PDU_BUFFER_CFG, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+
+	cfg.iso_rx_sdu_buffer_cfg.count = iso_rx_paths;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_ISO_RX_SDU_BUFFER_CFG, &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif
+
+#if defined(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT) &&                                         \
+	defined(CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT)
+	cfg.iso_tx_buffer_cfg.tx_hci_buffer_count = CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT;
+	cfg.iso_tx_buffer_cfg.tx_pdu_buffer_per_stream_count =
+		CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+					  SDC_CFG_TYPE_ISO_TX_BUFFER_CFG, &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
