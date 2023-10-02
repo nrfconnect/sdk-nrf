@@ -7,7 +7,7 @@ Location
    :local:
    :depth: 2
 
-The location library provides functionality for retrieving the location of a device using different positioning methods such as:
+The Location library provides functionality for retrieving the location of a device using different positioning methods such as:
 
 * GNSS satellite positioning including Assisted GPS (A-GPS) and Predicted GPS (P-GPS) data.
 * Cellular positioning.
@@ -27,20 +27,20 @@ This library can use the assistance data (A-GPS and P-GPS) to find the satellite
 Implementation
 ==============
 
-The location library has a compact API and a location core that handles the functionality that is independent of the location method, such as fallback to the next preferred method and timeouts.
+The Location library has a compact API and a location core that handles the functionality that is independent of the location method, such as fallback to the next preferred method and timeouts.
 The supported location methods are as follows:
 
 * GNSS positioning
 
   * Uses :ref:`gnss_interface` for getting the location.
   * A-GPS and P-GPS are managed with :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`.
-  * The application may also use some other source for the data and use :c:func:`location_agps_data_process` and :c:func:`location_pgps_data_process` to pass the data to the location library.
+  * The application may also use some other source for the data and use :c:func:`location_agps_data_process` and :c:func:`location_pgps_data_process` to pass the data to the Location library.
   * The data format of A-GPS or P-GPS must be as received from :ref:`lib_nrf_cloud_agps`.
   * The data transport method for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
     If different transport is desired for different location methods, (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) and (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be enabled simultaneously. In such a case, MQTT takes
     precedence as the transport method of GNSS assistance data.
   * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
-    Also, if A-GPS is not used and Power Saving Mode (PSM) is enabled, Location library will wait for the modem to enter PSM.
+    Also, if A-GPS is not used and Power Saving Mode (PSM) is enabled, the Location library will wait for the modem to enter PSM.
   * Selectable location accuracy (low/normal/high).
   * Obstructed visibility detection enables a fast fallback to another positioning method if the device is detected to be indoors.
 
@@ -70,6 +70,109 @@ Here are details related to the services handling cell information for cellular 
   * The services available are `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ and `HERE Positioning`_.
   * The data transport method for the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
   * The only data transport method with `HERE Positioning`_ service is REST.
+
+Diagrams
+========
+
+In this section, the diagrams illustrate the use of the Location library when the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option is set.
+
+The following diagram shows the basic case when GNSS fix is found.
+
+.. msc::
+  hscale="1.3";
+
+  Application,
+  Loclib [label="Location library"],
+  Cloud;
+
+  Application => Loclib [label="location_request(&config)\nmethod list: GNSS, Cellular"];
+  |||;
+  Application << Loclib [label="LOCATION_EVT_GNSS_ASSISTANCE_REQUEST"];
+  Application => Cloud [label="Request A-GNSS data"];
+  Application << Cloud [label="A-GNSS data"];
+  Application => Loclib [label="location_agps_data_process()"];
+  Loclib rbox Loclib [label="Search for GNSS fix"];
+  ...;
+  Loclib rbox Loclib [label="GNSS fix found"];
+
+  Application << Loclib [label="LOCATION_EVT_LOCATION\n(latitude,longitude)"];
+
+The following diagram shows successful cellular positioning.
+
+.. msc::
+  hscale="1.3";
+
+  Application,
+  Loclib [label="Location library"],
+  Cloud;
+
+  Application => Loclib [label="location_request(&config)\nmethod list: Cellular"];
+  Loclib rbox Loclib [label="Scan LTE networks"];
+  |||;
+  Application << Loclib [label="LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST"];
+  Application => Cloud [label="Send LTE cell info, wait for response"];
+  |||;
+  Application << Cloud [label="(latitude,longitude)"];
+  Application => Loclib [label="location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_SUCCESS)\n(latitude,longitude)"];
+  |||;
+  Application << Loclib [label="LOCATION_EVT_LOCATION\n(latitude,longitude)"];
+  |||;
+
+The following diagram depicts a failure to find the GNSS fix, followed by a fallback to cloud positioning.
+Since the Wi-Fi and cellular positioning methods are one after another, they are combined to a single cloud positioning request.
+Both Wi-Fi APs and LTE cells are given to the application with a single :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event.
+
+.. msc::
+  hscale="1.3";
+
+  Application,
+  Loclib [label="Location library"],
+  Cloud;
+
+  Application => Loclib [label="location_request(&config)\nmethod list: GNSS, Wi-Fi, Cellular"];
+  |||;
+  Application << Loclib [label="LOCATION_EVT_GNSS_ASSISTANCE_REQUEST"];
+  Application => Cloud [label="Request A-GNSS data"];
+  Application << Cloud [label="A-GNSS data"];
+  Application => Loclib [label="location_agps_data_process()"];
+  Loclib rbox Loclib [label="Search for GNSS fix"];
+  ...;
+  Loclib rbox Loclib [label="GNSS timeout occurs"];
+
+  Loclib rbox Loclib [label="Fallback to cloud positioning"];
+  Loclib rbox Loclib [label="Scan Wi-Fi and LTE networks"];
+  |||;
+  Application << Loclib [label="LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST"];
+  Application => Cloud [label="Send Wi-Fi AP and LTE cell info but do not wait for response"];
+  Application => Loclib [label="location_cloud_location_ext_result_set(\nLOCATION_EXT_RESULT_UNKNOWN)"];
+  |||;
+  Loclib rbox Loclib [label="All methods tried,\nfallback is not possible"];
+  Application << Loclib [label="LOCATION_EVT_RESULT_UNKNOWN"];
+  |||;
+
+The following diagram illustrates a case where Wi-Fi is used as first priority location method, and its result is unknown.
+A fallback is performed to GNSS.
+
+.. msc::
+  hscale="1.3";
+
+  Application,
+  Loclib [label="Location library"],
+  Cloud;
+
+  Application => Loclib [label="location_request(&config)\nmethod list: Wi-Fi, GNSS, Cellular"];
+  Loclib rbox Loclib [label="Scan Wi-Fi networks"];
+  |||;
+  Application << Loclib [label="LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST"];
+  Application => Cloud [label="Send Wi-Fi APs but do not wait for response"];
+  Application => Loclib [label="location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_UNKNOWN)"];
+  Loclib rbox Loclib [label="Perform fallback to GNSS"];
+
+  Loclib rbox Loclib [label="A-GNSS data already exists\nSearch for GNSS fix"];
+  ...;
+  Loclib rbox Loclib [label="GNSS fix found"];
+
+  Application << Loclib [label="LOCATION_EVT_LOCATION\n(latitude,longitude)"];
 
 Requirements
 ************
@@ -133,9 +236,9 @@ Configure the following options to enable location methods of your choice:
 
 The following options control the use of GNSS assistance data:
 
-* :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` - Enables A-GPS and P-GPS data retrieval from an external source, implemented separately by the application.
-  If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` or :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
-  Once the application has obtained the assistance data, it should call the :c:func:`location_agps_data_process` or the :c:func:`location_pgps_data_process` function to feed it into the library.
+* :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` - Enables A-GPS and P-GPS data retrieval, and cellular cell information and Wi-Fi APs sending to an external source, implemented separately by the application.
+  If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST`, :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` or :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event when additional information is needed.
+  Once the application has obtained necessary information, it must call the :c:func:`location_agps_data_process`, the :c:func:`location_pgps_data_process`, or the :c:func:`location_cloud_location_ext_result_set` function, respectively, to feed it into the library.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
@@ -239,7 +342,7 @@ Use method priority list defined by Kconfig options and set custom timeout value
     * need to iterate through the method list as the order is defined by Kconfig options.
     */
    for (int i = 0; i < config.methods_count; i++) {
-       if (config.methods[i].method == LOCATION_METHOD_GNSS) {
+       if (config.methods[i].method == LOCATION_METHOD_CELLULAR) {
            config.methods[i].cellular.timeout = 15 * MSEC_PER_SEC;
        }
    }
@@ -260,8 +363,6 @@ Limitations
 ***********
 
 * The Location library can only have one application registered at a time. If there is already an application handler registered, another initialization will override the existing handler.
-* Cellular neighbor information used for cellular positioning is more accurate on modem firmware (MFW) 1.3.0 compared to earlier MFW releases that do not have an API for scanning the neighboring cells.
-  For MFW releases older than 1.3.0, only serving cell information is provided and it can be hours or days old, or even older, depending on the modem sleep states.
 
 Dependencies
 ************
