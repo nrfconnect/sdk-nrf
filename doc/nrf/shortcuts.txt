@@ -171,7 +171,7 @@
 
 .. |external_flash_size| replace:: external flash memory with minimum 4 MB
 
-.. |gps_tradeoffs| replace:: For more information on the various trade-offs of using A-GPS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
+.. |gnss_tradeoffs| replace:: For more information on the various trade-offs of using A-GNSS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
 
 .. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
 

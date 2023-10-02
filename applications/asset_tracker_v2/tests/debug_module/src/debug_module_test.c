@@ -226,7 +226,7 @@ void test_memfault_unhandled_event(void)
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct app_event_header *)location_module_event));
 
-	location_module_event->type = LOCATION_MODULE_EVT_AGPS_NEEDED;
+	location_module_event->type = LOCATION_MODULE_EVT_AGNSS_NEEDED;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct app_event_header *)location_module_event));
 

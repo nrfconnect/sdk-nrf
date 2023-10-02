@@ -497,9 +497,9 @@ int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id,
 	return -ENOTSUP;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_agnss_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
-	/* Not supported, A-GPS is requested internally via the nRF Cloud A-GPS library. */
+	/* Not supported, A-GNSS is requested internally via the nRF Cloud A-GPS library. */
 	return -ENOTSUP;
 }
 

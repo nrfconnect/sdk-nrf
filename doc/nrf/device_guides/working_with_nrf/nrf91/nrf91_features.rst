@@ -333,7 +333,7 @@ This means that the number of satellites having valid predicted ephemerides redu
 Hence, the GNSS module needs to download the ephemeris data from the satellite broadcast if no predicted ephemeris is found for that satellite to be able to use the satellite.
 
 .. note::
-   |gps_tradeoffs|
+   |gnss_tradeoffs|
 
 nRF Cloud compared with SUPL library
 ------------------------------------
