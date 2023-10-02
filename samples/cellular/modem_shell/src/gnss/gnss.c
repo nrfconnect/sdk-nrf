@@ -14,7 +14,7 @@
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
 	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 #include <net/lwm2m_client_utils_location.h>
 #include "cloud_lwm2m.h"
@@ -100,7 +100,7 @@ static bool agnss_inject_int = true;
 #endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
-	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 static char agnss_data_buf[3500];
 #endif
 
@@ -116,7 +116,7 @@ static struct k_work get_pgps_data_work;
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) && defined(CONFIG_NRF_CLOUD_REST) && \
-	!defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+	!defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 #define AGNSS_USES_REST
 #endif
 
@@ -571,7 +571,7 @@ static int gnss_enable_all_nmeas(void)
 }
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
-	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 {
 	int err;
@@ -687,7 +687,7 @@ static void get_agnss_data(struct k_work *item)
 
 	mosh_print(
 		"GNSS: Getting A-GNSS data from %s...",
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 		"LwM2M"
 #elif defined(CONFIG_NRF_CLOUD_AGPS)
 		"nRF Cloud"
@@ -703,13 +703,13 @@ static void get_agnss_data(struct k_work *item)
 			agnss_request.system[i].sv_mask_alm);
 	}
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 	if (!cloud_lwm2m_is_connected()) {
 		mosh_error("GNSS: LwM2M not connected, can't request A-GNSS data");
 		return;
 	}
-	location_assistance_agps_set_mask(&agnss_request);
-	err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get());
+	location_assistance_agnss_set_mask(&agnss_request);
+	err = location_assistance_agnss_request_send(cloud_lwm2m_client_ctx_get());
 	if (err) {
 		mosh_error("GNSS: Failed to request A-GNSS data, error: %d", err);
 	}

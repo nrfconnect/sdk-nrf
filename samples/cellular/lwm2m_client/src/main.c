@@ -117,7 +117,7 @@ static bool button_callback(const struct app_event_header *aeh)
 
 		switch (event->device_number) {
 		case 1:
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
 defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 			LOG_INF("Starting GNSS");
 			start_gnss();

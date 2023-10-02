@@ -529,7 +529,7 @@ int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 	ARG_UNUSED(id);
 	ARG_UNUSED(ack);
 
-	return location_assistance_agps_request_send(&client);
+	return location_assistance_agnss_request_send(&client);
 }
 
 int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
