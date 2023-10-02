@@ -19,7 +19,7 @@ To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 
 The library adds support for four objects related to location assistance:
 
-* GNSS Assistance object (ID 33625) for requesting and handling A-GPS and P-GPS assistance data.
+* GNSS Assistance object (ID 33625) for requesting and handling A-GNSS and P-GPS assistance data.
 * Ground Fix Location object (ID 33626) for requesting and storing estimated cell and Wi-Fi based location.
 * Visible Wi-Fi Access Point object (ID 33627) for storing nearby Wi-Fi Access Point information.
 * ECID-Signal Measurement Information object (ID 10256) for storing the cell neighborhood information.
@@ -39,8 +39,8 @@ There are four different supported methods of obtaining the location assistance:
   The LwM2M server then sends the location request to nRF Cloud, which responds with the location data.
 * Location based on Wi-Fi access points - The device sends information about the nearby Wi-Fi access points to the LwM2M server.
   The LwM2M server then sends the location request to nRF Cloud, which responds with the location data.
-* Query of A-GPS assistance data - The A-GPS assistance data is queried from nRF Cloud and provided back to the device through the LwM2M server.
-  The A-GPS assistance data is then provided to the GNSS module for obtaining the position fix faster.
+* Query of A-GNSS assistance data - The A-GNSS assistance data is queried from nRF Cloud and provided back to the device through the LwM2M server.
+  The A-GNSS assistance data is then provided to the GNSS module for obtaining the position fix faster.
 * Query of P-GPS predictions - The P-GPS predictions are queried from nRF Cloud and provided back to the device through the LwM2M server.
   The predictions are stored in the device flash and injected to the GNSS module when needed.
 
@@ -82,25 +82,25 @@ The Ground Fix Location object is used in the same manner as it is used in the c
    Cell-based location and Wi-Fi based location can be combined.
    When combined, the ground fix assistance request contains data from both, the nearby cells and nearby Wi-Fi access points.
 
-.. _location_assistance_agps_lwm2m:
+.. _location_assistance_agnss_lwm2m:
 
-A-GPS assistance
-================
+A-GNSS assistance
+=================
 
-When using A-GPS assistance, the device requests A-GPS assistance data from the server.
+When using A-GNSS assistance, the device requests A-GNSS assistance data from the server.
 You can query the GNSS module for the data needed.
 A device can request for all data at once or split the request to reduce the memory usage.
 The request also contains information about the current cell the device is connected to and the information is similarly available on Connectivity Monitor object as in the cell-based location.
 
-When requesting for A-GPS assistance data, the device must first set the mask for the data it is requesting by calling the :c:func:`location_assistance_agps_set_mask` function.
-When the mask has been set, the :c:func:`location_assistance_agps_request_send` function sends the request with all necessary data to the server and responds with the A-GPS assistance data.
+When requesting for A-GNSS assistance data, the device must first set the mask for the data it is requesting by calling the :c:func:`location_assistance_agnss_set_mask` function.
+When the mask has been set, the :c:func:`location_assistance_agnss_request_send` function sends the request with all necessary data to the server and responds with the A-GNSS assistance data.
 The assistance data is written to the GNSS module automatically by the library.
 
-Filtered A-GPS
---------------
+Filtered A-GNSS
+---------------
 
-With filtered A-GPS, the satellites below the given angle above the ground are filtered out.
-You can set the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agps_set_elevation_mask` function.
+With filtered A-GNSS, the satellites below the given angle above the ground are filtered out.
+You can set the angle to a degree `[0 - 90]` using the :c:func:`location_assist_agnss_set_elevation_mask` function.
 Setting the degree to `-1` disables filtering, which is the default setting.
 
 .. _location_assistance_pgps_lwm2m:
@@ -137,12 +137,12 @@ The library has a callback handler for the result code.
 You can set your own callback with the :c:func:`location_assistance_set_result_code_cb` function.
 It is called whenever the request has been handled.
 
-Using A-GPS and P-GPS simultaneously
-====================================
+Using A-GNSS and P-GPS simultaneously
+=====================================
 
-A-GPS and P-GPS can be used simultaneously.
+A-GNSS and P-GPS can be used simultaneously.
 However, only one active request at a time for the object is allowed.
-The functions :c:func:`location_assistance_agps_set_mask`, :c:func:`location_assistance_agps_request_send` and :c:func:`location_assistance_pgps_request_send` return ``-EAGAIN`` if there is an active request.
+The functions :c:func:`location_assistance_agnss_set_mask`, :c:func:`location_assistance_agnss_request_send` and :c:func:`location_assistance_pgps_request_send` return ``-EAGAIN`` if there is an active request.
 In such case, the device must resend the request after the previous request has been handled.
 
 
@@ -156,7 +156,7 @@ To enable location assistance, configure either or both of the following Kconfig
 
 Following are the other important library options:
 
-* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS` -  nRF Cloud provides A-GPS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS` -  nRF Cloud provides A-GNSS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` -  nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL` -  nRF Cloud provides estimated location based on currently attached cell and its neighborhood.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT` - Enable support for connectivity monitoring utilities.

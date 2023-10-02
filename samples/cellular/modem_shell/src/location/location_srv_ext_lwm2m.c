@@ -29,9 +29,9 @@ void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame 
 		return;
 	}
 
-	location_assistance_agps_set_mask(agnss_req);
+	location_assistance_agnss_set_mask(agnss_req);
 
-	while ((err = location_assistance_agps_request_send(cloud_lwm2m_client_ctx_get())) ==
+	while ((err = location_assistance_agnss_request_send(cloud_lwm2m_client_ctx_get())) ==
 	       -EAGAIN) {
 		/* LwM2M client utils library is currently handling a P-GPS data request, need to
 		 * wait until it has been completed.

@@ -122,9 +122,9 @@ See `nRF Cloud integration with Coiote Device Management`_ for more information 
 The integration supports the following location services:
 
 * Cell-based location assistance
-* A-GPS location assistance
+* A-GNSS location assistance
 * :ref:`P-GPS location assistance <location_assistance_pgps_lwm2m>`
-* :ref:`Wi-Fi based location assistance <location_assistance_agps_lwm2m>`
+* :ref:`Wi-Fi based location assistance <location_assistance_agnss_lwm2m>`
 
 Cell-based location
 ===================
@@ -147,20 +147,20 @@ See the sample or application documentation for more information.
 
 After flashing the sample, the cell-based location of the device will be visible in Coiote Device Management as explained in `Viewing device location in Coiote Device Management`_.
 
-A-GPS location assistance
-=========================
+A-GNSS location assistance
+==========================
 
-A-GPS location assistance has the advantages of faster :term:`Time to First Fix (TTFF)` and lesser power consumption compared to GNSS usage without assistance.
-See :ref:`location_assistance_agps_lwm2m` for more information on the API usage.
+A-GNSS location assistance has the advantages of faster :term:`Time to First Fix (TTFF)` and lesser power consumption compared to GNSS usage without assistance.
+See :ref:`location_assistance_agnss_lwm2m` for more information on the API usage.
 
-After you flash the supported sample or application on to your device, the device requests A-GPS data.
-`Coiote Device Management server`_ obtains the data from nRF Cloud and sends the A-GPS data blob to the GNSS module of the device.
+After you flash the supported sample or application on to your device, the device requests A-GNSS data.
+`Coiote Device Management server`_ obtains the data from nRF Cloud and sends the A-GNSS data blob to the GNSS module of the device.
 This data is used in combination with the data broadcast by the GNSS satellites to acquire a fix.
 
-.. figure:: images/avsystem_integration_agps_location.svg
-   :alt: A-GPS location assistance
+.. figure:: images/avsystem_integration_agnss_location.svg
+   :alt: A-GNSS location assistance
 
-   A-GPS location assistance
+   A-GNSS location assistance
 
 For cell-based location assistance, each supported sample might use a different overlay file.
 See the sample or application documentation for more information.

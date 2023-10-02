@@ -214,9 +214,9 @@ void test_codec_helpers_set_agps_data(void)
 		.queued = true,
 	};
 
-	__cmock_location_assistance_agps_set_mask_ExpectAndReturn(&agps.request, 0);
+	__cmock_location_assistance_agnss_set_mask_ExpectAndReturn(&agps.request, 0);
 
-	__cmock_location_assist_agps_set_elevation_mask_Expect(-1);
+	__cmock_location_assist_agnss_set_elevation_mask_Expect(-1);
 
 	__cmock_lwm2m_set_u32_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID), agps.cell, 0);

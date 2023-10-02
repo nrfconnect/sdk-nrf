@@ -46,7 +46,7 @@ target_include_directories(app PRIVATE ${ASSET_TRACKER_v2_DIR}/src/cloud/cloud_w
 
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
-	-DCONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS=y
+	-DCONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS=y
 	-DCONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS=y
 	-DCONFIG_LWM2M_INTEGRATION_ENDPOINT_PREFIX=":urn:id:"
 	-DCONFIG_LWM2M_INTEGRATION=y

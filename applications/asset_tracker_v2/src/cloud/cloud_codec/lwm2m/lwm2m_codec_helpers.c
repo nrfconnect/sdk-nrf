@@ -511,13 +511,13 @@ int lwm2m_codec_helpers_set_agps_data(struct cloud_data_agps_request *agps_reque
 		return -ENODATA;
 	}
 
-	err = location_assistance_agps_set_mask(&agps_request->request);
+	err = location_assistance_agnss_set_mask(&agps_request->request);
 	if (err) {
 		return err;
 	}
 
 	/* Disable filtered A-GPS. */
-	location_assist_agps_set_elevation_mask(-1);
+	location_assist_agnss_set_elevation_mask(-1);
 
 	err = lwm2m_set_u32(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
 			    agps_request->cell);
