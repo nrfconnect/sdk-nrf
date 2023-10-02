@@ -6,11 +6,11 @@
 
 / {
 	chosen {
-		nordic,pm-ext-flash = &gd25lb256;
+		nordic,pm-ext-flash = &gd25wb256;
 	};
 };
 
 /* External flash device is disabled by default */
-&gd25lb256 {
+&gd25wb256 {
 	status = "okay";
 };

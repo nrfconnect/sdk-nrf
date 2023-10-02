@@ -20,15 +20,15 @@
 
 / {
 	aliases {
-		ext-flash = &gd25lb256;
+		ext-flash = &gd25wb256;
 	};
 
-	/* Configure partition manager to use gd25lb256 as the external flash */
+	/* Configure partition manager to use gd25wb256 as the external flash */
 	chosen {
-		nordic,pm-ext-flash = &gd25lb256;
+		nordic,pm-ext-flash = &gd25wb256;
 	};
 };
 
-&gd25lb256 {
+&gd25wb256 {
 	status = "okay";
 };
