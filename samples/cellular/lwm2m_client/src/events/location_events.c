@@ -9,7 +9,7 @@
 
 #include "location_events.h"
 
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 static void log_gnss_agnss_request_event(const struct app_event_header *eh)
 {
 	APP_EVENT_MANAGER_LOG(eh, "got agnss request event");

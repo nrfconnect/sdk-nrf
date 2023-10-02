@@ -852,7 +852,15 @@ Libraries for networking
     * A Kconfig option :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CON_MANAGEMENT` for saving and loading the DTLS socket state.
       Saving the session will free memory in the modem, which makes memory available for other connections.
 
-  * Updated Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than -126 dBm.
+  * Updated:
+
+    * The Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than -126 dBm.
+    * The ``CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS`` Kconfig option has been renamed to :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS`.
+    * The ``location_assistance_agps_set_mask()`` function has been renamed to :c:func:`location_assistance_agnss_set_mask`.
+    * The ``location_assistance_agps_request_send()`` function has been renamed to :c:func:`location_assistance_agnss_request_send`.
+    * The ``location_assist_agps_request_set()`` function has been renamed to :c:func:`location_assist_agnss_request_set`.
+    * The ``location_assist_agps_set_elevation_mask()`` function has been renamed to :c:func:`location_assist_agnss_set_elevation_mask`.
+    * The ``location_assist_agps_get_elevation_mask()`` function has been renamed to :c:func:`location_assist_agnss_get_elevation_mask`.
 
 * :ref:`lib_aws_fota` library:
 

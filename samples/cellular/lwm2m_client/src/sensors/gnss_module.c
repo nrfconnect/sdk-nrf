@@ -7,7 +7,7 @@
 #include <zephyr/kernel.h>
 #include <nrf_modem_gnss.h>
 #include <app_event_manager.h>
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 #include <net/lwm2m_client_utils_location.h>
 #include "location_events.h"
 #endif
@@ -24,7 +24,7 @@
 LOG_MODULE_REGISTER(gnss_module, CONFIG_APP_LOG_LEVEL);
 
 static struct nrf_modem_gnss_pvt_data_frame pvt_data;
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
 defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 static struct nrf_modem_gnss_agnss_data_frame agnss_req;
 #endif
@@ -95,7 +95,7 @@ static void gnss_event_handler(int event_id)
 		break;
 		}
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ: {
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS) || \
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
 defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 		LOG_INF("GPS requests A-GNSS Data. Sending request to LwM2M server");
 		err = nrf_modem_gnss_read(&agnss_req, sizeof(agnss_req),
@@ -104,7 +104,7 @@ defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 			LOG_ERR("Error reading A-GNSS request (%d)", err);
 		}
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 		struct gnss_agnss_request_event *event = new_gnss_agnss_request_event();
 
 		event->agnss_req = agnss_req;
@@ -138,7 +138,7 @@ int initialise_gnss(void)
 	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
 
 	/* Disable GNSS scheduled downloads if A-GNSS is used. */
-	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)) {
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)) {
 		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
 	}
 

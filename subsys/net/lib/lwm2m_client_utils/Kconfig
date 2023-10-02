@@ -142,10 +142,10 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
 	  Information of current cell and neighboring cells are sent to lwm2m server to
 	  obtain coarse location.
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
-	bool "Use location based on A-GPS"
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
+	bool "Use location based on A-GNSS"
 	help
-	  A-GPS assistance data is requested from lwm2m server and fed to the GNSS module
+	  A-GNSS assistance data is requested from lwm2m server and fed to the GNSS module
 	  after the data has been received.
 
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
@@ -187,14 +187,14 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_TIME
 	help
 	  The starting time of the predictions.
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_BUF_SIZE
 	int "Size of the buffer for storing the assistance data coming from server"
-	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
 	default 4096
 
-config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_ELEVATION_MASK
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_ELEVATION_MASK
 	int "Minimum elevation angle for visible satellites."
-	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
 	default -1
 	help
 	  Minimum elevation angle for visible satellites. The range is 0...90.
