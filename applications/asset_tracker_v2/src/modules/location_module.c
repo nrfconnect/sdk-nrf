@@ -478,7 +478,7 @@ void location_event_handler(const struct location_event_data *event_data)
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 		struct location_module_event *location_module_event = new_location_module_event();
 
-		location_module_event->data.agps_request = event_data->agps_request;
+		location_module_event->data.agps_request = event_data->agnss_request;
 		location_module_event->type = LOCATION_MODULE_EVT_AGPS_NEEDED;
 		APP_EVENT_SUBMIT(location_module_event);
 #endif

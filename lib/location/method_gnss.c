@@ -52,30 +52,30 @@ BUILD_ASSERT(
 #define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
 #endif
 #if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
-#define AGPS_REQUEST_RECV_BUF_SIZE 3500
-#define AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE 400
-/* Minimum time between two A-GPS data requests in seconds. */
-#define AGPS_REQUEST_MIN_INTERVAL (60 * 60)
-/* A-GPS data expiration threshold in minutes before requesting fresh data. An 80 minute threshold
- * is used because it leaves enough time to try again after an hour if fetching of A-GPS data fails
+#define AGNSS_REQUEST_RECV_BUF_SIZE 3500
+#define AGNSS_REQUEST_HTTPS_RESP_HEADER_SIZE 400
+/* Minimum time between two A-GNSS data requests in seconds. */
+#define AGNSS_REQUEST_MIN_INTERVAL (60 * 60)
+/* A-GNSS data expiration threshold in minutes before requesting fresh data. An 80 minute threshold
+ * is used because it leaves enough time to try again after an hour if fetching of A-GNSS data fails
  * once. Also, because of overlapping ephemeris validity times, fresh ephemerides are
  * needed on average every two hours with both 80 minute and shorter expiration thresholds.
  */
-#define AGPS_EXPIRY_THRESHOLD (80)
+#define AGNSS_EXPIRY_THRESHOLD (80)
 /* P-GPS data expiration threshold is zero minutes, because there is no overlap between
  * predictions.
  */
 #define PGPS_EXPIRY_THRESHOLD 0
-/* A-GPS minimum number of expired ephemerides to request all ephemerides. */
-#define AGPS_EPHE_MIN_COUNT 3
+/* A-GNSS minimum number of expired ephemerides to request all ephemerides. */
+#define AGNSS_EPHE_MIN_COUNT 3
 /* P-GPS minimum number of expired ephemerides to trigger injection of predictions.
  * With P-GPS, predictions are not available for all satellites, especially when
  * predictions are made further into the future, so it is natural that predictions are
  * missing for some of the satellites.
  */
 #define PGPS_EPHE_MIN_COUNT 12
-/* A-GPS minimum number of expired almanacs to request all almanacs. */
-#define AGPS_ALM_MIN_COUNT 3
+/* A-GNSS minimum number of expired almanacs to request all almanacs. */
+#define AGNSS_ALM_MIN_COUNT 3
 /* PRN of the first QZSS satellite. The range for QZSS PRNs is 193...202. */
 #define FIRST_QZSS_PRN 193
 #endif
@@ -89,17 +89,17 @@ static struct k_work method_gnss_pvt_work;
 /* Flag indicating whether nrf_modem_gnss_agnss_expiry_get() is supported. If the API is
  * supported, NRF_MODEM_GNSS_EVT_AGNSS_REQ events are ignored.
  */
-static bool agps_expiry_get_supported;
-static struct k_work method_gnss_agps_req_event_handle_work;
-static struct k_work method_gnss_agps_req_work;
+static bool agnss_expiry_get_supported;
+static struct k_work method_gnss_agnss_req_event_handle_work;
+static struct k_work method_gnss_agnss_req_work;
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-static int64_t agps_req_timestamp;
+static int64_t agnss_req_timestamp;
 #if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && \
 	(defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)) && \
 	!defined(CONFIG_NRF_CLOUD_MQTT)
-static char agps_rest_data_buf[AGPS_REQUEST_RECV_BUF_SIZE];
+static char agnss_rest_data_buf[AGNSS_REQUEST_RECV_BUF_SIZE];
 #endif
 #endif
 
@@ -119,11 +119,11 @@ static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 static K_SEM_DEFINE(entered_rrc_idle, 1, 1);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-static struct nrf_modem_gnss_agnss_data_frame agps_request;
+static struct nrf_modem_gnss_agnss_data_frame agnss_request;
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-static struct nrf_modem_gnss_agnss_data_frame pgps_agps_request = {
+static struct nrf_modem_gnss_agnss_data_frame pgps_agnss_request = {
 	/* Inject current time by default. */
 	.data_flags = NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST,
 	.system_count = 1,
@@ -141,7 +141,7 @@ static struct nrf_modem_gnss_agnss_data_frame pgps_agps_request = {
 #if (defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)) || \
 	(defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
-			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
+			      AGNSS_REQUEST_HTTPS_RESP_HEADER_SIZE];
 #endif
 #endif
 
@@ -167,9 +167,9 @@ static void method_gnss_inject_pgps_work_fn(struct k_work *work)
 	int err;
 
 	LOG_DBG("Sending prediction to modem (ephe: 0x%08x)...",
-		(uint32_t)pgps_agps_request.system[0].sv_mask_ephe);
+		(uint32_t)pgps_agnss_request.system[0].sv_mask_ephe);
 
-	err = nrf_cloud_pgps_inject(prediction, &pgps_agps_request);
+	err = nrf_cloud_pgps_inject(prediction, &pgps_agnss_request);
 	if (err) {
 		LOG_ERR("Unable to send prediction to modem: %d", err);
 	}
@@ -251,20 +251,20 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-static void method_gnss_nrf_cloud_agps_request(void)
+static void method_gnss_nrf_cloud_agnss_request(void)
 {
-	int err = nrf_cloud_agps_request(&agps_request);
+	int err = nrf_cloud_agps_request(&agnss_request);
 
 	if (err) {
-		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
+		LOG_ERR("nRF Cloud A-GNSS request failed, error: %d", err);
 		return;
 	}
 
-	LOG_DBG("A-GPS data requested");
+	LOG_DBG("A-GNSS data requested");
 }
 
 #elif defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)
-static void method_gnss_nrf_cloud_agps_request(void)
+static void method_gnss_nrf_cloud_agnss_request(void)
 {
 	int err;
 
@@ -288,7 +288,7 @@ static void method_gnss_nrf_cloud_agps_request(void)
 
 	struct nrf_cloud_rest_agps_request request = {
 		NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
-		&agps_request,
+		&agnss_request,
 		NULL,
 		false,
 		0
@@ -297,13 +297,13 @@ static void method_gnss_nrf_cloud_agps_request(void)
 	struct lte_lc_cells_info net_info = {0};
 	struct lte_lc_cells_info *scan_results;
 
-	/* Get network info for the A-GPS location request.
+	/* Get network info for the A-GNSS location request.
 	 * Timeout value is just some number that should be big enough.
 	 */
 	scan_cellular_execute(5000, 0);
 	scan_results = scan_cellular_results_get();
 	if (scan_results == NULL) {
-		LOG_WRN("Requesting A-GPS data without location assistance");
+		LOG_WRN("Requesting A-GNSS data without location assistance");
 	} else {
 		net_info.current_cell.mcc = scan_results->current_cell.mcc;
 		net_info.current_cell.mnc = scan_results->current_cell.mnc;
@@ -315,8 +315,8 @@ static void method_gnss_nrf_cloud_agps_request(void)
 	}
 
 	struct nrf_cloud_rest_agps_result result = {
-		agps_rest_data_buf,
-		sizeof(agps_rest_data_buf),
+		agnss_rest_data_buf,
+		sizeof(agnss_rest_data_buf),
 		0};
 
 #if defined(CONFIG_NRF_CLOUD_REST)
@@ -325,19 +325,19 @@ static void method_gnss_nrf_cloud_agps_request(void)
 	err = nrf_cloud_coap_agps_data_get(&request, &result);
 #endif
 	if (err) {
-		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
+		LOG_ERR("nRF Cloud A-GNSS request failed, error: %d", err);
 		return;
 	}
 
-	LOG_DBG("A-GPS data requested");
+	LOG_DBG("A-GNSS data requested");
 
 	err = nrf_cloud_agps_process(result.buf, result.agps_sz);
 	if (err) {
-		LOG_ERR("A-GPS data processing failed, error: %d", err);
+		LOG_ERR("A-GNSS data processing failed, error: %d", err);
 		return;
 	}
 
-	LOG_DBG("A-GPS data processed");
+	LOG_DBG("A-GNSS data processed");
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	err = nrf_cloud_pgps_notify_prediction();
@@ -422,21 +422,21 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-static bool method_gnss_agps_required(void)
+static bool method_gnss_agnss_required(void)
 {
-	int32_t time_since_agps_req;
+	int32_t time_since_agnss_req;
 	bool ephe_or_alm_required = false;
 
 	/* Check if A-GNSS data is needed. */
-	for (int i = 0; i < agps_request.system_count; i++) {
-		if (agps_request.system[i].sv_mask_ephe != 0 ||
-		    agps_request.system[i].sv_mask_alm != 0) {
+	for (int i = 0; i < agnss_request.system_count; i++) {
+		if (agnss_request.system[i].sv_mask_ephe != 0 ||
+		    agnss_request.system[i].sv_mask_alm != 0) {
 			ephe_or_alm_required = true;
 			break;
 		}
 	}
 
-	if (agps_request.data_flags == 0 && !ephe_or_alm_required) {
+	if (agnss_request.data_flags == 0 && !ephe_or_alm_required) {
 		LOG_DBG("No A-GNSS data types requested");
 		return false;
 	}
@@ -444,11 +444,11 @@ static bool method_gnss_agps_required(void)
 	/* A-GNSS data is needed, check if enough time has passed since the last A-GNSS data
 	 * request.
 	 */
-	if (agps_req_timestamp != 0) {
-		time_since_agps_req = k_uptime_get() - agps_req_timestamp;
-		if (time_since_agps_req < (AGPS_REQUEST_MIN_INTERVAL * MSEC_PER_SEC)) {
+	if (agnss_req_timestamp != 0) {
+		time_since_agnss_req = k_uptime_get() - agnss_req_timestamp;
+		if (time_since_agnss_req < (AGNSS_REQUEST_MIN_INTERVAL * MSEC_PER_SEC)) {
 			LOG_DBG("Skipping A-GNSS request, time since last request: %d s",
-				time_since_agps_req / 1000);
+				time_since_agnss_req / 1000);
 			return false;
 		}
 	}
@@ -475,23 +475,23 @@ static const char *get_system_string(uint8_t system_id)
 	}
 }
 
-/* Triggers A-GPS data request and/or injection of P-GPS predictions.
+/* Triggers A-GNSS data request and/or injection of P-GPS predictions.
  *
  * Before this function is called, the assistance data need from GNSS must be stored into
- * 'agps_request'.
+ * 'agnss_request'.
  *
  * There are three possible assistance configurations with different behavior:
  *
- * A-GPS only:
- * Ephemerides, almanacs and additional assistance data is handled by A-GPS.
+ * A-GNSS only:
+ * Ephemerides, almanacs and additional assistance data is handled by A-GNSS.
  * If any additional assistance data (UTC, Klobuchar, GPS time, integrity or position) is needed,
  * all additional assistance is requested at the same time.
  *
- * A-GPS and P-GPS:
+ * A-GNSS and P-GPS:
  * GPS ephemerides are handled by P-GPS.
- * GPS almanacs are handled by A-GPS, but only if the downloaded P-GPS prediction set is longer than
- * one week.
- * Additional assistance data is handled by A-GPS.
+ * GPS almanacs are handled by A-GNSS, but only if the downloaded P-GPS prediction set is longer
+ * than one week.
+ * Additional assistance data is handled by A-GNSS.
  * If any additional assistance data (UTC, Klobuchar, GPS time, integrity or position) is needed,
  * all additional assistance is requested at the same time.
  *
@@ -500,7 +500,7 @@ static const char *get_system_string(uint8_t system_id)
  * Almanacs are not used.
  * GPS time and position assistance are handled by P-GPS.
  *
- * The frequency of A-GPS data requests is limited to avoid requesting data repeatedly, for
+ * The frequency of A-GNSS data requests is limited to avoid requesting data repeatedly, for
  * example in case the server is down.
  *
  * Almanacs are not used with P-GPS prediction sets up to one week in length, because GNSS always
@@ -512,30 +512,30 @@ static void method_gnss_assistance_request(void)
 {
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	/* GPS ephemerides come from P-GPS. */
-	pgps_agps_request.system[0].sv_mask_ephe = agps_request.system[0].sv_mask_ephe;
-	pgps_agps_request.data_flags = agps_request.data_flags;
-	agps_request.system[0].sv_mask_ephe = 0;
+	pgps_agnss_request.system[0].sv_mask_ephe = agnss_request.system[0].sv_mask_ephe;
+	pgps_agnss_request.data_flags = agnss_request.data_flags;
+	agnss_request.system[0].sv_mask_ephe = 0;
 	if (CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS <= 42) {
 		/* GPS almanacs not needed in this configuration. */
-		agps_request.system[0].sv_mask_alm = 0;
+		agnss_request.system[0].sv_mask_alm = 0;
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_AGPS)) {
-		/* Time and position come from A-GPS. */
-		pgps_agps_request.data_flags = 0;
+		/* Time and position come from A-GNSS. */
+		pgps_agnss_request.data_flags = 0;
 	}
 
 	LOG_DBG("P-GPS request sv_mask_ephe: 0x%08x, data_flags 0x%02x",
-		(uint32_t)pgps_agps_request.system[0].sv_mask_ephe, pgps_agps_request.data_flags);
+		(uint32_t)pgps_agnss_request.system[0].sv_mask_ephe, pgps_agnss_request.data_flags);
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-	if (agps_request.data_flags != 0) {
-		/* With A-GPS, if any of the flags in the data_flags field is set, it is
+	if (agnss_request.data_flags != 0) {
+		/* With A-GNSS, if any of the flags in the data_flags field is set, it is
 		 * feasible to request everything at the same time, because of the small amount
 		 * of data.
 		 */
-		agps_request.data_flags =
+		agnss_request.data_flags =
 			NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
 			NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |
 			NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
@@ -548,66 +548,66 @@ static void method_gnss_assistance_request(void)
 	 * than GPS ephemerides, there are only a few QZSS satellites and GNSS reports unused
 	 * QZSS satellites always as expired.
 	 */
-	if (agps_request.system_count > 1) {
-		if (agps_request.data_flags != 0 ||
-		    agps_request.system[0].sv_mask_ephe != 0 ||
-		    agps_request.system[0].sv_mask_alm != 0) {
+	if (agnss_request.system_count > 1) {
+		if (agnss_request.data_flags != 0 ||
+		    agnss_request.system[0].sv_mask_ephe != 0 ||
+		    agnss_request.system[0].sv_mask_alm != 0) {
 			/* QZSS ephemerides are requested always when other assistance data is
 			 * needed.
 			 */
-			agps_request.system[1].sv_mask_ephe = 0x3ff;
+			agnss_request.system[1].sv_mask_ephe = 0x3ff;
 		} else {
 			/* No other assistance is needed. Request QZSS ephemerides anyway if
 			 * all QZSS ephemerides are expired and QZSS assistance is prioritized.
 			 */
-			if (!(agps_request.system[1].sv_mask_ephe == 0x3ff &&
+			if (!(agnss_request.system[1].sv_mask_ephe == 0x3ff &&
 			     IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS_PRIORITIZE_QZSS_ASSISTANCE))) {
-				agps_request.system[1].sv_mask_ephe = 0x0;
+				agnss_request.system[1].sv_mask_ephe = 0x0;
 			}
 		}
 
 		/* QZSS almanacs are requested whenever GPS almanacs are requested. */
-		if (agps_request.system[0].sv_mask_alm != 0) {
-			agps_request.system[1].sv_mask_alm = 0x3ff;
+		if (agnss_request.system[0].sv_mask_alm != 0) {
+			agnss_request.system[1].sv_mask_alm = 0x3ff;
 		} else {
-			agps_request.system[1].sv_mask_alm = 0x0;
+			agnss_request.system[1].sv_mask_alm = 0x0;
 		}
 	}
 
-	LOG_DBG("A-GNSS request: data_flags: 0x%02x", agps_request.data_flags);
-	for (int i = 0; i < agps_request.system_count; i++) {
+	LOG_DBG("A-GNSS request: data_flags: 0x%02x", agnss_request.data_flags);
+	for (int i = 0; i < agnss_request.system_count; i++) {
 		LOG_DBG("A-GNSS request: %s sv_mask_ephe: 0x%llx, sv_mask_alm: 0x%llx",
-			get_system_string(agps_request.system[i].system_id),
-			agps_request.system[i].sv_mask_ephe,
-			agps_request.system[i].sv_mask_alm);
+			get_system_string(agnss_request.system[i].system_id),
+			agnss_request.system[i].sv_mask_ephe,
+			agnss_request.system[i].sv_mask_alm);
 	}
 
-	/* Check if A-GPS data should be requested. If A-GPS request is not needed, jump to
+	/* Check if A-GNSS data should be requested. If A-GNSS request is not needed, jump to
 	 * P-GPS (if enabled).
 	 */
-	if (method_gnss_agps_required()) {
+	if (method_gnss_agnss_required()) {
 		enum lte_lc_nw_reg_status reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
 
 		lte_lc_nw_reg_status_get(&reg_status);
 		if (reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
 		    reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
 			/* Only store the timestamp when LTE is connected, otherwise it is not
-			 * very likely that the A-GPS request succeeds.
+			 * very likely that the A-GNSS request succeeds.
 			 */
-			agps_req_timestamp = k_uptime_get();
+			agnss_req_timestamp = k_uptime_get();
 		}
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
-		location_core_event_cb_agps_request(&agps_request);
+		location_core_event_cb_agnss_request(&agnss_request);
 #else
-		method_gnss_nrf_cloud_agps_request();
+		method_gnss_nrf_cloud_agnss_request();
 #endif
 	}
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-	if (pgps_agps_request.system[0].sv_mask_ephe != 0) {
-		/* When A-GPS is used, the nRF Cloud library also calls this function after
-		 * A-GPS data has been processed. However, the call happens too late to trigger
+	if (pgps_agnss_request.system[0].sv_mask_ephe != 0) {
+		/* When A-GNSS is used, the nRF Cloud library also calls this function after
+		 * A-GNSS data has been processed. However, the call happens too late to trigger
 		 * the initial P-GPS data download at the correct stage.
 		 */
 		int err = nrf_cloud_pgps_notify_prediction();
@@ -620,21 +620,21 @@ static void method_gnss_assistance_request(void)
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 }
 
-static void method_gnss_agps_req_event_handle_work_fn(struct k_work *item)
+static void method_gnss_agnss_req_event_handle_work_fn(struct k_work *item)
 {
-	int err = nrf_modem_gnss_read(&agps_request,
-				      sizeof(agps_request),
+	int err = nrf_modem_gnss_read(&agnss_request,
+				      sizeof(agnss_request),
 				      NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 
 	if (err) {
-		LOG_WRN("Reading A-GPS req data from GNSS failed, error: %d", err);
+		LOG_WRN("Reading A-GNSS req data from GNSS failed, error: %d", err);
 		return;
 	}
 
 	/* GPS data need is always expected to be present and first in list. */
-	__ASSERT(agps_request.system_count > 0,
+	__ASSERT(agnss_request.system_count > 0,
 		 "GNSS system data need not found");
-	__ASSERT(agps_request.system[0].system_id == NRF_MODEM_GNSS_SYSTEM_GPS,
+	__ASSERT(agnss_request.system[0].system_id == NRF_MODEM_GNSS_SYSTEM_GPS,
 		 "GPS data need not found");
 
 	method_gnss_assistance_request();
@@ -650,10 +650,10 @@ void method_gnss_event_handler(int event)
 
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-		if (!agps_expiry_get_supported) {
+		if (!agnss_expiry_get_supported) {
 			k_work_submit_to_queue(
 				location_core_work_queue_get(),
-				&method_gnss_agps_req_event_handle_work);
+				&method_gnss_agnss_req_event_handle_work);
 		}
 #endif
 		break;
@@ -805,8 +805,8 @@ static bool method_gnss_allowed_to_start(void)
 	k_sem_give(&entered_rrc_idle);
 
 #if !defined(CONFIG_NRF_CLOUD_AGPS)
-	/* If A-GPS is used, a GNSS fix can be obtained fast even in RRC idle mode (without PSM).
-	 * Without A-GPS, it's practical to wait for the modem to sleep before attempting a fix.
+	/* If A-GNSS is used, a GNSS fix can be obtained fast even in RRC idle mode (without PSM).
+	 * Without A-GNSS, it's practical to wait for the modem to sleep before attempting a fix.
 	 */
 	if (method_gnss_psm_enabled()) {
 		return method_gnss_entered_psm();
@@ -1032,7 +1032,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 }
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-/* Processes A-GPS expiry data from nrf_modem_gnss_agnss_expiry_get() function.
+/* Processes A-GNSS expiry data from nrf_modem_gnss_agnss_expiry_get() function.
  *
  * This function is only used with modem firmware v1.3.2 or later. With older modem firmware
  * versions, the logic in this function is handled by GNSS.
@@ -1045,7 +1045,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
  * checks whether its ephemeris has expired or is going to expire. If there are enough satellites
  * with expired ephemerides, ephemerides for all satellites are requested. The time when an
  * ephemeris is considered expired and the threshold for the number of expired satellites is
- * different with A-GPS and P-GPS. The used constants are described in the beginning of the file.
+ * different with A-GNSS and P-GPS. The used constants are described in the beginning of the file.
  *
  * Almanacs:
  * Each satellite has its own almanac expiration time. The code goes though all satellites and
@@ -1053,11 +1053,11 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
  * with expired almanacs, almanacs for all satellites are requested.
  *
  * Other assistance data:
- * For other assistance data, the same A-GPS expiration threshold is used if expiry time is
+ * For other assistance data, the same A-GNSS expiration threshold is used if expiry time is
  * provided by GNSS. For some data, there is only a flag indicating whether the data is needed or
  * not.
  */
-static void method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agnss_expiry *agps_expiry)
+static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_expiry *agnss_expiry)
 {
 	uint16_t ephe_expiry_threshold;
 	uint8_t expired_ephes_min_count;
@@ -1067,26 +1067,26 @@ static void method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agnss_ex
 	uint32_t expired_qzss_ephe_mask = 0;
 	uint32_t expired_qzss_alm_mask = 0;
 
-	memset(&agps_request, 0, sizeof(agps_request));
+	memset(&agnss_request, 0, sizeof(agnss_request));
 
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
 		ephe_expiry_threshold = PGPS_EXPIRY_THRESHOLD;
 	} else {
-		ephe_expiry_threshold = AGPS_EXPIRY_THRESHOLD;
+		ephe_expiry_threshold = AGNSS_EXPIRY_THRESHOLD;
 	}
 
-	for (int i = 0; i < agps_expiry->sv_count; i++) {
-		if (agps_expiry->sv[i].system_id == NRF_MODEM_GNSS_SYSTEM_GPS) {
-			if (agps_expiry->sv[i].ephe_expiry <= ephe_expiry_threshold) {
+	for (int i = 0; i < agnss_expiry->sv_count; i++) {
+		if (agnss_expiry->sv[i].system_id == NRF_MODEM_GNSS_SYSTEM_GPS) {
+			if (agnss_expiry->sv[i].ephe_expiry <= ephe_expiry_threshold) {
 				expired_gps_ephes++;
 			}
 
-			if (agps_expiry->sv[i].alm_expiry <= AGPS_EXPIRY_THRESHOLD) {
+			if (agnss_expiry->sv[i].alm_expiry <= AGNSS_EXPIRY_THRESHOLD) {
 				expired_gps_alms++;
 			}
 		}
 
-		if (agps_expiry->sv[i].system_id == NRF_MODEM_GNSS_SYSTEM_QZSS) {
+		if (agnss_expiry->sv[i].system_id == NRF_MODEM_GNSS_SYSTEM_QZSS) {
 			qzss_supported = true;
 
 			/* GNSS supports QZSS PRNs 193...202. Only part of these are currently
@@ -1097,14 +1097,14 @@ static void method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agnss_ex
 			/* QZSS ephemerides are valid for a maximum of two hours, so no expiry
 			 * is used here.
 			 */
-			if (agps_expiry->sv[i].ephe_expiry == 0) {
+			if (agnss_expiry->sv[i].ephe_expiry == 0) {
 				expired_qzss_ephe_mask |=
-					1 << (agps_expiry->sv[i].sv_id - FIRST_QZSS_PRN);
+					1 << (agnss_expiry->sv[i].sv_id - FIRST_QZSS_PRN);
 			}
 
-			if (agps_expiry->sv[i].alm_expiry < AGPS_EXPIRY_THRESHOLD) {
+			if (agnss_expiry->sv[i].alm_expiry < AGNSS_EXPIRY_THRESHOLD) {
 				expired_qzss_alm_mask |=
-					1 << (agps_expiry->sv[i].sv_id - FIRST_QZSS_PRN);
+					1 << (agnss_expiry->sv[i].sv_id - FIRST_QZSS_PRN);
 			}
 		}
 	}
@@ -1112,36 +1112,36 @@ static void method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agnss_ex
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
 		expired_ephes_min_count = PGPS_EPHE_MIN_COUNT;
 	} else {
-		expired_ephes_min_count = AGPS_EPHE_MIN_COUNT;
+		expired_ephes_min_count = AGNSS_EPHE_MIN_COUNT;
 	}
 
-	agps_request.system_count = 1;
-	agps_request.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
+	agnss_request.system_count = 1;
+	agnss_request.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
 	if (expired_gps_ephes >= expired_ephes_min_count) {
-		agps_request.system[0].sv_mask_ephe = 0xffffffff;
+		agnss_request.system[0].sv_mask_ephe = 0xffffffff;
 	}
-	if (expired_gps_alms >= AGPS_ALM_MIN_COUNT) {
-		agps_request.system[0].sv_mask_alm = 0xffffffff;
-	}
-
-	if (agps_expiry->utc_expiry <= AGPS_EXPIRY_THRESHOLD) {
-		agps_request.data_flags |= NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST;
+	if (expired_gps_alms >= AGNSS_ALM_MIN_COUNT) {
+		agnss_request.system[0].sv_mask_alm = 0xffffffff;
 	}
 
-	if (agps_expiry->klob_expiry <= AGPS_EXPIRY_THRESHOLD) {
-		agps_request.data_flags |= NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST;
+	if (agnss_expiry->utc_expiry <= AGNSS_EXPIRY_THRESHOLD) {
+		agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST;
 	}
 
-	if (agps_expiry->neq_expiry <= AGPS_EXPIRY_THRESHOLD) {
-		agps_request.data_flags |= NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST;
+	if (agnss_expiry->klob_expiry <= AGNSS_EXPIRY_THRESHOLD) {
+		agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST;
 	}
 
-	if (agps_expiry->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
-		agps_request.data_flags |= NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST;
+	if (agnss_expiry->neq_expiry <= AGNSS_EXPIRY_THRESHOLD) {
+		agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST;
 	}
 
-	if (agps_expiry->integrity_expiry <= AGPS_EXPIRY_THRESHOLD) {
-		agps_request.data_flags |= NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
+	if (agnss_expiry->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+		agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST;
+	}
+
+	if (agnss_expiry->integrity_expiry <= AGNSS_EXPIRY_THRESHOLD) {
+		agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
 	}
 
 	/* Position is reported as being valid for 2h. The uncertainty increases with time,
@@ -1150,28 +1150,28 @@ static void method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agnss_ex
 	 *
 	 * Position is only requested when also some other assistance data is needed.
 	 */
-	if (agps_expiry->position_expiry == 0 &&
-	    (agps_request.system[0].sv_mask_ephe != 0 ||
-	     agps_request.system[0].sv_mask_alm != 0 ||
-	     agps_request.data_flags != 0)) {
-		agps_request.data_flags |= NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST;
+	if (agnss_expiry->position_expiry == 0 &&
+	    (agnss_request.system[0].sv_mask_ephe != 0 ||
+	     agnss_request.system[0].sv_mask_alm != 0 ||
+	     agnss_request.data_flags != 0)) {
+		agnss_request.data_flags |= NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST;
 	}
 
 	if (qzss_supported) {
-		agps_request.system_count = 2;
-		agps_request.system[1].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
-		agps_request.system[1].sv_mask_ephe = expired_qzss_ephe_mask;
-		agps_request.system[1].sv_mask_alm = expired_qzss_alm_mask;
+		agnss_request.system_count = 2;
+		agnss_request.system[1].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
+		agnss_request.system[1].sv_mask_ephe = expired_qzss_ephe_mask;
+		agnss_request.system[1].sv_mask_alm = expired_qzss_alm_mask;
 	}
 
 	LOG_DBG("GPS: Expired ephemerides: %d, almanacs: %d", expired_gps_ephes, expired_gps_alms);
 
-	LOG_DBG("A-GNSS data need: data_flags: 0x%02x", agps_request.data_flags);
-	for (int i = 0; i < agps_request.system_count; i++) {
+	LOG_DBG("A-GNSS data need: data_flags: 0x%02x", agnss_request.data_flags);
+	for (int i = 0; i < agnss_request.system_count; i++) {
 		LOG_DBG("A-GNSS data need: %s sv_mask_ephe: 0x%llx, sv_mask_alm: 0x%llx",
-			get_system_string(agps_request.system[i].system_id),
-			agps_request.system[i].sv_mask_ephe,
-			agps_request.system[i].sv_mask_alm);
+			get_system_string(agnss_request.system[i].system_id),
+			agnss_request.system[i].sv_mask_ephe,
+			agnss_request.system[i].sv_mask_alm);
 	}
 }
 
@@ -1182,12 +1182,12 @@ static void method_gnss_agps_expiry_process(const struct nrf_modem_gnss_agnss_ex
  * firmware), GNSS is briefly started to trigger the NRF_MODEM_GNSS_EVT_AGNSS_REQ event from GNSS
  * in case assistance data is currently needed.
  */
-static void method_gnss_agps_req_work_fn(struct k_work *work)
+static void method_gnss_agnss_req_work_fn(struct k_work *work)
 {
 	int err;
-	struct nrf_modem_gnss_agnss_expiry agps_expiry;
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry;
 
-	err = nrf_modem_gnss_agnss_expiry_get(&agps_expiry);
+	err = nrf_modem_gnss_agnss_expiry_get(&agnss_expiry);
 	if (err) {
 		if (err == -NRF_EOPNOTSUPP) {
 			LOG_DBG("nrf_modem_gnss_agnss_expiry_get() not supported by the modem "
@@ -1205,9 +1205,9 @@ static void method_gnss_agps_req_work_fn(struct k_work *work)
 		return;
 	}
 
-	agps_expiry_get_supported = true;
+	agnss_expiry_get_supported = true;
 
-	method_gnss_agps_expiry_process(&agps_expiry);
+	method_gnss_agnss_expiry_process(&agnss_expiry);
 
 	method_gnss_assistance_request();
 }
@@ -1253,11 +1253,11 @@ int method_gnss_location_get(const struct location_request_info *request)
 	}
 #endif
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agps_req_work);
-	/* Sleep for a while before submitting the next work, otherwise A-GPS data may not be
+	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agnss_req_work);
+	/* Sleep for a while before submitting the next work, otherwise A-GNSS data may not be
 	 * downloaded before GNSS is started. If the nrf_modem_gnss_agnss_expiry_get() API is not
 	 * supported, GNSS is briefly started and stopped to trigger the
-	 * NRF_MODEM_GNSS_EVT_AGNSS_REQ event, which in turn causes the A-GPS data download work
+	 * NRF_MODEM_GNSS_EVT_AGNSS_REQ event, which in turn causes the A-GNSS data download work
 	 * item to be submitted into the work queue. This all needs to happen before the work item
 	 * below is submitted.
 	 */
@@ -1292,9 +1292,9 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
 	k_work_init(&method_gnss_start_work, method_gnss_positioning_work_fn);
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-	k_work_init(&method_gnss_agps_req_event_handle_work,
-		    method_gnss_agps_req_event_handle_work_fn);
-	k_work_init(&method_gnss_agps_req_work, method_gnss_agps_req_work_fn);
+	k_work_init(&method_gnss_agnss_req_event_handle_work,
+		    method_gnss_agnss_req_event_handle_work_fn);
+	k_work_init(&method_gnss_agnss_req_work, method_gnss_agnss_req_work_fn);
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
