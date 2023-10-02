@@ -693,10 +693,10 @@ void test_encode_wifi_aps_data_object(void)
 	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 
-void test_encode_agps_request_data_object(void)
+void test_encode_agnss_request_data_object(void)
 {
 	int ret;
-	struct cloud_data_agps_request data = {
+	struct cloud_data_agnss_request data = {
 		.mcc = 242,
 		.mnc = 1,
 		.cell = 21679716,
@@ -713,12 +713,12 @@ void test_encode_agps_request_data_object(void)
 		.queued = true
 	};
 
-	ret = json_common_agps_request_data_add(dummy.root_obj,
-						&data,
-						JSON_COMMON_ADD_DATA_TO_OBJECT);
+	ret = json_common_agnss_request_data_add(dummy.root_obj,
+						 &data,
+						 JSON_COMMON_ADD_DATA_TO_OBJECT);
 	TEST_ASSERT_EQUAL(0, ret);
 
-	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_AGPS_REQUEST_JSON_SCHEMA,
+	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_AGNSS_REQUEST_JSON_SCHEMA,
 				   data.queued);
 	TEST_ASSERT_EQUAL(0, ret);
 
@@ -726,9 +726,9 @@ void test_encode_agps_request_data_object(void)
 
 	data.queued = false;
 
-	ret = json_common_agps_request_data_add(dummy.root_obj,
-						&data,
-						JSON_COMMON_ADD_DATA_TO_OBJECT);
+	ret = json_common_agnss_request_data_add(dummy.root_obj,
+						 &data,
+						 JSON_COMMON_ADD_DATA_TO_OBJECT);
 	TEST_ASSERT_EQUAL(-ENODATA, ret);
 }
 

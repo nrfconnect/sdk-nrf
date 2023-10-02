@@ -244,7 +244,7 @@ struct cloud_data_cloud_location {
 	bool queued : 1;
 };
 
-struct cloud_data_agps_request {
+struct cloud_data_agnss_request {
 	/** Mobile Country Code. */
 	int mcc;
 	/** Mobile Network Code. */
@@ -253,7 +253,7 @@ struct cloud_data_agps_request {
 	uint32_t cell;
 	/** Area Code. */
 	uint32_t area;
-	/** AGPS request types */
+	/** A-GNSS request types */
 	struct nrf_modem_gnss_agnss_data_frame request;
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
@@ -342,22 +342,22 @@ int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
 				      struct location_data *location);
 
 /**
- * @brief Encode cloud codec A-GPS request.
+ * @brief Encode cloud codec A-GNSS request.
  *
  * @note LwM2M builds: This function does not output a list of objects, unlike other
  *		       functions in this API. The object references that are required to update
- *		       A-GPS are kept internal in the LwM2M utils library.
+ *		       A-GNSS are kept internal in the LwM2M utils library.
  *
  * @param[out] output String buffer for encoding result.
- * @param[in] agps_request A-GPS request data.
+ * @param[in] agnss_request A-GNSS request data.
  *
  * @retval 0 on success.
  * @retval -ENODATA if data object is not marked valid.
  * @retval -ENOMEM if codec couldn't allocate memory.
  * @retval -ENOTSUP if the function is not supported by the encoding backend.
  */
-int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
-				    struct cloud_data_agps_request *agps_request);
+int cloud_codec_encode_agnss_request(struct cloud_codec_data *output,
+				     struct cloud_data_agnss_request *agnss_request);
 
 /**
  * @brief Encode cloud codec P-GPS request.

@@ -791,13 +791,13 @@ int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
 	return err;
 }
 
-int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
-				    struct cloud_data_agps_request *agps_request)
+int cloud_codec_encode_agnss_request(struct cloud_codec_data *output,
+				     struct cloud_data_agnss_request *agnss_request)
 {
 	__ASSERT_NO_MSG(output != NULL);
-	__ASSERT_NO_MSG(agps_request != NULL);
+	__ASSERT_NO_MSG(agnss_request != NULL);
 
-	agps_request->queued = false;
+	agnss_request->queued = false;
 	return -ENOTSUP;
 }
 

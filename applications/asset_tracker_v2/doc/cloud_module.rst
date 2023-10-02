@@ -81,10 +81,10 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 nRF Cloud A-GPS and P-GPS
 =========================
 
-When the cloud module is configured to communicate with `AWS IoT Core`_, `Azure IoT Hub`_, or an `LwM2M`_ server, it supports processing of received A-GPS and P-GPS data using the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
-This enables the cloud service to fetch A-GPS and P-GPS data directly from `nRF Cloud`_ using REST calls and relay this data to an nRF91 Series SiP using the pre-established cloud connection.
+When the cloud module is configured to communicate with `AWS IoT Core`_, `Azure IoT Hub`_, or an `LwM2M`_ server, it supports processing of received A-GNSS and P-GPS data using the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
+This enables the cloud service to fetch A-GNSS and P-GPS data directly from `nRF Cloud`_ using REST calls and relay this data to an nRF91 Series SiP using the pre-established cloud connection.
 By reusing the pre-established connection, the application saves overhead related to maintaining multiple connections at the same time.
-When configuring the application to communicate with nRF Cloud, A-GPS and P-GPS data are received directly from the service, and not by proxy.
+When configuring the application to communicate with nRF Cloud, A-GNSS and P-GPS data are received directly from the service, and not by proxy.
 For more information, see `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_.
 
 FOTA

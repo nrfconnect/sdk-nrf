@@ -40,16 +40,16 @@ int lwm2m_codec_helpers_create_objects_and_resources(void);
  */
 int lwm2m_codec_helpers_setup_resources(void);
 
-/** @brief Set Assisted GPS (A-GPS) request data.
+/** @brief Set Assisted GNSS (A-GNSS) request data.
  *	   This function will populate the GNSS assistance object (object ID 33625)
- *	   with the A-GPS request.
+ *	   with the A-GNSS request.
  *
- *  @param[in] agps_request Pointer to buffer that contains A-GPS data.
+ *  @param[in] agnss_request Pointer to buffer that contains A-GNSS data.
  *
  *  @retval 0 If successful, otherwise a negative value indicating the reason of failure.
  *  @return -ENODATA if the queued flag present in the input structure is false.
  */
-int lwm2m_codec_helpers_set_agps_data(struct cloud_data_agps_request *agps_request);
+int lwm2m_codec_helpers_set_agnss_data(struct cloud_data_agnss_request *agnss_request);
 
 /** @brief Set Predicted GPS (P-GPS) request data.
  *	   This function will populate the GNSS assistance object (object ID 33625)

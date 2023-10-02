@@ -29,9 +29,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define PROP_BAG_BATCH_KEY "batch"
 #define PROP_BAG_GROUND_FIX_KEY "ground-fix"
 
-#define PROP_BAG_AGPS_KEY "agps"
-#define PROP_BAG_AGPS_GET_VALUE "get"
-#define PROP_BAG_AGPS_RESPONSE_VALUE "result"
+#define PROP_BAG_AGNSS_KEY "agps"
+#define PROP_BAG_AGNSS_GET_VALUE "get"
+#define PROP_BAG_AGNSS_RESPONSE_VALUE "result"
 
 #define PROP_BAG_PGPS_KEY "pgps"
 #define PROP_BAG_PGPS_GET_VALUE "get"
@@ -72,12 +72,12 @@ static struct azure_iot_hub_property prop_bag_batch[] = {
 		.value.size = sizeof(PROP_BAG_CONTENT_ENCODING_VALUE) - 1,
 	},
 };
-static struct azure_iot_hub_property prop_bag_agps[] = {
+static struct azure_iot_hub_property prop_bag_agnss[] = {
 	{
-		.key.ptr = PROP_BAG_AGPS_KEY,
-		.key.size = sizeof(PROP_BAG_AGPS_KEY) - 1,
-		.value.ptr = PROP_BAG_AGPS_GET_VALUE,
-		.value.size = sizeof(PROP_BAG_AGPS_GET_VALUE) - 1,
+		.key.ptr = PROP_BAG_AGNSS_KEY,
+		.key.size = sizeof(PROP_BAG_AGNSS_KEY) - 1,
+		.value.ptr = PROP_BAG_AGNSS_GET_VALUE,
+		.value.size = sizeof(PROP_BAG_AGNSS_GET_VALUE) - 1,
 	},
 	{
 		.key.ptr = PROP_BAG_CONTENT_TYPE_KEY,
@@ -173,7 +173,7 @@ static void incoming_message_handle(struct azure_iot_hub_evt *event)
 	}
 
 	/* Iterate over property bags included in incoming devicebound topic to filter
-	 * on A-GPS and P-GPS related key and value pairs.
+	 * on A-GNSS and P-GPS related key and value pairs.
 	 */
 	for (int i = 0; i < event->topic.property_count; i++) {
 		if ((event->topic.properties[i].key.ptr == NULL) ||
@@ -183,11 +183,11 @@ static void incoming_message_handle(struct azure_iot_hub_evt *event)
 		}
 
 		/* Property bags are null terminated strings. */
-		if (!strncmp(event->topic.properties[i].key.ptr, PROP_BAG_AGPS_KEY,
+		if (!strncmp(event->topic.properties[i].key.ptr, PROP_BAG_AGNSS_KEY,
 			     event->topic.properties[i].key.size) &&
-		    !strncmp(event->topic.properties[i].value.ptr, PROP_BAG_AGPS_RESPONSE_VALUE,
+		    !strncmp(event->topic.properties[i].value.ptr, PROP_BAG_AGNSS_RESPONSE_VALUE,
 			     event->topic.properties[i].value.size)) {
-			cloud_wrap_evt.type = CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED;
+			cloud_wrap_evt.type = CLOUD_WRAP_EVT_AGNSS_DATA_RECEIVED;
 		} else if (!strncmp(event->topic.properties[i].key.ptr, PROP_BAG_PGPS_KEY,
 				    event->topic.properties[i].key.size) &&
 			   !strncmp(event->topic.properties[i].value.ptr,
@@ -514,7 +514,7 @@ bool cloud_wrap_cloud_location_response_wait(void)
 	return false;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_agnss_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct azure_iot_hub_msg msg = {
@@ -523,8 +523,8 @@ int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
-		.topic.properties = prop_bag_agps,
-		.topic.property_count = ARRAY_SIZE(prop_bag_agps)
+		.topic.properties = prop_bag_agnss,
+		.topic.property_count = ARRAY_SIZE(prop_bag_agnss)
 	};
 
 	err = azure_iot_hub_send(&msg);

@@ -503,42 +503,42 @@ int lwm2m_codec_helpers_get_configuration_object(struct cloud_data_cfg *cfg)
 	return 0;
 }
 
-int lwm2m_codec_helpers_set_agps_data(struct cloud_data_agps_request *agps_request)
+int lwm2m_codec_helpers_set_agnss_data(struct cloud_data_agnss_request *agnss_request)
 {
 	int err;
 
-	if (!agps_request->queued) {
+	if (!agnss_request->queued) {
 		return -ENODATA;
 	}
 
-	err = location_assistance_agnss_set_mask(&agps_request->request);
+	err = location_assistance_agnss_set_mask(&agnss_request->request);
 	if (err) {
 		return err;
 	}
 
-	/* Disable filtered A-GPS. */
+	/* Disable filtered A-GNSS. */
 	location_assist_agnss_set_elevation_mask(-1);
 
 	err = lwm2m_set_u32(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, CELLID),
-			    agps_request->cell);
+			    agnss_request->cell);
 	if (err) {
 		return err;
 	}
 
 	err = lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMNC),
-			    (uint16_t)agps_request->mnc);
+			    (uint16_t)agnss_request->mnc);
 	if (err) {
 		return err;
 	}
 
 	err = lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, SMCC),
-			    (uint16_t)agps_request->mcc);
+			    (uint16_t)agnss_request->mcc);
 	if (err) {
 		return err;
 	}
 
 	err = lwm2m_set_u16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, LAC),
-			    (uint16_t)agps_request->area);
+			    (uint16_t)agnss_request->area);
 	if (err) {
 		return err;
 	}

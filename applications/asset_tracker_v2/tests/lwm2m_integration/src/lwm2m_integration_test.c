@@ -210,11 +210,11 @@ void test_lwm2m_integration_neighbor_cells_send(void)
 	TEST_ASSERT_EQUAL(0, cloud_wrap_cloud_location_send(NULL, 0, true, 0));
 }
 
-void test_lwm2m_integration_agps_request_send(void)
+void test_lwm2m_integration_agnss_request_send(void)
 {
 	__cmock_location_assistance_agnss_request_send_ExpectAndReturn(&client, 0);
 
-	TEST_ASSERT_EQUAL(0, cloud_wrap_agps_request_send(NULL, 0, true, 0));
+	TEST_ASSERT_EQUAL(0, cloud_wrap_agnss_request_send(NULL, 0, true, 0));
 }
 
 /* Tests for APIs that are not supported by the lwm2m integration layer (uut), lwm2m_integration.c.

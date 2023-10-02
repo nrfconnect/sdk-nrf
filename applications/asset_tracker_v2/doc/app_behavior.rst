@@ -123,11 +123,11 @@ User interface
 The application supports basic UI elements to visualize its operating state and to notify the cloud using button presses.
 This functionality is implemented in the :ref:`UI module <asset_tracker_v2_ui_module>` and the supported LED patterns are documented in the :ref:`UI module LED indication <led_indication>` section.
 
-A-GPS and P-GPS
-***************
+A-GNSS and P-GPS
+****************
 
-The application supports processing of incoming A-GPS and P-GPS data to reduce the GNSS Time-To-First-Fix (`TTFF`_).
-Requesting and processing of A-GPS data is a default feature of the application.
+The application supports processing of incoming A-GNSS and P-GPS data to reduce the GNSS Time-To-First-Fix (`TTFF`_).
+Requesting and processing of A-GNSS data is a default feature of the application.
 See :ref:`nRF Cloud A-GPS and P-GPS <nrfcloud_agps_pgps>` for further details.
 To enable support for P-GPS, add the parameter ``-DEXTRA_CONF_FILE=overlay-pgps.conf`` to your build command.
 
@@ -136,4 +136,4 @@ To enable support for P-GPS, add the parameter ``-DEXTRA_CONF_FILE=overlay-pgps.
    To ensure that the resulting binary can be deployed using FOTA, you must make sure that the new partition layout is compatible with layout of the old image.
    See :ref:`static partitioning <ug_pm_static_providing>` for more details.
 
-   |gps_tradeoffs|
+   |gnss_tradeoffs|

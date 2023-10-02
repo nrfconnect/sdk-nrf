@@ -73,10 +73,10 @@ enum location_module_event_type {
 
 	/** The location library has reported that it needs GPS assistance data.
 	 *  The event has associated payload of the type ``struct nrf_modem_gnss_agnss_data_frame``
-	 *  in the event struct member ``data.agps_request``, which contains the types
-	 *  of A-GPS data that the modem needs.
+	 *  in the event struct member ``data.agnss_request``, which contains the types
+	 *  of A-GNSS data that the modem needs.
 	 */
-	LOCATION_MODULE_EVT_AGPS_NEEDED,
+	LOCATION_MODULE_EVT_AGNSS_NEEDED,
 
 	/** The location library has reported that it needs GPS prediction data.
 	 *  The event has associated payload of the type ``struct gps_pgps_request``
@@ -183,8 +183,8 @@ struct location_module_event {
 		struct location_module_data location;
 		/** Data for event LOCATION_MODULE_EVT_CLOUD_LOCATION_DATA_READY. */
 		struct location_module_cloud_location cloud_location;
-		/** Data for event LOCATION_MODULE_EVT_AGPS_NEEDED. */
-		struct nrf_modem_gnss_agnss_data_frame agps_request;
+		/** Data for event LOCATION_MODULE_EVT_AGNSS_NEEDED. */
+		struct nrf_modem_gnss_agnss_data_frame agnss_request;
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 		/** Data for event LOCATION_MODULE_EVT_PGPS_NEEDED. */
 		struct gps_pgps_request pgps_request;

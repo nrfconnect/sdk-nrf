@@ -107,19 +107,19 @@ int cloud_codec_decode_cloud_location(const char *input, size_t input_len,
 	return -ENOTSUP;
 }
 
-int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
-				    struct cloud_data_agps_request *agps_request)
+int cloud_codec_encode_agnss_request(struct cloud_codec_data *output,
+				     struct cloud_data_agnss_request *agnss_request)
 {
 	ARG_UNUSED(output);
 
 	int err;
 
-	err = lwm2m_codec_helpers_set_agps_data(agps_request);
+	err = lwm2m_codec_helpers_set_agnss_data(agnss_request);
 	if (err) {
 		return err;
 	}
 
-	agps_request->queued = false;
+	agnss_request->queued = false;
 	return 0;
 }
 

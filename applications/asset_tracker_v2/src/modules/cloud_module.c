@@ -106,7 +106,7 @@ enum {
 	BATCH,
 	UI,
 	CLOUD_LOCATION,
-	AGPS_REQUEST,
+	AGNSS_REQUEST,
 	PGPS_REQUEST,
 	CONFIG,
 	MEMFAULT,
@@ -290,13 +290,13 @@ static void config_data_handle(uint8_t *buf, const size_t len)
 	}
 }
 
-static void agps_data_handle(const uint8_t *buf, const size_t len)
+static void agnss_data_handle(const uint8_t *buf, const size_t len)
 {
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	int err = nrf_cloud_agps_process(buf, len);
 
 	if (err) {
-		LOG_ERR("Unable to process A-GPS data, error: %d", err);
+		LOG_ERR("Unable to process A-GNSS data, error: %d", err);
 		return;
 	}
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -391,9 +391,9 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		LOG_DBG("CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED");
 		pgps_data_handle(evt->data.buf, evt->data.len);
 		break;
-	case CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED:
-		LOG_DBG("CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED");
-		agps_data_handle(evt->data.buf, evt->data.len);
+	case CLOUD_WRAP_EVT_AGNSS_DATA_RECEIVED:
+		LOG_DBG("CLOUD_WRAP_EVT_AGNSS_DATA_RECEIVED");
+		agnss_data_handle(evt->data.buf, evt->data.len);
 		break;
 	case CLOUD_WRAP_EVT_CLOUD_LOCATION_RESULT_RECEIVED:
 		LOG_DBG("CLOUD_WRAP_EVT_CLOUD_LOCATION_RESULT_RECEIVED");
@@ -743,15 +743,15 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				true);
 	}
 
-	if (IS_EVENT(msg, data, DATA_EVT_AGPS_REQUEST_DATA_SEND)) {
+	if (IS_EVENT(msg, data, DATA_EVT_AGNSS_REQUEST_DATA_SEND)) {
 
 		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-			int err = cloud_wrap_agps_request_send(NULL,
-							       0,
-							       true,
-							       0);
+			int err = cloud_wrap_agnss_request_send(NULL,
+								0,
+								true,
+								0);
 			if (err) {
-				LOG_ERR("cloud_wrap_agps_request_send, err: %d", err);
+				LOG_ERR("cloud_wrap_agnss_request_send, err: %d", err);
 			}
 
 			return;
@@ -759,7 +759,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 
 		add_qos_message(msg->module.data.data.buffer.buf,
 				msg->module.data.data.buffer.len,
-				AGPS_REQUEST,
+				AGNSS_REQUEST,
 				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
 				true);
 	}
@@ -928,13 +928,13 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				LOG_WRN("cloud_wrap_cloud_location_send, err: %d", err);
 			}
 			break;
-		case AGPS_REQUEST:
-			err = cloud_wrap_agps_request_send(message->buf,
-							   message->len,
-							   ack,
-							   msg->module.cloud.data.message.id);
+		case AGNSS_REQUEST:
+			err = cloud_wrap_agnss_request_send(message->buf,
+							    message->len,
+							    ack,
+							    msg->module.cloud.data.message.id);
 			if (err) {
-				LOG_WRN("cloud_wrap_agps_request_send, err: %d", err);
+				LOG_WRN("cloud_wrap_agnss_request_send, err: %d", err);
 			}
 			break;
 		case PGPS_REQUEST:
