@@ -29,6 +29,10 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_SYNC_TRANSFER_SENDER_SUPPORT
 	select BT_CTLR_SYNC_TRANSFER_RECEIVER_SUPPORT
 	select BT_CTLR_SCA_UPDATE_SUPPORT
+	select BT_CTLR_PERIPHERAL_ISO_SUPPORT
+	select BT_CTLR_CENTRAL_ISO_SUPPORT
+	select BT_CTLR_SYNC_ISO_SUPPORT
+	select BT_CTLR_ADV_ISO_SUPPORT
 	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
 	select BT_HAS_HCI_VS
@@ -131,6 +135,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
+	default 10000 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	default 7500 if !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	range 1250 4000000
 	help
@@ -240,6 +245,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_SCA_UPDATE || \
 						     BT_CTLR_SDC_PAWR_ADV || \
 						     BT_CTLR_SDC_PAWR_SYNC || \
+						     BT_ISO || \
 						     SOC_NRF5340_CPUNET)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
 	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
@@ -269,6 +275,14 @@ config BT_LL_SOFTDEVICE_MULTIROLE
 	  by the linker.
 
 endchoice
+
+config BT_LL_SOFTDEVICE_EXPERIMENTAL_ISO
+	bool "ISO Support in the SoftDevice Controller [EXPERIMENTAL]"
+	default BT_ISO
+	select EXPERIMENTAL
+	help
+	  ISO support in the SoftDevice Controller is experimental.
+	  It cannot be used in products as per now.
 
 config BT_CTLR_FAL_SIZE
 	int "Configures the maximum number of addresses in the Filter Accept List"
@@ -318,6 +332,24 @@ config BT_CTLR_LE_POWER_CONTROL
 	help
 	  Enable support for LE Power Control feature that defined in the Bluetooth
 	  Core specification, Version 5.3 | Vol 6, Part B, Section 4.6.31.
+
+config BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT
+	int "BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT"
+	depends on BT_CTLR_SYNC_ISO || BT_CTLR_CONN_ISO
+	range 0 10
+	default 3
+
+config BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT
+	int "BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT"
+	depends on BT_CTLR_ADV_ISO || BT_CTLR_CONN_ISO
+	range 0 10
+	default 3
+
+config BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT
+	int "BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT"
+	depends on BT_CTLR_ADV_ISO || BT_CTLR_CONN_ISO
+	range 1 32
+	default 3
 
 config BT_UNINIT_MPSL_ON_DISABLE
 	bool "Uninitializes MPSL on BT disable"
