@@ -389,6 +389,7 @@ Cellular samples (renamed from nRF9160 samples)
     * The :file:`overlay_coap.conf` file and made changes to the sample to enable the use of CoAP instead of MQTT to connect with nRF Cloud.
     * An overlay that allows the sample to be used with Wi-Fi instead of LTE (MQTT only).
     * Reporting of device and connection info to the device shadow.
+    * The :file:`overlay_min_coap.conf` and :file:`overlay_min_mqtt.conf` overlay files.
 
   * Updated:
 
@@ -398,6 +399,7 @@ Cellular samples (renamed from nRF9160 samples)
     * From using the :ref:`lte_lc_readme` library directly to using Zephyr's ``conn_mgr`` and the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kconfig option.
     * The sample to remove redundant shadow updates for nRF Cloud.
     * Build instructions, board files, and DTC overlay file so that Wi-Fi scanning works for the nRF9161 DK and the nRF9160 DK.
+    * Configuration to enable power saving mode by default.
 
   * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
 
