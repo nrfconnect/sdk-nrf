@@ -10,11 +10,6 @@ config APP_VERSION
 	string "Multi Service Sample version"
 	default "1.0.0"
 
-config POWER_SAVING_MODE_ENABLE
-	bool "Enable Power Saving Mode (PSM)"
-	help
-	  Enable to request Power Saving Mode from cellular network.
-
 config CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS
 	int "Cloud connection retry timeout (seconds)"
 	default 30
@@ -91,6 +86,15 @@ config SENSOR_SAMPLE_INTERVAL_SECONDS
 	help
 	  Sets the time to wait between each sensor sample.
 
+menuconfig LOCATION_TRACKING
+	bool "Location tracking service"
+	default y
+	help
+	  Uses GNSS, LTE, and/or Wi-Fi information to determine and report device
+	  location.
+
+if LOCATION_TRACKING
+
 config LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS
 	int "Location sampling interval (seconds)"
 	default 60
@@ -118,6 +122,8 @@ config LOCATION_TRACKING_WIFI
 	help
 	  Requires the use of an nRF7002 companion chip.
 	  Disable all location tracking methods to completely disable location tracking.
+
+endif
 
 config TEMP_DATA_USE_SENSOR
 	bool "Use genuine temperature data"
@@ -223,8 +229,8 @@ config AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH
 
 if NRF_CLOUD_COAP
 
-menuconfig NRF_CLOUD_COAP_FOTA
-	bool "Enable FOTA service when using CoAP to connect to nRF Cloud"
+menuconfig COAP_FOTA
+	bool "FOTA service when using CoAP to connect to nRF Cloud"
 	select FOTA_DOWNLOAD
 	select FOTA_DOWNLOAD_PROGRESS_EVT
 	select IMG_ERASE_PROGRESSIVELY
@@ -235,7 +241,7 @@ menuconfig NRF_CLOUD_COAP_FOTA
 	select SETTINGS
 	default y
 
-if NRF_CLOUD_COAP_FOTA
+if COAP_FOTA
 
 config COAP_FOTA_DL_TIMEOUT_MIN
 	int "The time (minutes) allotted for a FOTA download to complete"
@@ -286,6 +292,15 @@ config COAP_FOTA_THREAD_STACK_SIZE
 
 endif
 
+menuconfig COAP_SHADOW
+	bool "Updating shadow service"
+	default y
+	help
+	  Updates the shadow with device information. Checks for a shadow
+	  delta periodically and processes it if received.
+
+if COAP_SHADOW
+
 config COAP_SHADOW_CHECK_RATE_SECONDS
 	int "Shadow job check interval (seconds)"
 	default 300
@@ -299,6 +314,8 @@ config COAP_SHADOW_THREAD_STACK_SIZE
 	help
 	  Sets the stack size (in bytes) for the CoAP shadow thread of the
 	  sample.
+
+endif
 
 endif
 

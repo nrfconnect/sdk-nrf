@@ -7,7 +7,6 @@
 #include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 #include <nrf_errno.h>
-#include <modem/location.h>
 #include <cJSON.h>
 #include <stdio.h>
 

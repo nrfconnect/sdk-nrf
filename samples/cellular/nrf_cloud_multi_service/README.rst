@@ -352,14 +352,18 @@ The following key features of this sample may be independently disabled:
 
 * GNSS-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_GNSS <CONFIG_LOCATION_TRACKING_GNSS>` option to disabled.
 * Cellular-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>` option to disabled.
-* Wi-Fi-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_WIFI <CONFIG_LOCATION_TRACKING_CELLULAR>` option to disabled.
+* Wi-Fi-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_WIFI <CONFIG_LOCATION_TRACKING_WIFI>` option to disabled.
 * Temperature tracking - by setting the :ref:`CONFIG_TEMP_TRACKING <CONFIG_TEMP_TRACKING>` option to disabled.
 * GNSS assistance (A-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` option to disabled.
 * Predictive GNSS assistance (P-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` option to disabled.
 * FOTA when using MQTT - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option to disabled.
-* FOTA when using CoAP - by setting the :kconfig:option:`NRF_CLOUD_COAP_FOTA` option to disabled.
+* FOTA when using CoAP - by setting the :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>` option to disabled.
+* Shadow handling when using CoAP - by setting the :ref:`CONFIG_COAP_SHADOW <CONFIG_COAP_SHADOW>` option to disabled.
 
 If you disable GNSS, Wi-Fi-based, and cellular-based location tracking, location tracking is completely disabled.
+In that case, also set the :ref:`CONFIG_LOCATION_TRACKING <CONFIG_LOCATION_TRACKING>` option to disabled.
+
+For examples, see the related minimal overlays in the :ref:`nrf_cloud_multi_service_minimal` section.
 
 .. note::
   MQTT should only be used with applications that need to stay connected constantly or transfer data frequently.
@@ -617,11 +621,6 @@ Set the following configuration options for the sample:
 CONFIG_MULTI_SERVICE_LOG_LEVEL_DBG - Sample debug logging
    Sets the log level for this sample to debug.
 
-.. _CONFIG_POWER_SAVING_MODE_ENABLE:
-
-CONFIG_POWER_SAVING_MODE_ENABLE - Enable Power Saving Mode (PSM)
-   Requests Power Saving Mode from cellular network when enabled.
-
 .. _CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS:
 
 CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS - Cloud connection retry timeout (seconds)
@@ -697,6 +696,12 @@ CONFIG_GNSS_FIX_TIMEOUT_SECONDS - GNSS fix timeout (seconds)
    Sets the GNSS fix timeout in seconds.
    On each location sample, try for this long to achieve a GNSS fix before falling back to cellular positioning.
 
+.. _CONFIG_LOCATION_TRACKING:
+
+CONFIG_LOCATION_TRACKING - Enable or disable location tracking
+   Enables location tracking.
+   Enable at least one location tracking method to avoid a build error.
+
 .. _CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS:
 
 CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS - Location sampling interval (seconds)
@@ -706,21 +711,21 @@ CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS - Location sampling interval (s
 
 CONFIG_LOCATION_TRACKING_GNSS - GNSS location tracking
    Enables GNSS location tracking.
-   Disable all location tracking methods to completely disable location tracking.
+   Disable :ref:`CONFIG_LOCATION_TRACKING <CONFIG_LOCATION_TRACKING>` and all location tracking methods to completely disable location tracking.
    Defaults to enabled.
 
 .. _CONFIG_LOCATION_TRACKING_CELLULAR:
 
 CONFIG_LOCATION_TRACKING_CELLULAR - Cellular location tracking
    Enables cellular location tracking.
-   Disable all location tracking methods to completely disable location tracking.
+   Disable :ref:`CONFIG_LOCATION_TRACKING <CONFIG_LOCATION_TRACKING>` and all location tracking methods to completely disable location tracking.
    Defaults to enabled.
 
 .. _CONFIG_LOCATION_TRACKING_WIFI:
 
 CONFIG_LOCATION_TRACKING_WIFI - Wi-Fi location tracking
    Enables Wi-Fi location tracking.
-   Disable all location tracking methods to completely disable location tracking.
+   Disable :ref:`CONFIG_LOCATION_TRACKING <CONFIG_LOCATION_TRACKING>` and all location tracking methods to completely disable location tracking.
    Requires the use of an nRF7002 companion chip.
    Defaults to disabled.
 
@@ -798,6 +803,13 @@ CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH - Length of AT command request resp
 
 When using CoAP, the following additional configuration options are available:
 
+.. _CONFIG_COAP_SHADOW:
+
+CONFIG_COAP_SHADOW - Enable shadow handling
+   Periodically check for and process shadow delta messages.
+
+If :ref:`CONFIG_COAP_SHADOW <CONFIG_COAP_SHADOW>` is enabled, these options additional are available:
+
 .. _CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS:
 
 CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS - Rate to check for shadow changes
@@ -808,13 +820,13 @@ CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS - Rate to check for shadow changes
 CONFIG_COAP_SHADOW_THREAD_STACK_SIZE - CoAP Shadow Thread Stack Size (bytes)
    Sets the stack size (in bytes) for the shadow delta checking thread of the sample.
 
-.. _CONFIG_NRF_CLOUD_COAP_FOTA:
+.. _CONFIG_COAP_FOTA:
 
-CONFIG_NRF_CLOUD_COAP_FOTA - Enable FOTA with CoAP
+CONFIG_COAP_FOTA - Enable FOTA with CoAP
    The sample periodically checks for pending FOTA jobs.
    The sample performs the FOTA update when received.
 
-If :kconfig:option:`CONFIG_NRF_CLOUD_COAP_FOTA` is enabled, these options additional are available:
+If :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>` is enabled, these options additional are available:
 
 .. _CONFIG_COAP_FOTA_DL_TIMEOUT_MIN:
 
@@ -1023,6 +1035,21 @@ You can read JSON log messages in real-time in the nRF Cloud user interface.
 However, because JSON logs are large, you may want to edit the overlay file to change to using dictionary logging.
 Deselect the :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` Kconfig option and select :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY` instead.
 See `Dictionary-based Logging`_ to learn how dictionary-based logging works, how the dictionary is built, and how to decode the binary log output.
+
+.. _nrf_cloud_multi_service_minimal:
+
+Building with minimal services
+==============================
+
+To build the sample with only temperature tracking enabled for either MQTT or CoAP, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_min_mqtt.conf``
+
+or
+
+``-DOVERLAY_CONFIG=overlay_min_coap.conf``
+
+These overlays show all the Kconfig settings changes needed to properly disable all but a single sensor.
 
 .. _nrf_cloud_multi_service_dependencies:
 
