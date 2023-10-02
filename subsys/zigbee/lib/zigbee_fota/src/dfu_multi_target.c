@@ -29,6 +29,9 @@ static int dfu_multi_target_done_0(bool success);
 #if CONFIG_UPDATEABLE_IMAGE_NUMBER > 1
 static int dfu_multi_target_done_1(bool success);
 #endif
+#if CONFIG_UPDATEABLE_IMAGE_NUMBER > 2
+static int dfu_multi_target_done_2(bool success);
+#endif
 
 LOG_MODULE_DECLARE(zigbee_fota);
 static uint32_t images_to_download;
@@ -36,7 +39,7 @@ static uint32_t images_to_download;
 /** Buffer for parsing the multi-image header as well as DFU target buffer. */
 static uint8_t image_buf[DFU_MULTI_TARGET_BUFFER_SIZE] __aligned(4);
 
-/** DFU target writer for image 0 (single-app image or APP core). */
+/** DFU target writer for image 0 (single-app image or APP core image put in internal flash). */
 static struct dfu_image_writer dfu_multi_target_writer_0 = {
 	.image_id = 0,
 	.open = dfu_multi_target_open,
@@ -54,6 +57,15 @@ static struct dfu_image_writer dfu_multi_target_writer_1 = {
 };
 #endif
 
+#if CONFIG_UPDATEABLE_IMAGE_NUMBER > 2
+/** DFU target writer for image 2 (split from APP core and to be put in external memory). */
+static struct dfu_image_writer dfu_multi_target_writer_2 = {
+	.image_id = 2,
+	.open = dfu_multi_target_open,
+	.write = dfu_multi_target_write,
+	.close = dfu_multi_target_done_2
+};
+#endif
 
 static int dfu_multi_target_open(int image_id, size_t image_size)
 {
@@ -91,6 +103,19 @@ static int dfu_multi_target_done_1(bool success)
 
 	if (success) {
 		images_to_download &= ~(1 << 1);
+	}
+
+	return dfu_target_done(success);
+}
+#endif
+
+#if CONFIG_UPDATEABLE_IMAGE_NUMBER > 2
+static int dfu_multi_target_done_2(bool success)
+{
+	LOG_INF("Close image 2 for writing success: %d", success);
+
+	if (success) {
+		images_to_download &= ~(1 << 2);
 	}
 
 	return dfu_target_done(success);
@@ -145,6 +170,17 @@ int dfu_multi_target_init_default(void)
 
 	images_to_download |= (1 << 1);
 #endif
+
+#if CONFIG_UPDATEABLE_IMAGE_NUMBER > 2
+	err = dfu_multi_image_register_writer(&dfu_multi_target_writer_2);
+	if (err) {
+		LOG_ERR("Failed to register DFU target writer for image 2 (err %d)", err);
+		return err;
+	}
+
+	images_to_download |= (1 << 2);
+#endif
+
 	err = dfu_target_mcuboot_set_buf(image_buf, sizeof(image_buf));
 	if (err) {
 		LOG_ERR("Failed to set DFU target buffer (err %d)", err);
