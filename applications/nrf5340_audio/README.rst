@@ -405,6 +405,10 @@ You can add support for the nRF21540 front-end module (FEM) to this application 
 
 To set the TX power output, use the :ref:`CONFIG_NRF_21540_MAIN_TX_POWER <config_nrf53_audio_app_options>` and :ref:`CONFIG_NRF_21540_PRI_ADV_TX_POWER <config_nrf53_audio_app_options>` Kconfig options.
 
+.. note::
+   When you build the nRF5340 Audio application with the nRF21540 FEM support, the :ref:`lib_bt_ll_acs_nrf53_readme` does not support the +20 dBm setting.
+   This is because of a power class restriction in the controller's QDID.
+
 See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.
 
 .. _nrf53_audio_app_building_script:
