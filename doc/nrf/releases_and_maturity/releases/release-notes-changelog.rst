@@ -395,6 +395,7 @@ Cellular samples (renamed from nRF9160 samples)
     * An overlay that allows the sample to be used with Wi-Fi instead of LTE (MQTT only).
     * Reporting of device and connection info to the device shadow.
     * The :file:`overlay_min_coap.conf` and :file:`overlay_min_mqtt.conf` overlay files.
+    * Handling of shadow deltas caused by alert and log configuration changes for CoAP.
 
   * Updated:
 
@@ -405,6 +406,10 @@ Cellular samples (renamed from nRF9160 samples)
     * The sample to remove redundant shadow updates for nRF Cloud.
     * Build instructions, board files, and DTC overlay file so that Wi-Fi scanning works for the nRF9161 DK and the nRF9160 DK.
     * Configuration to enable power saving mode by default.
+
+  * Fixed:
+
+    * Legitimate server side CoAP API errors are not counted now as a reason to disconnect from and reconnect to the cloud, but only communications errors.
 
   * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
 
@@ -801,6 +806,7 @@ Libraries for networking
     * Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB` for controlling whether a FOTA update job is started automatically or at the request of the application.
     * An event :c:enum:`NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE` that indicates a FOTA update job is available.
     * :c:func:`nrf_cloud_fota_job_start` function that starts a FOTA update job.
+    * :c:func:`nrf_cloud_shadow_delta_response_encode()` to help accept or reject shadow delta desired settings.
 
   * Updated:
 
@@ -808,12 +814,15 @@ Libraries for networking
     * :c:func:`nrf_cloud_obj_location_request_create` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
     * Retry handling for P-GPS data download errors to retry ``ECONNREFUSED`` errors.
     * By default, Wi-Fi location requests include only the MAC address and RSSI value.
+    * The shadow desired section for the config subsection is no longer deleted.
+      Applications and samples should use the function :c:func:`nrf_cloud_shadow_delta_response_encode()` to prevent recurring deltas.
 
   * Fixed:
 
     * A build issue that occurred when MQTT and P-GPS are enabled and A-GPS is disabled.
     * A bug preventing ``AIR_QUAL`` from being enabled in shadow UI service info.
     * A bug that prevented an MQTT FOTA job from being started.
+    * An invalid value for a shadow delta change to the control section is now rejected by updating the desired section to the previous value.
 
   * Removed:
 
