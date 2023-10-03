@@ -588,11 +588,18 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		srv->delta_start = to_actual(status.current);
 	}
 
-	/* Clamp the value to the lightness range to prevent it be moved back to zero in binding
-	 * with Generic Level state.
-	 */
-	target_actual = CLAMP(srv->delta_start + delta_set->delta,
-			      srv->range.min, srv->range.max);
+	if (srv->delta_start == 0 && delta_set->delta <= 0) {
+		/* Do not clamp to range when dimming down from zero, to avoid
+		 * the light to turn on when dimmed down.
+		 */
+		target_actual = 0;
+	} else {
+		/* Clamp the value to the lightness range to prevent that it moves
+		 * back to zero in binding with Generic Level state.
+		 */
+		target_actual = CLAMP(srv->delta_start + delta_set->delta,
+				      to_actual(srv->range.min), to_actual(srv->range.max));
+	}
 
 	struct bt_mesh_lightness_set set = {
 		/* Converting back to configured space: */
@@ -631,7 +638,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	if (move_set->delta > 0) {
 		target = srv->range.max;
 	} else if (move_set->delta < 0) {
-		target = srv->range.min;
+		target = status.current == 0 ? 0 : srv->range.min;
 	} else {
 		target = status.current;
 	}
@@ -642,8 +649,15 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		.transition = NULL,
 	};
 
-	if (move_set->delta != 0 && move_set->transition) {
+	if (move_set->delta != 0 && move_set->transition && target != status.current) {
 		uint32_t distance = abs(target - status.current);
+		if (status.current == 0) {
+			/* Subtract RANGE_MIN when dimming up from zero to avoid taking
+			 * the "jumped" distance between 0 and RANGE_MIN into account
+			 * when computing the timing.
+			 */
+			distance -= srv->range.min;
+		}
 		/* Note: We're not actually converting from the lightness actual
 		 * space to the linear space here, even if configured. This
 		 * means that a generic level server communicating with a
