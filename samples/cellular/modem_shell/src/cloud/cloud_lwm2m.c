@@ -224,6 +224,7 @@ static void cloud_lwm2m_rd_client_event_cb(struct lwm2m_ctx *client_ctx,
 					   enum lwm2m_rd_client_event client_event)
 {
 	switch (client_event) {
+	case LWM2M_RD_CLIENT_EVENT_DEREGISTER:
 	case LWM2M_RD_CLIENT_EVENT_NONE:
 		/* Do nothing. */
 		break;
