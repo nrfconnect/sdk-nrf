@@ -119,8 +119,10 @@ static void periodic_led_work(struct k_work *work)
 
 	k_work_reschedule(&l_ctx->per_work, K_MSEC(l_ctx->time_per));
 apply_and_print:
-	lc_pwm_led_set(l_ctx->current_lvl);
-	printk("Current light lvl: %u/65535\n", l_ctx->current_lvl);
+	uint16_t clamped_lvl = bt_mesh_lightness_clamp(&l_ctx->lightness_srv,
+						       l_ctx->current_lvl);
+	lc_pwm_led_set(clamped_lvl);
+	printk("Current light lvl: %u/65535\n", clamped_lvl);
 }
 
 static void light_set(struct bt_mesh_lightness_srv *srv,
@@ -144,7 +146,7 @@ static void light_get(struct bt_mesh_lightness_srv *srv,
 	struct lightness_ctx *l_ctx =
 		CONTAINER_OF(srv, struct lightness_ctx, lightness_srv);
 
-	rsp->current = l_ctx->current_lvl;
+	rsp->current = bt_mesh_lightness_clamp(&l_ctx->lightness_srv, l_ctx->current_lvl);
 	rsp->target = l_ctx->target_lvl;
 	rsp->remaining_time = l_ctx->rem_time;
 }

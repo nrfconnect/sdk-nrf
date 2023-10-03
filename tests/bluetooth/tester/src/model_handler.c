@@ -382,7 +382,7 @@ start_new_lightness_trans(uint32_t step_cnt,
 static void lightness_status(struct lightness_ctx *ctx,
 			     struct bt_mesh_lightness_status *rsp)
 {
-	rsp->current = ctx->current;
+	rsp->current = bt_mesh_lightness_clamp(&ctx->srv, ctx->current);
 	rsp->target = ctx->target;
 	rsp->remaining_time = ctx->remaining;
 }

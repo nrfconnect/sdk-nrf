@@ -75,6 +75,10 @@ struct bt_mesh_lightness_srv_handlers {
 	 * @ref bt_mesh_model_transition_time returns a nonzero value, the application is
 	 * responsible for publishing a value of the Light state at the end of the transition.
 	 *
+	 * When performing a non-instantaneous state change, the Light state at any intermediate
+	 * point must be clamped to the current lightness range of the server using
+	 * @ref bt_mesh_lightness_clamp.
+	 *
 	 * @note This handler is mandatory.
 	 *
 	 * @param[in] srv Server to set the Light state of.
@@ -89,6 +93,10 @@ struct bt_mesh_lightness_srv_handlers {
 				struct bt_mesh_lightness_status *rsp);
 
 	/** @brief Get the current Light state.
+	 *
+	 * When in the middle of a non-instantaneous state change, the Light value filled in
+	 * @c rsp must be clamped to the current lightness range of the server using
+	 * @ref bt_mesh_lightness_clamp.
 	 *
 	 * @note This handler is mandatory.
 	 *
@@ -189,6 +197,18 @@ struct bt_mesh_lightness_srv {
 	struct bt_mesh_light_ctrl_srv *ctrl;
 #endif
 };
+
+/** @brief Clamp lightness to lightness range.
+ *
+ *  @return @c lightness clamped to the lightness range set on the
+ *  @ref bt_mesh_lightness_srv pointed to by @c srv if @c lightness > 0, zero
+ *  otherwise.
+ */
+static inline uint16_t bt_mesh_lightness_clamp(const struct bt_mesh_lightness_srv *srv,
+					       uint16_t lightness)
+{
+	return lightness == 0 ? 0 : CLAMP(lightness, srv->range.min, srv->range.max);
+}
 
 /** @brief Publish the current Light state.
  *
