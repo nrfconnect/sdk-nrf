@@ -12,7 +12,6 @@ static void slot_info_print(const struct bt_mesh_dfu_slot *slot, const uint8_t *
 {
 	char fwid[2 * CONFIG_BT_MESH_DFU_FWID_MAXLEN + 1];
 	char metadata[2 * CONFIG_BT_MESH_DFU_METADATA_MAXLEN + 1];
-	char uri[CONFIG_BT_MESH_DFU_URI_MAXLEN + 1];
 	size_t len;
 
 	len = bin2hex(slot->fwid, slot->fwid_len, fwid, sizeof(fwid));
@@ -20,8 +19,6 @@ static void slot_info_print(const struct bt_mesh_dfu_slot *slot, const uint8_t *
 	len = bin2hex(slot->metadata, slot->metadata_len, metadata,
 		      sizeof(metadata));
 	metadata[len] = '\0';
-	memcpy(uri, slot->uri, slot->uri_len);
-	uri[slot->uri_len] = '\0';
 
 	if (idx != NULL) {
 		printk("Slot %u:\n", *idx);
@@ -31,7 +28,6 @@ static void slot_info_print(const struct bt_mesh_dfu_slot *slot, const uint8_t *
 	printk("\tSize:     %u bytes\n", slot->size);
 	printk("\tFWID:     %s\n", fwid);
 	printk("\tMetadata: %s\n", metadata);
-	printk("\tURI:      %s\n", uri);
 }
 
 static int dfd_srv_recv(struct bt_mesh_dfd_srv *srv,
