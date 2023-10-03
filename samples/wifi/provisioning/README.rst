@@ -7,7 +7,7 @@ Wi-Fi: Provisioning Service
    :local:
    :depth: 2
 
-This sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
+The Provisioning Service sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
 
 .. _wifi_provisioning_app:
 

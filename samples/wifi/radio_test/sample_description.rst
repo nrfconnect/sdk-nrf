@@ -53,8 +53,8 @@ Building and running
 
 Currently, the following configurations are supported:
 
-* 7002 DK + QSPI
-* 7002 EK + SPIM
+* nRF7002 DK + QSPI
+* nRF7002 EK + SPIM
 
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
@@ -130,8 +130,8 @@ Testing
          * To run a continuous Orthogonal frequency-division multiplexing (OFDM) TX traffic sequence with the following configuration:
 
            * Channel: 11
-           * Frame duration: 2708 us
-           * Inter-frame gap: 4200 us
+           * Frame duration: 2708 µs
+           * Inter-frame gap: 4200 µs
 
            Execute the following sequence of commands:
 
@@ -148,8 +148,8 @@ Testing
          * To run a continuous Direct-sequence spread spectrum (DSSS) TX traffic sequence with the following configuration:
 
            * Channel: 14
-           * Frame duration: 8500 us
-           * Inter-frame gap: 8600 us
+           * Frame duration: 8500 µs
+           * Inter-frame gap: 8600 µs
 
            Execute the following sequence of commands:
 
@@ -170,16 +170,16 @@ Testing
             * For regulatory certification, it is advisable to run the TX streams in Legacy OFDM or DSSS modes only (``wifi_radio_test tx_pkt_tput_mode 0``).
             * The frame duration can be calculated using the formula:
 
-              .. code-block::
+              .. math::
 
                  D = ((L * 8) / R ) + P
 
               where the following parameters are used:
 
-              * D - Frame duration (us)
-              * L - Frame length (bytes)
-              * R - Data rate (Mbps)
-              * P - PHY overhead duration (us) (Values: 20 us - Legacy OFDM, 192 us - DSSS)
+              * ``D`` - Frame duration (µs)
+              * ``L`` - Frame length (bytes)
+              * ``R`` - Data rate (Mbps)
+              * ``P`` - PHY overhead duration (µs) (values: 20 µs - Legacy OFDM, 192 µs - DSSS)
 
          * To run a RX test with the following configuration:
 
@@ -579,7 +579,7 @@ Testing
 
          .. note::
 
-            The default regulatory domain is ``00`` (World regulatory).
+            The default regulatory domain is ``00`` (world regulatory).
 
          * To bypass regulatory domain, set ``bypass_reg_domain`` to ``1`` using the following command:
 

@@ -7,7 +7,7 @@ Wi-Fi: Shell
    :local:
    :depth: 2
 
-This sample allows you to test Nordic Semiconductor's Wi-Fi® chipsets.
+The Shell sample allows you to test Nordic Semiconductor's Wi-Fi® chipsets.
 
 Requirements
 ************
@@ -19,7 +19,7 @@ The sample supports the following development kits:
 Overview
 ********
 
-This sample can perform all Wi-Fi operations in the 2.4GHz and 5GHz bands depending on the capabilities supported in the underlying chipset.
+The sample can perform all Wi-Fi operations in the 2.4GHz and 5GHz bands depending on the capabilities supported in the underlying chipset.
 
 Using this sample, the development kit can associate with, and ping to, any Wi-Fi capable access point in :abbr:`STA (Station)` mode.
 
@@ -32,9 +32,9 @@ Building and running
 
 Currently, the following configurations are supported:
 
-* 7002 DK + QSPI
-* 7002 EK + SPIM
-* 9160 DK + SPIM
+* nRF7002 DK + QSPI
+* nRF7002 EK + SPIM
+* nRF9160 DK + SPIM
 
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
@@ -186,11 +186,15 @@ Testing
 
 #. |connect_kit|
 #. |connect_terminal|
-#. Scan for the Wi-Fi networks in range using the following command::
+#. Scan for the Wi-Fi networks in range using the following command:
 
-     wifi scan
+   .. code-block:: console
 
-   The output should be similar to the following::
+      wifi scan
+
+   The output should be similar to the following:
+
+   .. code-block:: console
 
       Scan requested
 
@@ -200,17 +204,23 @@ Testing
 
 
 
-#. Connect to your preferred network using the following command::
+#. Connect to your preferred network using the following command:
 
-     wifi connect <SSID> <passphrase>
+   .. code-block:: console
+
+      wifi connect <SSID> <passphrase>
 
    ``<SSID>`` is the SSID of the network you want to connect to, and ``<passphrase>`` is its passphrase.
 
-#. Check the connection status after a while, using the following command::
+#. Check the connection status after a while, using the following command:
 
-     wifi status
+   .. code-block:: console
 
-   If the connection is established, you should see an output similar to the following::
+      wifi status
+
+   If the connection is established, you should see an output similar to the following:
+
+   .. code-block:: console
 
       Status: successful
       ==================
@@ -225,23 +235,27 @@ Testing
       PMF: Optional
       RSSI: 0
 
-#. Initiate a ping and verify data connectivity using the following commands::
+#. Initiate a ping and verify data connectivity using the following commands:
 
-     net dns <hostname>
-     net ping <resolved hostname>
+   .. code-block:: console
 
-   See the following example::
+      net dns <hostname>
+      net ping <resolved hostname>
 
-     net dns google.com
-      Query for 'google.com' sent.
-      dns: 142.250.74.46
-      dns: All results received
+   See the following example:
 
-     net ping 10 142.250.74.46
-      PING 142.250.74.46
-      28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=0 ttl=113 time=191 ms
-      28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=1 ttl=113 time=190 ms
-      28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=2 ttl=113 time=190 ms
+   .. code-block:: console
+
+      net dns google.com
+       Query for 'google.com' sent.
+       dns: 142.250.74.46
+       dns: All results received
+
+      net ping 10 142.250.74.46
+       PING 142.250.74.46
+       28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=0 ttl=113 time=191 ms
+       28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=1 ttl=113 time=190 ms
+       28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=2 ttl=113 time=190 ms
 
 Dependencies
 ************
