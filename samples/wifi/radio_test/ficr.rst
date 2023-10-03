@@ -7,7 +7,7 @@ FICR programming subcommands
    :local:
    :depth: 2
 
-``wifi_radio_ficr_prog`` is the Wi-Fi radio FICR programming command and it supports the following subcommands.
+``wifi_radio_ficr_prog`` is the Wi-Fi® radio FICR programming command and it supports the following subcommands.
 
 .. _wifi_radio_ficr_prog_subcmds:
 

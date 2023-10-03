@@ -19,12 +19,13 @@ The sample supports the following development kits:
 Overview
 ********
 
-This sample can perform Wi-Fi operations such as connect and disconnect in the 2.4GHz and 5GHz bands depending on the capabilities of an access point.
+The sample can perform Wi-Fi operations such as connect and disconnect in the 2.4GHz and 5GHz bands depending on the capabilities of an access point.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
 
 User interface
 **************
+
 The sample adds LED support to map with connection and disconnection events.
 
 LED 1:
@@ -51,7 +52,7 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 Configuration options
 =====================
 
-The following application-specific Kconfig option is used in this sample (located in :file:`samples/wifi/sta/Kconfig`):
+The following sample-specific Kconfig option is used in this sample (located in :file:`samples/wifi/sta/Kconfig`):
 
 .. _CONFIG_NRF700X_QSPI_ENCRYPTION_KEY:
 

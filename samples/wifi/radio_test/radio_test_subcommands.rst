@@ -65,9 +65,9 @@ Wi-Fi radio test subcommands
      - Configuration
      - Configure HE long training field (LTF) value while transmitting the packet.
    * - he_gi
-     - | 0 - 0.8 us
-       | 1 - 1.6 us
-       | 2 - 3.2 us
+     - | 0 - 0.8 µs
+       | 1 - 1.6 µs
+       | 2 - 3.2 µs
      - 2
      - Configuration
      - Configure HE guard interval (GI) while transmitting the packet.
@@ -128,12 +128,12 @@ Wi-Fi radio test subcommands
      - Configuration
      - Transmit power for frame transmission.
    * - ru_tone
-     - <val> – Desired resource unit (RU) size (26, 52, 106 or 242).
+     - <val> - Desired resource unit (RU) size (26, 52, 106 or 242).
      - 26
      - Configuration
      - Configure the resource unit (RU) size.
    * - ru_index
-     - | <val> – Valid values:
+     - | <val> - Valid values:
        | For 26 ru_tone: 1 to 9
        | For 52 ru_tone: 1 to 4
        | For 106 ru_tone: 1 to 2
@@ -238,8 +238,8 @@ Wi-Fi radio test subcommands
      - Configuration
      - Contention window for transmitted packets.
    * - reg_domain
-     - <country code> – Desired country code(for example: NO, US, GB, IN).
-     - 00 (World regulatory)
+     - <country code> - Desired country code(for example: NO, US, GB, IN).
+     - 00 (world regulatory)
      - Action
      - Configure WLAN regulatory domain country code.
    * - bypass_reg_domain

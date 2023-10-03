@@ -7,7 +7,7 @@ Wi-Fi: Bluetooth LE coexistence
    :local:
    :depth: 2
 
-This sample demonstrates coexistence between Wi-Fi® and Short Range (SR) radios in 2.4 GHz frequency.
+The Bluetooth LE coexistence sample demonstrates coexistence between Wi-Fi® and Short Range (SR) radios in 2.4 GHz frequency.
 The sample documentation includes details of test setup used, build procedure, test procedure and the results obtained when the sample is run on the nRF7002 DK.
 
 Requirements
@@ -177,7 +177,7 @@ Set up the following configuration parameters in the :file:`prj_nrf5340dk_nrf534
   The units are in milliseconds.
 
 .. note::
-   Use the same test duration value for :ref:`CONFIG_WIFI_TEST_DURATION <CONFIG_WIFI_TEST_DURATION>`, :ref:`CONFIG_BLE_TEST_DURATION <CONFIG_BLE_TEST_DURATION>` and :ref:`CONFIG_BT_THROUGHPUT_DURATION <CONFIG_BT_THROUGHPUT_DURATION>`.
+   Use the same test duration value for :ref:`CONFIG_WIFI_TEST_DURATION <CONFIG_WIFI_TEST_DURATION>`, :ref:`CONFIG_BLE_TEST_DURATION <CONFIG_BLE_TEST_DURATION>`, and :ref:`CONFIG_BT_THROUGHPUT_DURATION <CONFIG_BT_THROUGHPUT_DURATION>`.
 
 Building and running
 ********************
@@ -197,53 +197,53 @@ The following are examples of the CLI commands:
 
 * Build with coexistence disabled:
 
-.. code-block:: console
+  .. code-block:: console
 
-   west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=n -Dhci_rpmsg_CONFIG_MPSL_CX=n
+     west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=n -Dhci_rpmsg_CONFIG_MPSL_CX=n
 
 Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or concurrent Wi-Fi and Bluetooth LE throughput with coexistence disabled tests.
 
 * Build with coexistence enabled:
 
-.. code-block:: console
+  .. code-block:: console
 
-   west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=y -Dhci_rpmsg_CONFIG_MPSL_CX=y
+     west build -p -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_MPSL_CX=y -Dhci_rpmsg_CONFIG_MPSL_CX=y
 
 Use this command for concurrent Wi-Fi and Bluetooth LE throughput with coexistence enabled test.
 
 Change the build target as given below for the nRF7001 DK, nRF7002 EK and nRF7001 EK.
 
-Build target for nRF7001 DK:
+* Build target for nRF7001 DK:
 
-.. code-block:: console
+  .. code-block:: console
 
-   nrf7002dk_nrf7001_nrf5340_cpuapp
+     nrf7002dk_nrf7001_nrf5340_cpuapp
 
-Build target for nRF7002 EK and nRF7001 EK:
+* Build target for nRF7002 EK and nRF7001 EK:
 
-.. code-block:: console
+  .. code-block:: console
 
-   nrf5340dk_nrf5340_cpuapp
+     nrf5340dk_nrf5340_cpuapp
 
 Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
-For nRF7002 EK:
+* For nRF7002 EK:
 
-.. code-block:: console
+  .. code-block:: console
 
-   -DSHIELD=nrf7002ek -Dhci_rpmsg_SHIELD=nrf7002ek_coex
+     -DSHIELD=nrf7002ek -Dhci_rpmsg_SHIELD=nrf7002ek_coex
 
-For nRF7001 EK:
+* For nRF7001 EK:
 
-.. code-block:: console
+  .. code-block:: console
 
-   -DSHIELD=nrf7002ek_nrf7001 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
+     -DSHIELD=nrf7002ek_nrf7001 -Dhci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
 
 The generated HEX file to be used is :file:`sr_coex/build/zephyr/merged_domains.hex`.
 
 Use the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder on the peer nRF5340 DK device.
 
-* Build for the nRF5340 DK:
+Build for the nRF5340 DK:
 
 .. code-block:: console
 
@@ -285,9 +285,9 @@ To program the nRF5340 DK:
 #. Navigate to :file:`<ncs code>/nrf/samples/bluetooth/throughput/`.
 #. Run the following command:
 
-.. code-block:: console
+   .. code-block:: console
 
-   $ west flash --dev-id <device-id> --hex-file build/zephyr/merged_domains.hex
+      $ west flash --dev-id <device-id> --hex-file build/zephyr/merged_domains.hex
 
 To program the nRF7002 DK:
 
@@ -295,9 +295,9 @@ To program the nRF7002 DK:
 #. Navigate to :file:`<ncs code>/nrf/samples/wifi/sr_coex/`.
 #. Run the following command:
 
-.. code-block:: console
+   .. code-block:: console
 
-   $ west flash --dev-id <device-id> --hex-file build/zephyr/merged_domains.hex
+      $ west flash --dev-id <device-id> --hex-file build/zephyr/merged_domains.hex
 
 Testing
 =======
@@ -335,7 +335,7 @@ The Bluetooth LE throughput result appears on the minicom terminal connected to 
 Results
 =======
 
-The following tables collect a summary of results obtained when coexistence tests are run for different Wi-Fi operating bands, antenna configurations and Wi-Fi modes.
+The following tables collect a summary of results obtained when coexistence tests are run for different Wi-Fi operating bands, antenna configurations, and Wi-Fi modes.
 The tests are run with the test setup inside an RF shield box.
 Therefore, the results are representative and might change with adjustments in the test setup.
 
@@ -494,7 +494,8 @@ In the images, the top image result shows Wi-Fi throughput that appears on a tes
 
      Wi-Fi and Bluetooth LE throughput, coexistence enabled: Wi-Fi 8.3 Mbps and Bluetooth LE 478 kbps
 
-As is evident from the results of the sample execution, coexistence harmonizes air-time between Wi-Fi and Bluetooth LE rather than resulting in a higher combined throughput. This is consistent with the design intent.
+As is evident from the results of the sample execution, coexistence harmonizes air-time between Wi-Fi and Bluetooth LE rather than resulting in a higher combined throughput.
+This is consistent with the design intent.
 
 Dependencies
 ************

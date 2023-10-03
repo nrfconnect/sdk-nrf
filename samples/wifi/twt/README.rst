@@ -19,7 +19,7 @@ The sample supports the following development kit:
 Overview
 ********
 
-The sample can perform Wi-Fi operations such as connect and disconnect in the 2.4 GHz and 5 GHz bands depending on the capabilities of an access point.
+The sample can perform Wi-Fi® operations such as connect and disconnect in the 2.4 GHz and 5 GHz bands depending on the capabilities of an access point.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode and setup TWT flow with the access point.
 By default once the TWT flow is setup, the sample will use the traffic generator module to send and receive TCP data packets to and from the traffic generator server running on a PC connected to the same access point (typically through Ethernet).
@@ -58,7 +58,7 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 Configuration options
 =====================
 
-The following application-specific Kconfig option is used in this sample (located in :file:`samples/wifi/twt/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/twt/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:
