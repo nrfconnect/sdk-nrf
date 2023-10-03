@@ -38,12 +38,7 @@ IDE and tool support
 Application development
 =======================
 
-|no_changes_yet_note|
-
-RF Front-End Modules
---------------------
-
-* Updated the name of the ``nrf21540_ek`` shield to ``nrf21540ek``.
+This section provides detailed lists of changes to overarching SDK systems and components.
 
 Build system
 ------------
@@ -53,6 +48,11 @@ Build system
 
 * The |NCS| name and version is now displayed instead of the Zephyr version as the default boot banner when applications boot.
   This can be customized in user applications.
+
+nRF Front-End Modules
+---------------------
+
+* Updated the name of the ``nrf21540_ek`` shield to ``nrf21540ek``.
 
 Working with nRF91 Series
 =========================
@@ -624,7 +624,9 @@ Debug libraries
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`lib_bt_ll_acs_nrf53_readme` library:
+
+  * Added a limitation about the lack of support for the +20 dBm setting when :ref:`building the nRF5340 Audio application with the nRF21540 FEM support <nrf53_audio_app_adding_FEM_support>`.
 
 Bluetooth libraries and services
 --------------------------------
