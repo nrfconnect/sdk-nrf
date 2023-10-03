@@ -562,12 +562,34 @@ static void lwm2m_lte_reg_handler_notify(enum lte_lc_nw_reg_status nw_reg_status
 	k_mutex_unlock(&lte_mutex);
 }
 
+#ifdef CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS
+static void lte_modem_enter_sleep(const struct lte_lc_modem_sleep *event)
+{
+	switch (event->type) {
+	case LTE_LC_MODEM_SLEEP_PSM:
+	case LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM:
+		LOG_INF("Modem Enter PSM, time %lld", event->time);
+		break;
+	case LTE_LC_MODEM_SLEEP_RF_INACTIVITY:
+		LOG_INF("Modem Enter eDRX state, time %lld", event->time);
+		break;
+	default:
+		break;
+	}
+}
+#endif
+
 static void lte_notify_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:
 		lwm2m_lte_reg_handler_notify(evt->nw_reg_status);
 		break;
+#ifdef CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS
+	case LTE_LC_EVT_MODEM_SLEEP_ENTER:
+		lte_modem_enter_sleep(&evt->modem_sleep);
+		break;
+#endif
 	default:
 		break;
 	}
