@@ -817,6 +817,10 @@ struct nrf_wifi_cmd_sys_init {
 	unsigned char mgmt_buff_offload;
 	/** Enable features from driver config */
 	unsigned int feature_flags;
+	/** To deactivate beamforming, By default the RPU enables the beamforming feature.
+	 *  If a user wishes to turn it off, they should set this parameter to 1.
+	 */
+	unsigned int disable_beamforming;
 } __NRF_WIFI_PKD;
 
 /**
