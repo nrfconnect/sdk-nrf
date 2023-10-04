@@ -520,10 +520,6 @@ Syntax
 
     * ``<value>`` is an integer that indicates the send timeout in seconds.
 
-  * ``25`` - :c:macro:`SO_BINDTODEVICE` (set-only).
-
-    * ``<value>`` is an integer that indicates the PDP context ID to bind to.
-
   * ``30`` - :c:macro:`SO_SILENCE_ALL`.
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv4 and IPv6 are disabled.
@@ -538,6 +534,10 @@ Syntax
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv6 are enabled.
       It is ``0`` for disabled or ``1`` for enabled.
+
+  * ``40`` - :c:macro:`SO_BINDTOPDN` (set-only).
+
+    * ``<value>`` is an integer that indicates the packet data network ID to bind to.
 
   * ``50`` - :c:macro:`SO_RAI_NO_DATA` (set-only).
     Immediately release the RRC.
@@ -663,12 +663,7 @@ Syntax
 
     * ``<value>`` can be any integer value.
 
-  * ``14`` - :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO`.
-
-    * ``<value>`` is an integer that indicates the DTLS handshake timeout in seconds.
-      It can be one of the following values: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
-
-  * ``17`` - :c:macro:`TLS_DTLS_CID`.
+  * ``14`` - :c:macro:`TLS_DTLS_CID` (set-only).
 
     * ``<value>`` is an integer that indicates the DTLS connection identifier setting.
       It can be one of the following values:
@@ -680,11 +675,16 @@ Syntax
     This option is only supported with modem firmware 1.3.5 and newer.
     See :ref:`nrfxlib:dtls_cid_setting` for more details regarding the allowed values.
 
-  * ``18`` - :c:macro:`TLS_DTLS_CID_STATUS` (get-only).
+  * ``15`` - :c:macro:`TLS_DTLS_CID_STATUS` (get-only).
     It is the DTLS connection identifier status.
     It can be retrieved after the DTLS handshake.
     This option is only supported with modem firmware 1.3.5 and newer.
     See :ref:`nrfxlib:dtls_cid_status` for more details regarding the returned values.
+
+  * ``18`` - :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO`.
+
+    * ``<value>`` is an integer that indicates the DTLS handshake timeout in seconds.
+      It can be one of the following values: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
 
 See `nRF socket options`_ for explanation of the supported options.
 
