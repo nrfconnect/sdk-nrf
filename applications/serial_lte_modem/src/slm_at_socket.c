@@ -101,7 +101,7 @@ static int find_avail_socket(void)
 	return -ENOENT;
 }
 
-static int bind_to_device(uint16_t cid)
+static int bind_to_pdn(uint16_t cid)
 {
 	int ret = 0;
 
@@ -143,7 +143,7 @@ static int do_socket_open(void)
 
 	sock.fd = ret;
 	/* Explicitly bind to secondary PDP context if required */
-	ret = bind_to_device(sock.cid);
+	ret = bind_to_pdn(sock.cid);
 	if (ret) {
 		close(sock.fd);
 		return ret;
@@ -180,7 +180,7 @@ static int do_secure_socket_open(int peer_verify)
 	}
 	sock.fd = ret;
 	/* Explicitly bind to secondary PDP context if required */
-	ret = bind_to_device(sock.cid);
+	ret = bind_to_pdn(sock.cid);
 	if (ret) {
 		close(sock.fd);
 		return ret;
