@@ -96,8 +96,9 @@ def pre_process(data: Data):
     for package in data.packages.values():
         if (package.url is None) or (package.version is None):
             continue
-        if (package.name is None) and (package.url.startswith('https://github.com/')):
-            package.name = package.url.replace('https://github.com/', '')
+        if (package.name is None) and ('github.com' in package.url):
+            offs = package.url.find('github.com') + len('github.com') + 1
+            package.name = package.url[offs:]
             if package.name.endswith('.git'):
                 package.name = package.name[:-4]
         if package.name in package_name_map:
