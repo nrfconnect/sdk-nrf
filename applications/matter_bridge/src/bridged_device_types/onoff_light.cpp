@@ -8,6 +8,8 @@
 
 #include <zephyr/logging/log.h>
 
+#include <app-common/zap-generated/ids/Commands.h>
+
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 namespace
