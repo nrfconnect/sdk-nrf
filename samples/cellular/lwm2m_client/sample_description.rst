@@ -481,6 +481,8 @@ The following files are available:
 * :file:`overlay-adv-firmware.conf` - Enables experimental Advanced Firmware Update object.
 * :file:`overlay-dtls-cid.conf` - Enables DTLS Connection Identifier.
   This requires modem firmware version 1.3.5 or newer.
+* :file:`overlay-aggressive-psm.con` - Enables optimized PSM setup and proprietary PSM mode.
+   Proprietary PSM is only supported with modem firmware v2.x.
 
 Moreover, the sample also provides the following files for LwM2M 1.1 features:
 
