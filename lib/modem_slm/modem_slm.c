@@ -54,6 +54,27 @@ static const char at_usage_str[] = "Usage: slm <at_command>";
 /* global functions defined in different files */
 void slm_monitor_dispatch(const char *notif);
 
+static bool check_at_result(const char *data, const char *result, size_t datalen)
+{
+	char *ptr;
+	size_t len = strlen(result);
+
+	if (datalen < len) {
+		return false;
+	}
+
+	ptr = (char *)(data + (datalen - len));
+	while (strncmp(ptr, result, len) != 0) {
+		if (ptr > data) {
+			ptr--;
+		} else {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 static void gpio_wakeup_wk(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -149,13 +170,13 @@ static void uart_rx_handler(const uint8_t *data, int datalen)
 
 	/* handle AT response */
 	if (at_state == AT_CMD_PENDING) {
-		if (strstr((const char *)data, AT_CMD_OK_STR) != NULL) {
+		if (check_at_result((const char *)data, AT_CMD_OK_STR, datalen)) {
 			at_state = AT_CMD_OK;
-		} else if (strstr((const char *)data, AT_CMD_ERROR_STR) != NULL) {
+		} else if (check_at_result((const char *)data, AT_CMD_ERROR_STR, datalen)) {
 			at_state = AT_CMD_ERROR;
-		} else if (strstr((const char *)data, AT_CMD_CMS_STR) != NULL) {
+		} else if (check_at_result((const char *)data, AT_CMD_CMS_STR, datalen)) {
 			at_state = AT_CMD_ERROR_CMS;
-		} else if (strstr((const char *)data, AT_CMD_CME_STR) != NULL) {
+		} else if (check_at_result((const char *)data, AT_CMD_CME_STR, datalen)) {
 			at_state = AT_CMD_ERROR_CME;
 		}
 		if (at_state != AT_CMD_PENDING) {
