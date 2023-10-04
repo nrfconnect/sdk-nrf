@@ -39,6 +39,9 @@ The script requires three inputs to be functional:
   where none of the listed companion chip options are present, the feature
   is marked as independent of the companion chips for the given SoC. Otherwise
   all found companion chip options are added as a footnote.
+  The companion chip options can have a display name associated with them to
+  use in the footnotes, instead of a substring of the option name. The
+  associated display names are listed under the "display_names" section.
 
   One such file might look like this:
 
@@ -60,6 +63,9 @@ The script requires three inputs to be functional:
                 boards_and_shields:
                   - SHIELD_NRF7002EK
                   - BOARD_NRF7002DK_NRF5340_CPUAPP
+    display_names:
+      SHIELD_NRF7002EK: nRF7002 EK
+      BOARD_NRF7002DK_NRF5340_CPUAPP: nRF7002 DK
 
 If no input file is specified, the script will look in the local directory for
 a 'software_maturity_features.yaml' file.
@@ -395,7 +401,9 @@ def parse_rule(rule: str) -> list:
     return parsed_rule
 
 
-def parse_rule_set(rule_set: Union[str, Dict[str, str]]) -> dict:
+def parse_rule_set(
+    rule_set: Union[str, Dict[str, str]], display_names: Dict[str, str]
+) -> dict:
     """Parse a rule set consisting of the Kconfig rule and the companion chip
     dependency KConfig options.
 
@@ -413,16 +421,13 @@ def parse_rule_set(rule_set: Union[str, Dict[str, str]]) -> dict:
     else:
         rule = parse_rule(rule_set["rule"])
         if "boards_and_shields" in rule_set:
-            if isinstance(rule_set["boards_and_shields"], list):
-                companion_chips = {
-                    chip: parse_rule(chip) for chip in rule_set["boards_and_shields"]
-                }
-            else:
-                companion_chips = {
-                    rule_set["boards_and_shields"]: parse_rule(
-                        rule_set["boards_and_shields"]
-                    )
-                }
+            companion_chips = {}
+            for chip_rule in list(rule_set["boards_and_shields"]):
+                name = chip_rule
+                # Use the dependency's given displayname, if present.
+                if chip_rule in display_names:
+                    name = display_names[chip_rule]
+                companion_chips[name] = parse_rule(chip_rule)
 
     return {"rule": rule, "companion_chips": companion_chips}
 
@@ -502,8 +507,11 @@ def evaluate_rule_set(
 def extract_dependency_name(option: str) -> str:
     """Extract the dependency names from the found KConfig symbols.
 
-    For shields, the SHIELD prefix is stripped.
-    For boards, the BOARD prefix is stripped, as well as the last occurrence of NRFxxx.
+    If no display name is given, the symbol itself is used with the
+    following modifications:
+     - For shields, the SHIELD prefix is stripped.
+     - For boards, the BOARD prefix is stripped, as well as the last
+       occurrence of NRFxxx.
 
     Args:
         option: The KConfig option.
@@ -516,7 +524,7 @@ def extract_dependency_name(option: str) -> str:
     elif option.startswith("SHIELD_"):
         pattern = r"SHIELD_(NRF.*)"
     else:
-        return ""
+        return option
 
     return re.match(pattern, option).group(1).replace("NRF", "nRF")
 
@@ -590,13 +598,16 @@ def generate_tables(
     except yaml.YAMLError as yamlerr:
         sys.exit(f"Invalid or corrupt input file: {yamlerr}")
 
+    # Extract the display name lookup table
+    display_names = input_doc["display_names"]
+
     # Create a dictionary of all unique features and their respective rule
     all_features = {}
     feature_categories = input_doc["features"]
     for cat, features in feature_categories.items():
         for feature, rule_set in features.items():
             key = f"{cat}_{feature}"
-            all_features[key] = parse_rule_set(rule_set)
+            all_features[key] = parse_rule_set(rule_set, display_names)
 
     # Find all sample.yaml files
     all_samples = list(sample_dir.glob("samples/**/sample.yaml"))
@@ -629,7 +640,7 @@ def generate_tables(
 
         # Look for technology symbols
         for tech, rule_set in top_table_info.items():
-            parsed_rule_set = parse_rule_set(rule_set)
+            parsed_rule_set = parse_rule_set(rule_set, display_names)
             # Top level technologies are currently only Supported/Not supported
             match, dependent_on = evaluate_rule_set(kconf.variables, parsed_rule_set)
             if match:
