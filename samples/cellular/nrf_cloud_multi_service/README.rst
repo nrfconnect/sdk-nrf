@@ -37,7 +37,8 @@ This sample implements or demonstrates the following features:
 * Error-tolerant use of the nRF Cloud CoAP API using the :ref:`lib_nrf_cloud_coap` CoAP library.
 * Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`lib_nrf_cloud` library.
 * Support for `Firmware-Over-The-Air (FOTA) update service <nRF Cloud Getting Started FOTA documentation_>`_ using the `nRF Cloud`_ portal.
-* Support for `modem AT commands <AT Commands Reference Guide_>`_ over UART using the :ref:`lib_at_host` library.
+* Support for modem AT commands over UART using the :ref:`lib_at_host` library.
+  See `nRF91x1 AT Commands Reference Guide`_ or `nRF9160 AT Commands Reference Guide`_ documentation on each AT command.
 * Support for remote execution of modem AT commands using application-specific device messages.
 * Periodic cellular, Wi-Fi, and GNSS location tracking using the :ref:`lib_location` library.
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9161 DK`_, or `Nordic nRF9160 DK`_.

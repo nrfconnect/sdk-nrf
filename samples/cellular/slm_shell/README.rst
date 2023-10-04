@@ -93,9 +93,9 @@ The following table shows how to connect PCA10143 UART_2 to nRF9160 UART_2 for c
 References
 **********
 
-`AT Commands Reference Guide`_
-
-:ref:`SLM_AT_intro`
+* `nRF91x1 AT Commands Reference Guide`_
+* `nRF9160 AT Commands Reference Guide`_
+* :ref:`SLM_AT_intro`
 
 Dependencies
 ************

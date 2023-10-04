@@ -76,8 +76,7 @@ To connect to the Thingy:91 using the nRF Connect Serial Terminal app, complete 
    If the connection is working, the modem responds with OK.
 
 The terminal view shows all of the Asset Tracker v2 debug output as well as the AT commands and their results.
-For information on the available AT commands, see `nRF91 AT Commands Reference Guide <AT Commands Reference Guide_>`_.
-
+For information on the available AT commands, see the `nRF9160 AT Commands Reference Guide`_.
 
 Operating modes
 ***************

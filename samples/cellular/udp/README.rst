@@ -110,7 +110,7 @@ The following configurations are recommended for low power behavior:
    before the device enters PSM.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
-See `Power saving mode setting section in AT commands reference document`_ for a conversion chart of these timer values.
+For a conversion chart of these timer values, see the `Power saving mode setting`_ section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
 
 .. note::
    The availability of power saving features or timers is entirely dependent on the cellular network.
