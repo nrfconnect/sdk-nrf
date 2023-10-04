@@ -444,16 +444,19 @@ Cellular samples (renamed from nRF9160 samples)
 
 * :ref:`lwm2m_client` sample:
 
-  * Added an overlay for using DTLS Connection Identifier.
-    This significantly reduces the DTLS handshake overhead when doing the LwM2M Update operation.
+  * Added:
 
     * An overlay for using DTLS Connection Identifier.
       This significantly reduces the DTLS handshake overhead when doing the LwM2M Update operation.
     * Support for Hosting MCUmgr client for external MCU.
-      Including a new overlay file for enabling this and devicetree overlay files for UART2 and MCUboot recovery mode.
+      An new overlay file for enabling this and devicetree overlay files for UART2 and MCUboot recovery mode.
+    * An overlay for enabling proprietary Power Saving Mode (PSM).
+      This will fix a case where a battery-operated device joins a network that does not support PSM.
+      This fulfills the proprietary PSM requirements of modem firmware v2.0.0.
 
   * Updated the sample to use tickless operating mode from Zephyr's LwM2M engine, which does not cause device wake-up in 500 ms interval anymore.
-    This allows the device to achieve 2 uA of current usage while in PSM sleep mode.
+    This allows the device to achieve two µA of current usage while in PSM sleep mode.
+
 
 * :ref:`gnss_sample` sample:
 
