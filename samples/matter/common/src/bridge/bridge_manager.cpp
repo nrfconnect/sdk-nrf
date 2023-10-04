@@ -118,12 +118,16 @@ CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint, uint8_t &device
 CHIP_ERROR BridgeManager::SafelyRemoveDevice(uint8_t index)
 {
 	uint16_t duplicatedItemKeys[kMaxBridgedDevices];
-	uint8_t size;
 	bool removeProvider = true;
-
 	auto &devicePair = mDevicesMap[index];
-	if (mDevicesMap.ValueDuplicated(devicePair, duplicatedItemKeys, size)) {
-		for (uint8_t i = 0; i < size; i++) {
+
+	uint8_t duplicatesNumber = mDevicesMap.GetDuplicatesCount(devicePair, duplicatedItemKeys);
+	/* There must be at least 2 duplicates in the map to determine the real duplicate,
+       as the one under the current index is also contained in the map. */
+	bool realDuplicatePresent = duplicatesNumber >= 2;
+
+	if (realDuplicatePresent) {
+		for (uint8_t i = 0; i < duplicatesNumber; i++) {
 			/* We must consider only true duplicates, so skip the current index, as
 			 * it would lead to comparing the same values each time. */
 			if (duplicatedItemKeys[i] != index) {
@@ -176,6 +180,18 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 {
 	uint8_t index{ 0 };
 	CHIP_ERROR err;
+	uint16_t duplicatedItemKeys[kMaxBridgedDevices];
+	BridgedDevicePair pair(device, dataProvider);
+
+	/* Check if the current provider is already contained in the map - if so, there is at least one duplicate */
+	bool isNewProvider = (Instance().mDevicesMap.GetDuplicatesCount(pair, duplicatedItemKeys) == 0);
+
+	if (isNewProvider) {
+		VerifyOrReturnError(mNumberOfProviders + 1 <= kMaxDataProviders, CHIP_ERROR_NO_MEMORY,
+				    LOG_ERR("Maximum number of providers exceeded"));
+		mNumberOfProviders++;
+		dataProvider->Init();
+	}
 
 	/* The adding algorithm differs depending on the devicesPairIndex value:
 	 * - If devicesPairIndex has value it means that index and endpoint id are specified and should be assigned
@@ -189,7 +205,7 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 			return CHIP_ERROR_INTERNAL;
 		}
 
-		if (!mDevicesMap.Insert(index, BridgedDevicePair(device, dataProvider))) {
+		if (!mDevicesMap.Insert(index, std::move(pair))) {
 			return CHIP_ERROR_INTERNAL;
 		}
 
@@ -211,7 +227,7 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 		while (index < kMaxBridgedDevices) {
 			/* Find the first empty index in the bridged devices list */
 			if (!mDevicesMap.Contains(index)) {
-				if (mDevicesMap.Insert(index, BridgedDevicePair(device, dataProvider))) {
+				if (mDevicesMap.Insert(index, std::move(pair))) {
 					/* Assign the free endpoint ID. */
 					do {
 						err = CreateEndpoint(index, mCurrentDynamicEndpointId);
@@ -284,16 +300,11 @@ CHIP_ERROR BridgeManager::AddDevices(MatterBridgedDevice *devices[], BridgedDevi
 	}
 	Platform::UniquePtr<BridgedDeviceDataProvider> dataProviderPtr(dataProvider);
 
-	dataProviderPtr->Init();
-
 	/* Maximum number of Matter bridged devices is controlled inside mDevicesMap,
 	   but the data providers may be created independently, so let's ensure we do not
 	   violate the maximum number of supported instances. */
 	VerifyOrReturnError(mDevicesMap.FreeSlots() >= deviceListSize, CHIP_ERROR_NO_MEMORY,
 			    LOG_ERR("Not enough free slots in the map"));
-	VerifyOrReturnError(mNumberOfProviders + 1 <= kMaxDataProviders, CHIP_ERROR_NO_MEMORY,
-			    LOG_ERR("Maximum number of providers exceeded"));
-	mNumberOfProviders++;
 
 	CHIP_ERROR cumulativeStatus{ CHIP_NO_ERROR };
 	CHIP_ERROR status{ CHIP_NO_ERROR };
