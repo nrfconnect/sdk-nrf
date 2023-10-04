@@ -27,12 +27,8 @@ The library uses two general-purpose registers of the IPC peripheral in the appl
 
 The ``GPMEM[0]`` register is divided into two 16-bit parts.
 
-The ``COUNTER`` value is incremented by the network core every :kconfig:option:`CONFIG_NCM_APP_FEEDING_INTERVAL_MSEC`.
-The application core periodically calls the :c:func:`ncm_net_status_check` function to check the status of the network core.
+The ``COUNTER`` value is incremented by the network core every :kconfig:option:`CONFIG_NCM_FEEDING_INTERVAL_MSEC`.
 If the network core is suspended, the counter value is not updated.
-The :c:func:`ncm_net_status_check` function returns error code ``-EBUSY``.
-
-To correctly detect the network core status, the :c:func:`ncm_net_status_check` function should be called less frequently than the value set in the :kconfig:option:`CONFIG_NCM_APP_FEEDING_INTERVAL_MSEC` Kconfig option.
 
 The ``FLAGS`` field has the ``Reset`` flag as the bit 0.
 
@@ -43,13 +39,23 @@ During the startup of the network core, the reset bit is set and the cause of th
 This value is rewritten from the network core's ``RESET.RESETREAS`` register.
 For a detailed description of the bits in this register, see the `RESETREAS`_ section for nRF5340.
 
-The :c:func:`ncm_net_status_check` function returns the following error codes:
+The :c:func:`ncm_net_core_event_handler` function may be implemented by your application.
+On the application core, the network core monitor checks the values of IPC registers written by the network core every :kconfig:option:`CONFIG_NCM_FEEDING_INTERVAL_MSEC`.
+If the network core malfunctions and fails to increment the ``COUNTER`` value, the :c:func:`ncm_net_core_event_handler` function is called on the application core.
+This function is also called when the network core is restarted.
+The network core monitor provides a ``__weak`` implementation of that function in the :file:`nrf/subsys/net_core_monitor/app_core.c` file.
 
-* ``-EBUSY`` if the network core is suspended
-* ``-EFAULT`` if a network core reset has occurred
+The following events are supported and also listed in the :file:`nrf/include/net_core_monitor.h` file:
 
-The function takes a pointer to a variable of type uint32_t as a parameter.
-When a network core reset is detected, the cause of the reset is stored in this pointer.
+* :c:macro:`NCM_EVT_NET_CORE_RESET`
+
+   * Event triggered when a network core reset occurs.
+   * The ``reset_reas`` variable holds the reason for the reset.
+     It is rewritten from the ``RESET.RESETREAS`` register.
+
+* :c:macro:`NCM_EVT_NET_CORE_FREEZE`
+
+   * Event triggered when the network core is not responding.
 
 Configuration
 *************
@@ -68,38 +74,28 @@ Usage
 
 To enable the Network core monitor library, set the :kconfig:option:`CONFIG_NET_CORE_MONITOR` Kconfig option.
 
-On the application core, periodically call the :c:func:`ncm_net_status_check` function to monitor the state of the network core.
+The :c:func:`ncm_net_core_event_handler` function can be used to notify the application about the status of the network core.
+To define the user action for the event, you must override the ``__weak`` function definition of :c:func:`ncm_net_core_event_handler`.
+Otherwise, the ``__weak``` definition is called and it prints information about the event.
+
 See the following usage example.
 
 .. code-block::
 
    #include "net_core_monitor.h"
    ...
-   static void print_reset(uint32_t reset_reas)
+   /* This is the override for the __weak handler. */
+   void ncm_net_core_event_handler(enum ncm_event_type event, uint32_t reset_reas)
    {
-      if (reset_reas & NRF_RESET_RESETREAS_RESETPIN_MASK) {
-         printk("Reset by pin-reset\n");
-      } else if (reset_reas & NRF_RESET_RESETREAS_DOG0_MASK) {
-         printk("Reset by application watchdog timer 0 \n");
-      } else if (reset_reas & NRF_RESET_RESETREAS_SREQ_MASK) {
-         printk("Reset by soft-reset\n");
-      } else if (reset_reas) {
-         printk("Reset by a different source (0x%08X)\n", reset_reas);
-      }
-   }
-
-   int main(void)
-   {
-      uint32_t reset_reas;
-      ...
-      for (;;) {
-         ret = ncm_net_status_check(&reset_reas);
-         if (ret == -EBUSY) {
-            /* do something*/
-         } else if (ret == -EFAULT) {
-            print_reset(reset_reas);
-         }
-         k_sleep(K_MSEC(1000));
+      switch (event) {
+      case NCM_EVT_NET_CORE_RESET:
+         printk("The network core reset.\n");
+         /* do something */
+         break;
+      case NCM_EVT_NET_CORE_FREEZE:
+         printk("The network core is not responding.\n");
+         /* do something */
+         break;
       }
    }
 
