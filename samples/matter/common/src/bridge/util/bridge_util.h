@@ -125,12 +125,12 @@ template <typename T, std::size_t N> struct FiniteMap {
 	}
 	std::size_t FreeSlots() { return N - mElementsCount; }
 
-	bool ValueDuplicated(const T &value, uint16_t *key, uint8_t &numberOfDuplicates)
+	uint8_t GetDuplicatesCount(const T &value, uint16_t *key)
 	{
 		/* Find the first duplicated item and return its key,
 		 so that the application can handle the duplicate by itself. */
 		*key = kInvalidKey;
-		numberOfDuplicates = 0;
+		uint8_t numberOfDuplicates = 0;
 		for (auto it = std::begin(mMap); it != std::end(mMap); ++it) {
 			if (it->value == value) {
 				*(key++) = it->key;
@@ -138,8 +138,7 @@ template <typename T, std::size_t N> struct FiniteMap {
 			}
 		}
 
-		/* We must find at least two matching items. */
-		return (numberOfDuplicates > 1) ? true : false;
+		return numberOfDuplicates;
 	}
 
 	Item mMap[N];
