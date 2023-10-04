@@ -99,7 +99,7 @@ The following list mentions some of the information that can be extracted from t
 
 .. note::
    Some of the functionalities might not be compatible with certain modem firmware versions.
-   To check if a desired feature is compatible with a certain modem firmware version, see nRF9160 `AT Commands Reference Guide`_.
+   To check if a desired feature is compatible with a certain modem firmware version, see the AT commands that are documented in the `nRF91x1 AT Commands Reference Guide`_  or `nRF9160 AT Commands Reference Guide`_ depending on the SiP you are using.
 
 Enabling power-saving features
 ==============================

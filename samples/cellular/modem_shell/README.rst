@@ -41,10 +41,11 @@ LTE link control changes and queries the state of the LTE connection.
 Many of the changes are applied when going to online mode for the next time.
 You can store some link subcommand parameters into settings, which are persistent between sessions.
 
-3GPP Release 14 features are enabled by default, which means they are set when going into normal mode and when booting up.
-For the list of supported features, refer to `3GPP Release 14 features AT command`_.
+For nRF9160, 3GPP Release 14 features are enabled by default, which means they are set when going into normal mode and when booting up.
 To disable these features in normal mode,  use the ``link funmode --normal_no_rel14`` command.
 During autoconnect in bootup, use the ``link nmodeauto --enable_no_rel14`` command.
+For the list of supported features, refer to the `3GPP Release 14 features AT command`_ section in the nRF9160 AT Commands Reference Guide.
+For nRF91x1, 3GPP Release 14 features are always enabled and cannot be disabled.
 
 Examples
 --------

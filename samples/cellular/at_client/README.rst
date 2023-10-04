@@ -27,7 +27,7 @@ This facilitates the reading of responses or analyzing of events related to the 
 You can initiate the commands manually from a terminal such as the `nRF Connect Serial Terminal`_, or visually using the `Cellular Monitor`_ app.
 Both apps are part of `nRF Connect for Desktop`_.
 
-For more information on the AT commands, see the `AT Commands Reference Guide`_.
+For more information on the AT commands, see the `nRF91x1 AT Commands Reference Guide`_  or `nRF9160 AT Commands Reference Guide`_ depending on the SiP you are using.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -87,8 +87,8 @@ Following is a sample output of the command :command:`AT%XMONITOR`:
 References
 **********
 
-`AT Commands Reference Guide`_
-
+* `nRF91x1 AT Commands Reference Guide`_
+* `nRF9160 AT Commands Reference Guide`_
 
 Dependencies
 ************

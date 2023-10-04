@@ -95,7 +95,8 @@ LTE modem
 =========
 
 The LTE modem handles LTE communication.
-It is controlled through `AT commands <AT Commands Reference Guide_>`_.
+It is controlled through AT commands.
+The AT commands are documented in the `nRF9160 AT Commands Reference Guide`_.
 
 The firmware for the modem is available as a precompiled binary.
 You can download the firmware from the `nRF9160 product website (compatible downloads)`_.

@@ -100,7 +100,7 @@ The TLS handshake happens twice:
 * Before requesting commands.
 * After the execution of the commands, to report the results.
 
-If you are using `AT commands <AT Commands Reference Guide_>`_, the library shuts down the modem for writing data to the modem's non-volatile memory.
+If you are using AT commands, the library shuts down the modem for writing data to the modem's non-volatile memory.
 Once the memory writes are complete, the connection is re-established to report the results back to the server.
 The results are reported back to the server when either all the commands succeed or when an error occurs.
 If an error occurs, the results of all the commands that are successfully executed before the error and the erroneous result are reported back to the server.

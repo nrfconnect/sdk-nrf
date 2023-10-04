@@ -16,8 +16,10 @@ It provides an API for the following purposes:
 
 The library uses several AT commands, and it relies on the following two types of AT notifications to work:
 
-* Packet domain events notifications (``+CGEV``) - Subscribed by using the `AT+CGEREP set command`_ (``AT+CGEREP=1``)
-* Notifications for unsolicited reporting of error codes sent by the network (``+CNEC``) - Subscribed by using the `AT+CNEC set command`_ (``AT+CNEC=16``)
+* Packet domain events notifications (``+CGEV``) - Subscribed by using the ``AT+CGEREP=1`` command.
+  See the `AT+CGEREP set command`_ section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
+* Notifications for unsolicited reporting of error codes sent by the network (``+CNEC``) - Subscribed by using the ``AT+CNEC=16`` command.
+  See the `AT+CNEC set command`_ section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
 
 If the application uses the :ref:`lte_lc_readme` library to change the modem's functional mode, the PDN library automatically subscribes to the necessary AT notifications.
 This includes automatically resubscribing to the notifications upon functional mode changes.
@@ -35,7 +37,7 @@ Following are the AT commands that are used by the library:
 * ``AT%XGETPDNID``- To retrieve the PDN ID for a given PDP context
 * ``AT+CGAUTH`` - To set the PDN connection authentication parameters
 
-For more information about these commands, see `Packet Domain AT commands`_.
+For more information about these commands, see `Packet Domain AT commands`_ in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
 
 The application can create PDP contexts by using the :c:func:`pdn_ctx_create` function, and a callback can be assigned to receive the events pertaining to the state and connectivity of the PDP contexts.
 The application can use the :c:func:`pdn_default_ctx_cb_reg` function to register an event handler for events pertaining the default PDP context, and the :c:func:`pdn_default_ctx_cb_dereg` to deregister it.
