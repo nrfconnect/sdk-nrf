@@ -65,7 +65,8 @@ static struct k_work ppp_ctrl_restart_work;
 
 static bool ppp_up;
 
-static volatile bool ppp_closing;
+static volatile bool ppp_restarting;
+static volatile bool ppp_prot_running;
 
 /******************************************************************************/
 
@@ -88,6 +89,7 @@ static int ppp_ctrl_start_net_if(void)
 	struct net_if *iface;
 	struct pdp_context_info *pdp_context_info;
 	int idx = 0; /* Note: PPP iface index assumed to be 0 */
+	int ret = 0;
 
 	ctx = net_ppp_context_get(idx);
 	if (!ctx) {
@@ -131,7 +133,12 @@ static int ppp_ctrl_start_net_if(void)
 
 	free(pdp_context_info);
 	net_if_flag_set(iface, NET_IF_POINTOPOINT);
-	net_if_up(iface);
+
+	ret = net_if_up(iface);
+	if (ret) {
+		mosh_warn("Cannot bring PPP up, err: %d", ret);
+		goto return_error;
+	}
 
 	return 0;
 
@@ -161,8 +168,33 @@ static void ppp_ctrl_restart_worker(struct k_work *work_item)
 {
 	ARG_UNUSED(work_item);
 
+	ppp_restarting = true;
 	ppp_ctrl_stop();
 	ppp_ctrl_start();
+	ppp_restarting = false;
+	mosh_print("PPP: restarting is DONE");
+}
+
+/******************************************************************************/
+
+static struct net_mgmt_event_callback ppp_ctrl_net_if_mgmt_event_ppp_cb;
+
+static void ppp_ctrl_net_if_mgmt_event_handler(struct net_mgmt_event_callback *cb,
+					    uint32_t mgmt_event,
+					    struct net_if *iface)
+{
+	if (net_if_l2(iface) != &NET_L2_GET_NAME(PPP)) {
+		return;
+	}
+
+	if (mgmt_event == NET_EVENT_IF_UP) {
+		mosh_print("PPP net if up");
+		return;
+	}
+	if (mgmt_event == NET_EVENT_IF_DOWN) {
+		mosh_print("PPP net if down");
+		return;
+	}
 }
 
 /******************************************************************************/
@@ -173,27 +205,36 @@ static void ppp_ctrl_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 					    uint32_t mgmt_event,
 					    struct net_if *iface)
 {
-	if ((mgmt_event & (NET_EVENT_PPP_CARRIER_ON |
-			   NET_EVENT_PPP_CARRIER_OFF)) != mgmt_event) {
-		return;
+	switch (mgmt_event) {
+	case NET_EVENT_PPP_PHASE_RUNNING: {
+		ppp_prot_running = true;
+		mosh_print("PPP in running phase");
+		break;
 	}
-
-	if (mgmt_event == NET_EVENT_PPP_CARRIER_ON) {
-		mosh_print("PPP carrier ON");
-		return;
-	}
-
-	if (mgmt_event == NET_EVENT_PPP_CARRIER_OFF) {
-		mosh_print("PPP carrier OFF");
-
-		/* To be able to reconnect the dial up from Windows UI,
-		 * we need to bring PPP net_if and sockets down/up:
-		 */
-		if (!ppp_closing && ppp_up) {
-			mosh_print("PPP: restarting...");
-			k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_restart_work);
+	case NET_EVENT_PPP_PHASE_DEAD: {
+		mosh_print("PPP in dead phase");
+		if (ppp_prot_running) {
+			/* To be able to reconnect the dial up from Windows UI,
+			 * we need to bring PPP net_if and sockets down/up:
+			 */
+			if (!ppp_restarting && ppp_up) {
+				mosh_print("PPP: restarting...");
+				k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_restart_work);
+			}
+			ppp_prot_running = false;
 		}
-		return;
+		break;
+	}
+	case NET_EVENT_PPP_CARRIER_ON: {
+		mosh_print("PPP carrier ON");
+		break;
+	}
+	case NET_EVENT_PPP_CARRIER_OFF: {
+		mosh_print("PPP carrier OFF");
+		break;
+	}
+	default:
+		break;
 	}
 }
 
@@ -233,10 +274,19 @@ ppp_ctrl_net_mgmt_event_ipv6_levelhandler(struct net_mgmt_event_callback *cb,
 
 static void ppp_ctrl_net_mgmt_events_subscribe(void)
 {
+	net_mgmt_init_event_callback(&ppp_ctrl_net_if_mgmt_event_ppp_cb,
+				     ppp_ctrl_net_if_mgmt_event_handler,
+				     (NET_EVENT_IF_UP |
+				      NET_EVENT_IF_DOWN));
+
 	net_mgmt_init_event_callback(&ppp_ctrl_net_mgmt_event_ppp_cb,
 				     ppp_ctrl_net_mgmt_event_handler,
-				     (NET_EVENT_PPP_CARRIER_ON |
-				      NET_EVENT_PPP_CARRIER_OFF));
+				     (NET_EVENT_IF_UP |
+				      NET_EVENT_IF_DOWN |
+				      NET_EVENT_PPP_CARRIER_ON |
+				      NET_EVENT_PPP_CARRIER_OFF |
+				      NET_EVENT_PPP_PHASE_RUNNING |
+				      NET_EVENT_PPP_PHASE_DEAD));
 
 	net_mgmt_init_event_callback(&ipv4_level_net_mgmt_event_cb,
 				     ppp_ctrl_net_mgmt_event_ipv4_levelhandler,
@@ -248,6 +298,7 @@ static void ppp_ctrl_net_mgmt_events_subscribe(void)
 				     (NET_EVENT_IPV6_ADDR_ADD |
 				      NET_EVENT_IPV6_ADDR_DEL));
 
+	net_mgmt_add_event_callback(&ppp_ctrl_net_if_mgmt_event_ppp_cb);
 	net_mgmt_add_event_callback(&ppp_ctrl_net_mgmt_event_ppp_cb);
 	net_mgmt_add_event_callback(&ipv4_level_net_mgmt_event_cb);
 	net_mgmt_add_event_callback(&ipv6_level_net_mgmt_event_cb);
@@ -258,7 +309,8 @@ static void ppp_ctrl_net_mgmt_events_subscribe(void)
 void ppp_ctrl_init(void)
 {
 	ppp_up = false;
-	ppp_closing = false;
+	ppp_restarting = false;
+	ppp_prot_running = true;
 
 	used_mtu_mru = CONFIG_NET_PPP_MTU_MRU;
 
@@ -459,11 +511,9 @@ clear:
 
 void ppp_ctrl_stop(void)
 {
-	ppp_closing = true;
 	ppp_ctrl_stop_net_if();
 	ppp_ctrl_close_sckts();
 
 	mosh_print("PPP: stopped");
 	ppp_up = false;
-	ppp_closing = false;
 }
