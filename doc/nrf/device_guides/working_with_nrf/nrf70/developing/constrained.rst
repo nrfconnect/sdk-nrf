@@ -20,6 +20,8 @@ The nRF5340 host has two operating frequencies, 64 MHz and 128 MHz, default freq
 For low power applications, it is recommended to use 64 MHz as the CPU frequency but the nRF7002 Wi-Fi performance might be impacted.
 For high performance applications, it is recommended to use 128 MHz as the CPU frequency.
 
+.. _constrained_host_networking_stack:
+
 Networking stack
 ================
 
@@ -45,6 +47,8 @@ The following table explains the configuration options:
 | :kconfig:option:`CONFIG_NET_BUF_RX_COUNT`| ``1`` - Unlimited           | Number of RX buffers. Typically for Wi-Fi, each packet has one buffer,                                                   |
 |                                          | (based on available memory) | so this has to be equal to the number of packets.                                                                        |
 +------------------------------------------+-----------------------------+--------------------------------------------------------------------------------------------------------------------------+
+
+.. _constrained_host_driver_memory_controls:
 
 nRF70 Series driver performance and memory fine-tuning controls
 ***************************************************************
@@ -118,6 +122,8 @@ The configuration options must be used in conjunction with the Zephyr networking
 These options form a staged pipeline all the way to the nRF7002 chip, any change in one stage of the pipeline will impact the performance and memory usage of the next stage.
 For example, solving bottleneck in one stage of the pipeline might lead to a bottleneck in the next stage.
 
+.. _constrained_host_packet_memory:
+
 nRF70 Series packet memory
 **************************
 The nRF70 Series device chipset has a special memory called the packet memory to store the Wi-Fi protocol frames for both TX and RX.
@@ -152,6 +158,8 @@ There is a build time check to ensure that the total packet memory size does not
 
 .. note::
    The ``52`` bytes in the above equations are the overhead bytes required by the nRF7002 chip to store the headers and footers of the Wi-Fi protocol frames.
+
+.. _constrained_host_usage_profiles:
 
 Usage profiles
 **************
