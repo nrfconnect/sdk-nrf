@@ -759,7 +759,11 @@ Bluetooth libraries and services
 Bootloader libraries
 --------------------
 
-|no_changes_yet_note|
+* :ref:`bootloader`:
+
+  * Fixed:
+
+    * The regeneration of the provision page when both :ref:`bootloader` and :ref:`mcuboot_ncs` are present, and MCUboot is provided as a HEX file (using :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE`).
 
 Modem libraries
 ---------------

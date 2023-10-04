@@ -37,15 +37,17 @@ if(CONFIG_SECURE_BOOT)
         --num-counter-slots-version ${CONFIG_SB_NUM_VER_COUNTER_SLOTS})
     endif()
 
-    # Skip signing if MCUBoot is to be booted and its not built from source
-    if ((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
-       ((NOT (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE)) OR NCS_SYSBUILD_PARTITION_MANAGER))
+    if (CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH)
 
       # Input is comma separated string, convert to CMake list type
       string(REPLACE "," ";" PUBLIC_KEY_FILES_LIST "${CONFIG_SB_PUBLIC_KEY_FILES}")
 
       include(${CMAKE_CURRENT_LIST_DIR}/debug_keys.cmake)
-      include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
+      include(${CMAKE_CURRENT_LIST_DIR}/sign_keys.cmake)
+      # Skip signing if MCUBoot is to be booted and its not built from source
+      if(((NOT (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE)) OR NCS_SYSBUILD_PARTITION_MANAGER))
+        include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
+      endif()
 
       if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
         message(WARNING
