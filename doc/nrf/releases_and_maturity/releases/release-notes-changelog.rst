@@ -240,6 +240,7 @@ Serial LTE modem
   * Modem FOTA to only need a modem reset to apply the firmware update.
     The full chip reset (using the ``#XRESET`` AT command) remains supported.
   * ``#XGPSDEL`` AT command to disallow deleting local clock (TCXO) frequency offset data because it is an internal value that should not be deleted when simulating a cold start.
+  * Socket option ``TLS_DTLS_HANDSHAKE_TIMEO`` to a new name value.
 
 * Removed:
 
