@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <app-common/zap-generated/ids/Attributes.h>
+#include <app-common/zap-generated/ids/Clusters.h>
 #include <app/util/attribute-storage.h>
 
 /* Definitions of  helper macros that are used across all bridged device types to create common mandatory clusters in a
