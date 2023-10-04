@@ -22,6 +22,19 @@ static struct k_work_delayable socket_transmission_work;
 
 K_SEM_DEFINE(lte_connected, 0, 1);
 
+static bool is_nrf9160(void)
+{
+	char resp[32];
+
+	if (nrf_modem_at_cmd(resp, sizeof(resp), "AT+CGMM") == 0) {
+		if (strstr(resp, "nRF9160") != NULL) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static void socket_transmission_work_fn(struct k_work *work)
 {
 	int err;
@@ -33,7 +46,7 @@ static void socket_transmission_work_fn(struct k_work *work)
 	       CONFIG_UDP_SERVER_ADDRESS_STATIC,
 	       CONFIG_UDP_SERVER_PORT);
 
-#if defined(CONFIG_UDP_RAI_ENABLE)
+#if defined(CONFIG_UDP_RAI_LAST)
 	/* Let the modem know that this is the last packet for now and we do not
 	 * wait for a response.
 	 */
@@ -43,10 +56,28 @@ static void socket_transmission_work_fn(struct k_work *work)
 	}
 #endif
 
+#if defined(CONFIG_UDP_RAI_ONGOING)
+	/* Let the modem know that we expect to keep the network up longer.
+	 */
+	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI_ONGOING, NULL, 0);
+	if (err) {
+		printk("Failed to set socket option, error: %d\n", errno);
+	}
+#endif
+
 	err = send(client_fd, buffer, sizeof(buffer), 0);
 	if (err < 0) {
 		printk("Failed to transmit UDP packet, error: %d\n", errno);
 	}
+
+#if defined(CONFIG_UDP_RAI_NO_DATA)
+	/* Let the modem know that there will be no upcoming data transmission anymore.
+	 */
+	err = setsockopt(client_fd, SOL_SOCKET, SO_RAI_NO_DATA, NULL, 0);
+	if (err) {
+		printk("Failed to set socket option, error: %d\n", errno);
+	}
+#endif
 
 	k_work_schedule(&socket_transmission_work,
 			K_SECONDS(CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS));
@@ -104,6 +135,23 @@ static int modem_init(void)
 		printk("Failed to initialize modem library, error: %d\n", err);
 		return err;
 	}
+
+#if defined(CONFIG_UDP_RAI_ENABLE)
+	/* Enable Access Stratum RAI support for nRF9160.
+	 * Note: The 1.3.x modem firmware release is certified to be compliant with 3GPP Release 13.
+	 * %REL14FEAT enables selected optional features from 3GPP Release 14. The 3GPP Release 14
+	 * features are not GCF or PTCRB conformance certified by Nordic and must be certified
+	 * by MNO before being used in commercial products.
+	 * nRF9161 is certified to be compliant with 3GPP Release 14.
+	 */
+	if (is_nrf9160()) {
+		err = nrf_modem_at_printf("AT%%REL14FEAT=0,1,0,0,0");
+		if (err) {
+			printk("Failed to enable Access Stratum RAI support, error: %d\n", err);
+			return err;
+		}
+	}
+#endif
 
 	err = lte_lc_init();
 	if (err) {
