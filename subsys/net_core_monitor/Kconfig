@@ -10,14 +10,21 @@ config NET_CORE_MONITOR
 	depends on (SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET)
 	help
 	  Enable the Network Core Monitor module.
+	  To define the user action for event, you need to override the
+	  weak function definition of the ncm_net_core_event_handler.
 
 if NET_CORE_MONITOR
 
 menu "Net Core Monitor"
 
-config NCM_APP_FEEDING_INTERVAL_MSEC
-	default 500
-	int "Application core feeding interval (in ms)"
+config NCM_FEEDING_INTERVAL_MSEC
+	default 500 if SOC_NRF5340_CPUNET
+	default 1000 if SOC_NRF5340_CPUAPP
+	int "Feeding interval in milliseconds"
+	help
+	  The value of this parameter on the application core must be greater
+	  than the value on the network core. Otherwise the network core monitor
+	  will report false positive network code malfunctions.
 
 config NCM_RESET_INIT_PRIORITY
 	int "Reset init priority"

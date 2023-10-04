@@ -18,21 +18,29 @@
 extern "C" {
 #endif
 
-/** @brief Check the status of the network core.
+/** @brief Network core monitor event types, used to signal the application. */
+enum ncm_event_type {
+	/** Event triggered when a network core reset occurs.
+	 *  The ``reset_reas`` variable holds the reason for the reset.
+	 *  It is rewritten from the RESET.RESETREAS register.
+	 */
+	NCM_EVT_NET_CORE_RESET,
+
+	/** Event triggered when the network core is not responding. */
+	NCM_EVT_NET_CORE_FREEZE
+};
+
+/** @brief Event handler that is called by the Network core monitor library when an event occurs.
  *
- *  The function should be called less frequently than
- *  @kconfig{CONFIG_NCM_APP_FEEDING_INTERVAL_MSEC} to correctly detect the network core status.
+ * @note This function should be defined by the application.
+ *       Otherwise, `__weak` definition will called and it prints information about the event.
  *
- *  @param[out]  reset_reas  Reason for network core reset.
- *                           When the -EFAULT code is returned, the variable is set.
- *                           This value is rewritten from the network core's RESET.RESETREAS
- *                           register.
- *
- *  @retval 0       If network core works properly.
- *  @retval -EBUSY  If network core failure occurred.
- *  @retval -EFAULT If network core restart occurred.
+ * @param[out] event       Event occurring.
+ * @param[out] reset_reas  Reason for network core reset.
+ *                         When the NCM_EVT_NET_CORE_RESET event was triggered the variable is set.
+ *                         This value is rewritten from the network core's RESET.RESETREAS register.
  */
-int ncm_net_status_check(uint32_t * const reset_reas);
+extern void ncm_net_core_event_handler(enum ncm_event_type event, uint32_t reset_reas);
 
 #ifdef __cplusplus
 }
