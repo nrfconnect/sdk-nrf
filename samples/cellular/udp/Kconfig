@@ -36,6 +36,25 @@ config UDP_RAI_ENABLE
 	default y
 	select LTE_RAI_REQ
 
+if UDP_RAI_ENABLE
+
+choice UDP_RAI_INDICATION
+	prompt "RAI indication to set for UDP transmission"
+	default UDP_RAI_LAST
+
+config UDP_RAI_NO_DATA
+	bool "Indicates that there will be no upcoming data transmission anymore"
+
+config UDP_RAI_LAST
+	bool "Indicates that the next transmission will be the last one for some time"
+
+config UDP_RAI_ONGOING
+	bool "Indicates that the client expects to use the socket more after the next transmission"
+
+endchoice
+
+endif # UDP_RAI_ENABLE
+
 endmenu
 
 module = UDP

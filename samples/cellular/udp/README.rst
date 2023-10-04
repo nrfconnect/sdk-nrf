@@ -89,6 +89,21 @@ CONFIG_UDP_EDRX_ENABLE - eDRX mode configuration
 CONFIG_UDP_RAI_ENABLE - RAI configuration
    This configuration option, if set, allows the sample to request RAI for transmitted messages.
 
+.. _CONFIG_UDP_RAI_NO_DATA:
+
+CONFIG_UDP_RAI_NO_DATA - RAI indication configuration
+   This configuration option, if set, allows the sample to indicate that there will be no upcoming data transmission anymore after the previous transmission.
+
+.. _CONFIG_UDP_RAI_LAST:
+
+CONFIG_UDP_RAI_LAST - RAI indication configuration
+   This configuration option, if set, allows the sample to indicate that the next transmission will be the last one for some duration.
+
+.. _CONFIG_UDP_RAI_ONGOING:
+
+CONFIG_UDP_RAI_ONGOING - RAI indication configuration
+   This configuration option, if set, allows the sample to indicate that the client expects to use more socket after the next transmission.
+
 .. note::
    To configure PSM and eDRX timer values, use the options from the :ref:`lte_lc_readme` library.
 
@@ -165,6 +180,28 @@ After programming the sample to your device, test it by performing the following
       Transmitting UDP/IP payload of 38 bytes to the IP address 8.8.8.8, port number 2469
       RRC mode: Connected
       RRC mode: Idle
+
+Testing RAI feature
+-------------------
+
+Test the RAI feature by performing the following steps:
+
+1. |connect_kit|
+#. |connect_terminal|
+#. Connect the nRF91 Series DK to the `Power Profiler Kit II (PPK2)`_ and set up for current measurement.
+#. `Install the Power Profiler app`_ in the `nRF Connect for Desktop`_.
+#. Connect the Power Profiler Kit II (PPK2) to the PC using a micro-USB cable and `connect to it using the App <Using the Power Profiler app_>`_.
+#. Enable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``y`` in the :file:`prj.conf` configuration file.
+#. Update the data upload frequency by setting the :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>` option to ``30`` in the :file:`prj.conf` configuration file.
+#. Program the sample to the device.
+#. Power on or reset your nRF91 Series DK.
+#. In the Power Profiler app choose a one minute time window.
+#. Observe that after some minutes the average power consumption will settle at around 1.7 mA (may vary depending on network conditions).
+#. Disable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``n`` in the :file:`prj.conf` configuration file.
+#. Program the sample to the device.
+#. Power on or reset your nRF91 Series DK.
+#. Observe that after some minutes the average power consumption will settle at around 2.3 mA (may vary depending on network conditions).
+#. Observe that power consumption with RAI enabled is lower than with RAI disabled.
 
 Dependencies
 ************
