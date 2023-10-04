@@ -2442,6 +2442,16 @@ Bootloader
 
 The issues in this section are related to :ref:`Bootloaders <app_bootloaders>`.
 
+.. rst-class:: v2-4-0 v2-4-1 v2-4-2
+
+NCSDK-23761: MCUboot fails to boot when both the :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION` and :kconfig:option:`CONFIG_BOOT_FIH_PROFILE_LOW` Kconfig options are enabled.
+  The MCUboot downgrade prevention mechanism relies on platform-specific implementation of hardware security counters.
+  The |NCS| implementation of the hardware security counters is not compatible with the fault injection hardening code (FIH) of MCUboot.
+  In the |NCS|, the Kconfig option :kconfig:option:`CONFIG_BOOT_FIH_PROFILE_LOW` of MCUboot is enabled by default for TF-M builds.
+  You can enable the MCUboot Kconfig option :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION` in the |NCS| using the option :kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`.
+
+  **Workaround:** To fix the issue, disable either the :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION` or :kconfig:option:`CONFIG_BOOT_FIH_PROFILE_LOW` Kconfig option in MCUboot.
+
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0
 
 SHEL-1352: Incorrect base address used in the OTP TX trim coefficients
