@@ -108,3 +108,10 @@ features:
     Immutable Bootloader as part of build: SECURE_BOOT
   hw_unique_key:
     Key Derivation from Hardware Unique Key: HW_UNIQUE_KEY
+display_names:
+  SHIELD_NRF7002EK: nRF7002 EK
+  SHIELD_NRF7002EK_NRF7000: nRF7002 EK in nRF7000 emulation mode
+  SHIELD_NRF7002EK_NRF7001: nRF7002 EK in nRF7001 emulation mode
+  SHIELD_NRF7002EB: nRF7002 EB
+  BOARD_NRF7002DK_NRF5340_CPUAPP: nRF7002 DK
+  BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP: nRF7002 DK in nRF7001 emulation mode
