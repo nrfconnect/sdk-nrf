@@ -6,6 +6,8 @@
 #ifndef __PPI_TRACE_H
 #define __PPI_TRACE_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,6 +46,25 @@ void *ppi_trace_config(uint32_t pin, uint32_t evt);
  * @return Handle, or NULL if the configuration failed.
  */
 void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt);
+
+/** @brief Configure and enable a PPI trace pin for tracing a DPPI channel.
+ *
+ * This function allows to trace DPPI triggers without knowing any events being the source of the
+ * trigger. Configuration of events so that they publish to the given DPPI and enabling the DPPI is
+ * out of scope of this function and must be done externally.
+ * This function allows also to trace DPPI channels which are triggered by multiple events or
+ * the set of events publishing to the DPPI channel changes in run-time.
+ *
+ * @note Supported only on platforms equipped with DPPI.
+ *
+ * @param pin		Pin to use for tracing.
+ * @param dppi_ch	DPPI channel number to be traced on the pin.
+ *
+ * @retval 0		The configuration succeeded.
+ * @retval -ENOMEM	The configuration failed, due to lack of necessary resources.
+ * @retval -ENOTSUP	The function is not supported on current hardware platform.
+ */
+int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch);
 
 /** @brief Enable PPI trace pin.
  *
