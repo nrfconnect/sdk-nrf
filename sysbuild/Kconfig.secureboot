@@ -38,7 +38,8 @@ config SECURE_BOOT_IMAGE_NAME
 
 config SECURE_BOOT_BOARD
 	string
-	default "nrf5340dk_nrf5340_cpunet" if SECURE_BOOT_NETCORE && $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+	default "nrf5340dk_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp")
+	default "thingy53_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
 	help
 	  Remote board when building this sample.
 	  If not set, the board given to sysbuild is used.
