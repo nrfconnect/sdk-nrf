@@ -384,12 +384,16 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		LOG_WRN("MTU exchange failed (err %d)", err);
 	}
 
+#ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 	err = bt_conn_set_security(conn, BT_SECURITY_L2);
 	if (err) {
 		LOG_WRN("Failed to set security: %d", err);
 
 		gatt_discover(conn);
 	}
+#else
+	gatt_discover(conn);
+#endif
 
 	err = bt_scan_stop();
 	if ((!err) && (err != -EALREADY)) {
@@ -420,6 +424,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 }
 
+#ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
@@ -436,11 +441,14 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 	gatt_discover(conn);
 }
+#endif
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
+#ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 	.security_changed = security_changed
+#endif
 };
 
 static void scan_filter_match(struct bt_scan_device_info *device_info,
@@ -515,7 +523,7 @@ static int scan_init(void)
 	return err;
 }
 
-
+#ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 static void auth_cancel(struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -553,11 +561,13 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
+#endif
 
 int main(void)
 {
 	int err;
 
+#ifdef CONFIG_BT_NUS_SECURITY_ENABLED
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		LOG_ERR("Failed to register authorization callbacks.");
@@ -569,6 +579,7 @@ int main(void)
 		printk("Failed to register authorization info callbacks.\n");
 		return 0;
 	}
+#endif
 
 	err = bt_enable(NULL);
 	if (err) {
