@@ -196,6 +196,33 @@ void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)
 #endif
 }
 
+int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch)
+{
+#ifdef DPPI_PRESENT
+	uint32_t task;
+	int gpiote_ch;
+	nrf_gpiote_task_t task_id;
+
+	gpiote_ch = gpiote_channel_alloc(pin);
+	if (gpiote_ch < 0) {
+		LOG_ERR("Failed to allocate GPIOTE channel.");
+		return -ENOMEM;
+	}
+
+	task_id = offsetof(NRF_GPIOTE_Type, TASKS_OUT[gpiote_ch]);
+	task = nrf_gpiote_task_address_get(NRF_GPIOTE, task_id);
+
+	*SUBSCRIBE_ADDR(task) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | dppi_ch;
+
+	return 0;
+#else
+	(void)pin;
+	(void)dppi_ch;
+
+	return -ENOTSUP;
+#endif
+}
+
 static uint32_t ppi_channel_mask_get(void *handle)
 {
 	return IS_PAIR(handle) ?
