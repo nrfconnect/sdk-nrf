@@ -23,7 +23,7 @@ config BT_NUS_SECURITY_ENABLED
 
 config BT_NUS_UART_RX_WAIT_TIME
 	int "Timeout for UART RX complete event"
-	default 50
+	default 50000
 	help
 	  Wait for RX complete event time in microseconds
 
