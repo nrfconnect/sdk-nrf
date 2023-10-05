@@ -2,7 +2,6 @@ sample:
   name: Matter Weather Station
   description: Matter Weather Station application
 tests:
-  # Excluded in quarantine.yaml to limit resource usage in integration builds
   # This configuration is used for performing DFU over BLE between different NCS
   # applications on Thingy53.
   applications.matter_weather_station.debug.no_fd:
@@ -11,7 +10,6 @@ tests:
     platform_exclude: thingy53_nrf5340_cpuapp_ns
     integration_platforms:
       - thingy53_nrf5340_cpuapp
-  # ---------------
   applications.matter_weather_station.debug:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-factory_data.conf
