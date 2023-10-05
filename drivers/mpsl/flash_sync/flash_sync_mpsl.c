@@ -140,9 +140,16 @@ void nrf_flash_sync_set_context(uint32_t duration)
 	_context.request_length_us = duration;
 }
 
+static bool is_in_fault_isr(void)
+{
+	int32_t irqn = __get_IPSR() - 16;
+
+	return (irqn >= HardFault_IRQn && irqn <= UsageFault_IRQn);
+}
+
 bool nrf_flash_sync_is_required(void)
 {
-	return mpsl_is_initialized();
+	return mpsl_is_initialized() && !is_in_fault_isr();
 }
 
 int nrf_flash_sync_exe(struct flash_op_desc *op_desc)
