@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&gd25lb256 {
+	status = "okay";
+};
+
+/ {
+	/* Configure partition manager to use gd25lb256 as the external flash */
+	chosen {
+		nordic,pm-ext-flash = &gd25lb256;
+	};
+};
