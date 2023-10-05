@@ -115,6 +115,8 @@ endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 # Consider if this shoulc come through Sysbuild Kconfig flag.
 set(NCS_SYSBUILD_PARTITION_MANAGER TRUE)
 
+list(APPEND CMAKE_MODULE_PATH ${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/modules)
+include(ncs_sysbuild_extensions)
 include(${CMAKE_CURRENT_LIST_DIR}/extensions.cmake)
 
 if(SB_CONFIG_SECURE_BOOT)
