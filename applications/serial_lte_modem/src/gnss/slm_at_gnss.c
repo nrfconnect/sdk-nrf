@@ -179,21 +179,6 @@ static void on_gnss_evt_agnss_req(void)
 static int gnss_startup(void)
 {
 	int ret;
-	uint8_t use_case;
-
-	use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
-	if (gnss_cloud_assistance) {
-		/* When A-GNSS/P-GPS is used there should always be
-		 * valid almanacs/ephemerides so disable the scheduled
-		 * downloads from the sky in periodic navigation mode.
-		 */
-		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
-	}
-	ret = nrf_modem_gnss_use_case_set(use_case);
-	if (ret) {
-		LOG_ERR("Failed to set GNSS use case (%d).", ret);
-		return ret;
-	}
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
 
@@ -677,6 +662,20 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 			err = nrf_modem_gnss_fix_interval_set(interval);
 			if (err) {
 				LOG_ERR("Failed to set GNSS fix interval (%d).", err);
+				return err;
+			}
+
+			/* Disable scheduled downloads for periodical tracking */
+			if (interval >= 10) {
+				err = nrf_modem_gnss_use_case_set(
+						NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START |
+						NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE);
+			} else {
+				err = nrf_modem_gnss_use_case_set(
+						NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START);
+			}
+			if (err) {
+				LOG_ERR("Failed to set use case, error: %d", err);
 				return err;
 			}
 

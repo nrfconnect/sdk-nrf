@@ -70,7 +70,7 @@ It can be one of the following:
 
 .. note::
 
-   In periodic navigation mode, the ``<interval>`` and ``<timeout>`` parameters are temporarily ignored during the first fix (for up to 60 seconds) and when the GNSS module determines it needs to download ephemerides or almanacs from the broadcast.
+   In periodic navigation mode, the ``<interval>`` and ``<timeout>`` parameters are temporarily ignored during the first fix (for up to 60 seconds).
 
 .. note::
 
