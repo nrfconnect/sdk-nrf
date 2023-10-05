@@ -236,7 +236,8 @@ void nrf_wifi_fmac_dev_rem_rt(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
  * @param sleep_type Type of RPU sleep.
  * @param phy_calib PHY calibration flags to be passed to the RPU.
  * @param op_band Operating band of the RPU.
- * @param tx_pwr_ctrl_params TX power control parameters to be passed to the RPU.
+ * @param beamforming Enable/disable Wi-Fi beamforming.
+ * @param tx_pwr_ctrl TX power control parameters to be passed to the RPU.
  *
  * This function initializes the firmware of an RPU instance.
  *
@@ -245,11 +246,12 @@ void nrf_wifi_fmac_dev_rem_rt(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
  */
 enum nrf_wifi_status nrf_wifi_fmac_dev_init_rt(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #if defined(CONFIG_NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
-			int sleep_type,
+					       int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-			unsigned int phy_calib,
-			enum op_band op_band,
-			struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params);
+					       unsigned int phy_calib,
+					       enum op_band op_band,
+					       bool beamforming,
+					       struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl);
 
 
 /**

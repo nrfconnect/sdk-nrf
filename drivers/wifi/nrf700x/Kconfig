@@ -351,3 +351,7 @@ endif # NETWORKING
 config WIFI_MGMT_SCAN_SSID_FILT_MAX
 	default 2
 endif
+
+config NRF_WIFI_BEAMFORMING
+	bool "Enable Wi-Fi beamforming. Enabling beamforming can provide slight improvement in performance where as disabling it can provide better power saving in low network activity applications"
+	default y

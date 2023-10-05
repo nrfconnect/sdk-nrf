@@ -97,6 +97,7 @@ enum nrf_wifi_status umac_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 				   unsigned int phy_calib,
 				   enum op_band op_band,
+				   bool beamforming,
 				   struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -187,6 +188,9 @@ enum nrf_wifi_status umac_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef CONFIG_NRF700X_RPU_EXTEND_TWT_SP
 	 umac_cmd_data->feature_flags |= TWT_EXTEND_SP_EDCA;
 #endif
+	if (!beamforming) {
+		umac_cmd_data->disable_beamforming = 1;
+	}
 
 	 status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
 					    umac_cmd,
