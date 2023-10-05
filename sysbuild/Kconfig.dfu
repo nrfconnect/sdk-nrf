@@ -1,0 +1,32 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config DFU_MULTI_IMAGE_PACKAGE_BUILD
+	bool "Created multi-image DFU"
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Build DFU Multi Image package that contains a manifest file followed by
+	  selected update images.
+
+if DFU_MULTI_IMAGE_PACKAGE_BUILD
+
+config DFU_MULTI_IMAGE_PACKAGE_APP
+	bool "Application update"
+
+if SECURE_BOOT
+
+config DFU_MULTI_IMAGE_PACKAGE_NET
+	bool "Network core update"
+	depends on SUPPORT_NETCORE
+	depends on !NETCORE_NONE
+	depends on !NETCORE_EMPTY
+	depends on SECURE_BOOT_NETCORE
+
+config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT
+	bool "MCUboot update"
+	depends on !SECURE_BOOT_NETCORE
+
+endif
+
+endif
