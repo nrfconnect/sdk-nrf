@@ -34,6 +34,7 @@ static enum nrf_wifi_status nrf_wifi_fmac_fw_init_rt(struct nrf_wifi_fmac_dev_ct
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 						  unsigned int phy_calib,
 						  enum op_band op_band,
+						  bool beamforming,
 						  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl)
 {
 	unsigned long start_time_us = 0;
@@ -45,6 +46,7 @@ static enum nrf_wifi_status nrf_wifi_fmac_fw_init_rt(struct nrf_wifi_fmac_dev_ct
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 			       phy_calib,
 			       op_band,
+			       beamforming,
 			       tx_pwr_ctrl);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -96,6 +98,7 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_init_rt(struct nrf_wifi_fmac_dev_ctx *fma
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 					    unsigned int phy_calib,
 					    enum op_band op_band,
+					    bool beamforming,
 					    struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -119,11 +122,12 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_init_rt(struct nrf_wifi_fmac_dev_ctx *fma
 
 	status = nrf_wifi_fmac_fw_init_rt(fmac_dev_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-				       sleep_type,
+					  sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-				       phy_calib,
-				       op_band,
-				       tx_pwr_ctrl_params);
+					  phy_calib,
+					  op_band,
+					  beamforming,
+					  tx_pwr_ctrl_params);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
