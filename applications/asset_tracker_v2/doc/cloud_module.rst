@@ -35,7 +35,7 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
+|                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`lib_nrf_cloud_pgps`  |
 +------------------------------------------------------------------------------------+-------------------------------+
@@ -47,7 +47,7 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
+|                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`lib_nrf_cloud_pgps`  |
 +------------------------------------------------------------------------------------+-------------------------------+
@@ -59,7 +59,7 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
+|                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`lib_nrf_cloud_pgps`  |
 +------------------------------------------------------------------------------------+-------------------------------+
@@ -73,15 +73,15 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
+|                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 +------------------------------------------------------------------------------------+-------------------------------+
 
-.. _nrfcloud_agps_pgps:
+.. _nrfcloud_agnss_pgps:
 
-nRF Cloud A-GPS and P-GPS
-=========================
+nRF Cloud A-GNSS and P-GPS
+==========================
 
-When the cloud module is configured to communicate with `AWS IoT Core`_, `Azure IoT Hub`_, or an `LwM2M`_ server, it supports processing of received A-GNSS and P-GPS data using the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
+When the cloud module is configured to communicate with `AWS IoT Core`_, `Azure IoT Hub`_, or an `LwM2M`_ server, it supports processing of received A-GNSS and P-GPS data using the :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps` libraries.
 This enables the cloud service to fetch A-GNSS and P-GPS data directly from `nRF Cloud`_ using REST calls and relay this data to an nRF91 Series SiP using the pre-established cloud connection.
 By reusing the pre-established connection, the application saves overhead related to maintaining multiple connections at the same time.
 When configuring the application to communicate with nRF Cloud, A-GNSS and P-GPS data are received directly from the service, and not by proxy.
@@ -247,7 +247,7 @@ Dependencies
 This module uses the following |NCS| libraries and drivers:
 
 * :ref:`api_cloud_wrapper`
-* :ref:`lib_nrf_cloud_agps`
+* :ref:`lib_nrf_cloud_agnss`
 * :ref:`lib_nrf_cloud_pgps`
 
 API documentation

@@ -581,7 +581,7 @@ This application uses the following |NCS| libraries:
 * :ref:`lib_fota_download`
 * :ref:`lib_download_client`
 * :ref:`lib_nrf_cloud`
-* :ref:`lib_nrf_cloud_agps`
+* :ref:`lib_nrf_cloud_agnss`
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_nrf_cloud_cell_pos`
 

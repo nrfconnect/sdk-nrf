@@ -3244,8 +3244,8 @@ int nrf_cloud_alert_encode(const struct nrf_cloud_alert_info *alert, struct nrf_
 	return 0;
 }
 
-static int agps_types_array_json_encode(cJSON * const obj,
-					const enum nrf_cloud_agps_type * const types,
+static int agnss_types_array_json_encode(cJSON * const obj,
+					const enum nrf_cloud_agnss_type * const types,
 					const size_t type_count)
 {
 	if (!obj || !types || !type_count) {
@@ -3260,11 +3260,11 @@ static int agps_types_array_json_encode(cJSON * const obj,
 	}
 
 	for (size_t i = 0; i < type_count; ++i) {
-		if ((types[i] <= NRF_CLOUD_AGPS__TYPE_INVALID) ||
-		    (types[i] > NRF_CLOUD_AGPS__LAST)) {
-			LOG_INF("Ignoring unknown A-GPS type: %d", types[i]);
+		if ((types[i] <= NRF_CLOUD_AGNSS__TYPE_INVALID) ||
+		    (types[i] > NRF_CLOUD_AGNSS__LAST)) {
+			LOG_INF("Ignoring unknown A-GNSS type: %d", types[i]);
 			continue;
-		} else if (types[i] == NRF_CLOUD_AGPS__RSVD_PREDICTION_DATA) {
+		} else if (types[i] == NRF_CLOUD_AGNSS__RSVD_PREDICTION_DATA) {
 			continue;
 		}
 
@@ -3288,7 +3288,7 @@ static int agps_types_array_json_encode(cJSON * const obj,
 	return err;
 }
 
-int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const types,
+int nrf_cloud_agnss_req_data_json_encode(const enum nrf_cloud_agnss_type * const types,
 					const size_t type_count,
 					const struct lte_lc_cell * const cell_inf,
 					const bool fetch_cell_inf,
@@ -3316,15 +3316,15 @@ int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type * const t
 	if (cell_inf || fetch_cell_inf) {
 		err = nrf_cloud_cell_info_json_encode(data_obj_out, cell_inf);
 		if (err) {
-			LOG_ERR("Failed to add cellular network info to A-GPS request: %d", err);
+			LOG_ERR("Failed to add cellular network info to A-GNSS request: %d", err);
 			goto cleanup;
 		}
 	}
 
 	/* Add the requested types */
-	err = agps_types_array_json_encode(data_obj_out, types, type_count);
+	err = agnss_types_array_json_encode(data_obj_out, types, type_count);
 	if (err) {
-		LOG_ERR("Failed to add types array to A-GPS request %d", err);
+		LOG_ERR("Failed to add types array to A-GNSS request %d", err);
 		goto cleanup;
 	}
 
@@ -3361,51 +3361,51 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	*
 }
 #endif /* CONFIG_NRF_MODEM */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame * const request,
-				   cJSON * const agps_req_obj_out)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+int nrf_cloud_agnss_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame * const request,
+				   cJSON * const agnss_req_obj_out)
 {
-	if (!agps_req_obj_out || !request) {
+	if (!agnss_req_obj_out || !request) {
 		return -EINVAL;
 	}
 
 	int err;
 	cJSON *data_obj = NULL;
-	enum nrf_cloud_agps_type types[NRF_CLOUD_AGPS__LAST];
-	uint8_t mask_angle = NRF_CLOUD_AGPS_MASK_ANGLE_NONE;
-	int type_count = nrf_cloud_agps_type_array_get(request, types, ARRAY_SIZE(types));
+	enum nrf_cloud_agnss_type types[NRF_CLOUD_AGNSS__LAST];
+	uint8_t mask_angle = NRF_CLOUD_AGNSS_MASK_ANGLE_NONE;
+	int type_count = nrf_cloud_agnss_type_array_get(request, types, ARRAY_SIZE(types));
 
 	if (type_count < 0) {
 		if (type_count == -ENODATA) {
-			LOG_INF("No A-GPS data types requested");
+			LOG_INF("No A-GNSS data types requested");
 		}
 		return type_count;
 	}
 
 	/* Create request JSON containing a data object */
-	if (json_add_str_cs(agps_req_obj_out,
+	if (json_add_str_cs(agnss_req_obj_out,
 			    NRF_CLOUD_JSON_APPID_KEY,
 			    NRF_CLOUD_JSON_APPID_VAL_AGPS) ||
-	    json_add_str_cs(agps_req_obj_out,
+	    json_add_str_cs(agnss_req_obj_out,
 			    NRF_CLOUD_JSON_MSG_TYPE_KEY,
 			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA)) {
 		err = -ENOMEM;
 		goto cleanup;
 	}
 
-	data_obj = cJSON_AddObjectToObject(agps_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
+	data_obj = cJSON_AddObjectToObject(agnss_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
 	if (!data_obj) {
 		err = -ENOMEM;
 		goto cleanup;
 	}
 
-#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
-	mask_angle = CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK;
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
+	mask_angle = CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK;
 #endif
 
 	/* Populate the request payload */
-	err = nrf_cloud_agps_req_data_json_encode(types, type_count, NULL, true,
-						  IS_ENABLED(CONFIG_NRF_CLOUD_AGPS_FILTERED),
+	err = nrf_cloud_agnss_req_data_json_encode(types, type_count, NULL, true,
+						  IS_ENABLED(CONFIG_NRF_CLOUD_AGNSS_FILTERED),
 						  mask_angle, data_obj);
 	if (!err) {
 		return 0;
@@ -3413,9 +3413,9 @@ int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame 
 
 cleanup:
 	/* On failure, remove any items added to the provided object */
-	cJSON_DeleteItemFromObject(agps_req_obj_out, NRF_CLOUD_JSON_APPID_KEY);
-	cJSON_DeleteItemFromObject(agps_req_obj_out, NRF_CLOUD_JSON_MSG_TYPE_KEY);
-	cJSON_DeleteItemFromObject(agps_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
+	cJSON_DeleteItemFromObject(agnss_req_obj_out, NRF_CLOUD_JSON_APPID_KEY);
+	cJSON_DeleteItemFromObject(agnss_req_obj_out, NRF_CLOUD_JSON_MSG_TYPE_KEY);
+	cJSON_DeleteItemFromObject(agnss_req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
 
 	return err;
 }
@@ -3436,40 +3436,40 @@ static const struct nrf_modem_gnss_agnss_system_data_need *system_data_need_get(
 	return system_data_need;
 }
 
-int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agnss_data_frame * const request,
-				  enum nrf_cloud_agps_type *array, const size_t array_size)
+int nrf_cloud_agnss_type_array_get(const struct nrf_modem_gnss_agnss_data_frame * const request,
+				  enum nrf_cloud_agnss_type *array, const size_t array_size)
 {
 	const struct nrf_modem_gnss_agnss_system_data_need *system_data_need;
 
 	if (!request || !array || !array_size) {
 		return -EINVAL;
 	}
-	if (array_size < NRF_CLOUD_AGPS__TYPES_COUNT) {
+	if (array_size < NRF_CLOUD_AGNSS__TYPES_COUNT) {
 		LOG_ERR("Array size (%d) too small, must be >= %d",
-			array_size, NRF_CLOUD_AGPS__TYPES_COUNT);
+			array_size, NRF_CLOUD_AGNSS__TYPES_COUNT);
 		return -ERANGE;
 	}
 
 	int cnt = 0;
 
-	memset((void *)array, NRF_CLOUD_AGPS__TYPE_INVALID, array_size * sizeof(*array));
+	memset((void *)array, NRF_CLOUD_AGNSS__TYPE_INVALID, array_size * sizeof(*array));
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
+		array[cnt++] = NRF_CLOUD_AGNSS_GPS_UTC_PARAMETERS;
 	}
 
 	system_data_need = system_data_need_get(request, NRF_MODEM_GNSS_SYSTEM_GPS);
 	if (system_data_need) {
 		if (system_data_need->sv_mask_ephe) {
-			array[cnt++] = NRF_CLOUD_AGPS_EPHEMERIDES;
+			array[cnt++] = NRF_CLOUD_AGNSS_GPS_EPHEMERIDES;
 		}
 
 		if (system_data_need->sv_mask_alm) {
-			array[cnt++] = NRF_CLOUD_AGPS_ALMANAC;
+			array[cnt++] = NRF_CLOUD_AGNSS_GPS_ALMANAC;
 		}
 
 		if (request->data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
-			array[cnt++] = NRF_CLOUD_AGPS_INTEGRITY;
+			array[cnt++] = NRF_CLOUD_AGNSS_GPS_INTEGRITY;
 		}
 	}
 
@@ -3489,20 +3489,20 @@ int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agnss_data_frame *
 	}
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION;
+		array[cnt++] = NRF_CLOUD_AGNSS_KLOBUCHAR_CORRECTION;
 	}
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_NEQUICK_CORRECTION;
+		array[cnt++] = NRF_CLOUD_AGNSS_NEQUICK_CORRECTION;
 	}
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_GPS_TOWS;
-		array[cnt++] = NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK;
+		array[cnt++] = NRF_CLOUD_AGNSS_GPS_TOWS;
+		array[cnt++] = NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK;
 	}
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
-		array[cnt++] = NRF_CLOUD_AGPS_LOCATION;
+		array[cnt++] = NRF_CLOUD_AGNSS_LOCATION;
 	}
 
 	if (cnt == 0) {
@@ -3511,7 +3511,7 @@ int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agnss_data_frame *
 
 	return cnt;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_pgps_response_decode(const char *const response,

@@ -750,7 +750,6 @@
 .. _`GNSS`: https://en.wikipedia.org/wiki/Satellite_navigation
 .. _`GPS`: https://en.wikipedia.org/wiki/Global_Positioning_System
 .. _`A-GNSS`: https://en.wikipedia.org/wiki/Assisted_GNSS
-.. _`A-GPS`: https://en.wikipedia.org/wiki/Assisted_GPS
 
 .. _`Radio Resource Control`: https://en.wikipedia.org/wiki/Radio_Resource_Control
 .. _`ephemeris`: https://en.wikipedia.org/wiki/Ephemeris

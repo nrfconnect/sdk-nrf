@@ -12,7 +12,7 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/console/console.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #include <dk_buttons_and_leds.h>
 #include <modem/lte_lc.h>
 #include <zephyr/sys/reboot.h>
@@ -167,7 +167,7 @@ static void agnss_request(struct k_work *work)
 	int retval;
 	struct nrf_modem_gnss_agnss_data_frame agnss_data;
 
-	if (!nrf_cloud_agps_request_in_progress()) {
+	if (!nrf_cloud_agnss_request_in_progress()) {
 		retval = nrf_modem_gnss_read(&agnss_data, sizeof(agnss_data),
 					     NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 		if (retval) {
@@ -175,7 +175,7 @@ static void agnss_request(struct k_work *work)
 			return;
 		}
 
-		retval = nrf_cloud_agps_request(&agnss_data);
+		retval = nrf_cloud_agnss_request(&agnss_data);
 		if (retval) {
 			LOG_ERR("Failed to request A-GNSS data, err %d", retval);
 			return;

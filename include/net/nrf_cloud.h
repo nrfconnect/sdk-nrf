@@ -150,8 +150,8 @@ enum nrf_cloud_error_status {
 	NRF_CLOUD_ERR_STATUS_MQTT_CONN_NOT_AUTH,
 	/** Failed to subscribe to MQTT topic */
 	NRF_CLOUD_ERR_STATUS_MQTT_SUB_FAIL,
-	/** Error processing A-GPS data */
-	NRF_CLOUD_ERR_STATUS_AGPS_PROC,
+	/** Error processing A-GNSS data */
+	NRF_CLOUD_ERR_STATUS_AGNSS_PROC,
 	/** Error processing P-GPS data */
 	NRF_CLOUD_ERR_STATUS_PGPS_PROC,
 };

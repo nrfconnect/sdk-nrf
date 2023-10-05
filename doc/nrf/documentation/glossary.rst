@@ -38,10 +38,10 @@ Glossary
    Application Programming Interface (API)
       A language and message format used by an application program to communicate with an operating system, application, or other services.
 
-   Assisted GPS (A-GPS)
+   Assisted GNSS (A-GNSS)
       A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix.
-      It improves the :term:`Time to First Fix (TTFF)` by utilizing a connection (for example, over cellular) to the internet to retrieve the :term:`Almanac data` and :term:`Ephemeris data`.
-      A connection to an internet server that has the Almanac and Ephemeris data is several times quicker than using the data link to the GPS satellites.
+      It improves the :term:`Time to First Fix (TTFF)` by utilizing a connection (for example, over cellular) to the internet to retrieve the :term:`almanac data` and :term:`ephemeris data`.
+      A connection to an internet server that has the almanac and ephemeris data is several times quicker than using the data link to the GNSS satellites.
 
    Association
       The process of adding a provisioned device to a cloud account using the device ID.

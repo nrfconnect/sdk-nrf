@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include "nrf_cloud_agps_schema_v1.h"
+#include "nrf_cloud_agnss_schema_v1.h"
 
 #ifndef NRF_CLOUD_PGPS_SCHEMA_V1_H_
 #define NRF_CLOUD_PGPS_SCHEMA_V1_H_
@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 #define NRF_CLOUD_PGPS_BIN_SCHEMA_VERSION		(1)
-#define NRF_CLOUD_PGPS_PREDICTION_HEADER		(NRF_CLOUD_AGPS__RSVD_PREDICTION_DATA)
+#define NRF_CLOUD_PGPS_PREDICTION_HEADER		(NRF_CLOUD_AGNSS__RSVD_PREDICTION_DATA)
 
 #define NRF_CLOUD_PGPS_BIN_SCHEMA_VERSION_INDEX		(0)
 #define NRF_CLOUD_PGPS_BIN_SCHEMA_VERSION_SIZE		(1)
@@ -46,7 +46,7 @@ struct nrf_cloud_pgps_header {
 	 */
 } __packed;
 
-struct agps_header {
+struct agnss_header {
 	uint8_t type;
 	uint16_t count;
 	uint8_t data[];
@@ -56,14 +56,14 @@ struct pgps_sys_time {
 	uint8_t schema_version;
 	uint8_t type;
 	uint16_t count;
-	struct nrf_cloud_agps_system_time time;
+	struct nrf_cloud_agnss_system_time time;
 } __packed;
 
 struct pgps_location {
 	uint8_t schema_version;
 	uint8_t type;
 	uint16_t count;
-	struct nrf_cloud_agps_location location;
+	struct nrf_cloud_agnss_location location;
 } __packed;
 
 #ifdef __cplusplus

@@ -13,7 +13,7 @@
 #include <dk_buttons_and_leds.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_coap.h>
 #include "nrf_cloud_coap_transport.h"
@@ -40,22 +40,22 @@ static int64_t get_ts(void)
 	return ts;
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-static int agps_err;
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+static int agnss_err;
 
-static void get_agps_callback(int16_t result_code,
+static void get_agnss_callback(int16_t result_code,
 			      size_t offset, const uint8_t *payload, size_t len,
 			      bool last_block, void *user_data)
 {
-	struct nrf_cloud_rest_agps_result *result = user_data;
+	struct nrf_cloud_rest_agnss_result *result = user_data;
 
 	if (!result) {
 		LOG_ERR("Cannot process result");
-		agps_err = -EINVAL;
+		agnss_err = -EINVAL;
 		return;
 	}
 	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
-		agps_err = result_code;
+		agnss_err = result_code;
 		if (len) {
 			LOG_ERR("Unexpected response: %*s", len, payload);
 		}
@@ -63,18 +63,18 @@ static void get_agps_callback(int16_t result_code,
 	}
 	if (((offset + len) <= result->buf_sz) && result->buf && payload) {
 		memcpy(&result->buf[offset], payload, len);
-		result->agps_sz += len;
+		result->agnss_sz += len;
 	} else {
-		agps_err = -EOVERFLOW;
+		agnss_err = -EOVERFLOW;
 		return;
 	}
 	if (last_block) {
-		agps_err = 0;
+		agnss_err = 0;
 	}
 }
 
-int nrf_cloud_coap_agps_data_get(struct nrf_cloud_rest_agps_request const *const request,
-				 struct nrf_cloud_rest_agps_result *result)
+int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *const request,
+				 struct nrf_cloud_rest_agnss_result *result)
 {
 	__ASSERT_NO_MSG(request != NULL);
 	__ASSERT_NO_MSG(result != NULL);
@@ -82,37 +82,37 @@ int nrf_cloud_coap_agps_data_get(struct nrf_cloud_rest_agps_request const *const
 		return -EACCES;
 	}
 
-	static uint8_t buffer[AGPS_GET_CBOR_MAX_SIZE];
+	static uint8_t buffer[AGNSS_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
 	int err;
 
-	err = coap_codec_agps_encode(request, buffer, &len,
+	err = coap_codec_agnss_encode(request, buffer, &len,
 				     COAP_CONTENT_FORMAT_APP_CBOR);
 	if (err) {
-		LOG_ERR("Unable to encode A-GPS request: %d", err);
+		LOG_ERR("Unable to encode A-GNSS request: %d", err);
 		return err;
 	}
 
-	result->agps_sz = 0;
+	result->agnss_sz = 0;
 	err = nrf_cloud_coap_fetch("loc/agps", NULL,
 				   buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
-				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_agps_callback,
+				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_agnss_callback,
 				   result);
-	if (!err && !agps_err) {
-		LOG_INF("Got A-GPS data");
+	if (!err && !agnss_err) {
+		LOG_INF("Got A-GNSS data");
 	} else if (err == -EAGAIN) {
-		LOG_ERR("Timeout waiting for A-GPS data");
-	} else if (agps_err > 0) {
-		LOG_RESULT_CODE_ERR("Unexpected result code:", agps_err);
-		err = agps_err;
+		LOG_ERR("Timeout waiting for A-GNSS data");
+	} else if (agnss_err > 0) {
+		LOG_RESULT_CODE_ERR("Unexpected result code:", agnss_err);
+		err = agnss_err;
 	} else {
-		err = agps_err;
+		err = agnss_err;
 		LOG_ERR("Error: %d", err);
 	}
 
 	return err;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static int pgps_err;

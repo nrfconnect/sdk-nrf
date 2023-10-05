@@ -17,7 +17,7 @@ FOTA can be used to update the device application, bootloader, and modem.
 The modem can be incrementally updated with a modem delta image.
 If the device has sufficiently large external flash storage, the modem can be entirely updated with a full modem image.
 
-nRF Cloud also helps your devices determine their location using assisted GPS (A-GPS) and predicted GPS (P-GPS).
+nRF Cloud also helps your devices determine their location using assisted GNSS (A-GNSS) and predicted GPS (P-GPS).
 It can determine device location from cellular and Wi-Fi network information sent by the device.
 
 Additionally, nRF Cloud allows devices to report data to the cloud for collection and analysis later.
@@ -133,7 +133,7 @@ The |NCS| provides the :ref:`lib_nrf_cloud` library, which if enabled, allows yo
 
 For more information on the various services, see the following documentation:
 
-* :ref:`lib_nrf_cloud_agps`
+* :ref:`lib_nrf_cloud_agnss`
 * :ref:`lib_nrf_cloud_location`
 * :ref:`lib_nrf_cloud_fota`
 * :ref:`lib_nrf_cloud_pgps`
