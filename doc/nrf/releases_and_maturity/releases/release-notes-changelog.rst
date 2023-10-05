@@ -674,6 +674,7 @@ Wi-Fi samples
 Other samples
 -------------
 
+* Added the :ref:`802154_sniffer` sample.
 * Removed the random hardware unique key sample.
   The sample is redundant since its functionality is presented as part of the :ref:`hw_unique_key_usage` sample.
 
@@ -681,9 +682,7 @@ Other samples
 
   * Aligned the timer's configuration to the new nrfx API.
 
-* :ref:`802154_sniffer` sample:
 
-  * Added the 802.15.4 sniffer sample.
 
 Drivers
 =======
