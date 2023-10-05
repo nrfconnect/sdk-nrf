@@ -770,6 +770,11 @@ Bootloader libraries
 
     * The regeneration of the provision page when both :ref:`bootloader` and :ref:`mcuboot_ncs` are present, and MCUboot is provided as a HEX file (using :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE`).
 
+  * Added:
+
+    * the :kconfig:option:`CONFIG_PROVISION_BUILD_STRATEGY_USE_HEX_FILE` Kconfig option to provide the provision page as a HEX file.
+    * the :kconfig:option:`CONFIG_PROVISION_BUILD_STRATEGY_SKIP_BUILD` Kconfig option to skip the building of the provision page.
+
 Modem libraries
 ---------------
 

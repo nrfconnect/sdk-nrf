@@ -27,9 +27,18 @@ if (CONFIG_NCS_IS_VARIANT_IMAGE)
   return()
 endif()
 
-# Build and include hex file containing provisioned data for the bootloader.
-set(PROVISION_HEX_NAME     provision.hex)
-set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
+
+
+if (CONFIG_PROVISION_BUILD_STRATEGY_USE_HEX_FILE)
+  set(PROVISION_HEX ${CONFIG_PROVISION_HEX_FILE})
+  set(PROVISION_HEX_EXISTS TRUE)
+elseif(CONFIG_PROVISION_BUILD_STRATEGY_FROM_SOURCE)
+  # Build and include hex file containing provisioned data for the bootloader.
+  set(PROVISION_HEX_NAME     provision.hex)
+  set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
+  set(GENERATE_PROVISION_HEX TRUE)
+  set(PROVISION_HEX_EXISTS   TRUE)
+endif()
 
 if(CONFIG_SECURE_BOOT)
     if (DEFINED CONFIG_SB_MONOTONIC_COUNTER)
@@ -49,26 +58,28 @@ if(CONFIG_SECURE_BOOT)
         include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
       endif()
 
-      if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
-        message(WARNING
-          "
-      -----------------------------------------------------------------
-      --- WARNING: SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST is enabled.   ---
-      --- This config should only be enabled for testing/debugging. ---
-      -----------------------------------------------------------------")
-        list(APPEND PUBLIC_KEY_FILES ${SIGNATURE_PUBLIC_KEY_FILE})
-      else()
-        list(INSERT PUBLIC_KEY_FILES 0 ${SIGNATURE_PUBLIC_KEY_FILE})
+      if (GENERATE_PROVISION_HEX)
+        if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
+          message(WARNING
+            "
+        -----------------------------------------------------------------
+        --- WARNING: SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST is enabled.   ---
+        --- This config should only be enabled for testing/debugging. ---
+        -----------------------------------------------------------------")
+          list(APPEND PUBLIC_KEY_FILES ${SIGNATURE_PUBLIC_KEY_FILE})
+        else()
+          list(INSERT PUBLIC_KEY_FILES 0 ${SIGNATURE_PUBLIC_KEY_FILE})
+        endif()
+
+        # Convert CMake list type back to comma separated string.
+        string(REPLACE ";" "," PUBLIC_KEY_FILES "${PUBLIC_KEY_FILES}")
+
+        set(public_keys_file_arg
+          --public-key-files "${PUBLIC_KEY_FILES}"
+        )
+
+        set(PROVISION_DEPENDS signature_public_key_file_target)
       endif()
-
-      # Convert CMake list type back to comma separated string.
-      string(REPLACE ";" "," PUBLIC_KEY_FILES "${PUBLIC_KEY_FILES}")
-
-      set(public_keys_file_arg
-        --public-key-files "${PUBLIC_KEY_FILES}"
-      )
-
-      set(PROVISION_DEPENDS signature_public_key_file_target)
     endif()
 
     # Adjustment to be able to load into sysbuild
@@ -88,56 +99,57 @@ if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
   set(mcuboot_counters_slots --mcuboot-counters-slots ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
 endif()
 
-if(CONFIG_SECURE_BOOT)
-add_custom_command(
-  OUTPUT
-  ${PROVISION_HEX}
-  COMMAND
-  ${PYTHON_EXECUTABLE}
-  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
-  ${s0_arg}
-  ${s1_arg}
-  --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
-  ${public_keys_file_arg}
-  --output ${PROVISION_HEX}
-  --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
-  ${monotonic_counter_arg}
-  ${no_verify_hashes_arg}
-  ${mcuboot_counters_slots}
-  DEPENDS
-  ${PROVISION_KEY_DEPENDS}
-  ${PROVISION_DEPENDS}
-  WORKING_DIRECTORY
-  ${PROJECT_BINARY_DIR}
-  COMMENT
-  "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
-  USES_TERMINAL
-  )
-elseif(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-add_custom_command(
-  OUTPUT
-  ${PROVISION_HEX}
-  COMMAND
-  ${PYTHON_EXECUTABLE}
-  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
-  --mcuboot-only
-  --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
-  --output ${PROVISION_HEX}
-  --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
-  ${mcuboot_counters_num}
-  ${mcuboot_counters_slots}
-  DEPENDS
-  ${PROVISION_KEY_DEPENDS}
-  WORKING_DIRECTORY
-  ${PROJECT_BINARY_DIR}
-  COMMENT
-  "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
-  USES_TERMINAL
-  )
+if(GENERATE_PROVISION_HEX)
+  if(CONFIG_SECURE_BOOT)
+    add_custom_command(
+      OUTPUT
+      ${PROVISION_HEX}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
+      ${s0_arg}
+      ${s1_arg}
+      --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
+      ${public_keys_file_arg}
+      --output ${PROVISION_HEX}
+      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+      ${monotonic_counter_arg}
+      ${no_verify_hashes_arg}
+      ${mcuboot_counters_slots}
+      DEPENDS
+      ${PROVISION_KEY_DEPENDS}
+      ${PROVISION_DEPENDS}
+      WORKING_DIRECTORY
+      ${PROJECT_BINARY_DIR}
+      COMMENT
+      "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
+      USES_TERMINAL
+      )
+  elseif(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+    add_custom_command(
+      OUTPUT
+      ${PROVISION_HEX}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
+      --mcuboot-only
+      --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+      --output ${PROVISION_HEX}
+      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+      ${mcuboot_counters_num}
+      ${mcuboot_counters_slots}
+      DEPENDS
+      ${PROVISION_KEY_DEPENDS}
+      WORKING_DIRECTORY
+      ${PROJECT_BINARY_DIR}
+      COMMENT
+      "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
+      USES_TERMINAL
+      )
+  endif()
 endif()
 
-
-if(CONFIG_SECURE_BOOT OR CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+if((CONFIG_SECURE_BOOT OR CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION) AND PROVISION_HEX_EXISTS)
   add_custom_target(
     provision_target
     DEPENDS

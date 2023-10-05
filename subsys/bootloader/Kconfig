@@ -41,6 +41,8 @@ config BOOTLOADER_PROVISION_HEX
 
 if SECURE_BOOT
 
+module=PROVISION
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
 module=B0
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
 
