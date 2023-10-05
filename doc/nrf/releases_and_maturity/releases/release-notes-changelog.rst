@@ -869,6 +869,7 @@ Libraries for networking
     * An event :c:enum:`NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE` that indicates a FOTA update job is available.
     * :c:func:`nrf_cloud_fota_job_start` function that starts a FOTA update job.
     * :c:func:`nrf_cloud_shadow_delta_response_encode()` to help accept or reject shadow delta desired settings.
+    * :c:func:`nrf_cloud_credentials_check` to check if nRF Cloud credentials exist.
 
   * Updated:
 
