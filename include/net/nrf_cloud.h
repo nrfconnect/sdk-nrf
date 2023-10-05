@@ -557,6 +557,16 @@ struct nrf_cloud_gnss_pvt {
 	uint8_t _rsvd:5;
 };
 
+struct nrf_cloud_credentials_status {
+	/* Configured sec_tag for nRF Cloud */
+	uint32_t sec_tag;
+
+	/* Flags to indicate if the specified credentials exist */
+	uint8_t ca:1;
+	uint8_t client_cert:1;
+	uint8_t prv_key:1;
+};
+
 #if !defined(CONFIG_NRF_MODEM)
 #define NRF_MODEM_GNSS_NMEA_MAX_LEN 83
 #endif
@@ -983,6 +993,18 @@ bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
  * @return A negative value indicates an error starting the job.
  */
 int nrf_cloud_fota_job_start(void);
+
+/**
+ * @brief Function to check if credentials exist in the configured location.
+ *
+ * @param[out] cs Results of credentials check.
+ *
+ * @retval 0 Successfully obtained status of credentials.
+ * @retval -EIO Error checking if credential exists.
+ * @retval -EINVAL Error; invalid parameter.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs);
 
 /** @} */
 

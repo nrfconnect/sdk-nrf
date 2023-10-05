@@ -43,6 +43,10 @@ config NRF_CLOUD_SEC_TAG
 	int "Security tag to use for nRF Cloud connection"
 	default 16842753
 
+config NRF_CLOUD_CHECK_CREDENTIALS
+	bool "Enable the ability to check if nRF Cloud credentials are present"
+	select MODEM_KEY_MGMT if NRF_MODEM_LIB
+
 config NRF_CLOUD_SEND_DEVICE_STATUS
 	bool "Send device status on initial connection"
 	depends on NRF_CLOUD_MQTT || NRF_CLOUD_COAP

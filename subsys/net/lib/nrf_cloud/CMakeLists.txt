@@ -61,6 +61,9 @@ zephyr_library_sources_ifdef(
 	coap/src/nrf_cloud_coap.c
 	coap/src/pgps_decode.c
 	coap/src/pgps_encode.c)
+zephyr_library_sources_ifdef(
+	CONFIG_NRF_CLOUD_CHECK_CREDENTIALS
+	src/nrf_cloud_credentials.c)
 zephyr_include_directories_ifdef(
 	CONFIG_NRF_CLOUD_COAP
 	coap/include)
