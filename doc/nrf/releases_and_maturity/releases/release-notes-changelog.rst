@@ -516,6 +516,10 @@ Matter samples
 
   * Added the :ref:`Matter thermostat <matter_thermostat_sample>` sample.
 
+* :ref:`matter_template_sample`:
+
+  * Removed support for the Thread, Wi-Fi, and software diagnostics clusters from the ZAP file.
+
 NFC samples
 -----------
 
