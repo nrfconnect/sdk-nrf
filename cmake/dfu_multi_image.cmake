@@ -18,7 +18,7 @@ find_package(Python3 REQUIRED)
 #   OUTPUT        location of the created package
 #
 function(dfu_multi_image_package TARGET_NAME)
-    cmake_parse_arguments(ARG "" "OUTPUT" "IMAGE_IDS;IMAGE_PATHS" ${ARGN})
+    cmake_parse_arguments(ARG "" "OUTPUT" "IMAGE_IDS;IMAGE_PATHS;DEPENDS" ${ARGN})
 
     if (NOT DEFINED ARG_IMAGE_IDS OR NOT ARG_IMAGE_PATHS OR NOT ARG_OUTPUT)
         message(FATAL_ERROR "All IMAGE_IDS, IMAGE_PATHS and OUTPUT arguments must be specified")
@@ -44,5 +44,7 @@ function(dfu_multi_image_package TARGET_NAME)
         @${ARG_OUTPUT}.args
         BYPRODUCTS
         ${ARG_OUTPUT}
+        DEPENDS
+        ${ARG_DEPENDS}
     )
 endfunction()
