@@ -563,12 +563,12 @@ static int gnss_init_and_start(void)
 		LOG_WRN("Failed to set GNSS use case");
 	}
 
-#if defined(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK)
-	if (nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK) != 0) {
+#if defined(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK)
+	if (nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK) != 0) {
 		LOG_ERR("Failed to set elevation threshold");
 		return -1;
 	}
-	LOG_DBG("Set elevation threshold to %u", CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+	LOG_DBG("Set elevation threshold to %u", CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK);
 #endif
 
 #if defined(CONFIG_GNSS_SAMPLE_MODE_CONTINUOUS)

@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
 #include <getopt.h>
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 
 #include "mosh_print.h"
 #include "gnss.h"
@@ -379,7 +379,7 @@ static int cmd_gnss_agnss_inject(const struct shell *shell, size_t argc, char **
 		}
 	} else if (argc == 2) {
 		/* Assistance data provided as command line argument */
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 		size_t bin_array_length = 0;
 
 		if (strlen(argv[1]) <= AGNSS_CMD_LINE_INJECT_MAX_LENGTH) {
@@ -396,7 +396,7 @@ static int cmd_gnss_agnss_inject(const struct shell *shell, size_t argc, char **
 
 			if (bin_array_length) {
 				mosh_print("Injecting %d bytes", bin_array_length);
-				if (nrf_cloud_agps_process(buf, bin_array_length) != 0) {
+				if (nrf_cloud_agnss_process(buf, bin_array_length) != 0) {
 					ret = -EINVAL;
 				}
 			} else {
@@ -411,7 +411,7 @@ static int cmd_gnss_agnss_inject(const struct shell *shell, size_t argc, char **
 			ret = -EINVAL;
 		}
 #else
-		mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS to enable the processing of "
+		mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGNSS to enable the processing of "
 			   "A-GNSS data");
 		ret = -ENOEXEC;
 #endif

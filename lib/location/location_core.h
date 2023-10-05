@@ -66,7 +66,7 @@ int location_core_cancel(void);
 void location_core_event_cb(const struct location_data *location);
 void location_core_event_cb_error(void);
 void location_core_event_cb_timeout(void);
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data_frame *request);
 #endif
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_PGPS)

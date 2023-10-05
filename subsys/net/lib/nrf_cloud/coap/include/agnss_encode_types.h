@@ -27,17 +27,17 @@ extern "C" {
  */
 #define DEFAULT_MAX_QTY 10
 
-struct agps_req_types_ {
-	int32_t _agps_req_types_int[10];
-	size_t _agps_req_types_int_count;
+struct agnss_req_types_ {
+	int32_t _agnss_req_types_int[10];
+	size_t _agnss_req_types_int_count;
 };
 
-struct agps_req_filtered {
-	bool _agps_req_filtered;
+struct agnss_req_filtered {
+	bool _agnss_req_filtered;
 };
 
-struct agps_req_mask {
-	uint32_t _agps_req_mask;
+struct agnss_req_mask {
+	uint32_t _agnss_req_mask;
 };
 
 struct type_ {
@@ -47,29 +47,29 @@ struct type_ {
 	} _type_choice;
 };
 
-struct agps_req_requestType {
-	struct type_ _agps_req_requestType;
+struct agnss_req_requestType {
+	struct type_ _agnss_req_requestType;
 };
 
-struct agps_req_rsrp {
-	int32_t _agps_req_rsrp;
+struct agnss_req_rsrp {
+	int32_t _agnss_req_rsrp;
 };
 
-struct agps_req {
-	struct agps_req_types_ _agps_req_types;
-	bool _agps_req_types_present;
-	uint32_t _agps_req_eci;
-	struct agps_req_filtered _agps_req_filtered;
-	bool _agps_req_filtered_present;
-	struct agps_req_mask _agps_req_mask;
-	bool _agps_req_mask_present;
-	uint32_t _agps_req_mcc;
-	uint32_t _agps_req_mnc;
-	struct agps_req_requestType _agps_req_requestType;
-	bool _agps_req_requestType_present;
-	struct agps_req_rsrp _agps_req_rsrp;
-	bool _agps_req_rsrp_present;
-	uint32_t _agps_req_tac;
+struct agnss_req {
+	struct agnss_req_types_ _agnss_req_types;
+	bool _agnss_req_types_present;
+	uint32_t _agnss_req_eci;
+	struct agnss_req_filtered _agnss_req_filtered;
+	bool _agnss_req_filtered_present;
+	struct agnss_req_mask _agnss_req_mask;
+	bool _agnss_req_mask_present;
+	uint32_t _agnss_req_mcc;
+	uint32_t _agnss_req_mnc;
+	struct agnss_req_requestType _agnss_req_requestType;
+	bool _agnss_req_requestType_present;
+	struct agnss_req_rsrp _agnss_req_rsrp;
+	bool _agnss_req_rsrp_present;
+	uint32_t _agnss_req_tac;
 };
 
 #ifdef __cplusplus

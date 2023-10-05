@@ -9,7 +9,7 @@ nRF Cloud P-GPS
 
 The nRF Cloud P-GPS library enables applications to request and process :term:`Predicted GPS (P-GPS)` data from `nRF Cloud`_ to be used with the nRF9160 SiP.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
-It can be used with or without :term:`Assisted GPS (A-GPS)` data from nRF Cloud.
+It can be used with or without :term:`Assisted GNSS (A-GNSS)` data from nRF Cloud.
 
 Overview
 ********
@@ -24,13 +24,13 @@ A device using P-GPS downloads the ephemeris predictions from the cloud, stores 
 
 P-GPS is designed for devices that are frequently disconnected from the cloud but need periodic GNSS fixes as quickly as possible to save power.
 This is possible because a device does not need to download ephemerides from the satellite broadcast.
-However, P-GPS should not be used for general use cases that already work with :term:`Assisted GPS (A-GPS)` only.
+However, P-GPS should not be used for general use cases that already work with :term:`Assisted GNSS (A-GNSS)` only.
 
 .. note::
    When using two-week ephemeris prediction sets, the TTFF towards the end of the second week increases due to the accumulated errors in the predictions and the decreases in the number of satellite ephemerides in the later prediction periods.
 
 P-GPS requires a cloud connection approximately once a week to download new predictions, depending on the configuration settings.
-With A-GPS, new ephemerides are needed on average every two hours, or if the fix interval is longer, whenever GNSS is started.
+With A-GNSS, new ephemerides are needed on average every two hours, or if the fix interval is longer, whenever GNSS is started.
 
 .. note::
    To use the nRF Cloud P-GPS service, you need an nRF Cloud account, and the device needs to be associated with the account.
@@ -58,11 +58,11 @@ Configure these additional options to refine the behavior of P-GPS:
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT`
 
-Configure the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` option if you need your application to also use A-GPS, for time and coarse position data and to get the fastest TTFF.
-Using A-GPS also improves the accuracy because of ionospheric corrections.
+Configure the :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS` option if you need your application to also use A-GNSS, for time and coarse position data and to get the fastest TTFF.
+Using A-GNSS also improves the accuracy because of ionospheric corrections.
 
 .. note::
-   Disable this option if you do not want to use A-GPS (due to data costs or expected frequent loss of cloud connectivity).
+   Disable this option if you do not want to use A-GNSS (due to data costs or expected frequent loss of cloud connectivity).
 
 You must also configure the following options for storing settings, for having accurate clock time, and for having a location to store predictions:
 
@@ -146,21 +146,21 @@ See :ref:`configure_application` for information on how to change configuration 
 Usage
 *****
 
-A device can use P-GPS together with A-GPS.
+A device can use P-GPS together with A-GNSS.
 This provides the following advantages:
 
 * It shortens TTFF compared to using only P-GPS.
-* A-GPS provides ionospheric correction data, which improves accuracy.
+* A-GNSS provides ionospheric correction data, which improves accuracy.
 
-In particular, A-GPS is beneficial when the device is powered on.
-Getting GPS system time and coarse location using A-GPS can significantly shorten the time needed for the first fix.
+In particular, A-GNSS is beneficial when the device is powered on.
+Getting GPS system time and coarse location using A-GNSS can significantly shorten the time needed for the first fix.
 As long as the modem remains powered on, GNSS "knows" the previous location and the current time with sufficient accuracy.
 
-To improve accuracy, ionospheric correction data can also be downloaded periodically using A-GPS.
+To improve accuracy, ionospheric correction data can also be downloaded periodically using A-GNSS.
 If used, the ionospheric correction data should be updated at least every 24 hours.
 
-There should be no need to download almanacs with A-GPS, because it is assumed that the device has valid ephemerides (predictions) for all satellites available at all times.
-Because ephemerides and almanacs do not need to be downloaded with A-GPS, the amount of data is very small, less than 200 bytes.
+There should be no need to download almanacs with A-GNSS, because it is assumed that the device has valid ephemerides (predictions) for all satellites available at all times.
+Because ephemerides and almanacs do not need to be downloaded with A-GNSS, the amount of data is very small, less than 200 bytes.
 
 Initialization
 ==============
@@ -262,7 +262,7 @@ A P-GPS prediction for the current date and time can be retrieved using one of t
 The indirect method is used in the :ref:`gnss_sample` sample and in the :ref:`asset_tracker_v2` and :ref:`serial_lte_modem` applications.
 
 The application can inject the data contained in the prediction to the GNSS module in the modem by calling the :c:func:`nrf_cloud_pgps_inject` function.
-This must be done when event :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` is received from the GNSS interface.
+This must be done when event :c:enumerator:`NRF_MODEM_GNSS_EVT_AGNSS_REQ` is received from the GNSS interface.
 After injecting the prediction, call the :c:func:`nrf_cloud_pgps_preemptive_updates` function to update the prediction set as needed.
 
 A prediction is also automatically injected to the modem every four hours whenever the current prediction expires and the next one begins (if the next one is available in flash).
@@ -274,17 +274,17 @@ The P-GPS subsystem, like several other nRF Cloud subsystems, is event driven.
 
 Following are the two GNSS events relating to P-GPS that an application receives through the GNSS interface:
 
-* :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` - Occurs when the GNSS module requires assistance data.
+* :c:enumerator:`NRF_MODEM_GNSS_EVT_AGNSS_REQ` - Occurs when the GNSS module requires assistance data.
 * :c:enumerator:`NRF_MODEM_GNSS_EVT_FIX` - Occurs once a fix is attained.
 
-When the application receives the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event, it must call the :c:func:`nrf_cloud_pgps_notify_prediction` function.
+When the application receives the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGNSS_REQ` event, it must call the :c:func:`nrf_cloud_pgps_notify_prediction` function.
 This event results in the callback of the application's :c:func:`pgps_event_handler_t` function when a valid P-GPS prediction set is available.
 It passes the :c:enum:`PGPS_EVT_AVAILABLE` event and a pointer to the :c:struct:`nrf_cloud_pgps_prediction` structure to the handler.
 
-The application must pass this prediction to the :c:func:`nrf_cloud_pgps_inject` function, along with either the :c:struct:`nrf_modem_gnss_agnss_data_frame` structure read from the GNSS interface after the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGPS_REQ` event or NULL.
+The application must pass this prediction to the :c:func:`nrf_cloud_pgps_inject` function, along with either the :c:struct:`nrf_modem_gnss_agnss_data_frame` structure read from the GNSS interface after the :c:enumerator:`NRF_MODEM_GNSS_EVT_AGNSS_REQ` event or NULL.
 
 If the device does not move distances longer than a few dozen kilometers before it gets a new GNSS fix, it can pass the latitude and longitude read after the :c:enumerator:`NRF_MODEM_GNSS_EVT_FIX` event to the :c:func:`nrf_cloud_pgps_set_location` function.
-The P-GPS subsystem uses this stored location for the next GNSS request for position assistance when A-GPS assistance is not enabled or is unavailable.
+The P-GPS subsystem uses this stored location for the next GNSS request for position assistance when A-GNSS assistance is not enabled or is unavailable.
 If the device moves further between fix attempts, such a mechanism can be detrimental to short TTFF, as the saved position might be too inaccurate to be useful.
 
 The application can also call the :c:func:`nrf_cloud_pgps_preemptive_updates` function to discard expired predictions and replace them with newer ones, before the expiration of the entire set of predictions.

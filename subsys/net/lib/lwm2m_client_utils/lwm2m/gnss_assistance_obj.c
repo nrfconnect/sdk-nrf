@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include "lwm2m_engine.h"
 #include <net/lwm2m_client_utils_location.h>
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 #include <net/nrf_cloud_pgps.h>
@@ -113,7 +113,7 @@ static int gnss_assist_write_agnss(uint8_t *data, uint16_t data_len, bool last_b
 	memcpy(&assist_buf[bytes_downloaded], &data[0], data_len);
 
 	if (last_block) {
-		err = nrf_cloud_agps_process(assist_buf, bytes_downloaded + data_len);
+		err = nrf_cloud_agnss_process(assist_buf, bytes_downloaded + data_len);
 		if (err) {
 			LOG_WRN("Unable to process A-GNSS data, error: %d", err);
 		} else {

@@ -128,7 +128,7 @@ A-GNSS and P-GPS
 
 The application supports processing of incoming A-GNSS and P-GPS data to reduce the GNSS Time-To-First-Fix (`TTFF`_).
 Requesting and processing of A-GNSS data is a default feature of the application.
-See :ref:`nRF Cloud A-GPS and P-GPS <nrfcloud_agps_pgps>` for further details.
+See :ref:`nRF Cloud A-GNSS and P-GPS <nrfcloud_agnss_pgps>` for further details.
 To enable support for P-GPS, add the parameter ``-DEXTRA_CONF_FILE=overlay-pgps.conf`` to your build command.
 
 .. note::

@@ -19,7 +19,7 @@ Set command
 
 The set command allows you to start and stop the GNSS module.
 
-Both the :ref:`lib_nrf_cloud_agps` service and the :ref:`lib_nrf_cloud_pgps` service can be used with the module, either together or independently of each other.
+Both the :ref:`lib_nrf_cloud_agnss` service and the :ref:`lib_nrf_cloud_pgps` service can be used with the module, either together or independently of each other.
 Using them reduces the time it takes the GNSS module to estimate its position.
 
 To use either of them, the device must be connected to nRF Cloud (using the :ref:`#XNRFCLOUD <SLM_AT_NRFCLOUD>` AT command) when starting the GNSS module.
@@ -91,7 +91,7 @@ It can be one of the following:
 
 .. note::
 
-   See the documentation for the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries for information on how to best configure and use A-GNSS and P-GPS, respectively.
+   See the documentation for the :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps` libraries for information on how to best configure and use A-GNSS and P-GPS, respectively.
 
 .. note::
 

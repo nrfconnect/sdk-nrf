@@ -12,8 +12,8 @@
 #include <app_event_manager.h>
 #include <qos.h>
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-#include <net/nrf_cloud_agps.h>
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+#include <net/nrf_cloud_agnss.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
@@ -292,8 +292,8 @@ static void config_data_handle(uint8_t *buf, const size_t len)
 
 static void agnss_data_handle(const uint8_t *buf, const size_t len)
 {
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-	int err = nrf_cloud_agps_process(buf, len);
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+	int err = nrf_cloud_agnss_process(buf, len);
 
 	if (err) {
 		LOG_ERR("Unable to process A-GNSS data, error: %d", err);
@@ -306,7 +306,7 @@ static void agnss_data_handle(const uint8_t *buf, const size_t len)
 		return;
 	}
 #endif /* CONFIG_NRF_CLOUD_PGPS */
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 }
 
 static void pgps_data_handle(const uint8_t *buf, const size_t len)

@@ -16,7 +16,7 @@
 #include "slm_at_nrfcloud.h"
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -214,11 +214,11 @@ static int gnss_startup(void)
 			 * the modem will not request new almanacs/ephemerides from the cloud.
 			 */
 			const int64_t gps_sec = utc_to_gps_sec(utc_now_ms / 1000);
-			struct nrf_modem_gnss_agps_data_system_time_and_sv_tow gps_time = { 0 };
+			struct nrf_modem_gnss_agnss_gps_data_system_time_and_sv_tow gps_time = {0};
 
 			gps_sec_to_day_time(gps_sec, &gps_time.date_day, &gps_time.time_full_s);
-			ret = nrf_modem_gnss_agps_write(&gps_time, sizeof(gps_time),
-					NRF_MODEM_GNSS_AGPS_GPS_SYSTEM_CLOCK_AND_TOWS);
+			ret = nrf_modem_gnss_agnss_write(&gps_time, sizeof(gps_time),
+					NRF_MODEM_GNSS_AGNSS_GPS_SYSTEM_CLOCK_AND_TOWS);
 			if (ret) {
 				LOG_WRN("Failed to inject GNSS time (%d).", ret);
 			} else {
@@ -314,7 +314,7 @@ static int read_agnss_req(struct nrf_modem_gnss_agnss_data_frame *req)
 
 	return 0;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static void agnss_req_wk(struct k_work *work)
@@ -330,19 +330,19 @@ static void agnss_req_wk(struct k_work *work)
 		return;
 	}
 
-	err = nrf_cloud_agps_request(&req);
+	err = nrf_cloud_agnss_request(&req);
 	if (err) {
 		LOG_ERR("Failed to request A-GNSS data (%d).", err);
 	} else {
 		LOG_INF("A-GNSS data requested.");
 		/* When A-GNSS data is received it gets injected in the background by
-		 * nrf_cloud_agps_process() without notification. In the case where
+		 * nrf_cloud_agnss_process() without notification. In the case where
 		 * CONFIG_NRF_CLOUD_PGPS=y, nrf_cloud_pgps_inject() (called on PGPS_EVT_AVAILABLE)
 		 * plays a role as A-GNSS expects P-GPS to process some of the data.
 		 */
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static void pgps_req_wk(struct k_work *work)

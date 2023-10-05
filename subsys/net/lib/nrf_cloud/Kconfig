@@ -11,7 +11,7 @@ rsource "Kconfig.nrf_cloud_mqtt"
 
 rsource "Kconfig.nrf_cloud_fota"
 
-rsource "Kconfig.nrf_cloud_agps"
+rsource "Kconfig.nrf_cloud_agnss"
 
 rsource "Kconfig.nrf_cloud_pgps"
 
@@ -97,7 +97,7 @@ endchoice
 
 endif
 
-if NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
+if NRF_CLOUD_AGNSS || NRF_CLOUD_PGPS
 
 module = NRF_CLOUD_GPS
 module-str = nRF Cloud GPS Assistance

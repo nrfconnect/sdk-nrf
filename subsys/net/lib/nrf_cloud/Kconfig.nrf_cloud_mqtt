@@ -99,7 +99,7 @@ config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
 
 config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
 	int "Size of the buffer for MQTT PUBLISH payload"
-	default 2144 if NRF_CLOUD_AGPS
+	default 2144 if NRF_CLOUD_AGNSS
 	default 2048
 
 config NRF_CLOUD_CONNECTION_POLL_THREAD

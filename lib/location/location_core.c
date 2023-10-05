@@ -504,7 +504,7 @@ void location_core_event_cb_timeout(void)
 	location_core_event_cb(NULL);
 }
 
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data_frame *request)
 {
 	struct location_event_data agnss_request_event_data;

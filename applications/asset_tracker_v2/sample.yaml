@@ -19,14 +19,14 @@ tests:
       - thingy91_nrf9160_ns
     extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
     tags: ci_build
-  applications.asset_tracker_v2.nrf_cloud-no-agps:
+  applications.asset_tracker_v2.nrf_cloud-no-agnss:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
-    extra_args: CONFIG_NRF_CLOUD_AGPS=n
+    extra_args: CONFIG_NRF_CLOUD_AGNSS=n
     tags: ci_build
   applications.asset_tracker_v2.aws:
     build_only: true

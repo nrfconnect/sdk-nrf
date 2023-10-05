@@ -12,8 +12,8 @@
 #include <modem/lte_lc.h>
 #endif
 #include <modem/modem_info.h>
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-#include <net/nrf_cloud_agps.h>
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+#include <net/nrf_cloud_agnss.h>
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -667,7 +667,7 @@ static void data_encode(void)
 	}
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_NRF_CLOUD_MQTT)
 static int get_modem_info(struct modem_param_info *const modem_info)
 {
 	__ASSERT_NO_MSG(modem_info != NULL);
@@ -760,7 +760,7 @@ static int agnss_request_encode(struct nrf_modem_gnss_agnss_data_frame *incoming
 
 	return err;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_MQTT */
+#endif /* CONFIG_NRF_CLOUD_AGNSS && !CONFIG_NRF_CLOUD_MQTT */
 
 static void config_get(void)
 {
@@ -1065,18 +1065,18 @@ static void agnss_request_handle(struct nrf_modem_gnss_agnss_data_frame *incomin
 {
 	int err;
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* If CONFIG_NRF_CLOUD_MQTT is enabled, the nRF Cloud MQTT transport library will be used
 	 * to send the request.
 	 */
-	err = (incoming_request == NULL) ? nrf_cloud_agps_request_all() :
-					   nrf_cloud_agps_request(incoming_request);
+	err = (incoming_request == NULL) ? nrf_cloud_agnss_request_all() :
+					   nrf_cloud_agnss_request(incoming_request);
 	if (err) {
 		LOG_WRN("Failed to request A-GNSS data, error: %d", err);
 		LOG_DBG("This is expected to fail if we are not in a connected state");
 	} else {
-		if (nrf_cloud_agps_request_in_progress()) {
+		if (nrf_cloud_agnss_request_in_progress()) {
 			LOG_DBG("A-GNSS request sent");
 			return;
 		}

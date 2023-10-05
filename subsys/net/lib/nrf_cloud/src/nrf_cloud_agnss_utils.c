@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #include <nrf_modem_gnss.h>
 
 static void print_utc(struct nrf_modem_gnss_agnss_gps_data_utc *data)
@@ -139,7 +139,7 @@ static void print_gnss_integrity(struct nrf_modem_gnss_agnss_data_integrity *dat
 	}
 }
 
-void agps_print(uint16_t type, void *data)
+void agnss_print(uint16_t type, void *data)
 {
 
 	switch (type) {
@@ -181,7 +181,7 @@ void agps_print(uint16_t type, void *data)
 		break;
 	}
 	default:
-		printk("Unknown AGPS data type\n");
+		printk("Unknown AGNSS data type\n");
 		break;
 	}
 }

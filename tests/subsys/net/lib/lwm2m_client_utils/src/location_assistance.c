@@ -84,7 +84,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_agnss_send)
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
 								   buf, 8, true, 8);
 
-	zassert_equal(nrf_cloud_agps_process_fake.call_count, 1, "Data not processed");
+	zassert_equal(nrf_cloud_agnss_process_fake.call_count, 1, "Data not processed");
 }
 
 ZTEST(lwm2m_client_utils_location_assistance, test_pgps_send)
@@ -130,7 +130,7 @@ ZTEST(lwm2m_client_utils_location_assistance, test_simultaneous_send)
 	gnss_obj->resources[GNSS_ASSIST_ASSIST_DATA].post_write_cb(0, GNSS_ASSIST_ASSIST_DATA, 0,
 								   buf, 8, true, 8);
 
-	zassert_equal(nrf_cloud_agps_process_fake.call_count, 1, "Data not processed");
+	zassert_equal(nrf_cloud_agnss_process_fake.call_count, 1, "Data not processed");
 
 	rc = location_assistance_pgps_request_send(&client_ctx);
 	zassert_equal(rc, 0, "Error %d", rc);

@@ -230,7 +230,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lib_lwm2m_location_assistance`
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_fota`
-* :ref:`lib_nrf_cloud_agps`
+* :ref:`lib_nrf_cloud_agnss`
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_date_time`
 * :ref:`lte_lc_readme`

@@ -26,13 +26,13 @@ zephyr_library_sources_ifdef(
 	src/nrf_cloud_fsm.c
 	src/nrf_cloud_transport.c)
 zephyr_library_sources_ifdef(
-	CONFIG_NRF_CLOUD_AGPS
-	src/nrf_cloud_agps.c
-	src/nrf_cloud_agps_utils.c)
+	CONFIG_NRF_CLOUD_AGNSS
+	src/nrf_cloud_agnss.c
+	src/nrf_cloud_agnss_utils.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_PGPS
-	src/nrf_cloud_agps.c
-	src/nrf_cloud_agps_utils.c
+	src/nrf_cloud_agnss.c
+	src/nrf_cloud_agnss_utils.c
 	src/nrf_cloud_pgps.c
 	src/nrf_cloud_pgps_utils.c
 	src/nrf_cloud_download.c)
@@ -51,7 +51,7 @@ zephyr_compile_definitions_ifdef(
 	CDDL_CBOR_CANONICAL)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_COAP
-	coap/src/agps_encode.c
+	coap/src/agnss_encode.c
 	coap/src/nrf_cloud_coap_transport.c
 	coap/src/coap_codec.c
 	coap/src/nrfc_dtls.c
