@@ -20,6 +20,15 @@ config PM_MCUBOOT_PAD
 	  different padding size, then this value must be updated to correspond
 	  to the value in the static partition file.
 
+if BOOTLOADER_MCUBOOT
+
+choice BOOT_SIGNATURE_TYPE
+	default BOOT_SIGNATURE_TYPE_ECDSA_P256
+
+endchoice
+
+endif
+
 rsource "Kconfig.netcore"
 rsource "Kconfig.secureboot"
 rsource "Kconfig.dfu"
