@@ -118,6 +118,7 @@ NRF = [
     ("ug_matter_device_attestation","protocols/matter/end_product/attestation"),
     ("ug_matter_device_bootloader","protocols/matter/end_product/bootloader"),
     ("ug_matter_device_certification","protocols/matter/end_product/certification"),
+    ("ug_matter_ecosystems_certification","protocols/matter/end_product/ecosystems_certification"),
     ("ug_matter_device_dcl","protocols/matter/end_product/dcl"),
     ("ug_matter_device_factory_provisioning","protocols/matter/end_product/factory_provisioning"),
     ("ug_matter_intro_device","protocols/matter/end_product/index"),

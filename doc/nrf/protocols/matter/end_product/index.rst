@@ -19,7 +19,7 @@ Watch the following video for an overview of the Matter end product development 
    </h1>
 
 The pages that follow deal with the preparation of the device for market launch, starting with :ref:`ug_matter_device_prerequisites` and the reference to the :ref:`ug_matter_device_factory_provisioning` guide.
-Finally, we discuss topics related to Matter certification (:ref:`ug_matter_device_attestation`, :ref:`ug_matter_device_dcl`, :ref:`ug_matter_device_certification`, and :ref:`ug_matter_device_configuring_cd`) and :ref:`ug_matter_device_bootloader`.
+Finally, we discuss topics related to Matter certification (:ref:`ug_matter_device_attestation`, :ref:`ug_matter_device_dcl`, :ref:`ug_matter_device_certification`, :ref:`ug_matter_ecosystems_certification`, and :ref:`ug_matter_device_configuring_cd`) and :ref:`ug_matter_device_bootloader`.
 
 .. toctree::
    :maxdepth: 1
@@ -30,6 +30,7 @@ Finally, we discuss topics related to Matter certification (:ref:`ug_matter_devi
    attestation
    dcl
    certification
+   ecosystems_certification
    bootloader
    security
    configuring_cd

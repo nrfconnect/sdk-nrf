@@ -82,6 +82,8 @@ Some of these can be configured using the Kconfig options listed below:
 * :kconfig:option:`CONFIG_CHIP_ROTATING_DEVICE_ID` enables an optional rotating device identifier feature that provides an additional unique identifier for each device.
   This identifier is similar to the serial number, but it additionally changes at predefined times to protect against long-term tracking of the device.
 
+.. _ug_matter_configuring_ffs:
+
 Amazon Frustration-Free Setup support
 =====================================
 
@@ -97,6 +99,12 @@ To enable the FFS support, set the following configuration options to meet the A
 * :kconfig:option:`CONFIG_CHIP_ROTATING_DEVICE_ID` to ``y``.
 * :kconfig:option:`CONFIG_CHIP_DEVICE_TYPE` to the appropriate value, depending on the device used.
   The value must be compliant with the Matter Device Type Identifier.
+
+Every Matter device must use an unique device identifier for rotating device identifier calculation purpose.
+By default, the identifier is set to a random value and stored in the factory data partition.
+You can choose your own unique identifier value instead by setting the :kconfig:option:`CONFIG_CHIP_DEVICE_GENERATE_ROTATING_DEVICE_UID` Kconfig option to ``n`` and using the :kconfig:option:`CONFIG_CHIP_DEVICE_ROTATING_DEVICE_UID` Kconfig option.
+When using your own identifier, the value can be stored in either firmware or factory data.
+For more information about the factory data generation, see the :ref:`Matter Device Factory Provisioning<ug_matter_device_factory_provisioning>` page.
 
 To read more about the FFS technology and its compatibility with Matter, see the following pages in the Amazon developer documentation:
 

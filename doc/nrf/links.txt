@@ -873,6 +873,7 @@
 .. _`AWS IoT Core`: https://aws.amazon.com/iot-core/
 
 .. _`Understanding Frustration-Free Setup`: https://developer.amazon.com/docs/frustration-free-setup/understanding-ffs.html
+.. _`Matter Simple Setup`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-getting-started.html
 .. _`Matter Simple Setup for Wi-Fi Overview`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-wifi-overview.html
 .. _`Matter Simple Setup for Thread Overview`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-thread-overview.html
 .. _`Amazon Alexa integration with Matter`: https://developer.amazon.com/en-US/docs/alexa/smarthome/matter-support.html
@@ -1102,6 +1103,7 @@
 .. _`Google Chrome browser`: https://www.google.com/chrome
 
 .. _`Google Home integration with Matter`: https://developers.home.google.com/matter
+.. _`Works with Google Home`: https://developers.home.google.com/matter/certification#wwgh_certification
 
 .. ### Source: ubuntu.com
 
