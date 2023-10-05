@@ -22,3 +22,4 @@ config PM_MCUBOOT_PAD
 
 rsource "Kconfig.netcore"
 rsource "Kconfig.secureboot"
+rsource "Kconfig.dfu"
