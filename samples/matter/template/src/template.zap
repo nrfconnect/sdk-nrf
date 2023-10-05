@@ -18,17 +18,17 @@
   "package": [
     {
       "pathRelativity": "relativeToZap",
+      "path": "../../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
+      "type": "gen-templates-json",
+      "version": "chip-v1"
+    },
+    {
+      "pathRelativity": "relativeToZap",
       "path": "../../../../../modules/lib/matter/src/app/zap-templates/zcl/zcl.json",
       "type": "zcl-properties",
       "category": "matter",
       "version": 1,
       "description": "Matter SDK ZCL data"
-    },
-    {
-      "pathRelativity": "relativeToZap",
-      "path": "../../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
-      "type": "gen-templates-json",
-      "version": "chip-v1"
     }
   ],
   "endpointTypes": [
@@ -3086,7 +3086,7 @@
           "mfgCode": null,
           "define": "SOFTWARE_DIAGNOSTICS_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "attributes": [
             {
               "name": "ThreadMetrics",
@@ -3276,7 +3276,7 @@
           "mfgCode": null,
           "define": "THREAD_NETWORK_DIAGNOSTICS_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "attributes": [
             {
               "name": "Channel",
@@ -4410,7 +4410,7 @@
           "mfgCode": null,
           "define": "WIFI_NETWORK_DIAGNOSTICS_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "attributes": [
             {
               "name": "BSSID",
