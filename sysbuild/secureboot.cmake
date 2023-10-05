@@ -32,9 +32,24 @@ if(SB_CONFIG_SECURE_BOOT)
   )
 
   if(SB_CONFIG_SECURE_BOOT_DOMAIN_APP)
-  set_property(GLOBAL PROPERTY DOMAIN_APP_${SB_CONFIG_SECURE_BOOT_DOMAIN}
-               "${SB_CONFIG_SECURE_BOOT_IMAGE_NAME}"
-  )
+    set_property(GLOBAL PROPERTY DOMAIN_APP_${SB_CONFIG_SECURE_BOOT_DOMAIN}
+                 "${SB_CONFIG_SECURE_BOOT_IMAGE_NAME}"
+    )
+  endif()
+
+  if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+    set(image s1_image)
+
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+      ExternalNcsVariantProject_Add(APPLICATION mcuboot VARIANT ${image})
+    else()
+      ExternalNcsVariantProject_Add(APPLICATION ${DEFAULT_IMAGE} VARIANT ${image})
+    endif()
+
+    set_property(GLOBAL APPEND PROPERTY
+        PM_${SB_CONFIG_SECURE_BOOT_DOMAIN}_IMAGES
+        "${image}"
+    )
   endif()
 endif()
 

@@ -51,4 +51,10 @@ config SECURE_BOOT_DOMAIN
 	help
 	  Internal build system domain name used for first stage bootloader.
 
+config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
+	bool
+	default y if SECURE_BOOT_APPCORE
+	help
+	  Will build an S1 variant image for the second slot.
+
 endif
