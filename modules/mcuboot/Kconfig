@@ -4,12 +4,23 @@ config BOOT_SIGNATURE_KEY_FILE
 	string "MCUBoot PEM key file"
 	depends on !MCUBOOT_BUILD_STRATEGY_FROM_SOURCE
 	help
-	  Absolute path to PEM key file containing the private key corresponding
+	  Path to PEM key file containing the private key corresponding
 	  to the public key included in MCUBoot. This will be used to sign the
 	  image so that it can be verified by MCUBoot. Since MCUBoot is not
 	  built from source, it is not possible for the build system to deduce
 	  what key was used when compiling it. Hence, it is required that the
 	  key is passed to the build system through this option.
+	  You can use either absolute or relative path.
+	  In case relative path is used, the build system assumes that it starts
+	  from the directory where the MCUBoot KConfig configuration file is
+	  located. If the key file is not there, the build system uses a
+	  relative path that starts from the sample directory being built
+	  (CMAKE_SOURCE_DIR).
+	  If none of these exist, MCUboot's default key will be used and a warning
+	  is printed. This key must NOT be used in production.
+	  The key file will be parsed by imgtool's getpub command and a .c source
+	  with the public key information will be written in a format expected by
+	  MCUboot.
 
 config SIGN_IMAGES
 	bool "Sign images for MCUBoot"

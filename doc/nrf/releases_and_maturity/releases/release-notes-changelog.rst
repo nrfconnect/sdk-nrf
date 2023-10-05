@@ -759,6 +759,11 @@ Bluetooth libraries and services
 Bootloader libraries
 --------------------
 
+* :ref:`mcuboot_ncs`:
+
+  * The path set using :kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE` can now be relative to the current sample directory.
+    See the help text of the kconfig option for more details.
+
 * :ref:`bootloader`:
 
   * Fixed:
