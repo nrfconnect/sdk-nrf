@@ -273,11 +273,14 @@ static void rest_client_close_connection(struct rest_client_req_context *const r
 		ret = close(req_ctx->connect_socket);
 		if (ret) {
 			LOG_WRN("Failed to close socket, error: %d", errno);
+		} else {
+			LOG_DBG("Socket with id: %d was closed", req_ctx->connect_socket);
 		}
+
 		req_ctx->connect_socket = REST_CLIENT_SCKT_CONNECT;
 	} else {
 		resp_ctx->used_socket_is_alive = true;
-		LOG_INF("Socket with id: %d was kept alive and wasn't closed",
+		LOG_DBG("Socket with id: %d was kept alive and wasn't closed",
 			req_ctx->connect_socket);
 	}
 }
@@ -326,6 +329,8 @@ static int rest_client_do_api_call(struct http_request *http_req,
 	resp_ctx->total_response_len = 0;
 	resp_ctx->used_socket_id = req_ctx->connect_socket;
 	resp_ctx->http_status_code_str[0] = '\0';
+	resp_ctx->used_socket_is_alive = false;
+	resp_ctx->http_status_code = 0;
 
 	err = http_client_req(req_ctx->connect_socket, http_req, req_ctx->timeout_ms, resp_ctx);
 	if (err < 0) {
