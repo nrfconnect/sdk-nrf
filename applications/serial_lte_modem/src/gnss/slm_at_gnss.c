@@ -15,8 +15,8 @@
 #include <net/nrf_cloud_codec.h>
 #include "slm_at_nrfcloud.h"
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-#include <net/nrf_cloud_agps.h>
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+#include <net/nrf_cloud_agnss.h>
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -52,7 +52,7 @@ enum slm_gnss_operation {
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 static struct k_work agnss_req;
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -142,7 +142,7 @@ static void gnss_status_set(enum gnss_status status)
 	}
 }
 
-#if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_SLM_NRF_CLOUD) && defined(CONFIG_NRF_CLOUD_AGNSS)
 
 static int64_t utc_to_gps_sec(const int64_t utc_sec)
 {
@@ -166,7 +166,7 @@ static void on_gnss_evt_agnss_req(void)
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 	k_work_submit_to_queue(&slm_work_q, &agnss_req);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -197,13 +197,13 @@ static int gnss_startup(void)
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 	if (gnss_cloud_assistance) {
 		int64_t utc_now_ms;
 
-#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
 		ret = nrf_modem_gnss_elevation_threshold_set(
-					CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+					CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK);
 		if (ret) {
 			LOG_ERR("Failed to set elevation threshold (%d).", ret);
 			return ret;
@@ -227,7 +227,7 @@ static int gnss_startup(void)
 			}
 		}
 	}
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	if (gnss_cloud_assistance) {
@@ -297,7 +297,7 @@ static int gnss_shutdown(void)
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static int read_agnss_req(struct nrf_modem_gnss_agnss_data_frame *req)
 {
 	int err;
@@ -314,9 +314,9 @@ static int read_agnss_req(struct nrf_modem_gnss_agnss_data_frame *req)
 
 	return 0;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 static void agnss_req_wk(struct k_work *work)
 {
 	int err;
@@ -330,19 +330,19 @@ static void agnss_req_wk(struct k_work *work)
 		return;
 	}
 
-	err = nrf_cloud_agps_request(&req);
+	err = nrf_cloud_agnss_request(&req);
 	if (err) {
 		LOG_ERR("Failed to request A-GNSS data (%d).", err);
 	} else {
 		LOG_INF("A-GNSS data requested.");
 		/* When A-GNSS data is received it gets injected in the background by
-		 * nrf_cloud_agps_process() without notification. In the case where
+		 * nrf_cloud_agnss_process() without notification. In the case where
 		 * CONFIG_NRF_CLOUD_PGPS=y, nrf_cloud_pgps_inject() (called on PGPS_EVT_AVAILABLE)
 		 * plays a role as A-GNSS expects P-GPS to process some of the data.
 		 */
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static void pgps_req_wk(struct k_work *work)
@@ -652,7 +652,8 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 			if (err || gnss_cloud_assistance > 1) {
 				return -EINVAL;
 			}
-			if (!IS_ENABLED(CONFIG_NRF_CLOUD_AGPS) && !IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)
+			if (!IS_ENABLED(CONFIG_NRF_CLOUD_AGNSS) &&
+			    !IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)
 			&& gnss_cloud_assistance) {
 				LOG_ERR("A-GNSS and/or P-GPS must be enabled during compilation.");
 				return -ENOTSUP;
@@ -774,7 +775,7 @@ int slm_at_gnss_init(void)
 	k_work_init(&gnss_status_notifier, gnss_status_notifier_wk);
 
 #if defined(CONFIG_SLM_NRF_CLOUD)
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 	k_work_init(&agnss_req, agnss_req_wk);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)

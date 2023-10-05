@@ -25,20 +25,20 @@
 #include <lwm2m_carrier.h>
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <stdlib.h>
 #include <modem/modem_jwt.h>
 #include <net/nrf_cloud_rest.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-#include <net/nrf_cloud_agps.h>
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+#include <net/nrf_cloud_agnss.h>
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif /* CONFIG_NRF_CLOUD_PGPS */
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_SUPL_CLIENT_LIB)
 #include <supl_session.h>
@@ -49,12 +49,12 @@
 #include "mosh_print.h"
 #include "gnss.h"
 
-#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
+#if (defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
 	defined(CONFIG_SUPL_CLIENT_LIB)
 BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library cannot be enabled at the same time");
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 /* Verify that MQTT, REST or COAP is enabled */
 BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	     IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
@@ -86,7 +86,7 @@ static bool nmea_mask_set;
 static struct nrf_modem_gnss_agnss_data_frame agnss_need;
 static uint8_t gnss_elevation = 5; /* init to modem default threshold angle */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 static struct k_work get_agnss_data_work;
 static bool agnss_automatic;
 static bool agnss_inject_ephe = true;
@@ -97,9 +97,9 @@ static bool agnss_inject_neq = true;
 static bool agnss_inject_time = true;
 static bool agnss_inject_pos = true;
 static bool agnss_inject_int = true;
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_SUPL_CLIENT_LIB */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
+#if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
 	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 static char agnss_data_buf[3500];
 #endif
@@ -115,7 +115,7 @@ static struct k_work get_pgps_data_work;
 #endif /* !CONFIG_NRF_CLOUD_MQTT */
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && defined(CONFIG_NRF_CLOUD_REST) && \
+#if defined(CONFIG_NRF_CLOUD_AGNSS) && defined(CONFIG_NRF_CLOUD_REST) && \
 	!defined(CONFIG_NRF_CLOUD_MQTT) && !defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 #define AGNSS_USES_REST
 #endif
@@ -131,9 +131,9 @@ static char jwt_buf[600];
 static char rx_buf[2048];
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME)
 static bool gnss_filtered_ephemerides_enabled;
-#endif /* CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME */
+#endif /* CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME */
 
 /* Struct for an event item. The data is read in the event handler and passed as a part of the
  * event item because an NMEA string would get overwritten by the next NMEA string before the
@@ -495,7 +495,7 @@ static void data_handler_thread_fn(void)
 
 			memcpy(&agnss_need, event.data, sizeof(agnss_need));
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 			if (agnss_automatic) {
 				k_work_submit_to_queue(&mosh_common_work_q, &get_agnss_data_work);
 			}
@@ -570,7 +570,7 @@ static int gnss_enable_all_nmeas(void)
 		NRF_MODEM_GNSS_NMEA_RMC_MASK);
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
+#if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
 	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 {
@@ -625,7 +625,7 @@ static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 }
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 static void get_filtered_agnss_request(struct nrf_modem_gnss_agnss_data_frame *agnss_request)
 {
 	memset(agnss_request, 0, sizeof(*agnss_request));
@@ -689,7 +689,7 @@ static void get_agnss_data(struct k_work *item)
 		"GNSS: Getting A-GNSS data from %s...",
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 		"LwM2M"
-#elif defined(CONFIG_NRF_CLOUD_AGPS)
+#elif defined(CONFIG_NRF_CLOUD_AGNSS)
 		"nRF Cloud"
 #else
 		"SUPL"
@@ -713,9 +713,9 @@ static void get_agnss_data(struct k_work *item)
 	if (err) {
 		mosh_error("GNSS: Failed to request A-GNSS data, error: %d", err);
 	}
-#elif defined(CONFIG_NRF_CLOUD_AGPS)
+#elif defined(CONFIG_NRF_CLOUD_AGNSS)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-	err = nrf_cloud_agps_request(&agnss_request);
+	err = nrf_cloud_agnss_request(&agnss_request);
 	if (err == -EACCES) {
 		mosh_error("GNSS: Not connected to nRF Cloud");
 	} else if (err) {
@@ -739,25 +739,25 @@ static void get_agnss_data(struct k_work *item)
 	};
 #endif
 
-	struct nrf_cloud_rest_agps_request request = {
-		.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
+	struct nrf_cloud_rest_agnss_request request = {
+		.type = NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
 		.agnss_req = &agnss_request,
 	};
 
-	struct nrf_cloud_rest_agps_result result = {
+	struct nrf_cloud_rest_agnss_result result = {
 		.buf = agnss_data_buf,
 		.buf_sz = sizeof(agnss_data_buf),
 	};
 
 	struct lte_lc_cells_info net_info = { 0 };
 
-#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME)
 	if (gnss_filtered_ephemerides_enabled) {
 		request.mask_angle = gnss_elevation;
 		mosh_print("GNSS: Requesting filtered ephemeris; elevation = %u", gnss_elevation);
 	}
 	request.filtered = gnss_filtered_ephemerides_enabled;
-#endif /* CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME */
+#endif /* CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME */
 
 	err = serving_cell_info_get(&net_info.current_cell);
 	if (err) {
@@ -768,9 +768,9 @@ static void get_agnss_data(struct k_work *item)
 	}
 
 #if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
+	err = nrf_cloud_rest_agnss_data_get(&rest_ctx, &request, &result);
 #elif defined(CONFIG_NRF_CLOUD_COAP)
-	err = nrf_cloud_coap_agps_data_get(&request, &result);
+	err = nrf_cloud_coap_agnss_data_get(&request, &result);
 #endif
 	if (err) {
 		mosh_error("GNSS: Failed to get A-GNSS data, error: %d", err);
@@ -779,7 +779,7 @@ static void get_agnss_data(struct k_work *item)
 
 	mosh_print("GNSS: Processing A-GNSS data");
 
-	err = nrf_cloud_agps_process(result.buf, result.agps_sz);
+	err = nrf_cloud_agnss_process(result.buf, result.agnss_sz);
 	if (err) {
 		mosh_error("GNSS: Failed to process A-GNSS data, error: %d", err);
 		return;
@@ -797,7 +797,7 @@ static void get_agnss_data(struct k_work *item)
 	}
 #endif
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_SUPL_CLIENT_LIB */
 
 #if defined(CONFIG_SUPL_CLIENT_LIB)
 static void get_agnss_data_type_string(char *type_string, uint16_t type)
@@ -1094,9 +1094,9 @@ static void gnss_api_init(void)
 	k_work_init_delayable(&gnss_start_work, start_gnss_work_fn);
 	k_work_init_delayable(&gnss_timeout_work, handle_timeout_work_fn);
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	k_work_init(&get_agnss_data_work, get_agnss_data);
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_SUPL_CLIENT_LIB */
 
 #if defined(CONFIG_SUPL_CLIENT_LIB)
 	static struct supl_api supl_api = {
@@ -1367,7 +1367,7 @@ int gnss_set_elevation_threshold(uint8_t elevation)
 
 int gnss_set_agnss_filtered_ephemerides(bool enable)
 {
-#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME)
 	gnss_filtered_ephemerides_enabled = enable;
 	return 0;
 #else
@@ -1580,7 +1580,7 @@ int gnss_set_timing_source(enum gnss_timing_source source)
 int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob,
 				bool neq, bool time, bool pos, bool integrity)
 {
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	agnss_inject_ephe = ephe;
 	agnss_inject_alm = alm;
 	agnss_inject_utc = utc;
@@ -1592,7 +1592,7 @@ int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob,
 
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS or CONFIG_SUPL_CLIENT_LIB for "
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGNSS or CONFIG_SUPL_CLIENT_LIB for "
 		   "A-GNSS support");
 	return -EOPNOTSUPP;
 #endif
@@ -1600,18 +1600,18 @@ int gnss_set_agnss_data_enabled(bool ephe, bool alm, bool utc, bool klob,
 
 int gnss_set_agnss_automatic(bool value)
 {
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	agnss_automatic = value;
 
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS or CONFIG_SUPL_CLIENT_LIB for "
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGNSS or CONFIG_SUPL_CLIENT_LIB for "
 		   "A-GNSS support");
 	return -EOPNOTSUPP;
 #endif
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 static bool qzss_assistance_is_supported(void)
 {
 	char resp[32];
@@ -1625,11 +1625,11 @@ static bool qzss_assistance_is_supported(void)
 
 	return true;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 int gnss_inject_agnss_data(void)
 {
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_SUPL_CLIENT_LIB)
 	gnss_api_init();
 
 	/* Pretend modem requested all A-GNSS data */
@@ -1644,7 +1644,7 @@ int gnss_inject_agnss_data(void)
 	agnss_need.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
 	agnss_need.system[0].sv_mask_ephe = 0xffffffff;
 	agnss_need.system[0].sv_mask_alm = 0xffffffff;
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 	if (qzss_assistance_is_supported()) {
 		agnss_need.system_count = 2;
 		agnss_need.system[1].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
@@ -1657,7 +1657,7 @@ int gnss_inject_agnss_data(void)
 
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS or CONFIG_SUPL_CLIENT_LIB for "
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGNSS or CONFIG_SUPL_CLIENT_LIB for "
 		   "A-GNSS support");
 	return -EOPNOTSUPP;
 #endif

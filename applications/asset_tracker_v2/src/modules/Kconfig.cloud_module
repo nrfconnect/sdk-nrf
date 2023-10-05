@@ -14,11 +14,11 @@ if CLOUD_MODULE
 # Only a single cloud MQTT service is supported at a time.
 CLOUD_SERVICE_SELECTOR := choice
 
-# nRF Cloud A-GPS is enabled by default when building for all supported cloud transport services.
+# nRF Cloud A-GNSS is enabled by default when building for all supported cloud transport services.
 # For LwM2M builds, A-GNSS is disabled if P-GPS is enabled.
 # This is because the two methods are currently mutually exclusive for LwM2M builds.
 # For the other cloud configurations, A-GNSS and P-GPS can coexist.
-config NRF_CLOUD_AGPS
+config NRF_CLOUD_AGNSS
 	depends on LOCATION_MODULE
 	default n if NRF_CLOUD_PGPS && LWM2M_INTEGRATION
 	default y

@@ -227,7 +227,7 @@ Location services
 `nRF Cloud`_ offers location services that allow you to obtain the location of your device.
 The following enhancements to this library can be used to interact with `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_:
 
-* Assisted GPS - :ref:`lib_nrf_cloud_agps`
+* Assisted GNSS - :ref:`lib_nrf_cloud_agnss`
 * Predicted GPS - :ref:`lib_nrf_cloud_pgps`
 * Cellular Positioning - :ref:`lib_nrf_cloud_cell_pos`
 * nRF Cloud REST  - :ref:`lib_nrf_cloud_rest`

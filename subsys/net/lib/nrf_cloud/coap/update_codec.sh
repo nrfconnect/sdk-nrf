@@ -43,11 +43,11 @@ if [ $? -ne 0 ]; then
 	exit
 fi
 
-zcbor code -c cddl/nrf_cloud_coap_agps.cddl       --default-max-qty 10 -e \
-	-t agps_req \
-	--oc src/agps_encode.c \
-	--oh include/agps_encode.h \
-	--oht include/agps_encode_types.h \
+zcbor code -c cddl/nrf_cloud_coap_agnss.cddl       --default-max-qty 10 -e \
+	-t agnss_req \
+	--oc src/agnss_encode.c \
+	--oh include/agnss_encode.h \
+	--oht include/agnss_encode_types.h \
 	--file-header "$HDR"
 
 if [ $? -ne 0 ]; then
@@ -91,10 +91,10 @@ git add cddl/*.cddl
 # alternate design -- combine all encoders into one file and all decoders into another
 # zcbor code -c cddl/nrf_cloud_coap_ground_fix.cddl \
 # 	-c cddl/nrf_cloud_coap_device_msg.cddl \
-# 	-c cddl/nrf_cloud_coap_agps.cddl \
+# 	-c cddl/nrf_cloud_coap_agnss.cddl \
 # 	-c cddl/nrf_cloud_coap_pgps.cddl \
 # 	--default-max-qty 10 -e \
-# 	-t ground_fix_req message_out agps_req pgps_req \
+# 	-t ground_fix_req message_out agnss_req pgps_req \
 # 	--oc src/coap_encode.c \
 # 	--oh include/coap_encode.h \
 # 	--oht include/coap_encode_types.h

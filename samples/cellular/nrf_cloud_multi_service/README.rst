@@ -354,7 +354,7 @@ The following key features of this sample may be independently disabled:
 * Cellular-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>` option to disabled.
 * Wi-Fi-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_WIFI <CONFIG_LOCATION_TRACKING_WIFI>` option to disabled.
 * Temperature tracking - by setting the :ref:`CONFIG_TEMP_TRACKING <CONFIG_TEMP_TRACKING>` option to disabled.
-* GNSS assistance (A-GNSS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` option to disabled.
+* GNSS assistance (A-GNSS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS` option to disabled.
 * Predictive GNSS assistance (P-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` option to disabled.
 * FOTA when using MQTT - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option to disabled.
 * FOTA when using CoAP - by setting the :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>` option to disabled.

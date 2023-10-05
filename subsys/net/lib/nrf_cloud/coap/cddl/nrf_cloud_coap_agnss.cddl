@@ -5,12 +5,12 @@
 ;
 
 ; ************
-; AGPS Request
+; AGNSS Request
 ; ************
 
 type = rtAssistance/custom
 
-agps_req = {
+agnss_req = {
 	? types => [1*14 int],
 	eci => uint,
 	? filtered => bool,
@@ -35,5 +35,5 @@ rtAssistance = 10
 custom = 11
 
 ; ***********************
-; AGPS Response is binary
+; AGNSS Response is binary
 ; ***********************

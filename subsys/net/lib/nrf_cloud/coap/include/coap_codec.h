@@ -18,7 +18,7 @@
 
 #define LOCATION_GET_CBOR_MAX_SIZE 1024
 #define LOCATION_SEND_CBOR_MAX_SIZE 64
-#define AGPS_GET_CBOR_MAX_SIZE 64
+#define AGNSS_GET_CBOR_MAX_SIZE 64
 #define PGPS_URL_GET_CBOR_MAX_SIZE 64
 #define SENSOR_SEND_CBOR_MAX_SIZE 32
 #define MESSAGE_SEND_CBOR_MAX_SIZE 256
@@ -51,11 +51,11 @@ int coap_codec_ground_fix_req_encode(struct lte_lc_cells_info const *const cell_
 int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 				      const uint8_t *buf, size_t len, enum coap_content_format fmt);
 
-int coap_codec_agps_encode(struct nrf_cloud_rest_agps_request const *const request,
+int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const request,
 			   uint8_t *buf, size_t *len,
 			   enum coap_content_format fm);
 
-int coap_codec_agps_resp_decode(struct nrf_cloud_rest_agps_result *result,
+int coap_codec_agnss_resp_decode(struct nrf_cloud_rest_agnss_result *result,
 				const uint8_t *buf, size_t len, enum coap_content_format fmt);
 
 int coap_codec_pgps_encode(struct nrf_cloud_rest_pgps_request const *const request,

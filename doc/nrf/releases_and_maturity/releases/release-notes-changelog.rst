@@ -815,6 +815,8 @@ Libraries for networking
 
   * Updated:
 
+    * ``nRF Cloud A-GPS`` has been renamed to :ref:`lib_nrf_cloud_agnss`.
+      All Kconfig options and functions have been updated to use the term A-GNSS instead of A-GPS.
     * JSON manipulation moved from :file:`nrf_cloud_fota.c` to :file:`nrf_cloud_codec_internal.c`.
     * :c:func:`nrf_cloud_obj_location_request_create` to use the new function :c:func:`nrf_cloud_obj_location_request_payload_add`.
     * Retry handling for P-GPS data download errors to retry ``ECONNREFUSED`` errors.
@@ -1116,3 +1118,4 @@ Documentation
     The instructions for using Programmer were moved to the :ref:`ug_nrf9160` page.
   * Replaced LTE Link Monitor and Trace Collector apps with `nRF Connect Serial Terminal`_ and `Cellular Monitor`_ apps.
   * Renamed nRF91 AT Commands Reference Guide to `nRF9160 AT Commands Reference Guide`_, and added references to the `nRF91x1 AT Commands Reference Guide`_ in the documentation.
+  * All references to GNSS assistance from ``A-GPS`` to `A-GNSS`_.

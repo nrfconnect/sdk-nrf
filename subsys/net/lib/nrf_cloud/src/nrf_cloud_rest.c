@@ -18,7 +18,7 @@
 #include <modem/modem_key_mgmt.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_rest.h>
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #include <net/rest_client.h>
 #include <zephyr/logging/log.h>
 #include <cJSON.h>
@@ -596,7 +596,7 @@ clean_up:
 	return ret;
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 static int get_content_range_total_bytes(char *const buf)
 {
 	char *end;
@@ -642,9 +642,9 @@ static int format_range_header(char *const buf, size_t buf_sz, size_t start_byte
 	return 0;
 }
 
-int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
-				 struct nrf_cloud_rest_agps_request const *const request,
-				 struct nrf_cloud_rest_agps_result *const result)
+int nrf_cloud_rest_agnss_data_get(struct nrf_cloud_rest_context *const rest_ctx,
+				 struct nrf_cloud_rest_agnss_request const *const request,
+				 struct nrf_cloud_rest_agnss_result *const result)
 {
 	__ASSERT_NO_MSG(rest_ctx != NULL);
 	__ASSERT_NO_MSG(request != NULL);
@@ -657,14 +657,14 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	size_t pos = 0;
 	size_t frag_size = (rest_ctx->fragment_size ? rest_ctx->fragment_size : RANGE_MAX_BYTES);
 	char *auth_hdr = NULL;
-	cJSON *agps_obj;
-	enum nrf_cloud_agps_type types[NRF_CLOUD_AGPS__TYPES_COUNT];
+	cJSON *agnss_obj;
+	enum nrf_cloud_agnss_type types[NRF_CLOUD_AGNSS__TYPES_COUNT];
 	char range_hdr[HDR_RANGE_BYTES_SZ];
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
 	static int64_t last_request_timestamp;
 	bool filtered = false;
-	uint8_t mask_angle = NRF_CLOUD_AGPS_MASK_ANGLE_NONE;
+	uint8_t mask_angle = NRF_CLOUD_AGNSS_MASK_ANGLE_NONE;
 
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_POST);
@@ -675,23 +675,23 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	 */
 	req.keep_alive = true;
 
-#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED_RUNTIME)
 	filtered = request->filtered;
 	mask_angle = request->mask_angle;
-#elif defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
-	filtered = CONFIG_NRF_CLOUD_AGPS_FILTERED;
-	mask_angle = CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK;
+#elif defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
+	filtered = CONFIG_NRF_CLOUD_AGNSS_FILTERED;
+	mask_angle = CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK;
 #endif
 
-	if (filtered && (mask_angle != NRF_CLOUD_AGPS_MASK_ANGLE_NONE) && (mask_angle > 90)) {
+	if (filtered && (mask_angle != NRF_CLOUD_AGNSS_MASK_ANGLE_NONE) && (mask_angle > 90)) {
 		LOG_ERR("Mask angle %u out of range (must be <= 90)", mask_angle);
 		ret = -EINVAL;
 		goto clean_up;
 	}
 
-	if ((request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) &&
+	if ((request->type == NRF_CLOUD_REST_AGNSS_REQ_CUSTOM) &&
 	    (request->agnss_req == NULL)) {
-		LOG_ERR("Custom request type requires A-GPS request data");
+		LOG_ERR("Custom request type requires A-GNSS request data");
 		ret = -EINVAL;
 		goto clean_up;
 	} else if (result && !result->buf) {
@@ -700,32 +700,32 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		goto clean_up;
 	}
 
-/** In filtered ephemeris mode, request A-GPS data no more often than
+/** In filtered ephemeris mode, request A-GNSS data no more often than
  *  every 2 hours (time in milliseconds). Without this, the GNSS unit will
  *  request for ephemeris every hour because a full set was not received.
  */
 #define MARGIN_MINUTES 10
-#define AGPS_UPDATE_PERIOD ((120 - MARGIN_MINUTES) * 60 * MSEC_PER_SEC)
+#define AGNSS_UPDATE_PERIOD ((120 - MARGIN_MINUTES) * 60 * MSEC_PER_SEC)
 
 	if (filtered && (last_request_timestamp != 0) &&
-	    ((k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD)) {
-		LOG_WRN("A-GPS request was sent less than 2 hours ago");
+	    ((k_uptime_get() - last_request_timestamp) < AGNSS_UPDATE_PERIOD)) {
+		LOG_WRN("A-GNSS request was sent less than 2 hours ago");
 		ret = 0;
-		result->agps_sz = 0;
+		result->agnss_sz = 0;
 		goto clean_up;
 	}
 
-	/* Get the A-GPS type array */
+	/* Get the A-GNSS type array */
 	switch (request->type) {
-	case NRF_CLOUD_REST_AGPS_REQ_CUSTOM:
-		type_count = nrf_cloud_agps_type_array_get(request->agnss_req,
+	case NRF_CLOUD_REST_AGNSS_REQ_CUSTOM:
+		type_count = nrf_cloud_agnss_type_array_get(request->agnss_req,
 							   types, ARRAY_SIZE(types));
 		break;
-	case NRF_CLOUD_REST_AGPS_REQ_LOCATION:
+	case NRF_CLOUD_REST_AGNSS_REQ_LOCATION:
 		type_count = 1;
-		types[0] = NRF_CLOUD_AGPS_LOCATION;
+		types[0] = NRF_CLOUD_AGNSS_LOCATION;
 		break;
-	case NRF_CLOUD_REST_AGPS_REQ_ASSISTANCE: {
+	case NRF_CLOUD_REST_AGNSS_REQ_ASSISTANCE: {
 		struct nrf_modem_gnss_agnss_data_frame assist = { 0 };
 		/* Set all request flags for GPS */
 		assist.data_flags =
@@ -739,7 +739,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		assist.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
 		assist.system[0].sv_mask_ephe = 0xFFFFFFFF;
 		assist.system[0].sv_mask_alm = 0xFFFFFFFF;
-		type_count = nrf_cloud_agps_type_array_get(&assist, types, ARRAY_SIZE(types));
+		type_count = nrf_cloud_agnss_type_array_get(&assist, types, ARRAY_SIZE(types));
 		break;
 	}
 	default:
@@ -747,21 +747,21 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 	if (type_count <= 0) {
-		LOG_ERR("No A-GPS request data found for type: %u", request->type);
+		LOG_ERR("No A-GNSS request data found for type: %u", request->type);
 		ret = -ENOENT;
 		goto clean_up;
 	}
 
-	agps_obj = cJSON_CreateObject();
-	ret = nrf_cloud_agps_req_data_json_encode(types, type_count,
+	agnss_obj = cJSON_CreateObject();
+	ret = nrf_cloud_agnss_req_data_json_encode(types, type_count,
 						  &request->net_info->current_cell, false,
 						  filtered, mask_angle,
-						  agps_obj);
+						  agnss_obj);
 
 	/* Set payload */
-	req.body = cJSON_PrintUnformatted(agps_obj);
-	cJSON_Delete(agps_obj);
-	agps_obj = NULL;
+	req.body = cJSON_PrintUnformatted(agnss_obj);
+	cJSON_Delete(agnss_obj);
+	agnss_obj = NULL;
 
 	if (!req.body) {
 		ret = -ENOMEM;
@@ -835,7 +835,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 				goto clean_up;
 
 			} else if (result->buf_sz < total_bytes) {
-				LOG_ERR("Result buffer too small for %d bytes of A-GPS data",
+				LOG_ERR("Result buffer too small for %d bytes of A-GNSS data",
 					total_bytes);
 				ret = -ENOBUFS;
 				goto clean_up;
@@ -844,7 +844,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 		rcvd_bytes += rest_ctx->response_len;
 
-		LOG_DBG("A-GPS data rx: %u/%u", rcvd_bytes, total_bytes);
+		LOG_DBG("A-GNSS data rx: %u/%u", rcvd_bytes, total_bytes);
 		if (rcvd_bytes > total_bytes) {
 			ret = -EFBIG;
 			goto clean_up;
@@ -860,7 +860,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	} while (remain);
 
 	/* Set output size */
-	result->agps_sz = total_bytes;
+	result->agnss_sz = total_bytes;
 	last_request_timestamp = k_uptime_get();
 
 clean_up:
@@ -873,7 +873,7 @@ clean_up:
 
 	return ret;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,

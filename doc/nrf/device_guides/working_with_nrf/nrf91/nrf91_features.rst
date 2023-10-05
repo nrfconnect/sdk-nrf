@@ -338,11 +338,11 @@ Hence, the GNSS module needs to download the ephemeris data from the satellite b
 nRF Cloud compared with SUPL library
 ------------------------------------
 
-* The :ref:`lib_nrf_cloud_agps` library is more efficient to use when compared to the :ref:`SUPL <supl_client>` library, and the latter takes a bit more memory on the device.
+* The :ref:`lib_nrf_cloud_agnss` library is more efficient to use when compared to the :ref:`SUPL <supl_client>` library, and the latter takes a bit more memory on the device.
 * With nRF Cloud, the data is encrypted, whereas SUPL uses plain socket.
 * nRF Cloud also supports assistance for QZSS satellites, while SUPL is limited to GPS.
 * No licenses are required from external vendors to use nRF Cloud, whereas for commercial use of SUPL, you must obtain a license.
-* The :ref:`lib_nrf_cloud_agps` library is highly integrated into `Nordic Semiconductor's IoT cloud platform`_.
+* The :ref:`lib_nrf_cloud_agnss` library is highly integrated into `Nordic Semiconductor's IoT cloud platform`_.
 
 Low Accuracy Mode
 -----------------

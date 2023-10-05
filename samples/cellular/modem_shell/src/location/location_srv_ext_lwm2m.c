@@ -19,7 +19,7 @@
 #define GROUND_FIX_LONGITUDE		3
 #define GROUND_FIX_ACCURACY		4
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame *agnss_req)
 {
 	int err;
@@ -42,7 +42,7 @@ void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame 
 		mosh_error("Failed to request A-GNSS data, err: %d", err);
 	}
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 void location_srv_ext_pgps_handle(const struct gps_pgps_request *pgps_req)

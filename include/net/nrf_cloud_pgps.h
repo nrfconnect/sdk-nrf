@@ -17,7 +17,7 @@
 #else
 struct nrf_modem_gnss_agnss_data_frame;
 #endif
-#include "nrf_cloud_agps_schema_v1.h"
+#include "nrf_cloud_agnss_schema_v1.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,7 +30,7 @@ extern "C" {
 #define NRF_CLOUD_PGPS_NUM_SV				(32U)
 
 /** @brief nrf_cloud_pgps_system_time is a special version of
- * nrf_cloud_agps_system_time that does not include the full array of sv_tow
+ * nrf_cloud_agnss_system_time that does not include the full array of sv_tow
  * values; this is transferred from the cloud as part of each prediction,
  * to indicate the date_day and time_full_s for the center of each prediction's
  * validity period.
@@ -46,26 +46,26 @@ struct nrf_cloud_pgps_system_time {
 	uint16_t time_frac_ms;
 	/** Will be 0. */
 	uint32_t sv_mask;
-	/** Placeholder where sv_tow[32] is for A-GPS. */
+	/** Placeholder where sv_tow[32] is for A-GNSS. */
 	uint32_t pad;
 } __packed;
 
 /** @brief P-GPS prediction Flash storage format. */
 struct nrf_cloud_pgps_prediction {
-	/** Set to NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK. */
+	/** Set to NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK. */
 	uint8_t time_type;
 	/** Will be 1. */
 	uint16_t time_count;
 	/** Information about when this prediction is applicable. */
 	struct nrf_cloud_pgps_system_time time;
-	/** Not from cloud; inserted during storage to ease reusing A-GPS code. */
+	/** Not from cloud; inserted during storage to ease reusing A-GNSS code. */
 	uint8_t schema_version;
-	/** Set to NRF_CLOUD_AGPS_EPHEMERIDES. */
+	/** Set to NRF_CLOUD_AGNSS_EPHEMERIDES. */
 	uint8_t ephemeris_type;
 	/** Usually will be NRF_CLOUD_PGPS_NUM_SV. */
 	uint16_t ephemeris_count;
 	/** Array of satellite orbital equation coefficients. */
-	struct nrf_cloud_agps_ephemeris ephemerii[NRF_CLOUD_PGPS_NUM_SV];
+	struct nrf_cloud_agnss_ephemeris ephemerii[NRF_CLOUD_PGPS_NUM_SV];
 	/** Not from cloud; appended during storage to verify integrity on retrieval. */
 	uint32_t sentinel;
 } __packed;
@@ -188,7 +188,7 @@ void nrf_cloud_pgps_set_location_normalized(int32_t latitude, int32_t longitude)
 /** @brief Update the storage of the most recent known location in degrees.
  * This will be injected along with the current time and relevant predicted
  * ephemerides to the GPS unit in order to get the fastest possible fix, when
- * the P-GPS subsystem is built with A-GPS disabled, or when A-GPS data is
+ * the P-GPS subsystem is built with A-GNSS disabled, or when A-GNSS data is
  * unavailable due to lack of a cloud connection.
  * Current time is also stored.
  *
@@ -204,7 +204,7 @@ void nrf_cloud_pgps_set_location(double latitude, double longitude);
 void nrf_cloud_pgps_clear_location(void);
 
 /** @brief Update the storage of the leap second offset between GPS time
- * and UTC. This called automatically by the A-GPS subsystem (if enabled)
+ * and UTC. This called automatically by the A-GNSS subsystem (if enabled)
  * when it receives a UTC assistance element, setting leap_seconds to  the delta_tls field.
  *
  * @param leap_seconds Offset in seconds.
