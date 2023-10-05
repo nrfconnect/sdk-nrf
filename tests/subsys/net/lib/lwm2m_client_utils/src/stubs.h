@@ -60,7 +60,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const 
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
 DECLARE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
-DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_agps_process, const char *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_agnss_process, const char *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_begin_update);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_process_update, uint8_t *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_finish_update);
@@ -149,7 +149,7 @@ DECLARE_FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void 
 	FUNC(lte_lc_edrx_req)                           \
 	FUNC(lte_lc_neighbor_cell_measurement)          \
 	FUNC(lte_lc_register_handler)                   \
-	FUNC(nrf_cloud_agps_process)			\
+	FUNC(nrf_cloud_agnss_process)			\
 	FUNC(nrf_cloud_pgps_begin_update)		\
 	FUNC(nrf_cloud_pgps_process_update)		\
 	FUNC(nrf_cloud_pgps_finish_update)		\

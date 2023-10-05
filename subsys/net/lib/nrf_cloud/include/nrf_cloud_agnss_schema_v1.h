@@ -6,50 +6,50 @@
 
 #include <zephyr/kernel.h>
 
-#ifndef NRF_CLOUD_AGPS_SCHEMA_V1_H_
-#define NRF_CLOUD_AGPS_SCHEMA_V1_H_
+#ifndef NRF_CLOUD_AGNSS_SCHEMA_V1_H_
+#define NRF_CLOUD_AGNSS_SCHEMA_V1_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION		(1)
+#define NRF_CLOUD_AGNSS_BIN_SCHEMA_VERSION		(1)
 
-#define NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_INDEX		(0)
-#define NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE		(1)
-#define NRF_CLOUD_AGPS_BIN_TYPE_OFFSET			(0)
-#define NRF_CLOUD_AGPS_BIN_TYPE_SIZE			(1)
-#define NRF_CLOUD_AGPS_BIN_COUNT_OFFSET			(1)
-#define NRF_CLOUD_AGPS_BIN_COUNT_SIZE			(2)
+#define NRF_CLOUD_AGNSS_BIN_SCHEMA_VERSION_INDEX	(0)
+#define NRF_CLOUD_AGNSS_BIN_SCHEMA_VERSION_SIZE		(1)
+#define NRF_CLOUD_AGNSS_BIN_TYPE_OFFSET			(0)
+#define NRF_CLOUD_AGNSS_BIN_TYPE_SIZE			(1)
+#define NRF_CLOUD_AGNSS_BIN_COUNT_OFFSET		(1)
+#define NRF_CLOUD_AGNSS_BIN_COUNT_SIZE			(2)
 
 
 /* Maximum number of satellites in time-of-week data array. */
-#define NRF_CLOUD_AGPS_MAX_SV_TOW			(32U)
+#define NRF_CLOUD_AGNSS_MAX_SV_TOW			(32U)
 
-enum nrf_cloud_agps_type {
-	NRF_CLOUD_AGPS__TYPE_INVALID		= 0,
-	NRF_CLOUD_AGPS__FIRST			= 1,
-	NRF_CLOUD_AGPS_UTC_PARAMETERS		= NRF_CLOUD_AGPS__FIRST,
-	NRF_CLOUD_AGPS_EPHEMERIDES		= 2,
-	NRF_CLOUD_AGPS_ALMANAC			= 3,
-	NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION	= 4,
-	NRF_CLOUD_AGPS_NEQUICK_CORRECTION	= 5,
-	NRF_CLOUD_AGPS_GPS_TOWS			= 6,
-	NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK		= 7,
-	NRF_CLOUD_AGPS_LOCATION			= 8,
-	NRF_CLOUD_AGPS_INTEGRITY		= 9,
+enum nrf_cloud_agnss_type {
+	NRF_CLOUD_AGNSS__TYPE_INVALID		= 0,
+	NRF_CLOUD_AGNSS__FIRST			= 1,
+	NRF_CLOUD_AGNSS_GPS_UTC_PARAMETERS	= NRF_CLOUD_AGNSS__FIRST,
+	NRF_CLOUD_AGNSS_GPS_EPHEMERIDES		= 2,
+	NRF_CLOUD_AGNSS_GPS_ALMANAC		= 3,
+	NRF_CLOUD_AGNSS_KLOBUCHAR_CORRECTION	= 4,
+	NRF_CLOUD_AGNSS_NEQUICK_CORRECTION	= 5,
+	NRF_CLOUD_AGNSS_GPS_TOWS		= 6,
+	NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK	= 7,
+	NRF_CLOUD_AGNSS_LOCATION		= 8,
+	NRF_CLOUD_AGNSS_GPS_INTEGRITY		= 9,
 	/* This value signifies prediction data */
-	NRF_CLOUD_AGPS__RSVD_PREDICTION_DATA	= 10,
+	NRF_CLOUD_AGNSS__RSVD_PREDICTION_DATA	= 10,
 	/* A-GNSS types for modem firmware version v2.0.0 or later */
 	NRF_CLOUD_AGNSS_QZSS_ALMANAC		= 11,
 	NRF_CLOUD_AGNSS_QZSS_EPHEMERIDES	= 12,
 	NRF_CLOUD_AGNSS_QZSS_INTEGRITY		= 13,
-	NRF_CLOUD_AGPS__LAST			= NRF_CLOUD_AGNSS_QZSS_INTEGRITY,
+	NRF_CLOUD_AGNSS__LAST			= NRF_CLOUD_AGNSS_QZSS_INTEGRITY,
 	/* Ignore the reserved prediction data enum for the count calculation */
-	NRF_CLOUD_AGPS__TYPES_COUNT		= NRF_CLOUD_AGPS__LAST - NRF_CLOUD_AGPS__FIRST
+	NRF_CLOUD_AGNSS__TYPES_COUNT		= NRF_CLOUD_AGNSS__LAST - NRF_CLOUD_AGNSS__FIRST
 };
 
-struct nrf_cloud_agps_utc {
+struct nrf_cloud_agnss_utc {
 	int32_t a1;
 	int32_t a0;
 	uint8_t tot;
@@ -60,7 +60,7 @@ struct nrf_cloud_agps_utc {
 	int8_t delta_tlsf;
 } __packed;
 
-struct nrf_cloud_agps_ephemeris {
+struct nrf_cloud_agnss_ephemeris {
 	uint8_t sv_id;
 	uint8_t health;
 	uint16_t iodc;
@@ -89,7 +89,7 @@ struct nrf_cloud_agps_ephemeris {
 	int16_t cuc;
 } __packed;
 
-struct nrf_cloud_agps_almanac {
+struct nrf_cloud_agnss_almanac {
 	uint8_t sv_id;
 	uint8_t wn;
 	uint8_t toa;
@@ -106,7 +106,7 @@ struct nrf_cloud_agps_almanac {
 	int16_t af1;
 } __packed;
 
-struct nrf_cloud_agps_klobuchar {
+struct nrf_cloud_agnss_klobuchar {
 	int8_t alpha0;
 	int8_t alpha1;
 	int8_t alpha2;
@@ -117,7 +117,7 @@ struct nrf_cloud_agps_klobuchar {
 	int8_t beta3;
 } __packed;
 
-struct nrf_cloud_agps_nequick {
+struct nrf_cloud_agnss_nequick {
 	int16_t ai0;
 	int16_t ai1;
 	int16_t ai2;
@@ -125,21 +125,21 @@ struct nrf_cloud_agps_nequick {
 	uint8_t storm_valid;
 } __packed;
 
-struct nrf_cloud_agps_tow_element {
+struct nrf_cloud_agnss_tow_element {
 	uint8_t sv_id;
 	uint16_t tlm;
 	uint8_t flags;
 } __packed;
 
-struct nrf_cloud_agps_system_time {
+struct nrf_cloud_agnss_system_time {
 	uint16_t date_day;
 	uint32_t time_full_s;
 	uint16_t time_frac_ms;
 	uint32_t sv_mask;
-	struct nrf_cloud_agps_tow_element sv_tow[NRF_CLOUD_AGPS_MAX_SV_TOW];
+	struct nrf_cloud_agnss_tow_element sv_tow[NRF_CLOUD_AGNSS_MAX_SV_TOW];
 } __packed;
 
-struct nrf_cloud_agps_location {
+struct nrf_cloud_agnss_location {
 	int32_t latitude;
 	int32_t longitude;
 	int16_t altitude;
@@ -150,24 +150,24 @@ struct nrf_cloud_agps_location {
 	uint8_t confidence;
 } __packed;
 
-struct nrf_cloud_agps_integrity {
+struct nrf_cloud_agnss_integrity {
 	uint32_t integrity_mask;
 };
 
-struct nrf_cloud_apgs_element {
-	enum nrf_cloud_agps_type type;
+struct nrf_cloud_agnss_element {
+	enum nrf_cloud_agnss_type type;
 	union {
-		struct nrf_cloud_agps_utc *utc;
-		struct nrf_cloud_agps_ephemeris *ephemeris;
-		struct nrf_cloud_agps_almanac *almanac;
+		struct nrf_cloud_agnss_utc *utc;
+		struct nrf_cloud_agnss_ephemeris *ephemeris;
+		struct nrf_cloud_agnss_almanac *almanac;
 		union {
-			struct nrf_cloud_agps_klobuchar *klobuchar;
-			struct nrf_cloud_agps_nequick *nequick;
+			struct nrf_cloud_agnss_klobuchar *klobuchar;
+			struct nrf_cloud_agnss_nequick *nequick;
 		} ion_correction;
-		struct nrf_cloud_agps_tow_element *tow;
-		struct nrf_cloud_agps_system_time *time_and_tow;
-		struct nrf_cloud_agps_location *location;
-		struct nrf_cloud_agps_integrity *integrity;
+		struct nrf_cloud_agnss_tow_element *tow;
+		struct nrf_cloud_agnss_system_time *time_and_tow;
+		struct nrf_cloud_agnss_location *location;
+		struct nrf_cloud_agnss_integrity *integrity;
 	};
 };
 
@@ -176,4 +176,4 @@ struct nrf_cloud_apgs_element {
 }
 #endif
 
-#endif /* NRF_CLOUD_AGPS_SCHEMA_V1_H_ */
+#endif /* NRF_CLOUD_AGNSS_SCHEMA_V1_H_ */

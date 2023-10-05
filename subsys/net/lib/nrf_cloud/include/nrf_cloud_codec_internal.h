@@ -17,8 +17,8 @@
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-#include <net/nrf_cloud_agps.h>
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#include <net/nrf_cloud_agnss.h>
 #endif
 #if defined(CONFIG_NRF_MODEM)
 #include <nrf_modem_gnss.h>
@@ -27,7 +27,7 @@
 #include <net/nrf_cloud_log.h>
 #include "cJSON.h"
 #include "nrf_cloud_fsm.h"
-#include "nrf_cloud_agps_schema_v1.h"
+#include "nrf_cloud_agnss_schema_v1.h"
 #include "nrf_cloud_log_internal.h"
 #include "nrf_cloud_fota.h"
 
@@ -307,8 +307,8 @@ enum nrf_cloud_rcv_topic nrf_cloud_dc_rx_topic_decode(const char *const topic);
  */
 void nrf_cloud_set_app_version(const char *const app_ver);
 
-/** @brief Encode the data payload of an nRF Cloud A-GPS request into the provided object */
-int nrf_cloud_agps_req_data_json_encode(const enum nrf_cloud_agps_type *const types,
+/** @brief Encode the data payload of an nRF Cloud A-GNSS request into the provided object */
+int nrf_cloud_agnss_req_data_json_encode(const enum nrf_cloud_agnss_type *const types,
 					const size_t type_count,
 					const struct lte_lc_cell *const cell_inf,
 					const bool fetch_cell_inf,
@@ -321,16 +321,16 @@ int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	*
 				    cJSON * const pvt_data_obj);
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
-/** @brief Build A-GPS type array based on request.
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+/** @brief Build A-GNSS type array based on request.
  */
-int nrf_cloud_agps_type_array_get(const struct nrf_modem_gnss_agnss_data_frame *const request,
-				  enum nrf_cloud_agps_type *array, const size_t array_size);
+int nrf_cloud_agnss_type_array_get(const struct nrf_modem_gnss_agnss_data_frame *const request,
+				  enum nrf_cloud_agnss_type *array, const size_t array_size);
 
-/** @brief Encode an A-GPS request device message to be sent to nRF Cloud */
-int nrf_cloud_agps_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame *const request,
-				   cJSON * const agps_req_obj_out);
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+/** @brief Encode an A-GNSS request device message to be sent to nRF Cloud */
+int nrf_cloud_agnss_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame *const request,
+				   cJSON * const agnss_req_obj_out);
+#endif /* CONFIG_NRF_CLOUD_AGNSS || CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 /** @brief Parse the PGPS response (REST and MQTT) from nRF Cloud */

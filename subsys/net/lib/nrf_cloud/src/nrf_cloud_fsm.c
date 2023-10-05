@@ -11,8 +11,8 @@
 #include <net/nrf_cloud_alert.h>
 #include <net/nrf_cloud_log.h>
 #include <zephyr/logging/log.h>
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-#include <net/nrf_cloud_agps.h>
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+#include <net/nrf_cloud_agnss.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
@@ -514,27 +514,27 @@ static int dc_connection_handler(const struct nct_evt *nct_evt)
 	return 0;
 }
 
-static void agps_process(const char * const buf, const size_t buf_len)
+static void agnss_process(const char * const buf, const size_t buf_len)
 {
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-	int ret = nrf_cloud_agps_process(buf, buf_len);
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+	int ret = nrf_cloud_agnss_process(buf, buf_len);
 
 	if (ret) {
 		struct nrf_cloud_evt evt = {
 			.type = NRF_CLOUD_EVT_ERROR,
-			.status = NRF_CLOUD_ERR_STATUS_AGPS_PROC
+			.status = NRF_CLOUD_ERR_STATUS_AGNSS_PROC
 		};
 
-		LOG_ERR("Error processing A-GPS data: %d", ret);
+		LOG_ERR("Error processing A-GNSS data: %d", ret);
 		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
 	} else {
-		LOG_DBG("A-GPS data processed");
+		LOG_DBG("A-GNSS data processed");
 	}
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* If both A-GPS and P-GPS are enabled, everything but ephemerides and almanacs
-	 * are handled by A-GPS.
-	 * In this configuration it is important to check, after receiving A-GPS data,
+	/* If both A-GNSS and P-GPS are enabled, everything but ephemerides and almanacs
+	 * are handled by A-GNSS.
+	 * In this configuration it is important to check, after receiving A-GNSS data,
 	 * whether any further assistance is needed by the modem for ephemerides,
 	 * which would come from P-GPS (usually, in stored predictions in flash).
 	 */
@@ -604,7 +604,7 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 
 	switch (nrf_cloud_dc_rx_topic_decode(cloud_evt.topic.ptr)) {
 	case NRF_CLOUD_RCV_TOPIC_AGPS:
-		agps_process(cloud_evt.data.ptr, cloud_evt.data.len);
+		agnss_process(cloud_evt.data.ptr, cloud_evt.data.len);
 		return 0;
 	case NRF_CLOUD_RCV_TOPIC_PGPS:
 		pgps_process(cloud_evt.data.ptr, cloud_evt.data.len);

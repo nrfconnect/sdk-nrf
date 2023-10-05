@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#if (defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)) ||\
+#if (defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)) ||\
 	defined(CONFIG_LOCATION_DATA_DETAILS)
 #include <nrf_modem_gnss.h>
 #endif
@@ -220,7 +220,7 @@ struct location_event_data {
 		struct location_data_error error;
 #endif
 
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
 		/**
 		 * A-GNSS notification data frame used by GNSS to let the application know it needs
 		 * new assistance data, used with event @ref LOCATION_EVT_GNSS_ASSISTANCE_REQUEST.
@@ -573,7 +573,7 @@ const char *location_method_str(enum location_method method);
  * function.
  *
  * Note that the data must be formatted similarly to the nRF Cloud A-GNSS data, see for example
- * nrf_cloud_agps_schema_v1.h.
+ * nrf_cloud_agnss_schema_v1.h.
  *
  * @param[in] buf Data received.
  * @param[in] buf_len Buffer size of data to be processed.

@@ -66,7 +66,7 @@ If this parameter is provided, the response data is parsed into ``result``.
 A number of functions automatically handle response data themselves:
 
 * :c:func:`nrf_cloud_rest_pgps_data_get` - Pass response data to the P-GPS library :ref:`lib_nrf_cloud_pgps`.
-* :c:func:`nrf_cloud_rest_agps_data_get` - Pass response data to the A-GPS library :ref:`lib_nrf_cloud_agps`.
+* :c:func:`nrf_cloud_rest_agnss_data_get` - Pass response data to the A-GNSS library :ref:`lib_nrf_cloud_agnss`.
 * :c:func:`nrf_cloud_rest_fota_job_get` - If a FOTA job exists, :ref:`lib_fota_download` can perform the firmware download and installation.
   Call the :c:func:`nrf_cloud_rest_fota_job_update` function to report the status of the job.
 

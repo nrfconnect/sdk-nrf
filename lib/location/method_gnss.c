@@ -14,10 +14,10 @@
 #include <nrf_errno.h>
 #include "location_core.h"
 #include "location_utils.h"
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include "scan_cellular.h"
 #include <net/nrf_cloud_rest.h>
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #include <stdlib.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -30,7 +30,7 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 /* Verify that MQTT, REST, CoAP or external service is enabled */
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
@@ -46,12 +46,12 @@ BUILD_ASSERT(
  * constantly active.
  */
 #define SLEEP_WAIT_BACKSTOP 5
-#if !defined(CONFIG_NRF_CLOUD_AGPS)
+#if !defined(CONFIG_NRF_CLOUD_AGNSS)
 /* range 10240-3456000000 ms, see AT command %XMODEMSLEEP */
 #define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
 #define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
 #endif
-#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
+#if (defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS))
 #define AGNSS_REQUEST_RECV_BUF_SIZE 3500
 #define AGNSS_REQUEST_HTTPS_RESP_HEADER_SIZE 400
 /* Minimum time between two A-GNSS data requests in seconds. */
@@ -85,7 +85,7 @@ BUILD_ASSERT(
 
 static struct k_work method_gnss_start_work;
 static struct k_work method_gnss_pvt_work;
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 /* Flag indicating whether nrf_modem_gnss_agnss_expiry_get() is supported. If the API is
  * supported, NRF_MODEM_GNSS_EVT_AGNSS_REQ events are ignored.
  */
@@ -94,7 +94,7 @@ static struct k_work method_gnss_agnss_req_event_handle_work;
 static struct k_work method_gnss_agnss_req_work;
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 static int64_t agnss_req_timestamp;
 #if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && \
 	(defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)) && \
@@ -118,7 +118,7 @@ static struct location_gnss_config gnss_config;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 static K_SEM_DEFINE(entered_rrc_idle, 1, 1);
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_modem_gnss_agnss_data_frame agnss_request;
 #endif
 
@@ -138,7 +138,7 @@ static struct nrf_modem_gnss_agnss_data_frame pgps_agnss_request = {
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
-#if (defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)) || \
+#if (defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)) || \
 	(defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL))
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGNSS_REQUEST_HTTPS_RESP_HEADER_SIZE];
@@ -249,11 +249,11 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 static void method_gnss_nrf_cloud_agnss_request(void)
 {
-	int err = nrf_cloud_agps_request(&agnss_request);
+	int err = nrf_cloud_agnss_request(&agnss_request);
 
 	if (err) {
 		LOG_ERR("nRF Cloud A-GNSS request failed, error: %d", err);
@@ -286,8 +286,8 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 	rest_ctx.auth = (char *)jwt_buf;
 #endif
 
-	struct nrf_cloud_rest_agps_request request = {
-		NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
+	struct nrf_cloud_rest_agnss_request request = {
+		NRF_CLOUD_REST_AGNSS_REQ_CUSTOM,
 		&agnss_request,
 		NULL,
 		false,
@@ -314,15 +314,15 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 		request.net_info = &net_info;
 	}
 
-	struct nrf_cloud_rest_agps_result result = {
+	struct nrf_cloud_rest_agnss_result result = {
 		agnss_rest_data_buf,
 		sizeof(agnss_rest_data_buf),
 		0};
 
 #if defined(CONFIG_NRF_CLOUD_REST)
-	err = nrf_cloud_rest_agps_data_get(&rest_ctx, &request, &result);
+	err = nrf_cloud_rest_agnss_data_get(&rest_ctx, &request, &result);
 #elif defined(CONFIG_NRF_CLOUD_COAP)
-	err = nrf_cloud_coap_agps_data_get(&request, &result);
+	err = nrf_cloud_coap_agnss_data_get(&request, &result);
 #endif
 	if (err) {
 		LOG_ERR("nRF Cloud A-GNSS request failed, error: %d", err);
@@ -331,7 +331,7 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 
 	LOG_DBG("A-GNSS data requested");
 
-	err = nrf_cloud_agps_process(result.buf, result.agps_sz);
+	err = nrf_cloud_agnss_process(result.buf, result.agnss_sz);
 	if (err) {
 		LOG_ERR("A-GNSS data processing failed, error: %d", err);
 		return;
@@ -347,7 +347,7 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 #endif
 }
 #endif /* #elif defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP) */
-#endif /* defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
+#endif /* defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
 	!defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
@@ -421,7 +421,7 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 }
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 static bool method_gnss_agnss_required(void)
 {
 	int32_t time_since_agnss_req;
@@ -455,9 +455,9 @@ static bool method_gnss_agnss_required(void)
 
 	return true;
 }
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static const char *get_system_string(uint8_t system_id)
 {
 	switch (system_id) {
@@ -520,7 +520,7 @@ static void method_gnss_assistance_request(void)
 		agnss_request.system[0].sv_mask_alm = 0;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_AGPS)) {
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_AGNSS)) {
 		/* Time and position come from A-GNSS. */
 		pgps_agnss_request.data_flags = 0;
 	}
@@ -529,7 +529,7 @@ static void method_gnss_assistance_request(void)
 		(uint32_t)pgps_agnss_request.system[0].sv_mask_ephe, pgps_agnss_request.data_flags);
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 	if (agnss_request.data_flags != 0) {
 		/* With A-GNSS, if any of the flags in the data_flags field is set, it is
 		 * feasible to request everything at the same time, because of the small amount
@@ -602,7 +602,7 @@ static void method_gnss_assistance_request(void)
 		method_gnss_nrf_cloud_agnss_request();
 #endif
 	}
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	if (pgps_agnss_request.system[0].sv_mask_ephe != 0) {
@@ -639,7 +639,7 @@ static void method_gnss_agnss_req_event_handle_work_fn(struct k_work *item)
 
 	method_gnss_assistance_request();
 }
-#endif /* defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS) */
+#endif /* defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS) */
 
 void method_gnss_event_handler(int event)
 {
@@ -649,7 +649,7 @@ void method_gnss_event_handler(int event)
 		break;
 
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 		if (!agnss_expiry_get_supported) {
 			k_work_submit_to_queue(
 				location_core_work_queue_get(),
@@ -716,7 +716,7 @@ int method_gnss_timeout(void)
 	return method_gnss_cancel();
 }
 
-#if !defined(CONFIG_NRF_CLOUD_AGPS)
+#if !defined(CONFIG_NRF_CLOUD_AGNSS)
 static bool method_gnss_psm_enabled(void)
 {
 	int ret = 0;
@@ -772,7 +772,7 @@ static void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 		LOG_DBG("Subscribed to modem sleep notifications");
 	}
 }
-#endif /* !CONFIG_NRF_CLOUD_AGPS */
+#endif /* !CONFIG_NRF_CLOUD_AGNSS */
 
 static bool method_gnss_allowed_to_start(void)
 {
@@ -804,7 +804,7 @@ static bool method_gnss_allowed_to_start(void)
 	}
 	k_sem_give(&entered_rrc_idle);
 
-#if !defined(CONFIG_NRF_CLOUD_AGPS)
+#if !defined(CONFIG_NRF_CLOUD_AGNSS)
 	/* If A-GNSS is used, a GNSS fix can be obtained fast even in RRC idle mode (without PSM).
 	 * Without A-GNSS, it's practical to wait for the modem to sleep before attempting a fix.
 	 */
@@ -986,8 +986,8 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 		LOG_WRN("Modem's system or functional mode doesn't allow GNSS usage");
 	}
 
-#if defined(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK)
-	err |= nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+#if defined(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK)
+	err |= nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK);
 #endif
 
 	insuf_timewin_count = 0;
@@ -1031,7 +1031,7 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	location_core_timer_start(gnss_config.timeout);
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 /* Processes A-GNSS expiry data from nrf_modem_gnss_agnss_expiry_get() function.
  *
  * This function is only used with modem firmware v1.3.2 or later. With older modem firmware
@@ -1252,7 +1252,7 @@ int method_gnss_location_get(const struct location_request_info *request)
 		}
 	}
 #endif
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agnss_req_work);
 	/* Sleep for a while before submitting the next work, otherwise A-GNSS data may not be
 	 * downloaded before GNSS is started. If the nrf_modem_gnss_agnss_expiry_get() API is not
@@ -1291,7 +1291,7 @@ int method_gnss_init(void)
 
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
 	k_work_init(&method_gnss_start_work, method_gnss_positioning_work_fn);
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 	k_work_init(&method_gnss_agnss_req_event_handle_work,
 		    method_gnss_agnss_req_event_handle_work_fn);
 	k_work_init(&method_gnss_agnss_req_work, method_gnss_agnss_req_work_fn);
@@ -1309,7 +1309,7 @@ int method_gnss_init(void)
 
 #endif
 
-#if !defined(CONFIG_NRF_CLOUD_AGPS)
+#if !defined(CONFIG_NRF_CLOUD_AGNSS)
 	/* Subscribe to sleep notification to monitor when modem enters power saving mode */
 	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);
 #endif

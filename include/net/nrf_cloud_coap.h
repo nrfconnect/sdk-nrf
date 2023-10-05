@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #include <net/nrf_cloud_rest.h>
-#include <net/nrf_cloud_agps.h>
+#include <net/nrf_cloud_agnss.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_codec.h>
 #include <zephyr/net/coap_client.h>
@@ -91,21 +91,21 @@ int nrf_cloud_coap_disconnect(void);
 /* nRF Cloud service functions */
 
 /**
- * @brief Request nRF Cloud CoAP Assisted GPS (A-GPS) data.
+ * @brief Request nRF Cloud CoAP Assisted GNSS (A-GNSS) data.
  *
  * @param[in]     request Data to be provided in API call.
- * @param[in,out] result Structure pointing to caller-provided buffer in which to store A-GPS data.
+ * @param[in,out] result Structure pointing to caller-provided buffer in which to store A-GNSS data.
  *
  *  @retval -EINVAL will be returned, and an error message printed, if invalid parameters
  *          are given.
- *  @retval -ENOENT will be returned if there was no A-GPS data requested for the specified
+ *  @retval -ENOENT will be returned if there was no A-GNSS data requested for the specified
  *          request type.
  *  @retval -ENOBUFS will be returned, and an error message printed, if there is not enough
- *          buffer space to store retrieved AGPS data.
+ *          buffer space to store retrieved A-GNSS data.
  * @retval 0 If successful.
  */
-int nrf_cloud_coap_agps_data_get(struct nrf_cloud_rest_agps_request const *const request,
-				 struct nrf_cloud_rest_agps_result *result);
+int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *const request,
+				  struct nrf_cloud_rest_agnss_result *result);
 
 /**
  * @brief Request URL for nRF Cloud Predicted GPS (P-GPS) data.

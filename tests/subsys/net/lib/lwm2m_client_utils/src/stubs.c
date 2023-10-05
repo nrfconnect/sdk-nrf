@@ -66,7 +66,7 @@ DEFINE_FAKE_VALUE_FUNC(int, lte_lc_edrx_param_set, enum lte_lc_lte_mode, const c
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_edrx_req, bool);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_neighbor_cell_measurement, struct lte_lc_ncellmeas_params *);
 DEFINE_FAKE_VOID_FUNC(lte_lc_register_handler, lte_lc_evt_handler_t);
-DEFINE_FAKE_VALUE_FUNC(int, nrf_cloud_agps_process, const char *, size_t);
+DEFINE_FAKE_VALUE_FUNC(int, nrf_cloud_agnss_process, const char *, size_t);
 DEFINE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_begin_update);
 DEFINE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_process_update, uint8_t *, size_t);
 DEFINE_FAKE_VALUE_FUNC(int, nrf_cloud_pgps_finish_update);

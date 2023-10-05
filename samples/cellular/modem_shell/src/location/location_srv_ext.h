@@ -7,7 +7,7 @@
 #ifndef MOSH_LOCATION_SERVICE_H
 #define MOSH_LOCATION_SERVICE_H
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <nrf_modem_gnss.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -20,7 +20,7 @@
 #include <net/wifi_location_common.h>
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 void location_srv_ext_agnss_handle(const struct nrf_modem_gnss_agnss_data_frame *agnss_req);
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)

@@ -303,7 +303,7 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		mosh_error("Location request failed");
 		break;
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
 	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
 		mosh_print(
 			"A-GNSS request from Location library "
