@@ -15,8 +15,8 @@ struct mock_socket_iface_data {
 	struct net_if *iface;
 } mock_socket_iface_data;
 
-struct net_if_api mock_if_api = {
-	.init = mock_socket_iface_init,
+struct offloaded_if_api mock_if_api = {
+	.iface_api.init = mock_socket_iface_init,
 };
 
 /* All the functions contains a delay of 50 msec to avoid endless loops in
