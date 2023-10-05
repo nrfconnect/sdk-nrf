@@ -21,6 +21,10 @@
 	};
 };
 
+&uicr {
+	gpio-as-nreset;
+};
+
 &gpiote {
 	interrupts = <6 NRF_DEFAULT_IRQ_PRIORITY>;
 };

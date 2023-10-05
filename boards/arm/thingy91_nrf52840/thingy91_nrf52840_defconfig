@@ -14,7 +14,4 @@ CONFIG_SERIAL=y
 # Enable console
 CONFIG_CONSOLE=y
 
-# Additional board options
-CONFIG_GPIO_AS_PINRESET=n
-
 CONFIG_BOOTLOADER_MCUBOOT=y
