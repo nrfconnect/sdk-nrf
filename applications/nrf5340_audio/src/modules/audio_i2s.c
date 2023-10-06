@@ -12,7 +12,7 @@
 #include <nrfx_i2s.h>
 #include <nrfx_clock.h>
 
-#include "nrf5340_audio_common.h"
+#include "audio_sync_timer.h"
 
 #define I2S_NL DT_NODELABEL(i2s0)
 
@@ -66,8 +66,7 @@ static i2s_blk_comp_callback_t i2s_blk_comp_callback;
 
 static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t status)
 {
-	uint32_t frame_start_ts = nrfx_timer_capture_get(
-		&audio_sync_timer_instance, AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
+	uint32_t frame_start_ts = audio_sync_timer_capture_get();
 
 	if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && released_bufs &&
 	    i2s_blk_comp_callback && (released_bufs->p_rx_buffer || released_bufs->p_tx_buffer)) {
