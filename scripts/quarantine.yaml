@@ -8,5 +8,4 @@
 
   platforms:
 
-  
     - qemu_cortex_m3
