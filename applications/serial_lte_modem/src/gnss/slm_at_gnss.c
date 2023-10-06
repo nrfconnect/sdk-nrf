@@ -588,11 +588,6 @@ static void gnss_event_handler(int event)
 		LOG_INF("GNSS_EVT_FIX");
 		on_gnss_evt_fix();
 		break;
-	case NRF_MODEM_GNSS_EVT_NMEA:
-		if (IS_ENABLED(CONFIG_SLM_LOG_LEVEL_DBG)) {
-			on_gnss_evt_nmea();
-		}
-		break;
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
 		LOG_INF("GNSS_EVT_AGNSS_REQ");
 		on_gnss_evt_agnss_req();
