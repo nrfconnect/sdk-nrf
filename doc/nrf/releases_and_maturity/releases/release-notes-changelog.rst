@@ -460,8 +460,11 @@ Cellular samples (renamed from nRF9160 samples)
       This will fix a case where a battery-operated device joins a network that does not support PSM.
       This fulfills the proprietary PSM requirements of modem firmware v2.0.0.
 
-  * Updated the sample to use tickless operating mode from Zephyr's LwM2M engine, which does not cause device wake-up in 500 ms interval anymore.
-    This allows the device to achieve two µA of current usage while in PSM sleep mode.
+  * Updated:
+
+    * The sample to use tickless operating mode from Zephyr's LwM2M engine, which does not cause device wake-up in 500 ms interval anymore.
+      This allows the device to achieve two µA of current usage while in PSM sleep mode.
+    * The sample to use the :kconfig:option:`CONFIG_LWM2M_UPDATE_PERIOD` Kconfig option to set the LwM2M update sending interval.
 
 
 * :ref:`gnss_sample` sample:
