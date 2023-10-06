@@ -317,8 +317,8 @@ To implement the callback function, complete the following steps:
 1. Create a new file, for example :file:`src/zcl_callbacks.cpp`.
 2. Implement the callback in this file:
 
-   a. Open :file:`src/zap-generated/callback-stub.cpp` to check the list of customizable callback functions, marked with ``__attribute__((weak))``.
-   #. Read the description of :c:func:`MatterPostAttributeChangeCallback()`.
+   a. Open :file:`ncs/modules/lib/matter/src/app/util/generic-callback-stubs.cpp` to check the list of customizable callback functions, marked with ``__attribute__((weak))``.
+   #. Read the description of :c:func:`MatterPostAttributeChangeCallback()` in the :file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` file.
    #. Implement :c:func:`MatterPostAttributeChangeCallback()` in the :file:`src/zcl_callbacks.cpp` file.
 
 For example, the implementation can look as follows:
