@@ -566,6 +566,9 @@ NFC samples
 Networking samples
 ------------------
 
+* Added a new :ref:`udp_sample` sample that has support for Wi-Fi and LTE connectivity.
+  The :ref:`udp` sample continues to serve as a low power example that sends UDP packets over LTE connection.
+
 * :ref:`aws_iot` sample:
 
   * Added support for Wi-Fi and LTE connectivity through the connection manager API.

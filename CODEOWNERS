@@ -140,6 +140,7 @@ Kconfig*                                  @tejlmand
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/mqtt/                        @simensrostad
+/samples/net/udp/                         @simensrostad
 /samples/sensor/bh1749/                   @gregersrygg
 /samples/sensor/bme68x_iaq/               @maxd-nordic
 /samples/bluetooth/                       @alwa-nordic @jori-nordic @carlescufi @KAGA164
