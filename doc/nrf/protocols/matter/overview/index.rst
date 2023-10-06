@@ -38,5 +38,6 @@ The following pages provide a brief overview of the Matter structure, in accorda
    commissioning
    multi_fabrics
    dfu
+   bridge
    dev_model
    integration

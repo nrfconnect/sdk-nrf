@@ -118,6 +118,8 @@ Matter
     * Perform a factory reset of the device and start Bluetooth LE advertising (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START`).
     * Perform a factory reset of the device and then reboot the device (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT`).
 
+  * Page about :ref:`ug_matter_overview_bridge`.
+
 * Updated:
 
   * Matter over Thread samples so that the OpenThread shell is disabled by default.

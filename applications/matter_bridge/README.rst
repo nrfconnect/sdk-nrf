@@ -14,6 +14,8 @@ The devices on the non-Matter side of the Matter bridge are called *bridged devi
 The Matter bridge device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.11ax (Wi-Fi 6) network.
 You can use this application as a reference for creating your own application.
 
+See :ref:`ug_matter_overview_bridge` for more information about the Matter bridge specification and architecture.
+
 Requirements
 ************
 
