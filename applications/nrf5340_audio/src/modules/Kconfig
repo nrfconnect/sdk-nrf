@@ -12,6 +12,11 @@ config BUTTON_DEBOUNCE_MS
 	int "Button debounce time in ms"
 	default 50
 
+config AUDIO_SYNC_TIMER_USES_RTC
+	bool
+	default !BT_LL_ACS_NRF53
+	select NRFX_RTC0
+
 #----------------------------------------------------------------------------#
 menu "Power measurement"
 

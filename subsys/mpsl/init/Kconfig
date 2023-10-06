@@ -39,6 +39,23 @@ config MPSL_DYNAMIC_INTERRUPTS
 	  interrupts. This allows reconfiguring TIMER0_IRQn, RTC0_IRQn,
 	  and RADIO_IRQn handlers during runtime when MPSL is uninitialized.
 
+config MPSL_TRIGGER_IPC_TASK_ON_RTC_START
+	bool "Trigger an IPC task when the RTC starts"
+	depends on SOC_NRF5340_CPUNET
+	help
+	  This option configures MPSL to trigger an IPC task at the time the
+	  RTC starts. This can be used for synchronizing time betwen the
+	  application and network core.
+
+config MPSL_TRIGGER_IPC_TASK_ON_RTC_START_CHANNEL
+	int "IPC channel to trigger on IPC start"
+	depends on MPSL_TRIGGER_IPC_TASK_ON_RTC_START
+	default 4
+	help
+	  The channel that will be triggered when the RTC starts.
+	  The application core part of the code needs to be aware of
+	  which channel is used.
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
