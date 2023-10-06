@@ -866,6 +866,7 @@ Libraries for networking
 
     * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option's default value to ``255``.
     * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option's default value to ``255``.
+    * Changed the event order so that the :c:member:`DOWNLOAD_CLIENT_EVT_ERROR` is always received before the :c:member:`DOWNLOAD_CLIENT_EVT_CLOSED` event.
 
 * :ref:`lib_fota_download` library:
 
