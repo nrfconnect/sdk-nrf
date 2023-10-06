@@ -13,13 +13,6 @@
 #include <nrfx_nvmc.h>
 #include <errno.h>
 #include <pm_config.h>
-/* In case this gets included in an image that is build without a bootloader
- * the provision area is not defined, so we have to point to the OTP manually
- * NCSDK-18032 is to prevent this workaround in the future
- */
-#ifndef PM_PROVISION_ADDRESS
-#define PM_PROVISION_ADDRESS (&NRF_UICR->OTP)
-#endif
 
 
 #ifdef __cplusplus
