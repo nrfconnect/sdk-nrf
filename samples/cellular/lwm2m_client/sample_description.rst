@@ -412,7 +412,8 @@ Check and configure the following LwM2M options that are used by the sample:
 * :kconfig:option:`CONFIG_LWM2M_ENGINE_MAX_REPLIES` - Maximum number of LwM2M reply objects.
   You must increase this value if many notifications will be sent at once.
 * :kconfig:option:`CONFIG_LWM2M_COAP_BLOCK_SIZE` - Increase if you need to add several new LwM2M objects to the sample, as the registration procedure contains information about all the LwM2M objects in one block.
-* :kconfig:option:`CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME` - Set this option to configure how often the client sends ``I'm alive`` messages to the server.
+* :kconfig:option:`CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME` - Configure default LwM2M registration lifetime.
+* :kconfig:option:`CONFIG_LWM2M_UPDATE_PERIOD` - Set this option to configure how often the client sends ``I'm alive`` messages to the server.
 * :kconfig:option:`CONFIG_LWM2M_IPSO_TEMP_SENSOR_VERSION_1_0` - Sets the IPSO Temperature sensor object version to 1.0.
   You can use this configuration option for other IPSO objects also by modifying the option accordingly.
   See the `LwM2M Object and Resource Registry`_ for a list of objects and their available versions.
