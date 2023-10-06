@@ -43,6 +43,7 @@ int coap_parse(struct download_client *client, size_t len);
 int coap_request_send(struct download_client *client);
 
 static int handle_disconnect(struct download_client *client);
+static int error_evt_send(const struct download_client *dl, int error);
 
 static bool is_idle(struct download_client *client)
 {
@@ -410,6 +411,7 @@ static int client_connect(struct download_client *dl)
 	if (err) {
 		err = -errno;
 		LOG_ERR("Unable to connect, errno %d", -err);
+		error_evt_send(dl, -err);
 	}
 
 cleanup:
@@ -629,7 +631,6 @@ static int handle_socket_error(struct download_client *dl, ssize_t len)
 	rc = reconnect(dl);
 	k_mutex_unlock(&dl->mutex);
 	if (rc) {
-		error_evt_send(dl, EHOSTDOWN);
 		return -1;
 	}
 
@@ -768,7 +769,6 @@ void download_thread(void *client, void *a, void *b)
 			rc = client_connect(dl);
 
 			if (rc) {
-				error_evt_send(dl, -rc);
 				if (dl->close_when_done) {
 					handle_disconnect(dl);
 				}
@@ -803,7 +803,6 @@ void download_thread(void *client, void *a, void *b)
 
 					rc = reconnect(dl);
 					if (rc) {
-						error_evt_send(dl, EHOSTDOWN);
 						break;
 					}
 					/* Send request again */
