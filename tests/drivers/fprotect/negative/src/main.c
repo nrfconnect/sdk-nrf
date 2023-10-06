@@ -34,7 +34,7 @@
 		CONFIG_FPROTECT_BLOCK_SIZE) \
 	+ CONFIG_FPROTECT_BLOCK_SIZE)
 
-static uint32_t expected_fatal;
+static volatile uint32_t expected_fatal;
 static uint32_t actual_fatal;
 static uint8_t read_buf[BUF_SIZE];
 
@@ -49,7 +49,7 @@ static void flash_write_protected_fails(uint32_t addr, bool backup)
 	uint8_t buf[BUF_SIZE];
 
 #ifdef CONFIG_HAS_HW_NRF_ACL
-	zassert_true(fprotect_is_protected(ROUND_DOWN(addr, CONFIG_FPROTECT_BLOCK_SIZE)), NULL);
+	zassert_equal(1, fprotect_is_protected(ROUND_DOWN(addr, CONFIG_FPROTECT_BLOCK_SIZE)), NULL);
 #endif
 
 	(void)memset(buf, 0xa5, sizeof(buf));
@@ -81,7 +81,7 @@ ZTEST(test_fprotect_negative, test_flash_write_protected_fails)
 	nrfx_nvmc_bytes_write(TEST_FPROTECT_WRITE_ADDR, buf, sizeof(buf));
 
 #ifdef CONFIG_HAS_HW_NRF_ACL
-	zassert_false(fprotect_is_protected(TEST_FPROTECT_WRITE_ADDR), NULL);
+	zassert_equal(0, fprotect_is_protected(TEST_FPROTECT_WRITE_ADDR), NULL);
 #endif
 	fprotect_area(TEST_FPROTECT_WRITE_ADDR, CONFIG_FPROTECT_BLOCK_SIZE);
 
@@ -105,19 +105,23 @@ ZTEST(test_fprotect_negative, test_flash_read_protected_fails_r)
 {
 	Z_TEST_SKIP_IFNDEF(CONFIG_HAS_HW_NRF_ACL);
 #ifdef CONFIG_HAS_HW_NRF_ACL
-	uint8_t buf[BUF_SIZE];
+	const volatile uint32_t *test_read = (void *)TEST_FPROTECT_READ_ADDR;
+	uint32_t expected_content = *test_read;
 
-	zassert_false(fprotect_is_protected(TEST_FPROTECT_READ_ADDR), NULL);
+	zassert_equal(0, fprotect_is_protected(TEST_FPROTECT_READ_ADDR), NULL);
 
 	fprotect_area_no_access(TEST_FPROTECT_READ_ADDR, CONFIG_FPROTECT_BLOCK_SIZE);
 
-	zassert_true(fprotect_is_protected(TEST_FPROTECT_READ_ADDR), NULL);
+	zassert_equal(3, fprotect_is_protected(TEST_FPROTECT_READ_ADDR), NULL);
 
 	printk("NOTE: A BUS FAULT immediately after this message"
 		" means the test passed!\n");
 	zassert_equal(expected_fatal, actual_fatal, "An unexpected fatal error has occurred.\n");
 	expected_fatal++;
-	memcpy(buf, (void *)TEST_FPROTECT_READ_ADDR, sizeof(read_buf));
+
+	/* The following line should busfault. */
+	zassert_equal(expected_content, *test_read, "Unexpected flash contents\n");
+
 	zassert_unreachable("Should have BUS FAULTed before coming here.");
 #endif
 }
