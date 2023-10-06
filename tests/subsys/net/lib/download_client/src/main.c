@@ -23,6 +23,7 @@ static int download_client_callback(const struct download_client_evt *event)
 	}
 
 	last_event = event->id;
+	printk("event: %d\n", last_event);
 
 	return 0;
 }
@@ -81,20 +82,12 @@ static void dl_coap_start(void)
 		initialized = true;
 	}
 
-	err = download_client_set_host(&client, host, &config);
-	zassert_ok(err, NULL);
-
-	err = download_client_start(&client, "no.file", 0);
+	err = download_client_get(&client, host, &config, "no.file", 0);
 	zassert_ok(err, NULL);
 }
 
 static void de_init(struct download_client *client)
 {
-	int err;
-
-	err = download_client_disconnect(client);
-	zassert_ok(err, NULL);
-
 	wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, 10);
 }
 
@@ -105,11 +98,14 @@ ZTEST(download_client, test_download_simple)
 	int32_t recvfrom_params[] = { 25, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20 };
 
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
+
 	dl_coap_init(75, 20);
 
 	mock_return_values("mock_socket_offload_recvfrom", recvfrom_params,
 			   ARRAY_SIZE(recvfrom_params));
 	mock_return_values("mock_socket_offload_sendto", sendto_params, ARRAY_SIZE(sendto_params));
+
 
 	dl_coap_start();
 
@@ -118,10 +114,26 @@ ZTEST(download_client, test_download_simple)
 	de_init(&client);
 }
 
+ZTEST(download_client, test_connection_failed)
+{
+	z_ztest_returns_value("mock_socket_offload_connect", ENETUNREACH);
+
+	dl_coap_init(75, 20);
+
+	dl_coap_start();
+
+	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, 10), "");
+
+	de_init(&client);
+}
+
 ZTEST(download_client, test_download_reconnect_on_socket_error)
 {
 	int32_t recvfrom_params[] = { 25, -1, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20, 20 };
+
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
 
 	dl_coap_init(75, 20);
 
@@ -141,6 +153,9 @@ ZTEST(download_client, test_download_reconnect_on_peer_close)
 	int32_t recvfrom_params[] = { 25, 0, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20, 20 };
 
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
+
 	dl_coap_init(75, 20);
 
 	mock_return_values("mock_socket_offload_recvfrom", recvfrom_params,
@@ -159,6 +174,8 @@ ZTEST(download_client, test_download_ignore_duplicate_block)
 	int32_t recvfrom_params[] = { 25, 25, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20 };
 	int32_t coap_parse_retv[] = { 0, 0, 1, 0 };
+
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
 
 	dl_coap_init(75, 20);
 
@@ -181,6 +198,8 @@ ZTEST(download_client, test_download_abort_on_invalid_block)
 	int32_t sendto_params[] = { 20, 20, 20 };
 	int32_t coap_parse_retv[] = { 0, 0, -1 };
 
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
+
 	dl_coap_init(75, 20);
 
 	mock_return_values("mock_socket_offload_recvfrom", recvfrom_params,
@@ -201,6 +220,8 @@ ZTEST(download_client, test_get)
 	int err;
 	int32_t recvfrom_params[] = { 25, 25, 25 };
 	int32_t sendto_params[] = { 20, 20, 20 };
+
+	z_ztest_returns_value("mock_socket_offload_connect", 0);
 
 	dl_coap_init(75, 20);
 
