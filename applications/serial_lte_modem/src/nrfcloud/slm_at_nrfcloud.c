@@ -599,6 +599,11 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 					return err;
 				}
 			}
+			/* Disconnect for the case where a connection previously
+			 * got initiated and failed to receive NRF_CLOUD_EVT_READY.
+			 */
+			nrf_cloud_disconnect();
+
 			err = nrf_cloud_connect();
 			if (err) {
 				LOG_ERR("Cloud connection failed, error: %d", err);
@@ -613,7 +618,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 		} else if (op == SLM_NRF_CLOUD_SEND && slm_nrf_cloud_ready) {
 			/* enter data mode */
 			err = enter_datamode(nrf_cloud_datamode_callback);
-		} else if (op == SLM_NRF_CLOUD_DISCONNECT && slm_nrf_cloud_ready) {
+		} else if (op == SLM_NRF_CLOUD_DISCONNECT) {
 			err = nrf_cloud_disconnect();
 			if (err) {
 				LOG_ERR("Cloud disconnection failed, error: %d", err);
