@@ -17,6 +17,9 @@
 #if defined(CONFIG_NRFX_DPPI)
 #include <nrfx_dppi.h>
 #endif
+#if defined(CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START)
+#include <hal/nrf_ipc.h>
+#endif
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
@@ -225,6 +228,14 @@ static int32_t mpsl_lib_init_internal(void)
 {
 	int err = 0;
 	mpsl_clock_lfclk_cfg_t clock_cfg;
+
+#ifdef CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START
+	nrf_ipc_send_config_set(NRF_IPC,
+		CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START_CHANNEL,
+		(1UL << CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START_CHANNEL));
+	mpsl_clock_task_trigger_on_rtc_start_set(
+		(uint32_t)&NRF_IPC->TASKS_SEND[CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START_CHANNEL]);
+#endif
 
 	clock_cfg.source = m_config_clock_source_get();
 	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
