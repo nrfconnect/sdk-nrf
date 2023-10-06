@@ -794,6 +794,7 @@ WARN_LOGFILE           =
 INPUT                  = @NRFX_BASE@/helpers \
                          @NRFX_BASE@/drivers \
                          @NRFX_BASE@/hal \
+                         @NRFX_BASE@/haly \
                          @NRFX_BASE@/soc \
                          @NRFX_BASE@/templates \
                          @NRFX_BASE@/CHANGELOG.md \
