@@ -24,6 +24,7 @@
 #include "contin_array.h"
 #include "pcm_mix.h"
 #include "streamctrl.h"
+#include "audio_sync_timer.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
@@ -733,8 +734,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 	static int32_t count;
 	int ret;
 
-	uint32_t curr_frame_ts = nrfx_timer_capture(&audio_sync_timer_instance,
-						    AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
+	uint32_t curr_frame_ts = audio_sync_timer_capture();
 	int diff = curr_frame_ts - sdu_ref_us;
 
 	if (count++ % 100 == 0) {

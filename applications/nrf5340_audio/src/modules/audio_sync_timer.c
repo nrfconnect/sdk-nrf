@@ -4,24 +4,28 @@
  *  SPDX-License-Identifier: LicenseRef-PCFT
  */
 
+#include "audio_sync_timer.h"
+
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <nrfx_dppi.h>
 #include <nrfx_i2s.h>
 #include <nrfx_ipc.h>
+#include <nrfx_timer.h>
 
-#include "nrf5340_audio_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_AUDIO_SYNC_TIMER_LOG_LEVEL);
 
 #define AUDIO_SYNC_TIMER_INSTANCE_NUMBER 1
 
+#define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
+#define AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL	     1
 #define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE NRF_TIMER_TASK_CAPTURE0
 
 #define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT NRF_IPC_EVENT_RECEIVE_4
 
-const nrfx_timer_t audio_sync_timer_instance =
+static const nrfx_timer_t audio_sync_timer_instance =
 	NRFX_TIMER_INSTANCE(AUDIO_SYNC_TIMER_INSTANCE_NUMBER);
 
 static uint8_t dppi_channel_timer_clear;
@@ -32,6 +36,18 @@ static nrfx_timer_config_t cfg = {.frequency = NRFX_MHZ_TO_HZ(1UL),
 				  .bit_width = NRF_TIMER_BIT_WIDTH_32,
 				  .interrupt_priority = NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
 				  .p_context = NULL};
+
+uint32_t audio_sync_timer_capture(void)
+{
+	return nrfx_timer_capture(&audio_sync_timer_instance,
+				  AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
+}
+
+uint32_t audio_sync_timer_capture_get(void)
+{
+	return nrfx_timer_capture_get(&audio_sync_timer_instance,
+				      AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
+}
 
 static void event_handler(nrf_timer_event_t event_type, void *ctx)
 {
