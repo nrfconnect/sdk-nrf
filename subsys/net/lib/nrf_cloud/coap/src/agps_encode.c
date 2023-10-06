@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ * Copyright (c) 2023 Nordic Semiconductor ASA SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.7.0
  * https://github.com/NordicSemiconductor/zcbor
@@ -36,12 +35,12 @@ static bool encode_repeated_agps_req_types(zcbor_state_t *state,
 
 	bool tmp_result =
 		((((zcbor_uint32_put(state, (1)))) &&
-		  (zcbor_list_start_encode(state, 10) &&
-		   ((zcbor_multi_encode_minmax(1, 10, &(*input)._agps_req_types_int_count,
+		  (zcbor_list_start_encode(state, 14) &&
+		   ((zcbor_multi_encode_minmax(1, 14, &(*input)._agps_req_types_int_count,
 					       (zcbor_encoder_t *)zcbor_int32_encode, state,
 					       (&(*input)._agps_req_types_int), sizeof(int32_t))) ||
 		    (zcbor_list_map_end_force_encode(state), false)) &&
-		   zcbor_list_end_encode(state, 10))));
+		   zcbor_list_end_encode(state, 14))));
 
 	if (!tmp_result) {
 		zcbor_trace();

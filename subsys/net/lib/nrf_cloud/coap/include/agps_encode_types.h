@@ -28,7 +28,7 @@ extern "C" {
 #define DEFAULT_MAX_QTY 10
 
 struct agps_req_types_ {
-	int32_t _agps_req_types_int[10];
+	int32_t _agps_req_types_int[14];
 	size_t _agps_req_types_int_count;
 };
 
