@@ -102,3 +102,31 @@ To read more about the FFS technology and its compatibility with Matter, see the
 
 * `Matter Simple Setup for Wi-Fi Overview`_
 * `Matter Simple Setup for Thread Overview`_
+
+Reaction to the last Matter fabric removal
+==========================================
+
+.. include:: ../end_product/last_fabric_removal_delegate.rst
+    :start-after: matter_last_fabric_removal_description_start
+    :end-before: matter_last_fabric_removal_description_end
+
+When the device leaves the last fabric, one of several reactions can be set to happen.
+
+To enable one of the reactions to the last fabric removal, set the corresponding Kconfig option to ``y``:
+
+* :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE` - Do not react to the last fabric removal.
+  The device will keep all saved data and network credentials, and will not reboot.
+* :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY` - Remove all saved network credentials.
+  The device will remove all saved network credentials, keep application-specific non-volatile data, and will not reboot.
+* :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START` - Remove all saved network credentials and start Bluetooth LE advertising.
+  The device will remove all saved network credentials, keep application-specific non-volatile data, and start advertising Bluetooth LE Matter service.
+  After that, it will be ready for commissioning to Matter over Bluetooth LE.
+* :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT` - Remove all saved network credentials and reboot the device.
+  This option is selected by default.
+
+  When the :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option is also set to ``y``, the device will also remove all non-volatile data stored on the device, including application-specific entries.
+  This means the device is restored to the factory settings.
+
+.. note::
+  The :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option is set to ``y`` by default.
+  To disable removing application-specific non-volatile data when the :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT` Kconfig option is selected, set the :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option to ``n``.
