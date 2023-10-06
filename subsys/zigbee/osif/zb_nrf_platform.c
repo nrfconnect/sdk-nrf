@@ -604,7 +604,7 @@ void zb_reset(zb_uint8_t param)
  * Do it manually in this case - NCP samples require this.
  */
 #ifdef CONFIG_SOC_NRF5340_CPUAPP
-	nrf_power_gpregret_set(NRF_POWER, reas);
+	nrf_power_gpregret_set(NRF_POWER, 0, reas);
 #endif /* CONFIG_SOC_NRF5340_CPUAPP */
 
 	/* Power on unused sections of RAM to allow MCUboot to use it. */
@@ -685,7 +685,7 @@ zb_uint8_t zb_get_reset_source(void)
 
 	/* Read the value at the first API call, then use data from RAM. */
 	if (zephyr_reset_type == 0xFF) {
-		zephyr_reset_type = nrf_power_gpregret_get(NRF_POWER);
+		zephyr_reset_type = nrf_power_gpregret_get(NRF_POWER, 0);
 	}
 #endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 
@@ -730,7 +730,7 @@ zb_uint8_t zb_get_reset_source(void)
 	 * SW reset, the value will not trigger NCP logic.
 	 */
 	if (zephyr_reset_type == SYS_REBOOT_NCP) {
-		nrf_power_gpregret_set(NRF_POWER, (uint8_t)SYS_REBOOT_COLD);
+		nrf_power_gpregret_set(NRF_POWER, 0, (uint8_t)SYS_REBOOT_COLD);
 	}
 #endif /* CONFIG_ZIGBEE_LIBRARY_NCP_DEV */
 
