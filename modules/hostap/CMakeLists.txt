@@ -41,7 +41,7 @@ zephyr_library_compile_definitions(
 	CONFIG_SUITEB192
 	)
 
-zephyr_library_compile_definitions_ifndef(CONFIG_WPA_SUPP_CRYPTO
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	CONFIG_NO_PBKDF2
 )
 
@@ -163,21 +163,21 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_AP
 )
 
 
-zephyr_library_sources_ifndef(CONFIG_WPA_SUPP_CRYPTO
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	${COMMON_SRC_BASE}/crypto/crypto_none.c
 	${COMMON_SRC_BASE}/crypto/tls_none.c
 )
 
-zephyr_library_compile_definitions_ifndef(CONFIG_WPA_SUPP_CRYPTO
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	CONFIG_NO_WPA
 	CONFIG_CRYPTO_INTERNAL
 )
 
-zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO
+zephyr_library_compile_definitions_ifndef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	CONFIG_WEP
 )
 
-zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_CRYPTO
+zephyr_library_sources_ifndef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	${COMMON_SRC_BASE}/common/wpa_common.c
 	${COMMON_SRC_BASE}/rsn_supp/wpa.c
 	${COMMON_SRC_BASE}/rsn_supp/preauth.c
@@ -211,7 +211,7 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_WPA3
 	CONFIG_ECC
 )
 
-zephyr_library_include_directories_ifdef(CONFIG_WPA_SUPP_CRYPTO
+zephyr_library_include_directories_ifndef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	${CMAKE_SOURCE_DIR}
 )
 
