@@ -135,6 +135,7 @@ Kconfig*                                  @tejlmand
 /lib/pcm_stream_channel_modifier/         @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/tone/                                @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /modules/                                 @tejlmand
+/modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /samples/                                 @nrfconnect/ncs-test-leads
