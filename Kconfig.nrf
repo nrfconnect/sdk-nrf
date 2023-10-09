@@ -134,5 +134,6 @@ rsource "lib/Kconfig"
 rsource "drivers/Kconfig"
 rsource "ext/Kconfig"
 rsource "tests/Kconfig"
+rsource "core_fw/Kconfig"
 
 endmenu

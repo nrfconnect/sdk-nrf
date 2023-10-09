@@ -42,6 +42,8 @@
 # All cmake related files
 /cmake/                                   @tejlmand
 /CMakeLists.txt                           @tejlmand
+# Core firmware files
+/core_fw/                                 @dchat-nordic
 # All Kconfig related files
 Kconfig*                                  @tejlmand
 # Sysbuild related files

@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NCS_REMOTE_RADIO_CHILD_IMAGE
+	bool "Add remote_radio child image [Experimental]"
+	depends on !NCS_INCLUDE_RPMSG_CHILD_IMAGE
+	select PARTITION_MANAGER_ENABLED
+	select EXPERIMENTAL
+	help
+	  Add remote_radio as a child image (network core).
+	  The image can be configured as Bluetooth radio,
+	  IEEE 802.15.4 radio or left empty.

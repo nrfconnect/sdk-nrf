@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Nordic remote_radio sample"
+
+config REMOTE_RADIO_802154
+	bool "Remote IEEE 802.15.4 radio"
+	select NRF_802154_SER_RADIO
+	default n
+	help
+	  Enable the remote IEEE 802.15.4 radio serialization.
+
+config REMOTE_RADIO_BT
+	bool "Remote Bluetooth"
+	default n
+	help
+	  Enable the remote Bluetooth radio serialization.
+
+if REMOTE_RADIO_BT
+
+choice REMOTE_RADIO_BT_SER
+	default REMOTE_RADIO_BT_RPMSG
+	prompt "Bluetooth serialization type"
+	help
+	  Type of the remote Bluetooth radio serialization used.
+
+config REMOTE_RADIO_BT_RPMSG
+	bool "Bluetooth serialization over rpmsg"
+	depends on IPC_SERVICE_BACKEND_RPMSG
+	depends on BT_HCI_RAW
+	help
+	  Use rpmsg serialization for Bluetooth.
+
+config REMOTE_RADIO_BT_RPC
+	bool "Bluetooth serialization over RPC"
+	depends on BT_RPC_HOST
+	help
+	  Use nRF RPC serialization for Bluetooth.
+
+endchoice # REMOTE_RADIO_BT_SER
+
+config BT_MAX_CONN
+	default 4 if REMOTE_RADIO_802154
+	default 16 if !REMOTE_RADIO_802154
+
+endif # REMOTE_RADIO_BT
+
+module = REMOTE_RADIO
+module-str = "remote_radio"
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+source "Kconfig.zephyr"
