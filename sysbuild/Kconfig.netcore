@@ -46,6 +46,10 @@ config SUPPORT_NETCORE_MULTIPROTOCOL_RPMSG
 	bool
 	default y
 
+config SUPPORT_NETCORE_IPC_RADIO
+	bool
+	default y
+
 config NRF_DEFAULT_EMPTY
 	bool
 
@@ -58,12 +62,16 @@ config NRF_DEFAULT_802154
 config NRF_DEFAULT_MULTIPROTOCOL
 	bool
 
+config NRF_DEFAULT_IPC_RADIO
+	bool
+
 choice NETCORE
 	prompt "Netcore image"
 	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && NETCORE_REMOTE_BOARD_NAME != ""
+	default NETCORE_IPC_RADIO if NRF_DEFAULT_IPC_RADIO && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_NONE
 	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
 
@@ -101,6 +109,15 @@ config NETCORE_MULTIPROTOCOL_RPMSG
 	help
 	  Include multiprotocol_rpmsg as the netcore image to use
 
+config NETCORE_IPC_RADIO
+	bool "ipc_radio [Experimental]"
+	depends on SUPPORT_NETCORE_IPC_RADIO
+	select EXPERIMENTAL
+	help
+	  Add ipc_radio as a netcore image to use.
+	  The image can be configured as Bluetooth radio,
+	  IEEE 802.15.4 radio or left empty.
+
 endchoice
 
 if !NETCORE_NONE
@@ -112,6 +129,7 @@ config NETCORE_IMAGE_NAME
 	default "rpc_host" if NETCORE_RPC_HOST
 	default "802154_rpmsg" if NETCORE_802154_RPMSG
 	default "multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
+	default "ipc_radio" if NETCORE_IPC_RADIO
 	help
 	  Name of netcore image.
 
@@ -122,6 +140,7 @@ config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
 	default "${ZEPHYR_BASE}/samples/boards/nrf/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/ipc_radio" if NETCORE_IPC_RADIO
 	help
 	  Source directory of netcore image.
 
@@ -145,6 +164,25 @@ config NETCORE_APP_UPDATE
 	  Enabling this will add support for network core updates from the application core,
 	  requires b0n for network core and MCUboot for application core.
 
-endif
+if NETCORE_IPC_RADIO
+
+config NETCORE_IPC_RADIO_BT_HCI_IPC
+	bool
+	help
+	  Use HCI serialization for Bluetooth
+
+config NETCORE_IPC_RADIO_BT_RPC
+	bool
+	help
+	  Use nRF RPC serialization for Bluetooth
+
+config NETCORE_IPC_RADIO_IEEE802154
+	bool
+	help
+	  Use Spinel serialization for IEEE 802.15.4
+
+endif # NETCORE_IPC_RADIO
+
+endif # !NETCORE_NONE
 
 endmenu

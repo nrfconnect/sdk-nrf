@@ -31,4 +31,32 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
   )
 endif()
 
+# Include ipc_radio overlays if ipc_radio is enabled.
+if(SB_CONFIG_NETCORE_IPC_RADIO)
+  if(SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC AND SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC)
+    message(FATAL_ERROR "HCI IPC can't be used together with BT RPC as ipc_radio configuration.")
+  endif()
+
+  if(SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC)
+    add_overlay_config(
+      ${SB_CONFIG_NETCORE_IMAGE_NAME}
+      ${SB_CONFIG_NETCORE_IMAGE_PATH}/overlay-bt_rpc.conf
+    )
+  endif()
+
+  if(SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC)
+    add_overlay_config(
+      ${SB_CONFIG_NETCORE_IMAGE_NAME}
+      ${SB_CONFIG_NETCORE_IMAGE_PATH}/overlay-bt_hci_ipc.conf
+    )
+  endif()
+
+  if(SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154)
+    add_overlay_config(
+      ${SB_CONFIG_NETCORE_IMAGE_NAME}
+      ${SB_CONFIG_NETCORE_IMAGE_PATH}/overlay-802154.conf
+    )
+  endif()
+endif()
+
 set_property(GLOBAL PROPERTY PM_DOMAINS ${PM_DOMAINS})

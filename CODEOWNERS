@@ -30,6 +30,7 @@
 # Applications
 /applications/asset_tracker_v2/           @nrfconnect/ncs-cia @coderbyheart
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
+/applications/ipc_radio/                  @dchat-nordic
 /applications/machine_learning/           @pdunaj
 /applications/matter_bridge/              @Damian-Nordic @kkasperczyk-no
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
