@@ -37,7 +37,7 @@ static struct k_work_delayable uart_recovery_work;
 
 static slm_data_handler_t data_handler;
 static K_SEM_DEFINE(at_rsp, 0, 1);
-static enum at_cmd_state at_state;
+static enum at_cmd_state slm_at_state;
 
 RING_BUF_DECLARE(slm_data_rb, SLM_AT_CMD_RESPONSE_MAX_LEN);
 static struct k_work slm_data_work;
@@ -135,7 +135,42 @@ static int uart_send(const uint8_t *buffer, size_t len)
 	return ret;
 }
 
-static void uart_rx_handler(const uint8_t *data, int datalen)
+/* Attempts to find AT responses in the UART buffer. */
+static void parse_at_response(const char *data, size_t datalen)
+{
+	/* SLM AT responses are formatted based on TS 27.007. */
+	static const char * const at_responses[] = {
+		[AT_CMD_OK] = "\r\nOK\r\n",
+		[AT_CMD_ERROR] = "\r\nERROR\r\n",
+		[AT_CMD_ERROR_CMS] = "\r\n+CMS ERROR:",
+		[AT_CMD_ERROR_CME] = "\r\n+CME ERROR:"
+	};
+	static size_t at_response_lens[ARRAY_SIZE(at_responses)];
+
+	if (!at_response_lens[0]) {
+		/* Initialize the AT response lengths array. */
+		for (size_t at_state = 0; at_state != ARRAY_SIZE(at_responses); ++at_state) {
+			at_response_lens[at_state] = strlen(at_responses[at_state]);
+		}
+	}
+	/* Search the UART buffer in sequential order. */
+	for (size_t i = 0; i != datalen; ++i) {
+		/* Look for all the AT state responses. */
+		for (size_t at_state = 0; at_state != ARRAY_SIZE(at_responses); ++at_state) {
+			const char *at_response = at_responses[at_state];
+			const size_t at_response_len = at_response_lens[at_state];
+
+			if (i + at_response_len <= datalen
+			&& !strncmp(data + i, at_response, at_response_len)) {
+				/* Found a match. */
+				slm_at_state = at_state;
+				return;
+			}
+		}
+	}
+}
+
+static void uart_rx_handler(const uint8_t *data, size_t datalen)
 {
 	int ret;
 
@@ -148,17 +183,9 @@ static void uart_rx_handler(const uint8_t *data, int datalen)
 	}
 
 	/* handle AT response */
-	if (at_state == AT_CMD_PENDING) {
-		if (strstr((const char *)data, AT_CMD_OK_STR) != NULL) {
-			at_state = AT_CMD_OK;
-		} else if (strstr((const char *)data, AT_CMD_ERROR_STR) != NULL) {
-			at_state = AT_CMD_ERROR;
-		} else if (strstr((const char *)data, AT_CMD_CMS_STR) != NULL) {
-			at_state = AT_CMD_ERROR_CMS;
-		} else if (strstr((const char *)data, AT_CMD_CME_STR) != NULL) {
-			at_state = AT_CMD_ERROR_CME;
-		}
-		if (at_state != AT_CMD_PENDING) {
+	if (slm_at_state == AT_CMD_PENDING) {
+		parse_at_response(data, datalen);
+		if (slm_at_state != AT_CMD_PENDING) {
 			k_work_submit(&slm_data_work);
 			k_sem_give(&at_rsp);
 		}
@@ -349,7 +376,7 @@ int modem_slm_init(slm_data_handler_t handler)
 
 	data_handler = handler;
 	ind_handler = NULL;
-	at_state = AT_CMD_OK;
+	slm_at_state = AT_CMD_OK;
 
 	err = gpio_init();
 	if (err != 0) {
@@ -384,7 +411,7 @@ int modem_slm_uninit(void)
 
 	data_handler = NULL;
 	ind_handler = NULL;
-	at_state = AT_CMD_OK;
+	slm_at_state = AT_CMD_OK;
 
 	return 0;
 }
@@ -446,7 +473,7 @@ int modem_slm_send_cmd(const char *const command, uint32_t timeout)
 {
 	int ret;
 
-	at_state = AT_CMD_PENDING;
+	slm_at_state = AT_CMD_PENDING;
 	ret = uart_send(command, strlen(command));
 	if (ret < 0) {
 		return ret;
@@ -472,7 +499,7 @@ int modem_slm_send_cmd(const char *const command, uint32_t timeout)
 		return ret;
 	}
 
-	return at_state;
+	return slm_at_state;
 }
 
 int modem_slm_send_data(const uint8_t *const data, size_t datalen)
