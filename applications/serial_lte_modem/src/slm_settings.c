@@ -30,9 +30,6 @@ enum fota_stage slm_fota_stage = FOTA_STAGE_INIT;
 enum fota_status slm_fota_status;
 int32_t slm_fota_info;
 
-bool slm_uart_configured;
-struct uart_config slm_uart;
-
 static int settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
 	if (!strcmp(name, "fota_type")) {
@@ -62,36 +59,6 @@ static int settings_set(const char *name, size_t len, settings_read_cb read_cb, 
 		if (read_cb(cb_arg, &slm_carrier_auto_connect, len) > 0)
 			return 0;
 #endif
-	} else if (!strcmp(name, "uart_configured")) {
-		if (len != sizeof(slm_uart_configured))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_uart_configured, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "uart_baudrate")) {
-		if (len != sizeof(slm_uart.baudrate))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_uart.baudrate, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "uart_parity")) {
-		if (len != sizeof(slm_uart.parity))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_uart.parity, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "uart_stop_bits")) {
-		if (len != sizeof(slm_uart.stop_bits))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_uart.stop_bits, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "uart_data_bits")) {
-		if (len != sizeof(slm_uart.data_bits))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_uart.data_bits, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "uart_flow_ctrl")) {
-		if (len != sizeof(slm_uart.flow_ctrl))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_uart.flow_ctrl, len) > 0)
-			return 0;
 	}
 
 	return -ENOENT;
@@ -177,42 +144,3 @@ int slm_settings_auto_connect_save(void)
 	return 0;
 }
 #endif
-
-int slm_settings_uart_save(void)
-{
-	int ret;
-
-	/* Write a single serialized value to persisted storage (if it has changed value). */
-	ret = settings_save_one("slm/uart_configured",
-		&(slm_uart_configured), sizeof(slm_uart_configured));
-	if (ret) {
-		return ret;
-	}
-	ret = settings_save_one("slm/uart_baudrate",
-		&(slm_uart.baudrate), sizeof(slm_uart.baudrate));
-	if (ret) {
-		return ret;
-	}
-	ret = settings_save_one("slm/uart_parity",
-		&(slm_uart.parity), sizeof(slm_uart.parity));
-	if (ret) {
-		return ret;
-	}
-	ret = settings_save_one("slm/uart_stop_bits",
-		&(slm_uart.stop_bits), sizeof(slm_uart.stop_bits));
-	if (ret) {
-		return ret;
-	}
-	ret = settings_save_one("slm/uart_data_bits",
-		&(slm_uart.data_bits), sizeof(slm_uart.data_bits));
-	if (ret) {
-		return ret;
-	}
-	ret = settings_save_one("slm/uart_flow_ctrl",
-		&(slm_uart.flow_ctrl), sizeof(slm_uart.flow_ctrl));
-	if (ret) {
-		return ret;
-	}
-
-	return 0;
-}

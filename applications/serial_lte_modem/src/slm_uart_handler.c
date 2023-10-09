@@ -23,6 +23,8 @@ LOG_MODULE_REGISTER(slm_uart_handler, CONFIG_SLM_LOG_LEVEL);
 
 #define SLM_SYNC_STR	"Ready\r\n"
 
+uint32_t slm_uart_baudrate;
+
 static const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart));
 
 static struct k_work_delayable rx_process_work;
@@ -329,31 +331,12 @@ int slm_uart_power_off(void)
 	return err;
 }
 
-int slm_uart_configure(void)
-{
-	int err;
-
-	LOG_DBG("Set UART baudrate to: %d", slm_uart.baudrate);
-
-	err = uart_configure(uart_dev, &slm_uart);
-	if (err != 0) {
-		LOG_ERR("uart_configure: %d", err);
-	}
-
-	return err;
-}
-
 bool slm_uart_can_context_send(const uint8_t *data, size_t len)
 {
 	if (!k_is_in_isr()) {
 		return true;
 	}
-	if (len >= 2 && data[0] == '\r' && data[1] == '\n') {
-		/* Make so that the message is on the same line as the log. */
-		data += 2;
-		len -= 2;
-	}
-	LOG_ERR("FIXME: Attempt to send UART message in ISR: %.*s", len, data);
+	LOG_ERR("FIXME: Attempt to send UART message (of size %u) in ISR.", len);
 	return false;
 }
 
@@ -411,35 +394,22 @@ int slm_uart_handler_init(slm_uart_rx_callback_t callback_t)
 {
 	int err;
 	uint32_t start_time;
+	struct uart_config cfg;
 
 	if (!device_is_ready(uart_dev)) {
 		LOG_ERR("UART device not ready");
 		return -ENODEV;
 	}
-	if (!slm_uart_configured) {
-		/* Save UART configuration to settings page */
-		slm_uart_configured = true;
-		err = uart_config_get(uart_dev, &slm_uart);
-		if (err != 0) {
-			LOG_ERR("uart_config_get: %d", err);
-			return err;
-		}
-		err = slm_settings_uart_save();
-		if (err != 0) {
-			LOG_ERR("slm_settings_uart_save: %d", err);
-			return err;
-		}
-	} else {
-		/* Configure UART based on settings page */
-		err = slm_uart_configure();
-		if (err != 0) {
-			LOG_ERR("Fail to set UART baudrate: %d", err);
-			return err;
-		}
+
+	err = uart_config_get(uart_dev, &cfg);
+	if (err) {
+		LOG_ERR("uart_config_get: %d", err);
+		return err;
 	}
+	slm_uart_baudrate = cfg.baudrate;
 	LOG_INF("UART baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
-		slm_uart.baudrate, slm_uart.data_bits, slm_uart.parity,
-		slm_uart.stop_bits, slm_uart.flow_ctrl);
+		cfg.baudrate, cfg.data_bits, cfg.parity,
+		cfg.stop_bits, cfg.flow_ctrl);
 
 	/* Wait for the UART line to become valid */
 	start_time = k_uptime_get_32();

@@ -29,17 +29,6 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       #XSLMVER: "2.3.0","2.3.0"
       OK
 
-#. Read the current baud rate.
-
-   .. parsed-literal::
-      :class: highlight
-
-      **AT#XSLMUART?**
-      #XSLMUART: 115200,0
-      OK
-
-   You can change the used baud rate with the corresponding set command, but note that nRF Connect Serial Terminal requires 115200 bps for communication.
-
 #. Retrieve a list of all supported proprietary AT commands.
 
    .. parsed-literal::
