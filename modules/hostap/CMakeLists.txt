@@ -173,7 +173,7 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	CONFIG_CRYPTO_INTERNAL
 )
 
-zephyr_library_compile_definitions_ifdef(CONFIG_WEP
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_WEP
 	CONFIG_WEP
 )
 
