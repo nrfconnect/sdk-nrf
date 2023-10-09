@@ -241,6 +241,7 @@ Serial LTE modem
     The full chip reset (using the ``#XRESET`` AT command) remains supported.
   * ``#XGPSDEL`` AT command to disallow deleting local clock (TCXO) frequency offset data because it is an internal value that should not be deleted when simulating a cold start.
   * Socket option ``TLS_DTLS_HANDSHAKE_TIMEO`` to a new name value.
+  * ``#XTCPSVR`` connection closure status and documentation.
 
 * Removed:
 
