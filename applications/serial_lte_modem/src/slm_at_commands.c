@@ -75,7 +75,6 @@ enum sleep_modes {
 typedef int (*slm_at_handler_t) (enum at_cmd_type);
 
 static struct slm_work_info {
-	struct k_work_delayable uart_work;
 	struct k_work_delayable sleep_work;
 	uint32_t data;
 } slm_work;
@@ -271,71 +270,6 @@ static int handle_at_uuid(enum at_cmd_type type)
 	return ret;
 }
 
-static void set_uart_wk(struct k_work *work)
-{
-	int err;
-
-	err = slm_uart_configure();
-	if (err != 0) {
-		LOG_ERR("slm_uart_configure: %d", err);
-		return;
-	}
-	err = slm_settings_uart_save();
-	if (err != 0) {
-		LOG_ERR("slm_settings_uart_save: %d", err);
-	}
-}
-
-/* Handles AT#XSLMUART commands. */
-static int handle_at_slmuart(enum at_cmd_type type)
-{
-	int ret = -EINVAL;
-
-	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		uint32_t baudrate;
-
-		ret = at_params_unsigned_int_get(&slm_at_param_list, 1, &baudrate);
-
-		if (ret == 0) {
-			switch (baudrate) {
-			case 1200:
-			case 2400:
-			case 4800:
-			case 9600:
-			case 14400:
-			case 19200:
-			case 38400:
-			case 57600:
-			case 115200:
-			case 230400:
-			case 460800:
-			case 921600:
-			case 1000000:
-				slm_uart.baudrate = baudrate;
-				break;
-			default:
-				LOG_ERR("Invalid uart baud rate provided. %d", baudrate);
-				return -EINVAL;
-			}
-		}
-
-		ret = k_work_reschedule(&slm_work.uart_work, K_MSEC(SLM_UART_RESPONSE_DELAY));
-		if (ret > 0) {
-			ret = 0;
-		}
-	}
-	if (type == AT_CMD_TYPE_READ_COMMAND) {
-		rsp_send("\r\n#XSLMUART: %d\r\n", slm_uart.baudrate);
-		ret = 0;
-	}
-	if (type == AT_CMD_TYPE_TEST_COMMAND) {
-		rsp_send("\r\n#XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,"
-			 "115200,230400,460800,921600,1000000)\r\n");
-		ret = 0;
-	}
-	return ret;
-}
-
 /* Handles AT#XDATACTRL commands. */
 static int handle_at_datactrl(enum at_cmd_type cmd_type)
 {
@@ -468,7 +402,6 @@ static struct slm_at_cmd {
 	{"AT#XMODEMRESET", handle_at_modemreset},
 	{"AT#XUUID", handle_at_uuid},
 	{"AT#XCLAC", handle_at_clac},
-	{"AT#XSLMUART", handle_at_slmuart},
 	{"AT#XDATACTRL", handle_at_datactrl},
 
 	/* TCP proxy commands */
@@ -609,7 +542,6 @@ int slm_at_init(void)
 {
 	int err;
 
-	k_work_init_delayable(&slm_work.uart_work, set_uart_wk);
 	k_work_init_delayable(&slm_work.sleep_work, go_sleep_wk);
 
 	err = slm_at_tcp_proxy_init();
