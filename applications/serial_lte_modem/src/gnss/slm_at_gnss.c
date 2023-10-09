@@ -86,7 +86,7 @@ K_FIFO_DEFINE(gnss_status_fifo);
  */
 static uint16_t gnss_cloud_assistance;
 
-/* If true, indicates that the NRF_MODEM_GNSS_EVT_AGPS_REQ event
+/* If true, indicates that the NRF_MODEM_GNSS_EVT_AGNSS_REQ event
  * was received and ignored due to cloud assistance being disabled.
  * It has been observed that the event is not sent again after a restart of GNSS, so
  * this is to remember that A/P-GPS data was requested if cloud assistance gets enabled.
@@ -308,9 +308,9 @@ static int read_agnss_req(struct nrf_modem_gnss_agnss_data_frame *req)
 		return err;
 	}
 
-	LOG_DBG("AGPS_REQ.sv_mask_ephe = 0x%08x", (uint32_t)req->system[0].sv_mask_ephe);
-	LOG_DBG("AGPS_REQ.sv_mask_alm  = 0x%08x", (uint32_t)req->system[0].sv_mask_alm);
-	LOG_DBG("AGPS_REQ.data_flags   = 0x%08x", req->data_flags);
+	LOG_DBG("AGNSS_REQ.sv_mask_ephe = 0x%08x", (uint32_t)req->system[0].sv_mask_ephe);
+	LOG_DBG("AGNSS_REQ.sv_mask_alm  = 0x%08x", (uint32_t)req->system[0].sv_mask_alm);
+	LOG_DBG("AGNSS_REQ.data_flags   = 0x%08x", req->data_flags);
 
 	return 0;
 }
