@@ -1145,6 +1145,9 @@
 .. _`Wi-Fi Alliance`: https://www.wi-fi.org/
 .. _`Join Wi-Fi Alliance`: https://www.wi-fi.org/membership
 .. _`Wi-Fi Certification`: https://www.wi-fi.org/certification
+.. _`QuickTrack Test Tool User Manual`: https://www.wi-fi.org/system/files/members/QuickTrack Test Tool User Manual v2.2.pdf
+.. _`QuickTrack Test Tool Platform Integration Guide`: https://www.wi-fi.org/system/files/members/QuickTrack Test Tool Platform Integration Guide v1.0.pdf
+.. _`Platform Intel Ax210 Integration Guide`: https://www.wi-fi.org/file-member/quicktrack-test-tool-platform-intel-ax210-station-integration-guide
 
 .. ### Source: avsystem.com & avsystem.cloud
 
