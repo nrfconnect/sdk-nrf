@@ -48,7 +48,6 @@ choice WPA_SUPP_CRYPTO_BACKEND
 # and one for the PSA crypto.
 config WPA_SUPP_CRYPTO_PSA
 	bool "PSA Crypto support for WiFi"
-	select WEP
 	select NRF_SECURITY
 	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_CMAC
@@ -79,7 +78,6 @@ config WPA_SUPP_CRYPTO_PSA
 
 config WPA_SUPP_CRYPTO_LEGACY
 	bool "Legacy Crypto support for WiFi"
-	select WEP
 	select MBEDTLS
 	select NRF_SECURITY
 	select MBEDTLS_CIPHER_MODE_CBC
