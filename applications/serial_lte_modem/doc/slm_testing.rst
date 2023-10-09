@@ -225,7 +225,7 @@ TCP client
          #XTCPCLI: 1,0
          OK
 
-   #. Send plain text data to the TCP server and retrieve ten bytes of the returned data.
+   #. Send plain text data to the TCP server and receive ten bytes of the returned data.
 
       .. parsed-literal::
          :class: highlight
@@ -234,9 +234,8 @@ TCP client
          #XTCPSEND: 8
          OK
 
-         **AT#XTCPRECV=10**
+         #XTCPDATA: 10
          PONG: b'Te
-         #XTCPRECV: 10
          OK
 
    #. Disconnect and confirm the status of the connection.
@@ -450,7 +449,7 @@ You must register the corresponding credentials on the server side.
          #XTCPCLI: 1,0
          OK
 
-   #. Send plain text data to the TLS server and retrieve the returned data.
+   #. Send plain text data to the TLS server and receive the returned data.
 
       .. parsed-literal::
          :class: highlight
@@ -458,12 +457,9 @@ You must register the corresponding credentials on the server side.
          **AT#XTCPSEND="Test TLS client"**
          #XTCPSEND: 15
          OK
-         #XTCPDATA: 24
 
-         **AT#XTCPRECV**
+         #XTCPDATA: 24
          PONG: b'Test TLS client'
-         #XTCPRECV: 24
-         OK
 
    #. Disconnect from the server.
 
@@ -624,7 +620,7 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=1,1,1**
-         #XSOCKET: 2,1,6
+         #XSOCKET: 0,1,6
          OK
 
          **AT#XBIND=**\ *1234*
@@ -640,16 +636,16 @@ To act as a TCP server, |global_private_address|
       .. parsed-literal::
          :class: highlight
 
-         **AT#XACCEPT**
-         #XACCEPT: connected with *IP address*
-         #XACCEPT: 3
-         OK
+         **AT#XACCEPT=60**
 
+         #XACCEPT: 1,"*IP address*"
+
+         OK
          **AT#XRECV=0**
+
          #XRECV: 26
          Hello, TCP#1!Hello, TCP#2!
          OK
-
          **AT#XSEND="TCP1/2 received"**
          #XSEND: 15
          OK
@@ -682,7 +678,7 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=0**
-         #XSOCKET: "closed"
+         #XSOCKET: 0,"closed"
          OK
 
 
@@ -698,7 +694,7 @@ To act as a TCP server, |global_private_address|
          OK
 
          **AT#XTCPSVR?**
-         #XTCPSVR: -1,-1
+         #XTCPSVR: -1,-1,0
          OK
 
    #. Create a TCP server and read the information about the current state.
@@ -708,58 +704,58 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR=1,**\ *1234*
-         #XTCPSVR: 2,"started"
+         #XTCPSVR: 0,"started"
          OK
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1,-1,0
+         #XTCPSVR: 0,-1,1
          OK
 
    #. Run the :file:`client_tcp.py` script to start sending data to the server.
 
-   #. Observe that the server accepts the connection from the client.
+   #. Observe that the server accepts the connection from the client and receives the first packets.
       Read the information about the current state again.
 
       .. parsed-literal::
          :class: highlight
 
-         #XTCPSVR: *IP address* connected
+         #XTCPSVR: "*IP address*","connected"
+
          #XTCPDATA: 13
+         Hello, TCP#1!
          #XTCPDATA: 13
+         Hello, TCP#2!
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1,2,0
+         #XTCPSVR: 0,1,1
          OK
 
-   #. Start receiving and acknowledging the data.
+   #. Send responses and receive the rest of the data.
+      Client disconnects after receiving the last response.
 
       .. parsed-literal::
          :class: highlight
 
-         **AT#XTCPRECV**
-         Hello, TCP#1!Hello, TCP#2!
-         #XTCPRECV: 26
-         OK
-
          **AT#XTCPSEND="TCP1/2 received"**
+
          #XTCPSEND: 15
-         OK
-         #XTCPDATA: 13
-         #XTCPDATA: 13
-         #XTCPDATA: 13
 
-         **AT#XTCPSVR?**
-         #XTCPSVR: 1,2,0
          OK
 
-         **AT#XTCPRECV**
-         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
-         #XTCPRECV: 39
-         OK
+         #XTCPDATA: 13
+         Hello, TCP#3!
+         #XTCPDATA: 13
+         Hello, TCP#4!
+         #XTCPDATA: 13
+         Hello, TCP#5!
 
-         **AT#XTCPSEND=1,"TCP3/4/5 received"**
+         **AT#XTCPSEND="TCP3/4/5 received"**
+
          #XTCPSEND: 17
+
          OK
+
+         #XTCPSVR: 0,"disconnected"
 
    #. Observe the output of the Python script::
 
@@ -780,7 +776,7 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR?**
-         #XTCPSVR: 1,2,0
+         #XTCPSVR: 0,-1,1
          OK
 
    #. Stop the server.
@@ -789,11 +785,11 @@ To act as a TCP server, |global_private_address|
          :class: highlight
 
          **AT#XTCPSVR=0**
-         #XTCPSVR:-1,"stopped"
+         #XTCPSVR:0,"stopped"
          OK
 
          **AT#XTCPSVR?**
-         #XTCPSVR: -1,-1
+         #XTCPSVR: -1,-1,0
          OK
 
 UDP server
@@ -1003,30 +999,13 @@ To act as a UDP server, |global_private_address|
 TLS server
 ==========
 
-The TLS server role is currently not supported.
+The TLS server role is currently only supported when using the :file:`overlay-native_tls.conf` configuration file.
 
-.. parsed-literal::
-   :class: highlight
-
-   **AT#XSOCKET=1,1,1,16842753**
-   #XSOCKET: "(D)TLS Server not supported"
-   ERROR
-
-   **AT#XTCPSVR=1,3443,16842753**
-   #XTCPSVR: "TLS Server not supported"
-   ERROR
 
 DTLS server
 ===========
 
 The DTLS server role is currently not supported (modem limitation).
-
-.. parsed-literal::
-   :class: highlight
-
-   **AT#XSOCKET=1,2,1,16842755**
-   #XSOCKET: "(D)TLS Server not supported"
-   ERROR
 
 DNS lookup
 ==========

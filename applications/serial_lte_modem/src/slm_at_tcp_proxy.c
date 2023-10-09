@@ -239,6 +239,7 @@ static int do_tcp_server_stop(void)
 			return ret;
 		}
 		proxy.sock = INVALID_SOCKET;
+		proxy.family = AF_UNSPEC;
 	}
 	if (k_thread_join(&tcp_thread, K_SECONDS(CONFIG_SLM_TCP_POLL_TIME + 1)) != 0) {
 		LOG_WRN("Wait for thread terminate failed");
@@ -416,7 +417,9 @@ static void tcpsvr_terminate_connection(int cause)
 		(void)exit_datamode_handler(cause);
 	}
 	if (proxy.sock_peer != INVALID_SOCKET) {
-		close(proxy.sock_peer);
+		if (close(proxy.sock_peer) < 0) {
+			LOG_WRN("close() error: %d", -errno);
+		}
 		proxy.sock_peer = INVALID_SOCKET;
 		rsp_send("\r\n#XTCPSVR: %d,\"disconnected\"\r\n", cause);
 	}
@@ -518,6 +521,23 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 client_events:
 		/* Incoming socket events */
 		if (fds[1].revents) {
+			/* Process POLLIN first to get the data, even if there are errors. */
+			if ((fds[1].revents & POLLIN) == POLLIN) {
+				ret = recv(fds[1].fd, (void *)slm_data_buf,
+					   sizeof(slm_data_buf), 0);
+				if (ret < 0) {
+					LOG_ERR("recv() error: %d", -errno);
+					tcpsvr_terminate_connection(-errno);
+					fds[1].fd = INVALID_SOCKET;
+					continue;
+				}
+				if (ret > 0) {
+					if (!in_datamode()) {
+						rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
+					}
+					data_send(slm_data_buf, ret);
+				}
+			}
 			if ((fds[1].revents & POLLERR) == POLLERR) {
 				LOG_ERR("1: POLLERR");
 				tcpsvr_terminate_connection(-EIO);
@@ -526,32 +546,14 @@ client_events:
 			}
 			if ((fds[1].revents & POLLHUP) == POLLHUP) {
 				LOG_ERR("1: POLLHUP");
-				tcpsvr_terminate_connection(-ECONNRESET);
+				tcpsvr_terminate_connection(0);
 				fds[1].fd = INVALID_SOCKET;
 				continue;
 			}
 			if ((fds[1].revents & POLLNVAL) == POLLNVAL) {
 				LOG_WRN("1: POLLNVAL");
-				tcpsvr_terminate_connection(-ENETDOWN);
+				tcpsvr_terminate_connection(-EBADF);
 				fds[1].fd = INVALID_SOCKET;
-				continue;
-			}
-			if ((fds[1].revents & POLLIN) != POLLIN) {
-				continue;
-			}
-			ret = recv(fds[1].fd, (void *)slm_data_buf, sizeof(slm_data_buf), 0);
-			if (ret < 0) {
-				LOG_WRN("recv() error: %d", -errno);
-				continue;
-			}
-			if (ret == 0) {
-				continue;
-			}
-			if (in_datamode()) {
-				data_send(slm_data_buf, ret);
-			} else {
-				rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
-				data_send(slm_data_buf, ret);
 			}
 		}
 	}
@@ -805,7 +807,7 @@ int handle_at_tcp_hangup(enum at_cmd_type cmd_type)
 		if (handle != proxy.sock_peer) {
 			return -EINVAL;
 		}
-		tcpsvr_terminate_connection(-ECONNREFUSED);
+		tcpsvr_terminate_connection(0);
 		err = 0;
 		break;
 

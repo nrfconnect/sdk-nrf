@@ -221,8 +221,8 @@ K_TIMER_DEFINE(inactivity_timer, inactivity_timer_handler, NULL);
 static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
 {
 	size_t processed;
-	bool quit_str_match;
-	bool prev_quit_str_match;
+	bool quit_str_match = false;
+	bool prev_quit_str_match = false;
 	uint8_t quit_str_match_count;
 	uint8_t prev_quit_str_match_count;
 
@@ -230,7 +230,6 @@ static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
 
 	/* Initialize from previous time.*/
 	prev_quit_str_match_count = quit_str_partial_match;
-	quit_str_match = false;
 	quit_str_match_count = prev_quit_str_match_count;
 	if (prev_quit_str_match_count != 0) {
 		prev_quit_str_match = true;
