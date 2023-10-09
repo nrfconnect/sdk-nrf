@@ -50,6 +50,8 @@ endif
 
 config BT_MESH_NLC_PERF_CONF
 	bool "Enable NLC performance configurations"
+	select BT_MESH_V1d1
+	select BT_MESH_COMP_PAGE_2
 	help
 	  Enables performance configurations required for NLC profiles.
 	  When implementing the NLC Basic Lightness Controller profile

@@ -63,6 +63,26 @@
 #include <bluetooth/mesh/scheduler_cli.h>
 #include <bluetooth/mesh/scheduler_srv.h>
 
+/**
+ *  @name Mesh Profiles from the NLC Profile Specifications
+ * @{
+ */
+/** Ambient Light Sensor NLC Profile 1.0 */
+#define BT_MESH_NLC_PROFILE_ID_AMBIENT_LIGHT_SENSOR 0x1600
+/** Basic Lightness Controller NLC Profile 1.0 */
+#define BT_MESH_NLC_PROFILE_ID_BASIC_LIGHTNESS_CONTROLLER 0x1601
+/** Basic Scene Selector NLC Profile 1.0 */
+#define BT_MESH_NLC_PROFILE_ID_BASIC_SCENE_SELECTOR 0x1602
+/** Dimming Control NLC Profile 1.0 */
+#define BT_MESH_NLC_PROFILE_ID_DIMMING_CONTROL 0x1603
+/** Energy Monitor NLC Profile 1.0 */
+#define BT_MESH_NLC_PROFILE_ID_ENERGY_MONITOR 0x1604
+/** Occupancy Sensor NLC Profile 1.0 */
+#define BT_MESH_NLC_PROFILE_ID_OCCUPANCY_SENSOR 0x1605
+/**
+ * @}
+ */
+
 /** @brief Check whether the model publishes to a unicast address.
  *
  * @param[in] model Model to check

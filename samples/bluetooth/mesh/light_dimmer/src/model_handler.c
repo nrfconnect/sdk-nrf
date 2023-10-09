@@ -50,6 +50,36 @@ struct scene_btn_ctx {
 	int64_t press_start_time;
 };
 
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+static const uint8_t cmp2_elem_offset[1] = { 0 };
+
+static const struct bt_mesh_comp2_record comp_rec[2] = {
+	{
+	.id = BT_MESH_NLC_PROFILE_ID_BASIC_SCENE_SELECTOR,
+	.version.x = 1,
+	.version.y = 0,
+	.version.z = 0,
+	.elem_offset_cnt = 1,
+	.elem_offset = cmp2_elem_offset,
+	.data_len = 0
+	},
+	{
+	.id = BT_MESH_NLC_PROFILE_ID_DIMMING_CONTROL,
+	.version.x = 1,
+	.version.y = 0,
+	.version.z = 0,
+	.elem_offset_cnt = 1,
+	.elem_offset = cmp2_elem_offset,
+	.data_len = 0
+	}
+};
+
+static const struct bt_mesh_comp2 comp_p2 = {
+	.record_cnt = 2,
+	.record = comp_rec
+};
+#endif
+
 static void dimmer_start(struct k_work *work)
 {
 	struct dimmer_ctx *ctx = CONTAINER_OF(k_work_delayable_from_work(work), struct dimmer_ctx,
@@ -275,6 +305,12 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+	if (bt_mesh_comp2_register(&comp_p2)) {
+		printf("Failed to register comp2\n");
+	}
+#endif
+
 	static struct button_handler button_handler = {
 		.cb = button_handler_cb,
 	};
