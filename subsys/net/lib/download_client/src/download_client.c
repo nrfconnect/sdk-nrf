@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* A comment that should not do anything */
+
 #include <stdio.h>
 #include <string.h>
 #include <zephyr/kernel.h>
