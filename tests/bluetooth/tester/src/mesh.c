@@ -63,6 +63,7 @@ static void supported_commands(uint8_t *data, uint16_t len)
 	tester_set_bit(buf->data, MESH_CONFIG_PROVISIONING);
 	tester_set_bit(buf->data, MESH_INIT);
 	tester_set_bit(buf->data, MESH_RESET);
+	tester_set_bit(buf->data, MESH_START);
 
 	tester_send(BTP_SERVICE_ID_MESH, MESH_READ_SUPPORTED_COMMANDS,
 		    CONTROLLER_INDEX, buf->data, buf->len);
@@ -234,9 +235,18 @@ static void init(uint8_t *data, uint16_t len)
 	err = bt_mesh_init(&prov, comp);
 	if (err) {
 		status = BTP_STATUS_FAILED;
-
-		goto rsp;
 	}
+
+	tester_rsp(BTP_SERVICE_ID_MESH, MESH_INIT, CONTROLLER_INDEX,
+		   status);
+}
+
+static void start(uint8_t *data, uint16_t len)
+{
+	uint8_t status = BTP_STATUS_SUCCESS;
+	int err;
+
+	LOG_DBG("");
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		printk("Loading stored settings\n");
@@ -256,8 +266,7 @@ static void init(uint8_t *data, uint16_t len)
 		}
 	}
 
-rsp:
-	tester_rsp(BTP_SERVICE_ID_MESH, MESH_INIT, CONTROLLER_INDEX,
+	tester_rsp(BTP_SERVICE_ID_MESH, MESH_START, CONTROLLER_INDEX,
 		   status);
 }
 
@@ -282,6 +291,9 @@ void tester_handle_mesh(uint8_t opcode, uint8_t index, uint8_t *data, uint16_t l
 		break;
 	case MESH_INIT:
 		init(data, len);
+		break;
+	case MESH_START:
+		start(data, len);
 		break;
 	case MESH_RESET:
 		reset(data, len);

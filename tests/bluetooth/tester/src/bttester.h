@@ -145,6 +145,7 @@ struct mesh_provision_node_cmd {
 
 #define MESH_INIT			0x04
 #define MESH_RESET			0x05
+#define MESH_START			0x78
 
 /* events */
 #define MESH_EV_OUT_NUMBER_ACTION	0x80
