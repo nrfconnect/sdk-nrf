@@ -25,6 +25,11 @@ module-str = Log level for Wi-Fi nRF700x bus layers
 module-help = Sets log level for Wi-Fi nRF700x bus layers
 source "subsys/net/Kconfig.template.log_config.net"
 
+# Hidden define for internal use
+config NRF700X_SCAN_ONLY_MODE
+	bool
+	default y if !WPA_SUPP && !NRF700X_RADIO_TEST
+
 config NRF700X_STA_MODE
 	bool "Enable nRF700X STA mode"
 	depends on WPA_SUPP
