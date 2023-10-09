@@ -27,6 +27,7 @@ source "subsys/net/Kconfig.template.log_config.net"
 
 config NRF700X_STA_MODE
 	bool "Enable nRF700X STA mode"
+	depends on WPA_SUPP
 	default y if WPA_SUPP
 
 config NRF_WIFI_IF_AUTO_START
