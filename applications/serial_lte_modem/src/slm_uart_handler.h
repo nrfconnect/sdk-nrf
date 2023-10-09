@@ -16,8 +16,7 @@
 
 #define HEXDUMP_LIMIT		16
 
-extern bool slm_uart_configured; /* UART: first-time configured */
-extern struct uart_config slm_uart; /* UART: config */
+extern uint32_t slm_uart_baudrate;
 
 /**@brief UART RX data callback type.
  *
@@ -41,14 +40,6 @@ int slm_uart_power_on(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_uart_power_off(void);
-
-/**
- * @brief Configure UART.
- *
- * @retval 0 If the UART was successfully configured.
- *           Otherwise, a (negative) error code is returned.
- */
-int slm_uart_configure(void);
 
 /** @return Whether a UART message can be sent from the current context. */
 bool slm_uart_can_context_send(const uint8_t *data, size_t len);

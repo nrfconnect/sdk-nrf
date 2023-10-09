@@ -241,12 +241,13 @@ Serial LTE modem
 
   * DFU AT commands ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` because they were not usable without a custom application in the target (nRF52 series) device.
   * Support for bootloader FOTA update because it is not needed for Serial LTE modem.
-  * Option to set or get HWFC setting from ``#XSLMUART`` AT command.
   * Operations to read or erase the MCUboot secondary slot from the ``#XFOTA`` AT command because the application update process overwrites the slot in any case.
   * AT commands ``#XCELLPOS`` and ``#XWIFIPOS``.
     They are replaced by the ``#XNRFCLOUDPOS`` command that allows to combine cellular and Wi-Fi data to determine the device location.
   * The AT commands ``#XAGPS`` and ``#XPGPS``.
     Their functionality is merged into the ``#XGPS`` AT command that now allows using A-GPS and P-GPS at the same time.
+  * The AT command ``#XSLMUART``.
+    UART is now configured using only devicetree.
 
 nRF5340 Audio
 -------------

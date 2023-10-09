@@ -36,12 +36,5 @@ int slm_settings_fota_save(void);
  */
 int slm_settings_auto_connect_save(void);
 
-/**
- * @brief Saves the UART settings to NVM.
- *
- * @retval 0 on success, nonzero otherwise.
- */
-int slm_settings_uart_save(void);
-
 /** @} */
 #endif

@@ -703,9 +703,9 @@ int enter_datamode(slm_datamode_handler_t handler)
 
 	datamode_handler = handler;
 	if (slm_datamode_time_limit == 0) {
-		if (slm_uart.baudrate > 0) {
+		if (slm_uart_baudrate > 0) {
 			slm_datamode_time_limit = CONFIG_SLM_UART_RX_BUF_SIZE * (8 + 1 + 1) * 1000 /
-					      slm_uart.baudrate;
+					      slm_uart_baudrate;
 			slm_datamode_time_limit += UART_RX_MARGIN_MS;
 		} else {
 			LOG_WRN("Baudrate not set");
@@ -752,12 +752,12 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 {
 	int min_time;
 
-	if (slm_uart.baudrate == 0) {
+	if (slm_uart_baudrate == 0) {
 		LOG_ERR("Baudrate not set");
 		return false;
 	}
 
-	min_time = CONFIG_SLM_UART_RX_BUF_SIZE * (8 + 1 + 1) * 1000 / slm_uart.baudrate;
+	min_time = CONFIG_SLM_UART_RX_BUF_SIZE * (8 + 1 + 1) * 1000 / slm_uart_baudrate;
 	min_time += UART_RX_MARGIN_MS;
 
 	if (time_limit > 0 && min_time > time_limit) {
