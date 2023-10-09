@@ -57,6 +57,36 @@ static double dummy_ambient_light_value;
 static int32_t pres_detect;
 static uint32_t prev_detect;
 
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+static const uint8_t cmp2_elem_offset1[1] = { 0 };
+static const uint8_t cmp2_elem_offset2[1] = { 1 };
+
+static const struct bt_mesh_comp2_record comp_rec[2] = {
+	{
+	.id = BT_MESH_NLC_PROFILE_ID_AMBIENT_LIGHT_SENSOR,
+	.version.x = 1,
+	.version.y = 0,
+	.version.z = 0,
+	.elem_offset_cnt = 1,
+	.elem_offset = cmp2_elem_offset1,
+	.data_len = 0
+	},
+	{
+	.id = BT_MESH_NLC_PROFILE_ID_OCCUPANCY_SENSOR,
+	.version.x = 1,
+	.version.y = 0,
+	.version.z = 0,
+	.elem_offset_cnt = 1,
+	.elem_offset = cmp2_elem_offset2,
+	.data_len = 0
+	}
+};
+
+static const struct bt_mesh_comp2 comp_p2 = {
+	.record_cnt = 2,
+	.record = comp_rec
+};
+#endif
 static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor *sensor,
 			 struct bt_mesh_msg_ctx *ctx,
@@ -718,6 +748,12 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+	if (bt_mesh_comp2_register(&comp_p2)) {
+		printf("Failed to register comp2\n");
+	}
+#endif
+
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&presence_detected_work, presence_detected);
 

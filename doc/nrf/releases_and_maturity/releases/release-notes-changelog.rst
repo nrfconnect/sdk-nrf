@@ -361,11 +361,15 @@ Bluetooth mesh samples
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
+  * Added Composition Data Page 2 support.
+    Composition Data Page 2 support has a dependency on Bluetooth mesh 1.1 support.
   * Fixed an issue where the sample could return an invalid Light Lightness Status message if the transition time was evaluated to zero.
   * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
 
 * :ref:`bluetooth_mesh_light_dim` sample:
 
+  * Added Composition Data Page 2 support.
+    Composition Data Page 2 support has a dependency on Bluetooth mesh 1.1 support.
   * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
 
 * :ref:`bluetooth_mesh_light_switch` sample:
@@ -374,6 +378,8 @@ Bluetooth mesh samples
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
+  * Added Composition Data Page 2 support.
+    Composition Data Page 2 support has a dependency on Bluetooth mesh 1.1 support.
   * Added a getter for the :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` sensor.
   * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
   * Fixed an issue where the :c:var:`bt_mesh_sensor_time_since_presence_detected` sensor could report an invalid value when the time delta would exceed the range of the characteristic.

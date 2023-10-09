@@ -21,6 +21,37 @@ struct lightness_ctx {
 	uint32_t rem_time;
 };
 
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+static const uint8_t cmp2_elem_offset1[2] = { 0, 1 };
+static const uint8_t cmp2_elem_offset2[1] = { 0 };
+
+static const struct bt_mesh_comp2_record comp_rec[2] = {
+	{
+	.id = BT_MESH_NLC_PROFILE_ID_BASIC_LIGHTNESS_CONTROLLER,
+	.version.x = 1,
+	.version.y = 0,
+	.version.z = 0,
+	.elem_offset_cnt = 2,
+	.elem_offset = cmp2_elem_offset1,
+	.data_len = 0
+	},
+	{
+	.id = BT_MESH_NLC_PROFILE_ID_ENERGY_MONITOR, /* Energy Monitor NLC Profile 1.0 */
+	.version.x = 1,
+	.version.y = 0,
+	.version.z = 0,
+	.elem_offset_cnt = 1,
+	.elem_offset = cmp2_elem_offset2,
+	.data_len = 0
+	}
+};
+
+static const struct bt_mesh_comp2 comp_p2 = {
+	.record_cnt = 2,
+	.record = comp_rec
+};
+#endif
+
 /* Set up a repeating delayed work to blink the DK's LEDs when attention is
  * requested.
  */
@@ -245,6 +276,12 @@ const struct bt_mesh_comp *model_handler_init(void)
 void model_handler_start(void)
 {
 	int err;
+
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+	if (bt_mesh_comp2_register(&comp_p2)) {
+		printf("Failed to register comp2\n");
+	}
+#endif
 
 	if (bt_mesh_is_provisioned()) {
 		return;
