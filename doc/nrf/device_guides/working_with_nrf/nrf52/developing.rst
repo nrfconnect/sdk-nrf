@@ -138,14 +138,15 @@ To perform a FOTA update, complete the following steps:
 
    |fota_upgrades_building|
 
-#. Download the :file:`app_update.bin` image file to your device.
+#. Download the :file:`dfu_application.zip` archive to your device.
+   See :ref:`app_build_fota` for more information about the contents of update archive.
 
    .. note::
       nRF Connect for Desktop does not currently support the FOTA process.
 
    Use `nRF Connect Device Manager`_, `nRF Connect for Mobile`_, or `nRF Toolbox`_ to update your device with the new firmware.
 
-   a. Ensure that you can access the :file:`app_update.bin` image file from your phone or tablet.
+   a. Ensure that you can access the :file:`dfu_application.zip` archive from your phone or tablet.
    #. Connect to the device with the mobile app.
    #. Initiate the DFU process to transfer the image to the device.
 
