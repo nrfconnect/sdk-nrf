@@ -331,7 +331,7 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`wifi_throughput_sample` sample that demonstrates how to measure the network throughput of a Nordic Wi-Fi enabled platform under the different Wi-Fi stack configuration profiles.
 
 Other samples
 -------------
