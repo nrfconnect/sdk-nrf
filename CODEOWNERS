@@ -192,6 +192,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/sta/                        @D-Triveni @bama-nordic
 /samples/wifi/sr_coex/                    @muraliThokala @bama-nordic
 /samples/wifi/twt/                        @chiranjeevi2776 @krish2718
+/samples/wifi/throughput/                 @SusanGRapaka @D-Triveni
 /scripts/                                 @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @MarekPieta
 /scripts/tools-versions-*.txt             @tejlmand @grho @shanthanordic @ihansse
