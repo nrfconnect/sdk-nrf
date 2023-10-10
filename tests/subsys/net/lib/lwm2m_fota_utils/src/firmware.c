@@ -699,13 +699,18 @@ ZTEST(lwm2m_client_utils_firmware, test_firmware_update)
 
 ZTEST(lwm2m_client_utils_firmware, test_firmware_push_update)
 {
-	int rc;
+	int rc, inavalid_cancel;
 	uint8_t test_dummy_data[32];
 	uint8_t state;
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	inavalid_cancel = 0;
+#else
+	inavalid_cancel = -EINVAL;
+#endif
 	dfu_target_mcuboot_identify_fake.return_val = false;
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, NULL, 0, false, 0);
-	zassert_equal(rc, -EINVAL, "wrong return value");
+	zassert_equal(rc, inavalid_cancel, "wrong return value");
 
 	rc = post_write_to_resource(app_instance, LWM2M_FOTA_PACKAGE_ID, test_dummy_data, 32, false,
 				    64);
