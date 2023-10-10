@@ -346,7 +346,6 @@ Bluetooth samples
 * :ref:`peripheral_fast_pair` sample:
 
   * Added automatic switching to the Fast Pair not discoverable advertising mode with the hide UI indication instead of removing the Fast Pair advertising payload when all bond slots are taken.
-  * Updated by disabling the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option as a workaround fix for the `Zephyr issue #61033`_.
   * Fixed an issue where the sample was unable to advertise in Fast Pair not discoverable advertising mode when it had five Account Keys written.
 
 Bluetooth mesh samples
