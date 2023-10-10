@@ -51,3 +51,26 @@ tests:
     extra_configs:
       - CONFIG_BOOTLOADER_MCUBOOT=y
       - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+  sample.bluetooth.peripheral_lbs_bt_ota_dfu.direct_xip:
+    build_only: true
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840
+    tags: bluetooth ci_build
+    extra_args: mcuboot_CONFIG_BOOT_DIRECT_XIP=y
+    extra_configs:
+      - CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+      - CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT=y
+  sample.bluetooth.peripheral_lbs_bt_ota_dfu.direct_xip.revert:
+    build_only: true
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840
+    tags: bluetooth ci_build
+    extra_args: mcuboot_CONFIG_BOOT_DIRECT_XIP=y mcuboot_CONFIG_BOOT_DIRECT_XIP_REVERT=y
+    extra_configs:
+      - CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+      - CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT=y
+      - CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
