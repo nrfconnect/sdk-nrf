@@ -327,6 +327,7 @@
   - "drivers/hw_cc310/*"
   - "drivers/wifi/**/*"
   - "modules/hostap/**/*"
+  - "modules/lib/hostap/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/ieee802154/**/*"
   - "subsys/bootloader/**/*"
