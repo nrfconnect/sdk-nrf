@@ -57,7 +57,7 @@ In that case, the DFU module assumes that the MCUboot direct-xip bootloader simp
 
 The :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP <config_desktop_app_options>` option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
 If the option is enabled, the DFU module reports the ``MCUBOOT+XIP`` bootloader name instead of ``MCUBOOT`` to indicate that the bootloader working in the direct-xip mode is used.
-The option depends on enabling the MCUboot bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`) and is enabled by default if the direct-xip variant of the application image is built (:kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT`).
+The option depends on enabling the MCUboot bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`) and is enabled by default if the MCUboot direct-xip mode of operations is set (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP`).
 
 .. note::
    The configured MCUboot bootloader mode needs to be manually aligned for both bootloader and application image.

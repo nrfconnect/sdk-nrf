@@ -1947,11 +1947,12 @@ Direct-xip mode
 
 The direct-xip mode is used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
-Make sure to enable the :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option in the application configuration to build application update images for both slots.
+To set the MCUboot mode of operations to the direct-xip mode, make sure to enable the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option in the application configuration.
+This option automatically enables :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` to build application update images for both slots.
 
 Enable the ``CONFIG_BOOT_DIRECT_XIP`` Kconfig option in the bootloader configuration to make the MCUboot run the image directly from both image slots.
 The nRF Desktop's bootloader configurations do not enable the revert mechanism (``CONFIG_BOOT_DIRECT_XIP_REVERT``).
-When the direct-xip mode is enabled (the :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option is set in the application configuration), the application modules that control the DFU transport do not request firmware upgrades and do not confirm the running image.
+When the direct-xip mode is enabled (the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option is set in the application configuration), the application modules that control the DFU transport do not request firmware upgrades and do not confirm the running image.
 In that scenario, the MCUboot bootloader simply boots the image with the higher image version.
 
 By default, the MCUboot bootloader ignores the build number while comparing image versions.

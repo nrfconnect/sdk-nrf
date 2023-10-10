@@ -68,7 +68,7 @@ The DFU over Simple Management Protocol in Zephyr is supported only with the MCU
 By default, the MCUmgr DFU module confirms the image using the :c:func:`boot_write_img_confirmed` function during the system boot.
 If the :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` option is enabled, the MCUmgr DFU module assumes that the bootloader simply boots the image with a higher version and does not confirm the newly updated image after a successful boot.
 Make sure that :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` Kconfig option is enabled if devices use the MCUboot bootloader in direct-xip mode.
-The option is enabled by default if :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` is enabled.
+The option is enabled by default if :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` is enabled.
 
 You must also enable the preferred transport for the MCUmgr's SMP protocol (for example, the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT` Kconfig option).
 With the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT` Kconfig option enabled, the module enables the :kconfig:option:`CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS` event.
