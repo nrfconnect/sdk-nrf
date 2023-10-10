@@ -453,13 +453,13 @@ int main(void)
 			ret = traffic_gen_start(&tg_config);
 			if (ret < 0) {
 				LOG_ERR("Failed to start traffic role ");
-				return -1;
+				goto teardown;
 			}
 
 			ret = traffic_gen_wait_for_report(&tg_config);
 			if (ret < 0) {
 				LOG_ERR("Failed to get traffic report ");
-				return -1;
+				goto teardown;
 			}
 			traffic_gen_get_report(&tg_config);
 #endif /* CONFIG_TRAFFIC_GEN */
@@ -467,6 +467,7 @@ int main(void)
 			/* Wait for few service periods before tearing down */
 			k_sleep(K_USEC(5 * CONFIG_TWT_INTERVAL));
 
+teardown:
 			ret = teardown_twt();
 			if (ret) {
 				LOG_ERR("Failed to teardown TWT flow: %d\n", ret);
