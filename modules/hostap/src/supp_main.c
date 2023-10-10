@@ -63,7 +63,7 @@ static struct k_thread z_wpa_s_tid;
 static K_THREAD_STACK_DEFINE(z_wpas_wq_stack,
 	CONFIG_WPA_SUPP_WQ_STACK_SIZE);
 
-/* TODO: Debug why wsing system workqueue blocks the driver dedicated
+/* TODO: Debug why using system workqueue blocks the driver dedicated
  * workqueue?
  */
 static struct k_work_q z_wpas_wq;
