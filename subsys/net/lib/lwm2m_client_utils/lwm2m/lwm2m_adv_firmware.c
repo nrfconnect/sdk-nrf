@@ -255,18 +255,18 @@ static int package_write_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_
 	lwm2m_engine_set_data_cb_t callback;
 
 	state = lwm2m_adv_firmware_get_update_state(obj_inst_id);
-	if (state == STATE_IDLE) {
-		lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_DOWNLOADING);
-	} else if (data_len == 0U || (data_len == 1U && data[0] == '\0')) {
-		if (state == STATE_DOWNLOADED || state == STATE_DOWNLOADING) {
-			/* reset to state idle and result default */
-			lwm2m_adv_firmware_set_update_result(obj_inst_id, RESULT_DEFAULT);
-			LOG_DBG("Update canceled by writing %d bytes", data_len);
-			return 0;
+	if (data_len == 0U || (data_len == 1U && data[0] == '\0')) {
+		if (state == STATE_UPDATING) {
+			/* Cancel at Updating state is not accepted */
+			LOG_WRN("Download has already completed");
+			return -EPERM;
 		}
-		LOG_WRN("Download has already completed");
-		return -EPERM;
 
+		lwm2m_adv_firmware_set_update_result(obj_inst_id, RESULT_DEFAULT);
+		return 0;
+
+	} else if (state == STATE_IDLE) {
+		lwm2m_adv_firmware_set_update_state(obj_inst_id, STATE_DOWNLOADING);
 	} else if (state != STATE_DOWNLOADING) {
 		LOG_WRN("Cannot download: state = %d", state);
 		return -EPERM;
