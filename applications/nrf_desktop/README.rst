@@ -886,19 +886,23 @@ Selecting a build type from command line
 
    * NCS keyboard - The Fast Pair Provider meant to be used with keyboards:
 
-      * Device name: NCS keyboard
+      * Device Name: NCS keyboard
       * Model ID: ``0x52FF02``
-      * Anti-spoofing key (base64, uncompressed): ``8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=``
-      * Type: Input device
-      * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+      * Anti-Spoofing Private Key (base64, uncompressed): ``8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=``
+      * Device Type: Input Device
+      * Notification Type: Fast Pair
+      * Data-Only connection: true
+      * No Personalized Name: false
 
    * NCS gaming mouse - Fast Pair Provider meant to be used with gaming mice:
 
-      * Device name: NCS gaming mouse
+      * Device Name: NCS gaming mouse
       * Model ID: ``0x8E717D``
-      * Anti-spoofing key (base64, uncompressed): ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
-      * Type: Input device
-      * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+      * Anti-Spoofing Private Key (base64, uncompressed): ``dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=``
+      * Device Type: Input Device
+      * Notification Type: Fast Pair
+      * Data-Only connection: true
+      * No Personalized Name: false
 
    See :ref:`ug_bt_fast_pair_provisioning` documentation for the following information:
 

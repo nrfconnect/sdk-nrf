@@ -64,11 +64,13 @@ By default, if Model ID and Anti-Spoofing Private Key are not specified, the fol
 
 * NCS Fast Pair demo - The input device Fast Pair provider:
 
-   * Device name: NCS Fast Pair demo
+   * Device Name: NCS Fast Pair demo
    * Model ID: ``0x2A410B``
-   * Anti-spoofing key (base64, uncompressed): ``Unoh+nycK/ZJ7k3dHsdcNpiP1SfOy0P/Lx5XixyYois=``
-   * Type: Input device
-   * Additional features: Data only connection, Support personalized name, Ringing device unsupported
+   * Anti-Spoofing Private Key (base64, uncompressed): ``Unoh+nycK/ZJ7k3dHsdcNpiP1SfOy0P/Lx5XixyYois=``
+   * Device Type: Input Device
+   * Notification Type: Fast Pair
+   * Data-Only connection: true
+   * No Personalized Name: false
 
 See :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide for details.
 
