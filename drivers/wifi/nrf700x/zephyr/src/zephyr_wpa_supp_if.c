@@ -141,6 +141,7 @@ void nrf_wifi_wpa_supp_event_proc_scan_done(void *if_priv,
 			&event);
 	}
 	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
+	vif_ctx_zep->scan_in_progress = false;
 	k_sem_give(&wait_for_scan_resp_sem);
 }
 
