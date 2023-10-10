@@ -95,7 +95,7 @@ gitlint==0.18.0
     #   -r ./zephyr/scripts/requirements-extras.txt
 gitlint-core==0.18.0
     # via gitlint
-gitpython==3.1.35
+gitpython==3.1.37
     # via -r ./nrf/scripts/requirements-ci.txt
 graphviz==0.20.1
     # via -r ./zephyr/scripts/requirements-extras.txt
