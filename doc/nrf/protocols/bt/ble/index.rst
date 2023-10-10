@@ -38,7 +38,7 @@ The SoftDevice Controller is distributed as a set of precompiled, linkable libra
 There are different variants of the libraries that support different feature sets.
 Which variant you should choose depends on the chip that you are using, the features that you need, and the amount of available memory.
 
-Nordic's SoftDevice Controller supports an extensive standard feature set from the Bluetooth® 5.2 specification and a number of extensions for high-performance applications like Low Latency Packet mode (LLPM).
+Nordic's SoftDevice Controller supports an extensive standard feature set from the Bluetooth® specification and a number of extensions for high-performance applications like Low Latency Packet mode (LLPM).
 See the :ref:`SoftDevice Controller documentation <nrfxlib:softdevice_controller>` for a detailed list of supported features.
 
 
