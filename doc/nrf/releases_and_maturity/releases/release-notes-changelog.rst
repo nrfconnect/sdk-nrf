@@ -350,10 +350,11 @@ Bluetooth samples
 
   * Fixed an interoperability issue with iOS devices by setting the report IDs of HID input and output reports to zero.
 
-* :ref:`peripheral_fast_pair` sample:
+* :ref:`fast_pair_input_device` sample:
 
   * Added automatic switching to the Fast Pair not discoverable advertising mode with the hide UI indication instead of removing the Fast Pair advertising payload when all bond slots are taken.
   * Fixed an issue where the sample was unable to advertise in Fast Pair not discoverable advertising mode when it had five Account Keys written.
+  * Renamed the sample to :ref:`fast_pair_input_device` and moved it to the :file:`samples/bluetooth/fast_pair` folder.
 
 Bluetooth mesh samples
 ----------------------

@@ -415,7 +415,7 @@ Bluetooth samples
   * Fixed scanning start on the nRF5340 target with the Zephyr LL controller.
     Previously, it was not possible to start scanning, because the :kconfig:option:`CONFIG_BT_EXT_ADV` option was disabled for the Zephyr LL controller.
 
-* :ref:`peripheral_fast_pair` sample:
+* Bluetooth: Fast Pair sample:
 
   * Added:
 

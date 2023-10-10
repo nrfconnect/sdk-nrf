@@ -32,7 +32,7 @@ The Fast Pair standard integration in the |NCS| consists of the following steps:
 These steps are described in the following sections.
 
 The Fast Pair standard implementation in the |NCS| integrates Fast Pair Provider, one of the available `Fast Pair roles`_.
-For an integration example, see the :ref:`peripheral_fast_pair` sample.
+For an integration example, see the :ref:`fast_pair_input_device` sample.
 
 .. rst-class:: numbered-step
 
@@ -49,7 +49,7 @@ Registering Fast Pair Provider
 
 See the official `Fast Pair Model Registration`_ documentation for information on how to register the device and obtain the Model ID and Anti-Spoofing Public/Private Key pair.
 Alternatively, you can use the debug Model ID and Anti-Spoofing Public/Private Key pair obtained by Nordic Semiconductor for the development purposes.
-See the :ref:`peripheral_fast_pair` sample and the :ref:`nrf_desktop` for details about the debug Fast Pair Providers registered by Nordic.
+See the :ref:`fast_pair_input_device` sample and the :ref:`nrf_desktop` for details about the debug Fast Pair Providers registered by Nordic.
 
 Provisioning registration data onto device
 ==========================================
@@ -112,7 +112,7 @@ Fast Pair advertising data provider
 ===================================
 
 The Fast Pair :ref:`advertising data provider <bt_le_adv_prov_readme>` (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`) can be used to manage the Fast Pair advertising data.
-See :ref:`peripheral_fast_pair` for an example of using the provider in a sample.
+See :ref:`fast_pair_input_device` for an example of using the provider in a sample.
 See :file:`subsys/bluetooth/adv_prov/providers/fast_pair.c` for provider implementation.
 
 Advertising TX power
@@ -132,7 +132,7 @@ Advertising data provider
 If your application uses :ref:`bt_le_adv_prov_readme`, you can use the TX power advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER`) to read the advertising TX power from Bluetooth controller and add it to the generated advertising data.
 The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` option can be used to define a TX power correction value that is added to the TX power readout included in the advertising data.
 The option can be used to take into account hardware configuration, for example, used antenna and device casing.
-See :ref:`peripheral_fast_pair` sample for an example of how to use the TX power advertising provider.
+See :ref:`fast_pair_input_device` sample for an example of how to use the TX power advertising provider.
 
 Multiprotocol Service Layer front-end module (MPSL FEM)
 -------------------------------------------------------

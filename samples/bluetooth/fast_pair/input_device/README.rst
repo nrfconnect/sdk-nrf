@@ -1,13 +1,13 @@
-.. _peripheral_fast_pair:
+.. _fast_pair_input_device:
 
-Bluetooth: Fast Pair
-####################
+Bluetooth: Fast Pair input device
+#################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Fast Pair sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>`.
+The Fast Pair input device sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>`.
 
 Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth and Bluetooth LE devices with as little user interaction required as possible.
 Google also provides additional features built upon the Fast Pair standard.
@@ -62,9 +62,9 @@ This is required to obtain Model ID and Anti-Spoofing Private Key.
 You can register your own device or use the debug Model ID and Anti-Spoofing Public/Private Key pair obtained by Nordic for development purposes.
 By default, if Model ID and Anti-Spoofing Private Key are not specified, the following debug Fast Pair provider is used:
 
-* NCS Fast Pair demo - The input device Fast Pair provider:
+* NCS input device - The input device Fast Pair provider:
 
-   * Device Name: NCS Fast Pair demo
+   * Device Name: NCS input device
    * Model ID: ``0x2A410B``
    * Anti-Spoofing Private Key (base64, uncompressed): ``Unoh+nycK/ZJ7k3dHsdcNpiP1SfOy0P/Lx5XixyYois=``
    * Device Type: Input Device
@@ -166,12 +166,12 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_fast_pair`
+.. |sample path| replace:: :file:`samples/bluetooth/fast_pair/input_device`
 
 .. include:: /includes/build_and_run_ns.txt
 
 When building the sample, you can provide the Fast Pair Model ID (:c:macro:`FP_MODEL_ID`) and the Fast Pair Anti-Spoofing Key (:c:macro:`FP_ANTI_SPOOFING_KEY`) as CMake options.
-If the data is not provided, the sample uses the default provisioning data obtained for the *NCS Fast Pair demo* (the input device debug Fast Pair provider).
+If the data is not provided, the sample uses the default provisioning data obtained for the *NCS input device* (the input device debug Fast Pair provider).
 See :ref:`ug_bt_fast_pair_provisioning` for detailed guide.
 
 .. note::
@@ -199,7 +199,7 @@ Testing
 
    The device model name and displayed logo depend on the data provided during the device model registration.
 
-   If you use the debug Model ID (for example, the default is *NCS Fast Pair demo*), the notification is similar to the following:
+   If you use the debug Model ID (for example, the default is *NCS input device*), the notification is similar to the following:
 
    .. figure:: /images/bt_fast_pair_discoverable_notification_debug.png
       :scale: 50 %
@@ -257,7 +257,7 @@ Test not discoverable advertising by completing `Testing`_ and the following add
       :scale: 50 %
       :alt: Fast Pair not discoverable advertising Android notification
 
-   If you use the debug Model ID (for example, the default is *NCS Fast Pair demo*) and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
+   If you use the debug Model ID (for example, the default is *NCS input device*) and the device is in the show UI indication advertising mode, a notification similar to the following one appears:
 
    .. figure:: /images/bt_fast_pair_not_discoverable_notification_debug.png
       :scale: 50 %

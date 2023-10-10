@@ -2267,7 +2267,7 @@ Bluetooth libraries and services
 NCSDK-23315: The :ref:`bt_le_adv_prov_readme` has an incorrect range and default value for the :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_ADV_BUF_SIZE` Kconfig option.
   The buffer size has not been aligned to the new Fast Pair not discoverable advertising data size after size of the salt included in the data was increased from 1 byte to 2 bytes.
   Too small default buffer size results in an assertion failure when generating an advertising data for the Fast Pair not discoverable advertising with five Account Keys and the Battery Notification enabled.
-  The assertion failure replicates in the :ref:`peripheral_fast_pair` sample.
+  The assertion failure replicates in the :ref:`fast_pair_input_device` sample.
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``a8b668e82837295962348e9e681125c2ae11bb4e``).
 

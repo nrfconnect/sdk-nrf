@@ -1,8 +1,8 @@
 sample:
-  name: Fast Pair Provider
-  description: Bluetooth Fast Pair Provider sample
+  name: Fast Pair input device
+  description: Bluetooth Fast Pair Provider sample setup for the input device use case
 tests:
-  sample.bluetooth.fast_pair:
+  sample.bluetooth.fast_pair.input_device:
     build_only: true
     integration_platforms:
       - nrf52dk_nrf52832
