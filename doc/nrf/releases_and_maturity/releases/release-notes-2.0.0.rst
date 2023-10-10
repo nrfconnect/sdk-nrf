@@ -294,7 +294,7 @@ Bluetooth samples
 * Added:
 
   * :ref:`peripheral_ams_client` sample.
-  * :ref:`peripheral_fast_pair` sample.
+  * Bluetooth: Fast Pair sample.
     See :ref:`ug_bt_fast_pair` for details about this feature.
 
 * Removed Peripheral Alexa Gadgets Bluetooth sample due to Amazon pausing support for the Gadgets ecosystem.

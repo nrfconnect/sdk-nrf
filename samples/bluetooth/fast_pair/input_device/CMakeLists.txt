@@ -20,7 +20,7 @@ if(NOT DEFINED FP_MODEL_ID AND NOT DEFINED FP_ANTI_SPOOFING_KEY)
 endif()
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(peripheral_fast_pair)
+project(input_device)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE

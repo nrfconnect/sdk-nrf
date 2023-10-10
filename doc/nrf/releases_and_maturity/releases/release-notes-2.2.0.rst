@@ -348,7 +348,7 @@ Bluetooth samples
   * Added terminal commands for selecting the role.
   * Updated the ASCII art used for showing progress to feature the current Nordic Semiconductor logo.
 
-* :ref:`peripheral_fast_pair` sample:
+* Bluetooth: Fast Pair sample:
 
   * Added:
 
