@@ -36,7 +36,7 @@ K_THREAD_DEFINE(con_thread, CONFIG_CONNECTION_THREAD_STACK_SIZE, cloud_connectio
 		NULL, NULL, NULL, 0, 0, 0);
 
 #if defined(CONFIG_NRF_CLOUD_COAP)
-#if defined(CONFIG_NRF_CLOUD_COAP_FOTA)
+#if defined(CONFIG_COAP_FOTA)
 /* Define, and automatically start the CoAP FOTA check thread. See fota_support_coap.c */
 K_THREAD_DEFINE(coap_fota, CONFIG_COAP_FOTA_THREAD_STACK_SIZE, coap_fota_thread_fn,
 		NULL, NULL, NULL, 0, 0, 0);
