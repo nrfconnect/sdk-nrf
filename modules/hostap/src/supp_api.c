@@ -129,7 +129,8 @@ static void supp_shell_connect_status(struct k_work *work)
 			goto out;
 		}
 
-		k_work_reschedule(&wpa_supp_status_work, K_SECONDS(OP_STATUS_POLLING_INTERVAL));
+		k_work_reschedule_for_queue(&z_wpas_wq, &wpa_supp_status_work,
+			K_SECONDS(OP_STATUS_POLLING_INTERVAL));
 		ctrl->status_thread_state = STATUS_THREAD_RUNNING;
 		k_mutex_unlock(&wpa_supplicant_mutex);
 		return;
@@ -150,7 +151,7 @@ static inline void wpa_supp_restart_status_work(void)
 	wpa_supp_api_ctrl.terminate = 0;
 
 	/* Start afresh */
-	k_work_reschedule(&wpa_supp_status_work,
+	k_work_reschedule_for_queue(&z_wpas_wq, &wpa_supp_status_work,
 		K_MSEC(10));
 }
 
