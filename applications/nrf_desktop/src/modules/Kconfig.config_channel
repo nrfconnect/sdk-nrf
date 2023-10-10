@@ -81,7 +81,7 @@ config DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE
 config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
 	bool "Device uses MCUboot bootloader in direct-xip mode"
 	depends on BOOTLOADER_MCUBOOT
-	default y if BOOT_BUILD_DIRECT_XIP_VARIANT
+	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
 	help
 	  The option informs the DFU module that the MCUboot bootloader supports
 	  direct-xip mode. In this mode, the image is booted directly from the
