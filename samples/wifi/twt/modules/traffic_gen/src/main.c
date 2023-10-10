@@ -48,20 +48,21 @@ void traffic_gen_get_report(struct traffic_gen_config *tg_config)
 			LOG_INF("Printing Client Report:");
 		} else {
 			LOG_INF("Server Report:");
+			LOG_INF("\t Total Bytes Received  : %-15u", ntohl(report->bytes_received));
+			LOG_INF("\t Total Packets Received: %-15u",
+					ntohl(report->packets_received));
+			LOG_INF("\t Elapsed Time          : %-15u", ntohl(report->elapsed_time));
+			LOG_INF("\t Throughput (Kbps)     : %-15u", ntohl(report->throughput));
+			LOG_INF("\t Average Jitter (ms)   : %-15u", ntohl(report->average_jitter));
 		}
-		LOG_INF("\t Total Bytes Received  : %-15u", ntohl(report->bytes_received));
-		LOG_INF("\t Total Packets Received: %-15u", ntohl(report->packets_received));
-		LOG_INF("\t Elapsed Time          : %-15u", ntohl(report->elapsed_time));
-		LOG_INF("\t Throughput (Kbps)     : %-15u", ntohl(report->throughput));
-		LOG_INF("\t Average Jitter (ms)   : %-15u", ntohl(report->average_jitter));
-	} else {
-		LOG_INF("Client Report:");
-		LOG_INF("\t Total Bytes Received  : %-15u", (report->bytes_received));
-		LOG_INF("\t Total Packets Received: %-15u", (report->packets_received));
-		LOG_INF("\t Elapsed Time          : %-15u", (report->elapsed_time));
-		LOG_INF("\t Throughput (Kbps)     : %-15u", (report->throughput));
-		LOG_INF("\t Average Jitter (ms)   : %-15u", (report->average_jitter));
 	}
+
+	LOG_INF("Client Report:");
+	LOG_INF("\t Total Bytes Received  : %-15u", (report->bytes_received));
+	LOG_INF("\t Total Packets Received: %-15u", (report->packets_received));
+	LOG_INF("\t Elapsed Time          : %-15u", (report->elapsed_time));
+	LOG_INF("\t Throughput (Kbps)     : %-15u", (report->throughput));
+	LOG_INF("\t Average Jitter (ms)   : %-15u", (report->average_jitter));
 }
 
 int traffic_gen_wait_for_report(struct traffic_gen_config *tg_config)
