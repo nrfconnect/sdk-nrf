@@ -291,9 +291,9 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		z_wpa_cli_cmd_v("set_network %d scan_freq %d",
 			resp.network_id, freq);
 	}
+
 	_wpa_cli_cmd_v("select_network %d", resp.network_id);
 
-	z_wpa_cli_cmd_v("select_network %d", resp.network_id);
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = CONNECT;
 	wpa_supp_api_ctrl.connection_timeout = params->timeout;
