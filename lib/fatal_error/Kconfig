@@ -6,7 +6,7 @@
 
 menuconfig RESET_ON_FATAL_ERROR
 	bool "Reset on fatal error"
-	default y if !DEBUG && !BOARD_NATIVE_POSIX && !QEMU_TARGET && !ZTEST
+	default y if !DEBUG && !BOARD_NATIVE_POSIX && !QEMU_TARGET && !TEST
 	select REBOOT
 	help
 	  Enable using the fatal error handler defined for Nordic DKs.
