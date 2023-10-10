@@ -82,6 +82,51 @@ If you want to add SMP Service to advertising data, refer to the :ref:`zephyr:sm
 
 .. fota_upgrades_over_ble_additional_information_end
 
+.. fota_upgrades_over_ble_mcuboot_direct_xip_information_start
+
+Build configuration additions for MCUboot in the direct-xip mode
+----------------------------------------------------------------
+
+FOTA updates are also supported when MCUboot is in the direct-xip mode.
+In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
+It can be used either with or without the revert mechanism support.
+For more information about the direct-xip mode and the revert mechanism support, go to the Equal slots (direct-xip) section on the :doc:`mcuboot:design` page.
+
+To use MCUboot in the direct-xip mode together with FOTA updates, do the following:
+
+* Enable the ``CONFIG_BOOT_DIRECT_XIP`` Kconfig option in the MCUboot bootloader configuration.
+* Enable the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option to inform the application about the chosen MCUboot mode of operation.
+
+See how to build the :ref:`peripheral_lbs` sample with MCUboot in the direct-xip mode when the revert mechanism support is disabled:
+
+.. parsed-literal::
+   :class: highlight
+
+    west build -b *build_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP=y
+
+Optionally, if you want to enable the revert mechanism support, complete the following:
+
+* Enable the ``CONFIG_BOOT_DIRECT_XIP_REVERT`` Kconfig option in the MCUboot bootloader configuration.
+* Enable the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT` Kconfig option in place of :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` to inform the application about the chosen MCUboot mode of operation.
+
+See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mode when the revert mechanism support is enabled:
+
+.. parsed-literal::
+   :class: highlight
+
+    west build -b *build_target* -- -Dmcuboot_CONFIG_BOOT_DIRECT_XIP=y -Dmcuboot_CONFIG_BOOT_DIRECT_XIP_REVERT=y -DCONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y -DCONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
+
+.. note::
+   When building the application for the first time with MCUboot in direct-xip mode and the revert mechanism support, use an additional option ``-DCONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS=\"--confirm\"``.
+   This option will mark the application as ``confirmed`` during the image signing process.
+   If the application is built without this option, it will fail to boot.
+   It must, however, be disabled when building update images.
+
+Both the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` and :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT` Kconfig options automatically enable :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT`, which allows to build application update images for both slots.
+To see which files are built when the option is enabled, go to the :ref:`app_build_mcuboot_output` page.
+
+.. fota_upgrades_over_ble_mcuboot_direct_xip_information_end
+
 .. fota_upgrades_outro_start
 
 Testing steps
