@@ -66,7 +66,7 @@ static K_THREAD_STACK_DEFINE(z_wpas_wq_stack,
 /* TODO: Debug why using system workqueue blocks the driver dedicated
  * workqueue?
  */
-static struct k_work_q z_wpas_wq;
+struct k_work_q z_wpas_wq;
 static K_WORK_DEFINE(z_wpas_iface_work,
 	z_wpas_iface_work_handler);
 

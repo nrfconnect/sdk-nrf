@@ -16,4 +16,5 @@ struct wpa_supplicant_event_msg {
 	void *data;
 };
 int z_wpas_send_event(const struct wpa_supplicant_event_msg *msg);
+extern struct k_work_q z_wpas_wq;
 #endif /* __SUPP_MAIN_H_ */
