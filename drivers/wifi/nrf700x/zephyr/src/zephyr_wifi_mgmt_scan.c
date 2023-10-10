@@ -65,12 +65,13 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
-
 	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
 		goto out;
 	}
+
+	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+
 
 	if (vif_ctx_zep->scan_in_progress) {
 		LOG_INF("%s: Scan already in progress\n", __func__);
