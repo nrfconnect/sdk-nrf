@@ -20,6 +20,7 @@ config NCS_SAMPLE_MCUMGR_BT_OTA_DFU
 	imply FLASH
 	imply MCUMGR_GRP_IMG
 	imply MCUMGR_GRP_OS
+	imply MCUMGR_GRP_OS_BOOTLOADER_INFO
 	imply MCUMGR_TRANSPORT_BT_REASSEMBLY
 	imply NORDIC_QSPI_NOR if $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
 	imply NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
@@ -134,3 +135,10 @@ config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_VALIDATION
 	  Enable this option to validate the MCUmgr OTA DFU configuration at the
 	  build time. If the project configuration does not match predefined
 	  defaults, the build system issues a warning for each misaligned item.
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_MCUBOOT_DIRECT_XIP_SUPPORT
+	bool
+	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	imply MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT
+	imply MCUMGR_GRP_IMG_DIRECT_UPLOAD
