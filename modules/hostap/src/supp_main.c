@@ -476,7 +476,7 @@ static void z_wpas_start(void)
 	k_work_queue_start(&z_wpas_wq,
 					   z_wpas_wq_stack,
 					   K_THREAD_STACK_SIZEOF(z_wpas_wq_stack),
-					   7,
+					   CONFIG_WPA_SUPP_WQ_PRIORITY,
 					   NULL);
 
 	os_memset(&params, 0, sizeof(params));
