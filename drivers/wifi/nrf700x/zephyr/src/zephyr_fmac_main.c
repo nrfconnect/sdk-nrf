@@ -159,6 +159,7 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 			LOG_ERR("%s: nrf_wifi_disp_scan_res_get_zep failed\n", __func__);
 			return;
 		}
+		vif_ctx_zep->scan_in_progress = false;
 #ifdef CONFIG_NRF700X_STA_MODE
 	} else if (vif_ctx_zep->scan_type == SCAN_CONNECT) {
 		nrf_wifi_wpa_supp_event_proc_scan_done(vif_ctx_zep,
