@@ -55,7 +55,7 @@ static struct {
 	};
 } context;
 
-static bool twt_supported, twt_resp_received;
+static bool twt_supported, twt_resp_received, twt_resp_accept;
 static uint32_t twt_flow_id = 1;
 
 static bool wait_for_twt_resp_received(void)
@@ -65,7 +65,7 @@ static bool wait_for_twt_resp_received(void)
 	for (i = 0; i < timeout_polls; i++) {
 		k_sleep(K_MSEC(STATUS_POLLING_MS));
 		if (twt_resp_received) {
-			return true;
+			return twt_resp_accept;
 		}
 	}
 
@@ -253,6 +253,10 @@ static void handle_wifi_twt_event(struct net_mgmt_event_callback *cb)
 	if (resp->resp_status == WIFI_TWT_RESP_RECEIVED) {
 		LOG_INF("TWT response: %s",
 		      wifi_twt_setup_cmd_txt(resp->setup_cmd));
+
+		if (resp->setup_cmd == WIFI_TWT_SETUP_CMD_ACCEPT) {
+			twt_resp_accept = true;
+		}
 
 		twt_resp_received = true;
 		twt_flow_id = resp->flow_id;
