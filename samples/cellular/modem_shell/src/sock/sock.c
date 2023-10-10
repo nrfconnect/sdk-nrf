@@ -64,6 +64,7 @@ struct sock_info {
 	int bind_port;
 	int pdn_cid;
 	bool in_use;
+	bool secure;
 	char *send_buffer;
 	uint32_t send_buffer_size;
 	bool send_poll;
@@ -577,6 +578,7 @@ int sock_open_and_connect(
 	socket_info->port = port;
 	socket_info->bind_port = bind_port;
 	socket_info->pdn_cid = pdn_cid;
+	socket_info->secure = secure;
 
 	/* Binding socket with PDN ID to particular PDP context */
 	if (pdn_cid > 0) {
@@ -602,8 +604,8 @@ int sock_open_and_connect(
 		}
 	}
 
-	if (type == SOCK_STREAM) {
-		/* Connect TCP socket */
+	if (type == SOCK_STREAM || (type == SOCK_DGRAM && secure)) {
+		/* Connect TCP and DTLS socket */
 		err = connect(
 			fd,
 			socket_info->addrinfo->ai_addr,
@@ -720,7 +722,7 @@ static int sock_send(
 		}
 	}
 
-	if (socket_info->type == SOCK_DGRAM) {
+	if (socket_info->type == SOCK_DGRAM && !socket_info->secure) {
 		/* UDP */
 		if (socket_info->family == AF_INET) {
 			dest_addr_len = sizeof(struct sockaddr_in);
@@ -730,7 +732,7 @@ static int sock_send(
 		bytes = sendto(socket_info->fd, data, length, 0,
 			       socket_info->addrinfo->ai_addr, dest_addr_len);
 	} else {
-		/* TCP and raw socket */
+		/* TCP, DTLS and raw socket */
 		bytes = send(socket_info->fd, data, length, 0);
 	}
 	if (bytes < 0) {
