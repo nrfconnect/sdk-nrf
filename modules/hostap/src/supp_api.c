@@ -121,6 +121,8 @@ static void supp_shell_connect_status(struct k_work *work)
 
 	if (ctrl->requested_op == CONNECT && wpa_s->wpa_state != WPA_COMPLETED) {
 		if (ctrl->connection_timeout > 0 && seconds_counter++ > ctrl->connection_timeout) {
+			wpa_printf(MSG_ERROR, "Connection timed out, timeout: %d seconds",
+				ctrl->connection_timeout);
 			_wpa_cli_cmd_v("disconnect");
 			conn_result = -ETIMEDOUT;
 			send_wifi_mgmt_event(wpa_s->ifname, NET_EVENT_WIFI_CMD_CONNECT_RESULT,
