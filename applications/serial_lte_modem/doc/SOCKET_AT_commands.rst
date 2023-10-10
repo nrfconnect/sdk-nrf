@@ -1160,12 +1160,13 @@ Response syntax
 
 ::
 
-   #XRECVFROM: <size>,<ip_addr>
+   #XRECVFROM: <size>,"<ip_addr>",<port>
    <data>
 
 * The ``<data>`` value is a string that contains the data being received.
 * The ``<size>`` value is an integer that represents the actual number of bytes received.
-* The ``<ip_addr>`` value is a string that represents the IPv4 or IPv6 address of remote peer.
+* The ``<ip_addr>`` value is a string that represents the IPv4 or IPv6 address of the remote peer.
+* The ``<port>`` value is an integer that represents the UDP port of the remote peer.
 
 Example
 ~~~~~~~~
@@ -1173,7 +1174,7 @@ Example
 ::
 
    AT#XRECVFROM=10
-   #XRECVFROM: 7,"192.168.1.100"
+   #XRECVFROM: 7,"192.168.1.100",24210
    Test OK
    OK
 

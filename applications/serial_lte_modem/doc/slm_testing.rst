@@ -279,7 +279,7 @@ UDP client
          #XSENDTO: 8
          OK
          **AT#XRECVFROM=0**
-         #XRECVFROM: 14
+         #XRECVFROM: 14,"<*IP address*>",<*port*>
          PONG: Test UDP
          OK
 
@@ -816,22 +816,22 @@ To act as a UDP server, |global_private_address|
       s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
       s.bind(local)
       print("Sending: 'Hello, UDP#1!")
-      s.sendto("Hello, UDP#1!", host)
+      s.sendto(b"Hello, UDP#1!", host)
       time.sleep(1)
       print("Sending: 'Hello, UDP#2!")
-      s.sendto("Hello, UDP#2!", host)
+      s.sendto(b"Hello, UDP#2!", host)
       data, address = s.recvfrom(1024)
       print(data)
       print(address)
 
       print("Sending: 'Hello, UDP#3!")
-      s.sendto("Hello, UDP#3!", host)
+      s.sendto(b"Hello, UDP#3!", host)
       time.sleep(1)
       print("Sending: 'Hello, UDP#4!")
-      s.sendto("Hello, UDP#4!", host)
+      s.sendto(b"Hello, UDP#4!", host)
       time.sleep(1)
       print("Sending: 'Hello, UDP#5!")
-      s.sendto("Hello, UDP#5!", host)
+      s.sendto(b"Hello, UDP#5!", host)
       data, address = s.recvfrom(1024)
       print(data)
       print(address)
@@ -848,7 +848,7 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XSOCKET=1,2,1**
-         #XSOCKET: 2,2,17
+         #XSOCKET: 0,2,17
          OK
 
          **AT#XBIND=**\ *1234*
@@ -863,12 +863,12 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XRECVFROM=0**
-         #XRECVFROM: 13
+         #XRECVFROM: 13,"<*IP address*>",<*port*>
          Hello, UDP#1!
          OK
 
          **AT#XRECVFROM=0**
-         #XRECVFROM: 13
+         #XRECVFROM: 13,"<*IP address*>",<*port*>
          Hello, UDP#2!
          OK
 
@@ -877,17 +877,17 @@ To act as a UDP server, |global_private_address|
          OK
 
          **AT#XRECVFROM=0**
-         #XRECVFROM: 13
+         #XRECVFROM: 13,"<*IP address*>",<*port*>
          Hello, UDP#3!
          OK
 
          **AT#XRECVFROM=0**
-         #XRECVFROM: 13
+         #XRECVFROM: 13,"<*IP address*>",<*port*>
          Hello, UDP#4!
          OK
 
          **AT#XRECVFROM=0**
-         #XRECVFROM: 13
+         #XRECVFROM: 13,"<*IP address*>",<*port*>
          Hello, UDP#5!
          OK
 
@@ -895,29 +895,19 @@ To act as a UDP server, |global_private_address|
          #XSENDTO: 17
          OK
 
-      Note that you will get an error message if a UDP packet is lost.
-      For example, this error indicates that a packet is lost in the downlink to the nRF91 Series DK:
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XRECVFROM=0**
-         #XSOCKET: -60
-         ERROR
-
    #. Observe the output of the Python script::
 
          $ python client_udp.py
 
          Sending: 'Hello, UDP#1!
          Sending: 'Hello, UDP#2!
-         UDP1/2 received
-         ('000.000.000.00', 1234)
+         b'UDP1/2 received'
+         ('000.000.000.00', 1234, 0, 0)
          Sending: 'Hello, UDP#3!
          Sending: 'Hello, UDP#4!
          Sending: 'Hello, UDP#5!
-         UDP3/4/5 received
-         ('000.000.000.00', 1234)
+         b'UDP3/4/5 received'
+         ('000.000.000.00', 1234, 0, 0)
          Closing connection
 
    #. Close the socket.
@@ -942,7 +932,7 @@ To act as a UDP server, |global_private_address|
          OK
 
          **AT#XUDPSVR=1,**\ *1234*
-         #XUDPSVR: 2,"started"
+         #XUDPSVR: 0,"started"
          OK
 
    #. Run the :file:`client_udp.py` script to start sending data to the server.
@@ -978,13 +968,13 @@ To act as a UDP server, |global_private_address|
 
          Sending: 'Hello, UDP#1!
          Sending: 'Hello, UDP#2!
-         UDP1/2 received
-         ('000.000.000.00', 1234)
+         b'UDP1/2 received'
+         ('000.000.000.00', 1234, 0, 0)
          Sending: 'Hello, UDP#3!
          Sending: 'Hello, UDP#4!
          Sending: 'Hello, UDP#5!
-         UDP3/4/5 received
-         ('000.000.000.00', 1234)
+         b'UDP3/4/5 received'
+         ('000.000.000.00', 1234, 0, 0)
          Closing connection
 
    #. Close the socket.
@@ -993,7 +983,7 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XUDPSVR=0**
-         #XUDPSVR: "stopped"
+         #XUDPSVR: 0,"stopped"
          OK
 
 TLS server
