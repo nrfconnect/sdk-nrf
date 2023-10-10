@@ -33,6 +33,10 @@ config WPA_SUPP_WQ_STACK_SIZE
 	int "Stack size for wpa_supplicant workqueue"
 	default 4096
 
+config WPA_SUPP_WQ_PRIORITY
+	int "Priority for wpa_supplicant workqueue"
+	default 7
+
 config WPA_SUPP_CRYPTO_WEP
 	bool "WEP (Legacy crypto) support"
 
