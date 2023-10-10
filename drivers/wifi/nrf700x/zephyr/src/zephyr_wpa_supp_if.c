@@ -20,6 +20,7 @@
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 K_SEM_DEFINE(wait_for_event_sem, 0, 1);
+K_SEM_DEFINE(wait_for_scan_resp_sem, 0, 1);
 
 #define ACTION_FRAME_RESP_TIMEOUT_MS 5000
 
@@ -140,6 +141,7 @@ void nrf_wifi_wpa_supp_event_proc_scan_done(void *if_priv,
 			&event);
 	}
 	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
+	k_sem_give(&wait_for_scan_resp_sem);
 }
 
 void nrf_wifi_wpa_supp_event_proc_scan_res(void *if_priv,
@@ -558,6 +560,7 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	int sem_ret;
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
@@ -571,6 +574,15 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: Scan trigger failed\n", __func__);
+		goto out;
+	}
+
+	k_sem_reset(&wait_for_scan_resp_sem);
+	sem_ret = k_sem_take(&wait_for_scan_resp_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
+	if (sem_ret) {
+		LOG_ERR("%s: Timedout waiting for scan abort response, ret = %d\n",
+			    __func__, sem_ret);
+		status = NRF_WIFI_STATUS_FAIL;
 		goto out;
 	}
 
