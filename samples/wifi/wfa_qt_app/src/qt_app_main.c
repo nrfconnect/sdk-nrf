@@ -16,14 +16,6 @@
 #include <zephyr/device.h>
 #include <zephyr/net/net_config.h>
 
-#ifdef CONFIG_SLIP
-/* Fixed address as the static IP given from Kconfig will be
- * applied to Wi-Fi interface.
- */
-#define CONFIG_NET_CONFIG_SLIP_IPV4_ADDR "192.0.2.1"
-#define CONFIG_NET_CONFIG_SLIP_IPV4_MASK "255.255.255.0"
-#endif /* CONFIG_SLIP */
-
 #ifdef CONFIG_USB_DEVICE_STACK
 #include <zephyr/usb/usb_device.h>
 
