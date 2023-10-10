@@ -408,45 +408,28 @@ static void keepalive_timeout(struct k_timer *dummy)
 	}
 }
 
-static int host_lookup(const char *hostname, int family, struct sockaddr *sa)
-{
-	int err;
-	struct addrinfo *ai;
-	struct addrinfo hints = {
-		.ai_family = family,
-		.ai_socktype = SOCK_STREAM
-	};
-
-	err = getaddrinfo(hostname, NULL, &hints, &ai);
-	if (err) {
-		LOG_DBG("getaddrinfo(%d) error: %d", family, err);
-		return -EHOSTUNREACH;
-	}
-
-	*sa = *(ai->ai_addr);
-	client.family = family;
-	freeaddrinfo(ai);
-	return 0;
-}
-
 int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 {
-	int ret;
-
 	if (client.connected) {
 		LOG_ERR("FTP already connected");
 		return -EINVAL;
 	}
+	int ret;
+	struct addrinfo *ai;
 
-	/* Attempt IPv6 resolution, fallback to IPv4 if failed */
-	ret = host_lookup(hostname, AF_INET6, (struct sockaddr *)(&client.remote6));
+	/* Resolve the hostname in the preferred IP version .*/
+	ret = getaddrinfo(hostname, NULL, NULL, &ai);
 	if (ret) {
-		ret = host_lookup(hostname, AF_INET, (struct sockaddr *)(&client.remote));
-		if (ret) {
-			LOG_ERR("Failed to parse remote host");
-			return -EHOSTUNREACH;
-		}
+		LOG_ERR("Failed to resolve hostname (\"%s\"): %s", hostname, gai_strerror(ret));
+		return -EHOSTUNREACH;
 	}
+	client.family = ai->ai_family;
+	if (client.family == AF_INET) {
+		memcpy(&client.remote, ai->ai_addr, sizeof(client.remote));
+	} else {
+		memcpy(&client.remote6, ai->ai_addr, sizeof(client.remote6));
+	}
+	freeaddrinfo(ai);
 
 	/* open control socket */
 	if (sec_tag == INVALID_SEC_TAG) {
