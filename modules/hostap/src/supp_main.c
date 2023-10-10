@@ -60,13 +60,13 @@ static K_THREAD_STACK_DEFINE(z_wpa_s_thread_stack,
 			     CONFIG_WPA_SUPP_THREAD_STACK_SIZE);
 static struct k_thread z_wpa_s_tid;
 
-static K_THREAD_STACK_DEFINE(z_wpas_iface_wq_stack,
-	CONFIG_WPA_SUPP_IFACE_WQ_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(z_wpas_wq_stack,
+	CONFIG_WPA_SUPP_WQ_STACK_SIZE);
 
 /* TODO: Debug why wsing system workqueue blocks the driver dedicated
  * workqueue?
  */
-static struct k_work_q z_wpas_iface_wq;
+static struct k_work_q z_wpas_wq;
 static K_WORK_DEFINE(z_wpas_iface_work,
 	z_wpas_iface_work_handler);
 
@@ -471,11 +471,11 @@ static void z_wpas_start(void)
 	mbedtls_platform_set_calloc_free(calloc, free);
 #endif /* !CONFIG_WPA_SUPP_CRYPTO_NONE && !CONFIG_MBEDTLS_ENABLE_HEAP */
 
-	k_work_queue_init(&z_wpas_iface_wq);
+	k_work_queue_init(&z_wpas_wq);
 
-	k_work_queue_start(&z_wpas_iface_wq,
-					   z_wpas_iface_wq_stack,
-					   K_THREAD_STACK_SIZEOF(z_wpas_iface_wq_stack),
+	k_work_queue_start(&z_wpas_wq,
+					   z_wpas_wq_stack,
+					   K_THREAD_STACK_SIZEOF(z_wpas_wq_stack),
 					   7,
 					   NULL);
 
@@ -508,7 +508,7 @@ static void z_wpas_start(void)
 
 	register_wpa_event_sock();
 
-	k_work_submit_to_queue(&z_wpas_iface_wq, &z_wpas_iface_work);
+	k_work_submit_to_queue(&z_wpas_wq, &z_wpas_iface_work);
 
 #ifdef CONFIG_MATCH_IFACE
 	if (exitcode == 0) {
