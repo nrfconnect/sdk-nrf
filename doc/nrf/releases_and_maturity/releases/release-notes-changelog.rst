@@ -249,6 +249,7 @@ Serial LTE modem
   * ``#XGPSDEL`` AT command to disallow deleting local clock (TCXO) frequency offset data because it is an internal value that should not be deleted when simulating a cold start.
   * Socket option ``TLS_DTLS_HANDSHAKE_TIMEO`` to a new name value.
   * ``#XTCPSVR`` connection closure status and documentation.
+  * ``#XRECVFROM`` to include the port of the peer.
 
 * Removed:
 

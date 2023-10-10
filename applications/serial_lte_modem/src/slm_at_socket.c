@@ -872,15 +872,20 @@ static int do_recvfrom(int timeout, int flags)
 		LOG_WRN("recvfrom() return 0");
 	} else {
 		char peer_addr[NET_IPV6_ADDR_LEN] = {0};
+		uint16_t peer_port = 0;
 
 		if (remote.sa_family == AF_INET) {
 			(void)inet_ntop(AF_INET, &((struct sockaddr_in *)&remote)->sin_addr,
-			    peer_addr, sizeof(peer_addr));
+					peer_addr, sizeof(peer_addr));
+			peer_port = ntohs(((struct sockaddr_in *)&remote)->sin_port);
+
 		} else if (remote.sa_family == AF_INET6) {
 			(void)inet_ntop(AF_INET6, &((struct sockaddr_in6 *)&remote)->sin6_addr,
-			    peer_addr, sizeof(peer_addr));
+					peer_addr, sizeof(peer_addr));
+			peer_port = ntohs(((struct sockaddr_in6 *)&remote)->sin6_port);
 		}
-		rsp_send("\r\n#XRECVFROM: %d,\"%s\"\r\n", ret, peer_addr);
+
+		rsp_send("\r\n#XRECVFROM: %d,\"%s\",%d\r\n", ret, peer_addr, peer_port);
 		data_send(slm_data_buf, ret);
 	}
 
