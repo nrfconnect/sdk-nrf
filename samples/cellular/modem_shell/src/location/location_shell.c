@@ -281,8 +281,6 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			event_data->location.latitude, event_data->location.longitude);
 
 		if (gnss_location_to_cloud) {
-			k_work_init(&gnss_location_work_data.work, location_to_cloud_worker);
-
 			gnss_location_work_data.loc_evt_data = *event_data;
 			gnss_location_work_data.format = gnss_location_to_cloud_format;
 			k_work_submit_to_queue(&mosh_common_work_q, &gnss_location_work_data.work);
@@ -361,6 +359,8 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 void location_ctrl_init(void)
 {
 	int ret;
+
+	k_work_init(&gnss_location_work_data.work, location_to_cloud_worker);
 
 #if defined(CONFIG_DK_LIBRARY)
 	k_work_init_delayable(&location_evt_led_work, location_evt_led_worker);
