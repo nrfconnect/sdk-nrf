@@ -1040,7 +1040,8 @@
 .. _`CSA Specifications Download Request`: https://csa-iot.org/developer-resource/specifications-download-request/
 .. _`Zigbee Cluster Library specification`: https://zigbeealliance.org/wp-content/uploads/2019/12/07-5123-06-zigbee-cluster-library-specification.pdf
 
-.. _`Matter Resource Kit`: https://groups.csa-iot.org/wg/all-users/home/matter-resource-kit
+.. _`Matter Resource Kit`:
+.. _`CSA Matter Resource Kit`: https://groups.csa-iot.org/wg/all-users/home/matter-resource-kit
 .. _`Connectivity Standards Alliance Certification Policy`: https://csa-iot.org/wp-content/uploads/2021/12/07-4842-14-ptsc-certification-policy.pdf
 .. _`CSA's Testing Providers`: https://csa-iot.org/certification/testing-providers/
 .. _`CSA's Certification Team`: https://csa-iot.org/contact-us/

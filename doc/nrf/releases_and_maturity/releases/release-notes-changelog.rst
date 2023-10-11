@@ -138,6 +138,8 @@ Matter
     * Improved the buffer usage of the nRF700X driver for Matter.
     * Reduced the size of the Matter event queue.
 
+  * Page about :ref:`ug_matter_device_certification` with the information about :ref:`ug_matter_device_certification_matter_samples`.
+
 * Fixed:
 
   * An IPC crash on nRF5340 when Zephyr's main thread takes a long time.
