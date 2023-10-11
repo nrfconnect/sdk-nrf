@@ -6,15 +6,14 @@
 menuconfig NRF_MODEM_LIB
 	bool "Modem library"
 	depends on SOC_SERIES_NRF91X
-	imply NRFX_IPC
+	depends on TRUSTED_EXECUTION_NONSECURE
+	select NRF_MODEM
 	imply NET_SOCKETS_OFFLOAD
 	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
-	select REQUIRES_FULL_LIBC
-	select NRF_MODEM
 	# The modem must be turned on to achieve low power consumption.
 	# But disable it for ZTEST's as some tests have HW
 	# resource-conflicts with NRF_MODEM_LIB.
-	default y if TRUSTED_EXECUTION_NONSECURE && !ZTEST
+	default y if !ZTEST
 	help
 	  Use Nordic Modem library.
 
