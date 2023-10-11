@@ -7,7 +7,7 @@ Cellular: UDP
    :local:
    :depth: 2
 
-The UDP sample demonstrates the sequential transmission of UDP packets to a predetermined server identified by an IP address and a port.
+The Cellular: UDP sample demonstrates the sequential transmission of UDP packets to a predetermined server identified by an IP address and a port.
 The sample uses the :ref:`nrfxlib:nrf_modem` and :ref:`lte_lc_readme` library.
 
 Requirements
@@ -32,7 +32,7 @@ These parameters can be set through the sample configuration file :file:`prj.con
 You can configure the frequency with which the packets are transmitted and the size of the UDP payload through the Kconfig system.
 In addition to setting of the above options, you can also set the various LTE parameters that are related to current consumption for adding low power behavior to the device.
 
-The UDP sample can be used to characterize the current consumption of the nRF91 Series SiP.
+You can use this sample to characterize the current consumption of the nRF91 Series SiP.
 This is due to the simple UDP/IP behavior demonstrated by the sample, which makes it suitable for current measurement.
 
 .. note::
