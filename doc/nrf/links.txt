@@ -1007,6 +1007,7 @@
 .. _`nRF Cloud Device ID`: https://docs.nrfcloud.com/Devices/Properties/DeviceId.html
 .. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Devices/Properties/Shadows.html
 .. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/Security/Security.html
+.. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#preconnect-provisioning
 .. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#just-in-time-provisioning
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html
 .. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html

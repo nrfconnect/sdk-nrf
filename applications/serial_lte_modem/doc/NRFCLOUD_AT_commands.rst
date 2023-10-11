@@ -17,7 +17,8 @@ The ``#XNRFCLOUD`` command controls the access to the nRF Cloud service.
 .. note::
    To use ``#XNRFCLOUD``, the following preconditions apply:
 
-   * You must first provision the device to nRF Cloud, using the UUID from the modem firmware as device ID.
+   * You must first preconnect provision the device to nRF Cloud, using the UUID from the modem firmware as device ID.
+     See `nRF Cloud Preconnect Provisioning`_ for more information.
    * The :ref:`CONFIG_SLM_NRF_CLOUD <CONFIG_SLM_NRF_CLOUD>` Kconfig option must be enabled.
    * The device must have access to nRF Cloud through the LTE network.
 
