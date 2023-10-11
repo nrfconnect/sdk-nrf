@@ -72,7 +72,10 @@ Working with nRF91 Series
 Working with nRF52 Series
 =========================
 
-|no_changes_yet_note|
+* :ref:`ug_nrf52_developing`:
+
+  * Updated the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option to support MCUboot bootloader in the direct-xip mode, and added the related documentation.
+    For details, see the :ref:`FOTA updates <ug_nrf52_developing_ble_fota>` section of the :ref:`ug_nrf52_developing` guide.
 
 Working with nRF53 Series
 =========================
