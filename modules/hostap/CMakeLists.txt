@@ -75,7 +75,6 @@ zephyr_library_sources(
 	${COMMON_SRC_BASE}/utils/bitfield.c
 	${COMMON_SRC_BASE}/utils/eloop.c
 	${COMMON_SRC_BASE}/utils/os_zephyr.c
-	${COMMON_SRC_BASE}/utils/radiotap.c
 	${WPA_SUPPLICANT_BASE}/config.c
 	${WPA_SUPPLICANT_BASE}/notify.c
 	${WPA_SUPPLICANT_BASE}/bss.c
