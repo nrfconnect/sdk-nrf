@@ -268,7 +268,7 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 		return -EHOSTUNREACH;
 	}
 
-	*sa = *(ai->ai_addr);
+	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
 	freeaddrinfo(ai);
 
 	return 0;
