@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2017 Intel Corporation
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/bluetooth/bluetooth.h>
