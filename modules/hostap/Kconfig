@@ -21,6 +21,34 @@ config WPA_SUPP
 
 if WPA_SUPP
 
+# Memory optimizations
+config WPA_SUPP_ADVANCED_FEATURES
+	bool "Enable advanced features"
+	default y
+
+if WPA_SUPP_ADVANCED_FEATURES
+
+config WPA_SUPP_ROBUST_AV
+	bool "Robust Audio Video streaming support"
+	default y
+
+config WPA_SUPP_WMM_AC
+	bool "WMM admission control"
+	default y
+
+config WPA_SUPP_MBO
+	bool "Agile Multiband support"
+	default y
+
+config WPA_SUPP_WNM
+	bool "Wireless Network Management support"
+	default y
+
+config WPA_SUPP_RRM
+	bool "Radio Resource Management support"
+	default y
+endif
+
 choice LIBC_IMPLEMENTATION
 	default NEWLIB_LIBC
 endchoice

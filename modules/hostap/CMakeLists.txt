@@ -36,10 +36,9 @@ zephyr_library_compile_definitions(
 	CONFIG_CTRL_IFACE
 	CONFIG_CTRL_IFACE_ZEPHYR
 	CONFIG_NO_RANDOM_POOL
-	CONFIG_MBO
-	CONFIG_WNM
 	CONFIG_SUITEB192
-	)
+)
+
 
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_NONE
 	CONFIG_NO_PBKDF2
@@ -47,6 +46,26 @@ zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_CRYPTO_NONE
 
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_NO_DEBUG
 	CONFIG_NO_STDOUT_DEBUG
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_ROBUST_AV
+	CONFIG_ROBUST_AV
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_WMM_AC
+	CONFIG_WMM_AC
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_RRM
+	CONFIG_RRM
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_MBO
+	CONFIG_MBO
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_WNM
+	CONFIG_WNM
 )
 
 zephyr_library_include_directories(
@@ -79,9 +98,6 @@ zephyr_library_sources(
 	${WPA_SUPPLICANT_BASE}/notify.c
 	${WPA_SUPPLICANT_BASE}/bss.c
 	${WPA_SUPPLICANT_BASE}/eap_register.c
-	${WPA_SUPPLICANT_BASE}/op_classes.c
-	${WPA_SUPPLICANT_BASE}/rrm.c
-	${WPA_SUPPLICANT_BASE}/wmm_ac.c
 	${WPA_SUPPLICANT_BASE}/config_none.c
 	${WPA_SUPPLICANT_BASE}/sme.c
 	${WPA_SUPPLICANT_BASE}/wpa_supplicant.c
@@ -89,10 +105,7 @@ zephyr_library_sources(
 	${WPA_SUPPLICANT_BASE}/bssid_ignore.c
 	${WPA_SUPPLICANT_BASE}/wpas_glue.c
 	${WPA_SUPPLICANT_BASE}/scan.c
-	${WPA_SUPPLICANT_BASE}/robust_av.c
 	${WPA_SUPPLICANT_BASE}/ctrl_iface.c
-	${WPA_SUPPLICANT_BASE}/mbo.c
-	${WPA_SUPPLICANT_BASE}/wnm_sta.c
 	${WPA_SUPPLICANT_BASE}/wpa_cli_cmds.c
 	${WPA_SUPPLICANT_BASE}/ctrl_iface_zephyr.c
 	${WPA_SUPPLICANT_BASE}/wpa_cli_zephyr.c
@@ -101,6 +114,24 @@ zephyr_library_sources(
 	src/utils/wpa_debug.c
 	src/supp_api.c
 	src/supp_events.c
+)
+
+# Advanced features
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_RRM
+	${WPA_SUPPLICANT_BASE}/op_classes.c
+	${WPA_SUPPLICANT_BASE}/rrm.c
+)
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_WMM_AC
+	${WPA_SUPPLICANT_BASE}/wmm_ac.c
+)
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_ROBUST_AV
+	${WPA_SUPPLICANT_BASE}/robust_av.c
+)
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_MBO
+	${WPA_SUPPLICANT_BASE}/mbo.c
+)
+zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_WNM
+	${WPA_SUPPLICANT_BASE}/wnm_sta.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_WPA_CLI
