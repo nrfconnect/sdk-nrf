@@ -18,10 +18,6 @@ config REST_DEVICE_MESSAGE_SEND_LED_NUM
 	int "The LED number to use for indicating outgoing REST request"
 	default 1
 
-config REST_DEVICE_MESSAGE_BUTTON_EVT_NUM
-	int "Button number to use for device interactions"
-	default 1
-
 config REST_DEVICE_MESSAGE_DO_JITP
 	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
 	help

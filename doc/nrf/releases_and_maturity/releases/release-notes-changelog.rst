@@ -529,6 +529,7 @@ Cellular samples (renamed from nRF9160 samples)
 
     * A DTS overlay file for LEDs on the nRF9160 DK to be compatible with the :ref:`caf_leds`.
     * Header files for buttons and LEDs definition required by the :ref:`lib_caf` library.
+    * An :file:`overlay-nrf_provisioning.conf` file to enable the :ref:`lib_nrf_provisioning` library.
 
   * Updated:
 

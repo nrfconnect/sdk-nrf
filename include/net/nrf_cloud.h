@@ -818,7 +818,7 @@ int nrf_cloud_process(void);
 int nrf_cloud_modem_fota_completed(const bool fota_success);
 
 /**
- * @brief Function to retrieve the current device ID.
+ * @brief Retrieve the current device ID.
  *
  * @param[in,out] id_buf Buffer to receive the device ID.
  * @param[in] id_len     Size of buffer (NRF_CLOUD_CLIENT_ID_MAX_LEN).
@@ -829,7 +829,7 @@ int nrf_cloud_modem_fota_completed(const bool fota_success);
 int nrf_cloud_client_id_get(char *id_buf, size_t id_len);
 
 /**
- * @brief Function to retrieve the current customer tenant ID.
+ * @brief Retrieve the current customer tenant ID.
  *
  * @param[in,out] id_buf Buffer to receive the tenant ID.
  * @param[in] id_len     Size of buffer (NRF_CLOUD_TENANT_ID_MAX_LEN).
@@ -840,7 +840,7 @@ int nrf_cloud_client_id_get(char *id_buf, size_t id_len);
 int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len);
 
 /**
- * @brief Function to generate a JWT to be used with nRF Cloud's REST API.
+ * @brief Generate a JWT to be used with nRF Cloud's REST API.
  *        This library's configured values for client id and sec tag (NRF_CLOUD_SEC_TAG)
  *        will be used for generating the JWT.
  *
@@ -857,7 +857,7 @@ int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len);
 int nrf_cloud_jwt_generate(uint32_t time_valid_s, char * const jwt_buf, size_t jwt_buf_sz);
 
 /**
- * @brief Function to process/validate a pending FOTA update job. Typically the job
+ * @brief Process/validate a pending FOTA update job. Typically the job
  *        information is read from non-volatile storage on startup. This function
  *        is intended to be used by custom REST-based FOTA implementations.
  *        It is called internally if @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled.
@@ -877,7 +877,7 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 				       bool * const reboot_required);
 
 /**
- * @brief Function to set the active bootloader (B1) slot flag which is needed
+ * @brief Set the active bootloader (B1) slot flag which is needed
  *        to validate a bootloader FOTA update. For proper functionality,
  *        @kconfig{CONFIG_FOTA_DOWNLOAD} must be enabled.
  *
@@ -889,7 +889,7 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * const job);
 
 /**
- * @brief Function to retrieve the FOTA type of a pending FOTA job. A value of
+ * @brief Retrieve the FOTA type of a pending FOTA job. A value of
  *        NRF_CLOUD_FOTA_TYPE__INVALID indicates that there are no pending FOTA jobs.
  *        Depends on @kconfig{CONFIG_NRF_CLOUD_FOTA}.
  *
@@ -902,7 +902,7 @@ int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * cons
 int nrf_cloud_fota_pending_job_type_get(enum nrf_cloud_fota_type * const pending_fota_type);
 
 /**
- * @brief Function to validate a pending FOTA installation before initializing this library.
+ * @brief Validate a pending FOTA installation before initializing this library.
  *        This function enables the application to control the reboot/reinit process during FOTA
  *        updates. If this function is not called directly by the application, it will
  *        be called internally when @ref nrf_cloud_init is executed.
@@ -925,7 +925,7 @@ int nrf_cloud_fota_pending_job_type_get(enum nrf_cloud_fota_type * const pending
 int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_type_out);
 
 /**
- * @brief Function to set the flash device used for full modem FOTA updates.
+ * @brief Set the flash device used for full modem FOTA updates.
  *        This function is intended to be used by custom REST-based FOTA implementations.
  *        It is called internally when @ref nrf_cloud_init is executed if
  *        @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled. It can be called before @ref nrf_cloud_init
@@ -940,7 +940,7 @@ int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_ty
 int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_dev_inf);
 
 /**
- * @brief Function to install a full modem update from flash. If successful,
+ * @brief Install a full modem update from flash. If successful,
  *        reboot the device or reinit the modem to complete the update.
  *        This function is intended to be used by custom REST-based FOTA implementations.
  *        If @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled,
@@ -957,14 +957,14 @@ int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_de
 int nrf_cloud_fota_fmfu_apply(void);
 
 /**
- * @brief Function to determine if FOTA type is modem related.
+ * @brief Determine if FOTA type is modem related.
  *
  * @return true if FOTA is modem type, otherwise false.
  */
 bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
 
 /**
- * @brief Function to determine if the specified FOTA type is enabled by the
+ * @brief Determine if the specified FOTA type is enabled by the
  *        configuration. This function returns false if both @kconfig{CONFIG_NRF_CLOUD_FOTA}
  *        and @kconfig{CONFIG_NRF_CLOUD_REST} are disabled.
  *        REST-based applications are responsible for implementing FOTA updates
@@ -995,7 +995,7 @@ bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
 int nrf_cloud_fota_job_start(void);
 
 /**
- * @brief Function to check if credentials exist in the configured location.
+ * @brief Check if credentials exist in the configured location.
  *
  * @param[out] cs Results of credentials check.
  *

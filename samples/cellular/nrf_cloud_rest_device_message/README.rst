@@ -14,6 +14,8 @@ It also demonstrates use of the :ref:`lib_nrf_cloud_alert` and the :ref:`lib_nrf
 The sample sends an alert when the device first comes online.
 It also sends a log message indicating the sample version, as well as when the button is pressed.
 
+You can also configure the sample to use the `nRF Cloud Provisioning Service`_ with the :ref:`lib_nrf_provisioning` library.
+
 Requirements
 ************
 
@@ -34,7 +36,7 @@ Limitations
 ***********
 
 The `nRF Cloud REST API`_ requires all requests to be authenticated with a JSON Web Token (JWT).
-See  `nRF Cloud Security`_ for more details.
+See `nRF Cloud Security`_ for more details.
 Generating valid JWTs requires the network carrier to provide date and time to the modem, so the sample must first connect to an LTE carrier and determine the current date and time before REST requests can be sent.
 
 Note also that the `nRF Cloud REST API`_ is stateless.
@@ -43,7 +45,7 @@ This differs from the `nRF Cloud MQTT API`_, which requires you to establish and
 User interface
 **************
 
-Once the device is provisioned and connected, each press of the configured button (**Button 1** by default) (:ref:`CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM <CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM>`) generates a device-to-cloud button press `Device Message <nRF Cloud Device Messages_>`_ over REST.
+Once the device is provisioned and connected, each press of **Button 1** generates a device-to-cloud button press `Device Message <nRF Cloud Device Messages_>`_ over REST.
 These messages are sent to the non-bulk D2C (device-to-cloud) topic, detailed in `topics used by devices running the nRF Cloud library <nRF Cloud MQTT Topics_>`_.
 
 The configured LTE LED (**LED 1** by default) (:ref:`CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM <CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM>`) is lit once an LTE connection is established and JWT tokens are ready to be generated.
@@ -52,15 +54,15 @@ The configured Send LED (**LED 2** by default) (:ref:`CONFIG_REST_DEVICE_MESSAGE
 
 .. _nrf_cloud_rest_device_message_provisioning:
 
-Provisioning
-************
+Just-in-time provisioning (JITP) with nRF Cloud
+***********************************************
 
-Your device must be provisioned for this sample to function.
+Your device must be provisioned with nRF Cloud for this sample to function.
 
 Complete the following steps to provision your device:
 
 1. Enable the :ref:`CONFIG_REST_DEVICE_MESSAGE_DO_JITP <CONFIG_REST_DEVICE_MESSAGE_DO_JITP>` option.
-#. Press the button (configured with :ref:`CONFIG_REST_DEVICE_MESSAGE_DO_JITP <CONFIG_REST_DEVICE_MESSAGE_DO_JITP>`) when prompted at startup.
+#. Press button 1 when prompted at startup.
 #. Follow the instructions for just-in-time provisioning (JITP) printed to UART.
 
 You only need to do this once for each device.
@@ -83,11 +85,6 @@ CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM - LTE LED number
 
 CONFIG_REST_DEVICE_MESSAGE_SEND_LED_NUM - Send LED number
    This configuration option defines which LED is used to indicate a REST request is being sent.
-
-.. _CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM:
-
-CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM - Button number
-   This configuration option defines the button to use for device interactions.
 
 .. _CONFIG_REST_DEVICE_MESSAGE_DO_JITP:
 
@@ -114,6 +111,14 @@ To enable `Zephyr Logging`_ to nRF Cloud using the :ref:`lib_nrf_cloud_log` libr
 This overlay allows the sample and various subsystems that have logging enabled to send their logs to nRF Cloud.
 Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` option to the log level of messages to send to nRF Cloud, such as ``4`` for debug log messages.
 Set the :kconfig:option:`CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL_DBG` option so that log messages are generated on each button press.
+
+To enable remote provisioning with the `nRF Cloud Provisioning Service`_ add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay-nrf_provisioning.conf``
+
+This overlay enables the :ref:`lib_nrf_provisioning` library and its provisioning shell.
+The sample will periodically check for provisioning commands.
+Press **Button 2** to manually initiate a check for provisioning commands.
 
 Press **Button 1** to have a message sent to nRF Cloud:
 

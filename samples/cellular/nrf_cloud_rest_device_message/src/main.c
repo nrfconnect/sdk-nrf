@@ -25,10 +25,22 @@
 
 #include "leds_def.h"
 
+#if defined(CONFIG_NRF_PROVISIONING)
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/sys/reboot.h>
+#include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
+#include <net/nrf_provisioning.h>
+#include "nrf_provisioning_at.h"
+/* Button number to check for provisioning commands */
+#define BTN_NUM_PROV		2
+#endif /* CONFIG_NRF_PROVISIONING */
+
 LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
 		    CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
 
-#define BTN_NUM			CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM
+/* Button number to perform JITP or send BUTTON event device message */
+#define BTN_NUM			1
 #define LTE_LED_NUM		CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM
 #define SEND_LED_NUM		CONFIG_REST_DEVICE_MESSAGE_SEND_LED_NUM
 #define JITP_REQ_WAIT_SEC	10
@@ -69,6 +81,96 @@ static bool jitp_requested;
 static bool app_event_handler(const struct app_event_header *aeh);
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, button_event);
+
+static void await_credentials(void);
+
+#if defined(CONFIG_NRF_PROVISIONING)
+static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data);
+static void device_mode_cb(void *user_data);
+static struct nrf_provisioning_dm_change dmode = { .cb = device_mode_cb };
+static struct nrf_provisioning_mm_change mmode = { .cb = modem_mode_cb };
+
+static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
+{
+	enum lte_lc_func_mode fmode;
+	char time_buf[64];
+	int ret;
+
+	ARG_UNUSED(user_data);
+
+	if (lte_lc_func_mode_get(&fmode)) {
+		LOG_ERR("Failed to read modem functional mode");
+		ret = -EFAULT;
+		return ret;
+	}
+
+	if (fmode == new_mode) {
+		ret = fmode;
+	} else if (new_mode == LTE_LC_FUNC_MODE_NORMAL) {
+		/* Use the blocking call, because in next step
+		 * the service will create a socket and call connect()
+		 */
+		ret = lte_lc_connect();
+
+		if (ret) {
+			LOG_ERR("lte_lc_connect() failed %d", ret);
+		}
+		LOG_INF("Modem connection restored");
+
+		LOG_INF("Waiting for modem to acquire network time...");
+
+		do {
+			k_sleep(K_SECONDS(3));
+			ret = nrf_provisioning_at_time_get(time_buf, sizeof(time_buf));
+		} while (ret != 0);
+
+		LOG_INF("Network time obtained");
+		ret = fmode;
+	} else {
+		ret = lte_lc_func_mode_set(new_mode);
+		if (ret == 0) {
+			LOG_DBG("Modem set to requested state %d", new_mode);
+			ret = fmode;
+		}
+	}
+
+	return ret;
+}
+
+static void device_mode_cb(void *user_data)
+{
+	(void)user_data;
+
+	/* Disconnect from network gracefully */
+	int ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+
+	if (ret != 0) {
+		LOG_ERR("Unable to set modem offline, error %d", ret);
+	}
+
+	LOG_INF("Provisioning done, rebooting...");
+	while (log_process()) {
+		;
+	}
+
+	sys_reboot(SYS_REBOOT_WARM);
+}
+#endif /* CONFIG_NRF_PROVISIONING */
+
+void init_provisioning(void)
+{
+#if defined(CONFIG_NRF_PROVISIONING)
+	LOG_INF("Initializing the nRF Provisioning library...");
+
+	int ret = nrf_provisioning_init(&mmode, &dmode);
+
+	if (ret) {
+		LOG_ERR("Failed to initialize provisioning client, error: %d", ret);
+	}
+
+	await_credentials();
+#endif
+}
 
 static int send_led_event(enum led_id led_idx, const int state)
 {
@@ -113,6 +215,56 @@ static int set_leds_off(void)
 	return 0;
 }
 
+static bool cred_check(struct nrf_cloud_credentials_status *const cs)
+{
+	int ret;
+
+	ret = nrf_cloud_credentials_check(cs);
+	if (ret) {
+		LOG_ERR("nRF Cloud credentials check failed, error: %d", ret);
+		return false;
+	}
+
+	/* Since this is a REST sample, we only need two credentials:
+	 *  - a CA for the TLS connections
+	 *  - a private key to sign the JWT
+	 */
+	return (cs->ca && cs->prv_key);
+}
+
+static void await_credentials(void)
+{
+	struct nrf_cloud_credentials_status cs;
+
+	if (!cred_check(&cs)) {
+		LOG_WRN("Missing required nRF Cloud credential(s) in sec tag %u:",
+			cs.sec_tag);
+
+		if (!cs.ca) {
+			LOG_WRN("\t-CA Cert");
+		}
+
+		if (!cs.prv_key) {
+			LOG_WRN("\t-Private Key");
+		}
+
+#if defined(CONFIG_NRF_PROVISIONING)
+		LOG_INF("Waiting for credentials to be remotely provisioned...");
+		/* Device will reboot when credential provisioning is complete */
+		k_sleep(K_FOREVER);
+#else
+		LOG_ERR("Cannot continue without required credentials");
+		LOG_INF("Install credentials on the device and then "
+			"provision the device or register its public key with nRF Cloud.");
+		LOG_INF("Reboot device when complete");
+		(void)lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+		k_sleep(K_FOREVER);
+#endif
+	}
+
+	LOG_INF("nRF Cloud credentials detected");
+}
+
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	struct button_event *event = is_button_event(aeh) ? cast_button_event(aeh) : NULL;
@@ -123,11 +275,17 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return true;
 	}
 
-	LOG_DBG("Button %d pressed", BTN_NUM);
-	if (event->key_id == (uint16_t)(BTN_NUM - 1)) {
+	const uint16_t btn_num = event->key_id + 1;
+
+	LOG_INF("Button %d pressed", btn_num);
+	if (btn_num == BTN_NUM) {
 		k_sem_give(&button_press_sem);
 	}
-
+#if defined(CONFIG_NRF_PROVISIONING)
+	else if (btn_num == BTN_NUM_PROV) {
+		nrf_provisioning_trigger_manually();
+	}
+#endif
 	return true;
 }
 
@@ -138,7 +296,7 @@ static int send_message(const char *const msg)
 	/* Turn the SEND LED on for a bit */
 	set_led(SEND_LED_NUM, 1);
 
-	LOG_DBG("Sending message:'%s'", msg);
+	LOG_INF("Sending message:'%s'", msg);
 	/* Send the message to nRF Cloud */
 	ret = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, msg, false, NULL);
 	if (ret) {
@@ -148,7 +306,7 @@ static int send_message(const char *const msg)
 	/* Keep that LED on for at least 100ms */
 	k_sleep(K_MSEC(100));
 
-	LOG_DBG("Message sent");
+	LOG_INF("Message sent");
 	/* Turn the LED back off */
 	set_led(SEND_LED_NUM, 0);
 
@@ -351,6 +509,13 @@ static int init(void)
 		return -EFAULT;
 	}
 
+	/* If provisioning library is disabled, ensure device has credentials installed
+	 * before proceeding
+	 */
+	if (!IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
+		await_credentials();
+	}
+
 	/* Inform the app event manager that this module is ready to receive events */
 	module_set_state(MODULE_STATE_READY);
 
@@ -386,6 +551,8 @@ static int setup(void)
 		LOG_ERR("Connection set-up failed.");
 		return err;
 	}
+
+	init_provisioning();
 
 	return 0;
 }
@@ -433,6 +600,9 @@ int main(void)
 		return 0;
 	}
 
+	/* Set the keep alive flag to true;
+	 * connection will remain open to allow for multiple REST calls
+	 */
 	rest_ctx.keep_alive = true;
 	err = nrf_cloud_rest_alert_send(&rest_ctx, device_id,
 					ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
@@ -448,13 +618,19 @@ int main(void)
 	if (err) {
 		LOG_ERR("Error sending direct log to cloud: %d", err);
 	}
+
+	/* Set the keep alive flag to false; connection will be closed after the next REST call */
 	rest_ctx.keep_alive = false;
 
 	err = send_hello_world_msg();
-	if (err) {
-		LOG_ERR("Hello World failed, stopping.");
-		return 0;
+
+	/* -EBADMSG can indicate that nRF Cloud rejected the device's JWT in the REST call */
+	if (err == -EBADMSG) {
+		LOG_ERR("Ensure device is provisioned or "
+			"has its public key registered with nRF Cloud");
 	}
+
+	k_sem_reset(&button_press_sem);
 
 	while (1) {
 		send_message_on_button();
