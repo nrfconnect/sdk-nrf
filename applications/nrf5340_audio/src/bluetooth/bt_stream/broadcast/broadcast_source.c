@@ -24,6 +24,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(broadcast_source, CONFIG_BROADCAST_SOURCE_LOG_LEVEL);
 
+/* Length-type-value size for channel allocation */
+#define LTV_CHAN_ALLOC_SIZE 6
+
 BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two audio streams are currently supported");
 
@@ -506,7 +509,7 @@ int broadcast_source_enable(void)
 	int ret;
 
 	struct bt_cap_initiator_broadcast_stream_param stream_params[ARRAY_SIZE(cap_streams)];
-	uint8_t bis_codec_data[ARRAY_SIZE(stream_params)][6];
+	uint8_t bis_codec_data[ARRAY_SIZE(stream_params)][LTV_CHAN_ALLOC_SIZE];
 	struct bt_cap_initiator_broadcast_subgroup_param
 		subgroup_params[CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
 	struct bt_cap_initiator_broadcast_create_param create_param;
