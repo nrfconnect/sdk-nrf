@@ -1076,7 +1076,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
     * To reduce RAM usage, the script now runs the `Scancode-Toolkit`_ detector in a single process.
       This change slows down the licenses detector, because it is no longer executed simultaneously on all files.
-    * SPDX License List database updated to version 3.21.
+    * SPDX License List database updated to version 3.22.
 
 MCUboot
 =======
