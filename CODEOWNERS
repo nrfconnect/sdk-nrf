@@ -172,6 +172,7 @@ Kconfig*                                  @tejlmand
 /samples/cellular/nrf_cloud_*             @plskeggs @jayteemo @glarsennordic
 /samples/cellular/nrf_provisioning/       @SeppoTakalo @juhaylinen
 /samples/cellular/modem_trace_flash/      @gregersrygg @balaji-nordic
+/samples/cellular/slm_shell/              @MarkusLassila @tomi-font
 /samples/cellular/sms/                    @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
 /samples/nrf_profiler/                    @pdunaj
@@ -231,7 +232,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/mqtt_helper/              @simensrostad @jtguggedal
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/aws_*                     @jtguggedal @simensrostad @coderbyheart
-/subsys/net/lib/ftp_client/               @junqingzou
+/subsys/net/lib/ftp_client/               @MarkusLassila @tomi-font
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @SeppoTakalo @jheiskan81 @juhaylinen
 /subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
