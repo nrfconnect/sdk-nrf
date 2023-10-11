@@ -123,7 +123,6 @@
 #cmakedefine PSA_NEED_CC3XX_ASYMMETRIC_DRIVER                   @PSA_NEED_CC3XX_ASYMMETRIC_DRIVER@
 #cmakedefine PSA_NEED_CC3XX_CIPHER_DRIVER                       @PSA_NEED_CC3XX_CIPHER_DRIVER@
 #cmakedefine PSA_NEED_CC3XX_ECDH_DRIVER                         @PSA_NEED_CC3XX_ECDH_DRIVER@
-#cmakedefine PSA_NEED_CC3XX_ENTROPY_DRIVER                      @PSA_NEED_CC3XX_ENTROPY_DRIVER@
 #cmakedefine PSA_NEED_CC3XX_HASH_DRIVER                         @PSA_NEED_CC3XX_HASH_DRIVER@
 #cmakedefine PSA_NEED_CC3XX_KEY_PAIR_DRIVER                     @PSA_NEED_CC3XX_KEY_PAIR_DRIVER@
 #cmakedefine PSA_NEED_CC3XX_MAC_DRIVER                          @PSA_NEED_CC3XX_MAC_DRIVER@
