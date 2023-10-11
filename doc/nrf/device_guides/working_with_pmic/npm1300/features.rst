@@ -21,6 +21,7 @@ For additional information, see the following documentation:
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 * `nPM1300`_ for the technical documentation on the nPM1300 PMIC and associated kits.
 * :ref:`ug_npm1300_gs`.
+* :ref:`ug_npm1300_developing`.
 
 Supported boards
 ================
