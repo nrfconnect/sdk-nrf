@@ -78,6 +78,7 @@ config NET_MGMT_EVENT_STACK_SIZE
 
 config NRF700X_LOG_VERBOSE
 	bool "Maintains the verbosity of information in logs"
+	default y
 
 module = WIFI_NRF700X
 module-dep = LOG
