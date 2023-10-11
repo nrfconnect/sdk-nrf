@@ -57,6 +57,17 @@ static bool wait_for_event(enum download_client_evt_id event, uint8_t seconds)
 	}
 }
 
+static struct download_client_evt get_next_event(void)
+{
+	size_t read;
+	struct download_client_evt evt;
+	int err;
+
+	err = k_pipe_get(&event_pipe, &evt, sizeof(evt), &read, sizeof(evt), K_FOREVER);
+	zassert_ok(err);
+	return evt;
+}
+
 static struct download_client_cfg config = {
 	.pdn_id = 0,
 	.frag_size_override = 0,
@@ -121,7 +132,10 @@ ZTEST(download_client, test_connection_failed)
 
 	dl_coap_start();
 
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, 10), "");
+	struct download_client_evt evt = get_next_event();
+
+	zassert_equal(evt.id, DOWNLOAD_CLIENT_EVT_ERROR);
+	zassert_equal(evt.error, -ENETUNREACH);
 
 	de_init(&client);
 }

@@ -93,7 +93,7 @@ static int mock_socket_offload_connect(void *obj, const struct sockaddr *addr, s
 {
 	k_sleep(K_MSEC(50));
 	errno = ztest_get_return_value();
-	return -errno;
+	return errno ? -1 : 0;
 }
 
 static int mock_socket_offload_listen(void *obj, int backlog)
