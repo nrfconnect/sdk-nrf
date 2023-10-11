@@ -19,6 +19,3 @@ config BT_EXT_ADV
 # Mandatory to support at least 1 for ASCS
 config BT_ATT_PREPARE_COUNT
 	default 1
-
-config ZBUS_RUNTIME_OBSERVERS
-	default y

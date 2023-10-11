@@ -31,7 +31,7 @@ LOG_MODULE_DECLARE(bt_mgmt_scan);
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
 struct bt_le_scan_cb scan_callback;
-static bool cb_registered;
+static bool scan_cb_registered;
 static bool sync_cb_registered;
 static char const *srch_name;
 static struct bt_le_per_adv_sync *pa_sync;
@@ -64,7 +64,7 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
 	struct bt_le_per_adv_sync_param param;
 
 	bt_le_scan_cb_unregister(&scan_callback);
-	cb_registered = false;
+	scan_cb_registered = false;
 
 	ret = bt_le_scan_stop();
 	if (ret) {
@@ -209,10 +209,10 @@ int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char c
 		sync_cb_registered = true;
 	}
 
-	if (!cb_registered) {
+	if (!scan_cb_registered) {
 		scan_callback.recv = scan_recv_cb;
 		bt_le_scan_cb_register(&scan_callback);
-		cb_registered = true;
+		scan_cb_registered = true;
 	} else {
 		if (name == srch_name) {
 			return -EALREADY;
