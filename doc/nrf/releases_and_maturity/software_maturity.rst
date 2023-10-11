@@ -175,6 +175,15 @@ The following table indicates the software maturity levels of the support for ea
 
 .. sml-table:: top_level
 
+Amazon Sidewalk features support
+********************************
+
+The following table indicates the software maturity levels of the support for each Amazon Sidewalk feature:
+
+.. toggle::
+
+  .. sml-table:: sidewalk
+
 Bluetooth features support
 **************************
 
