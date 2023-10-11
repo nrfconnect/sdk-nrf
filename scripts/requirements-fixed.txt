@@ -66,7 +66,7 @@ mock==5.1.0               # via -r ./zephyr/scripts/requirements-build-test.txt
 msgpack==1.0.5            # via python-can
 mypy==1.5.1               # via -r ./zephyr/scripts/requirements-build-test.txt
 mypy-extensions==1.0.0    # via mypy
-natsort==8.4.0            # via pyocd
+natsort==8.4.0            # via -r ./zephyr/scripts/requirements-run-test.txt, pyocd
 nrfcredstore==1.0.0       # via -r ./nrf/scripts/requirements-extra.txt
 packaging==23.1           # via -r ./zephyr/scripts/requirements-base.txt, pytest, python-can, west
 pathspec==0.11.2          # via yamllint
@@ -85,7 +85,7 @@ pyelftools==0.30          # via -r ./zephyr/scripts/requirements-base.txt, pyocd
 pygit2==1.10.0            # via -r ./nrf/scripts/requirements-extra.txt
 pygithub==1.59.1          # via -r ./nrf/scripts/requirements-extra.txt, -r ./zephyr/scripts/requirements-extras.txt
 pygments==2.16.1          # via gcovr
-pyjwt==2.8.0              # via pygithub, pyjwt
+pyjwt==2.8.0              # via pygithub
 pykwalify==1.8.0          # via -r ./zephyr/scripts/requirements-base.txt, west
 pylink-square==1.2.0      # via -r ./zephyr/scripts/requirements-base.txt, pyocd
 pylint==2.17.5            # via -r ./nrf/scripts/requirements-build.txt, -r ./zephyr/scripts/requirements-compliance.txt
