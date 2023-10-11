@@ -289,7 +289,7 @@ static int client_connect(struct download_client *dl)
 		err = host_lookup(dl->host, AF_INET, dl->config.pdn_id, &dl->remote_addr);
 	}
 	if (err) {
-		return err;
+		goto cleanup;
 	}
 
 	err = url_parse_proto(dl->host, &dl->proto, &type);
@@ -305,21 +305,24 @@ static int client_connect(struct download_client *dl)
 
 	if (dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2) {
 		if (!IS_ENABLED(CONFIG_COAP)) {
-			return -EPROTONOSUPPORT;
+			err = -EPROTONOSUPPORT;
+			goto cleanup;
 		}
 	}
 
 	if (dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2) {
 		if (dl->config.sec_tag_list == NULL || dl->config.sec_tag_count == 0) {
 			LOG_WRN("No security tag provided for TLS/DTLS");
-			return -EINVAL;
+			err = -EINVAL;
+			goto cleanup;
 		}
 	}
 
 	if ((dl->config.sec_tag_list == NULL || dl->config.sec_tag_count == 0) &&
 	    dl->config.set_tls_hostname) {
 		LOG_WRN("set_tls_hostname flag is set for non-TLS connection");
-		return -EINVAL;
+		err = -EINVAL;
+		goto cleanup;
 	}
 
 	err = url_parse_port(dl->host, &port);
@@ -351,7 +354,8 @@ static int client_connect(struct download_client *dl)
 		addrlen = sizeof(struct sockaddr_in);
 		break;
 	default:
-		return -EAFNOSUPPORT;
+		err = -EAFNOSUPPORT;
+		goto cleanup;
 	}
 
 	if (dl->set_native_tls) {
@@ -365,7 +369,8 @@ static int client_connect(struct download_client *dl)
 	dl->fd = socket(dl->remote_addr.sa_family, type, dl->proto);
 	if (dl->fd < 0) {
 		LOG_ERR("Failed to create socket, err %d", errno);
-		return -errno;
+		err = -errno;
+		goto cleanup;
 	}
 
 	if (dl->config.pdn_id) {
@@ -385,6 +390,7 @@ static int client_connect(struct download_client *dl)
 		if (dl->config.set_tls_hostname) {
 			err = socket_tls_hostname_set(dl->fd, dl->host);
 			if (err) {
+				err = -errno;
 				goto cleanup;
 			}
 		}
@@ -408,14 +414,12 @@ static int client_connect(struct download_client *dl)
 		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
 
 	err = connect(dl->fd, &dl->remote_addr, addrlen);
-	if (err) {
-		err = -errno;
-		LOG_ERR("Unable to connect, errno %d", -err);
-		error_evt_send(dl, -err);
-	}
 
 cleanup:
 	if (err) {
+		LOG_ERR("Unable to connect, errno %d", -err);
+		error_evt_send(dl, -err);
+
 		/* Unable to connect, close socket */
 		handle_disconnect(dl);
 	}
@@ -769,9 +773,6 @@ void download_thread(void *client, void *a, void *b)
 			rc = client_connect(dl);
 
 			if (rc) {
-				if (dl->close_when_done) {
-					handle_disconnect(dl);
-				}
 				continue;
 			}
 
