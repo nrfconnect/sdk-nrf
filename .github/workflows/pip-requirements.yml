@@ -1,7 +1,7 @@
 name: Validate pip requirements-fixed.txt
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
     branches:
       - main
@@ -9,16 +9,25 @@ on:
     paths:
       - 'scripts/requirements*.txt'
 
-jobs:
-  build:
-    runs-on: ubuntu-20.04
+env:
+  REACT_EMOTE: 'eyes'
 
+jobs:
+  check-requirements:
+    runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout PR target branch
+        uses: actions/checkout@v4
         with:
+          token: ${{ secrets.NCS_GITHUB_TOKEN }}
           path: ncs/nrf
-          fetch-depth: 0
+          fetch-depth: 1
+
+      - name: Switch to PR source branch
+        working-directory: ncs/nrf
+        env:
+          GITHUB_TOKEN: ${{ secrets.NCS_GITHUB_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
 
       - name: Get python version
         id: pyv
@@ -38,44 +47,31 @@ jobs:
           pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
           pip3 install -r nrf/scripts/requirements-base.txt
           west init -l nrf
-          west update mcuboot zephyr
+          west update --narrow mcuboot zephyr
 
-      - name: Generate new requirements-fixed.txt
-        working-directory: ncs
-        run: nrf/scripts/compile-requirements.sh requirements-fixed.txt
-
-      - name: Store requirements-fixed
-        uses: actions/upload-artifact@v3
+      - name: Execute script diff action
+        uses: nordicbuilder/action-script-diff@main
         with:
-          name: requirements-fixed
-          path: ncs/requirements-fixed.txt
-
-      - name: Compare requirements-fixed
-        id: diff
-        run: |
-          NEW=ncs/requirements-fixed.txt
-          OLD=ncs/nrf/scripts/requirements-fixed.txt
-          echo -e "$NEW\t\t\t\t\t"$OLD
-          diff -y $NEW $OLD
-
-      - name: Post summary
-        if: ${{ !cancelled() }}
-        run: |
-          if [[ "failure" == "${{ steps.diff.outcome }}" ]]; then
-            echo -e 'New requirements-fixed.txt file differs from the current file.
-            Please add the newly created file to the PR.' >> $GITHUB_STEP_SUMMARY
-
-          fi
-          if [[ -e ncs/requirements-fixed.txt ]]; then
-            echo -e '
+          github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
+          message_diff: |
+            This pr introduces changes to requirements files.
+            The compiled requirements-fixed.txt has changed.
+            To automatically add the changed file to this pr react with the :$REACT_EMOTE: emote to this comment and re-run the check.
+            [Check Run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
             <details>
-              <summary>requirements-fixed.txt</summary>
+              <summary>requirements-fixed.txt diff</summary>
 
-            ```' >> $GITHUB_STEP_SUMMARY
-            cat ncs/requirements-fixed.txt >> $GITHUB_STEP_SUMMARY
-            echo -e '```
-
-            </details>' >> $GITHUB_STEP_SUMMARY
-          else
-            echo -e 'Error during workflow, requirements-fixed file was not created' >> GITHUB_STEP_SUMMARY
-          fi
+              \`\`\` diff
+              $GITDIFF
+              \`\`\`
+            </details>
+          message_success: |
+            The changes to the 'requirements-fixed.txt' have been added to this PR.
+            All further changes to any of the requirements file will automatically be applied as long an :$REACT_EMOTE: is present.
+          script_call: scripts/compile-requirements.sh scripts/requirements-fixed.txt
+          git_diff_root: ncs/nrf
+          diff_path: scripts
+          diff_file: requirements-fixed.txt
+          reaction_emote: "${{ env.REACT_EMOTE }}"
+          git_user_name: "NordicBuilder"
+          git_user_email: "NordicBuilder@github.com"

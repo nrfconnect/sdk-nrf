@@ -30,8 +30,8 @@ jobs:
         pip3 install -U pip
         pip3 install -U setuptools
         pip3 install -U wheel
-        grep -E "python-magic|junitparser|lxml|gitlint|pylint|pykwalify|yamllint" scripts/requirements-fixed.txt | grep -v '^[ \t]*#' | xargs pip3 install -U
-        grep -E "west" scripts/requirements-fixed.txt | grep -v '^[ \t]*#' | xargs pip3 install -U
+        grep -E "^python-magic|^junitparser|^lxml|^gitlint|^pylint|^pykwalify|^yamllint" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
+        grep -E "^west" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
         pip3 show -f west
 
     - name: West init and update
