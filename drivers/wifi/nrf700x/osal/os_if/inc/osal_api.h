@@ -16,7 +16,7 @@
 #include "osal_structs.h"
 
 #ifndef CONFIG_NRF700X_LOG_VERBOSE
-#define __func__ ""
+#define __func__ "<snipped>"
 #endif /* CONFIG_NRF700X_LOG_VERBOSE */
 
 /**
