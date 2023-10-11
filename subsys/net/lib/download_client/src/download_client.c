@@ -414,10 +414,13 @@ static int client_connect(struct download_client *dl)
 		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
 
 	err = connect(dl->fd, &dl->remote_addr, addrlen);
+	if (err) {
+		LOG_ERR("Unable to connect, errno %d", errno);
+		err = -errno;
+	}
 
 cleanup:
 	if (err) {
-		LOG_ERR("Unable to connect, errno %d", -err);
 		error_evt_send(dl, -err);
 
 		/* Unable to connect, close socket */
