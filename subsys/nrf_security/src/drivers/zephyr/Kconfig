@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PSA_NEED_ZEPHYR_ENTROPY_DRIVER
+config PSA_NEED_NRF_RNG_ENTROPY_DRIVER
 	bool
 	default y
 	select PSA_ACCEL_GET_ENTROPY
