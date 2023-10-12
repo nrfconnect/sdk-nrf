@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: a01c3a4caccb6964a29078172ba7f590bcdbe790
+      revision: v3.4.99-ncs1-snapshot1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -111,7 +111,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: d82c309c2e7eea5f08bbc1ac9e2f4c4622fbe998
+      revision: v2.11-devel-ncs1-snapshot1
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -120,7 +120,7 @@ manifest:
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
-      revision: 0e213ab6a421298484a81a9d18f5c31c4b8084a8
+      revision: R2.2-ncs1-snapshot1
       userdata:
         ncs:
           upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: dc0b692181837d912e49fc49841918e47a60d22c
+      revision: v1.10.99-ncs1-snapshot1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -137,7 +137,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: acea48fc8a5eb227033b55e6ec012731218e257f
+      revision: v3.3.0-ncs2-snapshot1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
@@ -145,7 +145,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v1.8.0-ncs1-rc1
+      revision: v1.8.0-ncs1-snapshot1
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
