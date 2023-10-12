@@ -14,7 +14,7 @@
 psa_status_t zephyr_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
 				size_t output_size)
 {
-	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
+	const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(rng));
 	uint16_t request_len = MIN(UINT16_MAX, output_size);
 	int err;
 
