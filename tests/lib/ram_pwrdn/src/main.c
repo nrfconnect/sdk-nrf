@@ -75,20 +75,25 @@ static bool get_first_down_section(struct bank_section *out)
 
 /* ===== Test cases ===== */
 
+/*
+ * Use a global extern pointer to hold the allocated buffer to prevent the
+ * compiler from optimizing away malloc()/free().
+ */
+void *allocated_buffer;
+
 ZTEST(ram_pwrdn, test_heap_resize)
 {
 	const size_t buffer_size = 20480; // 20KiB
 
 	struct bank_section limit;
 	struct bank_section limit_saved;
-	void *buffer;
 
 	/* Save the current limit between powered up and down RAM areas */
 	zassert_true(get_first_down_section(&limit_saved), "Enabled RAM limit not found");
 
 	/* Allocate some memory and verify that the limit has moved forward */
-	buffer = malloc(buffer_size);
-	memset(buffer, 0, buffer_size);
+	allocated_buffer = malloc(buffer_size);
+	memset(allocated_buffer, 0, buffer_size);
 
 	zassert_true(get_first_down_section(&limit), "Enabled RAM limit not found after malloc");
 	zassert_true(limit.bank_id > limit_saved.bank_id || (limit.bank_id == limit_saved.bank_id &&
@@ -96,7 +101,7 @@ ZTEST(ram_pwrdn, test_heap_resize)
 		     "Enabled RAM limit not moved forward after malloc");
 
 	/* Trim memory and verify that the limit has moved backward */
-	free(buffer);
+	free(allocated_buffer);
 	malloc_trim(0);
 	limit_saved.bank_id = limit.bank_id;
 	limit_saved.sect_id = limit.sect_id;
