@@ -350,6 +350,11 @@ For example:
 
 The first part of these names is based on :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
 
+.. note::
+   When performing DFU for the nRF5340 Audio application, there will be one or more error prints related to opening flash area ID 1.
+   This is due to restrictions in the DFU system, and the error print is expected.
+   The DFU process should still complete successfully.
+
 .. _nrf53_audio_app_building:
 
 Building and running
