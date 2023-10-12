@@ -712,7 +712,7 @@ Binary libraries
 
 * :ref:`liblwm2m_carrier_readme` library:
 
-  * Updated to 3.3.0.
+  * Updated to v3.3.1.
     See the :ref:`liblwm2m_carrier_changelog` for detailed information.
 
 Bluetooth libraries and services
