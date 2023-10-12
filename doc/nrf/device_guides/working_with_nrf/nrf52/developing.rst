@@ -84,6 +84,9 @@ If you want to add SMP Service to advertising data, refer to the :ref:`zephyr:sm
 
 .. fota_upgrades_outro_start
 
+Testing steps
+-------------
+
 To perform a FOTA update, complete the following steps:
 
 1. Create a binary file that contains the new image.
