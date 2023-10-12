@@ -14,6 +14,8 @@
 /**
  * @brief	Get configuration for audio stream.
  *
+ * @param[in]	conn			Pointer to the conn to get the config for.
+ * @param[in]	dir			Direction to get the configuration from.
  * @param[out]	bitrate			Pointer to the bitrate used; can be NULL.
  * @param[out]	sampling_rate_hz	Pointer to the sampling rate used; can be NULL.
  * @param[out]	pres_delay_us		Pointer to the presentation delay used; can be NULL.
@@ -21,8 +23,8 @@
  * @retval	0		Operation successful.
  * @retval	-ENXIO		The feature is disabled.
  */
-int unicast_server_config_get(uint32_t *bitrate, uint32_t *sampling_rate_hz,
-			      uint32_t *pres_delay_us);
+int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
+			      uint32_t *sampling_rate_hz, uint32_t *pres_delay_us);
 
 /**
  * @brief	Put the UUIDs from this module into the buffer.

@@ -214,23 +214,30 @@ static void le_audio_msg_sub_thread(void)
 			break;
 
 		case LE_AUDIO_EVT_CONFIG_RECEIVED:
-			LOG_DBG("Config received");
+			LOG_DBG("LE audio config received");
 
-			ret = unicast_server_config_get(&bitrate_bps, &sampling_rate_hz, NULL);
+			ret = unicast_server_config_get(msg.conn, msg.dir, &bitrate_bps,
+							&sampling_rate_hz, NULL);
 			if (ret) {
 				LOG_WRN("Failed to get config: %d", ret);
 				break;
 			}
 
-			LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
-			LOG_DBG("Bitrate: %d bps", bitrate_bps);
+			LOG_DBG("\tSampling rate: %d Hz", sampling_rate_hz);
+			LOG_DBG("\tBitrate: %d bps", bitrate_bps);
+
+			if (msg.dir == BT_AUDIO_DIR_SINK) {
+				audio_system_config_set(0, 0, sampling_rate_hz);
+			} else if (msg.dir == BT_AUDIO_DIR_SOURCE) {
+				audio_system_config_set(sampling_rate_hz, bitrate_bps, 0);
+			}
 
 			break;
 
 		case LE_AUDIO_EVT_PRES_DELAY_SET:
 			LOG_DBG("Set presentation delay");
 
-			ret = unicast_server_config_get(NULL, NULL, &pres_delay_us);
+			ret = unicast_server_config_get(msg.conn, 0, NULL, NULL, &pres_delay_us);
 			if (ret) {
 				LOG_ERR("Failed to get config: %d", ret);
 				break;

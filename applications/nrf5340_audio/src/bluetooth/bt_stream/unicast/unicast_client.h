@@ -24,25 +24,56 @@ enum unicast_discover_dir {
 				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA,  \
+	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                               \
+				       BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL,                       \
 				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
 
 #elif CONFIG_BT_BAP_UNICAST_16_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA |                             \
+						 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 
 #elif CONFIG_BT_BAP_UNICAST_24_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA |                             \
+						 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA)
+	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
+
+#elif CONFIG_BT_BAP_UNICAST_48_4_1
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
+	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_MEDIA |                             \
+						 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
+
+#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
+	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
+					 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 #else
 #error Unsupported LC3 codec preset for unicast
 #endif /* CONFIG_BT_BAP_UNICAST_CONFIGURABLE */
+
+/**
+ * @brief	Get configuration for audio stream.
+ *
+ * @param[in]	conn			Pointer to the conn to get the config for.
+ * @param[in]	dir			Direction to get the configuration from.
+ * @param[out]	bitrate			Pointer to the bitrate used; can be NULL.
+ * @param[out]	sampling_rate_hz	Pointer to the sampling rate used; can be NULL.
+ *
+ * @retval	0		Operation successful.
+ * @retval	-ENXIO		The feature is disabled.
+ */
+int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
+			      uint32_t *sampling_rate);
 
 /**
  * @brief	Start service discovery for a Bluetooth LE Audio unicast (CIS) server.

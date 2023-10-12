@@ -24,6 +24,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(streamctrl_unicast_client, CONFIG_STREAMCTRL_LOG_LEVEL);
 
+#define VALUE_NOT_SET 0
+
 static enum stream_state strm_state = STATE_PAUSED;
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
@@ -203,6 +205,8 @@ static void button_msg_sub_thread(void)
 static void le_audio_msg_sub_thread(void)
 {
 	int ret;
+	uint32_t bitrate_bps;
+	uint32_t sampling_rate_hz;
 	const struct zbus_channel *chan;
 
 	while (1) {
@@ -245,6 +249,29 @@ static void le_audio_msg_sub_thread(void)
 
 			ret = led_on(LED_APP_1_BLUE);
 			ERR_CHK(ret);
+			break;
+
+		case LE_AUDIO_EVT_CONFIG_RECEIVED:
+			LOG_DBG("LE audio config received");
+
+			ret = unicast_client_config_get(msg.conn, msg.dir, &bitrate_bps,
+							&sampling_rate_hz);
+			if (ret) {
+				LOG_WRN("Failed to get config: %d", ret);
+				break;
+			}
+
+			LOG_DBG("\tSampling rate: %d Hz", sampling_rate_hz);
+			LOG_DBG("\tBitrate: %d bps", bitrate_bps);
+
+			if (msg.dir == BT_AUDIO_DIR_SINK) {
+				audio_system_config_set(sampling_rate_hz, bitrate_bps,
+							VALUE_NOT_SET);
+			} else if (msg.dir == BT_AUDIO_DIR_SOURCE) {
+				audio_system_config_set(VALUE_NOT_SET, VALUE_NOT_SET,
+							sampling_rate_hz);
+			}
+
 			break;
 
 		default:
