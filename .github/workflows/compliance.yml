@@ -50,8 +50,7 @@ jobs:
         # debug
         git log  --pretty=oneline | head -n 10
         west init -l .
-        west update
-        west zephyr-export
+        west update --narrow -o=--depth=1
 
     - name: Run CODEOWNERS test
       id: codeowners
