@@ -738,8 +738,8 @@ static int handle_disconnect(struct download_client *client)
 	if (client->fd != -1) {
 		err = close(client->fd);
 		if (err) {
-			err = errno;
-			LOG_ERR("Failed to close socket, errno %d", err);
+			LOG_ERR("Failed to close socket, errno %d", errno);
+			err = -errno;
 		}
 	}
 
