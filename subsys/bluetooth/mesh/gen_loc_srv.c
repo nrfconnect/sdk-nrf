@@ -259,6 +259,24 @@ const struct bt_mesh_model_cb _bt_mesh_loc_srv_cb = {
 	.reset = bt_mesh_loc_srv_reset,
 };
 
+static int bt_mesh_loc_setup_srv_init(struct bt_mesh_model *model)
+{
+	struct bt_mesh_loc_srv *srv = model->user_data;
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	int err = bt_mesh_model_correspond(model, srv->model);
+
+	if (err) {
+		return err;
+	}
+#endif
+
+	return bt_mesh_model_extend(model, srv->model);
+}
+
+const struct bt_mesh_model_cb _bt_mesh_loc_setup_srv_cb = {
+	.init = bt_mesh_loc_setup_srv_init,
+};
+
 int bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
 			       struct bt_mesh_msg_ctx *ctx,
 			       const struct bt_mesh_loc_global *global)

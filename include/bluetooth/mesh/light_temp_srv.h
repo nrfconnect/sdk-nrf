@@ -128,6 +128,10 @@ struct bt_mesh_light_temp_srv {
 	struct bt_mesh_lvl_srv lvl;
 	/** Model entry. */
 	struct bt_mesh_model *model;
+	/** Pointer to the corresponding CTL server, if it has one.
+	 *  Is set automatically by the CTL server.
+	 */
+	const struct bt_mesh_light_ctl_srv *ctl;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/** Transaction ID tracker for the set messages. */

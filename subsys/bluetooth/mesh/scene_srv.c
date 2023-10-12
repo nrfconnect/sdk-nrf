@@ -843,6 +843,13 @@ static int scene_setup_srv_init(struct bt_mesh_model *model)
 		return err;
 	}
 
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	err = bt_mesh_model_correspond(srv->setup_mod, srv->model);
+	if (err) {
+		return err;
+	}
+#endif
+
 	return bt_mesh_model_extend(srv->setup_mod, srv->model);
 }
 

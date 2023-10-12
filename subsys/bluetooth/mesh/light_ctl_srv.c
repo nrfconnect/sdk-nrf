@@ -407,6 +407,7 @@ static int bt_mesh_light_ctl_srv_init(struct bt_mesh_model *model)
 	struct bt_mesh_light_ctl_srv *srv = model->user_data;
 
 	srv->model = model;
+	srv->temp_srv.ctl = srv;
 	srv->pub.msg = &srv->pub_buf;
 	srv->pub.update = update_handler;
 	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
@@ -477,6 +478,13 @@ static int bt_mesh_light_ctl_setup_srv_init(struct bt_mesh_model *model)
 	if (err) {
 		return err;
 	}
+
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	err = bt_mesh_model_correspond(model, srv->model);
+	if (err) {
+		return err;
+	}
+#endif
 
 	return bt_mesh_model_extend(model, srv->lightness_srv.lightness_setup_model);
 }

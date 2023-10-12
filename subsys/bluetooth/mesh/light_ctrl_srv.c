@@ -1748,6 +1748,13 @@ static int lc_setup_srv_init(struct bt_mesh_model *model)
 		return err;
 	}
 
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	err = bt_mesh_model_correspond(srv->setup_srv, srv->model);
+	if (err) {
+		return err;
+	}
+#endif
+
 	srv->setup_pub.msg = &srv->setup_pub_buf;
 	net_buf_simple_init_with_data(&srv->setup_pub_buf, srv->setup_pub_data,
 				      sizeof(srv->setup_pub_data));
