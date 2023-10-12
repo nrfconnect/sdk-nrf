@@ -111,7 +111,8 @@ void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 	char code_str[4];  /* Proprietary code 900 ~ 999 */
 	int code;
 
-	strncpy(code_str, msg, 3);
+	strncpy(code_str, msg, sizeof(code_str) - 1);
+	code_str[sizeof(code_str) - 1] = '\0';
 	code = atoi(code_str);
 	if (FTP_PROPRIETARY(code)) {
 		switch (code) {
@@ -157,26 +158,22 @@ void ftp_ctrl_callback(const uint8_t *msg, uint16_t len)
 	}
 }
 
-static int ftp_data_save(uint8_t *data, uint32_t length)
+static void ftp_data_save(uint8_t *data, uint32_t length)
 {
-	if (ring_buf_space_get(&ftp_data_buf) < length) {
-		LOG_WRN("FTP buffer overflow");
-		return -1; /* RX overrun */
-	}
+	const int ret = ring_buf_put(&ftp_data_buf, data, length);
 
-	return ring_buf_put(&ftp_data_buf, data, length);
+	if (ret != length) {
+		LOG_WRN("FTP buffer overflow (%u bytes dropped).", length - ret);
+	}
 }
 
-static int ftp_data_send(void)
+static void ftp_data_send(void)
 {
-	uint32_t sz_send = 0;
+	uint32_t sz_send;
 
-	if (ring_buf_is_empty(&ftp_data_buf) == 0) {
-		sz_send = ring_buf_get(&ftp_data_buf, slm_data_buf, sizeof(slm_data_buf));
+	while ((sz_send = ring_buf_get(&ftp_data_buf, slm_data_buf, sizeof(slm_data_buf)))) {
 		data_send(slm_data_buf, sz_send);
 	}
-
-	return sz_send;
 }
 
 void ftp_data_callback(const uint8_t *msg, uint16_t len)
