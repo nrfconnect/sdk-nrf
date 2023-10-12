@@ -379,6 +379,7 @@ static int sat_srv_pub_update(struct bt_mesh_model *model)
 static int sat_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	int err;
 
 	srv->model = model;
 	srv->pub.update = sat_srv_pub_update;
@@ -390,14 +391,23 @@ static int sat_srv_init(struct bt_mesh_model *model)
 	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
 	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
 	srv->emds_entry.entry.len = sizeof(srv->transient);
-	int err = emds_entry_add(&srv->emds_entry);
+	err = emds_entry_add(&srv->emds_entry);
 
 	if (err) {
 		return err;
 	}
 #endif
 
-	return bt_mesh_model_extend(model, srv->lvl.model);
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	err = bt_mesh_model_correspond(srv->hsl->model, model);
+
+	if (err) {
+		return err;
+	}
+#endif
+
+	err = bt_mesh_model_extend(model, srv->lvl.model);
+	return err;
 }
 
 static int sat_srv_settings_set(struct bt_mesh_model *model, const char *name,

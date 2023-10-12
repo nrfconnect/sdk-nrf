@@ -645,6 +645,13 @@ static int bt_mesh_light_xyl_setup_srv_init(struct bt_mesh_model *model)
 		return err;
 	}
 
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	err = bt_mesh_model_correspond(model, srv->model);
+	if (err) {
+		return err;
+	}
+#endif
+
 	lightness_setup_srv = bt_mesh_model_find(bt_mesh_model_elem(model),
 						 BT_MESH_MODEL_ID_LIGHT_LIGHTNESS_SETUP_SRV);
 

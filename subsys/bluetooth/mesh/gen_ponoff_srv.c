@@ -378,9 +378,15 @@ static int bt_mesh_ponoff_setup_srv_init(struct bt_mesh_model *model)
 		return err;
 	}
 
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	err = bt_mesh_model_correspond(model, srv->ponoff_model);
+	if (err) {
+		return err;
+	}
+#endif
+
 	return bt_mesh_model_extend(model, srv->dtt.model);
 }
-
 
 const struct bt_mesh_model_cb _bt_mesh_ponoff_setup_srv_cb = {
 	.init = bt_mesh_ponoff_setup_srv_init,

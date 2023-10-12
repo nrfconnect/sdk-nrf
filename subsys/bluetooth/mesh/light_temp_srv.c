@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <zephyr/sys/byteorder.h>
 #include <bluetooth/mesh/light_temp_srv.h>
+#include <bluetooth/mesh/light_ctl_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
 #include "light_ctl_internal.h"
 #include "model_utils.h"
@@ -388,6 +389,7 @@ static void light_temp_srv_reset(struct bt_mesh_light_temp_srv *srv)
 static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_temp_srv *srv = model->user_data;
+	int err;
 
 	srv->model = model;
 	light_temp_srv_reset(srv);
@@ -397,14 +399,23 @@ static int bt_mesh_light_temp_srv_init(struct bt_mesh_model *model)
 	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
 	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
 	srv->emds_entry.entry.len = sizeof(srv->transient);
-	int err = emds_entry_add(&srv->emds_entry);
+	err = emds_entry_add(&srv->emds_entry);
 
 	if (err) {
 		return err;
 	}
 #endif
 
-	return bt_mesh_model_extend(model, srv->lvl.model);
+#if defined(CONFIG_BT_MESH_COMP_PAGE_1)
+	err = bt_mesh_model_correspond(srv->ctl->model, model);
+
+	if (err) {
+		return err;
+	}
+#endif
+
+	err = bt_mesh_model_extend(model, srv->lvl.model);
+	return err;
 }
 
 static int bt_mesh_light_temp_srv_settings_set(struct bt_mesh_model *model,
