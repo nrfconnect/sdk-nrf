@@ -129,12 +129,14 @@ config PSA_USE_CC3XX_CTR_DRBG_DRIVER
 	default y
 	depends on PSA_USE_CTR_DRBG_DRIVER
 	depends on CRYPTOCELL_USABLE
+	depends on BUILD_WITH_TFM || NRF_CC3XX_PLATFORM
 
 config PSA_USE_CC3XX_HMAC_DRBG_DRIVER
 	bool
 	default y
 	depends on PSA_USE_HMAC_DRBG_DRIVER
 	depends on CRYPTOCELL_USABLE
+	depends on BUILD_WITH_TFM || NRF_CC3XX_PLATFORM
 
 endmenu
 
