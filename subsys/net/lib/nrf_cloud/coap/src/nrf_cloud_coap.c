@@ -604,24 +604,23 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data)
 	int err;
 	enum nrf_cloud_ctrl_status status;
 	struct nrf_cloud_data out_data;
-	bool found = false;
 
 	err = nrf_cloud_device_control_update(in_data, &out_data, &status);
 	if (err) {
 		return err;
 	}
-	LOG_DBG("Control found:%d, status:%d", found, status);
-	LOG_DBG("Ack delta: len:%zd, %s", out_data.len, (const char *)out_data.ptr);
-	/* Acknowledge it so we do not receive it again. */
-	err = nrf_cloud_coap_shadow_state_update(out_data.ptr);
-	if (err) {
-		LOG_ERR("Failed to acknowledge delta: %d", err);
-	} else {
-		LOG_DBG("Delta acknowledged");
+	LOG_DBG("Control status:%d", status);
+	if (out_data.ptr) {
+		LOG_DBG("Ack delta: len:%zd, %s", out_data.len, (const char *)out_data.ptr);
+		/* Acknowledge it so we do not receive it again. */
+		err = nrf_cloud_coap_shadow_state_update(out_data.ptr);
+		if (err) {
+			LOG_ERR("Failed to acknowledge delta: %d", err);
+		} else {
+			LOG_DBG("Delta acknowledged");
+		}
 	}
 
-	if (found) {
-		LOG_INF("Processed control change");
-	}
+	LOG_INF("Processed control change");
 	return err;
 }

@@ -381,18 +381,15 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 
 	err = nrf_cloud_device_control_update(&nct_evt->param.cc->data, &msg.data,
 					      &status);
-	if (!err && msg.data.ptr) {
-		if ((status == NRF_CLOUD_CTRL_REPLY) || (status == NRF_CLOUD_CTRL_REJECT)) {
-			LOG_DBG("Confirming shadow: %s",
-				(const char *)msg.data.ptr);
-			err = nct_cc_send(&msg);
-			nrf_cloud_free((void *)msg.data.ptr);
-			if (err) {
-				LOG_ERR("nct_cc_send failed %d", err);
-			}
-		}
-	} else {
+	if (err) {
 		LOG_ERR("Error updating device control: %d", err);
+	} else if (msg.data.ptr) {
+		LOG_DBG("Confirming shadow: %s", (const char *)msg.data.ptr);
+		err = nct_cc_send(&msg);
+		nrf_cloud_free((void *)msg.data.ptr);
+		if (err) {
+			LOG_ERR("nct_cc_send failed %d", err);
+		}
 	}
 
 	struct nrf_cloud_evt cloud_evt = {
