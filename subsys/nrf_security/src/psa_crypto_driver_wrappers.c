@@ -124,8 +124,8 @@
 #include "tfm_builtin_key_loader.h"
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
 
-#if defined(PSA_NEED_ZEPHYR_ENTROPY_DRIVER)
-#include "zephyr_entropy.h"
+#if defined(PSA_NEED_NRF_RNG_ENTROPY_DRIVER)
+#include <psa/nrf_rng_entropy.h>
 #endif
 
 /* Repeat above block for each JSON-declared driver during autogeneration */
@@ -2360,8 +2360,8 @@ psa_status_t psa_driver_wrapper_free_random(psa_driver_random_context_t *context
 psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
 					    size_t output_size)
 {
-#if defined(PSA_NEED_ZEPHYR_ENTROPY_DRIVER)
-	return zephyr_get_entropy(flags, estimate_bits, output, output_size);
+#if defined(PSA_NEED_NRF_RNG_ENTROPY_DRIVER)
+	return nrf_rng_get_entropy(flags, estimate_bits, output, output_size);
 #endif
 
 	(void)flags;

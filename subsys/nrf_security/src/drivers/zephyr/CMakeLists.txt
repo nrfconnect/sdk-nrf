@@ -4,15 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (PSA_NEED_ZEPHYR_ENTROPY_DRIVER)
-  # Add nrf_cc3xx_platform includes for mbedcrypto
-  target_include_directories(${mbedcrypto_target}
-    INTERFACE
-      include
-  )
-
+if (PSA_NEED_NRF_RNG_ENTROPY_DRIVER)
   target_sources(${mbedcrypto_target}
     PRIVATE
-      zephyr_entropy.c
+      nrf_rng_entropy.c
   )
 endif()

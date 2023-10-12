@@ -214,7 +214,7 @@
 #cmakedefine PSA_NEED_OBERON_TLS12_PSK_TO_MS                    @PSA_NEED_OBERON_TLS12_PSK_TO_MS@
 #cmakedefine PSA_NEED_OBERON_JPAKE_DRIVER                       @PSA_NEED_OBERON_JPAKE_DRIVER@
 
-#cmakedefine PSA_NEED_ZEPHYR_ENTROPY_DRIVER                     @PSA_NEED_ZEPHYR_ENTROPY_DRIVER@
+#cmakedefine PSA_NEED_NRF_RNG_ENTROPY_DRIVER                    @PSA_NEED_NRF_RNG_ENTROPY_DRIVER@
 
 /* Nordic specific */
 #cmakedefine PSA_NATIVE_ITS                                     @PSA_NATIVE_ITS@
