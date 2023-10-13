@@ -12,12 +12,9 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
-.. HOWTO
-
-   Add changes in the following format:
-
-.. * Change1 and description
-.. * Change2 and description
+* All references to GNSS assistance have been changed from ``A-GPS`` to `A-GNSS`_.
+  This affects the :ref:`nrfxlib:nrf_modem_gnss_api`, as well as :ref:`lib_nrf_cloud`, :ref:`lib_location`, and :ref:`lib_lwm2m_location_assistance` libraries.
+  See release notes for changes related to each component.
 
 Recommended changes
 *******************
