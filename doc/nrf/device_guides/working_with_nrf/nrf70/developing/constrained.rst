@@ -17,6 +17,18 @@ The table below lists the required protocol stack combinations for various class
    :file: stack_combo.csv
    :header-rows: 1
 
+Host SoC support
+****************
+The following table indicates the support of various classes of Wi-Fi networking applications (denoted by the corresponding protocol stack capabilities) running on the different nRF host MCUs combined with the nRF70 Series companion IC.
+You can identify and select the appropriate host MCU depending on the IoT use case of interest.
+
+.. csv-table:: Host SoC's support
+   :file: soc_combo.csv
+   :header-rows: 1
+
+.. note::
+   The asterisk * indicates that the SoC is supported, but the use case is not recommended due to performance or memory constraints.
+
 Zephyr OS factors
 *****************
 The following sections explain the factors that are applicable when using the Zephyr OS on the nRF5340 SoC.
