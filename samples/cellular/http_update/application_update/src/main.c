@@ -185,7 +185,9 @@ static void apply_state(enum fota_state new_state)
 	switch (new_state) {
 	case IDLE:
 		app_dfu_btn_irq_disable();
+#if !defined(CONFIG_LWM2M_CARRIER)
 		modem_configure_and_connect();
+#endif /* !CONFIG_LWM2M_CARRIER */
 		break;
 	case CONNECTED:
 		app_dfu_btn_irq_enable();
@@ -257,7 +259,6 @@ static int modem_configure_and_connect(void)
 	BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 		     "This sample does not support auto init and connect");
 
-#if !defined(CONFIG_LWM2M_CARRIER)
 	int err;
 
 #if defined(CONFIG_USE_HTTPS)
@@ -275,7 +276,6 @@ static int modem_configure_and_connect(void)
 		printk("LTE link could not be established.");
 		return err;
 	}
-#endif /* !CONFIG_LWM2M_CARRIER */
 
 	return 0;
 }
