@@ -123,6 +123,10 @@ The sample implements the following LwM2M objects:
       - 33627
       - Yes
       - Yes
+   *  - Advanced Firmware Update
+      - 33629
+      - Yes
+      - Yes
 
 User interface
 **************
@@ -163,6 +167,10 @@ You need to provide the following information to the LwM2M server before you can
 * `Pre-Shared Key (PSK)`_
 
 See :ref:`server setup <server_setup_lwm2m_client>` for instructions on providing the information to the server.
+
+Optional configuration:
+
+* DTLS Connection Identifier, requires modem version 1.3.5 or newer.
 
 .. _notifications_lwm2m:
 
@@ -232,6 +240,8 @@ Set the server address and PSK
    * For Coiote bootstrap server - ``coaps://eu.iot.avsystem.cloud:5694``
 #. Set :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP` if bootstrap is used.
 #. Set :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` to the hexadecimal representation of the PSK used when registering the device with the server.
+
+See the :ref:`lwm2m_configuration_files` section for overlays that set the mentioned options.
 
 .. _notifications_setup_lwm2m:
 
@@ -400,6 +410,89 @@ CONFIG_SENSOR_MODULE_COLOR - Configuration for color
 Additional configuration
 ========================
 
+Check also the default configurations and any additional configurations of the sample listed in this section.
+
+Default configuration
+---------------------
+
+The sample use the following default configurations.
+
+LwM2M configuration:
+
+* Protocol version: 1.0
+* Binding mode: Queue
+* Device Management server: Leshan Demo server
+* Security: Enabled with PSK and DTLS session caching
+* Registration life time: 12 hours
+* Coap ACK initial timeout: 4 seconds
+* Enable LwM2M tickless mode power optimization
+* LwM2M shell
+
+Modem configurations:
+
+* Network Mode: LTE-M with GNSS.
+* PSM: Enabled TAU 60 minutes, RAT 30 seconds
+* Paging window: LTE 1.28 seconds and NB-IoT 2.56 seconds
+* eDRX: Enabled, with request of 10.24 seconds on LTE and 20.48 seconds on NB-IoT.
+* TAU pre-warning enabled, notification triggers registration update and TAU will be sent with the update which decreases power consumption.
+
+DTLS Connection Identifier
+--------------------------
+
+Add :file:`overlay-dtls-cid.conf` to activate DTLS Connection Identifier.
+It is recommended to enable the Connection Identifier, because it reduces DTLS reconnection data traffic and also solves the network NAT timeout problems from client to server side.
+
+.. note::
+   This requires modem firmware version 1.3.5 or newer.
+
+Modem proprietary PSM
+---------------------
+
+Add the :file:`overlay-aggressive-psm.conf` overlay file to enable optimized PSM setup and proprietary PSM mode.
+This configuration disables eDRX, because it will request 10 seconds RAT and 12 hours TAU period.
+Proprietary PSM enables power saving when network does not allow PSM.
+The modem enters the PSM state after the configured RAT period when the connection is released.
+
+.. note::
+
+   Proprietary PSM is only supported with modem firmware v2.x.
+   Enabling this file for an older modem version generates the following error message:
+
+   .. code-block:: console
+
+      <err> lte_lc: Failed to configure proprietary PSM, err -14
+
+
+Configuration for external FOTA
+-------------------------------
+
+The sample supports UART2 connection on the nRF9160 SiP to onboard an nRF52840 SiP with or without MCUboot recovery mode.
+The nRF9160 SiP needs to enable UART2 on the devicetree using the following configuration files and recovery mode overlay files:
+
+* :file:`overlay-mcumgr_client.conf` - Defines the configuration for external FOTA client.
+  This requires an additional devicetree overlay file :file:`nrf9160dk_mcumgr_client_uart2.overlay`.
+* :file:`overlay-mcumgr_reset.conf` - Enables MCUboot recovery mode.
+  This requires an additional devicetree overlay file :file:`nrf9160dk_recovery.overlay`.
+
+.. _overlay_advanced_fw_object:
+
+To enable the experimental Advanced Firmware Update object for the external FOTA, use the following overlay configuration files:
+
+* :file:`overlay-adv-firmware.conf` - Enables the experimental Advanced Firmware Update object.
+* :file:`overlay-lwm2m-1.1.conf` - Enables the LwM2M version 1.1.
+
+You also need one of the following `Coiote Device Management`_ server configurations:
+
+* :file:`overlay-avsystem.conf` - For the `Coiote Device Management`_ server.
+* :file:`overlay-avsystem-bootstrap.conf` - For Coiote in bootstrap mode.
+
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
+Various library options
+-----------------------
+
 Check and configure the following LwM2M options that are used by the sample:
 
 * :kconfig:option:`CONFIG_LWM2M_PEER_PORT` - LwM2M server port.
@@ -462,63 +555,55 @@ Check and configure the following library options that are used by the sample:
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS` - nRF Cloud provides P-GPS predictions and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER` - Disable this option if you provide your own method of populating the LwM2M objects (ID 10256) containing the cell neighborhood information.
 
+.. _lwm2m_configuration_files:
 
 Configuration files
 ===================
 
 The sample provides predefined configuration files for typical use cases.
 
-The following files are available:
+* :file:`prj.conf` - Default configuration file.
 
-* :file:`prj.conf` - Standard default configuration file.
+LwM2M Device management server:
+
 * :file:`overlay-leshan-bootstrap.conf` - Enables LwM2M bootstrap support with Leshan demo server.
 * :file:`overlay-avsystem.conf` - Uses `Coiote Device Management`_ server.
 * :file:`overlay-avsystem-bootstrap.conf` - Uses Coiote in bootstrap mode.
+
+NB-IoT:
+
 * :file:`overlay-nbiot.conf` - Enables the use of NB-IoT.
+
+LwM2M v1.1:
+
+* :file:`overlay-lwm2m-1.1.conf` - Enables LwM2M v1.1 protocol version.
+
+Firmware update:
+
+* :file:`overlay-adv-firmware.conf` - Enables experimental Advanced Firmware Update object.
+* :file:`overlay-fota_helper.conf` - Enables faster response for evaluating FOTA.
+
+Location assistance:
+
 * :file:`overlay-assist-agnss.conf` - Enables A-GNSS assistance.
 * :file:`overlay-assist-cell.conf` - Enables cell-based location assistance.
 * :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance in the sample.
-* :file:`overlay-lowpower.conf` - Disables certain features to bring the power consumption down.
-* :file:`overlay-adv-firmware.conf` - Enables experimental Advanced Firmware Update object.
+
+Location service requires `Coiote Device Management`_ server and LwM2M v1.1.
+
+DTLS optimizations:
+
 * :file:`overlay-dtls-cid.conf` - Enables DTLS Connection Identifier.
-  This requires modem firmware version 1.3.5 or newer.
-* :file:`overlay-aggressive-psm.con` - Enables optimized PSM setup and proprietary PSM mode.
-   Proprietary PSM is only supported with modem firmware v2.x.
 
-Moreover, the sample also provides the following files for LwM2M 1.1 features:
+Power savings:
 
-* :file:`overlay-lwm2m-1.1.conf` - Enables v1.1 and running of Interoperability Test Cases [0-499].
-* :file:`overlay-lwm2m-1.1-core-interop.conf` - Enables v.1.1 and running of Core Specific Objects Test cases [500-999].
-* :file:`overlay-lwm2m-1.1-object-interop.conf` -  Enables v.1.1 and running of Additional Objects Test cases [1000-1999].
+* :file:`overlay-aggressive-psm.conf` - Enables optimized PSM setup and proprietary PSM mode.
+* :file:`overlay-lowpower.conf` - Disables serial console to bring the power consumption down.
 
-For further information about the test cases, see `Enabler Test Specification (Interoperability) for Lightweight M2M`_.
+LwM2M v1.1 conformance testing:
 
-Configuration for external FOTA
--------------------------------
-
-The sample supports UART2 connection on the nRF9160 SoC to onboard the nRF52840 SoC with or without MCUboot recovery mode.
-The nRF9160 SoC needs to enable UART2 on the devicetree using the following configuration files and recovery mode overlay files:
-
-* :file:`overlay-mcumgr_client.conf` - Defines the configuration for external FOTA client.
-  This requires an additional devicetree overlay file :file:`nrf9160dk_mcumgr_client_uart2.overlay`.
-* :file:`overlay-mcumgr_reset.conf` - Enables MCUboot recovery mode.
-  This requires an additional devicetree overlay file :file:`nrf9160dk_recovery.overlay`.
-
-.. _overlay_advanced_fw_object:
-
-To enable the experimental Advanced Firmware Update object for the external FOTA, use the following overlay configuration files:
-
-* :file:`overlay-adv-firmware.conf` - Enables the experimental Advanced Firmware Update object.
-* :file:`overlay-lwm2m-1.1.conf` - Enables the LwM2M version 1.1.
-
-You also need one of the following `Coiote Device Management`_ server configurations:
-
-* :file:`overlay-avsystem.conf` - For the `Coiote Device Management`_ server.
-* :file:`overlay-avsystem-bootstrap.conf` - For Coiote in bootstrap mode.
-
-.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
-   :start-after: modem_lib_sending_traces_UART_start
-   :end-before: modem_lib_sending_traces_UART_end
+* :file:`overlay-lwm2m-1.1-core-interop.conf` - Allows running of Core Specific Objects Test cases.
+* :file:`overlay-lwm2m-1.1-object-interop.conf` - Allows running of Additional Objects Test cases.
 
 .. _build_lwm2m:
 
@@ -557,10 +642,9 @@ Bootstrap support
 =================
 
 To successfully run the bootstrap procedure, you must first register the device in the LwM2M bootstrap server.
+See :ref:`registering your device to an LwM2M bootstrap server <bootstrap_server_reg>` for instructions.
 
-See :ref:`Registering your device to an LwM2M boot strap server <bootstrap_server_reg>` for instructions.
-
-To build the LwM2M Client with LwM2M bootstrap support, build it with the :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf` configuration overlays:
+To build the LwM2M Client with LwM2M bootstrap support, use :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf` configuration overlays:
 
    .. tabs::
 
@@ -576,46 +660,51 @@ To build the LwM2M Client with LwM2M bootstrap support, build it with the :file:
 
             west build -b nrf9160dk_nrf9160_ns -- -DEXTRA_CONF_FILE=overlay-leshan-bootstrap.conf
 
-See :ref:`cmake_options` for instructions on how to add this option.
-Keep in mind that the used bootstrap URI is set in the aforementioned configuration file.
 In bootstrap mode, application does not overwrite the PSK key from the modem so :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` is not used.
 Please refer to :ref:`lwm2m_client_provisioning` for instructions how to provision bootstrap keys.
 
-MCUboot recovery mode with bootstrap
-====================================
 
-To build for MCUboot recovery mode with bootstrap, use the following command:
-
-.. code-block:: console
-
-   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
-
-MCUboot recovery mode without bootstrap
-=======================================
-
-To build for MCUboot recovery mode without bootstrap, use the following command:
-
-.. code-block:: console
-
-   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
-
-MCUmgr client with bootstrap
-============================
-
-To build for MCUmgr client with bootstrap, use the following command:
-
-.. code-block:: console
-
-   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
-
-MCUmgr client without bootstrap
+MCUmgr client for external FOTA
 ===============================
 
-To build for MCUmgr client without bootstrap, use the following command:
+Use one of the following build commands to evaluate external FOTA:
 
-.. code-block:: console
+   .. tabs::
 
-   west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
+      .. group-tab:: MCUboot recovery mode with bootstrap
+
+         To build for MCUboot recovery mode with bootstrap, use the following command:
+
+         .. code-block:: console
+
+            west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
+
+      .. group-tab:: MCUboot recovery mode without bootstrap
+
+         To build for MCUboot recovery mode without bootstrap, use the following command:
+
+         .. code-block:: console
+
+            west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
+
+      .. group-tab:: MCUmgr client with bootstrap
+
+         To build for MCUmgr client with bootstrap, use the following command:
+
+         .. code-block:: console
+
+            west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
+
+      .. group-tab:: MCUmgr client without bootstrap
+
+         To build for MCUmgr client without bootstrap, use the following command:
+
+         .. code-block:: console
+
+            west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
+
+
+See :ref:`lwm2m_client_fota_external_mcu` for details.
 
 Testing
 =======
@@ -678,20 +767,78 @@ Firmware Over-the-Air (FOTA)
 You can update the firmware of the device if you are using Coiote Device Management server or Leshan server.
 Application firmware updates and modem firmware (both full and delta) updates are supported.
 
+The client supports Push and Pull modes for image delivery.
+Recommend transport types are CoAP or HTTP for Pull mode.
+Coiote Device Management server also supports Multi component FOTA object, which allows updating multiple instances at the same time.
+
+Use :file:`overlay-adv-firmware.conf` overlay file to enable the experimental Advanced Firmware Update object.
+Advanced firmware requires `Coiote Device Management`_ server that supports it.
+Refer to :ref:`lwm2m_client_fota` for more details.
+
+.. note::
+
+   You can use the :file:`overlay-fota_helper.conf` configuration file to enable faster responses when using queue mode binding.
+   This configuration uses an update period of 60 seconds.
+
 To update the firmware, complete the following steps:
 
-   1. Identify the firmware image file to be uploaded to the device. See :ref:`lte_modem` and :ref:`nrf9160_fota` for more information.
-   #. Open `Coiote Device Management server`_ and click :guilabel:`LwM2M firmware`.
-   #. Click :guilabel:`Schedule new firmware upgrade`.
-   #. Click :guilabel:`Upload file` in the bottom left corner and upload the firmware image file.
-   #. Configure the necessary firmware update settings in the menu to the right.
-   #. Click :guilabel:`Upgrade`.
-   #. Observe in the terminal window that the image file is being downloaded.
-      The download will take some time.
-      If you do not increase the server lifetime, the Coiote server might drop the connection to the device. The device reconnects later.
-   #. When the download is complete, the device restarts on its own after installing the firmware.
-      Restart the device manually if it has not started automatically.
-      The device runs the updated firmware and reconnects to Coiote Device Management server automatically.
+   .. tabs::
+
+      .. group-tab:: Coiote Basic Firmware update
+
+         1. Identify the firmware image file to be uploaded to the device.
+            See :ref:`lte_modem` and :ref:`nrf9160_fota` for more information.
+         #. Open `Coiote Device Management server`_ and click :guilabel:`Firmware update`.
+         #. Click :guilabel:`Update Firmware`.
+         #. Click :guilabel:`Basic Firmware update`.
+         #. Click :guilabel:`Upload Firmware`.
+         #. Select or upload the binary under **Upload New** or **from Resources** and click :guilabel:`Save`.
+         #. Click :guilabel:`Next`.
+         #. Set the image delivery mode, transport type, and timeout values.
+            Coiote Device Management server recommends to use the **Pull** delivery mode because it is fail safe operation.
+            Select the transport type (CoAP or HTTP) for the pull operation.
+         #. Click :guilabel:`Next` to continue.
+         #. Click :guilabel:`Schedule Update` after checking that the update process summary is correct.
+         #. The firmware update starts at next registration update.
+
+      .. group-tab:: Coiote Multi-component Firmware update
+
+         Use the :file:`overlay-adv-firmware.conf` overlay file for multi component FOTA.
+
+         1. Identify the firmware image file to be uploaded to the device.
+            See :ref:`lte_modem` and :ref:`nrf9160_fota` for more information.
+         #. Open `Coiote Device Management server`_ and click :guilabel:`Firmware update`.
+         #. Click :guilabel:`Update Firmware`.
+         #. Click :guilabel:`Multi-component Firmware update`.
+         #. Edit firmware update name if necessary and click :guilabel:`Next`.
+         #. Select :guilabel:`application`component from tab and click :guilabel:`Upload Firmware`.
+            Select or upload the binary under **Upload New** or **from Resources** and click :guilabel:`Save`.
+            Click :guilabel:`Add new component`.
+            Select :guilabel:`modem:xxx` component from tab and click :guilabel:`Upload Firmware`.
+            Select or upload the binary under **Upload New** or **from Resources** and click :guilabel:`Save`.
+         #. Click :guilabel:`Next`.
+         #. Set the image delivery mode, transport type, and timeout values.
+            Coiote Device Management server recommends to use the **Pull** delivery mode because it is fail safe operation.
+            Select the transport type (CoAP or HTTP) for the pull operation.
+         #. Click :guilabel:`Next` to continue.
+         #. Click :guilabel:`Schedule Update` after checking that the update process summary is correct.
+         #. The firmware update starts at next registration update.
+
+      .. group-tab:: Leshan Firmware update
+
+         1. Identify the firmware image file to be uploaded to the device. See :ref:`lte_modem` and :ref:`nrf9160_fota` for more information.
+         #. Open `Coiote Device Management server`_ and click :guilabel:`LwM2M firmware`.
+         #. Click :guilabel:`Schedule new firmware upgrade`.
+         #. Click :guilabel:`Upload file` in the bottom left corner and upload the firmware image file.
+         #. Configure the necessary firmware update settings in the menu to the right.
+         #. Click :guilabel:`Upgrade`.
+         #. Observe in the terminal window that the image file is being downloaded.
+            The download will take some time.
+            If you do not increase the server lifetime, the Coiote server might drop the connection to the device.
+            The device reconnects later.
+         #. When the download is complete, the device restarts on its own after installing the firmware.
+            Restart the device manually if it has not started automatically.
+            The device runs the updated firmware and reconnects to Coiote Device Management server automatically.
 
 
 Dependencies
