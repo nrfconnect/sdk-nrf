@@ -164,6 +164,8 @@ Next, you need to activate the SIM card you will use in the |DK|.
 Connecting to nRF Cloud
 =======================
 
+.. |firmware_section_link| replace:: :ref:`nrf9160_gs_updating_fw`
+
 .. nrf_cloud_connection_start
 
 You must activate your SIM card and add the |DK| to your nRF Cloud account.
@@ -203,7 +205,7 @@ To activate the iBasis SIM card that comes shipped with the |DK| and add the |DK
 
    a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the **SIM ICCID/EID** text box.
 
-      If you followed the instructions in the :ref:`nrf9160_gs_updating_fw` section, paste the copied ICCID into the **SIM ICCID/EID** box and remove the last two digits.
+      If you followed the instructions in the |firmware_section_link| section, paste the copied ICCID into the **SIM ICCID/EID** box and remove the last two digits.
 
       .. note::
          The SIM cards can have either the EID, the ICCID, or neither printed on it.

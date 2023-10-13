@@ -176,7 +176,7 @@ For information about CMSE and the difference between the two environments, see 
 Updating the DK firmware using Programmer
 *****************************************
 
-Download the latest application and modem firmware from the `nRF9160 DK Downloads`_ page.
+Download and extract the latest application and modem firmware from the `nRF9160 DK Downloads`_ page.
 
 The downloaded ZIP archive contains the following firmware:
 
@@ -202,6 +202,8 @@ Modem firmware
 .. tip::
    For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
    See :ref:`gs_programming` for details on building a firmware sample application.
+
+The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
 
 Complete the following steps to program applications using the Programmer app from `nRF Connect for Desktop`_.
 

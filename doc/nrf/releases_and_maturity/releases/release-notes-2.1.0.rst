@@ -1087,7 +1087,7 @@ Documentation
     * In the :ref:`ug_nrf91_features` page, added a section about :ref:`modem_trace`.
     * In the :ref:`ug_nrf9160_gs` guide, :ref:`nrf9160_gs_updating_fw_modem` section is now moved before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
     * In the :ref:`ug_nrf9160` guide, the :ref:`build_pgm_nrf9160` section now mentions |VSC| and command-line instructions.
-    * In the :ref:`ug_thingy91_gsg` guide, :ref:`programming_thingy` and :ref:`connect_nRF_cloud` sections now have different structure.
+    * In the :ref:`ug_thingy91_gsg` guide, Programming firmware and :ref:`connect_nRF_cloud` sections now have different structure.
     * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` guides now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
 
   * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
