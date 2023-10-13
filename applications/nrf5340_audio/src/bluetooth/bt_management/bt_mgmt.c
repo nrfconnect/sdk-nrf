@@ -78,8 +78,11 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	enum ble_hci_vs_tx_power conn_tx_pwr;
 	struct bt_mgmt_msg msg;
 
+	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
 	if (err) {
-		LOG_ERR("ACL connection to %s failed, error %d", addr, err);
+		LOG_ERR("ACL connection to addr: %s, conn: %p, failed, error %d", addr,
+			(void *)conn, err);
 
 		bt_conn_unref(conn);
 
@@ -103,7 +106,6 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	bt_conn_foreach(BT_CONN_TYPE_LE, conn_state_connected_check, (void *)&num_conn);
 
 	/* ACL connection established */
-	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Connected: %s", addr);
 
