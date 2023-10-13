@@ -9,6 +9,14 @@ Operating with a resource constrained host
 
 This guide provides recommendations and guidelines for using the nRF7002 as a companion chip on resource-constrained hosts such as the nRF5340 SoC.
 
+Networking stack combinations
+*****************************
+The table below lists the required protocol stack combinations for various classes of Wi-Fi inter networking applications.
+
+.. csv-table:: Supported networking stack combinations
+   :file: stack_combo.csv
+   :header-rows: 1
+
 Zephyr OS factors
 *****************
 The following sections explain the factors that are applicable when using the Zephyr OS on the nRF5340 SoC.
