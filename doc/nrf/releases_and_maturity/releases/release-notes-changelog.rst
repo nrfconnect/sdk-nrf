@@ -914,14 +914,19 @@ Libraries for networking
   * Updated:
 
     * The Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than -126 dBm.
+    * The advanced LwM2M FOTA object to accept zero length of a firmware package for reset state and result resources.
+      This fixes an interoperability issue with AVSystem's Coiote Device Management server related to firmware update by push-mode.
+
+* :ref:`lib_lwm2m_location_assistance` library:
+
+  * Updated:
+
     * The ``CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS`` Kconfig option has been renamed to :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS`.
     * The ``location_assistance_agps_set_mask()`` function has been renamed to :c:func:`location_assistance_agnss_set_mask`.
     * The ``location_assistance_agps_request_send()`` function has been renamed to :c:func:`location_assistance_agnss_request_send`.
     * The ``location_assist_agps_request_set()`` function has been renamed to :c:func:`location_assist_agnss_request_set`.
     * The ``location_assist_agps_set_elevation_mask()`` function has been renamed to :c:func:`location_assist_agnss_set_elevation_mask`.
     * The ``location_assist_agps_get_elevation_mask()`` function has been renamed to :c:func:`location_assist_agnss_get_elevation_mask`.
-    * The advanced LwM2M FOTA object to accept zero length of a firmware package for reset state and result resources.
-      This fixes an interoperability issue with AVSystem's Coiote Device Management server related to firmware update by push-mode.
 
 * :ref:`lib_aws_fota` library:
 
