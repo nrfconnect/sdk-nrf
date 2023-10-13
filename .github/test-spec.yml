@@ -199,18 +199,17 @@
   - "applications/zigbee_weather_station/**/*"
 
 "CI-thingy91-test":
-  - "ext/cjson/**/*"
-  - "drivers/gps/gps_sim/**/*"
+  - "modules/cjson/**/*"
+  - "modules/azure-sdk-for-c/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
-  - "subsys/net/lib/cloud/**/*"
   - "subsys/net/lib/aws_iot/**/*"
   - "subsys/net/lib/azure_iot_hub/**/*"
   - "lib/date_time/**/*"
   - "drivers/sensor/sensor_sim/**/*"
   - "applications/asset_tracker_v2/**/*"
   - "samples/cellular/udp/**/*"
-  - "samples/cellular/aws_iot/**/*"
-  - "samples/cellular/azure_iot_hub/**/*"
+  - "samples/net/aws_iot/**/*"
+  - "samples/net/azure_iot_hub/**/*"
 
 "CI-apps-test":
   - "applications/machine_learning/**/*"
