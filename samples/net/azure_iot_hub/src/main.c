@@ -195,7 +195,9 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		/* All initializations and cloud connection were successful, now mark
 		 * image as working so that we will not revert upon reboot.
 		 */
+#if defined(CONFIG_BOOTLOADER_MCUBOOT)
 		boot_write_img_confirmed();
+#endif
 
 		/* The AZURE_IOT_HUB_EVT_READY event indicates that the
 		 * IoT hub connection is established and interaction with the
