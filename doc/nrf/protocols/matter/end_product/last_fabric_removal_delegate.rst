@@ -30,6 +30,21 @@ Predefined last fabric removal behaviors
 There are four predefined reactions to the last fabric removal available in the :ref:`matter_samples`.
 All behaviors are implemented as a delegation for the Fabric Table module, and the chosen reaction is run as a callback on each fabric removal.
 
+To enable the predefined behavior in your specific sample based on the :ref:`matter_samples` in the |NCS|, complete the following steps:
+
+1. Include the :file:`fabric_table_delegate.h` header file in the :file:`app_task.cpp` project file:
+
+   .. code-block:: c
+
+      #include "fabric_table_delegate.h"
+
+#. Call the ``AppFabricTableDelegate::Init`` method after the ``chip::Server::GetInstance().Init(initParams)`` invocation within the ``AppTask::Init`` method in the :file:`app_task.cpp` project file:
+
+    .. code-block:: c
+
+      AppFabricTableDelegate::Init();
+
+
 For more information, see the :file:`fabric_table_delegate.h` header file which is located in the Matter samples common directory.
 
 You can choose one of the following reactions to the last fabric removal and instruct the device to:
@@ -89,6 +104,7 @@ To implement the custom Fabric Table delegation, complete the following points:
 .. note::
    Not all actions implemented in the ``OnFabricRemoved`` can be called directly from the method body, and should be delegated to be done in Zephyr thread of Matter.
    This is because the device needs to confirm the removal of the fabric and send the acknowledgment to the Matter controller.
-   To delegate actions to the Zephyr thread of Matter, use the ``chip::DeviceLayer::PlatformMgr().ScheduleWork`` method.
+   To postpone running the chosen action, delegate its invocation to the Zephyr thread of Matter using the ``chip::DeviceLayer::PlatformMgr().ScheduleWork`` method.
+   If the device doesn't complete all activities that need to be done before clearing non-volatile storage, use a timer to delay the action execution.
 
 To see an example implementation of the Fabric Table delegation, see the :file:`fabric_table_delegate.h` file which is located in the Matter samples common directory.

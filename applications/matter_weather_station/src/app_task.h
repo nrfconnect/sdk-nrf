@@ -27,11 +27,9 @@
 #endif
 
 struct k_timer;
-class AppFabricTableDelegate;
 
 class AppTask {
 public:
-	friend class AppFabricTableDelegate;
 
 	CHIP_ERROR StartApp();
 
