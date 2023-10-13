@@ -1180,8 +1180,8 @@ Documentation
     * :ref:`release_notes`, :ref:`software_maturity`, :ref:`known_issues`, :ref:`glossary`, and :ref:`dev-model` are now located under :ref:`releases_and_maturity`.
 
   * The :ref:`ug_thread` documentation to improve the overall presentation and add additional details where necessary.
-  * The :ref:`ug_nrf9160_gs` instructions to use `Cellular Monitor`_ instead of Programmer for :ref:`nrf9160_gs_updating_fw`.
-    The instructions for using Programmer were moved to the :ref:`ug_nrf9160` page.
+  * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` instructions to use `Cellular Monitor`_ instead of Programmer for the :ref:`nrf9160_gs_updating_fw` and :ref:`thingy91_update_firmware` sections, respectively.
+    The instructions for using Programmer were moved to the :ref:`ug_nrf9160` and :ref:`ug_thingy91` pages.
   * Replaced LTE Link Monitor and Trace Collector apps with `nRF Connect Serial Terminal`_ and `Cellular Monitor`_ apps.
   * Renamed nRF91 AT Commands Reference Guide to `nRF9160 AT Commands Reference Guide`_, and added references to the `nRF91x1 AT Commands Reference Guide`_ in the documentation.
   * All references to GNSS assistance from ``A-GPS`` to `A-GNSS`_.
