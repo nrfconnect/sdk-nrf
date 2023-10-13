@@ -23,6 +23,9 @@ The following instructions describe how to register your device to `Leshan Demo 
 
          .. coiote_start
 
+         If bootstrap is enabled, you can skip the following steps.
+         The bootstrap server creates the management device automatically during the bootstrap.
+
          1. Open `Coiote Device Management server`_.
          #. Click on :guilabel:`Device inventory` in the left menu in the UI.
          #. Click on :guilabel:`Add new device`.
