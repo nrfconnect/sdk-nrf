@@ -53,10 +53,12 @@ This means that if you create a Matter product based on the |NCS|, you can appro
 You can do this by filling the Reference APID field when you register your product on Amazon's developer page.
 Use one of the following values:
 
-+----------------------------------------------------+-----------------------+
-| Matter platform variant                            | Reference Design APID |
-+====================================================+=======================+
-| :ref:`nRF52840 DK <ug_nrf52>` (Matter over Thread) | ZNwt                  |
-+----------------------------------------------------+-----------------------+
-| :ref:`nRF5340 DK <ug_nrf5340>` (Matter over Thread)| xzNd                  |
-+----------------------------------------------------+-----------------------+
++----------------------------------------------------------+-----------------------+
+| Matter platform variant                                  | Reference Design APID |
++==========================================================+=======================+
+| :ref:`nRF52840 DK <ug_nrf52>` (Matter over Thread)       | ZNwt                  |
++----------------------------------------------------------+-----------------------+
+| :ref:`nRF5340 DK <ug_nrf5340>` (Matter over Thread)      | xzNd                  |
++----------------------------------------------------------+-----------------------+
+| :ref:`nRF7002 DK <nrf7002dk_nrf5340>` (Matter over Wi-Fi)| jyjh                  |
++----------------------------------------------------------+-----------------------+
