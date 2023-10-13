@@ -1219,8 +1219,8 @@ class OpenThreadTHCI(object):
                 else:
                     return False
 
-        if self.IsBorderRouter:
-            self._waitBorderRoutingStabilize()
+        # if self.IsBorderRouter:
+        #     self._waitBorderRoutingStabilize()
 
         return True
 
@@ -1326,7 +1326,7 @@ class OpenThreadTHCI(object):
         return self.wait_for_attach_to_the_network(expected_role="", timeout=self.NETWORK_ATTACHMENT_TIMEOUT)
 
     @API
-    def ping(self, strDestination, ilength=0, hop_limit=64, timeout=5):
+    def ping(self, strDestination, ilength=0, hop_limit=64, timeout=5, src_addr_type=''):
         """ send ICMPv6 echo request with a given length/hoplimit to a unicast
             destination address
         Args:
@@ -1335,14 +1335,15 @@ class OpenThreadTHCI(object):
             hop_limit: hop limit
 
         """
-        cmd = 'ping %s %s' % (strDestination, str(ilength))
-        if not self.IsReference20200818:
-            cmd += ' 1 1 %d %d' % (hop_limit, timeout)
-
+        print('%s call ping' % self.port)
+        print('destination: %s' % strDestination)
+        print('source: %s' % src_addr_type)
+        if src_addr_type != '':
+            cmd = 'ping -I %s %s %s 1 1 %d %d' % (src_addr_type, strDestination, str(ilength), hop_limit, timeout)
+        else:
+            cmd = 'ping %s %s 1 1 %d %d' % (strDestination, str(ilength), hop_limit, timeout)
         self.__executeCommand(cmd)
-        if self.IsReference20200818:
-            # wait echo reply
-            self.sleep(6)  # increase delay temporarily (+5s) to remedy TH's delay updates
+        time.sleep(6)  # increase delay temporarily (+5s) to remedy TH's delay updates
 
     @API
     def multicast_Ping(self, destination, length=20):
@@ -1693,6 +1694,10 @@ class OpenThreadTHCI(object):
                 return self.__executeCommand(cmd)[-1] == 'Done'
         else:
             return False
+
+    @API
+    def disable_dua_prefix(self ):
+        self.__useDefaultDomainPrefix = False
 
     @watched
     def getNetworkData(self):
@@ -2835,11 +2840,12 @@ class OpenThreadTHCI(object):
     def ValidateDeviceFirmware(self):
         assert not self.IsBorderRouter, "Method not expected to be used with border router devices"
 
-        if self.DeviceCapability == OT11_CAPBS:
-            return OT11_VERSION in self.UIStatusMsg
-        elif self.DeviceCapability == OT12_CAPBS:
-            return OT12_VERSION in self.UIStatusMsg
-        elif self.DeviceCapability == OT13_CAPBS:
+        # As this is 1.3 specifc THCI, 1.1, 1.2 device should not be handled here
+        # if self.DeviceCapability == OT11_CAPBS:
+        #     return OT11_VERSION in self.UIStatusMsg
+        # elif self.DeviceCapability == OT12_CAPBS:
+        #     return OT12_VERSION in self.UIStatusMsg
+        if self.DeviceCapability == OT13_CAPBS:
             return OT13_VERSION in self.UIStatusMsg
         else:
             return False
@@ -3116,61 +3122,34 @@ class OpenThreadTHCI(object):
         mliid = mleid[-19:].replace(':', '')
         return mliid
 
-    def srp_host_remove(self):
-        cmd = 'srp client host remove'
-        self.__executeCommand(cmd)
+    @API
+    def enable_trel_connectivity(self):
+        """
+        Thread Radio Encapsulation Link enables Thread devices to
+        communicate directly over IPv6-based link technologies other then
+        802.15.4, including WI-Fi and Ethernet.
+        """
 
-    def add_new_service(self):
-        rloc = self.__executeCommand('rloc16')[0]
-        mleid = self.__executeCommand('ipaddr mleid')[0]
-        mleid = ModuleHelper.GetFullIpv6Address(mleid)
-        mleid = mleid.replace(':', '')
-        cmd = 'service add 44970 5d %sd11f' % (mleid)
-        self.__executeCommand(cmd)
-        self.__executeCommand('netdata register')
-        time.sleep(3)
+        #Implement-1.3-Thread
+        #https://github.com/openthread/openthread/tree/ca450e541636692909183773beba8f55591a7185/src/cli#trel-enable
+        #trel enable
+        #Implement-1.3-Thread
 
-    def remove_prefix_network_data(self, prefix):
-        cmd = 'prefix remove %s' % prefix
-        self.__executeCommand(cmd)
-        cmd1 = 'netdata register'
-        self.__executeCommand(cmd1)
-        time.sleep(3)
+        pass
 
-    def republish_prefix(self):
-        cmd = 'br omrprefix'
-        omrprefix = self.__executeCommand(cmd)
+    def disable_trel_connectivity(self):
+        """
+        Thread Radio Encapsulation Link disables Thread devices to
+        communicate directly over IPv6-based link technologies other then
+        802.15.4, including WI-Fi and Ethernet.
+        """
 
-        cmd1 = 'prefix remove %s' % omrprefix[0]
-        self.__executeCommand(cmd1)
+        #Implement-1.3-Thread
+        #https://github.com/openthread/openthread/tree/ca450e541636692909183773beba8f55591a7185/src/cli#trel-enable
+        #trel disable
+        #Implement-1.3-Thread
 
-        cmd2 = 'netdata register'
-        self.__executeCommand(cmd2)
-        time.sleep(3)
-
-        cmd4 = 'prefix add %s paros med ' % (omrprefix[0])
-        self.__executeCommand(cmd4)
-
-        cmd5 = 'netdata register'
-        self.__executeCommand(cmd5)
-        time.sleep(3)
-
-    def config_prefix(self):
-        cmd = 'br omrprefix'
-        omrprefix = self.__executeCommand(cmd)
-
-        cmd1 = 'prefix remove %s' % omrprefix[0]
-        self.__executeCommand(cmd1)
-
-        cmd2 = 'netdata register'
-        self.__executeCommand(cmd2)
-        time.sleep(3)
-        omrprefix = omrprefix[0][:-3]
-        omrprefix = omrprefix + '/64'
-        cmd4 = 'prefix add %s paos low' % (omrprefix)
-        self.__executeCommand(cmd4)
-        cmd5 = 'netdata register'
-        self.__executeCommand(cmd5)
+        pass
 
     ########################################################################################################################
     #                                       1.3 THCI Commands
@@ -3233,37 +3212,6 @@ class OpenThreadTHCI(object):
             False: Fail to send the multicast DNS query for SRV value of service description instruction.
         """
         pass
-
-    def enable_trel_connectivity(self):
-        """
-        Thread Radio Encapsulation Link enables Thread devices to
-        communicate directly over IPv6-based link technologies other then
-        802.15.4, including WI-Fi and Ethernet.
-        """
-
-        #Implement-1.3-Thread
-        #https://github.com/openthread/openthread/tree/ca450e541636692909183773beba8f55591a7185/src/cli#trel-enable
-        #trel enable
-        #Implement-1.3-Thread
-
-        pass
-
-    def disable_trel_connectivity(self):
-        """
-        Thread Radio Encapsulation Link disables Thread devices to
-        communicate directly over IPv6-based link technologies other then
-        802.15.4, including WI-Fi and Ethernet.
-        """
-
-        #Implement-1.3-Thread
-        #https://github.com/openthread/openthread/tree/ca450e541636692909183773beba8f55591a7185/src/cli#trel-enable
-        #trel disable
-        #Implement-1.3-Thread
-
-        pass
-
-    def setMliid(self, sMlIid):
-        self.__setMlIid(sMlIid)
 
     def __setMlIid(self, sMlIid):
         """Set the Mesh Local IID before Thread Starts."""
@@ -3464,35 +3412,79 @@ class OpenThreadTHCI(object):
         self.__executeCommand(cmd)
 
     @API
-    def getOMRPrefix(self):
+    def get_br_omr_address(self):
         cmd = 'br omrprefix'
         getomr = self.__executeCommand(cmd)
+        getomr = getomr[0].split('Local: ')[1]
+        print(getomr)
         cmd = 'ipaddr'
         ipaddr = self.__executeCommand(cmd)
+        print(ipaddr)
         result = []
         for ip in ipaddr:
             try:
-                if (ipaddress.ip_address(unicode(ip)) in ipaddress.ip_network(unicode(getomr[0]))):
+                if (ipaddress.ip_address(unicode(ip)) in ipaddress.ip_network(unicode(getomr))):
                     result.append(ip)
             except:
                 continue
+        if not result:
+            raise ValueError("No OMR address found for the registered OMR prefix.")
+        else:
+            return result
+
+    @API
+    def get_ed_omr_address(self, br_omr_prefix):
+        cmd = 'ipaddr'
+        ipaddr = self.__executeCommand(cmd)
+        print(ipaddr)
+        full_addr = []
+        for i in ipaddr[:-1]:
+            full_addr.append(ModuleHelper.GetFullIpv6Address(i.strip()))
+        print(full_addr)
+        result = (filter(lambda x: x.startswith(''.join(br_omr_prefix)), full_addr))
         return result
 
     @API
-    def getOMR(self, br_omr_prefix):
+    def get_own_omr_address(self, omr_prefix):
         cmd = 'ipaddr'
         ipaddr = self.__executeCommand(cmd)
-        result = (filter(lambda x: x.startswith(br_omr_prefix), ipaddr))
-        return result
-        # return self.getGUA()
+        print(ipaddr)
+        result = []
+        for ip in ipaddr:
+            try:
+                if (ipaddress.ip_address(unicode(ip)) in ipaddress.ip_network(unicode(omr_prefix))):
+                    result.append(ip)
+            except:
+                continue
+        if not result:
+            raise ValueError("No OMR address found for the registered OMR prefix.")
+        else:
+            return result
 
     def srp_client_remove(self, instancename, servicename):
         cmd = 'srp client service remove %s %s' % (instancename, servicename)
         #cmd = 'srp client service remove service-test-1 _thread-test._udp'
         self.__executeCommand(cmd)
+        self.__executeCommand('netdata register')
+        time.sleep(3)
 
     def srpCallBackEnable(self):
         cmd = 'srp client callback enable'
+        self.__executeCommand(cmd)
+
+    def set_ttl(self, ttl):
+        cmd = 'srp client ttl %s' % ttl
+        self.__executeCommand(cmd)
+        self.sleep(3)
+
+    def generate_new_ip(self, ip_addr='2001::dead:beef:cafe'):
+        cmd = 'ipaddr add %s' % ip_addr
+        new_host_addr = self.__executeCommand(cmd)
+        print(new_host_addr)
+        return new_host_addr
+
+    def host_clear(self):
+        cmd = 'srp client host clear'
         self.__executeCommand(cmd)
 
     def srpCallBackDisable(self):
@@ -3515,7 +3507,8 @@ class OpenThreadTHCI(object):
                    client_remove=False,
                    is_tcp=False,
                    omr=None,
-                   ml_eid=None):
+                   ml_eid=None,
+                   txt=""):
         """ Send Service Registration Protocol
 
         Args:
@@ -3569,7 +3562,7 @@ class OpenThreadTHCI(object):
             self.__executeCommand(cmd)
 
         if host_addr == None:
-            #mleid = ModuleHelper.GetFullIpv6Address(self.getOMR()).lower()
+            #mleid = ModuleHelper.GetFullIpv6Address(self.get_ed_omr_address()).lower()
             if ml_eid == None:
                 cmd = 'srp client host address %s' % (omr[0])
             elif omr == None:
@@ -3591,19 +3584,16 @@ class OpenThreadTHCI(object):
             cmd = 'srp client keyleaseinterval %s' % (keylease)
             self.__executeCommand(cmd)
 
-        if port == '12345':
-            cmd = 'srp client host name %s' % (AAAA)
-            print(cmd)
-            self.__executeCommand(cmd)
-        elif port == '12348':
+        # Not required to execute this command for port 12346
+        if port in ['12345', '12348']:
             cmd = 'srp client host name %s' % (AAAA)
             print(cmd)
             self.__executeCommand(cmd)
 
         if is_tcp != False:
-            cmd = 'srp client service add %s %s %s %s %s' % (srv, tcp_service_type, port, weight, priority)
+            cmd = 'srp client service add %s %s %s %s %s %s' % (srv, tcp_service_type, port, weight, priority,txt)
         else:
-            cmd = 'srp client service add %s %s %s %s %s' % (srv, service_type, port, weight, priority)
+            cmd = 'srp client service add %s %s %s %s %s %s' % (srv, service_type, port, weight, priority,txt)
         self.__executeCommand(cmd)
         time.sleep(3)
 
@@ -3621,7 +3611,7 @@ class OpenThreadTHCI(object):
 
     def srp_add(self, dst_addr=None,service_type = '_thread-test._udp',tcp_service_type='_thread-test._tcp,test_subtype', srv=None, weight='0', priority='4', AAAA=None,\
                                                                                                          port=None,
-                lease_option=(),enable_srv_key=False,enable_name_compression=False,host_addr=None,client_remove=False, is_tcp=False,omr=None,ml_eid=None):
+                lease_option=(),enable_srv_key=False,enable_name_compression=False,host_addr=None,client_remove=False, is_tcp=False,omr=None,ml_eid=None, txt=""):
         """ Send Service Registration Protocol
 
         Args:
@@ -3676,7 +3666,7 @@ class OpenThreadTHCI(object):
             self.__executeCommand(cmd)
 
         if host_addr == None:
-            #mleid = ModuleHelper.GetFullIpv6Address(self.getOMR()).lower()
+            #mleid = ModuleHelper.GetFullIpv6Address(self.get_ed_omr_address()).lower()
             if ml_eid == None:
                 cmd = 'srp client host address %s' % (omr[0])
             elif omr == None:
@@ -3704,9 +3694,9 @@ class OpenThreadTHCI(object):
         self.__executeCommand(cmd)
 
         if is_tcp != False:
-            cmd = 'srp client service add %s %s %s %s %s' % (srv, tcp_service_type, port, weight, priority)
+            cmd = 'srp client service add %s %s %s %s %s %s' % (srv, tcp_service_type, port, weight, priority,txt)
         else:
-            cmd = 'srp client service add %s %s %s %s %s' % (srv, service_type, port, weight, priority)
+            cmd = 'srp client service add %s %s %s %s %s %s' % (srv, service_type, port, weight, priority,txt)
         self.__executeCommand(cmd)
 
         if dst_addr == None:
@@ -3715,44 +3705,12 @@ class OpenThreadTHCI(object):
         else:
             cmd_to_stop_srp = 'srp client stop'
             self.__executeCommand(cmd_to_stop_srp)
-            cmd1 = 'dns config %s 53 6000 3 1' % dst_addr[1]
+            cmd1 = 'dns config %s 53 6000 3 1' % dst_addr
             self.__executeCommand(cmd1)
-            cmd = 'srp client start %s' % dst_addr[0]
+            cmd = 'srp client start %s %s' % (dst_addr, port)
             self.__executeCommand(cmd)
 
-    @API
-    def get_br_omr_address(self):
-        cmd = 'br omrprefix'
-        getomr = self.__executeCommand(cmd)
-        print(getomr)
-        cmd = 'ipaddr'
-        ipaddr = self.__executeCommand(cmd)
-        print(ipaddr)
-        result = []
-        for ip in ipaddr:
-            try:
-                if (ipaddress.ip_address(unicode(ip)) in ipaddress.ip_network(unicode(getomr[0]))):
-                    result.append(ip)
-            except:
-                continue
-        if not result:
-            raise ValueError("No OMR address found for the registered OMR prefix.")
-        else:
-            return result
-
-    @API
-    def get_ed_omr_address(self, br_omr_prefix):
-        cmd = 'ipaddr'
-        ipaddr = self.__executeCommand(cmd)
-        print(ipaddr)
-        full_addr = []
-        for i in ipaddr[:-1]:
-            full_addr.append(ModuleHelper.GetFullIpv6Address(i.strip()))
-        print(full_addr)
-        result = (filter(lambda x: x.startswith(''.join(br_omr_prefix)), full_addr))
-        return result
-
-    def dns_query(self, service_type='_thread-test._udp'):
+    def dns_query(self, addr='', service_type='_thread-test._udp'):
         """ Send unicast DNS query
 
         Args:
@@ -3769,41 +3727,120 @@ class OpenThreadTHCI(object):
         #getParentAddress()
         #https://github.com/openthread/openthread/blob/39a1f55447f3eec0cf089d8bec29b3303f3e7f99/src/cli/README.md#dns-config
         #Implement-1.3-Thread
-        cmd = 'dns browse %s.default.service.arpa' % service_type
+        cmd = 'dns browse %s.default.service.arpa %s' % (service_type, addr)
         self.__executeCommand(cmd)
 
     def dns_resolve(self, host_name):
         cmd = 'dns resolve %s.default.service.arpa' % host_name
         self.__executeCommand(cmd)
 
-    def dns_browse(self):
+    def dns_browse(self,service_type='_thread-test1._udp',max_attempts='3'):
         cmd = 'srp client autostart enable'
         self.__executeCommand(cmd)
+        self.sleep(3)
         cmd1 = 'dns config'
         dns_conf = self.__executeCommand(cmd1)
-        dns_server_ip = dns_conf[0][9:41]
-        cmd = 'dns browse _thread-test1._udp.default.service.arpa %s 53 6000 3 0' % (dns_server_ip)
+        self.sleep(3)
+        print(dns_conf)
+        dns_server_ip = re.findall(r'\[(.*?)\]', dns_conf[0])
+        #dns_server_ip = dns_conf[0][9:41]
+        cmd = 'dns browse %s.default.service.arpa %s 53 6000 %s 0' % (service_type,dns_server_ip[0],
+                                                                                      max_attempts)
         self.__executeCommand(cmd)
 
     def get_ip_port(self):
-        cmd = 'sudo ot-ctl ipaddr mleid'
-        server_ip = self.bash(cmd)
+        cmd = 'ipaddr mleid'
+        server_ip = self.__executeCommand(cmd)
         ipaddr = ipaddress.ip_address(unicode((server_ip[0])))
         ipaddr = str(ipaddr.exploded)
         return ipaddr
 
-    def generate_new_ip(self):
-        cmd = 'ipaddr add 2001::dead:beef:cafe'
-        new_host_addr = self.__executeCommand(cmd)
-        return new_host_addr
+    @API
+    def mdns_query_instance(self, ip_addr, service_name):
+        self.bash(' timeout 2s dns-sd -P %s _thread-test._udp "" 53 host-test-1.default.service.arpa %s' % (
+            service_name, ip_addr))
 
     def dns_tcp_query_instance(self, ip_addr, service_name):
         #cmd = 'dns service %s _test_subtype._sub._duckhorn-test._tcp.default.service.arpa %s 53 6000 3 1' % (
         # service_name, ip_addr)
         cmd = 'ot dns browse _thread-test._tcp.default.service.arpa'
+        print(cmd)
         self.__executeCommand(cmd)
 
+    def dns_query_instance(self,ip_addr,service_name,service_type='_thread-test._udp'):
+        cmd = 'dns service %s %s.default.service.arpa %s 53 6000 3 1' % (service_name,service_type,
+                                                                                        ip_addr)
+        self.__executeCommand(cmd)
 
+    def setMliid(self, sMlIid):
+        self.__setMlIid(sMlIid)
+
+    def set_prefix_meshlocal(self,prefix):
+        cmd = 'prefix meshlocal %s' % prefix
+        self.__executeCommand(cmd)
+
+    def srp_host_remove(self):
+        cmd = 'srp client host remove'
+        self.__executeCommand(cmd)
+
+    def add_new_service(self):
+        rloc = self.__executeCommand('rloc16')[0]
+        mleid = self.__executeCommand('ipaddr mleid')[0]
+        mleid = ModuleHelper.GetFullIpv6Address(mleid)
+        mleid = mleid.replace(':', '')
+        cmd = 'service add 44970 5d %sd11f' % (mleid)
+        self.__executeCommand(cmd)
+        self.__executeCommand('netdata register')
+        time.sleep(3)
+
+    def remove_prefix_network_data(self, prefix):
+        cmd = 'prefix remove %s' % prefix
+        self.__executeCommand(cmd)
+        cmd1 = 'netdata register'
+        self.__executeCommand(cmd1)
+        time.sleep(3)
+
+    def republish_prefix(self):
+        cmd = 'br omrprefix'
+        omrprefix = self.__executeCommand(cmd)
+        omrprefix = omrprefix[0].split('Local: ')[1]
+
+        cmd1 = 'prefix remove %s' % omrprefix
+        self.__executeCommand(cmd1)
+
+        cmd2 = 'netdata register'
+        self.__executeCommand(cmd2)
+        time.sleep(3)
+
+        cmd4 = 'prefix add %s paros med ' % omrprefix
+        self.__executeCommand(cmd4)
+
+        cmd5 = 'netdata register'
+        self.__executeCommand(cmd5)
+        time.sleep(3)
+
+    def config_prefix(self):
+        cmd = 'br omrprefix'
+        omrprefix = self.__executeCommand(cmd)
+        omrprefix = omrprefix[0].split('Local: ')[1]
+
+        cmd1 = 'prefix remove %s' % omrprefix
+        self.__executeCommand(cmd1)
+
+        cmd2 = 'netdata register'
+        self.__executeCommand(cmd2)
+        time.sleep(3)
+        omrprefix = omrprefix[:-3]
+        omrprefix = omrprefix + '/64'
+        cmd4 = 'prefix add %s paos low' % (omrprefix)
+        self.__executeCommand(cmd4)
+        cmd5 = 'netdata register'
+        self.__executeCommand(cmd5)
+
+    @API
+    def add_service(self, service, server):
+        self.__executeCommand('service add 44970 %s %s' % (service, server))
+        self.__executeCommand('netdata register')
 class nRF_Connect_SDK_1_3(OpenThreadTHCI, IThci):
 
     def _connect(self):
@@ -3876,10 +3913,3 @@ class nRF_Connect_SDK_1_3(OpenThreadTHCI, IThci):
             self.__socWrite(line + '\r')
         else:
             self.__socWrite(line + '\r\n')
-
-    def get_ip_port(self):
-        cmd = 'sudo ot-ctl ipaddr mleid'
-        server_ip = self.bash(cmd)
-        ipaddr = ipaddress.ip_address(unicode((server_ip[0])))
-        ipaddr = str(ipaddr.exploded)
-        return ipaddr
