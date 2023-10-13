@@ -333,6 +333,12 @@
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
 
 "CI-find-my-test":
+  - "CMakeLists.txt"
+  - "Kconfig.nrf"
+  - "cmake/**/*"
+  - "drivers/entropy/**/*"
+  - "drivers/hw_cc310/**/*"
+  - "drivers/mpsl/**/*"
   - "include/dfu/**/*"
   - "include/nfc/**/*"
   - "include/dk_buttons_and_leds.h"
@@ -343,7 +349,12 @@
   - "subsys/app_event_manager/**/*"
   - "subsys/nfc/**/*"
   - "subsys/partition_manager/**/*"
+  - "subsys/pcd/**/*"
+  - "subsys/mpsl/**/*"
+  - "subsys/nrf_security/**/*"
   - "modules/mcuboot/**/*"
+  - "modules/tfm/**/*"
+  - "modules/trusted-firmware-m/**/*"
   - any:
       - "include/bluetooth/**/*"
       - "!include/bluetooth/mesh/**/*"
