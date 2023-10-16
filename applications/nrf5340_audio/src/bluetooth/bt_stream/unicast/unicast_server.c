@@ -73,22 +73,26 @@ static const uint8_t cap_adv_data[] = {
 	BT_AUDIO_UNICAST_ANNOUNCEMENT_TARGETED,
 };
 
-#define AVAILABLE_SOURCE_CONTEXT                                                                   \
-	(BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED | BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
-
+#if defined(CONFIG_BT_AUDIO_RX)
 #define AVAILABLE_SINK_CONTEXT                                                                     \
 	(BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED | BT_AUDIO_CONTEXT_TYPE_MEDIA |                         \
 	 BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
+#else
+#define AVAILABLE_SINK_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
+#endif /* CONFIG_BT_AUDIO_RX */
+
+#if defined(CONFIG_BT_AUDIO_TX)
+#define AVAILABLE_SOURCE_CONTEXT                                                                   \
+	(BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED | BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
+#else
+#define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
+#endif /* CONFIG_BT_AUDIO_TX */
 
 static uint8_t unicast_server_adv_data[] = {
 	BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL),
 	BT_AUDIO_UNICAST_ANNOUNCEMENT_TARGETED,
-#if defined(CONFIG_BT_AUDIO_RX)
 	BT_BYTES_LIST_LE16(AVAILABLE_SINK_CONTEXT),
-#endif /* CONFIG_BT_AUDIO_RX */
-#if defined(CONFIG_BT_AUDIO_TX)
 	BT_BYTES_LIST_LE16(AVAILABLE_SOURCE_CONTEXT),
-#endif	      /* CONFIG_BT_AUDIO_TX */
 	0x00, /* Metadata length */
 };
 
