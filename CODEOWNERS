@@ -137,6 +137,7 @@ Kconfig*                                  @tejlmand
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
 /modules/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/mqtt/                        @simensrostad
 /samples/net/udp/                         @simensrostad
