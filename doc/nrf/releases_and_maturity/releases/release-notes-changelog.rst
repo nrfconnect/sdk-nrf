@@ -889,6 +889,7 @@ Libraries for networking
     * A bug preventing ``AIR_QUAL`` from being enabled in shadow UI service info.
     * A bug that prevented an MQTT FOTA job from being started.
     * An invalid value for a shadow delta change to the control section is now rejected by updating the desired section to the previous value.
+    * Encoding of the "doReply" flag in the :c:func:`nrf_cloud_obj_location_request_create` function.
 
   * Removed:
 
