@@ -7,7 +7,7 @@ Wi-Fi: WFA QuickTrack control application
    :local:
    :depth: 2
 
-This sample demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance QuickTrack certification.
+The QuickTrack sample demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance QuickTrack certification.
 
 Requirements
 ************
@@ -23,7 +23,7 @@ The QuickTrack sample and library offer support for QuickTrack certification tes
 
 You can choose either of these options for running QuickTrack certification.
 
-See `Wi-Fi Alliance Certification for nRF70 Series <Wi-Fi Alliance Certification for nRF70 Series_>`_ for more information.
+See `Wi-Fi Alliance Certification for nRF70 Series`_ for more information.
 
 Test setup
 ==========
@@ -98,7 +98,7 @@ Also, run the following command to create a Serial Line Internet Protocol (SLIP)
 
 .. code-block:: console
 
-   tunslip6 -s <serial_port> -T <IPv6_prefix>
+   ./tunslip6 -s <serial_port> -T <IPv6_prefix>
 
 * ``tunslip6``: Creates a SLIP interface on the host PC, which can be used for serial communication.
 * ``serial_port``: Can be replaced with the device path on which the DUT is connected to.
@@ -108,7 +108,7 @@ The following is an example of the CLI command:
 
 .. code-block:: console
 
-   tunslip6 -s /dev/ttyACM4 -T 2001:db8::1/64
+   ./tunslip6 -s /dev/ttyACM4 -T 2001:db8::1/64
 
 .. note::
    The SLIP interface can be created only on a Linux PC.
