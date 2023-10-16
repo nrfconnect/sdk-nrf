@@ -923,15 +923,15 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 		goto cleanup;
 	}
 
-	/* By default, nRF Cloud will send the location to the device */
-	if (!request_loc &&
-	    nrf_cloud_obj_num_add(obj, NRF_CLOUD_LOCATION_KEY_DOREPLY, 0, true)) {
-		err = -ENOMEM;
+	err = nrf_cloud_obj_init(&data_obj);
+	if (err) {
 		goto cleanup;
 	}
 
-	err = nrf_cloud_obj_init(&data_obj);
-	if (err) {
+	/* By default, nRF Cloud will send the location to the device */
+	if (!request_loc &&
+	    nrf_cloud_obj_num_add(&data_obj, NRF_CLOUD_LOCATION_KEY_DOREPLY, 0, false)) {
+		err = -ENOMEM;
 		goto cleanup;
 	}
 
