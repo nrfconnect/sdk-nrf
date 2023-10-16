@@ -284,7 +284,7 @@ static int random_static_addr_cfg(void)
 
 static int local_identity_addr_print(void)
 {
-	size_t num_ids;
+	size_t num_ids = 0;
 	bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
 	char addr_str[BT_ADDR_LE_STR_LEN];
 
