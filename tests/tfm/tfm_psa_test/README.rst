@@ -12,6 +12,9 @@ The TF-M platform security architecture test sample provides a basis for validat
 Requirements
 ************
 
+When :kconfig:option:`CONFIG_TFM_PSA_TEST_ATTESTATION` is enabled, it is required that the device is provisioned with the PSA root-of-trust security parameters using the :ref:`provisioning image <provisioning_image>` sample.
+To provision the device, build and flash the provisioning image sample before using the test sample.
+
 The test supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
@@ -42,6 +45,8 @@ The following Kconfig options can be used to choose a test suite:
 
 Building and running
 ********************
+
+Do not flash with ``--erase``, ``--recover``, or similar, as this will erase the PSA platform security parameters.
 
 .. |test path| replace:: :file:`tests/tfm/tfm_psa_test/`
 
