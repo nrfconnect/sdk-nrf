@@ -203,7 +203,6 @@ Module discovery operations
 Recipient discovery operations
   The :ref:`nrf_desktop_hid_forward` handles recipients discovery operations.
   These operations are performed to obtain IDs of Bluetooth® LE Peripherals connected to the device.
-  See :ref:`discovering devices connected through dongle <nrf_desktop_config_channel_recipient_discovery>` for more information.
 
   The Event ID field is not used and it should be set to ``0``.
   The following operations belong to this group:
@@ -219,6 +218,24 @@ Recipient discovery operations
 
     Performing the operation multiple times returns information about subsequent Bluetooth® LE Peripherals.
     This operation should be performed until Recipient ID is set to ``0xFF``, in which case there are no more peripherals.
+
+Recipient discovery caching
+  Apart from the recipient discovery operations, the :ref:`nrf_desktop_hid_forward` handles an additional request that can be used to retrieve a snapshot of currently connected recipients (``CONFIG_STATUS_GET_PEERS_CACHE``).
+  The request can be used to detect changes in the set of connected Bluetooth® LE Peripherals.
+  The request is supported in the firmware since the |NCS| v2.5.0, firmware built with older SDK releases does not support it.
+
+  The Event ID field is not used and it should be set to ``0``.
+  The response to this request contains 16 bytes of data, which represents peers cache values for Bluetooth® LE Peripherals.
+  Every byte describes peers cache value of a single peripheral.
+  The first byte describes the peripheral with a Recipient ID of ``1``, and rest bytes describe peripherals with subsequent Recipient IDs.
+
+  The cache value related to a given Recipient ID is initialized to zero during dongle boot and incremented on both connection establishment and disconnection of the recipient.
+  An odd number is reported for a connected recipient.
+  An even number is reported for a disconnected recipient.
+
+  If the cache value of a given recipient remains the same as reported before the recipient discovery, the discovered recipient is still connected.
+  Otherwise, the host tools must identify the device and perform rediscovery if needed.
+  See :ref:`discovering devices connected through dongle <nrf_desktop_config_channel_recipient_discovery>` for details.
 
 Response
 --------
@@ -285,7 +302,9 @@ The Recipient ID equal to ``0`` is used to communicate with any device directly 
 The configuration channel allows a dongle type device to act as a proxy for Bluetooth® LE Peripheral devices.
 If you are developing a custom host tool, you need to ensure your tool performs the following steps to discover all of the peripherals that are connected to the dongle over Bluetooth® LE:
 
-1. Trigger a Recipient ID re-evaluation with the ``CONFIG_STATUS_INDEX_PEERS`` request.
+1. Retrieve the peers cache with the ``CONFIG_STATUS_GET_PEERS_CACHE`` request.
+   The peers cache can be periodically fetched from the device and compared with the previously fetched values to detect changes in the set of peripherals connected through a dongle.
+#. Trigger a Recipient ID re-evaluation with the ``CONFIG_STATUS_INDEX_PEERS`` request.
 #. Obtain a list of connected devices by calling the ``CONFIG_STATUS_GET_PEER`` request.
 
 Once the Recipient ID list is obtained, you can perform :ref:`nrf_desktop_config_channel_device_identification` and :ref:`nrf_desktop_config_channel_module_discovery` procedures on selected or all connected devices.
