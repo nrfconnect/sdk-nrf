@@ -138,6 +138,7 @@ Kconfig*                                  @tejlmand
 /modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
+/modules/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/mqtt/                        @simensrostad
 /samples/net/udp/                         @simensrostad
@@ -248,8 +249,6 @@ Kconfig*                                  @tejlmand
 /subsys/nonsecure/                        @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/net_core_monitor/                 @maje-emb
-/modules/                                 @tejlmand
-/modules/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @ludvigsj
