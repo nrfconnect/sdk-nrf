@@ -338,6 +338,10 @@ The device discovery procedure is described on the :ref:`configuration channel d
 An example of implementation is available in the :file:`scripts/hid_configurator/NrfHidDevice.py` file.
 The device discovery is implemented in the ``__init__`` function of the ``NrfHidDevice`` class.
 
+.. note::
+  The HID configurator script does not cache device discovery data.
+  All of the connected nRF Desktop devices are rediscovered on each script invocation, right before the specified command is called.
+
 Dependencies
 ************
 
