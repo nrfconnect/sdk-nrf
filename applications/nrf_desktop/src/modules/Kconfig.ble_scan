@@ -51,7 +51,8 @@ config DESKTOP_BLE_FORCED_SCAN_DURATION_S
 	help
 	  Duration of the forced scan operation in seconds. The module enters a
 	  forced scan state right after boot or wakeup, on successful peripheral
-	  discovery, on peripheral disconnection and on connection failure.
+	  discovery, on peripheral disconnection, on connection failure, on bond
+	  erase and on scan request.
 
 	  Setting forced scan duration to 0 disables the feature.
 
