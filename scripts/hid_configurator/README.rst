@@ -42,6 +42,9 @@ Complete the following instructions, depending on your operating system:
 * `Windows`_
 * `Debian/Ubuntu/Linux Mint`_
 
+You also need to ensure that the `Linux Vendor Firmware Service (LVFS) <LVFS_>`_ ``fwupd`` daemon is not running in the background.
+See the `Stopping fwupd daemon`_ section for details.
+
 Windows
 =======
 
@@ -121,6 +124,34 @@ Complete the following steps:
       pip3 install --user -r requirements_music_led_stream.txt
 
   For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
+
+Stopping fwupd daemon
+=====================
+
+The :ref:`nrf_desktop_config_channel` is also used in the `Linux Vendor Firmware Service (LVFS) <LVFS_>`_ by the Nordic HID plugin of ``fwupd``.
+Several Linux-based operating systems run the ``fwupd`` daemon in the background to manage firmware updates.
+
+Configuring a connected HID device simultaneously with multiple host tools is not supported.
+If multiple host tools configure a HID device at the same time, the configuration channel transport implementation in the firmware might mix requests and responses coming from various host tools.
+Make sure to stop the ``fwupd`` daemon before using the HID configurator script.
+
+Ubuntu example
+--------------
+
+To either stop or start the ``fwupd`` daemon on Ubuntu, run one of the following commands:
+
+.. parsed-literal::
+    :class: highlight
+
+    sudo systemctl stop fwupd
+    sudo systemctl start fwupd
+
+To check the status of the ``fwupd`` daemon on Ubuntu, run the following command:
+
+.. parsed-literal::
+    :class: highlight
+
+    systemctl status fwupd
 
 Using the script
 ****************
