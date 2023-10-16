@@ -811,7 +811,7 @@ To update the firmware, complete the following steps:
          #. Click :guilabel:`Update Firmware`.
          #. Click :guilabel:`Multi-component Firmware update`.
          #. Edit firmware update name if necessary and click :guilabel:`Next`.
-         #. Select :guilabel:`application`component from tab and click :guilabel:`Upload Firmware`.
+         #. Select :guilabel:`application` component from tab and click :guilabel:`Upload Firmware`.
             Select or upload the binary under **Upload New** or **from Resources** and click :guilabel:`Save`.
             Click :guilabel:`Add new component`.
             Select :guilabel:`modem:xxx` component from tab and click :guilabel:`Upload Firmware`.

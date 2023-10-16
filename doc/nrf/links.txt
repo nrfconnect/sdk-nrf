@@ -231,6 +231,7 @@
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
 .. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-0
 .. _`known issues for nRF Connect SDK v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-2
 .. _`known issues for nRF Connect SDK v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-1
 .. _`known issues for nRF Connect SDK v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-0
@@ -311,6 +312,7 @@
 
 .. _`nRF socket options`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/nrf_modem/doc/sockets.html#socket-options
 
+.. _`Repositories and revisions for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.2/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.1/nrf/introduction.html#ncs-repository-revisions
 .. _`Repositories and revisions for v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/nrf/introduction.html#ncs-repository-revisions
@@ -328,6 +330,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/introduction.html#repositories-and-revisions
 
+.. _`Modem library changelog for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -345,6 +348,7 @@
 .. _`Modem library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 
+.. _`LwM2M carrier library changelog for v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.4.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -437,6 +441,7 @@
 .. #### Source: www.nordicsemi.com/Events/
 
 
+.. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
 .. _`nRF Connect SDK v2.4.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v240
 .. _`nRF Connect SDK v2.3.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v23?utm_campaign=2023%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3
 .. _`nRF Connect SDK v2.2.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v220?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2
