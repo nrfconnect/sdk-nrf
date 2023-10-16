@@ -25,7 +25,6 @@
 #include "macros_common.h"
 #include "nrf5340_audio_common.h"
 #include "le_audio.h"
-#include "channel_assignment.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);

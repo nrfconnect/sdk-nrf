@@ -112,8 +112,8 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 	char pcm_data_mono[PCM_NUM_BYTES_MONO] = {0};
 	static char pcm_data_stereo[PCM_NUM_BYTES_STEREO];
 
-	size_t pcm_size_stereo = 0;
-	size_t pcm_size_session = 0;
+	uint16_t pcm_size_stereo = 0;
+	uint16_t pcm_size_session = 0;
 
 	switch (m_config.sw_codec) {
 	case SW_CODEC_LC3: {
@@ -127,9 +127,9 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 				memset(pcm_data_mono, 0, PCM_NUM_BYTES_MONO);
 				pcm_size_session = PCM_NUM_BYTES_MONO;
 			} else {
-				ret = sw_codec_lc3_dec_run(
-					encoded_data, encoded_size, LC3_PCM_NUM_BYTES_MONO, 0,
-					pcm_data_mono, (uint16_t *)&pcm_size_session, bad_frame);
+				ret = sw_codec_lc3_dec_run(encoded_data, encoded_size,
+							   LC3_PCM_NUM_BYTES_MONO, 0, pcm_data_mono,
+							   &pcm_size_session, bad_frame);
 				if (ret) {
 					return ret;
 				}
@@ -139,9 +139,9 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			 * just one channel, we need to insert 0 for the
 			 * other channel
 			 */
-			ret = pscm_zero_pad(pcm_data_mono, pcm_size_session,
+			ret = pscm_zero_pad(pcm_data_mono, (size_t)pcm_size_session,
 					    m_config.decoder.audio_ch, CONFIG_AUDIO_BIT_DEPTH_BITS,
-					    pcm_data_stereo, &pcm_size_stereo);
+					    pcm_data_stereo, (size_t *)&pcm_size_stereo);
 			if (ret) {
 				return ret;
 			}
@@ -156,23 +156,22 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 				/* Decode left channel */
 				ret = sw_codec_lc3_dec_run(
 					encoded_data, encoded_size / 2, LC3_PCM_NUM_BYTES_MONO,
-					AUDIO_CH_L, pcm_data_mono, (uint16_t *)&pcm_size_session,
-					bad_frame);
+					AUDIO_CH_L, pcm_data_mono, &pcm_size_session, bad_frame);
 				if (ret) {
 					return ret;
 				}
 				/* Decode right channel */
-				ret = sw_codec_lc3_dec_run(
-					(encoded_data + (encoded_size / 2)), encoded_size / 2,
-					LC3_PCM_NUM_BYTES_MONO, AUDIO_CH_R, pcm_data_mono_right,
-					(uint16_t *)&pcm_size_session, bad_frame);
+				ret = sw_codec_lc3_dec_run((encoded_data + (encoded_size / 2)),
+							   encoded_size / 2, LC3_PCM_NUM_BYTES_MONO,
+							   AUDIO_CH_R, pcm_data_mono_right,
+							   &pcm_size_session, bad_frame);
 				if (ret) {
 					return ret;
 				}
 			}
-			ret = pscm_combine(pcm_data_mono, pcm_data_mono_right, pcm_size_session,
-					   CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,
-					   &pcm_size_stereo);
+			ret = pscm_combine(pcm_data_mono, pcm_data_mono_right,
+					   (size_t)pcm_size_session, CONFIG_AUDIO_BIT_DEPTH_BITS,
+					   pcm_data_stereo, (size_t *)&pcm_size_stereo);
 			if (ret) {
 				return ret;
 			}
@@ -183,7 +182,7 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			return -ENODEV;
 		}
 
-		*decoded_size = pcm_size_stereo;
+		*decoded_size = (size_t)pcm_size_stereo;
 		*decoded_data = pcm_data_stereo;
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
