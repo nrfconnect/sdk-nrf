@@ -263,7 +263,7 @@ Wi-Fi
 
 The current Wi-Fi® memory requirements are listed on the :ref:`ug_wifi_mem_req` page.
 
-In addition to applying `General recommendations`_, you can also see the :ref:`nRF7002dk_nRF5340_constrained_host` page to optimize the Wi-Fi stack of your application.
+In addition to applying `General recommendations`_, you can also see the :ref:`nRF70_nRF5340_constrained_host` page to optimize the Wi-Fi stack of your application.
 Specifically, you can refer to the section on :ref:`networking stack <constrained_host_networking_stack>` or :ref:`memory fine-tuning controls <constrained_host_driver_memory_controls>` which lists Kconfig options that can be used to reduce memory requirements of your application.
 
 .. _app_memory_zigbee:
