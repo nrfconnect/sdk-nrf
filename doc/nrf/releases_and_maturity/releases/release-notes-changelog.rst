@@ -304,6 +304,9 @@ nRF Desktop
   * A new :ref:`nrf_desktop_config_channel` request (``CONFIG_STATUS_GET_PEERS_CACHE``).
     The request is handled by the :ref:`nrf_desktop_hid_forward` and can be used to detect changes in the set of connected Bluetooth® LE peripherals.
     For details, see the :ref:`nrf_desktop_config_channel` documentation.
+  * The forced scan state to :ref:`nrf_desktop_ble_scan`.
+    The new state prevents interrupting scanning when a connected peripheral is in use.
+    The forced scan speeds up establishing new connections with peripherals, but it also negatively impacts the performance of already connected peripherals.
 
 * Updated:
 

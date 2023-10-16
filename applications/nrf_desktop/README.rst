@@ -537,7 +537,9 @@ The peripheral supports one wireless connection at a time, but it can be bonded 
    See the :ref:`nrf_desktop_bluetooth_guide_fast_pair` documentation section for details.
 
 The nRF Desktop Bluetooth Central device scans for all bonded peripherals that are not connected.
-The scanning is interrupted when any device connected to the dongle through Bluetooth comes in use.
+Right after entering the scanning state, the scanning operation is uninterruptable for a predefined time (:kconfig:option:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S`) to speed up connection establishment with Bluetooth Peripherals.
+After the timeout, the scanning is interrupted when any device connected to the dongle through Bluetooth comes in use.
+A connected peripheral is considered in use when it provides HID input reports.
 Continuing the scanning in such scenario would cause report rate drop.
 
 The scanning starts automatically when one of the bonded peers disconnects.
@@ -680,7 +682,7 @@ The assignments of hardware interface elements depend on the device type.
           When **LED2** starts blinking rapidly, double-press to confirm the operation.
           After the confirmation, all the Bluetooth bonds are removed for the dongle.
         * Short-press to start scanning for both bonded and non-bonded Bluetooth Peripherals.
-          The scan is interrupted if another peripheral connected to the dongle is in use.
+          After the forced scan timeout, the scan is interrupted if another peripheral connected to the dongle is in use.
 
           .. note::
               |led_note|
@@ -943,8 +945,7 @@ After building the application with or without :ref:`specifying the build type <
 
    .. note::
         You can manually start the scanning for new peripheral devices by pressing the **SW1** button on the dongle for a short time.
-        This might be needed if the dongle does not connect with all the peripherals before timeout.
-        The scanning is interrupted after the amount of time predefined in :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>`, because it negatively affects the performance of already connected peripherals.
+        This might be needed if the dongle does not connect with all the peripherals before scanning is interrupted by a timeout.
 
 #. Move the mouse and press any key on the keyboard.
    The input is reflected on the host.
