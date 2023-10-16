@@ -241,11 +241,11 @@ Serial LTE modem
   * Support for the Binary App Data Container object as an alternative to the App Data Container object.
     This can be used through the ``app_data`` operation in the ``#XCARRIER`` carrier command.
   * ``#XNRFCLOUDPOS`` AT command to send location requests to nRF Cloud using cellular or Wi-Fi positioning, or both.
-  * Support for using A-GPS and P-GPS at the same time.
+  * ``#XGPS`` AT command to control the GNSS module with support for A-GNSS and P-GPS at the same time.
 
 * Updated:
 
-  * The configuration to enable support for nRF Cloud A-GPS service and nRF Cloud Location service by default.
+  * The configuration to enable support for nRF Cloud A-GNSS service and nRF Cloud Location service by default.
   * UART receive refactored to utilize hardware flow control (HWFC) instead of disabling and enabling UART receiving between commands.
   * UART transmit has been refactored to utilize buffering.
     Multiple responses can now be received in a single transmission.
@@ -264,7 +264,7 @@ Serial LTE modem
   * AT commands ``#XCELLPOS`` and ``#XWIFIPOS``.
     They are replaced by the ``#XNRFCLOUDPOS`` command that allows to combine cellular and Wi-Fi data to determine the device location.
   * The AT commands ``#XAGPS`` and ``#XPGPS``.
-    Their functionality is merged into the ``#XGPS`` AT command that now allows using A-GPS and P-GPS at the same time.
+    Their functionality is merged into the ``#XGPS`` AT command that now allows using A-GNSS and P-GPS at the same time.
   * The AT command ``#XSLMUART``.
     UART is now configured using only devicetree.
 
