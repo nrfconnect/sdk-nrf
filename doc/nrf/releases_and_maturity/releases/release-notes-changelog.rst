@@ -478,7 +478,10 @@ zcbor
 Trusted Firmware-M
 ==================
 
-|no_changes_yet_note|
+* The minimal TF-M build profile no longer silences TF-M logs by default.
+
+  .. note::
+     This can be a breaking change if the UART instance used by TF-M is already in use, for example by modem trace with a UART backend.
 
 cJSON
 =====
