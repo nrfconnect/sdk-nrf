@@ -728,8 +728,6 @@ enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 
 		config->mac_hdr_info.eosp = 1;
 
-		if (def_dev_ctx->tx_config.peers[peer_id].ps_state == NRF_WIFI_CLIENT_PS_MODE) {
-		}
 	} else {
 		config->mac_hdr_info.eosp = 0;
 	}
