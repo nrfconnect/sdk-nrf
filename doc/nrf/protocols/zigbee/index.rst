@@ -14,6 +14,11 @@ In combination with the integrated Zephyr RTOS, Zigbee in |NCS| allows for devel
 
 .. zigbee_ug_intro_end
 
+.. caution::
+   The Zigbee stack integrated with the |NCS| is not eligible for certification.
+   It should only be used for evaluation and prototyping, and should not be used in an end product.
+   A fixed, production ready version of the Zigbee stack will be part of the |NCS| 2.6.0 release.
+
 See also :ref:`zigbee_samples` for the list of available Zigbee samples and :ref:`lib_zigbee` for the list of available Zigbee libraries.
 
 .. toctree::

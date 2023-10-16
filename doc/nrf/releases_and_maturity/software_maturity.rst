@@ -77,6 +77,8 @@ See the following table for more details:
      - Incomplete verification
      - Not applicable.
 
+For the certification status of different features in a specific SoC, see its Compatibility Matrix in the `Nordic Semiconductor Infocenter`_.
+
 .. _api_deprecation:
 
 API deprecation

@@ -82,10 +82,12 @@ If you want to add SMP Service to advertising data, refer to the :ref:`zephyr:sm
 
 .. fota_upgrades_over_ble_additional_information_end
 
-.. fota_upgrades_over_ble_mcuboot_direct_xip_information_start
+.. _ug_nrf52_developing_ble_fota_mcuboot_direct_xip_mode:
 
 Build configuration additions for MCUboot in the direct-xip mode
 ----------------------------------------------------------------
+
+.. fota_upgrades_over_ble_mcuboot_direct_xip_information_start
 
 FOTA updates are also supported when MCUboot is in the direct-xip mode.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.

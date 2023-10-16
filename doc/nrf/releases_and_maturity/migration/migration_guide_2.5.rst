@@ -2,8 +2,15 @@
 
 .. _migration_2.5:
 
-Migration guide for |NCS| v2.5.0 (Working draft)
-################################################
+Migration guide for |NCS| v2.5.0
+################################
+
+.. HOWTO
+
+   Add changes in the following format:
+
+.. * Change1 and description
+.. * Change2 and description
 
 This document describes the changes required or recommended when migrating your application from |NCS| v2.4.0 to |NCS| v2.5.0.
 
@@ -25,12 +32,18 @@ The following changes are mandatory to make your application work in the same wa
   * The operations to update bootloader (``3``) and read (``6``) or erase (``8``) the MCUboot secondary slot have been removed from the ``#XFOTA`` AT command.
   * The ``#XSLMUART`` AT command has been removed.
     UART is now configured using only devicetree.
-  * The :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN` Kconfig option has been renamed to :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN`.
-  * The ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` AT commands have been removed.
+
+    UART settings that were previously saved for this command now provoke error logs on startup.
+    The errors are harmless.
+    To remove these errors, you can erase all settings by doing a full erase of the device.
+    This will be fixed in the next |NCS| release.
+
   * Hardware flow control is now required for the UART.
     If hardware flow control for the UART cannot be enabled, use the :kconfig:option:`CONFIG_SLM_UART_RX_BUF_SIZE` Kconfig option to ensure that there is adequate buffer space for the worst case scenario.
   * UART TX now allows multiple AT command responses and notifications to be bundled together in a single transmission.
     Ensure that you correctly parse multiple responses and notifications, and do not rely on UART disablement between them.
+  * The Kconfig option ``CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN`` has been renamed to :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN`.
+  * The ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` AT commands have been removed.
   * The ``#XSOCKETOPT`` option ``SO_BINDTODEVICE`` has been replaced by ``SO_BINDTOPDN``.
   * The value of the ``#XSSOCKETOPT`` option ``TLS_DTLS_HANDSHAKE_TIMEO`` has been updated.
 
@@ -52,14 +65,8 @@ The following changes are recommended for your application to work optimally aft
   For an example, see the :ref:`lwm2m_client` sample.
 * Applications that use Zephyr's LwM2M stack are recommended to use the :kconfig:option:`CONFIG_LWM2M_UPDATE_PERIOD` Kconfig option to set the LwM2M update sending interval.
 * For the Serial LTE Modem (SLM) application:
+
   * If you are using the :ref:`liblwm2m_carrier_readme` library, make sure to take into account the addition of the auto-connect feature that is enabled by default.
   * When performing a modem firmware update, you can now reset only the modem (instead of the whole device) using the new ``#XMODEMRESET`` AT command.
 
 * Applications that use :file:`prj_<board>.conf` Kconfig configurations should be transitioned to using :file:`boards/<board>.conf` Kconfig fragments.
-
-.. HOWTO
-
-   Add changes in the following format:
-
-.. * Change1 and description
-.. * Change2 and description
