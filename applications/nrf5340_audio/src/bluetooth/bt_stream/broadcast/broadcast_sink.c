@@ -44,6 +44,7 @@ struct audio_codec_info {
 struct active_audio_stream {
 	struct bt_bap_stream *stream;
 	struct audio_codec_info *codec;
+	uint32_t pd;
 };
 
 static struct bt_bap_broadcast_sink *broadcast_sink;
@@ -79,6 +80,10 @@ static int broadcast_sink_cleanup(void)
 	int ret;
 
 	init_routine_completed = false;
+
+	active_stream.pd = 0;
+	active_stream.stream = NULL;
+	active_stream.codec = NULL;
 
 	if (broadcast_sink != NULL) {
 		ret = bt_bap_broadcast_sink_delete(broadcast_sink);
@@ -323,6 +328,7 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 		channel_assignment_get((enum audio_channel *)&active_stream_index);
 		active_stream.stream = &audio_streams[active_stream_index];
 		active_stream.codec = &audio_codec_info[active_stream_index];
+		active_stream.pd = base->pd;
 
 		le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED);
 
@@ -449,7 +455,7 @@ int broadcast_sink_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32
 			return -ENXIO;
 		}
 
-		*pres_delay = active_stream.stream->qos->pd;
+		*pres_delay = active_stream.pd;
 	}
 
 	return 0;
