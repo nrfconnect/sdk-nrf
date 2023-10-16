@@ -1,4 +1,4 @@
-.. _nRF7002dk_nRF5340_constrained_host:
+.. _nRF70_nRF5340_constrained_host:
 
 Operating with a resource constrained host
 ##########################################
@@ -7,7 +7,7 @@ Operating with a resource constrained host
    :local:
    :depth: 2
 
-This guide provides recommendations and guidelines for using the nRF7002 as a companion chip on resource-constrained hosts such as the nRF5340 SoC.
+This guide provides recommendations and guidelines for using the nRF70 Series device as a companion chip on resource-constrained hosts such as the nRF5340 SoC.
 
 Networking stack combinations
 *****************************
@@ -37,7 +37,7 @@ CPU frequency
 =============
 
 The nRF5340 host has two operating frequencies, 64 MHz and 128 MHz, default frequency is 64 MHz.
-For low power applications, it is recommended to use 64 MHz as the CPU frequency but the nRF7002 Wi-Fi performance might be impacted.
+For low power applications, it is recommended to use 64 MHz as the CPU frequency, but the Wi-Fi performance of the nRF70 Series device might be impacted.
 For high performance applications, it is recommended to use 128 MHz as the CPU frequency.
 
 .. _constrained_host_networking_stack:
@@ -45,9 +45,9 @@ For high performance applications, it is recommended to use 128 MHz as the CPU f
 Networking stack
 ================
 
-The nRF7002 driver uses the Zephyr networking stack for Wi-Fi protocol implementation.
+The nRF70 Series driver uses the Zephyr networking stack for Wi-Fi protocol implementation.
 You can configure the networking stack to use different networking buffers and queue depths.
-The nRF7002 driver can be configured to use different numbers of TX buffers and RX buffers based on the use case.
+The nRF70 Series driver can be configured to use different numbers of TX buffers and RX buffers based on the use case.
 A separate configuration option is provided to configure the number of packets, and the number of buffers used by each packet can also be configured.
 
 The following table explains the configuration options:
@@ -139,7 +139,7 @@ The nRF70 Series driver provides the following software configurations to fine-t
        If the application does not need to receive large frames, then this can be reduced to save memory.
 
 The configuration options must be used in conjunction with the Zephyr networking stack configuration options to achieve the desired performance and memory usage.
-These options form a staged pipeline all the way to the nRF7002 chip, any change in one stage of the pipeline will impact the performance and memory usage of the next stage.
+These options form a staged pipeline all the way to the nRF70 Series chip, any change in one stage of the pipeline will impact the performance and memory usage of the next stage.
 For example, solving bottleneck in one stage of the pipeline might lead to a bottleneck in the next stage.
 
 .. _constrained_host_packet_memory:
@@ -174,10 +174,10 @@ The total packet memory size is calculated as follows:
    (CONFIG_NRF700X_TX_MAX_DATA_SIZE + 52 ) * CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_MAX_TX_AGGREGATION +
    CONFIG_NRF700X_RX_MAX_DATA_SIZE * CONFIG_NRF700X_RX_NUM_BUFS
 
-There is a build time check to ensure that the total packet memory size does not exceed the available packet memory size in the nRF7002 chip.
+There is a build time check to ensure that the total packet memory size does not exceed the available packet memory size in the nRF70 Series chip.
 
 .. note::
-   The ``52`` bytes in the above equations are the overhead bytes required by the nRF7002 chip to store the headers and footers of the Wi-Fi protocol frames.
+   The ``52`` bytes in the above equations are the overhead bytes required by the nRF70 Series chip to store the headers and footers of the Wi-Fi protocol frames.
 
 .. _constrained_host_usage_profiles:
 
@@ -311,6 +311,6 @@ The nRF70 Series driver can be used in the following profiles (not an exhaustive
        ``UDP-RX: 12.7 Mbps``
 
 .. note::
-   The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002 DK. The results represent the best throughput, averaged over three iterations, and were obtained with a good RSSI signal in a clean environment.
+   The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002DK. The results represent the best throughput, averaged over three iterations, and were obtained with a good RSSI signal in a clean environment.
 
    The above configuration values can be passed using standard ways such as CMake arguments to west build (`Zephyr One Time Arguments`_ or `Zephyr Permanent Arguments`_), or by adding them in an :file:`overlay` file and passing to west build as CMake argument ``EXTRA_CONF_FILE``. See `Zephyr Application Configuration`_ for more details.
