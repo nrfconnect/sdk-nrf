@@ -152,22 +152,26 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 		return;
 	}
 
-	if (vif_ctx_zep->scan_type == SCAN_DISPLAY) {
+	switch (vif_ctx_zep->scan_type) {
+#ifdef CONFIG_NET_L2_WIFI_MGMT
+	case SCAN_DISPLAY:
 		status = nrf_wifi_disp_scan_res_get_zep(vif_ctx_zep);
-
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_disp_scan_res_get_zep failed\n", __func__);
 			return;
 		}
 		vif_ctx_zep->scan_in_progress = false;
+		break;
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_NRF700X_STA_MODE
-	} else if (vif_ctx_zep->scan_type == SCAN_CONNECT) {
+	case SCAN_CONNECT:
 		nrf_wifi_wpa_supp_event_proc_scan_done(vif_ctx_zep,
 						       scan_done_event,
 						       event_len,
 						       0);
+		break;
 #endif /* CONFIG_NRF700X_STA_MODE */
-	} else {
+	default:
 		LOG_ERR("%s: Scan type = %d not supported yet\n", __func__, vif_ctx_zep->scan_type);
 		return;
 	}
@@ -180,12 +184,16 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+#ifdef CONFIG_NET_L2_WIFI_MGMT
 	struct wifi_scan_result res;
 	scan_result_cb_t disp_scan_cb = NULL;
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 	vif_ctx_zep = CONTAINER_OF(work, struct nrf_wifi_vif_ctx_zep, scan_timeout_work);
 
+#ifdef CONFIG_NET_L2_WIFI_MGMT
 	disp_scan_cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 	if (!vif_ctx_zep->scan_in_progress) {
 		LOG_INF("%s: Scan not in progress\n", __func__);
@@ -195,12 +203,15 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
+#ifdef CONFIG_NET_L2_WIFI_MGMT
 	if (disp_scan_cb) {
 		memset(&res, 0x0, sizeof(res));
 
 		disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, &res);
 		vif_ctx_zep->disp_scan_cb = NULL;
-	} else {
+	} else
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
+	{
 #ifdef CONFIG_NRF700X_STA_MODE
 		/* WPA supplicant scan */
 		union wpa_event_data event;
@@ -620,7 +631,9 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 
 	callbk_fns.scan_start_callbk_fn = nrf_wifi_event_proc_scan_start_zep;
 	callbk_fns.scan_done_callbk_fn = nrf_wifi_event_proc_scan_done_zep;
+#ifdef CONFIG_NET_L2_WIFI_MGMT
 	callbk_fns.disp_scan_res_callbk_fn = nrf_wifi_event_proc_disp_scan_res_zep;
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 	callbk_fns.rx_bcn_prb_resp_callbk_fn = nrf_wifi_rx_bcn_prb_resp_frm;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
@@ -698,7 +711,7 @@ err:
 }
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
-
+#ifdef CONFIG_NET_L2_WIFI_MGMT
 static struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.scan = nrf_wifi_disp_scan_zep,
 #ifdef CONFIG_NET_STATISTICS_WIFI
@@ -711,6 +724,7 @@ static struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.get_power_save_config = nrf_wifi_get_power_save_config,
 #endif /* CONFIG_NRF700X_STA_MODE */
 };
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 
 static const struct net_wifi_mgmt_offload wifi_offload_ops = {
@@ -723,7 +737,9 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	.wifi_iface.get_stats = nrf_wifi_eth_stats_get,
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
+#ifdef CONFIG_NET_L2_WIFI_MGMT
 	.wifi_mgmt_api = &nrf_wifi_mgmt_ops,
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 };
 
 #ifdef CONFIG_NRF700X_STA_MODE
