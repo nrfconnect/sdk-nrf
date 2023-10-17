@@ -3369,7 +3369,11 @@ int iperf_defaults(struct iperf_test *testp)
 	testp->settings->mss = 0;
 	testp->settings->bytes = 0;
 	testp->settings->blocks = 0;
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	testp->settings->connect_timeout = CONFIG_NRF_IPERF3_CLIENT_TEST_START_TIME * 1000;
+#else
 	testp->settings->connect_timeout = -1;
+#endif
 	memset(testp->cookie, 0, COOKIE_SIZE);
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
