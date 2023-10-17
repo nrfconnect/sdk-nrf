@@ -95,11 +95,11 @@ This tool is provided with the Matter repository in the |NCS|.
 To edit clusters using the ZAP tool, complete the following steps:
 
 1. Complete the installation steps for the ZAP tool listed in :ref:`ug_matter_tools_installing_zap`.
-#. Open the :file:`src/template.zap` for editing by running the following command, where ``samples/matter/sensor`` stands for the path where you copied the template sample in the first step of this guide:
+#. Open the :file:`src/template.zap` for editing by running the following command, where *sample_location* stands for the path where you copied the template sample in the first step of this guide, and *matter_root_location* stands for the path where Matter project is located:
 
    .. code-block::
 
-      zap ../../../nrf/samples/matter/sensor/src/template.zap
+      zap *sample_location*/src/template.zap --zcl *matter_root_location*/src/app/zap-templates/zcl/zcl.json --gen *matter_root_location*/src/app/zap-templates/app-templates.json
 
    The ZAP tool's Zigbee Cluster Configurator window appears.
 
@@ -119,7 +119,7 @@ To edit clusters using the ZAP tool, complete the following steps:
 
       Create New Endpoint menu in ZAP tool
 
-   The new cluster is created with both the Basic and Identify clusters enabled.
+   The new endpoint is created with both the Descriptor and Identify clusters enabled.
 #. Configure the On/Off cluster required for this endpoint:
 
    a. In the :guilabel:`Search Clusters` menu, find the On/Off cluster.
@@ -158,6 +158,15 @@ To edit clusters using the ZAP tool, complete the following steps:
       python ./scripts/tools/zap/generate.py ../../../nrf/samples/matter/sensor/src/template.zap -t src/app/zap-templates/app-templates.json -o ../../../nrf/samples/matter/sensor/src/zap-generated
 
 At this point, new clusters have been added to the Matter device.
+
+.. note::
+   On the first run the ZAP tool creates a :file:`.zap` directory to store cached information for the following runs.
+   The default directory location is the user's home directory and it can be overridden by adding ``--stateDirectory`` and the location path to the invoked ZAP commands.
+
+   Introducing significant changes to the ZAP tool configuration, such as updating the tool version or changing which ZCL templates are used, can result in unexpected issues with the application when previously cached information in the :file:`.zap` directory is used.
+   The behavior of the application in such a case is undefined and it depends on the difference between the new configuration and the old cached data.
+   For example, it could result in problems with displaying specific information in the UI, generating new configuration, or even application crashes.
+   The solution is to remove the :file:`.zap` directory to clear the cached information.
 
 .. _ug_matter_creating_accessory_edit_loop:
 
@@ -242,7 +251,7 @@ To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` 
            k_timer_stop(&sSensorTimer);
    }
 
-   int AppTask::Init()
+   CHIP_ERROR AppTask::Init()
    {
            /*
            ... Original content
@@ -250,7 +259,7 @@ To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` 
 
            k_timer_init(&sSensorTimer, &SensorTimerHandler, nullptr);
            k_timer_user_data_set(&sSensorTimer, this);
-           return 0;
+           return CHIP_NO_ERROR;
    }
 
 The timer must be initialized in the ``Init()`` method of the ``AppTask`` class.
