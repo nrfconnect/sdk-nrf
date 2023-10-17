@@ -137,7 +137,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.3.0-ncs2-rc1
+      revision: acea48fc8a5eb227033b55e6ec012731218e257f
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
