@@ -94,26 +94,50 @@ The following is an example of the CLI command:
 
    west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-slip.conf -DDTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
 
-Also, run the following command to create a Serial Line Internet Protocol (SLIP) interface on the PC where the QT tool is running.
-
-.. code-block:: console
-
-   ./tunslip6 -s <serial_port> -T <IPv6_prefix>
-
-* ``tunslip6``: Creates a SLIP interface on the host PC, which can be used for serial communication.
-* ``serial_port``: Can be replaced with the device path on which the DUT is connected to.
-* ``IPv6_prefix``: Can be replaced with the desired IPv6 address and subnet prefix length for your device.
-
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   ./tunslip6 -s /dev/ttyACM4 -T 2001:db8::1/64
-
-.. note::
-   The SLIP interface can be created only on a Linux PC.
-
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
+
+Testing
+=======
+
+After programming the sample to your development kit, complete the following steps to test it with the SLIP configuration:
+
+1. Install :file:`tunslip6` by installing the ``net-tools`` package on the PC where the QuickTrack (QT) tool is running.
+   Run the following command to clone the ``net-tools`` repository:
+
+   .. code-block:: console
+
+      git clone https://github.com/zephyrproject-rtos/net-tools.git
+
+#. Navigate to the :file:`net-tools` directory.
+
+   .. code-block:: console
+
+      cd net-tools/
+
+#. Run the following command to compile the ``net-tools`` package:
+
+   .. code-block:: console
+
+      make
+
+   .. note::
+      Install all dependent packages.
+
+#. Run the following command to create a SLIP interface.
+
+   .. code-block:: console
+
+      ./tunslip6 -s <serial_port> -T <IPv6_prefix>
+
+   * ``tunslip6``: Creates a SLIP interface on the host PC, which can be used for serial communication.
+   * ``serial_port``: Can be replaced with the device path on which the DUT is connected to.
+   * ``IPv6_prefix``: Can be replaced with the desired IPv6 address and subnet prefix length for your device.
+
+   The following is an example of the CLI command:
+
+   .. code-block:: console
+
+      ./tunslip6 -s /dev/ttyACM4 -T 2001:db8::1/64
 
 Sample output
 =============
