@@ -2041,25 +2041,25 @@ Image transfer over SMP
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 If the MCUboot bootloader is selected, the update image can also be transferred in the background either through the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`.
-The `nRF Connect for Mobile`_ application uses binary files for the image transfer over the Simple Management Protocol (SMP).
-The :guilabel:`DFU` button appears in the tab of the connected Bluetooth device that supports the image transfer over the SMP.
-After pressing the button, you can select the :file:`*.bin` file used for the firmware update.
+The `nRF Connect Device Manager`_ application uses binary files for the image transfer over the Simple Management Protocol (SMP).
 
-After building your application for configuration with either the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` enabled, the following firmware update files are generated in the build directory:
+After building your application with either :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` enabled, the :file:`dfu_application.zip` archive is generated in the build directory.
+It contains all the firmware update files that are necessary to perform DFU.
+For more information about the contents of update archive, see :ref:`app_build_fota`.
 
- * :file:`zephyr/app_update.bin` - The application image that is bootable from the primary slot.
- * :file:`zephyr/mcuboot_secondary_app_update.bin` - The application image that is bootable from the secondary slot.
-   The file is generated only if the MCUboot bootloader is built in the direct-xip mode.
+To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
-If the MCUboot bootloader uses the built-in direct-xip mode, you must upload the image for the slot that is currently unused.
-If the MCUboot bootloader built-in swap mode is used, the :file:`zephyr/app_update.bin` file must always be used.
-The :file:`zephyr/app_update.bin` file is the application image that can be booted from the primary slot.
-In the swap mode, the MCUboot bootloader always moves the new application image to the primary slot before booting it.
+.. include:: /device_guides/working_with_nrf/nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
+   :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
+
+.. include:: /device_guides/working_with_nrf/nrf52/developing.rst
+   :start-after: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
+   :end-before: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
 
 .. note::
   If the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option is enabled in the application configuration, the device rejects update image upload for the invalid slot.
   It is recommended to enable the option if the application uses MCUboot in the direct-xip mode.
-  The upload rejection can be used as a simple mechanism of verifying which image update should be used.
 
 Update image verification and application image update
 ------------------------------------------------------
