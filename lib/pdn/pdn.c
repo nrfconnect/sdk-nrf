@@ -58,8 +58,10 @@ static K_SEM_DEFINE(sem_cnec, 0, 1);
 /* Use one monitor for all CGEV events and distinguish
  * between the different type of events later (ME, IPV6, etc).
  */
+#ifndef CONFIG_UNITY
 AT_MONITOR(pdn_cgev, "+CGEV", on_cgev);
 AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm);
+#endif
 
 static struct pdn *pdn_find(int cid)
 {
@@ -90,7 +92,11 @@ static struct pdn *pdn_ctx_new(void)
 	return pdn;
 }
 
+#ifdef CONFIG_UNITY
+void on_cnec_esm(const char *notif)
+#else
 static void on_cnec_esm(const char *notif)
+#endif
 {
 	char *p;
 	uint32_t cid;
@@ -215,15 +221,22 @@ static void parse_cgev_apn_rate_ctrl(const char *notif)
 	}
 }
 
+#ifdef CONFIG_UNITY
+void on_cgev(const char *notif)
+#else
 static void on_cgev(const char *notif)
+#endif
 {
 	parse_cgev(notif);
 	parse_cgev_apn_rate_ctrl(notif);
 }
 
+#ifdef CONFIG_UNITY
+void on_modem_init(int ret, void *ctx)
+#else
 NRF_MODEM_LIB_ON_INIT(modem_init_hook, on_modem_init, NULL);
-
 static void on_modem_init(int ret, void *ctx)
+#endif
 {
 	int err;
 	(void) err;
@@ -522,13 +535,14 @@ int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *fam)
 			*fam = PDN_FAM_IPV4;
 		} else if (pdn_act_notif.reason == PDN_ACT_REASON_IPV6_ONLY) {
 			*fam = PDN_FAM_IPV6;
-		}
+		} /* TODO SHOULD WE SET fam TO SOMETHING HERE IF REASON IS PDN_ACT_REASON_NONE? */
 	}
+
 	if (esm) {
 		timeout = k_sem_take(&sem_cnec, K_MSEC(CONFIG_PDN_ESM_TIMEOUT));
 		if (!timeout) {
 			*esm = pdn_act_notif.esm;
-		} else if (timeout == -EAGAIN) {
+		} else {
 			*esm = 0;
 		}
 	}
@@ -586,6 +600,9 @@ int pdn_default_apn_get(char *buf, size_t len)
 	if (err < 0) {
 		LOG_ERR("Failed to read PDP contexts, err %d", err);
 		return err;
+	} else if (err == 0) {
+		/* no argument matched */
+		return -EFAULT;
 	}
 
 	if (strlen(apn) + 1 > len) {
