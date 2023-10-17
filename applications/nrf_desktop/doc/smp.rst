@@ -25,4 +25,4 @@ Implementation details
 **********************
 
 nRF Desktop uses the |smp| from :ref:`lib_caf` (CAF).
-See the :ref:`CAF module <caf_ble_smp>` page for the implementation details and guide on how to perform the firmware update in the `nRF Connect for Mobile`_ application.
+See the :ref:`CAF module <caf_ble_smp>` page for the implementation details and guide on how to perform the firmware update in the `nRF Connect Device Manager`_ application.
