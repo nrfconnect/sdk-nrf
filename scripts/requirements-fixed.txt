@@ -328,7 +328,7 @@ typing-extensions==4.8.0
     #   pyocd
     #   python-can
     #   qrcode
-urllib3==2.0.5
+urllib3==2.0.7
     # via requests
 wcwidth==0.2.6
     # via prettytable
