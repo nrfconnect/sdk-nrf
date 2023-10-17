@@ -3684,7 +3684,7 @@ NCSDK-22818: TF-M does not build with :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_M
 
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
 
-NCSDK-22629: TF-M might fail to reset when using nrfjprog version 10.22.x on nRF9160 platforms
+NRFJPROG-454: TF-M might fail to reset when using nrfjprog version 10.22.x on nRF9160 platforms
   Issuing a reset command using nrfjprog for nRF9160 platforms using the following command might fail to successfully complete and might cause a TF-M core panic:
 
   .. code-block::
