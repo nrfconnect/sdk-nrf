@@ -73,5 +73,5 @@ jobs:
           diff_path: scripts
           diff_file: requirements-fixed.txt
           reaction_emote: "${{ env.REACT_EMOTE }}"
-          git_user_name: "NordicBuilder"
+          git_user_name: "Nordic Builder"
           git_user_email: "NordicBuilder@github.com"
