@@ -1,0 +1,6 @@
+tests:
+  pdn.unit_test:
+    tags: modem_info
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix

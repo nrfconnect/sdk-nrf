@@ -279,6 +279,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/sms/                           @trantanen @tokangas
 /tests/lib/nrf_modem_lib/                 @lemrey @MirkoCovizzi
 /tests/lib/nrf_modem_lib/nrf91_sockets/   @MirkoCovizzi
+/tests/lib/pdn/                           @lemrey @eivindj-nordic
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
 /tests/lib/contin_array/                  @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/lib/data_fifo/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey
