@@ -727,6 +727,7 @@ static struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 
+#ifdef CONFIG_NET_L2_ETHERNET
 static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.wifi_iface.iface_api.init = nrf_wifi_if_init_zep,
 	.wifi_iface.start = nrf_wifi_if_start_zep,
@@ -741,6 +742,8 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 	.wifi_mgmt_api = &nrf_wifi_mgmt_ops,
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 };
+#endif /* CONFIG_NET_L2_ETHERNET */
+
 
 #ifdef CONFIG_NRF700X_STA_MODE
 static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
