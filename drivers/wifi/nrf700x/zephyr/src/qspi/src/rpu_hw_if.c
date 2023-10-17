@@ -137,6 +137,7 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 
 int rpu_irq_remove(struct gpio_callback *irq_callback_data)
 {
+	gpio_pin_configure_dt(&host_irq_spec, GPIO_DISCONNECTED);
 	gpio_remove_callback(host_irq_spec.port, irq_callback_data);
 
 	return 0;
@@ -234,6 +235,14 @@ int rpu_pwroff(void)
 {
 	gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
 	gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
+
+	gpio_pin_configure_dt(&bucken_spec, GPIO_DISCONNECTED);
+	gpio_pin_configure_dt(&iovdd_ctrl_spec, GPIO_DISCONNECTED);
+
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+	gpio_pin_configure_dt(&btrf_switch_spec, GPIO_DISCONNECTED);
+#endif
 
 	return 0;
 }
