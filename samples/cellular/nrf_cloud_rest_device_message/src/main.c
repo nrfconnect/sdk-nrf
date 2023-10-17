@@ -301,12 +301,13 @@ static int send_message(const char *const msg)
 	ret = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, msg, false, NULL);
 	if (ret) {
 		LOG_ERR("Failed to send device message via REST: %d", ret);
+	} else {
+		LOG_INF("Message sent");
 	}
 
 	/* Keep that LED on for at least 100ms */
 	k_sleep(K_MSEC(100));
 
-	LOG_INF("Message sent");
 	/* Turn the LED back off */
 	set_led(SEND_LED_NUM, 0);
 
