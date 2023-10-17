@@ -316,6 +316,8 @@ nRF Desktop
   * The :ref:`nrf_desktop_ble_scan` no longer stops Bluetooth LE scanning when it receives :c:struct:`hid_report_event` related to a HID output report.
     Sending HID output report is triggered by a HID host.
     Scanning stop may lead to an edge case where the scanning is stopped, but there are no peripherals connected to the dongle.
+  * Increased heap memory pool size (:kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE`) in nRF5340 Development Kit configurations.
+    This is done to prevent Event Manger out of memory (OOM) error.
 
 Thingy:53: Matter weather station
 ---------------------------------
