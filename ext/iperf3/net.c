@@ -100,7 +100,6 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen,
 			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
-                printf("timeout_connect() getsockopt error %d\n", ret);
 				ret = optval == 0 ? 0 : -1;
 			}
 		} else if (ret == 0) {
