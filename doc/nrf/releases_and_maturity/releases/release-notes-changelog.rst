@@ -640,7 +640,9 @@ Multicore samples
 nRF5340 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nc_bootloader` sample:
+
+  * Added the functionality of reading out the network core application version number.
 
 Gazell samples
 --------------
@@ -1099,6 +1101,9 @@ DFU libraries
 
 * Added a new DFU SMP target for the image update to an external MCU by using the MCUmgr SMP Client.
 
+* :ref:`subsys_pcd` library:
+
+  * Added function :c:func:`pcd_network_core_app_version` for reading peripheral CPU application version number.
 
 Scripts
 =======
@@ -1130,7 +1135,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+* Added a version check for network core when downgrade prevention is enabled.
 
 Zephyr
 ======

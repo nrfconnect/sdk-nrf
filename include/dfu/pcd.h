@@ -53,8 +53,9 @@ extern "C" {
 
 enum pcd_status {
 	PCD_STATUS_COPY = 0,
-	PCD_STATUS_COPY_DONE = 1,
-	PCD_STATUS_COPY_FAILED = 2
+	PCD_STATUS_DONE = 1,
+	PCD_STATUS_FAILED = 2,
+	PCD_STATUS_READ_VERSION = 3,
 };
 
 /** @brief Sets up the PCD command structure with the location and size of the
@@ -89,10 +90,10 @@ int pcd_network_core_update_initiate(const void *src_addr, size_t len);
  */
 void pcd_lock_ram(void);
 
-/** @brief Update the PCD CMD to indicate that the copy operation has completed
+/** @brief Update the PCD CMD to indicate that the operation has completed
  *         successfully.
  */
-void pcd_fw_copy_done(void);
+void pcd_done(void);
 
 /** @brief Invalidate the PCD CMD, indicating that the copy failed.
  */
@@ -122,6 +123,25 @@ const void *pcd_cmd_data_ptr_get(void);
  * @retval non-negative integer on success, negative errno code on failure.
  */
 int pcd_fw_copy(const struct device *fdev);
+
+#ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
+/** @brief Set up the PCD command structure and point the data buffer to version
+ *
+ * @param buf Pointer to a at least 4 byte sized buffer in RAM.
+ * @param len Length of the buffer.
+ *
+ * @retval 0 on success, -EFAULT and -EINVAL on failure.
+ */
+int pcd_network_core_app_version(uint8_t *buf, size_t len);
+
+/** @brief Read network core image version.
+ *
+ * Finds and sets the version number in the data buffer provided by PCD CMD structure.
+ *
+ * @retval non-negative integer on success, negative on failure.
+ */
+int pcd_find_fw_version(void);
+#endif /* CONFIG_PCD_READ_NETCORE_APP_VERSION */
 
 #endif /* PCD_H__ */
 

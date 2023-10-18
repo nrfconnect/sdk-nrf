@@ -19,9 +19,56 @@
 #define NET_CORE_VIRTUAL_PRIMARY_SLOT 3
 
 #include <dfu/pcd.h>
+#if defined(CONFIG_PCD_APP) && defined(CONFIG_NRF53_MULTI_IMAGE_UPDATE)
+#include <fw_info_bare.h>
 
-int boot_read_image_header_hook(int img_index, int slot,
-		struct image_header *img_head)
+/** @brief Compare image version numbers of network core and network core update.
+ *
+ * @param fap Pointer to the flash area of image 1 secondary slot
+ * @param hdr Pointer to the MCUBoot header of the image 1 secondary slot
+ *
+ * @retval -1           If ver1 is less than ver2.
+ * @retval 0            If the image version numbers are equal.
+ * @retval 1            If ver1 is greater than ver2.
+ * @retval -EFAULT	If the PCD fails or unable to open the flash area.
+ */
+int pcd_version_cmp_net(const struct flash_area *fap, struct image_header *hdr)
+{
+	int err;
+	const struct fw_info *firmware_info;
+	uint32_t version = 0;
+	uint32_t read_buf[CONFIG_PCD_VERSION_PAGE_BUF_SIZE];
+
+	err = pcd_network_core_app_version((uint8_t *)&version, sizeof(version));
+	if (err != 0) {
+		return -EFAULT;
+	}
+
+	err = flash_area_read(fap, hdr->ih_load_addr, &read_buf,
+				ARRAY_SIZE(read_buf));
+	if (err != 0) {
+		return -EFAULT;
+	}
+
+	firmware_info = fw_info_find((uint32_t)&read_buf);
+	if (firmware_info != NULL) {
+
+		if (firmware_info->version > version) {
+			return 1;
+		}
+
+		if (firmware_info->version < version) {
+			return -1;
+		}
+
+		return 0;
+	}
+
+	return -EFAULT;
+}
+#endif
+
+int boot_read_image_header_hook(int img_index, int slot, struct image_header *img_head)
 {
 	if (img_index == 1 && slot == 0) {
 		img_head->ih_magic = IMAGE_MAGIC;
