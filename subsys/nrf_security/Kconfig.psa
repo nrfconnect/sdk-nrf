@@ -16,6 +16,7 @@ if MBEDTLS_PSA_CRYPTO_C
 
 config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 	bool
+	default y
 
 osource "modules/mbedtls/Kconfig.psa"
 
