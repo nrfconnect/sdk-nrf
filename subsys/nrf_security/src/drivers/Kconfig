@@ -85,7 +85,7 @@ config PSA_USE_CC3XX_MAC_DRIVER
 	  Enable CryptoCell for the PSA mac APIs. Enabling this
 	  will provide support for HMAC and CMAC.
 
-config PSA_USE_CC3XX_ECDH_DRIVER
+config PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER
 	prompt "Enable CryptoCell driver support for the PSA key agreement APIs"
 	bool
 	default y
@@ -93,7 +93,7 @@ config PSA_USE_CC3XX_ECDH_DRIVER
 	  Enable CryptoCell for the PSA key agreement APIs. Enabling this
 	  will provide support for key agreement with ECDH.
 
-config PSA_USE_CC3XX_SIGNATURE_DRIVER
+config PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER
 	prompt "Enable CryptoCell driver support for the PSA asymmetric signature APIs"
 	bool
 	default y
@@ -102,7 +102,7 @@ config PSA_USE_CC3XX_SIGNATURE_DRIVER
 	  will provide support signing/verification with ECDSA in deterministic
 	  and randomized modes and RSA in PKCS1V15 and PSS modes.
 
-config PSA_USE_CC3XX_ASYMMETRIC_DRIVER
+config PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER
 	prompt "Enable CryptoCell driver support for the PSA asymmetric encryption APIs"
 	bool
 	default y
@@ -111,13 +111,13 @@ config PSA_USE_CC3XX_ASYMMETRIC_DRIVER
 	  will provide support for assymetric encryption with RSA
 	  in PKCS1V15 and OAEP modes.
 
-config PSA_USE_CC3XX_KEY_PAIR_DRIVER
+config PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER
 	prompt "Enable CryptoCell driver support for the PSA key management APIs"
 	bool
 	default y
-	depends on PSA_USE_CC3XX_ASYMMETRIC_DRIVER || \
-		   PSA_USE_CC3XX_SIGNATURE_DRIVER  || \
-		   PSA_USE_CC3XX_ECDH_DRIVER
+	depends on PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER || \
+		   PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER  || \
+		   PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER
 	help
 	  Enabling this will provide support for key generation, key importing and
 	  public exporting for asymmetric keys. ECC and RSA keys are supported.
