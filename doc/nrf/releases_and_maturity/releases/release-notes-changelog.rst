@@ -267,6 +267,7 @@ Serial LTE modem
     Their functionality is merged into the ``#XGPS`` AT command that now allows using A-GNSS and P-GPS at the same time.
   * The AT command ``#XSLMUART``.
     UART is now configured using only devicetree.
+  * Socket option``SO_BINDTODEVICE``. It is replaced by ``SO_BINDTOPDN``.
 
 nRF5340 Audio
 -------------

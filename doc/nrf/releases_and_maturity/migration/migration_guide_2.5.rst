@@ -22,10 +22,17 @@ The following changes are mandatory to make your application work in the same wa
   * The :kconfig:option:`CONFIG_SLM_LOCATION` Kconfig option has been replaced by :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION` and is now enabled by default.
   * The ``#XCELLPOS`` and ``#XWIFIPOS`` AT commands have been replaced by ``#XNRFCLOUDPOS``.
   * The ``#XAGPS`` and ``#XPGPS`` AT commands have been replaced by ``#XGPS``.
-  * The operations to read (``6``) or erase (``8``) the MCUboot secondary slot have been removed from the ``#XFOTA`` AT command.
+  * The operations to update bootloader (``3``) and read (``6``) or erase (``8``) the MCUboot secondary slot have been removed from the ``#XFOTA`` AT command.
   * The ``#XSLMUART`` AT command has been removed.
     UART is now configured using only devicetree.
   * The :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN` Kconfig option has been renamed to :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN`.
+  * The ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` AT commands have been removed.
+  * Hardware flow control is now required for the UART.
+    If hardware flow control for the UART cannot be enabled, use the :kconfig:option:`CONFIG_SLM_UART_RX_BUF_SIZE` Kconfig option to ensure that there is adequate buffer space for the worst case scenario.
+  * UART TX now allows multiple AT command responses and notifications to be bundled together in a single transmission.
+    Ensure that you correctly parse multiple responses and notifications, and do not rely on UART disablement between them.
+  * The ``#XSOCKETOPT`` option ``SO_BINDTODEVICE`` has been replaced by ``SO_BINDTOPDN``.
+  * The value of the ``#XSSOCKETOPT`` option ``TLS_DTLS_HANDSHAKE_TIMEO`` has been updated.
 
 * Applications using MCUboot must update to setting their version using an :ref:`application VERSION file <zephyr:app-version-details>` instead of the previously used ``CONFIG_MCUBOOT_IMAGE_VERSION`` Kconfig option.
   Alternatively, you can set the version in Kconfig by using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` option, but using a :file:`VERSION` file is the recommended approach.
