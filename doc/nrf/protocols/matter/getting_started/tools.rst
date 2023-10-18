@@ -51,6 +51,10 @@ Depending on your system, you can install the CHIP Tool in one of the following 
   Make sure that the package is compatible with your |NCS| version.
 * For both Linux and macOS - Build it manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory and using the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 
+.. note::
+   To use CHIP Tool for macOS you need to have the appropriate Apple profile installed on your macOS machine.
+   To learn how to install the profile and work with Apple devices see the `Testing with Apple Devices`_ user guide in the Matter documentation.
+
 .. _ug_matter_gs_tools_zap:
 
 ZAP tool
