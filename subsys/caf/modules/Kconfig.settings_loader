@@ -27,7 +27,7 @@ config CAF_SETTINGS_LOADER_THREAD_STACK_SIZE
 	int "Settings module thread stack size"
 	depends on CAF_SETTINGS_LOADER_USE_THREAD
 	range 0 4096
-	default 1024
+	default 1200
 	help
 	  Stack size for thread responsible for loading
 	  settings from flash memory.
