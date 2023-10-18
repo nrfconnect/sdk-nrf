@@ -3677,6 +3677,14 @@ Trusted Firmware-M (TF-M)
 
 The issues in this section are related to the TF-M implementation in the |NCS|.
 
+.. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0
+
+NCSDK-22907: TF-M does not build with :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED` enabled and :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE` disabled
+  This fails with: Invalid config: NOT PS_ROLLBACK_PROTECTION and PS_ENCRYPTION and PSA_ALG_GCM or PSA_ALG_CCM! and
+  TFM_SP_PS is not defined
+
+  **Workaround:** Enable :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE` if encrypted ITS is used.
+
 .. rst-class:: v2-4-0
 
 NCSDK-22818: TF-M does not build with :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` disabled and :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` enabled
