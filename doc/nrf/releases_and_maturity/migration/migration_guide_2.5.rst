@@ -27,6 +27,9 @@ The following changes are mandatory to make your application work in the same wa
     UART is now configured using only devicetree.
   * The :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN` Kconfig option has been renamed to :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN`.
 
+* Applications using MCUboot must update to setting their version using an :ref:`application VERSION file <zephyr:app-version-details>` instead of the previously used ``CONFIG_MCUBOOT_IMAGE_VERSION`` Kconfig option.
+  Alternatively, you can set the version in Kconfig by using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` option, but using a :file:`VERSION` file is the recommended approach.
+
 Recommended changes
 *******************
 
@@ -44,6 +47,8 @@ The following changes are recommended for your application to work optimally aft
 * For the Serial LTE Modem (SLM) application:
   * If you are using the :ref:`liblwm2m_carrier_readme` library, make sure to take into account the addition of the auto-connect feature that is enabled by default.
   * When performing a modem firmware update, you can now reset only the modem (instead of the whole device) using the new ``#XMODEMRESET`` AT command.
+
+* Applications that use :file:`prj_<board>.conf` Kconfig configurations should be transitioned to using :file:`boards/<board>.conf` Kconfig fragments.
 
 .. HOWTO
 
