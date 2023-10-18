@@ -103,6 +103,7 @@ config TFM_PARTITION_INITIAL_ATTESTATION
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR
 	select PSA_WANT_ALG_ECDSA
 	select PSA_WANT_ECC_SECP_R1_256
+	select SECURE_BOOT_STORAGE
 	help
 	   We select "implementation ID" because it is a mandatory claim
 	   in the IAT.
