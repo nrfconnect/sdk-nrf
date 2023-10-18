@@ -318,6 +318,8 @@ nRF Desktop
     Scanning stop may lead to an edge case where the scanning is stopped, but there are no peripherals connected to the dongle.
   * Increased heap memory pool size (:kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE`) in nRF5340 Development Kit configurations.
     This is done to prevent Event Manger out of memory (OOM) error.
+  * Increased the stack size of a thread responsible for loading settings (:kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE`) to ``1200`` (default value) in the ``nrf52kbd_nrf52832`` configurations.
+    This is needed to prevent stack overflows on the initial boot right after programming the device.
 
 Thingy:53: Matter weather station
 ---------------------------------
