@@ -667,6 +667,11 @@ static void delayed_action_timeout(struct k_work *work)
 		turn_off(srv, &transition, true);
 	} else if (atomic_test_and_clear_bit(&srv->flags, FLAG_OCC_PENDING) &&
 		   (srv->state == LIGHT_CTRL_STATE_ON ||
+		    srv->state == LIGHT_CTRL_STATE_PROLONG ||
+		    (/* Fade Standby Auto */
+		     srv->state == LIGHT_CTRL_STATE_STANDBY &&
+		     !atomic_test_bit(&srv->flags, FLAG_ON) &&
+		     atomic_test_bit(&srv->flags, FLAG_TRANSITION)) ||
 		    atomic_test_bit(&srv->flags, FLAG_OCC_MODE))) {
 		turn_on(srv, NULL, true);
 	}
