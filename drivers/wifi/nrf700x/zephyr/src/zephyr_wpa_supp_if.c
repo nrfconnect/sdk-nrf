@@ -984,13 +984,23 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	struct nrf_wifi_umac_chg_sta_info chg_sta_info;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	enum nrf_wifi_status ret = NRF_WIFI_STATUS_FAIL;
+	struct net_if *iface = NULL;
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
+	iface = vif_ctx_zep->zep_net_if_ctx;
+	if (!iface) {
+		LOG_ERR("%s: Interface not found or not initialized\n", __func__);
+		return -1;
+	}
+
+	net_if_lock(iface);
+
 	if (vif_ctx_zep->if_op_state != NRF_WIFI_FMAC_IF_OP_STATE_UP) {
 		LOG_DBG("%s: Interface not UP, ignoring\n", __func__);
-		return 0;
+		ret = 0;
+		goto out;
 	}
 
 	memset(&chg_sta_info, 0x0, sizeof(chg_sta_info));
@@ -1010,10 +1020,14 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 
 	if (ret != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_chg_sta failed\n", __func__);
-		return -1;
+		ret = -1;
+		goto out;
 	}
 
-	return 0;
+	ret = 0;
+out:
+	net_if_unlock(iface);
+	return ret;
 }
 
 int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, unsigned char *bssid)
