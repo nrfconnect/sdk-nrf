@@ -55,11 +55,12 @@ struct bt_mesh_scheduler_srv;
 			BT_MESH_MODEL_USER_DATA(struct bt_mesh_scheduler_srv,  \
 						_srv),                         \
 			&_bt_mesh_scheduler_srv_cb),                           \
-	BT_MESH_MODEL(BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV,                    \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_SCHEDULER_SETUP_SRV,                    \
 			_bt_mesh_scheduler_setup_srv_op,                       \
 			NULL,                                                  \
 			BT_MESH_MODEL_USER_DATA(struct bt_mesh_scheduler_srv,  \
-						_srv))
+						_srv),						   \
+			&_bt_mesh_scheduler_setup_srv_cb)
 
 /** Scheduler Server model instance */
 struct bt_mesh_scheduler_srv {
@@ -132,6 +133,7 @@ int bt_mesh_scheduler_srv_time_update(struct bt_mesh_scheduler_srv *srv);
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_cb _bt_mesh_scheduler_srv_cb;
 extern const struct bt_mesh_model_op _bt_mesh_scheduler_srv_op[];
+extern const struct bt_mesh_model_cb _bt_mesh_scheduler_setup_srv_cb;
 extern const struct bt_mesh_model_op _bt_mesh_scheduler_setup_srv_op[];
 /** @endcond */
 
