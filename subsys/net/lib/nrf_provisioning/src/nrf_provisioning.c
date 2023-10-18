@@ -205,7 +205,6 @@ static int nrf_provisioning_set(const char *key, size_t len_rd,
 		return 0;
 	}
 
-
 	return -ENOENT;
 }
 

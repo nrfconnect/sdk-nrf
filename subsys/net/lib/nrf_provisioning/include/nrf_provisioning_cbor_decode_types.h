@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /*
- * Generated using zcbor version 0.6.0
+ * Generated using zcbor version 0.7.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of CONFIG_NRF_PROVISIONING_CBOR_RECORDS
  */
@@ -15,8 +15,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <string.h>
-#include "zcbor_decode.h"
+#include <zcbor_common.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** Which value for --default-max-qty this file was created with.
  *
@@ -31,17 +34,28 @@ struct at_command {
 	struct zcbor_string _at_command_set_command;
 	struct zcbor_string _at_command_parameters;
 	uint32_t _at_command_ignore_cme_errors_uint[6];
-	uint_fast32_t _at_command_ignore_cme_errors_uint_count;
+	size_t _at_command_ignore_cme_errors_uint_count;
 };
 
-struct properties_tstrtstr {
-	struct zcbor_string _config_properties_tstrtstr_key;
-	struct zcbor_string _properties_tstrtstr;
+struct properties_tstrunion_ {
+	struct zcbor_string _config_properties_tstrunion_key;
+	union {
+		struct zcbor_string _properties_tstrunion_tstr;
+		bool _properties_tstrunion_bool;
+		int32_t _properties_tstrunion_int;
+		struct zcbor_string _properties_tstrunion_bstr;
+	};
+	enum {
+		_properties_tstrunion_tstr,
+		_properties_tstrunion_bool,
+		_properties_tstrunion_int,
+		_properties_tstrunion_bstr,
+	} _properties_tstrunion_choice;
 };
 
 struct config {
-	struct properties_tstrtstr _properties_tstrtstr[100];
-	uint_fast32_t _properties_tstrtstr_count;
+	struct properties_tstrunion_ _properties_tstrunion[100];
+	size_t _properties_tstrunion_count;
 };
 
 struct command {
@@ -59,7 +73,11 @@ struct command {
 
 struct commands {
 	struct command _commands__command[CONFIG_NRF_PROVISIONING_CBOR_RECORDS];
-	uint_fast32_t _commands__command_count;
+	size_t _commands__command_count;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* NRF_PROVISIONING_CBOR_DECODE_TYPES_H__ */

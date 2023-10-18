@@ -179,6 +179,37 @@ static const unsigned char cbor_rsps4_valid[] = {
 	0x63, 0x30, 0x37, 0x61, 0x66, 0x66, 0x65, 0x63, 0x35, 0x64, 0x2E, 0x31, 0x34, 0x18, 0x65
 };
 
+/* [["e5256918-aba9-4d12-8b87-f2c07affec5d.14",1,{"provisioning/int":3600}]] */
+static unsigned char cbor_cmds5_valid[] = {
+	0x81, 0x83, 0x78, 0x27, 0x65, 0x35, 0x32, 0x35, 0x36, 0x39, 0x31, 0x38, 0x2D, 0x61, 0x62,
+	0x61, 0x39, 0x2D, 0x34, 0x64, 0x31, 0x32, 0x2D, 0x38, 0x62, 0x38, 0x37, 0x2D, 0x66, 0x32,
+	0x63, 0x30, 0x37, 0x61, 0x66, 0x66, 0x65, 0x63, 0x35, 0x64, 0x2E, 0x31, 0x34, 0x01, 0xA1,
+	0x70, 0x70, 0x72, 0x6F, 0x76, 0x69, 0x73, 0x69, 0x6F, 0x6E, 0x69, 0x6E, 0x67, 0x2F, 0x69,
+	0x6E, 0x74, 0x19, 0x0E, 0x10
+};
+
+/* [["e5256918-aba9-4d12-8b87-f2c07affec5d.14",1,{"provisioning/boolean:true}]] */
+static unsigned char cbor_cmds6_valid[] = {
+	0x81, 0x83, 0x78, 0x27, 0x65, 0x35, 0x32, 0x35, 0x36, 0x39, 0x31, 0x38, 0x2D, 0x61, 0x62,
+	0x61, 0x39, 0x2D, 0x34, 0x64, 0x31, 0x32, 0x2D, 0x38, 0x62, 0x38, 0x37, 0x2D, 0x66, 0x32,
+	0x63, 0x30, 0x37, 0x61, 0x66, 0x66, 0x65, 0x63, 0x35, 0x64, 0x2E, 0x31, 0x34, 0x01, 0xA1,
+	0x74, 0x70, 0x72, 0x6F, 0x76, 0x69, 0x73, 0x69, 0x6F, 0x6E, 0x69, 0x6E, 0x67, 0x2F, 0x62,
+	0x6F, 0x6F, 0x6C, 0x65, 0x61, 0x6E, 0xF5
+};
+
+/* [["e5256918-aba9-4d12-8b87-f2c07affec5d.14",1,{"provisioning/byte_string:
+ *	h'54657374696E67206279746520737472696E67'}]]
+ */
+static unsigned char cbor_cmds7_valid[] = {
+	0x81, 0x83, 0x78, 0x27, 0x65, 0x35, 0x32, 0x35, 0x36, 0x39, 0x31, 0x38, 0x2D,
+	0x61, 0x62, 0x61, 0x39, 0x2D, 0x34, 0x64, 0x31, 0x32, 0x2D, 0x38, 0x62, 0x38,
+	0x37, 0x2D, 0x66, 0x32, 0x63, 0x30, 0x37, 0x61, 0x66, 0x66, 0x65, 0x63, 0x35,
+	0x64, 0x2E, 0x31, 0x34, 0x01, 0xA1, 0x78, 0x18, 0x70, 0x72, 0x6F, 0x76, 0x69,
+	0x73, 0x69, 0x6F, 0x6E, 0x69, 0x6E, 0x67, 0x2F, 0x62, 0x79, 0x74, 0x65, 0x5F,
+	0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x53, 0x54, 0x65, 0x73, 0x74, 0x69, 0x6E,
+	0x67, 0x20, 0x62, 0x79, 0x74, 0x65, 0x20, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67
+};
+
 static int modem_key_mgmt_exists_true(nrf_sec_tag_t sec_tag,
 					enum modem_key_mgmt_cred_type cred_type,
 					bool *exists,
@@ -899,6 +930,116 @@ void test_codec_config_store1_valid(void)
 	nrf_provisioning_codec_teardown();
 }
 
+void test_codec_config_store_int_valid(void)
+{
+	struct cdc_context cdc_ctx;
+	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
+	int mm_cb_ret = 0;
+	int32_t value = 3600;
+
+	struct nrf_provisioning_mm_change dummy_cb = {
+		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
+	};
+
+	nrf_provisioning_codec_init(&dummy_cb);
+
+	cdc_ctx.ipkt = cbor_cmds5_valid;
+	cdc_ctx.ipkt_sz = sizeof(cbor_cmds5_valid);
+	cdc_ctx.opkt = tx_buff;
+	cdc_ctx.opkt_sz = sizeof(tx_buff);
+
+	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
+	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+
+	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
+
+	__cmock_settings_save_one_ExpectAndReturn(
+		"provisioning/int", &value, sizeof(value), 0);
+
+	int ret = nrf_provisioning_codec_process_commands();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	TEST_ASSERT_EQUAL_INT(0, memcmp(cbor_rsps4_valid, tx_buff, sizeof(cbor_rsps4_valid)));
+
+	nrf_provisioning_codec_teardown();
+}
+
+void test_codec_config_store_bool_valid(void)
+{
+	struct cdc_context cdc_ctx;
+	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
+	int mm_cb_ret = 0;
+	bool value = true;
+
+	struct nrf_provisioning_mm_change dummy_cb = {
+		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
+	};
+
+	nrf_provisioning_codec_init(&dummy_cb);
+
+	cdc_ctx.ipkt = cbor_cmds6_valid;
+	cdc_ctx.ipkt_sz = sizeof(cbor_cmds6_valid);
+	cdc_ctx.opkt = tx_buff;
+	cdc_ctx.opkt_sz = sizeof(tx_buff);
+
+	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
+	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+
+	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
+
+	__cmock_settings_save_one_ExpectAndReturn(
+		"provisioning/boolean", &value, sizeof(value), 0);
+
+	int ret = nrf_provisioning_codec_process_commands();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	TEST_ASSERT_EQUAL_INT(0, memcmp(cbor_rsps4_valid, tx_buff, sizeof(cbor_rsps4_valid)));
+
+	nrf_provisioning_codec_teardown();
+}
+
+void test_codec_config_store_bstr_valid(void)
+{
+	struct cdc_context cdc_ctx;
+	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
+	int mm_cb_ret = 0;
+	unsigned char value[] = {0x54, 0x65, 0x73, 0x74, 0x69, 0x6E, 0x67, 0x20, 0x62, 0x79,
+				 0x74, 0x65, 0x20, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67};
+
+	struct nrf_provisioning_mm_change dummy_cb = {nrf_provisioning_mm_cb_dummy, &mm_cb_ret};
+
+	nrf_provisioning_codec_init(&dummy_cb);
+
+	cdc_ctx.ipkt = cbor_cmds7_valid;
+	cdc_ctx.ipkt_sz = sizeof(cbor_cmds7_valid);
+	cdc_ctx.opkt = tx_buff;
+	cdc_ctx.opkt_sz = sizeof(tx_buff);
+
+	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
+	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+
+	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
+
+	__cmock_settings_save_one_ExpectAndReturn(
+		"provisioning/byte_string", value, sizeof(value), 0);
+
+	int ret = nrf_provisioning_codec_process_commands();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	TEST_ASSERT_EQUAL_INT(0, memcmp(cbor_rsps4_valid, tx_buff, sizeof(cbor_rsps4_valid)));
+
+	nrf_provisioning_codec_teardown();
+}
+
 /*
  * - Detect invalid CBOR payload
  * - To see that an invalid encoding is detected
@@ -1317,7 +1458,6 @@ void test_provisioning_schedule_no_nw_time_valid(void)
 	TEST_ASSERT_LESS_OR_EQUAL_INT(
 		CONFIG_NRF_PROVISIONING_INTERVAL_S + CONFIG_NRF_PROVISIONING_SPREAD_S, ret);
 }
-
 
 extern int unity_main(void);
 

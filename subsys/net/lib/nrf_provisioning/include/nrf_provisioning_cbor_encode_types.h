@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 /*
- * Generated using zcbor version 0.6.0
+ * Generated using zcbor version 0.7.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 1234567890
  */
@@ -15,8 +15,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <string.h>
-#include "zcbor_encode.h"
+#include <zcbor_common.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** Which value for --default-max-qty this file was created with.
  *
@@ -52,7 +55,11 @@ struct response {
 
 struct responses {
 	struct response _responses__response[CONFIG_NRF_PROVISIONING_CBOR_RECORDS];
-	uint_fast32_t _responses__response_count;
+	size_t _responses__response_count;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* NRF_PROVISIONING_CBOR_ENCODE_TYPES_H__ */

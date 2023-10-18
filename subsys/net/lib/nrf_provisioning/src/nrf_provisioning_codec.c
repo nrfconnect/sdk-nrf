@@ -351,7 +351,7 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 	struct config *aconf = &cmd_req->_command_union__config;
 	int max_key_sz = 1;
 	int max_value_sz = 1;
-	struct properties_tstrtstr *pair;
+	struct properties_tstrunion_ *pair;
 	char *key;
 	char *value = NULL;
 	int ret = 0;
@@ -360,21 +360,18 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 	size_t resp_sz = CONFIG_NRF_PROVISIONING_CODEC_RX_SZ_START;
 
 	/* Figure out the max key and value legths */
-	for (int i = 0; i < aconf->_properties_tstrtstr_count; i++) {
-		pair = &aconf->_properties_tstrtstr[i];
+	for (int i = 0; i < aconf->_properties_tstrunion_count; i++) {
+		pair = &aconf->_properties_tstrunion[i];
 
-		max_key_sz = MAX(max_key_sz, pair->_config_properties_tstrtstr_key.len + 1);
-		max_value_sz = MAX(max_value_sz, pair->_properties_tstrtstr.len + 1);
+		max_key_sz = MAX(max_key_sz, pair->_config_properties_tstrunion_key.len + 1);
+
+		if (pair->_properties_tstrunion_choice == _properties_tstrunion_tstr) {
+			max_value_sz = MAX(max_value_sz, pair->_properties_tstrunion_tstr.len + 1);
+		}
 	}
 
 	key = k_malloc(max_key_sz);
 	if (!key) {
-		ret = -ENOMEM;
-		goto exit;
-	}
-
-	value = k_malloc(max_value_sz);
-	if (!value) {
 		ret = -ENOMEM;
 		goto exit;
 	}
@@ -385,33 +382,87 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		goto exit;
 	}
 
-	LOG_DBG("Storing %d key-value pair/s", aconf->_properties_tstrtstr_count);
+	LOG_DBG("Storing %d key-value pair/s", aconf->_properties_tstrunion_count);
 
-	for (int i = 0; i < aconf->_properties_tstrtstr_count; i++) {
-		pair = &aconf->_properties_tstrtstr[i];
+	for (int i = 0; i < aconf->_properties_tstrunion_count; i++) {
+		pair = &aconf->_properties_tstrunion[i];
 
-		ret = charseq2cstr(key, &pair->_config_properties_tstrtstr_key, max_key_sz);
+		ret = charseq2cstr(key, &pair->_config_properties_tstrunion_key, max_key_sz);
 		if (ret < 0) {
 			LOG_WRN("Unable to store key: %s; err: %d", key, ret);
 			snprintk(resp, resp_sz, "key [%d](0-indexed) too big", i);
 			goto exit;
 		}
 
-		ret = charseq2cstr(value, &pair->_properties_tstrtstr, max_value_sz);
-		if (ret < 0) {
-			LOG_WRN("Unable to store value: %s; err: %d", value, ret);
-			snprintk(resp, resp_sz, "value [%d](0-indexed) too big", i);
-			goto exit;
-		}
+		switch (pair->_properties_tstrunion_choice) {
+		case _properties_tstrunion_tstr:
+			value = k_malloc(max_value_sz);
+			if (!value) {
+				ret = -ENOMEM;
+				goto exit;
+			}
 
-		ret = settings_save_one(key, value, strlen(value)+1);
-		if (ret) {
-			snprintk(resp, resp_sz,
-				"unable to store [%d](0-indexed) key-value-pair", i);
-			LOG_WRN("Unable to store key: %s; value: %s; err: %d", key, value, ret);
+			ret = charseq2cstr(value, &pair->_properties_tstrunion_tstr, max_value_sz);
+			if (ret < 0) {
+				LOG_WRN("Unable to store value: %s; err: %d", value, ret);
+				snprintk(resp, resp_sz, "value [%d](0-indexed) too big", i);
+				goto exit;
+			}
+
+			ret = settings_save_one(key, value, strlen(value) + 1);
+			if (ret) {
+				snprintk(resp, resp_sz,
+					 "unable to store [%d](0-indexed) key-value-pair", i);
+				LOG_WRN("Unable to store key: %s; value: %s; err: %d", key, value,
+					ret);
+				goto exit;
+			}
+			LOG_DBG("Stored key: \"%s\"; value: \"%s\"", key, value);
+			break;
+		case _properties_tstrunion_int:
+			ret = settings_save_one(key, &pair->_properties_tstrunion_int,
+						sizeof(pair->_properties_tstrunion_int));
+			if (ret) {
+				snprintk(resp, resp_sz,
+					 "unable to store [%d](0-indexed) key-value-pair", i);
+				LOG_WRN("Unable to store key: %s; value: %d; err: %d", key,
+					pair->_properties_tstrunion_int, ret);
+				goto exit;
+			}
+			LOG_DBG("Stored key: \"%s\"; value: %d", key,
+				pair->_properties_tstrunion_int);
+			break;
+		case _properties_tstrunion_bool:
+			ret = settings_save_one(key, &pair->_properties_tstrunion_bool,
+						sizeof(pair->_properties_tstrunion_bool));
+			if (ret) {
+				snprintk(resp, resp_sz,
+					 "unable to store [%d](0-indexed) key-value-pair", i);
+				LOG_WRN("Unable to store key: %s; value: %d; err: %d", key,
+					pair->_properties_tstrunion_bool, ret);
+				goto exit;
+			}
+			LOG_DBG("Stored key: \"%s\"; value: %d", key,
+				pair->_properties_tstrunion_bool);
+			break;
+		case _properties_tstrunion_bstr:
+			ret = settings_save_one(key, pair->_properties_tstrunion_bstr.value,
+						pair->_properties_tstrunion_bstr.len);
+			if (ret) {
+				snprintk(resp, resp_sz,
+					 "unable to store [%d](0-indexed) key-value-pair ", i);
+				LOG_WRN(" Unable to store key : %s; err : %d ", key, ret);
+				goto exit;
+			}
+			LOG_DBG("Stored key: \"%s\"", key);
+			LOG_HEXDUMP_DBG(pair->_properties_tstrunion_bstr.value,
+					pair->_properties_tstrunion_bstr.len, "value");
+			break;
+		default:
+			__ASSERT_NO_MSG(false);
+			ret = -ENOSYS;
 			goto exit;
 		}
-		LOG_DBG("Stored key: \"%s\"; value: \"%s\"", key, value);
 	}
 
 	/* No error to report */
