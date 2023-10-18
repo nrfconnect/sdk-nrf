@@ -10,6 +10,7 @@
 #include <zephyr/logging/log.h>
 
 #ifdef CONFIG_PCD_NET
+#include <fw_info_bare.h>
 #include <zephyr/storage/stream_flash.h>
 #endif
 
@@ -21,6 +22,8 @@ LOG_MODULE_REGISTER(pcd, CONFIG_PCD_LOG_LEVEL);
 #define PCD_CMD_MAGIC_FAIL 0x25bafc15
 /** Magic value written to indicate that a copy is done. */
 #define PCD_CMD_MAGIC_DONE 0xf103ce5d
+/** Magic value written to indicate that a version number read should take place. */
+#define PCD_CMD_MAGIC_READ_VERSION 0xdca345ea
 
 #ifdef CONFIG_PCD_APP
 
@@ -62,11 +65,13 @@ enum pcd_status pcd_fw_copy_status_get(void)
 {
 	if (cmd->magic == PCD_CMD_MAGIC_COPY) {
 		return PCD_STATUS_COPY;
+	} else if (cmd->magic == PCD_CMD_MAGIC_READ_VERSION) {
+		return PCD_STATUS_READ_VERSION;
 	} else if (cmd->magic == PCD_CMD_MAGIC_DONE) {
-		return PCD_STATUS_COPY_DONE;
+		return PCD_STATUS_DONE;
 	}
 
-	return PCD_STATUS_COPY_FAILED;
+	return PCD_STATUS_FAILED;
 }
 
 const void *pcd_cmd_data_ptr_get(void)
@@ -75,6 +80,24 @@ const void *pcd_cmd_data_ptr_get(void)
 }
 
 #ifdef CONFIG_PCD_NET
+int pcd_find_fw_version(void)
+{
+	const struct fw_info *firmware_info;
+
+	if (cmd->magic != PCD_CMD_MAGIC_READ_VERSION) {
+		return -EFAULT;
+	}
+
+	firmware_info = fw_info_find(PM_APP_ADDRESS);
+
+	if (firmware_info != NULL) {
+		memcpy((void *)cmd->data, &firmware_info->version, cmd->len);
+		cmd->len = sizeof(firmware_info->version);
+		return 0;
+	}
+
+	return -EFAULT;
+}
 
 int pcd_fw_copy(const struct device *fdev)
 {
@@ -105,7 +128,7 @@ int pcd_fw_copy(const struct device *fdev)
 	return 0;
 }
 
-void pcd_fw_copy_done(void)
+void pcd_done(void)
 {
 	/* Signal complete by setting magic to DONE */
 	cmd->magic = PCD_CMD_MAGIC_DONE;
@@ -143,13 +166,13 @@ static void network_core_finished_check_handler(struct k_timer *timer)
  *
  * @retval non-negative integer on success, negative errno code on failure.
  */
-static int pcd_cmd_write(const void *data, size_t len, off_t offset)
+static int pcd_cmd_write(uint32_t command, const void *data, size_t len, off_t offset)
 {
 	if (data == NULL || len == 0) {
 		return -EINVAL;
 	}
 
-	cmd->magic = PCD_CMD_MAGIC_COPY;
+	cmd->magic = command;
 	cmd->data = data;
 	cmd->len = len;
 	cmd->offset = offset;
@@ -157,17 +180,21 @@ static int pcd_cmd_write(const void *data, size_t len, off_t offset)
 	return 0;
 }
 
-static int network_core_pcd_cmdset(const void *src_addr, size_t len, bool wait)
+static int network_core_pcd_cmdset(uint32_t cmd, const void *src_addr, size_t len, bool wait)
 {
 	int err;
+	enum pcd_status command_status;
+
 	/* Ensure that the network core is turned off */
 	nrf_reset_network_force_off(NRF_RESET, true);
 
-	err = pcd_cmd_write(src_addr, len, PCD_NET_CORE_APP_OFFSET);
+	err = pcd_cmd_write(cmd, src_addr, len, PCD_NET_CORE_APP_OFFSET);
 	if (err != 0) {
 		LOG_INF("Error while writing PCD cmd: %d", err);
 		return err;
 	}
+
+	enum pcd_status initial_command_status = pcd_fw_copy_status_get();
 
 	nrf_reset_network_force_off(NRF_RESET, false);
 	LOG_INF("Turned on network core");
@@ -182,18 +209,36 @@ static int network_core_pcd_cmdset(const void *src_addr, size_t len, bool wait)
 		 */
 		k_busy_wait(1 * USEC_PER_SEC);
 
-		err = pcd_fw_copy_status_get();
-	} while (err == PCD_STATUS_COPY);
+		command_status = pcd_fw_copy_status_get();
+	} while (command_status == initial_command_status);
 
-	if (err == PCD_STATUS_COPY_FAILED) {
+	if (command_status == PCD_STATUS_FAILED) {
 		LOG_ERR("Network core update failed");
-		return err;
+		network_core_pcd_tidy();
+		return -EFAULT;
 	}
 
 	nrf_reset_network_force_off(NRF_RESET, true);
 	LOG_INF("Turned off network core");
 	network_core_pcd_tidy();
 	return 0;
+}
+
+int pcd_network_core_app_version(uint8_t *buf, size_t len)
+{
+	if (buf == NULL || len < 4) {
+		return -EINVAL;
+	}
+
+	/* Configure nRF5340 Network MCU into Secure domain (bus
+	 * accesses by Network MCU will have Secure attribute set).
+	 * This is needed for the network core to be able to read the
+	 * shared RAM area used for IPC.
+	 */
+
+	nrf_spu_extdomain_set(NRF_SPU, 0, true, false);
+
+	return network_core_pcd_cmdset(PCD_CMD_MAGIC_READ_VERSION, buf, len, true);
 }
 
 static int network_core_update(const void *src_addr, size_t len, bool wait)
@@ -205,7 +250,7 @@ static int network_core_update(const void *src_addr, size_t len, bool wait)
 	 */
 	nrf_spu_extdomain_set(NRF_SPU, 0, true, false);
 
-	return network_core_pcd_cmdset(src_addr, len, wait);
+	return network_core_pcd_cmdset(PCD_CMD_MAGIC_COPY, src_addr, len, wait);
 }
 
 int pcd_network_core_update_initiate(const void *src_addr, size_t len)

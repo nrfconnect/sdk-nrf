@@ -39,8 +39,23 @@ int main(void)
 
 	uint32_t s0_addr = s0_address_read();
 	bool valid = false;
+	uint8_t status = pcd_fw_copy_status_get();
 
-	if (pcd_fw_copy_status_get() == PCD_STATUS_COPY) {
+	if (status == PCD_STATUS_READ_VERSION) {
+		err = pcd_find_fw_version();
+		if (err < 0) {
+			printk("Unable to find valid firmware version %d\n\r", err);
+			pcd_fw_copy_invalidate();
+		}
+		pcd_done();
+
+		/* Success, waiting to be rebooted */
+		while (1)
+			;
+		CODE_UNREACHABLE;
+	}
+
+	if (status == PCD_STATUS_COPY) {
 		/* First we validate the data where the PCD CMD tells
 		 * us that we can find it.
 		 */
@@ -66,7 +81,7 @@ int main(void)
 		 */
 		valid = bl_validate_firmware(s0_addr, s0_addr);
 		if (valid) {
-			pcd_fw_copy_done();
+			pcd_done();
 		} else {
 			printk("Unable to find valid firmware inside %p\n\r",
 				(void *)s0_addr);
