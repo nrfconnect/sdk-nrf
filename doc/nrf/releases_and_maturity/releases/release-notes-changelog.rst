@@ -301,6 +301,9 @@ nRF Desktop
   * Kconfig option to configure a motion generated per second during a button press (:ref:`CONFIG_DESKTOP_MOTION_BUTTONS_MOTION_PER_SEC <config_desktop_app_options>`) in the :ref:`nrf_desktop_motion`.
     The implementation relies on the hardware clock instead of system uptime to improve accuracy of the motion data generated when pressing a button.
   * The :ref:`nrf_desktop_measuring_hid_report_rate` section in the nRF Desktop documentation.
+  * A new :ref:`nrf_desktop_config_channel` request (``CONFIG_STATUS_GET_PEERS_CACHE``).
+    The request is handled by the :ref:`nrf_desktop_hid_forward` and can be used to detect changes in the set of connected Bluetooth® LE peripherals.
+    For details, see the :ref:`nrf_desktop_config_channel` documentation.
 
 * Updated:
 
