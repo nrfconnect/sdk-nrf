@@ -37,7 +37,7 @@ extern uint32_t rpu_7002_memmap[][3];
 int rpu_read(unsigned int addr, void *data, int len);
 int rpu_write(unsigned int addr, const void *data, int len);
 
-int  rpu_qspi_init(void);
+int rpu_qspi_init(void);
 int rpu_sleep(void);
 int rpu_wakeup(void);
 int rpu_sleep_status(void);
