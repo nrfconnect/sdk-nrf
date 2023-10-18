@@ -27,7 +27,13 @@ ZTEST(pcd_test, test_pcd_network_core_update)
 	zassert_not_equal(err, 0, "Unexpected success");
 
 	status = pcd_fw_copy_status_get();
-	zassert_equal(status, PCD_STATUS_COPY_FAILED, "Unexpected success");
+	zassert_equal(status, PCD_STATUS_FAILED, "Unexpected success");
+
+	err = pcd_network_core_app_version((uint8_t *)&data, sizeof(data));
+	zassert_not_equal(err, 0, "Unexpected success");
+
+	status = pcd_fw_copy_status_get();
+	zassert_equal(status, PCD_STATUS_FAILED, "Unexpected success");
 }
 
 ZTEST_SUITE(pcd_test, NULL, NULL, NULL, NULL, NULL);

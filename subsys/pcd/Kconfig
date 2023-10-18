@@ -18,6 +18,11 @@ endif
 config PCD_APP
 	bool "Peripheral CPU DFU Support for Application Processor"
 	default y if SOC_SERIES_NRF53X && MCUBOOT && BT_RPMSG
+	select FW_INFO_API if !SECURE_BOOT
+
+config PCD_VERSION_PAGE_BUF_SIZE
+	int
+	default 2046
 
 config PCD_NET
 	bool "Peripheral CPU DFU Support for Network Processor"
