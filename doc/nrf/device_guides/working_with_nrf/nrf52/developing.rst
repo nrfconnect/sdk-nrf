@@ -125,11 +125,15 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mod
 Both the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` and :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT` Kconfig options automatically enable :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT`, which allows to build application update images for both slots.
 To see which files are built when the option is enabled, go to the :ref:`app_build_mcuboot_output` page.
 
+.. fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
+
 .. note::
    Support for FOTA updates with MCUboot in the direct-xip mode is available since the following versions of the `nRF Connect Device Manager`_ mobile app:
 
    * Version ``1.8.0`` on Android.
    * Version ``1.4.0`` on iOS.
+
+.. fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
 
 .. fota_upgrades_over_ble_mcuboot_direct_xip_information_end
 
@@ -140,9 +144,14 @@ Testing steps
 
 To perform a FOTA update, complete the following steps:
 
-1. Create a binary file that contains the new image.
+.. fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
 
-   |fota_upgrades_building|
+1. Generate the DFU package by building your application with the FOTA support over Bluetooth Low Energy.
+   You can find the generated :file:`dfu_application.zip` archive in the following directory :file:`<build_dir>/zephyr`.
+
+   .. note::
+      For each image included in the DFU-generated package, use a higher version number than your currently active firmware.
+      Otherwise, the DFU target may reject the FOTA process due to a downgrade prevention mechanism.
 
 #. Download the :file:`dfu_application.zip` archive to your device.
    See :ref:`app_build_fota` for more information about the contents of update archive.
@@ -163,6 +172,8 @@ To perform a FOTA update, complete the following steps:
       * If you are using an iOS device, tap the selected mode in the pop-up window.
 
    #. Wait for the DFU to finish and then verify that the application works properly.
+
+.. fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 
 FOTA update sample
 ==================
