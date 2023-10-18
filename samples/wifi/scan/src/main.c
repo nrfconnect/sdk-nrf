@@ -355,7 +355,10 @@ int main(void)
 							net_if_get_link_addr(iface)->len));
 	}
 
-	wifi_scan();
+	while (1) {
+		wifi_scan();
+		k_sleep(K_SECONDS(CONFIG_WIFI_SCAN_INTERVAL_S));
+	}
 
 	return 0;
 }
