@@ -11,18 +11,18 @@
 #include "psa/crypto.h"
 #include "oberon_cipher.h"
 
-#if defined(PSA_NEED_OBERON_AES_CTR) || defined(PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG)
+#if defined(PSA_NEED_OBERON_CTR_AES) || defined(PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES)
 #include "ocrypto_aes_ctr.h"
 #endif
-#if defined(PSA_NEED_OBERON_AES_CBC_PKCS7) || defined(PSA_NEED_OBERON_AES_CBC_NO_PADDING) || defined(PSA_NEED_OBERON_AES_ECB_NO_PADDING)
+#if defined(PSA_NEED_OBERON_CBC_PKCS7_AES) || defined(PSA_NEED_OBERON_CBC_NO_PADDING_AES) ||       \
+	defined(PSA_NEED_OBERON_ECB_NO_PADDING_AES)
 #include "ocrypto_aes_cbc_pkcs.h"
 #endif
-#ifdef PSA_NEED_OBERON_CHACHA20
+#ifdef PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20
 #include "ocrypto_chacha20.h"
 #endif
 
-
-#ifdef PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG
+#ifdef PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES
 static void oberon_aes_ccm_star_set_iv(
     ocrypto_aes_ctr_ctx *ctx,
     const uint8_t iv[13])
@@ -34,8 +34,7 @@ static void oberon_aes_ccm_star_set_iv(
     counter[15] = 1; // initial count
     ocrypto_aes_ctr_init(ctx, NULL, 0, counter);
 }
-#endif /* PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-
+#endif /* PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
 
 static psa_status_t oberon_cipher_setup(
     oberon_cipher_operation_t *operation,
@@ -43,7 +42,7 @@ static psa_status_t oberon_cipher_setup(
     const uint8_t *key, size_t key_length,
     psa_algorithm_t alg, uint8_t decrypt)
 {
-#ifdef PSA_NEED_OBERON_CHACHA20
+#ifdef PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20
     _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_chacha20_ctx), "oberon_cipher_operation_t.ctx too small");
     if (alg == PSA_ALG_STREAM_CIPHER && psa_get_key_type(attributes) == PSA_KEY_TYPE_CHACHA20) {
         if (key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
@@ -52,40 +51,44 @@ static psa_status_t oberon_cipher_setup(
         operation->alg = alg;
         return PSA_SUCCESS;
     }
-#endif /* PSA_NEED_OBERON_CHACHA20 */
+#endif /* PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20 */
 
     if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) return PSA_ERROR_NOT_SUPPORTED;
     if (key_length != 16 && key_length != 24 && key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
 
     switch (alg) {
-#if defined(PSA_NEED_OBERON_AES_CTR) || defined(PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG)
-    _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_ctr_ctx), "oberon_cipher_operation_t.ctx too small");
-#ifdef PSA_NEED_OBERON_AES_CTR
+#if defined(PSA_NEED_OBERON_CTR_AES) || defined(PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES)
+	_Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_ctr_ctx),
+		       "oberon_cipher_operation_t.ctx too small");
+#ifdef PSA_NEED_OBERON_CTR_AES
     case PSA_ALG_CTR:
-#endif /* PSA_NEED_OBERON_AES_CTR */
-#ifdef PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG
+#endif /* PSA_NEED_OBERON_CTR_AES */
+#ifdef PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES
     case PSA_ALG_CCM_STAR_NO_TAG:
-#endif /* PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-        ocrypto_aes_ctr_init((ocrypto_aes_ctr_ctx*)operation->ctx, key, key_length, NULL);
-        break;
-#endif /* PSA_NEED_OBERON_AES_CTR || PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-#ifdef PSA_NEED_OBERON_AES_CBC_PKCS7
-    _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_cbc_pkcs_ctx), "oberon_cipher_operation_t.ctx too small");
+#endif /* PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
+	ocrypto_aes_ctr_init((ocrypto_aes_ctr_ctx *)operation->ctx, key, key_length, NULL);
+	break;
+#endif /* PSA_NEED_OBERON_CTR_AES || PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
+#ifdef PSA_NEED_OBERON_CBC_PKCS7_AES
+	_Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_cbc_pkcs_ctx),
+		       "oberon_cipher_operation_t.ctx too small");
     case PSA_ALG_CBC_PKCS7:
         ocrypto_aes_cbc_pkcs_init((ocrypto_aes_cbc_pkcs_ctx*)operation->ctx, key, key_length, NULL, decrypt);
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 */
-#if defined(PSA_NEED_OBERON_AES_CBC_NO_PADDING) || defined(PSA_NEED_OBERON_AES_ECB_NO_PADDING)
-    _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_cbc_pkcs_ctx), "oberon_cipher_operation_t.ctx too small");
-#ifdef PSA_NEED_OBERON_AES_CBC_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES */
+#if defined(PSA_NEED_OBERON_CBC_NO_PADDING_AES) || defined(PSA_NEED_OBERON_ECB_NO_PADDING_AES)
+	_Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_cbc_pkcs_ctx),
+		       "oberon_cipher_operation_t.ctx too small");
+#ifdef PSA_NEED_OBERON_CBC_NO_PADDING_AES
     case PSA_ALG_CBC_NO_PADDING:
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING */
-#ifdef PSA_NEED_OBERON_AES_ECB_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES */
+#ifdef PSA_NEED_OBERON_ECB_NO_PADDING_AES
     case PSA_ALG_ECB_NO_PADDING:
-#endif /* PSA_NEED_OBERON_AES_ECB_NO_PADDING */
-        ocrypto_aes_cbc_pkcs_init((ocrypto_aes_cbc_pkcs_ctx*)operation->ctx, key, key_length, NULL, decrypt * 2);
-        break;
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING || PSA_NEED_OBERON_AES_ECB_NO_PADDING */
+#endif /* PSA_NEED_OBERON_ECB_NO_PADDING_AES */
+	ocrypto_aes_cbc_pkcs_init((ocrypto_aes_cbc_pkcs_ctx *)operation->ctx, key, key_length, NULL,
+				  decrypt * 2);
+	break;
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES || PSA_NEED_OBERON_ECB_NO_PADDING_AES */
     default:
         (void)key;
         return PSA_ERROR_NOT_SUPPORTED;
@@ -119,35 +122,37 @@ psa_status_t oberon_cipher_set_iv(
     const uint8_t *iv, size_t iv_length)
 {
     switch (operation->alg) {
-#ifdef PSA_NEED_OBERON_CHACHA20
+#ifdef PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20
     case PSA_ALG_STREAM_CIPHER:
         if (iv_length != 12) return PSA_ERROR_INVALID_ARGUMENT;
         ocrypto_chacha20_init((ocrypto_chacha20_ctx*)operation->ctx, iv, 12, NULL, 0);
         break;
-#endif /* PSA_NEED_OBERON_CHACHA20 */
-#ifdef PSA_NEED_OBERON_AES_CTR
+#endif /* PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20 */
+#ifdef PSA_NEED_OBERON_CTR_AES
     case PSA_ALG_CTR:
         if (iv_length != 16) return PSA_ERROR_INVALID_ARGUMENT;
         ocrypto_aes_ctr_init((ocrypto_aes_ctr_ctx*)operation->ctx, NULL, 0, iv);
         break;
-#endif /* PSA_NEED_OBERON_AES_CTR */
-#ifdef PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG
+#endif /* PSA_NEED_OBERON_CTR_AES */
+#ifdef PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES
     case PSA_ALG_CCM_STAR_NO_TAG:
         if (iv_length != 13) return PSA_ERROR_INVALID_ARGUMENT;
         oberon_aes_ccm_star_set_iv((ocrypto_aes_ctr_ctx*)operation->ctx, iv);
         break;
-#endif /* PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-#if defined(PSA_NEED_OBERON_AES_CBC_PKCS7) || defined(PSA_NEED_OBERON_AES_CBC_NO_PADDING)
-#ifdef PSA_NEED_OBERON_AES_CBC_PKCS7
+#endif /* PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
+#if defined(PSA_NEED_OBERON_CBC_PKCS7_AES) || defined(PSA_NEED_OBERON_CBC_NO_PADDING_AES)
+#ifdef PSA_NEED_OBERON_CBC_PKCS7_AES
     case PSA_ALG_CBC_PKCS7:
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 */
-#ifdef PSA_NEED_OBERON_AES_CBC_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES */
+#ifdef PSA_NEED_OBERON_CBC_NO_PADDING_AES
     case PSA_ALG_CBC_NO_PADDING:
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING */
-        if (iv_length != 16) return PSA_ERROR_INVALID_ARGUMENT;
-        ocrypto_aes_cbc_pkcs_init((ocrypto_aes_cbc_pkcs_ctx*)operation->ctx, NULL, 0, iv, 0);
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES */
+	if (iv_length != 16) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+	ocrypto_aes_cbc_pkcs_init((ocrypto_aes_cbc_pkcs_ctx*)operation->ctx, NULL, 0, iv, 0);
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 || PSA_NEED_OBERON_AES_CBC_NO_PADDING */
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES || PSA_NEED_OBERON_CBC_NO_PADDING_AES */
     default:
         (void)iv;
         (void)iv_length;
@@ -165,41 +170,46 @@ psa_status_t oberon_cipher_update(
     size_t out_len;
     
     switch (operation->alg) {
-#ifdef PSA_NEED_OBERON_CHACHA20
+#ifdef PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20
     case PSA_ALG_STREAM_CIPHER:
         if (output_size < input_length) return PSA_ERROR_BUFFER_TOO_SMALL;
         ocrypto_chacha20_update((ocrypto_chacha20_ctx*)operation->ctx, output, input, input_length);
         *output_length = input_length;
         break;
-#endif /* PSA_NEED_OBERON_CHACHA20 */
-#if defined(PSA_NEED_OBERON_AES_CTR) || defined(PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG)
-#ifdef PSA_NEED_OBERON_AES_CTR
+#endif /* PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20 */
+#if defined(PSA_NEED_OBERON_CTR_AES) || defined(PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES)
+#ifdef PSA_NEED_OBERON_CTR_AES
     case PSA_ALG_CTR:
-#endif /* PSA_NEED_OBERON_AES_CTR */
-#ifdef PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG
+#endif /* PSA_NEED_OBERON_CTR_AES */
+#ifdef PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES
     case PSA_ALG_CCM_STAR_NO_TAG:
-#endif /* PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-        if (output_size < input_length) return PSA_ERROR_BUFFER_TOO_SMALL;
-        ocrypto_aes_ctr_update((ocrypto_aes_ctr_ctx*)operation->ctx, output, input, input_length);
+#endif /* PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
+	if (output_size < input_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+	ocrypto_aes_ctr_update((ocrypto_aes_ctr_ctx*)operation->ctx, output, input, input_length);
         *output_length = input_length;
         break;
-#endif /* PSA_NEED_OBERON_AES_CTR || PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-#if defined(PSA_NEED_OBERON_AES_CBC_PKCS7) || defined(PSA_NEED_OBERON_AES_CBC_NO_PADDING) || defined(PSA_NEED_OBERON_AES_ECB_NO_PADDING)
-#ifdef PSA_NEED_OBERON_AES_CBC_PKCS7
+#endif /* PSA_NEED_OBERON_CTR_AES || PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
+#if defined(PSA_NEED_OBERON_CBC_PKCS7_AES) || defined(PSA_NEED_OBERON_CBC_NO_PADDING_AES) ||       \
+	defined(PSA_NEED_OBERON_ECB_NO_PADDING_AES)
+#ifdef PSA_NEED_OBERON_CBC_PKCS7_AES
     case PSA_ALG_CBC_PKCS7:
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 */
-#ifdef PSA_NEED_OBERON_AES_CBC_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES */
+#ifdef PSA_NEED_OBERON_CBC_NO_PADDING_AES
     case PSA_ALG_CBC_NO_PADDING:
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING */
-#ifdef PSA_NEED_OBERON_AES_ECB_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES */
+#ifdef PSA_NEED_OBERON_ECB_NO_PADDING_AES
     case PSA_ALG_ECB_NO_PADDING:
-#endif /* PSA_NEED_OBERON_AES_ECB_NO_PADDING */
-        out_len = ocrypto_aes_cbc_pkcs_output_size((ocrypto_aes_cbc_pkcs_ctx*)operation->ctx, input_length);
-        if (output_size < out_len) return PSA_ERROR_BUFFER_TOO_SMALL;
+#endif /* PSA_NEED_OBERON_ECB_NO_PADDING_AES */
+	out_len = ocrypto_aes_cbc_pkcs_output_size((ocrypto_aes_cbc_pkcs_ctx *)operation->ctx,
+						   input_length);
+	if (output_size < out_len) return PSA_ERROR_BUFFER_TOO_SMALL;
         ocrypto_aes_cbc_pkcs_update((ocrypto_aes_cbc_pkcs_ctx*)operation->ctx, output, input, input_length);
         *output_length = out_len;
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 || PSA_NEED_OBERON_AES_CBC_NO_PADDING || PSA_NEED_OBERON_AES_ECB_NO_PADDING */
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES || PSA_NEED_OBERON_CBC_NO_PADDING_AES ||                   \
+	  PSA_NEED_OBERON_ECB_NO_PADDING_AES */
     default:
         (void)input;
         (void)input_length;
@@ -221,7 +231,7 @@ psa_status_t oberon_cipher_finish(
     *output_length = 0;
 
     switch (operation->alg) {
-#ifdef PSA_NEED_OBERON_AES_CBC_PKCS7
+#ifdef PSA_NEED_OBERON_CBC_PKCS7_AES
     case PSA_ALG_CBC_PKCS7:
         if (output_size < 16) return PSA_ERROR_BUFFER_TOO_SMALL;
         if (operation->decrypt) {
@@ -235,19 +245,19 @@ psa_status_t oberon_cipher_finish(
             *output_length = 16;
         }
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 */
-#if defined(PSA_NEED_OBERON_AES_CBC_NO_PADDING) || defined(PSA_NEED_OBERON_AES_ECB_NO_PADDING)
-#ifdef PSA_NEED_OBERON_AES_CBC_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES */
+#if defined(PSA_NEED_OBERON_CBC_NO_PADDING_AES) || defined(PSA_NEED_OBERON_ECB_NO_PADDING_AES)
+#ifdef PSA_NEED_OBERON_CBC_NO_PADDING_AES
     case PSA_ALG_CBC_NO_PADDING:
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING */
-#ifdef PSA_NEED_OBERON_AES_ECB_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES */
+#ifdef PSA_NEED_OBERON_ECB_NO_PADDING_AES
     case PSA_ALG_ECB_NO_PADDING:
-#endif /* PSA_NEED_OBERON_AES_ECB_NO_PADDING */
-        if (ocrypto_aes_cbc_pkcs_output_size((ocrypto_aes_cbc_pkcs_ctx *)operation->ctx, 15) > 0) {
-            return PSA_ERROR_INVALID_ARGUMENT;
-        }
-        break;
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING || PSA_NEED_OBERON_AES_ECB_NO_PADDING */
+#endif /* PSA_NEED_OBERON_ECB_NO_PADDING_AES */
+	if (ocrypto_aes_cbc_pkcs_output_size((ocrypto_aes_cbc_pkcs_ctx *)operation->ctx, 15) > 0) {
+	    return PSA_ERROR_INVALID_ARGUMENT;
+	}
+	break;
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES || PSA_NEED_OBERON_ECB_NO_PADDING_AES */
     default:
         (void)output;
         (void)output_size;
@@ -268,13 +278,14 @@ psa_status_t oberon_cipher_abort(
 
 
 typedef union {
-#if defined(PSA_NEED_OBERON_AES_CTR) || defined(PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG)
+#if defined(PSA_NEED_OBERON_CTR_AES) || defined(PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES)
     ocrypto_aes_ctr_ctx ctr;
 #endif
-#if defined(PSA_NEED_OBERON_AES_CBC_PKCS7) || defined(PSA_NEED_OBERON_AES_CBC_NO_PADDING) || defined(PSA_NEED_OBERON_AES_ECB_NO_PADDING)
+#if defined(PSA_NEED_OBERON_CBC_PKCS7_AES) || defined(PSA_NEED_OBERON_CBC_NO_PADDING_AES) ||       \
+	defined(PSA_NEED_OBERON_ECB_NO_PADDING_AES)
     ocrypto_aes_cbc_pkcs_ctx cbc;
 #endif
-#ifdef PSA_NEED_OBERON_CHACHA20
+#ifdef PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20
     ocrypto_chacha20_ctx ch;
 #endif
     int dummy;
@@ -291,7 +302,7 @@ psa_status_t oberon_cipher_encrypt(
     ocrypto_context ctx;
     size_t out_len;
 
-#ifdef PSA_NEED_OBERON_CHACHA20
+#ifdef PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20
     if (alg == PSA_ALG_STREAM_CIPHER && psa_get_key_type(attributes) == PSA_KEY_TYPE_CHACHA20) {
         if (key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
         if (iv_length != 12) return PSA_ERROR_INVALID_ARGUMENT;
@@ -301,13 +312,13 @@ psa_status_t oberon_cipher_encrypt(
         ocrypto_chacha20_update(&ctx.ch, output, input, input_length);
         return PSA_SUCCESS;
     }
-#endif /* PSA_NEED_OBERON_CHACHA20 */
+#endif /* PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20 */
 
     if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) return PSA_ERROR_NOT_SUPPORTED;
     if (key_length != 16 && key_length != 24 && key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
 
     switch (alg) {
-#ifdef PSA_NEED_OBERON_AES_CTR
+#ifdef PSA_NEED_OBERON_CTR_AES
     case PSA_ALG_CTR:
         if (iv_length != 16) return PSA_ERROR_INVALID_ARGUMENT;
         if (output_size < input_length) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -315,8 +326,8 @@ psa_status_t oberon_cipher_encrypt(
         ocrypto_aes_ctr_init(&ctx.ctr, key, key_length, iv);
         ocrypto_aes_ctr_update(&ctx.ctr, output, input, input_length);
         break;
-#endif /* PSA_NEED_OBERON_AES_CTR */
-#ifdef PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG
+#endif /* PSA_NEED_OBERON_CTR_AES */
+#ifdef PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES
     case PSA_ALG_CCM_STAR_NO_TAG:
         if (iv_length != 13) return PSA_ERROR_INVALID_ARGUMENT;
         if (output_size < input_length) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -325,8 +336,8 @@ psa_status_t oberon_cipher_encrypt(
         oberon_aes_ccm_star_set_iv(&ctx.ctr, iv);
         ocrypto_aes_ctr_update(&ctx.ctr, output, input, input_length);
         break;
-#endif /* PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-#ifdef PSA_NEED_OBERON_AES_CBC_PKCS7
+#endif /* PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
+#ifdef PSA_NEED_OBERON_CBC_PKCS7_AES
     case PSA_ALG_CBC_PKCS7:
         if (iv_length != 16) return PSA_ERROR_INVALID_ARGUMENT;
         out_len = (input_length + 16) & ~15; // next multiple of block size
@@ -336,8 +347,8 @@ psa_status_t oberon_cipher_encrypt(
         ocrypto_aes_cbc_pkcs_update(&ctx.cbc, output, input, input_length);
         ocrypto_aes_cbc_pkcs_final_enc(&ctx.cbc, output + (input_length & ~15));
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 */
-#ifdef PSA_NEED_OBERON_AES_CBC_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES */
+#ifdef PSA_NEED_OBERON_CBC_NO_PADDING_AES
     case PSA_ALG_CBC_NO_PADDING:
         if (iv_length != 16) return PSA_ERROR_INVALID_ARGUMENT;
         if ((input_length & 15) != 0) return PSA_ERROR_INVALID_ARGUMENT;
@@ -346,8 +357,8 @@ psa_status_t oberon_cipher_encrypt(
         ocrypto_aes_cbc_pkcs_init(&ctx.cbc, key, key_length, iv, 0);
         ocrypto_aes_cbc_pkcs_update(&ctx.cbc, output, input, input_length);
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING */
-#ifdef PSA_NEED_OBERON_AES_ECB_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES */
+#ifdef PSA_NEED_OBERON_ECB_NO_PADDING_AES
     case PSA_ALG_ECB_NO_PADDING:
         if (iv_length != 0) return PSA_ERROR_INVALID_ARGUMENT;
         if ((input_length & 15) != 0) return PSA_ERROR_INVALID_ARGUMENT;
@@ -356,7 +367,7 @@ psa_status_t oberon_cipher_encrypt(
         ocrypto_aes_cbc_pkcs_init(&ctx.cbc, key, key_length, NULL, 0);
         ocrypto_aes_cbc_pkcs_update(&ctx.cbc, output, input, input_length);
         break;
-#endif /* PSA_NEED_OBERON_AES_ECB_NO_PADDING */
+#endif /* PSA_NEED_OBERON_ECB_NO_PADDING_AES */
     default:
         (void)key;
         (void)iv;
@@ -384,7 +395,7 @@ psa_status_t oberon_cipher_decrypt(
     ocrypto_context ctx;
     int res;
 
-#ifdef PSA_NEED_OBERON_CHACHA20
+#ifdef PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20
     if (alg == PSA_ALG_STREAM_CIPHER && psa_get_key_type(attributes) == PSA_KEY_TYPE_CHACHA20) {
         if (input_length < 12) return PSA_ERROR_INVALID_ARGUMENT;
         if (key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
@@ -394,13 +405,13 @@ psa_status_t oberon_cipher_decrypt(
         ocrypto_chacha20_update(&ctx.ch, output, input + 12, input_length - 12);
         return PSA_SUCCESS;
     }
-#endif /* PSA_NEED_OBERON_CHACHA20 */
+#endif /* PSA_NEED_OBERON_STREAM_CIPHER_CHACHA20 */
 
     if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) return PSA_ERROR_NOT_SUPPORTED;
     if (key_length != 16 && key_length != 24 && key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
 
     switch (alg) {
-#ifdef PSA_NEED_OBERON_AES_CTR
+#ifdef PSA_NEED_OBERON_CTR_AES
     case PSA_ALG_CTR:
         if (input_length < 16) return PSA_ERROR_INVALID_ARGUMENT;
         if (output_size < input_length - 16) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -408,8 +419,8 @@ psa_status_t oberon_cipher_decrypt(
         ocrypto_aes_ctr_init(&ctx.ctr, key, key_length, input);
         ocrypto_aes_ctr_update(&ctx.ctr, output, input + 16, input_length - 16);
         break;
-#endif /* PSA_NEED_OBERON_AES_CTR */
-#ifdef PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG
+#endif /* PSA_NEED_OBERON_CTR_AES */
+#ifdef PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES
     case PSA_ALG_CCM_STAR_NO_TAG:
         if (input_length < 13) return PSA_ERROR_INVALID_ARGUMENT;
         if (output_size < input_length - 13) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -418,8 +429,8 @@ psa_status_t oberon_cipher_decrypt(
         oberon_aes_ccm_star_set_iv(&ctx.ctr, input);
         ocrypto_aes_ctr_update(&ctx.ctr, output, input + 13, input_length - 13);
         break;
-#endif /* PSA_NEED_OBERON_AES_CCM_STAR_NO_TAG */
-#ifdef PSA_NEED_OBERON_AES_CBC_PKCS7
+#endif /* PSA_NEED_OBERON_CCM_STAR_NO_TAG_AES */
+#ifdef PSA_NEED_OBERON_CBC_PKCS7_AES
     case PSA_ALG_CBC_PKCS7:
         if (input_length < 32 || (input_length & 15) != 0) return PSA_ERROR_INVALID_ARGUMENT;
         if (output_size < input_length - 16) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -429,8 +440,8 @@ psa_status_t oberon_cipher_decrypt(
         if (res) return PSA_ERROR_INVALID_PADDING;
         *output_length += input_length - 32;
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_PKCS7 */
-#ifdef PSA_NEED_OBERON_AES_CBC_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_PKCS7_AES */
+#ifdef PSA_NEED_OBERON_CBC_NO_PADDING_AES
     case PSA_ALG_CBC_NO_PADDING:
         if (input_length < 16 || (input_length & 15) != 0) return PSA_ERROR_INVALID_ARGUMENT;
         if (output_size < input_length - 16) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -438,8 +449,8 @@ psa_status_t oberon_cipher_decrypt(
         ocrypto_aes_cbc_pkcs_init(&ctx.cbc, key, key_length, input, 2);
         ocrypto_aes_cbc_pkcs_update(&ctx.cbc, output, input + 16, input_length - 16);
         break;
-#endif /* PSA_NEED_OBERON_AES_CBC_NO_PADDING */
-#ifdef PSA_NEED_OBERON_AES_ECB_NO_PADDING
+#endif /* PSA_NEED_OBERON_CBC_NO_PADDING_AES */
+#ifdef PSA_NEED_OBERON_ECB_NO_PADDING_AES
     case PSA_ALG_ECB_NO_PADDING:
         if ((input_length & 15) != 0) return PSA_ERROR_INVALID_ARGUMENT;
         if (output_size < input_length) return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -447,7 +458,7 @@ psa_status_t oberon_cipher_decrypt(
         ocrypto_aes_cbc_pkcs_init(&ctx.cbc, key, key_length, NULL, 2);
         ocrypto_aes_cbc_pkcs_update(&ctx.cbc, output, input, input_length);
         break;
-#endif /* PSA_NEED_OBERON_AES_ECB_NO_PADDING */
+#endif /* PSA_NEED_OBERON_ECB_NO_PADDING_AES */
     default:
         (void)key;
         (void)input;

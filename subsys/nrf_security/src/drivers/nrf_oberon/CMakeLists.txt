@@ -27,22 +27,33 @@ endif()
 if (COMPILE_PSA_APIS)
   list(APPEND src_crypto_oberon
        ${drivers_path}/oberon_helpers.c
+       ${drivers_path}/oberon_ecdh.c
+       ${drivers_path}/oberon_ecdsa.c
+       ${drivers_path}/oberon_ec_keys.c
+       ${drivers_path}/oberon_jpake.c
+       ${drivers_path}/oberon_spake2p.c
+       ${drivers_path}/oberon_srp.c
   )
 
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_PAIR_DRIVER     src_crypto_oberon ${drivers_path} oberon_key_pair.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_AEAD_DRIVER         src_crypto_oberon ${drivers_path} oberon_aead.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KDF_DRIVER          src_crypto_oberon ${drivers_path} oberon_kdf.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_MAC_DRIVER          src_crypto_oberon ${drivers_path} oberon_mac.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CIPHER_DRIVER       src_crypto_oberon ${drivers_path} oberon_cipher.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_RSA_DRIVER          src_crypto_oberon ${drivers_path} oberon_rsa.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HASH_DRIVER         src_crypto_oberon ${drivers_path} oberon_hash.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ECDSA_DRIVER        src_crypto_oberon ${drivers_path} oberon_ecdsa.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ECDH_DRIVER         src_crypto_oberon ${drivers_path} oberon_ecdh.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_JPAKE_DRIVER        src_crypto_oberon ${drivers_path} oberon_jpake.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_SPAKE2P_DRIVER      src_crypto_oberon ${drivers_path} oberon_spake2p.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_SRP_DRIVER          src_crypto_oberon ${drivers_path} oberon_srp.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CTR_DRBG_DRIVER     src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
-  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HMAC_DRBG_DRIVER    src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
+  # This is a workaroudn to avoid a build warning since oberon_rsa.c has an unused variable when RSA is not enabled.
+  if(CONFIG_PSA_NEED_OBERON_RSA_ANY_CRYPT OR CONFIG_PSA_NEED_OBERON_RSA_ANY_SIGN OR CONFIG_PSA_NEED_OBERON_KEY_MANAGEMENT_RSA)
+    list(APPEND src_crypto_oberon
+        ${drivers_path}/oberon_rsa.c
+    )
+  endif()
+
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER        src_crypto_oberon ${drivers_path} oberon_key_management.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_AEAD_DRIVER                  src_crypto_oberon ${drivers_path} oberon_aead.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_DERIVATION_DRIVER        src_crypto_oberon ${drivers_path} oberon_key_derivation.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_MAC_DRIVER                   src_crypto_oberon ${drivers_path} oberon_mac.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CIPHER_DRIVER                src_crypto_oberon ${drivers_path} oberon_cipher.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HASH_DRIVER                  src_crypto_oberon ${drivers_path} oberon_hash.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_AGREEMENT_DRIVER         src_crypto_oberon ${drivers_path} oberon_key_agreement.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_PAKE_DRIVER                  src_crypto_oberon ${drivers_path} oberon_pake.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER  src_crypto_oberon ${drivers_path} oberon_asymmetric_signature.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ASYMMETRIC_ENCRYPTION_DRIVER src_crypto_oberon ${drivers_path} oberon_asymmetric_encrypt.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CTR_DRBG_DRIVER              src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
+  append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HMAC_DRBG_DRIVER             src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
 
   target_sources(${mbedcrypto_target} PRIVATE ${src_crypto_oberon})
 endif()

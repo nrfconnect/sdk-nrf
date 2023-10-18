@@ -182,7 +182,7 @@ static inline struct psa_aead_operation_s psa_aead_operation_init( void )
 
 /* Include the context definition for the compiled-in drivers for the kdf
  * algorithms. */
-#include "psa/crypto_driver_contexts_kdf.h"
+#include "psa/crypto_driver_contexts_key_derivation.h"
 
 struct psa_key_derivation_s  /*!!OM*/
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2022-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -36,11 +36,11 @@
 #include "cc3xx_crypto_primitives.h"
 #endif
 
-#if defined(PSA_NEED_OBERON_MAC_DRIVER)
-#include "oberon_mac.h"
-#endif
 #if defined(PSA_NEED_OBERON_AEAD_DRIVER)
 #include "oberon_aead.h"
+#endif
+#if defined(PSA_NEED_OBERON_MAC_DRIVER)
+#include "oberon_mac.h"
 #endif
 
 /* Define the context to be used for an operation that is executed through the

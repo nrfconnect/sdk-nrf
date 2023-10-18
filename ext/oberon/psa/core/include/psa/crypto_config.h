@@ -120,9 +120,8 @@
 #define PSA_USE_HMAC_DRBG_DRIVER                1
 
 /* Hardware driver demonstration */
-#define PSA_USE_ENTROPY_DEMO_DRIVER             1
-//#define PSA_USE_HARDWARE_DEMO_DRIVER            1
-#define PSA_USE_OPAQUE_DEMO_DRIVER              1
-
+#define PSA_USE_DEMO_ENTROPY_DRIVER 1
+// #define PSA_USE_DEMO_HARDWARE_DRIVER            1
+#define PSA_USE_DEMO_OPAQUE_DRIVER  1
 
 #endif /* PSA_CRYPTO_CONFIG_H */
