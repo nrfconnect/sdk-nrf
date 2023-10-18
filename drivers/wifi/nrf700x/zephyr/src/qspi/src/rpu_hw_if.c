@@ -144,7 +144,7 @@ int rpu_irq_remove(struct gpio_callback *irq_callback_data)
 }
 
 
-int ble_gpio_config(void)
+static int ble_gpio_config(void)
 {
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
@@ -163,7 +163,7 @@ int ble_gpio_config(void)
 }
 
 
-int rpu_gpio_config(void)
+static int rpu_gpio_config(void)
 {
 	int ret;
 
@@ -198,7 +198,7 @@ int rpu_gpio_config(void)
 	return 0;
 }
 
-int rpu_pwron(void)
+static int rpu_pwron(void)
 {
 	int ret;
 
@@ -230,7 +230,7 @@ int rpu_pwron(void)
 	return 0;
 }
 
-int rpu_pwroff(void)
+static int rpu_pwroff(void)
 {
 	gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
 	gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
