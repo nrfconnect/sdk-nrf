@@ -162,6 +162,15 @@ static int ble_gpio_config(void)
 #endif /* CONFIG_BOARD_NRF700XDK_NRF5340 */
 }
 
+static int ble_gpio_remove(void)
+{
+	#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
+		defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+		return gpio_pin_configure_dt(&btrf_switch_spec, GPIO_DISCONNECTED);
+	#else
+		return 0;
+	#endif
+}
 
 static int rpu_gpio_config(void)
 {
@@ -196,6 +205,26 @@ static int rpu_gpio_config(void)
 	LOG_DBG("GPIO configuration done...\n\n");
 
 	return 0;
+}
+
+static int rpu_gpio_remove(void)
+{
+	int ret;
+
+	ret = gpio_pin_configure_dt(&bucken_spec, GPIO_DISCONNECTED);
+	if (ret) {
+		LOG_ERR("BUCKEN GPIO remove failed...\n");
+		return ret;
+	}
+
+	ret = gpio_pin_configure_dt(&iovdd_ctrl_spec, GPIO_DISCONNECTED);
+	if (ret) {
+		LOG_ERR("IOVDD GPIO remove failed...\n");
+		return ret;
+	}
+
+	LOG_DBG("GPIO remove done...\n\n");
+	return ret;
 }
 
 static int rpu_pwron(void)
@@ -234,14 +263,6 @@ static int rpu_pwroff(void)
 {
 	gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
 	gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
-
-	gpio_pin_configure_dt(&bucken_spec, GPIO_DISCONNECTED);
-	gpio_pin_configure_dt(&iovdd_ctrl_spec, GPIO_DISCONNECTED);
-
-#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
-	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
-	gpio_pin_configure_dt(&btrf_switch_spec, GPIO_DISCONNECTED);
-#endif
 
 	return 0;
 }
@@ -375,6 +396,8 @@ int rpu_enable(void)
 int rpu_disable(void)
 {
 	rpu_pwroff();
+	rpu_gpio_remove();
+	ble_gpio_remove();
 
 	return 0;
 }
