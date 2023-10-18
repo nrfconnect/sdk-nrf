@@ -1188,6 +1188,7 @@ Documentation
 
 * Updated:
 
+  * :ref:`samples` with separate sections for :ref:`keys_samples` and :ref:`peripheral_samples`, which were previously listed in :ref:`other_samples`.
   * The :ref:`emds_readme` library documentation with :ref:`emds_readme_application_integration` section about the formula used to compute the required storage time at shutdown in a worst case scenario.
   * The structure of the :ref:`nrf_modem_lib_readme` documentation.
   * The structure of the |NCS| documentation at its top level, with the following major changes:

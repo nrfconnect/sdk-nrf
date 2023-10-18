@@ -33,11 +33,13 @@ General information about samples in the |NCS|
    samples/edge
    samples/esb
    samples/gazell
+   samples/keys
    samples/matter
    samples/multicore
    samples/net
    samples/nfc
    samples/nrf5340
+   samples/peripheral
    samples/pmic
    samples/sensor
    samples/tfm
