@@ -1056,6 +1056,11 @@ Common Application Framework (CAF)
 
   * Reduced verbosity of logs denoting allowed power states from ``info`` to ``debug``.
 
+* :ref:`caf_settings_loader`:
+
+  * Increased the default stack size of a thread responsible for loading settings (:kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE`) to ``1200``.
+    A bigger thread stack size prevents stack overflows on the initial boot right after programming the device.
+
 Shell libraries
 ---------------
 
