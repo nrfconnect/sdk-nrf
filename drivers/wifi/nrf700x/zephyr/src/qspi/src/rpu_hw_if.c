@@ -256,15 +256,26 @@ static int rpu_pwron(void)
 	LOG_DBG("Bucken = %d, IOVDD = %d\n", gpio_pin_get_dt(&bucken_spec),
 			gpio_pin_get_dt(&iovdd_ctrl_spec));
 
-	return 0;
+	return ret;
 }
 
 static int rpu_pwroff(void)
 {
-	gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
-	gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
+	int ret;
 
-	return 0;
+	ret = gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
+	if (ret) {
+		LOG_ERR("BUCKEN GPIO set failed...\n");
+		return ret;
+	}
+
+	ret = gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
+	if (ret) {
+		LOG_ERR("IOVDD GPIO set failed...\n");
+		return ret;
+	}
+
+	return ret;
 }
 
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
@@ -322,9 +333,18 @@ int rpu_sleep(void)
 
 int rpu_wakeup(void)
 {
-	rpu_wrsr2(1);
-	rpu_rdsr2();
-	rpu_rdsr1();
+	int ret;
+
+	ret = rpu_wrsr2(1);
+	if (ret) {
+		LOG_ERR("Error: WRSR2 failed\n");
+		return ret;
+	}
+
+	/* These return actual values not return values */
+	(void)rpu_rdsr2();
+
+	(void)rpu_rdsr1();
 
 	return 0;
 }
@@ -336,21 +356,39 @@ int rpu_sleep_status(void)
 
 void rpu_get_sleep_stats(uint32_t addr, uint32_t *buff, uint32_t wrd_len)
 {
-	rpu_wakeup();
-	rpu_read(addr, buff, wrd_len * 4);
-	rpu_sleep();
+	int ret;
+
+	ret = rpu_wakeup();
+	if (ret) {
+		LOG_ERR("Error: RPU wakeup failed\n");
+		return;
+	}
+
+	ret = rpu_read(addr, buff, wrd_len * 4);
+	if (ret) {
+		LOG_ERR("Error: RPU read failed\n");
+		return;
+	}
+
+	ret = rpu_sleep();
+	if (ret) {
+		LOG_ERR("Error: RPU sleep failed\n");
+		return;
+	}
 }
 
 int rpu_wrsr2(uint8_t data)
 {
+	int ret;
+
 #if CONFIG_NRF700X_ON_QSPI
-	qspi_cmd_wakeup_rpu(&qspi_perip, data);
+	ret = qspi_cmd_wakeup_rpu(&qspi_perip, data);
 #else
-	spim_cmd_rpu_wakeup_fn(data);
+	ret = spim_cmd_rpu_wakeup_fn(data);
 #endif
 
 	LOG_DBG("Written 0x%x to WRSR2\n", data);
-	return 0;
+	return ret;
 }
 
 int rpu_rdsr2(void)
