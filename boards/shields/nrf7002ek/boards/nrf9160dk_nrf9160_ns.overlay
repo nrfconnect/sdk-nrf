@@ -9,3 +9,31 @@
 &uart1 {
 	status = "disabled";
 };
+
+/* Typically we use GPIO extender to resolve these conflicts but the
+ * GPIO pin used by extender itself conflicts with Wi-Fi (0.6), so,
+ * disable LEDs and Button0/1.
+ */
+&led0 {
+	status = "disabled";
+};
+
+&led1 {
+	status = "disabled";
+};
+
+&led2 {
+	status = "disabled";
+};
+
+&led3 {
+	status = "disabled";
+};
+
+&button0 {
+	status = "disabled";
+};
+
+&button1 {
+	status = "disabled";
+};
