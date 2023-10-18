@@ -209,18 +209,17 @@ int rpu_pwron(void)
 	}
 	/* Settling time is 50us (H0) or 100us (L0) */
 	k_msleep(1);
+
 	ret = gpio_pin_set_dt(&iovdd_ctrl_spec, 1);
 	if (ret) {
 		LOG_ERR("IOVDD GPIO set failed...\n");
 		return ret;
 	}
-
 	/* Settling time for iovdd nRF7002 DK/EK - switch (TCK106AG): ~600us */
 	k_msleep(1);
-
 #ifdef CONFIG_SHIELD_NRF7002EB
-	/* For nRF7002 Evaluation board, we need a total time after bucken assertion
-	 * to be 6ms (2ms+4ms)
+	/* For nRF7002 Expansion board, we need a total wait time after bucken assertion
+	 * to be 6ms (1ms + 1ms + 4ms).
 	 */
 	k_msleep(4);
 #endif /* SHIELD_NRF7002EB */
