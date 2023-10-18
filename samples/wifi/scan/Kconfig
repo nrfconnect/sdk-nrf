@@ -16,6 +16,12 @@ config WIFI_MAC_ADDRESS
 		use the default MAC address (locally administrative). This is only used
 		when the nRF7002 OTP is not programmed with a MAC address.
 
+config WIFI_SCAN_INTERVAL_S
+	int "Scan interval (seconds)"
+	default 10
+	help
+	  Specifies the scan interval in seconds.
+
 config WIFI_SCAN_BANDS_LIST
 	string "Frequency bands to scan"
 	default "2" if WIFI_SCAN_PROFILE_2_4GHz_ACTIVE || WIFI_SCAN_PROFILE_2_4GHz_PASSIVE || WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
