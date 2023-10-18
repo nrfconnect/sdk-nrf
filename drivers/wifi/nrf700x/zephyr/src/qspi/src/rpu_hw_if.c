@@ -119,6 +119,10 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 {
 	int ret;
 
+	if (!device_is_ready(host_irq_spec.port)) {
+		return -ENODEV;
+	}
+
 	ret = gpio_pin_configure_dt(&host_irq_spec, GPIO_INPUT);
 
 	ret = gpio_pin_interrupt_configure_dt(&host_irq_spec,
@@ -181,10 +185,6 @@ static int rpu_gpio_config(void)
 	}
 
 	if (!device_is_ready(bucken_spec.port)) {
-		return -ENODEV;
-	}
-
-	if (!device_is_ready(host_irq_spec.port)) {
 		return -ENODEV;
 	}
 
