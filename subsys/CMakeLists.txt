@@ -63,8 +63,9 @@ if (CONFIG_NFC_T2T_NRFXLIB OR
     CONFIG_NFC_TNEP_POLLER)
         add_subdirectory(nfc)
 endif()
-
-add_subdirectory_ifdef(CONFIG_FW_INFO	fw_info)
+if(CONFIG_FW_INFO OR CONFIG_FW_INFO_API)
+  add_subdirectory(fw_info)
+endif()
 add_subdirectory(shell)
 
 add_subdirectory(debug)

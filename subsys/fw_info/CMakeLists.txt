@@ -9,6 +9,10 @@ if (CONFIG_FW_INFO)
   zephyr_linker_sources(RODATA ext_apis.ld)
 endif ()
 
+if (CONFIG_FW_INFO_API)
+  zephyr_library()
+endif()
+
 zephyr_linker_sources_ifdef(CONFIG_FW_INFO
   ROM_START
   SORT_KEY ${CONFIG_FW_INFO_OFFSET}
