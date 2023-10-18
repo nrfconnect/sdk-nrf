@@ -764,7 +764,7 @@ static enum nrf_wifi_status umac_event_rf_test_process(struct nrf_wifi_fmac_dev_
 			nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 			"Temperature reading failed\n");
 		} else {
-			nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+			nrf_wifi_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 			"The temperature is = %d degree celsius\n",
 			rf_test_get_temperature.temperature);
 		}
@@ -774,7 +774,7 @@ static enum nrf_wifi_status umac_event_rf_test_process(struct nrf_wifi_fmac_dev_
 			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 			sizeof(rf_get_rf_rssi));
 
-		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 		"RF RSSI value is = %d\n",
 		rf_get_rf_rssi.agc_status_val);
 		break;
@@ -783,7 +783,7 @@ static enum nrf_wifi_status umac_event_rf_test_process(struct nrf_wifi_fmac_dev_
 			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 			sizeof(xo_calib_params));
 
-		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 		"XO value configured is = %d\n",
 		xo_calib_params.xo_val);
 		break;
@@ -792,7 +792,7 @@ static enum nrf_wifi_status umac_event_rf_test_process(struct nrf_wifi_fmac_dev_
 			(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 			sizeof(rf_get_xo_value_params));
 
-		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+		nrf_wifi_osal_log_info(fmac_dev_ctx->fpriv->opriv,
 		"Best XO value is = %d\n",
 		rf_get_xo_value_params.xo_value);
 		break;
