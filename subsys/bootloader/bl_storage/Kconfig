@@ -6,4 +6,3 @@
 
 config SECURE_BOOT_STORAGE
 	bool "Library for accessing the bootloader storage"
-	depends on SECURE_BOOT_CRYPTO
