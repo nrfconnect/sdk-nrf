@@ -765,9 +765,6 @@ static enum nrf_wifi_status umac_event_rf_test_process(struct nrf_wifi_fmac_dev_
 			"Temperature reading failed\n");
 		} else {
 			nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
-			"Temperature reading success: \t");
-
-			nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
 			"The temperature is = %d degree celsius\n",
 			rf_test_get_temperature.temperature);
 		}
