@@ -15,6 +15,11 @@
 #include <stdarg.h>
 #include "osal_structs.h"
 
+/* Have to match zephyr/include/zephyr/logging/log_core.h */
+#define NRF_WIFI_LOG_LEVEL_ERR  1U
+#define NRF_WIFI_LOG_LEVEL_INF  3U
+#define NRF_WIFI_LOG_LEVEL_DBG  4U
+
 #ifndef CONFIG_NRF700X_LOG_VERBOSE
 #define __func__ "<snipped>"
 #endif /* CONFIG_NRF700X_LOG_VERBOSE */
@@ -318,7 +323,7 @@ void nrf_wifi_osal_spinlock_irq_rel(struct nrf_wifi_osal_priv *opriv,
 				     unsigned long *flags);
 
 
-#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= LOG_LEVEL_DBG
+#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
 /**
  * nrf_wifi_osal_log_dbg() - Log a debug message.
  * @opriv: Pointer to the OSAL context returned by the @nrf_wifi_osal_init API.
@@ -336,7 +341,7 @@ int nrf_wifi_osal_log_dbg(struct nrf_wifi_osal_priv *opriv,
 #endif
 
 
-#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= LOG_LEVEL_INF
+#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 /**
  * nrf_wifi_osal_log_info() - Log a informational message.
  * @opriv: Pointer to the OSAL context returned by the @nrf_wifi_osal_init API.
@@ -354,7 +359,7 @@ int nrf_wifi_osal_log_info(struct nrf_wifi_osal_priv *opriv,
 #endif
 
 
-#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= LOG_LEVEL_ERR
+#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_ERR
 /**
  * nrf_wifi_osal_log_err() - Logs an error message.
  * @opriv: Pointer to the OSAL context returned by the @nrf_wifi_osal_init API.
