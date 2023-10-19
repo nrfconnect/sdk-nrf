@@ -39,7 +39,7 @@ static void wifi_set_mode(int mode_val)
 
 int main(void)
 {
-	int status, mode;
+	int mode;
 #ifdef CONFIG_RAW_TX_PACKET_SAMPLE_STA_ONLY_MODE
 	mode = BIT(0);
 #elif CONFIG_RAW_TX_PACKET_SAMPLE_STA_TX_INJECTION_MODE
@@ -47,10 +47,14 @@ int main(void)
 #endif
 	wifi_set_mode(mode);
 
+#ifdef CONFIG_RAW_TX_PACKET_SAMPLE_CONNECTION_MODE
+	int status;
+
 	status = try_wifi_connect();
 	if (status < 0) {
 		return status;
 	}
+#endif
 
 	return 0;
 }

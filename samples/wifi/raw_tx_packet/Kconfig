@@ -60,4 +60,19 @@ config RAW_TX_PACKET_SAMPLE_STA_TX_INJECTION_MODE
 	help
 	  Set the device operating mode as Station + TX injection mode.
 
+choice RAW_TX_PACKET_SAMPLE_OPERATION_MODE
+	prompt "Choose Wi-Fi operation mode"
+	default RAW_TX_PACKET_SAMPLE_NON_CONNECTED_MODE
+
+config RAW_TX_PACKET_SAMPLE_CONNECTION_MODE
+	bool "Connected Station mode"
+	help
+	  Enable the option to select Connected Station mode.
+
+config RAW_TX_PACKET_SAMPLE_NON_CONNECTED_MODE
+	bool "Non-connected Station mode"
+	help
+	  Enable the option to select non-connected Station mode.
+endchoice
+
 endmenu
