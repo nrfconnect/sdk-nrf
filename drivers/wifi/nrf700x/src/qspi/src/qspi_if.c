@@ -27,8 +27,10 @@
 #include "qspi_if.h"
 
 static struct qspi_config *qspi_config;
+#if NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC
 static unsigned int nonce_last_addr;
 static unsigned int nonce_cnt;
+#endif /*NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC*/
 
 /* Main config structure */
 static nrfx_qspi_config_t QSPIconfig;
@@ -1153,7 +1155,7 @@ int qspi_init(struct qspi_config *config)
 
 void qspi_update_nonce(unsigned int addr, int len, int hlread)
 {
-#if defined(CONFIG_SOC_SERIES_NRF53X)
+#if NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC
 
 	NRF_QSPI_Type *p_reg = NRF_QSPI;
 
@@ -1167,7 +1169,7 @@ void qspi_update_nonce(unsigned int addr, int len, int hlread)
 
 	nonce_last_addr = addr + len - 4;
 
-#endif
+#endif /*NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC*/
 }
 
 void qspi_addr_check(unsigned int addr, const void *data, unsigned int len)

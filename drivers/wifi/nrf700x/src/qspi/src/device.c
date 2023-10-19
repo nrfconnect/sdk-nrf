@@ -51,7 +51,7 @@ struct qspi_config *qspi_defconfig(void)
 
 	config.encryption = config.CMD_CNONCE = false;
 
-#if defined(CONFIG_NRF700X_ON_QSPI)
+#if defined(CONFIG_NRF700X_ON_QSPI) && (NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC)
 
 	/*For #Bit 6 Enable below: i.e ALL Ones for QSPI Key*/
 	memset(&config.p_cfg.key, 0xff, sizeof(config.p_cfg.key));
@@ -60,7 +60,7 @@ struct qspi_config *qspi_defconfig(void)
 	config.p_cfg.nonce[1] = 0x0;
 	config.p_cfg.nonce[2] = 0x1;
 
-#endif /*CONFIG_NRF700X_ON_QSPI*/
+#endif /*CONFIG_NRF700X_ON_QSPI && (NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC)*/
 
 	return &config;
 }
