@@ -83,4 +83,39 @@ config RAW_TX_PACKET_SAMPLE_CHANNEL
 	  Specify the Wi-Fi channel for transmitting raw TX packets in non-connected Station mode.
 	  The valid channel range is 1 to 233.
 
+config RAW_TX_PACKET_SAMPLE_RATE_VALUE
+	int "MCS index or Data rate value"
+	default 0
+	help
+	  Specify the Wi-Fi data rate value for raw TX packet transmission.
+	  The value represents either the data rate in Mbps or Modulation and coding (MCS) index.
+	  Note: 5.5Mbps is treated specially as 55 to avoid floating point usage.
+	  Legacy: 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54
+	  MCS index: 0-7
+
+config RAW_TX_PACKET_SAMPLE_RATE_FLAGS
+	int "Rate flag value"
+	default 1
+	help
+	  Specify the rate flag value to be used for raw TX packet transmission.
+	  Rate Flags:
+	  0 - Legacy
+	  1 - 11n format
+	  2 - VHT format
+	  3 - HE_SU
+	  4 - HE_ER_SU
+	  5 - HE_TB
+
+config RAW_TX_PACKET_SAMPLE_QUEUE_NUM
+	int "Queue number"
+	default 0
+	range 0 4
+	help
+	  Specify the transmission queue number for raw TX packets.
+	  0 - Background
+	  1 - Best effort
+	  2 - Video
+	  3 - Voice
+	  4 - Beacon.
+
 endmenu
