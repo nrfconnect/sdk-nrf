@@ -17,7 +17,7 @@
 #include "zephyr_wifi_mgmt.h"
 #include "zephyr_wpa_supp_if.h"
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 K_SEM_DEFINE(wait_for_scan_resp_sem, 0, 1);
