@@ -39,9 +39,9 @@ struct qspi_config {
 	struct k_sem lock;
 	unsigned int addrmask;
 	unsigned char qspi_slave_latency;
-#ifdef CONFIG_NRF700X_ON_QSPI
+#if defined(CONFIG_NRF700X_ON_QSPI) && (NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC)
 	nrf_qspi_encryption_t p_cfg;
-#endif /*CONFIG_NRF700X_ON_QSPI*/
+#endif /*CONFIG_NRF700X_ON_QSPI && (NRF_QSPI_HAS_XIP_ENC || NRF_QSPI_HAS_DMA_ENC)*/
 	int test_hlread;
 	char *test_name;
 	int test_start;
