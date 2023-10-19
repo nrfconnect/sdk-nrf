@@ -37,9 +37,9 @@ static bool can_xmit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	    def_dev_ctx->twt_sleep_status == NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 }
 
-/* Set the coresponding bit of access category.
- * First 4 bits(0 to 3) represenst first spare desc access cateogories
- * Second 4 bits(4 to 7) represenst second spare desc access cateogories and so on
+/* Set the corresponding bit of access category.
+ * First 4 bits(0 to 3) represent first spare desc access categories
+ * Second 4 bits(4 to 7) represent second spare desc access categories and so on
  */
 static void set_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				 unsigned int desc,
@@ -66,9 +66,9 @@ static void set_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 }
 
 
-/* Clear the coresponding bit of access category.
- * First 4 bits(0 to 3) represenst first spare desc access cateogories
- * Second 4 bits(4 to 7) represenst second spare desc access cateogories and so on
+/* Clear the corresponding bit of access category.
+ * First 4 bits(0 to 3) represent first spare desc access categories
+ * Second 4 bits(4 to 7) represent second spare desc access categories and so on
  */
 static void clear_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				   unsigned int desc,
