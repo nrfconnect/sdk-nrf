@@ -65,15 +65,29 @@ static int parse_return_code(const uint8_t *message, int success_code)
 	if (success_code == FTP_CODE_ANY) {
 		return success_code;
 	}
-	char *endptr;
-	int return_code = strtol(message, &endptr, 10);
+	int ret = FTP_CODE_500;
 
-	/* Strict parsing of "%d ". */
-	if (return_code && endptr && *endptr == ' ') {
-		return return_code;
+	while (true) {
+		char *endptr;
+		int reply_code = strtol(message, &endptr, 10);
+
+		/* Strict parsing of "%d ". */
+		if (reply_code && endptr && *endptr == ' ') {
+			ret = reply_code;
+			if (ret == success_code) {
+				break;
+			}
+		}
+
+		/* No reply code on this line. Go to the next one. */
+		message = strstr(message, "\r\n");
+		if (!message) {
+			break;
+		}
+		message += 2;
 	}
 
-	return FTP_CODE_500;
+	return ret;
 }
 
 static int establish_data_channel(const char *pasv_msg)
@@ -749,9 +763,7 @@ int ftp_get(const char *file)
 		return -EIO;
 	}
 
-	ret = run_data_task();
-
-	return ret;
+	return run_data_task();
 }
 
 int ftp_put(const char *file, const uint8_t *data, uint16_t length, int type)
