@@ -447,6 +447,7 @@ Cellular samples (renamed from nRF9160 samples)
     * The sample to remove redundant shadow updates for nRF Cloud.
     * Build instructions, board files, and DTC overlay file so that Wi-Fi scanning works for the nRF9161 DK and the nRF9160 DK.
     * Configuration to enable power saving mode by default.
+    * Reduced the default value of :kconfig:option:`CONFIG_MAX_OUTGOING_MESSAGES` to prevent potential heap issues.
 
   * Fixed:
 

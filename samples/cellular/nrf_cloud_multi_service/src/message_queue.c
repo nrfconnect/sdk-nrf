@@ -49,6 +49,14 @@ static int enqueue_device_message(struct nrf_cloud_obj *const msg_obj, const boo
 	}
 
 	struct nrf_cloud_obj *q_msg = msg_obj;
+	uint32_t msgs_in_q = k_msgq_num_used_get(&device_message_queue);
+
+	LOG_DBG("Messages queue status: %u/%u", msgs_in_q, CONFIG_MAX_OUTGOING_MESSAGES);
+
+	if (msgs_in_q == CONFIG_MAX_OUTGOING_MESSAGES) {
+		LOG_WRN("Message queue is full");
+		return -ENOSPC;
+	}
 
 	if (create_copy) {
 		/* Allocate a new nrf_cloud_obj structure for the message queue.
@@ -115,6 +123,7 @@ static int consume_device_message(void)
 	 * message sending.
 	 */
 	LOG_DBG("Attempting to transmit enqueued device message");
+	LOG_DBG("Messages remaining in queue: %u", k_msgq_num_used_get(&device_message_queue));
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	struct nrf_cloud_tx_data mqtt_msg = {
