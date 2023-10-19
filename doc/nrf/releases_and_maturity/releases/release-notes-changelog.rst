@@ -452,6 +452,7 @@ Cellular samples (renamed from nRF9160 samples)
   * Fixed:
 
     * Legitimate server side CoAP API errors are not counted now as a reason to disconnect from and reconnect to the cloud, but only communications errors.
+    * Increased the value of :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` in the full modem FOTA overlay to prevent a boot loop on full modem image installation.
 
   * Removed the Kconfig options :kconfig:option:`CONFIG_LTE_INIT_RETRY_TIMEOUT_SECONDS` and :kconfig:option:`CLOUD_CONNECTION_REESTABLISH_DELAY_SECONDS` as they are no longer needed.
 
