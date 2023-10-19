@@ -316,7 +316,7 @@ After programming the application, perform the following steps to test the Matte
             [1675849714.536985][164896:164898] CHIP:TOO: Endpoint: 3 Cluster: 0x0000_0403 Attribute 0x0000_0000 DataVersion: 3096547
             [1675849714.537008][164896:164898] CHIP:TOO:   MeasuredValue: 1015
 
-         This means that the current current air pressure value is equal to 1015 hPa.
+         This means that the current air pressure value is equal to 1015 hPa.
 
 Onboarding information
 ----------------------

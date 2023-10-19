@@ -329,7 +329,7 @@ You can program applications and samples on the nRF9160 DK after obtaining the c
 .. note::
    When you update the application firmware on an nRF9160 DK, make sure the modem firmware and application firmware are compatible versions.
 
-To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instrutions in :ref:`nrf9160_updating_fw_application`.
+To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instructions in :ref:`nrf9160_updating_fw_application`.
 
 .. _build_pgm_nrf9160_vsc:
 
@@ -416,16 +416,16 @@ To add the modem trace UART snippet when building an application with west, use 
 
    west build --board <your_board> -S nrf91-modem-trace-uart
 
-With cmake
+With CMake
 ----------
 
-To add the modem trace UART snippet when building an application with cmake, add the following command to the CMake arguments:
+To add the modem trace UART snippet when building an application with CMake, add the following command to the CMake arguments:
 
 .. code-block:: console
 
    -DSNIPPET="nrf91-modem-trace-uart" [...]
 
-To build with the |nRFVSC|, specify ``-DSNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra Cmake arguments** field.
+To build with the |nRFVSC|, specify ``-DSNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
 
 See :ref:`cmake_options` for more details.
 

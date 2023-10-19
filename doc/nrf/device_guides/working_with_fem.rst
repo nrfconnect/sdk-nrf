@@ -617,7 +617,7 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 
    set(SHIELD nrf21540ek)
 
-To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540ek`` in the **Extra Cmake arguments** field.
+To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540ek`` in the **Extra CMake arguments** field.
 See :ref:`cmake_options`.
 
 When building for a board with an additional network core, like the nRF5340, add the ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core.

@@ -54,7 +54,7 @@ This is done through two chained GitHub actions, :file:`docbuild.yml` and :file:
 Docbuild
 --------
 Whenever a pull request is created the `docbuild`_ workflow is triggered.
-This will checkout all the relevant repositories with west, install the necessary dependencies and build the documentation with cmake.
+This will checkout all the relevant repositories with west, install the necessary dependencies and build the documentation with CMake.
 After the documentation is built a cache file is created using :file:`doc/_scripts/cache_create.py` which can be used locally to speed up builds.
 
 Docpublish

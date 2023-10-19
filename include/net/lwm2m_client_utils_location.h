@@ -43,11 +43,11 @@
  * @param result_code Contains following possible result codes:
  *                    LOCATION_ASSIST_RESULT_CODE_OK when there are no problems
  *                    LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR when there is a permanent error
- *                    between LwM2M-server and the nrfCloud. Location assistance library will no
+ *                    between LwM2M-server and the nRF Cloud. Location assistance library will no
  *                    longer send any requests. Device needs reboot for assistance library to
  *                    resume operation.
  *                    LOCATION_ASSIST_RESULT_CODE_TEMP_ERR when there is a temporary error between
- *                    LwM2M-server and the nrfCloud. The library automatically uses exponential
+ *                    LwM2M-server and the nRF Cloud. The library automatically uses exponential
  *                    backoff for the retries.
  */
 typedef void (*location_assistance_result_code_cb_t)(int32_t result_code);

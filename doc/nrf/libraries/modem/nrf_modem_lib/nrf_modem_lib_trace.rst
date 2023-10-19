@@ -163,7 +163,7 @@ Modem tracing with RTT
 
 Following are the requirements to perform tracing with RTT:
 
-* An nRF91 Series DK with Segger J-Link on-Board or an external Segger J-Link
+* An nRF91 Series DK with SEGGER J-Link on-Board or an external SEGGER J-Link
 * J-Link RTT logger software application
 
 To enable modem traces with RTT, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` and :kconfig:option:`CONFIG_USE_SEGGER_RTT` Kconfig options, with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option.

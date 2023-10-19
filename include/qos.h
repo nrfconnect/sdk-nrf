@@ -189,7 +189,7 @@ uint16_t qos_message_id_get_next(void);
 void qos_message_notify_all(void);
 
 /** @brief Remove all pending messages.
- *         All messages that are currently stored in the internal list will removed. Each message
+ *         All messages that are currently stored in the internal list will be removed. Each message
  *	   will be notified in the QOS_EVT_MESSAGE_REMOVED_FROM_LIST callback event.
  *	   This API clears the internal pending list.
  */
