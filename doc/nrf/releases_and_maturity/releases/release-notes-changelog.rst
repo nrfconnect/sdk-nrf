@@ -128,7 +128,9 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Asset Tracker v2
 ----------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The MQTT topic name for A-GNSS requests is changed to ``agnss`` for AWS and Azure backends.
 
 Serial LTE modem
 ----------------
