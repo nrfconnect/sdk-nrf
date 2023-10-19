@@ -34,14 +34,15 @@ After restoring the previous data, the application must run the :c:func:`emds_pr
 If the remaining empty flash area is smaller than the required data size, the flash area will be automatically erased to increase the available flash area.
 
 The storage is done in deterministic time, so it is possible to know how long it takes to store all registered entries.
-However, this is chip-dependent, so it is important to measure the time. The `Nordic Semiconductor Infocenter`_ contains chip information and datasheet, and timing values can be found under the "Electical specification" for the Non-volatile memory controller.
+However, this is chip-dependent, so it is important to measure the time.
+The `Nordic Semiconductor Infocenter`_ contains chip information and datasheet, and timing values can be found under the "Electrical specification" for the Non-volatile memory controller.
 The following Kconfig options can be configured:
 
 * :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US`
 * :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US`
 * :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`
 
-When configuring this values consider the time for erase when doing garbage collection in NVS.
+When configuring these values, consider the time for erase when doing garbage collection in NVS.
 If partial erase is not enabled or supported, the time of a complete sector erase has to be included in the :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`.
 When partial erase is enabled and supported by the hardware, include the time it takes for the scheduler to trigger, which is depending on the time defined in :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE_MS`.
 When changing the :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US` option, it is important that the worst time is considered.

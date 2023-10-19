@@ -351,7 +351,7 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file, spec
 
    set(SHIELD nrf7002ek_nrf7000)
 
-To build with the |nRFVSC|, specify ``-DSHIELD=nrf7002ek`` in the **Extra Cmake arguments** field.
+To build with the |nRFVSC|, specify ``-DSHIELD=nrf7002ek`` in the **Extra CMake arguments** field.
 See :ref:`cmake_options` for instructions on how to provide CMake options.
 
 To build for the nRF7002 EK and the nRF7002 IC with nRF5340 DK, use the ``nrf5340dk_nrf5340_cpuapp`` build target with the CMake ``SHIELD`` variable set to ``nrf7002ek``.

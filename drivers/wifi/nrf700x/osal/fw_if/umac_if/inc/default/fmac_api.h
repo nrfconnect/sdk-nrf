@@ -125,7 +125,7 @@ enum nrf_wifi_status nrf_wifi_fmac_abort_scan(void *fmac_dev_ctx,
 
 #if defined(CONFIG_NRF700X_STA_MODE) || defined(__DOXYGEN__)
 /**
- * @brief Issue a 802.11 authentication request to the RPU firmware.
+ * @brief Issue an 802.11 authentication request to the RPU firmware.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param if_idx Index of the interface on which the authentication is to be
  *	         performed.
@@ -145,7 +145,7 @@ enum nrf_wifi_status nrf_wifi_fmac_auth(void *fmac_dev_ctx,
 
 
 /**
- * @brief Issue a 802.11 de-authentication request to the RPU firmware.
+ * @brief Issue an 802.11 de-authentication request to the RPU firmware.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param if_idx Index of the interface on which the de-authentication is to be
  *          performed.
@@ -164,7 +164,7 @@ enum nrf_wifi_status nrf_wifi_fmac_deauth(void *fmac_dev_ctx,
 
 
 /**
- * @brief Issue a 802.11 association request to the RPU firmware.
+ * @brief Issue an 802.11 association request to the RPU firmware.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param if_idx Index of the interface on which the association is to be
  *           performed.
@@ -184,7 +184,7 @@ enum nrf_wifi_status nrf_wifi_fmac_assoc(void *fmac_dev_ctx,
 
 
 /**
- * @brief Issue a 802.11 disassociation request to the RPU firmware.
+ * @brief Issue an 802.11 disassociation request to the RPU firmware.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param if_idx Index of the interface on which the disassociation is to be
  *	         performed.
@@ -203,7 +203,7 @@ enum nrf_wifi_status nrf_wifi_fmac_disassoc(void *fmac_dev_ctx,
 
 
 /**
- * @brief Add a 802.11 security key into the RPU security database.
+ * @brief Add an 802.11 security key into the RPU security database.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param if_idx Index of the interface on which the key is to be added.
  * @param key_info Key specific information which needs to be passed to the RPU firmware.
@@ -224,7 +224,7 @@ enum nrf_wifi_status nrf_wifi_fmac_add_key(void *fmac_dev_ctx,
 
 
 /**
- * @brief Delete a 802.11 key from the RPU security database.
+ * @brief Delete an 802.11 key from the RPU security database.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param if_idx Index of the interface for which the key is to be deleted.
  * @param key_info Key specific information which needs to be passed to the RPU firmware.

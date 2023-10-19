@@ -492,7 +492,7 @@ To test the Thread 1.2 and Thread 1.3 features, complete the following steps:
          uart:~$ ot srp server enable
          Done
 
-   #. Register a `_ipps._tcp`` service on the router kit (now SED):
+   #. Register an `_ipps._tcp` service on the router kit (now SED):
 
       .. code-block:: console
 

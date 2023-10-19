@@ -34,7 +34,7 @@ Features
 This sample implements or demonstrates the following features:
 
 * Generic, disconnect-tolerant integration of LTE using Zephyr's ``conn_mgr`` and :kconfig:option:`CONFIG_LTE_CONNECTIVITY`.
-* Error-tolerant use of the nRF Cloud CoAP API using the :ref:`lib_nrf_cloud_coap` CoAP library.
+* Error-tolerant use of the nRF Cloud CoAP API using the :ref:`lib_nrf_cloud_coap` library.
 * Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`lib_nrf_cloud` library.
 * Support for `Firmware-Over-The-Air (FOTA) update service <nRF Cloud Getting Started FOTA documentation_>`_ using the `nRF Cloud`_ portal.
 * Support for modem AT commands over UART using the :ref:`lib_at_host` library.
@@ -80,7 +80,7 @@ The cloud connection loop (implemented in :file:`src/cloud_connection.c`) monito
 It starts a connection with `nRF Cloud`_ whenever the Internet becomes reachable, and closes that connection whenever Internet access is lost.
 It has error handling and timeout features to ensure that failed or lost connections are re-established after a waiting period (:ref:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS <CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS>`).
 
-Since the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kcofig option is enabled, Zephyr's ``conn_mgr`` automatically enables and connects to LTE.
+Since the :kconfig:option:`CONFIG_LTE_CONNECTIVITY` Kconfig option is enabled, Zephyr's ``conn_mgr`` automatically enables and connects to LTE.
 
 Whenever a connection to nRF Cloud is started, the cloud connection loop follows the :ref:`nRF Cloud connection process <lib_nrf_cloud_connect>`.
 The :ref:`lib_nrf_cloud` library handles most of the connection process, with exception to the following behavior:

@@ -195,7 +195,7 @@ For example, for a Target node with product ID 0x0059, zero company and version 
 
   mesh models dfu metadata comp-add 0x59 0 0 10 7
 
-Now you need to encode elements the are present on a new image.
+Now you need to encode elements that are present on a new image.
 For each element to encode, issue the ``mesh models dfu metadata comp-elem-add`` shell command specifying the location of the element, number of Bluetooth SIG and vendor models and their IDs.
 For example, for :ref:`ble_mesh_dfu_target` sample, which has only one element containing Configuration and Health Server models as well as DFU and BLOB Transfer Server models, the command will be the following::
 

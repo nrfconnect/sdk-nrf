@@ -436,7 +436,7 @@ The following shell commands and network management APIs are provided for Power 
    * - net_mgmt(NET_REQUEST_WIFI_PS)
      - wifi ps_wakeup_mode listen_interval
      - Config ps wakeup mode as listen_interval
-     - Wakeup mode set to listem interval
+     - Wakeup mode set to listen interval
    * - net_mgmt(NET_REQUEST_WIFI_TWT)
      - wifi twt setup 0 0 1 1 0 1 1 1 65000 524000
      - | Set up TWT:

@@ -100,7 +100,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/native_posix.conf` - Configuration file for native posix.
+* :file:`boards/native_posix.conf` - Configuration file for Native Posix.
 
 Files that are located under the :file:`/boards` folder is automatically merged with the :file:`prj.conf` file when you build for corresponding target.
 
@@ -108,7 +108,7 @@ In addition, the sample provides the following overlay configuration files, whic
 
 * :file:`overlay-tls-nrf91.conf` - TLS overlay configuration file for nRF91 Series devices.
 * :file:`overlay-tls-nrf70.conf` - TLS overlay configuration file for nRF70 Series devices.
-* :file:`overlay-tls-native_posix.conf` - TLS overlay configuration file for native posix.
+* :file:`overlay-tls-native_posix.conf` - TLS overlay configuration file for Native Posix.
 
 They are located in :file:`samples/net/mqtt` folder.
 
@@ -260,7 +260,7 @@ Emulation
 =========
 
 The sample can be run in :ref:`Native Posix <zephyr:native_posix>` that simplifies development and testing and removes the need for hardware.
-Before you can build and run native posix, you need to perform the steps included in this link: :ref:`networking_with_native_posix`.
+Before you can build and run Native Posix, you need to perform the steps included in this link: :ref:`networking_with_native_posix`.
 
 When the aforementioned steps are completed, you can build and run the sample by using the following commands:
 

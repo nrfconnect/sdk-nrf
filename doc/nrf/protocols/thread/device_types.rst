@@ -141,7 +141,7 @@ If the parent has any pending messages, it will send them to the SED (which can 
 Otherwise, the parent will send a response indicating no pending messages.
 
 SSEDs operate similarly to Sleepy End Devices, but they are synchronized with their parent.
-They wake up at designated transmission windows agreed with their their parent, which eliminates the need for polling for messages.
+They wake up at designated transmission windows agreed with their parent, which eliminates the need for polling for messages.
 If the parent has messages for the SSED, it sends them during the designated transmission window.
 The SSED allows the transmission to finish if radio activity is detected during the transmission window.
 

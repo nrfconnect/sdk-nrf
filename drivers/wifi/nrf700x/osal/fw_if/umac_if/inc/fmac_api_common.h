@@ -95,7 +95,7 @@ enum nrf_wifi_status nrf_wifi_fmac_ver_get(struct nrf_wifi_fmac_dev_ctx *fmac_de
  * @param enabled enable/disable HE LTF and GI parameter configured.
  *
  * This function is used to send a command to RPU
- *	    to configure HE ltf and gi parameters in RPU.
+ *	    to configure HE LTF and GI parameters in RPU.
  *
  * @return Command execution status
  */
@@ -112,7 +112,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fma
 /**
  * @brief Get the RPU power save status from host perspective.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
- * @param rpu_ps_ctrl_state Pointer to the address where the current rpu ps state.
+ * @param rpu_ps_ctrl_state Pointer to the address where the current RPU power save state
  *			    from host perspective needs to be copied.
  *
  * This function is used to fetch the RPU power save status
