@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: a01c3a4caccb6964a29078172ba7f590bcdbe790
+      revision: 32a51d982e0b7eba7e458678a8246440b25c3916
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: dc0b692181837d912e49fc49841918e47a60d22c
+      revision: 289166425805f937abfe9058f57323085ec96523
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -145,7 +145,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v1.8.0-ncs1-rc1
+      revision: afd54b6bad00c56098cb84a7b79ac72cc44f082b
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
