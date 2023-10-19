@@ -35,7 +35,11 @@ from pathlib import Path
 BUILDPROG_FOLDER = Path(__file__).resolve().parent
 NRF5340_AUDIO_FOLDER = (BUILDPROG_FOLDER / "../..").resolve()
 NRF_FOLDER = (BUILDPROG_FOLDER / "../../../..").resolve()
-USER_CONFIG = BUILDPROG_FOLDER / "nrf5340_audio_dk_devices.json"
+if os.getenv("AUDIO_KIT_SERIAL_NUMBERS_JSON") is None:
+    AUDIO_KIT_SERIAL_NUMBERS_JSON = BUILDPROG_FOLDER / "nrf5340_audio_dk_devices.json"
+else:
+    AUDIO_KIT_SERIAL_NUMBERS_JSON = Path(
+        os.getenv("AUDIO_KIT_SERIAL_NUMBERS_JSON"))
 TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME = "nrf5340_audio_dk_nrf5340_cpuapp"
 
 TARGET_CORE_APP_FOLDER = NRF5340_AUDIO_FOLDER
@@ -228,6 +232,8 @@ def __main():
             "This script builds and programs the nRF5340 "
             "Audio project on Windows and Linux"
         ),
+        epilog=("If there exists an environmental variable called \"AUDIO_KIT_SERIAL_NUMBERS_JSON\" which contains"
+                "the location of a json file, the program will use this file as a substitute for nrf5340_audio_dk_devices.json"),
         allow_abbrev=False
     )
     parser.add_argument(
@@ -323,7 +329,7 @@ def __main():
         nargs='*',
         dest="custom_bt_name",
         default=None,
-        help="Use custom Bluetooth device name.",
+        help="Use custom Bluetooth device name",
     )
     parser.add_argument(
         "-u",
@@ -331,7 +337,7 @@ def __main():
         action="store_true",
         dest="user_bt_name",
         default=False,
-        help="Set to generate a user specific Bluetooth device name. Note that this will put the computer user name on air in clear text.",
+        help="Set to generate a user specific Bluetooth device name. Note that this will put the computer user name on air in clear text",
     )
     options = parser.parse_args(args=sys.argv[1:])
 
@@ -362,7 +368,7 @@ def __main():
     # This JSON file should be altered by the developer.
     # Then run git update-index --skip-worktree FILENAME to avoid changes
     # being pushed
-    with USER_CONFIG.open() as f:
+    with AUDIO_KIT_SERIAL_NUMBERS_JSON.open() as f:
         dev_arr = json.load(f)
     device_list = [
         DeviceConf(
