@@ -75,4 +75,12 @@ config RAW_TX_PACKET_SAMPLE_NON_CONNECTED_MODE
 	  Enable the option to select non-connected Station mode.
 endchoice
 
+config RAW_TX_PACKET_SAMPLE_CHANNEL
+	int "Channel for non-connected Station mode"
+	depends on RAW_TX_PACKET_SAMPLE_NON_CONNECTED_MODE
+	range 1 233
+	help
+	  Specify the Wi-Fi channel for transmitting raw TX packets in non-connected Station mode.
+	  The valid channel range is 1 to 233.
+
 endmenu
