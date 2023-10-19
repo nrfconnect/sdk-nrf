@@ -48,4 +48,16 @@ config RAW_TX_PACKET_SAMPLE_PASSWORD
 	help
 	  Specify the Password to connect
 
+config RAW_TX_PACKET_SAMPLE_STA_ONLY_MODE
+	bool "Set Wi-Fi Station mode"
+	default n
+	help
+	  Set the device operating mode as Station mode.
+
+config RAW_TX_PACKET_SAMPLE_STA_TX_INJECTION_MODE
+	bool "Set Wi-Fi Station + TX injection mode"
+	default y
+	help
+	  Set the device operating mode as Station + TX injection mode.
+
 endmenu

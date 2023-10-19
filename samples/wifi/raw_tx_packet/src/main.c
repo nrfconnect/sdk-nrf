@@ -14,9 +14,38 @@ LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 #include "net_private.h"
 #include "wifi_connection.h"
 
+static void wifi_set_mode(int mode_val)
+{
+	int ret;
+	struct net_if *iface = NULL;
+	struct wifi_mode_info mode_info = {0};
+
+	mode_info.oper = WIFI_MGMT_SET;
+
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("Failed to get Wi-Fi iface");
+		return;
+	}
+
+	mode_info.if_index = net_if_get_by_iface(iface);
+	mode_info.mode = mode_val;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_MODE, iface, &mode_info, sizeof(mode_info));
+	if (ret) {
+		LOG_ERR("Mode setting failed %d", ret);
+	}
+}
+
 int main(void)
 {
-	int status;
+	int status, mode;
+#ifdef CONFIG_RAW_TX_PACKET_SAMPLE_STA_ONLY_MODE
+	mode = BIT(0);
+#elif CONFIG_RAW_TX_PACKET_SAMPLE_STA_TX_INJECTION_MODE
+	mode = BIT(0) | BIT(2);
+#endif
+	wifi_set_mode(mode);
 
 	status = try_wifi_connect();
 	if (status < 0) {
