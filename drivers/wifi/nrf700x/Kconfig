@@ -25,6 +25,10 @@ module-str = Log level for Wi-Fi nRF700x bus layers
 module-help = Sets log level for Wi-Fi nRF700x bus layers
 source "subsys/net/Kconfig.template.log_config.net"
 
+config WIFI_NRF700X_BUS_LOG_LEVEL
+	# Enable error by default
+	default 1
+
 # Hidden define for internal use
 config NRF700X_SCAN_ONLY_MODE
 	bool
@@ -85,6 +89,10 @@ module-dep = LOG
 module-str = Log level for Wi-Fi nRF700x driver
 module-help = Sets log level for Wi-Fi nRF700x driver
 source "subsys/logging/Kconfig.template.log_config"
+
+config WIFI_NRF700X_LOG_LEVEL
+	# Enable error by default
+	default 1
 
 config NRF700X_ON_QSPI
 	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF700X_QSPI))
