@@ -41,6 +41,7 @@ int main(void)
 	bool valid = false;
 	uint8_t status = pcd_fw_copy_status_get();
 
+#ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 	if (status == PCD_STATUS_READ_VERSION) {
 		err = pcd_find_fw_version();
 		if (err < 0) {
@@ -54,6 +55,7 @@ int main(void)
 			;
 		CODE_UNREACHABLE;
 	}
+#endif
 
 	if (status == PCD_STATUS_COPY) {
 		/* First we validate the data where the PCD CMD tells

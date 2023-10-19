@@ -19,7 +19,8 @@
 #define NET_CORE_VIRTUAL_PRIMARY_SLOT 3
 
 #include <dfu/pcd.h>
-#if defined(CONFIG_PCD_APP) && defined(CONFIG_NRF53_MULTI_IMAGE_UPDATE)
+#if defined(CONFIG_PCD_APP) && defined(CONFIG_NRF53_MULTI_IMAGE_UPDATE) \
+	&& defined(CONFIG_PCD_READ_NETCORE_APP_VERSION)
 #include <fw_info_bare.h>
 
 /** @brief Compare image version numbers of network core and network core update.
