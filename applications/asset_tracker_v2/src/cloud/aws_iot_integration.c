@@ -30,9 +30,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 #define MESSAGES_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
 #define GROUND_FIX_TOPIC "%s/ground-fix"
 #define GROUND_FIX_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 11)
-#define AGNSS_REQUEST_TOPIC "%s/agps/get"
+#define AGNSS_REQUEST_TOPIC "%s/agnss/get"
 #define AGNSS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
-#define AGNSS_RESPONSE_TOPIC "%s/agps"
+#define AGNSS_RESPONSE_TOPIC "%s/agnss"
 #define AGNSS_RESPONSE_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 5)
 #define PGPS_REQUEST_TOPIC "%s/pgps/get"
 #define PGPS_REQUEST_TOPIC_LEN (AWS_CLOUD_CLIENT_ID_LEN + 9)
@@ -517,7 +517,7 @@ int cloud_wrap_agnss_request_send(char *buf, size_t len, bool ack, uint32_t id)
 		.len = len,
 		.message_id = id,
 		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
-		/* <imei>/agps/get */
+		/* <imei>/agnss/get */
 		.topic.str = pub_topics[APP_PUB_TOPIC_IDX_AGNSS].topic.utf8,
 		.topic.len = pub_topics[APP_PUB_TOPIC_IDX_AGNSS].topic.size
 	};
