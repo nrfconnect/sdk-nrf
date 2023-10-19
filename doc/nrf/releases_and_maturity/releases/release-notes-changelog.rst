@@ -375,6 +375,7 @@ Bluetooth samples
   * Added automatic switching to the Fast Pair not discoverable advertising mode with the hide UI indication instead of removing the Fast Pair advertising payload when all bond slots are taken.
   * Fixed an issue where the sample was unable to advertise in Fast Pair not discoverable advertising mode when it had five Account Keys written.
   * Renamed the sample to :ref:`fast_pair_input_device` and moved it to the :file:`samples/bluetooth/fast_pair` folder.
+  * Increased the system workqueue stack size (:kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`) to ``1200`` to prevent stack overflows right after booting the nRF5340 DK.
 
 Bluetooth mesh samples
 ----------------------
