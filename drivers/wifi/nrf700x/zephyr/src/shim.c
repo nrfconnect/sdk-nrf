@@ -26,7 +26,7 @@
 #include "osal_ops.h"
 #include "qspi_if.h"
 
-LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 struct zep_shim_intr_priv *intr_priv;
 

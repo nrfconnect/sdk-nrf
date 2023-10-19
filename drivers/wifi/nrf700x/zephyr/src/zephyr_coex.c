@@ -19,7 +19,7 @@
 #include "zephyr_fmac_main.h"
 #include "fmac_api.h"
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 static struct nrf_wifi_ctx_zep *rpu_ctx = &rpu_drv_priv_zep.rpu_ctx_zep;

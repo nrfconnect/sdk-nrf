@@ -16,7 +16,7 @@
 
 #include "zephyr_work.h"
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 K_THREAD_STACK_DEFINE(bh_wq_stack_area, CONFIG_NRF700X_BH_WQ_STACK_SIZE);
 struct k_work_q zep_wifi_bh_q;
