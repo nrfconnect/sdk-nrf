@@ -319,8 +319,6 @@ void nrf_wifi_osal_spinlock_irq_rel(struct nrf_wifi_osal_priv *opriv,
 
 
 #if CONFIG_WIFI_NRF700X_LOG_LEVEL >= CONFIG_WIFI_NRF700X_LOG_LEVEL_DBG
-#define nrf_wifi_osal_log_dbg(level, fmt, ...)
-#else
 /**
  * nrf_wifi_osal_log_dbg() - Log a debug message.
  * @opriv: Pointer to the OSAL context returned by the @nrf_wifi_osal_init API.
@@ -333,12 +331,12 @@ void nrf_wifi_osal_spinlock_irq_rel(struct nrf_wifi_osal_priv *opriv,
  */
 int nrf_wifi_osal_log_dbg(struct nrf_wifi_osal_priv *opriv,
 			   const char *fmt, ...);
+#else
+#define nrf_wifi_osal_log_dbg(level, fmt, ...)
 #endif
 
 
 #if CONFIG_WIFI_NRF700X_LOG_LEVEL >= CONFIG_WIFI_NRF700X_LOG_LEVEL_INF
-#define nrf_wifi_osal_log_info(level, fmt, ...)
-#else
 /**
  * nrf_wifi_osal_log_info() - Log a informational message.
  * @opriv: Pointer to the OSAL context returned by the @nrf_wifi_osal_init API.
@@ -351,12 +349,12 @@ int nrf_wifi_osal_log_dbg(struct nrf_wifi_osal_priv *opriv,
  */
 int nrf_wifi_osal_log_info(struct nrf_wifi_osal_priv *opriv,
 			    const char *fmt, ...);
+#else
+#define nrf_wifi_osal_log_info(level, fmt, ...)
 #endif
 
 
 #if CONFIG_WIFI_NRF700X_LOG_LEVEL >= CONFIG_WIFI_NRF700X_LOG_LEVEL_ERR
-#define nrf_wifi_osal_log_err(level, fmt, ...)
-#else
 /**
  * nrf_wifi_osal_log_err() - Logs an error message.
  * @opriv: Pointer to the OSAL context returned by the @nrf_wifi_osal_init API.
@@ -369,6 +367,8 @@ int nrf_wifi_osal_log_info(struct nrf_wifi_osal_priv *opriv,
  */
 int nrf_wifi_osal_log_err(struct nrf_wifi_osal_priv *opriv,
 			   const char *fmt, ...);
+#else
+#define nrf_wifi_osal_log_err(level, fmt, ...)
 #endif
 
 
