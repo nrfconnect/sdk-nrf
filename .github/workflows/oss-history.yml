@@ -33,4 +33,4 @@ jobs:
         uses: nrfconnect/action-oss-history@main
         with:
           workspace: 'ncs'
-          args: -p zephyr -p mcuboot -p hostap -p wfa-qt-control-app
+          args: -p zephyr -p mcuboot -p trusted-firmware-m -p hostap -p wfa-qt-control-app
