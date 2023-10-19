@@ -200,7 +200,7 @@ void nrf_wifi_osal_spinlock_irq_rel(struct nrf_wifi_osal_priv *opriv,
 }
 
 
-#ifdef CONFIG_WIFI_NRF700X_LOG_LEVEL_DBG
+#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= LOG_LEVEL_DBG
 int nrf_wifi_osal_log_dbg(struct nrf_wifi_osal_priv *opriv,
 			  const char *fmt,
 			  ...)
@@ -219,7 +219,7 @@ int nrf_wifi_osal_log_dbg(struct nrf_wifi_osal_priv *opriv,
 #endif /* CONFIG_WIFI_NRF700X_LOG_LEVEL_DBG */
 
 
-#ifdef CONFIG_WIFI_NRF700X_LOG_LEVEL_INF
+#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= LOG_LEVEL_INF
 int nrf_wifi_osal_log_info(struct nrf_wifi_osal_priv *opriv,
 			   const char *fmt,
 			   ...)
@@ -238,7 +238,7 @@ int nrf_wifi_osal_log_info(struct nrf_wifi_osal_priv *opriv,
 #endif /* CONFIG_WIFI_NRF700X_LOG_LEVEL_INF */
 
 
-#ifdef CONFIG_WIFI_NRF700X_LOG_LEVEL_ERR
+#if CONFIG_WIFI_NRF700X_LOG_LEVEL >= LOG_LEVEL_ERR
 int nrf_wifi_osal_log_err(struct nrf_wifi_osal_priv *opriv,
 			  const char *fmt,
 			  ...)
