@@ -42,7 +42,7 @@ K_THREAD_DEFINE(coap_fota, CONFIG_COAP_FOTA_THREAD_STACK_SIZE, coap_fota_thread_
 		NULL, NULL, NULL, 0, 0, 0);
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_COAP_SHADOW)
+#if defined(CONFIG_COAP_SHADOW)
 /* Define, and automatically start the CoAP shadow check thread. See shadow_support_coap.c */
 K_THREAD_DEFINE(coap_shadow, CONFIG_COAP_SHADOW_THREAD_STACK_SIZE, coap_shadow_thread_fn,
 		NULL, NULL, NULL, 0, 0, 0);
