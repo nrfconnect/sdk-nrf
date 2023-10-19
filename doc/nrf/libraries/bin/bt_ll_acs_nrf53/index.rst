@@ -12,6 +12,10 @@ The LE Audio controller for nRF5340 is a link layer controller for the nRF5340 n
 This controller is compatible with the HCI RPMsg driver provided by the |NCS| Bluetooth® :ref:`bt_hci_drivers` core.
 When the communication between the application and the network core on a device is handled by the HCI RPMsg driver, this link layer controller can be used to handle time critical low level communication and the radio.
 
+.. note::
+   The LE Audio controller for nRF5340 is under development and is provided in the :ref:`experimental state <software_maturity>`.
+   Make sure to always use the latest version of the controller.
+
 .. le_audio_controller_qdid_start
 
 LE Audio controller for nRF5340 QDID
@@ -42,6 +46,9 @@ Usage
 
 This controller is provided as a HEX file and includes the LE Audio Controller Subsystem for nRF53.
 Check the license file in the :file:`/bin` directory for usage conditions.
+
+The HEX file is to be used with the |NCS| version it is delivered with.
+Other combinations are not tested and their behavior is undefined.
 
 When using the file, the controller is programmed to the network core of nRF5340.
 Configurations and calls are handled through standard HCI and VSC.
