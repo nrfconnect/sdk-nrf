@@ -136,7 +136,7 @@ To enable one of the reactions to the last fabric removal, set the corresponding
   This means the device is restored to the factory settings.
 
 To create a delay between  the chosen reaction and the last fabric being removed, set the :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ACTION_DELAY` Kconfig option to a specific time in milliseconds.
-By default this Kconfig option is set to 500 milliseconds.
+By default this Kconfig option is set to 1 second.
 
 .. note::
   The :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option is set to ``y`` by default.
