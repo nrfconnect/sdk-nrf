@@ -80,6 +80,7 @@ const void *pcd_cmd_data_ptr_get(void)
 }
 
 #ifdef CONFIG_PCD_NET
+#ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 int pcd_find_fw_version(void)
 {
 	const struct fw_info *firmware_info;
@@ -98,6 +99,7 @@ int pcd_find_fw_version(void)
 
 	return -EFAULT;
 }
+#endif
 
 int pcd_fw_copy(const struct device *fdev)
 {
@@ -224,6 +226,7 @@ static int network_core_pcd_cmdset(uint32_t cmd, const void *src_addr, size_t le
 	return 0;
 }
 
+#ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 int pcd_network_core_app_version(uint8_t *buf, size_t len)
 {
 	if (buf == NULL || len < 4) {
@@ -240,6 +243,7 @@ int pcd_network_core_app_version(uint8_t *buf, size_t len)
 
 	return network_core_pcd_cmdset(PCD_CMD_MAGIC_READ_VERSION, buf, len, true);
 }
+#endif
 
 static int network_core_update(const void *src_addr, size_t len, bool wait)
 {
