@@ -7,9 +7,9 @@
 """ Tools to program multiple nRF5340 Audio DKs """
 
 from threading import Thread
-from os import system
+from os import system, path
 from typing import List
-from nrf5340_audio_dk_devices import DeviceConf, SelectFlags, AudioDevice
+from nrf5340_audio_dk_devices import DeviceConf, SelectFlags, AudioDevice, Controller
 
 MEM_ADDR_UICR_SNR = 0x00FF80F0
 MEM_ADDR_UICR_CH = 0x00FF80F4
@@ -38,6 +38,14 @@ def __populate_UICR(dev):
 
 def _program_cores(dev: DeviceConf, mcuboot_type) -> int:
     if dev.core_net_programmed == SelectFlags.TBD:
+        if not path.isfile(dev.hex_path_net):
+            if dev.controller == Controller.sdc:
+                print(
+                    "Controller: SDC. NET core hex not found. Built as APP core child image.")
+            if dev.controller == Controller.acs_nrf53:
+                print("Controller: acs_nrf53. NET core hex not found.")
+            return 1
+
         print(f"Programming net core on: {dev}")
         cmd = f"nrfjprog --program {dev.hex_path_net}  -f NRF53  -q --snr {dev.nrf5340_audio_dk_snr} --sectorerase --coprocessor CP_NETWORK"
         ret_val = system(cmd)
@@ -54,18 +62,17 @@ def _program_cores(dev: DeviceConf, mcuboot_type) -> int:
         ret_val = system(cmd)
         if ret_val != 0:
             if not dev.recover_on_fail:
-                dev.core_app_programmed =  SelectFlags.FAIL
+                dev.core_app_programmed = SelectFlags.FAIL
             return ret_val
         else:
             dev.core_app_programmed = SelectFlags.DONE
-
         # Populate UICR data matching the JSON file
         if not __populate_UICR(dev):
             dev.core_app_programmed = SelectFlags.FAIL
             return 1
 
     if dev.core_net_programmed != SelectFlags.NOT or dev.core_app_programmed != SelectFlags.NOT:
-        if mcuboot_type =='external':
+        if mcuboot_type == 'external':
             print(f"Hard resetting {dev}")
             cmd = f"nrfjprog -p --snr {dev.nrf5340_audio_dk_snr}"
         else:

@@ -13,28 +13,28 @@ from pathlib import Path
 from typing import List
 
 
-class SelectFlags(Enum):
+class SelectFlags(str, Enum):
     """Holds the available status flags"""
 
     NOT = "Not selected"
-    TBD = "Selected TBD"
+    TBD = "Selected"
     DONE = "Done"
     FAIL = "Failed"
 
 
-class Core(Enum):
+class Core(str, Enum):
     app = "app"
     net = "network"
     both = "both"
 
 
-class AudioDevice(Enum):
+class AudioDevice(str, Enum):
     headset = "headset"
     gateway = "gateway"
     both = "both"
 
 
-class BuildType(Enum):
+class BuildType(str, Enum):
     release = "release"
     debug = "debug"
 
@@ -44,6 +44,11 @@ class Channel(Enum):
     left = 0
     right = 1
     NA = auto()
+
+
+class Controller(str, Enum):
+    acs_nrf53 = "ACS_nRF53"
+    sdc = "SDC"
 
 
 @dataclass
@@ -61,20 +66,25 @@ class DeviceConf:
     cores: InitVar[List[Core]]
     devices: InitVar[List[AudioDevice]]
     _only_reboot: InitVar[SelectFlags]
+    controller: InitVar[List[Controller]]
     # Post init variables
     only_reboot: SelectFlags = field(init=False, default=SelectFlags.NOT)
     hex_path_app: Path = field(init=False, default=None)
-    core_app_programmed: SelectFlags = field(init=False, default=SelectFlags.NOT)
+    core_app_programmed: SelectFlags = field(
+        init=False, default=SelectFlags.NOT)
     hex_path_net: Path = field(init=False, default=None)
-    core_net_programmed: SelectFlags = field(init=False, default=SelectFlags.NOT)
+    core_net_programmed: SelectFlags = field(
+        init=False, default=SelectFlags.NOT)
 
     def __post_init__(
-        self, cores: List[Core], devices: List[AudioDevice], _only_reboot: SelectFlags
+        self, cores: List[Core], devices: List[AudioDevice], _only_reboot: SelectFlags, controller: Controller,
     ):
         device_selected = self.nrf5340_audio_dk_dev in devices
         self.only_reboot = _only_reboot if device_selected else SelectFlags.NOT
+        self.controller = controller
         if self.only_reboot == SelectFlags.TBD:
             return
+
         if (Core.app in cores) and device_selected:
             self.core_app_programmed = SelectFlags.TBD
         if (Core.net in cores) and device_selected:
@@ -95,3 +105,5 @@ class BuildConf:
     device: AudioDevice
     build: BuildType
     pristine: bool
+    controller: Controller
+    child_image: bool
