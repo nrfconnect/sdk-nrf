@@ -72,6 +72,9 @@ Also, for a successful TLS connection to the Azure IoT Hub instance, the device 
 If you want to test FOTA, ensure that also the required credentials for the file server are provisioned and the :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG` Kconfig option is set accordingly.
 See :ref:`prereq_connect_to_azure_iot_hub` for information on provisioning the certificates.
 
+.. include:: /includes/wifi_credentials_shell.txt
+
+.. include:: /includes/wifi_credentials_static.txt
 
 .. _configure_options_azure_iot:
 
