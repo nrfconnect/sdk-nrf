@@ -10,6 +10,7 @@
 #include <zephyr/toolchain.h>
 #include <nrf.h>
 #include <nrf_cc310_bl_init.h>
+#include <pm_config.h>
 
 #ifdef CONFIG_SOC_SERIES_NRF91X
 #define NRF_CRYPTOCELL NRF_CRYPTOCELL_S
@@ -29,16 +30,25 @@ void cc310_bl_backend_disable(void)
 
 int cc310_bl_init(void)
 {
-	static bool initialized;
+#if (defined(CONFIG_BL_ROT_VERIFY_EXT_API_ENABLED) || defined(CONFIG_BL_SHA256_EXT_API_ENABLED) \
+	|| defined(CONFIG_BL_SECP256R1_EXT_API_ENABLED)) && defined(PM_B0_END_ADDRESS)
+	uint32_t msp = __get_MSP();
 
-	if (!initialized) {
-		cc310_bl_backend_enable();
-		if (nrf_cc310_bl_init() != CRYS_OK) {
-			return -EFAULT;
+	if (msp < PM_B0_END_ADDRESS) {
+#endif
+		static bool initialized;
+
+		if (!initialized) {
+			cc310_bl_backend_enable();
+			if (nrf_cc310_bl_init() != CRYS_OK) {
+				return -EFAULT;
+			}
+			initialized = true;
+			cc310_bl_backend_disable();
 		}
-		initialized = true;
-		cc310_bl_backend_disable();
+#if (defined(CONFIG_BL_ROT_VERIFY_EXT_API_ENABLED) || defined(CONFIG_BL_SHA256_EXT_API_ENABLED) \
+	|| defined(CONFIG_BL_SECP256R1_EXT_API_ENABLED)) && defined(PM_B0_END_ADDRESS)
 	}
-
+#endif
 	return 0;
 }
