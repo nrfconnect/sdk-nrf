@@ -9,6 +9,21 @@ tests:
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
     tags: ci_build
+  sample.cellular.nrf_cloud_multi_service.mqtt.full:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    extra_args: "EXTRA_CONF_FILE=\"overlay_full_modem_fota.conf;\
+      overlay_pgps_ext_flash.conf;overlay_mcuboot_ext_flash.conf\""
+    tags: ci_build
+  sample.cellular.nrf_cloud_multi_service.mqtt.min:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    extra_args: EXTRA_CONF_FILE="overlay_min_mqtt.conf"
+    tags: ci_build
   sample.cellular.nrf_cloud_multi_service.coap:
     build_only: true
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
@@ -16,21 +31,28 @@ tests:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
-    extra_args: EXTRA_CONF_FILE=overlay_coap.conf
+    extra_args: EXTRA_CONF_FILE="overlay_coap.conf"
     tags: ci_build
-  sample.cellular.nrf7002ek_wifi.nrf9160dk:
+  sample.cellular.nrf_cloud_multi_service.coap.min:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    extra_args: EXTRA_CONF_FILE="overlay_coap.conf;overlay_min_coap.conf"
+    tags: ci_build
+  sample.cellular.nrf7002ek_wifi.scan:
     build_only: true
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+      - nrf9161dk_nrf9161_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
+    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
                 EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
-  sample.cellular.nrf7002ek_wifi.nrf9161dk:
+  sample.cellular.nrf7002ek_wifi.conn:
     build_only: true
     integration_platforms:
-      - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9161dk_nrf9161_ns
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
-                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE="overlay_nrf7002ek_wifi_no_lte.conf"
     tags: ci_build
