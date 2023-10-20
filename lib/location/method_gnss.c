@@ -68,9 +68,9 @@ BUILD_ASSERT(
 #define PGPS_EXPIRY_THRESHOLD 0
 /* A-GNSS minimum number of expired ephemerides to request all ephemerides. */
 #define AGNSS_EPHE_MIN_COUNT 3
-/* P-GPS minimum number of expired ephemerides to trigger injection of predictions.
- * With P-GPS, predictions are not available for all satellites, especially when
- * predictions are made further into the future, so it is natural that predictions are
+/* P-GPS minimum number of expired ephemerides to trigger injection of a prediction.
+ * With P-GPS, ephemerides are not available for all satellites, especially when
+ * predictions are made further into the future, so it is natural that ephemerides are
  * missing for some of the satellites.
  */
 #define PGPS_EPHE_MIN_COUNT 12
@@ -85,14 +85,6 @@ BUILD_ASSERT(
 
 static struct k_work method_gnss_start_work;
 static struct k_work method_gnss_pvt_work;
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
-/* Flag indicating whether nrf_modem_gnss_agnss_expiry_get() is supported. If the API is
- * supported, NRF_MODEM_GNSS_EVT_AGNSS_REQ events are ignored.
- */
-static bool agnss_expiry_get_supported;
-static struct k_work method_gnss_agnss_req_event_handle_work;
-static struct k_work method_gnss_agnss_req_work;
-#endif
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 static int64_t agnss_req_timestamp;
@@ -128,7 +120,7 @@ static struct nrf_modem_gnss_agnss_data_frame pgps_agnss_request = {
 	.data_flags = NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST,
 	.system_count = 1,
 	/* Ephe mask for GPS is initially all set, because event PGPS_EVT_AVAILABLE may be received
-	 * before the assistance request from GNSS. If ephe mask would be zero, no predictions
+	 * before the assistance request from GNSS. If ephe mask would be zero, no prediction
 	 * would be injected.
 	 */
 	.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
@@ -171,7 +163,7 @@ static void method_gnss_inject_pgps_work_fn(struct k_work *work)
 
 	err = nrf_cloud_pgps_inject(prediction, &pgps_agnss_request);
 	if (err) {
-		LOG_ERR("Unable to send prediction to modem: %d", err);
+		LOG_ERR("Failed to send prediction to modem, error: %d", err);
 	}
 }
 
@@ -205,7 +197,7 @@ static void method_gnss_notify_pgps_work_fn(struct k_work *work)
 	int err = nrf_cloud_pgps_notify_prediction();
 
 	if (err) {
-		LOG_ERR("Error requesting notification of prediction availability: %d", err);
+		LOG_ERR("Failed to request prediction, error: %d", err);
 	}
 }
 #endif
@@ -342,7 +334,7 @@ static void method_gnss_nrf_cloud_agnss_request(void)
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	err = nrf_cloud_pgps_notify_prediction();
 	if (err) {
-		LOG_ERR("Error requesting notification of prediction availability: %d", err);
+		LOG_ERR("Failed to request prediction, error: %d", err);
 	}
 #endif
 }
@@ -414,7 +406,7 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 
 	err = nrf_cloud_pgps_notify_prediction();
 	if (err) {
-		LOG_ERR("GNSS: Failed to request current prediction, error: %d", err);
+		LOG_ERR("Failed to request prediction, error: %d", err);
 	} else {
 		LOG_DBG("P-GPS prediction requested");
 	}
@@ -475,7 +467,7 @@ static const char *get_system_string(uint8_t system_id)
 	}
 }
 
-/* Triggers A-GNSS data request and/or injection of P-GPS predictions.
+/* Triggers A-GNSS data request and/or injection of a P-GPS prediction.
  *
  * Before this function is called, the assistance data need from GNSS must be stored into
  * 'agnss_request'.
@@ -613,31 +605,10 @@ static void method_gnss_assistance_request(void)
 		int err = nrf_cloud_pgps_notify_prediction();
 
 		if (err) {
-			LOG_ERR("Error requesting notification of prediction availability: %d",
-				err);
+			LOG_ERR("Failed to request prediction, error: %d", err);
 		}
 	}
 #endif /* CONFIG_NRF_CLOUD_PGPS */
-}
-
-static void method_gnss_agnss_req_event_handle_work_fn(struct k_work *item)
-{
-	int err = nrf_modem_gnss_read(&agnss_request,
-				      sizeof(agnss_request),
-				      NRF_MODEM_GNSS_DATA_AGNSS_REQ);
-
-	if (err) {
-		LOG_WRN("Reading A-GNSS req data from GNSS failed, error: %d", err);
-		return;
-	}
-
-	/* GPS data need is always expected to be present and first in list. */
-	__ASSERT(agnss_request.system_count > 0,
-		 "GNSS system data need not found");
-	__ASSERT(agnss_request.system[0].system_id == NRF_MODEM_GNSS_SYSTEM_GPS,
-		 "GPS data need not found");
-
-	method_gnss_assistance_request();
 }
 #endif /* defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS) */
 
@@ -648,14 +619,7 @@ void method_gnss_event_handler(int event)
 		k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_pvt_work);
 		break;
 
-	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
-		if (!agnss_expiry_get_supported) {
-			k_work_submit_to_queue(
-				location_core_work_queue_get(),
-				&method_gnss_agnss_req_event_handle_work);
-		}
-#endif
+	default:
 		break;
 	}
 }
@@ -676,7 +640,7 @@ int method_gnss_cancel(void)
 	(void)k_work_cancel(&method_gnss_start_work);
 
 	/* If we are currently not in PSM, i.e., LTE is running, reset the semaphore to unblock
-	 * method_gnss_positioning_work_fn() and allow the ongoing location request to terminate.
+	 * method_gnss_start_work_fn() and allow the ongoing location request to terminate.
 	 * Otherwise, don't reset the semaphore in order not to lose information about the current
 	 * sleep state.
 	 */
@@ -686,7 +650,7 @@ int method_gnss_cancel(void)
 	}
 
 	/* If we are currently in RRC connected mode, reset the semaphore to unblock
-	 * method_gnss_positioning_work_fn() and allow the ongoing location request to terminate.
+	 * method_gnss_start_work_fn() and allow the ongoing location request to terminate.
 	 * Otherwise, don't reset the semaphore in order not to lose information about the current
 	 * RRC state.
 	 */
@@ -767,7 +731,7 @@ static void method_gnss_modem_sleep_notif_subscribe(uint32_t threshold_ms)
 
 	err = nrf_modem_at_printf(AT_MDM_SLEEP_NOTIF_START, 0, threshold_ms);
 	if (err) {
-		LOG_ERR("Cannot subscribe to modem sleep notifications, err %d", err);
+		LOG_ERR("Cannot subscribe to modem sleep notifications, error: %d", err);
 	} else {
 		LOG_DBG("Subscribed to modem sleep notifications");
 	}
@@ -971,65 +935,29 @@ static void method_gnss_pgps_ext_work_fn(struct k_work *item)
 }
 #endif
 
-static void method_gnss_positioning_work_fn(struct k_work *work)
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+static void method_gnss_pgps_init(void)
 {
-	int err = 0;
+	int err;
+	static bool initialized;
 
-	if (!method_gnss_allowed_to_start()) {
-		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
-		return;
+	if (!initialized) {
+		struct nrf_cloud_pgps_init_param param = {
+			.event_handler = method_gnss_pgps_handler,
+			/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+			.storage_base = 0u,
+			.storage_size = 0u
+		};
+
+		err = nrf_cloud_pgps_init(&param);
+		if (err) {
+			LOG_ERR("Failed to initialize P-GPS, error: %d", err);
+		} else {
+			initialized = true;
+		}
 	}
-
-	/* Configure GNSS to continuous tracking mode */
-	err = nrf_modem_gnss_fix_interval_set(1);
-	if (err == -NRF_EACCES) {
-		LOG_WRN("Modem's system or functional mode doesn't allow GNSS usage");
-	}
-
-#if defined(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK)
-	err |= nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK);
-#endif
-
-	insuf_timewin_count = 0;
-
-	/* By default we take the first fix. */
-	fixes_remaining = 1;
-
-	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
-
-	switch (gnss_config.accuracy) {
-	case LOCATION_ACCURACY_LOW:
-		use_case |= NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
-		break;
-
-	case LOCATION_ACCURACY_NORMAL:
-		break;
-
-	case LOCATION_ACCURACY_HIGH:
-		/* In high accuracy mode, use the configured fix count. */
-		fixes_remaining = gnss_config.num_consecutive_fixes;
-		break;
-	}
-
-	err |= nrf_modem_gnss_use_case_set(use_case);
-
-	if (err) {
-		LOG_ERR("Failed to configure GNSS");
-		location_core_event_cb_error();
-		running = false;
-		return;
-	}
-
-	err = nrf_modem_gnss_start();
-	if (err) {
-		LOG_ERR("Failed to start GNSS");
-		location_core_event_cb_error();
-		running = false;
-		return;
-	}
-
-	location_core_timer_start(gnss_config.timeout);
 }
+#endif /* CONFIG_NRF_CLOUD_PGPS */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 /* Processes A-GNSS expiry data from nrf_modem_gnss_agnss_expiry_get() function.
@@ -1175,43 +1103,94 @@ static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_e
 	}
 }
 
-/* Queries assistance data need from GNSS.
- *
- * To maintain backward compatibility with older modem firmware versions, two different methods are
- * supported. If the nrf_modem_gnss_agnss_expiry_get() API is not supported (pre-v1.3.2 modem
- * firmware), GNSS is briefly started to trigger the NRF_MODEM_GNSS_EVT_AGNSS_REQ event from GNSS
- * in case assistance data is currently needed.
- */
-static void method_gnss_agnss_req_work_fn(struct k_work *work)
+/* Queries assistance data need from GNSS. */
+static void method_gnss_assistance_data_need_get(void)
 {
 	int err;
 	struct nrf_modem_gnss_agnss_expiry agnss_expiry;
 
 	err = nrf_modem_gnss_agnss_expiry_get(&agnss_expiry);
 	if (err) {
-		if (err == -NRF_EOPNOTSUPP) {
-			LOG_DBG("nrf_modem_gnss_agnss_expiry_get() not supported by the modem "
-				"firmware");
-
-			/* Start and stop GNSS to trigger NRF_MODEM_GNSS_EVT_AGNSS_REQ event if
-			 * assistance data is needed.
-			 */
-			nrf_modem_gnss_start();
-			nrf_modem_gnss_stop();
-		} else {
-			LOG_WRN("nrf_modem_gnss_agnss_expiry_get() failed, err %d", err);
-		}
-
+		LOG_ERR("nrf_modem_gnss_agnss_expiry_get() failed, error: %d", err);
 		return;
 	}
 
-	agnss_expiry_get_supported = true;
-
 	method_gnss_agnss_expiry_process(&agnss_expiry);
-
-	method_gnss_assistance_request();
 }
 #endif
+
+static void method_gnss_start_work_fn(struct k_work *work)
+{
+	int err = 0;
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	/* P-GPS is only initialized here because initialization may trigger P-GPS data request
+	 * which would fail if the device is not registered to a network.
+	 */
+	method_gnss_pgps_init();
+#endif
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+	method_gnss_assistance_data_need_get();
+
+	/* Request assistance data if needed. */
+	method_gnss_assistance_request();
+#endif
+
+	if (!method_gnss_allowed_to_start()) {
+		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
+		return;
+	}
+
+	/* Configure GNSS to continuous tracking mode */
+	err = nrf_modem_gnss_fix_interval_set(1);
+	if (err == -NRF_EACCES) {
+		LOG_WRN("Modem's system or functional mode doesn't allow GNSS usage");
+	}
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK)
+	err |= nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGNSS_ELEVATION_MASK);
+#endif
+
+	insuf_timewin_count = 0;
+
+	/* By default we take the first fix. */
+	fixes_remaining = 1;
+
+	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
+
+	switch (gnss_config.accuracy) {
+	case LOCATION_ACCURACY_LOW:
+		use_case |= NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY;
+		break;
+
+	case LOCATION_ACCURACY_NORMAL:
+		break;
+
+	case LOCATION_ACCURACY_HIGH:
+		/* In high accuracy mode, use the configured fix count. */
+		fixes_remaining = gnss_config.num_consecutive_fixes;
+		break;
+	}
+
+	err |= nrf_modem_gnss_use_case_set(use_case);
+
+	if (err) {
+		LOG_ERR("Failed to configure GNSS");
+		location_core_event_cb_error();
+		running = false;
+		return;
+	}
+
+	err = nrf_modem_gnss_start();
+	if (err) {
+		LOG_ERR("Failed to start GNSS");
+		location_core_event_cb_error();
+		running = false;
+		return;
+	}
+
+	location_core_timer_start(gnss_config.timeout);
+}
 
 int method_gnss_location_get(const struct location_request_info *request)
 {
@@ -1226,43 +1205,9 @@ int method_gnss_location_get(const struct location_request_info *request)
 	 */
 	err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
 	if (err) {
-		LOG_ERR("Failed to set GNSS event handler, error %d", err);
+		LOG_ERR("Failed to set GNSS event handler, error: %d", err);
 		return err;
 	}
-
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	/* P-GPS is only initialized here because initialization may trigger P-GPS data request
-	 * which would fail if the device is not registered to a network.
-	 */
-	static bool initialized;
-
-	if (!initialized) {
-		struct nrf_cloud_pgps_init_param param = {
-			.event_handler = method_gnss_pgps_handler,
-			/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
-			.storage_base = 0u,
-			.storage_size = 0u
-		};
-
-		err = nrf_cloud_pgps_init(&param);
-		if (err) {
-			LOG_ERR("Error from PGPS init: %d", err);
-		} else {
-			initialized = true;
-		}
-	}
-#endif
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
-	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_agnss_req_work);
-	/* Sleep for a while before submitting the next work, otherwise A-GNSS data may not be
-	 * downloaded before GNSS is started. If the nrf_modem_gnss_agnss_expiry_get() API is not
-	 * supported, GNSS is briefly started and stopped to trigger the
-	 * NRF_MODEM_GNSS_EVT_AGNSS_REQ event, which in turn causes the A-GNSS data download work
-	 * item to be submitted into the work queue. This all needs to happen before the work item
-	 * below is submitted.
-	 */
-	k_sleep(K_MSEC(100));
-#endif
 
 	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work);
 
@@ -1285,17 +1230,12 @@ int method_gnss_init(void)
 
 	err = nrf_modem_gnss_event_handler_set(method_gnss_event_handler);
 	if (err) {
-		LOG_ERR("Failed to set GNSS event handler, error %d", err);
+		LOG_ERR("Failed to set GNSS event handler, error: %d", err);
 		return err;
 	}
 
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
-	k_work_init(&method_gnss_start_work, method_gnss_positioning_work_fn);
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
-	k_work_init(&method_gnss_agnss_req_event_handle_work,
-		    method_gnss_agnss_req_event_handle_work_fn);
-	k_work_init(&method_gnss_agnss_req_work, method_gnss_agnss_req_work_fn);
-#endif
+	k_work_init(&method_gnss_start_work, method_gnss_start_work_fn);
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
