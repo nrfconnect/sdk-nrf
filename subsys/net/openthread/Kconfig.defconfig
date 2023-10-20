@@ -168,10 +168,6 @@ config NRF_802154_ENCRYPTION
 	bool
 	default y
 
-config IEEE802154_2015
-	bool
-	default y
-
 config NET_PKT_TXTIME
 	bool
 	default y
