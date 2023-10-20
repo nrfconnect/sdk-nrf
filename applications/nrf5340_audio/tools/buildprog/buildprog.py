@@ -27,6 +27,7 @@ from nrf5340_audio_dk_devices import (
     AudioDevice,
     SelectFlags,
     Core,
+    Controller,
 )
 from program import program_threads_run
 from pathlib import Path
@@ -86,7 +87,7 @@ def __print_dev_conf(device_list):
     print(table)
 
 
-def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine, options):
+def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine, controller: Controller, child_image, options):
     if core == Core.app:
         build_cmd = f"west build {TARGET_CORE_APP_FOLDER} -b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME}"
         if device == AudioDevice.headset:
@@ -112,6 +113,10 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
             device_flag += " -DCONFIG_AUDIO_DFU=2"
         if options.min_b0n:
             device_flag += " -DCONFIG_B0N_MINIMAL=y"
+        if options.controller == Controller.sdc:
+            device_flag += " -DCONFIG_BT_LL_ACS_NRF53=n"
+            if not child_image:
+                device_flag += " -DCONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE=n"
 
         if options.nrf21540:
             device_flag += " -DSHIELD=nrf21540ek_fwd"
@@ -137,7 +142,6 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine,
             build_cmd += " -p"
 
     elif core == Core.net:
-        # The net core is precompiled
         dest_folder = TARGET_CORE_NET_FOLDER
         build_cmd = ""
         device_flag = ""
@@ -152,6 +156,8 @@ def __build_module(build_config, options):
         build_config.device,
         build_config.build,
         build_config.pristine,
+        build_config.controller,
+        build_config.child_image,
         options,
     )
     west_str = f"{build_cmd} -d {dest_folder} "
@@ -185,14 +191,20 @@ def __find_snr():
     return list(map(int, snrs))
 
 
-def __populate_hex_paths(dev, options):
+def __populate_hex_paths(dev, options, child_image):
     """Poplulate hex paths where relevant"""
 
     _, temp_dest_folder, _, _ = __build_cmd_get(
-        Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options
+        Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options.controller, child_image, options
     )
 
     dest_folder = temp_dest_folder
+
+    if options.controller != Controller.acs_nrf53:
+        dev.hex_path_app = dest_folder / "zephyr/zephyr.hex"
+        dev.hex_path_net = dest_folder / "hci_rpmsg/zephyr/zephyr.hex"
+        return
+
     if dev.core_app_programmed == SelectFlags.TBD:
         if options.mcuboot != '':
             dev.hex_path_app = dest_folder / "zephyr/merged.hex"
@@ -299,6 +311,15 @@ def __main():
         default=False,
         help="Recover device if programming fails",
     )
+    parser.add_argument(
+        # Experimental argument
+        "--ctlr",
+        type=str,
+        choices=[i.value for i in Controller],
+        dest="controller",
+        default=Controller.acs_nrf53.value,
+        help=argparse.SUPPRESS,
+    )
     # DFU relative option
     parser.add_argument(
         "-M",
@@ -306,7 +327,8 @@ def __main():
         dest="min_b0n",
         action='store_true',
         default=False,
-        help="net core bootloader use minimal size build",
+        help="net core bootloader use minimal size build. Only for controller: " +
+        Controller.acs_nrf53,
     )
     parser.add_argument(
         "-m",
@@ -314,7 +336,7 @@ def __main():
         required=("-M" in sys.argv or "--min_b0n" in sys.argv),
         choices=["external", "internal"],
         default='',
-        help="MCUBOOT with external, internal flash",
+        help="MCUBOOT with external, internal flash. Only for controller: " + Controller.acs_nrf53,
     )
     parser.add_argument(
         "--nrf21540",
@@ -339,7 +361,15 @@ def __main():
         default=False,
         help="Set to generate a user specific Bluetooth device name. Note that this will put the computer user name on air in clear text",
     )
+
     options = parser.parse_args(args=sys.argv[1:])
+
+    if options.controller != Controller.acs_nrf53:
+        print(Fore.YELLOW +
+              "Experimental app - controller combination" + Style.RESET_ALL)
+        if options.nrf21540 or options.mcuboot != '' or options.min_b0n:
+            raise Exception("nrf21540 or DFU arguments only accepted when using controller: " +
+                            Controller.acs_nrf53 + ". Please use standard tools.")
 
     # Post processing for Enums
     if options.core is None:
@@ -381,6 +411,7 @@ def __main():
             cores=cores,
             devices=devices,
             _only_reboot=options.only_reboot,
+            controller=options.controller,
         )
         for dev in dev_arr
     ]
@@ -397,11 +428,15 @@ def __main():
 
     # Reboot step finished
     # Build step start
+    child_image = True
 
     if options.build is not None:
         print("Invoking build step")
         build_configs = []
         if Core.app in cores:
+            if not Core.net in cores:
+                child_image = False
+
             if AudioDevice.headset in devices:
                 build_configs.append(
                     BuildConf(
@@ -409,6 +444,8 @@ def __main():
                         device=AudioDevice.headset,
                         pristine=options.pristine,
                         build=options.build,
+                        controller=options.controller,
+                        child_image=child_image,
                     )
                 )
             if AudioDevice.gateway in devices:
@@ -418,10 +455,13 @@ def __main():
                         device=AudioDevice.gateway,
                         pristine=options.pristine,
                         build=options.build,
+                        controller=options.controller,
+                        child_image=child_image,
                     )
                 )
+
         if Core.net in cores:
-            print("Net core uses precompiled hex")
+            print("Net core uses precompiled hex or child image")
 
         for build_cfg in build_configs:
             __build_module(build_cfg, options)
@@ -432,7 +472,7 @@ def __main():
     if options.program:
         for dev in device_list:
             if dev.snr_connected:
-                __populate_hex_paths(dev, options)
+                __populate_hex_paths(dev, options, child_image)
         program_threads_run(device_list, options.mcuboot,
                             sequential=options.sequential_prog)
 
