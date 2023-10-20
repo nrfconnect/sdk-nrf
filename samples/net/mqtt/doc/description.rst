@@ -81,7 +81,9 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC - MQTT subscribe topic
 	This configuration option sets the topic to which the sample subscribes.
 	Default is ``<clientID>/my/subscribe/topic``.
 
-.. include:: /includes/wifi_credentials_options.txt
+.. include:: /includes/wifi_credentials_shell.txt
+
+.. include:: /includes/wifi_credentials_static.txt
 
 Additional configuration
 ========================

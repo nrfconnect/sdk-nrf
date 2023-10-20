@@ -133,7 +133,9 @@ CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
 CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
    This configuration option configures the sample to use the HW ID (IMEI, MAC) as the device ID in the MQTT connection.
 
-.. include:: /includes/wifi_credentials_options.txt
+.. include:: /includes/wifi_credentials_shell.txt
+
+.. include:: /includes/wifi_credentials_static.txt
 
 Configuration files
 ===================

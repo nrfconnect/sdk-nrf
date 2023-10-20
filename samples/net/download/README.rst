@@ -89,6 +89,9 @@ CONFIG_SAMPLE_COMPARE_HASH - Hash compare configuration
 CONFIG_SAMPLE_SHA256_HASH - Hash configuration
    This option sets the SHA256 hash to be compared with :ref:`CONFIG_SAMPLE_COMPUTE_HASH <CONFIG_SAMPLE_COMPUTE_HASH>`.
 
+.. include:: /includes/wifi_credentials_shell.txt
+
+.. include:: /includes/wifi_credentials_static.txt
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

@@ -63,7 +63,9 @@ CONFIG_COAP_SERVER_HOSTNAME - CoAP server hostname
 CONFIG_COAP_SERVER_PORT - CoAP server port
    This option sets the port for the CoAP server. Default is ``5683``.
 
-.. include:: /includes/wifi_credentials_options.txt
+.. include:: /includes/wifi_credentials_shell.txt
+
+.. include:: /includes/wifi_credentials_static.txt
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

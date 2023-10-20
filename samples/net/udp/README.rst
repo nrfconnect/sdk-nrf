@@ -55,6 +55,10 @@ CONFIG_UDP_SAMPLE_SERVER_ADDRESS_STATIC - UDP Server IP Address
 CONFIG_UDP_SAMPLE_SERVER_PORT - UDP server port configuration
    This configuration option sets the server address port number.
 
+.. include:: /includes/wifi_credentials_shell.txt
+
+.. include:: /includes/wifi_credentials_static.txt
+
 Configuration files
 ===================
 

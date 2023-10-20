@@ -17,6 +17,7 @@ source "subsys/logging/Kconfig.template.log_config"
 
 choice WIFI_CREDENTIALS_BACKEND
 	prompt "WiFi credentials backend"
+	default WIFI_CREDENTIALS_BACKEND_PSA if BUILD_WITH_TFM && !TFM_PROFILE_TYPE_MINIMAL
 	default WIFI_CREDENTIALS_BACKEND_SETTINGS
 	default WIFI_CREDENTIALS_BACKEND_NONE if WIFI_CREDENTIALS_STATIC
 	help
