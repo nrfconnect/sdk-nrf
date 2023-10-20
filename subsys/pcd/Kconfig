@@ -35,6 +35,7 @@ if PCD_APP || PCD_NET
 config PCD_READ_NETCORE_APP_VERSION
 	bool "Include PCD command to read network core application version"
 	depends on FW_INFO || FW_INFO_API
+	default y if PCD_NET
 
 config PCD_USE_CONSTANTS
 	bool "Use KConfig constants rather than pm_config.h"
