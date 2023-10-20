@@ -45,7 +45,8 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk, -bsec]
+  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk,
+    -bsec]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -141,7 +142,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: bbb718adf44a915c1f42bbc6393b2708cb93cf88
+      revision: pull/1098/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
