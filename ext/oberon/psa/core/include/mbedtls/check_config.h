@@ -111,7 +111,7 @@
 
 #if defined(MBEDTLS_ECJPAKE_C) &&           \
     ( !defined(MBEDTLS_ECP_C) ||            \
-      !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_C) ) )
+      !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_CLIENT) ) )
 #error "MBEDTLS_ECJPAKE_C defined, but not all prerequisites"
 #endif
 
@@ -157,18 +157,18 @@
 #endif
 
 #if defined(MBEDTLS_PKCS5_C) && \
-    ( !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_C) ) || \
+    ( !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_CLIENT) ) || \
         !defined(MBEDTLS_CIPHER_C) )
 #error "MBEDTLS_PKCS5_C defined, but not all prerequisites"
 #endif
 
 #if defined(MBEDTLS_PKCS12_C) && \
-    !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_C) )
+    !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_CLIENT) )
 #error "MBEDTLS_PKCS12_C defined, but not all prerequisites"
 #endif
 
 #if defined(MBEDTLS_PKCS1_V21) && \
-    !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_C) )
+    !( defined(MBEDTLS_MD_C) || defined(MBEDTLS_PSA_CRYPTO_CLIENT) )
 #error "MBEDTLS_PKCS1_V21 defined, but not all prerequisites"
 #endif
 
@@ -355,8 +355,10 @@
 #error "MBEDTLS_MD_C defined, but not all prerequisites"
 #endif
 
+*/
+
 #if defined(MBEDTLS_LMS_C) &&                                          \
-    ! ( defined(MBEDTLS_PSA_CRYPTO_C) && defined(PSA_WANT_ALG_SHA_256) )
+    ! ( defined(MBEDTLS_PSA_CRYPTO_CLENT) && defined(PSA_WANT_ALG_SHA_256) )
 #error "MBEDTLS_LMS_C requires MBEDTLS_PSA_CRYPTO_C and PSA_WANT_ALG_SHA_256"
 #endif
 
@@ -620,7 +622,7 @@
 #error "MBEDTLS_PLATFORM_NV_SEED_WRITE_MACRO and MBEDTLS_PLATFORM_STD_NV_SEED_WRITE cannot be defined simultaneously"
 #endif
 
-#if defined(MBEDTLS_PSA_CRYPTO_C) &&                                    \
+#if defined(MBEDTLS_PSA_CRYPTO_CLIENT) &&                                    \
     !( ( ( defined(MBEDTLS_CTR_DRBG_C) || defined(MBEDTLS_HMAC_DRBG_C) ) && \
          defined(MBEDTLS_ENTROPY_C) ) ||                                \
        defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG) )
@@ -650,7 +652,7 @@
 #endif /* MBEDTLS_PSA_CRYPTO_SE_C */
 
 #if defined(MBEDTLS_PSA_CRYPTO_STORAGE_C) &&            \
-    ! defined(MBEDTLS_PSA_CRYPTO_C)
+    ! ( defined(MBEDTLS_PSA_CRYPTO_C) || defined(MBEDTLS_PSA_CRYPTO_CLIENT) )
 #error "MBEDTLS_PSA_CRYPTO_STORAGE_C defined, but not all prerequisites"
 #endif
 
@@ -787,7 +789,7 @@
 
 /* TLS 1.3 requires separate HKDF parts from PSA */
 #if defined(MBEDTLS_SSL_PROTO_TLS1_3) && \
-        !( defined(MBEDTLS_PSA_CRYPTO_C) && defined(PSA_WANT_ALG_HKDF_EXTRACT) && defined(PSA_WANT_ALG_HKDF_EXPAND) )
+        !( defined(MBEDTLS_PSA_CRYPTO_CLIENT) && defined(PSA_WANT_ALG_HKDF_EXTRACT) && defined(PSA_WANT_ALG_HKDF_EXPAND) )
 #error "MBEDTLS_SSL_PROTO_TLS1_3 defined, but not all prerequisites"
 #endif
 
@@ -974,7 +976,7 @@
 #endif
 #undef MBEDTLS_THREADING_IMPL
 
-#if defined(MBEDTLS_USE_PSA_CRYPTO) && !defined(MBEDTLS_PSA_CRYPTO_C)
+#if defined(MBEDTLS_USE_PSA_CRYPTO) && !defined(MBEDTLS_PSA_CRYPTO_CLIENT)
 #error "MBEDTLS_USE_PSA_CRYPTO defined, but not all prerequisites"
 #endif
 

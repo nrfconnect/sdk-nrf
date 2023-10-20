@@ -33,7 +33,7 @@
 
 #include "mbedtls/build_info.h"
 
-#if defined(MBEDTLS_PSA_CRYPTO_C)
+#if defined(MBEDTLS_PSA_CRYPTO_CLIENT)
 
 #include "psa/crypto.h"
 
@@ -42,6 +42,7 @@
 #include "mbedtls/pk.h"
 #include "mbedtls/oid.h"
 #include "mbedtls/error.h"
+#include "mbedtls/cipher.h"
 
 #include <string.h>
 
