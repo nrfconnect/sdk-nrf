@@ -36,6 +36,14 @@ extern "C" {
  */
 int memfault_ncs_device_id_set(const char *device_id, size_t len);
 
+/** @brief Trigger NCS metrics collection. Called by default from NCS
+ *	   memfault_metrics_heartbeat_collect_data(), but can instead be called
+ *	   from user's implementation of
+ *	   memfault_metrics_heartbeat_collect_data(), see
+ *	   CONFIG_MEMFAULT_NCS_IMPLEMENT_METRICS_COLLECTION Kconfig option.
+ */
+void memfault_ncs_metrics_collect_data(void);
+
 #ifdef __cplusplus
 }
 #endif

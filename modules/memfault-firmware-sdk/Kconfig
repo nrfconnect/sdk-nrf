@@ -169,6 +169,14 @@ config MEMFAULT_NCS_USE_DEFAULT_METRICS
 	select MEMFAULT_METRICS_EXTRA_DEFS_FILE
 	default y if (MEMFAULT_NCS_STACK_METRICS || MEMFAULT_NCS_LTE_METRICS || MEMFAULT_NCS_BT_METRICS)
 
+config MEMFAULT_NCS_IMPLEMENT_METRICS_COLLECTION
+	bool "Implement metrics collection"
+	depends on MEMFAULT_NCS_USE_DEFAULT_METRICS
+	default y
+	help
+	  Implement the Memfault 'memfault_metrics_heartbeat_collect_data()' function
+	  for the selected metrics. Disable this to override the implementation.
+
 config MEMFAULT_NCS_ETB_CAPTURE
 	bool "Enable ETB trace capture"
 	depends on ETB_TRACE
