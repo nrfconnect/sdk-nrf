@@ -9,6 +9,22 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 3.3.2
+**********************
+
+Release for modem firmware version 1.3.5 and 2.0.0.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Changes
+=======
+
+* Fixed an issue where failed modem firmware updates would not be reported correctly to the user application and the LwM2M server.
+
+
 liblwm2m_carrier 3.3.1
 **********************
 
