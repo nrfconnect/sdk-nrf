@@ -43,7 +43,8 @@ enum status_thread_state {
 
 #define _wpa_cli_cmd_v(cmd, ...) \
 	do { \
-		if (z_wpa_cli_cmd_v(cmd, ##__VA_ARGS__) < 0) { \
+		ret = z_wpa_cli_cmd_v(cmd, ##__VA_ARGS__); \
+		if (ret < 0) { \
 			wpa_printf(MSG_ERROR, "Failed to execute wpa_cli command: %s", cmd); \
 			goto out; \
 		} \
@@ -101,7 +102,7 @@ out:
 static void supp_shell_connect_status(struct k_work *work)
 {
 	static int seconds_counter;
-	int status = CONNECTION_SUCCESS;
+	int ret = CONNECTION_SUCCESS;
 	int conn_result = CONNECTION_FAILURE;
 	struct wpa_supplicant *wpa_s;
 	struct wpa_supp_api_ctrl *ctrl = &wpa_supp_api_ctrl;
@@ -109,13 +110,13 @@ static void supp_shell_connect_status(struct k_work *work)
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
 	if (ctrl->status_thread_state == STATUS_THREAD_RUNNING &&  ctrl->terminate) {
-		status = CONNECTION_TERMINATED;
+		ret = CONNECTION_TERMINATED;
 		goto out;
 	}
 
 	wpa_s = get_wpa_s_handle(ctrl->dev);
 	if (!wpa_s) {
-		status = CONNECTION_FAILURE;
+		ret = CONNECTION_FAILURE;
 		goto out;
 	}
 
@@ -127,7 +128,7 @@ static void supp_shell_connect_status(struct k_work *work)
 			conn_result = -ETIMEDOUT;
 			send_wifi_mgmt_event(wpa_s->ifname, NET_EVENT_WIFI_CMD_CONNECT_RESULT,
 					     (void *)&conn_result, sizeof(int));
-			status = CONNECTION_FAILURE;
+			ret = CONNECTION_FAILURE;
 			goto out;
 		}
 
