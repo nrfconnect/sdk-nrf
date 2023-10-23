@@ -19,9 +19,6 @@
  */
 int slm_settings_init(void);
 
-/** @brief Sets the FOTA settings to their default values. */
-void slm_settings_fota_init(void);
-
 /**
  * @brief Saves the FOTA settings to NVM.
  *

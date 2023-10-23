@@ -268,83 +268,71 @@ void enter_shutdown(void)
 
 static void on_modem_dfu_res(int dfu_res, void *ctx)
 {
+	slm_fota_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
+	slm_fota_stage = FOTA_STAGE_COMPLETE;
+	slm_fota_status = FOTA_STATUS_ERROR;
+	slm_fota_info = dfu_res;
+
 	switch (dfu_res) {
 	case NRF_MODEM_DFU_RESULT_OK:
-		LOG_INF("MODEM UPDATE OK. Running new firmware");
-		slm_fota_stage = FOTA_STAGE_COMPLETE;
+		LOG_INF("Modem update OK. Running new firmware.");
 		slm_fota_status = FOTA_STATUS_OK;
 		slm_fota_info = 0;
 		break;
 	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
 	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
-		LOG_ERR("MODEM UPDATE ERROR %d. Running old firmware", dfu_res);
-		slm_fota_status = FOTA_STATUS_ERROR;
-		slm_fota_info = dfu_res;
+		LOG_ERR("Modem update failed (0x%x). Running old firmware.", dfu_res);
 		break;
 	case NRF_MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case NRF_MODEM_DFU_RESULT_INTERNAL_ERROR:
-		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", dfu_res);
-		slm_fota_status = FOTA_STATUS_ERROR;
-		slm_fota_info = dfu_res;
+		LOG_ERR("Fatal error (0x%x) encountered during modem update.", dfu_res);
 		break;
 	case NRF_MODEM_DFU_RESULT_VOLTAGE_LOW:
-		LOG_ERR("MODEM UPDATE CANCELLED %d.", dfu_res);
-		LOG_ERR("Please reboot once you have sufficient power for the DFU");
+		LOG_ERR("Modem update postponed due to low voltage. "
+			"Reset the modem once you have sufficient power.");
 		slm_fota_stage = FOTA_STAGE_ACTIVATE;
-		slm_fota_status = FOTA_STATUS_ERROR;
-		slm_fota_info = dfu_res;
 		break;
 	default:
-		LOG_WRN("Unhandled nrf_modem DFU result code %d.", dfu_res);
-
-		/* All unknown return codes are considered irrecoverable and reprogramming
-		 * the modem is needed.
-		 */
-		LOG_ERR("nRF modem lib initialization failed, error: %d", dfu_res);
-		slm_fota_status = FOTA_STATUS_ERROR;
-		slm_fota_info = dfu_res;
-		slm_settings_fota_save();
+		LOG_ERR("Unhandled nrf_modem DFU result code 0x%x.", dfu_res);
 		break;
 	}
 }
 
-static void handle_mcuboot_swap_ret(void)
+static void check_app_fota_status(void)
 {
-	int err;
-
 	/** When a TEST image is swapped to primary partition and booted by MCUBOOT,
 	 * the API mcuboot_swap_type() will return BOOT_SWAP_TYPE_REVERT. By this type
 	 * MCUBOOT means that the TEST image is booted OK and, if it's not confirmed
 	 * next, it'll be swapped back to secondary partition and original application
 	 * image will be restored to the primary partition (so-called Revert).
 	 */
-	int type = mcuboot_swap_type();
+	const int type = mcuboot_swap_type();
 
-	slm_fota_stage = FOTA_STAGE_COMPLETE;
 	switch (type) {
+	/** Attempt to boot the contents of slot 0. */
+	case BOOT_SWAP_TYPE_NONE:
+		/* Normal reset, nothing happened, do nothing. */
+		return;
 	/** Swap to slot 1. Absent a confirm command, revert back on next boot. */
 	case BOOT_SWAP_TYPE_TEST:
 	/** Swap to slot 1, and permanently switch to booting its contents. */
 	case BOOT_SWAP_TYPE_PERM:
+	/** Swap failed because image to be run is not valid. */
+	case BOOT_SWAP_TYPE_FAIL:
 		slm_fota_status = FOTA_STATUS_ERROR;
-		slm_fota_info = -EBADF;
+		slm_fota_info = type;
 		break;
 	/** Swap back to alternate slot. A confirm changes this state to NONE. */
 	case BOOT_SWAP_TYPE_REVERT:
-		err = boot_write_img_confirmed();
-		if (err) {
-			slm_fota_status = FOTA_STATUS_ERROR;
-			slm_fota_info = err;
-		} else {
-			slm_fota_status = FOTA_STATUS_OK;
-			slm_fota_info = 0;
-		}
-		break;
-	/** Swap failed because image to be run is not valid */
-	case BOOT_SWAP_TYPE_FAIL:
-	default:
+		/* Happens on a successful application FOTA. */
+		const int ret = boot_write_img_confirmed();
+
+		slm_fota_info = ret;
+		slm_fota_status = ret ? FOTA_STATUS_ERROR : FOTA_STATUS_OK;
 		break;
 	}
+	slm_fota_type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
+	slm_fota_stage = FOTA_STAGE_COMPLETE;
 }
 
 int lte_auto_connect(void)
@@ -413,7 +401,6 @@ static void indicate_wk(struct k_work *work)
 int main(void)
 {
 	uint32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
-	enum fota_stage fota_stage;
 
 	nrf_power_resetreas_clear(NRF_POWER_NS, 0x70017);
 	LOG_DBG("RR: 0x%08x", rr);
@@ -428,10 +415,12 @@ int main(void)
 		LOG_WRN("Failed to init slm settings");
 	}
 
-	/* The fota stage is updated in the dfu_callback during modem initialization.
-	 * We store it here to see if a fota was performed during this modem init.
-	 */
-	fota_stage = slm_fota_stage;
+#if defined(CONFIG_SLM_FULL_FOTA)
+	if (slm_modem_full_fota) {
+		slm_finish_modem_full_fota();
+		slm_fota_type = DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
+	}
+#endif
 
 	const int ret = nrf_modem_lib_init();
 
@@ -445,21 +434,8 @@ int main(void)
 		}
 	}
 
+	check_app_fota_status();
 
-	/* Post-FOTA handling */
-	if (fota_stage == FOTA_STAGE_ACTIVATE) {
-		if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
-#if defined(CONFIG_SLM_FULL_FOTA)
-			slm_finish_modem_full_dfu();
-#endif
-		} else if (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
-			handle_mcuboot_swap_ret();
-		} else if (slm_fota_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
-			LOG_ERR("Unknown DFU type: %d", slm_fota_type);
-			slm_fota_status = FOTA_STATUS_ERROR;
-			slm_fota_info = -EAGAIN;
-		}
-	}
 #if defined(CONFIG_SLM_START_SLEEP)
 	else {
 		if ((rr & NRF_POWER_RESETREAS_OFF_MASK) ||  /* DETECT signal from GPIO*/

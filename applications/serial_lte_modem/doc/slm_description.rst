@@ -565,7 +565,8 @@ Using the LwM2M carrier library
 
 The certificate provisioning can also be done directly in the Serial LTE Modem application by using the same AT commands as described for the :ref:`at_client_sample` sample.
 
-Enabling the LwM2M carrier library will disable this application's support for GNSS in order to have enough space in flash.
+When the :ref:`liblwm2m_carrier_readme` library is in use, by default the application will auto-connect to the network on startup.
+This behavior can be changed with the ``AT#XCARRIER="auto_connect"`` command.
 
 Dependencies
 ************

@@ -167,6 +167,7 @@ config SLM_NRF_CLOUD
 config SLM_FULL_FOTA
 	bool "Full modem FOTA support in SLM"
 	default n
+	depends on !BOARD_THINGY91_NRF9160_NS
 
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"

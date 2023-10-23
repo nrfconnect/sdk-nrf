@@ -215,26 +215,21 @@ static int handle_at_modemreset(enum at_cmd_type type)
 	unsigned int step = 1;
 	int ret;
 
-	/* The fota stage is updated in the dfu_callback during modem initialization.
-	 * We store it here to see if a fota was performed during this modem init.
-	 */
-	enum fota_stage fota_stage = slm_fota_stage;
-
-
 	ret = nrf_modem_lib_shutdown();
 	if (ret != 0) {
 		goto out;
 	}
 	++step;
 
+#if defined(CONFIG_SLM_FULL_FOTA)
+	if (slm_modem_full_fota) {
+		slm_finish_modem_full_fota();
+	}
+#endif
+
 	ret = nrf_modem_lib_init();
 
-	if ((fota_stage == FOTA_STAGE_ACTIVATE &&
-	    (slm_fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
-	     slm_fota_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM))) {
-#if defined(CONFIG_SLM_FULL_FOTA)
-		slm_finish_modem_full_dfu();
-#endif
+	if (slm_fota_type & DFU_TARGET_IMAGE_TYPE_ANY_MODEM) {
 		slm_fota_post_process();
 	}
 

@@ -8,13 +8,12 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/settings/settings.h>
-#include <zephyr/drivers/uart.h>
 #include <dfu/dfu_target.h>
 #include "slm_at_fota.h"
 #include "slm_settings.h"
 #include "lwm2m_carrier/slm_at_carrier.h"
 
-LOG_MODULE_REGISTER(slm_config, CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_settings, CONFIG_SLM_LOG_LEVEL);
 
 /**
  * Serial LTE Modem setting page for persistent data
@@ -25,32 +24,12 @@ LOG_MODULE_REGISTER(slm_config, CONFIG_SLM_LOG_LEVEL);
 int32_t slm_carrier_auto_connect = 1;
 #endif
 
-uint8_t slm_fota_type;
-enum fota_stage slm_fota_stage = FOTA_STAGE_INIT;
-enum fota_status slm_fota_status;
-int32_t slm_fota_info;
-
 static int settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
-	if (!strcmp(name, "fota_type")) {
-		if (len != sizeof(slm_fota_type))
+	if (!strcmp(name, "modem_full_fota")) {
+		if (len != sizeof(slm_modem_full_fota))
 			return -EINVAL;
-		if (read_cb(cb_arg, &slm_fota_type, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "fota_stage")) {
-		if (len != sizeof(slm_fota_stage))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_fota_stage, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "fota_status")) {
-		if (len != sizeof(slm_fota_status))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_fota_status, len) > 0)
-			return 0;
-	} else if (!strcmp(name, "fota_info")) {
-		if (len != sizeof(slm_fota_info))
-			return -EINVAL;
-		if (read_cb(cb_arg, &slm_fota_info, len) > 0)
+		if (read_cb(cb_arg, &slm_modem_full_fota, len) > 0)
 			return 0;
 #if defined(CONFIG_SLM_CARRIER)
 	} else if (!strcmp(name, "auto_connect")) {
@@ -95,39 +74,8 @@ int slm_settings_init(void)
 
 int slm_settings_fota_save(void)
 {
-	int ret;
-
-	/* Write a single serialized value to persisted storage (if it has changed value). */
-	ret = settings_save_one("slm/fota_type", &(slm_fota_type), sizeof(slm_fota_type));
-	if (ret) {
-		LOG_ERR("save slm/fota_type failed: %d", ret);
-		return ret;
-	}
-	ret = settings_save_one("slm/fota_stage", &(slm_fota_stage), sizeof(slm_fota_stage));
-	if (ret) {
-		LOG_ERR("save slm/fota_stage failed: %d", ret);
-		return ret;
-	}
-	ret = settings_save_one("slm/fota_status", &(slm_fota_status), sizeof(slm_fota_status));
-	if (ret) {
-		LOG_ERR("save slm/fota_status failed: %d", ret);
-		return ret;
-	}
-	ret = settings_save_one("slm/fota_info", &(slm_fota_info), sizeof(slm_fota_info));
-	if (ret) {
-		LOG_ERR("save slm/fota_info failed: %d", ret);
-		return ret;
-	}
-
-	return 0;
-}
-
-void slm_settings_fota_init(void)
-{
-	slm_fota_type = DFU_TARGET_IMAGE_TYPE_ANY;
-	slm_fota_stage = FOTA_STAGE_INIT;
-	slm_fota_status = FOTA_STATUS_OK;
-	slm_fota_info = 0;
+	return settings_save_one("slm/modem_full_fota",
+		&slm_modem_full_fota, sizeof(slm_modem_full_fota));
 }
 
 #if defined(CONFIG_SLM_CARRIER)
