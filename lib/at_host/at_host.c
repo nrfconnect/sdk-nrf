@@ -67,13 +67,13 @@ static void response_handler(const char *response)
 
 static void cmd_send(struct k_work *work)
 {
-	int               err;
+	int err;
 
 	ARG_UNUSED(work);
 
-    /* Sending through string format rather than raw buffer in case
-     * the buffer contains characters that need to be escaped
-     */
+	/* Sending through string format rather than raw buffer in case
+	 * the buffer contains characters that need to be escaped
+	 */
 	err = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
 	if (err < 0) {
 		LOG_ERR("Error while processing AT command: %d", err);
@@ -92,9 +92,9 @@ static void uart_rx_handler(uint8_t character)
 
 	/* Handle control characters */
 	switch (character) {
-	case 0x08: /* Backspace. */
-		/* Fall through. */
-	case 0x7F: /* DEL character */
+	/* Backspace and DEL character */
+	case 0x08:
+	case 0x7F:
 		if (at_cmd_len > 0) {
 			at_cmd_len--;
 		}
@@ -145,7 +145,8 @@ static void uart_rx_handler(uint8_t character)
 
 	return;
 send:
-	at_buf[at_cmd_len] = '\0'; /* Terminate the command string */
+	/* Terminate the command string */
+	at_buf[at_cmd_len] = '\0';
 
 	/* Reset UART handler state */
 	inside_quotes = false;
@@ -156,13 +157,15 @@ send:
 		if (*c > ' ') {
 			break;
 		} else if (*c == '\0') {
-			return; /* Drop command, if it has no such character */
+			/* Drop command, if it has no such character */
+			return;
 		}
 	}
 
 	/* Send the command, if there is one to send */
 	if (at_buf[0]) {
-		uart_irq_rx_disable(uart_dev); /* Stop UART to protect at_buf */
+		/* Stop UART to protect at_buf */
+		uart_irq_rx_disable(uart_dev);
 		at_buf_busy = true;
 		k_work_submit_to_queue(&at_host_work_q, &cmd_send_work);
 	}
