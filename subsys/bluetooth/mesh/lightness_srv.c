@@ -248,7 +248,7 @@ static int lightness_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	}
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
-		/* According to the Mesh Model Specification section 6.2.3.1,
+		/* According to MshMDLv1.1: 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
 		lightness_srv_disable_control(srv);
@@ -552,7 +552,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_lightness_status status = { 0 };
 
 	if (lvl_set->new_transaction) {
-		/* According to the Mesh Model Specification section 6.2.3.1,
+		/* According to MshMDLv1.1: 6.2.3.1,
 		 * manual changes to the lightness should disable control.
 		 */
 		lightness_srv_disable_control(srv);
@@ -607,7 +607,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		.transition = delta_set->transition,
 	};
 
-	/* According to the Mesh Model Specification section 6.2.3.1,
+	/* According to MshMDLv1.1: 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
 	lightness_srv_disable_control(srv);
@@ -680,7 +680,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		}
 	}
 
-	/* According to the Mesh Model Specification section 6.2.3.1,
+	/* According to MshMDLv1.1: 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
 	lightness_srv_disable_control(srv);
@@ -722,7 +722,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 		set.lvl = 0;
 	}
 
-	/* According to the Mesh Model Specification section 6.2.3.1,
+	/* According to MshMDLv1.1: 6.2.3.1,
 	 * manual changes to the lightness should disable control.
 	 */
 	lightness_srv_disable_control(srv);
@@ -810,7 +810,7 @@ static void scene_recall_complete(struct bt_mesh_model *model)
 	(void)pub(srv, NULL, &status, ACTUAL);
 }
 
-/*  MeshMDL1.0.1, section 5.1.3.1.1:
+/*  MshMDLv1.1: 5.1.3.1.1:
  *  If a model is extending another model, the extending model shall determine
  *  the Stored with Scene behavior of that model.
  *
@@ -945,7 +945,7 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *model)
 	struct bt_mesh_lightness_srv *srv = model->user_data;
 
 	/* When Light Lightness server is extended by Light LC server, Light LC server will execute
-	 * power-up sequence of Light Lightness server according to section 6.5.1.2. Otherwise,
+	 * power-up sequence of Light Lightness server according to MshMDLv1.1: 6.5.1.2. Otherwise,
 	 * Light Lightness will execute power-up sequence behavior.
 	 */
 	if (atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {

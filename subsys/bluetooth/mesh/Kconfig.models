@@ -20,7 +20,7 @@ config BT_MESH_MOD_ACKD_TIMEOUT_BASE
 	help
 	  The base timeout in milliseconds that the model waits for the response
 	  if it is required. The response is typically a status message.
-	  Mesh Profile recommends the waiting time a minimum of 30 seconds.
+	  Mesh Protocol recommends a minimum waiting time of 30 seconds.
 
 config BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP
 	int "The per hop timeout for acknowledged messages"
@@ -660,7 +660,7 @@ config BT_MESH_SCENES_MAX
 	help
 	  Maximum number of scenes that can be stored by a single Scene Server.
 	  According to the specification, this value should be 16.
-	  The Bluetooth Mesh Model specification v1.0.1 (MshMDLv1.0.1) defines the
+	  The Bluetooth Mesh Model specification v1.1 (MshMDLv1.1) defines the
 	  Scene Register state as a 16-element array of 16-bit values representing a Scene Number.
 
 config BT_MESH_SCENE_CLI

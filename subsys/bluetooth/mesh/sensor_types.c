@@ -478,7 +478,7 @@ static int float32_decode(const struct bt_mesh_sensor_format *format,
  * Formats define how single channels are encoded and decoded, and are generally
  * represented as a scalar format with multipliers.
  *
- * See Mesh Model Specification Section 2.3 for details.
+ * See MshMDLv1.1: 2.3 for details.
  ******************************************************************************/
 
 

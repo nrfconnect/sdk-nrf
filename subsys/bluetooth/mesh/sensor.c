@@ -553,9 +553,8 @@ int sensor_cadence_decode(struct net_buf_simple *buf,
 		return err;
 	}
 
-	/* According to the Bluetooth Mesh Model Specification v1.0.1, Section
-	 * 4.1.3.6, if range.high is lower than range.low, the cadence is fast
-	 * outside the range. Swap the two in this case.
+	/* According to MshMDLv1.1: 4.1.3.6, if range.high is lower than range.low, the cadence is
+	 * fast outside the range. Swap the two in this case.
 	 */
 	if (threshold->range.high.val1 < threshold->range.low.val1 ||
 	    (threshold->range.high.val1 == threshold->range.low.val1 &&
@@ -603,7 +602,7 @@ void sensor_cadence_update(struct bt_mesh_sensor *sensor,
 	new = sensor_cadence(&sensor->state.threshold, value);
 
 	/** Use Fast Cadence Period Divisor when publishing when the change exceeds the delta,
-	 * section 4.3.1.2.4.3, E15551 and E15886.
+	 * MshMDLv1.1: 4.3.1.2.4.3, E15551 and E15886.
 	 */
 	if (new == BT_MESH_SENSOR_CADENCE_NORMAL) {
 		new = bt_mesh_sensor_delta_threshold(sensor, value) ?
