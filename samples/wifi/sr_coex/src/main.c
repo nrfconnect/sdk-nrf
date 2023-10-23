@@ -37,7 +37,7 @@ LOG_MODULE_REGISTER(coex, CONFIG_LOG_DEFAULT_LEVEL);
 /* For net_sprint_ll_addr_buf */
 #include "net_private.h"
 
-#include <zephyr_coex.h>
+#include <coex.h>
 
 #include "bt_throughput_test.h"
 

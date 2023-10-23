@@ -9,7 +9,7 @@
  */
 
 #include <zephyr/logging/log.h>
-#include <zephyr_fmac_main.h>
+#include <fmac_main.h>
 #include <util.h>
 #include <nrf_wifi_radio_test_shell.h>
 #include "ficr_prog.h"
