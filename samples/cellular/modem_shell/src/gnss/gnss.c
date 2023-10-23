@@ -47,6 +47,7 @@
 #endif /* CONFIG_SUPL_CLIENT_LIB */
 
 #include "mosh_print.h"
+#include "str_utils.h"
 #include "gnss.h"
 
 #if (defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
@@ -389,56 +390,6 @@ static void print_nmea(struct nrf_modem_gnss_nmea_data_frame *nmea)
 	mosh_print("%s", nmea->nmea_str);
 }
 
-static void get_agnss_data_flags_string(char *flags_string, uint32_t data_flags)
-{
-	size_t len;
-
-	*flags_string = '\0';
-
-	if (data_flags & NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST) {
-		(void)strcat(flags_string, "utc | ");
-	}
-	if (data_flags & NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST) {
-		(void)strcat(flags_string, "klob | ");
-	}
-	if (data_flags & NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST) {
-		(void)strcat(flags_string, "neq | ");
-	}
-	if (data_flags & NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST) {
-		(void)strcat(flags_string, "time | ");
-	}
-	if (data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
-		(void)strcat(flags_string, "pos | ");
-	}
-	if (data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
-		(void)strcat(flags_string, "int | ");
-	}
-
-	len = strlen(flags_string);
-	if (len == 0) {
-		(void)strcpy(flags_string, "none");
-	} else {
-		flags_string[len - 3] = '\0';
-	}
-}
-
-static const char *get_system_string(uint8_t system_id)
-{
-	switch (system_id) {
-	case NRF_MODEM_GNSS_SYSTEM_INVALID:
-		return "invalid";
-
-	case NRF_MODEM_GNSS_SYSTEM_GPS:
-		return "GPS";
-
-	case NRF_MODEM_GNSS_SYSTEM_QZSS:
-		return "QZSS";
-
-	default:
-		return "unknown";
-	}
-}
-
 static void data_handler_thread_fn(void)
 {
 	struct event_item event;
@@ -477,7 +428,7 @@ static void data_handler_thread_fn(void)
 			if (event_output_level > 0) {
 				char flags_string[48];
 
-				get_agnss_data_flags_string(
+				agnss_data_flags_str_get(
 					flags_string,
 					agnss_data_frame->data_flags);
 
@@ -486,7 +437,7 @@ static void data_handler_thread_fn(void)
 					mosh_print(
 						"GNSS: A-GNSS data needed: "
 						"%s ephe: 0x%llx, alm: 0x%llx",
-						get_system_string(
+						gnss_system_str_get(
 							agnss_data_frame->system[i].system_id),
 						agnss_data_frame->system[i].sv_mask_ephe,
 						agnss_data_frame->system[i].sv_mask_alm);
@@ -683,7 +634,7 @@ static void get_agnss_data(struct k_work *item)
 
 	get_filtered_agnss_request(&agnss_request);
 
-	get_agnss_data_flags_string(flags_string, agnss_request.data_flags);
+	agnss_data_flags_str_get(flags_string, agnss_request.data_flags);
 
 	mosh_print(
 		"GNSS: Getting A-GNSS data from %s...",
@@ -698,7 +649,7 @@ static void get_agnss_data(struct k_work *item)
 	mosh_print("GNSS: A-GNSS request: flags: %s", flags_string);
 	for (int i = 0; i < agnss_request.system_count; i++) {
 		mosh_print("GNSS: A-GNSS request: %s sv_mask_ephe: 0x%llx, sv_mask_alm: 0x%llx",
-			get_system_string(agnss_request.system[i].system_id),
+			gnss_system_str_get(agnss_request.system[i].system_id),
 			agnss_request.system[i].sv_mask_ephe,
 			agnss_request.system[i].sv_mask_alm);
 	}
@@ -1748,7 +1699,7 @@ int gnss_get_agnss_expiry(void)
 	mosh_print("Position:   %s", expiry_string);
 
 	for (int i = 0; i < agnss_expiry.sv_count; i++) {
-		system_string = get_system_string(agnss_expiry.sv[i].system_id);
+		system_string = gnss_system_str_get(agnss_expiry.sv[i].system_id);
 		get_expiry_string(expiry_string, sizeof(expiry_string),
 				  agnss_expiry.sv[i].ephe_expiry);
 		get_expiry_string(expiry_string2, sizeof(expiry_string2),
