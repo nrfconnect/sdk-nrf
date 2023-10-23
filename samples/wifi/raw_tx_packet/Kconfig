@@ -118,4 +118,30 @@ config RAW_TX_PACKET_SAMPLE_QUEUE_NUM
 	  3 - Voice
 	  4 - Beacon.
 
+choice
+	prompt "Select transmission mode"
+	default RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_CONTINUOUS
+
+config RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_CONTINUOUS
+	bool "Continuous transmission mode"
+
+config RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_FIXED
+	bool "Fixed transmission mode"
+
+endchoice
+
+if RAW_TX_PACKET_SAMPLE_TRANSMISSION_MODE_FIXED
+config RAW_TX_PACKET_SAMPLE_FIXED_NUM_PACKETS
+	int "Number of packets"
+	default 1
+	help
+	  Specify the number of packets to be sent when using Fixed mode of transmission.
+endif
+
+config RAW_TX_PACKET_SAMPLE_INTER_FRAME_DELAY_MS
+	int "Inter-Frame Delay (milliseconds)"
+	default 10
+	help
+	  Specify the inter-frame delay duration for raw TX packet transmission.
+
 endmenu
