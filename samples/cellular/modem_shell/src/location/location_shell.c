@@ -21,6 +21,7 @@
 #include <dk_buttons_and_leds.h>
 
 #include "mosh_print.h"
+#include "str_utils.h"
 #include "location_srv_ext.h"
 #include "location_cmd_utils.h"
 #include "mosh_defines.h"
@@ -302,15 +303,22 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		break;
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
-	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
-		mosh_print(
-			"A-GNSS request from Location library "
-			"(ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
-			(uint32_t)event_data->agnss_request.system[0].sv_mask_ephe,
-			(uint32_t)event_data->agnss_request.system[0].sv_mask_alm,
-			event_data->agnss_request.data_flags);
+	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST: {
+		char flags_string[48];
+
+		agnss_data_flags_str_get(flags_string, event_data->agnss_request.data_flags);
+		mosh_print("A-GNSS request from Location library: flags: %s", flags_string);
+		for (int i = 0; i < event_data->agnss_request.system_count; i++) {
+			mosh_print(
+				"A-GNSS request from Location library: "
+				"%s sv_mask_ephe: 0x%llx, sv_mask_alm: 0x%llx",
+				gnss_system_str_get(event_data->agnss_request.system[i].system_id),
+				event_data->agnss_request.system[i].sv_mask_ephe,
+				event_data->agnss_request.system[i].sv_mask_alm);
+		}
 		location_srv_ext_agnss_handle(&event_data->agnss_request);
 		break;
+	}
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
