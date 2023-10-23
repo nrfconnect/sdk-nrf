@@ -376,7 +376,7 @@ static void scene_recall_complete(struct bt_mesh_model *model)
 	bt_mesh_light_ctl_pub(srv, NULL, &status);
 }
 
-/*  MeshMDL1.0.1, section 5.1.3.1.1:
+/*  MshMDLv1.1: 5.1.3.1.1:
  *  If a model is extending another model, the extending model shall determine
  *  the Stored with Scene behavior of that model.
  *

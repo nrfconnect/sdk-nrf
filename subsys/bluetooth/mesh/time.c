@@ -14,7 +14,7 @@
 void bt_mesh_time_decode_time_params(struct net_buf_simple *buf,
 				     struct bt_mesh_time_status *status)
 {
-	/* Mesh Model Specification 5.2.1.3: If the TAI Seconds field is
+	/* MshMDLv1.1: 5.2.1.3: If the TAI Seconds field is
 	 * 0, all other fields shall be omitted
 	 */
 	if (buf->len != BT_MESH_TIME_MSG_MAXLEN_TIME_STATUS) {

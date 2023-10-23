@@ -103,9 +103,8 @@ static struct bt_mesh_scene_srv *srv_find(uint16_t elem_idx)
 static uint16_t current_scene(const struct bt_mesh_scene_srv *srv)
 {
 	if (srv->next && k_work_delayable_is_pending(&srv->work)) {
-		/* When we're in a transition, the current scene should be NONE (see the Bluetooth
-		 * mesh model specification, section 5.1.3.2.1). Check that we're not just in a
-		 * delay phase:
+		/* MshMDLv1.1: 5.1.3.2.1: When we're in a transition, the current scene should be
+		 * NONE. Check that we're not just in a delay phase:
 		 */
 		if (!srv->transition.delay ||
 		    (k_ticks_to_ms_near64(k_work_delayable_remaining_get(&srv->work)) <=
@@ -316,7 +315,7 @@ static void entry_recover(struct bt_mesh_scene_srv *srv, bool vnd,
 		return;
 	}
 
-	/* MeshMDL1.0.1, section 5.1.3.1.1:
+	/* MshMDLv1.1: 5.1.3.1.1:
 	 * If a model is extending another model, the extending model shall determine
 	 * the Stored with Scene behavior of that model.
 	 */
@@ -447,7 +446,7 @@ static void scene_recall_complete_mod(struct bt_mesh_scene_srv *srv, struct bt_m
 			continue;
 		}
 
-		/* MeshMDL1.0.1, section 5.1.3.1.1:
+		/* MshMDLv1.1: 5.1.3.1.1:
 		 * If a model is extending another model, the extending
 		 * model shall determine the Stored with Scene behavior
 		 * of that model.
@@ -502,7 +501,7 @@ static void scene_store_mod(struct bt_mesh_scene_srv *srv, uint16_t scene,
 				continue;
 			}
 
-			/* MeshMDL1.0.1, section 5.1.3.1.1:
+			/* MshMDLv1.1: 5.1.3.1.1:
 			 * If a model is extending another model, the extending
 			 * model shall determine the Stored with Scene behavior
 			 * of that model.

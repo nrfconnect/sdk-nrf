@@ -85,10 +85,8 @@ static struct bt_mesh_model_transition *transition_get(struct bt_mesh_light_hue_
 		model_transition_buf_pull(buf, transition);
 		return transition;
 	} else if (srv->hsl && bt_mesh_dtt_srv_transition_get(srv->hsl->model, transition)) {
-		/* According to the Bluetooth Mesh Model specification,
-		 * section 6.4.7.2.2: The Hue Server shall use the Default
-		 * Transition Time server on the HSL element if no transition
-		 * time is set.
+		/* According to MshMDLv1.1: 6.4.7.2.2: The Hue Server shall use the Default
+		 * Transition Time server on the HSL element if no transition time is set.
 		 */
 		return transition;
 	} else if (bt_mesh_dtt_srv_transition_get(srv->model, transition)) {

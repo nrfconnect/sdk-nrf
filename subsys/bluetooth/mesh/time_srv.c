@@ -174,7 +174,7 @@ static int send_time_status(struct bt_mesh_model *model,
 
 	err = bt_mesh_time_srv_status(srv, uptime, &status);
 	if (err) {
-		/* Mesh Model Specification 5.2.1.3: If the TAI Seconds field is
+		/* MshMDLv1.1: 5.2.1.3: If the TAI Seconds field is
 		 * 0, all other fields shall be omitted
 		 */
 		bt_mesh_time_buf_put_tai_sec(&msg, 0);
@@ -520,7 +520,7 @@ int bt_mesh_time_srv_time_status_send(struct bt_mesh_time_srv *srv,
 	int64_t uptime = k_uptime_get();
 	int err;
 
-	/** Mesh Model Specification 5.3.1.2.2:
+	/** MshMDLv1.1: 5.3.1.2.2:
 	 * The message (Time Status) may be sent as an unsolicited message at any time
 	 * if the value of the Time Role state is 0x01 (Time Authority) or 0x02 (Time Relay).
 	 */

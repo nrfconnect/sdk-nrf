@@ -99,10 +99,8 @@ static int sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	if (buf->len == 2) {
 		model_transition_buf_pull(buf, &transition);
 	} else if (srv->hsl) {
-		/* According to the Bluetooth Mesh Model specification,
-		 * section 6.4.8.2.2: The Saturation Server shall use the
-		 * Default Transition Time server on the HSL element if no
-		 * transition time is set.
+		/* According to MshMDLv1.1: 6.4.8.2.2: The Saturation Server shall use the Default
+		 * Transition Time server on the HSL element if no transition time is set.
 		 */
 		bt_mesh_dtt_srv_transition_get(srv->hsl->model, &transition);
 	} else {
