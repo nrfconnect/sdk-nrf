@@ -8,7 +8,7 @@
  * @brief NRF Wi-Fi radio test shell module
  */
 
-#include <zephyr_fmac_main.h>
+#include <fmac_main.h>
 #include <nrf_wifi_radio_test_shell.h>
 #include <util.h>
 #include "fmac_api_common.h"

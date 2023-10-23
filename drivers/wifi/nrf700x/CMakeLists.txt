@@ -6,117 +6,119 @@
 
 zephyr_library()
 
+set(OS_AGNOSTIC_BASE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi)
+
 zephyr_include_directories(
-	zephyr/inc
-	osal/utils/inc
-	osal/os_if/inc
-	osal/bus_if/bus/qspi/inc
-	osal/bus_if/bal/inc
-	osal/fw_if/umac_if/inc
-	osal/fw_load/mips/fw/inc
-	osal/hw_if/hal/inc
-	zephyr/src/qspi/inc
+	inc
+	${OS_AGNOSTIC_BASE}/utils/inc
+	${OS_AGNOSTIC_BASE}/os_if/inc
+	${OS_AGNOSTIC_BASE}/bus_if/bus/qspi/inc
+	${OS_AGNOSTIC_BASE}/bus_if/bal/inc
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/inc
+	${OS_AGNOSTIC_BASE}/fw_load/mips/fw/inc
+	${OS_AGNOSTIC_BASE}/hw_if/hal/inc
+	src/qspi/inc
 	# for net_sprint_ll_addr
 	${ZEPHYR_BASE}/subsys/net/ip
-	osal/hw_if/hal/inc/fw
-	osal/fw_if/umac_if/inc/fw
+	${OS_AGNOSTIC_BASE}/hw_if/hal/inc/fw
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/inc/fw
 )
 
 zephyr_include_directories_ifdef(CONFIG_NRF700X_RADIO_TEST
-	osal/fw_if/umac_if/inc/radio_test
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/inc/radio_test
 )
 
 zephyr_include_directories_ifndef(CONFIG_NRF700X_RADIO_TEST
-	osal/fw_if/umac_if/inc/default
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/inc/default
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_BT_COEX
-	zephyr/src/zephyr_coex.c
+	src/coex.c
 )
 
 zephyr_library_sources(
-	osal/os_if/src/osal.c
-	osal/utils/src/list.c
-	osal/utils/src/queue.c
-	osal/utils/src/util.c
-	osal/hw_if/hal/src/hal_api.c
-	osal/hw_if/hal/src/hal_fw_patch_loader.c
-	osal/hw_if/hal/src/hal_interrupt.c
-	osal/hw_if/hal/src/hal_mem.c
-	osal/hw_if/hal/src/hal_reg.c
-	osal/hw_if/hal/src/hpqm.c
-	osal/hw_if/hal/src/pal.c
-	osal/bus_if/bal/src/bal.c
-	osal/bus_if/bus/qspi/src/qspi.c
-	osal/fw_if/umac_if/src/cmd.c
-	osal/fw_if/umac_if/src/event.c
-	osal/fw_if/umac_if/src/fmac_api_common.c
-	zephyr/src/shim.c
-	zephyr/src/zephyr_work.c
-	zephyr/src/timer.c
-	zephyr/src/zephyr_fmac_main.c
-	zephyr/src/zephyr_fw_load.c
-	zephyr/src/qspi/src/device.c
-	zephyr/src/qspi/src/rpu_hw_if.c
-	zephyr/src/qspi/src/ficr_prog.c
+	${OS_AGNOSTIC_BASE}/os_if/src/osal.c
+	${OS_AGNOSTIC_BASE}/utils/src/list.c
+	${OS_AGNOSTIC_BASE}/utils/src/queue.c
+	${OS_AGNOSTIC_BASE}/utils/src/util.c
+	${OS_AGNOSTIC_BASE}/hw_if/hal/src/hal_api.c
+	${OS_AGNOSTIC_BASE}/hw_if/hal/src/hal_fw_patch_loader.c
+	${OS_AGNOSTIC_BASE}/hw_if/hal/src/hal_interrupt.c
+	${OS_AGNOSTIC_BASE}/hw_if/hal/src/hal_mem.c
+	${OS_AGNOSTIC_BASE}/hw_if/hal/src/hal_reg.c
+	${OS_AGNOSTIC_BASE}/hw_if/hal/src/hpqm.c
+	${OS_AGNOSTIC_BASE}/hw_if/hal/src/pal.c
+	${OS_AGNOSTIC_BASE}/bus_if/bal/src/bal.c
+	${OS_AGNOSTIC_BASE}/bus_if/bus/qspi/src/qspi.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/cmd.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/event.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_api_common.c
+	src/shim.c
+	src/work.c
+	src/timer.c
+	src/fmac_main.c
+	src/fw_load.c
+	src/qspi/src/device.c
+	src/qspi/src/rpu_hw_if.c
+	src/qspi/src/ficr_prog.c
 )
 
 zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST
-	osal/fw_if/umac_if/src/rx.c
-	osal/fw_if/umac_if/src/fmac_vif.c
-	osal/fw_if/umac_if/src/fmac_util.c
-	zephyr/src/zephyr_net_if.c
-	osal/fw_if/umac_if/src/default/fmac_api.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/rx.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_vif.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_util.c
+	src/net_if.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/default/fmac_api.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NET_L2_WIFI_MGMT
-	zephyr/src/zephyr_wifi_mgmt_scan.c
+	src/wifi_mgmt_scan.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_RADIO_TEST
-	osal/fw_if/umac_if/src/radio_test/fmac_api.c
-	osal/fw_if/umac_if/src/fmac_util.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/radio_test/fmac_api.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_util.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_DATA_TX
-	osal/fw_if/umac_if/src/tx.c
-	osal/fw_if/umac_if/src/fmac_peer.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/tx.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_peer.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_STA_MODE
-	zephyr/src/zephyr_wpa_supp_if.c
-	zephyr/src/zephyr_wifi_mgmt.c
-	osal/fw_if/umac_if/src/fmac_peer.c
-	osal/fw_if/umac_if/src/fmac_util.c
+	src/wpa_supp_if.c
+	src/wifi_mgmt.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_peer.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_util.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_AP_MODE
-	osal/fw_if/umac_if/src/fmac_ap.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_ap.c
 )
 
 
 # Without WPA supplicant we only support scan
 zephyr_library_sources_ifdef(CONFIG_NRF700X_STA_MODE
-	zephyr/src/zephyr_wpa_supp_if.c
-	osal/fw_if/umac_if/src/fmac_peer.c
-	osal/fw_if/umac_if/src/fmac_util.c
+	src/wpa_supp_if.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_peer.c
+	${OS_AGNOSTIC_BASE}/fw_if/umac_if/src/fmac_util.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_ON_QSPI
-	zephyr/src/qspi/src/qspi_if.c
+	src/qspi/src/qspi_if.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_ON_SPI
-	zephyr/src/qspi/src/spi_if.c
+	src/qspi/src/spi_if.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_UTIL
-	zephyr/src/zephyr_wifi_util.c
+	src/wifi_util.c
 )
 
 if (CONFIG_NRF_WIFI_PATCHES_EXT_FLASH)
 # Run patches from the external flash (XIP). No need to copy.
-zephyr_code_relocate(FILES zephyr/src/zephyr_fw_load.c LOCATION EXTFLASH_RODATA NOCOPY)
+zephyr_code_relocate(FILES src/fw_load.c LOCATION EXTFLASH_RODATA NOCOPY)
 endif()
 
 # These are XIP related anomalies and aren't applicable for nRF7002 and cause

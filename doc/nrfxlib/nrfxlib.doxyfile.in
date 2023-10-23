@@ -751,7 +751,11 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 
-INPUT                  = @NRFXLIB_BASE@
+INPUT                  = @NRFXLIB_BASE@ \
+                         @NRFXLIB_BASE@/nrf_wifi/fw_if/umac_if/inc/fmac_api_common.h \
+                         @NRFXLIB_BASE@/nrf_wifi/fw_if/umac_if/inc/fmac_structs_common.h \
+                         @NRFXLIB_BASE@/nrf_wifi/fw_if/umac_if/inc/default \
+                         @NRFXLIB_BASE@/nrf_wifi/fw_if/umac_if/inc/radio_test/fmac_api.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
