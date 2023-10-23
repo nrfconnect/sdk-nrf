@@ -31,6 +31,9 @@ enum fota_status {
 	FOTA_STATUS_CANCELLED
 };
 
+/* Whether a modem full firmware update is to be activated. */
+extern bool slm_modem_full_fota;
+
 extern uint8_t slm_fota_type; /* FOTA image type. */
 extern enum fota_stage slm_fota_stage; /* Current stage of FOTA process. */
 extern enum fota_status slm_fota_status; /* FOTA process status. */
@@ -52,6 +55,9 @@ int slm_at_fota_init(void);
  */
 int slm_at_fota_uninit(void);
 
+/** @brief Sets the FOTA state variables to their default values. */
+void slm_fota_init_state(void);
+
 /**
  * @brief FOTA post-process after reboot.
  */
@@ -64,7 +70,7 @@ void slm_fota_post_process(void);
  * has been rebooted and a full modem firmware update is ongoing.
  */
 #if defined(CONFIG_SLM_FULL_FOTA)
-void slm_finish_modem_full_dfu(void);
+void slm_finish_modem_full_fota(void);
 #endif
 
 /** @} */

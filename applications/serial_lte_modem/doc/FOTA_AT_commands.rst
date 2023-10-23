@@ -28,11 +28,15 @@ Syntax
 
 * The ``<op>`` parameter must be one of the following values:
 
-  * ``0`` - Cancel FOTA (during download only).
+  * ``0`` - Stop FOTA (during download only).
+    Can be used as a way to pause and resume the download, by issuing the same FOTA start command to resume.
   * ``1`` - Start FOTA for application update.
   * ``2`` - Start FOTA for modem delta update.
   * ``3`` - Start FOTA for full modem update.
     Can only be used when the :file:`overlay-full_fota.conf` configuration file is used.
+
+    Not supported on the :ref:`Thingy:91 <thingy91_ug_intro>` as it lacks an external flash to store the firmware image.
+
   * ``7`` - Read modem DFU area size and firmware image offset (for modem delta update).
   * ``9`` - Erase modem DFU area (for modem delta update).
 
@@ -58,7 +62,7 @@ Syntax
    The firmware image is stored in external flash memory during a full modem update.
    The external flash is erased automatically after a new firmware activation.
 
-    Activating the new full modem firmware is done identically to a modem delta update, by resetting either the whole device or only the modem.
+   Activating the new modem firmware is done identically to a modem delta update, by resetting either the whole device or only the modem.
 
 Response syntax
 ~~~~~~~~~~~~~~~
