@@ -273,6 +273,11 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 
 	cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
 
+	/* Delayed event (after scan timeout) or rogue event after scan done */
+	if (!cb) {
+		return;
+	}
+
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
 		vif_ctx_zep->max_bss_cnt : CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT;
 
