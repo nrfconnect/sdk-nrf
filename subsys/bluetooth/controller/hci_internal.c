@@ -643,6 +643,14 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 #if defined(CONFIG_BT_CENTRAL)
 	cmds->central_acl_event_spacing_set = 1;
 #endif
+
+#if defined(CONFIG_BT_CTLR_SDC_EVENT_TRIGGER)
+	cmds->set_conn_event_trigger = 1;
+#endif
+
+#if defined(CONFIG_BT_CONN)
+	cmds->get_next_conn_event_counter = 1;
+#endif
 }
 #endif	/* CONFIG_BT_HCI_VS */
 
@@ -1563,6 +1571,16 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 #ifdef CONFIG_BT_CENTRAL
 	case SDC_HCI_OPCODE_CMD_VS_CENTRAL_ACL_EVENT_SPACING_SET:
 		return sdc_hci_cmd_vs_central_acl_event_spacing_set((void *)cmd_params);
+#endif
+#if defined(CONFIG_BT_CTLR_SDC_EVENT_TRIGGER)
+	case SDC_HCI_OPCODE_CMD_VS_SET_CONN_EVENT_TRIGGER:
+		return sdc_hci_cmd_vs_set_conn_event_trigger((void *)cmd_params);
+#endif
+#if defined(CONFIG_BT_CONN)
+	case SDC_HCI_OPCODE_CMD_VS_GET_NEXT_CONN_EVENT_COUNTER:
+		*param_length_out += sizeof(sdc_hci_cmd_vs_get_next_conn_event_counter_return_t);
+		return sdc_hci_cmd_vs_get_next_conn_event_counter((void *)cmd_params,
+							    (void *)event_out_params);
 #endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;

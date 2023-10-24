@@ -349,6 +349,16 @@ config BT_CTLR_LE_POWER_CONTROL
 	  Enable support for LE Power Control feature that defined in the Bluetooth
 	  Core specification, Version 5.3 | Vol 6, Part B, Section 4.6.31.
 
+config BT_CTLR_SDC_EVENT_TRIGGER
+	bool "Event Trigger"
+	help
+	  Enable support for the Event Trigger feature.
+	  The event trigger is a proprietary SDC feature which can be used
+	  to perform tasks in synchronization with radio activity.
+	  When enabled, this feature will trigger a (D)PPI task at the start of radio events.
+	  When used for connections, the connection event trigger can be configured to trigger
+	  every N connection events starting from a given connection event counter.
+
 config BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT
 	int "BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT"
 	depends on BT_CTLR_SYNC_ISO || BT_CTLR_CONN_ISO
