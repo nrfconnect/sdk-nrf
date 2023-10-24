@@ -185,7 +185,6 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 #ifdef CONFIG_NET_L2_WIFI_MGMT
-	struct wifi_scan_result res;
 	scan_result_cb_t disp_scan_cb = NULL;
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 
@@ -205,9 +204,7 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	if (disp_scan_cb) {
-		memset(&res, 0x0, sizeof(res));
-
-		disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, &res);
+		disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, NULL);
 		vif_ctx_zep->disp_scan_cb = NULL;
 	} else
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
