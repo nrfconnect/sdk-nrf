@@ -190,7 +190,8 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	vif_ctx_zep->scan_type = SCAN_DISPLAY;
 	vif_ctx_zep->scan_in_progress = true;
 
-	k_work_schedule(&vif_ctx_zep->scan_timeout_work, NRF_WIFI_SCAN_TIMEOUT);
+	k_work_schedule(&vif_ctx_zep->scan_timeout_work,
+		K_SECONDS(CONFIG_WIFI_NRF700X_SCAN_TIMEOUT_S));
 
 	ret = 0;
 out:
