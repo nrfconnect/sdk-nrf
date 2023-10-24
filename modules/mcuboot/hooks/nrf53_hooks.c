@@ -88,13 +88,13 @@ int boot_read_image_header_hook(int img_index, int slot, struct image_header *im
 	return BOOT_HOOK_REGULAR;
 }
 
-fih_int boot_image_check_hook(int img_index, int slot)
+fih_ret boot_image_check_hook(int img_index, int slot)
 {
 	if (img_index == 1 && slot == 0) {
 		FIH_RET(FIH_SUCCESS);
 	}
 
-	FIH_RET(fih_int_encode(BOOT_HOOK_REGULAR));
+	FIH_RET(FIH_BOOT_HOOK_REGULAR);
 }
 
 int boot_perform_update_hook(int img_index, struct image_header *img_head,
