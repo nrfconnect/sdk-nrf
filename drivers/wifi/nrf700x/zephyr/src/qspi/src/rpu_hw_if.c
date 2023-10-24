@@ -188,6 +188,10 @@ static int ble_gpio_config(void)
 	}
 
 	ret = gpio_pin_configure_dt(&btrf_switch_spec, GPIO_OUTPUT);
+	if (ret) {
+		LOG_ERR("BLE GPIO configuration failed %d\n", ret);
+		return ret;
+	}
 
 	return ret;
 #else
@@ -197,12 +201,20 @@ static int ble_gpio_config(void)
 
 static int ble_gpio_remove(void)
 {
-	#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
-		defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
-		return gpio_pin_configure_dt(&btrf_switch_spec, GPIO_DISCONNECTED);
-	#else
-		return 0;
-	#endif
+#if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
+	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
+	int ret;
+
+	ret = gpio_pin_configure_dt(&btrf_switch_spec, GPIO_DISCONNECTED);
+	if (ret) {
+		LOG_ERR("Bluetooth LE GPIO remove failed %d\n", ret);
+		return ret;
+	}
+
+	return ret;
+#else
+	return 0;
+#endif
 }
 
 static int rpu_gpio_config(void)
@@ -210,24 +222,25 @@ static int rpu_gpio_config(void)
 	int ret;
 
 	if (!device_is_ready(iovdd_ctrl_spec.port)) {
+		LOG_ERR("IOVDD GPIO %s is not ready\n", iovdd_ctrl_spec.port->name);
 		return -ENODEV;
 	}
 
 	if (!device_is_ready(bucken_spec.port)) {
+		LOG_ERR("BUCKEN GPIO %s is not ready\n", bucken_spec.port->name);
 		return -ENODEV;
 	}
 
 	ret = gpio_pin_configure_dt(&bucken_spec, (GPIO_OUTPUT | NRF_GPIO_DRIVE_H0H1));
-
 	if (ret) {
 		LOG_ERR("BUCKEN GPIO configuration failed...\n");
 		return ret;
 	}
 
 	ret = gpio_pin_configure_dt(&iovdd_ctrl_spec, GPIO_OUTPUT);
-
 	if (ret) {
 		LOG_ERR("IOVDD GPIO configuration failed...\n");
+		gpio_pin_configure_dt(&bucken_spec, GPIO_DISCONNECTED);
 		return ret;
 	}
 
@@ -271,6 +284,7 @@ static int rpu_pwron(void)
 	ret = gpio_pin_set_dt(&iovdd_ctrl_spec, 1);
 	if (ret) {
 		LOG_ERR("IOVDD GPIO set failed...\n");
+		gpio_pin_set_dt(&bucken_spec, 0);
 		return ret;
 	}
 	/* Settling time for iovdd nRF7002 DK/EK - switch (TCK106AG): ~600us */
@@ -311,7 +325,15 @@ static int rpu_pwroff(void)
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
 int ble_ant_switch(unsigned int ant_switch)
 {
-	return gpio_pin_set_dt(&btrf_switch_spec, ant_switch & 0x1);
+	int ret;
+
+	ret = gpio_pin_set_dt(&btrf_switch_spec, ant_switch & 0x1);
+	if (ret) {
+		LOG_ERR("BLE GPIO set failed %d\n", ret);
+		return ret;
+	}
+
+	return ret;
 }
 #endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 
@@ -437,25 +459,65 @@ int rpu_clks_on(void)
 	return 0;
 }
 
+#define CALL_RPU_FUNC(func, ...) \
+	do { \
+		ret = func(__VA_ARGS__); \
+		if (ret) { \
+			LOG_DBG("Error: %s failed with %d\n", #func, ret); \
+			goto out; \
+		} \
+	} while (0)
+
 int rpu_enable(void)
 {
+	int ret;
+
 	qdev = qspi_dev();
 
-	rpu_gpio_config();
-	ble_gpio_config();
-	rpu_pwron();
-	rpu_wakeup();
-	rpu_clks_on();
+	CALL_RPU_FUNC(rpu_gpio_config);
+
+	ret = ble_gpio_config();
+	if (ret) {
+		goto rpu_gpio_remove;
+	}
+
+	ret = rpu_pwron();
+	if (ret) {
+		goto ble_gpio_remove;
+	}
+
+	ret = rpu_wakeup();
+	if (ret) {
+		goto rpu_pwroff;
+	}
+
+	ret = rpu_clks_on();
+	if (ret) {
+		goto rpu_pwroff;
+	}
 
 	return 0;
+
+rpu_pwroff:
+	rpu_pwroff();
+ble_gpio_remove:
+	ble_gpio_remove();
+rpu_gpio_remove:
+	rpu_gpio_remove();
+out:
+	return ret;
 }
 
 int rpu_disable(void)
 {
-	rpu_pwroff();
-	rpu_gpio_remove();
-	ble_gpio_remove();
+	int ret;
+
+	CALL_RPU_FUNC(rpu_pwroff);
+	CALL_RPU_FUNC(rpu_gpio_remove);
+	CALL_RPU_FUNC(ble_gpio_remove);
+
 	qdev = NULL;
 
-	return 0;
+out:
+	return ret;
 }
