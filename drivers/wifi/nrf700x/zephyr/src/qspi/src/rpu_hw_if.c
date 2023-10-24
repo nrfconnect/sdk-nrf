@@ -315,17 +315,6 @@ int ble_ant_switch(unsigned int ant_switch)
 }
 #endif /* CONFIG_BOARD_NRF7002DK_NRF5340 */
 
-int rpu_qspi_init(void)
-{
-	qdev = qspi_dev();
-
-	cfg = qspi_defconfig();
-
-	qdev->init(cfg);
-
-	return 0;
-}
-
 int rpu_read(unsigned int addr, void *data, int len)
 {
 	bool hl_flag;
@@ -450,10 +439,11 @@ int rpu_clks_on(void)
 
 int rpu_enable(void)
 {
+	qdev = qspi_dev();
+
 	rpu_gpio_config();
 	ble_gpio_config();
 	rpu_pwron();
-	rpu_qspi_init();
 	rpu_wakeup();
 	rpu_clks_on();
 
@@ -465,6 +455,7 @@ int rpu_disable(void)
 	rpu_pwroff();
 	rpu_gpio_remove();
 	ble_gpio_remove();
+	qdev = NULL;
 
 	return 0;
 }
