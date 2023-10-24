@@ -196,7 +196,6 @@ def page_filter_install(
     doctree.walk(visitor)
     if visitor.found_filter_dropdown:
         app.add_css_file("page_filter.css")
-        context["css_files"].append(app.builder.css_files[-1])
         app.add_js_file("page_filter.mjs", type="module")
         filename = app.builder.script_files[-1]
 
@@ -209,7 +208,6 @@ def page_filter_install(
             body += "); "
 
         app.add_js_file(filename=None, body=body, type="module")
-        context["script_files"].append(app.builder.script_files[-1])
 
 
 def add_filter_resources(app: Sphinx):
