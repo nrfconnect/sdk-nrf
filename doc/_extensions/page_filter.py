@@ -66,8 +66,8 @@ from sphinx.application import Sphinx
 from sphinx.util import logging
 from typing import Dict, List, Optional, Tuple
 from pathlib import Path
-import json
 import re
+import json
 
 __version__ = "0.1.0"
 
