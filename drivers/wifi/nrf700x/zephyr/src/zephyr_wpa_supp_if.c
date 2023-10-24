@@ -547,7 +547,8 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	vif_ctx_zep->scan_type = SCAN_CONNECT;
 	vif_ctx_zep->scan_in_progress = true;
 
-	k_work_schedule(&vif_ctx_zep->scan_timeout_work, NRF_WIFI_SCAN_TIMEOUT);
+	k_work_schedule(&vif_ctx_zep->scan_timeout_work,
+		K_SECONDS(CONFIG_WIFI_NRF700X_SCAN_TIMEOUT_S));
 
 	ret = 0;
 out:

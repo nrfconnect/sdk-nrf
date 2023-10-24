@@ -34,11 +34,6 @@
 #define NRF700X_DRIVER_VERSION "1."NCS_VERSION_STRING
 
 #ifndef CONFIG_NRF700X_RADIO_TEST
-/* Use same timeout as WPA supplicant, this is high mainly to handle
- * connected scan.
- */
-#define NRF_WIFI_SCAN_TIMEOUT (K_SECONDS(30))
-
 struct nrf_wifi_vif_ctx_zep {
 	const struct device *zep_dev_ctx;
 	struct net_if *zep_net_if_ctx;
