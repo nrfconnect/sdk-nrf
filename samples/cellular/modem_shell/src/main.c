@@ -9,6 +9,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
+#include <helpers/nrfx_reset_reason.h>
 #include <nrf_modem.h>
 
 #include <sys/types.h>
@@ -147,29 +148,54 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 	__ASSERT(false, "Modem crash detected, halting application execution");
 }
 
-static void mosh_print_version_info(void)
+static void reset_reason_str_get(char *str, uint32_t reason)
 {
-#if defined(APP_VERSION)
-	printk("\nMOSH version:       %s", STRINGIFY(APP_VERSION));
-#else
-	printk("\nMOSH version:       unknown");
-#endif
+	size_t len;
 
-#if defined(BUILD_ID)
-	printk("\nMOSH build id:      v%s", STRINGIFY(BUILD_ID));
-#else
-	printk("\nMOSH build id:      custom");
-#endif
+	*str = '\0';
 
-#if defined(BUILD_VARIANT)
-#if defined(BRANCH_NAME)
-	printk("\nMOSH build variant: %s/%s\n\n", STRINGIFY(BRANCH_NAME), STRINGIFY(BUILD_VARIANT));
-#else
-	printk("\nMOSH build variant: %s\n\n", STRINGIFY(BUILD_VARIANT));
-#endif
-#else
-	printk("\nMOSH build variant: dev\n\n");
-#endif
+	if (reason & NRFX_RESET_REASON_RESETPIN_MASK) {
+		(void)strcat(str, "PIN reset | ");
+	}
+	if (reason & NRFX_RESET_REASON_DOG_MASK) {
+		(void)strcat(str, "watchdog | ");
+	}
+	if (reason & NRFX_RESET_REASON_OFF_MASK) {
+		(void)strcat(str, "wakeup from power-off | ");
+	}
+	if (reason & NRFX_RESET_REASON_DIF_MASK) {
+		(void)strcat(str, "debug interface wakeup | ");
+	}
+	if (reason & NRFX_RESET_REASON_SREQ_MASK) {
+		(void)strcat(str, "software | ");
+	}
+	if (reason & NRFX_RESET_REASON_LOCKUP_MASK) {
+		(void)strcat(str, "CPU lockup | ");
+	}
+	if (reason & NRFX_RESET_REASON_CTRLAP_MASK) {
+		(void)strcat(str, "control access port | ");
+	}
+
+	len = strlen(str);
+	if (len == 0) {
+		(void)strcpy(str, "power-on reset");
+	} else {
+		str[len - 3] = '\0';
+	}
+}
+
+static void mosh_print_reset_reason(void)
+{
+	uint32_t reset_reason;
+	char reset_reason_str[128];
+
+	/* Read RESETREAS register value and clear current reset reason(s). */
+	reset_reason = nrfx_reset_reason_get();
+	nrfx_reset_reason_clear(reset_reason);
+
+	reset_reason_str_get(reset_reason_str, reset_reason);
+
+	printk("\nReset reason: %s\n", reset_reason_str);
 }
 
 #if defined(CONFIG_DK_LIBRARY)
@@ -210,6 +236,8 @@ int main(void)
 #endif
 
 	__ASSERT(mosh_shell != NULL, "Failed to get shell backend");
+
+	mosh_print_reset_reason();
 
 	mosh_print_version_info();
 
