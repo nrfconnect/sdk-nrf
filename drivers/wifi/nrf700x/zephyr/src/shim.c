@@ -557,14 +557,9 @@ static unsigned int zep_shim_time_elapsed_us(unsigned long start_time_us)
 
 static enum nrf_wifi_status zep_shim_bus_qspi_dev_init(void *os_qspi_dev_ctx)
 {
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct qspi_dev *dev = NULL;
+	ARG_UNUSED(os_qspi_dev_ctx);
 
-	dev = os_qspi_dev_ctx;
-
-	status = NRF_WIFI_STATUS_SUCCESS;
-
-	return status;
+	return NRF_WIFI_STATUS_SUCCESS;
 }
 
 static void zep_shim_bus_qspi_dev_deinit(void *os_qspi_dev_ctx)
@@ -578,15 +573,22 @@ static void zep_shim_bus_qspi_dev_deinit(void *os_qspi_dev_ctx)
 
 static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_ctx)
 {
-	struct zep_shim_bus_qspi_priv *zep_qspi_priv = NULL;
-	struct qspi_dev *qdev = NULL;
+	struct zep_shim_bus_qspi_priv *zep_qspi_priv = os_qspi_priv;
+	struct qspi_dev *qdev = qspi_dev();
+	int ret;
+	enum nrf_wifi_status status;
 
-	zep_qspi_priv = os_qspi_priv;
+	status = qdev->init(qspi_defconfig());
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: QSPI device init failed\n", __func__);
+		return NULL;
+	}
 
-	rpu_enable();
-
-	qdev = qspi_dev();
-
+	ret = rpu_enable();
+	if (ret) {
+		LOG_ERR("%s: RPU enable failed with error %d\n", __func__, ret);
+		return NULL;
+	}
 	zep_qspi_priv->qspi_dev = qdev;
 	zep_qspi_priv->dev_added = true;
 
