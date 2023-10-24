@@ -184,15 +184,8 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-#ifdef CONFIG_NET_L2_WIFI_MGMT
-	scan_result_cb_t disp_scan_cb = NULL;
-#endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 	vif_ctx_zep = CONTAINER_OF(work, struct nrf_wifi_vif_ctx_zep, scan_timeout_work);
-
-#ifdef CONFIG_NET_L2_WIFI_MGMT
-	disp_scan_cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
-#endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 	if (!vif_ctx_zep->scan_in_progress) {
 		LOG_INF("%s: Scan not in progress\n", __func__);
@@ -203,8 +196,8 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 #ifdef CONFIG_NET_L2_WIFI_MGMT
-	if (disp_scan_cb) {
-		disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, NULL);
+	if (vif_ctx_zep->disp_scan_cb) {
+		vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, NULL);
 		vif_ctx_zep->disp_scan_cb = NULL;
 	} else
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
