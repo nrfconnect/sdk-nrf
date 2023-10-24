@@ -53,4 +53,7 @@ void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_
 /** Print error level information to output. */
 #define mosh_error(fmt, ...) mosh_fprintf(MOSH_PRINT_LEVEL_ERROR, fmt, ##__VA_ARGS__)
 
+/** Print application version information. */
+void mosh_print_version_info(void);
+
 #endif

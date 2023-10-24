@@ -181,7 +181,12 @@ Bluetooth mesh samples
 Cellular samples (renamed from nRF9160 samples)
 -----------------------------------------------
 
-|no_changes_yet_note|
+* :ref:`modem_shell_application` sample:
+
+  * Added:
+
+    * Printing of the last reset reason when the sample starts.
+    * Support for printing the sample version information using the ``version`` command.
 
 Cryptography samples
 --------------------

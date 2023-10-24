@@ -214,6 +214,13 @@ int heap_shell(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+int version_shell(const struct shell *shell, size_t argc, char **argv)
+{
+	mosh_print_version_info();
+
+	return 0;
+}
+
 #if defined(CONFIG_MOSH_IPERF3)
 static int cmd_iperf3(const struct shell *shell, size_t argc, char **argv)
 {
@@ -243,3 +250,7 @@ SHELL_CMD_ARG_REGISTER(sleep, NULL,
 SHELL_CMD_ARG_REGISTER(heap, NULL,
 	"Print heap usage statistics.",
 	heap_shell, 1, 0);
+
+SHELL_CMD_ARG_REGISTER(version, NULL,
+	"Print application version information.",
+	version_shell, 1, 0);
