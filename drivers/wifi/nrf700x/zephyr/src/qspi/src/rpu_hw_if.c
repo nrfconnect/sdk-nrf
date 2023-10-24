@@ -120,31 +120,60 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 	int ret;
 
 	if (!device_is_ready(host_irq_spec.port)) {
+		LOG_ERR("Host IRQ GPIO %s is not ready\n", host_irq_spec.port->name);
 		return -ENODEV;
 	}
 
 	ret = gpio_pin_configure_dt(&host_irq_spec, GPIO_INPUT);
+	if (ret) {
+		LOG_ERR("Failed to configure host_irq pin %d\n", host_irq_spec.pin);
+		goto out;
+	}
 
 	ret = gpio_pin_interrupt_configure_dt(&host_irq_spec,
 			GPIO_INT_EDGE_TO_ACTIVE);
+	if (ret) {
+		LOG_ERR("Failed to configure interrupt on host_irq pin %d\n",
+				host_irq_spec.pin);
+		goto out;
+	}
 
 	gpio_init_callback(irq_callback_data,
 			irq_handler,
 			BIT(host_irq_spec.pin));
 
-	gpio_add_callback(host_irq_spec.port, irq_callback_data);
+	ret = gpio_add_callback(host_irq_spec.port, irq_callback_data);
+	if (ret) {
+		LOG_ERR("Failed to add callback on host_irq pin %d\n",
+				host_irq_spec.pin);
+		goto out;
+	}
 
 	LOG_DBG("Finished Interrupt config\n\n");
 
-	return 0;
+out:
+	return ret;
 }
 
 int rpu_irq_remove(struct gpio_callback *irq_callback_data)
 {
-	gpio_pin_configure_dt(&host_irq_spec, GPIO_DISCONNECTED);
-	gpio_remove_callback(host_irq_spec.port, irq_callback_data);
+	int ret;
 
-	return 0;
+	ret = gpio_pin_configure_dt(&host_irq_spec, GPIO_DISCONNECTED);
+	if (ret) {
+		LOG_ERR("Failed to remove host_irq pin %d\n", host_irq_spec.pin);
+		goto out;
+	}
+
+	ret = gpio_remove_callback(host_irq_spec.port, irq_callback_data);
+	if (ret) {
+		LOG_ERR("Failed to remove callback on host_irq pin %d\n",
+				host_irq_spec.pin);
+		goto out;
+	}
+
+out:
+	return ret;
 }
 
 
