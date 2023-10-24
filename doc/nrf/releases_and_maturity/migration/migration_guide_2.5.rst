@@ -25,12 +25,15 @@ The following changes are mandatory to make your application work in the same wa
   * The operations to update bootloader (``3``) and read (``6``) or erase (``8``) the MCUboot secondary slot have been removed from the ``#XFOTA`` AT command.
   * The ``#XSLMUART`` AT command has been removed.
     UART is now configured using only devicetree.
-  * The :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN` Kconfig option has been renamed to :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN`.
-  * The ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` AT commands have been removed.
+    UART settings that were previously saved for this command now provoke error logs on startup.
+    They are innocuous.
+    This will be fixed in the next |NCS| release.
   * Hardware flow control is now required for the UART.
     If hardware flow control for the UART cannot be enabled, use the :kconfig:option:`CONFIG_SLM_UART_RX_BUF_SIZE` Kconfig option to ensure that there is adequate buffer space for the worst case scenario.
   * UART TX now allows multiple AT command responses and notifications to be bundled together in a single transmission.
     Ensure that you correctly parse multiple responses and notifications, and do not rely on UART disablement between them.
+  * The :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_CONTAINER_BUFFER_LEN` Kconfig option has been renamed to :kconfig:option:`CONFIG_SLM_CARRIER_APP_DATA_BUFFER_LEN`.
+  * The ``#XDFUGET``, ``#XDFUSIZE`` and ``#XDFURUN`` AT commands have been removed.
   * The ``#XSOCKETOPT`` option ``SO_BINDTODEVICE`` has been replaced by ``SO_BINDTOPDN``.
   * The value of the ``#XSSOCKETOPT`` option ``TLS_DTLS_HANDSHAKE_TIMEO`` has been updated.
 
