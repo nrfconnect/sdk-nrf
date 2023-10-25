@@ -169,10 +169,17 @@ Serial LTE modem
 * Added:
 
   * ``#XMQTTCFG`` AT command to configure MQTT client before connecting to the broker.
+  * The :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` Kconfig option to support automatic LTE connection at start-up or reset.
+  * The :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` Kconfig option for customers to define their own version string after customization.
 
 * Updated:
 
   * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
+  * ``#XSLMVER`` AT command to report CONFIG_SLM_CUSTOMER_VERSION if it is defined.
+
+* Removed:
+  * The ``CONFIG_SLM_CUSTOMIZED`` Kconfig option due to it no longer being used.
+  * The ``CONFIG_SLM_SOCKET_RX_MAX`` Kconfig option due to it no longer being used.
 
 nRF5340 Audio
 -------------

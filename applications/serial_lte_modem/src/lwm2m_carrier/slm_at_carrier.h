@@ -14,10 +14,6 @@
  * @brief Vendor-specific AT command for LwM2M Carrier service.
  * @{
  */
-
-/* Whether to auto-connect to the network at startup or after a FOTA update. */
-extern int32_t slm_carrier_auto_connect;
-
 /**
  * @brief Initialize Carrier AT command parser.
  *

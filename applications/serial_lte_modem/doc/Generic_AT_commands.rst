@@ -32,11 +32,13 @@ Response syntax
 
 ::
 
-   #XSLMVER: <ncs_version>,<libmodem_version>
+   #XSLMVER: <ncs_version>,<libmodem_version>[,<customer_version>]
 
-The ``<ncs_version>`` value returns a string containing the version of the |NCS|.
+The ``<ncs_version>`` value is a string containing the version of the |NCS|.
 
-The ``<libmodem_version>`` value returns a string containing the version of the modem library.
+The ``<libmodem_version>`` value is a string containing the version of the modem library.
+
+The ``<customer_version>`` value is the :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` string, if defined.
 
 Example
 ~~~~~~~
@@ -46,7 +48,11 @@ The following command example reads the versions:
 ::
 
    AT#XSLMVER
-   #XSLMVER: "2.3.0","2.3.0"
+   #XSLMVER: "2.5.0","2.5.0-lte-5ccd2d4dd54c"
+   OK
+
+   AT#XSLMVER
+   #XSLMVER: "2.5.99","2.5.0-lte-5ccd2d4dd54c","Onomondo 2.1.0"
    OK
 
 Read command
