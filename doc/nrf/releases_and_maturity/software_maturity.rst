@@ -174,6 +174,24 @@ Protocol support
 The following table indicates the software maturity levels of the support for each :ref:`protocol <protocols>`:
 
 .. sml-table:: top_level
+  :insert-values:
+    [
+      (
+        "Zigbee",
+        "nRF52833",
+        "Experimental"
+      ),
+      (
+        "Zigbee",
+        "nRF52840",
+        "Experimental"
+      ),
+      (
+        "Zigbee",
+        "nRF5340",
+        "Experimental"
+      )
+    ]
 
 Amazon Sidewalk features support
 ********************************
