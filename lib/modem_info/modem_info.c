@@ -13,6 +13,7 @@
 #include <modem/modem_info.h>
 #include <nrf_errno.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/toolchain.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -43,6 +44,10 @@ LOG_MODULE_REGISTER(modem_info);
 #define AT_CMD_IMSI		"AT+CIMI"
 #define AT_CMD_IMEI		"AT+CGSN"
 #define AT_CMD_DATE_TIME	"AT+CCLK?"
+#define AT_CMD_XCONNSTAT	"AT%XCONNSTAT?"
+#define AT_CMD_XCONNSTAT_ON	"AT%%XCONNSTAT=1"
+#define AT_CMD_XCONNSTAT_OFF	"AT%%XCONNSTAT=0"
+#define AT_CMD_XMONITOR		"AT%%XMONITOR"
 #define AT_CMD_SUCCESS_SIZE	5
 
 #define RSRP_DATA_NAME		"rsrp"
@@ -143,6 +148,10 @@ LOG_MODULE_REGISTER(modem_info);
 
 #define HWVER_CMD_STR "HWVERSION"
 #define HWVER_FMT_STR "%%%%" HWVER_CMD_STR ": %%%d[^" AT_CMD_RSP_DELIM "]"
+
+#define SHORT_OP_NAME_SIZE_WITHOUT_NULL_TERM 64
+BUILD_ASSERT(SHORT_OP_NAME_SIZE_WITHOUT_NULL_TERM == (MODEM_INFO_SHORT_OP_NAME_SIZE - 1),
+	     "Short operator size macros must match");
 
 struct modem_info_data {
 	const char *cmd;
@@ -750,6 +759,30 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 	return 0;
 }
 
+int modem_info_connectivity_stats_init(void)
+{
+	int err = nrf_modem_at_printf(AT_CMD_XCONNSTAT_ON);
+
+	if (err != 0) {
+		if (err > 0) {
+			err = nrf_modem_at_err_type(err);
+		}
+	}
+	return err;
+}
+
+int modem_info_connectivity_stats_disable(void)
+{
+	int err = nrf_modem_at_printf(AT_CMD_XCONNSTAT_OFF);
+
+	if (err != 0) {
+		if (err > 0) {
+			err = nrf_modem_at_err_type(err);
+		}
+	}
+	return err;
+}
+
 int modem_info_get_fw_uuid(char *buf, size_t buf_size)
 {
 	int ret;
@@ -885,6 +918,93 @@ int modem_info_get_rsrp(int *val)
 	}
 
 	*val = *val - RSRP_OFFSET_VAL;
+	return 0;
+}
+
+int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes)
+{
+	if (tx_kbytes == NULL || rx_kbytes == NULL) {
+		return -EINVAL;
+	}
+
+	int ret = nrf_modem_at_scanf(AT_CMD_XCONNSTAT, "%%XCONNSTAT: %*d,%*d,%d,%d,%*d,%*d",
+				     tx_kbytes, rx_kbytes);
+
+	if (ret != 2) {
+		LOG_ERR("Could not get connectivity stats, error: %d", ret);
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
+	return 0;
+}
+
+int modem_info_get_current_band(uint8_t *val)
+{
+	if (val == NULL) {
+		return -EINVAL;
+	}
+
+	int ret = nrf_modem_at_scanf("AT%XCBAND", "%%XCBAND: %u", val);
+
+	if (ret != 1) {
+		LOG_ERR("Could not get band, error: %d", ret);
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
+	if (*val == BAND_UNAVAILABLE) {
+		LOG_WRN("No valid band");
+		return -ENOENT;
+	}
+
+	return 0;
+}
+
+int modem_info_get_operator(char *buf, size_t buf_size)
+{
+	if (buf == NULL || buf_size < MODEM_INFO_SHORT_OP_NAME_SIZE) {
+		return -EINVAL;
+	}
+
+	int ret = nrf_modem_at_scanf(
+		"AT%XMONITOR",
+		"%%XMONITOR: "
+		"%*u,"	  /* <reg_status> ignored */
+		"%*[^,]," /* <full_name> ignored */
+		"\"%" STRINGIFY(SHORT_OP_NAME_SIZE_WITHOUT_NULL_TERM) "[^\"]\",", /* <short_name> */
+				buf);
+
+	if (ret != 1) {
+		/* Warning instead of error because it is not always reported */
+		LOG_WRN("No valid operator");
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
+	/* Null terminate */
+	buf[buf_size - 1] = '\0';
+
+	return 0;
+}
+
+int modem_info_get_snr(int *val)
+{
+	if (val == NULL) {
+		return -EINVAL;
+	}
+
+	int ret = nrf_modem_at_scanf("AT%XSNRSQ?", "%%XSNRSQ: %d,%*d,%*d", val);
+
+	if (ret != 1) {
+		LOG_ERR("Could not get SNR, error: %d", ret);
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
+	if (*val == SNR_UNAVAILABLE) {
+		LOG_WRN("No valid SNR");
+		return -ENOENT;
+	}
+
+	*val -= SNR_OFFSET_VAL;
+
 	return 0;
 }
 

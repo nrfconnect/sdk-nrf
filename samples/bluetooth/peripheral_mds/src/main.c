@@ -173,14 +173,12 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		time_measure_start = !time_measure_start;
 
 		if (time_measure_start) {
-			err = memfault_metrics_heartbeat_timer_start(
-						MEMFAULT_METRICS_KEY(Button1TimeMeasure));
+			err = MEMFAULT_METRIC_TIMER_START(button_1_elapsed_time_ms);
 			if (err) {
 				printk("Failed to start memfault metrics timer: %d\n", err);
 			}
 		} else {
-			err = memfault_metrics_heartbeat_timer_stop(
-						MEMFAULT_METRICS_KEY(Button1TimeMeasure));
+			err = MEMFAULT_METRIC_TIMER_STOP(button_1_elapsed_time_ms);
 			if (err) {
 				printk("Failed to stop memfault metrics: %d\n", err);
 			}
@@ -206,10 +204,11 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	if ((has_changed & DK_BTN2_MSK) && !pairing_confirmation_conn) {
 		bool button_state = (buttons & DK_BTN2_MSK) ? 1 : 0;
 
-		MEMFAULT_TRACE_EVENT_WITH_LOG(Button2StateChanged, "Button state: %u",
+		MEMFAULT_TRACE_EVENT_WITH_LOG(button_2_state_changed, "Button state: %u",
 					      button_state);
 
-		printk("Button state event has been tracked, button state: %u\n", button_state);
+		printk("button_2_state_changed event has been tracked, button state: %u\n",
+		       button_state);
 	}
 
 	if (buttons & DK_BTN2_MSK) {
@@ -226,11 +225,11 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	}
 
 	if (buttons & DK_BTN3_MSK) {
-		err = memfault_metrics_heartbeat_add(MEMFAULT_METRICS_KEY(Button3PressCount), 1);
+		err = MEMFAULT_METRIC_ADD(button_3_press_count, 1);
 		if (err) {
-			printk("Failed to increase button press count metrics: %d\n", err);
+			printk("Failed to increase button_3_press_count metric: %d\n", err);
 		} else {
-			printk("Button 3 press count metrics increased\n");
+			printk("button_3_press_count metric increased\n");
 		}
 	}
 
@@ -259,10 +258,9 @@ static void bas_notify(void)
 		battery_level = 100U;
 	}
 
-	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(BatteryLvl),
-						      battery_level);
+	err = MEMFAULT_METRIC_SET_UNSIGNED(battery_soc_pct, battery_level);
 	if (err) {
-		printk("Failed to set battery lvl memfault metrics (err %d)\n", err);
+		printk("Failed to set battery_soc_pct memfault metrics (err %d)\n", err);
 	}
 
 	bt_bas_set_battery_level(battery_level);

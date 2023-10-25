@@ -105,12 +105,16 @@ void memfault_metrics_heartbeat_collect_data(void)
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_BT_METRICS)) {
 		memfault_bt_metrics_update();
 	}
+
+	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_LTE_METRICS)) {
+		memfault_lte_metrics_update();
+	}
 }
 
-void memfault_ncs_metrcics_init(void)
+void memfault_ncs_metrics_init(void)
 {
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_LTE_METRICS)) {
-		memfault_lte_metrics_init();
+		memfault_lte_metrcics_init();
 	}
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_BT_METRICS)) {

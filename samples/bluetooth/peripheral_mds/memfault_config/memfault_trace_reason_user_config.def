@@ -2,4 +2,4 @@
  * Please refer to https://docs.memfault.com/docs/embedded/trace-events for more details.
  */
 
-MEMFAULT_TRACE_REASON_DEFINE(Button2StateChanged)
+MEMFAULT_TRACE_REASON_DEFINE(button_2_state_changed)
