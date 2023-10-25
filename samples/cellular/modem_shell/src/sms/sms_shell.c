@@ -66,6 +66,7 @@ static struct option long_options[] = {
 	{ "number",     required_argument, 0, 'n' },
 	{ "start",      no_argument,       0, 'r' },
 	{ "type",       no_argument,       0, 't' },
+	{ "help",       no_argument,       0, 'h' },
 	{ 0,            0,                 0, 0   }
 };
 
@@ -74,7 +75,7 @@ static void sms_print_usage(void)
 	mosh_print_no_format(sms_usage_str);
 }
 
-int sms_shell(const struct shell *shell, size_t argc, char **argv)
+static int sms_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	int err = 0;
 	enum sms_command command;
@@ -94,7 +95,9 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (!strcmp(argv[1], "recv")) {
 		command = SMS_CMD_RECV;
 	} else {
-		mosh_error("Unsupported command=%s\n", argv[1]);
+		if (strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
+			mosh_error("Unsupported command=%s\n", argv[1]);
+		}
 		sms_print_usage();
 		return -EINVAL;
 	}
@@ -113,7 +116,7 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 	/* Parse command line */
 	int flag = 0;
 
-	while ((flag = getopt_long(argc, argv, "m:n:rt:", long_options, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "m:n:rt:h", long_options, NULL)) != -1) {
 		int send_data_len = 0;
 
 		switch (flag) {
@@ -148,6 +151,13 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
+
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
+			goto show_usage;
 		}
 	}
 
@@ -172,4 +182,13 @@ int sms_shell(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	return err;
+
+show_usage:
+	/* Reset getopt for another users */
+	optreset = 1;
+
+	sms_print_usage();
+	return err;
 }
+
+SHELL_CMD_REGISTER(sms, NULL, "Commands for sending and receiving SMS.", sms_shell);

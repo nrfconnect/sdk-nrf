@@ -61,7 +61,7 @@ static void startup_cmd_shell_print_usage(void)
 
 /******************************************************************************/
 
-int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv)
+static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	enum startup_cmd_common_options common_option = SETT_CMD_COMMON_NONE;
 	int ret = 0;
@@ -104,9 +104,10 @@ int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case '?':
-			goto show_usage;
-		default:
 			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
 			goto show_usage;
 		}
 	}

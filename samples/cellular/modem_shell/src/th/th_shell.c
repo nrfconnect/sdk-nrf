@@ -11,13 +11,6 @@
 #include "th/th_ctrl.h"
 #include "mosh_print.h"
 
-static int print_help(const struct shell *shell, size_t argc, char **argv)
-{
-	shell_help(shell);
-
-	return 1;
-}
-
 static int cmd_th_startbg(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2) {
@@ -82,13 +75,8 @@ static int cmd_th_status(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-static int cmd_th(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_bg,
+	sub_th,
 	SHELL_CMD(startbg, NULL, "iperf3 | ping <params>\nStart a background thread.",
 		  cmd_th_startbg),
 	SHELL_CMD(startfg, NULL, "iperf3 | ping <params>\nStart a foreground thread.",
@@ -103,8 +91,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(kill, NULL, "th kill <thread nbr>\nKill a thread.", cmd_th_ctrl_kill, 2, 0),
 	SHELL_CMD_ARG(status, NULL, "Get status of the threads.", cmd_th_status, 1, 0),
 	SHELL_SUBCMD_SET_END);
-SHELL_CMD_REGISTER(th, &sub_bg,
+
+SHELL_CMD_REGISTER(th, &sub_th,
 		   "Commands for running iperf3 and ping in separate threads.\n"
 		   "Note: ping cannot be run with other commands within the same PDN ID.\n"
 		   "      Use \"link connect\" to create PDP context.",
-		   cmd_th);
+		   mosh_print_help_shell);

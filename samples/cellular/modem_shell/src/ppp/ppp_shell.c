@@ -15,7 +15,6 @@
 
 #include "ppp_ctrl.h"
 #include "ppp_settings.h"
-#include "ppp_shell.h"
 
 #include "mosh_print.h"
 
@@ -70,6 +69,7 @@ static struct option long_options[] = { { "baudrate", required_argument, 0, 'b' 
 					{ "parity", required_argument, 0, 'p' },
 					{ "flowctrl", required_argument, 0, 'f' },
 					{ "read", no_argument, 0, 'r' },
+					{ "help", no_argument, 0, 'h' },
 					{ 0, 0, 0, 0 } };
 
 static void ppp_shell_print_usage(struct ppp_shell_cmd_args_t *ppp_cmd_args)
@@ -151,7 +151,7 @@ static void ppp_shell_uart_conf_print(struct uart_config *ppp_uart_config)
 	mosh_print("  stop bits:    %s", tmp_str);
 }
 
-int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
+static int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
 	bool uartconf_option_given = false;
@@ -168,11 +168,10 @@ int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 		ppp_cmd_args.command = PPP_CMD_DOWN;
 	} else if (strcmp(argv[1], "uartconf") == 0) {
 		ppp_cmd_args.command = PPP_CMD_UARTCONF;
-	} else if (strcmp(argv[1], "help") == 0) {
-		goto show_usage;
 	} else {
-		mosh_error("Unsupported command=%s\n", argv[1]);
-		ret = -EINVAL;
+		if (strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
+			mosh_error("Unsupported command=%s\n", argv[1]);
+		}
 		goto show_usage;
 	}
 
@@ -186,7 +185,7 @@ int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 	int opt;
 	struct uart_config ppp_uart_config;
 
-	while ((opt = getopt_long(argc, argv, "b:d:s:p:f:r", long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "b:d:s:p:f:rh", long_options, &long_index)) != -1) {
 		switch (opt) {
 		case 'b':
 			ret = atoi(optarg);
@@ -283,8 +282,11 @@ int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 			ppp_cmd_args.common_option = PPP_COMMON_READ;
 			break;
 
-		default:
+		case '?':
 			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
 			goto show_usage;
 		}
 	}
@@ -348,3 +350,5 @@ show_usage:
 	ppp_shell_print_usage(&ppp_cmd_args);
 	return 0;
 }
+
+SHELL_CMD_REGISTER(ppp, NULL, "Commands for controlling PPP.", ppp_shell_cmd);

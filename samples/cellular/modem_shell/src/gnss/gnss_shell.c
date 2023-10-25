@@ -7,32 +7,12 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
-#include <getopt.h>
 #include <net/nrf_cloud_agnss.h>
 
 #include "mosh_print.h"
 #include "gnss.h"
 
 #define AGNSS_CMD_LINE_INJECT_MAX_LENGTH MIN(3500, CONFIG_SHELL_CMD_BUFF_SIZE)
-
-static int print_help(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = 1;
-
-	if (argc > 1) {
-		mosh_error("%s: subcommand not found", argv[1]);
-		ret = -EINVAL;
-	}
-
-	shell_help(shell);
-
-	return ret;
-}
-
-static int cmd_gnss(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
 
 static int cmd_gnss_start(const struct shell *shell, size_t argc, char **argv)
 {
@@ -42,11 +22,6 @@ static int cmd_gnss_start(const struct shell *shell, size_t argc, char **argv)
 static int cmd_gnss_stop(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_stop() == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_delete(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
 }
 
 static int cmd_gnss_delete_ephe(const struct shell *shell, size_t argc, char **argv)
@@ -62,11 +37,6 @@ static int cmd_gnss_delete_all(const struct shell *shell, size_t argc, char **ar
 static int cmd_gnss_delete_tcxo(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_delete_data(GNSS_DATA_DELETE_TCXO) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_mode(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
 }
 
 static int cmd_gnss_mode_cont(const struct shell *shell, size_t argc, char **argv)
@@ -135,11 +105,6 @@ static int cmd_gnss_mode_periodic_gnss(const struct shell *shell, size_t argc, c
 	return gnss_set_periodic_fix_mode_gnss(interval, timeout) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_dynamics(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 static int cmd_gnss_dynamics_general(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_GENERAL) == 0 ? 0 : -ENOEXEC;
@@ -159,12 +124,6 @@ static int cmd_gnss_dynamics_automotive(const struct shell *shell, size_t argc, 
 {
 	return gnss_set_dynamics_mode(GNSS_DYNAMICS_MODE_AUTOMOTIVE) == 0 ? 0 : -ENOEXEC;
 }
-
-static int cmd_gnss_config(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 
 static int cmd_gnss_config_system(const struct shell *shell, size_t argc, char **argv)
 {
@@ -244,11 +203,6 @@ static int cmd_gnss_config_nmea(const struct shell *shell, size_t argc, char **a
 	return gnss_set_nmea_mask(nmea_mask) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_config_powersave(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 static int cmd_gnss_config_powersave_off(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_DISABLED) == 0 ? 0 : -ENOEXEC;
@@ -262,16 +216,6 @@ static int cmd_gnss_config_powersave_perf(const struct shell *shell, size_t argc
 static int cmd_gnss_config_powersave_power(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_duty_cycling_policy(GNSS_DUTY_CYCLING_POWER) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_config_qzss(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
-static int cmd_gnss_config_qzss_nmea(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
 }
 
 static int cmd_gnss_config_qzss_nmea_standard(const struct shell *shell, size_t argc, char **argv)
@@ -303,11 +247,6 @@ static int cmd_gnss_config_qzss_mask(const struct shell *shell, size_t argc, cha
 	return gnss_set_qzss_mask(qzss_mask) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_config_timing(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 static int cmd_gnss_config_timing_rtc(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_timing_source(GNSS_TIMING_SOURCE_RTC) == 0 ? 0 : -ENOEXEC;
@@ -316,11 +255,6 @@ static int cmd_gnss_config_timing_rtc(const struct shell *shell, size_t argc, ch
 static int cmd_gnss_config_timing_tcxo(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_timing_source(GNSS_TIMING_SOURCE_TCXO) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_priority(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
 }
 
 static int cmd_gnss_priority_enable(const struct shell *shell, size_t argc, char **argv)
@@ -333,11 +267,6 @@ static int cmd_gnss_priority_disable(const struct shell *shell, size_t argc, cha
 	return gnss_set_priority_time_windows(false) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_agnss_automatic(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 static int cmd_gnss_agnss_automatic_enable(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_agnss_automatic(true) == 0 ? 0 : -ENOEXEC;
@@ -348,11 +277,6 @@ static int cmd_gnss_agnss_automatic_disable(const struct shell *shell, size_t ar
 	return gnss_set_agnss_automatic(false) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_agnss_filtered(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 static int cmd_gnss_agnss_filtered_enable(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_agnss_filtered_ephemerides(true) == 0 ? 0 : -ENOEXEC;
@@ -361,11 +285,6 @@ static int cmd_gnss_agnss_filtered_enable(const struct shell *shell, size_t argc
 static int cmd_gnss_agnss_filtered_disable(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_set_agnss_filtered_ephemerides(false) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_agnss(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
 }
 
 static int cmd_gnss_agnss_inject(const struct shell *shell, size_t argc, char **argv)
@@ -467,11 +386,6 @@ static int cmd_gnss_agnss_ref_altitude(const struct shell *shell, size_t argc, c
 		NRF_MODEM_GNSS_AGNSS_LOCATION) == 0 ? 0 : -ENOEXEC;
 }
 
-static int cmd_gnss_pgps(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 static int cmd_gnss_pgps_enable(const struct shell *shell, size_t argc, char **argv)
 {
 	return gnss_enable_pgps() == 0 ? 0 : -ENOEXEC;
@@ -514,11 +428,6 @@ static int cmd_gnss_agnss_filter(const struct shell *shell, size_t argc, char **
 	return gnss_set_agnss_data_enabled(ephe_enabled, alm_enabled, utc_enabled,
 					   klob_enabled, neq_enabled, time_enabled,
 					   pos_enabled, int_enabled) == 0 ? 0 : -ENOEXEC;
-}
-
-static int cmd_gnss_1pps(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
 }
 
 static int cmd_gnss_1pps_enable(const struct shell *shell, size_t argc, char **argv)
@@ -819,7 +728,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_config_qzss,
-	SHELL_CMD(nmea, &sub_gnss_config_qzss_nmea, "QZSS NMEA mode.", cmd_gnss_config_qzss_nmea),
+	SHELL_CMD(nmea, &sub_gnss_config_qzss_nmea, "QZSS NMEA mode.", mosh_print_help_shell),
 	SHELL_CMD_ARG(mask, NULL,
 		      "<193> <194> <195> <196> <197> <198> <199> <200> <201> <202>\n"
 		      "QZSS NMEA mask for PRNs 193...202. 0 = disabled, 1 = enabled.",
@@ -852,10 +761,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "NMEA mask. 0 = disabled, 1 = enabled (default all enabled).",
 		      cmd_gnss_config_nmea, 6, 0),
 	SHELL_CMD(powersave, &sub_gnss_config_powersave, "Continuous tracking power saving mode.",
-		  cmd_gnss_config_powersave),
-	SHELL_CMD(qzss, &sub_gnss_config_qzss, "QZSS configuration.", cmd_gnss_config_qzss),
+		  mosh_print_help_shell),
+	SHELL_CMD(qzss, &sub_gnss_config_qzss, "QZSS configuration.", mosh_print_help_shell),
 	SHELL_CMD(timing, &sub_gnss_config_timing, "Timing source during sleep.",
-		  cmd_gnss_config_timing),
+		  mosh_print_help_shell),
 	SHELL_SUBCMD_SET_END
 	);
 
@@ -889,7 +798,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_agnss,
 	SHELL_CMD(automatic, &sub_gnss_agnss_automatic,
-		  "Enable/disable automatic fetching of A-GNSS data.", cmd_gnss_agnss_automatic),
+		  "Enable/disable automatic fetching of A-GNSS data.", mosh_print_help_shell),
 	SHELL_CMD_ARG(inject, NULL, "[assistance_data]\nFetch and inject A-GNSS data to GNSS. "
 				    "Assistance data can be provided on command line in "
 				    "hexadecimal format without spaces. If <assistance_data> is "
@@ -901,7 +810,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  "allowed A-GNSS data. 0 = disabled, 1 = enabled (default all enabled).",
 		  cmd_gnss_agnss_filter),
 	SHELL_CMD(filtephem, &sub_gnss_agnss_filtered,
-		  "Enable/disable A-GNSS filtered ephemerides.", cmd_gnss_agnss_filtered),
+		  "Enable/disable A-GNSS filtered ephemerides.", mosh_print_help_shell),
 	SHELL_CMD_ARG(expiry, NULL, "Query A-GNSS data expiry information from GNSS.",
 		      cmd_gnss_agnss_expiry, 1, 0),
 	SHELL_CMD(ref_altitude, NULL, "Reference altitude for 3-sat fix in meters with regard to "
@@ -932,18 +841,19 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss,
 	SHELL_CMD_ARG(start, NULL, "Start GNSS.", cmd_gnss_start, 1, 0),
 	SHELL_CMD_ARG(stop, NULL, "Stop GNSS.", cmd_gnss_stop, 1, 0),
-	SHELL_CMD(delete, &sub_gnss_delete, "Delete GNSS data.", cmd_gnss_delete),
-	SHELL_CMD(mode, &sub_gnss_mode, "Set tracking mode.", cmd_gnss_mode),
-	SHELL_CMD(dynamics, &sub_gnss_dynamics, "Set dynamics mode.", cmd_gnss_dynamics),
-	SHELL_CMD(config, &sub_gnss_config, "Set GNSS configuration.", cmd_gnss_config),
+	SHELL_CMD(delete, &sub_gnss_delete, "Delete GNSS data.", mosh_print_help_shell),
+	SHELL_CMD(mode, &sub_gnss_mode, "Set tracking mode.", mosh_print_help_shell),
+	SHELL_CMD(dynamics, &sub_gnss_dynamics, "Set dynamics mode.", mosh_print_help_shell),
+	SHELL_CMD(config, &sub_gnss_config, "Set GNSS configuration.", mosh_print_help_shell),
 	SHELL_CMD(priority, &sub_gnss_priority, "Enable/disable priority time window requests.",
-		  cmd_gnss_priority),
-	SHELL_CMD(agnss, &sub_gnss_agnss, "A-GNSS configuration and commands.", cmd_gnss_agnss),
-	SHELL_CMD(pgps, &sub_gnss_pgps, "P-GPS commands.", cmd_gnss_pgps),
-	SHELL_CMD(1pps, &sub_gnss_1pps, "1PPS control.", cmd_gnss_1pps),
+		  mosh_print_help_shell),
+	SHELL_CMD(agnss, &sub_gnss_agnss, "A-GNSS configuration and commands.",
+		  mosh_print_help_shell),
+	SHELL_CMD(pgps, &sub_gnss_pgps, "P-GPS commands.", mosh_print_help_shell),
+	SHELL_CMD(1pps, &sub_gnss_1pps, "1PPS control.", mosh_print_help_shell),
 	SHELL_CMD(output, NULL, "<pvt level> <nmea level> <event level>\nSet output levels.",
 		  cmd_gnss_output),
 	SHELL_SUBCMD_SET_END
 );
 
-SHELL_CMD_REGISTER(gnss, &sub_gnss, "Commands for controlling GNSS.", cmd_gnss);
+SHELL_CMD_REGISTER(gnss, &sub_gnss, "Commands for controlling GNSS.", mosh_print_help_shell);

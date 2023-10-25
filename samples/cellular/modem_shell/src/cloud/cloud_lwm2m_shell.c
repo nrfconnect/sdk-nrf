@@ -13,25 +13,6 @@
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_MOSH_CLOUD_MQTT));
 
-static int lwm2m_shell_print_usage(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = 1;
-
-	if (argc > 1) {
-		mosh_error("%s: subcommand not found", argv[1]);
-		ret = -EINVAL;
-	}
-
-	shell_help(shell);
-
-	return ret;
-}
-
-static int cmd_lwm2m(const struct shell *shell, size_t argc, char **argv)
-{
-	return lwm2m_shell_print_usage(shell, argc, argv);
-}
-
 static int cmd_lwm2m_connect(const struct shell *shell, size_t argc, char **argv)
 {
 	if (cloud_lwm2m_connect() != 0) {
@@ -90,4 +71,4 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_SUBCMD_SET_END
 );
 
-SHELL_CMD_REGISTER(cloud_lwm2m, &sub_lwm2m, "Cloud connection with LwM2M", cmd_lwm2m);
+SHELL_CMD_REGISTER(cloud_lwm2m, &sub_lwm2m, "Cloud connection with LwM2M", mosh_print_help_shell);

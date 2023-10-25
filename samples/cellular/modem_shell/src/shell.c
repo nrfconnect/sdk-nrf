@@ -18,12 +18,6 @@
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
 #endif
-#if defined(CONFIG_MOSH_PING)
-#include "ping/icmp_ping_shell.h"
-#endif
-#if defined(CONFIG_MOSH_SOCK)
-#include "sock/sock_shell.h"
-#endif
 #if defined(CONFIG_MOSH_IPERF3)
 #include <zephyr/posix/sys/select.h>
 #include <iperf_api.h>
@@ -38,18 +32,6 @@
 #endif /* CONFIG_MOSH_LINK */
 #if defined(CONFIG_MOSH_CURL)
 #include <nrf_curl.h>
-#endif
-#if defined(CONFIG_MOSH_SMS)
-#include "sms/sms_shell.h"
-#endif
-#if defined(CONFIG_MOSH_LOCATION)
-#include "location_shell.h"
-#endif
-#if defined(CONFIG_MOSH_PPP)
-#include "ppp/ppp_shell.h"
-#endif
-#if defined(CONFIG_MOSH_REST)
-#include "rest_shell.h"
 #endif
 #include "uart/uart_shell.h"
 #include "mosh_print.h"
@@ -250,40 +232,8 @@ static int cmd_curl(const struct shell *shell, size_t argc, char **argv)
 SHELL_CMD_REGISTER(curl, NULL, "For curl usage, just type \"curl --manual\"", cmd_curl);
 #endif
 
-#if defined(CONFIG_MOSH_SOCK)
-SHELL_CMD_REGISTER(sock, NULL,
-	"Commands for socket operations such as connect and send.",
-	sock_shell);
-#endif
-
-#if defined(CONFIG_MOSH_PING)
-SHELL_CMD_REGISTER(ping, NULL, "For ping usage, just type \"ping\"", icmp_ping_shell);
-#endif
-
 #if defined(CONFIG_MOSH_IPERF3)
 SHELL_CMD_REGISTER(iperf3, NULL, "For iperf3 usage, just type \"iperf3 --manual\"", cmd_iperf3);
-#endif
-
-#if defined(CONFIG_MOSH_SMS)
-SHELL_CMD_REGISTER(sms, NULL, "Commands for sending and receiving SMS.", sms_shell);
-#endif
-
-#if defined(CONFIG_MOSH_LOCATION)
-SHELL_CMD_REGISTER(location, NULL,
-	"Commands for using the Location library.",
-	location_shell);
-#endif
-
-#if defined(CONFIG_MOSH_PPP)
-SHELL_CMD_REGISTER(ppp, NULL,
-	"Commands for controlling PPP.",
-	ppp_shell_cmd);
-#endif
-
-#if defined(CONFIG_MOSH_REST)
-SHELL_CMD_REGISTER(rest, NULL,
-	"REST client.",
-	rest_shell);
 #endif
 
 SHELL_CMD_ARG_REGISTER(sleep, NULL,

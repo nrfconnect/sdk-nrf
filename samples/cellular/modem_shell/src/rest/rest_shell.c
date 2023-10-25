@@ -17,7 +17,6 @@
 #include <zephyr/net/http/parser.h>
 #include <net/rest_client.h>
 
-#include "rest_shell.h"
 #include "mosh_print.h"
 
 static const char rest_shell_cmd_usage_str[] =
@@ -67,6 +66,7 @@ static struct option long_options[] = {
 	{ "timeout", required_argument, 0, 't' },
 	{ "keepalive", no_argument, 0, 'k' },
 	{ "sckt_id", required_argument, 0, 'i' },
+	{ "help", no_argument, 0, 'h' },
 	{ "print_headers", no_argument, 0, REST_SHELL_OPT_PRINT_RESP_HEADERS },
 	{ 0, 0, 0, 0 }
 };
@@ -82,7 +82,7 @@ static void rest_shell_print_usage(const struct shell *shell)
 #define REST_RESPONSE_BUFF_SIZE 1024
 #define REST_DEFAULT_DESTINATION_PORT 80
 
-int rest_shell(const struct shell *shell, size_t argc, char **argv)
+static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	int opt, i, len;
 	int ret = 0;
@@ -105,15 +105,10 @@ int rest_shell(const struct shell *shell, size_t argc, char **argv)
 	req_ctx.body = NULL;
 	memset(req_headers, 0, (REST_REQUEST_MAX_HEADERS + 1) * sizeof(char *));
 
-	if (argc < 3) {
-		show_usage = true;
-		goto end;
-	}
-
 	/* Start from the 1st argument */
 	optind = 1;
 
-	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:i:k", long_options,
+	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:i:kh", long_options,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 'm':
@@ -180,7 +175,6 @@ int rest_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'b':
-			req_ctx.body = optarg;
 			len = strlen(optarg);
 			if (len > 0) {
 				req_ctx.body = k_malloc(len + 1);
@@ -240,11 +234,13 @@ int rest_shell(const struct shell *shell, size_t argc, char **argv)
 		case REST_SHELL_OPT_PRINT_RESP_HEADERS:
 			print_headers_from_resp = true;
 			break;
+
 		case '?':
+			mosh_error("Unknown option. See usage:");
 			show_usage = true;
 			goto end;
+		case 'h':
 		default:
-			mosh_error("Unknown option. See usage:");
 			show_usage = true;
 			goto end;
 		}
@@ -318,3 +314,5 @@ end:
 	}
 	return ret;
 }
+
+SHELL_CMD_REGISTER(rest, NULL, "REST client.", rest_shell);

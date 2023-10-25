@@ -18,25 +18,6 @@ static const char fota_server_usa[] = "nrf-test-us.s3.amazonaws.com";
 static const char fota_server_jpn[] = "nrf-test-jpn.s3.amazonaws.com";
 static const char fota_server_au[] = "nrf-test-au.s3.amazonaws.com";
 
-static int print_help(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = 1;
-
-	if (argc > 1) {
-		mosh_error("%s: subcommand not found", argv[1]);
-		ret = -EINVAL;
-	}
-
-	shell_help(shell);
-
-	return ret;
-}
-
-static int cmd_fota(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 static int cmd_fota_download(const struct shell *shell, size_t argc,
 			     char **argv)
 {
@@ -78,4 +59,5 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		"<server> <filename>\nDownload and install a FOTA update. Available servers are \"eu\", \"us\", \"jpn\" and \"au\".",
 		cmd_fota_download, 3, 0),
 	SHELL_SUBCMD_SET_END);
-SHELL_CMD_REGISTER(fota, &sub_fota, "Commands for FOTA update.", cmd_fota);
+
+SHELL_CMD_REGISTER(fota, &sub_fota, "Commands for FOTA update.", mosh_print_help_shell);

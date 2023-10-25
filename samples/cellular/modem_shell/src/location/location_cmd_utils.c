@@ -12,7 +12,6 @@
 #include <date_time.h>
 #include <cJSON.h>
 #include <math.h>
-#include <getopt.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <modem/location.h>

@@ -14,13 +14,6 @@ extern bool mosh_print_timestamp_use;
 extern bool mosh_print_cloud_echo;
 #endif
 
-static int print_help(const struct shell *shell, size_t argc, char **argv)
-{
-	shell_help(shell);
-
-	return 1;
-}
-
 static int cmd_timestamps_enable(const struct shell *shell, size_t argc, char **argv)
 {
 	mosh_print_timestamp_use = true;
@@ -67,12 +60,16 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_print,
 	SHELL_CMD(
 		timestamps, &sub_timestamps,
-		"Enable/disable timestamps in shell output.", print_help),
+		"Enable/disable timestamps in shell output.", mosh_print_help_shell),
 #if defined(CONFIG_MOSH_CLOUD_MQTT)
 	SHELL_CMD(
 		cloud, &sub_cloud_echo,
-		"Enable/disable echoing shell output to cloud over MQTT.", print_help),
+		"Enable/disable echoing shell output to cloud over MQTT.", mosh_print_help_shell),
 #endif
 SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(print, &sub_print, "Commands for shell output formatting.", print_help);
+SHELL_CMD_REGISTER(
+	print,
+	&sub_print,
+	"Commands for shell output formatting.",
+	mosh_print_help_shell);

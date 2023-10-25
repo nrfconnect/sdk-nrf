@@ -142,6 +142,7 @@ static struct option long_options[] = {
 	{ "cloud_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED },
 	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
 	{ "wifi_service", required_argument, 0, LOCATION_SHELL_OPT_WIFI_SERVICE },
+	{ "help", no_argument, 0, 'h' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -382,7 +383,7 @@ void location_ctrl_init(void)
 
 /******************************************************************************/
 
-int location_shell(const struct shell *shell, size_t argc, char **argv)
+static int location_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	enum location_shell_command command = LOCATION_CMD_NONE;
 
@@ -439,8 +440,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (strcmp(argv[1], "cancel") == 0) {
 		command = LOCATION_CMD_CANCEL;
 	} else {
-		mosh_error("Unsupported command=%s\n", argv[1]);
-		ret = -EINVAL;
+		if (strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
+			mosh_error("Unsupported command=%s\n", argv[1]);
+		}
 		goto show_usage;
 	}
 
@@ -452,7 +454,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	gnss_location_to_cloud = false;
 
-	while ((opt = getopt_long(argc, argv, "m:t:", long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "m:t:h", long_options, &long_index)) != -1) {
 		switch (opt) {
 		case LOCATION_SHELL_OPT_GNSS_TIMEOUT:
 			gnss_timeout = atof(optarg);
@@ -576,10 +578,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case '?':
-			goto show_usage;
-
-		default:
 			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
 			goto show_usage;
 		}
 	}
@@ -665,6 +667,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		goto show_usage;
 	}
 	return ret;
+
 show_usage:
 	/* Reset getopt for another users */
 	optreset = 1;
@@ -672,3 +675,9 @@ show_usage:
 	location_shell_print_usage(shell, command);
 	return ret;
 }
+
+SHELL_CMD_REGISTER(
+	location,
+	NULL,
+	"Commands for using the Location library.",
+	location_shell);
