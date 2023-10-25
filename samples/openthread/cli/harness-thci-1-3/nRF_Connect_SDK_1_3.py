@@ -3465,7 +3465,6 @@ class OpenThreadTHCI(object):
         cmd = 'srp client service remove %s %s' % (instancename, servicename)
         #cmd = 'srp client service remove service-test-1 _thread-test._udp'
         self.__executeCommand(cmd)
-        self.__executeCommand('netdata register')
         time.sleep(3)
 
     def srpCallBackEnable(self):
