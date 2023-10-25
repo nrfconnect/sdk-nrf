@@ -15,17 +15,19 @@
 
 #include "derive_key.h"
 
-psa_key_id_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
-			uint32_t key_label_len)
+psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
+			uint32_t key_label_len, psa_key_id_t *key_id_out)
 {
 	psa_status_t status;
 	psa_key_derivation_operation_t op = PSA_KEY_DERIVATION_OPERATION_INIT;
-	psa_key_id_t key_id_out = 0;
+	psa_key_id_t key_id;
+
+	*key_id_out = PSA_KEY_ID_NULL;
 
 	status = psa_key_derivation_setup(&op, PSA_ALG_HKDF(PSA_ALG_SHA_256));
 	if (status != PSA_SUCCESS) {
 		printk("psa_key_derivation_setup returned error: %d\n", status);
-		return 0;
+		return status;
 	}
 
 	/* Set up a key derivation operation with HUK  */
@@ -33,7 +35,7 @@ psa_key_id_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 					      TFM_BUILTIN_KEY_ID_HUK);
 	if (status != PSA_SUCCESS) {
 		printk("psa_key_derivation_input_key returned error: %d\n", status);
-		return 0;
+		return status;
 	}
 
 	/* Supply the PS key label as an input to the key derivation */
@@ -42,24 +44,24 @@ psa_key_id_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 						key_label_len);
 	if (status != PSA_SUCCESS) {
 		printk("psa_key_derivation_input_bytes returned error: %d\n", status);
-		return 0;
+		return status;
 	}
 
 	/* Create the storage key from the key derivation operation */
-	status = psa_key_derivation_output_key(attributes, &op, &key_id_out);
+	status = psa_key_derivation_output_key(attributes, &op, &key_id);
 	if (status != PSA_SUCCESS) {
 		printk("psa_key_derivation_output_key returned error: %d\n", status);
-		return 0;
+		return status;
 	}
 
 	printk("(Key resides internally in TF-M)\n");
 
-	/* Free resources associated with the key derivation operation */
+	/* Finish key derivation operation and free associated resources */
 	status = psa_key_derivation_abort(&op);
 	if (status != PSA_SUCCESS) {
 		printk("psa_key_derivation_abort returned error: %d\n", status);
-		return 0;
 	}
 
-	return key_id_out;
+	*key_id_out = key_id;
+	return PSA_SUCCESS;
 }

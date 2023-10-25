@@ -44,7 +44,7 @@ int main(void)
 	psa_status_t status;
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	uint8_t key_label[] = "HUK derivation sample label";
-	psa_key_id_t key_id_out = 0;
+	psa_key_id_t key_id;
 	uint8_t plaintext[] = "Lorem ipsum dolor sit amet. This will be encrypted.";
 	uint8_t ciphertext[sizeof(plaintext) + MAC_LEN];
 	uint32_t ciphertext_out_len;
@@ -101,17 +101,18 @@ int main(void)
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&attributes, PSA_BYTES_TO_BITS(HUK_SIZE_BYTES));
 
-	key_id_out = derive_key(&attributes, key_label, sizeof(key_label) - 1);
-	if (key_id_out == 0) {
+	status = derive_key(&attributes, key_label, sizeof(key_label) - 1, &key_id);
+	if (status != PSA_SUCCESS) {
+		printk("derive_key returned error: %d\n", status);
 		return 0;
 	}
 
-	printk("Key ID: 0x%x\n\n", key_id_out);
+	printk("Key ID: 0x%x\n\n", key_id);
 	printk("Encrypting\n");
 	printk("Plaintext:\n\"%s\"\n", plaintext);
 	hex_dump(plaintext, sizeof(plaintext) - 1);
 
-	status = psa_aead_encrypt(key_id_out, ENCRYPT_ALG, iv, IV_LEN,
+	status = psa_aead_encrypt(key_id, ENCRYPT_ALG, iv, IV_LEN,
 				additional_data, sizeof(additional_data) - 1,
 				plaintext, sizeof(plaintext) - 1,
 				ciphertext, sizeof(ciphertext), &ciphertext_out_len);
