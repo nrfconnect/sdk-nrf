@@ -146,8 +146,36 @@ bool NUSService::RegisterCommand(const char *const name, size_t length, CommandC
 
 void NUSService::DispatchCommand(const char *const data, uint16_t len)
 {
+	static constexpr char LF = '\n';
+	static constexpr char CR = '\r';
+	static const char *CRLF = "\r\n";
+
+	auto isNoEolCommand = [data, len](const Command &c) {
+		return strncmp(data, c.command, len) == 0 && len == strlen(c.command);
+	};
+	auto isEolCommand = [data, len](const Command &c) {
+		const size_t rawLenEol = len - 1;
+		if (rawLenEol < 0) {
+			LOG_ERR("Cannot parse NUS command!");
+			return false;
+		}
+		const char eol = *(data + rawLenEol);
+		return strncmp(data, c.command, rawLenEol) == 0 && rawLenEol == strlen(c.command) &&
+		       (eol == LF || eol == CR);
+	};
+	auto isWindowsEolCommand = [data, len](const Command &c) {
+		const size_t rawLenWindowsEol = len - 2;
+		if (rawLenWindowsEol < 0) {
+			LOG_ERR("Cannot parse NUS command!");
+			return false;
+		}
+		const char *windowsEol = data + rawLenWindowsEol;
+		return (strncmp(data, c.command, rawLenWindowsEol) == 0 && rawLenWindowsEol == strlen(c.command) &&
+			strncmp(windowsEol, CRLF, strlen(CRLF)) == 0);
+	};
+
 	for (const auto &c : mCommandsList) {
-		if (strncmp(data, c.command, len) == 0 && len == strlen(c.command)) {
+		if (isNoEolCommand(c) || isEolCommand(c) || isWindowsEolCommand(c)) {
 			if (c.callback) {
 				PlatformMgr().LockChipStack();
 				c.callback(c.context);
