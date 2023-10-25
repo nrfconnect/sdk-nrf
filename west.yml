@@ -45,7 +45,8 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk, -bsec]
+  group-filter: [-homekit, -nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk,
+    -bsec]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -224,7 +225,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 57ef721eeed2550835c528ab7b8e77671f7039d6
+      revision: 91b7c3ff3f178a212c94f18662a3b4e3f400d721
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
