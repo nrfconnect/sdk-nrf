@@ -91,6 +91,7 @@ if LOCATION_METHOD_CELLULAR || LOCATION_METHOD_WIFI
 
 config LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE
 	int "Receive buffer size"
+	default 1024 if LOCATION_SERVICE_HERE
 	default 512
 	help
 	  Size of the buffer used to store the response from the location service.
