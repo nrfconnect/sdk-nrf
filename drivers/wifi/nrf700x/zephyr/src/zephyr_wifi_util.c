@@ -783,7 +783,9 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  umac->interface_data_stats.rx_bytes,
 				  umac->interface_data_stats.rx_checksum_error_count,
 				  umac->interface_data_stats.replay_attack_drop_cnt);
-	} else if (stats_type == RPU_STATS_TYPE_LMAC || stats_type == RPU_STATS_TYPE_ALL) {
+	}
+
+	if (stats_type == RPU_STATS_TYPE_LMAC || stats_type == RPU_STATS_TYPE_ALL) {
 		struct rpu_lmac_stats *lmac = &stats.fw.lmac;
 
 		shell_fprintf(shell, SHELL_INFO,
@@ -859,7 +861,9 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  lmac->scan_abort_req,
 				  lmac->scan_abort_complete,
 				  lmac->internal_buf_pool_null);
-	} else if (stats_type == RPU_STATS_TYPE_PHY || stats_type == RPU_STATS_TYPE_ALL) {
+	}
+
+	if (stats_type == RPU_STATS_TYPE_PHY || stats_type == RPU_STATS_TYPE_ALL) {
 		struct rpu_phy_stats *phy = &stats.fw.phy;
 
 		shell_fprintf(shell, SHELL_INFO,
@@ -877,9 +881,6 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 				  phy->ofdm_crc32_fail_cnt,
 				  phy->dsss_crc32_pass_cnt,
 				  phy->dsss_crc32_fail_cnt);
-	} else {
-		shell_fprintf(shell, SHELL_ERROR, "Invalid stats type\n");
-		return -EINVAL;
 	}
 
 	return 0;
