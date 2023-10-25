@@ -36,12 +36,6 @@ static const char at_usage_str[] =
 AT_MONITOR(mosh_at_handler, ANY, at_cmd_handler, PAUSED);
 
 #if defined(CONFIG_MOSH_AT_CMD_MODE)
-static int at_shell_cmd_mode_print_help(const struct shell *shell, size_t argc, char **argv)
-{
-	shell_help(shell);
-
-	return 1;
-}
 
 static int at_shell_cmd_mode_start(const struct shell *shell, size_t argc, char **argv)
 {
@@ -81,7 +75,7 @@ static void at_cmd_handler(const char *response)
 	mosh_print("AT event handler: %s", response);
 }
 
-int at_shell(const struct shell *shell, size_t argc, char **argv)
+static int at_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 
@@ -98,6 +92,8 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (!strcmp(command, "events_disable")) {
 		at_monitor_pause(&mosh_at_handler);
 		mosh_print("AT command events disabled");
+	} else if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
+		mosh_print_no_format(at_usage_str);
 	} else {
 		k_mutex_lock(&mosh_at_resp_buf_mutex, K_FOREVER);
 		err = nrf_modem_at_cmd(mosh_at_resp_buf, sizeof(mosh_at_resp_buf), "%s", command);
@@ -126,24 +122,25 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  "Enable AT command autostart on bootup.",
 		  at_shell_cmd_mode_enable_autostart),
 	SHELL_CMD(disable_autostart, NULL,
-		 "Disable AT command mode autostart on bootup.",
+		  "Disable AT command mode autostart on bootup.",
 		  at_shell_cmd_mode_disable_autostart),
 	SHELL_CMD(term_cr_lf, NULL,
-		 "Receive CR+LF as command line termination.",
+		  "Receive CR+LF as command line termination.",
 		  at_shell_cmd_mode_term_cr_lf),
 	SHELL_CMD(term_lf, NULL,
-		 "Receive LF as command line termination.",
+		  "Receive LF as command line termination.",
 		  at_shell_cmd_mode_term_lf),
 	SHELL_CMD(term_cr, NULL,
-		 "Receive CR as command line termination.",
+		  "Receive CR as command line termination.",
 		  at_shell_cmd_mode_term_cr),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_STATIC_SUBCMD_SET_CREATE(sub_at_shell,
-			       SHELL_CMD(at_cmd_mode, &sub_at_cmd_mode,
-					 "Enable/disable AT command mode.",
-					 at_shell_cmd_mode_print_help),
-			       SHELL_SUBCMD_SET_END);
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_at_shell,
+	SHELL_CMD(at_cmd_mode, &sub_at_cmd_mode,
+		  "Enable/disable AT command mode.",
+		  mosh_print_help_shell),
+	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(at, &sub_at_shell, "Execute an AT command.", at_shell);
 #else

@@ -58,7 +58,7 @@ static void icmp_ping_shell_usage_print(void)
 
 /*****************************************************************************/
 
-int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
+static int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	return icmp_ping_shell_th(shell, argc, argv, NULL, 0, NULL);
 }
@@ -67,7 +67,7 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 	char *print_buf, int print_buf_len, struct k_poll_signal *kill_signal)
 {
 	struct icmp_ping_shell_cmd_argv ping_args;
-	int flag, dest_len;
+	int opt, dest_len;
 
 	icmp_ping_cmd_defaults_set(&ping_args);
 
@@ -79,16 +79,13 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 		ping_args.kill_signal = kill_signal;
 	}
 #endif
-	if (argc < 3) {
-		goto show_usage;
-	}
 
 	/* Start from the 1st argument */
 	optind = 1;
 
-	while ((flag = getopt_long(argc, argv, "d:t:c:i:I:l:h6r", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:t:c:i:I:l:h6r", long_options, NULL)) != -1) {
 
-		switch (flag) {
+		switch (opt) {
 		case 'd': /* destination */
 			dest_len = strlen(optarg);
 			if (dest_len > ICMP_MAX_URL) {
@@ -165,7 +162,11 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 			}
 			break;
 			}
-		case 'h': /* help */
+
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
 		default:
 			goto show_usage;
 		}
@@ -183,3 +184,5 @@ show_usage:
 	icmp_ping_shell_usage_print();
 	return -1;
 }
+
+SHELL_CMD_REGISTER(ping, NULL, "For ping usage, just type \"ping\"", icmp_ping_shell);

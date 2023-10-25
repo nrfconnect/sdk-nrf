@@ -107,24 +107,6 @@ static int cmd_cloud_rest_shadow_device_status_update(const struct shell *shell,
 	return 0;
 }
 
-static int print_help(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = 1;
-
-	if (argc > 1) {
-		mosh_error("%s: subcommand not found", argv[1]);
-		ret = -EINVAL;
-	}
-	shell_help(shell);
-
-	return ret;
-}
-
-static int cmd_cloud_rest(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_cloud_rest,
 			       SHELL_CMD(jitp, NULL,
 					 "Perform Just-in-Time-Provisioning with nRF Cloud.",
@@ -134,4 +116,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_cloud_rest,
 					 cmd_cloud_rest_shadow_device_status_update),
 			       SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(cloud_rest, &sub_cloud_rest, "Send nRF Cloud command over REST", cmd_cloud_rest);
+SHELL_CMD_REGISTER(
+	cloud_rest,
+	&sub_cloud_rest,
+	"Send nRF Cloud command over REST",
+	mosh_print_help_shell);

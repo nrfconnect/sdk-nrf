@@ -28,20 +28,6 @@ static struct k_work shadow_update_work;
 
 static char shell_cmd[CLOUD_CMD_MAX_LENGTH + 1];
 
-static int cloud_shell_print_usage(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = 1;
-
-	if (argc > 1) {
-		mosh_error("%s: subcommand not found", argv[1]);
-		ret = -EINVAL;
-	}
-
-	shell_help(shell);
-
-	return ret;
-}
-
 static void cloud_reconnect_work_fn(struct k_work *work)
 {
 	int err = nrf_cloud_connect();
@@ -258,11 +244,6 @@ static void cmd_cloud_disconnect(const struct shell *shell, size_t argc, char **
 	}
 }
 
-static int cmd_cloud(const struct shell *shell, size_t argc, char **argv)
-{
-	return cloud_shell_print_usage(shell, argc, argv);
-}
-
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_cloud,
 	SHELL_CMD_ARG(connect, NULL, "Establish MQTT connection to nRF Cloud.", cmd_cloud_connect,
@@ -271,4 +252,4 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_SUBCMD_SET_END
 );
 
-SHELL_CMD_REGISTER(cloud, &sub_cloud, "MQTT connection to nRF Cloud", cmd_cloud);
+SHELL_CMD_REGISTER(cloud, &sub_cloud, "MQTT connection to nRF Cloud", mosh_print_help_shell);

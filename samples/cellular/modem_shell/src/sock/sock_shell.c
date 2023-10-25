@@ -174,7 +174,8 @@ static struct option long_options[] = {
 	{ "rai_one_resp",   no_argument,       0, SOCK_SHELL_OPT_RAI_ONE_RESP },
 	{ "rai_ongoing",    no_argument,       0, SOCK_SHELL_OPT_RAI_ONGOING },
 	{ "rai_wait_more",  no_argument,       0, SOCK_SHELL_OPT_RAI_WAIT_MORE },
-	{ 0,                0,                 0, 0  }
+	{ "help",           no_argument,       0, 'h' },
+	{ 0,                0,                 0, 0   }
 };
 
 static void sock_print_usage(void)
@@ -182,7 +183,7 @@ static void sock_print_usage(void)
 	mosh_print_no_format(sock_usage_str);
 }
 
-int sock_shell(const struct shell *shell, size_t argc, char **argv)
+static int sock_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	int err = 0;
 	char *command_str = argv[1];
@@ -209,7 +210,9 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (!strcmp(command_str, "list")) {
 		command = SOCK_CMD_LIST;
 	} else {
-		mosh_error("Unsupported command=%s\n", command_str);
+		if (strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
+			mosh_error("Unsupported command=%s\n", command_str);
+		}
 		sock_print_usage();
 		return -EINVAL;
 	}
@@ -253,7 +256,7 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 	int flag = 0;
 
 	while ((flag = getopt_long(argc, argv,
-				   "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:P:",
+				   "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:P:h",
 				   long_options, NULL)) != -1) {
 		int addr_len = 0;
 		int send_data_len = 0;
@@ -443,8 +446,13 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		case SOCK_SHELL_OPT_RAI_WAIT_MORE:
 			arg_rai_wait_more = true;
 			break;
+
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
 		default:
-			break;
+			goto show_usage;
 		}
 	}
 
@@ -520,4 +528,17 @@ int sock_shell(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	return err;
+
+show_usage:
+	/* Reset getopt for another users */
+	optreset = 1;
+
+	sock_print_usage();
+	return err;
 }
+
+SHELL_CMD_REGISTER(
+	sock,
+	NULL,
+	"Commands for socket operations such as connect and send.",
+	sock_shell);

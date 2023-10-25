@@ -156,3 +156,17 @@ void mosh_print_no_format(const char *usage)
 {
 	shell_print(mosh_shell, "%s", usage);
 }
+
+int mosh_print_help_shell(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret = 1;
+
+	if (argc > 1 && strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
+		mosh_error("%s: subcommand not found", argv[1]);
+		ret = -EINVAL;
+	}
+
+	shell_help(shell);
+
+	return ret;
+}

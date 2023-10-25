@@ -26,20 +26,6 @@ static const struct device *const shell_uart_dev = DEVICE_DT_GET(UART_DEVICE_NOD
 bool uart_shell_disable_during_sleep_requested;
 extern bool link_shell_msleep_notifications_subscribed;
 
-static int print_help(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = 1;
-
-	if (argc > 1) {
-		mosh_error("%s: subcommand not found", argv[1]);
-		ret = -EINVAL;
-	}
-
-	shell_help(shell);
-
-	return ret;
-}
-
 static void uart_disable_handler(struct k_work *work)
 {
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART
@@ -169,11 +155,6 @@ static int cmd_uart_enable_when_sleep(void)
 	return 0;
 }
 
-static int cmd_uart_during_sleep(const struct shell *shell, size_t argc, char **argv)
-{
-	return print_help(shell, argc, argv);
-}
-
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_uart_during_sleep,
 	SHELL_CMD_ARG(enable, NULL, "Enable UARTs during sleep mode.",
@@ -197,8 +178,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_uart,
 		&sub_uart_during_sleep,
 		"Disable UARTs during the modem sleep mode. UARTs are re-enabled once the modem "
 		"exits sleep mode.",
-		cmd_uart_during_sleep),
+		mosh_print_help_shell),
 	SHELL_SUBCMD_SET_END
 );
 
-SHELL_CMD_REGISTER(uart, &sub_uart, "Commands for disabling UARTs for power measurement.", NULL);
+SHELL_CMD_REGISTER(
+	uart,
+	&sub_uart,
+	"Commands for disabling UARTs for power measurement.",
+	mosh_print_help_shell);

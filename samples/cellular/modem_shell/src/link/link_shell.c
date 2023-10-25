@@ -381,6 +381,7 @@ enum {
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options[] = {
+	{ "help", no_argument, 0, 'h' },
 	{ "apn", required_argument, 0, 'a' },
 	{ "cid", required_argument, 0, 'I' },
 	{ "family", required_argument, 0, 'f' },
@@ -448,7 +449,7 @@ static struct option long_options[] = {
 	{ 0, 0, 0, 0 }
 };
 
-static const char short_options[] = "a:I:f:i:p:t:A:P:U:su014rmngMNed";
+static const char short_options[] = "ha:I:f:i:p:t:A:P:U:su014rmngMNed";
 
 /******************************************************************************/
 
@@ -724,10 +725,12 @@ static int link_shell_connect(const struct shell *shell, size_t argc, char **arg
 		case 'P': /* auth password */
 			password = optarg;
 			break;
+
 		case '?':
-			goto show_usage;
-		default:
 			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
 			goto show_usage;
 		}
 	}
@@ -2225,4 +2228,4 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 SHELL_CMD_REGISTER(
 	link, &sub_link,
 	"Commands for LTE link controlling and status information.",
-	NULL);
+	mosh_print_help_shell);
