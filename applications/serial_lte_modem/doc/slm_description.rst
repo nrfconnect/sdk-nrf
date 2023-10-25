@@ -43,11 +43,11 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. _CONFIG_SLM_CUSTOMIZED:
+.. _CONFIG_SLM_CUSTOMER_VERSION:
 
-CONFIG_SLM_CUSTOMIZED - Flag for customized functionality
-   This flag can be used to enable customized functionality.
-   To add your own custom logic, enclose the code by ``#if defined(CONFIG_SLM_CUSTOMIZED)`` and enable this flag.
+CONFIG_SLM_CUSTOMER_VERSION - Customer version string
+   Version string defined by the customer after customizing the application.
+   When defined, this version is reported with the baseline versions by the ``#XSLMVER`` AT command.
 
 .. _CONFIG_SLM_AT_MAX_PARAM:
 
@@ -124,14 +124,29 @@ CONFIG_SLM_INDICATE_TIME - Indicate GPIO active time
    This option specifies the length, in milliseconds, of the time interval during which the indicate GPIO must stay active.
    The default value is 100 milliseconds.
 
-.. _CONFIG_SLM_SOCKET_RX_MAX:
+.. _CONFIG_SLM_AUTO_CONNECT:
 
-CONFIG_SLM_SOCKET_RX_MAX - Maximum RX buffer size for receiving socket data
-   This option specifies the maximum buffer size for receiving data through the socket interface.
-   By default, this size is set to :c:enumerator:`NET_IPV4_MTU` (576), which is defined in Zephyr.
-   The maximum value is 708, which is the maximum segment size (MSS) defined for the modem.
+CONFIG_SLM_AUTO_CONNECT - Connect to LTE network at start-up or reset
+   This option enables connecting to the LTE network at start-up or reset using a defined PDN configuration.
+   This option is enabled by the LwM2M Carrier overlay, but is otherwise disabled by default.
 
-   This option impacts the total RAM usage.
+   .. note::
+      This option requires network-specific configuration in the ``slm_auto_connect.h`` file.
+
+   Here is a sample configuration for NIDD connection in the :file:`slm_auto_connect.h` file::
+
+      /* Network-specific default system mode configured by %XSYSTEMMODE (refer to AT command manual) */
+      0,        /* LTE support */
+      1,        /* NB-IoT support */
+      0,        /* GNSS support, also define CONFIG_MODEM_ANTENNA if not Nordic DK */
+      0,        /* LTE preference */
+      /* Network-specific default PDN configured by +CGDCONT and +CGAUTH (refer to AT command manual) */
+      true,     /* PDP context definition required or not */
+      "Non-IP", /* PDP type: "IP", "IPV6", "IPV4V6", "Non-IP" */
+      "",       /* Access point name */
+      0,        /* PDP authentication protocol: 0(None), 1(PAP), 2(CHAP) */
+      "",       /* PDN connection authentication username */
+      ""        /* PDN connection authentication password */
 
 .. _CONFIG_SLM_CR_TERMINATION:
 

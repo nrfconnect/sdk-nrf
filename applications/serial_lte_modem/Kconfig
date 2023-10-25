@@ -8,16 +8,10 @@ source "Kconfig.zephyr"
 
 menu "Nordic Serial LTE Modem"
 
-config SLM_CUSTOMIZED
-	bool "Flag for customized functionality"
+config SLM_CUSTOMER_VERSION
+	string "Customer version string"
 	help
-	  Enable this flag to include customized logic.
-
-config SLM_AT_MODE
-	bool "Serial LTE Modem by raw AT mode"
-	default y
-	select AT_CMD_PARSER
-	select AT_MONITOR
+	   This version is reported together with baseline versions by AT command "#XSLMVER".
 
 config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
@@ -104,15 +98,12 @@ config SLM_INDICATE_TIME
 	  GPIO active indication time in milliseconds. This setting specify the period length for the pin to be active
 
 #
-# Socket
+# LTE network automatic attach
 #
-config SLM_SOCKET_RX_MAX
-	int "Maximum RX buffer size for receiving socket data"
-	range 576 708
-	default 576
+config SLM_AUTO_CONNECT
+	bool "Automatically connect to the LTE network on start-up or after a reset"
 	help
-	  Default: NET_IPV4_MTU (576)
-	  Maximum: MSS setting in modem (708)
+	  Enables automatic connection to the LTE network using the PDN configuration defined in 'slm_auto_connect.h'.
 
 #
 # TCP/TLS proxy

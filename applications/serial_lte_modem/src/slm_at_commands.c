@@ -116,7 +116,14 @@ static int handle_at_slmver(enum at_cmd_type type)
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
 		char *libmodem = nrf_modem_build_version();
 
-		rsp_send("\r\n#XSLMVER: %s,\"%s\"\r\n", STRINGIFY(NCS_VERSION_STRING), libmodem);
+		if (strlen(CONFIG_SLM_CUSTOMER_VERSION) > 0) {
+			rsp_send("\r\n#XSLMVER: %s,\"%s\",\"%s\"\r\n",
+				 STRINGIFY(NCS_VERSION_STRING), libmodem,
+				 CONFIG_SLM_CUSTOMER_VERSION);
+		} else {
+			rsp_send("\r\n#XSLMVER: %s,\"%s\"\r\n",
+				 STRINGIFY(NCS_VERSION_STRING), libmodem);
+		}
 		ret = 0;
 	}
 

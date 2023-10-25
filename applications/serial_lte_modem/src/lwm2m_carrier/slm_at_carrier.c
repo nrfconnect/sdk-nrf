@@ -18,8 +18,6 @@ LOG_MODULE_REGISTER(slm_carrier, CONFIG_SLM_LOG_LEVEL);
 
 /**@brief LwM2M Carrier operations. */
 enum slm_carrier_operation {
-	/* LTE auto-connect operation for LwM2M Carrier */
-	CARRIER_OP_AUTO_CONNECT,
 	/* Carrier AppData Operation */
 	CARRIER_OP_APPDATA_SEND,
 	/* Carrier Device Operation */
@@ -60,7 +58,6 @@ struct carrier_op_list {
 static int m_mem_free;
 
 /** forward declaration of cmd handlers **/
-static int do_carrier_auto_connect(void);
 static int do_carrier_appdata_send(void);
 static int do_carrier_device_battery_level(void);
 static int do_carrier_device_battery_status(void);
@@ -84,7 +81,6 @@ static int do_carrier_request_link_up(void);
 
 /**@brief SLM AT Command list type. */
 static struct carrier_op_list op_list[CARRIER_OP_MAX] = {
-	{CARRIER_OP_AUTO_CONNECT, "auto_connect", do_carrier_auto_connect},
 	{CARRIER_OP_APPDATA_SEND, "app_data", do_carrier_appdata_send},
 	{CARRIER_OP_DEVICE_BATTERY_LEVEL, "battery_level", do_carrier_device_battery_level},
 	{CARRIER_OP_DEVICE_BATTERY_STATUS, "battery_status", do_carrier_device_battery_status},
@@ -837,37 +833,6 @@ static int do_carrier_request_link_down(void)
 static int do_carrier_request_link_up(void)
 {
 	return lwm2m_carrier_request(LWM2M_CARRIER_REQUEST_LINK_UP);
-}
-
-/* AT#XCARRIER="auto_connect","read|write"[,<auto-connect-flag>] */
-static int do_carrier_auto_connect(void)
-{
-	int ret = 0;
-	int flag;
-	char operation[6];
-	size_t size = sizeof(operation);
-
-	ret = util_string_get(&slm_at_param_list, 2, operation, &size);
-	if (ret) {
-		return ret;
-	}
-
-	if (slm_util_cmd_casecmp(operation, "READ")) {
-		rsp_send("\r\n#XCARRIER: auto_connect %d\r\n", slm_carrier_auto_connect);
-	} else if (slm_util_cmd_casecmp(operation, "WRITE")) {
-		ret = at_params_int_get(&slm_at_param_list, 3, &flag);
-		if (ret) {
-			return ret;
-		}
-		if (flag == 0 || flag == 1) {
-			slm_carrier_auto_connect = flag;
-			(void)slm_settings_auto_connect_save();
-		} else {
-			ret = -EINVAL;
-		}
-	}
-
-	return ret;
 }
 
 /**@brief API to handle Carrier AT command

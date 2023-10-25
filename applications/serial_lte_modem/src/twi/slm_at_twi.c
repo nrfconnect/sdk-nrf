@@ -17,10 +17,6 @@ LOG_MODULE_REGISTER(slm_twi, CONFIG_SLM_LOG_LEVEL);
 #define TWI_ADDR_LEN		2
 #define TWI_DATA_LEN		255
 
-#if (TWI_DATA_LEN * 2) > (CONFIG_SLM_SOCKET_RX_MAX * 2)
-# error "Please specify smaller TWI_DATA_LEN"
-#endif
-
 static const struct device *slm_twi_dev[] = {
 	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(i2c0)),
 	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(i2c1)),

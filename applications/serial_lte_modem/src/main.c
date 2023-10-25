@@ -26,9 +26,7 @@
 #include "slm_at_fota.h"
 #include "slm_settings.h"
 #include "slm_uart_handler.h"
-#if defined(CONFIG_SLM_CARRIER)
-#include "slm_at_carrier.h"
-#endif
+#include "slm_util.h"
 
 LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 
@@ -338,32 +336,59 @@ static void check_app_fota_status(void)
 int lte_auto_connect(void)
 {
 	int err = 0;
-
-#if defined(CONFIG_SLM_CARRIER)
+#if defined(CONFIG_SLM_AUTO_CONNECT)
 	int stat;
+	struct network_config {
+		/* Refer to AT command manual of %XSYSTEMMODE for system mode settings */
+		int lte_m_support;     /* 0 ~ 1 */
+		int nb_iot_support;    /* 0 ~ 1 */
+		int gnss_support;      /* 0 ~ 1 */
+		int lte_preference;    /* 0 ~ 4 */
+		/* Refer to AT command manual of +CGDCONT and +CGAUTH for PDN configuration */
+		bool pdp_config;       /* PDP context definition required or not */
+		char *pdn_fam;         /* PDP type: "IP", "IPV6", "IPV4V6", "Non-IP" */
+		char *pdn_apn;         /* Access point name */
+		int pdn_auth;          /* PDN authentication protocol 0(None), 1(PAP), 2(CHAP) */
+		char *pdn_username;    /* PDN connection authentication username */
+		char *pdn_password;    /* PDN connection authentication password */
+	};
+	const struct network_config cfg = {
+#include "slm_auto_connect.h"
+	};
 
-	if (!slm_carrier_auto_connect) {
-		return 0;
-	}
 	err = nrf_modem_at_scanf("AT+CEREG?", "+CEREG: %d", &stat);
 	if (err != 1 || (stat == 1 || stat == 5)) {
 		return 0;
 	}
 
-	LOG_INF("auto connect");
-#if defined(CONFIG_LWM2M_CARRIER_SERVER_BINDING_N)
-	err = nrf_modem_at_printf("AT%%XSYSTEMMODE=0,1,0,0");
+	LOG_INF("lte auto connect");
+	err = nrf_modem_at_printf("AT%%XSYSTEMMODE=%d,%d,%d,%d", cfg.lte_m_support,
+				  cfg.nb_iot_support, cfg.gnss_support, cfg.lte_preference);
 	if (err) {
-		LOG_ERR("Failed to configure RAT: %d", err);
+		LOG_ERR("Failed to configure system mode: %d", err);
 		return err;
 	}
-#endif /* CONFIG_LWM2M_CARRIER_SERVER_BINDING_N */
+	if (cfg.pdp_config) {
+		err = nrf_modem_at_printf("AT+CGDCONT=0,%s,%s", cfg.pdn_fam, cfg.pdn_apn);
+		if (err) {
+			LOG_ERR("Failed to configure PDN: %d", err);
+			return err;
+		}
+	}
+	if (cfg.pdp_config && cfg.pdn_auth != 0) {
+		err = nrf_modem_at_printf("AT+CGAUTH=0,%d,%s,%s", cfg.pdn_auth,
+					  cfg.pdn_username, cfg.pdn_password);
+		if (err) {
+			LOG_ERR("Failed to configure AUTH: %d", err);
+			return err;
+		}
+	}
 	err = nrf_modem_at_printf("AT+CFUN=1");
 	if (err) {
 		LOG_ERR("Failed to turn on radio: %d", err);
 		return err;
 	}
-#endif /* CONFIG_SLM_CARRIER */
+#endif /* CONFIG_SLM_AUTO_CONNECT */
 
 	return err;
 }
