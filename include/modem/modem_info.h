@@ -43,6 +43,20 @@ extern "C" {
 /** Modem firmware version string can be up to 40 characters long. */
 #define MODEM_INFO_FWVER_SIZE 41
 
+/** Band unavailable value. */
+#define BAND_UNAVAILABLE 0
+
+/** Short operator size can be up to 64 characters long.
+ * Matches value in nrf/samples/cellular/modem_shell/src/link/link_api.h.
+ */
+#define MODEM_INFO_SHORT_OP_NAME_SIZE 65
+
+/** SNR unavailable value. */
+#define SNR_UNAVAILABLE	 127
+
+/** SNR offset value. */
+#define SNR_OFFSET_VAL 24
+
 /** Modem returns RSRP and RSRQ as index values which require
  * a conversion to dBm and dB respectively. See modem AT
  * command reference guide for more information.
@@ -160,6 +174,25 @@ int modem_info_params_init(struct modem_param_info *modem_param);
  *           Otherwise, a (negative) error code is returned.
  */
 int modem_info_rsrp_register(rsrp_cb_t cb);
+
+/**
+ * @brief Initialize collection of connectivity statistics
+ *
+ * @note The function will reset statistics if connectivity statistics
+ *       are already initialized/enabled.
+ *
+ * @return 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int modem_info_connectivity_stats_init(void);
+
+/**
+ * @brief Disable collection of connectivity statistics
+ *
+ * @return 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int modem_info_connectivity_stats_disable(void);
 
 /** @brief Request the current modem status of any predefined
  *         information value as a string.
@@ -319,6 +352,56 @@ int modem_info_get_temperature(int *val);
  *         Otherwise, a (negative) error code is returned.
  */
 int modem_info_get_rsrp(int *val);
+
+/**
+ * @brief Obtain the connectivity statistics.
+ *
+ * Get the total amount of data transmitted and receievd during the collection
+ * period.
+ *
+ * @note Will return bytes = 0 until connectivity statistics collection has been
+ * enabled using AT%XCONNSTAT=1, or with modem_info_connectivity_stats_init().
+ *
+ * @param tx_kbytes Pointer to the target variable for the number of kilobytes transmitted.
+ * @param rx_kbytes Pointer to the target variable for the number of kilobytes received.
+ *
+ * @return 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes);
+
+/**
+ * @brief Obtain the current band.
+ *
+ * @param val Pointer to the target variable.
+ *
+ * @return 0 if the operation was successful.
+ * @return -ENOENT if there is no valid band.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_current_band(uint8_t *val);
+
+/**
+ * @brief Obtain the operator name.
+ *
+ * @param buf Pointer to the target buffer.
+ * @param buf_size Size of target buffer.
+ *
+ * @return 0 if  the operation was successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_operator(char *buf, size_t buf_size);
+
+/**
+ * @brief Obtain the signal-to-noise ratio.
+ *
+ * @param val Pointer to the target variable.
+ *
+ * @return 0 if the operation was successful.
+ * @return -ENOENT if there is no valid SNR.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_snr(int *val);
 
 /** @} */
 

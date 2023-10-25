@@ -44,8 +44,8 @@ static int fib(int n)
  * Only button 1 is available on Thingy:91, the rest are available on nRF9160 DK.
  *	Button 1: Trigger stack overflow.
  *	Button 2: Trigger NULL-pointer dereference.
- *	Switch 1: Increment Switch1ToggleCount metric by one.
- *	Switch 2: Trace Switch2Toggled event, along with switch state.
+ *	Switch 1: Increment switch_1_toggle_count metric by one.
+ *	Switch 2: Trace switch_2_toggled event, along with switch state.
  */
 static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
@@ -65,18 +65,17 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		ARG_UNUSED(i);
 	} else if (has_changed & DK_BTN3_MSK) {
 		/* DK_BTN3_MSK is Switch 1 on nRF9160 DK. */
-		int err =
-			memfault_metrics_heartbeat_add(MEMFAULT_METRICS_KEY(Switch1ToggleCount), 1);
+		int err = MEMFAULT_METRIC_ADD(switch_1_toggle_count, 1);
 		if (err) {
-			LOG_ERR("Failed to increment Switch1ToggleCount");
+			LOG_ERR("Failed to increment switch_1_toggle_count");
 		} else {
-			LOG_INF("Switch1ToggleCount incremented");
+			LOG_INF("switch_1_toggle_count incremented");
 		}
 	} else if (has_changed & DK_BTN4_MSK) {
 		/* DK_BTN4_MSK is Switch 2 on nRF9160 DK. */
-		MEMFAULT_TRACE_EVENT_WITH_LOG(Switch2Toggled, "Switch state: %d",
+		MEMFAULT_TRACE_EVENT_WITH_LOG(switch_2_toggled, "Switch state: %d",
 					      buttons_pressed & DK_BTN4_MSK ? 1 : 0);
-		LOG_INF("Switch2Toggled event has been traced, button state: %d",
+		LOG_INF("switch_2_toggled event has been traced, button state: %d",
 			buttons_pressed & DK_BTN4_MSK ? 1 : 0);
 	}
 }
@@ -87,7 +86,7 @@ static void on_connect(void)
 	uint32_t time_to_lte_connection;
 
 	/* Retrieve the LTE time to connect metric. */
-	memfault_metrics_heartbeat_timer_read(MEMFAULT_METRICS_KEY(Ncs_LteTimeToConnect),
+	memfault_metrics_heartbeat_timer_read(MEMFAULT_METRICS_KEY(ncs_lte_time_to_connect_ms),
 					      &time_to_lte_connection);
 
 	LOG_INF("Time to connect: %d ms", time_to_lte_connection);

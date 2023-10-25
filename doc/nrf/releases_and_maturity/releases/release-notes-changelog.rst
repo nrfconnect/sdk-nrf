@@ -888,6 +888,11 @@ Other libraries
 
   * Fixed issue where the adp536x driver was included in the immutable bootloader on Thingy:91 when :kconfig:option:`CONFIG_SECURE_BOOT` was enabled.
 
+* :ref:`mod_memfault` library:
+
+  * Added more default LTE metrics, such as band, operator, RSRP, and kilobytes sent and received.
+  * Updated the default metric names to follow the standard |NCS| variable name convention.
+
 Common Application Framework (CAF)
 ----------------------------------
 

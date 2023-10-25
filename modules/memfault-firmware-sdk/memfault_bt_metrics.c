@@ -23,11 +23,11 @@ static atomic_t connection_count = ATOMIC_INIT(0);
 static struct memfault_ncs_metrics_thread metrics_threads[] = {
 	{
 		.thread_name = "BT RX",
-		.key = MEMFAULT_METRICS_KEY(NcsBtRxUnusedStack)
+		.key = MEMFAULT_METRICS_KEY(ncs_bt_rx_unused_stack)
 	},
 	{
 		.thread_name = "BT TX",
-		.key = MEMFAULT_METRICS_KEY(NcsBtTxUnusedStack)
+		.key = MEMFAULT_METRICS_KEY(ncs_bt_tx_unused_stack)
 	}
 };
 #endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */
@@ -40,10 +40,9 @@ void connected(struct bt_conn *conn, uint8_t conn_err)
 
 	if (conn_err == 0) {
 		if (count == 0) {
-			err = memfault_metrics_heartbeat_timer_start(
-					MEMFAULT_METRICS_KEY(Ncs_BtConnectionTime));
+			err = MEMFAULT_METRIC_TIMER_START(ncs_bt_connection_time_ms);
 			if (err) {
-				LOG_WRN("Failed to start memfault Ncs_BtConnectionTime timer, "
+				LOG_WRN("Failed to start memfault ncs_bt_connection_time_ms timer, "
 				"err: %d", err);
 			}
 		}
@@ -60,10 +59,10 @@ void disconnected(struct bt_conn *conn, uint8_t reason)
 	__ASSERT_NO_MSG(count > 0);
 
 	if (count == 1) {
-		err = memfault_metrics_heartbeat_timer_stop(
-				MEMFAULT_METRICS_KEY(Ncs_BtConnectionTime));
+		err = MEMFAULT_METRIC_TIMER_STOP(ncs_bt_connection_time_ms);
 		if (err) {
-			LOG_WRN("Failed to stop memfault Ncs_BtConnectionTime timer, err: %d", err);
+			LOG_WRN("Failed to stop memfault ncs_bt_connection_time_ms timer, err: %d",
+				err);
 		}
 	}
 
@@ -117,15 +116,13 @@ void memfault_bt_metrics_update(void)
 
 	LOG_DBG("Current bond count: %u", bond_count);
 
-	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(Ncs_BtBondCount),
-						      bond_count);
+	err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_bt_bond_count, bond_count);
 	if (err) {
-		LOG_WRN("Failed to set the Ncs_BtBondCount metric, err: %d", err);
+		LOG_ERR("Failed to set the ncs_bt_bond_count metric, err: %d", err);
 	}
 
-	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(Ncs_BtConnectionCount),
-						      atomic_get(&connection_count));
+	err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_bt_connection_count, atomic_get(&connection_count));
 	if (err) {
-		LOG_WRN("Failed to set Ncs_BtConnectionCount metrics, err: %d", err);
+		LOG_ERR("Failed to set ncs_bt_connection_count metrics, err: %d", err);
 	}
 }

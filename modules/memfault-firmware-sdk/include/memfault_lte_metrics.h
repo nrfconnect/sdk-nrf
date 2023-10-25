@@ -14,6 +14,12 @@ extern "C" {
 /** @brief Initialize default LTE metrics. */
 void memfault_lte_metrics_init(void);
 
+/** @brief Update LTE metrics.
+ *
+ *  You can use the metrics on a heartbeat collection.
+ */
+void memfault_lte_metrics_update(void);
+
 #ifdef __cplusplus
 }
 #endif
