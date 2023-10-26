@@ -38,7 +38,7 @@ LOG_MODULE_REGISTER(persistent_key_usage, LOG_LEVEL_DBG);
 #define SAMPLE_PERS_KEY_ID PSA_KEY_ID_USER_MIN
 
 
-static psa_key_handle_t key_handle;
+static psa_key_id_t key_id;
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -58,7 +58,7 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(key_handle);
+	status = psa_destroy_key(key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -86,9 +86,9 @@ int generate_prersistent_key(void)
 	psa_set_key_id(&key_attributes, SAMPLE_PERS_KEY_ID);
 
 	/* Generate a random AES key with persistent lifetime. The key can be used for
-	 * encryption/decryption using the key_handle.
+	 * encryption/decryption using the key_id.
 	 */
-	status = psa_generate_key(&key_attributes, &key_handle);
+	status = psa_generate_key(&key_attributes, &key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;

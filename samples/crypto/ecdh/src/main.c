@@ -44,8 +44,8 @@ static uint8_t m_pub_key_alice[NRF_CRYPTO_EXAMPLE_ECDH_PUBLIC_KEY_SIZE];
 static uint8_t m_secret_alice[32];
 static uint8_t m_secret_bob[32];
 
-psa_key_handle_t key_handle_alice;
-psa_key_handle_t key_handle_bob;
+psa_key_id_t key_id_alice;
+psa_key_id_t key_id_bob;
 
 /* ====================================================================== */
 
@@ -66,14 +66,14 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(key_handle_alice);
+	status = psa_destroy_key(key_id_alice);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(key_handle_bob);
+	status = psa_destroy_key(key_id_bob);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -82,7 +82,7 @@ int crypto_finish(void)
 	return APP_SUCCESS;
 }
 
-int create_ecdh_keypair(psa_key_handle_t *key_handle)
+int create_ecdh_keypair(psa_key_id_t *key_id)
 {
 	psa_status_t status;
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -97,7 +97,7 @@ int create_ecdh_keypair(psa_key_handle_t *key_handle)
 	psa_set_key_bits(&key_attributes, 256);
 
 	/* Generate a key pair */
-	status = psa_generate_key(&key_attributes, key_handle);
+	status = psa_generate_key(&key_attributes, key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -110,13 +110,13 @@ int create_ecdh_keypair(psa_key_handle_t *key_handle)
 	return APP_SUCCESS;
 }
 
-int export_ecdh_public_key(psa_key_handle_t *key_handle, uint8_t *buff, size_t buff_size)
+int export_ecdh_public_key(psa_key_id_t *key_id, uint8_t *buff, size_t buff_size)
 {
 	size_t olen;
 	psa_status_t status;
 
 	/* Export the public key */
-	status = psa_export_public_key(*key_handle, buff, buff_size, &olen);
+	status = psa_export_public_key(*key_id, buff, buff_size, &olen);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_export_public_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -127,7 +127,7 @@ int export_ecdh_public_key(psa_key_handle_t *key_handle, uint8_t *buff, size_t b
 	return APP_SUCCESS;
 }
 
-int calculate_ecdh_secret(psa_key_handle_t *key_handle,
+int calculate_ecdh_secret(psa_key_id_t *key_id,
 			  uint8_t *pub_key,
 			  size_t pub_key_len,
 			  uint8_t *secret,
@@ -138,7 +138,7 @@ int calculate_ecdh_secret(psa_key_handle_t *key_handle,
 
 	/* Perform the ECDH key exchange to calculate the secret */
 	status = psa_raw_key_agreement(
-		PSA_ALG_ECDH, *key_handle, pub_key, pub_key_len, secret, secret_len, &output_len);
+		PSA_ALG_ECDH, *key_id, pub_key, pub_key_len, secret, secret_len, &output_len);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_raw_key_agreement failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -180,14 +180,14 @@ int main(void)
 
 	/* Create the ECDH key pairs for Alice and Bob  */
 	LOG_INF("Creating ECDH key pair for Alice");
-	status = create_ecdh_keypair(&key_handle_alice);
+	status = create_ecdh_keypair(&key_id_alice);
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	LOG_INF("Creating ECDH key pair for Bob");
-	status = create_ecdh_keypair(&key_handle_bob);
+	status = create_ecdh_keypair(&key_id_bob);
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
@@ -196,14 +196,14 @@ int main(void)
 	/* Export the ECDH public keys */
 	LOG_INF("Export Alice's public key");
 	status =
-		export_ecdh_public_key(&key_handle_alice, m_pub_key_alice, sizeof(m_pub_key_alice));
+		export_ecdh_public_key(&key_id_alice, m_pub_key_alice, sizeof(m_pub_key_alice));
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
 	}
 
 	LOG_INF("Export Bob's public key");
-	status = export_ecdh_public_key(&key_handle_bob, m_pub_key_bob, sizeof(m_pub_key_bob));
+	status = export_ecdh_public_key(&key_id_bob, m_pub_key_bob, sizeof(m_pub_key_bob));
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
 		return APP_ERROR;
@@ -211,7 +211,7 @@ int main(void)
 
 	/* Calculate the secret value for each participant */
 	LOG_INF("Calculating the secret value for Alice");
-	status = calculate_ecdh_secret(&key_handle_alice,
+	status = calculate_ecdh_secret(&key_id_alice,
 				       m_pub_key_bob,
 				       sizeof(m_pub_key_bob),
 				       m_secret_alice,
@@ -222,7 +222,7 @@ int main(void)
 	}
 
 	LOG_INF("Calculating the secret value for Bob");
-	status = calculate_ecdh_secret(&key_handle_bob,
+	status = calculate_ecdh_secret(&key_id_bob,
 				       m_pub_key_alice,
 				       sizeof(m_pub_key_alice),
 				       m_secret_bob,
