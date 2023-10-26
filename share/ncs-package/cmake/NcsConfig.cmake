@@ -45,7 +45,6 @@ if(NOT NO_BOILERPLATE)
       set(WEST                     ${NCS_TOOLCHAIN_WEST}    CACHE FILEPATH "NCS Toolchain West")
       set(Python3_EXECUTABLE       ${NCS_TOOLCHAIN_PYTHON}  CACHE FILEPATH "NCS Toolchain Python")
       set(PYTHON_EXECUTABLE        ${NCS_TOOLCHAIN_PYTHON}  CACHE FILEPATH "NCS Toolchain Python")
-      set(PYTHON_PREFER            ${NCS_TOOLCHAIN_PYTHON}  CACHE FILEPATH "NCS Toolchain Python")
 
       if(DEFINED NCS_TOOLCHAIN_PROTOC)
         set(PROTOC                     ${CUSTOM_COMMAND_ENV} ${NCS_TOOLCHAIN_PROTOC} CACHE STRING "NCS Toolchain protoc")
