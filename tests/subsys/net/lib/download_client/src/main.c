@@ -39,7 +39,8 @@ static void mock_return_values(const char *func, int32_t *val, size_t len)
 	}
 }
 
-static bool wait_for_event(enum download_client_evt_id event, uint8_t seconds)
+static struct download_client_evt wait_for_event(enum download_client_evt_id event,
+						 k_timeout_t timeout)
 {
 	size_t read;
 	struct download_client_evt evt;
@@ -47,23 +48,23 @@ static bool wait_for_event(enum download_client_evt_id event, uint8_t seconds)
 
 	while (true) {
 		err = k_pipe_get(&event_pipe, &evt, sizeof(evt), &read, sizeof(evt),
-				 K_SECONDS(seconds));
-		if (err) {
-			return true;
-		}
+				 timeout);
+		zassert_ok(err);
 		if (evt.id == event) {
-			return false;
+			break;
 		}
 	}
+	zassert_equal(evt.id, event);
+	return evt;
 }
 
-static struct download_client_evt get_next_event(void)
+static struct download_client_evt get_next_event(k_timeout_t timeout)
 {
 	size_t read;
 	struct download_client_evt evt;
 	int err;
 
-	err = k_pipe_get(&event_pipe, &evt, sizeof(evt), &read, sizeof(evt), K_FOREVER);
+	err = k_pipe_get(&event_pipe, &evt, sizeof(evt), &read, sizeof(evt), timeout);
 	zassert_ok(err);
 	return evt;
 }
@@ -99,7 +100,7 @@ static void dl_coap_start(void)
 
 static void de_init(struct download_client *client)
 {
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, 10), "");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, K_SECONDS(1));
 }
 
 ZTEST_SUITE(download_client, NULL, NULL, NULL, NULL, NULL);
@@ -119,7 +120,7 @@ ZTEST(download_client, test_download_simple)
 
 	dl_coap_start();
 
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, 10), "Download must have finished");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, K_SECONDS(1));
 
 	de_init(&client);
 }
@@ -132,7 +133,7 @@ ZTEST(download_client, test_connection_failed)
 
 	dl_coap_start();
 
-	struct download_client_evt evt = get_next_event();
+	struct download_client_evt evt = get_next_event(K_FOREVER);
 
 	zassert_equal(evt.id, DOWNLOAD_CLIENT_EVT_ERROR);
 	zassert_equal(evt.error, -ENETUNREACH);
@@ -157,12 +158,12 @@ ZTEST(download_client, test_wrong_address)
 
 	err = download_client_get(&client, "host", &config, NULL, 0);
 	zassert_equal(err, 0);
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, 10), "");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
 	de_init(&client);
 
 	err = download_client_get(&client, "0.0.a", &config, NULL, 0);
 	zassert_equal(err, 0);
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, 10), "");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
 	de_init(&client);
 
 }
@@ -171,6 +172,7 @@ ZTEST(download_client, test_download_reconnect_on_socket_error)
 {
 	int32_t recvfrom_params[] = {25, -1, 25, 25};
 	int32_t sendto_params[] = {20, 20, 20, 20};
+	struct download_client_evt evt;
 
 	z_ztest_returns_value("mock_socket_offload_connect", 0);
 	z_ztest_returns_value("mock_socket_offload_connect", 0);
@@ -183,7 +185,12 @@ ZTEST(download_client, test_download_reconnect_on_socket_error)
 
 	dl_coap_start();
 
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, 10), "Download must have finished");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	evt = wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
+	zassert_equal(evt.error, -ECONNRESET);
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, K_SECONDS(1));
 
 	de_init(&client);
 }
@@ -192,6 +199,7 @@ ZTEST(download_client, test_download_reconnect_on_peer_close)
 {
 	int32_t recvfrom_params[] = {25, 0, 25, 25};
 	int32_t sendto_params[] = {20, 20, 20, 20};
+	struct download_client_evt evt;
 
 	z_ztest_returns_value("mock_socket_offload_connect", 0);
 	z_ztest_returns_value("mock_socket_offload_connect", 0);
@@ -204,7 +212,14 @@ ZTEST(download_client, test_download_reconnect_on_peer_close)
 
 	dl_coap_start();
 
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, 10), "Download must have finished");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	evt = get_next_event(K_SECONDS(1));
+	zassert_equal(evt.id, DOWNLOAD_CLIENT_EVT_ERROR);
+	zassert_equal(evt.error, -ECONNRESET);
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	evt = get_next_event(K_SECONDS(1));
+	zassert_equal(evt.id, DOWNLOAD_CLIENT_EVT_DONE);
 
 	de_init(&client);
 }
@@ -214,6 +229,7 @@ ZTEST(download_client, test_download_ignore_duplicate_block)
 	int32_t recvfrom_params[] = {25, 25, 25, 25};
 	int32_t sendto_params[] = {20, 20, 20};
 	int32_t coap_parse_retv[] = {0, 0, 1, 0};
+	struct download_client_evt evt;
 
 	z_ztest_returns_value("mock_socket_offload_connect", 0);
 
@@ -227,7 +243,11 @@ ZTEST(download_client, test_download_ignore_duplicate_block)
 
 	dl_coap_start();
 
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, 10), "Download must have finished");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	wait_for_event(DOWNLOAD_CLIENT_EVT_FRAGMENT, K_SECONDS(1));
+	evt = get_next_event(K_SECONDS(1));
+	zassert_equal(evt.id, DOWNLOAD_CLIENT_EVT_DONE);
 
 	de_init(&client);
 }
@@ -250,7 +270,7 @@ ZTEST(download_client, test_download_abort_on_invalid_block)
 
 	dl_coap_start();
 
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, 10), "Download must be on error");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_ERROR, K_SECONDS(1));
 
 	de_init(&client);
 }
@@ -271,8 +291,8 @@ ZTEST(download_client, test_get)
 
 	err = download_client_get(&client, "coap://192.168.1.2/large", &config, NULL, 0);
 	zassert_ok(err, NULL);
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, 10), "Download must have finished");
-	zassert_ok(wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, 10), "Socket must have closed");
+	wait_for_event(DOWNLOAD_CLIENT_EVT_DONE, K_SECONDS(1));
+	wait_for_event(DOWNLOAD_CLIENT_EVT_CLOSED, K_SECONDS(1));
 }
 
 #define TEST_SOCKET_PRIO 40
