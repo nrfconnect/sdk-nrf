@@ -26,8 +26,9 @@ The sample performs the following operations:
 1. Initialization:
 
    a. The Platform Security Architecture (PSA) API is initialized.
-   #. A random Elliptic Curve Cryptography (ECC) key pair is generated and imported into the PSA crypto keystore.
-   #. The public key of the ECDSA key pair is imported into the PSA crypto keystore.
+   #. A random Elliptic Curve Cryptography (ECC) key pair is generated in the PSA crypto keystore for signing purposes.
+   #. The public key of the ECC key pair is exported to the application.
+   #. The exported public key is imported into the PSA crypto key storage to be used for verification.
 
 #. ECDSA signing and verification:
 

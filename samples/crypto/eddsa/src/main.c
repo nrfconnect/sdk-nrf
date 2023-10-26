@@ -48,8 +48,8 @@ static size_t m_pub_key_len;
 static uint8_t m_signature[NRF_CRYPTO_EXAMPLE_EDDSA_SIGNATURE_SIZE];
 static size_t m_signature_len;
 
-static psa_key_handle_t m_key_pair_handle;
-static psa_key_handle_t m_pub_key_handle;
+static psa_key_id_t m_key_pair_id;
+static psa_key_id_t m_pub_key_id;
 
 int crypto_init(void)
 {
@@ -70,13 +70,13 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(m_key_pair_handle);
+	status = psa_destroy_key(m_key_pair_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	status = psa_destroy_key(m_pub_key_handle);
+	status = psa_destroy_key(m_pub_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -105,14 +105,14 @@ int generate_eddsa_keypair(void)
 	/* Generate a random keypair. The keypair is not exposed to the application,
 	 * we can use it to sign messages.
 	 */
-	status = psa_generate_key(&key_attributes, &m_key_pair_handle);
+	status = psa_generate_key(&key_attributes, &m_key_pair_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Export the public key */
-	status = psa_export_public_key(m_key_pair_handle,
+	status = psa_export_public_key(m_key_pair_id,
 				       m_pub_key, sizeof(m_pub_key),
 				       &m_pub_key_len);
 	if (status != PSA_SUCCESS) {
@@ -142,7 +142,7 @@ int import_eddsa_pub_key(void)
 			 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS));
 	psa_set_key_bits(&key_attributes, 255);
 
-	status = psa_import_key(&key_attributes, m_pub_key, m_pub_key_len, &m_pub_key_handle);
+	status = psa_import_key(&key_attributes, m_pub_key, m_pub_key_len, &m_pub_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -161,7 +161,7 @@ int sign_message(void)
 	LOG_INF("Signing a message using EDDSA...");
 
 	/* Sign the message */
-	status = psa_sign_message(m_key_pair_handle,
+	status = psa_sign_message(m_key_pair_id,
 				  PSA_ALG_PURE_EDDSA,
 				  m_plain_text,
 				  sizeof(m_plain_text),
@@ -173,7 +173,7 @@ int sign_message(void)
 		return APP_ERROR;
 	}
 
-	LOG_INF("Signed the message successfully!");
+	LOG_INF("Message signed successfully!");
 	PRINT_HEX("Plaintext", m_plain_text, sizeof(m_plain_text));
 	PRINT_HEX("Signature", m_signature, sizeof(m_signature));
 
@@ -187,7 +187,7 @@ int verify_message(void)
 	LOG_INF("Verifying EDDSA signature...");
 
 	/* Verify the signature of the message */
-	status = psa_verify_message(m_pub_key_handle,
+	status = psa_verify_message(m_pub_key_id,
 				    PSA_ALG_PURE_EDDSA,
 				    m_plain_text,
 				    sizeof(m_plain_text),
