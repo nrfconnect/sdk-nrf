@@ -5,7 +5,6 @@ top_table:
   Zigbee: ZIGBEE
   Thread: NET_L2_OPENTHREAD
   LTE: LTE_LINK_CONTROL
-  HomeKit: HOMEKIT
   Matter: CHIP
   Wi-Fi:
     rule: WIFI && WIFI_NRF700X
@@ -64,14 +63,6 @@ features:
     OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR
     Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT &&
       NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
-  homekit:
-    HomeKit over Bluetooth LE: HOMEKIT && BT && !CONFIG_HAP_HAVE_THREAD
-    HomeKit over Thread FTD: HOMEKIT && BT && OPENTHREAD_FTD
-    HomeKit over Thread MTD SED: HOMEKIT && BT && OPENTHREAD_MTD_SED
-    HomeKit commissioning over Bluetooth LE with QR code: HOMEKIT && BT && !CONFIG_HAP_HAVE_NFC
-    HomeKit commissioning over Bluetooth LE with NFC: HOMEKIT && BT && CONFIG_HAP_HAVE_NFC
-    HomeKit - OTA DFU over Bluetooth LE: HOMEKIT && HOMEKIT_NORDIC_DFU
-    HomeKit - OTA DFU over HomeKit: HOMEKIT && BT && CONFIG_HAP_FIRMWARE_UPDATE
   wifi:
     STA Mode:
       rule: WPA_SUPP && WIFI_NRF700X

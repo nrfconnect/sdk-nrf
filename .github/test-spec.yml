@@ -286,21 +286,6 @@
   - "modules/nrfxlib/nrf_802154/**/*"
   - "samples/CMakeLists.txt"
 
-"CI-homekit-test":
-  - "drivers/hw_cc310/*"
-  - "drivers/mpsl/**/*"
-  - "dts/bindings/radio_fem/**/*"
-  - "modules/nrfxlib/nrf_802154/**/*"
-  - "samples/nrf5340/multiprotocol_rpmsg/**/*"
-  - "subsys/bluetooth/controller/*"
-  - "subsys/ieee802154/**/*"
-  - "subsys/mpsl/**/*"
-  - "subsys/net/openthread/*"
-  - any:
-      - "subsys/nrf_security/**/*"
-      - "!subsys/nrf_security/doc/**/*"
-      - "!subsys/nrf_security/*.rst"
-
 "CI-thread-test":
   - "samples/openthread/**/*"
   - "subsys/mpsl/**/*"
