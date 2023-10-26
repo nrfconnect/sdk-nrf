@@ -45,7 +45,7 @@ static uint8_t m_plain_text[NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE] = {
 static uint8_t m_encrypted_text[NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE];
 static uint8_t m_decrypted_text[NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE];
 
-static psa_key_handle_t key_handle;
+static psa_key_id_t key_id;
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -65,7 +65,7 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(key_handle);
+	status = psa_destroy_key(key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -92,7 +92,7 @@ int generate_key(void)
 	/* Generate a random key. The key is not exposed to the application,
 	 * we can use it to encrypt/decrypt using the key handle
 	 */
-	status = psa_generate_key(&key_attributes, &key_handle);
+	status = psa_generate_key(&key_attributes, &key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -115,7 +115,7 @@ int encrypt_cbc_aes(void)
 	LOG_INF("Encrypting using AES CBC MODE...");
 
 	/* Setup the encryption operation */
-	status = psa_cipher_encrypt_setup(&operation, key_handle, PSA_ALG_CBC_NO_PADDING);
+	status = psa_cipher_encrypt_setup(&operation, key_id, PSA_ALG_CBC_NO_PADDING);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_cipher_encrypt_setup failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -166,7 +166,7 @@ int decrypt_cbc_aes(void)
 	LOG_INF("Decrypting using AES CBC MODE...");
 
 	/* Setup the decryption operation */
-	status = psa_cipher_decrypt_setup(&operation, key_handle, PSA_ALG_CBC_NO_PADDING);
+	status = psa_cipher_decrypt_setup(&operation, key_id, PSA_ALG_CBC_NO_PADDING);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_cipher_decrypt_setup failed! (Error: %d)", status);
 		return APP_ERROR;

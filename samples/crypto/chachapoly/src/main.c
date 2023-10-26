@@ -57,7 +57,7 @@ static uint8_t m_encrypted_text[NRF_CRYPTO_EXAMPLE_CHACHAPOLY_TEXT_SIZE +
 
 static uint8_t m_decrypted_text[NRF_CRYPTO_EXAMPLE_CHACHAPOLY_TEXT_SIZE];
 
-psa_key_handle_t key_handle;
+psa_key_id_t key_id;
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -77,7 +77,7 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(key_handle);
+	status = psa_destroy_key(key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -101,7 +101,7 @@ int generate_key(void)
 	/* Generate a random key. The key is not exposed to the application,
 	 * we can use it to encrypt/decrypt using the key handle
 	 */
-	status = psa_generate_key(&key_attributes, &key_handle);
+	status = psa_generate_key(&key_attributes, &key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -130,7 +130,7 @@ int encrypt_chachapoly(void)
 	}
 
 	/* Perform the authenticated encryption */
-	status = psa_aead_encrypt(key_handle,
+	status = psa_aead_encrypt(key_id,
 				  PSA_ALG_CHACHA20_POLY1305,
 				  m_nonce,
 				  sizeof(m_nonce),
@@ -163,7 +163,7 @@ int decrypt_chachapoly(void)
 	LOG_INF("Decrypting using Chacha20-Poly1305 ...");
 
 	/* Decrypt and authenticate the encrypted data */
-	status = psa_aead_decrypt(key_handle,
+	status = psa_aead_decrypt(key_id,
 				  PSA_ALG_CHACHA20_POLY1305,
 				  m_nonce,
 				  sizeof(m_nonce),

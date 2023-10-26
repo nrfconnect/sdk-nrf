@@ -65,8 +65,8 @@ static uint8_t m_expected_output_key[NRF_CRYPTO_EXAMPLE_HKDF_OUTPUT_KEY_SIZE] = 
 	0x00, 0x72, 0x08, 0xd5, 0xb8, 0x87, 0x18, 0x58, 0x65
 };
 
-psa_key_handle_t input_key_handle;
-psa_key_handle_t output_key_handle;
+psa_key_id_t input_key_id;
+psa_key_id_t output_key_id;
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -86,13 +86,13 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(input_key_handle);
+	status = psa_destroy_key(input_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	status = psa_destroy_key(output_key_handle);
+	status = psa_destroy_key(output_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -118,7 +118,7 @@ int import_input_key(void)
 	status = psa_import_key(&key_attributes,
 				m_input_key,
 				sizeof(m_input_key),
-				&input_key_handle);
+				&input_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -133,7 +133,7 @@ int export_derived_key(void)
 	psa_status_t status;
 	int cmp_status;
 	/* Export the generated key content to verify it's value */
-	status = psa_export_key(output_key_handle, m_output_key, sizeof(m_output_key), &olen);
+	status = psa_export_key(output_key_id, m_output_key, sizeof(m_output_key), &olen);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_export_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -190,7 +190,7 @@ int derive_hkdf(void)
 
 	/* Set the master key for the operation */
 	status = psa_key_derivation_input_key(
-		&operation, PSA_KEY_DERIVATION_INPUT_SECRET, input_key_handle);
+		&operation, PSA_KEY_DERIVATION_INPUT_SECRET, input_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_key_derivation_input_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -206,8 +206,8 @@ int derive_hkdf(void)
 		return APP_ERROR;
 	}
 
-	/* Store the derived key in the keystore slot pointed by out_key_handle */
-	status = psa_key_derivation_output_key(&key_attributes, &operation, &output_key_handle);
+	/* Store the derived key in the keystore slot pointed by out_key_id */
+	status = psa_key_derivation_output_key(&key_attributes, &operation, &output_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_key_derivation_output_key failed! (Error: %d)", status);
 		return APP_ERROR;

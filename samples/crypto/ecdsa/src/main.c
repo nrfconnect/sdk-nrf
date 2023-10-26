@@ -49,8 +49,8 @@ static uint8_t m_pub_key[NRF_CRYPTO_EXAMPLE_ECDSA_PUBLIC_KEY_SIZE];
 static uint8_t m_signature[NRF_CRYPTO_EXAMPLE_ECDSA_SIGNATURE_SIZE];
 static uint8_t m_hash[NRF_CRYPTO_EXAMPLE_ECDSA_HASH_SIZE];
 
-static psa_key_handle_t keypair_handle;
-static psa_key_handle_t pub_key_handle;
+static psa_key_id_t keypair_id;
+static psa_key_id_t pub_key_id;
 /* ====================================================================== */
 
 int crypto_init(void)
@@ -70,13 +70,13 @@ int crypto_finish(void)
 	psa_status_t status;
 
 	/* Destroy the key handle */
-	status = psa_destroy_key(keypair_handle);
+	status = psa_destroy_key(keypair_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
-	status = psa_destroy_key(pub_key_handle);
+	status = psa_destroy_key(pub_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_destroy_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -105,14 +105,14 @@ int generate_ecdsa_keypair(void)
 	/* Generate a random keypair. The keypair is not exposed to the application,
 	 * we can use it to signing/verification the key handle.
 	 */
-	status = psa_generate_key(&key_attributes, &keypair_handle);
+	status = psa_generate_key(&key_attributes, &keypair_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_generate_key failed! (Error: %d)", status);
 		return APP_ERROR;
 	}
 
 	/* Export the public key */
-	status = psa_export_public_key(keypair_handle, m_pub_key, sizeof(m_pub_key), &olen);
+	status = psa_export_public_key(keypair_id, m_pub_key, sizeof(m_pub_key), &olen);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_export_public_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -137,7 +137,7 @@ int import_ecdsa_pub_key(void)
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1));
 	psa_set_key_bits(&key_attributes, 256);
 
-	status = psa_import_key(&key_attributes, m_pub_key, sizeof(m_pub_key), &pub_key_handle);
+	status = psa_import_key(&key_attributes, m_pub_key, sizeof(m_pub_key), &pub_key_id);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_import_key failed! (Error: %d)", status);
 		return APP_ERROR;
@@ -169,7 +169,7 @@ int sign_message(void)
 	}
 
 	/* Sign the hash */
-	status = psa_sign_hash(keypair_handle,
+	status = psa_sign_hash(keypair_id,
 			       PSA_ALG_ECDSA(PSA_ALG_SHA_256),
 			       m_hash,
 			       sizeof(m_hash),
@@ -196,7 +196,7 @@ int verify_message(void)
 	LOG_INF("Verifying ECDSA signature...");
 
 	/* Verify the signature of the hash */
-	status = psa_verify_hash(pub_key_handle,
+	status = psa_verify_hash(pub_key_id,
 				 PSA_ALG_ECDSA(PSA_ALG_SHA_256),
 				 m_hash,
 				 sizeof(m_hash),
