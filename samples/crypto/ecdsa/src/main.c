@@ -59,8 +59,10 @@ int crypto_init(void)
 
 	/* Initialize PSA Crypto */
 	status = psa_crypto_init();
-	if (status != PSA_SUCCESS)
+	if (status != PSA_SUCCESS) {
+		LOG_INF("psa_crypto_init failed! (Error: %d)", status);
 		return APP_ERROR;
+	}
 
 	return APP_SUCCESS;
 }
@@ -103,7 +105,7 @@ int generate_ecdsa_keypair(void)
 	psa_set_key_bits(&key_attributes, 256);
 
 	/* Generate a random keypair. The keypair is not exposed to the application,
-	 * we can use it to signing/verification the key handle.
+	 * we can use it to sign hashes.
 	 */
 	status = psa_generate_key(&key_attributes, &keypair_id);
 	if (status != PSA_SUCCESS) {
@@ -118,7 +120,7 @@ int generate_ecdsa_keypair(void)
 		return APP_ERROR;
 	}
 
-	/* After the key handle is acquired the attributes are not needed */
+	/* Reset key attributes and free any allocated resources. */
 	psa_reset_key_attributes(&key_attributes);
 
 	return APP_SUCCESS;
@@ -143,7 +145,7 @@ int import_ecdsa_pub_key(void)
 		return APP_ERROR;
 	}
 
-	/* After the key handle is acquired the attributes are not needed */
+	/* Reset key attributes and free any allocated resources. */
 	psa_reset_key_attributes(&key_attributes);
 
 	return APP_SUCCESS;
@@ -181,7 +183,7 @@ int sign_message(void)
 		return APP_ERROR;
 	}
 
-	LOG_INF("Signing the message successful!");
+	LOG_INF("Message signed successfully!");
 	PRINT_HEX("Plaintext", m_plain_text, sizeof(m_plain_text));
 	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
 	PRINT_HEX("Signature", m_signature, sizeof(m_signature));
