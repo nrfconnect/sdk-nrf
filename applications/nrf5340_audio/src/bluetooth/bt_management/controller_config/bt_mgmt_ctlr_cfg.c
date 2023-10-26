@@ -17,14 +17,16 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt_ctlr_cfg, CONFIG_BT_MGMT_CTLR_CFG_LOG_LEVEL);
 
+#define COMPANY_ID_PACKETCRAFT	0x07E8
+
 #define WDT_TIMEOUT_MS	      1200
 #define CTLR_POLL_INTERVAL_MS (WDT_TIMEOUT_MS - 200)
 
-static struct k_work work_ctlr_version_poll;
-static void ctlr_version_poll_timer_handler(struct k_timer *timer_id);
+static struct k_work work_ctlr_poll;
+static void ctlr_poll_timer_handler(struct k_timer *timer_id);
 static int wdt_ch_id;
 
-K_TIMER_DEFINE(ctlr_poll_timer, ctlr_version_poll_timer_handler, NULL);
+K_TIMER_DEFINE(ctlr_poll_timer, ctlr_poll_timer_handler, NULL);
 
 static int bt_ll_acs_nrf53_cfg(void)
 {
@@ -120,25 +122,21 @@ static int bt_ll_acs_nrf53_cfg(void)
 #endif /* CONFIG_BT_LL_ACS_NRF53*/
 }
 
-static void work_ctlr_poll(struct k_work *work)
+static void work_ctlr_poll_handler(struct k_work *work)
 {
 	int ret;
-	uint16_t ctlr_version = 0;
+	uint16_t manufacturer = 0;
 
-	ret = bt_mgmt_ctlr_cfg_version_get(&ctlr_version);
+	ret = bt_mgmt_ctlr_cfg_manufacturer_get(false, &manufacturer);
 	ERR_CHK_MSG(ret, "Failed to contact net core");
-
-	if (!ctlr_version) {
-		ERR_CHK_MSG(-EIO, "Controller version is not set");
-	}
 
 	ret = task_wdt_feed(wdt_ch_id);
 	ERR_CHK_MSG(ret, "Failed to feed watchdog");
 }
 
-static void ctlr_version_poll_timer_handler(struct k_timer *timer_id)
+static void ctlr_poll_timer_handler(struct k_timer *timer_id)
 {
-	k_work_submit(&work_ctlr_version_poll);
+	k_work_submit(&work_ctlr_poll);
 }
 
 static void wdt_timeout_cb(int channel_id, void *user_data)
@@ -146,7 +144,7 @@ static void wdt_timeout_cb(int channel_id, void *user_data)
 	ERR_CHK_MSG(-ETIMEDOUT, "Controller not responsive");
 }
 
-int bt_mgmt_ctlr_cfg_version_get(uint16_t *ctlr_version)
+int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version, uint16_t *manufacturer)
 {
 	int ret;
 	struct net_buf *rsp;
@@ -158,7 +156,17 @@ int bt_mgmt_ctlr_cfg_version_get(uint16_t *ctlr_version)
 
 	struct bt_hci_rp_read_local_version_info *rp = (void *)rsp->data;
 
-	*ctlr_version = sys_le16_to_cpu(rp->hci_revision);
+	if (print_version) {
+		if (rp->manufacturer == COMPANY_ID_PACKETCRAFT) {
+			/* NOTE: The string below is used by the Nordic CI system */
+			LOG_INF("Controller: LL_ACS_NRF53. Version: %d", rp->hci_revision);
+		} else {
+			LOG_ERR("Unsupported controller");
+			return -EPERM;
+		}
+	}
+
+	*manufacturer = sys_le16_to_cpu(rp->manufacturer);
 
 	net_buf_unref(rsp);
 
@@ -168,23 +176,18 @@ int bt_mgmt_ctlr_cfg_version_get(uint16_t *ctlr_version)
 int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 {
 	int ret;
-	uint16_t ctlr_version = 0;
+	uint16_t manufacturer = 0;
 
-	ret = bt_mgmt_ctlr_cfg_version_get(&ctlr_version);
+	ret = bt_mgmt_ctlr_cfg_manufacturer_get(true, &manufacturer);
 	if (ret) {
 		return ret;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
-		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_INF("Controller: LL_ACS_NRF53. Version: %d", ctlr_version);
+	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) && (manufacturer == COMPANY_ID_PACKETCRAFT)) {
 		ret = bt_ll_acs_nrf53_cfg();
 		if (ret) {
 			return ret;
 		}
-	} else {
-		LOG_ERR("Unsupported controller");
-		return -EPERM;
 	}
 
 	if (watchdog_enable) {
@@ -199,7 +202,7 @@ int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 			return wdt_ch_id;
 		}
 
-		k_work_init(&work_ctlr_version_poll, work_ctlr_poll);
+		k_work_init(&work_ctlr_poll, work_ctlr_poll_handler);
 		k_timer_start(&ctlr_poll_timer, K_MSEC(CTLR_POLL_INTERVAL_MS),
 			      K_MSEC(CTLR_POLL_INTERVAL_MS));
 	}
