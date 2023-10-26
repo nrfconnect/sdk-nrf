@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/sys/printk.h>
+#include <zephyr/logging/log.h>
 #include <string.h>
 #include <stdio.h>
 #include <hw_unique_key.h>
@@ -24,51 +24,48 @@
 #define IV_LEN 12
 #define MAC_LEN 16
 
-
 #ifdef HUK_HAS_CC310
 #define ENCRYPT_ALG PSA_ALG_CCM
 #else
 #define ENCRYPT_ALG PSA_ALG_GCM
 #endif
 
-void hex_dump(uint8_t *buff, uint32_t len)
-{
-	for (int i = 0; i < len; i++) {
-		printk("%s%02x", i && ((i % 32) == 0) ? "\n" : "", buff[i]);
-	}
-	printk("\n");
-}
+#define APP_SUCCESS		(0)
+#define APP_ERROR		(-1)
+#define APP_SUCCESS_MESSAGE "Example finished successfully!"
+#define APP_ERROR_MESSAGE "Example exited with error!"
 
-int main(void)
+#define PRINT_HEX(p_label, p_text, len)\
+	({\
+		LOG_INF("---- %s (len: %u): ----", p_label, len);\
+		LOG_HEXDUMP_INF(p_text, len, "Content:");\
+		LOG_INF("---- %s end  ----", p_label);\
+	})
+
+LOG_MODULE_REGISTER(app, LOG_LEVEL_DBG);
+
+static psa_key_id_t key_id;
+
+int crypto_init(void)
 {
 	psa_status_t status;
-	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	uint8_t key_label[] = "HUK derivation sample label";
-	psa_key_id_t key_id;
-	uint8_t plaintext[] = "Lorem ipsum dolor sit amet. This will be encrypted.";
-	uint8_t ciphertext[sizeof(plaintext) + MAC_LEN];
-	uint32_t ciphertext_out_len;
-	uint8_t iv[IV_LEN];
-	uint8_t additional_data[] = "This will be authenticated but not encrypted.";
-
-	printk("Derive a key, then use it to encrypt a message.\n\n");
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
 	int result = nrf_cc3xx_platform_init();
 
 	if (result != NRF_CC3XX_PLATFORM_SUCCESS) {
-		printk("nrf_cc3xx_platform_init returned error: %d\n", result);
-		return 0;
+		LOG_INF("nrf_cc3xx_platform_init returned error: %d", result);
+		return APP_ERROR;
 	}
 
 	if (!hw_unique_key_are_any_written()) {
-		printk("Writing random keys to KMU\n");
+		LOG_INF("Writing random keys to KMU");
 		result = hw_unique_key_write_random();
 		if (result != HW_UNIQUE_KEY_SUCCESS) {
-			printk("hw_unique_key_write_random returned error: %d\n", result);
-			return 0;
+			LOG_INF("hw_unique_key_write_random returned error: %d", result);
+			return APP_ERROR;
 		}
-		printk("Success!\n\n");
+		LOG_INF("Success!");
 
 #if !defined(HUK_HAS_KMU)
 		/* Reboot to allow the bootloader to load the key into CryptoCell. */
@@ -79,20 +76,33 @@ int main(void)
 
 	status = psa_crypto_init();
 	if (status != PSA_SUCCESS) {
-		printk("psa_crypto_init returned error: %d\n", status);
-		return 0;
+		LOG_INF("psa_crypto_init returned error: %d", status);
+		return APP_ERROR;
 	}
 
-	printk("Generating random IV\n");
-	status = psa_generate_random(iv, IV_LEN);
+	return APP_SUCCESS;
+}
+
+int crypto_finish(void)
+{
+	psa_status_t status;
+
+	status = psa_destroy_key(key_id);
 	if (status != PSA_SUCCESS) {
-		printk("psa_generate_random returned error: %d\n", status);
-		return 0;
+		LOG_INF("psa_destroy_key returned error: %d", status);
+		return APP_ERROR;
 	}
-	printk("IV:\n");
-	hex_dump(iv, IV_LEN);
-	printk("\n");
-	printk("Deriving key\n");
+
+	return APP_SUCCESS;
+}
+
+int generate_key(void)
+{
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+	uint8_t key_label[] = "HUK derivation sample label";
+	psa_status_t status;
+
+	LOG_INF("Deriving key");
 
 	/* Set the key attributes for the storage key */
 	psa_set_key_usage_flags(&attributes,
@@ -103,30 +113,85 @@ int main(void)
 
 	status = derive_key(&attributes, key_label, sizeof(key_label) - 1, &key_id);
 	if (status != PSA_SUCCESS) {
-		printk("derive_key returned error: %d\n", status);
-		return 0;
+		LOG_INF("derive_key returned error: %d", status);
+		return APP_ERROR;
 	}
 
-	printk("Key ID: 0x%x\n\n", key_id);
-	printk("Encrypting\n");
-	printk("Plaintext:\n\"%s\"\n", plaintext);
-	hex_dump(plaintext, sizeof(plaintext) - 1);
+	return APP_SUCCESS;
+}
+
+int encrypt_message(void)
+{
+	psa_status_t status;
+	uint8_t plaintext[] = "Lorem ipsum dolor sit amet. This will be encrypted.";
+	uint8_t ciphertext[sizeof(plaintext) + MAC_LEN];
+	uint32_t ciphertext_out_len;
+	uint8_t iv[IV_LEN];
+	uint8_t additional_data[] = "This will be authenticated but not encrypted.";
+
+	LOG_INF("Generating random IV");
+
+	status = psa_generate_random(iv, IV_LEN);
+	if (status != PSA_SUCCESS) {
+		LOG_INF("psa_generate_random returned error: %d", status);
+		return APP_ERROR;
+	}
+
+	PRINT_HEX("IV", iv, IV_LEN);
+
+	LOG_INF("Key ID: 0x%x", key_id);
+	LOG_INF("Encrypting");
+	PRINT_HEX("Plaintext", plaintext, sizeof(plaintext) - 1);
 
 	status = psa_aead_encrypt(key_id, ENCRYPT_ALG, iv, IV_LEN,
 				additional_data, sizeof(additional_data) - 1,
 				plaintext, sizeof(plaintext) - 1,
 				ciphertext, sizeof(ciphertext), &ciphertext_out_len);
 	if (status != PSA_SUCCESS) {
-		printk("psa_aead_encrypt returned error: %d\n", status);
-		return 0;
+		LOG_INF("psa_aead_encrypt returned error: %d", status);
+		return APP_ERROR;
 	}
 	if (ciphertext_out_len != (sizeof(plaintext) - 1 + MAC_LEN)) {
-		printk("ciphertext has wrong length: %d\n", ciphertext_out_len);
-		return 0;
+		LOG_INF("ciphertext has wrong length: %d", ciphertext_out_len);
+		return APP_ERROR;
 	}
 
-	printk("Ciphertext (with authentication tag):\n");
-	hex_dump(ciphertext, ciphertext_out_len);
+	PRINT_HEX("Ciphertext (with authentication tag)", ciphertext, ciphertext_out_len);
 
-	return 0;
+	return APP_SUCCESS;
+}
+
+int main(void)
+{
+	int status;
+
+	LOG_INF("Derive a key, then use it to encrypt a message.");
+
+	status = crypto_init();
+	if (status != APP_SUCCESS) {
+		LOG_INF(APP_ERROR_MESSAGE);
+		return APP_ERROR;
+	}
+
+	status = generate_key();
+	if (status != APP_SUCCESS) {
+		LOG_INF(APP_ERROR_MESSAGE);
+		return APP_ERROR;
+	}
+
+	status = encrypt_message();
+	if (status != APP_SUCCESS) {
+		LOG_INF(APP_ERROR_MESSAGE);
+		return APP_ERROR;
+	}
+
+	status = crypto_finish();
+	if (status != APP_SUCCESS) {
+		LOG_INF(APP_ERROR_MESSAGE);
+		return APP_ERROR;
+	}
+
+	LOG_INF(APP_SUCCESS_MESSAGE);
+
+	return APP_SUCCESS;
 }
