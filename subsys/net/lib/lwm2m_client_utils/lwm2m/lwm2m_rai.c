@@ -22,7 +22,7 @@ static int set_rel14feat(void)
 	int ret;
 
 	ret = nrf_modem_at_printf("AT%%REL14FEAT=0,1,0,0,0");
-	if (ret) {
+	if (ret < 0) {
 		LOG_ERR("AT command failed, error code: %d", ret);
 		return -EFAULT;
 	}
@@ -122,8 +122,10 @@ int lwm2m_rai_no_data(void)
 		}
 
 		if (ctx->sock_fd >= 0) {
+			int dummy = 1;
 			LOG_DBG("Set socket option SO_RAI_NO_DATA");
-			ret = setsockopt(ctx->sock_fd, SOL_SOCKET, SO_RAI_NO_DATA, NULL, 0);
+			ret = setsockopt(ctx->sock_fd, SOL_SOCKET, SO_RAI_NO_DATA, &dummy,
+					 sizeof(dummy));
 
 			if (ret < 0) {
 				ret = -errno;
@@ -140,7 +142,6 @@ int lwm2m_rai_last(void)
 {
 	int ret;
 	struct lwm2m_ctx *ctx;
-	u_int8_t data = 0;
 
 	if (rrc_connected) {
 		ctx = lwm2m_rd_client_ctx();
@@ -150,20 +151,14 @@ int lwm2m_rai_last(void)
 		}
 
 		if (ctx->sock_fd >= 0) {
+			int dummy = 1;
 			LOG_DBG("Set socket option SO_RAI_LAST");
-			ret = setsockopt(ctx->sock_fd, SOL_SOCKET, SO_RAI_LAST, NULL, 0);
+			ret = setsockopt(ctx->sock_fd, SOL_SOCKET, SO_RAI_LAST, &dummy,
+					 sizeof(dummy));
 
 			if (ret < 0) {
 				ret = -errno;
 				LOG_ERR("Failed to set RAI socket option, error code: %d", ret);
-				return ret;
-			}
-
-			ret = send(ctx->sock_fd, &data, sizeof(data), 0);
-
-			if (ret < 0) {
-				ret = -errno;
-				LOG_ERR("Failed to send dummy packet, error code: %d", ret);
 				return ret;
 			}
 		}
