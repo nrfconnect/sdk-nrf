@@ -962,7 +962,7 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 		}
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
-		memset(udp_url, 0x00, sizeof(udp_url));
+		memset(udp_url, 0, sizeof(udp_url));
 	}
 
 	return ret;
@@ -1477,6 +1477,7 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 				return err;
 			}
 			err = do_sendto(udp_url, udp_port, data, size);
+			memset(udp_url, 0, sizeof(udp_url));
 		} else {
 			err = enter_datamode(socket_datamode_callback);
 		}
