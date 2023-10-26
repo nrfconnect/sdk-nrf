@@ -44,7 +44,6 @@ declare -A PROJECT_TAGS
 # nrfx/nRF/srcx repositories: vX.Y.Z(-rcN)
 PROJECT_TAGS[nrfxlib]=""
 PROJECT_TAGS[find-my]=""
-PROJECT_TAGS[homekit]=""
 PROJECT_TAGS[matter]=""
 PROJECT_TAGS[nrf-802154]=""
 
