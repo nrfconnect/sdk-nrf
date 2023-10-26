@@ -638,16 +638,18 @@ void link_modem_tau_notifications_unsubscribe(void)
 
 int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 {
-	int return_value = 0;
+	int ret = 0;
 	int sysmode;
+	enum lte_lc_system_mode curr_sysmode;
 	int lte_pref;
+	enum lte_lc_system_mode_preference curr_lte_pref;
 
 	switch (fun) {
 	case LTE_LC_FUNC_MODE_POWER_OFF:
-		return_value = lte_lc_power_off();
+		ret = lte_lc_power_off();
 		break;
 	case LTE_LC_FUNC_MODE_OFFLINE:
-		return_value = lte_lc_offline();
+		ret = lte_lc_offline();
 		break;
 	case LTE_LC_FUNC_MODE_NORMAL:
 		/* Enable/disable Rel14 features before going to normal mode */
@@ -667,13 +669,21 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 		sysmode = link_sett_sysmode_get();
 		lte_pref = link_sett_sysmode_lte_preference_get();
 		if (sysmode != LINK_SYSMODE_NONE) {
-			return_value = lte_lc_system_mode_set(sysmode, lte_pref);
-			if (return_value < 0) {
-				mosh_warn("lte_lc_system_mode_set returned error %d", return_value);
+			/* System mode configuration is set, check if modem system mode needs to
+			 * be updated.
+			 */
+			if (lte_lc_system_mode_get(&curr_sysmode, &curr_lte_pref) != 0 ||
+			    curr_sysmode != sysmode ||
+			    curr_lte_pref != lte_pref) {
+				/* System mode needs to be updated. */
+				ret = lte_lc_system_mode_set(sysmode, lte_pref);
+				if (ret < 0) {
+					mosh_warn("lte_lc_system_mode_set returned error %d", ret);
+				}
 			}
 		}
 
-		return_value = lte_lc_normal();
+		ret = lte_lc_normal();
 		break;
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
@@ -683,14 +693,14 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 	case LTE_LC_FUNC_MODE_ACTIVATE_UICC:
 	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON:
 	default:
-		return_value = lte_lc_func_mode_set(fun);
-		if (return_value) {
-			mosh_error("lte_lc_func_mode_set returned, error %d", return_value);
+		ret = lte_lc_func_mode_set(fun);
+		if (ret) {
+			mosh_error("lte_lc_func_mode_set returned, error %d", ret);
 		}
 		break;
 	}
 
-	return return_value;
+	return ret;
 }
 
 void link_rai_read(void)
