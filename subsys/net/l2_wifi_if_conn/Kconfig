@@ -6,7 +6,6 @@
 menuconfig L2_WIFI_CONNECTIVITY
 	bool "L2 Wi-Fi Connectivity"
 	depends on NET_CONNECTION_MANAGER
-	default y if WPA_SUPP
 
 if L2_WIFI_CONNECTIVITY
 
