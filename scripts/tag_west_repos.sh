@@ -45,6 +45,7 @@ declare -A PROJECT_TAGS
 PROJECT_TAGS[nrfxlib]=""
 PROJECT_TAGS[find-my]=""
 PROJECT_TAGS[homekit]=""
+PROJECT_TAGS[sidewalk]=""
 PROJECT_TAGS[matter]=""
 PROJECT_TAGS[nrf-802154]=""
 
