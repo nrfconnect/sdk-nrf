@@ -415,8 +415,14 @@ static int client_connect(struct download_client *dl)
 
 	err = connect(dl->fd, &dl->remote_addr, addrlen);
 	if (err) {
-		LOG_ERR("Unable to connect, errno %d", errno);
 		err = -errno;
+		LOG_ERR("Unable to connect, errno %d", -err);
+		/* Make sure that ECONNRESET is not returned as it has a special meaning
+		 * in the download client API
+		 */
+		if (err == -ECONNRESET) {
+			err = -ECONNREFUSED;
+		}
 	}
 
 cleanup:

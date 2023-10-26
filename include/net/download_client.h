@@ -58,11 +58,16 @@ enum download_client_evt_id {
 	 * returning zero from the callback will let the library attempt
 	 * to reconnect to the server and download the last fragment again.
 	 * Otherwise, the application may return any non-zero value
-	 * to stop the download.
+	 * to stop the download. On any other error code than ECONNRESET, the client
+	 * will not attempt to reconnect and ignores the return value.
 	 *
-	 * In case the download is stopped, the application should manually
-	 * disconnect (@ref download_client_disconnect) to clean up the
-	 * network socket as necessary before re-attempting the download.
+	 * In case the download is stopped, and it was started using @ref download_client_get,
+	 * the download client automatically closes the connection. The application should wait for
+	 * DOWNLOAD_CLIENT_EVT_CLOSED before attempting another download.
+	 * If download is stopped, and it was started using @ref download_client_start
+	 * the application should manually disconnect (@ref download_client_disconnect)
+	 * to clean up the network socket and wait for DOWNLOAD_CLIENT_EVT_CLOSED before attempting
+	 * another download.
 	 */
 	DOWNLOAD_CLIENT_EVT_ERROR,
 	/** Download complete. */
