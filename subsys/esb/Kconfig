@@ -118,8 +118,8 @@ config ESB_NEVER_DISABLE_TX
 	  the radio emitter needs to be turned off to enable the radio receiver.
 	  This reduces delay between consecutive transmissions but consumes more energy.
 
-endif # NRF_ENHANCED_SHOCKBURST
-
 module=ESB
 module-str=ESB
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_ENHANCED_SHOCKBURST
