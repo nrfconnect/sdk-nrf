@@ -24,14 +24,3 @@
     - applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure
     - applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws
   comment: "ruby package not available in Windows toolchain"
-
-- scenarios:
-    - sample.esb.prx
-    - sample.esb.ptx
-  comment: "Cmake error for EBC tests - NCSDK-21089"
-
-- scenarios:
-    - sample.net.mqtt.nrf9160.tls
-    - sample.net.mqtt
-    - applications.asset_tracker_v2.*
-  comment: "build failure on Windows after Zephyr upmerge - NCSIDB-1039"
