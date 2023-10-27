@@ -191,6 +191,11 @@ Cellular samples (renamed from nRF9160 samples)
 Cryptography samples
 --------------------
 
+* Updated:
+
+  * All crypto samples to use ``psa_key_id_t`` instead of ``psa_key_handle_t``.
+    These concepts have been merged and ``psa_key_handle_t`` is removed from the PSA API specification.
+
 |no_changes_yet_note|
 
 Debug samples
