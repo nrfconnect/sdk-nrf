@@ -444,7 +444,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`tnep_poller_readme` and :ref:`tnep_tag_readme` - updated
 * :ref:`nrf_desktop_config_channel_script` - updated
 * BSD library - added documentation about GNSS socket.
-* :ref:`nrfxlib:mpsl` - added documentation about :ref:`nrfxlib:mpsl_timeslot`, :ref:`nrfxlib:mpsl_radio_notification`, and :ref:`nrfxlib:mpsl_tx_power_control`
+* :ref:`nrfxlib:mpsl` - added documentation about :ref:`nrfxlib:mpsl_timeslot`, Radio notifications, and :ref:`nrfxlib:mpsl_tx_power_control`
 * :ref:`nrfxlib:nfc` - added documentation about :ref:`nrfxlib:type_2_tag` and :ref:`nrfxlib:type_4_tag`, updated the :ref:`nrfxlib:nfc_integration_notes`
 * :ref:`nrf_security` - updated
 
