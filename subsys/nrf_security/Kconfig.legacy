@@ -764,7 +764,7 @@ config MBEDTLS_CIPHER_C
 config MBEDTLS_MD_C
 	bool
 	prompt "Enable MD support"
-	default y if MBEDTLS_PSA_CRYPTO_C || MBEDTLS_USE_PSA_CRYPTO || MBEDTLS_LEGACY_CRYPTO_C
+	default y if MBEDTLS_LEGACY_CRYPTO_C || MBEDTLS_TLS_LIBRARY
 
 config MBEDTLS_PK_C
 	bool
