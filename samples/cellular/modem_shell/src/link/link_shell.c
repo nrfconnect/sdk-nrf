@@ -64,14 +64,14 @@ enum link_shell_common_options {
 	LINK_COMMON_RESET
 };
 
-/******************************************************************************/
 static const char link_settings_usage_str[] =
 	"Usage: link settings --read | --reset | --mreset_all | --mreset_user\n"
 	"Options:\n"
 	"  -r, --read,        Read and print current persistent settings\n"
 	"      --reset,       Reset all persistent settings to defaults\n"
 	"      --mreset_all,  Reset all modem settings to defaults\n"
-	"      --mreset_user, Reset modem user configurable settings to defaults\n";
+	"      --mreset_user, Reset modem user configurable settings to defaults\n"
+	"  -h, --help,        Shows this help information";
 
 static const char link_defcont_usage_str[] =
 	"Usage: link defcont --enable [options] | --disable | --read\n"
@@ -81,7 +81,8 @@ static const char link_defcont_usage_str[] =
 	"  -e, --enable,       Enable custom config for default PDP context\n"
 	"  -a, --apn, [str]    Set default Access Point Name\n"
 	"  -f, --family, [str] Address family: 'ipv4v6' (default), 'ipv4', 'ipv6',\n"
-	"                      'non-ip'\n";
+	"                      'non-ip'\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_defcontauth_usage_str[] =
 	"Usage: link defcontauth --enable [options] | --disable | --read\n"
@@ -91,8 +92,8 @@ static const char link_defcontauth_usage_str[] =
 	"  -e, --enable,       Enable custom config for default PDP context\n"
 	"  -U, --uname, [str]  Username\n"
 	"  -P, --pword, [str]  Password\n"
-	"  -A, --prot, [int]   Authentication protocol (Default: 0 (None), 1 (PAP),\n"
-	"                      2 (CHAP)\n";
+	"  -A, --prot, [int]   Authentication protocol (Default: 0 (None), 1 (PAP), 2 (CHAP)\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_connect_usage_str[] =
 	"Usage: link connect --apn <apn str> [--family <pdn family str>] [auth options]\n"
@@ -102,12 +103,14 @@ static const char link_connect_usage_str[] =
 	"Optional authentication options:\n"
 	"  -U, --uname, [str]  Username\n"
 	"  -P, --pword, [str]  Password\n"
-	"  -A, --prot,  [int]  Authentication protocol: 0 (None), 1 (PAP), 2 (CHAP)\n";
+	"  -A, --prot,  [int]  Authentication protocol: 0 (None), 1 (PAP), 2 (CHAP)\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_disconnect_usage_str[] =
 	"Usage: link disconnect -I <cid>\n"
 	"Options:\n"
-	"  -I, --cid, [int]    Use this option to disconnect specific PDN CID\n";
+	"  -I, --cid, [int]    Use this option to disconnect specific PDN CID\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_sysmode_usage_str[] =
 	"Usage: link sysmode [options] | --read | --reset\n"
@@ -121,11 +124,12 @@ static const char link_sysmode_usage_str[] =
 	"  -M, --ltem_gnss,        Set LTE-M + GNSS system mode\n"
 	"  -N, --nbiot_gnss,       Set NB-IoT + GNSS system mode\n"
 	"      --ltem_nbiot_gnss,  Set LTE-M + NB-IoT + GNSS system mode\n"
+	"  -h, --help,             Shows this help information\n"
 	"\n"
 	"Additional LTE mode preference that can be optionally given\n"
 	"and might make an impact with multimode system modes in modem,\n"
 	" i.e. with --ltem_nbiot or --ltem_nbiot_gnss\n"
-	"      --pref_auto,            auto, selected by modem (set as default if not\n"
+	"      --pref_auto,            Auto, selected by modem (set as default if not\n"
 	"                              given)\n"
 	"      --pref_ltem,            LTE-M is preferred over PLMN selection\n"
 	"      --pref_nbiot,           NB-IoT is preferred over PLMN selection\n"
@@ -148,8 +152,8 @@ static const char link_funmode_usage_str[] =
 	"      --gnsson,            Activates GNSS without changing LTE.\n"
 	"      --uiccoff,           Deactivates UICC.\n"
 	"      --uiccon,            Activates UICC.\n"
-	"      --flightmode_uiccon, Sets the device to flight mode without shutting down\n"
-	"                           UICC.\n";
+	"      --flightmode_uiccon, Sets the device to flight mode without shutting down UICC.\n"
+	"  -h, --help,              Shows this help information";
 
 static const char link_normal_mode_at_usage_str[] =
 	"Usage: link nmodeat --read | --mem<1-3>\n"
@@ -158,7 +162,8 @@ static const char link_normal_mode_at_usage_str[] =
 	"      --mem[1-3],   Set at cmd to given memory slot,\n"
 	"                    Example: \"link nmodeat --mem1 \"at%xbandlock=2,\\\"100\\\"\"\"\n"
 	"                    To clear the given memslot by given the empty string:\n"
-	"                    \"link nmodeat --mem2 \"\"\"\n";
+	"                    \"link nmodeat --mem2 \"\"\"\n"
+	"  -h, --help,       Shows this help information";
 
 static const char link_normal_mode_auto_usage_str[] =
 	"Usage: link nmodeauto --read | --enable | --enable_no_rel14 | --disable\n"
@@ -166,7 +171,8 @@ static const char link_normal_mode_auto_usage_str[] =
 	"  -r, --read,            Read and print current setting\n"
 	"  -e, --enable,          Enable autoconnect (default)\n"
 	"      --enable_no_rel14, Enable autoconnect without setting Release 14 features\n"
-	"  -d, --disable,         Disable autoconnect\n";
+	"  -d, --disable,         Disable autoconnect\n"
+	"  -h, --help,            Shows this help information";
 
 static const char link_edrx_usage_str[] =
 	"Usage: link edrx --enable [options] | --disable | --read\n"
@@ -181,7 +187,8 @@ static const char link_edrx_usage_str[] =
 	"      --nbiot_edrx, [str] Sets custom eDRX value for NB-IoT to be requested when\n"
 	"                          enabling eDRX with -e option.\n"
 	"      --nbiot_ptw, [str]  Sets custom Paging Time Window value for NB-IoT to be\n"
-	"                          requested when enabling eDRX with -e option.\n";
+	"                          requested when enabling eDRX with -e option.\n"
+	"  -h, --help,             Shows this help information";
 
 static const char link_psm_usage_str[] =
 	"Usage: link psm --enable [options] | --disable | --read\n"
@@ -192,13 +199,15 @@ static const char link_psm_usage_str[] =
 	"  -p, --rptau, [str]  Sets custom requested periodic TAU value to be requested\n"
 	"                      when enabling PSM -e option.\n"
 	"  -t, --rat, [str]    Sets custom requested active time (RAT) value to be\n"
-	"                      requested when enabling PSM -e option.\n";
+	"                      requested when enabling PSM -e option.\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_rsrp_usage_str[] =
 	"Usage: link rsrp --subscribe | --unsubscribe\n"
 	"Options:\n"
 	"  -s, --subscribe,    Subscribe for RSRP info\n"
-	"  -u, --unsubscribe,  Unsubscribe for RSRP info\n";
+	"  -u, --unsubscribe,  Unsubscribe for RSRP info\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_search_usage_str[] =
 	"Usage: link search --read | --write | --clear | --start\n"
@@ -224,6 +233,7 @@ static const char link_search_usage_str[] =
 	"      --start,  Start modem search request. This is an extra request outside of\n"
 	"                the periodic requests. However, the search is performed only\n"
 	"                when the modem is in sleep state between periodic searches.\n"
+	"  -h, --help,   Shows this help information\n"
 	"\n"
 	"For more details on the individual parameters referred to with <param>, see:\n"
 	"https://infocenter.nordicsemi.com/index.jsp?topic=%2Fref_at_commands%2FREF%2Fat_commands%2Fnw_service%2Fperiodicsearchconf_set.html\n";
@@ -239,6 +249,7 @@ static const char link_ncellmeas_usage_str[] =
 	"   --search_type,     Used search type:\n"
 	"                      'default', 'ext_light', 'ext_comp', 'gci_default', 'gci_ext_light'\n"
 	"                      and 'gci_ext_comp'.\n"
+	"  -h, --help,         Shows this help information\n"
 	"Options for GCI search_types:\n"
 	"   --gci_count, [int] Result notification for GCI (Global Cell Id) search types from\n"
 	"                      gci_default to gci_ext_comp include Cell ID, PLMN and TAC for\n"
@@ -287,6 +298,7 @@ static const char link_msleep_usage_str[] =
 	"  -s, --subscribe,       Subscribe for modem sleep notifications\n"
 	"      --threshold, [int] Shortest value of the duration of the scheduled modem\n"
 	"                         sleep that triggers a notification. In milliseconds.\n"
+	"  -h, --help,            Shows this help information\n"
 	"Related static configs:\n"
 	"  warn_time              Time before modem exits sleep that a pre-warning\n"
 	"                         is to be received. Default value from\n"
@@ -302,14 +314,16 @@ static const char link_tau_usage_str[] =
 	"Related static configs:\n"
 	"  warn_time              Time before a TAU that a pre-warning is to be received.\n"
 	"                         Default value from\n"
-	"                         CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS.\n";
+	"                         CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS.\n"
+	"  -h, --help,            Shows this help information";
 
 static const char link_rai_usage_str[] =
 	"Usage: link rai --enable | --disable\n"
 	"Options:\n"
 	"  -r, --read,         Read current RAI status\n"
 	"  -d, --disable,      Disable RAI\n"
-	"  -e, --enable,       Enable RAI\n";
+	"  -e, --enable,       Enable RAI\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_dnsaddr_usage_str[] =
 	"Usage: link dnsaddr [options] | --read | --enable | --disable\n"
@@ -317,7 +331,8 @@ static const char link_dnsaddr_usage_str[] =
 	"  -r, --read,         Read and print current config\n"
 	"  -d, --disable,      Disable manual DNS server address\n"
 	"  -e, --enable,       Enable manual DNS server address\n"
-	"  -i, --ipaddr, [str] DNS server IP address\n";
+	"  -i, --ipaddr, [str] DNS server IP address\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_redmob_usage_str[] =
 	"Usage: link redmob [options] | --read\n"
@@ -325,18 +340,18 @@ static const char link_redmob_usage_str[] =
 	"  -r, --read,         Read and print current mode\n"
 	"  -d, --disable,      Disable reduced mobility mode\n"
 	"      --default,      Enable default reduced mobility mode\n"
-	"      --nordic,       Enable Nordic proprietary reduced mobility mode\n";
+	"      --nordic,       Enable Nordic proprietary reduced mobility mode\n"
+	"  -h, --help,         Shows this help information";
 
 static const char link_propripsm_usage_str[] =
 	"Usage: link propripsm --read | --disable | --enable\n"
 	"Options:\n"
 	"  -r, --read,         Read proprietary PSM status\n"
 	"  -d, --disable,      Disable proprietary PSM\n"
-	"  -e, --enable,       Enable proprietary PSM\n";
+	"  -e, --enable,       Enable proprietary PSM\n"
+	"  -h, --help,         Shows this help information";
 
-/******************************************************************************/
-
-/* Following are not having short options: */
+/* The following do not have short options */
 enum {
 	LINK_SHELL_OPT_MEM_SLOT_1 = 1001,
 	LINK_SHELL_OPT_MEM_SLOT_2,
@@ -379,7 +394,7 @@ enum {
 	LINK_SHELL_OPT_NBIOT_PTW
 };
 
-/* Specifying the expected options (both long and short): */
+/* Specifying the expected options (both long and short) */
 static struct option long_options[] = {
 	{ "help", no_argument, 0, 'h' },
 	{ "apn", required_argument, 0, 'a' },
@@ -451,8 +466,6 @@ static struct option long_options[] = {
 
 static const char short_options[] = "ha:I:f:i:p:t:A:P:U:su014rmngMNed";
 
-/******************************************************************************/
-
 bool link_shell_msleep_notifications_subscribed;
 
 static void link_shell_print_usage(enum link_shell_command command)
@@ -523,8 +536,6 @@ static void link_shell_print_usage(enum link_shell_command command)
 	}
 }
 
-/******************************************************************************/
-
 /* From lte_lc.c, and TODO: to be updated if something is added */
 #define SYS_MODE_PREFERRED					   \
 	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)              ?  \
@@ -564,8 +575,6 @@ static void link_shell_sysmode_set(int sysmode, int lte_pref)
 	}
 }
 
-/******************************************************************************/
-
 #define MOSH_NCELLMEAS_SEARCH_TYPE_NONE 0xFF
 
 static enum lte_lc_neighbor_search_type
@@ -589,8 +598,6 @@ static enum lte_lc_neighbor_search_type
 
 	return search_type;
 }
-
-/******************************************************************************/
 
 int link_shell_get_and_print_current_system_modes(
 	enum lte_lc_system_mode *sys_mode_current,
@@ -662,15 +669,11 @@ static enum link_shell_common_options link_shell_getopt_common(int argc, char *c
 {
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 
-	int long_index = 0;
+	optreset = 1;
+	optind = 1;
 	int opt;
 
-	/* Reset getopt due to possible previous failures */
-	optreset = 1;
-	/* We start from subcmd arguments */
-	optind = 1;
-
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 	}
 	return common_option;
@@ -692,12 +695,11 @@ static int link_shell_connect(const struct shell *shell, size_t argc, char **arg
 		goto show_usage;
 	}
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'a': /* APN */
 			apn_len = strlen(optarg);
@@ -792,12 +794,11 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 	char *apn = NULL;
 	char *family = NULL;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -861,12 +862,11 @@ static int link_shell_defcontauth(const struct shell *shell, size_t argc, char *
 	char *username = NULL;
 	char *password = NULL;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -919,12 +919,11 @@ static int link_shell_disconnect(const struct shell *shell, size_t argc, char **
 	int ret = 0;
 	int pdn_cid = 0;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'I': /* PDN CID */
 			pdn_cid = atoi(optarg);
@@ -957,12 +956,11 @@ static int link_shell_dnsaddr(const struct shell *shell, size_t argc, char **arg
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 	char *ip_address = NULL;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1016,12 +1014,11 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 	char nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
 	bool nbiot_ptw_set = false;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1179,13 +1176,18 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 	char snum[64];
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
+
+		/* This condition prevents accidentally using two functional modes */
+		if (funmode_option != LINK_FUNMODE_NONE) {
+			mosh_error("Two options setting functional mode are not allowed");
+			break;
+		}
 
 		switch (opt) {
 		case '0':
@@ -1223,6 +1225,10 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 			nmode_use_rel14 = false;
 			break;
 		default:
+			if (common_option == LINK_COMMON_NONE) {
+				link_shell_print_usage(LINK_CMD_FUNMODE);
+				return 0;
+			}
 			break;
 		}
 	}
@@ -1257,12 +1263,11 @@ static int link_shell_msleep(const struct shell *shell, size_t argc, char **argv
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 	int threshold_time = 0;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1308,12 +1313,11 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 	bool periodic_time_given = false;
 	int gci_count;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1375,12 +1379,11 @@ static int link_shell_nmodeat(const struct shell *shell, size_t argc, char **arg
 	char *normal_mode_at_str = NULL;
 	uint8_t normal_mode_at_mem_slot = 0;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1428,12 +1431,11 @@ static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **a
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 	bool nmode_use_rel14 = true;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1498,12 +1500,11 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 	char psm_rat_bit_str[LINK_SHELL_PSM_PARAM_STR_LENGTH + 1];
 	bool psm_rat_set = false;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1623,12 +1624,11 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 	enum lte_lc_reduced_mobility_mode redmob_mode = LINK_REDMOB_NONE;
 	char snum[10];
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1697,12 +1697,11 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 	struct lte_lc_periodic_search_cfg search_cfg = { 0 };
 	bool search_cfg_given = false;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1900,12 +1899,11 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 	enum lte_lc_factory_reset_type mreset_type = LTE_LC_FACTORY_RESET_INVALID;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -1981,12 +1979,11 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {
@@ -2044,7 +2041,7 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 			enum lte_lc_system_mode sett_sys_mode;
 			enum lte_lc_system_mode_preference sett_lte_pref;
 
-			/* Print also settings stored in mosh side: */
+			/* Print also settings stored in mosh side */
 			link_sett_sysmode_print();
 			sett_sys_mode = link_sett_sysmode_get();
 			sett_lte_pref = link_sett_sysmode_lte_preference_get();
@@ -2062,7 +2059,7 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 	} else if (sysmode_option != LINK_SYSMODE_NONE) {
 		link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
 
-		/* Save system modem to link settings: */
+		/* Save system modem to link settings */
 		(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
 
 	} else if (common_option == LINK_COMMON_RESET) {
@@ -2084,12 +2081,11 @@ static int link_shell_tau(const struct shell *shell, size_t argc, char **argv)
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 	int threshold_time = 0;
 
-	int long_index = 0;
-	int opt;
-
 	optreset = 1;
 	optind = 1;
-	while ((opt = getopt_long(argc, argv, short_options, long_options, &long_index)) != -1) {
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		link_shell_getopt_common_option(opt, &common_option);
 
 		switch (opt) {

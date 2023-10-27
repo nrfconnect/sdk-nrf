@@ -18,51 +18,19 @@
 
 #include "mosh_print.h"
 
-enum ppp_shell_command { PPP_CMD_UP = 0, PPP_CMD_DOWN, PPP_CMD_UARTCONF };
-
-enum ppp_shell_common_options { PPP_COMMON_NONE = 0, PPP_COMMON_READ };
-
-struct ppp_shell_cmd_args_t {
-	enum ppp_shell_command command;
-	enum ppp_shell_common_options common_option;
-	uint32_t baudrate;
-
-	bool parity_set;
-	enum uart_config_parity parity;
-
-	bool stop_bits_set;
-	enum uart_config_stop_bits stop_bits;
-
-	bool data_bits_set;
-	enum uart_config_data_bits data_bits;
-
-	bool flow_ctrl_set;
-	enum uart_config_flow_control flow_ctrl;
-};
-
-static struct ppp_shell_cmd_args_t ppp_cmd_args;
-
-static const char ppp_cmd_usage_str[] =
-	"Usage: ppp <sub-command>\n"
-	"\n"
-	"where <command> is one of the following:\n"
-	"  help:                    Show this message\n"
-	"  uartconf:                Configure or read PPP UART configuration\n"
-	"  up:                      Set PPP net_if up (no options)\n"
-	"  down:                    Set PPP net_if down (no options)\n"
-	"\n";
-
 static const char ppp_uartconf_usage_str[] =
-	"Usage: ppp uartconf <options>\n"
+	"Usage: ppp uartconf [-r] [-b <number>] [-f <method>]\n"
+	"       [-d <bits>] [-s <bits>] [-p <parity>]\n"
 	"Options:\n"
 	"  -r, --read,            Read currrent PPP uart configuration\n"
 	"  -b, --baudrate,        Set baudrate (e.g. 115200, 230400, 460800 or 921600)\n"
 	"  -f, --flowctrl,        Set flow control method (\"none\" or \"rts_cts\")\n"
 	"  -d, --databits,        Set databits ('7' or '8')\n"
 	"  -s, --stopbits,        Set stopbits ('1' or '2')\n"
-	"  -p, --parity,          Set parity (\"none\" or \"odd\" or \"even\")\n";
+	"  -p, --parity,          Set parity (\"none\" or \"odd\" or \"even\")\n"
+	"  -h, --help,            Shows this help information";
 
-/* Specifying the expected options (both long and short): */
+/* Specifying the expected options (both long and short) */
 static struct option long_options[] = { { "baudrate", required_argument, 0, 'b' },
 					{ "databits", required_argument, 0, 'd' },
 					{ "stopbits", required_argument, 0, 's' },
@@ -71,23 +39,6 @@ static struct option long_options[] = { { "baudrate", required_argument, 0, 'b' 
 					{ "read", no_argument, 0, 'r' },
 					{ "help", no_argument, 0, 'h' },
 					{ 0, 0, 0, 0 } };
-
-static void ppp_shell_print_usage(struct ppp_shell_cmd_args_t *ppp_cmd_args)
-{
-	switch (ppp_cmd_args->command) {
-	case PPP_CMD_UARTCONF:
-		mosh_print_no_format(ppp_uartconf_usage_str);
-		break;
-	default:
-		mosh_print_no_format(ppp_cmd_usage_str);
-		break;
-	}
-}
-
-static void ppp_shell_cmd_defaults_set(struct ppp_shell_cmd_args_t *ppp_cmd_args)
-{
-	memset(ppp_cmd_args, 0, sizeof(struct ppp_shell_cmd_args_t));
-}
 
 static void ppp_shell_uart_conf_print(struct uart_config *ppp_uart_config)
 {
@@ -151,41 +102,53 @@ static void ppp_shell_uart_conf_print(struct uart_config *ppp_uart_config)
 	mosh_print("  stop bits:    %s", tmp_str);
 }
 
-static int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
+static int cmd_ppp_up(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret = 0;
+
+	ret = ppp_ctrl_start();
+	if (ret >= 0) {
+		mosh_print("PPP up.");
+	} else {
+		mosh_error("PPP cannot be started");
+	}
+
+	return 0;
+}
+
+static int cmd_ppp_down(const struct shell *shell, size_t argc, char **argv)
+{
+	ppp_ctrl_stop();
+
+	return 0;
+}
+
+static int cmd_ppp_uartconf(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
 	bool uartconf_option_given = false;
+	bool uart_config_read = false;
+	struct uart_config ppp_uart_config;
 
-	ppp_shell_cmd_defaults_set(&ppp_cmd_args);
+	uint32_t baudrate = 0;
+	bool parity_set = false;
+	enum uart_config_parity parity;
+	bool stop_bits_set = false;
+	enum uart_config_stop_bits stop_bits;
+	bool data_bits_set = false;
+	enum uart_config_data_bits data_bits;
+	bool flow_ctrl_set = false;
+	enum uart_config_flow_control flow_ctrl;
 
 	if (argc < 2) {
 		goto show_usage;
 	}
 
-	if (strcmp(argv[1], "up") == 0) {
-		ppp_cmd_args.command = PPP_CMD_UP;
-	} else if (strcmp(argv[1], "down") == 0) {
-		ppp_cmd_args.command = PPP_CMD_DOWN;
-	} else if (strcmp(argv[1], "uartconf") == 0) {
-		ppp_cmd_args.command = PPP_CMD_UARTCONF;
-	} else {
-		if (strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
-			mosh_error("Unsupported command=%s\n", argv[1]);
-		}
-		goto show_usage;
-	}
-
-	/* Reset getopt due to possible previous failures: */
 	optreset = 1;
-
-	/* We start from subcmd arguments */
-	optind = 2;
-
-	int long_index = 0;
+	optind = 1;
 	int opt;
-	struct uart_config ppp_uart_config;
 
-	while ((opt = getopt_long(argc, argv, "b:d:s:p:f:rh", long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "b:d:s:p:f:rh", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'b':
 			ret = atoi(optarg);
@@ -203,7 +166,7 @@ static int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 			case 460800:
 			case 921600:
 			case 1000000:
-				ppp_cmd_args.baudrate = ret;
+				baudrate = ret;
 				uartconf_option_given = true;
 				break;
 			default:
@@ -213,73 +176,73 @@ static int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case 'd':
 			ret = atoi(optarg);
-			ppp_cmd_args.data_bits_set = true;
+			data_bits_set = true;
 			uartconf_option_given = true;
 			switch (ret) {
 			case 7:
-				ppp_cmd_args.data_bits = UART_CFG_DATA_BITS_7;
+				data_bits = UART_CFG_DATA_BITS_7;
 				break;
 			case 8:
-				ppp_cmd_args.data_bits = UART_CFG_DATA_BITS_8;
+				data_bits = UART_CFG_DATA_BITS_8;
 				break;
 			default:
 				mosh_error("Unsupported data bits config");
-				ppp_cmd_args.data_bits_set = false;
+				data_bits_set = false;
 				return -EINVAL;
 			}
 			break;
 		case 's':
 			ret = atoi(optarg);
-			ppp_cmd_args.stop_bits_set = true;
+			stop_bits_set = true;
 			uartconf_option_given = true;
 			switch (ret) {
 			case 1:
-				ppp_cmd_args.stop_bits = UART_CFG_STOP_BITS_1;
+				stop_bits = UART_CFG_STOP_BITS_1;
 				uartconf_option_given = true;
 				break;
 			case 2:
-				ppp_cmd_args.stop_bits = UART_CFG_STOP_BITS_2;
+				stop_bits = UART_CFG_STOP_BITS_2;
 				uartconf_option_given = true;
 				break;
 			default:
 				mosh_error("Unsupported stop bits config");
-				ppp_cmd_args.stop_bits_set = false;
+				stop_bits_set = false;
 				return -EINVAL;
 			}
 			break;
 		case 'p':
 			ret = atoi(optarg);
-			ppp_cmd_args.parity_set = true;
+			parity_set = true;
 			uartconf_option_given = true;
 			if (strcmp(optarg, "none") == 0) {
-				ppp_cmd_args.parity = UART_CFG_PARITY_NONE;
+				parity = UART_CFG_PARITY_NONE;
 			} else if (strcmp(optarg, "odd") == 0) {
-				ppp_cmd_args.parity = UART_CFG_PARITY_ODD;
+				parity = UART_CFG_PARITY_ODD;
 			} else if (strcmp(optarg, "even") == 0) {
-				ppp_cmd_args.parity = UART_CFG_PARITY_EVEN;
+				parity = UART_CFG_PARITY_EVEN;
 			} else {
 				mosh_error("Unsupported parity config");
-				ppp_cmd_args.parity_set = false;
+				parity_set = false;
 				return -EINVAL;
 			}
 			break;
 		case 'f':
 			ret = atoi(optarg);
-			ppp_cmd_args.flow_ctrl_set = true;
+			flow_ctrl_set = true;
 			uartconf_option_given = true;
 			if (strcmp(optarg, "none") == 0) {
-				ppp_cmd_args.flow_ctrl = UART_CFG_FLOW_CTRL_NONE;
+				flow_ctrl = UART_CFG_FLOW_CTRL_NONE;
 			} else if (strcmp(optarg, "rts_cts") == 0 ||
 				   strcmp(optarg, "RTS_CTS") == 0) {
-				ppp_cmd_args.flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS;
+				flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS;
 			} else {
 				mosh_error("Unsupported flow ctrl config");
-				ppp_cmd_args.flow_ctrl_set = false;
+				flow_ctrl_set = false;
 				return -EINVAL;
 			}
 			break;
 		case 'r':
-			ppp_cmd_args.common_option = PPP_COMMON_READ;
+			uart_config_read = true;
 			break;
 
 		case '?':
@@ -291,64 +254,65 @@ static int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-	switch (ppp_cmd_args.command) {
-	case PPP_CMD_UP:
-		ret = ppp_ctrl_start();
-		if (ret >= 0) {
-			mosh_print("PPP up.");
-		} else {
-			mosh_error("PPP cannot be started");
+	/* Read current config */
+	ret = ppp_uart_settings_read(&ppp_uart_config);
+	if (ret) {
+		mosh_error("Cannot get current PPP uart config, ret %d", ret);
+		return ret;
+	}
+	if (uart_config_read) {
+		ppp_shell_uart_conf_print(&ppp_uart_config);
+	} else if (!uartconf_option_given) {
+		mosh_error("No option given. See usage:");
+		goto show_usage;
+	} else {
+		if (baudrate > 0) {
+			ppp_uart_config.baudrate = baudrate;
+		}
+		if (flow_ctrl_set) {
+			ppp_uart_config.flow_ctrl = flow_ctrl;
+		}
+		if (data_bits_set) {
+			ppp_uart_config.data_bits = data_bits;
+		}
+		if (stop_bits_set) {
+			ppp_uart_config.stop_bits = stop_bits;
+		}
+		if (parity_set) {
+			ppp_uart_config.parity = parity;
 		}
 
-		break;
-	case PPP_CMD_DOWN:
-		ppp_ctrl_stop();
-		break;
-	case PPP_CMD_UARTCONF:
-		/* Read current config: */
-		ret = ppp_uart_settings_read(&ppp_uart_config);
-		if (ret) {
-			mosh_error("Cannot get current PPP uart config, ret %d", ret);
+		/* Save UART configuration to settings and to device */
+		ret = ppp_uart_settings_write(&ppp_uart_config);
+		if (ret != 0) {
+			mosh_error("Cannot write PPP uart config: %d", ret);
 			return ret;
 		}
-		if (ppp_cmd_args.common_option == PPP_COMMON_READ) {
-			ppp_shell_uart_conf_print(&ppp_uart_config);
-		} else if (!uartconf_option_given) {
-			mosh_error("No option given. See usage:");
-			goto show_usage;
-		} else {
-			if (ppp_cmd_args.baudrate) {
-				ppp_uart_config.baudrate = ppp_cmd_args.baudrate;
-			}
-			if (ppp_cmd_args.flow_ctrl_set) {
-				ppp_uart_config.flow_ctrl = ppp_cmd_args.flow_ctrl;
-			}
-			if (ppp_cmd_args.data_bits_set) {
-				ppp_uart_config.data_bits = ppp_cmd_args.data_bits;
-			}
-			if (ppp_cmd_args.stop_bits_set) {
-				ppp_uart_config.stop_bits = ppp_cmd_args.stop_bits;
-			}
-			if (ppp_cmd_args.parity_set) {
-				ppp_uart_config.parity = ppp_cmd_args.parity;
-			}
-
-			/* Save UART configuration to settings and to device: */
-			ret = ppp_uart_settings_write(&ppp_uart_config);
-			if (ret != 0) {
-				mosh_error("Cannot write PPP uart config: %d", ret);
-				return ret;
-			}
-			mosh_print("UART config updated");
-		}
-		break;
+		mosh_print("UART config updated");
 	}
 
 	return 0;
 
 show_usage:
-	ppp_shell_print_usage(&ppp_cmd_args);
+	mosh_print_no_format(ppp_uartconf_usage_str);
 	return 0;
 }
 
-SHELL_CMD_REGISTER(ppp, NULL, "Commands for controlling PPP.", ppp_shell_cmd);
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_ppp,
+	SHELL_CMD_ARG(
+		up, NULL,
+		"Set PPP net_if up (no options).",
+		cmd_ppp_up, 1, 0),
+	SHELL_CMD_ARG(
+		down, NULL,
+		"Set PPP net_if down (no options).",
+		cmd_ppp_down, 1, 0),
+	SHELL_CMD_ARG(
+		uartconf, NULL,
+		"Configure or read PPP UART configuration.",
+		cmd_ppp_uartconf, 1, 20),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_CMD_REGISTER(ppp, &sub_ppp, "Commands for controlling PPP.", mosh_print_help_shell);

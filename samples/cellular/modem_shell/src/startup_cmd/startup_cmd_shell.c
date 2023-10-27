@@ -19,8 +19,6 @@ enum startup_cmd_common_options {
 	SETT_CMD_COMMON_READ,
 };
 
-/******************************************************************************/
-
 static const char startup_cmd_usage_str[] =
 	"Usage: startup_cmd --read | --mem<1-3> <cmd_str> | -t <timeout_in_secs>\n"
 	"Options:\n"
@@ -31,18 +29,17 @@ static const char startup_cmd_usage_str[] =
 	"  -t, --time,      Starting time of executing of commands (in seconds after a bootup).\n"
 	"                   By default execution will be done when LTE is connected\n"
 	"                   for the first time after the bootup. Restore default value\n"
-	"                   by giving a negative value.\n";
+	"                   by giving a negative value.\n"
+	"  -h, --help,      Shows this help information";
 
-/******************************************************************************/
-
-/* Following are not having short options: */
+/* The following do not have short options */
 enum {
 	SETT_CMD_SHELL_OPT_MEM_SLOT_1 = 1001,
 	SETT_CMD_SHELL_OPT_MEM_SLOT_2,
 	SETT_CMD_SHELL_OPT_MEM_SLOT_3,
 };
 
-/* Specifying the expected options (both long and short): */
+/* Specifying the expected options (both long and short) */
 static struct option long_options[] = {
 	{ "read", no_argument, 0, 'r' },
 	{ "time", required_argument, 0, 't' },
@@ -52,36 +49,29 @@ static struct option long_options[] = {
 	{ 0, 0, 0, 0 }
 };
 
-/******************************************************************************/
-
 static void startup_cmd_shell_print_usage(void)
 {
 	mosh_print_no_format(startup_cmd_usage_str);
 }
 
-/******************************************************************************/
-
 static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	enum startup_cmd_common_options common_option = SETT_CMD_COMMON_NONE;
 	int ret = 0;
-	int long_index = 0;
 	int starttime;
-	int opt;
 	uint8_t startup_cmd_mem_slot = 0;
 	char *startup_cmd_str = NULL;
 	bool starttime_given = false;
 
-	if (!argc) {
+	if (argc < 2) {
 		goto show_usage;
 	}
 
-	/* Reset getopt due to possible previous failures: */
 	optreset = 1;
 	optind = 1;
+	int opt;
 
-	while ((opt = getopt_long(argc, argv, "t:r",
-				  long_options, &long_index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "t:r", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 			common_option = SETT_CMD_COMMON_READ;
@@ -137,9 +127,6 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 	return ret;
 
 show_usage:
-	/* Reset getopt for another users: */
-	optreset = 1;
-
 	startup_cmd_shell_print_usage();
 	return ret;
 }

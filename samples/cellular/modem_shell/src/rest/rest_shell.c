@@ -27,7 +27,7 @@ static const char rest_shell_cmd_usage_str[] =
 	"              [-k] [-i sckt_id] [--print_headers]\n"
 	"\n"
 	"  -d, --host,          Destination host/domain of the URL\n"
-	"Optionals:\n"
+	"Options:\n"
 	"  -m, --method,        HTTP method (one of the: \"get\" (default),\"head\",\n"
 	"                       \"post\",\"put\",\"delete\" or \"patch\")\n"
 	"  -p, --port,          Destination port (default: 80)\n"
@@ -45,14 +45,15 @@ static const char rest_shell_cmd_usage_str[] =
 	"  -k, --keepalive,     Keep socket connection alive for upcoming requests\n"
 	"                       towards the same server (default: false)\n"
 	"      --print_headers, Print HTTP headers of the response\n"
-	"  -i, --sckt_id,       Use existing socket id (default: create a new connection)\n";
+	"  -i, --sckt_id,       Use existing socket id (default: create a new connection)\n"
+	"  -h, --help,          Shows this help information";
 
-/* Following are not having short options: */
+/* The following do not have short options */
 enum {
 	REST_SHELL_OPT_PRINT_RESP_HEADERS = 1001,
 };
 
-/* Specifying the expected options (both long and short): */
+/* Specifying the expected options (both long and short) */
 static struct option long_options[] = {
 	{ "host", required_argument, 0, 'd' },
 	{ "port", required_argument, 0, 'p' },
@@ -76,21 +77,18 @@ static void rest_shell_print_usage(const struct shell *shell)
 	mosh_print_no_format(rest_shell_cmd_usage_str);
 }
 
-/*****************************************************************************/
-
 #define REST_REQUEST_MAX_HEADERS 10
 #define REST_RESPONSE_BUFF_SIZE 1024
 #define REST_DEFAULT_DESTINATION_PORT 80
 
 static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 {
-	int opt, i, len;
+	int i, len;
 	int ret = 0;
-	int long_index = 0;
 	bool show_usage = false;
 	struct rest_client_req_context req_ctx = { 0 };
 	struct rest_client_resp_context resp_ctx = { 0 };
-	/* Headers to request + 1 for NULL (for http_client): */
+	/* Headers to request + 1 for NULL (for http_client) */
 	char *req_headers[REST_REQUEST_MAX_HEADERS + 1] = { NULL };
 	bool headers_set = false;
 	bool method_set = false;
@@ -98,18 +96,24 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 	bool print_headers_from_resp = false;
 	int response_buf_len = REST_RESPONSE_BUFF_SIZE;
 
-	/* Set the defaults: */
+	if (argc < 2) {
+		show_usage = true;
+		goto end;
+	}
+
+	/* Set the defaults */
 	rest_client_request_defaults_set(&req_ctx);
 	req_ctx.url = "/index.html";
 	req_ctx.port = REST_DEFAULT_DESTINATION_PORT;
 	req_ctx.body = NULL;
 	memset(req_headers, 0, (REST_REQUEST_MAX_HEADERS + 1) * sizeof(char *));
 
-	/* Start from the 1st argument */
+	optreset = 1;
 	optind = 1;
+	int opt;
 
 	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:i:kh", long_options,
-				  &long_index)) != -1) {
+				  NULL)) != -1) {
 		switch (opt) {
 		case 'm':
 			if (strcmp(optarg, "get") == 0) {
@@ -246,7 +250,7 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-	/* Check that all mandatory args were given: */
+	/* Check that all mandatory args were given */
 	if (!host_set) {
 		mosh_error("Please, give all mandatory options");
 		show_usage = true;
@@ -305,9 +309,6 @@ end:
 		k_free(req_headers[i]);
 	}
 	k_free(req_ctx.resp_buff);
-
-	/* Reset getopt for another users */
-	optreset = 1;
 
 	if (show_usage) {
 		rest_shell_print_usage(shell);
