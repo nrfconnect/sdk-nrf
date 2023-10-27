@@ -44,7 +44,7 @@ config DTM_USB
 
 choice DTM_TRANSPORT
 	default DTM_TRANSPORT_TWOWIRE
-	prompt "Transport layer to use with DTM."
+	prompt "Transport layer to use with DTM"
 	help
 	  Transport interface to use with the DTM.
 

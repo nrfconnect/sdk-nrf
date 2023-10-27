@@ -199,16 +199,16 @@ config MBEDTLS_HMAC_DRBG_ENABLED
 	select PSA_WANT_ALG_HMAC_DRBG
 
 config MBEDTLS_CIPHER
-	bool "Enable the generic cipher layer."
+	bool "Enable the generic cipher layer"
 
 config MBEDTLS_MD
-	bool "Enable the generic message digest layer."
+	bool "Enable the generic message digest layer"
 
 config MBEDTLS_ENTROPY_ENABLED
 	bool "Enable mbedTLS generic entropy pool"
 
 config MBEDTLS_GENPRIME_ENABLED
-	bool "Enable the prime-number generation code."
+	bool "Enable the prime-number generation code"
 
 endmenu # Zephyr legacy configurations
 

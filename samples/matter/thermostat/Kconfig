@@ -6,26 +6,26 @@
 mainmenu "Matter Thermostat sample application"
 
 config THERMOSTAT_EXTERNAL_SENSOR
-	bool "Select if the temperature measurement is provided directly from an external sensor."
+	bool "Select if the temperature measurement is provided directly from an external sensor"
 	help
 	 Set to true to enable the temperature measurement from a physical external sensor. Set to false to simulate the temperature measurement.
 
 config THERMOSTAT_TEMPERATURE_STEP
-	int "Defines a simulated temperature step. Use 0 for random."
+	int "Defines a simulated temperature step. Use 0 for random"
 	default 0
 	help
 	  A temperature step that defines differences between consecutive simulated temperature measurements. If set to 0, then the step is random.
 
 config THERMOSTAT_SIMULATED_TEMPERATURE_MAX
-	int "Maximum simulated temperature value."
+	int "Maximum simulated temperature value"
 	default 3000
 
 config THERMOSTAT_SIMULATED_TEMPERATURE_MIN
-	int "Minimum simulated temperature value."
+	int "Minimum simulated temperature value"
 	default 1500
 
 config THERMOSTAT_SIMULATED_TEMPERATURE_CHANGE
-	bool "Select to set the temperature to rise or fall."
+	bool "Select to set the temperature to rise or fall"
 	default y
 	help
 	  If set to true, the simulated temperature is rising. If set to false, the simulated temperature is falling.

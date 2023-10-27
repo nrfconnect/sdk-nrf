@@ -42,14 +42,14 @@ config HEAP_MEM_POOL_SIZE
 	default 512
 
 config NFC_RING_SIZE
-	int "Size of ring buffer in bytes."
+	int "Size of ring buffer in bytes"
 	default 2048
 	help
 	  Size of the ring buffer.
 	  The specified size is expressed as n bytes.
 
 config NFC_LIB_CTX_MAX_SIZE
-	int "Maximum size of NFC library context in bytes."
+	int "Maximum size of NFC library context in bytes"
 	default 16
 	help
 	  Maximum size of the NFC library context in bytes.
@@ -100,7 +100,7 @@ config NFC_SWI_NUMBER
 
 choice NFC_SWI
 	default NFC_SWI1
-	prompt "Software interrupt to use for NFC callback request."
+	prompt "Software interrupt to use for NFC callback request"
 	help
 	  Software interrupt instantion to use for NFC callback request.
 
