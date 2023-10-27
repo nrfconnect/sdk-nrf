@@ -303,7 +303,9 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 Wi-Fi drivers
 -------------
 
-|no_changes_yet_note|
+* OS agnostic code is moved to |NCS| (``sdk-nrfxlib``) repository.
+
+   - Low-level API documentation is now available on the :ref:`Wi-Fi driver API <nrfxlib:nrf_wifi_api>`.
 
 Libraries
 =========
