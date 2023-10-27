@@ -279,7 +279,7 @@ void model_handler_start(void)
 
 #if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
 	if (bt_mesh_comp2_register(&comp_p2)) {
-		printf("Failed to register comp2\n");
+		printk("Failed to register comp2\n");
 	}
 #endif
 
