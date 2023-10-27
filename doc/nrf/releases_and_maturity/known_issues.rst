@@ -1960,7 +1960,7 @@ NCSDK-19942: HID samples do not work with Android 13
   * :ref:`fast_pair_input_device`
   * Fast Pair configurations of the :ref:`nrf_desktop` application
 
-.. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+.. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-18518: Cannot build peripheral UART and peripheral LBS samples for the nRF52810 and nRF52811 devices with the Zephyr Bluetooth LE Controller
   The :ref:`peripheral_uart` and :ref:`peripheral_lbs` samples fail to build for the nRF52810 and nRF52811 devices when the :kconfig:option:`CONFIG_BT_LL_CHOICE` Kconfig option is set to :kconfig:option:`CONFIG_BT_LL_SW_SPLIT`.
