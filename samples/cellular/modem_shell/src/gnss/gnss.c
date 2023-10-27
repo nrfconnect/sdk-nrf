@@ -1130,7 +1130,8 @@ int gnss_delete_data(enum gnss_data_delete data)
 			      NRF_MODEM_GNSS_DELETE_LAST_GOOD_FIX |
 			      NRF_MODEM_GNSS_DELETE_GPS_TOW |
 			      NRF_MODEM_GNSS_DELETE_GPS_WEEK |
-			      NRF_MODEM_GNSS_DELETE_UTC_DATA;
+			      NRF_MODEM_GNSS_DELETE_UTC_DATA |
+			      NRF_MODEM_GNSS_DELETE_GPS_TOW_PRECISION;
 		break;
 
 	case GNSS_DATA_DELETE_TCXO:
