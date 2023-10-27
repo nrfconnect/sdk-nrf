@@ -73,11 +73,11 @@ endif
 if BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 
 config BRIDGE_TEMPERATURE_SENSOR_MIN_MEASURED_VALUE
-	int "Default minimum measured value allowed by the bridged temperature sensor device."
+	int "Default minimum measured value allowed by the bridged temperature sensor device"
 	default -20
 
 config BRIDGE_TEMPERATURE_SENSOR_MAX_MEASURED_VALUE
-	int "Default maximum measured value allowed by the bridged temperature sensor device."
+	int "Default maximum measured value allowed by the bridged temperature sensor device"
 	default 60
 
 endif
@@ -85,11 +85,11 @@ endif
 if BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 config BRIDGE_HUMIDITY_SENSOR_MIN_MEASURED_VALUE
-	int "Default minimum measured value allowed by the bridged humidity sensor device."
+	int "Default minimum measured value allowed by the bridged humidity sensor device"
 	default 0
 
 config BRIDGE_HUMIDITY_SENSOR_MAX_MEASURED_VALUE
-	int "Default maximum measured value allowed by the bridged humidity sensor device."
+	int "Default maximum measured value allowed by the bridged humidity sensor device"
 	default 100
 
 endif

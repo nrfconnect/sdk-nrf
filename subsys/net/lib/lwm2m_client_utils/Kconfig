@@ -193,7 +193,7 @@ config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_BUF_SIZE
 	default 4096
 
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_ELEVATION_MASK
-	int "Minimum elevation angle for visible satellites."
+	int "Minimum elevation angle for visible satellites"
 	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
 	default -1
 	help
