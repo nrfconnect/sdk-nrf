@@ -4,59 +4,34 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Subsystems"
 
 rsource "bootloader/Kconfig"
-
 rsource "bluetooth/Kconfig"
-
 rsource "dfu/Kconfig"
-
 rsource "esb/Kconfig"
-
 rsource "emds/Kconfig"
-
 rsource "gazell/Kconfig"
-
 rsource "pcd/Kconfig"
-
 rsource "net/Kconfig"
-
 rsource "nfc/Kconfig"
-
 rsource "app_event_manager/Kconfig"
-
 rsource "nonsecure/Kconfig"
-
 rsource "app_event_manager_profiler_tracer/Kconfig"
-
 rsource "event_manager_proxy/Kconfig"
-
 rsource "nrf_profiler/Kconfig"
-
 rsource "fw_info/Kconfig"
-
 rsource "debug/Kconfig"
-
 rsource "shell/Kconfig"
-
 rsource "mpsl/Kconfig"
-
 rsource "partition_manager/Kconfig"
-
 rsource "nrf_rpc/Kconfig"
-
 rsource "zigbee/Kconfig"
-
 rsource "mgmt/fmfu/Kconfig"
-
 rsource "caf/Kconfig"
-
 rsource "ieee802154/Kconfig"
-
 rsource "dm/Kconfig"
-
 rsource "nrf_security/Kconfig"
-
 rsource "net_core_monitor/Kconfig"
-
 rsource "audio_module/Kconfig"
+endmenu
