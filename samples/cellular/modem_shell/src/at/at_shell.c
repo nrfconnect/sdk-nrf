@@ -21,18 +21,6 @@
 extern char mosh_at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
 extern struct k_mutex mosh_at_resp_buf_mutex;
 
-static const char at_usage_str[] =
-	"Usage: at <subcommand>\n"
-	"\n"
-	"Subcommands:\n"
-	"  events_enable     Enable AT event handler which prints AT notifications\n"
-	"  events_disable    Disable AT event handler\n"
-#if defined(CONFIG_MOSH_AT_CMD_MODE)
-	"  at_cmd_mode       AT command mode.\n"
-#endif
-	"\n"
-	"Any other subcommand is interpreted as AT command and sent to the modem.\n";
-
 AT_MONITOR(mosh_at_handler, ANY, at_cmd_handler, PAUSED);
 
 #if defined(CONFIG_MOSH_AT_CMD_MODE)
@@ -75,28 +63,31 @@ static void at_cmd_handler(const char *response)
 	mosh_print("AT event handler: %s", response);
 }
 
-static int at_shell(const struct shell *shell, size_t argc, char **argv)
+static int sub_at_cmd_events_enable(const struct shell *shell, size_t argc, char **argv)
+{
+	at_monitor_resume(&mosh_at_handler);
+	mosh_print("AT command events enabled");
+
+	return 0;
+}
+
+static int sub_at_cmd_events_disable(const struct shell *shell, size_t argc, char **argv)
+{
+	at_monitor_pause(&mosh_at_handler);
+	mosh_print("AT command events disabled");
+
+	return 0;
+}
+
+static int cmd_at(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 
-	if (argc < 2) {
-		mosh_print_no_format(at_usage_str);
-		return 0;
-	}
-
-	char *command = argv[1];
-
-	if (!strcmp(command, "events_enable")) {
-		at_monitor_resume(&mosh_at_handler);
-		mosh_print("AT command events enabled");
-	} else if (!strcmp(command, "events_disable")) {
-		at_monitor_pause(&mosh_at_handler);
-		mosh_print("AT command events disabled");
-	} else if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
-		mosh_print_no_format(at_usage_str);
+	if (argc < 2 || (strcmp(argv[1], "-h") == 0) || (strcmp(argv[1], "--help") == 0)) {
+		shell_help(shell);
 	} else {
 		k_mutex_lock(&mosh_at_resp_buf_mutex, K_FOREVER);
-		err = nrf_modem_at_cmd(mosh_at_resp_buf, sizeof(mosh_at_resp_buf), "%s", command);
+		err = nrf_modem_at_cmd(mosh_at_resp_buf, sizeof(mosh_at_resp_buf), "%s", argv[1]);
 		if (err == 0) {
 			mosh_print("%s", mosh_at_resp_buf);
 		} else if (err > 0) {
@@ -114,7 +105,7 @@ static int at_shell(const struct shell *shell, size_t argc, char **argv)
 
 #if defined(CONFIG_MOSH_AT_CMD_MODE)
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	sub_at_cmd_mode,
+	sub_cmd_at_cmd_mode,
 	SHELL_CMD(start, NULL,
 		  "Start AT command mode.",
 		  at_shell_cmd_mode_start),
@@ -134,15 +125,26 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  "Receive CR as command line termination.",
 		  at_shell_cmd_mode_term_cr),
 	SHELL_SUBCMD_SET_END);
+#endif
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_at_shell,
-	SHELL_CMD(at_cmd_mode, &sub_at_cmd_mode,
+	SHELL_CMD_ARG(events_enable, NULL,
+		  "Enable AT event handler which prints AT notifications.",
+		  sub_at_cmd_events_enable, 1, 0),
+	SHELL_CMD(events_disable, NULL,
+		  "Disable AT event handler.",
+		  sub_at_cmd_events_disable),
+#if defined(CONFIG_MOSH_AT_CMD_MODE)
+	SHELL_CMD(at_cmd_mode, &sub_cmd_at_cmd_mode,
 		  "Enable/disable AT command mode.",
 		  mosh_print_help_shell),
+#endif
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(at, &sub_at_shell, "Execute an AT command.", at_shell);
-#else
-SHELL_CMD_REGISTER(at, NULL, "Execute an AT command.", at_shell);
-#endif
+SHELL_CMD_REGISTER(
+	at,
+	&sub_at_shell,
+	"Execute an AT command. Any subcommand not listed below is interpreted "
+	"as AT command and sent to the modem.",
+	cmd_at);

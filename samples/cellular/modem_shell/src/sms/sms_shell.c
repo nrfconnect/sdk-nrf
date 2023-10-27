@@ -21,24 +21,15 @@
 /* Maximum length of the message data that can be specified with -m option */
 #define SMS_MAX_MESSAGE_LEN CONFIG_SHELL_CMD_BUFF_SIZE
 
-enum sms_command {
-	SMS_CMD_REGISTER = 0,
-	SMS_CMD_UNREGISTER,
-	SMS_CMD_SEND,
+enum sms_shell_command {
+	SMS_CMD_SEND = 0,
 	SMS_CMD_RECV
 };
 
-static const char sms_usage_str[] =
-	"Usage: sms <command> [options]\n"
+static const char sms_send_usage_str[] =
+	"Usage: sms send -n <number> -m <message> [-t <type>]\n"
 	"\n"
-	"<command> is one of the following:\n"
-	"  send:    Send SMS message. Also registers SMS service if required.\n"
-	"           Mandatory options: -m, -n\n"
-	"  recv:    Record number of received SMS messages.\n"
-	"  reg:     Register SMS service to be able to receive messages.\n"
-	"  unreg:   Unregister SMS service after which messages cannot be received.\n"
-	"\n"
-	"Options for 'send' command:\n"
+	"Options:\n"
 	"  -m, --message, <str> Text to be sent.\n"
 	"  -n, --number, <str>  Number in international format including country number.\n"
 	"                       Leading '+' can be present or left out.\n"
@@ -56,11 +47,16 @@ static const char sms_usage_str[] =
 	"                             010203040506070809101112\n"
 	"                             01 02 03 04 05 06 07 08 09 10 11 12\n"
 	"                             01020304 05060708 09101112\n"
+	"  -h, --help,          Shows this help information";
+
+static const char sms_recv_usage_str[] =
+	"Usage: sms recv [-r]\n"
 	"\n"
 	"Options for 'recv' command:\n"
-	"  -r, --start,         Reset SMS counter to zero\n";
+	"  -r, --start,         Reset SMS counter to zero\n"
+	"  -h, --help,          Shows this help information";
 
-/* Specifying the expected options (both long and short): */
+/* Specifying the expected options (both long and short) */
 static struct option long_options[] = {
 	{ "message",    required_argument, 0, 'm' },
 	{ "number",     required_argument, 0, 'n' },
@@ -70,56 +66,44 @@ static struct option long_options[] = {
 	{ 0,            0,                 0, 0   }
 };
 
-static void sms_print_usage(void)
+static void sms_print_usage(enum sms_shell_command command)
 {
-	mosh_print_no_format(sms_usage_str);
+	switch (command) {
+	case SMS_CMD_SEND:
+		mosh_print_no_format(sms_send_usage_str);
+		break;
+	case SMS_CMD_RECV:
+		mosh_print_no_format(sms_recv_usage_str);
+		break;
+	default:
+		break;
+	}
 }
 
-static int sms_shell(const struct shell *shell, size_t argc, char **argv)
+static int cmd_sms_send(const struct shell *shell, size_t argc, char **argv)
 {
 	int err = 0;
-	enum sms_command command;
 
 	if (argc < 2) {
-		sms_print_usage();
-		return 0;
+		goto show_usage;
 	}
-
-	/* Command = argv[1] */
-	if (!strcmp(argv[1], "reg")) {
-		command = SMS_CMD_REGISTER;
-	} else if (!strcmp(argv[1], "unreg")) {
-		command = SMS_CMD_UNREGISTER;
-	} else if (!strcmp(argv[1], "send")) {
-		command = SMS_CMD_SEND;
-	} else if (!strcmp(argv[1], "recv")) {
-		command = SMS_CMD_RECV;
-	} else {
-		if (strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
-			mosh_error("Unsupported command=%s\n", argv[1]);
-		}
-		sms_print_usage();
-		return -EINVAL;
-	}
-	/* Set getopt command line parsing index to skip commands */
-	optind = 2;
 
 	/* Variables for command line arguments */
 	char arg_number[SMS_MAX_MESSAGE_LEN + 1];
 	char arg_message[SMS_MAX_MESSAGE_LEN + 1];
-	bool arg_receive_start = false;
 	enum sms_data_type arg_message_type = SMS_DATA_TYPE_ASCII;
 
 	memset(arg_number, 0, SMS_MAX_MESSAGE_LEN + 1);
 	memset(arg_message, 0, SMS_MAX_MESSAGE_LEN + 1);
 
-	/* Parse command line */
-	int flag = 0;
+	optreset = 1;
+	optind = 1;
+	int opt;
 
-	while ((flag = getopt_long(argc, argv, "m:n:rt:h", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "m:n:t:h", long_options, NULL)) != -1) {
 		int send_data_len = 0;
 
-		switch (flag) {
+		switch (opt) {
 		case 'n': /* Phone number */
 			strcpy(arg_number, optarg);
 			break;
@@ -134,9 +118,6 @@ static int sms_shell(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			strcpy(arg_message, optarg);
-			break;
-		case 'r': /* Start monitoring received messages */
-			arg_receive_start = true;
 			break;
 		case 't': /* Message data type */
 			if (!strcmp(optarg, "ascii")) {
@@ -161,34 +142,79 @@ static int sms_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-	/* Run given command with it's arguments */
-	switch (command) {
-	case SMS_CMD_REGISTER:
-		err = sms_register();
-		break;
-	case SMS_CMD_UNREGISTER:
-		err = sms_unregister();
-		break;
-	case SMS_CMD_SEND:
-		err = sms_send_msg(arg_number, arg_message, arg_message_type);
-		break;
-	case SMS_CMD_RECV:
-		err = sms_recv(arg_receive_start);
-		break;
-	default:
-		mosh_error("Internal error. Unknown sms command=%d", command);
-		err = -EINVAL;
-		break;
-	}
+	err = sms_send_msg(arg_number, arg_message, arg_message_type);
 
 	return err;
 
 show_usage:
-	/* Reset getopt for another users */
-	optreset = 1;
-
-	sms_print_usage();
+	sms_print_usage(SMS_CMD_SEND);
 	return err;
 }
 
-SHELL_CMD_REGISTER(sms, NULL, "Commands for sending and receiving SMS.", sms_shell);
+static int cmd_sms_recv(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	/* Variables for command line arguments */
+	bool arg_receive_start = false;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, "rh", long_options, NULL)) != -1) {
+
+		switch (opt) {
+		case 'r': /* Start monitoring received messages */
+			arg_receive_start = true;
+			break;
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
+			goto show_usage;
+		}
+	}
+
+	err = sms_recv(arg_receive_start);
+
+	return err;
+
+show_usage:
+	sms_print_usage(SMS_CMD_RECV);
+	return err;
+}
+
+static int cmd_sms_reg(const struct shell *shell, size_t argc, char **argv)
+{
+	return sms_register();
+}
+
+static int cmd_sms_unreg(const struct shell *shell, size_t argc, char **argv)
+{
+	return sms_unregister();
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_sms,
+	SHELL_CMD_ARG(
+		send, NULL,
+		"Send SMS message. Also registers SMS service if required.",
+		cmd_sms_send, 0, 20),
+	SHELL_CMD_ARG(
+		recv, NULL,
+		"Record number of received SMS messages.",
+		cmd_sms_recv, 0, 10),
+	SHELL_CMD_ARG(
+		reg, NULL,
+		"Register SMS service to be able to receive messages.",
+		cmd_sms_reg, 1, 0),
+	SHELL_CMD_ARG(
+		unreg, NULL,
+		"Unregister SMS service after which messages cannot be received.",
+		cmd_sms_unreg, 1, 0),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_CMD_REGISTER(sms, &sub_sms, "Commands for sending and receiving SMS.", mosh_print_help_shell);

@@ -27,36 +27,19 @@
 /* Maximum length of the address */
 #define SOCK_MAX_ADDR_LEN 100
 
-enum sock_command {
+enum sock_shell_command {
 	SOCK_CMD_CONNECT = 0,
+	SOCK_CMD_CLOSE,
 	SOCK_CMD_SEND,
 	SOCK_CMD_RECV,
-	SOCK_CMD_CLOSE,
-	SOCK_CMD_RAI,
-	SOCK_CMD_LIST
+	SOCK_CMD_RAI
 };
 
-static const char sock_usage_str[] =
-	"Usage: sock <subcommand> [options]\n"
-	"\n"
-	"Subcommands:\n"
-	"  connect:  Open socket and connect to given host. No mandatory options.\n"
-	"  close:    Close socket connection. Mandatory options: -i\n"
-	"  send:     Send data. Mandatory options: -i\n"
-	"  recv:     Initialize and query receive throughput metrics. Without -r option,\n"
-	"            returns current metrics so that can be used both as status request\n"
-	"            and final summary for receiving.\n"
-	"            Mandatory options: -i\n"
-	"  rai:      Set Release Assistance Indication (RAI) parameters.\n"
-	"            In order to use RAI options for a socket, RAI feature must be\n"
-	"            globally enabled with 'link rai' command.\n"
-	"  list:     List open sockets. No options available.\n"
-	"\n"
-	"General options:\n"
-	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
-	"                            sockets.\n"
-	"\n"
-	"Options for 'connect' command:\n"
+static const char sock_connect_usage_str[] =
+	"Usage: sock connect -a <address> -p <port>\n"
+	"       [-f <family>] [-t <type>] [-b <port>] [-I <cid>]\n"
+	"       [-S] [-T <sec_tag>] [-c] [-V <level>] [-H <hostname>]\n"
+	"Options:\n"
 	"  -a, --address, [str]      Address as ip address or hostname\n"
 	"  -p, --port,  [int]        Port\n"
 	"  -f, --family, [str]       Address family: 'inet' (ipv4, default),\n"
@@ -72,8 +55,21 @@ static const char sock_usage_str[] =
 	"  -V, --peer_verify, [int]  TLS peer verification level. None (0),\n"
 	"                            optional (1) or required (2). Default value is 2.\n"
 	"  -H, --hostname, [str]     Hostname for TLS peer verification.\n"
-	"\n"
-	"Options for 'send' command:\n"
+	"  -h, --help,               Shows this help information";
+
+static const char sock_close_usage_str[] =
+	"Usage: sock close -i <socket id>\n"
+	"Options:\n"
+	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
+	"                            sockets.\n"
+	"  -h, --help,               Shows this help information";
+
+static const char sock_send_usage_str[] =
+	"Usage: sock send -i <socket id> [-d <data> | -l <data length>] [-e <interval>]\n"
+	"       [--packet_number_prefix] [-B <blocking>] [-s <size>] [-x]\n"
+	"Options:\n"
+	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
+	"                            sockets.\n"
 	"  -d, --data [str]          Data to be sent. Cannot be used with -l option.\n"
 	"  -l, --length, [int]       Length of undefined data in bytes. This can be used\n"
 	"                            when testing with bigger data amounts. Cannot be\n"
@@ -101,7 +97,30 @@ static const char sock_usage_str[] =
 	"                                010203040506070809101112\n"
 	"                                01 02 03 04 05 06 07 08 09 10 11 12\n"
 	"                                01020304 05060708 09101112\n"
-	"Options for 'rai' command:\n"
+	"  -h, --help,               Shows this help information";
+
+static const char sock_recv_usage_str[] =
+	"Usage: sock recv -i <socket id> [-r] [-l <data_len>] [-B <blocking>] [-P <format>]\n"
+	"Options:\n"
+	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
+	"                            sockets.\n"
+	"  -r, --start,              Initialize variables for receive throughput\n"
+	"                            calculation\n"
+	"  -l, --length, [int]       Length of expected data in bytes. After receiving\n"
+	"                            data with given length, summary of data throughput\n"
+	"                            is printed. Should be used with -r option.\n"
+	"  -B, --blocking, [int]     Blocking (1) or non-blocking (0) mode. This only\n"
+	"                            accounts when -r is given. Default value is 0.\n"
+	"  -P, --print_format, [str] Set receive data print format: 'str' (default) or\n"
+	"                            'hex'\n"
+	"  -h, --help,               Shows this help information";
+
+static const char sock_rai_usage_str[] =
+	"Usage: sock rai -i <socket id> [--rai_last] [--rai_no_data] [--rai_one_resp]\n"
+	"       [--rai_ongoing] [--rai_wait_more]\n"
+	"Options:\n"
+	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
+	"                            sockets.\n"
 	"      --rai_last,           Sets NRF_SO_RAI_LAST option.\n"
 	"                            Indicates that the next call to send/sendto will be\n"
 	"                            the last one for some time, which means that the\n"
@@ -126,19 +145,9 @@ static const char sock_usage_str[] =
 	"                            If a server application expects to use the socket\n"
 	"                            more it can indicate that by setting this socket\n"
 	"                            option before the next send call.\n"
-	"\n"
-	"Options for 'recv' command:\n"
-	"  -r, --start,              Initialize variables for receive throughput\n"
-	"                            calculation\n"
-	"  -l, --length, [int]       Length of expected data in bytes. After receiving\n"
-	"                            data with given length, summary of data throughput\n"
-	"                            is printed. Should be used with -r option.\n"
-	"  -B, --blocking, [int]     Blocking (1) or non-blocking (0) mode. This only\n"
-	"                            accounts when -r is given. Default value is 0.\n"
-	"  -P, --print_format, [str] Set receive data print format: 'str' (default) or\n"
-	"                            'hex'\n";
+	"  -h, --help,               Shows this help information";
 
-/* The following do not have short options: */
+/* The following do not have short options */
 #define SOCK_SHELL_OPT_RAI_LAST 200
 #define SOCK_SHELL_OPT_RAI_NO_DATA 201
 #define SOCK_SHELL_OPT_RAI_ONE_RESP 202
@@ -146,7 +155,7 @@ static const char sock_usage_str[] =
 #define SOCK_SHELL_OPT_RAI_WAIT_MORE 204
 #define SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX 205
 
-/* Specifying the expected options (both long and short): */
+/* Specifying the expected options (both long and short) */
 static struct option long_options[] = {
 	{ "id",             required_argument, 0, 'i' },
 	{ "cid",            required_argument, 0, 'I' },
@@ -178,49 +187,40 @@ static struct option long_options[] = {
 	{ 0,                0,                 0, 0   }
 };
 
-static void sock_print_usage(void)
+static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:P:h";
+
+static void sock_print_usage(enum sock_shell_command command)
 {
-	mosh_print_no_format(sock_usage_str);
+	switch (command) {
+	case SOCK_CMD_CONNECT:
+		mosh_print_no_format(sock_connect_usage_str);
+		break;
+	case SOCK_CMD_CLOSE:
+		mosh_print_no_format(sock_close_usage_str);
+		break;
+	case SOCK_CMD_SEND:
+		mosh_print_no_format(sock_send_usage_str);
+		break;
+	case SOCK_CMD_RECV:
+		mosh_print_no_format(sock_recv_usage_str);
+		break;
+	case SOCK_CMD_RAI:
+		mosh_print_no_format(sock_rai_usage_str);
+		break;
+	default:
+		break;
+	}
 }
 
-static int sock_shell(const struct shell *shell, size_t argc, char **argv)
+static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 {
 	int err = 0;
-	char *command_str = argv[1];
-	enum sock_command command;
-
-	/* Reset getopt index to the start of the arguments */
-	optind = 1;
 
 	if (argc < 2) {
-		sock_print_usage();
-		return 0;
+		goto show_usage;
 	}
-
-	if (!strcmp(command_str, "connect")) {
-		command = SOCK_CMD_CONNECT;
-	} else if (!strcmp(command_str, "send")) {
-		command = SOCK_CMD_SEND;
-	} else if (!strcmp(command_str, "recv")) {
-		command = SOCK_CMD_RECV;
-	} else if (!strcmp(command_str, "close")) {
-		command = SOCK_CMD_CLOSE;
-	} else if (!strcmp(command_str, "rai")) {
-		command = SOCK_CMD_RAI;
-	} else if (!strcmp(command_str, "list")) {
-		command = SOCK_CMD_LIST;
-	} else {
-		if (strcmp(argv[1], "-h") != 0 && strcmp(argv[1], "--help") != 0) {
-			mosh_error("Unsupported command=%s\n", command_str);
-		}
-		sock_print_usage();
-		return -EINVAL;
-	}
-	/* Increase getopt command line parsing index not to handle command */
-	optind++;
 
 	/* Variables for command line arguments */
-	int arg_socket_id = SOCK_ID_NONE;
 	int arg_family = AF_INET;
 	int arg_type = SOCK_STREAM;
 	char arg_address[SOCK_MAX_ADDR_LEN + 1];
@@ -232,39 +232,18 @@ static int sock_shell(const struct shell *shell, size_t argc, char **argv)
 	bool arg_session_cache = false;
 	int arg_peer_verify = 2;
 	char arg_peer_hostname[SOCK_MAX_ADDR_LEN + 1];
-	char arg_send_data[SOCK_MAX_SEND_DATA_LEN + 1];
-	int arg_data_length = 0;
-	int arg_data_interval = SOCK_SEND_DATA_INTERVAL_NONE;
-	bool arg_packet_number_prefix = false;
-	int arg_buffer_size = SOCK_BUFFER_SIZE_NONE;
-	bool arg_data_format_hex = false;
-	bool arg_receive_start = false;
-	bool arg_blocking_send = true;
-	bool arg_blocking_recv = false;
-	enum sock_recv_print_format arg_recv_print_format = SOCK_RECV_PRINT_FORMAT_NONE;
-	bool arg_rai_last = false;
-	bool arg_rai_no_data = false;
-	bool arg_rai_one_resp = false;
-	bool arg_rai_ongoing = false;
-	bool arg_rai_wait_more = false;
 
 	memset(arg_address, 0, SOCK_MAX_ADDR_LEN + 1);
 	memset(arg_peer_hostname, 0, SOCK_MAX_ADDR_LEN + 1);
-	memset(arg_send_data, 0, SOCK_MAX_SEND_DATA_LEN + 1);
 
-	/* Parse command line */
-	int flag = 0;
+	optreset = 1;
+	optind = 1;
+	int opt;
 
-	while ((flag = getopt_long(argc, argv,
-				   "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:P:h",
-				   long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		int addr_len = 0;
-		int send_data_len = 0;
 
-		switch (flag) {
-		case 'i': /* Socket ID */
-			arg_socket_id = atoi(optarg);
-			break;
+		switch (opt) {
 		case 'I': /* PDN CID */
 			arg_pdn_cid = atoi(optarg);
 			if (arg_pdn_cid <= 0) {
@@ -365,6 +344,108 @@ static int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			strcpy(arg_peer_hostname, optarg);
 			break;
+
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
+			goto show_usage;
+		}
+	}
+
+	err = sock_open_and_connect(
+		arg_family,
+		arg_type,
+		arg_address,
+		arg_port,
+		arg_bind_port,
+		arg_pdn_cid,
+		arg_secure,
+		arg_sec_tag,
+		arg_session_cache,
+		arg_peer_verify,
+		arg_peer_hostname);
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_CONNECT);
+	return err;
+}
+
+static int cmd_sock_close(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_socket_id = SOCK_ID_NONE;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, "i:h", long_options, NULL)) != -1) {
+
+		switch (opt) {
+		case 'i': /* Socket ID */
+			arg_socket_id = atoi(optarg);
+			break;
+
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
+			goto show_usage;
+		}
+	}
+
+	err = sock_close(arg_socket_id);
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_CLOSE);
+	return err;
+}
+
+static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_socket_id = SOCK_ID_NONE;
+	char arg_send_data[SOCK_MAX_SEND_DATA_LEN + 1];
+	int arg_data_length = 0;
+	int arg_data_interval = SOCK_SEND_DATA_INTERVAL_NONE;
+	bool arg_packet_number_prefix = false;
+	int arg_buffer_size = SOCK_BUFFER_SIZE_NONE;
+	bool arg_data_format_hex = false;
+	bool arg_blocking_send = true;
+	bool arg_blocking_recv = false;
+
+	memset(arg_send_data, 0, SOCK_MAX_SEND_DATA_LEN + 1);
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		int send_data_len = 0;
+
+		switch (opt) {
+		case 'i': /* Socket ID */
+			arg_socket_id = atoi(optarg);
+			break;
 		case 'd': /* Data to be sent is available in send buffer */
 			send_data_len = strlen(optarg);
 			if (send_data_len > SOCK_MAX_SEND_DATA_LEN) {
@@ -393,6 +474,79 @@ static int sock_shell(const struct shell *shell, size_t argc, char **argv)
 					arg_buffer_size);
 				return -EINVAL;
 			}
+			break;
+		case 'B': /* Blocking/non-blocking send or receive */
+		{
+			int blocking = atoi(optarg);
+
+			if (blocking != 0 && blocking != 1) {
+				mosh_error(
+					"Blocking (%d) must be either '0' (false) or '1' (true)",
+					optarg);
+				return -EINVAL;
+			}
+			arg_blocking_recv = blocking;
+			arg_blocking_send = blocking;
+			break;
+		}
+		case SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX:
+			arg_packet_number_prefix = true;
+			break;
+
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
+			goto show_usage;
+		}
+	}
+
+	err = sock_send_data(
+		arg_socket_id,
+		arg_send_data,
+		arg_data_length,
+		arg_data_interval,
+		arg_packet_number_prefix,
+		arg_blocking_send,
+		arg_buffer_size,
+		arg_data_format_hex);
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_SEND);
+	return err;
+}
+
+static int cmd_sock_recv(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_socket_id = SOCK_ID_NONE;
+	int arg_data_length = 0;
+	bool arg_receive_start = false;
+	bool arg_blocking_send = true;
+	bool arg_blocking_recv = false;
+	enum sock_recv_print_format arg_recv_print_format = SOCK_RECV_PRINT_FORMAT_NONE;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+
+		switch (opt) {
+		case 'i': /* Socket ID */
+			arg_socket_id = atoi(optarg);
+			break;
+		case 'l': /* Length of data */
+			arg_data_length = atoi(optarg);
 			break;
 		case 'r': /* Start monitoring received data */
 			arg_receive_start = true;
@@ -426,9 +580,54 @@ static int sock_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 
-		/* Options without short option: */
-		case SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX:
-			arg_packet_number_prefix = true;
+		case '?':
+			mosh_error("Unknown option. See usage:");
+			goto show_usage;
+		case 'h':
+		default:
+			goto show_usage;
+		}
+	}
+
+	err = sock_recv(
+		arg_socket_id,
+		arg_receive_start,
+		arg_data_length,
+		arg_blocking_recv,
+		arg_recv_print_format);
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_RECV);
+	return err;
+}
+
+static int cmd_sock_rai(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_socket_id = SOCK_ID_NONE;
+	bool arg_rai_last = false;
+	bool arg_rai_no_data = false;
+	bool arg_rai_one_resp = false;
+	bool arg_rai_ongoing = false;
+	bool arg_rai_wait_more = false;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+
+		switch (opt) {
+		case 'i': /* Socket ID */
+			arg_socket_id = atoi(optarg);
 			break;
 
 		case SOCK_SHELL_OPT_RAI_LAST:
@@ -456,89 +655,74 @@ static int sock_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-	/* Run given command with it's arguments */
-	switch (command) {
-	case SOCK_CMD_CONNECT:
-		err = sock_open_and_connect(
-			arg_family,
-			arg_type,
-			arg_address,
-			arg_port,
-			arg_bind_port,
-			arg_pdn_cid,
-			arg_secure,
-			arg_sec_tag,
-			arg_session_cache,
-			arg_peer_verify,
-			arg_peer_hostname);
-		break;
-	case SOCK_CMD_SEND:
-		err = sock_send_data(
-			arg_socket_id,
-			arg_send_data,
-			arg_data_length,
-			arg_data_interval,
-			arg_packet_number_prefix,
-			arg_blocking_send,
-			arg_buffer_size,
-			arg_data_format_hex);
-		break;
-	case SOCK_CMD_RECV:
-		err = sock_recv(
-			arg_socket_id,
-			arg_receive_start,
-			arg_data_length,
-			arg_blocking_recv,
-			arg_recv_print_format);
-		break;
-	case SOCK_CMD_CLOSE:
-		err = sock_close(arg_socket_id);
-		break;
-	case SOCK_CMD_RAI:
-		{
-		bool rai_status = false;
+	bool rai_status = false;
 
-		(void)link_api_rai_status(&rai_status);
-		/* If RAI is disabled or reading it fails, show warning. It's only
-		 * warning because RAI status may be out of sync if device hadn't gone
-		 * to normal mode since changing it.
-		 */
-		if (!rai_status) {
-			mosh_warn(
-				"RAI is requested but RAI is disabled.\n"
-				"Use 'link rai' command to enable it for socket usage.");
-		}
-
-		err = sock_rai(
-			arg_socket_id,
-			arg_rai_last,
-			arg_rai_no_data,
-			arg_rai_one_resp,
-			arg_rai_ongoing,
-			arg_rai_wait_more);
-		break;
-		}
-	case SOCK_CMD_LIST:
-		err = sock_list();
-		break;
-	default:
-		mosh_error("Internal error. Unknown socket command=%d", command);
-		err = -EINVAL;
-		break;
+	(void)link_api_rai_status(&rai_status);
+	/* If RAI is disabled or reading it fails, show warning. It's only
+	 * warning because RAI status may be out of sync if device hadn't gone
+	 * to normal mode since changing it.
+	 */
+	if (!rai_status) {
+		mosh_warn(
+			"RAI is requested but RAI is disabled.\n"
+			"Use 'link rai' command to enable it for socket usage.");
 	}
+
+	err = sock_rai(
+		arg_socket_id,
+		arg_rai_last,
+		arg_rai_no_data,
+		arg_rai_one_resp,
+		arg_rai_ongoing,
+		arg_rai_wait_more);
 
 	return err;
 
 show_usage:
-	/* Reset getopt for another users */
-	optreset = 1;
-
-	sock_print_usage();
+	sock_print_usage(SOCK_CMD_RAI);
 	return err;
 }
 
+static int cmd_sock_list(const struct shell *shell, size_t argc, char **argv)
+{
+	return sock_list();
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_sock,
+	SHELL_CMD_ARG(
+		connect, NULL,
+		"Open socket and connect to given host.",
+		cmd_sock_connect, 0, 20),
+	SHELL_CMD_ARG(
+		close, NULL,
+		"Close socket connection.",
+		cmd_sock_close, 0, 10),
+	SHELL_CMD_ARG(
+		send, NULL,
+		"Send data.",
+		cmd_sock_send, 0, 30),
+	SHELL_CMD_ARG(
+		recv, NULL,
+		"Initialize and query receive throughput metrics. Without -r option, "
+		"returns current metrics so that can be used both as status request "
+		"and final summary for receiving.",
+		cmd_sock_recv, 0, 10),
+	SHELL_CMD_ARG(
+		rai, NULL,
+		"Set Release Assistance Indication (RAI) parameters. "
+		"In order to use RAI options for a socket, RAI feature must be "
+		"globally enabled with 'link rai' command.",
+		cmd_sock_rai, 0, 10),
+	SHELL_CMD_ARG(
+		list, NULL,
+		"List open sockets.",
+		cmd_sock_list, 1, 0),
+	SHELL_SUBCMD_SET_END
+);
+
 SHELL_CMD_REGISTER(
 	sock,
-	NULL,
+	&sub_sock,
 	"Commands for socket operations such as connect and send.",
-	sock_shell);
+	mosh_print_help_shell);
