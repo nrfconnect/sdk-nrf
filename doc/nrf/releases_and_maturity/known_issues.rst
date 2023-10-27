@@ -2686,8 +2686,8 @@ The issues in this section are related to :ref:`Bootloaders <app_bootloaders>`.
 
 .. rst-class:: v2-5-0
 
-NCSDK-24203: If fault injection hardening (FIH) is enabled, a bug is observed in the boot_image_check_hook() function
-  Due to this, multicore applications cannot be booted for nRF5340 MCUboot builds with simultaneous multimage update enabled.
+NCSDK-24203: If fault injection hardening (FIH) is enabled, a bug is observed in the :func:`boot_image_check_hook` function
+  Due to this, multicore applications cannot be booted for nRF5340 MCUboot builds with simultaneous multimage update enabled.
 
   **Affected platforms:** nRF5340, Thingy:53
 
