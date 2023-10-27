@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Multiprotocol service layer (MPSL)"
+
 config MPSL_FEM_ONLY
 	bool "Support only radio front-end module (FEM)"
 	help
@@ -18,3 +20,5 @@ rsource "cx/Kconfig"
 rsource "init/Kconfig"
 
 endif # !MPSL_FEM_ONLY
+
+endmenu
