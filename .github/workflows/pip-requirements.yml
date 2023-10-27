@@ -74,4 +74,4 @@ jobs:
           diff_file: requirements-fixed.txt
           reaction_emote: "${{ env.REACT_EMOTE }}"
           git_user_name: "Nordic Builder"
-          git_user_email: "NordicBuilder@github.com"
+          git_user_email: "pylon@nordicsemi.no"
