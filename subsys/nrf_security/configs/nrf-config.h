@@ -25,12 +25,14 @@ extern "C" {
  */
 /****************************************************************/
 
+/* Required for MBEDTLS_HAS_ECDH_CIPHERSUITE_REQUIREMENTS */
 #if defined(PSA_WANT_ALG_ECDH)
 #define MBEDTLS_ECDH_C
 #define MBEDTLS_ECP_C
 #define MBEDTLS_BIGNUM_C
 #endif
 
+/* Required for MBEDTLS_HAS_ECDSA_CIPHERSUITE_REQUIREMENTS */
 #if defined(PSA_WANT_ALG_ECDSA)
 #define MBEDTLS_ECDSA_C
 #define MBEDTLS_ECP_C
@@ -39,37 +41,10 @@ extern "C" {
 #define MBEDTLS_ASN1_WRITE_C
 #endif
 
-#if defined(PSA_WANT_ALG_MD5)
-#define MBEDTLS_MD5_C
-#endif
-
-#if defined(PSA_WANT_ALG_RSA_OAEP)
-#define MBEDTLS_RSA_C
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_OID_C
-#define MBEDTLS_PKCS1_V21
-#endif
-
-#if defined(PSA_WANT_ALG_RSA_PKCS1V15_CRYPT)
-#define MBEDTLS_RSA_C
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_OID_C
-#define MBEDTLS_PKCS1_V15
-#endif
-
-#if defined(PSA_WANT_ALG_RSA_PKCS1V15_SIGN)
-#define MBEDTLS_RSA_C
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_OID_C
-#define MBEDTLS_PKCS1_V15
-#endif
-
-#if defined(PSA_WANT_ALG_RSA_PSS)
-#define MBEDTLS_RSA_C
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_OID_C
-#define MBEDTLS_PKCS1_V21
-#endif
+/* Required for MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
+ *
+ * The requirements should all be met on MBEDTLS configurations already.
+ */
 
 #if defined(PSA_WANT_ALG_SHA_1)
 /* TLS/DTLS 1.2 requires SHA-1 support using legacy API for now.
@@ -80,132 +55,39 @@ extern "C" {
 #endif
 #endif
 
-#if defined(PSA_WANT_ALG_SHA_224)
-#define MBEDTLS_SHA224_C
-#define MBEDTLS_SHA256_C
-#endif
-
+/* Required for MBEDTLS_HAS_ECJPAKE_CIPHERSUITE_REQUIREMENTS */
 #if defined(PSA_WANT_ALG_SHA_256)
 #define MBEDTLS_SHA224_C
 #define MBEDTLS_SHA256_C
 #endif
 
-#if defined(PSA_WANT_ALG_SHA_384)
-#define MBEDTLS_SHA384_C
-#define MBEDTLS_SHA512_C
-#endif
-
-#if defined(PSA_WANT_ALG_SHA_512)
-#define MBEDTLS_SHA512_C
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_ECC_KEY_PAIR)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_KEY_PAIR)
-#define MBEDTLS_ECP_C
-#define MBEDTLS_BIGNUM_C
-#endif
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_ECC_PUBLIC_KEY)
-#define MBEDTLS_ECP_C
-#define MBEDTLS_BIGNUM_C
-#endif
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_RSA_KEY_PAIR)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_KEY_PAIR)
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_OID_C
-#define MBEDTLS_GENPRIME
-#endif
-#define MBEDTLS_RSA_C
-#define MBEDTLS_PK_PARSE_C
-#define MBEDTLS_PK_WRITE_C
-#define MBEDTLS_PK_C
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_RSA_PUBLIC_KEY)
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_OID_C
-#endif
-#define MBEDTLS_RSA_C
-#define MBEDTLS_PK_PARSE_C
-#define MBEDTLS_PK_WRITE_C
-#define MBEDTLS_PK_C
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_AES)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_AES)
-#define MBEDTLS_AES_C
-#endif
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_CAMELLIA)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_CAMELLIA)
-#define MBEDTLS_CAMELLIA_C
-#endif
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_DES)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_DES)
-#define MBEDTLS_DES_C
-#endif
-#endif
-
-#if defined(PSA_WANT_KEY_TYPE_CHACHA20)
-#if !defined(MBEDTLS_PSA_ACCEL_KEY_TYPE_CHACHA20)
-#define MBEDTLS_CHACHA20_C
-#endif
-#endif
-
-#if defined(PSA_WANT_ALG_CBC_MAC)
-#if !defined(MBEDTLS_PSA_ACCEL_ALG_CBC_MAC)
-#error "CBC-MAC is not yet supported via the PSA API in Mbed TLS."
-#endif
-#endif
-
+/* Required for OPENTHREAD_NRF_SECURITY_PSA_CHOICE (KRKNWK-18015) */
 #if defined(PSA_WANT_ALG_CMAC)
 #define MBEDTLS_CMAC_C
 #define MBEDTLS_AES_C
 #endif
 
-#if defined(PSA_WANT_ALG_CTR)
-#define MBEDTLS_CIPHER_MODE_CTR
-#endif
-
-#if defined(PSA_WANT_ALG_CFB)
-#define MBEDTLS_CIPHER_MODE_CFB
-#endif
-
-#if defined(PSA_WANT_ALG_OFB)
-#define MBEDTLS_CIPHER_MODE_OFB
-#endif
-
-#if defined(PSA_WANT_ALG_XTS)
-#define MBEDTLS_CIPHER_MODE_XTS
-#endif
-
-#if defined(PSA_WANT_ALG_CBC_NO_PADDING)
-#define MBEDTLS_CIPHER_MODE_CBC
-#endif
-
+/* Required for MBEDTLS_HAS_CBC_CIPHERSUITE_REQUIREMENTS */
 #if defined(PSA_WANT_ALG_CBC_PKCS7)
+/* NB: check_config does not do any checks for CBC. */
 #define MBEDTLS_CIPHER_MODE_CBC
 #define MBEDTLS_CIPHER_PADDING_PKCS7
+#define MBEDTLS_AES_C
 #endif
 
+/* Required for MBEDTLS_HAS_CCM_CIPHERSUITE_REQUIREMENTS */
 #if defined(PSA_WANT_ALG_CCM)
 #define MBEDTLS_CCM_C
 #define MBEDTLS_AES_C
 #endif
 
+/* Required for MBEDTLS_HAS_GCM_CIPHERSUITE_REQUIREMENTS */
 #if defined(PSA_WANT_ALG_GCM)
 #define MBEDTLS_GCM_C
 #define MBEDTLS_AES_C
 #endif
 
+/* Required for MBEDTLS_HAS_CHACHAPOLY_CIPHERSUITE_REQUIREMENTS */
 #if defined(PSA_WANT_ALG_CHACHA20_POLY1305)
 #if defined(PSA_WANT_KEY_TYPE_CHACHA20)
 #define MBEDTLS_CHACHA20_C
@@ -214,6 +96,7 @@ extern "C" {
 #endif
 #endif
 
+/* Because we have enabled MBEDTLS_ECP_C we need atleast one ECC curve type. */
 #if defined(PSA_WANT_ECC_BRAINPOOL_P_R1_256)
 #define MBEDTLS_ECP_DP_BP256R1_ENABLED
 #endif
@@ -266,6 +149,14 @@ extern "C" {
 #define MBEDTLS_ECP_DP_SECP256K1_ENABLED
 #endif
 
+/* Required for MBEDTLS_HAS_ECJPAKE_CIPHERSUITE_REQUIREMENTS */
+#if defined(PSA_WANT_ALG_JPAKE)
+#define MBEDTLS_ECP_DP_SECP256R1_ENABLED
+#define MBEDTLS_BIGNUM_C
+#define MBEDTLS_ECP_C
+#define MBEDTLS_ECJPAKE_C
+#endif
+
 /* Nordic added */
 #if defined(MBEDTLS_PK_PARSE_C)
 #define MBEDTLS_ASN1_PARSE_C
@@ -273,26 +164,6 @@ extern "C" {
 
 #if defined(MBEDTLS_PK_WRITE_C)
 #define MBEDTLS_ASN1_WRITE_C
-#endif
-
-#if defined(PSA_WANT_ALG_CTR_DRBG)
-#if !defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
-#define MBEDTLS_ENTROPY_C
-#define MBEDTLS_SHA224_C
-#define MBEDTLS_SHA256_C
-#define MBEDTLS_CTR_DRBG_C
-#define MBEDTLS_AES_C
-#endif
-#endif
-
-#if defined(PSA_WANT_ALG_HMAC_DRBG)
-#if !defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
-#define MBEDTLS_ENTROPY_C
-#define MBEDTLS_SHA224_C
-#define MBEDTLS_SHA256_C
-#define MBEDTLS_MD_C
-#define MBEDTLS_HMAC_DRBG_C
-#endif
 #endif
 
 /* TLS/DTLS additions */
@@ -316,14 +187,11 @@ extern "C" {
 #define MBEDTLS_PK_C
 #define MBEDTLS_OID_C
 #define MBEDTLS_DHM_C
+#define MBEDTLS_BIGNUM_C
 #define MBEDTLS_BASE64_C
 #define MBEDTLS_PEM_PARSE_C
 #endif
 
-#if defined(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
-#define MBEDTLS_ECJPAKE_C
-#define MBEDTLS_ECP_C
-#endif
 #endif /* MBEDTLS_PSA_CRYPTO_SPM */
 
 #if defined(CONFIG_MBEDTLS_DEBUG)
