@@ -193,6 +193,14 @@ Cellular samples (renamed from nRF9160 samples)
     * Printing of the last reset reason when the sample starts.
     * Support for printing the sample version information using the ``version`` command.
 
+* :ref:`nrf_cloud_multi_service` sample:
+
+  * Fixed:
+
+    * The sample now waits for a successful connection before printing ``Connected to nRF Cloud!``.
+
+|no_changes_yet_note|
+
 Cryptography samples
 --------------------
 
