@@ -26,15 +26,15 @@ LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 /* Pendable events that threads can wait for. */
 #define NETWORK_READY			BIT(0)
-#define CLOUD_READY			BIT(1)
-#define CLOUD_DISCONNECTED		BIT(2)
-#define DATE_TIME_KNOWN			BIT(3)
+#define CLOUD_CONNECTED			BIT(1)
+#define CLOUD_READY			BIT(2)
+#define CLOUD_DISCONNECTED		BIT(3)
+#define DATE_TIME_KNOWN			BIT(4)
 static K_EVENT_DEFINE(cloud_events);
 
 /* Atomic status flag tracking whether an initial association is in progress. */
 atomic_t initial_association;
 
-static void cloud_ready(void);
 static void update_shadow(void);
 
 /* Helper functions for pending on pendable events. */
@@ -58,6 +58,19 @@ bool await_date_time_known(k_timeout_t timeout)
 	return k_event_wait(&cloud_events, DATE_TIME_KNOWN, false, timeout) != 0;
 }
 
+/* Wait for a connection result, and return true if connection was successful within the timeout,
+ * otherwise return false.
+ */
+static bool await_connection_result(k_timeout_t timeout)
+{
+	/* After a connection attempt, either CLOUD_CONNECTED or CLOUD_DISCONNECTED will be
+	 * raised, depending on whether the connection succeeded.
+	 */
+	uint32_t events = CLOUD_CONNECTED | CLOUD_DISCONNECTED;
+
+	return (k_event_wait(&cloud_events, events, false, timeout) & CLOUD_CONNECTED) != 0;
+}
+
 /* Delayable work item for handling cloud readiness timeout.
  * The work item is scheduled at a delay any time connection starts and is cancelled when the
  * connection to nRF Cloud becomes ready to use (signalled by NRF_CLOUD_EVT_READY).
@@ -74,10 +87,18 @@ static void ready_timeout_work_fn(struct k_work *work)
 
 static K_WORK_DELAYABLE_DEFINE(ready_timeout_work, ready_timeout_work_fn);
 
+
+/* Start the readiness timeout if readiness is not already achieved. */
 static void start_readiness_timeout(void)
 {
+	/* It doesn't make sense to start the readiness timeout if we're already ready. */
+	if (!k_event_test(&cloud_events, CLOUD_READY)) {
+		return;
+	}
+
 	LOG_DBG("Starting cloud connection readiness timeout for %d seconds",
 		CONFIG_CLOUD_READY_TIMEOUT_SECONDS);
+
 	k_work_reschedule(&ready_timeout_work, K_SECONDS(CONFIG_CLOUD_READY_TIMEOUT_SECONDS));
 }
 
@@ -85,6 +106,29 @@ static void clear_readiness_timeout(void)
 {
 	LOG_DBG("Stopping cloud connection readiness timeout");
 	k_work_cancel_delayable(&ready_timeout_work);
+}
+
+/**
+ * @brief Update internal state in response to achieving connection.
+ */
+static void cloud_connected(void)
+{
+	LOG_INF("Connected to nRF Cloud");
+
+	/* Notify that the nRF Cloud connection is established. */
+	k_event_post(&cloud_events, CLOUD_CONNECTED);
+}
+
+/**
+ * @brief Update internal state in response to achieving readiness.
+ */
+static void cloud_ready(void)
+{
+	/* Clear the readiness timeout, since we have become ready. */
+	clear_readiness_timeout();
+
+	/* Notify that the nRF Cloud connection is ready for use. */
+	k_event_post(&cloud_events, CLOUD_READY);
 }
 
 /* A callback that the application may register in order to handle custom device messages.
@@ -111,8 +155,8 @@ void disconnect_cloud(void)
 	/* Clear the readiness timeout in case it was running. */
 	clear_readiness_timeout();
 
-	/* Clear the Ready event, no longer accurate. */
-	k_event_clear(&cloud_events, CLOUD_READY);
+	/* Clear the Ready and Connected events, no longer accurate. */
+	k_event_clear(&cloud_events, CLOUD_READY | CLOUD_CONNECTED);
 
 	/* Clear the initial association flag, no longer accurate. */
 	atomic_set(&initial_association, false);
@@ -144,6 +188,8 @@ void disconnect_cloud(void)
 /**
  * @brief Attempt to connect to nRF Cloud and update internal state accordingly.
  *
+ * Blocks until connection attempt either succeeds or fails.
+ *
  * @retval true if successful
  * @retval false if connection failed
  */
@@ -162,7 +208,10 @@ static bool connect_cloud(void)
 #elif defined(CONFIG_NRF_CLOUD_COAP)
 	/* Connect via CoAP -- blocking. */
 	err = nrf_cloud_coap_connect(CONFIG_APP_VERSION);
+
+	/* Cloud is immediately ready and connected since nrf_cloud_coap_connect is blocking. */
 	if (!err) {
+		cloud_connected();
 		cloud_ready();
 		update_shadow();
 		return true;
@@ -175,28 +224,23 @@ static bool connect_cloud(void)
 		return true;
 	}
 
-	/* If the connection attempt fails, report and exit. */
+	/* If the connection attempt fails immediately, report and exit. */
 	if (err != 0) {
 		LOG_ERR("Could not connect to nRF Cloud, error: %d", err);
 		return false;
 	}
 
-	/* If the connect attempt succeeded, start the readiness timeout. */
-	LOG_INF("Connected to nRF Cloud");
+	/* Wait for the connection to either complete or fail. */
+	if (!await_connection_result(K_FOREVER)) {
+		LOG_ERR("Could not connect to nRF Cloud");
+		return false;
+	}
+
+	/* If connection succeeded and we aren't already ready, start the readiness timeout.
+	 * (Readiness check is performed by start_readiness_timeout).
+	 */
 	start_readiness_timeout();
 	return true;
-}
-
-/**
- * @brief Update internal state in response to achieving readiness.
- */
-static void cloud_ready(void)
-{
-	/* Clear the readiness timeout, since we have become ready. */
-	clear_readiness_timeout();
-
-	/* Notify that the nRF Cloud connection is ready for use. */
-	k_event_post(&cloud_events, CLOUD_READY);
 }
 
 /**
@@ -313,7 +357,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 	switch (nrf_cloud_evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
-		/* There isn't much to do here since what we really care about is association! */
+
+		/* Handle connection success. */
+		cloud_connected();
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
