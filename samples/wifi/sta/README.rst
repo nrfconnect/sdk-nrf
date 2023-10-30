@@ -38,32 +38,28 @@ Configuration
 
 |config|
 
-You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
-
-* Network name (SSID)
-* Key management
-* Password
-
-.. note::
-   You can also use ``menuconfig`` to enable ``Key management`` option.
-
-See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
-
 Configuration options
 =====================
 
-The following sample-specific Kconfig option is used in this sample (located in :file:`samples/wifi/sta/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/sta/Kconfig`):
 
-.. _CONFIG_NRF700X_QSPI_ENCRYPTION_KEY:
+.. options-from-kconfig::
+   :show-type:
 
-CONFIG_NRF700X_QSPI_ENCRYPTION_KEY
-   This option specifies the QSPI encryption key.
+You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+
+.. include:: /includes/wifi_credentials_static.txt
+
+.. note::
+   You can also use ``menuconfig`` to configure ``Wi-Fi credentials``.
+
+See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
 Quad Serial Peripheral Interface (QSPI) encryption
 **************************************************
 
 This sample demonstrates QSPI encryption API usage.
-You can set the key using the :ref:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY <CONFIG_NRF700X_QSPI_ENCRYPTION_KEY>` Kconfig option.
+You can set the key using the :kconfig:option:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY` Kconfig option.
 
 If encryption of the QSPI traffic is required for the production devices, matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
 The key from non-volatile storage must be set as the encryption key using the APIs.

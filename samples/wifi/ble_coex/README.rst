@@ -75,8 +75,8 @@ The following sample-specific Kconfig options are used in this sample (located i
 .. options-from-kconfig::
    :show-type:
 
-Configuration files
-===================
+Additional configuration
+========================
 
 To enable different test modes, set up the following configuration parameters in the :file:`prj.conf` file:
 
@@ -96,15 +96,14 @@ To enable different test modes, set up the following configuration parameters in
 * Bluetooth LE configuration: Set the Bluetooth LE connection interval limits using the :kconfig:option:`CONFIG_INTERVAL_MIN` and :kconfig:option:`CONFIG_INTERVAL_MAX` Kconfig options.
   The units are 1.25 milliseconds.
   For example, ``CONFIG_INTERVAL_MIN=80`` corresponds to an interval of 100 ms (80 x 1.25).
-* Wi-Fi connection: Set the following options appropriately as per the credentials of the access point used for this testing:
+* Wi-Fi connection: Use the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option to establish a connection to a peer host.
 
-  * :ref:`CONFIG_STA_SAMPLE_SSID <CONFIG_STA_SAMPLE_SSID>`
-  * :ref:`CONFIG_STA_SAMPLE_PASSWORD <CONFIG_STA_SAMPLE_PASSWORD>`
-  * :ref:`CONFIG_STA_KEY_MGMT_* <CONFIG_STA_KEY_MGMT_*>`
-  * :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR`
+You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+
+.. include:: /includes/wifi_credentials_static.txt
 
 .. note::
-   ``menuconfig`` can also be used to enable the ``Key management`` option.
+   You can also use ``menuconfig`` to configure ``Wi-Fi credentials``.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
