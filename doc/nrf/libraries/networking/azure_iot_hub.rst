@@ -24,17 +24,83 @@ For more information on how Azure SDK for Embedded C is integrated in this libra
    If the server sends a device-bound message when the device is unavailable for a period of time, for instance while in LTE Power Saving Mode, the server will most likely terminate the TCP connection.
    This will result in additional data traffic as the device has to reconnect to the server, which in turn requires a new TLS handshake and MQTT connection establishment.
 
-
 .. _prereq_connect_to_azure_iot_hub:
 
-Prerequisites for connecting to Azure IoT Hub
-*********************************************
+Setup and configuration
+***********************
+To connect a device to Azure IoT Hub, complete the following steps:
 
-In order to connect to Azure IoT Hub, an Azure account and an Azure IoT Hub instance must first be created and configured.
-See `Creating an Azure IoT Hub instance using the Azure portal`_ for more information.
+1. :ref:`azure_set_up`
+#. :ref:`azure_create_IoT_Hub`
+#. :ref:`azure_create_device`
+#. :ref:`azure_generating_certificates`
+#. :ref:`azure_iot_hub_flash_certs`
 
-.. note::
-   If you do not use DPS to provision devices to your IoT Hub, make sure that you select ``X.509 CA Signed`` as the *Authentication type* while `Registering the device with Azure IoT Hub`_.
+.. rst-class:: numbered-step
+.. _azure_set_up:
+
+Setting up Azure
+================
+If you do not already have an Azure account, this needs to be created.
+
+To complete the steps described below, for getting started with testing Azure IoT Hub, make sure
+that the following prerequisites are met:
+
+* Install https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
+* To use the ``nrfcredstore`` tool, the dependencies in the :file:`nrf/scripts/requirements-extra.txt` file must be installed.
+
+
+.. rst-class:: numbered-step
+.. _azure_create_IoT_Hub:
+
+Create an IoT Hub
+=================
+1. When creating an IoT hub you must create it in a resource group. You can create a resource group through azure's cli, with the following command:
+   .. code-block:: console
+      az group create --name <resource_name> --location westus
+
+   if you want to use another region than `westus` you can aquire a list of the available locations by running the following command:
+   .. code-block:: console
+   az account list-locations -o table
+
+
+#. To create an IoT hub use the following command, select the resource group you created in last step, and create an unique name for your IoT Hub.
+   .. code-block:: console
+      az iot hub create --resource-group <resource_name> --name <hub_name> --sku F1 --partition-count 2
+
+   Using `F1` as an argument, creates a free IoT hub, which you are only allowed to have one instance of. Either
+   delete your existing free IoT hub or change the SKU to `S1`.
+
+For information on how to set up creating an Azure IoT Hub instance, using the Azure portal, see
+`Creating an Azure IoT Hub instance using the Azure portal`_.
+
+.. rst-class:: numbered-step
+.. _azure_create_device:
+
+Register a Device in Azure IoT Hub
+=================================
+
+.. important::
+   This step is only relevant if you do not use DPS to provision devices to your IoT Hub.
+   In this step we select ``X.509 CA Signed`` as the *Authentication type*, which is necessary when not using DPS.
+
+
+To register a new device in the IoT hub use the following command:
+
+   .. code-block:: console
+      az iot hub device-identity create -n <iothub_name> -d <device_id> --am x509_ca
+
+You can list your devices in Azure IoT Hub using the following command:
+   .. code-block:: console
+      az iot hub device-identity list --hub-name <iothub_name>
+
+.. rst-class:: numbered-step
+
+.. _azure_generating_and_provisioning_certificates:
+.. _azure_generating_certificates:
+
+Generating certificates
+=======================
 
 The connection to Azure IoT Hub with MQTT is secured using TLS.
 For testing purposes, see `Creating Azure IoT Hub certificates`_ for the steps to create certificates and a private key for the leaf device, and to register the generated test root certificate to be used with an IoT hub.
@@ -52,26 +118,90 @@ The Azure IoT Hub library requires provisioning of the following certificates an
    Due to this, it is recommended to provision the DigiCert Root G2 certificate to a secondary security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` option.
    This ensures that the device can connect after the transition.
 
-
 The location and name of the generated public device certificate and private key files vary depending on the method you use for the credential generation as follows:
 
-* For PowerShell scripts, the device certificate is called :file:`mydevice-public.pem` and the private key is :file:`mydevice-private.pem`.
+* For PowerShell scripts, the device certificate is called :file:`<mydevice>-public.pem` and the private key is :file:`<mydevice>-private.pem`.
 
   These files are located in the working directory with the other generated files.
 
-* For bash scripts, the public device certificate is called :file:`new-device.cert.pem` and is located in a directory called :file:`certs` within the :file:`script` directory.
+* For bash scripts, the public device certificate is called :file:`<mydevice>.cert.pem` and is located in a directory called :file:`certs` within the :file:`script` directory.
 
-  The private key is called :file:`new-device.key.pem` and located in a directory called :file:`private` within the :file:`script` directory.
+  The private key is called :file:`<mydevice>.key.pem` and located in a directory called :file:`private` within the :file:`script` directory.
 
 The file and directory names may change if Azure changes their scripts.
 
-
+.. rst-class:: numbered-step
 .. _azure_iot_hub_flash_certs:
 
-Provisioning of the certificates
-================================
+Provisioning certificates
+=========================
 
-.. include:: /includes/cert-flashing.txt
+   For provisioning of the certificates, there are several ways to do it, depending on which DK you are using.
+
+.. tabs::
+
+   .. tab:: nRF91: nrfcredstore
+
+            .. important::
+         Program the :ref:`at_client_sample` sample to your device before following this guide and make sure you have nrfcredstore installed.
+
+         1. Obtain a list of installed keys using the following command:
+
+            .. code-block:: console
+
+               nrfcredstore <serial port> list
+
+            where ``<serial port>`` refers to your
+
+         #. Provision the private key to the modem and replace the placeholders:
+
+            .. code-block:: console
+
+               nrfcredstore <serial port> write <sec tag> CLIENT_KEY {device_name}.key
+
+         #. Provision the client certificate and replace the placeholders:
+
+            .. code-block:: console
+
+               nrfcredstore <serial port> write <sec tag> CLIENT_CERT {device_name}.key
+
+         #. Provison the server certificate, which you downloaded previously:
+
+            .. code-block:: console
+
+               nrfcredstore <serial port> write <sec tag> ROOT_CA_CERT BaltimoreCyberTrustRoot.crt.pem
+
+            or:
+
+            .. code-block:: console
+
+               nrfcredstore <serial port> write <sec tag> ROOT_CA_CERT DigiCertGlobalRootG2.crt.pem
+
+
+   .. tab:: nRF91: nRF connect for Desktop
+
+         To provision the certificates and the private key to the cellular modem, complete the following steps:
+
+         1. `Download nRF Connect for Desktop`_.
+         #. Update the modem firmware on the onboard modem of the nRF91 Series device to the latest version by following the steps in :ref:`nrf9160_gs_updating_fw_modem`.
+         #. Build and program the :ref:`at_client_sample` sample to the nRF91 Series device as explained in :ref:`programming`.
+         #. Launch the `Cellular Monitor`_ application, which is part of `nRF Connect for Desktop`_.
+         #. Click :guilabel:`CERTIFICATE MANAGER` located at the upper right corner.
+         #. Copy the server root certificate into the ``CA certificate`` entry.
+         #. Copy and paste the device certificate and the private key into the respective entries (``Client certificate``, ``Private key``).
+         #. Select a desired security tag (any positive integer in the range of 0 to 2147483647) and click :guilabel:`Update certificates`.
+
+         .. important::
+            The default security tag set by the **CERTIFICATE MANAGER** *16842753* is reserved for communications with :ref:`lib_nrf_cloud`.
+            Overwriting this security tag entry will require you to flash new certificates if you want to establish a connection to the nRF Cloud.
+
+   .. tab:: nRF70: runtime provisioning
+
+         Provision the certificates and private key at runtime to the Mbed TLS stack.
+         This is achieved by placing the PEM files into a :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
+         For more information, refer to the :ref:`aws_iot` sample as well as the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FILE` Kconfig option.
+
+         The CA will be provisioned to the security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option.
 
 The chosen security tag while provisioning the certificates must be the same as the security tag configured by the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option.
 
