@@ -947,6 +947,12 @@ Libraries for networking
   * Updated the library to use the :ref:`lib_mqtt_helper` library.
     This simplifies the handling of the MQTT stack.
 
+* :ref:`lib_azure_iot_hub` library:
+
+  * Improved the documentation on IoT Hub configuration and credentials storage.
+    The documentation now contains more details on how to use the Azure CLI to set up an IoT Hub.
+    The documentation on credential provisioning has also been updated, both for nRF91 Series devices and nRF70 Series devices.
+
 * :ref:`lib_download_client` library:
 
   * Added:
