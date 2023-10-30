@@ -99,9 +99,6 @@ static const char *fmt_name(enum coap_content_format fmt)
 
 bool nrf_cloud_coap_is_connected(void)
 {
-	if (!authenticated) {
-		LOG_DBG("Not connected and authenticated");
-	}
 	return authenticated;
 }
 

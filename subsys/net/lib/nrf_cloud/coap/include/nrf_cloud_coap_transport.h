@@ -18,7 +18,15 @@ extern "C" {
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_agnss.h>
 #include <net/nrf_cloud_pgps.h>
+#if defined(CONFIG_NRF_CLOUD_COAP)
 #include <zephyr/net/coap_client.h>
+#else
+/* Work around missing Kconfigs upstream in coap_client.h */
+#define coap_client_response_cb_t void *
+enum coap_content_format {
+	dummy
+};
+#endif
 
 /**
  * @defgroup nrf_cloud_coap_transport nRF CoAP API

@@ -169,7 +169,7 @@ int nrf_cloud_alert_send(enum nrf_cloud_alert_type type,
 	}
 
 	/* send to d2c topic */
-	err = nrf_cloud_coap_json_message_send(data.ptr);
+	err = nrf_cloud_coap_json_message_send(data.ptr, false);
 	if (!err) {
 		LOG_DBG("Send alert via CoAP");
 	} else {

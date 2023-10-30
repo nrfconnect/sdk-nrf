@@ -24,6 +24,15 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
+#define COAP_AGPS_RSC "loc/agps"
+#define COAP_PGPS_RSC "loc/pgps"
+#define COAP_GND_FIX_RSC "loc/ground-fix"
+#define COAP_FOTA_GET_RSC "fota/exec/current"
+#define COAP_SHDW_RSC "state"
+#define COAP_D2C_RSC "msg/d2c"
+#define COAP_D2C_BULK_RSC "msg/d/%s/d2c/bulk"
+#define COAP_D2C_RSC_MAX_LEN MAX(sizeof(COAP_D2C_RSC), sizeof(COAP_D2C_BULK_RSC))
+
 #define MAX_COAP_PAYLOAD_SIZE (CONFIG_COAP_CLIENT_BLOCK_SIZE - \
 			       CONFIG_COAP_CLIENT_MESSAGE_HEADER_SIZE)
 
@@ -38,6 +47,29 @@ static int64_t get_ts(void)
 		ts = 0;
 	}
 	return ts;
+}
+
+static const char *get_d2c_resource(bool bulk)
+{
+	char id_buf[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+	static char d2c_bulk_rsc[sizeof(id_buf) + COAP_D2C_RSC_MAX_LEN];
+
+	if (!bulk) {
+		return COAP_D2C_RSC;
+	}
+
+	if (!d2c_bulk_rsc[0]) {
+		int err = nrf_cloud_client_id_get(id_buf, sizeof(id_buf));
+
+		if (err) {
+			LOG_ERR("Failed to retrieve the device id: %d", err);
+			return NULL;
+		}
+
+		snprintk(d2c_bulk_rsc, sizeof(d2c_bulk_rsc) - 1,
+			 COAP_D2C_BULK_RSC, id_buf);
+	}
+	return d2c_bulk_rsc;
 }
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
@@ -99,7 +131,7 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
 	}
 
 	result->agnss_sz = 0;
-	err = nrf_cloud_coap_fetch("loc/agps", NULL,
+	err = nrf_cloud_coap_fetch(COAP_AGPS_RSC, NULL,
 				   buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
 				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_agnss_callback,
 				   result);
@@ -157,7 +189,7 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 		return err;
 	}
 
-	err = nrf_cloud_coap_fetch("loc/pgps", NULL,
+	err = nrf_cloud_coap_fetch(COAP_PGPS_RSC, NULL,
 				   buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
 				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_pgps_callback,
 				   file_location);
@@ -197,8 +229,19 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
 		return -ENOTSUP;
 	}
 
+	bool bulk = nrf_cloud_obj_bulk_check(obj);
+
+	if (bulk && (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR)) {
+		return -ENOTSUP;
+	}
+
 	int err = 0;
 	bool enc = false;
+	const char *resource = get_d2c_resource(bulk);
+
+	if (!resource) {
+		return -EINVAL;
+	}
 
 	if (obj->enc_src == NRF_CLOUD_ENC_SRC_NONE) {
 		err = nrf_cloud_obj_cloud_encode(obj);
@@ -209,7 +252,8 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
 		enc = true;
 	}
 
-	err = nrf_cloud_coap_post("msg/d2c", NULL, obj->encoded_data.ptr, obj->encoded_data.len,
+	err = nrf_cloud_coap_post(resource, NULL,
+				  obj->encoded_data.ptr, obj->encoded_data.len,
 				  (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR) ?
 				   COAP_CONTENT_FORMAT_APP_CBOR : COAP_CONTENT_FORMAT_APP_JSON,
 				  false, NULL, NULL);
@@ -241,7 +285,7 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms)
 		LOG_ERR("Unable to encode sensor data: %d", err);
 		return err;
 	}
-	err = nrf_cloud_coap_post("msg/d2c", NULL, buffer, len,
+	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
 				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
@@ -274,7 +318,7 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
 		LOG_ERR("Unable to encode sensor data: %d", err);
 		return err;
 	}
-	err = nrf_cloud_coap_post("msg/d2c", NULL, buffer, len,
+	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
 				  json ? COAP_CONTENT_FORMAT_APP_JSON :
 					 COAP_CONTENT_FORMAT_APP_CBOR,
 				  false, NULL, NULL);
@@ -286,15 +330,20 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
 	return err;
 }
 
-int nrf_cloud_coap_json_message_send(const char *message)
+int nrf_cloud_coap_json_message_send(const char *message, bool bulk)
 {
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
 	}
 	size_t len = strlen(message);
+	const char *resource = get_d2c_resource(bulk);
 	int err;
 
-	err = nrf_cloud_coap_post("msg/d2c", NULL, message, len,
+	if (!resource) {
+		return -EINVAL;
+	}
+	err = nrf_cloud_coap_post(resource,
+				  NULL, message, len,
 				  COAP_CONTENT_FORMAT_APP_JSON,
 				  false, NULL, NULL);
 	if (err < 0) {
@@ -326,7 +375,7 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss)
 		LOG_ERR("Unable to encode GNSS PVT data: %d", err);
 		return err;
 	}
-	err = nrf_cloud_coap_post("msg/d2c", NULL, buffer, len,
+	err = nrf_cloud_coap_post(COAP_D2C_RSC, NULL, buffer, len,
 				  COAP_CONTENT_FORMAT_APP_CBOR, false, NULL, NULL);
 	if (err < 0) {
 		LOG_ERR("Failed to send POST request: %d", err);
@@ -372,7 +421,7 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 		LOG_ERR("Unable to encode location data: %d", err);
 		return err;
 	}
-	err = nrf_cloud_coap_fetch("loc/ground-fix", NULL, buffer, len,
+	err = nrf_cloud_coap_fetch(COAP_GND_FIX_RSC, NULL, buffer, len,
 				   COAP_CONTENT_FORMAT_APP_CBOR,
 				   COAP_CONTENT_FORMAT_APP_CBOR, true,
 				   get_location_callback, result);
@@ -425,7 +474,7 @@ int nrf_cloud_coap_fota_job_get(struct nrf_cloud_fota_job_info *const job)
 
 	job->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 
-	err = nrf_cloud_coap_get("fota/exec/current", NULL, NULL, 0,
+	err = nrf_cloud_coap_get(COAP_FOTA_GET_RSC, NULL, NULL, 0,
 				 COAP_CONTENT_FORMAT_APP_CBOR,
 				 COAP_CONTENT_FORMAT_APP_JSON, true, get_fota_callback, job);
 
@@ -526,7 +575,7 @@ int nrf_cloud_coap_shadow_get(char *buf, size_t buf_len, bool delta)
 	get_shadow_data.buf_len = buf_len;
 	int err;
 
-	err = nrf_cloud_coap_get("state", delta ? NULL : "delta=false", NULL, 0,
+	err = nrf_cloud_coap_get(COAP_SHDW_RSC, delta ? NULL : "delta=false", NULL, 0,
 				  0, COAP_CONTENT_FORMAT_APP_JSON, true, get_shadow_callback,
 				  &get_shadow_data);
 	if (err) {
@@ -547,7 +596,7 @@ int nrf_cloud_coap_shadow_state_update(const char * const shadow_json)
 		return -EACCES;
 	}
 
-	err = nrf_cloud_coap_patch("state", NULL, (uint8_t *)shadow_json,
+	err = nrf_cloud_coap_patch(COAP_SHDW_RSC, NULL, (uint8_t *)shadow_json,
 				   strlen(shadow_json),
 				   COAP_CONTENT_FORMAT_APP_JSON, true, NULL, NULL);
 	if (err < 0) {

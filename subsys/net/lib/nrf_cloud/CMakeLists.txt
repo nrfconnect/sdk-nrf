@@ -64,7 +64,4 @@ zephyr_library_sources_ifdef(
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_CHECK_CREDENTIALS
 	src/nrf_cloud_credentials.c)
-zephyr_include_directories_ifdef(
-	CONFIG_NRF_CLOUD_COAP
-	coap/include)
-zephyr_include_directories(./include)
+zephyr_include_directories(./include coap/include)

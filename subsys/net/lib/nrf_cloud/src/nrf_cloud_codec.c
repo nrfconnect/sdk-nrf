@@ -351,6 +351,11 @@ int nrf_cloud_obj_free(struct nrf_cloud_obj *const obj)
 	return -ENOTSUP;
 }
 
+bool nrf_cloud_obj_bulk_check(struct nrf_cloud_obj *const obj)
+{
+	return (obj && (obj->type == NRF_CLOUD_OBJ_TYPE_JSON) && cJSON_IsArray(obj->json));
+}
+
 int nrf_cloud_obj_bulk_add(struct nrf_cloud_obj *const bulk, struct nrf_cloud_obj *const obj)
 {
 	if (!bulk || !obj) {

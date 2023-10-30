@@ -19,7 +19,6 @@ extern "C" {
 #include <net/nrf_cloud_agnss.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_codec.h>
-#include <zephyr/net/coap_client.h>
 
 /**
  * @defgroup nrf_cloud_coap nRF CoAP API
@@ -161,11 +160,13 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
  *  The CoAP message is sent as a non-confirmable CoAP message.
  *
  * @param[in]     message    The string to send.
+ * @param[in]     bulk       Set true if message is an array of JSON messages
+ *                           to be sent to the bulk topic.
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_coap_json_message_send(const char *message);
+int nrf_cloud_coap_json_message_send(const char *message, bool bulk);
 
 /**
  * @brief Send the device location in the @ref nrf_cloud_gnss_data PVT field to nRF Cloud.
@@ -293,7 +294,10 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data);
 /**
  * @brief Send an nRF Cloud object
  *
- * This only supports sending of the CoAP CBOR or JSON type or a pre-encoded CBOR buffer.
+ * This only supports sending of the CoAP CBOR or JSON type objects or a pre-encoded CBOR buffer.
+ * If the object is actually an array of JSON objects, it will be sent to the d2c/bulk topic,
+ * otherwise all other documents are sent to the d2c topic. See the @ref nrf_cloud_obj_bulk_init()
+ * function.
  *
  * @param[in]     obj An nRF Cloud object. Will be encoded first if obj->enc_src is
  * NRF_CLOUD_ENC_SRC_NONE.
