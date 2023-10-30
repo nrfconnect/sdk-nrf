@@ -43,7 +43,6 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 			      size_t desired_data_size)
 {
 	int ret;
-	bool data_size_mismatch = false;
 	uint32_t blocks_alloced_num, blocks_locked_num;
 	struct ble_iso_data *iso_received = NULL;
 	static struct rx_stats rx_stats[AUDIO_CH_NUM];
@@ -57,8 +56,12 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 						    AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
 
 	rx_stats[channel_index].recv_cnt++;
-	if (data_size != desired_data_size && !bad_frame) {
-		data_size_mismatch = true;
+
+	if (data_size != desired_data_size) {
+		/* A valid frame should always be equal to desired_data_size, set bad_frame
+		 * if that is not the case
+		 */
+		bad_frame = true;
 		rx_stats[channel_index].data_size_mismatch_cnt++;
 	}
 
@@ -71,12 +74,6 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 		LOG_DBG("ISO RX SDUs: Ch: %d Total: %d Bad: %d Size mismatch %d", channel_index,
 			rx_stats[channel_index].recv_cnt, rx_stats[channel_index].bad_frame_cnt,
 			rx_stats[channel_index].data_size_mismatch_cnt);
-	}
-
-	if (data_size_mismatch) {
-		/* Return if sizes do not match */
-		LOG_WRN("Data size mismatch");
-		return;
 	}
 
 	if (stream_state_get() != STATE_STREAMING) {
