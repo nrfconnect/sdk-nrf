@@ -355,7 +355,7 @@ config BUTTON_MSG_SUB_STACK_SIZE
 
 config LE_AUDIO_MSG_SUB_STACK_SIZE
 	int "Stack size for LE Audio subscriber"
-	default 1024
+	default 1250
 
 config CONTENT_CONTROL_MSG_SUB_STACK_SIZE
 	int "Stack size for content control subscriber"
