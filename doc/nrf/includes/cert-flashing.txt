@@ -1,4 +1,4 @@
-To provision the certificates and the private key to the cellular modem, complete the following steps:
+To provision the certificates and the private key to the nRF91 Series modem, complete the following steps:
 
 1. `Download nRF Connect for Desktop`_.
 #. Update the modem firmware on the onboard modem of the nRF91 Series device to the latest version by following the steps in :ref:`nrf9160_gs_updating_fw_modem`.

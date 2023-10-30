@@ -24,24 +24,116 @@ For more information on how Azure SDK for Embedded C is integrated in this libra
    If the server sends a device-bound message when the device is unavailable for a period of time, for instance while in LTE Power Saving Mode, the server will most likely terminate the TCP connection.
    This will result in additional data traffic as the device has to reconnect to the server, which in turn requires a new TLS handshake and MQTT connection establishment.
 
-
 .. _prereq_connect_to_azure_iot_hub:
 
-Prerequisites for connecting to Azure IoT Hub
-*********************************************
+Setup and configuration
+***********************
 
-In order to connect to Azure IoT Hub, an Azure account and an Azure IoT Hub instance must first be created and configured.
-See `Creating an Azure IoT Hub instance using the Azure portal`_ for more information.
+To connect a device to Azure IoT Hub, complete the following steps:
 
-.. note::
-   If you do not use DPS to provision devices to your IoT Hub, make sure that you select ``X.509 CA Signed`` as the *Authentication type* while `Registering the device with Azure IoT Hub`_.
+1. :ref:`azure_set_up`
+#. :ref:`azure_create_iot_hub`
+#. :ref:`azure_create_device`
+#. :ref:`azure_generating_certificates`
+#. :ref:`azure_iot_hub_flash_certs`
+
+.. rst-class:: numbered-step
+
+.. _azure_set_up:
+
+Setting up Azure IoT Hub
+========================
+
+If you do not have an Azure account, you need to create one.
+
+To get started with testing the Azure IoT Hub, make sure that the following prerequisites are met:
+
+* Install the `Azure CLI`_.
+* To use the ``nrfcredstore`` tool, the dependencies in the :file:`nrf/scripts/requirements-extra.txt` file must be installed.
+
+.. rst-class:: numbered-step
+.. _azure_authenticate:
+
+Authenticate Azure CLI
+======================
+
+Authenticate the Azure CLI tool to use your Azure account in the default browser with the following command:
+
+.. code-block:: console
+
+    az login
+
+For other authentication options, see INSERT-LINK-HERE(Sign in with Azure CLI)
+https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+
+.. _azure_create_iot_hub:
+
+Create an IoT Hub
+=================
+
+1. When creating an IoT Hub, you must create it in a resource group.
+   You can create a resource group through Azure's CLI using the following command:
+
+   .. code-block:: console
+
+      az group create --name <resource_name> --location westus
+
+   If you want to use another region than ``westus``, you can acquire a list of the available locations by running the following command:
+
+   .. code-block:: console
+
+      az account list-locations -o table
+
+
+#. To create an IoT Hub, use the following command, select the resource group you created, and create a unique name for your IoT Hub.
+
+   .. code-block:: console
+
+      az iot hub create --resource-group <resource_name> --name <hub_name> --sku F1 --partition-count 2
+
+   Using ``F1`` as an argument creates a free IoT Hub, which allows you to have only one instance.
+   Hence, delete your existing free IoT Hub or change the SKU to ``S1``.
+
+For information on how to set up creating an Azure IoT Hub instance using the Azure portal, see `Creating an Azure IoT Hub instance using the Azure portal`_.
+
+.. rst-class:: numbered-step
+
+.. _azure_create_device:
+
+Register a device in Azure IoT Hub
+==================================
+
+.. important::
+   This step is only relevant if you do not use DPS to provision devices to your IoT hub.
+   In this step, ``X.509 CA Signed`` is selected as the *Authentication type*, which is necessary when not using DPS.
+
+
+To register a new device in your IoT hub, use the following command:
+
+.. code-block:: console
+
+   az iot hub device-identity create -n <iothub_name> -d <device_id> --am x509_ca
+
+You can list your devices in Azure IoT Hub using the following command:
+
+.. code-block:: console
+
+   az iot hub device-identity list --hub-name <iothub_name>
+
+.. rst-class:: numbered-step
+
+.. _azure_generating_and_provisioning_certificates:
+.. _azure_generating_certificates:
+
+Generating certificates
+=======================
 
 The connection to Azure IoT Hub with MQTT is secured using TLS.
-For testing purposes, see `Creating Azure IoT Hub certificates`_ for the steps to create certificates and a private key for the leaf device, and to register the generated test root certificate to be used with an IoT hub.
+For testing purposes, see `Creating Azure IoT Hub certificates`_ for the steps to create certificates and a private key for the leaf device, and to register the generated test root certificate to be used with an IoT Hub.
 
 The Azure IoT Hub library requires provisioning of the following certificates and a private key for a successful TLS connection:
 
-1. `DigiCert Global Root G2`_ - Server certificate, used to verify the server's certificate while connecting.
+1. `DigiCert Global Root G2`_ - Server certificate, used to verify the server's certificate chain while connecting.
 #. Public device certificate - generated by the procedures described in `Creating Azure IoT Hub certificates`_ , used by Azure IoT Hub to authenticate the device.
 #. Private key of the device.
 
@@ -53,31 +145,79 @@ The Azure IoT Hub library requires provisioning of the following certificates an
    Due to this, it is recommended to provision the DigiCert Baltimore CyberTrust Root Certificate to a secondary security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` option.
    This ensures that the device can also connect after the transition.
 
-
 The location and name of the generated public device certificate and private key files vary depending on the method you use for the credential generation as follows:
 
-* For PowerShell scripts, the device certificate is called :file:`mydevice-public.pem` and the private key is :file:`mydevice-private.pem`.
-
+* For PowerShell scripts, the device certificate is called :file:`<mydevice>-public.pem` and the private key is :file:`<mydevice>-private.pem`.
   These files are located in the working directory with the other generated files.
 
-* For bash scripts, the public device certificate is called :file:`new-device.cert.pem` and is located in a directory called :file:`certs` within the :file:`script` directory.
-
-  The private key is called :file:`new-device.key.pem` and located in a directory called :file:`private` within the :file:`script` directory.
+* For bash scripts, the public device certificate is called :file:`<mydevice>.cert.pem` and is located in a directory called :file:`certs` within the :file:`script` directory.
+  The private key is called :file:`<mydevice>.key.pem` and located in a directory called :file:`private` within the :file:`script` directory.
 
 The file and directory names may change if Azure changes their scripts.
 
+.. rst-class:: numbered-step
 
 .. _azure_iot_hub_flash_certs:
 
-Provisioning of the certificates
-================================
+Provisioning certificates
+=========================
 
-.. include:: /includes/cert-flashing.txt
+To provision the certificates, use any of the following methods, depending on the DK you are using.
+
+.. tabs::
+
+   .. tab:: nRF91: ``nrfcredstore``
+
+      .. important::
+         Program the :ref:`at_client_sample` sample to your device before following this guide and make sure you have ``nrfcredstore`` installed.
+
+      1. Obtain a list of installed keys using the following command:
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> list
+
+         where ``<serial port>`` is the serial port of your device.
+
+      #. Provision the private key to the modem and replace the placeholders:
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> write <sec tag> CLIENT_KEY {device_name}.key.pem
+
+      #. Provision the client certificate and replace the placeholders:
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> write <sec tag> CLIENT_CERT {device_name}.cert.pem
+
+      #. Provison the server certificates, which you downloaded previously, by running the following commands:
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> write <sec tag> ROOT_CA_CERT DigiCertGlobalRootG2.crt.pem
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> write <secondary sec tag> ROOT_CA_CERT BaltimoreCyberTrustRoot.crt.pem
+
+
+   .. tab:: nRF91: nRF connect for Desktop
+
+      .. include:: /includes/cert-flashing.txt
+
+   .. tab:: nRF70: runtime provisioning
+
+         Provision the certificates and private key at runtime to the MbedTLS stack.
+         This is achieved by placing the PEM files into a :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
+         For more information, refer to the :ref:`aws_iot` sample as well as the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FILE` Kconfig option.
+
+         The CA will be provisioned to the security tag set by the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option.
 
 The chosen security tag while provisioning the certificates must be the same as the security tag configured by the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` option.
 
 If more than one root server certificate is used, the second one can be provisioned to a different security tag and configured in the application using the :kconfig:option:`CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG` Kconfig option.
-The modem will check both security tags if necessary when verifying the server's certificate.
+The modem checks both security tags if necessary when verifying the server's certificate.
 
 Configuring the library
 =======================
@@ -89,8 +229,12 @@ Configuration without using DPS
 
 To connect to Azure IoT Hub without using DPS, complete the following minimum required configuration:
 
-1. In the `Azure Portal`_, navigate to :guilabel:`IoT Hub` and select the desired IoT hub.
-#. In the overview page, locate and copy the ``Hostname`` and configure :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` to this address.
+1. To retrieve your IoT Hub hostname, run the following command:
+    .. code-block:: console
+
+        az iot hub show --name <hub_name> --query "properties.hostName"
+
+#. Configure :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` to the returned address.
 
    You can also set the host name at run time.
 #. Set the Kconfig option :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` to the device ID.
