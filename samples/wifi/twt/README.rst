@@ -48,17 +48,6 @@ Configuration
 
 |config|
 
-You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
-
-* Network name (SSID)
-* Key management
-* Password
-
-.. note::
-   You can also use ``menuconfig`` to enable ``Key management`` option.
-
-See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
-
 Configuration options
 =====================
 
@@ -66,6 +55,15 @@ The following sample-specific Kconfig options are used in this sample (located i
 
 .. options-from-kconfig::
    :show-type:
+
+You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+
+.. include:: /includes/wifi_credentials_static.txt
+
+.. note::
+   You can also use ``menuconfig`` to configure ``Wi-Fi credentials``.
+
+See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
 IP addressing
 *************
