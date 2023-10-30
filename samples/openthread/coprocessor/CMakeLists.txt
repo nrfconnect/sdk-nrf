@@ -14,4 +14,5 @@ project(openthread_coprocessor)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c src/nrf_802154_radio_wrapper.c)
+target_sources_ifdef(CONFIG_RCP_SAMPLE_HCI app PRIVATE src/rcp_hci.c)
 # NORDIC SDK APP END
