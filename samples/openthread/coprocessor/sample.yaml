@@ -23,3 +23,11 @@ tests:
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
       nrf21540dk_nrf52840
     tags: ci_build
+  sample.openthread.coprocessor.hci:
+    build_only: true
+    extra_args: SNIPPET="hci"
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840
+      nrf21540dk_nrf52840
+    tags: ci_build

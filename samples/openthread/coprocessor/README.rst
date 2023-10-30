@@ -100,6 +100,7 @@ The following snippets are available:
 * ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 * ``usb`` - Enables emulating a serial port over USB for Spinel communication with the host.
+* ``hci`` - Enables support for the Bluetooth HCI interface parallel to :ref:`Thread RCP <thread_architectures_designs_cp_rcp>`.
 
 FEM support
 ===========
@@ -117,15 +118,25 @@ Building and running
 
 .. _ot_coprocessor_testing:
 
+HCI support
+===========
+
+Currently, HCI is only supported using the nRF USB interface.
+The device will show two virtual UART ports.
+Usually the first port will be associated with the HCI interface, and the second one with the Thread co-processor.
+
 Testing
 =======
 
 After building the sample and programming it to your development kit, complete the following steps to test it:
 
 1. Connect the development kit's SEGGER J-Link USB port to the PC USB port with a USB cable.
+   If you are using HCI, connect the kit's nRF USB port to the PC USB port instead.
 #. Get the kit's serial port name (for example, :file:`/dev/ttyACM0`).
 #. Run and configure ot-cli as described in :ref:`ug_thread_tools_ot_apps`.
 #. From this point, you can follow the :ref:`ot_cli_sample_testing` instructions in the CLI sample by removing the `ot` prefix for each command.
+   If you are using HCI, follow the instructions for the :ref:`zephyr:bluetooth-hci-uart-sample` sample in the Zephyr documentation.
+   You can follow these instead of or in addition to the CLI sample instructions.
 
 Dependencies
 ************
@@ -141,3 +152,5 @@ This sample uses the following Zephyr libraries:
 * :ref:`zephyr:logging_api`:
 
   * ``include/logging/log.h``
+
+* :ref:`zephyr:bluetooth-hci`:
