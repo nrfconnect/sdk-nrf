@@ -623,6 +623,17 @@ Glossary
       It comes with digital encoder and decoder for transferring audio data.
       It is being gradually supplanted by the :term:`LC3 codec` developed for :term:`LE Audio`.
 
+   Scheduled downloads
+      A mechanism to maintain GNSS navigation data availability in periodic navigation mode.
+
+      If GNSS only runs long enough to calculate the first usable fix, it is probably never able to download for example almanacs or ionospheric correction data from the satellite broadcast.
+      To ensure GNSS data availability and to improve accuracy in periodic navigation mode, GNSS performs scheduled downloads.
+      When GNSS determines it needs to download ephemerides or almanacs from the broadcast, the fix interval and fix retry parameters are temporarily ignored and GNSS runs continuously for a longer period of time.
+      GNSS performs scheduled downloads until it has downloaded the data it needs.
+      After the downloads, normal operation is resumed.
+      When `A-GNSS`_ is used, scheduled downloads are not necessary and you can disable them using the :ref:`nrfxlib:nrf_modem_gnss_api`.
+      Scheduled downloads are only performed in periodic navigation mode.
+
    Secure access port protection mechanism (Secure AP-Protect)
       A mechanism used to prevent read and write access to all secure CPU registers and secure memory-mapped addresses.
       In the |NCS|, it uses ``SECUREAPPROTECT`` registers and several Kconfig options, as described in :ref:`app_approtect`.
