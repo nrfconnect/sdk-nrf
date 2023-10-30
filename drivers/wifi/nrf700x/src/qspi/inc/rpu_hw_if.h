@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <zephyr/drivers/gpio.h>
 
-enum {
+enum NRF70_MEM_REGIONS {
 	SYSBUS = 0,
 	EXT_SYS_BUS,
 	PBUS,
@@ -31,8 +31,11 @@ enum {
 	NUM_MEM_BLOCKS
 };
 
+#define RPU_LATENCY_PKT_RAM 0
+#define RPU_LATENCY_DEFAULT 1
+#define RPU_LATENCY_RF_REG 2
+
 extern char blk_name[][15];
-extern uint32_t rpu_7002_memmap[][3];
 
 int rpu_read(unsigned int addr, void *data, int len);
 int rpu_write(unsigned int addr, const void *data, int len);

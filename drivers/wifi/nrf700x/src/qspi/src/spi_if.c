@@ -222,13 +222,10 @@ int spim_init(struct qspi_config *config)
 
 	k_sem_init(&spim_config->lock, 1, 1);
 
-	if (spi_spec.config.frequency >= MHZ(16)) {
-		spim_config->qspi_slave_latency = 1;
-	}
-
 	LOG_INF("SPIM %s: freq = %d MHz", spi_spec.bus->name,
 		spi_spec.config.frequency / MHZ(1));
-	LOG_INF("SPIM %s: latency = %d", spi_spec.bus->name, spim_config->qspi_slave_latency);
+
+	config->freq = spi_spec.config.frequency / MHZ(1);
 
 	return 0;
 }
@@ -259,44 +256,32 @@ int spim_write(unsigned int addr, const void *data, int len)
 	return status;
 }
 
-int spim_read(unsigned int addr, void *data, int len)
+static int _spim_read(unsigned int addr, void *data, int len, unsigned int discard_bytes)
 {
 	int status;
 
 	spim_addr_check(addr, data, len);
 
-	addr |= spim_config->addrmask;
-
 	k_sem_take(&spim_config->lock, K_FOREVER);
 
-	status = spim_xfer_rx(addr, data, len, 0);
+	status = spim_xfer_rx(addr, data, len, discard_bytes);
 
 	k_sem_give(&spim_config->lock);
 
 	return status;
 }
 
-static int spim_hl_readw(unsigned int addr, void *data)
+static int spim_readw(unsigned int addr, void *data, unsigned int latency)
 {
-	int status = -1;
-
-	k_sem_take(&spim_config->lock, K_FOREVER);
-
-	status = spim_xfer_rx(addr, data, 4, 4 * spim_config->qspi_slave_latency);
-
-	k_sem_give(&spim_config->lock);
-
-	return status;
+	return _spim_read(addr, data, 4, latency * 4);
 }
 
-int spim_hl_read(unsigned int addr, void *data, int len)
+int spim_read(unsigned int addr, void *data, int len, unsigned int latency)
 {
 	int count = 0;
 
-	spim_addr_check(addr, data, len);
-
 	while (count < (len / 4)) {
-		spim_hl_readw(addr + (4 * count), (char *)data + (4 * count));
+		spim_readw(addr + (4 * count), (char *)data + (4 * count), latency);
 		count++;
 	}
 

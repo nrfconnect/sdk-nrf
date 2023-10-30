@@ -15,9 +15,7 @@ int spim_init(struct qspi_config *config);
 
 int spim_write(unsigned int addr, const void *data, int len);
 
-int spim_read(unsigned int addr, void *data, int len);
-
-int spim_hl_read(unsigned int addr, void *data, int len);
+int spim_read(unsigned int addr, void *data, int len, unsigned int latency);
 
 int spim_cmd_rpu_wakeup_fn(uint32_t data);
 

@@ -46,36 +46,38 @@ char blk_name[][15] = { "SysBus",   "ExtSysBus",	   "PBus",	   "PKTRAM",
 			       "GRAM",	   "LMAC_ROM",	   "LMAC_RET_RAM", "LMAC_SRC_RAM",
 			       "UMAC_ROM", "UMAC_RET_RAM", "UMAC_SRC_RAM" };
 
-uint32_t rpu_7002_memmap[][3] = {
-	{ 0x000000, 0x008FFF, 1 },
-	{ 0x009000, 0x03FFFF, 2 },
-	{ 0x040000, 0x07FFFF, 1 },
-	{ 0x0C0000, 0x0F0FFF, 0 },
-	{ 0x080000, 0x092000, 1 },
-	{ 0x100000, 0x134000, 1 },
-	{ 0x140000, 0x14C000, 1 },
-	{ 0x180000, 0x190000, 1 },
-	{ 0x200000, 0x261800, 1 },
-	{ 0x280000, 0x2A4000, 1 },
-	{ 0x300000, 0x338000, 1 }
+struct {
+	uint32_t start_addr;
+	uint32_t end_addr;
+	uint32_t slave_latency;
+} rpu_7002_memmap[NUM_MEM_BLOCKS] = {
+	{ 0x000000, 0x008FFF, RPU_LATENCY_DEFAULT },
+	{ 0x009000, 0x03FFFF, RPU_LATENCY_RF_REG  },
+	{ 0x040000, 0x07FFFF, RPU_LATENCY_DEFAULT },
+	{ 0x0C0000, 0x0F0FFF, RPU_LATENCY_PKT_RAM },
+	{ 0x080000, 0x092000, RPU_LATENCY_DEFAULT },
+	{ 0x100000, 0x134000, RPU_LATENCY_DEFAULT },
+	{ 0x140000, 0x14C000, RPU_LATENCY_DEFAULT },
+	{ 0x180000, 0x190000, RPU_LATENCY_DEFAULT },
+	{ 0x200000, 0x261800, RPU_LATENCY_DEFAULT },
+	{ 0x280000, 0x2A4000, RPU_LATENCY_DEFAULT },
+	{ 0x300000, 0x338000, RPU_LATENCY_DEFAULT }
 };
 
 static const struct qspi_dev *qdev;
-static struct qspi_config *cfg;
 
 static int validate_addr_blk(uint32_t start_addr,
 							 uint32_t end_addr,
 							 uint32_t block_no,
-							 bool *hl_flag,
+							 unsigned int *latency,
 							 int *selected_blk)
 {
-	uint32_t *block_map = rpu_7002_memmap[block_no];
-
-	if (((start_addr >= block_map[0]) && (start_addr <= block_map[1])) &&
-	    ((end_addr >= block_map[0]) && (end_addr <= block_map[1]))) {
-		if (block_no == PKTRAM) {
-			*hl_flag = 0;
-		}
+	if ((start_addr >= rpu_7002_memmap[block_no].start_addr) &&
+		(start_addr <= rpu_7002_memmap[block_no].end_addr) &&
+		(end_addr >= rpu_7002_memmap[block_no].start_addr) &&
+		(end_addr <= rpu_7002_memmap[block_no].end_addr)) {
+		/* TODO: Check affect of SPI frequency on latency */
+		*latency = rpu_7002_memmap[block_no].slave_latency;
 		*selected_blk = block_no;
 		return 0;
 	}
@@ -83,7 +85,7 @@ static int validate_addr_blk(uint32_t start_addr,
 	return -1;
 }
 
-static int rpu_validate_addr(uint32_t start_addr, uint32_t len, bool *hl_flag)
+static int rpu_validate_addr(uint32_t start_addr, uint32_t len, unsigned int *latency)
 {
 	int ret = 0, i;
 	uint32_t end_addr;
@@ -91,17 +93,15 @@ static int rpu_validate_addr(uint32_t start_addr, uint32_t len, bool *hl_flag)
 
 	end_addr = start_addr + len - 1;
 
-	*hl_flag = 1;
-
 	for (i = 0; i < NUM_MEM_BLOCKS; i++) {
-		ret = validate_addr_blk(start_addr, end_addr, i, hl_flag, &selected_blk);
+		ret = validate_addr_blk(start_addr, end_addr, i, latency, &selected_blk);
 		if (!ret) {
 			break;
 		}
 	}
 
 	if (ret) {
-		LOG_ERR("Address validation failed - pls check memmory map and re-try");
+		LOG_ERR("Address validation failed - pls check memory map and re-try");
 		return -1;
 	}
 
@@ -109,8 +109,6 @@ static int rpu_validate_addr(uint32_t start_addr, uint32_t len, bool *hl_flag)
 		LOG_ERR("Error: Cannot write to ROM blocks");
 		return -1;
 	}
-
-	cfg->qspi_slave_latency = (*hl_flag) ? rpu_7002_memmap[selected_blk][2] : 0;
 
 	return 0;
 }
@@ -339,25 +337,24 @@ int ble_ant_switch(unsigned int ant_switch)
 
 int rpu_read(unsigned int addr, void *data, int len)
 {
-	bool hl_flag;
+	unsigned int latency;
 
-	if (rpu_validate_addr(addr, len, &hl_flag)) {
+	if (rpu_validate_addr(addr, len, &latency)) {
 		return -1;
 	}
 
-	if (hl_flag)
-		return qdev->hl_read(addr, data, len);
-	else
-		return qdev->read(addr, data, len);
+	return qdev->read(addr, data, len, latency);
 }
 
 int rpu_write(unsigned int addr, const void *data, int len)
 {
-	bool hl_flag;
+	unsigned int latency;
 
-	if (rpu_validate_addr(addr, len, &hl_flag)) {
+	if (rpu_validate_addr(addr, len, &latency)) {
 		return -1;
 	}
+
+	(void)latency;
 
 	return qdev->write(addr, data, len);
 }
@@ -517,7 +514,6 @@ int rpu_disable(void)
 	CALL_RPU_FUNC(ble_gpio_remove);
 
 	qdev = NULL;
-
 out:
 	return ret;
 }

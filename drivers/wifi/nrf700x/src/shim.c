@@ -62,15 +62,12 @@ static int zep_shim_mem_cmp(const void *addr1,
 static unsigned int zep_shim_qspi_read_reg32(void *priv, unsigned long addr)
 {
 	unsigned int val;
-	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
-	struct qspi_dev *dev;
+	int ret;
 
-	dev = qspi_priv->qspi_dev;
-
-	if (addr < 0x0C0000) {
-		dev->hl_read(addr, &val, 4);
-	} else {
-		dev->read(addr, &val, 4);
+	ret = rpu_read(addr, &val, 4);
+	if (ret) {
+		LOG_ERR("%s: Unable to read from address 0x%lx\n", __func__, addr);
+		return 0;
 	}
 
 	return val;
@@ -78,44 +75,40 @@ static unsigned int zep_shim_qspi_read_reg32(void *priv, unsigned long addr)
 
 static void zep_shim_qspi_write_reg32(void *priv, unsigned long addr, unsigned int val)
 {
-	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
-	struct qspi_dev *dev;
+	int ret;
 
-	dev = qspi_priv->qspi_dev;
-
-	dev->write(addr, &val, 4);
+	ret  = rpu_write(addr, &val, 4);
+	if (ret) {
+		LOG_ERR("%s: Unable to write to address 0x%lx\n", __func__, addr);
+	}
 }
 
 static void zep_shim_qspi_cpy_from(void *priv, void *dest, unsigned long addr, size_t count)
 {
-	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
-	struct qspi_dev *dev;
-
-	dev = qspi_priv->qspi_dev;
+	int ret;
 
 	if (count % 4 != 0) {
 		count = (count + 4) & 0xfffffffc;
 	}
 
-	if (addr < 0x0C0000) {
-		dev->hl_read(addr, dest, count);
-	} else {
-		dev->read(addr, dest, count);
+	ret = rpu_read(addr, dest, count);
+	if (ret) {
+		LOG_ERR("%s: Unable to read from address 0x%lx\n", __func__, addr);
 	}
 }
 
 static void zep_shim_qspi_cpy_to(void *priv, unsigned long addr, const void *src, size_t count)
 {
-	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
-	struct qspi_dev *dev;
-
-	dev = qspi_priv->qspi_dev;
+	int ret;
 
 	if (count % 4 != 0) {
 		count = (count + 4) & 0xfffffffc;
 	}
 
-	dev->write(addr, src, count);
+	ret = rpu_write(addr, src, count);
+	if (ret) {
+		LOG_ERR("%s: Unable to write to address 0x%lx\n", __func__, addr);
+	}
 }
 
 static void *zep_shim_spinlock_alloc(void)

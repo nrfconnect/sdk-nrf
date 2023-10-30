@@ -21,15 +21,19 @@
 static struct qspi_config config;
 
 #if defined(CONFIG_NRF700X_ON_QSPI)
-static struct qspi_dev qspi = { .init = qspi_init,
+static struct qspi_dev qspi = {
+			 .config = &config,
+			 .init = qspi_init,
 			 .read = qspi_read,
 			 .write = qspi_write,
-			 .hl_read = qspi_hl_read};
+};
 #else
-static struct qspi_dev spim = { .init = spim_init,
+static struct qspi_dev spim = {
+			 .config = &config,
+			 .init = spim_init,
 			 .read = spim_read,
 			 .write = spim_write,
-			 .hl_read = spim_hl_read};
+};
 #endif
 
 struct qspi_config *qspi_defconfig(void)
@@ -46,8 +50,6 @@ struct qspi_config *qspi_defconfig(void)
 	config.test_name = "QSPI TEST";
 	config.test_hlread = false;
 	config.test_iteration = 0;
-
-	config.qspi_slave_latency = 0;
 
 	config.encryption = config.CMD_CNONCE = false;
 

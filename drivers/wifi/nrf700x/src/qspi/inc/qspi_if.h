@@ -38,10 +38,10 @@ struct qspi_config {
 	bool enc_enabled;
 	struct k_sem lock;
 	unsigned int addrmask;
-	unsigned char qspi_slave_latency;
 #ifdef CONFIG_NRF700X_ON_QSPI
 	nrf_qspi_encryption_t p_cfg;
 #endif /*CONFIG_NRF700X_ON_QSPI*/
+	unsigned int freq;
 	int test_hlread;
 	char *test_name;
 	int test_start;
@@ -57,8 +57,7 @@ struct qspi_dev {
 	void *config;
 	int (*init)(struct qspi_config *config);
 	int (*write)(unsigned int addr, const void *data, int len);
-	int (*read)(unsigned int addr, void *data, int len);
-	int (*hl_read)(unsigned int addr, void *data, int len);
+	int (*read)(unsigned int addr, void *data, int len, unsigned int latency);
 	void (*hard_reset)(void);
 };
 
@@ -68,9 +67,7 @@ int qspi_init(struct qspi_config *config);
 
 int qspi_write(unsigned int addr, const void *data, int len);
 
-int qspi_read(unsigned int addr, void *data, int len);
-
-int qspi_hl_read(unsigned int addr, void *data, int len);
+int qspi_read(unsigned int addr, void *data, int len, unsigned int latency);
 
 int qspi_deinit(void);
 

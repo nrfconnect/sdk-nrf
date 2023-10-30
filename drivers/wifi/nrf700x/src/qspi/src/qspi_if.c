@@ -628,10 +628,7 @@ static inline void qspi_fill_init_struct(nrfx_qspi_config_t *initstruct)
 
 	/* Configure physical interface */
 	initstruct->phy_if.sck_freq = INST_0_SCK_CFG;
-	/* Using MHZ fails checkpatch constant check */
-	if (INST_0_SCK_FREQUENCY >= 16000000) {
-		qspi_config->qspi_slave_latency = 1;
-	}
+
 	initstruct->phy_if.sck_delay = QSPI_SCK_DELAY;
 	initstruct->phy_if.spi_mode = qspi_get_mode(DT_INST_PROP(0, cpol), DT_INST_PROP(0, cpha));
 
@@ -1143,10 +1140,19 @@ int qspi_init(struct qspi_config *config)
 
 	config->readoc = config->quad_spi ? NRF_QSPI_READOC_READ4IO : NRF_QSPI_READOC_FASTREAD;
 	config->writeoc = config->quad_spi ? NRF_QSPI_WRITEOC_PP4IO : NRF_QSPI_WRITEOC_PP;
+	config->freq = INST_0_SCK_FREQUENCY / MHZ(1);
 
 	rc = qspi_nor_init(&qspi_perip);
+	if (rc != 0) {
+		LOG_ERR("Failed to initialize QSPI: %d\n", rc);
+		return rc;
+	}
 
-	k_sem_init(&qspi_config->lock, 1, 1);
+	rc = k_sem_init(&qspi_config->lock, 1, 1);
+	if (rc != 0) {
+		LOG_ERR("Failed to initialize QSPI semaphore: %d\n", rc);
+		return rc;
+	}
 
 	return rc;
 }
@@ -1198,17 +1204,15 @@ int qspi_write(unsigned int addr, const void *data, int len)
 	return status;
 }
 
-int qspi_read(unsigned int addr, void *data, int len)
+static int _qspi_read(unsigned int addr, void *data, int len, unsigned int latency)
 {
 	int status;
 
 	qspi_addr_check(addr, data, len);
 
-	addr |= qspi_config->addrmask;
-
 	k_sem_take(&qspi_config->lock, K_FOREVER);
 
-	qspi_update_nonce(addr, len, 0);
+	qspi_update_nonce(addr, len, latency != 0);
 
 	status = qspi_nor_read(&qspi_perip, addr, data, len);
 
@@ -1217,46 +1221,41 @@ int qspi_read(unsigned int addr, void *data, int len)
 	return status;
 }
 
-int qspi_hl_readw(unsigned int addr, void *data)
+static int qspi_readw(unsigned int addr, void *data, unsigned int latency)
 {
 	int status;
 	uint8_t *rxb = NULL;
 	uint32_t len = 4;
 
-	len = len + (4 * qspi_config->qspi_slave_latency);
+	len = len + (4 * latency);
 
 	rxb = k_malloc(len);
-
 	if (rxb == NULL) {
-		LOG_ERR("%s: ERROR ENOMEM line %d", __func__, __LINE__);
+		LOG_ERR("%s: Failed to allocate memory: %d", __func__, len);
 		return -ENOMEM;
 	}
-
 	memset(rxb, 0, len);
 
-	k_sem_take(&qspi_config->lock, K_FOREVER);
-
-	qspi_update_nonce(addr, 4, 1);
-
-	status = qspi_nor_read(&qspi_perip, addr, rxb, len);
-
-	k_sem_give(&qspi_config->lock);
+	status = _qspi_read(addr, rxb, len, latency);
+	if (status < 0) {
+		LOG_ERR("%s: Failed to read data from 0x%x\n", __func__, addr);
+		goto out;
+	}
 
 	*(uint32_t *)data = *(uint32_t *)(rxb + (len - 4));
 
+out:
 	k_free(rxb);
 
 	return status;
 }
 
-int qspi_hl_read(unsigned int addr, void *data, int len)
+int qspi_read(unsigned int addr, void *data, int len, unsigned int latency)
 {
 	int count = 0;
 
-	qspi_addr_check(addr, data, len);
-
 	while (count < (len / 4)) {
-		qspi_hl_readw(addr + (4 * count), ((char *)data + (4 * count)));
+		qspi_readw(addr + (4 * count), ((char *)data + (4 * count)), latency);
 		count++;
 	}
 
@@ -1267,14 +1266,13 @@ int qspi_cmd_sleep_rpu(const struct device *dev)
 {
 	uint8_t data = 0x0;
 
-	/* printf("TODO : %s:", __func__); */
 	const struct qspi_buf tx_buf = {
 		.buf = &data,
 		.len = sizeof(data),
 	};
 
 	const struct qspi_cmd cmd = {
-		.op_code = 0x3f, /* 0x3f, //WRSR2(0x3F) WakeUP RPU. */
+		.op_code = 0x3F, /* WRSR2 WakeUP RPU. */
 		.tx_buf = &tx_buf,
 	};
 
