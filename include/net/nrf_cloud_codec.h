@@ -296,6 +296,15 @@ int nrf_cloud_obj_reset(struct nrf_cloud_obj *const obj);
 int nrf_cloud_obj_free(struct nrf_cloud_obj *const obj);
 
 /**
+ * @brief Check if an object is a JSON array eligible for bulk transfer.
+ *
+ * @param[in] obj Object to check.
+ *
+ * @return bool True if the object is a JSON array.
+ */
+bool nrf_cloud_obj_bulk_check(struct nrf_cloud_obj *const obj);
+
+/**
  * @brief Add an object to a bulk message object.
  *
  * @details If successful, the object belongs to the bulk message and should not be freed directly.
