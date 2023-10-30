@@ -11,6 +11,7 @@ breathe                   # |  X  |         |        |         |      |    X    
 m2r2                      # |     |         |        |         |  X   |         |      |        |
 PyYAML                    # |  X  |         |        |         |      |         |      |   X    |
 pykwalify                 # |     |         |        |         |      |         |      |   X    |
+python-Levenshtein        # |  X  |         |        |         |      |         |      |        |
 recommonmark              # |     |         |   X    |    X    |      |         |      |        |
 sphinx~=6.2               # |  X  |    X    |   X    |    X    |   X  |    X    |  X   |   X    |
 sphinx-copybutton         # |  X  |         |        |         |      |         |      |   X    |

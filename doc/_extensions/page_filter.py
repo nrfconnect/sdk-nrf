@@ -212,28 +212,31 @@ def page_filter_install(
 
 def add_filter_resources(app: Sphinx):
     app.config.html_static_path.append(RESOURCES_DIR.as_posix())
-    read_versions(app)
+    load_versions(app)
 
+def read_versions() -> List[str]:
+    """Get all versions not including dashes."""
+    try:
+        with open(VERSIONS_FILE) as version_file:
+            nrf_versions = json.loads(version_file.read())
+            return list(
+                filter(lambda v: re.match(r"\d+\.\d+\.\d+$", v), nrf_versions)
+            )
+    except FileNotFoundError:
+        logger.error("Could not load version file")
+        return []
 
-def read_versions(app: Sphinx) -> None:
+def load_versions(app: Sphinx) -> None:
     """Get all NRF versions to date"""
 
     if hasattr(app.env, "nrf_versions") and app.env.nrf_versions:
         return
 
-    try:
-        with open(VERSIONS_FILE) as version_file:
-            nrf_versions = json.loads(version_file.read())
-            nrf_versions = list(
-                filter(lambda v: re.match(r"\d\.\d\.\d$", v), nrf_versions)
-            )
-            # Versions classes are on the format "vX-X-X"
-            app.env.nrf_versions = [
-                f"v{version.replace('.', '-')}" for version in reversed(nrf_versions)
-            ]
-    except FileNotFoundError:
-        logger.error("Could not load version file")
-        app.env.nrf_versions = []
+    # Versions classes are on the format "vX-X-X"
+    nrf_versions = read_versions()
+    app.env.nrf_versions = [
+        f"v{version.replace('.', '-')}" for version in reversed(nrf_versions)
+    ]
 
 
 def setup(app: Sphinx):
