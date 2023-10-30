@@ -55,6 +55,7 @@ extensions = [
     "notfound.extension",
     "ncs_tool_versions",
     "page_filter",
+    "ncs_migration_guide_extraction",
 ]
 
 linkcheck_ignore = [
@@ -222,6 +223,14 @@ manifest_revisions_table_manifest = NRF_BASE / "west.yml"
 notfound_urls_prefix = "/nRF_Connect_SDK/doc/{}/nrf/".format(
     "latest" if version.endswith("99") else version
 )
+
+# Options for ncs_migration_guide_extraction -----------------------------------
+
+fetch_upstream_repos = {
+    "zephyr": ("https://github.com/zephyrproject-rtos/zephyr", "main"),
+    "mcuboot": ("https://github.com/zephyrproject-rtos/mcuboot", "main"),
+}
+
 
 def setup(app):
     app.add_css_file("css/nrf.css")
