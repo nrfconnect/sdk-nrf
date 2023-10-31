@@ -777,7 +777,9 @@ static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 			ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
 
 			if (adjust) {
-				audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
+				if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+					audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
+				}
 			}
 		} else {
 			LOG_WRN("Stream not startet - Can not update sdu_ref_us");
