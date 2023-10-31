@@ -888,6 +888,40 @@ void test_lte_lc_cereg(void)
 	at_monitor_dispatch(at_notif);
 }
 
+/* Test the following CEREG syntax:
+ * - Empty: <tac>, <ci>, <AcT>, <cause_type>, <reject_cause>
+ * - Exists: <Active-Time>, <Periodic-TAU>
+ *
+ * Not having <tac> and <ci> is a bit abnormal but valid.
+ */
+void test_lte_lc_cereg_no_tac_but_tau(void)
+{
+	strcpy(at_notif, "+CEREG: 4,,,,,,\"11100000\",\"00010010\"\r\n");
+
+	lte_lc_callback_count_expected = 3;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_UNKNOWN;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.mcc = 0;
+	test_event_data[1].cell.mnc = 0;
+	test_event_data[1].cell.id = -1;
+	test_event_data[1].cell.tac = -1;
+	test_event_data[1].cell.earfcn = 0;
+	test_event_data[1].cell.timing_advance = 0;
+	test_event_data[1].cell.timing_advance_meas_time = 0;
+	test_event_data[1].cell.measurement_time = 0;
+	test_event_data[1].cell.phys_cell_id = 0;
+	test_event_data[1].cell.rsrp = 0;
+	test_event_data[1].cell.rsrq = 0;
+
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_NONE;
+
+	at_monitor_dispatch(at_notif);
+}
+
 /* Test failing neighbor cell measurement first to see that the semaphore is given properly */
 void test_lte_lc_neighbor_cell_measurement_fail(void)
 {

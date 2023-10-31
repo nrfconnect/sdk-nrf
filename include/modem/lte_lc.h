@@ -362,6 +362,8 @@ struct lte_lc_edrx_cfg {
 #define LTE_LC_CELL_EUTRAN_ID_INVALID		UINT32_MAX
 /** Maximum cell ID value. */
 #define LTE_LC_CELL_EUTRAN_ID_MAX		268435455
+/** Tracking Area Code value not valid. */
+#define LTE_LC_CELL_TAC_INVALID			UINT32_MAX
 /** Time difference not valid. */
 #define LTE_LC_CELL_TIME_DIFF_INVALID		0
 
