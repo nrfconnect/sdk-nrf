@@ -46,12 +46,12 @@ static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 								nrf_wifi_net_iface_work);
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		return;
 	}
 
 	if (!vif_ctx_zep->zep_net_if_ctx) {
-		LOG_ERR("%s: zep_net_if_ctx is NULL\n", __func__);
+		LOG_ERR("%s: zep_net_if_ctx is NULL", __func__);
 		return;
 	}
 
@@ -100,7 +100,7 @@ enum nrf_wifi_status nrf_wifi_if_carr_state_chg(void *os_vif_ctx,
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	if (!os_vif_ctx) {
-		LOG_ERR("%s: Invalid parameters\n",
+		LOG_ERR("%s: Invalid parameters",
 			__func__);
 		goto out;
 	}
@@ -109,7 +109,7 @@ enum nrf_wifi_status nrf_wifi_if_carr_state_chg(void *os_vif_ctx,
 
 	vif_ctx_zep->if_carr_state = carr_state;
 
-	LOG_DBG("%s: Carrier state: %d\n", __func__, carr_state);
+	LOG_DBG("%s: Carrier state: %d", __func__, carr_state);
 
 	k_work_submit(&vif_ctx_zep->nrf_wifi_net_iface_work);
 
@@ -152,14 +152,14 @@ int nrf_wifi_if_send(const struct device *dev,
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
 	if (!dev || !pkt) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
@@ -212,7 +212,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 
 	if (!mcast_info) {
 		LOG_ERR("%s: Unable to allocate memory of size %d "
-			"for mcast_info\n", __func__, sizeof(*mcast_info));
+			"for mcast_info", __func__, sizeof(*mcast_info));
 		return;
 	}
 
@@ -260,7 +260,7 @@ static void ip_maddr_event_handler(struct net_mgmt_event_callback *cb,
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		LOG_ERR("%s: nrf_wifi_fmac_set_multicast failed	for"
-			" mac addr=%s\n",
+			" mac addr=%s",
 			__func__,
 			net_sprint_ll_addr_buf(mac_addr.addr,
 					       WIFI_MAC_ADDR_LEN, mac_string_buf,
@@ -282,7 +282,7 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	struct ethernet_context *eth_ctx = net_if_l2_data(iface);
 
 	if (!iface) {
-		LOG_ERR("%s: Invalid parameters\n",
+		LOG_ERR("%s: Invalid parameters",
 			__func__);
 		return;
 	}
@@ -290,13 +290,13 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	dev = net_if_get_device(iface);
 
 	if (!dev) {
-		LOG_ERR("%s: Invalid dev\n",
+		LOG_ERR("%s: Invalid dev",
 			__func__);
 		return;
 	}
 
 	if (!device_is_ready(dev)) {
-		LOG_ERR("%s: Device %s is not ready\n",
+		LOG_ERR("%s: Device %s is not ready",
 			__func__, dev->name);
 		return;
 	}
@@ -304,7 +304,7 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n",
+		LOG_ERR("%s: vif_ctx_zep is NULL",
 			__func__);
 		return;
 	}
@@ -312,7 +312,7 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n",
+		LOG_ERR("%s: rpu_ctx_zep is NULL",
 			__func__);
 		return;
 	}
@@ -325,19 +325,19 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 		status = nrf_wifi_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed\n",
+			LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed",
 				__func__);
 			return;
 		}
 
 		fmac_dev_added = true;
-		LOG_DBG("%s: FMAC device added\n", __func__);
+		LOG_DBG("%s: FMAC device added", __func__);
 	}
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	if (!fmac_dev_ctx) {
-		LOG_ERR("%s: fmac_dev_ctx is NULL\n",
+		LOG_ERR("%s: fmac_dev_ctx is NULL",
 			__func__);
 		return;
 	}
@@ -352,7 +352,7 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 				CONFIG_WIFI_FIXED_MAC_ADDRESS);
 
 		if (ret < 0) {
-			LOG_ERR("%s: Failed to parse MAC address: %s\n",
+			LOG_ERR("%s: Failed to parse MAC address: %s",
 				__func__,
 				CONFIG_WIFI_FIXED_MAC_ADDRESS);
 			goto dev_rem;
@@ -364,7 +364,7 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 				fixed_mac_addr,
 				WIFI_MAC_ADDR_LEN);
 		} else {
-			LOG_ERR("%s: Invalid MAC address: %s\n",
+			LOG_ERR("%s: Invalid MAC address: %s",
 				__func__,
 				net_sprint_ll_addr(fixed_mac_addr,
 						WIFI_MAC_ADDR_LEN));
@@ -376,7 +376,7 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 					vif_ctx_zep->mac_addr.addr);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: Fetching of MAC address from OTP failed\n",
+			LOG_ERR("%s: Fetching of MAC address from OTP failed",
 				__func__);
 			goto dev_rem;
 		}
@@ -433,13 +433,13 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	bool fmac_dev_added = false;
 
 	if (!dev) {
-		LOG_ERR("%s: Invalid parameters\n",
+		LOG_ERR("%s: Invalid parameters",
 			__func__);
 		goto out;
 	}
 
 	if (!device_is_ready(dev)) {
-		LOG_ERR("%s: Device %s is not ready\n",
+		LOG_ERR("%s: Device %s is not ready",
 			__func__, dev->name);
 		goto out;
 	}
@@ -447,7 +447,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n",
+		LOG_ERR("%s: vif_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
@@ -455,7 +455,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n",
+		LOG_ERR("%s: rpu_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
@@ -464,12 +464,12 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 		status = nrf_wifi_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed\n",
+			LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed",
 				__func__);
 			goto out;
 		}
 		fmac_dev_added = true;
-		LOG_DBG("%s: FMAC device added\n", __func__);
+		LOG_DBG("%s: FMAC device added", __func__);
 	}
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
@@ -493,7 +493,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 		add_vif_info.iftype;
 
 	if (vif_ctx_zep->vif_idx >= MAX_NUM_VIFS) {
-		LOG_ERR("%s: FMAC returned invalid interface index\n",
+		LOG_ERR("%s: FMAC returned invalid interface index",
 			__func__);
 		goto dev_rem;
 	}
@@ -506,7 +506,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 
 	if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
 					      mac_addr)) {
-		LOG_ERR("%s: Invalid MAC address: %s\n",
+		LOG_ERR("%s: Invalid MAC address: %s",
 			__func__,
 			net_sprint_ll_addr(mac_addr,
 					   mac_addr_len));
@@ -518,7 +518,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 					       mac_addr);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: MAC address change failed\n",
+		LOG_ERR("%s: MAC address change failed",
 			__func__);
 		goto dev_rem;
 	}
@@ -538,7 +538,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 					     &vif_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed\n",
+		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed",
 			__func__);
 		goto dev_rem;
 	}
@@ -552,7 +552,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 					      NRF_WIFI_PS_ENABLED);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_set_power_save failed\n",
+		LOG_ERR("%s: nrf_wifi_fmac_set_power_save failed",
 			__func__);
 		goto dev_rem;
 	}
@@ -581,7 +581,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	int ret = -1;
 
 	if (!dev) {
-		LOG_ERR("%s: Invalid parameters\n",
+		LOG_ERR("%s: Invalid parameters",
 			__func__);
 		goto out;
 	}
@@ -589,7 +589,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n",
+		LOG_ERR("%s: vif_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
@@ -597,7 +597,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n",
+		LOG_ERR("%s: rpu_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
@@ -609,7 +609,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 					      NRF_WIFI_PS_DISABLED);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_set_power_save failed\n",
+		LOG_ERR("%s: nrf_wifi_fmac_set_power_save failed",
 			__func__);
 		goto out;
 	}
@@ -631,7 +631,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 					     &vif_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed\n",
+		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed",
 			__func__);
 		goto out;
 	}
@@ -640,7 +640,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 				       vif_ctx_zep->vif_idx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_del_vif failed\n",
+		LOG_ERR("%s: nrf_wifi_fmac_del_vif failed",
 			__func__);
 		goto out;
 	}
@@ -666,7 +666,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 	int ret = -1;
 
 	if (!dev) {
-		LOG_ERR("%s: Invalid parameters\n",
+		LOG_ERR("%s: Invalid parameters",
 			__func__);
 		goto out;
 	}
@@ -674,7 +674,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n",
+		LOG_ERR("%s: vif_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
@@ -682,7 +682,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n",
+		LOG_ERR("%s: rpu_ctx_zep is NULL",
 			__func__);
 		goto out;
 	}
@@ -690,7 +690,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
 	if (!fmac_dev_ctx) {
-		LOG_ERR("%s: fmac_dev_ctx is NULL\n",
+		LOG_ERR("%s: fmac_dev_ctx is NULL",
 			__func__);
 		goto out;
 	}
@@ -698,7 +698,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 	if (type == ETHERNET_CONFIG_TYPE_MAC_ADDRESS) {
 		if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
 						      config->mac_address.addr)) {
-			LOG_ERR("%s: Invalid MAC address %s\n",
+			LOG_ERR("%s: Invalid MAC address %s",
 				__func__,
 				net_sprint_ll_addr(config->mac_address.addr,
 						   sizeof(config->mac_address.addr)));
@@ -726,14 +726,14 @@ struct net_stats_eth *nrf_wifi_eth_stats_get(const struct device *dev)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
 	if (!dev) {
-		LOG_ERR("%s Device not found\n", __func__);
+		LOG_ERR("%s Device not found", __func__);
 		goto out;
 	}
 
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
@@ -753,26 +753,26 @@ int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	int ret = -1;
 
 	if (!dev) {
-		LOG_ERR("%s Device not found\n", __func__);
+		LOG_ERR("%s Device not found", __func__);
 		goto out;
 	}
 
 	if (!zstats) {
-		LOG_ERR("%s Stats buffer not allocated\n", __func__);
+		LOG_ERR("%s Stats buffer not allocated", __func__);
 		goto out;
 	}
 
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
@@ -780,7 +780,7 @@ int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
 	status = nrf_wifi_fmac_stats_get(rpu_ctx_zep->rpu_ctx, 0, &stats);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_stats_get failed\n", __func__);
+		LOG_ERR("%s: nrf_wifi_fmac_stats_get failed", __func__);
 		goto out;
 	}
 

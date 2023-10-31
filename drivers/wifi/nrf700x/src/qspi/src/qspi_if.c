@@ -262,7 +262,7 @@ nrfx_err_t _nrfx_qspi_init(nrfx_qspi_config_t const *p_config, nrfx_qspi_handler
 	/* RDC4IO = 4'hA (register IFTIMING), which means 10 Dummy Cycles for READ4. */
 	p_reg->IFTIMING |= qspi_config->RDC4IO;
 
-	/* LOG_DBG("%04x : IFTIMING\n", p_reg->IFTIMING & qspi_config->RDC4IO); */
+	/* LOG_DBG("%04x : IFTIMING", p_reg->IFTIMING & qspi_config->RDC4IO); */
 
 	/* ACTIVATE task fails for slave bitfile so ignore it */
 	return NRFX_SUCCESS;
@@ -945,7 +945,7 @@ static int qspi_cmd_encryption(const struct device *dev, nrf_qspi_encryption_t *
 	qspi_device_uninit(dev);
 
 	if (ret < 0)
-		LOG_DBG("cmd_encryption failed %d\n", ret);
+		LOG_DBG("cmd_encryption failed %d", ret);
 
 	return ret;
 }
@@ -971,7 +971,7 @@ int qspi_RDSR2(const struct device *dev, uint8_t *rdsr2)
 
 	qspi_device_uninit(dev);
 
-	LOG_DBG("RDSR2 = 0x%x\n", sr);
+	LOG_DBG("RDSR2 = 0x%x", sr);
 
 	if (ret == 0)
 		*rdsr2 = sr;
@@ -1016,7 +1016,7 @@ int qspi_RDSR1(const struct device *dev, uint8_t *rdsr1)
 
 	qspi_device_uninit(dev);
 
-	LOG_DBG("RDSR2 = 0x%x\n", sr);
+	LOG_DBG("RDSR2 = 0x%x", sr);
 
 	if (ret == 0)
 		*rdsr1 = sr;
@@ -1033,7 +1033,7 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 	for (int ii = 0; ii < 10; ii++) {
 		ret = qspi_RDSR1(dev, &val);
 
-		LOG_DBG("RDSR1 = 0x%x\n", val);
+		LOG_DBG("RDSR1 = 0x%x", val);
 
 		if (!ret && (val & RPU_AWAKE_BIT)) {
 			break;
@@ -1077,10 +1077,10 @@ int qspi_wait_while_firmware_awake(const struct device *dev)
 		qspi_device_uninit(dev);
 
 		if ((ret < 0) || (sr != 0x6)) {
-			LOG_DBG("ret val = 0x%x\t RDSR1 = 0x%x\n", ret, sr);
+			LOG_DBG("ret val = 0x%x\t RDSR1 = 0x%x", ret, sr);
 		} else {
-			LOG_DBG("RDSR1 = 0x%x\n", sr);
-			LOG_INF("RPU is awake...\n");
+			LOG_DBG("RDSR1 = 0x%x", sr);
+			LOG_INF("RPU is awake...");
 			break;
 		}
 		k_msleep(1);
@@ -1107,7 +1107,7 @@ int qspi_WRSR2(const struct device *dev, uint8_t data)
 	qspi_device_uninit(dev);
 
 	if (ret < 0)
-		LOG_ERR("cmd_wakeup RPU failed %d\n", ret);
+		LOG_ERR("cmd_wakeup RPU failed %d", ret);
 
 	return ret;
 }
@@ -1130,7 +1130,7 @@ struct device qspi_perip = {
 
 int qspi_deinit(void)
 {
-	LOG_DBG("TODO : %s\n", __func__);
+	LOG_DBG("TODO : %s", __func__);
 
 	return 0;
 }
@@ -1173,7 +1173,7 @@ void qspi_update_nonce(unsigned int addr, int len, int hlread)
 void qspi_addr_check(unsigned int addr, const void *data, unsigned int len)
 {
 	if ((addr % 4 != 0) || (((unsigned int)data) % 4 != 0) || (len % 4 != 0)) {
-		LOG_ERR("%s : Unaligned address %x %x %d %x %x\n", __func__, addr,
+		LOG_ERR("%s : Unaligned address %x %x %d %x %x", __func__, addr,
 		       (unsigned int)data, (addr % 4 != 0), (((unsigned int)data) % 4 != 0),
 		       (len % 4 != 0));
 	}
@@ -1228,7 +1228,7 @@ int qspi_hl_readw(unsigned int addr, void *data)
 	rxb = k_malloc(len);
 
 	if (rxb == NULL) {
-		LOG_ERR("%s: ERROR ENOMEM line %d\n", __func__, __LINE__);
+		LOG_ERR("%s: ERROR ENOMEM line %d", __func__, __LINE__);
 		return -ENOMEM;
 	}
 
@@ -1267,7 +1267,7 @@ int qspi_cmd_sleep_rpu(const struct device *dev)
 {
 	uint8_t data = 0x0;
 
-	/* printf("TODO : %s:\n", __func__); */
+	/* printf("TODO : %s:", __func__); */
 	const struct qspi_buf tx_buf = {
 		.buf = &data,
 		.len = sizeof(data),
@@ -1287,7 +1287,7 @@ int qspi_cmd_sleep_rpu(const struct device *dev)
 	qspi_device_uninit(dev);
 
 	if (ret < 0) {
-		LOG_ERR("cmd_wakeup RPU failed: %d\n", ret);
+		LOG_ERR("cmd_wakeup RPU failed: %d", ret);
 	}
 
 	return ret;
@@ -1306,7 +1306,7 @@ int qspi_enable_encryption(uint8_t *key)
 	int ret = qspi_device_init(&qspi_perip);
 
 	if (ret != 0) {
-		LOG_ERR("qspi_device_init failed: %d\n", ret);
+		LOG_ERR("qspi_device_init failed: %d", ret);
 		return -EIO;
 	}
 
@@ -1314,13 +1314,13 @@ int qspi_enable_encryption(uint8_t *key)
 
 	err = nrfx_qspi_dma_encrypt(&qspi_config->p_cfg);
 	if (err != NRFX_SUCCESS) {
-		LOG_ERR("nrfx_qspi_dma_encrypt failed: %d\n", err);
+		LOG_ERR("nrfx_qspi_dma_encrypt failed: %d", err);
 		return -EIO;
 	}
 
 	err = qspi_cmd_encryption(&qspi_perip, &qspi_config->p_cfg);
 	if (err != 0) {
-		LOG_ERR("qspi_cmd_encryption failed: %d\n", err);
+		LOG_ERR("qspi_cmd_encryption failed: %d", err);
 		return -EIO;
 	}
 

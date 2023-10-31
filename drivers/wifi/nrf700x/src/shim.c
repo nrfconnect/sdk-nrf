@@ -125,7 +125,7 @@ static void *zep_shim_spinlock_alloc(void)
 	lock = k_malloc(sizeof(*lock));
 
 	if (!lock) {
-		LOG_ERR("%s: Unable to allocate memory for spinlock\n", __func__);
+		LOG_ERR("%s: Unable to allocate memory for spinlock", __func__);
 	}
 
 	return lock;
@@ -377,7 +377,7 @@ static void *zep_shim_llist_node_alloc(void)
 	llist_node = k_calloc(sizeof(*llist_node), sizeof(char));
 
 	if (!llist_node) {
-		LOG_ERR("%s: Unable to allocate memory for linked list node\n", __func__);
+		LOG_ERR("%s: Unable to allocate memory for linked list node", __func__);
 		return NULL;
 	}
 
@@ -416,7 +416,7 @@ static void *zep_shim_llist_alloc(void)
 	llist = k_calloc(sizeof(*llist), sizeof(char));
 
 	if (!llist) {
-		LOG_ERR("%s: Unable to allocate memory for linked list\n", __func__);
+		LOG_ERR("%s: Unable to allocate memory for linked list", __func__);
 	}
 
 	return llist;
@@ -580,13 +580,13 @@ static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_c
 
 	status = qdev->init(qspi_defconfig());
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: QSPI device init failed\n", __func__);
+		LOG_ERR("%s: QSPI device init failed", __func__);
 		return NULL;
 	}
 
 	ret = rpu_enable();
 	if (ret) {
-		LOG_ERR("%s: RPU enable failed with error %d\n", __func__, ret);
+		LOG_ERR("%s: RPU enable failed with error %d", __func__, ret);
 		return NULL;
 	}
 	zep_qspi_priv->qspi_dev = qdev;
@@ -612,7 +612,7 @@ static void *zep_shim_bus_qspi_init(void)
 	qspi_priv = k_calloc(sizeof(*qspi_priv), sizeof(char));
 
 	if (!qspi_priv) {
-		LOG_ERR("%s: Unable to allocate memory for qspi_priv\n", __func__);
+		LOG_ERR("%s: Unable to allocate memory for qspi_priv", __func__);
 		goto out;
 	}
 out:
@@ -653,7 +653,7 @@ static void zep_shim_bus_qspi_dev_host_map_get(void *os_qspi_dev_ctx,
 					       struct nrf_wifi_osal_host_map *host_map)
 {
 	if (!os_qspi_dev_ctx || !host_map) {
-		LOG_ERR("%s: Invalid parameters\n", __func__);
+		LOG_ERR("%s: Invalid parameters", __func__);
 		return;
 	}
 
@@ -667,7 +667,7 @@ static void irq_work_handler(struct k_work *work)
 	ret = intr_priv->callbk_fn(intr_priv->callbk_data);
 
 	if (ret) {
-		LOG_ERR("%s: Interrupt callback failed\n", __func__);
+		LOG_ERR("%s: Interrupt callback failed", __func__);
 	}
 }
 
@@ -693,7 +693,7 @@ static enum nrf_wifi_status zep_shim_bus_qspi_intr_reg(void *os_dev_ctx, void *c
 	intr_priv = k_calloc(sizeof(*intr_priv), sizeof(char));
 
 	if (!intr_priv) {
-		LOG_ERR("%s: Unable to allocate memory for intr_priv\n", __func__);
+		LOG_ERR("%s: Unable to allocate memory for intr_priv", __func__);
 		goto out;
 	}
 
@@ -705,7 +705,7 @@ static enum nrf_wifi_status zep_shim_bus_qspi_intr_reg(void *os_dev_ctx, void *c
 	ret = rpu_irq_config(&intr_priv->gpio_cb_data, zep_shim_irq_handler);
 
 	if (ret) {
-		LOG_ERR("%s: request_irq failed\n", __func__);
+		LOG_ERR("%s: request_irq failed", __func__);
 		k_free(intr_priv);
 		intr_priv = NULL;
 		goto out;
@@ -737,7 +737,7 @@ static void *zep_shim_timer_alloc(void)
 	timer = k_malloc(sizeof(*timer));
 
 	if (!timer)
-		LOG_ERR("%s: Unable to allocate memory for work\n", __func__);
+		LOG_ERR("%s: Unable to allocate memory for work", __func__);
 
 	return timer;
 }
@@ -788,7 +788,7 @@ static void zep_shim_assert(int test_val, int val, enum nrf_wifi_assert_op_type 
 		NET_ASSERT(test_val >= val, "%s", msg);
 	break;
 	default:
-		LOG_ERR("%s: Invalid assertion operation\n", __func__);
+		LOG_ERR("%s: Invalid assertion operation", __func__);
 	}
 }
 

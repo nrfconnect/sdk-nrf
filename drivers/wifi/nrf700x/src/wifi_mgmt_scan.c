@@ -55,18 +55,18 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
 	if (vif_ctx_zep->if_op_state != NRF_WIFI_FMAC_IF_OP_STATE_UP) {
-		LOG_ERR("%s: Interface not UP\n", __func__);
+		LOG_ERR("%s: Interface not UP", __func__);
 		goto out;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
@@ -74,7 +74,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 
 
 	if (vif_ctx_zep->scan_in_progress) {
-		LOG_INF("%s: Scan already in progress\n", __func__);
+		LOG_INF("%s: Scan already in progress", __func__);
 		ret = -EBUSY;
 		goto out;
 	}
@@ -87,7 +87,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 #endif /* CONFIG_BOARD_NF7001 */
 
 		if (params->bands & band_flags) {
-			LOG_ERR("%s: Unsupported band(s) (0x%X)\n", __func__, params->bands);
+			LOG_ERR("%s: Unsupported band(s) (0x%X)", __func__, params->bands);
 			ret = -EBUSY;
 			goto out;
 		}
@@ -111,7 +111,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 			     sizeof(char));
 
 	if (!scan_info) {
-		LOG_ERR("%s: Unable to allocate memory for scan_info (size: %d bytes)\n",
+		LOG_ERR("%s: Unable to allocate memory for scan_info (size: %d bytes)",
 			__func__,
 		       sizeof(*scan_info) + (num_scan_channels *
 					     sizeof(scan_info->scan_params.center_frequency[0])));
@@ -155,7 +155,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 				band = nrf_wifi_map_zep_band_to_rpu(i);
 
 				if (band == NRF_WIFI_BAND_INVALID) {
-					LOG_ERR("%s: Unsupported band %d\n",
+					LOG_ERR("%s: Unsupported band %d",
 						__func__,
 						i);
 					goto out;
@@ -167,7 +167,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 								    params->chan[i][j]);
 
 				if (scan_info->scan_params.center_frequency[k-1] == -1) {
-					LOG_ERR("%s: Invalid channel %d\n",
+					LOG_ERR("%s: Invalid channel %d",
 						__func__,
 						params->chan[i][j]);
 					goto out;
@@ -183,7 +183,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 	status = nrf_wifi_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_scan failed\n", __func__);
+		LOG_ERR("%s: nrf_wifi_fmac_scan failed", __func__);
 		goto out;
 	}
 
@@ -214,7 +214,7 @@ enum nrf_wifi_status nrf_wifi_disp_scan_res_get_zep(struct nrf_wifi_vif_ctx_zep 
 					    SCAN_DISPLAY);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_fmac_scan failed\n", __func__);
+		LOG_ERR("%s: nrf_wifi_fmac_scan failed", __func__);
 		goto out;
 	}
 
@@ -353,19 +353,19 @@ void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 	vif_ctx_zep = vif_ctx;
 
 	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		return;
 	}
 
 	if (!vif_ctx_zep->scan_in_progress) {
-		/*LOG_INF("%s: Scan not in progress : raw scan data not available\n", __func__);*/
+		/*LOG_INF("%s: Scan not in progress : raw scan data not available", __func__);*/
 		return;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep) {
-		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
 		return;
 	}
 

@@ -101,7 +101,7 @@ static int rpu_validate_addr(uint32_t start_addr, uint32_t len, bool *hl_flag)
 	}
 
 	if (ret) {
-		LOG_ERR("Address validation failed - pls check memmory map and re-try\n");
+		LOG_ERR("Address validation failed - pls check memmory map and re-try");
 		return -1;
 	}
 
@@ -120,20 +120,20 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 	int ret;
 
 	if (!device_is_ready(host_irq_spec.port)) {
-		LOG_ERR("Host IRQ GPIO %s is not ready\n", host_irq_spec.port->name);
+		LOG_ERR("Host IRQ GPIO %s is not ready", host_irq_spec.port->name);
 		return -ENODEV;
 	}
 
 	ret = gpio_pin_configure_dt(&host_irq_spec, GPIO_INPUT);
 	if (ret) {
-		LOG_ERR("Failed to configure host_irq pin %d\n", host_irq_spec.pin);
+		LOG_ERR("Failed to configure host_irq pin %d", host_irq_spec.pin);
 		goto out;
 	}
 
 	ret = gpio_pin_interrupt_configure_dt(&host_irq_spec,
 			GPIO_INT_EDGE_TO_ACTIVE);
 	if (ret) {
-		LOG_ERR("Failed to configure interrupt on host_irq pin %d\n",
+		LOG_ERR("Failed to configure interrupt on host_irq pin %d",
 				host_irq_spec.pin);
 		goto out;
 	}
@@ -144,12 +144,12 @@ int rpu_irq_config(struct gpio_callback *irq_callback_data, void (*irq_handler)(
 
 	ret = gpio_add_callback(host_irq_spec.port, irq_callback_data);
 	if (ret) {
-		LOG_ERR("Failed to add callback on host_irq pin %d\n",
+		LOG_ERR("Failed to add callback on host_irq pin %d",
 				host_irq_spec.pin);
 		goto out;
 	}
 
-	LOG_DBG("Finished Interrupt config\n\n");
+	LOG_DBG("Finished Interrupt config\n");
 
 out:
 	return ret;
@@ -161,13 +161,13 @@ int rpu_irq_remove(struct gpio_callback *irq_callback_data)
 
 	ret = gpio_pin_configure_dt(&host_irq_spec, GPIO_DISCONNECTED);
 	if (ret) {
-		LOG_ERR("Failed to remove host_irq pin %d\n", host_irq_spec.pin);
+		LOG_ERR("Failed to remove host_irq pin %d", host_irq_spec.pin);
 		goto out;
 	}
 
 	ret = gpio_remove_callback(host_irq_spec.port, irq_callback_data);
 	if (ret) {
-		LOG_ERR("Failed to remove callback on host_irq pin %d\n",
+		LOG_ERR("Failed to remove callback on host_irq pin %d",
 				host_irq_spec.pin);
 		goto out;
 	}
@@ -189,7 +189,7 @@ static int ble_gpio_config(void)
 
 	ret = gpio_pin_configure_dt(&btrf_switch_spec, GPIO_OUTPUT);
 	if (ret) {
-		LOG_ERR("BLE GPIO configuration failed %d\n", ret);
+		LOG_ERR("BLE GPIO configuration failed %d", ret);
 		return ret;
 	}
 
@@ -207,7 +207,7 @@ static int ble_gpio_remove(void)
 
 	ret = gpio_pin_configure_dt(&btrf_switch_spec, GPIO_DISCONNECTED);
 	if (ret) {
-		LOG_ERR("Bluetooth LE GPIO remove failed %d\n", ret);
+		LOG_ERR("Bluetooth LE GPIO remove failed %d", ret);
 		return ret;
 	}
 
@@ -222,29 +222,29 @@ static int rpu_gpio_config(void)
 	int ret;
 
 	if (!device_is_ready(iovdd_ctrl_spec.port)) {
-		LOG_ERR("IOVDD GPIO %s is not ready\n", iovdd_ctrl_spec.port->name);
+		LOG_ERR("IOVDD GPIO %s is not ready", iovdd_ctrl_spec.port->name);
 		return -ENODEV;
 	}
 
 	if (!device_is_ready(bucken_spec.port)) {
-		LOG_ERR("BUCKEN GPIO %s is not ready\n", bucken_spec.port->name);
+		LOG_ERR("BUCKEN GPIO %s is not ready", bucken_spec.port->name);
 		return -ENODEV;
 	}
 
 	ret = gpio_pin_configure_dt(&bucken_spec, (GPIO_OUTPUT | NRF_GPIO_DRIVE_H0H1));
 	if (ret) {
-		LOG_ERR("BUCKEN GPIO configuration failed...\n");
+		LOG_ERR("BUCKEN GPIO configuration failed...");
 		return ret;
 	}
 
 	ret = gpio_pin_configure_dt(&iovdd_ctrl_spec, GPIO_OUTPUT);
 	if (ret) {
-		LOG_ERR("IOVDD GPIO configuration failed...\n");
+		LOG_ERR("IOVDD GPIO configuration failed...");
 		gpio_pin_configure_dt(&bucken_spec, GPIO_DISCONNECTED);
 		return ret;
 	}
 
-	LOG_DBG("GPIO configuration done...\n\n");
+	LOG_DBG("GPIO configuration done...\n");
 
 	return 0;
 }
@@ -255,17 +255,17 @@ static int rpu_gpio_remove(void)
 
 	ret = gpio_pin_configure_dt(&bucken_spec, GPIO_DISCONNECTED);
 	if (ret) {
-		LOG_ERR("BUCKEN GPIO remove failed...\n");
+		LOG_ERR("BUCKEN GPIO remove failed...");
 		return ret;
 	}
 
 	ret = gpio_pin_configure_dt(&iovdd_ctrl_spec, GPIO_DISCONNECTED);
 	if (ret) {
-		LOG_ERR("IOVDD GPIO remove failed...\n");
+		LOG_ERR("IOVDD GPIO remove failed...");
 		return ret;
 	}
 
-	LOG_DBG("GPIO remove done...\n\n");
+	LOG_DBG("GPIO remove done...\n");
 	return ret;
 }
 
@@ -275,7 +275,7 @@ static int rpu_pwron(void)
 
 	ret = gpio_pin_set_dt(&bucken_spec, 1);
 	if (ret) {
-		LOG_ERR("BUCKEN GPIO set failed...\n");
+		LOG_ERR("BUCKEN GPIO set failed...");
 		return ret;
 	}
 	/* Settling time is 50us (H0) or 100us (L0) */
@@ -283,7 +283,7 @@ static int rpu_pwron(void)
 
 	ret = gpio_pin_set_dt(&iovdd_ctrl_spec, 1);
 	if (ret) {
-		LOG_ERR("IOVDD GPIO set failed...\n");
+		LOG_ERR("IOVDD GPIO set failed...");
 		gpio_pin_set_dt(&bucken_spec, 0);
 		return ret;
 	}
@@ -296,7 +296,7 @@ static int rpu_pwron(void)
 	k_msleep(4);
 #endif /* SHIELD_NRF7002EB */
 
-	LOG_DBG("Bucken = %d, IOVDD = %d\n", gpio_pin_get_dt(&bucken_spec),
+	LOG_DBG("Bucken = %d, IOVDD = %d", gpio_pin_get_dt(&bucken_spec),
 			gpio_pin_get_dt(&iovdd_ctrl_spec));
 
 	return ret;
@@ -308,13 +308,13 @@ static int rpu_pwroff(void)
 
 	ret = gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
 	if (ret) {
-		LOG_ERR("BUCKEN GPIO set failed...\n");
+		LOG_ERR("BUCKEN GPIO set failed...");
 		return ret;
 	}
 
 	ret = gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
 	if (ret) {
-		LOG_ERR("IOVDD GPIO set failed...\n");
+		LOG_ERR("IOVDD GPIO set failed...");
 		return ret;
 	}
 
@@ -329,7 +329,7 @@ int ble_ant_switch(unsigned int ant_switch)
 
 	ret = gpio_pin_set_dt(&btrf_switch_spec, ant_switch & 0x1);
 	if (ret) {
-		LOG_ERR("BLE GPIO set failed %d\n", ret);
+		LOG_ERR("BLE GPIO set failed %d", ret);
 		return ret;
 	}
 
@@ -377,7 +377,7 @@ int rpu_wakeup(void)
 
 	ret = rpu_wrsr2(1);
 	if (ret) {
-		LOG_ERR("Error: WRSR2 failed\n");
+		LOG_ERR("Error: WRSR2 failed");
 		return ret;
 	}
 
@@ -400,19 +400,19 @@ void rpu_get_sleep_stats(uint32_t addr, uint32_t *buff, uint32_t wrd_len)
 
 	ret = rpu_wakeup();
 	if (ret) {
-		LOG_ERR("Error: RPU wakeup failed\n");
+		LOG_ERR("Error: RPU wakeup failed");
 		return;
 	}
 
 	ret = rpu_read(addr, buff, wrd_len * 4);
 	if (ret) {
-		LOG_ERR("Error: RPU read failed\n");
+		LOG_ERR("Error: RPU read failed");
 		return;
 	}
 
 	ret = rpu_sleep();
 	if (ret) {
-		LOG_ERR("Error: RPU sleep failed\n");
+		LOG_ERR("Error: RPU sleep failed");
 		return;
 	}
 }
@@ -427,7 +427,7 @@ int rpu_wrsr2(uint8_t data)
 	ret = spim_cmd_rpu_wakeup_fn(data);
 #endif
 
-	LOG_DBG("Written 0x%x to WRSR2\n", data);
+	LOG_DBG("Written 0x%x to WRSR2", data);
 	return ret;
 }
 
@@ -455,7 +455,7 @@ int rpu_clks_on(void)
 	uint32_t rpu_clks = 0x100;
 	/* Enable RPU Clocks */
 	qdev->write(0x048C20, &rpu_clks, 4);
-	LOG_DBG("RPU Clocks ON...\n");
+	LOG_DBG("RPU Clocks ON...");
 	return 0;
 }
 
@@ -463,7 +463,7 @@ int rpu_clks_on(void)
 	do { \
 		ret = func(__VA_ARGS__); \
 		if (ret) { \
-			LOG_DBG("Error: %s failed with %d\n", #func, ret); \
+			LOG_DBG("Error: %s failed with %d", #func, ret); \
 			goto out; \
 		} \
 	} while (0)
