@@ -62,7 +62,6 @@ Besides applying `General recommendations`_, you can also complete the following
   * :kconfig:option:`CONFIG_BT_BUF_EVT_RX_COUNT`
   * :kconfig:option:`CONFIG_BT_CONN_TX_MAX`
   * :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT`
-  * :kconfig:option:`CONFIG_BT_CTLR_RX_BUFFERS`
   * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`
   * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_SIZE`
 
