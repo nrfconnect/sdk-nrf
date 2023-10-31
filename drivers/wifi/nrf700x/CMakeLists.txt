@@ -127,3 +127,16 @@ zephyr_compile_definitions_ifdef(CONFIG_NRF700X_ON_QSPI
 	-DNRF53_ERRATA_43_ENABLE_WORKAROUND=0
 	-DNRF52_ERRATA_215_ENABLE_WORKAROUND=0
 )
+
+# RPU FW patch binaries based on the selected configuration
+zephyr_compile_definitions_ifdef(CONFIG_NRF700X_SYSTEM_MODE
+	-DCONFIG_NRF_WIFI_FW_BIN=${OS_AGNOSTIC_BASE}/fw_bins/default/nrf70.bin
+)
+
+zephyr_compile_definitions_ifdef(CONFIG_NRF700X_RADIO_TEST
+	-DCONFIG_NRF_WIFI_FW_BIN=${OS_AGNOSTIC_BASE}/fw_bins/radio_test/nrf70.bin
+)
+
+zephyr_compile_definitions_ifdef(CONFIG_NRF700X_SCAN_ONLY
+	-DCONFIG_NRF_WIFI_FW_BIN=${OS_AGNOSTIC_BASE}/fw_bins/scan_only/nrf70.bin
+)
