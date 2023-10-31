@@ -8,7 +8,7 @@
 DT_COMPAT_NORDIC_NRF700X_QSPI := nordic,nrf700x-qspi
 DT_COMPAT_NORDIC_NRF700X_SPI := nordic,nrf700x-spi
 
-config WIFI_NRF700X
+menuconfig WIFI_NRF700X
 	bool "nRF700x driver"
 	depends on WIFI
 	select NET_L2_WIFI_MGMT if NETWORKING
@@ -29,15 +29,44 @@ config WIFI_NRF700X_BUS_LOG_LEVEL
 	# Enable error by default
 	default 1
 
-# Hidden define for internal use
-config NRF700X_SCAN_ONLY_MODE
-	bool
-	default y if !WPA_SUPP && !NRF700X_RADIO_TEST
+choice NRF700X_OPER_MODES
+	bool "nRF700x operating modes"
+	default NRF700X_SYSTEM_MODE if WPA_SUPP
+	default NRF700X_SCAN_ONLY if !WPA_SUPP
+	help
+	  Select the operating mode of the nRF700x driver
+
+config NRF700X_SYSTEM_MODE
+	bool "Enable nRF700X system mode"
+	depends on WPA_SUPP
+	help
+	  Select this option to enable system mode of the nRF700x driver
+
+config NRF700X_SCAN_ONLY
+	bool "Enable nRF700X scan only mode"
+	help
+	  Select this option to enable scan only mode of the nRF700x driver
+
+config NRF700X_RADIO_TEST
+	bool "Radio test mode of the nRF700x driver"
+
+endchoice
+
+if NRF700X_SYSTEM_MODE
 
 config NRF700X_STA_MODE
 	bool "Enable nRF700X STA mode"
-	depends on WPA_SUPP
-	default y if WPA_SUPP
+	default y
+	help
+		Select this option to enable STA mode of the nRF700x driver
+
+config NRF700X_AP_MODE
+	bool "Enable Access point mode"
+
+config NRF700X_P2P_MODE
+	bool "Enable P2P support in driver"
+
+endif # NRF700X_SYSTEM_MODE
 
 config NRF_WIFI_IF_AUTO_START
 	bool "Enable Wi-Fi interface auto start on boot"
@@ -118,21 +147,9 @@ config NRF700X_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
 	default 18
 
-config NRF700X_RADIO_TEST
-	bool "Radio test mode of the nRF700x driver"
-	depends on !NRF700X_STA_MODE && !NRF700X_AP_MODE && !NRF700X_P2P_MODE && !NRF700X_DATA_TX
-
-config NRF700X_AP_MODE
-	bool "Enable Access point mode"
-	select WPA_SUPP
-
-config NRF700X_P2P_MODE
-	bool "Enable P2P support in driver"
-	select WPA_SUPP
-
 config NRF700X_DATA_TX
 	bool "Enable TX data path in the driver"
-	default y if NRF700X_STA_MODE || NRF700X_AP_MODE || NRF700X_P2P_MODE
+	default y if NRF700X_SYSTEM_MODE
 
 config NRF700X_UTIL
 	depends on SHELL
