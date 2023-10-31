@@ -631,7 +631,7 @@ int method_gnss_cancel(void)
 	int rrc_idling;
 
 	if ((err != 0) && (err != -NRF_EPERM)) {
-		LOG_ERR("Failed to stop GNSS");
+		LOG_ERR("Failed to stop GNSS, error: %d", err);
 	}
 
 	running = false;
@@ -1136,11 +1136,6 @@ static void method_gnss_start_work_fn(struct k_work *work)
 	method_gnss_assistance_request();
 #endif
 
-	if (!method_gnss_allowed_to_start()) {
-		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
-		return;
-	}
-
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
 	if (err == -NRF_EACCES) {
@@ -1181,9 +1176,14 @@ static void method_gnss_start_work_fn(struct k_work *work)
 		return;
 	}
 
+	if (!method_gnss_allowed_to_start()) {
+		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
+		return;
+	}
+
 	err = nrf_modem_gnss_start();
 	if (err) {
-		LOG_ERR("Failed to start GNSS");
+		LOG_ERR("Failed to start GNSS, error: %d", err);
 		location_core_event_cb_error();
 		running = false;
 		return;
