@@ -11,7 +11,7 @@ This guide provides recommendations and guidelines for using the nRF70 Series de
 
 Networking stack combinations
 *****************************
-The table below lists the required protocol stack combinations for various classes of Wi-Fi inter networking applications.
+The table below lists the required protocol stack combinations for various classes of Wi-Fi® internetworking applications.
 
 .. csv-table:: Supported networking stack combinations
    :file: stack_combo.csv
