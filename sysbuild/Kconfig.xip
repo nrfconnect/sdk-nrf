@@ -1,0 +1,18 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SUPPORT_QSPI_XIP
+	bool
+	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+
+menuconfig QSPI_XIP_SUPPORT
+	bool "QSPI XIP support"
+	depends on SUPPORT_QSPI_XIP
+	help
+	  Configures images and build system to support executing code from
+	  QSPI flash in XIP mode. Will also configure an additional image for
+	  MCUboot (if enabled) to allow for updating the image.
+
+	  Requires `mcuboot_primary_2` and `mcuboot_secondary_2` entries in a
+	  partition manager configuration file.
