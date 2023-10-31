@@ -248,9 +248,17 @@ static void at_handler_cereg(const char *response)
 		evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
 		evt.lte_mode = lte_mode;
 
-		LTE_LC_TRACE(lte_mode == LTE_LC_LTE_MODE_LTEM ?
-			     LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM :
-			     LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT);
+		switch (lte_mode) {
+		case LTE_LC_LTE_MODE_LTEM:
+			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM);
+			break;
+		case LTE_LC_LTE_MODE_NBIOT:
+			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT);
+			break;
+		case LTE_LC_LTE_MODE_NONE:
+			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_NONE);
+			break;
+		}
 
 		event_handler_list_dispatch(&evt);
 	}

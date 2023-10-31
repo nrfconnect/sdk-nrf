@@ -635,12 +635,12 @@ int parse_cereg(const char *at_response,
 					   AT_CEREG_READ_TAC_INDEX,
 				str_buf, &len);
 		if (err) {
-			LOG_ERR("Could not get tracking area code, error: %d", err);
-			goto clean_exit;
+			LOG_DBG("Could not get tracking area code, error: %d", err);
+			cell->tac = LTE_LC_CELL_TAC_INVALID;
+		} else {
+			str_buf[len] = '\0';
+			cell->tac = strtoul(str_buf, NULL, 16);
 		}
-
-		str_buf[len] = '\0';
-		cell->tac = strtoul(str_buf, NULL, 16);
 
 		/* Parse cell ID */
 		len = sizeof(str_buf) - 1;
@@ -650,14 +650,14 @@ int parse_cereg(const char *at_response,
 					   AT_CEREG_READ_CELL_ID_INDEX,
 				str_buf, &len);
 		if (err) {
-			LOG_ERR("Could not get cell ID, error: %d", err);
-			goto clean_exit;
+			LOG_DBG("Could not get cell ID, error: %d", err);
+			cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+		} else {
+			str_buf[len] = '\0';
+			cell->id = strtoul(str_buf, NULL, 16);
 		}
-
-		str_buf[len] = '\0';
-		cell->id = strtoul(str_buf, NULL, 16);
 	} else if (cell) {
-		cell->tac = UINT32_MAX;
+		cell->tac = LTE_LC_CELL_TAC_INVALID;
 		cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 	}
 
