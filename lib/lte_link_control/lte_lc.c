@@ -652,7 +652,8 @@ static int connect_lte(bool blocking)
 	err = lte_lc_nw_reg_status_get(&reg_status);
 	if (err) {
 		LOG_ERR("Failed to get current registration status");
-		return -EFAULT;
+		err = -EFAULT;
+		goto exit;
 	}
 
 	/* Do not attempt to register with an LTE network if the device already is registered.
