@@ -69,7 +69,7 @@ static int poll_otp_ready(void)
 		}
 		poll++;
 	}
-	LOG_ERR("OTP is not ready\n");
+	LOG_ERR("OTP is not ready");
 	return -ENOEXEC;
 }
 
@@ -88,7 +88,7 @@ static int otp_wr_voltage_2V5(void)
 	err = req_otp_standby_mode();
 
 	if (err) {
-		LOG_ERR("Failed Setting OTP voltage IOVDD to 2.5V\n");
+		LOG_ERR("Failed Setting OTP voltage IOVDD to 2.5V");
 		return -ENOEXEC;
 	}
 	write_word(OTP_VOLTCTRL_ADDR, OTP_VOLTCTRL_2V5);
@@ -108,7 +108,7 @@ static int poll_otp_read_valid(void)
 		}
 		poll++;
 	}
-	LOG_ERR("failed poll_otp_read_valid()\n");
+	LOG_ERR("failed poll_otp_read_valid()");
 	return -ENOEXEC;
 }
 
@@ -125,7 +125,7 @@ static int poll_otp_wrdone(void)
 		}
 		poll++;
 	}
-	LOG_ERR("failed poll_otp_wrdone()\n");
+	LOG_ERR("failed poll_otp_wrdone()");
 	return -ENOEXEC;
 }
 
@@ -149,7 +149,7 @@ static unsigned int read_otp_location(unsigned int offset, unsigned int *read_va
 	write_word(OTP_RDENABLE_ADDR,  offset);
 	err = poll_otp_read_valid();
 	if (err) {
-		LOG_ERR("OTP read failed\n");
+		LOG_ERR("OTP read failed");
 		return err;
 	}
 	read_word(OTP_READREG_ADDR, read_val);
@@ -172,7 +172,7 @@ static int otp_rd_voltage_1V8(void)
 
 	err = req_otp_standby_mode();
 	if (err) {
-		LOG_ERR("error in %s\n", __func__);
+		LOG_ERR("error in %s", __func__);
 		return err;
 	}
 	write_word(OTP_VOLTCTRL_ADDR, OTP_VOLTCTRL_1V8);
@@ -187,10 +187,10 @@ static int update_mac_addr(unsigned int index, unsigned int *write_val)
 	for (int i = 0; i < 2; i++) {
 		ret = write_otp_location(MAC0_ADDR + 2 * index + i, write_val[i]);
 		if (ret == -ENOEXEC) {
-			LOG_ERR("FICR: Failed to update MAC ADDR%d\n", index);
+			LOG_ERR("FICR: Failed to update MAC ADDR%d", index);
 			break;
 		}
-		LOG_INF("mac addr %d : Reg%d (0x%x) = 0x%04x\n",
+		LOG_INF("mac addr %d : Reg%d (0x%x) = 0x%04x",
 					index, (i+1), (MAC0_ADDR + i) << 2, write_val[i]);
 	}
 	return ret;
@@ -205,7 +205,7 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 
 	err = poll_otp_ready();
 	if (err) {
-		LOG_ERR("err in otp ready poll\n");
+		LOG_ERR("err in otp ready poll");
 		return err;
 	}
 
@@ -213,13 +213,13 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 
 	err = otp_wr_voltage_2V5();
 	if (err) {
-		LOG_ERR("error in write_voltage 2V5\n");
+		LOG_ERR("error in write_voltage 2V5");
 		goto _exit_otp_write;
 	}
 
 	err = req_otp_byte_write_mode();
 	if (err) {
-		LOG_ERR("error in OTP byte write mode\n");
+		LOG_ERR("error in OTP byte write mode");
 		goto _exit_otp_write;
 	}
 
@@ -230,13 +230,13 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 		write_otp_location(REGION_PROTECT+2, write_val[0]);
 		write_otp_location(REGION_PROTECT+3, write_val[0]);
 
-		LOG_INF("Written REGION_PROTECT0 (0x%x) : 0x%04x\n",
+		LOG_INF("Written REGION_PROTECT0 (0x%x) : 0x%04x",
 						(REGION_PROTECT << 2), write_val[0]);
-		LOG_INF("Written REGION_PROTECT1 (0x%x) : 0x%04x\n",
+		LOG_INF("Written REGION_PROTECT1 (0x%x) : 0x%04x",
 						(REGION_PROTECT+1) << 2, write_val[0]);
-		LOG_INF("Written REGION_PROTECT2 (0x%x) : 0x%04x\n",
+		LOG_INF("Written REGION_PROTECT2 (0x%x) : 0x%04x",
 						(REGION_PROTECT+2) << 2, write_val[0]);
-		LOG_INF("Written REGION_PROTECT3 (0x%x) : 0x%04x\n",
+		LOG_INF("Written REGION_PROTECT3 (0x%x) : 0x%04x",
 						(REGION_PROTECT+3) << 2, write_val[0]);
 		break;
 	case QSPI_KEY:
@@ -244,14 +244,14 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 		for (int i = 0; i < QSPI_KEY_LENGTH_BYTES / 4; i++) {
 			ret = write_otp_location(QSPI_KEY + i, write_val[i]);
 			if (ret == -ENOEXEC) {
-				LOG_ERR("FICR: Failed to write QSPI key offset-%d\n", QSPI_KEY + i);
+				LOG_ERR("FICR: Failed to write QSPI key offset-%d", QSPI_KEY + i);
 				goto _exit_otp_write;
 			}
-			LOG_INF("Written QSPI_KEY0 (0x%x) : 0x%04x\n",
+			LOG_INF("Written QSPI_KEY0 (0x%x) : 0x%04x",
 						(QSPI_KEY + i) << 2, write_val[i]);
 		}
 		write_otp_location(REGION_DEFAULTS, mask_val);
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
+		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
 	case MAC0_ADDR:
@@ -262,8 +262,8 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 		}
 
 		write_otp_location(REGION_DEFAULTS, mask_val);
-		LOG_INF("Written MAC address 0\n");
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
+		LOG_INF("Written MAC address 0");
+		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
 	case MAC1_ADDR:
@@ -273,8 +273,8 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 			goto _exit_otp_write;
 		}
 		write_otp_location(REGION_DEFAULTS, mask_val);
-		LOG_INF("Written MAC address 1\n");
-		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
+		LOG_INF("Written MAC address 1");
+		LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x",
 						(REGION_DEFAULTS) << 2, mask_val);
 		break;
 	case CALIB_XO:
@@ -282,14 +282,14 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 		ret = write_otp_location(CALIB_XO, write_val[0]);
 
 		if (ret == -ENOEXEC) {
-			LOG_ERR("XO_Update Exception\n");
+			LOG_ERR("XO_Update Exception");
 			goto _exit_otp_write;
 		} else {
 			write_otp_location(REGION_DEFAULTS, mask_val);
 
-			LOG_INF("Written CALIB_XO (0x%x) to 0x%04x\n",
+			LOG_INF("Written CALIB_XO (0x%x) to 0x%04x",
 						CALIB_XO << 2, write_val[0]);
-			LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x\n",
+			LOG_INF("Written REGION_DEFAULTS (0x%x) : 0x%04x",
 						(REGION_DEFAULTS) << 2, mask_val);
 		}
 		break;
@@ -332,11 +332,11 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 	case REGION_DEFAULTS:
 		write_otp_location(REGION_DEFAULTS, write_val[0]);
 
-		LOG_INF("Written REGION_DEFAULTS (0x%x) to 0x%04x\n",
+		LOG_INF("Written REGION_DEFAULTS (0x%x) to 0x%04x",
 						REGION_DEFAULTS << 2, write_val[0]);
 		break;
 	default:
-		LOG_ERR("unknown field received: %d\n", otp_addr);
+		LOG_ERR("unknown field received: %d", otp_addr);
 
 	}
 	return ret;
@@ -353,7 +353,7 @@ int read_otp_memory(unsigned int otp_addr, unsigned int *read_val, int len)
 
 	err = poll_otp_ready();
 	if (err) {
-		LOG_ERR("err in otp ready poll\n");
+		LOG_ERR("err in otp ready poll");
 		return -ENOEXEC;
 	}
 
@@ -361,13 +361,13 @@ int read_otp_memory(unsigned int otp_addr, unsigned int *read_val, int len)
 
 	err = otp_rd_voltage_1V8();
 	if (err) {
-		LOG_ERR("error in read_voltage 1V8\n");
+		LOG_ERR("error in read_voltage 1V8");
 		return -ENOEXEC;
 	}
 
 	err = req_otp_read_mode();
 	if (err) {
-		LOG_ERR("error in req_otp_read_mode()\n");
+		LOG_ERR("error in req_otp_read_mode()");
 		return -ENOEXEC;
 	}
 

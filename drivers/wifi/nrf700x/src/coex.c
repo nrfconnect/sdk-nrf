@@ -212,25 +212,25 @@ int nrf_wifi_config_sr_switch(bool separate_antennas)
 	int ret;
 
 	if (!device_is_ready(btrf_switch_spec.port)) {
-		LOG_ERR("Unable to open GPIO device\n");
+		LOG_ERR("Unable to open GPIO device");
 		return -ENODEV;
 	}
 
 	ret = gpio_pin_configure_dt(&btrf_switch_spec, GPIO_OUTPUT);
 	if (ret < 0) {
-		LOG_ERR("Unable to configure GPIO device\n");
+		LOG_ERR("Unable to configure GPIO device");
 		return -1;
 	}
 
 	if (separate_antennas) {
 		gpio_pin_set_dt(&btrf_switch_spec, 0x0);
-		LOG_INF("GPIO P1.10 set to 0\n");
+		LOG_INF("GPIO P1.10 set to 0");
 	} else {
 		gpio_pin_set_dt(&btrf_switch_spec, 0x1);
-		LOG_INF("GPIO P1.10 set to 1\n");
+		LOG_INF("GPIO P1.10 set to 1");
 	}
 
-	LOG_DBG("Successfully configured GPIO P1.10\n");
+	LOG_DBG("Successfully configured GPIO P1.10");
 
 	return 0;
 }
@@ -262,7 +262,7 @@ int nrf_wifi_coex_hw_reset(void)
 				(void *)(&params), cmd_len);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("CH reset configuration failed\n");
+		LOG_ERR("CH reset configuration failed");
 		return -1;
 	}
 

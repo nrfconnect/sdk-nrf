@@ -101,7 +101,7 @@ int spim_read_reg(uint32_t reg_addr, uint8_t *reg_value)
 
 	err = spi_transceive_dt(&spi_spec, &tx, &rx);
 
-	LOG_DBG("err: %d -> %x %x %x %x %x %x\n", err, sr[0], sr[1], sr[2], sr[3], sr[4], sr[5]);
+	LOG_DBG("err: %d -> %x %x %x %x %x %x", err, sr[0], sr[1], sr[2], sr[3], sr[4], sr[5]);
 
 	if (err == 0)
 		*reg_value = sr[1];
@@ -120,7 +120,7 @@ int spim_write_reg(uint32_t reg_addr, const uint8_t reg_value)
 	err = spi_transceive_dt(&spi_spec, &tx, NULL);
 
 	if (err) {
-		LOG_ERR("SPI error: %d\n", err);
+		LOG_ERR("SPI error: %d", err);
 	}
 
 	return err;
@@ -155,7 +155,7 @@ int _spim_wait_while_rpu_awake(void)
 
 		ret = spim_read_reg(0x1F, &val);
 
-		LOG_DBG("RDSR1 = 0x%x\n", val);
+		LOG_DBG("RDSR1 = 0x%x", val);
 
 		if (!ret && (val & RPU_AWAKE_BIT)) {
 			break;
@@ -177,7 +177,7 @@ int spim_wait_while_rpu_wake_write(void)
 
 		ret = spim_read_reg(0x2F, &val);
 
-		LOG_DBG("RDSR2 = 0x%x\n", val);
+		LOG_DBG("RDSR2 = 0x%x", val);
 
 		if (!ret && (val & RPU_WAKEUP_NOW)) {
 			break;
@@ -205,7 +205,7 @@ unsigned int spim_cmd_sleep_rpu(void)
 	err = spi_transceive_dt(&spi_spec, &tx, NULL);
 
 	if (err) {
-		LOG_ERR("SPI error: %d\n", err);
+		LOG_ERR("SPI error: %d", err);
 	}
 
 	return 0;
@@ -214,7 +214,7 @@ unsigned int spim_cmd_sleep_rpu(void)
 int spim_init(struct qspi_config *config)
 {
 	if (!spi_is_ready_dt(&spi_spec)) {
-		LOG_ERR("Device %s is not ready\n", spi_spec.bus->name);
+		LOG_ERR("Device %s is not ready", spi_spec.bus->name);
 		return -ENODEV;
 	}
 
@@ -226,9 +226,9 @@ int spim_init(struct qspi_config *config)
 		spim_config->qspi_slave_latency = 1;
 	}
 
-	LOG_INF("SPIM %s: freq = %d MHz\n", spi_spec.bus->name,
+	LOG_INF("SPIM %s: freq = %d MHz", spi_spec.bus->name,
 		spi_spec.config.frequency / MHZ(1));
-	LOG_INF("SPIM %s: latency = %d\n", spi_spec.bus->name, spim_config->qspi_slave_latency);
+	LOG_INF("SPIM %s: latency = %d", spi_spec.bus->name, spim_config->qspi_slave_latency);
 
 	return 0;
 }
@@ -236,7 +236,7 @@ int spim_init(struct qspi_config *config)
 static void spim_addr_check(unsigned int addr, const void *data, unsigned int len)
 {
 	if ((addr % 4 != 0) || (((unsigned int)data) % 4 != 0) || (len % 4 != 0)) {
-		LOG_ERR("%s : Unaligned address %x %x %d %x %x\n", __func__, addr,
+		LOG_ERR("%s : Unaligned address %x %x %d %x %x", __func__, addr,
 		       (unsigned int)data, (addr % 4 != 0), (((unsigned int)data) % 4 != 0),
 		       (len % 4 != 0));
 	}
