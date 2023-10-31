@@ -14,6 +14,31 @@ Certification status
 
 For certification status of the released versions, see `Mobile network operator certifications`_.
 
+liblwm2m_carrier 3.4.0
+**********************
+
+Release for modem firmware version 1.3.5 and 2.0.0.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            |               |            |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            |               |            |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+*
+
 liblwm2m_carrier 3.3.3
 **********************
 
