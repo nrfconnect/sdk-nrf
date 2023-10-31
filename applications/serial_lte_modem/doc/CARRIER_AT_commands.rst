@@ -79,7 +79,7 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
-* ``AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>]``
+* ``AT#XCARRIER="app_data_set"[,<data>][,<instance_id>,<resource_instance_id>]``
 * ``AT#XCARRIER="battery_level",<battery_level>``
 * ``AT#XCARRIER="battery_status",<battery_status>``
 * ``AT#XCARRIER="current",<power_source>,<current>``
@@ -93,6 +93,7 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIER="power_sources"[,<source1>[,<source2>[,...[,<source8>]]]]``
 * ``AT#XCARRIER="position",<latitude>,<longitude>,<altitude>,<timestamp>,<uncertainty>``
 * ``AT#XCARRIER="reboot"``
+* ``AT#XCARRIER="send",<object_id>,<object_instance_id>,<resource_id>[,<resource_instance_id>]``
 * ``AT#XCARRIER="time"``
 * ``AT#XCARRIER="timezone","read|write"[,<timezone>]``
 * ``AT#XCARRIER="utc_offset","read|write"[,<utc_offset>]``
@@ -101,8 +102,8 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIER="voltage",<power_source>,<voltage>``
 
 The values of the parameters depend on the command string used.
-Specifying ``instance_id`` and ``resource_instance_id`` in the ``app_data`` command sends the data to the Binary App Data Container object instead of the App Data Container object.
-When using the ``app_data`` command, if no attributes are specified, SLM enters ``slm_data_mode``.
+Specifying ``instance_id`` and ``resource_instance_id`` in the ``app_data_set`` command sends the data to the Binary App Data Container object instead of the App Data Container object.
+When using the ``app_data_set`` command, if no attributes are specified, SLM enters ``slm_data_mode``.
 ``slm_data_mode`` is only supported when using the App Data Container object.
 
 Response syntax
@@ -141,6 +142,11 @@ Examples
 ::
 
    AT#XCARRIER="reboot"
+   OK
+
+::
+
+   AT#XCARRIER="send",19,0,0,0
    OK
 
 Read command
@@ -197,6 +203,10 @@ The ``<cmd>`` command is a string, and can be used as follows:
 
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL` Kconfig option.
 
+* ``AT#XCARRIERCFG="download_timeout"[,<timeout>]``
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT` Kconfig option.
+
 * ``AT#XCARRIERCFG="config_enable"[,<0|1>]``
 
   Set flag to apply the stored settings to the general Kconfig options (see the :ref:`general_options_lwm2m` section of the library's documentation).
@@ -236,6 +246,10 @@ The ``<cmd>`` command is a string, and can be used as follows:
 * ``AT#XCARRIERCFG="pdn_type"[,<pdn_type>]``
 
   For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE` Kconfig option.
+
+* ``AT#XCARRIERCFG="queue_mode"[,<0|1>]``
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_QUEUE_MODE` Kconfig option.
 
 * ``AT#XCARRIERCFG="binding"[,<binding>]``
 

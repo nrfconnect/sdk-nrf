@@ -30,22 +30,15 @@ extern "C" {
 /**
  * @brief Maximum number of timers that the system must support.
  */
-#define LWM2M_OS_MAX_TIMER_COUNT (5 + (LWM2M_OS_MAX_WORK_QS * 4))
+#define LWM2M_OS_MAX_TIMER_COUNT (4 + (LWM2M_OS_MAX_WORK_QS * 4))
 
 typedef int lwm2m_os_work_q_t;
 typedef int lwm2m_os_timer_t;
 
 /**
- * @brief Maximum number of threads that the system must support.
- */
-#define LWM2M_OS_MAX_THREAD_COUNT 1
-
-typedef void (*lwm2m_os_thread_entry_t)(void *p1, void *p2, void *p3);
-
-/**
  * @brief Maximum number of semaphores that the system must support.
  */
-#define LWM2M_OS_MAX_SEM_COUNT (4 + (LWM2M_OS_MAX_WORK_QS * 2))
+#define LWM2M_OS_MAX_SEM_COUNT (6 + (LWM2M_OS_MAX_WORK_QS * 2))
 
 typedef int lwm2m_os_sem_t;
 
@@ -133,6 +126,14 @@ struct lwm2m_os_download_evt {
 	};
 };
 
+/** @brief PDN family */
+enum lwm2m_os_pdn_fam {
+	LWM2M_OS_PDN_FAM_IPV4,
+	LWM2M_OS_PDN_FAM_IPV6,
+	LWM2M_OS_PDN_FAM_IPV4V6,
+	LWM2M_OS_PDN_FAM_NONIP,
+};
+
 /**
  * @brief Download client configuration options.
  */
@@ -143,20 +144,14 @@ struct lwm2m_os_download_cfg {
 	uint8_t sec_tag_count;
 	/** PDN ID to be used for the download. */
 	int pdn_id;
+	/** Address family to be used for the download. Set to 0 for both IPv6 and IPv4. */
+	enum lwm2m_os_pdn_fam family;
 };
 
 /**
  * @brief Download client asynchronous event handler.
  */
 typedef int (*lwm2m_os_download_callback_t)(const struct lwm2m_os_download_evt *event);
-
-/** @brief PDN family */
-enum lwm2m_os_pdn_fam {
-	LWM2M_OS_PDN_FAM_IPV4,
-	LWM2M_OS_PDN_FAM_IPV6,
-	LWM2M_OS_PDN_FAM_IPV4V6,
-	LWM2M_OS_PDN_FAM_NONIP,
-};
 
 /** @brief PDN event */
 enum lwm2m_os_pdn_event {
@@ -179,13 +174,6 @@ enum lwm2m_os_pdn_event {
  */
 typedef void (*lwm2m_os_pdn_event_handler_t)
 	(uint8_t cid, enum lwm2m_os_pdn_event event, int reason);
-
-/**
- * @brief Initialize the PDN functionality.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_pdn_init(void);
 
 /**
  * @brief Create a Packet Data Protocol (PDP) context.
@@ -253,18 +241,6 @@ int lwm2m_os_pdn_deactivate(uint8_t cid);
  * @retval  0      If success.
  */
 int lwm2m_os_pdn_id_get(uint8_t cid);
-
-/**
- * @brief Retrieve the default Access Point Name (APN).
- *
- * The default APN is the APN of the default PDP context (zero).
- *
- * @param buf The buffer to copy the APN into.
- * @param len The size of the output buffer.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_pdn_default_apn_get(char *buf, size_t len);
 
 /**
  * @brief Set a callback for events pertaining to the default PDP context (zero).
@@ -335,9 +311,7 @@ int64_t lwm2m_os_uptime_delta(int64_t *ref);
 /**
  * @brief Put a thread to a sleep.
  *
- * @param ms Desired duration of sleep in milliseconds. Can be -1 for forever, in which case the
- *           thread is suspended, but can be subsequently resumed by means of
- *           @ref lwm2m_os_thread_resume.
+ * @param ms Desired duration of sleep in milliseconds.
  */
 int lwm2m_os_sleep(int ms);
 
@@ -439,41 +413,12 @@ int64_t lwm2m_os_timer_remaining(lwm2m_os_timer_t *timer);
 bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer);
 
 /**
- * @brief Create and start a new thread.
- *
- * @param index Number of the thread.
- * @param entry Thread entry function.
- * @param name  Name of the thread.
- *
- * @retval  0      Thread created and started.
- * @retval -EINVAL Thread index not valid.
- */
-int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *name);
-
-/**
- * @brief Resume a suspended thread. If the thread is not suspended, this function shall do nothing.
- *
- * @param index Number of the thread.
- */
-void lwm2m_os_thread_resume(int index);
-
-/**
  * @brief Initialize AT command driver.
  *
  * @retval  0      If success.
  * @retval -EIO    If AT command driver initialization failed.
  */
 int lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback);
-
-/**
- * @brief Initialize SMS subscriber library.
- */
-int lwm2m_os_sms_init(void);
-
-/**
- * @brief Uninitialize SMS subscriber library.
- */
-void lwm2m_os_sms_uninit(void);
 
 /**
  * @brief Register as an SMS client/listener.
@@ -546,55 +491,101 @@ void lwm2m_os_lte_mode_request(int32_t prefer);
 int lwm2m_os_nrf_errno(void);
 
 /**
- * @brief Start an application firmware upgrade.
+ * @defgroup lwm2m_os_dfu_img_type LwM2M OS DFU image types.
+ * @{
+ */
+#define LWM2M_OS_DFU_IMG_TYPE_NONE        0
+#define LWM2M_OS_DFU_IMG_TYPE_APPLICATION 1
+#define LWM2M_OS_DFU_IMG_TYPE_MODEM_DELTA 2
+/** @} */
+
+/**
+ * @brief Find the image type for the buffer of bytes received.
  *
+ * @param[in] buf A buffer of bytes which are the start of a binary firmware image.
+ * @param[in] len The length of the provided buffer.
+ *
+ * @return Identifier for a supported image type or LWM2M_OS_DFU_IMG_TYPE_NONE if
+ *         image type is not recognized.
+ **/
+int lwm2m_os_dfu_img_type(const void *const buf, size_t len);
+
+/**
+ * @brief Start a firmware upgrade.
+ *
+ * @param[in] img_type      DFU target type to be initialized.
  * @param[in] max_file_size Estimate of the new firmware image to be received. May be greater than
  *                          or equal to the actual image size received by the end.
+ * @param[in] crc_validate  Flag to indicate whether to validate the incoming image fragments by
+ *                          means of IEEE CRC32.
  *
  * @retval  0       Ready to start a new firmware upgrade.
  * @return  A positive number of bytes written so far, if the previous upgrade was not completed.
  *          In this case, the upgrade will resume from this offset.
- * @retval -EBUSY   Another application firmware upgrade is already ongoing.
- * @retval -ENOMEM  Not enough memory to store the file of the given size.
+ * @retval -EBUSY   Another firmware upgrade is already ongoing.
+ * @retval -EFBIG   File size exceeds the DFU area size.
+ * @retval -ENOTSUP Firmware image not supported or unknown.
  * @retval -EIO     Internal error.
- * @retval -ENOTSUP This function is not implemented.
  */
-int lwm2m_os_app_fota_start(size_t max_file_size);
+int lwm2m_os_dfu_start(int img_type, size_t max_file_size, bool crc_validate);
 
 /**
- * @brief Receive an application firmware image fragment and validate its CRC.
+ * @brief Receive a firmware image fragment and validate its CRC if required.
  *
  * @param[in] buf    Buffer containing the fragment.
  * @param[in] len    Length of the fragment in bytes.
- * @param[in] offset Offset into the buffer, from which to start copying the fragment to flash.
- * @param[in] crc32  Expected IEEE CRC32 value. Must be checked for the whole fragment.
+ * @param[in] crc32  Expected IEEE CRC32 value to be checked for the whole fragment. Can be any
+ *                   value if no validation expected.
  *
  * @retval  0       Success.
- * @retval -EACCES  lwm2m_os_app_fota_start() was not called beforehand.
- * @retval -ENOMEM  Not enough memory to store the file.
+ * @retval -EACCES  lwm2m_os_dfu_start() was not called beforehand.
+ * @retval -ENOMEM  Not enough memory to process the fragment.
  * @retval -EINVAL  CRC error.
  * @retval -EIO     Internal error.
- * @retval -ENOTSUP Firmware image not recognized, or this function is not implemented.
  */
-int lwm2m_os_app_fota_fragment(const char *buf, uint16_t len, uint16_t offset, uint32_t crc32);
+int lwm2m_os_dfu_fragment(const char *buf, size_t len, uint32_t crc32);
 
 /**
- * @brief Finalize the current application firmware upgrade and CRC-validate the image.
+ * @brief Finalize the current firmware upgrade and CRC-validate the image if required.
  *
- * @param[in] crc32  Expected IEEE CRC32 value. Should be checked for the whole file in flash.
+ * @param[in] successful Indicate if upload was successful.
+ * @param[in] crc32      Expected IEEE CRC32 value to be checked for the whole file in flash.
+ *                       Can be any value if no validation expected.
  *
  * @retval  0       Success.
- * @retval -EACCES  lwm2m_os_app_fota_start() was not called beforehand.
+ * @retval -EACCES  lwm2m_os_dfu_start() was not called beforehand.
  * @retval -EINVAL  CRC error.
  * @retval -EIO     Internal error.
- * @retval -ENOTSUP This function is not implemented.
  */
-int lwm2m_os_app_fota_finish(uint32_t crc32);
+int lwm2m_os_dfu_done(bool successful, uint32_t crc32);
 
 /**
- * @brief Abort the current application firmware upgrade.
+ * @brief Pause the DFU process and release the resources temporarily.
+ *
+ * @return  A positive number of bytes written so far.
+ * @retval -EACCES  lwm2m_os_dfu_start() was not called beforehand.
+ * @retval -EIO     Internal error.
  */
-void lwm2m_os_app_fota_abort(void);
+int lwm2m_os_dfu_pause(void);
+
+/**
+ * @brief Schedule update for uploaded image.
+ *
+ * @retval  0  If success.
+ */
+int lwm2m_os_dfu_schedule_update(void);
+
+/**
+ * @brief Reset the current DFU target.
+ */
+void lwm2m_os_dfu_reset(void);
+
+/**
+ * @brief Validate the application image update.
+ *
+ * @retval  true  If the application image was updated successfully.
+ */
+bool lwm2m_os_dfu_application_update_validate(void);
 
 #ifdef __cplusplus
 }

@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <strings.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -32,10 +33,10 @@ static const struct {
 } carriers_enabled_map[] = {
 	{ LWM2M_CARRIER_GENERIC, "Generic" },
 	{ LWM2M_CARRIER_VERIZON, "Verizon" },
-	{ LWM2M_CARRIER_ATT, "AT&T" },
 	{ LWM2M_CARRIER_LG_UPLUS, "LG U+" },
 	{ LWM2M_CARRIER_T_MOBILE, "T-Mobile" },
-	{ LWM2M_CARRIER_SOFTBANK, "SoftBank" }
+	{ LWM2M_CARRIER_SOFTBANK, "SoftBank" },
+	{ LWM2M_CARRIER_BELL_CA, "Bell Canada" }
 };
 
 static int cmd_device_time_read(const struct shell *shell, size_t argc, char **argv)
@@ -701,7 +702,7 @@ static int cmd_device_memory_free_write(const struct shell *shell, size_t argc, 
 	return 0;
 }
 
-static int cmd_log_data_send(const struct shell *shell, size_t argc, char **argv)
+static int cmd_log_data_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc != 2) {
 		shell_print(shell, "%s <data>", argv[0]);
@@ -733,17 +734,17 @@ static int cmd_log_data_send(const struct shell *shell, size_t argc, char **argv
 	return 0;
 }
 
-static int cmd_app_data_send(const struct shell *shell, size_t argc, char **argv)
+static int cmd_app_data_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2 || argc > 4) {
-		shell_print(shell, "%s <data> | [<instance_id> <resource_instance_id> [data]]",
-			    argv[0]);
+		shell_print(shell, "%s <data> | [<object_instance_id> <resource_instance_id> "
+			    "[data]]", argv[0]);
 		shell_print(shell, " The data argument is required if using the App Data "
 			    "Container.");
 		shell_print(shell, " When using the Binary App Data Container it is optional,");
 		shell_print(shell, "   not defining it clears the resource instance.");
-		shell_print(shell, " The instance_id and resource_instance_id arguments are");
-		shell_print(shell, "   only used when using the Binary App Data Container. ");
+		shell_print(shell, " The object_instance_id and resource_instance_id arguments");
+		shell_print(shell, "   are only used when using the Binary App Data Container.");
 		return 0;
 	}
 
@@ -773,7 +774,7 @@ static int cmd_app_data_send(const struct shell *shell, size_t argc, char **argv
 		}
 	}
 
-	int err = lwm2m_carrier_app_data_send(path, path_len, buffer, buffer_len);
+	int err = lwm2m_carrier_app_data_set(path, path_len, buffer, buffer_len);
 
 	switch (err) {
 	case 0:
@@ -787,6 +788,49 @@ static int cmd_app_data_send(const struct shell *shell, size_t argc, char **argv
 		break;
 	case -ENOMEM:
 		shell_print(shell, "Not enough memory");
+		break;
+	default:
+		shell_print(shell, "Unknown error: %d", err);
+		break;
+	}
+
+	return 0;
+}
+
+static int cmd_data_send(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc != 4 && argc != 5) {
+		shell_print(shell, "%s <object_id> <object_instance_id> <resource_id> "
+			    "[<resource_instance_id>]", argv[0]);
+		return 0;
+	}
+
+	uint16_t path[4];
+	uint8_t path_len = 3;
+
+	path[0] = (uint16_t)atoi(argv[1]);
+	path[1] = (uint16_t)atoi(argv[2]);
+	path[2] = (uint16_t)atoi(argv[3]);
+
+	if (argc == 5) {
+		path[3] = (uint16_t)atoi(argv[4]);
+		path_len = 4;
+	}
+
+	int err = lwm2m_carrier_data_send(path, path_len);
+
+	switch (err) {
+	case 0:
+		shell_print(shell, "Sent app data successfully");
+		break;
+	case -EINVAL:
+		shell_print(shell, "Invalid path");
+		break;
+	case -ENOENT:
+		shell_print(shell, "Resource at path does not exist");
+		break;
+	case -EINPROGRESS:
+		shell_print(shell, "Send operation already in progress");
 		break;
 	default:
 		shell_print(shell, "Unknown error: %d", err);
@@ -911,7 +955,7 @@ static int cmd_carriers_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2) {
 		shell_print(shell, "%s all", argv[0]);
-		shell_print(shell, "  All carriers except AT&T");
+		shell_print(shell, "  All carriers");
 		shell_print(shell, "%s <id1> <id2> ...", argv[0]);
 		for (int i = 0; i < ARRAY_SIZE(carriers_enabled_map); i++) {
 			shell_print(shell, "  %d = %s", i, carriers_enabled_map[i].name);
@@ -955,6 +999,27 @@ static int cmd_bootstrap_from_smartcard_set(const struct shell *shell, size_t ar
 		lwm2m_settings_bootstrap_from_smartcard_set(bootstrap_from_smartcard);
 		shell_print(shell, "Set bootstrap from smartcard: %s",
 		bootstrap_from_smartcard ? GREEN "Yes" NORMAL : RED "No" NORMAL);
+	} else {
+		shell_print(shell, "Invalid input: <y|n>");
+	}
+
+	return 0;
+}
+
+static int cmd_queue_mode_set(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc != 2) {
+		shell_print(shell, "%s <y|n>", argv[0]);
+		return 0;
+	}
+
+	bool queue_mode;
+	int err = string_to_bool(argv[1], &queue_mode);
+
+	if (!err) {
+		lwm2m_settings_queue_mode_set(queue_mode);
+		shell_print(shell, "Set queue mode: %s",
+			    queue_mode ? GREEN "Yes" NORMAL : RED "No" NORMAL);
 	} else {
 		shell_print(shell, "Invalid input: <y|n>");
 	}
@@ -1100,6 +1165,27 @@ static int cmd_coap_confirmable_interval(const struct shell *shell, size_t argc,
 	return 0;
 }
 
+static int cmd_firmware_download_timeout_set(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc != 2) {
+		shell_print(shell, "%s <minutes>", argv[0]);
+		return 0;
+	}
+
+	int32_t firmware_download_timeout = atoi(argv[1]);
+
+	if (firmware_download_timeout < 0 || firmware_download_timeout > UINT16_MAX) {
+		shell_print(shell, "invalid value, must be between 0 and 65535");
+		return 0;
+	}
+
+	lwm2m_settings_firmware_download_timeout_set(firmware_download_timeout);
+
+	shell_print(shell, "Set firmware download timeout: %d min", firmware_download_timeout);
+
+	return 0;
+}
+
 static int cmd_sec_tag_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc != 2) {
@@ -1120,7 +1206,7 @@ static int cmd_sec_tag_set(const struct shell *shell, size_t argc, char **argv)
 	shell_print(shell, "Set security tag: %u", server_sec_tag);
 
 	if (!provisioned && server_sec_tag != 0) {
-		shell_print(shell, "Warning: a PSK does not exist in sec_tag %u.", server_sec_tag);
+		shell_print(shell, "Warning: a PSK does not exist in sec_tag %u", server_sec_tag);
 		shell_print(shell, "This can be written using AT%%CMNG=0,%u,3,\"PSK\"",
 			    server_sec_tag);
 	}
@@ -1441,6 +1527,8 @@ static int cmd_settings_print(const struct shell *shell, size_t argc, char **arg
 	shell_print(shell, "  Carriers enabled               %s", carriers_enabled_str());
 	shell_print(shell, "  Bootstrap from smartcard       %s",
 			lwm2m_settings_bootstrap_from_smartcard_get() ? "Yes" : "No");
+	shell_print(shell, "  Queue mode                     %s",
+			lwm2m_settings_queue_mode_get() ? "Yes" : "No");
 	shell_print(shell, "  Session idle timeout           %d",
 			lwm2m_settings_session_idle_timeout_get());
 	shell_print(shell, "  CoAP confirmable interval      %d",
@@ -1452,6 +1540,9 @@ static int cmd_settings_print(const struct shell *shell, size_t argc, char **arg
 			lwm2m_settings_service_code_get());
 	shell_print(shell, "  Device Serial Number type      %d",
 			lwm2m_settings_device_serial_no_type_get());
+	shell_print(shell, "  Firmware download timeout      %d %s",
+			lwm2m_settings_firmware_download_timeout_get(),
+			lwm2m_settings_firmware_download_timeout_get() ? "min" : "(disabled)");
 	shell_print(shell, "");
 	shell_print(shell, "Custom carrier server settings   %s",
 			lwm2m_settings_enable_custom_server_config_get() ?
@@ -1489,13 +1580,13 @@ static int cmd_settings_print(const struct shell *shell, size_t argc, char **arg
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_event_log,
-		SHELL_CMD(send, NULL, "Send log data using the event log object",
-			  cmd_log_data_send),
+		SHELL_CMD(set, NULL, "Set log data in the event log object",
+			  cmd_log_data_set),
 		SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_app_data,
-		SHELL_CMD(send, NULL, "Send data using an app data container object",
-			  cmd_app_data_send),
+		SHELL_CMD(set, NULL, "Set data in an app data container object",
+			  cmd_app_data_set),
 		SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_api_device,
@@ -1536,6 +1627,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_request,
 		SHELL_CMD(link_down, NULL, "Link down", cmd_request_link_down),
 		SHELL_CMD(link_up, NULL, "Link up", cmd_request_link_up),
 		SHELL_CMD(reboot, NULL, "Reboot", cmd_request_reboot),
+		SHELL_CMD(send, NULL, "Send", cmd_data_send),
 		SHELL_SUBCMD_SET_END /* Array terminated. */
 );
 
@@ -1593,14 +1685,17 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_config,
 		SHELL_CMD(coap_confirmable_interval, NULL, "CoAP confirmable interval",
 			  cmd_coap_confirmable_interval),
 		SHELL_CMD(device, &sub_carrier_config_device, "Device configuration", NULL),
-		SHELL_CMD(disable, NULL, "Disable custom settings", cmd_disable_set),
-		SHELL_CMD(enable, NULL, "Enable custom settings", cmd_enable_set),
-		SHELL_CMD(pdn_type, NULL, "PDN type", cmd_pdn_type_set),
-		SHELL_CMD(print, NULL, "Print custom settings", cmd_settings_print),
-		SHELL_CMD(server, &sub_carrier_config_server, "Server configuration", NULL),
-		SHELL_CMD(service_code, NULL, "Service code", cmd_service_code_set),
 		SHELL_CMD(device_serial_no_type, NULL, "Device Serial Number type",
 			  cmd_device_serial_no_type_set),
+		SHELL_CMD(disable, NULL, "Disable custom settings", cmd_disable_set),
+		SHELL_CMD(enable, NULL, "Enable custom settings", cmd_enable_set),
+		SHELL_CMD(firmware_download_timeout, NULL, "Firmware download timeout",
+			  cmd_firmware_download_timeout_set),
+		SHELL_CMD(pdn_type, NULL, "PDN type", cmd_pdn_type_set),
+		SHELL_CMD(print, NULL, "Print custom settings", cmd_settings_print),
+		SHELL_CMD(queue_mode, NULL, "Queue mode", cmd_queue_mode_set),
+		SHELL_CMD(server, &sub_carrier_config_server, "Server configuration", NULL),
+		SHELL_CMD(service_code, NULL, "Service code", cmd_service_code_set),
 		SHELL_CMD(session_idle_timeout, NULL, "Session timeout time",
 			  cmd_session_idle_timeout_set),
 		SHELL_SUBCMD_SET_END

@@ -337,9 +337,10 @@ int main(void)
 	}
 #endif
 	/* Application started successfully, mark image as OK to prevent
-	 * revert at next reboot.
+	 * revert at next reboot. If LwM2M Carrier library is enabled, allow
+	 * the library to do it.
 	 */
-#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+#if (defined(CONFIG_BOOTLOADER_MCUBOOT) && !defined(CONFIG_LWM2M_CARRIER))
 	boot_write_img_confirmed();
 #endif
 	k_poll_signal_init(&mosh_signal);

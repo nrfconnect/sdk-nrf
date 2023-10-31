@@ -11,7 +11,6 @@
 #include <nrf_modem.h>
 #include <nrf_errno.h>
 
-#define LWM2M_CARRIER_THREAD_STACK_SIZE 4096
 #define LWM2M_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
 
 NRF_MODEM_LIB_ON_INIT(lwm2m_carrier_init_hook, on_modem_lib_init, NULL);
@@ -175,10 +174,6 @@ void lwm2m_carrier_thread_run(void)
 	config.carriers_enabled |= LWM2M_CARRIER_VERIZON;
 #endif
 
-#ifdef CONFIG_LWM2M_CARRIER_ATT
-	config.carriers_enabled |= LWM2M_CARRIER_ATT;
-#endif
-
 #ifdef CONFIG_LWM2M_CARRIER_LG_UPLUS
 	config.carriers_enabled |= LWM2M_CARRIER_LG_UPLUS;
 #endif
@@ -191,8 +186,16 @@ void lwm2m_carrier_thread_run(void)
 	config.carriers_enabled |= LWM2M_CARRIER_SOFTBANK;
 #endif
 
+#ifdef CONFIG_LWM2M_CARRIER_BELL_CA
+	config.carriers_enabled |= LWM2M_CARRIER_BELL_CA;
+#endif
+
 #ifndef CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
 	config.disable_bootstrap_from_smartcard = true;
+#endif
+
+#ifndef CONFIG_LWM2M_CARRIER_QUEUE_MODE
+	config.disable_queue_mode = true;
 #endif
 
 	config.server_uri = CONFIG_LWM2M_CARRIER_CUSTOM_URI;
@@ -213,6 +216,7 @@ void lwm2m_carrier_thread_run(void)
 	config.device_type = CONFIG_LWM2M_CARRIER_DEVICE_TYPE;
 	config.hardware_version = CONFIG_LWM2M_CARRIER_DEVICE_HARDWARE_VERSION;
 	config.software_version = CONFIG_LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION;
+	config.firmware_download_timeout = CONFIG_LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT;
 
 #ifdef CONFIG_LWM2M_CARRIER_LG_UPLUS
 	config.lg_uplus.service_code = CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE;
@@ -247,6 +251,6 @@ void lwm2m_carrier_thread_run(void)
 	}
 }
 
-K_THREAD_DEFINE(lwm2m_carrier_thread, LWM2M_CARRIER_THREAD_STACK_SIZE,
+K_THREAD_DEFINE(lwm2m_carrier_thread, CONFIG_LWM2M_CARRIER_THREAD_STACK_SIZE,
 		lwm2m_carrier_thread_run, NULL, NULL, NULL,
 		LWM2M_CARRIER_THREAD_PRIORITY, 0, 0);

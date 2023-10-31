@@ -34,6 +34,8 @@ menuconfig LWM2M_CARRIER
 	depends on (AT_MONITOR_HEAP_SIZE >= 320)
 	# reboot functionality
 	depends on REBOOT
+	# Firmware upgrade functionality
+	depends on DFU_TARGET
 	help
 	  A library for cellular connection management.
 
@@ -53,12 +55,6 @@ config LWM2M_CARRIER_VERIZON
 	default y
 	help
 	  Enable Carrier Library when the SIM Subscriber ID is Verizon.
-
-config LWM2M_CARRIER_ATT
-	bool "AT&T"
-	default n
-	help
-	  Enable Carrier Library when the SIM Subscriber ID is AT&T.
 
 config LWM2M_CARRIER_LG_UPLUS
 	bool "LG U+"
@@ -104,6 +100,12 @@ config LWM2M_CARRIER_SOFTBANK
 	default y
 	help
 	  Enable Carrier Library when the SIM Subscriber ID is SoftBank.
+
+config LWM2M_CARRIER_BELL_CA
+	bool "Bell Canada"
+	default y
+	help
+	  Enable Carrier Library when the SIM Subscriber ID is Bell Canada.
 
 endmenu
 
@@ -195,6 +197,13 @@ config LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
 	help
 	  Bootstrap from Smartcard mode when this is enabled by the carrier.
 
+config LWM2M_CARRIER_QUEUE_MODE
+	bool "Enable queue mode"
+	default y
+	help
+	  Configure whether the LwM2M device is to inform the LwM2M server that
+	  it may be disconnected for an extended period of time.
+
 config LWM2M_CARRIER_DEVICE_MANUFACTURER
 	string "Device manufacturer"
 	default ""
@@ -213,7 +222,7 @@ config LWM2M_CARRIER_DEVICE_MODEL_NUMBER
 
 config LWM2M_CARRIER_DEVICE_TYPE
 	string "Device type"
-	default "Smart Device"
+	default "Module"
 	help
 	  Set the LwM2M device type (manufacturer-specified string).
 	  Some carriers may override this value.
@@ -250,17 +259,28 @@ config LWM2M_CARRIER_COAP_CON_INTERVAL
 	  Setting this to 0 will use the default value (86400s).
 	  Setting this to -1 will always use Confirmable notifications.
 
+config LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT
+	int "Firmware download timeout"
+	range 0 65535
+	default 0
+	help
+	  Number of minutes allowed for a single firmware image download.
+	  If the download is not completed by the time the specified number of minutes elapses,
+	  the download shall be aborted. This configuration is currently only supported for
+	  PUSH delivery method of firmware images.
+	  Setting this to 0 will disable the use of this timer.
+
 config LWM2M_CARRIER_WORKQ_STACK_SIZE
 	int "LwM2M carrier work queue stack size"
-	default 4096
+	default 1536
 	help
-	  Stack size for the LwM2M work queue thread.
+	  Stack size for the LwM2M carrier client work queue threads.
 
 config LWM2M_CARRIER_THREAD_STACK_SIZE
 	int "LwM2M carrier thread stack size"
-	default 600
+	default 1536
 	help
-	  Stack size for the LwM2M carrier process thread.
+	  Stack size for the LwM2M carrier thread.
 
 config LWM2M_CARRIER_STORAGE_AREA_SIZE
 	hex "Size of the lwm2m_carrier partition"
@@ -284,7 +304,6 @@ config LWM2M_CARRIER_SHELL
 	bool "LwM2M carrier shell"
 	depends on SHELL
 	depends on LWM2M_CARRIER_SETTINGS
-	depends on MODEM_KEY_MGMT
 	help
 	  Include LwM2M carrier shell
 

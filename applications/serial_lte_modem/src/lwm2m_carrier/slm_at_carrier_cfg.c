@@ -24,9 +24,11 @@ enum slm_carrier_cfg_operation {
 	CARRIER_CFG_OP_CONFIG_BOOTSTRAP_FROM_SMARTCARD,
 	CARRIER_CFG_OP_CONFIG_CARRIERS,
 	CARRIER_CFG_OP_CONFIG_COAP_CON_INTERVAL,
+	CARRIER_CFG_OP_CONFIG_FIRMWARE_DOWNLOAD_TIMEOUT,
 	CARRIER_CFG_OP_CONFIG_LGU_DEVICE_SERIAL_NO_TYPE,
 	CARRIER_CFG_OP_CONFIG_LGU_SERVICE_CODE,
 	CARRIER_CFG_OP_CONFIG_PDN_TYPE,
+	CARRIER_CFG_OP_CONFIG_QUEUE_MODE,
 	CARRIER_CFG_OP_CONFIG_SESSION_IDLE_TIMEOUT,
 	/* Device Custom Configuration */
 	CARRIER_CFG_OP_DEVICE_ENABLE,
@@ -52,6 +54,7 @@ static int do_cfg_auto_startup(void);
 static int do_cfg_bootstrap_from_smartcard(void);
 static int do_cfg_carriers(void);
 static int do_cfg_coap_con_interval(void);
+static int do_cfg_firmware_download_timeout(void);
 static int do_cfg_config_enable(void);
 static int do_cfg_device_enable(void);
 static int do_cfg_device_type(void);
@@ -63,6 +66,7 @@ static int do_cfg_software_version(void);
 static int do_cfg_device_serial_no_type(void);
 static int do_cfg_service_code(void);
 static int do_cfg_pdn_type(void);
+static int do_cfg_queue_mode(void);
 static int do_cfg_binding(void);
 static int do_cfg_server_enable(void);
 static int do_cfg_is_bootstrap(void);
@@ -84,11 +88,14 @@ static struct carrier_cfg_op_list cfg_op_list[CARRIER_CFG_OP_MAX] = {
 	 do_cfg_bootstrap_from_smartcard},
 	{CARRIER_CFG_OP_CONFIG_CARRIERS, "carriers", do_cfg_carriers},
 	{CARRIER_CFG_OP_CONFIG_COAP_CON_INTERVAL, "coap_con_interval", do_cfg_coap_con_interval},
+	{CARRIER_CFG_OP_CONFIG_FIRMWARE_DOWNLOAD_TIMEOUT, "download_timeout",
+	 do_cfg_firmware_download_timeout},
 	{CARRIER_CFG_OP_CONFIG_ENABLE, "config_enable", do_cfg_config_enable},
 	{CARRIER_CFG_OP_CONFIG_LGU_DEVICE_SERIAL_NO_TYPE, "device_serial_no_type",
 	 do_cfg_device_serial_no_type},
 	{CARRIER_CFG_OP_CONFIG_LGU_SERVICE_CODE, "service_code", do_cfg_service_code},
 	{CARRIER_CFG_OP_CONFIG_PDN_TYPE, "pdn_type", do_cfg_pdn_type},
+	{CARRIER_CFG_OP_CONFIG_QUEUE_MODE, "queue_mode", do_cfg_queue_mode},
 	{CARRIER_CFG_OP_CONFIG_SESSION_IDLE_TIMEOUT, "session_idle_timeout",
 	 do_cfg_session_idle_timeout},
 	{CARRIER_CFG_OP_DEVICE_ENABLE, "device_enable", do_cfg_device_enable},
@@ -221,7 +228,7 @@ static int do_cfg_bootstrap_from_smartcard(void)
 const static uint32_t carriers_enabled_map[] = {
 	LWM2M_CARRIER_GENERIC,
 	LWM2M_CARRIER_VERIZON,
-	LWM2M_CARRIER_ATT,
+	LWM2M_CARRIER_BELL_CA,
 	LWM2M_CARRIER_LG_UPLUS,
 	LWM2M_CARRIER_T_MOBILE,
 	LWM2M_CARRIER_SOFTBANK
@@ -314,6 +321,31 @@ static int do_cfg_coap_con_interval(void)
 	}
 
 	return lwm2m_settings_coap_con_interval_set(coap_con_interval);
+}
+
+/* AT#XCARRIERCFG="download_timeout"[,<timeout>] */
+static int do_cfg_firmware_download_timeout(void)
+{
+	uint32_t count;
+
+	count = at_params_valid_count_get(&slm_at_param_list);
+	if (count == 2) {
+		rsp_send("\r\n#XCARRIERCFG: %hu\r\n",
+			 lwm2m_settings_firmware_download_timeout_get());
+		return 0;
+	} else if (count != 3) {
+		return -EINVAL;
+	}
+
+	int ret;
+	uint16_t firmware_download_timeout;
+
+	ret = at_params_unsigned_short_get(&slm_at_param_list, 2, &firmware_download_timeout);
+	if (ret) {
+		return ret;
+	}
+
+	return lwm2m_settings_firmware_download_timeout_set(firmware_download_timeout);
 }
 
 /* AT#XCARRIERCFG="config_enable"[,<0|1>] */
@@ -629,6 +661,35 @@ static int do_cfg_pdn_type(void)
 	}
 
 	return lwm2m_settings_pdn_type_set(pdn_type);
+}
+
+/* AT#XCARRIERCFG="queue_mode"[,<0|1>] */
+static int do_cfg_queue_mode(void)
+{
+	uint32_t count;
+
+	count = at_params_valid_count_get(&slm_at_param_list);
+	if (count == 2) {
+		rsp_send("\r\n#XCARRIERCFG: %d\r\n", lwm2m_settings_queue_mode_get());
+		return 0;
+	} else if (count != 3) {
+		return -EINVAL;
+	}
+
+	int ret;
+	uint16_t queue_mode;
+
+	ret = at_params_unsigned_short_get(&slm_at_param_list, 2, &queue_mode);
+	if (ret) {
+		return ret;
+	}
+
+	if (queue_mode > 1) {
+		LOG_ERR("AT#XCARRIERCFG=\"queue_mode\" failed: must be 0 or 1");
+		return -EINVAL;
+	}
+
+	return lwm2m_settings_queue_mode_set(queue_mode);
 }
 
 /* AT#XCARRIERCFG="binding"[,<binding>] */
