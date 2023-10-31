@@ -77,6 +77,8 @@ int dfu_target_smp_client_init(void)
 			     image_info);
 	os_mgmt_client_init(&os_gr_client, &smp_client);
 
+	image_count = 0;
+
 	return rc;
 }
 
