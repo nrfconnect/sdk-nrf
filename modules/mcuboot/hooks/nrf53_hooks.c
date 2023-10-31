@@ -181,7 +181,7 @@ int boot_reset_request_hook(bool force)
 {
 	ARG_UNUSED(force);
 
-	if (pcd_fw_copy_status_get() == PCD_STATUS_COPY) {
+	if (pcd_cmd_status_get() == PCD_STATUS_COPY) {
 		return BOOT_RESET_REQUEST_HOOK_BUSY;
 	}
 	return 0;

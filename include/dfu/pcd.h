@@ -97,7 +97,7 @@ void pcd_done(void);
 
 /** @brief Invalidate the PCD CMD, indicating that the copy failed.
  */
-void pcd_fw_copy_invalidate(void);
+void pcd_cmd_invalidate(void);
 
 /** @brief Check the PCD CMD to find the status of the update.
  *
@@ -105,7 +105,7 @@ void pcd_fw_copy_invalidate(void);
  * @return PCD_STATUS_COPY_DONE if update has completed successfully
  * @return PCD_STATUS_COPY_FAILED if update has completed unsuccessfully
  */
-enum pcd_status pcd_fw_copy_status_get(void);
+enum pcd_status pcd_cmd_status_get(void);
 
 /** @brief Get value of 'data' member of pcd cmd.
  *

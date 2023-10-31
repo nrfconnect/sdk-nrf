@@ -8,6 +8,7 @@
 #include <zephyr/device.h>
 #include <dfu/pcd.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/linker/linker-defs.h>
 
 #ifdef CONFIG_PCD_NET
 #include <fw_info_bare.h>
@@ -56,12 +57,12 @@ struct pcd_cmd {
 
 static struct pcd_cmd *cmd = (struct pcd_cmd *)PCD_CMD_ADDRESS;
 
-void pcd_fw_copy_invalidate(void)
+void pcd_cmd_invalidate(void)
 {
 	cmd->magic = PCD_CMD_MAGIC_FAIL;
 }
 
-enum pcd_status pcd_fw_copy_status_get(void)
+enum pcd_status pcd_cmd_status_get(void)
 {
 	if (cmd->magic == PCD_CMD_MAGIC_COPY) {
 		return PCD_STATUS_COPY;
@@ -92,7 +93,8 @@ int pcd_find_fw_version(void)
 	firmware_info = fw_info_find(PM_APP_ADDRESS);
 
 	if (firmware_info != NULL) {
-		memcpy((void *)cmd->data, &firmware_info->version, cmd->len);
+		memcpy((void *)cmd->data, &firmware_info->version,
+				sizeof(firmware_info->version));
 		cmd->len = sizeof(firmware_info->version);
 		return 0;
 	}
@@ -150,7 +152,7 @@ static void network_core_pcd_tidy(void)
 
 static void network_core_finished_check_handler(struct k_timer *timer)
 {
-	if (pcd_fw_copy_status_get() != PCD_STATUS_COPY) {
+	if (pcd_cmd_status_get() != PCD_STATUS_COPY) {
 		/* Upgrade has finished and either failed or completed
 		 * successfully, tidy up and cancel timer
 		 */
@@ -196,7 +198,7 @@ static int network_core_pcd_cmdset(uint32_t cmd, const void *src_addr, size_t le
 		return err;
 	}
 
-	enum pcd_status initial_command_status = pcd_fw_copy_status_get();
+	enum pcd_status initial_command_status = pcd_cmd_status_get();
 
 	nrf_reset_network_force_off(NRF_RESET, false);
 	LOG_INF("Turned on network core");
@@ -211,11 +213,11 @@ static int network_core_pcd_cmdset(uint32_t cmd, const void *src_addr, size_t le
 		 */
 		k_busy_wait(1 * USEC_PER_SEC);
 
-		command_status = pcd_fw_copy_status_get();
+		command_status = pcd_cmd_status_get();
 	} while (command_status == initial_command_status);
 
 	if (command_status == PCD_STATUS_FAILED) {
-		LOG_ERR("Network core update failed");
+		LOG_ERR("Network core command failed: 0x%x", cmd);
 		network_core_pcd_tidy();
 		return -EFAULT;
 	}
@@ -229,7 +231,9 @@ static int network_core_pcd_cmdset(uint32_t cmd, const void *src_addr, size_t le
 #ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 int pcd_network_core_app_version(uint8_t *buf, size_t len)
 {
-	if (buf == NULL || len < 4) {
+	if (buf == NULL || len < 4
+	   || ((uintptr_t)buf < (uintptr_t)&_image_ram_start)
+	   || ((uintptr_t)buf > (uintptr_t)&_image_ram_end)) {
 		return -EINVAL;
 	}
 
