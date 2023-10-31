@@ -1,0 +1,138 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "MCUboot configuration"
+	depends on BOOTLOADER_MCUBOOT
+
+choice MCUBOOT_MODE
+	prompt "Mode of operation"
+	default MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH
+	help
+	  The operating mode of MCUboot (which will also be propagated to the
+	  application).
+
+config MCUBOOT_MODE_SINGLE_APP
+	bool "Single slot"
+	help
+	  MCUboot will only boot slot0_partition placed application and does
+	  not care about other slots. In this mode application is not able
+	  to DFU its own update to secondary slot and all updates need to
+	  be performed using MCUboot serial recovery.
+
+config MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH
+	bool "Swap without scratch (swap using move)"
+	help
+	  MCUboot expects slot0_partition and slot1_partition to be present
+	  in DT and application will boot from slot0_partition.
+	  MCUBOOT_BOOTLOADER_NO_DOWNGRADE should also be selected
+	  if MCUboot has been built with MCUBOOT_DOWNGRADE_PREVENTION.
+
+config MCUBOOT_MODE_SWAP_SCRATCH
+	bool "Swap using scratch"
+	help
+	  MCUboot expects slot0_partition, slot1_partition and scratch_partition
+	  to be present in DT, and application will boot from slot0_partition.
+	  In this mode scratch_partition is used as temporary storage when
+	  MCUboot swaps application from the secondary slot to the primary
+	  slot.
+	  MCUBOOT_BOOTLOADER_NO_DOWNGRADE should also be selected
+	  if MCUboot has been built with MCUBOOT_DOWNGRADE_PREVENTION.
+
+config MCUBOOT_MODE_OVERWRITE_ONLY
+	bool "Overwrite"
+	help
+	  MCUboot will take contents of secondary slot of an image and will
+	  overwrite primary slot with it.
+	  In this mode it is not possible to revert back to previous version
+	  as it is not stored in the secondary slot.
+	  This mode supports MCUBOOT_BOOTLOADER_NO_DOWNGRADE which means
+	  that the overwrite will not happen unless the version of secondary
+	  slot is higher than the version in primary slot.
+
+config MCUBOOT_MODE_DIRECT_XIP
+	bool "DirectXIP"
+	help
+	  MCUboot expects slot0_partition and slot1_partition to exist in DT.
+	  In this mode MCUboot can boot from either partition and will
+	  select one with higher application image version, which usually
+	  means major.minor.patch triple, unless BOOT_VERSION_CMP_USE_BUILD_NUMBER
+	  is also selected that enables comparison of build number.
+	  This option automatically selectes
+	  MCUBOOT_BOOTLOADER_NO_DOWNGRADE as it is not possible
+	  to swap back to older version of application.
+
+config MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
+	bool "DirectXIP with revert"
+	help
+	  MCUboot expects slot0_partition and slot1_partition to exist in DT.
+	  In this mode MCUboot will boot the application with the higher version
+	  from either slot, as long as it has been marked to be boot
+	  next time for test or permanently. In case when application is marked
+	  for test it needs to confirm itself, on the first boot, or it will
+	  be removed and MCUboot will revert to booting previously approved
+	  application.
+	  This mode does not allow freely switching between application
+	  versions, as, once higher version application is approved, it is
+	  not possible to select lower version for boot.
+	  This mode selects MCUBOOT_BOOTLOADER_NO_DOWNGRADE as it is not possible
+	  to downgrade running application, but note that MCUboot may do that
+	  if application with higher version will not get confirmed.
+
+endchoice
+
+menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+	bool "Downgrade prevention using hardware security counters"
+	depends on ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf9160dk_nrf9160" || $(BOARD) = "nrf9160dk_nrf9160_ns" || $(BOARD) = "thingy91_nrf9160" || $(BOARD) = "thingy91_nrf9160_ns")
+	help
+	  This option can be enabled by the application and will ensure
+	  that the MCUBOOT_HW_DOWNGRADE_PREVENTION Kconfig option is
+	  enabled in the MCUboot image.
+
+if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+
+config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
+	int "Number of available hardware counter slots"
+	default 240
+	range 2 300
+	help
+	  When MCUBOOT_HW_DOWNGRADE_PREVENTION is enabled, MCUboot will use
+	  one hardware counter for each updatable image (UPDATEABLE_IMAGE_NUMBER).
+	  This configuration specifies how many counter slots will be allocated
+	  for each hardware counter. The hardware counters are stored in OTP storage.
+	  The rationale for the default number (240): Assume one update a month for
+	  10 years, then double that value just in case. This default fits
+	  comfortably within the OTP region of UICR.
+
+config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE
+	int "Security counter value"
+	default 1
+	range 1 65535
+	help
+	  The security counter value for this image.
+	  This is the value that will be passed to the --security-counter
+	  parameter of imgtool.py
+
+endif # MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+
+config MCUBOOT_MAX_UPDATEABLE_IMAGES
+	int
+	default 3
+
+config MCUBOOT_UPDATEABLE_IMAGES
+	int "Updateable images"
+	range 3 MCUBOOT_MAX_UPDATEABLE_IMAGES if QSPI_XIP_SUPPORT
+	range 2 MCUBOOT_MAX_UPDATEABLE_IMAGES if NETCORE_APP_UPDATE
+	range 1 MCUBOOT_MAX_UPDATEABLE_IMAGES
+	help
+	  The number of images that MCUboot will be built with.
+
+config SECURE_BOOT_MCUBOOT_VERSION
+	string "MCUboot S0/S1 image update version"
+	default "0.0.0+0"
+	depends on SECURE_BOOT
+	depends on SECURE_BOOT_APPCORE
+	help
+	  The version of the MCUboot S0/S1 upgrade package
+
+endmenu

@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-config DFU_MULTI_IMAGE_PACKAGE_BUILD
-	bool "Created multi-image DFU"
+menuconfig DFU_MULTI_IMAGE_PACKAGE_BUILD
+	bool "Create multi-image DFU"
 	depends on BOOTLOADER_MCUBOOT
 	help
 	  Build DFU Multi Image package that contains a manifest file followed by
@@ -25,8 +25,8 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT
 	bool "MCUboot update"
-	depends on !SECURE_BOOT_NETCORE
+	depends on SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
 
-endif
+endif # SECURE_BOOT
 
-endif
+endif # DFU_MULTI_IMAGE_PACKAGE_BUILD

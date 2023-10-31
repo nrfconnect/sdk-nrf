@@ -6,7 +6,8 @@ config SUPPORT_NETCORE
 	bool
 	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
 
-if SUPPORT_NETCORE
+menu "Network core configuration"
+	depends on SUPPORT_NETCORE
 
 config SUPPORT_NETCORE_EMPTY
 	bool
@@ -141,4 +142,4 @@ config NETCORE_APP_UPDATE
 	  Enabling this will add support for network core updates from the application core,
 	  requires b0n for network core and MCUboot for application core.
 
-endif
+endmenu

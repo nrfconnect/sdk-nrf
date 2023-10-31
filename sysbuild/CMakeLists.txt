@@ -4,6 +4,31 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Usage:
+#   configure_cache(IMAGE <name>)
+#
+# This function is similar in nature to configure file, except that it takes
+# an image as argument to work on the CMakeCache of said image.
+#
+# The CMake cache of the image will only be re-written in case there are
+# variables which has been updated as part of the call.
+#
+# Only variable of the form `@VAR_NAME@` will be updated.
+#
+# IMAGE: image name identifying the cache to update.
+#
+function(configure_cache)
+  set(single_args IMAGE)
+  cmake_parse_arguments(CONFIGURE_CACHE "" "${single_args}" "" ${ARGN})
+
+  zephyr_check_arguments_required(configure_cache CONFIGURE_CACHE IMAGE)
+
+  ExternalProject_Get_Property(${CONFIGURE_CACHE_IMAGE} BINARY_DIR)
+
+  configure_file("${BINARY_DIR}/CMakeCache.txt" "${BINARY_DIR}/CMakeCache.txt.tmp" @ONLY)
+  zephyr_file_copy("${BINARY_DIR}/CMakeCache.txt.tmp" "${BINARY_DIR}/CMakeCache.txt" ONLY_IF_DIFFERENT)
+endfunction()
+
 function(store_ncs_vars)
   get_property(ncs_vars DIRECTORY ${SYSBUILD_CURRENT_CMAKE_DIR} PROPERTY VARIABLES)
   list(FILTER ncs_vars INCLUDE REGEX "NCS_.*")
@@ -22,7 +47,12 @@ function(restore_ncs_vars)
 endfunction()
 
 function(include_provision_hex)
-  include(${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/cmake/provision_hex.cmake)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/provision_hex.cmake)
+endfunction()
+
+function(include_packaging)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0_mcuboot_signing.cmake)
+  include(${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/cmake/packaging.cmake)
 endfunction()
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
@@ -34,6 +64,18 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(${image} CONFIG_PARTITION_MANAGER_ENABLED y)
     else()
       set_config_bool(${image} CONFIG_PARTITION_MANAGER_ENABLED n)
+    endif()
+
+    if(SB_CONFIG_BUILD_OUTPUT_BIN)
+      set_config_bool(${image} CONFIG_BUILD_OUTPUT_BIN y)
+    else()
+      set_config_bool(${image} CONFIG_BUILD_OUTPUT_BIN n)
+    endif()
+
+    if(SB_CONFIG_BUILD_OUTPUT_HEX)
+      set_config_bool(${image} CONFIG_BUILD_OUTPUT_HEX y)
+    else()
+      set_config_bool(${image} CONFIG_BUILD_OUTPUT_HEX n)
     endif()
   endforeach()
 
@@ -52,38 +94,138 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   endif()
 
   if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-    set_config_string(${DEFAULT_IMAGE} CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS
-                      "--pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD}"
-    )
+    # Make mcuboot a build only target as the main application will flash this from the
+    # merged hex file
+    set_target_properties(mcuboot PROPERTIES BUILD_ONLY true)
+    set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES}\n")
+    set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES}\n")
 
-    if(NOT DEFINED mcuboot_BOARD AND DEFINED board_secure)
-      # MCUboot must run in secure mode on the nRF9160/nRF5340
-        set_target_properties(mcuboot PROPERTIES BOARD ${board_secure})
+    # Set MCUboot operating mode in application and MCUboot
+# TODO: NCSDK-24488 add RAM LOAD mode
+    set(mcuboot_modes "CONFIG_SINGLE_APPLICATION_SLOT;CONFIG_BOOT_SWAP_USING_MOVE;CONFIG_BOOT_SWAP_USING_SCRATCH;CONFIG_BOOT_UPGRADE_ONLY;CONFIG_BOOT_DIRECT_XIP;CONFIG_BOOT_DIRECT_XIP_REVERT")
+    set(application_mcuboot_modes "CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP;CONFIG_MCUBOOT_BOOTLOADER_MODE_SWAP_WITHOUT_SCRATCH;CONFIG_MCUBOOT_BOOTLOADER_MODE_SWAP_SCRATCH;CONFIG_MCUBOOT_BOOTLOADER_MODE_OVERWRITE_ONLY;CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP;CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT")
+
+    if(SB_CONFIG_MCUBOOT_MODE_SINGLE_APP)
+      set(mcuboot_mode CONFIG_SINGLE_APPLICATION_SLOT)
+      set(application_mcuboot_mode CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP)
+    elseif(SB_CONFIG_MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH)
+      set(mcuboot_mode CONFIG_BOOT_SWAP_USING_MOVE)
+      set(application_mcuboot_mode CONFIG_MCUBOOT_BOOTLOADER_MODE_SWAP_WITHOUT_SCRATCH)
+    elseif(SB_CONFIG_MCUBOOT_MODE_SWAP_SCRATCH)
+      set(mcuboot_mode CONFIG_BOOT_SWAP_USING_SCRATCH)
+      set(application_mcuboot_mode CONFIG_MCUBOOT_BOOTLOADER_MODE_SWAP_SCRATCH)
+    elseif(SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY)
+      set(mcuboot_mode CONFIG_BOOT_UPGRADE_ONLY)
+      set(application_mcuboot_mode CONFIG_MCUBOOT_BOOTLOADER_MODE_OVERWRITE_ONLY)
+    elseif(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP)
+      set(mcuboot_mode CONFIG_BOOT_DIRECT_XIP)
+      set(application_mcuboot_mode CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
+    elseif(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
+      set(mcuboot_mode CONFIG_BOOT_DIRECT_XIP;CONFIG_BOOT_DIRECT_XIP_REVERT)
+      set(application_mcuboot_mode CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
     endif()
-  endif()
 
-  if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
-    if(NOT DEFINED b0_BOARD AND DEFINED board_secure)
-      # b0 must run in secure mode on the nRF9160/nRF5340
-      set_target_properties(b0 PROPERTIES BOARD ${board_secure})
-
-      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        set_target_properties(s1_image PROPERTIES BOARD ${board_secure})
+    # Apply configuration to MCUboot
+    foreach(mode ${mcuboot_modes})
+      if("${mode}" IN_LIST mcuboot_mode)
+        set_config_bool(mcuboot ${mode} y)
+      else()
+        set_config_bool(mcuboot ${mode} n)
       endif()
+    endforeach()
+
+    # Apply configuration to application
+    foreach(mode ${application_mcuboot_modes})
+      if("${mode}" IN_LIST application_mcuboot_mode)
+        set_config_bool(${DEFAULT_IMAGE} ${mode} y)
+      else()
+        set_config_bool(${DEFAULT_IMAGE} ${mode} n)
+      endif()
+    endforeach()
+
+    # Check if the board is a non-secure one
+    string(LENGTH "${BOARD}" board_len)
+    math(EXPR board_len "${board_len} - 3")
+    string(SUBSTRING "${BOARD}" ${board_len} 3 ns_board_check)
+
+    if("${ns_board_check}" STREQUAL "_ns")
+      # Configure MCUboot before application so that TF-M can read MCUboot configuration
+      sysbuild_add_dependencies(CONFIGURE ${DEFAULT_IMAGE} mcuboot)
+
+      # Configure MCUBoot to be able to boot TFM
+      add_overlay_config(
+        mcuboot
+        ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/tfm.conf
+        )
+
+      # Add fault injection protection to MCUBOOT
+      add_overlay_config(
+        mcuboot
+        ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/fih_low_enable.conf
+      )
     endif()
-  elseif(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_NETCORE)
-    if(SB_CONFIG_NETCORE_APP_UPDATE)
-      set_config_bool(mcuboot CONFIG_PCD_APP y)
-      set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=2\n")
+
+    # Use NCS signing script with support for PM
+    set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+
+    set(imgtool_extra)
+    if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+      set(imgtool_extra " --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE}")
+
+      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=${SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION}\n")
+      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS=${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS}\n")
+      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE=${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE}\n")
 
       add_overlay_config(
         mcuboot
-        ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf
-        )
-      add_overlay_dts(
-        mcuboot
-        ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim.overlay
-        )
+        ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/hw_counters.conf
+      )
+    endif()
+
+    if(NOT DEFINED mcuboot_BOARD AND DEFINED board_secure)
+      # MCUboot must run in secure mode on the nRF9160/nRF5340
+      set_target_properties(mcuboot PROPERTIES BOARD ${board_secure})
+    endif()
+  endif()
+
+  if(SB_CONFIG_SECURE_BOOT)
+    if(SB_CONFIG_SECURE_BOOT_APPCORE)
+      if(NOT DEFINED b0_BOARD AND DEFINED board_secure)
+        # b0 must run in secure mode on the nRF9160/nRF5340
+        set_target_properties(b0 PROPERTIES BOARD ${board_secure})
+
+        if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+          set_target_properties(s1_image PROPERTIES BOARD ${board_secure})
+        endif()
+      endif()
+
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        add_overlay_config(
+          mcuboot
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/mcuboot_enable_secure_bootloader.overlay
+          )
+        add_overlay_config(
+          mcuboot
+          ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
+          )
+      endif()
+    endif()
+
+    if(SB_CONFIG_SECURE_BOOT_NETCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
+      if(SB_CONFIG_NETCORE_APP_UPDATE)
+        set_config_bool(mcuboot CONFIG_PCD_APP y)
+
+        add_overlay_config(
+          mcuboot
+          ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf
+          )
+        add_overlay_dts(
+          mcuboot
+          ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/flash_sim.overlay
+          )
+      else()
+        set_config_bool(mcuboot CONFIG_PCD_APP n)
+      endif()
     endif()
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
@@ -93,22 +235,33 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   cmake_parse_arguments(POST_CMAKE "" "" "IMAGES" ${ARGN})
   restore_ncs_vars()
 
+  set(SYSBUILD y)
+
   set_property(GLOBAL PROPERTY DOMAIN_APP_APP ${DEFAULT_IMAGE})
 
-  # Run partition manager for each image before running CMake.
-  set(domain ${SB_CONFIG_SECURE_BOOT_DOMAIN})
-  if(DEFINED domain AND NOT domain STREQUAL APP)
-    set(partition_manager_target partition_manager_${domain})
-  endif()
+  include_packaging()
 
-  if(SB_CONFIG_SECURE_BOOT)
+  if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     include_provision_hex()
   endif()
 
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/extensions.cmake)
   if(SB_CONFIG_PARTITION_MANAGER)
+    # Run partition manager for each image before running CMake.
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/partition_manager.cmake OPTIONAL)
   endif()
+
+  # Set PM variables up that applications need prior to PM having ran
+  get_property(PM_MCUBOOT_PRIMARY_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_SIZE)
+  get_property(PM_MCUBOOT_PAD_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PAD_SIZE)
+
+  if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_EMPTY)
+    get_property(PM_MCUBOOT_PRIMARY_1_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_1_SIZE)
+  endif()
+
+  foreach(image ${IMAGES})
+    configure_cache(IMAGE ${image})
+  endforeach()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
 # Enable use of partition manager with sysbuild.
@@ -149,13 +302,25 @@ if(SB_CONFIG_SECURE_BOOT)
     endif()
 
     add_overlay_config(mcuboot "${ZEPHYR_NRF_MODULE_DIR}/subsys/pcd/pcd.conf")
-  else()
+  endif()
+
+  if(SB_CONFIG_SECURE_BOOT_APPCORE)
     if(SB_CONFIG_BOOTLOADER_MCUBOOT)
       add_overlay_config(mcuboot ${secure_boot_image_dir}/multi_image_mcuboot.conf)
 
       # Include a kconfig file which enables CONFIG_FW_INFO in the image
       # which is booted by B0.
       add_overlay_config(mcuboot ${secure_boot_image_dir}/fw_info.conf)
+
+      add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/log_minimal.conf)
+
+      if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
+        add_overlay_config(mcuboot ${CMAKE_CURRENT_SOURCE_DIR}/override_external_mcuboot.conf)
+      endif()
+    else()
+      # Include a kconfig file which enables CONFIG_FW_INFO in the image
+      # which is booted by B0.
+      add_overlay_config(${DEFAULT_IMAGE} ${secure_boot_image_dir}/fw_info.conf)
     endif()
   endif()
 endif()

@@ -2,19 +2,13 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-config SECURE_BOOT
-	bool "Use Secure Bootloader"
+menuconfig SECURE_BOOT
+	bool "Secure Bootloader"
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
 
 if SECURE_BOOT
-
-choice SECURE_BOOT_CORE
-	bool "Secure boot SoC core"
-	default SECURE_BOOT_NETCORE
-	help
-	  SoC core where the first stage bootloader resides.
 
 config SECURE_BOOT_APPCORE
 	bool "Appcore"
@@ -27,34 +21,105 @@ config SECURE_BOOT_NETCORE
 	help
 	  Locate first stage bootloader on network core.
 
-endchoice
-
-config SECURE_BOOT_IMAGE_NAME
+config SECURE_BOOT_NETWORK_BOARD
 	string
-	default "b0n" if SECURE_BOOT_NETCORE
-	default "b0"
-	help
-	  Internal build system name of secure bootloader image.
-
-config SECURE_BOOT_BOARD
-	string
-	default "nrf5340dk_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp")
+	default "nrf5340dk_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
 	default "thingy53_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	depends on SECURE_BOOT_NETCORE
 	help
 	  Remote board when building this sample.
 	  If not set, the board given to sysbuild is used.
 
-config SECURE_BOOT_DOMAIN
-	string
-	default "CPUNET" if SECURE_BOOT_NETCORE
-	default "APP"
-	help
-	  Internal build system domain name used for first stage bootloader.
-
 config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
 	bool
-	default y if SECURE_BOOT_APPCORE
+	default y
+	depends on SECURE_BOOT_APPCORE
 	help
 	  Will build an S1 variant image for the second slot.
+
+choice SECURE_BOOT_SIGNING
+	prompt "Firmware signing method"
+	default SECURE_BOOT_SIGNING_PYTHON
+
+config SECURE_BOOT_SIGNING_PYTHON
+	bool "Sign with Python ecdsa library"
+	select SECURE_BOOT_PRIVATE_KEY_PROVIDED
+
+config SECURE_BOOT_SIGNING_OPENSSL
+	bool "Sign with openssl command line tool"
+	select SECURE_BOOT_PRIVATE_KEY_PROVIDED
+
+config SECURE_BOOT_SIGNING_CUSTOM
+	bool "Sign with custom command"
+
+endchoice
+
+config SECURE_BOOT_SIGNING_KEY_FILE
+	string
+	prompt "Private key PEM file" if !SECURE_BOOT_SIGNING_CUSTOM
+	default ""
+	help
+	  Absolute path to the private key PEM file.
+	  Specifies the private key used for signing the firmware image.
+	  The hash of the corresponding public key is stored as the first
+	  entry in the list of public key hashes in the provision hex file.
+	  This value can also be set by exporting an environment variable
+	  named 'SECURE_BOOT_SIGNING_KEY_FILE' or passing
+	  '-DSECURE_BOOT_SIGNING_KEY_FILE=/path/to/my/pem' when running cmake.
+	  See also SECURE_BOOT_PUBLIC_KEY_FILES.
+
+config SECURE_BOOT_SIGNING_COMMAND
+	string
+	prompt "Custom signing command" if SECURE_BOOT_SIGNING_CUSTOM
+	default ""
+	help
+	  This command will be called to produce a signature of the firmware.
+	  It will be called as "${CONFIG_SECURE_BOOT_SIGNING_COMMAND} <file>"
+	  The command must calculate the signature over the contents
+	  of the <file> and write the signature to stdout.
+	  The signature must be on DER format.
+
+config SECURE_BOOT_SIGNING_PUBLIC_KEY
+	string
+	prompt "Public key PEM file" if SECURE_BOOT_SIGNING_CUSTOM
+	default ""
+	help
+	  Path to a PEM file.
+	  When using a custom signing command, specify the corresponding public
+	  key here. This public key is checked during building, and added as
+	  the first entry in the provisioned data. See SECURE_BOOT_PUBLIC_KEY_FILES.
+
+config SECURE_BOOT_PUBLIC_KEY_FILES
+	string "Public Key PEM files"
+	default ""
+	help
+	  Comma-separated list of absolute paths to public key pem files.
+	  The provision hex file will contain a list of hashes of public keys.
+	  The first public key hash is the one corresponding to the private
+	  signing key used to sign the image. See SECURE_BOOT_SIGNING_KEY_FILE.
+	  The hashes of the public keys specified in this configuration will be
+	  placed after the aforementioned public key hash, in the order
+	  they appear in this config. The order is significant since if an image
+	  is successfully validated against a public key in the list, all
+	  public keys before it in the list will be invalidated.
+	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
+	  If config is the string "debug", 2 generated debug files will be used.
+	  If config is an empty string then only the public key hash
+	  corresponding to the private signing key used to sign the image is
+	  included in provision.hex.
+
+config SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
+	bool "[DEBUG] Place signing public key last"
+	default n
+	help
+	  Place the public key used for signing last in the list instead of
+	  first. This is meant to be used for testing looping through the
+	  public keys.
+
+config SECURE_BOOT_DEBUG_NO_VERIFY_HASHES
+	bool
+	help
+	  [DEBUG] Don't check public key hashes for applicability.
+	  Use this only in (negative) tests!
 
 endif
