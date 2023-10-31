@@ -374,6 +374,20 @@ Libraries for networking
   * Updated the library to use the :ref:`lib_mqtt_helper` library.
     This simplifies the handling of the MQTT stack.
 
+* :ref:`lib_nrf_cloud_coap` library:
+
+  * Added:
+
+    * Automatic selection of proprietary PSM mode when building for the SOC_NRF9161_LACA.
+    * Support for bulk transfers to the :c:func:`nrf_cloud_coap_json_message_send` function.
+
+* :ref:`lib_nrf_cloud_log` library:
+
+  * Added:
+
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_LOG_INCLUDE_LEVEL_0` Kconfig option.
+    * Support for nRF Cloud CoAP text mode logging.
+
 Libraries for NFC
 -----------------
 

@@ -16,8 +16,8 @@ The logging backend can either use JSON encoding or `Dictionary-based Logging`_ 
 Overview
 ********
 
-This library provides an API for either REST-based or MQTT-based applications to send logs to nRF Cloud.
-For MQTT-based applications, you can enable or disable logging as well as change the logging level remotely using the nRF Cloud portal or `nRF Cloud Patch Device State`_ REST API.
+This library provides an API for REST-, MQTT-, or CoAP-based applications to send logs to nRF Cloud.
+For MQTT- and CoAP-based applications, you can enable or disable logging as well as change the logging level remotely using the nRF Cloud portal or `nRF Cloud Patch Device State`_ REST API.
 For REST-based applications, the enabled state and logging level can be controlled at compile time or at run time on the device, but not from the cloud.
 
 Each JSON log message contains the following elements:
@@ -55,12 +55,12 @@ The sequence number is set to a monotonically-increasing value that resets to ``
 Supported backends
 ==================
 
-When so configured, this library includes a Zephyr logging backend that can transport log messages to nRF Cloud using MQTT or REST.
-The logging backend can also use either JSON messages or dictionary-based compact binary messages.
+When so configured, this library includes a Zephyr logging backend that can transport log messages to nRF Cloud using REST, MQTT, or CoAP.
+The logging backend can also use either JSON messages or dictionary-based compact binary messages (binary messages are only supported with MQTT).
 
 Multiple JSON log messages are sent together as a JSON array to the `d2c/bulk device message topic <nRF Cloud MQTT Topics_>`_.
 The nRF Cloud backend splits the array into individual JSON messages for display.
-Using the bulk topic reduces the data transfer size as MQTT or REST message overhead is consolidated for multiple messages.
+Using the bulk topic reduces the data transfer size as message overhead is consolidated for multiple messages.
 
 Multiple dictionary-based log messages are sent together as a binary message to the `d2c/bin device message topic <nRF Cloud MQTT Topics_>`_.
 The nRF Cloud portal does not display the contents of the dictionary-based log messages in real time.
@@ -92,13 +92,15 @@ If only the second is enabled:
 
 If both options are enabled, calls to the direct log message functions are passed to the logging backend instead.
 
-Configure one of the following options to select the data transport method:
+Configure one of the following Kconfig options to select the data transport method:
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_REST`
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST`
+* :kconfig:option:`CONFIG_NRF_CLOUD_COAP`
 
 Configure the message encoding:
 
-* :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` or :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY`
+* :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT` or :kconfig:option:`CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY` (MQTT only)
 
 See `Dictionary-based Logging`_ to learn how dictionary-based logging works, how the dictionary is built, and how to decode the binary log output.
 Dictionary logs are compact binary log messages that require decoding using an offline script.
@@ -112,6 +114,12 @@ Configure the default log level to be sent to the cloud:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_LOG_OUTPUT_LEVEL` set to ``0`` for NONE (to disable), ``1`` for ERR, ``2`` for WRN, ``3`` for INF, or ``4`` for DBG.
 
+By default, output from the :c:func:`printk` function is not logged to the cloud.
+Configure the following to log these messages:
+
+* Set the :kconfig:option:`CONFIG_LOG_PRINTK` option to ``y``.
+* Set the :kconfig:option:`CONFIG_NRF_CLOUD_LOG_INCLUDE_LEVEL_0` option to ``y``.
+
 For fine run-time control of log levels for each logging source, configure the following:
 
 * :kconfig:option:`CONFIG_LOG_RUNTIME_FILTERING`
@@ -124,7 +132,6 @@ Finally, configure these additional options:
 * :kconfig:option:`CONFIG_LOG_PROCESS_THREAD_STACK_SIZE` set to ``4096``.
 * :kconfig:option:`CONFIG_LOG_BUFFER_SIZE` set to the maximum size of buffered log data before transmission to the cloud.
 * :kconfig:option:`CONFIG_LOG_PROCESS_THREAD_SLEEP_MS` set to the maximum time log messages can be buffered before transmission to the cloud.
-* :kconfig:option:`CONFIG_LOG_PRINTK` to ``n`` so that periodic messages from the :ref:`lte_lc_readme` library do not get sent to the cloud.
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -157,6 +164,7 @@ This library uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_rest`
+* :ref:`lib_nrf_cloud_coap`
 * :ref:`lib_date_time`
 
 API documentation
