@@ -9,15 +9,15 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+Certification status
+====================
+
+For certification status of the released versions, see `Mobile network operator certifications`_.
+
 liblwm2m_carrier 3.3.3
 **********************
 
 Release for modem firmware version 1.3.5 and 2.0.0.
-
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
 
 Changes
 =======
@@ -45,11 +45,6 @@ liblwm2m_carrier 3.3.1
 
 Release for modem firmware version 1.3.5 and 2.0.0.
 
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
-
 Changes
 =======
 
@@ -59,11 +54,6 @@ liblwm2m_carrier 3.3.0
 **********************
 
 Release for modem firmware version 1.3.5 and 2.0.0.
-
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
 
 Size
 ====
@@ -94,7 +84,7 @@ Changes
   * New successful event flow: :c:member:`LWM2M_CARRIER_EVENT_FOTA_START` > :c:member:`LWM2M_CARRIER_EVENT_LTE_POWER_OFF` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS` > :c:member:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`.
 
 AT&T support has been deprecated
---------------------------------
+================================
 
 The application must no longer connect to the AT&T Device Management server.
 Consequently, the LwM2M carrier library is no longer required to certify with AT&T.
@@ -109,11 +99,6 @@ liblwm2m_carrier 3.2.0
 **********************
 
 Release for modem firmware version 1.3.5.
-
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
 
 Size
 ====
@@ -155,7 +140,7 @@ Changes
   * New successful event flow: :c:member:`LWM2M_CARRIER_EVENT_FOTA_START` > :c:member:`LWM2M_CARRIER_EVENT_LTE_POWER_OFF` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_MODEM_INIT` > :c:member:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS` > :c:member:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`.
 
 nRF modem dependency change
----------------------------
+===========================
 
 LwM2M carrier library no longer explicitly controls the :ref:`nrf_modem`.
 Instead, the application can initialize the Modem library at its own convenience.
@@ -186,11 +171,6 @@ liblwm2m_carrier 3.1.0
 **********************
 
 Release for modem firmware version 1.3.3 and 1.3.4.
-
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
 
 Size
 ====
@@ -306,11 +286,6 @@ liblwm2m_carrier 0.30.2
 
 Release for modem firmware version 1.3.3.
 
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
-
 Changes
 =======
 
@@ -338,11 +313,6 @@ liblwm2m_carrier 0.30.1
 
 Release for modem firmware version 1.3.3.
 
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
-
 Changes
 =======
 
@@ -352,11 +322,6 @@ liblwm2m_carrier 0.30.0
 ***********************
 
 Release for modem firmware version 1.3.1 and 1.3.2.
-
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
 
 Size
 ====
@@ -438,11 +403,6 @@ liblwm2m_carrier 0.22.0
 
 Release for modem firmware version 1.3.1.
 
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
-
 Size
 ====
 
@@ -474,11 +434,6 @@ liblwm2m_carrier 0.21.0
 ***********************
 
 Release for modem firmware version 1.3.1.
-
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
 
 Size
 ====
@@ -519,11 +474,6 @@ liblwm2m_carrier 0.20.1
 
 Release for modem firmware version 1.3.0.
 
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
-
 Size
 ====
 
@@ -549,11 +499,6 @@ liblwm2m_carrier 0.20.0
 
 Release for modem firmware version 1.3.0.
 
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
-
 Changes
 =======
 
@@ -571,11 +516,6 @@ liblwm2m_carrier 0.10.2
 ***********************
 
 Release for modem firmware versions 1.2.3 and 1.1.4, and |NCS| 1.4.2.
-
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
 
 Size
 ====
@@ -603,11 +543,6 @@ liblwm2m_carrier 0.10.1
 
 Release for modem firmware versions 1.2.2 and 1.1.4, and |NCS| 1.4.1.
 
-Certification status
-====================
-
-For certification status, see `Mobile network operator certifications`_.
-
 Changes
 =======
 
@@ -624,11 +559,6 @@ Modem firmware version 1.1.4 must be used for Verizon, and the modem firmware ve
 The snapshot can be used for development and testing only.
 It is not ready for certification.
 
-Certification status
-====================
-
-The library is not certified with any carrier.
-
 Changes
 =======
 
@@ -642,11 +572,6 @@ liblwm2m_carrier 0.9.1
 **********************
 
 Release with AT&T support, intended for modem firmware version 1.2.1 and |NCS| version 1.3.1.
-
-Certification status
-====================
-
-The library is certified with AT&T.
 
 Size
 ====
@@ -677,11 +602,6 @@ This release is intended to let users begin integration towards the AT&T and Ver
 It can be used for development and testing only.
 It is not ready for certification.
 
-Certification status
-====================
-
-The library is not certified with any carrier.
-
 Changes
 =======
 
@@ -703,11 +623,6 @@ liblwm2m_carrier 0.8.2
 **********************
 
 Release for modem firmware version 1.1.2, with support for Verizon Wireless.
-
-Certification status
-====================
-
-The library is certified with Verizon Wireless.
 
 Changes
 =======
@@ -736,11 +651,6 @@ liblwm2m_carrier 0.8.1+build1
 
 Release for modem firmware version 1.1.0, with support for Verizon Wireless.
 
-Certification status
-====================
-
-The library is certified with Verizon Wireless.
-
 Changes
 =======
 
@@ -766,11 +676,6 @@ liblwm2m_carrier 0.8.1
 
 Release for modem firmware version 1.1.0, with support for Verizon Wireless.
 
-Certification status
-====================
-
-The library is certified with Verizon Wireless.
-
 Changes
 =======
 
@@ -795,11 +700,6 @@ liblwm2m_carrier 0.8.0
 **********************
 
 Release for modem firmware version 1.1.0 and |NCS| v1.1.0, with support for Verizon Wireless.
-
-Certification status
-====================
-
-The library is not certified with Verizon Wireless.
 
 Changes
 =======
