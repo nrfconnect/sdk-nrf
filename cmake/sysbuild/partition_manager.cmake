@@ -91,6 +91,7 @@ function(partition_manager)
       dynamic_partition_argument
       "--flash_primary-dynamic-partition;${dynamic_partition}"
       )
+    set(static_configuration)
   endif()
 
   if (DEFINED PM_DOMAIN)
@@ -145,7 +146,6 @@ function(partition_manager)
     message(FATAL_ERROR "Partition Manager output generation failed, aborting. Command: ${pm_output_cmd}")
   endif()
 
-
   add_custom_target(partition_manager${underscore}${PM_DOMAIN})
   set(pm_var_names)
   import_pm_config(${pm_out_dotconf_file} pm_var_names)
@@ -177,6 +177,13 @@ function(partition_manager)
         get_property(part GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
       else()
         set(part "${DEFAULT_IMAGE}")
+      endif()
+    elseif(${part} STREQUAL "provision")
+      # Adjust provision name for domain
+      if("${PM_DOMAIN}" STREQUAL "CPUNET")
+        set(part "net_${part}")
+      else()
+        set(part "app_${part}")
       endif()
     endif()
     string(TOUPPER ${part} PART)
@@ -388,6 +395,13 @@ sysbuild_get(${DEFAULT_IMAGE}_binary_dir  IMAGE ${DEFAULT_IMAGE} VAR ZEPHYR_BINA
 list(APPEND prefixed_images ":${dynamic_partition}")
 list(APPEND input_files  ${${DEFAULT_IMAGE}_input_files})
 list(APPEND header_files ${${DEFAULT_IMAGE}_binary_dir}/${generated_path}/pm_config.h)
+
+if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+  sysbuild_get(s1_image_binary_dir  IMAGE s1_image VAR ZEPHYR_BINARY_DIR CACHE)
+  list(APPEND prefixed_images ":s1_image")
+  list(APPEND header_files ${s1_image_binary_dir}/${generated_path}/pm_config.h)
+endif()
+
 foreach (image ${IMAGES})
   set(domain)
   # Special handling of `app_image` as this must be added as `:app` for historic reasons.
@@ -400,7 +414,7 @@ foreach (image ${IMAGES})
     endif()
   endforeach()
 
-  if(NOT "${DEFAULT_IMAGE}" STREQUAL "${image}")
+  if(NOT "${DEFAULT_IMAGE}" STREQUAL "${image}" AND NOT "s1_image" STREQUAL "${image}")
     sysbuild_get(${image}_input_files IMAGE ${image} VAR PM_YML_FILES CACHE)
     sysbuild_get(${image}_binary_dir  IMAGE ${image} VAR ZEPHYR_BINARY_DIR CACHE)
 
@@ -527,41 +541,26 @@ if(ext_flash_enabled)
     )
 endif()
 
-# Start - Code related to network core update. Multi image updates are part of NCSDK-17807
-## If simultaneous updates of the network core and application core is supported
-## we add a region which is used to emulate flash. In reality this data is being
-## placed in RAM. This is used to bank the network core update in RAM while
-## the application core update is banked in flash. This works since the nRF53
-## application core has 512kB of RAM and the network core only has 256kB of flash
-#get_shared(
-#  mcuboot_NRF53_MULTI_IMAGE_UPDATE
-#  IMAGE mcuboot
-#  PROPERTY NRF53_MULTI_IMAGE_UPDATE
-#  )
-#
-#get_shared(
-#  mcuboot_NRF53_RECOVERY_NETWORK_CORE
-#  IMAGE mcuboot
-#  PROPERTY NRF53_RECOVERY_NETWORK_CORE
-#  )
-#
-#if ((DEFINED mcuboot_NRF53_MULTI_IMAGE_UPDATE) OR (DEFINED mcuboot_NRF53_RECOVERY_NETWORK_CORE))
-#  # This region will contain the 'mcuboot_secondary' partition, and the banked
-#  # updates for the network core will be stored here.
-#  get_shared(ram_flash_label IMAGE mcuboot PROPERTY RAM_FLASH_LABEL)
-#  get_shared(ram_flash_addr IMAGE mcuboot PROPERTY RAM_FLASH_ADDR)
-#  get_shared(ram_flash_size IMAGE mcuboot PROPERTY RAM_FLASH_SIZE)
-#
-#  add_region(
-#    NAME ram_flash
-#    SIZE ${ram_flash_size}
-#    BASE ${ram_flash_addr}
-#    PLACEMENT start_to_end
-#    DEVICE ${ram_flash_label}
-#    DEFAULT_DRIVER_KCONFIG CONFIG_FLASH_SIMULATOR
-#    )
-#endif()
-# end - Code related to network core update. Multi image updates are part of NCSDK-17807
+# If simultaneous updates of the network core and application core is supported
+# we add a region which is used to emulate flash. In reality this data is being
+# placed in RAM. This is used to bank the network core update in RAM while
+# the application core update is banked in flash. This works since the nRF53
+# application core has 512kB of RAM and the network core only has 256kB of flash
+if(SB_CONFIG_NETCORE_APP_UPDATE)
+  # This region will contain the 'mcuboot_secondary' partition, and the banked
+  # updates for the network core will be stored here.
+  sysbuild_get(ram_flash_addr IMAGE mcuboot VAR RAM_FLASH_ADDR CACHE)
+  sysbuild_get(ram_flash_size IMAGE mcuboot VAR RAM_FLASH_SIZE CACHE)
+
+  add_region(
+    NAME ram_flash
+    SIZE ${ram_flash_size}
+    BASE ${ram_flash_addr}
+    PLACEMENT start_to_end
+    DEVICE nordic_ram_flash_controller
+    DEFAULT_DRIVER_KCONFIG CONFIG_FLASH_SIMULATOR
+    )
+endif()
 
 # Do per domain, end with main app domain.
 partition_manager(IN_FILES ${input_files} REGIONS ${regions})
