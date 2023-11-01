@@ -243,6 +243,7 @@ Cellular samples (renamed from nRF9160 samples)
   * Fixed:
 
     * The sample now waits for a successful connection before printing ``Connected to nRF Cloud!``.
+    * Building for the Thingy:91.
 
   * Changed:
 
