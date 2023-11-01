@@ -74,18 +74,19 @@ config DFU_TARGET_MODEM_DELTA
 	  Enable support for updates to the modem firmware.
 
 if (DFU_TARGET_MODEM_DELTA)
+
 config DFU_TARGET_MODEM_TIMEOUT
 	int "Erase pending timeout"
 	default 60
 	depends on DFU_TARGET_MODEM_DELTA
 	help
-	  Set the timeout in seconds for how long the code will wait when
-	  reading DFU_ERASE_PENDING from the modem. If the timeout is reached
-	  an DFU_TARGET_EVT_TIMEOUT is issued and a disconnect of the LTE link
-	  is recommended so that the modem has time to service the
-	  DFU_ERASE_PENDING request. It's also possible to reboot the device to
-	  achive the same desired behavior.
-
+	  Set the time in seconds that the code will wait for the modem delta DFU erase
+	  to complete before generating a DFU_TARGET_EVT_TIMEOUT event.
+	  Every time this timeout is reached, a DFU_TARGET_EVT_TIMEOUT event is sent
+	  and the counting timer is reset while the erasure continues.
+	  If this timeout is reached, a disconnect of the LTE link is recommended
+	  so that the modem has time to service the delta DFU erase request.
+	  It's also possible to reboot the device to achieve the same behavior.
 
 endif # DFU_TARGET_MODEM_DELTA
 

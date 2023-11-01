@@ -679,14 +679,15 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
-		/* MODEM delta: update job status and reboot */
-		nrf_cloud_download_end();
-		current_fota.status = NRF_CLOUD_FOTA_IN_PROGRESS;
-		save_validate_status(current_fota.info.id,
-				     current_fota.info.type,
-				     NRF_CLOUD_FOTA_VALIDATE_PENDING);
-		ret = send_job_update(&current_fota);
+		/* MODEM delta: DFU area erasure started, before download can start. */
 		send_event(NRF_CLOUD_FOTA_EVT_ERASE_PENDING, &current_fota);
+		break;
+
+	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
+		/* MODEM delta: this event is received when the erasure
+		 * has been going on for CONFIG_DFU_TARGET_MODEM_TIMEOUT already.
+		 */
+		send_event(NRF_CLOUD_FOTA_EVT_ERASE_TIMEOUT, &current_fota);
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:

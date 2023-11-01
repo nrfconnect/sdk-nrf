@@ -245,6 +245,11 @@ static void fota_dl_handler(const struct fota_download_evt *fota_evt)
 		callback(&evt);
 		break;
 
+	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
+		LOG_DBG("FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT");
+		/* The erasure continues. */
+		break;
+
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
 		evt.type = AZURE_FOTA_EVT_ERASE_DONE;
 		callback(&evt);

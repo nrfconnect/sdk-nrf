@@ -113,7 +113,7 @@ Example
    #XFOTA: 294912,2621440
    OK
 
-   erase modem DFU area for next modem FOTA (optional)
+   erase modem DFU area for next modem delta update (optional)
    AT#XFOTA=9
    OK
 
@@ -128,8 +128,8 @@ Unsolicited notification
 
   * ``0`` - Init
   * ``1`` - Download
-  * ``2`` - Download, erase pending (modem FOTA only)
-  * ``3`` - Download, erased (modem FOTA only)
+  * ``2`` - Download, erase pending (modem delta update only)
+  * ``3`` - Download, erase complete (modem delta update only)
   * ``4`` - Downloaded, to be activated
   * ``5`` - Complete
 

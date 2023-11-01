@@ -16,6 +16,7 @@
 #include <zephyr/storage/stream_flash.h>
 #include <zephyr/sys/reboot.h>
 #include <net/fota_download.h>
+#include <fota_download_util.h>
 #include <dfu/dfu_target_full_modem.h>
 #include <dfu/fmfu_fdev.h>
 #include "slm_util.h"
@@ -32,7 +33,6 @@ LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 #define URI_SCHEMA_MAX	8
-#define ERASE_WAIT_TIME 60
 #define ERASE_POLL_TIME 2
 
 /* Some features need fota_download update */
@@ -138,9 +138,9 @@ static int do_fota_erase_mfw(void)
 			break;
 		}
 		time_elapsed += ERASE_POLL_TIME;
-	} while (time_elapsed < ERASE_WAIT_TIME);
+	} while (time_elapsed < CONFIG_DFU_TARGET_MODEM_TIMEOUT);
 
-	if (time_elapsed >= ERASE_WAIT_TIME) {
+	if (time_elapsed >= CONFIG_DFU_TARGET_MODEM_TIMEOUT) {
 		LOG_WRN("Erase timeout");
 		return -ETIME;
 	}
@@ -258,7 +258,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
-		/* The erasure continues. */
+		LOG_INF("Erasure timeout reached. Erasure continues.");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		slm_fota_stage = FOTA_STAGE_DOWNLOAD_ERASE_PENDING;

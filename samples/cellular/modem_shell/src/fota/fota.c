@@ -88,6 +88,9 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 		mosh_print("FOTA: Download finished");
 		modem_update_apply();
 		break;
+	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
+		mosh_print("FOTA: Erasing reached timeout");
+		/* Fall through, erasing continues. */
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		mosh_print("FOTA: Still erasing...");
 		break;

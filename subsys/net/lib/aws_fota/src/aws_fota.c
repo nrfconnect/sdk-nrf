@@ -767,6 +767,11 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		callback(&aws_fota_evt);
 		break;
 
+	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
+		LOG_DBG("FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT");
+		/* The erasure continues. */
+		break;
+
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
 		LOG_DBG("FOTA_DOWNLOAD_EVT_ERASE_DONE");
 		aws_fota_evt.id = AWS_FOTA_EVT_ERASE_DONE;
