@@ -37,6 +37,7 @@ static int delete_banked_modem_delta_fw(void)
 		LOG_ERR("Failed to delete backup, error %d", err);
 		return -EFAULT;
 	}
+	callback(DFU_TARGET_EVT_ERASE_PENDING);
 
 	while (true) {
 		err = nrf_modem_delta_dfu_offset(&offset);
@@ -48,6 +49,7 @@ static int delete_banked_modem_delta_fw(void)
 			if (err != NRF_MODEM_DELTA_DFU_ERASE_PENDING &&
 			    err != NRF_MODEM_DELTA_DFU_INVALID_DATA) {
 				LOG_ERR("Error during erase, error %d", err);
+				break;
 			}
 			k_sleep(K_SECONDS(SLEEP_TIME));
 			timeout -= SLEEP_TIME;
@@ -58,7 +60,7 @@ static int delete_banked_modem_delta_fw(void)
 		}
 	}
 
-	return 0;
+	return err;
 }
 
 bool dfu_target_modem_delta_identify(const void *const buf)

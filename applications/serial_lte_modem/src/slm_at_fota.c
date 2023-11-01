@@ -257,6 +257,9 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		slm_settings_fota_save();
 		rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
 		break;
+	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
+		/* The erasure continues. */
+		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		slm_fota_stage = FOTA_STAGE_DOWNLOAD_ERASE_PENDING;
 		rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);

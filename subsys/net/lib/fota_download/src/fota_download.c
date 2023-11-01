@@ -106,8 +106,11 @@ static void stopped(void)
 static void dfu_target_callback_handler(enum dfu_target_evt_id evt)
 {
 	switch (evt) {
-	case DFU_TARGET_EVT_TIMEOUT:
+	case DFU_TARGET_EVT_ERASE_PENDING:
 		send_evt(FOTA_DOWNLOAD_EVT_ERASE_PENDING);
+		break;
+	case DFU_TARGET_EVT_TIMEOUT:
+		send_evt(FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT);
 		break;
 	case DFU_TARGET_EVT_ERASE_DONE:
 		send_evt(FOTA_DOWNLOAD_EVT_ERASE_DONE);
