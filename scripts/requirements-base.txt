@@ -1,1 +1,1 @@
-west>=1.0.0
+nrf/malpy-0.1.0.tar.gz
