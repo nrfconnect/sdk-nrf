@@ -48,6 +48,7 @@ enum dfu_target_image_type {
 };
 
 enum dfu_target_evt_id {
+	DFU_TARGET_EVT_ERASE_PENDING,
 	DFU_TARGET_EVT_TIMEOUT,
 	DFU_TARGET_EVT_ERASE_DONE
 };

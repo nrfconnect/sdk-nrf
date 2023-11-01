@@ -46,6 +46,12 @@ enum fota_download_evt_id {
 	 */
 	FOTA_DOWNLOAD_EVT_ERASE_PENDING,
 
+	/** Deletion of the downloaded FOTA image has reached the defined timeout. It will continue.
+	 *
+	 * Not fired for all FOTA types.
+	 */
+	FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT,
+
 	/** Deletion of the downloaded FOTA image is complete.
 	 *
 	 * Not fired for all FOTA types.
