@@ -31,13 +31,17 @@ When the traffic generator module is used with this sample, the traffic generato
 The server source is available in the :file:`scripts/traffic_gen_server` file.
 This is a `python3` based server, so you must make sure that `python3` is installed on your PC.
 
-To start the server, run the following command:
+To start the server:
 
-.. code-block:: console
+1. Set the :kconfig:option:`CONFIG_TRAFFIC_GEN_REMOTE_IPV4_ADDR` Kconfig option to the IPv4 address of the host running the traffic generator server.
 
-   python3 traffic_gen_server.py
+2. Run the following command:
 
-Use the ``-h`` option to display the help message for how to use the server.
+   .. code-block:: console
+
+      python3 traffic_gen_server.py
+
+   Use the ``-h`` option to display the help message for how to use the server.
 
 Configuration
 *************
