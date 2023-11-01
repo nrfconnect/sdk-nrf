@@ -20,8 +20,8 @@ See the `Memfault documentation <Memfault introduction_>`_ for more details.
 .. note::
    Memfault has been integrated in |NCS| since the v1.6.0 release.
 
-Prerequisites
-*************
+Integration prerequisites
+*************************
 
 Before you start the |NCS| integration with Memfault, make sure that the following prerequisites are completed:
 
@@ -57,13 +57,17 @@ Integration overview
 The SDK version is included in the `west manifest file`_ in |NCS| and is automatically downloaded when running ``west update``.
 By default, it is downloaded to ``ncs/modules/lib/memfault-firmware-sdk/``.
 
-Complete the following steps to integrate Memfault into |NCS|:
+Integration steps
+*****************
 
-1. :ref:`Configure Memfault <ug_memfault_config>`
-#. :ref:`Track errors <ug_memfault_error>`
-#. :ref:`Collect metrices <ug_memfault_metrics>`
+To integrate Memfault into |NCS|, after completing the prerequisites, complete the following steps:
+
+1. Configuring Memfault
+#. Adding additional configuration files
 
 .. _ug_memfault_config:
+
+.. rst-class:: numbered-step
 
 Configuring Memfault
 ====================
@@ -79,7 +83,7 @@ The APIs in the Memfault SDK can then be linked into your application.
 You can get your project key after signing up with Memfault.
 
 .. note::
-   In the :ref:`memfault_sample` sample folder, the aforementioned Memfault configurations are already included.
+   In the |NCS| samples folders that use Memfault, the aforementioned Memfault configurations are already included.
    Make sure to add your project key in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
 
 You can also add the configurations using a Kconfig configuration fragment file.
@@ -89,8 +93,10 @@ See the following example on how to set an overlay configuration for Memfault in
 
    west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-memfault.conf
 
-Configuration files
--------------------
+.. rst-class:: numbered-step
+
+Adding additional configuration files
+=====================================
 
 Memfault SDK requires the three files in the include path during the build process.
 You can avoid adding these user configuration files by disabling the :kconfig:option:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option.
@@ -110,17 +116,18 @@ Add the following code in the :file:`CMakeLists.txt` file to have these configur
 
 See the `Memfault nRF Connect SDK integration guide`_ for more details.
 
-.. _ug_memfault_error:
+.. note::
+   In the |NCS| samples and applications that use Memfault, these configuration files are already added in the sample or application folders.
 
-Error Tracking
-==============
+Error tracking
+**************
 
 Memfault captures all faults that happen at any time.
 The crash data is sent to the Memfault cloud for further inspection and analysis.
 The faults are tracked using the following methods.
 
 Reboot reason tracking
-----------------------
+======================
 
 The device might reboot due to a crash, a brownout, or a firmware update.
 The reboot events for each device are captured and displayed in the Memfault UI along with the recorded reboot reason.
@@ -128,7 +135,7 @@ The reboot events for each device are captured and displayed in the Memfault UI 
 See `Memfault: Reboot tracking`_ for detailed documentation.
 
 Error tracking with trace events
---------------------------------
+================================
 
 You can use the trace event method if you want to track errors without capturing full coredump traces (that use less storage) and keep the device up and running.
 The following samples implement a user-defined trace reason for demonstration purposes.
@@ -136,13 +143,13 @@ The following samples implement a user-defined trace reason for demonstration pu
 * :ref:`memfault_sample`
 * :ref:`peripheral_mds`
 
-Read the **Error Tracking with trace events** section of these sample documents for more information.
+Read the **Error tracking with trace events** section of these sample documents for more information.
 
 See `Memfault: Error Tracking with Trace Events`_ for detailed documentation.
 Faults are captured and displayed on the **Issues** page of Memfault UI.
 
 RAM-backed stack dump collection (Coredumps)
---------------------------------------------
+============================================
 
 The coredumps can be triggered to track the fault.
 The **Coredumps** section of the following sample documents provides more information:
@@ -153,10 +160,8 @@ The **Coredumps** section of the following sample documents provides more inform
 See `Memfault: Coredumps`_ for detailed documentation.
 Faults are captured and displayed on the **Issues** page of the Memfault UI.
 
-.. _ug_memfault_metrics:
-
-Collecting Metrics
-==================
+Collecting metrics
+******************
 
 Memfault collects data from each device and visualizes it in a graph.
 The Memfault SDK integration layer in |NCS| adds the system property metrics.
@@ -169,7 +174,7 @@ See **Metrics** section of the following sample documents for more information:
 See `Memfault: Collecting Device Metrics`_ for detailed documentation.
 
 Configuration options
-=====================
+*********************
 
 There are different configuration options defined for the Memfault SDK in |NCS|.
 The configuration options are defined both in `Memfault-SDK`_ and in the integration layer, which integrates the SDK into |NCS|.
@@ -196,8 +201,7 @@ The following samples demonstrate the Memfault integration in |NCS|:
 
 * :ref:`peripheral_mds` - This sample has an implementation of the Memfault Diagnostic Service (MDS).
   It sends data to the Memfault cloud through a Bluetooth gateway.
-* :ref:`memfault_sample` - This sample connects to the LTE network and sends data using HTTPS.
-  It supports nRF9160-based build targets.
+* :ref:`memfault_sample` - This sample connects to an LTE network using an nRF91 Series DK or Thingy:91, or to Wi-Fi using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
 
 Library support
 ***************

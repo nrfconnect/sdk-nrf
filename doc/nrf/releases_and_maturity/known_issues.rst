@@ -229,7 +229,7 @@ The issues in this section are related to the :ref:`ug_bt_mesh` protocol.
 NCSDK-21625: Advertisements of Bluetooth mesh GATT services are not stopped by :c:func:`bt_mesh_suspend` and not resumed by :c:func:`bt_mesh_resume`
   Functions :c:func:`bt_mesh_suspend` and :c:func:`bt_mesh_resume` do not work together with functions :c:func:`bt_disable` and :c:func:`bt_enable`.
 
-**Workaround:** To disable node identity advertisement, use ``bt_mesh_subnet_node_id_set`` instead.
+  **Workaround:** To disable node identity advertisement, use ``bt_mesh_subnet_node_id_set`` instead.
 
 .. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
@@ -237,7 +237,7 @@ NCSDK-23087: Unsolicited Time Status messages rewrite periodic publishing TTL to
   The Time models specification mandates publishing unsolicited Time Status messages with TTL field value set to ``0``.
   The implementation rewrites the TTL field to ``0``, but does not write the initial value back, resulting in losing the initial value.
 
-**Workaround:** Configure the initial TTL value after an unsolicited Time Status message is sent.
+  **Workaround:** Configure the initial TTL value after an unsolicited Time Status message is sent.
 
 .. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
@@ -2522,7 +2522,7 @@ The issues in this section are related to :ref:`Bootloaders <app_bootloaders>`.
 
 .. rst-class:: v2-5-0
 
-NCSDK-24203: If fault injection hardening (FIH) is enabled, a bug is observed in the :func:`boot_image_check_hook` function
+NCSDK-24203: If fault injection hardening (FIH) is enabled, a bug is observed in the :c:func:`boot_image_check_hook` function
   Due to this, multicore applications cannot be booted for nRF5340 MCUboot builds with simultaneous multimage update enabled.
 
   **Affected platforms:** nRF5340, Thingy:53
