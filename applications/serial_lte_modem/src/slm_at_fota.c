@@ -495,6 +495,14 @@ void slm_finish_modem_full_fota(void)
 		handle_full_fota_activation_fail(err);
 	}
 
+	/* Reset dfu_target to a pristine state, otherwise it has been observed to
+	 * fail when attempting a second full MFW update without application reset.
+	 */
+	err = fota_download_util_image_reset(DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
+	if (err) {
+		LOG_ERR("fota_download_util_image_reset() failed: %d\n", err);
+	}
+
 	slm_fota_status = FOTA_STATUS_OK;
 	slm_fota_info = 0;
 	LOG_INF("Full modem firmware update complete.");
