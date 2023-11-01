@@ -56,7 +56,7 @@ This metric is defined in :file:`samples/debug/memfault/config/memfault_metrics_
 
 *  ``Switch1ToggleCount`` - The number of times **Switch 1** has been toggled on an nRF9160 DK.
 
-Error Tracking with trace events
+Error tracking with trace events
 ================================
 
 The sample implements a user-defined trace reason for demonstration purposes.
