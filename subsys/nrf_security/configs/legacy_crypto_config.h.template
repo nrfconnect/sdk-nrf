@@ -3091,7 +3091,7 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
  * If this option is unset, the library will fall back to a default value of
  * 32 keys.
  */
-//#define MBEDTLS_PSA_KEY_SLOT_COUNT 32
+#cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT              @MBEDTLS_PSA_KEY_SLOT_COUNT@
 
 /* SSL Cache options */
 //#define MBEDTLS_SSL_CACHE_DEFAULT_TIMEOUT       86400 /**< 1 day  */

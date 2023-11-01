@@ -193,6 +193,7 @@ kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_STORAGE_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_DRIVERS)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_CLIENT)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
+kconfig_check_and_set_base_int(MBEDTLS_PSA_KEY_SLOT_COUNT)
 
 # TF-M
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_SPM)

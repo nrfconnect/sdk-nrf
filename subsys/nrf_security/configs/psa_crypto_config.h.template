@@ -223,6 +223,7 @@
 #cmakedefine MBEDTLS_PSA_CRYPTO_DRIVERS                         @MBEDTLS_PSA_CRYPTO_DRIVERS@
 #cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
 #cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+#cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
 
 /* TF-M */
 #cmakedefine MBEDTLS_PSA_CRYPTO_SPM
