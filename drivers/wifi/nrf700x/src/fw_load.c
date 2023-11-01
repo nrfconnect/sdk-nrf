@@ -12,7 +12,6 @@
  * by disabling XIP and enabling it again after use. This means no LOG_* macros
  * (buffered) or buffered printk can be used in this file, else it will crash.
  */
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -21,6 +20,9 @@
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
 #include <zephyr/drivers/flash/nrf_qspi_nor.h>
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH */
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 #include <fmac_main.h>
 
@@ -84,7 +86,7 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 	status = nrf_wifi_fmac_fw_load(rpu_ctx, &fw_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		printf("%s: nrf_wifi_fmac_fw_load failed\n", __func__);
+		LOG_ERR("%s: nrf_wifi_fmac_fw_load failed", __func__);
 	}
 
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
