@@ -356,4 +356,12 @@ config TFM_NRF_PROVISIONING
 	  provisioning lifecycle state in order to boot. See provisioning
 	  guide for more details.
 
+config TFM_PSA_FRAMEWORK_HAS_MM_IOVEC
+	bool
+	prompt "TF-M MM-IOVEC"
+	depends on TFM_ISOLATION_LEVEL = 1
+	help
+	  Memory-mapped iovecs provide direct mapping of client input and output vectors into
+	  the Secure Partition.
+
 endif # BUILD_WITH_TFM

@@ -160,6 +160,13 @@ if (CONFIG_TFM_NRF_PROVISIONING)
     )
 endif()
 
+if (CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DPSA_FRAMEWORK_HAS_MM_IOVEC=ON
+    )
+endif()
+
 if (CONFIG_NFCT_PINS_AS_GPIOS)
   set_property(TARGET zephyr_property_target
   APPEND PROPERTY TFM_CMAKE_OPTIONS
