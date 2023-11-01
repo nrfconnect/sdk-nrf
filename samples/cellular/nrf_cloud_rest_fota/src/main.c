@@ -170,9 +170,8 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 		k_sem_give(&fota_download_sem);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
-		LOG_INF("FOTA download erase pending");
-		fota_status = NRF_CLOUD_FOTA_SUCCEEDED;
-		k_sem_give(&fota_download_sem);
+	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
+		LOG_INF("FOTA download erase ongoing");
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
 		LOG_DBG("FOTA download erase done");

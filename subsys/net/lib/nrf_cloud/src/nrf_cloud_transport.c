@@ -705,6 +705,10 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 		LOG_DBG("NRF_CLOUD_FOTA_EVT_ERASE_PENDING");
 		break;
 	}
+	case NRF_CLOUD_FOTA_EVT_ERASE_TIMEOUT: {
+		LOG_DBG("NRF_CLOUD_FOTA_EVT_ERASE_TIMEOUT");
+		break;
+	}
 	case NRF_CLOUD_FOTA_EVT_ERASE_DONE: {
 		LOG_DBG("NRF_CLOUD_FOTA_EVT_ERASE_DONE");
 		break;
