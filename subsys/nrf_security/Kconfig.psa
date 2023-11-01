@@ -74,6 +74,16 @@ config MBEDTLS_USE_PSA_CRYPTO
 	help
 	  Corresponds to MBEDTLS_USE_PSA_CRYPTO setting in mbed TLS config file.
 
+config MBEDTLS_PSA_KEY_SLOT_COUNT
+	int "Number of PSA key slots available"
+	default 32
+	range 1 64
+	help
+	  Describes the number of available PSA key slots. A key slot is used in PSA
+	  for each transparent key in use. So this number defines the sum of volatile and
+	  transparent keys that we can have open concurrently.
+	  The default value comes from MBedTLS.
+
 config PSA_ITS_ENCRYPTED
 	bool
 	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
