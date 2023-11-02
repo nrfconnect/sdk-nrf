@@ -33,14 +33,9 @@ LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
 #define AUTH_MVER "mver=%s"
 #define AUTH_CVER "cver=%s"
-#define AUTH_PATH "p/auth"
 #define AUTH_PATH_JWT "p/auth-jwt"
 
-#if defined(CONFIG_NRF_PROVISIONING_ATTESTTOKEN)
-#define AUTH_API_TEMPLATE (AUTH_PATH "?" AUTH_MVER "&" AUTH_CVER)
-#else
 #define AUTH_API_TEMPLATE (AUTH_PATH_JWT "?" AUTH_MVER "&" AUTH_CVER)
-#endif
 
 #define CMDS_PATH "p/cmd"
 #define CMDS_AFTER "after=%s"
@@ -325,13 +320,7 @@ static int max_token_len(void)
 {
 	int token_len = 0;
 
-#if defined(CONFIG_NRF_PROVISIONING_AT_ATTESTTOKEN_MAX_LEN)
-	token_len = MAX(token_len, CONFIG_NRF_PROVISIONING_AT_ATTESTTOKEN_MAX_LEN);
-#endif
-
-#if defined(CONFIG_MODEM_JWT_MAX_LEN)
 	token_len = MAX(token_len, CONFIG_MODEM_JWT_MAX_LEN);
-#endif
 
 	return token_len;
 }
@@ -357,26 +346,11 @@ static int generate_auth_token(char **auth_token)
 	memset(*auth_token, 0x0, tok_len);
 	tok_ptr = *auth_token;
 
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_ATTESTTOKEN)) {
-		ret = nrf_provisioning_at_attest_token_get(tok_ptr, tok_len);
+	ret = nrf_provisioning_jwt_generate(0, tok_ptr, tok_len + 1);
 
-		if (ret != 0) {
-			LOG_ERR("Failed to generate attestation token, error: %d", ret);
-			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_JWT)) {
-				goto a_alt_tok;
-			}
-			goto fail;
-		}
-	}
-
-a_alt_tok:
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_JWT)) {
-		ret = nrf_provisioning_jwt_generate(0, tok_ptr, tok_len + 1);
-
-		if (ret < 0) {
-			LOG_ERR("Failed to generate JWT, error: %d", ret);
-			goto fail;
-		}
+	if (ret < 0) {
+		LOG_ERR("Failed to generate JWT, error: %d", ret);
+		goto fail;
 	}
 
 	return 0;

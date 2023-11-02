@@ -12,8 +12,9 @@ project(nrf_provisioning_unittest)
 set(app_sources)
 
 set(options
-  -DCONFIG_NRF_PROVISIONING_STATIC_AUTH_TOKEN=""
   -DCONFIG_NRF_MODEM_LIB_MEM_DIAG=y
+  -DCONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S=300
+  -DCONFIG_MODEM_JWT_MAX_LEN=850
 )
 
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h)
@@ -26,20 +27,15 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nr
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(include/nrf_modem_at.h)
 
-if(CONFIG_NRF_PROVISIONING_JWT)
+if(CONFIG_SETTINGS_CUSTOM)
   test_runner_generate(src/http_jwt.c)
   list(APPEND app_sources src/http_jwt.c)
-  list (APPEND options
-    -DCONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S=300
-    -DCONFIG_MODEM_JWT_MAX_LEN=850
-  )
   cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_jwt.h)
 
 elseif(CONFIG_NRF_PROVISIONING_COAP)
   test_runner_generate(src/coap.c)
   list(APPEND app_sources src/coap.c)
   list (APPEND options
-    -DCONFIG_NRF_PROVISIONING_AT_ATTESTTOKEN_MAX_LEN=256
     -DCONFIG_COAP_CLIENT_MESSAGE_HEADER_SIZE=48
     -DCONFIG_COAP_CLIENT_MESSAGE_SIZE=512
     -DCONFIG_COAP_CLIENT_STACK_SIZE=1024
@@ -48,14 +44,13 @@ elseif(CONFIG_NRF_PROVISIONING_COAP)
     -DCONFIG_COAP_CLIENT_MAX_REQUESTS=2
   )
   cmock_handle(include/coap_client.h)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
 
-elseif(CONFIG_NRF_PROVISIONING_ATTESTTOKEN)
+elseif(CONFIG_NRF_PROVISIONING_HTTP)
   test_runner_generate(src/main.c)
   list(APPEND app_sources src/main.c)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
 
-  list (APPEND options
-    -DCONFIG_NRF_PROVISIONING_AT_ATTESTTOKEN_MAX_LEN=256
-  )
 endif()
 
 target_sources(app PRIVATE ${app_sources})

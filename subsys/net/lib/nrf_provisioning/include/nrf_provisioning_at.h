@@ -20,17 +20,6 @@ enum nrf_provisioning_at_cmee_state {
 };
 
 /**
- * @brief Retrieves an attestation token.
- *
- *
- * @param buff Buffer to store the token
- * @param size Size of the buffer
- *
- * @returns Zero on success, negative error code on failure.
- */
-int nrf_provisioning_at_attest_token_get(void *const buff, size_t size);
-
-/**
  * @brief Retrieves network time.
  *
  * @param buff Buffer to receive the time into.
