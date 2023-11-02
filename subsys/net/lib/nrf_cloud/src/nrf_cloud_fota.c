@@ -64,8 +64,6 @@ static int publish(const struct mqtt_publish_param *const pub);
 static int save_validate_status(const char *const job_id,
 			   const enum nrf_cloud_fota_type job_type,
 			   const enum nrf_cloud_fota_validate_status status);
-static int fota_settings_set(const char *key, size_t len_rd,
-			     settings_read_cb read_cb, void *cb_arg);
 static int report_validated_job_status(void);
 static void reset_topics(void);
 
@@ -100,73 +98,6 @@ static bool initialized;
 static bool fota_dl_initialized;
 /** Flag to indicate that a pending FOTA job was validated and a reboot is required */
 static bool reboot_on_init;
-
-SETTINGS_STATIC_HANDLER_DEFINE(fota, NRF_CLOUD_SETTINGS_FULL_FOTA, NULL,
-			       fota_settings_set, NULL, NULL);
-
-static int fota_settings_set(const char *key, size_t len_rd,
-			     settings_read_cb read_cb, void *cb_arg)
-{
-	if (!key) {
-		LOG_DBG("Key is NULL");
-		return -EINVAL;
-	}
-
-	LOG_DBG("Settings key: %s, size: %d", key, len_rd);
-
-	if (strncmp(key, NRF_CLOUD_SETTINGS_FOTA_JOB, strlen(NRF_CLOUD_SETTINGS_FOTA_JOB)) != 0) {
-		return -ENOMSG;
-	}
-
-	if (len_rd > sizeof(saved_job)) {
-		LOG_INF("FOTA settings size larger than expected");
-		len_rd = sizeof(saved_job);
-	}
-
-	ssize_t sz = read_cb(cb_arg, (void *)&saved_job, len_rd);
-
-	if (sz == 0) {
-		LOG_DBG("FOTA settings key-value pair has been deleted");
-		return -EIDRM;
-	} else if (sz < 0) {
-		LOG_ERR("FOTA settings read error: %d", sz);
-		return -EIO;
-	}
-
-	if (sz == sizeof(saved_job)) {
-		LOG_INF("Saved job: %s, type: %d, validate: %d, bl: 0x%X",
-			saved_job.id, saved_job.type,
-			saved_job.validate, saved_job.bl_flags);
-	} else {
-		LOG_INF("FOTA settings size smaller than expected, likely outdated");
-	}
-
-	return 0;
-}
-
-static int load_fota_settings(void)
-{
-	static bool settings_loaded = false;
-	int ret = 0;
-
-	if (!settings_loaded) {
-		ret = settings_subsys_init();
-
-		if (ret) {
-			LOG_ERR("Settings init failed: %d", ret);
-			return ret;
-		}
-
-		ret = settings_load_subtree(settings_handler_fota.name);
-		if (ret) {
-			LOG_ERR("Cannot load settings: %d", ret);
-		} else {
-			settings_loaded = true;
-		}
-	}
-
-	return ret;
-}
 
 static void send_fota_done_event_if_done(void)
 {
@@ -213,7 +144,7 @@ int nrf_cloud_fota_pending_job_type_get(enum nrf_cloud_fota_type * const pending
 		return -EINVAL;
 	}
 
-	int err = load_fota_settings();
+	int err = nrf_cloud_fota_settings_load(&saved_job);
 
 	*pending_fota_type = (err ? NRF_CLOUD_FOTA_TYPE__INVALID : saved_job.type);
 
@@ -227,7 +158,7 @@ int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_ty
 	if (fota_type_out) {
 		err = nrf_cloud_fota_pending_job_type_get(fota_type_out);
 	} else {
-		err = load_fota_settings();
+		err = nrf_cloud_fota_settings_load(&saved_job);
 	}
 
 	if (err) {
@@ -265,6 +196,11 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 
 	if (initialized) {
 		return 0;
+	}
+
+	ret = nrf_cloud_fota_settings_load(&saved_job);
+	if (ret != 0) {
+		return ret;
 	}
 
 	/* Ensure the codec is initialized */
@@ -639,8 +575,7 @@ static int save_validate_status(const char *const job_id,
 		}
 	}
 
-	ret = settings_save_one(NRF_CLOUD_SETTINGS_FULL_FOTA_JOB, &saved_job,
-				sizeof(saved_job));
+	ret = nrf_cloud_fota_settings_save(&saved_job);
 	if (ret) {
 		LOG_ERR("settings_save_one failed: %d", ret);
 	}
@@ -1014,7 +949,8 @@ static int send_job_update(struct nrf_cloud_fota_job *const job)
 	ret = publish_and_free_obj(&update_obj, &topic_updt, &param);
 	if (ret == 0 && is_job_status_terminal(job->status)) {
 		/* If job was updated to terminal status, save job ID */
-		strncpy(last_job, job->info.id, sizeof(last_job));
+		strncpy(last_job, job->info.id, sizeof(last_job) - 1);
+		last_job[sizeof(last_job) - 1] = '\0';
 	}
 
 	return ret;

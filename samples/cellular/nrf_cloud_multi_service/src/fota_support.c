@@ -17,8 +17,6 @@ LOG_MODULE_REGISTER(fota_support, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 /* Called from nRF Cloud event handler in connection.c */
 void fota_reboot(const unsigned int delay_s, const bool error)
 {
-	LOG_INF("Rebooting in %us%s", delay_s, error ? " due to error" : "...");
-
 #if defined(CONFIG_LTE_LINK_CONTROL)
 	if (error) {
 		(void)lte_lc_power_off();

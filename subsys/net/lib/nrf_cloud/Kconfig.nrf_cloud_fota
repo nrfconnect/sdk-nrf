@@ -39,36 +39,54 @@ config NRF_CLOUD_FOTA_BLE_DEVICES
 	bool "Enable API for FOTA of BLE devices"
 	depends on BT
 
-choice
-	prompt "Log level for nRF Cloud FOTA"
-	depends on LOG
-	default NRF_CLOUD_FOTA_LOG_LEVEL_INF
-
-config NRF_CLOUD_FOTA_LOG_LEVEL_DBG
-	bool "Debug"
-
-config NRF_CLOUD_FOTA_LOG_LEVEL_INF
-	bool "Info"
-
-config NRF_CLOUD_FOTA_LOG_LEVEL_WRN
-	bool "Warning"
-
-config NRF_CLOUD_FOTA_LOG_LEVEL_ERR
-	bool "Error"
-
-config NRF_CLOUD_FOTA_LOG_LEVEL_NONE
-	bool "None"
-endchoice
-
-config NRF_CLOUD_FOTA_LOG_LEVEL
-	int
-	default 0 if NRF_CLOUD_FOTA_LOG_LEVEL_NONE
-	default 1 if NRF_CLOUD_FOTA_LOG_LEVEL_ERR
-	default 2 if NRF_CLOUD_FOTA_LOG_LEVEL_WRN
-	default 3 if NRF_CLOUD_FOTA_LOG_LEVEL_INF
-	default 4 if NRF_CLOUD_FOTA_LOG_LEVEL_DBG
+module = NRF_CLOUD_FOTA
+module-str = nRF Cloud FOTA
+source "subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_CLOUD_FOTA
+
+config FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	bool "Use the same settings area as the nRF Cloud FOTA library"
+	default y
+	help
+	  Using the same settings area as the nRF Cloud FOTA library will
+	  allow this sample to perform application-FOTA updates to applications
+	  built with CONFIG_NRF_CLOUD_FOTA enabled.
+
+config FOTA_SETTINGS_NAME
+	depends on !FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	string "Settings identifier for the FOTA support library"
+	default "nrf_cloud_fota_poll"
+	help
+	  The root settings identifier for this application.
+	  For application-FOTA, this value should also be found in your target application
+	  so that the FOTA status can be properly reported to nRF Cloud.
+
+config FOTA_SETTINGS_KEY_PENDING_JOB
+	depends on !FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	string "Settings item key for pending FOTA job info"
+	default "pending_job"
+	help
+	  The settings item key where pending FOTA job info will be stored.
+	  For application-FOTA, this value should also be found in your target application
+	  so that the FOTA status can be properly reported to nRF Cloud.
+
+config FOTA_DL_TIMEOUT_MIN
+	int "The time (minutes) allotted for a FOTA download to complete"
+	default REST_FOTA_DL_TIMEOUT_MIN if NRF_CLOUD_REST
+	default 15
+	help
+	  If the FOTA download does not complete in the allotted time,
+	  the download will be cancelled and the job status will be
+	  set as failed.
+
+if NRF_CLOUD_REST
+
+config REST_FOTA_DL_TIMEOUT_MIN
+	int "The time (minutes) allotted for a FOTA download to complete"
+	default 30
+
+endif # NRF_CLOUD_REST
 
 menuconfig NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
 	bool "Enable full modem FOTA updates"
@@ -94,3 +112,19 @@ config NRF_CLOUD_FOTA_FULL_MODEM_UPDATE_BUF_SIZE
 	range 512 4096
 	default 4096
 endif # NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
+
+config NRF_CLOUD_FOTA_POLL
+	bool "Enable FOTA job polling helpers"
+	help
+	  When enabled, nRF Cloud FOTA job polling helpers will be built.  These
+	  functions make it easy to request, download, and handle modem, boot,
+	  and application FOTA updates when using the REST or CoAP interfaces
+	  to nRF Cloud.
+
+if NRF_CLOUD_FOTA_POLL
+
+module = NRF_CLOUD_FOTA_POLL
+module-str = nRF Cloud FOTA Poll
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_CLOUD_FOTA_POLL
