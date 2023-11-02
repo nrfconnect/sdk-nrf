@@ -123,7 +123,7 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 
   For more details about the scripts, refer to the `nRF Cloud Utilities documentation`_.
 
-  See `Securely generating credentials on the nRF9160`_  and `nRF Cloud Provisioning`_ for more details.
+  See `Securely generating credentials`_  and `nRF Cloud Provisioning`_ for more details.
 
 
 |NCS| library support
