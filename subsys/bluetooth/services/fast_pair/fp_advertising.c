@@ -6,7 +6,7 @@
 
 #include <errno.h>
 #include <zephyr/net/buf.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <zephyr/bluetooth/bluetooth.h>
 
 #include <zephyr/logging/log.h>

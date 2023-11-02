@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/sys/__assert.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <zboss_api.h>
 #if CONFIG_CRYPTO_NRF_ECB
 #include <zephyr/crypto/crypto.h>

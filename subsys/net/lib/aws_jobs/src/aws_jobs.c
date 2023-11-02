@@ -4,7 +4,7 @@
  *SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr/kernel.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <stdio.h>
 #include <zephyr/net/mqtt.h>
 #include <zephyr/logging/log.h>

@@ -19,7 +19,7 @@
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <zephyr/toolchain.h>
 #include <zephyr/fs/nvs.h>
 #include <zephyr/logging/log.h>

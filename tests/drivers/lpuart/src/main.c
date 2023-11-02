@@ -8,7 +8,7 @@
 #include <zephyr/busy_sim.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/drivers/counter.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_uarte.h>
 #include <nrfx_gpiote.h>
