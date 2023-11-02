@@ -471,3 +471,7 @@
   - "subsys/fw_info/*"
   - "subsys/pcd/**/*"
   - "subsys/bluetooth/controller/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
