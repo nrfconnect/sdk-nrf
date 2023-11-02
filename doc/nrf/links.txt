@@ -1026,7 +1026,7 @@
 .. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html
 .. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html#mqtt-job-execution-notifications
 .. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTATutorial.html
-.. _`Securely generating credentials on the nRF9160`: https://docs.nrfcloud.com/Devices/Security/Credentials.html
+.. _`Securely generating credentials`: https://docs.nrfcloud.com/Devices/Security/Credentials.html
 .. _`nRF Cloud provisioning configuration`: https://docs.nrfcloud.com/SecurityServices/ProvisioningService/ProvisioningConfiguration/ProvisioningConfigurationPortal.html
 .. _`nRF Cloud Provisioning Service`: https://docs.nrfcloud.com/SecurityServices/ProvisioningService/ProvisioningOverview.html
 .. _`nRF Cloud REST API`:
