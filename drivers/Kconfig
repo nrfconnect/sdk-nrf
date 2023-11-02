@@ -8,7 +8,7 @@ menu "Device Drivers"
 
 rsource "bluetooth/Kconfig"
 rsource "entropy/Kconfig"
-rsource "hw_cc310/Kconfig"
+rsource "hw_cc3xx/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"

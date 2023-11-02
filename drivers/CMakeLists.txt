@@ -11,7 +11,7 @@ if (CONFIG_MPSL AND NOT CONFIG_MPSL_FEM_ONLY)
   add_subdirectory(mpsl)
 endif()
 
-add_subdirectory(hw_cc310)
+add_subdirectory(hw_cc3xx)
 add_subdirectory(entropy)
 add_subdirectory(serial)
 add_subdirectory_ifdef(CONFIG_WIFI wifi)

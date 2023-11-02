@@ -247,7 +247,7 @@
 "CI-crypto-test":
   - "cmake/*"
   - "drivers/entropy/*"
-  - "drivers/hw_cc310/*"
+  - "drivers/hw_cc3xx/*"
   - "drivers/net/*"
   - "samples/crypto/**/*"
   - "subsys/partition_manager/**/*"
@@ -293,7 +293,7 @@
   - "subsys/net/lib/coap_utils/**/*"
   - "subsys/net/openthread/**/*"
   - "drivers/mpsl/**/*"
-  - "drivers/hw_cc310/*"
+  - "drivers/hw_cc3xx/*"
   - "drivers/entropy/*"
   - "modules/nrfxlib/nrf_802154/**/*"
 
@@ -308,7 +308,7 @@
 
 "CI-matter-test":
   - "drivers/mpsl/**/*"
-  - "drivers/hw_cc310/*"
+  - "drivers/hw_cc3xx/*"
   - "drivers/wifi/**/*"
   - "modules/hostap/**/*"
   - "modules/lib/hostap/**/*"
@@ -337,7 +337,7 @@
   - "Kconfig.nrf"
   - "cmake/**/*"
   - "drivers/entropy/**/*"
-  - "drivers/hw_cc310/**/*"
+  - "drivers/hw_cc3xx/**/*"
   - "drivers/mpsl/**/*"
   - "include/dfu/**/*"
   - "include/nfc/**/*"
