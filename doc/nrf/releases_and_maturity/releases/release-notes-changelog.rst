@@ -122,6 +122,11 @@ Wi-Fi
 
 |no_changes_yet_note|
 
+HomeKit
+-------
+
+HomeKit is now removed, as announced in the :ref:`ncs_release_notes_250`.
+
 Applications
 ============
 
