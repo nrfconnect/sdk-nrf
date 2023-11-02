@@ -48,7 +48,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* Number of audio blocks given a duration */
 #define NUM_BLKS(d)	    ((d) / BLK_PERIOD_US)
 /* Single audio block size in number of samples (stereo) */
-#define BLK_SIZE_SAMPLES(r) (((r)*BLK_PERIOD_US) / 1000000)
+#define BLK_SIZE_SAMPLES(r) (((r) * BLK_PERIOD_US) / 1000000)
 /* Increment sample FIFO index by one block */
 #define NEXT_IDX(i)	    (((i) < (FIFO_NUM_BLKS - 1)) ? ((i) + 1) : 0)
 /* Decrement sample FIFO index by one block */
@@ -70,7 +70,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define APLL_FREQ_MIN	 36834
 #define APLL_FREQ_MAX	 42874
 /* Use nanoseconds to reduce rounding errors */
-#define APLL_FREQ_ADJ(t) (-((t)*1000) / 331)
+#define APLL_FREQ_ADJ(t) (-((t) * 1000) / 331)
 
 #define DRIFT_MEAS_PERIOD_US	100000
 #define DRIFT_ERR_THRESH_LOCK	16
@@ -134,7 +134,6 @@ static struct {
 	} out;
 
 	uint32_t previous_sdu_ref_us;
-	uint32_t current_pres_dly_us;
 
 	struct {
 		enum drift_comp_state state: 8;
@@ -147,7 +146,8 @@ static struct {
 	struct {
 		enum pres_comp_state state: 8;
 		uint16_t ctr; /* Count func calls. Used for collecting data points and waiting */
-		int32_t sum_err_dly_us;
+		int32_t curr_dly_err_us;
+		int32_t sum_dly_err_us;
 		uint32_t pres_delay_us;
 		bool enabled;
 	} pres_comp;
@@ -175,8 +175,6 @@ static void drift_comp_state_set(enum drift_comp_state new_state)
 		return;
 	}
 
-	ctrl_blk.drift_comp.ctr = 0;
-
 	ctrl_blk.drift_comp.state = new_state;
 	LOG_INF("Drft comp state: %s", drift_comp_state_names[new_state]);
 }
@@ -194,10 +192,12 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 	case DRIFT_STATE_INIT: {
 		/* Check if audio data has been received */
 		if (ctrl_blk.previous_sdu_ref_us) {
+			ctrl_blk.drift_comp.ctr = 0;
 			ctrl_blk.drift_comp.meas_start_time_us = ctrl_blk.previous_sdu_ref_us;
 
 			drift_comp_state_set(DRIFT_STATE_CALIB);
 		}
+
 		break;
 	}
 	case DRIFT_STATE_CALIB: {
@@ -222,7 +222,10 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 
 		hfclkaudio_set(ctrl_blk.drift_comp.center_freq);
 
+		ctrl_blk.drift_comp.ctr = 0;
+
 		drift_comp_state_set(DRIFT_STATE_OFFSET);
+
 		break;
 	}
 	case DRIFT_STATE_OFFSET: {
@@ -230,6 +233,8 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 			/* Waiting */
 			return;
 		}
+
+		ctrl_blk.drift_comp.ctr = 0;
 
 		int32_t err_us = (ctrl_blk.previous_sdu_ref_us - frame_start_ts) % BLK_PERIOD_US;
 
@@ -267,9 +272,9 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 
 		if ((err_us > DRIFT_ERR_THRESH_UNLOCK) || (err_us < -DRIFT_ERR_THRESH_UNLOCK)) {
 			drift_comp_state_set(DRIFT_STATE_INIT);
-		} else {
-			ctrl_blk.drift_comp.ctr = 0;
 		}
+
+		ctrl_blk.drift_comp.ctr = 0;
 
 		break;
 	}
@@ -287,8 +292,6 @@ static void pres_comp_state_set(enum pres_comp_state new_state)
 		return;
 	}
 
-	ctrl_blk.pres_comp.ctr = 0;
-
 	ctrl_blk.pres_comp.state = new_state;
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Pres comp state: %s", pres_comp_state_names[new_state]);
@@ -305,12 +308,11 @@ static void pres_comp_state_set(enum pres_comp_state new_state)
  *
  * @note The audio sync is based on sdu_ref_us.
  *
- * @param recv_frame_ts_us Timestamp of when frame was received.
  * @param sdu_ref_us ISO timestamp reference from Bluetooth LE controller.
  * @param sdu_ref_not_consecutive True if sdu_ref_us and the previous sdu_ref_us
  *				  originate from non-consecutive frames.
  */
-static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, uint32_t sdu_ref_us,
+static void audio_datapath_presentation_compensation(uint32_t sdu_ref_us,
 						     bool sdu_ref_not_consecutive)
 {
 	if (ctrl_blk.drift_comp.state != DRIFT_STATE_LOCKED) {
@@ -326,26 +328,27 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 		pres_comp_state_set(PRES_STATE_WAIT);
 	}
 
-	int32_t wanted_pres_dly_us =
-		ctrl_blk.pres_comp.pres_delay_us - (recv_frame_ts_us - sdu_ref_us);
 	int32_t pres_adj_us = 0;
 
 	switch (ctrl_blk.pres_comp.state) {
 	case PRES_STATE_INIT: {
-		ctrl_blk.pres_comp.sum_err_dly_us = 0;
+		ctrl_blk.pres_comp.ctr = 0;
+		ctrl_blk.pres_comp.sum_dly_err_us = 0;
 		pres_comp_state_set(PRES_STATE_MEAS);
+
 		break;
 	}
 	case PRES_STATE_MEAS: {
 		if (ctrl_blk.pres_comp.ctr++ < PRES_COMP_NUM_DATA_PTS) {
-			ctrl_blk.pres_comp.sum_err_dly_us +=
-				wanted_pres_dly_us - ctrl_blk.current_pres_dly_us;
+			ctrl_blk.pres_comp.sum_dly_err_us += ctrl_blk.pres_comp.curr_dly_err_us;
 
 			/* Same state - Collect more data */
 			break;
 		}
 
-		pres_adj_us = ctrl_blk.pres_comp.sum_err_dly_us / PRES_COMP_NUM_DATA_PTS;
+		ctrl_blk.pres_comp.ctr = 0;
+
+		pres_adj_us = ctrl_blk.pres_comp.sum_dly_err_us / PRES_COMP_NUM_DATA_PTS;
 		if ((pres_adj_us >= (BLK_PERIOD_US / 2)) || (pres_adj_us <= -(BLK_PERIOD_US / 2))) {
 			pres_comp_state_set(PRES_STATE_WAIT);
 		} else {
@@ -390,6 +393,11 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 	/* Number of adjustment blocks is 0 as long as |pres_adj_us| < BLK_PERIOD_US */
 	int32_t pres_adj_blks = pres_adj_us / BLK_PERIOD_US;
 
+	if (pres_adj_blks == 0) {
+		LOG_DBG("pres_adj_blks is 0, pres_adj_us: %d", pres_adj_us);
+		return;
+	}
+
 	if (pres_adj_blks > (FIFO_NUM_BLKS / 2)) {
 		/* Limit adjustment */
 		pres_adj_blks = FIFO_NUM_BLKS / 2;
@@ -413,7 +421,7 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 
 			/* Record producer block start reference */
 			ctrl_blk.out.prod_blk_ts[ctrl_blk.out.prod_blk_idx] =
-				recv_frame_ts_us - ((pres_adj_blks - i) * BLK_PERIOD_US);
+				sdu_ref_us - ((pres_adj_blks - i) * BLK_PERIOD_US);
 
 			ctrl_blk.out.prod_blk_idx = NEXT_IDX(ctrl_blk.out.prod_blk_idx);
 		}
@@ -564,8 +572,9 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 	alt_buffer_free(tx_buf_released);
 
 	/*** Presentation delay measurement ***/
-	ctrl_blk.current_pres_dly_us =
-		frame_start_ts - ctrl_blk.out.prod_blk_ts[ctrl_blk.out.cons_blk_idx];
+	ctrl_blk.pres_comp.curr_dly_err_us =
+		ctrl_blk.pres_comp.pres_delay_us -
+		(frame_start_ts - ctrl_blk.out.prod_blk_ts[ctrl_blk.out.cons_blk_idx]);
 
 	/********** I2S TX **********/
 	static uint8_t *tx_buf;
@@ -806,8 +815,7 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 	*delay_us = ctrl_blk.pres_comp.pres_delay_us;
 }
 
-void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame,
-			       uint32_t recv_frame_ts_us)
+void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame)
 {
 	if (!ctrl_blk.stream_started) {
 		LOG_WRN("Stream not started");
@@ -861,8 +869,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 
 	/*** Presentation compensation ***/
 	if (ctrl_blk.pres_comp.enabled) {
-		audio_datapath_presentation_compensation(recv_frame_ts_us, sdu_ref_us,
-							 sdu_ref_not_consecutive);
+		audio_datapath_presentation_compensation(sdu_ref_us, sdu_ref_not_consecutive);
 	}
 
 	/*** Decode ***/
@@ -907,7 +914,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		}
 
 		/* Record producer block start reference */
-		ctrl_blk.out.prod_blk_ts[out_blk_idx] = recv_frame_ts_us + (i * BLK_PERIOD_US);
+		ctrl_blk.out.prod_blk_ts[out_blk_idx] = sdu_ref_us + (i * BLK_PERIOD_US);
 
 		out_blk_idx = NEXT_IDX(out_blk_idx);
 	}

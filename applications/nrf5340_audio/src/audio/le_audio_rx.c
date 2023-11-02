@@ -21,7 +21,6 @@ struct ble_iso_data {
 	size_t data_size;
 	bool bad_frame;
 	uint32_t sdu_ref;
-	uint32_t recv_frame_ts;
 } __packed;
 
 struct rx_stats {
@@ -51,10 +50,6 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 	if (!initialized) {
 		ERR_CHK_MSG(-EPERM, "Data received but le_audio_rx is not initialized");
 	}
-
-	/* Capture timestamp of when audio frame is received */
-	uint32_t recv_frame_ts = nrfx_timer_capture(&audio_sync_timer_instance,
-						    AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
 
 	rx_stats[channel_index].recv_cnt++;
 	if (data_size != desired_data_size && !bad_frame) {
@@ -121,7 +116,6 @@ void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, boo
 	iso_received->bad_frame = bad_frame;
 	iso_received->data_size = data_size;
 	iso_received->sdu_ref = sdu_ref;
-	iso_received->recv_frame_ts = recv_frame_ts;
 
 	ret = data_fifo_block_lock(&ble_fifo_rx, (void *)&iso_received,
 				   sizeof(struct ble_iso_data));
@@ -148,8 +142,7 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 			ERR_CHK(ret);
 		} else {
 			audio_datapath_stream_out(iso_received->data, iso_received->data_size,
-						  iso_received->sdu_ref, iso_received->bad_frame,
-						  iso_received->recv_frame_ts);
+						  iso_received->sdu_ref, iso_received->bad_frame);
 		}
 		data_fifo_block_free(&ble_fifo_rx, (void *)iso_received);
 

@@ -23,14 +23,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(streamctrl_broadcast_sink, CONFIG_STREAMCTRL_LOG_LEVEL);
 
-struct ble_iso_data {
-	uint8_t data[CONFIG_BT_ISO_RX_MTU];
-	size_t data_size;
-	bool bad_frame;
-	uint32_t sdu_ref;
-	uint32_t recv_frame_ts;
-} __packed;
-
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 ZBUS_SUBSCRIBER_DEFINE(le_audio_evt_sub, CONFIG_LE_AUDIO_MSG_SUB_QUEUE_SIZE);
 
