@@ -15,7 +15,7 @@
 #include <net/nrf_cloud_alert.h>
 #include <zephyr/logging/log.h>
 #include <date_time.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 
 #include <app_event_manager.h>
 #include <caf/events/button_event.h>

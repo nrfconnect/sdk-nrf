@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <bluetooth/services/ddfs.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <dm.h>
 
 #include "service.h"

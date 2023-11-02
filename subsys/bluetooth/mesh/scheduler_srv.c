@@ -9,7 +9,7 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/math_extras.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include "model_utils.h"
 #include "time_util.h"
 #include "scheduler_internal.h"

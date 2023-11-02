@@ -6,7 +6,7 @@
 
 #include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <bluetooth/mesh/time_srv.h>
 #include <bluetooth/mesh/models.h>
 #include "time_internal.h"

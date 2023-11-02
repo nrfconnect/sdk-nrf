@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <zephyr/net/mqtt.h>
 #include <zephyr/net/socket.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_native_tls.h"
