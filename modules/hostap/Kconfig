@@ -109,7 +109,7 @@ config WPA_SUPP_CRYPTO_PSA
 	select MBEDTLS_KEY_EXCHANGE_ALL_ENABLED
 
 config WPA_SUPP_CRYPTO_LEGACY
-	bool "Legacy Crypto support for WiFi"
+	bool "Legacy Crypto support for WiFi using nRF security"
 	select MBEDTLS
 	select NRF_SECURITY
 	select MBEDTLS_CIPHER_MODE_CBC
@@ -119,6 +119,18 @@ config WPA_SUPP_CRYPTO_LEGACY
 	select MBEDTLS_CTR_DRBG_C
 	select MBEDTLS_PK_WRITE_C
 	select MBEDTLS_KEY_EXCHANGE_ALL_ENABLED
+
+config WPA_SUPP_CRYPTO_LEGACY_BUILTIN
+	bool "Legacy Crypto support for WiFi using builtin MbedTLS"
+	select MBEDTLS
+	select MBEDTLS_CIPHER_MODE_CTR_ENABLED
+	select MBEDTLS_CIPHER_MODE_CBC_ENABLED
+	select MBEDTLS_PK_WRITE_C
+	select MBEDTLS_ECP_C
+	select MBEDTLS_ECP_ALL_ENABLED
+	select MBEDTLS_PKCS5_C
+	select MBEDTLS_MAC_CMAC_ENABLED
+
 
 config WPA_SUPP_CRYPTO_NONE
 	bool "No Crypto support for WiFi"
