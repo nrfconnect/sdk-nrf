@@ -17,7 +17,7 @@
 
 #include <nrfx_timer.h>
 #include <zephyr/kernel.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 
 #include <hal/nrf_egu.h>
 #include <helpers/nrfx_gppi.h>

@@ -48,7 +48,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/ethernet.h>
 #include <zephyr/sys/crc.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <SEGGER_RTT.h>
 
 /** RTT channel name used to identify Ethernet transfer channel. */

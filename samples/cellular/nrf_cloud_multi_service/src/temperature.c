@@ -13,7 +13,7 @@
 
 #else /* CONFIG_TEMP_DATA_USE_SENSOR */
 
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 
 #endif /* CONFIG_TEMP_DATA_USE_SENSOR */
 

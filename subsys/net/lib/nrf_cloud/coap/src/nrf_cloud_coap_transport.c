@@ -20,7 +20,7 @@
 #include <zephyr/net/socket.h>
 #endif
 #include <modem/lte_lc.h>
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 #include <nrf_socket.h>
 #include <nrf_modem_at.h>
 #include <date_time.h>
