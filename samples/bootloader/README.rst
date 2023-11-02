@@ -133,6 +133,11 @@ When using the ``nrf52840dk_nrf52840`` board, this would produce a flash memory 
 
    B0 flash memory layout with MCUboot
 
+Configuration
+*************
+
+|config|
+
 .. _bootloader_signature_keys:
 
 Signature keys
@@ -146,34 +151,18 @@ See :ref:`ug_fw_update_development_keys` for more details.
 
 For details on creating and using custom signature keys, refer to the :ref:`ug_bootloader_adding_immutable_keys` documentation.
 
-.. _bootloader_monotonic_counter:
-
 Monotonic counter
 =================
 
-.. bootloader_monotonic_counter_start
+.. include:: ../../doc/nrf/config_and_build/bootloaders_and_dfu/fw_update.rst
+   :start-after: bootloader_monotonic_counter_start
+   :end-before: bootloader_monotonic_counter_end
 
-A non-volatile *monotonic counter* can be stored in the *Provision* area and is used to implement anti-rollback protection.
-
-Counter updates are written to slots in the *Provision* area, with each new counter update occupying a new slot.
-For this reason, the number of counter updates, and therefore firmware version updates, is limited.
-
-Using a counter is optional and can be configured for the application using configuration options.
-You can also configure the supported number of updates, but the number is limited by the size of the *Provision* area and how much of that area is taken up by other features, like public key hashes.
-In addition, you can configure what firmware version of the image you want to boot.
-
-For NSIB, the configuration options are :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER`, :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`, and :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION`.
-
-For MCUboot, the configuration options are :kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`, :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS`, and :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`.
+.. include:: ../../doc/nrf/config_and_build/bootloaders_and_dfu/fw_update.rst
+   :start-after: bootloader_monotonic_counter_nsib_start
+   :end-before: bootloader_monotonic_counter_nsib_end
 
 To set options for child images, such as NSIB and MCUboot, see the :ref:`ug_multi_image_variables` section.
-
-.. bootloader_monotonic_counter_end
-
-Configuration
-*************
-
-|config|
 
 .. _bootloader_build_and_run:
 
@@ -185,9 +174,11 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 .. caution::
-   The NSIB should be included as a child image in a multi-image build, rather than being built stand-alone.
+   |NSIB| should be included as a child image in a multi-image build, rather than being built stand-alone.
    While it is technically possible to build the NSIB by itself and merge it into other application images, this process is not supported.
    To reduce the development time and potential issues with this route, let the existing |NCS| infrastructure for multi-image builds handle the integration.
+
+   The NSIB is automatically added as a child image when the :kconfig:option:`CONFIG_SECURE_BOOT` Kconfig option is set in the application.
 
 For building and running the NSIB with an application, see :ref:`ug_bootloader_adding_immutable`.
 
