@@ -10,22 +10,9 @@
 
 #include "nrf_provisioning_at.h"
 
-#define AT_ATT_CMD "AT%ATTESTTOKEN"
 #define GET_TIME_CMD "AT%%CCLK?"
 
 LOG_MODULE_REGISTER(nrf_provisioning_at, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
-
-int nrf_provisioning_at_attest_token_get(void *const buff, size_t size)
-{
-	if (size < CONFIG_NRF_PROVISIONING_AT_ATTESTTOKEN_MAX_LEN) {
-		return -ENOMEM;
-	}
-
-	int ret = nrf_modem_at_scanf(AT_ATT_CMD, "%%ATTESTTOKEN: \"%255[^\"]\"", buff);
-
-	/* One match is expected */
-	return ret == 1 ? 0 : ret;
-}
 
 int nrf_provisioning_at_time_get(void *const time_buff, size_t size)
 {

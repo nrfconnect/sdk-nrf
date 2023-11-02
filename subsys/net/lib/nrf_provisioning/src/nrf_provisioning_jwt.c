@@ -13,7 +13,6 @@
 
 LOG_MODULE_REGISTER(nrf_provisioning_jwt, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
-/** Max length of a device's MQTT client ID (device ID) on nRF Cloud*/
 #define TIME_MAX_LEN 64
 
 int nrf_provisioning_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jwt_buf_sz)

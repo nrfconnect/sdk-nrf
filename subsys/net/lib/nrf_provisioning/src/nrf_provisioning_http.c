@@ -23,8 +23,6 @@
 
 #include <nrf_modem_at.h>
 
-#include <modem/modem_attest_token.h>
-
 #include "nrf_provisioning_at.h"
 #include "nrf_provisioning_codec.h"
 #include "nrf_provisioning_cbor_decode.h"
@@ -65,8 +63,6 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define CONTENT_TYPE_ALL (CONTENT_TYPE HDR_TYPE_ALL CRLF)
 #define CONTENT_TYPE_APP_CBOR (CONTENT_TYPE HDR_TYPE_APP_CBOR CRLF)
 
-#define AUTH_HDR_BEARER_PREFIX "Authorization: Bearer "
-#define AUTH_HDR_BEARER_PREFIX_ATT "Authorization: Bearer att."
 #define AUTH_HDR_BEARER_PREFIX_JWT "Authorization: Bearer "
 #define HTTP_HDR_ACCEPT "Accept: "
 #define HDR_ACCEPT_APP_CBOR (HTTP_HDR_ACCEPT HDR_TYPE_APP_CBOR CRLF)
@@ -122,14 +118,9 @@ static void print_req_info(struct rest_client_req_context *req, int hdr_cnt)
 
 static int max_auth_prefix_len(void)
 {
-	int prefix_len = sizeof(AUTH_HDR_BEARER_PREFIX) - 1;
+	int prefix_len = 0;
 
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_ATTESTTOKEN)) {
-		prefix_len = MAX(prefix_len, sizeof(AUTH_HDR_BEARER_PREFIX_ATT) - 1);
-	}
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_JWT)) {
-		prefix_len = MAX(prefix_len, sizeof(AUTH_HDR_BEARER_PREFIX_JWT) - 1);
-	}
+	prefix_len = MAX(prefix_len, sizeof(AUTH_HDR_BEARER_PREFIX_JWT) - 1);
 
 	return prefix_len;
 }
@@ -138,21 +129,15 @@ static int max_token_len(void)
 {
 	int token_len = 0;
 
-#if defined(CONFIG_NRF_PROVISIONING_AT_ATTESTTOKEN_MAX_LEN)
-	token_len = MAX(token_len, CONFIG_NRF_PROVISIONING_AT_ATTESTTOKEN_MAX_LEN);
-#endif
-
-#if defined(CONFIG_MODEM_JWT_MAX_LEN)
 	token_len = MAX(token_len, CONFIG_MODEM_JWT_MAX_LEN);
-#endif
 
 	return token_len;
 }
 
 /* Generate an authorization header value string in the form:
- * "Authorization: Bearer JWT/ATTESTTOKEN\r\n"
+ * "Authorization: Bearer JWT\r\n"
  */
-static int generate_auth_header(const char *const tok, char **auth_hdr_out)
+static int generate_auth_header(char **auth_hdr_out)
 {
 	int ret;
 	/* These lengths NOT including null terminators */
@@ -165,28 +150,14 @@ static int generate_auth_header(const char *const tok, char **auth_hdr_out)
 	char *tok_ptr;
 	char *postfix_ptr;
 
-	if (!(tok ||
-		IS_ENABLED(CONFIG_NRF_PROVISIONING_JWT) ||
-		IS_ENABLED(CONFIG_NRF_PROVISIONING_ATTESTTOKEN))) {
-		LOG_ERR("Cannot generate auth header, no token was given, "
-			"and generation is not enabled");
-		__ASSERT_NO_MSG(false);
-		return -EINVAL;
-	}
 	if (!auth_hdr_out) {
 		LOG_ERR("Cannot generate auth header, no output pointer given.");
 		__ASSERT_NO_MSG(false);
 		return -EINVAL;
 	}
 
-	if (tok) {
-		tok_len = strlen(tok);
-		prefix_len = sizeof(AUTH_HDR_BEARER_PREFIX) - 1;
-	} else {
-		/* Any of the generatable tokens */
-		tok_len = max_token_len();
-		prefix_len = max_auth_prefix_len();
-	}
+	tok_len = max_token_len();
+	prefix_len = max_auth_prefix_len();
 
 	hdr_size = prefix_len + tok_len + postfix_len + 1;
 	*auth_hdr_out = k_malloc(hdr_size);
@@ -198,52 +169,19 @@ static int generate_auth_header(const char *const tok, char **auth_hdr_out)
 
 	prefix_ptr = *auth_hdr_out;
 
-	/* Write the prefix and copy the given token if it exists*/
-	if (tok) {
-		tok_ptr = prefix_ptr + prefix_len;
-		memcpy(prefix_ptr, AUTH_HDR_BEARER_PREFIX, prefix_len);
-		memcpy(tok_ptr, tok, tok_len);
-		goto postfix;
+	prefix_len = strlen(AUTH_HDR_BEARER_PREFIX_JWT);
+	tok_ptr = prefix_ptr + prefix_len;
+
+	memcpy(prefix_ptr, AUTH_HDR_BEARER_PREFIX_JWT, prefix_len);
+
+	ret = nrf_provisioning_jwt_generate(0, tok_ptr, tok_len + 1);
+
+	if (ret < 0) {
+		LOG_INF("Failed to generate JWT, error: %d", ret);
+		goto fail;
 	}
+	tok_len = strlen(tok_ptr);
 
-	/* Generate a token, if none was given */
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_ATTESTTOKEN)) {
-		prefix_len = strlen(AUTH_HDR_BEARER_PREFIX_ATT);
-		tok_ptr = prefix_ptr + prefix_len;
-
-		memcpy(prefix_ptr, AUTH_HDR_BEARER_PREFIX_ATT, prefix_len);
-
-		ret = nrf_provisioning_at_attest_token_get(tok_ptr, tok_len);
-
-		if (ret != 0) {
-			LOG_INF("Failed to generate attestation token, error: %d", ret);
-			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_JWT)) {
-				goto a_alt_tok;
-			}
-
-			goto fail;
-		}
-
-		tok_len = strlen(tok_ptr);
-		goto postfix;
-	}
-a_alt_tok:
-	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_JWT)) {
-		prefix_len = strlen(AUTH_HDR_BEARER_PREFIX_JWT);
-		tok_ptr = prefix_ptr + prefix_len;
-
-		memcpy(prefix_ptr, AUTH_HDR_BEARER_PREFIX, prefix_len);
-
-		ret = nrf_provisioning_jwt_generate(0, tok_ptr, tok_len + 1);
-
-		if (ret < 0) {
-			LOG_INF("Failed to generate JWT, error: %d", ret);
-			goto fail;
-		}
-		tok_len = strlen(tok_ptr);
-	}
-
-postfix:
 	postfix_ptr = tok_ptr + tok_len;
 	memcpy(postfix_ptr, CRLF, postfix_len + 1);
 
@@ -387,7 +325,7 @@ static int nrf_provisioning_responses_req(struct nrf_provisioning_http_context *
 		goto clean_up;
 	}
 
-	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
+	ret = generate_auth_header(&auth_hdr);
 	if (ret) {
 		LOG_ERR("Could not format HTTP auth header");
 		goto clean_up;
@@ -480,7 +418,7 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 			break;
 		}
 
-		ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
+		ret = generate_auth_header(&auth_hdr);
 		if (ret) {
 			break;
 		}
