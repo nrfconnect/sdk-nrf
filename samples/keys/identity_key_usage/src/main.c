@@ -29,12 +29,6 @@ int main(void)
 	uint8_t key[IDENTITY_KEY_SIZE_BYTES];
 	size_t olen;
 
-	err = nrf_cc3xx_platform_init();
-	if (err != NRF_CC3XX_PLATFORM_SUCCESS) {
-		LOG_INF("nrf_cc3xx_platform_init returned error: %d", err);
-		return 0;
-	}
-
 	LOG_INF("Initializing PSA crypto.");
 
 	status = psa_crypto_init();
@@ -68,7 +62,7 @@ int main(void)
 	}
 
 	/* Clear out the local copy of the key to prevent leakage */
-	nrf_cc3xx_platform_identity_key_free(key);
+	identity_key_free(key);
 
 	LOG_INF("Exporting the public key corresponding to the identity key.");
 	status = psa_export_public_key(key_id_out, m_pub_key, sizeof(m_pub_key), &olen);
