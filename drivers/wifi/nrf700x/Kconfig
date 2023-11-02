@@ -404,3 +404,22 @@ config NRF_WIFI_BEAMFORMING
 config WIFI_NRF700X_SCAN_TIMEOUT_S
 	int "Scan timeout in seconds"
 	default 30
+
+config NRF_WIFI_2G_BAND
+	bool "Set operation band to 2.4GHz"
+	default y if BOARD_NRF7001
+
+config NRF_WIFI_5G_BAND
+	bool "Set operation band to 5GHz"
+	depends on !BOARD_NRF7001
+
+config NRF_WIFI_OP_BAND
+	int "Options to set operation band"
+	default 1 if NRF_WIFI_2G_BAND
+	default 2 if NRF_WIFI_5G_BAND
+	default 3
+	help
+	  Set this option to select frequency band
+	  1 - 2.4GHz
+	  2 - 5GHz
+	  3 - All ( 2.4GHz and 5GHz )
