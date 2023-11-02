@@ -820,7 +820,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		LOG_ERR("buf is NULL");
 	}
 
-	if (sdu_ref_us == ctrl_blk.previous_sdu_ref_us) {
+	if (sdu_ref_us == ctrl_blk.previous_sdu_ref_us && sdu_ref_us != 0) {
 		LOG_WRN("Duplicate sdu_ref_us (%d) - Dropping audio frame", sdu_ref_us);
 		return;
 	}
