@@ -19,15 +19,10 @@ jobs:
       - name: Checkout PR target branch
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.NCS_GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.head.sha }}
           path: ncs/nrf
           fetch-depth: 1
-
-      - name: Switch to PR source branch
-        working-directory: ncs/nrf
-        env:
-          GITHUB_TOKEN: ${{ secrets.NCS_GITHUB_TOKEN }}
-        run: gh pr checkout ${{ github.event.pull_request.number }}
+          persist-credentials: false
 
       - name: Get python version
         id: pyv
