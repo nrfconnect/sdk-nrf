@@ -172,6 +172,7 @@ static int wpa_supp_supported_channels(struct wpa_supplicant *wpa_s, uint8_t ban
 
 	mode = get_mode_by_band(wpa_s, band);
 	if (!mode) {
+		wpa_printf(MSG_ERROR, "Unsupported or invalid band: %d", band);
 		return -EINVAL;
 	}
 
@@ -292,7 +293,7 @@ int z_wpa_supplicant_connect(const struct device *dev,
 	_wpa_cli_cmd_v("set_network %d scan_ssid 1", resp.network_id);
 	_wpa_cli_cmd_v("set_network %d key_mgmt NONE", resp.network_id);
 	_wpa_cli_cmd_v("set_network %d ieee80211w 0", resp.network_id);
-	if (params->band) {
+	if (params->band != WIFI_FREQ_BAND_UNKNOWN) {
 		ret = wpa_supp_supported_channels(wpa_s, params->band, &chan_list);
 		if (ret < 0) {
 			_wpa_cli_cmd_v("remove_network %d", resp.network_id);
