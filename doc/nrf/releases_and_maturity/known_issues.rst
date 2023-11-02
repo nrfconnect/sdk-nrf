@@ -1103,163 +1103,6 @@ KRKNWK-7836: Coordinator asserting when flooded with ZDO commands
 KRKNWK-6073: Potential delay during FOTA
   There might be a noticeable delay (~220 ms) between calling the ZBOSS API and on-the-air activity.
 
-HomeKit
-=======
-
-The issues in this section are related to the HomeKit protocol.
-
-.. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
-
-KRKNWK-17343: Accessories become significantly slower when some data pairs in the non-volatile storage (NVS) change frequently
-  Accessing data pairs that rarely change can take a long time.
-  It might happen, for example, in case of long booting or paired/unpaired identify response time, which can lead to certification issues.
-  During the certification, the accessory is subjected to multiple resets and pair/unpair processes, which causes the NVS to store a large amount of new data pairs.
-  As a result, the accessory does not pass the certification test cases exceeding the maximum operation time (for example, TCT012, TCT022 and TCT023).
-
-  **Workaround:** Enable the NVS cache by setting the following Kconfig options: :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE` to ``y`` and :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
-  Additional optimization can be enabled by setting the following Kconfig options: :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE` to ``y`` and :kconfig:option:`SETTINGS_NVS_NAME_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
-  Alternatively, you can manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``216d6588d069390d2c5291560002ca47684fbfc0``).
-
-.. rst-class:: v2-3-0 v2-2-0
-
-KRKNWK-16503: OTA DFU using the iOS Home app (over UARP) does not work on the nRF5340 SoC
-  Application core cannot be upgraded due to a problem with uploading images for two cores.
-  Uploading the network core image overrides an already uploaded application core image.
-
-  **Affected platforms:** nRF5340
-
-  **Workaround:** Manually cherry-pick and apply commit from the main branch (commit hash: ``09874a36edf21ced7d3c9356de07df6f0ff3d457``).
-
-.. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-KRKNWK-13010: Dropping from Thread to Bluetooth LE takes too long
-  Dropping from Thread to Bluetooth LE, after a Thread Border Router is powered off, takes much longer for FTD accessories than estimated in TCT030 test case.
-  It takes between 3-4 minutes for the FTD accessory to detect that the Thread network connection is lost.
-  The accessory then waits the specified 65 seconds and falls back to Bluetooth LE in case the Thread network is not available again.
-
-  **Workaround:** Specification for TCT030 is going to be updated.
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
-
-KRKNWK-14130: Bluetooth LE TX configuration is set to ``0`` dBm by default
-  The minimum Bluetooth LE TX configuration required is at least ``4`` dBm.
-  For HomeKit multiprotocol samples, this should be ``8`` dBm.
-  This results in a weak signal on the SoC itself.
-
-  **Workaround:** You need to configure the appropriate dBm values for Bluetooth LE and Thread manually in the source code.
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-KRKNWK-14081: HomeKit SDK light bulb example does not work with MTD
-  If the MTD is set to ``y`` in the light bulb sample, user is not able to communicate with the device after it has been added to the Home app using an iPhone and a HomePod Mini.
-
-.. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
-
-NCSDK-13947: Net core downgrade prevention does not work on nRF5340
-  When updating firmware via SMP protocol (Nordic DFU), the downgrade prevention mechanism does not work for the network core.
-
-  **Affected platforms:** nRF5340
-
-  **Workaround:** Prevention mechanism can be implemented in the mobile application layer.
-
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0
-
-KRKNWK-13607: Stateless switch application crashes upon factory reset
-  When running Thread test suit on the stateless switch application, the CI crashes upon factory reset.
-
-.. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
-
-KRKNWK-13249: Unexpected assertion in HAP Bluetooth Peripheral Manager
-  When Bluetooth LE layer emits callback with a connect or disconnect event, one of its parameters is an underlying Bluetooth LE connection object.
-  On rare occasions, this connection object is no longer valid by the time it is processed in HomeKit, and this results in assertion.
-  There is no proven workaround yet.
-
-.. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-KRKNWK-11729: Stateless switch event characteristic value not handled according to specification in Bluetooth LE mode
-  The stateless programmable switch application does not handle the value of the stateless switch event characteristic in the Bluetooth LE mode according to the specification.
-  According to the specification, the accessory is expected to return null once the characteristic has been read or after 10 seconds have passed.
-  In its current implementation in the |NCS|, the characteristic value does not change to null immediately after it is read, and changes to null after 5 seconds instead.
-
-  **Workaround:** The HomeKit specification in point 11.47 is going to be updated.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0
-
-KRKNWK-13063: RTT logs do not work with the Light Bulb multiprotocol sample with DFU on nRF52840
-  The Light Bulb multiprotocol sample with Nordic DFU activated in debug version for nRF52840 platform does not display RTT logs properly.
-
-  **Affected platforms:** nRF52840
-
-  **Workaround:** Disable RTT logs for the bootloader.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0
-
-KRKNWK-13064: Nordic DFU is not compliant with HAP certification requirements
-  Some of the HAP certification requirements are not met by the Nordic DFU solution.
-
-  **Workaround:** Cherry-pick changes from `PR #332 in sdk-homekit repo`_.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
-
-KRKNWK-12474: Multiprotocol samples on nRF52840 might not switch to Thread
-  Samples might not switch to Thread mode as expected and remain in Bluetooth mode instead.
-  The issue is related to older iOS versions.
-
-  **Affected platforms:** nRF52840
-
-  **Workaround:** Update your iPhone to iOS 15.4.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0
-
-KRKNWK-13095: Change in KVS key naming scheme causes an error for updated devices
-  A previous implementation allowed for empty key in domain.
-  This has been restricted during refactoring.
-
-  **Workaround:** Cherry-pick changes from `PR #329 in sdk-homekit repo`_.
-
-.. rst-class:: v1-9-2 v1-9-1 v1-9-0
-
-KRKNWK-13022: Activating DFU causes increased power consumption
-  Currently shell is used to initiate DFU mode, which leads to increased power consumption.
-
-.. _krknwk_10611:
-
-.. rst-class:: v1-6-0
-
-KRKNWK-10611: DFU fails with external flash memory
-  DFU will fail when using external flash memory for update image storage.
-  For this reason, DFU with external flash memory cannot be performed on HomeKit accessories.
-
-.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
-KRKNWK-9422: On-mesh commissioning does not work
-  Thread's on-mesh commissioning does not work for the HomeKit accessories.
-
-.. rst-class:: v1-6-1 v1-6-0
-
-Invalid NFC payload
-  Invalid NFC payload occurs if the HomeKit accessory is paired.
-
-.. rst-class:: v1-6-1
-
-Build error when building with DEBUG_SETUP_CODE configuration
-  The following build error is observed with DEBUG_SETUP_CODE - invalid file path in CMakeFile.
-
-.. rst-class:: v1-6-1
-
-HomeKit accessory fails to start
-  Occasionally, the accessory fails to start after a factory reset attempt.
-
-.. rst-class:: v1-8-0 v1-7-1 v1-7-0
-
-KRKNWK-11666: CLI command ``hap services`` returns incorrect results
-  Observed issues with the command include float values not printed, values not updated, and read callbacks shown as "<No read callback>" even though present.
-
-.. rst-class:: v1-8-0 v1-7-1 v1-7-0
-
-KRKNWK-11365: HAP tool's ``provision`` command freezes
-  This issue happens on macOS when an EUI argument is not passed in attempt to read EUI from a connected board.
-
 Applications
 ************
 
@@ -4291,6 +4134,165 @@ Known issues for deprecated components
 
 This section lists known issues for components that have been deprecated during the |NCS| development.
 These issues are visible for older releases.
+
+HomeKit
+=======
+
+.. note::
+    HomeKit is deprecated with the |NCS| v2.5.0 release and removed in the |NCS| v.2.6.0 release.
+    All HomeKit customers are recommended to use Matter for new designs of smart home products.
+
+.. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+KRKNWK-17343: Accessories become significantly slower when some data pairs in the non-volatile storage (NVS) change frequently
+  Accessing data pairs that rarely change can take a long time.
+  It might happen, for example, in case of long booting or paired/unpaired identify response time, which can lead to certification issues.
+  During the certification, the accessory is subjected to multiple resets and pair/unpair processes, which causes the NVS to store a large amount of new data pairs.
+  As a result, the accessory does not pass the certification test cases exceeding the maximum operation time (for example, TCT012, TCT022 and TCT023).
+
+  **Workaround:** Enable the NVS cache by setting the following Kconfig options: :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE` to ``y`` and :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
+  Additional optimization can be enabled by setting the following Kconfig options: :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE` to ``y`` and :kconfig:option:`SETTINGS_NVS_NAME_CACHE_SIZE` to ``512`` (requires additional 2KB of RAM).
+  Alternatively, you can manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``216d6588d069390d2c5291560002ca47684fbfc0``).
+
+.. rst-class:: v2-3-0 v2-2-0
+
+KRKNWK-16503: OTA DFU using the iOS Home app (over UARP) does not work on the nRF5340 SoC
+  Application core cannot be upgraded due to a problem with uploading images for two cores.
+  Uploading the network core image overrides an already uploaded application core image.
+
+  **Affected platforms:** nRF5340
+
+  **Workaround:** Manually cherry-pick and apply commit from the main branch (commit hash: ``09874a36edf21ced7d3c9356de07df6f0ff3d457``).
+
+.. rst-class:: wontfix v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+KRKNWK-13010: Dropping from Thread to Bluetooth LE takes too long
+  Dropping from Thread to Bluetooth LE, after a Thread Border Router is powered off, takes much longer for FTD accessories than estimated in TCT030 test case.
+  It takes between 3-4 minutes for the FTD accessory to detect that the Thread network connection is lost.
+  The accessory then waits the specified 65 seconds and falls back to Bluetooth LE in case the Thread network is not available again.
+
+  **Workaround:** Specification for TCT030 is going to be updated.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+KRKNWK-14130: Bluetooth LE TX configuration is set to ``0`` dBm by default
+  The minimum Bluetooth LE TX configuration required is at least ``4`` dBm.
+  For HomeKit multiprotocol samples, this should be ``8`` dBm.
+  This results in a weak signal on the SoC itself.
+
+  **Workaround:** You need to configure the appropriate dBm values for Bluetooth LE and Thread manually in the source code.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+KRKNWK-14081: HomeKit SDK light bulb example does not work with MTD
+  If the MTD is set to ``y`` in the light bulb sample, user is not able to communicate with the device after it has been added to the Home app using an iPhone and a HomePod Mini.
+
+.. rst-class:: v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+NCSDK-13947: Net core downgrade prevention does not work on nRF5340
+  When updating firmware via SMP protocol (Nordic DFU), the downgrade prevention mechanism does not work for the network core.
+
+  **Affected platforms:** nRF5340
+
+  **Workaround:** Prevention mechanism can be implemented in the mobile application layer.
+
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+KRKNWK-13607: Stateless switch application crashes upon factory reset
+  When running Thread test suit on the stateless switch application, the CI crashes upon factory reset.
+
+.. rst-class:: wontfix v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+KRKNWK-13249: Unexpected assertion in HAP Bluetooth Peripheral Manager
+  When Bluetooth LE layer emits callback with a connect or disconnect event, one of its parameters is an underlying Bluetooth LE connection object.
+  On rare occasions, this connection object is no longer valid by the time it is processed in HomeKit, and this results in assertion.
+  There is no proven workaround yet.
+
+.. rst-class:: wontfix v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+KRKNWK-11729: Stateless switch event characteristic value not handled according to specification in Bluetooth LE mode
+  The stateless programmable switch application does not handle the value of the stateless switch event characteristic in the Bluetooth LE mode according to the specification.
+  According to the specification, the accessory is expected to return null once the characteristic has been read or after 10 seconds have passed.
+  In its current implementation in the |NCS|, the characteristic value does not change to null immediately after it is read, and changes to null after 5 seconds instead.
+
+  **Workaround:** The HomeKit specification in point 11.47 is going to be updated.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0
+
+KRKNWK-13063: RTT logs do not work with the Light Bulb multiprotocol sample with DFU on nRF52840
+  The Light Bulb multiprotocol sample with Nordic DFU activated in debug version for nRF52840 platform does not display RTT logs properly.
+
+  **Affected platforms:** nRF52840
+
+  **Workaround:** Disable RTT logs for the bootloader.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0
+
+KRKNWK-13064: Nordic DFU is not compliant with HAP certification requirements
+  Some of the HAP certification requirements are not met by the Nordic DFU solution.
+
+  **Workaround:** Cherry-pick changes from `PR #332 in sdk-homekit repo`_.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
+
+KRKNWK-12474: Multiprotocol samples on nRF52840 might not switch to Thread
+  Samples might not switch to Thread mode as expected and remain in Bluetooth mode instead.
+  The issue is related to older iOS versions.
+
+  **Affected platforms:** nRF52840
+
+  **Workaround:** Update your iPhone to iOS 15.4.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0
+
+KRKNWK-13095: Change in KVS key naming scheme causes an error for updated devices
+  A previous implementation allowed for empty key in domain.
+  This has been restricted during refactoring.
+
+  **Workaround:** Cherry-pick changes from `PR #329 in sdk-homekit repo`_.
+
+.. rst-class:: v1-9-2 v1-9-1 v1-9-0
+
+KRKNWK-13022: Activating DFU causes increased power consumption
+  Currently shell is used to initiate DFU mode, which leads to increased power consumption.
+
+.. _krknwk_10611:
+
+.. rst-class:: v1-6-0
+
+KRKNWK-10611: DFU fails with external flash memory
+  DFU will fail when using external flash memory for update image storage.
+  For this reason, DFU with external flash memory cannot be performed on HomeKit accessories.
+
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+KRKNWK-9422: On-mesh commissioning does not work
+  Thread's on-mesh commissioning does not work for the HomeKit accessories.
+
+.. rst-class:: v1-6-1 v1-6-0
+
+Invalid NFC payload
+  Invalid NFC payload occurs if the HomeKit accessory is paired.
+
+.. rst-class:: v1-6-1
+
+Build error when building with DEBUG_SETUP_CODE configuration
+  The following build error is observed with DEBUG_SETUP_CODE - invalid file path in CMakeFile.
+
+.. rst-class:: v1-6-1
+
+HomeKit accessory fails to start
+  Occasionally, the accessory fails to start after a factory reset attempt.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0
+
+KRKNWK-11666: CLI command ``hap services`` returns incorrect results
+  Observed issues with the command include float values not printed, values not updated, and read callbacks shown as "<No read callback>" even though present.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0
+
+KRKNWK-11365: HAP tool's ``provision`` command freezes
+  This issue happens on macOS when an EUI argument is not passed in attempt to read EUI from a connected board.
 
 SEGGER Embedded Studio Nordic Edition
 =====================================
