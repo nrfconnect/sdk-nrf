@@ -5,7 +5,7 @@
 #
 
 config FEM_AL_LIB
-	bool "FEM Abstarction Layer library"
+	bool "FEM Abstraction Layer library"
 	default n
 
 if FEM_AL_LIB
