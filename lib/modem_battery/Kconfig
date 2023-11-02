@@ -41,9 +41,9 @@ config MODEM_BATTERY_POFWARN_VOLTAGE
 	default 32 if MODEM_BATTERY_POFWARN_3200
 	default 33 if MODEM_BATTERY_POFWARN_3300
 
-endif # MODEM_BATTERY
-
 module = MODEM_BATTERY
 module-dep = LOG
 module-str = Modem battery library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # MODEM_BATTERY
