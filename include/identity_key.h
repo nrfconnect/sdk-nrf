@@ -71,6 +71,16 @@ bool identity_key_is_written(void);
  */
 int identity_key_read(uint8_t key[IDENTITY_KEY_SIZE_BYTES]);
 
+/** @brief Function to clear out an identity key after usage
+ *
+ * @details This function will clear out the memory of an identity key.
+ *          This must be called after the identity key is used to ensure that
+ *          it is not leaked in the system.
+ *
+ * @param[in,out]   key         Key to clear out
+ */
+void identity_key_free(uint8_t key[IDENTITY_KEY_SIZE_BYTES]);
+
 /**
  * @brief Function to write a random identity key to KMU
  *

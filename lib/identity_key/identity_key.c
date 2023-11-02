@@ -171,3 +171,8 @@ int identity_key_read(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
 
 	return IDENTITY_KEY_SUCCESS;
 }
+
+void identity_key_free(uint8_t key[IDENTITY_KEY_SIZE_BYTES])
+{
+	nrf_cc3xx_platform_identity_key_free(key);
+}
