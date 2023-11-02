@@ -51,7 +51,7 @@ Using the Arm CryptoCell cc3xx driver
 
 To use the :ref:`nrf_cc3xx_mbedcrypto_readme` PSA driver, the Arm CryptoCell cc310/cc312 hardware must be first initialized.
 
-The Arm CryptoCell cc3xx hardware is initialized in the :file:`hw_cc310.c` file, located under :file:`nrf/drivers/hw_cc310/`, and is controlled with the :kconfig:option:`CONFIG_HW_CC3XX` Kconfig option.
+The Arm CryptoCell cc3xx hardware is initialized in the :file:`hw_cc3xx.c` file, located under :file:`nrf/drivers/hw_cc3xx/`, and is controlled with the :kconfig:option:`CONFIG_HW_CC3XX` Kconfig option.
 The Kconfig option has a default value of ``y`` when cc3xx is available in the SoC.
 
 .. _nrf_security_drivers_oberon:
