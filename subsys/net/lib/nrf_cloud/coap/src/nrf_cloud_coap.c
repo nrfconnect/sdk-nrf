@@ -483,7 +483,7 @@ int nrf_cloud_coap_fota_job_get(struct nrf_cloud_fota_job_info *const job)
 			job->type, job->id, job->host, job->path, job->file_size);
 	} else if (!err && (fota_err == COAP_RESPONSE_CODE_NOT_FOUND)) {
 		LOG_INF("No pending FOTA job");
-		err = -ENOMSG;
+		err = 0;
 	} else if (err == -EAGAIN) {
 		LOG_ERR("Timeout waiting for FOTA job");
 	} else if (err < 0) {

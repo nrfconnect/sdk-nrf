@@ -244,40 +244,6 @@ menuconfig COAP_FOTA
 
 if COAP_FOTA
 
-config COAP_FOTA_DL_TIMEOUT_MIN
-	int "The time (minutes) allotted for a FOTA download to complete"
-	default 15
-	help
-	  If the FOTA download does not complete in the allotted time,
-	  the download will be cancelled and the job status will be
-	  set as failed.
-
-config COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
-	bool "Use the same settings area as the nRF Cloud FOTA library"
-	default y
-	help
-	  Using the same settings area as the nRF Cloud FOTA library will
-	  allow this sample to perform application-FOTA updates to applications
-	  built with CONFIG_NRF_CLOUD_FOTA enabled.
-
-config COAP_FOTA_SETTINGS_NAME
-	depends on !COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
-	string "Settings identifier for the COAP FOTA sample"
-	default "coap_fota_sample"
-	help
-	  The root settings identifier for this application.
-	  For application-FOTA, this value should also be found in your target application
-	  so that the FOTA status can be properly reported to nRF Cloud.
-
-config COAP_FOTA_SETTINGS_KEY_PENDING_JOB
-	depends on !COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
-	string "Settings item key for pending FOTA job info"
-	default "pending_job"
-	help
-	  The settings item key where pending FOTA job info will be stored.
-	  For application-FOTA, this value should also be found in your target application
-	  so that the FOTA status can be properly reported to nRF Cloud.
-
 config COAP_FOTA_JOB_CHECK_RATE_MINUTES
 	int "FOTA job check interval (minutes)"
 	default 60

@@ -213,6 +213,24 @@ int nrf_cloud_fota_ble_job_update(
 	const struct nrf_cloud_fota_ble_job * const ble_job,
 	const enum nrf_cloud_fota_status status);
 
+/** @brief Initialize FOTA settings handling.
+ *
+ *  @param job Pointer to FOTA job settings structure. The pointer must remain valid.
+ *
+ *  @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_fota_settings_load(struct nrf_cloud_settings_fota_job *job);
+
+/** @brief Save FOTA job info.
+ *
+ *  @param job Pointer to FOTA job settings structure. The pointer must remain valid.
+ *
+ *  @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_fota_settings_save(struct nrf_cloud_settings_fota_job *job);
+
 #ifdef __cplusplus
 }
 #endif

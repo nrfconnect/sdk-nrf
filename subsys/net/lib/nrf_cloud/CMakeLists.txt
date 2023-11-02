@@ -44,6 +44,9 @@ zephyr_library_sources_ifdef(
 	src/nrf_cloud_fota.c
 	src/nrf_cloud_download.c)
 zephyr_library_sources_ifdef(
+  CONFIG_NRF_CLOUD_FOTA_POLL
+  src/nrf_cloud_fota_poll.c)
+zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_REST
 	src/nrf_cloud_rest.c)
 zephyr_compile_definitions_ifdef(

@@ -260,10 +260,12 @@ Cellular samples (renamed from nRF9160 samples)
   * Changed:
 
     * The sample now explicitly uses the :c:func:`conn_mgr_all_if_connect` function to start network connectivity, instead of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT` Kconfig options.
+    * The sample to use the FOTA support functions in the :file:`nrf_cloud_fota_poll.c` and :file:`nrf_cloud_fota_common.c` files.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
   * Added credential check before connecting to network.
+  * Changed the sample use the functions in the :file:`nrf_cloud_fota_poll.c` and :file:`nrf_cloud_fota_common.c` files.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
@@ -529,6 +531,10 @@ Libraries for networking
 * :ref:`lib_nrf_provisioning` library:
 
   * Updated the device mode callback to send an event when the provisioning state changes.
+
+* :ref:`lib_nrf_cloud_fota` library:
+
+  * Added the :file:`nrf_cloud_fota_poll.c` file to consolidate the FOTA polling code from the :ref:`nrf_cloud_multi_service` and :ref:`nrf_cloud_rest_fota` samples.
 
 Libraries for NFC
 -----------------

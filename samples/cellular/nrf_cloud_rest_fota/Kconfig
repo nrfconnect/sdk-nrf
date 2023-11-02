@@ -14,44 +14,10 @@ config REST_FOTA_JOB_CHECK_RATE_MIN
 	int "Rate (minutes) at which this sample will check for FOTA updates"
 	default 15
 
-config REST_FOTA_DL_TIMEOUT_MIN
-	int "The time (minutes) allotted for a FOTA download to complete"
-	default 15
-	help
-	  If the FOTA download does not complete in the allotted time,
-	  the download will be cancelled and the job status will be
-	  set as failed.
-
 config REST_FOTA_ENABLE_LED
 	depends on DK_LIBRARY
 	bool "Turn on LED when connected to network"
 	default y
-
-config REST_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
-	bool "Use the same settings area as the nRF Cloud FOTA library"
-	default y
-	help
-	  Using the same settings area as the nRF Cloud FOTA library will
-	  allow this sample to perform application-FOTA updates to applications
-	  built with CONFIG_NRF_CLOUD_FOTA enabled.
-
-config REST_FOTA_SETTINGS_NAME
-	depends on !REST_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
-	string "Settings identifier for the REST FOTA sample"
-	default "rest_fota_sample"
-	help
-	  The root settings identifier for this application.
-	  For application-FOTA, this value should also be found in your target application
-	  so that the FOTA status can be properly reported to nRF Cloud.
-
-config REST_FOTA_SETTINGS_KEY_PENDING_JOB
-	depends on !REST_FOTA_USE_NRF_CLOUD_SETTINGS_AREA
-	string "Settings item key for pending FOTA job info"
-	default "pending_job"
-	help
-	  The settings item key where pending FOTA job info will be stored.
-	  For application-FOTA, this value should also be found in your target application
-	  so that the FOTA status can be properly reported to nRF Cloud.
 
 if REST_FOTA_ENABLE_LED
 config REST_FOTA_LED_NUM

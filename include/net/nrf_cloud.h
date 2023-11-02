@@ -673,6 +673,28 @@ struct nrf_cloud_init_param {
 	const char *application_version;
 };
 
+enum nrf_cloud_fota_reboot_status {
+	FOTA_REBOOT_REQUIRED,	/** Reboot to install update. */
+	FOTA_REBOOT_SUCCESS,	/** Reboot to complete FOTA job. */
+	FOTA_REBOOT_FAIL,	/** Reboot because FOTA job failed. */
+	FOTA_REBOOT_SYS_ERROR	/** Reboot because fatal system error occurred. */
+};
+
+/**
+ * @brief  Event handler registered with the module to handle asynchronous
+ * events from the module.
+ *
+ * @param[in]  status The reason for the reboot request.
+ */
+typedef void (*fota_reboot_handler_t)(enum nrf_cloud_fota_reboot_status status);
+
+struct nrf_cloud_fota_poll_ctx {
+	struct nrf_cloud_rest_context *rest_ctx;
+	const char *device_id;
+	fota_reboot_handler_t reboot_fn;
+	bool full_modem_fota_supported;
+};
+
 /**
  * @brief Initialize the module.
  *
@@ -993,6 +1015,10 @@ bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
  * @return A negative value indicates an error starting the job.
  */
 int nrf_cloud_fota_job_start(void);
+
+int nrf_cloud_fota_poll_init(struct nrf_cloud_fota_poll_ctx *ctx);
+int nrf_cloud_fota_poll_start(struct nrf_cloud_fota_poll_ctx *ctx);
+int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx);
 
 /**
  * @brief Check if credentials exist in the configured location.

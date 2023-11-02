@@ -114,6 +114,7 @@ bool nrf_cloud_is_text_logging_enabled(void);
 bool nrf_cloud_is_dict_logging_enabled(void);
 
 #if defined(CONFIG_NRF_CLOUD_LOG_DIRECT)
+
 #if defined(CONFIG_NRF_CLOUD_MQTT) || defined(CONFIG_NRF_CLOUD_COAP)
 /**
  * @brief Directly log to the cloud. This does not use the Zephyr logging
@@ -126,8 +127,9 @@ bool nrf_cloud_is_dict_logging_enabled(void);
  * @return 0 if log line is successfully sent, otherwise, a negative error number.
  */
 int nrf_cloud_log_send(int log_level, const char *fmt, ...);
+#endif /* CONFIG_NRF_CLOUD_MQTT || CONFIG_NRF_CLOUD_COAP */
 
-#elif defined(CONFIG_NRF_CLOUD_REST)
+#if defined(CONFIG_NRF_CLOUD_REST) || defined(__DOXYGEN__)
 /**
  * @brief Directly log to the cloud. This does not use the Zephyr logging
  * system if CONFIG_NRF_CLOUD_LOG_BACKEND is disabled. Otherwise, it is passed to
@@ -142,7 +144,8 @@ int nrf_cloud_log_send(int log_level, const char *fmt, ...);
  */
 int nrf_cloud_rest_log_send(struct nrf_cloud_rest_context *ctx, const char *dev_id,
 			     int log_level, const char *fmt, ...);
-#endif /* CONFIG_NRF_CLOUD_REST */
+#endif /* CONFIG_NRF_CLOUD_REST || __DOXYGEN__ */
+
 #else /* CONFIG_NRF_CLOUD_LOG_DIRECT */
 #define nrf_cloud_log_send(log_level, fmt, ...) (0)
 #endif /* CONFIG_NRF_CLOUD_LOG_DIRECT */
