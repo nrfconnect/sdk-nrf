@@ -16,10 +16,6 @@ config NRFX_DPPI
 config CMSIS_DSP
 	default y
 
-# Required for calculating test tones
-config CMSIS_DSP_FASTMATH
-	default y
-
 # HEADSET
 if AUDIO_DEV = 1
 
