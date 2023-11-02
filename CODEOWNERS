@@ -307,6 +307,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
 /tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jheiskan81 @juhaylinen
+/tests/subsys/net/lib/mcumgr_smp_client/  @jheiskan81
 /tests/subsys/net/lib/nrf_cloud/          @tony-le-24
 /tests/subsys/net/lib/nrf_provisioning/   @SeppoTakalo @juhaylinen
 /tests/subsys/net/lib/wifi_credentials*/  @maxd-nordic
