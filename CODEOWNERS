@@ -250,6 +250,7 @@ Kconfig*                                  @tejlmand
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/subsys/secure_storage/                   @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/net_core_monitor/                 @maje-emb
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @gopiotr

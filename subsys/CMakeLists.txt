@@ -22,6 +22,7 @@ if(NOT SYSBUILD)
 endif()
 
 add_subdirectory_ifdef(CONFIG_NRF_SECURITY nrf_security)
+add_subdirectory_ifdef(CONFIG_SECURE_STORAGE secure_storage)
 
 add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_ESB		esb)

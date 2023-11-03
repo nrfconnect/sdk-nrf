@@ -33,4 +33,5 @@ rsource "dm/Kconfig"
 rsource "nrf_security/Kconfig"
 rsource "net_core_monitor/Kconfig"
 rsource "audio_module/Kconfig"
+rsource "secure_storage/Kconfig"
 endmenu
