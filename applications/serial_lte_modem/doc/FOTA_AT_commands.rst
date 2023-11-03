@@ -33,6 +33,9 @@ Syntax
   * ``2`` - Start FOTA for modem delta update.
   * ``3`` - Start FOTA for full modem update.
     Can only be used when the :file:`overlay-full_fota.conf` configuration file is used.
+
+    Not supported on the :ref:`Thingy:91 <thingy91_ug_intro>` as it lacks an external flash to store the firmware image.
+
   * ``7`` - Read modem DFU area size and firmware image offset (for modem delta update).
   * ``9`` - Erase modem DFU area (for modem delta update).
 
