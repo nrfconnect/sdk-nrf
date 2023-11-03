@@ -35,6 +35,10 @@ static const uint8_t fp_magic[] = {0xFA, 0x57, 0xFA, 0x57};
 #define FP_DATA_SIZE		 (FP_END_OFF - FP_DATA_START)
 #define FP_OFFSET_TO_DATA_IDX(_offset) ((_offset) - FP_DATA_START)
 
+#ifdef FP_DATA_NOT_PRESENT
+#error "Fast Pair provisioning data was not provided with `FP_MODEL_ID` and `FP_ANTI_SPOOFING_KEY`"
+#endif
+
 BUILD_ASSERT(FP_END_OFF <= FP_PARTITION_SIZE, "Fast Pair registration data partition is too small");
 
 static bool data_valid;
