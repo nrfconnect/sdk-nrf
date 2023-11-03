@@ -8,6 +8,7 @@ Bluetooth libraries and services
    :caption: Bluetooth® libraries:
    :glob:
 
+   softdevice_controller/index
    *
 
 

@@ -9,4 +9,5 @@ Modem libraries
    :caption: Subpages:
 
    nrf_modem_lib/index
+   modem_lib_int_layer/index
    *

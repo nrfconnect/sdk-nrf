@@ -1,0 +1,5 @@
+{signal: [
+  {name: 'GRANT', wave: '1....0....'},
+  {name: 'REQUEST', wave: 'x..4.x.x..', data: ['TX REQ']},
+  {name: 'OPERATION', wave: 'x..3.x....', data: ['TX']}
+]}

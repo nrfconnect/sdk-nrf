@@ -9,3 +9,5 @@ Other libraries
    :caption: Subpages:
 
    *
+   nrf_dm/index
+   nrf_rpc/index

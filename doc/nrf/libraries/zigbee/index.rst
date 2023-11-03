@@ -84,3 +84,4 @@ Read the table symbols in the following manner:
    :caption: Subpages:
 
    *
+   zboss/index

@@ -8,4 +8,5 @@ Multiprotocol Service Layer libraries
    :caption: Subpages:
    :glob:
 
+   mpsl/index
    *

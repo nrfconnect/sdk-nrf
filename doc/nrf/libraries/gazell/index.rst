@@ -8,4 +8,5 @@ Gazell libraries
    :glob:
    :caption: Subpages:
 
+   */index
    *

@@ -17,3 +17,4 @@ Here you can find documentation for drivers in the |NCS|, including API document
 
    drivers/*
    drivers/wifi/nrf700x/*
+   drivers/nrf_802154/index
