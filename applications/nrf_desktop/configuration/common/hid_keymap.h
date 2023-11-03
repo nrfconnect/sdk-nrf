@@ -8,7 +8,7 @@
 #define _HID_KEYMAP_H_
 
 #include <stddef.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <zephyr/types.h>
 
 #include "hid_report_desc.h"
