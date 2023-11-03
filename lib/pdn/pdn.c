@@ -293,21 +293,25 @@ int pdn_default_ctx_cb_reg(pdn_event_handler_t cb)
 
 int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb)
 {
-	bool remvd;
+	bool removed;
 	struct pdn *pdn;
 	struct pdn *tmp;
 
-	remvd = false;
+	if (!cb) {
+		return -EFAULT;
+	}
+
+	removed = false;
 	k_mutex_lock(&list_mutex, K_FOREVER);
 	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&pdn_contexts, pdn, tmp, node) {
 		if (pdn->callback == cb) {
-			remvd = sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
+			removed = sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
 			break;
 		}
 	}
 	k_mutex_unlock(&list_mutex);
 
-	if (!remvd) {
+	if (!removed) {
 		return -EINVAL;
 	}
 
@@ -319,13 +323,19 @@ int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb)
 
 static void pdn_ctx_free(struct pdn *pdn)
 {
+	bool removed;
+
 	if (!pdn) {
 		return;
 	}
 
 	k_mutex_lock(&list_mutex, K_FOREVER);
-	sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
+	removed = sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
 	k_mutex_unlock(&list_mutex);
+
+	if (!removed) {
+		return;
+	}
 
 	k_free(pdn);
 }
@@ -349,6 +359,10 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 	if (err < 0) {
 		pdn_ctx_free(pdn);
 		return err;
+	} else if (err == 0) {
+		/* no argument matched */
+		pdn_ctx_free(pdn);
+		return -EBADMSG;
 	}
 
 	if (ctx_id_tmp > SCHAR_MAX || ctx_id_tmp < SCHAR_MIN) {
