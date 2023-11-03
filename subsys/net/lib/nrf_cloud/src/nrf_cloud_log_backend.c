@@ -18,7 +18,9 @@
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_log_internal.h"
+#include "nrf_cloud_coap_transport.h"
 #include <net/nrf_cloud_rest.h>
+#include <net/nrf_cloud_coap.h>
 #include <net/nrf_cloud_log.h>
 
 LOG_MODULE_DECLARE(nrf_cloud_log, CONFIG_NRF_CLOUD_LOG_LOG_LEVEL);
@@ -95,6 +97,12 @@ static const char * const filtered_modules[] = {
 	"rest_client",
 	"net_http",
 #endif
+#if defined(CONFIG_NRF_CLOUD_COAP)
+	"nrf_cloud_coap",
+	"nrf_cloud_coap_transport",
+	"coap_codec",
+	"dtls",
+#endif
 	"net_tcp",
 	"net_ipv4",
 	"net_ipv6",
@@ -125,6 +133,11 @@ static void logger_init(const struct log_backend *const backend)
 	int sid;
 
 	if ((backend != &log_nrf_cloud_backend) || initialized) {
+		return;
+	}
+	if ((CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DEFAULT != LOG_OUTPUT_TEXT) &&
+	    !IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		LOG_ERR("Only text mode logs supported with current cloud transport");
 		return;
 	}
 	initialized = true;
@@ -200,7 +213,9 @@ static int log_msg_filter(uint32_t src_id, int level)
 	if (level > nrf_cloud_log_control_get()) {
 		return -ENOMSG;
 	}
-
+	if ((level == 0) && !IS_ENABLED(NRF_CLOUD_LOG_INCLUDE_LEVEL_0)) {
+		return -ENOMSG;
+	}
 #if !defined(CONFIG_LOG_RUNTIME_FILTERING)
 	/* Prevent locally-generated logs or those from underlying modules
 	 * from being self-logged, which results in an infinite series of
@@ -286,7 +301,9 @@ static int logger_is_ready(const struct log_backend *const backend)
 			}
 		}
 	}
-
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP) && !nrf_cloud_coap_is_connected()) {
+		return -EBUSY;
+	}
 	return 0; /* Logging is ready. */
 }
 
@@ -383,6 +400,8 @@ static int send_ring_buffer(void)
 				k_sleep(K_MSEC(100));
 			}
 		} while (err == -EBUSY);
+	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
+		err = nrf_cloud_coap_json_message_send(output.data.ptr, true);
 	} else {
 		err = -ENODEV;
 	}

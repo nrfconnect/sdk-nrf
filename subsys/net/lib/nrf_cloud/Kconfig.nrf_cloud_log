@@ -17,7 +17,7 @@ config NRF_CLOUD_LOG_DIRECT
 
 menuconfig NRF_CLOUD_LOG_BACKEND
 	bool "nRF Cloud logging system"
-	depends on NRF_CLOUD_MQTT || NRF_CLOUD_REST
+	depends on NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_COAP
 	depends on LOG_MODE_DEFERRED
 	depends on !LOG_MODE_MINIMAL
 	select RING_BUFFER
@@ -37,6 +37,7 @@ config NRF_CLOUD_LOG_SEQ_ALWAYS
 
 config NRF_CLOUD_LOG_RING_BUF_SIZE
 	int "Size of buffer for log output before network transfer"
+	default 768 if NRF_CLOUD_COAP
 	default 2048
 	help
 	  Set size in bytes for buffer for log output system to combine log
@@ -57,6 +58,12 @@ config NRF_CLOUD_LOG_OUTPUT_LEVEL
 	  disable. Applies to both NRF_CLOUD_LOG_BACKEND and NRF_CLOUD_LOG_DIRECT.
 	  Log messages with a log level larger than this will be ignored.
 	  Can be overridden at runtime from the cloud.
+
+config NRF_CLOUD_LOG_INCLUDE_LEVEL_0
+	bool "Level 0 messages such as from printk will be sent"
+	help
+	  Enable to include level 0 messages, such as from LTE modem notifications.
+	  Disable to drop these messages.
 
 config NRF_CLOUD_LOG_BUF_SIZE
 	int "Number of bytes to buffer in RAM before flushing"
