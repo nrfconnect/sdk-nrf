@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "TF-M"
+
 config TFM_BOARD
 	string
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/tfm/tfm/boards/nrf9160" if SOC_NRF9160
@@ -187,3 +189,5 @@ config TFM_DOORBELL_API
 	depends on TFM_IPC
 	default n
 endmenu
+
+endmenu # TFM
