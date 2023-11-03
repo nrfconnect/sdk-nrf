@@ -422,7 +422,9 @@ Modem libraries
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_SYS_INIT``.
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
 
-|no_changes_yet_note|
+* :ref:`pdn_readme` library:
+
+  * Fixed a potential issue where the library tries to free the PDN context twice, causing the application to crash.
 
 Libraries for networking
 ------------------------
