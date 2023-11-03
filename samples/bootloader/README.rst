@@ -143,22 +143,17 @@ Configuration
 Signature keys
 ==============
 
-The ECDSA-p256 key type is supported for validating the next image in the boot chain.
-
-By default, when not explicitly defined, a private/public key pair is generated during the build.
-However, these key pairs should only be used during development.
-See :ref:`ug_fw_update_development_keys` for more details.
-
-For details on creating and using custom signature keys, refer to the :ref:`ug_bootloader_adding_immutable_keys` documentation.
+The ECDSA-P256 key type is supported for validating the next image in the boot chain.
+See :ref:`bootloader_signature_keys_guide` for more information.
 
 Monotonic counter
 =================
 
-.. include:: ../../doc/nrf/config_and_build/bootloaders_and_dfu/fw_update.rst
+.. include:: ../../doc/nrf/config_and_build/bootloaders/bootloader_downgrade_protection.rst
    :start-after: bootloader_monotonic_counter_start
    :end-before: bootloader_monotonic_counter_end
 
-.. include:: ../../doc/nrf/config_and_build/bootloaders_and_dfu/fw_update.rst
+.. include:: ../../doc/nrf/config_and_build/bootloaders/bootloader_downgrade_protection.rst
    :start-after: bootloader_monotonic_counter_nsib_start
    :end-before: bootloader_monotonic_counter_nsib_end
 

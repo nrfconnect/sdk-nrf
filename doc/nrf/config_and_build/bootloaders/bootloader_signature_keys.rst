@@ -1,23 +1,27 @@
-.. _ug_fw_update:
+.. _ug_fw_update_keys:
+.. _bootloader_signature_keys_guide:
 
-Firmware updates
-################
+Signature keys
+##############
 
 .. contents::
    :local:
    :depth: 2
 
-This user guide provides an overview of firmware updates with |NCS|.
+A signature key can be used by :ref:`bootloader` to validate the next image in the boot chain.
+Dedicated host tools like :doc:`mcuboot:imgtool` can be used to sign application update images.
 
-.. _ug_fw_update_keys:
+When you use |NSIB|, a private/public key pair is by default generated during the build when you are :ref:`ug_bootloader_adding_immutable_keys`.
+You can use the methods described in the following sections to explicitly define how the key pair is to be generated.
 
-Signature keys
-**************
+When you use MCUboot or you are :ref:`ug_bootloader_adding_upgradable_mcuboot`, MCUBoot uses keys that were generated once and are stored in the public MCUboot Git repository be default.
 
-You can find information on the key types supported in the |NCS| in the :ref:`nRF Secure Immutable Bootloader <bootloader_signature_keys>` and :doc:`mcuboot:imgtool` documentation.
+.. note::
+    These key pairs should only be used during development.
+    See :ref:`ug_fw_update_development_keys` for more details.
 
 Generating private keys
-=======================
+***********************
 
 The |NCS| supports the following most common ways to generate private/public key pairs:
 
@@ -28,7 +32,7 @@ The |NCS| supports the following most common ways to generate private/public key
 .. _ug_fw_update_keys_openssl:
 
 Using OpenSSL to generate keys
-------------------------------
+==============================
 
 `OpenSSL`_ is installed by default with some packages and programs, such as Git.
 It supports many different types of keys, but not all of them are supported by |NSIB| and MCUboot.
@@ -42,7 +46,7 @@ For a complete list of the key types supported by each bootloader, see the follo
    * - Bootloader
      - Supported key types
    * - |NSIB|
-     - ECDSA256
+     - ECDSA-P256
    * - MCUboot
      - RSA-2048, RSA-3072, ECDSA-P256, ED25519
 
@@ -70,7 +74,7 @@ Examples of using OpenSSL to create some commonly used key types:
 .. _ug_fw_update_keys_imgtool:
 
 Using Imgtool to generate keys
-------------------------------
+==============================
 
 :doc:`mcuboot:imgtool` is a Python tool maintained by MCUboot that handles public/private key pairs.
 
@@ -98,7 +102,7 @@ For a full list of supported types, use the ``--help`` argument with the tool or
 .. _ug_fw_update_keys_python:
 
 Using Python to generate keys
------------------------------
+=============================
 
 The |NCS| includes an internal script to interact with private and public keys with the |NSIB|.
 This script is maintained by the |NCS| team and uses the ``ecdsa`` package available from PyPI.
@@ -113,7 +117,7 @@ An example of this internal Python script used to generate keys.
 .. _ug_fw_update_development_keys:
 
 Using development keys
-======================
+**********************
 
 When testing the bootloader chain, you can optionally generate and use custom signing keys.
 If you do not provide your own keys through Kconfig options, the build system automatically creates debug keys, depending on the bootloaders compiled into the application.
@@ -133,7 +137,7 @@ If you do not provide your own keys through Kconfig options, the build system au
 .. _ug_fw_update_key_revocation:
 
 Revoking private keys
-=====================
+*********************
 
 The |NSIB| allows you to revoke public verification keys used to validate the next image in the secure boot chain.
 Key revocation can be a useful security measure for devices that have already been deployed to the field.
@@ -256,159 +260,3 @@ To test that the bootloader no longer boots images signed with the earlier keys,
       ...
 
 Recompile with ``priv_c.pem`` and the incremented firmware version to correctly boot the new image.
-
-.. _ug_fw_update_image_versions:
-
-Image versions
-**************
-
-Each release of an application must come with a specific version.
-The version can have the form of a single number.
-Alternatively, it can be based on a more advanced versioning scheme.
-For example, the semantic versioning scheme uses three numbers to denote major, minor, and patch versions, respectively.
-
-The choice of the versioning scheme depends on the :ref:`selected bootloader <ug_bootloader_adding>` and the configuration of the bootloader.
-The |NCS| :ref:`build system <app_build_system>` can automatically handle building of the bootloader together with the application.
-The build system can also sign the application images and provide versioning information for the images.
-
-See the following sections for details related to application versioning for bootloaders supported in the |NCS|.
-
-.. _ug_fw_update_image_versions_b0:
-
-Configuring image version with |NSIB|
-=====================================
-
-You can set the image version for your application using the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` Kconfig option.
-This option can refer to two different things:
-
-* If NSIB directly boots your application image, the Kconfig option denotes the application image version.
-* If NSIB boots a secondary-stage bootloader, the Kconfig option denotes the version of the secondary-stage bootloader.
-  In such case, the application is booted by the secondary-state bootloader and the application image version is configured using the versioning scheme of the secondary-stage bootloader.
-  For example, if you opted for :ref:`ug_bootloader_adding_upgradable_mcuboot`, the application image versioning configuration is described in :ref:`ug_fw_update_image_versions_mcuboot`.
-
-.. _ug_fw_update_image_versions_mcuboot:
-
-Configuring image version with MCUboot
-======================================
-
-To assign a semantic version number to your application when you have opted for booting application directly by the MCUboot bootloader (that is, if you have opted for either :ref:`ug_bootloader_adding_immutable_mcuboot` or :ref:`ug_bootloader_adding_upgradable_mcuboot`), add the version string to the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` option for the application:
-
-.. code-block:: console
-
-   CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="0.1.2+3"
-
-See the `Semantic versioning`_ webpage or :doc:`mcuboot:imgtool` for details on version syntax.
-
-.. _ug_fw_update_image_versions_mcuboot_downgrade:
-.. _ug_fw_update_downgrade_protection:
-
-Downgrade protection
-********************
-
-The downgrade protection feature blocks downgrading the firmware version on the device.
-This can be useful for security reasons, because firmware downgrade can allow attackers to bring back security vulnerabilities that were fixed by a particular firmware update.
-
-As part of this process, the bootloader compares the new firmware image version with the version of the currently booted firmware.
-The bootloader rejects the update if the new image version is lower than the version of the currently booted firmware.
-
-The implementation is related to the :ref:`ug_fw_update_image_versions` and also depends on the type of bootloader used:
-
-* Software-based downgrade protection is supported only by MCUboot.
-  In this kind of protection, the current firmware version is encoded into the currently active image.
-* Hardware-based downgrade protection is supported by both MCUboot and |NSIB|.
-  In this kind of protection, the current version is encoded into a non-volatile storage partition outside of any image.
-
-.. _ug_fw_update_downgrade_protection_sw:
-
-Software-based downgrade protection
-===================================
-
-The |NCS| supports MCUboot's software-based downgrade prevention for application images, using semantic versioning.
-This feature offers protection against any outdated firmware that is uploaded to a device.
-
-To enable this feature, set the MCUboot-specific configuration options ``CONFIG_MCUBOOT_DOWNGRADE_PREVENTION`` and ``CONFIG_BOOT_UPGRADE_ONLY`` for the MCUboot image.
-
-.. caution::
-
-   Enabling ``CONFIG_BOOT_UPGRADE_ONLY`` prevents the fallback recovery of application images.
-   Consult its Kconfig description and the :doc:`MCUboot Design documentation <mcuboot:design>` for more information on how to use it.
-
-You can compile your application with this feature as follows:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b *board* *application* -- \\
-   -DCONFIG_BOOTLOADER_MCUBOOT=y \\
-   -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\\"0.1.2\\+3\\" \\
-   -Dmcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y \\
-   -Dmcuboot_CONFIG_BOOT_UPGRADE_ONLY=y
-
-|how_to_configure|
-
-After you upload a new image and reset the development kit, MCUboot attempts to boot the secondary image.
-If this image has, in order of precedence, a *major*, *minor*, or *revision* value that is lower than the primary application image, it is considered invalid and the existing primary application boots instead.
-
-.. note::
-
-   The optional label or build number specified after the ``+`` character is ignored when evaluating the version.
-   For example, an existing application image with version ``0.1.2+3`` can be overwritten by an uploaded image with ``0.1.2+2``, but not by one with ``0.1.1+2``.
-
-.. _ug_fw_update_downgrade_protection_hw:
-.. _bootloader_monotonic_counter:
-
-Hardware-based downgrade protection
-===================================
-
-.. bootloader_monotonic_counter_start
-
-You can implement hardware-based downgrade protection using a non-volatile monotonic counter.
-
-Counter updates are written to slots in the *Provision* area, with each new counter update occupying a new slot.
-For this reason, the number of counter updates, and therefore firmware version updates, is limited.
-The *Provision* is a partition in non-volatile memory, and its location can be found using :ref:`pm_generated_output_and_usage_pm_report`.
-
-Using a counter is optional and can be configured for the application using configuration options.
-You can also configure the supported number of updates, but the number is limited by the size of the *Provision* area and how much of that area is taken up by other features, like public key hashes.
-In addition, you can configure what firmware version of the image you want to boot.
-
-.. bootloader_monotonic_counter_end
-
-.. _ug_fw_update_hw_downgrade_nsib:
-
-Downgrade protection using |NSIB|
-=================================
-
-.. bootloader_monotonic_counter_nsib_start
-
-To enable anti-rollback protection with monotonic counter for |NSIB|, set the following configurations in the application (parent image):
-
-* :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER`
-* :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`
-
-Special handling is needed when updating the S1 variant of an image when :ref:`ug_bootloader_adding_upgradable`.
-See :ref:`ug_bootloader_adding_presigned_variants` for details.
-
-.. bootloader_monotonic_counter_nsib_end
-
-To set options for child images, see the :ref:`ug_multi_image_variables` section.
-
-.. _ug_fw_update_hw_downgrade_mcuboot:
-
-Downgrade protection using MCUboot
-==================================
-
-To enable anti-rollback protection with monotonic counter for MCUboot, set the following configurations in the application (parent image):
-
-* :kconfig:option:`CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`
-* :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS`
-* :kconfig:option:`CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`
-
-To set options for child images, see the :ref:`ug_multi_image_variables` section.
-
-.. _ug_fw_mcuboot_output:
-
-MCUboot output build files
-**************************
-
-Read the :ref:`app_build_mcuboot_output` page for the list of all the FOTA upgrade files that are automatically generated when using MCUboot.

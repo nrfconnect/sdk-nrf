@@ -24,7 +24,7 @@ All of them have a role in the creation of an application, from configuring the 
 Read the guides in this section to learn how to use these tools and configuration methods in areas valid for :ref:`all supported boards <app_boards>`.
 Depending on the board you are working with, check also its :ref:`hardware guide <device_guides>`, as some nRF Series families have specific exceptions and rules to be applied on top of the general configuration procedures.
 
-Make sure to consider :ref:`app_bootloaders` already at this stage of the application development.
+Make sure to consider :ref:`app_bootloaders` and :ref:`app_dfu` already at this stage of the application development.
 
 .. toctree::
    :maxdepth: 1
@@ -33,9 +33,10 @@ Make sure to consider :ref:`app_bootloaders` already at this stage of the applic
    config_and_build/config_and_build_system
    config_and_build/board_support
    config_and_build/pin_control
+   config_and_build/use_gpio_pin_directly
    config_and_build/programming
    config_and_build/output_build_files
    config_and_build/modifying
    config_and_build/multi_image
-   config_and_build/bootloaders_and_dfu/index
-   config_and_build/use_gpio_pin_directly
+   config_and_build/bootloaders/index
+   config_and_build/dfu/index
