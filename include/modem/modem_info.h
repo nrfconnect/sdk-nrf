@@ -161,6 +161,25 @@ int modem_info_params_init(struct modem_param_info *modem_param);
  */
 int modem_info_rsrp_register(rsrp_cb_t cb);
 
+/**
+ * @brief Initialize collection of connectivity stats
+ *
+ * @note The function will reset stats if connectivity stats
+ *       are already initialized/enabled.
+ *
+ * @return 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int modem_info_connectivity_stats_init(void);
+
+/**
+ * @brief Disable collection of connectivity stats
+ *
+ * @return 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int modem_info_connectivity_stats_disable(void);
+
 /** @brief Request the current modem status of any predefined
  *         information value as a string.
  *
@@ -319,6 +338,19 @@ int modem_info_get_temperature(int *val);
  *         Otherwise, a (negative) error code is returned.
  */
 int modem_info_get_rsrp(int *val);
+
+/**
+ * @brief Obtain the connectivity statistics.
+ *
+ * @note Will return bytes = 0 until connectivity stats collection
+ * has been enabled via AT%XCONNSTAT=1
+ *
+ * @param tx_kbytes total amount of data (in kilobytes) transmitted during the collection period
+ * @param rx_kbytes total amount of data (in kilobytes) received during the collection period
+ *
+ * @return 0 if operation was successful
+ */
+int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes);
 
 /** @} */
 

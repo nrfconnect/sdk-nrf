@@ -43,6 +43,9 @@ LOG_MODULE_REGISTER(modem_info);
 #define AT_CMD_IMSI		"AT+CIMI"
 #define AT_CMD_IMEI		"AT+CGSN"
 #define AT_CMD_DATE_TIME	"AT+CCLK?"
+#define AT_CMD_XCONNSTAT	"AT%XCONNSTAT?"
+#define AT_CMD_XCONNSTAT_ON	"AT%%XCONNSTAT=1"
+#define AT_CMD_XCONNSTAT_OFF	"AT%%XCONNSTAT=0"
 #define AT_CMD_SUCCESS_SIZE	5
 
 #define RSRP_DATA_NAME		"rsrp"
@@ -750,6 +753,30 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 	return 0;
 }
 
+int modem_info_connectivity_stats_init(void)
+{
+	int err = nrf_modem_at_printf(AT_CMD_XCONNSTAT_ON);
+
+	if (err != 0) {
+		if (err > 0) {
+			err = nrf_modem_at_err_type(err);
+		}
+	}
+	return err;
+}
+
+int modem_info_connectivity_stats_disable(void)
+{
+	int err = nrf_modem_at_printf(AT_CMD_XCONNSTAT_OFF);
+
+	if (err != 0) {
+		if (err > 0) {
+			err = nrf_modem_at_err_type(err);
+		}
+	}
+	return err;
+}
+
 int modem_info_get_fw_uuid(char *buf, size_t buf_size)
 {
 	int ret;
@@ -885,6 +912,22 @@ int modem_info_get_rsrp(int *val)
 	}
 
 	*val = *val - RSRP_OFFSET_VAL;
+	return 0;
+}
+
+int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes)
+{
+	if (tx_kbytes == NULL || rx_kbytes == NULL) {
+		return -EINVAL;
+	}
+
+	int ret = nrf_modem_at_scanf(AT_CMD_XCONNSTAT, "%%XCONNSTAT: %*d,%*d,%d,%d,%*d,%*d",
+				     tx_kbytes, rx_kbytes);
+
+	if (ret != 2) {
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
 	return 0;
 }
 

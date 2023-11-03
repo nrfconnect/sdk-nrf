@@ -12,6 +12,7 @@
 
 #if defined(CONFIG_MODEM_INFO)
 #include <modem/modem_info.h>
+#include <nrf_modem_at.h>
 #endif
 
 #include <memfault/metrics/metrics.h>
@@ -74,6 +75,26 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			LOG_ERR("Failed to set Ncs_LteRsrp");
 		}
   };
+
+  // Get connectivity stats (data tx and rx)
+  int tx_kbytes;
+  int rx_kybtes;
+  err = modem_info_get_connectivity_stats(&tx_kbytes, &rx_kybtes);
+  if (err) {
+		LOG_WRN("LTE connectivity stats collections failed, error: %d", err);
+  } else {
+		err = memfault_metrics_heartbeat_set_unsigned(
+			MEMFAULT_METRICS_KEY(ncs_lte_tx_kilobytes), tx_kbytes);
+		if (err) {
+			LOG_ERR("Failed to set ncs_lte_tx_kilobytes");
+		}
+
+		err = memfault_metrics_heartbeat_set_unsigned(
+			MEMFAULT_METRICS_KEY(ncs_lte_rx_kilobytes), rx_kybtes);
+		if (err) {
+			LOG_ERR("Failed to set ncs_lte_rx_kilobytes");
+		}
+  }
 
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:
@@ -187,15 +208,48 @@ void memfault_lte_metrics_init(void)
 	buf[sizeof(buf) - 1] = '\0';
 
 	memfault_metrics_heartbeat_set_string(MEMFAULT_METRICS_KEY(Ncs_LteModemFwVersion), buf);
+
+	int err = modem_info_connectivity_stats_init();
+	if (err) {
+		LOG_ERR("Failed to init connectivity stats, err: %d", err);
+	}
 #endif
 
 #if CONFIG_MEMFAULT_NCS_STACK_METRICS
-	int err;
-
 	err = memfault_ncs_metrics_thread_add(&lte_metrics_thread);
 	if (err) {
 		LOG_WRN("Failed to add thread: %s for stack unused space measurement, err: %d",
 			lte_metrics_thread.thread_name, err);
 	}
 #endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */
+}
+
+void memfault_lte_metrics_update(void)
+{
+#if defined(CONFIG_MODEM_INFO)
+	int tx_kbytes;
+	int rx_kybtes;
+	int err = modem_info_get_connectivity_stats(&tx_kbytes, &rx_kybtes);
+	if (err) {
+		LOG_WRN("LTE connectivity stats collections failed, error: %d", err);
+	} else {
+		err = memfault_metrics_heartbeat_set_unsigned(
+			MEMFAULT_METRICS_KEY(ncs_lte_tx_kilobytes), tx_kbytes);
+		if (err) {
+			LOG_ERR("Failed to set ncs_lte_tx_kilobytes");
+		}
+
+		err = memfault_metrics_heartbeat_set_unsigned(
+			MEMFAULT_METRICS_KEY(ncs_lte_rx_kilobytes), rx_kybtes);
+		if (err) {
+			LOG_ERR("Failed to set ncs_lte_rx_kilobytes");
+		}
+	}
+
+	// Reset stats
+	err = modem_info_connectivity_stats_init();
+	if (err) {
+		LOG_ERR("Failed to reset connectivity stats, err: %d", err);
+	}
+#endif
 }
