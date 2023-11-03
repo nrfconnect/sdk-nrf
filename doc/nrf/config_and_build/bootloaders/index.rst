@@ -1,26 +1,22 @@
 .. _app_bootloaders:
 
-Bootloaders and Device Firmware Updates
-#######################################
+Bootloaders
+###########
 
 .. contents::
    :local:
    :depth: 2
 
+The bootloader is a firmware image that is responsible for booting the application.
+The bootloader chooses an application firmware image to boot and verifies it to ensure validity.
+The image validation can be used to ensure :ref:`chain of trust <ug_bootloader_chain_of_trust>`.
+
+Using a bootloader is closely related to :ref:`device firmware update (DFU) <app_dfu>`.
+
 There are two types of bootloaders used by the |NCS|:
 
-* :ref:`Immutable first-stage bootloaders <immutable_bootloader>` that cannot be upgraded through device firmware update (DFU) and run after each reset.
+* :ref:`Immutable first-stage bootloaders <immutable_bootloader>` that cannot be upgraded through DFU and run after each reset.
 * :ref:`Upgradable second-stage bootloaders <upgradable_bootloader>` that can perform DFU to both themselves and the application, and are booted by the first-stage bootloader.
-
-The bootloaders support two types of updates:
-
-* Direct updates, where an in-place substitution of the image takes place.
-* Background updates, where the updated image is obtained and stored, but the update is completed later on.
-
-You can deliver the updated images to the device in two ways:
-
-* Wired, where updates are sent through a wired connection, like UART, or delivered by connecting a flash device.
-* Over-the-air (OTA), where updates are sent through a wireless connection, like Bluetooth® Low Energy.
 
 You can use a second-stage bootloader only in combination with a first-stage one.
 Also, not all bootloaders supported by the |NCS| can be used as either first-stage or second-stage ones.
@@ -72,4 +68,5 @@ See the following user guides to learn more:
    bootloader_testing
    bootloader_external_flash
    bootloader_config
-   fw_update
+   bootloader_signature_keys
+   bootloader_downgrade_protection

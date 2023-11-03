@@ -2527,7 +2527,7 @@ Missing :file:`CMakeLists.txt`
 Bootloader
 ==========
 
-The issues in this section are related to :ref:`Bootloaders <app_bootloaders>`.
+The issues in this section are related to :ref:`app_bootloaders`.
 
 .. rst-class:: v2-5-0
 
@@ -2611,7 +2611,7 @@ NRF91-989: Unable to bootstrap after changing SIMs
 DFU and FOTA
 ============
 
-The issues in this section are related to :ref:`Device Firmware Updates <app_bootloaders>`.
+The issues in this section are related to :ref:`app_dfu`.
 
 .. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0
 
