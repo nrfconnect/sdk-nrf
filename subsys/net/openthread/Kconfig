@@ -35,8 +35,6 @@ config OPENTHREAD_NRF_SECURITY_PSA
 	select NRF_SECURITY
 	select MBEDTLS_ENABLE_HEAP
 	select MBEDTLS_TLS_LIBRARY if (OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
-	select MBEDTLS_PSA_CRYPTO_STORAGE_C if !BUILD_WITH_TFM
-	select PSA_NATIVE_ITS if !BUILD_WITH_TFM
 	select PSA_WANT_ALG_HKDF
 	select PSA_WANT_ALG_CCM
 	select PSA_WANT_ALG_CMAC
@@ -57,6 +55,14 @@ config OPENTHREAD_NRF_SECURITY_PSA
 	  Enables nrf_security module for use by OpenThread with PSA Crypto enabled.
 	  This allows OpenThread to make use of hardware accelerated cryptography
 	  functions if available as well as fast oberon backend for software encryption.
+
+config OPENTHREAD_NRF_SECURITY_PSA
+	bool
+	select MBEDTLS_PSA_CRYPTO_STORAGE_C
+	select SECURE_STORAGE
+# SECURE_STORAGE requires Settings
+	select SETTINGS
+	depends on !BUILD_WITH_TFM
 
 config OPENTHREAD_NRF_SECURITY
 	bool
