@@ -117,7 +117,7 @@ endchoice # SECURE_STORAGE_BACKEND_AEAD_NONCE
 
 choice SECURE_STORAGE_BACKEND_AEAD_KEY
 	prompt "AEAD Key implementation"
-	default SECURE_STORAGE_AEAD_BACKEND_KEY_HASH_UID
+	default SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
 	help
 	  Implementation to provide the AEAD keys.
 
@@ -128,6 +128,15 @@ config SECURE_STORAGE_BACKEND_AEAD_KEY_HASH_UID
 	  Use SHA-256 hash of UID as key, this option does not provide a very high
 	  level of security and therefor is not recommended and should only be used
 	  if it is impossible to use the HUK.
+
+config SECURE_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+	bool "HUK + UID"
+	select HW_UNIQUE_KEY
+	select HW_UNIQUE_KEY_RANDOM
+	select PM_SINGLE_IMAGE
+	help
+	  Use the Hardware Unique Key (HUK) with the UID as label to derive a
+	  new key.
 
 config SECURE_STORAGE_AEAD_BACKEND_KEY_CUSTOM
 	bool "Custom"
