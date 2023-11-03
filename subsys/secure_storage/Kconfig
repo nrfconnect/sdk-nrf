@@ -1,0 +1,157 @@
+#
+# Copyright (c) 2018 - 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Secure storage subsystem configuration options
+
+menuconfig SECURE_STORAGE
+	bool "Secure Storage"
+	depends on !BUILD_WITH_TFM
+	help
+	  The secure storage subsystem allows its users to store in a secure
+	  way data ensuring data integrity and confidentially by using AEAD
+	  algorithms. It supports several secure implementation back-ends to
+	  provide various levels of trust depending on the device security
+	  features.
+
+if SECURE_STORAGE
+module = SECURE_STORAGE
+module-str = secure_storage
+source "subsys/logging/Kconfig.template.log_config"
+
+
+menuconfig PSA_PROTECTED_STORAGE
+	bool "Protected Storage"
+	help
+	  The Protected Storage is designed to store critical assets.
+	  It supports several storage back-ends and several secure
+	  implementation back-ends to provide various levels of trust.
+
+if PSA_PROTECTED_STORAGE
+
+config PSA_PROTECTED_STORAGE_PREFIX
+	string "Protected Storage object prefix"
+	default "ps"
+	help
+	  This defines the prefix for Protected Storage object names.
+
+endif # PSA_PROTECTED_STORAGE
+
+menuconfig PSA_INTERNAL_TRUSTED_STORAGE
+	bool "Internal Trusted Storage"
+	default y
+	help
+	  The Internal Trusted Storage is designed to store critcal assets that
+	  must be placed inside internal flash. Some examples of assets that
+	  require this are replay protection values for external storage and
+	  keys for use by components of the PSA Root of Trust.
+
+if PSA_INTERNAL_TRUSTED_STORAGE
+
+config PSA_INTERNAL_TRUSTED_STORAGE_PREFIX
+	string "Internal Trusted Storage object prefix"
+	depends on PSA_INTERNAL_TRUSTED_STORAGE
+	default "its"
+	help
+	  This defines the prefix for Internal Trusted Storage object names.
+
+endif # PSA_INTERNAL_TRUSTED_STORAGE
+
+choice SECURE_STORAGE_BACKEND
+	prompt "Secure storage backend"
+	default SECURE_STORAGE_BACKEND_AEAD
+	help
+	  The backend that handles encryption, authentication or other means of
+	  validation of the stored assets.
+
+menuconfig SECURE_STORAGE_BACKEND_AEAD
+	bool "Use AEAD scheme"
+	help
+	  Use an AEAD scheme to encrypt the asset data and authenticate its
+	  data including the meta data.
+
+if SECURE_STORAGE_BACKEND_AEAD
+
+config SECURE_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
+	int "AEAD backend maximum storage size"
+	default 256
+	help
+	  This defines the maximum data size that can be stored.
+
+choice SECURE_STORAGE_AEAD_BACKEND_CRYPTO
+	prompt "AEAD algorithm crypto backend"
+	default SECURE_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
+	help
+	  Decides which implementation to be used to perform the AEAD crypto
+	  operations.
+
+config SECURE_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY
+	bool "PSA ChaChaPoly"
+	select PSA_WANT_ALG_CHACHA20_POLY1305
+	help
+	  Use PSA Crypto API's with the ChaChaPoly-1305 AEAD algorithm.
+
+endchoice # SECURE_STORAGE_AEAD_BACKEND_CRYPTO
+
+choice SECURE_STORAGE_BACKEND_AEAD_NONCE
+	prompt "AEAD nonce implementation"
+	default SECURE_STORAGE_BACKEND_AEAD_NONCE_PSA_SEED_COUNTER
+	help
+	  Implementation to provide a AEAD nonce.
+
+config SECURE_STORAGE_BACKEND_AEAD_NONCE_PSA_SEED_COUNTER
+	bool "PSA Nonce Seed + Counter"
+	select PSA_WANT_GENERATE_RANDOM
+	help
+	  Use PSA Crypto for Nonce initial random seed, then incrementing
+	  nonce for each AEAD encryption.
+
+config SECURE_STORAGE_BACKEND_AEAD_NONCE_CUSTOM
+	bool "Custom"
+	help
+	  Use custom implementation for AEAD Nonce provider.
+
+endchoice # SECURE_STORAGE_BACKEND_AEAD_NONCE
+
+choice SECURE_STORAGE_BACKEND_AEAD_KEY
+	prompt "AEAD Key implementation"
+	default SECURE_STORAGE_AEAD_BACKEND_KEY_HASH_UID
+	help
+	  Implementation to provide the AEAD keys.
+
+config SECURE_STORAGE_BACKEND_AEAD_KEY_HASH_UID
+	bool "Hash of UID"
+	select PSA_WANT_ALG_SHA_256
+	help
+	  Use SHA-256 hash of UID as key, this option does not provide a very high
+	  level of security and therefor is not recommended and should only be used
+	  if it is impossible to use the HUK.
+
+config SECURE_STORAGE_AEAD_BACKEND_KEY_CUSTOM
+	bool "Custom"
+	help
+	  Use custom implementation for AEAD key provider.
+
+endchoice # SECURE_STORAGE_BACKEND_AEAD_KEY
+
+endif # SECURE_STORAGE_BACKEND_AEAD
+
+endchoice # SECURE_STORAGE_BACKEND
+
+choice SECURE_STORAGE_STORAGE_BACKEND
+	prompt "Storage backend"
+	default SECURE_STORAGE_STORAGE_BACKEND_SETTINGS
+	help
+	  Implementation used to store the assets
+
+config SECURE_STORAGE_STORAGE_BACKEND_SETTINGS
+	bool "Settings storage backend"
+	depends on SETTINGS
+	help
+	  Use the Settings subsystem to store the assets
+
+endchoice # CONFIG_SECURE_STORAGE_STORAGE_BACKEND
+
+endif # SECURE_STORAGE
