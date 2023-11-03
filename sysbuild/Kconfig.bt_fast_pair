@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR
+	bool "Bluetooth Fast Pair support"
+	help
+	  Enable this option to generate a Fast Pair provisioning data hex file and enable
+	  Bluetooth Fast Pair support in the main image. Note that `FP_MODEL_ID` and
+	  `FP_ANTI_SPOOFING_KEY` variables must be supplied when configuring the application
+	  for this functionality to be available.

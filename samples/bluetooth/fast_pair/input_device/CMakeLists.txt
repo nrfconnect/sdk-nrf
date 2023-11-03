@@ -5,8 +5,7 @@
 #
 cmake_minimum_required(VERSION 3.20.0)
 
-
-if(NOT DEFINED FP_MODEL_ID AND NOT DEFINED FP_ANTI_SPOOFING_KEY)
+if(NOT DEFINED FP_MODEL_ID AND NOT DEFINED FP_ANTI_SPOOFING_KEY AND NOT SYSBUILD)
   message(WARNING "
   -------------------------------------------------------
   --- WARNING: Using demo Fast Pair Model ID and Fast ---
