@@ -35,6 +35,10 @@ endif()
 
 file(GLOB_RECURSE  edge_impulse_all_headers "${EDGE_IMPULSE_SOURCE_DIR}/*.h")
 
+if(SYSBUILD)
+  zephyr_get(EI_API_KEY_HEADER SYSBUILD GLOBAL)
+endif()
+
 include(ExternalProject)
 ExternalProject_Add(edge_impulse_project
     URL              ${EI_URI}
