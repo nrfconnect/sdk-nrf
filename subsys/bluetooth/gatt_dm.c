@@ -13,7 +13,7 @@
 LOG_MODULE_REGISTER(bt_gatt_dm, CONFIG_BT_GATT_DM_LOG_LEVEL);
 
 /* Available sizes: 128, 512, 2048... */
-#define CHUNK_DATA_SIZE (128 - sizeof(struct k_mem_block_id) \
+#define CHUNK_DATA_SIZE (128 - sizeof(struct k_heap *) \
 		- sizeof(struct data_chunk_item *))
 
 #define DATA_ALIGN 4U
