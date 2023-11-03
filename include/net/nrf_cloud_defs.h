@@ -7,7 +7,7 @@
 #ifndef NRF_CLOUD_DEFS_H__
 #define NRF_CLOUD_DEFS_H__
 
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 
 /** @defgroup nrf_cloud_defs nRF Cloud common defines
  * @{

@@ -11,7 +11,7 @@
 #ifndef _USB_EVENT_H_
 #define _USB_EVENT_H_
 
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>

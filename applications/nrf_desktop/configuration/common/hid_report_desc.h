@@ -13,7 +13,7 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <zephyr/sys/util.h>
 
 #include "hid_report_mouse.h"
