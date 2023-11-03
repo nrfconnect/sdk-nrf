@@ -8,7 +8,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include "common.h"
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/drivers/entropy.h>
 

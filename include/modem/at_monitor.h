@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/util_macro.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 
 #ifdef __cplusplus
 extern "C" {

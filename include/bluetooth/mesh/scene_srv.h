@@ -16,7 +16,7 @@
 
 #include <bluetooth/mesh/scene.h>
 #include <zephyr/settings/settings.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <zephyr/sys/slist.h>
 
 #ifdef __cplusplus

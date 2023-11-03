@@ -7,7 +7,7 @@
 #ifndef __FOO_H
 #define __FOO_H
 
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 
 int foo_init(void *handle);
 
