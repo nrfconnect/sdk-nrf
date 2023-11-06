@@ -81,6 +81,7 @@ int gpio_request_irq(int pin, struct gpio_callback *button_cb_data, void (*irq_h
 struct qspi_config *qspi_defconfig(void);
 
 struct qspi_dev *qspi_dev(void);
+struct qspi_config *qspi_get_config(void);
 
 int qspi_cmd_sleep_rpu(const struct device *dev);
 
