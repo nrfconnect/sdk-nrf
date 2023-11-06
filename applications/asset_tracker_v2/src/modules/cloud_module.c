@@ -13,6 +13,7 @@
 #include <qos.h>
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
+#include <modem/modem_info.h>
 #include <net/nrf_cloud_agnss.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
@@ -86,7 +87,7 @@ struct cloud_backoff_delay_lookup {
 
 /* Lookup table for backoff reconnection to cloud. Binary scaling. */
 static struct cloud_backoff_delay_lookup backoff_delay[] = {
-	{ 32 }, { 64 }, { 128 }, { 256 }, { 512 },
+	{ 32 }, { 64 }, { 128 }, { 256 }, { 512 }, { 1024 },
 	{ 2048 }, { 4096 }, { 8192 }, { 16384 }, { 32768 },
 	{ 65536 }, { 131072 }, { 262144 }, { 524288 }, { 1048576 }
 };
@@ -111,6 +112,16 @@ enum {
 	CONFIG,
 	MEMFAULT,
 };
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+/* Whether `agnss_request_buffer` has A-GNSS request buffered for sending when connection to
+ * cloud has been re-established.
+ */
+static bool agnss_request_buffered;
+
+/* Buffered A-GNSS request. */
+static struct nrf_modem_gnss_agnss_data_frame agnss_request_buffer;
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 /* Cloud module message queue. */
 #define CLOUD_QUEUE_ENTRY_COUNT		20
@@ -187,6 +198,154 @@ static void sub_state_set(enum sub_state_type new_state)
 
 	sub_state = new_state;
 }
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+static int get_modem_info(struct modem_param_info *const modem_info)
+{
+	__ASSERT_NO_MSG(modem_info != NULL);
+
+	int err = modem_info_init();
+
+	if (err) {
+		LOG_ERR("Could not initialize modem info module, error: %d", err);
+		return err;
+	}
+
+	err = modem_info_params_init(modem_info);
+	if (err) {
+		LOG_ERR("Could not initialize modem info parameters, error: %d", err);
+		return err;
+	}
+
+	err = modem_info_params_get(modem_info);
+	if (err) {
+		LOG_ERR("Could not obtain cell information, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static int agnss_request_encode(struct nrf_modem_gnss_agnss_data_frame *incoming_request)
+{
+	int err;
+	struct cloud_codec_data output = {0};
+	static struct modem_param_info modem_info = {0};
+	static struct cloud_data_agnss_request cloud_agnss_request = {0};
+
+	err = get_modem_info(&modem_info);
+	if (err) {
+		return err;
+	}
+
+	if (incoming_request == NULL) {
+		const uint32_t mask = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0u : 0xFFFFFFFFu;
+
+		LOG_DBG("Requesting all A-GNSS elements");
+		cloud_agnss_request.request.data_flags =
+					NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
+					NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |
+					NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
+					NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST |
+					NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
+					NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
+		cloud_agnss_request.request.system_count = 1;
+		cloud_agnss_request.request.system[0].sv_mask_ephe = mask;
+		cloud_agnss_request.request.system[0].sv_mask_alm = mask;
+	} else {
+		cloud_agnss_request.request = *incoming_request;
+	}
+
+	cloud_agnss_request.mcc = modem_info.network.mcc.value;
+	cloud_agnss_request.mnc = modem_info.network.mnc.value;
+	cloud_agnss_request.cell = modem_info.network.cellid_dec;
+	cloud_agnss_request.area = modem_info.network.area_code.value;
+	cloud_agnss_request.queued = true;
+
+	err = cloud_codec_encode_agnss_request(&output, &cloud_agnss_request);
+	switch (err) {
+	case 0:
+		LOG_DBG("A-GNSS request encoded successfully");
+
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+			err = cloud_wrap_agnss_request_send(NULL, 0, true, 0);
+			if (err) {
+				LOG_ERR("cloud_wrap_agnss_request_send, err: %d", err);
+			}
+
+			return err;
+		}
+
+		add_qos_message(output.buf,
+				output.len,
+				AGNSS_REQUEST,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
+		break;
+	case -ENOTSUP:
+		LOG_ERR("Encoding of A-GNSS requests are not supported by the configured codec");
+		break;
+	case -ENODATA:
+		LOG_DBG("No A-GNSS request data to encode, error: %d", err);
+		break;
+	default:
+		LOG_ERR("Error encoding A-GNSS request: %d", err);
+		SEND_ERROR(data, CLOUD_EVT_ERROR, err);
+		break;
+	}
+
+	return err;
+}
+#endif /* CONFIG_NRF_CLOUD_AGNSS && !CONFIG_NRF_CLOUD_MQTT */
+
+#if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+static int pgps_request_encode(struct gps_pgps_request *incoming_request)
+{
+	/* Encode and send P-GPS request to cloud. */
+	int err;
+	struct cloud_codec_data output = {0};
+	struct cloud_data_pgps_request request = {
+		.count = incoming_request->prediction_count,
+		.interval = incoming_request->prediction_period_min,
+		.day = incoming_request->gps_day,
+		.time = incoming_request->gps_time_of_day,
+		.queued = true,
+	};
+
+	err = cloud_codec_encode_pgps_request(&output, &request);
+	switch (err) {
+	case 0:
+		LOG_DBG("P-GPS request encoded successfully");
+
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+			err = cloud_wrap_pgps_request_send(NULL, 0, true, 0);
+			if (err) {
+				LOG_ERR("cloud_wrap_pgps_request_send, err: %d", err);
+			}
+
+			return err;
+		}
+
+		add_qos_message(output.buf,
+				output.len,
+				PGPS_REQUEST,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
+		break;
+	case -ENOTSUP:
+		LOG_DBG("P-GPS request encoding is not supported, error: %d", err);
+		break;
+	case -ENODATA:
+		LOG_DBG("No P-GPS data to encode, error: %d", err);
+		break;
+	default:
+		LOG_ERR("Error encoding P-GPS request: %d", err);
+		SEND_ERROR(data, CLOUD_EVT_ERROR, err);
+	}
+
+	return err;
+}
+#endif /* CONFIG_NRF_CLOUD_PGPS && !CONFIG_NRF_CLOUD_MQTT */
 
 /* Handlers */
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -290,38 +449,87 @@ static void config_data_handle(uint8_t *buf, const size_t len)
 	}
 }
 
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+/**
+ * @brief Requests A-GNSS data upon receiving a request from the location module.
+ *
+ * @param[in] incoming_request Pointer to a structure containing A-GNSS data types that has been
+ *                             requested by the modem.
+ */
+static void agnss_request_handle(struct nrf_modem_gnss_agnss_data_frame *incoming_request)
+{
+	int err;
+
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	/* If CONFIG_NRF_CLOUD_MQTT is enabled, the nRF Cloud MQTT transport is used to send
+	 * the request.
+	 */
+	err = nrf_cloud_agnss_request(incoming_request);
+	if (err) {
+		LOG_WRN("Failed to request A-GNSS data, error: %d", err);
+		LOG_DBG("This is expected to fail if we are not in a connected state");
+	} else {
+		if (nrf_cloud_agnss_request_in_progress()) {
+			LOG_DBG("A-GNSS request sent");
+		} else {
+			LOG_DBG("No A-GNSS data requested");
+		}
+	}
+#else /* !CONFIG_NRF_CLOUD_MQTT */
+	/* If the nRF Cloud MQTT transport is not enabled, encode the A-GNSS request and send it
+	 * to the cloud.
+	 */
+	err = agnss_request_encode(incoming_request);
+	if (err) {
+		LOG_WRN("Failed to request A-GNSS data, error: %d", err);
+	} else {
+		LOG_DBG("A-GNSS request sent");
+	}
+#endif /* !CONFIG_NRF_CLOUD_MQTT */
+
+	(void)err;
+}
+#endif /* CONFIG_NRF_CLOUD_AGNSS */
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+/**
+ * @brief Requests P-GPS data upon receiving a request from the location module.
+ *
+ * When nRF Cloud MQTT transport is used, the nRF Cloud P-GPS library handles the P-GPS data
+ * download.
+ *
+ * @param[in] incoming_request Pointer to a structure containing the P-GPS data request.
+ */
+static void pgps_request_handle(struct gps_pgps_request *incoming_request)
+{
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
+	int err;
+
+	/* nRF Cloud MQTT transport is not enabled, encode the P-GPS request and send it
+	 * to the cloud.
+	 */
+	err = pgps_request_encode(incoming_request);
+	if (err) {
+		LOG_WRN("Failed to request P-GPS data, error: %d", err);
+	} else {
+		LOG_DBG("P-GPS request sent");
+	}
+#endif /* !CONFIG_NRF_CLOUD_MQTT */
+}
+#endif /* CONFIG_NRF_CLOUD_PGPS */
+
 static void agnss_data_handle(const uint8_t *buf, const size_t len)
 {
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
-	int err = nrf_cloud_agnss_process(buf, len);
-
-	if (err) {
-		LOG_ERR("Unable to process A-GNSS data, error: %d", err);
-		return;
-	}
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	err = nrf_cloud_pgps_notify_prediction();
-	if (err) {
-		LOG_ERR("Error requesting prediction notification: %d", err);
-		return;
-	}
-#endif /* CONFIG_NRF_CLOUD_PGPS */
-#endif /* CONFIG_NRF_CLOUD_AGNSS */
+	(void)location_agnss_data_process(buf, len);
+#endif
 }
 
 static void pgps_data_handle(const uint8_t *buf, const size_t len)
 {
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-#if !defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM)
-	int err = nrf_cloud_pgps_process(buf, len);
-
-	if (err) {
-		LOG_ERR("Unable to process P-GPS data, error: %d", err);
-		return;
-	}
-
-#endif /* CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM */
-#endif /* CONFIG_NRF_CLOUD_PGPS */
+#if defined(CONFIG_NRF_CLOUD_PGPS) && !defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM)
+	(void)location_pgps_data_process(buf, len);
+#endif
 }
 
 #if defined(CONFIG_LOCATION)
@@ -704,6 +912,15 @@ static void on_state_lte_disconnected(struct cloud_msg_data *msg)
 		/* LTE is now connected, cloud connection can be attempted */
 		connect_cloud();
 	}
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGNSS_NEEDED)) {
+		LOG_DBG("A-GNSS request buffered");
+		agnss_request_buffered = true;
+		agnss_request_buffer = msg->module.location.data.agnss_request;
+		return;
+	}
+#endif
 }
 
 /* Message handler for SUB_STATE_CLOUD_CONNECTED. */
@@ -739,27 +956,6 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 		add_qos_message(msg->module.debug.data.memfault.buf,
 				msg->module.debug.data.memfault.len,
 				MEMFAULT,
-				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-				true);
-	}
-
-	if (IS_EVENT(msg, data, DATA_EVT_AGNSS_REQUEST_DATA_SEND)) {
-
-		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-			int err = cloud_wrap_agnss_request_send(NULL,
-								0,
-								true,
-								0);
-			if (err) {
-				LOG_ERR("cloud_wrap_agnss_request_send, err: %d", err);
-			}
-
-			return;
-		}
-
-		add_qos_message(msg->module.data.data.buffer.buf,
-				msg->module.data.data.buffer.len,
-				AGNSS_REQUEST,
 				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
 				true);
 	}
@@ -969,6 +1165,20 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			break;
 		}
 	}
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGNSS_NEEDED)) {
+		agnss_request_handle(&msg->module.location.data.agnss_request);
+		return;
+	}
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_PGPS_NEEDED)) {
+		pgps_request_handle(&msg->module.location.data.pgps_request);
+		return;
+	}
+#endif
 }
 
 /* Message handler for SUB_STATE_CLOUD_DISCONNECTED. */
@@ -979,6 +1189,14 @@ static void on_sub_state_cloud_disconnected(struct cloud_msg_data *msg)
 
 		connect_retries = 0;
 		k_work_cancel_delayable(&connect_check_work);
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+		if (agnss_request_buffered) {
+			LOG_DBG("Handle buffered A-GNSS request");
+			agnss_request_handle(&agnss_request_buffer);
+			agnss_request_buffered = false;
+		}
+#endif
 	}
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTION_TIMEOUT)) {
@@ -1023,6 +1241,15 @@ static void on_sub_state_cloud_disconnected(struct cloud_msg_data *msg)
 			break;
 		}
 	}
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS)
+	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_AGNSS_NEEDED)) {
+		LOG_DBG("A-GNSS request buffered");
+		agnss_request_buffered = true;
+		agnss_request_buffer = msg->module.location.data.agnss_request;
+		return;
+	}
+#endif
 }
 
 /* Message handler for all states. */
@@ -1047,56 +1274,6 @@ static void on_all_states(struct cloud_msg_data *msg)
 			break;
 		}
 	}
-
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	if (IS_EVENT(msg, location, LOCATION_MODULE_EVT_PGPS_NEEDED)) {
-		/* Encode and send P-GPS request to cloud. */
-		struct cloud_codec_data output = {0};
-		struct cloud_data_pgps_request request = {
-			.count = msg->module.location.data.pgps_request.prediction_count,
-			.interval = msg->module.location.data.pgps_request.prediction_period_min,
-			.day = msg->module.location.data.pgps_request.gps_day,
-			.time = msg->module.location.data.pgps_request.gps_time_of_day,
-			.queued = true,
-		};
-
-		int err = cloud_codec_encode_pgps_request(&output, &request);
-
-		switch (err) {
-		case 0:
-			LOG_DBG("P-GPS request encoded successfully");
-
-			if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
-				int err = cloud_wrap_pgps_request_send(NULL,
-								       0,
-								       true,
-								       0);
-				if (err) {
-					LOG_ERR("cloud_wrap_pgps_request_send, err: %d", err);
-				}
-
-				return;
-			}
-
-			add_qos_message(output.buf,
-					output.len,
-					PGPS_REQUEST,
-					QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-					true);
-			break;
-		case -ENOTSUP:
-			LOG_DBG("P-GPS request encoding is not supported, error: %d", err);
-			break;
-		case -ENODATA:
-			LOG_DBG("No P-GPS data to encode, error: %d", err);
-			break;
-		default:
-			LOG_ERR("Error encoding P-GPS request: %d", err);
-			SEND_ERROR(data, DATA_EVT_ERROR, err);
-			return;
-		}
-	}
-#endif
 }
 
 static void module_thread_fn(void)
