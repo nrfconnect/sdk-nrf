@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SAMPLE_RATE_CONVERTER
+	bool "Sample Rate conversion library [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select CMSIS_DSP
+	select TIMING_FUNCTIONS
+	help
+	  Enable the sample rate conversion library. The library uses CMSIS DSP filters to
+	  preserve quality during the conversion. Conversion between 16kHz, 24kHz and 48kHz
+	  frequencies are supported.
+
+if SAMPLE_RATE_CONVERTER
+
+module = SAMPLE_RATE_CONVERTER
+module-str = Sample Rate Converter
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config SAMPLE_RATE_CONVERTER_FILTER_TEST
+	bool "Include the test filters for the sample rate converter"
+	help
+	  Includes the test filters for the sample rate converter. These simple filters are
+	  intended to be used for unittests only, as they give predictable and easy to understand
+	  output.
+
+config SAMPLE_RATE_CONVERTER_MAX_FILTER_SIZE
+	int
+	default 3 if SAMPLE_RATE_CONVERTER_FILTER_TEST
+	help
+	  The maximum number of filter taps the sample rate converter supports.
+
+config SAMPLE_RATE_CONVERTER_BLOCK_SIZE_MAX
+	int "Number of samples per conversion call"
+	default 480
+	help
+	  Number of samples that will be input to the sample rate converter. Number of samples may
+	  be lower. Increasing this number will increase the memory usage of the converter.
+
+choice SAMPLE_RATE_CONVERTER_BIT_DEPTH
+	prompt "Sample rate converter bit depth"
+	default SAMPLE_RATE_CONVERTER_BIT_DEPTH_16
+	help
+	  Select bit depth for the sample rate converter
+
+config SAMPLE_RATE_CONVERTER_BIT_DEPTH_16
+	bool "16 bit sample rate converter"
+
+config SAMPLE_RATE_CONVERTER_BIT_DEPTH_32
+	bool "32 bit sample rate converter"
+endchoice
+
+endif #SAMPLE_RATE_CONVERTER

@@ -139,6 +139,7 @@ Kconfig*                                  @tejlmand
 /lib/data_fifo/                           @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/pcm_stream_channel_modifier/         @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/lib/sample_rate_converter/               @andvib @gWacey
 /lib/tone/                                @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /modules/                                 @tejlmand
 /modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
@@ -296,6 +297,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/data_fifo/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/lib/pcm_mix/                       @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/lib/pcm_stream_channel_modifier/   @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/tests/lib/sample_rate_converter/         @andvib @gWacey
 /tests/lib/tone/                          @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @hakonfam
