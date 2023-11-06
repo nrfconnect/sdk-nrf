@@ -71,16 +71,6 @@ CONFIG_RF_PROVISIONING_RX_BUF_S
 CONFIG_NRF_PROVISIONING_TX_BUF_SZ
    Configures the command request buffer size.
 
-.. _CONFIG_NRF_PROVISIONING_ATTESTTOKEN:
-
-CONFIG_NRF_PROVISIONING_ATTESTTOKEN
-   Configures attestation token for client authentication.
-
-.. _CONFIG_NRF_PROVISIONING_JWT:
-
-CONFIG_NRF_PROVISIONING_JWT
-   Configures JWT for client authentication.
-
 HTTP options
 ------------
 
@@ -126,7 +116,7 @@ The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
 * :file:`overlay-coap.conf` - Enables CoAP transfer protocol support.
-* :file:`overlay-jwt.conf` - Enables authentication with JWT.
+* :file:`overlay-at_shell.conf` - Enables writing of large certificates from AT shell.
 
 Building and running
 ********************
