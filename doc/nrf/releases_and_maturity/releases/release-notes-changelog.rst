@@ -497,4 +497,6 @@ Documentation
 
    *  Section :ref:tfm_enable_share_uart in the :ref:uge_nrf9160 page.
 
-|no_changes_yet_note|
+* Updated:
+
+  * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages  so that instructions in the :ref:`nrf9160_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
