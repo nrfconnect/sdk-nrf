@@ -12,6 +12,8 @@ The nRF5340 Audio application has the following unique characteristics:
 * It is developed for use only with the :ref:`nRF5340 Audio development kit <nrf53_audio_app_requirements>`.
 * In its default configuration, the application requires the :ref:`LC3 software codec <nrfxlib:lc3>`.
 * The application also comes with various application-specific tools, including the :file:`buildprog.py` Python script that simplifies building and programming the firmware.
+* The application uses the :ref:`lib_bt_ll_acs_nrf53_readme` as the controller programmed to the network core.
+  This controller is required in all application configurations and testing scenarios.
 
 .. _nrf53_audio_app_requirements:
 
@@ -63,6 +65,10 @@ Only one of the following :file:`.conf` files is included when building:
   No debug features are enabled in the release application version.
   When building using the command line, you must explicitly specify if :file:`prj_release.conf` is going to be included instead of :file:`prj.conf`.
   See :ref:`nrf53_audio_app_building` for details.
+
+In addition, the application features the :file:`child_image` directory with an experimental :file:`hci_rpmsg.conf`.
+This file is a work-in-progress implementation of the SoftDevice Controller that has not been thoroughly tested and should not be used.
+The application is only tested using :ref:`lib_bt_ll_acs_nrf53_readme`.
 
 Requirements for FOTA
 =====================
