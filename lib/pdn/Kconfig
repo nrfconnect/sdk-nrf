@@ -29,6 +29,7 @@ config PDN_INIT_PRIORITY
 
 config PDN_DEFAULTS_OVERRIDE
 	bool "Override defaults for PDP context 0"
+	depends on LTE_LINK_CONTROL
 	help
 	  The defaults are overridden automatically as soon as the modem has been initialized.
 

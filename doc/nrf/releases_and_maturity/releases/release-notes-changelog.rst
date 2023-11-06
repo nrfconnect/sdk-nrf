@@ -424,7 +424,8 @@ Modem libraries
 
 * :ref:`pdn_readme` library:
 
-  * Fixed a potential issue where the library tries to free the PDN context twice, causing the application to crash.
+   * Fixed a potential issue where the library tries to free the PDN context twice, causing the application to crash.
+   * Updated the library to add PDP auto configuration to the :c:enumerator:`LTE_LC_FUNC_MODE_POWER_OFF` event.
 
 Libraries for networking
 ------------------------
