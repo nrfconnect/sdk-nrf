@@ -19,7 +19,6 @@ if NRF_MODEM_LIB_NET_IF
 
 config NRF_MODEM_LIB_NET_IF_AUTO_START
 	bool "Network interface auto-start"
-	default y
 	help
 	  If this option is enabled, the modem is automatically initialized from the main context
 	  at SYS init.
@@ -55,7 +54,6 @@ config NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE
 
 config NRF_MODEM_LIB_NET_IF_AUTO_CONNECT
 	bool "Auto connect"
-	default y
 	help
 	 If this option is set the Connection Manager will automatically call connect after the
 	 network interface has been brought up. This option sets the default value, the option has
@@ -63,7 +61,6 @@ config NRF_MODEM_LIB_NET_IF_AUTO_CONNECT
 
 config NRF_MODEM_LIB_NET_IF_AUTO_DOWN
 	bool "Auto down"
-	default y
 	help
 	 If this option is set the Connection Manager will automatically take the network interface
 	 down when it stops trying to connect. This option sets the default value, the option has
