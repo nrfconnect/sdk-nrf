@@ -421,6 +421,10 @@ Modem libraries
 
   * Added the :c:func:`lte_lc_psm_param_set_seconds` function and Kconfig options :kconfig:option:`LTE_PSM_REQ_FORMAT`, :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU_SECONDS`, and :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT_SECONDS` to enable setting of PSM parameters in seconds instead of using bit field strings.
 
+  * Removed:
+
+    * The deprecated Kconfig option ``CONFIG_LTE_AUTO_INIT_AND_CONNECT``.
+
 * :ref:`nrf_modem_lib_readme`:
 
   * Added:
