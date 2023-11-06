@@ -191,7 +191,7 @@ static const struct uart_driver_api uart_ipc_api = {
 };
 
 #define UART_IPC_DEVICE(idx)                                                                    \
-	static const struct uart_ipc_config CONCAT(uart_ipc_config_, idx) = {                   \
+	static const struct uart_ipc_config _CONCAT(uart_ipc_config_, idx) = {                  \
 		.ipc = DEVICE_DT_GET(DT_INST_PHANDLE(idx, ipc)),                                \
 		.ept_name = DT_INST_PROP(idx, ept_name)                                         \
 	};                                                                                      \
@@ -199,13 +199,13 @@ static const struct uart_driver_api uart_ipc_api = {
 	RING_BUF_DECLARE(ipc_uart_tx_buf_##idx, CONFIG_IPC_UART_TX_RING_BUFFER_SIZE);           \
 	RING_BUF_DECLARE(ipc_uart_rx_buf_##idx, CONFIG_IPC_UART_RX_RING_BUFFER_SIZE);           \
                                                                                                 \
-	static struct uart_ipc_data CONCAT(uart_ipc_data_, idx) = {                             \
-		.tx_ringbuf = &CONCAT(ipc_uart_tx_buf_, idx),                                   \
-		.rx_ringbuf = &CONCAT(ipc_uart_rx_buf_, idx)                                    \
+	static struct uart_ipc_data _CONCAT(uart_ipc_data_, idx) = {                            \
+		.tx_ringbuf = &_CONCAT(ipc_uart_tx_buf_, idx),                                  \
+		.rx_ringbuf = &_CONCAT(ipc_uart_rx_buf_, idx)                                   \
 	};                                                                                      \
                                                                                                 \
 	DEVICE_DT_INST_DEFINE(idx, ipc_uart_init, NULL,                                         \
-			      &CONCAT(uart_ipc_data_, idx), &CONCAT(uart_ipc_config_, idx),     \
+			      &_CONCAT(uart_ipc_data_, idx), &_CONCAT(uart_ipc_config_, idx),   \
 			      POST_KERNEL, CONFIG_IPC_UART_INIT_PRIORITY, &uart_ipc_api);
 
 DT_INST_FOREACH_STATUS_OKAY(UART_IPC_DEVICE)
