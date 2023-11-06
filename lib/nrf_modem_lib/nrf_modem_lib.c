@@ -125,9 +125,9 @@ static void nrf_modem_lib_dfu_handler(uint32_t dfu_res)
 	}
 }
 
-static int _nrf_modem_lib_init(void)
+int nrf_modem_lib_init(void)
 {
-	int rc;
+	int err;
 
 	/* Setup the network IRQ used by the Modem library.
 	 * Note: No call to irq_enable() here, that is done through nrf_modem_init().
@@ -135,7 +135,10 @@ static int _nrf_modem_lib_init(void)
 	IRQ_CONNECT(NRF_MODEM_IPC_IRQ, CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
 
-	rc = nrf_modem_init(&init_params);
+	err = nrf_modem_init(&init_params);
+	if (err) {
+		LOG_ERR("Modem library initialization failed, err %d", err);
+	}
 
 #if CONFIG_NRF_MODEM_LIB_TRACE
 	/* We enable tracing as early as possible because the modem can only store a given
@@ -148,28 +151,12 @@ static int _nrf_modem_lib_init(void)
 		log_fw_version_uuid();
 	}
 
-	LOG_DBG("Modem library has initialized, ret %d", rc);
-
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_init_cb, e) {
 		LOG_DBG("Modem init callback: %p", e->callback);
-		e->callback(rc, e->context);
+		e->callback(err, e->context);
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
-		/* nrf_modem_init() returns values from a different namespace
-		 * than Zephyr's. Make sure to return something in Zephyr's
-		 * namespace, in this case 0, when called during SYS_INIT.
-		 * Non-zero values in SYS_INIT are currently ignored.
-		 */
-		return 0;
-	}
-
-	return rc;
-}
-
-int nrf_modem_lib_init(void)
-{
-	return _nrf_modem_lib_init();
+	return err;
 }
 
 int nrf_modem_lib_bootloader_init(void)
@@ -210,8 +197,3 @@ int nrf_modem_lib_shutdown(void)
 
 	return 0;
 }
-
-#if defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-/* Initialize during SYS_INIT */
-SYS_INIT(_nrf_modem_lib_init, POST_KERNEL, 0);
-#endif

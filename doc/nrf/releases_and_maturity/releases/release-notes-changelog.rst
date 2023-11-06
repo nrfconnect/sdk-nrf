@@ -396,6 +396,10 @@ Modem libraries
      All related Kconfig options have been renamed accordingly.
    * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
 
+  * Removed:
+
+    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_SYS_INIT``.
+
 |no_changes_yet_note|
 
 Libraries for networking
