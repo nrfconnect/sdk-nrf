@@ -57,7 +57,7 @@ extern "C" {
 	static struct bt_hids _name =				       \
 	{								       \
 		.gp = BT_GATT_POOL_INIT(CONFIG_BT_HIDS_ATTR_MAX),	       \
-		.conn_ctx = &CONCAT(_name, _ctx_lib),			       \
+		.conn_ctx = &_CONCAT(_name, _ctx_lib),			       \
 	}
 
 

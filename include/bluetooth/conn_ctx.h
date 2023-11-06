@@ -34,9 +34,9 @@ extern "C" {
 			  (_max_clients),                                      \
 			  CONFIG_BT_CONN_CTX_MEM_BUF_ALIGN);                   \
 	K_MUTEX_DEFINE(_name##_mutex);                                         \
-	static struct bt_conn_ctx_lib CONCAT(_name, _ctx_lib) =                \
+	static struct bt_conn_ctx_lib _CONCAT(_name, _ctx_lib) =                \
 	{                                                                      \
-		.mem_slab = &CONCAT(_name, _mem_slab),                         \
+		.mem_slab = &_CONCAT(_name, _mem_slab),                         \
 		.mutex = &_name##_mutex                                        \
 	}
 

@@ -107,27 +107,27 @@ ssize_t bt_nsms_status_read(struct bt_conn *conn,
  * @param _len_max     Maximal size of the message. The size of the message buffer.
  */
 #define BT_NSMS_DEF(_nsms, _name, _slevel, _status_init, _len_max)                      \
-	static K_MUTEX_DEFINE(CONCAT(_nsms, _status_mtx));                              \
-	static char CONCAT(_nsms, _status_buf)[_len_max] = _status_init;                \
-	static const struct bt_nsms_status_str CONCAT(_nsms, _status_str) = {           \
-		.mtx = &CONCAT(_nsms, _status_mtx),                                     \
+	static K_MUTEX_DEFINE(_CONCAT(_nsms, _status_mtx));                             \
+	static char _CONCAT(_nsms, _status_buf)[_len_max] = _status_init;               \
+	static const struct bt_nsms_status_str _CONCAT(_nsms, _status_str) = {          \
+		.mtx = &_CONCAT(_nsms, _status_mtx),                                    \
 		.size = (_len_max),                                                     \
-		.buf = CONCAT(_nsms, _status_buf)                                       \
+		.buf = _CONCAT(_nsms, _status_buf)                                      \
 	};                                                                              \
-	BT_NSMS_SERVICE_DEF(CONCAT(_nsms, _svc),                                        \
+	BT_NSMS_SERVICE_DEF(_CONCAT(_nsms, _svc),                                       \
 		BT_GATT_PRIMARY_SERVICE(BT_UUID_NSMS_SERVICE),                          \
 			BT_GATT_CHARACTERISTIC(BT_UUID_NSMS_STATUS,                     \
 					       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, \
 					       _BT_NSMS_CH_READ_PERM(_slevel),          \
 					       bt_nsms_status_read,                     \
 					       NULL,                                    \
-					       (void *)&CONCAT(_nsms, _status_str)),    \
+					       (void *)&_CONCAT(_nsms, _status_str)),   \
 			BT_GATT_CCC(NULL, _BT_NSMS_CH_READ_PERM(_slevel) |              \
 					  _BT_NSMS_CH_WRITE_PERM(_slevel)),             \
 			BT_GATT_CUD(_name, _BT_NSMS_CH_READ_PERM(_slevel)),             \
 	);                                                                              \
 	static const struct bt_nsms _nsms = {                                           \
-		.status_attr = &CONCAT(_nsms, _svc).attrs[2],                           \
+		.status_attr = &_CONCAT(_nsms, _svc).attrs[2],                          \
 	}
 
 /**@brief Set status
