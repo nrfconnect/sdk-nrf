@@ -143,6 +143,17 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  microseconds. The event length and the connection interval are the
 	  primary parameters for setting the throughput of a connection.
 
+config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
+	int "Default central ACL event spacing [us]"
+	default BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
+	help
+	  On the central, sets the time ACL connections are spaced apart assuming that
+	  they are using the same connection interval.
+	  This configuration allows the application to set a different value for event spacing
+	  than BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT. This will result in holes in the scheduling
+	  timeline if the connection interval is longer than the ACL event spacing.
+	  This gap can be used for other scheduling activites like isochronous streams.
+
 config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
 	bool "Override periodic adv event length default"
 

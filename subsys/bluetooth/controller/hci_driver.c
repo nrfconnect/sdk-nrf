@@ -1184,6 +1184,18 @@ static int hci_driver_open(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		sdc_hci_cmd_vs_central_acl_event_spacing_set_t params = {
+			.central_acl_event_spacing_us =
+				CONFIG_BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
+		};
+		err = sdc_hci_cmd_vs_central_acl_event_spacing_set(&params);
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return -ENOTSUP;
+		}
+	}
+
 	MULTITHREADING_LOCK_RELEASE();
 
 	return 0;

@@ -640,7 +640,9 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 	cmds->set_auto_power_control_request_param = 1;
 	cmds->set_power_control_apr_handling = 1;
 	cmds->set_power_control_request_params = 1;
-
+#endif
+#if defined(CONFIG_BT_CENTRAL)
+	cmds->central_acl_event_spacing_set = 1;
 #endif
 }
 #endif	/* CONFIG_BT_HCI_VS */
@@ -1559,6 +1561,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_set_power_control_apr_handling((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_SET_POWER_CONTROL_REQUEST_PARAMS:
 		return sdc_hci_cmd_vs_set_power_control_request_params((void *)cmd_params);
+#endif
+#ifdef CONFIG_BT_CENTRAL
+	case SDC_HCI_OPCODE_CMD_VS_CENTRAL_ACL_EVENT_SPACING_SET:
+		return sdc_hci_cmd_vs_central_acl_event_spacing_set((void *)cmd_params);
 #endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
