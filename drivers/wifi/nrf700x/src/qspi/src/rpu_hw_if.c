@@ -473,6 +473,7 @@ int rpu_enable(void)
 	int ret;
 
 	qdev = qspi_dev();
+	cfg = qspi_get_config();
 
 	CALL_RPU_FUNC(rpu_gpio_config);
 
@@ -517,6 +518,7 @@ int rpu_disable(void)
 	CALL_RPU_FUNC(ble_gpio_remove);
 
 	qdev = NULL;
+	cfg = NULL;
 
 out:
 	return ret;
