@@ -399,6 +399,7 @@ Modem libraries
   * Removed:
 
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_SYS_INIT``.
+    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
 
 |no_changes_yet_note|
 

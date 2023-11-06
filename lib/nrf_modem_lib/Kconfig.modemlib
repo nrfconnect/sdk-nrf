@@ -227,8 +227,8 @@ rsource "lte_net_if/Kconfig"
 
 DT_IPC := $(dt_nodelabel_path,ipc)
 config NRF_MODEM_LIB_IPC_IRQ_PRIO
-	int "IPC IRQ priority" if NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
-	default $(dt_node_array_prop_int,$(DT_IPC),interrupts,1) if !NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
+	int
+	default $(dt_node_array_prop_int,$(DT_IPC),interrupts,1)
 
 module = NRF_MODEM_LIB
 module-str = Modem library
@@ -237,11 +237,3 @@ source "subsys/logging/Kconfig.template.log_config"
 config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
 	depends on LOG
 	bool "Log FW version and UUID during initialization"
-
-comment "Deprecated"
-
-config NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE
-	bool "Override IPC IRQ priority"
-	select DEPRECATED
-	help
-	  Override the IPC IRQ priority set in device tree
