@@ -715,7 +715,7 @@ Modem libraries
     * The library to handle notifications from the modem when eDRX is not used by the current cell.
       The application now receives an :c:enum:`LTE_LC_EVT_EDRX_UPDATE` event with the network mode set to :c:enum:`LTE_LC_LTE_MODE_NONE` in these cases.
       Modem firmware version v1.3.4 or newer is required to receive these events.
-    * The Kconfig option :kconfig:option:`CONFIG_LTE_AUTO_INIT_AND_CONNECT` is now deprecated.
+    * The Kconfig option ``CONFIG_LTE_AUTO_INIT_AND_CONNECT`` is now deprecated.
       The application calls the :c:func:`lte_lc_init_and_connect` function instead.
     * New events added to enumeration :c:enum:`lte_lc_modem_evt` for RACH CE levels and missing IMEI.
 

@@ -256,9 +256,6 @@ static int cert_provision(void)
  */
 static int modem_configure_and_connect(void)
 {
-	BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
-		     "This sample does not support auto init and connect");
-
 	int err;
 
 #if defined(CONFIG_USE_HTTPS)

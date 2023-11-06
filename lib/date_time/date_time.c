@@ -165,9 +165,6 @@ static int date_time_init(void)
 	return 0;
 }
 
-/* Initialization should be before lte_lc (uses CONFIG_APPLICATION_INIT_PRIORITY)
- * so that we can subscribe to xtime notification if CONFIG_LTE_AUTO_INIT_AND_CONNECT is enabled
- */
 #define DATE_TIME_INIT_PRIO 80
 
 SYS_INIT(date_time_init, APPLICATION, DATE_TIME_INIT_PRIO);
