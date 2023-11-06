@@ -65,6 +65,11 @@ struct qspi_config *qspi_defconfig(void)
 	return &config;
 }
 
+struct qspi_config *qspi_get_config(void)
+{
+	return &config;
+}
+
 struct qspi_dev *qspi_dev(void)
 {
 #if CONFIG_NRF700X_ON_QSPI
