@@ -231,6 +231,33 @@ static void on_cgev(const char *notif)
 	parse_cgev_apn_rate_ctrl(notif);
 }
 
+#if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
+static void pdn_defaults_override(void)
+{
+	int err;
+
+	err = pdn_ctx_configure(0, CONFIG_PDN_DEFAULT_APN,
+				CONFIG_PDN_DEFAULT_FAM, NULL);
+	if (err) {
+		LOG_ERR("Failed to configure default CID, err %d", err);
+		return;
+	}
+
+#if defined(CONFIG_PDN_DEFAULT_AUTH_PAP) || defined(CONFIG_PDN_DEFAULT_AUTH_CHAP)
+	/* +CGAUTH=<cid>[,<auth_prot>[,<userid>[,<password>]]] */
+	BUILD_ASSERT(sizeof(CONFIG_PDN_DEFAULT_USERNAME) > 1, "Username not defined");
+
+	err = pdn_ctx_auth_set(0, CONFIG_PDN_DEFAULT_AUTH,
+			       CONFIG_PDN_DEFAULT_USERNAME,
+			       CONFIG_PDN_DEFAULT_PASSWORD);
+	if (err) {
+		LOG_ERR("Failed to set auth params for default CID, err %d", err);
+		return;
+	}
+#endif /* CONFIG_PDN_DEFAULT_AUTH_PAP || CONFIG_PDN_DEFAULT_AUTH_CHAP */
+}
+#endif /* CONFIG_PDN_DEFAULTS_OVERRIDE */
+
 #ifdef CONFIG_UNITY
 void on_modem_init(int ret, void *ctx)
 #else
@@ -261,26 +288,8 @@ static void on_modem_init(int ret, void *ctx)
 #endif /* CONFIG_PDN_LEGACY_PCO */
 
 #if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
-	err = pdn_ctx_configure(0, CONFIG_PDN_DEFAULT_APN,
-				CONFIG_PDN_DEFAULT_FAM, NULL);
-	if (err) {
-		LOG_ERR("Failed to configure default CID, err %d", err);
-		return;
-	}
-
-#if defined(CONFIG_PDN_DEFAULT_AUTH_PAP) || defined(CONFIG_PDN_DEFAULT_AUTH_CHAP)
-	/* +CGAUTH=<cid>[,<auth_prot>[,<userid>[,<password>]]] */
-	BUILD_ASSERT(sizeof(CONFIG_PDN_DEFAULT_USERNAME) > 1, "Username not defined");
-
-	err = pdn_ctx_auth_set(0, CONFIG_PDN_DEFAULT_AUTH,
-			       CONFIG_PDN_DEFAULT_USERNAME,
-			       CONFIG_PDN_DEFAULT_PASSWORD);
-	if (err) {
-		LOG_ERR("Failed to set auth params for default CID, err %d", err);
-		return;
-	}
-#endif /* CONFIG_PDN_DEFAULT_AUTH_PAP || CONFIG_PDN_DEFAULT_AUTH_CHAP */
-#endif /* CONFIG_PDN_DEFAULTS_OVERRIDE */
+	pdn_defaults_override();
+#endif
 }
 
 int pdn_default_ctx_cb_reg(pdn_event_handler_t cb)
@@ -631,6 +640,12 @@ static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
 		if (err) {
 			LOG_ERR("Unable to subscribe to +CGEREP=1, err %d", err);
 		}
+	}
+
+	if (mode == LTE_LC_FUNC_MODE_POWER_OFF) {
+#if defined(CONFIG_PDN_DEFAULTS_OVERRIDE)
+		pdn_defaults_override();
+#endif
 	}
 }
 #endif /* CONFIG_LTE_LINK_CONTROL */

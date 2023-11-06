@@ -628,12 +628,12 @@ void test_pdn_pdn_default_ctx_cb_reg(void)
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-void test_pdn_default_ctx_cb_dereg_einval(void)
+void test_pdn_default_ctx_cb_dereg_efault(void)
 {
 	int ret;
 
 	ret = pdn_default_ctx_cb_dereg(NULL);
-	TEST_ASSERT_EQUAL(-EINVAL, ret);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
 void test_pdn_default_ctx_cb_dereg(void)
@@ -662,6 +662,18 @@ void test_pdn_ctx_create_eshutdown(void)
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
+void test_pdn_ctx_create_ebadmsg(void)
+{
+	int ret;
+	uint8_t cid = 0;
+
+	k_malloc_fake.custom_fake = k_malloc_PDN1;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_no_match;
+
+	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
 void test_pdn_ctx_create_efault(void)
 {
 	int ret;
@@ -671,10 +683,6 @@ void test_pdn_ctx_create_efault(void)
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
-	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_no_match;
-
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_too_big;
 
