@@ -24,6 +24,14 @@
 #define AWS_SUBS_MESSAGE_ID 1984
 #define APP_SUBS_MESSAGE_ID 2469
 
+#define SHADOW_TOPIC_GET_ACCEPTED "$aws/things/" MQTT_CLIENT_ID "/shadow/get/accepted"
+#define SHADOW_TOPIC_GET_REJECTED "$aws/things/" MQTT_CLIENT_ID "/shadow/get/rejected"
+#define SHADOW_TOPIC_UPDATE_DELTA "$aws/things/" MQTT_CLIENT_ID "/shadow/update/delta"
+#define SHADOW_TOPIC_UPDATE_ACCEPTED "$aws/things/" MQTT_CLIENT_ID "/shadow/update/accepted"
+#define SHADOW_TOPIC_UPDATE_REJECTED "$aws/things/" MQTT_CLIENT_ID "/shadow/update/rejected"
+#define SHADOW_TOPIC_DELETE_ACCEPTED "$aws/things/" MQTT_CLIENT_ID "/shadow/delete/accepted"
+#define SHADOW_TOPIC_DELETE_REJECTED "$aws/things/" MQTT_CLIENT_ID "/shadow/delete/rejected"
+
 /* The unity_main is not declared in any header file. It is only defined in the generated test
  * runner because of ncs' unity configuration. It is therefore declared here to avoid a compiler
  * warning.
@@ -48,6 +56,7 @@ static struct mqtt_helper_cfg test_mqtt_helper_cfg;
 
 /* Variables used to expect some value being set by the UUT. */
 static enum aws_iot_evt_type event_type_expected;
+static enum aws_iot_shadow_topic_received_type topic_type_expected;
 static char *topic_expected = "";
 static char *hostname_expected = "";
 static char *client_id_expected = "";
@@ -56,6 +65,12 @@ static char *client_id_expected = "";
 static void event_handler(const struct aws_iot_evt *const evt)
 {
 	TEST_ASSERT_EQUAL(evt->type, event_type_expected);
+}
+
+static void event_handler_topic_type_check(const struct aws_iot_evt *const evt)
+{
+	TEST_ASSERT_EQUAL(evt->type, AWS_IOT_EVT_DATA_RECEIVED);
+	TEST_ASSERT_EQUAL(evt->data.msg.topic.type_received, topic_type_expected);
 }
 
 /* Stubs used to register test local handlers used to invoke events in the UUT. */
@@ -72,12 +87,12 @@ static int aws_fota_init_stub(aws_fota_callback_t evt_handler, int num_of_calls)
 }
 
 /* Convenience function used to stub internal callbacks prior to running a testcase. */
-static void mqtt_helper_handlers_register(void)
+static void mqtt_helper_handlers_register(aws_iot_evt_handler_t handler)
 {
 	__cmock_mqtt_helper_init_Stub(&mqtt_helper_init_stub);
 	__cmock_aws_fota_init_Stub(&aws_fota_init_stub);
 
-	TEST_ASSERT_EQUAL(0, aws_iot_init(event_handler));
+	TEST_ASSERT_EQUAL(0, aws_iot_init(handler));
 }
 
 int mqtt_helper_connect_stub(struct mqtt_helper_conn_params *conn_params, int num_of_calls)
@@ -137,7 +152,7 @@ void test_init_should_return_success(void)
 
 void test_connect_should_use_static_connection_parameters(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	event_type_expected = AWS_IOT_EVT_CONNECTED;
 	hostname_expected = CONFIG_AWS_IOT_BROKER_HOST_NAME;
@@ -153,7 +168,7 @@ void test_connect_should_use_static_connection_parameters(void)
 
 void test_connect_should_use_run_time_parameters(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	struct aws_iot_config config = {
 		.host_name = MQTT_HOSTNAME,
@@ -180,7 +195,7 @@ void test_connect_should_return_error_if_mqtt_helper_connect_fails(void)
 
 void test_connect_should_return_success(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	event_type_expected = AWS_IOT_EVT_CONNECTED;
 
@@ -302,7 +317,7 @@ void test_application_topics_set_should_return_success(void)
 
 void test_on_connack_should_notify_error_on_failure(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 
@@ -314,7 +329,7 @@ void test_on_connack_should_notify_error_on_failure(void)
 
 void test_on_connack_should_notify_connected_without_subscribing(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
 
@@ -325,7 +340,7 @@ void test_on_connack_should_notify_connected_without_subscribing(void)
 
 void test_on_connack_should_notify_connected_with_subscribing(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	__cmock_mqtt_helper_subscribe_ExpectAnyArgsAndReturn(0);
 	__cmock_mqtt_helper_subscribe_ExpectAnyArgsAndReturn(0);
@@ -337,7 +352,7 @@ void test_on_connack_should_notify_connected_with_subscribing(void)
 
 void test_on_disconnect_should_notify_disconnect(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	event_type_expected = AWS_IOT_EVT_DISCONNECTED;
 
@@ -346,7 +361,7 @@ void test_on_disconnect_should_notify_disconnect(void)
 
 void test_on_puback_should_notify_puback(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	event_type_expected = AWS_IOT_EVT_PUBACK;
 
@@ -355,7 +370,7 @@ void test_on_puback_should_notify_puback(void)
 
 void test_on_suback_should_notify_error_on_fail(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 
@@ -395,7 +410,7 @@ void test_on_all_events_should_call_aws_fota_mqtt_evt_handler(void)
 
 void test_on_pingresp_should_notify_pingresp(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	event_type_expected = AWS_IOT_EVT_PINGRESP;
 
@@ -404,7 +419,7 @@ void test_on_pingresp_should_notify_pingresp(void)
 
 void test_on_error_should_notify_error(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	__cmock_mqtt_helper_disconnect_ExpectAndReturn(0);
 
@@ -415,7 +430,7 @@ void test_on_error_should_notify_error(void)
 
 void test_on_publish_should_data_received(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	struct mqtt_helper_buf topic;
 	struct mqtt_helper_buf payload;
@@ -427,7 +442,7 @@ void test_on_publish_should_data_received(void)
 
 void test_aws_fota_events_should_be_propagated(void)
 {
-	mqtt_helper_handlers_register();
+	mqtt_helper_handlers_register(event_handler);
 
 	struct aws_fota_event event = { 0 };
 
@@ -454,6 +469,54 @@ void test_aws_fota_events_should_be_propagated(void)
 	event.id = AWS_FOTA_EVT_DL_PROGRESS;
 	event_type_expected = AWS_IOT_EVT_FOTA_DL_PROGRESS;
 	test_aws_fota_handler(&event);
+}
+
+void test_on_publish_should_set_topic_type(void)
+{
+	mqtt_helper_handlers_register(event_handler_topic_type_check);
+
+	struct mqtt_helper_buf topic = { 0 };
+	struct mqtt_helper_buf payload = { 0 };
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_GET_ACCEPTED;
+	topic.ptr = SHADOW_TOPIC_GET_ACCEPTED;
+	topic.size = strlen(SHADOW_TOPIC_GET_ACCEPTED);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_GET_REJECTED;
+	topic.ptr = SHADOW_TOPIC_GET_REJECTED;
+	topic.size = strlen(SHADOW_TOPIC_GET_REJECTED);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_UPDATE_DELTA;
+	topic.ptr = SHADOW_TOPIC_UPDATE_DELTA;
+	topic.size = strlen(SHADOW_TOPIC_UPDATE_DELTA);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_UPDATE_ACCEPTED;
+	topic.ptr = SHADOW_TOPIC_UPDATE_ACCEPTED;
+	topic.size = strlen(SHADOW_TOPIC_UPDATE_ACCEPTED);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_UPDATE_REJECTED;
+	topic.ptr = SHADOW_TOPIC_UPDATE_REJECTED;
+	topic.size = strlen(SHADOW_TOPIC_UPDATE_REJECTED);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_DELETE_ACCEPTED;
+	topic.ptr = SHADOW_TOPIC_DELETE_ACCEPTED;
+	topic.size = strlen(SHADOW_TOPIC_DELETE_ACCEPTED);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_DELETE_REJECTED;
+	topic.ptr = SHADOW_TOPIC_DELETE_REJECTED;
+	topic.size = strlen(SHADOW_TOPIC_DELETE_REJECTED);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
+	topic.ptr = "some-application-specific-topic";
+	topic.size = strlen("some-application-specific-topic");
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
 }
 
 int main(void)
