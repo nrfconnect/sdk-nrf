@@ -189,8 +189,7 @@ To update the firmware on the Thingy:91, complete the following steps:
          The ICCID copied here has 20 digits.
          When activating the SIM, you need to remove the last two digits so that it is 18 digits.
 
-Next, you need to create an nRF Cloud account if you do not have one already.
-
+.. _connect_nRF_cloud:
 .. _thingy91_connect_to_cloud:
 
 Connecting the |DK| to nRF Cloud
@@ -209,64 +208,29 @@ Creating an nRF Cloud account
    :start-after: nrf_cloud_account_start
    :end-before: nrf_cloud_account_end
 
-.. _connect_nRF_cloud:
+.. _thingy91_cloud_activate_sim:
 
-Connecting to nRF Cloud
+Activating the SIM card
 =======================
 
 .. |firmware_section_link| replace:: :ref:`thingy91_update_firmware`
 
 .. include:: nrf9160_gs.rst
-   :start-after: nrf_cloud_connection_start
-   :end-before: nrf_cloud_connection_end
+   :start-after: nrf_cloud_activate_sim_start
+   :end-before: nrf_cloud_activate_sim_end
 
-5. Connect the Thingy:91 to the computer with a USB cable and switch it on, or reset the device if it is already turned on.
-#. Wait up to three minutes for the Thingy:91 to connect to the LTE network and to nRF Cloud.
+.. _thingy91_cloud_add_device:
 
-   After a few moments, the nRF Cloud user association process starts.
-   This is indicated by white double pulse blinking of the Thingy:91's RGB LED as indicated in :ref:`Operating states <led_indication>`.
+Adding the Thingy:91 to nRF Cloud
+=================================
 
-#. In the Add LTE Device view from Step 4, enter your device ID and ownership code (**PIN/HWID**).
+.. |led_cloud_association| replace:: the RGB LED double pulse blinks as white
+.. |led_publishing_data| replace:: the RGB LED blinking green
+.. |activate_sim_section| replace:: :ref:`thingy91_cloud_activate_sim`
 
-   .. figure:: images/nrfcloud_add_lte_device.png
-      :alt: nRF Cloud - Add LTE Device view
-
-      nRF Cloud - Add LTE Device view
-
-   * **Device ID**: The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your Thingy:91. It is case sensitive, so make sure all the letters are lower-case.
-   * **PIN/HWID**: The ownership code is the PIN or the hardware ID of your Thingy:91, and it is found on the label of your Thingy:91.
-
-   .. figure:: images/thingy91_pin_imei.svg
-      :alt: PIN and IMEI on Thingy:91
-
-      PIN and IMEI on Thingy:91
-
-   If the label contains a PIN in addition to the IMEI number, enter this pin.
-   If it does not contain a PIN, enter the Hardware ID (HWID) HEX code, with or without colons.
-   For example, *AA:BB:CC:DD:EE:FF* or *AABBCCDDEEFF*.
-
-   .. note::
-
-      The ownership code serves as a password and proves that you own the specific Thingy:91.
-      Therefore, do not share it with anyone.
-
-
-#. Click the :guilabel:`Add Device` button.
-
-   The message "Device added to account. Waiting for it to connect..." appears.
-
-   .. note::
-
-      If you see an error message, check the error code and see `nRF Cloud REST API (v1)`_ to find out what is causing the error.
-
-#. When the message has disappeared, go to the menu on the left and click :guilabel:`Devices`.
-
-   You can see the Thingy:91 in your device list and all the sensor data being transmitted to the cloud from the  Thingy:91.
-   The LED on the Thingy:91 should be blinking green, which indicates that it is transmitting all the data to the cloud.
-
-   .. note::
-
-      It might take a while for the sensor data to appear in the nRF Cloud portal, depending on the duration of time GNSS uses to search for a fix.
+.. include:: nrf9160_gs.rst
+   :start-after: nrf_cloud_add_device_start
+   :end-before: nrf_cloud_add_device_end
 
 Next steps
 **********
