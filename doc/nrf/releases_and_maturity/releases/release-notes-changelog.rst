@@ -365,6 +365,10 @@ Modem libraries
    * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
      All related Kconfig options have been renamed accordingly.
 
+  * Removed:
+
+    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_SYS_INIT``.
+
 |no_changes_yet_note|
 
 Libraries for networking

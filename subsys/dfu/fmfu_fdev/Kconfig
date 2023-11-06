@@ -7,7 +7,7 @@
 menuconfig FMFU_FDEV
 	bool "Full Modem Firmware Upgrade from flash device"
 	depends on ZCBOR
-	depends on NRF_MODEM_LIB && !NRF_MODEM_LIB_SYS_INIT
+	depends on NRF_MODEM_LIB
 	depends on MBEDTLS_SHA256_C
 
 

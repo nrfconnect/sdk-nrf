@@ -14,7 +14,6 @@ if LTE_LINK_CONTROL
 config LTE_AUTO_INIT_AND_CONNECT
 	select DEPRECATED
 	bool "Auto Initialize and Connect for the LTE link [DEPRECATED]"
-	default y if NRF_MODEM_LIB_SYS_INIT
 	help
 	  Turn on to make the LTE link control to automatically initialize and connect the modem
 	  before the application starts.
