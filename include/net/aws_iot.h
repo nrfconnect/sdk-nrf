@@ -26,6 +26,67 @@
 extern "C" {
 #endif
 
+/** @brief AWS IoT shadow received topic types.
+ *	   If a message is received on a subscribed shadow topic, the type will be set to the
+ *	   corresponding topic.
+ */
+enum aws_iot_shadow_topic_received_type {
+	/** This type is used if the message is published to an application specific topic. */
+	AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC,
+
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/get/accepted.
+	 *  When requesting the shadow document and the request is accepted,
+	 *  the response is publishes to this topic.
+	 */
+	AWS_IOT_SHADOW_TOPIC_GET_ACCEPTED,
+
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/get/rejected.
+	 *  When requesting the shadow document and the request is rejected,
+	 *  the response is published to this topic.
+	 *  The response includes an error code that indicates the reason for rejection.
+	 *  The error code can be looked up in the AWS documentation under
+	 *  "Device Shadow error messages".
+	 */
+	AWS_IOT_SHADOW_TOPIC_GET_REJECTED,
+
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/update/delta.
+	 *  When there is a mismatch between the state.reported and state.desired shadow properties
+	 *  The desired state is published to this topic. These desired properties should be updated
+	 *  on the device, and the device should report back its updated state to clear the delta.
+	 */
+	AWS_IOT_SHADOW_TOPIC_UPDATE_DELTA,
+
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/update/accepted.
+	 *  When an update of the device shadow is accepted the device shadow document is
+	 *  published to this topic.
+	 */
+	AWS_IOT_SHADOW_TOPIC_UPDATE_ACCEPTED,
+
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/update/rejected.
+	 *  When an update of the device shadow is rejected a response is received on this topic
+	 *  with an error code stating the reason of rejection.
+	 */
+	AWS_IOT_SHADOW_TOPIC_UPDATE_REJECTED,
+
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/delete/accepted.
+	 *  When the device shadow is deleted a message is sent to this topic.
+	 */
+	AWS_IOT_SHADOW_TOPIC_DELETE_ACCEPTED,
+
+	/** This topic type corresponds to
+	 *  $aws/things/<thing-name>/shadow/delete/rejected.
+	 *  When a deletion of the device shadow is rejected a response is published to this topic
+	 *  with an error code stating the reason for rejection.
+	 */
+	AWS_IOT_SHADOW_TOPIC_DELETE_REJECTED
+};
+
 /** @brief AWS IoT shadow topic types.
  *	   Used to address messages to the AWS IoT shadow service.
  */
@@ -113,11 +174,20 @@ enum aws_iot_evt_type {
 
 /** @brief AWS IoT topic data. */
 struct aws_iot_topic_data {
-	/** Optional: type of shadow topic that will be published to.
-	 *  When publishing to a shadow topic this can be set instead of the
-	 *  application specific topic below.
-	 */
-	enum aws_iot_shadow_topic_type type;
+
+	union {
+		/** Optional: type of shadow topic that will be published to.
+		 *  When publishing to a shadow topic this can be set instead of the
+		 *  application specific topic below.
+		 */
+		enum aws_iot_shadow_topic_type type;
+
+		/** Type of shadow topic that the incoming message is received on.
+		 *  If a message is received on an application specific topic the type will be set
+		 *  to AWS_IOT_SHADOW_TOPIC_NONE.
+		 */
+		enum aws_iot_shadow_topic_received_type type_received;
+	};
 
 	/** Pointer to string of application specific topic. */
 	const char *str;

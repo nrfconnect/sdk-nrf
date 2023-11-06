@@ -120,6 +120,28 @@ static struct suback_conf {
 /* Semaphore used to wait for acknowledgment of MQTT subscriptions. */
 static K_SEM_DEFINE(subs_acked_sem, 0, 1);
 
+/* Include size flavour of strstr for safety. */
+#if defined(CONFIG_EXTERNAL_LIBC)
+/* Pull in memmem and strnstr due to being an extension to the C library and
+ * not included by default.
+ */
+extern void *memmem(const void *haystack, size_t hs_len, const void *needle, size_t ne_len);
+char *strnstr(const char *haystack, const char *needle, size_t haystack_len)
+{
+	size_t needle_len = strnlen(needle, haystack_len);
+
+	if (needle_len < haystack_len || !needle[needle_len]) {
+		char *x = memmem(haystack, haystack_len, needle, needle_len);
+	if (x && !memchr(haystack, 0, x - haystack))
+		return x;
+	}
+
+	return NULL;
+}
+#else
+extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
+#endif
+
 /* Forward declarations */
 static void device_shadow_document_request(void);
 
@@ -466,6 +488,28 @@ static void on_disconnect(int result)
 	module_evt_handler(&evt);
 }
 
+static enum aws_iot_shadow_topic_received_type topic_type_set(const char *topic_str,
+							      size_t topic_len)
+{
+	if (strnstr(topic_str, "get/accepted", topic_len)) {
+		return AWS_IOT_SHADOW_TOPIC_GET_ACCEPTED;
+	} else if (strnstr(topic_str, "get/rejected", topic_len)) {
+		return AWS_IOT_SHADOW_TOPIC_GET_REJECTED;
+	} else if (strnstr(topic_str, "update/delta", topic_len)) {
+		return AWS_IOT_SHADOW_TOPIC_UPDATE_DELTA;
+	} else if (strnstr(topic_str, "update/accepted", topic_len)) {
+		return AWS_IOT_SHADOW_TOPIC_UPDATE_ACCEPTED;
+	} else if (strnstr(topic_str, "update/rejected", topic_len)) {
+		return AWS_IOT_SHADOW_TOPIC_UPDATE_REJECTED;
+	} else if (strnstr(topic_str, "delete/accepted", topic_len)) {
+		return AWS_IOT_SHADOW_TOPIC_DELETE_ACCEPTED;
+	} else if (strnstr(topic_str, "delete/rejected", topic_len)) {
+		return AWS_IOT_SHADOW_TOPIC_DELETE_REJECTED;
+	} else {
+		return AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
+	}
+}
+
 static void on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf payload)
 {
 	struct aws_iot_evt evt = {
@@ -479,6 +523,9 @@ static void on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf payl
 	LOG_DBG("Received message: topic = %.*s and len = %d ", topic.size,
 								topic.ptr,
 								payload.size);
+
+	evt.data.msg.topic.type = topic_type_set(evt.data.msg.topic.str,
+						 evt.data.msg.topic.len);
 
 	module_evt_handler(&evt);
 }
