@@ -128,9 +128,10 @@ It can have three different values:
 * ``-1`` - A permanent error in the server needs fixing.
   The library will reject further requests and the device must be rebooted after the issue has been resolved in the server.
 * ``1``  - Due to a temporary error in the server, the device needs to retry sending the request after a while.
+* ``2`` - When no response has been received from the server in LOCATION_ASSISTANT_RESULT_TIMEOUT seconds.
 
 The library has a resend handler for the temporary error code.
-You can initialize it with the :c:func:`location_assistance_init_resend_handler` function.
+You can initialize it with the :c:func:`location_assistance_retry_init` function.
 It uses an exponential backoff for scheduling the resends.
 
 The library has a callback handler for the result code.

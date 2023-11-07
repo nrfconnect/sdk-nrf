@@ -32,14 +32,16 @@
 #define LOCATION_ASSIST_RESULT_CODE_OK			0
 #define LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR	-1
 #define LOCATION_ASSIST_RESULT_CODE_TEMP_ERR		1
+#define LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR		2
 
 /**
  * @typedef location_assistance_result_code_cb_t
  * @brief Callback for location assistance result.
  *
- * This callback is called whenever there is a new result in the location assistance and the
- * location assistance resend handler has been initialized.
+ * This callback is called whenever there is a new result in the location assistance from Ground
+ * or GNSS location object.
  *
+ * @param object_id   Object identifier GROUND_FIX_OBJECT_ID or GNSS_ASSIST_OBJECT_ID
  * @param result_code Contains following possible result codes:
  *                    LOCATION_ASSIST_RESULT_CODE_OK when there are no problems
  *                    LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR when there is a permanent error
@@ -47,10 +49,12 @@
  *                    longer send any requests. Device needs reboot for assistance library to
  *                    resume operation.
  *                    LOCATION_ASSIST_RESULT_CODE_TEMP_ERR when there is a temporary error between
- *                    LwM2M-server and the nRF Cloud. The library automatically uses exponential
+ *                    LwM2M server and the nRF Cloud. The library automatically uses exponential
  *                    backoff for the retries.
+ *                    LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR when no response has been received
+ *                    from the server in LOCATION_ASSISTANT_RESULT_TIMEOUT seconds.
  */
-typedef void (*location_assistance_result_code_cb_t)(int32_t result_code);
+typedef void (*location_assistance_result_code_cb_t)(uint16_t object_id, int32_t result_code);
 
 /**
  * @brief Set the location assistance result code calback
@@ -100,10 +104,9 @@ int location_assistance_pgps_request_send(struct lwm2m_ctx *ctx);
  *        Handler will handle the result code from server and schedule resending in
  *        case of temporary error in server using an exponential backoff.
  *
- * @return Returns a negative error code (errno.h) indicating
- *         reason of failure or 0 for success.
+ * @param enable_resend Set to true to allow retrying.
  */
-int location_assistance_init_resend_handler(void);
+void location_assistance_retry_init(bool enable_resend);
 
 /**
  * @brief Initialize the location assistance event handler

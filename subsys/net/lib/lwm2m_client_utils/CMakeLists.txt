@@ -20,6 +20,8 @@ zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT
 			     lwm2m/gnss_assistance_obj.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
 			     location/location_assistance.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+			     location/location_retry_timer.c)
 zephyr_library_sources_ifdef(CONFIG_LWM2M_CLIENT_UTILS_RAI
 			     lwm2m/lwm2m_rai.c)
 zephyr_library_sources(lwm2m/lwm2m_lte_notification.c)
