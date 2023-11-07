@@ -44,6 +44,16 @@ To enable key types for cryptographic algorithms, set one or more of the Kconfig
 +=======================+=============================================================+
 | AES                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`              |
 +-----------------------+-------------------------------------------------------------+
+| ARIA                  | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ARIA`             |
++-----------------------+-------------------------------------------------------------+
+| DES (weak)            | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_DES`              |
++-----------------------+-------------------------------------------------------------+
+| CAMELLIA              | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CAMELLIA`         |
++-----------------------+-------------------------------------------------------------+
+| SM4                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SM4`              |
++-----------------------+-------------------------------------------------------------+
+| ARC4 (weak)           | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ARC4`             |
++-----------------------+-------------------------------------------------------------+
 | Chacha20              | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`         |
 +-----------------------+-------------------------------------------------------------+
 | ECC Key Pair          | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`     |
@@ -69,6 +79,16 @@ The following table shows key type support for each driver:
 +=======================+===========================+============================+
 | AES                   | Supported                 | Supported                  |
 +-----------------------+---------------------------+----------------------------+
+| ARIA                  | Not supported             | Not supported              |
++-----------------------+---------------------------+----------------------------+
+| DES (weak)            | Not supported             | Not supported              |
++-----------------------+---------------------------+----------------------------+
+| CAMELLIA              | Not supported             | Not supported              |
++-----------------------+---------------------------+----------------------------+
+| SM4                   | Not supported             | Not supported              |
++-----------------------+---------------------------+----------------------------+
+| ARC4 (weak)           | Not supported             | Not supported              |
++-----------------------+---------------------------+----------------------------+
 | Chacha20              | Supported                 | Supported                  |
 +-----------------------+---------------------------+----------------------------+
 | ECC Key Pair          | Supported                 | Supported                  |
@@ -83,6 +103,8 @@ The following table shows key type support for each driver:
 +-----------------------+---------------------------+----------------------------+
 | DH Public key         | Not supported             | Not supported              |
 +-----------------------+---------------------------+----------------------------+
+
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported key types.
 
 Cipher configurations
 *********************
@@ -103,6 +125,8 @@ To enable cipher modes, set one or more of the Kconfig options in the following 
 | CTR                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`            |
 +-----------------------+------------------------------------------------------+
 | OFB                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_OFB`            |
++-----------------------+------------------------------------------------------+
+| CCM* no tag           | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`|
 +-----------------------+------------------------------------------------------+
 | XTS                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_XTS`            |
 +-----------------------+------------------------------------------------------+
@@ -129,6 +153,8 @@ The following table shows Cipher algorithm support for each driver:
 +-----------------------+---------------------------+----------------------------+
 | OFB                   | Supported                 | Not supported              |
 +-----------------------+---------------------------+----------------------------+
+| CCM* no tag           | Not supported             | Supported                  |
++-----------------------+---------------------------+----------------------------+
 | XTS                   | Not supported             | Not supported              |
 +-----------------------+---------------------------+----------------------------+
 | Stream cipher         | Supported                 | Supported                  |
@@ -152,6 +178,10 @@ To enable key derivation function (KDF) support, set one or more of the Kconfig 
 | KDF algorithm            | Configuration option                                          |
 +==========================+===============================================================+
 | HKDF                     | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`                    |
++--------------------------+---------------------------------------------------------------+
+| HKDF-Extract             | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXTRACT`            |
++--------------------------+---------------------------------------------------------------+
+| HKDF-Expand              | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXPAND`             |
 +--------------------------+---------------------------------------------------------------+
 | PBKDF2-HMAC              | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC`             |
 +--------------------------+---------------------------------------------------------------+
@@ -177,6 +207,10 @@ The following table shows Key Derivation Function (KDF) support for each driver:
 +==========================+==========================+============================+
 | HKDF                     | Not supported            | Supported                  |
 +--------------------------+--------------------------+----------------------------+
+| HKDF-Extract             | Not supported            | Supported                  |
++--------------------------+--------------------------+----------------------------+
+| HKDF-Expand              | Not supported            | Supported                  |
++--------------------------+--------------------------+----------------------------+
 | PBKDF2-HMAC              | Not supported            | Supported                  |
 +--------------------------+--------------------------+----------------------------+
 | PBKDF2-AES-CMAC-PRF-128  | Not supported            | Supported                  |
@@ -195,13 +229,15 @@ MAC configurations
 
 To enable MAC support, set one or more of the Kconfig options in the following table:
 
-+----------------+--------------------------------------------+
-| MAC cipher     | Configuration option                       |
-+================+============================================+
-| CMAC           | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC` |
-+----------------+--------------------------------------------+
-| HMAC           | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC` |
-+----------------+--------------------------------------------+
++----------------+----------------------------------------------+
+| MAC cipher     | Configuration option                         |
++================+==============================================+
+| CMAC           | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`   |
++----------------+----------------------------------------------+
+| HMAC           | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`   |
++----------------+----------------------------------------------+
+| CBC-MAC        | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_MAC`|
++----------------+----------------------------------------------+
 
 MAC driver configurations
 =========================
@@ -214,6 +250,8 @@ The following table shows MAC algorithm support for each driver:
 | CMAC           | Supported                | Supported                  |
 +----------------+--------------------------+----------------------------+
 | HMAC           | Supported                | Supported                  |
++----------------+--------------------------+----------------------------+
+| CBC-MAC        | Not supported            | Not supported              |
 +----------------+--------------------------+----------------------------+
 
 The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_MAC_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
@@ -236,8 +274,6 @@ To enable Authenticated Encryption with Associated Data (AEAD), set one or more 
 +=======================+=========================================================+
 | CCM                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`               |
 +-----------------------+---------------------------------------------------------+
-| CCM star with no tag  | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`   |
-+-----------------------+---------------------------------------------------------+
 | GCM                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`               |
 +-----------------------+---------------------------------------------------------+
 | ChaCha20-Poly1305     | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305` |
@@ -252,8 +288,6 @@ The following table shows AEAD algorithm support for each driver:
 | AEAD cipher           | nrf_cc3xx driver support  | nrf_oberon driver support |
 +=======================+===========================+===========================+
 | CCM                   | Supported                 | Supported                 |
-+-----------------------+---------------------------+---------------------------+
-| CCM star with no tag  | Not supported             | Supported                 |
 +-----------------------+---------------------------+---------------------------+
 | GCM                   | Supported                 | Supported                 |
 +-----------------------+---------------------------+---------------------------+
@@ -275,15 +309,23 @@ ECC configurations
 
 To enable Elliptic Curve Cryptography (ECC), set one or more of the Kconfig options in the following table:
 
-+-----------------------+-----------------------------------------------------------+
-| ECC algorithm         | Configuration option                                      |
-+=======================+===========================================================+
-| ECDH                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`                |
-+-----------------------+-----------------------------------------------------------+
-| ECDSA                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`               |
-+-----------------------+-----------------------------------------------------------+
-| ECDSA (deterministic) | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA` |
-+-----------------------+-----------------------------------------------------------+
++------------------------+-----------------------------------------------------------+
+| ECC algorithm          | Configuration option                                      |
++========================+===========================================================+
+| ECDH                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`                |
++------------------------+-----------------------------------------------------------+
+| ECDSA                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`               |
++------------------------+-----------------------------------------------------------+
+| ECDSA without hashing  | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA_ANY`           |
++------------------------+-----------------------------------------------------------+
+| ECDSA (deterministic)  | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA` |
++------------------------+-----------------------------------------------------------+
+| PureEdDSA              | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`          |
++------------------------+-----------------------------------------------------------+
+| HashEdDSA Edwards25519 | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`           |
++------------------------+-----------------------------------------------------------+
+| HashEdDSA Edwards448   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`             |
++------------------------+-----------------------------------------------------------+
 
 The ECC algorithm support is dependent on one or more Kconfig options enabling curve support according to `ECC curve configurations`_.
 
@@ -292,19 +334,27 @@ ECC driver configurations
 
 The following table shows ECC algorithm support for each driver:
 
-+-----------------------+---------------------------+----------------------------+
-| ECC algorithm         | nrf_cc3xx driver support  | nrf_oberon driver support  |
-+=======================+===========================+============================+
-| ECDH                  | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| ECDSA                 | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| ECDSA (deterministic) | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
++------------------------+---------------------------+----------------------------+
+| ECC algorithm          | nrf_cc3xx driver support  | nrf_oberon driver support  |
++========================+===========================+============================+
+| ECDH                   | Supported                 | Supported                  |
++------------------------+---------------------------+----------------------------+
+| ECDSA                  | Supported                 | Supported                  |
++------------------------+---------------------------+----------------------------+
+| ECDSA without hashing  | Supported                 | Supported                  |
++------------------------+---------------------------+----------------------------+
+| ECDSA (deterministic)  | Supported                 | Supported                  |
++------------------------+---------------------------+----------------------------+
+| PureEdDSA              | Supported                 | Supported                  |
++------------------------+---------------------------+----------------------------+
+| HashEdDSA Edwards25519 | Not supported             | Not supported              |
++------------------------+---------------------------+----------------------------+
+| HashEdDSA Edwards448   | Not supported             | Not supported              |
++------------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for the ECDSA and ECDSA deterministic algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for the ECDSA, ECDSA deterministic, and EdDSA algorithms.
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ECDH_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for ECDH.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for key agreement with ECDH.
 
 The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `ECC configurations`_.
 
@@ -317,70 +367,152 @@ ECC curve configurations
 
 To configure elliptic curve support, set one or more of the Kconfig options in the following table:
 
-+-----------------------+-----------------------------------------------------------+
-| ECC curve type        | Configuration option                                      |
-+=======================+===========================================================+
-| Brainpool256r1        | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`  |
-+-----------------------+-----------------------------------------------------------+
-| Brainpool384r1        | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384`  |
-+-----------------------+-----------------------------------------------------------+
-| Brainpool512r1        | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`  |
-+-----------------------+-----------------------------------------------------------+
-| Curve25519            | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`      |
-+-----------------------+-----------------------------------------------------------+
-| Curve448              | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`      |
-+-----------------------+-----------------------------------------------------------+
-| Edwards25519          | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255` |
-+-----------------------+-----------------------------------------------------------+
-| secp192k1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`         |
-+-----------------------+-----------------------------------------------------------+
-| secp256k1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`         |
-+-----------------------+-----------------------------------------------------------+
-| secp192r1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`         |
-+-----------------------+-----------------------------------------------------------+
-| secp224r1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`         |
-+-----------------------+-----------------------------------------------------------+
-| secp256r1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`         |
-+-----------------------+-----------------------------------------------------------+
-| secp384r1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`         |
-+-----------------------+-----------------------------------------------------------+
-| secp521r1             | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`         |
-+-----------------------+-----------------------------------------------------------+
++--------------------------+--------------------------------------------------------------+
+| ECC curve type           | Configuration option                                         |
++==========================+==============================================================+
+| BrainpoolP160r1 (weak)   | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_160`     |
++--------------------------+--------------------------------------------------------------+
+| BrainpoolP192r1          | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`     |
++--------------------------+--------------------------------------------------------------+
+| BrainpoolP224r1          | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`     |
++--------------------------+--------------------------------------------------------------+
+| BrainpoolP256r1          | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`     |
++--------------------------+--------------------------------------------------------------+
+| BrainpoolP320r1          | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_320`     |
++--------------------------+--------------------------------------------------------------+
+| BrainpoolP384r1          | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384`     |
++--------------------------+--------------------------------------------------------------+
+| BrainpoolP512r1          | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`     |
++--------------------------+--------------------------------------------------------------+
+| Curve25519 (X25519)      | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`         |
++--------------------------+--------------------------------------------------------------+
+| Curve448 (X448)          | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`         |
++--------------------------+--------------------------------------------------------------+
+| Edwards25519 (Ed25519)   | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`    |
++--------------------------+--------------------------------------------------------------+
+| Edwards448 (Ed448)       | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`    |
++--------------------------+--------------------------------------------------------------+
+| secp192k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`            |
++--------------------------+--------------------------------------------------------------+
+| secp224k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_224`            |
++--------------------------+--------------------------------------------------------------+
+| secp256k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`            |
++--------------------------+--------------------------------------------------------------+
+| secp192r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`            |
++--------------------------+--------------------------------------------------------------+
+| secp224r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`            |
++--------------------------+--------------------------------------------------------------+
+| secp256r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`            |
++--------------------------+--------------------------------------------------------------+
+| secp384r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`            |
++--------------------------+--------------------------------------------------------------+
+| secp521r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`            |
++--------------------------+--------------------------------------------------------------+
+| secp160r2 (weak)         | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R2_160`            |
++--------------------------+--------------------------------------------------------------+
+| sect163k1 (weak)         | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_163`            |
++--------------------------+--------------------------------------------------------------+
+| sect233k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_233`            |
++--------------------------+--------------------------------------------------------------+
+| sect239k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_239`            |
++--------------------------+--------------------------------------------------------------+
+| sect283k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_283`            |
++--------------------------+--------------------------------------------------------------+
+| sect409k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_409`            |
++--------------------------+--------------------------------------------------------------+
+| sect571k1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_571`            |
++--------------------------+--------------------------------------------------------------+
+| sect163r1 (weak)         | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_163`            |
++--------------------------+--------------------------------------------------------------+
+| sect233r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_233`            |
++--------------------------+--------------------------------------------------------------+
+| sect283r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_283`            |
++--------------------------+--------------------------------------------------------------+
+| sect409r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_409`            |
++--------------------------+--------------------------------------------------------------+
+| sect571r1                | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_571`            |
++--------------------------+--------------------------------------------------------------+
+| sect163r2 (weak)         | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R2_163`            |
++--------------------------+--------------------------------------------------------------+
+| FRP256v1                 | :kconfig:option:`CONFIG_PSA_WANT_ECC_FRP_V1_256`             |
++--------------------------+--------------------------------------------------------------+
 
 ECC curve driver configurations
 ===============================
 
 The following table shows ECC curve support for each driver:
 
-+-----------------------+---------------------------+----------------------------+
-| ECC curve type        | nrf_cc3xx driver support  | nrf_oberon driver support  |
-+=======================+===========================+============================+
-| Brainpool256r1        | Not supported             | Not supported              |
-+-----------------------+---------------------------+----------------------------+
-| Brainpool384r1        | Not supported             | Not supported              |
-+-----------------------+---------------------------+----------------------------+
-| Brainpool512r1        | Not supported             | Not supported              |
-+-----------------------+---------------------------+----------------------------+
-| Curve25519            | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| Curve448              | Not supported             | Not supported              |
-+-----------------------+---------------------------+----------------------------+
-| Edwards25519          | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| secp192k1             | Supported                 | Not supported              |
-+-----------------------+---------------------------+----------------------------+
-| secp256k1             | Supported                 | Not supported              |
-+-----------------------+---------------------------+----------------------------+
-| secp192r1             | Supported                 | Not supported              |
-+-----------------------+---------------------------+----------------------------+
-| secp224r1             | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| secp256r1             | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| secp384r1             | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| secp521r1             | Not supported             | Not supported              |
-+-----------------------+---------------------------+----------------------------+
++--------------------------+---------------------------+----------------------------+
+| ECC curve type           | nrf_cc3xx driver support  | nrf_oberon driver support  |
++==========================+===========================+============================+
+| BrainpoolP160r1 (weak)   | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| BrainpoolP192r1          | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| BrainpoolP224r1          | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| BrainpoolP256r1          | Supported                 | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| BrainpoolP320r1          | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| BrainpoolP384r1          | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| BrainpoolP512r1          | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| Curve25519 (X25519)      | Supported                 | Supported                  |
++--------------------------+---------------------------+----------------------------+
+| Curve448 (X448)          | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| Edwards25519 (Ed25519)   | Supported                 | Supported                  |
++--------------------------+---------------------------+----------------------------+
+| Edwards448 (Ed448)       | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| secp192k1                | Supported                 | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| secp224k1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| secp256k1                | Supported                 | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| secp192r1                | Supported                 | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| secp224r1                | Supported                 | Supported                  |
++--------------------------+---------------------------+----------------------------+
+| secp256r1                | Supported                 | Supported                  |
++--------------------------+---------------------------+----------------------------+
+| secp384r1                | Supported                 | Supported                  |
++--------------------------+---------------------------+----------------------------+
+| secp521r1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| secp160r2 (weak)         | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect163k1 (weak)         | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect233k1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect239k1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect283k1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect409k1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect571k1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect163r1 (weak)         | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect233r1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect283r1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect409r1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect571r1                | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| sect163r2 (weak)         | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+| FRP256v1                 | Not supported             | Not supported              |
++--------------------------+---------------------------+----------------------------+
+
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for key management using ECC curves.
 
 RNG configurations
 ******************
@@ -417,38 +549,46 @@ RSA configurations
 
 To enable Rivest-Shamir-Adleman (RSA) support, set one or more of the Kconfig options in the following table:
 
-+-----------------------+----------------------------------------------------------+
-| RSA algorithms        | Configuration option                                     |
-+=======================+==========================================================+
-| RSA OAEP              | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`           |
-+-----------------------+----------------------------------------------------------+
-| RSA PKCS#1 v1.5 crypt | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` |
-+-----------------------+----------------------------------------------------------+
-| RSA PKCS#1 v1.5 sign  | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`  |
-+-----------------------+----------------------------------------------------------+
-| RSA PSS               | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`            |
-+-----------------------+----------------------------------------------------------+
++---------------------------+--------------------------------------------------------------+
+| RSA algorithms            | Configuration option                                         |
++===========================+==============================================================+
+| RSA OAEP                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`               |
++---------------------------+--------------------------------------------------------------+
+| RSA PKCS#1 v1.5 crypt     | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT`     |
++---------------------------+--------------------------------------------------------------+
+| RSA PKCS#1 v1.5 sign      | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`      |
++---------------------------+--------------------------------------------------------------+
+| RSA raw PKCS#1 v1.5 sign  | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`  |
++---------------------------+--------------------------------------------------------------+
+| RSA PSS                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`                |
++---------------------------+--------------------------------------------------------------+
+| RSA PSS any salt          | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`       |
++---------------------------+--------------------------------------------------------------+
 
 RSA driver configurations
 =========================
 
 The following table shows RSA algorithm support for each driver:
 
-+-----------------------+---------------------------+----------------------------+
-| RSA algorithms        | nrf_cc3xx driver support  | nrf_oberon driver support  |
-+=======================+===========================+============================+
-| RSA OAEP              | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| RSA PKCS#1 v1.5 crypt | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| RSA PKCS#1 v1.5 sign  | Supported                 | Supported                  |
-+-----------------------+---------------------------+----------------------------+
-| RSA PSS               | Not supported             | Supported                  |
-+-----------------------+---------------------------+----------------------------+
++---------------------------+---------------------------+----------------------------+
+| RSA algorithms            | nrf_cc3xx driver support  | nrf_oberon driver support  |
++===========================+===========================+============================+
+| RSA OAEP                  | Supported                 | Supported                  |
++---------------------------+---------------------------+----------------------------+
+| RSA PKCS#1 v1.5 crypt     | Supported                 | Supported                  |
++---------------------------+---------------------------+----------------------------+
+| RSA PKCS#1 v1.5 sign      | Supported                 | Supported                  |
++---------------------------+---------------------------+----------------------------+
+| RSA raw PKCS#1 v1.5 sign  | Supported                 | Supported                  |
++---------------------------+---------------------------+----------------------------+
+| RSA PSS                   | Not supported             | Supported                  |
++---------------------------+---------------------------+----------------------------+
+| RSA PSS any salt          | Not supported             | Supported                  |
++---------------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for the RSA PKCS#1 v1.5 signing algorithm.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for the RSA PKCS#1 v1.5 signing algorithm.
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for RSA PKCS#1 v1.5 and RSA OAEP encryption.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for RSA PKCS#1 v1.5 and RSA OAEP encryption.
 
 Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in  `RSA configurations`_.
 
@@ -475,6 +615,26 @@ To configure the Hash algorithms, set one or more of the Kconfig options in the 
 | SHA-384               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_384`     |
 +-----------------------+---------------------------------------------------+
 | SHA-512               | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512`     |
++-----------------------+---------------------------------------------------+
+| SHA-512/224           | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512_224` |
++-----------------------+---------------------------------------------------+
+| SHA-512/256           | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512_256` |
++-----------------------+---------------------------------------------------+
+| SHA3-224              | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`    |
++-----------------------+---------------------------------------------------+
+| SHA3-256              | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`    |
++-----------------------+---------------------------------------------------+
+| SHA3-384              | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`    |
++-----------------------+---------------------------------------------------+
+| SHA3-512              | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`    |
++-----------------------+---------------------------------------------------+
+| SM3                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SM3`         |
++-----------------------+---------------------------------------------------+
+| SHAKE256 512 bits     | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`|
++-----------------------+---------------------------------------------------+
+| MD2 (weak)            | :kconfig:option:`CONFIG_PSA_WANT_ALG_MD2`         |
++-----------------------+---------------------------------------------------+
+| MD4 (weak)            | :kconfig:option:`CONFIG_PSA_WANT_ALG_MD4`         |
 +-----------------------+---------------------------------------------------+
 | MD5 (weak)            | :kconfig:option:`CONFIG_PSA_WANT_ALG_MD5`         |
 +-----------------------+---------------------------------------------------+
@@ -503,6 +663,26 @@ The following table shows Hash algorithm support for each driver:
 +-----------------------+----------------------------+---------------------------+
 | SHA-512               | Not supported              | Supported                 |
 +-----------------------+----------------------------+---------------------------+
+| SHA-512/224           | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| SHA-512/256           | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| SHA3-224              | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| SHA3-256              | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| SHA3-384              | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| SHA3-512              | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| SM3                   | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| SHAKE256 512 bits     | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| MD2 (weak)            | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
+| MD4 (weak)            | Not supported              | Not supported             |
++-----------------------+----------------------------+---------------------------+
 | MD5 (weak)            | Not supported              | Not supported             |
 +-----------------------+----------------------------+---------------------------+
 | RIPEMD160             | Not supported              | Not supported             |
@@ -510,12 +690,12 @@ The following table shows Hash algorithm support for each driver:
 
 The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all the supported algorithms.
 
-The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in  `HASH configurations`_.
+The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Hash configurations`_.
 
-Password-authenticated key agreement configurations
-***************************************************
+Password-authenticated key exchange configurations
+**************************************************
 
-To enable password-authenticated key agreement (PAKE) support, set one or more of the Kconfig options in the following table:
+To enable password-authenticated key exchange (PAKE) support, set one or more of the Kconfig options in the following table:
 
 +-----------------------+-----------------------------------------------+
 | PAKE algorithm        | Configuration option                          |
@@ -531,7 +711,7 @@ To enable password-authenticated key agreement (PAKE) support, set one or more o
    * The provided support is experimental.
    * Not supported with TF-M.
 
-Password-authenticated key agreement driver configurations
+Password-authenticated key exchange driver configurations
 ==========================================================
 
 The following table shows PAKE algorithm support for each driver:
@@ -546,7 +726,7 @@ The following table shows PAKE algorithm support for each driver:
 | SRP-6                 | Not supported            | Supported                 |
 +-----------------------+--------------------------+---------------------------+
 
-Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in  `Password-authenticated key agreement configurations`_.
+Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in  `Password-authenticated key exchange configurations`_.
 
 Key size configurations
 ***********************
