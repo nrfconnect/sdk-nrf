@@ -124,12 +124,12 @@ int nfc_t4t_tlv_block_parse(struct nfc_t4t_tlv_block *file_control_tlv,
  */
 void nfc_t4t_tlv_block_printout(uint8_t num, const struct nfc_t4t_tlv_block *t4t_tlv_block);
 
-/**
- *@}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ *@}
+ */
 
 #endif /* NFC_T4T_TLV_BLOCK_H_ */

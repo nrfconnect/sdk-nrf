@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef NFC_NDEF_RECORD_PARSER_H_
 #define NFC_NDEF_RECORD_PARSER_H_
 
@@ -59,7 +60,6 @@ void nfc_ndef_record_printout(uint32_t num,
 /**
  * @}
  */
-
 
 #ifdef __cplusplus
 }

@@ -223,12 +223,12 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
 
 #define NFC_NDEF_TNEP_RECORD_DESC(_name) NFC_NDEF_GENERIC_RECORD_DESC(_name)
 
-/**
- * @}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_NDEF_TNEP_REC_H_ */

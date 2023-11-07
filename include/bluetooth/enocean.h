@@ -3,15 +3,16 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+#ifndef BT_ENOCEAN_H__
+#define BT_ENOCEAN_H__
+
 /**
  * @file
  * @defgroup bt_enocean Bluetooth EnOcean library API
  * @{
  * @brief API for interacting with EnOcean Bluetooth wall switches and sensors
  */
-
-#ifndef BT_ENOCEAN_H__
-#define BT_ENOCEAN_H__
 
 #include <zephyr/bluetooth/bluetooth.h>
 

@@ -137,6 +137,10 @@ int module_start(struct module_data *module);
  */
 uint32_t module_active_count_get(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 /**
  *@}
  */

@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef NFC_T2T_TLV_BLOCK_H_
 #define NFC_T2T_TLV_BLOCK_H_
 
@@ -80,13 +81,12 @@ struct nfc_t2t_tlv_block {
 /** Predefined length of the LOCK CONTROL and MEMORY CONTROL blocks. */
 #define NFC_T2T_TLV_LOCK_MEMORY_CTRL_LEN    3
 
-/**
- * @}
- */
-
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_T2T_TLV_BLOCK_H_ */

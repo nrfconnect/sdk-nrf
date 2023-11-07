@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef QOS_H__
+#define QOS_H__
+
 /**
  * @defgroup qos Quality of Service library
  * @{
  * @brief QoS library that provides functionality to store and handle acknowledgment of multiple
  *	  in-flight messages.
  */
-
-#ifndef QOS_H__
-#define QOS_H__
 
 #include <zephyr/kernel.h>
 #include <stdbool.h>

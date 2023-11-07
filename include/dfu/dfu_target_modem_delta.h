@@ -90,6 +90,10 @@ int dfu_target_modem_delta_schedule_update(int img_num);
  */
 int dfu_target_modem_delta_reset(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* DFU_TARGET_MODEM_H__ */
 
 /**@} */

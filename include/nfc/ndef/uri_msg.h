@@ -51,12 +51,12 @@ int nfc_ndef_uri_msg_encode(enum nfc_ndef_uri_rec_id uri_id_code,
 			    uint8_t *buf,
 			    uint32_t *len);
 
-/**
- * @}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_NDEF_URI_MSG_H */

@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef __CPU_LOAD_H
 #define __CPU_LOAD_H
 

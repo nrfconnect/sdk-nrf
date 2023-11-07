@@ -93,13 +93,12 @@ int nfc_ndef_msg_parse(uint8_t  *result_buf,
  */
 void nfc_ndef_msg_printout(const struct nfc_ndef_msg_desc *msg_desc);
 
-/**
- * @}
- */
-
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_NDEF_MSG_PARSER_H_ */

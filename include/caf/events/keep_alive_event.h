@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef _KEEP_ALIVE_EVENT_H_
 #define _KEEP_ALIVE_EVENT_H_
 

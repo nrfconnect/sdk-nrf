@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef __TRAFFIC_GEN_TCP_H__
 #define __TRAFFIC_GEN_TCP_H__
 

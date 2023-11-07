@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef NFC_NDEF_MSG_PARSER_LOCAL_H_
 #define NFC_NDEF_MSG_PARSER_LOCAL_H_
 
@@ -82,12 +83,12 @@ int nfc_ndef_msg_parser_internal(struct nfc_ndef_parser_memo_desc *parser_memo_d
 				 const uint8_t *nfc_data,
 				 uint32_t *nfc_data_len);
 
-/**
- * @}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_NDEF_MSG_PARSER_LOCAL_H_ */

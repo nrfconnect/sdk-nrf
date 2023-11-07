@@ -1,16 +1,17 @@
-/** @file
- * @brief CoAP client API
- *
- * An API for applications to do CoAP requests
- */
-
 /*
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef ZEPHYR_INCLUDE_NET_COAP_CLIENT_H_
 #define ZEPHYR_INCLUDE_NET_COAP_CLIENT_H_
+
+/** @file
+ * @brief CoAP client API
+ *
+ * An API for applications to do CoAP requests
+ */
 
 /**
  * @brief CoAP client API

@@ -108,6 +108,10 @@ int dfu_target_stream_done(bool successful);
  */
 int dfu_target_stream_reset(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* DFU_TARGET_STREAM_H__ */
 
 /**@} */

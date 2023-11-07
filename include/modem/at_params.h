@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef AT_PARAMS_H__
 #define AT_PARAMS_H__
 

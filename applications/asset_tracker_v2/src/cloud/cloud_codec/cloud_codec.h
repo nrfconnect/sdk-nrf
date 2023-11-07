@@ -535,10 +535,10 @@ void cloud_codec_populate_modem_dynamic_buffer(
 				int *head_modem_buf,
 				size_t buffer_count);
 
-/**
- * @}
- */
 #ifdef __cplusplus
 }
 #endif
+/**
+ * @}
+ */
 #endif

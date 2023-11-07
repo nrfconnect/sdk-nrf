@@ -586,6 +586,6 @@ const char *bt_mesh_sensor_ch_str(const struct sensor_value *ch);
 }
 #endif
 
-/** @} */
-
 #endif /* BT_MESH_SENSOR_H__ */
+
+/** @} */

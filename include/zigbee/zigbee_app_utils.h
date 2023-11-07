@@ -265,10 +265,10 @@ bool was_factory_reset_done(void);
 
 #endif /* CONFIG_ZIGBEE_FACTORY_RESET */
 
-#endif /* ZIGBEE_APP_UTILS_H__ */
-
 #ifdef __cplusplus
 }
 #endif
 
 /**@} */
+
+#endif /* ZIGBEE_APP_UTILS_H__ */

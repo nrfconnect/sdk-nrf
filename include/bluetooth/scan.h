@@ -4,7 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/**@file
+#ifndef BT_SCAN_H_
+#define BT_SCAN_H_
+
+/**
+ * @file
  * @defgroup nrf_bt_scan BT Scanning module
  * @{
  * @brief BT Scanning module
@@ -20,10 +24,6 @@
  * @note The Scanning Module also supports applications with a
  *       multicentral link.
  */
-
-
-#ifndef BT_SCAN_H_
-#define BT_SCAN_H_
 
 #include <zephyr/types.h>
 #include <zephyr/sys/slist.h>
@@ -566,6 +566,6 @@ void bt_scan_blocklist_clear(void);
 }
 #endif
 
-#endif /* BT_SCAN_H_ */
-
 /** @} */
+
+#endif /* BT_SCAN_H_ */

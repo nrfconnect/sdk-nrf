@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef BT_LATENCY_CLIENT_H_
+#define BT_LATENCY_CLIENT_H_
+
 /**
  * @file
  * @defgroup bt_latency_c Bluetooth LE GATT Latency Client API
  * @{
  * @brief API for the Bluetooth LE GATT Latency Client.
  */
-
-#ifndef BT_LATENCY_CLIENT_H_
-#define BT_LATENCY_CLIENT_H_
 
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/conn.h>

@@ -365,5 +365,3 @@ int dtm_test_end(uint16_t *pack_cnt);
 #endif
 
 #endif /* DTM_H_ */
-
-/** @} */

@@ -47,4 +47,4 @@ static bool region_within(uint32_t inner_start, uint32_t inner_end,
 }
 #endif
 
-#endif
+#endif /* BL_VALIDATION_INTERNAL_H__ */

@@ -193,11 +193,10 @@ static inline void slm_monitor_resume(struct slm_monitor_entry *mon)
 	mon->paused = MON_ACTIVE;
 }
 
-
-/** @} */
-
 #ifdef __cplusplus
 }
 #endif
+
+/** @} */
 
 #endif /* MODEM_SLM_H_ */

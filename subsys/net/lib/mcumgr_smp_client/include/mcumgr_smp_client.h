@@ -89,4 +89,12 @@ int mcumgr_smp_client_erase(void);
  */
 int mcumgr_smp_client_confirm_image(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* MCUMGR_SMP_CLIENT_H_ */
+
+/**
+ *@}
+ */

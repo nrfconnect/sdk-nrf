@@ -12,6 +12,7 @@
  * @brief Vendor-specific AT command for ICMP service.
  * @{
  */
+
 /**
  * @brief Initialize ICMP AT command parser.
  *

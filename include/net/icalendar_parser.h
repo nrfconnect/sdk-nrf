@@ -137,10 +137,10 @@ int ical_parser_init(struct icalendar_parser *ical,
 size_t ical_parser_parse(struct icalendar_parser *ical,
 			const char *data, size_t len);
 
+/**@} */
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* ICAL_PARSER_H__ */
-
-/**@} */

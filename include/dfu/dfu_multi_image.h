@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef DFU_MULTI_IMAGE_H__
+#define DFU_MULTI_IMAGE_H__
+
 /**
  * @defgroup dfu_multi_image DFU Multi Image
  * @brief Provides an API for writing DFU Multi Image package
@@ -36,9 +39,6 @@
  *
  * @{
  */
-
-#ifndef DFU_MULTI_IMAGE_H__
-#define DFU_MULTI_IMAGE_H__
 
 #include <stdbool.h>
 #include <stddef.h>

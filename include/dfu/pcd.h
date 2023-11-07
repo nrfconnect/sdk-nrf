@@ -143,6 +143,10 @@ int pcd_network_core_app_version(uint8_t *buf, size_t len);
 int pcd_find_fw_version(void);
 #endif /* CONFIG_PCD_READ_NETCORE_APP_VERSION */
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* PCD_H__ */
 
 /**@} */

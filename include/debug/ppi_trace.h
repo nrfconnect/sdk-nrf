@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef __PPI_TRACE_H
 #define __PPI_TRACE_H
 

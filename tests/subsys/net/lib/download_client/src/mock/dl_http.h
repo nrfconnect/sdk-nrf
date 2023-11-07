@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef _DL_HTTP_H_
 #define _DL_HTTP_H_
 

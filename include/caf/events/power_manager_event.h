@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef _POWER_MANAGER_EVENT_H_
 #define _POWER_MANAGER_EVENT_H_
 

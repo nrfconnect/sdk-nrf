@@ -46,10 +46,10 @@ extern "C" {
  */
 zb_uint8_t zigbee_logger_eprxzcl_ep_handler(zb_bufid_t bufid);
 
-#endif /* ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_ */
-
 #ifdef __cplusplus
 }
 #endif
 
 /**@} */
+
+#endif /* ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_ */

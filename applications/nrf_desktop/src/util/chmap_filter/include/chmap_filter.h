@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef _CHMAP_FILTER_H_
 #define _CHMAP_FILTER_H_
 

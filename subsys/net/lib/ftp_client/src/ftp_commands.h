@@ -103,5 +103,3 @@ extern "C" {
 #endif
 
 #endif /* FTP_COMMANDS_ */
-
-/**@} */

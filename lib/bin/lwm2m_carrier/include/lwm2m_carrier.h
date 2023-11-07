@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef LWM2M_CARRIER_H__
+#define LWM2M_CARRIER_H__
+
 /**
  * @file lwm2m_carrier.h
  *
  * @defgroup lwm2m_carrier_api LwM2M carrier library API
  * @{
  */
-
-#ifndef LWM2M_CARRIER_H__
-#define LWM2M_CARRIER_H__
 
 #include <stdint.h>
 #include <stddef.h>

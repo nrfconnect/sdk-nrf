@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef BT_CGMS_INTERNAL_H_
 #define BT_CGMS_INTERNAL_H_
 

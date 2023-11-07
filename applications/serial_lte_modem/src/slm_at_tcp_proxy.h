@@ -12,6 +12,7 @@
  * @brief Vendor-specific AT command for TCP proxy service.
  * @{
  */
+
 /**
  * @brief Initialize TCP proxy AT command parser.
  *

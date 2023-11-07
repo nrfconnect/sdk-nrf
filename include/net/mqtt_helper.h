@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef MQTT_HELPER__
+#define MQTT_HELPER__
+
 /**
  * @defgroup mqtt_helper MQTT helper library
  * @{
  * @brief Convenience library that simplifies Zephyr MQTT API and socket handling.
  */
-
-#ifndef MQTT_HELPER__
-#define MQTT_HELPER__
 
 #include <stdio.h>
 #include <zephyr/net/mqtt.h>

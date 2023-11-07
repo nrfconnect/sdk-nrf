@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef BT_THROUGHPUT_H_
+#define BT_THROUGHPUT_H_
+
 /**
  * @file
  * @defgroup bt_throughput Bluetooth LE GATT Throughput Service API
  * @{
  * @brief API for the Bluetooth LE GATT Throughput Service.
  */
-
-#ifndef BT_THROUGHPUT_H_
-#define BT_THROUGHPUT_H_
 
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/conn.h>

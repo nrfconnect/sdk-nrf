@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef WIFI_PROVISIONING_H_
 #define WIFI_PROVISIONING_H_
 

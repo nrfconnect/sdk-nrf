@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef LWM2M_OS_H__
+#define LWM2M_OS_H__
+
 /**
  * @file lwm2m_os.h
  *
  * @defgroup lwm2m_carrier_os LWM2M OS layer
  * @{
  */
-
-#ifndef LWM2M_OS_H__
-#define LWM2M_OS_H__
 
 #include <stddef.h>
 #include <stdint.h>

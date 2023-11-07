@@ -670,6 +670,6 @@ extern const struct bt_mesh_model_cb _bt_mesh_sensor_cli_cb;
 }
 #endif
 
-/** @} */
-
 #endif /* BT_MESH_SENSOR_CLI_H__ */
+
+/** @} */

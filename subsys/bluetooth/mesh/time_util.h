@@ -43,5 +43,3 @@ int ts_to_tai(struct bt_mesh_time_tai *tai, const struct tm *timeptr);
 #endif
 
 #endif /* BT_MESH_TIME_UTIL */
-
-/** @} */

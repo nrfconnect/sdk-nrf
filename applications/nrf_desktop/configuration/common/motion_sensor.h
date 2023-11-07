@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef _MOTION_SENSOR_H_
 #define _MOTION_SENSOR_H_
 

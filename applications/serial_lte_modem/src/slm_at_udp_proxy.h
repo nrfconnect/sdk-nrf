@@ -12,6 +12,7 @@
  * @brief Vendor-specific AT command for UDP proxy service.
  * @{
  */
+
 /**
  * @brief Initialize UDP proxy AT command parser.
  *

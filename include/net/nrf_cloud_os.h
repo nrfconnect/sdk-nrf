@@ -37,10 +37,10 @@ struct nrf_cloud_os_mem_hooks {
  */
 void nrf_cloud_os_mem_hooks_init(struct nrf_cloud_os_mem_hooks *hooks);
 
-/** @} */
-
 #ifdef __cplusplus
 }
 #endif
+
+/** @} */
 
 #endif /* NRF_CLOUD_OS_H__ */

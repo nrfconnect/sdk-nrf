@@ -1340,10 +1340,10 @@ extern const struct bt_mesh_sensor_type
 
 /** @} */
 
-/** @} */
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* BT_MESH_SENSOR_TYPES_H__ */
+
+/** @} */

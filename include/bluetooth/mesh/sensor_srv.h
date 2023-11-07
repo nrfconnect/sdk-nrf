@@ -151,6 +151,6 @@ extern const struct bt_mesh_model_op _bt_mesh_sensor_setup_srv_op[];
 }
 #endif
 
-/** @} */
-
 #endif /* BT_MESH_SENSOR_SRV_H__ */
+
+/** @} */

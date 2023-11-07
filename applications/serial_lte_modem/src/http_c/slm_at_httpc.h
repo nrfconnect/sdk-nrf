@@ -12,6 +12,7 @@
  * @brief Vendor-specific AT command for HTTP service.
  * @{
  */
+
 /**
  * @brief HTTPC raw data send.
  *

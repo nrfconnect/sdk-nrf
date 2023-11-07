@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef __NRF_802154_RADIO_WRAPPER_H__
 #define __NRF_802154_RADIO_WRAPPER_H__
 
@@ -40,4 +41,4 @@ uint16_t nrf_802154_radio_wrapper_hw_capabilities_get(void);
 }
 #endif
 
-#endif
+#endif /* __NRF_802154_RADIO_WRAPPER_H__ */

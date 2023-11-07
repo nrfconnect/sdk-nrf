@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef _FORCE_POWER_DOWN_EVENT_H_
 #define _FORCE_POWER_DOWN_EVENT_H_
 
