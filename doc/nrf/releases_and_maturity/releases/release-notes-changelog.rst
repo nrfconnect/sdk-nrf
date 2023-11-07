@@ -229,6 +229,10 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Added credential check before connecting to network.
 
+* :ref:`nrf_cloud_rest_cell_pos_sample` sample:
+
+  * Added credential check before connecting to network.
+
 Cryptography samples
 --------------------
 

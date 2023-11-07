@@ -610,6 +610,20 @@ static void connect_to_network(void)
 	modem_time_wait();
 }
 
+static void check_credentials(void)
+{
+	int err = nrf_cloud_credentials_configured_check();
+
+	if (err == -ENOTSUP) {
+		LOG_ERR("Required nRF Cloud credentials were not found");
+		LOG_INF("Install credentials and then reboot the device");
+		k_sleep(K_FOREVER);
+	} else if (err) {
+		LOG_ERR("nrf_cloud_credentials_configured_check() failed, error: %d", err);
+		LOG_WRN("Continuing without verifying that credentials are installed");
+	}
+}
+
 int main(void)
 {
 	int err;
@@ -622,6 +636,9 @@ int main(void)
 		LOG_ERR("Initialization failed");
 		return 0;
 	}
+
+	/* Before connecting, ensure nRF Cloud credentials are installed */
+	check_credentials();
 
 	connect_to_network();
 
