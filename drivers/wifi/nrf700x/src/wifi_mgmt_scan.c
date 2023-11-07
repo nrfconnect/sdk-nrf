@@ -92,14 +92,12 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 			goto out;
 		}
 
-		for (i = 0; i <= WIFI_FREQ_BAND_MAX; i++) {
-			for (j = 0; j < WIFI_CHANNEL_MAX; j++) {
-				if (!params->chan[i][j]) {
-					break;
-				}
-
-				num_scan_channels++;
+		for (j = 0; j < CONFIG_WIFI_MGMT_SCAN_CHAN_MAX_MANUAL; j++) {
+			if (!params->band_chan[j].channel) {
+				break;
 			}
+
+			num_scan_channels++;
 		}
 	}
 
@@ -139,7 +137,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 		vif_ctx_zep->max_bss_cnt = params->max_bss_cnt;
 
 		for (i = 0; i < NRF_WIFI_SCAN_MAX_NUM_SSIDS; i++) {
-			if (!strlen(params->ssids[i])) {
+			if (!(params->ssids[i]) || !strlen(params->ssids[i])) {
 				break;
 			}
 
@@ -153,32 +151,26 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 			scan_info->scan_params.num_scan_ssids++;
 		}
 
-		for (i = 0; i <= WIFI_FREQ_BAND_MAX; i++) {
-			for (j = 0; j < WIFI_CHANNEL_MAX; j++) {
-				if (!params->chan[i][j]) {
-					break;
-				}
+		for (i = 0; i < CONFIG_WIFI_MGMT_SCAN_CHAN_MAX_MANUAL; i++) {
+			if (!params->band_chan[i].channel) {
+				break;
+			}
 
-				band = nrf_wifi_map_zep_band_to_rpu(i);
+			band = nrf_wifi_map_zep_band_to_rpu(params->band_chan[i].band);
 
-				if (band == NRF_WIFI_BAND_INVALID) {
-					LOG_ERR("%s: Unsupported band %d",
-						__func__,
-						i);
-					goto out;
-				}
+			if (band == NRF_WIFI_BAND_INVALID) {
+				LOG_ERR("%s: Unsupported band %d", __func__,
+					params->band_chan[i].band);
+				goto out;
+			}
 
-				scan_info->scan_params.center_frequency[k++] =
-					nrf_wifi_utils_chan_to_freq(fmac_dev_ctx->fpriv->opriv,
-								    band,
-								    params->chan[i][j]);
+			scan_info->scan_params.center_frequency[k++] = nrf_wifi_utils_chan_to_freq(
+				fmac_dev_ctx->fpriv->opriv, band, params->band_chan[i].channel);
 
-				if (scan_info->scan_params.center_frequency[k-1] == -1) {
-					LOG_ERR("%s: Invalid channel %d",
-						__func__,
-						params->chan[i][j]);
-					goto out;
-				}
+			if (scan_info->scan_params.center_frequency[k - 1] == -1) {
+				LOG_ERR("%s: Invalid channel %d", __func__,
+					 params->band_chan[i].channel);
+				goto out;
 			}
 		}
 
@@ -286,8 +278,7 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 		return;
 	}
 
-	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
-		vif_ctx_zep->max_bss_cnt : CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT;
+	max_bss_cnt = vif_ctx_zep->max_bss_cnt;
 
 	for (i = 0; i < scan_res->event_bss_count; i++) {
 		/* Limit the scan results to the configured maximum */
