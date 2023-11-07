@@ -205,7 +205,7 @@ kconfig_check_and_set_base_depends(MBEDTLS_SHA512_C
 )
 
 kconfig_check_and_set_base_depends(MBEDTLS_ECP_C
-  PSA_HAS_ECC_SUPPORT
+  PSA_WANT_ALG_ECDH
 )
 
 kconfig_check_and_set_base_depends(MBEDTLS_ECDH_C
@@ -213,6 +213,10 @@ kconfig_check_and_set_base_depends(MBEDTLS_ECDH_C
 )
 
 Kconfig_check_and_set_base_depends(MBEDTLS_ECDSA_C
+  PSA_WANT_ALG_ECDSA
+)
+
+kconfig_check_and_set_base_depends(MBEDTLS_ECP_C
   PSA_WANT_ALG_ECDSA
 )
 
