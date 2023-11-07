@@ -627,13 +627,6 @@ CVE-2023-2626: OpenThread KeyID Mode 2 Security Vulnerability
   OpenThread libraries for selected |NCS| releases were patched with the OpenThread KeyID Mode 2 Security Vulnerability fix and re-certified by inheritance.
   The libraries are available through a DevZone request.
 
-.. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1
-
-KRKNWK-14756: Increased average latency during communication with nRF5340-based SED
-  The measured average latency (RTT) of the Echo Request/Response transaction sometimes shows a slight increase over the baseline when the receiver is a Sleepy End Device based on the nRF5340 SoC platform.
-
-  **Affected platforms:** nRF5340
-
 .. rst-class:: v2-0-0
 
 KRKNWK-14231: Device stops receiving after switching from SSED to MED
