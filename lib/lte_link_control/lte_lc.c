@@ -69,9 +69,9 @@ static char ptw_param_ltem[5] = CONFIG_LTE_PTW_VALUE_LTE_M;
 static char ptw_param_nbiot[5] = CONFIG_LTE_PTW_VALUE_NBIOT;
 /* Default PSM RAT setting */
 static char psm_param_rat[9] = CONFIG_LTE_PSM_REQ_RAT;
-/* Default PSM RPATU setting */
+/* Default PSM RPTAU setting */
 static char psm_param_rptau[9] = CONFIG_LTE_PSM_REQ_RPTAU;
-/* Request PSM to be disabled */
+/* Request PSM to be disabled and timers set to default values */
 static const char psm_disable[] = "AT+CPSMS=";
 /* Enable CSCON (RRC mode) notifications */
 static const char cscon[] = "AT+CSCON=1";
@@ -589,6 +589,23 @@ static int enable_notifications(void)
 	return 0;
 }
 
+static void lte_lc_psm_default_config_set(void)
+{
+	if (IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_SECONDS)) {
+		lte_lc_psm_param_set_seconds(
+			CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
+			CONFIG_LTE_PSM_REQ_RAT_SECONDS);
+		LOG_DBG("PSM configs set from seconds: tau=%s (%ds), rat=%s (%ds)",
+			psm_param_rptau, CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
+			psm_param_rat, CONFIG_LTE_PSM_REQ_RAT_SECONDS);
+	} else {
+		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_STRING));
+		lte_lc_psm_param_set(CONFIG_LTE_PSM_REQ_RPTAU, CONFIG_LTE_PSM_REQ_RAT);
+		LOG_DBG("PSM configs set from string: tau=%s, rat=%s",
+			psm_param_rptau, psm_param_rat);
+	}
+}
+
 static int init_and_config(void)
 {
 	int err;
@@ -626,6 +643,8 @@ static int init_and_config(void)
 		LOG_DBG("System mode (%d) and preference (%d) are already configured",
 			sys_mode_current, mode_pref_current);
 	}
+
+	lte_lc_psm_default_config_set();
 
 	/* Listen for RRC connection mode notifications */
 	err = enable_notifications();
@@ -861,7 +880,7 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat)
 		LOG_DBG("RPTAU set to %s", psm_param_rptau);
 	} else {
 		*psm_param_rptau = '\0';
-		LOG_DBG("RPTAU use default");
+		LOG_DBG("Using modem default value for RPTAU");
 	}
 
 	if (rat != NULL) {
@@ -869,15 +888,34 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat)
 		LOG_DBG("RAT set to %s", psm_param_rat);
 	} else {
 		*psm_param_rat = '\0';
-		LOG_DBG("RAT use default");
+		LOG_DBG("Using modem default value for RAT");
 	}
 
 	return 0;
 }
 
+int lte_lc_psm_param_set_seconds(int rptau, int rat)
+{
+	int ret;
+
+	ret = encode_psm(psm_param_rptau, psm_param_rat, rptau, rat);
+
+	if (ret != 0) {
+		*psm_param_rptau = '\0';
+		*psm_param_rat = '\0';
+	}
+
+	LOG_DBG("RPTAU=%d (%s), RAT=%d (%s), ret=%d",
+		rptau, psm_param_rptau, rat, psm_param_rat, ret);
+
+	return ret;
+}
+
 int lte_lc_psm_req(bool enable)
 {
 	int err;
+
+	LOG_DBG("enable=%d, tau=%s, rat=%s", enable, psm_param_rptau, psm_param_rat);
 
 	if (enable) {
 		if (strlen(psm_param_rptau) == 8 &&
