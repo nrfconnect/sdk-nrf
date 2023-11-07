@@ -140,7 +140,13 @@ Asset Tracker v2
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Added:
+
+  * ``#XMQTTCFG`` AT command to configure MQTT client before connecting to the broker.
+
+* Updated:
+
+  * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
 
 nRF5340 Audio
 -------------

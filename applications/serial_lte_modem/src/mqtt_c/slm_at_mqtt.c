@@ -20,6 +20,8 @@ LOG_MODULE_REGISTER(slm_mqtt, CONFIG_SLM_LOG_LEVEL);
 #define MQTT_MAX_TOPIC_LEN	128
 #define MQTT_MAX_CID_LEN	64
 
+#define SLM_DEFAULT_CID		"slm_default_client_id"
+
 /**@brief MQTT client operations. */
 enum slm_mqttcon_operation {
 	MQTTC_DISCONNECT,
@@ -276,9 +278,7 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 		(void)mqtt_abort(&client);
 	}
 
-	memset(&ctx, 0, sizeof(ctx));
 	ctx.connected = false;
-	ctx.sec_tag = INVALID_SEC_TAG;
 	client.broker = NULL;
 
 	LOG_INF("MQTT thread terminated");
@@ -308,12 +308,53 @@ static int broker_init(void)
 	return 0;
 }
 
-/**@brief Initialize the MQTT client structure
+/**@brief Configure the MQTT client structure
  */
-static void client_init(void)
+static int do_mqtt_config(uint16_t keep_alive, uint8_t clean_session)
 {
+	if (ctx.connected) {
+		return -EINVAL;
+	}
+	if (clean_session != 0 && clean_session != 1) {
+		return -EINVAL;
+	}
+
 	/* Init MQTT client */
 	mqtt_client_init(&client);
+
+	client.evt_cb = mqtt_evt_handler;
+
+	/* MQTT client id configuration */
+	client.client_id.utf8 = mqtt_clientid;
+	client.client_id.size = strlen(mqtt_clientid);
+
+	/* MQTT buffers configuration */
+	client.rx_buf = rx_buffer;
+	client.rx_buf_size = sizeof(rx_buffer);
+	client.tx_buf = tx_buffer;
+	client.tx_buf_size = sizeof(tx_buffer);
+
+	/* MQTT Keep Alive configuration */
+	client.keepalive = keep_alive;
+	/* MQTT Clean Session configuration */
+	client.clean_session = clean_session;
+
+	return 0;
+}
+
+static int do_mqtt_connect(void)
+{
+	int err;
+
+	if (ctx.connected) {
+		return -EISCONN;
+	}
+
+	/* Init MQTT broker */
+	err = broker_init();
+	if (err) {
+		return err;
+	}
 
 	/* MQTT client configuration */
 	if (ctx.family == AF_INET) {
@@ -321,9 +362,6 @@ static void client_init(void)
 	} else {
 		client.broker = &ctx.broker6;
 	}
-	client.evt_cb = mqtt_evt_handler;
-	client.client_id.utf8 = mqtt_clientid;
-	client.client_id.size = strlen(mqtt_clientid);
 	client.password = NULL;
 	if (ctx.username.size > 0) {
 		client.user_name = &ctx.username;
@@ -334,15 +372,7 @@ static void client_init(void)
 		client.user_name = NULL;
 		/* ignore password if no user_name */
 	}
-
-	/* MQTT buffers configuration */
-	client.rx_buf = rx_buffer;
-	client.rx_buf_size = sizeof(rx_buffer);
-	client.tx_buf = tx_buffer;
-	client.tx_buf_size = sizeof(tx_buffer);
-
 #if defined(CONFIG_MQTT_LIB_TLS)
-	/* MQTT transport configuration */
 	if (ctx.sec_tag != INVALID_SEC_TAG) {
 		struct mqtt_sec_config *tls_config;
 
@@ -360,24 +390,8 @@ static void client_init(void)
 #else
 	client.transport.type = MQTT_TRANSPORT_NON_SECURE;
 #endif
-}
-
-static int do_mqtt_connect(void)
-{
-	int err;
-
-	if (ctx.connected) {
-		return -EISCONN;
-	}
-
-	/* Init MQTT broker */
-	err = broker_init();
-	if (err) {
-		return err;
-	}
 
 	/* Connect to MQTT broker */
-	client_init();
 	err = mqtt_connect(&client);
 	if (err != 0) {
 		LOG_ERR("ERROR: mqtt_connect %d", err);
@@ -459,6 +473,55 @@ static int do_mqtt_subscribe(uint16_t op,
 	return err;
 }
 
+/* Handles AT#XMQTTCFG commands. */
+int handle_at_mqtt_config(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+	uint16_t keep_alive = CONFIG_MQTT_KEEPALIVE;
+	uint16_t clean_session = CONFIG_MQTT_CLEAN_SESSION;
+	uint32_t param_count = at_params_valid_count_get(&slm_at_param_list);
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+		size_t clientid_sz = sizeof(mqtt_clientid);
+
+		err = util_string_get(&slm_at_param_list, 1, mqtt_clientid, &clientid_sz);
+		if (err) {
+			return err;
+		}
+		if (param_count > 2) {
+			err = at_params_unsigned_short_get(&slm_at_param_list, 2, &keep_alive);
+			if (err) {
+				return err;
+			}
+		}
+		if (param_count > 3) {
+			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &clean_session);
+			if (err) {
+				return err;
+			}
+		}
+		err = do_mqtt_config(keep_alive, (uint8_t)clean_session);
+		break;
+
+	case AT_CMD_TYPE_READ_COMMAND:
+		rsp_send("\r\n#XMQTTCFG: \"%s\",%d,%d\r\n",
+			 mqtt_clientid, client.keepalive, client.clean_session);
+		err = 0;
+		break;
+
+	case AT_CMD_TYPE_TEST_COMMAND:
+		rsp_send("\r\n#XMQTTCFG: <client_id>,<keep_alive>,<clean_session>\r\n");
+		err = 0;
+		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
 /* Handles AT#XMQTTCON commands. */
 int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 {
@@ -472,42 +535,37 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (op == MQTTC_CONNECT || op == MQTTC_CONNECT6)  {
-			size_t clientid_sz = sizeof(mqtt_clientid);
 			size_t username_sz = sizeof(mqtt_username);
 			size_t password_sz = sizeof(mqtt_password);
 			size_t url_sz = sizeof(mqtt_broker_url);
 
-			err = util_string_get(&slm_at_param_list, 2, mqtt_clientid, &clientid_sz);
-			if (err) {
-				return err;
-			}
-			err = util_string_get(&slm_at_param_list, 3, mqtt_username, &username_sz);
+			err = util_string_get(&slm_at_param_list, 2, mqtt_username, &username_sz);
 			if (err) {
 				return err;
 			} else {
 				ctx.username.utf8 = mqtt_username;
 				ctx.username.size = strlen(mqtt_username);
 			}
-			err = util_string_get(&slm_at_param_list, 4, mqtt_password, &password_sz);
+			err = util_string_get(&slm_at_param_list, 3, mqtt_password, &password_sz);
 			if (err) {
 				return err;
 			} else {
 				ctx.password.utf8 = mqtt_password;
 				ctx.password.size = strlen(mqtt_password);
 			}
-			err = util_string_get(&slm_at_param_list, 5, mqtt_broker_url, &url_sz);
+			err = util_string_get(&slm_at_param_list, 4, mqtt_broker_url, &url_sz);
 			if (err) {
 				return err;
 			}
 			err = at_params_unsigned_short_get(
-				&slm_at_param_list, 6, &mqtt_broker_port);
+				&slm_at_param_list, 5, &mqtt_broker_port);
 			if (err) {
 				return err;
 			}
 			ctx.sec_tag = INVALID_SEC_TAG;
-			if (at_params_valid_count_get(&slm_at_param_list) > 7) {
+			if (at_params_valid_count_get(&slm_at_param_list) > 6) {
 				err = at_params_unsigned_int_get(
-					&slm_at_param_list, 7, &ctx.sec_tag);
+					&slm_at_param_list, 6, &ctx.sec_tag);
 				if (err) {
 					return err;
 				}
@@ -539,7 +597,7 @@ int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XMQTTCON: (%d,%d,%d),<client_id>,<username>,"
+		rsp_send("\r\n#XMQTTCON: (%d,%d,%d),<username>,"
 			 "<password>,<url>,<port>,<sec_tag>\r\n",
 			 MQTTC_DISCONNECT, MQTTC_CONNECT, MQTTC_CONNECT6);
 		err = 0;
@@ -735,6 +793,9 @@ int slm_at_mqtt_init(void)
 	pub_param.message_id = 0;
 	memset(&ctx, 0, sizeof(ctx));
 	ctx.sec_tag = INVALID_SEC_TAG;
+
+	strcpy(mqtt_clientid, SLM_DEFAULT_CID);
+	do_mqtt_config(CONFIG_MQTT_KEEPALIVE, CONFIG_MQTT_CLEAN_SESSION);
 
 	return 0;
 }

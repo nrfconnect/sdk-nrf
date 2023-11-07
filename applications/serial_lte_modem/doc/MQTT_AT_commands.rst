@@ -48,6 +48,112 @@ Syntax
   * *Negative value* - Failure.
     It is the error code indicating the reason for the failure.
 
+MQTT configure #XMQTTCFG
+========================
+
+The ``#XMQTTCFG`` command allows you to configure the MQTT client before connecting to a broker.
+
+Set command
+-----------
+
+The set command allows you to configure the MQTT client.
+
+Syntax
+~~~~~~
+
+::
+
+   AT#XMQTTCFG=<client_id>[,<keep_alive>[,<clean_session>]]
+
+* The ``<client_id>`` parameter is a string.
+  It indicates the MQTT Client ID.
+  If this command is not issued, SLM uses the default value of ``slm_default_client_id``.
+* The ``<keep_alive>`` parameter is an integer.
+  It indicates the maximum Keep Alive time in seconds for MQTT.
+  The default Kepp Alive time is 60 seconds.
+* The ``<clean_session>`` parameter is an integer.
+  It can have one of the following values:
+
+    * ``0`` - Connect to a MQTT broker using a persistent session.
+    * ``1`` - Connect to a MQTT broker using a clean session.
+
+  The default is using a persistent session.
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XMQTTCFG="MyMQTT-Client-ID",300,1
+   OK
+
+Read command
+------------
+
+The read command shows MQTT client configuration information.
+
+Syntax
+~~~~~~
+
+::
+
+   AT#XMQTTCFG?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XMQTTCFG: <client_id>,<keep_alive>,<clean_session>
+
+* The ``<client_id>`` parameter is a string.
+  It indicates the MQTT Client ID.
+* The ``<keep_alive>`` parameter is an integer.
+  It indicates the maximum Keep Alive time in seconds for MQTT.
+* The ``<clean_session>`` parameter is an integer.
+  It can have one of the following values:
+
+    * ``0`` - Connect to a MQTT broker using a persistent session.
+    * ``1`` - Connect to a MQTT broker using a clean session.
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XMQTTCFG?
+   #XMQTTCFG: "MyMQTT-Client-ID",60,0
+   OK
+
+Test command
+------------
+
+The test command tests the existence of the command and provides information about the type of its subparameters.
+
+Syntax
+~~~~~~
+
+::
+
+   #XMQTTCFG=?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XMQTTCFG: <client_id>,<keep_alive>,<clean_session>
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XMQTTCFG=?
+   #XMQTTCFG: <client_id>,,<keep_alive>,<clean_session>
+   OK
+
+
 MQTT connect #XMQTTCON
 ======================
 
@@ -63,7 +169,7 @@ Syntax
 
 ::
 
-   AT#XMQTTCON=<op>[,<client_id>,<username>,<password>,<url>,<port>[,<sec_tag>]]
+   AT#XMQTTCON=<op>[,<username>,<password>,<url>,<port>[,<sec_tag>]]
 
 * The ``<op>`` parameter is an integer.
   It can accept one of the following values:
@@ -72,8 +178,6 @@ Syntax
   * ``1`` - Connect to the MQTT broker using IP protocol family version 4.
   * ``2`` - Connect to the MQTT broker using IP protocol family version 6.
 
-* The ``<client_id>`` parameter is a string.
-  It indicates the MQTT Client ID.
 * The ``<username>`` parameter is a string.
   It indicates the MQTT Client username.
 * The ``<password>`` parameter is a string.
@@ -106,7 +210,10 @@ Examples
 
 ::
 
-   AT#XMQTTCON=1,"MyMQTT-Client-ID","","","mqtt.server.com",1883
+   AT#XMQTTCFG="MyMQTT-Client-ID",300,1
+   OK
+
+   AT#XMQTTCON=1,"","","mqtt.server.com",1883
    OK
    #XMQTTEVT: 0,0
 
@@ -141,9 +248,6 @@ Response syntax
     * ``0`` - MQTT is not connected.
     * ``1`` - MQTT is connected.
 
-* The ``<client_id>`` value is a string.
-  It indicates the MQTT client ID.
-  Present only when ``<status>`` is ``1``.
 * The ``<url>`` value is a string.
   It indicates the MQTT broker hostname.
   Present only when ``<status>`` is ``1``.
@@ -160,7 +264,7 @@ Examples
 ::
 
    AT#XMQTTCON?
-   #XMQTTCON: 1,"MyMQTT-Client-ID","","","mqtt.server.com",1883
+   #XMQTTCON: 1,"","","mqtt.server.com",1883
    OK
 
 Test command
@@ -180,7 +284,7 @@ Response syntax
 
 ::
 
-   #XMQTTCON: (list of op),<client_id>,<username>,<password>,<url>,<port>,<sec_tag>
+   #XMQTTCON: (list of op),<username>,<password>,<url>,<port>,<sec_tag>
 
 Examples
 ~~~~~~~~
@@ -188,9 +292,8 @@ Examples
 ::
 
    AT#XMQTTCON=?
-   #XMQTTCON: (0,1,2),<client_id>,<username>,<password>,<url>,<port>,<sec_tag>
+   #XMQTTCON: (0,1,2),<username>,<password>,<url>,<port>,<sec_tag>
    OK
-
 
 MQTT subscribe #XMQTTSUB
 ========================

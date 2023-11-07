@@ -358,6 +358,7 @@ int handle_at_tftp(enum at_cmd_type cmd_type);
 #endif
 
 #if defined(CONFIG_SLM_MQTTC)
+int handle_at_mqtt_config(enum at_cmd_type cmd_type);
 int handle_at_mqtt_connect(enum at_cmd_type cmd_type);
 int handle_at_mqtt_publish(enum at_cmd_type cmd_type);
 int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type);
@@ -464,6 +465,7 @@ static struct slm_at_cmd {
 #endif
 
 #if defined(CONFIG_SLM_MQTTC)
+	{"AT#XMQTTCFG", handle_at_mqtt_config},
 	{"AT#XMQTTCON", handle_at_mqtt_connect},
 	{"AT#XMQTTPUB", handle_at_mqtt_publish},
 	{"AT#XMQTTSUB", handle_at_mqtt_subscribe},
