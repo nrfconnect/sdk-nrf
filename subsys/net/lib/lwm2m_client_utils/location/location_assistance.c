@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/init.h>
 
 #define LOG_MODULE_NAME net_lwm2m_location_assist
 #define LOG_LEVEL CONFIG_LWM2M_LOG_LEVEL
@@ -18,6 +19,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include "gnss_assistance_obj.h"
 #include "ground_fix_obj.h"
+#include "location_assistance.h"
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_BUF_SIZE)
 #define AGNSS_BUF_SIZE CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_BUF_SIZE
@@ -53,93 +55,142 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 static struct lwm2m_ctx *req_client_ctx;
 
-#define INITIAL_RETRY_INTERVAL 675
-#define MAXIMUM_RETRY_INTERVAL 86400
+static struct assistance_retry_data gnss_retry_info;
+static struct assistance_retry_data ground_retry_info;
 
+static bool request_retry_enabled;
 static bool permanent_error;
-static bool temp_error;
-static int retry_seconds;
-
 static location_assistance_result_code_cb_t result_code_cb;
 
 static int do_agnss_request_send(struct lwm2m_ctx *ctx);
 static int do_pgps_request_send(struct lwm2m_ctx *ctx);
 static int do_ground_fix_request_send(struct lwm2m_ctx *ctx);
 
-static struct k_work_delayable location_assist_gnss_work;
+static int gnss_assintace_request_prepare(void)
+{
+	if (permanent_error) {
+		LOG_ERR("Permanent error interfacing location services, fix and reboot");
+		return -EPIPE;
+	} else if (gnss_retry_info.temp_error) {
+		LOG_ERR("Temporary error in location services retry scheduled");
+		return -EALREADY;
+	}
+
+	if (location_assist_gnss_is_busy()) {
+		LOG_WRN("GNSS object busy handling request");
+		return -EAGAIN;
+	}
+
+	gnss_retry_info.retry_seconds = LOCATION_ASSISTANT_INITIAL_RETRY_INTERVAL;
+	location_retry_timer_start(&gnss_retry_info);
+	gnss_retry_info.retry_left = 1;
+	return 0;
+}
+
 static void location_assist_gnss_work_handler(struct k_work *work)
 {
 	int assist_type = location_assist_gnss_type_get();
 
+	if (!location_retry_timer_timeout(&gnss_retry_info)) {
+		return;
+	}
+
+	if (location_retry_timer_report_no_response(&gnss_retry_info)) {
+		lwm2m_set_s32(&LWM2M_OBJ(GNSS_ASSIST_OBJECT_ID, 0, GNSS_ASSIST_RESULT_CODE),
+			      LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR);
+		return;
+	}
+
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) &&
 	    assist_type == ASSISTANCE_REQUEST_TYPE_AGNSS) {
+		location_retry_timer_start(&gnss_retry_info);
 		do_agnss_request_send(req_client_ctx);
 	}
 
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS) &&
 	    assist_type == ASSISTANCE_REQUEST_TYPE_PGPS) {
+		location_retry_timer_start(&gnss_retry_info);
 		do_pgps_request_send(req_client_ctx);
 	}
 }
 
 static void location_assist_gnss_result_cb(int32_t data)
 {
+	location_retry_timer_cancel(&gnss_retry_info);
 	switch (data) {
 	case LOCATION_ASSIST_RESULT_CODE_OK:
-		retry_seconds = INITIAL_RETRY_INTERVAL;
-		temp_error = false;
+		gnss_assistance_download_cancel();
+		location_retry_timer_ok(&gnss_retry_info);
 		break;
 	case LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR:
 		LOG_ERR("Permanent error interfacing location services, fix and reboot");
-		permanent_error = true;
+		if (request_retry_enabled) {
+			permanent_error = true;
+		} else {
+			gnss_assistance_download_cancel();
+		}
 		break;
 	case LOCATION_ASSIST_RESULT_CODE_TEMP_ERR:
-		LOG_ERR("Temporary error in location services, scheduling retry in %d s",
-		retry_seconds);
-		temp_error = true;
-		k_work_schedule(&location_assist_gnss_work, K_SECONDS(retry_seconds));
-		if (retry_seconds < MAXIMUM_RETRY_INTERVAL) {
-			retry_seconds *= 2;
+		if (request_retry_enabled) {
+			location_retry_timer_temp_error(&gnss_retry_info);
+		} else {
+			gnss_assistance_download_cancel();
 		}
+		break;
+	case LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR:
+		LOG_ERR("No response error in location services");
+		gnss_assistance_download_cancel();
 		break;
 	default:
 		LOG_ERR("Unknown error %d", data);
+		gnss_assistance_download_cancel();
 	}
 
 	/* Notify the application about the result if it has requested a callback */
 	if (result_code_cb) {
-		result_code_cb(data);
+		result_code_cb(GNSS_ASSIST_OBJECT_ID, data);
 	}
 }
 
-static struct k_work_delayable location_assist_ground_fix_work;
-static bool ground_temp_error;
-static int ground_retry_seconds;
-
 static void location_assist_ground_fix_work_handler(struct k_work *work)
 {
+	if (!location_retry_timer_timeout(&ground_retry_info)) {
+		return;
+	}
+
+	if (location_retry_timer_report_no_response(&ground_retry_info)) {
+		lwm2m_set_s32(&LWM2M_OBJ(GROUND_FIX_OBJECT_ID, 0, GROUND_FIX_RESULT_CODE),
+			      LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR);
+		return;
+	}
+
+	location_retry_timer_start(&ground_retry_info);
 	do_ground_fix_request_send(req_client_ctx);
 }
 
 static void location_assist_ground_fix_result_cb(int32_t data)
 {
+	location_retry_timer_cancel(&ground_retry_info);
+	/* Clear timer seconds for accept new request if no error reported*/
+	ground_retry_info.retry_seconds = 0;
+
 	switch (data) {
 	case LOCATION_ASSIST_RESULT_CODE_OK:
-		ground_retry_seconds = 0;
-		ground_temp_error = false;
+		location_retry_timer_ok(&ground_retry_info);
 		break;
 	case LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR:
 		LOG_ERR("Permanent error interfacing location services, fix and reboot");
-		permanent_error = true;
+		if (request_retry_enabled) {
+			permanent_error = true;
+		}
 		break;
 	case LOCATION_ASSIST_RESULT_CODE_TEMP_ERR:
-		LOG_ERR("Temporary error in location services, scheduling retry in %d s",
-		ground_retry_seconds);
-		ground_temp_error = true;
-		k_work_schedule(&location_assist_ground_fix_work, K_SECONDS(ground_retry_seconds));
-		if (ground_retry_seconds < MAXIMUM_RETRY_INTERVAL) {
-			ground_retry_seconds *= 2;
+		if (request_retry_enabled) {
+			location_retry_timer_temp_error(&ground_retry_info);
 		}
+		break;
+	case LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR:
+		LOG_ERR("No response error in location services");
 		break;
 	default:
 		LOG_ERR("Unknown error %d", data);
@@ -147,7 +198,7 @@ static void location_assist_ground_fix_result_cb(int32_t data)
 
 	/* Notify the application about the result if it has requested a callback */
 	if (result_code_cb) {
-		result_code_cb(data);
+		result_code_cb(GROUND_FIX_OBJECT_ID, data);
 	}
 }
 
@@ -195,7 +246,7 @@ int location_assistance_agnss_set_mask(const struct nrf_modem_gnss_agnss_data_fr
 	if (permanent_error) {
 		LOG_ERR("Permanent error interfacing location services, fix and reboot");
 		return -EPIPE;
-	} else if (temp_error) {
+	} else if (gnss_retry_info.temp_error) {
 		LOG_ERR("Temporary error in location services, retry scheduled");
 		return -EALREADY;
 	}
@@ -247,20 +298,13 @@ static int do_agnss_request_send(struct lwm2m_ctx *ctx)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 int location_assistance_agnss_request_send(struct lwm2m_ctx *ctx)
 {
-	if (permanent_error) {
-		LOG_ERR("Permanent error interfacing location services, fix and reboot");
-		return -EPIPE;
-	} else if (temp_error) {
-		LOG_ERR("Temporary error in location services retry scheduled");
-		return -EALREADY;
-	}
+	int ret;
 
-	if (location_assist_gnss_is_busy()) {
-		LOG_WRN("GNSS object busy handling request");
-		return -EAGAIN;
-	}
 	LOG_INF("Send A-GNSS request");
-	retry_seconds = INITIAL_RETRY_INTERVAL;
+	ret = gnss_assintace_request_prepare();
+	if (ret) {
+		return ret;
+	}
 
 	return do_agnss_request_send(ctx);
 }
@@ -304,14 +348,18 @@ int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx)
 	if (permanent_error) {
 		LOG_ERR("Permanent error interfacing location services, fix and reboot");
 		return -EPIPE;
-	} else if (ground_temp_error || ground_retry_seconds) {
+	} else if (ground_retry_info.temp_error || ground_retry_info.retry_seconds) {
 		LOG_ERR("Temporary error in location services retry scheduled");
 		return -EALREADY;
 	}
 
+	location_retry_timer_start(&ground_retry_info);
 	ret = do_ground_fix_request_send(ctx);
 	if (ret == 0) {
-		ground_retry_seconds = INITIAL_RETRY_INTERVAL;
+		ground_retry_info.retry_seconds = LOCATION_ASSISTANT_INITIAL_RETRY_INTERVAL;
+		ground_retry_info.retry_left = 1;
+	} else {
+		location_retry_timer_cancel(&ground_retry_info);
 	}
 
 	return ret;
@@ -321,6 +369,7 @@ int location_assistance_ground_fix_request_send(struct lwm2m_ctx *ctx)
 static int do_pgps_request_send(struct lwm2m_ctx *ctx)
 {
 	int path_count = PGPS_LOCATION_PATHS_DEFAULT;
+
 	LOG_INF("Send P-GPS request");
 	location_assist_gnss_type_set(ASSISTANCE_REQUEST_TYPE_PGPS);
 	gnss_assistance_prepare_download();
@@ -344,62 +393,64 @@ static int do_pgps_request_send(struct lwm2m_ctx *ctx)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 int location_assistance_pgps_request_send(struct lwm2m_ctx *ctx)
 {
-	if (permanent_error) {
-		LOG_ERR("Permanent error interfacing location services, fix and reboot");
-		return -EPIPE;
-	} else if (temp_error) {
-		LOG_ERR("Temporary error in location services, retry scheduled");
-		return -EALREADY;
-	}
+	int ret;
 
-	if (location_assist_gnss_is_busy()) {
-		LOG_WRN("GNSS object busy handling request");
-		return -EAGAIN;
+	ret = gnss_assintace_request_prepare();
+	if (ret) {
+		return ret;
 	}
-
-	retry_seconds = INITIAL_RETRY_INTERVAL;
 
 	return do_pgps_request_send(ctx);
 }
 #endif
-static bool resend_init_done;
 
-int location_assistance_init_resend_handler(void)
+void location_assistance_retry_init(bool enable_resend)
 {
-
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) ||
 	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)) {
-		if (resend_init_done) {
-			k_work_cancel_delayable(&location_assist_gnss_work);
-			temp_error = false;
-			permanent_error = false;
-		} else {
-			k_work_init_delayable(&location_assist_gnss_work,
-					      location_assist_gnss_work_handler);
-		}
-
-		gnss_assistance_set_result_code_cb(location_assist_gnss_result_cb);
+		location_retry_timer_cancel(&gnss_retry_info);
+		gnss_retry_info.retry_seconds = 0;
+		gnss_retry_info.temp_error = false;
+		gnss_assistance_download_cancel();
 	}
 
 	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)) {
-		if (resend_init_done) {
-			k_work_cancel_delayable(&location_assist_ground_fix_work);
-			ground_retry_seconds = 0;
-			ground_temp_error = false;
-			permanent_error = false;
-		} else {
-			k_work_init_delayable(&location_assist_ground_fix_work,
-				      location_assist_ground_fix_work_handler);
-		}
+		location_retry_timer_cancel(&ground_retry_info);
+		ground_retry_info.retry_seconds = 0;
+		ground_retry_info.temp_error = false;
 
-		ground_fix_set_result_code_cb(location_assist_ground_fix_result_cb);
 	}
-
-	resend_init_done = true;
-	return 0;
+	permanent_error = false;
+	request_retry_enabled = enable_resend;
 }
 
 void location_assistance_set_result_code_cb(location_assistance_result_code_cb_t cb)
 {
 	result_code_cb = cb;
 }
+
+static int location_assistance_init(void)
+{
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) ||
+	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)) {
+		k_work_init_delayable(&gnss_retry_info.worker,
+				      location_assist_gnss_work_handler);
+		gnss_retry_info.retry_seconds = 0;
+		gnss_retry_info.temp_error = false;
+		gnss_assistance_set_result_code_cb(location_assist_gnss_result_cb);
+	}
+
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT)) {
+		k_work_init_delayable(&ground_retry_info.worker,
+				      location_assist_ground_fix_work_handler);
+		ground_retry_info.retry_seconds = 0;
+		ground_retry_info.temp_error = false;
+		ground_fix_set_result_code_cb(location_assist_ground_fix_result_cb);
+
+	}
+	permanent_error = false;
+
+	return 0;
+}
+
+SYS_INIT(location_assistance_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);

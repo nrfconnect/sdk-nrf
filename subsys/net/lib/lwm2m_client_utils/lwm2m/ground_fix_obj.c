@@ -68,6 +68,12 @@ static int ground_fix_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 				     uint16_t data_len, bool last_block,
 				     size_t total_size)
 {
+	if (data_len != sizeof(int32_t)) {
+		return -EINVAL;
+	}
+
+	result =  *(int32_t *)data;
+
 	if (result_code_cb) {
 		result_code_cb(result);
 	}

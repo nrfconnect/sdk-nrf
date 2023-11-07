@@ -15,6 +15,7 @@ typedef void (*gnss_assistance_get_result_code_cb_t)(int32_t result_code);
 void gnss_assistance_set_result_code_cb(gnss_assistance_get_result_code_cb_t cb);
 
 void gnss_assistance_prepare_download(void);
+void gnss_assistance_download_cancel(void);
 int location_assist_agnss_alloc_buf(size_t buf_size);
 bool location_assist_gnss_is_busy(void);
 int location_assist_gnss_type_set(int assistance_type);

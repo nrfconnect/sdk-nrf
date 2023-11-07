@@ -199,6 +199,12 @@ void gnss_assistance_prepare_download(void)
 	request_ongoing = true;
 }
 
+void gnss_assistance_download_cancel(void)
+{
+	bytes_downloaded = 0;
+	request_ongoing = false;
+}
+
 bool location_assist_gnss_is_busy(void)
 {
 	return request_ongoing;
