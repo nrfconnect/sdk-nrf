@@ -69,9 +69,27 @@ config LTE_PSM_REQ
 	  the modem is initialized. This will cause the modem to include a PSM request in
 	  every subsequent LTE attach request.
 
+choice LTE_PSM_REQ_FORMAT
+	prompt "Format for PSM configuration"
+	default LTE_PSM_REQ_FORMAT_STRING
+	help
+	  Select the format in which default parameters for PSM are given.
+
+config LTE_PSM_REQ_FORMAT_STRING
+	bool "Use PSM configs given as bit field strings"
+	help
+	  Use LTE_PSM_REQ_RPTAU and LTE_PSM_REQ_RAT.
+
+config LTE_PSM_REQ_FORMAT_SECONDS
+	bool "Use PSM configs given in seconds"
+	help
+	  Use LTE_PSM_REQ_RPTAU_SECONDS and LTE_PSM_REQ_RAT_SECONDS.
+
+endchoice
+
 config LTE_PSM_REQ_RPTAU
 	string "Requested periodic TAU for PSM"
-	default "00000011"
+	default "00000011" # 30 minutes
 	help
 	  Power saving mode setting for requested periodic TAU.
 	  See 3GPP 27.007 Ch. 7.38.
@@ -79,11 +97,27 @@ config LTE_PSM_REQ_RPTAU
 
 config LTE_PSM_REQ_RAT
 	string "Requested active time for PSM"
-	default "00100001"
+	default "00100001" # 1 minute
 	help
 	  Power saving mode setting for requested active time.
 	  See 3GPP 27.007 Ch. 7.38.
 	  And 3GPP 24.008 Ch. 10.5.7.3 for data format.
+
+config LTE_PSM_REQ_RPTAU_SECONDS
+	int "Requested periodic TAU for PSM in seconds"
+	default 1800
+	help
+	  Power saving mode setting for requested periodic TAU in seconds.
+	  See lte_lc_psm_param_set_seconds() on limitations although any
+	  non-negative value can be given.
+
+config LTE_PSM_REQ_RAT_SECONDS
+	int "Requested active time for PSM in seconds"
+	default 60
+	help
+	  Power saving mode setting for requested active time in seconds.
+	  See lte_lc_psm_param_set_seconds() on limitations although any
+	  non-negative value can be given.
 
 config LTE_PROPRIETARY_PSM_REQ
 	bool "Enable use of proprietary PSM"

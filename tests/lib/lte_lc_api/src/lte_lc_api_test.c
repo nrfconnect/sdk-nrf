@@ -555,6 +555,45 @@ void test_lte_lc_psm_req_disable_success(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
+void test_lte_lc_psm_param_set_seconds_enable_both_set(void)
+{
+	int ret;
+
+	ret = lte_lc_psm_param_set_seconds(60, 600);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* TODO: We need custom nrf_modem_at_printf mock to verify the content */
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,\"%s\",\"%s\"", EXIT_SUCCESS);
+	ret = lte_lc_psm_req(true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_psm_param_set_seconds_enable_both_zero(void)
+{
+	int ret;
+
+	ret = lte_lc_psm_param_set_seconds(0, 0);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* TODO: We need custom nrf_modem_at_printf mock to verify the content */
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,\"%s\",\"%s\"", EXIT_SUCCESS);
+	ret = lte_lc_psm_req(true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_psm_param_set_seconds_enable_both_default(void)
+{
+	int ret;
+
+	ret = lte_lc_psm_param_set_seconds(-1, -1);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* TODO: We need custom nrf_modem_at_printf mock to verify the content */
+	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", EXIT_SUCCESS);
+	ret = lte_lc_psm_req(true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
 void test_lte_lc_edrx_param_set_wrong_mode(void)
 {
 	int ret;

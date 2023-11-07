@@ -472,6 +472,84 @@ void test_parse_psm(void)
 	TEST_ASSERT_EQUAL(32, psm_cfg.active_time);
 }
 
+void test_encode_psm(void)
+{
+	int err;
+	char tau_ext_str[9] = "";
+	char active_time_str[9] = "";
+
+	err = encode_psm(tau_ext_str, active_time_str, 11400, 60);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL_STRING("00010011", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("00011110", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+
+	/* Test value -1 */
+	err = encode_psm(tau_ext_str, active_time_str, -1, -1);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL_STRING("", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+
+	/* Test too big TAU */
+	err = encode_psm(tau_ext_str, active_time_str, 35712001, 61);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+	TEST_ASSERT_EQUAL_STRING("", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("00011111", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+
+	/* Test too big active time */
+	err = encode_psm(tau_ext_str, active_time_str, 61, 11161);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+	TEST_ASSERT_EQUAL_STRING("01111111", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+
+	/* Test value 1 rounding to 2*/
+	err = encode_psm(tau_ext_str, active_time_str, 1, 1);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL_STRING("01100001", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("00000001", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+
+	/* Test maximum values */
+	err = encode_psm(tau_ext_str, active_time_str, 35712000, 11160);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL_STRING("11011111", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("01011111", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+
+	/****************************************/
+	err = encode_psm(tau_ext_str, active_time_str, 123456, 89);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL_STRING("01000100", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("00100010", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+
+	/****************************************/
+	err = encode_psm(tau_ext_str, active_time_str, 62, 63);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL_STRING("01111111", tau_ext_str);
+	TEST_ASSERT_EQUAL_STRING("00100010", active_time_str);
+
+	memset(tau_ext_str, 0, sizeof(tau_ext_str));
+	memset(active_time_str, 0, sizeof(active_time_str));
+}
+
 void test_parse_mdmev(void)
 {
 	int err;

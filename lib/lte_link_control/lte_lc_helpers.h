@@ -206,6 +206,17 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg);
 int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	      const char *tau_legacy_str, struct lte_lc_psm_cfg *psm_cfg);
 
+/* @brief Encode Periodic TAU timer and active time strings.
+ *
+ * @param[out] tau_ext_str TAU (T3412 extended) string. Must be at least 9 bytes.
+ * @param[out] active_time_str Active time string buffer. Must be at least 9 bytes.
+ * @param rptau[in] Requested Periodic TAU value to be encoded.
+ * @param rat[in] Requested active time value to be encoded.
+ *
+ * @retval 0 if PSM configuration was successfully parsed.
+ * @retval -EINVAL if parsing failed.
+ */
+int encode_psm(char *tau_ext_str, char *active_time_str, int rptau, int rat);
 
 /* @brief Parses an CEREG response and returns network registration status,
  *	  cell information, LTE mode and pSM configuration.

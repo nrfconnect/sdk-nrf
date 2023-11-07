@@ -193,14 +193,20 @@ static const char link_edrx_usage_str[] =
 static const char link_psm_usage_str[] =
 	"Usage: link psm --enable [options] | --disable | --read\n"
 	"Options:\n"
-	"  -r, --read,         Read PSM config\n"
-	"  -d, --disable,      Disable PSM\n"
-	"  -e, --enable,       Enable PSM\n"
-	"  -p, --rptau, [str]  Sets custom requested periodic TAU value to be requested\n"
-	"                      when enabling PSM -e option.\n"
-	"  -t, --rat, [str]    Sets custom requested active time (RAT) value to be\n"
-	"                      requested when enabling PSM -e option.\n"
-	"  -h, --help,         Shows this help information";
+	"  -r, --read,          Read PSM config.\n"
+	"  -d, --disable,       Disable PSM.\n"
+	"  -e, --enable,        Enable PSM.\n"
+	"  -p, --rptau, [str]   Sets custom requested periodic TAU value to be requested\n"
+	"                       when enabling PSM with -e option.\n"
+	"  -t, --rat, [str]     Sets custom requested active time (RAT) value to be\n"
+	"                       requested when enabling PSM with -e option.\n"
+	"  -P, --srptau, [int]  Sets custom requested periodic TAU value in seconds to be\n"
+	"                       requested when enabling PSM with -e option.\n"
+	"  -T, --srat, [int]    Sets custom requested active time (RAT) value in seconds to be\n"
+	"                       requested when enabling PSM with -e option.\n"
+	"  -h, --help,          Shows this help information.\n"
+	"\n"
+	"Options -p and -t cannot be mixed with options -P and -T in the same command.";
 
 static const char link_rsrp_usage_str[] =
 	"Usage: link rsrp --subscribe | --unsubscribe\n"
@@ -432,6 +438,8 @@ static struct option long_options[] = {
 	{ "uname", required_argument, 0, 'U' },
 	{ "rptau", required_argument, 0, 'p' },
 	{ "rat", required_argument, 0, 't' },
+	{ "srptau", required_argument, 0, 'P' },
+	{ "srat", required_argument, 0, 'T' },
 	{ "mem1", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_1 },
 	{ "mem2", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_2 },
 	{ "mem3", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_3 },
@@ -464,7 +472,7 @@ static struct option long_options[] = {
 	{ 0, 0, 0, 0 }
 };
 
-static const char short_options[] = "ha:I:f:i:p:t:A:P:U:su014rmngMNed";
+static const char short_options[] = "ha:I:f:i:p:t:A:P:T:U:su014rmngMNed";
 
 bool link_shell_msleep_notifications_subscribed;
 
@@ -1496,9 +1504,13 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 	int ret = 0;
 	enum link_shell_common_options common_option = LINK_COMMON_NONE;
 	char psm_rptau_bit_str[LINK_SHELL_PSM_PARAM_STR_LENGTH + 1];
-	bool psm_rptau_set = false;
+	bool psm_rptau_bit_str_set = false;
 	char psm_rat_bit_str[LINK_SHELL_PSM_PARAM_STR_LENGTH + 1];
-	bool psm_rat_set = false;
+	bool psm_rat_bit_str_set = false;
+	int psm_rptau_seconds = 0;
+	bool psm_rptau_seconds_set = false;
+	int psm_rat_seconds = 0;
+	bool psm_rat_seconds_set = false;
 
 	optreset = 1;
 	optind = 1;
@@ -1512,7 +1524,7 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 			if (strlen(optarg) ==
 			    LINK_SHELL_PSM_PARAM_STR_LENGTH) {
 				strcpy(psm_rptau_bit_str, optarg);
-				psm_rptau_set = true;
+				psm_rptau_bit_str_set = true;
 			} else {
 				mosh_error(
 					"RPTAU bit string length must be %d.",
@@ -1524,13 +1536,22 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 			if (strlen(optarg) ==
 			    LINK_SHELL_PSM_PARAM_STR_LENGTH) {
 				strcpy(psm_rat_bit_str, optarg);
-				psm_rat_set = true;
+				psm_rat_bit_str_set = true;
 			} else {
 				mosh_error(
 					"RAT bit string length must be %d.",
 					LINK_SHELL_PSM_PARAM_STR_LENGTH);
 				return -EINVAL;
 			}
+			break;
+
+		case 'P': /* rptau in seconds */
+			psm_rptau_seconds = atoi(optarg);
+			psm_rptau_seconds_set = true;
+			break;
+		case 'T': /* rat in seconds */
+			psm_rat_seconds = atoi(optarg);
+			psm_rat_seconds_set = true;
 			break;
 		default:
 			break;
@@ -1542,23 +1563,39 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 		char *rptau_bit_value = NULL;
 		char *rat_bit_value = NULL;
 
-		if (psm_rptau_set) {
+		if ((psm_rptau_bit_str_set || psm_rat_bit_str_set) &&
+		    (psm_rptau_seconds_set || psm_rat_seconds_set)) {
+			mosh_print("Use either -p and -t, or -P and -T options. Do not mix them.");
+			return -EINVAL;
+		}
+
+		if (psm_rptau_bit_str_set) {
 			rptau_bit_value = psm_rptau_bit_str;
 		}
 
-		if (psm_rat_set) {
+		if (psm_rat_bit_str_set) {
 			rat_bit_value = psm_rat_bit_str;
 		}
 
-		ret = lte_lc_psm_param_set(rptau_bit_value,
-						rat_bit_value);
-		if (ret < 0) {
-			mosh_error("Cannot set PSM parameters: error %d", ret);
-			mosh_error(
-				"  rptau %s, rat %s",
-				((rptau_bit_value == NULL) ? "NULL" : rptau_bit_value),
-				((rat_bit_value == NULL) ? "NULL" : rat_bit_value));
-			return -EINVAL;
+		if (psm_rptau_bit_str_set || psm_rat_bit_str_set) {
+			ret = lte_lc_psm_param_set(rptau_bit_value, rat_bit_value);
+			if (ret < 0) {
+				mosh_error("Cannot set PSM parameters: error %d", ret);
+				mosh_error(
+					"  rptau %s, rat %s",
+					((rptau_bit_value == NULL) ? "NULL" : rptau_bit_value),
+					((rat_bit_value == NULL) ? "NULL" : rat_bit_value));
+				return -EINVAL;
+			}
+		} else if (psm_rptau_seconds_set || psm_rat_seconds_set) {
+			ret = lte_lc_psm_param_set_seconds(psm_rptau_seconds, psm_rat_seconds);
+			if (ret < 0) {
+				mosh_error("Cannot set PSM parameters: error %d", ret);
+				mosh_error(
+					"  rptau %d, rat %d",
+					psm_rptau_seconds, psm_rat_seconds);
+				return -EINVAL;
+			}
 		}
 
 		ret = lte_lc_psm_req(true);

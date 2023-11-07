@@ -435,6 +435,147 @@ clean_exit:
 	return err;
 }
 
+/* Different values in the T3324 lookup table. */
+#define T3324_LOOKUP_DIFFERENT_VALUES 3
+/* Different values in the T3412 extended lookup table. */
+#define T3412_EXT_LOOKUP_DIFFERENT_VALUES 7
+/* Maximum value for the timer value field of the timer information elements in both
+ * T3324 and T3412 extended lookup tables.
+ */
+#define TIMER_VALUE_MAX 31
+
+/* Lookup table for T3324 timer used for PSM active time in seconds.
+ * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163.
+ */
+static const uint32_t t3324_lookup[8] = {2, 60, 360, 60, 60, 60, 60, 0};
+
+/* Lookup table for T3412-extended timer used for periodic TAU. Unit is seconds.
+ * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a.
+ */
+static const uint32_t t3412_ext_lookup[8] = {600, 3600, 36000, 2, 30, 60, 1152000, 0};
+
+/* Lookup table for T3412 (legacy) timer used for periodic TAU. Unit is seconds.
+ * Ref: GPRS Timer in 3GPP TS 24.008 Table 10.5.172.
+ */
+static const uint32_t t3412_lookup[8] = {2, 60, 360, 60, 60, 60, 60, 0};
+
+/* String format that can be used in printf-style functions for printing a byte as a bit field. */
+#define BYTE_TO_BINARY_STRING_FORMAT "%c%c%c%c%c%c%c%c"
+/* Arguments for a byte in a bit field string representation. */
+#define BYTE_TO_BINARY_STRING_ARGS(byte)  \
+	((byte) & 0x80 ? '1' : '0'), \
+	((byte) & 0x40 ? '1' : '0'), \
+	((byte) & 0x20 ? '1' : '0'), \
+	((byte) & 0x10 ? '1' : '0'), \
+	((byte) & 0x08 ? '1' : '0'), \
+	((byte) & 0x04 ? '1' : '0'), \
+	((byte) & 0x02 ? '1' : '0'), \
+	((byte) & 0x01 ? '1' : '0')
+
+static int encode_psm_timer(
+	char *encoded_timer_str,
+	uint32_t requested_value,
+	const uint32_t *lookup_table,
+	uint8_t lookup_table_size)
+{
+	/* Timer unit and timer value refer to the terminology used in 3GPP 24.008
+	 * Ch. 10.5.7.4a and Ch. 10.5.7.3. for bits 6 to 8 and bits 1 to 5, respectively
+	 */
+
+	/* Lookup table index to the currently selected timer unit */
+	uint32_t selected_index = -1;
+	/* Currently calculated value for the timer, which tries to match the requested value */
+	uint32_t selected_value = -1;
+	/* Currently selected timer value */
+	uint32_t selected_timer_value = -1;
+	/* Timer unit and timer value encoded as an integer which will be converted to a string */
+	uint8_t encoded_value_int = 0;
+
+	/* Search a value that is as close as possible to the requested value
+	 * rounding it up to the closest possible value
+	 */
+	for (int i = 0; i < lookup_table_size; i++) {
+		uint32_t current_timer_value = requested_value / lookup_table[i];
+
+		if (requested_value % lookup_table[i] > 0) {
+			/* Round up the time when it's not divisible by the timer unit */
+			current_timer_value++;
+		}
+
+		/* Current timer unit is so small that timer value range is not enough */
+		if (current_timer_value > TIMER_VALUE_MAX) {
+			continue;
+		}
+
+		uint32_t current_value = lookup_table[i] * current_timer_value;
+
+		/* Use current timer unit if current value is closer to requested value
+		 * than currently selected values
+		 */
+		if (selected_value == -1 ||
+		    current_value - requested_value  < selected_value - requested_value) {
+			selected_value = current_value;
+			selected_index = i;
+			selected_timer_value = current_timer_value;
+		}
+	}
+
+	if (selected_index != -1) {
+		LOG_DBG("requested_value=%d, selected_value=%d, selected_timer_unit=%d, "
+			"selected_timer_value=%d, selected_index=%d",
+			requested_value,
+			selected_value,
+			lookup_table[selected_index],
+			selected_timer_value,
+			selected_index);
+
+		/* Selected index (timer unit) is in bits 6 to 8 */
+		encoded_value_int = (selected_index << 5) | selected_timer_value;
+		sprintf(encoded_timer_str, BYTE_TO_BINARY_STRING_FORMAT,
+			BYTE_TO_BINARY_STRING_ARGS(encoded_value_int));
+	} else {
+		LOG_ERR("requested_value=%d is too big to be represented by the timer encoding",
+			requested_value);
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+int encode_psm(char *tau_ext_str, char *active_time_str, int rptau, int rat)
+{
+	int ret = 0;
+
+	LOG_DBG("TAU: %d sec, active time: %d sec", rptau, rat);
+
+	__ASSERT_NO_MSG(tau_ext_str != NULL);
+	__ASSERT_NO_MSG(active_time_str != NULL);
+
+	if (rptau >= 0) {
+		ret = encode_psm_timer(
+			tau_ext_str,
+			rptau,
+			t3412_ext_lookup,
+			T3412_EXT_LOOKUP_DIFFERENT_VALUES);
+	} else {
+		*tau_ext_str = '\0';
+		LOG_DBG("Using modem default value for RPTAU");
+	}
+
+	if (rat >= 0) {
+		ret |= encode_psm_timer(
+			active_time_str,
+			rat,
+			t3324_lookup,
+			T3324_LOOKUP_DIFFERENT_VALUES);
+	} else {
+		*active_time_str = '\0';
+		LOG_DBG("Using modem default value for RAT");
+	}
+
+	return ret;
+}
+
 int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	      const char *tau_legacy_str, struct lte_lc_psm_cfg *psm_cfg)
 {
@@ -442,21 +583,6 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	size_t unit_str_len = sizeof(unit_str) - 1;
 	size_t lut_idx;
 	uint32_t timer_unit, timer_value;
-
-	/* Lookup table for T3324 timer used for PSM active time in seconds.
-	 * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
-	 */
-	static const uint32_t t3324_lookup[8] = {2, 60, 360, 60, 60, 60, 60, 0};
-
-	/* Lookup table for T3412-extended timer used for periodic TAU. Unit is seconds.
-	 * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
-	 */
-	static const uint32_t t3412_ext_lookup[8] = {600, 3600, 36000, 2, 30, 60, 1152000, 0};
-
-	/* Lookup table for T3412 (legacy) timer used for periodic TAU. Unit is seconds.
-	 * Ref: GPRS Timer in 3GPP TS 24.008 Table 10.5.172/3GPP TS 24.008.
-	 */
-	static const uint32_t t3412_lookup[8] = {2, 60, 360, 60, 60, 60, 60, 0};
 
 	if ((strlen(active_time_str) != 8) || (strlen(tau_ext_str) != 8)) {
 		return -EINVAL;
@@ -476,8 +602,8 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	psm_cfg->tau = timer_unit ? timer_unit * timer_value : -1;
 
 	/* If T3412-extended is disabled, there's a chance that the network
-	 * only reports the T3412 (legacy) timer. We therefore needs to check
-	 * that as well. The legacy timer is only reported by modem fe >= 1.2.0.
+	 * only reports the T3412 (legacy) timer. We therefore need to check
+	 * that as well. The legacy timer is only reported by modem fw >= 1.2.0.
 	 */
 	if ((psm_cfg->tau == -1) && tau_legacy_str && (strlen(tau_legacy_str) == 8)) {
 		memcpy(unit_str, tau_legacy_str, unit_str_len);
