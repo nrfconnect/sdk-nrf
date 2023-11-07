@@ -225,7 +225,9 @@ Cellular samples (renamed from nRF9160 samples)
 
     * The sample now explicitly uses :c:func:`conn_mgr_all_if_connect` to start network connectivity, instead of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT` Kconfig options.
 
-|no_changes_yet_note|
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Added credential check before connecting to network.
 
 Cryptography samples
 --------------------
@@ -425,6 +427,10 @@ Libraries for networking
 
     * The :kconfig:option:`CONFIG_NRF_CLOUD_LOG_INCLUDE_LEVEL_0` Kconfig option.
     * Support for nRF Cloud CoAP text mode logging.
+
+* :ref:`lib_nrf_cloud` library:
+
+  * Added the :c:func:`nrf_cloud_credentials_configured_check` function to check if credentials exist based on the application's configuration.
 
 Libraries for NFC
 -----------------
