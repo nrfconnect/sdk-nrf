@@ -68,12 +68,12 @@ extern const uint8_t ndef_android_launchapp_rec_type[NFC_ANDROID_REC_TYPE_LENGTH
  */
 #define NFC_NDEF_ANDROID_LAUNCHAPP_RECORD_DESC(name) NFC_NDEF_RECORD_BIN_DATA(name)
 
-/**
- *@}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif // NFC_LAUNCHAPP_REC

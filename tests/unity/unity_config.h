@@ -2,6 +2,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef UNITY_CONFIG_H__
 #define UNITY_CONFIG_H__
 

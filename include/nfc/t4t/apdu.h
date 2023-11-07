@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef NFC_T4T_APDU_H_
 #define NFC_T4T_APDU_H_
 
@@ -167,12 +168,12 @@ static inline void nfc_t4t_apdu_resp_clear(struct nfc_t4t_apdu_resp *resp_apdu)
 	memset(resp_apdu, 0, sizeof(struct nfc_t4t_apdu_resp));
 }
 
-/**
- * @}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_T4T_APDU_H_ */

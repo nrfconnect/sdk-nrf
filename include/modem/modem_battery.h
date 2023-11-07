@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef ZEPHYR_INCLUDE_MODEM_BATTERY_H_
 #define ZEPHYR_INCLUDE_MODEM_BATTERY_H_
 

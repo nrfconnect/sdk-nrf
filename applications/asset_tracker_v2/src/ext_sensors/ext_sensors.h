@@ -11,8 +11,7 @@
 #ifndef EXT_SENSORS_H__
 #define EXT_SENSORS_H__
 
-/**@file
- *
+/**
  * @defgroup External sensors ext_sensors
  * @brief    Module that manages external sensors.
  * @{

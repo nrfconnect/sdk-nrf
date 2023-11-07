@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef MGMT_FMFU_STAT_H__
+#define MGMT_FMFU_STAT_H__
+
 /** @file fmfu_mgmt_stat.h
  * @defgroup fmfu_mgmt_stat MCUMgr hooks for Full Modem Firmware Upgrade stats
  * @{
@@ -13,9 +16,6 @@
  * SMP protocol MTU and frame size.
  *
  */
-
-#ifndef MGMT_FMFU_STAT_H__
-#define MGMT_FMFU_STAT_H__
 
 #ifdef __cplusplus
 extern "C" {

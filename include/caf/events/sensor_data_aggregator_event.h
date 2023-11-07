@@ -43,15 +43,15 @@ struct sensor_data_aggregator_release_buffer_event {
 	const char *sensor_descr;
 };
 
-/**
- * @}
- */
-
 APP_EVENT_TYPE_DECLARE(sensor_data_aggregator_event);
 APP_EVENT_TYPE_DECLARE(sensor_data_aggregator_release_buffer_event);
 
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* _AGGREGATOR_EVENT_H_ */

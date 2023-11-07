@@ -1,11 +1,11 @@
-/** @file
- *  @brief Bluetooth Mesh DFU Target role handler
- */
-
 /*
  * Copyright (c) 2021 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/** @file
+ *  @brief Bluetooth Mesh DFU Target role handler
  */
 
 #ifndef DFU_TARGET_H__

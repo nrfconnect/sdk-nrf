@@ -37,4 +37,8 @@ enum network_status {
 
 ZBUS_CHAN_DECLARE(TRIGGER_CHAN, PAYLOAD_CHAN, NETWORK_CHAN, FATAL_ERROR_CHAN);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* _MESSAGE_CHANNEL_H_ */

@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef FMFU_MGMT_H__
+#define FMFU_MGMT_H__
+
 /** @file fmfu_mgmt.h
  * @defgroup fmfu_mgmt MCUMgr module for full Modem Firmware Upgrade
  * @{
@@ -16,9 +19,6 @@
  * The command values are 0 for get_hash and 1 for firmware_upload
  *
  */
-
-#ifndef FMFU_MGMT_H__
-#define FMFU_MGMT_H__
 
 #ifdef __cplusplus
 extern "C" {

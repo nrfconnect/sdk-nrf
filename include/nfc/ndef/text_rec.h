@@ -131,10 +131,10 @@ extern const uint8_t nfc_ndef_text_rec_type_field[];
  */
 #define NFC_NDEF_TEXT_RECORD_DESC(name) NFC_NDEF_GENERIC_RECORD_DESC(name)
 
-/** @} */
-
 #ifdef __cplusplus
 }
 #endif
+
+/** @} */
 
 #endif /* NFC_NDEF_TEXT_REC_H_ */

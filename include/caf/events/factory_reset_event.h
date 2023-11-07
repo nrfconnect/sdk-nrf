@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef _FACTORY_RESET_EVENT_H_
 #define _FACTORY_RESET_EVENT_H_
 

@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 /**
  * @file
  * @defgroup bt_mesh_ponoff_srv Generic Power OnOff Server model

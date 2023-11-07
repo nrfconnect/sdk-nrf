@@ -73,10 +73,10 @@ zb_bool_t zb_shell_debug_get(void);
 zb_bool_t zb_shell_nvram_enabled(void);
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 
-#endif /* ZIGBEE_SHELL_H__ */
-
 #ifdef __cplusplus
 }
 #endif
 
 /**@} */
+
+#endif /* ZIGBEE_SHELL_H__ */

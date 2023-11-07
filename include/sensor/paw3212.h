@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef ZEPHYR_INCLUDE_PAW3212_H_
 #define ZEPHYR_INCLUDE_PAW3212_H_
 
@@ -51,12 +52,12 @@ enum paw3212_attribute {
 	PAW3212_ATTR_SLEEP3_SAMPLE_TIME,
 };
 
-#ifdef __cplusplus
-}
-#endif
-
 /**
  * @}
  */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ZEPHYR_INCLUDE_PAW3212_H_ */

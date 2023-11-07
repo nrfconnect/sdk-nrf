@@ -129,12 +129,12 @@ int azure_iot_hub_dps_device_id_delete(void);
  */
 int azure_iot_hub_dps_reset(void);
 
-/**
- *@}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ *@}
+ */
 
 #endif /* AZURE_IOT_HUB_DPS__ */

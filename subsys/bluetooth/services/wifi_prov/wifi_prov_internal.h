@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef WIFI_PROV_INTERNAL_H
 #define WIFI_PROV_INTERNAL_H
 

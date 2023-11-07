@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef ZEPHYR_INCLUDE_PMW3360_H_
 #define ZEPHYR_INCLUDE_PMW3360_H_
 
@@ -51,13 +52,12 @@ enum pmw3360_attribute {
 	PMW3360_ATTR_REST3_SAMPLE_TIME,
 };
 
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }
 #endif
-
-/**
- * @}
- */
 
 #endif /* ZEPHYR_INCLUDE_PMW3360_H_ */

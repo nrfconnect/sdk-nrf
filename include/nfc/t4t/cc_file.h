@@ -135,12 +135,12 @@ int nfc_t4t_cc_file_content_set(struct nfc_t4t_cc_file *t4t_cc_file,
  */
 void nfc_t4t_cc_file_printout(const struct nfc_t4t_cc_file *t4t_cc_file);
 
-/**
- *@}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ *@}
+ */
 
 #endif /* NFC_T4T_CC_FILE_H_ */

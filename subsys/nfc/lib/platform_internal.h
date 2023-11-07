@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef NFC_PLATFORM_INTERNAL_H_
 #define NFC_PLATFORM_INTERNAL_H_
 
@@ -32,12 +33,12 @@ extern "C" {
  */
 int nfc_platform_internal_init(nfc_lib_cb_resolve_t cb_rslv);
 
-/**
- * @}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_PLATFORM_INTERNAL_H_ */

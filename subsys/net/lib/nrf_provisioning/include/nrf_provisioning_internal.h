@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef NRF_PROVISIONING_INTERNAL_H__
 #define NRF_PROVISIONING_INTERNAL_H__
 

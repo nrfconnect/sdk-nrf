@@ -14,6 +14,7 @@
  * @brief CAF Module State Event.
  */
 
+
 #include <zephyr/sys/atomic.h>
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
@@ -323,8 +324,8 @@ static inline void module_set_state(enum module_state state)
 }
 #endif
 
-#endif /* defined(MODULE) && !defined(MODULE_NAME) */
-
 /**
  * @}
  */
+
+#endif /* defined(MODULE) && !defined(MODULE_NAME) */

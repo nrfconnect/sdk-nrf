@@ -12,6 +12,7 @@
  * @brief Vendor-specific AT command for MQTT service.
  * @{
  */
+
 /**
  * @brief Initialize MQTT AT command parser.
  *

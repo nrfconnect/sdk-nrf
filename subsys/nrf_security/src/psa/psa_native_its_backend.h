@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef PSA_NATIVE_ITS_BACKEND_H
 #define PSA_NATIVE_ITS_BACKEND_H
 

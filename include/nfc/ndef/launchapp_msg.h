@@ -50,12 +50,12 @@ int nfc_launchapp_msg_encode(uint8_t  const *android_package_name,
 			     uint8_t  *buf,
 			     size_t   *len);
 
-/**
- * @}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
  #endif // NFC_LAUNCHAPP_MSG_H__

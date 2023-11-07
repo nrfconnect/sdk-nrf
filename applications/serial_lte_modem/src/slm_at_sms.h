@@ -12,6 +12,7 @@
  * @brief Vendor-specific AT command for SMS service.
  * @{
  */
+
 /**
  * @brief Initialize SMS AT command parser.
  *

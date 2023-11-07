@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef MODEM_ATTEST_TOKEN_H__
 #define MODEM_ATTEST_TOKEN_H__
 

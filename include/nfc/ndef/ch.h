@@ -556,12 +556,12 @@ int nfc_ndef_ch_cr_rec_payload_encode(const struct nfc_ndef_ch_cr_rec *nfc_rec_c
  */
 #define NFC_NDEF_CR_RECORD_DESC(_name) NFC_NDEF_GENERIC_RECORD_DESC(_name)
 
-/**
- *@}
- */
-
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* NFC_NDEF_CH_H_ */

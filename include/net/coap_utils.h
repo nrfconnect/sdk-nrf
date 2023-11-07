@@ -1,14 +1,15 @@
+/*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 /**
  * @file
  * @defgroup coap_utils CoAP communication BSD socket API based
  * @{
  */
 
-/*
- * Copyright (c) 2020 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- */
 #ifndef __COAP_UTILS_H__
 #define __COAP_UTILS_H__
 
@@ -39,7 +40,7 @@ int coap_send_request(enum coap_method method, const struct sockaddr *addr,
 		      const char *const *uri_path_options, uint8_t *payload,
 		      uint16_t payload_size, coap_reply_t reply_cb);
 
-#endif
+#endif /* __COAP_UTILS_H__ */
 
 /**
  * @}

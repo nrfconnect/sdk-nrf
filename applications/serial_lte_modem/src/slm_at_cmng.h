@@ -12,6 +12,7 @@
  * @brief Vendor-specific AT command for CMNG service.
  * @{
  */
+
 /**
  * @brief Initialize CMNG AT command parser.
  *

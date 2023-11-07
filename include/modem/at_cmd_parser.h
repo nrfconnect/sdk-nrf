@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #ifndef AT_CMD_PARSER_H__
 #define AT_CMD_PARSER_H__
 

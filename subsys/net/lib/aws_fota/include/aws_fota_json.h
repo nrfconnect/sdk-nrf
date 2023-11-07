@@ -4,6 +4,9 @@
  *SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef AWS_FOTA_JSON_H__
+#define AWS_FOTA_JSON_H__
+
 /**@file aws_fota_json.h
  *
  * @defgroup aws_fota_json
@@ -11,9 +14,6 @@
  * @brief  Library for parsing AWS Jobs json payloads.
  *
  */
-
-#ifndef AWS_FOTA_JSON_H__
-#define AWS_FOTA_JSON_H__
 
 #ifdef __cplusplus
 extern "C" {

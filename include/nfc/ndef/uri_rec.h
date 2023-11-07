@@ -152,10 +152,10 @@ int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input,
  */
 #define NFC_NDEF_URI_RECORD_DESC(name) NFC_NDEF_GENERIC_RECORD_DESC(name)
 
-/** @} */
-
 #ifdef __cplusplus
 }
 #endif
+
+/** @} */
 
 #endif /* NFC_NDEF_URI_REC_H_ */

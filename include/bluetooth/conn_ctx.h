@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef BT_CONN_CTX_H_
+#define BT_CONN_CTX_H_
+
 /**
  * @file
  * @defgroup bt_conn_ctx Bluetooth connection context library API
  * @{
  * @brief API for the Bluetooth connection context library.
  */
-
-#ifndef BT_CONN_CTX_H_
-#define BT_CONN_CTX_H_
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/__assert.h>

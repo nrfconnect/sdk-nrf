@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef REST_CLIENT_H__
+#define REST_CLIENT_H__
+
 /**
  * @file rest_client.h
  *
@@ -13,9 +16,6 @@
  *
  * @details Provide REST client functionality.
  */
-
-#ifndef REST_CLIENT_H__
-#define REST_CLIENT_H__
 
 #include <zephyr/kernel.h>
 #include <zephyr/net/http/client.h>
