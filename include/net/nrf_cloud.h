@@ -1006,6 +1006,18 @@ int nrf_cloud_fota_job_start(void);
  */
 int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs);
 
+/**
+ * @brief Check if the credentials required for connecting to nRF Cloud exist.
+ *        The application's configuration is used to determine which credentials
+ *        are required.
+ *
+ * @retval 0 Required credentials exist.
+ * @retval -EIO Error checking if credentials exists.
+ * @retval -ENOTSUP Required credentials do not exist.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_credentials_configured_check(void);
+
 /** @} */
 
 #ifdef __cplusplus

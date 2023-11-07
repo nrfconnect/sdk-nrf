@@ -9,6 +9,39 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_credentials, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
+int nrf_cloud_credentials_configured_check(void)
+{
+	int ret;
+	struct nrf_cloud_credentials_status cs;
+
+	ret = nrf_cloud_credentials_check(&cs);
+	if (ret) {
+		LOG_ERR("nrf_cloud_credentials_check failed, error: %d", ret);
+		return -EIO;
+	}
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ||
+	    IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
+		if (!cs.ca) {
+			LOG_ERR("CA Certificate not found in sec tag %d", cs.sec_tag);
+			ret = -ENOTSUP;
+		}
+		if (!cs.prv_key) {
+			LOG_ERR("Private Key not found in sec tag %d", cs.sec_tag);
+			ret = -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
+		if (!cs.client_cert) {
+			LOG_ERR("Client Certificate not found in sec tag %d", cs.sec_tag);
+			ret = -ENOTSUP;
+		}
+	}
+
+	return ret;
+}
+
 int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs)
 {
 	if (!cs) {
