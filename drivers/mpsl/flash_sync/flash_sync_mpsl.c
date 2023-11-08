@@ -142,9 +142,18 @@ void nrf_flash_sync_set_context(uint32_t duration)
 
 static bool is_in_fault_isr(void)
 {
+#if defined(CONFIG_ARM)
 	int32_t irqn = __get_IPSR() - 16;
 
 	return (irqn >= HardFault_IRQn && irqn <= UsageFault_IRQn);
+#elif defined(CONFIG_ARCH_POSIX)
+	/* Faults of this type cause the program to exit in the POSIX
+	 * architecture, therefore we cannot be in one.
+	 */
+	return false;
+#else
+#error "Architecture not supported, please implement me"
+#endif
 }
 
 bool nrf_flash_sync_is_required(void)
