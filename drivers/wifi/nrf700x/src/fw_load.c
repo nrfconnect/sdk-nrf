@@ -42,7 +42,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 #elif defined __APPLE__
 #define INCBIN_SECTION "__TEXT,__const"
 #else
-#define INCBIN_SECTION ".rodata"
+#define INCBIN_SECTION ".rodata.*"
 #endif
 
 /* this aligns start address to 16 and terminates byte array with explicit 0
