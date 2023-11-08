@@ -385,7 +385,6 @@ int main(void)
 		return err;
 	}
 
-
 	/* Start the infinite coap request loop. */
 	coap_loop();
 

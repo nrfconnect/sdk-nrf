@@ -238,6 +238,13 @@ static void on_aws_iot_evt_fota_done(const struct aws_iot_evt *const evt)
 			return;
 		}
 
+		err = conn_mgr_all_if_connect(true);
+		if (err) {
+			LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
+			FATAL_ERROR();
+			return;
+		}
+
 	} else if (evt->data.image & DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION) {
 		LOG_INF("Application FOTA done, rebooting");
 		IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)));
@@ -369,6 +376,13 @@ int main(void)
 	err = conn_mgr_all_if_up(true);
 	if (err) {
 		LOG_ERR("conn_mgr_all_if_up, error: %d", err);
+		FATAL_ERROR();
+		return err;
+	}
+
+	err = conn_mgr_all_if_connect(true);
+	if (err) {
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
 		FATAL_ERROR();
 		return err;
 	}

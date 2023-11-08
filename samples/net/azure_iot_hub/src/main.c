@@ -576,6 +576,12 @@ int main(void)
 		return err;
 	}
 
+	err = conn_mgr_all_if_connect(true);
+	if (err) {
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
+		return err;
+	}
+
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
 	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
 	if (err) {
