@@ -73,17 +73,22 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 	const struct device *flash_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
+	uint8_t *fw_start;
+	uint8_t *fw_end;
 
 #ifdef CONFIG_NRF_WIFI_PATCHES_BUILTIN
-	status = nrf_wifi_fmac_fw_parse(rpu_ctx, (const uint8_t *)_bin_nrf70_fw_start,
-					_bin_nrf70_fw_end - _bin_nrf70_fw_start, &fw_info);
+	fw_start = (uint8_t *)_bin_nrf70_fw_start;
+	fw_end = (uint8_t *)_bin_nrf70_fw_end;
+#else
+	BUILD_ASSERT(0, "CONFIG_NRF_WIFI_PATCHES_BUILTIN must be enabled");
+#endif /* CONFIG_NRF_WIFI_PATCHES_BUILTIN */
+
+	status = nrf_wifi_fmac_fw_parse(rpu_ctx, fw_start, fw_end - fw_start,
+					&fw_info);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_fw_parse failed", __func__);
 		return status;
 	}
-#else
-	BUILD_ASSERT(0, "CONFIG_NRF_WIFI_PATCHES_BUILTIN must be enabled");
-#endif /* CONFIG_NRF_WIFI_PATCHES_BUILTIN */
 
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 	nrf_qspi_nor_xip_enable(flash_dev, true);
