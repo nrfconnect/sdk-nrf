@@ -6,7 +6,7 @@ tests:
   ################################################################################
   ## PSA APIs with Cryptocell and Oberon
   ################################################################################
-  sample.psa_tls.server.ecdsa.cc3xx_oberon:
+  sample.psa_tls.tls_server.ecdsa.cc3xx_oberon:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
@@ -19,7 +19,20 @@ tests:
       - nrf9160dk_nrf9160
       - nrf9160dk_nrf9160_ns
     tags: ci_build cc3xx_oberon
-  sample.psa_tls.client.ecdsa.cc3xx_oberon:
+  sample.psa_tls.dtls_server.ecdsa.cc3xx_oberon:
+    build_only: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
+    platform_allow: >
+      nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp_ns
+      nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf9160dk_nrf9160
+      - nrf9160dk_nrf9160_ns
+    tags: ci_build cc3xx_oberon dtls
+  sample.psa_tls.tls_client.ecdsa.cc3xx_oberon:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
@@ -31,10 +44,23 @@ tests:
       - nrf9160dk_nrf9160
       - nrf9160dk_nrf9160_ns
     tags: ci_build cc3xx_oberon
+  sample.psa_tls.dtls_client.ecdsa.cc3xx_oberon:
+    build_only: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
+    platform_allow: >
+      nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp_ns
+      nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf9160dk_nrf9160
+      - nrf9160dk_nrf9160_ns
+    tags: ci_build cc3xx_oberon dtls
   ################################################################################
   ## Legacy APIs with Cryptocell (secure-only)
   ################################################################################
-  sample.psa_tls.server.rsa.cc3xx_legacy:
+  sample.psa_tls.tls_server.rsa.cc3xx_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
@@ -44,7 +70,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160
     tags: ci_build legacy cc3xx_legacy
-  sample.psa_tls.client.rsa.cc3xx_legacy:
+  sample.psa_tls.tls_client.rsa.cc3xx_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
@@ -54,7 +80,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160
     tags: ci_build legacy cc3xx_legacy
-  sample.psa_tls.server.ecdsa.cc3xx_legacy:
+  sample.psa_tls.tls_server.ecdsa.cc3xx_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-legacy.conf"
@@ -64,7 +90,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160
     tags: ci_build legacy cc3xx_legacy
-  sample.psa_tls.client.ecdsa.cc3xx_legacy:
+  sample.psa_tls.tls_client.ecdsa.cc3xx_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-legacy.conf"
@@ -77,7 +103,7 @@ tests:
   ################################################################################
   ## Legacy APIs with Oberon (secure-only)
   ################################################################################
-  sample.psa_tls.server.rsa.oberon_legacy:
+  sample.psa_tls.tls_server.rsa.oberon_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
@@ -87,7 +113,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160
     tags: ci_build legacy oberon_legacy
-  sample.psa_tls.client.rsa.oberon_legacy:
+  sample.psa_tls.tls_client.rsa.oberon_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
@@ -97,7 +123,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160
     tags: ci_build legacy oberon_legacy
-  sample.psa_tls.server.ecdsa.oberon_legacy:
+  sample.psa_tls.tls_server.ecdsa.oberon_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-legacy.conf"
@@ -107,7 +133,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf9160dk_nrf9160
     tags: ci_build legacy oberon_legacy
-  sample.psa_tls.client.ecdsa.oberon_legacy:
+  sample.psa_tls.tls_client.ecdsa.oberon_legacy:
     build_only: true
     extra_args: >
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-legacy.conf"
