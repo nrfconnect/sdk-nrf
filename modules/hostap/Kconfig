@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config WPA_SUPP
+menuconfig WPA_SUPP
 	bool "WPA supplicant support"
 	# Need full POSIX from libc, Zephyr's POSIX support is only partial
 	depends on !POSIX_API
