@@ -26,6 +26,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 
 #include <fmac_main.h>
 
+#ifdef CONFIG_NRF_WIFI_PATCHES_BUILTIN
 /* INCBIN macro Taken from https://gist.github.com/mmozeiko/ed9655cf50341553d282 */
 #define STR2(x) #x
 #define STR(x) STR2(x)
@@ -63,6 +64,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
 	extern                  const char prefix ## _ ## name ## _end[];
 
 INCBIN(_bin, nrf70_fw, STR(CONFIG_NRF_WIFI_FW_BIN));
+#endif /* CONFIG_NRF_WIFI_PATCHES_BUILTIN */
 
 enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 {
@@ -72,12 +74,16 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 	const struct device *flash_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
+#ifdef CONFIG_NRF_WIFI_PATCHES_BUILTIN
 	status = nrf_wifi_fmac_fw_parse(rpu_ctx, (const uint8_t *)_bin_nrf70_fw_start,
 					_bin_nrf70_fw_end - _bin_nrf70_fw_start, &fw_info);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_fw_parse failed", __func__);
 		return status;
 	}
+#else
+	BUILD_ASSERT(0, "CONFIG_NRF_WIFI_PATCHES_BUILTIN must be enabled");
+#endif /* CONFIG_NRF_WIFI_PATCHES_BUILTIN */
 
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 	nrf_qspi_nor_xip_enable(flash_dev, true);
