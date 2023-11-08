@@ -658,7 +658,6 @@ int z_wpa_supplicant_mode(const struct device *dev,
 		return -ENOTSUP;
 	}
 
-	wpa_printf(MSG_ERROR, "wpa supplicant mode setting being invoked");
 	return wifi_mgmt_api->mode(dev, mode);
 }
 
