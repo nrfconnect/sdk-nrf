@@ -67,12 +67,6 @@ static void ble_data_sent(struct bt_nus_client *nus, uint8_t err,
 {
 	ARG_UNUSED(nus);
 
-	struct uart_data_t *buf;
-
-	/* Retrieve buffer context. */
-	buf = CONTAINER_OF(data, struct uart_data_t, data);
-	k_free(buf);
-
 	k_sem_give(&nus_write_sem);
 
 	if (err) {
@@ -624,5 +618,7 @@ int main(void)
 		if (err) {
 			LOG_WRN("NUS send timeout");
 		}
+
+		k_free(buf);
 	}
 }
