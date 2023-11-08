@@ -638,6 +638,7 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_LE_POWER_CONTROL)
 	cmds->write_remote_tx_power = 1;
 	cmds->set_power_control_request_params = 1;
+	cmds->read_average_rssi = 1;
 #endif
 #if defined(CONFIG_BT_CENTRAL)
 	cmds->central_acl_event_spacing_set = 1;
@@ -1479,15 +1480,14 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 }
 
 #if defined(CONFIG_BT_HCI_VS)
-static uint8_t vs_cmd_put(uint8_t const * const cmd,
-			  uint8_t * const raw_event_out,
+static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out,
 			  uint8_t *param_length_out)
 {
 	uint8_t const *cmd_params = &cmd[BT_HCI_CMD_HDR_SIZE];
-	uint8_t * const event_out_params = &raw_event_out[CMD_COMPLETE_MIN_SIZE];
+	uint8_t *const event_out_params = &raw_event_out[CMD_COMPLETE_MIN_SIZE];
 	uint16_t opcode = sys_get_le16(cmd);
 
-	switch (opcode)	{
+	switch (opcode) {
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_VERSION_INFO:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_version_info_return_t);
 		return sdc_hci_cmd_vs_zephyr_read_version_info((void *)event_out_params);
@@ -1504,7 +1504,7 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_zephyr_read_static_addresses((void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_KEY_HIERARCHY_ROOTS:
 		*param_length_out +=
-				sizeof(sdc_hci_cmd_vs_zephyr_read_key_hierarchy_roots_return_t);
+			sizeof(sdc_hci_cmd_vs_zephyr_read_key_hierarchy_roots_return_t);
 		return sdc_hci_cmd_vs_zephyr_read_key_hierarchy_roots((void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_WRITE_BD_ADDR:
 		return sdc_hci_cmd_vs_zephyr_write_bd_addr((void *)cmd_params);
@@ -1521,7 +1521,7 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_ZEPHYR_READ_TX_POWER:
 		*param_length_out += sizeof(sdc_hci_cmd_vs_zephyr_read_tx_power_return_t);
 		return sdc_hci_cmd_vs_zephyr_read_tx_power((void *)cmd_params,
-							    (void *)event_out_params);
+							   (void *)event_out_params);
 #endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL */
 #endif /* CONFIG_BT_HCI_VS_EXT */
 	case SDC_HCI_OPCODE_CMD_VS_READ_SUPPORTED_VS_COMMANDS:
@@ -1555,6 +1555,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_write_remote_tx_power((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_SET_POWER_CONTROL_REQUEST_PARAMS:
 		return sdc_hci_cmd_vs_set_power_control_request_params((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_READ_AVERAGE_RSSI:
+		*param_length_out += sizeof(sdc_hci_cmd_vs_read_average_rssi_return_t);
+		return sdc_hci_cmd_vs_read_average_rssi((void *)cmd_params,
+							(void *)event_out_params);
 #endif
 #ifdef CONFIG_BT_CENTRAL
 	case SDC_HCI_OPCODE_CMD_VS_CENTRAL_ACL_EVENT_SPACING_SET:
