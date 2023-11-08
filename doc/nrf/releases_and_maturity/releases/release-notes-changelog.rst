@@ -375,6 +375,7 @@ Modem libraries
    * Added a mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
    * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
      All related Kconfig options have been renamed accordingly.
+   * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
 
 |no_changes_yet_note|
 
