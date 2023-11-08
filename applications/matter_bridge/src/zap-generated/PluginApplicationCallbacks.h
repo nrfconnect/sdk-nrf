@@ -21,7 +21,6 @@
 
 void MatterIdentifyPluginServerInitCallback();
 void MatterGroupsPluginServerInitCallback();
-void MatterScenesPluginServerInitCallback();
 void MatterOnOffPluginServerInitCallback();
 void MatterDescriptorPluginServerInitCallback();
 void MatterAccessControlPluginServerInitCallback();
@@ -42,7 +41,6 @@ void MatterRelativeHumidityMeasurementPluginServerInitCallback();
 #define MATTER_PLUGINS_INIT                                                                                            \
 	MatterIdentifyPluginServerInitCallback();                                                                      \
 	MatterGroupsPluginServerInitCallback();                                                                        \
-	MatterScenesPluginServerInitCallback();                                                                        \
 	MatterOnOffPluginServerInitCallback();                                                                         \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
 	MatterAccessControlPluginServerInitCallback();                                                                 \

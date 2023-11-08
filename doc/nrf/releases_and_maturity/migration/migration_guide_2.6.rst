@@ -19,6 +19,17 @@ The following changes are mandatory to make your application work in the same wa
     The setting controls whether the SLM connects automatically to the network on startup.
     You can read and write it using the ``AT#XCARRIER="auto_connect"`` command.
 
+* For the Matter samples and applications using Intermittently Connected Devices configuration (formerly called Sleepy End Devices):
+
+  * The naming convention for the energy-optimized devices has been changed from Sleepy End Devices (SED) to Intermittently Connected Devices (ICD).
+    Because of this, the Kconfig options used to manage this configuration have been aligned as well.
+    If your application uses the following Kconfig options, they require name changes:
+
+      * The ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT`.
+      * The ``CONFIG_CHIP_SED_IDLE_INTERVAL`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`.
+      * The ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
+      * The ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
+
 Recommended changes
 *******************
 

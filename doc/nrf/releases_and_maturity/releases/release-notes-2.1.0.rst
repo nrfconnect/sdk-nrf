@@ -558,14 +558,14 @@ Matter samples
 * :ref:`matter_light_switch_sample`:
 
   * Added support for Matter over Wi-Fi on ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
-  * Updated :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to be enabled by default.
+  * Updated ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` to be enabled by default.
   * Removed the overlay file for the low-power configuration build type.
     The low-power communication modes is now enabled by the default for this sample.
 
 * :ref:`matter_lock_sample`:
 
   * Added support for Matter over Wi-Fi on ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
-  * Updated :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to be enabled by default.
+  * Updated ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` to be enabled by default.
   * Removed the overlay file for the low-power configuration build type.
     The low-power communication modes is now enabled by the default for this sample.
 
@@ -576,7 +576,7 @@ Matter samples
 * :ref:`matter_window_covering_sample`:
 
   * Added information about the :ref:`matter_window_covering_sample_ssed` in the sample documentation.
-  * Updated :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` and :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to be enabled by default.
+  * Updated ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` and :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to be enabled by default.
   * Removed the overlay file for the low-power configuration build type.
     The low-power communication modes is now enabled by the default for this sample.
 

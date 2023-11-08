@@ -24,7 +24,7 @@ choice OPENTHREAD_DEVICE_TYPE
 	default OPENTHREAD_MTD
 endchoice
 
-config CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT
+config CHIP_ENABLE_ICD_SUPPORT
 	default y
 
 # Reduce Thread TX output power to 0 dBm for SED device
@@ -40,9 +40,6 @@ config NRF_WIFI_LOW_POWER
 	default y
 
 endif # CHIP_WIFI
-
-config CHIP_ICD_SUBSCRIPTION_HANDLING
-	default y
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"

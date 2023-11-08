@@ -34,12 +34,15 @@ namespace chip
 {
 namespace app
 {
+
 	// Cluster specific command parsing
 
 	namespace Clusters
 	{
+
 		namespace AdministratorCommissioning
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -104,6 +107,7 @@ namespace app
 
 		namespace GeneralCommissioning
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -168,6 +172,7 @@ namespace app
 
 		namespace GeneralDiagnostics
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -212,6 +217,7 @@ namespace app
 
 		namespace GroupKeyManagement
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -285,6 +291,7 @@ namespace app
 
 		namespace Identify
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -328,6 +335,7 @@ namespace app
 
 		namespace OtaSoftwareUpdateRequestor
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -372,6 +380,7 @@ namespace app
 
 		namespace OperationalCredentials
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -485,6 +494,7 @@ namespace app
 
 		namespace ThreadNetworkDiagnostics
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{
@@ -529,6 +539,7 @@ namespace app
 
 		namespace WindowCovering
 		{
+
 			void DispatchServerCommand(CommandHandler *apCommandObj,
 						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
 			{

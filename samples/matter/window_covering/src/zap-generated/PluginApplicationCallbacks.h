@@ -32,6 +32,7 @@ void MatterThreadNetworkDiagnosticsPluginServerInitCallback();
 void MatterAdministratorCommissioningPluginServerInitCallback();
 void MatterOperationalCredentialsPluginServerInitCallback();
 void MatterGroupKeyManagementPluginServerInitCallback();
+void MatterIcdManagementPluginServerInitCallback();
 void MatterWindowCoveringPluginServerInitCallback();
 
 #define MATTER_PLUGINS_INIT                                                                                            \
@@ -48,4 +49,5 @@ void MatterWindowCoveringPluginServerInitCallback();
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
 	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
+	MatterIcdManagementPluginServerInitCallback();                                                                 \
 	MatterWindowCoveringPluginServerInitCallback();

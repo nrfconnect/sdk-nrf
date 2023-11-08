@@ -21,10 +21,6 @@
 #include "dfu_over_smp.h"
 #endif
 
-#ifdef CONFIG_CHIP_ICD_SUBSCRIPTION_HANDLING
-#include "icd_util.h"
-#endif
-
 struct k_timer;
 struct Identify;
 

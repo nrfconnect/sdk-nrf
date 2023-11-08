@@ -63,7 +63,7 @@ k_timer sFunctionTimer;
 k_timer sTriggerEffectTimer;
 
 Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
-		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED, AppTask::TriggerIdentifyEffectHandler };
+		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator, AppTask::TriggerIdentifyEffectHandler };
 
 LEDWidget sStatusLED;
 LEDWidget sIdentifyLED;
@@ -288,11 +288,11 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 {
 	switch (identify->mCurrentEffectIdentifier) {
 	/* Just handle all effects in the same way. */
-	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_BLINK:
-	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_BREATHE:
-	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_OKAY:
-	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_CHANNEL_CHANGE:
-		LOG_INF("Identify effect identifier changed to %d", identify->mCurrentEffectIdentifier);
+	case Clusters::Identify::EffectIdentifierEnum::kBlink:
+	case Clusters::Identify::EffectIdentifierEnum::kBreathe:
+	case Clusters::Identify::EffectIdentifierEnum::kOkay:
+	case Clusters::Identify::EffectIdentifierEnum::kChannelChange:
+		LOG_INF("Identify effect identifier changed to %d", static_cast<uint8_t>(identify->mCurrentEffectIdentifier));
 
 		sIsTriggerEffectActive = false;
 
@@ -303,12 +303,12 @@ void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
 		sIdentifyLED.Blink(LedConsts::kIdentifyBlinkRate_ms);
 
 		break;
-	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_FINISH_EFFECT:
+	case Clusters::Identify::EffectIdentifierEnum::kFinishEffect:
 		LOG_INF("Identify effect finish triggered");
 		k_timer_stop(&sTriggerEffectTimer);
 		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectFinishTimeout), K_NO_WAIT);
 		break;
-	case EMBER_ZCL_IDENTIFY_EFFECT_IDENTIFIER_STOP_EFFECT:
+	case Clusters::Identify::EffectIdentifierEnum::kStopEffect:
 		if (sIsTriggerEffectActive) {
 			sIsTriggerEffectActive = false;
 

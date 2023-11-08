@@ -11,11 +11,14 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/ConcreteAttributePath.h>
 #include <app/clusters/door-lock-server/door-lock-server.h>
+#include <app/data-model/Nullable.h>
+#include <lib/core/DataModelTypes.h>
 #include <lib/support/CodeUtils.h>
 
 using namespace ::chip;
 using namespace ::chip::app::Clusters;
 using namespace ::chip::app::Clusters::DoorLock;
+using ::chip::app::DataModel::Nullable;
 
 void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &attributePath, uint8_t type,
 				       uint16_t size, uint8_t *value)
@@ -65,8 +68,9 @@ bool emberAfPluginDoorLockSetCredential(EndpointId endpointId, uint16_t credenti
 					   secret);
 }
 
-bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Optional<ByteSpan> &pinCode,
-					    OperationErrorEnum &err)
+bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Nullable<chip::FabricIndex> & fabricIdx,
+                                            const Nullable<chip::NodeId> & nodeId, const Optional<ByteSpan> & pinCode,
+                                            OperationErrorEnum & err)
 {
 	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
 
@@ -78,8 +82,9 @@ bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Optiona
 	return result;
 }
 
-bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Optional<ByteSpan> &pinCode,
-					      OperationErrorEnum &err)
+bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Nullable<chip::FabricIndex> & fabricIdx,
+                                              const Nullable<chip::NodeId> & nodeId, const Optional<ByteSpan> & pinCode,
+                                              OperationErrorEnum & err)
 {
 	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
 

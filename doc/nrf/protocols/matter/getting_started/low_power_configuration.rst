@@ -40,30 +40,30 @@ Sleepy End Device (SED) configuration in Matter
 
 To enable Thread SED support in Matter, set the following configuration options:
 
-* :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to ``y``
+* :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_MTD` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` to ``y``
 
 Additionally, you can configure the SED wake-up intervals according to your needs, but keep in mind that the bigger sleep periods, the smaller power consumption and bigger device response time.
 To configure the SED wake-up intervals, set both of the following Kconfig options:
 
-* :kconfig:option:`CONFIG_CHIP_SED_IDLE_INTERVAL` to a value in milliseconds that determines how often the device wakes up to poll for data in the idle state (for example, ``1000``).
-* :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_INTERVAL` to a value in milliseconds that determines how often the device wakes up to poll for data in the active state (for example, ``200``).
+* :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` to a value in milliseconds that determines how often the device wakes up to poll for data in the idle state (for example, ``1000``).
+* :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` to a value in milliseconds that determines how often the device wakes up to poll for data in the active state (for example, ``200``).
 
 You can also configure the SED active threshold to make the device stay active for some time after the network activity, instead of going to idle state immediately.
 The reason to use this functionality is to make the device wait for potentially delayed incoming traffic and avoid energy-wasting retransmissions.
 The higher the threshold value, the greater the communication reliability, but it also leads to higher power consumption.
-In practice, it is reasonable to set a non-zero threshold time only for devices using :kconfig:option:`CONFIG_CHIP_SED_IDLE_INTERVAL` value bigger than a few seconds.
+In practice, it is reasonable to set a non-zero threshold time only for devices using :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` value bigger than a few seconds.
 To configure the SED active threshold, set the following Kconfig option:
 
-* :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_THRESHOLD` to a value in milliseconds that determines how long the device stays in the active mode after network activity.
+* :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` to a value in milliseconds that determines how long the device stays in the active mode after network activity.
 
 Synchronized Sleepy End Device (SSED) configuration in Matter
 -------------------------------------------------------------
 
 To enable the Thread SSED support in Matter, set the following Kconfig options:
 
-* :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to ``y``
+* :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_MTD` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` to ``y``
 * :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to ``y``
@@ -71,16 +71,16 @@ To enable the Thread SSED support in Matter, set the following Kconfig options:
 Additionally, you can configure the SSED wake-up intervals according to your needs, but keep in mind that the bigger sleep periods, the smaller power consumption and bigger device response time.
 To configure the SSED wake-up intervals, set both of the following Kconfig options:
 
-* :kconfig:option:`CONFIG_CHIP_SED_IDLE_INTERVAL` to a value in milliseconds that determines how often the device wakes up to listen for data in the idle state (for example, ``500``).
-* :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_INTERVAL` to a value in milliseconds that determines how often the device wakes up to listen for data in the active state (for example, ``500``).
+* :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` to a value in milliseconds that determines how often the device wakes up to listen for data in the idle state (for example, ``500``).
+* :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` to a value in milliseconds that determines how often the device wakes up to listen for data in the active state (for example, ``500``).
 
 You can also configure the SED active threshold to make the device stay active for some time after the network activity, instead of going to idle state immediately.
 The reason to use this functionality is to make the device wait for potentially delayed incoming traffic and avoid energy-wasting retransmissions.
 The higher the threshold value, the greater the communication reliability, but it also leads to higher power consumption.
-In practice, it is reasonable to set a non-zero threshold time only for devices using :kconfig:option:`CONFIG_CHIP_SED_IDLE_INTERVAL` value bigger than a few seconds.
+In practice, it is reasonable to set a non-zero threshold time only for devices using :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` value bigger than a few seconds.
 To configure the SED active threshold, set the following Kconfig option:
 
-* :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_THRESHOLD` to a value in milliseconds that determines how long the device stays in the active mode after network activity.
+* :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` to a value in milliseconds that determines how long the device stays in the active mode after network activity.
 
 Matter over Wi-Fi
 =================
