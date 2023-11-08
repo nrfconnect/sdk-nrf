@@ -74,13 +74,26 @@ config NRF_WIFI_IF_AUTO_START
 
 config NRF_WIFI_PATCHES_BUILTIN
 	bool "Store nRF700x FW patches as part of the driver"
+	depends on !NRF_WIFI_PATCHES_EXT_FLASH_STORE
+	default y if !NRF_WIFI_PATCHES_EXT_FLASH_STORE
 	help
 	  Select this option to store nRF700x FW patches as part of the driver.
-	  This option impacts the flash memory size of the application.
-	default y
+	  This option impacts the code memory footprint of the driver.
+
+choice NRF_WIFI_PATCHES_EXT_FLASH_SUPPORT
+	bool "Store nRF700x FW patches in external flash"
+	default NRF_WIFI_PATCHES_EXT_FLASH_DISABLED
+	help
+	  Select this option to store nRF700x FW patches in external flash.
+	  This option helps to reduce the code memory size of the application, but
+	  requires external memory to be available for storing the FW patches.
+
+config NRF_WIFI_PATCHES_EXT_FLASH_DISABLED
+	bool "Store nRF700x FW patches in RAM"
+	select NRF_WIFI_PATCHES_BUILTIN
 
 config NRF_WIFI_PATCHES_EXT_FLASH_XIP
-	bool "Relocate nRF700x FW patches to external flash and execute from there"
+	bool "Relocate nRF700x FW patches to external memory and execute from there"
 	# nRF7002 supports SPI based external flash access with no XIP
 	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
 	# Disable until Matter DFU changes are ready
@@ -94,6 +107,15 @@ config NRF_WIFI_PATCHES_EXT_FLASH_XIP
 	select BUILD_NO_GAP_FILL
 	select CODE_DATA_RELOCATION
 	select HAVE_CUSTOM_LINKER_SCRIPT
+
+config NRF_WIFI_PATCHES_EXT_FLASH_STORE
+	bool "Store nRF700x FW patches in external memory but execute from RAM"
+	# nRF7002 supports SPI based external memory access but missing tools support
+	# TODO: Enable when tools support is available (NRFJPROG-157)
+	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
+	select FLASH
+	select FLASH_MAP
+endchoice
 
 config CUSTOM_LINKER_SCRIPT
 	string "Custom linker script for nRF700x FW patches"
