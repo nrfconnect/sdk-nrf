@@ -76,6 +76,9 @@ endchoice
 
 endif # TFM_SECURE_UART
 
+# Pull in full list of peripherals
+rsource "Kconfig.peripheral_secure"
+
 choice TFM_PROFILE_TYPE
 	default TFM_PROFILE_TYPE_MINIMAL
 

@@ -5,7 +5,6 @@
 #
 
 if BUILD_WITH_TFM
-menu "Trusted Execution Non-Secure"
 
 menu "Peripheral Secure mapping"
 
@@ -310,7 +309,5 @@ config NRF_DPPI_CHANNEL_MASK_SECURE
 	  accesses can be made to the DPPI pins configured as non-secure.
 
 endmenu # Peripheral Secure mapping
-
-endmenu # Trusted Execution Non-Secure
 
 endif # BUILD_WITH_TFM
