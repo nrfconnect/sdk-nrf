@@ -56,10 +56,6 @@ if(CONFIG_MCUMGR_TRANSPORT_BT)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
 endif()
 
-if(CONFIG_CHIP_ICD_SUBSCRIPTION_HANDLING)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/icd_util.cpp)
-endif()
-
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL

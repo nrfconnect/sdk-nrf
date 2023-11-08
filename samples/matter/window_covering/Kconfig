@@ -19,9 +19,6 @@ config OPENTHREAD_DEFAULT_TX_POWER
 	int
 	default 0
 
-config CHIP_ICD_SUBSCRIPTION_HANDLING
-	default y
-
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
 source "Kconfig.zephyr"

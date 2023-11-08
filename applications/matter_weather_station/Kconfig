@@ -27,7 +27,7 @@ endchoice
 config IEEE802154_NRF5_RX_STACK_SIZE
 	default 8192
 
-config CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT
+config CHIP_ENABLE_ICD_SUPPORT
 	default y
 
 # # Reduce Thread TX output power to 0 dBm for SED device
@@ -36,9 +36,6 @@ config CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT
 # 	default 0
 
 endif # NET_L2_OPENTHREAD
-
-config CHIP_ICD_SUBSCRIPTION_HANDLING
-	default y
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"

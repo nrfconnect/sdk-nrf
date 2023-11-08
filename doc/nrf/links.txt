@@ -128,11 +128,11 @@
 
 .. ### Matter links that need updated SHA per release
 
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/9e6386c/src/controller
-.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/9e6386c/src/tools
-.. _`Bluetooth LE Arbiter's header file`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/9e6386c/src/platform/Zephyr/BLEAdvertisingArbiter.h
-.. _`LogModule enumeration`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/9e6386c/src/lib/support/logging/Constants.h
-.. _`Matter SDK's Logging header`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/9e6386c/src/lib/support/logging/CHIPLogging.h
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/181b0cb/src/controller
+.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/181b0cb/src/tools
+.. _`Bluetooth LE Arbiter's header file`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/platform/Zephyr/BLEAdvertisingArbiter.h
+.. _`LogModule enumeration`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/lib/support/logging/Constants.h
+.. _`Matter SDK's Logging header`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/181b0cb/src/lib/support/logging/CHIPLogging.h
 
 .. _`bt_nus_service.cpp`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus_service.cpp
 .. _`bt_nus_service.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus_service.h

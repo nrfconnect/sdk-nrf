@@ -33,6 +33,7 @@ void MatterWiFiNetworkDiagnosticsPluginServerInitCallback();
 void MatterAdministratorCommissioningPluginServerInitCallback();
 void MatterOperationalCredentialsPluginServerInitCallback();
 void MatterGroupKeyManagementPluginServerInitCallback();
+void MatterIcdManagementPluginServerInitCallback();
 void MatterDoorLockPluginServerInitCallback();
 
 #define MATTER_PLUGINS_INIT                                                                                            \
@@ -50,4 +51,5 @@ void MatterDoorLockPluginServerInitCallback();
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
 	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
+	MatterIcdManagementPluginServerInitCallback();                                                                 \
 	MatterDoorLockPluginServerInitCallback();

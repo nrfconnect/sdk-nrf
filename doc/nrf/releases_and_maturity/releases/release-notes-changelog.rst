@@ -89,11 +89,22 @@ Matter
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.1.0.1`` tag.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.2.0.1`` tag.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-|no_changes_yet_note|
+* Added:
+
+   * Support for the Intermittently Connected Devices (ICD) Management cluster.
+   * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_IDLE_MODE_INTERVAL`, :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_INTERVAL` and :kconfig:option:`CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC` to manage ICD configuration.
+
+* Updated:
+
+   * Renamed the :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` Kconfig option to :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT`.
+   * Renamed the :kconfig:option:`CONFIG_CHIP_SED_IDLE_INTERVAL` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`.
+   * Renamed the :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_INTERVAL` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
+   * Renamed the :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_THRESHOLD` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
+
 
 Thread
 ------
