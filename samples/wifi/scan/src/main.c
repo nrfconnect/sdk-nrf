@@ -125,7 +125,7 @@ static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 	printk("%-4d | %-32s %-5u | %-4u | %-4d | %-5s | %s\n",
 	       scan_result, entry->ssid, entry->ssid_length,
 	       entry->channel, entry->rssi,
-	       (entry->security == WIFI_SECURITY_TYPE_PSK ? "WPA/WPA2" : "Open    "),
+	       wifi_security_txt(entry->security),
 	       ((entry->mac_length) ?
 			net_sprint_ll_addr_buf(entry->mac, WIFI_MAC_ADDR_LEN, mac_string_buf,
 						sizeof(mac_string_buf)) : ""));
