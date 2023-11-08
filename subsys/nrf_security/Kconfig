@@ -217,15 +217,13 @@ endmenu # Zephyr legacy configurations
 # and not have to provide a "dummy" path for the implementation
 #
 choice MBEDTLS_IMPLEMENTATION
-	prompt "Select implementation"
 	default MBEDTLS_LIBRARY_NRF_SECURITY
 
 config MBEDTLS_LIBRARY_NRF_SECURITY
-	bool "Use Mbed TLS library from Nordic provided security backend"
+	bool "Use nRF Security mbedTLS version"
 	depends on NORDIC_SECURITY_BACKEND || NRF_SECURITY
 	help
-	  Use external, out of tree prebuilt Mbed TLS library. For advanced
-	  users only.
+	  Use Mbed TLS library from Nordic provided security backend
 
 endchoice
 
