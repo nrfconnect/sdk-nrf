@@ -72,12 +72,20 @@ config NRF_WIFI_IF_AUTO_START
 	bool "Enable Wi-Fi interface auto start on boot"
 	default y
 
+config NRF_WIFI_PATCHES_BUILTIN
+	bool "Store nRF700x FW patches as part of the driver"
+	help
+	  Select this option to store nRF700x FW patches as part of the driver.
+	  This option impacts the flash memory size of the application.
+	default y
+
 config NRF_WIFI_PATCHES_EXT_FLASH_XIP
 	bool "Relocate nRF700x FW patches to external flash and execute from there"
 	# nRF7002 supports SPI based external flash access with no XIP
 	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
 	# Disable until Matter DFU changes are ready
 	# default y if BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF52840DK_NRF52840
+	select NRF_WIFI_PATCHES_BUILTIN
 	# For accessing external flash
 	select FLASH
 	# For relocation code to external flash
