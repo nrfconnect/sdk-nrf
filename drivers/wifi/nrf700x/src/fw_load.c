@@ -17,9 +17,9 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
-#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
+#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 #include <zephyr/drivers/flash/nrf_qspi_nor.h>
-#endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH */
+#endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
@@ -68,9 +68,9 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_fw_info fw_info = { 0 };
-#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
+#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 	const struct device *flash_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
-#endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH */
+#endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
 	status = nrf_wifi_fmac_fw_parse(rpu_ctx, (const uint8_t *)_bin_nrf70_fw_start,
 					_bin_nrf70_fw_end - _bin_nrf70_fw_start, &fw_info);
@@ -79,7 +79,7 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 		return status;
 	}
 
-#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
+#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 	nrf_qspi_nor_xip_enable(flash_dev, true);
 #endif /* CONFIG_NRF_WIFI */
 	/* Load the FW patches to the RPU */
@@ -89,7 +89,7 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 		LOG_ERR("%s: nrf_wifi_fmac_fw_load failed", __func__);
 	}
 
-#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH) && defined(CONFIG_NORDIC_QSPI_NOR)
+#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 	nrf_qspi_nor_xip_enable(flash_dev, false);
 #endif /* CONFIG_NRF_WIFI */
 
