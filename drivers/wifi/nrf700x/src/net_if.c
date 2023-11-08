@@ -150,33 +150,46 @@ int nrf_wifi_if_send(const struct device *dev,
 #ifdef CONFIG_NRF700X_DATA_TX
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct net_if *iface = NULL;
 
 	if (!dev || !pkt) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
 	}
 
+	iface = net_pkt_iface(pkt);
+	if (!iface) {
+		LOG_ERR("%s: iface is NULL", __func__);
+		goto out;
+	}
+
+	net_if_lock(iface);
+
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
-		goto out;
+		goto unlock;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep->rpu_ctx) {
-		goto out;
+		goto unlock;
 	}
 
 	if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
 	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
-		goto out;
+		goto unlock;
 	}
 
 	ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
 				       vif_ctx_zep->vif_idx,
 				       net_pkt_to_nbuf(pkt));
+
+
+unlock:
+	net_if_unlock(iface);
 #else
 	goto out;
 #endif /* CONFIG_NRF700X_DATA_TX */
