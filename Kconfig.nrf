@@ -38,23 +38,6 @@ config BOOT_BANNER_STRING
 config ROM_START_OFFSET
 	default 0 if PARTITION_MANAGER_ENABLED
 
-#
-# Provide a new choice to override the mbedtls_external library completely
-# and not have to provide a "dummy" path for the implementation
-#
-choice MBEDTLS_IMPLEMENTATION
-	prompt "Select implementation"
-	default MBEDTLS_LIBRARY_NRF_SECURITY
-
-config MBEDTLS_LIBRARY_NRF_SECURITY
-	bool "Use Mbed TLS library from Nordic provided security backend"
-	depends on NORDIC_SECURITY_BACKEND || NRF_SECURITY
-	help
-	  Use external, out-of-tree prebuilt Mbed TLS library. For advanced
-	  users only.
-
-endchoice
-
 # nRF Connect SDK default experimental warnings to on.
 config WARN_EXPERIMENTAL
 	default y
