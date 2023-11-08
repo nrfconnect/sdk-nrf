@@ -23,10 +23,13 @@ def generate_legal_key():
     while True:
         key = ec.generate_private_key(ec.SECP256R1())
         public_bytes = key.public_key().public_bytes(
-                encoding=serialization.Encoding.DER,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo,
-                )
-        digest = sha256(public_bytes).digest()[:16]
+                encoding=serialization.Encoding.X962,
+                format=serialization.PublicFormat.UncompressedPoint,
+        )
+
+        # The digest don't contain the first byte as it denotes
+        # if it is compressed/UncompressedPoint.
+        digest = sha256(public_bytes[1:]).digest()[:16]
         if not (any([digest[n:n + 2] == b'\xff\xff'
                      for n in range(0, len(digest), 2)])):
             return key
