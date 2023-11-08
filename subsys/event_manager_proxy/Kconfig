@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config EVENT_MANAGER_PROXY
+menuconfig EVENT_MANAGER_PROXY
 	depends on APP_EVENT_MANAGER
 	bool "Event manager proxy"
 	depends on IPC_SERVICE
