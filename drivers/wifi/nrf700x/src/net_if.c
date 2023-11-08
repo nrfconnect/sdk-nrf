@@ -150,7 +150,9 @@ int nrf_wifi_if_send(const struct device *dev,
 #ifdef CONFIG_NRF700X_DATA_TX
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
-
+#ifdef CONFIG_NRF700X_RAWDATA_TX
+	unsigned int magic_num;
+#endif /* CONFIG_NRF700X_RAWDATA_TX */
 	if (!dev || !pkt) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
@@ -169,14 +171,30 @@ int nrf_wifi_if_send(const struct device *dev,
 		goto out;
 	}
 
-	if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
-	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
-		goto out;
-	}
+#ifdef CONFIG_NRF700X_RAWDATA_TX
+	memcpy(&magic_num, pkt->frags->data, sizeof(int));
+	/* Should this be in a #define? But which header will it go to? */
+	if (magic_num == NRF_WIFI_MAGIC_NUM_RAWTX) {
+		if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
+			goto out;
+		}
 
-	ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
-				       vif_ctx_zep->vif_idx,
-				       net_pkt_to_nbuf(pkt));
+		ret = nrf_wifi_fmac_start_rawpkt_xmit(rpu_ctx_zep->rpu_ctx,
+						      vif_ctx_zep->vif_idx,
+						      net_pkt_to_nbuf(pkt));
+	} else {
+#endif
+		if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
+		    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
+			goto out;
+		}
+
+		ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
+					       vif_ctx_zep->vif_idx,
+					       net_pkt_to_nbuf(pkt));
+#ifdef CONFIG_NRF700X_RAWDATA_TX
+	}
+#endif
 #else
 	goto out;
 #endif /* CONFIG_NRF700X_DATA_TX */

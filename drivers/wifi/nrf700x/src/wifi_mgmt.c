@@ -69,8 +69,12 @@ int nrf_wifi_set_power_save(const struct device *dev,
 						params->listen_interval);
 	break;
 	case  WIFI_PS_PARAM_TIMEOUT:
-		if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
-			LOG_ERR("%s: Operation supported only in STA mode",
+		if ((vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION)
+#ifdef CONFIG_NRF700X_RAWDATA_TX
+		    || (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
+#endif /* CONFIG_NRF700X_RAWDATA_TX */
+		   ) {
+			LOG_ERR("%s: Operation supported only in STA enabled mode",
 				__func__);
 			params->fail_reason =
 				WIFI_PS_PARAM_FAIL_CMD_EXEC_FAIL;
@@ -143,8 +147,12 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 		goto out;
 	}
 
-	if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
-		LOG_ERR("%s: Operation supported only in STA mode",
+	if ((vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION)
+#ifdef CONFIG_NRF700X_RAWDATA_TX
+	    || (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
+#endif /* CONFIG_NRF700X_RAWDATA_TX */
+	    ) {
+		LOG_ERR("%s: Operation supported only in STA enabled mode",
 			__func__);
 		goto out;
 	}
