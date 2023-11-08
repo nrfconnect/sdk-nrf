@@ -19,7 +19,7 @@ config OPENTHREAD_LIBRARY_AVAILABLE
 	# Switch:
 	# - To `y` when libraries for the current OpenThread revision are provided
 	# - To `n` on the next OpenThread upmerge
-	default y
+	default n
 	depends on OPENTHREAD_THREAD_VERSION_1_3
 	depends on OPENTHREAD_NORDIC_LIBRARY_FTD || OPENTHREAD_NORDIC_LIBRARY_MTD
 	depends on !OPENTHREAD_COPROCESSOR
@@ -84,6 +84,7 @@ endchoice
 
 config MBEDTLS_SSL_PROTO_DTLS
 	bool
+	default n if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 	default y
 
 config MBEDTLS_ENTROPY_C
@@ -149,6 +150,18 @@ config MBEDTLS_SSL_COOKIE_C
 	default n
 
 endif # !(OPENTHREAD_BORDER_AGENT || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
+
+if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
+
+config MBEDTLS_SSL_CLI_C
+	bool
+	default n
+
+config MBEDTLS_SSL_TLS_C
+	bool
+	default n
+
+endif # !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 
 # Note: MBEDTLS_HEAP_SIZE value for OPENTHREAD_NRF_SECURITY_PSA is experimental.
 # It might be changed in the future.
