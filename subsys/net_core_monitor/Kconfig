@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config NET_CORE_MONITOR
+menuconfig NET_CORE_MONITOR
 	bool "NCM (Network Core Monitor) module [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	depends on (SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET)
