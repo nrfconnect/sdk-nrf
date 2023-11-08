@@ -169,8 +169,41 @@ Key size configuration is supported as described in `AES key size configuration`
 .. note::
    The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell cc310.
 
-Key Derivation Function
-***********************
+Key agreement configurations
+****************************
+
+To enable key agreement support, set one or more of the Kconfig options in the following table:
+
++-------------------------+-----------------------------------------------------------+
+| Key agreement algorithm | Configuration option                                      |
++=========================+===========================================================+
+| ECDH                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`                |
++-------------------------+-----------------------------------------------------------+
+| FFDH                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_FFDH`                |
++-------------------------+-----------------------------------------------------------+
+
+Key agreement driver configuration
+==================================
+
+The following table shows Key agreement support for each driver:
+
++-------------------------+---------------------------+----------------------------+
+| Key agreement algorithm | nrf_cc3xx driver support  | nrf_oberon driver support  |
++=========================+===========================+============================+
+| ECDH                    | Supported                 | Supported                  |
++-------------------------+---------------------------+----------------------------+
+| FFDH                    | Not supported             | Not supported              |
++-------------------------+---------------------------+----------------------------+
+
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
+
+The algorithm support when using ECC key types is dependent on one or more Kconfig options enabling curve support according to `ECC curve configurations`_.
+
+.. note::
+   The :ref:`nrf_security_drivers_oberon` is currently limited to curve types secp224r1, secp256r1, secp384r1, and Curve25519 for ECDH.
+
+Key derivation function configurations
+**************************************
 
 To enable key derivation function (KDF) support, set one or more of the Kconfig options in the following table:
 
@@ -197,10 +230,10 @@ To enable key derivation function (KDF) support, set one or more of the Kconfig 
 .. note::
    PBKDF2 algorithms are not supported with TF-M.
 
-Key Derivation Function driver configurations
+Key derivation function driver configurations
 =============================================
 
-The following table shows Key Derivation Function (KDF) support for each driver:
+The following table shows key derivation function (KDF) support for each driver:
 
 +--------------------------+--------------------------+----------------------------+
 | KDF algorithm            | nrf_cc3xx driver support | nrf_oberon driver support  |
@@ -222,7 +255,7 @@ The following table shows Key Derivation Function (KDF) support for each driver:
 | TLS 1.2 EC J-PAKE to PMS | Not supported            | Supported                  |
 +--------------------------+--------------------------+----------------------------+
 
-The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Key Derivation Function`_.
+The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Key derivation function configurations`_.
 
 MAC configurations
 ******************
@@ -304,63 +337,114 @@ Key size configuration for CCM and GCM is supported as described in `AES key siz
    * The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell cc310.
    * The :ref:`nrf_security_drivers_cc3xx` does not provide hardware support for GCM on devices with Arm CryptoCell cc310.
 
-ECC configurations
-******************
 
-To enable Elliptic Curve Cryptography (ECC), set one or more of the Kconfig options in the following table:
+Asymmetric signature configurations
+***********************************
 
-+------------------------+-----------------------------------------------------------+
-| ECC algorithm          | Configuration option                                      |
-+========================+===========================================================+
-| ECDH                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`                |
-+------------------------+-----------------------------------------------------------+
-| ECDSA                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`               |
-+------------------------+-----------------------------------------------------------+
-| ECDSA without hashing  | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA_ANY`           |
-+------------------------+-----------------------------------------------------------+
-| ECDSA (deterministic)  | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA` |
-+------------------------+-----------------------------------------------------------+
-| PureEdDSA              | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`          |
-+------------------------+-----------------------------------------------------------+
-| HashEdDSA Edwards25519 | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`           |
-+------------------------+-----------------------------------------------------------+
-| HashEdDSA Edwards448   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`             |
-+------------------------+-----------------------------------------------------------+
+To enable asymmetric signature support, set one or more of the Kconfig options in the following table:
 
-The ECC algorithm support is dependent on one or more Kconfig options enabling curve support according to `ECC curve configurations`_.
++---------------------------------+--------------------------------------------------------------+
+| Asymmetric signature algorithms | Configuration option                                         |
++=================================+==============================================================+
+| ECDSA                           | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`                  |
++---------------------------------+--------------------------------------------------------------+
+| ECDSA without hashing           | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA_ANY`              |
++---------------------------------+--------------------------------------------------------------+
+| ECDSA (deterministic)           | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`    |
++---------------------------------+--------------------------------------------------------------+
+| PureEdDSA                       | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`             |
++---------------------------------+--------------------------------------------------------------+
+| HashEdDSA Edwards25519          | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`              |
++---------------------------------+--------------------------------------------------------------+
+| HashEdDSA Edwards448            | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`                |
++---------------------------------+--------------------------------------------------------------+
+| RSA PKCS#1 v1.5 sign            | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`      |
++---------------------------------+--------------------------------------------------------------+
+| RSA raw PKCS#1 v1.5 sign        | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`  |
++---------------------------------+--------------------------------------------------------------+
+| RSA PSS                         | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`                |
++---------------------------------+--------------------------------------------------------------+
+| RSA PSS any salt                | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`       |
++---------------------------------+--------------------------------------------------------------+
 
-ECC driver configurations
-=========================
+Asymmetric signature driver configurations
+==========================================
 
-The following table shows ECC algorithm support for each driver:
+The following table shows asymmetric signature algorithm support for each driver:
 
-+------------------------+---------------------------+----------------------------+
-| ECC algorithm          | nrf_cc3xx driver support  | nrf_oberon driver support  |
-+========================+===========================+============================+
-| ECDH                   | Supported                 | Supported                  |
-+------------------------+---------------------------+----------------------------+
-| ECDSA                  | Supported                 | Supported                  |
-+------------------------+---------------------------+----------------------------+
-| ECDSA without hashing  | Supported                 | Supported                  |
-+------------------------+---------------------------+----------------------------+
-| ECDSA (deterministic)  | Supported                 | Supported                  |
-+------------------------+---------------------------+----------------------------+
-| PureEdDSA              | Supported                 | Supported                  |
-+------------------------+---------------------------+----------------------------+
-| HashEdDSA Edwards25519 | Not supported             | Not supported              |
-+------------------------+---------------------------+----------------------------+
-| HashEdDSA Edwards448   | Not supported             | Not supported              |
-+------------------------+---------------------------+----------------------------+
++---------------------------------+---------------------------+----------------------------+
+| Asymmetric signature algorithms | nrf_cc3xx driver support  | nrf_oberon driver support  |
++=================================+===========================+============================+
+| ECDSA                           | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| ECDSA without hashing           | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| ECDSA (deterministic)           | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| PureEdDSA                       | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| HashEdDSA Edwards25519          | Not supported             | Not supported              |
++---------------------------------+---------------------------+----------------------------+
+| HashEdDSA Edwards448            | Not supported             | Not supported              |
++---------------------------------+---------------------------+----------------------------+
+| RSA PKCS#1 v1.5 sign            | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| RSA raw PKCS#1 v1.5 sign        | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| RSA PSS                         | Not supported             | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| RSA PSS any salt                | Not supported             | Supported                  |
++---------------------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for the ECDSA, ECDSA deterministic, and EdDSA algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for key agreement with ECDH.
+Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in `Asymmetric signature configurations`_.
 
-The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `ECC configurations`_.
+The algorithm support when using ECC key types is dependent on one or more Kconfig options enabling curve support according to `ECC curve configurations`_.
+
+RSA key size configuration is supported as described in `RSA key size configuration`_.
 
 .. note::
-   * The :ref:`nrf_security_drivers_oberon` is currently limited to curve types secp224r1, secp256r1, and secp384r1 for ECDH and ECDSA.
-   * The :ref:`nrf_security_drivers_oberon` is currently limited to X25519 (using Curve25519) and Ed25519 for EdDSA.
+   * :ref:`nrf_security_drivers_cc3xx` is limited to RSA key sizes less than or equal to 2048 bits.
+   * :ref:`nrf_security_drivers_oberon` does not support RSA key pair generation.
+   * :ref:`nrf_security_drivers_oberon` is currently limited to ECC curve types secp224r1, secp256r1, and secp384r1 for ECDSA.
+   * :ref:`nrf_security_drivers_oberon` is currently limited to ECC curve type Ed25519 for EdDSA.
+
+Asymmetric encryption configurations
+************************************
+
+To enable asymmetric encryption, set one or more of the Kconfig options in the following table:
+
++---------------------------------+-----------------------------------------------------------+
+| Asymmetric encryption algorithm | Configuration option                                      |
++=================================+===========================================================+
+| RSA OAEP                        | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`            |
++---------------------------------+-----------------------------------------------------------+
+| RSA PKCS#1 v1.5 crypt           | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT`  |
++---------------------------------+-----------------------------------------------------------+
+
+Asymmetric encryption support
+=============================
+
+The following table shows asymmetric encryption algorithm support for each driver:
+
++---------------------------------+---------------------------+----------------------------+
+| Asymmetric encryption algorithm | nrf_cc3xx driver support  | nrf_oberon driver support  |
++=================================+===========================+============================+
+| RSA OAEP                        | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+| RSA PKCS#1 v1.5 crypt           | Supported                 | Supported                  |
++---------------------------------+---------------------------+----------------------------+
+
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
+
+Configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Asymmetric encryption configurations`_.
+
+RSA key size configuration is supported as described in `RSA key size configuration`_.
+
+.. note::
+   * :ref:`nrf_security_drivers_cc3xx` is limited to key sizes less than or equal to 2048 bits.
+   * :ref:`nrf_security_drivers_oberon` does not support RSA key pair generation.
 
 ECC curve configurations
 ************************
@@ -543,60 +627,6 @@ There are no public configurations for entropy and PRNG algorithm support and th
 The PSA drivers using the Arm CryptoCell peripheral is enabled by default for nRF52840, nRF91 Series, and nRF5340 devices.
 
 For devices without a hardware-accelerated cryptographic engine, entropy is provided by the nRF RNG peripheral. PRNG support is provided by the Oberon PSA driver, which is implemented using software.
-
-RSA configurations
-******************
-
-To enable Rivest-Shamir-Adleman (RSA) support, set one or more of the Kconfig options in the following table:
-
-+---------------------------+--------------------------------------------------------------+
-| RSA algorithms            | Configuration option                                         |
-+===========================+==============================================================+
-| RSA OAEP                  | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`               |
-+---------------------------+--------------------------------------------------------------+
-| RSA PKCS#1 v1.5 crypt     | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT`     |
-+---------------------------+--------------------------------------------------------------+
-| RSA PKCS#1 v1.5 sign      | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`      |
-+---------------------------+--------------------------------------------------------------+
-| RSA raw PKCS#1 v1.5 sign  | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW`  |
-+---------------------------+--------------------------------------------------------------+
-| RSA PSS                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`                |
-+---------------------------+--------------------------------------------------------------+
-| RSA PSS any salt          | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`       |
-+---------------------------+--------------------------------------------------------------+
-
-RSA driver configurations
-=========================
-
-The following table shows RSA algorithm support for each driver:
-
-+---------------------------+---------------------------+----------------------------+
-| RSA algorithms            | nrf_cc3xx driver support  | nrf_oberon driver support  |
-+===========================+===========================+============================+
-| RSA OAEP                  | Supported                 | Supported                  |
-+---------------------------+---------------------------+----------------------------+
-| RSA PKCS#1 v1.5 crypt     | Supported                 | Supported                  |
-+---------------------------+---------------------------+----------------------------+
-| RSA PKCS#1 v1.5 sign      | Supported                 | Supported                  |
-+---------------------------+---------------------------+----------------------------+
-| RSA raw PKCS#1 v1.5 sign  | Supported                 | Supported                  |
-+---------------------------+---------------------------+----------------------------+
-| RSA PSS                   | Not supported             | Supported                  |
-+---------------------------+---------------------------+----------------------------+
-| RSA PSS any salt          | Not supported             | Supported                  |
-+---------------------------+---------------------------+----------------------------+
-
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for the RSA PKCS#1 v1.5 signing algorithm.
-
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for RSA PKCS#1 v1.5 and RSA OAEP encryption.
-
-Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in  `RSA configurations`_.
-
-RSA key size configuration is supported as described in `RSA key size configuration`_.
-
-.. note::
-   * :ref:`nrf_security_drivers_cc3xx` is limited to key sizes less than or equal to 2048 bits.
-   * :ref:`nrf_security_drivers_oberon` does not support RSA key pair generation.
 
 Hash configurations
 *******************
