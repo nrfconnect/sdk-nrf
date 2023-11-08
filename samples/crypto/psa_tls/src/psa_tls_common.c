@@ -9,7 +9,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 
-
 /** @brief Function for sending all data in a given buffer to a connected
  * socket.
  *
