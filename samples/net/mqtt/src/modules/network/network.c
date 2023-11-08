@@ -88,6 +88,13 @@ static void network_task(void)
 		return;
 	}
 
+	err = conn_mgr_all_if_connect(true);
+	if (err) {
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
+		SEND_FATAL_ERROR();
+		return;
+	}
+
 	/* Resend connection status if the sample is built for Native Posix.
 	 * This is necessary because the network interface is automatically brought up
 	 * at SYS_INIT() before main() is called.

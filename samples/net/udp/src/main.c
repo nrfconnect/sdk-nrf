@@ -170,6 +170,13 @@ int main(void)
 		return err;
 	}
 
+	err = conn_mgr_all_if_connect(true);
+	if (err) {
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
+		FATAL_ERROR();
+		return err;
+	}
+
 	/* Resend connection status if the sample is built for QEMU x86.
 	 * This is necessary because the network interface is automatically brought up
 	 * at SYS_INIT() before main() is called.
