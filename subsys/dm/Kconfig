@@ -4,16 +4,14 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config DM_MODULE
-	bool "DM (Distance Measurement) module [EXPERIMENTAL]"
+menuconfig DM_MODULE
+	bool "nRF DM (Distance Measurement) [EXPERIMENTAL]"
 	select NRF_DM
 	select EXPERIMENTAL
 	help
 	  Enable the DM (Distance Measurement) module.
 
 if DM_MODULE
-
-menu "nRF DM (Distance Measurement)"
 
 config DM_HIGH_PRECISION_CALC
 	# Due to memory limitations, functionality is not provided for nrf52832.
@@ -70,8 +68,6 @@ config DM_TIMESLOT_QUEUE_COUNT_SAME_PEER
 	default 10
 	help
 	  The maximum number of timeslots that can be scheduled for a single peer.
-
-endmenu
 
 module = DM_MODULE
 module-str = DM_MODULE
