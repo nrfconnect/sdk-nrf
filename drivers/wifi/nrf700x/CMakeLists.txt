@@ -116,7 +116,7 @@ zephyr_library_sources_ifdef(CONFIG_NRF700X_UTIL
 	src/wifi_util.c
 )
 
-if (CONFIG_NRF_WIFI_PATCHES_EXT_FLASH)
+if (CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP)
 # Run patches from the external flash (XIP). No need to copy.
 zephyr_code_relocate(FILES src/fw_load.c LOCATION EXTFLASH_RODATA NOCOPY)
 endif()
