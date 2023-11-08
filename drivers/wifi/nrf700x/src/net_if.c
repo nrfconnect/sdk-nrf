@@ -191,6 +191,8 @@ int nrf_wifi_if_send(const struct device *dev,
 unlock:
 	net_if_unlock(iface);
 #else
+	ARG_UNUSED(dev);
+	ARG_UNUSED(pkt);
 	goto out;
 #endif /* CONFIG_NRF700X_DATA_TX */
 
