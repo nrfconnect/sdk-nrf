@@ -23,20 +23,48 @@ extern "C" {
  */
 
 /**
- * @brief Initialize mocking variables for nrf_modem_at_scanf() calls.
+ * @brief Initialize mock variables.
  *
  * This is intended to be used in setUp() function.
  */
 void mock_nrf_modem_at_Init(void);
 /**
- * @brief Verify that nrf_modem_at_scanf() calls where executed as expected.
+ * @brief Verify that mock functions where executed as expected.
  *
  * This is intended to be used in tearDown() function.
  */
 void mock_nrf_modem_at_Verify(void);
 
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_PRINTF)
+
+/**
+ * @brief Mock for nrf_modem_at_printf().
+ *
+ * This function will verify that the string produced from @ref fmt using vsprintf()
+ * with variable arguments matches the expected string.
+ *
+ * @param[in] fmt Format.
+ */
+int __cmock_nrf_modem_at_printf(const char *fmt, ...);
+
+/**
+ * @brief Sets expected parameter and return value.
+ *
+ * @param[in] fmt Expected string. This is not the format with specifiers but the
+ *                expected string after applying variable arguments with vsprintf().
+ * @param[in] return_value Value returned by the mock.
+ */
+void __mock_nrf_modem_at_printf_ExpectAndReturn(const char *fmt, int return_value);
+
+#endif /* CONFIG_MOCK_NRF_MODEM_AT_PRINTF */
+
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_SCANF)
+
 /**
  * @brief Mock for nrf_modem_at_scanf().
+ *
+ * @param[in] cmd Command.
+ * @param[in] fmt Format.
  */
 int __cmock_nrf_modem_at_scanf(const char *cmd, const char *fmt, ...);
 
@@ -47,6 +75,10 @@ int __cmock_nrf_modem_at_scanf(const char *cmd, const char *fmt, ...);
  * must be set after calling this function by using
  * __mock_nrf_modem_at_scanf_ReturnVarg_*() functions before calling this
  * function again.
+ *
+ * @param[in] cmd Expected command.
+ * @param[in] fmt Expected format.
+ * @param[in] return_value Value returned by the mock.
  */
 void __mock_nrf_modem_at_scanf_ExpectAndReturn(
 	const char *cmd, const char *fmt, int return_value);
@@ -80,6 +112,8 @@ void __mock_nrf_modem_at_scanf_ReturnVarg_uint16(uint16_t value);
  * @brief Set next variable argument to be a string output parameter.
  */
 void __mock_nrf_modem_at_scanf_ReturnVarg_string(char *value);
+
+#endif /* CONFIG_MOCK_NRF_MODEM_AT_SCANF */
 
 /** @} */
 

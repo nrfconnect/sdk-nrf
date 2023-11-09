@@ -7,5 +7,7 @@
 zephyr_library()
 zephyr_library_sources(mock_nrf_modem_at.c)
 # Manually handled mock.
-set(mock_function nrf_modem_at_scanf)
-zephyr_library_link_libraries("-Wl,--defsym,${mock_function}=__cmock_${mock_function}")
+set(mock_function_scanf nrf_modem_at_scanf)
+set(mock_function_printf nrf_modem_at_printf)
+zephyr_library_link_libraries("-Wl,--defsym,${mock_function_scanf}=__cmock_${mock_function_scanf}")
+zephyr_library_link_libraries("-Wl,--defsym,${mock_function_printf}=__cmock_${mock_function_printf}")
