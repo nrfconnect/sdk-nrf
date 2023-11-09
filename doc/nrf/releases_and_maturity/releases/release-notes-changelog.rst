@@ -344,6 +344,15 @@ Thread samples
 
 * Changed building method to use :ref:`zephyr:snippets` for predefined configuration.
 
+* In the :ref:`thread_ug_feature_sets` provided as part of the |NCS|, the following features have been removed from the FTD and MTD variants:
+
+  * ``DHCP6_CLIENT``
+  * ``JOINER``
+  * ``SNTP_CLIENT``
+  * ``LINK_METRICS_INITIATOR``
+
+  All mentioned features are still available in the master variant.
+
 Sensor samples
 --------------
 

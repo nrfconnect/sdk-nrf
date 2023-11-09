@@ -96,8 +96,8 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       -
     * - DHCP6_CLIENT
       - ✔
-      - ✔
-      - ✔
+      -
+      -
       -
     * - ECDSA
       - ✔
@@ -116,8 +116,8 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       -
     * - JOINER
       - ✔
-      - ✔
-      - ✔
+      -
+      -
       -
     * - LINK_RAW
       - ✔
@@ -146,8 +146,8 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       -
     * - SNTP_CLIENT
       - ✔
-      - ✔
-      - ✔
+      -
+      -
       -
     * - SRP_CLIENT
       - ✔
@@ -176,8 +176,8 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       -
     * - LINK_METRICS_INITIATOR (Thread 1.2)
       - ✔
-      - ✔
-      - ✔
+      -
+      -
       -
     * - LINK_METRICS_SUBJECT (Thread 1.2)
       - ✔
