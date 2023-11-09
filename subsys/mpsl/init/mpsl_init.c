@@ -189,8 +189,18 @@ void m_assert_handler(const char *const file, const uint32_t line)
 #else /* !IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 static void m_assert_handler(const char *const file, const uint32_t line)
 {
+#if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
+	__ASSERT(false, "MPSL ASSERT: %s, %d\n", file, line);
+#elif defined(CONFIG_LOG)
 	LOG_ERR("MPSL ASSERT: %s, %d", file, line);
 	k_oops();
+#elif defined(CONFIG_PRINTK)
+	printk("MPSL ASSERT: %s, %d\n", file, line);
+	printk("\n");
+	k_oops();
+#else
+	k_oops();
+#endif
 }
 #endif /* IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 
