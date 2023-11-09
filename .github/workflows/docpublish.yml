@@ -57,6 +57,8 @@ jobs:
             sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
             cd docs-be.nordicsemi.com/sphinx-html/incoming
             put ${file}
+            cd nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
+            put ${file}
             quit
           EOF
           done
