@@ -188,7 +188,8 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated the :ref:`nrf_desktop_dfu` to use :ref:`partition_manager` definitions for determining currently booted image slot in build time.
+  The other image slot is used to store an application update image.
 
 Thingy:53: Matter weather station
 ---------------------------------
