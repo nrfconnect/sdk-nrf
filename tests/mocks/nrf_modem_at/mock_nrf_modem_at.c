@@ -8,6 +8,30 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_PRINTF)
+
+/** Size of the buffer used for vnsprintf. */
+#define MOCK_NRF_MODEM_AT_PRINTF_BUFFER_SIZE 4096
+
+/**
+ * Mock information for a single nrf_modem_at_printf() call.
+ */
+struct printf_mock {
+	const char *fmt;
+	int return_value;
+};
+
+/* Currently processed nrf_modem_at_printf() call */
+static int printf_mock_index;
+/* Number of expected nrf_modem_at_printf() calls */
+static int printf_mock_count;
+/* Mock information for multiple nrf_modem_at_printf() calls */
+static struct printf_mock printf_mocks[CONFIG_MOCK_NRF_MODEM_AT_PRINTF_CALL_COUNT];
+
+#endif
+
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_SCANF)
+
 /**
  * Variable argument type.
  */
@@ -61,18 +85,80 @@ static int scanf_mock_count;
 /* Mock information for multiple nrf_modem_at_scanf() calls */
 static struct scanf_mock scanf_mocks[CONFIG_MOCK_NRF_MODEM_AT_SCANF_CALL_COUNT];
 
+#endif
+
 void mock_nrf_modem_at_Init(void)
 {
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_PRINTF)
+	memset(printf_mocks, 0, sizeof(printf_mocks));
+	printf_mock_index = 0;
+	printf_mock_count = -1;
+#endif
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_SCANF)
 	memset(scanf_mocks, 0, sizeof(scanf_mocks));
 	scanf_mock_index = 0;
 	scanf_mock_count = -1;
+#endif
 }
 
 void mock_nrf_modem_at_Verify(void)
 {
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_PRINTF)
+	TEST_ASSERT_MESSAGE(printf_mock_index > printf_mock_count,
+		"nrf_modem_at_printf called fewer times than expected");
+#endif
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_SCANF)
 	TEST_ASSERT_MESSAGE(scanf_mock_index > scanf_mock_count,
 		"nrf_modem_at_scanf called fewer times than expected");
+#endif
 }
+
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_PRINTF)
+
+void __mock_nrf_modem_at_printf_ExpectAndReturn(const char *fmt, int return_value)
+{
+	printf_mock_count++;
+
+	TEST_ASSERT_MESSAGE(
+		printf_mock_count < CONFIG_MOCK_NRF_MODEM_AT_PRINTF_CALL_COUNT,
+		"Too many nrf_modem_at_printf calls set to be expected. "
+		"Please increase CONFIG_MOCK_NRF_MODEM_AT_PRINTF_CALL_COUNT.");
+
+	printf_mocks[printf_mock_count].fmt = fmt;
+	printf_mocks[printf_mock_count].return_value = return_value;
+}
+
+int __cmock_nrf_modem_at_printf(const char *fmt, ...)
+{
+	static char string[MOCK_NRF_MODEM_AT_PRINTF_BUFFER_SIZE];
+	va_list args;
+	struct printf_mock *mock_data = &printf_mocks[printf_mock_index];
+	int len;
+
+	memset(string, 0, sizeof(string));
+
+	TEST_ASSERT_MESSAGE(printf_mock_index <= printf_mock_count,
+		"nrf_modem_at_printf called more times than expected");
+
+	va_start(args, fmt);
+	len = vsnprintf(string, MOCK_NRF_MODEM_AT_PRINTF_BUFFER_SIZE, fmt, args);
+	va_end(args);
+
+	TEST_ASSERT_MESSAGE(
+		len < MOCK_NRF_MODEM_AT_PRINTF_BUFFER_SIZE,
+		"Unit under test calls nrf_modem_at_printf with too big final formatted string. "
+		"Please increase MOCK_NRF_MODEM_AT_PRINTF_BUFFER_SIZE in mock_nrf_modem_at.c");
+
+	TEST_ASSERT_EQUAL_STRING(mock_data->fmt, string);
+
+	printf_mock_index++;
+
+	return mock_data->return_value;
+}
+
+#endif /* CONFIG_MOCK_NRF_MODEM_AT_PRINTF */
+
+#if defined(CONFIG_MOCK_NRF_MODEM_AT_SCANF)
 
 void __mock_nrf_modem_at_scanf_ExpectAndReturn(
 	const char *cmd, const char *fmt, int return_value)
@@ -242,3 +328,5 @@ int __cmock_nrf_modem_at_scanf(const char *cmd, const char *fmt, ...)
 
 	return mock_data->return_value;
 }
+
+#endif /* CONFIG_MOCK_NRF_MODEM_AT_SCANF */
