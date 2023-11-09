@@ -90,6 +90,7 @@ config NRF_WIFI_PATCHES_EXT_FLASH_XIP
 	select FLASH
 	# For relocation code to external flash
 	select XIP
+	select NORDIC_QSPI_NOR
 	select BUILD_NO_GAP_FILL
 	select CODE_DATA_RELOCATION
 	select HAVE_CUSTOM_LINKER_SCRIPT
