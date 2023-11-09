@@ -1,7 +1,7 @@
 .. _nrf_security_driver_config:
 
-Driver configurations and supported features
-############################################
+Feature configurations and driver support
+#########################################
 
 .. contents::
    :local:
@@ -34,8 +34,8 @@ The driver :ref:`nrf_security_drivers_oberon` allows finer configuration granula
 
 When multiple enabled drivers support the same cryptographic feature, the configuration system attempts to include only one implementation to minimize code size.
 
-Key type configuration
-**********************
+Key type configurations
+***********************
 
 To enable key types for cryptographic algorithms, set one or more of the Kconfig options in the following table:
 
@@ -133,8 +133,8 @@ To enable cipher modes, set one or more of the Kconfig options in the following 
 | Stream cipher         | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`  |
 +-----------------------+------------------------------------------------------+
 
-Cipher driver configurations
-============================
+Cipher support
+==============
 
 The following table shows Cipher algorithm support for each driver:
 
@@ -182,8 +182,8 @@ To enable key agreement support, set one or more of the Kconfig options in the f
 | FFDH                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_FFDH`                |
 +-------------------------+-----------------------------------------------------------+
 
-Key agreement driver configuration
-==================================
+Key agreement support
+=====================
 
 The following table shows Key agreement support for each driver:
 
@@ -225,13 +225,13 @@ To enable key derivation function (KDF) support, set one or more of the Kconfig 
 | TLS 1.2 PSK to MS        | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`         |
 +--------------------------+---------------------------------------------------------------+
 | TLS 1.2 EC J-PAKE to PMS | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`    |
-+-------------------------+----------------------------------------------------------------+
++--------------------------+---------------------------------------------------------------+
 
 .. note::
    PBKDF2 algorithms are not supported with TF-M.
 
-Key derivation function driver configurations
-=============================================
+Key derivation function support
+===============================
 
 The following table shows key derivation function (KDF) support for each driver:
 
@@ -272,8 +272,8 @@ To enable MAC support, set one or more of the Kconfig options in the following t
 | CBC-MAC        | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_MAC`|
 +----------------+----------------------------------------------+
 
-MAC driver configurations
-=========================
+MAC support
+===========
 
 The following table shows MAC algorithm support for each driver:
 
@@ -312,8 +312,8 @@ To enable Authenticated Encryption with Associated Data (AEAD), set one or more 
 | ChaCha20-Poly1305     | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305` |
 +-----------------------+---------------------------------------------------------+
 
-AEAD driver configurations
-==========================
+AEAD support
+============
 
 The following table shows AEAD algorithm support for each driver:
 
@@ -367,8 +367,8 @@ To enable asymmetric signature support, set one or more of the Kconfig options i
 | RSA PSS any salt                | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT`       |
 +---------------------------------+--------------------------------------------------------------+
 
-Asymmetric signature driver configurations
-==========================================
+Asymmetric signature support
+============================
 
 The following table shows asymmetric signature algorithm support for each driver:
 
@@ -521,8 +521,8 @@ To configure elliptic curve support, set one or more of the Kconfig options in t
 | FRP256v1                 | :kconfig:option:`CONFIG_PSA_WANT_ECC_FRP_V1_256`             |
 +--------------------------+--------------------------------------------------------------+
 
-ECC curve driver configurations
-===============================
+ECC curve support
+=================
 
 The following table shows ECC curve support for each driver:
 
@@ -619,8 +619,8 @@ When RNG is enabled, set at least one of the configurations in the following tab
    * :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG` and :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` are custom configurations not described by the PSA Crypto specification.
    * If multiple PRNG algorithms are enabled at the same time, CTR-DRBG will be prioritized for random number generation through the front-end APIs for PSA Crypto.
 
-RNG driver configurations
-*************************
+RNG support
+===========
 
 There are no public configurations for entropy and PRNG algorithm support and the choice of drivers that provide support is automatic.
 
@@ -675,8 +675,8 @@ To configure the Hash algorithms, set one or more of the Kconfig options in the 
    * The SHA-1 hash is weak and deprecated and is only recommended for use in legacy protocols.
    * The MD5 hash is weak and deprecated and is only recommended for use in legacy protocols.
 
-Hash driver configurations
-==========================
+Hash support
+============
 
 The following table shows Hash algorithm support for each driver:
 
@@ -741,8 +741,8 @@ To enable password-authenticated key exchange (PAKE) support, set one or more of
    * The provided support is experimental.
    * Not supported with TF-M.
 
-Password-authenticated key exchange driver configurations
-==========================================================
+Password-authenticated key exchange support
+===========================================
 
 The following table shows PAKE algorithm support for each driver:
 
