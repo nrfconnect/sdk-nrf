@@ -244,24 +244,16 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_SYNC_LOST:
 			LOG_INF("Sync lost");
 
+			ret = bt_mgmt_pa_sync_delete(msg.pa_sync);
+			if (ret) {
+				LOG_WRN("Failed to delete PA sync");
+			}
+
 			if (strm_state == STATE_STREAMING) {
 				stream_state_set(STATE_PAUSED);
 				audio_system_stop();
 				ret = led_on(LED_APP_1_BLUE);
 				ERR_CHK(ret);
-			}
-
-			if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
-				if (ret) {
-					if (ret != -EALREADY) {
-						LOG_ERR("Failed to restart scanning: %d", ret);
-					}
-					break;
-				}
-
-				/* NOTE: The string below is used by the Nordic CI system */
-				LOG_INF("Restarted scanning for broadcaster");
 			}
 
 			break;

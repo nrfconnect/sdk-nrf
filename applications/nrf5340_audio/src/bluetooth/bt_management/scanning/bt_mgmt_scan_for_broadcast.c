@@ -42,6 +42,33 @@ struct broadcast_source {
 	uint32_t broadcast_id;
 };
 
+static void scan_restart_worker(struct k_work *work)
+{
+	int ret;
+
+	/* Delete pending PA sync before restarting scan */
+	ret = bt_mgmt_pa_sync_delete(pa_sync);
+	if (ret) {
+		LOG_WRN("Failed to delete pending PA sync: %d", ret);
+	}
+
+	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
+	if (ret) {
+		LOG_WRN("Failed to restart scanning for broadcast: %d", ret);
+	}
+}
+
+K_WORK_DEFINE(scan_restart_work, scan_restart_worker);
+
+static void pa_sync_timeout(struct k_timer *timer)
+{
+	LOG_WRN("PA sync create timed out, restarting scanning");
+
+	k_work_submit(&scan_restart_work);
+}
+
+K_TIMER_DEFINE(pa_sync_timer, pa_sync_timeout, NULL);
+
 static uint16_t interval_to_sync_timeout(uint16_t interval)
 {
 	uint16_t timeout;
@@ -78,6 +105,9 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
 	param.timeout = interval_to_sync_timeout(info->interval);
 
 	broadcaster_broadcast_id = broadcast_id;
+
+	/* Set timeout to same value as PA sync timeout in ms */
+	k_timer_start(&pa_sync_timer, K_MSEC(param.timeout * 10), K_NO_WAIT);
 
 	ret = bt_le_per_adv_sync_create(&param, &pa_sync);
 	if (ret) {
@@ -171,6 +201,8 @@ static void pa_synced_cb(struct bt_le_per_adv_sync *sync,
 	}
 
 	LOG_DBG("PA synced");
+
+	k_timer_stop(&pa_sync_timer);
 
 	msg.event = BT_MGMT_PA_SYNCED;
 	msg.pa_sync = sync;
