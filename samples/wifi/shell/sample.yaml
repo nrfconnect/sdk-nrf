@@ -102,12 +102,13 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns
     tags: ci_build
-  sample.nrf7000.shell.scan_only_9160:
+  sample.nrf7000.shell.scan_only_91:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     tags: ci_build
   sample.nrf7001.shell.scan_only_9160:
     build_only: true
