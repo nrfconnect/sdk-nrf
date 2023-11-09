@@ -52,6 +52,8 @@ static struct bt_bap_stream audio_streams[CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COU
 static struct audio_codec_info audio_codec_info[CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT];
 static uint32_t bis_index_bitfields[CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT];
 
+static struct bt_le_per_adv_sync *pa_sync_stored;
+
 static struct active_audio_stream active_stream;
 
 /* The values of sync_stream_cnt and active_stream_index must never become larger
@@ -113,6 +115,11 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 {
 	int ret;
 	struct le_audio_msg msg;
+
+	if (event == LE_AUDIO_EVT_SYNC_LOST) {
+		msg.pa_sync = pa_sync_stored;
+		pa_sync_stored = NULL;
+	}
 
 	msg.event = event;
 
@@ -192,6 +199,8 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 		break;
 
+	case BT_HCI_ERR_CONN_FAIL_TO_ESTAB:
+		/* Fall-through */
 	case BT_HCI_ERR_CONN_TIMEOUT:
 		LOG_INF("Stream sync lost");
 		k_work_submit(&bis_cleanup_work);
@@ -494,6 +503,8 @@ int broadcast_sink_pa_sync_set(struct bt_le_per_adv_sync *pa_sync, uint32_t broa
 		LOG_WRN("Failed to create sink: %d", ret);
 		return ret;
 	}
+
+	pa_sync_stored = pa_sync;
 
 	return 0;
 }
