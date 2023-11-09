@@ -400,7 +400,7 @@ static void indicate_wk(struct k_work *work)
 
 int main(void)
 {
-	uint32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
+	const uint32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
 
 	nrf_power_resetreas_clear(NRF_POWER_NS, 0x70017);
 	LOG_DBG("RR: 0x%08x", rr);
@@ -437,11 +437,8 @@ int main(void)
 	check_app_fota_status();
 
 #if defined(CONFIG_SLM_START_SLEEP)
-	else {
-		if ((rr & NRF_POWER_RESETREAS_OFF_MASK) ||  /* DETECT signal from GPIO*/
-			(rr & NRF_POWER_RESETREAS_DIF_MASK)) {  /* Entering debug interface mode */
-			return start_execute();
-		}
+	if (!(rr & NRF_POWER_RESETREAS_OFF_MASK) &&  /* DETECT signal from GPIO*/
+	    !(rr & NRF_POWER_RESETREAS_DIF_MASK)) {  /* Entering debug interface mode */
 		enter_sleep();
 		return 0;
 	}
