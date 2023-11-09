@@ -348,6 +348,7 @@ int main(void)
 		}
 
 		if (context.connected) {
+			cmd_wifi_status();
 			k_sleep(K_FOREVER);
 		}
 	}
