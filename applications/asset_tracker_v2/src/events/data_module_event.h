@@ -77,15 +77,6 @@ enum data_module_event_type {
 	 */
 	DATA_EVT_CLOUD_LOCATION_DATA_SEND,
 
-	/** Send A-GNSS request.
-	 *  The event has an associated payload of type @ref data_module_data_buffers in
-	 *  the `data.buffer` member.
-	 *
-	 *  If a non LwM2M build is used the data is heap allocated and must be freed after use by
-	 *  calling k_free() on `data.buffer.buf`.
-	 */
-	DATA_EVT_AGNSS_REQUEST_DATA_SEND,
-
 	/** Send the initial device configuration.
 	 *  The event has an associated payload of type @ref cloud_data_cfg in
 	 *  the `data.cfg` member.

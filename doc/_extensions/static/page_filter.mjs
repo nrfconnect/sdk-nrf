@@ -76,7 +76,7 @@ function createFilterTags(dropdown, elementType, filterTags) {
 
     var tagDiv = document.createElement("div");
     tagDiv.classList.add("filtertag-container");
-    containerParent.insertBefore(tagDiv, containerParent.children[1]);
+    containerParent.append(tagDiv);
 
     filterClasses.forEach((className) => {
 

@@ -23,7 +23,7 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 default-timeout = 100
 source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
 
-default-size = 10
+default-size = 512
 source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
 
 choice
@@ -149,7 +149,7 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 default-timeout = 100
 source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
 
-default-size = 10
+default-size = 512
 source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
 
 endif #SHELL_IPC
@@ -236,7 +236,7 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 default-timeout = 100
 source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
 
-default-size = 10
+default-size = 512
 source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
 
 

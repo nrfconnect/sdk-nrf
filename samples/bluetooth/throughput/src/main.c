@@ -29,8 +29,8 @@
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
-#define INTERVAL_MIN	0x140	/* 320 units, 400 ms */
-#define INTERVAL_MAX	0x140	/* 320 units, 400 ms */
+#define INTERVAL_MIN	0x6	/* 6 units, 7.5 ms, only used to setup connection */
+#define INTERVAL_MAX	0x6	/* 6 units, 7.5 ms, only used to setup connection */
 
 #define THROUGHPUT_CONFIG_TIMEOUT K_SECONDS(20)
 
@@ -205,12 +205,34 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 	       info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
 	printk("Conn. interval is %u units\n", info.le.interval);
 
+	if (info.role == BT_CONN_ROLE_PERIPHERAL) {
+		err = bt_conn_set_security(conn, BT_SECURITY_L2);
+		if (err) {
+			printk("Failed to set security: %d\n", err);
+		}
+	}
+}
+
+void security_changed(struct bt_conn *conn, bt_security_t level,
+				 enum bt_security_err security_err)
+{
+	printk("Security changed: level %i, err: %i\n", level, security_err);
+
+	if (security_err != 0) {
+		printk("Failed to encrypt link\n");
+		bt_conn_disconnect(conn, BT_HCI_ERR_PAIRING_NOT_SUPPORTED);
+		return;
+	}
+
+	struct bt_conn_info info = {0};
+	int err;
+
+	err = bt_conn_get_info(default_conn, &info);
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		err = bt_gatt_dm_start(default_conn,
 				       BT_UUID_THROUGHPUT,
 				       &discovery_cb,
 				       &throughput);
-
 		if (err) {
 			printk("Discover failed (err %d)\n", err);
 		}
@@ -295,6 +317,11 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	if (err) {
 		printk("Failed to get connection info (%d)\n", err);
 		return;
+	}
+
+	err = bt_unpair(info.id, info.le.remote);
+	if (err) {
+		printk("Cannot unpair peer (err %d)", err);
 	}
 
 	/* Re-connect using same roles */
@@ -627,7 +654,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.le_param_req = le_param_req,
 	.le_param_updated = le_param_updated,
 	.le_phy_updated = le_phy_updated,
-	.le_data_len_updated = le_data_length_updated
+	.le_data_len_updated = le_data_length_updated,
+	.security_changed = security_changed
 };
 
 int main(void)

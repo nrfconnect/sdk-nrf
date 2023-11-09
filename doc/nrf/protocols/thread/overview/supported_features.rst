@@ -149,7 +149,7 @@ Transport Control Protocol
 While the |NCS| has had TCP support through Zephyr (:ref:`IP stack supported features <zephyr:ip_stack_overview>`), the Thread 1.3 Specification defines a set of parameters and features that make TCP more efficient for the limited IEEE 802.15.4 networks.
 An alternative TCP stack implementation incorporated from the OpenThread project can be enabled by users working on Thread-based TCP applications.
 
-See the :file:`overlay-tcp.conf` configuration file for the :ref:`ot_cli_sample` sample for an example how to enable the alternative TCP implementation.
+See the :file:`tcp.conf` configuration file in the :file:`snippets/tcp/` directory of the :ref:`ot_cli_sample` sample for an example how to enable the alternative TCP implementation.
 
 Limitations for Thread 1.3 support
 ==================================

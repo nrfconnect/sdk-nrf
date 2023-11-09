@@ -41,6 +41,36 @@ config MODEM_ANTENNA_AT_COEX0
 	  Defines the AT%XCOEX0 command to be sent to the modem. Leave
 	  empty if this command should not be sent.
 
+config MODEM_ANTENNA_AT_MIPIRFFEDEV
+	string "AT%XMIPIRFFEDEV command"
+	help
+	  Defines the AT%XMIPIRFFEDEV command to be sent to the modem. Leave
+	  empty if this command should not be sent.
+
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_INIT
+	string "AT%XMIPIRFFECTRL command (INIT)"
+	help
+	  Defines the AT%XMIPIRFFECTRL command to be sent to the modem for INIT phase.
+	  Leave empty if this command should not be sent.
+
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_ON
+	string "AT%XMIPIRFFECTRL command (ON)"
+	help
+	  Defines the AT%XMIPIRFFECTRL command to be sent to the modem for ON phase.
+	  Leave empty if this command should not be sent.
+
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_OFF
+	string "AT%XMIPIRFFECTRL command (OFF)"
+	help
+	  Defines the AT%XMIPIRFFECTRL command to be sent to the modem for OFF phase.
+	  Leave empty if this command should not be sent.
+
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_PWROFF
+	string "AT%XMIPIRFFECTRL command (PWROFF)"
+	help
+	  Defines the AT%XMIPIRFFECTRL command to be sent to the modem for PWROFF phase.
+	  Leave empty if this command should not be sent.
+
 module=MODEM_ANTENNA
 module-dep=LOG
 module-str=Modem antenna

@@ -25,7 +25,7 @@ The leader board is flashed with the regular :ref:`Thread CLI sample <ot_cli_sam
    .. code-block::
 
       cd ncs/nrf/samples/openthread/cli/
-      west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="overlay-ci.conf;overlay-logging.conf"
+      west build -b nrf52840dk_nrf52840 -S ci -S logging
 
 The DUT board is flashed with the :ref:`Thread CLI sample low power mode <ot_cli_sample_low_power>` firmware.
 In the build command below, replace ``build-target`` with the build target name of the DUT.
@@ -33,7 +33,7 @@ In the build command below, replace ``build-target`` with the build target name 
    .. code-block::
 
       cd ncs/nrf/samples/openthread/cli/
-      west build -b build-target -- -DOVERLAY_CONFIG="overlay-ci.conf;overlay-low_power.conf" -DDTC_OVERLAY_FILE="low_power.overlay"
+      west build -b build-target -S ci -S low_power
 
 
 After the Thread network is enabled on the leader, the child is configured with the desired parameters.

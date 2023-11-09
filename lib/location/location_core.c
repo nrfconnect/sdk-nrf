@@ -509,10 +509,7 @@ void location_core_event_cb_agnss_request(const struct nrf_modem_gnss_agnss_data
 {
 	struct location_event_data agnss_request_event_data;
 
-	LOG_DBG("Request A-GNSS data from application: ephe 0x%08x, alm 0x%08x, data_flags 0x%02x",
-		(uint32_t)request->system[0].sv_mask_ephe,
-		(uint32_t)request->system[0].sv_mask_alm,
-		request->data_flags);
+	LOG_DBG("Request A-GNSS data from application");
 
 	agnss_request_event_data.id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;
 	agnss_request_event_data.method = LOCATION_METHOD_GNSS;

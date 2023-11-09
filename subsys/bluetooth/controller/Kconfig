@@ -174,9 +174,11 @@ config BT_CTLR_SDC_TX_PACKET_COUNT
 	range 1 20
 	help
 	  The number Link Layer ACL TX packets reserved per connection.
-	  With the default count, the application is able to refill the buffers during a connection event.
-	  That is, non-default values should only be used if reduced throughput is accepted, or when the CPU
-	  utilization is so high that the application is not able to provide data fast enough during connection events.
+	  With the default count, the application is expected to be able to refill
+	  the buffers during a connection event. That is, non-default values (>3) should only
+	  be used when the CPU utilization is so high that the application is not able to
+	  provide data fast enough during connection events. Values 1 or 2
+	  should be used to save memory when reduced throughput is accepted.
 
 config BT_CTLR_SDC_RX_PACKET_COUNT
 	int "Number of Link Layer ACL RX buffers"
@@ -184,9 +186,11 @@ config BT_CTLR_SDC_RX_PACKET_COUNT
 	range 1 20
 	help
 	  The number Link Layer ACL RX packets reserved per connection.
-	  With the default count, the application is able to empty the buffers during a connection event.
-	  That is, non-default values should only be used if reduced throughput is accepted, or when the CPU
-	  utilization is so high that the application is not able to read data fast enough during connection events.
+	  With the default count, the application is expected to be able to empty the buffers
+	  during a connection event. That is, non-default values (>2) should only be used when
+	  the CPU utilization is so high that the application is not able to read data
+	  fast enough during connection events.
+	  Value 1 should be used to save memory when reduced throughput is accepted.
 
 config BT_CTLR_SDC_SCAN_BUFFER_COUNT
 	int "Number of buffers available in the scanner"

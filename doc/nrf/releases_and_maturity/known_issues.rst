@@ -2686,6 +2686,14 @@ Jobs not received after reset
 
   **Workaround:** Delete the stalled in progress job from AWS IoT.
 
+.. rst-class:: v2-5-0
+
+NCSDK-24305: fota_download library sends FOTA_DOWNLOAD_EVT_FINISHED when unable to connect
+  The :ref:`lib_download_client` library does not resume a download if the device cannot connect to a target server.
+  This causes the :ref:`lib_fota_download` library to incorrectly assume that the download has completed.
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_FOTA_SOCKET_RETRIES` Kconfig option to ``0``.
+
 .. rst-class:: v1-1-0
 
 Stalled download

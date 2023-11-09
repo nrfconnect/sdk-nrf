@@ -140,7 +140,13 @@ Asset Tracker v2
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Added:
+
+  * ``#XMQTTCFG`` AT command to configure MQTT client before connecting to the broker.
+
+* Updated:
+
+  * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
 
 nRF5340 Audio
 -------------
@@ -177,6 +183,11 @@ Bluetooth samples
 -----------------
 
 |no_changes_yet_note|
+
+* :ref:`ble_throughput` sample:
+
+  * Enabled encryption in the sample.
+    The measured throughput is calculated over the encrypted data, which is how most of the Bluetooth products use this protocol.
 
 Bluetooth mesh samples
 ----------------------
@@ -292,7 +303,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Changed building method to use :ref:`zephyr:snippets` for predefined configuration.
 
 Sensor samples
 --------------

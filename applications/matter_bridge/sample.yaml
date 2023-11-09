@@ -2,7 +2,6 @@ sample:
   description: Matter Bridge
   name: Matter Bridge application
 tests:
-  # Excluded in quarantine.yaml to limit resources usage in integration builds
   applications.matter_bridge.release:
     build_only: true
     extra_args: CONF_FILE=prj_release.conf
@@ -20,9 +19,9 @@ tests:
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp
-  applications.matter_bridge.br_ble:
+  applications.matter_bridge.smp_dfu.br_ble:
     build_only: true
-    extra_args: CONFIG_BRIDGED_DEVICE_BT=y
+    extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y CONFIG_BRIDGED_DEVICE_BT=y
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
     platform_allow: nrf7002dk_nrf5340_cpuapp

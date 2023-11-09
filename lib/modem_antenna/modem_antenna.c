@@ -13,27 +13,30 @@ LOG_MODULE_REGISTER(modem_antenna, CONFIG_MODEM_ANTENNA_LOG_LEVEL);
 
 NRF_MODEM_LIB_ON_INIT(gnss_cfg_init_hook, on_modem_lib_init, NULL);
 
-static void on_modem_lib_init(int ret, void *ctx)
+void set_antenna_configuration(const char *config_value)
 {
 	int err;
 
+	if (strlen(config_value) > 0) {
+		LOG_DBG("Setting configuration: %s", config_value);
+		err = nrf_modem_at_printf("%s", config_value);
+		if (err) {
+			LOG_ERR("Failed to set configuration (err: %d)", err);
+		}
+	}
+}
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
 	if (ret != 0) {
 		return;
 	}
 
-	if (strlen(CONFIG_MODEM_ANTENNA_AT_MAGPIO) > 0) {
-		LOG_DBG("Setting MAGPIO configuration: %s", CONFIG_MODEM_ANTENNA_AT_MAGPIO);
-		err = nrf_modem_at_printf("%s", CONFIG_MODEM_ANTENNA_AT_MAGPIO);
-		if (err) {
-			LOG_ERR("Failed to set MAGPIO configuration (err: %d)", err);
-		}
-	}
-
-	if (strlen(CONFIG_MODEM_ANTENNA_AT_COEX0) > 0) {
-		LOG_DBG("Setting COEX0 configuration: %s", CONFIG_MODEM_ANTENNA_AT_COEX0);
-		err = nrf_modem_at_printf("%s", CONFIG_MODEM_ANTENNA_AT_COEX0);
-		if (err) {
-			LOG_ERR("Failed to set COEX0 configuration (err: %d)", err);
-		}
-	}
+	set_antenna_configuration(CONFIG_MODEM_ANTENNA_AT_MAGPIO);
+	set_antenna_configuration(CONFIG_MODEM_ANTENNA_AT_COEX0);
+	set_antenna_configuration(CONFIG_MODEM_ANTENNA_AT_MIPIRFFEDEV);
+	set_antenna_configuration(CONFIG_MODEM_ANTENNA_AT_MIPIRFFECTRL_INIT);
+	set_antenna_configuration(CONFIG_MODEM_ANTENNA_AT_MIPIRFFECTRL_ON);
+	set_antenna_configuration(CONFIG_MODEM_ANTENNA_AT_MIPIRFFECTRL_OFF);
+	set_antenna_configuration(CONFIG_MODEM_ANTENNA_AT_MIPIRFFECTRL_PWROFF);
 }

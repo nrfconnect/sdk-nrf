@@ -297,6 +297,8 @@ const char *location_method_str(enum location_method method)
 int location_agnss_data_process(const char *buf, size_t buf_len)
 {
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
+	int err;
+
 	if (!buf) {
 		LOG_ERR("A-GNSS data buffer cannot be a NULL pointer.");
 		return -EINVAL;
@@ -305,8 +307,21 @@ int location_agnss_data_process(const char *buf, size_t buf_len)
 		LOG_ERR("A-GNSS data buffer length cannot be zero.");
 		return -EINVAL;
 	}
-	return nrf_cloud_agnss_process(buf, buf_len);
+
+	err = nrf_cloud_agnss_process(buf, buf_len);
+	if (err) {
+		LOG_ERR("A-GNSS data processing failed, error: %d", err);
+	}
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	/* Ephemerides are handled by P-GPS, so request the P-GPS library to inject current
+	 * ephemerides as well.
+	 */
+	nrf_cloud_pgps_notify_prediction();
 #endif
+
+	return err;
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_AGNSS */
 	return -ENOTSUP;
 }
 
@@ -326,14 +341,13 @@ int location_pgps_data_process(const char *buf, size_t buf_len)
 	}
 
 	err = nrf_cloud_pgps_process(buf, buf_len);
-
 	if (err) {
 		nrf_cloud_pgps_request_reset();
 		LOG_ERR("P-GPS data processing failed, error: %d", err);
 	}
 
 	return err;
-#endif
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && CONFIG_NRF_CLOUD_PGPS */
 	return -ENOTSUP;
 }
 
