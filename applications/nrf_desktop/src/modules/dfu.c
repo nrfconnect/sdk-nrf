@@ -9,7 +9,6 @@
 #include <zephyr/types.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/storage/flash_map.h>
-#include <pm_config.h>
 #include <zephyr/sys/reboot.h>
 
 #include <app_event_manager.h>
@@ -52,29 +51,48 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 #define SYNC_BUFFER_SIZE (CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE * sizeof(uint32_t)) /* bytes */
 
 #if CONFIG_SECURE_BOOT
- #include <fw_info.h>
- #define IMAGE0_ID		PM_S0_IMAGE_ID
- #define IMAGE0_ADDRESS		PM_S0_IMAGE_ADDRESS
- #define IMAGE0_SIZE		PM_S0_IMAGE_SIZE
- #define IMAGE1_ID		PM_S1_IMAGE_ID
- #define IMAGE1_ADDRESS		PM_S1_IMAGE_ADDRESS
- #define IMAGE1_SIZE		PM_S1_IMAGE_SIZE
- #define BOOTLOADER_NAME	"B0"
+	BUILD_ASSERT(IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED),
+		     "B0 bootloader supported only with Partition Manager");
+	#include <pm_config.h>
+	#include <fw_info.h>
+	#define BOOTLOADER_NAME	"B0"
+	#if PM_ADDRESS == PM_S0_IMAGE_ADDRESS
+		#define DFU_SLOT_ID		PM_S1_IMAGE_ID
+	#elif PM_ADDRESS == PM_S1_IMAGE_ADDRESS
+		#define DFU_SLOT_ID		PM_S0_IMAGE_ID
+	#else
+		#error Missing partition definitions.
+	#endif
 #elif CONFIG_BOOTLOADER_MCUBOOT
- #include <zephyr/dfu/mcuboot.h>
- #define IMAGE0_ID		PM_MCUBOOT_PRIMARY_ID
- #define IMAGE0_ADDRESS		PM_MCUBOOT_PRIMARY_ADDRESS
- #define IMAGE0_SIZE		PM_MCUBOOT_PRIMARY_SIZE
- #define IMAGE1_ID		PM_MCUBOOT_SECONDARY_ID
- #define IMAGE1_ADDRESS		PM_MCUBOOT_SECONDARY_ADDRESS
- #define IMAGE1_SIZE		PM_MCUBOOT_SECONDARY_SIZE
- #if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
-   #define BOOTLOADER_NAME	"MCUBOOT+XIP"
- #else
-   #define BOOTLOADER_NAME	"MCUBOOT"
- #endif
+	BUILD_ASSERT(IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED),
+		     "MCUBoot bootloader supported only with Partition Manager");
+	#include <pm_config.h>
+	#include <zephyr/dfu/mcuboot.h>
+	#if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+		#define BOOTLOADER_NAME	"MCUBOOT+XIP"
+	#else
+		#define BOOTLOADER_NAME	"MCUBOOT"
+	#endif
+
+	#ifdef PM_MCUBOOT_SECONDARY_PAD_SIZE
+		BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
+	#endif
+
+	#if CONFIG_BUILD_WITH_TFM
+		#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE + PM_TFM_SIZE)
+	#else
+		#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE)
+	#endif
+
+	#if (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_PRIMARY_ADDRESS
+		#define DFU_SLOT_ID		PM_MCUBOOT_SECONDARY_ID
+	#elif (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_SECONDARY_ADDRESS
+		#define DFU_SLOT_ID		PM_MCUBOOT_PRIMARY_ID
+	#else
+		#error Missing partition definitions.
+	#endif
 #else
- #error Bootloader not supported.
+	#error Bootloader not supported.
 #endif
 
 static struct k_work_delayable dfu_timeout;
@@ -136,22 +154,6 @@ static void config_channel_dfu_lock_release(void)
 			/* Should not happen. */
 			__ASSERT_NO_MSG(false);
 		}
-	}
-}
-
-static uint8_t dfu_slot_id(void)
-{
-	/* Assuming that image 0 slot is always located in internal FLASH. */
-	uint32_t cur_fun_addr = (uintptr_t)dfu_slot_id;
-
-	/* Return slot ID that is currently not in use. */
-	if ((cur_fun_addr >= IMAGE0_ADDRESS) &&
-	    (cur_fun_addr < (IMAGE0_ADDRESS + IMAGE0_SIZE))) {
-		return IMAGE1_ID;
-	} else {
-		__ASSERT_NO_MSG((cur_fun_addr >= IMAGE1_ADDRESS) &&
-				(cur_fun_addr < (IMAGE1_ADDRESS + IMAGE1_SIZE)));
-		return IMAGE0_ID;
 	}
 }
 
@@ -244,7 +246,7 @@ static void background_erase_handler(struct k_work *work)
 	}
 
 	if (!flash_area) {
-		err = flash_area_open(dfu_slot_id(), &flash_area);
+		err = flash_area_open(DFU_SLOT_ID, &flash_area);
 		if (err) {
 			LOG_ERR("Cannot open flash area (%d)", err);
 			flash_area = NULL;
@@ -512,7 +514,7 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 	}
 
 	__ASSERT_NO_MSG(flash_area == NULL);
-	int err = flash_area_open(dfu_slot_id(), &flash_area);
+	int err = flash_area_open(DFU_SLOT_ID, &flash_area);
 
 	if (err) {
 		LOG_ERR("Cannot open flash area (%d)", err);
@@ -669,11 +671,11 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	const struct fw_info *info;
 	uint8_t flash_area_id;
 
-	if (dfu_slot_id() == IMAGE1_ID) {
-		info = fw_info_find(IMAGE0_ADDRESS);
+	if (DFU_SLOT_ID == PM_S1_IMAGE_ID) {
+		info = fw_info_find(PM_S0_IMAGE_ADDRESS);
 		flash_area_id = 0;
 	} else {
-		info = fw_info_find(IMAGE1_ADDRESS);
+		info = fw_info_find(PM_S1_IMAGE_ADDRESS);
 		flash_area_id = 1;
 	}
 
@@ -727,12 +729,12 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	uint8_t flash_area_id;
 	uint8_t bank_header_area_id;
 
-	if (dfu_slot_id() == IMAGE1_ID) {
+	if (DFU_SLOT_ID == PM_MCUBOOT_SECONDARY_ID) {
 		flash_area_id = 0;
-		bank_header_area_id = IMAGE0_ID;
+		bank_header_area_id = PM_MCUBOOT_PRIMARY_ID;
 	} else {
 		flash_area_id = 1;
-		bank_header_area_id = IMAGE1_ID;
+		bank_header_area_id = PM_MCUBOOT_SECONDARY_ID;
 	}
 
 	int err = boot_read_bank_header(bank_header_area_id, &header,
