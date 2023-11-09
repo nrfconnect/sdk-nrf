@@ -296,38 +296,6 @@ enum lwm2m_rai_mode {
 };
 
 /**
- * @brief Initialize release assistance indication (RAI) module.
- *
- * @return Zero if success, negative error code otherwise.
- */
-int lwm2m_init_rai(void);
-
-/**
- * @brief Set socket option SO_RAI_NO_DATA to bypass
- * RRC Inactivity period and immediately switch to Idle mode.
- *
- * @return Zero if success, negative error code otherwise.
- */
-int lwm2m_rai_no_data(void);
-
-/**
- * @brief Set socket option SO_RAI_LAST and send dummy packet to bypass
- * RRC Inactivity period and immediately switch to Idle mode.
- *
- * @return Zero if success, negative error code otherwise.
- */
-int lwm2m_rai_last(void);
-
-/**
- * @brief Get the RAI mode.
- *
- * @param mode Pointer to RAI mode variable.
- *
- * @return Zero if success, negative error code otherwise.
- */
-int lwm2m_rai_get(enum lwm2m_rai_mode *mode);
-
-/**
  * @brief Function for requesting modem to enable or disable
  * use of AS RAI.
  *
@@ -380,6 +348,23 @@ int lwm2m_utils_conneval(struct lwm2m_ctx *client, enum lwm2m_rd_client_event *c
  * @param client_event A pointer to LwM2M RD client events.
  */
 void lwm2m_utils_connection_manage(struct lwm2m_ctx *client,
+				      enum lwm2m_rd_client_event *client_event);
+
+/**
+ * @brief LwM2M utils RAI event handler.
+ *
+ * Handle registration of the socket state callback and enabling/disabling of Release Assistance
+ * Indication depending on the state of LwM2M client.
+ *
+ * This function should be called from an event handler registered to lwm2m_rd_client_start()
+ * before normal event handler part.
+ * This is called from lwm2m_utils_connection_manage() if that module is enabled. Otherwise
+ * application should call this directly.
+ *
+ * @param client LwM2M context.
+ * @param client_event event.
+ */
+void lwm2m_utils_rai_event_cb(struct lwm2m_ctx *client,
 				      enum lwm2m_rd_client_event *client_event);
 
 /* Advanced firmare object support */

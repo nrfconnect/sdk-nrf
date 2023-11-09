@@ -64,12 +64,12 @@ void lwm2m_utils_connection_manage(struct lwm2m_ctx *client,
 		lwm2m_utils_conneval(client, client_event);
 	}
 
+	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
+		lwm2m_utils_rai_event_cb(client, client_event);
+	}
+
 	switch (*client_event) {
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
-		if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
-			lwm2m_rai_last();
-		}
-
 		if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_DTLS_CON_MANAGEMENT)) {
 			lwm2m_utils_dtls_save(client);
 		}
