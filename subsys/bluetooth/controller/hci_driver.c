@@ -250,8 +250,18 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 #else /* !IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
 void sdc_assertion_handler(const char *const file, const uint32_t line)
 {
+#if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
+	__ASSERT(false, "SoftDevice Controller ASSERT: %s, %d\n", file, line);
+#elif defined(CONFIG_LOG)
 	LOG_ERR("SoftDevice Controller ASSERT: %s, %d", file, line);
 	k_oops();
+#elif defined(CONFIG_PRINTK)
+	printk("SoftDevice Controller ASSERT: %s, %d\n", file, line);
+	printk("\n");
+	k_oops();
+#else
+	k_oops();
+#endif
 }
 #endif /* IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
 
