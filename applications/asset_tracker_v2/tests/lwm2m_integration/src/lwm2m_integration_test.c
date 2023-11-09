@@ -36,6 +36,7 @@ static lwm2m_ctx_event_cb_t rd_client_callback;
 static lwm2m_engine_execute_cb_t engine_execute_cb;
 static modem_mode_cb_t modem_mode_change_cb;
 static lwm2m_firmware_event_cb_t firmware_update_event_cb;
+static location_assistance_result_code_cb_t assistance_result_cb;
 
 /* Forward declarations. */
 static int register_exec_callback_stub(const struct lwm2m_obj_path *path,
@@ -46,7 +47,9 @@ static int init_security_callback_stub(struct lwm2m_ctx *ctx,
 				       struct modem_mode_change *mmode,
 				       int no_of_calls);
 static int init_firmware_cb_stub(lwm2m_firmware_event_cb_t cb,
-					   int no_of_calls);
+				 int no_of_calls);
+static void assistance_result_cb_stub(location_assistance_result_code_cb_t cb,
+				      int no_of_calls);
 
 /* It is required to be added to each test. That is because unity's
  * main may return nonzero, while zephyr's main currently must
@@ -58,20 +61,23 @@ extern int unity_main(void);
 void setUp(void)
 {
 	__cmock_lwm2m_init_image_ExpectAndReturn(0);
+
 	__cmock_lwm2m_init_firmware_cb_ExpectAnyArgsAndReturn(0);
 	__cmock_lwm2m_init_firmware_cb_AddCallback(&init_firmware_cb_stub);
+
 	__cmock_lwm2m_init_security_ExpectAndReturn(&client,
 						   endpoint_name,
 						   NULL,
 						   0);
 	__cmock_lwm2m_init_security_IgnoreArg_mmode();
-
 	__cmock_lwm2m_init_security_AddCallback(&init_security_callback_stub);
 
 	__cmock_lwm2m_register_exec_callback_ExpectAndReturn(&LWM2M_OBJ(3, 0, 4), NULL, 0);
 	__cmock_lwm2m_register_exec_callback_IgnoreArg_cb();
-
 	__cmock_lwm2m_register_exec_callback_AddCallback(&register_exec_callback_stub);
+
+	__cmock_location_assistance_set_result_code_cb_ExpectAnyArgs();
+	__cmock_location_assistance_set_result_code_cb_AddCallback(&assistance_result_cb_stub);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_init(cloud_wrap_event_handler));
 }
@@ -120,12 +126,20 @@ static int init_security_callback_stub(struct lwm2m_ctx *ctx,
 	return 0;
 }
 
-int init_firmware_cb_stub(lwm2m_firmware_event_cb_t cb, int no_of_calls)
+static int init_firmware_cb_stub(lwm2m_firmware_event_cb_t cb, int no_of_calls)
 {
 	ARG_UNUSED(no_of_calls);
 
 	firmware_update_event_cb = cb;
 	return 0;
+}
+
+static void assistance_result_cb_stub(location_assistance_result_code_cb_t cb,
+				      int no_of_calls)
+{
+	ARG_UNUSED(no_of_calls);
+
+	assistance_result_cb = cb;
 }
 
 /* Tests */
@@ -241,6 +255,42 @@ void test_lwm2m_integration_pgps_request_send(void)
 	__cmock_location_assistance_pgps_request_send_ExpectAndReturn(&client, 0);
 
 	TEST_ASSERT_EQUAL(0, cloud_wrap_pgps_request_send(NULL, 0, true, 0));
+}
+
+/* Tests that a P-GPS request is buffered while an A-GNSS request is being executed and
+ * that the buffered request is handled after the A-GNSS request has been finished.
+ */
+void test_lwm2m_integration_agnss_pgps_request_send(void)
+{
+	__cmock_location_assistance_agnss_request_send_ExpectAndReturn(&client, 0);
+
+	__cmock_location_assistance_pgps_request_send_ExpectAndReturn(&client, -EAGAIN);
+
+	__cmock_location_assistance_pgps_request_send_ExpectAndReturn(&client, 0);
+
+	TEST_ASSERT_EQUAL(0, cloud_wrap_agnss_request_send(NULL, 0, true, 0));
+
+	TEST_ASSERT_EQUAL(0, cloud_wrap_pgps_request_send(NULL, 0, true, 0));
+
+	assistance_result_cb(GNSS_ASSIST_OBJECT_ID, LOCATION_ASSIST_RESULT_CODE_OK);
+}
+
+/* Tests that an A-GNSS request is buffered while a P-GPS request is being executed and
+ * that the buffered request is handled after the P-GPS request has been finished.
+ */
+void test_lwm2m_integration_pgps_agnss_request_send(void)
+{
+	__cmock_location_assistance_pgps_request_send_ExpectAndReturn(&client, 0);
+
+	__cmock_location_assistance_agnss_request_send_ExpectAndReturn(&client, -EAGAIN);
+
+	__cmock_location_assistance_agnss_request_send_ExpectAndReturn(&client, 0);
+
+	TEST_ASSERT_EQUAL(0, cloud_wrap_pgps_request_send(NULL, 0, true, 0));
+
+	TEST_ASSERT_EQUAL(0, cloud_wrap_agnss_request_send(NULL, 0, true, 0));
+
+	assistance_result_cb(GNSS_ASSIST_OBJECT_ID, LOCATION_ASSIST_RESULT_CODE_OK);
 }
 
 void test_lwm2m_integration_memfault_data_send(void)
