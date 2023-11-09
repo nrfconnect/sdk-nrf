@@ -13,7 +13,8 @@ project(lte_lc_api_test)
 test_runner_generate(src/lte_lc_api_test.c)
 
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
-	     FUNC_EXCLUDE ".*nrf_modem_at_scanf")
+	     FUNC_EXCLUDE ".*nrf_modem_at_scanf"
+	     FUNC_EXCLUDE ".*nrf_modem_at_printf")
 
 # When mocking nrf_modem_at then nrf_modem/include must manually be added
 # because CONFIG_NRF_MODEM_LINK_BINARY=n

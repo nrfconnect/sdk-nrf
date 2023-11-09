@@ -207,9 +207,9 @@ void wrap_lc_init(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* gps_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* mode_preference */
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%XSYSTEMMODE=%s,%c", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=1,0,1,0", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
 	int ret = lte_lc_init();
 
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -232,13 +232,9 @@ void tearDown(void)
 {
 	int ret;
 
-	/* Wait until we've received all events. */
-	for (int i = 0; i < lte_lc_callback_count_expected; i++) {
-		k_sem_take(&event_handler_called_sem, K_SECONDS(3));
-	}
 	TEST_ASSERT_EQUAL(lte_lc_callback_count_expected, lte_lc_callback_count_occurred);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
 
 	ret = lte_lc_deregister_handler(lte_lc_event_handler);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -286,7 +282,7 @@ void test_lte_lc_deregister_handler_not_initialized(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
 	ret = lte_lc_deinit();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	ret = lte_lc_deregister_handler(NULL);
@@ -300,7 +296,7 @@ void test_lte_lc_deinit_twice(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
 	ret = lte_lc_deinit();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	ret = lte_lc_deinit();
@@ -355,9 +351,9 @@ void test_lte_lc_normal_success(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", EXIT_SUCCESS);
 	ret = lte_lc_normal();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -366,7 +362,7 @@ void test_lte_lc_normal_fail1(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", -NRF_ENOMEM);
 	ret = lte_lc_normal();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -375,12 +371,12 @@ void test_lte_lc_normal_fail2(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
 	/* enable_notifications */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", -NRF_ENOMEM);
 	__cmock_nrf_modem_at_cmd_ExpectAnyArgsAndReturn(-NRF_ENOMEM);
 	/* error is ignored */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", EXIT_SUCCESS);
 
 
 	ret = lte_lc_normal();
@@ -392,9 +388,9 @@ void test_lte_lc_normal_fail3(void)
 	int ret;
 	char modem_ver[] = "MODEM_FW_VER_1.0\r\nOK";
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
 	/* enable_notifications */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", -NRF_ENOMEM);
 
 	/* error is ignored but modem FW version is checked */
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGMR", EXIT_SUCCESS);
@@ -402,7 +398,7 @@ void test_lte_lc_normal_fail3(void)
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(modem_ver, sizeof(modem_ver));
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", EXIT_SUCCESS);
 	ret = lte_lc_normal();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -411,9 +407,9 @@ void test_lte_lc_normal_fail4(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", -NRF_ENOMEM);
 	ret = lte_lc_normal();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -422,7 +418,7 @@ void test_lte_lc_offline_success(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", EXIT_SUCCESS);
 	ret = lte_lc_offline();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -431,7 +427,7 @@ void test_lte_lc_offline_fail(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", -NRF_ENOMEM);
 	ret = lte_lc_offline();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -440,7 +436,7 @@ void test_lte_lc_power_off_success(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
 	ret = lte_lc_power_off();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -449,7 +445,7 @@ void test_lte_lc_power_off_fail(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", -NRF_ENOMEM);
 	ret = lte_lc_power_off();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -493,7 +489,7 @@ void test_lte_lc_psm_req_enable_both_default(void)
 	ret = lte_lc_psm_param_set(NULL, NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -505,7 +501,7 @@ void test_lte_lc_psm_req_enable_rptau_default(void)
 	ret = lte_lc_psm_param_set(NULL, "01001001");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,,\"%s\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,,\"01001001\"", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -517,7 +513,7 @@ void test_lte_lc_psm_req_enable_rat_default(void)
 	ret = lte_lc_psm_param_set("00000111", NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,\"%s\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,\"00000111\"", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -529,7 +525,8 @@ void test_lte_lc_psm_req_enable_both_set(void)
 	ret = lte_lc_psm_param_set("00000111", "01001001");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,\"%s\",\"%s\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CPSMS=1,,,\"00000111\",\"01001001\"", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -541,7 +538,7 @@ void test_lte_lc_psm_req_enable_fail(void)
 	ret = lte_lc_psm_param_set(NULL, NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", NRF_MODEM_AT_ERROR);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", NRF_MODEM_AT_ERROR);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -550,7 +547,7 @@ void test_lte_lc_psm_req_disable_success(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(false);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -562,8 +559,8 @@ void test_lte_lc_psm_param_set_seconds_enable_both_set(void)
 	ret = lte_lc_psm_param_set_seconds(60, 600);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	/* TODO: We need custom nrf_modem_at_printf mock to verify the content */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,\"%s\",\"%s\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CPSMS=1,,,\"01111110\",\"00101010\"", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -575,8 +572,8 @@ void test_lte_lc_psm_param_set_seconds_enable_both_zero(void)
 	ret = lte_lc_psm_param_set_seconds(0, 0);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	/* TODO: We need custom nrf_modem_at_printf mock to verify the content */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1,,,\"%s\",\"%s\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CPSMS=1,,,\"00000000\",\"00000000\"", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -588,8 +585,7 @@ void test_lte_lc_psm_param_set_seconds_enable_both_default(void)
 	ret = lte_lc_psm_param_set_seconds(-1, -1);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	/* TODO: We need custom nrf_modem_at_printf mock to verify the content */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -662,7 +658,7 @@ void test_lte_lc_edrx_req_disable_fail(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", -NRF_ENOMEM);
 	ret = lte_lc_edrx_req(false);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -671,7 +667,7 @@ void test_lte_lc_edrx_req_disable_success(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	ret = lte_lc_edrx_req(false);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -680,7 +676,7 @@ void test_lte_lc_edrx_req_enable_fail1(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,%d,\"%s\"", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0000\"", -NRF_ENOMEM);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -689,8 +685,8 @@ void test_lte_lc_edrx_req_enable_fail2(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,%d,\"%s\"", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%XPTW=%d,\"%s\"", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0000\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"0000\"", -NRF_ENOMEM);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -699,9 +695,9 @@ void test_lte_lc_edrx_req_enable_fail3(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,%d,\"%s\"", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%XPTW=%d,\"%s\"", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,%d,\"%s\"", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0000\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"0000\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5,\"1001\"", -NRF_ENOMEM);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -710,9 +706,9 @@ void test_lte_lc_edrx_req_enable_success(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,%d,\"%s\"", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%XPTW=%d,\"%s\"", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,%d,\"%s\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0000\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"0000\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5,\"1001\"", EXIT_SUCCESS);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -803,10 +799,11 @@ void test_lte_lc_system_mode_get_all_preferences(void)
 void test_lte_lc_func_mode_set_all_modes(void)
 {
 	int ret;
+	char at_cmd[12];
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=21", EXIT_SUCCESS);
 	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
@@ -823,7 +820,8 @@ void test_lte_lc_func_mode_set_all_modes(void)
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(modes); ++i) {
-		__cmock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=%d", EXIT_SUCCESS);
+		sprintf(at_cmd, "AT+CFUN=%d", modes[i]);
+		__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, EXIT_SUCCESS);
 		ret = lte_lc_func_mode_set(modes[i]);
 		TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	}
@@ -955,6 +953,9 @@ void test_lte_lc_cereg_no_tac_but_tau(void)
 	test_event_data[1].cell.rsrp = 0;
 	test_event_data[1].cell.rsrq = 0;
 
+	/* Because previous test leaves the mode to LTE_LC_LTE_MODE_LTEM,
+	 * there is a change to LTE_LC_LTE_MODE_NONE in this test
+	 */
 	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
 	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_NONE;
 
@@ -971,7 +972,7 @@ void test_lte_lc_neighbor_cell_measurement_fail(void)
 		.gci_count = 0,
 	};
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=2", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=2", -NRF_ENOMEM);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
@@ -990,7 +991,7 @@ void test_lte_lc_neighbor_cell_measurement_neighbors(void)
 
 	lte_lc_callback_count_expected = 1;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -1037,8 +1038,7 @@ void test_lte_lc_neighbor_cell_measurement_gci(void)
 
 	lte_lc_callback_count_expected = 1;
 
-	/* TODO: Doesn't verify GCI count. Would need custom mock for nrf_modem_at_printf(). */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=5,%d", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=5,15", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -1089,11 +1089,11 @@ void test_lte_lc_neighbor_cell_measurement_cancel(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", EXIT_SUCCESS);
 	ret = lte_lc_neighbor_cell_measurement_cancel();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", -NRF_ENOMEM);
 	ret = lte_lc_neighbor_cell_measurement_cancel();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -1149,12 +1149,12 @@ void test_lte_lc_modem_events(void)
 
 	lte_lc_callback_count_expected = 10;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=2", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
 	ret = lte_lc_modem_events_enable();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=2", EXIT_FAILURE);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_FAILURE);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=1", EXIT_SUCCESS);
 	ret = lte_lc_modem_events_enable();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
@@ -1218,7 +1218,7 @@ void test_lte_lc_modem_events(void)
 	at_monitor_dispatch(at_notif);
 	index++;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=0", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=0", EXIT_SUCCESS);
 	ret = lte_lc_modem_events_disable();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -1227,12 +1227,12 @@ void test_lte_lc_modem_events_fail(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=2", EXIT_FAILURE);
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=1", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_FAILURE);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=1", -NRF_ENOMEM);
 	ret = lte_lc_modem_events_enable();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%MDMEV=0", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=0", -NRF_ENOMEM);
 	ret = lte_lc_modem_events_disable();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 
@@ -1249,11 +1249,11 @@ void test_lte_lc_periodic_search_request(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=3", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PERIODICSEARCHCONF=3", EXIT_SUCCESS);
 	ret = lte_lc_periodic_search_request();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=3", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PERIODICSEARCHCONF=3", -NRF_ENOMEM);
 	ret = lte_lc_periodic_search_request();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
@@ -1371,18 +1371,19 @@ void test_lte_lc_periodic_search_set_null(void)
 void test_lte_lc_periodic_search_set_success(void)
 {
 	int ret;
-	struct lte_lc_periodic_search_cfg cfg;
+	struct lte_lc_periodic_search_cfg cfg = { 0 };
 
 	cfg.pattern_count = 1;
+	cfg.return_to_pattern = 1;
+	cfg.band_optimization = 1;
 	cfg.patterns[0].type = 0;
 	cfg.patterns[0].range.initial_sleep = 60;
 	cfg.patterns[0].range.final_sleep = 3600;
 	cfg.patterns[0].range.time_to_final_sleep = 300;
 	cfg.patterns[0].range.pattern_end_point = 600;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=0,"
-						   "%hu,%hu,%hu,%s%s%s%s%s%s%s",
-						   EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=0,0,1,1,\"0,60,3600,300,600\"", EXIT_SUCCESS);
 
 	ret = lte_lc_periodic_search_set(&cfg);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -1391,13 +1392,12 @@ void test_lte_lc_periodic_search_set_success(void)
 void test_lte_lc_periodic_search_set_at_fail(void)
 {
 	int ret;
-	struct lte_lc_periodic_search_cfg cfg;
+	struct lte_lc_periodic_search_cfg cfg = { 0 };
 
 	cfg.pattern_count = 1;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=0,"
-						   "%hu,%hu,%hu,%s%s%s%s%s%s%s",
-						   -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=0,0,0,0,\"0,0,0,0,0\"", -NRF_ENOMEM);
 
 	ret = lte_lc_periodic_search_set(&cfg);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
@@ -1406,13 +1406,12 @@ void test_lte_lc_periodic_search_set_at_fail(void)
 void test_lte_lc_periodic_search_set_at_cme(void)
 {
 	int ret;
-	struct lte_lc_periodic_search_cfg cfg;
+	struct lte_lc_periodic_search_cfg cfg = { 0 };
 
 	cfg.pattern_count = 1;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=0,"
-						   "%hu,%hu,%hu,%s%s%s%s%s%s%s",
-						   1);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=0,0,0,0,\"0,0,0,0,0\"", 1);
 
 	ret = lte_lc_periodic_search_set(&cfg);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
@@ -1422,8 +1421,8 @@ void test_lte_lc_periodic_search_clear_success(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=2",
-						   EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=2", EXIT_SUCCESS);
 
 	ret = lte_lc_periodic_search_clear();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -1433,8 +1432,8 @@ void test_lte_lc_periodic_search_clear_at_fail(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=2",
-						   -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=2", -NRF_ENOMEM);
 
 	ret = lte_lc_periodic_search_clear();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
@@ -1444,8 +1443,8 @@ void test_lte_lc_periodic_search_clear_cme(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%PERIODICSEARCHCONF=2",
-						   1);
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=2", 1);
 
 	ret = lte_lc_periodic_search_clear();
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
