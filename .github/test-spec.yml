@@ -130,6 +130,7 @@
   - "cmake/*"
   - "lib/lte_link_control/**/*"
   - "modules/mcuboot/**/*"
+  - "modules/trusted-firmware-m/*"
   - "samples/cellular/*fota/**/*"
   - "samples/cellular/fmfu_smp_svr/**/*"
   - "samples/cellular/http_update/**/*"
