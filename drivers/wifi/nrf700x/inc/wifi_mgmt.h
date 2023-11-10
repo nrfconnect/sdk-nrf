@@ -50,4 +50,15 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 		struct nrf_wifi_umac_event_power_save_info *ps_info,
 		unsigned int event_len);
+
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
+int nrf_wifi_mode(const struct device *dev,
+		  struct wifi_mode_info *mode);
+
+int nrf_wifi_filter(const struct device *dev,
+		    struct wifi_filter_info *filter);
+
+int nrf_wifi_channel(const struct device *dev,
+		     struct wifi_channel_info *channel);
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */
