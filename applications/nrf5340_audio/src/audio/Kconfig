@@ -206,6 +206,7 @@ config SW_CODEC_PLC_DISABLED
 	default n
 	select LC3_PLC_DISABLED
 
+#----------------------------------------------------------------------------#
 menu "LC3"
 visible if SW_CODEC_LC3
 
@@ -368,10 +369,6 @@ menu "Zbus"
 
 config BUTTON_MSG_SUB_QUEUE_SIZE
 	int "Queue size for button subscriber"
-	default 4
-
-config LE_AUDIO_MSG_SUB_QUEUE_SIZE
-	int "Queue size for LE Audio subscriber"
 	default 4
 
 config CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE
