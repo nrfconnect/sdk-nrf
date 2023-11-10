@@ -84,7 +84,9 @@ Bluetooth mesh
 Matter
 ------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Page about :ref:`ug_matter_device_low_power_configuration` with the information about Intermittently Connected Devices (ICD) configuration.
 
 Matter fork
 +++++++++++
@@ -96,14 +98,27 @@ The following list summarizes the most important changes inherited from the upst
 * Added:
 
    * Support for the Intermittently Connected Devices (ICD) Management cluster.
-   * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_IDLE_MODE_INTERVAL`, :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_INTERVAL` and :kconfig:option:`CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC` to manage ICD configuration.
+   * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_IDLE_MODE_DURATION`, :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_DURATION` and :kconfig:option:`CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC` to manage ICD configuration.
+   * New device types:
+
+     * Refidgerator
+     * Room Air Conditioner
+     * Dishwasher
+     * Laundry Washer
+     * Robotic Vacuum Cleaner
+     * Smoke CO Alarm
+     * Air Quality Sensor
+     * Air Purifier
+     * Fan
+
+   * Product Appearance attribute in the Basic Information cluster that allows describing the product's color and finish.
 
 * Updated:
 
-   * Renamed the :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` Kconfig option to :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT`.
-   * Renamed the :kconfig:option:`CONFIG_CHIP_SED_IDLE_INTERVAL` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`.
-   * Renamed the :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_INTERVAL` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
-   * Renamed the :kconfig:option:`CONFIG_CHIP_SED_ACTIVE_THRESHOLD` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
+   * Renamed the ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT`.
+   * Renamed the ``CONFIG_CHIP_SED_IDLE_INTERVAL`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`.
+   * Renamed the ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
+   * Renamed the ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
 
 
 Thread

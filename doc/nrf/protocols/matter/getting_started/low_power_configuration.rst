@@ -19,6 +19,75 @@ The following Matter samples and applications use the low power configuration by
 * :ref:`Matter window covering sample <matter_window_covering_sample>`
 * :ref:`Matter weather station application <matter_weather_station_app>`
 
+.. _ug_matter_device_low_power_icd:
+
+Enable Matter Intermittently Connected Devices support
+******************************************************
+
+In Matter, power-optimized devices are part of the wider group of devices which includes devices that are intermittently connected to the network or otherwise unreachable for periods of time.
+These devices are known as Intermittently Connected Devices (ICD) and can be unreachable in the network for various reasons, the details of which are out of scope for the Matter specification to define.
+The ICD management layer can be used regardless of the underlying network layer and focuses on managing the device reachability on a more abstract level.
+
+To enable the ICD support in Matter, set the :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT` Kconfig option to ``y``.
+
+.. _ug_matter_device_low_power_icd_modes:
+
+Operating modes
+===============
+
+An ICD can operate in one of two states: idle mode or active mode.
+
+* Idle mode is a state where the device is unreachable for a certain period of time.
+  The maximum time it is unreachable is specified by the Idle Mode Duration parameter (previously called the Idle Mode Interval parameter).
+
+  In idle mode, the device configures the networking interface to use slow polling.
+  This means that the fastest it is able to receive messages is the Slow Polling Interval.
+
+* Active mode is a state where the device is reachable and will answer in a timely manner.
+  The minimum time it remains in this state is specified by the Active Mode Duration parameter (previously called the Active Mode Interval parameter).
+
+  In active mode, the device configures the networking interface to use fast polling.
+  This means that the fastest it is able to receive messages is the Fast Polling Interval.
+
+The client of the ICD has to respect the slow polling and fast polling intervals and not attempt to send messages with a higher frequency.
+
+To configure the ICD communication, use the following Kconfig options:
+
+* :kconfig:option:`CONFIG_CHIP_ICD_IDLE_MODE_DURATION` to set the Idle Mode Duration value in seconds (for example, ``120``).
+* :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_DURATION` to set the Active Mode Duration value in milliseconds (for example, ``300``).
+* :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` to set the Slow Polling Interval value in milliseconds (for example, ``5000``).
+* :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` to set the Fast Polling Interval value in milliseconds (for example, ``200``).
+
+An ICD switches modes from idle to active for various reasons, such as:
+
+* Idle Mode Duration elapsed.
+* Maximum reporting interval for an active subscription elapsed.
+* Processing an attribute change that has to be reported to a subscriber.
+* Processing an application event.
+
+Active Mode Threshold
+=====================
+
+An ICD is allowed to switch to the idle mode to save power once it has spent time in the active mode equal to the active mode duration and there are no further pending exchanges.
+In some scenarios it can be beneficial for the device to spend more time in the active mode instead of going to the idle mode immediately.
+
+The period of time that an ICD additionally stays in the active mode after finishing network activity is called the Active Mode Threshold and it can be configured using the :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` Kconfig option.
+Use this functionality to make the device wait for potentially delayed incoming traffic and to avoid energy-wasting retransmissions.
+
+The higher the threshold value, the higher the communication reliability, but the power consumption is also higher.
+A high threshold is useful mainly for an ICD with a long Slow Polling Interval, typically bigger than a few seconds, where getting another chance to receive a message will happen after a long time.
+For devices with a short Slow Polling Interval, using this functionality can lead to unnecessary power consumption.
+
+Short idle time and long idle time devices
+==========================================
+
+The Matter v1.2 specification divides ICD into short idle time (SIT) and long idle time (LIT) devices.
+The division is based on the idle mode duration parameter: equal to or shorter than 15 seconds for SIT, and longer than 15 seconds for LIT.
+
+The SIT device behavior is aligned with what was called SED in Matter v.1.1 specification.
+The LIT device implementation requires multiple new features,  such as Check-In protocol support and ICD client registration.
+The division of ICD types and related features were not finalized for Matter v.1.2 and they are marked as provisional, so it is not recommended to use them, though you can find some of the LIT implementation in the Matter SDK and Matter specification.
+
 Enable low power mode for the selected networking technology
 ************************************************************
 
@@ -35,52 +104,35 @@ The Thread protocol defines two types of devices working in a low power mode: Sl
 Both types are variants of Minimal Thread Device (MTD) type.
 For more information about MTD and SEDs, see :ref:`Thread device types <thread_ot_device_types>`.
 
+In a Thread network, :ref:`Matter ICD <ug_matter_device_low_power_icd>` behave like Thread SED, but the two terms are not interchangeable.
+
 Sleepy End Device (SED) configuration in Matter
 -----------------------------------------------
 
 To enable Thread SED support in Matter, set the following configuration options:
 
-* :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_MTD` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` to ``y``
 
 Additionally, you can configure the SED wake-up intervals according to your needs, but keep in mind that the bigger sleep periods, the smaller power consumption and bigger device response time.
-To configure the SED wake-up intervals, set both of the following Kconfig options:
-
-* :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` to a value in milliseconds that determines how often the device wakes up to poll for data in the idle state (for example, ``1000``).
-* :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` to a value in milliseconds that determines how often the device wakes up to poll for data in the active state (for example, ``200``).
-
-You can also configure the SED active threshold to make the device stay active for some time after the network activity, instead of going to idle state immediately.
-The reason to use this functionality is to make the device wait for potentially delayed incoming traffic and avoid energy-wasting retransmissions.
-The higher the threshold value, the greater the communication reliability, but it also leads to higher power consumption.
-In practice, it is reasonable to set a non-zero threshold time only for devices using :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` value bigger than a few seconds.
-To configure the SED active threshold, set the following Kconfig option:
-
-* :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` to a value in milliseconds that determines how long the device stays in the active mode after network activity.
+To configure the SED wake-up intervals, set both of the :ref:`ICD slow polling and ICD fast polling intervals <ug_matter_device_low_power_icd_modes>` to determine how often the device wakes up to poll for data.
 
 Synchronized Sleepy End Device (SSED) configuration in Matter
 -------------------------------------------------------------
 
 To enable the Thread SSED support in Matter, set the following Kconfig options:
 
-* :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_MTD` to ``y``
 * :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` to ``y``
 * :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to ``y``
 
 Additionally, you can configure the SSED wake-up intervals according to your needs, but keep in mind that the bigger sleep periods, the smaller power consumption and bigger device response time.
-To configure the SSED wake-up intervals, set both of the following Kconfig options:
+To configure the SSED wake-up intervals, set both of the :ref:`ICD slow polling and ICD fast polling intervals <ug_matter_device_low_power_icd_modes>` to determine how often the device wakes up to poll for data.
 
-* :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` to a value in milliseconds that determines how often the device wakes up to listen for data in the idle state (for example, ``500``).
-* :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` to a value in milliseconds that determines how often the device wakes up to listen for data in the active state (for example, ``500``).
-
-You can also configure the SED active threshold to make the device stay active for some time after the network activity, instead of going to idle state immediately.
-The reason to use this functionality is to make the device wait for potentially delayed incoming traffic and avoid energy-wasting retransmissions.
-The higher the threshold value, the greater the communication reliability, but it also leads to higher power consumption.
-In practice, it is reasonable to set a non-zero threshold time only for devices using :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` value bigger than a few seconds.
-To configure the SED active threshold, set the following Kconfig option:
-
-* :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` to a value in milliseconds that determines how long the device stays in the active mode after network activity.
+The SSED uses the Coordinated Sampled Listening (CSL) protocol, which requires exchanging messages with the Thread parent on every interval value change.
+Switching the Matter :ref:`ug_matter_device_low_power_icd_modes` and frequently updating polling intervals may result in increasing the device power consumption due to additional exchanges on the Thread protocol layer.
+To avoid this issue, set the :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` and :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` Kconfig options to the same value (for example, ``500``).
+The typical use case that the SSED is best suited for is battery-powered devices that require short response time, such as door locks or window blinds.
 
 Matter over Wi-Fi
 =================
@@ -91,45 +143,6 @@ The message is sent in a predefined subset of the beacons, so the STA device nee
 For more information about the Wi-Fi power save mechanism, see the :ref:`Wi-Fi MAC layer <wifi_mac_layer>` documentation.
 
 To enable the Wi-Fi power save mode, set the :kconfig:option:`CONFIG_NRF_WIFI_LOW_POWER` Kconfig option to ``y``.
-
-Optimize subscription report intervals
-**************************************
-
-The majority of Matter controllers establishes :ref:`subscriptions <ug_matter_overview_int_model>` to some attributes of the Matter accessory in order to receive periodic data reports.
-The node that initiates subscription (subscriber) recommends using data report interval within the requested min-max range.
-The node that receives the subscription request (publisher) may accept or modify the maximum interval value.
-
-The default implementation assumes that the publisher node accepts the requested intervals, which may result in sending data reports very often and consuming significant amounts of power.
-You can use one of the following ways to modify this behavior and select the optimal timings for your specific use case:
-
-* Enable the nRF platform's implementation of the subscription request handling and specify the preferred data report interval value.
-  The implementation looks at the value requested by the initiator and the value preferred by the publisher and selects the higher of the two.
-  To enable it, complete the following steps:
-
-  1. Set the :kconfig:option:`CONFIG_CHIP_ICD_SUBSCRIPTION_HANDLING` Kconfig option to ``y``.
-  2. Set the :kconfig:option:`CONFIG_CHIP_MAX_PREFERRED_SUBSCRIPTION_REPORT_INTERVAL` Kconfig option to the preferred value of the maximum data report interval in seconds.
-
-* Provide your own policy and implementation of the subscription request handling.
-  To do this, implement the ``OnSubscriptionRequested`` method in your application to set values of subscription report intervals that are appropriate for your use case.
-  See the following code snippet for an example of how this implementation could look:
-
-  .. code-block::
-
-     #include <app/ReadHandler.h>
-
-     class SubscriptionApplicationCallback : public chip::app::ReadHandler::ApplicationCallback
-     {
-        CHIP_ERROR OnSubscriptionRequested(chip::app::ReadHandler & aReadHandler,
-                                           chip::Transport::SecureSession & aSecureSession) override;
-     };
-
-     CHIP_ERROR SubscriptionApplicationCallback::OnSubscriptionRequested(chip::app::ReadHandler & aReadHandler,
-                                                          chip::Transport::SecureSession & aSecureSession)
-     {
-        /* Set the interval in seconds appropriate for your application use case, e.g. 15 seconds. */
-        uint32_t exampleMaxInterval = 15;
-        return aReadHandler.SetReportingIntervals(exampleMaxInterval);
-     }
 
 Disable serial logging
 **********************
