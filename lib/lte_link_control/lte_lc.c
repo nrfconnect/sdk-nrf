@@ -84,6 +84,8 @@ static char rai_param[2] = CONFIG_LTE_RAI_REQ_VALUE;
 static struct lte_lc_ncellmeas_params ncellmeas_params;
 /* Sempahore value 1 means ncellmeas is not ongoing, and 0 means it's ongoing. */
 K_SEM_DEFINE(ncellmeas_idle_sem, 1, 1);
+/* Network attach semaphore */
+static K_SEM_DEFINE(link, 0, 1);
 
 static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
 
@@ -138,8 +140,6 @@ static const char system_mode_preference[] = {
 	/* Equal priority, but prefer NB-IoT. */
 	[LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO]	= '4',
 };
-
-static struct k_sem link;
 
 static bool is_cellid_valid(uint32_t cellid)
 {
@@ -596,8 +596,6 @@ static int init_and_config(void)
 		return 0;
 	}
 
-	k_sem_init(&link, 0, 1);
-
 	err = lte_lc_system_mode_get(&sys_mode_current, &mode_pref_current);
 	if (err) {
 		LOG_ERR("Could not get current system mode, error: %d", err);
@@ -669,10 +667,6 @@ static int connect_lte(bool blocking)
 		goto exit;
 	}
 
-	if (blocking) {
-		k_sem_init(&link, 0, 1);
-	}
-
 	do {
 		tries--;
 
@@ -692,6 +686,11 @@ static int connect_lte(bool blocking)
 				goto exit;
 			}
 		}
+
+		/* Reset the semaphore, it may have already been given
+		 * by an earlier +CEREG notification.
+		 */
+		k_sem_reset(&link);
 
 		err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 		if (err || !blocking) {
