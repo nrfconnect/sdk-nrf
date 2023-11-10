@@ -40,7 +40,7 @@ In such case, you must obtain a copy of the |NCS| on your file system and then m
 
 To obtain a copy of the |NCS|, you can use one of the following methods:
 
-* :ref:`Install the |NCS| <install_ncs>` using the |nRFVSC| and download the desired |NCS| version.
+* :ref:`Install the nRF Connect SDK <install_ncs>` using the |nRFVSC| and download the desired |NCS| version.
   This corresponds to steps 2 and 3 on the linked page.
 * Follow the instructions in the :ref:`dm-wf-get-ncs` section of the documentation.
   This requires you to install Git and west, but you can then ignore them from that point onwards.

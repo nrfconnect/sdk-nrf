@@ -1176,11 +1176,17 @@
 .. _`mosquitto.org server CA`: https://test.mosquitto.org/ssl/mosquitto.org.crt
 .. _`test.mosquitto.org`: https://test.mosquitto.org
 
-.. ###: visualstudio.com
+.. ### visualstudio.com
 
 .. _`nRF Connect for VS Code Extension Pack`: https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-connect-extension-pack
 .. _`VSMQTT`: https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt
 .. _`Visual Studio Code download page`: https://code.visualstudio.com/download
+
+.. ### python.org
+
+.. _`Python virtual environments`: https://docs.python.org/3/library/venv.html
+.. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
+.. _`Python's Path.glob`: https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
 
 .. ### Source: other (2 links or less from the same URL)
 
@@ -1269,9 +1275,7 @@
 
 .. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
-.. _`Python virtual environments`: https://docs.python.org/3/library/venv.html
-.. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
-.. _`Python's Path.glob`: https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
+
 
 .. _`CMock`: https://www.throwtheswitch.org/cmock
 .. _`Unity`: https://www.throwtheswitch.org/unity

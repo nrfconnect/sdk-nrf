@@ -276,6 +276,7 @@ For more information about the repository and development model, see the :ref:`d
          .. code-block:: console
 
             west zephyr-export
+
 ..
 
 If you used the default locations, your directory structure now looks similar to this:
@@ -368,38 +369,140 @@ To install the |NCS| system-wide, complete the following steps:
 
       .. note::
 
-         Use a command prompt window with administrator rights to ensure that Python is initialized.
+         It is easy to run into Python package incompatibilities when installing dependencies at a system or user level.
+         This situation can happen, for example, if working on multiple Zephyr versions or other projects using Python on the same machine.
+
+         For this reason, it is suggested to use `Python virtual environments`_.
 
       .. tabs::
 
          .. group-tab:: Windows
 
-            Enter the following command in a command-line window:
+            .. tabs::
 
-            .. code-block:: console
+               .. group-tab:: Install within virtual environment
 
-               pip3 install west
+                  #. Create a new virtual environment:
 
-            .. note::
-               Ensure the west location is added to the path in environmental variables.
+                     .. code-block:: bat
+
+                        cd %HOMEPATH%
+                        python -m venv ncs\.venv
+
+                  #. Activate the virtual environment:
+
+                     .. code-block:: bat
+
+                        ncs\.venv\Scripts\activate.bat
+
+                     Once activated your shell will be prefixed with ``(.venv)``.
+                     The virtual environment can be deactivated at any time by running ``deactivate``.
+
+                     .. note::
+
+                        Remember to activate the virtual environment every time you start working.
+
+                  #. Install west:
+
+                     .. code-block:: bat
+
+                        pip3 install west
+
+               .. group-tab:: Install globally
+
+                  #. Install west:
+
+                     .. code-block:: bat
+
+                        pip3 install -U west
 
          .. group-tab:: Linux
 
-            Enter the following command in a terminal window:
+            .. tabs::
 
-            .. code-block:: console
+               .. group-tab:: Install within virtual environment
 
-               pip3 install --user west
-               echo 'export PATH=~/.local/bin:"$PATH"' >> ~/.bashrc
-               source ~/.bashrc
+                  #. Use ``apt`` to install Python ``venv`` package:
+
+                     .. code-block:: bash
+
+                        sudo apt install python3-venv
+
+                  #. Create a new virtual environment:
+
+                     .. code-block:: bash
+
+                        python3 -m venv ~/ncs/.venv
+
+                  #. Activate the virtual environment:
+
+                     .. code-block:: bash
+
+                        source ~/ncs/.venv/bin/activate
+
+                     Once activated, your shell will be prefixed with ``(.venv)``.
+                     The virtual environment can be deactivated at any time by running ``deactivate``.
+
+                     .. note::
+
+                        Remember to activate the virtual environment every time you start working.
+
+                  #. Install west:
+
+                     .. code-block:: bash
+
+                        pip3 install west
+
+               .. group-tab:: Install globally
+
+                  #. Install west and make sure :file:`~/.local/bin` is on your :envvar:`PATH` :ref:`environment variable <env_vars>`:
+
+                     .. code-block:: bash
+
+                        pip3 install --user -U west
+                        echo 'export PATH=~/.local/bin:"$PATH"' >> ~/.bashrc
+                        source ~/.bashrc
 
          .. group-tab:: macOS
 
-            Enter the following command in a terminal window:
+            .. tabs::
 
-            .. code-block:: console
+               .. group-tab:: Install within virtual environment
 
-               pip3 install west
+                  #. Create a new virtual environment:
+
+                     .. code-block:: bash
+
+                        python3 -m venv ~/ncs/.venv
+
+                  #. Activate the virtual environment:
+
+                     .. code-block:: bash
+
+                        source ~/ncs/.venv/bin/activate
+
+                     Once activated, your shell will be prefixed with ``(.venv)``.
+                     The virtual environment can be deactivated at any time by running ``deactivate``.
+
+                     .. note::
+
+                        Remember to activate the virtual environment every time you start working.
+
+                  #. Install west:
+
+                     .. code-block:: bash
+
+                        pip3 install west
+
+               .. group-tab:: Install globally
+
+                  #. Install west:
+
+                     .. code-block:: bash
+
+                        pip3 install -U west
+
+            ..
 
       ..
 
@@ -407,7 +510,7 @@ To install the |NCS| system-wide, complete the following steps:
 
 #. Get the |NCS| code as described in :ref:`cloning_the_repositories` for the command line.
    (You can skip step 2.)
-   When you first install the |NCS|, it is recommended to install the latest released versions of the SDK.
+   When you first install the |NCS|, it is recommended to install the latest released version of the SDK.
 #. Install the Python dependencies.
    Expand the section below to see the commands.
 
@@ -422,110 +525,33 @@ To install the |NCS| system-wide, complete the following steps:
 
          .. group-tab:: Windows
 
-            1. Use the following command to install the Python ``venv`` package:
+            #. Enter the following commands in a ``cmd.exe`` terminal window in the :file:`ncs` folder:
 
                .. code-block:: bash
 
-                  pip install virtualenv
-
-            #. Create a new virtual environment:
-
-               .. code-block:: bash
-
-                  cd %HOMEPATH%
-                  python -m venv ncs\.venv
-
-            #. Activate the virtual environment:
-
-               .. code-block:: bash
-
-                  :: cmd.exe
-                  ncs\.venv\Scripts\activate.bat
-
-               Once activated, your shell will be prefixed with ``(.venv)``.
-               You can deactivate the virtual environment at any time by running ``deactivate``.
-
-               .. note::
-
-                  Remember to activate the virtual environment every time you start working.
-
-            #. Enter the following commands in a command-line window in the :file:`ncs` folder:
-
-               .. code-block:: bash
-
-                  pip install -r zephyr\scripts\requirements.txt
-                  pip install -r nrf\scripts\requirements.txt
-                  pip install -r bootloader\mcuboot\scripts\requirements.txt
+                  pip3 install -r zephyr\scripts\requirements.txt
+                  pip3 install -r nrf\scripts\requirements.txt
+                  pip3 install -r bootloader\mcuboot\scripts\requirements.txt
 
          .. group-tab:: Linux
 
-            1. Use the following command to install the Python ``venv`` package:
-
-               .. code-block:: bash
-
-                  sudo apt install python3-venv
-
-            #. Create a new virtual environment:
-
-               .. code-block:: bash
-
-                  python3 -m venv ~/ncs/.venv
-
-            #. Activate the virtual environment:
-
-               .. code-block:: bash
-
-                  source ~/ncs/.venv/bin/activate
-
-               Once activated, your shell will be prefixed with ``(.venv)``.
-               You can deactivate the virtual environment at any time by running ``deactivate``.
-
-               .. note::
-
-                  Remember to activate the virtual environment every time you start working.
-
             #. Enter the following commands in a terminal window in the :file:`ncs` folder:
 
                .. code-block:: bash
 
-                  pip install -r zephyr/scripts/requirements.txt
-                  pip install -r nrf/scripts/requirements.txt
-                  pip install -r bootloader/mcuboot/scripts/requirements.txt
+                  pip3 install -r zephyr/scripts/requirements.txt
+                  pip3 install -r nrf/scripts/requirements.txt
+                  pip3 install -r bootloader/mcuboot/scripts/requirements.txt
 
          .. group-tab:: macOS
 
-            1. Use the following command to install the Python ``venv`` package:
-
-               .. code-block:: bash
-
-                  sudo apt install python3-venv
-
-            #. Create a new virtual environment:
-
-               .. code-block:: bash
-
-                  python3 -m venv ~/ncs/.venv
-
-            #. Activate the virtual environment:
-
-               .. code-block:: bash
-
-                  source ~/ncs/.venv/bin/activate
-
-               Once activated, your shell will be prefixed with ``(.venv)``.
-               You can deactivate the virtual environment at any time by running ``deactivate``.
-
-               .. note::
-
-                  Remember to activate the virtual environment every time you start working.
-
             #. Enter the following commands in a terminal window in the :file:`ncs` folder:
 
                .. code-block:: bash
 
-                  pip install -r zephyr/scripts/requirements.txt
-                  pip install -r nrf/scripts/requirements.txt
-                  pip install -r bootloader/mcuboot/scripts/requirements.txt
+                  pip3 install -r zephyr/scripts/requirements.txt
+                  pip3 install -r nrf/scripts/requirements.txt
+                  pip3 install -r bootloader/mcuboot/scripts/requirements.txt
 
       ..
 
