@@ -1,0 +1,126 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+
+# This configurations come from tests/samples in sdk-zephyr
+
+- scenarios:
+    - drivers.flash.common.tfm_ns
+  platforms:
+    - nrf9160dk_nrf9160_ns
+  comment: "To report."
+
+- scenarios:
+    - libraries.encoding.jwt
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "To report."
+
+- scenarios:
+    - libraries.hash_map.newlib.cxx_unordered_map.djb2
+  platforms:
+    - nrf52dk_nrf52832
+    - nrf9160dk_nrf9160_ns
+    - mps2_an521
+    - qemu_cortex_m3
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf52840dk_nrf52840
+    - nrf9160dk_nrf9160
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf5340dk_nrf5340_cpunet
+  comment: "To report."
+
+- scenarios:
+    - mcuboot.recovery.retention
+    - mcuboot.recovery.retention.mem
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "To report."
+
+- scenarios:
+    - mgmt.mcumgr.all.options
+    - mgmt.mcumgr.all.options.other
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "To report."
+
+- scenarios:
+    - net.mqtt.tls
+  platforms:
+    - nrf9160dk_nrf9160_ns
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "Used to be overflow, now build error. To report"
+
+- scenarios:
+    - net.socket.register.tls
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "To report."
+
+- scenarios:
+    - sample.bluetooth.central.multilink
+    - sample.bluetooth.peripheral_identity
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "To report."
+
+- scenarios:
+    - sample.display.lvgl.gui
+  platforms:
+    - native_posix
+  comment: "libsdl2-dev package not available"
+
+- scenarios:
+    - sample.drivers.crypto.mbedtls
+  platforms:
+    - nrf9160dk_nrf9160_ns
+    - nrf5340dk_nrf5340_cpuapp_ns
+  comment: "To report."
+
+- scenarios:
+    - sample.drivers.flash.soc_flash_nrf
+  platforms:
+    - nrf9160dk_nrf9160_ns
+  comment: "To report."
+
+- scenarios:
+    - sample.ipc.openamp
+  platforms:
+    - mps2_an521
+  comment: "To report."
+
+- scenarios:
+    - sample.mcumgr.smp_svr.mcuboot_flags.direct_xip_withrevert
+  platforms:
+    - nrf52840dk_nrf52840
+  comment: "To report."
+
+- scenarios:
+    - sample.mgmt.osdp.control_panel
+    - sample.mgmt.osdp.peripheral_device
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "To report."
+
+- scenarios:
+    - sample.net.sockets.websocket_client
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "To report."
+
+- scenarios:
+    - sample.psa_crypto
+  platforms:
+    - nrf5340dk_nrf5340_cpuapp_ns
+    - nrf9160dk_nrf9160_ns
+  comment: "Suppose to work with nrf manifest. To report"
+
+- scenarios:
+    - zephyr_get.sysbuild
+  platforms:
+    - native_posix
+  comment: "To report."
