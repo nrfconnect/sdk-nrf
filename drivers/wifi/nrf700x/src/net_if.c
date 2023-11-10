@@ -178,15 +178,28 @@ int nrf_wifi_if_send(const struct device *dev,
 		goto unlock;
 	}
 
-	if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
-	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
-		goto unlock;
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
+	if ((*(unsigned int *)pkt->frags->data) == NRF_WIFI_MAGIC_NUM_RAWTX) {
+		if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
+			goto unlock;
+		}
+
+		ret = nrf_wifi_fmac_start_rawpkt_xmit(rpu_ctx_zep->rpu_ctx,
+						      vif_ctx_zep->vif_idx,
+						      net_pkt_to_nbuf(pkt));
+	} else {
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
+		if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
+		    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
+			goto unlock;
+		}
+
+		ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
+					       vif_ctx_zep->vif_idx,
+					       net_pkt_to_nbuf(pkt));
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
 	}
-
-	ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
-				       vif_ctx_zep->vif_idx,
-				       net_pkt_to_nbuf(pkt));
-
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
 
 unlock:
 	net_if_unlock(iface);

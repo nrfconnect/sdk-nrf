@@ -69,8 +69,12 @@ int nrf_wifi_set_power_save(const struct device *dev,
 						params->listen_interval);
 	break;
 	case  WIFI_PS_PARAM_TIMEOUT:
-		if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
-			LOG_ERR("%s: Operation supported only in STA mode",
+		if ((vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION)
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
+		    && (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
+		   ) {
+			LOG_ERR("%s: Operation supported only in STA enabled mode",
 				__func__);
 			params->fail_reason =
 				WIFI_PS_PARAM_FAIL_CMD_EXEC_FAIL;
@@ -143,8 +147,12 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 		goto out;
 	}
 
-	if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
-		LOG_ERR("%s: Operation supported only in STA mode",
+	if ((vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION)
+#ifdef CONFIG_NRF700X_RAW_DATA_TX
+	    && (vif_ctx_zep->if_type != NRF_WIFI_STA_TX_INJECTOR)
+#endif /* CONFIG_NRF700X_RAW_DATA_TX */
+	    ) {
+		LOG_ERR("%s: Operation supported only in STA enabled mode",
 			__func__);
 		goto out;
 	}
@@ -686,8 +694,8 @@ int nrf_wifi_mode(const struct device *dev,
 		LOG_ERR("%s: illegal input parameters", __func__);
 		goto out;
 	}
-	vif_ctx_zep = dev->data;
 
+	vif_ctx_zep = dev->data;
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
@@ -716,7 +724,8 @@ int nrf_wifi_mode(const struct device *dev,
 		 * context maps the correct network interface index to current driver
 		 * interface index.
 		 */
-		status = nrf_wifi_fmac_mode(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, mode->mode);
+		status = nrf_wifi_fmac_set_mode(rpu_ctx_zep->rpu_ctx,
+						vif_ctx_zep->vif_idx, mode->mode);
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: mode set operation failed", __func__);
 			goto out;
@@ -724,62 +733,6 @@ int nrf_wifi_mode(const struct device *dev,
 
 	} else {
 		mode->mode = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode;
-	}
-	ret = 0;
-out:
-	return ret;
-}
-
-int nrf_wifi_filter(const struct device *dev,
-		    struct wifi_filter_info *filter)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
-	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
-	int ret = -1;
-
-	if (!dev || !filter) {
-		goto out;
-	}
-
-	vif_ctx_zep = dev->data;
-
-	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
-		goto out;
-	}
-
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
-	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-
-	if (filter->oper == WIFI_MGMT_SET) {
-		/**
-		 * In case a user sets data + management + ctrl bits
-		 * or all the filter bits. Map it to bit 0 set to
-		 * enable "all" packet filter bit setting.
-		 */
-		if (filter->filter == 0xE || filter->filter == 0xF) {
-			filter->filter = 1;
-		}
-
-		/**
-		 * Send the driver vif_idx instead of upper layer sent if_index.
-		 * we map network if_index 1 to vif_idx of 0 and so on. The vif_ctx_zep
-		 * context maps the correct network interface index to current driver
-		 * interface index.
-		 */
-		status = nrf_wifi_fmac_packet_filter(rpu_ctx_zep->rpu_ctx, filter->filter,
-						     vif_ctx_zep->vif_idx, filter->buffer_size);
-
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: filter operation failed", __func__);
-			goto out;
-		}
-	} else {
-		filter->filter = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->packet_filter;
 	}
 	ret = 0;
 out:
@@ -802,7 +755,6 @@ int nrf_wifi_channel(const struct device *dev,
 	}
 
 	vif_ctx_zep = dev->data;
-
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		goto out;
@@ -824,8 +776,8 @@ int nrf_wifi_channel(const struct device *dev,
 		 * context maps the correct network interface index to current driver
 		 * interface index.
 		 */
-		status = nrf_wifi_fmac_channel(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
-					       channel->channel);
+		status = nrf_wifi_fmac_set_channel(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
+						   channel->channel);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: set channel failed", __func__);
