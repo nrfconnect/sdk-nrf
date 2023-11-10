@@ -14,4 +14,4 @@ Read the following subpages for suggestions and recommendations for optimizing t
    :caption: Subpages:
 
    power_general
-   power_nrf9160
+   power_nrf91

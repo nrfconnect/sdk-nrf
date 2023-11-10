@@ -36,7 +36,7 @@ The Arm CryptoCell cc3xx driver is a is a closed-source binary that provides har
 The Arm CryptoCell cc3xx driver is only available on the following devices:
 
 * nRF52840
-* nRF9160
+* nRF91 Series
 * nRF5340
 
 

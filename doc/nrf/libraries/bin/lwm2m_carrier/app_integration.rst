@@ -118,7 +118,7 @@ Following are some of the general Kconfig options that you can configure:
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`, :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE`, :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER`:
 
   * The :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE` Kconfig option sets the LG U+ service code, which is needed to identify your device in the LG U+ device management.
-  * The :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER` configuration lets you choose between using the nRF9160 SoC 2DID Serial Number, or the device IMEI as a serial number when connecting to the LG U+ device management server.
+  * The :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER` configuration lets you choose between using the nRF91 Series SiP 2DID Serial Number, or the device IMEI as a serial number when connecting to the LG U+ device management server.
 
   .. note::
      Application DFU is needed to enable LG U+ functionality.

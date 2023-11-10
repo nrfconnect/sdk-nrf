@@ -41,7 +41,7 @@ See the following table for an overview of the key types supported by each devic
       - CryptoCell version
       - Key Management Unit
       - Supported HUK types
-    * - nRF9160
+    * - nRF91 Series
       - CC310
       - Yes
       - KDR, MKEK, MEXT
@@ -54,7 +54,7 @@ See the following table for an overview of the key types supported by each devic
       - No
       - KDR only
 
-In devices with a Key Management Unit (KMU), like nRF9160 or nRF5340, the keys reside in reserved slots in the KMU itself.
+In devices with a Key Management Unit (KMU), like nRF91 Series or nRF5340, the keys reside in reserved slots in the KMU itself.
 The KMU can make the keys non-readable and non-writable from the application, while still accessible by the Arm CryptoCell.
 
 In devices without a KMU, like nRF52840, the bootloader writes the key to the Arm CryptoCell and locks the flash memory page where the key is stored.

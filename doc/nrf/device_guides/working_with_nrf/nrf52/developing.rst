@@ -299,7 +299,7 @@ To perform the test, :ref:`connect to the nRF52 Series DK <nrf52_gs_connecting>`
 Building and programming
 ************************
 
-You can program applications and samples on the nRF9160 DK after obtaining the corresponding firmware images.
+You can program applications and samples on the nRF52 Series DK after obtaining the corresponding firmware images.
 
 To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instructions in :ref:`nrf52_gs_installing_application`.
 In Step 5, choose the :file:`.hex` file for the application you are programming.

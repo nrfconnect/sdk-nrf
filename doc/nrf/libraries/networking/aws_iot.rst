@@ -468,7 +468,7 @@ For issues related to the library and |NCS| in general, refer to :ref:`known_iss
   AWS IoT specifies a maximum allowed keepalive of 1200 seconds (20 minutes), however in certain LTE networks, the Network Address Translation (NAT) timeout can be considerably lower.
   As a recommendation to prevent the likelihood of unexpected disconnects, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the highest value of the network NAT and maximum allowed MQTT keepalive.
 * If publishing larger payloads fails, you might need to increase the value of the :kconfig:option:`CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE` option.
-* For nRF9160-based boards, the size of incoming messages cannot exceed approximately 2 kB.
+* For nRF91 Series devices, the size of incoming messages cannot exceed approximately 2 kB.
   This is due to a limitation of the modem's internal TLS buffers.
   Messages that exceed this limitation will be dropped.
 

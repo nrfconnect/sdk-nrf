@@ -60,7 +60,7 @@ Creating a FOTA job
 #. Select the file :file:`app_update.bin` (located in the :file:`zephyr` subfolder of your build directory).
 
    If you want to update the modem firmware, extract the content of a downloaded modem firmware zip and select the desired delta update, for example :file:`mfw_nrf9160_update_from_1.3.1_to_1.3.2`.
-   The various modem firmware versions can be found in `nRF9160 DK Downloads`_.
+   The various modem firmware versions can be found in `nRF9160 DK Downloads`_ for the nRF9160 DK, and `nRF9161 DK Downloads`_ for the nRF9161 DK.
 #. Click :guilabel:`Upload` and then :guilabel:`Close`.
 #. Click the uploaded image file :file:`app_update.bin` and copy the *Object URL* without the *https://* prefix and folder path.
 #. Create a text file (job document) with content as in the snippet, replacing the following data:

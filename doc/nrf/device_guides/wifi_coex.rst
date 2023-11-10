@@ -275,7 +275,7 @@ Bluetooth-only 1-wire coexistence
 Refer to :ref:`ug_radio_coex_bluetooth_only_based` for the general requirements of this implementation.
 
 The Bluetooth-only 1-wire coexistence feature allows the :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>` to coexist alongside an LTE device on a separate chip.
-It is specifically designed for the coex interface of the nRF9160.
+It is specifically designed for the coex interface of the nRF91 Series SiP.
 The implementation is based on :ref:`nrfxlib:mpsl_bluetooth_coex_1wire`, which is provided into the :ref:`nrfxlib:mpsl` (MPSL) library.
 
 

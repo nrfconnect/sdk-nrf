@@ -34,15 +34,15 @@ Integration prerequisites
 Before you start the |NCS| integration with AVSystem's Coiote IoT Device Management, make sure that the following prerequisites are completed:
 
 * :ref:`Installation of the nRF Connect SDK <installation>`.
-* :ref:`Setup of nRF9160 DK <ug_nrf9160_gs>`.
+* :ref:`Setup of an nRF91 Series DK <ug_nrf91>`.
 * Creation of an account in `AVSystem's Coiote Device Management <Coiote Device Management_>`_.
 * :ref:`Creation of an nRF Cloud account <creating_cloud_account>` (if you are utilizing nRF Cloud Location Services).
 
 Solution architecture
 *********************
 
-As a prototyping solution, AVSystem supports a pre-integrated LwM2M Client stack on the nRF9160-based development kit, provides a free version of the Coiote device management platform, and acts as a bridge to nRF Cloud.
-This results in full LwM2M integration of nRF9160 with AVSystem Coiote IoT for data, device management, and nRF Cloud Location services.
+As a prototyping solution, AVSystem supports a pre-integrated LwM2M Client stack on an nRF91 Series DK, provides a free version of the Coiote device management platform, and acts as a bridge to nRF Cloud.
+This results in full LwM2M integration of the nRF91 Series SiP with AVSystem Coiote IoT for data, device management, and nRF Cloud Location services.
 
 .. figure:: images/avsystem_integration.svg
    :alt: AVSystem integration
@@ -55,7 +55,7 @@ Following are the components that are required for the integration with |NCS|:
 
  .. note::
 
-    Instead of Zephyr stack, you can also use AVSystem's LwM2M Client SDK Anjay that can be ported to the nRF9160-based device.
+    Instead of Zephyr stack, you can also use AVSystem's LwM2M Client SDK Anjay that can be ported to the nRF91 Series device.
     To use Anjay, follow the procedures described in the AVSystem documentation for `nRF9160 integration <nRF9160 Anjay integration_>`_ and `Thingy:91 integration`_.
 
 * `Coiote IoT Device Management <Coiote Device Management_>`_ - Component that accepts communication from devices, performs management functionalities, and acts as a communication hub for third-party cloud solutions.

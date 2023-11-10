@@ -8,7 +8,7 @@ nRF Cloud A-GNSS
    :local:
    :depth: 2
 
-The nRF Cloud A-GNSS library enables applications to request and process Assisted GNSS (`A-GNSS`_) data from `nRF Cloud`_ to be used with the nRF9160 SiP.
+The nRF Cloud A-GNSS library enables applications to request and process Assisted GNSS (`A-GNSS`_) data from `nRF Cloud`_ to be used with the nRF91 Series SiP.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 
 Overview

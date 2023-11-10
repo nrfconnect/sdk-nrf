@@ -118,7 +118,7 @@ The application can use the :c:func:`qos_message_id_get_next` function to genera
 Samples using the library
 *************************
 
-The :ref:`nRF9160:Asset Tracker v2 <asset_tracker_v2_description>` application uses this library.
+The :ref:`Asset Tracker v2 <asset_tracker_v2_description>` application uses this library.
 
 API documentation
 *****************

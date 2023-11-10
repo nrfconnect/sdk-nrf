@@ -34,7 +34,7 @@ Currently, the following configurations are supported:
 
 * nRF7002 DK + QSPI
 * nRF7002 EK + SPIM
-* nRF9160 DK + SPIM
+* nRF91 Series DK + SPIM
 
 
 To build for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target.
@@ -51,12 +51,25 @@ The following is an example of the CLI command:
 
    west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek
 
-To build for the nRF9160 DK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and scan-only overlay configuration.
-The following is an example of the CLI command:
+.. tabs::
 
-.. code-block:: console
+   .. group-tab:: nRF9161 DK
 
-   west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002ek
+      To build for the nRF9161 DK, use the ``nrf9161dk_nrf9161_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
+      The following is an example of the CLI command:
+
+      .. code-block:: console
+
+         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002ek
+
+   .. group-tab:: nRF9160 DK
+
+      To build for the nRF9160 DK, use the ``nrf9160dk_nrf9160_ns`` build target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
+      The following is an example of the CLI command:
+
+    .. code-block:: console
+
+       west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-scan-only.conf -DSHIELD=nrf7002ek
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 

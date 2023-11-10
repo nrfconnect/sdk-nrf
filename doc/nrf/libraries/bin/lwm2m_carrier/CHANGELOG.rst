@@ -270,7 +270,7 @@ Changes
 
 * Added the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER`.
 
-  * This configuration lets you choose between using the nRF9160 SoC 2DID Serial Number, or the Device IMEI as a Serial Number when connecting to the LG U+ device management server.
+  * This configuration lets you choose between using the nRF9160 SiP 2DID Serial Number, or the Device IMEI as a Serial Number when connecting to the LG U+ device management server.
   * Now that there are several LG U+ options, they have been grouped in :c:struct:`lwm2m_carrier_lg_uplus_config_t` inside :c:struct:`lwm2m_carrier_config_t`.
 
 * Added the ``carriers_enabled`` parameter to :c:macro:`lwm2m_carrier_config_t`.
@@ -858,4 +858,4 @@ Known issues and limitations
 * The following values are reported as dummy values instead of being fetched from the modem:
 
 	* "IP address", reported as ``192.168.0.0``.
-* The "Current Time" and "Timezone" resources do not respect write operations, instead, read operations on these resources will return the current time and timezone as kept by the nRF9160 modem.
+* The "Current Time" and "Timezone" resources do not respect write operations, instead, read operations on these resources will return the current time and timezone as kept by the nRF91 Series modem.
