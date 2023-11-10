@@ -162,7 +162,10 @@ int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version, uint16_t *manufacturer
 	if (print_version) {
 		if (rp->manufacturer == COMPANY_ID_PACKETCRAFT) {
 			/* NOTE: The string below is used by the Nordic CI system */
-			LOG_INF("Controller: LL_ACS_NRF53. Version: %d", rp->hci_revision);
+			LOG_INF("Controller: LL_ACS_NRF53: Version %s (0x%02x), Revision %d",
+				bt_hci_get_ver_str(rp->hci_version),
+				rp->hci_version,
+				rp->hci_revision);
 		} else if (rp->manufacturer == COMPANY_ID_NORDIC) {
 			/* NOTE: The string below is used by the Nordic CI system */
 			LOG_INF("Controller: SoftDevice: Version %s (0x%02x), Revision %d",
