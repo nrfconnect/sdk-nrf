@@ -28,8 +28,8 @@
 /.vscode/                                 @trond-snekvik
 
 # Applications
-/applications/asset_tracker_v2/           @simensrostad @jtguggedal @jhn-nordic @coderbyheart
-/applications/connectivity_bridge/        @jtguggedal @nordic-auko
+/applications/asset_tracker_v2/           @nrfconnect/ncs-cia @coderbyheart
+/applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/machine_learning/           @pdunaj
 /applications/matter_bridge/              @Damian-Nordic @kkasperczyk-no
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
@@ -68,8 +68,8 @@ Kconfig*                                  @tejlmand
 # All subfolders
 /drivers/                                 @anangl
 /drivers/serial/                          @nordic-krch @anangl
-/drivers/sensor/bh1749/                   @gregersrygg
-/drivers/sensor/bme68x_iaq/               @maxd-nordic
+/drivers/sensor/bh1749/                   @nrfconnect/ncs-cia
+/drivers/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /drivers/sensor/paw3212/                  @anangl @pdunaj @MarekPieta
 /drivers/sensor/pmw3360/                  @anangl @pdunaj @MarekPieta
 /drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @rado17 @rlubos
@@ -77,8 +77,8 @@ Kconfig*                                  @tejlmand
 /ext/                                     @carlescufi
 /ext/oberon/                              @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /include/                                 @anangl @rlubos
-/include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
-/include/net/wifi_credentials.h           @maxd-nordic
+/include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
+/include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @jori-nordic @KAGA164
 /include/bluetooth/services/fast_pair.h   @MarekPieta @kapi-no @KAGA164
@@ -92,12 +92,12 @@ Kconfig*                                  @tejlmand
 /include/nfc/                             @anangl @grochu
 /include/shell/                           @nordic-krch
 /lib/bin/                                 @rlubos @lemrey
-/lib/adp536x/                             @jtguggedal
+/lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/at_cmd_parser/                       @rlubos
 /lib/at_cmd_custom/                       @eivindj-nordic
 /lib/at_host/                             @rlubos
 /lib/at_monitor/                          @lemrey @rlubos
-/lib/at_shell/                            @jtguggedal @simensrostad
+/lib/at_shell/                            @nrfconnect/ncs-cia
 /lib/gcf_sms/                             @eivindj-nordic
 /lib/nrf_modem_lib/                       @rlubos @lemrey
 /lib/edge_impulse/                        @pdunaj
@@ -119,14 +119,14 @@ Kconfig*                                  @tejlmand
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @tokangas
 /lib/date_time/                           @trantanen @tokangas
-/lib/hw_id/                               @maxd-nordic
+/lib/hw_id/                               @nrfconnect/ncs-cia
 /lib/wave_gen/                            @MarekPieta
 /lib/hw_unique_key/                       @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /lib/identity_key/                        @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_slm/                           @SeppoTakalo @MarkusLassila @tomi-font
 /lib/modem_attest_token/                  @jayteemo
-/lib/qos/                                 @simensrostad
+/lib/qos/                                 @nrfconnect/ncs-cia
 /lib/contin_array/                        @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/data_fifo/                           @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /lib/pcm_mix/                             @koffes @alexsven @erikrobstad @rick1082 @gWacey
@@ -135,14 +135,13 @@ Kconfig*                                  @tejlmand
 /modules/                                 @tejlmand
 /modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
 /modules/mcuboot/                         @de-nordic @nordicjm
-/modules/cjson/                           @simensrostad @plskeggs @sigvartmh
+/modules/cjson/                           @nrfconnect/ncs-cia @plskeggs @sigvartmh
 /modules/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/                                 @nrfconnect/ncs-test-leads
-/samples/net/mqtt/                        @simensrostad
-/samples/net/udp/                         @simensrostad
-/samples/sensor/bh1749/                   @gregersrygg
-/samples/sensor/bme68x_iaq/               @maxd-nordic
+/samples/net/                             @nrfconnect/ncs-cia @lemrey
+/samples/sensor/bh1749/                   @nrfconnect/ncs-cia
+/samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/bluetooth/                       @alwa-nordic @jori-nordic @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @ludvigsj
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
@@ -152,7 +151,7 @@ Kconfig*                                  @tejlmand
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
-/samples/hw_id/                           @maxd-nordic
+/samples/hw_id/                           @nrfconnect/ncs-cia
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
 /samples/app_event_manager/               @pdunaj @MarekPieta
@@ -205,7 +204,7 @@ Kconfig*                                  @tejlmand
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /snippets/nrf91-modem-trace-uart/         @eivindj-nordic
-/snippets/tfm-enable-share-uart/          @KajaKoren
+/snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
 /subsys/audio_module/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @ludvigsj
@@ -232,16 +231,16 @@ Kconfig*                                  @tejlmand
 /subsys/mpsl/cx/                          @jciupis @martintv
 /subsys/mpsl/fem/                         @jciupis @martintv
 /subsys/net/                              @rlubos
-/subsys/net/lib/mqtt_helper/              @simensrostad @jtguggedal
-/subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
-/subsys/net/lib/aws_*                     @jtguggedal @simensrostad @coderbyheart
+/subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
+/subsys/net/lib/azure_*                   @nrfconnect/ncs-cia @coderbyheart
+/subsys/net/lib/aws_*                     @nrfconnect/ncs-cia @coderbyheart
 /subsys/net/lib/ftp_client/               @MarkusLassila @tomi-font
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @SeppoTakalo @jheiskan81 @juhaylinen
 /subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
 /subsys/net/lib/nrf_provisioning/         @SeppoTakalo @juhaylinen
 /subsys/net/lib/zzhc/                     @junqingzou
-/subsys/net/lib/wifi_credentials/         @maxd-nordic
+/subsys/net/lib/wifi_credentials/         @nrfconnect/ncs-cia
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
@@ -267,14 +266,14 @@ Kconfig*                                  @tejlmand
 /tests/lib/nrf_fuel_gauge/                @nordic-auko @aasinclair
 /tests/lib/gcf_sms/                       @eivindj-nordic
 /tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
-/tests/lib/hw_id/                         @maxd-nordic
+/tests/lib/hw_id/                         @nrfconnect/ncs-cia
 /tests/lib/location/                      @trantanen @tokangas
 /tests/lib/lte_lc/                        @trantanen @tokangas
 /tests/lib/lte_lc_api/                    @trantanen @tokangas
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/modem_battery/                 @MirkoCovizzi
-/tests/lib/modem_info/                    @maxd-nordic
-/tests/lib/qos/                           @simensrostad
+/tests/lib/modem_info/                    @nrfconnect/ncs-cia
+/tests/lib/qos/                           @nrfconnect/ncs-cia
 /tests/lib/sfloat/                        @kapi-no @maje-emb
 /tests/lib/sms/                           @trantanen @tokangas
 /tests/lib/nrf_modem_lib/                 @lemrey @MirkoCovizzi
@@ -303,15 +302,15 @@ Kconfig*                                  @tejlmand
 /tests/subsys/event_manager_proxy/        @rakons
 /tests/subsys/app_event_manager/          @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
-/tests/subsys/net/lib/aws_*/              @simensrostad
-/tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
+/tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
+/tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
 /tests/subsys/net/lib/lwm2m_*/            @SeppoTakalo @jheiskan81 @juhaylinen
 /tests/subsys/net/lib/mcumgr_smp_client/  @jheiskan81
 /tests/subsys/net/lib/nrf_cloud/          @tony-le-24
 /tests/subsys/net/lib/nrf_provisioning/   @SeppoTakalo @juhaylinen
-/tests/subsys/net/lib/wifi_credentials*/  @maxd-nordic
-/tests/subsys/net/lib/mqtt_helper/        @simensrostad @jtguggedal
+/tests/subsys/net/lib/wifi_credentials*/  @nrfconnect/ncs-cia
+/tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
