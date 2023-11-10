@@ -563,27 +563,8 @@ static int enable_notifications(void)
 	/* +CSCON notifications */
 	err = nrf_modem_at_printf(cscon);
 	if (err) {
-		char buf[50];
-
-		/* AT+CSCON is supported from modem firmware v1.1.0, and will
-		 * not work for older versions. If the command fails, RRC
-		 * mode change notifications will not be received. This is not
-		 * considered a critical error, and the error code is therefore
-		 * not returned, while informative log messages are printed.
-		 */
-		LOG_WRN("AT+CSCON failed (%d), RRC notifications are not enabled", err);
-		LOG_WRN("AT+CSCON is supported in nRF9160 modem >= v1.1.0");
-
-		err = nrf_modem_at_cmd(buf, sizeof(buf), "AT+CGMR");
-		if (err == 0) {
-			char *end = strstr(buf, "\r\nOK");
-
-			if (end) {
-				*end = '\0';
-			}
-
-			LOG_WRN("Current modem firmware version: %s", buf);
-		}
+		LOG_WRN("Failed to enable RRC notifications (+CSCON), error %d", err);
+		return -EFAULT;
 	}
 
 	return 0;
