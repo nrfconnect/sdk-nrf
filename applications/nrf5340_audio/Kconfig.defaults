@@ -53,6 +53,9 @@ config ZBUS
 config ZBUS_RUNTIME_OBSERVERS
 	default y
 
+config ZBUS_MSG_SUBSCRIBER
+	default y
+
 config SENSOR
 	default y
 

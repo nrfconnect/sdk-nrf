@@ -32,7 +32,8 @@ struct ble_iso_data {
 } __packed;
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
-ZBUS_SUBSCRIBER_DEFINE(le_audio_evt_sub, CONFIG_LE_AUDIO_MSG_SUB_QUEUE_SIZE);
+
+ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 
 ZBUS_CHAN_DECLARE(button_chan);
 ZBUS_CHAN_DECLARE(le_audio_chan);
@@ -179,12 +180,9 @@ static void le_audio_msg_sub_thread(void)
 	const struct zbus_channel *chan;
 
 	while (1) {
-		ret = zbus_sub_wait(&le_audio_evt_sub, &chan, K_FOREVER);
-		ERR_CHK(ret);
-
 		struct le_audio_msg msg;
 
-		ret = zbus_chan_read(chan, &msg, ZBUS_READ_TIMEOUT_MS);
+		ret = zbus_sub_wait_msg(&le_audio_evt_sub, &chan, &msg, K_FOREVER);
 		ERR_CHK(ret);
 
 		LOG_DBG("Received event = %d, current state = %d", msg.event, strm_state);
@@ -385,7 +383,7 @@ static int zbus_link_producers_observers(void)
 {
 	int ret;
 
-	if (!IS_ENABLED(CONFIG_ZBUS) || (CONFIG_ZBUS_RUNTIME_OBSERVERS_POOL_SIZE <= 0)) {
+	if (!IS_ENABLED(CONFIG_ZBUS)) {
 		return -ENOTSUP;
 	}
 

@@ -121,7 +121,7 @@ config POWER_MEAS_STACK_SIZE
 
 config BUTTON_PUBLISH_STACK_SIZE
 	int "Stack size for button publish thread"
-	default 300
+	default 450
 
 config VOLUME_MSG_SUB_STACK_SIZE
 	int "Stack size for volume message subscribe thread"
@@ -129,6 +129,7 @@ config VOLUME_MSG_SUB_STACK_SIZE
 
 endmenu # Stack sizes
 
+#----------------------------------------------------------------------------#
 menu "Zbus"
 
 config VOLUME_MSG_SUB_QUEUE_SIZE
