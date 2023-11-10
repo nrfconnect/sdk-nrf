@@ -1,7 +1,7 @@
 cbor2>=5.4.2.post1
 clang-format
 ecdsa
-cryptography>=35.0.0
+cryptography>=36.0.0
 imagesize>=1.2.0
 intelhex
 pylint
