@@ -5,6 +5,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/logging/log.h>
 #include <stdio.h>
 #include <date_time.h>
@@ -553,6 +554,9 @@ static int setup_cloud(void)
 void cloud_connection_thread_fn(void)
 {
 	long_led_pattern(LED_WAITING);
+
+	LOG_INF("Enabling connectivity...");
+	conn_mgr_all_if_connect(true);
 
 	LOG_INF("Setting up nRF Cloud library...");
 	if (setup_cloud()) {

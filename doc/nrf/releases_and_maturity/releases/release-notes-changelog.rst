@@ -210,6 +210,10 @@ Cellular samples (renamed from nRF9160 samples)
 
     * The sample now waits for a successful connection before printing ``Connected to nRF Cloud!``.
 
+  * Changed:
+
+    * The sample now explicitly uses :c:func:`conn_mgr_all_if_connect` to start network connectivity, instead of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT` Kconfig options.
+
 |no_changes_yet_note|
 
 Cryptography samples
