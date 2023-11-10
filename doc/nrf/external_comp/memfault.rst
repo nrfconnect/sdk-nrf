@@ -26,7 +26,7 @@ Integration prerequisites
 Before you start the |NCS| integration with Memfault, make sure that the following prerequisites are completed:
 
 * :ref:`Installation of the nRF Connect SDK <installation>`.
-* :ref:`Setup of nRF9160 DK <ug_nrf9160_gs>`.
+* :ref:`Setup of an nRF91 Series DK <ug_nrf91>`.
 * Sign up in the `Memfault registration page`_.
 * `Create a Memfault project <create a new project in Memfault_>`_.
   You will be directed to the Integration guide for Memfault.
@@ -89,7 +89,7 @@ You can get your project key after signing up with Memfault.
    Make sure to add your project key in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
 
 You can also add the configurations using a Kconfig configuration fragment file.
-See the following example on how to set an overlay configuration for Memfault integration:
+See the following example on how to set an overlay configuration for Memfault integration on an nRF9160 DK:
 
 .. code-block:: console
 

@@ -61,7 +61,7 @@ To disable serial output, you must change the project configuration associated w
     See :ref:`ug_nrf5340` and :ref:`ug_multi_image`.
 
 1. Set the project configuration :kconfig:option:`CONFIG_SERIAL` to ``n`` irrespective of whether you are building the sample for the :ref:`SPE-only <app_boards_spe_nspe_cpuapp>` build targets or build targets with :ref:`NSPE <app_boards_spe_nspe_cpuapp_ns>`.
-#. For the build target with NSPE (``nrf9160dk_nrf9160_ns``), ensure that serial logging is also disabled in Trusted Firmware-M by setting :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` to ``y``.
+#. For the build target with NSPE (for example, ``nrf9160dk_nrf9160_ns``), ensure that serial logging is also disabled in Trusted Firmware-M by setting :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` to ``y``.
 
 The output on Power Profiler Kit II shows the power consumption on an nRF9160 DK with the sample compiled for the ``nrf9160dk_nrf9160_ns`` build target with ``CONFIG_SERIAL=n``.
 
@@ -73,9 +73,9 @@ The output on Power Profiler Kit II shows the power consumption on an nRF9160 DK
 
 The average current reduces to 6 µA, which implies 9.5 years of battery life on a 500 mAh lithium polymer battery compared to the 6-week battery life of the previous measurement.
 
-For a similar configuration, see the :ref:`udp` sample, which transmits UDP packets to an LTE network using an nRF9160 DK.
-You can use the sample to characterize the current consumption of the nRF9160 SiP.
-It is optimized for low power operation on the ``nrf9160dk_nrf9160_ns`` build target without any modifications.
+For a similar configuration, see the :ref:`udp` sample, which transmits UDP packets to an LTE network using an nRF91 Series DK.
+You can use the sample to characterize the current consumption of the nRF91 Series SiP.
+It is optimized for low power operation on the ``nrf9160dk_nrf9160_ns`` or ``nrf9161dk_nrf9161_ns`` build target without any modifications.
 
 Verify idle current due to other peripherals
 ============================================

@@ -47,7 +47,7 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Press the reset button on the nRF91 Series DK to reboot the kit and start the AT Client sample.
-#. :ref:`Connect to the nRF9160 DK with nRF Connect Serial Terminal <serial_terminal_connect>`.
+#. :ref:`Connect to the nRF91 Series DK with nRF Connect Serial Terminal <serial_terminal_connect>`.
 #. Run the following commands from the Serial Terminal:
 
    a. Enter the command: :command:`AT+CFUN?`.

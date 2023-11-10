@@ -1,18 +1,21 @@
-.. _app_power_opt_nRF9160:
+.. _app_power_opt_nRF91:
 
-Power optimization for nRF9160
-##############################
+Power optimization for nRF91 Series
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-In addition to the :ref:`general power optimization recommendations <app_power_opt_general>`, you can use the `Online Power Profiler (OPP)`_ when optimizing the power consumption of your nRF9160 application.
+In addition to the :ref:`general power optimization recommendations <app_power_opt_general>`, you can use the `Online Power Profiler (OPP)`_ when optimizing the power consumption of your cellular application.
 
-Online Power Profiler for LTE is a tool to estimate the current consumption of the nRF9160 LTE modem.
+Online Power Profiler for LTE is a tool to estimate the current consumption of the nRF91 Series LTE modem.
 See the `Online Power Profiler user guide`_ for a basic overview of the tool and explanation of different parameters.
 
-The following sections describe how you can use Online Power Profiler and other power profiling tools to optimize the power consumption in your nRF9160-based design.
+.. note::
+   Currently, Online Power Profiler has support only for the nRF9160 DK.
+
+The following sections describe how you can use Online Power Profiler and other power profiling tools to optimize the power consumption in your nRF9160 DK.
 
 Cellular applications
 *********************
@@ -160,7 +163,7 @@ After exporting the settings from Online Power Profiler, use the settings while 
 To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is connected to a live network, complete the following steps:
 
 1. Connect Power Profiler Kit II to an nRF9160 DK as described in `Power Profiler Kit II user guide <Power Profiler Kit II (PPK2)_>`_.
-#. Navigate to the :ref:`udp` sample in |NCS| and copy the contents of the :file:`opp.conf` file that you exported from Online Power Profiler into the :file:`prj.conf` file in the UDP sample folder (``samples\\nrf9160\\udp``).
+#. Navigate to the :ref:`udp` sample in |NCS| and copy the contents of the :file:`opp.conf` file that you exported from Online Power Profiler into the :file:`prj.conf` file in the UDP sample folder (``samples\\cellular\\udp``).
 #. :ref:`Build and program the sample onto the nRF9160 DK <programming>`.
 #. If PSM is available in your network, the power measurement using Power Profiler Kit II produces the following results:
 

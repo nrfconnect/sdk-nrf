@@ -9,7 +9,7 @@ Template: Application
 
 .. note::
    * Provide a concise name to the application, which corresponds to the folder name.
-     If the application targets a specific device, add it in the title before the application name (for example, "nRF9160:").
+     If the application targets a specific device, add it in the title before the application name (for example, "nRF5340:").
      Do not include the word "application" in the title.
    * Place the documentation inside the :file:`applications` folder and use the file name :file:`README.rst`.
    * Use the provided stock phrases and includes when possible.

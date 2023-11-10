@@ -13,7 +13,7 @@ It also shows how to enable interrupt every time data is ready, instead of thres
 Requirements
 ************
 
-The sample supports the following nRF9160-based device:
+The sample supports the following device:
 
 .. table-from-sample-yaml::
 

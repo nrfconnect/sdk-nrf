@@ -104,21 +104,28 @@ After receiving the :c:enumerator:`NRF_CLOUD_EVT_READY` event, the application c
 Configuration options for device ID
 ===================================
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - If you enable this option, the ID is automatically generated using a prefix and the modem's IMEI (``<prefix><IMEI>``). You can configure the prefix by using :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`. The default format of the prefix is ``nrf-`` and it is valid only for Nordic devices such as Thingy:91 or nRF9160 DK. For custom hardware, use a prefix other than ``nrf-`` by modifying :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - If you enable this option, the ID is automatically generated using a prefix and the modem's IMEI (``<prefix><IMEI>``).
+  You can configure the prefix by using :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
+  The default format of the prefix is ``nrf-`` and it is valid only for Nordic devices such as Thingy:91 or an nRF91 Series DK.
+  For custom hardware, use a prefix other than ``nrf-`` by modifying :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - If you enable this option, the ID is automatically generated using the modem's 128-bit internal UUID, which results in a 36 character string of hexadecimal values in the 8-4-4-4-12 UUID format. This option requires modem firmware v1.3.0 or higher.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - If you enable this option, the ID is automatically generated using the modem's 128-bit internal UUID, which results in a 36 character string of hexadecimal values in the 8-4-4-4-12 UUID format.
+* This option requires modem firmware v1.3.0 or higher.
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` - If you enable this option, the ID is automatically generated using a unique hardware ID (for example, a MAC address). You can choose the required hardware ID using the ``HW_ID_LIBRARY_SOURCE`` Kconfig choice.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` - If you enable this option, the ID is automatically generated using a unique hardware ID (for example, a MAC address).
+  You can choose the required hardware ID using the ``HW_ID_LIBRARY_SOURCE`` Kconfig choice.
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at run time. If the nRF Cloud library is used directly, set the NULL-terminated ID string in the :c:struct:`nrf_cloud_init_param` structure when calling the :c:func:`nrf_cloud_init` function.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at runtime.
+  If the nRF Cloud library is used directly, set the NULL-terminated ID string in the :c:struct:`nrf_cloud_init_param` structure when calling the :c:func:`nrf_cloud_init` function.
 
 .. _lib_nrf_cloud_fota:
 
 Firmware over-the-air (FOTA) updates
 ************************************
-The nRF Cloud library supports FOTA updates for your nRF9160-based device.
+
+The nRF Cloud library supports FOTA updates for your nRF91 Series device.
 The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` Kconfig option is enabled by default when :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is set.
 This enables FOTA functionality in the application.
 
@@ -140,7 +147,10 @@ Following are the supported FOTA types:
 
 * ``"APP"`` - Updates the application.
 * ``"BOOT"`` - Updates the :ref:`upgradable_bootloader`.
-* ``"MDM_FULL"`` - :ref:`Full modem FOTA <nrf_modem_bootloader>` updates the entire modem firmware image. Full modem updates require |external_flash_size| of available space. For the nRF9160, a full modem firmware image is approximately 2 MB. Consider the power and network costs before deploying full modem FOTA updates.
+* ``"MDM_FULL"`` - :ref:`Full modem FOTA <nrf_modem_bootloader>` updates the entire modem firmware image.
+  Full modem updates require |external_flash_size| of available space.
+  For the an nRF91 Series device, a full modem firmware image is approximately 2 MB.
+  Consider the power and network costs before deploying full modem FOTA updates.
 * ``"MODEM"`` - :ref:`Delta modem FOTA <nrf_modem_delta_dfu>` applies incremental changes between specific versions of the modem firmware.
   Delta modem updates are much smaller in size and do not require external memory.
 

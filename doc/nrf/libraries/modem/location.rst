@@ -183,7 +183,7 @@ nRF Cloud certificates
 
 When using nRF Cloud for any location data, you must have the certificate provisioned.
 See :ref:`nrf9160_ug_updating_cloud_certificate` for more information.
-nRF9160 DK comes pre-provisioned with certificates for nRF Cloud.
+An nRF91 Series DK comes pre-provisioned with certificates for nRF Cloud.
 
 Location service accounts
 =========================
@@ -199,7 +199,7 @@ Wi-Fi chip
 ==========
 
 None of the supported DKs have an integrated Wi-Fi chip.
-You can use an external Wi-Fi chip, such as nRF7002 EK, and connect it to the nRF9160 DK.
+You can use an external Wi-Fi chip, such as nRF7002 EK, and connect it to the nRF91 Series DK.
 
 Library files
 *************

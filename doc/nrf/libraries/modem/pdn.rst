@@ -42,7 +42,7 @@ For more information about these commands, see `Packet Domain AT commands`_ in t
 The application can create PDP contexts by using the :c:func:`pdn_ctx_create` function, and a callback can be assigned to receive the events pertaining to the state and connectivity of the PDP contexts.
 The application can use the :c:func:`pdn_default_ctx_cb_reg` function to register an event handler for events pertaining the default PDP context, and the :c:func:`pdn_default_ctx_cb_dereg` to deregister it.
 The library stores 12 bytes of memory on the system heap for each PDP context created using :c:func:`pdn_ctx_create` and for each event handler for the default PDP context.
-The maximum number of PDP contexts that can be created is limited by the maximum number of PDP context supported by the nRF9160 modem firmware and the amount of system heap memory available.
+The maximum number of PDP contexts that can be created is limited by the maximum number of PDP context supported by the nRF91 Series modem firmware and the amount of system heap memory available.
 The :c:func:`pdn_ctx_configure` function is used to configure a PDP context, which can be configured with a family, access point name, and optional authentication parameters.
 The :c:func:`pdn_activate` function activates a PDN connection for a PDP context.
 A PDN connection is identified by an ID as reported by ``AT%XGETPDNID``, and it is distinct from the PDP context ID (CID).

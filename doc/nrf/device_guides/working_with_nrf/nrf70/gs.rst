@@ -275,7 +275,7 @@ Overview
 
 The nRF7002 EK (PCA63556) is designed to provide Wi-Fi connectivity and Wi-Fi (SSID) scanning capabilities via the nRF7002 companion IC to a compatible host development board.
 
-The nRF7002 EK features an Arduino shield form factor and interface connector that allows it to be used with Arduino compatible boards, such as the `nRF52840 DK <nRF52840 DK product page_>`_, `nRF5340 DK <nRF5340 DK product page_>`_, or `nRF9160 DK <nRF9160 DK product page_>`_.
+The nRF7002 EK features an Arduino shield form factor and interface connector that allows it to be used with Arduino compatible boards, such as the `nRF52840 DK <nRF52840 DK product page_>`_, `nRF5340 DK <nRF5340 DK product page_>`_, `nRF9160 DK <nRF9160 DK product page_>`_, or `nRF9161 DK <Nordic nRF9161 DK_>`_.
 This interface is used to connect the nRF7002 companion device to a host :term:`System on Chip (SoC)`, Microprocessor Unit (MPU), or :term:`Microcontroller Unit (MCU)`.
 
 .. figure:: images/nRF7002ek.png
@@ -286,7 +286,7 @@ This interface is used to connect the nRF7002 companion device to a host :term:`
 Pin assignment for Arduino interface connector
 ----------------------------------------------
 
-The Arduino interface of the nRF7002 EK is compatible with the Nordic nRF52840 DK, nRF5340 DK, and nRF9160 DK.
+The Arduino interface of the nRF7002 EK is compatible with the nRF52840 DK, the nRF5340 DK, and an nRF91 Series DK.
 The interface connectors are described in the following table:
 
 +------------------+-----------------------+----------------------------------+

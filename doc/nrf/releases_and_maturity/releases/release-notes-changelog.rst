@@ -239,8 +239,8 @@ Bluetooth Mesh samples
 
 |no_changes_yet_note|
 
-Cellular samples (renamed from nRF9160 samples)
------------------------------------------------
+Cellular samples
+----------------
 
 * :ref:`modem_shell_application` sample:
 

@@ -7,7 +7,7 @@ Running applications with Trusted Firmware-M
    :local:
    :depth: 2
 
-On nRF5340 and nRF9160, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
+On nRF5340 and nRF91 Series devices, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
 
 Overview
 ********
@@ -28,7 +28,7 @@ The TF-M implementation in |NCS| is currently demonstrated in the following samp
 - All :ref:`tfm_samples` in this SDK
 - All :ref:`cryptography samples <crypto_samples>` in this SDK
 - A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
-- The :ref:`https_client` sample for nRF9160 in this SDK
+- The :ref:`https_client` sample for nRF91 Series devices in this SDK
 - The :ref:`openthread_samples` that support the ``nrf5340dk_nrf5340_cpuapp_ns`` build target in this SDK
 
 Building
@@ -49,7 +49,7 @@ You must build TF-M using a non-secure build target.
 The following platforms are currently supported:
 
 * nRF5340
-* nRF9160
+* nRF91 Series
 
 TF-M uses UART1 for logging from the secure application.
 To disable logging, enable the :kconfig:option:`TFM_LOG_LEVEL_SILENCE` option.

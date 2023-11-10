@@ -8,7 +8,7 @@ Modem SLM
    :depth: 2
 
 The Modem SLM library exposes the AT command interface of the :ref:`Serial LTE Modem <slm_description>` application for external devices over a serial interface.
-This library is for applications running on external MCU that is built with |NCS| and is connected to nRF9160 SiP through UART.
+This library is for applications running on external MCU that is built with |NCS| and is connected to an nRF91 Series SiP through UART.
 
 Overview
 ********
@@ -60,7 +60,7 @@ Use one of the following options to select the termination character:
 * :kconfig:option:`CONFIG_MODEM_SLM_LF_TERMINATION` - Enables ``<LF>`` as the termination character.
 * :kconfig:option:`CONFIG_MODEM_SLM_CR_LF_TERMINATION` - Enables ``<CR+LF>`` as the termination character, which is selected by default.
 
-You must configure the same termination character as that configured in SLM on nRF9160 SiP.
+You must configure the same termination character as that configured in SLM on the nRF91 Series SiP.
 The library sends the termination character automatically after an AT command.
 
 Shell usage

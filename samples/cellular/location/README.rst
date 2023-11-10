@@ -70,16 +70,25 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-nRF9160 DK with nRF7002 EK Wi-Fi support
-========================================
+nRF91 Series DK with nRF7002 EK Wi-Fi support
+=============================================
 
-To build the sample with nRF9160 DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
-
+To build the sample with nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
 For example:
 
-.. code-block:: console
+.. tabs::
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+   .. group-tab:: nRF9161 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 
@@ -87,7 +96,6 @@ ESP8266 Wi-Fi support
 =====================
 
 To build the Location sample with ESP8266 Wi-Fi chip support, use the ``-DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay`` and  ``-DOVERLAY_CONFIG=overlay-esp-wifi.conf`` options.
-
 For example:
 
 .. code-block:: console
@@ -99,12 +107,21 @@ See :ref:`cmake_options` for more instructions on how to add these options.
 P-GPS support
 =============
 
-To build the Location sample with P-GPS support, use the ``-DOVERLAY_CONFIG=overlay-pgps.conf`` option.
-For example:
+To build the Location sample with P-GPS support, use the following commands:
 
-.. code-block:: console
+.. tabs::
 
-   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-pgps.conf
+   .. group-tab:: nRF9161 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9161dk_nrf9161_ns -- -DOVERLAY_CONFIG=overlay-pgps.conf
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-pgps.conf
 
 See :ref:`cmake_options` for more instructions on how to add this option.
 

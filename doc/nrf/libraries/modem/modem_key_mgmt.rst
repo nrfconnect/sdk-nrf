@@ -7,7 +7,7 @@ Modem key management
    :local:
    :depth: 2
 
-The modem key management library provides functions to manage the credentials stored in the nRF9160 LTE modem.
+The modem key management library provides functions to manage the credentials stored in the nRF91 Series LTE modem.
 The library uses credential storage management to add, update, and delete credentials using the ``%CMNG`` command.
 See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the same section in the `nRF91x1 AT Commands Reference Guide`_ depending on the SiP you are using.
 
@@ -29,7 +29,7 @@ You can download a certificate for a given server using your web browser.
 Alternatively, you can obtain it from a dedicated website like `SSL Labs`_.
 
 Certificates come in different formats.
-To provision the certificate to the nRF9160 DK, it must be in PEM format.
+To provision the certificate to the nRF91 Series DK, it must be in PEM format.
 The PEM format looks like this::
 
    "-----BEGIN CERTIFICATE-----\n"
