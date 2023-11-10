@@ -627,13 +627,6 @@ static int init_and_config(void)
 
 	lte_lc_psm_default_config_set();
 
-	/* Listen for RRC connection mode notifications */
-	err = enable_notifications();
-	if (err) {
-		LOG_ERR("Failed to enable notifications");
-		return err;
-	}
-
 	is_initialized = true;
 
 	return 0;
