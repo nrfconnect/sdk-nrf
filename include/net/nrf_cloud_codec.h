@@ -218,6 +218,26 @@ int nrf_cloud_obj_str_get(const struct nrf_cloud_obj *const obj, const char *con
 			  char **str);
 
 /**
+ * @brief Get and detach the object associated with the provided key.
+ *
+ * @details If successful, the object data specified by the given key is removed from obj
+ *          and moved into obj_out.
+ *
+ * @param[in] obj Object containing the key and object.
+ * @param[in] key Key.
+ * @param[out] obj_out Object associated with the provided key.
+ *
+ * @retval -EINVAL Invalid parameter.
+ * @retval -ENODEV Object does not contain the provided key.
+ * @retval -ENOENT Object is not initialized.
+ * @retval -ENOTSUP Action not supported for the object's type.
+ * @retval -ENOMSG Value associated with the key is not an object.
+ * @retval 0 Success; string found.
+ */
+int nrf_cloud_obj_object_detach(struct nrf_cloud_obj *const obj, const char *const key,
+				struct nrf_cloud_obj *const obj_out);
+
+/**
  * @brief Initialize an object as an nRF Cloud device message.
  *
  * @details If successful, memory is allocated for the provided object.
@@ -408,6 +428,10 @@ int nrf_cloud_obj_null_add(struct nrf_cloud_obj *const obj, const char *const ke
 
 /**
  * @brief Add a key string and object to the provided object.
+ *
+ * @details If successful, obj_to_add will be reset with @ref nrf_cloud_obj_reset
+ *          since its data has been moved to obj.
+
  *
  * @param[out] obj Object to contain key and object.
  * @param[in] key Key string; must be valid and constant for the life of the object.

@@ -552,7 +552,14 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
-  * Added the :c:func:`nrf_cloud_credentials_configured_check` function to check if credentials exist based on the application's configuration.
+  * Added:
+
+    * The :c:func:`nrf_cloud_credentials_configured_check` function to check if credentials exist based on the application's configuration.
+    * The :c:func:`nrf_cloud_obj_object_detach` function to get an object from an object.
+
+  * Updated:
+
+    * The :c:func:`nrf_cloud_obj_object_add` function to reset the added object on success.
 
 * :ref:`lib_nrf_provisioning` library:
 

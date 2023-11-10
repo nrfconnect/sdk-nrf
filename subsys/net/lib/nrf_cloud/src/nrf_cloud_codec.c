@@ -128,6 +128,44 @@ int nrf_cloud_obj_str_get(const struct nrf_cloud_obj *const obj, const char *con
 	return -ENOTSUP;
 }
 
+int nrf_cloud_obj_object_detach(struct nrf_cloud_obj *const obj, const char *const key,
+			     struct nrf_cloud_obj *const obj_out)
+{
+	if (!obj || !key || !obj_out) {
+		return -EINVAL;
+	}
+
+	switch (obj->type) {
+	case NRF_CLOUD_OBJ_TYPE_JSON:
+	{
+		if (!obj->json) {
+			return -ENOENT;
+		}
+
+		cJSON * to_detach = cJSON_GetObjectItem(obj->json, key);
+
+		if (!to_detach) {
+			return -ENODEV;
+		}
+
+		if (!cJSON_IsObject(to_detach)) {
+			return -ENOMSG;
+		}
+
+		(void)cJSON_DetachItemViaPointer(obj->json, to_detach);
+
+		obj_out->type = NRF_CLOUD_OBJ_TYPE_JSON;
+		obj_out->json = to_detach;
+
+		return 0;
+	}
+	default:
+		break;
+	}
+
+	return -ENOTSUP;
+}
+
 int nrf_cloud_obj_msg_init(struct nrf_cloud_obj *const obj, const char *const app_id,
 	const char *const msg_type)
 {
@@ -584,8 +622,13 @@ int nrf_cloud_obj_object_add(struct nrf_cloud_obj *const obj, const char *const 
 			return -ENOENT;
 		}
 
-		return cJSON_AddItemToObjectCS(dest_json_get(obj, data_child),
-					       key, obj_to_add->json) ? 0 : -ENOMEM;
+		if (!cJSON_AddItemToObjectCS(dest_json_get(obj, data_child), key,
+					     obj_to_add->json)) {
+			return -ENOMEM;
+		}
+
+		(void)nrf_cloud_obj_reset(obj_to_add);
+		return 0;
 	}
 	default:
 		break;
@@ -776,7 +819,6 @@ int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
 		}
 
 		/* The pvt object now belongs to the gnss msg object */
-		pvt_obj.json = NULL;
 
 		break;
 
@@ -956,7 +998,6 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 		}
 
 		/* The data object now belongs to the location request object */
-		data_obj.json = NULL;
 
 		break;
 	}
@@ -1017,7 +1058,6 @@ int nrf_cloud_obj_pgps_request_create(struct nrf_cloud_obj *const obj,
 		}
 
 		/* The data object now belongs to the P-GPS request object */
-		data_obj.json = NULL;
 
 		break;
 	}
