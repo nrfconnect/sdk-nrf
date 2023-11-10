@@ -161,6 +161,10 @@ config NRF700X_DATA_TX
 	bool "Enable TX data path in the driver"
 	default y if NRF700X_SYSTEM_MODE
 
+config NRF700X_RAW_DATA_TX
+	bool "Enable RAW TX data path in the driver"
+	default y if NRF700X_STA_MODE
+
 config NRF700X_UTIL
 	depends on SHELL
 	bool "Enable Utility shell in nRF700x driver"
