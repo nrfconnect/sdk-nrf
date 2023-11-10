@@ -308,6 +308,12 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	printk("Disconnected (reason 0x%02x)\n", reason);
 
 	test_ready = false;
+
+	err = bt_unpair(BT_ID_DEFAULT, NULL);
+	if (err) {
+		printk("Cannot remove bonds (err %d)\n", err);
+	}
+
 	if (default_conn) {
 		bt_conn_unref(default_conn);
 		default_conn = NULL;
