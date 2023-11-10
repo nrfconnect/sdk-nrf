@@ -20,7 +20,7 @@ GN tool
 To build and develop Matter applications, you need the `GN`_ meta-build system.
 This system generates the Ninja files that the |NCS| uses.
 
-The GN is automatically installed with the |NCS|'s toolchain when you :ref:`install the |NCS| <install_ncs>`.
+The GN is automatically installed with the |NCS|'s toolchain when you :ref:`install the nRF Connect SDK <install_ncs>`.
 If you are updating from the |NCS| version earlier than v1.5.0, see the following GN installation instructions.
 
 .. toggle:: GN installation instructions
@@ -76,45 +76,33 @@ If you are updating from the |NCS| version earlier than v1.5.0, see the followin
 
                mkdir ${HOME}/gn && cd ${HOME}/gn
 
-         #. Install the wget tool:
-
-            .. code-block:: console
-
-               brew install wget
-
          #. Download the GN binary archive and extract it by using the following commands:
 
-            * For 64-bit ARM (M1 and M2) host architecture:
+            * On macOS running on Apple Silicon:
 
             .. code-block:: console
 
-               wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/latest
-               unzip gn.zip
-               rm gn.zip
+               curl -o gn.zip -L https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-arm64/+/latest
 
-            * For 64-bit AMD (Intel) host architecture:
+            * On macOS running on Intel:
 
             .. code-block:: console
 
-               wget -O gn.zip https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
+               curl -o gn.zip -L https:\ //chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest
+
+         #. Unzip the archive and then delete it:
+
+            .. code-block:: console
+
                unzip gn.zip
                rm gn.zip
 
          #. Add the location of the GN tool to the system :envvar:`PATH`.
-            For example, if you are using ``bash``, run the following commands:
 
-            a. Create the :file:`.bash_profile` file if you do not have it already:
+            .. code-block:: console
 
-               .. code-block:: console
-
-                  touch ${HOME}/.bash_profile
-
-            #. Add the location of the GN tool to :file:`.bash_profile`:
-
-               .. code-block:: console
-
-                  echo 'export PATH=${HOME}/gn:"$PATH"' >> ${HOME}/.bash_profile
-                  source ${HOME}/.bash_profile
+               (echo; echo 'export PATH="'${HOME}'/gn:$PATH"') >> ~/.zprofile
+               source ~/.zprofile
 
 .. _ug_matter_gs_tools_controller:
 
