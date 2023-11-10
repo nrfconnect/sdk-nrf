@@ -259,6 +259,16 @@ Sensor device types
 |                   | to a lighting device such as a color light, is capable of being used         |                     |                                       |
 |                   | to switch the device on or off.                                              |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Smoke/CO Alarm    | A Smoke/CO Alarm device is capable of sensing smoke, carbon monoxide,        | Certifiable         |                                       |
+|                   | or both. It is capable of issuing a visual and audible alert to indicate     |                     |                                       |
+|                   | elevated concentration of smoke or carbon monoxide. Smoke/CO Alarms          |                     |                                       |
+|                   | are capable of monitoring themselves and issuing visual and audible alerts   |                     |                                       |
+|                   | for hardware faults, critical low battery conditions, and end of service.    |                     |                                       |
+|                   | Optionally, some of the audible alerts can be temporarily silenced.          |                     |                                       |
+|                   | Smoke/CO Alarms are capable of performing a self-test which performs         |                     |                                       |
+|                   | a diagnostic of the primary sensor and issuing a cycle of the audible        |                     |                                       |
+|                   | and visual life safety alarm indications.                                    |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_closures:
 
@@ -303,6 +313,55 @@ HVAC device types
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 | Fan               | A Fan device capable of controlling a fan in a heating or cooling system.    | Provisional         |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Air Purifier      | An Air Purifier is a standalone device that is designed to clean the air in  | Certifiable         |                                       |
+|                   | a room. It has a fan to control the air speed while it is operating.         |                     |                                       |
+|                   | Optionally, it can report on the condition of its filters.                   |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Air Quality       | An Air Quality Sensor is a device designed to monitor and measure various    | Certifiable         |                                       |
+| Sensor            | parameters related to the quality of ambient air in indoor or outdoor        |                     |                                       |
+|                   | environments.                                                                |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_appliance:
+
+Appliance device types
+======================
+
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type        | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
++====================+==============================================================================+=====================+=======================================+
+| Laundry Washer     | A Laundry Washer represents a device that is capable of laundering consumer  | Certifiable         |                                       |
+|                    | items. Any laundry washer product may utilize this device type.              |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Refidgerator       | A Refrigerator represents a device that contains one or more cabinets that   | Certifiable         |                                       |
+|                    | are capable of chilling or freezing food. Examples of consumer products that |                     |                                       |
+|                    | may make use of this device type include refrigerators, freezers, and wine   |                     |                                       |
+|                    | coolers.                                                                     |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Room Air           | A Room Air Conditioner is a device with the primary function of controlling  | Certifiable         |                                       |
+| Conditioner        | the air temperature in a single room.                                        |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Temperature        | A Temperature Controlled Cabinet only exists composed as part of another     | Certifiable         |                                       |
+| Controlled         | device type. It represents a single cabinet chilling or freezing food        |                     |                                       |
+| Cabinet            | in a refrigerator, freezer, wine chiller or other similar device.            |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Dishwasher         | A Dishwasher is a device that is generally installed in residential homes    | Certifiable         |                                       |
+|                    | and is capable of washing dishes, cutlery, and other items associated        |                     |                                       |
+|                    | with food preparation and consumption. The device can be permanently         |                     |                                       |
+|                    | installed or portable and can have variety of filling and draining methods.  |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_robotic:
+
+Robotic device types
+======================
+
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type        | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
++====================+==============================================================================+=====================+=======================================+
+| Robotic Vacuum     | A Robotic Vacuum Cleaner is a device that is capable of cleaning consumer    | Certifiable         |                                       |
+| Cleaner            | floor.                                                                       |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_utility:
 
