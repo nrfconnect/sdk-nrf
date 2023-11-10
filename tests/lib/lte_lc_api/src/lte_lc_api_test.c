@@ -374,36 +374,12 @@ void test_lte_lc_normal_fail2(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
 	/* enable_notifications */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", -NRF_ENOMEM);
-	__cmock_nrf_modem_at_cmd_ExpectAnyArgsAndReturn(-NRF_ENOMEM);
-	/* error is ignored */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", EXIT_SUCCESS);
-
 
 	ret = lte_lc_normal();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
 void test_lte_lc_normal_fail3(void)
-{
-	int ret;
-	char modem_ver[] = "MODEM_FW_VER_1.0\r\nOK";
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
-	/* enable_notifications */
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", -NRF_ENOMEM);
-
-	/* error is ignored but modem FW version is checked */
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGMR", EXIT_SUCCESS);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(modem_ver, sizeof(modem_ver));
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", EXIT_SUCCESS);
-	ret = lte_lc_normal();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-}
-
-void test_lte_lc_normal_fail4(void)
 {
 	int ret;
 
