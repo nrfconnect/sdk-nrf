@@ -189,6 +189,8 @@
 #define NRF_CLOUD_JSON_KEY_METHOD		"method"
 #define NRF_CLOUD_JSON_VAL_NOT_ASSOC		"not_associated"
 #define NRF_CLOUD_JSON_VAL_PAIRED		"paired"
+#define NRF_CLOUD_JSON_KEY_SHADOW_VERSION	"version"
+#define NRF_CLOUD_JSON_KEY_SHADOW_TIMESTAMP	"timestamp"
 /* Current FOTA version string used in device shadow */
 #define NRF_CLOUD_FOTA_VER_STR			"fota_v" STRINGIFY(NRF_CLOUD_FOTA_VER)
 /* Max length of nRF Cloud's stage/environment name */

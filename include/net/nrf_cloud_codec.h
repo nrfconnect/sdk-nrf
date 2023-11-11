@@ -94,6 +94,48 @@ struct nrf_cloud_obj {
 	struct nrf_cloud_data encoded_data;
 };
 
+/** @brief Types of shadow updates */
+enum nrf_cloud_obj_shadow_type {
+	/* A shadow delta, when there is a mismatch between "desired" and "reported" sections. */
+	NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA,
+	/* The accepted shadow data. nRF Cloud provides a trimmed report to reduce overhead. */
+	NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED
+};
+
+/** @brief Object containing shadow delta data */
+struct nrf_cloud_obj_shadow_delta {
+	/** The shadow version number */
+	int ver;
+	/** Timestamp of the delta event */
+	int64_t ts;
+	/** The delta data in the "state" object */
+	struct nrf_cloud_obj state;
+};
+
+/** @brief Object containing the accepted shadow data */
+struct nrf_cloud_obj_shadow_accepted {
+	/** The "desired" shadow data */
+	struct nrf_cloud_obj desired;
+	/** The "reported" shadow data */
+	struct nrf_cloud_obj reported;
+	/** The reported "config" shadow data.
+	 * nRF Cloud separates this to allow for easier processing.
+	 */
+	struct nrf_cloud_obj config;
+};
+
+/** @brief Object containing shadow update data */
+struct nrf_cloud_obj_shadow_data {
+	/** The type of shadow data provided in the union */
+	enum nrf_cloud_obj_shadow_type type;
+	union {
+		/** Accepted data; for type = NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED */
+		struct nrf_cloud_obj_shadow_accepted *accepted;
+		/** Delta data; for type = NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA */
+		struct nrf_cloud_obj_shadow_delta *delta;
+	};
+};
+
 /** @brief Define an nRF Cloud JSON object.
  *
  * This macro defines a codec object with the type of NRF_CLOUD_OBJ_TYPE_JSON.
@@ -695,25 +737,22 @@ int nrf_cloud_error_msg_decode(const char * const buf,
  *      "myData":{"myValue":1}
  *
  *  If rejecting, the delta should be modified with the correct data and passed
- *  into this function as the input_obj parameter, with the accept flag set to false.
+ *  into this function as the delta_state_obj parameter, with the accept flag set to false.
  *  Example input_obj:
  *      "myData":{"myValue":3}
  *
  *  A value can be removed from the shadow by setting it to null.
  *  Example input_obj:
  *      "myData":{"myValue":null}
- *  The output parameter can then be sent to nRF Cloud using nrf_cloud_coap_shadow_state_update()
- *  when using CoAP or nrf_cloud_send() when using MQTT.
+ *  On success, the delta_state_obj parameter can be sent to nRF Cloud using
+ *  nrf_cloud_coap_shadow_state_update() for CoAP or nrf_cloud_obj_shadow_update() for MQTT.
  *
- *  @param[in]  input_obj  Shadow fragment to encode for sending.
+ *  @param[in]  delta_state_obj  The contents of the "state" object received in a shadow delta.
  *  @param[in]  accept     Flag to indicate whether to accept (place in reported section) or reject
  *                         (place in desired section).
- *  @param[out] output     Pointer to and length of a buffer containing the JSON-formatted
- *                         text to send.
  */
-int nrf_cloud_shadow_delta_response_encode(cJSON *input_obj,
-					   bool accept,
-					   struct nrf_cloud_data *const output);
+int nrf_cloud_obj_shadow_delta_response_encode(struct nrf_cloud_obj *const delta_state_obj,
+					       bool accept);
 
 /** @} */
 

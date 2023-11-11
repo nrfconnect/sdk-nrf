@@ -38,6 +38,11 @@ int nrf_cloud_obj_input_decode(struct nrf_cloud_obj *const obj,
 		return -EINVAL;
 	}
 
+	if (obj->type == NRF_CLOUD_OBJ_TYPE_COAP_CBOR) {
+		/* Decoding CoAP CBOR input is not supported */
+		return -ENOTSUP;
+	}
+
 	int ret;
 	bool known_type = true;
 
@@ -1075,38 +1080,29 @@ cleanup:
 }
 #endif
 
-int nrf_cloud_shadow_delta_response_encode(cJSON *input_obj,
-					   bool accept,
-					   struct nrf_cloud_data *const output)
+int nrf_cloud_obj_shadow_delta_response_encode(struct nrf_cloud_obj *const delta_state_obj,
+					       bool accept)
 {
-	__ASSERT_NO_MSG(output != NULL);
-	__ASSERT_NO_MSG(input_obj != NULL);
-
-	char *buffer = NULL;
-	cJSON *root_obj = NULL;
-	cJSON *state_obj = NULL;
-
-	if (input_obj == NULL) {
-		LOG_ERR("No input_obj");
-		return -ESRCH; /* invalid input */
+	if (!delta_state_obj || !delta_state_obj->json ||
+	    (delta_state_obj->type != NRF_CLOUD_OBJ_TYPE_JSON)) {
+		return -EINVAL;
 	}
 
-	root_obj = cJSON_CreateObject();
-	state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
-	if (cJSON_AddItemToObjectCS(state_obj,
+	cJSON * root_obj = cJSON_CreateObject();
+	cJSON *state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
+
+	/* Move the provided state into the new object.
+	 * Accept the delta by updating reported.
+	 * Reject the delta by updating desired.
+	 */
+	if (!cJSON_AddItemToObjectCS(state_obj,
 				    accept ? NRF_CLOUD_JSON_KEY_REP : NRF_CLOUD_JSON_KEY_DES,
-				    input_obj)) {
-		buffer = cJSON_PrintUnformatted(root_obj);
-	}
-	cJSON_Delete(root_obj);
-
-	if (buffer == NULL) {
+				    delta_state_obj->json)) {
+		cJSON_Delete(root_obj);
 		return -ENOMEM;
 	}
 
-	LOG_DBG("Response to the delta: %s", buffer);
-	output->ptr = buffer;
-	output->len = strlen(buffer);
-
+	/* Update to reference the new object */
+	delta_state_obj->json = root_obj;
 	return 0;
 }
