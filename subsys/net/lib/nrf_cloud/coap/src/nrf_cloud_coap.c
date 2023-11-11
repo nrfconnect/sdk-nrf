@@ -670,6 +670,6 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data)
 		}
 	}
 
-	LOG_INF("Processed control change");
+	LOG_DBG("Processed control change");
 	return err;
 }

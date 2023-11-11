@@ -13,6 +13,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <net/nrf_cloud_defs.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_alert.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
@@ -102,26 +103,56 @@ int nrf_cloud_encode_message(const char *app_id, double value, const char *str_v
 int nrf_cloud_shadow_data_encode(const struct nrf_cloud_sensor_data *sensor,
 				 struct nrf_cloud_data *output);
 
-/** @brief Encode the user association data based on the indicated type. */
-int nrf_cloud_requested_state_decode(const struct nrf_cloud_data *payload,
-				     enum nfsm_state *requested_state);
-
 /** @brief Decode data endpoint information. */
-int nrf_cloud_data_endpoint_decode(const struct nrf_cloud_data *input,
-				   struct nrf_cloud_data *tx_endpoint,
-				   struct nrf_cloud_data *rx_endpoint,
-				   struct nrf_cloud_data *bulk_endpoint,
-				   struct nrf_cloud_data *bin_endpoint,
-				   struct nrf_cloud_data *m_endpoint);
+int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
+				  struct nrf_cloud_data *tx_endpoint,
+				  struct nrf_cloud_data *rx_endpoint,
+				  struct nrf_cloud_data *bulk_endpoint,
+				  struct nrf_cloud_data *bin_endpoint,
+				  struct nrf_cloud_data *m_endpoint);
 
 /** @brief Encode state information. */
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
 			   const bool add_dev_status, struct nrf_cloud_data *output);
 
-/** @brief Parse input for control section, and return contents and status of it. */
-int nrf_cloud_shadow_control_decode(struct nrf_cloud_data const *const input,
-				    enum nrf_cloud_ctrl_status *status,
+/** @brief Decode the shadow data and get the requested FSM state. */
+int nrf_cloud_shadow_data_state_decode(const struct nrf_cloud_obj_shadow_data *const input,
+				       enum nfsm_state *const requested_state);
+
+/** @brief Decode the accepted shadow data.
+ * Decoded data should be freed with @ref nrf_cloud_obj_shadow_accepted_free.
+ */
+int nrf_cloud_obj_shadow_accepted_decode(struct nrf_cloud_obj *const shadow_obj,
+					 struct nrf_cloud_obj_shadow_accepted *const accepted);
+
+/** @brief Free the accepted shadow data. */
+void nrf_cloud_obj_shadow_accepted_free(struct nrf_cloud_obj_shadow_accepted *const accepted);
+
+/** @brief Decode the delta shadow data.
+ * Decoded data should be freed with @ref nrf_cloud_obj_shadow_delta_free.
+ */
+int nrf_cloud_obj_shadow_delta_decode(struct nrf_cloud_obj *const shadow_obj,
+				      struct nrf_cloud_obj_shadow_delta *const delta);
+
+/** @brief Free the delta shadow data. */
+void nrf_cloud_obj_shadow_delta_free(struct nrf_cloud_obj_shadow_delta *const delta);
+
+/** @brief Check if the shadow data should be sent to the application. */
+bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const input);
+
+/** @brief Get the control section from the shadow data.
+ * The control section will be detached from the input object and should be
+ * freed with @ref nrf_cloud_obj_free.
+ */
+int nrf_cloud_shadow_control_get(struct nrf_cloud_obj_shadow_data *const input,
+				 struct nrf_cloud_obj *const ctrl_obj);
+
+/** @brief Parse the control object into the provided control data struct. */
+int nrf_cloud_shadow_control_decode(struct nrf_cloud_obj *const ctrl_obj,
 				    struct nrf_cloud_ctrl_data *data);
+
+/** @brief Get the current device control state. */
+void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl);
 
 /** @brief Encode response that we have accepted a shadow delta. */
 int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *const data,

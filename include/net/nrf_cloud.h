@@ -405,6 +405,8 @@ struct nrf_cloud_evt {
 	struct nrf_cloud_data data;
 	/** Topic on which data was received. */
 	struct nrf_cloud_topic topic;
+	/** Decoded shadow data: valid for NRF_CLOUD_EVT_RX_DATA_SHADOW events. */
+	struct nrf_cloud_obj_shadow_data *shadow;
 };
 
 /** @brief Structure used to send data to nRF Cloud. */

@@ -9,6 +9,7 @@
 #include "nrf_cloud_mem.h"
 #include <zephyr/kernel.h>
 #include <net/nrf_cloud_alert.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_log.h>
 #include <zephyr/logging/log.h>
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
@@ -34,7 +35,6 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt);
 static int dc_tx_ack_handler(const struct nct_evt *nct_evt);
 static int dc_disconnection_handler(const struct nct_evt *nct_evt);
 static int cc_rx_data_handler(const struct nct_evt *nct_evt);
-static int handle_pin_complete(const struct nct_evt *nct_evt);
 
 static const fsm_transition idle_fsm_transition[NCT_EVT_TOTAL] = {
 	[NCT_EVT_DISCONNECTED] = disconnection_handler,
@@ -335,19 +335,27 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 	return 0;
 }
 
-static int handle_pin_complete(const struct nct_evt *nct_evt)
+static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input)
 {
 	int err;
-	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
 	struct nrf_cloud_data rx;
 	struct nrf_cloud_data tx;
 	struct nrf_cloud_data bulk;
 	struct nrf_cloud_data bin;
 	struct nrf_cloud_data endpoint;
+	struct nrf_cloud_obj *desired_obj = NULL;
 
-	err = nrf_cloud_data_endpoint_decode(payload, &tx, &rx, &bulk, &bin, &endpoint);
+	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
+		desired_obj = &input->accepted->desired;
+	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+		desired_obj = &input->delta->state;
+	} else {
+		return -ENOTSUP;
+	}
+
+	err = nrf_cloud_obj_endpoint_decode(desired_obj, &tx, &rx, &bulk, &bin, &endpoint);
 	if (err) {
-		LOG_ERR("nrf_cloud_data_endpoint_decode failed %d", err);
+		LOG_ERR("nrf_cloud_obj_endpoint_decode failed %d", err);
 		return err;
 	}
 
@@ -357,80 +365,224 @@ static int handle_pin_complete(const struct nct_evt *nct_evt)
 	/* Set the endpoint information. */
 	nct_dc_endpoint_set(&tx, &rx, &bulk, &bin, &endpoint);
 
-	return state_ua_pin_complete();
+	return 0;
+}
+
+static void shadow_control_process(struct nrf_cloud_obj_shadow_data *const input)
+{
+	enum nrf_cloud_ctrl_status ctrl_status = NRF_CLOUD_CTRL_NOT_PRESENT;
+	struct nrf_cloud_ctrl_data cloud_ctrl;
+	struct nrf_cloud_ctrl_data device_ctrl = {0};
+	NRF_CLOUD_OBJ_JSON_DEFINE(ctrl_obj);
+
+	int err = nrf_cloud_shadow_control_get(input, &ctrl_obj);
+
+	if (err) {
+		/* No control to process */
+		return;
+	}
+
+	/* A delta needs a reply */
+	ctrl_status = (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) ?
+		      NRF_CLOUD_CTRL_REPLY : NRF_CLOUD_CTRL_NO_REPLY;
+
+	/* Init control status variables */
+	nrf_cloud_device_control_get(&device_ctrl);
+	/* Set cloud equal to device, then diff later */
+	cloud_ctrl = device_ctrl;
+
+	/* Get actual cloud control status */
+	err = nrf_cloud_shadow_control_decode(&ctrl_obj, &cloud_ctrl);
+	if (err == -EINVAL) {
+		/* There was an invalid value, correct (reject) it */
+		ctrl_status = NRF_CLOUD_CTRL_REJECT;
+	}
+
+	nrf_cloud_obj_free(&ctrl_obj);
+
+	/* Diff cloud/device control settings */
+	if (ctrl_status != NRF_CLOUD_CTRL_REJECT) {
+
+		if (device_ctrl.alerts_enabled != cloud_ctrl.alerts_enabled) {
+			ctrl_status = NRF_CLOUD_CTRL_REPLY;
+#if defined(CONFIG_NRF_CLOUD_ALERT)
+			nrf_cloud_alert_control_set(cloud_ctrl.alerts_enabled);
+#endif /* CONFIG_NRF_CLOUD_ALERT */
+		}
+
+		if (device_ctrl.log_level != cloud_ctrl.log_level) {
+			ctrl_status = NRF_CLOUD_CTRL_REPLY;
+			nrf_cloud_log_control_set(cloud_ctrl.log_level);
+		}
+	}
+
+	if (ctrl_status == NRF_CLOUD_CTRL_NO_REPLY) {
+		LOG_INF("No need to reply to control settings");
+		return;
+	}
+
+	struct nct_cc_data msg = {
+		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
+		.message_id = NCT_MSG_ID_STATE_REPORT
+	};
+
+	/* Encode reply; if rejecting use device control data, confirm with cloud data */
+	err = nrf_cloud_shadow_control_response_encode(
+		((ctrl_status == NRF_CLOUD_CTRL_REJECT) ? &device_ctrl : &cloud_ctrl),
+		(ctrl_status == NRF_CLOUD_CTRL_REPLY),
+		&msg.data);
+
+	if (err) {
+		LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
+		return;
+	}
+
+	LOG_INF("Confirming device control in shadow: %s", (const char *)msg.data.ptr);
+	err = nct_cc_send(&msg);
+	nrf_cloud_free((void *)msg.data.ptr);
+	if (err) {
+		LOG_ERR("nct_cc_send failed %d", err);
+	}
+}
+
+static void accept_associated_or_wait_state(enum nfsm_state cur_state, enum nfsm_state new_state,
+					    bool *const accept_state, bool *const do_discon)
+{
+	if (!accept_state || !do_discon) {
+		return;
+	}
+
+	switch (cur_state) {
+	case STATE_CC_CONNECTED:
+	case STATE_CLOUD_STATE_REQUESTED:
+	case STATE_UA_PIN_WAIT:
+	case STATE_UA_PIN_COMPLETE:
+		if (new_state == STATE_UA_PIN_COMPLETE) {
+			*accept_state = true;
+			return;
+		} else if (new_state == STATE_UA_PIN_WAIT) {
+			*accept_state = true;
+			return;
+		}
+		break;
+	case STATE_DC_CONNECTING:
+	case STATE_DC_CONNECTED:
+		if (new_state == STATE_UA_PIN_WAIT) {
+			*accept_state = true;
+			*do_discon = true;
+		}
+		break;
+	default:
+		break;
+	}
+
+	*accept_state = false;
+	*do_discon = false;
 }
 
 static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 {
 	__ASSERT_NO_MSG(nct_evt != NULL);
 	__ASSERT_NO_MSG(nct_evt->param.cc != NULL);
-	int err;
-	enum nfsm_state new_state;
-	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
-	const enum nfsm_state current_state = nfsm_get_current_state();
-	struct nct_cc_data msg = {
-		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
-		.message_id = NCT_MSG_ID_STATE_REPORT
-	};
-	enum nrf_cloud_ctrl_status status;
 
-	LOG_DBG("CC RX on topic %*s: %s",
+	int err = 0;
+	bool accept = false;
+	bool discon = false;
+	enum nfsm_state new_state;
+	const enum nfsm_state current_state = nfsm_get_current_state();
+	struct nrf_cloud_obj_shadow_accepted shadow_accepted = {0};
+	struct nrf_cloud_obj_shadow_delta shadow_delta = {0};
+	struct nrf_cloud_obj_shadow_data shadow_data = {0};
+	NRF_CLOUD_OBJ_JSON_DEFINE(shadow_obj);
+
+	LOG_DBG("CC RX on topic [%d] %*s: %s",
+		nct_evt->param.cc->opcode,
 		nct_evt->param.cc->topic.len,
 		(const char *)nct_evt->param.cc->topic.ptr,
 		(const char *)nct_evt->param.cc->data.ptr);
 
-	err = nrf_cloud_device_control_update(&nct_evt->param.cc->data, &msg.data,
-					      &status);
+	if ((nct_evt->param.cc->opcode != NCT_CC_OPCODE_UPDATE_ACCEPTED) &&
+	    (nct_evt->param.cc->opcode != NCT_CC_OPCODE_UPDATE_DELTA)) {
+		return 0;
+	}
+
+	/* Decode input data */
+	err = nrf_cloud_obj_input_decode(&shadow_obj, &nct_evt->param.cc->data);
 	if (err) {
-		LOG_ERR("Error updating device control: %d", err);
-	} else if (msg.data.ptr) {
-		LOG_DBG("Confirming shadow: %s", (const char *)msg.data.ptr);
-		err = nct_cc_send(&msg);
-		nrf_cloud_free((void *)msg.data.ptr);
-		if (err) {
-			LOG_ERR("nct_cc_send failed %d", err);
+		LOG_ERR("Error decoding shadow data, error: %d", err);
+		return -ENOMSG;
+	}
+
+	/* Decode data based on the topic */
+	if (nct_evt->param.cc->opcode == NCT_CC_OPCODE_UPDATE_ACCEPTED) {
+		err = nrf_cloud_obj_shadow_accepted_decode(&shadow_obj, &shadow_accepted);
+		if (!err) {
+			shadow_data.type = NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED;
+			shadow_data.accepted = &shadow_accepted;
+			LOG_DBG("Accepted shadow decoded");
+		}
+	} else if (nct_evt->param.cc->opcode == NCT_CC_OPCODE_UPDATE_DELTA) {
+		err = nrf_cloud_obj_shadow_delta_decode(&shadow_obj, &shadow_delta);
+		if (!err) {
+			shadow_data.type = NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA;
+			shadow_data.delta = &shadow_delta;
+			LOG_DBG("Delta shadow decoded");
 		}
 	}
 
-	struct nrf_cloud_evt cloud_evt = {
-		.type = NRF_CLOUD_EVT_RX_DATA_SHADOW,
-		.data = nct_evt->param.cc->data,
-		.topic = nct_evt->param.cc->topic
-	};
+	nrf_cloud_obj_free(&shadow_obj);
 
-	/* Give application a chance to see the change to the shadow. */
-	nfsm_set_current_state_and_notify(current_state, &cloud_evt);
-
-	err = nrf_cloud_requested_state_decode(payload, &new_state);
 	if (err) {
-		LOG_DBG("Error %d when decoding requested state; current:%d",
-			err, current_state);
+		return 0;
+	}
+
+	/* Check for (device/cloud association) state data */
+	err = nrf_cloud_shadow_data_state_decode(&shadow_data, &new_state);
+	if (!err) {
+		accept_associated_or_wait_state(current_state, new_state, &accept, &discon);
+	}
+
+	/* If accepting the association complete state, set the endpoint data */
+	if (accept && (new_state == STATE_UA_PIN_COMPLETE)) {
+		/* Get and set endpoint data */
+		(void)set_endpoint_data(&shadow_data);
+	}
+
+	/* Process control data */
+	shadow_control_process(&shadow_data);
+
+	/* Check if data should be sent to the application */
+	if (nrf_cloud_shadow_app_send_check(&shadow_data)) {
+		/* Include the decoded shadow_data along with the original data */
+		struct nrf_cloud_evt cloud_evt = {
+			.type = NRF_CLOUD_EVT_RX_DATA_SHADOW,
+			.data = nct_evt->param.cc->data,
+			.topic = nct_evt->param.cc->topic,
+			.shadow = &shadow_data
+		};
+
+		nfsm_set_current_state_and_notify(current_state, &cloud_evt);
+	}
+
+	/* Free the shadow objects */
+	nrf_cloud_obj_shadow_accepted_free(&shadow_accepted);
+	nrf_cloud_obj_shadow_delta_free(&shadow_delta);
+
+	if (!accept) {
+		/* The new state is not accepted */
 		return 0;
 	}
 
 	LOG_DBG("New state: %d", new_state);
 
-	switch (current_state) {
-	case STATE_CC_CONNECTED:
-	case STATE_CLOUD_STATE_REQUESTED:
-	case STATE_UA_PIN_WAIT:
-	case STATE_UA_PIN_COMPLETE:
-		if (new_state == STATE_UA_PIN_COMPLETE) {
-			return handle_pin_complete(nct_evt);
-		} else if (new_state == STATE_UA_PIN_WAIT) {
-			return state_ua_pin_wait();
-		}
-		break;
-	case STATE_DC_CONNECTING:
-	case STATE_DC_CONNECTED:
-		if (new_state == STATE_UA_PIN_WAIT) {
+	if (new_state == STATE_UA_PIN_COMPLETE) {
+		return state_ua_pin_complete();
+	} else if (new_state == STATE_UA_PIN_WAIT) {
+		if (discon) {
 			/* Device was just removed from its nRF Cloud account. */
 			(void)nct_dc_disconnect();
-			return state_ua_pin_wait();
 		}
-		break;
-	default:
-		break;
+		return state_ua_pin_wait();
 	}
 
 	return 0;
