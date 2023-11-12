@@ -1299,9 +1299,11 @@ psa_status_t psa_driver_wrapper_aead_encrypt_setup(psa_aead_operation_t *operati
 		 */
 #if defined(PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT)
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
-		operation->id = PSA_CRYPTO_CC3XX_DRIVER_ID;
 		status = cc3xx_aead_encrypt_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 						  key_buffer, key_buffer_size, alg);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CC3XX_DRIVER_ID;
+		}
 
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
@@ -1309,9 +1311,11 @@ psa_status_t psa_driver_wrapper_aead_encrypt_setup(psa_aead_operation_t *operati
 		}
 #endif /* PSA_NEED_CC3XX_AEAD_DRIVER */
 #if defined(PSA_NEED_OBERON_AEAD_DRIVER)
-		operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		status = oberon_aead_encrypt_setup(&operation->ctx.oberon_driver_ctx, attributes,
 						   key_buffer, key_buffer_size, alg);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
+		}
 
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
@@ -1351,19 +1355,22 @@ psa_status_t psa_driver_wrapper_aead_decrypt_setup(psa_aead_operation_t *operati
 		 */
 #if defined(PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT)
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER)
-		operation->id = PSA_CRYPTO_CC3XX_DRIVER_ID;
 		status = cc3xx_aead_decrypt_setup(&operation->ctx.cc3xx_driver_ctx, attributes,
 						  key_buffer, key_buffer_size, alg);
-
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_CC3XX_DRIVER_ID;
+		}
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
 			return status;
 		}
 #endif /* PSA_NEED_CC3XX_AEAD_DRIVER  */
 #if defined(PSA_NEED_OBERON_AEAD_DRIVER)
-		operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		status = oberon_aead_decrypt_setup(&operation->ctx.oberon_driver_ctx, attributes,
 						   key_buffer, key_buffer_size, alg);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
+		}
 
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
