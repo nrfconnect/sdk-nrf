@@ -313,7 +313,7 @@ static void assistance_result_cb(uint16_t object_id, int32_t result_code)
 	if (object_id == GNSS_ASSIST_OBJECT_ID) {
 		LOG_DBG("LwM2M GNSS assistance result: %d", result_code);
 
-		if (agnss_request_pending) {
+		if (agnss_request_pending && IS_ENABLED(CONFIG_NRF_CLOUD_AGNSS)) {
 			LOG_INF("Sending pending A-GNSS request");
 
 			err = location_assistance_agnss_request_send(&client);
@@ -322,7 +322,7 @@ static void assistance_result_cb(uint16_t object_id, int32_t result_code)
 			}
 
 			agnss_request_pending = false;
-		} else if (pgps_request_pending) {
+		} else if (pgps_request_pending && IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
 			LOG_INF("Sending pending P-GPS request");
 
 			err = location_assistance_pgps_request_send(&client);

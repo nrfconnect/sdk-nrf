@@ -313,6 +313,7 @@ void test_location_gnss(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 	at_monitor_dispatch("+CSCON: 0");
+	k_sleep(K_MSEC(1));
 
 	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
@@ -513,6 +514,7 @@ void test_location_request_default(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 	at_monitor_dispatch("+CSCON: 0");
+	k_sleep(K_MSEC(1));
 
 	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, -EINVAL);
@@ -728,6 +730,7 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 
 	at_monitor_dispatch("+CSCON: 0");
+	k_sleep(K_MSEC(1));
 
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 }
@@ -796,6 +799,7 @@ void test_location_gnss_periodic(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 	at_monitor_dispatch("+CSCON: 0");
+	k_sleep(K_MSEC(1));
 
 	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
@@ -834,6 +838,7 @@ void test_location_gnss_periodic(void)
 
 	k_sleep(K_MSEC(1500));
 	at_monitor_dispatch("+CSCON: 0");
+	k_sleep(K_MSEC(1));
 
 	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
 		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
