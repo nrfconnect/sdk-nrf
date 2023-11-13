@@ -14,6 +14,16 @@ set(CONF_FILE_BUILD_TYPE ${CONF_FILE_BUILD_TYPE} CACHE INTERNAL "The build type"
 # Customize the Zephyr kernel version.h using nRF Connect SDK ncs_version.h.
 set(KERNEL_VERSION_CUSTOMIZATION \#include;<ncs_version.h> PARENT_SCOPE)
 
+foreach(runner_ext BIN HEX ELF)
+  zephyr_get(NCS_RUNNER_${runner_ext} SYSBUILD)
+  if(DEFINED NCS_RUNNER_${runner_ext})
+    string(TOLOWER "${runner_ext}" type)
+    set_target_properties(runners_yaml_props_target PROPERTIES
+                          "${type}_file" "${NCS_RUNNER_${runner_ext}}"
+    )
+  endif()
+endforeach()
+
 include(cmake/extensions.cmake)
 include(cmake/version.cmake)
 include(cmake/multi_image.cmake)

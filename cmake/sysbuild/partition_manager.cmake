@@ -299,21 +299,34 @@ function(update_runner)
 
   set(runners_content_update)
   file(STRINGS ${runners_file} runners_content)
-  foreach(line ${runners_content})
-    if(DEFINED RUNNER_ELF AND ${line} MATCHES "^.*elf_file: .*$")
+  foreach(line IN LISTS runners_content)
+    if(DEFINED RUNNER_ELF AND "${line}" MATCHES "^.*elf_file: .*$")
       string(REGEX REPLACE "(.*elf_file:) .*" "\\1 ${RUNNER_ELF}" line ${line})
+      set(${RUNNER_IMAGE}_NCS_RUNNER_ELF "${RUNNER_ELF}" CACHE INTERNAL
+          "nRF Connect SDK partition managere controlled elf file"
+      )
     endif()
 
-    if(DEFINED RUNNER_HEX AND ${line} MATCHES "^.*hex_file: .*$")
+    if(DEFINED RUNNER_HEX AND "${line}" MATCHES "^.*hex_file: .*$")
       string(REGEX REPLACE "(.*hex_file:) .*" "\\1 ${RUNNER_HEX}" line ${line})
+      set(${RUNNER_IMAGE}_NCS_RUNNER_HEX "${RUNNER_HEX}" CACHE INTERNAL
+          "nRF Connect SDK partition managere controlled hex file"
+      )
     endif()
 
-    if(DEFINED RUNNER_BIN AND ${line} MATCHES "^.*bin_file: .*$")
+    if(DEFINED RUNNER_BIN AND "${line}" MATCHES "^.*bin_file: .*$")
       string(REGEX REPLACE "(.*bin_file:) .*" "\\1 ${RUNNER_BIN}" line ${line})
+      set(${RUNNER_IMAGE}_NCS_RUNNER_BIN "${RUNNER_BIN}" CACHE INTERNAL
+          "nRF Connect SDK partition managere controlled bin file"
+      )
     endif()
     list(APPEND runners_content_update "${line}\n")
   endforeach()
   file(WRITE ${runners_file} ${runners_content_update})
+
+  # NCS has updated the cache with an NCS_RUNNER file, thus re-create the sysbuild cache.
+  # No need for CMAKE_RERUN in this case, as runners.yaml has been updated above.
+  sysbuild_cache(CREATE APPLICATION ${RUNNER_IMAGE})
 endfunction()
 
 
