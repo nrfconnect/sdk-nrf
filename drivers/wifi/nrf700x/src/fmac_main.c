@@ -184,8 +184,9 @@ void nrf_wifi_scan_timeout_work(struct k_work *work)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
 
-	vif_ctx_zep = CONTAINER_OF(work, struct nrf_wifi_vif_ctx_zep, scan_timeout_work);
+	vif_ctx_zep = CONTAINER_OF(dwork, struct nrf_wifi_vif_ctx_zep, scan_timeout_work);
 
 	if (!vif_ctx_zep->scan_in_progress) {
 		LOG_INF("%s: Scan not in progress", __func__);

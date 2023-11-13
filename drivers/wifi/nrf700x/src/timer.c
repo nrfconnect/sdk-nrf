@@ -21,8 +21,9 @@
 static void timer_expiry_function(struct k_work *work)
 {
 	struct timer_list *timer;
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
 
-	timer = (struct timer_list *)CONTAINER_OF(work, struct timer_list, work);
+	timer = (struct timer_list *)CONTAINER_OF(dwork, struct timer_list, work);
 
 	timer->function(timer->data);
 }
