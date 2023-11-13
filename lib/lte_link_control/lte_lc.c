@@ -87,8 +87,6 @@ K_SEM_DEFINE(ncellmeas_idle_sem, 1, 1);
 /* Network attach semaphore */
 static K_SEM_DEFINE(link, 0, 1);
 
-static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
-
 /* System mode to use when connecting to LTE network, which can be changed in
  * two ways:
  *	- Automatically to fallback mode (if enabled) when connection to the
@@ -703,10 +701,10 @@ static int connect_lte(bool blocking)
 
 			if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) &&
 			    (tries > 0)) {
-				if (sys_mode_target == sys_mode_preferred) {
+				if (sys_mode_target == SYS_MODE_PREFERRED) {
 					sys_mode_target = sys_mode_fallback;
 				} else {
-					sys_mode_target = sys_mode_preferred;
+					sys_mode_target = SYS_MODE_PREFERRED;
 				}
 
 				err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
