@@ -66,6 +66,14 @@ config NRF_MODEM_LIB_NET_IF_AUTO_DOWN
 	 down when it stops trying to connect. This option sets the default value, the option has
 	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
 
+config NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT
+	bool "Disconnect on iface down"
+	help
+	 If this option is set, the LTE iface will disconnect LTE instead of shutting down the
+	 modem when going down. This option sets the default value for the
+	 NRF_MODEM_LIB_NET_IF_DOWN connectivity option. The value can still be changed at runtime
+	 by calling conn_mgr_if_set_opt().
+
 module = NRF_MODEM_LIB_NET_IF
 module-str = Modem network interface
 source "subsys/logging/Kconfig.template.log_config"

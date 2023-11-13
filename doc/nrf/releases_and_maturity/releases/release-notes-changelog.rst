@@ -420,10 +420,14 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
-   * Added a mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
-   * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
-     All related Kconfig options have been renamed accordingly.
-   * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
+  * Added:
+
+    * A mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT` option, allowing the :c:enumerator:`nrf_modem_lib_net_if_options.NRF_MODEM_LIB_NET_IF_DOWN` option to be set to :c:enumerator:`~nrf_modem_lib_net_if_down_options.NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT` at build time.
+
+  * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
+    All related Kconfig options have been renamed accordingly.
+  * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
 
   * Removed:
 

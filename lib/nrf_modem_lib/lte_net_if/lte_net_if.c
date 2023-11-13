@@ -344,10 +344,22 @@ static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 {
 	int ret;
 	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
+	uint8_t down_mode;
 
 	net_if_dormant_on(if_conn->iface);
 
-	/* Apply requested flag overrides */
+	/* Apply requested option and flag overrides */
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT)) {
+		down_mode = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
+		ret = conn_mgr_if_set_opt(if_conn->iface, NRF_MODEM_LIB_NET_IF_DOWN,
+					  (const void *)&down_mode, sizeof(down_mode));
+		if (ret) {
+			LOG_ERR("conn_mgr_if_set_opt, error: %d", ret);
+			net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
+			return;
+		}
+	}
+
 	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT)) {
 		ret = conn_mgr_if_set_flag(if_conn->iface, CONN_MGR_IF_NO_AUTO_CONNECT, true);
 		if (ret) {
