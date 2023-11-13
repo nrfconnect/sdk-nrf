@@ -16,8 +16,10 @@
 static int client_fd;
 static struct sockaddr_storage host_addr;
 static struct k_work_delayable socket_transmission_work;
+static int data_upload_iterations = CONFIG_UDP_DATA_UPLOAD_ITERATIONS;
 
 K_SEM_DEFINE(lte_connected, 0, 1);
+K_SEM_DEFINE(modem_shutdown_sem, 0, 1);
 
 static void socket_transmission_work_fn(struct k_work *work)
 {
@@ -63,6 +65,18 @@ static void socket_transmission_work_fn(struct k_work *work)
 	}
 #endif
 
+	/* Transmit a limited number of times and then shutdown. */
+	if (data_upload_iterations > 0) {
+		data_upload_iterations--;
+	} else if (data_upload_iterations == 0) {
+		k_sem_give(&modem_shutdown_sem);
+		/* No need to schedule work if we're shutting down. */
+		return;
+	}
+
+	/* Schedule work if we're either transmitting indefinitely or
+	 * there are more iterations left.
+	 */
 	k_work_schedule(&socket_transmission_work,
 			K_SECONDS(CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS));
 }
@@ -177,6 +191,13 @@ int main(void)
 	}
 
 	k_work_schedule(&socket_transmission_work, K_NO_WAIT);
+
+	k_sem_take(&modem_shutdown_sem, K_FOREVER);
+
+	err = nrf_modem_lib_shutdown();
+	if (err) {
+		return -1;
+	}
 
 	return 0;
 }

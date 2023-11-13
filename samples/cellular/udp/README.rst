@@ -62,6 +62,12 @@ CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES - UDP data upload size configuration
 CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS - UDP data upload frequency configuration
    This configuration option sets the frequency with which the sample transmits data to the server.
 
+.. _CONFIG_UDP_DATA_UPLOAD_ITERATIONS:
+
+CONFIG_UDP_DATA_UPLOAD_ITERATIONS - UDP data upload iterations configuration
+   This configuration option sets the number of times the sample transmits data to the server before shutting down.
+   Set to ``-1`` to transmit indefinitely.
+
 .. _CONFIG_UDP_SERVER_ADDRESS_STATIC:
 
 CONFIG_UDP_SERVER_ADDRESS_STATIC - UDP Server IP Address configuration
