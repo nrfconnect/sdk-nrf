@@ -361,30 +361,15 @@ static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 	}
 
 	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT)) {
-		ret = conn_mgr_if_set_flag(if_conn->iface, CONN_MGR_IF_NO_AUTO_CONNECT, true);
-		if (ret) {
-			LOG_ERR("conn_mgr_if_set_flag, error: %d", ret);
-			net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
-			return;
-		}
+		conn_mgr_binding_set_flag(if_conn, CONN_MGR_IF_NO_AUTO_CONNECT, true);
 	}
 
 	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN)) {
-		ret = conn_mgr_if_set_flag(if_conn->iface, CONN_MGR_IF_NO_AUTO_DOWN, true);
-		if (ret) {
-			LOG_ERR("conn_mgr_if_set_flag, error: %d", ret);
-			net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
-			return;
-		}
+		conn_mgr_binding_set_flag(if_conn, CONN_MGR_IF_NO_AUTO_DOWN, true);
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE)) {
-		ret = conn_mgr_if_set_flag(if_conn->iface, CONN_MGR_IF_PERSISTENT, true);
-		if (ret) {
-			LOG_ERR("conn_mgr_if_set_flag, error: %d", ret);
-			net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
-			return;
-		}
+		conn_mgr_binding_set_flag(if_conn, CONN_MGR_IF_PERSISTENT, true);
 	}
 
 	/* Set default values for timeouts */
