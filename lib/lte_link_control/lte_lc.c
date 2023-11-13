@@ -57,8 +57,6 @@ enum feaconf_feat {
 
 /* Static variables */
 
-static bool is_initialized;
-
 /* Request eDRX to be disabled */
 static const char edrx_disable[] = "AT+CEDRXS=3";
 /* Default eDRX setting */
@@ -568,18 +566,6 @@ static int enable_notifications(void)
 	return 0;
 }
 
-static int init_and_config(void)
-{
-	if (is_initialized) {
-		LOG_DBG("The library is already initialized and configured");
-		return 0;
-	}
-
-	is_initialized = true;
-
-	return 0;
-}
-
 static int connect_lte(bool blocking)
 {
 	int err;
@@ -587,11 +573,6 @@ static int connect_lte(bool blocking)
 	enum lte_lc_func_mode current_func_mode;
 	enum lte_lc_nw_reg_status reg_status;
 	static atomic_t in_progress;
-
-	if (!is_initialized) {
-		LOG_ERR("The LTE link controller is not initialized");
-		return -EPERM;
-	}
 
 	/* Check if a connection attempt is already in progress */
 	if (atomic_set(&in_progress, 1)) {
@@ -680,18 +661,6 @@ exit:
 	return err;
 }
 
-static int init_and_connect(void)
-{
-	int err;
-
-	err = lte_lc_init();
-	if (err) {
-		return err;
-	}
-
-	return connect_lte(true);
-}
-
 static int feaconf_write(enum feaconf_feat feat, bool state)
 {
 	return nrf_modem_at_printf("AT%%FEACONF=%d,%d,%u", FEACONF_OPER_WRITE, feat, state);
@@ -701,9 +670,7 @@ static int feaconf_write(enum feaconf_feat feat, bool state)
 
 int lte_lc_init(void)
 {
-	int err = init_and_config();
-
-	return err ? -EFAULT : 0;
+	return 0;
 }
 
 void lte_lc_register_handler(lte_lc_evt_handler_t handler)
@@ -719,10 +686,6 @@ void lte_lc_register_handler(lte_lc_evt_handler_t handler)
 
 int lte_lc_deregister_handler(lte_lc_evt_handler_t handler)
 {
-	if (!is_initialized) {
-		LOG_ERR("Module not initialized yet");
-		return -EINVAL;
-	}
 	if (handler == NULL) {
 		LOG_ERR("Invalid handler (handler=0x%08X)", (uint32_t)handler);
 		return -EINVAL;
@@ -738,7 +701,7 @@ int lte_lc_connect(void)
 
 int lte_lc_init_and_connect(void)
 {
-	return init_and_connect();
+	return connect_lte(true);
 }
 
 int lte_lc_connect_async(lte_lc_evt_handler_t handler)
@@ -755,25 +718,12 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler)
 
 int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler)
 {
-	int err;
-
-	err = init_and_config();
-	if (err) {
-		return -EFAULT;
-	}
-
 	return lte_lc_connect_async(handler);
 }
 
 int lte_lc_deinit(void)
 {
-	if (is_initialized) {
-		is_initialized = false;
-
-		return lte_lc_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF) ? -EFAULT : 0;
-	}
-
-	return 0;
+	return lte_lc_power_off();
 }
 
 int lte_lc_normal(void)

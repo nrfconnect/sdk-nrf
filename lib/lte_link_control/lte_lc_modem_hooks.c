@@ -126,5 +126,5 @@ static void on_modem_init(int err, void *ctx)
 
 static void on_modem_shutdown(void *ctx)
 {
-	(void)lte_lc_deinit();
+	(void)lte_lc_power_off();
 }

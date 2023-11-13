@@ -117,7 +117,7 @@ int main(void)
 		return 0;
 	}
 
-	err = lte_lc_init_and_connect();
+	err = lte_lc_connect();
 	if (err) {
 		return 0;
 	}

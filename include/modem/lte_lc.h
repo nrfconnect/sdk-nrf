@@ -1232,26 +1232,24 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
 /**
  * Initialize the library and configure the modem.
  *
+ * @deprecated There is no need to call this function anymore.
+ *
  * @note A follow-up call to lte_lc_connect() or lte_lc_connect_async() must be made to establish
  *       an LTE connection. The library can be initialized only once, and subsequent calls will
  *       return @c 0.
  *
  * @retval 0 if successful.
- * @retval -EFAULT if an AT command failed.
  */
-int lte_lc_init(void);
+__deprecated int lte_lc_init(void);
 
 /**
  * Connect to LTE network.
  *
- * @note Before calling this function, a call to lte_lc_init() must be made, otherwise @c -EPERM is
- *       returned.
  *
  * @note After initialization, the system mode will be set to the default mode selected with Kconfig
  *       and LTE preference set to automatic selection.
  *
  * @retval 0 if successful.
- * @retval -EPERM if the library was not initialized.
  * @retval -EFAULT if an AT command failed.
  * @retval -ETIMEDOUT if a connection attempt timed out before the device was
  *	   registered to a network.
@@ -1261,6 +1259,8 @@ int lte_lc_connect(void);
 
 /**
  * Initialize the library, configure the modem and connect to LTE network.
+ *
+ * @deprecated Use @ref lte_lc_connect instead.
  *
  * The function blocks until connection is established, or the connection attempt times out.
  *
@@ -1273,7 +1273,7 @@ int lte_lc_connect(void);
  *	   registered to a network.
  * @retval -EINPROGRESS if a connection establishment attempt is already in progress.
  */
-int lte_lc_init_and_connect(void);
+__deprecated int lte_lc_init_and_connect(void);
 
 /**
  * Connect to LTE network.
@@ -1294,6 +1294,8 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 /**
  * Initialize the library, configure the modem and connect to LTE network.
  *
+ * @deprecated Use @ref lte_lc_connect_async instead.
+ *
  * The function returns immediately.
  *
  * @note The library can be initialized only once, and repeated calls will return @c 0.
@@ -1306,15 +1308,17 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
  * @retval -EFAULT if an AT command failed.
  * @retval -EINVAL if no event handler was registered.
  */
-int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
+__deprecated int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
 /**
  * Deinitialize the library and power off the modem.
  *
+ * @deprecated Use @ref lte_lc_power_off instead.
+ *
  * @retval 0 if successful.
  * @retval -EFAULT if an AT command failed.
  */
-int lte_lc_deinit(void);
+__deprecated int lte_lc_deinit(void);
 
 /**
  * Set the modem to offline mode.

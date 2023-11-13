@@ -209,13 +209,6 @@ static void connection_timeout_schedule(void)
 	}
 }
 
-static int modem_init(void)
-{
-	LOG_DBG("Initializing nRF Modem Library");
-
-	return nrf_modem_lib_init();
-}
-
 static void on_pdn_activated(void)
 {
 	int ret;
@@ -403,23 +396,8 @@ static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 
 int lte_net_if_enable(void)
 {
-	int ret;
-
 	if (!nrf_modem_is_initialized()) {
-		ret = modem_init();
-		if (ret) {
-			LOG_ERR("modem_init, error: %d", ret);
-			return ret;
-		}
-	}
-
-	/* Calling this function if the link controller has already been initialized is safe,
-	 * as it will return 0 in that case.
-	 */
-	ret = lte_lc_init();
-	if (ret) {
-		LOG_ERR("lte_lc_init, error: %d", ret);
-		return ret;
+		return nrf_modem_lib_init();
 	}
 
 	return 0;

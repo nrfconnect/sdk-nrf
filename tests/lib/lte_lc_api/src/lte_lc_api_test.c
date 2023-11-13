@@ -198,19 +198,11 @@ static void helper_lte_lc_data_clear(void)
 	memset(&test_gci_cells, 0, sizeof(test_gci_cells));
 }
 
-void wrap_lc_init(void)
-{
-	int ret = lte_lc_init();
-
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-}
-
 void setUp(void)
 {
 	mock_nrf_modem_at_Init();
 
 	helper_lte_lc_data_clear();
-	wrap_lc_init();
 	lte_lc_register_handler(lte_lc_event_handler);
 
 	lte_lc_callback_count_occurred = 0;
@@ -224,12 +216,7 @@ void tearDown(void)
 
 	TEST_ASSERT_EQUAL(lte_lc_callback_count_expected, lte_lc_callback_count_occurred);
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
-
 	ret = lte_lc_deregister_handler(lte_lc_event_handler);
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-
-	ret = lte_lc_deinit();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
 	mock_nrf_modem_at_Verify();
@@ -268,34 +255,6 @@ void test_lte_lc_register_handler_twice(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
-void test_lte_lc_deregister_handler_not_initialized(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
-	ret = lte_lc_deinit();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-	ret = lte_lc_deregister_handler(NULL);
-	TEST_ASSERT_EQUAL(-EINVAL, ret);
-
-	/* this is just to make the tearDown work again */
-	wrap_lc_init();
-}
-
-void test_lte_lc_deinit_twice(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
-	ret = lte_lc_deinit();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-	ret = lte_lc_deinit();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-
-	/* this is just to make the tearDown work again */
-	wrap_lc_init();
-}
-
 void test_lte_lc_connect_home_already_registered(void)
 {
 	int ret;
@@ -309,20 +268,7 @@ void test_lte_lc_connect_home_already_registered(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
-void test_lte_lc_init_and_connect_home_already_registered(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 2);
-	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_NW_REG_REGISTERED_HOME);
-	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(0);
-
-	ret = lte_lc_init_and_connect();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-}
-
-void test_lte_lc_init_and_connect_async_null(void)
+void test_lte_lc_connect_async_null(void)
 {
 	int ret;
 
@@ -330,7 +276,7 @@ void test_lte_lc_init_and_connect_async_null(void)
 	ret = lte_lc_deregister_handler(lte_lc_event_handler);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
-	ret = lte_lc_init_and_connect_async(NULL);
+	ret = lte_lc_connect_async(NULL);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	/* Register handler so that tearDown() doesn't cause unnecessary warning log */

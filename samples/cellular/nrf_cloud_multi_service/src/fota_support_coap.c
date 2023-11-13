@@ -383,7 +383,7 @@ static void handle_download_succeeded_and_reboot(void)
 		LOG_WRN("Failed to set B1 slot flag, BOOT FOTA validation may be incorrect");
 	}
 
-	(void)lte_lc_deinit();
+	(void)lte_lc_power_off();
 
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 	if (job.type == NRF_CLOUD_FOTA_MODEM_FULL) {

@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
 #include <nrf_modem_at.h>
 #include <modem/modem_info.h>
 #include <zephyr/sys/reboot.h>
@@ -582,7 +583,7 @@ static void connect_to_network(void)
 
 	k_sem_reset(&lte_connected_sem);
 
-	err = lte_lc_init_and_connect_async(lte_handler);
+	err = lte_lc_connect_async(lte_handler);
 	if (err) {
 		LOG_ERR("Failed to init LTE module, unable to continue, error: %d", err);
 		k_sleep(K_FOREVER);
@@ -596,7 +597,7 @@ static void connect_to_network(void)
 		LOG_INF("Connected to network");
 	} else if (err == -EAGAIN) {
 		LOG_ERR("Failed to connect to network, rebooting in 30s...");
-		(void)lte_lc_deinit();
+		(void)lte_lc_power_off();
 		k_sleep(K_SECONDS(30));
 		sys_reboot(SYS_REBOOT_COLD);
 	} else {

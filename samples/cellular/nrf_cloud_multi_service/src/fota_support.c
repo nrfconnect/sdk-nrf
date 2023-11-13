@@ -21,7 +21,7 @@ void fota_reboot(const unsigned int delay_s, const bool error)
 
 #if defined(CONFIG_LTE_LINK_CONTROL)
 	if (error) {
-		(void)lte_lc_deinit();
+		(void)lte_lc_power_off();
 	}
 #endif
 

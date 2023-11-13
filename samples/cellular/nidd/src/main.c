@@ -55,12 +55,6 @@ static void modem_init(void)
 		return;
 	}
 
-	err = lte_lc_init();
-	if (err) {
-		printk("Modem LTE connection initialization failed, error: %d\n", err);
-		return;
-	}
-
 	(void)nrf_modem_at_printf("AT+CMEE=1");
 }
 

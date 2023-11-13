@@ -31,9 +31,6 @@ static void on_modem_lib_init(int ret, void *ctx)
 		return;
 	}
 
-	/* LTE Link Controller is uninitialized on every modem shutdown. */
-	lte_lc_init();
-
 	/* Let the application write the credentials first and then bring the link up. */
 	if (m_first_init) {
 		err = carrier_cert_provision();

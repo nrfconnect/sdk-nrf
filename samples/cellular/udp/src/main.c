@@ -163,12 +163,6 @@ int main(void)
 	}
 #endif
 
-	err = lte_lc_init();
-	if (err) {
-		printk("Failed to initialize LTE link control, error: %d\n", err);
-		return -1;
-	}
-
 	err = lte_lc_connect_async(lte_handler);
 	if (err) {
 		printk("Failed to connect to LTE network, error: %d\n", err);

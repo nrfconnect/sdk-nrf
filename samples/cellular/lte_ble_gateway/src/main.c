@@ -488,7 +488,7 @@ static void modem_configure(void)
 	display_state = LEDS_LTE_CONNECTING;
 
 	LOG_INF("Establishing LTE link (this may take some time) ...");
-	err = lte_lc_init_and_connect();
+	err = lte_lc_connect();
 	__ASSERT(err == 0, "LTE link could not be established.");
 	display_state = LEDS_LTE_CONNECTED;
 }

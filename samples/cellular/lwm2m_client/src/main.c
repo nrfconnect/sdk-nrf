@@ -626,13 +626,6 @@ int main(void)
 		return 0;
 	}
 
-	LOG_INF("Initializing modem.");
-	ret = lte_lc_init();
-	if (ret < 0) {
-		LOG_ERR("Unable to init modem (%d)", ret);
-		return 0;
-	}
-
 	lte_lc_register_handler(lte_notify_handler);
 
 	ret = modem_info_init();
@@ -773,8 +766,6 @@ int main(void)
 			/* Enable client reconnect */
 			LOG_INF("Restart modem and client after an update");
 			state_trigger_and_unlock(START);
-			/* Initialize & connect modem */
-			lte_lc_init();
 			modem_connect();
 			break;
 

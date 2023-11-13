@@ -142,12 +142,7 @@ static void lte_lc_evt_handler(const struct lte_lc_evt * const evt)
 
 static int connect_lte(void)
 {
-	int err = lte_lc_init();
-
-	if (err) {
-		LOG_ERR("Failed to initialize LTE");
-		return err;
-	}
+	int err;
 
 	err = lte_lc_connect_async(lte_lc_evt_handler);
 	if (err) {
