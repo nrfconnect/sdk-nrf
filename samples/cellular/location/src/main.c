@@ -256,7 +256,6 @@ int main(void)
 
 	printk("Connecting to LTE...\n");
 
-	lte_lc_init();
 	lte_lc_register_handler(lte_event_handler);
 
 	/* Enable PSM. */

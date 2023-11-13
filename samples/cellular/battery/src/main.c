@@ -89,9 +89,9 @@ static void low_level_state_update(struct k_work *item)
 	k_sem_take(&state_sem, K_FOREVER);
 
 	if (state == NORMAL_HIGH_BAT) {
-		err = lte_lc_deinit();
+		err = lte_lc_power_off();
 		if (err) {
-			printk("Modem deinitialization failed, err: %d\n", err);
+			printk("Failed to power off modem, err: %d\n", err);
 			return;
 		}
 
@@ -198,11 +198,9 @@ static int modem_init_and_connect(void)
 {
 	int err;
 
-	printk("Initializing modem and connecting...\n");
-
-	err = lte_lc_init_and_connect();
+	err = lte_lc_connect();
 	if (err) {
-		printk("Modem initialization and connect failed, err: %d\n", err);
+		printk("Failed to connect to network, err: %d\n", err);
 		return err;
 	}
 

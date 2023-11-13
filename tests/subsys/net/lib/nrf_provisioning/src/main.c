@@ -1006,7 +1006,7 @@ void test_provisioning_init_wo_cert_change_valid(void)
 	__cmock_lte_lc_register_handler_ExpectAnyArgs();
 	__cmock_modem_info_init_IgnoreAndReturn(0);
 	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_and_connect_IgnoreAndReturn(0);
+	__cmock_lte_lc_connect_IgnoreAndReturn(0);
 
 	__cmock_settings_subsys_init_ExpectAndReturn(0);
 	__cmock_settings_register_ExpectAnyArgsAndReturn(0);
@@ -1018,7 +1018,7 @@ void test_provisioning_init_wo_cert_change_valid(void)
 
 	__cmock_modem_info_init_StopIgnore();
 	__cmock_nrf_modem_lib_init_StopIgnore();
-	__cmock_lte_lc_init_and_connect_StopIgnore();
+	__cmock_lte_lc_connect_StopIgnore();
 }
 
 /*

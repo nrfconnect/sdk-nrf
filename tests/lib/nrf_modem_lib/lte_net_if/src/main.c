@@ -49,7 +49,6 @@ static void bring_network_interface_up(void)
 	struct net_if *net_if = net_if_get_default();
 
 	__cmock_nrf_modem_is_initialized_ExpectAndReturn(1);
-	__cmock_lte_lc_init_ExpectAndReturn(0);
 
 	TEST_ASSERT_EQUAL(0, net_if_up(net_if));
 }
@@ -208,7 +207,6 @@ void test_enable_should_init_modem_and_link_controller(void)
 
 	__cmock_nrf_modem_is_initialized_ExpectAndReturn(0);
 	__cmock_nrf_modem_lib_init_ExpectAndReturn(0);
-	__cmock_lte_lc_init_ExpectAndReturn(0);
 
 	TEST_ASSERT_EQUAL(0, net_if_up(net_if));
 }
@@ -219,7 +217,6 @@ void test_enable_should_init_modem_upon_successful_dfu_result(void)
 
 	__cmock_nrf_modem_is_initialized_ExpectAndReturn(0);
 	__cmock_nrf_modem_lib_init_ExpectAndReturn(0);
-	__cmock_lte_lc_init_ExpectAndReturn(0);
 
 	TEST_ASSERT_EQUAL(0, net_if_up(net_if));
 }
@@ -568,7 +565,6 @@ void test_pdn_act_without_cereg_should_not_activate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -606,7 +602,6 @@ void test_pdn_act_with_cereg_should_activate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -652,7 +647,6 @@ void test_cereg_registered_without_pdn_should_not_activate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -686,7 +680,6 @@ void test_cereg_registered_home_with_pdn_should_activate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -731,7 +724,6 @@ void test_cereg_registered_roaming_with_pdn_should_activate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -776,7 +768,6 @@ void test_cereg_searching_should_not_activate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -811,7 +802,6 @@ void test_cereg_searching_should_not_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -860,7 +850,6 @@ void test_cereg_unregistered_should_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -909,7 +898,6 @@ void test_pdn_deact_should_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_lte_lc_init_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);

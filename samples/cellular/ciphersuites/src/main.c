@@ -162,7 +162,7 @@ int main(void)
 	}
 
 	printk("Waiting for network.. ");
-	err = lte_lc_init_and_connect();
+	err = lte_lc_connect();
 	if (err) {
 		printk("Failed to connect to the LTE network, err %d\n", err);
 		return 0;

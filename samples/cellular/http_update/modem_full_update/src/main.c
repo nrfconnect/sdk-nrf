@@ -392,7 +392,7 @@ static int modem_configure_and_connect(void)
 #endif /* CONFIG_USE_HTTPS */
 
 	printk("LTE Link Connecting ...\n");
-	err = lte_lc_init_and_connect_async(lte_lc_handler);
+	err = lte_lc_connect_async(lte_lc_handler);
 	if (err) {
 		printk("LTE link could not be established.");
 		return err;

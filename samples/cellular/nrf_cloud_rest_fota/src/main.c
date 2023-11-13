@@ -5,16 +5,17 @@
  */
 
 #include <zephyr/kernel.h>
-#include <modem/nrf_modem_lib.h>
-#include <nrf_modem_at.h>
-#include <modem/modem_info.h>
 #include <zephyr/settings/settings.h>
-#include <net/nrf_cloud.h>
-#include <net/nrf_cloud_rest.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log.h>
-#include <dk_buttons_and_leds.h>
+#include <nrf_modem_at.h>
+#include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
+#include <modem/modem_info.h>
+#include <net/nrf_cloud.h>
+#include <net/nrf_cloud_rest.h>
 #include <net/fota_download.h>
+#include <dk_buttons_and_leds.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_fota, CONFIG_NRF_CLOUD_REST_FOTA_SAMPLE_LOG_LEVEL);
 
@@ -525,7 +526,7 @@ static int connect_to_network(void)
 
 	k_sem_reset(&lte_connected);
 
-	err = lte_lc_init_and_connect_async(lte_handler);
+	err = lte_lc_connect_async(lte_handler);
 	if (err) {
 		LOG_ERR("Failed to init modem, error: %d", err);
 	} else {
@@ -678,7 +679,7 @@ static void handle_download_succeeded_and_reboot(void)
 	}
 
 	(void)nrf_cloud_rest_disconnect(&rest_ctx);
-	(void)lte_lc_deinit();
+	(void)lte_lc_power_off();
 
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 	if (job.type == NRF_CLOUD_FOTA_MODEM_FULL) {
@@ -722,7 +723,7 @@ static void error_reboot(void)
 {
 	LOG_INF("Rebooting in 30s...");
 	(void)nrf_cloud_rest_disconnect(&rest_ctx);
-	(void)lte_lc_deinit();
+	(void)lte_lc_power_off();
 	k_sleep(K_SECONDS(30));
 	sys_reboot(SYS_REBOOT_COLD);
 }

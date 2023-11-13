@@ -105,7 +105,7 @@ int main(void)
 	}
 
 	LOG_INF("Establishing LTE link ...");
-	ret = lte_lc_init_and_connect();
+	ret = lte_lc_connect();
 	if (ret) {
 		LOG_ERR("LTE link could not be established (%d)", ret);
 		return 0;

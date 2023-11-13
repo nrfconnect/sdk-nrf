@@ -268,7 +268,7 @@ static int modem_configure_and_connect(void)
 #endif /* CONFIG_USE_HTTPS */
 
 	printk("LTE Link Connecting ...\n");
-	err = lte_lc_init_and_connect_async(lte_lc_handler);
+	err = lte_lc_connect_async(lte_lc_handler);
 	if (err) {
 		printk("LTE link could not be established.");
 		return err;
@@ -293,7 +293,7 @@ static void fota_work_cb(struct k_work *work)
 		break;
 	case UPDATE_APPLY:
 #if !defined(CONFIG_LWM2M_CARRIER)
-		lte_lc_deinit();
+		lte_lc_power_off();
 #endif
 		sys_reboot(SYS_REBOOT_WARM);
 		break;
@@ -379,24 +379,6 @@ static int update_download(void)
 }
 
 #if defined(CONFIG_LWM2M_CARRIER)
-NRF_MODEM_LIB_ON_INIT(carrier_on_modem_lib_init, on_modem_lib_init, NULL);
-
-static void on_modem_lib_init(int ret, void *ctx)
-{
-	ARG_UNUSED(ctx);
-
-	if (ret) {
-		/* Modem initialization failed. */
-		return;
-	}
-
-	/* LTE LC is uninitialized on every modem shutdown. */
-	ret = lte_lc_init();
-	if (ret != 0) {
-		printk("failed to initialize LTE connection");
-		return;
-	}
-}
 
 static void print_err(const lwm2m_carrier_event_t *evt)
 {

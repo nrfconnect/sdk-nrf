@@ -412,7 +412,7 @@ static int connect_to_lte(void)
 
 	k_sem_reset(&lte_connected);
 
-	err = lte_lc_init_and_connect_async(lte_handler);
+	err = lte_lc_connect_async(lte_handler);
 	if (err) {
 		LOG_ERR("Failed to init modem, error: %d", err);
 		return err;

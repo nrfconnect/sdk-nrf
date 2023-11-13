@@ -417,9 +417,21 @@ DFU libraries
 Modem libraries
 ---------------
 
-* :ref:`lte_lc_readme`:
+* :ref:`lte_lc_readme` library:
 
-  * Added the :c:func:`lte_lc_psm_param_set_seconds` function and Kconfig options :kconfig:option:`LTE_PSM_REQ_FORMAT`, :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU_SECONDS`, and :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT_SECONDS` to enable setting of PSM parameters in seconds instead of using bit field strings.
+  * Added:
+
+    * The :c:func:`lte_lc_psm_param_set_seconds` function and Kconfig options :kconfig:option:`CONFIG_LTE_PSM_REQ_FORMAT`, :kconfig:option:`CONFIG_LTE_PSM_REQ_RPTAU_SECONDS`, and :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT_SECONDS` to enable setting of PSM parameters in seconds instead of using bit field strings.
+
+  * Updated:
+
+    * The :c:func:`lte_lc_init` function is deprecated.
+    * The :c:func:`lte_lc_deinit` function is deprecated.
+      Use the :c:func:`lte_lc_power_off` function instead.
+    * The :c:func:`lte_lc_init_and_connect` function is deprecated.
+      Use the :c:func:`lte_lc_connect` function instead.
+    * The :c:func:`lte_lc_init_and_connect_async` function is deprecated.
+      Use the :c:func:`lte_lc_connect_async` function instead.
 
   * Removed:
 

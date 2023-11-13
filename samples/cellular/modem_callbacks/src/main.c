@@ -43,10 +43,10 @@ int main(void)
 		return 0;
 	}
 
-	printk("Changing functional mode\n");
-	err = lte_lc_init_and_connect();
+	printk("Connecting to network\n");
+	err = lte_lc_connect();
 	if (err) {
-		printk("lte_lc_init_and_connect() failed, err %d\n", err);
+		printk("Connecting to network failed, err %d\n", err);
 	}
 
 	printk("Shutting down modem library\n");

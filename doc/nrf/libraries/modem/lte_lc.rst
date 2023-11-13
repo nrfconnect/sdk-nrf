@@ -73,9 +73,9 @@ The following block of code shows how you can use the API to establish an LTE co
 
            printk("Connecting to LTE network. This may take a few minutes...\n");
 
-           err = lte_lc_init_and_connect_async(lte_handler);
+           err = lte_lc_connect_async(lte_handler);
            if (err) {
-                   printk("lte_lc_init_and_connect_async, error: %d\n", err);
+                   printk("lte_lc_connect_async, error: %d\n", err);
                    return 0;
            }
 
@@ -140,9 +140,9 @@ The following code block shows a basic implementation of :c:func:`lte_lc_conn_ev
 
            printk("Connecting to LTE network. This may take a few minutes...\n");
 
-           err = lte_lc_init_and_connect_async(lte_handler);
+           err = lte_lc_connect_async(lte_handler);
            if (err) {
-                   printk("lte_lc_init_and_connect_async, error: %d\n", err);
+                   printk("lte_lc_connect_async, error: %d\n", err);
                    return 0;
            }
 

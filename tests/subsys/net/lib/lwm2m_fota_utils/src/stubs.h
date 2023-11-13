@@ -33,7 +33,6 @@ DECLARE_FAKE_VALUE_FUNC(int, modem_key_mgmt_write, nrf_sec_tag_t, enum modem_key
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_set, enum lte_lc_func_mode);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_connect);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_offline);
-DECLARE_FAKE_VALUE_FUNC(int, lte_lc_deinit);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_get, enum lte_lc_func_mode *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_ptw_set, enum lte_lc_lte_mode, const char *);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_psm_param_set, const char *, const char *);
@@ -109,7 +108,6 @@ DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_apply_update, enum dfu_target_im
 		FUNC(modem_info_rsrp_register)                                                     \
 		FUNC(lte_lc_func_mode_set)                                                         \
 		FUNC(lte_lc_connect)                                                               \
-		FUNC(lte_lc_deinit)                                                                \
 		FUNC(lte_lc_offline)                                                               \
 		FUNC(lte_lc_func_mode_get)                                                         \
 		FUNC(lte_lc_lte_mode_get)                                                          \

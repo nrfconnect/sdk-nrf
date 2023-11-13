@@ -446,11 +446,6 @@ static int modem_init(void)
 		date_time_register_handler(date_time_evt_handler);
 	}
 
-	if (lte_lc_init() != 0) {
-		LOG_ERR("Failed to initialize LTE link controller");
-		return -1;
-	}
-
 #if defined(CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND)
 	lte_lc_register_handler(lte_lc_event_handler);
 #elif !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)

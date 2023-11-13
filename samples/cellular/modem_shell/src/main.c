@@ -279,7 +279,6 @@ int main(void)
 		return 0;
 	}
 
-	lte_lc_init();
 #if defined(CONFIG_MOSH_PPP)
 	ppp_ctrl_init();
 #endif

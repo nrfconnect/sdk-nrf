@@ -66,7 +66,7 @@ int main(void)
 		return 0;
 	}
 
-	ret = lte_lc_init_and_connect();
+	ret = lte_lc_connect();
 	if (ret) {
 		printk("Lte_lc failed to initialize and connect, err %d", ret);
 		return 0;

@@ -273,7 +273,7 @@ static int modem_configure_and_connect(void)
 #endif /* CONFIG_USE_HTTPS */
 
 	printk("LTE Link Connecting ...\n");
-	err = lte_lc_init_and_connect_async(lte_lc_handler);
+	err = lte_lc_connect_async(lte_lc_handler);
 	if (err) {
 		printk("LTE link could not be established.");
 		return err;
@@ -399,7 +399,7 @@ static void fota_work_cb(struct k_work *work)
 		break;
 	case UPDATE_APPLY:
 		printk("Applying firmware update. This can take a while.\n");
-		lte_lc_deinit();
+		lte_lc_power_off();
 		/* Re-initialize the modem to apply the update. */
 		err = nrf_modem_lib_shutdown();
 		if (err) {
