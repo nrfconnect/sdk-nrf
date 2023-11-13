@@ -14,6 +14,14 @@ config UDP_DATA_UPLOAD_FREQUENCY_SECONDS
 	int "How often data is transmitted to the server"
 	default 900
 
+config UDP_DATA_UPLOAD_ITERATIONS
+	int "Number of data transmissions to the server before shutdown"
+	range -1 2147483647
+	default -1
+	help
+	  Number of data transmissions to the server before shutdown.
+	  Set to -1 to transmit indefinitely.
+
 config UDP_SERVER_ADDRESS_STATIC
 	string "UDP server IP address"
 	default "8.8.8.8"

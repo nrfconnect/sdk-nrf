@@ -316,6 +316,10 @@ Cellular samples
 
   * Added the configuration overlay file :file:`overlay-supl.conf` for building the sample with SUPL assistance support.
 
+* :ref:`udp` sample:
+
+  * Added the :ref:`CONFIG_UDP_DATA_UPLOAD_ITERATIONS <CONFIG_UDP_DATA_UPLOAD_ITERATIONS>` Kconfig option for configuring the number of data transmissions to the server.
+
 Cryptography samples
 --------------------
 
