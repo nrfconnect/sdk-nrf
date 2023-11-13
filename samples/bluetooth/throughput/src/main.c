@@ -319,11 +319,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		return;
 	}
 
-	err = bt_unpair(info.id, info.le.remote);
-	if (err) {
-		printk("Cannot unpair peer (err %d)", err);
-	}
-
 	/* Re-connect using same roles */
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		scan_start();
