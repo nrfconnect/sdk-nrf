@@ -13,7 +13,6 @@ The DFU specification is implemented in the Zephyr Bluetooth mesh DFU subsystem 
 * :ref:`zephyr:bluetooth_mesh_dfu_cli`
 * :ref:`zephyr:bluetooth_mesh_dfd_srv`
 
-The Bluetooth mesh DFU subsystem is in experimental state.
 For more information about the Zephyr Bluetooth mesh DFU subsystem, see :ref:`zephyr:bluetooth_mesh_dfu`.
 
 The Bluetooth mesh subsystem in |NCS| provides a set of samples that can be used for evaluation of the Bluetooth mesh DFU specification and subsystem:
