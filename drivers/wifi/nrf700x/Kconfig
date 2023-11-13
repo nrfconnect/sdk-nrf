@@ -117,6 +117,17 @@ config NRF_WIFI_PATCHES_EXT_FLASH_STORE
 	select FLASH_MAP
 endchoice
 
+if NRF_WIFI_PATCHES_EXT_FLASH_STORE
+
+config NRF_WIFI_FW_FLASH_CHUNK_SIZE
+	int "Chunk size for nRF70 FW patches to be read from external flash"
+	default 8192
+	help
+	  Chunk size for nRF70 FW patches to be read from external flash.
+	  This option impacts the loading time of the nRF70 FW patches and
+	  RAM usage (heap) of the application.
+endif
+
 config CUSTOM_LINKER_SCRIPT
 	string "Custom linker script for nRF700x FW patches"
 	default "${ZEPHYR_BASE}/../nrf/drivers/wifi/nrf700x/rpu_fw_patches.ld"
