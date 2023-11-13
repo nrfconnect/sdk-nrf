@@ -267,6 +267,9 @@
 #cmakedefine PSA_NEED_OBERON_TLS12_PSK_TO_MS                    @PSA_NEED_OBERON_TLS12_PSK_TO_MS@
 #cmakedefine PSA_NEED_OBERON_JPAKE_DRIVER                       @PSA_NEED_OBERON_JPAKE_DRIVER@
 
+/* Use Matter compatible version of Spake2+ in Oberon code. */
+#cmakedefine SPAKE2P_USE_VERSION_04                             @SPAKE2_USE_VERSION_04@
+
 #cmakedefine PSA_NEED_NRF_RNG_ENTROPY_DRIVER                    @PSA_NEED_NRF_RNG_ENTROPY_DRIVER@
 
 /* Nordic specific */
