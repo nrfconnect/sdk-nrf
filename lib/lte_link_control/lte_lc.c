@@ -1360,18 +1360,6 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 		}
 	}
 
-	if (sys_mode_current != *mode) {
-		LOG_DBG("Current system mode updated from %d to %d",
-			sys_mode_current, *mode);
-		sys_mode_current = *mode;
-	}
-
-	if ((preference != NULL) && (mode_pref_current != *preference)) {
-		LOG_DBG("Current system mode preference updated from %d to %d",
-			mode_pref_current, *preference);
-		mode_pref_current = *preference;
-	}
-
 	return 0;
 }
 
