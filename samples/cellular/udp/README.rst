@@ -19,8 +19,6 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-Additionally, it supports :ref:`qemu_x86`.
-
 Overview
 ********
 
@@ -131,16 +129,6 @@ For a conversion chart of these timer values, see the `Power saving mode setting
    The availability of power saving features or timers is entirely dependent on the cellular network.
    The above recommendations may not be the most current efficient if the network does not support the respective feature.
 
-Configuration files
-===================
-
-The sample provides predefined configuration files for the following development kits:
-
-* :file:`prj.conf` - For nRF9160 DK and Thingy:91
-* :file:`prj_qemu_x86.conf` - For x86 Emulation (QEMU)
-
-They are located in :file:`samples/cellular/udp` folder.
-
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
@@ -164,7 +152,7 @@ After programming the sample to your device, test it by performing the following
 
    .. code-block:: console
 
-      *** Booting Zephyr OS build v3.3.99-ncs1-2938-gc7094146b5b4 ***
+      *** Booting nRF Connect SDK v2.5.0-241-g5ada4583172b ***
       UDP sample has started
       LTE cell changed: Cell ID: 37372427, Tracking area: 4020
       RRC mode: Connected
