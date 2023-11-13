@@ -254,6 +254,7 @@ kconfig_check_and_set_base_to_one(PSA_NEED_OBERON_SHA_384)
 kconfig_check_and_set_base_to_one(PSA_NEED_OBERON_SHA_512)
 kconfig_check_and_set_base_to_one(PSA_NEED_OBERON_TLS12_PRF)
 kconfig_check_and_set_base_to_one(PSA_NEED_OBERON_TLS12_PSK_TO_MS)
+set(SPAKE2P_USE_VERSION_04 ${CONFIG_PSA_CRYPTO_SPAKE2P_USE_VERSION_04})
 
 # Convert NRF_RNG driver configuration
 kconfig_check_and_set_base_to_one(PSA_NEED_NRF_RNG_ENTROPY_DRIVER)

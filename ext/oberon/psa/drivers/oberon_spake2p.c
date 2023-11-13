@@ -149,7 +149,7 @@ static psa_status_t oberon_get_confirmation_keys(
     // get K_shared
 #ifdef SPAKE2P_USE_VERSION_04
     hash_len >>= 1; // K_confirm and confirm size is hash_len / 2
-    memcpy(op->shared, data + hash_len, hash_len);
+    memcpy(op->shared, V + hash_len, hash_len);
 #else
     status = psa_driver_wrapper_key_derivation_setup(&kdf_op, PSA_ALG_HKDF(op->hash_alg));
     if (status) goto exit;

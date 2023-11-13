@@ -205,6 +205,12 @@ config PSA_MAX_RSA_KEY_BITS
 
 endmenu
 
+# Temporary configuration of SPAKE2+ version
+config PSA_CRYPTO_SPAKE2P_USE_VERSION_04
+	bool
+	prompt "Use SPAKE2P Version 04"
+	depends on PSA_CRYPTO_DRIVER_OBERON
+	depends on PSA_WANT_ALG_SPAKE2P
 
 rsource "Kconfig.psa_accel"
 
