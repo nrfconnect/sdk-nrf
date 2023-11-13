@@ -74,8 +74,12 @@ INCBIN(_bin, nrf70_fw, STR(CONFIG_NRF_WIFI_FW_BIN));
 
 #include <patch_info.h>
 
-/* Flash partition for NVS */
+#if USE_PARTITION_MANAGER
+#include <pm_config.h>
+#define NRF70_FW_PATCH_ID PM_NRF70_WIFI_FW_ID
+#else
 #define NRF70_FW_PATCH_ID FIXED_PARTITION_ID(nrf70_fw_partition)
+#endif
 static const struct flash_area *fa;
 
 static int nrf_wifi_read_and_download_chunk(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,

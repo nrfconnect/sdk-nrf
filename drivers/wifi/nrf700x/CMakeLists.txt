@@ -116,7 +116,7 @@ zephyr_library_sources_ifdef(CONFIG_NRF700X_UTIL
   src/wifi_util.c
 )
 
-if (CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP)
+if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP)
 # Run patches from the external flash (XIP). No need to copy.
 zephyr_code_relocate(FILES src/fw_load.c LOCATION EXTFLASH_RODATA NOCOPY)
 endif()
@@ -129,14 +129,91 @@ zephyr_compile_definitions_ifdef(CONFIG_NRF700X_ON_QSPI
 )
 
 # RPU FW patch binaries based on the selected configuration
-zephyr_compile_definitions_ifdef(CONFIG_NRF700X_SYSTEM_MODE
-  -DCONFIG_NRF_WIFI_FW_BIN=${OS_AGNOSTIC_BASE}/fw_bins/default/nrf70.bin
+if(CONFIG_NRF700X_SYSTEM_MODE)
+  set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/default/nrf70.bin)
+elseif(CONFIG_NRF700X_RADIO_TEST)
+  set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/radio_test/nrf70.bin)
+elseif(CONFIG_NRF700X_SCAN_ONLY)
+  set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/scan_only/nrf70.bin)
+else()
+  # Error
+  message(FATAL_ERROR "Unsupported nRF70 patch configuration")
+endif()
+
+zephyr_compile_definitions(
+  -DCONFIG_NRF_WIFI_FW_BIN=${NRF70_PATCH}
 )
 
-zephyr_compile_definitions_ifdef(CONFIG_NRF700X_RADIO_TEST
-  -DCONFIG_NRF_WIFI_FW_BIN=${OS_AGNOSTIC_BASE}/fw_bins/radio_test/nrf70.bin
-)
+if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
+  message(STATUS "nRF WiFi FW patch binary will be stored in external flash")
 
-zephyr_compile_definitions_ifdef(CONFIG_NRF700X_SCAN_ONLY
-  -DCONFIG_NRF_WIFI_FW_BIN=${OS_AGNOSTIC_BASE}/fw_bins/scan_only/nrf70.bin
-)
+  dt_chosen(ext_flash_dev PROPERTY nordic,pm-ext-flash)
+  if(DEFINED ext_flash_dev)
+    get_filename_component(qspi_node ${ext_flash_dev} DIRECTORY)
+  else()
+    dt_nodelabel(qspi_node NODELABEL "qspi")
+  endif()
+  if(DEFINED qspi_node)
+    dt_reg_addr(xip_addr PATH ${qspi_node} NAME qspi_mm)
+    if(NOT DEFINED xip_addr)
+      message(FATAL_ERROR "Unable to find XIP area in dts")
+    endif()
+  else()
+    message(FATAL_ERROR "QSPI node not found in dts")
+  endif()
+
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    add_custom_target(nrf70_wifi_fw_patch_target
+      DEPENDS ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
+    )
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
+      COMMAND ${Python3_EXECUTABLE}
+        -c 'import sys\; import intelhex\; intelhex.bin2hex(sys.argv[1], sys.argv[2], int(sys.argv[3])) '
+        ${NRF70_PATCH}
+        ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
+        $<TARGET_PROPERTY:partition_manager,nrf70_wifi_fw_XIP_ABS_ADDR>
+      )
+    set_property(
+      GLOBAL PROPERTY
+      nrf70_wifi_fw_PM_HEX_FILE
+      ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
+      )
+    set_property(
+      GLOBAL PROPERTY
+      nrf70_wifi_fw_PM_TARGET
+      nrf70_wifi_fw_patch_target
+      )
+  else()
+    dt_nodelabel(nrf70_fw_node NODELABEL "nrf70_fw_partition")
+    if(NOT DEFINED nrf70_fw_node)
+      message(FATAL_ERROR "nrf70_fw_partition node not found in dts")
+    endif()
+    dt_prop(nrf70_fw_offset PATH ${nrf70_fw_node} PROPERTY reg INDEX 0)
+    if(NOT DEFINED nrf70_fw_offset)
+      message(FATAL_ERROR "nrf70_fw_partition.reg not found in dts")
+    endif()
+    math(EXPR NRF70_PATCH_ADDR "${xip_addr} + ${nrf70_fw_offset}")
+
+    # Using python module instead of intelhex command line tool to handle windows
+    execute_process(
+      COMMAND ${Python3_EXECUTABLE}
+        -c "import sys; import intelhex; intelhex.bin2hex(sys.argv[1], sys.argv[2], int(sys.argv[3]))"
+        ${NRF70_PATCH}
+        ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex
+        ${NRF70_PATCH_ADDR}
+      RESULT_VARIABLE _bin2hex_result
+      OUTPUT_VARIABLE _bin2hex_output
+      ERROR_VARIABLE _bin2hex_error
+      COMMAND_ECHO STDOUT
+    )
+
+    if(NOT _bin2hex_result EQUAL 0)
+      message(FATAL_ERROR "Failed to convert binary patch to hex format: \n${_bin2hex_output}\n${_bin2hex_error}")
+    endif()
+
+    set_property(GLOBAL APPEND PROPERTY HEX_FILES_TO_MERGE
+      ${CMAKE_BINARY_DIR}/zephyr/nrf70.hex ${CMAKE_BINARY_DIR}/zephyr/zephyr.hex)
+    set_property(TARGET runners_yaml_props_target PROPERTY
+      hex_file ${CMAKE_BINARY_DIR}/zephyr/merged.hex)
+    endif()
+endif()
