@@ -16,9 +16,24 @@ NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
 
 static void on_modem_init(int err, void *ctx)
 {
+	extern const enum lte_lc_system_mode lte_lc_sys_mode;
+	extern const enum lte_lc_system_mode_preference lte_lc_sys_mode_pref;
+
 	if (err) {
 		LOG_ERR("Modem library init error: %d, lte_lc not initialized", err);
 		return;
+	}
+
+	if (!IS_ENABLED(CONFIG_LTE_NETWORK_MODE_DEFAULT)) {
+		err = lte_lc_system_mode_set(lte_lc_sys_mode, lte_lc_sys_mode_pref);
+		if (err) {
+			LOG_ERR("Failed to set system mode and mode preference, err %d", err);
+			return;
+		}
+
+		LOG_DBG("System mode set to %d, preference %d",
+			lte_lc_sys_mode,
+			lte_lc_sys_mode_pref);
 	}
 
 	/* Request configured PSM and eDRX settings to save power. */

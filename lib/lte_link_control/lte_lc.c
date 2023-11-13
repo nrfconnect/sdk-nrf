@@ -87,17 +87,19 @@ K_SEM_DEFINE(ncellmeas_idle_sem, 1, 1);
 /* Network attach semaphore */
 static K_SEM_DEFINE(link, 0, 1);
 
-/* System mode to use when connecting to LTE network, which can be changed in
- * two ways:
- *	- Automatically to fallback mode (if enabled) when connection to the
- *	  preferred mode is unsuccessful and times out.
- *	- By calling lte_lc_system_mode_set() and set the mode explicitly.
+/* System mode to use when connecting to LTE network, which can be changed in two ways:
+ * - Automatically to fallback mode (if enabled) when connection to the
+ *   preferred mode is unsuccessful and times out.
+ * - By calling lte_lc_system_mode_set() and set the mode explicitly.
+ *
+ * extern in lte_lc_modem_hooks.c
  */
-static enum lte_lc_system_mode sys_mode_target = SYS_MODE_PREFERRED;
-
-/* System mode preference to set when configuring system mode. */
-static enum lte_lc_system_mode_preference mode_pref_target = CONFIG_LTE_MODE_PREFERENCE_VALUE;
-static enum lte_lc_system_mode_preference mode_pref_current;
+enum lte_lc_system_mode lte_lc_sys_mode = SYS_MODE_PREFERRED;
+/* System mode preference to set when configuring system mode.
+ *
+ * extern in lte_lc_modem_hooks.c
+ */
+enum lte_lc_system_mode_preference lte_lc_sys_mode_pref = CONFIG_LTE_MODE_PREFERENCE_VALUE;
 
 static const enum lte_lc_system_mode sys_mode_fallback =
 #if IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK)
@@ -111,8 +113,6 @@ static const enum lte_lc_system_mode sys_mode_fallback =
 		LTE_LC_SYSTEM_MODE_LTEM_GPS		:
 #endif
 	LTE_LC_SYSTEM_MODE_DEFAULT;
-
-static enum lte_lc_system_mode sys_mode_current = LTE_LC_SYSTEM_MODE_DEFAULT;
 
 /* Parameters to be passed using AT%XSYSTEMMMODE=<params>,<preference> */
 static const char *const system_mode_params[] = {
@@ -587,38 +587,9 @@ static void lte_lc_psm_default_config_set(void)
 
 static int init_and_config(void)
 {
-	int err;
-
 	if (is_initialized) {
 		LOG_DBG("The library is already initialized and configured");
 		return 0;
-	}
-
-	err = lte_lc_system_mode_get(&sys_mode_current, &mode_pref_current);
-	if (err) {
-		LOG_ERR("Could not get current system mode, error: %d", err);
-		return err;
-	}
-
-	if (IS_ENABLED(CONFIG_LTE_NETWORK_MODE_DEFAULT)) {
-		sys_mode_target = sys_mode_current;
-
-		LOG_DBG("Default system mode is used: %d", sys_mode_current);
-	}
-
-	if ((sys_mode_current != sys_mode_target) ||
-	    (mode_pref_current != mode_pref_target)) {
-		err = lte_lc_system_mode_set(sys_mode_target, mode_pref_target);
-		if (err) {
-			LOG_ERR("Could not set system mode, error: %d", err);
-			return err;
-		}
-
-		LOG_DBG("System mode (%d) and preference (%d) configured",
-			sys_mode_target, mode_pref_target);
-	} else {
-		LOG_DBG("System mode (%d) and preference (%d) are already configured",
-			sys_mode_current, mode_pref_current);
 	}
 
 	lte_lc_psm_default_config_set();
@@ -678,7 +649,7 @@ static int connect_lte(bool blocking)
 		if (!IS_ENABLED(CONFIG_LTE_NETWORK_MODE_DEFAULT) &&
 		    ((current_func_mode == LTE_LC_FUNC_MODE_POWER_OFF) ||
 		     (current_func_mode == LTE_LC_FUNC_MODE_OFFLINE))) {
-			err = lte_lc_system_mode_set(sys_mode_target, mode_pref_current);
+			err = lte_lc_system_mode_set(lte_lc_sys_mode, lte_lc_sys_mode_pref);
 			if (err) {
 				err = -EFAULT;
 				goto exit;
@@ -701,10 +672,10 @@ static int connect_lte(bool blocking)
 
 			if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) &&
 			    (tries > 0)) {
-				if (sys_mode_target == SYS_MODE_PREFERRED) {
-					sys_mode_target = sys_mode_fallback;
+				if (lte_lc_sys_mode == SYS_MODE_PREFERRED) {
+					lte_lc_sys_mode = sys_mode_fallback;
 				} else {
-					sys_mode_target = SYS_MODE_PREFERRED;
+					lte_lc_sys_mode = SYS_MODE_PREFERRED;
 				}
 
 				err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
@@ -1271,10 +1242,8 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 		return -EFAULT;
 	}
 
-	sys_mode_current = mode;
-	sys_mode_target = mode;
-	mode_pref_current = preference;
-	mode_pref_target = preference;
+	lte_lc_sys_mode = mode;
+	lte_lc_sys_mode_pref = preference;
 
 	return 0;
 }

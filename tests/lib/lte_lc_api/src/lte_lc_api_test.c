@@ -200,15 +200,6 @@ static void helper_lte_lc_data_clear(void)
 
 void wrap_lc_init(void)
 {
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
-	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* ltem_mode */
-	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* nbiot_mode */
-	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* gps_mode */
-	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* mode_preference */
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=1,0,1,0", EXIT_SUCCESS);
-
 	int ret = lte_lc_init();
 
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
