@@ -96,6 +96,17 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		}
   }
 
+  uint8_t band;
+  err = modem_info_get_current_band(&band);
+  if (err != 0) {
+		LOG_WRN("Network band collection failed, error: %d", err);
+  } else {
+	  err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(ncs_lte_band), band);
+	  if (err) {
+			LOG_ERR("Failed to set nce_lte_band");
+	  }
+  }
+
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:
 		switch (evt->nw_reg_status) {

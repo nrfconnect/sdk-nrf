@@ -16,6 +16,7 @@
 #include <zephyr/fff.h>
 
 #include <nrf_modem_at.h>
+#include <nrf_errno.h>
 
 DEFINE_FFF_GLOBALS;
 
@@ -33,6 +34,8 @@ FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_scanf, const char *, const char *, ...)
 #define EXAMPLE_RSRP_INVALID 255
 #define EXAMPLE_RSRP_VALID 160
 #define RSRP_OFFSET 140
+#define EXAMPLE_BAND 13
+#define EXAMPLE_BAND_MAX_VAL 71
 
 struct at_param at_params[10] = {};
 static struct at_param_list m_param_list = {
@@ -129,6 +132,48 @@ static int nrf_modem_at_scanf_custom_cesq_invalid(const char *cmd, const char *f
 	return 1;
 }
 
+static int nrf_modem_at_scanf_custom_xcband(const char *cmd, const char *fmt, va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
+
+	uint8_t *val = va_arg(args, uint8_t *);
+	*val = EXAMPLE_BAND;
+
+	return 1;
+}
+
+static int nrf_modem_at_scanf_custom_xcband_max_val(const char *cmd, const char *fmt, va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
+
+	uint8_t *val = va_arg(args, uint8_t *);
+	*val = EXAMPLE_BAND_MAX_VAL;
+
+	return 1;
+}
+
+static int nrf_modem_at_scanf_custom_xcband_unavailable(const char *cmd, const char *fmt,
+							va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
+
+	uint8_t *val = va_arg(args, uint8_t *);
+	*val = BAND_UNAVAILABLE;
+
+	return 1;
+}
+
+static int nrf_modem_at_scanf_custom_xcband_at_cmd_error(const char *cmd, const char *fmt,
+							 va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
+
+	return -NRF_EBADMSG; // no arguments matched
+}
 
 void setUp(void)
 {
@@ -403,6 +448,57 @@ void test_modem_info_get_rsrp_success(void)
 	ret = modem_info_get_rsrp(&val);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	TEST_ASSERT_EQUAL(EXAMPLE_RSRP_VALID-RSRP_OFFSET, val);
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_current_band_null(void)
+{
+	int ret = modem_info_get_current_band(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+	TEST_ASSERT_EQUAL(0, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_current_band_success(void)
+{
+	uint8_t band;
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_xcband;
+
+	int ret = modem_info_get_current_band(&band);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(EXAMPLE_BAND, band);
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_current_band_success_max_val(void)
+{
+	uint8_t band;
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_xcband_max_val;
+
+	int ret = modem_info_get_current_band(&band);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(EXAMPLE_BAND_MAX_VAL, band);
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_current_band_unavailable(void)
+{
+	uint8_t band;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_xcband_unavailable;
+
+	int ret = modem_info_get_current_band(&band);
+	TEST_ASSERT_EQUAL(-ENOMSG, ret);
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_current_band_at_cmd_error(void)
+{
+	uint8_t band;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_xcband_at_cmd_error;
+
+	int ret = modem_info_get_current_band(&band);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret); // the generic posix error should get returned
 	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
 }
 

@@ -931,6 +931,25 @@ int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes)
 	return 0;
 }
 
+int modem_info_get_current_band(uint8_t *band)
+{
+	if (band == NULL) {
+		return -EINVAL;
+	}
+
+	int ret = nrf_modem_at_scanf("AT%XCBAND", "%%XCBAND: %u", band);
+
+	if (ret != 1) {
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
+	if (*band == BAND_UNAVAILABLE) {
+		return -ENOMSG;
+	}
+
+	return 0;
+}
+
 int modem_info_init(void)
 {
 	int err = 0;

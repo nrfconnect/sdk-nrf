@@ -27,6 +27,7 @@ MEMFAULT_METRICS_KEY_DEFINE(Ncs_LteRsrp, kMemfaultMetricType_Signed)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_tx_kilobytes, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_rx_kilobytes, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_reset_loop_detected_count, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_band, kMemfaultMetricType_Unsigned)
 #endif /* CONFIG_MEMFAULT_NCS_LTE_METRICS */
 
 #ifdef CONFIG_MEMFAULT_NCS_BT_METRICS

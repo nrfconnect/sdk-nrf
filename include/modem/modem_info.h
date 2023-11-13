@@ -43,6 +43,8 @@ extern "C" {
 /** Modem firmware version string can be up to 40 characters long. */
 #define MODEM_INFO_FWVER_SIZE 41
 
+#define BAND_UNAVAILABLE 0
+
 /** Modem returns RSRP and RSRQ as index values which require
  * a conversion to dBm and dB respectively. See modem AT
  * command reference guide for more information.
@@ -351,6 +353,15 @@ int modem_info_get_rsrp(int *val);
  * @return 0 if operation was successful
  */
 int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes);
+
+/**
+ * @brief Obtain the current band
+ *
+ * @param band_id id of the current band
+ * @return 0 if operation was sucessful.
+ *          Otherwise, a (negative) error code is returned
+ */
+int modem_info_get_current_band(uint8_t *band_id);
 
 /** @} */
 
