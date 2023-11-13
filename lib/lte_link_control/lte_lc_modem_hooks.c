@@ -36,6 +36,30 @@ static void on_modem_init(int err, void *ctx)
 			lte_lc_sys_mode_pref);
 	}
 
+	if (IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_SECONDS)) {
+		err = lte_lc_psm_param_set_seconds(CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
+						   CONFIG_LTE_PSM_REQ_RAT_SECONDS);
+		if (err) {
+			LOG_ERR("Failed to set PSM params, err %d", err);
+			return;
+		}
+
+		LOG_DBG("PSM configs set from seconds: tau=%ds, rat=%ds",
+			CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
+			CONFIG_LTE_PSM_REQ_RAT_SECONDS);
+	} else {
+		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_STRING));
+
+		err = lte_lc_psm_param_set(CONFIG_LTE_PSM_REQ_RPTAU, CONFIG_LTE_PSM_REQ_RAT);
+		if (err) {
+			LOG_ERR("Failed to set PSM params, err %d", err);
+			return;
+		}
+
+		LOG_DBG("PSM configs set from string: tau=%s, rat=%s",
+			CONFIG_LTE_PSM_REQ_RPTAU, CONFIG_LTE_PSM_REQ_RAT);
+	}
+
 	/* Request configured PSM and eDRX settings to save power. */
 	err = lte_lc_psm_req(IS_ENABLED(CONFIG_LTE_PSM_REQ));
 	if (err) {

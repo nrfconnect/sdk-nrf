@@ -568,31 +568,12 @@ static int enable_notifications(void)
 	return 0;
 }
 
-static void lte_lc_psm_default_config_set(void)
-{
-	if (IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_SECONDS)) {
-		lte_lc_psm_param_set_seconds(
-			CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
-			CONFIG_LTE_PSM_REQ_RAT_SECONDS);
-		LOG_DBG("PSM configs set from seconds: tau=%s (%ds), rat=%s (%ds)",
-			psm_param_rptau, CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
-			psm_param_rat, CONFIG_LTE_PSM_REQ_RAT_SECONDS);
-	} else {
-		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_STRING));
-		lte_lc_psm_param_set(CONFIG_LTE_PSM_REQ_RPTAU, CONFIG_LTE_PSM_REQ_RAT);
-		LOG_DBG("PSM configs set from string: tau=%s, rat=%s",
-			psm_param_rptau, psm_param_rat);
-	}
-}
-
 static int init_and_config(void)
 {
 	if (is_initialized) {
 		LOG_DBG("The library is already initialized and configured");
 		return 0;
 	}
-
-	lte_lc_psm_default_config_set();
 
 	is_initialized = true;
 
