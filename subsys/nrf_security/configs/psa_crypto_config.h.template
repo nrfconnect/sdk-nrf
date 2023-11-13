@@ -96,18 +96,13 @@
 #cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR                     @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR@
 #cmakedefine PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY                   @PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY@
 
+#cmakedefine PSA_MAX_RSA_KEY_BITS @PSA_MAX_RSA_KEY_BITS@
+
 /*
  * nrf_cc3xx_platform driver configurations
  */
 #cmakedefine PSA_NEED_CC3XX_CTR_DRBG_DRIVER                     @PSA_NEED_CC3XX_CTR_DRBG_DRIVER@
 #cmakedefine PSA_NEED_CC3XX_HMAC_DRBG_DRIVER                    @PSA_NEED_CC3XX_HMAC_DRBG_DRIVER@
-
-/*
- * PSA driver configurations
- */
-#cmakedefine PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT @PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT@
-
-#cmakedefine PSA_MAX_RSA_KEY_BITS @PSA_MAX_RSA_KEY_BITS@
 
 /*
  * nrf_cc3xx driver configurations
@@ -212,7 +207,6 @@
 /* Nordic specific */
 #cmakedefine PSA_NATIVE_ITS                                     @PSA_NATIVE_ITS@
 #cmakedefine PSA_NATIVE_ITS_BACKEND_ZEPHYR                      @PSA_NATIVE_ITS_BACKEND_ZEPHYR@
-#cmakedefine PSA_CRYPTO_SECURE                                  @PSA_CRYPTO_SECURE@
 #cmakedefine PSA_CRYPTO_DRIVER_ALG_PRNG_TEST                    @PSA_CRYPTO_DRIVER_ALG_PRNG_TEST@
 
 /* PSA and drivers */

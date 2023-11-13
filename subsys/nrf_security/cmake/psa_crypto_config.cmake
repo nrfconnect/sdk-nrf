@@ -80,8 +80,6 @@ kconfig_check_and_set_base_to_one(PSA_WANT_ALG_SRP_6)
 
 kconfig_check_and_set_base_int(PSA_MAX_RSA_KEY_BITS)
 
-kconfig_check_and_set_base_to_one(PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT)
-
 # Convert nrf_cc3xx_platform driver configurations
 kconfig_check_and_set_base_to_one(PSA_NEED_CC3XX_CTR_DRBG_DRIVER)
 kconfig_check_and_set_base_to_one(PSA_NEED_CC3XX_HMAC_DRBG_DRIVER)
@@ -183,7 +181,6 @@ kconfig_check_and_set_base_to_one(PSA_NEED_NRF_RNG_ENTROPY_DRIVER)
 # Nordic specific
 kconfig_check_and_set_base_to_one(PSA_NATIVE_ITS)
 kconfig_check_and_set_base_to_one(PSA_NATIVE_ITS_BACKEND_ZEPHYR)
-kconfig_check_and_set_base_to_one(PSA_CRYPTO_SECURE)
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
 
 # PSA and Drivers

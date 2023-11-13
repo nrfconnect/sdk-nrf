@@ -34,18 +34,6 @@ config MBEDTLS_PSA_CRYPTO_DRIVERS
 config PSA_DEFAULT_OFF
 	bool
 
-config PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
-	bool
-	depends on PSA_CRYPTO_DRIVER_CC3XX 	|| \
-			   PSA_CRYPTO_DRIVER_OBERON
-	default y
-	help
-	  configuration that is set if any driver is
-	  enabled
-
-config PSA_CRYPTO_SECURE
-	bool
-
 config MBEDTLS_PSA_CRYPTO_CLIENT
 	bool
 	default y
