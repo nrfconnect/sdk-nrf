@@ -212,7 +212,6 @@ FOTA in Bluetooth mesh
 When performing a FOTA update when working with the Bluetooth mesh protocol, use one of the following DFU methods:
 
 * DFU over Bluetooth mesh using the Zephyr Bluetooth mesh DFU subsystem.
-  The specification that the Bluetooth mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
 * Point-to-point DFU over Bluetooth Low Energy as described in `FOTA over Bluetooth Low Energy`_ above.
 
 For more information about both methods, see :ref:`ug_bt_mesh_fota`.
