@@ -225,11 +225,7 @@ void test_location_init(void)
 	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
 	__cmock_modem_key_mgmt_write_IgnoreAndReturn(0);
 
-	/* TODO: This would be correct but printf syntax is what we receive into the mock
-	 *       so we cannot check that XMODEMSLEEP parameters are correct.
-	 * __cmock_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,0,10240", 0);
-	 */
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%XMODEMSLEEP=1,%d,%d", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,0,10240", 0);
 
 	ret = location_init(location_event_handler);
 	TEST_ASSERT_EQUAL(0, ret);
@@ -372,7 +368,7 @@ void test_location_cellular(void)
 
 	location_callback_called_expected = true;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -410,13 +406,13 @@ void test_location_cellular_cancel_during_ncellmeas(void)
 	config.methods[0].cellular.cell_count = 2;
 	location_callback_called_expected = false;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEASSTOP", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
 
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
@@ -526,14 +522,14 @@ void test_location_request_default(void)
 
 	/***** Fallback to cellular *****/
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=4,%d", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,3", 0);
 
 	/* Select cellular service to be used */
 	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
@@ -583,7 +579,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 
 	/***** First cellular positioning *****/
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -695,7 +691,7 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	location_callback_called_expected = true;
 
 	/***** First cellular positioning *****/
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", -EFAULT);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", -EFAULT);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -881,7 +877,7 @@ void test_location_cellular_periodic(void)
 
 	location_callback_called_expected = true;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -926,7 +922,7 @@ void test_location_cellular_periodic(void)
 	rest_req_ctx.port = HTTPS_PORT;
 	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
 
-	__cmock_nrf_modem_at_printf_ExpectAndReturn("AT%%NCELLMEAS=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();

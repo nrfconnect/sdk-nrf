@@ -15,7 +15,9 @@ test_runner_generate(src/location_test.c)
 cmock_handle(../../../include/modem/modem_key_mgmt.h)
 cmock_handle(../../../include/net/rest_client.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_gnss.h)
-cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h FUNC_EXCLUDE ".*nrf_modem_at_scanf")
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
+	     FUNC_EXCLUDE ".*nrf_modem_at_printf"
+             FUNC_EXCLUDE ".*nrf_modem_at_scanf")
 
 zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include)
 
