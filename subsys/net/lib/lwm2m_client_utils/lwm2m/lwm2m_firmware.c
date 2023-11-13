@@ -34,6 +34,9 @@ LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 #define BYTE_PROGRESS_STEP (1024 * 10)
 
 #define LWM2M_FIRM_PREFIX "lwm2m:fir"
+#define SETTINGS_FIRM_PATH_LEN sizeof(LWM2M_FIRM_PREFIX) + LWM2M_MAX_PATH_STR_SIZE
+#define SETTINGS_FIRM_PATH_FMT  LWM2M_FIRM_PREFIX "/%hu/%hu/%hu"
+#define SETTINGS_FIRM_INSTANCE_PATH_FMT  LWM2M_FIRM_PREFIX "/%hu/%hu"
 
 #define FOTA_PULL_SUPPORTED_COUNT 4
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT)
@@ -287,16 +290,16 @@ static struct settings_handler lwm2m_firm_settings = {
 	.h_set = set,
 };
 
-static int write_resource_to_settings(int inst, int res, uint8_t *data, uint16_t data_len)
+static int write_resource_to_settings(uint16_t inst, uint16_t res, uint8_t *data, uint16_t data_len)
 {
-	char path[sizeof(LWM2M_FIRM_PREFIX "/65535/0/10")];
+	char path[SETTINGS_FIRM_PATH_LEN];
 
 	if ((inst < 0 || inst > 9) || (res < 0 || res > 99)) {
 		return -EINVAL;
 	}
 
-	snprintk(path, sizeof(path), LWM2M_FIRM_PREFIX "/%d/%d/%d", ENABLED_LWM2M_FIRMWARE_OBJECT,
-		 inst, res);
+	snprintk(path, sizeof(path), SETTINGS_FIRM_PATH_FMT,
+		 (uint16_t)ENABLED_LWM2M_FIRMWARE_OBJECT, inst, res);
 	if (settings_save_one(path, data, data_len)) {
 		LOG_ERR("Failed to store %s", path);
 	}
@@ -304,12 +307,12 @@ static int write_resource_to_settings(int inst, int res, uint8_t *data, uint16_t
 	return 0;
 }
 
-static int write_image_type_to_settings(int inst, int img_type)
+static int write_image_type_to_settings(uint16_t inst, uint16_t img_type)
 {
-	char path[sizeof(LWM2M_FIRM_PREFIX "/65632/0")];
+	char path[SETTINGS_FIRM_PATH_LEN];
 
-	snprintk(path, sizeof(path), LWM2M_FIRM_PREFIX "/%d/%d", ENABLED_LWM2M_FIRMWARE_OBJECT,
-		 inst);
+	snprintk(path, sizeof(path), SETTINGS_FIRM_INSTANCE_PATH_FMT,
+		 (uint16_t)ENABLED_LWM2M_FIRMWARE_OBJECT, inst);
 	if (settings_save_one(path, &img_type, sizeof(int))) {
 		LOG_ERR("Failed to store %s", path);
 	}
@@ -966,14 +969,14 @@ static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 	return 0;
 }
 
-static void lwm2m_firmware_load_from_settings(int instance_id)
+static void lwm2m_firmware_load_from_settings(uint16_t instance_id)
 {
 	int ret;
-	char path[sizeof(LWM2M_FIRM_PREFIX "65632/0/10")];
+	char path[SETTINGS_FIRM_PATH_LEN];
 
 	/* Read Object Spesific data */
-	snprintk(path, sizeof(path), LWM2M_FIRM_PREFIX "/%d/%d", ENABLED_LWM2M_FIRMWARE_OBJECT,
-		 instance_id);
+	snprintk(path, sizeof(path), SETTINGS_FIRM_INSTANCE_PATH_FMT,
+		 (uint16_t)ENABLED_LWM2M_FIRMWARE_OBJECT, instance_id);
 	ret = settings_load_subtree(path);
 	if (ret) {
 		LOG_ERR("Failed to load settings, %d", ret);
