@@ -134,13 +134,15 @@ tests:
       - nrf9161dk_nrf9161_ns
     extra_args: EXTRA_CONF_FILE=overlay-carrier.conf
     tags: ci_build
-  applications.asset_tracker_v2.lwm2m.low-power:
+  applications.asset_tracker_v2.lwm2m.bootstrap-low_power:
     build_only: true
     build_on_all: true
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
+    extra_configs:
+      - CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP=y
     extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-low-power.conf"
     tags: ci_build
   applications.asset_tracker_v2.lwm2m.debug:

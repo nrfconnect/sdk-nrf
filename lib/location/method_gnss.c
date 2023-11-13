@@ -83,6 +83,7 @@ BUILD_ASSERT(
 #define VISIBILITY_DETECTION_EXEC_TIME CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME
 #define VISIBILITY_DETECTION_SAT_LIMIT CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 
+static struct k_work method_gnss_prepare_work;
 static struct k_work method_gnss_start_work;
 static struct k_work method_gnss_pvt_work;
 
@@ -637,6 +638,7 @@ int method_gnss_cancel(void)
 	running = false;
 
 	/* Cancel any work that has not been started yet */
+	(void)k_work_cancel(&method_gnss_prepare_work);
 	(void)k_work_cancel(&method_gnss_start_work);
 
 	/* If we are currently not in PSM, i.e., LTE is running, reset the semaphore to unblock
@@ -1119,22 +1121,38 @@ static void method_gnss_assistance_data_need_get(void)
 }
 #endif
 
-static void method_gnss_start_work_fn(struct k_work *work)
+static void method_gnss_prepare_work_fn(struct k_work *work)
 {
-	int err = 0;
-
+#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 	/* P-GPS is only initialized here because initialization may trigger P-GPS data request
 	 * which would fail if the device is not registered to a network.
 	 */
 	method_gnss_pgps_init();
 #endif
-#if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+
 	method_gnss_assistance_data_need_get();
 
 	/* Request assistance data if needed. */
 	method_gnss_assistance_request();
 #endif
+
+	if (!running) {
+		/* Location request has been cancelled. */
+		return;
+	}
+
+	/* GNSS start work is injected into the work queue only after GNSS assistance data need
+	 * has been handled to ensure correct execution order in the work queue. If necessary,
+	 * the library should emit both LOCATION_EVT_GNSS_ASSISTANCE_REQUEST and
+	 * LOCATION_EVT_GNSS_PREDICTION_REQUEST events before the GNSS start work gets to execute.
+	 */
+	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work);
+}
+
+static void method_gnss_start_work_fn(struct k_work *work)
+{
+	int err = 0;
 
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
@@ -1209,7 +1227,7 @@ int method_gnss_location_get(const struct location_request_info *request)
 		return err;
 	}
 
-	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work);
+	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_prepare_work);
 
 	running = true;
 
@@ -1235,6 +1253,7 @@ int method_gnss_init(void)
 	}
 
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
+	k_work_init(&method_gnss_prepare_work, method_gnss_prepare_work_fn);
 	k_work_init(&method_gnss_start_work, method_gnss_start_work_fn);
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
