@@ -31,9 +31,23 @@ constexpr CommandId onOffIncomingCommands[] = {
 	kInvalidCommandId,
 };
 
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(groupsAttrs)
+DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Groups::Attributes::NameSupport::Id, BITMAP8, 1, 0), DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+
+constexpr CommandId groupsIncomingCommands[] = {
+	app::Clusters::Groups::Commands::AddGroup::Id,
+	app::Clusters::Groups::Commands::ViewGroup::Id,
+	app::Clusters::Groups::Commands::GetGroupMembership::Id,
+	app::Clusters::Groups::Commands::RemoveGroup::Id,
+	app::Clusters::Groups::Commands::RemoveAllGroups::Id,
+	app::Clusters::Groups::Commands::AddGroupIfIdentifying::Id,
+	kInvalidCommandId,
+};
+
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(bridgedLightClusters)
 DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffAttrs, onOffIncomingCommands, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+	DECLARE_DYNAMIC_CLUSTER(Clusters::Groups::Id, groupsAttrs, groupsIncomingCommands, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr,
 				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
@@ -64,6 +78,9 @@ CHIP_ERROR OnOffLightDevice::HandleRead(ClusterId clusterId, AttributeId attribu
 	case Clusters::OnOff::Id:
 		return HandleReadOnOff(attributeId, buffer, maxReadLength);
 		break;
+	case Clusters::Groups::Id:
+		return HandleReadGroups(attributeId, buffer, maxReadLength);
+		break;
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
@@ -82,6 +99,26 @@ CHIP_ERROR OnOffLightDevice::HandleReadOnOff(AttributeId attributeId, uint8_t *b
 	}
 	case Clusters::OnOff::Attributes::FeatureMap::Id: {
 		uint32_t featureMap = GetOnOffFeatureMap();
+		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
+	}
+	default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+}
+
+CHIP_ERROR OnOffLightDevice::HandleReadGroups(AttributeId attributeId, uint8_t *buffer, uint16_t maxReadLength)
+{
+	switch (attributeId) {
+	case Clusters::Groups::Attributes::NameSupport::Id: {
+		uint8_t nameSupportMap = GetGroupsNameSupportMap();
+		return CopyAttribute(&nameSupportMap, sizeof(nameSupportMap), buffer, maxReadLength);
+	}
+	case Clusters::Groups::Attributes::ClusterRevision::Id: {
+		uint16_t clusterRevision = GetGroupsClusterRevision();
+		return CopyAttribute(&clusterRevision, sizeof(clusterRevision), buffer, maxReadLength);
+	}
+	case Clusters::Groups::Attributes::FeatureMap::Id: {
+		uint32_t featureMap = GetGroupsFeatureMap();
 		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
 	}
 	default:
