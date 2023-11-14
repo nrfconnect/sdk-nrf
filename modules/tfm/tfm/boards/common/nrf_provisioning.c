@@ -6,7 +6,7 @@
 
 #include "tfm_plat_provisioning.h"
 #include "tfm_plat_otp.h"
-#include "tfm_hal_platform.h"
+#include "tfm_platform_system.h"
 #include "tfm_attest_hal.h"
 #include "hw_unique_key.h"
 #include "nrfx_nvmc.h"
@@ -85,7 +85,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
     }
 
     /* Perform a mandatory reset since we switch to an attestable LCS state */
-    tfm_hal_system_reset();
+    tfm_platform_hal_system_reset();
 
     /*
      * We should never return from this function, a reset should be triggered
