@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Override the AEAD algorithm configuration
+# Override the platform crypto key handling
 set(PLATFORM_DEFAULT_CRYPTO_KEYS        FALSE       CACHE BOOL      "Use default crypto keys implementation.")
 
 # Disable crypto regression tests that are not supported
