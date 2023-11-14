@@ -649,8 +649,8 @@ int main(void)
 	}
 
 	/* use IMEI as unique endpoint name */
-	snprintk(endpoint_name, sizeof(endpoint_name), "%s%s", CONFIG_APP_ENDPOINT_PREFIX,
-		 imei_buf);
+	snprintk(endpoint_name, sizeof(endpoint_name), "%s%.*s", CONFIG_APP_ENDPOINT_PREFIX,
+		 IMEI_LEN, imei_buf);
 	LOG_INF("endpoint: %s", (char *)endpoint_name);
 
 	/* Setup LwM2M */
