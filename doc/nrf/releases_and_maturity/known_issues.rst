@@ -325,6 +325,15 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2
+
+KRKNWK-17360: Groupcast communication does not work for multiple endpoints that are part of the same group on a single Matter node
+  The Matter core implementation handles commands status in a wrong way for those targeted to a group.
+  This issue is only visible when adding multiple endpoints that exist on the same Matter node to the same group, and results in an application crash after receiving a group command.
+  When adding multiple Matter nodes with a single endpoint each to the same group, the communication works correctly.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``99f80de289491ad24a13dda9178a7a24c85324a7``).
+
 .. rst-class:: v2-5-0
 
 KRKNWK-17864: When using Wi-Fi low power mode, the communication with the device might not work after it re-connects to the newly respawned Wi-Fi network

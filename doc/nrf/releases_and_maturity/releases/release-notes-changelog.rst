@@ -206,7 +206,7 @@ Thingy:53: Matter weather station
 Matter Bridge
 -------------
 
-|no_changes_yet_note|
+* Added support for groupcast communication to the On/Off Light device implementation.
 
 Samples
 =======
