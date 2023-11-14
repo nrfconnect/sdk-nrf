@@ -196,7 +196,7 @@ struct nrf_modem_lib_shutdown_cb {
  */
 void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info);
 
-#if defined(CONFIG_NRF_MODEM_LIB_NET_IF)
+#if defined(CONFIG_NRF_MODEM_LIB_NET_IF) || defined(__DOXYGEN__)
 /** @brief Options used to specify desired behavior when the network interface is brought down by
  *	   calling net_if_down().
  */
