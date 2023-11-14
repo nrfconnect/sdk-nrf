@@ -541,19 +541,21 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 int main(void)
 {
 	int err;
-	char hostname[128] = CONFIG_AZURE_IOT_HUB_HOSTNAME;
-	char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
-	struct azure_iot_hub_config cfg = {
+	static char hostname[128] = CONFIG_AZURE_IOT_HUB_HOSTNAME;
+	static char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
+	static struct azure_iot_hub_config cfg = {
 		.device_id = {
 			.ptr = device_id,
-			.size = strlen(device_id),
 		},
 		.hostname = {
 			.ptr = hostname,
-			.size = strlen(hostname),
 		},
 		.use_dps = true,
 	};
+
+	cfg.device_id.size = strlen(device_id);
+	cfg.hostname.size = strlen(hostname);
+
 
 	LOG_INF("Azure IoT Hub sample started");
 
