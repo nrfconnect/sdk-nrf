@@ -355,7 +355,7 @@ KRKNWK-17914: The links to Kconfig options from :file:`Kconfig.features` do not 
 KRKNWK-17718: Failure at TC-DGSW-1.1 Matter Certification test
   The issue happens due to a wrong Software Diagnostic cluster feature map with features enabled by default.
 
-  **Workaround:** Set the default value of the Software Diagnostic cluster feature map to 0 using the ZAP Tool and regenerate files.
+  **Workaround:** Set the default value of the Software Diagnostic cluster feature map to 0 using the ZAP Tool and regenerate files, and manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``70dd449ff943159365466ad5125f42a5bdcbfc0b``).
 
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0
 
