@@ -46,9 +46,7 @@ The module selects the following configurations:
 
   MCUmgr notifications hooks:
 
-    * :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK` - This option enables the MCUmgr upload check hook, which sends image upload requests to the registered callbacks.
-    * :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_STATUS_HOOKS` - This option enables the MCUmgr image status hooks, which report the DFU status to the registered callbacks.
-    * :kconfig:option:`CONFIG_MCUMGR_GRP_OS_RESET_HOOK` - This option enables the MCUmgr OS reset hook, which sends reset requests to the registered callbacks.
+    * :kconfig:option:`CONFIG_MCUMGR_SMP_COMMAND_STATUS_HOOKS` - This option enables the MCUmgr SMP command status callbacks, which inform when an SMP command is received or processed.
 
 * MCUmgr dependencies:
 
@@ -82,7 +80,7 @@ In other words, you cannot simultaneously enable the :ref:`CONFIG_DESKTOP_DFU_MC
 Implementation details
 **********************
 
-The module uses MCUmgr's image notification callbacks for the following purposes:
+The module uses MCUmgr's SMP command received callback for the following purposes:
 
 * To periodically submit a :c:struct:`ble_smp_transfer_event` while image upload over Bluetooth LE is in progress.
   The module registers itself as the final subscriber of the event to track the number of submitted events.
