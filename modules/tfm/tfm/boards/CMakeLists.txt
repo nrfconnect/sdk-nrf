@@ -116,6 +116,14 @@ if (NRF_ALLOW_NON_SECURE_RESET)
   target_compile_definitions(platform_s PUBLIC NRF_ALLOW_NON_SECURE_RESET)
 endif()
 
+if (NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
+  target_compile_definitions(platform_s PUBLIC NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
+  target_sources(platform_s
+    PRIVATE
+      common/ns_fault_service.c
+  )
+endif()
+
 if (CONFIG_NFCT_PINS_AS_GPIOS)
   target_compile_definitions(platform_s PUBLIC CONFIG_NFCT_PINS_AS_GPIOS)
 endif()

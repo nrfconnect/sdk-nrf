@@ -19,6 +19,7 @@ set(NRF_NS_STORAGE                      ON          CACHE BOOL      "Enable non-
 set(PLATFORM_DEFAULT_ATTEST_HAL         OFF         CACHE BOOL      "Use default attest hal implementation.")
 
 set(NRF_ALLOW_NON_SECURE_RESET          OFF         CACHE BOOL      "Allow system reset calls from Non-Secure")
+set(NRF_ALLOW_NON_SECURE_FAULT_HANDLING OFF         CACHE BOOL      "Allow Non-Secure to handle Secure faults triggered by Non-Secure")
 
 set(TFM_DUMMY_PROVISIONING              OFF         CACHE BOOL      "Provision with dummy values. NOT to be used in production")
 set(PLATFORM_DEFAULT_PROVISIONING       OFF         CACHE BOOL      "Use default provisioning implementation")
