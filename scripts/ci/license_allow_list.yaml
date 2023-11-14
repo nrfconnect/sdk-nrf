@@ -44,6 +44,7 @@ Apache-2.0: |
   /src/zap-generated/
   ^nrf/tests/bluetooth/tester/src/main.c$
   ^nrf/subsys/nrf_security/src/legacy
+  ^nrf/modules/trusted-firmware-m/fault.c
 curl: "^nrf/ext/"
 MIT: "^nrf/ext/"
 BSD-3-CLAUSE: |
