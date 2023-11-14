@@ -195,8 +195,11 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-* Updated the :ref:`nrf_desktop_dfu` to use :ref:`partition_manager` definitions for determining currently booted image slot in build time.
-  The other image slot is used to store an application update image.
+* Updated:
+
+  * The :ref:`nrf_desktop_dfu` to use :ref:`partition_manager` definitions for determining currently booted image slot in build time.
+    The other image slot is used to store an application update image.
+  * The :ref:`nrf_desktop_dfu_mcumgr` to use MCUmgr SMP command status callbacks (the :kconfig:option:`CONFIG_MCUMGR_SMP_COMMAND_STATUS_HOOKS` Kconfig option) instead of MCUmgr image and OS management callbacks.
 
 Thingy:53: Matter weather station
 ---------------------------------
