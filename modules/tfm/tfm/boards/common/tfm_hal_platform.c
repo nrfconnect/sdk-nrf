@@ -21,6 +21,8 @@
 #include "tfm_spm_log.h"
 #include "hw_unique_key.h"
 #include "config_tfm.h"
+#include "exception_info.h"
+#include "tfm_arch.h"
 
 #if defined(TFM_PARTITION_CRYPTO)
 static enum tfm_hal_status_t crypto_platform_init(void)

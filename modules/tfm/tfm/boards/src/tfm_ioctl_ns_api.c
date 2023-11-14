@@ -11,7 +11,6 @@
 #include <autoconf.h>
 #include <errno.h>
 
-#if CONFIG_FW_INFO
 static int status2err(enum tfm_platform_err_t status, uint32_t result)
 {
 	switch (status) {
@@ -35,6 +34,7 @@ static int status2err(enum tfm_platform_err_t status, uint32_t result)
 	return 0;
 }
 
+#if CONFIG_FW_INFO
 int tfm_platform_firmware_info(uint32_t fw_address, struct fw_info *info)
 {
 	enum tfm_platform_err_t ret;
@@ -84,3 +84,27 @@ int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address,
 	return 0;
 }
 #endif
+
+int tfm_platform_ns_fault_set_handler(struct tfm_ns_fault_service_handler_context  *context,
+				      tfm_ns_fault_service_handler_callback callback)
+{
+	enum tfm_platform_err_t ret;
+	psa_invec in_vec;
+	psa_outvec out_vec;
+	struct tfm_ns_fault_service_args args;
+	struct tfm_ns_fault_service_out out;
+
+	in_vec.base = (const void *)&args;
+	in_vec.len = sizeof(args);
+
+	out_vec.base = (void *)&out;
+	out_vec.len = sizeof(out);
+
+	args.context = context;
+	args.callback = callback;
+
+	ret = tfm_platform_ioctl(TFM_PLATFORM_IOCTL_NS_FAULT, &in_vec,
+				 &out_vec);
+
+	return status2err(ret, out.result);
+}

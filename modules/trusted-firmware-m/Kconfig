@@ -267,6 +267,19 @@ config TFM_ALLOW_NON_SECURE_RESET
 	  to issue a system reset of the chip without going through a secure
 	  service.
 
+config TFM_ALLOW_NON_SECURE_FAULT_HANDLING
+	bool "Handle faults originating from non-secure code in Zephyr"
+	default y
+	depends on TFM_EXCEPTION_INFO_DUMP
+	help
+	  When a BusFault or SecureFault originates from non-secure code,
+	  allow the Zephyr fault handler to handle the exception. This is
+	  beneficial as it allows fault information to be dumped to the
+	  Zephyr shell for quick debug and for error data to be extracted
+	  remotely using tools such as Memfault. Any error from the fault
+	  handling path itself, will trap back into the secure HardFault
+	  handler for processing.
+
 config TFM_S_CODE_VECTOR_TABLE_SIZE
 	hex
 	default 0x144 if SOC_SERIES_NRF91X
