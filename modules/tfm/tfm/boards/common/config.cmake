@@ -7,6 +7,8 @@
 # Override the platform crypto key handling
 set(PLATFORM_DEFAULT_CRYPTO_KEYS        FALSE       CACHE BOOL      "Use default crypto keys implementation.")
 
+set(PLATFORM_DEFAULT_SYSTEM_RESET_HALT  OFF         CACHE BOOL      "Use default system reset/halt implementation")
+
 # Disable crypto regression tests that are not supported
 set(TFM_CRYPTO_TEST_ALG_CFB             OFF         CACHE BOOL      "Test CFB cryptography mode")
 set(TFM_CRYPTO_TEST_ALG_OFB             OFF         CACHE BOOL      "Test OFB cryptography mode")
