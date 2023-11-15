@@ -36,6 +36,8 @@ The nRF70 Series provides the following firmware patch optimizations to reduce t
 
 * A separate firmware patch variant is provided for applications that only require support for Wi-Fi scan-only operation.
   This patch variant is significantly smaller in size compared to the full-featured firmware patch variant that supports Wi-Fi :abbr:`STA (Station)` mode.
+* The nRF Wi-Fi driver offers support for either relocating or storing the patch in the external non-volatile memory if that is available.
+  See :ref:`ug_nrf70_developing_fw_patch_ext_flash` for details.
 
 Zephyr OS factors
 *****************
