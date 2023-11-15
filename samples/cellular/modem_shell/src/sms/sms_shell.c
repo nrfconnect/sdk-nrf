@@ -133,13 +133,18 @@ static int cmd_sms_send(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	err = sms_send_msg(arg_number, arg_message, arg_message_type);
@@ -168,13 +173,18 @@ static int cmd_sms_recv(const struct shell *shell, size_t argc, char **argv)
 		case 'r': /* Start monitoring received messages */
 			arg_receive_start = true;
 			break;
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	err = sms_recv(arg_receive_start);

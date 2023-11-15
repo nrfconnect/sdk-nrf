@@ -345,13 +345,18 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			strcpy(arg_peer_hostname, optarg);
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	err = sock_open_and_connect(
@@ -396,13 +401,18 @@ static int cmd_sock_close(const struct shell *shell, size_t argc, char **argv)
 			arg_socket_id = atoi(optarg);
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	err = sock_close(arg_socket_id);
@@ -493,13 +503,18 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 			arg_packet_number_prefix = true;
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	err = sock_send_data(
@@ -580,13 +595,18 @@ static int cmd_sock_recv(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	err = sock_recv(
@@ -646,13 +666,18 @@ static int cmd_sock_rai(const struct shell *shell, size_t argc, char **argv)
 			arg_rai_wait_more = true;
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	bool rai_status = false;

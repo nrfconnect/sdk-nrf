@@ -71,7 +71,7 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 	optind = 1;
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "t:r", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "t:rh", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 			common_option = SETT_CMD_COMMON_READ;
@@ -93,14 +93,20 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 			startup_cmd_mem_slot = 3;
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
 	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
 	if (!starttime_given && common_option == SETT_CMD_COMMON_NONE &&
 	    startup_cmd_str == NULL) {
 		mosh_warn("No command option given. Please, see the usage.");
