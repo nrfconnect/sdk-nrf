@@ -9,7 +9,7 @@
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(lte_lc);
+LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 NRF_MODEM_LIB_ON_INIT(lte_lc_init_hook, on_modem_init, NULL);
 NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
