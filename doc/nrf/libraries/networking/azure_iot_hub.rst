@@ -96,7 +96,7 @@ To connect to Azure IoT Hub without using DPS, complete the following minimum re
 
    The device ID must match with the one used while creating the certificates.
    You can also set the device ID at run time by populating the ``device_id`` member of the :c:struct:`azure_iot_hub_config` structure passed to the :c:func:`azure_iot_hub_connect` function when connecting.
-   If the ``device_id.size`` buffer size is zero, the compile-time option :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID`` is used.
+   If the ``device_id.size`` buffer size is zero, the compile-time option :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` is used.
 #. Make sure that the device is already registered with your Azure IoT Hub, or follow the instructions in `Registering the device with Azure IoT Hub`_.
 #. Set the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option to the security tag used in :ref:`azure_iot_hub_flash_certs`.
 
@@ -346,6 +346,10 @@ Azure IoT Hub API
 | Header file: :file:`include/net/azure_iot_hub.h`
 | Source files: :file:`subsys/net/lib/azure_iot_hub/src/azure_iot_hub.c`
 
+.. doxygengroup:: azure_iot_hub
+   :project: nrf
+   :members:
+
 .. _azure_iot_hub_dps_api:
 
 Azure IoT Hub DPS API
@@ -354,7 +358,6 @@ Azure IoT Hub DPS API
 | Header file: :file:`include/net/azure_iot_hub_dps.h`
 | Source files: :file:`subsys/net/lib/azure_iot_hub/src/azure_iot_hub_dps.c`
 
-
-.. doxygengroup:: azure_iot_hub
+.. doxygengroup:: azure_iot_hub_dps
    :project: nrf
    :members:
