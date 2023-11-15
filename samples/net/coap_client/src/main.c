@@ -6,14 +6,16 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
 #include <zephyr/net/coap.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/random/random.h>
+#include <zephyr/net/coap_client.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 
 LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 
@@ -21,31 +23,24 @@ LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 #define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
-#define APP_COAP_SEND_INTERVAL_MS 5000
-#define APP_COAP_MAX_MSG_LEN 1280
-#define APP_COAP_VERSION 1
+/* Macro called upon a fatal error, reboots the device. */
+#define FATAL_ERROR()					\
+	LOG_ERR("Fatal error! Rebooting the device.");	\
+	LOG_PANIC();					\
+	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
 
 /* Zephyr NET management event callback structures. */
 static struct net_mgmt_event_callback l4_cb;
 static struct net_mgmt_event_callback conn_cb;
 
-static int sock;
-static struct pollfd fds;
-static struct sockaddr_storage server;
-static uint16_t next_token;
-
-static uint8_t coap_buf[APP_COAP_MAX_MSG_LEN];
-
-K_MUTEX_DEFINE(network_connected_lock);
-K_CONDVAR_DEFINE(network_connected);
+/* Variable used to indicate if network is connected. */
 static bool is_connected;
 
-/**
- * @brief Resolves the configured hostname.
- *
- * @return 0 on success, error code otherwise.
- */
-static int server_resolve(void)
+/* Mutex and conditional variable used to signal network connectivity. */
+K_MUTEX_DEFINE(network_connected_lock);
+K_CONDVAR_DEFINE(network_connected);
+
+static int server_resolve(struct sockaddr_storage *server)
 {
 	int err;
 	struct addrinfo *result;
@@ -55,27 +50,26 @@ static int server_resolve(void)
 	};
 	char ipv4_addr[NET_IPV4_ADDR_LEN];
 
-	err = getaddrinfo(CONFIG_COAP_SERVER_HOSTNAME, NULL, &hints, &result);
-	if (err != 0) {
-		LOG_ERR("ERROR: getaddrinfo failed %d", err);
-		return -EIO;
+	err = getaddrinfo(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, NULL, &hints, &result);
+	if (err) {
+		LOG_ERR("getaddrinfo, error: %d", err);
+		return err;
 	}
 
 	if (result == NULL) {
-		LOG_ERR("ERROR: Address not found");
+		LOG_ERR("Address not found");
 		return -ENOENT;
 	}
 
 	/* IPv4 Address. */
-	struct sockaddr_in *server4 = ((struct sockaddr_in *)&server);
+	struct sockaddr_in *server4 = ((struct sockaddr_in *)server);
 
-	server4->sin_addr.s_addr =
-		((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
+	server4->sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
 	server4->sin_family = AF_INET;
-	server4->sin_port = htons(CONFIG_COAP_SERVER_PORT);
+	server4->sin_port = htons(CONFIG_COAP_SAMPLE_SERVER_PORT);
 
-	inet_ntop(AF_INET, &server4->sin_addr.s_addr, ipv4_addr,
-		  sizeof(ipv4_addr));
+	inet_ntop(AF_INET, &server4->sin_addr.s_addr, ipv4_addr, sizeof(ipv4_addr));
+
 	LOG_INF("IPv4 Address found %s", ipv4_addr);
 
 	/* Free the address. */
@@ -84,240 +78,78 @@ static int server_resolve(void)
 	return 0;
 }
 
-/**
- * @brief Initialize the CoAP client
- *
- * @return 0 on success, error code otherwise.
- */
-static int client_init(void)
-{
-	int err;
-
-	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (sock < 0) {
-		LOG_ERR("Failed to create CoAP socket: %d.", errno);
-		return -errno;
-	}
-
-	err = connect(sock, (struct sockaddr *)&server,
-		      sizeof(struct sockaddr_in));
-	if (err < 0) {
-		LOG_ERR("Connect failed : %d", errno);
-		return -errno;
-	}
-
-	/* Initialize FDS, for poll. */
-	fds.fd = sock;
-	fds.events = POLLIN;
-
-	/* Randomize token. */
-	next_token = sys_rand32_get();
-
-	return 0;
-}
-
-/**
- * @brief Handles responses from the remote CoAP server.
- *
- * @return 0 on success, error code otherwise.
- */
-static int client_handle_get_response(uint8_t *buf, int received)
-{
-	int err;
-	struct coap_packet reply;
-	const uint8_t *payload;
-	uint16_t payload_len;
-	uint8_t token[8];
-	uint16_t token_len;
-	uint8_t temp_buf[16];
-
-	err = coap_packet_parse(&reply, buf, received, NULL, 0);
-	if (err < 0) {
-		LOG_ERR("Malformed response received: %d", err);
-		return err;
-	}
-
-	payload = coap_packet_get_payload(&reply, &payload_len);
-	token_len = coap_header_get_token(&reply, token);
-
-	if ((token_len != sizeof(next_token)) ||
-	    (memcmp(&next_token, token, sizeof(next_token)) != 0)) {
-		LOG_ERR("Invalid token received: 0x%02x%02x",
-		       token[1], token[0]);
-		return 0;
-	}
-
-	if (payload_len > 0) {
-		snprintf(temp_buf, MIN(payload_len, sizeof(temp_buf)), "%s", payload);
-	} else {
-		strcpy(temp_buf, "EMPTY");
-	}
-
-	LOG_INF("CoAP response: code: 0x%x, token 0x%02x%02x, payload: %s",
-	       coap_header_get_code(&reply), token[1], token[0], temp_buf);
-
-	return 0;
-}
-
-/**
- * @brief Send CoAP GET request.
- *
- * @return 0 on success, error code otherwise.
- */
-static int client_get_send(void)
-{
-	int err;
-	struct coap_packet request;
-
-	next_token++;
-
-	err = coap_packet_init(&request, coap_buf, sizeof(coap_buf),
-			       APP_COAP_VERSION, COAP_TYPE_NON_CON,
-			       sizeof(next_token), (uint8_t *)&next_token,
-			       COAP_METHOD_GET, coap_next_id());
-	if (err < 0) {
-		LOG_ERR("Failed to create CoAP request, %d", err);
-		return err;
-	}
-
-	err = coap_packet_append_option(&request, COAP_OPTION_URI_PATH,
-					(uint8_t *)CONFIG_COAP_RESOURCE,
-					strlen(CONFIG_COAP_RESOURCE));
-	if (err < 0) {
-		LOG_ERR("Failed to encode CoAP option, %d", err);
-		return err;
-	}
-
-	err = send(sock, request.data, request.offset, 0);
-	if (err < 0) {
-		LOG_ERR("Failed to send CoAP request, %d", errno);
-		return -errno;
-	}
-
-	LOG_INF("CoAP request sent: token 0x%04x", next_token);
-
-	return 0;
-}
-
-/**
- * @brief Waits until data is available on the socket
- *
- * @return 0 on success
- * @return -EAGAIN if timeout occurred and there is no data.
- * @return negative error code in case of poll error.
- */
-static int wait(int timeout)
-{
-	int ret = poll(&fds, 1, timeout);
-
-	if (ret < 0) {
-		LOG_ERR("poll error: %d", errno);
-		return -errno;
-	}
-
-	if (ret == 0) {
-		/* Timeout. */
-		return -EAGAIN;
-	}
-
-	if ((fds.revents & POLLERR) == POLLERR) {
-		LOG_ERR("wait: POLLERR");
-		return -EIO;
-	}
-
-	if ((fds.revents & POLLNVAL) == POLLNVAL) {
-		LOG_ERR("wait: POLLNVAL");
-		return -EBADF;
-	}
-
-	if ((fds.revents & POLLIN) != POLLIN) {
-		return -EAGAIN;
-	}
-
-	return 0;
-}
-
-/**
- * @brief Waits for the establishment of a network connection.
- */
 static void wait_for_network(void)
 {
 	k_mutex_lock(&network_connected_lock, K_FOREVER);
+
 	if (!is_connected) {
 		LOG_INF("Waiting for network connectivity");
 		k_condvar_wait(&network_connected, &network_connected_lock, K_FOREVER);
 	}
+
 	k_mutex_unlock(&network_connected_lock);
 }
 
-/**
- * @brief Infinite CoAP request loop
- */
-static void coap_loop(void)
+static void response_cb(int16_t code, size_t offset, const uint8_t *payload,
+			size_t len, bool last_block, void *user_data)
 {
-	int64_t next_msg_time = APP_COAP_SEND_INTERVAL_MS;
-	int err, received;
+	if (code >= 0) {
+		LOG_INF("CoAP response: code: 0x%x, payload: %s", code, payload);
+	} else {
+		LOG_INF("Response received with error code: %d", code);
+	}
+}
 
-	wait_for_network();
+static int periodic_coap_request_loop(void)
+{
+	int err, sock;
+	struct sockaddr_storage server = { 0 };
+	struct coap_client coap_client = { 0 };
+	struct coap_client_request req = {
+		.method = COAP_METHOD_GET,
+		.confirmable = true,
+		.fmt = COAP_CONTENT_FORMAT_TEXT_PLAIN,
+		.payload = NULL,
+		.cb = response_cb,
+		.len = 0,
+		.path = CONFIG_COAP_SAMPLE_RESOURCE,
+	};
 
-	if (server_resolve() != 0) {
+	err = server_resolve(&server);
+	if (err) {
 		LOG_ERR("Failed to resolve server name");
-		return;
+		return err;
 	}
 
-	if (client_init() != 0) {
-		LOG_ERR("Failed to initialize CoAP client");
-		return;
+	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock < 0) {
+		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
+		return -errno;
 	}
 
-	next_msg_time = k_uptime_get();
+	LOG_INF("Initializing CoAP client");
 
-	while (1) {
+	err = coap_client_init(&coap_client, NULL);
+	if (err) {
+		LOG_ERR("Failed to initialize CoAP client: %d", err);
+		return err;
+	}
+
+	while (true) {
 		wait_for_network();
 
-		if (k_uptime_get() >= next_msg_time) {
-			if (client_get_send() != 0) {
-				LOG_ERR("Failed to send GET request, exit...");
-				break;
-			}
-
-			next_msg_time = k_uptime_get() + APP_COAP_SEND_INTERVAL_MS;
+		/* Send request */
+		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, -1);
+		if (err) {
+			LOG_ERR("Failed to send request: %d", err);
+			return err;
 		}
 
-		int64_t remaining = next_msg_time - k_uptime_get();
+		LOG_INF("CoAP GET request sent sent to %s, resource: %s",
+			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, CONFIG_COAP_SAMPLE_RESOURCE);
 
-		if (remaining < 0) {
-			remaining = 0;
-		}
-
-		err = wait(remaining);
-		if (err < 0) {
-			if (err == -EAGAIN) {
-				continue;
-			}
-
-			LOG_ERR("Poll error...");
-			continue;
-		}
-
-		received = recv(sock, coap_buf, sizeof(coap_buf), MSG_DONTWAIT);
-		if (received < 0) {
-			LOG_ERR("Socket error, error: %d", errno);
-		}
-
-		if (received == 0) {
-			LOG_ERR("Empty datagram");
-			continue;
-		}
-
-		err = client_handle_get_response(coap_buf, received);
-		if (err < 0) {
-			LOG_ERR("Invalid response...");
-			continue;
-		}
+		k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
 	}
-
-	(void)close(sock);
 }
 
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
@@ -343,14 +175,13 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		return;
 	}
 }
-
 static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint32_t event,
-				       struct net_if *iface)
+						uint32_t event,
+						struct net_if *iface)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
-		k_fatal_halt(K_ERR_KERNEL_OOPS);
+		FATAL_ERROR();
 		return;
 	}
 }
@@ -359,13 +190,12 @@ int main(void)
 {
 	int err;
 
-	LOG_INF("The nRF CoAP client sample started");
+	LOG_INF("The CoAP client sample started");
 
-	/* Setup handler for Zephyr NET Connection Manager events. */
+	/* Setup handler for Zephyr NET Connection Manager events and Connectivity layer. */
 	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
 	net_mgmt_add_event_callback(&l4_cb);
 
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
 	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
 	net_mgmt_add_event_callback(&conn_cb);
 
@@ -373,23 +203,29 @@ int main(void)
 	 * Wi-Fi or LTE depending on the board that the sample was built for.
 	 */
 	LOG_INF("Bringing network interface up and connecting to the network");
+
 	err = conn_mgr_all_if_up(true);
 	if (err) {
 		LOG_ERR("conn_mgr_all_if_up, error: %d", err);
+		FATAL_ERROR();
 		return err;
 	}
 
 	err = conn_mgr_all_if_connect(true);
 	if (err) {
-		printk("conn_mgr_all_if_connect, error: %d\n", err);
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
+		FATAL_ERROR();
 		return err;
 	}
 
-	/* Start the infinite coap request loop. */
-	coap_loop();
+	wait_for_network();
 
-	/* If we get here an error occurred. Halt the system. */
-	k_fatal_halt(K_ERR_KERNEL_OOPS);
+	err = periodic_coap_request_loop();
+	if (err) {
+		LOG_ERR("periodic_coap_request_loop, error: %d", err);
+		FATAL_ERROR();
+		return err;
+	}
 
 	return 0;
 }
