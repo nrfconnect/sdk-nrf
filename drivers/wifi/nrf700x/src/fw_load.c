@@ -251,13 +251,8 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 	uint8_t *fw_start;
 	uint8_t *fw_end;
 
-#ifdef CONFIG_NRF_WIFI_PATCHES_BUILTIN
 	fw_start = (uint8_t *)_bin_nrf70_fw_start;
 	fw_end = (uint8_t *)_bin_nrf70_fw_end;
-#else
-	BUILD_ASSERT(0, "CONFIG_NRF_WIFI_PATCHES_BUILTIN must be enabled");
-#endif /* CONFIG_NRF_WIFI_PATCHES_BUILTIN */
-
 
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 	nrf_qspi_nor_xip_enable(flash_dev, true);
