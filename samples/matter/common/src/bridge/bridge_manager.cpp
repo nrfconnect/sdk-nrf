@@ -220,6 +220,9 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 			 * biggest assigned number. */
 			mCurrentDynamicEndpointId =
 				mCurrentDynamicEndpointId > endpointId ? mCurrentDynamicEndpointId : endpointId + 1;
+		} else {
+			/* The pair was added to a map, so we have to take care about removing it in case of failure. */
+			mDevicesMap.Erase(index);
 		}
 
 		return err;
@@ -231,6 +234,12 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 					/* Assign the free endpoint ID. */
 					do {
 						err = CreateEndpoint(index, mCurrentDynamicEndpointId);
+
+						if (err != CHIP_NO_ERROR) {
+							/* The pair was added to a map, so we have to take care about
+							 * removing it in case of failure. */
+							mDevicesMap.Erase(index);
+						}
 
 						/* Handle wrap condition */
 						if (++mCurrentDynamicEndpointId < mFirstDynamicEndpointId) {
@@ -293,35 +302,28 @@ CHIP_ERROR BridgeManager::AddDevices(MatterBridgedDevice *devices[], BridgedDevi
 {
 	VerifyOrReturnError(devices && dataProvider, CHIP_ERROR_INTERNAL);
 
-	/* Wrap input data into unique_ptr to avoid memory leakage in case any error occurs. */
-	Platform::UniquePtr<MatterBridgedDevice> devicesPtr[deviceListSize];
-	for (auto i = 0; i < deviceListSize; ++i) {
-		devicesPtr[i] = std::move(Platform::UniquePtr<MatterBridgedDevice>(devices[i]));
-	}
-	Platform::UniquePtr<BridgedDeviceDataProvider> dataProviderPtr(dataProvider);
-
 	/* Maximum number of Matter bridged devices is controlled inside mDevicesMap,
 	   but the data providers may be created independently, so let's ensure we do not
 	   violate the maximum number of supported instances. */
-	VerifyOrReturnError(mDevicesMap.FreeSlots() >= deviceListSize, CHIP_ERROR_NO_MEMORY,
-			    LOG_ERR("Not enough free slots in the map"));
+	if (mDevicesMap.FreeSlots() < deviceListSize) {
+		/* This method takes care of the resources, so objects have to be deleted. */
+		for (auto i = 0; i < deviceListSize; ++i) {
+			chip::Platform::Delete(devices[i]);
+		}
+		chip::Platform::Delete(dataProvider);
+		return CHIP_ERROR_NO_MEMORY;
+	}
 
-	CHIP_ERROR cumulativeStatus{ CHIP_NO_ERROR };
 	CHIP_ERROR status{ CHIP_NO_ERROR };
 	for (auto i = 0; i < deviceListSize; ++i) {
-		MatterBridgedDevice *device = devicesPtr[i].get();
-		status = AddSingleDevice(device, dataProviderPtr.get(), devicesPairIndexes[i], endpointIds[i]);
-		if (status == CHIP_NO_ERROR) {
-			devicesPtr[i].release();
-		} else {
-			cumulativeStatus = status;
+		status = AddSingleDevice(devices[i], dataProvider, devicesPairIndexes[i], endpointIds[i]);
+
+		if (status != CHIP_NO_ERROR) {
+			return status;
 		}
 	}
 
-	if (cumulativeStatus == CHIP_NO_ERROR) {
-		dataProviderPtr.release();
-	}
-	return cumulativeStatus;
+	return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR BridgeManager::HandleRead(uint16_t index, ClusterId clusterId,
