@@ -6,11 +6,6 @@
 
 /**
  * @brief File containing FW load functions for Zephyr.
- *
- * For NRF QSPI NOR special handling is needed for this file as all RODATA of
- * this file is stored in external flash, so, any use of RODATA has to be protected
- * by disabling XIP and enabling it again after use. This means no LOG_* macros
- * (buffered) or buffered printk can be used in this file, else it will crash.
  */
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +17,16 @@
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
 #include <zephyr/logging/log.h>
+#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
+/* For NRF QSPI NOR special handling is needed for this file as all RODATA of
+ * this file is stored in external flash, so, any use of RODATA has to be protected
+ * by disabling XIP and enabling it again after use. This means no LOG_* macros
+ * (buffered) or buffered printk can be used in this file, else it will crash.
+ */
+LOG_MODULE_DECLARE(wifi_nrf, LOG_LEVEL_NONE);
+#else
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF700X_LOG_LEVEL);
+#endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
 #include <fmac_main.h>
 
