@@ -17,6 +17,7 @@ Examples:
 """
 
 NRF = [
+    ("introduction", "index"),
     ("app_boards", "config_and_build/board_support"),
     ("app_dev/board_support/index", "config_and_build/board_support"),
     ("ug_bootloader", "config_and_build/bootloaders_and_dfu/bootloader"),
