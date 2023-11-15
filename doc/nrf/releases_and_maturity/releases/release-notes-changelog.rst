@@ -436,11 +436,14 @@ Multicore samples
 Networking samples
 ------------------
 
-* :ref:`nrf_coap_client_sample` sample:
+* :ref:`net_coap_client_sample` sample:
 
   * Added support for Wi-Fi and LTE connectivity through the connection manager API.
-  * Updated by moving the sample from :file:`cellular/coap_client` folder to :file:`net/coap_client`.
-    The documentation is now found in the :ref:`networking_samples` section.
+  * Updated:
+
+    * The sample is moved from the :file:`cellular/coap_client` folder to :file:`net/coap_client`.
+      The documentation is now found in the :ref:`networking_samples` section.
+    * The sample to use the :ref:`coap_client_interface` library.
 
 NFC samples
 -----------

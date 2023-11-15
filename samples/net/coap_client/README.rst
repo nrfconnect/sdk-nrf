@@ -1,13 +1,17 @@
 .. _nrf_coap_client_sample:
+.. _net_coap_client_sample:
 
-nRF CoAP Client
-###############
+CoAP Client
+###########
 
 .. contents::
    :local:
    :depth: 2
 
-The nRF CoAP Client sample demonstrates the communication between a public CoAP server and an nRF91 Series SiP or nRF70 Series SoC that acts as the CoAP client.
+The CoAP Client sample demonstrates the communication between a public CoAP server and a CoAP client application that is running on a Nordic SoC that enables IP networking through cellular or Wi-Fi connectivity.
+Cellular connectivity is supported on the nRF91 Series SiPs, while Wi-Fi connectivity is supported on the nRF52 or nRF53 Series SoCs hosting the nRF70 Series Wi-Fi companion ICs.
+
+The sample uses the :ref:`connection manager <zephyr:conn_mgr_overview>` that provides a common connectivity API for LTE and Wi-Fi stacks.
 
 Requirements
 ************
@@ -23,7 +27,7 @@ The sample also requires a public CoAP server IP address or URL available on the
 Overview
 ********
 
-The nRF CoAP Client sample performs the following actions:
+The CoAP Client sample performs the following actions:
 
 #. Connect to the configured public CoAP test server (specified by the Kconfig option :ref:`CONFIG_COAP_SERVER_HOSTNAME <CONFIG_COAP_SERVER_HOSTNAME>`).
 #. Send periodic GET request for a test resource (specified by the Kconfig option :ref:`CONFIG_COAP_RESOURCE <CONFIG_COAP_RESOURCE>`) that is available on the server.
@@ -31,7 +35,6 @@ The nRF CoAP Client sample performs the following actions:
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
 This server runs Eclipse Californium, which is an open source implementation of the CoAP protocol that is targeted at the development and testing of IoT applications.
-An nRF91 Series DK or nRF7002 DK is used as the CoAP client.
 
 This sample uses the resource **obs** (Californium observable resource) in the communication between the CoAP client and the public CoAP server.
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
@@ -74,7 +77,7 @@ CONFIG_COAP_SERVER_PORT - CoAP server port
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/coap_client`
+.. |sample path| replace:: :file:`samples/net/coap_client`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -89,13 +92,11 @@ Testing
 #. Power on or reset the kit.
 #. Observe that the following output is displayed in the terminal::
 
-       The nRF CoAP client sample started
+       The CoAP client sample started
 #. Observe that the discovered IP address of the public CoAP server is displayed on the terminal emulator.
 #. Observe that your DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE connection.
 #. Observe that the sample either displays the response data received from the server or indicates a timeout on the terminal.
    For more information on the response codes, see `COAP response codes`_.
-
-
 
 Sample output
 =============
@@ -104,14 +105,13 @@ The sample displays the data in the following format:
 
 .. code-block:: console
 
-   CoAP request sent: token 0x9772
-   CoAP response: code: 0x45, token 0x9772, payload: 15:39:40
+   CoAP GET request sent sent to californium.eclipseprojects.io, resource: obs
+   CoAP response: code: 0x45, payload: 15:29:45
 
 Instead of displaying every single CoAP frame content, the sample displays only the essential data.
 For the above sample output, the information displayed on the terminal conveys the following:
 
 * ``code:0x45`` -  CoAP response code (2.05 - Content), which is constant across responses
-* ``token 0x9772`` - CoAP token, which is unique per request/response pair
 * ``payload: 15:39:40`` - the actual message payload (current time in UTC format) from the resource that is queried in this sample
 
 References
@@ -122,18 +122,10 @@ References
 Dependencies
 ************
 
-This sample uses the following |NCS| library:
+This sample uses the following Zephyr libraries:
 
-* :ref:`lte_lc_readme`
-
-It uses the following `sdk-nrfxlib`_ library:
-
-* :ref:`nrfxlib:nrf_modem`
-
-It uses the following Zephyr library:
-
-* :ref:`CoAP <zephyr:networking_api>`
-
-In addition, it uses the following secure firmware component:
-
-* :ref:`Trusted Firmware-M <ug_tfm>`
+* :ref:`net_if_interface`
+* :ref:`net_mgmt_interface`
+* :ref:`CoAP client <zephyr:coap_client_interface>`
+* :ref:`CoAP <zephyr:coap_sock_interface>`
+* :ref:`Connection manager <zephyr:conn_mgr_overview>`
