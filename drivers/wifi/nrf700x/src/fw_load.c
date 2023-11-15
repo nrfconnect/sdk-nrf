@@ -258,16 +258,17 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 	BUILD_ASSERT(0, "CONFIG_NRF_WIFI_PATCHES_BUILTIN must be enabled");
 #endif /* CONFIG_NRF_WIFI_PATCHES_BUILTIN */
 
+
+#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
+	nrf_qspi_nor_xip_enable(flash_dev, true);
+#endif /* CONFIG_NRF_WIFI */
+
 	status = nrf_wifi_fmac_fw_parse(rpu_ctx, fw_start, fw_end - fw_start,
 					&fw_info);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_fw_parse failed", __func__);
 		return status;
 	}
-
-#if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
-	nrf_qspi_nor_xip_enable(flash_dev, true);
-#endif /* CONFIG_NRF_WIFI */
 	/* Load the FW patches to the RPU */
 	status = nrf_wifi_fmac_fw_load(rpu_ctx, &fw_info);
 
