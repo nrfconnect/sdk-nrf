@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AWS_IOT_INTEGRATION
+	bool "AWS IoT Integration layer"
+
+if AWS_IOT_INTEGRATION
+
+config AWS_IOT_INTEGRATION_MESSAGE_SIZE_MAX
+	int "Maximum size of messages"
+	default 512
+
+config AWS_IOT_INTEGRATION_RECONNECT_INTERVAL_SECONDS
+	int "Reconnection interval in seconds"
+	default 30
+
+config AWS_IOT_INTEGRATION_WORKQUEUE_STACK_SIZE
+	int "Workqueue stack size"
+	default 4096
+
+module = AWS_IOT_INTEGRATION
+module-str = AWS IoT integration
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # AWS_IOT_INTEGRATION

@@ -32,6 +32,10 @@
 #include "ota_util.h"
 #endif
 
+#ifdef CONFIG_AWS_IOT_INTEGRATION
+#include "aws_iot_integration.h"
+#endif
+
 #include <dk_buttons_and_leds.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -84,6 +88,8 @@ CHIP_ERROR AppTask::Init()
 	/* Initialize CHIP stack */
 	LOG_INF("Init CHIP stack");
 
+	int ret;
+
 	CHIP_ERROR err = chip::Platform::MemoryInit();
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("Platform::MemoryInit() failed");
@@ -121,6 +127,14 @@ CHIP_ERROR AppTask::Init()
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
+#ifdef CONFIG_AWS_IOT_INTEGRATION
+	ret = aws_iot_integration_register_callback(AWSIntegrationCallback);
+	if (ret) {
+		LOG_ERR("aws_iot_integration_register_callback() failed");
+		return chip::System::MapErrorZephyr(ret);
+	}
+#endif
+
 	/* Initialize trigger effect timer */
 	k_timer_init(&sTriggerEffectTimer, &AppTask::TriggerEffectTimerTimeoutCallback, nullptr);
 
@@ -131,7 +145,7 @@ CHIP_ERROR AppTask::Init()
 	uint8_t maxLightLevel = kDefaultMaxLevel;
 	Clusters::LevelControl::Attributes::MaxLevel::Get(kLightEndpointId, &maxLightLevel);
 
-	int ret = mPWMDevice.Init(&sLightPwmDevice, minLightLevel, maxLightLevel, maxLightLevel);
+	ret = mPWMDevice.Init(&sLightPwmDevice, minLightLevel, maxLightLevel, maxLightLevel);
 	if (ret != 0) {
 		return chip::System::MapErrorZephyr(ret);
 	}
@@ -286,6 +300,38 @@ void AppTask::ButtonEventHandler(ButtonState state, ButtonMask hasChanged)
 		});
 	}
 }
+
+#ifdef CONFIG_AWS_IOT_INTEGRATION
+bool AppTask::AWSIntegrationCallback(struct aws_iot_integration_cb_data *data)
+{
+	LOG_INF("Attribute cha1nge requested from AWS IoT: %d", data->value);
+
+	EmberAfStatus status;
+
+	VerifyOrDie(data->error == 0);
+
+	if (data->attribute_id == ATTRIBUTE_ID_ONOFF) {
+		/* write the new on/off value */
+		status = Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId,
+								 data->value);
+		if (status != EMBER_ZCL_STATUS_SUCCESS) {
+			LOG_ERR("Updating on/off cluster failed: %x", status);
+			return false;
+		}
+	} else if (data->attribute_id == ATTRIBUTE_ID_LEVEL_CONTROL) {
+		/* write the current level */
+		status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId,
+									       data->value);
+
+		if (status != EMBER_ZCL_STATUS_SUCCESS) {
+			LOG_ERR("Updating level cluster failed: %x", status);
+			return false;
+		}
+	}
+
+	return true;
+}
+#endif /* CONFIG_AWS_IOT_INTEGRATION */
 
 void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 {
