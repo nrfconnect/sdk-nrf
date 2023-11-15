@@ -163,6 +163,19 @@ private:
 
 	using DeviceMap = FiniteMap<BridgedDevicePair, kMaxBridgedDevices>;
 
+	/**
+	 * @brief Add pair of single bridged device and its data provider using optional index and endpoint id.
+	 * The method takes care of releasing the memory allocated for the data provider and bridged device objects
+	 * in case of adding process failure.
+	 *
+	 * @param device address of valid bridged device object
+	 * @param dataProvider address of valid data provider object
+	 * @param devicesPairIndex index object that will be filled with pair's index
+	 * assigned by the bridge
+	 * @param endpointId value of endpoint id required to be assigned
+	 * @return CHIP_NO_ERROR on success
+	 * @return other error code on failure
+	 */
 	CHIP_ERROR AddSingleDevice(MatterBridgedDevice *device, BridgedDeviceDataProvider *dataProvider,
 				   chip::Optional<uint8_t> &devicesPairIndex, uint16_t endpointId);
 	CHIP_ERROR SafelyRemoveDevice(uint8_t index);
