@@ -803,6 +803,19 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
 int nrf_cloud_send(const struct nrf_cloud_tx_data *msg);
 
 /**
+ * @brief Update the device's shadow with the data from the provided object.
+ *
+ * @param[in] shadow_obj Object containing data to be written to the device's shadow.
+ *
+ * @retval 0       If successful.
+ * @retval -EINVAL Error; invalid parameter.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ * @retval -EIO Error; failed to encode data.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_obj_shadow_update(struct nrf_cloud_obj *const shadow_obj);
+
+/**
  * @brief Disconnect from the cloud.
  *
  * This API may be called any time after receiving the

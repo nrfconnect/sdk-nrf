@@ -556,6 +556,7 @@ Libraries for networking
 
     * The :c:func:`nrf_cloud_credentials_configured_check` function to check if credentials exist based on the application's configuration.
     * The :c:func:`nrf_cloud_obj_object_detach` function to get an object from an object.
+    * The :c:func:`nrf_cloud_obj_shadow_update` function to update the device's shadow with the data from an :c:struct:`nrf_cloud_obj` structure.
 
   * Updated:
 
