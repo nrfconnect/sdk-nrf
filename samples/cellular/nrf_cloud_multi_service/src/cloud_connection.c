@@ -551,6 +551,31 @@ static int setup_cloud(void)
 	return 0;
 }
 
+static void wait_for_credentials(void) {
+#if defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)
+	LOG_INF("Waiting for necessary credentials...");
+
+	while (true) {
+		int cred_status = nrf_cloud_credentials_configured_check();
+
+		if (cred_status == -ENOTSUP) {
+			/* One or more necessary credentials are missing, try again later. */
+			k_sleep(K_SECONDS(20));
+			continue;
+		}
+
+		if (cred_status) {
+			LOG_ERR("Error checking for necessary credentials: %d. "
+				"Proceeding anyways.", cred_status);
+		}
+		else {
+			LOG_INF("The necessary credentials are installed!");
+		}
+		return;
+	}
+#endif /* CONFIG_NRF_CLOUD_CHECK_CREDENTIALS */
+}
+
 void cloud_connection_thread_fn(void)
 {
 	long_led_pattern(LED_WAITING);
@@ -576,6 +601,11 @@ void cloud_connection_thread_fn(void)
 		(void)await_network_ready(K_FOREVER);
 
 		LOG_INF("Network is ready");
+
+		/* Wait for credentials to be installed before proceeding */
+		if (IS_ENABLED(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)) {
+			wait_for_credentials();
+		}
 
 		/* Attempt to connect to nRF Cloud. */
 		if (connect_cloud()) {
