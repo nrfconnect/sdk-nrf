@@ -231,11 +231,9 @@ static int download_client_callback(const struct download_client_evt *event)
 		}
 
 		if (IS_ENABLED(CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT)) {
-			err = dfu_target_offset_get(&offset);
+			err = download_client_downloaded_size_get(&dlc, &offset);
 			if (err != 0) {
-				LOG_DBG("unable to get dfu target "
-					"offset err: %d",
-					err);
+				LOG_DBG("unable to get downloaded size err: %d", err);
 				set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
 				goto error_and_close;
 			}
