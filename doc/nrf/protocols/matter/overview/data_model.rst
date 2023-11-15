@@ -333,7 +333,7 @@ Appliance device types
 | Laundry Washer     | A Laundry Washer represents a device that is capable of laundering consumer  | Certifiable         |                                       |
 |                    | items. Any laundry washer product may utilize this device type.              |                     |                                       |
 +--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Refidgerator       | A Refrigerator represents a device that contains one or more cabinets that   | Certifiable         |                                       |
+| Refrigerator       | A Refrigerator represents a device that contains one or more cabinets that   | Certifiable         |                                       |
 |                    | are capable of chilling or freezing food. Examples of consumer products that |                     |                                       |
 |                    | may make use of this device type include refrigerators, freezers, and wine   |                     |                                       |
 |                    | coolers.                                                                     |                     |                                       |
