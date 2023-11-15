@@ -18,7 +18,7 @@
 
 #include "lte_lc_helpers.h"
 
-LOG_MODULE_REGISTER(lte_lc_helpers, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
+LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 static K_MUTEX_DEFINE(list_mtx);
 
