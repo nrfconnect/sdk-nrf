@@ -1,7 +1,7 @@
 .. _nrf_coap_client_sample:
 
-nRF CoAP Client
-###############
+CoAP Client
+###########
 
 .. contents::
    :local:
@@ -104,14 +104,13 @@ The sample displays the data in the following format:
 
 .. code-block:: console
 
-   CoAP request sent: token 0x9772
-   CoAP response: code: 0x45, token 0x9772, payload: 15:39:40
+   CoAP GET request sent sent to californium.eclipseprojects.io, resource: obs
+   CoAP response: code: 0x45, payload: 15:29:45
 
 Instead of displaying every single CoAP frame content, the sample displays only the essential data.
 For the above sample output, the information displayed on the terminal conveys the following:
 
 * ``code:0x45`` -  CoAP response code (2.05 - Content), which is constant across responses
-* ``token 0x9772`` - CoAP token, which is unique per request/response pair
 * ``payload: 15:39:40`` - the actual message payload (current time in UTC format) from the resource that is queried in this sample
 
 References
@@ -132,7 +131,9 @@ It uses the following `sdk-nrfxlib`_ library:
 
 It uses the following Zephyr library:
 
-* :ref:`CoAP <zephyr:networking_api>`
+* :ref:`CoAP client <zephyr:coap_client_interface>`
+
+* :ref:`CoAP <zephyr:coap_sock_interface>`
 
 In addition, it uses the following secure firmware component:
 

@@ -6,15 +6,15 @@
 
 menu "nRF CoAP client sample"
 
-config COAP_RESOURCE
+config COAP_SAMPLE_RESOURCE
 	string "CoAP resource - defaults to Californium observable resource"
 	default "obs"
 
-config COAP_SERVER_HOSTNAME
+config COAP_SAMPLE_SERVER_HOSTNAME
 	string "CoAP server hostname"
 	default "californium.eclipseprojects.io"
 
-config COAP_SERVER_PORT
+config COAP_SAMPLE_SERVER_PORT
 	int "CoAP server port"
 	default 5683
 
