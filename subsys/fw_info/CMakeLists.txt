@@ -3,20 +3,14 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-if (CONFIG_FW_INFO)
-  zephyr_library()
+
+zephyr_library()
+
+if (CONFIG_FW_INFO AND NOT CONFIG_FW_INFO_API)
   zephyr_library_sources(fw_info.c)
   zephyr_linker_sources(RODATA ext_apis.ld)
+  zephyr_linker_sources(ROM_START SORT_KEY ${CONFIG_FW_INFO_OFFSET} fw_info.ld)
 endif ()
-
-if (CONFIG_FW_INFO_API)
-  zephyr_library()
-endif()
-
-zephyr_linker_sources_ifdef(CONFIG_FW_INFO
-  ROM_START
-  SORT_KEY ${CONFIG_FW_INFO_OFFSET}
-  fw_info.ld)
 
 # The following creates variables with the magic numbers used for firmware
 # metadata as comma-separated lists of numbers.
