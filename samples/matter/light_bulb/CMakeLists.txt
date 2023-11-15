@@ -37,6 +37,10 @@ target_include_directories(app PRIVATE
     ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/zzz_generated/app-common
 )
 
+if(CONFIG_AWS_IOT_INTEGRATION)
+    add_subdirectory(src/aws_iot_integration)
+endif()
+
 target_sources(app PRIVATE
     src/app_task.cpp
     src/main.cpp

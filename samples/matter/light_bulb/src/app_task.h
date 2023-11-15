@@ -60,6 +60,10 @@ private:
 	static void ActionInitiated(PWMDevice::Action_t action, int32_t actor);
 	static void ActionCompleted(PWMDevice::Action_t action, int32_t actor);
 
+#ifdef CONFIG_AWS_IOT_INTEGRATION
+	static bool AWSIntegrationCallback(struct aws_iot_integration_cb_data *data);
+#endif
+
 	PWMDevice mPWMDevice;
 #if CONFIG_CHIP_FACTORY_DATA
 	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;

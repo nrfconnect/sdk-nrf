@@ -41,3 +41,9 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf7002dk_nrf5340_cpuapp
+  sample.matter.light_bulb.aws:
+    build_only: true
+    extra_args: OVERLAY_CONFIG="overlay-aws-iot-integration.conf"
+    platform_allow: nrf7002dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf7002dk_nrf5340_cpuapp

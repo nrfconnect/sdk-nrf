@@ -371,6 +371,12 @@ Matter samples
   * Defined common LED and button constants in the dedicated board configuration files.
   * Created the Kconfig file for the Matter common directory.
 
+* Disabled :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
+
+* :ref:`matter_light_bulb_sample` sample:
+
+  * Added support for `AWS IoT Core`_.
+
 * :ref:`matter_lock_sample` sample:
 
   * Fixed an issue that prevented nRF Toolbox for iOS in version 5.0.9 from controlling the sample using :ref:`nus_service_readme`.
