@@ -4,18 +4,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config FW_INFO
+menuconfig FW_INFO
 	bool
 	prompt "Firmware Metadata"
 	imply NRFX_NVMC
 
-if(!FW_INFO)
-config FW_INFO_API
-	bool
-	prompt "Firmware Metadata find API"
-endif
+if (FW_INFO)
 
-if (FW_INFO || FW_INFO_API)
+config FW_INFO_API
+	bool "Only provide APIs to locate metadata"
+	help
+	  Only provide APIs to locate metadata.
+
 config FW_INFO_OFFSET
 	hex "The location of firmware info inside this firmware"
 	default 0x200
