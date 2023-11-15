@@ -171,7 +171,7 @@ Kconfig*                                  @tejlmand
 /samples/cellular/nidd/                   @stig-bjorlykke
 /samples/cellular/nrf_cloud_*             @plskeggs @jayteemo @glarsennordic
 /samples/cellular/nrf_provisioning/       @SeppoTakalo @juhaylinen
-/samples/cellular/modem_trace_flash/      @gregersrygg @balaji-nordic
+/samples/cellular/modem_trace_flash/      @eivindj-nordic
 /samples/cellular/slm_shell/              @MarkusLassila @tomi-font
 /samples/cellular/sms/                    @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
