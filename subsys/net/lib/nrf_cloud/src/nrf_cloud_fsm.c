@@ -162,7 +162,7 @@ static int state_ua_pin_wait(void)
 {
 	int err;
 	struct nct_cc_data msg = {
-		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
 		.message_id = NCT_MSG_ID_STATE_REPORT,
 	};
 
@@ -197,7 +197,7 @@ static int state_ua_pin_complete(void)
 {
 	int err;
 	struct nct_cc_data msg = {
-		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
 		.message_id = NCT_MSG_ID_PAIR_STATUS_REPORT,
 	};
 
@@ -369,7 +369,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
 	const enum nfsm_state current_state = nfsm_get_current_state();
 	struct nct_cc_data msg = {
-		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
 		.message_id = NCT_MSG_ID_STATE_REPORT
 	};
 	enum nrf_cloud_ctrl_status status;

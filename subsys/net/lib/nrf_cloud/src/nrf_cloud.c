@@ -391,7 +391,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 			break;
 		}
 		const struct nct_cc_data shadow_data = {
-			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+			.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
 			.data.ptr = send_data.ptr,
 			.data.len = send_data.len,
 			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT

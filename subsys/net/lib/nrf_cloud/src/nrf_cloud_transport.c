@@ -56,7 +56,7 @@ BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX
  * topic ("$aws/things/<deviceId>/shadow/get/accepted").
  * Messages on the AWS topic contain the entire shadow, including metadata and
  * they can become too large for the modem to handle.
- * Messages on the topic below are published by nRF Connect for Cloud and
+ * Messages on the topic below are published by nRF Cloud and
  * contain only a part of the original message so it can be received by the
  * device.
  */
@@ -119,15 +119,19 @@ static struct nct {
 } nct;
 
 #define CC_RX_LIST_CNT 3
+static uint32_t const nct_cc_rx_opcode_map[CC_RX_LIST_CNT] = {
+	NCT_CC_OPCODE_UPDATE_ACCEPTED,
+	NCT_CC_OPCODE_UPDATE_REJECTED,
+	NCT_CC_OPCODE_UPDATE_DELTA
+};
 static struct mqtt_topic nct_cc_rx_list[CC_RX_LIST_CNT];
+
+BUILD_ASSERT(ARRAY_SIZE(nct_cc_rx_opcode_map) == ARRAY_SIZE(nct_cc_rx_list),
+	"nct_cc_rx_opcode_map should be the same size as nct_cc_rx_list");
+
 #define CC_TX_LIST_CNT 2
 static struct mqtt_topic nct_cc_tx_list[CC_TX_LIST_CNT];
 
-static uint32_t const nct_cc_rx_opcode_map[] = {
-	NCT_CC_OPCODE_UPDATE_REQ,
-	NCT_CC_OPCODE_UPDATE_REJECT_RSP,
-	NCT_CC_OPCODE_UPDATE_ACCEPT_RSP
-};
 
 /* Internal routine to reset data endpoint information. */
 static void dc_endpoint_reset(void)
@@ -423,18 +427,31 @@ static void nct_reset_topics(void)
 
 static void nct_topic_lists_populate(void)
 {
-	/* Add RX topics */
-	nct_cc_rx_list[0].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	nct_cc_rx_list[0].topic.utf8 = accepted_topic;
-	nct_cc_rx_list[0].topic.size = strlen(accepted_topic);
+	/* Add RX topics, aligning with opcode list */
+	for (int idx = 0; idx < CC_RX_LIST_CNT; ++idx) {
+		if (nct_cc_rx_opcode_map[idx] == NCT_CC_OPCODE_UPDATE_ACCEPTED) {
+			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+			nct_cc_rx_list[idx].topic.utf8 = accepted_topic;
+			nct_cc_rx_list[idx].topic.size = strlen(accepted_topic);
+			continue;
+		}
 
-	nct_cc_rx_list[1].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	nct_cc_rx_list[1].topic.utf8 = rejected_topic;
-	nct_cc_rx_list[1].topic.size = strlen(rejected_topic);
+		if (nct_cc_rx_opcode_map[idx] == NCT_CC_OPCODE_UPDATE_REJECTED) {
+			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+			nct_cc_rx_list[idx].topic.utf8 = rejected_topic;
+			nct_cc_rx_list[idx].topic.size = strlen(rejected_topic);
+			continue;
+		}
 
-	nct_cc_rx_list[2].qos = MQTT_QOS_1_AT_LEAST_ONCE;
-	nct_cc_rx_list[2].topic.utf8 = update_delta_topic;
-	nct_cc_rx_list[2].topic.size = strlen(update_delta_topic);
+		if (nct_cc_rx_opcode_map[idx] == NCT_CC_OPCODE_UPDATE_DELTA) {
+			nct_cc_rx_list[idx].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+			nct_cc_rx_list[idx].topic.utf8 = update_delta_topic;
+			nct_cc_rx_list[idx].topic.size = strlen(update_delta_topic);
+			continue;
+		}
+
+		__ASSERT(false, "Op code not added to RX list");
+	}
 
 	/* Add TX topics */
 	nct_cc_tx_list[0].qos = MQTT_QOS_1_AT_LEAST_ONCE;
