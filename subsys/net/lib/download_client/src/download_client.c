@@ -1026,3 +1026,16 @@ int download_client_file_size_get(struct download_client *client, size_t *size)
 
 	return 0;
 }
+
+int download_client_downloaded_size_get(struct download_client *client, size_t *size)
+{
+	if (!client || !size) {
+		return -EINVAL;
+	}
+
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	*size = client->progress;
+	k_mutex_unlock(&client->mutex);
+
+	return 0;
+}

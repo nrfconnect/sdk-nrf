@@ -261,6 +261,7 @@ int download_client_set_host(struct download_client *client, const char *host,
  */
 __deprecated int download_client_connect(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config);
+
 /**
  * @brief Download a file.
  *
@@ -279,6 +280,7 @@ __deprecated int download_client_connect(struct download_client *client, const c
  */
 int download_client_start(struct download_client *client, const char *file,
 			  size_t from);
+
 /**
  * @brief Retrieve the size of the file being downloaded, in bytes.
  *
@@ -290,6 +292,18 @@ int download_client_start(struct download_client *client, const char *file,
  * @retval int Zero on success, a negative error code otherwise.
  */
 int download_client_file_size_get(struct download_client *client, size_t *size);
+
+/**
+ * @brief Retrieve the number of bytes downloaded so far.
+ *
+ * The progress is only available after the download has begun.
+ *
+ * @param[in]  client	Client instance.
+ * @param[out] size	Number of bytes downloaded so far.
+ *
+ * @retval int Zero on success, a negative error code otherwise.
+ */
+int download_client_downloaded_size_get(struct download_client *client, size_t *size);
 
 /**
  * @brief Initiate disconnection.
