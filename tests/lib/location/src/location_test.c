@@ -125,11 +125,14 @@ void setUp(void)
 
 void tearDown(void)
 {
+	int err;
+
 	if (location_callback_called_expected) {
 		/* Wait for location_event_handler call for 3 seconds.
 		 * If it doesn't happen, next assert will fail the test.
 		 */
-		k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+		err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+		TEST_ASSERT_EQUAL(0, err);
 	}
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 
@@ -138,6 +141,7 @@ void tearDown(void)
 
 static void location_event_handler(const struct location_event_data *event_data)
 {
+	TEST_ASSERT_EQUAL(false, location_callback_called_occurred);
 	location_callback_called_occurred = true;
 
 	TEST_ASSERT_EQUAL(test_location_event_data.id, event_data->id);
@@ -184,7 +188,8 @@ void test_location_init_fail_gnss_event_handler_set(void)
 {
 	int ret;
 
-	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler,
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(
+		&method_gnss_event_handler,
 		-EPERM);
 
 	ret = location_init(location_event_handler);
@@ -290,7 +295,6 @@ void test_location_gnss(void)
 	location_callback_called_expected = true;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
-
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -321,6 +325,7 @@ void test_location_gnss(void)
 	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
+	k_sleep(K_MSEC(1));
 }
 
 /********* CELLULAR POSITIONING TESTS ***********************/
@@ -394,6 +399,7 @@ void test_location_cellular(void)
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);
+	k_sleep(K_MSEC(1));
 }
 
 /* Test cancelling cellular location request. */
@@ -491,7 +497,6 @@ void test_location_request_default(void)
 	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
-
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -543,15 +548,16 @@ void test_location_request_default(void)
 	 * Otherwise, lte_lc would ignore NCELLMEAS notification because no NCELLMEAS on going
 	 * from lte_lc point of view.
 	 */
-	k_sleep(K_MSEC(100));
+	k_sleep(K_MSEC(1));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);
 
 	cellular_rest_req_resp_handle();
 
-	k_sleep(K_MSEC(100));
+	k_sleep(K_MSEC(1));
 	at_monitor_dispatch(ncellmeas_gci_resp);
+	k_sleep(K_MSEC(1));
 }
 
 /* Test location request with:
@@ -600,7 +606,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
 
 	/* Wait a bit so that NCELLMEAS is sent before we send response */
-	k_sleep(K_MSEC(10000));
+	k_sleep(K_MSEC(1));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
 	at_monitor_dispatch(ncellmeas_resp);
@@ -608,40 +614,40 @@ void test_location_request_mode_all_cellular_gnss(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 	location_callback_called_occurred = false;
 	k_sem_reset(&event_handler_called_sem);
 
 	/***** Then GNSS positioning *****/
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
-	test_location_event_data.location.latitude = 61.005;
+	test_location_event_data.location.latitude = 60.987;
 	test_location_event_data.location.longitude = -45.997;
 	test_location_event_data.location.accuracy = 15.83;
 	test_location_event_data.location.datetime.valid = true;
 	test_location_event_data.location.datetime.year = 2021;
 	test_location_event_data.location.datetime.month = 8;
-	test_location_event_data.location.datetime.day = 13;
+	test_location_event_data.location.datetime.day = 2;
 	test_location_event_data.location.datetime.hour = 12;
 	test_location_event_data.location.datetime.minute = 34;
-	test_location_event_data.location.datetime.second = 56;
+	test_location_event_data.location.datetime.second = 23;
 	test_location_event_data.location.datetime.ms = 789;
 
 	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
-	test_pvt_data.latitude = 61.005;
+	test_pvt_data.latitude = 60.987;
 	test_pvt_data.longitude = -45.997;
 	test_pvt_data.accuracy = 15.83;
 	test_pvt_data.datetime.year = 2021;
 	test_pvt_data.datetime.month = 8;
-	test_pvt_data.datetime.day = 13;
+	test_pvt_data.datetime.day = 2;
 	test_pvt_data.datetime.hour = 12;
 	test_pvt_data.datetime.minute = 34;
-	test_pvt_data.datetime.seconds = 56;
+	test_pvt_data.datetime.seconds = 23;
 	test_pvt_data.datetime.ms = 789;
 	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
-
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -669,6 +675,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
+	k_sleep(K_MSEC(1));
 }
 
 /* Test location request error/timeout with :
@@ -701,8 +708,8 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
-	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 	location_callback_called_occurred = false;
 	k_sem_reset(&event_handler_called_sem);
@@ -710,6 +717,7 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	/***** Then GNSS positioning *****/
 	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
 
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -729,10 +737,10 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
+
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
-
-	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 }
 
 /********* TESTS PERIODIC POSITIONING REQUESTS ***********************/
@@ -812,9 +820,38 @@ void test_location_gnss_periodic(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
+	location_callback_called_occurred = false;
 	k_sem_reset(&event_handler_called_sem);
+
+	/* 2nd GNSS fix */
+
+	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.location.latitude = 61.005;
+	test_location_event_data.location.longitude = -44.123;
+	test_location_event_data.location.accuracy = 15.83;
+	test_location_event_data.location.datetime.valid = true;
+	test_location_event_data.location.datetime.year = 2021;
+	test_location_event_data.location.datetime.month = 8;
+	test_location_event_data.location.datetime.day = 13;
+	test_location_event_data.location.datetime.hour = 12;
+	test_location_event_data.location.datetime.minute = 34;
+	test_location_event_data.location.datetime.second = 56;
+	test_location_event_data.location.datetime.ms = 789;
+
+	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
+	test_pvt_data.latitude = 61.005;
+	test_pvt_data.longitude = -44.123;
+	test_pvt_data.accuracy = 15.83;
+	test_pvt_data.datetime.year = 2021;
+	test_pvt_data.datetime.month = 8;
+	test_pvt_data.datetime.day = 13;
+	test_pvt_data.datetime.hour = 12;
+	test_pvt_data.datetime.minute = 34;
+	test_pvt_data.datetime.seconds = 56;
+	test_pvt_data.datetime.ms = 789;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
@@ -850,7 +887,8 @@ void test_location_gnss_periodic(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 	location_callback_called_occurred = false;
 	k_sem_reset(&event_handler_called_sem);
@@ -907,7 +945,8 @@ void test_location_cellular_periodic(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 	location_callback_called_occurred = false;
 	k_sem_reset(&event_handler_called_sem);
@@ -944,7 +983,8 @@ void test_location_cellular_periodic(void)
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
 	 */
-	k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
 	location_callback_called_occurred = false;
 	k_sem_reset(&event_handler_called_sem);
