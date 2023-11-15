@@ -480,6 +480,21 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 	return err;
 }
 
+int nrf_cloud_obj_shadow_update(struct nrf_cloud_obj *const shadow_obj)
+{
+	if (!shadow_obj) {
+		return -EINVAL;
+	}
+
+	struct nrf_cloud_tx_data msg = {
+		.obj = shadow_obj,
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
+		.topic_type = NRF_CLOUD_TOPIC_STATE,
+	};
+
+	return nrf_cloud_send(&msg);
+}
+
 int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len)
 {
 	return nct_tenant_id_get(id_buf, id_len);
