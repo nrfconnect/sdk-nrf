@@ -187,7 +187,8 @@ tests:
   sample.nrf7002.superset.debug:
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-debug.conf;overlay-zperf.conf
+      SNIPPET=nrf70-debug
+      OVERLAY_CONFIG=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
