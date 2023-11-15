@@ -99,6 +99,11 @@ features:
     Immutable Bootloader as part of build: SECURE_BOOT
   hw_unique_key:
     Key Derivation from Hardware Unique Key: HW_UNIQUE_KEY
+  power_management:
+    nPM1100: REGULATOR_NPM1100
+    nPM1300: MFD_NPM1300
+    nPM6001: MFD_NPM6001
+
 display_names:
   SHIELD_NRF7002EK: nRF7002 EK
   SHIELD_NRF7002EK_NRF7000: nRF7002 EK in nRF7000 emulation mode
