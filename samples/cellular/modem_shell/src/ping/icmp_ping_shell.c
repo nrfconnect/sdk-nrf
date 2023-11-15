@@ -165,13 +165,18 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 			break;
 			}
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	/* Check that all mandatory args were given */

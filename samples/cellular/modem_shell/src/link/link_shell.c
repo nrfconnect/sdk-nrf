@@ -51,17 +51,17 @@ enum link_shell_command {
 	LINK_CMD_PROPRIPSM
 };
 
-enum link_shell_common_options {
-	LINK_COMMON_NONE = 0,
-	LINK_COMMON_READ,
-	LINK_COMMON_WRITE,
-	LINK_COMMON_ENABLE,
-	LINK_COMMON_DISABLE,
-	LINK_COMMON_SUBSCRIBE,
-	LINK_COMMON_UNSUBSCRIBE,
-	LINK_COMMON_START,
-	LINK_COMMON_STOP,
-	LINK_COMMON_RESET
+enum link_shell_operation {
+	LINK_OPERATION_NONE = 0,
+	LINK_OPERATION_READ,
+	LINK_OPERATION_WRITE,
+	LINK_OPERATION_ENABLE,
+	LINK_OPERATION_DISABLE,
+	LINK_OPERATION_SUBSCRIBE,
+	LINK_OPERATION_UNSUBSCRIBE,
+	LINK_OPERATION_START,
+	LINK_OPERATION_STOP,
+	LINK_OPERATION_RESET
 };
 
 static const char link_settings_usage_str[] =
@@ -638,53 +638,39 @@ int link_shell_get_and_print_current_system_modes(
 	return ret;
 }
 
-static void link_shell_getopt_common_option(int opt, enum link_shell_common_options *common_option)
+static void link_shell_getopt_operation(int opt, enum link_shell_operation *operation)
 {
 	switch (opt) {
 	case 's':
-		*common_option = LINK_COMMON_SUBSCRIBE;
+		*operation = LINK_OPERATION_SUBSCRIBE;
 		break;
 	case 'u':
-		*common_option = LINK_COMMON_UNSUBSCRIBE;
+		*operation = LINK_OPERATION_UNSUBSCRIBE;
 		break;
 	case 'e':
-		*common_option = LINK_COMMON_ENABLE;
+		*operation = LINK_OPERATION_ENABLE;
 		break;
 	case 'd':
-		*common_option = LINK_COMMON_DISABLE;
+		*operation = LINK_OPERATION_DISABLE;
 		break;
 	case 'r':
-		*common_option = LINK_COMMON_READ;
+		*operation = LINK_OPERATION_READ;
 		break;
 	case LINK_SHELL_OPT_WRITE:
-		*common_option = LINK_COMMON_WRITE;
+		*operation = LINK_OPERATION_WRITE;
 		break;
 	case LINK_SHELL_OPT_RESET:
-		*common_option = LINK_COMMON_RESET;
+		*operation = LINK_OPERATION_RESET;
 		break;
 	case LINK_SHELL_OPT_START:
-		*common_option = LINK_COMMON_START;
+		*operation = LINK_OPERATION_START;
 		break;
 	case LINK_SHELL_OPT_STOP:
-		*common_option = LINK_COMMON_STOP;
+		*operation = LINK_OPERATION_STOP;
 		break;
 	default:
 		break;
 	}
-}
-
-static enum link_shell_common_options link_shell_getopt_common(int argc, char *const argv[])
-{
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
-
-	optreset = 1;
-	optind = 1;
-	int opt;
-
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-	}
-	return common_option;
 }
 
 static int link_shell_connect(const struct shell *shell, size_t argc, char **argv)
@@ -736,13 +722,18 @@ static int link_shell_connect(const struct shell *shell, size_t argc, char **arg
 			password = optarg;
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	/* Check that all mandatory args were given */
@@ -797,7 +788,7 @@ static int link_shell_coneval(const struct shell *shell, size_t argc, char **arg
 static int link_shell_defcont(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	int apn_len = 0;
 	char *apn = NULL;
 	char *family = NULL;
@@ -807,9 +798,17 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r, -e or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case 'a': /* APN */
 			apn_len = strlen(optarg);
 			if (apn_len > LINK_APN_STR_MAX_LENGTH) {
@@ -823,16 +822,26 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 		case 'f': /* Address family */
 			family = optarg;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		link_sett_defcont_conf_shell_print();
-	} else if (common_option == LINK_COMMON_ENABLE) {
+	} else if (operation == LINK_OPERATION_ENABLE) {
 		link_sett_save_defcont_enabled(true);
-	} else if (common_option == LINK_COMMON_DISABLE) {
+	} else if (operation == LINK_OPERATION_DISABLE) {
 		if (nrf_modem_at_printf("AT+CGDCONT=0") != 0) {
 			mosh_warn(
 				"ERROR from modem. Getting the initial PDP context back "
@@ -841,7 +850,7 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 		link_sett_save_defcont_enabled(false);
 		mosh_print("Custom default context config disabled.");
 	} else if (apn == NULL && family == NULL) {
-		link_shell_print_usage(LINK_CMD_DEFCONT);
+		goto show_usage;
 	}
 
 	if (apn != NULL) {
@@ -853,18 +862,22 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 		ret = link_family_str_to_pdn_lib_family(&pdn_lib_fam, family);
 		if (ret) {
 			mosh_error("Unknown PDN family %s", family);
-			link_shell_print_usage(LINK_CMD_DEFCONT);
+			goto show_usage;
 		} else {
 			(void)link_sett_save_defcont_pdn_family(pdn_lib_fam);
 		}
 	}
 
 	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_DEFCONT);
+	return 0;
 }
 
 static int link_shell_defcontauth(const struct shell *shell, size_t argc, char **argv)
 {
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	int protocol = 0;
 	bool protocol_given = false;
 	char *username = NULL;
@@ -875,9 +888,17 @@ static int link_shell_defcontauth(const struct shell *shell, size_t argc, char *
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r, -e or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case 'A': /* auth protocol */
 			protocol = atoi(optarg);
 			protocol_given = true;
@@ -888,25 +909,35 @@ static int link_shell_defcontauth(const struct shell *shell, size_t argc, char *
 		case 'P': /* auth password */
 			password = optarg;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		link_sett_defcontauth_conf_shell_print();
-	} else if (common_option == LINK_COMMON_ENABLE) {
+	} else if (operation == LINK_OPERATION_ENABLE) {
 		if (link_sett_save_defcontauth_enabled(true) < 0) {
 			mosh_warn("Cannot enable authentication.");
 		}
-	} else if (common_option == LINK_COMMON_DISABLE) {
+	} else if (operation == LINK_OPERATION_DISABLE) {
 		if (nrf_modem_at_printf("AT+CGAUTH=0,0") != 0) {
 			mosh_warn("Disabling of auth cannot be done to modem.");
 		}
 		link_sett_save_defcontauth_enabled(false);
 	} else if (!protocol_given && username == NULL && password == NULL) {
 
-		link_shell_print_usage(LINK_CMD_DEFCONTAUTH);
+		goto show_usage;
 	}
 
 	if (protocol_given) {
@@ -919,6 +950,10 @@ static int link_shell_defcontauth(const struct shell *shell, size_t argc, char *
 		(void)link_sett_save_defcontauth_password(password);
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_DEFCONTAUTH);
 	return 0;
 }
 
@@ -943,25 +978,38 @@ static int link_shell_disconnect(const struct shell *shell, size_t argc, char **
 				return -EINVAL;
 			}
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
 	if (pdn_cid == 0) {
-		link_shell_print_usage(LINK_CMD_DISCONNECT);
-		return 0;
+		goto show_usage;
 	}
 
 	ret = link_shell_pdn_disconnect(pdn_cid);
 
 	return ret;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_DISCONNECT);
+	return 0;
 }
 
 static int link_shell_dnsaddr(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	char *ip_address = NULL;
 
 	optreset = 1;
@@ -969,18 +1017,36 @@ static int link_shell_dnsaddr(const struct shell *shell, size_t argc, char **arg
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r, -e or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case 'i':
 			ip_address = optarg;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		link_sett_dnsaddr_conf_shell_print();
 		return 0;
 	}
@@ -992,12 +1058,12 @@ static int link_shell_dnsaddr(const struct shell *shell, size_t argc, char **arg
 		return -EINVAL;
 	}
 
-	if (common_option == LINK_COMMON_ENABLE) {
+	if (operation == LINK_OPERATION_ENABLE) {
 		link_sett_save_dnsaddr_enabled(true);
-	} else if (common_option == LINK_COMMON_DISABLE) {
+	} else if (operation == LINK_OPERATION_DISABLE) {
 		link_sett_save_dnsaddr_enabled(false);
 	} else if (ip_address == NULL) {
-		link_shell_print_usage(LINK_CMD_DNSADDR);
+		goto show_usage;
 	}
 
 	ret = link_setdnsaddr(ip_address ? ip_address : link_sett_dnsaddr_ip_get());
@@ -1007,12 +1073,16 @@ static int link_shell_dnsaddr(const struct shell *shell, size_t argc, char **arg
 	}
 
 	return ret;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_DNSADDR);
+	return 0;
 }
 
 static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	char ltem_edrx_str[LINK_SHELL_EDRX_VALUE_STR_LENGTH + 1];
 	bool ltem_edrx_set = false;
 	char ltem_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
@@ -1027,12 +1097,19 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r, -e or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case LINK_SHELL_OPT_LTEM_EDRX:
-			if (strlen(optarg) ==
-			    LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
 				strcpy(ltem_edrx_str, optarg);
 				ltem_edrx_set = true;
 			} else {
@@ -1054,8 +1131,7 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case LINK_SHELL_OPT_NBIOT_EDRX:
-			if (strlen(optarg) ==
-			    LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
 				strcpy(nbiot_edrx_str, optarg);
 				nbiot_edrx_set = true;
 			} else {
@@ -1076,12 +1152,22 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_ENABLE) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_ENABLE) {
 		char *value = NULL; /* Set with the defaults if not given */
 
 		if (ltem_edrx_set) {
@@ -1145,14 +1231,14 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 		} else {
 			mosh_print("eDRX enabled");
 		}
-	} else if (common_option == LINK_COMMON_DISABLE) {
+	} else if (operation == LINK_OPERATION_DISABLE) {
 		ret = lte_lc_edrx_req(false);
 		if (ret < 0) {
 			mosh_error("Cannot disable eDRX: %d", ret);
 		} else {
 			mosh_print("eDRX disabled");
 		}
-	} else if (common_option == LINK_COMMON_READ) {
+	} else if (operation == LINK_OPERATION_READ) {
 		struct lte_lc_edrx_cfg edrx_cfg;
 
 		ret = lte_lc_edrx_get(&edrx_cfg);
@@ -1169,9 +1255,13 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			}
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_EDRX);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_EDRX);
 	return 0;
 }
 
@@ -1181,7 +1271,7 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 	bool nmode_use_rel14 = true;
 	enum lte_lc_func_mode funmode_option = LINK_FUNMODE_NONE;
 	enum lte_lc_func_mode functional_mode;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	char snum[64];
 
 	optreset = 1;
@@ -1189,15 +1279,20 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		/* This condition prevents accidentally using two functional modes */
 		if (funmode_option != LINK_FUNMODE_NONE) {
-			mosh_error("Two options setting functional mode are not allowed");
-			break;
+			mosh_error("Use only one option when setting functional mode");
+			goto show_usage;
+		}
+		if (operation != LINK_OPERATION_NONE) {
+			mosh_error("Do not use other options with -r");
+			goto show_usage;
 		}
 
 		switch (opt) {
+		case 'r':
+			operation = LINK_OPERATION_READ;
+			break;
 		case '0':
 			funmode_option = LTE_LC_FUNC_MODE_POWER_OFF;
 			break;
@@ -1232,16 +1327,22 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 			funmode_option = LTE_LC_FUNC_MODE_NORMAL;
 			nmode_use_rel14 = false;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			if (common_option == LINK_COMMON_NONE) {
-				link_shell_print_usage(LINK_CMD_FUNMODE);
-				return 0;
-			}
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		ret = lte_lc_func_mode_get(&functional_mode);
 		if (ret) {
 			mosh_error("Cannot get functional mode: %d", ret);
@@ -1260,15 +1361,19 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 				link_shell_funmode_to_string(funmode_option, snum));
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_FUNMODE);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_FUNMODE);
 	return 0;
 }
 
 static int link_shell_msleep(const struct shell *shell, size_t argc, char **argv)
 {
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	int threshold_time = 0;
 
 	optreset = 1;
@@ -1276,9 +1381,16 @@ static int link_shell_msleep(const struct shell *shell, size_t argc, char **argv
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 's':
+		case 'u':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -s or -u options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case LINK_SHELL_OPT_THRESHOLD_TIME:
 			threshold_time = atoi(optarg);
 			if (threshold_time <= 0) {
@@ -1287,23 +1399,37 @@ static int link_shell_msleep(const struct shell *shell, size_t argc, char **argv
 				return -EINVAL;
 			}
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_SUBSCRIBE) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_SUBSCRIBE) {
 		link_modem_sleep_notifications_subscribe(
 			CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS,
 			((threshold_time) ?
 				threshold_time :
 				CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS));
-	} else if (common_option == LINK_COMMON_UNSUBSCRIBE) {
+	} else if (operation == LINK_OPERATION_UNSUBSCRIBE) {
 		link_modem_sleep_notifications_unsubscribe();
 	} else {
-		link_shell_print_usage(LINK_CMD_MDMSLEEP);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_MDMSLEEP);
 	return 0;
 }
 
@@ -1313,7 +1439,7 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 		.gci_count = 5,
 		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
 	};
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	enum link_ncellmeas_modes ncellmeasmode = LINK_NCELLMEAS_MODE_NONE;
 	enum lte_lc_neighbor_search_type ncellmeas_search_type =
 		LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
@@ -1326,9 +1452,11 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case LINK_SHELL_OPT_STOP:
+			operation = LINK_OPERATION_STOP;
+			break;
+
 		case LINK_SHELL_OPT_SINGLE:
 			ncellmeasmode = LINK_NCELLMEAS_MODE_SINGLE;
 			break;
@@ -1339,7 +1467,7 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 			ncellmeas_search_type = link_shell_string_to_ncellmeas_search_type(optarg);
 			if (ncellmeas_search_type == MOSH_NCELLMEAS_SEARCH_TYPE_NONE) {
 				mosh_error("Unknown search_type. See usage:");
-				link_shell_print_usage(LINK_CMD_NCELLMEAS);
+				goto show_usage;
 			}
 			break;
 		case LINK_SHELL_OPT_NCELLMEAS_GCI_COUNT:
@@ -1361,12 +1489,22 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 			periodic_time_given = true;
 			break;
 		}
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_STOP) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_STOP) {
 		link_ncellmeas_start(false, LINK_NCELLMEAS_MODE_NONE, ncellmeas_params, 0, false);
 	} else if (ncellmeasmode != LINK_NCELLMEAS_MODE_NONE) {
 		mosh_print("Neighbor cell measurements and reporting starting");
@@ -1374,16 +1512,20 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 		link_ncellmeas_start(
 			true, ncellmeasmode, ncellmeas_params, periodic_time, periodic_time_given);
 	} else {
-		link_shell_print_usage(LINK_CMD_NCELLMEAS);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_NCELLMEAS);
 	return 0;
 }
 
 static int link_shell_nmodeat(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	char *normal_mode_at_str = NULL;
 	uint8_t normal_mode_at_mem_slot = 0;
 
@@ -1392,9 +1534,10 @@ static int link_shell_nmodeat(const struct shell *shell, size_t argc, char **arg
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+			operation = LINK_OPERATION_READ;
+			break;
 		case LINK_SHELL_OPT_MEM_SLOT_1:
 			normal_mode_at_str = optarg;
 			normal_mode_at_mem_slot = 1;
@@ -1407,12 +1550,22 @@ static int link_shell_nmodeat(const struct shell *shell, size_t argc, char **arg
 			normal_mode_at_str = optarg;
 			normal_mode_at_mem_slot = 3;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		link_sett_normal_mode_at_cmds_shell_print();
 	} else if (normal_mode_at_str != NULL) {
 		ret = link_sett_save_normal_mode_at_cmd_str(
@@ -1428,15 +1581,19 @@ static int link_shell_nmodeat(const struct shell *shell, size_t argc, char **arg
 				normal_mode_at_mem_slot);
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_NORMAL_MODE_AT);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_NORMAL_MODE_AT);
 	return 0;
 }
 
 static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **argv)
 {
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	bool nmode_use_rel14 = true;
 
 	optreset = 1;
@@ -1444,48 +1601,94 @@ static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **a
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r, -e or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case LINK_SHELL_OPT_NMODE_NO_REL14:
-			common_option = LINK_COMMON_ENABLE;
+			operation = LINK_OPERATION_ENABLE;
 			nmode_use_rel14 = false;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
-		link_sett_normal_mode_autoconn_shell_print();
-	} else if (common_option == LINK_COMMON_ENABLE) {
-		link_sett_save_normal_mode_autoconn_enabled(true, nmode_use_rel14);
-	} else if (common_option == LINK_COMMON_DISABLE) {
-		link_sett_save_normal_mode_autoconn_enabled(false, nmode_use_rel14);
-	} else {
-		link_shell_print_usage(LINK_CMD_NORMAL_MODE_AUTO);
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
+	if (operation == LINK_OPERATION_READ) {
+		link_sett_normal_mode_autoconn_shell_print();
+	} else if (operation == LINK_OPERATION_ENABLE) {
+		link_sett_save_normal_mode_autoconn_enabled(true, nmode_use_rel14);
+	} else if (operation == LINK_OPERATION_DISABLE) {
+		link_sett_save_normal_mode_autoconn_enabled(false, nmode_use_rel14);
+	} else {
+		goto show_usage;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_NORMAL_MODE_AUTO);
 	return 0;
 }
 
 static int link_shell_propripsm(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
-	common_option = link_shell_getopt_common(argc, argv);
+	optreset = 1;
+	optind = 1;
+	int opt;
 
-	if (common_option == LINK_COMMON_READ) {
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		link_propripsm_read();
-	} else if (common_option == LINK_COMMON_ENABLE) {
+	} else if (operation == LINK_OPERATION_ENABLE) {
 		err = lte_lc_proprietary_psm_req(true);
 		if (!err) {
 			mosh_print("Proprietary PSM enabled");
 		} else {
 			mosh_error("Cannot enable proprietary PSM: %d", err);
 		}
-	} else if (common_option == LINK_COMMON_DISABLE) {
+	} else if (operation == LINK_OPERATION_DISABLE) {
 		err = lte_lc_proprietary_psm_req(false);
 		if (!err) {
 			mosh_print("Proprietary PSM disabled");
@@ -1493,16 +1696,20 @@ static int link_shell_propripsm(const struct shell *shell, size_t argc, char **a
 			mosh_error("Cannot disable proprietary PSM: %d", err);
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_PROPRIPSM);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_PROPRIPSM);
 	return 0;
 }
 
 static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	char psm_rptau_bit_str[LINK_SHELL_PSM_PARAM_STR_LENGTH + 1];
 	bool psm_rptau_bit_str_set = false;
 	char psm_rat_bit_str[LINK_SHELL_PSM_PARAM_STR_LENGTH + 1];
@@ -1517,9 +1724,17 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r, -e or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case 'p': /* rptau */
 			if (strlen(optarg) ==
 			    LINK_SHELL_PSM_PARAM_STR_LENGTH) {
@@ -1553,12 +1768,22 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 			psm_rat_seconds = atoi(optarg);
 			psm_rat_seconds_set = true;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_ENABLE) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_ENABLE) {
 		/* Set with the defaults if not given */
 		char *rptau_bit_value = NULL;
 		char *rat_bit_value = NULL;
@@ -1604,14 +1829,14 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 		} else {
 			mosh_print("PSM enabled");
 		}
-	} else if (common_option == LINK_COMMON_DISABLE) {
+	} else if (operation == LINK_OPERATION_DISABLE) {
 		ret = lte_lc_psm_req(false);
 		if (ret < 0) {
 			mosh_error("Cannot disable PSM: %d", ret);
 		} else {
 			mosh_print("PSM disabled");
 		}
-	} else if (common_option == LINK_COMMON_READ) {
+	} else if (operation == LINK_OPERATION_READ) {
 		int tau, active_time;
 
 		ret = lte_lc_psm_get(&tau, &active_time);
@@ -1629,35 +1854,71 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 				"seconds");
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_PSM);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_PSM);
 	return 0;
 }
 
 static int link_shell_rai(const struct shell *shell, size_t argc, char **argv)
 {
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
-	common_option = link_shell_getopt_common(argc, argv);
+	optreset = 1;
+	optind = 1;
+	int opt;
 
-	if (common_option == LINK_COMMON_READ) {
-		link_rai_read();
-	} else if (common_option == LINK_COMMON_ENABLE) {
-		link_rai_enable(true);
-	} else if (common_option == LINK_COMMON_DISABLE) {
-		link_rai_enable(false);
-	} else {
-		link_shell_print_usage(LINK_CMD_RAI);
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case 'r':
+		case 'e':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r, -e or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
 	}
 
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
+		link_rai_read();
+	} else if (operation == LINK_OPERATION_ENABLE) {
+		link_rai_enable(true);
+	} else if (operation == LINK_OPERATION_DISABLE) {
+		link_rai_enable(false);
+	} else {
+		goto show_usage;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_RAI);
 	return 0;
 }
 
 static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	enum lte_lc_reduced_mobility_mode redmob_mode = LINK_REDMOB_NONE;
 	char snum[10];
 
@@ -1666,24 +1927,41 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case 'd':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r or -d options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case LINK_SHELL_OPT_REDMOB_DEFAULT:
 			redmob_mode = LTE_LC_REDUCED_MOBILITY_DEFAULT;
 			break;
 		case LINK_SHELL_OPT_REDMOB_NORDIC:
 			redmob_mode = LTE_LC_REDUCED_MOBILITY_NORDIC;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_DISABLE) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_DISABLE) {
 		redmob_mode = LTE_LC_REDUCED_MOBILITY_DISABLED;
 	}
-	if (common_option == LINK_COMMON_READ) {
+	if (operation == LINK_OPERATION_READ) {
 		enum lte_lc_reduced_mobility_mode mode;
 
 		ret = lte_lc_reduced_mobility_get(&mode);
@@ -1704,33 +1982,68 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 				link_shell_redmob_mode_to_string(redmob_mode, snum));
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_REDMOB);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_REDMOB);
 	return 0;
 }
 
 static int link_shell_rsrp(const struct shell *shell, size_t argc, char **argv)
 {
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
-	common_option = link_shell_getopt_common(argc, argv);
+	optreset = 1;
+	optind = 1;
+	int opt;
 
-	if (common_option == LINK_COMMON_SUBSCRIBE) {
-		link_rsrp_subscribe(true);
-	} else if (common_option == LINK_COMMON_UNSUBSCRIBE) {
-		link_rsrp_subscribe(false);
-	} else {
-		link_shell_print_usage(LINK_CMD_RSRP);
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case 's':
+		case 'u':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -s or -u options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
 	}
 
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_SUBSCRIBE) {
+		link_rsrp_subscribe(true);
+	} else if (operation == LINK_OPERATION_UNSUBSCRIBE) {
+		link_rsrp_subscribe(false);
+	} else {
+		goto show_usage;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_RSRP);
 	return 0;
 }
 
 static int link_shell_search(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	struct lte_lc_periodic_search_cfg search_cfg = { 0 };
 	bool search_cfg_given = false;
 
@@ -1739,9 +2052,20 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case LINK_SHELL_OPT_START:
+		case LINK_SHELL_OPT_WRITE:
+		case LINK_SHELL_OPT_RESET:
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error(
+					"Only one of -r, --start, --write or --reset options "
+					"can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case LINK_SHELL_OPT_SEARCH_CFG: {
 			int loop_integer = 0;
 
@@ -1827,12 +2151,22 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 			search_cfg.pattern_count++;
 			break;
 		}
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 
 		ret = lte_lc_periodic_search_get(&search_cfg);
 		if (ret) {
@@ -1870,7 +2204,7 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 				mosh_error("Unknown pattern");
 			}
 		}
-	} else if (common_option == LINK_COMMON_WRITE) {
+	} else if (operation == LINK_OPERATION_WRITE) {
 
 		if (!search_cfg_given) {
 			mosh_print("No --search_cfg option given, using default configuration");
@@ -1910,14 +2244,14 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 			mosh_print("Writing search configuration succeeded");
 		}
 
-	} else if (common_option == LINK_COMMON_START) {
+	} else if (operation == LINK_OPERATION_START) {
 		ret = lte_lc_periodic_search_request();
 		if (ret) {
 			mosh_error("Starting search failed: %d", ret);
 		} else {
 			mosh_print("Search requested");
 		}
-	} else if (common_option == LINK_COMMON_RESET) {
+	} else if (operation == LINK_OPERATION_RESET) {
 		ret = lte_lc_periodic_search_clear();
 		if (ret) {
 			mosh_error("Clearing search configuration failed: %d", ret);
@@ -1925,15 +2259,19 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 			mosh_print("Search configuration cleared");
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_SEARCH);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_SEARCH);
 	return 0;
 }
 
 static int link_shell_settings(const struct shell *shell, size_t argc, char **argv)
 {
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	enum lte_lc_factory_reset_type mreset_type = LTE_LC_FACTORY_RESET_INVALID;
 
 	optreset = 1;
@@ -1941,25 +2279,42 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case LINK_SHELL_OPT_RESET:
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r or --reset options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case LINK_SHELL_OPT_MRESET_ALL:
 			mreset_type = LTE_LC_FACTORY_RESET_ALL;
 			break;
 		case LINK_SHELL_OPT_MRESET_USER:
 			mreset_type = LTE_LC_FACTORY_RESET_USER;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		link_sett_all_print();
-	} else if (common_option == LINK_COMMON_RESET ||
+	} else if (operation == LINK_OPERATION_RESET ||
 		   mreset_type != LTE_LC_FACTORY_RESET_INVALID) {
-		if (common_option == LINK_COMMON_RESET) {
+		if (operation == LINK_OPERATION_RESET) {
 			link_sett_defaults_set();
 			if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
 				link_shell_sysmode_set(SYS_MODE_PREFERRED,
@@ -1972,9 +2327,13 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 			link_sett_modem_factory_reset(LTE_LC_FACTORY_RESET_USER);
 		}
 	} else {
-		link_shell_print_usage(LINK_CMD_SETTINGS);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_SETTINGS);
 	return 0;
 }
 
@@ -2014,16 +2373,23 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 	int ret = 0;
 	enum lte_lc_system_mode sysmode_option = LINK_SYSMODE_NONE;
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
 	optreset = 1;
 	optind = 1;
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 'r':
+		case LINK_SHELL_OPT_RESET:
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only one of -r or --reset options can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case 'm':
 			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM;
 			break;
@@ -2060,12 +2426,22 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 		case LINK_SHELL_OPT_SYSMODE_PREF_NBIOT_PLMN_PRIO:
 			sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO;
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_READ) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
 		enum lte_lc_system_mode sys_mode_current;
 		enum lte_lc_system_mode_preference sys_mode_pref_current;
 		enum lte_lc_lte_mode currently_active_mode;
@@ -2099,7 +2475,7 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 		/* Save system modem to link settings */
 		(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
 
-	} else if (common_option == LINK_COMMON_RESET) {
+	} else if (operation == LINK_OPERATION_RESET) {
 		if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
 			link_shell_sysmode_set(SYS_MODE_PREFERRED,
 					       CONFIG_LTE_MODE_PREFERENCE_VALUE);
@@ -2107,15 +2483,19 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 
 		(void)link_sett_sysmode_default_set();
 	} else {
-		link_shell_print_usage(LINK_CMD_SYSMODE);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_SYSMODE);
 	return 0;
 }
 
 static int link_shell_tau(const struct shell *shell, size_t argc, char **argv)
 {
-	enum link_shell_common_options common_option = LINK_COMMON_NONE;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	int threshold_time = 0;
 
 	optreset = 1;
@@ -2123,9 +2503,12 @@ static int link_shell_tau(const struct shell *shell, size_t argc, char **argv)
 	int opt;
 
 	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
-		link_shell_getopt_common_option(opt, &common_option);
-
 		switch (opt) {
+		case 's':
+		case 'u':
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
 		case LINK_SHELL_OPT_THRESHOLD_TIME:
 			threshold_time = atoi(optarg);
 			if (threshold_time <= 0) {
@@ -2134,23 +2517,37 @@ static int link_shell_tau(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			break;
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
 		}
 	}
 
-	if (common_option == LINK_COMMON_SUBSCRIBE) {
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_SUBSCRIBE) {
 		link_modem_tau_notifications_subscribe(
 			CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS,
 			((threshold_time) ?
 				threshold_time :
 				CONFIG_LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS));
-	} else if (common_option == LINK_COMMON_UNSUBSCRIBE) {
+	} else if (operation == LINK_OPERATION_UNSUBSCRIBE) {
 		link_modem_tau_notifications_unsubscribe();
 	} else {
-		link_shell_print_usage(LINK_CMD_TAU);
+		goto show_usage;
 	}
 
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_TAU);
 	return 0;
 }
 

@@ -511,13 +511,18 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 			method_count++;
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
-			goto show_usage;
 		case 'h':
+			goto show_usage;
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	struct location_config config = { 0 };

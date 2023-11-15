@@ -239,15 +239,21 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 			print_headers_from_resp = true;
 			break;
 
-		case '?':
-			mosh_error("Unknown option. See usage:");
+		case 'h':
 			show_usage = true;
 			goto end;
-		case 'h':
+		case '?':
 		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			show_usage = true;
 			goto end;
 		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		show_usage = true;
+		goto end;
 	}
 
 	/* Check that all mandatory args were given */
