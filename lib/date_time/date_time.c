@@ -165,6 +165,4 @@ static int date_time_init(void)
 	return 0;
 }
 
-#define DATE_TIME_INIT_PRIO 80
-
-SYS_INIT(date_time_init, APPLICATION, DATE_TIME_INIT_PRIO);
+SYS_INIT(date_time_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
