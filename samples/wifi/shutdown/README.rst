@@ -7,7 +7,9 @@ Wi-Fi: Shutdown
    :local:
    :depth: 2
 
-The Shutdown sample demonstrates how to put the Nordic Semiconductor's Wi-Fi® chipset in shutdown mode.
+The Shutdown sample demonstrates how to put the Nordic Semiconductor's Wi-Fi® chipset in the Shutdown state, where the device is completely powered off.
+For more information, see the `nRF70 Series power states`_ page.
+
 This also demonstrates how to achieve the lowest possible power consumption in the nRF5340 SoC when Wi-Fi is enabled but not in use.
 
 Requirements
@@ -25,18 +27,19 @@ The sample:
 
 1. Initializes the Wi-Fi driver.
 #. Scans for available Wi-Fi networks to verify that the Wi-Fi driver is operational.
-#. Shuts down the Wi-Fi driver.
+#. Brings down the Wi-Fi network interface, which automatically directs the Wi-Fi driver to power down the nRF70 device.
 #. Puts the nRF5340 SoC in the lowest possible power consumption mode.
+
 
 User Interface
 **************
 
 Button 1:
-   Wakes up the nRF5340 SoC and initializes the Wi-Fi chipset.
+   Wakes up the nRF5340 SoC, brings up the Wi-Fi network interface, which automatically directs the Wi-Fi driver to power on the nRF70 device.
    The sample then scans for available Wi-Fi networks to verify that the Wi-Fi driver is operational.
 
 Button 2:
-   Shuts down the Wi-Fi driver.
+   Brings down the Wi-Fi network interface, which automatically directs the Wi-Fi driver to power down the nRF70 device.
    The nRF5340 SoC is put into the lowest possible power consumption mode.
 
 
