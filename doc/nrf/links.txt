@@ -566,6 +566,8 @@
 
 .. _`Guidelines and application notes for nRF70 Series devices`: https://infocenter.nordicsemi.com/topic/struct_nrf70/struct/nrf70_guidelines.html
 
+.. _`nRF70 Series power states`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf7002%2Fchapters%2Ffunctional%2Fdoc%2Fpower_states.html&cp=3_0_0_4_0
+
 .. _`Programming SoCs with nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf_cltools/UG/cltools/nrf_nrfjprogexe.html
 
 .. _`Nordic Thingy:53 Hardware`: https://infocenter.nordicsemi.com/topic/ug_thingy53/UG/thingy53/intro/frontpage.html
