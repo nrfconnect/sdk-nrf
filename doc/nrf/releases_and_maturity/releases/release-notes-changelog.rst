@@ -207,6 +207,8 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
+* Added the :ref:`ipc_radio` application.
+
 Asset Tracker v2
 ----------------
 
