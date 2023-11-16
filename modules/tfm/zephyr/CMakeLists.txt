@@ -18,7 +18,7 @@ if (NOT CONFIG_TFM_BUILD_NS AND CONFIG_TFM_PARTITION_PLATFORM AND CONFIG_SOC_FAM
     )
 endif()
 
-if (CONFIG_TFM_BL2)
+if(CONFIG_TFM_BL2)
   # Add the mcuboot hex file built by TFM as the contents of the bl2 partitions,
   # so it can be flashed together with the app/tfm hex files.
   set_property(GLOBAL PROPERTY
@@ -37,10 +37,14 @@ if (CONFIG_TFM_BL2)
     tfm_secure_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm_s_signed.hex
     )
 else()
-  if (CONFIG_TFM_USE_NS_APP)
+  if(CONFIG_TFM_USE_NS_APP)
     set_property(GLOBAL PROPERTY
       app_PM_HEX_FILE $<TARGET_PROPERTY:tfm,TFM_NS_HEX_FILE>
       )
+  elseif(SYSBUILD)
+    set(BYPRODUCT_KERNEL_HEX_NAME "${CMAKE_BINARY_DIR}/zephyr/tfm_merged.hex"
+        CACHE FILEPATH "Kernel hex file" FORCE
+    )
   endif()
 endif()
 
