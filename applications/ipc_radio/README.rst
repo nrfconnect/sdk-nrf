@@ -1,0 +1,125 @@
+.. _ipc_radio:
+
+IPC radio firmware
+##################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The IPC radio firmware allows to use the radio peripheral from another core in a multicore device.
+
+Application overview
+********************
+
+You can use this firmware as a general serialized radio peripheral.
+
+The firmware supports both Bluetooth® Low Energy and IEEE 802.15.4 simultaneously.
+In addition, you can configure the Bluetooth selection as an HCI :ref:`bluetooth_controller` or an RPC serialization interface (:ref:`ble_rpc`).
+
+HCI IPC serialization
+=====================
+
+The firmware exposes the :ref:`bluetooth_controller` support to another core using the IPC subsystem.
+
+Host for nRF RPC Bluetooth Low Energy
+=====================================
+
+The firmware is running the full Bluetooth Low Energy stack.
+It receives serialized function calls that it decodes and executes, then sends response data to the client.
+
+The serialization includes:
+
+* :ref:`bt_gap`
+* :ref:`bluetooth_connection_mgmt`
+* :ref:`bt_gatt`
+* :ref:`Bluetooth Cryptography <bt_crypto>`
+
+IEEE 802.15.4
+=============
+
+The firmware exposes radio driver support to another core using the IPC subsystem.
+
+Requirements
+************
+
+The firmware supports the following development kits:
+
+.. table-from-sample-yaml::
+
+To automatically attach the firmware image, you need to use the :ref:`sysbuild`.
+
+Configuration
+*************
+
+|config|
+
+Application
+===========
+
+You can set the supported radio configurations using the following Kconfig options:
+
+* :kconfig:option:`CONFIG_IPC_RADIO_BT` - For the Bluetooth Low Energy serialization.
+* :kconfig:option:`CONFIG_IPC_RADIO_802154` - For the IEEE 802.15.4 serialization.
+
+You can select the Bluetooth Low Energy serialization using the :kconfig:option:`CONFIG_IPC_RADIO_BT_SER` Kconfig option.
+
+The Bluetooth Low Energy and IEEE 802.15.4 functionalities can operate simultaneously and are only limited by available memory.
+
+Sysbuild
+========
+
+To enable the firmware, use the Sysbuild configuration of :kconfig:option:`SB_CONFIG_NRF_DEFAULT_IPC_RADIO`.
+
+You can set the supported radio configurations using the following (Sysbuild) Kconfig options:
+
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC`
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC`
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154`
+
+Configuration files
+===================
+
+The application provides predefined configuration files for typical use cases.
+You can find the configuration files in the application directory.
+
+The following files are available:
+
+* :file:`overlay-802154.conf` - Configuration file enabling IEEE 802.15.4.
+* :file:`overlay-bt_hci_ipc.conf` - Configuration file enabling Bluetooth Low Energy over HCI.
+* :file:`overlay-bt_rpc.conf` - Configuration file enabling Bluetooth Low Energy over RPC.
+
+Building and running
+********************
+
+.. |application path| replace:: :file:`applications/ipc_radio`
+
+.. include:: /includes/application_build_and_run.txt
+
+To enable a specific configuration overlay file, use the following command:
+
+.. code-block:: console
+
+   west build |application path| -b board_name -- -DEXTRA_CONF_FILE="overlay-***.conf"
+
+You can add multiple configuration files separated by a semicolon.
+You cannot use :ref:`ble_rpc` together with the HCI :ref:`bluetooth_controller`.
+
+.. note::
+   When using Sysbuild, the configuration files are added automatically.
+
+Dependencies
+************
+
+The dependencies may vary according to the configuration.
+
+This firmware can use the following |NCS| libraries:
+
+* :ref:`softdevice_controller`
+* :ref:`nrf_802154_sl`
+* :ref:`mpsl`
+* :ref:`ble_rpc`
+
+It can use the following `sdk-nrfxlib`_ library:
+
+* :ref:`nrfxlib:nrf_rpc`

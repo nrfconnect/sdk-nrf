@@ -26,3 +26,4 @@ If you want to list applications available for one or more specific boards, `use
    ../../applications/machine_learning/README
    ../../applications/matter_weather_station/README
    ../../applications/zigbee_weather_station/README
+   ../../applications/ipc_radio/README
