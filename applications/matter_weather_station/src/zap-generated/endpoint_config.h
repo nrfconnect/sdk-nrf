@@ -178,7 +178,7 @@
 			{ ZAP_SIMPLE_DEFAULT(1), 0x0000001C, 1, ZAP_TYPE(BOOLEAN), 0 }, /* BatFunctionalWhileCharging                    \
 											 */                                              \
 			{ ZAP_SIMPLE_DEFAULT(6), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                \
-			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                             \
+			{ ZAP_SIMPLE_DEFAULT(2), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                             \
                                                                                                                                          \
 			/* Endpoint: 0, Cluster: General Commissioning (server) */                                                       \
 			{ ZAP_LONG_DEFAULTS_INDEX(16), 0x00000000, 8, ZAP_TYPE(INT64U),                                                  \
@@ -378,7 +378,7 @@
 												  */                                     \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000002, 2, ZAP_TYPE(VENDOR_ID),                                                       \
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* AdminVendorId */                     \
-			{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                \
+			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                \
 			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                             \
                                                                                                                                          \
 			/* Endpoint: 0, Cluster: Operational Credentials (server) */                                                     \
@@ -419,7 +419,7 @@
 			{ ZAP_EMPTY_DEFAULT(), 0x00000002, 2, ZAP_TYPE(INT16U),                                                          \
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ActiveModeThreshold */                                              \
 			{ ZAP_SIMPLE_DEFAULT(0x0000), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                           \
-			{ ZAP_SIMPLE_DEFAULT(2), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                             \
+			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                             \
                                                                                                                                          \
 			/* Endpoint: 1, Cluster: Identify (server) */                                                                    \
 			{ ZAP_SIMPLE_DEFAULT(0), 0x00000000, 2, ZAP_TYPE(INT16U),                                                        \
@@ -974,9 +974,9 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
-		{ 0x00000016, 1 }, { 0x00000302, 1 }, { 0x00000307, 1 },                                               \
+		{ 0x00000016, 2 }, { 0x00000302, 2 }, { 0x00000307, 2 },                                               \
 		{                                                                                                      \
-			0x00000305, 1                                                                                  \
+			0x00000305, 2                                                                                  \
 		}                                                                                                      \
 	}
 

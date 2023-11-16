@@ -350,6 +350,9 @@ Especially, make sure that:
 * ``FeatureMap`` attributes for all clusters match the desired configuration selected in PICS, and all other cluster requirements related to the specific ``FeatureMap`` value are met.
 * ``ClusterRevision`` attributes for all clusters match the value of the Matter stack version that you want to use for your application certification.
 * ``Attribute List``, ``Accepted Command List`` and ``Generated Command List`` attributes for all clusters contain all the values that need to be there and nothing more.
+* Only the clusters, attributes and commands required by your application are enabled.
+  For example, the default configurations for the samples use both Thread Network Diagnostics and Wi-Fi Network Diagnostics clusters.
+  This is done due to the Thread and Wi-Fi platforms common maintenance reasons, but should not be used in the final product.
 
 See the :ref:`ug_matter_creating_accessory` page for how to configure your application using the ZAP Tool.
 

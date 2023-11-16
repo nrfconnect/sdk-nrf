@@ -40,16 +40,6 @@ namespace Controller
 		~IdentifyCluster() {}
 	};
 
-	class DLL_EXPORT ScenesCluster : public ClusterBase {
-	public:
-		ScenesCluster(Messaging::ExchangeManager &exchangeManager, const SessionHandle &session,
-			      EndpointId endpoint)
-			: ClusterBase(exchangeManager, session, endpoint)
-		{
-		}
-		~ScenesCluster() {}
-	};
-
 	class DLL_EXPORT OnOffCluster : public ClusterBase {
 	public:
 		OnOffCluster(Messaging::ExchangeManager &exchangeManager, const SessionHandle &session,

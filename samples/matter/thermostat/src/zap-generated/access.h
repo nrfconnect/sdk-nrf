@@ -49,7 +49,6 @@
     /* Cluster: Thermostat, Attribute: MaxHeatSetpointLimit, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: MinCoolSetpointLimit, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: MaxCoolSetpointLimit, Privilege: view */ \
-    /* Cluster: Thermostat, Attribute: MinSetpointDeadBand, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: ControlSequenceOfOperation, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: SystemMode, Privilege: view */ \
 }
@@ -76,7 +75,6 @@
     /* Cluster: Thermostat, Attribute: MaxHeatSetpointLimit, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: MinCoolSetpointLimit, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: MaxCoolSetpointLimit, Privilege: view */ \
-    /* Cluster: Thermostat, Attribute: MinSetpointDeadBand, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: ControlSequenceOfOperation, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: SystemMode, Privilege: view */ \
 }
@@ -103,7 +101,6 @@
     /* Cluster: Thermostat, Attribute: MaxHeatSetpointLimit, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: MinCoolSetpointLimit, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: MaxCoolSetpointLimit, Privilege: view */ \
-    /* Cluster: Thermostat, Attribute: MinSetpointDeadBand, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: ControlSequenceOfOperation, Privilege: view */ \
     /* Cluster: Thermostat, Attribute: SystemMode, Privilege: view */ \
 }
@@ -124,7 +121,6 @@
     0x00000201, /* Cluster: Thermostat, Attribute: MaxHeatSetpointLimit, Privilege: manage */ \
     0x00000201, /* Cluster: Thermostat, Attribute: MinCoolSetpointLimit, Privilege: manage */ \
     0x00000201, /* Cluster: Thermostat, Attribute: MaxCoolSetpointLimit, Privilege: manage */ \
-    0x00000201, /* Cluster: Thermostat, Attribute: MinSetpointDeadBand, Privilege: manage */ \
     0x00000201, /* Cluster: Thermostat, Attribute: ControlSequenceOfOperation, Privilege: manage */ \
     0x00000201, /* Cluster: Thermostat, Attribute: SystemMode, Privilege: manage */ \
 }
@@ -143,7 +139,6 @@
     0x00000016, /* Cluster: Thermostat, Attribute: MaxHeatSetpointLimit, Privilege: manage */ \
     0x00000017, /* Cluster: Thermostat, Attribute: MinCoolSetpointLimit, Privilege: manage */ \
     0x00000018, /* Cluster: Thermostat, Attribute: MaxCoolSetpointLimit, Privilege: manage */ \
-    0x00000019, /* Cluster: Thermostat, Attribute: MinSetpointDeadBand, Privilege: manage */ \
     0x0000001B, /* Cluster: Thermostat, Attribute: ControlSequenceOfOperation, Privilege: manage */ \
     0x0000001C, /* Cluster: Thermostat, Attribute: SystemMode, Privilege: manage */ \
 }
@@ -162,7 +157,6 @@
     kMatterAccessPrivilegeManage, /* Cluster: Thermostat, Attribute: MaxHeatSetpointLimit, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Thermostat, Attribute: MinCoolSetpointLimit, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Thermostat, Attribute: MaxCoolSetpointLimit, Privilege: manage */ \
-    kMatterAccessPrivilegeManage, /* Cluster: Thermostat, Attribute: MinSetpointDeadBand, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Thermostat, Attribute: ControlSequenceOfOperation, Privilege: manage */ \
     kMatterAccessPrivilegeManage, /* Cluster: Thermostat, Attribute: SystemMode, Privilege: manage */ \
 }
@@ -172,7 +166,10 @@
 // Parallel array data (*cluster*, command, privilege) for invoke command
 #define GENERATED_ACCESS_INVOKE_COMMAND__CLUSTER { \
     0x00000003, /* Cluster: Identify, Command: Identify, Privilege: manage */ \
-    0x00000003, /* Cluster: Identify, Command: TriggerEffect, Privilege: manage */ \
+    0x00000004, /* Cluster: Groups, Command: AddGroup, Privilege: manage */ \
+    0x00000004, /* Cluster: Groups, Command: RemoveGroup, Privilege: manage */ \
+    0x00000004, /* Cluster: Groups, Command: RemoveAllGroups, Privilege: manage */ \
+    0x00000004, /* Cluster: Groups, Command: AddGroupIfIdentifying, Privilege: manage */ \
     0x00000030, /* Cluster: General Commissioning, Command: ArmFailSafe, Privilege: administer */ \
     0x00000030, /* Cluster: General Commissioning, Command: SetRegulatoryConfig, Privilege: administer */ \
     0x00000030, /* Cluster: General Commissioning, Command: CommissioningComplete, Privilege: administer */ \
@@ -203,7 +200,10 @@
 // Parallel array data (cluster, *command*, privilege) for invoke command
 #define GENERATED_ACCESS_INVOKE_COMMAND__COMMAND { \
     0x00000000, /* Cluster: Identify, Command: Identify, Privilege: manage */ \
-    0x00000040, /* Cluster: Identify, Command: TriggerEffect, Privilege: manage */ \
+    0x00000000, /* Cluster: Groups, Command: AddGroup, Privilege: manage */ \
+    0x00000003, /* Cluster: Groups, Command: RemoveGroup, Privilege: manage */ \
+    0x00000004, /* Cluster: Groups, Command: RemoveAllGroups, Privilege: manage */ \
+    0x00000005, /* Cluster: Groups, Command: AddGroupIfIdentifying, Privilege: manage */ \
     0x00000000, /* Cluster: General Commissioning, Command: ArmFailSafe, Privilege: administer */ \
     0x00000002, /* Cluster: General Commissioning, Command: SetRegulatoryConfig, Privilege: administer */ \
     0x00000004, /* Cluster: General Commissioning, Command: CommissioningComplete, Privilege: administer */ \
@@ -234,7 +234,10 @@
 // Parallel array data (cluster, command, *privilege*) for invoke command
 #define GENERATED_ACCESS_INVOKE_COMMAND__PRIVILEGE { \
     kMatterAccessPrivilegeManage, /* Cluster: Identify, Command: Identify, Privilege: manage */ \
-    kMatterAccessPrivilegeManage, /* Cluster: Identify, Command: TriggerEffect, Privilege: manage */ \
+    kMatterAccessPrivilegeManage, /* Cluster: Groups, Command: AddGroup, Privilege: manage */ \
+    kMatterAccessPrivilegeManage, /* Cluster: Groups, Command: RemoveGroup, Privilege: manage */ \
+    kMatterAccessPrivilegeManage, /* Cluster: Groups, Command: RemoveAllGroups, Privilege: manage */ \
+    kMatterAccessPrivilegeManage, /* Cluster: Groups, Command: AddGroupIfIdentifying, Privilege: manage */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: General Commissioning, Command: ArmFailSafe, Privilege: administer */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: General Commissioning, Command: SetRegulatoryConfig, Privilege: administer */ \
     kMatterAccessPrivilegeAdminister, /* Cluster: General Commissioning, Command: CommissioningComplete, Privilege: administer */ \
