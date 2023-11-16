@@ -612,7 +612,7 @@ int main(void)
 	 * This means that NET_EVENT_L4_CONNECTED fires before the
 	 * appropriate handler l4_event_handler() is registered.
 	 */
-	if (IS_ENABLED(CONFIG_BOARD_QEMU_X86)) {
+	if (IS_ENABLED(CONFIG_BOARD_QEMU_X86) || IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
 		conn_mgr_mon_resend_status();
 	}
 
