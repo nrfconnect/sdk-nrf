@@ -7,7 +7,7 @@
 #include <pm_config.h>
 #include "autoconf.h"
 #include "region_defs.h"
-#include <zephyr/toolchain/common.h>
+#include "utilities.h"
 
 #define IS_ALIGNED_POW2(value, align) (((value) & ((align) - 1)) == 0)
 
@@ -15,7 +15,7 @@
 #if !(IS_ALIGNED_POW2(PM_TFM_NONSECURE_ADDRESS, CONFIG_NRF_SPU_FLASH_REGION_SIZE))
 #pragma message "\n\n!!!Partition alignment error!!!"\
                 "\nThe non-secure start address in pm_static.yml"\
-                " or generated partition.yml is: " STRINGIFY(PM_TFM_NONSECURE_ADDRESS)\
+                " or generated partition.yml is: " M2S(PM_TFM_NONSECURE_ADDRESS)\
                 "\nwhich is not aligned with the SPU region size."\
                 "\nRefer to the documentation section 'TF-M partition alignment requirements'"\
                 "\nfor more information.\n\n"
