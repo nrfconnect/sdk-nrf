@@ -93,6 +93,10 @@ config TFM_PROFILE_TYPE_MINIMAL
 	  and reproduce the desired configuration through kconfig fragments.
 endchoice
 
+choice TFM_MODEL
+	default TFM_SFN if TFM_PROFILE_TYPE_MINIMAL
+endchoice
+
 config TFM_EXPERIMENTAL
 	bool
 	select EXPERIMENTAL
