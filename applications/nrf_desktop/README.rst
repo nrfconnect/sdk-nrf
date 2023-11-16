@@ -873,12 +873,12 @@ For example, you can build the application for ``nrf52840dk_nrf52840`` with ``nr
 
 For the multi-core build, you need to pass the ``SHIELD`` parameter to images built on both application and network core.
 The network core controls the FEM, but the application core needs to forward the needed pins to the network core.
-Use ``hci_rpmsg_`` as the *childImageName* parameter, because in the nRF Desktop application, network core runs using ``hci_rpmsg_``.
+Use ``hci_ipc_`` as the *childImageName* parameter, because in the nRF Desktop application, network core runs using ``hci_ipc_``.
 The command for ``nrf5340dk_nrf5340_cpuapp`` with ``nrf21540ek`` shield would look as follows:
 
 .. code-block:: console
 
-   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540ek_fwd -Dhci_rpmsg_SHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
+   west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540ek_fwd -Dhci_ipc_SHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
 
 For detailed information about building an application using the nRF21540 EK, see the :ref:`ug_radio_fem_nrf21540ek_programming` section in the Working with RF Front-end modules documentation.
 

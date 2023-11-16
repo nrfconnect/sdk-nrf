@@ -121,8 +121,8 @@ See the following example:
 .. code-block:: cmake
 
    add_child_image(
-      NAME hci_rpmsg
-      SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
+      NAME hci_ipc
+      SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_ipc
       DOMAIN CPUNET
       )
 

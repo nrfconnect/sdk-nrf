@@ -157,7 +157,7 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
 
    *  ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
    *  ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
-   *  ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
+   *  ``hci_ipc`` for application having support for Bluetooth, but not for 802.15.4.
 
 #. Enable the following Kconfig options:
 
@@ -235,7 +235,7 @@ To enable the generic three-wire coexistence, do the following:
 
    * ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
    * ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
-   * ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
+   * ``hci_ipc`` for application having support for Bluetooth, but not for 802.15.4.
 
 #. Enable the following Kconfig options:
 

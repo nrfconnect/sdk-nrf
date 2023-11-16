@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/hci_rpmsg_overlay.txt
+.. include:: /includes/hci_ipc_overlay.txt
 
 The sample also requires a device running a Heart Rate Server with LE Coded PHY support to connect to.
 For example, another development kit running the :ref:`bluetooth_central_hr_coded` sample.

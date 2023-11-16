@@ -66,7 +66,7 @@ Only one of the following :file:`.conf` files is included when building:
   When building using the command line, you must explicitly specify if :file:`prj_release.conf` is going to be included instead of :file:`prj.conf`.
   See :ref:`nrf53_audio_app_building` for details.
 
-In addition, the application features the :file:`child_image` directory with an experimental :file:`hci_rpmsg.conf`.
+In addition, the application features the :file:`child_image` directory with an experimental :file:`hci_ipc.conf`.
 This file is a work-in-progress implementation of the SoftDevice Controller that has not been thoroughly tested and should not be used.
 The application is only tested using :ref:`lib_bt_ll_acs_nrf53_readme`.
 

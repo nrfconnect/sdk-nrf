@@ -17,7 +17,7 @@ endif
 
 config PCD_APP
 	bool "Peripheral CPU DFU Support for Application Processor"
-	default y if SOC_SERIES_NRF53X && MCUBOOT && BT_RPMSG
+	default y if SOC_SERIES_NRF53X && MCUBOOT && BT_HCI_IPC
 
 config PCD_VERSION_PAGE_BUF_SIZE
 	int

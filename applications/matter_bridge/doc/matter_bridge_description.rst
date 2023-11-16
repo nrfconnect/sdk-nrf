@@ -349,7 +349,7 @@ Build the target using the following command in the project directory to enable 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DOVERLAY_CONFIG="overlay-bt_max_connections_app.conf" -Dhci_rpmsg_OVERLAY_CONFIG="*absoule_path*/overlay-bt_max_connections_net.conf"
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DOVERLAY_CONFIG="overlay-bt_max_connections_app.conf" -Dhci_ipc_OVERLAY_CONFIG="*absoule_path*/overlay-bt_max_connections_net.conf"
 
 Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
 

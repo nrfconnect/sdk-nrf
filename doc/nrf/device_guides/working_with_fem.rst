@@ -304,7 +304,7 @@ To use nRF21540 in GPIO mode, complete the following steps:
 
    *  ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
    *  ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
-   *  ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
+   *  ``hci_ipc`` for application having support for Bluetooth, but not for 802.15.4.
 
    .. note::
        This step is not needed when testing with :ref:`direct_test_mode` and :ref:`radio_test` on the nRF53 Series devices.
@@ -635,7 +635,7 @@ The *childImageName_* parameter can take the following values:
 
 *  ``multiprotocol_rpmsg_`` for multiprotocol applications with support for 802.15.4 and Bluetooth
 *  ``802154_rpmsg_`` for applications with support for 802.15.4, but without support for Bluetooth
-*  ``hci_rpmsg_`` for application with support for Bluetooth, but without support for 802.15.4
+*  ``hci_ipc_`` for application with support for Bluetooth, but without support for 802.15.4
 
 References
 ^^^^^^^^^^
