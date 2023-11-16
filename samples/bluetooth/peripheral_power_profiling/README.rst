@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/hci_rpmsg_overlay.txt
+.. include:: /includes/hci_ipc_overlay.txt
 
 Optionally, you can use the `Power Profiler Kit II (PPK2)`_ for power profiling and optimizing your configuration.
 You can use also your proprietary solution for measuring the power consumption.

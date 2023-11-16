@@ -25,7 +25,7 @@ The sample is compatible with the HCI RPMsg driver provided by the |NCS| Bluetoo
 
 See the following configuration options for more information:
 
-* :kconfig:option:`CONFIG_BT_RPMSG`
+* :kconfig:option:`CONFIG_BT_HCI_IPC`
 * :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
 
 You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.
@@ -44,7 +44,7 @@ Building and running
 You must program this sample to the nRF5340 network core.
 
 The recommended way of building the sample is to use the multi-image feature of the build system.
-In this way, the sample is built automatically as a child image when both :kconfig:option:`CONFIG_BT_RPMSG` and :kconfig:option:`CONFIG_NRF_802154_SER_HOST` are enabled.
+In this way, the sample is built automatically as a child image when both :kconfig:option:`CONFIG_BT_HCI_IPC` and :kconfig:option:`CONFIG_NRF_802154_SER_HOST` are enabled.
 
 However, you can also build the sample as a stand-alone image.
 

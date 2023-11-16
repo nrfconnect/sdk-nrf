@@ -202,7 +202,7 @@ def __populate_hex_paths(dev, options, child_image):
 
     if options.controller != Controller.acs_nrf53:
         dev.hex_path_app = dest_folder / "zephyr/zephyr.hex"
-        dev.hex_path_net = dest_folder / "hci_rpmsg/zephyr/zephyr.hex"
+        dev.hex_path_net = dest_folder / "hci_ipc/zephyr/zephyr.hex"
         return
 
     if dev.core_app_programmed == SelectFlags.TBD:

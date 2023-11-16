@@ -112,7 +112,7 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
     extra_args: SHIELD=nrf21540ek_fwd
-                hci_rpmsg_SHIELD=nrf21540ek
+                hci_ipc_SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_CAF_BLE_USE_LLPM=n
   applications.nrf_desktop.zrelease:
