@@ -14,8 +14,9 @@ Overview
 
 This library creates a socket with TLS when requested.
 It uses Zephyr's HTTP client library to send HTTP requests and receive HTTP responses.
-When using this library, the :c:struct:`rest_client_req_resp_context` structure is populated and passed to the :c:func:`rest_client_request` function.
-The same structure will contain the response data.
+When using this library, the :c:struct:`rest_client_req_context` structure is populated and
+passed to the :c:func:`rest_client_request` function together with the :c:struct:`rest_client_resp_context` structure,
+which will contain the response data.
 
 Configuration
 *************
