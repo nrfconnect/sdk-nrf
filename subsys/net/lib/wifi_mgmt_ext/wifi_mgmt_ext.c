@@ -94,6 +94,9 @@ static int add_network_from_credentials_struct_personal(struct wifi_credentials_
 	}
 
 	z_wpa_cli_cmd_v("enable_network %d", resp.network_id);
+
+	z_wpa_cli_cmd_v("select_network %d", resp.network_id);
+
 	return ret;
 }
 
