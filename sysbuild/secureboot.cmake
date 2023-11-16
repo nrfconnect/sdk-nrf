@@ -14,7 +14,7 @@ if(SB_CONFIG_SECURE_BOOT)
       BOARD ${SB_CONFIG_SECURE_BOOT_NETWORK_BOARD}
       BUILD_ONLY true
     )
-    set_target_properties(${SB_CONFIG_SECURE_BOOT_IMAGE_NAME} PROPERTIES
+    set_target_properties(b0n PROPERTIES
       IMAGE_CONF_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/image_configurations/b0_image_default.cmake
     )
 
@@ -41,7 +41,7 @@ if(SB_CONFIG_SECURE_BOOT)
       SOURCE_DIR ${secure_boot_source_dir}
       BUILD_ONLY true
     )
-    set_target_properties(${SB_CONFIG_SECURE_BOOT_IMAGE_NAME} PROPERTIES
+    set_target_properties(b0 PROPERTIES
       IMAGE_CONF_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/image_configurations/b0_image_default.cmake
     )
 
