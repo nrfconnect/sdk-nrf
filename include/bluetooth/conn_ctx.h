@@ -71,7 +71,7 @@ struct bt_conn_ctx_lib {
  */
 static inline size_t bt_conn_ctx_block_size_get(struct bt_conn_ctx_lib *ctx_lib)
 {
-	return ctx_lib->mem_slab->block_size;
+	return ctx_lib->mem_slab->info.block_size;
 }
 
 /**
