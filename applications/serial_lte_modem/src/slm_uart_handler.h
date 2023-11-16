@@ -47,14 +47,15 @@ bool slm_uart_can_context_send(const uint8_t *data, size_t len);
 /**
  * @brief Write the data to TX buffer and trigger sending.
  *
- * @param data Data to write
- * @param len Length of data
- * @param print_full_debug Print full debug traces (if enabled)
+ * @param data Data to write.
+ * @param len Length of data.
+ * @param print_full_debug Print full debug traces.
+ * @param indicate Can trigger the indication pin.
  *
  * @retval 0 If the data was successfully written to buffer.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_uart_tx_write(const uint8_t *data, size_t len, bool print_full_debug);
+int slm_uart_tx_write(const uint8_t *data, size_t len, bool print_full_debug, bool indicate);
 
 /**
  * @brief Initialize SLM UART handler for serial LTE modem
