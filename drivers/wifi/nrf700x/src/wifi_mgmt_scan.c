@@ -116,6 +116,9 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 		goto out;
 	}
 
+	memset(scan_info, 0, sizeof(*scan_info) + (num_scan_channels *
+		sizeof(scan_info->scan_params.center_frequency[0])));
+
 	scan_info->scan_reason = SCAN_DISPLAY;
 
 	if (params) {
