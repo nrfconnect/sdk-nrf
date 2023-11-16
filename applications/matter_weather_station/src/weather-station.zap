@@ -35,7 +35,7 @@
   "endpointTypes": [
     {
       "id": 1,
-      "name": "Anonymous Endpoint Type",
+      "name": "MA-rootdevice",
       "deviceTypeRef": {
         "code": 22,
         "profileId": 259,
@@ -51,7 +51,7 @@
         }
       ],
       "deviceVersions": [
-        1
+        2
       ],
       "deviceIdentifiers": [
         22
@@ -1236,7 +1236,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "1",
+              "defaultValue": "2",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -3314,7 +3314,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -3972,7 +3972,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "2",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -3984,7 +3984,7 @@
     },
     {
       "id": 2,
-      "name": "Anonymous Endpoint Type",
+      "name": "MA-tempsensor",
       "deviceTypeRef": {
         "code": 770,
         "profileId": 259,
@@ -4000,7 +4000,7 @@
         }
       ],
       "deviceVersions": [
-        1
+        2
       ],
       "deviceIdentifiers": [
         770
@@ -4437,7 +4437,7 @@
     },
     {
       "id": 3,
-      "name": "Anonymous Endpoint Type",
+      "name": "MA-humiditysensor",
       "deviceTypeRef": {
         "code": 775,
         "profileId": 259,
@@ -4453,7 +4453,7 @@
         }
       ],
       "deviceVersions": [
-        1
+        2
       ],
       "deviceIdentifiers": [
         775
@@ -4890,7 +4890,7 @@
     },
     {
       "id": 4,
-      "name": "Anonymous Endpoint Type",
+      "name": "MA-pressuresensor",
       "deviceTypeRef": {
         "code": 773,
         "profileId": 259,
@@ -4906,7 +4906,7 @@
         }
       ],
       "deviceVersions": [
-        1
+        2
       ],
       "deviceIdentifiers": [
         773

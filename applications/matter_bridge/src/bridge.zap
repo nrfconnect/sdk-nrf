@@ -19,12 +19,6 @@
   "package": [
     {
       "pathRelativity": "relativeToZap",
-      "path": "../../../../../matter/connectedhomeip/src/app/zap-templates/app-templates.json",
-      "type": "gen-templates-json",
-      "version": "chip-v1"
-    },
-    {
-      "pathRelativity": "relativeToZap",
       "path": "../../../../modules/lib/matter/src/app/zap-templates/zcl/zcl.json",
       "type": "zcl-properties",
       "category": "matter",
@@ -34,6 +28,12 @@
     {
       "pathRelativity": "relativeToZap",
       "path": "../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
+      "type": "gen-templates-json",
+      "version": "chip-v1"
+    },
+    {
+      "pathRelativity": "relativeToZap",
+      "path": "../../../../../matter/connectedhomeip/src/app/zap-templates/app-templates.json",
       "type": "gen-templates-json",
       "version": "chip-v1"
     }
@@ -57,7 +57,7 @@
         }
       ],
       "deviceVersions": [
-        1
+        2
       ],
       "deviceIdentifiers": [
         22
@@ -2234,7 +2234,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2750,7 +2750,7 @@
     },
     {
       "id": 2,
-      "name": "Anonymous Endpoint Type",
+      "name": "MA-aggregator",
       "deviceTypeRef": {
         "code": 14,
         "profileId": 259,
@@ -3097,7 +3097,7 @@
     },
     {
       "id": 3,
-      "name": "Anonymous Endpoint Type",
+      "name": "MA-onofflight",
       "deviceTypeRef": {
         "code": 256,
         "profileId": 259,
@@ -4514,14 +4514,14 @@
       "networkId": 0
     },
     {
-      "endpointTypeName": "Anonymous Endpoint Type",
+      "endpointTypeName": "MA-aggregator",
       "endpointTypeIndex": 1,
       "profileId": 259,
       "endpointId": 1,
       "networkId": 0
     },
     {
-      "endpointTypeName": "Anonymous Endpoint Type",
+      "endpointTypeName": "MA-onofflight",
       "endpointTypeIndex": 2,
       "profileId": 259,
       "endpointId": 2,

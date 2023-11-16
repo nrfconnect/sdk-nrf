@@ -51,7 +51,7 @@
         }
       ],
       "deviceVersions": [
-        1
+        2
       ],
       "deviceIdentifiers": [
         22
@@ -3336,7 +3336,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -3852,7 +3852,7 @@
     },
     {
       "id": 2,
-      "name": "Anonymous Endpoint Type",
+      "name": "MA-dimmablelight",
       "deviceTypeRef": {
         "code": 257,
         "profileId": 259,
@@ -4417,7 +4417,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "4",
+              "defaultValue": "5",
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,

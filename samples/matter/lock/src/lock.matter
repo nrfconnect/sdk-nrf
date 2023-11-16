@@ -1724,7 +1724,7 @@ server cluster DoorLock = 257 {
 }
 
 endpoint 0 {
-  device type ma_rootdevice = 22, version 1;
+  device type ma_rootdevice = 22, version 2;
 
   binding cluster OtaSoftwareUpdateProvider;
 
@@ -1966,7 +1966,7 @@ endpoint 0 {
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
-    ram      attribute featureMap default = 0;
+    ram      attribute featureMap default = 1;
     ram      attribute clusterRevision default = 1;
 
     handle command OpenCommissioningWindow;
@@ -2029,7 +2029,7 @@ endpoint 0 {
     callback attribute eventList;
     callback attribute attributeList;
     ram      attribute featureMap default = 0x0000;
-    ram      attribute clusterRevision default = 2;
+    ram      attribute clusterRevision default = 1;
   }
 }
 endpoint 1 {

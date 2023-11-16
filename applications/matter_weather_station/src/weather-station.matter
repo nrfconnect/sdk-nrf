@@ -1437,7 +1437,7 @@ server cluster RelativeHumidityMeasurement = 1029 {
 }
 
 endpoint 0 {
-  device type ma_rootdevice = 22, version 1;
+  device type ma_rootdevice = 22, version 2;
 
   binding cluster OtaSoftwareUpdateProvider;
 
@@ -1520,7 +1520,7 @@ endpoint 0 {
     callback attribute acceptedCommandList;
     callback attribute attributeList;
     ram      attribute featureMap default = 6;
-    ram      attribute clusterRevision default = 1;
+    ram      attribute clusterRevision default = 2;
   }
 
   server cluster GeneralCommissioning {
@@ -1674,7 +1674,7 @@ endpoint 0 {
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
-    ram      attribute featureMap default = 0;
+    ram      attribute featureMap default = 1;
     ram      attribute clusterRevision default = 1;
 
     handle command OpenCommissioningWindow;
@@ -1737,11 +1737,11 @@ endpoint 0 {
     callback attribute eventList;
     callback attribute attributeList;
     ram      attribute featureMap default = 0x0000;
-    ram      attribute clusterRevision default = 2;
+    ram      attribute clusterRevision default = 1;
   }
 }
 endpoint 1 {
-  device type ma_tempsensor = 770, version 1;
+  device type ma_tempsensor = 770, version 2;
 
 
   server cluster Identify {
@@ -1780,7 +1780,7 @@ endpoint 1 {
   }
 }
 endpoint 2 {
-  device type ma_humiditysensor = 775, version 1;
+  device type ma_humiditysensor = 775, version 2;
 
 
   server cluster Identify {
@@ -1819,7 +1819,7 @@ endpoint 2 {
   }
 }
 endpoint 3 {
-  device type ma_pressuresensor = 773, version 1;
+  device type ma_pressuresensor = 773, version 2;
 
 
   server cluster Identify {
