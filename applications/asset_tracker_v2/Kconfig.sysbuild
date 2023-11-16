@@ -7,4 +7,7 @@
 config SECURE_BOOT
 	default y if $(BOARD) = "nrf9160dk_nrf9160_ns"
 
+config SECURE_BOOT_APPCORE
+	default y if $(BOARD) = "nrf9160dk_nrf9160_ns"
+
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
