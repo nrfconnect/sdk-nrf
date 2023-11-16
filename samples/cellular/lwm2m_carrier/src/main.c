@@ -6,11 +6,11 @@
 
 #include <zephyr/kernel.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
 
 #ifdef CONFIG_LWM2M_CARRIER
 #include <lwm2m_carrier.h>
 #include "carrier_certs.h"
-#include <modem/lte_lc.h>
 
 NRF_MODEM_LIB_ON_INIT(main_init_hook, on_modem_lib_init, NULL);
 
