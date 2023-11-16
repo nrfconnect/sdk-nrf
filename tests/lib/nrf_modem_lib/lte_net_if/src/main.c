@@ -53,19 +53,6 @@ static void bring_network_interface_up(void)
 	TEST_ASSERT_EQUAL(0, net_if_up(net_if));
 }
 
-static void network_interface_down_option_set(enum nrf_modem_lib_net_if_down_options value,
-					      int retval_expected)
-{
-	uint8_t option = value;
-
-	int ret = conn_mgr_if_set_opt(net_if_get_default(),
-				      NRF_MODEM_LIB_NET_IF_DOWN,
-				      (const void *)&option,
-				      sizeof(option));
-
-	TEST_ASSERT_EQUAL(retval_expected, ret);
-}
-
 /* Ensure consistent starting conditions for each test. */
 void setUp(void)
 {
@@ -109,12 +96,6 @@ void setUp(void)
 
 	/* Reset flags */
 	conn_mgr_if_set_flag(net_if, CONN_MGR_IF_PERSISTENT, false);
-
-	/* Reset options */
-	uint8_t option = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
-	(void)conn_mgr_if_set_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN,
-					  (const void *)&option,
-					  sizeof(option));
 
 	/* Take iface down */
 	(void)net_if_down(net_if);
@@ -238,9 +219,6 @@ void test_enable_should_return_error_upon_dfu_error(void)
  */
 void test_disable_should_shutdown_modem(void)
 {
-	/* Set the IF_DOWN mode to SHUTDOWN_MODEM */
-	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
-
 	/* Bring the interface up */
 	bring_network_interface_up();
 
@@ -258,9 +236,6 @@ void test_disable_should_shutdown_modem(void)
  */
 void test_disable_should_return_error_if_shutdown_of_modem_fails(void)
 {
-	/* Set the IF_DOWN mode to SHUTDOWN_MODEM */
-	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
-
 	/* Bring the interface up */
 	bring_network_interface_up();
 
@@ -273,23 +248,6 @@ void test_disable_should_return_error_if_shutdown_of_modem_fails(void)
 	TEST_ASSERT_EQUAL(-1, net_if_down(net_if_get_default()));
 }
 
-void test_disable_should_disconnect_lte(void)
-{
-	bring_network_interface_up();
-
-	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_DEACTIVATE_LTE, 0);
-
-	TEST_ASSERT_EQUAL(0, net_if_down(net_if_get_default()));
-}
-
-void test_disable_should_return_error_if_lte_disconnect_fails(void)
-{
-	bring_network_interface_up();
-
-	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_DEACTIVATE_LTE, -1);
-
-	TEST_ASSERT_EQUAL(-1, net_if_down(net_if_get_default()));
-}
 
 /* Verify nrf_modem_lib_netif_connect() */
 
@@ -329,126 +287,6 @@ void test_disconnect_should_return_error_if_setting_of_functional_mode_fails(voi
 	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_DEACTIVATE_LTE, -1);
 
 	TEST_ASSERT_EQUAL(-1, conn_mgr_if_disconnect(net_if_get_default()));
-}
-
-/* Verify nrf_modem_lib_netif_options_set() */
-
-void test_options_set_should_return_success_when_setting_option_to_modem_shutdown(void)
-{
-	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
-}
-
-void test_options_set_should_return_error_upon_unsupported_option_name(void)
-{
-	struct net_if *net_if = net_if_get_default();
-
-	uint8_t option = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
-
-	int ret = conn_mgr_if_set_opt(net_if,
-				      UINT8_MAX,
-				      (const void *)&option,
-				      sizeof(option));
-
-	TEST_ASSERT_EQUAL(-ENOPROTOOPT, ret);
-}
-
-void test_options_set_should_return_error_upon_unsupported_option_value(void)
-{
-	network_interface_down_option_set(UINT8_MAX, -EBADF);
-}
-
-void test_options_set_should_return_error_on_too_large_input(void)
-{
-	struct net_if *net_if = net_if_get_default();
-
-	uint32_t option = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
-
-	int ret = conn_mgr_if_set_opt(net_if,
-				      NRF_MODEM_LIB_NET_IF_DOWN,
-				      (const void *)&option,
-				      sizeof(option));
-
-	TEST_ASSERT_EQUAL(-ENOBUFS, ret);
-}
-
-/* Verify nrf_modem_lib_netif_options_get() */
-
-void test_options_get_should_return_success(void)
-{
-	struct net_if *net_if = net_if_get_default();
-	uint8_t option;
-	size_t len = sizeof(option);
-
-	int ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
-
-	TEST_ASSERT_EQUAL(0, ret);
-}
-
-/* Verify that conn_mgr_if_set_opt successfully changes the IF_DOWN option from LTE_DISCONNECT
- * to MODEM_SHUTDOWN
- */
-void test_options_set_should_change_connectivity_if_down_to_modem_shutdown(void)
-{
-	struct net_if *net_if = net_if_get_default();
-	uint8_t option = 99;
-	size_t len;
-	int ret;
-
-	/* Verify that the IF_DOWN option starts out as LTE_DISCONNECT */
-	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT, option);
-	TEST_ASSERT_EQUAL(0, ret);
-
-	/* Attempt to change the IF_DOWN option to MODEM_SHUTDOWN */
-	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
-
-	/* Verify that the IF_DOWN option was successfully changed  */
-	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, option);
-	TEST_ASSERT_EQUAL(0, ret);
-}
-
-/* Verify that conn_mgr_if_set_opt successfully changes the IF_DOWN option from MODEM_SHUTDOWN
- * to LTE_DISCONNECT
- */
-void test_options_set_should_change_connectivity_if_down_to_lte_disconnect(void)
-{
-	struct net_if *net_if = net_if_get_default();
-	uint8_t option = 99;
-	size_t len;
-	int ret;
-
-	/* Set up initial conditions by setting IF_DOWN option to MODEM_SHUTDOWN */
-	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, 0);
-
-	/* Verify that the IF_DOWN option is MODEM_SHUTDOWN */
-	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN, option);
-	TEST_ASSERT_EQUAL(0, ret);
-
-	/* Attempt to change the IF_DOWN option to LTE_DISCONNECT */
-	network_interface_down_option_set(NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT, 0);
-
-	/* Verify that the IF_DOWN option was successfully changed  */
-	len = sizeof(option);
-	ret = conn_mgr_if_get_opt(net_if, NRF_MODEM_LIB_NET_IF_DOWN, (void *)&option, &len);
-	TEST_ASSERT_EQUAL(NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT, option);
-	TEST_ASSERT_EQUAL(0, ret);
-}
-
-void test_options_get_should_return_error_if_wrong_option_name_is_used(void)
-{
-	struct net_if *net_if = net_if_get_default();
-	uint8_t option;
-	size_t len = sizeof(option);
-	int ret;
-
-	ret = conn_mgr_if_get_opt(net_if, UINT8_MAX, (void *)&option, &len);
-
-	TEST_ASSERT_EQUAL(-ENOPROTOOPT, ret);
 }
 
 /* PDN notifications */

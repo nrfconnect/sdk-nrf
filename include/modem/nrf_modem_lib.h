@@ -196,25 +196,6 @@ struct nrf_modem_lib_shutdown_cb {
  */
 void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info);
 
-#if defined(CONFIG_NRF_MODEM_LIB_NET_IF) || defined(__DOXYGEN__)
-/** @brief Options used to specify desired behavior when the network interface is brought down by
- *	   calling net_if_down().
- */
-enum nrf_modem_lib_net_if_down_options {
-	/** Shutdown modem - GNSS functionality will not be preserved. */
-	NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN = 1,
-
-	/** Disconnect from LTE - GNSS functionality will be preserved. */
-	NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT
-};
-
-/** @brief Option types used to specify library behavior. */
-enum nrf_modem_lib_net_if_options {
-	/** Sets desired behavior when net_if_down() is called. */
-	NRF_MODEM_LIB_NET_IF_DOWN = 1,
-};
-#endif
-
 #if defined(CONFIG_NRF_MODEM_LIB_FAULT_STRERROR) || defined(__DOXYGEN__)
 /**
  * @brief Retrieve a statically allocated textual description of a given fault.
