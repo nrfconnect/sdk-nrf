@@ -480,7 +480,7 @@ static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 	buf[1] = LF;
 	if (strlen(buf) > strlen(CRLF_STR)) {
 		format_final_result((char *)buf, strlen(buf), buf_size);
-		err = slm_uart_tx_write(buf, strlen(buf), true);
+		err = slm_uart_tx_write(buf, strlen(buf), true, false);
 		if (err) {
 			LOG_ERR("AT command response failed: %d", err);
 		}
@@ -620,7 +620,7 @@ static void rx_handler_callback(const uint8_t *buf, size_t len)
 			ret = null_handler(buf, len);
 		} else {
 			LOG_ERR("Internal error: Unknown SLM mode.");
-			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1, true);
+			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1, true, false);
 			break;
 		}
 
@@ -629,7 +629,7 @@ static void rx_handler_callback(const uint8_t *buf, size_t len)
 			len -= ret;
 		} else {
 			LOG_ERR("Internal error: Command overflow.");
-			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1, true);
+			(void)slm_uart_tx_write(FATAL_STR, sizeof(FATAL_STR) - 1, true, false);
 			break;
 		}
 	}
@@ -645,19 +645,19 @@ AT_MONITOR(at_notify, ANY, notification_handler);
 static void notification_handler(const char *notification)
 {
 	if (get_slm_mode() == SLM_AT_COMMAND_MODE) {
-		(void)slm_uart_tx_write(CRLF_STR, strlen(CRLF_STR), true);
-		(void)slm_uart_tx_write(notification, strlen(notification), true);
+		(void)slm_uart_tx_write(CRLF_STR, strlen(CRLF_STR), true, true);
+		(void)slm_uart_tx_write(notification, strlen(notification), true, false);
 	}
 }
 
 void rsp_send_ok(void)
 {
-	(void)slm_uart_tx_write(OK_STR, sizeof(OK_STR) - 1, true);
+	(void)slm_uart_tx_write(OK_STR, sizeof(OK_STR) - 1, true, false);
 }
 
 void rsp_send_error(void)
 {
-	(void)slm_uart_tx_write(ERROR_STR, sizeof(ERROR_STR) - 1, true);
+	(void)slm_uart_tx_write(ERROR_STR, sizeof(ERROR_STR) - 1, true, false);
 }
 
 void rsp_send(const char *fmt, ...)
@@ -676,14 +676,14 @@ void rsp_send(const char *fmt, ...)
 	vsnprintf(rsp_buf, sizeof(rsp_buf), fmt, arg_ptr);
 	va_end(arg_ptr);
 
-	(void)slm_uart_tx_write(rsp_buf, strlen(rsp_buf), true);
+	(void)slm_uart_tx_write(rsp_buf, strlen(rsp_buf), true, false);
 
 	k_mutex_unlock(&mutex_rsp_buf);
 }
 
 void data_send(const uint8_t *data, size_t len)
 {
-	(void)slm_uart_tx_write(data, len, false);
+	(void)slm_uart_tx_write(data, len, false, true);
 }
 
 int enter_datamode(slm_datamode_handler_t handler)
