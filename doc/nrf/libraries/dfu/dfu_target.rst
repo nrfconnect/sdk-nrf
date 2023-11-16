@@ -111,10 +111,10 @@ Configuring the library requires making edits to your component and using Kconfi
 Enabling the library
 ====================
 
-Every supported DFU target must implement the set of functions defined in :file:`subsys/dfu/src/dfu_target.c`.
+Every supported DFU target must implement the set of functions defined in the :file:`subsys/dfu/src/dfu_target.c` file.
 
 When initializing the DFU target library, you must provide information about the type of firmware upgrade.
-To do so automatically, send the first fragment of the firmware to the function :c:func:`dfu_target_img_type`.
+To do this automatically, send the first fragment of the firmware to the :c:func:`dfu_target_img_type` function.
 This function can identify all supported firmware upgrade types.
 The result of this call can then be given as input to the :c:func:`dfu_target_init` function.
 
@@ -134,7 +134,7 @@ Maintaining writing progress after reboot
 =========================================
 
 You can let the application maintain the writing progress in case the device reboots.
-To do so, enable the following options:
+Enable the following options:
 
 * :kconfig:option:`CONFIG_SETTINGS`
 * :kconfig:option:`CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS`.
@@ -144,7 +144,7 @@ The MCUboot target will then use the :ref:`zephyr:settings_api` subsystem in Zep
 Using a dedicated partition for full modem upgrades
 ===================================================
 
-Enable the :kconfig:option:`DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` Kconfig option to use :ref:`partition_manager` for creating a dedicated partition for full modem upgrades.
+Enable the :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` Kconfig option to use :ref:`partition_manager` for creating a dedicated partition for full modem upgrades.
 External flash partitions require ``nordic,pm-ext-flash`` to be set in the devicetree; see :ref:`partition_manager` for details.
 
 API documentation
