@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2022-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/random/random.h>
+#include <zephyr/sys_clock.h>
 #include <zephyr/sys/__assert.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
@@ -15,8 +16,6 @@
 LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
 
 #include "bt_adv_helper.h"
-
-#define SEC_PER_MIN		60U
 
 /* According to Fast Pair specification RPA rotation must be synchronized with generating new salt
  * for Acount Key Filter advertising data. The RPA rotation must occur at least every 15 minutes
