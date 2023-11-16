@@ -190,6 +190,7 @@ Kconfig*                                  @tejlmand
 /samples/wifi/shell/                      @krish2718 @sachinthegreen @rado17 @rlubos
 /samples/wifi/sta/                        @D-Triveni @bama-nordic
 /samples/wifi/sr_coex/                    @muraliThokala @bama-nordic
+/samples/wifi/shutdown/                   @krish2718 @sachinthegreen
 /samples/wifi/twt/                        @chiranjeevi2776 @krish2718
 /samples/wifi/throughput/                 @SusanGRapaka @D-Triveni
 /scripts/                                 @tejlmand @nrfconnect/ncs-test-leads
