@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2021-2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys_clock.h>
 #include <zephyr/sys/timeutil.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/logging/log.h>
@@ -24,10 +25,7 @@ LOG_MODULE_DECLARE(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
 #define GPS_TO_UNIX_UTC_OFFSET_SECONDS	(315964800UL)
 /* UTC/GPS time offset as of 1st of January 2017. */
 #define GPS_TO_UTC_LEAP_SECONDS		(18UL)
-#define SEC_PER_MIN			(60UL)
-#define MIN_PER_HOUR			(60UL)
 #define SEC_PER_HOUR			(MIN_PER_HOUR * SEC_PER_MIN)
-#define HOURS_PER_DAY			(24UL)
 #define SEC_PER_DAY			(HOURS_PER_DAY * SEC_PER_HOUR)
 #define DAYS_PER_WEEK			(7UL)
 #define PLMN_STR_MAX_LEN		8 /* MCC + MNC + quotes */
