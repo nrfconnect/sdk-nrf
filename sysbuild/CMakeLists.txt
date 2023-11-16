@@ -198,6 +198,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT)
+    if(NOT SB_CONFIG_SECURE_BOOT_APPCORE AND NOT SB_CONFIG_SECURE_BOOT_NETCORE)
+      # Error out early, this shortcuts to a later error which complains that the secure boot image name is missing
+      message(FATAL_ERROR "Error: No secure boot options have been selected, at least one core must be selected for secure boot to function.")
+    endif()
+
     if(SB_CONFIG_SECURE_BOOT_APPCORE)
       if(NOT DEFINED b0_BOARD AND DEFINED board_secure)
         # b0 must run in secure mode on the nRF9160/nRF5340
@@ -213,6 +218,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           mcuboot
           ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/mcuboot_enable_secure_bootloader.overlay
           )
+
         add_overlay_config(
           mcuboot
           ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
