@@ -131,7 +131,7 @@ config SECURE_BOOT_MCUBOOT_VERSION
 	string "MCUboot S0/S1 image update version"
 	default "0.0.0+0"
 	depends on SECURE_BOOT
-	depends on SECURE_BOOT_APPCORE
+	depends on BOOTLOADER_MCUBOOT
 	help
 	  The version of the MCUboot S0/S1 upgrade package
 
