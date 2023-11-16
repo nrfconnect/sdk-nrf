@@ -42,15 +42,15 @@ If you just want to do a quick test with a sample, disable the :kconfig:option:`
 Otherwise, follow the instructions below.
 
 Memfault SDK requires three files in the include path during the build process.
-Add a new folder into your project called :file:`config` and add the following three files:
+Add a new folder called :file:`config` into your project and add the following three files:
 
 * :file:`memfault_platform_config.h` - Sets Memfault SDK configurations that are not covered by Kconfig options.
 * :file:`memfault_metrics_heartbeat_config.def` - Defines application-specific metrics.
 * :file:`memfault_trace_reason_user_config.def` - Defines application-specific trace reasons.
 
-For more information, you can see `Memfault nRF Connect SDK integration guide`_.
+For more information, see the `Memfault nRF Connect SDK integration guide`_.
 You can use the files in the :ref:`memfault_sample` sample as a reference.
-To have these configuration files in the include path, add the following in the :file:`CMakeLists.txt` file:
+To have these configuration files in the include path, add the following to the :file:`CMakeLists.txt` file:
 
 .. code-block:: console
 
@@ -62,7 +62,7 @@ To have these configuration files in the include path, add the following in the 
 Configuration options in Memfault SDK
 =====================================
 
-Following are some of the configuration options that Memfault SDK define:
+Following are some of the configuration options that Memfault SDK defines:
 
 * :kconfig:option:`CONFIG_MEMFAULT_SHELL`
 * :kconfig:option:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP`
@@ -79,15 +79,14 @@ Following are some of the configuration options that Memfault SDK define:
 * :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD`
 * :kconfig:option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM`
 
-You can find more details on each option using ``menuconfig``, ``guiconfig``, and in the Kconfig sources in ``modules/lib/memfault-firmware-sdk/ports/zephyr/Kconfig``.
+For more details on each option, use ``menuconfig`` or ``guiconfig``, and see the Kconfig sources in ``modules/lib/memfault-firmware-sdk/ports/zephyr/Kconfig``.
 
 .. note::
 
    The Memfault shell is enabled by default, using the UART interface.
-   If :ref:`lib_at_host` library and the Memfault module are enabled simultaneously, both will not behave as expected, as they both require the UART same interface.
-   Therefore, it is recommended to only enable one of these at the same time.
-   To disable the Memfault shell, you need to disable the two configurations, ``CONFIG_MEMFAULT_SHELL`` and ``CONFIG_MEMFAULT_NRF_SHELL``.
-
+   If :ref:`lib_at_host` library and the Memfault module are enabled simultaneously, both will not behave as expected, as they both require the same UART interface.
+   Therefore, it is recommended to enable only one of these at a time.
+   To disable the Memfault shell, you need to disable the Kconfig options :kconfig:option:`CONFIG_MEMFAULT_SHELL` and :kconfig:option:`CONFIG_MEMFAULT_NRF_SHELL`.
 
 Configuration options in |NCS|
 ==============================
@@ -101,8 +100,8 @@ The Kconfig options for Memfault that are defined in |NCS| provide some addition
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS`
 
-The |NCS| integration of `Memfault SDK`_ provides default values for some metadata that are required to identify the firmware when it is sent to Memfault cloud.
-These defaults can be controlled by using the configuration options below:
+The |NCS| integration of `Memfault SDK`_ provides default values for some metadata that is required to identify the firmware when it is sent to Memfault cloud.
+You can control the defaults by using the configuration options below:
 
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_HW_VERSION`
@@ -112,7 +111,6 @@ These defaults can be controlled by using the configuration options below:
 
 The Kconfig options for :kconfig:option:`CONFIG_BT_MDS` are the following:
 
-* :kconfig:option:`CONFIG_BT_MDS`
 * :kconfig:option:`CONFIG_BT_MDS_MAX_URI_LENGTH`
 * :kconfig:option:`CONFIG_BT_MDS_PERM_RW`
 * :kconfig:option:`CONFIG_BT_MDS_PERM_RW_ENCRYPT`
