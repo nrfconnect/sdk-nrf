@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-.. include:: /includes/hci_rpmsg_overlay.txt
+.. include:: /includes/hci_ipc_overlay.txt
 
 If the NFC_OOB_PAIRING feature is enabled, the sample requires a smartphone or a tablet with Android v8.0.0 or newer.
 

@@ -80,9 +80,9 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
     set(CHILD_IMAGE_NAME "multiprotocol_rpmsg")
     set(CHILD_IMAGE_PATH "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg")
 
-  elseif (CONFIG_NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE)
-    set(CHILD_IMAGE_NAME "hci_rpmsg")
-    set(CHILD_IMAGE_PATH "${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg")
+  elseif (CONFIG_NCS_SAMPLE_HCI_IPC_CHILD_IMAGE)
+    set(CHILD_IMAGE_NAME "hci_ipc")
+    set(CHILD_IMAGE_PATH "${ZEPHYR_BASE}/samples/bluetooth/hci_ipc")
 
   elseif (CONFIG_NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE)
     set(CHILD_IMAGE_NAME "802154_rpmsg")
@@ -105,7 +105,7 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
   if (CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP)
     # By passing this value we don't require the user to pass any overlay files to the
     # network core child image. Bluetooth buffer sizes are aligned automatically.
-    if (CONFIG_NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE)
+    if (CONFIG_NCS_SAMPLE_HCI_IPC_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE)
       add_overlay_config(
         ${CHILD_IMAGE_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/common/mcumgr_bt_ota_dfu/rpmsg_child_image_overlay.conf
@@ -141,7 +141,7 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
       # on the network core required by the Bluetooth Mesh.
       add_overlay_config(
         ${CHILD_IMAGE_NAME}
-        "${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/hci_rpmsg_child_image_overlay.conf"
+        "${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/hci_ipc_child_image_overlay.conf"
       )
     endif()
 

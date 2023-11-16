@@ -106,7 +106,7 @@ endif # NCS_SAMPLE_MCUMGR_BT_OTA_DFU
 
 config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
 	bool "MCUmgr OTA DFU speedup"
-	depends on BT_CTLR || (NCS_SAMPLE_HCI_RPMSG_CHILD_IMAGE || NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE)
+	depends on BT_CTLR || (NCS_SAMPLE_HCI_IPC_CHILD_IMAGE || NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE)
 	help
 	  Enable this option to speed up the OTA DFU transfer over Bluetooth.
 	  This option extends the Bluetooth buffers to extend Bluetooth MTU

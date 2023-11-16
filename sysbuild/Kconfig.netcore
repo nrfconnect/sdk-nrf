@@ -13,7 +13,7 @@ config SUPPORT_NETCORE_EMPTY
 	bool
 	default y
 
-config SUPPORT_NETCORE_HCI_RPMSG
+config SUPPORT_NETCORE_HCI_IPC
 	bool
 	default y
 
@@ -44,7 +44,7 @@ config NRF_DEFAULT_MULTIPROTOCOL
 choice NETCORE
 	prompt "Netcore image"
 	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	default NETCORE_HCI_RPMSG if NRF_DEFAULT_BLUETOOTH && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
+	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	default NETCORE_NONE
@@ -60,11 +60,11 @@ config NETCORE_EMPTY
 	help
 	  Include empty image as the netcore image to use
 
-config NETCORE_HCI_RPMSG
-	bool "hci_rpmsg"
-	depends on SUPPORT_NETCORE_HCI_RPMSG
+config NETCORE_HCI_IPC
+	bool "hci_ipc"
+	depends on SUPPORT_NETCORE_HCI_IPC
 	help
-	  Include hci_rpmsg as the netcore image to use
+	  Include hci_ipc as the netcore image to use
 
 config NETCORE_RPC_HOST
 	bool "rpc_host"
@@ -91,7 +91,7 @@ if !NETCORE_NONE
 config NETCORE_IMAGE_NAME
 	string
 	default "empty_net_core" if NETCORE_EMPTY
-	default "hci_rpmsg" if NETCORE_HCI_RPMSG
+	default "hci_ipc" if NETCORE_HCI_IPC
 	default "rpc_host" if NETCORE_RPC_HOST
 	default "802154_rpmsg" if NETCORE_802154_RPMSG
 	default "multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
@@ -101,7 +101,7 @@ config NETCORE_IMAGE_NAME
 config NETCORE_IMAGE_PATH
 	string
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/empty_net_core" if NETCORE_EMPTY
-	default "${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg" if NETCORE_HCI_RPMSG
+	default "${ZEPHYR_BASE}/samples/bluetooth/hci_ipc" if NETCORE_HCI_IPC
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
 	default "${ZEPHYR_BASE}/samples/boards/nrf/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG

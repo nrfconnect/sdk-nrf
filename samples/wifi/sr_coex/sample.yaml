@@ -7,7 +7,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
-    extra_args: CONFIG_MPSL_CX=y hci_rpmsg_CONFIG_MPSL_CX=y
+    extra_args: CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
@@ -15,7 +15,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
-    extra_args: CONFIG_MPSL_CX=y hci_rpmsg_CONFIG_MPSL_CX=y
+    extra_args: CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=n
     platform_allow: nrf7002dk_nrf5340_cpuapp
     tags: ci_build
@@ -23,7 +23,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf7002dk_nrf7001_nrf5340_cpuapp
-    extra_args: CONFIG_MPSL_CX=y hci_rpmsg_CONFIG_MPSL_CX=y
+    extra_args: CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf7002dk_nrf7001_nrf5340_cpuapp
     tags: ci_build
@@ -32,8 +32,8 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    extra_args: SHIELD=nrf7002ek hci_rpmsg_SHIELD=nrf7002ek_coex
-                CONFIG_MPSL_CX=y hci_rpmsg_CONFIG_MPSL_CX=y
+    extra_args: SHIELD=nrf7002ek hci_ipc_SHIELD=nrf7002ek_coex
+                CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build
@@ -41,14 +41,14 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    extra_args: SHIELD=nrf7002ek_nrf7001 hci_rpmsg_SHIELD=nrf7002ek_nrf7001_coex
-                CONFIG_MPSL_CX=y hci_rpmsg_CONFIG_MPSL_CX=y
+    extra_args: SHIELD=nrf7002ek_nrf7001 hci_ipc_SHIELD=nrf7002ek_nrf7001_coex
+                CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf5340dk_nrf5340_cpuapp
   sample.nrf7002_eb.thingy53.sr_coex:
     build_only: true
-    extra_args: SHIELD=nrf7002eb hci_rpmsg_SHIELD=nrf7002eb_coex
-                CONFIG_MPSL_CX=y hci_rpmsg_CONFIG_MPSL_CX=y
+    extra_args: SHIELD=nrf7002eb hci_ipc_SHIELD=nrf7002eb_coex
+                CONFIG_MPSL_CX=y hci_ipc_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     integration_platforms:
       - thingy53_nrf5340_cpuapp
