@@ -209,6 +209,9 @@ static void cloud_lwm2m_init(void)
 				       sizeof(CONFIG_MOSH_LWM2M_PSK), true,
 				       endpoint_name);
 	}
+
+	/* Disable unnecessary time updates. */
+	lwm2m_update_device_service_period(0);
 }
 
 static void cloud_lwm2m_rd_client_update_lifetime(int srv_obj_inst)
