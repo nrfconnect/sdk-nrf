@@ -450,13 +450,17 @@ Modem libraries
   * Added:
 
     * A mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
-    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT` Kconfig option, allowing the :c:enumerator:`nrf_modem_lib_net_if_options.NRF_MODEM_LIB_NET_IF_DOWN` option to be set to :c:enumerator:`~nrf_modem_lib_net_if_down_options.NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT` at build time.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT` option, allowing the user to change the behavior of the driver's :c:func:`net_if_down` implementation at build time.
 
   * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
     All related Kconfig options have been renamed accordingly.
   * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
 
-  * Removed the deprecated Kconfig options ``CONFIG_NRF_MODEM_LIB_SYS_INIT`` and ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
+  * Removed:
+
+    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_SYS_INIT``.
+    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
+    * The ``NRF_MODEM_LIB_NET_IF_DOWN`` flag support in the ``lte_net_if`` network interface driver.
 
 * :ref:`lib_modem_slm`:
 

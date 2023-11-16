@@ -44,21 +44,15 @@ static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn);
 static struct net_if *iface_bound;
 
 /* Container and protection mutex for internal state of the connectivity binding. */
-struct lte_net_if_state {
-	/* Tracks the requested behavior when the network interface is brought down. */
-	enum nrf_modem_lib_net_if_down_options if_down_setting;
-
+static struct {
 	/* Tracks whether a PDN bearer is currently active. */
 	bool has_pdn;
 
 	/* Tracks whether a serving cell is currently or was recently available. */
 	bool has_cell;
-};
+} internal_state;
 
 static K_MUTEX_DEFINE(internal_state_lock);
-static struct lte_net_if_state internal_state = {
-	.if_down_setting = NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN
-};
 
 /* Local functions */
 
@@ -337,21 +331,8 @@ static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 {
 	int ret;
 	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
-	uint8_t down_mode;
 
 	net_if_dormant_on(if_conn->iface);
-
-	/* Apply requested option and flag overrides */
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT)) {
-		down_mode = NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT;
-		ret = conn_mgr_if_set_opt(if_conn->iface, NRF_MODEM_LIB_NET_IF_DOWN,
-					  (const void *)&down_mode, sizeof(down_mode));
-		if (ret) {
-			LOG_ERR("conn_mgr_if_set_opt, error: %d", ret);
-			net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
-			return;
-		}
-	}
 
 	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT)) {
 		conn_mgr_binding_set_flag(if_conn, CONN_MGR_IF_NO_AUTO_CONNECT, true);
@@ -405,34 +386,11 @@ int lte_net_if_enable(void)
 
 int lte_net_if_disable(void)
 {
-	int ret;
-
-	enum nrf_modem_lib_net_if_down_options if_down_setting;
-
-	(void)k_mutex_lock(&internal_state_lock, K_FOREVER);
-
-	if_down_setting = internal_state.if_down_setting;
-
-	(void)k_mutex_unlock(&internal_state_lock);
-
-	if (if_down_setting == NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN) {
-		ret = nrf_modem_lib_shutdown();
-		if (ret) {
-			LOG_ERR("nrf_modem_lib_shutdown, retval: %d", ret);
-			return ret;
-		}
-	} else if (if_down_setting == NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT) {
-		ret = lte_net_if_disconnect(NULL);
-		if (ret) {
-			LOG_ERR("lte_net_if_disconnect, retval: %d", ret);
-			return ret;
-		}
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT)) {
+		return lte_net_if_disconnect(NULL);
 	} else {
-		LOG_ERR("Unsupported option");
-		return -ENOTSUP;
+		return nrf_modem_lib_shutdown();
 	}
-
-	return 0;
 }
 
 static int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
@@ -472,76 +430,6 @@ static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
 	return 0;
 }
 
-static int lte_net_if_options_set(struct conn_mgr_conn_binding *const if_conn, int name,
-				  const void *value, size_t length)
-{
-	ARG_UNUSED(name);
-
-	switch (name) {
-	case NRF_MODEM_LIB_NET_IF_DOWN:
-	{
-		uint8_t if_down_setting;
-
-		if (length > sizeof(if_down_setting)) {
-			return -ENOBUFS;
-		}
-
-		if_down_setting = *((uint8_t *)value);
-
-		(void)k_mutex_lock(&internal_state_lock, K_FOREVER);
-
-		internal_state.if_down_setting = if_down_setting;
-
-		(void)k_mutex_unlock(&internal_state_lock);
-
-		switch (if_down_setting) {
-		case NRF_MODEM_LIB_NET_IF_DOWN_MODEM_SHUTDOWN:
-			LOG_DBG("Shutdown modem when the network interface is brought down");
-			break;
-		case NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT:
-			LOG_DBG("Disconnected from LTE when the network interface is brought down");
-			break;
-		default:
-			LOG_ERR("Unsupported option");
-			return -EBADF;
-		}
-		break;
-	}
-	default:
-		return -ENOPROTOOPT;
-	}
-
-	return 0;
-}
-
-static int lte_net_if_options_get(struct conn_mgr_conn_binding *const if_conn, int name,
-				  void *value, size_t *length)
-{
-	switch (name) {
-	case NRF_MODEM_LIB_NET_IF_DOWN:
-	{
-		uint8_t *if_down_setting_out = (uint8_t *) value;
-
-		if (*length < sizeof(*if_down_setting_out)) {
-			return -ENOBUFS;
-		}
-
-		*length = sizeof(*if_down_setting_out);
-
-		(void)k_mutex_lock(&internal_state_lock, K_FOREVER);
-
-		*if_down_setting_out = (uint8_t) internal_state.if_down_setting;
-
-		(void)k_mutex_unlock(&internal_state_lock);
-		break;
-	}
-	default:
-		return -ENOPROTOOPT;
-	}
-
-	return 0;
-}
-
 /* Bind connectity APIs.
  * extern in nrf91_sockets.c
  */
@@ -549,6 +437,4 @@ struct conn_mgr_conn_api lte_net_if_conn_mgr_api = {
 	.init = lte_net_if_init,
 	.connect = lte_net_if_connect,
 	.disconnect = lte_net_if_disconnect,
-	.set_opt = lte_net_if_options_set,
-	.get_opt = lte_net_if_options_get,
 };
