@@ -529,7 +529,11 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* :ref:`nrf_desktop_config_channel_script`:
+
+  * Separated functions that are specific to handling the :file:`dfu_application.zip` file format.
+    The ZIP format is used for update images in the nRF Connect SDK.
+    The change simplifies integrating new update image file formats.
 
 MCUboot
 =======
