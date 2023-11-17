@@ -1,40 +1,28 @@
 sample:
   name: Azure IoT Hub sample
 tests:
-  sample.net.azure_iot_hub.lte:
+  sample.net.azure_iot_hub:
     build_only: true
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
-    tags: ci_build
-  sample.net.azure_iot_hub.wifi:
-    build_only: true
-    integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
-    extra_configs:
-      - CONFIG_WIFI_CREDENTIALS_STATIC_SSID="test-ssid"
-      - CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD="test-password"
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf7002dk_nrf5340_cpuapp
     tags: ci_build
-  sample.net.azure_iot_hub.dps.lte:
+  sample.net.azure_iot_hub.dps:
     build_only: true
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
-    extra_args: OVERLAY_CONFIG=overlay-dps.conf
-    extra_configs:
-      - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
-    tags: ci_build
-  sample.net.azure_iot_hub.dps.wifi:
-    build_only: true
-    integration_platforms:
       - nrf7002dk_nrf5340_cpuapp
-    platform_allow: nrf7002dk_nrf5340_cpuapp
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf7002dk_nrf5340_cpuapp
     extra_args: OVERLAY_CONFIG=overlay-dps.conf
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
-      - CONFIG_WIFI_CREDENTIALS_STATIC_SSID="test-ssid"
-      - CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD="test-password"
     tags: ci_build

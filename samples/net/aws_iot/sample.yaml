@@ -15,6 +15,3 @@ tests:
       - nrf9161dk_nrf9161_ns
       - thingy91_nrf9160_ns
       - nrf7002dk_nrf5340_cpuapp
-    extra_configs:
-      - CONFIG_WIFI_CREDENTIALS_STATIC_SSID="ssid"
-      - CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD="psk"
