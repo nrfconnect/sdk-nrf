@@ -17,6 +17,13 @@ import json
 from NrfHidDevice import EVENT_DATA_LEN_MAX
 import imgtool.image
 
+try:
+    from suit_generator.envelope import SuitEnvelope
+except ImportError as e:
+    print('Exception when importing SUIT generator:{}'.format(e))
+    print('The SUIT generator Python package is necassary to handle device with SUIT')
+    print('The SUIT generator can be installed from ncs/modules/lib/suit-generator')
+
 DFU_SYNC_INTERVAL = 1
 
 class DFUInfo:
@@ -285,6 +292,8 @@ class DfuImage:
         if zipfile.is_zipfile(dfu_package):
             self._initialize_from_zip_file(dfu_package, dev_fwinfo, dev_board_name,
                                            dev_bootloader_variant)
+        elif dfu_package.endswith('.suit'):
+            self._initialize_from_suit_file(dfu_package)
         else:
             print('Invalid DFU package format')
             return
@@ -322,6 +331,24 @@ class DfuImage:
                 self.image_bin_version = \
                     bootloader_api['get_dfu_image_version'](self.image_bin_path)
 
+    def _initialize_from_suit_file(self, dfu_package):
+        try:
+            envelope = SuitEnvelope()
+            envelope.load(dfu_package)
+            version = envelope.sequence_number
+        except Exception as e:
+            print("Exception during retrieving manifest sequence number")
+            print(e)
+            return
+
+        if not isinstance(version, int):
+            print("Invalid sequence number type. \
+                   Is of type: {} and should be: int".format(type(version)))
+            return
+
+        self.image_bin_path = dfu_package
+        self.bootloader_variant = "SUIT"
+        self.image_bin_version = (0, 0, 0, version)
 
     @staticmethod
     def _zip_get_bootloader_api(manifest_json):
