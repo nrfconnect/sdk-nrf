@@ -83,7 +83,7 @@ endchoice
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
-	depends on ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf9160dk_nrf9160" || $(BOARD) = "nrf9160dk_nrf9160_ns" || $(BOARD) = "thingy91_nrf9160" || $(BOARD) = "thingy91_nrf9160_ns")
+	depends on ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf9160dk_nrf9160" || $(BOARD) = "nrf9160dk_nrf9160_ns" || $(BOARD) = "thingy91_nrf9160" || $(BOARD) = "thingy91_nrf9160_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	help
 	  This option can be enabled by the application and will ensure
 	  that the MCUBOOT_HW_DOWNGRADE_PREVENTION Kconfig option is

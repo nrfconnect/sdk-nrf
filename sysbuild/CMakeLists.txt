@@ -96,6 +96,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set(board_secure nrf5340dk_nrf5340_cpuapp)
   elseif(BOARD STREQUAL "thingy53_nrf5340_cpuapp_ns")
     set(board_secure thingy53_nrf5340_cpuapp)
+  elseif(BOARD STREQUAL "nrf7002dk_nrf5340_cpuapp_ns")
+    set(board_secure nrf7002dk_nrf5340_cpuapp)
   endif()
 
   if(DEFINED board_secure AND DEFINED BOARD_REVISION)
