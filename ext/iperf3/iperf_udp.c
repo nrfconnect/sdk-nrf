@@ -743,6 +743,13 @@ iperf_udp_connect(struct iperf_test *test)
         warning(test, "Unable to set socket SO_SNDTIMEO");
     }
 #endif
+
+    int val = 1;
+    size_t len = sizeof(val);
+
+    if (setsockopt(s, IPPROTO_ALL, SO_SILENCE_ALL, &val, len) < 0) {
+        iperf_printf(test, "Unable to set socket SO_SILENCE_ALL: %d\n", s);
+    }
 #endif
 
     /*
