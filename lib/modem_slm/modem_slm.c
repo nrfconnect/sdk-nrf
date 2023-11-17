@@ -42,7 +42,11 @@ static enum at_cmd_state slm_at_state;
 RING_BUF_DECLARE(slm_data_rb, SLM_AT_CMD_RESPONSE_MAX_LEN);
 static struct k_work slm_data_work;
 
+#if DT_HAS_CHOSEN(ncs_slm_gpio)
+static const struct device *gpio_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_gpio));
+#else
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
+#endif
 static struct k_work_delayable gpio_wakeup_work;
 static slm_ind_handler_t ind_handler;
 
@@ -59,7 +63,7 @@ static void gpio_wakeup_wk(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_WAKEUP_PIN, 0) != 0) {
-		LOG_WRN("GPIO_0 set error");
+		LOG_WRN("GPIO set error");
 	}
 	LOG_DBG("Stop wake-up");
 }
@@ -338,7 +342,7 @@ static int gpio_init(void)
 	err = gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_WAKEUP_PIN,
 				 GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW);
 	if (err) {
-		LOG_ERR("GPIO_0 config error: %d", err);
+		LOG_ERR("GPIO config error: %d", err);
 		return err;
 	}
 
@@ -346,19 +350,19 @@ static int gpio_init(void)
 	err = gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
 				 GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
 	if (err) {
-		LOG_ERR("GPIO_0 config error: %d", err);
+		LOG_ERR("GPIO config error: %d", err);
 		return err;
 	}
 
 	gpio_init_callback(&gpio_cb, gpio_cb_func, BIT(CONFIG_MODEM_SLM_INDICATE_PIN));
 	err = gpio_add_callback(gpio_dev, &gpio_cb);
 	if (err) {
-		LOG_WRN("GPIO_0 add callback error: %d", err);
+		LOG_WRN("GPIO add callback error: %d", err);
 	}
 	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
 					   GPIO_INT_LEVEL_LOW);
 	if (err) {
-		LOG_WRN("GPIO_0 enable callback error: %d", err);
+		LOG_WRN("GPIO enable callback error: %d", err);
 	}
 #endif
 
@@ -447,7 +451,7 @@ int modem_slm_wake_up(void)
 
 	err = gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_WAKEUP_PIN, 1);
 	if (err) {
-		LOG_ERR("GPIO_0 set error: %d", err);
+		LOG_ERR("GPIO set error: %d", err);
 	} else {
 		k_work_reschedule(&gpio_wakeup_work, K_MSEC(CONFIG_MODEM_SLM_WAKEUP_TIME));
 	}

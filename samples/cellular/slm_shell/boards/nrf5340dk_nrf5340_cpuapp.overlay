@@ -7,6 +7,7 @@
 / {
 	chosen {
 		ncs,slm-uart = &uart2;
+		ncs,slm-gpio = &gpio0;
 	};
 };
 
