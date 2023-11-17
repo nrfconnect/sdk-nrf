@@ -17,3 +17,5 @@ add_subdirectory_ifdef(CONFIG_BT_MESH mesh)
 add_subdirectory_ifdef(CONFIG_BT_NRF_SERVICES services)
 
 add_subdirectory_ifdef(CONFIG_BT_RPC rpc)
+
+add_subdirectory(host_extensions)

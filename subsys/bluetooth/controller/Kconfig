@@ -37,6 +37,7 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
 	select BT_HAS_HCI_VS
 	select BT_CTLR_DF_SUPPORT if HAS_HW_NRF_RADIO_DFE
+	select BT_CTLR_LE_POWER_CONTROL_SUPPORT
 	depends on (SOC_SERIES_BSIM_NRFXX || SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
 	help
 	  Use SoftDevice Link Layer implementation.
@@ -366,12 +367,6 @@ config BT_CTLR_ECDH_IN_MPSL_WORK
 	  This saves RAM at the cost of delaying MPSL work.
 
 endif # BT_CTLR_ECDH
-
-config BT_CTLR_LE_POWER_CONTROL
-	bool "LE Power Control"
-	help
-	  Enable support for LE Power Control feature that defined in the Bluetooth
-	  Core specification, Version 5.3 | Vol 6, Part B, Section 4.6.31.
 
 config BT_CTLR_SDC_EVENT_TRIGGER
 	bool "Event Trigger"
