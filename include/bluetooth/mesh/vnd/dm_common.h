@@ -22,8 +22,8 @@ extern "C" {
 #endif
 
 #define BT_MESH_VENDOR_COMPANY_ID 0x0059
-#define BT_MESH_MODEL_ID_DM_CLI 0x000B
-#define BT_MESH_MODEL_ID_DM_SRV 0x000C
+#define BT_MESH_MODEL_ID_DM_SRV 0x000B
+#define BT_MESH_MODEL_ID_DM_CLI 0x000C
 
 /** Parameters for the Distance Measurement Result entry. */
 struct bt_mesh_dm_res_entry {
@@ -66,8 +66,8 @@ struct bt_mesh_dm_cfg {
 };
 
 /** @cond INTERNAL_HIDDEN */
-#define BT_MESH_DM_SRV_OP BT_MESH_MODEL_OP_3(0x01, BT_MESH_VENDOR_COMPANY_ID)
-#define BT_MESH_DM_CLI_OP BT_MESH_MODEL_OP_3(0x02, BT_MESH_VENDOR_COMPANY_ID)
+#define BT_MESH_DM_SRV_OP BT_MESH_MODEL_OP_3(0x0F, BT_MESH_VENDOR_COMPANY_ID)
+#define BT_MESH_DM_CLI_OP BT_MESH_MODEL_OP_3(0x10, BT_MESH_VENDOR_COMPANY_ID)
 
 #define BT_MESH_DM_CONFIG_OP 0x01
 #define BT_MESH_DM_CONFIG_STATUS_OP 0x02

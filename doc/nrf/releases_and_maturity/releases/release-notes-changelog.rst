@@ -79,7 +79,9 @@ Bluetooth® LE
 Bluetooth mesh
 --------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * :ref:`bt_mesh_dm_srv_readme` and :ref:`bt_mesh_dm_cli_readme` model IDs and opcodes have been updated to avoid conflict with Simple OnOff Server and Client models.
 
 Matter
 ------
