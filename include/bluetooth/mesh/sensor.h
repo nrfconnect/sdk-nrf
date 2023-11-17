@@ -22,6 +22,10 @@
 extern "C" {
 #endif
 
+#ifndef CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX
+#define CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX 0
+#endif
+
 /** Largest period divisor value allowed. */
 #define BT_MESH_SENSOR_PERIOD_DIV_MAX 15
 /** Largest sensor interval allowed. The value is represented as
@@ -64,7 +68,403 @@ enum bt_mesh_sensor_sampling {
 	BT_MESH_SENSOR_SAMPLING_COUNT,
 };
 
+/** Sensor sampling cadence */
+enum bt_mesh_sensor_cadence {
+	/** Normal sensor publish interval. */
+	BT_MESH_SENSOR_CADENCE_NORMAL,
+	/** Fast sensor publish interval. */
+	BT_MESH_SENSOR_CADENCE_FAST,
+};
+
+/** Unit for single sensor channel values. */
+struct bt_mesh_sensor_unit {
+	/** English name of the unit, e.g. "Decibel". */
+	const char *name;
+	/** Symbol of the unit, e.g. "dB". */
+	const char *symbol;
+};
+
+struct bt_mesh_sensor_format;
+
+/** Single sensor channel */
+struct bt_mesh_sensor_channel {
+	/** Format for this sensor channel. */
+	const struct bt_mesh_sensor_format *format;
+#ifdef CONFIG_BT_MESH_SENSOR_LABELS
+	/** Name of this sensor channel. */
+	const char *name;
+#endif
+};
+
+/** Flag indicating this sensor type has a series representation. */
+#define BT_MESH_SENSOR_TYPE_FLAG_SERIES BIT(0)
+
+/** Sensor type. Should only be instantiated in sensor_types.c.
+ *  See sensor_types.h for a list of all defined sensor types.
+ */
+struct bt_mesh_sensor_type {
+	/** Device Property ID. */
+	uint16_t id;
+	/** Flags, @see BT_MESH_SENSOR_TYPE_FLAG_SERIES */
+	uint8_t flags;
+	/** The number of channels supported by this type. */
+	uint8_t channel_count;
+	/** Array of channel descriptors.
+	 *
+	 *  All channels are mandatory and immutable.
+	 */
+	const struct bt_mesh_sensor_channel *channels;
+};
+
+struct bt_mesh_sensor;
+struct bt_mesh_sensor_srv;
+
+#if !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) || defined(__DOXYGEN__)
+/** Sensor value type representing the value and format of a single channel of
+ *  sensor data.
+ */
+struct bt_mesh_sensor_value {
+	/** The format the sensor value is encoded in. */
+	const struct bt_mesh_sensor_format *format;
+	/** Raw encoded sensor value, in little endian order. */
+	uint8_t raw[CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX];
+};
+
 /** Sensor descriptor representing various static metadata for the sensor. */
+struct bt_mesh_sensor_descriptor {
+	/** Sensor measurement tolerance specification. */
+	struct {
+		/** @brief Encoded maximum positive measurement error.
+		 *
+		 *  Represents the magnitude of the maximum possible positive
+		 *  measurement error, in percent.
+		 *
+		 *  The value is encoded using the following formula:
+		 *
+		 *  encoded_value = (max_err_in_percent / 100) * 4095
+		 *
+		 *  A tolerance of 0 should be interpreted as "unspecified".
+		 */
+		uint16_t positive:12;
+		/** @brief Encoded maximum negative measurement error.
+		 *
+		 *  Represents the magnitude of the maximum possible negative
+		 *  measurement error, in percent.
+		 *
+		 *  The value is encoded using the following formula:
+		 *
+		 *  encoded_value = (max_err_in_percent / 100) * 4095
+		 *
+		 *  A tolerance of 0 should be interpreted as "unspecified".
+		 */
+		uint16_t negative:12;
+	} tolerance;
+	/** Sampling type for the sensor data. */
+	enum bt_mesh_sensor_sampling sampling_type;
+	/** Measurement period for the samples, if applicable. */
+	uint64_t period;
+	/** Update interval for the samples, if applicable. */
+	uint64_t update_interval;
+};
+
+/* Sensor delta triggering values. */
+struct bt_mesh_sensor_deltas {
+	/** Minimal delta for a positive change. */
+	struct bt_mesh_sensor_value up;
+	/** Minimal delta for a negative change. */
+	struct bt_mesh_sensor_value down;
+};
+
+/** Sensor thresholds for publishing. */
+struct bt_mesh_sensor_threshold {
+	/** Delta threshold values.
+	 *
+	 *  Denotes the minimal sensor value change that should cause the sensor
+	 *  to publish its value.
+	 */
+	struct bt_mesh_sensor_deltas deltas;
+
+	/** Range based threshold values.
+	 *
+	 *  Denotes the value range in which the sensor should be in fast
+	 *  cadence mode.
+	 */
+	struct {
+		/** Cadence when the sensor value is inside the range.
+		 *
+		 *  If the cadence is fast when the value is inside the range,
+		 *  it's normal when it's outside the range. If the cadence is
+		 *  normal when the value is inside the range, it's fast outside
+		 *  the range.
+		 */
+		enum bt_mesh_sensor_cadence cadence;
+		/** Lower boundary for the range based sensor cadence threshold.
+		 */
+		struct bt_mesh_sensor_value low;
+		/** Upper boundary for the range based sensor cadence threshold.
+		 */
+		struct bt_mesh_sensor_value high;
+	} range;
+};
+
+/** Sensor channel value format. */
+struct bt_mesh_sensor_format {
+	/** @brief Perform a delta check between two @ref bt_mesh_sensor_value
+	 *         instances.
+	 *
+	 *  @c current and @c previous must have the same format.
+	 *
+	 *  @param[in] current  The current value.
+	 *  @param[in] previous The previous sensor value to compare against.
+	 *  @param[in] delta    The delta to use when checking.
+	 *
+	 *  @return @c true if the difference between @c current and @c previous
+	 *          is bigger than the relevant delta specified in @c delta, @c
+	 *          false otherwise.
+	 */
+	bool (*const delta_check)(const struct bt_mesh_sensor_value *current,
+				  const struct bt_mesh_sensor_value *previous,
+				  const struct bt_mesh_sensor_deltas *delta);
+
+	/** @brief Compare two @ref bt_mesh_sensor_value instances.
+	 *
+	 *  @c op1 and @c op1 must have the same format.
+	 *
+	 *  @param[in] op1 The first value to compare.
+	 *  @param[in] op2 The second value to compare.
+	 *
+	 *  @return 0 if @c op1 == @c op2, 1 if @c op1 > @c op2, -1 otherwise
+	 *          (including if @c op1 and @c op2 are not comparable).
+	 */
+	int (*const compare)(const struct bt_mesh_sensor_value *op1,
+			     const struct bt_mesh_sensor_value *op2);
+
+	/** User data pointer. Used internally by the sensor types. */
+	void *user_data;
+	/** Size of the encoded data in bytes. */
+	size_t size;
+
+#ifdef CONFIG_BT_MESH_SENSOR_LABELS
+	/** Pointer to the unit associated with this format. */
+	const struct bt_mesh_sensor_unit *unit;
+#endif
+};
+
+/** Single sensor setting. */
+struct bt_mesh_sensor_setting {
+	/** Sensor type of this setting. */
+	const struct bt_mesh_sensor_type *type;
+
+	/** @brief Getter for this sensor setting.
+	 *
+	 *  @note This handler is mandatory.
+	 *
+	 *  @param[in]  srv     Sensor server instance associated with this
+	 *                      setting.
+	 *  @param[in]  sensor  Sensor this setting belongs to.
+	 *  @param[in]  setting Pointer to this setting structure.
+	 *  @param[in]  ctx     Context parameters for the packet this call
+	 *                      originated from, or NULL if this call wasn't
+	 *                      triggered by a packet.
+	 *  @param[out] rsp     Response buffer for the setting value. Points to
+	 *                      an array with the number of channels specified
+	 *                      by the setting sensor type. All channels must be
+	 *                      filled.
+	 */
+	void (*get)(struct bt_mesh_sensor_srv *srv,
+		    struct bt_mesh_sensor *sensor,
+		    const struct bt_mesh_sensor_setting *setting,
+		    struct bt_mesh_msg_ctx *ctx,
+		    struct bt_mesh_sensor_value *rsp);
+
+	/** @brief Setter for this sensor setting.
+	 *
+	 *  Should only be specified for writable sensor settings.
+	 *
+	 *  @param[in] srv     Sensor server instance associated with this
+	 *                     setting.
+	 *  @param[in] sensor  Sensor this setting belongs to.
+	 *  @param[in] setting Pointer to this setting structure.
+	 *  @param[in] ctx     Context parameters for the packet this call
+	 *                     originated from, or NULL if this call wasn't
+	 *                     triggered by a packet.
+	 *  @param[in] value   New setting value. Contains the number of
+	 *                     channels specified by the setting sensor type.
+	 *
+	 *  @return 0 on success, or (negative) error code otherwise.
+	 */
+	int (*set)(struct bt_mesh_sensor_srv *srv,
+		struct bt_mesh_sensor *sensor,
+		const struct bt_mesh_sensor_setting *setting,
+		struct bt_mesh_msg_ctx *ctx,
+		const struct bt_mesh_sensor_value *value);
+};
+
+/** Single sensor series data column.
+ *
+ *  The series data columns represent a range for specific measurement values,
+ *  inside which a set of sensor measurements were made. The range is
+ *  interpreted as a half-open interval (i.e. start <= value < start + width).
+ *
+ */
+struct bt_mesh_sensor_column {
+	/** Start of the column (inclusive). */
+	struct bt_mesh_sensor_value start;
+	/** Width of the column. */
+	struct bt_mesh_sensor_value width;
+};
+
+/** Sensor series specification. */
+struct bt_mesh_sensor_series {
+	/** Pointer to the list of columns.
+	 *
+	 *  The columns may overlap, but the start value of each column must be
+	 *  unique. The list of columns do not have to cover the entire valid
+	 *  range, and values that don't fit in any of the columns should be
+	 *  ignored. If columns overlap, samples must be present in all columns
+	 *  they fall into. The columns may come in any order.
+	 *
+	 *  This list is not used for sensor types with one or two channels.
+	 */
+	const struct bt_mesh_sensor_column *columns;
+
+	/** Number of columns. */
+	uint32_t column_count;
+
+	/** @brief Getter for the series values.
+	 *
+	 *  Should return the historical data for the latest sensor readings in
+	 *  the given column.
+	 *
+	 *  @param[in]  srv          Sensor server associated with sensor instance.
+	 *  @param[in]  sensor       Sensor pointer.
+	 *  @param[in]  ctx          Message context pointer, or NULL if this call
+	 *                           didn't originate from a mesh message.
+	 *  @param[in]  column_index The index of the requested sensor column.
+	 *                           Index into the @c columns array for sensors
+	 *                           with more than two channels.
+	 *  @param[out] value        Sensor value response buffer. Holds the number
+	 *                           of channels indicated by the sensor type. All
+	 *                           channels must be filled.
+	 *
+	 *  @return 0 on success, or (negative) error code otherwise.
+	 */
+	int (*get)(struct bt_mesh_sensor_srv *srv,
+		struct bt_mesh_sensor *sensor,
+		struct bt_mesh_msg_ctx *ctx,
+		uint32_t column_index,
+		struct bt_mesh_sensor_value *value);
+};
+
+/** Sensor instance. */
+struct bt_mesh_sensor {
+	/** Sensor type.
+	 *
+	 *  Must be one of the specification defined types listed in @ref
+	 *  bt_mesh_sensor_types.
+	 */
+	const struct bt_mesh_sensor_type *type;
+	/** Optional sensor descriptor. */
+	const struct bt_mesh_sensor_descriptor *descriptor;
+	/** Sensor settings access specification. */
+	const struct {
+		/** Static array of sensor settings */
+		const struct bt_mesh_sensor_setting *list;
+		/** Number of sensor settings. */
+		size_t count;
+	} settings;
+
+	/** Sensor series specification.
+	 *
+	 *  Only sensors who have a non-zero column-count and a defined
+	 *  series getter will accept series messages. Sensors with more than
+	 *  two channels also require a non-empty list of columns.
+	 */
+	const struct bt_mesh_sensor_series series;
+
+	/** @brief Getter function for the sensor value.
+	 *
+	 *  @param[in]  srv    Sensor server associated with sensor instance.
+	 *  @param[in]  sensor Sensor instance.
+	 *  @param[in]  ctx    Message context, or NULL if the call wasn't
+	 *                     triggered by a mesh message.
+	 *  @param[out] rsp    Value response buffer. Fits the number of
+	 *                     channels specified by the sensor type. All
+	 *                     channels must be filled.
+	 *
+	 *  @return 0 on success, or (negative) error code otherwise.
+	 */
+	int (*const get)(struct bt_mesh_sensor_srv *srv,
+			 struct bt_mesh_sensor *sensor,
+			 struct bt_mesh_msg_ctx *ctx,
+			 struct bt_mesh_sensor_value *rsp);
+
+	/* Internal state, overwritten on init. Should only be written to by
+	 * internal modules.
+	 */
+	struct {
+		/** Sensor threshold specification. */
+		struct bt_mesh_sensor_threshold threshold;
+
+		/** Linked list node. */
+		sys_snode_t node;
+
+		/** The previously published sensor value. */
+		struct bt_mesh_sensor_value prev;
+
+		/** Sequence number of the previous publication. */
+		uint16_t seq;
+
+		/** Minimum possible interval for fast cadence value publishing.
+		 *  The value is represented as 2 to the power of N milliseconds.
+		 *
+		 *  @see BT_MESH_SENSOR_INTERVAL_MAX
+		 */
+		uint8_t min_int;
+
+		/** Fast period divisor used when publishing with fast cadence.
+		 */
+		uint8_t pub_div : 4;
+
+		/** Flag indicating whether the sensor is in fast cadence mode.
+		 */
+		uint8_t fast_pub : 1;
+
+		/** Flag indicating whether the sensor cadence state has been configured. */
+		uint8_t configured : 1;
+	} state;
+};
+
+/** @brief Get a human readable representation of a single sensor channel.
+ *
+ *  @param[in]  ch  Sensor channel to represent.
+ *  @param[out] str String buffer to fill. Should be @ref
+ *                  BT_MESH_SENSOR_CH_STR_LEN bytes long.
+ *  @param[in]  len Length of @c str buffer.
+ *
+ *  @return Number of bytes that should have been written if @c str is
+ *          sufficiently large.
+ */
+static inline int bt_mesh_sensor_ch_to_str(const struct bt_mesh_sensor_value *ch,
+					   char *str, size_t len)
+{
+	/* TODO: Update this once util functions are available */
+	return snprintk(str, len, "(unknown format)");
+}
+
+/** @brief Get a human readable representation of a single sensor channel.
+ *
+ *  @note This function is not thread safe.
+ *
+ *  @param[in] ch Sensor channel to represent.
+ *
+ *  @return A string representing the sensor channel.
+ */
+const char *bt_mesh_sensor_ch_str(const struct bt_mesh_sensor_value *ch);
+
+#else /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
+/** Sensor descriptor representing various static metadata for the sensor.
+ */
 struct bt_mesh_sensor_descriptor {
 	/** Sensor measurement tolerance specification. */
 	struct {
@@ -97,14 +497,6 @@ enum bt_mesh_sensor_delta {
 	 *  old value (resolution: 0.01 %).
 	 */
 	BT_MESH_SENSOR_DELTA_PERCENT,
-};
-
-/** Sensor sampling cadence */
-enum bt_mesh_sensor_cadence {
-	/** Normal sensor publish interval. */
-	BT_MESH_SENSOR_CADENCE_NORMAL,
-	/** Fast sensor publish interval. */
-	BT_MESH_SENSOR_CADENCE_FAST,
 };
 
 /** Sensor thresholds for publishing. */
@@ -145,14 +537,6 @@ struct bt_mesh_sensor_threshold {
 	} range;
 };
 
-/** Unit for single sensor channel values. */
-struct bt_mesh_sensor_unit {
-	/** English name of the unit, e.g. "Decibel". */
-	const char *name;
-	/** Symbol of the unit, e.g. "dB". */
-	const char *symbol;
-};
-
 /** Sensor channel value format. */
 struct bt_mesh_sensor_format {
 	/** @brief Sensor channel value encode function.
@@ -189,39 +573,6 @@ struct bt_mesh_sensor_format {
 	const struct bt_mesh_sensor_unit *unit;
 #endif
 };
-
-/** Signle sensor channel */
-struct bt_mesh_sensor_channel {
-	/** Format for this sensor channel. */
-	const struct bt_mesh_sensor_format *format;
-#ifdef CONFIG_BT_MESH_SENSOR_LABELS
-	/** Name of this sensor channel. */
-	const char *name;
-#endif
-};
-
-/** Flag indicating this sensor type has a series representation. */
-#define BT_MESH_SENSOR_TYPE_FLAG_SERIES BIT(0)
-
-/** Sensor type. Should only be instantiated in sensor_types.c.
- *  See sensor_types.h for a list of all defined sensor types.
- */
-struct bt_mesh_sensor_type {
-	/** Device Property ID. */
-	uint16_t id;
-	/** Flags, @see BT_MESH_SENSOR_TYPE_FLAG_SERIES */
-	uint8_t flags;
-	/** The number of channels supported by this type. */
-	uint8_t channel_count;
-	/** Array of channel descriptors.
-	 *
-	 *  All channels are mandatory and immutable.
-	 */
-	const struct bt_mesh_sensor_channel *channels;
-};
-
-struct bt_mesh_sensor;
-struct bt_mesh_sensor_srv;
 
 /** Single sensor setting. */
 struct bt_mesh_sensor_setting {
@@ -435,19 +786,6 @@ struct bt_mesh_sensor {
 bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 				    const struct sensor_value *value);
 
-/** @brief Get the sensor type associated with the given Device Property ID.
- *
- *  Only known sensor types from @ref bt_mesh_sensor_types will be available.
- *  Sensor types can be made known to the sensor module by enabling
- *  @kconfig{CONFIG_BT_MESH_SENSOR_ALL_TYPES} or by referencing them in the
- *  application.
- *
- *  @param[in] id A Device Property ID.
- *
- *  @return The associated sensor type, or NULL if the ID is unknown.
- */
-const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id);
-
 /** @brief Check whether a single channel sensor value lies within a column.
  *
  *  @param[in] value Value to check. Only the first channel is considered.
@@ -457,16 +795,6 @@ const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id);
  */
 bool bt_mesh_sensor_value_in_column(const struct sensor_value *value,
 				    const struct bt_mesh_sensor_column *col);
-
-/** @brief Get the format of the sensor column data.
- *
- *  @param[in] type Sensor type.
- *
- *  @return The sensor type's sensor column format if series access is
- *          supported. Otherwise NULL.
- */
-const struct bt_mesh_sensor_format *
-bt_mesh_sensor_column_format_get(const struct bt_mesh_sensor_type *type);
 
 /** @brief Get a human readable representation of a single sensor channel.
  *
@@ -495,6 +823,30 @@ static inline int bt_mesh_sensor_ch_to_str(const struct sensor_value *ch,
  *  @return A string representing the sensor channel.
  */
 const char *bt_mesh_sensor_ch_str(const struct sensor_value *ch);
+#endif /* !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
+
+/** @brief Get the sensor type associated with the given Device Property ID.
+ *
+ *  Only known sensor types from @ref bt_mesh_sensor_types will be available.
+ *  Sensor types can be made known to the sensor module by enabling
+ *  @kconfig{CONFIG_BT_MESH_SENSOR_ALL_TYPES} or by referencing them in the
+ *  application.
+ *
+ *  @param[in] id A Device Property ID.
+ *
+ *  @return The associated sensor type, or NULL if the ID is unknown.
+ */
+const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id);
+
+/** @brief Get the format of the sensor column data.
+ *
+ *  @param[in] type Sensor type.
+ *
+ *  @return The sensor type's sensor column format if series access is
+ *          supported. Otherwise NULL.
+ */
+const struct bt_mesh_sensor_format *
+bt_mesh_sensor_column_format_get(const struct bt_mesh_sensor_type *type);
 
 /** @cond INTERNAL_HIDDEN */
 
@@ -516,10 +868,6 @@ const char *bt_mesh_sensor_ch_str(const struct sensor_value *ch);
 #define BT_MESH_SENSOR_OP_SETTING_SET BT_MESH_MODEL_OP_1(0x59)
 #define BT_MESH_SENSOR_OP_SETTING_SET_UNACKNOWLEDGED BT_MESH_MODEL_OP_1(0x5A)
 #define BT_MESH_SENSOR_OP_SETTING_STATUS BT_MESH_MODEL_OP_1(0x5B)
-
-#ifndef CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX
-#define CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX 0
-#endif
 
 #ifndef CONFIG_BT_MESH_SENSOR_CHANNELS_MAX
 #define CONFIG_BT_MESH_SENSOR_CHANNELS_MAX 0

@@ -94,6 +94,30 @@ struct bt_mesh_sensor_srv {
 	struct bt_mesh_model *model;
 };
 
+#if !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) || defined(__DOXYGEN__)
+/** @brief Publish a sensor value.
+ *
+ *  Immediately publishes the given sensor value, without checking thresholds
+ *  or intervals.
+ *
+ *  @see bt_mesh_sensor_srv_pub
+ *
+ *  @param[in] srv    Sensor server instance.
+ *  @param[in] ctx    Message context to publish with, or NULL to publish on the
+ *                    configured publish parameters.
+ *  @param[in] sensor Sensor to publish with.
+ *  @param[in] value  Sensor value to publish, interpreted as an array of sensor
+ *                    channel values matching the sensor channels specified by
+ *                    the sensor type. The length of the array must match the
+ *                    sensor channel count.
+ *
+ *  @return 0 on success, or (negative) error code otherwise.
+ */
+int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
+			   struct bt_mesh_msg_ctx *ctx,
+			   struct bt_mesh_sensor *sensor,
+			   const struct bt_mesh_sensor_value *value);
+#else /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 /** @brief Publish a sensor value.
  *
  *  Immediately publishes the given sensor value, without checking thresholds
@@ -116,7 +140,7 @@ int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct bt_mesh_sensor *sensor,
 			   const struct sensor_value *value);
-
+#endif /* !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 
 /** @brief Make the server to take a sample of the sensor, and publish if the
  *         value changed sufficiently.

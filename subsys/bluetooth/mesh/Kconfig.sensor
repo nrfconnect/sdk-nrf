@@ -10,6 +10,17 @@ config BT_MESH_SENSOR
 menu "Bluetooth Mesh Sensors"
 	visible if BT_MESH_SENSOR
 
+config BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+	bool "Use legacy sensor_value in Sensor APIs"
+	default y if BT_MESH_SENSOR
+	select DEPRECATED
+	help
+	  Enables the legacy Sensor APIs using sensor_value for sensor
+	  value representation. If this is not selected, the APIs will use
+	  bt_mesh_sensor_value for representation which can accurately represent
+	  any raw sensor value. This option is deprecated and will be removed in
+	  a future version.
+
 config BT_MESH_SENSOR_LABELS
 	bool "Enable Sensor labels"
 	help
