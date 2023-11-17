@@ -26,7 +26,7 @@ void tfm_platform_hal_system_reset(void)
 }
 
 #if CONFIG_FW_INFO
-enum tfm_platform_err_t
+static enum tfm_platform_err_t
 tfm_platform_hal_fw_info_service(psa_invec  *in_vec, psa_outvec *out_vec)
 {
 	const struct fw_info *tfm_info;
