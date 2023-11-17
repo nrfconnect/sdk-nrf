@@ -7,4 +7,7 @@
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
 config NRF_DEFAULT_MULTIPROTOCOL
-	default y
+	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp")
+
+config NRF_DEFAULT_BLUETOOTH
+	default y if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp")
