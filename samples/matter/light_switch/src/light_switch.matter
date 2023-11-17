@@ -105,7 +105,11 @@ server cluster Groups = 4 {
     kGroupNames = 0x1;
   }
 
-  readonly attribute bitmap8 nameSupport = 0;
+  bitmap NameSupportBitmap : BITMAP8 {
+    kGroupNames = 0x80;
+  }
+
+  readonly attribute NameSupportBitmap nameSupport = 0;
   readonly attribute command_id generatedCommandList[] = 65528;
   readonly attribute command_id acceptedCommandList[] = 65529;
   readonly attribute event_id eventList[] = 65530;
@@ -162,179 +166,6 @@ server cluster Groups = 4 {
   fabric command access(invoke: manage) RemoveGroup(RemoveGroupRequest): RemoveGroupResponse = 3;
   fabric command access(invoke: manage) RemoveAllGroups(): DefaultSuccess = 4;
   fabric command access(invoke: manage) AddGroupIfIdentifying(AddGroupIfIdentifyingRequest): DefaultSuccess = 5;
-}
-
-/** Attributes and commands for scene configuration and manipulation. */
-client cluster Scenes = 5 {
-  bitmap ScenesCopyMode : BITMAP8 {
-    kCopyAllScenes = 0x1;
-  }
-
-  bitmap ScenesFeature : BITMAP32 {
-    kSceneNames = 0x1;
-  }
-
-  struct AttributeValuePair {
-    optional attrib_id attributeID = 0;
-    int8u attributeValue[] = 1;
-  }
-
-  struct ExtensionFieldSet {
-    cluster_id clusterID = 0;
-    AttributeValuePair attributeValueList[] = 1;
-  }
-
-  readonly attribute int8u sceneCount = 0;
-  readonly attribute int8u currentScene = 1;
-  readonly attribute group_id currentGroup = 2;
-  readonly attribute boolean sceneValid = 3;
-  readonly attribute bitmap8 nameSupport = 4;
-  readonly attribute optional nullable node_id lastConfiguredBy = 5;
-  readonly attribute command_id generatedCommandList[] = 65528;
-  readonly attribute command_id acceptedCommandList[] = 65529;
-  readonly attribute event_id eventList[] = 65530;
-  readonly attribute attrib_id attributeList[] = 65531;
-  readonly attribute bitmap32 featureMap = 65532;
-  readonly attribute int16u clusterRevision = 65533;
-
-  request struct AddSceneRequest {
-    group_id groupID = 0;
-    INT8U sceneID = 1;
-    INT16U transitionTime = 2;
-    CHAR_STRING sceneName = 3;
-    ExtensionFieldSet extensionFieldSets[] = 4;
-  }
-
-  response struct AddSceneResponse = 0 {
-    ENUM8 status = 0;
-    group_id groupID = 1;
-    INT8U sceneID = 2;
-  }
-
-  request struct ViewSceneRequest {
-    group_id groupID = 0;
-    INT8U sceneID = 1;
-  }
-
-  response struct ViewSceneResponse = 1 {
-    ENUM8 status = 0;
-    group_id groupID = 1;
-    INT8U sceneID = 2;
-    optional INT16U transitionTime = 3;
-    optional CHAR_STRING sceneName = 4;
-    optional ExtensionFieldSet extensionFieldSets[] = 5;
-  }
-
-  request struct RemoveSceneRequest {
-    group_id groupID = 0;
-    INT8U sceneID = 1;
-  }
-
-  response struct RemoveSceneResponse = 2 {
-    ENUM8 status = 0;
-    group_id groupID = 1;
-    INT8U sceneID = 2;
-  }
-
-  request struct RemoveAllScenesRequest {
-    group_id groupID = 0;
-  }
-
-  response struct RemoveAllScenesResponse = 3 {
-    ENUM8 status = 0;
-    group_id groupID = 1;
-  }
-
-  request struct StoreSceneRequest {
-    group_id groupID = 0;
-    INT8U sceneID = 1;
-  }
-
-  response struct StoreSceneResponse = 4 {
-    ENUM8 status = 0;
-    group_id groupID = 1;
-    INT8U sceneID = 2;
-  }
-
-  request struct RecallSceneRequest {
-    group_id groupID = 0;
-    INT8U sceneID = 1;
-    optional nullable INT16U transitionTime = 2;
-  }
-
-  request struct GetSceneMembershipRequest {
-    group_id groupID = 0;
-  }
-
-  response struct GetSceneMembershipResponse = 6 {
-    ENUM8 status = 0;
-    nullable INT8U capacity = 1;
-    group_id groupID = 2;
-    optional INT8U sceneList[] = 3;
-  }
-
-  request struct EnhancedAddSceneRequest {
-    group_id groupID = 0;
-    INT8U sceneID = 1;
-    INT16U transitionTime = 2;
-    CHAR_STRING sceneName = 3;
-    ExtensionFieldSet extensionFieldSets[] = 4;
-  }
-
-  response struct EnhancedAddSceneResponse = 64 {
-    ENUM8 status = 0;
-    group_id groupID = 1;
-    INT8U sceneID = 2;
-  }
-
-  request struct EnhancedViewSceneRequest {
-    group_id groupID = 0;
-    INT8U sceneID = 1;
-  }
-
-  response struct EnhancedViewSceneResponse = 65 {
-    ENUM8 status = 0;
-    group_Id groupID = 1;
-    INT8U sceneID = 2;
-    optional INT16U transitionTime = 3;
-    optional CHAR_STRING sceneName = 4;
-    optional ExtensionFieldSet extensionFieldSets[] = 5;
-  }
-
-  request struct CopySceneRequest {
-    ScenesCopyMode mode = 0;
-    group_id groupIdentifierFrom = 1;
-    INT8U sceneIdentifierFrom = 2;
-    group_id groupIdentifierTo = 3;
-    INT8U sceneIdentifierTo = 4;
-  }
-
-  response struct CopySceneResponse = 66 {
-    ENUM8 status = 0;
-    group_Id groupIdentifierFrom = 1;
-    INT8U sceneIdentifierFrom = 2;
-  }
-
-  /** Add a scene to the scene table. Extension field sets are supported, and are inputed as '{"ClusterID": VALUE, "AttributeValueList":[{"AttributeId": VALUE, "AttributeValue": VALUE}]}' */
-  fabric command access(invoke: manage) AddScene(AddSceneRequest): AddSceneResponse = 0;
-  /** Retrieves the requested scene entry from its Scene table. */
-  fabric command ViewScene(ViewSceneRequest): ViewSceneResponse = 1;
-  /** Removes the requested scene entry, corresponding to the value of the GroupID field, from its Scene Table */
-  fabric command access(invoke: manage) RemoveScene(RemoveSceneRequest): RemoveSceneResponse = 2;
-  /** Remove all scenes, corresponding to the value of the GroupID field, from its Scene Table */
-  fabric command access(invoke: manage) RemoveAllScenes(RemoveAllScenesRequest): RemoveAllScenesResponse = 3;
-  /** Adds the scene entry into its Scene Table along with all extension field sets corresponding to the current state of other clusters on the same endpoint */
-  fabric command access(invoke: manage) StoreScene(StoreSceneRequest): StoreSceneResponse = 4;
-  /** Set the attributes and corresponding state for each other cluster implemented on the endpoint accordingly to the resquested scene entry in the Scene Table */
-  fabric command RecallScene(RecallSceneRequest): DefaultSuccess = 5;
-  /** Get an unused scene identifier when no commissioning tool is in the network, or for a commissioning tool to get the used scene identifiers within a certain group */
-  fabric command GetSceneMembership(GetSceneMembershipRequest): GetSceneMembershipResponse = 6;
-  /** Allows a scene to be added using a finer scene transition time than the AddScene command. */
-  fabric command EnhancedAddScene(EnhancedAddSceneRequest): EnhancedAddSceneResponse = 64;
-  /** Allows a scene to be retrieved using a finer scene transition time than the ViewScene command */
-  fabric command EnhancedViewScene(EnhancedViewSceneRequest): EnhancedViewSceneResponse = 65;
-  /** Allows a client to efficiently copy scenes from one group/scene identifier pair to another group/scene identifier pair. */
-  fabric command CopyScene(CopySceneRequest): CopySceneResponse = 66;
 }
 
 /** Attributes and commands for switching devices between 'On' and 'Off' states. */
@@ -1888,7 +1719,7 @@ endpoint 0 {
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
-    ram      attribute featureMap default = 0;
+    ram      attribute featureMap default = 1;
     ram      attribute clusterRevision default = 1;
   }
 
@@ -1921,7 +1752,6 @@ endpoint 0 {
 endpoint 1 {
   device type onofflightswitch = 260, version 2;
   binding cluster Identify;
-  binding cluster Scenes;
   binding cluster OnOff;
   binding cluster LevelControl;
 
