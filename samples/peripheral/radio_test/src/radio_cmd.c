@@ -39,7 +39,7 @@ static struct radio_param_config {
 	nrf_radio_mode_t mode;
 
 	/** Radio output power. */
-	uint8_t txpower;
+	int8_t txpower;
 
 	/** Radio start channel (frequency). */
 	uint8_t channel_start;
@@ -60,7 +60,7 @@ static struct radio_param_config {
 } config = {
 	.tx_pattern = TRANSMIT_PATTERN_RANDOM,
 	.mode = NRF_RADIO_MODE_BLE_1MBIT,
-	.txpower = RADIO_TXPOWER_TXPOWER_0dBm,
+	.txpower = 0,
 	.channel_start = 0,
 	.channel_end = 80,
 	.delay_ms = 10,
@@ -476,159 +476,7 @@ static int cmd_print(const struct shell *shell, size_t argc, char **argv)
 		break;
 	}
 
-	switch (config.txpower) {
-#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
-	case RADIO_TXPOWER_TXPOWER_Pos8dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos8dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm)
-	case RADIO_TXPOWER_TXPOWER_Pos7dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos7dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm)
-	case RADIO_TXPOWER_TXPOWER_Pos6dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos6dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm)
-	case RADIO_TXPOWER_TXPOWER_Pos5dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos5dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm)
-	case RADIO_TXPOWER_TXPOWER_Pos4dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos4dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
-	case RADIO_TXPOWER_TXPOWER_Pos3dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos3dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
-	case RADIO_TXPOWER_TXPOWER_Pos2dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos2dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
-
-	case RADIO_TXPOWER_TXPOWER_0dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_0dBm));
-		break;
-
-#if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm)
-	case RADIO_TXPOWER_TXPOWER_Neg1dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg1dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg1dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm)
-	case RADIO_TXPOWER_TXPOWER_Neg2dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg2dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg2dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm)
-	case RADIO_TXPOWER_TXPOWER_Neg3dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg3dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg3dBm) */
-
-	case RADIO_TXPOWER_TXPOWER_Neg4dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg4dBm));
-		break;
-
-#if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm)
-	case RADIO_TXPOWER_TXPOWER_Neg5dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg5dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm)
-	case RADIO_TXPOWER_TXPOWER_Neg6dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg6dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm)
-	case RADIO_TXPOWER_TXPOWER_Neg7dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg7dBm));
-		break;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) */
-
-	case RADIO_TXPOWER_TXPOWER_Neg8dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg8dBm));
-		break;
-
-	case RADIO_TXPOWER_TXPOWER_Neg12dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg12dBm));
-		break;
-
-	case RADIO_TXPOWER_TXPOWER_Neg16dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg16dBm));
-		break;
-
-	case RADIO_TXPOWER_TXPOWER_Neg20dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg20dBm));
-		break;
-
-	case RADIO_TXPOWER_TXPOWER_Neg40dBm:
-		shell_print(shell,
-			    "TX power: %s",
-			    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg40dBm));
-		break;
-
-	default:
-		shell_print(shell,
-			    "TX power unknown: %d",
-			    config.txpower);
-		break;
-	}
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 
 	switch (config.tx_pattern) {
 	case TRANSMIT_PATTERN_RANDOM:
@@ -743,175 +591,153 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 #if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
 static void cmd_pos8dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Pos8dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos8dBm));
+	config.txpower = 8;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm)
 static void cmd_pos7dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Pos7dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos7dBm));
+	config.txpower = 7;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm)
 static void cmd_pos6dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Pos6dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos6dBm));
+	config.txpower = 6;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm)
 static void cmd_pos5dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Pos5dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos5dBm));
+	config.txpower = 5;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
-static void cmd_pos2dbm(const struct shell *shell, size_t argc, char **argv)
-{
-	config.txpower = RADIO_TXPOWER_TXPOWER_Pos2dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos2dBm));
-}
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
-
-#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
-static void cmd_pos3dbm(const struct shell *shell, size_t argc, char **argv)
-{
-	config.txpower = RADIO_TXPOWER_TXPOWER_Pos3dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos3dBm));
-}
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm)
 static void cmd_pos4dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Pos4dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Pos4dBm));
+	config.txpower = 4;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) */
 
+#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
+static void cmd_pos3dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = 3;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
+static void cmd_pos2dbm(const struct shell *shell, size_t argc, char **argv)
+{
+	config.txpower = 2;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
+}
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
+
 static void cmd_pos0dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_0dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_0dBm));
+	config.txpower = 0;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm)
 static void cmd_neg1dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg1dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg1dBm));
+	config.txpower = -1;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg1dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm)
 static void cmd_neg2dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg2dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg2dBm));
+	config.txpower = -2;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg2dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm)
 static void cmd_neg3dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg3dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg3dBm));
+	config.txpower = -3;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg3dBm) */
 
 static void cmd_neg4dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg4dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg4dBm));
+	config.txpower = -4;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm)
 static void cmd_neg5dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg5dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg5dBm));
+	config.txpower = -5;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm)
 static void cmd_neg6dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg6dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg6dBm));
+	config.txpower = -6;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) */
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm)
 static void cmd_neg7dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg7dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg7dBm));
+	config.txpower = -7;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) */
 
 static void cmd_neg8dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg8dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg8dBm));
+	config.txpower = -8;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
 static void cmd_neg12dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg12dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg12dBm));
+	config.txpower = -12;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
-
 
 static void cmd_neg16dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg16dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg16dBm));
+	config.txpower = -16;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
 static void cmd_neg20dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg20dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg20dBm));
+	config.txpower = -20;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
 static void cmd_neg30dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg30dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg30dBm));
+	config.txpower = -30;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
 static void cmd_neg40dbm(const struct shell *shell, size_t argc, char **argv)
 {
-	config.txpower = RADIO_TXPOWER_TXPOWER_Neg40dBm;
-	shell_print(shell, "TX power: %s",
-		    Z_STRINGIFY(RADIO_TXPOWER_TXPOWER_Neg40dBm));
+	config.txpower = -40;
+	shell_print(shell, "TX power : %d dBm", config.txpower);
 }
 
 static int cmd_nrf_1mbit(const struct shell *shell, size_t argc, char **argv)
