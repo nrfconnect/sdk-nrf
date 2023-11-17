@@ -80,7 +80,7 @@
           "mfgCode": null,
           "define": "IDENTIFY_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "attributes": [
             {
               "name": "IdentifyTime",
@@ -255,7 +255,7 @@
               "code": 0,
               "mfgCode": null,
               "side": "server",
-              "type": "bitmap8",
+              "type": "NameSupportBitmap",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -5042,7 +5042,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": "1",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -5771,7 +5771,7 @@
               "code": 64,
               "mfgCode": null,
               "source": "client",
-              "incoming": 1,
+              "incoming": 0,
               "outgoing": 0
             }
           ],
@@ -5908,7 +5908,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x3",
+              "defaultValue": "0",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -5945,7 +5945,7 @@
               "code": 0,
               "mfgCode": null,
               "source": "client",
-              "incoming": 0,
+              "incoming": 1,
               "outgoing": 1
             },
             {
@@ -5953,7 +5953,7 @@
               "code": 1,
               "mfgCode": null,
               "source": "client",
-              "incoming": 0,
+              "incoming": 1,
               "outgoing": 1
             },
             {
@@ -5961,7 +5961,7 @@
               "code": 2,
               "mfgCode": null,
               "source": "client",
-              "incoming": 0,
+              "incoming": 1,
               "outgoing": 1
             },
             {
@@ -5969,7 +5969,7 @@
               "code": 3,
               "mfgCode": null,
               "source": "client",
-              "incoming": 0,
+              "incoming": 1,
               "outgoing": 1
             },
             {
@@ -5977,7 +5977,7 @@
               "code": 4,
               "mfgCode": null,
               "source": "client",
-              "incoming": 0,
+              "incoming": 1,
               "outgoing": 1
             },
             {
@@ -5985,7 +5985,7 @@
               "code": 5,
               "mfgCode": null,
               "source": "client",
-              "incoming": 0,
+              "incoming": 1,
               "outgoing": 1
             }
           ],
@@ -6038,7 +6038,7 @@
               "mfgCode": null,
               "source": "server",
               "incoming": 1,
-              "outgoing": 0
+              "outgoing": 1
             },
             {
               "name": "ViewGroupResponse",
@@ -6046,7 +6046,7 @@
               "mfgCode": null,
               "source": "server",
               "incoming": 1,
-              "outgoing": 0
+              "outgoing": 1
             },
             {
               "name": "GetGroupMembershipResponse",
@@ -6054,7 +6054,7 @@
               "mfgCode": null,
               "source": "server",
               "incoming": 1,
-              "outgoing": 0
+              "outgoing": 1
             },
             {
               "name": "RemoveGroupResponse",
@@ -6062,7 +6062,7 @@
               "mfgCode": null,
               "source": "server",
               "incoming": 1,
-              "outgoing": 0
+              "outgoing": 1
             }
           ],
           "attributes": [
@@ -6071,7 +6071,7 @@
               "code": 0,
               "mfgCode": null,
               "side": "server",
-              "type": "bitmap8",
+              "type": "NameSupportBitmap",
               "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
@@ -6523,7 +6523,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -6539,7 +6539,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -6555,7 +6555,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -6571,7 +6571,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -6587,7 +6587,7 @@
               "side": "server",
               "type": "array",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -7000,7 +7000,7 @@
               "mfgCode": null,
               "side": "server",
               "type": "int8s",
-              "included": 1,
+              "included": 0,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -7548,7 +7548,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "5",
+              "defaultValue": "6",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,

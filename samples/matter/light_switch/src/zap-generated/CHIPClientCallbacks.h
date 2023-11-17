@@ -37,14 +37,6 @@ typedef void (*IdentifyEventListListAttributeCallback)(void *context,
 						       const chip::app::DataModel::DecodableList<chip::EventId> &data);
 typedef void (*IdentifyAttributeListListAttributeCallback)(
 	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
-typedef void (*ScenesGeneratedCommandListListAttributeCallback)(
-	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
-typedef void (*ScenesAcceptedCommandListListAttributeCallback)(
-	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
-typedef void (*ScenesEventListListAttributeCallback)(void *context,
-						     const chip::app::DataModel::DecodableList<chip::EventId> &data);
-typedef void (*ScenesAttributeListListAttributeCallback)(
-	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
 typedef void (*OnOffGeneratedCommandListListAttributeCallback)(
 	void *context, const chip::app::DataModel::DecodableList<chip::CommandId> &data);
 typedef void (*OnOffAcceptedCommandListListAttributeCallback)(
