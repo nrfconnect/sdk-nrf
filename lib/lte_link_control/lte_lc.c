@@ -23,6 +23,10 @@
 
 #include "lte_lc_helpers.h"
 
+#if defined(CONFIG_MEMFAULT_NCS_LTE_METRICS)
+#include <memfault/metrics/metrics.h>
+#endif
+
 LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 /* Internal system mode value used when CONFIG_LTE_NETWORK_MODE_DEFAULT is enabled. */
@@ -1443,6 +1447,14 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 		LOG_DBG("CFUN monitor callback: %p", e->callback);
 		e->callback(mode, e->context);
 	}
+
+#if defined(CONFIG_MEMFAULT_NCS_LTE_METRICS)
+  if (mode == LTE_LC_FUNC_MODE_NORMAL || mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+    MEMFAULT_HEARTBEAT_TIMER_START(ncs_lte_on_time_msec);
+  } else if(mode == LTE_LC_FUNC_MODE_POWER_OFF || mode == LTE_LC_FUNC_MODE_OFFLINE || mode == LTE_LC_FUNC_MODE_DEACTIVATE_LTE) {
+    MEMFAULT_HEARTBEAT_TIMER_STOP(ncs_lte_on_time_msec);
+  }
+#endif
 
 	return 0;
 }
