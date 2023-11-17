@@ -18,14 +18,14 @@ The RAM area that the Modem library shares with the nRF9160 modem core is divide
 * TX
 * Trace
 
-The size of the RX, TX and the Trace regions can be configured by the following Kconfig options of the integration layer:
+You can configure the size of the RX, TX and the Trace regions using the following Kconfig options of the integration layer:
 
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` for the RX region
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE` for the TX region
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` for the Trace region
 
 The size of the Control region is fixed.
-The Modem library exports the size value through :kconfig:option:`CONFIG_NRF_MODEM_SHMEM_CTRL_SIZE`.
+The Modem library exports the size value through :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE`.
 This value is automatically passed by the integration layer to the library during the initialization through :c:func:`nrf_modem_lib_init`.
 
 When the application is built using CMake, the :ref:`partition_manager` automatically reads the Kconfig options of the integration layer.
