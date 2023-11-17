@@ -492,7 +492,10 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
-|no_changes_yet_note|
+* :ref:`caf_ble_state`:
+
+  * Updated the dependencies of the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig option.
+    The option can be enabled even when the Bluetooth controller is not enabled as part of the application that uses :ref:`caf_ble_state`.
 
 Shell libraries
 ---------------

@@ -34,7 +34,8 @@ The following Kconfig options are also available for this module:
 * :kconfig:option:`CONFIG_CAF_BLE_STATE_EXCHANGE_MTU` - This option can be used for GATT client (:kconfig:option:`CONFIG_BT_GATT_CLIENT`) to set the Maximum Transmission Unit (MTU) to the maximum possible size that the buffers can hold.
   This option is enabled by default.
 * :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` - This option enables the Low Latency Packet Mode (LLPM).
-  This option is enabled by default and depends on :kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM` and :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`.
+  If the Bluetooth controller is enabled as part of the application, this option is enabled by default and depends on :kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`.
+  Otherwise, this option is disabled and can be enabled manually.
 * :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` - This option enables setting the security level 2 for a Bluetooth LE connection automatically, right after the connection is established.
   The security level 2 or higher enables connection encryption.
   The device disconnects if establishing the connection security level 2 fails.
