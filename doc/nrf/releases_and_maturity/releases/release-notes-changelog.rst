@@ -371,7 +371,9 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * Corrected the way of setting the TX power with FEM.
 
 Drivers
 =======

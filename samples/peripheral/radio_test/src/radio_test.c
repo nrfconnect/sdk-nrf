@@ -91,6 +91,104 @@ static uint16_t channel_to_frequency(nrf_radio_mode_t mode, uint8_t channel)
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 }
 
+static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
+{
+	switch (tx_power) {
+	case -40:
+		return RADIO_TXPOWER_TXPOWER_Neg40dBm;
+
+	case -30:
+		return RADIO_TXPOWER_TXPOWER_Neg30dBm;
+
+	case -20:
+		return RADIO_TXPOWER_TXPOWER_Neg20dBm;
+
+	case -16:
+		return RADIO_TXPOWER_TXPOWER_Neg16dBm;
+
+	case -12:
+		return RADIO_TXPOWER_TXPOWER_Neg12dBm;
+
+	case -8:
+		return RADIO_TXPOWER_TXPOWER_Neg8dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm)
+	case -7:
+		return RADIO_TXPOWER_TXPOWER_Neg7dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm)
+	case -6:
+		return RADIO_TXPOWER_TXPOWER_Neg6dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm)
+	case -5:
+		return RADIO_TXPOWER_TXPOWER_Neg5dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) */
+
+	case -4:
+		return RADIO_TXPOWER_TXPOWER_Neg4dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm)
+	case -3:
+		return RADIO_TXPOWER_TXPOWER_Neg3dBm;
+#endif /* defined (RADIO_TXPOWER_TXPOWER_Neg3dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm)
+	case -2:
+		return RADIO_TXPOWER_TXPOWER_Neg2dBm;
+#endif /* defined (RADIO_TXPOWER_TXPOWER_Neg2dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm)
+	case -1:
+		return RADIO_TXPOWER_TXPOWER_Neg1dBm;
+#endif /* defined (RADIO_TXPOWER_TXPOWER_Neg1dBm) */
+
+	case 0:
+		return RADIO_TXPOWER_TXPOWER_0dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm)
+	case 2:
+		return RADIO_TXPOWER_TXPOWER_Pos2dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm)
+	case 3:
+		return RADIO_TXPOWER_TXPOWER_Pos3dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm)
+	case 4:
+		return RADIO_TXPOWER_TXPOWER_Pos4dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm)
+	case 5:
+		return RADIO_TXPOWER_TXPOWER_Pos5dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm)
+	case 6:
+		return RADIO_TXPOWER_TXPOWER_Pos6dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm)
+	case 7:
+		return RADIO_TXPOWER_TXPOWER_Pos7dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm)
+	case 8:
+		return RADIO_TXPOWER_TXPOWER_Pos8dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) */
+
+	default:
+		printk("TX power to enumerator conversion failed, defaulting to 0 dBm\n");
+		return RADIO_TXPOWER_TXPOWER_0dBm;
+	}
+}
+
 static void radio_power_set(nrf_radio_mode_t mode, uint8_t channel, int8_t power)
 {
 	int8_t output_power = power;
@@ -115,13 +213,13 @@ static void radio_power_set(nrf_radio_mode_t mode, uint8_t channel, int8_t power
 		high_voltage_enable = true;
 
 		/* High voltage increases radio output power by 3 dBm. */
-		radio_power -= RADIO_TXPOWER_TXPOWER_Pos3dBm;
+		radio_power -= 3;
 	}
 
 	nrf_vreqctrl_radio_high_voltage_set(NRF_VREQCTRL, high_voltage_enable);
 #endif /* NRF53_SERIES */
 
-	nrf_radio_txpower_set(NRF_RADIO, (nrf_radio_txpower_t)radio_power);
+	nrf_radio_txpower_set(NRF_RADIO, dbm_to_nrf_radio_txpower(radio_power));
 
 	if (!sweep_processing) {
 		printk("Requested tx output power: %" PRIi8 " dBm\n", power);
