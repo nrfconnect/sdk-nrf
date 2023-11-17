@@ -127,8 +127,8 @@ Connection pre-evaluation
 
 Modem firmware version 1.3.0 and higher supports connection a pre-evaluation feature that allows the application to get information about a cell that is likely to be used for an RRC connection.
 Based on the parameters received in the function call, the application can decide whether to send application data or not.
-The function :func:`lte_lc_conn_eval_params_get` populates a structure of type :c:struct:`lte_lc_conn_eval_params` that includes information on the current consumption cost by the data transmission when utilizing the given cell.
-The following code block shows a basic implementation of :c:func:`lte_lc_conn_eval_params_get`:
+The function :c:func:`lte_lc_conn_eval_params_get` populates a structure of type :c:struct:`lte_lc_conn_eval_params` that includes information on the current consumption cost by the data transmission when utilizing the given cell.
+The following code snippet shows a basic implementation of :c:func:`lte_lc_conn_eval_params_get`:
 
 .. code-block:: c
 
@@ -161,12 +161,12 @@ The following code block shows a basic implementation of :c:func:`lte_lc_conn_ev
            /* Continue execution... */
    }
 
-:c:struct:`lte_lc_conn_eval_params` lists all information that is available when performing connection pre-evaluation.
+The :c:struct:`lte_lc_conn_eval_params` structure lists all information that is available when performing connection pre-evaluation.
 
 Modem sleep and TAU pre-warning notifications
 =============================================
 
-Modem firmware version 1.3.0 and higher supports receiving callbacks from the modem related to Tracking Area Updates (TAU) and modem sleep.
+Modem firmware v1.3.0 and higher supports receiving callbacks from the modem related to Tracking Area Updates (TAU) and modem sleep.
 Based on these notifications, the application can alter its behavior to optimize for a given metric.
 
 For instance, TAU pre-warning notifications can be used to schedule data transfers before a TAU so that data transfer and TAU occurs within the same RRC connection window, thereby saving the potential overhead associated with the additional data exchange.

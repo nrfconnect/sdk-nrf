@@ -22,9 +22,7 @@ For a Thingy:91, it configures the antenna matching network used with both LTE a
 Configuration
 *************
 
-Set the following Kconfig option to enable this library:
-
-* :kconfig:option:`CONFIG_MODEM_ANTENNA` - Enables the Modem antenna library.
+Set the :kconfig:option:`CONFIG_MODEM_ANTENNA` Kconfig option to enable this library.
 
 .. note::
 
