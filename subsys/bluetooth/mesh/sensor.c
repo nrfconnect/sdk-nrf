@@ -16,10 +16,27 @@ LOG_MODULE_REGISTER(bt_mesh_sensor);
 /** Scale away the sensor_value fraction, to allow integer math */
 #define SENSOR_MILL(_val) ((1000000LL * (_val)->val1) + (_val)->val2)
 
+#ifndef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+/** Delta threshold type. */
+enum cadence_delta_type {
+	/** Value based delta threshold.
+	 *  The delta threshold values are represented as absolute value
+	 *  changes.
+	 */
+	CADENCE_DELTA_TYPE_VALUE,
+	/** Percent based delta threshold.
+	 *  The delta threshold values are represented as percentages of their
+	 *  old value (resolution: 0.01 %).
+	 */
+	CADENCE_DELTA_TYPE_PERCENT,
+};
+#endif
+
 static enum bt_mesh_sensor_cadence
 sensor_cadence(const struct bt_mesh_sensor_threshold *threshold,
-	       const struct sensor_value *curr)
+	       const sensor_value_type *curr)
 {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	int64_t high_mill = SENSOR_MILL(&threshold->range.high);
 	int64_t low_mill = SENSOR_MILL(&threshold->range.low);
 
@@ -30,10 +47,28 @@ sensor_cadence(const struct bt_mesh_sensor_threshold *threshold,
 	int64_t curr_mill = SENSOR_MILL(curr);
 	bool in_range = (curr_mill >= MIN(low_mill, high_mill) &&
 			 curr_mill <= MAX(low_mill, high_mill));
+#else
+	const struct bt_mesh_sensor_value *high, *low;
+	const struct bt_mesh_sensor_format *fmt = curr->format;
 
+	if (fmt->compare(&threshold->range.high,
+			 &threshold->range.low) >= 0) {
+		low = &threshold->range.low;
+		high = &threshold->range.high;
+	} else if (fmt->compare(&threshold->range.low,
+				&threshold->range.high) >= 0) {
+		low = &threshold->range.high;
+		high = &threshold->range.low;
+	} else {
+		return BT_MESH_SENSOR_CADENCE_NORMAL;
+	}
+
+	bool in_range = SENSOR_VALUE_IN_RANGE(curr, low, high);
+#endif
 	return in_range ? threshold->range.cadence : !threshold->range.cadence;
 }
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 				    const struct sensor_value *curr)
 {
@@ -79,6 +114,14 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 
 	return (delta_mill > thrsh_mill);
 }
+#else /* !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
+bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
+				    const struct bt_mesh_sensor_value *curr)
+{
+	return curr->format->delta_check(curr, &sensor->state.prev,
+					 &sensor->state.threshold.deltas);
+}
+#endif /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 
 void bt_mesh_sensor_cadence_set(struct bt_mesh_sensor *sensor,
 				enum bt_mesh_sensor_cadence cadence)
@@ -129,6 +172,7 @@ void sensor_status_id_decode(struct net_buf_simple *buf, uint8_t *len, uint16_t 
 	}
 }
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 static void tolerance_decode(uint16_t encoded, struct sensor_value *tolerance)
 {
 	uint32_t toll_mill = (encoded * 100ULL * 1000000ULL) / 4095ULL;
@@ -145,6 +189,7 @@ static uint16_t tolerance_encode(const struct sensor_value *tol)
 	}
 	return (tol_mill * 4095ULL + (1000000ULL * 50ULL)) / (1000000ULL * 100ULL);
 }
+#endif
 
 void sensor_descriptor_decode(struct net_buf_simple *buf,
 			struct bt_mesh_sensor_info *sensor)
@@ -153,10 +198,15 @@ void sensor_descriptor_decode(struct net_buf_simple *buf,
 
 	sensor->id = net_buf_simple_pull_le16(buf);
 	tolerances = net_buf_simple_pull_le24(buf);
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	tolerance_decode(tolerances & BIT_MASK(12),
 			 &sensor->descriptor.tolerance.positive);
 	tolerance_decode(tolerances >> 12,
 			 &sensor->descriptor.tolerance.negative);
+#else
+	sensor->descriptor.tolerance.positive = tolerances & BIT_MASK(12);
+	sensor->descriptor.tolerance.negative = tolerances >> 12;
+#endif
 	sensor->descriptor.sampling_type = net_buf_simple_pull_u8(buf);
 	sensor->descriptor.period =
 		sensor_powtime_decode(net_buf_simple_pull_u8(buf));
@@ -173,8 +223,13 @@ void sensor_descriptor_encode(struct net_buf_simple *buf,
 	const struct bt_mesh_sensor_descriptor *d =
 		sensor->descriptor ? sensor->descriptor : &dummy;
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	uint16_t tol_pos = tolerance_encode(&d->tolerance.positive);
 	uint16_t tol_neg = tolerance_encode(&d->tolerance.negative);
+#else
+	uint16_t tol_pos = d->tolerance.positive;
+	uint16_t tol_neg = d->tolerance.negative;
+#endif
 
 	net_buf_simple_add_u8(buf, tol_pos & 0xff);
 	net_buf_simple_add_u8(buf,
@@ -188,7 +243,7 @@ void sensor_descriptor_encode(struct net_buf_simple *buf,
 
 int sensor_value_encode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
-			const struct sensor_value *values)
+			const sensor_value_type *values)
 {
 	/* The API assumes that `values` array size is always CONFIG_BT_MESH_SENSOR_CHANNELS_MAX. */
 	__ASSERT_NO_MSG(type->channel_count <= CONFIG_BT_MESH_SENSOR_CHANNELS_MAX);
@@ -208,7 +263,7 @@ int sensor_value_encode(struct net_buf_simple *buf,
 
 int sensor_value_decode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
-			struct sensor_value *values)
+			sensor_value_type *values)
 {
 	int err;
 
@@ -228,21 +283,36 @@ int sensor_value_decode(struct net_buf_simple *buf,
 
 int sensor_ch_encode(struct net_buf_simple *buf,
 		     const struct bt_mesh_sensor_format *format,
-		     const struct sensor_value *value)
+		     const sensor_value_type *value)
 {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	return format->encode(format, value, buf);
+#else
+	if (format != value->format) {
+		return -EINVAL;
+	}
+	net_buf_simple_add_mem(buf, value->raw, value->format->size);
+	return 0;
+#endif
 }
 
 int sensor_ch_decode(struct net_buf_simple *buf,
 		     const struct bt_mesh_sensor_format *format,
-		     struct sensor_value *value)
+		     sensor_value_type *value)
 {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	return format->decode(format, buf, value);
+#else
+	value->format = format;
+	memcpy(value->raw, net_buf_simple_pull_mem(buf, format->size),
+	       format->size);
+	return 0;
+#endif
 }
 
 int sensor_status_encode(struct net_buf_simple *buf,
 			 const struct bt_mesh_sensor *sensor,
-			 const struct sensor_value *values)
+			 const sensor_value_type *values)
 {
 	const struct bt_mesh_sensor_type *type = sensor->type;
 	size_t size = 0;
@@ -276,7 +346,7 @@ int sensor_column_value_encode(struct net_buf_simple *buf,
 			       struct bt_mesh_msg_ctx *ctx,
 			       uint32_t column_index)
 {
-	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	sensor_value_type values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 	int err = sensor->series.get(srv, sensor, ctx, column_index, values);
 
 	if (err) {
@@ -294,7 +364,14 @@ int sensor_column_encode(struct net_buf_simple *buf,
 {
 	int col_index = col - sensor->series.columns;
 
-	const struct bt_mesh_sensor_format *col_format;
+	const struct bt_mesh_sensor_format *col_format =
+		bt_mesh_sensor_column_format_get(sensor->type);
+
+	if (!col_format) {
+		return -ENOTSUP;
+	}
+
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	const uint64_t width_million =
 		(col->end.val1 - col->start.val1) * 1000000ULL +
 		(col->end.val2 - col->start.val2);
@@ -302,22 +379,23 @@ int sensor_column_encode(struct net_buf_simple *buf,
 		.val1 = width_million / 1000000ULL,
 		.val2 = width_million % 1000000ULL,
 	};
-	int err;
 
 	LOG_DBG("Column width: %s", bt_mesh_sensor_ch_str(&width));
+#endif
 
-	col_format = bt_mesh_sensor_column_format_get(sensor->type);
-	if (!col_format) {
-		return -ENOTSUP;
-	}
+	int err;
 
 	err = sensor_ch_encode(buf, col_format, &col->start);
 	if (err) {
 		return err;
 	}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	/* The sensor columns are transmitted as start+width, not start+end: */
 	err = sensor_ch_encode(buf, col_format, &width);
+#else
+	err = sensor_ch_encode(buf, col_format, &col->width);
+#endif
 	if (err) {
 		return err;
 	}
@@ -328,7 +406,7 @@ int sensor_column_encode(struct net_buf_simple *buf,
 int sensor_column_decode(
 	struct net_buf_simple *buf, const struct bt_mesh_sensor_type *type,
 	struct bt_mesh_sensor_column *col,
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX])
+	sensor_value_type value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX])
 {
 	const struct bt_mesh_sensor_format *col_format;
 	int err;
@@ -349,6 +427,7 @@ int sensor_column_decode(
 		return -ENOENT;
 	}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	struct sensor_value width;
 
 	err = sensor_ch_decode(buf, col_format, &width);
@@ -361,6 +440,12 @@ int sensor_column_decode(
 
 	col->end.val1 = end_mill / 1000000ULL;
 	col->end.val2 = end_mill % 1000000ULL;
+#else
+	err = sensor_ch_decode(buf, col_format, &col->width);
+	if (err) {
+		return err;
+	}
+#endif
 
 	return sensor_value_decode(buf, type, value);
 }
@@ -462,21 +547,39 @@ int sensor_cadence_encode(struct net_buf_simple *buf,
 			  uint8_t fast_period_div, uint8_t min_int,
 			  const struct bt_mesh_sensor_threshold *threshold)
 {
-	net_buf_simple_add_u8(buf, ((!!threshold->delta.type) << 7) |
-					   (BIT_MASK(7) & fast_period_div));
-
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	const struct bt_mesh_sensor_format *delta_format =
 		(threshold->delta.type == BT_MESH_SENSOR_DELTA_PERCENT) ?
 			&bt_mesh_sensor_format_percentage_delta_trigger :
 			sensor_type->channels[0].format;
+
+	enum bt_mesh_sensor_delta delta_type = !!threshold->delta.type;
+#else
+	const struct bt_mesh_sensor_format *delta_format = threshold->deltas.down.format;
+
+	enum cadence_delta_type delta_type =
+		delta_format == &bt_mesh_sensor_format_percentage_delta_trigger ?
+		CADENCE_DELTA_TYPE_PERCENT : CADENCE_DELTA_TYPE_VALUE;
+#endif
+	net_buf_simple_add_u8(buf, (delta_type << 7) |
+				   (BIT_MASK(7) & fast_period_div));
+
 	int err;
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	err = sensor_ch_encode(buf, delta_format, &threshold->delta.down);
+#else
+	err = sensor_ch_encode(buf, delta_format, &threshold->deltas.down);
+#endif
 	if (err) {
 		return err;
 	}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	err = sensor_ch_encode(buf, delta_format, &threshold->delta.up);
+#else
+	err = sensor_ch_encode(buf, delta_format, &threshold->deltas.up);
+#endif
 	if (err) {
 		return err;
 	}
@@ -488,7 +591,7 @@ int sensor_cadence_encode(struct net_buf_simple *buf,
 	net_buf_simple_add_u8(buf, min_int);
 
 	/* Flip the order if the cadence is fast outside. */
-	const struct sensor_value *first, *second;
+	const sensor_value_type *first, *second;
 
 	if (threshold->range.cadence == BT_MESH_SENSOR_CADENCE_FAST) {
 		first = &threshold->range.low;
@@ -512,26 +615,45 @@ int sensor_cadence_decode(struct net_buf_simple *buf,
 			  struct bt_mesh_sensor_threshold *threshold)
 {
 	const struct bt_mesh_sensor_format *delta_format;
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+	enum bt_mesh_sensor_delta delta_type;
+#else
+	enum cadence_delta_type delta_type;
+#endif
 	uint8_t div_and_type;
 	int err;
 
 	div_and_type = net_buf_simple_pull_u8(buf);
-	threshold->delta.type = div_and_type >> 7;
+	delta_type = div_and_type >> 7;
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+	threshold->delta.type = delta_type;
+	delta_format = (delta_type == BT_MESH_SENSOR_DELTA_PERCENT) ?
+			&bt_mesh_sensor_format_percentage_delta_trigger :
+			sensor_type->channels[0].format;
+#else
+	delta_format = (delta_type == CADENCE_DELTA_TYPE_PERCENT) ?
+			&bt_mesh_sensor_format_percentage_delta_trigger :
+			sensor_type->channels[0].format;
+#endif
 	*fast_period_div = div_and_type & BIT_MASK(7);
 	if (*fast_period_div > BT_MESH_SENSOR_PERIOD_DIV_MAX) {
 		return -EINVAL;
 	}
 
-	delta_format = (threshold->delta.type == BT_MESH_SENSOR_DELTA_PERCENT) ?
-			       &bt_mesh_sensor_format_percentage_delta_trigger :
-			       sensor_type->channels[0].format;
-
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	err = sensor_ch_decode(buf, delta_format, &threshold->delta.down);
+#else
+	err = sensor_ch_decode(buf, delta_format, &threshold->deltas.down);
+#endif
 	if (err) {
 		return err;
 	}
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	err = sensor_ch_decode(buf, delta_format, &threshold->delta.up);
+#else
+	err = sensor_ch_decode(buf, delta_format, &threshold->deltas.up);
+#endif
 	if (err) {
 		return err;
 	}
@@ -556,6 +678,7 @@ int sensor_cadence_decode(struct net_buf_simple *buf,
 	/* According to MshMDLv1.1: 4.1.3.6, if range.high is lower than range.low, the cadence is
 	 * fast outside the range. Swap the two in this case.
 	 */
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	if (threshold->range.high.val1 < threshold->range.low.val1 ||
 	    (threshold->range.high.val1 == threshold->range.low.val1 &&
 	     threshold->range.high.val2 < threshold->range.low.val2)) {
@@ -564,7 +687,18 @@ int sensor_cadence_decode(struct net_buf_simple *buf,
 		temp = threshold->range.high;
 		threshold->range.high = threshold->range.low;
 		threshold->range.low = temp;
+#else
+	if (threshold->range.high.format->compare(&threshold->range.low,
+						  &threshold->range.high) > 0) {
+		uint8_t temp[CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX];
 
+		memcpy(temp, &threshold->range.high.raw,
+		       CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX);
+		memcpy(&threshold->range.high.raw, &threshold->range.low.raw,
+		       CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX);
+		memcpy(&threshold->range.low.raw, temp,
+		       CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX);
+#endif
 		threshold->range.cadence = BT_MESH_SENSOR_CADENCE_NORMAL;
 	} else {
 		threshold->range.cadence = BT_MESH_SENSOR_CADENCE_FAST;
@@ -584,6 +718,7 @@ uint8_t sensor_pub_div_get(const struct bt_mesh_sensor *s, uint32_t base_period)
 	return div;
 }
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 bool bt_mesh_sensor_value_in_column(const struct sensor_value *value,
 				    const struct bt_mesh_sensor_column *col)
 {
@@ -593,9 +728,10 @@ bool bt_mesh_sensor_value_in_column(const struct sensor_value *value,
 	       (value->val1 < col->end.val1 ||
 		(value->val1 == col->end.val1 && value->val2 <= col->end.val2));
 }
+#endif
 
 void sensor_cadence_update(struct bt_mesh_sensor *sensor,
-			   const struct sensor_value *value)
+			   const sensor_value_type *value)
 {
 	enum bt_mesh_sensor_cadence new;
 
@@ -618,7 +754,11 @@ void sensor_cadence_update(struct bt_mesh_sensor *sensor,
 	sensor->state.fast_pub = new;
 }
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 const char *bt_mesh_sensor_ch_str(const struct sensor_value *ch)
+#else
+const char *bt_mesh_sensor_ch_str(const struct bt_mesh_sensor_value *ch)
+#endif
 {
 	static char str[BT_MESH_SENSOR_CH_STR_LEN];
 

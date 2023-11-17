@@ -80,7 +80,7 @@ static void cadence_store(struct bt_mesh_sensor_srv *srv)
 static int value_get(struct bt_mesh_sensor_srv *srv,
 		     struct bt_mesh_sensor *sensor,
 		     struct bt_mesh_msg_ctx *ctx,
-		     struct sensor_value *value)
+		     sensor_value_type *value)
 {
 	int err;
 
@@ -104,7 +104,7 @@ static int buf_status_add(struct bt_mesh_sensor_srv *srv,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
+	sensor_value_type value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 	struct net_buf_simple_state state;
 	int err;
 
@@ -223,11 +223,15 @@ respond:
 
 static const struct bt_mesh_sensor_column *
 column_get(const struct bt_mesh_sensor_series *series,
-	   const struct sensor_value *val)
+	   const sensor_value_type *val)
 {
 	for (uint32_t i = 0; i < series->column_count; ++i) {
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		if (series->columns[i].start.val1 == val->val1 &&
 		    series->columns[i].start.val2 == val->val2) {
+#else
+		if (val->format->compare(&series->columns[i].start, val) == 0) {
+#endif
 			return &series->columns[i];
 		}
 	}
@@ -287,7 +291,7 @@ static int handle_column_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 
 	const struct bt_mesh_sensor_format *col_format;
 	const struct bt_mesh_sensor_column *col;
-	struct sensor_value col_x;
+	sensor_value_type col_x;
 
 	col_format = bt_mesh_sensor_column_format_get(sensor->type);
 
@@ -403,18 +407,18 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 
 	/* Check buf->len different from 0, before decoding buf to range and buf->len changes. */
 	bool ranged = (buf->len != 0);
-	struct bt_mesh_sensor_column range;
+	sensor_value_type range_start, range_end;
 
 	if (buf->len == col_format->size * 2) {
 		int err;
 
-		err = sensor_ch_decode(buf, col_format, &range.start);
+		err = sensor_ch_decode(buf, col_format, &range_start);
 		if (err) {
 			LOG_WRN("Range start decode failed: %d", err);
 			return err;
 		}
 
-		err = sensor_ch_decode(buf, col_format, &range.end);
+		err = sensor_ch_decode(buf, col_format, &range_end);
 		if (err) {
 			LOG_WRN("Range end decode failed: %d", err);
 			return err;
@@ -430,7 +434,7 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 			&sensor->series.columns[i];
 
 		if (ranged &&
-		    !bt_mesh_sensor_value_in_column(&col->start, &range)) {
+		    !SENSOR_VALUE_IN_RANGE(&col->start, &range_start, &range_end)) {
 			continue;
 		}
 
@@ -553,8 +557,13 @@ static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		char range_low_str[BT_MESH_SENSOR_CH_STR_LEN];
 		char range_high_str[BT_MESH_SENSOR_CH_STR_LEN];
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		strcpy(delta_down_str, bt_mesh_sensor_ch_str(&threshold.delta.down));
 		strcpy(delta_up_str, bt_mesh_sensor_ch_str(&threshold.delta.up));
+#else
+		strcpy(delta_down_str, bt_mesh_sensor_ch_str(&threshold.deltas.down));
+		strcpy(delta_up_str, bt_mesh_sensor_ch_str(&threshold.deltas.up));
+#endif
 		strcpy(range_low_str, bt_mesh_sensor_ch_str(&threshold.range.low));
 		strcpy(range_high_str, bt_mesh_sensor_ch_str(&threshold.range.high));
 
@@ -696,7 +705,7 @@ static int handle_setting_get(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 
 	net_buf_simple_add_u8(&rsp, setting->set ? 0x03 : 0x01);
 
-	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = { 0 };
+	sensor_value_type values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = { 0 };
 
 	setting->get(srv, sensor, setting, ctx, values);
 
@@ -747,7 +756,7 @@ static int setting_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		goto respond;
 	}
 
-	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	sensor_value_type values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 
 	err = sensor_value_decode(buf, setting->type, values);
 	if (err) {
@@ -904,7 +913,7 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 		return;
 	}
 
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
+	sensor_value_type value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 
 	err = value_get(srv, s, NULL, value);
 	if (err) {
@@ -1142,7 +1151,11 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_setup_srv_cb = {
 int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct bt_mesh_sensor *sensor,
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 			   const struct sensor_value *value)
+#else
+			   const struct bt_mesh_sensor_value *value)
+#endif
 {
 	int err;
 
@@ -1169,7 +1182,7 @@ int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 int bt_mesh_sensor_srv_sample(struct bt_mesh_sensor_srv *srv,
 			      struct bt_mesh_sensor *sensor)
 {
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
+	sensor_value_type value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 	int err;
 
 	err = value_get(srv, sensor, NULL, value);

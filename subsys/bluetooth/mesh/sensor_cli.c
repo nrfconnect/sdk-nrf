@@ -40,7 +40,11 @@ struct sensor_data_list_rsp {
 
 struct series_data_rsp {
 	struct bt_mesh_sensor_series_entry *entries;
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	const struct bt_mesh_sensor_column *col;
+#else
+	const struct bt_mesh_sensor_value *col_start;
+#endif
 	uint16_t id;
 	uint32_t count;
 };
@@ -152,7 +156,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 			return -EMSGSIZE;
 		}
 
-		struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+		sensor_value_type value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 
 		err = sensor_value_decode(buf, type, value);
 		if (err) {
@@ -166,8 +170,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 
 		if (rsp && count <= rsp->count) {
 			memcpy(rsp->sensors[count].value, value,
-			       sizeof(struct sensor_value) *
-				       type->channel_count);
+			       sizeof(sensor_value_type) * type->channel_count);
 
 			rsp->sensors[count].type = type;
 			++count;
@@ -236,8 +239,12 @@ yield_ack:
 								  (void **)&rsp)) {
 		/* If column format exists verify Raw Value A */
 		if (col_format &&
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 			(rsp->col->start.val1 != entry.column.start.val1 ||
 			 rsp->col->start.val2 != entry.column.start.val2)) {
+#else
+			col_format->compare(rsp->col_start, &entry.column.start) != 0) {
+#endif
 			return 0;
 		}
 
@@ -814,7 +821,11 @@ int bt_mesh_sensor_cli_setting_set(struct bt_mesh_sensor_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
 				   const struct bt_mesh_sensor_type *sensor,
 				   const struct bt_mesh_sensor_type *setting,
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 				   const struct sensor_value *value,
+#else
+				   const struct bt_mesh_sensor_value *value,
+#endif
 				   struct bt_mesh_sensor_setting_status *rsp)
 {
 	int err;
@@ -863,7 +874,11 @@ int bt_mesh_sensor_cli_setting_set_unack(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_type *setting,
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	const struct sensor_value *value)
+#else
+	const struct bt_mesh_sensor_value *value)
+#endif
 {
 	int err;
 
@@ -923,7 +938,11 @@ int bt_mesh_sensor_cli_all_get(struct bt_mesh_sensor_cli *cli,
 int bt_mesh_sensor_cli_get(struct bt_mesh_sensor_cli *cli,
 			   struct bt_mesh_msg_ctx *ctx,
 			   const struct bt_mesh_sensor_type *sensor,
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 			   struct sensor_value *rsp)
+#else
+			   struct bt_mesh_sensor_value *rsp)
+#endif
 {
 	int err;
 
@@ -954,7 +973,7 @@ int bt_mesh_sensor_cli_get(struct bt_mesh_sensor_cli *cli,
 		return -ENODEV;
 	}
 
-	memcpy(rsp, sensor_data.value, sizeof(struct sensor_value) * sensor->channel_count);
+	memcpy(rsp, sensor_data.value, sizeof(sensor_value_type) * sensor->channel_count);
 
 	return 0;
 }
@@ -962,7 +981,11 @@ int bt_mesh_sensor_cli_get(struct bt_mesh_sensor_cli *cli,
 int bt_mesh_sensor_cli_series_entry_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	const struct bt_mesh_sensor_type *sensor,
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	const struct bt_mesh_sensor_column *column,
+#else
+	const union bt_mesh_sensor_column_key *column,
+#endif
 	struct bt_mesh_sensor_series_entry *rsp)
 {
 	const struct bt_mesh_sensor_format *col_format;
@@ -974,6 +997,7 @@ int bt_mesh_sensor_cli_series_entry_get(
 	net_buf_simple_add_le16(&msg, sensor->id);
 
 	col_format = bt_mesh_sensor_column_format_get(sensor);
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	if (col_format == NULL) {
 		net_buf_simple_add_le16(&msg, column->start.val1);
 	} else {
@@ -982,12 +1006,26 @@ int bt_mesh_sensor_cli_series_entry_get(
 			return err;
 		}
 	}
+#else
+	if (col_format == NULL) {
+		net_buf_simple_add_le16(&msg, column->index);
+	} else {
+		err = sensor_ch_encode(&msg, col_format, &column->sensor_value);
+		if (err) {
+			return err;
+		}
+	}
+#endif
 
 	struct series_data_rsp rsp_data = {
 		.entries = rsp,
 		.id = sensor->id,
 		.count = 1,
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		.col = column,
+#else
+		.col_start = col_format ? &column->sensor_value : NULL,
+#endif
 	};
 
 	struct bt_mesh_msg_rsp_ctx rsp_ctx = {
@@ -1012,7 +1050,12 @@ int bt_mesh_sensor_cli_series_entry_get(
 int bt_mesh_sensor_cli_series_entries_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	const struct bt_mesh_sensor_type *sensor,
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	const struct bt_mesh_sensor_column *range,
+#else
+	const union bt_mesh_sensor_column_key *range_start,
+	const union bt_mesh_sensor_column_key *range_end,
+#endif
 	struct bt_mesh_sensor_series_entry *rsp, uint32_t *count)
 {
 	int err;
@@ -1023,11 +1066,16 @@ int bt_mesh_sensor_cli_series_entries_get(
 
 	net_buf_simple_add_le16(&msg, sensor->id);
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 	if (range) {
+#else
+	if (range_start && range_end) {
+#endif
 		const struct bt_mesh_sensor_format *col_format;
 
 		col_format = bt_mesh_sensor_column_format_get(sensor);
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 		if (!col_format) {
 			net_buf_simple_add_le16(&msg, range->start.val1);
 			net_buf_simple_add_le16(&msg, range->end.val1);
@@ -1042,6 +1090,22 @@ int bt_mesh_sensor_cli_series_entries_get(
 				return err;
 			}
 		}
+#else
+		if (!col_format) {
+			net_buf_simple_add_le16(&msg, range_start->index);
+			net_buf_simple_add_le16(&msg, range_end->index);
+		} else {
+			err = sensor_ch_encode(&msg, col_format, &range_start->sensor_value);
+			if (err) {
+				return err;
+			}
+
+			err = sensor_ch_encode(&msg, col_format, &range_end->sensor_value);
+			if (err) {
+				return err;
+			}
+		}
+#endif
 	}
 
 	struct series_data_rsp rsp_data = {
