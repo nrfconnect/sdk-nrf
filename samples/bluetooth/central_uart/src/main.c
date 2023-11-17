@@ -138,13 +138,13 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 		if (aborted_buf) {
 			buf = CONTAINER_OF(aborted_buf, struct uart_data_t,
-					   data);
+					   data[0]);
 			aborted_buf = NULL;
 			aborted_len = 0;
 		} else {
 			buf = CONTAINER_OF(evt->data.tx.buf,
 					   struct uart_data_t,
-					   data);
+					   data[0]);
 		}
 
 		k_free(buf);
@@ -162,7 +162,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 	case UART_RX_RDY:
 		LOG_DBG("UART_RX_RDY");
-		buf = CONTAINER_OF(evt->data.rx.buf, struct uart_data_t, data);
+		buf = CONTAINER_OF(evt->data.rx.buf, struct uart_data_t, data[0]);
 		buf->len += evt->data.rx.len;
 
 		if (disable_req) {
@@ -210,7 +210,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 	case UART_RX_BUF_RELEASED:
 		LOG_DBG("UART_RX_BUF_RELEASED");
 		buf = CONTAINER_OF(evt->data.rx_buf.buf, struct uart_data_t,
-				   data);
+				   data[0]);
 
 		if (buf->len > 0) {
 			k_fifo_put(&fifo_uart_rx_data, buf);
@@ -228,7 +228,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 		aborted_len += evt->data.tx.len;
 		buf = CONTAINER_OF(aborted_buf, struct uart_data_t,
-				   data);
+				   data[0]);
 
 		uart_tx(uart, &buf->data[aborted_len],
 			buf->len - aborted_len, SYS_FOREVER_MS);
