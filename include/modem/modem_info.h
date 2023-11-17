@@ -45,6 +45,13 @@ extern "C" {
 
 #define BAND_UNAVAILABLE 0
 
+// TODO: Confirm - there is no clear guidance in nrf9160 AT command
+// guide - 3GPP gives an upper limit on the full name size but the
+// short name is not specified. This may be a Nordic-defined limit,
+// so for now guess a medium length to give some room.
+/** Short operator size can be up to 15 characters long. */
+#define MODEM_INFO_MAX_SHORT_OP_NAME_SIZE 16
+
 /** Modem returns RSRP and RSRQ as index values which require
  * a conversion to dBm and dB respectively. See modem AT
  * command reference guide for more information.
@@ -362,6 +369,16 @@ int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes);
  *          Otherwise, a (negative) error code is returned
  */
 int modem_info_get_current_band(uint8_t *band_id);
+
+/**
+ * @brief Obtain the operator name.
+ *
+ * @param buf Buffer to store operator name in
+ * @param len Length of the buffer
+ * @return 0 if operation was successful.
+ *          Otherwise, a (negative) error code is returned
+ */
+int modem_info_get_operator(char *buf, size_t len);
 
 /** @} */
 
