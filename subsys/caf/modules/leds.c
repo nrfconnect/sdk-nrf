@@ -108,7 +108,8 @@ static void set_off(struct led *led)
 
 static void work_handler(struct k_work *work)
 {
-	struct led *led = CONTAINER_OF(work, struct led, work);
+	struct k_work_delayable *delayable_work = k_work_delayable_from_work(work);
+	struct led *led = CONTAINER_OF(delayable_work, struct led, work);
 
 	const struct led_effect_step *effect_step =
 		&led->effect->steps[led->effect_step];
