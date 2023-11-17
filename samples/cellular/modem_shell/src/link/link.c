@@ -95,7 +95,8 @@ static struct ncellmeas_data ncellmeas_param_data = {
 
 static void link_ncellmeas_worker(struct k_work *work_item)
 {
-	struct ncellmeas_data *data = CONTAINER_OF(work_item, struct ncellmeas_data, work);
+	struct k_work_delayable *delayable_work = k_work_delayable_from_work(work_item);
+	struct ncellmeas_data *data = CONTAINER_OF(delayable_work, struct ncellmeas_data, work);
 
 	if (data->mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
 		link_ncellmeas_start(true,
