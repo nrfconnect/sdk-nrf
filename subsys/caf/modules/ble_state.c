@@ -15,9 +15,9 @@
 
 #include <caf/events/ble_common_event.h>
 
-#ifdef CONFIG_BT_LL_SOFTDEVICE
+#ifdef CONFIG_CAF_BLE_USE_LLPM
 #include "sdc_hci_vs.h"
-#endif /* CONFIG_BT_LL_SOFTDEVICE */
+#endif /* CONFIG_CAF_BLE_USE_LLPM */
 
 #define MODULE ble_state
 #include <caf/events/module_state_event.h>
