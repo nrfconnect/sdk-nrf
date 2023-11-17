@@ -1274,7 +1274,7 @@ int method_gnss_init(void)
 #endif
 	lte_lc_register_handler(method_gnss_lte_ind_handler);
 
-#if !defined(CONFIG_LOCATION_METHOD_CELLULAR)
+#if !defined(CONFIG_LOCATION_METHOD_CELLULAR) && defined(CONFIG_NRF_CLOUD_AGNSS)
 	/* Cellular location method is disabled, but GNSS method uses the cellular scan
 	 * functionality for A-GNSS request. The module needs to be initialized explicitly, because
 	 * init is not called by core.
