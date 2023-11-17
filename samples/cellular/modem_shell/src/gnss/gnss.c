@@ -521,6 +521,29 @@ static int gnss_enable_all_nmeas(void)
 		NRF_MODEM_GNSS_NMEA_RMC_MASK);
 }
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS) || \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
+static void assistance_result_cb(uint16_t object_id, int32_t result_code)
+{
+	if (object_id != GNSS_ASSIST_OBJECT_ID) {
+		return;
+	}
+
+	switch (result_code) {
+	case LOCATION_ASSIST_RESULT_CODE_OK:
+		break;
+
+	case LOCATION_ASSIST_RESULT_CODE_PERMANENT_ERR:
+	case LOCATION_ASSIST_RESULT_CODE_TEMP_ERR:
+	case LOCATION_ASSIST_RESULT_CODE_NO_RESP_ERR:
+	default:
+		mosh_error("GNSS: Getting assistance data using LwM2M failed, result: %d",
+			   result_code);
+		break;
+	}
+}
+#endif
+
 #if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
 	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
 static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
@@ -659,6 +682,7 @@ static void get_agnss_data(struct k_work *item)
 		mosh_error("GNSS: LwM2M not connected, can't request A-GNSS data");
 		return;
 	}
+	location_assistance_set_result_code_cb(assistance_result_cb);
 	location_assistance_agnss_set_mask(&agnss_request);
 	err = location_assistance_agnss_request_send(cloud_lwm2m_client_ctx_get());
 	if (err) {
@@ -872,6 +896,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS)
 	mosh_print("GNSS: Getting P-GPS predictions from LwM2M...");
 
+	location_assistance_set_result_code_cb(assistance_result_cb);
 	err = location_assist_pgps_set_prediction_count(pgps_request.prediction_count);
 	err |= location_assist_pgps_set_prediction_interval(pgps_request.prediction_period_min);
 	location_assist_pgps_set_start_gps_day(pgps_request.gps_day);
