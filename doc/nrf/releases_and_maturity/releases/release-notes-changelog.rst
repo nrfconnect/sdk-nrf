@@ -74,7 +74,8 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Added host extensions for Nordic-only vendor-specific command APIs.
+  Implementation and integration of the host APIs can be found in the :file:`host_extensions.h` header file.
 
 Bluetooth mesh
 --------------
