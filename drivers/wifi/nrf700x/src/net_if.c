@@ -513,10 +513,6 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	vif_ctx_zep->vif_idx = nrf_wifi_fmac_add_vif(fmac_dev_ctx,
 						     vif_ctx_zep,
 						     &add_vif_info);
-
-	rpu_ctx_zep->vif_ctx_zep[vif_ctx_zep->vif_idx].if_type =
-		add_vif_info.iftype;
-
 	if (vif_ctx_zep->vif_idx >= MAX_NUM_VIFS) {
 		LOG_ERR("%s: FMAC returned invalid interface index",
 			__func__);
@@ -524,6 +520,8 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	}
 
 	k_mutex_init(&vif_ctx_zep->vif_lock);
+	rpu_ctx_zep->vif_ctx_zep[vif_ctx_zep->vif_idx].if_type =
+		add_vif_info.iftype;
 
 	/* Disallow if a valid mac address has not been configured for the interface
 	 * either from the OTP or by the user
