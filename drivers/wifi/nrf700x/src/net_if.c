@@ -319,12 +319,6 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 		return;
 	}
 
-	if (!device_is_ready(dev)) {
-		LOG_ERR("%s: Device %s is not ready",
-			__func__, dev->name);
-		return;
-	}
-
 	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep) {
