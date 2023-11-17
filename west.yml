@@ -79,6 +79,8 @@ manifest:
           - canopennode
           - chre
           - cmsis
+          - cmsis-dsp
+          - cmsis-nn
           - edtt
           - fatfs
           - hal_nordic
