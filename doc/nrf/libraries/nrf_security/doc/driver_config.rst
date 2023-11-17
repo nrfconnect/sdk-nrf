@@ -28,9 +28,9 @@ To enable a PSA driver, set the configurations in the following table:
 
 If multiple drivers are enabled, the first ordered item in this table takes precedence for an enabled cryptographic feature, unless the driver does not enable or support it.
 
-The driver :ref:`nrf_security_drivers_cc3xx` allows enabling or disabling of specific PSA APIs (such as psa_cipher_encrypt, psa_sign_hash), but not individual algorithms.
+The :ref:`nrf_security_drivers_cc3xx` allows enabling or disabling of specific PSA APIs (such as psa_cipher_encrypt, psa_sign_hash), but not individual algorithms.
 
-The driver :ref:`nrf_security_drivers_oberon` allows finer configuration granularity, allowing you to enable or disable individual algorithms as well.
+The :ref:`nrf_security_drivers_oberon` allows finer configuration granularity, allowing you to enable or disable individual algorithms as well.
 
 When multiple enabled drivers support the same cryptographic feature, the configuration system attempts to include only one implementation to minimize code size.
 
@@ -101,10 +101,10 @@ The following table shows key type support for each driver:
 +-----------------------+---------------------------+----------------------------+
 | DH Key Pair           | Not supported             | Not supported              |
 +-----------------------+---------------------------+----------------------------+
-| DH Public key         | Not supported             | Not supported              |
+| DH Public Key         | Not supported             | Not supported              |
 +-----------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported key types.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for all supported key types.
 
 Cipher configurations
 *********************
@@ -136,7 +136,7 @@ To enable cipher modes, set one or more of the Kconfig options in the following 
 Cipher support
 ==============
 
-The following table shows Cipher algorithm support for each driver:
+The following table shows cipher algorithm support for each driver:
 
 +-----------------------+---------------------------+----------------------------+
 | Cipher mode           | nrf_cc3xx driver support  | nrf_oberon driver support  |
@@ -160,7 +160,7 @@ The following table shows Cipher algorithm support for each driver:
 | Stream cipher         | Supported                 | Supported                  |
 +-----------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_CIPHER_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_CIPHER_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
 The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Cipher configurations`_.
 
@@ -195,7 +195,7 @@ The following table shows Key agreement support for each driver:
 | FFDH                    | Not supported             | Not supported              |
 +-------------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
 The algorithm support when using ECC key types is dependent on one or more Kconfig options enabling curve support according to `ECC curve configurations`_.
 
@@ -287,7 +287,7 @@ The following table shows MAC algorithm support for each driver:
 | CBC-MAC        | Not supported            | Not supported              |
 +----------------+--------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_MAC_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_MAC_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
 The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `MAC configurations`_.
 
@@ -327,9 +327,9 @@ The following table shows AEAD algorithm support for each driver:
 | ChaCha20-Poly1305     | Supported                 | Supported                 |
 +-----------------------+---------------------------+---------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_AEAD_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_AEAD_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
-Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in `AEAD configurations`_.
+Configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `AEAD configurations`_.
 
 Key size configuration for CCM and GCM is supported as described in `AES key size configuration`_.
 
@@ -436,7 +436,7 @@ The following table shows asymmetric encryption algorithm support for each drive
 | RSA PKCS#1 v1.5 crypt           | Supported                 | Supported                  |
 +---------------------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
 Configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Asymmetric encryption configurations`_.
 
@@ -596,7 +596,7 @@ The following table shows ECC curve support for each driver:
 | FRP256v1                 | Not supported             | Not supported              |
 +--------------------------+---------------------------+----------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for key management using ECC curves.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for key management using ECC curves.
 
 RNG configurations
 ******************
@@ -678,7 +678,7 @@ To configure the Hash algorithms, set one or more of the Kconfig options in the 
 Hash support
 ============
 
-The following table shows Hash algorithm support for each driver:
+The following table shows hash algorithm support for each driver:
 
 +-----------------------+----------------------------+---------------------------+
 | Hash algorithm        |  nrf_cc3xx driver support  | nrf_oberon driver support |
@@ -718,7 +718,7 @@ The following table shows Hash algorithm support for each driver:
 | RIPEMD160             | Not supported              | Not supported             |
 +-----------------------+----------------------------+---------------------------+
 
-The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all the supported algorithms.
+The option :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER` enables the :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
 The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Hash configurations`_.
 
@@ -756,7 +756,7 @@ The following table shows PAKE algorithm support for each driver:
 | SRP-6                 | Not supported            | Supported                 |
 +-----------------------+--------------------------+---------------------------+
 
-Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in  `Password-authenticated key exchange configurations`_.
+Configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in  `Password-authenticated key exchange configurations`_.
 
 Key size configurations
 ***********************
