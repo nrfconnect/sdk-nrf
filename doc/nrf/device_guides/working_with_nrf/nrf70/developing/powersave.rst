@@ -29,6 +29,13 @@ The nRF70 Series device can be in one of the following power states:
   In this state, the device consumes very low power (~2 µA) and does not retain any state information (apart from the values in the OTP memory).
   The device will only respond to a BUCKEN assertion to wake from the Shutdown state.
 
+The nRF70 Series transition to and from the Shutdown state is automatically managed by the Wi-Fi driver.
+When the network interface is brought down, the Wi-Fi driver puts the nRF70 Series device in Shutdown state.
+When the network interface is brought up, the Wi-Fi driver puts the nRF70 Series device in Active state.
+
+.. note::
+   The application needs to reinitialize the Wi-Fi association after the network interface is brought up.
+
 Functional state
 ================
 
