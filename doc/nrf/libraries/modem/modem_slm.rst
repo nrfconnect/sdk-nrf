@@ -41,13 +41,16 @@ Optionally configure the following Kconfig options based on need:
 * :kconfig:option:`CONFIG_MODEM_SLM_SHELL` - Enables the shell function in the Modem SLM library, which is not enabled by default.
 * :kconfig:option:`CONFIG_MODEM_SLM_INDICATE_PIN` - Configures the optional indicator GPIO, which is not configured by default.
 
-The application must use Zephyr chosen nodes in devicetree to select UART device. For example:
+The application must use Zephyr ``chosen`` nodes in devicetree to select UART device.
+Additionally, GPIO can also be selected.
+For example:
 
 .. code-block:: devicetree
 
    / {
       chosen {
          ncs,slm-uart = &uart1;
+         ncs,slm-gpio = &gpio0;
       };
    };
 
