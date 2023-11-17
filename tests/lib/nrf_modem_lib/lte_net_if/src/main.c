@@ -82,9 +82,6 @@ void setUp(void)
 	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
 	lte_lc_event_handler_callback(&cereg_evt);
 
-	/* Let events propagate */
-	k_sleep(K_MSEC(10));
-
 	/* Remove IP addresses if any */
 	if (net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &net_if)) {
 		net_if_config_ipv6_put(net_if);
@@ -99,9 +96,6 @@ void setUp(void)
 
 	/* Take iface down */
 	(void)net_if_down(net_if);
-
-	/* Let events propagate */
-	k_sleep(K_MSEC(10));
 
 	/* Stop ignoring mocked functions*/
 	__cmock_nrf_modem_is_initialized_StopIgnore();
@@ -311,9 +305,6 @@ void test_pdn_events_should_trigger_ipv4_address_changes(void)
 	/* Verify IPv4 was added */
 	TEST_ASSERT_TRUE(net_if_ipv4_get_global_addr(net_if, NET_ADDR_PREFERRED));
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Dectivate PDN */
 	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
 
@@ -360,9 +351,6 @@ void test_pdn_events_should_trigger_ipv6_address_changes(void)
 
 	/* Verify IPv6 was added */
 	TEST_ASSERT_TRUE(net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &net_if));
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Dectivate PDN */
 	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
@@ -418,9 +406,6 @@ void test_pdn_act_without_cereg_should_not_activate_iface(void)
 	/* Fire PDN active */
 	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that iface remains inactive */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
 }
@@ -448,9 +433,6 @@ void test_pdn_act_with_cereg_should_activate_iface(void)
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	lte_lc_event_handler_callback(&cereg_evt);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that the iface is still dormant. */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
 
@@ -461,9 +443,6 @@ void test_pdn_act_with_cereg_should_activate_iface(void)
 
 	/* Fire PDN active */
 	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Check that iface becomes active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
@@ -496,9 +475,6 @@ void test_cereg_registered_without_pdn_should_not_activate_iface(void)
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	lte_lc_event_handler_callback(&cereg_evt);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that iface remains inactive */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
 }
@@ -530,18 +506,12 @@ void test_cereg_registered_home_with_pdn_should_activate_iface(void)
 	/* Fire PDN active */
 	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that the iface is still dormant. */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
 
 	/* Fire CEREG registered (home) */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	lte_lc_event_handler_callback(&cereg_evt);
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Check that iface becomes active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
@@ -574,18 +544,12 @@ void test_cereg_registered_roaming_with_pdn_should_activate_iface(void)
 	/* Fire PDN active */
 	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that the iface is still dormant. */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
 
 	/* Fire CEREG registered (roaming) */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_ROAMING;
 	lte_lc_event_handler_callback(&cereg_evt);
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Check that iface becomes active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
@@ -616,9 +580,6 @@ void test_cereg_searching_should_not_activate_iface(void)
 	/* Fire CEREG searching */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_SEARCHING;
 	lte_lc_event_handler_callback(&cereg_evt);
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Check that iface remains active */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
@@ -656,18 +617,12 @@ void test_cereg_searching_should_not_deactivate_iface(void)
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	lte_lc_event_handler_callback(&cereg_evt);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that the iface is active. */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
 
 	/* Fire CEREG searching */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_SEARCHING;
 	lte_lc_event_handler_callback(&cereg_evt);
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Check that iface remains active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
@@ -704,18 +659,12 @@ void test_cereg_unregistered_should_deactivate_iface(void)
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	lte_lc_event_handler_callback(&cereg_evt);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that the iface is active. */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
 
 	/* Fire CEREG unregistered */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_UNKNOWN;
 	lte_lc_event_handler_callback(&cereg_evt);
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Check that iface becomes inactive */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
@@ -752,17 +701,11 @@ void test_pdn_deact_should_deactivate_iface(void)
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
 	lte_lc_event_handler_callback(&cereg_evt);
 
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
-
 	/* Check that the iface is active. */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
 
 	/* Fire PDN inactive */
 	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
-
-	/* Let events fire */
-	k_sleep(K_MSEC(10));
 
 	/* Check that iface becomes inactive */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
