@@ -52,10 +52,10 @@ The NFC Poller Device responds with the Handover Select Message after having rec
 If the NFC Tag Device takes the role of the Handover Selector, then the NFC Tag Device does not add any NDEF records defined in this specification into the TNEP status message.
 The TNEP status message follows the Service Select message and the NFC Tag Device waits for a Handover Request Message from the NFC Poller Device.
 
-The NFC Tag Device role is defined by callback sets in structure :c:type:`nfc_tnep_ch_cb` passed to :cpp:func:`nfc_tnep_ch_service_init`.
+The NFC Tag Device role is defined by callback set in the :c:struct:`nfc_tnep_ch_cb` structure and passed to the :c:func:`nfc_tnep_ch_service_init` function.
 
-   * Handover Selector role. Set :cpp:member:`request_msg_recv`.
-   * Handover Requester role. Set :cpp:member:`request_msg_prepare` and :cpp:member:`select_msg_recv`.
+   * Handover Selector role. Set :c:member:`nfc_tnep_ch_cb.request_msg_recv`.
+   * Handover Requester role. Set :c:member:`nfc_tnep_ch_cb.request_msg_prepare` and :c:member:`nfc_tnep_ch_cb.select_msg_recv`.
 
 NFC Tag Device
 **************

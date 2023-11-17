@@ -38,12 +38,12 @@ The polling device can use single response communication mode to exchange the ND
 Exchanging data is possible only when a service is selected.
 The data is exchanged in the NDEF read procedure or the NDEF write procedure.
 
-To exchange data, use :c:func:`nfc_tnep_poller_svc_update` or :c:func:`nfc_tnep_poller_on_ndef_read`.
+To exchange data, use :c:func:`nfc_tnep_poller_svc_write` or :c:func:`nfc_tnep_poller_on_ndef_read`.
 
 .. note::
     These operations are asynchronous.
 
-When the polling device finishes the NDEF read procedure or the NDEF write procedure, the application should inform the library about this by calling :c:func:`nfc_tnep_poller_on_ndef_read` or :c:func:`nfc_tnep_poller_on_ndef_update`, respectively.
+When the polling device finishes the NDEF read procedure or the NDEF write procedure, the application should inform the library about this by calling :c:func:`nfc_tnep_poller_on_ndef_read` or :c:func:`nfc_tnep_poller_on_ndef_write`, respectively.
 
 API documentation
 *****************
