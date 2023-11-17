@@ -271,49 +271,60 @@ BOOTLOADER_APIS = {
 
 
 class DfuImage:
-    MANIFEST_FILE = "manifest.json"
-
     def __init__(self, dfu_package, dev_fwinfo, dev_board_name, dev_bootloader_variant):
         assert isinstance(dev_fwinfo, FwInfo)
+        self.temp_dir = tempfile.TemporaryDirectory(dir='.')
         self.image_bin_path = None
+        self.bootloader_variant = None
+        self.image_bin_version = None
 
         if not os.path.exists(dfu_package):
             print('File does not exist')
             return
 
-        if not zipfile.is_zipfile(dfu_package):
+        if zipfile.is_zipfile(dfu_package):
+            self._initialize_from_zip_file(dfu_package, dev_fwinfo, dev_board_name,
+                                           dev_bootloader_variant)
+        else:
             print('Invalid DFU package format')
             return
 
-        self.temp_dir = tempfile.TemporaryDirectory(dir='.')
+    def _initialize_from_zip_file(self, dfu_package, dev_fwinfo, dev_board_name,
+                                  dev_bootloader_variant):
+        MANIFEST_FILE = "manifest.json"
 
         with ZipFile(dfu_package, 'r') as zip_file:
             zip_file.extractall(self.temp_dir.name)
 
         try:
-            with open(os.path.join(self.temp_dir.name, DfuImage.MANIFEST_FILE)) as f:
+            with open(os.path.join(self.temp_dir.name, MANIFEST_FILE)) as f:
                 manifest_str = f.read()
-                self.manifest = json.loads(manifest_str)
-                self.bootloader_api = DfuImage._get_bootloader_api(self.manifest)
+                manifest = json.loads(manifest_str)
+                bootloader_api = DfuImage._zip_get_bootloader_api(manifest)
         except Exception:
-            self.bootloader_api = None
-            self.manifest = None
+            bootloader_api = None
+            manifest = None
 
-        if self.bootloader_api is not None:
-            assert 'get_dfu_image_version' in self.bootloader_api
-            assert 'get_dfu_image_bootloader_var' in self.bootloader_api
-            assert 'get_dfu_image_name' in self.bootloader_api
-            assert 'is_dfu_file_correct' in self.bootloader_api
+        if bootloader_api is not None:
+            assert 'get_dfu_image_version' in bootloader_api
+            assert 'get_dfu_image_bootloader_var' in bootloader_api
+            assert 'get_dfu_image_name' in bootloader_api
+            assert 'is_dfu_file_correct' in bootloader_api
 
-            self.image_bin_path = DfuImage._parse_dfu_image_bin_path(self.temp_dir.name,
-                                                                     self.manifest,
-                                                                     dev_fwinfo,
-                                                                     dev_board_name,
-                                                                     dev_bootloader_variant,
-                                                                     self.bootloader_api)
+            self.image_bin_path = DfuImage._zip_parse_dfu_image_bin_path(self.temp_dir.name,
+                                                                         manifest,
+                                                                         dev_fwinfo,
+                                                                         dev_board_name,
+                                                                         dev_bootloader_variant,
+                                                                         bootloader_api)
+            if self.image_bin_path is not None:
+                self.bootloader_variant = bootloader_api['get_dfu_image_bootloader_var']()
+                self.image_bin_version = \
+                    bootloader_api['get_dfu_image_version'](self.image_bin_path)
+
 
     @staticmethod
-    def _get_bootloader_api(manifest_json):
+    def _zip_get_bootloader_api(manifest_json):
         bootloader_name = None
 
         for f in manifest_json["files"]:
@@ -357,7 +368,8 @@ class DfuImage:
         return board_name.split('_')[0]
 
     @staticmethod
-    def _parse_dfu_image_bin_path(dfu_folder, manifest, dev_fwinfo, dev_board_name, dev_bootloader_variant, bootloader_api):
+    def _zip_parse_dfu_image_bin_path(dfu_folder, manifest, dev_fwinfo, dev_board_name,
+				      dev_bootloader_variant, bootloader_api):
         flash_area_id = dev_fwinfo.get_flash_area_id()
         if flash_area_id not in (0, 1):
             print('Invalid area ID in FW info')
@@ -393,13 +405,10 @@ class DfuImage:
         return self.image_bin_path
 
     def get_dfu_image_version(self):
-        if self.image_bin_path is None:
-            return None
-        else:
-            return self.bootloader_api['get_dfu_image_version'](self.image_bin_path)
+        return self.image_bin_version
 
     def get_dfu_image_bootloader_var(self):
-        return self.bootloader_api['get_dfu_image_bootloader_var']()
+        return self.bootloader_variant
 
     def __del__(self):
         try:
