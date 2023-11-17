@@ -169,9 +169,9 @@ int handle_at_tftp(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			if (!slm_util_cmd_casecmp(mode, "netascii") &&
-			    !slm_util_cmd_casecmp(mode, "octet") &&
-			    !slm_util_cmd_casecmp(mode, "mail")) {
+			if (!slm_util_casecmp(mode, "netascii") &&
+			    !slm_util_casecmp(mode, "octet") &&
+			    !slm_util_casecmp(mode, "mail")) {
 				return -EINVAL;
 			}
 		} else {

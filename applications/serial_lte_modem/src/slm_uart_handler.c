@@ -12,7 +12,6 @@
 #include <zephyr/sys/ring_buffer.h>
 #include <zephyr/pm/device.h>
 #include <pm_config.h>
-#include "slm_settings.h"
 #include "slm_uart_handler.h"
 
 #include <zephyr/logging/log.h>

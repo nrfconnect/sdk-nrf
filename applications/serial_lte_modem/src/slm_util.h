@@ -21,6 +21,23 @@
 
 extern struct k_work_q slm_work_q; /* SLM's work queue. */
 
+/** Replacement for @c nrf_modem_at_printf() that cannot be
+ *  used so that the AT command interception works properly.
+ */
+int slm_util_at_printf(const char *fmt, ...);
+
+/** Replacement for @c nrf_modem_at_scanf() that cannot be
+ *  used so that the AT command interception works properly.
+ */
+int slm_util_at_scanf(const char *cmd, const char *fmt, ...);
+
+/** Forwards an intercepted AT command to the modem library.
+ *  @warning This must and can only be called from interception callbacks.
+ *  @note As of now this only returns the AT response code from the modem.
+ *  @return The AT response code as an integer and its string representation in @c buf.
+ */
+int slm_util_at_cmd_fwd_from_cb(char *buf, size_t len, char *at_cmd);
+
 /**
  * @brief Compare string ignoring case
  *
@@ -30,16 +47,6 @@ extern struct k_work_q slm_work_q; /* SLM's work queue. */
  * @return true If two commands match, false if not.
  */
 bool slm_util_casecmp(const char *str1, const char *str2);
-
-/**
- * @brief Compare name of AT command ignoring case
- *
- * @param cmd Command string received from UART
- * @param slm_cmd Propreiatry command supported by SLM
- *
- * @return true If two commands match, false if not.
- */
-bool slm_util_cmd_casecmp(const char *cmd, const char *slm_cmd);
 
 /**
  * @brief Detect hexdecimal string data type

@@ -216,13 +216,13 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	}
 
 	/* start HTTP(S) FOTA */
-	if (slm_util_cmd_casecmp(schema, SCHEMA_HTTPS)) {
+	if (slm_util_casecmp(schema, SCHEMA_HTTPS)) {
 		if (sec_tag == INVALID_SEC_TAG) {
 			LOG_ERR("Missing sec_tag");
 			return -EINVAL;
 		}
 		ret = fota_download_start_with_image_type(hostname, path, sec_tag, pdn_id, 0, type);
-	} else if (slm_util_cmd_casecmp(schema, SCHEMA_HTTP)) {
+	} else if (slm_util_casecmp(schema, SCHEMA_HTTP)) {
 		ret = fota_download_start_with_image_type(hostname, path, -1, pdn_id, 0, type);
 	} else {
 		ret = -EINVAL;
@@ -428,20 +428,20 @@ void slm_fota_init_state(void)
 
 void slm_fota_post_process(void)
 {
+	if (slm_fota_stage != FOTA_STAGE_COMPLETE && slm_fota_stage != FOTA_STAGE_ACTIVATE) {
+		return;
+	}
 	LOG_INF("FOTA result %d,%d,%d", slm_fota_stage, slm_fota_status, slm_fota_info);
 
-	if (slm_fota_stage == FOTA_STAGE_COMPLETE || slm_fota_stage == FOTA_STAGE_ACTIVATE) {
-		/* report final result of last fota */
-		if (slm_fota_status == FOTA_STATUS_OK) {
-			rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
-		} else {
-			rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", slm_fota_stage, slm_fota_status,
-				slm_fota_info);
-		}
-
-		slm_fota_init_state();
-		slm_settings_fota_save();
+	if (slm_fota_status == FOTA_STATUS_OK) {
+		rsp_send("\r\n#XFOTA: %d,%d\r\n", slm_fota_stage, slm_fota_status);
+	} else {
+		rsp_send("\r\n#XFOTA: %d,%d,%d\r\n", slm_fota_stage, slm_fota_status,
+			slm_fota_info);
 	}
+
+	slm_fota_init_state();
+	slm_settings_fota_save();
 }
 
 #if defined(CONFIG_SLM_FULL_FOTA)

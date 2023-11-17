@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/net/net_ip.h>
-#include <nrf_socket.h>
+#ifndef SLM_DEFINES_
+#define SLM_DEFINES_
 
-#ifndef SLM_AT_DEFINES_
-#define SLM_AT_DEFINES_
+#include <nrf_socket.h>
+#include "slm_trap_macros.h"
 
 #define INVALID_SOCKET       -1
 #define INVALID_SEC_TAG      -1
@@ -35,4 +35,4 @@
 #define SLM_NRF52_BLK_SIZE   4096 /** nRF52 flash block size for write operation */
 #define SLM_NRF52_BLK_TIME   2000 /** nRF52 flash block write time in millisecond (1.x second) */
 
-#endif /* SLM_AT_DEFINES_ */
+#endif

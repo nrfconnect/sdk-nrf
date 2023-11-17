@@ -53,9 +53,13 @@ int slm_at_host_init(void);
 
 /**
  * @brief Uninitialize AT host for serial LTE modem
- *
  */
 void slm_at_host_uninit(void);
+
+/**
+ * @brief Runs the SLM-proprietary @c at_cmd if it is one.
+ */
+int slm_at_parse(const char *cmd_str, size_t cmd_name_len);
 
 /**
  * @brief Send AT command response
@@ -72,7 +76,6 @@ void rsp_send_ok(void);
 
 /**
  * @brief Send AT command response of ERROR
- *
  */
 void rsp_send_error(void);
 

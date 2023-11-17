@@ -12,6 +12,8 @@
  * @brief UART handler for serial LTE modem
  * @{
  */
+#include "slm_trap_macros.h"
+
 #define UART_RX_MARGIN_MS	10
 
 #define HEXDUMP_LIMIT		16

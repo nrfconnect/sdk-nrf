@@ -7,14 +7,122 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
+#include <nrf_errno.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 
-LOG_LEVEL_SET(CONFIG_SLM_LOG_LEVEL);
+LOG_MODULE_REGISTER(slm_util, CONFIG_SLM_LOG_LEVEL);
 
-/**
- * @brief Compare string ignoring case
+static bool cmd_name_has_lower(const char *cmd)
+{
+	for (size_t i = 0; cmd[i] != '\0'; ++i) {
+		const char c = cmd[i];
+
+		/* Set/test command names are delimited by '=', read by '?'. */
+		if (c == '=' || c == '?') {
+			break;
+		} else if (islower(c)) {
+			LOG_ERR("FIX ME: AT command \"%s\" must be all-uppercase.", cmd);
+			return true;
+		}
+	}
+	return false;
+}
+
+int slm_util_at_printf(const char *fmt, ...)
+{
+	int ret;
+	char buf[128];
+	va_list args;
+
+	va_start(args, fmt);
+	ret = vsnprintf(buf, sizeof(buf), fmt, args);
+	va_end(args);
+	if (ret >= sizeof(buf)) {
+		LOG_ERR("AT command \"%.16s...\" would get truncated from %u to %u bytes. "
+			"The buffer needs to be made bigger.", buf, ret, sizeof(buf) - 1);
+		return -E2BIG;
+	}
+
+	/* AT command interception is case-sensitive. */
+	if (cmd_name_has_lower(buf)) {
+		return -EINVAL;
+	}
+
+	/* Even though we are not interested in the AT response, it must fit
+	 * into the provided buffer so that the response code is returned.
+	 */
+	ret = nrf_modem_at_cmd(buf, sizeof(buf), "%s", buf);
+	if (ret == -NRF_E2BIG) {
+		/* Unlikely, but in that case the response code most likely didn't
+		 * make it into the buffer, so searching for it would be fruitless.
+		 */
+		LOG_ERR("AT response to \"%s\" didn't fit into %u bytes. "
+			"The buffer needs to be made bigger.", fmt, sizeof(buf) - 1);
+	}
+	return ret;
+}
+
+int slm_util_at_scanf(const char *cmd, const char *fmt, ...)
+{
+	char buf[128];
+	va_list args;
+	int ret;
+
+	/* AT command interception is case-sensitive. */
+	if (cmd_name_has_lower(cmd)) {
+		return -EINVAL;
+	}
+
+	ret = nrf_modem_at_cmd(buf, sizeof(buf), "%s", cmd);
+	if (ret == -NRF_E2BIG) {
+		LOG_ERR("AT response to \"%s\" truncated to %u bytes. "
+			"The buffer needs to be made bigger.", cmd, sizeof(buf) - 1);
+		buf[sizeof(buf) - 1] = '\0';
+	} else if (ret < 0) {
+		return ret;
+	}
+
+	va_start(args, fmt);
+	ret = vsscanf(buf, fmt, args);
+	va_end(args);
+
+	if (ret == 0) {
+		ret = -NRF_EBADMSG;
+	}
+	return ret;
+}
+
+int slm_util_at_cmd_fwd_from_cb(char *buf, size_t len, char *at_cmd)
+{
+/* This gets called by interception callbacks invoked by nrf_modem_at_cmd().
+ * Here nrf_modem_at_cmd() must be bypassed because it would otherwise call
+ * the same interception callbacks and infinite recursion would happen.
  */
+#undef nrf_modem_at_printf
+	const int ret = nrf_modem_at_printf("%s", at_cmd);
+
+/* Restore the trap macro after the only place where this function is
+ * allowed to be used so that other code does not accidentally use it.
+ */
+#define nrf_modem_at_printf nrf_modem_at_scanf
+
+	if (ret < 0) {
+		LOG_ERR("Forwarding of \"%s\" failed (%d).", at_cmd, ret);
+		return ret;
+	}
+
+	const int err = nrf_modem_at_err_type(ret);
+
+	if (!ret || err == NRF_MODEM_AT_ERROR) {
+		snprintf(buf, len, "%s\r\n", ret ? "ERROR" : "OK");
+	} else {
+		snprintf(buf, len, "+CM%c ERROR: %d\r\n",
+			err == NRF_MODEM_AT_CME_ERROR ? 'E' : 'S', nrf_modem_at_err(ret));
+	}
+	return ret;
+}
+
 bool slm_util_casecmp(const char *str1, const char *str2)
 {
 	int str2_len = strlen(str2);
@@ -32,40 +140,6 @@ bool slm_util_casecmp(const char *str1, const char *str2)
 	return true;
 }
 
-
-/**
- * @brief Compare name of AT command ignoring case
- */
-bool slm_util_cmd_casecmp(const char *cmd, const char *slm_cmd)
-{
-	int i;
-	int slm_cmd_len = strlen(slm_cmd);
-
-	if (strlen(cmd) < slm_cmd_len) {
-		return false;
-	}
-
-	for (i = 0; i < slm_cmd_len; i++) {
-		if (toupper((int)*(cmd + i)) != toupper((int)*(slm_cmd + i))) {
-			return false;
-		}
-	}
-#if defined(CONFIG_SLM_CR_LF_TERMINATION)
-	if (strlen(cmd) > (slm_cmd_len + 2)) {
-#else
-	if (strlen(cmd) > (slm_cmd_len + 1)) {
-#endif
-		char ch = *(cmd + i);
-		/* With parameter, SET TEST, "="; READ, "?" */
-		return ((ch == '=') || (ch == '?'));
-	}
-
-	return true;
-}
-
-/**
- * @brief Detect hexdecimal string data type
- */
 bool slm_util_hexstr_check(const uint8_t *data, uint16_t data_len)
 {
 	for (int i = 0; i < data_len; i++) {
@@ -81,9 +155,6 @@ bool slm_util_hexstr_check(const uint8_t *data, uint16_t data_len)
 	return true;
 }
 
-/**
- * @brief Encode hex array to hexdecimal string (ASCII text)
- */
 int slm_util_htoa(const uint8_t *hex, uint16_t hex_len, char *ascii, uint16_t ascii_len)
 {
 	if (hex == NULL || ascii == NULL) {
@@ -100,9 +171,6 @@ int slm_util_htoa(const uint8_t *hex, uint16_t hex_len, char *ascii, uint16_t as
 	return (hex_len * 2);
 }
 
-/**
- * @brief Decode hexdecimal string (ASCII text) to hex array
- */
 int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t hex_len)
 {
 	char hex_str[3];
@@ -129,9 +197,6 @@ int slm_util_atoh(const char *ascii, uint16_t ascii_len, uint8_t *hex, uint16_t 
 	return (ascii_len / 2);
 }
 
-/**
- * @brief Get string value from AT command with length check
- */
 int util_string_get(const struct at_param_list *list, size_t index, char *value, size_t *len)
 {
 	int ret;
@@ -150,9 +215,6 @@ int util_string_get(const struct at_param_list *list, size_t index, char *value,
 	return -ENOMEM;
 }
 
-/**
- * @brief Get float value from string value input in AT command.
- */
 int util_string_to_float_get(const struct at_param_list *list, size_t index, float *value)
 {
 	int ret;
@@ -169,9 +231,6 @@ int util_string_to_float_get(const struct at_param_list *list, size_t index, flo
 	return 0;
 }
 
-/**
- * @brief Get double value from string value input in AT command.
- */
 int util_string_to_double_get(const struct at_param_list *list, size_t index, double *value)
 {
 	int ret;
@@ -188,9 +247,6 @@ int util_string_to_double_get(const struct at_param_list *list, size_t index, do
 	return 0;
 }
 
-/**
- * @brief use AT command to get IPv4 and/or IPv6 address for specified PDN
- */
 void util_get_ip_addr(int cid, char *addr4, char *addr6)
 {
 	int ret;
@@ -205,7 +261,7 @@ void util_get_ip_addr(int cid, char *addr4, char *addr6)
 	 * PDN type "IPV6": PDP_addr_1 is <IPv6>, max 46(INET6_ADDRSTRLEN),':', digits, 'A'~'F'
 	 * PDN type "IPV4V6": <IPv4>,<IPv6> or <IPV4> or <IPv6>
 	 */
-	ret = nrf_modem_at_scanf(cmd, "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
+	ret = slm_util_at_scanf(cmd, "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
 				 addr1, addr2);
 	if (ret <= 0) {
 		return;
@@ -225,9 +281,6 @@ void util_get_ip_addr(int cid, char *addr4, char *addr6)
 	}
 }
 
-/**
- * @brief Convert string to integer
- */
 int util_str_to_int(const char *str_buf, int base, int *output)
 {
 	int temp;
@@ -245,9 +298,6 @@ int util_str_to_int(const char *str_buf, int base, int *output)
 	return 0;
 }
 
-/**
- * @brief Resolve remote host by hostname or IP address
- */
 #define PORT_MAX_SIZE    5 /* 0xFFFF = 65535 */
 #define PDN_ID_MAX_SIZE  2 /* 0..10 */
 

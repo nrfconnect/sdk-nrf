@@ -16,6 +16,7 @@
 #include <zephyr/types.h>
 #include <zephyr/net/tls_credentials.h>
 #include <modem/modem_key_mgmt.h>
+#include "slm_trap_macros.h"
 
 #define MAX_SLM_SEC_TAG (INT_MAX/10)
 #define MIN_SLM_SEC_TAG 0

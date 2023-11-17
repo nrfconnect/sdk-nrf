@@ -423,7 +423,7 @@ static int do_secure_socketopt_set_str(int option, const char *value)
 		/** Write-only socket option to set hostname. It accepts a string containing
 		 *  the hostname (may be NULL to disable hostname verification).
 		 */
-		if (slm_util_cmd_casecmp(value, "NULL")) {
+		if (slm_util_casecmp(value, "NULL")) {
 			ret = setsockopt(sock.fd, SOL_TLS, option, NULL, 0);
 		} else {
 			ret = setsockopt(sock.fd, SOL_TLS, option, value, strlen(value));

@@ -10,7 +10,6 @@
 #include <zephyr/drivers/uart.h>
 #include <zephyr/sys/ring_buffer.h>
 #include <string.h>
-#include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 #include "slm_uart_handler.h"
@@ -49,9 +48,7 @@ K_MUTEX_DEFINE(mutex_data); /* Protects the data_rb and quit_str_partial_match. 
 
 static struct k_work raw_send_scheduled_work;
 
-
 /* global functions defined in different files */
-int slm_at_parse(const char *at_cmd);
 int slm_at_init(void);
 void slm_at_uninit(void);
 
@@ -285,9 +282,9 @@ static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
  * <body>: alphanumeric char only, size > 0
  * <parameters>: arbitrary, size > 0
  */
-static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
+static int cmd_grammar_check(const char *cmd, size_t length)
 {
-	const uint8_t *body;
+	const char *body;
 
 	/* check AT (if not, no check) */
 	if (length < 2 || toupper((int)cmd[0]) != 'A' || toupper((int)cmd[1]) != 'T') {
@@ -427,11 +424,23 @@ static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 	}
 }
 
-static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
+static size_t cmd_name_toupper(char *cmd, size_t cmd_len)
+{
+	size_t i;
+
+	/* Set/test command names are delimited by '=', read by '?'. */
+	for (i = 0; i != cmd_len && cmd[i] != '=' && cmd[i] != '?'; ++i) {
+
+		cmd[i] = toupper(cmd[i]);
+	}
+	return i;
+}
+
+static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 {
 	int err;
-	uint16_t offset = 0;
-	uint8_t *at_cmd = buf;
+	size_t offset = 0;
+	char *at_cmd = buf;
 
 	LOG_HEXDUMP_DBG(buf, cmd_length, "RX");
 
@@ -439,7 +448,7 @@ static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 	 * We ignore everything before the start of the AT-command.
 	 */
 	while (offset + 1 < cmd_length) {
-		if (toupper((int)buf[offset]) == 'A' && toupper((int)buf[offset + 1]) == 'T') {
+		if (toupper(buf[offset]) == 'A' && toupper(buf[offset + 1]) == 'T') {
 			at_cmd += offset;
 			cmd_length -= offset;
 			break;
@@ -453,18 +462,20 @@ static void cmd_send(uint8_t *buf, uint16_t cmd_length, uint16_t buf_size)
 		return;
 	}
 
-	err = slm_at_parse((const char *)at_cmd);
+	const size_t cmd_name_len = cmd_name_toupper(at_cmd, cmd_length);
+
+	err = slm_at_parse(at_cmd, cmd_name_len);
 	if (err == 0) {
 		rsp_send_ok();
 		return;
 	} else if (err != UNKNOWN_AT_COMMAND_RET) {
+		LOG_ERR("AT command error: %d", err);
 		rsp_send_error();
 		return;
 	}
 
 	/* Send to modem, reserve space for CRLF in response buffer */
-	err = nrf_modem_at_cmd((void *)(buf + strlen(CRLF_STR)),
-				buf_size - strlen(CRLF_STR), "%s", at_cmd);
+	err = nrf_modem_at_cmd(buf + strlen(CRLF_STR), buf_size - strlen(CRLF_STR), "%s", at_cmd);
 	if (err < 0) {
 		LOG_ERR("AT command failed: %d", err);
 		rsp_send_error();

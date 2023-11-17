@@ -99,15 +99,15 @@ static bool is_gnss_activated(void)
 	int cfun_mode = 0;
 
 	/*parse %XSYSTEMMODE=<LTE_M_support>,<NB_IoT_support>,<GNSS_support>,<LTE_preference> */
-	if (nrf_modem_at_scanf("AT%XSYSTEMMODE?",
-			       "%XSYSTEMMODE: %*d,%*d,%d", &activated) == 1) {
+	if (slm_util_at_scanf("AT%XSYSTEMMODE?",
+			       "%%XSYSTEMMODE: %*d,%*d,%d", &activated) == 1) {
 		if (activated == 0) {
 			return false;
 		}
 	}
 
 	/*parse +CFUN: <fun> */
-	if (nrf_modem_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun_mode) == 1) {
+	if (slm_util_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun_mode) == 1) {
 		if (cfun_mode == 1 || cfun_mode == 31) {
 			return true;
 		}
