@@ -61,13 +61,13 @@ ESB requires exclusive access to all fixed and configured resources for the :ref
      - NRF_TIMER2
      - configurable
    * - DPPI/PPI channels
-     - 6 channels
+     - 6 channels (7 channels for nRF53 and nRF54 Series devices)
      - automatically allocated
    * - Event generator unit
-     - NRF_EGU0 events 6 - 7
+     - NRF_EGU0 events 6 - 7 (event 8 for nRF54 Series devices)
      - fixed
    * - Software interrupt
-     - 0
+     - NRF_SWI0 (unused in nRF54 Series devices)
      - fixed
 
 .. note::
