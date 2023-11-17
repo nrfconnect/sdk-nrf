@@ -25,6 +25,7 @@ config SECURE_BOOT_NETWORK_BOARD
 	string
 	default "nrf5340dk_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
 	default "thingy53_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	default "nrf7002dk_nrf5340_cpunet" if SECURE_BOOT_NETCORE && ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp")
 	depends on SECURE_BOOT_NETCORE
 	help
 	  Remote board when building this sample.

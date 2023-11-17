@@ -4,7 +4,7 @@
 
 config SUPPORT_NETCORE
 	bool
-	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 
 menu "Network core configuration"
 	depends on SUPPORT_NETCORE
@@ -39,10 +39,10 @@ config NRF_DEFAULT_MULTIPROTOCOL
 
 choice NETCORE
 	prompt "Netcore image"
-	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	default NETCORE_HCI_RPMSG if NRF_DEFAULT_BLUETOOTH && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
+	default NETCORE_HCI_RPMSG if NRF_DEFAULT_BLUETOOTH && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
+	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
+	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	default NETCORE_NONE
 	depends on SUPPORT_NETCORE
 
@@ -87,6 +87,7 @@ config NETCORE_EMPTY_BOARD
 	string
 	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
 	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	depends on NETCORE_EMPTY
 	help
 	  Remote board when building this sample.
@@ -94,11 +95,11 @@ config NETCORE_EMPTY_BOARD
 
 config NETCORE_EMPTY_DOMAIN
 	string
-	default "CPUNET" if (NETCORE_EMPTY_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "thingy53_nrf5340_cpunet")
+	default "CPUNET" if (NETCORE_EMPTY_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_EMPTY_DOMAIN_APP
 	bool
-	default y if (NETCORE_EMPTY_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "thingy53_nrf5340_cpunet")
+	default y if (NETCORE_EMPTY_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_HCI_RPMSG_NAME
 	string
@@ -111,6 +112,7 @@ config NETCORE_HCI_RPMSG_BOARD
 	string
 	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
 	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	depends on NETCORE_HCI_RPMSG
 	help
 	  Remote board when building this sample.
@@ -118,11 +120,11 @@ config NETCORE_HCI_RPMSG_BOARD
 
 config NETCORE_HCI_RPMSG_DOMAIN
 	string
-	default "CPUNET" if (NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "thingy53_nrf5340_cpunet")
+	default "CPUNET" if (NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_HCI_RPMSG_DOMAIN_APP
 	bool
-	default y if (NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "thingy53_nrf5340_cpunet")
+	default y if (NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_802154_RPMSG_NAME
 	string
@@ -135,6 +137,7 @@ config NETCORE_802154_RPMSG_BOARD
 	string
 	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
 	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	depends on NETCORE_802154_RPMSG
 	help
 	  Remote board when building this sample.
@@ -142,11 +145,11 @@ config NETCORE_802154_RPMSG_BOARD
 
 config NETCORE_802154_RPMSG_DOMAIN
 	string
-	default "CPUNET" if (NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "thingy53_nrf5340_cpunet")
+	default "CPUNET" if (NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_802154_RPMSG_DOMAIN_APP
 	bool
-	default y if (NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "thingy53_nrf5340_cpunet")
+	default y if (NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_MULTIPROTOCOL_RPMSG_NAME
 	string
@@ -159,6 +162,7 @@ config NETCORE_MULTIPROTOCOL_RPMSG_BOARD
 	string
 	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
 	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
+	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 	depends on NETCORE_MULTIPROTOCOL_RPMSG
 	help
 	  Remote board when building this sample.
@@ -166,11 +170,11 @@ config NETCORE_MULTIPROTOCOL_RPMSG_BOARD
 
 config NETCORE_MULTIPROTOCOL_RPMSG_DOMAIN
 	string
-	default "CPUNET" if (NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "thingy53_nrf5340_cpunet")
+	default "CPUNET" if (NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_MULTIPROTOCOL_RPMSG_DOMAIN_APP
 	bool
-	default y if (NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "thingy53_nrf5340_cpunet")
+	default y if (NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_APP_UPDATE
 	bool "Network core updates"
