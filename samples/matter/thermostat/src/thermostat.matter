@@ -1395,6 +1395,8 @@ server cluster Thermostat = 513 {
   readonly attribute int16s absMaxHeatSetpointLimit = 4;
   readonly attribute int16s absMinCoolSetpointLimit = 5;
   readonly attribute int16s absMaxCoolSetpointLimit = 6;
+  attribute int16s occupiedCoolingSetpoint = 17;
+  attribute int16s occupiedHeatingSetpoint = 18;
   attribute access(write: manage) int16s minHeatSetpointLimit = 21;
   attribute access(write: manage) int16s maxHeatSetpointLimit = 22;
   attribute access(write: manage) int16s minCoolSetpointLimit = 23;
@@ -1794,6 +1796,8 @@ endpoint 1 {
     ram      attribute absMaxHeatSetpointLimit default = 3000;
     ram      attribute absMinCoolSetpointLimit default = 1600;
     ram      attribute absMaxCoolSetpointLimit default = 3200;
+    ram      attribute occupiedCoolingSetpoint default = 2600;
+    ram      attribute occupiedHeatingSetpoint default = 2000;
     ram      attribute minHeatSetpointLimit default = 700;
     ram      attribute maxHeatSetpointLimit default = 3000;
     ram      attribute minCoolSetpointLimit default = 1600;
