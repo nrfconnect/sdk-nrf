@@ -87,7 +87,7 @@ Kconfig*                                  @tejlmand
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
-/include/mpsl/                            @rugeGerritsen
+/include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
 /include/shell/                           @nordic-krch
@@ -110,7 +110,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_battery/                       @MirkoCovizzi
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
-/lib/multithreading_lock/                 @rugeGerritsen
+/lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/pdn/                                 @lemrey @rlubos
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
 /lib/fatal_error/                         @KAGA164 @nordic-krch
@@ -158,7 +158,7 @@ Kconfig*                                  @tejlmand
 /samples/event_manager_proxy/             @rakons
 /samples/gazell/                          @leewkb4567
 /samples/keys/                            @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
-/samples/mpsl/                            @rugeGerritsen
+/samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
 /samples/nrf5340/empty_app_core/          @doki-nordic
@@ -210,7 +210,7 @@ Kconfig*                                  @tejlmand
 /subsys/audio_module/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @ludvigsj
-/subsys/bluetooth/controller/             @rugeGerritsen
+/subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
@@ -229,7 +229,7 @@ Kconfig*                                  @tejlmand
 /subsys/event_manager_proxy/              @rakons
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
-/subsys/mpsl/                             @rugeGerritsen
+/subsys/mpsl/                             @nrfconnect/ncs-dragoon
 /subsys/mpsl/cx/                          @jciupis @martintv
 /subsys/mpsl/fem/                         @jciupis @martintv
 /subsys/net/                              @rlubos
