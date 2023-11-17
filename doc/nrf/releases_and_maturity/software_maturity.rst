@@ -288,3 +288,12 @@ Hardware Unique Key
 .. toggle::
 
   .. sml-table:: hw_unique_key
+
+Power management device support
+*******************************
+
+The following table indicates the software maturity levels of the support for each power management device:
+
+.. toggle::
+
+  .. sml-table:: power_management
