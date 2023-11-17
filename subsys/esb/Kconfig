@@ -60,6 +60,8 @@ config ESB_EVENT_IRQ_PRIORITY
 menu "Hardware selection (alter with care)"
 
 choice ESB_SYS_TIMER
+	default ESB_SYS_TIMER021 if $(dt_nodelabel_has_compat,timer021,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	default ESB_SYS_TIMER10 if $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	default ESB_SYS_TIMER2
 	prompt "Timer to use for the ESB system timer"
 
@@ -88,6 +90,26 @@ config ESB_SYS_TIMER4
 	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	select NRFX_TIMER4
 
+config ESB_SYS_TIMER10
+	bool "TIMER10"
+	depends on $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER10
+
+config ESB_SYS_TIMER020
+	bool "TIMER020"
+	depends on $(dt_nodelabel_has_compat,timer020,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER020
+
+config ESB_SYS_TIMER021
+	bool "TIMER021"
+	depends on $(dt_nodelabel_has_compat,timer021,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER021
+
+config ESB_SYS_TIMER022
+	bool "TIMER022"
+	depends on $(dt_nodelabel_has_compat,timer022,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER022
+
 endchoice
 
 config ESB_SYS_TIMER_INSTANCE
@@ -97,6 +119,14 @@ config ESB_SYS_TIMER_INSTANCE
 	default 2 if ESB_SYS_TIMER2
 	default 3 if ESB_SYS_TIMER3
 	default 4 if ESB_SYS_TIMER4
+	default 10 if ESB_SYS_TIMER10
+	default 20 if ESB_SYS_TIMER020
+	default 21 if ESB_SYS_TIMER021
+	default 22 if ESB_SYS_TIMER022
+
+config ESB_SYS_TIMER_INSTANCE_LEADING_ZERO
+	bool
+	default y if ESB_SYS_TIMER020 || ESB_SYS_TIMER021 || ESB_SYS_TIMER022
 
 endmenu
 
