@@ -752,8 +752,9 @@ static int sock_send(
 
 static void data_send_work_handler(struct k_work *item)
 {
+	struct k_work_delayable *delayable_work = k_work_delayable_from_work(item);
 	struct data_transfer_info *data_send_info_ptr =
-		CONTAINER_OF(item, struct data_transfer_info, work);
+		CONTAINER_OF(delayable_work, struct data_transfer_info, work);
 	struct sock_info *socket_info = data_send_info_ptr->parent;
 	int ret;
 
