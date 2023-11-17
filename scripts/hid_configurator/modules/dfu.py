@@ -17,6 +17,13 @@ import json
 from NrfHidDevice import EVENT_DATA_LEN_MAX
 import imgtool.image
 
+try:
+    from suit_generator.envelope import SuitEnvelope
+except ImportError as e:
+    print('Exception when importing SUIT generator:{}'.format(e))
+    print('The SUIT generator Python package is necassary to handle device with SUIT bootloader')
+    print('Please install the SUIT generator from ncs_next/modules/lib/suit-generator')
+
 DFU_SYNC_INTERVAL = 1
 
 class DFUInfo:
@@ -285,6 +292,8 @@ class DfuImage:
         if zipfile.is_zipfile(dfu_package):
             self._initialize_from_zip_file(dfu_package, dev_fwinfo, dev_board_name,
                                            dev_bootloader_variant)
+        elif dfu_package.endswith('.suit'):
+            self._initialize_from_suit_file(dfu_package)
         else:
             print('Invalid DFU package format')
             return
@@ -322,6 +331,31 @@ class DfuImage:
                 self.image_bin_version = \
                     bootloader_api['get_dfu_image_version'](self.image_bin_path)
 
+    def _initialize_from_suit_file(self, dfu_package):
+        temp_json_file = os.path.join(self.temp_dir.name, 'temp.json')
+
+        try:
+            envelope = SuitEnvelope()
+            envelope.load(dfu_package)
+            # The SuitEnvelope provides no API to directly access the SUIT manifest sequence number.
+            # Convert the manifest to *.json file to access the data.
+            envelope.dump(temp_json_file)
+            with open(temp_json_file) as f:
+                manifest_json = json.load(f)
+                suit_manifest = manifest_json["SUIT_Envelope_Tagged"]["suit-manifest"]
+                version = suit_manifest["suit-manifest-sequence-number"]
+        except Exception as e:
+            print("Exception during SUIT file processing")
+            print(e)
+            return
+
+        if not isinstance(version, int):
+            print("Invalid sequence number type")
+            return
+
+        self.image_bin_path = dfu_package
+        self.bootloader_variant = "SUIT"
+        self.image_bin_version = (0, 0, 0, version)
 
     @staticmethod
     def _zip_get_bootloader_api(manifest_json):
