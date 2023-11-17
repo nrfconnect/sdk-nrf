@@ -29,7 +29,7 @@ config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 
 config DESKTOP_BLE_LOW_LATENCY_LOCK
 	bool "Keep the slave latency low for LLPM connections"
-	depends on BT_LL_SOFTDEVICE
+	depends on CAF_BLE_USE_LLPM
 	help
 	  When this option is selected, the slave latency is kept low
 	  for the LLPM connection unless device is in low power mode. This
