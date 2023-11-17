@@ -283,10 +283,10 @@ static int do_ftp_verbose(void)
 		return ret;
 	}
 
-	if (slm_util_cmd_casecmp(vb_mode, "ON")) {
+	if (slm_util_casecmp(vb_mode, "ON")) {
 		ftp_verbose_on = true;
 		rsp_send("\r\nVerbose mode on\r\n");
-	} else if (slm_util_cmd_casecmp(vb_mode, "OFF")) {
+	} else if (slm_util_casecmp(vb_mode, "OFF")) {
 		ftp_verbose_on = false;
 		rsp_send("\r\nVerbose mode off\r\n");
 	} else {

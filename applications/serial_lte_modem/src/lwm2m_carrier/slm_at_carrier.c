@@ -231,7 +231,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
 		LOG_DBG("LWM2M_CARRIER_EVENT_LTE_POWER_OFF");
 		/* TODO: defer setting the modem to minimum funtional mode. */
-		err = nrf_modem_at_printf("AT+CFUN=0");
+		err = slm_util_at_printf("AT+CFUN=0");
 		break;
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		LOG_DBG("LWM2M_CARRIER_EVENT_BOOTSTRAPPED");
@@ -432,9 +432,9 @@ static int do_carrier_device_error(void)
 		return ret;
 	}
 
-	if (slm_util_cmd_casecmp(operation, "ADD")) {
+	if (slm_util_casecmp(operation, "ADD")) {
 		return lwm2m_carrier_error_code_add(error_code);
-	} else if (slm_util_cmd_casecmp(operation, "REMOVE")) {
+	} else if (slm_util_casecmp(operation, "REMOVE")) {
 		return lwm2m_carrier_error_code_remove(error_code);
 	}
 
@@ -471,11 +471,11 @@ static int do_carrier_device_mem_free(void)
 		return ret;
 	}
 
-	if (slm_util_cmd_casecmp(operation, "read")) {
+	if (slm_util_casecmp(operation, "read")) {
 		memory = lwm2m_carrier_memory_free_read();
 
 		rsp_send("\r\n#XCARRIER: %d\r\n", memory);
-	} else if (slm_util_cmd_casecmp(operation, "write")) {
+	} else if (slm_util_casecmp(operation, "write")) {
 		ret = at_params_int_get(&slm_at_param_list, 3, &memory);
 		if (ret) {
 			return ret;
@@ -537,7 +537,7 @@ static int do_carrier_device_timezone(void)
 		return ret;
 	}
 
-	if (slm_util_cmd_casecmp(operation, "READ")) {
+	if (slm_util_casecmp(operation, "READ")) {
 		const char *timezone;
 
 		timezone = lwm2m_carrier_timezone_read();
@@ -549,7 +549,7 @@ static int do_carrier_device_timezone(void)
 		}
 
 		return 0;
-	} else if (slm_util_cmd_casecmp(operation, "WRITE")) {
+	} else if (slm_util_casecmp(operation, "WRITE")) {
 		char timezone[64];
 
 		size = sizeof(timezone);
@@ -611,13 +611,13 @@ static int do_carrier_device_utc_offset(void)
 		return ret;
 	}
 
-	if (slm_util_cmd_casecmp(operation, "READ")) {
+	if (slm_util_casecmp(operation, "READ")) {
 		utc_offset = lwm2m_carrier_utc_offset_read();
 
 		rsp_send("\r\n#XCARRIER: %d\r\n", utc_offset);
 
 		return 0;
-	} else if (slm_util_cmd_casecmp(operation, "WRITE")) {
+	} else if (slm_util_casecmp(operation, "WRITE")) {
 		ret = at_params_int_get(&slm_at_param_list, 3, &utc_offset);
 		if (ret) {
 			return ret;
@@ -644,14 +644,14 @@ static int do_carrier_device_utc_time(void)
 		return ret;
 	}
 
-	if (slm_util_cmd_casecmp(operation, "READ")) {
+	if (slm_util_casecmp(operation, "READ")) {
 		utc_time = lwm2m_carrier_utc_time_read();
 		print_utc_time(time_str, utc_time);
 
 		rsp_send("\r\n#XCARRIER: %s\r\n", time_str);
 
 		return 0;
-	} else if (slm_util_cmd_casecmp(operation, "WRITE")) {
+	} else if (slm_util_casecmp(operation, "WRITE")) {
 		ret = at_params_int_get(&slm_at_param_list, 3, &utc_time);
 		if (ret) {
 			return ret;
@@ -808,7 +808,7 @@ static int do_carrier_portfolio(void)
 		}
 	}
 
-	if (slm_util_cmd_casecmp(operation, "READ") && (param_count > 4)) {
+	if (slm_util_casecmp(operation, "READ") && (param_count > 4)) {
 		ret = lwm2m_carrier_identity_read(instance_id, identity_type, buffer, &buf_len);
 		if (ret) {
 			return ret;
@@ -817,7 +817,7 @@ static int do_carrier_portfolio(void)
 		rsp_send("\r\n#XCARRIER: %s\r\n", buffer);
 
 		return 0;
-	} else if (slm_util_cmd_casecmp(operation, "WRITE") && (param_count > 4)) {
+	} else if (slm_util_casecmp(operation, "WRITE") && (param_count > 4)) {
 		size = sizeof(buffer);
 
 		ret = util_string_get(&slm_at_param_list, 5, buffer, &size);
@@ -826,7 +826,7 @@ static int do_carrier_portfolio(void)
 		}
 
 		return lwm2m_carrier_identity_write(instance_id, identity_type, buffer);
-	} else if (slm_util_cmd_casecmp(operation, "CREATE")) {
+	} else if (slm_util_casecmp(operation, "CREATE")) {
 		return lwm2m_carrier_portfolio_instance_create(instance_id);
 	}
 

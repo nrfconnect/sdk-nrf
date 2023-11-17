@@ -12,6 +12,7 @@
  * @brief Utility functions for serial LTE modem settings.
  * @{
  */
+#include "slm_trap_macros.h"
 
 /**
  * @brief Loads the SLM settings from NVM.

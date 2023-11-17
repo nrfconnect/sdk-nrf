@@ -356,34 +356,34 @@ int lte_auto_connect(void)
 #include "slm_auto_connect.h"
 	};
 
-	err = nrf_modem_at_scanf("AT+CEREG?", "+CEREG: %d", &stat);
+	err = slm_util_at_scanf("AT+CEREG?", "+CEREG: %d", &stat);
 	if (err != 1 || (stat == 1 || stat == 5)) {
 		return 0;
 	}
 
 	LOG_INF("lte auto connect");
-	err = nrf_modem_at_printf("AT%%XSYSTEMMODE=%d,%d,%d,%d", cfg.lte_m_support,
+	err = slm_util_at_printf("AT%%XSYSTEMMODE=%d,%d,%d,%d", cfg.lte_m_support,
 				  cfg.nb_iot_support, cfg.gnss_support, cfg.lte_preference);
 	if (err) {
 		LOG_ERR("Failed to configure system mode: %d", err);
 		return err;
 	}
 	if (cfg.pdp_config) {
-		err = nrf_modem_at_printf("AT+CGDCONT=0,%s,%s", cfg.pdn_fam, cfg.pdn_apn);
+		err = slm_util_at_printf("AT+CGDCONT=0,%s,%s", cfg.pdn_fam, cfg.pdn_apn);
 		if (err) {
 			LOG_ERR("Failed to configure PDN: %d", err);
 			return err;
 		}
 	}
 	if (cfg.pdp_config && cfg.pdn_auth != 0) {
-		err = nrf_modem_at_printf("AT+CGAUTH=0,%d,%s,%s", cfg.pdn_auth,
+		err = slm_util_at_printf("AT+CGAUTH=0,%d,%s,%s", cfg.pdn_auth,
 					  cfg.pdn_username, cfg.pdn_password);
 		if (err) {
 			LOG_ERR("Failed to configure AUTH: %d", err);
 			return err;
 		}
 	}
-	err = nrf_modem_at_printf("AT+CFUN=1");
+	err = slm_util_at_printf("AT+CFUN=1");
 	if (err) {
 		LOG_ERR("Failed to turn on radio: %d", err);
 		return err;

@@ -89,7 +89,7 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
 static bool is_modem_functional_mode(enum lte_lc_func_mode mode)
 {
 	int cfun;
-	int rc = nrf_modem_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun);
+	int rc = slm_util_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun);
 
 	return (rc == 1 && cfun == mode);
 }
@@ -104,7 +104,7 @@ static void modem_power_off(void)
 		 * This will return once the modem responds, which means it has actually
 		 * stopped. This has been observed to take between 1 and 2 seconds.
 		 */
-		nrf_modem_at_printf("AT+CFUN=0");
+		slm_util_at_printf("AT+CFUN=0");
 	}
 }
 
@@ -394,7 +394,7 @@ int handle_at_carrier(enum at_cmd_type cmd_type);
 #endif
 
 static struct slm_at_cmd {
-	char *string;
+	const char *string;
 	slm_at_handler_t handler;
 } slm_at_cmd_list[] = {
 	/* Generic commands */
@@ -519,24 +519,32 @@ int handle_at_clac(enum at_cmd_type cmd_type)
 	return ret;
 }
 
-int slm_at_parse(const char *at_cmd)
+int slm_at_parse(const char *cmd_str, size_t cmd_name_len)
 {
 	int ret = UNKNOWN_AT_COMMAND_RET;
 	int total = ARRAY_SIZE(slm_at_cmd_list);
 
 	for (int i = 0; i < total; i++) {
-		if (slm_util_cmd_casecmp(at_cmd, slm_at_cmd_list[i].string)) {
-			enum at_cmd_type type = at_parser_cmd_type_get(at_cmd);
+		const struct slm_at_cmd *const at_cmd = &slm_at_cmd_list[i];
 
-			at_params_list_clear(&slm_at_param_list);
-			ret = at_parser_params_from_str(at_cmd, NULL, &slm_at_param_list);
-			if (ret) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			ret = slm_at_cmd_list[i].handler(type);
-			break;
+		/* For the match to happen the AT command names must be identical,
+		 * which requires both names to have the same characters and the same length.
+		 */
+		if (!(!strncmp(cmd_str, at_cmd->string, cmd_name_len)
+		      && at_cmd->string[cmd_name_len] == '\0')) {
+			continue;
 		}
+
+		const enum at_cmd_type type = at_parser_cmd_type_get(cmd_str);
+
+		at_params_list_clear(&slm_at_param_list);
+		ret = at_parser_params_from_str(cmd_str, NULL, &slm_at_param_list);
+		if (ret) {
+			LOG_ERR("Failed to parse AT command %d", ret);
+			return -EINVAL;
+		}
+		ret = at_cmd->handler(type);
+		break;
 	}
 
 	return ret;
