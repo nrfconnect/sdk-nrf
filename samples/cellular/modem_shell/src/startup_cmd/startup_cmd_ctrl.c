@@ -28,8 +28,9 @@ static void startup_cmd_worker(struct k_work *work_item)
 {
 	char *shell_cmd_str;
 	int len = 0;
+	struct k_work_delayable *delayable_work = k_work_delayable_from_work(work_item);
 	struct startup_cmd_worker_data *data_ptr =
-		CONTAINER_OF(work_item, struct startup_cmd_worker_data, work);
+		CONTAINER_OF(delayable_work, struct startup_cmd_worker_data, work);
 
 	shell_cmd_str = startup_cmd_settings_get(data_ptr->running_mem_slot);
 
