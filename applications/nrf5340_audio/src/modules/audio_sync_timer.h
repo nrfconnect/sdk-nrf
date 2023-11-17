@@ -18,6 +18,13 @@
 uint32_t audio_sync_timer_capture(void);
 
 /**
+ * @brief Add some documentation :)
+ * 
+ * @retval
+*/
+uint32_t audio_sync_frame_send_timer_capture(void);
+
+/**
  * @brief Returns the last captured value of the sync timer.
  *
  * The captured time is corresponding to the I2S frame start.

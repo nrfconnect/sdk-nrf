@@ -22,6 +22,7 @@ LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_AUDIO_SYNC_TIMER_LOG_LEVEL);
 
 #define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
 #define AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL	     1
+#define AUDIO_SYNC_FRAME_SEND_TIME_GET_CHANNEL           2
 #define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE NRF_TIMER_TASK_CAPTURE0
 
 #define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT_CHANNEL 4
@@ -36,8 +37,11 @@ static uint8_t dppi_channel_i2s_frame_start;
 
 #define AUDIO_RTC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
 #define AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_CHANNEL           1
+#define AUDIO_RTC_TIMER_FRAME_SEND_TIME_CAPTURE_CHANNEL     2
 #define AUDIO_RTC_TIMER_I2S_FRAME_START_EVT_CAPTURE         NRF_RTC_TASK_CAPTURE_0
 #define AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_TASK              NRF_RTC_TASK_CAPTURE_1
+
+#define AUDIO_RTC_TIMER_FRAME_SEND_TIME_CAPTURE_TASK        NRF_RTC_TASK_CAPTURE_2 
 
 static const nrfx_rtc_config_t rtc_cfg = NRFX_RTC_DEFAULT_CONFIG;
 
@@ -77,6 +81,30 @@ uint32_t audio_sync_timer_capture(void)
 						AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
 
 	return timestamp_from_rtc_and_timer_get(tick, remainder_us);
+}
+
+uint32_t audio_sync_frame_send_timer_capture(void)
+{
+	uint32_t tick_before_task_trigger = nrf_rtc_cc_get(audio_rtc_timer_instance.p_reg,
+								   					   AUDIO_SYNC_FRAME_SEND_TIME_GET_CHANNEL);
+
+	nrf_rtc_task_trigger(audio_rtc_timer_instance.p_reg,
+						 AUDIO_RTC_TIMER_FRAME_SEND_TIME_CAPTURE_TASK);
+	nrf_timer_task_trigger(NRF_TIMER1,
+						   nrf_timer_capture_task_get(AUDIO_SYNC_FRAME_SEND_TIME_GET_CHANNEL));
+
+	uint32_t tick_after_task_trigger = nrf_rtc_cc_get(audio_rtc_timer_instance.p_reg,
+								   AUDIO_SYNC_FRAME_SEND_TIME_GET_CHANNEL);
+	
+	while (tick_after_task_trigger == tick_before_task_trigger) {
+			tick_after_task_trigger = nrf_rtc_cc_get(audio_rtc_timer_instance.p_reg,
+								   AUDIO_SYNC_FRAME_SEND_TIME_GET_CHANNEL);
+	}
+
+	uint32_t remainder_us = nrf_timer_cc_get(NRF_TIMER1,
+											 AUDIO_SYNC_FRAME_SEND_TIME_GET_CHANNEL);
+
+	return timestamp_from_rtc_and_timer_get(tick_after_task_trigger, remainder_us);
 }
 
 uint32_t audio_sync_timer_capture_get(void)

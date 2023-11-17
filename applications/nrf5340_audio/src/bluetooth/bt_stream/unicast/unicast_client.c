@@ -25,6 +25,7 @@
 #include "macros_common.h"
 #include "nrf5340_audio_common.h"
 #include "le_audio.h"
+#include "audio_sync_timer.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
@@ -778,7 +779,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 
 	ret = channel_index_get(stream->conn, &channel_index);
 	if (ret) {
-		LOG_ERR("Channel index not found");
+		LOG_WRN("Channel index not found");
 	} else {
 		atomic_dec(&headsets[channel_index].iso_tx_pool_alloc);
 	}
@@ -1153,7 +1154,7 @@ static void disconnected_headset_cleanup(uint8_t chan_idx)
 	headsets[chan_idx].num_source_eps = 0;
 }
 
-static int iso_stream_send(uint8_t const *const data, size_t size, struct le_audio_headset *headset)
+static int iso_stream_send(uint8_t const *const data, size_t size, struct le_audio_headset *headset, uint32_t ts)
 {
 	int ret;
 	struct net_buf *buf;
@@ -1191,7 +1192,8 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 
 	ret = bt_bap_stream_send(&headset->sink_stream, buf,
 				 get_and_incr_seq_num(&headset->sink_stream),
-				 BT_ISO_TIMESTAMP_NONE);
+				 ts);
+				 //BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
 		LOG_WRN("Failed to send audio data to %s: %d", headset->ch_name, ret);
 		net_buf_unref(buf);
@@ -1306,11 +1308,17 @@ int unicast_client_stop(void)
 	return 0;
 }
 
+
+#define SDU_INTERVAL_US (10000u)
+
 int unicast_client_send(struct le_audio_encoded_audio enc_audio)
 {
-	int ret;
+	bool headset_in_stream_state = false;
+	int left_ret  = 1;
+	int right_ret = 1;
 	size_t data_size_pr_stream;
-	struct bt_iso_tx_info tx_info = {0};
+	struct bt_iso_tx_info left_tx_info  = {0};
+	struct bt_iso_tx_info right_tx_info  = {0};
 	struct sdu_ref_msg msg;
 
 	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == ARRAY_SIZE(headsets))) {
@@ -1324,57 +1332,97 @@ int unicast_client_send(struct le_audio_encoded_audio enc_audio)
 		LOG_ERR("The encoded data size does not match the SDU size");
 		return -EINVAL;
 	}
-
+	
 	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream.ep->iso->chan,
-					      &tx_info);
-	} else if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream.ep->iso->chan,
-					      &tx_info);
-	} else {
+		left_ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream.ep->iso->chan,
+					      &left_tx_info);
+
+		headset_in_stream_state = true;
+	}
+	
+	if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
+		right_ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream.ep->iso->chan,
+					      &right_tx_info);
+
+		headset_in_stream_state = true;
+	}
+
+	if (!headset_in_stream_state) {
 		/* This can happen if a headset is reset and the state in
 		 * streamctrl hasn't had time to update yet
 		 */
-		LOG_DBG("No headset in stream state");
+		LOG_WRN("No headset in stream state");
 		return -ECANCELED;
 	}
 
-	if (ret) {
-		LOG_DBG("Error getting ISO TX anchor point: %d", ret);
+	if (left_ret)
+	{
+		LOG_DBG("Error getting left ISO TX anchor point: %d", left_ret);
+	} else if (right_ret)
+	{
+		LOG_DBG("Error getting right ISO TX anchor point: %d", right_ret);
+	}
+	
+	uint32_t ts = 0;
+	if ((!left_ret && !right_ret) && left_tx_info.ts == right_tx_info.ts)
+	{
+		/* We have timestamp from both channels and they are equal. Anyone
+		 * one of them can be chosen as timestamp to sync. */
+		ts = right_tx_info.ts;
+
+	} else if (!left_ret && (right_ret || left_tx_info.ts > right_tx_info.ts))
+	{
+		/* Left channel was assigned timestamp further into the future than the right channel,
+		 * or the right channel doesn't have a valid tx sync value yet (CIS not established or
+		 * SDU not sent on right channel). The right channel must catch up with the left channel so
+		 * we use the left tx sync info. */
+		ts = left_tx_info.ts;
+		
+	} else if (!right_ret && (left_ret || right_tx_info.ts > left_tx_info.ts))
+	{
+		/* Right channel was assigned timestamp further into the future than the left channel,
+		 * or the left channel doesn't have a valid tx sync value yet (CIS not established or
+		 * SDU not sent on left channel). The left channel must catch up with the right channel so
+		 * we use the right tx sync info. */
+		ts = right_tx_info.ts;
 	}
 
-	if (tx_info.ts != 0 && !ret) {
+	if (ts != 0)
+	{
 		if (!IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
-			msg.timestamp = tx_info.ts;
+			
+			msg.timestamp = ts;
 			msg.adjust = true;
 
-			ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
-			if (ret) {
-				LOG_WRN("Failed to publish timestamp: %d", ret);
+			left_ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
+			if (left_ret) {
+				LOG_WRN("Failed to publish timestamp: %d", left_ret);
 			}
 		}
+		
+		ts += SDU_INTERVAL_US;
 	}
 
 	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, &headsets[AUDIO_CH_L]);
-		if (ret) {
-			LOG_DBG("Failed to send data to left channel");
+		left_ret = iso_stream_send(enc_audio.data, data_size_pr_stream, &headsets[AUDIO_CH_L], ts);
+		if (left_ret) {
+			LOG_WRN("Failed to send data to left channel");
 		}
 	}
 
 	if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
 		if (enc_audio.num_ch == 1) {
-			ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
-					      &headsets[AUDIO_CH_R]);
+			right_ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
+					      &headsets[AUDIO_CH_R], ts);
 		} else {
-			ret = iso_stream_send(&enc_audio.data[data_size_pr_stream],
-					      data_size_pr_stream, &headsets[AUDIO_CH_R]);
+			right_ret = iso_stream_send(&enc_audio.data[data_size_pr_stream],
+					      data_size_pr_stream, &headsets[AUDIO_CH_R], ts);
 		}
-		if (ret) {
-			LOG_DBG("Failed to send data to right channel");
+		if (right_ret) {
+			LOG_WRN("Failed to send data to right channel");
 		}
 	}
-
+	
 	return 0;
 }
 
