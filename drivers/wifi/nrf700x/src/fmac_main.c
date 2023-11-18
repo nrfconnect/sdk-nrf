@@ -510,7 +510,7 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 	if (!rpu_ctx) {
 		LOG_ERR("%s: nrf_wifi_fmac_dev_add failed", __func__);
 		rpu_ctx_zep = NULL;
-		goto out;
+		goto err;
 	}
 
 	rpu_ctx_zep->rpu_ctx = rpu_ctx;
@@ -518,7 +518,7 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 	status = nrf_wifi_fw_load(rpu_ctx);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fw_load failed", __func__);
-		goto out;
+		goto err;
 	}
 
 	status = nrf_wifi_fmac_ver_get(rpu_ctx,
@@ -526,7 +526,7 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: FW version read failed", __func__);
-		goto out;
+		goto err;
 	}
 
 	LOG_DBG("Firmware (v%d.%d.%d.%d) booted successfully",
@@ -564,9 +564,19 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_dev_init failed", __func__);
-		goto out;
+		goto err;
 	}
-out:
+
+	return status;
+err:
+	if (rpu_ctx) {
+#ifdef CONFIG_NRF700X_RADIO_TEST
+		nrf_wifi_fmac_dev_rem_rt(rpu_ctx);
+#else
+		nrf_wifi_fmac_dev_rem(rpu_ctx);
+#endif /* CONFIG_NRF700X_RADIO_TEST */
+		rpu_ctx_zep->rpu_ctx = NULL;
+	}
 	return status;
 }
 
