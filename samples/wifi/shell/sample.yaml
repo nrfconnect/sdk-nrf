@@ -137,6 +137,16 @@ tests:
       - thingy53_nrf5340_cpuapp
     platform_allow: thingy53_nrf5340_cpuapp
     tags: ci_build
+  sample.qspi.ext_flash_xip:
+    build_only: true
+    extra_args:
+      SHIELD=nrf7002ek
+      CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf52840dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+    tags: ci_build
   # Used by QA and also acts as a memory stress test
   sample.nrf7001.superset:
     build_only: true
