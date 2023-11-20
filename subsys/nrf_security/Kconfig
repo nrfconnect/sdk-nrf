@@ -107,7 +107,7 @@ rsource "Kconfig.legacy"
 endif # NRF_SECURITY
 
 menu "Zephyr legacy configurations"
-	depends on !MBEDTLS_BUILTIN
+	depends on MBEDTLS_LIBRARY_NRF_SECURITY
 
 config MBEDTLS_TLS_VERSION_1_2
 	bool "Enable support for TLS 1.2 (DTLS 1.2)"
