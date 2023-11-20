@@ -323,6 +323,8 @@ To use MCUboot as an upgradable bootloader to your application, complete the fol
 
    See :ref:`ug_bootloader_config` for more information about using Kconfig fragments with bootloaders.
 
+The build process generates several :ref:`app_build_output_files`, including :ref:`app_build_mcuboot_output`.
+
 Configuring MCUboot as an upgradable bootloader
 -----------------------------------------------
 

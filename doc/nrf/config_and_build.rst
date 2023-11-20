@@ -34,6 +34,7 @@ Make sure to consider :ref:`app_bootloaders` already at this stage of the applic
    config_and_build/board_support
    config_and_build/pin_control
    config_and_build/programming
+   config_and_build/output_build_files
    config_and_build/modifying
    config_and_build/multi_image
    config_and_build/bootloaders_and_dfu/index

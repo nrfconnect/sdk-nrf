@@ -8,19 +8,10 @@ Multi-image builds
    :depth: 2
 
 The firmware programmed to a device can be composed of either one application or several separate images.
-In the latter case, one of the images (the *parent image*) requires one or more other images (the *child images*) to be present.
+In the latter case, the *parent* :term:`image file` requires one or more other images (the *child images*) to be present.
 The child image then *chain-loads*, or *boots*, the parent image, which could also be a child image to another parent image, and boots that one.
 
 The most common use cases for builds composed of multiple images are applications that require a bootloader to be present or applications for multi-core CPUs.
-
-.. _ug_multi_image_what_are_images:
-
-What image files are
-********************
-
-.. include:: config_and_build_system.rst
-   :start-after: output_build_files_info_start
-   :end-before: output_build_files_info_end
 
 Using multiple images has the following advantages:
 
@@ -30,11 +21,7 @@ Using multiple images has the following advantages:
   This is useful for bootloader images, which can require their own copy of a library that the application uses, but in a different version or configuration.
 * In multi-core builds, the build configuration of a child image in a separate core can be made known to the parent image.
 
-.. include:: config_and_build_system.rst
-   :start-after: output_build_files_table_start
-   :end-before: output_build_files_table_end
-
-For more information on other build output files refer to :ref:`app_build_system` page.
+For the list of image files output by the build system for the multi-image builds, refer to :ref:`app_build_output_files` page.
 
 .. _ug_multi_image_when_to_use_images:
 

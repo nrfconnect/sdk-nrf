@@ -180,8 +180,8 @@ See `nRF Cloud MQTT FOTA`_ for MQTT-specific FOTA details such as topics and pay
 
 Building FOTA images
 ====================
-The build system will create the files :file:`dfu_application.zip` and/or :file:`dfu_mcuboot.zip` for a properly configured application.
-See :ref:`app_build_fota` for more information about FOTA zip files.
+The build system will create the files :file:`dfu_application.zip` or :file:`dfu_mcuboot.zip` (or both) for a properly configured application.
+See :ref:`app_build_output_files` for more information about FOTA zip files.
 
 When you use the files :file:`dfu_application.zip` or :file:`dfu_mcuboot.zip` to create an update bundle, the `nRF Cloud`_ UI populates the ``Name`` and ``Version`` fields from the :file:`manifest.json` file contained within.
 However, you are free to change them as needed.
