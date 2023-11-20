@@ -283,7 +283,7 @@ config PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
 	help
 	  Memory set aside for the OTP / Non-Volatile (NV) Counters partition
 
-config TFM_STORAGE
+config PM_PARTITION_TFM_STORAGE
 	bool
 	default y if PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE != 0
 	default y if PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE != 0
