@@ -279,7 +279,8 @@ config LTE_RAI_REQ_VALUE
 
 config LTE_NETWORK_USE_FALLBACK
 	bool "Use fallback network mode if selected mode fails"
-	default y if !(LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)
+	default y if !(LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS || \
+		       LTE_NETWORK_MODE_DEFAULT)
 	help
 	  When enabled, the network mode will be switched to the other
 	  available if the preferred fails to establish connection within

@@ -30,10 +30,6 @@ static void on_modem_init(int err, void *ctx)
 			LOG_ERR("Failed to set system mode and mode preference, err %d", err);
 			return;
 		}
-
-		LOG_DBG("System mode set to %d, preference %d",
-			lte_lc_sys_mode,
-			lte_lc_sys_mode_pref);
 	}
 
 	if (IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_SECONDS)) {
