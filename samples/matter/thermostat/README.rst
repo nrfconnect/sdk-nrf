@@ -257,6 +257,9 @@ The device reboots after all its settings are erased.
 Testing with external sensor
 ----------------------------
 
+.. note::
+   To enable the external sensor option, set the :kconfig:option:`CONFIG_THERMOSTAT_EXTERNAL_SENSOR` Kconfig option to ``y`` in the configuration files or use the ``-DCONFIG_THERMOSTAT_EXTERNAL_SENSOR=y`` :ref:`CMake option <cmake_options>` when building the sample.
+
 After building this sample and the :ref:`Matter weather station <matter_weather_station_app>` application and programming each to the respective development kit and Nordic Thingy:53, complete the following steps to test communication between both devices:
 
 1. |connect_terminal_both|
@@ -266,23 +269,20 @@ After building this sample and the :ref:`Matter weather station <matter_weather_
 #. Commission devices to the Matter network.
    See `Commissioning the device`_ for more information.
    During the commissioning process, write down the values for the thermostat node ID, the temperature sensor node ID, and the temperature sensor endpoint ID.
-   These IDs are going to be used in the next steps (*<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<thermostat_sensor_endpoint_ID>*, respectively).
+   These IDs are going to be used in the next steps (*<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>*, respectively).
 #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the temperature sensor device.
-   Use the following command, with *<thermostat_node_ID>* and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
+   Use the following command, with *<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
 
    .. code-block:: console
 
-      $ ./chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, \
-      {"fabricIndex": 1, "privilege": 1, "authMode": 2, "subjects": [<thermostat_node_ID>], "targets": \
-      [{"cluster": 1026, "endpoint": <thermostat_sensor_endpoint_ID>, "deviceType": null}]}]' <Sensor Device NodeId> 0
+      chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 1, "authMode": 2, "subjects": [<thermostat_node_ID>], "targets": [{"cluster": 1026, "endpoint": <temperature_sensor_endpoint_ID>, "deviceType": null}]}]' <temperature_sensor_node_ID> 0
 
 #. Write a binding table to the thermostat to inform the device about the temperature sensor endpoint.
-   Use the following command, with *<temperature_sensor_node_ID>* and *<thermostat_sensor_endpoint_ID>* values from the previous step about commissioning:
+   Use the following command, with *<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
 
    .. code-block:: console
 
-      $ ./chip-tool binding write binding '[{"fabricIndex": 1, "node": <temperature_sensor_node_ID>, "endpoint": <thermostat_sensor_endpoint_ID>, \
-      "cluster": 1026}]' <thermostat_node_ID> 1
+      chip-tool binding write binding '[{"fabricIndex": 1, "node": <temperature_sensor_node_ID>, "endpoint": <temperature_sensor_endpoint_ID>, "cluster": 1026}]' <thermostat_node_ID> 1
 
    (You can read more about this step in the "Adding a binding table to the ``binding`` cluster" in the CHIP Tool guide.)
 
