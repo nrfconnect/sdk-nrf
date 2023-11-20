@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM tfm/zephyr)
 add_subdirectory_ifdef(CONFIG_BUILD_WITH_TFM trusted-firmware-m)
 add_subdirectory_ifdef(CONFIG_MEMFAULT memfault-firmware-sdk)
 add_subdirectory_ifdef(CONFIG_MCUBOOT mcuboot/hooks)
