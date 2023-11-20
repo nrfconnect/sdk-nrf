@@ -15,6 +15,14 @@
 
 rsource "Kconfig.tfm.defconfig"
 
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
+
+if !TFM_PROFILE_TYPE_MINIMAL
+# When enabling full TFM support, then partitions and crypto modules shall be available.
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
+endif
+
 if BUILD_WITH_TFM
 
 config TFM_SECURE_UART
@@ -217,18 +225,6 @@ config TFM_S_CODE_VECTOR_TABLE_SIZE
 	default 0xffffffff # Invalid value to discover missing SOC support.
 	help
 	  The TF-M interrupt vector table size.
-
-endif # BUILD_WITH_TFM
-
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
-
-if !TFM_PROFILE_TYPE_MINIMAL
-# When enabling full TFM support, then partitions and crypto modules shall be available.
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
-source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
-endif
-
-if BUILD_WITH_TFM
 
 config PM_PARTITION_SIZE_TFM_SRAM
 	hex
