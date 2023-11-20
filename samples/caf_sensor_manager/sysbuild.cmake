@@ -17,6 +17,13 @@ ExternalZephyrProject_Add(
   BOARD ${SB_CONFIG_REMOTE_BOARD}
 )
 
+if(SB_CONFIG_PARTITION_MANAGER)
+  set_property(GLOBAL APPEND PROPERTY PM_DOMAINS CPUNET)
+  set_property(GLOBAL APPEND PROPERTY PM_CPUNET_IMAGES remote)
+  set_property(GLOBAL PROPERTY DOMAIN_APP_CPUNET remote)
+  set(CPUNET_PM_DOMAIN_DYNAMIC_PARTITION remote CACHE INTERNAL "")
+endif()
+
 # Add a dependency so that the remote sample will be built and flashed first
 add_dependencies(caf_sensor_manager remote)
 # Add dependency so that the remote image is flashed first.

@@ -22,6 +22,6 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf54l15pdk_nrf54l15_cpuapp
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build sysbuild
     platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
       nrf5340dk_nrf5340_cpuapp_ns nrf54l15pdk_nrf54l15_cpuapp
