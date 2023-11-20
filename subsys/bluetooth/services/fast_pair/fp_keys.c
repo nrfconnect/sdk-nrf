@@ -434,7 +434,7 @@ static void key_gen_failure_cnt_reset_fn(struct k_work *w)
 
 static void timeout_fn(struct k_work *w)
 {
-	struct fp_procedure *proc = CONTAINER_OF(w, struct fp_procedure, timeout);
+	struct fp_procedure *proc = CONTAINER_OF(w, struct fp_procedure, timeout.work);
 
 	__ASSERT_NO_MSG(is_key_generated(proc->state));
 
