@@ -40,6 +40,7 @@ struct nrf_wifi_vif_ctx_zep {
 	void *supp_drv_if_ctx;
 	void *rpu_ctx_zep;
 	unsigned char vif_idx;
+	struct k_mutex vif_lock;
 
 	scan_result_cb_t disp_scan_cb;
 	bool scan_in_progress;
