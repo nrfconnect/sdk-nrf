@@ -57,6 +57,75 @@ config TFM_CRYPTO_SINGLE_PART_FUNCS_DISABLED
 	help
 	  Only enable multi-part operations in Hash, MAC, AEAD and symmetric
 	  ciphers, to optimize memory footprint in resource-constrained devices
+
+# Nordic additions to Crypto Kconfigs
+config TFM_CRYPTO_BUILTIN_KEYS
+	bool
+	prompt "TF-M crypto builtin keys"
+	default y
+	depends on !TFM_PROFILE_TYPE_MINIMAL
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_SHA_256
+	help
+	  Whether to allow crypto service to store builtin keys.
+	  Without this, ALL builtin keys must be stored in a platform-specific location.
+	  Builtin keys require HKDF with HMAC and SHA-256 to derive sub-keys.
+
+config TFM_CRYPTO_ENGINE_BUF_SIZE
+	int
+	prompt "TF-M Crypto - Engine buffer size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1 if TFM_PROFILE_TYPE_MINIMAL
+	default 12288 if PSA_NEED_CC3XX_RSA_OAEP || \
+		PSA_NEED_CC3XX_RSA_PKCS1V15_CRYPT || \
+		PSA_NEED_CC3XX_RSA_PKCS1V15_SIGN
+	default 8320
+	help
+	  Buffer used by Mbed Crypto for its own allocations at runtime.
+	  This is a buffer allocated in static memory.
+	  To be configured based on the desired use case and application requirements.
+
+config TFM_CRYPTO_CONC_OPER_NUM
+	int
+	prompt "TF-M Crypto - Number of concurrent operations" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1 if TFM_PROFILE_TYPE_MINIMAL
+	default 8
+	help
+	  This parameter defines the maximum number of possible
+	  concurrent operation contexts (cipher, MAC, hash and key derivation)
+	  for multi-part operations, that can be allocated simultaneously
+	  at any time. To be configured based on the desired use case and
+	  application requirements.
+
+config TFM_CRYPTO_IOVEC_BUFFER_SIZE
+	int
+	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1024 if TFM_PROFILE_TYPE_MINIMAL
+	default 16384 if TFM_REGRESSION_S || TFM_REGRESSION_NS
+	default 5120
+	help
+	  This parameter applies only to IPC model builds. In IPC model,
+	  during a Service call, input and outputs are allocated
+	  temporarily in an internal scratch buffer whose size is
+	  determined by this parameter. To be configured based on the
+	  desired use case and application requirements.
+
+config TFM_CRYPTO_PARTITION_STACK_SIZE
+	hex
+	prompt "TF-M Crypto Partition - Stack size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 0x800 if TFM_PROFILE_TYPE_MINIMAL
+	default 0x2000
+	help
+	  The stack size of the Crypto Secure Partition
+
+config TFM_CRYPTO_NV_SEED
+	# Hidden option to set value based on TF-M minimal profile
+	bool
+	default y if !TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Prompt-less configuration controlling NV Seed support.
+	  Not set when TFM_PROFILE_TYPE_MINIMAL is used
+
 endmenu
 
 # Copied from secure_fw/partitions/initial_attestation/Kconfig, appended the TFM prefix
@@ -134,6 +203,15 @@ config TFM_ITS_BUF_SIZE
 config TFM_ITS_STACK_SIZE
 	hex "Stack size"
 	default 0x720
+
+# Nordic additions to ITS Kconfig
+config TFM_ITS_ENCRYPTED
+	bool
+	prompt "PSA Internal Trusted Storage with encryption"
+	select PSA_ITS_ENCRYPTED
+	help
+	  Enables authenticated encryption for PSA Internal Trusted Storage files
+
 endmenu
 
 # Copied from secure_fw/partitions/protected_storage/Kconfig, appended the TFM prefix
@@ -250,84 +328,6 @@ config TFM_EXPERIMENTAL
 	bool
 	select EXPERIMENTAL
 	default y if !TFM_PROFILE_TYPE_MINIMAL
-
-if TFM_PARTITION_CRYPTO
-
-config TFM_CRYPTO_BUILTIN_KEYS
-	bool
-	prompt "TF-M crypto builtin keys"
-	default y
-	depends on !TFM_PROFILE_TYPE_MINIMAL
-	select PSA_WANT_ALG_HKDF
-	select PSA_WANT_ALG_HMAC
-	select PSA_WANT_ALG_SHA_256
-	help
-	  Whether to allow crypto service to store builtin keys.
-	  Without this, ALL builtin keys must be stored in a platform-specific location.
-	  Builtin keys require HKDF with HMAC and SHA-256 to derive sub-keys.
-
-config TFM_CRYPTO_ENGINE_BUF_SIZE
-	int
-	prompt "TF-M Crypto - Engine buffer size" if !TFM_PROFILE_TYPE_MINIMAL
-	default 1 if TFM_PROFILE_TYPE_MINIMAL
-	default 12288 if PSA_NEED_CC3XX_RSA_OAEP || \
-		PSA_NEED_CC3XX_RSA_PKCS1V15_CRYPT || \
-		PSA_NEED_CC3XX_RSA_PKCS1V15_SIGN
-	default 8320
-	help
-	  Buffer used by Mbed Crypto for its own allocations at runtime.
-	  This is a buffer allocated in static memory.
-	  To be configured based on the desired use case and application requirements.
-
-config TFM_CRYPTO_CONC_OPER_NUM
-	int
-	prompt "TF-M Crypto - Number of concurrent operations" if !TFM_PROFILE_TYPE_MINIMAL
-	default 1 if TFM_PROFILE_TYPE_MINIMAL
-	default 8
-	help
-	  This parameter defines the maximum number of possible
-	  concurrent operation contexts (cipher, MAC, hash and key derivation)
-	  for multi-part operations, that can be allocated simultaneously
-	  at any time. To be configured based on the desired use case and
-	  application requirements.
-
-config TFM_CRYPTO_IOVEC_BUFFER_SIZE
-	int
-	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
-	default 1024 if TFM_PROFILE_TYPE_MINIMAL
-	default 16384 if TFM_REGRESSION_S || TFM_REGRESSION_NS
-	default 5120
-	help
-	  This parameter applies only to IPC model builds. In IPC model,
-	  during a Service call, input and outputs are allocated
-	  temporarily in an internal scratch buffer whose size is
-	  determined by this parameter. To be configured based on the
-	  desired use case and application requirements.
-
-config TFM_CRYPTO_PARTITION_STACK_SIZE
-	hex
-	prompt "TF-M Crypto Partition - Stack size" if !TFM_PROFILE_TYPE_MINIMAL
-	default 0x800 if TFM_PROFILE_TYPE_MINIMAL
-	default 0x2000
-	help
-	  The stack size of the Crypto Secure Partition
-
-config TFM_CRYPTO_NV_SEED
-	# Hidden option to set value based on TF-M minimal profile
-	bool
-	default y if !TFM_PROFILE_TYPE_MINIMAL
-	help
-	  Prompt-less configuration controlling NV Seed support.
-	  Not set when TFM_PROFILE_TYPE_MINIMAL is used
-
-endif # TFM_PARTITION_CRYPTO
-
-config TFM_ITS_ENCRYPTED
-	bool
-	prompt "PSA Internal Trusted Storage with encryption"
-	select PSA_ITS_ENCRYPTED
-	help
-	  Enables authenticated encryption for PSA Internal Trusted Storage files
 
 config TFM_HW_INIT_RESET_ON_BOOT
 	bool "Initialize internal architecture state at boot"
