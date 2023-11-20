@@ -22,7 +22,7 @@ static void timer_expiry_function(struct k_work *work)
 {
 	struct timer_list *timer;
 
-	timer = (struct timer_list *)CONTAINER_OF(work, struct timer_list, work);
+	timer = (struct timer_list *)CONTAINER_OF(work, struct timer_list, work.work);
 
 	timer->function(timer->data);
 }
