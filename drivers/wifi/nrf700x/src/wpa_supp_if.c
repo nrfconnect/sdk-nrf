@@ -985,19 +985,16 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	struct nrf_wifi_umac_chg_sta_info chg_sta_info;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct net_if *iface = NULL;
 	int ret;
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	iface = vif_ctx_zep->zep_net_if_ctx;
-	if (!iface) {
-		LOG_ERR("%s: Interface not found or not initialized", __func__);
-		return -1;
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret) {
+		LOG_ERR("%s: Failed to lock vif mutex", __func__);
+		goto out;
 	}
-
-	net_if_lock(iface);
 
 	if (vif_ctx_zep->if_op_state != NRF_WIFI_FMAC_IF_OP_STATE_UP) {
 		LOG_DBG("%s: Interface not UP, ignoring", __func__);
@@ -1028,7 +1025,7 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 
 	ret = 0;
 out:
-	net_if_unlock(iface);
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
 
