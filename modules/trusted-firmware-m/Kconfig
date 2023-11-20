@@ -13,26 +13,9 @@
 # all parts of the TF-M module kconfig. If, however, TFM_PROFILE_TYPE_MINIMAL is set,
 # only a subset of these kconfig files will be included.
 
+rsource "Kconfig.tfm.defconfig"
+
 if BUILD_WITH_TFM
-
-config TFM_ISOLATION_LEVEL
-	default 1 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
-
-config TFM_BL2
-	bool
-	default n
-
-config TFM_REGRESSION_NS
-	bool
-	select NRF_TIMER0_SECURE
-
-config TFM_LOG_LEVEL_SILENCE
-	default n
-	depends on $(dt_nodelabel_has_prop,uart0,pinctrl-names) || \
-		   $(dt_nodelabel_has_prop,uart1,pinctrl-names)
-	help
-	  Overrule zephyr disable TF-M secure output if the uart1 node has not
-	  assigned GPIO pins using pinctrl.
 
 config TFM_SECURE_UART
 	bool "TF-M configure UART instance as secure peripheral"
@@ -79,63 +62,10 @@ endif # TFM_SECURE_UART
 # Pull in full list of peripherals
 rsource "Kconfig.peripheral_secure"
 
-choice TFM_PROFILE_TYPE
-	default TFM_PROFILE_TYPE_MINIMAL
-
-config TFM_PROFILE_TYPE_MINIMAL
-	bool "Use minimal TF-M build"
-	select PSA_DEFAULT_OFF
-	help
-	  Use minimal TF-M build. This will make the TF-M image fit within 32kB.
-	  No configuration of the size of the partition nor the features of the
-	  TF-M image can be done when this option is selected. If your application
-	  needs a different TF-M configuration you have to disable this option
-	  and reproduce the desired configuration through kconfig fragments.
-endchoice
-
-choice TFM_MODEL
-	default TFM_SFN if TFM_PROFILE_TYPE_MINIMAL
-endchoice
-
 config TFM_EXPERIMENTAL
 	bool
 	select EXPERIMENTAL
 	default y if !TFM_PROFILE_TYPE_MINIMAL
-
-config TFM_PARTITION_INITIAL_ATTESTATION
-	bool
-	default y if !TFM_PROFILE_TYPE_MINIMAL
-	depends on TFM_NRF_PROVISIONING
-	select PSA_WANT_ALG_SHA_256
-	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR
-	select PSA_WANT_ALG_ECDSA
-	select PSA_WANT_ECC_SECP_R1_256
-	select SECURE_BOOT_STORAGE
-	help
-	   We select "implementation ID" because it is a mandatory claim
-	   in the IAT.
-	   The initial attestation partition requires ECDSA algorithm with
-	   SHA-256 and uses the Identity Key stored in the KMU.
-	   The identity key is a secp256r1 key pair.
-
-config TFM_QCBOR_PATH
-	string
-	default "$(ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR)/../qcbor"
-
-config TFM_PARTITION_PROTECTED_STORAGE
-	bool
-	select HW_UNIQUE_KEY
-	select PSA_WANT_ALG_HKDF
-	select PSA_WANT_ALG_HMAC
-	select PSA_WANT_ALG_SHA_256
-	select PSA_WANT_KEY_TYPE_AES
-	select PSA_WANT_ALG_CCM if SOC_SERIES_NRF91X
-	select PSA_WANT_ALG_GCM if SOC_NRF5340_CPUAPP
-	help
-	  The encryption policy relies on a secret hardware unique key (HUK) per device.
-	  The protected storage partition require HKDF with HMAC and SHA-256 to
-	  derive the storage key and an AEAD encryption algorithm for storage
-	  encryption.
 
 if TFM_PARTITION_CRYPTO
 
@@ -287,11 +217,6 @@ config TFM_S_CODE_VECTOR_TABLE_SIZE
 	default 0xffffffff # Invalid value to discover missing SOC support.
 	help
 	  The TF-M interrupt vector table size.
-
-config BOOTLOADER_MCUBOOT
-	bool
-	imply TFM_HW_INIT_RESET_ON_BOOT
-	imply TFM_HW_INIT_NRF_PERIPHERALS
 
 endif # BUILD_WITH_TFM
 
