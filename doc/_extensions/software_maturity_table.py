@@ -213,7 +213,7 @@ class SoftwareMaturityTable(SphinxDirective):
         rows = []
         feature_prefix = table_type + "_"
         for feature, maturity_list in features.items():
-            feature = feature.lstrip(feature_prefix)
+            feature = feature.removeprefix(feature_prefix)
             if (
                 "remove-rows" in self.options
                 and feature.lower() in self.options["remove-rows"]
