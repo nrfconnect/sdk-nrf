@@ -984,8 +984,9 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_chg_sta_info chg_sta_info;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
-	enum nrf_wifi_status ret = NRF_WIFI_STATUS_FAIL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct net_if *iface = NULL;
+	int ret;
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
@@ -1017,9 +1018,9 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 		chg_sta_info.sta_flags2.nrf_wifi_set = 1 << 1;
 	}
 
-	ret = nrf_wifi_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
+	status = nrf_wifi_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
 
-	if (ret != NRF_WIFI_STATUS_SUCCESS) {
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_chg_sta failed", __func__);
 		ret = -1;
 		goto out;
