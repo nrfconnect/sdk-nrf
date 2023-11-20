@@ -371,16 +371,17 @@ struct location_cellular_config {
 	 *
 	 * Maximum value is 15.
 	 *
-	 * Zero indicates that only normal neighbor cell search is performed but no GCI search.
-	 *
-	 * If there are less than requested number of neighbor cells (including current cell),
-	 * GCI (surrounding) cells are requested also.
+	 * The number of cells mean GCI cells including current cell.
+	 * Normal neighbor cells are received and used but they do not count towards the cell count.
+	 * If the number of cells is bigger than one, GCI (surrounding) cells are requested.
+	 * Hence, zero and one mean that only normal neighbor cell search is performed
+	 * but no GCI search.
 	 *
 	 * Note that even if there are a lot of cells available, the number of cells
 	 * used for positioning may be lower than the requested number of cells due to
 	 * the behavior of the search algorithm. Also, the number of cells used for
 	 * positioning may be higher than the requested number of cells if there are
-	 * more neighbor cells (including current cell).
+	 * more cells in the history information (including current cell).
 	 */
 	uint8_t cell_count;
 };

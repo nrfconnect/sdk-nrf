@@ -27,8 +27,6 @@ static volatile bool running;
 static volatile bool timeout_occurred;
 /* Indicates when individual ncellmeas operation is completed. This is internal to this file. */
 static struct k_sem scan_cellular_sem_ncellmeas_evt;
-/* Requested number of cells to be searched. */
-static int8_t scan_cellular_cell_count;
 
 /** Handler for timeout. */
 static void scan_cellular_timeout_work_fn(struct k_work *work);
@@ -119,18 +117,19 @@ void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 
 	running = true;
 	timeout_occurred = false;
-	scan_cellular_cell_count = cell_count;
 	scan_cellular_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 	scan_cellular_info.ncells_count = 0;
 	scan_cellular_info.gci_cells_count = 0;
 
-	LOG_DBG("Triggering cell measurements");
+	LOG_DBG("Triggering cell measurements timeout=%d, cell_count=%d", timeout, cell_count);
 
 	if (timeout != SYS_FOREVER_MS && timeout > 0) {
 		LOG_DBG("Starting cellular timer with timeout=%d", timeout);
 		k_work_schedule(&scan_cellular_timeout_work, K_MSEC(timeout));
 	}
 
+	/***** 1st: Normal neighbor search to get current cell *****/
+	LOG_DBG("Normal neighbor search (NCELLMEAS=1)");
 	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 	if (err) {
 		LOG_ERR("Failed to initiate neighbor cell measurements: %d", err);
@@ -148,31 +147,59 @@ void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 		goto end;
 	}
 
-	/* Calculate the number of GCI cells to be requested.
-	 * We should subtract 1 for current cell as ncell_count won't include it.
-	 * GCI count requested from modem includes also current cell so we should add 1.
-	 * So these two cancel each other.
-	 */
-	scan_cellular_cell_count = scan_cellular_cell_count - scan_cellular_info.ncells_count;
-
-	LOG_DBG("scan_cellular_execute: scan_cellular_cell_count=%d", scan_cellular_cell_count);
-
-	if (scan_cellular_cell_count > 1) {
-
-		ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT;
-		ncellmeas_params.gci_count = scan_cellular_cell_count;
-
-		err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
-		if (err) {
-			LOG_WRN("Failed to initiate GCI cell measurements: %d", err);
-			/* Clearing 'err' because normal neighbor search has succeeded
-			 * so those are still valid and positioning can procede with that data
-			 */
-			err = 0;
-			goto end;
-		}
-		k_sem_take(&scan_cellular_sem_ncellmeas_evt, K_FOREVER);
+	/* If no more than 1 cell is requested, don't perform GCI searches */
+	if (cell_count <= 1) {
+		goto end;
 	}
+
+	/***** 2nd: GCI history search to get GCI cells we can quickly search and measure *****/
+	LOG_DBG("GCI history search (NCELLMEAS=3,15)");
+
+	ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT;
+	/* Use maximum number of GCI cells to get all that we have in the history information */
+	ncellmeas_params.gci_count = 15;
+
+	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
+	if (err) {
+		LOG_WRN("Failed to initiate GCI cell measurements: %d", err);
+		/* Clearing 'err' because previous neighbor search has succeeded
+		 * so those are still valid and positioning can proceed with that data
+		 */
+		err = 0;
+		goto end;
+	}
+	err = k_sem_take(&scan_cellular_sem_ncellmeas_evt, K_FOREVER);
+	if (err) {
+		/* Semaphore was reset so stop search procedure */
+		err = 0;
+		goto end;
+	}
+	if (timeout_occurred) {
+		LOG_DBG("Timeout occurred after 2nd neighbor measurement");
+		goto end;
+	}
+
+	/* If we received already enough GCI cells including current cell */
+	if (scan_cellular_info.gci_cells_count + 1 >= cell_count) {
+		goto end;
+	}
+
+	/***** 3rd: GCI regional search to get GCI cells we can quickly measure *****/
+
+	LOG_DBG("GCI regional search (NCELLMEAS=4,%d)", cell_count);
+	ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT;
+	ncellmeas_params.gci_count = cell_count;
+
+	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
+	if (err) {
+		LOG_WRN("Failed to initiate GCI cell measurements: %d", err);
+		/* Clearing 'err' because previous neighbor search has succeeded
+		 * so those are still valid and positioning can proceed with that data
+		 */
+		err = 0;
+		goto end;
+	}
+	k_sem_take(&scan_cellular_sem_ncellmeas_evt, K_FOREVER);
 
 end:
 	k_work_cancel_delayable(&scan_cellular_timeout_work);

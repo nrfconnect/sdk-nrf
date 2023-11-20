@@ -44,12 +44,20 @@ static const char xmonitor_resp[] =
 static const char cgact_resp_active[] = "+CGACT: 0,1";
 
 /* Strings for cellular positioning */
-static const char ncellmeas_resp[] =
+static const char ncellmeas_resp_pci1[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",2300,7,63,31,"
 	"150344527,2300,8,60,29,0,2400,11,55,26,184\r\n";
 
-static const char ncellmeas_gci_resp[] =
+static const char ncellmeas_resp_gci1[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",10512,9034,2300,7,63,31,150344527,1,0,"
+	"\"00011B08\",\"26295\",\"00B7\",65535,0,2300,9,62,30,150345527,0,0\r\n";
+
+static const char ncellmeas_resp_gci5[] =
+	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",10512,9034,2300,7,63,31,150344527,1,0,"
+	"\"00011B66\",\"26287\",\"00C3\",65535,0,4300,6,71,30,150345527,0,0,"
+	"\"0002ABCD\",\"26287\",\"00C3\",65535,0,4300,6,71,30,150345527,0,0,"
+	"\"00103425\",\"26244\",\"0056\",65535,0,6400,6,71,30,150345527,0,0,"
+	"\"00076543\",\"26256\",\"00C3\",65535,0,620000,6,71,30,150345527,0,0,"
 	"\"00011B08\",\"26295\",\"00B7\",65535,0,2300,9,62,30,150345527,0,0\r\n";
 
 char http_resp[512];
@@ -364,7 +372,7 @@ void test_location_cellular(void)
 
 	location_config_defaults_set(&config, 1, methods);
 
-	config.methods[0].cellular.cell_count = 2;
+	config.methods[0].cellular.cell_count = 1;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
 	test_location_event_data.location.latitude = 61.50375;
@@ -398,7 +406,7 @@ void test_location_cellular(void)
 	k_sleep(K_MSEC(1));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
-	at_monitor_dispatch(ncellmeas_resp);
+	at_monitor_dispatch(ncellmeas_resp_pci1);
 	k_sleep(K_MSEC(1));
 }
 
@@ -536,7 +544,9 @@ void test_location_request_default(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,3", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,15", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,4", 0);
 
 	/* Select cellular service to be used */
 	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
@@ -551,12 +561,15 @@ void test_location_request_default(void)
 	k_sleep(K_MSEC(1));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
-	at_monitor_dispatch(ncellmeas_resp);
+	at_monitor_dispatch(ncellmeas_resp_pci1);
+
+	k_sleep(K_MSEC(1));
+	at_monitor_dispatch(ncellmeas_resp_gci1);
+	k_sleep(K_MSEC(1));
 
 	cellular_rest_req_resp_handle();
 
-	k_sleep(K_MSEC(1));
-	at_monitor_dispatch(ncellmeas_gci_resp);
+	at_monitor_dispatch(ncellmeas_resp_gci5);
 	k_sleep(K_MSEC(1));
 }
 
@@ -575,7 +588,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	location_config_defaults_set(&config, 2, methods);
 	config.mode = LOCATION_REQ_MODE_ALL;
 	config.methods[0].cellular.timeout = SYS_FOREVER_MS;
-	config.methods[0].cellular.cell_count = 2;
+	config.methods[0].cellular.cell_count = 1;
 	config.methods[1].gnss.timeout = -10;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
@@ -609,7 +622,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	k_sleep(K_MSEC(1));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
-	at_monitor_dispatch(ncellmeas_resp);
+	at_monitor_dispatch(ncellmeas_resp_pci1);
 
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
@@ -692,7 +705,7 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 
 	location_config_defaults_set(&config, 2, methods);
 	config.mode = LOCATION_REQ_MODE_ALL;
-	config.methods[0].cellular.cell_count = 2;
+	config.methods[0].cellular.cell_count = 1;
 	config.methods[1].gnss.timeout = 100;
 
 	test_location_event_data.id = LOCATION_EVT_ERROR;
@@ -910,7 +923,7 @@ void test_location_cellular_periodic(void)
 
 	location_config_defaults_set(&config, 1, methods);
 	config.interval = 1;
-	config.methods[0].cellular.cell_count = 2;
+	config.methods[0].cellular.cell_count = 1;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
 	test_location_event_data.location.latitude = 61.50375;
@@ -940,7 +953,7 @@ void test_location_cellular_periodic(void)
 	k_sleep(K_MSEC(1));
 
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
-	at_monitor_dispatch(ncellmeas_resp);
+	at_monitor_dispatch(ncellmeas_resp_pci1);
 
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
@@ -978,7 +991,7 @@ void test_location_cellular_periodic(void)
 	 */
 	k_sleep(K_MSEC(1500));
 	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
-	at_monitor_dispatch(ncellmeas_resp);
+	at_monitor_dispatch(ncellmeas_resp_pci1);
 
 	/* Wait for location_event_handler call for 3 seconds.
 	 * If it doesn't happen, next assert will fail the test.
