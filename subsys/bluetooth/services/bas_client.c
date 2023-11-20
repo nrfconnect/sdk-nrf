@@ -181,7 +181,7 @@ static void bas_read_value_handler(struct k_work *work)
 	struct bt_bas_client *bas;
 
 	bas = CONTAINER_OF(work, struct bt_bas_client,
-			     periodic_read.read_work);
+			     periodic_read.read_work.work);
 
 	if (!atomic_get(&bas->periodic_read.interval)) {
 		/* disabled */
