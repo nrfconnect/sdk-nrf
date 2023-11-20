@@ -1,16 +1,18 @@
 tests:
   debug.cpu_load:
+    sysbuild: true
     platform_allow: nrf52840dk/nrf52840 nrf9160dk/nrf9160
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
     build_only: true
-    tags: ci_build debug
+    tags: ci_build debug sysbuild
   debug.cpu_load.shared_dppi:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
     build_only: true
-    tags: ci_build debug
+    tags: ci_build debug sysbuild
     extra_configs:
       - CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS=y

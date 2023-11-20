@@ -1,5 +1,6 @@
 tests:
   caf_sensor_aggregator.core:
+    sysbuild: true
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -12,3 +13,4 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160/ns
       - qemu_cortex_m3
+    tags: sysbuild

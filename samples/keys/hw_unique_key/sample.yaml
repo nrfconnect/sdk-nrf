@@ -22,4 +22,5 @@ common:
       - ".*Example finished successfully!.*"
 tests:
   sample.keys.hw_unique_key:
-    tags: huk ci_build
+    sysbuild: true
+    tags: huk ci_build sysbuild

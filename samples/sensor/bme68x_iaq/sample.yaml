@@ -2,6 +2,7 @@ sample:
   name: BME68X Sensor Sample
 tests:
   sample.sensor.bme68x.i2c:
+    sysbuild: true
     depends_on: i2c
     harness: sensor
     integration_platforms:
@@ -14,8 +15,9 @@ tests:
       thingy91/nrf9160/ns
       thingy53/nrf5340/cpuapp
       thingy53/nrf5340/cpuapp/ns
-    tags: sensors
+    tags: sensors sysbuild
   sample.sensor.bme68x.polling:
+    sysbuild: true
     depends_on: i2c
     integration_platforms:
       - thingy91/nrf9160
@@ -28,7 +30,7 @@ tests:
       thingy91/nrf9160/ns
       thingy53/nrf5340/cpuapp
       thingy53/nrf5340/cpuapp/ns
-    tags: sensors
+    tags: sensors sysbuild
     harness: console
     harness_config:
       type: multi_line
@@ -36,8 +38,9 @@ tests:
       regex:
         - "(\\d+\\.\\d+); press: (\\d+\\.\\d+); humidity: (\\d+\\.\\d+); iaq: (\\d+)"
   sample.sensor.bme68x.spi:
+    sysbuild: true
     depends_on: spi
     harness: sensor
     platform_allow: >-
       nrf9160dk/nrf9160/ns
-    tags: sensors
+    tags: sensors sysbuild

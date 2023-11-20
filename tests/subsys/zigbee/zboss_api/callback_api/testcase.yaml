@@ -1,7 +1,8 @@
 tests:
   zigbee.zboss_api.callback_api:
+    sysbuild: true
     platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833 nrf5340dk/nrf5340/cpuapp
-    tags: zboss_api_callback
+    tags: zboss_api_callback sysbuild
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833

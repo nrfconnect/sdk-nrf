@@ -3,14 +3,15 @@ sample:
   description: Zigbee Weather Station application
 tests:
   applications.zigbee_weather_station:
+    sysbuild: true
     build_only: true
     platform_allow: thingy53/nrf5340/cpuapp
-    tags: ci_build
-    extra_args: CONF_FILE=prj_release.conf
+    tags: ci_build sysbuild
+    extra_args: FILE_SUFFIX=release
     integration_platforms:
       - thingy53/nrf5340/cpuapp
   applications.zigbee_weather_station.debug:
+    sysbuild: true
     build_only: true
     platform_allow: thingy53/nrf5340/cpuapp
-    tags: ci_build debug
-    extra_args: CONF_FILE=prj.conf
+    tags: ci_build debug sysbuild

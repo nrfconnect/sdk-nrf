@@ -3,6 +3,7 @@ sample:
   name: Radio Test
 tests:
   sample.peripheral.radio_test:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
@@ -15,23 +16,26 @@ tests:
     platform_allow: >
       nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpunet nrf7002dk/nrf5340/cpunet
       nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpurad
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.peripheral.radio_test.nrf5340_nrf21540:
+    sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.peripheral.radio_test.nrf5340_usb:
+    sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_RADIO_TEST_USB=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.peripheral.radio_test.nrf5340_nrf21540_usb:
+    sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf21540ek
     extra_configs:
@@ -39,8 +43,9 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.peripheral.radio_test.nrf5340_nrf21540.no_automatic_power:
+    sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf21540ek
     extra_configs:
@@ -48,4 +53,4 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags: ci_build
+    tags: ci_build sysbuild

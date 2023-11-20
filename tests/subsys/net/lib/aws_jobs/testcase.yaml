@@ -1,7 +1,8 @@
 tests:
   net.lib.aws_jobs:
+    sysbuild: true
     platform_allow: native_posix qemu_cortex_m3
     integration_platforms:
       - native_posix
       - qemu_cortex_m3
-    tags: aws
+    tags: aws sysbuild

@@ -4,7 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
-
 config NRF_DEFAULT_802154
 	default y
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	default y if BOARD_NRF5340DK_NRF5340_CPUAPP
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

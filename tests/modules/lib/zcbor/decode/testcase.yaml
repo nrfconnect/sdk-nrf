@@ -1,6 +1,7 @@
 tests:
   modules.lib.zcbor.decode:
-    tags: zcbor
+    sysbuild: true
+    tags: zcbor sysbuild
     platform_allow: native_posix
     integration_platforms:
       - native_posix

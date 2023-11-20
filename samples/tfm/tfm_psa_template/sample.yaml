@@ -9,5 +9,6 @@ common:
     - nrf9160dk/nrf9160/ns
 tests:
   sample.tfm.psa_template:
-    tags: tfm ci_build
+    sysbuild: true
+    tags: ci_build sysbuild
     build_only: true

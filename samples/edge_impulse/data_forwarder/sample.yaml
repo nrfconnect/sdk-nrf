@@ -3,6 +3,7 @@ sample:
   name: Edge Impulse data forwarder sample
 tests:
   sample.ei_data_forwarder:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf52dk/nrf52832
@@ -18,4 +19,4 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
     platform_exclude: native_posix qemu_x86 qemu_cortex_m3
-    tags: ci_build
+    tags: ci_build sysbuild

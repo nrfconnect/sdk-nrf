@@ -3,18 +3,20 @@ sample:
   description: Sample application showing peripheral role of Direction Finding in connected mode
 tests:
   sample.bluetooth.direction_finding_peripheral_nrf:
+    sysbuild: true
     build_only: true
     platform_allow: nrf52833dk/nrf52833 nrf52833dk/nrf52820 nrf5340dk/nrf5340/cpuapp
-    tags: bluetooth
+    tags: bluetooth sysbuild
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
       - nrf5340dk/nrf5340/cpuapp
   sample.bluetooth.direction_finding_peripheral_nrf.aod:
+    sysbuild: true
     extra_args: OVERLAY_CONFIG="overlay-aoa.conf"
     build_only: true
     platform_allow: nrf52833dk/nrf52833 nrf52833dk/nrf52820 nrf5340dk/nrf5340/cpuapp
-    tags: bluetooth
+    tags: bluetooth sysbuild
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820

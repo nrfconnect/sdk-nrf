@@ -6,7 +6,8 @@ sample:
   name: Persistent key example
 tests:
   sample.persistent_key_usage.cc3xx:
-    tags: introduction psa cc3xx
+    sysbuild: true
+    tags: introduction psa cc3xx sysbuild
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns nrf5340dk/nrf5340/cpuapp nrf9160dk/nrf9160/ns
       nrf9160dk/nrf9160 nrf52840dk/nrf52840 nrf9161dk/nrf9161 nrf9161dk/nrf9161/ns
@@ -24,7 +25,8 @@ tests:
       - nrf9161dk/nrf9161
       - nrf9161dk/nrf9161/ns
   sample.persistent_key_usage.cracen:
-    tags: introduction psa cracen
+    sysbuild: true
+    tags: introduction psa cracen sysbuild
     platform_allow: >
       nrf54l15pdk/nrf54l15/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp/ns

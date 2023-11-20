@@ -3,10 +3,11 @@ sample:
   name: BLE Event Trigger
 tests:
   sample.bluetooth.connection_event_trigger:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpunet
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build sysbuild

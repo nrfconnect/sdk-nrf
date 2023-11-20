@@ -3,6 +3,7 @@ sample:
   name: Profiler sample
 tests:
   sample.nrf_profiler:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
@@ -17,4 +18,4 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
     platform_exclude: native_posix qemu_x86 qemu_cortex_m3
-    tags: ci_build
+    tags: ci_build sysbuild

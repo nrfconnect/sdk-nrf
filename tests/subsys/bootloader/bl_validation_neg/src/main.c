@@ -102,7 +102,7 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 			VAL_INFO_MAX_SIZE);
 
 		/* Reboot */
-		printk("Rebooting. Should fail to validate slot 1.\n");
+		printk("Rebooting. Should fail to validate slot 1.");
 		sys_reboot(0);
 		zassert_true(false, "should not come here.");
 	}
@@ -130,7 +130,7 @@ ZTEST(test_bl_validation_neg, test_validation_neg2)
 	zassert_true(any_valid,
 		"All public keys invalidated, should not have booted!");
 	printk("Rebooting. Should fail to validate because of invalid public "
-		"keys.\n");
+		"keys.");
 	sys_reboot(0);
 	zassert_true(false, "should not come here.");
 #endif

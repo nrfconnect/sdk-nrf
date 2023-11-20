@@ -2,6 +2,7 @@ sample:
   name: nrf LwM2M Sample
 tests:
   sample.cellular.lwm2m_client:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
@@ -14,4 +15,4 @@ tests:
       - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-    tags: ci_build
+    tags: ci_build sysbuild

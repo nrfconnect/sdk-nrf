@@ -2,6 +2,7 @@ sample:
   name: NIDD sample
 tests:
   samples.cellular.nidd:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -14,4 +15,4 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
-    tags: ci_build
+    tags: ci_build sysbuild

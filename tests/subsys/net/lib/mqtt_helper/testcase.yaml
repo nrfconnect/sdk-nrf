@@ -1,7 +1,8 @@
 tests:
   net.lib.mqtt_helper:
+    sysbuild: true
     platform_allow: qemu_cortex_m3 native_posix
     integration_platforms:
       - qemu_cortex_m3
       - native_posix
-    tags: mqtt_helper
+    tags: mqtt_helper sysbuild

@@ -1,8 +1,9 @@
 tests:
   nrfx_integration_test.build:
+    sysbuild: true
     build_only: true
     filter: CONFIG_HAS_NRFX
-    tags: drivers ci_build
+    tags: drivers ci_build sysbuild
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -24,9 +25,10 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
   nrfx_integration_test.build.bt.softdevice:
+    sysbuild: true
     build_only: true
     filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SOFTDEVICE
-    tags: drivers ci_build
+    tags: drivers ci_build sysbuild
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SOFTDEVICE=y
     platform_allow:
@@ -36,9 +38,10 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpunet
   nrfx_integration_test.build.bt.sw_split:
+    sysbuild: true
     build_only: true
     filter: CONFIG_HAS_NRFX and CONFIG_BT_LL_SW_SPLIT
-    tags: drivers ci_build
+    tags: drivers ci_build sysbuild
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SW_SPLIT=y
     platform_allow:

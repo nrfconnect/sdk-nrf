@@ -1,16 +1,15 @@
 tests:
   event_manager_proxy.openamp:
+    sysbuild: true
     platform_allow: nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    tags: event_manager_proxy
+    tags: event_manager_proxy sysbuild
   event_manager_proxy.icmsg:
+    sysbuild: true
     extra_args:
-      CONF_FILE=prj_icmsg.conf
-      remote_CONF_FILE=prj_icmsg.conf
-      DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpuapp_icmsg.overlay
-      remote_DTC_OVERLAY_FILE=boards/nrf5340dk_nrf5340_cpunet_icmsg.overlay
+      FILE_SUFFIX=icmsg
     platform_allow: nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    tags: event_manager_proxy
+    tags: event_manager_proxy sysbuild

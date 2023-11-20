@@ -3,7 +3,8 @@ sample:
   name: Spake2+ example
 tests:
   sample.spake2p.oberon:
-    tags: introduction psa oberon
+    sysbuild: true
+    tags: introduction psa oberon sysbuild
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp nrf5340dk/nrf5340/cpuapp/ns
       nrf9160dk/nrf9160 nrf52840dk/nrf52840
@@ -23,7 +24,8 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf52840dk/nrf52840
   sample.spake2p.cracen:
-    tags: introduction psa cracen
+    sysbuild: true
+    tags: introduction psa cracen sysbuild
     platform_allow: >
       nrf54l15pdk/nrf54l15/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp/ns

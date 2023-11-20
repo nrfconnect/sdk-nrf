@@ -1,71 +1,72 @@
 tests:
   lpuart.loopback_busy_sim:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart
+    tags: lpuart sysbuild
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
       - CONFIG_TEST_BUSY_SIM=y
-
   lpuart.loopback_busy_sim_no_hfxo:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart
+    tags: lpuart sysbuild
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
     extra_configs:
       - CONFIG_NRF_SW_LPUART_HFXO_ON_RX=n
       - CONFIG_TEST_LPUART_LOOPBACK=y
       - CONFIG_TEST_BUSY_SIM=y
-
   lpuart.loopback:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart
+    tags: lpuart sysbuild
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
-
   lpuart.loopback_no_hfxo:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart
+    tags: lpuart sysbuild
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
     extra_configs:
       - CONFIG_NRF_SW_LPUART_HFXO_ON_RX=n
       - CONFIG_TEST_LPUART_LOOPBACK=y
-
   lpuart.two_chip_test:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160 nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
-    tags: lpuart
+    tags: lpuart sysbuild
     build_only: true
     extra_configs:
       - CONFIG_TEST_LPUART_TIMEOUT=10
-
   lpuart.two_chip_test_busy_sim:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160 nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
-    tags: lpuart
+    tags: lpuart sysbuild
     build_only: true
     extra_configs:
       - CONFIG_TEST_LPUART_TIMEOUT=10
       - CONFIG_TEST_BUSY_SIM=y
-
   lpuart.two_chip_test_debug:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160 nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
-    tags: lpuart
+    tags: lpuart sysbuild
     build_only: true
     extra_args: OVERLAY_CONFIG=dbg.conf
     extra_configs:

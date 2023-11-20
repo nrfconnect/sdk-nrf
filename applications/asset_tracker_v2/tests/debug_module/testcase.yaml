@@ -1,8 +1,9 @@
 tests:
   asset_tracker_v2.debug_module_test.tester:
+    sysbuild: true
     platform_allow: native_sim qemu_cortex_m3 nrf9160dk/nrf9160/ns
     integration_platforms:
       - native_sim
       - qemu_cortex_m3
       - nrf9160dk/nrf9160/ns
-    tags: debug_module
+    tags: debug_module sysbuild

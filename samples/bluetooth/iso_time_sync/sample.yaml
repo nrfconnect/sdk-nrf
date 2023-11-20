@@ -3,6 +3,7 @@ sample:
   name: Bluetooth ISO time sync
 tests:
   sample.bluetooth.iso_time_sync:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -14,4 +15,4 @@ tests:
       - nrf52833dk/nrf52833
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build sysbuild

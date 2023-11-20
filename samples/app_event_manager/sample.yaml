@@ -14,6 +14,7 @@ common:
     type: multi_line
 tests:
   sample.app_event_manager:
+    sysbuild: true
     build_only: false
     platform_allow:
       - qemu_cortex_m3
@@ -31,7 +32,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
+    tags: sysbuild
   sample.app_event_manager_shell:
+    sysbuild: true
     build_only: false
     platform_allow:
       - qemu_cortex_m3
@@ -52,9 +55,12 @@ tests:
     extra_configs:
       - CONFIG_SHELL=y
     platform_exclude: native_posix
+    tags: sysbuild
   sample.app_event_manager_shell.native_posix:
+    sysbuild: true
     build_only: false
     extra_configs:
       - CONFIG_SHELL=y
       - CONFIG_NATIVE_UART_0_ON_STDINOUT=y
     platform_allow: native_posix
+    tags: sysbuild

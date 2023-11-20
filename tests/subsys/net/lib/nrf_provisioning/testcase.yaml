@@ -1,18 +1,21 @@
 tests:
   nrf_provisioning.unittest_jwt:
-    extra_args: CONF_FILE="prj_jwt.conf"
+    sysbuild: true
+    extra_args: FILE_SUFFIX=jwt
     platform_allow: native_posix native_sim
     integration_platforms:
       - native_sim
-    tags: unittest
+    tags: unittest sysbuild
   nrf_provisioning.unittest_http:
+    sysbuild: true
     platform_allow: native_posix native_sim
     integration_platforms:
       - native_sim
-    tags: unittest
+    tags: unittest sysbuild
   nrf_provisioning.unittest_coap:
-    extra_args: CONF_FILE="prj_coap.conf"
+    sysbuild: true
+    extra_args: FILE_SUFFIX=coap
     platform_allow: native_posix native_sim
     integration_platforms:
       - native_sim
-    tags: unittest
+    tags: unittest sysbuild
