@@ -50,7 +50,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* Number of audio blocks given a duration */
 #define NUM_BLKS(d)	    ((d) / BLK_PERIOD_US)
 /* Single audio block size in number of samples (stereo) */
-#define BLK_SIZE_SAMPLES(r) (((r) * BLK_PERIOD_US) / 1000000)
+#define BLK_SIZE_SAMPLES(r) (((r)*BLK_PERIOD_US) / 1000000)
 /* Increment sample FIFO index by one block */
 #define NEXT_IDX(i)	    (((i) < (FIFO_NUM_BLKS - 1)) ? ((i) + 1) : 0)
 /* Decrement sample FIFO index by one block */
@@ -72,7 +72,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define APLL_FREQ_MIN	 36834
 #define APLL_FREQ_MAX	 42874
 /* Use nanoseconds to reduce rounding errors */
-#define APLL_FREQ_ADJ(t) (-((t) * 1000) / 331)
+#define APLL_FREQ_ADJ(t) (-((t)*1000) / 331)
 
 #define DRIFT_MEAS_PERIOD_US	   100000
 #define DRIFT_ERR_THRESH_LOCK	   16
@@ -501,10 +501,15 @@ int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude)
 		return -EBUSY;
 	}
 
-	ret = tone_gen(test_tone_buf, &test_tone_size, freq, CONFIG_AUDIO_SAMPLE_RATE_HZ,
-		       amplitude);
-	if (ret) {
-		return ret;
+	if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
+		ret = tone_gen(test_tone_buf, &test_tone_size, freq, CONFIG_AUDIO_SAMPLE_RATE_HZ,
+			       amplitude);
+		if (ret) {
+			return ret;
+		}
+	} else {
+		LOG_ERR("Test tone is not enabled");
+		return -ENXIO;
 	}
 
 	/* If duration is 0, play forever */

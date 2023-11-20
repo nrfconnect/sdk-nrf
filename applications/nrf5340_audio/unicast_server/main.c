@@ -9,6 +9,7 @@
 #include <zephyr/zbus/zbus.h>
 
 #include "nrf5340_audio_common.h"
+#include "nrf5340_audio_dk.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
@@ -469,19 +470,19 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	}
 }
 
-int streamctrl_start(void)
+int main(void)
 {
 	int ret;
-	static bool started;
+
+	LOG_DBG("nRF5340 APP core started");
+
 	struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
 	size_t ext_adv_buf_cnt = 0;
 
-	if (started) {
-		LOG_WRN("Streamctrl already started");
-		return -EALREADY;
-	}
+	ret = nrf5340_audio_dk_init();
+	ERR_CHK(ret);
 
-	ret = audio_system_init();
+	ret = nrf5340_audio_common_init();
 	ERR_CHK(ret);
 
 	ret = zbus_subscribers_create();
@@ -507,8 +508,6 @@ int streamctrl_start(void)
 
 	ret = bt_mgmt_adv_start(ext_adv_buf, ext_adv_buf_cnt, NULL, 0, true);
 	ERR_CHK(ret);
-
-	started = true;
 
 	return 0;
 }

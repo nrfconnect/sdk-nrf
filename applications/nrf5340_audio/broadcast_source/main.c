@@ -10,6 +10,7 @@
 #include <zephyr/zbus/zbus.h>
 
 #include "nrf5340_audio_common.h"
+#include "nrf5340_audio_dk.h"
 #include "broadcast_source.h"
 #include "led.h"
 #include "button_assignments.h"
@@ -18,7 +19,7 @@
 #include "bt_mgmt.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(streamctrl_brcast_src, CONFIG_STREAMCTRL_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 
@@ -306,23 +307,22 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	}
 }
 
-int streamctrl_start(void)
+int main(void)
 {
 	int ret;
-	static bool started;
 
-	if (started) {
-		LOG_WRN("Streamctrl already started");
-		return -EALREADY;
-	}
+	LOG_DBG("nRF5340 APP core started");
+
+	ret = nrf5340_audio_dk_init();
+	ERR_CHK(ret);
+
+	ret = nrf5340_audio_common_init();
+	ERR_CHK(ret);
 
 	size_t ext_adv_size = 0;
 	size_t per_adv_size = 0;
 	const struct bt_data *ext_adv = NULL;
 	const struct bt_data *per_adv = NULL;
-
-	ret = audio_system_init();
-	ERR_CHK_MSG(ret, "Failed to initialize the audio system");
 
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
@@ -337,8 +337,6 @@ int streamctrl_start(void)
 
 	ret = bt_mgmt_adv_start(ext_adv, ext_adv_size, per_adv, per_adv_size, false);
 	ERR_CHK_MSG(ret, "Failed to start advertiser");
-
-	started = true;
 
 	return 0;
 }

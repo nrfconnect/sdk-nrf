@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+## ACL related configs ##
+config BT_OBSERVER
+	default y
+
+config BT_PERIPHERAL
+	default y
+
+# Generic Audio Sink - 0x0840
+config BT_DEVICE_APPEARANCE
+	default 2112
+
+config BT_PER_ADV_SYNC_MAX
+	default 2
+
+config BT_SMP
+	default y
+
+
+## ISO related configs ##
+config BT_ISO_SYNC_RECEIVER
+	default y
+
+config BT_BAP_BROADCAST_SINK
+	default y
+
+config BT_BAP_SCAN_DELEGATOR
+	default y
+
+config BT_BAP_BROADCAST_SNK_STREAM_COUNT
+	default 2
+
+config BT_BAP_BROADCAST_SNK_COUNT
+	default 2
+
+config BT_ISO_MAX_CHAN
+	default 2
+
+config BT_ISO_MAX_BIG
+	default 2
+
+config BT_PAC_SNK
+	default y
+
+config BT_AUDIO_RX
+	default y
+
+
+## Audio related configs ##
+config AUDIO_MUTE
+	default n
+
+config AUDIO_TEST_TONE
+	default n
+
+
+## LC3 related configs ##
+config LC3_DEC_CHAN_MAX
+	default 1

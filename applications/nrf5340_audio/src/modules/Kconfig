@@ -89,6 +89,10 @@ module = MODULE_SD_CARD_PLAYBACK
 module-str = module-sd-card-playback
 source "subsys/logging/Kconfig.template.log_config"
 
+module = MODULE_NRF5340_AUDIO_DK
+module-str = module-nrf5340-audio_dk
+source "subsys/logging/Kconfig.template.log_config"
+
 endmenu # Log levels
 
 #----------------------------------------------------------------------------#

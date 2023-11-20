@@ -15,9 +15,6 @@
 #include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/bluetooth/audio/lc3.h>
 
-/* TODO: Remove when a get_info function is implemented in host */
-#include <../subsys/bluetooth/audio/bap_endpoint.h>
-
 #include "macros_common.h"
 #include "nrf5340_audio_common.h"
 #include "channel_assignment.h"
@@ -186,8 +183,8 @@ static void print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_di
 		}
 
 		uint32_t octets_per_sdu = bt_audio_codec_cfg_get_octets_per_frame(codec);
-		uint32_t bitrate = octets_per_sdu * 8 *
-				   (1000000 / bt_audio_codec_cfg_get_frame_dur(codec));
+		uint32_t bitrate =
+			octets_per_sdu * 8 * (1000000 / bt_audio_codec_cfg_get_frame_dur(codec));
 
 		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d",
@@ -361,9 +358,16 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 static void stream_enabled_cb(struct bt_bap_stream *stream)
 {
 	int ret;
+	struct bt_bap_ep_info ep_info;
+
+	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
+	if (ret) {
+		LOG_WRN("Failed to get ep_info");
+	}
+
 	LOG_DBG("Stream %p enabled", stream);
 
-	if (stream->ep->dir == BT_AUDIO_DIR_SINK) {
+	if (ep_info.dir == BT_AUDIO_DIR_SINK) {
 		/* Automatically do the receiver start ready operation */
 		ret = bt_bap_stream_start(stream);
 		if (ret != 0) {
@@ -380,8 +384,17 @@ static void stream_disabled_cb(struct bt_bap_stream *stream)
 
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
+	int ret;
+	struct bt_bap_ep_info ep_info;
+
+	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
+	if (ret) {
+		LOG_WRN("Failed to get ep_info");
+	}
+
 	LOG_INF("Stream %p started", stream);
-	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
+
+	if (ep_info.dir == BT_AUDIO_DIR_SOURCE) {
 		ERR_CHK(bt_le_audio_tx_stream_started(0));
 	}
 
@@ -390,9 +403,17 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
+	int ret;
+	struct bt_bap_ep_info ep_info;
+
+	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
+	if (ret) {
+		LOG_WRN("Failed to get ep_info");
+	}
+
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
+	if (ep_info.dir == BT_AUDIO_DIR_SOURCE) {
 		ERR_CHK(bt_le_audio_tx_stream_stopped(0));
 	}
 
@@ -453,8 +474,8 @@ int unicast_server_config_get(uint32_t *bitrate, uint32_t *sampling_rate_hz,
 
 	if (bitrate != NULL) {
 		/* Get the configuration for the sink stream */
-		int frames_per_sec = 1000000 / bt_audio_codec_cfg_get_frame_dur(
-						       audio_streams[0].codec_cfg);
+		int frames_per_sec =
+			1000000 / bt_audio_codec_cfg_get_frame_dur(audio_streams[0].codec_cfg);
 		int bits_per_frame =
 			bt_audio_codec_cfg_get_octets_per_frame(audio_streams[0].codec_cfg) * 8;
 
