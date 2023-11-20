@@ -596,6 +596,10 @@ cJSON
 Documentation
 =============
 
+* Added
+
+  * A page on :ref:`ug_nrf70_developing_debugging` in the :ref:`ug_nrf70_developing` user guide.
+
 * Updated:
 
   * The :ref:`installation` section: by replacing two separate pages about installing the |NCS| with just one (:ref:`install_ncs`).
