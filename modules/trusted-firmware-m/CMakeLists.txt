@@ -15,7 +15,7 @@ if (NOT CONFIG_TFM_BUILD_NS AND CONFIG_TFM_PARTITION_PLATFORM AND CONFIG_SOC_FAM
   # build system. Usually the cmake INSTALL mechanism is used to move these
   # API source files to be built by the zephyr build system.
   # For convenience we instead refer directly to the source files here.
-  set(src_dir ${CMAKE_CURRENT_LIST_DIR}/../tfm/boards/src)
+  set(src_dir ${CMAKE_CURRENT_LIST_DIR}/tfm_boards/src)
 
   zephyr_library_sources(
     ${src_dir}/tfm_ioctl_ns_api.c
