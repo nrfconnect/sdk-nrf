@@ -266,20 +266,28 @@ int nrf_wifi_if_send(const struct device *dev,
 		goto out;
 	}
 
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	if (!rpu_ctx_zep->rpu_ctx) {
-		goto out;
+		goto unlock;
 	}
 
 	if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
-	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
-		goto out;
+		(!vif_ctx_zep->authorized && !is_eapol(pkt))) {
+		goto unlock;
 	}
 
 	ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
-				       vif_ctx_zep->vif_idx,
-				       net_pkt_to_nbuf(pkt));
+						vif_ctx_zep->vif_idx,
+						net_pkt_to_nbuf(pkt));
+unlock:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 #else
 	goto out;
 #endif /* CONFIG_NRF700X_DATA_TX */
@@ -606,6 +614,8 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 		goto dev_rem;
 	}
 
+	k_mutex_init(&vif_ctx_zep->vif_lock);
+
 	/* Disallow if a valid mac address has not been configured for the interface
 	 * either from the OTP or by the user
 	 */
@@ -716,6 +726,12 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 		goto out;
 	}
 
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto out;
+	}
+
 #ifdef CONFIG_NRF700X_STA_MODE
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	status = nrf_wifi_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
@@ -762,6 +778,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 		nrf_wifi_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
 	ret = 0;
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 out:
 	return ret;
 }
