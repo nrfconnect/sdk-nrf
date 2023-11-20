@@ -219,7 +219,7 @@ static ssize_t hids_inp_rep_read(struct bt_conn *conn,
 	uint8_t idx = rep->idx;
 	struct bt_hids *hids = CONTAINER_OF((rep - idx),
 						 struct bt_hids,
-						 inp_rep_group.reports);
+						 inp_rep_group.reports[0]);
 	uint8_t *rep_data;
 	ssize_t ret_len;
 
@@ -266,7 +266,7 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 	uint8_t idx = rep->idx;
 	struct bt_hids *hids = CONTAINER_OF((rep - idx),
 						 struct bt_hids,
-						 outp_rep_group.reports);
+						 outp_rep_group.reports[0]);
 	uint8_t *rep_data;
 	ssize_t ret_len;
 
@@ -307,7 +307,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 	uint8_t idx = rep->idx;
 	struct bt_hids *hids = CONTAINER_OF((rep - idx),
 						 struct bt_hids,
-						 outp_rep_group.reports);
+						 outp_rep_group.reports[0]);
 	uint8_t *rep_data;
 
 	struct bt_hids_conn_data *conn_data =
@@ -363,7 +363,7 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 	uint8_t idx = rep->idx;
 	struct bt_hids *hids = CONTAINER_OF((rep - idx),
 						 struct bt_hids,
-						 feat_rep_group.reports);
+						 feat_rep_group.reports[0]);
 	uint8_t *rep_data;
 	ssize_t ret_len;
 
@@ -410,7 +410,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 	uint8_t idx = rep->idx;
 	struct bt_hids *hids = CONTAINER_OF((rep - idx),
 						 struct bt_hids,
-						 feat_rep_group.reports);
+						 feat_rep_group.reports[0]);
 	uint8_t *rep_data;
 
 	struct bt_hids_conn_data *conn_data =
