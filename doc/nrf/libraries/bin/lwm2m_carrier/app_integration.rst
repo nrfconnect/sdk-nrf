@@ -123,6 +123,8 @@ Following are some of the general Kconfig options that you can configure:
   .. note::
      Application DFU is needed to enable LG U+ functionality.
 
+.. _server_options_lwm2m:
+
 Server options
 ==============
 
@@ -158,6 +160,8 @@ The server settings can put the LwM2M carrier library either in the normal mode 
 
   * The binding can be either ``U`` (UDP) or ``N`` (Non-IP).
   * Leaving this configuration empty selects the default binding (UDP).
+
+.. _device_options_lwm2m:
 
 Device options
 ==============

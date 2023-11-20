@@ -79,7 +79,6 @@ Syntax
 
 The ``<cmd>`` command is a string, and can be used as follows:
 
-* ``AT#XCARRIER="auto_connect","read|write"[,<auto-connect-flag>]``
 * ``AT#XCARRIER="app_data"[,<data>][,<instance_id>,<resource_instance_id>]``
 * ``AT#XCARRIER="battery_level",<battery_level>``
 * ``AT#XCARRIER="battery_status",<battery_status>``
@@ -116,19 +115,6 @@ Examples
 
 ::
 
-   AT#XCARRIER="auto_connect","read"
-   #XCARRIER: auto_connect 1
-   OK
-
-   AT#XCARRIER="auto_connect","write",0
-   OK
-
-   AT#XCARRIER="auto_connect","read"
-   #XCARRIER: auto_connect 0
-   OK
-
-::
-
    AT#XCARRIER="time","read"
    #XCARRIER: UTC_TIME: 2022-12-30T14:56:46Z, UTC_OFFSET: 60, TIMEZONE: Europe/Paris
    OK
@@ -155,6 +141,162 @@ Examples
 ::
 
    AT#XCARRIER="reboot"
+   OK
+
+Read command
+------------
+
+The read command is not supported.
+
+Test command
+------------
+
+The test command is not supported.
+
+LwM2M Carrier library configuration #XCARRIERCFG
+================================================
+
+The ``#XCARRIERCFG`` command allows you to configure the LwM2M carrier library.
+The settings are stored and applied persistently.
+
+.. note::
+   To use ``#XCARRIERCFG``, the :kconfig:option:`CONFIG_LWM2M_CARRIER_SETTINGS` Kconfig option must be enabled.
+   For more details on LwM2M carrier library configuration, see the :ref:`lwm2m_configuration` section of the library's documentation.
+
+Set command
+-----------
+
+The set command allows you to configure the LwM2M carrier library.
+
+Syntax
+~~~~~~
+
+::
+
+   AT#XCARRIERCFG=<cmd>[,<param1>[,<param2>]..]
+
+The ``<cmd>`` command is a string, and can be used as follows:
+
+* ``AT#XCARRIERCFG="apn"[,<apn>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` Kconfig option.
+* ``AT#XCARRIERCFG="auto_startup"[,<0|1>]``
+  * Set flag to automatically apply the enabled settings to the library configuration and connect to the device management server.
+* ``AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` Kconfig option.
+* ``AT#XCARRIERCFG="carriers"[,"all"|<carrier1>[<carrier2>[,...[,<carrier6>]]]]``
+  * Choose the networks in which the LwM2M carrier library will apply (see the :ref:`general_options_lwm2m` section of the library's documentation).
+* ``AT#XCARRIERCFG="coap_con_interval"[,<interval>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL` Kconfig option.
+* ``AT#XCARRIERCFG="config_enable"[,<0|1>]``
+  * Set flag to apply the stored settings to the general Kconfig options (see the :ref:`general_options_lwm2m` section of the library's documentation).
+* ``AT#XCARRIERCFG="device_enable"[,<0|1>]``
+  * Set flag to apply the stored settings to the device Kconfig options (see the :ref:`device_options_lwm2m` section of the library's documentation).
+* ``AT#XCARRIERCFG="device_type"[,<device_type>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE` Kconfig option.
+* ``AT#XCARRIERCFG="hardware_version"[,<version>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_HARDWARE_VERSION` Kconfig option.
+* ``AT#XCARRIERCFG="manufacturer"[,<manufacturer>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MANUFACTURER` Kconfig option.
+* ``AT#XCARRIERCFG="model_number"[,<model_number>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MODEL_NUMBER` Kconfig option.
+* ``AT#XCARRIERCFG="software_version"[,<version>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION` Kconfig option.
+* ``AT#XCARRIERCFG="device_serial_no_type"[,<device_serial_no_type>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER` Kconfig option.
+* ``AT#XCARRIERCFG="service_code"[,<service_code>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE` Kconfig option.
+* ``AT#XCARRIERCFG="pdn_type"[,<pdn_type>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE` Kconfig option.
+* ``AT#XCARRIERCFG="binding"[,<binding>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option.
+* ``AT#XCARRIERCFG="server_enable"[,<0|1>]``
+  * Set flag to apply the stored settings to the server Kconfig options (see the :ref:`server_options_lwm2m` section of the library's documentation).
+* ``AT#XCARRIERCFG="is_bootstrap"[,<0|1>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` Kconfig option.
+* ``AT#XCARRIERCFG="lifetime"[,<lifetime>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` Kconfig option.
+* ``AT#XCARRIERCFG="sec_tag"[,<sec_tag>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig option.
+* ``AT#XCARRIERCFG="uri"[,<uri>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` Kconfig option.
+* ``AT#XCARRIERCFG="session_idle_timeout"[,<session_idle_timeout>]``
+  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT` Kconfig option.
+
+The values of the parameters depend on the command string used.
+If a valid command string is used without any parameter, the current value of the corresponding configuration will be returned in the response, as in the examples shown below.
+Boolean configurations, such as ``auto_startup`` or ``is_bootstrap``, only accept ``0`` (disable) and ``1`` (enable) as input parameters.
+
+The ``carriers`` configuration allows to choose the networks in which the LwM2M carrier library will apply.
+Possible inputs are mapped as follows:
+
+* ``all`` - Any network allowed.
+* ``0`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`.
+* ``1`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`.
+* ``2`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT`.
+* ``3`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`.
+* ``4`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_T_MOBILE`.
+* ``5`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`.
+
+The ``device_serial_no_type`` configuration accepts the following values:
+
+* ``0`` - :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_IMEI`.
+* ``1`` - :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_2DID`.
+
+The ``pdn_type`` configuration accepts the following values:
+
+* ``0`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV4V6`.
+* ``1`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV4`.
+* ``2`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_IPV6`.
+* ``3`` - :c:macro:`LWM2M_CARRIER_PDN_TYPE_NONIP`.
+
+The ``binding`` configuration accepts the following values:
+
+* ``"U"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_U`.
+* ``"N"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_N`.
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+The response syntax depends on the commands used.
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XCARRIERCFG="auto_startup"
+   #XCARRIERCFG: 0
+   OK
+
+   AT#XCARRIERCFG="auto_startup",1
+   OK
+
+   AT#XCARRIERCFG="auto_startup"
+   #XCARRIERCFG: 1
+   OK
+
+::
+
+   AT#XCARRIERCFG="manufacturer","Nordic Semiconductor ASA"
+   OK
+
+   AT#XCARRIERCFG="manufacturer"
+   #XCARRIERCFG: Nordic Semiconductor ASA
+   OK
+
+::
+
+   AT#XCARRIERCFG="carriers","all"
+   OK
+
+   AT#XCARRIERCFG="carriers"
+   #XCARRIERCFG: all
+
+   AT#XCARRIERCFG="carriers",1,3
+   OK
+
+   AT#XCARRIERCFG="carriers"
+   #XCARRIERCFG: 1, 3
    OK
 
 Read command

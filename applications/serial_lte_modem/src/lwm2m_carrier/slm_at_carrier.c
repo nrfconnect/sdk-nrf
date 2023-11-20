@@ -80,7 +80,7 @@ static int do_carrier_request_reboot(void);
 static int do_carrier_request_link_down(void);
 static int do_carrier_request_link_up(void);
 
-/**@brief SLM AT Command list type. */
+/**@brief SLM Carrier AT Command list type. */
 static struct carrier_op_list op_list[CARRIER_OP_MAX] = {
 	{CARRIER_OP_APPDATA_SEND, "app_data", do_carrier_appdata_send},
 	{CARRIER_OP_DEVICE_BATTERY_LEVEL, "battery_level", do_carrier_device_battery_level},
@@ -853,7 +853,8 @@ static int do_carrier_request_link_up(void)
 	return lwm2m_carrier_request(LWM2M_CARRIER_REQUEST_LINK_UP);
 }
 
-/**@brief API to handle Carrier AT command
+/**
+ * @brief API to handle AT#XCARRIER command.
  */
 int handle_at_carrier(enum at_cmd_type cmd_type)
 {

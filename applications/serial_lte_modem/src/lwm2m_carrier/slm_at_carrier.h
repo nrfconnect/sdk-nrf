@@ -8,6 +8,7 @@
 #define SLM_AT_CARRIER_
 
 #include <stdint.h>
+#include <modem/at_cmd_parser.h>
 
 /**@file slm_at_carrier.h
  *
@@ -29,6 +30,11 @@ int slm_at_carrier_init(void);
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_at_carrier_uninit(void);
+
+/**
+ * @brief AT#XCARRIER command handler.
+ */
+int handle_at_carrier(enum at_cmd_type cmd_type);
 
 /** @} */
 
