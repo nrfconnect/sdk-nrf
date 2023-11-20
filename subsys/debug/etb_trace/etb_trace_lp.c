@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/timeout_q.h>
 #include <debug/etb_trace.h>
 
 #include <etb_trace_private.h>
