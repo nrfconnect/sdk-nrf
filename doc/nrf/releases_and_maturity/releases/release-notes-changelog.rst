@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.5.99
-###########################
+Changelog for |NCS| v2.5.99-dev1
+################################
 
 .. contents::
    :local:
@@ -84,9 +84,7 @@ Bluetooth mesh
 Matter
 ------
 
-* Updated:
-
-  * Page about :ref:`ug_matter_device_low_power_configuration` with the information about Intermittently Connected Devices (ICD) configuration.
+* Updated the page about :ref:`ug_matter_device_low_power_configuration` with the information about Intermittently Connected Devices (ICD) configuration.
 
 Matter fork
 +++++++++++
@@ -101,14 +99,14 @@ The following list summarizes the most important changes inherited from the upst
    * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_IDLE_MODE_DURATION`, :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_DURATION` and :kconfig:option:`CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC` to manage ICD configuration.
    * New device types:
 
-     * Refidgerator
-     * Room Air Conditioner
+     * Refridgerator
+     * Room air conditioner
      * Dishwasher
-     * Laundry Washer
-     * Robotic Vacuum Cleaner
-     * Smoke CO Alarm
-     * Air Quality Sensor
-     * Air Purifier
+     * Laundry washer
+     * Robotic vacuum cleaner
+     * Smoke CO alarm
+     * Air quality sensor
+     * Air purifier
      * Fan
 
    * Product Appearance attribute in the Basic Information cluster that allows describing the product's color and finish.
@@ -119,7 +117,6 @@ The following list summarizes the most important changes inherited from the upst
    * Renamed the ``CONFIG_CHIP_SED_IDLE_INTERVAL`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`.
    * Renamed the ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
    * Renamed the ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
-
 
 Thread
 ------
@@ -177,13 +174,10 @@ Serial LTE modem
   * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
   * ``#XSLMVER`` AT command to report CONFIG_SLM_CUSTOMER_VERSION if it is defined.
 
-* Removed:
-  * The ``CONFIG_SLM_CUSTOMIZED`` Kconfig option due to it no longer being used.
-  * The ``CONFIG_SLM_SOCKET_RX_MAX`` Kconfig option due to it no longer being used.
+* Removed Kconfig options ``CONFIG_SLM_CUSTOMIZED`` and ``CONFIG_SLM_SOCKET_RX_MAX``.
 
 nRF5340 Audio
 -------------
-
 
 |no_changes_yet_note|
 
@@ -219,8 +213,6 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
-
 * :ref:`ble_throughput` sample:
 
   * Enabled encryption in the sample.
@@ -249,7 +241,7 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Changed:
 
-    * The sample now explicitly uses :c:func:`conn_mgr_all_if_connect` to start network connectivity, instead of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT` Kconfig options.
+    * The sample now explicitly uses the :c:func:`conn_mgr_all_if_connect` function to start network connectivity, instead of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT` Kconfig options.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
@@ -266,8 +258,6 @@ Cryptography samples
 
   * All crypto samples to use ``psa_key_id_t`` instead of ``psa_key_handle_t``.
     These concepts have been merged and ``psa_key_handle_t`` is removed from the PSA API specification.
-
-|no_changes_yet_note|
 
 Debug samples
 -------------
@@ -315,8 +305,6 @@ Networking samples
   * Updated by moving the sample from :file:`cellular/coap_client` folder to :file:`net/coap_client`.
     The documentation is now found in the :ref:`networking_samples` section.
 
-|no_changes_yet_note|
-
 NFC samples
 -----------
 
@@ -355,6 +343,8 @@ Thread samples
 Sensor samples
 --------------
 
+|no_changes_yet_note|
+
 Zigbee samples
 --------------
 
@@ -375,14 +365,12 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-|no_changes_yet_note|
-
 Wi-Fi drivers
 -------------
 
 * OS agnostic code is moved to |NCS| (``sdk-nrfxlib``) repository.
 
-   - Low-level API documentation is now available on the :ref:`Wi-Fi driver API <nrfxlib:nrf_wifi_api>`.
+  * Low-level API documentation is now available on the :ref:`Wi-Fi driver API <nrfxlib:nrf_wifi_api>`.
 
 Libraries
 =========
@@ -433,25 +421,20 @@ Modem libraries
     * The :c:func:`lte_lc_init_and_connect_async` function is deprecated.
       Use the :c:func:`lte_lc_connect_async` function instead.
 
-  * Removed:
-
-    * The deprecated Kconfig option ``CONFIG_LTE_AUTO_INIT_AND_CONNECT``.
+  * Removed the deprecated Kconfig option ``CONFIG_LTE_AUTO_INIT_AND_CONNECT``.
 
 * :ref:`nrf_modem_lib_readme`:
 
   * Added:
 
     * A mention about enabling TF-M logging while using modem traces in the :ref:`modem_trace_module`.
-    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT` option, allowing the :c:enumerator:`nrf_modem_lib_net_if_options.NRF_MODEM_LIB_NET_IF_DOWN` option to be set to :c:enumerator:`~nrf_modem_lib_net_if_down_options.NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT` at build time.
+    * The :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT` Kconfig option, allowing the :c:enumerator:`nrf_modem_lib_net_if_options.NRF_MODEM_LIB_NET_IF_DOWN` option to be set to :c:enumerator:`~nrf_modem_lib_net_if_down_options.NRF_MODEM_LIB_NET_IF_DOWN_LTE_DISCONNECT` at build time.
 
   * Updated by renaming ``lte_connectivity`` module to ``lte_net_if``.
     All related Kconfig options have been renamed accordingly.
   * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
 
-  * Removed:
-
-    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_SYS_INIT``.
-    * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
+  * Removed the deprecated Kconfig options ``CONFIG_NRF_MODEM_LIB_SYS_INIT`` and ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
 
 * :ref:`lib_modem_slm`:
 
@@ -602,9 +585,12 @@ Documentation
 
 * Updated:
 
-  * The :ref:`installation` section: by replacing two separate pages about installing the |NCS| with just one (:ref:`install_ncs`).
+  * The :ref:`installation` section by replacing two separate pages about installing the |NCS| with just one (:ref:`install_ncs`).
   * The :ref:`requirements` page with new sections about :ref:`requirements_clt` and :ref:`toolchain_management_tools`.
   * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages so that instructions in the :ref:`nrf9160_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
   * The :ref:`ug_nrf9160_gs` by replacing the Updating the DK firmware section with a new :ref:`nrf9160_gs_installing_software` section.
     This new section includes steps for using Quick Start, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF91 Series DKs.
-  * Updated the :ref:`tfm_enable_share_uart` section on :ref:`ug_nrf9160`.
+  * The :ref:`tfm_enable_share_uart` section on :ref:`ug_nrf9160`.
+
+* Removed the Welcome to the |NCS| page.
+  This page is replaced with existing :ref:`ncs_introduction` page.

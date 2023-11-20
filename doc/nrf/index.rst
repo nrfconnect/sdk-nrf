@@ -4,6 +4,19 @@
 Introduction
 ############
 
+.. important::
+
+   |NCS| v2.5.99-dev1 is a development tag that will be replaced by v2.6.0 in the future.
+
+   This development tag includes the following major update:
+
+   * Experimental support for the Matter 1.2.0 protocol, with updates including but not limited to:
+
+     * Support for new device types such as refrigerators, room air conditioners, dishwashers, laundry washers, robotic vacuum cleaners, smoke CO alarms, air quality sensors, air purifiers, and fans.
+     * Support for the Intermittently Connected Devices (ICD) Management cluster.
+     * Support for the Product Appearance attribute in the Basic Information cluster.
+     * Updated documentation to reflect changes in the Matter 1.2.0 protocol.
+
 The |NCS| is a modern, unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, nRF70, and nRF91 Series wireless devices.
 It supports :ref:`Microsoft Windows, Linux, and macOS <requirements>` for development.
 
