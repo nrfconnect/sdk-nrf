@@ -1,6 +1,7 @@
 tests:
   modem_battery.unit_test:
-    tags: modem_battery
+    sysbuild: true
+    tags: modem_battery sysbuild
     platform_allow: native_posix
     integration_platforms:
       - native_posix

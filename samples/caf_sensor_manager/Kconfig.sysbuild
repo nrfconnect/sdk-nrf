@@ -8,3 +8,4 @@ source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
 config REMOTE_BOARD
 	string "The board used for remote target"
+	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK

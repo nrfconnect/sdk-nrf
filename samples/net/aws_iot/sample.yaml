@@ -2,7 +2,8 @@ sample:
   name: AWS IoT sample
 tests:
   sample.net.aws_iot:
-    tags: ci_build
+    sysbuild: true
+    tags: ci_build sysbuild
     build_only: true
     build_on_all: true
     integration_platforms:

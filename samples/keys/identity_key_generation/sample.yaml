@@ -15,12 +15,14 @@ common:
       - "Success!"
 tests:
   sample.keys.identity_key_generate.random_key:
-    tags: keys ci_build
+    sysbuild: true
+    tags: keys ci_build sysbuild
 
   # The TFM regression tests rely on a specific key in order to pass.
   # This sample configuration is mainly useful for writing that expected key,
   # which is called a "dummy key".
   sample.keys.identity_key_generate.static_key:
+    sysbuild: true
     extra_configs:
       - CONFIG_IDENTITY_KEY_DUMMY=y
-    tags: keys ci_build
+    tags: keys ci_build sysbuild

@@ -1,5 +1,6 @@
 tests:
   nrf_profiler.core:
+    sysbuild: true
     platform_exclude: native_posix qemu_x86 qemu_cortex_m3
     platform_allow:
       - nrf52dk/nrf52832
@@ -11,4 +12,4 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160/ns
-    tags: nrf_profiler
+    tags: nrf_profiler sysbuild

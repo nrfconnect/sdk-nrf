@@ -2,6 +2,7 @@ sample:
   name: HTTPS client sample
 tests:
   sample.net.https_client:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -15,8 +16,9 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.net.https_client.lte.tfm-mbedtls:
+    sysbuild: true
     build_only: true
     extra_args: OVERLAY_CONFIG="overlay-tfm-nrf91.conf"
     integration_platforms:
@@ -26,8 +28,9 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.net.https_client.lte.pdn-ipv4:
+    sysbuild: true
     build_only: true
     extra_args: OVERLAY_CONFIG="overlay-pdn-nrf91-ipv4.conf"
     integration_platforms:
@@ -38,4 +41,4 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build
+    tags: ci_build sysbuild

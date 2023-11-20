@@ -14,5 +14,6 @@ common:
       - "Ciphertext \\(with authentication tag\\):"
 tests:
   sample.keys.identity_key_usage:
-    tags: keys ci_build
+    sysbuild: true
+    tags: keys ci_build sysbuild
     build_only: true

@@ -2,8 +2,9 @@ sample:
   name: LTE-BLE gateway sample
 tests:
   sample.cellular.lte_ble_gateway:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     platform_allow: nrf9160dk/nrf9160/ns
-    tags: ci_build
+    tags: ci_build sysbuild

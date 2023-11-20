@@ -1,7 +1,8 @@
 tests:
   date_time.functionality_test:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160 qemu_x86 qemu_cortex_m3
     integration_platforms:
       - nrf9160dk/nrf9160
       - qemu_cortex_m3
-    tags: date_time
+    tags: date_time sysbuild

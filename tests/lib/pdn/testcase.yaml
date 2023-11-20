@@ -1,6 +1,7 @@
 tests:
   pdn.unit_test:
-    tags: modem_info
+    sysbuild: true
+    tags: modem_info sysbuild
     platform_allow: native_posix
     integration_platforms:
       - native_posix

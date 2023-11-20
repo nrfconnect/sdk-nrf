@@ -15,4 +15,5 @@ common:
       - "Success!"
 tests:
   sample.tfm.provisioning_image:
-    tags: keys ci_build
+    sysbuild: true
+    tags: keys ci_build sysbuild

@@ -5,7 +5,8 @@ sample:
   name: AES GCM example
 tests:
   sample.aes_gcm.cc312:
-    tags: introduction psa cc3xx
+    sysbuild: true
+    tags: introduction psa cc3xx sysbuild
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns nrf5340dk/nrf5340/cpuapp
     harness: console
@@ -17,7 +18,8 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpuapp
   sample.aes_gcm.oberon:
-    tags: introduction psa oberon
+    sysbuild: true
+    tags: introduction psa oberon sysbuild
     platform_allow: >
       nrf52840dk/nrf52840 nrf9161dk/nrf9161 nrf9161dk/nrf9161/ns
       nrf9160dk/nrf9160/ns nrf9160dk/nrf9160
@@ -33,7 +35,8 @@ tests:
       - nrf9161dk/nrf9161
       - nrf9161dk/nrf9161/ns
   sample.aes_gcm.cracen:
-    tags: introduction psa cracen
+    sysbuild: true
+    tags: introduction psa cracen sysbuild
     platform_allow: >
       nrf54l15pdk/nrf54l15/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp/ns

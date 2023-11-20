@@ -1,12 +1,14 @@
 tests:
   subsys.net.lib.lwm2m_fota_utils.unittest_adv:
-    tags: unittest
+    sysbuild: true
+    tags: unittest sysbuild
     platform_allow: native_sim
     integration_platforms:
       - native_sim
   subsys.net.lib.lwm2m_fota_utils.unittest_obj5:
-    extra_args: CONF_FILE="prj_obj5.conf"
-    tags: unittest
+    sysbuild: true
+    extra_args: FILE_SUFFIX=obj5
+    tags: unittest sysbuild
     platform_allow: native_sim
     integration_platforms:
       - native_sim

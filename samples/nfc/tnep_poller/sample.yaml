@@ -3,10 +3,11 @@ sample:
   name: TBD
 tests:
   sample.nfc.tnep_poller:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf52dk/nrf52832 nrf5340dk/nrf5340/cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild

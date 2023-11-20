@@ -16,4 +16,5 @@ common:
       - "SPP: processing signals: Success"
 tests:
   sample.tfm.secure_peripheral:
-    tags: tfm ci_build
+    sysbuild: true
+    tags: tfm ci_build sysbuild

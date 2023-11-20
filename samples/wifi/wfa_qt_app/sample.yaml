@@ -3,15 +3,17 @@ sample:
   name: WFA QT App
 tests:
   sample.nrf7002.wfa_qt_app:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.nrf7002_eks.wfa_qt_app:
+    sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf7002ek
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build
+    tags: ci_build sysbuild

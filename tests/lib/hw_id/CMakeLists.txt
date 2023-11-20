@@ -28,4 +28,6 @@ zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
 
 if(KCONFIG_OVERRIDE_FILE)
   add_definitions(-include ${KCONFIG_OVERRIDE_FILE})
+elseif(CONFIG_HW_ID_OVERRIDE_FILE)
+  add_definitions(-include ${CONFIG_HW_ID_OVERRIDE_FILE})
 endif()

@@ -11,13 +11,7 @@ set(mcuboot_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconn
 set(multiprotocol_rpmsg_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.multiprotocol_rpmsg.root")
 set(hci_ipc_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.hci_ipc.root")
 
-# For prj.conf the CONF_FILE is empty. In other cases extract the exact file name from the path string.
-if(CONF_FILE)
-    get_filename_component(CONF_FILE_NAME ${CONF_FILE} NAME CACHE)
-endif()
-
-find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
-
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(matter-lock)
 
 # Enable GNU STD support and initialize the Matter Data Model.

@@ -1,31 +1,41 @@
 tests:
   hw_id.device_id:
+    sysbuild: true
     integration_platforms:
       - native_posix
     platform_allow: native_posix
-    tags: ci_build
-    extra_args: KCONFIG_OVERRIDE_FILE="kconfig_override_device_id.h"
+    tags: ci_build sysbuild
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_device_id.h"
   hw_id.uuid:
+    sysbuild: true
     integration_platforms:
       - native_posix
     platform_allow: native_posix
-    tags: ci_build
-    extra_args: KCONFIG_OVERRIDE_FILE="kconfig_override_uuid.h"
+    tags: ci_build sysbuild
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_uuid.h"
   hw_id.imei:
+    sysbuild: true
     integration_platforms:
       - native_posix
     platform_allow: native_posix
-    tags: ci_build
-    extra_args: KCONFIG_OVERRIDE_FILE="kconfig_override_imei.h"
+    tags: ci_build sysbuild
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_imei.h"
   hw_id.ble:
+    sysbuild: true
     integration_platforms:
       - native_posix
     platform_allow: native_posix
-    tags: ci_build
-    extra_args: KCONFIG_OVERRIDE_FILE="kconfig_override_ble.h"
+    tags: ci_build sysbuild
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_ble.h"
   hw_id.net:
+    sysbuild: true
     integration_platforms:
       - native_posix
     platform_allow: native_posix
-    tags: ci_build
-    extra_args: KCONFIG_OVERRIDE_FILE="kconfig_override_net.h"
+    tags: ci_build sysbuild
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_net.h"

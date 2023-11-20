@@ -11,6 +11,7 @@
 / {
 	/* Configure partition manager to use mx25r64 as the external flash */
 	chosen {
+		zephyr,code-partition = &boot_partition;
 		nordic,pm-ext-flash = &mx25r64;
 	};
 };

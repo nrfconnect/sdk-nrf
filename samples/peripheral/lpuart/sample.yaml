@@ -3,6 +3,7 @@ sample:
   name: Low Power UART
 tests:
   sample.peripheral.lpuart:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf52dk/nrf52832
@@ -19,26 +20,27 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
     platform_exclude: native_posix
-
+    tags: sysbuild
   sample.peripheral.lpuart_nrf52840_debug:
+    sysbuild: true
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: OVERLAY_CONFIG=debug.conf
       DTC_OVERLAY_FILE="boards/nrf52840dk_nrf52840.overlay;debug.overlay"
-    tags: ci_build
-
+    tags: ci_build sysbuild
   sample.peripheral.lpuart_nrf9160dk_debug:
+    sysbuild: true
     build_only: true
     platform_allow: nrf9160dk/nrf9160/ns
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     extra_args: OVERLAY_CONFIG=debug.conf
       DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_ns.overlay;debug.overlay"
-    tags: ci_build
-
+    tags: ci_build sysbuild
   sample.peripheral.lpuart_int_driven:
+    sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_NRF_SW_LPUART_INT_DRIVEN=y
@@ -51,4 +53,4 @@ tests:
       - nrf21540dk/nrf52840
     platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840 nrf9160dk/nrf9160/ns
       nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840
-    tags: ci_build
+    tags: ci_build sysbuild

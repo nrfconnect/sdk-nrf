@@ -1,6 +1,7 @@
 tests:
   nrf_modem_lib.lte_net_if:
-    tags: nrf_modem_lib
+    sysbuild: true
+    tags: nrf_modem_lib sysbuild
     platform_allow: native_posix
     integration_platforms:
       - native_posix

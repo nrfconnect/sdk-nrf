@@ -2,6 +2,7 @@ sample:
   name: Download sample
 tests:
   sample.net.download_client:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9161dk/nrf9161/ns
@@ -9,8 +10,9 @@ tests:
     platform_allow:
       - nrf9161dk/nrf9161/ns
       - native_sim
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.net.download_client.ci:
+    sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_SHELL=y
@@ -27,4 +29,4 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
-    tags: ci_build
+    tags: ci_build sysbuild

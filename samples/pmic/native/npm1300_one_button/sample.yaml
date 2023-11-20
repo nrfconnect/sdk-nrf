@@ -14,6 +14,7 @@ common:
 
 tests:
   samples.npm1300_one_button:
+    sysbuild: true
     platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
     harness: console
     harness_config:
@@ -22,9 +23,10 @@ tests:
       ordered: true
       regex:
         - "PMIC device ok"
-
+    tags: sysbuild
   samples.npm1300_one_button_compile:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     harness: shield
-    tags: shield
+    tags: shield sysbuild
     extra_args: SHIELD=npm1300_ek

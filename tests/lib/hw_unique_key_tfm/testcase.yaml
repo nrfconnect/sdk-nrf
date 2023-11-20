@@ -1,8 +1,9 @@
 tests:
   lib.hw_unique_key_tfm:
+    sysbuild: true
     platform_allow: nrf9160dk/nrf9160/ns nrf5340dk/nrf5340/cpuapp/ns
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf5340dk/nrf5340/cpuapp/ns
-    tags: huk
+    tags: huk sysbuild
     build_only: true

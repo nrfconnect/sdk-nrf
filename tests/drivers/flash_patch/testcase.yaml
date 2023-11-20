@@ -1,14 +1,16 @@
 tests:
   flash_patch.flash_patch_off:
+    sysbuild: true
     platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
-    tags: flash_patch
+    tags: flash_patch sysbuild
     extra_args: CONFIG_DISABLE_FLASH_PATCH=n
   flash_patch.flash_patch_on:
+    sysbuild: true
     platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
-    tags: flash_patch
+    tags: flash_patch sysbuild

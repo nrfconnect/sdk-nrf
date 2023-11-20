@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SECURE_BOOT_DEBUG_NO_VERIFY_HASHES
+	bool
+	default y
+
+config SECURE_BOOT_PUBLIC_KEY_FILES
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/subsys/bootloader/bl_validation_ff_key/ff_pub.pem"
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

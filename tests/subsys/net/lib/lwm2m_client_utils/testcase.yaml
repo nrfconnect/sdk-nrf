@@ -1,6 +1,7 @@
 tests:
   subsys.net.lib.lwm2m_client_utils.unittest:
-    tags: unittest
+    sysbuild: true
+    tags: unittest sysbuild
     platform_allow: native_sim
     integration_platforms:
       - native_sim

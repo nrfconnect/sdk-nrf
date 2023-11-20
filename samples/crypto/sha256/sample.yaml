@@ -3,7 +3,8 @@ sample:
   name: SHA256 example
 tests:
   sample.sha256.cc3xx:
-    tags: introduction psa cc3xx
+    sysbuild: true
+    tags: introduction psa cc3xx sysbuild
     platform_allow: >
       nrf5340dk/nrf5340/cpuapp/ns nrf5340dk/nrf5340/cpuapp nrf9160dk/nrf9160/ns
       nrf9160dk/nrf9160 nrf52840dk/nrf52840 nrf9161dk/nrf9161 nrf9161dk/nrf9161/ns
@@ -21,7 +22,8 @@ tests:
       - nrf9161dk/nrf9161
       - nrf52840dk/nrf52840
   sample.sha256.cracen:
-    tags: introduction psa cracen
+    sysbuild: true
+    tags: introduction psa cracen sysbuild
     platform_allow: >
         nrf54h20dk/nrf54h20/cpuapp nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp/ns
     harness: console
@@ -36,14 +38,17 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp/ns
   # Build integration regression protection.
   sample.nrf_security.sha256.integration:
+    sysbuild: true
     build_only: true
-    extra_args: CONFIG_BOOTLOADER_MCUBOOT=y
+    extra_args: SB_CONFIG_BOOTLOADER_MCUBOOT=y
     platform_allow: nrf5340dk/nrf5340/cpuapp/ns nrf52840dk/nrf52840 nrf52833dk/nrf52833
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+    tags: sysbuild
   sample.newlib_libc.sha256:
+    sysbuild: true
     build_only: true
     extra_args: CONFIG_NEWLIB_LIBC=y
     platform_allow: nrf5340dk/nrf5340/cpuapp/ns nrf52840dk/nrf52840 nrf54h20dk/nrf54h20/cpuapp
@@ -51,3 +56,4 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf52840dk/nrf52840
       - nrf54h20dk/nrf54h20/cpuapp
+    tags: sysbuild

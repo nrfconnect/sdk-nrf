@@ -2,6 +2,7 @@ sample:
   name: nRF Cloud Multi Service Sample
 tests:
   sample.cellular.nrf_cloud_multi_service.mqtt:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -14,23 +15,26 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.cellular.nrf_cloud_multi_service.mqtt.full:
+    sysbuild: true
     build_only: true
     platform_allow: nrf9160dk/nrf9160/ns
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     extra_args: "EXTRA_CONF_FILE=\"overlay_full_modem_fota.conf;\
       overlay_pgps_ext_flash.conf;overlay_mcuboot_ext_flash.conf\""
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.cellular.nrf_cloud_multi_service.mqtt.min:
+    sysbuild: true
     build_only: true
     platform_allow: nrf9160dk/nrf9160/ns
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     extra_args: EXTRA_CONF_FILE="overlay_min_mqtt.conf"
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.cellular.nrf_cloud_multi_service.coap:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -43,15 +47,17 @@ tests:
       - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
     extra_args: EXTRA_CONF_FILE="overlay_coap.conf"
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.cellular.nrf_cloud_multi_service.coap.min:
+    sysbuild: true
     build_only: true
     platform_allow: nrf9160dk/nrf9160/ns
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     extra_args: EXTRA_CONF_FILE="overlay_coap.conf;overlay_min_coap.conf"
-    tags: ci_build
+    tags: ci_build sysbuild
   sample.cellular.nrf7002ek_wifi.scan:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
@@ -61,12 +67,19 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
-    tags: ci_build
+    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek
+      EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+      SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
+    tags: ci_build sysbuild
   sample.cellular.nrf7002ek_wifi.conn:
+    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
     platform_allow: nrf5340dk/nrf5340/cpuapp/ns
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE="overlay_nrf7002ek_wifi_no_lte.conf"
-    tags: ci_build
+    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek
+      EXTRA_CONF_FILE="overlay_nrf7002ek_wifi_no_lte.conf"
+      SB_CONFIG_BOOTLOADER_NONE=y
+      SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=n
+      SB_CONFIG_WIFI_NRF700X=y
+    tags: ci_build sysbuild

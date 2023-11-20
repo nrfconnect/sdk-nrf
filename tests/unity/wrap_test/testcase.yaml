@@ -1,6 +1,7 @@
 tests:
   unity.wrap_test:
-    tags: wrap_test
+    sysbuild: true
+    tags: wrap_test sysbuild
     platform_allow:
       - native_posix
     integration_platforms:

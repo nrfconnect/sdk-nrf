@@ -1,5 +1,6 @@
 tests:
   dfu.dfu_target.mcuboot:
+    sysbuild: true
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
@@ -12,4 +13,4 @@ tests:
       - nrf9160dk/nrf9160
       - native_posix
       - qemu_cortex_m3
-    tags: dfu mcuboot
+    tags: dfu mcuboot sysbuild

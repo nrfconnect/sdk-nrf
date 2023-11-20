@@ -3,8 +3,9 @@ sample:
   name: Matter Light Bulb
 tests:
   sample.matter.light_bulb.release:
+    sysbuild: true
     build_only: true
-    extra_args: CONF_FILE=prj_release.conf
+    extra_args: FILE_SUFFIX=release
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -13,7 +14,9 @@ tests:
       - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+    tags: sysbuild
   sample.matter.light_bulb.ffs:
+    sysbuild: true
     build_only: true
     extra_args: >
       CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y
@@ -22,46 +25,86 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
+    tags: sysbuild
+  sample.matter.light_bulb.ffs.nrf54l15:
+    sysbuild: true
+    build_only: true
+    extra_args: >
+      CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y
+      CONFIG_CHIP_DEVICE_TYPE=257
+      SB_CONFIG_BOOTLOADER_NONE=y
+      SB_CONFIG_MATTER_FACTORY_DATA=n
+      SB_CONFIG_PARTITION_MANAGER=n
+    integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54l15pdk@0.3.0/nrf54l15/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+    platform_allow: nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk@0.3.0/nrf54l15/cpuapp
+    tags: sysbuild
   sample.matter.light_bulb.debug.nrf21540ek:
+    sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf21540ek
+    extra_args: light_bulb_SHIELD=nrf21540ek
     integration_platforms:
       - nrf52840dk/nrf52840
     platform_allow: nrf52840dk/nrf52840
+    tags: sysbuild
   sample.matter.light_bulb.debug.nrf21540ek_fwd:
+    sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf21540ek_fwd multiprotocol_rpmsg_SHIELD=nrf21540ek
+    extra_args: light_bulb_SHIELD=nrf21540ek_fwd multiprotocol_rpmsg_SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags: sysbuild
   # Sample to execute load tests
   sample.matter.light_bulb.persistent_subscriptions:
+    sysbuild: true
     build_only: true
     extra_args: CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS=y
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
+    tags: sysbuild
+  sample.matter.light_bulb.persistent_subscriptions.nrf54l15:
+    sysbuild: true
+    build_only: true
+    extra_args: CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS=y
+                SB_CONFIG_BOOTLOADER_NONE=y
+                SB_CONFIG_MATTER_FACTORY_DATA=n
+                SB_CONFIG_PARTITION_MANAGER=n
+    platform_allow: nrf54l15pdk/nrf54l15/cpuapp
+    integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
+    tags: sysbuild
   sample.matter.light_bulb.aws:
+    sysbuild: true
     build_only: true
     extra_args: EXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
     platform_allow: nrf7002dk/nrf5340/cpuapp
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
+    tags: sysbuild
   sample.matter.light_bulb.memory_profiling:
+    sysbuild: true
     build_only: true
     extra_args: CONFIG_CHIP_MEMORY_PROFILING=y CONFIG_SHELL_MINIMAL=y
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
+    tags: sysbuild
+  sample.matter.light_bulb.memory_profiling.nrf54l15:
+    sysbuild: true
+    build_only: true
+    extra_args: CONFIG_CHIP_MEMORY_PROFILING=y CONFIG_SHELL_MINIMAL=y
+                SB_CONFIG_BOOTLOADER_NONE=y
+                SB_CONFIG_MATTER_FACTORY_DATA=n
+                SB_CONFIG_PARTITION_MANAGER=n
+    platform_allow: nrf54l15pdk/nrf54l15/cpuapp
+    integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
+    tags: sysbuild
