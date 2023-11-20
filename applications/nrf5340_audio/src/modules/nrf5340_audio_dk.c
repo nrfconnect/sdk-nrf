@@ -1,30 +1,21 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/kernel.h>
-#include <zephyr/device.h>
-#include <zephyr/bluetooth/bluetooth.h>
-#include <zephyr/zbus/zbus.h>
-
-#include "macros_common.h"
-#include "nrf5340_audio_common.h"
-#include "fw_info_app.h"
 #include "led.h"
 #include "button_handler.h"
 #include "button_assignments.h"
 #include "nrfx_clock.h"
 #include "sd_card.h"
-#include "bt_mgmt.h"
 #include "board_version.h"
 #include "channel_assignment.h"
-#include "streamctrl.h"
+
 #include "sd_card_playback.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf5340_audio_dk, CONFIG_MODULE_NRF5340_AUDIO_DK_LOG_LEVEL);
 
 static struct board_version board_rev;
 
@@ -111,52 +102,59 @@ static int channel_assign_check(void)
 	return 0;
 }
 
-int main(void)
+int nrf5340_audio_dk_init(void)
 {
 	int ret;
 
-	LOG_DBG("nRF5340 APP core started");
-
 	ret = hfclock_config_and_start();
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	ret = led_init();
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	ret = button_handler_init();
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	channel_assignment_init();
 
 	ret = channel_assign_check();
-	ERR_CHK(ret);
-
-	ret = fw_info_app_print();
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	ret = board_version_valid_check();
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	ret = board_version_get(&board_rev);
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	if (board_rev.mask & BOARD_VERSION_VALID_MSK_SD_CARD) {
 		ret = sd_card_init();
 		if (ret != -ENODEV) {
-			ERR_CHK(ret);
+			if (ret) {
+				return ret;
+			}
 		}
 	}
 
-	ret = bt_mgmt_init();
-	ERR_CHK(ret);
-
 	ret = leds_set();
-	ERR_CHK(ret);
-
-	ret = streamctrl_start();
-	ERR_CHK(ret);
+	if (ret) {
+		return ret;
+	}
 
 	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
 		sd_card_playback_init();
 	}
+
+	return 0;
 }

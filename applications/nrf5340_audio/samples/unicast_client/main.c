@@ -9,6 +9,7 @@
 #include <zephyr/zbus/zbus.h>
 
 #include "nrf5340_audio_common.h"
+#include "nrf5340_audio_dk.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
@@ -17,40 +18,77 @@
 #include "le_audio.h"
 #include "bt_mgmt.h"
 #include "bt_rend.h"
-#include "audio_datapath.h"
 #include "bt_content_ctrl.h"
-#include "unicast_server.h"
+#include "unicast_client.h"
 #include "le_audio_rx.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(streamctrl_unicast_server, CONFIG_STREAMCTRL_LOG_LEVEL);
+LOG_MODULE_REGISTER(streamctrl_unicast_client, CONFIG_STREAMCTRL_LOG_LEVEL);
+
+static enum stream_state strm_state = STATE_PAUSED;
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(content_control_evt_sub, CONFIG_CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE);
 
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 
 ZBUS_CHAN_DECLARE(button_chan);
 ZBUS_CHAN_DECLARE(le_audio_chan);
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
-ZBUS_CHAN_DECLARE(volume_chan);
+ZBUS_CHAN_DECLARE(cont_media_chan);
+ZBUS_CHAN_DECLARE(sdu_ref_chan);
 
-ZBUS_OBS_DECLARE(volume_evt_sub);
+ZBUS_OBS_DECLARE(sdu_ref_msg_listen);
 
 static struct k_thread button_msg_sub_thread_data;
 static struct k_thread le_audio_msg_sub_thread_data;
+static struct k_thread content_control_msg_sub_thread_data;
 
 static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
+static k_tid_t content_control_thread_id;
 
 K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
-
-static enum stream_state strm_state = STATE_PAUSED;
+K_THREAD_STACK_DEFINE(content_control_msg_sub_thread_stack,
+		      CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE);
 
 /* Function for handling all stream state changes */
 static void stream_state_set(enum stream_state stream_state_new)
 {
 	strm_state = stream_state_new;
+}
+
+static void content_control_msg_sub_thread(void)
+{
+	int ret;
+	const struct zbus_channel *chan;
+
+	while (1) {
+		ret = zbus_sub_wait(&content_control_evt_sub, &chan, K_FOREVER);
+		ERR_CHK(ret);
+
+		struct content_control_msg msg;
+
+		ret = zbus_chan_read(chan, &msg, ZBUS_READ_TIMEOUT_MS);
+		ERR_CHK(ret);
+
+		switch (msg.event) {
+		case MEDIA_START:
+			unicast_client_start();
+			break;
+
+		case MEDIA_STOP:
+			unicast_client_stop();
+			break;
+
+		default:
+			LOG_WRN("Unhandled event from content ctrl: %d", msg.event);
+			break;
+		}
+
+		STACK_USAGE_PRINT("content_ctrl_msg_thread", &content_control_msg_sub_thread);
+	}
 }
 
 /**
@@ -82,7 +120,7 @@ static void button_msg_sub_thread(void)
 		case BUTTON_PLAY_PAUSE:
 			if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
 				LOG_DBG("Play/pause not supported in walkie-talkie mode");
-				return;
+				break;
 			}
 
 			if (strm_state == STATE_STREAMING) {
@@ -167,9 +205,6 @@ static void button_msg_sub_thread(void)
 static void le_audio_msg_sub_thread(void)
 {
 	int ret;
-	uint32_t pres_delay_us;
-	uint32_t bitrate_bps;
-	uint32_t sampling_rate_hz;
 	const struct zbus_channel *chan;
 
 	while (1) {
@@ -191,13 +226,13 @@ static void le_audio_msg_sub_thread(void)
 
 			audio_system_start();
 			stream_state_set(STATE_STREAMING);
+
 			ret = led_blink(LED_APP_1_BLUE);
 			ERR_CHK(ret);
-
 			break;
 
 		case LE_AUDIO_EVT_NOT_STREAMING:
-			LOG_DBG("LE audio evt not streaming");
+			LOG_DBG("LE audio evt not_streaming");
 
 			if (strm_state == STATE_PAUSED) {
 				LOG_DBG("Got not_streaming event in paused state");
@@ -206,63 +241,73 @@ static void le_audio_msg_sub_thread(void)
 
 			stream_state_set(STATE_PAUSED);
 			audio_system_stop();
+
 			ret = led_on(LED_APP_1_BLUE);
 			ERR_CHK(ret);
-
-			break;
-
-		case LE_AUDIO_EVT_CONFIG_RECEIVED:
-			LOG_DBG("Config received");
-
-			ret = unicast_server_config_get(&bitrate_bps, &sampling_rate_hz, NULL);
-			if (ret) {
-				LOG_WRN("Failed to get config: %d", ret);
-				break;
-			}
-
-			LOG_DBG("Sampling rate: %d Hz", sampling_rate_hz);
-			LOG_DBG("Bitrate: %d bps", bitrate_bps);
-
-			break;
-
-		case LE_AUDIO_EVT_PRES_DELAY_SET:
-			LOG_DBG("Set presentation delay");
-
-			ret = unicast_server_config_get(NULL, NULL, &pres_delay_us);
-			if (ret) {
-				LOG_ERR("Failed to get config: %d", ret);
-				break;
-			}
-
-			ret = audio_datapath_pres_delay_us_set(pres_delay_us);
-			if (ret) {
-				LOG_ERR("Failed to set presentation delay to %d", pres_delay_us);
-				break;
-			}
-
-			LOG_INF("Presentation delay %d us is set by initiator", pres_delay_us);
-
-			break;
-
-		case LE_AUDIO_EVT_NO_VALID_CFG:
-			LOG_WRN("No valid configurations found, will disconnect");
-
-			ret = bt_mgmt_conn_disconnect(msg.conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-			if (ret) {
-				LOG_ERR("Failed to disconnect: %d", ret);
-			}
-
 			break;
 
 		default:
 			LOG_WRN("Unexpected/unhandled le_audio event: %d", msg.event);
-
 			break;
 		}
 
 		STACK_USAGE_PRINT("le_audio_msg_thread", &le_audio_msg_sub_thread_data);
 	}
 }
+
+/**
+ * @brief	Zbus listener to receive events from bt_mgmt.
+ *
+ * @param[in]	chan	Zbus channel.
+ *
+ * @note	Will in most cases be called from BT_RX context,
+ *		so there should not be too much processing done here.
+ */
+static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
+{
+	int ret;
+	const struct bt_mgmt_msg *msg;
+
+	msg = zbus_chan_const_msg(chan);
+
+	switch (msg->event) {
+	case BT_MGMT_CONNECTED:
+		LOG_INF("Device connected");
+		break;
+
+	case BT_MGMT_SECURITY_CHANGED:
+		LOG_INF("Security changed");
+
+		ret = bt_rend_discover(msg->conn);
+		if (ret) {
+			LOG_WRN("Failed to discover rendering services");
+		}
+
+		if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+			ret = unicast_client_discover(msg->conn, UNICAST_SERVER_BIDIR);
+		} else {
+			ret = unicast_client_discover(msg->conn, UNICAST_SERVER_SINK);
+		}
+
+		if (ret) {
+			LOG_ERR("Failed to handle unicast client discover: %d", ret);
+		}
+
+		break;
+
+	case BT_MGMT_DISCONNECTED:
+		LOG_INF("Device disconnected");
+
+		unicast_client_conn_disconnected(msg->conn);
+		break;
+
+	default:
+		LOG_WRN("Unexpected/unhandled bt_mgmt event: %d", msg->event);
+		break;
+	}
+}
+
+ZBUS_LISTENER_DEFINE(bt_mgmt_evt_listen, bt_mgmt_evt_handler);
 
 /**
  * @brief	Create zbus subscriber threads.
@@ -293,65 +338,24 @@ static int zbus_subscribers_create(void)
 		return ret;
 	}
 
+	content_control_thread_id = k_thread_create(
+		&content_control_msg_sub_thread_data, content_control_msg_sub_thread_stack,
+		CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE,
+		(k_thread_entry_t)content_control_msg_sub_thread, NULL, NULL, NULL,
+		K_PRIO_PREEMPT(CONFIG_CONTENT_CONTROL_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(content_control_thread_id, "CONTENT_CONTROL_MSG_SUB");
+	if (ret) {
+		return ret;
+	}
+
+	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add timestamp listener");
+		return ret;
+	}
+
 	return 0;
 }
-
-/**
- * @brief	Zbus listener to receive events from bt_mgmt.
- *
- * @param[in]	chan	Zbus channel.
- *
- * @note	Will in most cases be called from BT_RX context,
- *		so there should not be too much processing done here.
- */
-static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
-{
-	int ret;
-	const struct bt_mgmt_msg *msg;
-
-	msg = zbus_chan_const_msg(chan);
-
-	switch (msg->event) {
-	case BT_MGMT_CONNECTED:
-		LOG_INF("Connected");
-
-		break;
-
-	case BT_MGMT_DISCONNECTED:
-		LOG_INF("Disconnected");
-
-		ret = bt_content_ctrl_conn_disconnected(msg->conn);
-		if (ret) {
-			LOG_ERR("Failed to handle disconnection in content control: %d", ret);
-		}
-
-		break;
-
-	case BT_MGMT_SECURITY_CHANGED:
-		LOG_INF("Security changed");
-
-		ret = bt_rend_discover(msg->conn);
-		if (ret) {
-			LOG_WRN("Failed to discover rendering services");
-		}
-
-		ret = bt_content_ctrl_discover(msg->conn);
-		if (ret == -EALREADY) {
-			LOG_DBG("Discovery in progress or already done");
-		} else if (ret) {
-			LOG_ERR("Failed to start discovery of content control: %d", ret);
-		}
-
-		break;
-
-	default:
-		LOG_WRN("Unexpected/unhandled bt_mgmt event: %d", msg->event);
-
-		break;
-	}
-}
-
-ZBUS_LISTENER_DEFINE(bt_mgmt_evt_listen, bt_mgmt_evt_handler);
 
 /**
  * @brief	Link zbus producers and observers.
@@ -380,63 +384,12 @@ static int zbus_link_producers_observers(void)
 
 	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
-		LOG_ERR("Failed to add bt_mgmt sub");
+		LOG_ERR("Failed to add bt_mgmt listener");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&volume_chan, &volume_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
-		LOG_ERR("Failed to add volume sub");
-		return ret;
-	}
-
-	return 0;
-}
-
-static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size,
-			    size_t *ext_adv_count)
-{
-	int ret;
-	size_t ext_adv_buf_cnt = 0;
-
-	NET_BUF_SIMPLE_DEFINE(uuid_buf, CONFIG_EXT_ADV_UUID_BUF_MAX);
-
-	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_SOME;
-	ext_adv_buf[ext_adv_buf_cnt].data_len = 0;
-	ext_adv_buf[ext_adv_buf_cnt].data = uuid_buf.data;
-	ext_adv_buf_cnt++;
-
-	ret = bt_rend_uuid_populate(&uuid_buf);
-
-	if (ret) {
-		LOG_ERR("Failed to add adv data from renderer: %d", ret);
-		return ret;
-	}
-
-	ret = bt_content_ctrl_uuid_populate(&uuid_buf);
-
-	if (ret) {
-		LOG_ERR("Failed to add adv data from content ctrl: %d", ret);
-		return ret;
-	}
-
-	ret = unicast_server_adv_populate(&ext_adv_buf[ext_adv_buf_cnt],
-					  ext_adv_buf_size - ext_adv_buf_cnt);
-
-	if (ret < 0) {
-		LOG_ERR("Failed to add adv data from unicast server: %d", ret);
-		return ret;
-	}
-
-	ext_adv_buf_cnt += ret;
-
-	/* Add the number of UUIDs */
-	ext_adv_buf[0].data_len = uuid_buf.len;
-
-	LOG_DBG("Size of adv data: %d, num_elements: %d", sizeof(struct bt_data) * ext_adv_buf_cnt,
-		ext_adv_buf_cnt);
-
-	*ext_adv_count = ext_adv_buf_cnt;
+	ret = zbus_chan_add_obs(&cont_media_chan, &content_control_evt_sub,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 
 	return 0;
 }
@@ -454,7 +407,7 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
 
 	if (strm_state == STATE_STREAMING) {
-		ret = unicast_server_send(enc_audio);
+		ret = unicast_client_send(enc_audio);
 
 		if (ret != 0 && ret != prev_ret) {
 			if (ret == -ECANCELED) {
@@ -468,19 +421,16 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	}
 }
 
-int streamctrl_start(void)
+int main(void)
 {
 	int ret;
-	static bool started;
-	struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
-	size_t ext_adv_buf_cnt = 0;
 
-	if (started) {
-		LOG_WRN("Streamctrl already started");
-		return -EALREADY;
-	}
+	LOG_DBG("nRF5340 APP core started");
 
-	ret = audio_system_init();
+	ret = nrf5340_audio_dk_init();
+	ERR_CHK(ret);
+
+	ret = nrf5340_audio_common_init();
 	ERR_CHK(ret);
 
 	ret = zbus_subscribers_create();
@@ -490,10 +440,7 @@ int streamctrl_start(void)
 	ERR_CHK_MSG(ret, "Failed to link zbus producers and observers");
 
 	ret = le_audio_rx_init();
-	ERR_CHK_MSG(ret, "Failed to initialize rx path");
-
-	ret = unicast_server_enable(le_audio_rx_data_handler);
-	ERR_CHK_MSG(ret, "Failed to enable LE Audio");
+	ERR_CHK(ret);
 
 	ret = bt_rend_init();
 	ERR_CHK(ret);
@@ -501,13 +448,14 @@ int streamctrl_start(void)
 	ret = bt_content_ctrl_init();
 	ERR_CHK(ret);
 
-	ret = ext_adv_populate(ext_adv_buf, ARRAY_SIZE(ext_adv_buf), &ext_adv_buf_cnt);
+	ret = unicast_client_enable(le_audio_rx_data_handler);
 	ERR_CHK(ret);
 
-	ret = bt_mgmt_adv_start(ext_adv_buf, ext_adv_buf_cnt, NULL, 0, true);
-	ERR_CHK(ret);
-
-	started = true;
+	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME);
+	if (ret) {
+		LOG_ERR("Failed to start scanning");
+		return ret;
+	}
 
 	return 0;
 }

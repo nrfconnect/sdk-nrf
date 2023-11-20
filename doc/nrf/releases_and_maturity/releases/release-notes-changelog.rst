@@ -185,7 +185,9 @@ nRF5340 Audio
 -------------
 
 
-|no_changes_yet_note|
+* Updated:
+
+  * Split the generic applications into their own samples with separate main.c files
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
