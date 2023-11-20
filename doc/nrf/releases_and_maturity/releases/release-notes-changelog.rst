@@ -645,6 +645,9 @@ cJSON
 
 Documentation
 =============
+* Added:
+
+  * A page on :ref:`ug_nrf70_developing_fw_patch_ext_flash` in the :ref:`ug_nrf70_developing` user guide.
 
 * Added
 
