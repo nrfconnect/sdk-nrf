@@ -157,6 +157,7 @@ endchoice
 
 config AUDIO_TEST_TONE
 	bool "Test tone instead of doing user defined action"
+	select TONE
 	default y
 	help
 	  Use button 4 to set a test tone

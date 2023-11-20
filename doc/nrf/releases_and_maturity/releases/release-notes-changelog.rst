@@ -221,9 +221,11 @@ Serial LTE modem
 nRF5340 Audio
 -------------
 
-* Changed:
+* Updated:
 
-    * ISO data sending has been refactored, and is now done in a single file: bt_le_audio_tx.
+  * ISO data sending has been refactored, and is now done in a single file: bt_le_audio_tx.
+  * Split the generic applications into their own samples with separate main.c files
+
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

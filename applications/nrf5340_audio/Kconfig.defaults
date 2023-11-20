@@ -72,9 +72,6 @@ config NRFX_I2S0
 config PCM_MIX
 	default y
 
-config TONE
-	default y
-
 config PSCM
 	default y
 

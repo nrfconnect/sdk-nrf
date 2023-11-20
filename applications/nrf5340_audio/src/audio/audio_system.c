@@ -189,8 +189,14 @@ int audio_system_encode_test_tone_set(uint32_t freq)
 		return 0;
 	}
 
-	ret = tone_gen(test_tone_buf, &test_tone_size, freq, CONFIG_AUDIO_SAMPLE_RATE_HZ, 1);
-	ERR_CHK(ret);
+	if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
+		ret = tone_gen(test_tone_buf, &test_tone_size, freq, CONFIG_AUDIO_SAMPLE_RATE_HZ,
+			       1);
+		ERR_CHK(ret);
+	} else {
+		LOG_ERR("Test tone is not enabled");
+		return -ENXIO;
+	}
 
 	if (test_tone_size > sizeof(test_tone_buf)) {
 		return -ENOMEM;

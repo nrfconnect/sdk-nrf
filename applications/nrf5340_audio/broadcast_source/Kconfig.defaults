@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+## ISO related configs ##
+config BT_CAP_INITIATOR
+	default y
+
+# Broadcasting Device - 0x0885
+config BT_DEVICE_APPEARANCE
+	default 2181
+
+config BT_ISO_BROADCASTER
+	default y
+
+config BT_BAP_BROADCAST_SOURCE
+	default y
+
+config BT_ISO_TX_BUF_COUNT
+	default 2
+
+config BT_BAP_BROADCAST_SRC_STREAM_COUNT
+	default 2
+
+config BT_ISO_MAX_CHAN
+	default 2
+
+config BT_AUDIO_TX
+	default y
+
+
+## LC3 related configs ##
+config LC3_BITRATE
+	default BT_AUDIO_BITRATE_BROADCAST_SRC
+
+config LC3_ENC_CHAN_MAX
+	default 2

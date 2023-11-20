@@ -32,11 +32,4 @@ uint8_t stream_state_get(void);
  */
 void streamctrl_send(void const *const data, size_t size, uint8_t num_ch);
 
-/**
- * @brief Initialize the internal functionality and start streamctrl.
- *
- * @return 0 if successful.
- */
-int streamctrl_start(void);
-
 #endif /* _STREAMCTRL_H_ */

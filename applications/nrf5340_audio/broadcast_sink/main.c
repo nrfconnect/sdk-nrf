@@ -10,6 +10,7 @@
 #include <zephyr/zbus/zbus.h>
 
 #include "nrf5340_audio_common.h"
+#include "nrf5340_audio_dk.h"
 #include "broadcast_sink.h"
 #include "led.h"
 #include "button_assignments.h"
@@ -21,7 +22,7 @@
 #include "le_audio_rx.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(streamctrl_broadcast_sink, CONFIG_STREAMCTRL_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
 struct ble_iso_data {
 	uint8_t data[CONFIG_BT_ISO_RX_MTU];
@@ -436,18 +437,17 @@ void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
 	LOG_WRN("Sending is not possible for broadcast sink");
 }
 
-int streamctrl_start(void)
+int main(void)
 {
 	int ret;
-	static bool started;
 
-	if (started) {
-		LOG_WRN("Streamctrl already started");
-		return -EALREADY;
-	}
+	LOG_DBG("nRF5340 APP core started");
 
-	ret = audio_system_init();
-	ERR_CHK_MSG(ret, "Failed to initialize the audio system");
+	ret = nrf5340_audio_dk_init();
+	ERR_CHK(ret);
+
+	ret = nrf5340_audio_common_init();
+	ERR_CHK(ret);
 
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
@@ -463,8 +463,6 @@ int streamctrl_start(void)
 
 	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, CONFIG_BT_AUDIO_BROADCAST_NAME);
 	ERR_CHK_MSG(ret, "Failed to start scanning");
-
-	started = true;
 
 	return 0;
 }
