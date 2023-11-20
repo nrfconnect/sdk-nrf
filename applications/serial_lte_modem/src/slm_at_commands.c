@@ -58,6 +58,9 @@
 #if defined(CONFIG_SLM_CARRIER)
 #include "slm_at_carrier.h"
 #endif
+#if defined(CONFIG_LWM2M_CARRIER_SETTINGS)
+#include "slm_at_carrier_cfg.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 
@@ -389,10 +392,6 @@ int handle_at_gpio_configure(enum at_cmd_type cmd_type);
 int handle_at_gpio_operate(enum at_cmd_type cmd_type);
 #endif
 
-#if defined(CONFIG_SLM_CARRIER)
-int handle_at_carrier(enum at_cmd_type cmd_type);
-#endif
-
 static struct slm_at_cmd {
 	const char *string;
 	slm_at_handler_t handler;
@@ -498,6 +497,10 @@ static struct slm_at_cmd {
 
 #if defined(CONFIG_SLM_CARRIER)
 	{"AT#XCARRIER", handle_at_carrier},
+#endif
+
+#if defined(CONFIG_LWM2M_CARRIER_SETTINGS)
+	{"AT#XCARRIERCFG", handle_at_carrier_cfg},
 #endif
 
 };
