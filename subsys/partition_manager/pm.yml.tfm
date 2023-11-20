@@ -19,7 +19,7 @@ tfm_secure:
 tfm_nonsecure:
   span: [app]
 
-#ifdef CONFIG_TFM_STORAGE
+#ifdef CONFIG_PM_PARTITION_TFM_STORAGE
 tfm_storage:
   span: []
 
