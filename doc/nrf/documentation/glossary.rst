@@ -267,6 +267,11 @@ Glossary
       The term *HID* most commonly refers to the USB-HID specification.
       This standard allows the host stack or controller IC to be swapped with minimal adaptation.
 
+   Image file
+      An output file produced by the build process.
+      The image file can refer to an *executable*, a *program*, or an *ELF file*.
+      For the list of image files produced by the :ref:`build system <app_build_system>` of the |NCS|, refer to :ref:`app_build_output_files`.
+
    Integrated Circuit (IC)
       A semiconductor chip consisting of fabricated transistors, resistors, and capacitors.
 

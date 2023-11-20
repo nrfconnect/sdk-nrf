@@ -2045,7 +2045,7 @@ The `nRF Connect Device Manager`_ application uses binary files for the image tr
 
 After building your application with either :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` enabled, the :file:`dfu_application.zip` archive is generated in the build directory.
 It contains all the firmware update files that are necessary to perform DFU.
-For more information about the contents of update archive, see :ref:`app_build_fota`.
+For more information about the contents of update archive, see :ref:`app_build_output_files`.
 
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 

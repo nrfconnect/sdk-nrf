@@ -125,7 +125,7 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mod
    It must, however, be disabled when building update images.
 
 Both the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` and :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT` Kconfig options automatically enable :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT`, which allows to build application update images for both slots.
-To see which files are built when the option is enabled, go to the :ref:`app_build_mcuboot_output` page.
+To read about the files that are built when the option is enabled, refer to the :ref:`app_build_mcuboot_output` page.
 
 .. fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
 
@@ -156,7 +156,7 @@ To perform a FOTA update, complete the following steps:
       Otherwise, the DFU target may reject the FOTA process due to a downgrade prevention mechanism.
 
 #. Download the :file:`dfu_application.zip` archive to your device.
-   See :ref:`app_build_fota` for more information about the contents of update archive.
+   See :ref:`app_build_output_files` for more information about the contents of update archive.
 
    .. note::
       nRF Connect for Desktop does not currently support the FOTA process.

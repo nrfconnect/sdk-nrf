@@ -49,7 +49,7 @@ The modification of the data by multiple application modules can result in a bro
 
 After building your application with the |smp| enabled, the :file:`dfu_application.zip` archive is generated in the build directory.
 It contains all the firmware update files that are necessary to perform DFU.
-For more information about the contents of update archive, see :ref:`app_build_fota`.
+For more information about the contents of update archive, see :ref:`app_build_output_files`.
 
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
