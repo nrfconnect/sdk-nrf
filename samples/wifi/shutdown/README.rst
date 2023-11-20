@@ -10,7 +10,7 @@ Wi-Fi: Shutdown
 The Shutdown sample demonstrates how to put the Nordic Semiconductor's Wi-Fi® chipset in the Shutdown state, where the device is completely powered off.
 For more information, see the `nRF70 Series power states`_ page.
 
-This also demonstrates how to achieve the lowest possible power consumption in the nRF5340 SoC when Wi-Fi is enabled but not in use.
+This also demonstrates how to achieve the lowest possible power consumption in the Host SoC (nRF53, nRF52 or nRF91 Series) when Wi-Fi is enabled but not being used.
 
 Requirements
 ************
@@ -22,25 +22,25 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample can demonstrate Wi-Fi shutdown and achieve the lowest possible power consumption in the nRF5340 SoC.
+The sample can demonstrate Wi-Fi shutdown and achieve the lowest possible power consumption in the Host SoC.
 The sample:
 
 1. Initializes the Wi-Fi driver.
 #. Scans for available Wi-Fi networks to verify that the Wi-Fi driver is operational.
 #. Brings down the Wi-Fi network interface, which automatically directs the Wi-Fi driver to power down the nRF70 device.
-#. Puts the nRF5340 SoC in the lowest possible power consumption mode.
+#. Puts the Host SoC in the lowest possible power consumption mode.
 
 
 User Interface
 **************
 
 Button 1:
-   Wakes up the nRF5340 SoC, brings up the Wi-Fi network interface, which automatically directs the Wi-Fi driver to power on the nRF70 device.
+   Wakes up the Host SoC, brings up the Wi-Fi network interface, which automatically directs the Wi-Fi driver to power on the nRF70 device.
    The sample then scans for available Wi-Fi networks to verify that the Wi-Fi driver is operational.
 
 Button 2:
    Brings down the Wi-Fi network interface, which automatically directs the Wi-Fi driver to power down the nRF70 device.
-   The nRF5340 SoC is put into the lowest possible power consumption mode.
+   The Host SoC is put into the lowest possible power consumption mode.
 
 
 Building and running
