@@ -127,7 +127,7 @@ static void periodic_led_work(struct k_work *work)
 {
 	uint16_t clamped_lvl;
 	struct lightness_ctx *l_ctx =
-		CONTAINER_OF(work, struct lightness_ctx, per_work);
+		CONTAINER_OF(work, struct lightness_ctx, per_work.work);
 	l_ctx->rem_time -= l_ctx->time_per;
 
 	if ((l_ctx->rem_time <= l_ctx->time_per) ||
