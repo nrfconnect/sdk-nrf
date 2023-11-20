@@ -31,9 +31,19 @@ K_SEM_DEFINE(event_handler_called_sem, 0, TEST_EVENT_MAX_COUNT);
  */
 extern void at_monitor_dispatch(const char *at_notif);
 
+static void at_notif_dispatch_work_fn(struct k_work *work)
+{
+	at_monitor_dispatch(at_notif);
+}
+
+static K_WORK_DELAYABLE_DEFINE(at_notif_dispatch_work, at_notif_dispatch_work_fn);
+
 static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 {
 	uint8_t index = lte_lc_callback_count_occurred;
+
+	TEST_ASSERT_MESSAGE(lte_lc_callback_count_occurred < lte_lc_callback_count_expected,
+			    "LTE LC event callback called more times than expected");
 
 	TEST_ASSERT_EQUAL(test_event_data[index].type, evt->type);
 
@@ -281,6 +291,214 @@ void test_lte_lc_connect_async_null(void)
 
 	/* Register handler so that tearDown() doesn't cause unnecessary warning log */
 	lte_lc_register_handler(lte_lc_event_handler);
+}
+
+void test_lte_lc_connect_success(void)
+{
+	int ret;
+
+	/* AT commands triggered by lte_lc_connect() */
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_NW_REG_NOT_REGISTERED);
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CFUN?", "+CFUN: %hu", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_FUNC_MODE_OFFLINE);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XSYSTEMMODE=1,0,1,0", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
+
+	static const char xmonitor_resp[] =
+		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
+		"334,6200,66,44,\"\","
+		"\"00000101\",\"00010011\",\"01001001\"";
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+
+	/* AT commands triggered by lte_lc_offline() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
+
+	lte_lc_callback_count_expected = 7;
+
+	/* LTE-M registration */
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.id = 0x12beef;
+	test_event_data[1].cell.tac = 0x2f;
+
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_LTEM;
+
+	test_event_data[3].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[3].psm_cfg.tau = 11400;
+	test_event_data[3].psm_cfg.active_time = 10;
+
+	/* De-registration */
+	test_event_data[4].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[4].nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
+
+	test_event_data[5].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[5].cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[5].cell.tac = LTE_LC_CELL_TAC_INVALID;
+
+	test_event_data[6].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[6].lte_mode = LTE_LC_LTE_MODE_NONE;
+
+	/* Schedule +CEREG notification to be dispatched while lte_lc_connect() blocks */
+	strcpy(at_notif, "+CEREG: 1,\"002F\",\"0012BEEF\",7\r\n");
+	k_work_schedule(&at_notif_dispatch_work, K_MSEC(1));
+
+	ret = lte_lc_connect();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	ret = lte_lc_offline();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Send +CEREG notification to trigger de-registration events */
+	strcpy(at_notif, "+CEREG: 0\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_connect_fallback(void)
+{
+	int ret;
+
+	/* AT commands triggered by lte_lc_connect() */
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_NW_REG_NOT_REGISTERED);
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CFUN?", "+CFUN: %hu", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_FUNC_MODE_OFFLINE);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XSYSTEMMODE=1,0,1,0", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
+
+	/* Fallback to NB-IoT */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XSYSTEMMODE=0,1,1,0", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
+
+	static const char xmonitor_resp[] =
+		"%XMONITOR: 5,\"Operator\",\"OP\",\"20065\",\"003F\",9,20,\"0013BEEF\","
+		"334,6200,66,44,\"\","
+		"\"11100000\",\"00101000\",\"11100000\"";
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+
+	/* AT commands triggered by lte_lc_offline() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
+
+	lte_lc_callback_count_expected = 7;
+
+	/* NB-IoT registration */
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTERED_ROAMING;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.id = 0x13beef;
+	test_event_data[1].cell.tac = 0x3f;
+
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_NBIOT;
+
+	test_event_data[3].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[3].psm_cfg.tau = 28800;
+	test_event_data[3].psm_cfg.active_time = -1;
+
+	/* De-registration */
+	test_event_data[4].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[4].nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
+
+	test_event_data[5].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[5].cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[5].cell.tac = LTE_LC_CELL_TAC_INVALID;
+
+	test_event_data[6].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[6].lte_mode = LTE_LC_LTE_MODE_NONE;
+
+	/* Schedule +CEREG notification to be dispatched after timeout to trigger fallback */
+	strcpy(at_notif, "+CEREG: 5,\"003F\",\"0013BEEF\",9\r\n");
+	k_work_schedule(&at_notif_dispatch_work, K_MSEC(1100));
+
+	ret = lte_lc_connect();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	ret = lte_lc_offline();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Send +CEREG notification to trigger de-registration events */
+	strcpy(at_notif, "+CEREG: 0\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_connect_timeout(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XSYSTEMMODE=1,1,0,0", 0);
+
+	/* AT commands triggered by lte_lc_connect() */
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_NW_REG_NOT_REGISTERED);
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CFUN?", "+CFUN: %hu", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_FUNC_MODE_POWER_OFF);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XSYSTEMMODE=1,1,0,0", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
+
+	/* Modem is switched into offline mode after the timeout */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
+	/* Fallback not possible, modem switched back to original functional mode */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", 0);
+
+	lte_lc_callback_count_expected = 1;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_SEARCHING;
+
+	/* Change system mode to LTE-M + NB-IoT, so that fallback can not be used */
+	ret = lte_lc_system_mode_set(LTE_LC_SYSTEM_MODE_LTEM_NBIOT,
+				     LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Schedule +CEREG notification to be dispatched while lte_lc_connect() blocks */
+	strcpy(at_notif, "+CEREG: 2\r\n");
+	k_work_schedule(&at_notif_dispatch_work, K_MSEC(1));
+
+	ret = lte_lc_connect();
+	TEST_ASSERT_EQUAL(-ETIMEDOUT, ret);
 }
 
 void test_lte_lc_normal_success(void)
