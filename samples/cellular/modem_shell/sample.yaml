@@ -57,7 +57,7 @@ tests:
       - nrf9161dk_nrf9161_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.cellular.modem_shell.nrf7000ek_wifi:
     build_only: true
@@ -66,7 +66,7 @@ tests:
       - nrf9161dk_nrf9161_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek_nrf7000 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay" CONFIG_WPA_SUPP=n
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay" CONFIG_WPA_SUPP=n
     tags: ci_build
   sample.cellular.modem_shell.nrf7001ek_wifi:
     build_only: true
@@ -75,7 +75,7 @@ tests:
       - nrf9161dk_nrf9161_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek_nrf7001 OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.cellular.modem_shell.nrf7002ek_wifi-debug:
     build_only: true
@@ -85,7 +85,7 @@ tests:
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek
                 OVERLAY_CONFIG="overlay-nrf7002ek-wifi-scan-only.conf;overlay-debug.conf"
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.cellular.modem_shell.esp_wifi:
     build_only: true
@@ -166,7 +166,7 @@ tests:
       - CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
     extra_args: SHIELD=nrf7002ek
                 OVERLAY_CONFIG="overlay-cloud_mqtt.conf;overlay-pgps.conf;overlay-nrf7002ek-wifi-scan-only.conf"
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf9161dk_nrf9161_ns
@@ -244,7 +244,7 @@ tests:
       - CONFIG_LOCATION_METHOD_CELLULAR=n
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.cellular.modem_shell.location_wifi_cellular_no_gnss:
     build_only: true
@@ -257,7 +257,7 @@ tests:
       - CONFIG_LOCATION_METHOD_CELLULAR=y
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.cellular.modem_shell.location_wifi_no_cellular_no_gnss:
     build_only: true
@@ -270,7 +270,7 @@ tests:
       - CONFIG_LOCATION_METHOD_CELLULAR=n
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
-                DTC_OVERLAY_FILE="nrf9160dk_with_nrf7002ek.overlay"
+                DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular:
     build_only: true
