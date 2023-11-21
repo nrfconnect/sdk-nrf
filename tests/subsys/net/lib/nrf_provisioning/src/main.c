@@ -44,9 +44,11 @@ char http_auth_hdr_invalid2[] = "att." AUTH_HDR_BEARER_JWT_DUMMY CRLF;
 char MFW_VER[] = "mfw_nrf9161_99.99.99-DUMMY";
 char MFW_VER_NMB[] = "99.99.99";
 
-static void dummy_nrf_provisioning_device_mode_cb(void *user_data)
+static void dummy_nrf_provisioning_device_mode_cb(enum nrf_provisioning_event event,
+						  void *user_data)
 {
 	(void)user_data;
+	(void)event;
 }
 
 static int dummy_nrf_provisioning_modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)

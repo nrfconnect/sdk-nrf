@@ -43,9 +43,11 @@ static const char *auth_path = "p/auth-jwt";
 static const char *cmd_path = "p/cmd";
 static const char *resp_path = "p/rsp";
 
-static void dummy_nrf_provisioning_device_mode_cb(void *user_data)
+static void dummy_nrf_provisioning_device_mode_cb(enum nrf_provisioning_event event,
+						  void *user_data)
 {
 	(void)user_data;
+	(void)event;
 }
 
 static int dummy_nrf_provisioning_modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)

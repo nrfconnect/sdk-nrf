@@ -27,7 +27,7 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 	char time_buf[64];
 	int ret;
 
-	(void)user_data;
+	ARG_UNUSED(user_data);
 
 	if (lte_lc_func_mode_get(&fmode)) {
 		LOG_ERR("Failed to read modem functional mode");
@@ -68,10 +68,8 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 	return ret;
 }
 
-static void device_mode_cb(void *user_data)
+static void reboot_device(void)
 {
-	(void)user_data;
-
 	/* Disconnect from network gracefully */
 	int ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
 
@@ -79,12 +77,32 @@ static void device_mode_cb(void *user_data)
 		LOG_ERR("Unable to set modem offline, error %d", ret);
 	}
 
-	LOG_INF("Provisioning done, rebooting...");
 	while (log_process()) {
 		;
 	}
 
 	sys_reboot(SYS_REBOOT_WARM);
+}
+
+static void device_mode_cb(enum nrf_provisioning_event event, void *user_data)
+{
+	ARG_UNUSED(user_data);
+
+	switch (event) {
+	case NRF_PROVISIONING_EVENT_START:
+		LOG_INF("Provisioning started");
+		break;
+	case NRF_PROVISIONING_EVENT_STOP:
+		LOG_INF("Provisioning stopped");
+		break;
+	case NRF_PROVISIONING_EVENT_DONE:
+		LOG_INF("Provisioning done, rebooting...");
+		reboot_device();
+		break;
+	default:
+		LOG_ERR("Unknown event");
+		break;
+	}
 }
 
 int main(void)

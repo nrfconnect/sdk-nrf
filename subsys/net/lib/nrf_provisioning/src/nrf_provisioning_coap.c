@@ -162,6 +162,7 @@ static int socket_connect(int *const fd)
 	hints.ai_family = AF_UNSPEC;
 #endif /* defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4) */
 
+	LOG_DBG("CoAP host: %s", COAP_HOST);
 	hints.ai_socktype = SOCK_DGRAM;
 	st = zsock_getaddrinfo(COAP_HOST, PEER_PORT, &hints, &address);
 	LOG_DBG("getaddrinfo status: %d", st);
