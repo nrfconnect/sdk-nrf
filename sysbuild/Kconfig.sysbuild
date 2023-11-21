@@ -8,7 +8,7 @@
 
 menuconfig PARTITION_MANAGER
 	bool "Partition Manager"
-	default y
+	default y if ($(BOARD) != "qemu_cortex_m0" && $(BOARD) != "qemu_cortex_m3" && $(BOARD) != "native_posix" && $(BOARD) != "native_posix_64")
 
 config PM_MCUBOOT_PAD
 	hex "Memory reserved for MCUBOOT_PAD"
