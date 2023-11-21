@@ -284,12 +284,18 @@ int nrf_cloud_coap_shadow_service_info_update(const struct nrf_cloud_svc_info * 
  * One such element is the control section, which specifies the log level and turns
  * alerts on and off.
  *
- * @param[in] in_data A pointer to a structure with the length and a pointer to the delta received.
+ * If application-specific delta data exists, it will be provided in delta_out.
  *
- * @return 0 if the request succeeded, a positive value indicating a CoAP result code,
- * or a negative error number.
+ * @param[in] in_data A pointer to a structure with the length and a pointer to the delta received.
+ * @param[out] delta_out A pointer to a structure that contains application-specific delta data.
+ *
+ * @retval -ENOMSG Error decoding input data.
+ * @retval 0 Success, no application-specific delta data.
+ * @retval 1 Success, application-specific delta data exists.
+ *           Caller is responsible for the memory in delta_out; free with @ref nrf_cloud_obj_free.
  */
-int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data);
+int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
+					struct nrf_cloud_obj *const delta_out);
 
 /**
  * @brief Send an nRF Cloud object

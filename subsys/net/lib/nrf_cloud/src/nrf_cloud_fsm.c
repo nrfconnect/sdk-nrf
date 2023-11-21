@@ -370,74 +370,23 @@ static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input
 
 static void shadow_control_process(struct nrf_cloud_obj_shadow_data *const input)
 {
-	enum nrf_cloud_ctrl_status ctrl_status = NRF_CLOUD_CTRL_NOT_PRESENT;
-	struct nrf_cloud_ctrl_data cloud_ctrl;
-	struct nrf_cloud_ctrl_data device_ctrl = {0};
-	NRF_CLOUD_OBJ_JSON_DEFINE(ctrl_obj);
-
-	int err = nrf_cloud_shadow_control_get(input, &ctrl_obj);
-
-	if (err) {
-		/* No control to process */
-		return;
-	}
-
-	/* A delta needs a reply */
-	ctrl_status = (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) ?
-		      NRF_CLOUD_CTRL_REPLY : NRF_CLOUD_CTRL_NO_REPLY;
-
-	/* Init control status variables */
-	nrf_cloud_device_control_get(&device_ctrl);
-	/* Set cloud equal to device, then diff later */
-	cloud_ctrl = device_ctrl;
-
-	/* Get actual cloud control status */
-	err = nrf_cloud_shadow_control_decode(&ctrl_obj, &cloud_ctrl);
-	if (err == -EINVAL) {
-		/* There was an invalid value, correct (reject) it */
-		ctrl_status = NRF_CLOUD_CTRL_REJECT;
-	}
-
-	nrf_cloud_obj_free(&ctrl_obj);
-
-	/* Diff cloud/device control settings */
-	if (ctrl_status != NRF_CLOUD_CTRL_REJECT) {
-
-		if (device_ctrl.alerts_enabled != cloud_ctrl.alerts_enabled) {
-			ctrl_status = NRF_CLOUD_CTRL_REPLY;
-#if defined(CONFIG_NRF_CLOUD_ALERT)
-			nrf_cloud_alert_control_set(cloud_ctrl.alerts_enabled);
-#endif /* CONFIG_NRF_CLOUD_ALERT */
-		}
-
-		if (device_ctrl.log_level != cloud_ctrl.log_level) {
-			ctrl_status = NRF_CLOUD_CTRL_REPLY;
-			nrf_cloud_log_control_set(cloud_ctrl.log_level);
-		}
-	}
-
-	if (ctrl_status == NRF_CLOUD_CTRL_NO_REPLY) {
-		LOG_INF("No need to reply to control settings");
-		return;
-	}
-
 	struct nct_cc_data msg = {
 		.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
 		.message_id = NCT_MSG_ID_STATE_REPORT
 	};
+	int err = nrf_cloud_shadow_control_process(input, &msg.data);
 
-	/* Encode reply; if rejecting use device control data, confirm with cloud data */
-	err = nrf_cloud_shadow_control_response_encode(
-		((ctrl_status == NRF_CLOUD_CTRL_REJECT) ? &device_ctrl : &cloud_ctrl),
-		(ctrl_status == NRF_CLOUD_CTRL_REPLY),
-		&msg.data);
-
-	if (err) {
-		LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
+	if (err == -ENODATA) {
+		return;
+	} else if (err == -ENOMSG) {
+		LOG_DBG("No reply needed for device control shadow update");
+		return;
+	} else if (err) {
+		LOG_ERR("Failed to process device control shadow update, error: err");
 		return;
 	}
 
-	LOG_INF("Confirming device control in shadow: %s", (const char *)msg.data.ptr);
+	LOG_DBG("Confirming device control in shadow: %s", (const char *)msg.data.ptr);
 	err = nct_cc_send(&msg);
 	nrf_cloud_free((void *)msg.data.ptr);
 	if (err) {
@@ -493,6 +442,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	struct nrf_cloud_obj_shadow_accepted shadow_accepted = {0};
 	struct nrf_cloud_obj_shadow_delta shadow_delta = {0};
 	struct nrf_cloud_obj_shadow_data shadow_data = {0};
+
 	NRF_CLOUD_OBJ_JSON_DEFINE(shadow_obj);
 
 	LOG_DBG("CC RX on topic [%d] %*s: %s",

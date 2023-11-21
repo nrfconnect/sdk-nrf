@@ -32,6 +32,7 @@
 #include "nrfc_dtls.h"
 #include "coap_codec.h"
 #include "nrf_cloud_coap_transport.h"
+#include "nrf_cloud_mem.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
@@ -204,6 +205,40 @@ static int update_device_status(const char * const app_ver)
 	return err;
 }
 
+static void update_control_section(void)
+{
+	static bool updated;
+
+	if (updated) {
+		return;
+	}
+
+	struct nrf_cloud_ctrl_data device_ctrl = {0};
+	struct nrf_cloud_data data_out = {0};
+	int err;
+
+	/* Get the device control settings, encode it, and send to shadow */
+	nrf_cloud_device_control_get(&device_ctrl);
+
+	err = nrf_cloud_shadow_control_response_encode(&device_ctrl, true, &data_out);
+	if (err) {
+		LOG_ERR("Failed to encode control section, error: %d", err);
+		return;
+	}
+
+	/* If there is a difference with the desired settings in the shadow a delta
+	 * event will be sent to the device
+	 */
+	err = nrf_cloud_coap_shadow_state_update(data_out.ptr);
+	if (err) {
+		LOG_ERR("Failed to update control section in device shadow, error: %d", err);
+	} else {
+		updated = true;
+	}
+
+	nrf_cloud_free((void *)data_out.ptr);
+}
+
 int nrf_cloud_coap_connect(const char * const app_ver)
 {
 	struct sockaddr_storage server;
@@ -244,6 +279,10 @@ int nrf_cloud_coap_connect(const char * const app_ver)
 		goto fail;
 	}
 
+	/* On initial connect, set the control section in the shadow */
+	update_control_section();
+
+	/* On each connect, update the device status in the shadow */
 	return update_device_status(app_ver);
 
 fail:
