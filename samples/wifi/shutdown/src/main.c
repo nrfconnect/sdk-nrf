@@ -217,11 +217,13 @@ int main(void)
 		int ret;
 		struct ethernet_req_params params;
 
-		/* Set a local MAC address with Nordic OUI */
-		ret = net_if_down(iface);
-		if (ret) {
-			LOG_ERR("Cannot bring down iface (%d)", ret);
-			return ret;
+		if (net_if_is_up(iface)) {
+			/* Set a local MAC address with Nordic OUI */
+			ret = net_if_down(iface);
+			if (ret) {
+				LOG_ERR("Cannot bring down iface (%d)", ret);
+				return ret;
+			}
 		}
 
 		ret = net_bytes_from_str(params.mac_address.addr, sizeof(CONFIG_WIFI_MAC_ADDRESS),
