@@ -27,6 +27,20 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
+/** @brief How the control section is handled when either a trimmed shadow
+ *  or a delta shadow is received.
+ */
+enum nrf_cloud_ctrl_status {
+	/** Data not present in shadow. */
+	NRF_CLOUD_CTRL_NOT_PRESENT,
+	/** This was not a delta, so no need to send update back. */
+	NRF_CLOUD_CTRL_NO_REPLY,
+	/** Send shadow update confirmation back. */
+	NRF_CLOUD_CTRL_REPLY,
+	/** Reject values -- update desired section, not reported. */
+	NRF_CLOUD_CTRL_REJECT
+};
+
 bool initialized;
 static const char *application_version;
 
@@ -780,7 +794,7 @@ static int detach_item(struct nrf_cloud_obj *const src, char const *const key,
 		       struct nrf_cloud_obj *const dst)
 {
 	/* Detach the state object from the input object */
-	int err = nrf_cloud_obj_object_get(src, key, dst);
+	int err = nrf_cloud_obj_object_detach(src, key, dst);
 
 	if (err) {
 		LOG_DBG("Item with key \"%s\" not found", key);
@@ -907,77 +921,6 @@ int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *c
 
 end:
 	cJSON_Delete(root_obj);
-	return err;
-}
-
-int nrf_cloud_device_control_update(const struct nrf_cloud_data *const in_data,
-				    struct nrf_cloud_data *out_data,
-				    enum nrf_cloud_ctrl_status *status)
-{
-	int err;
-	struct nrf_cloud_ctrl_data ctrl_data;
-
-	if ((in_data == NULL) || (out_data == NULL) || (status == NULL)) {
-		return -EINVAL;
-	}
-
-	out_data->ptr = NULL;
-	out_data->len = 0;
-	*status = NRF_CLOUD_CTRL_NOT_PRESENT;
-
-#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
-	ctrl_data.alerts_enabled = nrf_cloud_alert_control_get();
-#else
-	ctrl_data.alerts_enabled = false;
-#endif /* CONFIG_NRF_CLOUD_ALERT */
-
-	ctrl_data.log_level = nrf_cloud_log_control_get();
-
-	err = nrf_cloud_shadow_control_decode(in_data, status, &ctrl_data);
-	if (err) {
-		return (err == -ESRCH) ? 0 : err;
-	}
-
-	if ((*status == NRF_CLOUD_CTRL_REPLY) || (*status == NRF_CLOUD_CTRL_NO_REPLY)) {
-		/* shadow included a valid control section, so use what it sent */
-
-#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
-		nrf_cloud_alert_control_set(ctrl_data.alerts_enabled);
-#endif /* CONFIG_NRF_CLOUD_ALERT */
-		nrf_cloud_log_control_set(ctrl_data.log_level);
-
-	} else {
-		/* no control section in shadow, or values there were invalid,
-		 * so set reported to our current settings
-		 */
-
-#if IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)
-		ctrl_data.alerts_enabled = nrf_cloud_alert_control_get();
-#else
-		ctrl_data.alerts_enabled = false;
-#endif
-		ctrl_data.log_level = nrf_cloud_log_control_get();
-		nrf_cloud_log_enable(ctrl_data.log_level != LOG_LEVEL_NONE);
-		/* First boot, so update shadow with our current settings. */
-		if (*status == NRF_CLOUD_CTRL_NOT_PRESENT) {
-			*status = NRF_CLOUD_CTRL_REPLY;
-		}
-		LOG_INF("Updating shadow with alertEn:%u and logLvl:%u",
-			ctrl_data.alerts_enabled, ctrl_data.log_level);
-
-	}
-
-	/* Acknowledge that shadow changes have been made. */
-	if ((*status == NRF_CLOUD_CTRL_REPLY) || (*status == NRF_CLOUD_CTRL_REJECT)) {
-		err = nrf_cloud_shadow_control_response_encode(&ctrl_data,
-							       (*status == NRF_CLOUD_CTRL_REPLY),
-							       out_data);
-		if (err) {
-			LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
-			return err;
-		}
-	}
-
 	return err;
 }
 
@@ -3803,6 +3746,151 @@ int nrf_cloud_obj_shadow_delta_decode(struct nrf_cloud_obj *const shadow_obj,
 	/* Success, set delta info */
 	delta->ver = (int)ver;
 	delta->ts = (int64_t)ts;
+
+	return 0;
+}
+
+int nrf_cloud_coap_shadow_default_process(struct nrf_cloud_obj_shadow_data *const input,
+					  struct nrf_cloud_data *const response_out)
+{
+	if (!input || !input->delta) {
+		return -EINVAL;
+	}
+
+	if (input->type != NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+		return -EOPNOTSUPP;
+	}
+
+	struct nrf_cloud_obj pair_obj = {0};
+	char *topic_str = NULL;
+
+	/* Check for the topic prefix string and pairing object */
+	(void)nrf_cloud_obj_str_get(&input->delta->state, NRF_CLOUD_JSON_KEY_TOPIC_PRFX,
+				    &topic_str);
+	(void)nrf_cloud_obj_object_detach(&input->delta->state, NRF_CLOUD_JSON_KEY_PAIRING,
+				       &pair_obj);
+
+	if (!topic_str && !pair_obj.json) {
+		return -ENODATA;
+	}
+
+	/* If one of the items is found, acknowledge it */
+	NRF_CLOUD_OBJ_JSON_DEFINE(ack_obj);
+	int err = nrf_cloud_obj_init(&ack_obj);
+
+	if (err) {
+		LOG_ERR("Could not init object, err: %d", err);
+		return -ENOMEM;
+	}
+
+	if (topic_str) {
+		err = nrf_cloud_obj_str_add(&ack_obj, NRF_CLOUD_JSON_KEY_TOPIC_PRFX,
+					    topic_str, false);
+		if (err) {
+			LOG_WRN("Failed to add topic prefix string");
+		}
+
+		/* Remove the string from the input */
+		cJSON_DeleteItemFromObject(input->delta->state.json,
+					   NRF_CLOUD_JSON_KEY_TOPIC_PRFX);
+	}
+
+	if (pair_obj.json) {
+		err = nrf_cloud_obj_object_add(&ack_obj, NRF_CLOUD_JSON_KEY_PAIRING,
+					       &pair_obj, false);
+
+		if (err) {
+			LOG_WRN("Failed to add pairing object");
+		}
+	}
+
+	/* Encode the data to be sent to the cloud */
+	err = nrf_cloud_obj_cloud_encode(&ack_obj);
+	if (err) {
+		LOG_WRN("Failed to encode object data for cloud");
+	} else {
+		*response_out = ack_obj.encoded_data;
+	}
+
+	if (nrf_cloud_obj_free(&ack_obj) != 0) {
+		LOG_WRN("Failed to free object memory");
+	}
+
+	return err;
+}
+
+int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const input,
+				     struct nrf_cloud_data *const response_out)
+{
+	if (!input) {
+		return -EINVAL;
+	}
+
+	NRF_CLOUD_OBJ_JSON_DEFINE(ctrl_obj);
+	enum nrf_cloud_ctrl_status ctrl_status = NRF_CLOUD_CTRL_NOT_PRESENT;
+	struct nrf_cloud_ctrl_data cloud_ctrl;
+	struct nrf_cloud_ctrl_data device_ctrl = {0};
+
+	/* Get the control object from the input data */
+	int err = nrf_cloud_shadow_control_get(input, &ctrl_obj);
+
+	if (err) {
+		/* No control to process */
+		return -ENODATA;
+	}
+
+	/* A delta needs a reply */
+	ctrl_status = (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) ?
+		      NRF_CLOUD_CTRL_REPLY : NRF_CLOUD_CTRL_NO_REPLY;
+
+	/* Get current device control status */
+	nrf_cloud_device_control_get(&device_ctrl);
+	/* Set cloud equal to device, then diff later */
+	cloud_ctrl = device_ctrl;
+
+	/* Get the cloud control status */
+	err = nrf_cloud_shadow_control_decode(&ctrl_obj, &cloud_ctrl);
+	if (err == -EINVAL) {
+		/* There was an invalid value, correct (reject) it */
+		ctrl_status = NRF_CLOUD_CTRL_REJECT;
+	}
+
+	/* Done with the control object */
+	nrf_cloud_obj_free(&ctrl_obj);
+
+	/* Diff cloud/device control settings */
+	if (ctrl_status != NRF_CLOUD_CTRL_REJECT) {
+
+		if (device_ctrl.alerts_enabled != cloud_ctrl.alerts_enabled) {
+			ctrl_status = NRF_CLOUD_CTRL_REPLY;
+#if defined(CONFIG_NRF_CLOUD_ALERT)
+			nrf_cloud_alert_control_set(cloud_ctrl.alerts_enabled);
+#endif /* CONFIG_NRF_CLOUD_ALERT */
+		}
+
+		if (device_ctrl.log_level != cloud_ctrl.log_level) {
+			ctrl_status = NRF_CLOUD_CTRL_REPLY;
+			nrf_cloud_log_control_set(cloud_ctrl.log_level);
+		}
+	}
+
+	if (ctrl_status == NRF_CLOUD_CTRL_NO_REPLY) {
+		LOG_DBG("No need to reply to control settings");
+		return -ENOMSG;
+	}
+
+	if (response_out) {
+		/* Encode reply; reject with device data or confirm with cloud data */
+		err = nrf_cloud_shadow_control_response_encode(
+			((ctrl_status == NRF_CLOUD_CTRL_REJECT) ? &device_ctrl : &cloud_ctrl),
+			(ctrl_status == NRF_CLOUD_CTRL_REPLY),
+			response_out);
+
+		if (err) {
+			LOG_ERR("nrf_cloud_shadow_control_response_encode failed %d", err);
+			return -EIO;
+		}
+	}
 
 	return 0;
 }

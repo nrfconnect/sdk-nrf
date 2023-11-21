@@ -159,12 +159,17 @@ int nrf_cloud_shadow_control_response_encode(struct nrf_cloud_ctrl_data const *c
 					     bool accept,
 					     struct nrf_cloud_data *const output);
 
-/** @brief Parse shadow delta for control section. Act on any changes to logging or alerts.
+/** @brief Parse shadow data for control section. Act on any changes to logging or alerts.
  * If needed, generate output JSON to send back to cloud to confirm change.
  */
-int nrf_cloud_device_control_update(const struct nrf_cloud_data *const in_data,
-				    struct nrf_cloud_data *out_data,
-				    enum nrf_cloud_ctrl_status *status);
+int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const input,
+				     struct nrf_cloud_data *const response_out);
+
+/** @brief Parse shadow data for default nRF Cloud shadow content. This data is not
+ * needed by CoAP devices, but it needs to be acknowledged to remove the shadow delta.
+ */
+int nrf_cloud_coap_shadow_default_process(struct nrf_cloud_obj_shadow_data *const input,
+					  struct nrf_cloud_data *const response_out);
 
 /** @brief Encode the device status data into a JSON formatted buffer to be saved to
  * the device shadow.

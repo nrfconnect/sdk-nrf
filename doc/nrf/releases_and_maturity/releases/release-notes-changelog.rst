@@ -265,6 +265,8 @@ Cellular samples
 
 * :ref:`nrf_cloud_multi_service` sample:
 
+  * Added a generic processing example for application-specific shadow data.
+
   * Fixed:
 
     * The sample now waits for a successful connection before printing ``Connected to nRF Cloud!``.
@@ -542,6 +544,11 @@ Libraries for networking
 
     * Automatic selection of proprietary PSM mode when building for the SOC_NRF9161_LACA.
     * Support for bulk transfers to the :c:func:`nrf_cloud_coap_json_message_send` function.
+
+  * Updated:
+
+    * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to include a parameter for application-specific shadow data.
+    * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to process default shadow data added by nRF Cloud, which is not used by CoAP.
 
 * :ref:`lib_nrf_cloud_log` library:
 

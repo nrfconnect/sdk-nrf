@@ -648,28 +648,79 @@ int nrf_cloud_coap_shadow_service_info_update(const struct nrf_cloud_svc_info * 
 	return nrf_cloud_coap_shadow_device_status_update(&dev_status);
 }
 
-int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data)
+int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
+					struct nrf_cloud_obj *const delta_out)
 {
-	int err;
-	enum nrf_cloud_ctrl_status status;
-	struct nrf_cloud_data out_data;
-
-	err = nrf_cloud_device_control_update(in_data, &out_data, &status);
-	if (err) {
-		return err;
+	if (!in_data) {
+		return -EINVAL;
 	}
-	LOG_DBG("Control status:%d", status);
-	if (out_data.ptr) {
-		LOG_DBG("Ack delta: len:%zd, %s", out_data.len, (const char *)out_data.ptr);
+
+	int err;
+	struct nrf_cloud_data out_data = {0};
+	struct nrf_cloud_obj_shadow_delta shadow_delta = {0};
+	struct nrf_cloud_obj_shadow_data shadow_data;
+
+	/* CoAP delta data does not have a "state" object, so decode directly to
+	 * the object in the nrf_cloud_obj_shadow_delta struct.
+	 */
+	shadow_delta.state.type = NRF_CLOUD_OBJ_TYPE_JSON;
+	err = nrf_cloud_obj_input_decode(&shadow_delta.state, in_data);
+	if (err) {
+		LOG_ERR("Error decoding shadow delta data, error: %d", err);
+		return -ENOMSG;
+	}
+
+	/* Set the delta data */
+	shadow_data.type = NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA,
+	shadow_data.delta = &shadow_delta;
+
+	/* Process the default nRF Cloud topic and pairing info, which is not used for CoAP */
+	err = nrf_cloud_coap_shadow_default_process(&shadow_data, &out_data);
+	if (err == 0) {
 		/* Acknowledge it so we do not receive it again. */
 		err = nrf_cloud_coap_shadow_state_update(out_data.ptr);
 		if (err) {
-			LOG_ERR("Failed to acknowledge delta: %d", err);
+			LOG_ERR("Failed to acknowledge default shadow data: %d", err);
 		} else {
-			LOG_DBG("Delta acknowledged");
+			LOG_DBG("Default shadow data acknowledged");
 		}
+
+		nrf_cloud_free((void *)out_data.ptr);
+		out_data.ptr = NULL;
+		out_data.len = 0;
 	}
 
-	LOG_DBG("Processed control change");
-	return err;
+	/* Process the potential control section of the delta */
+	err = nrf_cloud_shadow_control_process(&shadow_data, &out_data);
+	if ((err == -ENODATA) || (err == -ENOMSG)) {
+		/* No control data in the delta or no reply is needed */
+	} else if (err) {
+		LOG_ERR("Failed to process device control shadow update, error: %d", err);
+	} else {
+		LOG_DBG("Ack delta: len:%zd, %s", out_data.len, (const char *)out_data.ptr);
+
+		/* Acknowledge it so we do not receive it again. */
+		err = nrf_cloud_coap_shadow_state_update(out_data.ptr);
+		if (err) {
+			LOG_ERR("Failed to acknowledge control delta: %d", err);
+		} else {
+			LOG_DBG("Control delta acknowledged");
+		}
+
+		nrf_cloud_free((void *)out_data.ptr);
+		out_data.ptr = NULL;
+		out_data.len = 0;
+	}
+
+	/* Check if there is delta data to give to the caller */
+	if ((delta_out != NULL) &&
+	    nrf_cloud_shadow_app_send_check(&shadow_data)) {
+		/* Caller is now responsible for the object's memory */
+		*delta_out = shadow_data.delta->state;
+		err = 1;
+	} else {
+		nrf_cloud_obj_free(&shadow_delta.state);
+	}
+
+	return 0;
 }

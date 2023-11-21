@@ -27,6 +27,7 @@ static int check_shadow(void)
 	struct nrf_cloud_data in_data = {
 		.ptr = buf
 	};
+	struct nrf_cloud_obj delta_obj = {0};
 
 	/* Wait until we are able to communicate. */
 	LOG_DBG("Waiting for valid connection before checking shadow");
@@ -49,8 +50,45 @@ static int check_shadow(void)
 			CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS);
 		return -EAGAIN;
 	}
+
 	LOG_DBG("Shadow delta: len:%zd, %s", in_data.len, buf);
-	return nrf_cloud_coap_shadow_delta_process(&in_data);
+
+	err = nrf_cloud_coap_shadow_delta_process(&in_data, &delta_obj);
+	if (err == 1) {
+		/* There is an application specific shadow delta to process */
+
+		/* --- Process application's delta data here --- */
+
+		/* To clear the delta, we will just accept the delta by
+		 * updating the shadow state with the received data.
+		 *
+		 * Encode the delta to send to the cloud
+		 */
+		err = nrf_cloud_obj_cloud_encode(&delta_obj);
+
+		/* Free the object */
+		(void)nrf_cloud_obj_free(&delta_obj);
+
+		if (!err) {
+			/* Send the encoded data */
+			err = nrf_cloud_coap_shadow_state_update(delta_obj.encoded_data.ptr);
+		} else {
+			LOG_ERR("Failed to encode cloud data, err: %d", err);
+			return err;
+		}
+
+		if (err) {
+			LOG_ERR("Failed to send shadow delta update, err: %d", err);
+		}
+
+		/* Free the encoded data */
+		(void)nrf_cloud_obj_cloud_encoded_free(&delta_obj);
+
+	} else if (err < 0) {
+		LOG_ERR("Failed to process shadow delta, err: %d", err);
+	}
+
+	return err;
 }
 
 #define SHADOW_THREAD_DELAY_S 10

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <date_time.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_log.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
@@ -352,6 +353,38 @@ static void date_time_event_handler(const struct date_time_evt *date_time_evt)
 }
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
+/* Handler for nRF Cloud shadow events */
+static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
+{
+	if (!shadow) {
+		return;
+	}
+
+	int err;
+
+	if (shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
+		LOG_DBG("Shadow: Delta - version: %d, timestamp: %lld",
+			shadow->delta->ver,
+			shadow->delta->ts);
+
+		/* Always accept since this sample, by default,
+		 * doesn't have any application specific shadow handling
+		 */
+		err = nrf_cloud_obj_shadow_delta_response_encode(&shadow->delta->state, true);
+		if (err) {
+			LOG_ERR("Failed to encode shadow response: %d", err);
+			return;
+		}
+
+		err = nrf_cloud_obj_shadow_update(&shadow->delta->state);
+		if (err) {
+			LOG_ERR("Failed to send shadow response, error: %d", err);
+		}
+	} else if (shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
+		LOG_DBG("Shadow: Accepted");
+	}
+}
+
 /* Handler for events from nRF Cloud Lib. */
 static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 {
@@ -448,9 +481,11 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		}
 
 		break;
-	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
+	case NRF_CLOUD_EVT_RX_DATA_SHADOW: {
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_SHADOW");
+		handle_shadow_event(nrf_cloud_evt->shadow);
 		break;
+	}
 	case NRF_CLOUD_EVT_FOTA_START:
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_START");
 		break;

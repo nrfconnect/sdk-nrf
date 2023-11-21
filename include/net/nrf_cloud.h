@@ -610,20 +610,6 @@ struct nrf_cloud_gw_data {
 };
 #endif
 
-/** @brief How the control section is handled when either a trimmed shadow
- *  or a delta shadow is received.
- */
-enum nrf_cloud_ctrl_status {
-	/** Data not present in shadow. */
-	NRF_CLOUD_CTRL_NOT_PRESENT,
-	/** This was not a delta, so no need to send update back. */
-	NRF_CLOUD_CTRL_NO_REPLY,
-	/** Send shadow update confirmation back. */
-	NRF_CLOUD_CTRL_REPLY,
-	/** Reject values -- update desired section, not reported. */
-	NRF_CLOUD_CTRL_REJECT
-};
-
 /** @brief Data to control behavior of the nrf_cloud library from the
  *  cloud side. This data is stored in the device shadow.
  */
