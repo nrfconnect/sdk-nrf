@@ -154,6 +154,26 @@ config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	  timeline if the connection interval is longer than the ACL event spacing.
 	  This gap can be used for other scheduling activites like isochronous streams.
 
+config BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
+	int "Default minimum value that will be used as maximum Tx octets for ACL connections"
+	default 27
+	range 10 27
+	depends on BT_ISO && BT_CONN
+	help
+	  This configuration sets the minimum value of maximum ACL payload length that can be sent
+	  in each packet. If the configured event length is shorter than what is required to
+	  send a packet pair of 27 bytes in each direction, the controller will use this value to
+	  determine how much it can reduce the payload size to satisfy the event length requirements.
+	  LL Control PDUs are not affected by this API.
+	  Together with BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT this allows the controller to schedule
+	  ACLs events closer together with other activities.
+	  Setting this parameter to a lower value will result in more link layer fragmentation,
+	  reducing the maximum throughput.
+	  Setting this parameter to a value lower than 27 bytes may result in interoperability
+	  issues with older Bluetooth products. It is therefore not recommended to use this API
+	  for applications interacting with devices qualified for Bluetooth Specification 5.1 or
+	  older.
+
 config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
 	bool "Override periodic adv event length default"
 
