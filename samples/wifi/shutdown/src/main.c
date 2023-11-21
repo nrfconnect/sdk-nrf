@@ -250,9 +250,11 @@ int main(void)
 
 	buttons_init();
 
+#ifdef CONFIG_NRF_WIFI_IF_AUTO_START
 	exit_shutdown_mode();
 
 	enter_shutdown_mode();
+#endif
 
 	k_sleep(K_FOREVER);
 
