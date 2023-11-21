@@ -478,3 +478,12 @@ config NRF_WIFI_IFACE_MTU
 	range 576 2304 if NET_IPV4
 	range 1280 2304 if NET_IPV6
 	default 1500
+config WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
+	bool "Suppress networks with non-individual MAC address as BSSID in the scan results"
+	help
+	  Wi-Fi access points use locally administered MAC address to manage
+	  multiple virtual interfaces, for geo-location usecase these networks
+	  from the virtual interfaces do not help in anyway as they are co-located with the primary interface
+	  that has globally unique MAC address.
+
+	  So, to save resources, this option drops such networks from the scan results.

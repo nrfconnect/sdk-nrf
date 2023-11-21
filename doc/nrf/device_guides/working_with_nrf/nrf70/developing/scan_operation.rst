@@ -149,6 +149,9 @@ The following controls can fine-tune the time taken and power consumed by a scan
        | :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_CHAN`
        | Run time:
        | :c:member:`wifi_scan_params.chan`
+   * - Skip locally administered MAC addresses
+     - | Build time:
+       | :kconfig:option:`CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC`
 
 Scan robustness
 ***************

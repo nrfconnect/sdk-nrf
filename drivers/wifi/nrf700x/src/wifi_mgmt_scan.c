@@ -118,6 +118,10 @@ int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *pa
 		goto out;
 	}
 
+	static uint8_t skip_local_admin_mac = IS_ENABLED(CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC);
+
+	scan_info->scan_params.skip_local_admin_macs = skip_local_admin_mac;
+
 	scan_info->scan_reason = SCAN_DISPLAY;
 
 	if (params) {
