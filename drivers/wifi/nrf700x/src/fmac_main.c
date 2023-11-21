@@ -771,7 +771,7 @@ ETH_NET_DEVICE_INIT(wlan0, /* name - token */
 #endif /* !CONFIG_NRF700X_STA_MODE */
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
 		    &wifi_offload_ops, /* api */
-		    1500); /*mtu */
+		    CONFIG_NRF_WIFI_IFACE_MTU); /*mtu */
 #else
 DEVICE_DEFINE(wlan0, /* name - token */
 	      "wlan0", /* driver name - dev->name */
