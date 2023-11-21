@@ -23,7 +23,7 @@
 LOG_MODULE_DECLARE(fp_storage, CONFIG_FP_STORAGE_LOG_LEVEL);
 
 static struct fp_account_key account_key_list[ACCOUNT_KEY_CNT];
-static uint8_t account_key_ids[ACCOUNT_KEY_CNT];
+static uint8_t account_key_metadata[ACCOUNT_KEY_CNT];
 static uint8_t account_key_count;
 
 static uint8_t account_key_order[ACCOUNT_KEY_CNT];
@@ -35,6 +35,7 @@ static atomic_t settings_loaded = ATOMIC_INIT(false);
 static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
 	int rc;
+	uint8_t id;
 	uint8_t index;
 	struct account_key_data data;
 	const char *name_suffix;
@@ -53,12 +54,12 @@ static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb re
 		return -EINVAL;
 	}
 
-	if ((data.account_key_id < ACCOUNT_KEY_MIN_ID) ||
-	    (data.account_key_id > ACCOUNT_KEY_MAX_ID)) {
+	id = ACCOUNT_KEY_METADATA_FIELD_GET(data.account_key_metadata, ID);
+	if ((id < ACCOUNT_KEY_MIN_ID) || (id > ACCOUNT_KEY_MAX_ID)) {
 		return -EINVAL;
 	}
 
-	index = account_key_id_to_idx(data.account_key_id);
+	index = account_key_id_to_idx(id);
 	name_suffix = &name[sizeof(SETTINGS_AK_NAME_PREFIX) - 1];
 	name_suffix_len = strlen(name_suffix);
 
@@ -76,12 +77,12 @@ static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb re
 		return -EINVAL;
 	}
 
-	if (account_key_ids[index] != 0) {
+	if (ACCOUNT_KEY_METADATA_FIELD_GET(account_key_metadata[index], ID) != 0) {
 		return -EINVAL;
 	}
 
 	account_key_list[index] = data.account_key;
-	account_key_ids[index] = data.account_key_id;
+	account_key_metadata[index] = data.account_key_metadata;
 
 	return 0;
 }
@@ -191,7 +192,7 @@ static int commit_ak_order(void)
 	}
 
 	for (int i = 0; i < account_key_count; i++) {
-		uint8_t id = account_key_ids[i];
+		uint8_t id = ACCOUNT_KEY_METADATA_FIELD_GET(account_key_metadata[i], ID);
 		bool id_found = false;
 
 		for (size_t j = 0; j < account_key_count; j++) {
@@ -242,7 +243,7 @@ static int fp_settings_commit(void)
 	}
 
 	for (size_t i = 0; i < ACCOUNT_KEY_CNT; i++) {
-		id = account_key_ids[i];
+		id = ACCOUNT_KEY_METADATA_FIELD_GET(account_key_metadata[i], ID);
 		if (id == 0) {
 			first_zero_idx = i;
 			break;
@@ -255,14 +256,14 @@ static int fp_settings_commit(void)
 
 	if (first_zero_idx != -1) {
 		for (size_t i = 0; i < first_zero_idx; i++) {
-			id = account_key_ids[i];
+			id = ACCOUNT_KEY_METADATA_FIELD_GET(account_key_metadata[i], ID);
 			if (id != ACCOUNT_KEY_MIN_ID + i) {
 				return -EINVAL;
 			}
 		}
 
 		for (size_t i = first_zero_idx + 1; i < ACCOUNT_KEY_CNT; i++) {
-			id = account_key_ids[i];
+			id = ACCOUNT_KEY_METADATA_FIELD_GET(account_key_metadata[i], ID);
 			if (id != 0) {
 				return -EINVAL;
 			}
@@ -323,7 +324,8 @@ int fp_storage_ak_find(struct fp_account_key *account_key,
 		if (account_key_check_cb(&account_key_list[i], context)) {
 			int err;
 
-			ak_order_update_ram(account_key_ids[i]);
+			ak_order_update_ram(ACCOUNT_KEY_METADATA_FIELD_GET(account_key_metadata[i],
+									   ID));
 			err = settings_save_one(SETTINGS_AK_ORDER_FULL_NAME, account_key_order,
 						sizeof(account_key_order));
 			if (err) {
@@ -382,7 +384,8 @@ int fp_storage_ak_save(const struct fp_account_key *account_key)
 	id = next_account_key_id();
 	index = account_key_id_to_idx(id);
 
-	data.account_key_id = id;
+	data.account_key_metadata = 0;
+	ACCOUNT_KEY_METADATA_FIELD_SET(data.account_key_metadata, ID, id);
 	data.account_key = *account_key;
 
 	err = ak_name_gen(name, index);
@@ -396,7 +399,7 @@ int fp_storage_ak_save(const struct fp_account_key *account_key)
 	}
 
 	account_key_list[index] = *account_key;
-	account_key_ids[index] = id;
+	account_key_metadata[index] = data.account_key_metadata;
 
 	if (account_key_count < ACCOUNT_KEY_CNT) {
 		account_key_count++;
@@ -418,7 +421,7 @@ int fp_storage_ak_save(const struct fp_account_key *account_key)
 void fp_storage_ak_ram_clear(void)
 {
 	memset(account_key_list, 0, sizeof(account_key_list));
-	memset(account_key_ids, 0, sizeof(account_key_ids));
+	memset(account_key_metadata, 0, sizeof(account_key_metadata));
 	account_key_count = 0;
 
 	memset(account_key_order, 0, sizeof(account_key_order));
