@@ -1242,7 +1242,7 @@ static int hci_driver_open(void)
 	if (CONFIG_BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT != 27) {
 		sdc_hci_cmd_vs_min_val_of_max_acl_tx_payload_set_t params = {
 			.min_val_of_max_acl_tx_payload =
-				CONFIG_config BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
+				CONFIG_BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
 		};
 		err = sdc_hci_cmd_vs_min_val_of_max_acl_tx_payload_set(&params);
 		if (err) {
