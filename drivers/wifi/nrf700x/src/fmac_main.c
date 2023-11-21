@@ -49,7 +49,7 @@ struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 #define MAX_RX_QUEUES 3
 
 #define MAX_TX_FRAME_SIZE \
-	(CONFIG_NRF700X_TX_MAX_DATA_SIZE + TX_BUF_HEADROOM)
+	(CONFIG_NRF_WIFI_IFACE_MTU + TX_BUF_HEADROOM)
 #define TOTAL_TX_SIZE \
 	(CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_TX_MAX_DATA_SIZE)
 #define TOTAL_RX_SIZE \
@@ -63,6 +63,9 @@ BUILD_ASSERT(CONFIG_NRF700X_RX_NUM_BUFS >= 1,
 	"At least one RX buffer is required");
 BUILD_ASSERT(RPU_PKTRAM_SIZE - TOTAL_RX_SIZE >= TOTAL_TX_SIZE,
 	"Packet RAM overflow: not enough memory for TX");
+
+BUILD_ASSERT(CONFIG_NRF700X_TX_MAX_DATA_SIZE >= MAX_TX_FRAME_SIZE,
+	"TX buffer size must be at least as big as the MTU and headroom");
 
 static const unsigned char aggregation = 1;
 static const unsigned char wmm = 1;
