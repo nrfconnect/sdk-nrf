@@ -156,6 +156,34 @@ Supported CLI commands
      - | Configure Wi-Fi power save for wakeup mode
        | dtim - Wakeup mode for the DTIM interval
        | listen_interval - Wakeup mode for the Listen interval
+   * - mode
+     - | This command may be used to set the Wi-Fi device into a specific mode of operation
+       | parameters:
+       | [-i : --if-index <idx>] : Interface index.
+       | [-s : --sta] : Station mode.
+       | [-m : --monitor] : Monitor mode.
+       | [-p : --promiscuous] : Promiscuous mode.
+       | [-t : --tx-injection] : TX-Injection mode.
+       | [-a : --ap] : AP mode.
+       | [-k : --softap] : Softap mode.
+       | [-h : --help] : Help.
+       | [-g : --get] : Get current mode for a specific interface index
+       | Usage: Get operation example for interface index 1
+       | wifi mode -g -i1
+       | Set operation example for interface index 1 - set station+promiscuous
+       | wifi mode -i1 -sp
+   * - channel
+     - | This command is used to set the channel when monitor or TX-Injection mode is enabled
+       | Currently 20 MHz is only supported and no BW parameter is provided
+       | parameters:
+       | [-i : --if-index <idx>] : Interface index.
+       | [-c : --channel] : Set a specific channel number to the lower layer.
+       | [-g : --get] : Get current set channel number from the lower layer.
+       | [-h : --help] : Help.
+       | Usage: Get operation example for interface index 1
+       | wifi channel -i1 -g
+       | Set operation example for interface index 1 (setting channel 5)
+       | wifi -i1 -c5
 
 ``wifi_cred`` is an extension to the Wi-Fi command line.
 It adds the following commands to interact with the :ref:`lib_wifi_credentials` library:

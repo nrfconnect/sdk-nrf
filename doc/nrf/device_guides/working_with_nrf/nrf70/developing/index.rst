@@ -15,3 +15,4 @@ The |NCS| provides support for development on the nRF70 Series, using the nRF700
    scan_operation
    debugging
    fw_patches_ext_flash
+   raw_tx_operation
