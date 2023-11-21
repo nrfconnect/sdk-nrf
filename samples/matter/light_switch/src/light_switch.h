@@ -8,6 +8,8 @@
 #include <app/util/basic-types.h>
 #include <lib/core/CHIPError.h>
 
+#include "binding_handler.h"
+
 #include <atomic>
 
 /** @class LightSwitch
@@ -25,8 +27,8 @@ public:
 		Off /* Turn off light on lighting-app device */
 	};
 
-	void Init(chip::EndpointId aLightSwitchEndpoint);
-	void InitiateActionSwitch(Action);
+	void Init(chip::EndpointId lightSwitchEndpoint);
+	void InitiateActionSwitch(Action action);
 	void DimmerChangeBrightness();
 	chip::EndpointId GetLightSwitchEndpointId() { return mLightSwitchEndpoint; }
 
@@ -37,6 +39,14 @@ public:
 	}
 
 private:
+	static void SwitchChangedHandler(const EmberBindingTableEntry &binding,
+					 chip::OperationalDeviceProxy *deviceProxy,
+					 BindingHandler::BindingData &bindingData);
+	static void OnOffProcessCommand(chip::CommandId commandId, const EmberBindingTableEntry &binding,
+					chip::OperationalDeviceProxy *device, BindingHandler::BindingData &bindingData);
+	static void LevelControlProcessCommand(chip::CommandId commandId, const EmberBindingTableEntry &binding,
+					       chip::OperationalDeviceProxy *device,
+					       BindingHandler::BindingData &bindingData);
 	constexpr static auto kOnePercentBrightnessApproximation = 3;
 	constexpr static auto kMaximumBrightness = 254;
 

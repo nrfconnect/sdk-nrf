@@ -45,7 +45,7 @@ target_sources(app PRIVATE
     src/zcl_callbacks.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
-    src/binding_handler.cpp
+    ${COMMON_ROOT}/src/binding_handler.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/task_executor.cpp
     ${COMMON_ROOT}/src/board.cpp
