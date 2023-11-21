@@ -30,18 +30,18 @@ extern "C" {
  * @brief Callback to request a modem state change, being it powering off, flight mode etc.
  *
  * @param new_mode New mode.
- * @param user_data Not used.
- * @return <0 on error,  previous mode on success.
+ * @param user_data Application-specific data.
+ * @return <0 on error, previous mode on success.
  */
 typedef int (*nrf_provisioning_mmode_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
 
 /**
  * @struct nrf_provisioning_mm_change
- * @brief Holds the callback used for querying permission from the app to proceed when modem's state
- * changes. Together with data set by the callback provider.
+ * @brief Holds the callback used for querying permission from the application to proceed when
+ * modem's state changes. Together with data set by the callback provider.
  *
  * @param cb        The callback function.
- * @param user_data App specific data to be fed to the callback once it's called.
+ * @param user_data Application-specific data to be fed to the callback once it is called.
  */
 struct nrf_provisioning_mm_change {
 	nrf_provisioning_mmode_cb_t cb;
@@ -49,23 +49,38 @@ struct nrf_provisioning_mm_change {
 };
 
 /**
- * @typedef nrf_provisioning_dmode_cb_t
- * @brief Once provisioning is done this callback is to be called.
+ * @brief nrf_provisioning callback events
  *
- * @return <0 on error,  previous mode on success.
+ * nrf_provisioning events are passed back to the nrf_provisioning_event_cb_t callback function.
  */
-typedef void (*nrf_provisioning_dmode_cb_t)(void *user_data);
+enum nrf_provisioning_event {
+	/** Provisioning process started. Client will connect to the provisioning service. */
+	NRF_PROVISIONING_EVENT_START,
+	/** Provisioning process stopped. All provisioning commands (if any) executed. */
+	NRF_PROVISIONING_EVENT_STOP,
+	/** Provisioning complete. "Finished" command received from the provisioning service. */
+	NRF_PROVISIONING_EVENT_DONE
+};
+
+/**
+ * @typedef nrf_provisioning_event_cb_t
+ * @brief Called when provisioning state changes.
+ *
+ * @param event nrf_provisioning event code.
+ * @param user_data Application-specific data.
+ */
+typedef void (*nrf_provisioning_event_cb_t)(enum nrf_provisioning_event event, void *user_data);
 
 /**
  * @struct nrf_provisioning_dm_change
- * @brief Holds the callback to be called once provisioning is done together with data set by the
- * callback provider.
+ * @brief Holds the callback to be called once provisioning state changes together with data
+ * set by the callback provider.
  *
  * @param cb        The callback function.
- * @param user_data App specific data to be fed to the callback once it's called.
+ * @param user_data Application-specific data to be fed to the callback once it is called.
  */
 struct nrf_provisioning_dm_change {
-	nrf_provisioning_dmode_cb_t cb;
+	nrf_provisioning_event_cb_t cb;
 	void *user_data;
 };
 
@@ -77,8 +92,7 @@ struct nrf_provisioning_dm_change {
  * taken into use.
  *
  * @param mmode Modem mode change callback. Used when data is written to modem.
- * @param dmode Provisioning done callback. Used when all provisioning commands have been executed
- *              and responded to successfully.
+ * @param dmode Device mode callback. Used when provisioning state changes.
  * @return <0 on error, 0 on success.
  */
 int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,

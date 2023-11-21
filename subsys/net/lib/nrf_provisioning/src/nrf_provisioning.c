@@ -293,24 +293,26 @@ static int nrf_provisioning_modem_mode_cb(enum lte_lc_func_mode new_mode, void *
 	return ret;
 }
 
-static void nrf_provisioning_device_mode_cb(void *user_data)
+static void nrf_provisioning_device_mode_cb(enum nrf_provisioning_event event, void *user_data)
 {
 	(void)user_data;
 
 #if !CONFIG_UNITY
-	/* Disconnect from network gracefully */
-	int ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+	if (event == NRF_PROVISIONING_EVENT_DONE) {
+		/* Disconnect from network gracefully */
+		int ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
 
-	if (ret != 0) {
-		LOG_ERR("Unable to set modem offline, error %d", ret);
+		if (ret != 0) {
+			LOG_ERR("Unable to set modem offline, error %d", ret);
+		}
+
+		LOG_INF("Provisioning done, rebooting...");
+		while (log_process()) {
+			;
+		}
+
+		sys_reboot(SYS_REBOOT_WARM);
 	}
-
-	LOG_INF("Provisioning done, rebooting...");
-	while (log_process()) {
-		;
-	}
-
-	sys_reboot(SYS_REBOOT_WARM);
 #endif
 }
 
@@ -338,7 +340,6 @@ static void nrf_provisioning_lte_handler(const struct lte_lc_evt *const evt)
 		break;
 	}
 }
-
 
 int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
 				struct nrf_provisioning_dm_change *dmode)
@@ -509,7 +510,6 @@ static void commit_latest_cmd_id(void)
 	}
 }
 
-
 int nrf_provisioning_req(void)
 {
 	int ret;
@@ -535,11 +535,13 @@ int nrf_provisioning_req(void)
 			k_mutex_unlock(&np_mtx);
 		} while (!nw_connected);
 
+		dm.cb(NRF_PROVISIONING_EVENT_START, dm.user_data);
 		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
 			ret = nrf_provisioning_http_req(&rest_ctx);
 		} else {
 			ret = nrf_provisioning_coap_req(&coap_ctx);
 		}
+		dm.cb(NRF_PROVISIONING_EVENT_STOP, dm.user_data);
 
 		while (ret == -EBUSY) {
 			/* Backoff */
@@ -550,11 +552,13 @@ int nrf_provisioning_req(void)
 			if (backoff > SRV_TIMEOUT_BACKOFF_MAX_S) {
 				backoff = SRV_TIMEOUT_BACKOFF_MAX_S;
 			}
+			dm.cb(NRF_PROVISIONING_EVENT_START, dm.user_data);
 			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
 				ret = nrf_provisioning_http_req(&rest_ctx);
 			} else {
 				ret = nrf_provisioning_coap_req(&coap_ctx);
 			}
+			dm.cb(NRF_PROVISIONING_EVENT_STOP, dm.user_data);
 		}
 
 		if (ret == -EINVAL) {
@@ -574,7 +578,7 @@ int nrf_provisioning_req(void)
 				LOG_DBG("Saving the latest command id");
 				commit_latest_cmd_id();
 			}
-			dm.cb(dm.user_data);
+			dm.cb(NRF_PROVISIONING_EVENT_DONE, dm.user_data);
 		}
 
 #if CONFIG_UNITY
