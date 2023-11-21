@@ -409,6 +409,8 @@ Wi-Fi drivers
 
   * Low-level API documentation is now available on the :ref:`Wi-Fi driver API <nrfxlib:nrf_wifi_api>`.
 
+* Added TX injection feature to the nRF70 Series device.
+
 Libraries
 =========
 
@@ -655,6 +657,8 @@ Documentation
 * Added
 
   * A page on :ref:`ug_nrf70_developing_debugging` in the :ref:`ug_nrf70_developing` user guide.
+
+  * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` in the :ref:`ug_nrf70_developing` user guide.
 
 * Updated:
 
