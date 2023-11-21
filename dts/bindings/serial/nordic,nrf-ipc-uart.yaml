@@ -4,7 +4,7 @@
 description: |
   This is binding for the UART over IPC.
 
-include: uart-controller.yaml
+include: [uart-controller.yaml, pinctrl-device.yaml]
 
 compatible: "nordic,nrf-ipc-uart"
 
