@@ -215,6 +215,7 @@ int main(void)
 	if (!is_mac_addr_set(net_if_get_default())) {
 		struct net_if *iface = net_if_get_default();
 		int ret;
+		struct ethernet_req_params params;
 
 		/* Set a local MAC address with Nordic OUI */
 		ret = net_if_down(iface);
@@ -223,8 +224,16 @@ int main(void)
 			return ret;
 		}
 
+		ret = net_bytes_from_str(params.mac_address.addr, sizeof(CONFIG_WIFI_MAC_ADDRESS),
+					 CONFIG_WIFI_MAC_ADDRESS);
+		if (ret) {
+			LOG_ERR("Failed to parse MAC address: %s (%d)",
+				CONFIG_WIFI_MAC_ADDRESS, ret);
+			return ret;
+		}
+
 		net_mgmt(NET_REQUEST_ETHERNET_SET_MAC_ADDRESS, iface,
-			 (void *)CONFIG_WIFI_MAC_ADDRESS, sizeof(CONFIG_WIFI_MAC_ADDRESS));
+			 &params, sizeof(params));
 
 		ret = net_if_up(iface);
 		if (ret) {
