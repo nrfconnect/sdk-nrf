@@ -5,8 +5,7 @@
 #
 config COAP_UTILS
 	bool "Support for communication with CoAP"
-	select COAP
-	depends on NET_SOCKETS
+	depends on COAP
 	help
 	  Send and receive CoAP non-confirmable requests.
 	  Utilize CoAP and Modem libraries.
