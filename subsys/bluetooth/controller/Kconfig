@@ -137,11 +137,15 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
 	default 10000 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	default 7500 if !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
-	range 1250 4000000
+	range 0 4000000
 	help
 	  The time set aside for connections on every connection interval in
 	  microseconds. The event length and the connection interval are the
 	  primary parameters for setting the throughput of a connection.
+	  The event length may be set to a value that is shorter than the time needed
+	  for a single packet pair on a given PHY.
+	  In that case the controller will reserve time for receiving 27 bytes and transmitting
+	  the number of bytes configured with BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT.
 
 config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	int "Default central ACL event spacing [us]"
