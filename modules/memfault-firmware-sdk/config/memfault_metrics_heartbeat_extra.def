@@ -15,6 +15,7 @@ MEMFAULT_METRICS_KEY_DEFINE(NcsBtTxUnusedStack, kMemfaultMetricType_Unsigned)
 #if defined(CONFIG_MODEM_INFO)
 MEMFAULT_METRICS_STRING_KEY_DEFINE(Ncs_LteModemFwVersion, MODEM_INFO_FWVER_SIZE)
 MEMFAULT_METRICS_STRING_KEY_DEFINE(ncs_lte_operator, MODEM_INFO_MAX_SHORT_OP_NAME_SIZE)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_snr_decibels, kMemfaultMetricType_Signed)
 #endif /* defined(CONFIG_MODEM_INFO) */
 
 MEMFAULT_METRICS_KEY_DEFINE(Ncs_LteTimeToConnect, kMemfaultMetricType_Timer)

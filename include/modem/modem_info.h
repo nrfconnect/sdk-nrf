@@ -43,6 +43,7 @@ extern "C" {
 /** Modem firmware version string can be up to 40 characters long. */
 #define MODEM_INFO_FWVER_SIZE 41
 
+/** Band unavailable value. */
 #define BAND_UNAVAILABLE 0
 
 // TODO: Confirm - there is no clear guidance in nrf9160 AT command
@@ -51,6 +52,12 @@ extern "C" {
 // so for now guess a medium length to give some room.
 /** Short operator size can be up to 15 characters long. */
 #define MODEM_INFO_MAX_SHORT_OP_NAME_SIZE 16
+
+/** SNR unavailable value. */
+#define SNR_UNAVAILABLE	 127
+
+/** SNR offset value. */
+#define SNR_OFFSET_VAL 24
 
 /** Modem returns RSRP and RSRQ as index values which require
  * a conversion to dBm and dB respectively. See modem AT
@@ -379,6 +386,15 @@ int modem_info_get_current_band(uint8_t *band_id);
  *          Otherwise, a (negative) error code is returned
  */
 int modem_info_get_operator(char *buf, size_t len);
+
+/**
+ * @brief Obtain the signal-to-noise ratio
+ *
+ * @param snr current SNR
+ * @return 0 if operation was sucessful.
+ *          Otherwise, a (negative) error code is returned
+ */
+int modem_info_get_snr(int *snr);
 
 /** @} */
 

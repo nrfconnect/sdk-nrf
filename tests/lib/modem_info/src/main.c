@@ -44,6 +44,7 @@ FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...)
 // TODO: Confirm - this is an educated guess at the moment, based upon various
 // #define values in the library. Get input from Nordic on this later.
 #define XMONITOR_CMD_MAX_RESPONSE_LEN 300
+#define EXAMPLE_SNR 47
 
 struct at_param at_params[10] = {};
 static struct at_param_list m_param_list = {
@@ -252,6 +253,37 @@ static int nrf_modem_at_cmd_custom_xmonitor_shortname_success(void *buf, size_t 
 	char *response = (char *)buf;
 	memcpy(response, xmonitor_resp, sizeof(xmonitor_resp));
 	return 0;
+}
+
+static int nrf_modem_at_scanf_custom_snr_at_cmd_error(const char *cmd, const char *fmt,
+						      va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT%XSNRSQ?", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XSNRSQ: %d,%*d,%*d", fmt);
+
+	return -NRF_EBADMSG; // no arguments matched
+}
+
+static int nrf_modem_at_scanf_custom_snr_unavailable(const char *cmd, const char *fmt, va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT%XSNRSQ?", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XSNRSQ: %d,%*d,%*d", fmt);
+
+	int *val = va_arg(args, int *);
+	*val = SNR_UNAVAILABLE;
+
+	return 1;
+}
+
+static int nrf_modem_at_scanf_custom_snr(const char *cmd, const char *fmt, va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT%XSNRSQ?", cmd);
+	TEST_ASSERT_EQUAL_STRING("%%XSNRSQ: %d,%*d,%*d", fmt);
+
+	int *val = va_arg(args, int *);
+	*val = EXAMPLE_SNR;
+
+	return 1;
 }
 
 void setUp(void)
@@ -568,7 +600,7 @@ void test_modem_info_get_current_band_unavailable(void)
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_xcband_unavailable;
 
 	int ret = modem_info_get_current_band(&band);
-	TEST_ASSERT_EQUAL(-ENOMSG, ret);
+	TEST_ASSERT_EQUAL(-ENOENT, ret);
 	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
 }
 
@@ -657,6 +689,45 @@ void test_modem_info_get_operator_shortname_success(void)
 	TEST_ASSERT_EQUAL(0, ret);
 	TEST_ASSERT_EQUAL_STRING(EXAMPLE_SHORT_OPERATOR_NAME, buffer);
 	TEST_ASSERT_EQUAL(1, nrf_modem_at_cmd_fake.call_count);
+}
+
+void test_modem_info_get_snr_null(void)
+{
+	int ret = modem_info_get_snr(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+	TEST_ASSERT_EQUAL(0, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_snr_invalid(void)
+{
+	int snr;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_snr_unavailable;
+
+	int ret = modem_info_get_snr(&snr);
+	TEST_ASSERT_EQUAL(SNR_UNAVAILABLE, snr);
+	TEST_ASSERT_EQUAL(-ENOENT, ret);
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_snr_at_cmd_error(void)
+{
+	int snr;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_snr_at_cmd_error;
+
+	int ret = modem_info_get_snr(&snr);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
+}
+
+void test_modem_info_get_snr_success(void)
+{
+	int snr;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_snr;
+
+	int ret = modem_info_get_snr(&snr);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
+	TEST_ASSERT_EQUAL(EXAMPLE_SNR - SNR_OFFSET_VAL, snr);
 }
 
 /* It is required to be added to each test. That is because unity's

@@ -954,7 +954,7 @@ int modem_info_get_current_band(uint8_t *band)
 	}
 
 	if (*band == BAND_UNAVAILABLE) {
-		return -ENOMSG;
+		return -ENOENT;
 	}
 
 	return 0;
@@ -980,6 +980,27 @@ int modem_info_get_operator(char *buf, size_t len)
 	}
 
 	buf[len - 1] = '\0'; // Null terminate
+
+	return 0;
+}
+
+int modem_info_get_snr(int *snr)
+{
+	if (snr == NULL) {
+		return -EINVAL;
+	}
+
+	int ret = nrf_modem_at_scanf("AT%XSNRSQ?", "%%XSNRSQ: %d,%*d,%*d", snr);
+
+	if (ret != 1) {
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
+	if (*snr == SNR_UNAVAILABLE) {
+		return -ENOENT;
+	}
+
+	*snr -= SNR_OFFSET_VAL;
 
 	return 0;
 }

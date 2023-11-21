@@ -118,6 +118,21 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 						      operator_name);
 	  if (err) {
 		  LOG_ERR("Failed to set ncs_lte_operator");
+			LOG_ERR("Failed to set ncs_lte_band");
+	  }
+  }
+#endif
+
+#if defined(CONFIG_MODEM_INFO)
+  int snr;
+  err = modem_info_get_snr(&snr);
+  if (err != 0) {
+	  LOG_WRN("SNR collection failed, error: %d", err);
+  } else {
+	  err = memfault_metrics_heartbeat_set_signed(MEMFAULT_METRICS_KEY(ncs_lte_snr_decibels),
+						      snr);
+	  if (err) {
+			LOG_ERR("Failed to set ncs_lte_snr_decibels");
 	  }
   }
 #endif
