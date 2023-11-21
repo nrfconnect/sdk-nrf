@@ -35,7 +35,8 @@ static void store_key(uint8_t key_id)
 	zassert_true(('0' + account_key_id_to_idx(key_id)) <= '9', "Key index out of range");
 	settings_key[ARRAY_SIZE(settings_key) - 2] = ('0' + account_key_id_to_idx(key_id));
 
-	data.account_key_id = key_id;
+	data.account_key_metadata = 0;
+	ACCOUNT_KEY_METADATA_FIELD_SET(data.account_key_metadata, ID, key_id);
 	cu_generate_account_key(key_id, &data.account_key);
 
 	err = settings_save_one(settings_key, &data, sizeof(data));
@@ -142,7 +143,8 @@ ZTEST(suite_fast_pair_storage_corrupted, test_wrong_settings_key)
 	int err;
 	struct account_key_data data;
 
-	data.account_key_id = key_id;
+	data.account_key_metadata = 0;
+	ACCOUNT_KEY_METADATA_FIELD_SET(data.account_key_metadata, ID, key_id);
 	cu_generate_account_key(key_id, &data.account_key);
 
 	err = settings_save_one(SETTINGS_AK_SUBTREE_NAME SETTINGS_NAME_SEPARATOR_STR
@@ -163,7 +165,8 @@ ZTEST(suite_fast_pair_storage_corrupted, test_wrong_data_len)
 	zassert_true(('0' + account_key_id_to_idx(key_id)) <= '9', "Key index out of range");
 	settings_key[ARRAY_SIZE(settings_key) - 2] = ('0' + account_key_id_to_idx(key_id));
 
-	data.account_key_id = key_id;
+	data.account_key_metadata = 0;
+	ACCOUNT_KEY_METADATA_FIELD_SET(data.account_key_metadata, ID, key_id);
 	cu_generate_account_key(key_id, &data.account_key);
 
 	err = settings_save_one(settings_key, &data, sizeof(data) - 1);
@@ -183,7 +186,8 @@ ZTEST(suite_fast_pair_storage_corrupted, test_inconsistent_key_id)
 	zassert_true(('0' + account_key_id_to_idx(key_id)) <= '9', "Key index out of range");
 	settings_key[ARRAY_SIZE(settings_key) - 2] = ('0' + account_key_id_to_idx(key_id));
 
-	data.account_key_id = next_account_key_id(key_id);
+	data.account_key_metadata = 0;
+	ACCOUNT_KEY_METADATA_FIELD_SET(data.account_key_metadata, ID, next_account_key_id(key_id));
 	cu_generate_account_key(key_id, &data.account_key);
 
 	err = settings_save_one(settings_key, &data, sizeof(data));

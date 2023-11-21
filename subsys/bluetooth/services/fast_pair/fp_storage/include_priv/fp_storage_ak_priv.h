@@ -66,15 +66,48 @@ BUILD_ASSERT(ACCOUNT_KEY_MAX_ID < UINT8_MAX);
 BUILD_ASSERT(ACCOUNT_KEY_CNT <= 10);
 BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
 
+/* Account Key Metadata */
+/** Bits 4..0: ID field */
+#define ACCOUNT_KEY_METADATA_ID_POS		(0UL)
+#define ACCOUNT_KEY_METADATA_ID_MASK		(0x1FUL << ACCOUNT_KEY_METADATA_ID_POS)
+
+/** Bits 7..5: Reserved field */
+#define ACCOUNT_KEY_METADATA_RESERVED_POS	(5UL)
+#define ACCOUNT_KEY_METADATA_RESERVED_MASK	(0x7UL << ACCOUNT_KEY_METADATA_RESERVED_POS)
+
+/** Set field in Account Key Metadata.
+ *
+ * @param _metadata	Account Key Metadata that will be changed.
+ * @param _field_name	Field name in Account Key Metadata that will be changed.
+ * @param _val		Value to which the field will be set
+ */
+#define ACCOUNT_KEY_METADATA_FIELD_SET(_metadata, _field_name, _val)		\
+	__ASSERT_NO_MSG(((_val << ACCOUNT_KEY_METADATA_##_field_name##_POS) &	\
+			 ~ACCOUNT_KEY_METADATA_##_field_name##_MASK) == 0);	\
+	_metadata &= ~ACCOUNT_KEY_METADATA_##_field_name##_MASK;		\
+	_metadata |= (_val << ACCOUNT_KEY_METADATA_##_field_name##_POS) &	\
+		     ACCOUNT_KEY_METADATA_##_field_name##_MASK
+
+/** Get field of Account Key Metadata.
+ *
+ * @param _metadata	Account Key Metadata.
+ * @param _field_name	Field name in Account Key Metadata that will be changed.
+ */
+#define ACCOUNT_KEY_METADATA_FIELD_GET(_metadata, _field_name)		\
+	((_metadata & ACCOUNT_KEY_METADATA_##_field_name##_MASK) >>	\
+	 ACCOUNT_KEY_METADATA_##_field_name##_POS)
+
 /** Account Key settings record data format. */
 struct account_key_data {
-	/** Internal Account Key ID. */
-	uint8_t account_key_id;
+	/** Internal Account Key Metadata. */
+	uint8_t account_key_metadata;
 
 	/** Account Key value. */
 	struct fp_account_key account_key;
 };
 
+BUILD_ASSERT(ACCOUNT_KEY_MAX_ID <=
+	     ACCOUNT_KEY_METADATA_FIELD_GET(ACCOUNT_KEY_METADATA_ID_MASK, ID));
 
 /** Get Account Key index for given Account Key ID.
  *
