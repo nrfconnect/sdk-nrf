@@ -3,11 +3,10 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include "binding_handler.h"
-#include <platform/CHIPDeviceLayer.h>
-#include <stdint.h>
 
-#include <atomic>
+#include "binding_handler.h"
+
+#include <platform/CHIPDeviceLayer.h>
 
 #pragma once
 
@@ -38,4 +37,9 @@ public:
 	};
 
 	void TemperatureMeasurement();
+
+private:
+	static void TemperatureMeasurementReadHandler(const EmberBindingTableEntry &binding,
+						      chip::OperationalDeviceProxy *deviceProxy,
+						      BindingHandler::BindingData &bindingData);
 };

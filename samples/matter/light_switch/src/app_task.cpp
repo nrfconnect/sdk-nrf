@@ -105,12 +105,6 @@ CHIP_ERROR AppTask::Init()
 	return CHIP_ERROR_INTERNAL;
 #endif /* CONFIG_NET_L2_OPENTHREAD */
 
-	LightSwitch::GetInstance().Init(kLightSwitchEndpointId);
-
-	if (!GetBoard().Init(ButtonEventHandler)) {
-		LOG_ERR("User interface initialization failed.");
-		return CHIP_ERROR_INCORRECT_STATE;
-	}
 	/* Initialize application timers */
 	k_timer_init(&sDimmerPressKeyTimer, AppTask::UserTimerTimeoutCallback, nullptr);
 	k_timer_init(&sDimmerTimer, AppTask::UserTimerTimeoutCallback, nullptr);
@@ -144,6 +138,13 @@ CHIP_ERROR AppTask::Init()
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 	AppFabricTableDelegate::Init();
+
+	LightSwitch::GetInstance().Init(kLightSwitchEndpointId);
+
+	if (!GetBoard().Init(ButtonEventHandler)) {
+		LOG_ERR("User interface initialization failed.");
+		return CHIP_ERROR_INCORRECT_STATE;
+	}
 
 	/*
 	 * Add CHIP event handler and start CHIP thread.

@@ -43,7 +43,7 @@ static CHIP_ERROR SwitchCommandHandler(int argc, char **argv)
 
 static CHIP_ERROR TableCommandHelper(int argc, char **argv)
 {
-	BindingHandler::GetInstance().PrintBindingTable();
+	BindingHandler::PrintBindingTable();
 	return CHIP_NO_ERROR;
 }
 
@@ -70,8 +70,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
-							reinterpret_cast<intptr_t>(data));
+		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
@@ -82,8 +81,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
-							reinterpret_cast<intptr_t>(data));
+		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
@@ -94,8 +92,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
-							reinterpret_cast<intptr_t>(data));
+		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 } /* namespace Unicast */
@@ -140,8 +137,7 @@ namespace Group
 		data->ClusterId = Clusters::OnOff::Id;
 		data->IsGroup = true;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
-							reinterpret_cast<intptr_t>(data));
+		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
@@ -153,8 +149,7 @@ namespace Group
 		data->ClusterId = Clusters::OnOff::Id;
 		data->IsGroup = true;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
-							reinterpret_cast<intptr_t>(data));
+		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
@@ -166,8 +161,7 @@ namespace Group
 		data->ClusterId = Clusters::OnOff::Id;
 		data->IsGroup = true;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
-							reinterpret_cast<intptr_t>(data));
+		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
 	}
 
