@@ -49,7 +49,7 @@ static void ipc_send_work_handler(struct k_work *work)
 	uint8_t *data;
 	struct uart_ipc_data *dev_data;
 
-	dev_data = CONTAINER_OF(work, struct uart_ipc_data, ipc_send_work);
+	dev_data = CONTAINER_OF(work, struct uart_ipc_data, ipc_send_work.work);
 
 	data_size = ring_buf_get_claim(dev_data->tx_ringbuf, &data,
 				       ring_buf_size_get(dev_data->tx_ringbuf));
