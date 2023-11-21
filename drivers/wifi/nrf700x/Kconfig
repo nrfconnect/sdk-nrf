@@ -423,3 +423,9 @@ config NRF_WIFI_OP_BAND
 	  1 - 2.4GHz
 	  2 - 5GHz
 	  3 - All ( 2.4GHz and 5GHz )
+
+config NRF_WIFI_IFACE_MTU
+	int "MTU for Wi-Fi interface"
+	range 576 2304 if NET_IPV4
+	range 1280 2304 if NET_IPV6
+	default 1500
