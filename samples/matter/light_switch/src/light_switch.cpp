@@ -8,6 +8,10 @@
 #include "app_event.h"
 #include "binding_handler.h"
 
+#ifdef CONFIG_CHIP_LIB_SHELL
+#include "shell_commands.h"
+#endif
+
 #include <app/server/Server.h>
 #include <app/util/binding-table.h>
 #include <controller/InvokeInteraction.h>
@@ -18,6 +22,9 @@ using namespace chip::app;
 void LightSwitch::Init(chip::EndpointId aLightSwitchEndpoint)
 {
 	BindingHandler::GetInstance().Init();
+#ifdef CONFIG_CHIP_LIB_SHELL
+	SwitchCommands::RegisterSwitchCommands();
+#endif
 	mLightSwitchEndpoint = aLightSwitchEndpoint;
 }
 
@@ -42,7 +49,7 @@ void LightSwitch::InitiateActionSwitch(Action mAction)
 			return;
 		}
 		data->IsGroup = BindingHandler::GetInstance().IsGroupBound();
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 	}
 }
@@ -62,7 +69,7 @@ void LightSwitch::DimmerChangeBrightness()
 		}
 		data->Value = (uint8_t)sBrightness;
 		data->IsGroup = BindingHandler::GetInstance().IsGroupBound();
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 	}
 }

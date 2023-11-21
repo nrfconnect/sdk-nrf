@@ -70,7 +70,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 		return CHIP_NO_ERROR;
 	}
@@ -82,7 +82,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 		return CHIP_NO_ERROR;
 	}
@@ -94,7 +94,7 @@ namespace Unicast
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 		return CHIP_NO_ERROR;
 	}
@@ -140,7 +140,7 @@ namespace Group
 		data->ClusterId = Clusters::OnOff::Id;
 		data->IsGroup = true;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 		return CHIP_NO_ERROR;
 	}
@@ -153,7 +153,7 @@ namespace Group
 		data->ClusterId = Clusters::OnOff::Id;
 		data->IsGroup = true;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 		return CHIP_NO_ERROR;
 	}
@@ -166,7 +166,7 @@ namespace Group
 		data->ClusterId = Clusters::OnOff::Id;
 		data->IsGroup = true;
 
-		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
+		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
 		return CHIP_NO_ERROR;
 	}
