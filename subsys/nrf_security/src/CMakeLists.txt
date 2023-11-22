@@ -241,3 +241,8 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
       mbedcrypto_common
   )
 endif()
+
+if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+  # Add zephyr-specific code
+  add_subdirectory(zephyr)
+endif()

@@ -96,6 +96,3 @@ add_subdirectory(${NRFXLIB_DIR}/crypto crypto_copy)
 
 # Add mbed TLS Libraries
 add_subdirectory(src)
-
-# Add zephyr-specific code
-add_subdirectory(src/zephyr)
