@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f51a3a880d04f082e92dfc478d6dfdbdea8304e3
+      revision: 90a72daae2c8715d760d974a7d294aa2eb6b38c4
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -145,7 +145,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: c549292c3284039f73c9d7ac1303472796c48711
+      revision: 4c908f47646ac082848771d3e066bd709e251dfc
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
