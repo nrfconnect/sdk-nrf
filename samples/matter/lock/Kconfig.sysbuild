@@ -4,10 +4,47 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
-
 config NRF_DEFAULT_MULTIPROTOCOL
 	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp")
 
 config NRF_DEFAULT_BLUETOOTH
 	default y if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp")
+
+choice BOOTLOADER
+	default BOOTLOADER_MCUBOOT
+endchoice
+
+if BOOTLOADER_MCUBOOT && (($(BOARD) = "nrf5340dk_nrf5340_cpuapp") || ($(BOARD) = "nrf7002dk_nrf5340_cpuapp"))
+
+config MCUBOOT_UPDATEABLE_IMAGES
+	default 2
+
+choice MCUBOOT_MODE
+	default MCUBOOT_MODE_OVERWRITE_ONLY
+endchoice
+
+choice BOOT_SIGNATURE_TYPE
+	default BOOT_SIGNATURE_TYPE_RSA
+endchoice
+
+config SECURE_BOOT
+	default y
+
+config SECURE_BOOT_NETCORE
+	default y
+
+config NETCORE_APP_UPDATE
+	default y
+
+config DFU_MULTI_IMAGE_PACKAGE_BUILD
+	default y
+
+config DFU_MULTI_IMAGE_PACKAGE_APP
+	default y
+
+config DFU_MULTI_IMAGE_PACKAGE_NET
+	default y
+
+endif
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

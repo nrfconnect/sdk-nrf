@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config NRF_DEFAULT_MULTIPROTOCOL
-	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp")
-
 config NRF_DEFAULT_BLUETOOTH
 	default y if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp")
 
@@ -14,7 +11,7 @@ choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT
 endchoice
 
-if BOOTLOADER_MCUBOOT && (($(BOARD) = "nrf5340dk_nrf5340_cpuapp") || ($(BOARD) = "nrf7002dk_nrf5340_cpuapp"))
+if BOOTLOADER_MCUBOOT && ($(BOARD) = "nrf7002dk_nrf5340_cpuapp")
 
 config MCUBOOT_UPDATEABLE_IMAGES
 	default 2
