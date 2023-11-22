@@ -104,16 +104,9 @@ The application provides predefined configuration files for typical use cases.
 
 Following are the available configuration files:
 
-* :file:`prj.conf` - Configuration file common for ``nrf9161dk_nrf9161_ns``, ``thingy91_nrf9160_ns``, and ``nrf9160dk_nrf9160_ns`` build targets.
-* :file:`prj_qemu_x86.conf` - Configuration file common for ``qemu_x86`` build target.
-* :file:`prj_native_posix.conf` - Configuration file common for ``native_posix`` build target.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file specific for nRF9161 DK.
-  This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9161dk_nrf9161_ns`` build target.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91.
-  This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK.
-  This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
-* :file:`boards/<BOARD>/led_state_def.h` - Header file that describes the LED behavior of the CAF LEDs module.
+* :file:`prj.conf` - Configuration file for all build targets.
+* :file:`boards/<BOARD>.conf` - Configuration overlay file specific for <BOARD>.
+  This file is automatically merged with the :file:`prj.conf` file when you build for that target.
 
 Overlay configurations files that enable specific features:
 
@@ -133,6 +126,8 @@ Custom DTC overlay file for enabling a specific feature:
 * :file:`nrf91xxdk_with_nrf7002ek` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
 
 Multiple overlay files can be included to enable multiple features at the same time.
+
+Header file that describes the LED behavior of the CAF LEDs module: file:`include/<BOARD>/led_state_def.h`.
 
 .. note::
 
