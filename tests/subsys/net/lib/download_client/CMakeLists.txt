@@ -16,6 +16,7 @@ target_include_directories(app
         PRIVATE
         ${ZEPHYR_NRF_MODULE_DIR}/include/net/
         ${ZEPHYR_BASE}/subsys/net/ip/
+        ${ZEPHYR_BASE}/subsys/net/lib/sockets
         src/
         )
 
