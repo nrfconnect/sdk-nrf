@@ -168,6 +168,12 @@ int main(void)
 		return err;
 	}
 
+	err = conn_mgr_all_if_connect(true);
+	if (err) {
+		__ASSERT(false, "conn_mgr_all_if_connect, error: %d", err);
+		return err;
+	}
+
 	/* Performing in an infinite loop to be resilient against
 	 * re-connect bursts directly after boot, e.g. when connected
 	 * to a roaming network or via weak signal. Note that
