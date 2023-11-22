@@ -1,8 +1,8 @@
 tests:
   asset_tracker_v2.nrf_cloud_codec_test:
-    platform_allow: native_posix qemu_cortex_m3 nrf9160dk_nrf9160_ns
+    platform_allow: native_sim qemu_cortex_m3 nrf9160dk_nrf9160_ns
     integration_platforms:
-      - native_posix
+      - native_sim
       - qemu_cortex_m3
       - nrf9160dk_nrf9160_ns
     tags: nrf_cloud_codec

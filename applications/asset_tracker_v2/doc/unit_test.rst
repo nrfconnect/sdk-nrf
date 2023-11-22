@@ -30,11 +30,11 @@ Running unit tests using West
 
 Enter the following west commands to execute the tests on different board targets:
 
-* :ref:`zephyr:native_posix` board target:
+* :ref:`zephyr:native_sim` board target:
 
 .. code-block:: console
 
-   west build -b native_posix -t run
+   west build -b native_sim -t run
 
 * ``qemu_cortex_m3`` board target:
 
@@ -47,7 +47,7 @@ Running unit tests using Twister
 
 Enter the following twister commands to execute the tests on different board targets:
 
-* On both :ref:`zephyr:native_posix` and ``qemu_cortex_m3`` board targets:
+* On both :ref:`zephyr:native_sim` and ``qemu_cortex_m3`` board targets:
 
 .. code-block:: console
 

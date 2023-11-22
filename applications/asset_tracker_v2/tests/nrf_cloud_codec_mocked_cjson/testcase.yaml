@@ -1,7 +1,7 @@
 tests:
   asset_tracker_v2.nrf_cloud_codec_mocked_cjson_test:
-    platform_allow: native_posix qemu_cortex_m3
+    platform_allow: native_sim qemu_cortex_m3
     integration_platforms:
-      - native_posix
+      - native_sim
       - qemu_cortex_m3
     tags: nrf_cloud_codec_mocked_cJSON
