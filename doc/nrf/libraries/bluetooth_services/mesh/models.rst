@@ -31,3 +31,4 @@ For more information about these and other models, see also `Bluetooth Mesh mode
    scheduler.rst
    vnd/silvair_enocean_srv.rst
    vnd/dm.rst
+   vnd/le_pair_resp.rst

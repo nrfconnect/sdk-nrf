@@ -11,3 +11,4 @@ zephyr_library_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mes
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_SILVAIR_ENOCEAN_SRV silvair_enocean_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_DM_SRV dm_srv.c)
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_DM_CLI dm_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_LE_PAIR_RESP le_pair_resp.c)

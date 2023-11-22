@@ -10,6 +10,8 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 
+#include "smp_bt_auth.h"
+
 static void pending_adv_start(struct k_work *work);
 
 static struct bt_le_ext_adv *adv;
@@ -142,6 +144,19 @@ int smp_service_adv_init(void)
 
 int smp_dfu_init(void)
 {
+	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT_AUTHEN) &&
+	    IS_ENABLED(CONFIG_BT_MESH_LE_PAIR_RESP)) {
+		int err;
+
+		err = smp_bt_auth_init();
+		if (err) {
+			printk("Can't enable authentication for SMP (err: %d)\n", err);
+			return err;
+		}
+	} else {
+		printk("Authentication for SMP over BLE is disabled\n");
+	}
+
 /* .. include_startingpoint_mesh_smp_dfu_rst_2 */
 	bt_conn_cb_register(&conn_callbacks);
 
