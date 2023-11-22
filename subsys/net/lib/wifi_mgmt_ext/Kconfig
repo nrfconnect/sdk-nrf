@@ -21,6 +21,12 @@ config WIFI_CREDENTIALS_SHELL_AUTOCONNECT
 
 if WIFI_MGMT_EXT
 
+config WIFI_MGMT_EXT_CONNECTION_TIMEOUT
+	int "Connection timeout"
+	default 30
+	help
+	   Wait period before falling back to the next entry in the list of stored SSIDs.
+
 module = WIFI_MGMT_EXT
 module-str = wifi_mgmt_ext
 source "subsys/logging/Kconfig.template.log_config"
