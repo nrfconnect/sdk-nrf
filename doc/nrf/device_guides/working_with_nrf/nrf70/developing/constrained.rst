@@ -29,6 +29,14 @@ You can identify and select the appropriate host MCU depending on the IoT use ca
 .. note::
    The asterisk * indicates that the SoC is supported, but the use case is not recommended due to performance or memory constraints.
 
+Firmware patch optimizations
+****************************
+For resource-constrained hosts especially with low internal flash memory, the nRF70 Series firmware patches can significantly contribute to the overall memory footprint.
+The nRF70 Series provides the following firmware patch optimizations to reduce the memory footprint of the Wi-Fi host stack:
+
+* A separate firmware patch variant is provided for applications that only require support for Wi-Fi scan-only operation.
+  This patch variant is significantly smaller in size compared to the full-featured firmware patch variant that supports Wi-Fi :abbr:`STA (Station)` mode.
+
 Zephyr OS factors
 *****************
 The following sections explain the factors that are applicable when using the Zephyr OS on the nRF5340 SoC.
