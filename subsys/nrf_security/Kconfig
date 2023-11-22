@@ -95,6 +95,12 @@ config MBEDTLS_HEAP_SIZE
 	  Ensure to adjust the heap size according to the need of the
 	  application.
 
+config MBEDTLS_ENTROPY_POLL
+	bool
+	default y
+	depends on !NRF_CC3XX_PLATFORM
+	depends on !BUILD_WITH_TFM
+
 # Include TLS/DTLS and x509 configurations
 rsource "Kconfig.tls"
 
