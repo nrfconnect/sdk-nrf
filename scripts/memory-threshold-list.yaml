@@ -1,0 +1,36 @@
+- scenarios:
+    - sample.matter.lock.release
+    - sample.matter.light_bulb.release
+  platforms:
+    - nrf52840dk_nrf52840
+  ram_size: 241664
+  rom_size: 778240
+
+- scenarios:
+    - sample.matter.lock.debug
+    - sample.matter.light_bulb.debug
+  platforms:
+    - nrf52840dk_nrf52840
+  ram_size: 241664
+  rom_size: 931840
+
+- scenarios:
+    - sample.matter.lock.release
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
+  ram_size: 503808
+  rom_size: 778240
+
+- scenarios:
+    - sample.matter.lock.debug
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
+  ram_size: 503808
+  rom_size: 942080
+
+- scenarios:
+    - applications.nrf_desktop.z.*
+  platforms:
+    - all
+  rom_related_usage: 512
+  ram_related_usage: 256
