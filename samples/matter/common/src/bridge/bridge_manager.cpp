@@ -341,8 +341,8 @@ CHIP_ERROR BridgeManager::HandleRead(uint16_t index, ClusterId clusterId,
 	case Clusters::BridgedDeviceBasicInformation::Id:
 		return device->HandleReadBridgedDeviceBasicInformation(attributeMetadata->attributeId, buffer,
 								       maxReadLength);
-	case Clusters::Descriptor::Id:
-		return device->HandleReadDescriptor(attributeMetadata->attributeId, buffer, maxReadLength);
+	case Clusters::Identify::Id:
+		return device->HandleReadIdentify(attributeMetadata->attributeId, buffer, maxReadLength);
 	default:
 		break;
 	}
@@ -363,6 +363,11 @@ CHIP_ERROR BridgeManager::HandleWrite(uint16_t index, ClusterId clusterId,
 
 	/* Verify if the device is reachable or we should return prematurely. */
 	VerifyOrReturnError(device->GetIsReachable(), CHIP_ERROR_INCORRECT_STATE);
+
+	/* Handle Identify cluster write - for now it does not imply updating the provider's state */
+	if (clusterId == Clusters::Identify::Id) {
+		return device->HandleWriteIdentify(attributeMetadata->attributeId, buffer, attributeMetadata->size);
+	}
 
 	CHIP_ERROR err = device->HandleWrite(clusterId, attributeMetadata->attributeId, buffer);
 

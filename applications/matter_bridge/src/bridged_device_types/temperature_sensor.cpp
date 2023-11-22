@@ -10,6 +10,7 @@ namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
+IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 }; /* namespace */
 
 using namespace ::chip;
@@ -25,7 +26,8 @@ DECLARE_DYNAMIC_ATTRIBUTE(Clusters::TemperatureMeasurement::Attributes::Measured
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(bridgedTemperatureClusters)
 DECLARE_DYNAMIC_CLUSTER(Clusters::TemperatureMeasurement::Id, tempSensorAttrs, nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr,
+	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
+	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, sIdentifyIncomingCommands,
 				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedTemperatureEndpoint, bridgedTemperatureClusters);
@@ -54,7 +56,8 @@ CHIP_ERROR TemperatureSensorDevice::HandleRead(ClusterId clusterId, AttributeId 
 	switch (clusterId) {
 	case Clusters::TemperatureMeasurement::Id:
 		return HandleReadTemperatureMeasurement(attributeId, buffer, maxReadLength);
-		break;
+	case Clusters::Identify::Id:
+		return HandleReadIdentify(attributeId, buffer, maxReadLength);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
@@ -100,6 +103,8 @@ CHIP_ERROR TemperatureSensorDevice::HandleAttributeChange(chip::ClusterId cluste
 	switch (clusterId) {
 	case Clusters::BridgedDeviceBasicInformation::Id:
 		return HandleWriteDeviceBasicInformation(clusterId, attributeId, data, dataSize);
+	case Clusters::Identify::Id:
+		return HandleWriteIdentify(attributeId, data, dataSize);
 	case Clusters::TemperatureMeasurement::Id: {
 		switch (attributeId) {
 		case Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id: {
