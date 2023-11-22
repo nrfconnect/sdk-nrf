@@ -38,3 +38,7 @@ tests:
     tags: tfm_lvl1
     extra_args: CONFIG_TFM_SFN=y CONFIG_TFM_ISOLATION_LEVEL=1
     timeout: 200
+
+  tfm.regression_fp_hardabi:
+    tags: tfm_fp
+    extra_args: CONFIG_FPU=y CONFIG_FP_HARDABI=y
