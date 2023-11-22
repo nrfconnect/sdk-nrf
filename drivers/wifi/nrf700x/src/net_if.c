@@ -537,7 +537,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 			__func__,
 			net_sprint_ll_addr(mac_addr,
 					   mac_addr_len));
-		goto dev_rem;
+		goto del_vif;
 	}
 
 	status = nrf_wifi_fmac_set_vif_macaddr(rpu_ctx_zep->rpu_ctx,
@@ -547,7 +547,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: MAC address change failed",
 			__func__);
-		goto dev_rem;
+		goto del_vif;
 	}
 
 	memset(&vif_info,
@@ -567,7 +567,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed",
 			__func__);
-		goto dev_rem;
+		goto del_vif;
 	}
 
 #ifdef CONFIG_NRF700X_STA_MODE
@@ -589,6 +589,12 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
 
 	return 0;
+del_vif:
+	status = nrf_wifi_fmac_del_vif(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_del_vif failed",
+			__func__);
+	}
 dev_rem:
 	/* Free only if we added above i.e., for 1st VIF */
 	if (fmac_dev_added) {
