@@ -15,8 +15,6 @@
 
 #include "wpa_cli_zephyr.h"
 
-/* wait period before moving to next entry in list */
-#define CONNECTION_TIMEOUT 10
 /* Ensure 'strnlen' is available even with -std=c99. */
 size_t strnlen(const char *buf, size_t bufsz);
 
@@ -74,7 +72,7 @@ static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
 	params->security = creds->header.type;
 	params->mfp = WIFI_MFP_OPTIONAL;
 	params->channel = WIFI_CHANNEL_ANY;
-	params->timeout = CONNECTION_TIMEOUT;
+	params->timeout = CONFIG_WIFI_MGMT_EXT_CONNECTION_TIMEOUT;
 
 	/* Security type (optional) */
 	if (creds->header.type > WIFI_SECURITY_TYPE_MAX) {
@@ -137,7 +135,7 @@ static int add_network_from_credentials_struct_personal(struct wifi_credentials_
 		return -ENOEXEC;
 	}
 
-	LOG_INF("Connection requested\n");
+	LOG_INF("Connection requested");
 
 out:
 	if (cnx_params.psk) {
