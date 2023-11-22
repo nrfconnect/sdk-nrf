@@ -40,11 +40,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #define REPORT_TYPE_OUTPUT	0x02
 #define REPORT_TYPE_FEATURE	0x03
 
-
-#ifndef CONFIG_USB_HID_PROTOCOL_CODE
-  #define CONFIG_USB_HID_PROTOCOL_CODE -1
-#endif
-
 #if DT_PROP(DT_NODELABEL(usbd), num_in_endpoints) < (CONFIG_USB_HID_DEVICE_COUNT + 1)
   #error Too few USB IN Endpoints enabled. Modify dts.overlay file.
 #endif
@@ -551,14 +546,16 @@ static void protocol_change(const struct device *dev, uint8_t protocol)
 	struct usb_hid_device *usb_hid = dev_to_hid(dev);
 
 	BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_DISABLED) ==
-			 !IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL),
-			 "Boot protocol setup inconsistency");
+		      !IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL),
+		     "Boot protocol setup inconsistency");
 	BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) ==
-			 (IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL) && (CONFIG_USB_HID_PROTOCOL_CODE == 1)),
-			 "Boot protocol code does not reflect selected interface");
+		     ((IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL) &&
+		      (CONFIG_DESKTOP_USB_HID_PROTOCOL_CODE == 1))),
+		    "Boot protocol code does not reflect selected interface");
 	BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) ==
-			 (IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL) && (CONFIG_USB_HID_PROTOCOL_CODE == 2)),
-			 "Boot protocol code does not reflect selected interface");
+		     ((IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL) &&
+		      (CONFIG_DESKTOP_USB_HID_PROTOCOL_CODE == 2))),
+		    "Boot protocol code does not reflect selected interface");
 
 	if ((protocol != HID_PROTOCOL_BOOT) &&
 	    (protocol != HID_PROTOCOL_REPORT)) {
@@ -656,6 +653,15 @@ static int usb_init(void)
 
 		usb_hid_register_device(usb_hid_device[i].dev, hid_report_desc,
 					hid_report_desc_size, &hid_ops);
+
+		if (IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL)) {
+			err = usb_hid_set_proto_code(usb_hid_device[i].dev,
+						     CONFIG_DESKTOP_USB_HID_PROTOCOL_CODE);
+			if (err) {
+				LOG_ERR("Cannot set USB HID boot protocol code (err:%d)", err);
+				return err;
+			}
+		}
 
 		err = usb_hid_init(usb_hid_device[i].dev);
 		if (err) {

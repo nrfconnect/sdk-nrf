@@ -53,8 +53,9 @@ For low latency of HID reports, the device requests a polling rate of 1 ms.
 Boot protocol configuration
 ===========================
 
-The module sets default values of :kconfig:option:`CONFIG_USB_HID_BOOT_PROTOCOL` and :kconfig:option:`CONFIG_USB_HID_PROTOCOL_CODE` Kconfig options to support boot reports defined in the nRF Desktop configuration.
-The :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` are used to control support of HID boot reports in the nRF Desktop application.
+The :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` Kconfig options are used to control support of HID boot reports in the nRF Desktop application.
+The module aligns the USB HID boot protocol configuration with the application configuration.
+The module sets the default value of the :kconfig:option:`CONFIG_USB_HID_BOOT_PROTOCOL` Kconfig option and calls the :c:func:`usb_hid_set_proto_code` function during initialization to set the USB HID Boot Interface protocol code.
 
 USB device instance configuration
 =================================
