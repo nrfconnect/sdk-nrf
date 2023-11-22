@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -177,7 +178,24 @@ static void on_event_app_data(const lwm2m_carrier_event_t *event)
 {
 	lwm2m_carrier_event_app_data_t *app_data = event->data.app_data;
 
-	rsp_send("\r\n#XCARRIEREVT: %d,%d\r\n", event->type, app_data->buffer_len);
+	if (app_data->path_len > ARRAY_SIZE(app_data->path)) {
+		LOG_ERR("on_event_app_data: invalid path length");
+		return;
+	}
+
+	/* Longest possible URI path. */
+	char uri_path[sizeof(STRINGIFY(65535)) * ARRAY_SIZE(app_data->path) + 1];
+	uint32_t off = 0;
+
+	for (int i = 0; i < app_data->path_len; i++) {
+		off += snprintf(&uri_path[off], sizeof(uri_path) - off, "/%hu", app_data->path[i]);
+		if (off >= sizeof(uri_path)) {
+			LOG_ERR("on_event_app_data: insufficient memory");
+			return;
+		}
+	}
+
+	rsp_send("\r\n#XCARRIEREVT: %d,%d,\"%s\"\r\n", event->type, app_data->buffer_len, uri_path);
 
 	memcpy(slm_data_buf, app_data->buffer, app_data->buffer_len);
 

@@ -170,6 +170,7 @@ Serial LTE modem
   * ``#XMQTTCFG`` AT command to configure MQTT client before connecting to the broker.
   * The :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` Kconfig option to support automatic LTE connection at start-up or reset.
   * The :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` Kconfig option for customers to define their own version string after customization.
+  * The optional ``path`` parameter to the ``#XCARRIEREVT`` AT notification.
 
 * Updated:
 
