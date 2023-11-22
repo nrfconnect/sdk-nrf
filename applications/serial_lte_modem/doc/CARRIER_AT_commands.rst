@@ -24,7 +24,7 @@ Syntax
 
 ::
 
-   #XCARRIEREVT: <evt_type>,<info>
+   #XCARRIEREVT: <evt_type>,<info>[,<path>]
    <data>
 
 * The ``<evt_type>`` value is an integer indicating the type of the event.
@@ -51,6 +51,9 @@ Syntax
   * ``0`` - Success or nothing to report.
   * *Negative value* - Failure or request to defer an application reboot or modem functional mode change.
   * *Positive value* - Number of bytes received through the App Data Container object or the Binary App Data Container object.
+
+* The ``<path>`` value is a string only present in an event of type ``11``.
+  It describes the URI path of the resource or the resource instance that received the data.
 
 * The ``<data>`` parameter is a string that contains the data received through the App Data Container object or the Binary App Data container object.
 
