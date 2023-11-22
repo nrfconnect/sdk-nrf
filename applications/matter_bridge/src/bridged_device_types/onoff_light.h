@@ -7,11 +7,10 @@
 #pragma once
 
 #include "matter_bridged_device.h"
-
 class OnOffLightDevice : public MatterBridgedDevice {
 public:
-	static constexpr uint16_t kOnOffClusterRevision = 1;
-	static constexpr uint32_t kOnOffFeatureMap = 0;
+	static constexpr uint16_t kOnOffClusterRevision = 4;
+	static constexpr uint32_t kOnOffFeatureMap = 1;
 	static constexpr uint16_t kGroupsClusterRevision = 4;
 	static constexpr uint32_t kGroupsFeatureMap = 0;
 	static constexpr uint8_t kGroupsNameSupportMap = 0;

@@ -10,7 +10,7 @@
 
 class TemperatureSensorDevice : public MatterBridgedDevice {
 public:
-	static constexpr uint16_t kTemperatureMeasurementClusterRevision = 1;
+	static constexpr uint16_t kTemperatureMeasurementClusterRevision = 4;
 	static constexpr uint32_t kTemperatureMeasurementFeatureMap = 0;
 
 	TemperatureSensorDevice(const char *nodeLabel);

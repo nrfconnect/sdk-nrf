@@ -10,6 +10,7 @@ namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
+IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 }; /* namespace */
 
 using namespace ::chip;
@@ -27,7 +28,8 @@ DECLARE_DYNAMIC_ATTRIBUTE(Clusters::RelativeHumidityMeasurement::Attributes::Mea
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(bridgedHumidityClusters)
 DECLARE_DYNAMIC_CLUSTER(Clusters::RelativeHumidityMeasurement::Id, humiSensorAttrs, nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr,
+	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
+	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, sIdentifyIncomingCommands,
 				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedHumidityEndpoint, bridgedHumidityClusters);
@@ -56,7 +58,8 @@ CHIP_ERROR HumiditySensorDevice::HandleRead(ClusterId clusterId, AttributeId att
 	switch (clusterId) {
 	case Clusters::RelativeHumidityMeasurement::Id:
 		return HandleReadRelativeHumidityMeasurement(attributeId, buffer, maxReadLength);
-		break;
+	case Clusters::Identify::Id:
+		return HandleReadIdentify(attributeId, buffer, maxReadLength);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
@@ -102,6 +105,8 @@ CHIP_ERROR HumiditySensorDevice::HandleAttributeChange(chip::ClusterId clusterId
 	switch (clusterId) {
 	case Clusters::BridgedDeviceBasicInformation::Id:
 		return HandleWriteDeviceBasicInformation(clusterId, attributeId, data, dataSize);
+	case Clusters::Identify::Id:
+		return HandleWriteIdentify(attributeId, data, dataSize);
 	case Clusters::RelativeHumidityMeasurement::Id: {
 		switch (attributeId) {
 		case Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id: {

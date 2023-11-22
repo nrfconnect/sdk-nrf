@@ -16,6 +16,7 @@ namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
+IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 }; /* namespace */
 
 using namespace ::chip;
@@ -32,7 +33,8 @@ constexpr CommandId onOffIncomingCommands[] = {
 };
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(groupsAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Groups::Attributes::NameSupport::Id, BITMAP8, 1, 0), DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE(Clusters::Groups::Attributes::NameSupport::Id, BITMAP8, 1, 0),
+	DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 constexpr CommandId groupsIncomingCommands[] = {
 	app::Clusters::Groups::Commands::AddGroup::Id,
@@ -48,7 +50,8 @@ DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(bridgedLightClusters)
 DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffAttrs, onOffIncomingCommands, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Groups::Id, groupsAttrs, groupsIncomingCommands, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr,
+	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
+	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, sIdentifyIncomingCommands,
 				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedLightEndpoint, bridgedLightClusters);
@@ -77,10 +80,10 @@ CHIP_ERROR OnOffLightDevice::HandleRead(ClusterId clusterId, AttributeId attribu
 	switch (clusterId) {
 	case Clusters::OnOff::Id:
 		return HandleReadOnOff(attributeId, buffer, maxReadLength);
-		break;
 	case Clusters::Groups::Id:
 		return HandleReadGroups(attributeId, buffer, maxReadLength);
-		break;
+	case Clusters::Identify::Id:
+		return HandleReadIdentify(attributeId, buffer, maxReadLength);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
@@ -153,6 +156,8 @@ CHIP_ERROR OnOffLightDevice::HandleAttributeChange(chip::ClusterId clusterId, ch
 	switch (clusterId) {
 	case Clusters::BridgedDeviceBasicInformation::Id:
 		return HandleWriteDeviceBasicInformation(clusterId, attributeId, data, dataSize);
+	case Clusters::Identify::Id:
+		return HandleWriteIdentify(attributeId, data, dataSize);
 	case Clusters::OnOff::Id: {
 		switch (attributeId) {
 		case Clusters::OnOff::Attributes::OnOff::Id: {
