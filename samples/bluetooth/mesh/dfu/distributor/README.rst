@@ -108,6 +108,11 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. note::
+   To prevent an unauthenticated access to the device over SMP, it is strongly recommended to enable the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_AUTHEN` option.
+   This will enforce a remote device to initiate a pairing request before accessing SMP characteristics.
+   See `Zephyr Bluetooth LE Security`_ for more details about securing the Bluetooth LE connection.
+
 Testing
 =======
 
