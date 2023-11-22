@@ -206,6 +206,14 @@ elseif (DEFINED CONFIG_SOC_NRF5340_CPUAPP)
   set(otp_size 764)  # 191 * 4
 endif()
 
+if (DEFINED CONFIG_SOC_PLATFORM_NRF54L)
+  set(soc_nvs_controller rram_controller)
+  set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF_RRAM)
+else()
+  set(soc_nvs_controller flash_controller)
+  set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF)
+endif()
+
 add_region(
   NAME sram_primary
   SIZE ${CONFIG_PM_SRAM_SIZE}
@@ -229,8 +237,8 @@ add_region(
   SIZE ${flash_size}
   BASE ${CONFIG_FLASH_BASE_ADDRESS}
   PLACEMENT complex
-  DEVICE flash_controller
-  DEFAULT_DRIVER_KCONFIG CONFIG_SOC_FLASH_NRF
+  DEVICE ${soc_nvs_controller}
+  DEFAULT_DRIVER_KCONFIG ${soc_nvs_controller_driver_kc}
   )
 
 dt_chosen(ext_flash_dev PROPERTY nordic,pm-ext-flash)
