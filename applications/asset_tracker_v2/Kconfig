@@ -21,7 +21,9 @@ config ASSET_TRACKER_V2_APP_VERSION_MAX_LEN
 
 config ASSET_TRACKER_V2_LTO
 	bool "Enable link time optimization"
-	default y if SIZE_OPTIMIZATIONS
+	default y if (SIZE_OPTIMIZATIONS && !NATIVE_LIBRARY)
+	# not for NATIVE_LIBRARY as otherwise the native simulator build will produce a warning when
+	# mixing lto and non lto code causing twister runs to fail
 	help
 	  Compile the Asset Tracker application code with link time optimization enabled. This
 	  option is only applied for the application code and not the libraries and external modules
