@@ -146,7 +146,7 @@ Example
   AT+CFUN=31
 
   OK
-  AT#XGPS=1,0,0,0,0
+  AT#XGPS=1,0,0,0
 
   #XGPS: 1,1
 
