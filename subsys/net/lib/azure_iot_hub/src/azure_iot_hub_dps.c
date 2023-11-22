@@ -137,7 +137,7 @@ static int dps_settings_handler(const char *key, size_t len,
 
 	if (strcmp(key, DPS_SETTINGS_HOSTNAME_LEN_KEY) == 0) {
 		err = read_cb(cb_arg, &hostname_len, sizeof(hostname_len));
-		if (err < 0) {
+		if (err <= 0) {
 			LOG_ERR("Failed to read hostname length, error: %d", err);
 			return err;
 		}
@@ -150,7 +150,7 @@ static int dps_settings_handler(const char *key, size_t len,
 	if (strcmp(key, DPS_SETTINGS_HOSTNAME_KEY) == 0) {
 		err = read_cb(cb_arg, assigned_hub_buf,
 			      MIN(sizeof(assigned_hub_buf), hostname_len));
-		if (err < 0) {
+		if (err <= 0) {
 			LOG_ERR("Failed to read hostname, error: %d", err);
 			return err;
 		}
@@ -166,7 +166,7 @@ static int dps_settings_handler(const char *key, size_t len,
 
 	if (strcmp(key, DPS_SETTINGS_DEVICE_ID_LEN_KEY) == 0) {
 		err = read_cb(cb_arg, &device_id_len, sizeof(device_id_len));
-		if (err < 0) {
+		if (err <= 0) {
 			LOG_ERR("Failed to read device ID length, error: %d", err);
 			return err;
 		}
@@ -179,7 +179,7 @@ static int dps_settings_handler(const char *key, size_t len,
 	if (strcmp(key, DPS_SETTINGS_DEVICE_ID_KEY) == 0) {
 		err = read_cb(cb_arg, assigned_device_id_buf,
 			      MIN(sizeof(assigned_device_id_buf), device_id_len));
-		if (err < 0) {
+		if (err <= 0) {
 			LOG_ERR("Failed to read device ID, error: %d", err);
 			return err;
 		}
