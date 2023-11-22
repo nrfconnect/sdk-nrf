@@ -7,6 +7,8 @@
 config PSA_NEED_NRF_RNG_ENTROPY_DRIVER
 	bool
 	default y
+	# Cannot select entropy-generator without creating a loop to ENTROPY_PSA_CRYPTO_RNG
+	depends on ENTROPY_GENERATOR
 	select PSA_ACCEL_GET_ENTROPY
 	depends on HAS_HW_NRF_RNG
 	depends on (!PSA_USE_CC3XX_CTR_DRBG_DRIVER && !PSA_USE_CC3XX_HMAC_DRBG_DRIVER) && \

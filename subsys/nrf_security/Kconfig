@@ -35,7 +35,6 @@ config NRF_SECURITY
 	prompt "Enable nRF Security" if !PSA_PROMPTLESS
 	depends on SOC_FAMILY_NRF
 	default y if BUILD_WITH_TFM
-	select ENTROPY_GENERATOR
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	help
 	  Set this configuration to enable nRF Security. This provides
@@ -100,6 +99,7 @@ config MBEDTLS_ENTROPY_POLL
 	default y
 	depends on !NRF_CC3XX_PLATFORM
 	depends on !BUILD_WITH_TFM
+	select ENTROPY_GENERATOR
 
 # Include TLS/DTLS and x509 configurations
 rsource "Kconfig.tls"
