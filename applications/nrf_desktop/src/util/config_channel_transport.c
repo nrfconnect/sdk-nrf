@@ -158,7 +158,7 @@ static void timeout_fn(struct k_work *work)
 {
 	struct config_channel_transport *transport = CONTAINER_OF(work,
 					struct config_channel_transport,
-					timeout);
+					timeout.work);
 
 	__ASSERT_NO_MSG(transport->state == CONFIG_CHANNEL_TRANSPORT_WAIT_RSP);
 
