@@ -86,6 +86,7 @@ Bluetooth Mesh
   * :ref:`bt_mesh_sensors_readme` now use an updated API with sensor values represented by :c:struct:`bt_mesh_sensor_value` instead of :c:struct:`sensor_value`.
     This makes it possible to accurately represent all encodable sensor values.
     The old APIs based on the :c:struct:`sensor_value` type are deprecated, but are still available for backward compatibility, and can be enabled for use by setting the :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE` Kconfig option.
+  * :ref:`bt_mesh_ug_reserved_ids` with model ID and opcodes for the new :ref:`bt_mesh_le_pair_resp_readme` model.
 
 Matter
 ------
@@ -243,6 +244,12 @@ Bluetooth samples
 
 Bluetooth Mesh samples
 ----------------------
+
+* :ref:`ble_mesh_dfu_distributor` sample:
+
+  * Added:
+
+    * Support for pairing with display capability and the :ref:`bt_mesh_le_pair_resp_readme`.
 
 |no_changes_yet_note|
 
@@ -437,6 +444,12 @@ Bluetooth libraries and services
   * Updated:
 
     * Improved the :ref:`bt_fast_pair_readme` library documentation to include the description of the missing Kconfig options.
+
+* :ref:`bt_mesh` library:
+
+  * Added:
+
+    * The :ref:`bt_mesh_le_pair_resp_readme` model to allow passing a passkey used in LE pairing over a mesh network.
 
 Bootloader libraries
 --------------------

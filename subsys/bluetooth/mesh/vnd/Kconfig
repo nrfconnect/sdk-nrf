@@ -82,6 +82,15 @@ config BT_MESH_DM_SRV_REFLECTOR_RANGING_WINDOW_US
 	help
 	  Ranging window for the reflector in microseconds.
 
-endif
+endif # BT_MESH_DM_SRV
+
+config BT_MESH_LE_PAIR_RESP
+	bool "LE Pairing Responder model"
+	select BT_MESH_VENDOR_MODELS
+	select EXPERIMENTAL
+	depends on BT_FIXED_PASSKEY
+	help
+	  Enable the LE Pairing Responder model. The LE Pairing Responder model is used to transfer
+	  a passkey used for LE pairing over a mesh network to the pairing initiator.
 
 endmenu
