@@ -1,18 +1,18 @@
 tests:
   applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws:
-    platform_allow: nrf9160dk_nrf9160 native_posix qemu_cortex_m3
+    platform_allow: nrf9160dk_nrf9160 native_sim qemu_cortex_m3
     integration_platforms:
       - nrf9160dk_nrf9160
-      - native_posix
+      - native_sim
       - qemu_cortex_m3
     tags: json_common_test-aws
     extra_configs:
       - CONFIG_CLOUD_CODEC_AWS_IOT=y
   applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure:
-    platform_allow: nrf9160dk_nrf9160 native_posix qemu_cortex_m3
+    platform_allow: nrf9160dk_nrf9160 native_sim qemu_cortex_m3
     integration_platforms:
       - nrf9160dk_nrf9160
-      - native_posix
+      - native_sim
       - qemu_cortex_m3
     tags: json_common_test-azure
     extra_configs:

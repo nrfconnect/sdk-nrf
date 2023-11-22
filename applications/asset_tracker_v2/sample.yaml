@@ -4,11 +4,11 @@ tests:
   applications.asset_tracker_v2.nrf_cloud:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_sim
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
-      - native_posix
+      - native_sim
     tags: ci_build
   applications.asset_tracker_v2.nrf_cloud.sysbuild:
     build_only: true
@@ -60,11 +60,11 @@ tests:
   applications.asset_tracker_v2.aws:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_sim
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
-      - native_posix
+      - native_sim
     extra_configs:
       - CONFIG_AWS_IOT_BROKER_HOST_NAME="example-hostname.aws.com"
     extra_args: EXTRA_CONF_FILE="overlay-aws.conf"
@@ -134,11 +134,11 @@ tests:
   applications.asset_tracker_v2.azure:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_sim
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
-      - native_posix
+      - native_sim
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME="global.azure-devices-provisioning.net"
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="IDSCOPE"
@@ -160,11 +160,11 @@ tests:
   applications.asset_tracker_v2.debug:
     build_only: true
     build_on_all: true
-    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_posix
+    platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns thingy91_nrf9160_ns native_sim
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
-      - native_posix
+      - native_sim
     extra_args: EXTRA_CONF_FILE=overlay-debug.conf
     tags: ci_build
   applications.asset_tracker_v2.debug.sysbuild:
