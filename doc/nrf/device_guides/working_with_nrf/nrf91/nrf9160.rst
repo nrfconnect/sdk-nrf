@@ -44,22 +44,33 @@ To do so, you need to download a new certificate and then provision it to your D
 Downloading the nRF Cloud certificate
 =====================================
 
-Complete the following steps to download the nRF Cloud certificate for your nRF9160 DK:
+To download the nRF Cloud certificate for your nRF9160 DK, complete the following steps.
+Make sure you are logged in to the `nRF Cloud`_ portal.
 
-1. Go to `nRF Cloud`_ and sign in.
-#. Click :guilabel:`Device Management` in the left pane and select :guilabel:`Provision Devices`.
+1. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
 
-   .. figure:: images/nrfcloud_provisiondevices.png
-      :alt: nRF Cloud - Provision Devices
+   .. figure:: images/nrfcloud_devices.png
+      :alt: nRF Cloud - Devices
 
-      nRF Cloud - Provision Devices
+      nRF Cloud - Devices
 
-#. In the  page that opens up, click the gear icon near the upper right corner and select :guilabel:`Create JITP Certificates`.
+#. Click :guilabel:`Add Devices`.
 
-   .. figure:: images/nrfcloud_provisiondevices_gearicon.png
-      :alt: nRF Cloud - Gear icon in Provision Devices
+   .. figure:: images/nrfcloud_add_devices.png
+      :alt: nRF Cloud - Add Devices
 
-      nRF Cloud - Gear icon in Provision Devices
+      nRF Cloud - Add Devices
+
+   The **Select Device Type** pop-up opens.
+
+#. Click :guilabel:`LTE Device` in the **Select Device Type** pop-up.
+
+   .. figure:: images/nrfcloud_selectdevicetype.png
+      :alt: nRF Cloud - Select Device Type
+
+      nRF Cloud - Select Device Type
+
+#. Click **Create JITP Certificates** at the bottom of the page.
 
    The **Create JITP Certificates** dialog box opens.
 
@@ -90,6 +101,8 @@ Complete the following steps to download the nRF Cloud certificate for your nRF9
       The certificate contains all the information that is needed to connect your nRF9160 DK to nRF Cloud.
       Therefore, do not share it with anyone.
 
+#. Close the **Create JITP Certificates** dialog box.
+
 .. _provisioning_cloud_certificate:
 
 Provisioning the nRF Cloud certificate
@@ -100,13 +113,12 @@ After downloading the certificate, you must provision it to your nRF9160 DK.
 .. note::
 
    The application firmware on the nRF9160 DK must support long AT commands up to 3 kB to provision the certificate.
-   If you have updated the application firmware using the instructions in either the :ref:`Getting started <nrf9160_gs_updating_fw>` documentation or the :ref:`build_pgm_nrf9160` section, this requirement is fulfilled.
+   If you have updated the application firmware using the instructions in either the :ref:`nrf9160_gs_updating_fw` documentation or the :ref:`nrf9160_ug_updating_fw_programmer` or :ref:`build_pgm_nrf9160` sections, this requirement is fulfilled.
 
 Complete the following steps to provision the certificate:
 
 1. Start nRF Connect for Desktop and install the `Cellular Monitor`_ app.
 #. Open the Cellular Monitor app.
-#. Make sure that the DK is programmed as mentioned in the :ref:`nrf9160_gs_updating_fw` section.
 #. Connect the DK to the computer with a micro-USB cable, and turn it on.
 #. Click :guilabel:`Select device` and select the DK from the drop-down list.
 
