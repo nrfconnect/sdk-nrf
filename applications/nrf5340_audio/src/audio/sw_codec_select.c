@@ -87,7 +87,8 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 			break;
 		}
 		default:
-			LOG_ERR("Unsupported number of channels: %d", m_config.encoder.num_ch);
+			LOG_ERR("Unsupported channel mode for encoder: %d",
+				m_config.encoder.channel_mode);
 			return -ENODEV;
 		}
 
@@ -183,7 +184,8 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			break;
 		}
 		default:
-			LOG_ERR("Unsupported number of channels: %d", m_config.encoder.num_ch);
+			LOG_ERR("Unsupported channel mode for decoder: %d",
+				m_config.decoder.channel_mode);
 			return -ENODEV;
 		}
 
