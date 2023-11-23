@@ -42,7 +42,7 @@ else()
       app_PM_HEX_FILE $<TARGET_PROPERTY:tfm,TFM_NS_HEX_FILE>
       )
   elseif(SYSBUILD)
-    set(BYPRODUCT_KERNEL_HEX_NAME "${CMAKE_BINARY_DIR}/zephyr/tfm_merged.hex"
+    set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${CMAKE_BINARY_DIR}/zephyr/tfm_merged.hex"
         CACHE FILEPATH "Kernel hex file" FORCE
     )
   endif()
