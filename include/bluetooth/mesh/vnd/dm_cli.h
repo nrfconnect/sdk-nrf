@@ -95,7 +95,7 @@ struct bt_mesh_dm_cli {
 	/** Transaction ID. */
 	uint8_t tid;
 	/** Access model pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Response context for tracking acknowledged messages. */
 	struct bt_mesh_msg_ack_ctx ack_ctx;
 	/** Publish parameters. */

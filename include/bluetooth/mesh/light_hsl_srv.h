@@ -71,7 +71,7 @@ struct bt_mesh_light_hsl_srv {
 	struct bt_mesh_lightness_srv *lightness;
 
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/** Publish message buffer */

@@ -8,7 +8,7 @@
 #include "scheduler_internal.h"
 #include "model_utils.h"
 
-static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_scheduler_cli *cli = model->user_data;
@@ -30,7 +30,7 @@ static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	return 0;
 }
 
-static int handle_action_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_action_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
 	struct bt_mesh_scheduler_cli *cli = model->user_data;
@@ -80,7 +80,7 @@ const struct bt_mesh_model_op _bt_mesh_scheduler_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int scheduler_cli_init(struct bt_mesh_model *model)
+static int scheduler_cli_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scheduler_cli *cli = model->user_data;
 
@@ -99,7 +99,7 @@ static int scheduler_cli_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void scheduler_cli_reset(struct bt_mesh_model *model)
+static void scheduler_cli_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scheduler_cli *cli = model->user_data;
 

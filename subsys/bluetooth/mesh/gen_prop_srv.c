@@ -51,7 +51,7 @@ static struct bt_mesh_prop *prop_get(const struct bt_mesh_prop_srv *srv,
 }
 
 #if CONFIG_BT_SETTINGS
-static void bt_mesh_prop_srv_pending_store(struct bt_mesh_model *model)
+static void bt_mesh_prop_srv_pending_store(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_prop_srv *srv = model->user_data;
 
@@ -110,7 +110,8 @@ static void pub_list_build(const struct bt_mesh_prop_srv *srv,
 
 /* Owner properties */
 
-static int handle_owner_properties_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_owner_properties_get(const struct bt_mesh_model *model,
+				       struct bt_mesh_msg_ctx *ctx,
 				       struct net_buf_simple *buf)
 {
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
@@ -122,7 +123,8 @@ static int handle_owner_properties_get(struct bt_mesh_model *model, struct bt_me
 	return 0;
 }
 
-static int handle_owner_property_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_owner_property_get(const struct bt_mesh_model *model,
+				     struct bt_mesh_msg_ctx *ctx,
 				     struct net_buf_simple *buf)
 {
 	struct bt_mesh_prop_srv *srv = model->user_data;
@@ -166,7 +168,7 @@ respond:
 	return 0;
 }
 
-static int owner_property_set(struct bt_mesh_model *model,
+static int owner_property_set(const struct bt_mesh_model *model,
 			       struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf, bool ack)
 {
@@ -245,13 +247,15 @@ respond:
 	return 0;
 }
 
-static int handle_owner_property_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_owner_property_set(const struct bt_mesh_model *model,
+				     struct bt_mesh_msg_ctx *ctx,
 				     struct net_buf_simple *buf)
 {
 	return owner_property_set(model, ctx, buf, true);
 }
 
-static int handle_owner_property_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_owner_property_set_unack(const struct bt_mesh_model *model,
+					   struct bt_mesh_msg_ctx *ctx,
 					   struct net_buf_simple *buf)
 {
 	return owner_property_set(model, ctx, buf, false);
@@ -305,7 +309,8 @@ const struct bt_mesh_model_op _bt_mesh_prop_mfr_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int handle_client_properties_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_client_properties_get(const struct bt_mesh_model *model,
+					struct bt_mesh_msg_ctx *ctx,
 					struct net_buf_simple *buf)
 {
 	uint16_t start_prop = net_buf_simple_pull_le16(buf);
@@ -334,16 +339,16 @@ const struct bt_mesh_model_op _bt_mesh_prop_client_srv_op[] = {
 
 /* User properties */
 
-static struct bt_mesh_prop_srv *prop_srv_get(struct bt_mesh_model *user_srv_mod,
+static struct bt_mesh_prop_srv *prop_srv_get(const struct bt_mesh_model *user_srv_mod,
 					     uint16_t model_id)
 {
-	struct bt_mesh_model *model =
+	const struct bt_mesh_model *model =
 		bt_mesh_model_find(bt_mesh_model_elem(user_srv_mod), model_id);
 
 	return model ? model->user_data : NULL;
 }
 
-static struct bt_mesh_prop *user_prop_get(struct bt_mesh_model *model, uint16_t id,
+static struct bt_mesh_prop *user_prop_get(const struct bt_mesh_model *model, uint16_t id,
 					  struct bt_mesh_prop_srv **srv)
 {
 	struct bt_mesh_prop_srv *const srvs[] = {
@@ -365,7 +370,8 @@ static struct bt_mesh_prop *user_prop_get(struct bt_mesh_model *model, uint16_t 
 	return NULL;
 }
 
-static int handle_user_properties_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_user_properties_get(const struct bt_mesh_model *model,
+				      struct bt_mesh_msg_ctx *ctx,
 				      struct net_buf_simple *buf)
 {
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_PROPS_STATUS,
@@ -405,7 +411,7 @@ static int handle_user_properties_get(struct bt_mesh_model *model, struct bt_mes
 	return 0;
 }
 
-static int handle_user_property_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_user_property_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	uint16_t id = net_buf_simple_pull_le16(buf);
@@ -450,7 +456,7 @@ respond:
 	return 0;
 }
 
-static int user_property_set(struct bt_mesh_model *model,
+static int user_property_set(const struct bt_mesh_model *model,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf, bool ack)
 {
@@ -520,13 +526,14 @@ respond:
 	return 0;
 }
 
-static int handle_user_property_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_user_property_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	return user_property_set(model, ctx, buf, true);
 }
 
-static int handle_user_property_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_user_property_set_unack(const struct bt_mesh_model *model,
+					  struct bt_mesh_msg_ctx *ctx,
 					  struct net_buf_simple *buf)
 {
 	return user_property_set(model, ctx, buf, false);
@@ -556,7 +563,7 @@ const struct bt_mesh_model_op _bt_mesh_prop_user_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_prop_srv *srv = model->user_data;
 	struct bt_mesh_prop_val value;
@@ -593,7 +600,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_prop_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_prop_srv *srv = model->user_data;
 
@@ -621,7 +628,7 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 	if ((model->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
 	     model->id == BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV)) {
 		int err;
-		struct bt_mesh_model *usr_prop_srv = bt_mesh_model_find(
+		const struct bt_mesh_model *usr_prop_srv = bt_mesh_model_find(
 			bt_mesh_model_elem(model), BT_MESH_MODEL_ID_GEN_USER_PROP_SRV);
 
 		if (!usr_prop_srv) {
@@ -647,7 +654,7 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_prop_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_prop_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_prop_srv *srv = model->user_data;
 
@@ -659,7 +666,7 @@ static void bt_mesh_prop_srv_reset(struct bt_mesh_model *model)
 }
 
 #ifdef CONFIG_BT_SETTINGS
-static int bt_mesh_prop_srv_settings_set(struct bt_mesh_model *model,
+static int bt_mesh_prop_srv_settings_set(const struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {

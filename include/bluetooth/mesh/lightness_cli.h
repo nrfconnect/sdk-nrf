@@ -98,7 +98,7 @@ struct bt_mesh_lightness_cli_handlers {
  */
 struct bt_mesh_lightness_cli {
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

@@ -7,7 +7,7 @@
 #include <bluetooth/mesh/gen_lvl_cli.h>
 #include "model_utils.h"
 
-static int handle_status(struct bt_mesh_model *model,
+static int handle_status(const struct bt_mesh_model *model,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
@@ -52,7 +52,7 @@ const struct bt_mesh_model_op _bt_mesh_lvl_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_lvl_init(struct bt_mesh_model *model)
+static int bt_mesh_lvl_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_lvl_cli *cli = model->user_data;
 
@@ -66,7 +66,7 @@ static int bt_mesh_lvl_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_lvl_reset(struct bt_mesh_model *model)
+static void bt_mesh_lvl_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_lvl_cli *cli = model->user_data;
 

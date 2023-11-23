@@ -28,7 +28,7 @@ struct settings_data {
 } __packed;
 
 #if CONFIG_BT_SETTINGS
-static void sat_srv_pending_store(struct bt_mesh_model *model)
+static void sat_srv_pending_store(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
 
@@ -65,7 +65,7 @@ static void encode_status(struct net_buf_simple *buf,
 	}
 }
 
-static int sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int sat_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_SAT &&
@@ -133,7 +133,7 @@ static int sat_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_sat_get(struct bt_mesh_model *model,
+static int handle_sat_get(const struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
@@ -146,14 +146,14 @@ static int handle_sat_get(struct bt_mesh_model *model,
 	return 0;
 }
 
-static int handle_sat_set(struct bt_mesh_model *model,
+static int handle_sat_set(const struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	return sat_set(model, ctx, buf, true);
 }
 
-static int handle_sat_set_unack(struct bt_mesh_model *model,
+static int handle_sat_set_unack(const struct bt_mesh_model *model,
 				 struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
@@ -318,7 +318,7 @@ const struct bt_mesh_lvl_srv_handlers _bt_mesh_light_sat_srv_lvl_handlers = {
 	.move_set = lvl_move_set,
 };
 
-static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
@@ -330,7 +330,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	return 2;
 }
 
-static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
@@ -344,7 +344,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	bt_mesh_light_sat_srv_set(srv, NULL, &set, &status);
 }
 
-static void scene_recall_complete(struct bt_mesh_model *model)
+static void scene_recall_complete(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
@@ -362,7 +362,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_hue) = {
 	.recall_complete = scene_recall_complete,
 };
 
-static int sat_srv_pub_update(struct bt_mesh_model *model)
+static int sat_srv_pub_update(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
 	struct bt_mesh_light_sat_status status;
@@ -374,7 +374,7 @@ static int sat_srv_pub_update(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int sat_srv_init(struct bt_mesh_model *model)
+static int sat_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
 	int err;
@@ -408,7 +408,7 @@ static int sat_srv_init(struct bt_mesh_model *model)
 	return err;
 }
 
-static int sat_srv_settings_set(struct bt_mesh_model *model, const char *name,
+static int sat_srv_settings_set(const struct bt_mesh_model *model, const char *name,
 				size_t len_rd, settings_read_cb read_cb,
 				void *cb_data)
 {
@@ -430,7 +430,7 @@ static int sat_srv_settings_set(struct bt_mesh_model *model, const char *name,
 	return 0;
 }
 
-static void sat_srv_reset(struct bt_mesh_model *model)
+static void sat_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_sat_srv *srv = model->user_data;
 

@@ -24,7 +24,7 @@ struct settings_data {
 } __packed;
 
 #if CONFIG_BT_SETTINGS
-static void bt_mesh_dm_srv_pending_store(struct bt_mesh_model *model)
+static void bt_mesh_dm_srv_pending_store(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_dm_srv *srv = model->user_data;
 
@@ -102,7 +102,7 @@ static void new_entry_store(struct dm_result *result)
 	}
 }
 
-static void cfg_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *rx_ctx,
+static void cfg_status_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *rx_ctx,
 			    uint8_t status)
 {
 	struct bt_mesh_dm_srv *srv = model->user_data;
@@ -145,7 +145,7 @@ static void result_pack(struct bt_mesh_dm_res_entry *entry, struct net_buf_simpl
 	}
 }
 
-static void result_status_populate(struct bt_mesh_model *model, struct net_buf_simple *buf,
+static void result_status_populate(const struct bt_mesh_model *model, struct net_buf_simple *buf,
 				   uint8_t cnt)
 {
 	struct bt_mesh_dm_srv *srv = model->user_data;
@@ -157,7 +157,7 @@ static void result_status_populate(struct bt_mesh_model *model, struct net_buf_s
 	}
 }
 
-static void result_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *rx_ctx,
+static void result_status_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *rx_ctx,
 			       uint8_t cnt, int8_t status)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_DM_CLI_OP,
@@ -177,7 +177,7 @@ static void result_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_c
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static void sync_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx, uint8_t mode,
+static void sync_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx, uint8_t mode,
 		      uint8_t timeout)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_DM_SRV_OP, BT_MESH_DM_SYNC_MSG_LEN);
@@ -188,7 +188,7 @@ static void sync_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx, 
 	(void)bt_mesh_model_send(model, ctx, &msg, NULL, NULL);
 }
 
-static int handle_cfg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_cfg(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	struct bt_mesh_dm_srv *srv = model->user_data;
@@ -218,7 +218,7 @@ static int handle_cfg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_start(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_start(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
 	int err = 0;
@@ -298,7 +298,7 @@ rsp:
 	return -err;
 }
 
-static int handle_result_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_result_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
 	struct bt_mesh_dm_srv *srv = model->user_data;
@@ -319,7 +319,7 @@ static int handle_result_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	return 0;
 }
 
-static int handle_sync(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_sync(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf)
 {
 	int err;
@@ -356,7 +356,7 @@ static int handle_sync(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_msg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_msg(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	uint8_t opcode = net_buf_simple_pull_u8(buf);
@@ -425,7 +425,7 @@ static void timeout_work(struct k_work *work)
 	dm_srv->is_busy = false;
 }
 
-static int bt_mesh_dm_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_dm_srv_init(const struct bt_mesh_model *model)
 {
 	int err;
 	struct bt_mesh_dm_srv *srv = model->user_data;
@@ -447,7 +447,7 @@ static int bt_mesh_dm_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_dm_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_dm_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_dm_srv *srv = model->user_data;
 
@@ -460,7 +460,7 @@ static void bt_mesh_dm_srv_reset(struct bt_mesh_model *model)
 #endif
 }
 
-static int bt_mesh_dm_srv_settings_set(struct bt_mesh_model *model, const char *name,
+static int bt_mesh_dm_srv_settings_set(const struct bt_mesh_model *model, const char *name,
 						 size_t len_rd, settings_read_cb read_cb,
 						 void *cb_arg)
 {

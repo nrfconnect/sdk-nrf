@@ -76,7 +76,7 @@ struct bt_mesh_dtt_cli {
 	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_DTT_OP_SET,
 					       BT_MESH_DTT_MSG_LEN_SET)];
 	/** Composition data model entry pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 };
 
 /** @brief Get the Default Transition Time of the server.

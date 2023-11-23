@@ -31,7 +31,7 @@ struct settings_data {
 } __packed;
 
 #if CONFIG_BT_SETTINGS
-static void hue_srv_pending_store(struct bt_mesh_model *model)
+static void hue_srv_pending_store(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 
@@ -100,7 +100,7 @@ static struct bt_mesh_model_transition *transition_get(struct bt_mesh_light_hue_
 	return NULL;
 }
 
-static int hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int hue_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		   struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LIGHT_HSL_MSG_MINLEN_HUE &&
@@ -157,7 +157,7 @@ static int hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_hue_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_hue_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
@@ -169,13 +169,13 @@ static int handle_hue_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *c
 	return 0;
 }
 
-static int handle_hue_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_hue_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
 	return hue_set(model, ctx, buf, true);
 }
 
-static int handle_hue_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_hue_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
 	return hue_set(model, ctx, buf, false);
@@ -387,7 +387,7 @@ const struct bt_mesh_lvl_srv_handlers _bt_mesh_light_hue_srv_lvl_handlers = {
 	.move_set = lvl_move_set,
 };
 
-static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 	struct bt_mesh_light_hue_status status = { 0 };
@@ -399,7 +399,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	return 2;
 }
 
-static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
@@ -413,7 +413,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	bt_mesh_light_hue_srv_set(srv, NULL, &set, &status);
 }
 
-static void scene_recall_complete(struct bt_mesh_model *model)
+static void scene_recall_complete(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 	struct bt_mesh_light_hue_status status = { 0 };
@@ -431,7 +431,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_hue) = {
 	.recall_complete = scene_recall_complete,
 };
 
-static int hue_srv_pub_update(struct bt_mesh_model *model)
+static int hue_srv_pub_update(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 	struct bt_mesh_light_hue_status status;
@@ -443,7 +443,7 @@ static int hue_srv_pub_update(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int hue_srv_init(struct bt_mesh_model *model)
+static int hue_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 	int err;
@@ -477,7 +477,7 @@ static int hue_srv_init(struct bt_mesh_model *model)
 	return err;
 }
 
-static int hue_srv_settings_set(struct bt_mesh_model *model, const char *name,
+static int hue_srv_settings_set(const struct bt_mesh_model *model, const char *name,
 				size_t len_rd, settings_read_cb read_cb,
 				void *cb_data)
 {
@@ -499,7 +499,7 @@ static int hue_srv_settings_set(struct bt_mesh_model *model, const char *name,
 	return 0;
 }
 
-static void hue_srv_reset(struct bt_mesh_model *model)
+static void hue_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_hue_srv *srv = model->user_data;
 

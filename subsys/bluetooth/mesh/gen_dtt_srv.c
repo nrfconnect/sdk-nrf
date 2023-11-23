@@ -25,7 +25,7 @@ static void rsp_status(struct bt_mesh_dtt_srv *srv,
 	(void)bt_mesh_model_send(srv->model, rx_ctx, &msg, NULL, NULL);
 }
 
-static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
@@ -35,8 +35,8 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		    struct net_buf_simple *buf, bool ack)
+static int set_dtt(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		   struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 	uint32_t old_time = srv->transition_time;
@@ -68,13 +68,13 @@ static int set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	return set_dtt(model, ctx, buf, true);
 }
 
-static int handle_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	return set_dtt(model, ctx, buf, false);
@@ -99,7 +99,7 @@ const struct bt_mesh_model_op _bt_mesh_dtt_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 
@@ -107,7 +107,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_dtt_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_dtt_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 
@@ -120,7 +120,7 @@ static int bt_mesh_dtt_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_dtt_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_dtt_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 
@@ -134,7 +134,7 @@ static void bt_mesh_dtt_srv_reset(struct bt_mesh_model *model)
 }
 
 #ifdef CONFIG_BT_MESH_DTT_SRV_PERSISTENT
-static int bt_mesh_dtt_srv_settings_set(struct bt_mesh_model *model,
+static int bt_mesh_dtt_srv_settings_set(const struct bt_mesh_model *model,
 					const char *name,
 					size_t len_rd, settings_read_cb read_cb,
 					void *cb_arg)
@@ -197,9 +197,9 @@ struct bt_mesh_dtt_srv *bt_mesh_dtt_srv_get(const struct bt_mesh_elem *elem)
 
 	index = elem->addr - comp->elem[0].addr;
 	for (int i = index; i >= 0; --i) {
-		struct bt_mesh_elem *element = &comp->elem[i];
+		const struct bt_mesh_elem *element = &comp->elem[i];
 
-		struct bt_mesh_model *model =
+		const struct bt_mesh_model *model =
 			bt_mesh_model_find(element, BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_SRV);
 
 		if (model) {

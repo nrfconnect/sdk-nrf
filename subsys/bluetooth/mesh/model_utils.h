@@ -67,7 +67,7 @@ model_transition_buf_pull(struct net_buf_simple *buf,
 }
 
 static inline struct bt_mesh_model_transition *
-model_transition_get(struct bt_mesh_model *model,
+model_transition_get(const struct bt_mesh_model *model,
 		     struct bt_mesh_model_transition *transition,
 		     struct net_buf_simple *buf)
 {
@@ -91,7 +91,7 @@ model_transition_is_invalid(const struct bt_mesh_model_transition *transition)
 		 transition->delay > BT_MESH_MODEL_DELAY_TIME_MAX_MS));
 }
 
-int32_t model_ackd_timeout_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx);
+int32_t model_ackd_timeout_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx);
 
 #endif /* MODEL_UTILS_H__ */
 

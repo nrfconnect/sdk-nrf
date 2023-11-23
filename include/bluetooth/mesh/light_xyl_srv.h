@@ -151,7 +151,7 @@ struct bt_mesh_light_xyl_srv_handlers {
  */
 struct bt_mesh_light_xyl_srv {
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Pointer to Lightness Server instance. */
 	struct bt_mesh_lightness_srv *lightness_srv;
 	/** Publish parameters. */

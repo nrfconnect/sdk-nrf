@@ -77,9 +77,9 @@ struct bt_mesh_ponoff_srv {
 	/** Generic Default Transition Time server instance. */
 	struct bt_mesh_dtt_srv dtt;
 	/** Pointer to the model entry in the composition data. */
-	struct bt_mesh_model *ponoff_model;
+	const struct bt_mesh_model *ponoff_model;
 	/** Pointer to the model entry of the Setup Server. */
-	struct bt_mesh_model *ponoff_setup_model;
+	const struct bt_mesh_model *ponoff_setup_model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

@@ -147,9 +147,9 @@ struct bt_mesh_plvl_srv {
 	/** Generic Power OnOff server instance. */
 	struct bt_mesh_ponoff_srv ponoff;
 	/** Pointer to the model entry in the composition data. */
-	struct bt_mesh_model *plvl_model;
+	const struct bt_mesh_model *plvl_model;
 	/** Pointer to the model entry of the Setup Server. */
-	struct bt_mesh_model *plvl_setup_model;
+	const struct bt_mesh_model *plvl_setup_model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

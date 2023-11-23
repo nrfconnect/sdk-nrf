@@ -144,7 +144,7 @@ struct bt_mesh_lvl_srv {
 	/** Application handler functions. */
 	const struct bt_mesh_lvl_srv_handlers *const handlers;
 	/** Pointer to the mesh model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */
