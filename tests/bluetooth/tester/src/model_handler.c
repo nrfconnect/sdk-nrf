@@ -63,7 +63,7 @@ static void lvl_status(struct lvl_ctx *ctx, struct bt_mesh_plvl_status *rsp)
 
 static void periodic_led_work(struct k_work *work)
 {
-	struct lvl_ctx *ctx = CONTAINER_OF(work, struct lvl_ctx, work);
+	struct lvl_ctx *ctx = CONTAINER_OF(work, struct lvl_ctx, work.work);
 
 	ctx->remaining -= ctx->period;
 
@@ -341,7 +341,7 @@ void sensor_data_set(uint8_t *data, uint16_t len)
 
 static struct bt_mesh_dtt_srv dtt_srv = BT_MESH_DTT_SRV_INIT(NULL);
 
-static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
+const static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
 
 static struct bt_mesh_scheduler_srv scheduler_srv =
 	BT_MESH_SCHEDULER_SRV_INIT(NULL, &time_srv);
@@ -401,7 +401,7 @@ static void light_ctl_status(struct light_ctl_ctx *ctx,
 static void periodic_led_lightness_work(struct k_work *work)
 {
 	struct lightness_ctx *ctx =
-		CONTAINER_OF(work, struct lightness_ctx, work);
+		CONTAINER_OF(work, struct lightness_ctx, work.work);
 
 	ctx->remaining -= ctx->period;
 
@@ -493,7 +493,7 @@ static void light_temp_status(struct light_temp_ctx *ctx,
 static void periodic_light_temp_work(struct k_work *work)
 {
 	struct light_temp_ctx *ctx =
-		CONTAINER_OF(work, struct light_temp_ctx, work);
+		CONTAINER_OF(work, struct light_temp_ctx, work.work);
 	struct light_ctl_ctx *ctl_ctx =
 		CONTAINER_OF(ctx, struct light_ctl_ctx, light_temp_ctx);
 	struct lightness_ctx *lightness_ctx = &ctl_ctx->ctl_lightness_ctx;
@@ -586,7 +586,7 @@ static const struct bt_mesh_light_temp_srv_handlers light_temp_srv_handlers = {
 static void periodic_light_ctl_lightness_work(struct k_work *work)
 {
 	struct lightness_ctx *ctx =
-		CONTAINER_OF(work, struct lightness_ctx, work);
+		CONTAINER_OF(work, struct lightness_ctx, work.work);
 	struct light_ctl_ctx *ctl_ctx =
 		CONTAINER_OF(ctx, struct light_ctl_ctx, ctl_lightness_ctx);
 	struct light_temp_ctx *temp_ctx = &ctl_ctx->light_temp_ctx;
@@ -753,7 +753,7 @@ static void hue_status(struct light_hue_ctx *ctx,
 static void periodic_light_hue_work(struct k_work *work)
 {
 	struct light_hue_ctx *ctx =
-		CONTAINER_OF(work, struct light_hue_ctx, work);
+		CONTAINER_OF(work, struct light_hue_ctx, work.work);
 	struct light_hsl_ctx *hsl_ctx =
 		CONTAINER_OF(ctx, struct light_hsl_ctx, light_hue_ctx);
 	struct light_sat_ctx *sat_ctx = &hsl_ctx->light_sat_ctx;
@@ -852,7 +852,7 @@ static void light_sat_status(struct light_sat_ctx *ctx,
 static void periodic_light_sat_work(struct k_work *work)
 {
 	struct light_sat_ctx *ctx =
-		CONTAINER_OF(work, struct light_sat_ctx, work);
+		CONTAINER_OF(work, struct light_sat_ctx, work.work);
 	struct light_hsl_ctx *hsl_ctx =
 		CONTAINER_OF(ctx, struct light_hsl_ctx, light_sat_ctx);
 	struct light_hue_ctx *hue_ctx = &hsl_ctx->light_hue_ctx;
@@ -968,7 +968,7 @@ static void xyl_get(struct bt_mesh_light_xyl_srv *srv,
 static void periodic_light_xy_work(struct k_work *work)
 {
 	struct light_xy_ctx *ctx =
-		CONTAINER_OF(work, struct light_xy_ctx, work);
+		CONTAINER_OF(work, struct light_xy_ctx, work.work);
 	struct light_xyl_hsl_ctx *xyl_hsl_ctx =
 		CONTAINER_OF(ctx, struct light_xyl_hsl_ctx, xyl_ctx);
 
@@ -1056,7 +1056,7 @@ static const struct bt_mesh_light_xyl_srv_handlers light_xyl_handlers = {
 static void periodic_light_xyl_hsl_lightness_work(struct k_work *work)
 {
 	struct lightness_ctx *ctx =
-		CONTAINER_OF(work, struct lightness_ctx, work);
+		CONTAINER_OF(work, struct lightness_ctx, work.work);
 	struct light_xyl_hsl_ctx *xyl_hsl_ctx =
 		CONTAINER_OF(ctx, struct light_xyl_hsl_ctx, lightness_ctx);
 	struct light_hue_ctx *hue_ctx = &xyl_hsl_ctx->hsl_ctx.light_hue_ctx;
@@ -1167,7 +1167,7 @@ static void get_faults(uint8_t *faults, uint8_t faults_size, uint8_t *dst,
 	}
 }
 
-static int fault_get_cur(struct bt_mesh_model *model, uint8_t *test_id,
+static int fault_get_cur(const struct bt_mesh_model *model, uint8_t *test_id,
 			 uint16_t *company_id, uint8_t *faults,
 			 uint8_t *fault_count)
 {
@@ -1181,7 +1181,7 @@ static int fault_get_cur(struct bt_mesh_model *model, uint8_t *test_id,
 	return 0;
 }
 
-static int fault_get_reg(struct bt_mesh_model *model, uint16_t company_id,
+static int fault_get_reg(const struct bt_mesh_model *model, uint16_t company_id,
 			 uint8_t *test_id, uint8_t *faults,
 			 uint8_t *fault_count)
 {
@@ -1198,7 +1198,7 @@ static int fault_get_reg(struct bt_mesh_model *model, uint16_t company_id,
 	return 0;
 }
 
-static int fault_clear(struct bt_mesh_model *model, uint16_t company_id)
+static int fault_clear(const struct bt_mesh_model *model, uint16_t company_id)
 {
 	LOG_DBG("company_id 0x%04x", company_id);
 
@@ -1211,7 +1211,7 @@ static int fault_clear(struct bt_mesh_model *model, uint16_t company_id)
 	return 0;
 }
 
-static int fault_test(struct bt_mesh_model *model, uint8_t test_id,
+static int fault_test(const struct bt_mesh_model *model, uint8_t test_id,
 		      uint16_t company_id)
 {
 	LOG_DBG("test_id 0x%02x company_id 0x%04x", test_id, company_id);
