@@ -62,7 +62,7 @@ struct bt_mesh_prop_list {
  */
 struct bt_mesh_prop_cli {
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

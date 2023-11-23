@@ -119,7 +119,7 @@ struct bt_mesh_loc_srv_handlers {
  */
 struct bt_mesh_loc_srv {
 	/** Pointer to the model instance. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters for this model instance. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

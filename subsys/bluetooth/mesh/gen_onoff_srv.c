@@ -23,7 +23,7 @@ static void encode_status(struct net_buf_simple *buf,
 	}
 }
 
-static void rsp_status(struct bt_mesh_model *model,
+static void rsp_status(const struct bt_mesh_model *model,
 		       struct bt_mesh_msg_ctx *rx_ctx,
 		       const struct bt_mesh_onoff_status *status)
 {
@@ -34,7 +34,7 @@ static void rsp_status(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
@@ -47,7 +47,7 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int onoff_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_ONOFF_MSG_MINLEN_SET &&
@@ -103,13 +103,13 @@ respond:
 	return 0;
 }
 
-static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	return onoff_set(model, ctx, buf, true);
 }
 
-static int handle_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	return onoff_set(model, ctx, buf, false);
@@ -135,7 +135,7 @@ const struct bt_mesh_model_op _bt_mesh_onoff_srv_op[] = {
 };
 
 /* .. include_startingpoint_scene_srv_rst_1 */
-static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
@@ -148,7 +148,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	return 1;
 }
 
-static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len, struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
@@ -161,7 +161,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	srv->handlers->set(srv, NULL, &set, &status);
 }
 
-static void scene_recall_complete(struct bt_mesh_model *model)
+static void scene_recall_complete(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
@@ -180,7 +180,7 @@ BT_MESH_SCENE_ENTRY_SIG(onoff) = {
 };
 /* .. include_endpoint_scene_srv_rst_1 */
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
@@ -191,7 +191,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_onoff_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_onoff_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_onoff_srv *srv = model->user_data;
 
@@ -204,7 +204,7 @@ static int bt_mesh_onoff_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_onoff_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_onoff_srv_reset(const struct bt_mesh_model *model)
 {
 	net_buf_simple_reset(model->pub->msg);
 }

@@ -62,7 +62,7 @@ struct bt_mesh_scheduler_cli {
 			const struct bt_mesh_schedule_entry *action);
 
 	/* Composition data entry pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/* Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication message */

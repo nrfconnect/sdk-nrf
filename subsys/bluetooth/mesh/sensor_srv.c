@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(bt_mesh_sensor_srv);
 #define SENSOR_FOR_EACH(_list, _node)                                          \
 	SYS_SLIST_FOR_EACH_CONTAINER(_list, _node, state.node)
 
-static struct bt_mesh_sensor *sensor_get(struct bt_mesh_sensor_srv *srv,
+static struct bt_mesh_sensor *sensor_get(const struct bt_mesh_sensor_srv *srv,
 					 uint16_t id)
 {
 	struct bt_mesh_sensor *sensor;
@@ -37,9 +37,9 @@ static struct bt_mesh_sensor *sensor_get(struct bt_mesh_sensor_srv *srv,
 }
 
 #if CONFIG_BT_SETTINGS
-static void sensor_srv_pending_store(struct bt_mesh_model *model)
+static void sensor_srv_pending_store(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	/* Cadence is stored as a sequence of cadence status messages */
 	NET_BUF_SIMPLE_DEFINE(buf, (CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX *
@@ -69,7 +69,7 @@ static void sensor_srv_pending_store(struct bt_mesh_model *model)
 }
 #endif
 
-static void cadence_store(struct bt_mesh_sensor_srv *srv)
+static void cadence_store(const struct bt_mesh_sensor_srv *srv)
 {
 #if CONFIG_BT_SETTINGS
 	bt_mesh_model_data_store_schedule(srv->model);
@@ -77,7 +77,7 @@ static void cadence_store(struct bt_mesh_sensor_srv *srv)
 }
 
 
-static int value_get(struct bt_mesh_sensor_srv *srv,
+static int value_get(const struct bt_mesh_sensor_srv *srv,
 		     struct bt_mesh_sensor *sensor,
 		     struct bt_mesh_msg_ctx *ctx,
 		     sensor_value_type *value)
@@ -99,7 +99,7 @@ static int value_get(struct bt_mesh_sensor_srv *srv,
 	return 0;
 }
 
-static int buf_status_add(struct bt_mesh_sensor_srv *srv,
+static int buf_status_add(const struct bt_mesh_sensor_srv *srv,
 			  struct bt_mesh_sensor *sensor,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
@@ -129,10 +129,10 @@ static int buf_status_add(struct bt_mesh_sensor_srv *srv,
 	return err;
 }
 
-static int handle_descriptor_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_descriptor_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	if (buf->len != BT_MESH_SENSOR_MSG_MINLEN_DESCRIPTOR_GET &&
 	    buf->len != BT_MESH_SENSOR_MSG_MAXLEN_DESCRIPTOR_GET) {
@@ -178,10 +178,10 @@ respond:
 	return 0;
 }
 
-static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	if (buf->len != BT_MESH_SENSOR_MSG_MINLEN_GET &&
 	    buf->len != BT_MESH_SENSOR_MSG_MAXLEN_GET) {
@@ -239,10 +239,10 @@ column_get(const struct bt_mesh_sensor_series *series,
 	return NULL;
 }
 
-static int handle_column_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_column_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	int err;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
@@ -340,10 +340,10 @@ static uint16_t max_column_count(const struct bt_mesh_sensor_type *sensor)
 	}
 }
 
-static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_series_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	const struct bt_mesh_sensor_format *col_format;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
@@ -478,10 +478,10 @@ const struct bt_mesh_model_op _bt_mesh_sensor_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int handle_cadence_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_cadence_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	struct bt_mesh_sensor *sensor;
 	uint16_t id;
 	int err;
@@ -516,10 +516,10 @@ respond:
 	return 0;
 }
 
-static int cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int cadence_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	struct bt_mesh_sensor *sensor;
 	uint16_t id;
 
@@ -609,22 +609,22 @@ respond:
 	return 0;
 }
 
-static int handle_cadence_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_cadence_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
 	return cadence_set(model, ctx, buf, true);
 }
 
-static int handle_cadence_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_cadence_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	return cadence_set(model, ctx, buf, false);
 }
 
-static int handle_settings_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_settings_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
@@ -670,10 +670,10 @@ setting_get(struct bt_mesh_sensor *sensor, uint16_t setting_id)
 	return NULL;
 }
 
-static int handle_setting_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_setting_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 	uint16_t setting_id = net_buf_simple_pull_le16(buf);
 	int err;
@@ -724,10 +724,10 @@ respond:
 	return 0;
 }
 
-static int setting_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int setting_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 	uint16_t setting_id = net_buf_simple_pull_le16(buf);
 	int err;
@@ -795,13 +795,13 @@ respond:
 	return 0;
 }
 
-static int handle_setting_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_setting_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
 	return setting_set(model, ctx, buf, true);
 }
 
-static int handle_setting_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_setting_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	return setting_set(model, ctx, buf, false);
@@ -892,7 +892,7 @@ static uint16_t min_int_get(const struct bt_mesh_sensor *sensor,
  *  @param period_div  Server's original period divisor.
  *  @param base_period Server's original base period.
  */
-static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
+static void pub_msg_add(const struct bt_mesh_sensor_srv *srv,
 			struct bt_mesh_sensor *s, uint8_t period_div,
 			uint32_t base_period)
 {
@@ -941,9 +941,9 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 	s->state.seq = srv->seq;
 }
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	struct bt_mesh_sensor *s;
 
 	bt_mesh_model_msg_init(srv->pub.msg, BT_MESH_SENSOR_OP_STATUS);
@@ -986,9 +986,9 @@ static int update_handler(struct bt_mesh_model *model)
 	return (srv->pub.msg->len > original_len) ? 0 : -ENOENT;
 }
 
-static int sensor_srv_init(struct bt_mesh_model *model)
+static int sensor_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	sys_slist_init(&srv->sensors);
 
@@ -1038,9 +1038,9 @@ static int sensor_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void sensor_srv_reset(struct bt_mesh_model *model)
+static void sensor_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 
 	net_buf_simple_reset(srv->pub.msg);
 	net_buf_simple_reset(srv->setup_pub.msg);
@@ -1062,11 +1062,11 @@ static void sensor_srv_reset(struct bt_mesh_model *model)
 	}
 }
 
-static int sensor_srv_settings_set(struct bt_mesh_model *model, const char *name,
+static int sensor_srv_settings_set(const struct bt_mesh_model *model, const char *name,
 				   size_t len_rd, settings_read_cb read_cb,
 				   void *cb_arg)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 	int err = 0;
 
 	NET_BUF_SIMPLE_DEFINE(buf, (CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX *
@@ -1130,9 +1130,9 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_srv_cb = {
 #endif
 };
 
-static int sensor_setup_srv_init(struct bt_mesh_model *model)
+static int sensor_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_sensor_srv *srv = model->user_data;
+	const struct bt_mesh_sensor_srv *srv = model->user_data;
 #if defined(CONFIG_BT_MESH_COMP_PAGE_1)
 	int err = bt_mesh_model_correspond(model, srv->model);
 
@@ -1148,7 +1148,7 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_setup_srv_cb = {
 	.init = sensor_setup_srv_init,
 };
 
-int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
+int bt_mesh_sensor_srv_pub(const struct bt_mesh_sensor_srv *srv,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct bt_mesh_sensor *sensor,
 #ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
@@ -1179,7 +1179,7 @@ int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 	return 0;
 }
 
-int bt_mesh_sensor_srv_sample(struct bt_mesh_sensor_srv *srv,
+int bt_mesh_sensor_srv_sample(const struct bt_mesh_sensor_srv *srv,
 			      struct bt_mesh_sensor *sensor)
 {
 	sensor_value_type value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};

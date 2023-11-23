@@ -8,7 +8,7 @@
 #include "model_utils.h"
 #include "gen_loc_internal.h"
 
-static int handle_global_loc(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_global_loc(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
 	struct bt_mesh_loc_cli *cli = model->user_data;
@@ -30,7 +30,7 @@ static int handle_global_loc(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	return 0;
 }
 
-static int handle_local_loc(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_local_loc(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	struct bt_mesh_loc_cli *cli = model->user_data;
@@ -66,7 +66,7 @@ const struct bt_mesh_model_op _bt_mesh_loc_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_loc_init(struct bt_mesh_model *model)
+static int bt_mesh_loc_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_loc_cli *cli = model->user_data;
 
@@ -79,7 +79,7 @@ static int bt_mesh_loc_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_loc_reset(struct bt_mesh_model *model)
+static void bt_mesh_loc_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_loc_cli *cli = model->user_data;
 

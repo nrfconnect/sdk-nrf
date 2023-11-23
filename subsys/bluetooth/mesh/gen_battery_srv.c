@@ -46,7 +46,7 @@ void bt_mesh_gen_bat_encode_status(struct net_buf_simple *buf,
 	net_buf_simple_add_u8(buf, flags);
 }
 
-static void rsp_status(struct bt_mesh_model *model,
+static void rsp_status(const struct bt_mesh_model *model,
 		       struct bt_mesh_msg_ctx *rx_ctx,
 		       const struct bt_mesh_battery_status *status)
 {
@@ -58,8 +58,8 @@ static void rsp_status(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		       struct net_buf_simple *buf)
+static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		      struct net_buf_simple *buf)
 {
 	struct bt_mesh_battery_srv *srv = model->user_data;
 	struct bt_mesh_battery_status status = BATTERY_STATUS_DEFAULT;
@@ -80,7 +80,7 @@ const struct bt_mesh_model_op _bt_mesh_battery_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_battery_srv *srv = model->user_data;
 	struct bt_mesh_battery_status status = BATTERY_STATUS_DEFAULT;
@@ -93,7 +93,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_battery_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_battery_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_battery_srv *srv = model->user_data;
 
@@ -106,7 +106,7 @@ static int bt_mesh_battery_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_battery_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_battery_srv_reset(const struct bt_mesh_model *model)
 {
 	net_buf_simple_reset(model->pub->msg);
 }

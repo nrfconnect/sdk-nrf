@@ -26,7 +26,7 @@ struct bt_mesh_plvl_srv_settings_data {
 } __packed;
 
 #if CONFIG_BT_SETTINGS
-static void bt_mesh_plvl_srv_pending_store(struct bt_mesh_model *model)
+static void bt_mesh_plvl_srv_pending_store(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 
@@ -100,7 +100,7 @@ static int pub(struct bt_mesh_plvl_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	return bt_mesh_msg_send(srv->plvl_model, ctx, &msg);
 }
 
-static void rsp_plvl_status(struct bt_mesh_model *model,
+static void rsp_plvl_status(const struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx,
 			    struct bt_mesh_plvl_status *status)
 {
@@ -111,7 +111,7 @@ static void rsp_plvl_status(struct bt_mesh_model *model,
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 }
 
-static int handle_lvl_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_lvl_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
@@ -150,7 +150,7 @@ static int change_lvl(struct bt_mesh_plvl_srv *srv,
 	return 0;
 }
 
-static int plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int plvl_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_PLVL_MSG_MINLEN_LEVEL_SET &&
@@ -186,19 +186,19 @@ static int plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_plvl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_plvl_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	return plvl_set(model, ctx, buf, true);
 }
 
-static int handle_plvl_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_plvl_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
 	return plvl_set(model, ctx, buf, false);
 }
 
-static int handle_last_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_last_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
@@ -213,7 +213,7 @@ static int handle_last_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	return 0;
 }
 
-static int handle_default_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_default_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
@@ -228,7 +228,7 @@ static int handle_default_get(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 	return 0;
 }
 
-static int set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int set_default(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
@@ -259,19 +259,19 @@ static int set_default(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_default_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_default_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
 	return set_default(model, ctx, buf, true);
 }
 
-static int handle_default_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_default_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	return set_default(model, ctx, buf, false);
 }
 
-static int handle_range_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_range_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
@@ -289,7 +289,7 @@ static int handle_range_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx 
 	return 0;
 }
 
-static int set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int set_range(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		     struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
@@ -334,13 +334,13 @@ static int set_range(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_range_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_range_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	return set_range(model, ctx, buf, true);
 }
 
-static int handle_range_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_range_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
 	return set_range(model, ctx, buf, false);
@@ -593,7 +593,7 @@ const struct bt_mesh_onoff_srv_handlers bt_mesh_plvl_srv_onoff_handlers = {
 	.get = onoff_get,
 };
 
-static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
@@ -604,7 +604,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	return 2;
 }
 
-static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
@@ -618,7 +618,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	change_lvl(srv, NULL, &set, &status);
 }
 
-static void scene_recall_complete(struct bt_mesh_model *model)
+static void scene_recall_complete(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
@@ -652,7 +652,7 @@ static void plvl_srv_reset(struct bt_mesh_plvl_srv *srv)
 	srv->transient.is_on = false;
 }
 
-static void bt_mesh_plvl_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_plvl_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 
@@ -664,7 +664,7 @@ static void bt_mesh_plvl_srv_reset(struct bt_mesh_model *model)
 	}
 }
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
@@ -674,7 +674,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_plvl_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	int err;
@@ -706,7 +706,7 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 }
 
 #ifdef CONFIG_BT_SETTINGS
-static int bt_mesh_plvl_srv_settings_set(struct bt_mesh_model *model,
+static int bt_mesh_plvl_srv_settings_set(const struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {
@@ -731,7 +731,7 @@ static int bt_mesh_plvl_srv_settings_set(struct bt_mesh_model *model,
 	return 0;
 }
 
-static int bt_mesh_plvl_srv_start(struct bt_mesh_model *model)
+static int bt_mesh_plvl_srv_start(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
@@ -771,7 +771,7 @@ const struct bt_mesh_model_cb _bt_mesh_plvl_srv_cb = {
 #endif
 };
 
-static int bt_mesh_plvl_setup_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_plvl_setup_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_plvl_srv *srv = model->user_data;
 	int err;

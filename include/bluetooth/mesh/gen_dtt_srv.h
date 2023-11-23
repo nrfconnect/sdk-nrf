@@ -72,7 +72,7 @@ struct bt_mesh_dtt_srv {
 			     uint32_t old_transition_time,
 			     uint32_t new_transition_time);
 	/** Composition data Model entry pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Model publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */
@@ -128,7 +128,7 @@ struct bt_mesh_dtt_srv *bt_mesh_dtt_srv_get(const struct bt_mesh_elem *elem);
  * @return Whether the transition was set.
  */
 static inline bool
-bt_mesh_dtt_srv_transition_get(struct bt_mesh_model *model,
+bt_mesh_dtt_srv_transition_get(const struct bt_mesh_model *model,
 			       struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_dtt_srv *srv;

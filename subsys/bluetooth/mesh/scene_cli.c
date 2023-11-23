@@ -7,7 +7,7 @@
 #include <bluetooth/mesh/models.h>
 #include "model_utils.h"
 
-static int handle_scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_scene_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_state *rsp;
@@ -40,7 +40,7 @@ static int handle_scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_c
 	return 0;
 }
 
-static int handle_scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_scene_reg(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_register *rsp;
@@ -106,7 +106,7 @@ const struct bt_mesh_model_op _bt_mesh_scene_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int scene_cli_init(struct bt_mesh_model *model)
+static int scene_cli_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_cli *cli = model->user_data;
 
@@ -125,7 +125,7 @@ static int scene_cli_init(struct bt_mesh_model *model)
 }
 
 
-static void scene_cli_reset(struct bt_mesh_model *model)
+static void scene_cli_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_cli *cli = model->user_data;
 

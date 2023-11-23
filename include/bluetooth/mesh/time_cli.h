@@ -124,7 +124,7 @@ struct bt_mesh_time_cli_handlers {
  */
 struct bt_mesh_time_cli {
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/** Acknowledged message tracking. */

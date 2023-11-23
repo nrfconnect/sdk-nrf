@@ -127,7 +127,7 @@ struct bt_mesh_light_temp_srv {
 	/** Light Level Server instance. */
 	struct bt_mesh_lvl_srv lvl;
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Pointer to the corresponding CTL server, if it has one.
 	 *  Is set automatically by the CTL server.
 	 */

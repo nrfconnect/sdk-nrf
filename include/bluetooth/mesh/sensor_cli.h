@@ -54,7 +54,7 @@ struct bt_mesh_sensor_cli_handlers;
  */
 struct bt_mesh_sensor_cli {
 	/** Composition data model instance. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

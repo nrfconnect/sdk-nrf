@@ -131,7 +131,7 @@ struct bt_mesh_light_ctrl_cli_handlers {
  */
 struct bt_mesh_light_ctrl_cli {
 	/** Composition data model entry pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

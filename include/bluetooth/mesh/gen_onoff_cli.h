@@ -74,7 +74,7 @@ struct bt_mesh_onoff_cli {
 	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(BT_MESH_ONOFF_OP_SET,
 					       BT_MESH_ONOFF_MSG_MAXLEN_SET)];
 	/** Access model pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 };
 
 /** @brief Get the status of the bound srv.

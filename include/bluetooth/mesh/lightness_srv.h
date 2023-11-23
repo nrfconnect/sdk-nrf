@@ -158,9 +158,9 @@ struct bt_mesh_lightness_srv {
 	/** Internal flag state. */
 	atomic_t flags;
 	/** Pointer to the model entry in the composition data. */
-	struct bt_mesh_model *lightness_model;
+	const struct bt_mesh_model *lightness_model;
 	/** Pointer to the Setup Server model entry in the composition data. */
-	struct bt_mesh_model *lightness_setup_model;
+	const struct bt_mesh_model *lightness_setup_model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

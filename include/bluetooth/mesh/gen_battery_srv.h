@@ -53,7 +53,7 @@ struct bt_mesh_battery_srv;
  */
 struct bt_mesh_battery_srv {
 	/** Pointer to the model entry in the composition data. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

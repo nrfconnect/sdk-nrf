@@ -29,7 +29,7 @@ struct bt_mesh_dm_srv {
 	/** Transaction ID tracker. */
 	struct bt_mesh_tid_ctx prev_transaction;
 	/** Access model pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Flag indicating measurement in progress */
 	bool is_busy;
 	/** Default configuration */

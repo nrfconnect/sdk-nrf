@@ -161,7 +161,7 @@ struct bt_mesh_light_hue_srv {
 	const struct bt_mesh_light_hue_srv_handlers *handlers;
 
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Pointer to the corresponding HSL server, if it has one.
 	 *  Is set automatically by the HSL server.
 	 */

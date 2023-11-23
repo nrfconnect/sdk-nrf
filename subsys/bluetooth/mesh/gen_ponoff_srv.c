@@ -61,7 +61,7 @@ static int store_data(struct bt_mesh_ponoff_srv *srv,
 
 }
 
-static void bt_mesh_ponoff_srv_pending_store(struct bt_mesh_model *model)
+static void bt_mesh_ponoff_srv_pending_store(const struct bt_mesh_model *model)
 {
 	int err;
 
@@ -88,7 +88,7 @@ static void store_state(struct bt_mesh_ponoff_srv *srv)
 #endif
 }
 
-static void send_rsp(struct bt_mesh_model *model,
+static void send_rsp(const struct bt_mesh_model *model,
 		     struct bt_mesh_msg_ctx *ctx)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
@@ -100,7 +100,7 @@ static void send_rsp(struct bt_mesh_model *model,
 	bt_mesh_model_send(model, ctx, &msg, NULL, NULL);
 }
 
-static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	send_rsp(model, ctx);
@@ -131,7 +131,7 @@ static void set_on_power_up(struct bt_mesh_ponoff_srv *srv,
 	store_state(srv);
 }
 
-static int handle_set_msg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set_msg(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
@@ -152,13 +152,13 @@ static int handle_set_msg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *c
 	return 0;
 }
 
-static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	return handle_set_msg(model, ctx, buf, true);
 }
 
-static int handle_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	return handle_set_msg(model, ctx, buf, false);
@@ -219,7 +219,7 @@ const struct bt_mesh_onoff_srv_handlers _bt_mesh_ponoff_onoff_intercept = {
 	.get = onoff_intercept_get,
 };
 
-static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
@@ -232,7 +232,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	return 1;
 }
 
-static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len, struct bt_mesh_model_transition *transition)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
@@ -245,7 +245,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	srv->onoff_handlers->set(&srv->onoff, NULL, &set, &status);
 }
 
-static void scene_recall_complete(struct bt_mesh_model *model)
+static void scene_recall_complete(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
@@ -270,7 +270,7 @@ BT_MESH_SCENE_ENTRY_SIG(ponoff) = {
 	.recall_complete = scene_recall_complete,
 };
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 
@@ -280,7 +280,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_ponoff_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 
@@ -293,7 +293,7 @@ static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 	return bt_mesh_model_extend(model, srv->onoff.model);
 }
 
-static void bt_mesh_ponoff_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_ponoff_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 
@@ -306,7 +306,7 @@ static void bt_mesh_ponoff_srv_reset(struct bt_mesh_model *model)
 }
 
 #ifdef CONFIG_BT_SETTINGS
-static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
+static int bt_mesh_ponoff_srv_settings_set(const struct bt_mesh_model *model,
 					   const char *name,
 					   size_t len_rd,
 					   settings_read_cb read_cb,
@@ -366,7 +366,7 @@ const struct bt_mesh_model_cb _bt_mesh_ponoff_srv_cb = {
 #endif
 };
 
-static int bt_mesh_ponoff_setup_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_ponoff_setup_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 	int err;

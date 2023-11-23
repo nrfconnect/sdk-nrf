@@ -137,7 +137,7 @@ static void scene_status_encode(struct bt_mesh_scene_srv *srv, struct net_buf_si
 	}
 }
 
-static int scene_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int scene_status_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     const struct bt_mesh_scene_state *state)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -158,7 +158,7 @@ static void curr_scene_state_get(struct bt_mesh_scene_srv *srv, struct bt_mesh_s
 	state->status = BT_MESH_SCENE_SUCCESS;
 }
 
-static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -170,7 +170,7 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int scene_recall(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -221,19 +221,19 @@ static int scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	return 0;
 }
 
-static int handle_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_recall(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
 	return scene_recall(model, ctx, buf, true);
 }
 
-static int handle_recall_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_recall_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
 	return scene_recall(model, ctx, buf, false);
 }
 
-static int scene_register_status_send(struct bt_mesh_model *model,
+static int scene_register_status_send(const struct bt_mesh_model *model,
 				      struct bt_mesh_msg_ctx *ctx,
 				      enum bt_mesh_scene_status status)
 {
@@ -253,7 +253,7 @@ static int scene_register_status_send(struct bt_mesh_model *model,
 	return bt_mesh_msg_send(model, ctx, &buf);
 }
 
-static int handle_register_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_register_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
 	(void)scene_register_status_send(model, ctx, BT_MESH_SCENE_SUCCESS);
@@ -343,7 +343,7 @@ static void page_recover(struct bt_mesh_scene_srv *srv, bool vnd,
 	}
 }
 
-static ssize_t entry_store(struct bt_mesh_model *mod,
+static ssize_t entry_store(const struct bt_mesh_model *mod,
 			   const struct bt_mesh_scene_entry *entry, bool vnd,
 			   uint8_t buf[])
 {
@@ -588,7 +588,7 @@ static void scene_delete(struct bt_mesh_scene_srv *srv, uint16_t *scene)
 	*scene = srv->all[--srv->count];
 }
 
-static int handle_store(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_store(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -606,7 +606,7 @@ static int handle_store(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	return 0;
 }
 
-static int handle_store_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_store_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -635,7 +635,7 @@ static int delete_scene(struct bt_mesh_scene_srv *srv, struct bt_mesh_msg_ctx *c
 	return 0;
 }
 
-static int handle_delete(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_delete(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -651,7 +651,7 @@ static int handle_delete(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	return 0;
 }
 
-static int handle_delete_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_delete_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -702,7 +702,7 @@ static void scene_srv_transition_end(struct k_work *work)
 	}
 }
 
-static int scene_srv_pub_update(struct bt_mesh_model *model)
+static int scene_srv_pub_update(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
 	struct bt_mesh_scene_state state;
@@ -712,7 +712,7 @@ static int scene_srv_pub_update(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int scene_srv_init(struct bt_mesh_model *model)
+static int scene_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
 
@@ -729,7 +729,7 @@ static int scene_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int scene_srv_set(struct bt_mesh_model *model, const char *path,
+static int scene_srv_set(const struct bt_mesh_model *model, const char *path,
 			 size_t len_rd, settings_read_cb read_cb, void *cb_arg)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
@@ -793,7 +793,7 @@ static int scene_srv_set(struct bt_mesh_model *model, const char *path,
 	return 0;
 }
 
-static void scene_srv_reset(struct bt_mesh_model *model)
+static void scene_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
 
@@ -816,7 +816,7 @@ const struct bt_mesh_model_cb _bt_mesh_scene_srv_cb = {
 	.reset = scene_srv_reset,
 };
 
-static int scene_setup_srv_init(struct bt_mesh_model *model)
+static int scene_setup_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_scene_srv *srv = model->user_data;
 	struct bt_mesh_dtt_srv *dtt_srv = NULL;
@@ -856,7 +856,7 @@ const struct bt_mesh_model_cb _bt_mesh_scene_setup_srv_cb = {
 	.init = scene_setup_srv_init,
 };
 
-void bt_mesh_scene_invalidate(struct bt_mesh_model *mod)
+void bt_mesh_scene_invalidate(const struct bt_mesh_model *mod)
 {
 	struct bt_mesh_scene_srv *srv = srv_find(mod->elem_idx);
 

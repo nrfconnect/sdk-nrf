@@ -201,9 +201,9 @@ struct bt_mesh_light_ctrl_srv {
 	/** Transaction ID tracking context */
 	struct bt_mesh_tid_ctx tid;
 	/** Composition data server model instance */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Composition data setup server model instance */
-	struct bt_mesh_model *setup_srv;
+	const struct bt_mesh_model *setup_srv;
 };
 
 /** @brief Turn the light on.

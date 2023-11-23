@@ -52,7 +52,7 @@ int32_t model_transition_decode(uint8_t encoded_transition)
 	return 0;
 }
 
-struct bt_mesh_elem *bt_mesh_model_elem(struct bt_mesh_model *mod)
+const struct bt_mesh_elem *bt_mesh_model_elem(const struct bt_mesh_model *mod)
 {
 	return &dummy_elem;
 }
@@ -62,8 +62,8 @@ struct bt_mesh_elem *bt_mesh_elem_find(uint16_t addr)
 	return NULL;
 }
 
-struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
-					 uint16_t id)
+const struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
+					       uint16_t id)
 {
 	return &mock_scene_model;
 }
@@ -110,13 +110,13 @@ void bt_mesh_time_encode_time_params(struct net_buf_simple *buf,
 {
 }
 
-int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-	       struct net_buf_simple *buf)
+int bt_mesh_msg_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		     struct net_buf_simple *buf)
 {
 	return 0;
 }
 
-int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
+int _bt_mesh_time_srv_update_handler(const struct bt_mesh_model *model)
 {
 	return 0;
 }

@@ -86,7 +86,7 @@ struct bt_mesh_scheduler_srv {
 		sch_reg[BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT];
 	};
 	/** Composition data model pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publication state. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

@@ -63,7 +63,7 @@ static void unknown_type(struct bt_mesh_sensor_cli *cli,
 	}
 }
 
-static int handle_descriptor_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_descriptor_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	if (buf->len != 2 && buf->len % 8) {
@@ -108,7 +108,7 @@ yield_ack:
 	return 0;
 }
 
-static int handle_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
@@ -199,7 +199,7 @@ static int parse_series_entry(const struct bt_mesh_sensor_type *type,
 	return sensor_column_decode(buf, type, &entry->column, entry->value);
 }
 
-static int handle_column_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_column_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
@@ -260,7 +260,7 @@ yield_ack:
 	return 0;
 }
 
-static int handle_series_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_series_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
@@ -323,7 +323,7 @@ static int handle_series_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 	return 0;
 }
 
-static int handle_cadence_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_cadence_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
@@ -372,7 +372,7 @@ yield_ack:
 	return 0;
 }
 
-static int handle_settings_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_settings_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
@@ -415,7 +415,7 @@ static int handle_settings_status(struct bt_mesh_model *model, struct bt_mesh_ms
 	return 0;
 }
 
-static int handle_setting_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_setting_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
@@ -520,7 +520,7 @@ const struct bt_mesh_model_op _bt_mesh_sensor_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int sensor_cli_init(struct bt_mesh_model *model)
+static int sensor_cli_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
 
@@ -533,7 +533,7 @@ static int sensor_cli_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void sensor_cli_reset(struct bt_mesh_model *model)
+static void sensor_cli_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_sensor_cli *cli = model->user_data;
 

@@ -26,7 +26,7 @@
 
 /* Global location */
 
-static void rsp_global(struct bt_mesh_model *model,
+static void rsp_global(const struct bt_mesh_model *model,
 		       struct bt_mesh_msg_ctx *rx_ctx,
 		       const struct bt_mesh_loc_global *loc)
 {
@@ -39,7 +39,7 @@ static void rsp_global(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static int handle_global_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_global_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
@@ -52,7 +52,7 @@ static int handle_global_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	return 0;
 }
 
-static int global_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int global_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
@@ -72,14 +72,14 @@ static int global_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_global_set(struct bt_mesh_model *model,
+static int handle_global_set(const struct bt_mesh_model *model,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
 	return global_set(model, ctx, buf, true);
 }
 
-static int handle_global_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_global_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				   struct net_buf_simple *buf)
 {
 	return global_set(model, ctx, buf, false);
@@ -87,7 +87,7 @@ static int handle_global_set_unack(struct bt_mesh_model *model, struct bt_mesh_m
 
 /* Local location */
 
-static void rsp_local(struct bt_mesh_model *model,
+static void rsp_local(const struct bt_mesh_model *model,
 		      struct bt_mesh_msg_ctx *rx_ctx,
 		      const struct bt_mesh_loc_local *loc)
 {
@@ -100,7 +100,7 @@ static void rsp_local(struct bt_mesh_model *model,
 	(void)bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
 }
 
-static int handle_local_get(struct bt_mesh_model *model,
+static int handle_local_get(const struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
@@ -114,7 +114,7 @@ static int handle_local_get(struct bt_mesh_model *model,
 	return 0;
 }
 
-static int local_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int local_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
@@ -134,14 +134,14 @@ static int local_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_local_set(struct bt_mesh_model *model,
+static int handle_local_set(const struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
 	return local_set(model, ctx, buf, true);
 }
 
-static int handle_local_set_unack(struct bt_mesh_model *model,
+static int handle_local_set_unack(const struct bt_mesh_model *model,
 				   struct bt_mesh_msg_ctx *ctx,
 				   struct net_buf_simple *buf)
 {
@@ -207,7 +207,7 @@ static void local_update_handler(struct bt_mesh_loc_srv *srv)
 	bt_mesh_loc_local_encode(srv->pub.msg, &loc);
 }
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
 
@@ -232,7 +232,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_loc_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_loc_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
 
@@ -246,7 +246,7 @@ static int bt_mesh_loc_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_loc_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_loc_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
 
@@ -259,7 +259,7 @@ const struct bt_mesh_model_cb _bt_mesh_loc_srv_cb = {
 	.reset = bt_mesh_loc_srv_reset,
 };
 
-static int bt_mesh_loc_setup_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_loc_setup_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_loc_srv *srv = model->user_data;
 #if defined(CONFIG_BT_MESH_COMP_PAGE_1)
