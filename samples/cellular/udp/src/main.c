@@ -18,7 +18,7 @@ static struct sockaddr_storage host_addr;
 static struct k_work_delayable socket_transmission_work;
 static int data_upload_iterations = CONFIG_UDP_DATA_UPLOAD_ITERATIONS;
 
-K_SEM_DEFINE(lte_connected, 0, 1);
+K_SEM_DEFINE(lte_connected_sem, 0, 1);
 K_SEM_DEFINE(modem_shutdown_sem, 0, 1);
 
 static void socket_transmission_work_fn(struct k_work *work)
@@ -98,7 +98,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		printk("Network registration status: %s\n",
 		       evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 		       "Connected - home" : "Connected - roaming");
-		k_sem_give(&lte_connected);
+		k_sem_give(&lte_connected_sem);
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
 		printk("PSM parameter update: TAU: %d s, Active time: %d s\n",
@@ -183,7 +183,7 @@ int main(void)
 		return -1;
 	}
 
-	k_sem_take(&lte_connected, K_FOREVER);
+	k_sem_take(&lte_connected_sem, K_FOREVER);
 
 	err = socket_connect();
 	if (err) {
