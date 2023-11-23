@@ -175,7 +175,7 @@ static int read_state_and_enable_interrupts(struct selector *selector)
 
 static void selector_work_fn(struct k_work *w)
 {
-	struct selector *selector = CONTAINER_OF(w, struct selector, work);
+	struct selector *selector = CONTAINER_OF(w, struct selector, work.work);
 
 	int err = read_state_and_enable_interrupts(selector);
 

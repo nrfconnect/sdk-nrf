@@ -664,7 +664,7 @@ static void read_rsp_fn(struct k_work *work)
 {
 	struct hids_peripheral *per = CONTAINER_OF(work,
 						   struct hids_peripheral,
-						   read_rsp);
+						   read_rsp.work);
 	struct bt_hogp_rep_info *config_rep =
 		bt_hogp_rep_find(&per->hogp,
 				 BT_HIDS_REPORT_TYPE_FEATURE,
