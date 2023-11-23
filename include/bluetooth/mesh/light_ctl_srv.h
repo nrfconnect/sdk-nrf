@@ -68,7 +68,7 @@ struct bt_mesh_light_ctl_srv {
 	/** Lightness Server instance. */
 	struct bt_mesh_lightness_srv lightness_srv;
 	/** Model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

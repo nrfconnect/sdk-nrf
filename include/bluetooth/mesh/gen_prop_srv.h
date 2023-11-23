@@ -151,7 +151,7 @@ enum bt_mesh_prop_srv_state {
  */
 struct bt_mesh_prop_srv {
 	/** Pointer to the mesh model entry. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

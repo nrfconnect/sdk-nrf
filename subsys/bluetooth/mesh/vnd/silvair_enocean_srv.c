@@ -185,7 +185,7 @@ static void button_cb(struct bt_enocean_device *device,
 	}
 }
 
-static void status_pub(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static void status_pub(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       enum bt_mesh_silvair_enocean_status status, const uint8_t *addr)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SILVAIR_ENOCEAN_PROXY_OP, 8);
@@ -309,7 +309,7 @@ static void decommission_device(struct bt_mesh_silvair_enocean_srv *srv)
 	bt_enocean_foreach(find_and_decommission, &addr);
 }
 
-static int handle_get(struct bt_mesh_model *model,
+static int handle_get(const struct bt_mesh_model *model,
 		       struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf)
 {
@@ -328,7 +328,7 @@ static int handle_get(struct bt_mesh_model *model,
 	return 0;
 }
 
-static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	if (buf->len != BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MAXLEN - 1) {
@@ -386,7 +386,7 @@ static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int handle_delete(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_delete(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
 	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
@@ -408,7 +408,7 @@ static int handle_delete(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 	return 0;
 }
 
-static int handle_message(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_message(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
 	uint8_t sub_opcode;
@@ -436,7 +436,7 @@ const struct bt_mesh_model_op _bt_mesh_silvair_enocean_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_silvair_enocean_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_silvair_enocean_srv_init(const struct bt_mesh_model *model)
 {
 	if (!initialized) {
 		bt_enocean_init(&enocean_cbs);
@@ -460,7 +460,7 @@ static int bt_mesh_silvair_enocean_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_silvair_enocean_srv_start(struct bt_mesh_model *model)
+static int bt_mesh_silvair_enocean_srv_start(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
 
@@ -472,7 +472,7 @@ static int bt_mesh_silvair_enocean_srv_start(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_silvair_enocean_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_silvair_enocean_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
 
@@ -499,7 +499,7 @@ static void bt_mesh_silvair_enocean_srv_reset(struct bt_mesh_model *model)
 }
 
 static int bt_mesh_silvair_enocean_srv_settings_set(
-		struct bt_mesh_model *model, const char *name, size_t len_rd,
+		const struct bt_mesh_model *model, const char *name, size_t len_rd,
 		settings_read_cb read_cb, void *cb_arg)
 {
 	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;

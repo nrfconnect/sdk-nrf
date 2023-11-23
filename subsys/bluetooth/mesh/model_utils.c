@@ -102,7 +102,7 @@ int32_t model_delay_decode(uint8_t encoded_delay)
 	return encoded_delay * DELAY_TIME_STEP_MS;
 }
 
-int32_t model_ackd_timeout_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx)
+int32_t model_ackd_timeout_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx)
 {
 	uint8_t ttl = (ctx ? ctx->send_ttl : model->pub->ttl);
 	int32_t time = (CONFIG_BT_MESH_MOD_ACKD_TIMEOUT_BASE +

@@ -88,7 +88,7 @@ struct bt_mesh_silvair_enocean_srv {
 		BT_MESH_SILVAIR_ENOCEAN_PROXY_OP,
 		BT_MESH_SILVAIR_ENOCEAN_PROXY_MSG_MAXLEN)];
 	/** Access model pointer. */
-	struct bt_mesh_model *mod;
+	const struct bt_mesh_model *mod;
 	/** Entry in global list of Enocean Proxy models. */
 	sys_snode_t entry;
 };

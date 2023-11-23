@@ -95,7 +95,7 @@ struct bt_mesh_onoff_srv {
 	/** Handler function structure. */
 	const struct bt_mesh_onoff_srv_handlers *handlers;
 	/** Access model pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

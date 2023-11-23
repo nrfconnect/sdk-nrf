@@ -53,7 +53,7 @@ struct bt_mesh_ponoff_cli;
  */
 struct bt_mesh_ponoff_cli {
 	/** Model entry pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication buffer */

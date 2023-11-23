@@ -26,7 +26,7 @@ static void encode_status(const struct bt_mesh_lvl_status *status,
 			      model_transition_encode(status->remaining_time));
 }
 
-static void rsp_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static void rsp_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       const struct bt_mesh_lvl_status *status)
 {
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LVL_OP_STATUS,
@@ -36,7 +36,7 @@ static void rsp_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	bt_mesh_model_send(model, ctx, &rsp, NULL, 0);
 }
 
-static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
@@ -49,8 +49,8 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		struct net_buf_simple *buf, bool ack)
+static int set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+	       struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LVL_MSG_MINLEN_SET &&
 	    buf->len != BT_MESH_LVL_MSG_MAXLEN_SET) {
@@ -82,8 +82,8 @@ static int set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		      struct net_buf_simple *buf, bool ack)
+static int delta_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		     struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LVL_MSG_MINLEN_DELTA_SET &&
 	    buf->len != BT_MESH_LVL_MSG_MAXLEN_DELTA_SET) {
@@ -115,8 +115,8 @@ static int delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-		     struct net_buf_simple *buf, bool ack)
+static int move_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+		    struct net_buf_simple *buf, bool ack)
 {
 	if (buf->len != BT_MESH_LVL_MSG_MINLEN_MOVE_SET &&
 	    buf->len != BT_MESH_LVL_MSG_MAXLEN_MOVE_SET) {
@@ -159,37 +159,37 @@ static int move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 /* Message handlers */
 
-static int handle_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
 	return set(model, ctx, buf, true);
 }
 
-static int handle_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	return set(model, ctx, buf, false);
 }
 
-static int handle_delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_delta_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
 	return delta_set(model, ctx, buf, true);
 }
 
-static int handle_delta_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_delta_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
 	return delta_set(model, ctx, buf, false);
 }
 
-static int handle_move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_move_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	return move_set(model, ctx, buf, true);
 }
 
-static int handle_move_set_unack(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_move_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
 	return move_set(model, ctx, buf, false);
@@ -234,7 +234,7 @@ const struct bt_mesh_model_op _bt_mesh_lvl_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
+static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
 	struct bt_mesh_lvl_status status = { 0 };
@@ -246,7 +246,7 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	return 2;
 }
 
-static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
+static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
@@ -261,7 +261,7 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	srv->handlers->set(srv, NULL, &set, &status);
 }
 
-static void scene_recall_complete(struct bt_mesh_model *model)
+static void scene_recall_complete(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
 	struct bt_mesh_lvl_status status = { 0 };
@@ -279,7 +279,7 @@ BT_MESH_SCENE_ENTRY_SIG(lvl) = {
 	.recall_complete = scene_recall_complete,
 };
 
-static int update_handler(struct bt_mesh_model *model)
+static int update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
 	struct bt_mesh_lvl_status status = { 0 };
@@ -290,7 +290,7 @@ static int update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-static int bt_mesh_lvl_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_lvl_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_lvl_srv *srv = model->user_data;
 
@@ -303,7 +303,7 @@ static int bt_mesh_lvl_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_lvl_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_lvl_srv_reset(const struct bt_mesh_model *model)
 {
 	net_buf_simple_reset(model->pub->msg);
 }

@@ -34,7 +34,7 @@ static int status_decode(struct bt_mesh_light_xyl_cli *cli,
 	return 0;
 }
 
-static int handle_xyl_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_xyl_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
@@ -50,7 +50,7 @@ static int handle_xyl_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	return err;
 }
 
-static int handle_target_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_target_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
@@ -66,7 +66,7 @@ static int handle_target_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 	return err;
 }
 
-static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_default_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
@@ -90,7 +90,7 @@ static int handle_default_status(struct bt_mesh_model *model, struct bt_mesh_msg
 	return 0;
 }
 
-static int handle_range_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_range_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
@@ -140,7 +140,7 @@ const struct bt_mesh_model_op _bt_mesh_light_xyl_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_light_xyl_cli_init(struct bt_mesh_model *model)
+static int bt_mesh_light_xyl_cli_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 
@@ -157,7 +157,7 @@ static int bt_mesh_light_xyl_cli_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_light_xyl_cli_reset(struct bt_mesh_model *model)
+static void bt_mesh_light_xyl_cli_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_xyl_cli *cli = model->user_data;
 

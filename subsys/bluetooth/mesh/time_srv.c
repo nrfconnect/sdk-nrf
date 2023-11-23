@@ -105,7 +105,7 @@ static int16_t get_utc_delta(const struct bt_mesh_time_srv *srv, int64_t uptime)
 	return srv->data.sync.status.tai_utc_delta;
 }
 
-static int send_zone_status(struct bt_mesh_model *model,
+static int send_zone_status(const struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -126,7 +126,7 @@ static int send_zone_status(struct bt_mesh_model *model,
 	return bt_mesh_model_send(model, ctx, &msg, NULL, NULL);
 }
 
-static int send_tai_utc_delta_status(struct bt_mesh_model *model,
+static int send_tai_utc_delta_status(const struct bt_mesh_model *model,
 				     struct bt_mesh_msg_ctx *ctx)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -146,7 +146,7 @@ static int send_tai_utc_delta_status(struct bt_mesh_model *model,
 	return bt_mesh_model_send(model, ctx, &msg, NULL, NULL);
 }
 
-static int send_role_status(struct bt_mesh_model *model,
+static int send_role_status(const struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -161,7 +161,7 @@ static int send_role_status(struct bt_mesh_model *model,
 	return bt_mesh_model_send(model, ctx, &msg, NULL, NULL);
 }
 
-static int send_time_status(struct bt_mesh_model *model,
+static int send_time_status(const struct bt_mesh_model *model,
 			    struct bt_mesh_msg_ctx *ctx, int64_t uptime)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -195,7 +195,7 @@ static void time_status_send_after_delay(struct k_work *work)
 	(void)bt_mesh_time_srv_time_status_send(srv, NULL);
 }
 
-static int handle_time_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_time_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -247,7 +247,7 @@ static int handle_time_status(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 	return 0;
 }
 
-static int handle_time_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_time_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	send_time_status(model, ctx, k_uptime_get());
@@ -255,7 +255,7 @@ static int handle_time_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	return 0;
 }
 
-static int handle_time_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_time_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -275,7 +275,7 @@ static int handle_time_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	return 0;
 }
 
-static int handle_zone_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_zone_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	send_zone_status(model, ctx);
@@ -283,7 +283,7 @@ static int handle_zone_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	return 0;
 }
 
-static int handle_zone_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_zone_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -302,7 +302,7 @@ static int handle_zone_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	return 0;
 }
 
-static int handle_tai_utc_delta_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_tai_utc_delta_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	send_tai_utc_delta_status(model, ctx);
@@ -310,7 +310,7 @@ static int handle_tai_utc_delta_get(struct bt_mesh_model *model, struct bt_mesh_
 	return 0;
 }
 
-static int handle_tai_utc_delta_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_tai_utc_delta_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				    struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -328,7 +328,7 @@ static int handle_tai_utc_delta_set(struct bt_mesh_model *model, struct bt_mesh_
 	return 0;
 }
 
-static int handle_role_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_role_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	send_role_status(model, ctx);
@@ -336,7 +336,7 @@ static int handle_role_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	return 0;
 }
 
-static int handle_role_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_role_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
@@ -409,7 +409,7 @@ const struct bt_mesh_model_op _bt_mesh_time_setup_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_time_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_time_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 
@@ -422,7 +422,7 @@ static int bt_mesh_time_srv_init(struct bt_mesh_model *model)
 	return 0;
 }
 
-static void bt_mesh_time_srv_reset(struct bt_mesh_model *model)
+static void bt_mesh_time_srv_reset(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 	struct bt_mesh_time_srv_data data = { .timestamp = -STATUS_INTERVAL_MIN };
@@ -438,7 +438,7 @@ static void bt_mesh_time_srv_reset(struct bt_mesh_model *model)
 }
 
 #ifdef CONFIG_BT_MESH_TIME_SRV_PERSISTENT
-static int bt_mesh_time_srv_settings_set(struct bt_mesh_model *model,
+static int bt_mesh_time_srv_settings_set(const struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {
@@ -467,7 +467,7 @@ const struct bt_mesh_model_cb _bt_mesh_time_srv_cb = {
 #endif
 };
 
-static int bt_mesh_time_setup_srv_init(struct bt_mesh_model *model)
+static int bt_mesh_time_setup_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 #if defined(CONFIG_BT_MESH_COMP_PAGE_1)
@@ -486,7 +486,7 @@ const struct bt_mesh_model_cb _bt_mesh_time_setup_srv_cb = {
 	.init = bt_mesh_time_setup_srv_init,
 };
 
-int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
+int _bt_mesh_time_srv_update_handler(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 	struct bt_mesh_time_status status;

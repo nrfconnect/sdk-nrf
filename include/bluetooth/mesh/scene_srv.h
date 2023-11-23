@@ -97,9 +97,9 @@ struct bt_mesh_scene_srv {
 	/** TID context. */
 	struct bt_mesh_tid_ctx tid;
 	/** Composition data model pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Composition data setup model pointer. */
-	struct bt_mesh_model *setup_mod;
+	const struct bt_mesh_model *setup_mod;
 	/** Publication state. */
 	struct bt_mesh_model_pub pub;
 	/** Publication message. */
@@ -134,7 +134,7 @@ struct bt_mesh_scene_entry {
 	 *  @return The number of bytes written to @c data or a negative value
 	 *          on failure.
 	 */
-	ssize_t (*store)(struct bt_mesh_model *model, uint8_t data[]);
+	ssize_t (*store)(const struct bt_mesh_model *model, uint8_t data[]);
 
 	/** @brief Recall a scene based on the given scene data.
 	 *
@@ -150,7 +150,7 @@ struct bt_mesh_scene_entry {
 	 *  @param[in] len        Scene data length.
 	 *  @param[in] transition Transition parameters.
 	 */
-	void (*recall)(struct bt_mesh_model *model, const uint8_t data[],
+	void (*recall)(const struct bt_mesh_model *model, const uint8_t data[],
 		       size_t len, struct bt_mesh_model_transition *transition);
 
 	/** @brief Recall a scene is completed
@@ -166,7 +166,7 @@ struct bt_mesh_scene_entry {
 	 *
 	 *  @param[in] model      Model to restore the scene of.
 	 */
-	void (*recall_complete)(struct bt_mesh_model *model);
+	void (*recall_complete)(const struct bt_mesh_model *model);
 };
 
 /** @brief Notify the Scene Server that a Scene entry has changed.
@@ -177,7 +177,7 @@ struct bt_mesh_scene_entry {
  *
  *  @param[in] mod Model that invalidated the scene.
  */
-void bt_mesh_scene_invalidate(struct bt_mesh_model *mod);
+void bt_mesh_scene_invalidate(const struct bt_mesh_model *mod);
 
 /** @brief Set the current Scene.
  *

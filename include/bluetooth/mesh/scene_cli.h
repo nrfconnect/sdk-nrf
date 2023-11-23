@@ -70,7 +70,7 @@ struct bt_mesh_scene_cli {
 			       const struct bt_mesh_scene_register *reg);
 
 	/* Composition data entry pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/* Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/* Publication message */
