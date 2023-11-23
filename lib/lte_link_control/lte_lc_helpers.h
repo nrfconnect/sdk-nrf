@@ -256,6 +256,13 @@ uint32_t neighborcell_count_get(const char *at_response);
 /* @brief Parses an NCELLMEAS notification and stores neighboring cell
  *	  information in a struct.
  *
+ * 18446744073709551614 is the maximum value for timing_advance_meas_time and
+ * measurement_time in @ref lte_lc_cells_info.
+ * This value could be represented with uint64_t but cannot be stored by at_parser,
+ * which internally uses int64_t value for all integers.
+ * Hence, the maximum value for these fields is represented by 63 bits and is
+ * 9223372036854775807, which still represents millions of years.
+ *
  * @param at_response Pointer to buffer with AT response.
  * @param ncell Pointer to ncell structure.
  *
@@ -268,6 +275,13 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);
 
 /* @brief Parses a NCELLMEAS notification for GCI search types, and stores neighboring cell
  *	  and measured GCI cell information in a struct.
+ *
+ * 18446744073709551614 is the maximum value for timing_advance_meas_time and
+ * measurement_time in @ref lte_lc_cells_info.
+ * This value could be represented with uint64_t but cannot be stored by at_parser,
+ * which internally uses int64_t value for all integers.
+ * Hence, the maximum value for these fields is represented by 63 bits and is
+ * 9223372036854775807, which still represents millions of years.
  *
  * @param params Neighbor cell measurement parameters.
  * @param at_response Pointer to buffer with AT response.
