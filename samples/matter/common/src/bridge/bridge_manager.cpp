@@ -279,7 +279,7 @@ CHIP_ERROR BridgeManager::CreateEndpoint(uint8_t index, uint16_t endpointId)
 	EmberAfStatus ret = emberAfSetDynamicEndpoint(
 		index, endpointId, storedDevice->mEp,
 		Span<DataVersion>(storedDevice->mDataVersion, storedDevice->mDataVersionSize),
-		Span<const EmberAfDeviceType>(storedDevice->mDeviceTypeList, storedDevice->mDeviceTypeListSize));
+		Span<const EmberAfDeviceType>(storedDevice->mDeviceTypeList, storedDevice->mDeviceTypeListSize), kAggregatorEndpointId);
 
 	if (ret == EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_INF("Added device to dynamic endpoint %d (index=%d)", endpointId, index);

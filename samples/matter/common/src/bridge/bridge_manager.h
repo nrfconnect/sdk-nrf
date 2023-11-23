@@ -14,6 +14,7 @@ class BridgeManager {
 public:
 	static constexpr uint8_t kMaxBridgedDevices = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT;
 	static constexpr uint8_t kMaxBridgedDevicesPerProvider = CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER_PER_PROVIDER;
+	static constexpr chip::EndpointId kAggregatorEndpointId = CONFIG_BRIDGE_AGGREGATOR_ENDPOINT_ID;
 
 	using LoadStoredBridgedDevicesCallback = CHIP_ERROR (*)();
 
