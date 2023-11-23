@@ -16,6 +16,10 @@ config BRIDGE_MAX_BRIDGED_DEVICES_NUMBER_PER_PROVIDER
 	int "Maximum number of endpoints paired to the one non-Matter provider device"
 	default 2
 
+config BRIDGE_AGGREGATOR_ENDPOINT_ID
+	int "Id of an endpoint implementing Aggregator device type functionality"
+	default 1
+
 if BRIDGED_DEVICE_BT
 
 config BRIDGE_BT_RECOVERY_INTERVAL_MS
