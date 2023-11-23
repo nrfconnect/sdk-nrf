@@ -370,3 +370,9 @@ endif
 config NRF_WIFI_BEAMFORMING
 	bool "Enable Wi-Fi beamforming. Enabling beamforming can provide slight improvement in performance where as disabling it can provide better power saving in low network activity applications"
 	default y
+
+config NRF_WIFI_IFACE_MTU
+	int "MTU for Wi-Fi interface"
+	range 576 2304 if NET_IPV4
+	range 1280 2304 if NET_IPV6
+	default 1500
