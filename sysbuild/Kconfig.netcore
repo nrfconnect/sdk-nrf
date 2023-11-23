@@ -6,6 +6,17 @@ config SUPPORT_NETCORE
 	bool
 	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
 
+config NETCORE_REMOTE_BOARD_NAME
+	string
+	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp"
+	default "nrf5340dk_nrf5340_cpunet" if $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns"
+	default "thingy53_nrf5340_cpunet"  if $(BOARD) = "thingy53_nrf5340_cpuapp"
+	default "thingy53_nrf5340_cpunet"  if $(BOARD) = "thingy53_nrf5340_cpuapp_ns"
+
+config NETCORE_REMOTE_DOMAIN
+	string
+	default "CPUNET" if NETCORE_REMOTE_BOARD_NAME != ""
+
 menu "Network core configuration"
 	depends on SUPPORT_NETCORE
 
@@ -43,10 +54,10 @@ config NRF_DEFAULT_MULTIPROTOCOL
 
 choice NETCORE
 	prompt "Netcore image"
-	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
+	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_NAME != ""
+	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && NETCORE_REMOTE_BOARD_NAME != ""
+	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_NAME != ""
+	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_NONE
 	depends on SUPPORT_NETCORE
 
@@ -110,16 +121,15 @@ config NETCORE_IMAGE_PATH
 
 config NETCORE_IMAGE_BOARD
 	string
-	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
-	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
+	default NETCORE_REMOTE_BOARD_NAME
+	depends on NETCORE_EMPTY
 	help
 	  Remote board when building this sample.
 	  If not set, the board given to sysbuild is used.
 
 config NETCORE_IMAGE_DOMAIN
 	string
-	default "CPUNET" if (NETCORE_IMAGE_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_IMAGE_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_IMAGE_BOARD = "nrf7002dk_nrf5340_cpunet")
+	default NETCORE_REMOTE_DOMAIN
 
 config NETCORE_APP_UPDATE
 	bool "Network core updates"
