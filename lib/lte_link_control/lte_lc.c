@@ -368,8 +368,8 @@ static void at_handler_ncellmeas_gci(const char *response)
 	LOG_DBG("parse_ncellmeas_gci returned %d", err);
 	switch (err) {
 	case -E2BIG:
-		LOG_WRN("Not all neighbor cells could be parsed");
-		LOG_WRN("More cells than the configured max count of %d were found",
+		LOG_WRN("Not all neighbor cells could be parsed. "
+			"More cells than the configured max count of %d were found",
 			CONFIG_LTE_NEIGHBOR_CELLS_MAX);
 		/* Fall through */
 	case 0: /* Fall through */

@@ -22,7 +22,7 @@ static struct lte_lc_ncell test_neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cell test_gci_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static uint8_t lte_lc_callback_count_occurred;
 static uint8_t lte_lc_callback_count_expected;
-static char at_notif[256];
+static char at_notif[2048];
 
 K_SEM_DEFINE(event_handler_called_sem, 0, TEST_EVENT_MAX_COUNT);
 
@@ -1178,18 +1178,18 @@ void test_lte_lc_neighbor_cell_measurement_gci(void)
 {
 	int ret;
 	struct lte_lc_ncellmeas_params params = {
-		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE,
-		.gci_count = 15,
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT,
+		.gci_count = 10,
 	};
 	strcpy(at_notif,
 		"%NCELLMEAS: 0,"
 		"\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
 		"\"00567812\",\"11198\",\"3C4D\",65535,4,1300,75,53,16,189241,0,0,"
-		"\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0,\r\n");
+		"\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
 
 	lte_lc_callback_count_expected = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=5,15", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,10", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -1232,6 +1232,350 @@ void test_lte_lc_neighbor_cell_measurement_gci(void)
 	test_gci_cells[1].phys_cell_id = 449;
 	test_gci_cells[1].rsrp = 51;
 	test_gci_cells[1].rsrq = 11;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_gci_max_length(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE,
+		.gci_count = 15,
+	};
+
+	/* 18446744073709551614 is the maximum value for timing_advance_meas_time and
+	 * measurement_time in @ref lte_lc_cells_info.
+	 * This value could be represented with uint64_t but cannot be stored by at_parser,
+	 * which internally uses int64_t value for all integers.
+	 * Hence, the maximum value for these fields is represented by 63 bits and is
+	 * 9223372036854775807, which still represents millions of years.
+	 */
+	strcpy(at_notif,
+		/* Status */
+		"%NCELLMEAS: 0,"
+		/* Current cell */
+		"\"00123456\",\"555555\",\"0102\",65534,18446744073709551614,"
+		"999999,123,127,-127,184467440737095516140,1,17,"
+		/* Neighbor cells (17) */
+		"333333,100,101,102,0,333333,103,104,105,0,"
+		"333333,106,107,108,0,333333,109,110,111,0,"
+		"444444,112,113,114,0,444444,115,116,117,0,"
+		"444444,118,119,120,0,444444,121,122,123,0,"
+		"555555,124,125,126,0,555555,127,128,129,0,"
+		"555555,130,131,132,0,555555,133,134,135,0,"
+		"666666,136,137,138,0,666666,139,140,141,0,"
+		"666666,142,143,144,0,666666,145,146,147,0,"
+		"777777,148,149,150,0,"
+		/* GCI (surrounding) cells (14) */
+		"\"01234567\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"02345678\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"03456789\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"0456789A\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"056789AB\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"06789ABC\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"0789ABCD\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"089ABCDE\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"09ABCDEF\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"0ABCDEF0\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"0BCDEF01\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"0CDEF012\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"0DEF0123\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+		"\"0EF01234\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=5,15", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 555;
+	test_event_data[0].cells_info.current_cell.mnc = 555;
+	test_event_data[0].cells_info.current_cell.id = 0x00123456;
+	test_event_data[0].cells_info.current_cell.tac = 0x0102;
+	test_event_data[0].cells_info.current_cell.earfcn = 999999;
+	test_event_data[0].cells_info.current_cell.timing_advance = 65534;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 9223372036854775807;
+	test_event_data[0].cells_info.current_cell.measurement_time = 9223372036854775807;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 123;
+	test_event_data[0].cells_info.current_cell.rsrp = 127;
+	test_event_data[0].cells_info.current_cell.rsrq = -127;
+	test_event_data[0].cells_info.ncells_count = 17;
+	test_event_data[0].cells_info.gci_cells_count = 14;
+
+	/* Neighbor cells */
+	test_neighbor_cells[0].earfcn = 333333;
+	test_neighbor_cells[0].time_diff = 0;
+	test_neighbor_cells[0].phys_cell_id = 100;
+	test_neighbor_cells[0].rsrp = 101;
+	test_neighbor_cells[0].rsrq = 102;
+
+	test_neighbor_cells[1].earfcn = 333333;
+	test_neighbor_cells[1].time_diff = 0;
+	test_neighbor_cells[1].phys_cell_id = 103;
+	test_neighbor_cells[1].rsrp = 104;
+	test_neighbor_cells[1].rsrq = 105;
+
+	test_neighbor_cells[2].earfcn = 333333;
+	test_neighbor_cells[2].time_diff = 0;
+	test_neighbor_cells[2].phys_cell_id = 106;
+	test_neighbor_cells[2].rsrp = 107;
+	test_neighbor_cells[2].rsrq = 108;
+
+	test_neighbor_cells[3].earfcn = 333333;
+	test_neighbor_cells[3].time_diff = 0;
+	test_neighbor_cells[3].phys_cell_id = 109;
+	test_neighbor_cells[3].rsrp = 110;
+	test_neighbor_cells[3].rsrq = 111;
+
+	test_neighbor_cells[4].earfcn = 444444;
+	test_neighbor_cells[4].time_diff = 0;
+	test_neighbor_cells[4].phys_cell_id = 112;
+	test_neighbor_cells[4].rsrp = 113;
+	test_neighbor_cells[4].rsrq = 114;
+
+	test_neighbor_cells[5].earfcn = 444444;
+	test_neighbor_cells[5].time_diff = 0;
+	test_neighbor_cells[5].phys_cell_id = 115;
+	test_neighbor_cells[5].rsrp = 116;
+	test_neighbor_cells[5].rsrq = 117;
+
+	test_neighbor_cells[6].earfcn = 444444;
+	test_neighbor_cells[6].time_diff = 0;
+	test_neighbor_cells[6].phys_cell_id = 118;
+	test_neighbor_cells[6].rsrp = 119;
+	test_neighbor_cells[6].rsrq = 120;
+
+	test_neighbor_cells[7].earfcn = 444444;
+	test_neighbor_cells[7].time_diff = 0;
+	test_neighbor_cells[7].phys_cell_id = 121;
+	test_neighbor_cells[7].rsrp = 122;
+	test_neighbor_cells[7].rsrq = 123;
+
+	test_neighbor_cells[8].earfcn = 555555;
+	test_neighbor_cells[8].time_diff = 0;
+	test_neighbor_cells[8].phys_cell_id = 124;
+	test_neighbor_cells[8].rsrp = 125;
+	test_neighbor_cells[8].rsrq = 126;
+
+	test_neighbor_cells[9].earfcn = 555555;
+	test_neighbor_cells[9].time_diff = 0;
+	test_neighbor_cells[9].phys_cell_id = 127;
+	test_neighbor_cells[9].rsrp = 128;
+	test_neighbor_cells[9].rsrq = 129;
+
+	test_neighbor_cells[10].earfcn = 555555;
+	test_neighbor_cells[10].time_diff = 0;
+	test_neighbor_cells[10].phys_cell_id = 130;
+	test_neighbor_cells[10].rsrp = 131;
+	test_neighbor_cells[10].rsrq = 132;
+
+	test_neighbor_cells[11].earfcn = 555555;
+	test_neighbor_cells[11].time_diff = 0;
+	test_neighbor_cells[11].phys_cell_id = 133;
+	test_neighbor_cells[11].rsrp = 134;
+	test_neighbor_cells[11].rsrq = 135;
+
+	test_neighbor_cells[12].earfcn = 666666;
+	test_neighbor_cells[12].time_diff = 0;
+	test_neighbor_cells[12].phys_cell_id = 136;
+	test_neighbor_cells[12].rsrp = 137;
+	test_neighbor_cells[12].rsrq = 138;
+
+	test_neighbor_cells[13].earfcn = 666666;
+	test_neighbor_cells[13].time_diff = 0;
+	test_neighbor_cells[13].phys_cell_id = 139;
+	test_neighbor_cells[13].rsrp = 140;
+	test_neighbor_cells[13].rsrq = 141;
+
+	test_neighbor_cells[14].earfcn = 666666;
+	test_neighbor_cells[14].time_diff = 0;
+	test_neighbor_cells[14].phys_cell_id = 142;
+	test_neighbor_cells[14].rsrp = 143;
+	test_neighbor_cells[14].rsrq = 144;
+
+	test_neighbor_cells[15].earfcn = 666666;
+	test_neighbor_cells[15].time_diff = 0;
+	test_neighbor_cells[15].phys_cell_id = 145;
+	test_neighbor_cells[15].rsrp = 146;
+	test_neighbor_cells[15].rsrq = 147;
+
+	test_neighbor_cells[16].earfcn = 777777;
+	test_neighbor_cells[16].time_diff = 0;
+	test_neighbor_cells[16].phys_cell_id = 148;
+	test_neighbor_cells[16].rsrp = 149;
+	test_neighbor_cells[16].rsrq = 150;
+
+	/* GCI (surrounding) cells */
+	test_gci_cells[0].mcc = 555;
+	test_gci_cells[0].mnc = 555;
+	test_gci_cells[0].id = 0x01234567;
+	test_gci_cells[0].tac = 0x0102;
+	test_gci_cells[0].earfcn = 999999;
+	test_gci_cells[0].timing_advance = 65534;
+	test_gci_cells[0].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[0].measurement_time = 9223372036854775807;
+	test_gci_cells[0].phys_cell_id = 123;
+	test_gci_cells[0].rsrp = 127;
+	test_gci_cells[0].rsrq = -127;
+
+	test_gci_cells[1].mcc = 555;
+	test_gci_cells[1].mnc = 555;
+	test_gci_cells[1].id = 0x02345678;
+	test_gci_cells[1].tac = 0x0102;
+	test_gci_cells[1].earfcn = 999999;
+	test_gci_cells[1].timing_advance = 65534;
+	test_gci_cells[1].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[1].measurement_time = 9223372036854775807;
+	test_gci_cells[1].phys_cell_id = 123;
+	test_gci_cells[1].rsrp = 127;
+	test_gci_cells[1].rsrq = -127;
+
+	test_gci_cells[2].mcc = 555;
+	test_gci_cells[2].mnc = 555;
+	test_gci_cells[2].id = 0x03456789;
+	test_gci_cells[2].tac = 0x0102;
+	test_gci_cells[2].earfcn = 999999;
+	test_gci_cells[2].timing_advance = 65534;
+	test_gci_cells[2].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[2].measurement_time = 9223372036854775807;
+	test_gci_cells[2].phys_cell_id = 123;
+	test_gci_cells[2].rsrp = 127;
+	test_gci_cells[2].rsrq = -127;
+
+	test_gci_cells[3].mcc = 555;
+	test_gci_cells[3].mnc = 555;
+	test_gci_cells[3].id = 0x0456789A;
+	test_gci_cells[3].tac = 0x0102;
+	test_gci_cells[3].earfcn = 999999;
+	test_gci_cells[3].timing_advance = 65534;
+	test_gci_cells[3].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[3].measurement_time = 9223372036854775807;
+	test_gci_cells[3].phys_cell_id = 123;
+	test_gci_cells[3].rsrp = 127;
+	test_gci_cells[3].rsrq = -127;
+
+	test_gci_cells[4].mcc = 555;
+	test_gci_cells[4].mnc = 555;
+	test_gci_cells[4].id = 0x056789AB;
+	test_gci_cells[4].tac = 0x0102;
+	test_gci_cells[4].earfcn = 999999;
+	test_gci_cells[4].timing_advance = 65534;
+	test_gci_cells[4].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[4].measurement_time = 9223372036854775807;
+	test_gci_cells[4].phys_cell_id = 123;
+	test_gci_cells[4].rsrp = 127;
+	test_gci_cells[4].rsrq = -127;
+
+	test_gci_cells[5].mcc = 555;
+	test_gci_cells[5].mnc = 555;
+	test_gci_cells[5].id = 0x06789ABC;
+	test_gci_cells[5].tac = 0x0102;
+	test_gci_cells[5].earfcn = 999999;
+	test_gci_cells[5].timing_advance = 65534;
+	test_gci_cells[5].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[5].measurement_time = 9223372036854775807;
+	test_gci_cells[5].phys_cell_id = 123;
+	test_gci_cells[5].rsrp = 127;
+	test_gci_cells[5].rsrq = -127;
+
+	test_gci_cells[6].mcc = 555;
+	test_gci_cells[6].mnc = 555;
+	test_gci_cells[6].id = 0x0789ABCD;
+	test_gci_cells[6].tac = 0x0102;
+	test_gci_cells[6].earfcn = 999999;
+	test_gci_cells[6].timing_advance = 65534;
+	test_gci_cells[6].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[6].measurement_time = 9223372036854775807;
+	test_gci_cells[6].phys_cell_id = 123;
+	test_gci_cells[6].rsrp = 127;
+	test_gci_cells[6].rsrq = -127;
+
+	test_gci_cells[7].mcc = 555;
+	test_gci_cells[7].mnc = 555;
+	test_gci_cells[7].id = 0x089ABCDE;
+	test_gci_cells[7].tac = 0x0102;
+	test_gci_cells[7].earfcn = 999999;
+	test_gci_cells[7].timing_advance = 65534;
+	test_gci_cells[7].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[7].measurement_time = 9223372036854775807;
+	test_gci_cells[7].phys_cell_id = 123;
+	test_gci_cells[7].rsrp = 127;
+	test_gci_cells[7].rsrq = -127;
+
+	test_gci_cells[8].mcc = 555;
+	test_gci_cells[8].mnc = 555;
+	test_gci_cells[8].id = 0x09ABCDEF;
+	test_gci_cells[8].tac = 0x0102;
+	test_gci_cells[8].earfcn = 999999;
+	test_gci_cells[8].timing_advance = 65534;
+	test_gci_cells[8].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[8].measurement_time = 9223372036854775807;
+	test_gci_cells[8].phys_cell_id = 123;
+	test_gci_cells[8].rsrp = 127;
+	test_gci_cells[8].rsrq = -127;
+
+	test_gci_cells[9].mcc = 555;
+	test_gci_cells[9].mnc = 555;
+	test_gci_cells[9].id = 0x0ABCDEF0;
+	test_gci_cells[9].tac = 0x0102;
+	test_gci_cells[9].earfcn = 999999;
+	test_gci_cells[9].timing_advance = 65534;
+	test_gci_cells[9].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[9].measurement_time = 9223372036854775807;
+	test_gci_cells[9].phys_cell_id = 123;
+	test_gci_cells[9].rsrp = 127;
+	test_gci_cells[9].rsrq = -127;
+
+	test_gci_cells[10].mcc = 555;
+	test_gci_cells[10].mnc = 555;
+	test_gci_cells[10].id = 0x0BCDEF01;
+	test_gci_cells[10].tac = 0x0102;
+	test_gci_cells[10].earfcn = 999999;
+	test_gci_cells[10].timing_advance = 65534;
+	test_gci_cells[10].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[10].measurement_time = 9223372036854775807;
+	test_gci_cells[10].phys_cell_id = 123;
+	test_gci_cells[10].rsrp = 127;
+	test_gci_cells[10].rsrq = -127;
+
+	test_gci_cells[11].mcc = 555;
+	test_gci_cells[11].mnc = 555;
+	test_gci_cells[11].id = 0x0CDEF012;
+	test_gci_cells[11].tac = 0x0102;
+	test_gci_cells[11].earfcn = 999999;
+	test_gci_cells[11].timing_advance = 65534;
+	test_gci_cells[11].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[11].measurement_time = 9223372036854775807;
+	test_gci_cells[11].phys_cell_id = 123;
+	test_gci_cells[11].rsrp = 127;
+	test_gci_cells[11].rsrq = -127;
+
+	test_gci_cells[12].mcc = 555;
+	test_gci_cells[12].mnc = 555;
+	test_gci_cells[12].id = 0x0DEF0123;
+	test_gci_cells[12].tac = 0x0102;
+	test_gci_cells[12].earfcn = 999999;
+	test_gci_cells[12].timing_advance = 65534;
+	test_gci_cells[12].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[12].measurement_time = 9223372036854775807;
+	test_gci_cells[12].phys_cell_id = 123;
+	test_gci_cells[12].rsrp = 127;
+	test_gci_cells[12].rsrq = -127;
+
+	test_gci_cells[13].mcc = 555;
+	test_gci_cells[13].mnc = 555;
+	test_gci_cells[13].id = 0x0EF01234;
+	test_gci_cells[13].tac = 0x0102;
+	test_gci_cells[13].earfcn = 999999;
+	test_gci_cells[13].timing_advance = 65534;
+	test_gci_cells[13].timing_advance_meas_time = 9223372036854775807;
+	test_gci_cells[13].measurement_time = 9223372036854775807;
+	test_gci_cells[13].phys_cell_id = 123;
+	test_gci_cells[13].rsrp = 127;
+	test_gci_cells[13].rsrq = -127;
 
 	at_monitor_dispatch(at_notif);
 }

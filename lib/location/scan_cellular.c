@@ -16,6 +16,12 @@
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+BUILD_ASSERT(CONFIG_AT_MONITOR_HEAP_SIZE >= 1024,
+	    "CONFIG_AT_MONITOR_HEAP_SIZE must be >= 1024 to fit neighbor cell measurements "
+	    "and other notifications at the same time");
+#endif
+
 static struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cell gci_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cells_info scan_cellular_info = {

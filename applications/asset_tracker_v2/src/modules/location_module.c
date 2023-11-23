@@ -26,10 +26,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_LOCATION_MODULE_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_AT_MONITOR_HEAP_SIZE >= 1024,
-	    "CONFIG_AT_MONITOR_HEAP_SIZE must be >= 1024 to fit neighbor cell measurements "
-	    "and other notifications at the same time");
-
 struct location_msg_data {
 	union {
 		struct app_module_event app;
