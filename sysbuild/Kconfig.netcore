@@ -2,6 +2,12 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+config EXTERNAL_CONFIGURED_NETCORE
+	bool
+	default y
+	select NETCORE_REMOTE_NRF5340_CPUNET if NET_CORE_BOARD = "nrf5340dk_nrf5340_cpunet"
+	depends on NET_CORE_IMAGE_HCI_IPC # Zephyr Kconfig enabling HCI IPC on netcore
+
 config SUPPORT_NETCORE
 	bool
 	default y if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns" || $(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
@@ -59,7 +65,7 @@ choice NETCORE
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_NONE
-	depends on SUPPORT_NETCORE
+	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
 
 config NETCORE_NONE
 	bool "None"
