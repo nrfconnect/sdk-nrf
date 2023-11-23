@@ -19,8 +19,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt_ctlr_cfg, CONFIG_BT_MGMT_CTLR_CFG_LOG_LEVEL);
 
-#define COMPANY_ID_NORDIC	0x0059
-#define COMPANY_ID_PACKETCRAFT	0x07E8
+#define COMPANY_ID_NORDIC      0x0059
+#define COMPANY_ID_PACKETCRAFT 0x07E8
 
 #define WDT_TIMEOUT_MS	      1200
 #define CTLR_POLL_INTERVAL_MS (WDT_TIMEOUT_MS - 200)
@@ -163,14 +163,12 @@ int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version, uint16_t *manufacturer
 		if (rp->manufacturer == COMPANY_ID_PACKETCRAFT) {
 			/* NOTE: The string below is used by the Nordic CI system */
 			LOG_INF("Controller: LL_ACS_NRF53: Version %s (0x%02x), Revision %d",
-				bt_hci_get_ver_str(rp->hci_version),
-				rp->hci_version,
+				bt_hci_get_ver_str(rp->hci_version), rp->hci_version,
 				rp->hci_revision);
 		} else if (rp->manufacturer == COMPANY_ID_NORDIC) {
 			/* NOTE: The string below is used by the Nordic CI system */
 			LOG_INF("Controller: SoftDevice: Version %s (0x%02x), Revision %d",
-				bt_hci_get_ver_str(rp->hci_version),
-				rp->hci_version,
+				bt_hci_get_ver_str(rp->hci_version), rp->hci_version,
 				rp->hci_revision);
 		} else {
 			LOG_ERR("Unsupported controller");
@@ -193,6 +191,11 @@ int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 	ret = bt_mgmt_ctlr_cfg_manufacturer_get(true, &manufacturer);
 	if (ret) {
 		return ret;
+	}
+
+	if ((IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) && (manufacturer != COMPANY_ID_PACKETCRAFT)) ||
+	    (!IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) && (manufacturer == COMPANY_ID_PACKETCRAFT))) {
+		LOG_ERR("Controller config on APP and controller on NET mismatch.");
 	}
 
 	if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53) && (manufacturer == COMPANY_ID_PACKETCRAFT)) {
