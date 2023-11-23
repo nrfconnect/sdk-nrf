@@ -38,7 +38,7 @@
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/audio/                      @nrfconnect/ncs-audio
-/applications/peripheral_sensor_node/     @rakons maje-emb
+/applications/peripheral_sensor_node/     @rakons @maje-emb
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
 /applications/zigbee_weather_station/     @milewr
 # Boards
