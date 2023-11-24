@@ -347,10 +347,6 @@
 //#define MBEDTLS_PK_WRITE_C                                 @MBEDTLS_PK_WRITE_C@
 #cmakedefine MBEDTLS_MD_C
 
-/* Max curve bits for PSA APIs */
-#cmakedefine PSA_VENDOR_ECC_MAX_CURVE_BITS                      @PSA_VENDOR_ECC_MAX_CURVE_BITS@
-
-
 /* TLS/DTLS configurations */
 #cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
 #cmakedefine MBEDTLS_SSL_DTLS_CONNECTION_ID
