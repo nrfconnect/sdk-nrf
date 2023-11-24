@@ -201,6 +201,9 @@ endmenu
 
 rsource "Kconfig.tfm.pm"
 
+# Pull in full list of peripherals
+rsource "Kconfig.peripheral_secure"
+
 config TFM_SECURE_UART
 	bool "TF-M configure UART instance as secure peripheral"
 	default y if !TFM_LOG_LEVEL_SILENCE
@@ -242,9 +245,6 @@ config TFM_SECURE_UART1
 endchoice
 
 endif # TFM_SECURE_UART
-
-# Pull in full list of peripherals
-rsource "Kconfig.peripheral_secure"
 
 config TFM_EXPERIMENTAL
 	bool
