@@ -23,13 +23,6 @@ using namespace chip::DeviceLayer;
 
 #if CONFIG_CHIP_OTA_REQUESTOR
 
-#if CONFIG_THREAD_WIFI_SWITCHING
-#include "ota_multi_image_processor_impl.h"
-using OTAImageProcessorType = OTAMultiImageProcessorImpl;
-#else
-using OTAImageProcessorType = OTAImageProcessorBaseImpl;
-#endif
-
 namespace
 {
 DefaultOTARequestorStorage sOTARequestorStorage;
@@ -42,9 +35,9 @@ chip::DefaultOTARequestor sOTARequestor;
 OTAImageProcessorImpl &GetOTAImageProcessor()
 {
 #if CONFIG_PM_DEVICE && CONFIG_NORDIC_QSPI_NOR
-	static OTAImageProcessorType sOTAImageProcessor(&GetFlashHandler());
+	static OTAImageProcessorBaseImpl sOTAImageProcessor(&GetFlashHandler());
 #else
-	static OTAImageProcessorType sOTAImageProcessor;
+	static OTAImageProcessorBaseImpl sOTAImageProcessor;
 #endif
 	return sOTAImageProcessor;
 }

@@ -16,9 +16,7 @@ if(CONF_FILE)
     get_filename_component(CONFIG_FILE_NAME ${CONF_FILE} NAME)
 endif()
 
-if("${CONFIG_FILE_NAME}" STREQUAL "prj_thread_wifi_switched.conf")
-    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_thread_wifi_switched.yml)
-elseif(NOT "${CONFIG_FILE_NAME}" STREQUAL "prj_no_dfu.conf")
+if(NOT "${CONFIG_FILE_NAME}" STREQUAL "prj_no_dfu.conf")
     set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu.yml)
 endif()
 
@@ -62,36 +60,10 @@ if(CONFIG_MCUMGR_TRANSPORT_BT)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
 endif()
 
-if(CONFIG_THREAD_WIFI_SWITCHING)
-    target_sources(app PRIVATE
-        src/software_images_swapper.cpp
-        ${COMMON_ROOT}/src/ota_multi_image_processor_impl.cpp
-        ${COMMON_ROOT}/src/ota_multi_image_downloader.cpp
-    )
-endif()
-
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL
     GEN_DIR src/zap-generated
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/lock.zap
 )
-
-if(CONFIG_THREAD_WIFI_SWITCHING)
-    find_package(Python3)
-    set(app_idx ${CONFIG_APPLICATION_IDX})
-    add_custom_target(flash-external
-        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/src/flash-external.py
-            --app ${APPLICATION_BINARY_DIR}/zephyr/app_update.bin
-            --app-offset ${PM_APP_${app_idx}_CORE_APP_OFFSET}
-            --app-size ${PM_APP_${app_idx}_CORE_APP_SIZE}
-            --net ${APPLICATION_BINARY_DIR}/zephyr/net_core_app_update.bin
-            --net-offset ${PM_APP_${app_idx}_CORE_NET_OFFSET}
-            --net-size ${PM_APP_${app_idx}_CORE_NET_SIZE}
-        USES_TERMINAL
-        DEPENDS
-            ${APPLICATION_BINARY_DIR}/zephyr/app_update.bin
-            ${APPLICATION_BINARY_DIR}/zephyr/net_core_app_update.bin
-    )
-endif()
 # NORDIC SDK APP END
