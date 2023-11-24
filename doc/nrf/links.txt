@@ -678,6 +678,8 @@
 
 .. ### Source: App stores (play.google.com & apps.apple.com)
 
+.. _`Fast Pair Validator app`: https://play.google.com/store/apps/details?id=com.google.location.nearby.apps.fastpair.validator
+
 .. _`nRF Device Manager mobile app for iOS`: https://apps.apple.com/us/app/nrf-connect-device-manager/id1519423539
 .. _`nRF Device Manager mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfconnectdevicemanager
 
