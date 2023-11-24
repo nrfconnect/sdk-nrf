@@ -220,11 +220,13 @@ static void pa_sync_terminated_cb(struct bt_le_per_adv_sync *sync,
 
 	LOG_DBG("Periodic advertising sync lost");
 
-	msg.event = BT_MGMT_PA_SYNC_LOST;
-	msg.pa_sync = sync;
+	if (info->reason != BT_HCI_ERR_LOCALHOST_TERM_CONN) {
+		msg.event = BT_MGMT_PA_SYNC_LOST;
+		msg.pa_sync = sync;
 
-	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
-	ERR_CHK(ret);
+		ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+		ERR_CHK(ret);
+	}
 }
 
 static struct bt_le_per_adv_sync_cb sync_callbacks = {

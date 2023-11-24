@@ -93,6 +93,12 @@ static void button_msg_sub_thread(void)
 					LOG_WRN("Failed to stop broadcast sink: %d", ret);
 				}
 			} else if (strm_state == STATE_PAUSED) {
+				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
+				if (ret) {
+					LOG_WRN("Failed to start scanning for broadcaster: %d",
+						ret);
+				}
+
 				ret = broadcast_sink_start();
 				if (ret) {
 					LOG_WRN("Failed to start broadcast sink: %d", ret);
@@ -123,6 +129,10 @@ static void button_msg_sub_thread(void)
 			ret = broadcast_sink_change_active_audio_stream();
 			if (ret) {
 				LOG_WRN("Failed to change active audio stream: %d", ret);
+			}
+			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
+			if (ret) {
+				LOG_WRN("Failed to start scanning for broadcaster: %d", ret);
 			}
 
 			break;
@@ -242,11 +252,26 @@ static void le_audio_msg_sub_thread(void)
 			break;
 
 		case LE_AUDIO_EVT_SYNC_LOST:
-			LOG_INF("Sync lost");
+			LOG_INF("Sync lost, reason = %d", msg.sync_lost_reason);
 
 			ret = bt_mgmt_pa_sync_delete(msg.pa_sync);
 			if (ret) {
 				LOG_WRN("Failed to delete PA sync");
+			}
+
+			if (msg.sync_lost_reason != BT_HCI_ERR_LOCALHOST_TERM_CONN) {
+				if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
+					ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
+								 NULL);
+					if (ret != -EALREADY) {
+						LOG_WRN("Scanning already started: %d", ret);
+					} else {
+						/* NOTE: The string below is used by the Nordic CI
+						 * system
+						 */
+						LOG_INF("Restarted scanning for broadcaster");
+					}
+				}
 			}
 
 			if (strm_state == STATE_STREAMING) {

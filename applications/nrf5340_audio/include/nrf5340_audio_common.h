@@ -34,6 +34,7 @@ struct le_audio_msg {
 	enum le_audio_evt_type event;
 	struct bt_conn *conn;
 	struct bt_le_per_adv_sync *pa_sync;
+	uint8_t sync_lost_reason;
 };
 
 struct sdu_ref_msg {

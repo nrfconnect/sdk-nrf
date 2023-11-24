@@ -53,6 +53,7 @@ static struct audio_codec_info audio_codec_info[CONFIG_BT_BAP_BROADCAST_SNK_STRE
 static uint32_t bis_index_bitfields[CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT];
 
 static struct bt_le_per_adv_sync *pa_sync_stored;
+static uint8_t stream_stopped_reason;
 
 static struct active_audio_stream active_stream;
 
@@ -118,6 +119,7 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 
 	if (event == LE_AUDIO_EVT_SYNC_LOST) {
 		msg.pa_sync = pa_sync_stored;
+		msg.sync_lost_reason = stream_stopped_reason;
 		pa_sync_stored = NULL;
 	}
 
@@ -191,11 +193,12 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
+	stream_stopped_reason = reason;
 
 	switch (reason) {
 	case BT_HCI_ERR_LOCALHOST_TERM_CONN:
 		LOG_INF("Stream stopped by user");
-		le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
+		le_audio_event_publish(LE_AUDIO_EVT_SYNC_LOST);
 
 		break;
 
