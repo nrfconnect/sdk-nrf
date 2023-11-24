@@ -30,46 +30,11 @@ config THREAD_WIFI_SWITCHING
 	bool "Switching between Thread and Wi-Fi network support"
 	depends on SOC_SERIES_NRF53X
 	depends on NET_L2_OPENTHREAD || CHIP_WIFI
-	depends on CHIP_OTA_REQUESTOR
 	select EXPERIMENTAL
 	help
 	  Enable the functionality that allows a user to switch between Matter over Thread and Matter
 	  over Wi-Fi variants of the application, stored in the respective partitions in the external
 	  flash memory.
-
-if THREAD_WIFI_SWITCHING
-
-config APPLICATION_IDX
-	int
-	default 1 if NET_L2_OPENTHREAD
-	default 2 if CHIP_WIFI
-
-config APPLICATION_OTHER_IDX
-	int
-	default 2 if NET_L2_OPENTHREAD
-	default 1 if CHIP_WIFI
-
-config APPLICATION_LABEL
-	string
-	default "Thread" if NET_L2_OPENTHREAD
-	default "Wi-Fi" if CHIP_WIFI
-
-config APPLICATION_OTHER_LABEL
-	string
-	default "Wi-Fi" if NET_L2_OPENTHREAD
-	default "Thread" if CHIP_WIFI
-
-config THREAD_WIFI_SWITCHING_CLI_SUPPORT
-	bool "Add CLI command for triggering of the switch between Thread and Wi-Fi"
-	default n
-	select CHIP_LIB_SHELL
-
-# We need more heap size for image swap buffers
-config CHIP_MALLOC_SYS_HEAP_SIZE
-	default 30720 if CHIP_WIFI
-	default 10240 if NET_L2_OPENTHREAD
-
-endif
 
 # Sample configuration used for Thread networking
 if NET_L2_OPENTHREAD
