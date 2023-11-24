@@ -548,7 +548,7 @@ static void trigger_handler(struct k_work *work)
 	sensor_trigger_handler_t handler;
 	int err = 0;
 	struct paw3212_data *data = CONTAINER_OF(work, struct paw3212_data,
-						     trigger_handler_work);
+						 trigger_handler_work);
 	const struct device *dev = data->dev;
 	const struct paw3212_config *config = dev->config;
 
@@ -643,7 +643,7 @@ static int paw3212_async_init_configure(const struct device *dev)
 static void paw3212_async_init(struct k_work *work)
 {
 	struct paw3212_data *data = CONTAINER_OF(work, struct paw3212_data,
-						 init_work);
+						 init_work.work);
 	const struct device *dev = data->dev;
 
 	LOG_DBG("PAW3212 async init step %d", data->async_init_step);
