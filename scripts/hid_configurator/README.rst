@@ -73,7 +73,7 @@ Complete the following steps:
 
       py -3 -m pip install -r requirements_music_led_stream.txt
 
-For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
+   For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
 
 Debian/Ubuntu/Linux Mint
 ========================
@@ -123,7 +123,7 @@ Complete the following steps:
       sudo apt-get install portaudio19-dev python3-pyaudio
       pip3 install --user -r requirements_music_led_stream.txt
 
-  For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
+   For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
 
 Stopping fwupd daemon
 =====================
@@ -255,7 +255,7 @@ Performing DFU
 
 The nRF Desktop application supports background DFU (Device Firmware Upgrade).
 The image is passed to the device while the device is in normal operation.
-The new image is stored on a dedicated update partition of the flash memory.
+The new image is stored on a dedicated update partition of the non-volatile memory.
 When the whole image is transmitted, the update process is completed during the next reboot of the device.
 
 If the DFU process is interrupted, it can be resumed using the same image, unless the device restarts.
@@ -270,6 +270,8 @@ When the upload is completed, the script reboots the device.
 Customize the command with the following variable:
 
 ``UPDATE_IMAGE_PATH`` - Path to the DFU update file.
+
+For details about update image generation in the nRF Desktop application, see :ref:`nrf_desktop_bootloader_background_dfu`.
 
 To perform a DFU operation, run the following command:
 
