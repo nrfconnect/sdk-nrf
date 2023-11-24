@@ -172,7 +172,7 @@ config TFM_ITS_CREATE_FLASH_LAYOUT
 	  partition
 
 config TFM_ITS_RAM_FS
-	bool "Enable emulated RAM FS"
+	bool "Emulated RAM FS"
 	default n
 	help
 	  Enable emulated RAM FS for platforms that don't have flash for
@@ -225,14 +225,14 @@ config TFM_PS_CREATE_FLASH_LAYOUT
 	  Create flash FS if it doesn't exist for Protected Storage partition
 
 config TFM_PS_RAM_FS
-	bool "Enable emulated RAM FS"
+	bool "Emulated RAM FS"
 	default n
 	help
 	  Enable emulated RAM FS for platforms that don't have flash for
 	  Protected Storage partition
 
 config TFM_PS_ROLLBACK_PROTECTION
-	bool "Enable rollback protection"
+	bool "Rollback protection"
 	default y
 	help
 	  Enable rollback protection for Protected Storage partition
@@ -272,7 +272,7 @@ config TFM_CONN_HANDLE_MAX_NUM
 	  the same time
 
 config TFM_DOORBELL_API
-	bool "Enable the doorbell APIs"
+	bool "Doorbell APIs"
 	depends on TFM_IPC
 	default n
 endmenu
