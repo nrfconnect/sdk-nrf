@@ -36,17 +36,6 @@ config TFM_LOG_LEVEL_SILENCE
 
 choice TFM_PROFILE_TYPE
 	default TFM_PROFILE_TYPE_MINIMAL
-
-config TFM_PROFILE_TYPE_MINIMAL
-	bool "Use minimal TF-M build"
-	select PSA_DEFAULT_OFF
-	help
-	  Use minimal TF-M build. This will make the TF-M image fit within 32kB.
-	  No configuration of the size of the partition nor the features of the
-	  TF-M image can be done when this option is selected. If your application
-	  needs a different TF-M configuration you have to disable this option
-	  and reproduce the desired configuration through kconfig fragments.
-
 endchoice
 
 choice TFM_MODEL
