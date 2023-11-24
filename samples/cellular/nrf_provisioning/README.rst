@@ -146,15 +146,18 @@ The following is an example output of the sample when there is no provisioning c
 .. code-block:: console
 
 	<inf> nrf_provisioning_sample: Establishing LTE link ...
+	<inf> nrf_provisioning_sample: Provisioning started
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: No more commands to process on server side
+	<inf> nrf_provisioning_sample: Provisioning stopped
 
 The following is an example output when the sample is processing commands from the server:
 
 .. code-block:: console
 
 	<inf> nrf_provisioning_sample: Establishing LTE link ...
+	<inf> nrf_provisioning_sample: Provisioning started
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: Processing commands
@@ -167,6 +170,9 @@ The following is an example output when the sample is processing commands from t
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: No more commands to process on server side
+	<inf> nrf_provisioning_sample: Provisioning stopped
+	<inf> nrf_provisioning_sample: Provisioning done, rebooting...
+	<inf> nrf_provisioning: Disconnected from network - provisioning paused
 
 Dependencies
 ************
