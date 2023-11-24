@@ -85,7 +85,7 @@ In addition, it uses the following Zephyr libraries:
 * :file:`include/zephyr/types.h`
 * :file:`lib/libc/minimal/include/errno.h`
 * :file:`include/sys/printk.h`
-* :file:`include/random/rand32.h`
+* :file:`include/random/random.h`
 * :ref:`zephyr:bluetooth_api`:
 
   * :file:`include/bluetooth/bluetooth.h`
