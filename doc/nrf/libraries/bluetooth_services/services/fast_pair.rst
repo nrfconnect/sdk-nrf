@@ -20,6 +20,11 @@ Characteristics
 The Fast Pair GATT characteristics are described in detail in the `Fast Pair GATT Characteristics`_ documentation.
 The implementation in the |NCS| follows these requirements.
 
+The Fast Pair service also contains additional GATT characteristics under the following conditions:
+
+* The Additional Data GATT characteristic is enabled when an extension requires it.
+  Currently, only the Personalized Name extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_EXT_PN`) requires this characteristic.
+
 Configuration
 *************
 
@@ -27,12 +32,15 @@ Set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option to enable the modul
 
 The following Kconfig options are also available for this module:
 
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` - The option enables user reset action that is executed together with the Fast Pair factory reset operation.
+  See the :ref:`ug_bt_fast_pair_factory_reset_custom_user_reset_action` for more details.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX` - The option configures maximum number of stored Account Keys.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON` - These options are used to select the cryptographic backend for Fast Pair.
   The Oberon backend is used by default.
   The Mbed TLS backend uses Mbed TLS crypto APIs, which are now considered legacy APIs.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` - The option enables the `Fast Pair Personalized Name extension`_.
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX` - The option specifies the maximum length of a stored Fast Pair Personalized Name.
+
+  * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX` - The option specifies the maximum length of a stored Fast Pair Personalized Name.
 
 See the Kconfig help for details.
 
