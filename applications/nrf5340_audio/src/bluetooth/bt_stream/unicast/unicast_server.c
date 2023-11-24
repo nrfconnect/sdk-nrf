@@ -592,6 +592,7 @@ int unicast_server_send(struct le_audio_encoded_audio enc_audio)
 	net_buf_add_mem(buf, enc_audio.data, enc_audio.size);
 
 	atomic_inc(&iso_tx_pool_alloc);
+	/* No need to use timestamps here, as there is for now only one channel being sent back. */
 	ret = bt_bap_stream_send(sources[0].stream, buf, sources[0].seq_num++,
 				 BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
