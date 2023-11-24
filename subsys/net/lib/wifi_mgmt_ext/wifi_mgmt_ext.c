@@ -93,6 +93,9 @@ static int add_network_from_credentials_struct_personal(struct wifi_credentials_
 			     "5765 5785 5805 5825", resp.network_id);
 	}
 
+	/* Setting PMF to optional */
+	z_wpa_cli_cmd_v("set_network %d ieee80211w 1", resp.network_id);
+
 	z_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 
 	z_wpa_cli_cmd_v("select_network %d", resp.network_id);
