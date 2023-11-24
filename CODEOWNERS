@@ -136,7 +136,6 @@ Kconfig*                                  @tejlmand
 /modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @nrfconnect/ncs-cia @plskeggs @sigvartmh
-/modules/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/                             @nrfconnect/ncs-cia @lemrey
