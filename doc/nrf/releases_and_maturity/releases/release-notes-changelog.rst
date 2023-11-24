@@ -647,6 +647,8 @@ Documentation
   * The :ref:`ug_nrf9160_gs` by replacing the Updating the DK firmware section with a new :ref:`nrf9160_gs_installing_software` section.
     This new section includes steps for using Quick Start, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF91 Series DKs.
   * The :ref:`tfm_enable_share_uart` section on :ref:`ug_nrf9160`.
+  * Integration steps in the :ref:`ug_bt_fast_pair` guide.
+    Reorganized extension-specific content into dedicated subsections.
 
 * Removed the Welcome to the |NCS| page.
   This page is replaced with existing :ref:`ncs_introduction` page.
