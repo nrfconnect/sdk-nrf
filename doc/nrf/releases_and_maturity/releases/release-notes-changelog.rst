@@ -257,6 +257,10 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Added credential check before connecting to network.
 
+* :ref:`nrf_provisioning_sample` sample:
+
+  * Added event handling for events from device mode callback.
+
 Cryptography samples
 --------------------
 
@@ -500,6 +504,10 @@ Libraries for networking
 * :ref:`lib_nrf_cloud` library:
 
   * Added the :c:func:`nrf_cloud_credentials_configured_check` function to check if credentials exist based on the application's configuration.
+
+* :ref:`lib_nrf_provisioning` library:
+
+  * Updated the device mode callback to send an event when the provisioning state changes.
 
 Libraries for NFC
 -----------------
