@@ -767,7 +767,7 @@ static int pmw3360_async_init_configure(const struct device *dev)
 static void pmw3360_async_init(struct k_work *work)
 {
 	struct pmw3360_data *data = CONTAINER_OF(work, struct pmw3360_data,
-						 init_work);
+						 init_work.work);
 	const struct device *dev = data->dev;
 
 	LOG_DBG("PMW3360 async init step %d", data->async_init_step);
