@@ -443,6 +443,7 @@ int nrf_provisioning_schedule(void)
 
 	if (first) {
 		first = false;
+		nxt_provisioning = CONFIG_NRF_PROVISIONING_INTERVAL_S;
 		goto out;
 	}
 
