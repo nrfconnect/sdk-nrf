@@ -418,7 +418,11 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_readme` library:
+
+  * Updated:
+
+    * Improved the :ref:`bt_fast_pair_readme` library documentation to include the description of the missing Kconfig options.
 
 Bootloader libraries
 --------------------
