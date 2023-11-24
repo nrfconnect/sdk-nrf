@@ -10,7 +10,7 @@
 #include <zephyr/device.h>
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(at_monitor, CONFIG_AT_MONITOR_LOG_LEVEL);
