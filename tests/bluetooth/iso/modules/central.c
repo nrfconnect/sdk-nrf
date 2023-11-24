@@ -79,7 +79,8 @@ static void work_dummy_data_send(struct k_work *work)
 	static uint8_t channel_index;
 	static uint32_t acl_send_count[CONFIG_BT_MAX_CONN];
 
-	struct peer_device *peer = CONTAINER_OF(work, struct peer_device, dummy_data_send_work);
+	struct peer_device *peer = CONTAINER_OF(work, struct peer_device,
+						dummy_data_send_work.work);
 
 	ret = channel_index_get(peer->conn, &channel_index);
 	if (ret) {
