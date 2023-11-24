@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <unity.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/fff.h>
 #include <syscalls/random.h>

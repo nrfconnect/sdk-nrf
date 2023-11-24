@@ -8,7 +8,7 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/unistd.h>
 #include <zephyr/posix/netdb.h>
