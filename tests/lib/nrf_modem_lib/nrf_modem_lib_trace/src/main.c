@@ -9,7 +9,7 @@
 #include <zephyr/toolchain/common.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/fff.h>
-#include <syscalls/rand32.h>
+#include <syscalls/random.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/trace_backend.h>
 
