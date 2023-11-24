@@ -1153,7 +1153,7 @@ static void disconnected_headset_cleanup(uint8_t chan_idx)
 	headsets[chan_idx].num_source_eps = 0;
 }
 
-static int iso_stream_send(uint8_t const *const data, size_t size, struct le_audio_headset *headset)
+static int iso_stream_send(uint8_t const *const data, size_t size, struct le_audio_headset *headset, uint32_t timestamp)
 {
 	int ret;
 	struct net_buf *buf;
@@ -1191,7 +1191,8 @@ static int iso_stream_send(uint8_t const *const data, size_t size, struct le_aud
 
 	ret = bt_bap_stream_send(&headset->sink_stream, buf,
 				 get_and_incr_seq_num(&headset->sink_stream),
-				 BT_ISO_TIMESTAMP_NONE);
+				 timestamp);
+				 //BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
 		LOG_WRN("Failed to send audio data to %s: %d", headset->ch_name, ret);
 		net_buf_unref(buf);
@@ -1306,9 +1307,11 @@ int unicast_client_stop(void)
 	return 0;
 }
 
+static bool channels_are_synched = false;
+
 int unicast_client_send(struct le_audio_encoded_audio enc_audio)
 {
-	int ret;
+	int ret = 1;
 	size_t data_size_pr_stream;
 	struct bt_iso_tx_info tx_info = {0};
 	struct sdu_ref_msg msg;
@@ -1325,22 +1328,86 @@ int unicast_client_send(struct le_audio_encoded_audio enc_audio)
 		return -EINVAL;
 	}
 
-	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream.ep->iso->chan,
-					      &tx_info);
-	} else if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream.ep->iso->chan,
-					      &tx_info);
-	} else {
+	if (!ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)
+		&& !ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
 		/* This can happen if a headset is reset and the state in
 		 * streamctrl hasn't had time to update yet
 		 */
 		LOG_DBG("No headset in stream state");
 		return -ECANCELED;
-	}
+	} else if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)
+			   && ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)
+			   && !channels_are_synched) {
+		/* We are transitioning from state where only one channel was streaming.
+		 * We know this because both channels are not synced. All channels needs to sync.
+		 */
+		
+		ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
+						&headsets[AUDIO_CH_L], BT_ISO_TIMESTAMP_NONE);
+		if (ret) {
+			LOG_DBG("Failed to send data to left channel");
+		}
 
-	if (ret) {
-		LOG_DBG("Error getting ISO TX anchor point: %d", ret);
+		ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream.ep->iso->chan,
+					      &tx_info);
+		
+		if (ret) {
+			LOG_DBG("Error getting ISO TX anchor point: %d", ret);
+		}
+		LOG_WRN("Syncing channels, left sync %u", tx_info.ts);
+		
+		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, &headsets[AUDIO_CH_R], tx_info.ts);
+
+		if (ret) {
+			LOG_DBG("Failed to send data to right channel");
+		}
+
+		channels_are_synched = true;
+
+	} else {
+
+		bool all_channels_in_stream_state = true;
+
+		if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING))	{
+			
+			ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
+						&headsets[AUDIO_CH_L], BT_ISO_TIMESTAMP_NONE);
+			if (ret) {
+				LOG_DBG("Failed to send data to left channel");
+			}
+
+			ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_L].sink_stream.ep->iso->chan,
+			      &tx_info);
+		} else {
+			all_channels_in_stream_state = false;
+		}
+
+		if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
+
+			if (enc_audio.num_ch == 1) {
+				ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
+						      &headsets[AUDIO_CH_R], BT_ISO_TIMESTAMP_NONE);
+			} else {
+				ret = iso_stream_send(&enc_audio.data[data_size_pr_stream],
+						      data_size_pr_stream, &headsets[AUDIO_CH_R], BT_ISO_TIMESTAMP_NONE);
+			}
+			if (ret) {
+				LOG_DBG("Failed to send data to right channel");
+			}
+
+			ret = bt_iso_chan_get_tx_sync(&headsets[AUDIO_CH_R].sink_stream.ep->iso->chan,
+			      &tx_info);
+		} else {
+			all_channels_in_stream_state = false;
+		}
+
+		if (!all_channels_in_stream_state) {
+			channels_are_synched = false;
+		}
+
+		if (ret) {
+			LOG_DBG("Error getting ISO TX anchor point: %d", ret);
+		}
 	}
 
 	if (tx_info.ts != 0 && !ret) {
@@ -1352,26 +1419,6 @@ int unicast_client_send(struct le_audio_encoded_audio enc_audio)
 			if (ret) {
 				LOG_WRN("Failed to publish timestamp: %d", ret);
 			}
-		}
-	}
-
-	if (ep_state_check(headsets[AUDIO_CH_L].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		ret = iso_stream_send(enc_audio.data, data_size_pr_stream, &headsets[AUDIO_CH_L]);
-		if (ret) {
-			LOG_DBG("Failed to send data to left channel");
-		}
-	}
-
-	if (ep_state_check(headsets[AUDIO_CH_R].sink_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
-		if (enc_audio.num_ch == 1) {
-			ret = iso_stream_send(enc_audio.data, data_size_pr_stream,
-					      &headsets[AUDIO_CH_R]);
-		} else {
-			ret = iso_stream_send(&enc_audio.data[data_size_pr_stream],
-					      data_size_pr_stream, &headsets[AUDIO_CH_R]);
-		}
-		if (ret) {
-			LOG_DBG("Failed to send data to right channel");
 		}
 	}
 
