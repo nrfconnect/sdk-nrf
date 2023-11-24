@@ -11,7 +11,7 @@
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/nrf_modem_lib_trace.h>
 #include <pm_config.h>

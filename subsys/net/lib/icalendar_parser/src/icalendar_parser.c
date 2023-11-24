@@ -8,7 +8,7 @@
 #include <strings.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <net/icalendar_parser.h>
 #include <zephyr/logging/log.h>
 

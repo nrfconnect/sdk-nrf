@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "sensor.h"
 #include <zephyr/sys/byteorder.h>
-#include <zephyr/toolchain/common.h>
+#include <zephyr/toolchain.h>
 #include <bluetooth/mesh/properties.h>
 #include <bluetooth/mesh/sensor_types.h>
 
