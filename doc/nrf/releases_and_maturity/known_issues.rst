@@ -3823,6 +3823,19 @@ Trusted Firmware-M (TF-M)
 
 The issues in this section are related to the TF-M implementation in the |NCS|.
 
+.. rst-class:: v2-5-0
+
+NCSDK-24804: TF-M does not compile without the ``gpio0`` node enabled in devicetree
+  This fails with the error message ``'TFM_PERIPHERAL_GPIO0_PIN_MASK_SECURE' undeclared.``
+
+  **Workaround:** Enable the ``gpio0`` node in the devicetree configuration
+
+  .. code-block::
+
+        &gpio0 {
+          status = "okay";
+        };
+
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0
 
 NCSDK-22907: TF-M does not build with :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED` enabled and :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE` disabled
