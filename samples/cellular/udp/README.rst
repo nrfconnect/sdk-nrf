@@ -32,9 +32,32 @@ In addition to setting of the above options, you can also set the various LTE pa
 
 You can use this sample to characterize the current consumption of the nRF91 Series SiP.
 This is due to the simple UDP/IP behavior demonstrated by the sample, which makes it suitable for current measurement.
+The button control actions make it easier to compare the power consumption difference between power-saving features enable or not.
 
 .. note::
    Logging output is disabled by default in this sample to produce the lowest possible amount of current consumption.
+
+Button Control Actions
+========================
+
+This sample supports using buttons on board to control UDP send action and power-saving features, so developers can easily compare the power consumption difference between when using these features or not.
+The following table shows button control actions and corresponding buttons/switches.
+
++-------------------+------------+-----------+-----------+
+| Actions           | nRF9161 DK | nRF9160DK | Thingy:91 |
++===================+============+===========+===========+
+| Send UDP packets  | Button 1   | Button 1  | SW3       |
++-------------------+------------+-----------+-----------+
+| Set Modem ON/OFF  | Button 2   | Button 2  |           |
++-------------------+------------+-----------+-----------+
+| Set PSM ON/OFF    | Button 3   | Switch 1  |           |
++-------------------+------------+-----------+-----------+
+| Set RAI ON/OFF    | Button 4   | Switch 2  |           |
++-------------------+------------+-----------+-----------+
+
+For all supported devices, the "Send UDP packets" action is triggered by pressing a specific button.
+For nRF9161 DK, Modem, PSM and RAI are all set to ON in the initialization and they will switch between ON/OFF when corresponding button is pressed.
+For nRF9160 DK, PSM and RAI features are controlled by switches, which connect to either GND(ON) or N.C(OFF).
 
 Measuring current
 =================
@@ -182,12 +205,10 @@ Test the RAI feature by performing the following steps:
 #. Enable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``y`` in the :file:`prj.conf` configuration file.
 #. Update the data upload frequency by setting the :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>` option to ``30`` in the :file:`prj.conf` configuration file.
 #. Program the sample to the device.
-#. Power on or reset your nRF91 Series DK.
+#. Power on or reset your nRF91 Series DK, and make sure PSM and RAI are set to ON with button control actions.
 #. In the Power Profiler app choose a one minute time window.
 #. Observe that after some minutes the average power consumption will settle at around 1.7 mA (may vary depending on network conditions).
-#. Disable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``n`` in the :file:`prj.conf` configuration file.
-#. Program the sample to the device.
-#. Power on or reset your nRF91 Series DK.
+#. Disable RAI by setting RAI to OFF with button control actions.
 #. Observe that after some minutes the average power consumption will settle at around 2.3 mA (may vary depending on network conditions).
 #. Observe that power consumption with RAI enabled is lower than with RAI disabled.
 
