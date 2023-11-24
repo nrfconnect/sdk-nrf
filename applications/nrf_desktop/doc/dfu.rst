@@ -9,8 +9,8 @@ Device Firmware Upgrade module
 
 Use the DFU module to perform the following:
 
-* Obtain the update image from :ref:`nrf_desktop_config_channel` and store it in the appropriate flash memory partition.
-* Erase the flash memory partition in the background before storing the update image.
+* Obtain the update image from :ref:`nrf_desktop_config_channel` and store it in the appropriate non-volatile memory partition.
+* Erase the non-volatile memory partition in the background before storing the update image.
 
 Module events
 *************
@@ -27,19 +27,19 @@ Configuration
 
 To perform the firmware upgrade, you must enable the bootloader.
 You can use the DFU module with either MCUboot or B0 bootloader.
-For more information on how to enable the bootloader, see the :ref:`nrf_desktop_bootloader` documentation.
+For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
 
 Enable the DFU module using the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>` option.
 It requires the transport option :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
 
 Set the value of :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE <config_desktop_app_options>` to specify the size of the sync buffer (in words).
-During the DFU, the data is initially stored in the buffer and then it is moved to flash.
+During the DFU process, the data is initially stored in the buffer and then moved to non-volatile memory.
 The buffer is located in the RAM, so increasing the buffer size increases the RAM usage.
 If the buffer is small, the host must perform the DFU progress synchronization more often.
 
 .. important::
-   The received update image chunks are stored on the dedicated flash memory partition when the current version of the device firmware is running.
-   For this reason, make sure that you use configuration with two image partitions.
+   The received update image chunks are stored on the dedicated non-volatile memory partition when the current version of the device firmware is running.
+   For this reason, make sure that you use configuration with a dedicated update image partition.
    For more information on configuring the memory layout in the application, see the :ref:`nrf_desktop_flash_memory_layout` documentation.
 
 MCUboot bootloader mode
@@ -77,22 +77,22 @@ These values are fetched using the :ref:`devinfo <dfu_devinfo>` configuration ch
    By default, the reported Vendor ID, Product ID, and generation are aligned with the values defined globally for the nRF Desktop application.
    The default values of Kconfig options used by the DFU module are based on respectively :ref:`CONFIG_DESKTOP_DEVICE_VID <config_desktop_app_options>`, :ref:`CONFIG_DESKTOP_DEVICE_PID <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`.
 
-Flash access synchronization with other DFU methods
-===================================================
+Non-volatile memory access synchronization with other DFU methods
+=================================================================
 
-The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize flash access with other DFU methods (for example, SMP DFU).
+The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods (for example, SMP DFU).
 If multiple DFU transports are enabled in your application configuration, make sure that the following conditions are met:
 
 * The :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option is enabled
 * All of the used DFU transports use the :ref:`nrf_desktop_dfu_lock`.
 
-On each DFU attempt, the module attempts to claim ownership over the DFU flash using the DFU Lock API.
+On each DFU attempt, the module attempts to claim ownership over the DFU non-volatile memory using the DFU Lock API.
 It holds the DFU owner status until the DFU process is completed or timed out.
-The lock is also kept during the background erase operation as it changes the DFU flash memory content.
+The lock is also kept during the background erase operation as it changes the DFU non-volatile memory content.
 
-If the module is not the current DFU owner and cannot claim the DFU lock, it desists from performing requested actions that either modify the DFU flash content or reboot the device.
+If the module is not the current DFU owner and cannot claim the DFU lock, it desists from performing requested actions that either modify the DFU non-volatile memory content or reboot the device.
 
-The module also automatically starts the background erase operation of the DFU flash once it becomes the lock owner after another DFU method.
+The module also automatically starts the background erase operation of the DFU non-volatile memory once it becomes the lock owner after another DFU method.
 
 Implementation details
 **********************
@@ -103,8 +103,8 @@ The DFU module implementation is centered around the transmission and the storag
 * `Partition preparation`_ - How the module prepares for receiving an image.
 
 The firmware transfer operation can also be carried out either by the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`.
-The application user must not perform more than one firmware upgrade at a time.
-The modification of the data by multiple application modules would result in a broken image that would be rejected by the bootloader.
+Make sure that all enabled modules used for the firmware transfer operation use :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access.
+If a module does not use the :ref:`nrf_desktop_dfu_lock`, simultaneous modification of the data by the module and another application module may result in a broken image that would be rejected by the bootloader.
 
 Protocol operations
 ===================
@@ -132,7 +132,7 @@ fwinfo
    Perform the fetch operation on this option to get the following information about the currently executed image:
 
    * Version and length of the image.
-   * Partition ID of the image, used to specify the image placement on the flash.
+   * Partition ID of the currently booted image, used to specify the image placement.
 
 .. _dfu_devinfo:
 
@@ -148,6 +148,7 @@ The device generation allows to distinguish configurations that use the same boa
 
 reboot
    Perform the fetch operation on this option to trigger an instant reboot of the device.
+   After a successful image transfer, the reboot operation triggers a firmware update.
 
    |nrf_desktop_command_note_with_dfu_lock|
 
@@ -173,7 +174,7 @@ start
 
 data
    Perform the set operation on this option to pass the chunk of the update image that should be stored at the current offset.
-   The data is initially buffered in RAM, and then it is written to the flash partition after a fetch operation is performed on the ``sync`` option.
+   The data is initially buffered in RAM, and then written to the non-volatile memory partition after a fetch operation is performed on the ``sync`` option.
 
    If the set operation on the ``data`` option is successful, the offset in buffer is increased.
    If the operation fails to be completed, the update process is interrupted.
@@ -199,8 +200,8 @@ sync
      The module can report one of the following states:
 
      * :c:macro:`DFU_STATE_ACTIVE_OTHER` - Another DFU process is ongoing and the application is receiving the new image from the host over a different DFU transport.
-     * :c:macro:`DFU_STATE_CLEANING` - The module is erasing the secondary image flash area.
-     * :c:macro:`DFU_STATE_STORING` - The module is writing data to the secondary image flash area.
+     * :c:macro:`DFU_STATE_CLEANING` - The module is erasing the update image non-volatile partition.
+     * :c:macro:`DFU_STATE_STORING` - The module is writing data to the update image non-volatile partition.
      * :c:macro:`DFU_STATE_ACTIVE_CONFIG_CHANNEL` - The DFU is ongoing and the module is receiving the new image from the host.
      * :c:macro:`DFU_STATE_INACTIVE` - The module is not performing any operation, and the DFU can be started.
 
@@ -212,7 +213,7 @@ sync
 
    The update tool can fetch the ``sync`` option before starting the update process to see at which offset the update is to be restarted.
 
-   Fetching the ``sync`` option also triggers moving the image data from the RAM buffer to flash.
+   Fetching the ``sync`` option also triggers moving the image data from the RAM buffer to non-volatile memory.
 
 .. _dfu_bootloader_var:
 
@@ -220,27 +221,29 @@ module_variant
    Perform the fetch operation on this option to get the information about the bootloader variant that is being used on the device.
 
 
-Writing data to flash
-=====================
+Writing data to non-volatile memory
+===================================
 
 The image data that is received from the host is initially buffered in the RAM.
-Writing the data to flash is triggered when the host performs the fetch operation on the ``sync`` option.
-At that point, the :ref:`nrf_desktop_config_channel_script` waits until the data is written to flash before providing more image data chunks.
+Writing the data to non-volatile memory is triggered when the host performs the fetch operation on the ``sync`` option.
+At that point, the :ref:`nrf_desktop_config_channel_script` waits until the data is written to non-volatile memory before providing more image data chunks.
 
-The data is stored in a secondary image flash partition using a dedicated work (:c:struct:`k_work_delayable`).
+The data is stored in a dedicated non-volatile memory partition using a dedicated work (:c:struct:`k_work_delayable`).
 The work stores a single chunk of data and resubmits itself.
 
-To ensure that the flash write will not interfere with the device usability, the stored data is split into small chunks and written only if there are no HID reports transmitted and the Bluetooth connection state does not change.
+To ensure that the non-volatile memory write will not interfere with the device usability, the stored data is split into small chunks and written only if there are no HID reports transmitted and the Bluetooth connection state does not change.
 
 Partition preparation
 =====================
 
-The DFU module must prepare the partition before the update image can be stored.
+Non-volatile flash memory must be erased before writing to it.
+The DFU module erases the update image partition before storing the update image data.
 This operation is done in the background.
+The erase operation is always performed for non-volatile update image partition.
 
 To ensure that the memory erase will not interfere with the device usability, the memory pages are erased only if there are no HID reports transmitted and the Bluetooth connection state does not change.
 For example, the memory is not erased right after the Bluetooth connection is established.
 
 .. note::
     The DFU process cannot be started before the entire partition used for storing the update image is erased.
-    If the DFU command is rejected, you must wait until the flash area used for the update image is erased.
+    If the DFU command is rejected, you must wait until the non-volatile memory area used for the update image is erased.
