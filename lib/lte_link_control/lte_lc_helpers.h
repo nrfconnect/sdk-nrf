@@ -196,7 +196,7 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg);
  *
  * @param active_time_str Pointer to active time string.
  * @param tau_ext_str Pointer to TAU (T3412 extended) string.
- * @param tau_legacy_str Pointer to TAU (T3412) string. Can be NULL.
+ * @param tau_legacy_str Pointer to TAU (T3412) string.
  * @param psm_cfg Pointer to PSM configuraion struct where the parsed values
  *		  are stored.
  *

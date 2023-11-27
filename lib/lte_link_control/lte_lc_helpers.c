@@ -584,7 +584,8 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	size_t lut_idx;
 	uint32_t timer_unit, timer_value;
 
-	if ((strlen(active_time_str) != 8) || (strlen(tau_ext_str) != 8)) {
+	if (strlen(active_time_str) != 8 || strlen(tau_ext_str) != 8 ||
+	    strlen(tau_legacy_str) != 8) {
 		return -EINVAL;
 	}
 
@@ -601,11 +602,8 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	timer_value = strtoul(tau_ext_str + unit_str_len, NULL, 2);
 	psm_cfg->tau = timer_unit ? timer_unit * timer_value : -1;
 
-	/* If T3412-extended is disabled, there's a chance that the network
-	 * only reports the T3412 (legacy) timer. We therefore need to check
-	 * that as well. The legacy timer is only reported by modem fw >= 1.2.0.
-	 */
-	if ((psm_cfg->tau == -1) && tau_legacy_str && (strlen(tau_legacy_str) == 8)) {
+	/* If T3412-extended is disabled, periodic TAU is reported using the T3412 legacy timer */
+	if (psm_cfg->tau == -1) {
 		memcpy(unit_str, tau_legacy_str, unit_str_len);
 
 		lut_idx = strtoul(unit_str, NULL, 2);
@@ -615,8 +613,15 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 		}
 
 		timer_unit = t3412_lookup[lut_idx];
+		if (timer_unit == 0) {
+			/* TAU must be reported either using T3412-extended or T3412 (legacy)
+			 * timer, so the timer unit is expected to be valid.
+			 */
+			LOG_ERR("Expected valid T3412 timer unit");
+			return -EINVAL;
+		}
 		timer_value = strtoul(tau_legacy_str + unit_str_len, NULL, 2);
-		psm_cfg->tau = timer_unit ? timer_unit * timer_value : -1;
+		psm_cfg->tau = timer_unit * timer_value;
 	}
 
 	/* Parse active time */
@@ -632,8 +637,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	timer_value = strtoul(active_time_str + unit_str_len, NULL, 2);
 	psm_cfg->active_time = timer_unit ? timer_unit * timer_value : -1;
 
-	LOG_DBG("TAU: %d sec, active time: %d sec",
-		psm_cfg->tau, psm_cfg->active_time);
+	LOG_DBG("TAU: %d sec, active time: %d sec", psm_cfg->tau, psm_cfg->active_time);
 
 	return 0;
 }
