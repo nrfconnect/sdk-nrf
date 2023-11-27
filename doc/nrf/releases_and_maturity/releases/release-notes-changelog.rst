@@ -334,6 +334,7 @@ Matter samples
 * :ref:`matter_lock_sample` sample:
 
   * Fixed an issue that prevented nRF Toolbox for iOS in version 5.0.9 from controlling the sample using :ref:`nus_service_readme`.
+  * Changed the design of the :ref:`matter_lock_sample_wifi_thread_switching` feature so that support for both Matter over Thread and Matter over Wi-Fi is included in a single firmware image.
 
 Multicore samples
 -----------------

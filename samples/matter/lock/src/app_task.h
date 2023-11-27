@@ -65,8 +65,9 @@ private:
 	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
-	static void SwitchImagesTimerTimeoutCallback(k_timer *timer);
-	static void SwitchImagesEventHandler(const AppEvent &event);
+	static void SwitchTransportEventHandler(const AppEvent &event);
+	static void SwitchTransportTimerTimeoutCallback(k_timer *timer);
+	static void SwitchTransportTriggerHandler(const AppEvent &event);
 #endif
 
 #ifdef CONFIG_CHIP_NUS
