@@ -487,6 +487,33 @@ if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
     )
 endif()
 
+# Calculate absolute address for the wi-fi firmware patch location.
+if (CONFIG_WIFI_NRF700X AND CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
+  if(DEFINED ext_flash_dev)
+    get_filename_component(qspi_node ${ext_flash_dev} DIRECTORY)
+  else()
+    dt_nodelabel(qspi_node NODELABEL "qspi")
+  endif()
+  if(DEFINED qspi_node)
+    dt_reg_addr(xip_addr PATH ${qspi_node} NAME qspi_mm)
+    if(NOT DEFINED xip_addr)
+      message(WARNING "\
+      Could not find memory mapped address for XIP. Generated update hex files will \
+      not have the correct base address. Hence they can not be programmed directly \
+      to the external flash")
+    endif()
+  else()
+    set(xip_addr 0)
+  endif()
+
+  math(EXPR wifi_fw_abs_addr "${xip_addr} + ${PM_NRF70_WIFI_FW_OFFSET}")
+  set_property(
+    TARGET partition_manager
+    PROPERTY nrf70_wifi_fw_XIP_ABS_ADDR
+    ${wifi_fw_abs_addr}
+    )
+endif()
+
 if (is_dynamic_partition_in_domain)
   # We are being built as sub image.
   # Expose the generated partition manager configuration files to parent image.
