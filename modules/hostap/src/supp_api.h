@@ -142,6 +142,16 @@ int z_wpa_supplicant_filter(const struct device *dev,
 int z_wpa_supplicant_channel(const struct device *dev,
 			      struct wifi_channel_info *channel);
 
+/**
+ * @brief Set Wi-Fi RTS threshold
+ *
+ * @param dev Wi-Fi interface handle to use
+ * @param rts_threshold RTS threshold to set
+ * @return 0 for OK; -1 for ERROR
+ */
+int z_wpa_supplicant_set_rts_threshold(const struct device *dev,
+				       unsigned int rts_threshold);
+
 #ifdef CONFIG_AP
 /**
  * @brief Set Wi-Fi AP configuration

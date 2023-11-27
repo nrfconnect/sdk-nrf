@@ -626,7 +626,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 Wi-Fi drivers
 -------------
 
-|no_changes_yet_note|
+* Removed support for setting RTS threshold through ``wifi_util`` command.
 
 Libraries
 =========
