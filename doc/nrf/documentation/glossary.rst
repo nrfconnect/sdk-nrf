@@ -84,6 +84,13 @@ Glossary
       Carries the information on the amount of data available for each Logical Channel Group (LCG) from UE to eNB.
       From Wi-Fi perspective, BSR indicates the amount of queued uplink data buffered in the respective STA and access categories to which the queued data belong.
 
+   Build configuration
+      A set of build scripts.
+      The build configuration is created by :ref:`CMake <zephyr:build_overview>` by executing the build scripts from :file:`CMakeLists.txt` during the :ref:`configuration_system_overview_config` of the build process.
+      At this stage, CMake gathers configuration from different sources to produce a set of output files that will drive the build process.
+      The different sources can include source files such as :file:`main.c` and configuration input files such as :ref:`Devicetree <configure_application_hw>` and :ref:`Kconfig <configure_application_sw>` files.
+      The build scripts are then used during the :ref:`configuration_system_overview_build` to create the application firmware.
+
    Carrier-sense Multiple Access with Collision Avoidance (CSMA/CA)
       A network multiple access method in which carrier sensing is used, but nodes attempt to avoid collisions by beginning transmission only after the channel is sensed to be idle.
 

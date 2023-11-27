@@ -12,24 +12,14 @@ Modifying an application
 
 After programming and testing an application, you probably want to make some modifications to the application, for example, add your own files with additional functionality, change compilation options, or update the default configuration.
 
+.. _modifying_files_compiler:
+
 Adding files and changing compiler settings
 *******************************************
 
 The |NCS| build system is based on Zephyr, whose build system is based on `CMake <CMake documentation_>`_.
-For more information about how the build system works in Zephyr, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
-
-Role of CMakeLists.txt
-======================
-
-In the |NCS|, the application is a CMake project.
-As such, the application controls the configuration and build process of itself, Zephyr, and sourced libraries.
-The application's :file:`CMakeLists.txt` file is the main CMake project file and the source of the build process configuration.
-
-Zephyr provides a CMake package that must be loaded by the application into its :file:`CMakeLists.txt` file.
-When loaded, the application can reference items provided by both Zephyr and the |NCS|.
-
-Loading Zephyr's `CMake <CMake documentation_>`_ package creates the ``app`` CMake target.
-You can add application source files to this target from the application :file:`CMakeLists.txt` file.
+For an overview of the build system in the |NCS|, see :ref:`app_build_system`.
+For information about how the build system works in Zephyr, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
 
 Updating CMakeLists.txt
 =======================
@@ -72,108 +62,8 @@ Compiler options not controlled by the Zephyr build system can be controlled thr
 Configuring your application
 ****************************
 
-You might want to change the default options of the application.
+You might want to change the default options of the application for each of its :ref:`configuration systems <configuration_system_overview>`.
 There are different ways of doing this, but not all will store your configuration permanently.
-
-.. _configuration_system_overview:
-
-Configuration system overview
-=============================
-
-Zephyr and the |NCS| use several configuration systems, each system with a specialized syntax and purpose.
-
-The following tables summarizes information about the configuration sources in the |NCS|.
-
-.. list-table:: Configuration source overview
-   :header-rows: 1
-
-   * - Source
-     - File types
-     - Usage
-     - Available editing tools
-     - Additional information
-   * - :ref:`Devicetree <zephyr:dt-guide>`
-     - :file:`.dts`, :file:`.dtsi`, :file:`.overlay`
-     - Hardware-related options
-     - `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_
-     - Devicetree Visual Editor is part of the |nRFVSC|. You still need to be familiar with the devicetree language to use it.
-   * - :ref:`Kconfig <zephyr:application-kconfig>`
-     - :file:`Kconfig`, :file:`prj.conf`, :file:`.config`
-     - Software-related options
-     - `Kconfig GUI <Configuring with nRF Kconfig_>`_, :ref:`menuconfig and guiconfig <zephyr:menuconfig>`
-     - Kconfig GUI is part of the |nRFVSC|.
-   * - :ref:`partition_manager`
-     - :file:`pm.yml`
-     - Memory layout configuration
-     - :ref:`partition_manager` script
-     - Partition Manager is an |NCS| configuration system that is not available in Zephyr.
-
-See the following sections for more information.
-To read more about Zephyr's configuration system, see :ref:`zephyr:build_overview` in the Zephyr documentation.
-
-.. _configure_application_hw:
-
-Hardware-related configuration
-------------------------------
-
-.. ncs-include:: build/cmake/index.rst
-   :docset: zephyr
-   :dedent: 3
-   :start-after: Devicetree
-   :end-before: The preprocessed devicetree sources
-
-The preprocessed devicetree sources are parsed by the :file:`zephyr/scripts/dts/gen_defines.py` script to generate a :file:`devicetree_unfixed.h` header file with preprocessor macros.
-
-The :file:`zephyr.dts` file contains the entire hardware-related configuration of the system in the devicetree format.
-The header file contains the same kind of information, but with defines usable by source code.
-
-For more information, see Zephyr's :ref:`zephyr:dt-guide`.
-
-.. _configure_application_sw:
-
-Software-related configuration
-------------------------------
-
-.. ncs-include:: build/cmake/index.rst
-   :docset: zephyr
-   :dedent: 3
-   :start-after: Kconfig
-   :end-before: Information from devicetree is available to Kconfig,
-
-Information from devicetree is available to Kconfig, through the functions defined in :file:`zephyr/scripts/kconfig/kconfigfunctions.py`.
-
-The single :file:`.config` file in the :file:`<build_dir>/zephyr/` directory describes the entire software configuration of the constructed binary.
-
-For more information, see Zephyr's :ref:`zephyr:application-kconfig`.
-
-Memory layout configuration
----------------------------
-
-The Partition Manager is specific to the |NCS|.
-If enabled, it provides the memory layout configuration.
-The layout is impacted by various elements, such as Kconfig configuration options or the presence of child images.
-Partition Manager ensures that all required partitions are in the correct place and have the correct size.
-
-If enabled, the memory layout can be controlled in the following ways:
-
-* Dynamically (default) - In this scenario, the layout is impacted by various elements, such as Kconfig configuration options or the presence of child images.
-  Partition Manager ensures that all required partitions are in the correct place and have the correct size.
-* Statically - In this scenario, you need to provide the static configuration.
-  See :ref:`ug_pm_static` for information about how to do this.
-
-After CMake has run, a single :file:`partitions.yml` file with the complete memory layout will have been created in the :file:`build` directory.
-This process also creates a set of header files that provides defines, which can be used to refer to memory layout elements.
-
-For more information, see :ref:`partition_manager`.
-
-Child images
-------------
-
-The |NCS| build system allows the application project to become a root for the sub-applications known in the |NCS| as child images.
-Examples of child images are bootloader images, network core images, or security-related images.
-Each child image is a separate application.
-
-For more information, see :ref:`ug_multi_image`.
 
 Changing the hardware configuration
 ===================================
@@ -292,7 +182,7 @@ For information about what variables can be set and how to add these variables i
 
    .. group-tab:: nRF Connect for VS Code
 
-      If you work with the |nRFVSC|, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
+      If you work with the |nRFVSC|, you can specify project-specific CMake options when you add the :term:`build configuration` for a new |NCS| project.
       See `How to build an application`_ in the |nRFVSC| documentation.
 
    .. group-tab:: Command line
