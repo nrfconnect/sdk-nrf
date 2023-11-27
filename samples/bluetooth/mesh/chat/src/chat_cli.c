@@ -34,10 +34,10 @@ static const uint8_t *extract_msg(struct net_buf_simple *buf)
 	return net_buf_simple_pull_mem(buf, buf->len);
 }
 
-static int handle_message(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_message(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 	const uint8_t *msg;
 
 	msg = extract_msg(buf);
@@ -60,11 +60,10 @@ static void send_message_reply(struct bt_mesh_chat_cli *chat,
 	(void)bt_mesh_model_send(chat->model, ctx, &msg, NULL, NULL);
 }
 
-static int handle_private_message(struct bt_mesh_model *model,
-				  struct bt_mesh_msg_ctx *ctx,
+static int handle_private_message(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 	const uint8_t *msg;
 
 	msg = extract_msg(buf);
@@ -78,10 +77,10 @@ static int handle_private_message(struct bt_mesh_model *model,
 }
 /* .. include_endpoint_chat_cli_rst_1 */
 
-static int handle_message_reply(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_message_reply(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 
 	if (chat->handlers->message_reply) {
 		chat->handlers->message_reply(chat, ctx);
@@ -90,10 +89,10 @@ static int handle_message_reply(struct bt_mesh_model *model, struct bt_mesh_msg_
 	return 0;
 }
 
-static int handle_presence(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_presence(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 	enum bt_mesh_chat_cli_presence presence;
 
 	presence = net_buf_simple_pull_u8(buf);
@@ -105,17 +104,17 @@ static int handle_presence(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 	return 0;
 }
 
-static int handle_presence_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_presence_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_CHAT_CLI_OP_PRESENCE,
 				 BT_MESH_CHAT_CLI_MSG_LEN_PRESENCE);
 
 	encode_presence(&msg, chat->presence);
 
-	(void) bt_mesh_model_send(chat->model, ctx, &msg, NULL, NULL);
+	(void)bt_mesh_model_send(chat->model, ctx, &msg, NULL, NULL);
 
 	return 0;
 }
@@ -151,9 +150,9 @@ const struct bt_mesh_model_op _bt_mesh_chat_cli_op[] = {
 };
 /* .. include_endpoint_chat_cli_rst_2 */
 
-static int bt_mesh_chat_cli_update_handler(struct bt_mesh_model *model)
+static int bt_mesh_chat_cli_update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 
 	/* Continue publishing current presence. */
 	encode_presence(model->pub->msg, chat->presence);
@@ -163,13 +162,13 @@ static int bt_mesh_chat_cli_update_handler(struct bt_mesh_model *model)
 
 /* .. include_startingpoint_chat_cli_rst_3 */
 #ifdef CONFIG_BT_SETTINGS
-static int bt_mesh_chat_cli_settings_set(struct bt_mesh_model *model,
+static int bt_mesh_chat_cli_settings_set(const struct bt_mesh_model *model,
 					 const char *name,
 					 size_t len_rd,
 					 settings_read_cb read_cb,
 					 void *cb_arg)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 
 	if (name) {
 		return -ENOENT;
@@ -191,9 +190,9 @@ static int bt_mesh_chat_cli_settings_set(struct bt_mesh_model *model,
 /* .. include_endpoint_chat_cli_rst_3 */
 
 /* .. include_startingpoint_chat_cli_rst_4 */
-static int bt_mesh_chat_cli_init(struct bt_mesh_model *model)
+static int bt_mesh_chat_cli_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 
 	chat->model = model;
 
@@ -207,9 +206,9 @@ static int bt_mesh_chat_cli_init(struct bt_mesh_model *model)
 /* .. include_endpoint_chat_cli_rst_4 */
 
 /* .. include_startingpoint_chat_cli_rst_5 */
-static int bt_mesh_chat_cli_start(struct bt_mesh_model *model)
+static int bt_mesh_chat_cli_start(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 
 	if (chat->handlers->start) {
 		chat->handlers->start(chat);
@@ -220,9 +219,9 @@ static int bt_mesh_chat_cli_start(struct bt_mesh_model *model)
 /* .. include_endpoint_chat_cli_rst_5 */
 
 /* .. include_startingpoint_chat_cli_rst_6 */
-static void bt_mesh_chat_cli_reset(struct bt_mesh_model *model)
+static void bt_mesh_chat_cli_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_chat_cli *chat = model->user_data;
+	struct bt_mesh_chat_cli *chat = model->rt->user_data;
 
 	chat->presence = BT_MESH_CHAT_CLI_PRESENCE_AVAILABLE;
 
