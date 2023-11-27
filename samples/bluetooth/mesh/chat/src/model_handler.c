@@ -93,9 +93,9 @@ static const uint8_t *presence_string[] = {
 /**
  * Returns true if the specified address is an address of the local element.
  */
-static bool address_is_local(struct bt_mesh_model *mod, uint16_t addr)
+static bool address_is_local(const struct bt_mesh_model *mod, uint16_t addr)
 {
-	return bt_mesh_model_elem(mod)->addr == addr;
+	return bt_mesh_model_elem(mod)->rt->addr == addr;
 }
 
 /**
@@ -241,7 +241,7 @@ static void print_client_status(void)
 	} else {
 		shell_print(chat_shell,
 			    "The mesh node is provisioned. The client address is 0x%04x.",
-			    bt_mesh_model_elem(chat.model)->addr);
+			    bt_mesh_model_elem(chat.model)->rt->addr);
 	}
 
 	shell_print(chat_shell, "Current presence: %s",

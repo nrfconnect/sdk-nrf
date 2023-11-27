@@ -141,7 +141,7 @@ struct bt_mesh_chat_cli_handlers {
  */
 struct bt_mesh_chat_cli {
 	/** Access model pointer. */
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
 	/** Publication message. */
