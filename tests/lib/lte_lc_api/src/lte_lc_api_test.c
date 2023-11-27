@@ -720,6 +720,27 @@ void test_lte_lc_psm_param_set_seconds_enable_both_default(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
+void test_lte_lc_psm_get_badmsg(void)
+{
+	int ret;
+	int tau;
+	int active_time;
+
+	/* Missing T3412 legacy timer value */
+	static const char xmonitor_resp[] =
+		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
+		"334,6200,66,44,\"\","
+		"\"00000101\",\"00010011\"";
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+
+	ret = lte_lc_psm_get(&tau, &active_time);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
 void test_lte_lc_edrx_param_set_wrong_mode(void)
 {
 	int ret;
@@ -1645,14 +1666,14 @@ void test_lte_lc_periodic_search_get_success(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,,600"); /* pattern_buf */
 
 	ret = lte_lc_periodic_search_get(&cfg);
-	TEST_ASSERT_EQUAL(cfg.loop, 0);
-	TEST_ASSERT_EQUAL(cfg.return_to_pattern, 0);
-	TEST_ASSERT_EQUAL(cfg.band_optimization, 10);
-	TEST_ASSERT_EQUAL(cfg.patterns[0].type, LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE);
-	TEST_ASSERT_EQUAL(cfg.patterns[0].range.initial_sleep, 60);
-	TEST_ASSERT_EQUAL(cfg.patterns[0].range.final_sleep, 3600);
-	TEST_ASSERT_EQUAL(cfg.patterns[0].range.time_to_final_sleep, -1);
-	TEST_ASSERT_EQUAL(cfg.patterns[0].range.pattern_end_point, 600);
+	TEST_ASSERT_EQUAL(0, cfg.loop);
+	TEST_ASSERT_EQUAL(0, cfg.return_to_pattern);
+	TEST_ASSERT_EQUAL(10, cfg.band_optimization);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE, cfg.patterns[0].type);
+	TEST_ASSERT_EQUAL(60, cfg.patterns[0].range.initial_sleep);
+	TEST_ASSERT_EQUAL(3600, cfg.patterns[0].range.final_sleep);
+	TEST_ASSERT_EQUAL(-1, cfg.patterns[0].range.time_to_final_sleep);
+	TEST_ASSERT_EQUAL(600, cfg.patterns[0].range.pattern_end_point);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 

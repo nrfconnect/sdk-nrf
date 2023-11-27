@@ -394,79 +394,117 @@ void test_parse_psm(void)
 		char *tau_ext;
 		char *tau_legacy;
 	};
-	struct psm_strings disabled = {
+	struct psm_strings psm_disabled_tau_ext = {
+		.active_time = "11100000",
+		.tau_ext = "00001000",
+		.tau_legacy = "11100000",
+	};
+	struct psm_strings psm_disabled_tau_legacy = {
 		.active_time = "11100000",
 		.tau_ext = "11100000",
-		.tau_legacy = "11100000",
+		.tau_legacy = "01001010",
 	};
 	struct psm_strings tau_legacy = {
 		.active_time = "00001000",
 		.tau_ext = "11100000",
 		.tau_legacy = "00101010",
 	};
-	struct psm_strings no_tau_legacy = {
+	struct psm_strings invalid_no_tau = {
 		.active_time = "00001000",
 		.tau_ext = "11100000",
+		.tau_legacy = "11100000",
 	};
 	struct psm_strings invalid_values = {
 		.active_time = "0001111111",
 		.tau_ext = "00001",
+		.tau_legacy = "111",
 	};
 	struct psm_strings valid_values_0 = {
 		.active_time = "01000001",
 		.tau_ext = "01000010",
+		.tau_legacy = "11100000",
 	};
 	struct psm_strings valid_values_1 = {
 		.active_time = "00100100",
 		.tau_ext = "00001000",
+		.tau_legacy = "11100000",
 	};
 	struct psm_strings valid_values_2 = {
 		.active_time = "00010000",
 		.tau_ext = "10111011",
+		.tau_legacy = "11100000",
 	};
 
-	err = parse_psm(disabled.active_time, disabled.tau_ext, disabled.tau_legacy, &psm_cfg);
+	err = parse_psm(psm_disabled_tau_ext.active_time,
+			psm_disabled_tau_ext.tau_ext,
+			psm_disabled_tau_ext.tau_legacy,
+			&psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(4800, psm_cfg.tau);
 	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(tau_legacy.active_time, tau_legacy.tau_ext, tau_legacy.tau_legacy,
-				&psm_cfg);
+	err = parse_psm(psm_disabled_tau_legacy.active_time,
+			psm_disabled_tau_legacy.tau_ext,
+			psm_disabled_tau_legacy.tau_legacy,
+			&psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(3600, psm_cfg.tau);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(tau_legacy.active_time,
+			tau_legacy.tau_ext,
+			tau_legacy.tau_legacy,
+			&psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(600, psm_cfg.tau);
 	TEST_ASSERT_EQUAL(16, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(no_tau_legacy.active_time, no_tau_legacy.tau_ext, NULL, &psm_cfg);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
-	TEST_ASSERT_EQUAL(16, psm_cfg.active_time);
-
-	memset(&psm_cfg, 0, sizeof(psm_cfg));
-
-	err = parse_psm(invalid_values.active_time, invalid_values.tau_ext, NULL, &psm_cfg);
+	err = parse_psm(invalid_no_tau.active_time,
+			invalid_no_tau.tau_ext,
+			invalid_no_tau.tau_legacy,
+			&psm_cfg);
 	TEST_ASSERT_EQUAL(-EINVAL, err);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(valid_values_0.active_time, valid_values_0.tau_ext, NULL, &psm_cfg);
+	err = parse_psm(invalid_values.active_time,
+			invalid_values.tau_ext,
+			invalid_values.tau_legacy,
+			&psm_cfg);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+
+	memset(&psm_cfg, 0, sizeof(psm_cfg));
+
+	err = parse_psm(valid_values_0.active_time,
+			valid_values_0.tau_ext,
+			valid_values_0.tau_legacy,
+			&psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(72000, psm_cfg.tau);
 	TEST_ASSERT_EQUAL(360, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(valid_values_1.active_time, valid_values_1.tau_ext, NULL, &psm_cfg);
+	err = parse_psm(valid_values_1.active_time,
+			valid_values_1.tau_ext,
+			valid_values_1.tau_legacy,
+			&psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(4800, psm_cfg.tau);
 	TEST_ASSERT_EQUAL(240, psm_cfg.active_time);
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(valid_values_2.active_time, valid_values_2.tau_ext, NULL, &psm_cfg);
+	err = parse_psm(valid_values_2.active_time,
+			valid_values_2.tau_ext,
+			valid_values_2.tau_legacy,
+			&psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(1620, psm_cfg.tau);
 	TEST_ASSERT_EQUAL(32, psm_cfg.active_time);

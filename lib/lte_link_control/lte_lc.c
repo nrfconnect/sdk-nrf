@@ -876,7 +876,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	 * <phys_cell_id>,<EARFCN>,<rsrp>,<snr>,<NW-provided_eDRX_value>,<Active-Time>,
 	 * <Periodic-TAUext>,<Periodic-TAU>]
 	 * We need to parse the three last parameters, Active-Time, Periodic-TAU-ext and
-	 * Periodic-TAU. N.B. Periodic-TAU will not be present on modem firmwares < 1.2.0.
+	 * Periodic-TAU.
 	 */
 
 	response[0] = '\0';
@@ -928,10 +928,12 @@ int lte_lc_psm_get(int *tau, int *active_time)
 		return -EBADMSG;
 	}
 
-	/* It's ok not to have legacy Periodic-TAU, older FWs don't provide it. */
 	comma_ptr = strchr(comma_ptr + 1, ch);
 	if (comma_ptr) {
 		strncpy(tau_legacy_str, comma_ptr + 2, 8);
+	} else {
+		LOG_ERR("AT command parsing failed");
+		return -EBADMSG;
 	}
 
 	err = parse_psm(active_time_str, tau_ext_str, tau_legacy_str, &psm_cfg);

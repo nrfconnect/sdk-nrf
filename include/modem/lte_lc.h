@@ -329,7 +329,7 @@ struct lte_lc_psm_cfg {
 	/** Periodic Tracking Area Update interval in seconds. */
 	int tau;
 
-	/** Active-time (time from RRC idle to PSM) in seconds. */
+	/** Active-time (time from RRC idle to PSM) in seconds or @c -1 if PSM is deactivated. */
 	int active_time;
 };
 
@@ -1466,10 +1466,9 @@ int lte_lc_psm_req(bool enable);
 /**
  * Get the current PSM (Power Saving Mode) configuration.
  *
- * @param[out] tau Periodic TAU interval in seconds. A non-negative integer,
- *                 or @c -1 if timer is deactivated.
+ * @param[out] tau Periodic TAU interval in seconds. A non-negative integer.
  * @param[out] active_time Active time in seconds. A non-negative integer,
- *                         or @c -1 if timer is deactivated.
+ *                         or @c -1 if PSM is deactivated.
  *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
