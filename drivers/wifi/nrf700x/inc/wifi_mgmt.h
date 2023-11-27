@@ -70,4 +70,6 @@ int nrf_wifi_filter(const struct device *dev,
 		    struct wifi_filter_info *filter);
 #endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
 
+int nrf_wifi_set_rts_threshold(const struct device *dev,
+			       unsigned int rts_threshold);
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */

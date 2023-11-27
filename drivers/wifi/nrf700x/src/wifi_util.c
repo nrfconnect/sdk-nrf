@@ -178,41 +178,6 @@ static int nrf_wifi_util_set_he_ltf_gi(const struct shell *shell,
 	return 0;
 }
 
-
-static int nrf_wifi_util_set_rts_threshold(const struct shell *shell,
-					   size_t argc,
-					   const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	char *ptr = NULL;
-	unsigned long val = 0;
-	struct nrf_wifi_umac_set_wiphy_info wiphy_info;
-
-	memset(&wiphy_info, 0, sizeof(struct nrf_wifi_umac_set_wiphy_info));
-
-	val = strtoul(argv[1], &ptr, 10);
-
-	if (ctx->conf_params.rts_threshold != val) {
-
-		wiphy_info.rts_threshold = val;
-
-		status = nrf_wifi_fmac_set_wiphy_params(ctx->rpu_ctx,
-							0,
-							&wiphy_info);
-
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			shell_fprintf(shell,
-				      SHELL_ERROR,
-				      "Programming threshold failed\n");
-			return -ENOEXEC;
-		}
-
-		ctx->conf_params.rts_threshold = val;
-	}
-
-	return 0;
-}
-
 #ifdef CONFIG_NRF700X_STA_MODE
 static int nrf_wifi_util_set_uapsd_queue(const struct shell *shell,
 					 size_t argc,
@@ -282,11 +247,6 @@ static int nrf_wifi_util_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "set_he_ltf_gi = %d\n",
 		      conf_params->set_he_ltf_gi);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "rts_threshold = %d\n",
-		      conf_params->rts_threshold);
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
@@ -914,12 +874,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "0 - Disable\n"
 		      "1 - Enable",
 		      nrf_wifi_util_set_he_ltf_gi,
-		      2,
-		      0),
-	SHELL_CMD_ARG(rts_threshold,
-		      NULL,
-		      "<val> - Value  > 0",
-		      nrf_wifi_util_set_rts_threshold,
 		      2,
 		      0),
 #ifdef CONFIG_NRF700X_STA_MODE

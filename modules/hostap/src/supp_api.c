@@ -814,6 +814,19 @@ int z_wpa_supplicant_channel(const struct device *dev,
 	return wifi_mgmt_api->channel(dev, channel);
 }
 
+int z_wpa_supplicant_set_rts_threshold(const struct device *dev,
+				       unsigned int rts_threshold)
+{
+	const struct wifi_mgmt_ops *const wifi_mgmt_api = get_wifi_mgmt_api(dev);
+
+	if (!wifi_mgmt_api || !wifi_mgmt_api->set_rts_threshold) {
+		wpa_printf(MSG_ERROR, "Set RTS not supported");
+		return -ENOTSUP;
+	}
+
+	return wifi_mgmt_api->set_rts_threshold(dev, rts_threshold);
+}
+
 #ifdef CONFIG_AP
 int z_wpa_supplicant_ap_enable(const struct device *dev,
 			       struct wifi_connect_req_params *params)

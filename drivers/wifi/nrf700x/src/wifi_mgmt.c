@@ -948,3 +948,68 @@ out:
 	return ret;
 }
 #endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
+
+int nrf_wifi_set_rts_threshold(const struct device *dev,
+			       unsigned int rts_threshold)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_umac_set_wiphy_info wiphy_info;
+	int ret = -1;
+
+	if (!dev) {
+		LOG_ERR("%s: dev is NULL", __func__);
+		return ret;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_ERR("%s: RPU context not initialized", __func__);
+		return ret;
+	}
+
+	if ((int)rts_threshold < -1) {
+		/* 0 or any positive value is passed to f/w.
+		 * For RTS off, -1 is passed to f/w.
+		 * All other negative values considered as invalid.
+		 */
+		LOG_ERR("%s: Invalid threshold value : %d", __func__, (int)rts_threshold);
+		return ret;
+	}
+
+	memset(&wiphy_info, 0, sizeof(struct nrf_wifi_umac_set_wiphy_info));
+
+	wiphy_info.rts_threshold = (int)rts_threshold;
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+
+	status = nrf_wifi_fmac_set_wiphy_params(rpu_ctx_zep->rpu_ctx,
+						vif_ctx_zep->vif_idx,
+						&wiphy_info);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Configuring rts threshold failed\n", __func__);
+		goto out;
+	}
+
+	ret = 0;
+out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
+	return ret;
+}
