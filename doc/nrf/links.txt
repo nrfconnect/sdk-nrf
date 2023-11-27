@@ -179,9 +179,9 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
-.. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/project/Index.html
-.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/aws/GettingStarted/Index.html
-.. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.1.x/docs/azure/GettingStarted/Index.html
+.. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.2.x/docs/project/Index.html
+.. _`Getting started guide for nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.2.x/docs/aws/GettingStarted/Index.html
+.. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.2.x/docs/azure/GettingStarted/Index.html
 .. _`nRF Asset Tracker Memfault integration for AWS IoT`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-aws-js
 .. _`nRF Asset Tracker Memfault integration for Azure IoT Hub`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-azure-js
 .. _`nRF Asset Tracker Memfault integration`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v2.2.x/docs/memfault/Index.html
