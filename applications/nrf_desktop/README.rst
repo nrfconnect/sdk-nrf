@@ -1872,11 +1872,20 @@ The nRF Desktop application can use one of the following bootloaders:
 **Secure Bootloader**
   In this documentation, the Secure Bootloader is referred as *B0*.
   B0 is a small, simple, and secure bootloader that allows the application to boot directly from one of the application slots, thus increasing the speed of the direct firmware upgrade (DFU) process.
+  B0 is supported on the SoCs from the following series:
+
+  * nRF52 Series
+  * nRF53 Series (supports only application core DFU)
 
   This bootloader can be used only for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
   More information about the B0 can be found at the :ref:`bootloader` page.
 
 **MCUboot**
+  MCUboot is supported on the SoCs from the following series:
+
+  * nRF52 Series
+  * nRF53 Series
+
   The MCUboot bootloader can be used in the following scenarios:
 
   * :ref:`Background DFU <nrf_desktop_bootloader_background_dfu>`.
