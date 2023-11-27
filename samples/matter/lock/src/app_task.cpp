@@ -38,6 +38,10 @@
 #include "ota_util.h"
 #endif
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+#include "thread_wifi_switch.h"
+#endif
+
 #include <dk_buttons_and_leds.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -71,8 +75,8 @@ K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppE
 k_timer sFunctionTimer;
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
-k_timer sSwitchImagesTimer;
-constexpr uint32_t kSwitchImagesTimeout = 10000;
+k_timer sSwitchTransportTimer;
+constexpr uint32_t kSwitchTransportTimeout = 10000;
 #endif
 
 Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
@@ -109,7 +113,7 @@ namespace StatusLed
 } /* namespace StatusLed */
 } /* namespace LedConsts */
 
-#ifdef CONFIG_CHIP_WIFI
+#if defined(CONFIG_CHIP_WIFI) && !defined(CONFIG_THREAD_WIFI_SWITCHING)
 app::Clusters::NetworkCommissioning::Instance
 	sWiFiCommissioningInstance(0, &(NetworkCommissioning::NrfWiFiDriver::Instance()));
 #endif
@@ -147,12 +151,17 @@ CHIP_ERROR AppTask::Init()
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed: %s", ErrorStr(err));
 		return err;
 	}
+#endif /* CONFIG_NET_L2_OPENTHREAD */
 
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+	err = ThreadWifiSwitch::StartCurrentTransport();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ThreadWifiSwitch::StartCurrentTransport() failed: %" CHIP_ERROR_FORMAT, err.Format());
+		return err;
+	}
 #elif defined(CONFIG_CHIP_WIFI)
 	sWiFiCommissioningInstance.Init();
-#else
-	return CHIP_ERROR_INTERNAL;
-#endif /* CONFIG_NET_L2_OPENTHREAD */
+#endif
 
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
@@ -176,7 +185,7 @@ CHIP_ERROR AppTask::Init()
 	k_timer_user_data_set(&sFunctionTimer, this);
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
-	k_timer_init(&sSwitchImagesTimer, &AppTask::SwitchImagesTimerTimeoutCallback, nullptr);
+	k_timer_init(&sSwitchTransportTimer, &AppTask::SwitchTransportTimerTimeoutCallback, nullptr);
 #endif
 
 #ifdef CONFIG_CHIP_NUS
@@ -302,24 +311,30 @@ void AppTask::LockActionEventHandler(const AppEvent &event)
 }
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
-void AppTask::SwitchImagesTimerTimeoutCallback(k_timer *timer)
+void AppTask::SwitchTransportEventHandler(const AppEvent &event)
 {
-	// TODO:
+	LOG_INF("Switching to %s", ThreadWifiSwitch::IsThreadActive() ? "Wi-Fi" : "Thread");
+
+	ThreadWifiSwitch::SwitchTransport();
 }
 
-void AppTask::SwitchImagesTriggerHandler(const AppEvent &event)
+void AppTask::SwitchTransportTimerTimeoutCallback(k_timer *timer)
+{
+	AppEvent event;
+	event.Type = AppEventType::Timer;
+	event.Handler = SwitchTransportEventHandler;
+	PostEvent(event);
+}
+
+void AppTask::SwitchTransportTriggerHandler(const AppEvent &event)
 {
 	if (event.ButtonEvent.Action == static_cast<uint8_t>(AppEventType::ButtonPushed)) {
-		k_timer_start(&sSwitchImagesTimer, K_MSEC(kSwitchImagesTimeout), K_NO_WAIT);
-		// TODO:
-		// LOG_INF("Keep button pressed for %u ms to switch application from " CONFIG_APPLICATION_LABEL
-		//	" to " CONFIG_APPLICATION_OTHER_LABEL,
-		//	kSwitchImagesTimeout);
+		LOG_INF("Keep button pressed for %u ms to switch to %s", kSwitchTransportTimeout,
+			ThreadWifiSwitch::IsThreadActive() ? "Wi-Fi" : "Thread");
+		k_timer_start(&sSwitchTransportTimer, K_MSEC(kSwitchTransportTimeout), K_NO_WAIT);
 	} else {
-		k_timer_stop(&sSwitchImagesTimer);
-		// TODO:
-		// LOG_INF("Switching application from " CONFIG_APPLICATION_LABEL " to " CONFIG_APPLICATION_OTHER_LABEL
-		//	" cancelled");
+		LOG_INF("Switching to %s cancelled", ThreadWifiSwitch::IsThreadActive() ? "Wi-Fi" : "Thread");
+		k_timer_stop(&sSwitchTransportTimer);
 	}
 }
 #endif
@@ -352,7 +367,7 @@ void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 		button_event.ButtonEvent.Action = static_cast<uint8_t>((THREAD_WIFI_SWITCH_BUTTON_MASK & buttonState) ?
 									       AppEventType::ButtonPushed :
 									       AppEventType::ButtonReleased);
-		button_event.Handler = SwitchImagesTriggerHandler;
+		button_event.Handler = SwitchTransportTriggerHandler;
 		PostEvent(button_event);
 	}
 #endif

@@ -14,3 +14,14 @@
  */
 
 #pragma once
+
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+/*
+ * Reduce the code size by disabling ZCL progress level logs.
+ * Door Lock cluster logs are extremely verbose and significantly increase the code size.
+ */
+#define CHIP_CONFIG_LOG_MODULE_Zcl_PROGRESS 0
+
+/* Do not automatically register Thread Network Commissioning instance. */
+#define _NO_NETWORK_COMMISSIONING_DRIVER_
+#endif

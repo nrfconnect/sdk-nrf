@@ -26,16 +26,9 @@ tests:
       - nrf21540dk_nrf52840
     platform_allow: >
       nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf7002dk_nrf5340_cpuapp
-  sample.matter.lock.switchable_thread.nrf7002_ek:
+  sample.matter.lock.thread_wifi_switched:
     build_only: true
-    extra_args: SHIELD=nrf7002ek hci_rpmsg_SHIELD=nrf7002ek_coex
-      CONF_FILE=prj_thread_wifi_switched.conf CONFIG_CHIP_WIFI=n
-    integration_platforms:
-      - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf5340dk_nrf5340_cpuapp
-  sample.matter.lock.switchable_wifi.nrf7002_ek:
-    build_only: true
-    extra_args: SHIELD=nrf7002ek hci_rpmsg_SHIELD=nrf7002ek_coex
+    extra_args: SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
       CONF_FILE=prj_thread_wifi_switched.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp

@@ -101,7 +101,7 @@ For this design, the Wi-Fi driver on the application core communicates with the 
 Switchable Matter over Wi-Fi and Matter over Thread
 ===================================================
 
-In this design, the Matter stack, the OpenThread stack, Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
+In this design, the Matter stack, the OpenThread stack, the Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
 
 .. include:: ../../../../../samples/matter/lock/README.rst
    :start-after: matter_door_lock_sample_thread_wifi_switch_desc_start

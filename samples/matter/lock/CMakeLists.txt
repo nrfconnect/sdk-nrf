@@ -13,11 +13,16 @@ set(hci_rpmsg_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfco
 
 # For prj.conf the CONF_FILE is empty. In other case extract the exact file name from the path string.
 if(CONF_FILE)
-    get_filename_component(CONFIG_FILE_NAME ${CONF_FILE} NAME)
+    get_filename_component(CONF_FILE_NAME ${CONF_FILE} NAME CACHE)
 endif()
 
-if(NOT "${CONFIG_FILE_NAME}" STREQUAL "prj_no_dfu.conf")
+if(NOT CONF_FILE_NAME STREQUAL "prj_no_dfu.conf")
     set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu.yml)
+endif()
+
+if(CONF_FILE_NAME STREQUAL "prj_thread_wifi_switched.conf")
+    # TODO: Add Kconfig for adding custom Matter compilation flags
+    set(CHIP_CFLAGS "-flto")
 endif()
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
@@ -58,6 +63,14 @@ endif()
 if(CONFIG_MCUMGR_TRANSPORT_BT)
     zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
+endif()
+
+if(CONFIG_THREAD_WIFI_SWITCHING)
+    target_sources(app PRIVATE src/thread_wifi_switch.cpp)
+
+    # Enable link-time optimization for the app and WPA supplicant libraries
+    target_compile_options(app PRIVATE -flto)
+    target_compile_options(..__nrf__modules__hostap PRIVATE -flto)
 endif()
 
 chip_configure_data_model(app

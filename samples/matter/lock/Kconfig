@@ -27,14 +27,29 @@ config STATE_LEDS
 	  'n' does not disable the LED indicating the state of the simulated bolt.
 
 config THREAD_WIFI_SWITCHING
-	bool "Switching between Thread and Wi-Fi network support"
+	bool "Switching between Thread and Wi-Fi"
 	depends on SOC_SERIES_NRF53X
-	depends on NET_L2_OPENTHREAD || CHIP_WIFI
+	depends on NET_L2_OPENTHREAD
+	depends on CHIP_WIFI
+	depends on !CHIP_FACTORY_RESET_ERASE_NVS
 	select EXPERIMENTAL
 	help
-	  Enable the functionality that allows a user to switch between Matter over Thread and Matter
-	  over Wi-Fi variants of the application, stored in the respective partitions in the external
-	  flash memory.
+	  Build the application with both Thread and Wi-Fi support and initialize
+	  either transport based on the current configuration. A user can switch
+	  between Thread and Wi-Fi by pressing and holding Button 3 for more than
+	  10 seconds. During the switching, the device is automatically factory
+	  reset and rebooted.
+
+if THREAD_WIFI_SWITCHING
+
+config THREAD_WIFI_SWITCHING_SHELL
+	bool "Shell command for switching between Thread and Wi-Fi"
+	default y if SHELL
+	help
+	  Add "switch_transport" shell command that initiates switching between
+	  Thread and Wi-Fi transport for Matter protocol stack.
+
+endif # THREAD_WIFI_SWITCHING
 
 # Sample configuration used for Thread networking
 if NET_L2_OPENTHREAD
