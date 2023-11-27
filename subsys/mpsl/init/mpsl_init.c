@@ -36,6 +36,10 @@ static K_WORK_DELAYABLE_DEFINE(calibration_work, mpsl_calibration_work_handler);
 extern void rtc_pretick_rtc0_isr_hook(void);
 
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X)
+	#if IS_ENABLED(CONFIG_NRF52_ANOMALY_109_WORKAROUND)
+		BUILD_ASSERT(CONFIG_NRF52_ANOMALY_109_WORKAROUND_EGU_INSTANCE != 5,
+			     "MPSL uses EGU instance 5, please use another one");
+	#endif
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
 #elif IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF53X)
 	#define MPSL_LOW_PRIO_IRQn SWI0_IRQn

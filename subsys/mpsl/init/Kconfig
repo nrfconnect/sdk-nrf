@@ -10,6 +10,14 @@ config MPSL_THREAD_COOP_PRIO
 	default BT_CTLR_SDC_RX_PRIO if BT_LL_SOFTDEVICE
 	default 8
 
+config NRF52_ANOMALY_109_WORKAROUND_EGU_INSTANCE
+	int
+	depends on NRF52_ANOMALY_109_WORKAROUND
+	default 4
+	help
+	  Update default EGU instance used by the nRF52 Anomaly 109 workaround
+	  for PWM. The EGU instance 5 is used by the MPSL.
+
 config MPSL_WORK_STACK_SIZE
 	int "Size of the work handler thread stack"
 	default 1024
