@@ -152,6 +152,10 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = rpu_ctx;
 	unsigned int max_chunk_size = CONFIG_NRF_WIFI_FW_FLASH_CHUNK_SIZE;
 	char *fw_chunk = NULL;
+#ifdef CONFIG_NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
+	struct flash_area_check nrf70_fw_patch_check = { 0 };
+	char *fw_patch_check_buf = NULL;
+#endif /* NRF_WIFI_FW_PATCH_INTEGRITY_CHECK */
 
 	err = flash_area_open(NRF70_FW_PATCH_ID, &fa);
 	if (err < 0) {
@@ -174,6 +178,28 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 		LOG_ERR("Failed to validate patch header: %d", status);
 		goto out;
 	}
+
+#ifdef CONFIG_NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
+	fw_patch_check_buf = k_malloc(max_chunk_size);
+	if (!fw_patch_check_buf) {
+		LOG_ERR("Failed to allocate memory for patch data size: %d", patch_hdr.len);
+		goto out;
+	}
+	nrf70_fw_patch_check.match = (uint8_t *)patch_hdr.hash;
+	nrf70_fw_patch_check.clen = patch_hdr.len;
+	nrf70_fw_patch_check.off = offset;
+	nrf70_fw_patch_check.rbuf = fw_patch_check_buf;
+	nrf70_fw_patch_check.rblen = max_chunk_size;
+	/* Check the integrity of the patch */
+	err = flash_area_check_int_sha256(fa, &nrf70_fw_patch_check);
+	if (err < 0) {
+		LOG_ERR("Patch integrity check failed: %d", err);
+		status = NRF_WIFI_STATUS_FAIL;
+		k_free(fw_patch_check_buf);
+		goto out;
+	}
+	k_free(fw_patch_check_buf);
+#endif /* NRF_WIFI_FW_PATCH_INTEGRITY_CHECK */
 
 	status = nrf_wifi_fmac_fw_reset(rpu_ctx);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
