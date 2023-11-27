@@ -126,6 +126,22 @@ config NRF_WIFI_FW_FLASH_CHUNK_SIZE
 	  Chunk size for nRF70 FW patches to be read from external flash.
 	  This option impacts the loading time of the nRF70 FW patches and
 	  RAM usage (heap) of the application.
+
+config NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
+	bool "Enable integrity check of nRF70 FW patches"
+	select FLASH_AREA_CHECK_INTEGRITY
+	default y
+	help
+	  Select this option to enable integrity check of nRF70 FW patches using
+	  SHA-256 verification algorithm.This option impacts the loading time of the
+	  nRF70 FW patches but protects against corrupted FW patches.
+
+# TC is the default but Wi-Fi uses MbedTLS, so, to avoid loading another library.
+if NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
+choice FLASH_AREA_CHECK_INTEGRITY_BACKEND
+	default FLASH_AREA_CHECK_INTEGRITY_MBEDTLS
+endchoice
+endif
 endif
 
 config CUSTOM_LINKER_SCRIPT
