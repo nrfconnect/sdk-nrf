@@ -228,14 +228,16 @@ nRF Desktop
   * The :ref:`nrf_desktop_bootloader` and :ref:`nrf_desktop_bootloader_background_dfu` sections in the nRF Desktop documentation to explicitly mention the supported DFU configurations.
   * The documentation describing the :ref:`nrf_desktop_memory_layout` configuration to simplify the process of getting started with the application.
   * Changed the term *flash memory* to *non-volatile memory* for generalization purposes.
-  * The :ref:`nrf_desktop_usb_state` to use the :c:func:`usb_hid_set_proto_code` function to set the HID Boot Interface protocol code.
-    The ``CONFIG_USB_HID_PROTOCOL_CODE`` Kconfig option is deprecated and a dedicated API needs to be used instead.
   * The :ref:`nrf_desktop_watchdog` to use ``watchdog0`` DTS alias instead of ``wdt`` DTS node label.
     Using the alias makes the configuration of the module more flexible.
   * Introduced information about priority, pipeline depth and maximum number of HID reports to :c:struct:`hid_report_subscriber_event`.
   * The :ref:`nrf_desktop_hid_state` uses :c:struct:`hid_report_subscriber_event` to handle HID data subscribers connection and disconnection.
     The :c:struct:`ble_peer_event` and ``usb_hid_event`` are no longer used for this purpose.
   * The ``usb_hid_event`` is removed.
+  * The :ref:`nrf_desktop_usb_state` to use the :c:func:`usb_hid_set_proto_code` function to set the HID Boot Interface protocol code.
+    The ``CONFIG_USB_HID_BOOT_PROTOCOL`` Kconfig option was removed and dedicated API needs to be used instead.
+  * Disabled MCUboot's logs over RTT (:kconfig:option:`CONFIG_LOG_BACKEND_RTT` and :kconfig:option:`CONFIG_USE_SEGGER_RTT`) on ``nrf52840dk_nrf52840`` in :file:`prj_mcuboot_qspi.conf` configuration to reduce MCUboot memory footprint and avoid flash overflows.
+    Explicitly enabled the UART log backend (:kconfig:option:`CONFIG_LOG_BACKEND_UART`) together with its dependencies in the configuration file to ensure log visibility.
 
 Thingy:53: Matter weather station
 ---------------------------------
