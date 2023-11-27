@@ -6,6 +6,7 @@
 zephyr_library()
 if(CONFIG_NFC_PLATFORM)
   zephyr_library_sources(platform.c)
+  zephyr_library_sources(platform_internal_hfclk.c)
   zephyr_library_sources_ifdef(CONFIG_NFC_THREAD_CALLBACK platform_internal_thread.c)
   zephyr_library_sources_ifndef(CONFIG_NFC_THREAD_CALLBACK platform_internal_irq.c)
 endif()

@@ -33,6 +33,33 @@ extern "C" {
  */
 int nfc_platform_internal_init(nfc_lib_cb_resolve_t cb_rslv);
 
+/** @brief Initialize internal hfclk (high frequency clock) control.
+ *
+ *  This function should not be used directly.
+ *
+ *  @retval 0 If the operation was successful.
+ *  @retval -EIO Initialization failed.
+ */
+int nfc_platform_internal_hfclk_init(void);
+
+/** @brief Start hfclk.
+ *
+ *  This function should not be used directly.
+ *
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
+ */
+int nfc_platform_internal_hfclk_start(void);
+
+/** @brief Stop hfclk.
+ *
+ *  This function should not be used directly.
+ *
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
+ */
+int nfc_platform_internal_hfclk_stop(void);
+
 #ifdef __cplusplus
 }
 #endif

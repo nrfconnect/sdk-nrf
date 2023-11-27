@@ -719,6 +719,7 @@ Libraries for NFC
 -----------------
 
 * Fixed an issue with handling zero size data (when receiving empty I-blocks from poller) in the :file:`platform_internal_thread` file.
+* Added support for zero-latency interrupts for all NFC libraries.
 
 nRF Security
 ------------

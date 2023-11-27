@@ -7,6 +7,10 @@
 #include <nfc_platform.h>
 #include "platform_internal.h"
 
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
+
 static nfc_lib_cb_resolve_t nfc_cb_resolve;
 
 int nfc_platform_internal_init(nfc_lib_cb_resolve_t cb_rslv)
@@ -27,4 +31,31 @@ void nfc_platform_cb_request(const void *ctx,
 {
 	__ASSERT(nfc_cb_resolve != NULL, "nfc_cb_resolve is not set");
 	nfc_cb_resolve(ctx, data);
+}
+
+void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
+{
+	int err;
+
+	switch (event->evt_id) {
+	case NRFX_NFCT_EVT_FIELD_DETECTED:
+		LOG_DBG("Field detected");
+
+		err = nfc_platform_internal_hfclk_start();
+		__ASSERT_NO_MSG(err >= 0);
+
+		break;
+
+	case NRFX_NFCT_EVT_FIELD_LOST:
+		LOG_DBG("Field lost");
+
+		err = nfc_platform_internal_hfclk_stop();
+		__ASSERT_NO_MSG(err >= 0);
+
+		break;
+
+	default:
+		/* No implementation required */
+		break;
+	}
 }

@@ -11,7 +11,7 @@
 
 LOG_MODULE_DECLARE(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 
-#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
 #define SWI_NAME(number)	SWI_NAME2(number)
 #ifdef CONFIG_SOC_SERIES_NRF53X
 #define SWI_NAME2(number)	EGU ## number ## _IRQn
@@ -20,11 +20,17 @@ LOG_MODULE_DECLARE(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 #endif
 
 #define NFC_SWI_IRQN		SWI_NAME(CONFIG_NFC_SWI_NUMBER)
-#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
 
 #define NFC_LIB_CTX_SIZE CONFIG_NFC_LIB_CTX_MAX_SIZE
 
 #define NFC_HDR_FLAG_COPY BIT(0)
+
+enum hfclk_request {
+	HFCLK_NONE,
+	HFCLK_START,
+	HFCLK_STOP
+};
 
 struct nfc_item_header {
 	uint8_t ctx_size;
@@ -39,9 +45,33 @@ struct nfc_item_header {
 static K_SEM_DEFINE(cb_sem, 0, K_SEM_MAX_LIMIT);
 #endif /* CONFIG_NFC_OWN_THREAD */
 
-static bool buf_full;
+static volatile bool buf_full;
 static nfc_lib_cb_resolve_t nfc_cb_resolve;
 RING_BUF_DECLARE(nfc_cb_ring, CONFIG_NFC_RING_SIZE);
+
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+static volatile enum hfclk_request clk_mode;
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+
+static void hfclk_set(enum hfclk_request req)
+{
+	int err;
+
+	switch (req) {
+	case HFCLK_START:
+		err = nfc_platform_internal_hfclk_start();
+		__ASSERT_NO_MSG(err >= 0);
+		break;
+
+	case HFCLK_STOP:
+		err = nfc_platform_internal_hfclk_stop();
+		__ASSERT_NO_MSG(err >= 0);
+		break;
+
+	default:
+		break;
+	}
+}
 
 static void work_resubmit(struct k_work *work, struct ring_buf *buf)
 {
@@ -103,6 +133,11 @@ static void cb_work(struct k_work *work)
 	uint32_t size;
 	bool is_alloc = false;
 	int err = 0;
+
+	if (ring_buf_is_empty(&nfc_cb_ring)) {
+		LOG_DBG("NFC work callback called with nothing to execute.");
+		return;
+	}
 
 	/* Data from ring buffer is always processed in pairs - context + data in order
 	 * to avoid double copying
@@ -188,16 +223,30 @@ static void schedule_callback(void)
 #endif /* CONFIG_NFC_OWN_THREAD */
 }
 
-#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
 ISR_DIRECT_DECLARE(nfc_swi_handler)
 {
-	schedule_callback();
+	static enum hfclk_request old = HFCLK_NONE;
+	enum hfclk_request new;
+
+	/* If clk_mode changed after this line the swi interrupt
+	 * will be rescheduled for execution.
+	 */
+	new = clk_mode;
+	if (old != new) {
+		hfclk_set(new);
+		old = new;
+	}
+
+	if (!ring_buf_is_empty(&nfc_cb_ring)) {
+		schedule_callback();
+	}
 
 	ISR_DIRECT_PM();
 
 	return 1;
 }
-#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
 
 int nfc_platform_internal_init(nfc_lib_cb_resolve_t cb_rslv)
 {
@@ -205,11 +254,11 @@ int nfc_platform_internal_init(nfc_lib_cb_resolve_t cb_rslv)
 		return -EINVAL;
 	}
 
-#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
 	IRQ_DIRECT_CONNECT(NFC_SWI_IRQN, CONFIG_NFCT_IRQ_PRIORITY,
 			   nfc_swi_handler, 0);
 	irq_enable(NFC_SWI_IRQN);
-#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
 
 	nfc_cb_resolve = cb_rslv;
 
@@ -255,9 +304,36 @@ void nfc_platform_cb_request(const void *ctx,
 	}
 
 end:
-#ifdef CONFIG_NFC_LOW_LATENCY_IRQ
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
 	NVIC_SetPendingIRQ(NFC_SWI_IRQN);
 #else
 	schedule_callback();
-#endif /* CONFIG_NFC_LOW_LATENCY_IRQ */
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+}
+
+void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
+{
+	switch (event->evt_id) {
+	case NRFX_NFCT_EVT_FIELD_DETECTED:
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+		clk_mode = HFCLK_START;
+		NVIC_SetPendingIRQ(NFC_SWI_IRQN);
+#else
+		hfclk_set(HFCLK_START);
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+		break;
+
+	case NRFX_NFCT_EVT_FIELD_LOST:
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+		clk_mode = HFCLK_STOP;
+		NVIC_SetPendingIRQ(NFC_SWI_IRQN);
+#else
+		hfclk_set(HFCLK_STOP);
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
+		break;
+
+	default:
+		/* No implementation required */
+		break;
+	}
 }
