@@ -12,6 +12,15 @@ tests:
     platform_allow: nrf52833dk_nrf52833 nrf52840dk_nrf52840 nrf21540dk_nrf52840
       nrf5340dk_nrf5340_cpunet
     tags: ci_build ci_rs_build ci_rs_weekly
+  sample.peripheral.802154_phy_test.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf21540dk_nrf52840
+      - nrf5340dk_nrf5340_cpunet
+    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpunet
+    tags: ci_build ci_rs_build ci_rs_weekly sysbuild
   sample.peripheral.802154_phy_test.ant_div_mode_auto:
     build_only: true
     integration_platforms:
@@ -20,11 +29,29 @@ tests:
     tags: ci_build ci_rs_build ci_rs_weekly
     extra_args: CONFIG_PTT_ANTENNA_DIVERSITY=y
       CONFIG_PTT_ANT_MODE_AUTO=y
+  sample.peripheral.802154_phy_test.ant_div_mode_auto.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf21540dk_nrf52840
+    platform_allow: nrf21540dk_nrf52840
+    tags: ci_build ci_rs_build ci_rs_weekly sysbuild
+    extra_args: CONFIG_PTT_ANTENNA_DIVERSITY=y
+      CONFIG_PTT_ANT_MODE_AUTO=y
   sample.peripheral.802154_phy_test.ant_div_mode_manual:
     build_only: true
     integration_platforms:
       - nrf21540dk_nrf52840
     platform_allow: nrf21540dk_nrf52840
     tags: ci_build ci_rs_build ci_rs_weekly ci_rs_integration
+    extra_args: CONFIG_PTT_ANTENNA_DIVERSITY=y
+      CONFIG_PTT_ANT_MODE_MANUAL=y
+  sample.peripheral.802154_phy_test.ant_div_mode_manual.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf21540dk_nrf52840
+    platform_allow: nrf21540dk_nrf52840
+    tags: ci_build ci_rs_build ci_rs_weekly ci_rs_integration sysbuild
     extra_args: CONFIG_PTT_ANTENNA_DIVERSITY=y
       CONFIG_PTT_ANT_MODE_MANUAL=y

@@ -8,3 +8,10 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build
+  sample.tfm.provisioning_image_net_core.build.sysbuild:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build sysbuild
