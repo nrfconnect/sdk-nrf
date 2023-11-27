@@ -12,7 +12,7 @@
 #include "mesh/access.h"
 #include "shell_utils.h"
 
-static struct bt_mesh_model *mod;
+static const struct bt_mesh_model *mod;
 
 static void ctl_print(const struct shell *shell, int err, struct bt_mesh_light_ctl_status *rsp)
 {

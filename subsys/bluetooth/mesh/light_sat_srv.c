@@ -30,7 +30,7 @@ struct settings_data {
 #if CONFIG_BT_SETTINGS
 static void sat_srv_pending_store(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 
 	struct settings_data data = {
 		.range = srv->range,
@@ -73,7 +73,7 @@ static int sat_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_sat set = {
@@ -137,7 +137,7 @@ static int handle_sat_get(const struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
 
 	srv->handlers->get(srv, ctx, &status);
@@ -320,7 +320,7 @@ const struct bt_mesh_lvl_srv_handlers _bt_mesh_light_sat_srv_lvl_handlers = {
 
 static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
 
 	srv->handlers->get(srv, NULL, &status);
@@ -334,7 +334,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
 	struct bt_mesh_light_sat set = {
 		.lvl = sys_get_le16(data),
@@ -346,7 +346,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 
 static void scene_recall_complete(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_sat_status status = { 0 };
 
 	srv->handlers->get(srv, NULL, &status);
@@ -364,7 +364,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_hue) = {
 
 static int sat_srv_pub_update(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_sat_status status;
 
 	srv->handlers->get(srv, NULL, &status);
@@ -376,7 +376,7 @@ static int sat_srv_pub_update(const struct bt_mesh_model *model)
 
 static int sat_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	int err;
 
 	srv->model = model;
@@ -412,7 +412,7 @@ static int sat_srv_settings_set(const struct bt_mesh_model *model, const char *n
 				size_t len_rd, settings_read_cb read_cb,
 				void *cb_data)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 	struct settings_data data;
 	ssize_t len;
 
@@ -432,7 +432,7 @@ static int sat_srv_settings_set(const struct bt_mesh_model *model, const char *n
 
 static void sat_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_sat_srv *srv = model->user_data;
+	struct bt_mesh_light_sat_srv *srv = model->rt->user_data;
 
 	srv->range.min = BT_MESH_LIGHT_HSL_MIN;
 	srv->range.max = BT_MESH_LIGHT_HSL_MAX;

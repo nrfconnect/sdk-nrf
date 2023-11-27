@@ -140,7 +140,7 @@ double shell_model_strtodbl(const char *str, int *err)
 	return (trimmed_buf[0] == '-') ? ((double)intgr - frac_dbl) : ((double)intgr + frac_dbl);
 }
 
-static bool model_first_get(uint16_t id, struct bt_mesh_model **mod, uint16_t *cid)
+static bool model_first_get(uint16_t id, const struct bt_mesh_model **mod, uint16_t *cid)
 {
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
 
@@ -159,20 +159,20 @@ static bool model_first_get(uint16_t id, struct bt_mesh_model **mod, uint16_t *c
 	return false;
 }
 
-bool shell_model_first_get(uint16_t id, struct bt_mesh_model **mod)
+bool shell_model_first_get(uint16_t id, const struct bt_mesh_model **mod)
 {
 	return model_first_get(id, mod, NULL);
 }
 
-bool shell_vnd_model_first_get(uint16_t cid, uint16_t id, struct bt_mesh_model **mod)
+bool shell_vnd_model_first_get(uint16_t cid, uint16_t id, const struct bt_mesh_model **mod)
 {
 	return model_first_get(id, mod, &cid);
 }
 
-static int instance_set(const struct shell *shell, struct bt_mesh_model **mod, uint16_t mod_id,
-			uint16_t *cid, uint8_t elem_idx)
+static int instance_set(const struct shell *shell, const struct bt_mesh_model **mod,
+			uint16_t mod_id, uint16_t *cid, uint8_t elem_idx)
 {
-	struct bt_mesh_model *mod_temp;
+	const struct bt_mesh_model *mod_temp;
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
 
 	if (elem_idx >= comp->elem_count) {
@@ -196,13 +196,13 @@ static int instance_set(const struct shell *shell, struct bt_mesh_model **mod, u
 	return 0;
 }
 
-int shell_model_instance_set(const struct shell *shell, struct bt_mesh_model **mod, uint16_t mod_id,
-			     uint8_t elem_idx)
+int shell_model_instance_set(const struct shell *shell, const struct bt_mesh_model **mod,
+			     uint16_t mod_id, uint8_t elem_idx)
 {
 	return instance_set(shell, mod, mod_id, NULL, elem_idx);
 }
 
-int shell_vnd_model_instance_set(const struct shell *shell, struct bt_mesh_model **mod,
+int shell_vnd_model_instance_set(const struct shell *shell, const struct bt_mesh_model **mod,
 				 uint16_t mod_id, uint16_t cid, uint8_t elem_idx)
 {
 	return instance_set(shell, mod, mod_id, &cid, elem_idx);
@@ -212,11 +212,11 @@ static void model_instances_get(uint16_t id, uint16_t *cid, struct shell_model_i
 				uint8_t len)
 {
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
-	struct bt_mesh_elem *elem;
-	struct bt_mesh_model *mod;
+	const struct bt_mesh_elem *elem;
+	const struct bt_mesh_model *mod;
 
 	for (int i = 0; i < len; i++) {
-		elem = bt_mesh_elem_find(comp->elem[i].addr);
+		elem = bt_mesh_elem_find(comp->elem[i].rt->addr);
 
 		if (cid) {
 			mod = bt_mesh_model_find_vnd(elem, *cid, id);
@@ -225,8 +225,8 @@ static void model_instances_get(uint16_t id, uint16_t *cid, struct shell_model_i
 		}
 
 		if (mod) {
-			arr[i].addr = comp->elem[i].addr;
-			arr[i].elem_idx = mod->elem_idx;
+			arr[i].addr = comp->elem[i].rt->addr;
+			arr[i].elem_idx = mod->rt->elem_idx;
 		}
 	}
 }

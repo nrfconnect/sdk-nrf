@@ -25,7 +25,7 @@ struct bt_mesh_light_xyl_srv_settings_data {
 #if CONFIG_BT_SETTINGS
 static void bt_mesh_light_xyl_srv_pending_store(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 
 	struct bt_mesh_light_xyl_srv_settings_data data = {
 		.default_params = srv->xy_default,
@@ -95,7 +95,7 @@ static int xyl_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_xy_set set;
 	struct bt_mesh_light_xy_status status = { 0 };
@@ -155,7 +155,7 @@ static int handle_xyl_get(const struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xyl_status status = { 0 };
 
 	xyl_get(srv, ctx, &status);
@@ -182,7 +182,7 @@ static int handle_target_get(const struct bt_mesh_model *model,
 			      struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xy_status status = { 0 };
 	struct bt_mesh_lightness_status light = { 0 };
 
@@ -213,7 +213,7 @@ static void default_encode_status(struct bt_mesh_light_xyl_srv *srv,
 static void default_rsp(const struct bt_mesh_model *model,
 			struct bt_mesh_msg_ctx *rx_ctx)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_DEFAULT_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_LEN_DEFAULT);
@@ -225,7 +225,7 @@ static int default_set(const struct bt_mesh_model *model,
 			struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf,
 			bool ack)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xy old_default = srv->xy_default;
 	uint16_t light = from_actual(net_buf_simple_pull_le16(buf));
 
@@ -287,7 +287,7 @@ static void range_rsp(const struct bt_mesh_model *model,
 		      struct bt_mesh_msg_ctx *rx_ctx,
 		      enum bt_mesh_model_status status)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_XYL_OP_RANGE_STATUS,
 				 BT_MESH_LIGHT_XYL_MSG_LEN_RANGE_STATUS);
@@ -298,7 +298,7 @@ static void range_rsp(const struct bt_mesh_model *model,
 static int range_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xy_range new_range;
 	struct bt_mesh_light_xy_range old_range;
 	enum bt_mesh_model_status status_code;
@@ -419,7 +419,7 @@ struct __packed scene_data {
 
 static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xy_status xy_rsp = { 0 };
 	struct bt_mesh_lightness_status light = { 0 };
 	struct scene_data *scene = (struct scene_data *)&data[0];
@@ -448,7 +448,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct scene_data *scene = (struct scene_data *)&data[0];
 	struct bt_mesh_light_xy_status xy_status = { 0 };
 	struct bt_mesh_light_xy_set xy_set = {
@@ -480,7 +480,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 
 static void scene_recall_complete(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xyl_status xyl_status = { 0 };
 	struct bt_mesh_lightness_status light_status = { 0 };
 	struct bt_mesh_light_xy_status xy_status = { 0 };
@@ -512,7 +512,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_xyl) = {
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xyl_status status = { 0 };
 
 	xyl_get(srv, NULL, &status);
@@ -523,7 +523,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int bt_mesh_light_xyl_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model *lightness_srv;
 
 	srv->model = model;
@@ -559,7 +559,7 @@ static int bt_mesh_light_xyl_srv_settings_set(const struct bt_mesh_model *model,
 					      settings_read_cb read_cb,
 					      void *cb_arg)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xyl_srv_settings_data data;
 
 	if (read_cb(cb_arg, &data, sizeof(data)) != sizeof(data)) {
@@ -577,7 +577,7 @@ static int bt_mesh_light_xyl_srv_settings_set(const struct bt_mesh_model *model,
 
 static int bt_mesh_light_xyl_srv_start(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_xy_status status;
 	struct bt_mesh_model_transition transition = {
 		.time = srv->lightness_srv->ponoff.dtt.transition_time,
@@ -615,7 +615,7 @@ static int bt_mesh_light_xyl_srv_start(const struct bt_mesh_model *model)
 
 static void bt_mesh_light_xyl_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 
 	net_buf_simple_reset(srv->pub.msg);
 
@@ -636,7 +636,7 @@ const struct bt_mesh_model_cb _bt_mesh_light_xyl_srv_cb = {
 
 static int bt_mesh_light_xyl_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_srv *srv = model->user_data;
+	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model *lightness_setup_srv;
 	int err;
 

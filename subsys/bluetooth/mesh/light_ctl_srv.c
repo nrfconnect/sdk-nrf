@@ -57,7 +57,7 @@ static int ctl_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_lightness_status light_rsp;
 	struct bt_mesh_light_temp_status temp_rsp;
@@ -119,7 +119,7 @@ respond:
 static int handle_ctl_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_ctl_status status = { 0 };
 
 	ctl_get(srv, ctx, &status);
@@ -154,7 +154,7 @@ static void temp_range_rsp(const struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *rx_ctx,
 			   enum bt_mesh_model_status status)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_TEMP_RANGE_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_TEMP_RANGE_STATUS);
@@ -169,7 +169,7 @@ static enum bt_mesh_model_status temp_range_set(const struct bt_mesh_model *mode
 						struct bt_mesh_msg_ctx *ctx,
 						struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_temp_range temp = {
 		.min = net_buf_simple_pull_le16(buf),
 		.max = net_buf_simple_pull_le16(buf),
@@ -202,8 +202,8 @@ static int handle_temp_range_set(const struct bt_mesh_model *model, struct bt_me
 	return 0;
 }
 
-static int handle_temp_range_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-				       struct net_buf_simple *buf)
+static int handle_temp_range_set_unack(const struct bt_mesh_model *model,
+				       struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf)
 {
 	temp_range_set(model, ctx, buf);
 
@@ -222,7 +222,7 @@ static void default_encode_status(struct net_buf_simple *buf,
 static void default_rsp(const struct bt_mesh_model *model,
 			struct bt_mesh_msg_ctx *rx_ctx)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_CTL_DEFAULT_STATUS,
 				 BT_MESH_LIGHT_CTL_MSG_LEN_DEFAULT_MSG);
@@ -233,7 +233,7 @@ static void default_rsp(const struct bt_mesh_model *model,
 static int default_set(const struct bt_mesh_model *model,
 			struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_temp temp;
 	uint16_t light;
 
@@ -333,7 +333,7 @@ const struct bt_mesh_model_op _bt_mesh_light_ctl_setup_srv_op[] = {
 
 static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_lightness_status light = { 0 };
 
 	if (atomic_test_bit(&srv->lightness_srv.flags,
@@ -351,7 +351,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 
 	if (atomic_test_bit(&srv->lightness_srv.flags,
 			    LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
@@ -369,7 +369,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 
 static void scene_recall_complete(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_ctl_status status = { 0 };
 
 	ctl_get(srv, NULL, &status);
@@ -393,7 +393,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_ctl) = {
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_ctl_status status = { 0 };
 
 	ctl_get(srv, NULL, &status);
@@ -404,7 +404,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int bt_mesh_light_ctl_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 
 	srv->model = model;
 	srv->temp_srv.ctl = srv;
@@ -418,14 +418,14 @@ static int bt_mesh_light_ctl_srv_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_light_ctl_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 
 	net_buf_simple_reset(srv->pub.msg);
 }
 
 static int bt_mesh_light_ctl_srv_start(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_temp_status temp_status;
 	struct bt_mesh_light_temp_set temp = {
@@ -434,9 +434,9 @@ static int bt_mesh_light_ctl_srv_start(const struct bt_mesh_model *model)
 	};
 
 	if (!srv->temp_srv.model ||
-	    (srv->model->elem_idx > srv->temp_srv.model->elem_idx)) {
+	    (srv->model->rt->elem_idx > srv->temp_srv.model->rt->elem_idx)) {
 		LOG_ERR("Light CTL srv[%d]: Temp. srv not properly initialized",
-		       srv->model->elem_idx);
+		       srv->model->rt->elem_idx);
 		return -EINVAL;
 	}
 
@@ -471,7 +471,7 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctl_srv_cb = {
 
 static int bt_mesh_light_ctl_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctl_srv *srv = model->rt->user_data;
 	int err;
 
 	err = bt_mesh_model_extend(model, srv->model);

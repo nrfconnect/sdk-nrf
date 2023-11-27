@@ -12,7 +12,7 @@
 #include "mesh/access.h"
 #include "shell_utils.h"
 
-static struct bt_mesh_model *mod;
+static const struct bt_mesh_model *mod;
 
 static void xyl_print(const struct shell *shell, int err, struct bt_mesh_light_xyl_status *rsp)
 {

@@ -478,7 +478,7 @@ static void scheduled_action_handle(struct k_work *work)
 
 	WRITE_BIT(srv->active_bitmap, srv->idx, 0);
 
-	struct bt_mesh_model *next_sched_mod = NULL;
+	const struct bt_mesh_model *next_sched_mod = NULL;
 	uint16_t model_id = srv->sch_reg[srv->idx].action ==
 				BT_MESH_SCHEDULER_SCENE_RECALL ?
 		BT_MESH_MODEL_ID_SCENE_SRV : BT_MESH_MODEL_ID_GEN_ONOFF_SRV;
@@ -488,30 +488,30 @@ static void scheduled_action_handle(struct k_work *work)
 		.delay = 0,
 	};
 	uint16_t scene = srv->sch_reg[srv->idx].scene_number;
-	struct bt_mesh_elem *elem = bt_mesh_model_elem(srv->model);
+	const struct bt_mesh_elem *elem = bt_mesh_model_elem(srv->model);
 
 	LOG_DBG("Scheduler action fired: %d", srv->sch_reg[srv->idx].action);
 
 	do {
-		struct bt_mesh_model *handled_model =
+		const struct bt_mesh_model *handled_model =
 				bt_mesh_model_find(elem, model_id);
 
 		if (model_id == BT_MESH_MODEL_ID_SCENE_SRV &&
 		    handled_model != NULL) {
 			struct bt_mesh_scene_srv *scene_srv =
-			(struct bt_mesh_scene_srv *)handled_model->user_data;
+			(struct bt_mesh_scene_srv *)handled_model->rt->user_data;
 
 			bt_mesh_scene_srv_set(scene_srv, scene, &transition);
 			bt_mesh_scene_srv_pub(scene_srv, NULL);
 			LOG_DBG("Scene srv addr: %d recalled scene: %d",
-				elem->addr,
+				elem->rt->addr,
 				srv->sch_reg[srv->idx].scene_number);
 		}
 
 		if (model_id == BT_MESH_MODEL_ID_GEN_ONOFF_SRV &&
 		    handled_model != NULL) {
 			struct bt_mesh_onoff_srv *onoff_srv =
-			(struct bt_mesh_onoff_srv *)handled_model->user_data;
+			(struct bt_mesh_onoff_srv *)handled_model->rt->user_data;
 			struct bt_mesh_onoff_set set = {
 				.on_off = srv->sch_reg[srv->idx].action,
 				.transition = &transition
@@ -522,12 +522,12 @@ static void scheduled_action_handle(struct k_work *work)
 					NULL, &set, &status);
 			bt_mesh_onoff_srv_pub(onoff_srv, NULL, &status);
 			LOG_DBG("Onoff srv addr: %d set: %d",
-				elem->addr,
+				elem->rt->addr,
 				srv->sch_reg[srv->idx].action);
 		}
 
-		elem = BT_MESH_ADDR_IS_UNICAST(elem->addr + 1) ?
-				bt_mesh_elem_find(elem->addr + 1) : NULL;
+		elem = BT_MESH_ADDR_IS_UNICAST(elem->rt->addr + 1) ?
+				bt_mesh_elem_find(elem->rt->addr + 1) : NULL;
 
 		if (elem) {
 			next_sched_mod = bt_mesh_model_find(elem,
@@ -590,7 +590,7 @@ static void encode_action_status(struct bt_mesh_scheduler_srv *srv,
 static int send_scheduler_status(const struct bt_mesh_model *model,
 		struct bt_mesh_msg_ctx *ctx)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCHEDULER_OP_STATUS,
 			BT_MESH_SCHEDULER_MSG_LEN_STATUS);
@@ -604,7 +604,7 @@ static int send_scheduler_action_status(const struct bt_mesh_model *model,
 					uint8_t idx,
 					bool is_reduced)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCHEDULER_OP_ACTION_STATUS,
 			is_reduced ?
@@ -619,7 +619,7 @@ static int send_scheduler_action_status(const struct bt_mesh_model *model,
 static int action_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 	uint8_t idx;
 	struct bt_mesh_schedule_entry tmp = { 0 };
 
@@ -668,10 +668,10 @@ static int handle_scheduler_get(const struct bt_mesh_model *model, struct bt_mes
 	return 0;
 }
 
-static int handle_scheduler_action_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-				       struct net_buf_simple *buf)
+static int handle_scheduler_action_get(const struct bt_mesh_model *model,
+				       struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 	uint8_t idx = net_buf_simple_pull_u8(buf);
 
 	if (idx >= BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
@@ -679,14 +679,13 @@ static int handle_scheduler_action_get(const struct bt_mesh_model *model, struct
 	}
 
 	LOG_DBG("Rx: scheduler server action index %d get", idx);
-	send_scheduler_action_status(model, ctx, idx,
-			!is_entry_defined(srv, idx));
+	send_scheduler_action_status(model, ctx, idx, !is_entry_defined(srv, idx));
 
 	return 0;
 }
 
-static int handle_scheduler_action_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-				       struct net_buf_simple *buf)
+static int handle_scheduler_action_set(const struct bt_mesh_model *model,
+				       struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf)
 {
 	return action_set(model, ctx, buf, true);
 }
@@ -728,7 +727,7 @@ const struct bt_mesh_model_op _bt_mesh_scheduler_setup_srv_op[] = {
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 
 	if (srv->last_idx == BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
 		encode_status(srv, srv->pub.msg);
@@ -740,7 +739,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int scheduler_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 
 	if (srv->time_srv == NULL) {
 		return -ECANCELED;
@@ -766,7 +765,7 @@ static int scheduler_srv_init(const struct bt_mesh_model *model)
 
 static void scheduler_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 
 	srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
 	srv->last_idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
@@ -795,7 +794,7 @@ static int scheduler_srv_settings_set(const struct bt_mesh_model *model,
 				      size_t len_rd, settings_read_cb read_cb,
 				      void *cb_data)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 	struct bt_mesh_schedule_entry data = { 0 };
 	ssize_t len = read_cb(cb_data, &data, sizeof(data));
 	uint8_t idx = strtol(name, NULL, 16);
@@ -820,7 +819,7 @@ const struct bt_mesh_model_cb _bt_mesh_scheduler_srv_cb = {
 
 static int scheduler_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_scheduler_srv *srv = model->user_data;
+	struct bt_mesh_scheduler_srv *srv = model->rt->user_data;
 #if defined(CONFIG_BT_MESH_COMP_PAGE_1)
 	int err = bt_mesh_model_correspond(model, srv->model);
 

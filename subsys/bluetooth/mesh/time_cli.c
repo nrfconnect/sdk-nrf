@@ -16,7 +16,7 @@ static int handle_status(const struct bt_mesh_model *model,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
-	struct bt_mesh_time_cli *cli = model->user_data;
+	struct bt_mesh_time_cli *cli = model->rt->user_data;
 	struct bt_mesh_time_status status;
 	struct bt_mesh_time_status *rsp;
 
@@ -38,7 +38,7 @@ static int handle_status(const struct bt_mesh_model *model,
 static int handle_time_role_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				   struct net_buf_simple *buf)
 {
-	struct bt_mesh_time_cli *cli = model->user_data;
+	struct bt_mesh_time_cli *cli = model->rt->user_data;
 	enum bt_mesh_time_role status;
 	uint8_t *rsp;
 
@@ -60,7 +60,7 @@ static int handle_time_role_status(const struct bt_mesh_model *model, struct bt_
 static int handle_time_zone_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				   struct net_buf_simple *buf)
 {
-	struct bt_mesh_time_cli *cli = model->user_data;
+	struct bt_mesh_time_cli *cli = model->rt->user_data;
 	struct bt_mesh_time_zone_status status;
 	struct bt_mesh_time_zone_status *rsp;
 
@@ -83,15 +83,14 @@ static int handle_time_zone_status(const struct bt_mesh_model *model, struct bt_
 	return 0;
 }
 
-static int handle_tai_utc_delta_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
-				       struct net_buf_simple *buf)
+static int handle_tai_utc_delta_status(const struct bt_mesh_model *model,
+				       struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf)
 {
-	struct bt_mesh_time_cli *cli = model->user_data;
+	struct bt_mesh_time_cli *cli = model->rt->user_data;
 	struct bt_mesh_time_tai_utc_delta_status status;
 	struct bt_mesh_time_tai_utc_delta_status *rsp;
 
-	status.delta_current =
-		net_buf_simple_pull_le16(buf) - UTC_CHANGE_ZERO_POINT;
+	status.delta_current = net_buf_simple_pull_le16(buf) - UTC_CHANGE_ZERO_POINT;
 	status.tai_utc_change.delta_new =
 		net_buf_simple_pull_le16(buf) - UTC_CHANGE_ZERO_POINT;
 	status.tai_utc_change.timestamp = bt_mesh_time_buf_pull_tai_sec(buf);
@@ -135,7 +134,7 @@ const struct bt_mesh_model_op _bt_mesh_time_cli_op[] = {
 
 static int bt_mesh_time_cli_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_time_cli *cli = model->user_data;
+	struct bt_mesh_time_cli *cli = model->rt->user_data;
 
 	cli->model = model;
 	net_buf_simple_init(cli->pub.msg, 0);
@@ -151,7 +150,7 @@ static int bt_mesh_time_cli_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_time_cli_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_time_cli *cli = model->user_data;
+	struct bt_mesh_time_cli *cli = model->rt->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
 	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
