@@ -10,7 +10,7 @@
 
 #include "shell_utils.h"
 
-static struct bt_mesh_model *mod;
+static const struct bt_mesh_model *mod;
 
 static void descriptor_print(const struct shell *shell, int err,
 			     struct bt_mesh_sensor_descriptor *rsp)
@@ -48,7 +48,7 @@ static int cmd_desc_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 
 	if (argc == 1) {
 		uint32_t count = CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS;
@@ -115,7 +115,7 @@ static int cmd_cadence_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 	struct bt_mesh_sensor_cadence_status rsp;
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 
@@ -153,7 +153,7 @@ static int cadence_set(const struct shell *shell, size_t argc, char *argv[], boo
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 
 	if (sensor_type == NULL) {
@@ -206,7 +206,7 @@ static int cmd_settings_get(const struct shell *shell, size_t argc, char *argv[]
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 	uint32_t count = CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SETTINGS;
 	uint16_t ids[CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SETTINGS];
 
@@ -256,7 +256,7 @@ static int cmd_setting_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 	struct bt_mesh_sensor_setting_status rsp;
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 	const struct bt_mesh_sensor_type *setting_type = bt_mesh_sensor_type_get(setting_id);
@@ -286,7 +286,7 @@ static int setting_set(const struct shell *shell, size_t argc, char *argv[], boo
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 	const struct bt_mesh_sensor_type *setting_type = bt_mesh_sensor_type_get(setting_id);
 
@@ -336,7 +336,7 @@ static int cmd_get(const struct shell *shell, size_t argc, char *argv[])
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 
 	if (argc == 1) {
 		uint32_t count = CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS;
@@ -398,7 +398,7 @@ static int cmd_series_entry_get(const struct shell *shell, size_t argc, char *ar
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 
 	if (sensor_type == NULL) {
@@ -437,7 +437,7 @@ static int cmd_series_entries_get(const struct shell *shell, size_t argc, char *
 		return -ENODEV;
 	}
 
-	struct bt_mesh_sensor_cli *cli = mod->user_data;
+	struct bt_mesh_sensor_cli *cli = mod->rt->user_data;
 
 	const struct bt_mesh_sensor_type *sensor_type = bt_mesh_sensor_type_get(sensor_id);
 

@@ -11,7 +11,7 @@
 static int handle_cfg_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_dm_cli *cli = model->user_data;
+	struct bt_mesh_dm_cli *cli = model->rt->user_data;
 	struct bt_mesh_dm_cli_cfg_status status;
 	struct bt_mesh_dm_cli_cfg_status *rsp;
 	uint8_t temp;
@@ -68,7 +68,7 @@ static bool result_populate(struct bt_mesh_dm_res_entry *entry,
 static int handle_result_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
-	struct bt_mesh_dm_cli *cli = model->user_data;
+	struct bt_mesh_dm_cli *cli = model->rt->user_data;
 	struct bt_mesh_dm_cli_results status = {
 		.res = cli->res_arr,
 		.entry_cnt = 0
@@ -131,7 +131,7 @@ const struct bt_mesh_model_op _bt_mesh_dm_cli_op[] = {
 
 static int bt_mesh_dm_cli_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_dm_cli *cli = model->user_data;
+	struct bt_mesh_dm_cli *cli = model->rt->user_data;
 
 	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
@@ -143,7 +143,7 @@ static int bt_mesh_dm_cli_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_dm_cli_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_dm_cli *cli = model->user_data;
+	struct bt_mesh_dm_cli *cli = model->rt->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
 	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);

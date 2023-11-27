@@ -313,7 +313,7 @@ static int handle_get(const struct bt_mesh_model *model,
 		       struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf)
 {
-	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+	struct bt_mesh_silvair_enocean_srv *srv = model->rt->user_data;
 
 	if (buf->len != 0) {
 		return -EMSGSIZE;
@@ -335,7 +335,7 @@ static int handle_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx 
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+	struct bt_mesh_silvair_enocean_srv *srv = model->rt->user_data;
 	uint8_t *key;
 	uint8_t *addr_raw;
 
@@ -389,7 +389,7 @@ static int handle_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx 
 static int handle_delete(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
-	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+	struct bt_mesh_silvair_enocean_srv *srv = model->rt->user_data;
 
 	if (buf->len != 0) {
 		return -EMSGSIZE;
@@ -443,7 +443,7 @@ static int bt_mesh_silvair_enocean_srv_init(const struct bt_mesh_model *model)
 		initialized = true;
 	}
 
-	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+	struct bt_mesh_silvair_enocean_srv *srv = model->rt->user_data;
 
 	srv->mod = model;
 	srv->pub.msg = &srv->pub_buf;
@@ -462,7 +462,7 @@ static int bt_mesh_silvair_enocean_srv_init(const struct bt_mesh_model *model)
 
 static int bt_mesh_silvair_enocean_srv_start(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+	struct bt_mesh_silvair_enocean_srv *srv = model->rt->user_data;
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION) &&
 	    !bt_addr_le_cmp(&srv->addr, BT_ADDR_LE_NONE)) {
@@ -474,7 +474,7 @@ static int bt_mesh_silvair_enocean_srv_start(const struct bt_mesh_model *model)
 
 static void bt_mesh_silvair_enocean_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+	struct bt_mesh_silvair_enocean_srv *srv = model->rt->user_data;
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION)) {
 		bt_enocean_commissioning_disable();
@@ -502,7 +502,7 @@ static int bt_mesh_silvair_enocean_srv_settings_set(
 		const struct bt_mesh_model *model, const char *name, size_t len_rd,
 		settings_read_cb read_cb, void *cb_arg)
 {
-	struct bt_mesh_silvair_enocean_srv *srv = model->user_data;
+	struct bt_mesh_silvair_enocean_srv *srv = model->rt->user_data;
 	ssize_t result;
 
 	if (name) {

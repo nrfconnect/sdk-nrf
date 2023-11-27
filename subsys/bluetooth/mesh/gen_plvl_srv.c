@@ -28,7 +28,7 @@ struct bt_mesh_plvl_srv_settings_data {
 #if CONFIG_BT_SETTINGS
 static void bt_mesh_plvl_srv_pending_store(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 
 	struct bt_mesh_plvl_srv_settings_data data = {
 		.default_power = srv->default_power,
@@ -114,7 +114,7 @@ static void rsp_plvl_status(const struct bt_mesh_model *model,
 static int handle_lvl_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
 
 	srv->handlers->power_get(srv, ctx, &status);
@@ -158,7 +158,7 @@ static int plvl_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *c
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_plvl_status status;
 	struct bt_mesh_plvl_set set;
@@ -201,7 +201,7 @@ static int handle_plvl_set_unack(const struct bt_mesh_model *model, struct bt_me
 static int handle_last_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_LAST_STATUS,
 				 BT_MESH_PLVL_MSG_LEN_LAST_STATUS);
@@ -216,7 +216,7 @@ static int handle_last_get(const struct bt_mesh_model *model, struct bt_mesh_msg
 static int handle_default_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_DEFAULT_STATUS,
 				 BT_MESH_PLVL_MSG_LEN_DEFAULT_STATUS);
@@ -231,7 +231,7 @@ static int handle_default_get(const struct bt_mesh_model *model, struct bt_mesh_
 static int set_default(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	uint16_t new = net_buf_simple_pull_le16(buf);
 
 	if (new != srv->default_power) {
@@ -274,7 +274,7 @@ static int handle_default_set_unack(const struct bt_mesh_model *model, struct bt
 static int handle_range_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			    struct net_buf_simple *buf)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PLVL_OP_RANGE_STATUS,
 				 BT_MESH_PLVL_MSG_LEN_RANGE_STATUS);
@@ -292,7 +292,7 @@ static int handle_range_get(const struct bt_mesh_model *model, struct bt_mesh_ms
 static int set_range(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		     struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_range new;
 
 	new.min = net_buf_simple_pull_le16(buf);
@@ -595,7 +595,7 @@ const struct bt_mesh_onoff_srv_handlers bt_mesh_plvl_srv_onoff_handlers = {
 
 static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
 
 	srv->handlers->power_get(srv, NULL, &status);
@@ -608,7 +608,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
 	struct bt_mesh_plvl_set set = {
 		.power_lvl = sys_get_le16(data),
@@ -620,7 +620,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 
 static void scene_recall_complete(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
 
 	srv->handlers->power_get(srv, NULL, &status);
@@ -654,7 +654,7 @@ static void plvl_srv_reset(struct bt_mesh_plvl_srv *srv)
 
 static void bt_mesh_plvl_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 
 	plvl_srv_reset(srv);
 	net_buf_simple_reset(model->pub->msg);
@@ -666,7 +666,7 @@ static void bt_mesh_plvl_srv_reset(const struct bt_mesh_model *model)
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
 
 	srv->handlers->power_get(srv, NULL, &status);
@@ -676,7 +676,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int bt_mesh_plvl_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	int err;
 
 	srv->plvl_model = model;
@@ -710,7 +710,7 @@ static int bt_mesh_plvl_srv_settings_set(const struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_srv_settings_data data;
 
 	if (name) {
@@ -733,7 +733,7 @@ static int bt_mesh_plvl_srv_settings_set(const struct bt_mesh_model *model,
 
 static int bt_mesh_plvl_srv_start(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	struct bt_mesh_plvl_status status = { 0 };
 	struct bt_mesh_model_transition transition = {
 		.time = srv->ponoff.dtt.transition_time,
@@ -773,7 +773,7 @@ const struct bt_mesh_model_cb _bt_mesh_plvl_srv_cb = {
 
 static int bt_mesh_plvl_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_srv *srv = model->user_data;
+	struct bt_mesh_plvl_srv *srv = model->rt->user_data;
 	int err;
 
 	srv->plvl_setup_model = model;

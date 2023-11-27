@@ -53,7 +53,7 @@ static struct bt_mesh_prop *prop_get(const struct bt_mesh_prop_srv *srv,
 #if CONFIG_BT_SETTINGS
 static void bt_mesh_prop_srv_pending_store(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_prop_srv *srv = model->user_data;
+	struct bt_mesh_prop_srv *srv = model->rt->user_data;
 
 	uint8_t user_access[CONFIG_BT_MESH_PROP_MAXCOUNT];
 
@@ -117,7 +117,7 @@ static int handle_owner_properties_get(const struct bt_mesh_model *model,
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
-	pub_list_build(model->user_data, &rsp, 1);
+	pub_list_build(model->rt->user_data, &rsp, 1);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
 	return 0;
@@ -127,7 +127,7 @@ static int handle_owner_property_get(const struct bt_mesh_model *model,
 				     struct bt_mesh_msg_ctx *ctx,
 				     struct net_buf_simple *buf)
 {
-	struct bt_mesh_prop_srv *srv = model->user_data;
+	struct bt_mesh_prop_srv *srv = model->rt->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED) {
@@ -178,7 +178,7 @@ static int owner_property_set(const struct bt_mesh_model *model,
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_prop_srv *srv = model->user_data;
+	struct bt_mesh_prop_srv *srv = model->rt->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 	enum bt_mesh_prop_access user_access = net_buf_simple_pull_u8(buf);
 
@@ -322,7 +322,7 @@ static int handle_client_properties_get(const struct bt_mesh_model *model,
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_CLIENT_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
-	pub_list_build(model->user_data, &rsp, start_prop);
+	pub_list_build(model->rt->user_data, &rsp, start_prop);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
 	return 0;
@@ -345,7 +345,7 @@ static struct bt_mesh_prop_srv *prop_srv_get(const struct bt_mesh_model *user_sr
 	const struct bt_mesh_model *model =
 		bt_mesh_model_find(bt_mesh_model_elem(user_srv_mod), model_id);
 
-	return model ? model->user_data : NULL;
+	return model ? model->rt->user_data : NULL;
 }
 
 static struct bt_mesh_prop *user_prop_get(const struct bt_mesh_model *model, uint16_t id,
@@ -477,7 +477,7 @@ static int user_property_set(const struct bt_mesh_model *model,
 		return -EINVAL;
 	}
 
-	struct bt_mesh_prop_srv *user_srv = model->user_data;
+	struct bt_mesh_prop_srv *user_srv = model->rt->user_data;
 	struct bt_mesh_prop_srv *owner_srv;
 	struct bt_mesh_prop *prop = user_prop_get(model, id, &owner_srv);
 
@@ -565,7 +565,7 @@ const struct bt_mesh_model_op _bt_mesh_prop_user_srv_op[] = {
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_prop_srv *srv = model->user_data;
+	struct bt_mesh_prop_srv *srv = model->rt->user_data;
 	struct bt_mesh_prop_val value;
 	struct bt_mesh_prop *prop;
 
@@ -602,7 +602,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int bt_mesh_prop_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_prop_srv *srv = model->user_data;
+	struct bt_mesh_prop_srv *srv = model->rt->user_data;
 
 	srv->model = model;
 	srv->pub.msg = &srv->pub_buf;
@@ -656,7 +656,7 @@ static int bt_mesh_prop_srv_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_prop_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_prop_srv *srv = model->user_data;
+	struct bt_mesh_prop_srv *srv = model->rt->user_data;
 
 	net_buf_simple_reset(srv->pub.msg);
 
@@ -670,7 +670,7 @@ static int bt_mesh_prop_srv_settings_set(const struct bt_mesh_model *model,
 					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {
-	struct bt_mesh_prop_srv *srv = model->user_data;
+	struct bt_mesh_prop_srv *srv = model->rt->user_data;
 	uint8_t entries[CONFIG_BT_MESH_PROP_MAXCOUNT];
 	ssize_t size = MIN(sizeof(entries), len_rd);
 

@@ -12,7 +12,7 @@
 #include "mesh/access.h"
 #include "shell_utils.h"
 
-static struct bt_mesh_model *mod;
+static const struct bt_mesh_model *mod;
 
 static int cmd_battery_get(const struct shell *shell, size_t argc, char *argv[])
 {

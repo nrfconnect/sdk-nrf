@@ -37,7 +37,7 @@ static void rsp_status(const struct bt_mesh_model *model,
 static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
-	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_srv *srv = model->rt->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 
 	srv->handlers->get(srv, ctx, &status);
@@ -55,7 +55,7 @@ static int onoff_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_srv *srv = model->rt->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_onoff_set set;
@@ -137,7 +137,7 @@ const struct bt_mesh_model_op _bt_mesh_onoff_srv_op[] = {
 /* .. include_startingpoint_scene_srv_rst_1 */
 static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_srv *srv = model->rt->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 
 	/* Only store the next stable on_off state: */
@@ -151,7 +151,7 @@ static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[],
 			 size_t len, struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_srv *srv = model->rt->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 	struct bt_mesh_onoff_set set = {
 		.on_off = data[0],
@@ -163,7 +163,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 
 static void scene_recall_complete(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_srv *srv = model->rt->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 
 	srv->handlers->get(srv, NULL, &status);
@@ -182,7 +182,7 @@ BT_MESH_SCENE_ENTRY_SIG(onoff) = {
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_srv *srv = model->rt->user_data;
 	struct bt_mesh_onoff_status status = { 0 };
 
 	srv->handlers->get(srv, NULL, &status);
@@ -193,7 +193,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int bt_mesh_onoff_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_onoff_srv *srv = model->user_data;
+	struct bt_mesh_onoff_srv *srv = model->rt->user_data;
 
 	srv->model = model;
 	srv->pub.msg = &srv->pub_buf;

@@ -42,7 +42,7 @@ static void rsp_global(const struct bt_mesh_model *model,
 static int handle_global_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 	struct bt_mesh_loc_global global = LOC_GLOBAL_DEFAULT;
 
 	srv->handlers->global_get(srv, ctx, &global);
@@ -55,7 +55,7 @@ static int handle_global_get(const struct bt_mesh_model *model, struct bt_mesh_m
 static int global_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 	struct bt_mesh_loc_global global;
 
 	bt_mesh_loc_global_decode(buf, &global);
@@ -104,7 +104,7 @@ static int handle_local_get(const struct bt_mesh_model *model,
 			     struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 	struct bt_mesh_loc_local local = LOC_LOCAL_DEFAULT;
 
 	srv->handlers->local_get(srv, ctx, &local);
@@ -117,7 +117,7 @@ static int handle_local_get(const struct bt_mesh_model *model,
 static int local_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 	struct bt_mesh_loc_local local;
 
 	bt_mesh_loc_local_decode(buf, &local);
@@ -209,7 +209,7 @@ static void local_update_handler(struct bt_mesh_loc_srv *srv)
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 
 	if (!srv->pub_state.is_local_available && !srv->pub_state.is_global_available) {
 		return -EINVAL;
@@ -234,7 +234,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int bt_mesh_loc_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 
 	memset(&srv->pub_state, 0, sizeof(srv->pub_state));
 	srv->model = model;
@@ -248,7 +248,7 @@ static int bt_mesh_loc_srv_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_loc_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 
 	memset(&srv->pub_state, 0, sizeof(srv->pub_state));
 	net_buf_simple_reset(model->pub->msg);
@@ -261,7 +261,7 @@ const struct bt_mesh_model_cb _bt_mesh_loc_srv_cb = {
 
 static int bt_mesh_loc_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_loc_srv *srv = model->user_data;
+	struct bt_mesh_loc_srv *srv = model->rt->user_data;
 #if defined(CONFIG_BT_MESH_COMP_PAGE_1)
 	int err = bt_mesh_model_correspond(model, srv->model);
 

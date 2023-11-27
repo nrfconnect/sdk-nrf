@@ -61,7 +61,7 @@ static void rsp_status(const struct bt_mesh_model *model,
 static int handle_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
-	struct bt_mesh_battery_srv *srv = model->user_data;
+	struct bt_mesh_battery_srv *srv = model->rt->user_data;
 	struct bt_mesh_battery_status status = BATTERY_STATUS_DEFAULT;
 
 	srv->get(srv, ctx, &status);
@@ -82,7 +82,7 @@ const struct bt_mesh_model_op _bt_mesh_battery_srv_op[] = {
 
 static int update_handler(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_battery_srv *srv = model->user_data;
+	struct bt_mesh_battery_srv *srv = model->rt->user_data;
 	struct bt_mesh_battery_status status = BATTERY_STATUS_DEFAULT;
 
 	srv->get(srv, NULL, &status);
@@ -95,7 +95,7 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int bt_mesh_battery_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_battery_srv *srv = model->user_data;
+	struct bt_mesh_battery_srv *srv = model->rt->user_data;
 
 	srv->model = model;
 	srv->pub.msg = &srv->pub_buf;
