@@ -91,7 +91,7 @@ You can provide the desired value also as a CMake argument when building the sam
 
    .. group-tab:: nRF Connect for VS Code
 
-      To build a Matter sample with a custom Thread TX power in the nRF Connect for VS Code IDE, add the :kconfig:option:`CONFIG_OPENTHREAD_DEFAULT_TX_POWER` Kconfig option variable and the dBm value to the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
+      To build a Matter sample with a custom Thread TX power in the nRF Connect for VS Code IDE, add the :kconfig:option:`CONFIG_OPENTHREAD_DEFAULT_TX_POWER` Kconfig option variable and the dBm value to the :term:`build configuration`'s :guilabel:`Extra CMake arguments` and rebuild the build configuration.
       For example, if you want to build for the ``nrf52840dk_nrf52840`` build target with the default Thread TX power equal to 2 dBm, add ``-DCONFIG_OPENTHREAD_DEFAULT_TX_POWER=2``.
 
       See `nRF Connect for VS Code extension pack <How to work with build configurations_>`_ documentation for more information.

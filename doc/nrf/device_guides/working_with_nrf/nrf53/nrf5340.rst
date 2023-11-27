@@ -339,7 +339,7 @@ By default, the two images are built together for all Bluetooth LE, Thread, Zigb
 Samples that are designed to run only on the network core include the :ref:`nrf5340_empty_app_core` sample as a child image.
 For other samples, the images are built separately.
 
-The build configuration depends on the following Kconfig options that must be set in the configuration of the parent image:
+The :term:`build configuration` depends on the following Kconfig options that must be set in the configuration of the parent image:
 
 * :kconfig:option:`CONFIG_BT_RPMSG` - set to ``y`` in all Bluetooth LE samples for the application core
 * :kconfig:option:`CONFIG_NRF_802154_SER_HOST` - set to ``y`` in all Thread, Zigbee, and Matter samples for the application core

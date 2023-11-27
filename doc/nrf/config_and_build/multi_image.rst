@@ -19,7 +19,7 @@ Using multiple images has the following advantages:
   This partitioning is often useful for bootloaders.
 * Since there is a symbol table for each image, the same symbol names can exist multiple times in the final firmware.
   This is useful for bootloader images, which can require their own copy of a library that the application uses, but in a different version or configuration.
-* In multi-core builds, the build configuration of a child image in a separate core can be made known to the parent image.
+* In multi-core builds, the :term:`build configuration` of a child image in a separate core can be made known to the parent image.
 
 For the list of image files output by the build system for the multi-image builds, refer to :ref:`app_build_output_files` page.
 

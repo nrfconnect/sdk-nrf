@@ -330,6 +330,12 @@ Nordic Semiconductor provides proprietary |NCS| toolchain management tools that 
 
 |vsc_extension_description|
 
+In addition, the |nRFVSC| provides the following configuration tools for the :ref:`build system components <configuration_system_overview>`:
+
+* For CMake, the `build configuration management <How to work with build configurations_>`_.
+* For Devicetree, the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_.
+* For Kconfig, the `Kconfig GUI <Configuring with nRF Kconfig_>`_.
+
 The extension follows its own `release cycle <latest release notes for nRF Connect for Visual Studio Code_>`_.
 Use the latest available release for development.
 
