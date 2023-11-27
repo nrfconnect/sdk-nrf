@@ -151,7 +151,9 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* Added:
+
+  :ref:`wifi_raw_tx_packet_sample` sample that demonstrates how to transmit raw TX packets.
 
 HomeKit
 -------
