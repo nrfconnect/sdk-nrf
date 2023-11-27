@@ -18,3 +18,24 @@ tests:
       - thingy91_nrf9160_ns
       - thingy91x_nrf9151_ns
       - nrf7002dk_nrf5340_cpuapp_ns
+      - nrf7002dk_nrf5340_cpuapp
+  sample.net.aws_iot.sysbuild:
+    sysbuild: true
+    tags: ci_build sysbuild
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
+      - thingy91_nrf9160_ns
+      # NCSDK-24849 - wifi configuration needs sorting out
+      # - nrf7002dk_nrf5340_cpuapp
+    platform_allow:
+      - nrf9160dk_nrf9160_ns
+      - nrf9161dk_nrf9161_ns
+      - nrf9151dk_nrf9151_ns
+      - thingy91_nrf9160_ns
+      - thingy91x_nrf9151_ns
+      # - nrf7002dk_nrf5340_cpuapp_ns
+      # - nrf7002dk_nrf5340_cpuapp
