@@ -15,7 +15,7 @@
 
 #include "shell_utils.h"
 
-static struct bt_mesh_model *mod;
+static const struct bt_mesh_model *mod;
 static struct bt_mesh_schedule_entry set_entry;
 
 static int cmd_get(const struct shell *shell, size_t argc, char *argv[])

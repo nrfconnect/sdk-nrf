@@ -26,7 +26,7 @@ struct settings_data {
 #if CONFIG_BT_SETTINGS
 static void bt_mesh_dm_srv_pending_store(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 
 	struct settings_data data = {
 		.cfg = srv->cfg,
@@ -105,7 +105,7 @@ static void new_entry_store(struct dm_result *result)
 static void cfg_status_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *rx_ctx,
 			    uint8_t status)
 {
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_DM_CLI_OP,
 				 BT_MESH_DM_CONFIG_STATUS_MSG_LEN);
@@ -148,7 +148,7 @@ static void result_pack(struct bt_mesh_dm_res_entry *entry, struct net_buf_simpl
 static void result_status_populate(const struct bt_mesh_model *model, struct net_buf_simple *buf,
 				   uint8_t cnt)
 {
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 
 	for (int i = 0; i < MIN(cnt, srv->results.available_entries); i++) {
 		struct bt_mesh_dm_res_entry *entry = entry_get(srv, i);
@@ -191,7 +191,7 @@ static void sync_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx 
 static int handle_cfg(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 
 	if (!buf->len) {
 		cfg_status_send(model, ctx, 0);
@@ -222,7 +222,7 @@ static int handle_start(const struct bt_mesh_model *model, struct bt_mesh_msg_ct
 			struct net_buf_simple *buf)
 {
 	int err = 0;
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 	uint8_t timeout = srv->cfg.timeout;
 	uint8_t delay = srv->cfg.delay;
 	uint16_t temp = net_buf_simple_pull_le16(buf);
@@ -269,7 +269,7 @@ static int handle_start(const struct bt_mesh_model *model, struct bt_mesh_msg_ct
 	struct dm_request req = {
 		.role = DM_ROLE_REFLECTOR,
 		.ranging_mode = dm_mode,
-		.rng_seed = ((bt_mesh_primary_addr() + srv->model->elem_idx) << 16) +
+		.rng_seed = ((bt_mesh_primary_addr() + srv->model->rt->elem_idx) << 16) +
 			srv->target_addr,
 		.start_delay_us = delay,
 		.extra_window_time_us = CONFIG_BT_MESH_DM_SRV_REFLECTOR_RANGING_WINDOW_US
@@ -301,7 +301,7 @@ rsp:
 static int handle_result_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 	uint8_t cnt = net_buf_simple_pull_u8(buf);
 
 	if (!cnt) {
@@ -323,7 +323,7 @@ static int handle_sync(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 		       struct net_buf_simple *buf)
 {
 	int err;
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 
 	if (srv->is_busy) {
 		return -EBUSY;
@@ -428,7 +428,7 @@ static void timeout_work(struct k_work *work)
 static int bt_mesh_dm_srv_init(const struct bt_mesh_model *model)
 {
 	int err;
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 
 	srv->model = model;
 	dm_srv = srv;
@@ -449,7 +449,7 @@ static int bt_mesh_dm_srv_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_dm_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 
 	srv->cfg.ttl = CONFIG_BT_MESH_DM_SRV_DEFAULT_TTL;
 	srv->cfg.timeout = CONFIG_BT_MESH_DM_SRV_DEFAULT_TIMEOUT,
@@ -464,7 +464,7 @@ static int bt_mesh_dm_srv_settings_set(const struct bt_mesh_model *model, const 
 						 size_t len_rd, settings_read_cb read_cb,
 						 void *cb_arg)
 {
-	struct bt_mesh_dm_srv *srv = model->user_data;
+	struct bt_mesh_dm_srv *srv = model->rt->user_data;
 	struct settings_data data;
 	ssize_t len;
 

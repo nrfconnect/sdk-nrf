@@ -14,7 +14,7 @@
 
 #define SHELL_SENSOR_CLI_REG_CNT_MAX 32
 
-static struct bt_mesh_model *mod;
+static const struct bt_mesh_model *mod;
 
 static void scene_get_print(const struct shell *shell, int err, struct bt_mesh_scene_state *rsp)
 {

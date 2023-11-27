@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(bt_mesh_shell_prop_cli);
 
 #include "common/bt_str.h"
 
-static struct bt_mesh_model *mod;
+static const struct bt_mesh_model *mod;
 
 static void props_print(const struct shell *shell, int err, struct bt_mesh_prop_list *rsp)
 {

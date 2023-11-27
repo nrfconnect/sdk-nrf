@@ -43,7 +43,7 @@ static int handle_status(const struct bt_mesh_model *model, struct bt_mesh_msg_c
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_onoff_cli *cli = model->user_data;
+	struct bt_mesh_onoff_cli *cli = model->rt->user_data;
 	struct bt_mesh_onoff_status status;
 	struct bt_mesh_onoff_status *rsp;
 	int err;
@@ -77,7 +77,7 @@ const struct bt_mesh_model_op _bt_mesh_onoff_cli_op[] = {
 
 static int bt_mesh_onoff_cli_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_onoff_cli *cli = model->user_data;
+	struct bt_mesh_onoff_cli *cli = model->rt->user_data;
 
 	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
@@ -90,7 +90,7 @@ static int bt_mesh_onoff_cli_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_onoff_cli_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_onoff_cli *cli = model->user_data;
+	struct bt_mesh_onoff_cli *cli = model->rt->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
 	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);

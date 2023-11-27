@@ -14,7 +14,7 @@ static int handle_power_status(const struct bt_mesh_model *model, struct bt_mesh
 		return -EMSGSIZE;
 	}
 
-	struct bt_mesh_plvl_cli *cli = model->user_data;
+	struct bt_mesh_plvl_cli *cli = model->rt->user_data;
 	struct bt_mesh_plvl_status status;
 	struct bt_mesh_plvl_status *rsp;
 
@@ -44,7 +44,7 @@ static int handle_power_status(const struct bt_mesh_model *model, struct bt_mesh
 static int handle_last_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			      struct net_buf_simple *buf)
 {
-	struct bt_mesh_plvl_cli *cli = model->user_data;
+	struct bt_mesh_plvl_cli *cli = model->rt->user_data;
 	uint16_t last = net_buf_simple_pull_le16(buf);
 	uint16_t *rsp;
 
@@ -64,7 +64,7 @@ static int handle_last_status(const struct bt_mesh_model *model, struct bt_mesh_
 static int handle_default_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
-	struct bt_mesh_plvl_cli *cli = model->user_data;
+	struct bt_mesh_plvl_cli *cli = model->rt->user_data;
 	uint16_t default_lvl = net_buf_simple_pull_le16(buf);
 	uint16_t *rsp;
 
@@ -84,7 +84,7 @@ static int handle_default_status(const struct bt_mesh_model *model, struct bt_me
 static int handle_range_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	struct bt_mesh_plvl_cli *cli = model->user_data;
+	struct bt_mesh_plvl_cli *cli = model->rt->user_data;
 	struct bt_mesh_plvl_range_status status;
 	struct bt_mesh_plvl_range_status *rsp;
 
@@ -131,7 +131,7 @@ const struct bt_mesh_model_op _bt_mesh_plvl_cli_op[] = {
 
 static int bt_mesh_lvl_cli_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_cli *cli = model->user_data;
+	struct bt_mesh_plvl_cli *cli = model->rt->user_data;
 
 	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
@@ -144,7 +144,7 @@ static int bt_mesh_lvl_cli_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_lvl_cli_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_plvl_cli *cli = model->user_data;
+	struct bt_mesh_plvl_cli *cli = model->rt->user_data;
 
 	net_buf_simple_reset(model->pub->msg);
 	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);

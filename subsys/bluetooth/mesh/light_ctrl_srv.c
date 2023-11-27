@@ -712,7 +712,7 @@ static void store_state_data(struct bt_mesh_light_ctrl_srv *srv)
 
 static void ligth_ctrl_srv_pending_store(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	LOG_DBG("Store Timeout");
 
@@ -737,7 +737,7 @@ static void mode_rsp(struct bt_mesh_light_ctrl_srv *srv,
 static int handle_mode_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	mode_rsp(srv, ctx);
 
@@ -767,7 +767,7 @@ static int mode_set(struct bt_mesh_light_ctrl_srv *srv,
 static int handle_mode_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	int err;
 
 	err = mode_set(srv, buf);
@@ -783,7 +783,7 @@ static int handle_mode_set(const struct bt_mesh_model *model, struct bt_mesh_msg
 static int handle_mode_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	return mode_set(srv, buf);
 }
@@ -802,7 +802,7 @@ static void om_rsp(struct bt_mesh_light_ctrl_srv *srv,
 static int handle_om_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	om_rsp(srv, ctx);
 
@@ -833,7 +833,7 @@ static int om_set(struct bt_mesh_light_ctrl_srv *srv,
 static int handle_om_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	int err;
 
 	err = om_set(srv, buf);
@@ -849,7 +849,7 @@ static int handle_om_set(const struct bt_mesh_model *model, struct bt_mesh_msg_c
 static int handle_om_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	return om_set(srv, buf);
 }
@@ -857,7 +857,7 @@ static int handle_om_set_unack(const struct bt_mesh_model *model, struct bt_mesh
 static int handle_light_onoff_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	LOG_DBG("Get Light OnOff");
 
@@ -925,7 +925,7 @@ static int light_onoff_set(struct bt_mesh_light_ctrl_srv *srv, struct bt_mesh_ms
 static int handle_light_onoff_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	return light_onoff_set(srv, ctx, buf, true);
 }
@@ -934,7 +934,7 @@ static int handle_light_onoff_set_unack(const struct bt_mesh_model *model,
 					struct bt_mesh_msg_ctx *ctx,
 					struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	return light_onoff_set(srv, ctx, buf, false);
 }
@@ -942,7 +942,7 @@ static int handle_light_onoff_set_unack(const struct bt_mesh_model *model,
 static int handle_sensor_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	int err;
 
 	if (!is_enabled(srv)) {
@@ -1345,7 +1345,7 @@ static int prop_tx(struct bt_mesh_light_ctrl_srv *srv,
 static int handle_prop_get(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	return prop_tx(srv, ctx, id);
@@ -1354,7 +1354,7 @@ static int handle_prop_get(const struct bt_mesh_model *model, struct bt_mesh_msg
 static int handle_prop_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	uint16_t id = net_buf_simple_pull_le16(buf);
 	int err;
 
@@ -1378,7 +1378,7 @@ static int handle_prop_set(const struct bt_mesh_model *model, struct bt_mesh_msg
 static int handle_prop_set_unack(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	int err;
 
 	uint16_t id = net_buf_simple_pull_le16(buf);
@@ -1474,7 +1474,7 @@ struct __packed scene_data {
 
 static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	struct bt_mesh_lightness_status light = { 0 };
 	struct scene_data *scene = (struct scene_data *)&data[0];
 
@@ -1498,7 +1498,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	struct scene_data *scene = (struct scene_data *)&data[0];
 
 	atomic_set_bit_to(&srv->flags, FLAG_OCC_MODE, scene->occ);
@@ -1552,7 +1552,7 @@ static int update_handler(const struct bt_mesh_model *model)
 {
 	LOG_DBG("Update Handler");
 
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	light_onoff_encode(srv, srv->pub.msg, srv->state);
 
@@ -1561,13 +1561,13 @@ static int update_handler(const struct bt_mesh_model *model)
 
 static int light_ctrl_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	int err;
 
 	srv->model = model;
 
 	if (srv->lightness->lightness_model == NULL ||
-	    srv->lightness->lightness_model->elem_idx >= model->elem_idx) {
+	    srv->lightness->lightness_model->rt->elem_idx >= model->rt->elem_idx) {
 		LOG_ERR("Lightness: Invalid element index");
 		return -EINVAL;
 	}
@@ -1620,7 +1620,7 @@ static int light_ctrl_srv_settings_set(const struct bt_mesh_model *model,
 				       const char *name, size_t len_rd,
 				       settings_read_cb read_cb, void *cb_arg)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	atomic_t data;
 	ssize_t result;
 
@@ -1654,7 +1654,7 @@ static int light_ctrl_srv_settings_set(const struct bt_mesh_model *model,
 
 static int light_ctrl_srv_start(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 
 	atomic_set_bit(&srv->flags, FLAG_STARTED);
 
@@ -1702,7 +1702,7 @@ static int light_ctrl_srv_start(const struct bt_mesh_model *model)
 
 static void light_ctrl_srv_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_ctrl_srv_cfg cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT;
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	struct bt_mesh_light_ctrl_reg_cfg reg_cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT;
@@ -1739,7 +1739,7 @@ const struct bt_mesh_model_cb _bt_mesh_light_ctrl_srv_cb = {
 
 static int lc_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	int err;
 
 	srv->setup_srv = model;
@@ -1767,7 +1767,7 @@ static int lc_setup_srv_settings_set(const struct bt_mesh_model *model,
 				     const char *name, size_t len_rd,
 				     settings_read_cb read_cb, void *cb_arg)
 {
-	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
+	struct bt_mesh_light_ctrl_srv *srv = model->rt->user_data;
 	struct setup_srv_storage_data data;
 	ssize_t result;
 

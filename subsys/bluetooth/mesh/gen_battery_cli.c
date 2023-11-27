@@ -46,7 +46,7 @@ int bt_mesh_gen_bat_decode_status(struct net_buf_simple *buf,
 static int handle_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
 {
-	struct bt_mesh_battery_cli *cli = model->user_data;
+	struct bt_mesh_battery_cli *cli = model->rt->user_data;
 	struct bt_mesh_battery_status status;
 	struct bt_mesh_battery_status *rsp;
 	int err;
@@ -80,7 +80,7 @@ const struct bt_mesh_model_op _bt_mesh_battery_cli_op[] = {
 
 static int bt_mesh_battery_cli_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_battery_cli *cli = model->user_data;
+	struct bt_mesh_battery_cli *cli = model->rt->user_data;
 
 	cli->model = model;
 	cli->pub.msg = &cli->pub_buf;
@@ -93,7 +93,7 @@ static int bt_mesh_battery_cli_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_battery_cli_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_battery_cli *cli = model->user_data;
+	struct bt_mesh_battery_cli *cli = model->rt->user_data;
 
 	net_buf_simple_reset(model->pub->msg);
 	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);

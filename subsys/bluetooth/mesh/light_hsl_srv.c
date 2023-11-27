@@ -65,7 +65,7 @@ static int handle_hsl_get(const struct bt_mesh_model *model,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_hsl_status status;
 
 	hsl_get(srv, ctx, &status);
@@ -77,7 +77,7 @@ static int handle_hsl_get(const struct bt_mesh_model *model,
 static int hsl_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		   struct net_buf_simple *buf, bool ack)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_lightness_status lightness;
 	struct bt_mesh_light_hue_status hue;
@@ -166,7 +166,7 @@ static int handle_hsl_target_get(const struct bt_mesh_model *model,
 				  struct bt_mesh_msg_ctx *ctx,
 				  struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_lightness_status lightness;
 	struct bt_mesh_light_hue_status hue;
 	struct bt_mesh_light_sat_status sat;
@@ -190,7 +190,7 @@ static int handle_hsl_target_get(const struct bt_mesh_model *model,
 static void default_rsp(const struct bt_mesh_model *model,
 			struct bt_mesh_msg_ctx *rx_ctx)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	const struct bt_mesh_light_hsl hsl = {
 		.lightness = srv->lightness->default_light,
 		.hue = srv->hue.dflt,
@@ -208,7 +208,7 @@ static void default_rsp(const struct bt_mesh_model *model,
 static int default_set(const struct bt_mesh_model *model,
 			struct bt_mesh_msg_ctx *ctx, struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_hsl val;
 
 	light_hsl_buf_pull(buf, &val);
@@ -272,7 +272,7 @@ static void range_rsp(const struct bt_mesh_model *model,
 		      struct bt_mesh_msg_ctx *rx_ctx,
 		      enum bt_mesh_model_status status)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LIGHT_HSL_OP_RANGE_STATUS,
 				 BT_MESH_LIGHT_HSL_MSG_LEN_RANGE_STATUS);
@@ -283,7 +283,7 @@ static void range_rsp(const struct bt_mesh_model *model,
 static int range_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		     struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_hsl_range hue, sat;
 
 	hue.min = net_buf_simple_pull_le16(buf);
@@ -399,7 +399,7 @@ const struct bt_mesh_model_op _bt_mesh_light_hsl_setup_srv_op[] = {
 
 static ssize_t scene_store(const struct bt_mesh_model *model, uint8_t data[])
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_lightness_status status = { 0 };
 
 	if (atomic_test_bit(&srv->lightness->flags,
@@ -417,7 +417,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			 size_t len,
 			 struct bt_mesh_model_transition *transition)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 
 	if (atomic_test_bit(&srv->lightness->flags,
 			    LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
@@ -435,7 +435,7 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 
 static void scene_recall_complete(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_lightness_status light_status = { 0 };
 	struct bt_mesh_light_hue_status hue_status = { 0 };
 	struct bt_mesh_light_sat_status sat_status = { 0 };
@@ -467,7 +467,7 @@ BT_MESH_SCENE_ENTRY_SIG(light_hsl) = {
 
 static int hsl_srv_pub_update(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_light_hsl_status status;
 
 	hsl_get(srv, NULL, &status);
@@ -478,7 +478,7 @@ static int hsl_srv_pub_update(const struct bt_mesh_model *model)
 
 static int bt_mesh_light_hsl_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model *lightness_srv;
 
 	srv->model = model;
@@ -503,23 +503,23 @@ static int bt_mesh_light_hsl_srv_init(const struct bt_mesh_model *model)
 
 static int bt_mesh_light_hsl_srv_start(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_light_hue hue = { .transition = &transition };
 	struct bt_mesh_light_sat sat = { .transition = &transition };
 	struct bt_mesh_lightness_status lightness = { 0 };
 
 	if (!srv->sat.model ||
-	    (srv->model->elem_idx > srv->sat.model->elem_idx)) {
+	    (srv->model->rt->elem_idx > srv->sat.model->rt->elem_idx)) {
 		LOG_ERR("Light HSL srv[%d]: Sat. srv not properly initialized",
-		       srv->model->elem_idx);
+		       srv->model->rt->elem_idx);
 		return -EINVAL;
 	}
 
 	if (!srv->hue.model ||
-	    (srv->model->elem_idx > srv->hue.model->elem_idx)) {
+	    (srv->model->rt->elem_idx > srv->hue.model->rt->elem_idx)) {
 		LOG_ERR("Light HSL srv[%d]: Hue srv not properly initialized",
-		       srv->model->elem_idx);
+		       srv->model->rt->elem_idx);
 		return -EINVAL;
 	}
 
@@ -574,7 +574,7 @@ const struct bt_mesh_model_cb _bt_mesh_light_hsl_srv_cb = {
 
 static int bt_mesh_light_hsl_setup_srv_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_hsl_srv *srv = model->user_data;
+	struct bt_mesh_light_hsl_srv *srv = model->rt->user_data;
 	struct bt_mesh_model *lightness_setup_srv;
 	int err;
 

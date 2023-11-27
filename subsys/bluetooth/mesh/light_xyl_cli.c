@@ -37,7 +37,7 @@ static int status_decode(struct bt_mesh_light_xyl_cli *cli,
 static int handle_xyl_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_xyl_cli *cli = model->user_data;
+	struct bt_mesh_light_xyl_cli *cli = model->rt->user_data;
 	struct bt_mesh_light_xyl_status status;
 
 	uint32_t err = status_decode(cli, ctx, buf, BT_MESH_LIGHT_XYL_OP_STATUS,
@@ -53,7 +53,7 @@ static int handle_xyl_status(const struct bt_mesh_model *model, struct bt_mesh_m
 static int handle_target_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_xyl_cli *cli = model->user_data;
+	struct bt_mesh_light_xyl_cli *cli = model->rt->user_data;
 	struct bt_mesh_light_xyl_status status;
 
 	uint32_t err = status_decode(
@@ -69,7 +69,7 @@ static int handle_target_status(const struct bt_mesh_model *model, struct bt_mes
 static int handle_default_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 				 struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_xyl_cli *cli = model->user_data;
+	struct bt_mesh_light_xyl_cli *cli = model->rt->user_data;
 	struct bt_mesh_light_xyl status;
 	struct bt_mesh_light_xyl *rsp;
 
@@ -93,7 +93,7 @@ static int handle_default_status(const struct bt_mesh_model *model, struct bt_me
 static int handle_range_status(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	struct bt_mesh_light_xyl_cli *cli = model->user_data;
+	struct bt_mesh_light_xyl_cli *cli = model->rt->user_data;
 	struct bt_mesh_light_xyl_range_status status;
 	struct bt_mesh_light_xyl_range_status *rsp;
 
@@ -142,7 +142,7 @@ const struct bt_mesh_model_op _bt_mesh_light_xyl_cli_op[] = {
 
 static int bt_mesh_light_xyl_cli_init(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_cli *cli = model->user_data;
+	struct bt_mesh_light_xyl_cli *cli = model->rt->user_data;
 
 	if (!cli) {
 		return -EINVAL;
@@ -159,7 +159,7 @@ static int bt_mesh_light_xyl_cli_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_light_xyl_cli_reset(const struct bt_mesh_model *model)
 {
-	struct bt_mesh_light_xyl_cli *cli = model->user_data;
+	struct bt_mesh_light_xyl_cli *cli = model->rt->user_data;
 
 	net_buf_simple_reset(cli->pub.msg);
 	bt_mesh_msg_ack_ctx_reset(&cli->ack_ctx);
