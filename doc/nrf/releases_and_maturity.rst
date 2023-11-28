@@ -19,23 +19,12 @@ Each new release comes with its own :ref:`release_notes` and can also change the
 If an issue is found in a release after it has taken place, those issues are listed on the :ref:`known_issues` page.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Subpages:
 
    releases_and_maturity/dev_model
    releases_and_maturity/release_notes
+   releases_and_maturity/migration_guides
    releases_and_maturity/repository_revisions
    releases_and_maturity/software_maturity
    releases_and_maturity/known_issues
-
-Migration guides
-****************
-
-The |NCS| provides migration guides for all major and minor releases, in order to assist user's transition from the previous release.
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-   :reversed:
-
-   releases_and_maturity/migration/*
