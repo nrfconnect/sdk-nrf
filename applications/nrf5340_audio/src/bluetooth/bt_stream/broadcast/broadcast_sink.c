@@ -562,6 +562,14 @@ int broadcast_sink_disable(void)
 		}
 	}
 
+	if (pa_sync_stored != NULL) {
+		ret = bt_le_per_adv_sync_delete(pa_sync_stored);
+		if (ret) {
+			LOG_ERR("Failed to delete pa_sync");
+			return ret;
+		}
+	}
+
 	ret = broadcast_sink_cleanup();
 	if (ret) {
 		LOG_ERR("Error cleaning up");

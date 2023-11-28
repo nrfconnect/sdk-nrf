@@ -256,6 +256,21 @@ static void le_audio_msg_sub_thread(void)
 				ERR_CHK(ret);
 			}
 
+			if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
+				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
+				if (ret) {
+					if (ret == -EALREADY) {
+						return;
+					}
+
+					LOG_ERR("Failed to restart scanning: %d", ret);
+					break;
+				}
+
+				/* NOTE: The string below is used by the Nordic CI system */
+				LOG_INF("Restarted scanning for broadcaster");
+			}
+
 			break;
 
 		case LE_AUDIO_EVT_NO_VALID_CFG:
@@ -338,9 +353,10 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		break;
 
 	case BT_MGMT_PA_SYNC_LOST:
-		LOG_INF("PA sync lost");
+		LOG_INF("PA sync lost, reason: %d", msg->pa_sync_term_reason);
 
-		if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
+		if (IS_ENABLED(CONFIG_BT_OBSERVER) &&
+			msg->pa_sync_term_reason != BT_HCI_ERR_LOCALHOST_TERM_CONN) {
 			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST, NULL);
 			if (ret) {
 				if (ret == -EALREADY) {
