@@ -182,7 +182,7 @@ Use the following steps depending on the application type:
 
       This recommended process for command line takes advantage of Nordic Semiconductor's example application template repository, similar to the example application used for :ref:`creating an application in Zephyr <zephyr:application>`.
 
-      .. include:: /releases_and_maturity/developing/adding_code.rst
+      .. include:: /dev_model_and_contributions/adding_code.rst
          :start-after: example_app_start
          :end-before: example_app_end
 

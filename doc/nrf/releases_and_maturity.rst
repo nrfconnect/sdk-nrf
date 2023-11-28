@@ -22,7 +22,6 @@ If an issue is found in a release after it has taken place, those issues are lis
    :maxdepth: 1
    :caption: Subpages:
 
-   releases_and_maturity/dev_model
    releases_and_maturity/release_notes
    releases_and_maturity/migration_guides
    releases_and_maturity/repository_revisions

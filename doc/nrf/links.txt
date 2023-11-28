@@ -83,6 +83,7 @@
 .. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
 
 .. _`west manifest file`: https://github.com/nrfconnect/sdk-nrf/blob/main/west.yml
+.. _`LICENSE file`: https://github.com/nrfconnect/sdk-nrf/blob/main/LICENSE
 
 .. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/nrfconnect/sdk-nrf/blob/main/tests/unity/example_test/CMakeLists.txt
 
@@ -1345,3 +1346,5 @@
 .. _`Sidewalk documentation`: https://nrfconnect.github.io/sdk-sidewalk/
 
 .. _`Setting up the SDK for Amazon Sidewalk`: https://nrfconnect.github.io/sdk-sidewalk/setting_up_sidewalk_environment/setting_up_sdk.html
+
+.. _`Community Best Practice for Copyright Notice`: https://www.linuxfoundation.org/blog/copyright-notices-in-open-source-software-projects/
