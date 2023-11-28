@@ -341,7 +341,7 @@ void sensor_data_set(uint8_t *data, uint16_t len)
 
 static struct bt_mesh_dtt_srv dtt_srv = BT_MESH_DTT_SRV_INIT(NULL);
 
-const static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
+static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
 
 static struct bt_mesh_scheduler_srv scheduler_srv =
 	BT_MESH_SCHEDULER_SRV_INIT(NULL, &time_srv);
