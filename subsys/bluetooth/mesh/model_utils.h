@@ -22,7 +22,7 @@
 /**
  * @brief Create emds model id to identify the model, where @p mod is the model.
  */
-#define EMDS_MODEL_ID(mod) (((uint16_t)mod->elem_idx << 8) | mod->mod_idx)
+#define EMDS_MODEL_ID(mod) (((uint16_t)mod->rt->elem_idx << 8) | mod->rt->mod_idx)
 #endif
 
 /**
