@@ -558,7 +558,7 @@ static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t c
 }
 
 static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel,
-				       enum transmit_pattern pattern)
+				       enum transmit_pattern pattern, uint32_t packets_num)
 {
 	radio_disable();
 	generate_modulated_rf_packet(mode, pattern);
@@ -597,7 +597,9 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 	tx_packet_cnt = 0;
 
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
-	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_END_MASK);
+	if (packets_num != 0U) {
+		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_END_MASK);
+	}
 
 #if CONFIG_FEM
 	(void)fem_configure(false, mode, &fem);
@@ -737,7 +739,8 @@ void radio_test_start(const struct radio_test_config *config)
 		radio_modulated_tx_carrier(config->mode,
 			config->params.modulated_tx.txpower,
 			config->params.modulated_tx.channel,
-			config->params.modulated_tx.pattern);
+			config->params.modulated_tx.pattern,
+			config->params.modulated_tx.packets_num);
 		break;
 	case RX:
 		radio_rx(config->mode,
