@@ -2070,12 +2070,14 @@ Depending on the side on which the process is handled:
 Image transfer over SMP
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-If the MCUboot bootloader is selected, the update image can also be transferred in the background either through the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`.
-The `nRF Connect Device Manager`_ application uses binary files for the image transfer over the Simple Management Protocol (SMP).
+The update image can also be transferred in the background through one of the following modules:
 
-After building your application with either :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` enabled, the :file:`dfu_application.zip` archive is generated in the build directory.
-It contains all the firmware update files that are necessary to perform DFU.
-For more information about the contents of update archive, see :ref:`app_build_output_files`.
+* :ref:`nrf_desktop_ble_smp` (supported only with MCUboot bootloader)
+* :ref:`nrf_desktop_dfu_mcumgr` (supported only with MCUboot bootloader)
+  The module uses the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods.
+  Therefore, this module should be used for configurations that enable multiple DFU transports (for example, if a configuration also enables :ref:`nrf_desktop_dfu`).
+
+The `nRF Connect Device Manager`_ application transfers image update files over the Simple Management Protocol (SMP).
 
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
