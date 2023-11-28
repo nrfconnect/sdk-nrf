@@ -254,6 +254,8 @@ Cellular samples (renamed from nRF9160 samples)
 
     * The sample now waits for a successful connection before printing ``Connected to nRF Cloud!``.
     * Building for the Thingy:91.
+    * The PSM Requested Active Time is now reduced from 1 minute to 20 seconds.
+      The old value was too long for PSM to activate.
 
   * Changed:
 
