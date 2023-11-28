@@ -121,52 +121,52 @@ static struct bt_mesh_scheduler_cli sched_cli = {
  * | Scene Srv  |
  *
  */
-static struct bt_mesh_model mock_models_elem[4] = {
+static const struct bt_mesh_model mock_models_elem[4] = {
 	{
-		.user_data = &sched_srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &sched_srv},
 		.id = BT_MESH_MODEL_ID_SCHEDULER_SRV,
 	},
 	{
-		.user_data = &sched_cli,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &sched_cli},
 		.id = BT_MESH_MODEL_ID_SCHEDULER_CLI,
 	},
 	{
-		.user_data = &onoff_srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &onoff_srv},
 		.id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
 	},
 	{
-		.user_data = &scene_srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scene_srv},
 		.id = BT_MESH_MODEL_ID_SCENE_SRV,
 	},
 };
 
-static struct bt_mesh_elem mock_elem = {
-	.addr = 1,
+static const struct bt_mesh_elem mock_elem = {
+	.rt = &(struct bt_mesh_elem_rt_ctx){.addr = 1},
 	.model_count = ARRAY_SIZE(mock_models_elem),
 	.models = mock_models_elem,
 };
 
 struct mock_comp_data {
 	size_t elem_count;
-	struct bt_mesh_elem *elem;
+	const struct bt_mesh_elem *elem;
 } mock_comp = { .elem_count = 1, .elem = &mock_elem };
 
-static struct bt_mesh_model *mock_mod_srv = &mock_models_elem[0];
-static struct bt_mesh_model *mock_mod_cli = &mock_models_elem[1];
+static const struct bt_mesh_model *mock_mod_srv = &mock_models_elem[0];
+static const struct bt_mesh_model *mock_mod_cli = &mock_models_elem[1];
 
 /* Redefined mocks */
 
-struct bt_mesh_elem *bt_mesh_model_elem(struct bt_mesh_model *mod)
+const struct bt_mesh_elem *bt_mesh_model_elem(const struct bt_mesh_model *mod)
 {
 	return &mock_comp.elem[0];
 }
 
-struct bt_mesh_elem *bt_mesh_elem_find(uint16_t addr)
+const struct bt_mesh_elem *bt_mesh_elem_find(uint16_t addr)
 {
-	return (addr == mock_comp.elem[0].addr ? &mock_comp.elem[0] : NULL);
+	return (addr == mock_comp.elem[0].rt->addr ? &mock_comp.elem[0] : NULL);
 }
 
-struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem, uint16_t id)
+const struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem, uint16_t id)
 {
 	uint8_t i;
 
@@ -224,7 +224,7 @@ void bt_mesh_time_encode_time_ress(struct net_buf_simple *buf,
 {
 }
 
-int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_msg_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		     struct net_buf_simple *buf)
 {
 	ztest_check_expected_value(model);
@@ -235,7 +235,7 @@ int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-int bt_mesh_msg_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_msg_ackd_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf, const struct bt_mesh_msg_rsp_ctx *rsp)
 {
 	ztest_check_expected_value(model);
@@ -246,7 +246,7 @@ int bt_mesh_msg_ackd_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *c
 	return 0;
 }
 
-int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
+int _bt_mesh_time_srv_update_handler(const struct bt_mesh_model *model)
 {
 	return 0;
 }
