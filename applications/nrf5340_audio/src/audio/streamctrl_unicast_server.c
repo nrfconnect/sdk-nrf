@@ -14,12 +14,13 @@
 #include "macros_common.h"
 #include "audio_system.h"
 #include "button_handler.h"
-#include "le_audio.h"
+#include "bt_le_audio_tx.h"
 #include "bt_mgmt.h"
 #include "bt_rend.h"
 #include "audio_datapath.h"
 #include "bt_content_ctrl.h"
 #include "unicast_server.h"
+#include "le_audio.h"
 #include "le_audio_rx.h"
 
 #include <zephyr/logging/log.h>

@@ -18,7 +18,7 @@
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include "macros_common.h"
-#include "le_audio.h"
+#include "bt_le_audio_tx.h"
 #include "nrf5340_audio_common.h"
 
 #include <zephyr/logging/log.h>
@@ -31,9 +31,6 @@ BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two audio streams are currently supported");
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
-		 ZBUS_MSG_INIT(0));
-
-ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
 #if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
@@ -74,28 +71,10 @@ ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EM
 #define STANDARD_QUALITY_24KHZ 24000
 #define HIGH_QUALITY_48KHZ     48000
 
-#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
-/* For being able to dynamically define iso_tx_pools */
-#define NET_BUF_POOL_ITERATE(i, _)                                                                 \
-	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
-				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
-#define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
-LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT, NET_BUF_POOL_ITERATE, (;))
-
-/* clang-format off */
-static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT,
-						       NET_BUF_POOL_PTR_ITERATE, (,)) };
-/* clang-format on */
-
 static struct bt_cap_broadcast_source *broadcast_source;
-
 static struct bt_cap_stream cap_streams[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
-
 static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
-
 static struct bt_le_ext_adv *adv;
-static atomic_t iso_tx_pool_alloc[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
-static uint32_t seq_num[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 static bool initialized;
 static bool delete_broadcast_src;
 
@@ -119,24 +98,6 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 	ERR_CHK(ret);
 }
 
-static bool is_iso_buffer_full(uint8_t idx)
-{
-	/* net_buf_alloc allocates buffers for APP->NET transfer over HCI RPMsg,
-	 * but when these buffers are released it is not guaranteed that the
-	 * data has actually been sent. The data might be qued on the NET core,
-	 * and this can cause delays in the audio.
-	 * When stream_sent_cb() is called the data has been sent.
-	 * Data will be discarded if allocation becomes too high, to avoid audio delays.
-	 * If the NET and APP core operates in clock sync, discarding should not occur.
-	 */
-
-	if (atomic_get(&iso_tx_pool_alloc[idx]) >= HCI_ISO_BUF_ALLOC_PER_CHAN) {
-		return true;
-	}
-
-	return false;
-}
-
 static int get_stream_index(struct bt_bap_stream *stream, uint8_t *index)
 {
 	for (int i = 0; i < ARRAY_SIZE(cap_streams); i++) {
@@ -153,22 +114,10 @@ static int get_stream_index(struct bt_bap_stream *stream, uint8_t *index)
 
 static void stream_sent_cb(struct bt_bap_stream *stream)
 {
-	static uint32_t sent_cnt[ARRAY_SIZE(cap_streams)];
 	uint8_t index = 0;
 
 	get_stream_index(stream, &index);
-
-	if (atomic_get(&iso_tx_pool_alloc[index])) {
-		atomic_dec(&iso_tx_pool_alloc[index]);
-	} else {
-		LOG_WRN("Decreasing atomic variable for stream %d failed", index);
-	}
-
-	sent_cnt[index]++;
-
-	if ((sent_cnt[index] % 1000U) == 0U) {
-		LOG_DBG("Sent %d total ISO packets on stream %d", sent_cnt[index], index);
-	}
+	ERR_CHK(bt_le_audio_tx_stream_sent(index));
 }
 
 static void stream_started_cb(struct bt_bap_stream *stream)
@@ -176,7 +125,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	uint8_t index = 0;
 
 	get_stream_index(stream, &index);
-	seq_num[index] = 0;
+	ERR_CHK(bt_le_audio_tx_stream_started(index));
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
 
@@ -187,8 +136,13 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	int ret;
+	uint8_t index = 0;
+
+	get_stream_index(stream, &index);
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
+
+	ERR_CHK(bt_le_audio_tx_stream_stopped(index));
 
 	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)stream, reason);
 
@@ -396,81 +350,15 @@ int broadcast_source_stop(void)
 int broadcast_source_send(struct le_audio_encoded_audio enc_audio)
 {
 	int ret;
-	static bool wrn_printed[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
-	struct net_buf *buf;
-	size_t num_streams = ARRAY_SIZE(cap_streams);
-	size_t data_size_pr_stream;
-	struct bt_iso_tx_info tx_info = {0};
-	struct sdu_ref_msg msg;
+	struct bt_bap_stream *bap_tx_streams[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 
-	if ((enc_audio.num_ch == 1) || (enc_audio.num_ch == num_streams)) {
-		data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
-	} else {
-		LOG_ERR("Num enc channels is %d Must be 1 or num streams", enc_audio.num_ch);
-		return -EINVAL;
+	for (int i = 0; i < ARRAY_SIZE(cap_streams); i++) {
+		bap_tx_streams[i] = &cap_streams[i].bap_stream;
 	}
 
-	if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE)) {
-		LOG_ERR("The encoded data size does not match the SDU size");
-		return -ECANCELED;
-	}
-
-	for (int i = 0; i < num_streams; i++) {
-		if (cap_streams[i].bap_stream.ep->status.state != BT_BAP_EP_STATE_STREAMING) {
-			LOG_DBG("Stream %d not in streaming state", i);
-			continue;
-		}
-
-		if (is_iso_buffer_full(i)) {
-			if (!wrn_printed[i]) {
-				LOG_WRN("HCI ISO TX overrun on ch %d - Single print", i);
-				wrn_printed[i] = true;
-			}
-
-			return -ENOMEM;
-		}
-
-		wrn_printed[i] = false;
-
-		buf = net_buf_alloc(iso_tx_pools[i], K_NO_WAIT);
-		if (buf == NULL) {
-			/* This should never occur because of the is_iso_buffer_full() check */
-			LOG_WRN("Out of TX buffers");
-			return -ENOMEM;
-		}
-
-		net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
-		if (enc_audio.num_ch == 1) {
-			net_buf_add_mem(buf, &enc_audio.data[0], data_size_pr_stream);
-		} else {
-			net_buf_add_mem(buf, &enc_audio.data[i * data_size_pr_stream],
-					data_size_pr_stream);
-		}
-
-		atomic_inc(&iso_tx_pool_alloc[i]);
-
-		ret = bt_bap_stream_send(&cap_streams[i].bap_stream, buf, seq_num[i]++,
-					 BT_ISO_TIMESTAMP_NONE);
-		if (ret < 0) {
-			LOG_WRN("Failed to send audio data: %d", ret);
-			net_buf_unref(buf);
-			atomic_dec(&iso_tx_pool_alloc[i]);
-			return ret;
-		}
-	}
-
-	ret = bt_iso_chan_get_tx_sync(&cap_streams[0].bap_stream.ep->iso->chan, &tx_info);
-
+	ret = bt_le_audio_tx_send(bap_tx_streams, enc_audio, ARRAY_SIZE(cap_streams));
 	if (ret) {
-		LOG_DBG("Error getting ISO TX anchor point: %d", ret);
-	} else {
-		msg.timestamp = tx_info.ts;
-		msg.adjust = false;
-
-		ret = zbus_chan_pub(&sdu_ref_chan, &msg, K_NO_WAIT);
-		if (ret) {
-			LOG_WRN("Failed to publish timestamp: %d", ret);
-		}
+		return ret;
 	}
 
 	return 0;
@@ -517,6 +405,11 @@ int broadcast_source_enable(void)
 	if (initialized) {
 		LOG_WRN("Already initialized");
 		return -EALREADY;
+	}
+
+	ret = bt_le_audio_tx_init();
+	if (ret) {
+		return ret;
 	}
 
 	LOG_INF("Enabling broadcast_source %s", CONFIG_BT_AUDIO_BROADCAST_NAME);

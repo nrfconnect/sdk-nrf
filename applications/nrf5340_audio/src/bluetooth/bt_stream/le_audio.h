@@ -7,7 +7,7 @@
 #ifndef _LE_AUDIO_H_
 #define _LE_AUDIO_H_
 
-#include <zephyr/bluetooth/audio/audio.h>
+#include <zephyr/bluetooth/audio/bap.h>
 #include <audio_defines.h>
 
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
@@ -57,5 +57,18 @@ struct le_audio_encoded_audio {
 	size_t size;
 	uint8_t num_ch;
 };
+
+/**
+ * @brief	Check if an endpoint is in the given state.
+ *		If the endpoint is NULL, it is not in the
+ *		given state, and this function returns false.
+ *
+ * @param[in]	ep	The endpoint to check.
+ * @param[in]	state	The state to check for.
+ *
+ * @retval	true	The endpoint is in the given state.
+ * @retval	false	Otherwise.
+ */
+bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state);
 
 #endif /* _LE_AUDIO_H_ */

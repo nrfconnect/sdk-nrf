@@ -21,6 +21,8 @@
 #include "macros_common.h"
 #include "nrf5340_audio_common.h"
 #include "channel_assignment.h"
+#include "bt_le_audio_tx.h"
+#include "le_audio.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
@@ -32,24 +34,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 		 ZBUS_MSG_INIT(0));
 
 #define BLE_ISO_LATENCY_MS 10
-
-#if (CONFIG_BT_AUDIO_TX)
-#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
-/* For being able to dynamically define iso_tx_pools */
-#define NET_BUF_POOL_ITERATE(i, _)                                                                 \
-	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
-				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
-#define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
-LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT, NET_BUF_POOL_ITERATE, (;))
-
-static atomic_t iso_tx_pool_alloc;
-/* clang-format off */
-static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ASCS_ASE_SRC_COUNT,
-							   NET_BUF_POOL_PTR_ITERATE, (,)) };
-/* clang-format on */
-#endif /* (CONFIG_BT_AUDIO_TX) */
-
-#define CSIP_SET_SIZE 2
+#define CSIP_SET_SIZE	   2
 enum csip_set_rank {
 	CSIP_HL_RANK = 1,
 	CSIP_HR_RANK = 2
@@ -81,6 +66,7 @@ static const uint8_t cap_adv_data[] = {
 #endif /* CONFIG_BT_AUDIO_RX */
 
 #if defined(CONFIG_BT_AUDIO_TX)
+static struct bt_bap_stream *bap_tx_streams[CONFIG_BT_ASCS_ASE_SRC_COUNT];
 #define AVAILABLE_SOURCE_CONTEXT                                                                   \
 	(BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED | BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL)
 #else
@@ -177,10 +163,6 @@ static struct bt_bap_stream
 #if (CONFIG_BT_AUDIO_TX)
 BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
 	     "CIS headset only supports one source stream for now");
-static struct bt_audio_source {
-	struct bt_bap_stream *stream;
-	uint32_t seq_num;
-} sources[CONFIG_BT_ASCS_ASE_SRC_COUNT];
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
 static void print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir)
@@ -250,7 +232,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn);
 
 				/* CIS headset only supports one source stream for now */
-				sources[0].stream = audio_stream;
+				bap_tx_streams[0] = audio_stream;
 			}
 #endif /* (CONFIG_BT_AUDIO_TX) */
 			else {
@@ -371,7 +353,8 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 #if (CONFIG_BT_AUDIO_TX)
 static void stream_sent_cb(struct bt_bap_stream *stream)
 {
-	atomic_dec(&iso_tx_pool_alloc);
+	/* Unicast server/CIS headset only supports one source stream for now */
+	ERR_CHK(bt_le_audio_tx_stream_sent(0));
 }
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
@@ -398,6 +381,9 @@ static void stream_disabled_cb(struct bt_bap_stream *stream)
 static void stream_started_cb(struct bt_bap_stream *stream)
 {
 	LOG_INF("Stream %p started", stream);
+	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
+		ERR_CHK(bt_le_audio_tx_stream_started(0));
+	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn);
 }
@@ -406,9 +392,9 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
-#if (CONFIG_BT_AUDIO_TX)
-	atomic_clear(&iso_tx_pool_alloc);
-#endif /* (CONFIG_BT_AUDIO_TX) */
+	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
+		ERR_CHK(bt_le_audio_tx_stream_stopped(0));
+	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn);
 }
@@ -545,59 +531,9 @@ int unicast_server_send(struct le_audio_encoded_audio enc_audio)
 {
 #if (CONFIG_BT_AUDIO_TX)
 	int ret;
-	struct net_buf *buf;
-	static bool hci_wrn_printed;
 
-	if (enc_audio.num_ch > CONFIG_BT_ASCS_ASE_SRC_COUNT) {
-		LOG_ERR("Trying to send %d channel(s), but %d ASEs are configured for source",
-			enc_audio.num_ch, CONFIG_BT_ASCS_ASE_SRC_COUNT);
-		return -EINVAL;
-	}
-
-	/* CIS headset only supports one source stream for now */
-	if (sources[0].stream->ep->status.state != BT_BAP_EP_STATE_STREAMING) {
-		LOG_DBG("Return channel not connected");
-		return 0;
-	}
-
-	/* net_buf_alloc allocates buffers for APP->NET transfer over HCI RPMsg,
-	 * but when these buffers are released it is not guaranteed that the
-	 * data has actually been sent. The data might be queued on the NET core,
-	 * and this can cause delays in the audio.
-	 * When stream_sent_cb() is called the data has been sent.
-	 * Data will be discarded if allocation becomes too high, to avoid audio delays.
-	 * If the NET and APP core operates in clock sync, discarding should not occur.
-	 */
-	if (atomic_get(&iso_tx_pool_alloc) >= HCI_ISO_BUF_ALLOC_PER_CHAN) {
-		if (!hci_wrn_printed) {
-			LOG_WRN("HCI ISO TX overrun");
-			hci_wrn_printed = true;
-		}
-
-		return -ENOMEM;
-	}
-
-	hci_wrn_printed = false;
-
-	buf = net_buf_alloc(iso_tx_pools[0], K_NO_WAIT);
-	if (buf == NULL) {
-		/* This should never occur because of the iso_tx_pool_alloc
-		 * check above
-		 */
-		LOG_WRN("Out of TX buffers");
-		return -ENOMEM;
-	}
-
-	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
-	net_buf_add_mem(buf, enc_audio.data, enc_audio.size);
-
-	atomic_inc(&iso_tx_pool_alloc);
-	ret = bt_bap_stream_send(sources[0].stream, buf, sources[0].seq_num++,
-				 BT_ISO_TIMESTAMP_NONE);
-	if (ret < 0) {
-		LOG_WRN("Failed to send audio data: %d", ret);
-		net_buf_unref(buf);
-		atomic_dec(&iso_tx_pool_alloc);
+	ret = bt_le_audio_tx_send(bap_tx_streams, enc_audio, CONFIG_BT_ASCS_ASE_SRC_COUNT);
+	if (ret) {
 		return ret;
 	}
 
@@ -665,6 +601,10 @@ int unicast_server_enable(le_audio_receive_cb recv_cb)
 	}
 
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		ret = bt_le_audio_tx_init();
+		if (ret) {
+			return ret;
+		}
 		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK,
 						     BT_AUDIO_CONTEXT_TYPE_MEDIA |
 							     BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL |

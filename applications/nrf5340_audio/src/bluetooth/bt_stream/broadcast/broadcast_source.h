@@ -7,7 +7,7 @@
 #ifndef _BROADCAST_SOURCE_H_
 #define _BROADCAST_SOURCE_H_
 
-#include "le_audio.h"
+#include "bt_le_audio_tx.h"
 
 /**
  * @brief	Get the data to advertise.
