@@ -51,6 +51,7 @@ Varied reference designs
    libraries/index
    scripts
    integrations
+   dev_model_and_contributions
    releases_and_maturity
    documentation
 
