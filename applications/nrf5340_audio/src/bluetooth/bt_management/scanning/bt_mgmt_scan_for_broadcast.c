@@ -222,6 +222,7 @@ static void pa_sync_terminated_cb(struct bt_le_per_adv_sync *sync,
 
 	msg.event = BT_MGMT_PA_SYNC_LOST;
 	msg.pa_sync = sync;
+	msg.pa_sync_term_reason = info->reason;
 
 	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
 	ERR_CHK(ret);
