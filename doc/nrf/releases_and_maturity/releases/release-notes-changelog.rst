@@ -323,7 +323,9 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * The "start_tx_modulated_carrier" command, when used without an additional parameter, does not enable the radio end interrupt.
 
 PMIC samples
 ------------
