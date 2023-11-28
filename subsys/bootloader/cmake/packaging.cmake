@@ -22,9 +22,10 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   endif()
 
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET)
+    get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
     list(APPEND dfu_multi_image_ids 1)
-    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/signed_by_b0_${DOMAIN_APP_CPUNET}.bin")
-    list(APPEND dfu_multi_image_targets ${DOMAIN_APP_CPUNET}_extra_byproducts ${DOMAIN_APP_CPUNET}_signed_kernel_hex_target)
+    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/signed_by_b0_${image_name}.bin")
+    list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${image_name}_signed_kernel_hex_target)
   endif()
 
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT)
