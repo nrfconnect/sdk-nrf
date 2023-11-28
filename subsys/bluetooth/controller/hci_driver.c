@@ -196,13 +196,6 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_BIS_SOURCE_COUNT 0
 #endif
 
-#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)
-	#define SDC_MEM_ISO_RX_POOL \
-		SDC_MEM_ISO_RX_PDU_POOL_SIZE(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)
-#else
-	#define SDC_MEM_ISO_RX_POOL 0
-#endif
-
 #if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT)
 #define SDC_MEM_ISO_RX_PDU_POOL                                                            \
 	SDC_MEM_ISO_RX_PDU_POOL_PER_STREAM_SIZE(                                               \
@@ -218,10 +211,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	SDC_MEM_ISO_TX_POOL_SIZE(CONFIG_BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT,               \
 		CONFIG_BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT,                         \
 		SDC_CIS_COUNT,                                                                 \
-		(SDC_BIS_SINK_COUNT + SDC_BIS_SOURCE_COUNT))
-/* We should not have to allocate TX pool memory for CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT,
- * but currently bis_count does not differentiate between ADV or SYNC streams.
- */
+		SDC_BIS_SOURCE_COUNT)
 #else
 #define SDC_MEM_ISO_TX_POOL 0
 #endif
@@ -239,7 +229,6 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_MEM_CIS) + \
 		      (SDC_MEM_BIS_SINK) + \
 		      (SDC_MEM_BIS_SOURCE) + \
-		      (SDC_MEM_ISO_RX_POOL) + \
 		      (SDC_MEM_ISO_RX_PDU_POOL) + \
 		      (SDC_MEM_ISO_TX_POOL))
 
@@ -856,8 +845,7 @@ static int configure_memory_usage(void)
 	int required_memory;
 	sdc_cfg_t cfg;
 
-#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)                                           \
-	|| defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT)
+#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT)
 	uint8_t iso_rx_paths = 0;
 #endif
 
@@ -1061,10 +1049,7 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 
-	cfg.bis_count.count = 0;
 #if defined(CONFIG_BT_CTLR_ADV_ISO)
-	cfg.bis_count.count += CONFIG_BT_CTLR_ADV_ISO_STREAM_COUNT;
-
 	cfg.bis_source_count.count = CONFIG_BT_CTLR_ADV_ISO_STREAM_COUNT;
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 					  SDC_CFG_TYPE_BIS_SOURCE_COUNT, &cfg);
@@ -1073,7 +1058,6 @@ static int configure_memory_usage(void)
 	}
 #endif /* CONFIG_BT_CTLR_ADV_ISO */
 #if defined(CONFIG_BT_CTLR_SYNC_ISO)
-	cfg.bis_count.count += CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT;
 	cfg.bis_sink_count.count = CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT;
 	iso_rx_paths += CONFIG_BT_CTLR_SYNC_ISO_STREAM_COUNT;
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
@@ -1082,26 +1066,13 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 #endif /* CONFIG_BT_CTLR_SYNC_ISO */
-	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-					  SDC_CFG_TYPE_BIS_COUNT, &cfg);
-	if (required_memory < 0) {
-		return required_memory;
-	}
 #endif /* CONFIG_BT_CTLR_BROADCAST_ISO */
 
-#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT)                                           \
-	|| defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT)
+#if defined(CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT)
 	cfg.iso_rx_pdu_buffer_per_stream_cfg.count =
 		CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT;
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 					  SDC_CFG_TYPE_ISO_RX_PDU_BUFFER_PER_STREAM_CFG, &cfg);
-	if (required_memory < 0) {
-		return required_memory;
-	}
-
-	cfg.iso_rx_pdu_buffer_cfg.count = CONFIG_BT_CTLR_SDC_ISO_RX_PDU_BUFFER_COUNT;
-	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-					  SDC_CFG_TYPE_ISO_RX_PDU_BUFFER_CFG, &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
