@@ -3263,6 +3263,10 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
 #define MBEDTLS_ECP_FIXED_POINT_OPTIM      0 /**< Enable fixed-point speed-up */
 #endif
 
+#if CONFIG_MBEDTLS_CMAC_ALT
+/* NCSDK-24838 */
+#define MBEDTLS_CIPHER_MODE_CBC
+#endif
 
 /* \} name SECTION: Customisation configuration options */
 
