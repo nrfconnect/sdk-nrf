@@ -39,7 +39,7 @@ extern struct bt_mesh_light_hsl_cli light_hsl_cli;
 extern struct bt_mesh_scheduler_cli scheduler_cli;
 
 struct model_data {
-	struct bt_mesh_model *model;
+	const struct bt_mesh_model *model;
 	uint16_t addr;
 	uint16_t appkey_idx;
 };

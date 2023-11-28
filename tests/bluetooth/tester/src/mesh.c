@@ -331,7 +331,7 @@ void net_recv_ev(uint8_t ttl, uint8_t ctl, uint16_t src, uint16_t dst, const voi
 		    buf.data, buf.len);
 }
 
-static void model_bound_cb(uint16_t addr, struct bt_mesh_model *model,
+static void model_bound_cb(uint16_t addr, const struct bt_mesh_model *model,
 			   uint16_t key_idx)
 {
 	int i;
@@ -352,7 +352,7 @@ static void model_bound_cb(uint16_t addr, struct bt_mesh_model *model,
 	LOG_ERR("model_bound is full");
 }
 
-static void model_unbound_cb(uint16_t addr, struct bt_mesh_model *model,
+static void model_unbound_cb(uint16_t addr, const struct bt_mesh_model *model,
 			     uint16_t key_idx)
 {
 	int i;
