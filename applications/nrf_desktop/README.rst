@@ -2018,18 +2018,30 @@ Background Device Firmware Upgrade
 ==================================
 
 The nRF Desktop application uses the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu` for the background DFU process.
-From the application perspective, the update image transfer during the background DFU process is very similar for both MCUboot and B0 bootloader.
+From the application perspective, the update image transfer during the background DFU process is very similar for all supported configurations:
+
+* MCUboot
+* Secure Bootloader (B0)
+
 The firmware update process has three stages, discussed below.
 At the end of these three stages, the nRF Desktop application will be rebooted with the new firmware package installed.
 
 .. note::
   The background firmware upgrade can also be performed over the Simple Management Protocol (SMP).
-  For more details about the DFU over SMP, read the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` documentation.
+  For more details about the DFU procedure over SMP, read the documentation of the following modules:
+
+  * :ref:`nrf_desktop_ble_smp` (supported only with MCUboot bootloader)
+  * :ref:`nrf_desktop_dfu_mcumgr` (supported only with MCUboot bootloader)
+    The module uses the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods.
+    Therefore, this module should be used for configurations that enable multiple DFU transports (for example, if a configuration also enables :ref:`nrf_desktop_dfu`).
 
 Update image generation
 -----------------------
 
-The update image is generated in the build directory when building the firmware with the enabled bootloader.
+The update image is generated in the build directory when building the firmware regardless of the chosen DFU configuration.
+
+MCUboot and B0 bootloaders
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :file:`zephyr/dfu_application.zip` file is used by both B0 and MCUboot bootloader for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
 The package contains firmware images along with additional metadata.
@@ -2085,6 +2097,12 @@ Update image verification and application image update
 Once the update image transfer is completed, the background DFU process will continue after the device reboot.
 If :ref:`nrf_desktop_config_channel_script` is used, the reboot is triggered by the script right after the image transfer completes.
 
+The implementation details of the reboot mechanism for the chosen DFU configuration are described in the following subsections.
+
+MCUboot and B0 bootloaders
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For these configuration variants, the :c:func:`sys_reboot` function is called to reboot the device.
 After the reboot, the bootloader locates the update image on the update partition of the device.
 The image verification process ensures the integrity of the image and checks if its signature is valid.
 If verification is successful, the bootloader boots the new version of the application.
