@@ -24,7 +24,6 @@
 #include <lwm2m_engine.h>
 
 #include <modem/modem_info.h>
-#include <ncs_version.h>
 #include <pm_config.h>
 #include <zephyr/sys/reboot.h>
 

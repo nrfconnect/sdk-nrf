@@ -14,7 +14,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include "lwm2m_engine.h"
-#include "lwm2m_rd_client.h"
 #include "nrf_modem_at.h"
 #include "nrf_errno.h"
 
