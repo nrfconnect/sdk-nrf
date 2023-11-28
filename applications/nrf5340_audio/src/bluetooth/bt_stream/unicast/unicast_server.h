@@ -7,6 +7,7 @@
 #ifndef _UNICAST_SERVER_H_
 #define _UNICAST_SERVER_H_
 
+#include "bt_le_audio_tx.h"
 #include "le_audio.h"
 
 #include <audio_defines.h>

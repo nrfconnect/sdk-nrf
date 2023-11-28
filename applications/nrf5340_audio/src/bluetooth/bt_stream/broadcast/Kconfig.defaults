@@ -50,9 +50,6 @@ config BT_SMP
 config BT_PAC_SNK
 	default y
 
-config BT_AUDIO_RX
-	default y
-
 endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY
@@ -82,8 +79,5 @@ config BT_BAP_BROADCAST_SRC_STREAM_COUNT
 
 config BT_ISO_MAX_CHAN
 	default 2
-
-config BT_AUDIO_TX
-	default y
 
 endif # AUDIO_DEV = 2 (GATEWAY)

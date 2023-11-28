@@ -7,7 +7,7 @@
 #ifndef _UNICAST_CLIENT_H_
 #define _UNICAST_CLIENT_H_
 
-#include "le_audio.h"
+#include "bt_le_audio_tx.h"
 
 #include <zephyr/bluetooth/audio/audio.h>
 #include <audio_defines.h>

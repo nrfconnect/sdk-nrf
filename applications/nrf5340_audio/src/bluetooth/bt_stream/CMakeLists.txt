@@ -7,7 +7,13 @@
 zephyr_library_include_directories(
     broadcast
     unicast
+    bt_le_audio_tx
 )
+
+add_subdirectory(bt_le_audio_tx)
+
+target_sources(app PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/le_audio.c)
 
 if (CONFIG_BT_BAP_BROADCAST_SINK)
 	target_sources(app PRIVATE

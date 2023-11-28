@@ -106,12 +106,6 @@ config BT_CAP_ACCEPTOR
 config BT_CAP_ACCEPTOR_SET_MEMBER
 	default y
 
-config BT_AUDIO_TX
-	default y if STREAM_BIDIRECTIONAL
-
-config BT_AUDIO_RX
-	default y
-
 config BT_AUDIO_CODEC_CFG_MAX_METADATA_SIZE
 	default 25
 
@@ -175,11 +169,5 @@ config MCTL_LOCAL_PLAYER_CONTROL
 
 config MCTL_LOCAL_PLAYER_REMOTE_CONTROL
 	default y
-
-config BT_AUDIO_TX
-	default y
-
-config BT_AUDIO_RX
-	default y if STREAM_BIDIRECTIONAL
 
 endif # AUDIO_DEV = 2 (GATEWAY)

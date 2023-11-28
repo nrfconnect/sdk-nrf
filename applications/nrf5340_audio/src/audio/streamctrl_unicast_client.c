@@ -14,7 +14,7 @@
 #include "macros_common.h"
 #include "audio_system.h"
 #include "button_handler.h"
-#include "le_audio.h"
+#include "bt_le_audio_tx.h"
 #include "bt_mgmt.h"
 #include "bt_rend.h"
 #include "bt_content_ctrl.h"

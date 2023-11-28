@@ -16,7 +16,6 @@
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include "macros_common.h"
-#include "le_audio.h"
 #include "nrf5340_audio_common.h"
 #include "channel_assignment.h"
 

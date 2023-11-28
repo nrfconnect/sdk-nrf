@@ -7,7 +7,7 @@
 #ifndef _BROADCAST_SINK_H_
 #define _BROADCAST_SINK_H_
 
-#include "le_audio.h"
+#include "bt_le_audio_tx.h"
 
 /**
  * @brief	Change the active audio stream if the broadcast isochronous group (BIG) contains
