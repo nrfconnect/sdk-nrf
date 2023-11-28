@@ -25,12 +25,6 @@ if(SB_CONFIG_SECURE_BOOT)
         PM_CPUNET_IMAGES
         "b0n"
     )
-
-    if(SB_CONFIG_SECURE_BOOT_DOMAIN_APP)
-      set_property(GLOBAL PROPERTY DOMAIN_APP_CPUNET
-                   "b0n"
-      )
-    endif()
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_APPCORE)
@@ -52,12 +46,6 @@ if(SB_CONFIG_SECURE_BOOT)
         PM_APP_IMAGES
         "b0"
     )
-
-    if(SB_CONFIG_SECURE_BOOT_DOMAIN_APP)
-      set_property(GLOBAL PROPERTY DOMAIN_APP_APP
-                   "b0"
-      )
-    endif()
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
