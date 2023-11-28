@@ -45,19 +45,15 @@ static struct {
 
 /** Mocks ******************************************/
 
-static struct bt_mesh_model mock_lightness_model = { .elem_idx = 0 };
+static const struct bt_mesh_model mock_lightness_model = {
+	.rt = &(struct bt_mesh_model_rt_ctx){.elem_idx = 0}};
 
-static struct bt_mesh_lightness_srv lightness_srv = {
-	.lightness_model = &mock_lightness_model
-};
+static struct bt_mesh_lightness_srv lightness_srv = {.lightness_model = &mock_lightness_model};
 
-static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
-	BT_MESH_LIGHT_CTRL_SRV_INIT(&lightness_srv);
+static struct bt_mesh_light_ctrl_srv light_ctrl_srv = BT_MESH_LIGHT_CTRL_SRV_INIT(&lightness_srv);
 
-static struct bt_mesh_model mock_ligth_ctrl_model = {
-	.user_data = &light_ctrl_srv,
-	.elem_idx = 1,
-};
+static const struct bt_mesh_model mock_ligth_ctrl_model = {
+	.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &light_ctrl_srv, .elem_idx = 1}};
 
 enum light_ctrl_timer {
 	STATE_TIMER,
@@ -147,12 +143,12 @@ int32_t model_delay_decode(uint8_t encoded_delay)
 	return 0;
 }
 
-struct bt_mesh_elem *bt_mesh_model_elem(struct bt_mesh_model *mod)
+const struct bt_mesh_elem *bt_mesh_model_elem(const struct bt_mesh_model *mod)
 {
 	return NULL;
 }
 
-struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
+const struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
 					 uint16_t id)
 {
 	return NULL;
@@ -192,8 +188,8 @@ void bt_mesh_model_msg_init(struct net_buf_simple *msg, uint32_t opcode)
 	net_buf_simple_init(msg, 0);
 }
 
-int bt_mesh_model_extend(struct bt_mesh_model *mod,
-			 struct bt_mesh_model *base_mod)
+int bt_mesh_model_extend(const struct bt_mesh_model *mod,
+			 const struct bt_mesh_model *base_mod)
 {
 	return 0;
 }

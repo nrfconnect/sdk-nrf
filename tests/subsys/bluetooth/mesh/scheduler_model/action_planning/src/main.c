@@ -133,78 +133,83 @@ struct test_scene_srv scene_srv[5] = {
 
 static struct bt_mesh_model mock_models_elem1[3] = {
 	{
-		.user_data = &sched_srv[0],
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &sched_srv[0]},
 		.id = BT_MESH_MODEL_ID_SCHEDULER_SRV,
 	},
 	{
-		.user_data = &onoff_srv[0].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &onoff_srv[0].srv},
 		.id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
 	},
 	{
-		.user_data = &scene_srv[0].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scene_srv[0].srv},
 		.id = BT_MESH_MODEL_ID_SCENE_SRV,
 	},
 };
 
 static struct bt_mesh_model mock_models_elem2[2] = {
 	{
-		.user_data = &onoff_srv[1].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &onoff_srv[1].srv},
 		.id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
 	},
 	{
-		.user_data = &scene_srv[1].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scene_srv[1].srv},
 		.id = BT_MESH_MODEL_ID_SCENE_SRV,
 	},
 };
 
 static struct bt_mesh_model mock_models_elem3[2] = {
 	{
-		.user_data = &onoff_srv[2].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &onoff_srv[2].srv},
 		.id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
 	},
 	{
-		.user_data = &scene_srv[2].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scene_srv[2].srv},
 		.id = BT_MESH_MODEL_ID_SCENE_SRV,
 	},
 };
 
 static struct bt_mesh_model mock_models_elem4[3] = {
 	{
-		.user_data = &sched_srv[1],
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &sched_srv[1]},
 		.id = BT_MESH_MODEL_ID_SCHEDULER_SRV,
 	},
 	{
-		.user_data = &onoff_srv[3].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &onoff_srv[3].srv},
 		.id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
 	},
 	{
-		.user_data = &scene_srv[3].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scene_srv[3].srv},
 		.id = BT_MESH_MODEL_ID_SCENE_SRV,
 	},
 };
 
 static struct bt_mesh_model mock_models_elem5[2] = {
 	{
-		.user_data = &onoff_srv[4].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &onoff_srv[4].srv},
 		.id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
 	},
 	{
-		.user_data = &scene_srv[4].srv,
+		.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scene_srv[4].srv},
 		.id = BT_MESH_MODEL_ID_SCENE_SRV,
 	},
 };
 
-static struct bt_mesh_elem mock_elems[5] = {
-	{ .addr = 1, .model_count = 3, .models = mock_models_elem1 },
-	{ .addr = 2, .model_count = 2, .models = mock_models_elem2 },
-	{ .addr = 3, .model_count = 2, .models = mock_models_elem3 },
-	{ .addr = 4, .model_count = 3, .models = mock_models_elem4 },
-	{ .addr = 5, .model_count = 2, .models = mock_models_elem5 }
+static const struct bt_mesh_elem mock_elems[5] = {
+	{.rt = &(struct bt_mesh_elem_rt_ctx){.addr = 1}, .model_count = 3,
+	.models = mock_models_elem1},
+	{.rt = &(struct bt_mesh_elem_rt_ctx){.addr = 2}, .model_count = 2,
+	.models = mock_models_elem2},
+	{.rt = &(struct bt_mesh_elem_rt_ctx){.addr = 3}, .model_count = 2,
+	.models = mock_models_elem3},
+	{.rt = &(struct bt_mesh_elem_rt_ctx){.addr = 4}, .model_count = 3,
+	.models = mock_models_elem4},
+	{.rt = &(struct bt_mesh_elem_rt_ctx){.addr = 5}, .model_count = 2,
+	.models = mock_models_elem5}
 };
 
 struct mock_comp_data {
 	size_t elem_count;
-	struct bt_mesh_elem *elem;
+	const struct bt_mesh_elem *elem;
 } mock_comp = { .elem_count = 5, .elem = mock_elems };
 
 static struct bt_mesh_model *sched_mod_elem1 = &mock_models_elem1[0];
@@ -214,19 +219,19 @@ static void mod_elem_idx_prep(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(mock_elems); i++) {
 		for (size_t j = 0; j < mock_elems[i].model_count; j++) {
-			mock_elems[i].models[j].elem_idx = i;
+			mock_elems[i].models[j].rt->elem_idx = i;
 		}
 	}
 }
 
 /* Redefined mocks */
 
-struct bt_mesh_elem *bt_mesh_model_elem(struct bt_mesh_model *mod)
+const struct bt_mesh_elem *bt_mesh_model_elem(const struct bt_mesh_model *mod)
 {
-	return &mock_comp.elem[mod->elem_idx];
+	return &mock_comp.elem[mod->rt->elem_idx];
 }
 
-struct bt_mesh_elem *bt_mesh_elem_find(uint16_t addr)
+const struct bt_mesh_elem *bt_mesh_elem_find(uint16_t addr)
 {
 	uint16_t index;
 
@@ -234,14 +239,14 @@ struct bt_mesh_elem *bt_mesh_elem_find(uint16_t addr)
 		return NULL;
 	}
 
-	index = addr - mock_comp.elem[0].addr;
+	index = addr - mock_comp.elem[0].rt->addr;
 	if (index >= mock_comp.elem_count) {
 		return NULL;
 	}
 	return &mock_comp.elem[index];
 }
 
-struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem, uint16_t id)
+const struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem, uint16_t id)
 {
 	uint8_t i;
 
@@ -320,13 +325,13 @@ void bt_mesh_time_encode_time_params(struct net_buf_simple *buf,
 {
 }
 
-int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_msg_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	       struct net_buf_simple *buf)
 {
 	return 0;
 }
 
-int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
+int _bt_mesh_time_srv_update_handler(const struct bt_mesh_model *model)
 {
 	return 0;
 }

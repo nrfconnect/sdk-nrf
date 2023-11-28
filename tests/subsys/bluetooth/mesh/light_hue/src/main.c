@@ -95,10 +95,8 @@ static struct bt_mesh_light_hue_srv_handlers light_hue_srv_handlers = {
 static struct bt_mesh_light_hue_srv light_hue_srv =
 	BT_MESH_LIGHT_HUE_SRV_INIT(&light_hue_srv_handlers);
 
-static struct bt_mesh_model mock_light_hue_srv_model = {
-	.user_data = &light_hue_srv,
-	.elem_idx = 1,
-};
+static const struct bt_mesh_model mock_light_hue_srv_model = {
+	.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &light_hue_srv, .elem_idx = 1}};
 
 /** Mocks ******************************************/
 
@@ -123,7 +121,7 @@ static int hue_status_pub(struct net_buf_simple *buf)
 	return 0;
 }
 
-int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_msg_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	       struct net_buf_simple *buf)
 {
 	uint16_t opcode;
@@ -150,8 +148,8 @@ void bt_mesh_model_msg_init(struct net_buf_simple *msg, uint32_t opcode)
 	net_buf_simple_add_be16(msg, opcode);
 }
 
-int bt_mesh_model_extend(struct bt_mesh_model *mod,
-			 struct bt_mesh_model *base_mod)
+int bt_mesh_model_extend(const struct bt_mesh_model *mod,
+			 const struct bt_mesh_model *base_mod)
 {
 	return 0;
 }

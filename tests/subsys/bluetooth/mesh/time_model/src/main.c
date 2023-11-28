@@ -69,7 +69,8 @@ static void tc_teardown(void *f)
 	_bt_mesh_time_srv_cb.reset(mock_elem[0].models);
 }
 
-int bt_mesh_model_extend(struct bt_mesh_model *extending_mod, struct bt_mesh_model *base_mod)
+int bt_mesh_model_extend(const struct bt_mesh_model *extending_mod,
+			 const struct bt_mesh_model *base_mod)
 {
 	return 0;
 }
@@ -78,7 +79,7 @@ void bt_mesh_model_msg_init(struct net_buf_simple *msg, uint32_t opcode)
 {
 }
 
-int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_msg_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		     struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_status status;
@@ -122,7 +123,7 @@ int bt_mesh_msg_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-int bt_mesh_model_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+int bt_mesh_model_send(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *msg, const struct bt_mesh_send_cb *cb, void *cb_data)
 {
 	return 0;
