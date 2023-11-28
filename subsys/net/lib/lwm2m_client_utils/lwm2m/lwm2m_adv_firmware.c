@@ -106,6 +106,7 @@ uint8_t lwm2m_adv_firmware_get_update_state(uint16_t obj_inst_id)
 
 void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state)
 {
+	int ret;
 	bool error = false;
 	struct lwm2m_obj_path path;
 	time_t now;
@@ -162,7 +163,10 @@ void lwm2m_adv_firmware_set_update_state(uint16_t obj_inst_id, uint8_t state)
 	LOG_DBG("Update %d/%d/%d state = %d", path.obj_id, path.obj_inst_id, path.res_id, state);
 	now = time(NULL);
 	path.res_id = FIRMWARE_LAST_STATE_CHANGE_TIME_ID;
-	lwm2m_set_time(&path, now);
+	ret = lwm2m_set_time(&path, now);
+	if (ret) {
+		LOG_ERR("Failed to set timestamp");
+	}
 	lwm2m_registry_unlock();
 }
 
