@@ -404,6 +404,11 @@
 #cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
 #cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
 
+#if CONFIG_MBEDTLS_CMAC_ALT
+/* NCSDK-24838 */
+#define MBEDTLS_CIPHER_MODE_CBC
+#endif
+
 #include <psa/core_unsupported_ciphers_check.h>
 
 #endif /* PSA_CRYPTO_CONFIG_H */
