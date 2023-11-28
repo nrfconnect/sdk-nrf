@@ -24,17 +24,18 @@ static struct bt_mesh_scheduler_srv scheduler_srv =
 
 K_SEM_DEFINE(action_fired, 0, 1);
 
-static struct bt_mesh_model mock_sched_model = {
-	.user_data = &scheduler_srv,
-	.elem_idx = 1,
+static const struct bt_mesh_model mock_sched_model = {
+	.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scheduler_srv, .elem_idx = 1}
 };
 
-static struct bt_mesh_model mock_scene_model = {
-	.user_data = &scene_srv,
-	.elem_idx = 1,
+static const struct bt_mesh_model mock_scene_model = {
+	.rt = &(struct bt_mesh_model_rt_ctx){.user_data = &scene_srv, .elem_idx = 1}
 };
 
-static struct bt_mesh_elem dummy_elem;
+static const struct bt_mesh_elem dummy_elem = {
+	.rt = &(struct bt_mesh_elem_rt_ctx){.addr = 1}
+};
+
 static struct tm start_tm;
 
 static int gfire_cnt;
