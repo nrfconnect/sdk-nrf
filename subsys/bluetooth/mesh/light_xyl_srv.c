@@ -524,7 +524,7 @@ static int update_handler(const struct bt_mesh_model *model)
 static int bt_mesh_light_xyl_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
-	struct bt_mesh_model *lightness_srv;
+	const struct bt_mesh_model *lightness_srv;
 
 	srv->model = model;
 	srv->pub.msg = &srv->pub_buf;
@@ -637,7 +637,7 @@ const struct bt_mesh_model_cb _bt_mesh_light_xyl_srv_cb = {
 static int bt_mesh_light_xyl_setup_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_xyl_srv *srv = model->rt->user_data;
-	struct bt_mesh_model *lightness_setup_srv;
+	const struct bt_mesh_model *lightness_setup_srv;
 	int err;
 
 	err = bt_mesh_model_extend(model, srv->model);
