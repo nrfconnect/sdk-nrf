@@ -1,7 +1,7 @@
 top_table:
   Sidewalk: SIDEWALK
   Bluetooth: BT_CTLR
-  Bluetooth mesh: BT_MESH
+  Bluetooth Mesh: BT_MESH
   Zigbee: ZIGBEE
   Thread: NET_L2_OPENTHREAD
   LTE: LTE_LINK_CONTROL

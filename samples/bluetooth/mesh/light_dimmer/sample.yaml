@@ -1,6 +1,6 @@
 sample:
-  description: Bluetooth mesh light dimmer sample
-  name: Bluetooth mesh light dimmer
+  description: Bluetooth Mesh light dimmer sample
+  name: Bluetooth Mesh light dimmer
 tests:
   sample.bluetooth.mesh.light_dimmer:
     build_only: true

@@ -1,6 +1,6 @@
 .. _ug_bt_mesh_configuring:
 
-Configuring Bluetooth mesh in |NCS|
+Configuring Bluetooth Mesh in |NCS|
 ###################################
 
 .. contents::
@@ -16,7 +16,7 @@ The Bluetooth® mesh support is controlled by :kconfig:option:`CONFIG_BT_MESH`, 
 Optional features configuration
 *******************************
 
-Optional features in the Bluetooth mesh stack must be explicitly enabled:
+Optional features in the Bluetooth Mesh stack must be explicitly enabled:
 
 * :kconfig:option:`CONFIG_BT_MESH_RELAY` - Enables message relaying.
 * :kconfig:option:`CONFIG_BT_MESH_FRIEND` - Enables the Friend role.
@@ -26,23 +26,23 @@ Optional features in the Bluetooth mesh stack must be explicitly enabled:
 * :kconfig:option:`CONFIG_BT_MESH_PB_GATT` - Enables the GATT provisioning bearer.
 * :kconfig:option:`CONFIG_BT_MESH_CDB` - Enables the Configuration Database subsystem.
 
-The persistent storage of the Bluetooth mesh provisioning and configuration data is enabled by :kconfig:option:`CONFIG_BT_SETTINGS`.
+The persistent storage of the Bluetooth Mesh provisioning and configuration data is enabled by :kconfig:option:`CONFIG_BT_SETTINGS`.
 See the :ref:`zephyr:bluetooth-persistent-storage` section of :ref:`zephyr:bluetooth-arch` for details.
 
 Mesh models
 ===========
 
-The |NCS| Bluetooth mesh model implementations are optional features, and each model has individual Kconfig options that must be explicitly enabled.
+The |NCS| Bluetooth Mesh model implementations are optional features, and each model has individual Kconfig options that must be explicitly enabled.
 See :ref:`bt_mesh_models` for details.
 
 Mesh settings/performance
 =========================
 
-The following configuration options are used to configure the behavior and performance of a Bluetooth mesh network.
-For more information about configuration options affecting the memory footprint of Bluetooth mesh, see :ref:`memory footprint optimization guide for Bluetooth mesh <app_memory_bt_mesh>`.
+The following configuration options are used to configure the behavior and performance of a Bluetooth Mesh network.
+For more information about configuration options affecting the memory footprint of Bluetooth Mesh, see :ref:`memory footprint optimization guide for Bluetooth Mesh <app_memory_bt_mesh>`.
 
 * :kconfig:option:`CONFIG_BT_MESH_PROXY_USE_DEVICE_NAME` - Includes the GAP device name in a scan response when the GATT Proxy feature is enabled.
-* :kconfig:option:`CONFIG_BT_MESH_DK_PROV` - Enables the Bluetooth mesh provisioning handler for the nRF5x development kits.
+* :kconfig:option:`CONFIG_BT_MESH_DK_PROV` - Enables the Bluetooth Mesh provisioning handler for the nRF5x development kits.
 * :kconfig:option:`CONFIG_BT_MESH_ADV_BUF_COUNT` - Defines the number of advertising buffers for local messages.
   Increase to improve the performance, at the cost of increased RAM usage.
 * :kconfig:option:`CONFIG_BT_MESH_ADV_EXT_GATT_SEPARATE` - Enables the use of a separate extended advertising set for GATT Server Advertising.
@@ -53,7 +53,7 @@ For more information about configuration options affecting the memory footprint 
 Additional configuration options
 ================================
 
-This section lists additional configuration options that can be used to configure behavior and performance of Bluetooth mesh.
+This section lists additional configuration options that can be used to configure behavior and performance of Bluetooth Mesh.
 The provided values are meant as suggestions only, and should be individually adjusted for each application.
 
 * :kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` - Sets the system workqueue stack size.
@@ -145,7 +145,7 @@ For more information, see :ref:`emds_readme`.
 Low Power node (LPN)
 --------------------
 
-The Low Power node (LPN) is a :ref:`power optimization <app_power_opt>` feature specific to Bluetooth mesh.
+The Low Power node (LPN) is a :ref:`power optimization <app_power_opt>` feature specific to Bluetooth Mesh.
 
 The following configuration options are relevant when using the LPN feature:
 

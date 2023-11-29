@@ -1,28 +1,28 @@
 .. _dfu_over_bt_mesh:
 
-DFU over Bluetooth mesh
+DFU over Bluetooth Mesh
 #######################
 
 .. contents::
    :local:
    :depth: 2
 
-The DFU specification is implemented in the Zephyr Bluetooth mesh DFU subsystem as three separate models:
+The DFU specification is implemented in the Zephyr Bluetooth Mesh DFU subsystem as three separate models:
 
 * :ref:`zephyr:bluetooth_mesh_dfu_srv`
 * :ref:`zephyr:bluetooth_mesh_dfu_cli`
 * :ref:`zephyr:bluetooth_mesh_dfd_srv`
 
-For more information about the Zephyr Bluetooth mesh DFU subsystem, see :ref:`zephyr:bluetooth_mesh_dfu`.
+For more information about the Zephyr Bluetooth Mesh DFU subsystem, see :ref:`zephyr:bluetooth_mesh_dfu`.
 
-The Bluetooth mesh subsystem in |NCS| provides a set of samples that can be used for evaluation of the Bluetooth mesh DFU specification and subsystem:
+The Bluetooth Mesh subsystem in |NCS| provides a set of samples that can be used for evaluation of the Bluetooth Mesh DFU specification and subsystem:
 
 * :ref:`ble_mesh_dfu_target` sample
 * :ref:`ble_mesh_dfu_distributor` sample
 
 To configure and control DFU on the Firmware Distribution Server, it is required to have the Firmware Distribution Client model.
-The Bluetooth mesh DFU subsystem in Zephyr provides a set of shell commands that can be used to substitute the need for the client.
-For the complete list of commands, see the :ref:`zephyr:bluetooth_mesh_shell_dfd_server` section of the Bluetooth mesh shell documentation.
+The Bluetooth Mesh DFU subsystem in Zephyr provides a set of shell commands that can be used to substitute the need for the client.
+For the complete list of commands, see the :ref:`zephyr:bluetooth_mesh_shell_dfd_server` section of the Bluetooth Mesh shell documentation.
 
 The commands can be executed in two ways:
 
@@ -32,7 +32,7 @@ The commands can be executed in two ways:
 Provisioning and configuring the devices
 ****************************************
 
-After programming the samples onto the boards, they need to be provisioned into the same Bluetooth mesh network with an external provisioner device.
+After programming the samples onto the boards, they need to be provisioned into the same Bluetooth Mesh network with an external provisioner device.
 See the documentation for :ref:`provisioning the mesh DFU target device <ble_mesh_dfu_target_provisioning>` and :ref:`provisioning the mesh DFU distributor device <ble_mesh_dfu_distributor_provisioning>` for how this is done.
 
 After the provisioning is completed, a Configuration Client needs to add a common application key to all devices.
@@ -49,7 +49,7 @@ Uploading the firmware
 After configuring the models, a new image can be uploaded to the Distributor.
 To upload the image, follow the instructions provided in the :ref:`ble_mesh_dfu_distributor_fw_image_upload` section of the :ref:`ble_mesh_dfu_distributor` sample documentation.
 
-The uploaded image needs to be registered in the Bluetooth mesh DFU subsystem.
+The uploaded image needs to be registered in the Bluetooth Mesh DFU subsystem.
 To achieve this, issue the ``mesh models dfu slot add`` shell command specifying size in bytes of the image that was uploaded to the Distributor.
 Optionally, you can provide firmware ID, metadata and Unique Resource Identifier (URI) parameters that come with the image.
 
@@ -185,7 +185,7 @@ To bring a stalled Target node to idle state, use the ``mesh models dfu cli canc
 Composing the firmware metadata
 *******************************
 
-The Bluetooth mesh DFU subsystem provides a set of shell commands that can be used to compose a firmware metadata.
+The Bluetooth Mesh DFU subsystem provides a set of shell commands that can be used to compose a firmware metadata.
 The format of metadata is defined in the :c:struct:`bt_mesh_dfu_metadata` structure.
 For the complete list of commands, see :ref:`zephyr:bluetooth_mesh_shell_dfu_metadata`.
 

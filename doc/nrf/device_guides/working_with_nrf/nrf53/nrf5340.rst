@@ -201,12 +201,12 @@ To run the full Bluetooth LE stack on the network core, the |NCS| provides the :
 
 For the application core, use a compatible Bluetooth LE sample, for example, the :ref:`peripheral_hids_mouse`, :ref:`peripheral_uart` or :ref:`central_uart` sample.
 
-Bluetooth mesh
+Bluetooth Mesh
 --------------
 
-Bluetooth mesh operates on Bluetooth Low Energy (LE), and is implemented according to Bluetooth Mesh Profile Specification v1.0.1 and Bluetooth Mesh Model Specification v1.0.1.
+Bluetooth Mesh operates on Bluetooth Low Energy (LE), and is implemented according to Bluetooth Mesh Profile Specification v1.0.1 and Bluetooth Mesh Model Specification v1.0.1.
 For the application core, the |NCS| provides several :ref:`bt_mesh_samples`.
-In addition, you can find Bluetooth mesh samples with :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
+In addition, you can find Bluetooth Mesh samples with :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
 
 IEEE 802.15.4 (Thread and Zigbee)
 =================================

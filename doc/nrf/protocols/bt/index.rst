@@ -3,7 +3,7 @@
 Bluetooth
 #########
 
-The following section contains descriptions of Bluetooth® LE Controller and Bluetooth mesh, including the guidelines on how to qualify a product that uses these subsystems.
+The following section contains descriptions of Bluetooth® LE Controller and Bluetooth Mesh, including the guidelines on how to qualify a product that uses these subsystems.
 
 .. toctree::
    :maxdepth: 1

@@ -6,7 +6,7 @@
 
 /**
  * @file
- * @defgroup bt_mesh_properties Bluetooth mesh properties
+ * @defgroup bt_mesh_properties Bluetooth Mesh properties
  * @{
  * @brief Device properties definitions.
  */
@@ -17,7 +17,7 @@
 
 /**
  * @defgroup bt_mesh_property_ids Property IDs
- * All available mesh Property IDs. See the Bluetooth mesh device properties
+ * All available mesh Property IDs. See the Bluetooth Mesh device properties
  * specification for details.
  * @{
  */

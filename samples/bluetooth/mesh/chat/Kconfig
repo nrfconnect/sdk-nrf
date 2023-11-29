@@ -6,7 +6,7 @@
 
 source "Kconfig.zephyr"
 
-menu "Nordic Bluetooth mesh chat client sample"
+menu "Nordic Bluetooth Mesh chat client sample"
 
 config BT_MESH_CHAT_CLI_MESSAGE_LENGTH
 	int "Max length of the message to be sent over mesh"

@@ -6,7 +6,7 @@
 
 /**
  * @file
- * @defgroup bt_mesh_lvl_srv Bluetooth mesh Generic Level Server model
+ * @defgroup bt_mesh_lvl_srv Bluetooth Mesh Generic Level Server model
  * @ingroup bt_mesh_lvl
  * @{
  * @brief API for the Generic Level Server model.

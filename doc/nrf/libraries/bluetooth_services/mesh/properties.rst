@@ -1,13 +1,13 @@
 .. _bt_mesh_properties_readme:
 
-Bluetooth mesh properties
+Bluetooth Mesh properties
 ##########################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® Special Interest Group (SIG) defines a list of Bluetooth mesh properties in the Bluetooth mesh device properties specification.
+The Bluetooth® Special Interest Group (SIG) defines a list of Bluetooth Mesh properties in the Bluetooth Mesh device properties specification.
 Each property has an assigned ID and an associated Bluetooth GATT characteristic.
 The properties all represent values on a format defined by the associated characteristic.
 

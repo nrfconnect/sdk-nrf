@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_light_dim:
 
-Bluetooth mesh: Light dimmer and scene selector
+Bluetooth Mesh: Light dimmer and scene selector
 ###############################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® mesh light dimmer and scene selector sample demonstrates how to set up a light dimmer and scene selector application, and control dimmable LEDs with Bluetooth mesh using the :ref:`bt_mesh_lvl_readme`, the :ref:`bt_mesh_onoff_readme`, and the :ref:`bt_mesh_scene_readme`.
+The Bluetooth® mesh light dimmer and scene selector sample demonstrates how to set up a light dimmer and scene selector application, and control dimmable LEDs with Bluetooth Mesh using the :ref:`bt_mesh_lvl_readme`, the :ref:`bt_mesh_onoff_readme`, and the :ref:`bt_mesh_scene_readme`.
 The sample provides the following functionality:
 
   * On/off and dim up/down using one button
@@ -50,7 +50,7 @@ The sample instantiates the following models:
 
 Devices are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
-This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth Mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 1** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 2** can be used to store and restore scenes on the network nodes.
 
 .. note::

@@ -1,6 +1,6 @@
 sample:
-  description: Bluetooth mesh sensor sample
-  name: Bluetooth mesh sensor
+  description: Bluetooth Mesh sensor sample
+  name: Bluetooth Mesh sensor
 tests:
   sample.bluetooth.mesh.sensor_server:
     build_only: true

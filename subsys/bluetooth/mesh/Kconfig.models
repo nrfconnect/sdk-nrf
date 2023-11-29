@@ -83,7 +83,7 @@ config BT_MESH_TIME_SRV_CLOCK_ACCURACY
 	default 500
 	help
 	  This value defines the clock drift in microseconds per second, and is
-	  used to calculate overall time uncertainty for the Bluetooth mesh
+	  used to calculate overall time uncertainty for the Bluetooth Mesh
 	  Time Server model.
 
 endif

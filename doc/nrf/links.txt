@@ -729,15 +729,15 @@
 .. _`Bluetooth product types`: https://support.bluetooth.com/hc/en-us/articles/360049018712/
 .. _`PRD and DPD`: https://www.bluetooth.com/download/prd_dpd_resolutions/
 
-.. _`Bluetooth mesh model specification`:
-.. _`Bluetooth mesh profile specification`: https://www.bluetooth.com/specifications/specs/
+.. _`Bluetooth Mesh model specification`:
+.. _`Bluetooth Mesh profile specification`: https://www.bluetooth.com/specifications/specs/
 .. _`Bluetooth NLC profile specifications`: https://www.bluetooth.com/specifications/specs/
 
-.. _`Bluetooth mesh model overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
-.. _`Bluetooth mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/mesh/mesh-glossary/
-.. _`Bluetooth mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
-.. _`Bluetooth mesh study guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
-.. _`Bluetooth mesh introduction blog`: https://www.bluetooth.com/blog/introducing-bluetooth-mesh-networking
+.. _`Bluetooth Mesh model overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
+.. _`Bluetooth Mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/mesh/mesh-glossary/
+.. _`Bluetooth Mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
+.. _`Bluetooth Mesh study guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
+.. _`Bluetooth Mesh introduction blog`: https://www.bluetooth.com/blog/introducing-bluetooth-mesh-networking
 
 .. _`Bluetooth SIG's Assigned Numbers`: https://www.bluetooth.com/specifications/assigned-numbers/
 

@@ -5,9 +5,9 @@
  */
 
 /** @file
- *  @defgroup bt_mesh_sensor Bluetooth mesh Sensors
+ *  @defgroup bt_mesh_sensor Bluetooth Mesh Sensors
  *  @{
- *  @brief API for Bluetooth mesh Sensors.
+ *  @brief API for Bluetooth Mesh Sensors.
  */
 
 #ifndef BT_MESH_SENSOR_H__
@@ -279,7 +279,7 @@ struct bt_mesh_sensor_setting {
  *  inside which a set of sensor measurements were made. The range is
  *  interpreted as a half-open interval (i.e. start <= value < end).
  *
- *  @note Contrary to the Bluetooth mesh specification, the column has an end
+ *  @note Contrary to the Bluetooth Mesh specification, the column has an end
  *        value instead of a width, to match the conventional property format.
  *        This reduces implementation complexity for sensor series values that
  *        include the start and end (or min and max) of the measurement range,

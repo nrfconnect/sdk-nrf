@@ -77,7 +77,7 @@ Bluetooth® LE
 * Added host extensions for Nordic-only vendor-specific command APIs.
   Implementation and integration of the host APIs can be found in the :file:`host_extensions.h` header file.
 
-Bluetooth mesh
+Bluetooth Mesh
 --------------
 
 * Updated:
@@ -234,7 +234,7 @@ Bluetooth samples
   * Enabled encryption in the sample.
     The measured throughput is calculated over the encrypted data, which is how most of the Bluetooth products use this protocol.
 
-Bluetooth mesh samples
+Bluetooth Mesh samples
 ----------------------
 
 |no_changes_yet_note|

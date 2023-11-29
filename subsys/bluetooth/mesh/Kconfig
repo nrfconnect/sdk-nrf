@@ -6,7 +6,7 @@
 
 if BT_MESH
 
-menu "Bluetooth mesh"
+menu "Bluetooth Mesh"
 
 if BT_MESH_SETTINGS_WORKQ
 
