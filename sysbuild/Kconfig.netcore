@@ -86,129 +86,40 @@ config NETCORE_MULTIPROTOCOL_RPMSG
 
 endchoice
 
-config NETCORE_EMPTY_NAME
-	string
-	default "empty_net_core"
-	depends on NETCORE_EMPTY
-	help
-	  Image name of empty image.
+if !NETCORE_NONE
 
-config NETCORE_EMPTY_BOARD
+config NETCORE_IMAGE_NAME
+	string
+	default "empty_net_core" if NETCORE_EMPTY
+	default "hci_rpmsg" if NETCORE_HCI_RPMSG
+	default "rpc_host" if NETCORE_RPC_HOST
+	default "802154_rpmsg" if NETCORE_802154_RPMSG
+	default "multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
+	help
+	  Name of netcore image.
+
+config NETCORE_IMAGE_PATH
+	string
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/empty_net_core" if NETCORE_EMPTY
+	default "${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg" if NETCORE_HCI_RPMSG
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
+	default "${ZEPHYR_BASE}/samples/boards/nrf/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
+	help
+	  Source directory of netcore image.
+
+config NETCORE_IMAGE_BOARD
 	string
 	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
 	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
 	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	depends on NETCORE_EMPTY
 	help
 	  Remote board when building this sample.
 	  If not set, the board given to sysbuild is used.
 
-config NETCORE_EMPTY_DOMAIN
+config NETCORE_IMAGE_DOMAIN
 	string
-	default "CPUNET" if (NETCORE_EMPTY_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "nrf7002dk_nrf5340_cpunet")
-
-config NETCORE_EMPTY_DOMAIN_APP
-	bool
-	default y if (NETCORE_EMPTY_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_EMPTY_BOARD = "nrf7002dk_nrf5340_cpunet")
-
-config NETCORE_HCI_RPMSG_NAME
-	string
-	default "hci_rpmsg"
-	depends on NETCORE_HCI_RPMSG
-	help
-	  Image name of radio hci rpmsg.
-
-config NETCORE_HCI_RPMSG_BOARD
-	string
-	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
-	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	depends on NETCORE_HCI_RPMSG
-	help
-	  Remote board when building this sample.
-	  If not set, the board given to sysbuild is used.
-
-config NETCORE_HCI_RPMSG_DOMAIN
-	string
-	default "CPUNET" if (NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
-
-config NETCORE_HCI_RPMSG_DOMAIN_APP
-	bool
-	default y if (NETCORE_HCI_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_HCI_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
-
-config NETCORE_RPC_HOST_NAME
-	string
-	default "rpc_host"
-	depends on NETCORE_RPC_HOST
-	help
-	  Image name of radio rpc host.
-
-config NETCORE_RPC_HOST_BOARD
-	string
-	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
-	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	depends on NETCORE_RPC_HOST
-	help
-	  Remote board when building this sample.
-	  If not set, the board given to sysbuild is used.
-
-config NETCORE_RPC_HOST_DOMAIN
-	string
-	default "CPUNET" if (NETCORE_RPC_HOST_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_RPC_HOST_BOARD = "thingy53_nrf5340_cpunet")
-
-config NETCORE_RPC_HOST_DOMAIN_APP
-	bool
-	default y if (NETCORE_RPC_HOST_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_RPC_HOST_BOARD = "thingy53_nrf5340_cpunet")
-
-config NETCORE_802154_RPMSG_NAME
-	string
-	default "802154_rpmsg"
-	depends on NETCORE_802154_RPMSG
-	help
-	  Image name of radio 802154 rpmsg.
-
-config NETCORE_802154_RPMSG_BOARD
-	string
-	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
-	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	depends on NETCORE_802154_RPMSG
-	help
-	  Remote board when building this sample.
-	  If not set, the board given to sysbuild is used.
-
-config NETCORE_802154_RPMSG_DOMAIN
-	string
-	default "CPUNET" if (NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
-
-config NETCORE_802154_RPMSG_DOMAIN_APP
-	bool
-	default y if (NETCORE_802154_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_802154_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
-
-config NETCORE_MULTIPROTOCOL_RPMSG_NAME
-	string
-	default "multiprotocol_rpmsg"
-	depends on NETCORE_MULTIPROTOCOL_RPMSG
-	help
-	  Image name of radio hci rpmsg.
-
-config NETCORE_MULTIPROTOCOL_RPMSG_BOARD
-	string
-	default "nrf5340dk_nrf5340_cpunet" if ($(BOARD) = "nrf5340dk_nrf5340_cpuapp" || $(BOARD) = "nrf5340dk_nrf5340_cpuapp_ns")
-	default "thingy53_nrf5340_cpunet" if ($(BOARD) = "thingy53_nrf5340_cpuapp" || $(BOARD) = "thingy53_nrf5340_cpuapp_ns")
-	default "nrf7002dk_nrf5340_cpunet" if ($(BOARD) = "nrf7002dk_nrf5340_cpuapp" || $(BOARD) = "nrf7002dk_nrf5340_cpuapp_ns")
-	depends on NETCORE_MULTIPROTOCOL_RPMSG
-	help
-	  Remote board when building this sample.
-	  If not set, the board given to sysbuild is used.
-
-config NETCORE_MULTIPROTOCOL_RPMSG_DOMAIN
-	string
-	default "CPUNET" if (NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
-
-config NETCORE_MULTIPROTOCOL_RPMSG_DOMAIN_APP
-	bool
-	default y if (NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_MULTIPROTOCOL_RPMSG_BOARD = "nrf7002dk_nrf5340_cpunet")
+	default "CPUNET" if (NETCORE_IMAGE_BOARD = "nrf5340dk_nrf5340_cpunet" || NETCORE_IMAGE_BOARD = "thingy53_nrf5340_cpunet" || NETCORE_IMAGE_BOARD = "nrf7002dk_nrf5340_cpunet")
 
 config NETCORE_APP_UPDATE
 	bool "Network core updates"
@@ -217,5 +128,7 @@ config NETCORE_APP_UPDATE
 	help
 	  Enabling this will add support for network core updates from the application core,
 	  requires b0n for network core and MCUboot for application core.
+
+endif
 
 endmenu
