@@ -598,6 +598,11 @@ Modem libraries
     All related Kconfig options have been renamed accordingly.
   * Changed the default value of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START`, :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT`, and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN` Kconfig options from enabled to disabled.
 
+  * Fixed:
+
+    * The ``lte_net_if`` module now handles the :c:enumerator:`~pdn_event.PDN_EVENT_NETWORK_DETACH` PDN event.
+      Not handling this caused permanent connection loss and error message (``ipv4_addr_add, error: -19``) in some situations when reconnecting.
+
   * Removed:
 
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_SYS_INIT``.

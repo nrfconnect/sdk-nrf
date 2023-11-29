@@ -280,6 +280,7 @@ static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 		break;
 	case PDN_EVENT_NETWORK_DETACH:
 		LOG_DBG("PDN network detached");
+		on_pdn_deactivated();
 		break;
 	case PDN_EVENT_DEACTIVATED:
 		LOG_DBG("PDN connection deactivated");
