@@ -29,8 +29,6 @@ menuconfig LWM2M_CARRIER
 	depends on DOWNLOAD_CLIENT
 	depends on (DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE >= 64)
 	depends on (DOWNLOAD_CLIENT_MAX_FILENAME_SIZE >= 192)
-	# Credentials NCS
-	depends on MODEM_KEY_MGMT
 	# AT libraries
 	depends on AT_MONITOR
 	depends on (AT_MONITOR_HEAP_SIZE >= 320)
@@ -286,6 +284,7 @@ config LWM2M_CARRIER_SHELL
 	bool "LwM2M carrier shell"
 	depends on SHELL
 	depends on LWM2M_CARRIER_SETTINGS
+	depends on MODEM_KEY_MGMT
 	help
 	  Include LwM2M carrier shell
 
