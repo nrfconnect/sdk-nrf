@@ -261,13 +261,17 @@ static inline enum wifi_frequency_bands wpas_band_to_zephyr(enum wpa_radio_work_
 	}
 }
 
-static inline enum wifi_security_type wpas_key_mgmt_to_zephyr(int key_mgmt)
+static inline enum wifi_security_type wpas_key_mgmt_to_zephyr(int key_mgmt, int proto)
 {
 	switch (key_mgmt) {
 	case WPA_KEY_MGMT_NONE:
 		return WIFI_SECURITY_TYPE_NONE;
 	case WPA_KEY_MGMT_PSK:
-		return WIFI_SECURITY_TYPE_PSK;
+		if (proto == WPA_PROTO_RSN) {
+			return WIFI_SECURITY_TYPE_PSK;
+		} else {
+			return WIFI_SECURITY_TYPE_WPA_PSK;
+		}
 	case WPA_KEY_MGMT_PSK_SHA256:
 		return WIFI_SECURITY_TYPE_PSK_SHA256;
 	case WPA_KEY_MGMT_SAE:
@@ -343,11 +347,19 @@ int z_wpa_supplicant_connect(const struct device *dev,
 				resp.network_id, params->psk);
 			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK-SHA256",
 				resp.network_id);
-		} else if (params->security == WIFI_SECURITY_TYPE_PSK) {
+		} else if (params->security == WIFI_SECURITY_TYPE_PSK ||
+				   params->security == WIFI_SECURITY_TYPE_WPA_PSK) {
 			_wpa_cli_cmd_v("set_network %d psk \"%s\"",
 			resp.network_id, params->psk);
 			_wpa_cli_cmd_v("set_network %d key_mgmt WPA-PSK",
 				resp.network_id);
+			if (params->security == WIFI_SECURITY_TYPE_WPA_PSK) {
+				_wpa_cli_cmd_v("set_network %d proto WPA",
+					resp.network_id);
+			} else {
+				_wpa_cli_cmd_v("set_network %d proto RSN",
+					resp.network_id);
+			}
 		} else {
 			ret = -1;
 			wpa_printf(MSG_ERROR, "Unsupported security type: %d",
@@ -478,7 +490,7 @@ int z_wpa_supplicant_status(const struct device *dev,
 
 		os_memcpy(status->bssid, wpa_s->bssid, WIFI_MAC_ADDR_LEN);
 		status->band = wpas_band_to_zephyr(wpas_freq_to_band(wpa_s->assoc_freq));
-		status->security = wpas_key_mgmt_to_zephyr(wpa_s->key_mgmt);
+		status->security = wpas_key_mgmt_to_zephyr(wpa_s->key_mgmt, wpa_s->wpa_proto);
 		status->mfp = ssid->ieee80211w; /* Same mapping */
 		ieee80211_freq_to_chan(wpa_s->assoc_freq, &channel);
 		status->channel = channel;
