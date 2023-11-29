@@ -20,9 +20,9 @@ extern "C" {
 typedef struct {
     struct {
 #if defined(PSA_NEED_OBERON_GCM_AES)
-	    uint32_t a[77];
+        uint32_t a[77];
 #elif defined(PSA_NEED_OBERON_CCM_AES)
-	    uint32_t a[73];
+        uint32_t a[73];
 #else /* PSA_NEED_OBERON_CHACHA20_POLY1305 */
         uint32_t a[51];
 #endif

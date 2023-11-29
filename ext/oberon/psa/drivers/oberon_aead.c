@@ -42,21 +42,19 @@ static psa_status_t oberon_aead_setup(
         if (key_length != 16 && key_length != 24 && key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
         switch (short_alg) {
 #ifdef PSA_NEED_OBERON_CCM_AES
-		_Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_ccm_ctx),
-			       "oberon_aead_operation_t.ctx too small");
-	case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, 0):
+        _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_ccm_ctx), "oberon_aead_operation_t.ctx too small");
+        case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, 0):
             ocrypto_aes_ccm_init((ocrypto_aes_ccm_ctx*)&operation->ctx, key, key_length, NULL, 0, 0, 0, 0);
             break;
 #endif /* PSA_NEED_OBERON_CCM_AES */
 #ifdef PSA_NEED_OBERON_GCM_AES
-	    _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_gcm_ctx),
-			   "oberon_aead_operation_t.ctx too small");
-	case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, 0):
+        _Static_assert(sizeof operation->ctx >= sizeof(ocrypto_aes_gcm_ctx), "oberon_aead_operation_t.ctx too small");
+        case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, 0):
             ocrypto_aes_gcm_init((ocrypto_aes_gcm_ctx*)&operation->ctx, key, key_length, NULL);
             break;
 #endif /* PSA_NEED_OBERON_GCM_AES */
-	default:
-	    return PSA_ERROR_NOT_SUPPORTED;
+        default:
+            return PSA_ERROR_NOT_SUPPORTED;
         }
         break;
 #ifdef PSA_NEED_OBERON_CHACHA20_POLY1305
@@ -350,8 +348,8 @@ psa_status_t oberon_aead_encrypt(
         if (key_length != 16 && key_length != 24 && key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
         switch (PSA_ALG_AEAD_WITH_SHORTENED_TAG(alg, 0)) {
 #ifdef PSA_NEED_OBERON_CCM_AES
-	case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, 0):
-	    if (tag_length < 4 || tag_length > 16 || (tag_length & 1)) return PSA_ERROR_INVALID_ARGUMENT;
+        case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, 0):
+            if (tag_length < 4 || tag_length > 16 || (tag_length & 1)) return PSA_ERROR_INVALID_ARGUMENT;
             if (nonce_length < 7 || nonce_length > 13) return PSA_ERROR_INVALID_ARGUMENT;
             ocrypto_aes_ccm_init(&ctx.ccm,
                 key, key_length, nonce, nonce_length,
@@ -364,8 +362,8 @@ psa_status_t oberon_aead_encrypt(
             break;
 #endif /* PSA_NEED_OBERON_CCM_AES */
 #ifdef PSA_NEED_OBERON_GCM_AES
-	case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, 0):
-	    if (tag_length < 4 || tag_length > 16 || nonce_length == 0) return PSA_ERROR_INVALID_ARGUMENT;
+        case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, 0):
+            if (tag_length < 4 || tag_length > 16 || nonce_length == 0) return PSA_ERROR_INVALID_ARGUMENT;
             ocrypto_aes_gcm_init(&ctx.gcm, key, key_length, NULL);
             ocrypto_aes_gcm_init_iv(&ctx.gcm, nonce, nonce_length);
             if (additional_data_length) {
@@ -375,8 +373,8 @@ psa_status_t oberon_aead_encrypt(
             ocrypto_aes_gcm_final_enc(&ctx.gcm, ciphertext + plaintext_length, tag_length);
             break;
 #endif /* PSA_NEED_OBERON_GCM_AES */
-	default:
-	    return PSA_ERROR_NOT_SUPPORTED;
+        default:
+            return PSA_ERROR_NOT_SUPPORTED;
         }
         break;
 #ifdef PSA_NEED_OBERON_CHACHA20_POLY1305
@@ -432,8 +430,8 @@ psa_status_t oberon_aead_decrypt(
         if (key_length != 16 && key_length != 24 && key_length != 32) return PSA_ERROR_INVALID_ARGUMENT;
         switch (PSA_ALG_AEAD_WITH_SHORTENED_TAG(alg, 0)) {
 #ifdef PSA_NEED_OBERON_CCM_AES
-	case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, 0):
-	    if (tag_length < 4 || tag_length > 16 || (tag_length & 1)) return PSA_ERROR_INVALID_ARGUMENT;
+        case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CCM, 0):
+            if (tag_length < 4 || tag_length > 16 || (tag_length & 1)) return PSA_ERROR_INVALID_ARGUMENT;
             if (nonce_length < 7 || nonce_length > 13) return PSA_ERROR_INVALID_ARGUMENT;
             ocrypto_aes_ccm_init(&ctx.ccm,
                 key, key_length, nonce, nonce_length,
@@ -446,8 +444,8 @@ psa_status_t oberon_aead_decrypt(
             break;
 #endif /* PSA_NEED_OBERON_CCM_AES */
 #ifdef PSA_NEED_OBERON_GCM_AES
-	case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, 0):
-	    if (tag_length < 4 || tag_length > 16 || nonce_length == 0) return PSA_ERROR_INVALID_ARGUMENT;
+        case PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, 0):
+            if (tag_length < 4 || tag_length > 16 || nonce_length == 0) return PSA_ERROR_INVALID_ARGUMENT;
             ocrypto_aes_gcm_init(&ctx.gcm, key, key_length, NULL);
             ocrypto_aes_gcm_init_iv(&ctx.gcm, nonce, nonce_length);
             if (additional_data_length) {
@@ -457,8 +455,8 @@ psa_status_t oberon_aead_decrypt(
             res = ocrypto_aes_gcm_final_dec(&ctx.gcm, ciphertext + pt_length, tag_length);
             break;
 #endif /* PSA_NEED_OBERON_GCM_AES */
-	default:
-	    return PSA_ERROR_NOT_SUPPORTED;
+        default:
+            return PSA_ERROR_NOT_SUPPORTED;
         }
         break;
 #ifdef PSA_NEED_OBERON_CHACHA20_POLY1305

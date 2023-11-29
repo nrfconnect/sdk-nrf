@@ -4155,20 +4155,17 @@ psa_status_t psa_pake_set_user(psa_pake_operation_t *operation,
         return PSA_ERROR_BAD_STATE;
     }
 
+
 #ifdef PSA_WANT_ALG_SPAKE2P
     if (operation->alg == PSA_ALG_SPAKE2P) {
-	if (!operation->role_set || (operation->is_second && !operation->peer_set)) {
-	    return PSA_ERROR_BAD_STATE;
-	}
-	if (user_id == NULL && user_id_len != 0) {
-	    return PSA_ERROR_INVALID_ARGUMENT;
-	}
+        if (!operation->role_set || (operation->is_second && !operation->peer_set)) {
+            return PSA_ERROR_BAD_STATE;
+        }
+        if (user_id == NULL && user_id_len != 0) return PSA_ERROR_INVALID_ARGUMENT;
     } else
 #endif
     {
-	if (user_id == NULL || user_id_len == 0) {
-	    return PSA_ERROR_INVALID_ARGUMENT;
-	}
+        if (user_id == NULL || user_id_len == 0) return PSA_ERROR_INVALID_ARGUMENT;
     }
 
     status = psa_driver_wrapper_pake_set_user(operation, user_id, user_id_len);
@@ -4194,18 +4191,14 @@ psa_status_t psa_pake_set_peer(psa_pake_operation_t *operation,
 
 #ifdef PSA_WANT_ALG_SPAKE2P
     if (operation->alg == PSA_ALG_SPAKE2P) {
-	if (!operation->role_set || (!operation->is_second && !operation->user_set)) {
-	    return PSA_ERROR_BAD_STATE;
-	}
-	if (peer_id == NULL && peer_id_len != 0) {
-	    return PSA_ERROR_INVALID_ARGUMENT;
-	}
+        if (!operation->role_set || (!operation->is_second && !operation->user_set)) {
+            return PSA_ERROR_BAD_STATE;
+        }
+        if (peer_id == NULL && peer_id_len != 0) return PSA_ERROR_INVALID_ARGUMENT;
     } else
 #endif
     {
-	if (peer_id == NULL || peer_id_len == 0) {
-	    return PSA_ERROR_INVALID_ARGUMENT;
-	}
+        if (peer_id == NULL || peer_id_len == 0) return PSA_ERROR_INVALID_ARGUMENT;
     }
 
     status = psa_driver_wrapper_pake_set_peer(operation, peer_id, peer_id_len);
