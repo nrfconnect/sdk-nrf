@@ -212,7 +212,7 @@ manifest:
     - name: cirrus
       repo-path: sdk-mcu-drivers
       path: modules/hal/cirrus-logic
-      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
+      revision: 3873a08377d93a479105a75ac390d3bbcd31d690
       userdata:
         ncs:
           upstream-url: https://github.com/CirrusLogic/mcu-drivers
