@@ -42,7 +42,7 @@ Usage
 
 The EnOcean library uses the :c:func:`bt_le_scan_cb_register` function to receive Bluetooth advertisement packets from nearby EnOcean devices.
 The Bluetooth stack must be initialized separately, and Bluetooth scanning must be started by the application.
-The Bluetooth mesh stack does this automatically, so when combined, the application does not need to perform any additional initialization.
+The Bluetooth Mesh stack does this automatically, so when combined, the application does not need to perform any additional initialization.
 
 .. _bt_enocean_commissioning:
 

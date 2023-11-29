@@ -1,6 +1,6 @@
 .. _bt_mesh_samples:
 
-Bluetooth mesh samples
+Bluetooth Mesh samples
 ######################
 
 .. toctree::

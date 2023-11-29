@@ -1,16 +1,16 @@
 .. _ble_mesh_dfu_distributor:
 
-Bluetooth mesh: Device Firmware Update (DFU) distributor
+Bluetooth Mesh: Device Firmware Update (DFU) distributor
 ########################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® mesh DFU distributor sample demonstrates how device firmware can be distributed over a Bluetooth mesh network.
-The sample implements the Firmware Distribution role of the :ref:`Bluetooth mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
+The Bluetooth® mesh DFU distributor sample demonstrates how device firmware can be distributed over a Bluetooth Mesh network.
+The sample implements the Firmware Distribution role of the :ref:`Bluetooth Mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
 
-The specification that the Bluetooth mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
+The specification that the Bluetooth Mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
 
 Requirements
 ************
@@ -36,7 +36,7 @@ The following are the key features of the sample:
 
 * The sample is configured as an application for the MCUboot.
 * The image management subsystem of the MCU manager (mcumgr) is used to upload firmware images to the Distributor.
-* A set of shell commands is provided to control the firmware distribution over a Bluetooth mesh network.
+* A set of shell commands is provided to control the firmware distribution over a Bluetooth Mesh network.
 * Self-update is supported.
 
 Provisioning
@@ -77,7 +77,7 @@ The models are used for the following purposes:
 * Config Server allows configurator devices to configure the node remotely.
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
-* The Binary Large Object (BLOB) Transfer models, :ref:`zephyr:bluetooth_mesh_blob_srv` and :ref:`zephyr:bluetooth_mesh_blob_cli`, provide functionality for sending large binary objects from a single source to many Target nodes over the Bluetooth mesh network.
+* The Binary Large Object (BLOB) Transfer models, :ref:`zephyr:bluetooth_mesh_blob_srv` and :ref:`zephyr:bluetooth_mesh_blob_cli`, provide functionality for sending large binary objects from a single source to many Target nodes over the Bluetooth Mesh network.
   It is the underlying transport method for the DFU.
   BLOB Transfer Client and BLOB Transfer Server are instantiated on the primary element.
   An additional BLOB Transfer Server is instantiated on the secondary element.
@@ -96,7 +96,7 @@ Source file setup
 
 This sample is split into the following source files:
 
-* A :file:`main.c` file to handle Bluetooth mesh initialization, including the model handling for Device Composition Data, Health and Configuration Server models.
+* A :file:`main.c` file to handle Bluetooth Mesh initialization, including the model handling for Device Composition Data, Health and Configuration Server models.
 * File :file:`dfu_target.c` with the Target role implementation.
 * File :file:`dfu_dist.c` with the Distributor role implementation.
 * File :file:`smp_bt.c` implementing SMP Bluetooth service advertisement.
@@ -145,9 +145,9 @@ Configure the Firmware Update Server and BLOB Transfer Server models on the seco
 Performing a Device Firmware Update
 -----------------------------------
 
-The Bluetooth mesh defines the Firmware update Initiator role to control the firmware distribution.
+The Bluetooth Mesh defines the Firmware update Initiator role to control the firmware distribution.
 This sample supports, but doesn't require an external Initiator to control the DFU procedure.
-The Bluetooth mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
+The Bluetooth Mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
 Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
 
 The commands can be executed in two ways:
@@ -171,7 +171,7 @@ This sample supports Bluetooth Low Energy as the SMP transport.
 See :ref:`zephyr:device_mgmt` for more information about Mcumgr and SMP.
 
 In this sample, the device flash is split into fixed partitions using devicetree as defined in :zephyr_file:`nrf52840dk_nrf52840.dts<boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts>`.
-The firmware image that is to be distributed over Bluetooth mesh network should be stored at slot-1.
+The firmware image that is to be distributed over Bluetooth Mesh network should be stored at slot-1.
 The sample uses :ref:`zephyr:flash_map_api` to read the firmware image from slot-1 when distributes it to Target nodes.
 
 When the image is sent in-band, the Firmware Distribution Server will store the firmware image in slot-1.
@@ -206,7 +206,7 @@ For example, when the distribution is completed, the sample will print::
 Self-update
 -----------
 
-This sample instantiates the DFU and BLOB Transfer Server models on its secondary element and thus can also be updated over Bluetooth mesh by any other Distributor or by itself.
+This sample instantiates the DFU and BLOB Transfer Server models on its secondary element and thus can also be updated over Bluetooth Mesh by any other Distributor or by itself.
 
 To update this sample, use the address of the secondary element of the sample as the address of the Target node.
 

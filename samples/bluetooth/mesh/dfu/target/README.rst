@@ -1,16 +1,16 @@
 .. _ble_mesh_dfu_target:
 
-Bluetooth mesh: Device Firmware Update (DFU) target
+Bluetooth Mesh: Device Firmware Update (DFU) target
 ###################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® mesh DFU target sample demonstrates how to update device firmware over Bluetooth mesh network.
-The sample implements the Target role of the :ref:`Bluetooth mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
+The Bluetooth® mesh DFU target sample demonstrates how to update device firmware over Bluetooth Mesh network.
+The sample implements the Target role of the :ref:`Bluetooth Mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
 
-The specification that the Bluetooth mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
+The specification that the Bluetooth Mesh DFU subsystem is based on is not adopted yet, and therefore this feature should be used for experimental purposes only.
 
 Requirements
 ************
@@ -32,9 +32,9 @@ For uploading an image to the Distributor, this sample also requires a smartphon
 Overview
 ********
 
-This sample can be used as a base image or be transferred over Bluetooth mesh to update existing nodes.
+This sample can be used as a base image or be transferred over Bluetooth Mesh to update existing nodes.
 
-To distribute this sample as a new image over Bluetooth mesh network, use the :ref:`ble_mesh_dfu_distributor` sample.
+To distribute this sample as a new image over Bluetooth Mesh network, use the :ref:`ble_mesh_dfu_distributor` sample.
 
 Provisioning
 ============
@@ -86,7 +86,7 @@ Source file setup
 
 This sample is split into the following source files:
 
-* A :file:`main.c` file to handle Bluetooth mesh initialization, including the model handling for Device Composition Data, Health and Configuration Server models.
+* A :file:`main.c` file to handle Bluetooth Mesh initialization, including the model handling for Device Composition Data, Health and Configuration Server models.
 * File :file:`dfu_target.c` with the Target role implementation.
 * File :file:`dfu_dist.c` with the Distributor role implementation.
 * File :file:`smp_bt.c` implementing SMP Bluetooth service advertisement.
@@ -144,7 +144,7 @@ Firmware ID
    For example, when the new version is ``2.0.0+0``, the encoded value will be ``0200000000000000``.
 
 Firmware metadata
-   This sample enables the :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA` option and uses the format defined by the :ref:`Bluetooth mesh DFU subsystem<zephyr:bluetooth_mesh_dfu>`.
+   This sample enables the :kconfig:option:`CONFIG_BT_MESH_DFU_METADATA` option and uses the format defined by the :ref:`Bluetooth Mesh DFU subsystem<zephyr:bluetooth_mesh_dfu>`.
    How to generate valid metadata for this sample is described in :ref:`bluetooth_mesh_dfu_eval_md`.
 
 The firmware distribution process starts on a target node with checking a metadata supplied with a new firmware.

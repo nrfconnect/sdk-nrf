@@ -1,6 +1,6 @@
 sample:
-  description: Bluetooth mesh light sample
-  name: Bluetooth mesh light
+  description: Bluetooth Mesh light sample
+  name: Bluetooth Mesh light
 tests:
   sample.bluetooth.mesh.light:
     build_only: true

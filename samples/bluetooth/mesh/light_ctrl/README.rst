@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_light_lc:
 
-Bluetooth mesh: Light fixture
+Bluetooth Mesh: Light fixture
 #############################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® mesh light fixture sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth® mesh light fixture sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
 
 This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
 
@@ -50,7 +50,7 @@ For more information, see documentation on :ref:`bt_mesh_light_ctrl_srv_readme`.
 
 Devices are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
-This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth Mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the dimmable LED on the development kit from the app.
 
 Provisioning
@@ -150,7 +150,7 @@ Configuration
 
 |nrf5340_mesh_sample_note|
 
-The Kconfig option :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC` is set by default as it is necessary for the :ref:`bt_mesh_light_ctrl_srv_readme` model according to the `Bluetooth mesh model specification`_.
+The Kconfig option :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC` is set by default as it is necessary for the :ref:`bt_mesh_light_ctrl_srv_readme` model according to the `Bluetooth Mesh model specification`_.
 The option enables a separate module called illuminance regulator.
 For more information about the module, see the documentation on :ref:`bt_mesh_light_ctrl_reg_readme` and :ref:`bt_mesh_light_ctrl_reg_spec_readme`.
 

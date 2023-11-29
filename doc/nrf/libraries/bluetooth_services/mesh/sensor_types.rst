@@ -1,6 +1,6 @@
 .. _bt_mesh_sensor_types_readme:
 
-Bluetooth mesh sensor types
+Bluetooth Mesh sensor types
 ###########################
 
 .. contents::

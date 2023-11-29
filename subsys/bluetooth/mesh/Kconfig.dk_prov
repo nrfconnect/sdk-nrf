@@ -5,10 +5,10 @@
 #
 
 menuconfig BT_MESH_DK_PROV
-	bool "Bluetooth mesh provisioning handler for Nordic DKs"
+	bool "Bluetooth Mesh provisioning handler for Nordic DKs"
 	depends on HWINFO
 	help
-	  Basic implementation of a Bluetooth mesh provisioning handler for the
+	  Basic implementation of a Bluetooth Mesh provisioning handler for the
 	  nRF5x development kits. Configures the UUID and handles some basic OOB
 	  methods. Used in samples as a reference implementation for
 	  provisioning handlers.

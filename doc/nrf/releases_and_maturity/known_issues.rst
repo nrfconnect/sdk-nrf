@@ -219,14 +219,14 @@ Only secure applications can use Bluetooth® LE
   However, security is not enabled by default in the Zephyr sample.
 
 
-Bluetooth mesh
+Bluetooth Mesh
 ==============
 
 The issues in this section are related to the :ref:`ug_bt_mesh` protocol.
 
 .. rst-class:: v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1
 
-NCSDK-21625: Advertisements of Bluetooth mesh GATT services are not stopped by :c:func:`bt_mesh_suspend` and not resumed by :c:func:`bt_mesh_resume`
+NCSDK-21625: Advertisements of Bluetooth Mesh GATT services are not stopped by :c:func:`bt_mesh_suspend` and not resumed by :c:func:`bt_mesh_resume`
   Functions :c:func:`bt_mesh_suspend` and :c:func:`bt_mesh_resume` do not work together with functions :c:func:`bt_disable` and :c:func:`bt_enable`.
 
   **Workaround:** To disable node identity advertisement, use ``bt_mesh_subnet_node_id_set`` instead.
@@ -268,7 +268,7 @@ NCSDK-16798: Friend Subscription List might have duplicate entries
 
 .. rst-class:: v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
-NCSDK-16782: The extended advertiser might not work with Bluetooth mesh
+NCSDK-16782: The extended advertiser might not work with Bluetooth Mesh
   Using the extended advertiser instead of the legacy advertiser can lead to getting composition data while provisioning to fail.
   This problem might manifest in the sample :ref:`bluetooth_ble_peripheral_lbs_coex`, as it is using the extended advertiser.
 
@@ -1973,7 +1973,7 @@ Antenna switching does not work on targets ``nrf5340dk_nrf5340_cpuapp`` and ``nr
 
   **Affected platforms:** nRF5340
 
-Bluetooth mesh samples
+Bluetooth Mesh samples
 ======================
 
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0

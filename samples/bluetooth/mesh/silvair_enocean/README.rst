@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_silvair_enocean:
 
-Bluetooth mesh: Silvair EnOcean
+Bluetooth Mesh: Silvair EnOcean
 ###############################
 
 .. contents::
@@ -10,7 +10,7 @@ Bluetooth mesh: Silvair EnOcean
 You can use the :ref:`ug_bt_mesh` Silvair EnOcean sample to change the state of light sources on other devices within the same mesh network.
 It also demonstrates how to use Bluetooth® mesh models by using the Silvair EnOcean Proxy Server model in an application.
 
-Use the Silvair EnOcean sample with the :ref:`bluetooth_mesh_light_lc` sample to demonstrate its function in a Bluetooth mesh network.
+Use the Silvair EnOcean sample with the :ref:`bluetooth_mesh_light_lc` sample to demonstrate its function in a Bluetooth Mesh network.
 
 Requirements
 ************
@@ -34,12 +34,12 @@ For provisioning and configuring of the mesh model instances, the sample require
 Overview
 ********
 
-The Bluetooth mesh Silvair EnOcean sample demonstrates how to set up mesh client model applications, and control LEDs with the Bluetooth mesh using the :ref:`bt_mesh_onoff_readme` and :ref:`bt_mesh_lvl_readme` with use of an EnOcean switch.
+The Bluetooth Mesh Silvair EnOcean sample demonstrates how to set up mesh client model applications, and control LEDs with the Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme` and :ref:`bt_mesh_lvl_readme` with use of an EnOcean switch.
 To display any functionality, the sample must be paired with a device with the :ref:`bluetooth_mesh_light_lc` sample running in the same mesh network.
 
 In both samples, devices are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
-This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample to enable them to communicate with the servers.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth Mesh model instances in the sample to enable them to communicate with the servers.
 
 The Generic OnOff Client model and the Generic Level Client model are used for manipulating the Generic OnOff state and Generic Level state associated with the Generic OnOff Server model and Generic Level Server model respectively.
 The Silvair EnOcean sample implements the Silvair EnOcean Proxy Server model that instantiates the Generic OnOff Client and the Generic Level Client models.
@@ -130,8 +130,8 @@ FEM support
 Building and running
 ********************
 
-Make sure to enable the Bluetooth mesh in |NCS| before building and testing this sample.
-See :ref:`Bluetooth mesh user guide <ug_bt_mesh>` for more information.
+Make sure to enable the Bluetooth Mesh in |NCS| before building and testing this sample.
+See :ref:`Bluetooth Mesh user guide <ug_bt_mesh>` for more information.
 
 .. |sample path| replace:: :file:`samples/bluetooth/mesh/silvair_enocean`
 

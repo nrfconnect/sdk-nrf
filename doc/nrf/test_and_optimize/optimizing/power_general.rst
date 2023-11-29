@@ -176,10 +176,10 @@ Protocol-specific recommendations
 
 Besides applying `General recommendations`_, read the following subsections for more information on how to optimize specific subsystems.
 
-Bluetooth mesh
+Bluetooth Mesh
 ==============
 
-The Bluetooth mesh protocol offers the :ref:`ug_bt_mesh_configuring_lpn` feature for optimizing the power consumption of the Bluetooth mesh devices.
+The Bluetooth Mesh protocol offers the :ref:`ug_bt_mesh_configuring_lpn` feature for optimizing the power consumption of the Bluetooth Mesh devices.
 
 Matter
 ======

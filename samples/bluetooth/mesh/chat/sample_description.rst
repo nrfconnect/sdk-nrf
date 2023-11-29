@@ -27,11 +27,11 @@ Overview
 By means of the mesh network, the clients as mesh nodes can communicate with each other without the need of a server.
 The mesh chat sample is mainly designed for group communication, but it also supports one-on-one communication, as well as sharing the nodes presence.
 
-This sample is used in :ref:`ug_bt_mesh_vendor_model` as an example of how to implement a vendor model for the Bluetooth mesh in |NCS|.
+This sample is used in :ref:`ug_bt_mesh_vendor_model` as an example of how to implement a vendor model for the Bluetooth Mesh in |NCS|.
 
 The clients are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
-This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth Mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can communicate with other mesh nodes by sending text messages and obtaining their presence using the :ref:`shell module <shell_api>`.
 
 Provisioning
@@ -43,7 +43,7 @@ It supports four types of out-of-band (OOB) authentication methods, and uses the
 Models
 ======
 
-The following table shows the Bluetooth mesh chat composition data for this sample:
+The following table shows the Bluetooth Mesh chat composition data for this sample:
 
    +---------------+
    |  Element 1    |
@@ -89,7 +89,7 @@ This sample is split into the following source files:
 
 * A :file:`main.c` file to handle initialization.
 * A file for handling the Chat Client model, :file:`chat_cli.c`.
-* A file for handling Bluetooth mesh models and communication with the :ref:`shell module <shell_api>`, :file:`model_handler.c`.
+* A file for handling Bluetooth Mesh models and communication with the :ref:`shell module <shell_api>`, :file:`model_handler.c`.
 
 FEM support
 ===========

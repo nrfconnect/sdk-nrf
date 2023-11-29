@@ -1,6 +1,6 @@
 sample:
-  description: Bluetooth mesh Silvair EnOcean sample
-  name: Bluetooth mesh Silvair EnOcean
+  description: Bluetooth Mesh Silvair EnOcean sample
+  name: Bluetooth Mesh Silvair EnOcean
 tests:
   sample.bluetooth.mesh.silvair_enocean:
     build_only: true

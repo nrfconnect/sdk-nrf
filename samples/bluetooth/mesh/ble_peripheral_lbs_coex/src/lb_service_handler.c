@@ -120,7 +120,7 @@ static void lbs_adv_start(void)
 	int err;
 	size_t id_count = 0xFF;
 
-	/* Use different identity from Bluetooth mesh to avoid conflicts with Mesh Provisioning
+	/* Use different identity from Bluetooth Mesh to avoid conflicts with Mesh Provisioning
 	 * Service and Mesh Proxy Service advertisements.
 	 */
 	(void)bt_id_get(NULL, &id_count);

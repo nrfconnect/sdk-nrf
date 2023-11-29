@@ -1,9 +1,9 @@
 .. _mesh_ug_supported_features:
 
-Supported Bluetooth mesh features
+Supported Bluetooth Mesh features
 #################################
 
-The Bluetooth® mesh in |NCS| supports all mandatory features of the `Bluetooth mesh profile specification`_ and the `Bluetooth mesh model specification`_, as well as most of the optional features.
+The Bluetooth® mesh in |NCS| supports all mandatory features of the `Bluetooth Mesh profile specification`_ and the `Bluetooth Mesh model specification`_, as well as most of the optional features.
 
 The following features are supported by Zephyr's :ref:`zephyr:bluetooth_mesh`:
 
@@ -22,5 +22,5 @@ The following features are supported by Zephyr's :ref:`zephyr:bluetooth_mesh`:
 * :ref:`GATT Proxy Server role <zephyr:bt_mesh_proxy>`
 * :ref:`zephyr:bluetooth_mesh_models`
 
-In addition to these features, |NCS| implements several models defined in the `Bluetooth mesh model specification`_.
+In addition to these features, |NCS| implements several models defined in the `Bluetooth Mesh model specification`_.
 See :ref:`bt_mesh_models` for details.

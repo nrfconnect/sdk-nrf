@@ -1,6 +1,6 @@
 .. _bt_mesh_chat:
 
-Bluetooth mesh: Chat
+Bluetooth Mesh: Chat
 ####################
 
 .. contents::

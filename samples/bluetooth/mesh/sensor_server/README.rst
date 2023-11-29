@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_sensor_server:
 
-Bluetooth mesh: Sensor
+Bluetooth Mesh: Sensor
 ######################
 
 .. contents::
@@ -43,7 +43,7 @@ The application needs to be programmed on a separate device, and configured acco
 Overview
 ********
 
-The following Bluetooth mesh sensor types, and their settings, are used in this sample:
+The following Bluetooth Mesh sensor types, and their settings, are used in this sample:
 
 * On Sensor Server instance on Element 1:
 
@@ -83,7 +83,7 @@ Use `nRF Mesh mobile app`_ for provisioning and configuring of models supported 
 Models
 ======
 
-The following table shows the Bluetooth mesh sensor composition data for this sample:
+The following table shows the Bluetooth Mesh sensor composition data for this sample:
 
 .. table::
    :align: center
@@ -166,7 +166,7 @@ Testing
 =======
 
 .. note::
-   The Bluetooth mesh sensor sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_client` sample running in the same mesh network.
+   The Bluetooth Mesh sensor sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_client` sample running in the same mesh network.
    Before testing the sensor sample, go through the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_client_testing>` with a different development kit.
 
 After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.

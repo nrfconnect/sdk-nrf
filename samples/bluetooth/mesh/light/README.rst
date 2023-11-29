@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_light:
 
-Bluetooth mesh: Light
+Bluetooth Mesh: Light
 #####################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® mesh light sample demonstrates how to set up a mesh server model application, and control LEDs with Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth® mesh light sample demonstrates how to set up a mesh server model application, and control LEDs with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
 
 .. note::
    This sample is self-contained, and can be tested on its own.
@@ -64,7 +64,7 @@ The sample instantiates up to four instances of the Generic OnOff Server model f
 The number of OnOff Server instances depends on available LEDs, as defined in board DTS file.
 
 Provisioning is performed using the `nRF Mesh mobile app`_.
-This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth Mesh model instances in the sample.
 After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, you can control the LEDs on the development kit from the app.
 
 Provisioning

@@ -7,7 +7,7 @@
 config BT_MESH_SENSOR
 	bool
 
-menu "Bluetooth mesh Sensors"
+menu "Bluetooth Mesh Sensors"
 	visible if BT_MESH_SENSOR
 
 config BT_MESH_SENSOR_LABELS

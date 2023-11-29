@@ -24,7 +24,7 @@ None.
 Shell commands
 **************
 
-The Bluetooth mesh shell subsystem provides a set of commands to interact with the Light HSL Client model instantiated on a device.
+The Bluetooth Mesh shell subsystem provides a set of commands to interact with the Light HSL Client model instantiated on a device.
 
 To make these commands available, enable the following Kconfig options:
 

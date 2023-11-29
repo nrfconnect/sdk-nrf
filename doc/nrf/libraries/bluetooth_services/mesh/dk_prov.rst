@@ -1,6 +1,6 @@
 .. _bt_mesh_dk_prov:
 
-Bluetooth mesh provisioning handler for Nordic DKs
+Bluetooth Mesh provisioning handler for Nordic DKs
 ##################################################
 
 .. contents::

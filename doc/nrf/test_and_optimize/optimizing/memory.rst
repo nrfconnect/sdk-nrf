@@ -69,11 +69,11 @@ For reference, you can find minimal footprint configurations of the :ref:`periph
 
 .. _app_memory_bt_mesh:
 
-Bluetooth mesh
+Bluetooth Mesh
 **************
 
-Besides applying `General recommendations`_ and Bluetooth_ optimization actions, there are some configuration options you can use to optimize the :ref:`Bluetooth mesh <ug_bt_mesh>` part of your application.
-Changing any of these options will change the functional capabilities of the Bluetooth mesh device, and thereby result in changes to RAM and flash memory footprint.
+Besides applying `General recommendations`_ and Bluetooth_ optimization actions, there are some configuration options you can use to optimize the :ref:`Bluetooth Mesh <ug_bt_mesh>` part of your application.
+Changing any of these options will change the functional capabilities of the Bluetooth Mesh device, and thereby result in changes to RAM and flash memory footprint.
 
 Changing the values of the following options will affect the RAM footprint and the amount of space needed for persistent storage of the associated configuration data:
 

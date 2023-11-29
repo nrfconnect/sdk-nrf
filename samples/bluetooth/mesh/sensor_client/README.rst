@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_sensor_client:
 
-Bluetooth mesh: Sensor observer
+Bluetooth Mesh: Sensor observer
 ###############################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® mesh sensor observer sample demonstrates how to set up a basic Bluetooth mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
+The Bluetooth® mesh sensor observer sample demonstrates how to set up a basic Bluetooth Mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
 Five different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
@@ -32,7 +32,7 @@ Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample
 Overview
 ********
 
-The following Bluetooth mesh sensor types, and their settings, are used in this sample:
+The following Bluetooth Mesh sensor types, and their settings, are used in this sample:
 
 * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Periodically requested by the client and published by the server according to its publishing period.
 
@@ -121,7 +121,7 @@ Source file setup
 This sample is split into the following source files:
 
 * A :file:`main.c` file to handle initialization.
-* One additional file for handling Bluetooth mesh models, :file:`model_handler.c`.
+* One additional file for handling Bluetooth Mesh models, :file:`model_handler.c`.
 
 FEM support
 ===========

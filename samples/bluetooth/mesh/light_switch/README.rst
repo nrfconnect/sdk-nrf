@@ -1,6 +1,6 @@
 .. _bluetooth_mesh_light_switch:
 
-Bluetooth mesh: Light switch
+Bluetooth Mesh: Light switch
 ############################
 
 .. contents::
@@ -10,7 +10,7 @@ Bluetooth mesh: Light switch
 The :ref:`ug_bt_mesh` light switch sample can be used to change the state of light sources on other devices within the same mesh network.
 It also demonstrates how to use Bluetooth® mesh models by using the Generic OnOff Client model in an application.
 
-Use the light switch sample with the :ref:`bluetooth_mesh_light` sample to demonstrate its function in a Bluetooth mesh network.
+Use the light switch sample with the :ref:`bluetooth_mesh_light` sample to demonstrate its function in a Bluetooth Mesh network.
 
 This sample also provides the `Low Power node support`_.
 
@@ -47,17 +47,17 @@ The configuration overlay :file:`overlay-lpn.conf` is optimized for the followin
 
 * nrf52833dk_nrf52833
 
-However, the same configuration can be applied to other platforms that support the Bluetooth mesh Light Switch sample, as long as the device supports at least four buttons.
+However, the same configuration can be applied to other platforms that support the Bluetooth Mesh Light Switch sample, as long as the device supports at least four buttons.
 
 Overview
 ********
 
-The Bluetooth mesh light switch sample demonstrates how to set up a mesh client model application, and control LEDs with the Bluetooth mesh using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth Mesh light switch sample demonstrates how to set up a mesh client model application, and control LEDs with the Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
 To display any functionality, the sample must be paired with a device with the :ref:`bluetooth_mesh_light` sample running in the same mesh network.
 
 In both samples, devices are nodes with a provisionee role in a mesh network.
 Provisioning is performed using the `nRF Mesh mobile app`_.
-This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth mesh model instances in the sample to enable them to communicate with the servers.
+This mobile application is also used to configure key bindings, and publication and subscription settings of the Bluetooth Mesh model instances in the sample to enable them to communicate with the servers.
 
 The Generic OnOff Client model is used for manipulating the Generic OnOff state associated with the Generic OnOff Server model.
 The light switch sample implements the Generic OnOff Client model.
@@ -225,8 +225,8 @@ FEM support
 Building and running
 ********************
 
-Make sure to enable the Bluetooth mesh in |NCS| before building and testing this sample.
-See :ref:`Bluetooth mesh user guide <ug_bt_mesh>` for more information.
+Make sure to enable the Bluetooth Mesh in |NCS| before building and testing this sample.
+See :ref:`Bluetooth Mesh user guide <ug_bt_mesh>` for more information.
 
 .. |sample path| replace:: :file:`samples/bluetooth/mesh/light_switch`
 

@@ -1,6 +1,6 @@
 sample:
-  description: Bluetooth mesh light fixture sample
-  name: Bluetooth mesh light fixture
+  description: Bluetooth Mesh light fixture sample
+  name: Bluetooth Mesh light fixture
 tests:
   sample.bluetooth.mesh.light_ctrl:
     build_only: true

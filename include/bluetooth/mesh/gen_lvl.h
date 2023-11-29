@@ -6,9 +6,9 @@
 
 /**
  * @file
- * @defgroup bt_mesh_lvl Bluetooth mesh Generic Level models
+ * @defgroup bt_mesh_lvl Bluetooth Mesh Generic Level models
  * @{
- * @brief Common API for the Bluetooth mesh Generic Level models.
+ * @brief Common API for the Bluetooth Mesh Generic Level models.
  */
 #ifndef BT_MESH_GEN_LVL_H__
 #define BT_MESH_GEN_LVL_H__

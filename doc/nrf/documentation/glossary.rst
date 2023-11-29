@@ -443,7 +443,7 @@ Glossary
 
    Network node
       An element of a mesh network that has a unique network address, a role, and a type.
-      Such nodes are proper of :ref:`Thread <ug_thread>` or :ref:`Bluetooth mesh <ug_bt_mesh>` networks.
+      Such nodes are proper of :ref:`Thread <ug_thread>` or :ref:`Bluetooth Mesh <ug_bt_mesh>` networks.
 
       In the context of :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` networks, a network node also has a unique ID and operational credentials.
       After being commissioned into the respective network, it can be controlled remotely using *clusters*.

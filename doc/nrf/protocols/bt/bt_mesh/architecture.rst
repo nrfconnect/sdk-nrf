@@ -1,6 +1,6 @@
 .. _mesh_architecture:
 
-Bluetooth mesh stack architecture
+Bluetooth Mesh stack architecture
 #################################
 
 .. contents::
@@ -8,41 +8,41 @@ Bluetooth mesh stack architecture
    :depth: 2
 
 The Bluetooth® mesh stack in |NCS| is an extension of the Zephyr Bluetooth® mesh stack.
-The Zephyr Bluetooth mesh stack implements the Bluetooth mesh profile specification (see :ref:`zephyr:bluetooth_mesh`), while |NCS| provides additional model implementations from the Bluetooth mesh model specification on top of the :ref:`zephyr:bluetooth_mesh_access` API.
+The Zephyr Bluetooth Mesh stack implements the Bluetooth Mesh profile specification (see :ref:`zephyr:bluetooth_mesh`), while |NCS| provides additional model implementations from the Bluetooth Mesh model specification on top of the :ref:`zephyr:bluetooth_mesh_access` API.
 
 .. figure:: images/bt_mesh_basic_architecture.svg
    :alt: Graphical representation of basic mesh stack architecture
 
    Basic architecture of the mesh stack
 
-The mesh stack's structure corresponds to the structure of the Bluetooth mesh specification and follows the same naming conventions:
+The mesh stack's structure corresponds to the structure of the Bluetooth Mesh specification and follows the same naming conventions:
 
-* Bluetooth mesh components in |NCS|
+* Bluetooth Mesh components in |NCS|
 
-  * :ref:`mesh_architecture_models` - The Bluetooth mesh models present and implement device behavior.
+  * :ref:`mesh_architecture_models` - The Bluetooth Mesh models present and implement device behavior.
 
-* Bluetooth mesh components in Zephyr
+* Bluetooth Mesh components in Zephyr
 
-  * :ref:`mesh_architecture_access` - The Bluetooth mesh access layer organizes models and communication.
-  * :ref:`Core <mesh_architecture_core>` - The core Bluetooth mesh layer takes care of encryption and message relaying.
-  * :ref:`mesh_architecture_provisioning` - The Bluetooth mesh provisioning protocol is used for adding devices to the network.
+  * :ref:`mesh_architecture_access` - The Bluetooth Mesh access layer organizes models and communication.
+  * :ref:`Core <mesh_architecture_core>` - The core Bluetooth Mesh layer takes care of encryption and message relaying.
+  * :ref:`mesh_architecture_provisioning` - The Bluetooth Mesh provisioning protocol is used for adding devices to the network.
 
-See the official `Bluetooth mesh glossary`_ for definitions of the most important Bluetooth mesh-related terms used in this documentation.
-You can also read about :ref:`basic Bluetooth mesh concepts <mesh_concepts>` for a concise introduction to the Bluetooth mesh.
+See the official `Bluetooth Mesh glossary`_ for definitions of the most important Bluetooth Mesh-related terms used in this documentation.
+You can also read about :ref:`basic Bluetooth Mesh concepts <mesh_concepts>` for a concise introduction to the Bluetooth Mesh.
 
 .. _mesh_architecture_flow:
 
-Bluetooth mesh network data flow
+Bluetooth Mesh network data flow
 ********************************
 
 The following figure demonstrates how the data packets flow between mesh nodes and their layers within the mesh stack structure.
 
 .. figure:: images/bt_mesh_data_packet_flow.svg
-   :alt: Basic data flow within a mesh network in the |NCS| Bluetooth mesh
+   :alt: Basic data flow within a mesh network in the |NCS| Bluetooth Mesh
 
-   Basic data flow within a mesh network in the |NCS| Bluetooth mesh
+   Basic data flow within a mesh network in the |NCS| Bluetooth Mesh
 
-As an example, consider a Bluetooth mesh network with three devices/mesh network nodes and the process that takes place on each node when the light switch on the source node is pressed, as discussed in the following sections.
+As an example, consider a Bluetooth Mesh network with three devices/mesh network nodes and the process that takes place on each node when the light switch on the source node is pressed, as discussed in the following sections.
 
 Source node with a light switch
 ===============================
@@ -82,12 +82,12 @@ Models
 ******
 
 The models define the behavior and communication formats of all data that is transmitted across the mesh.
-Equivalent to Bluetooth LE's GATT services, the Bluetooth mesh models are independent, immutable implementations of specific behaviors or services.
+Equivalent to Bluetooth LE's GATT services, the Bluetooth Mesh models are independent, immutable implementations of specific behaviors or services.
 All mesh communication happens through models, and any application that exposes its behavior through the mesh must channel the communication through one or more models.
 
-The Bluetooth mesh specification defines a set of immutable models for typical usage scenarios, but vendors are also free to implement their own models.
+The Bluetooth Mesh specification defines a set of immutable models for typical usage scenarios, but vendors are also free to implement their own models.
 
-You can read more about the Bluetooth mesh models in |NCS| in :ref:`bt_mesh_models`.
+You can read more about the Bluetooth Mesh models in |NCS| in :ref:`bt_mesh_models`.
 
 .. _mesh_architecture_access:
 
@@ -107,10 +107,10 @@ For more information about the access layer, see :ref:`zephyr:bluetooth_mesh_acc
 
 .. _mesh_architecture_core:
 
-Bluetooth mesh core
+Bluetooth Mesh core
 *******************
 
-Consisting of a network and a transport layer, the Bluetooth mesh core module provides the mesh-specific transport for the messages.
+Consisting of a network and a transport layer, the Bluetooth Mesh core module provides the mesh-specific transport for the messages.
 
 The transport layer provides in-network security by encrypting mesh packets with *application keys*, and splitting them into smaller segments that can go on air.
 The transport layer re-assembles incoming packet segments and presents the full mesh message to the access layer.
@@ -118,9 +118,9 @@ The transport layer re-assembles incoming packet segments and presents the full 
 The network layer encrypts each transport layer packet segment with a *network key*, and populates the source and destination address fields.
 When receiving a mesh packet, the network layer decrypts the message, inspects the source and destination addresses, and decides whether the packet is intended for this device and whether the network layer should relay it.
 
-The Bluetooth mesh core provides protection against malicious behavior and attacks against the mesh network through two-layer encryption, replay protection, and packet header obfuscation.
-The Bluetooth mesh core is implemented in Zephyr.
-Read more about the Bluetooth mesh core API in :ref:`zephyr:bluetooth_mesh_core`.
+The Bluetooth Mesh core provides protection against malicious behavior and attacks against the mesh network through two-layer encryption, replay protection, and packet header obfuscation.
+The Bluetooth Mesh core is implemented in Zephyr.
+Read more about the Bluetooth Mesh core API in :ref:`zephyr:bluetooth_mesh_core`.
 
 .. _mesh_architecture_provisioning:
 
@@ -131,5 +131,5 @@ Provisioning is the act of adding a device to a mesh network.
 The Provisioning module takes care of both sides of this process, by implementing a provisioner role (the network owner) and a provisionee role (the device to add).
 
 The mesh stack supports provisioning of a device directly through the PB-ADV/PB-GATT provisioning bearer, which can only happen between a provisioner and a provisionee that are within radio range of each other.
-The Bluetooth mesh provisioning protocol is implemented in Zephyr.
+The Bluetooth Mesh provisioning protocol is implemented in Zephyr.
 For more information about the provisioning process and the API, see :ref:`zephyr:bluetooth_mesh_provisioning`.
