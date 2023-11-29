@@ -239,7 +239,7 @@ nRF Desktop
 
   * :ref:`Serial recovery DFU though USB <nrf_desktop_bootloader_serial_dfu>`
   * :ref:`Background DFU <nrf_desktop_bootloader_background_dfu>` through :ref:`nrf_desktop_smp`
-  * Background DFU with secondary slot on the :ref:`external flash <nrf_desktop_flash_memory_layout>`
+  * Background DFU with secondary slot on the :ref:`external flash <nrf_desktop_memory_layout>`
 
 * Dongle updates:
 
