@@ -307,7 +307,7 @@ void test_lte_lc_connect_success(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_FUNC_MODE_OFFLINE);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
-		"AT%XSYSTEMMODE=1,0,1,0", 0);
+		"AT%XSYSTEMMODE=1,1,1,3", 0);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
@@ -373,6 +373,9 @@ void test_lte_lc_connect_fallback(void)
 {
 	int ret;
 
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XSYSTEMMODE=1,0,1,0", 0);
+
 	/* AT commands triggered by lte_lc_connect() */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 1);
@@ -389,7 +392,7 @@ void test_lte_lc_connect_fallback(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
 
-	/* Fallback to NB-IoT */
+	/* Fallback to NB-IoT + GNSS */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
@@ -439,6 +442,11 @@ void test_lte_lc_connect_fallback(void)
 
 	test_event_data[6].type = LTE_LC_EVT_LTE_MODE_UPDATE;
 	test_event_data[6].lte_mode = LTE_LC_LTE_MODE_NONE;
+
+	/* Change system mode to LTE-M + GNSS, so that fallback can be used */
+	ret = lte_lc_system_mode_set(LTE_LC_SYSTEM_MODE_LTEM_GPS,
+				     LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/* Schedule +CEREG notification to be dispatched after timeout to trigger fallback */
 	strcpy(at_notif, "+CEREG: 5,\"003F\",\"0013BEEF\",9\r\n");

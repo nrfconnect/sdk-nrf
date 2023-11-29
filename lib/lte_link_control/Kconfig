@@ -172,7 +172,7 @@ config LTE_PTW_VALUE_NBIOT
 
 choice LTE_NETWORK_MODE
 	prompt "Select network mode"
-	default LTE_NETWORK_MODE_LTE_M_GPS
+	default LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	help
 	  Select the modem system mode.
 
@@ -203,6 +203,8 @@ endchoice
 
 choice LTE_MODE_PREFERENCE
 	prompt "LTE mode preference"
+	default LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO if LTE_NETWORK_MODE_LTE_M_NBIOT || \
+		LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	default LTE_MODE_PREFERENCE_AUTO
 	help
 	  Selects which LTE mode the modem should use if more than one is
@@ -216,8 +218,7 @@ config LTE_MODE_PREFERENCE_AUTO
 
 config LTE_MODE_PREFERENCE_LTE_M
 	bool "LTE-M"
-	depends on LTE_NETWORK_MODE_LTE_M || LTE_NETWORK_MODE_LTE_M_NBIOT || \
-		   LTE_NETWORK_MODE_LTE_M_GPS || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	help
 	  LTE-M is preferred over PLMN selection. The modem will prioritize to
 	  use LTE-M and switch over to a PLMN where LTE-M is available whenever
@@ -225,8 +226,7 @@ config LTE_MODE_PREFERENCE_LTE_M
 
 config LTE_MODE_PREFERENCE_NBIOT
 	bool "NB-IoT"
-	depends on LTE_NETWORK_MODE_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT || \
-		   LTE_NETWORK_MODE_NBIOT_GPS || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	help
 	  NB-IoT is preferred over PLMN selection. The modem will prioritize to
 	  use NB-IoT and switch over to a PLMN where NB-IoT is available
@@ -234,8 +234,7 @@ config LTE_MODE_PREFERENCE_NBIOT
 
 config LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
 	bool "LTE-M, PLMN prioritized"
-	depends on LTE_NETWORK_MODE_LTE_M || LTE_NETWORK_MODE_LTE_M_NBIOT || \
-		   LTE_NETWORK_MODE_LTE_M_GPS || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	help
 	  LTE-M is preferred, but PLMN selection is more important. The modem
 	  will prioritize to stay on home network and switch over to NB-IoT
@@ -243,8 +242,7 @@ config LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
 
 config LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
 	bool "NB-IoT, PLMN prioritized"
-	depends on LTE_NETWORK_MODE_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT || \
-		   LTE_NETWORK_MODE_NBIOT_GPS || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	help
 	  NB-IoT is preferred, but PLMN selection is more important. The modem
 	  will prioritize to stay on home network and switch over to LTE-M
