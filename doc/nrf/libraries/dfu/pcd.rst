@@ -28,8 +28,8 @@ This is done to avoid compromised code from being able to perform updates of the
 The network core uses the PCD library to look for instructions on where to find the updates.
 Once an update instruction is found, this library is used to transfer the firmware update image.
 
-On the application core, the PCD library is used by the :doc:`mcuboot:index-ncs` sample.
-On the network core, the PCD library is used by the :ref:`nc_bootloader` sample.
+On the application core, this library is used :ref:`MCUboot <ug_bootloader_adding_upgradable_mcuboot>`.
+On the network core, the library is used by the :ref:`nc_bootloader` sample.
 
 
 API documentation
