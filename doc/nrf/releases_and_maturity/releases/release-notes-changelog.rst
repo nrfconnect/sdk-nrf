@@ -450,6 +450,8 @@ Modem libraries
 
   * Updated:
 
+    * The default network mode to :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` from :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_GPS`.
+    * The default LTE mode preference to :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO` from :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE_AUTO`.
     * The :c:func:`lte_lc_init` function is deprecated.
     * The :c:func:`lte_lc_deinit` function is deprecated.
       Use the :c:func:`lte_lc_power_off` function instead.
