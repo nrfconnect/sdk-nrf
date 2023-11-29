@@ -40,7 +40,7 @@ If the buffer is small, the host must perform the DFU progress synchronization m
 .. important::
    The received update image chunks are stored on the dedicated non-volatile memory partition when the current version of the device firmware is running.
    For this reason, make sure that you use configuration with a dedicated update image partition.
-   For more information on configuring the memory layout in the application, see the :ref:`nrf_desktop_flash_memory_layout` documentation.
+   For more information on configuring the memory layout in the application, see the :ref:`nrf_desktop_memory_layout` documentation.
 
 MCUboot bootloader mode
 =======================
@@ -104,7 +104,8 @@ The DFU module implementation is centered around the transmission and the storag
 
 The firmware transfer operation can also be carried out either by the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`.
 Make sure that all enabled modules used for the firmware transfer operation use :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access.
-If a module does not use the :ref:`nrf_desktop_dfu_lock`, simultaneous modification of the data by the module and another application module may result in a broken image that would be rejected by the bootloader.
+If a module does not use the :ref:`nrf_desktop_dfu_lock`, simultaneous modification of the data by the module and another application module might result in a broken image.
+This broken image will then be rejected by the bootloader.
 
 Protocol operations
 ===================

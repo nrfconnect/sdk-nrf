@@ -7,21 +7,21 @@ DFU lock utility
    :local:
    :depth: 2
 
-The DFU lock utility provides a synchronization mechanism for accessing the DFU flash.
+The DFU lock utility provides a synchronization mechanism for accessing the DFU non-volatile memory.
 It is needed for application configurations that support more than one DFU transport.
 
 The DFU lock utility provides a basic synchronization API for all declared DFU owners.
 Each DFU owner can be declared using the :c:struct:`dfu_lock_owner` structure.
-The :c:func:`dfu_lock_claim` function is used to claim ownership over the DFU flash.
+The :c:func:`dfu_lock_claim` function is used to claim ownership over the DFU non-volatile memory.
 This function returns an error if the lock has already been taken by another DFU owner.
-The :c:func:`dfu_lock_release` function is used by the current owner to release the DFU flash when it is no longer used.
+The :c:func:`dfu_lock_release` function is used by the current owner to release the DFU non-volatile memory when it is no longer used.
 This function returns an error on the release attempt that is not triggered by the current owner.
 The :c:member:`dfu_lock_owner.owner_changed` callback is used to indicate the change in ownership.
-The previous owner can use this callback for tracking the DFU flash status and the need to erase it before subsequent DFU attempts.
+The previous owner can use this callback for tracking the DFU non-volatile memory status and the need to erase it before subsequent DFU attempts.
 
 .. note::
-    The nRF Desktop DFU transports must voluntarily take lock before accessing flash and release it after they stop using it.
-    The DFU lock utility does not provide any protection against the DFU transport module that writes to flash memory without taking a lock.
+    The nRF Desktop DFU transports must voluntarily take lock before accessing the non-volatile memory and release it after they stop using it.
+    The DFU lock utility does not provide any protection against the DFU transport module that writes to the non-volatile memory without taking a lock.
 
 Configuration
 *************

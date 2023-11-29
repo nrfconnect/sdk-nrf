@@ -395,7 +395,7 @@ If a board has other configuration files, for example associated with partition 
 
 The following build types are available for various boards in the nRF Desktop:
 
-* Bootloader-enabled configurations with support for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` are set as default if they fit in flash memory.
+* Bootloader-enabled configurations with support for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` are set as default if they fit in non-volatile memory.
   See :ref:`nrf_desktop_board_configuration_files` for details about which boards have bootloader included in their default configuration.
 * ``release`` - Release version of the application with no debugging features.
 * ``debug`` - Debug version of the application; the same as the ``release`` build type, but with debug options enabled.
@@ -1553,7 +1553,7 @@ To change the priority of the peripheral's interrupt, override the ``interrupts`
 
 This code snippet will change the **SPI1** interrupt priority from default ``1`` to ``2``.
 
-.. _nrf_desktop_flash_memory_layout:
+.. _nrf_desktop_memory_layout:
 
 Memory layout
 =============
@@ -1601,7 +1601,7 @@ For more details, see the `Board configuration`_ section.
     In that case, the code spawns for :kconfig:option:`CONFIG_FLASH_LOAD_SIZE` (or for the whole remaining chosen ``zephyr,flash`` memory if the load size is set to ``0``).
     The settings memory partition definition is still used by the firmware even if the :kconfig:option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option is disabled.
 
-For more information about how to configure the flash memory layout in the DTS files, see :ref:`zephyr:flash_map_api`.
+For more information about how to configure the non-volatile memory layout in the DTS files, see :ref:`zephyr:flash_map_api`.
 
 Memory layout in Partition Manager
 ----------------------------------
@@ -1616,13 +1616,13 @@ Take into account the following points:
 
 * For the :ref:`background firmware upgrade <nrf_desktop_bootloader_background_dfu>`, you must define the secondary image partition.
   This is because the update image is stored on the secondary image partition while the device is running firmware from the primary partition.
-  For this reason, the feature is not available for devices with smaller flash size, because the size of the required flash memory is essentially doubled.
-  The devices with smaller flash size can use either USB serial recovery or the MCUboot bootloader with the secondary image partition located on an external flash.
+  For this reason, the feature is not available for devices with smaller non-volatile memory size, because the size of the required non-volatile memory is essentially doubled.
+  The devices with smaller non-volatile memory size can use either USB serial recovery or the MCUboot bootloader with the secondary image partition located on an external non-volatile memory.
 * When you use :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>`, you do not need the secondary image partition.
   The firmware image is overwritten by the bootloader.
 
 For an example of configuration, see the static partition maps defined for the existing configuration that uses a given DFU method.
-For more information about how to configure the flash memory layout using the Partition Manager, see :ref:`partition_manager`.
+For more information about how to configure the non-volatile memory layout using the Partition Manager, see :ref:`partition_manager`.
 
 .. _nrf_desktop_pm_external_flash:
 
@@ -1839,7 +1839,7 @@ After successful erase advertising procedure, the peripheral removes all of the 
 
 Apart from that, the following changes are applied in configurations that support Fast Pair:
 
-* The static :ref:`partition_manager` configuration is modified to introduce a dedicated flash partition used to store the Fast Pair provisioning data.
+* The static :ref:`partition_manager` configuration is modified to introduce a dedicated non-volatile memory partition used to store the Fast Pair provisioning data.
 * Bluetooth privacy feature (:kconfig:option:`CONFIG_BT_PRIVACY`) is enabled.
 * The fast and slow advertising intervals defined in the :ref:`nrf_desktop_ble_adv` are aligned with Fast Pair expectations.
 * The Bluetooth advertising filter accept list (:kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`) is disabled to allow Fast Pair Seekers other than the bonded one to connect outside of the pairing mode.
@@ -1890,7 +1890,7 @@ The nRF Desktop application can use one of the following bootloaders:
 
   * :ref:`Background DFU <nrf_desktop_bootloader_background_dfu>`.
     In this scenario, the MCUboot either swaps the application images located on the secondary and primary slot before booting a new image (``swap mode``) or boots a new application image directly from the secondary image slot (``direct-xip mode``).
-    The swap operation significantly increases boot time after a successful image transfer, but an external flash can be used as the secondary image slot.
+    The swap operation significantly increases boot time after a successful image transfer, but external non-volatile memory can be used as the secondary image slot.
 
     You can use the MCUboot for the background DFU through the :ref:`nrf_desktop_config_channel` and :ref:`nrf_desktop_dfu`.
     The MCUboot can also be used for the background DFU over Simple Management Protocol (SMP).
@@ -1916,8 +1916,8 @@ The nRF Desktop application can use one of the following bootloaders:
     Make sure that you use your own private key for the release version of the devices.
     Do not use the debug key for production.
 
-If your configuration enables the bootloader, make sure to define a static flash memory layout in the Partition Manager.
-See :ref:`nrf_desktop_flash_memory_layout` documentation section for details.
+If your configuration enables the bootloader, make sure to define a static non-volatile memory layout in the Partition Manager.
+See :ref:`nrf_desktop_memory_layout` for details.
 
 Configuring the B0 bootloader
 -----------------------------
@@ -1932,7 +1932,7 @@ The B0 bootloader additionally requires enabling the following options in the ap
   The nRF Desktop application with the B0 bootloader configuration builds two application images: one for the S0 slot and the other for the S1 slot.
   To generate the DFU package, you need to update this configuration only in the main application image as the ``s1_image`` child image mirrors it.
   You can do that by rebuilding the application from scratch or by changing the configuration of the main image through menuconfig.
-* :kconfig:option:`CONFIG_BUILD_S1_VARIANT` - Required for the build system to be able to construct the application binaries for both application's slots in flash memory.
+* :kconfig:option:`CONFIG_BUILD_S1_VARIANT` - Required for the build system to be able to construct the application binaries for both application's slots in non-volatile memory.
 
 .. _nrf_desktop_configuring_mcuboot_bootloader:
 
@@ -1958,8 +1958,8 @@ For this purpose, make sure to enable :kconfig:option:`CONFIG_IMG_MANAGER` and :
 These options allow the :ref:`nrf_desktop_dfu`, :ref:`nrf_desktop_ble_smp`, and :ref:`nrf_desktop_dfu_mcumgr` to manage the DFU image.
 
 .. note::
-  When the MCUboot bootloader is in the swap mode, it can use a secondary image slot located on the external flash.
-  For details on using an external flash for the secondary image slot, see the :ref:`nrf_desktop_pm_external_flash` section.
+  When the MCUboot bootloader is in the swap mode, it can use a secondary image slot located on the external non-volatile memory.
+  For details on using external non-volatile memory for the secondary image slot, see the :ref:`nrf_desktop_pm_external_flash` section.
 
 Direct-xip mode
 ~~~~~~~~~~~~~~~
