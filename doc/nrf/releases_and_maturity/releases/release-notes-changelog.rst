@@ -101,7 +101,7 @@ The following list summarizes the most important changes inherited from the upst
    * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_IDLE_MODE_DURATION`, :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_DURATION` and :kconfig:option:`CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC` to manage ICD configuration.
    * New device types:
 
-     * Refridgerator
+     * Refrigerator
      * Room air conditioner
      * Dishwasher
      * Laundry washer
