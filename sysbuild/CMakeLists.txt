@@ -305,48 +305,11 @@ include(${CMAKE_CURRENT_LIST_DIR}/extensions.cmake)
 
 if(SB_CONFIG_SECURE_BOOT)
   set(secure_boot_image_dir ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image)
-  if(SB_CONFIG_SECURE_BOOT_NETCORE)
-    if(SB_CONFIG_NETCORE_HCI_RPMSG)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_HCI_RPMSG_NAME} # ToDo: Create a common Kconfig setting
-                                            # which can then default to the exact
-                                            # remote image selected, as to work for
-                                            # hci, mpsl, thread, etc.
-        "${secure_boot_image_dir}/secure_boot.conf"
-      )
-    elseif(SB_CONFIG_NETCORE_802154_RPMSG)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_802154_RPMSG_NAME} # ToDo: Create a common Kconfig setting
-                                            # which can then default to the exact
-                                            # remote image selected, as to work for
-                                            # hci, mpsl, thread, etc.
-        "${secure_boot_image_dir}/secure_boot.conf"
-      )
-    elseif(SB_CONFIG_NETCORE_EMPTY)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_EMPTY_NAME} # ToDo: Create a common Kconfig setting
-                                            # which can then default to the exact
-                                            # remote image selected, as to work for
-                                            # hci, mpsl, thread, etc.
-        "${secure_boot_image_dir}/secure_boot.conf"
-      )
-    elseif(SB_CONFIG_NETCORE_RPC_HOST)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_RPC_HOST_NAME}  # ToDo: Create a common Kconfig setting
-                                            # which can then default to the exact
-                                            # remote image selected, as to work for
-                                            # hci, mpsl, thread, etc.
-        "${secure_boot_image_dir}/secure_boot.conf"
-      )
-    elseif(SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG)
-      add_overlay_config(
-        ${SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG_NAME} # ToDo: Create a common Kconfig setting
-                                            # which can then default to the exact
-                                            # remote image selected, as to work for
-                                            # hci, mpsl, thread, etc.
-        "${secure_boot_image_dir}/secure_boot.conf"
-      )
-    endif()
+  if(SB_CONFIG_SECURE_BOOT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
+    add_overlay_config(
+      ${SB_CONFIG_NETCORE_IMAGE_NAME}
+      "${secure_boot_image_dir}/secure_boot.conf"
+    )
 
     add_overlay_config(mcuboot "${ZEPHYR_NRF_MODULE_DIR}/subsys/pcd/pcd.conf")
   endif()
