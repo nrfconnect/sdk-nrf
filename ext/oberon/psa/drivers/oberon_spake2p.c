@@ -282,17 +282,17 @@ psa_status_t oberon_spake2p_set_user(
     if (operation->role == PSA_PAKE_ROLE_CLIENT) {
         // prover = user
         if (user_id_len > sizeof operation->prover) return PSA_ERROR_INSUFFICIENT_MEMORY;
-	if (user_id_len) {
-		memcpy(operation->prover, user_id, user_id_len);
-	}
-	operation->prover_len = (uint8_t)user_id_len;
+        if (user_id_len) {
+            memcpy(operation->prover, user_id, user_id_len);
+        }
+        operation->prover_len = (uint8_t)user_id_len;
     } else {
         // verifier = user
         if (user_id_len > sizeof operation->verifier) return PSA_ERROR_INSUFFICIENT_MEMORY;
-	if (user_id_len) {
-		memcpy(operation->verifier, user_id, user_id_len);
-	}
-	operation->verifier_len = (uint8_t)user_id_len;
+        if (user_id_len) {
+            memcpy(operation->verifier, user_id, user_id_len);
+        }
+        operation->verifier_len = (uint8_t)user_id_len;
     }
 
     return PSA_SUCCESS;
@@ -305,17 +305,17 @@ psa_status_t oberon_spake2p_set_peer(
     if (operation->role == PSA_PAKE_ROLE_CLIENT) {
         // verifier = peer
         if (peer_id_len > sizeof operation->verifier) return PSA_ERROR_INSUFFICIENT_MEMORY;
-	if (peer_id_len) {
-		memcpy(operation->verifier, peer_id, peer_id_len);
-	}
-	operation->verifier_len = (uint8_t)peer_id_len;
+        if (peer_id_len) {
+            memcpy(operation->verifier, peer_id, peer_id_len);
+        }
+        operation->verifier_len = (uint8_t)peer_id_len;
     } else {
         // prover = peer
         if (peer_id_len > sizeof operation->prover) return PSA_ERROR_INSUFFICIENT_MEMORY;
-	if (peer_id_len) {
-		memcpy(operation->prover, peer_id, peer_id_len);
-	}
-	operation->prover_len = (uint8_t)peer_id_len;
+        if (peer_id_len) {
+            memcpy(operation->prover, peer_id, peer_id_len);
+        }
+        operation->prover_len = (uint8_t)peer_id_len;
     }
 
     return PSA_SUCCESS;
