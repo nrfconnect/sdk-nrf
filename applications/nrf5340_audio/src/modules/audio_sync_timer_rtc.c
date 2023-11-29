@@ -13,6 +13,7 @@
 #include <nrfx_ipc.h>
 #include <nrfx_rtc.h>
 #include <nrfx_timer.h>
+#include <nrfx_egu.h>
 
 
 #include <zephyr/logging/log.h>
@@ -21,8 +22,9 @@ LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_AUDIO_SYNC_TIMER_LOG_LEVEL);
 #define AUDIO_SYNC_TIMER_INSTANCE_NUMBER 1
 
 #define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
+#define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE         NRF_TIMER_TASK_CAPTURE0
 #define AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL	     1
-#define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE NRF_TIMER_TASK_CAPTURE0
+#define AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE                   NRF_TIMER_TASK_CAPTURE1
 
 #define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT_CHANNEL 4
 #define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT NRF_IPC_EVENT_RECEIVE_4
@@ -35,9 +37,11 @@ static uint8_t dppi_channel_i2s_frame_start;
 #define AUDIO_RTC_TIMER_INSTANCE_NUMBER                     0
 
 #define AUDIO_RTC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
-#define AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_CHANNEL           1
 #define AUDIO_RTC_TIMER_I2S_FRAME_START_EVT_CAPTURE         NRF_RTC_TASK_CAPTURE_0
-#define AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_TASK              NRF_RTC_TASK_CAPTURE_1
+#define AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_CHANNEL           1
+#define AUDIO_RTC_TIMER_CURR_TIME_CAPTURE                   NRF_RTC_TASK_CAPTURE_1
+
+static uint8_t dppi_channel_curr_time_capture;
 
 static const nrfx_rtc_config_t rtc_cfg = NRFX_RTC_DEFAULT_CONFIG;
 
@@ -66,13 +70,38 @@ static uint32_t timestamp_from_rtc_and_timer_get(uint32_t ticks, uint32_t remain
 
 uint32_t audio_sync_timer_capture(void)
 {
-	nrf_rtc_task_trigger(audio_rtc_timer_instance.p_reg,
-				AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_TASK);
-	nrf_timer_task_trigger(NRF_TIMER1,
-		nrf_timer_capture_task_get(AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL));
+	/* Ensure that the follow product specification statement is handled:
+	 *
+	 * There is a delay of 6 PCLK16M periods from when the TASKS_CAPTURE[n] is triggered
+	 * until the corresponding CC[n] register is updated.
+	 *
+	 * Lets have a stale value in the CC[n] register and compare that it is different when
+	 * we capture using DPPI.
+	 *
+	 * We ensure it is stale by setting it as the previous tick relative to current
+	 * counter value.
+	 */
+	uint32_t tick_stale = nrf_rtc_counter_get(audio_rtc_timer_instance.p_reg);
 
+	/* Set a stale value in the CC[n] register */
+	tick_stale--;
+	nrf_rtc_cc_set(audio_rtc_timer_instance.p_reg,
+		       AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_CHANNEL, tick_stale);
+
+	/* Trigger EGU task to capture RTC and TIMER value */
+	nrf_egu_task_trigger(NRF_EGU0, NRF_EGU_TASK_TRIGGER0);
+
+	/* Read captured RTC value */
 	uint32_t tick = nrf_rtc_cc_get(audio_rtc_timer_instance.p_reg,
-					AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
+				       AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
+
+	/* If required, wait until CC[n] register is updated */
+	while (tick == tick_stale) {
+		tick = nrf_rtc_cc_get(audio_rtc_timer_instance.p_reg,
+				      AUDIO_RTC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
+	}
+
+	/* Read captured TIMER value */
 	uint32_t remainder_us = nrf_timer_cc_get(NRF_TIMER1,
 						AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
 
@@ -157,6 +186,29 @@ static int audio_sync_timer_init(void)
 	ret = nrfx_dppi_channel_enable(dppi_channel_i2s_frame_start);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel enable error (I2S frame start): %d", ret);
+		return ret;
+	}
+
+	/* Initialize capturing of current timestamps */
+	ret = nrfx_dppi_channel_alloc(&dppi_channel_curr_time_capture);
+	if (ret - NRFX_ERROR_BASE_NUM) {
+		LOG_ERR("nrfx DPPI channel alloc error (I2S frame start) - Return value: %d", ret);
+		return ret;
+	}
+
+	nrf_rtc_subscribe_set(audio_rtc_timer_instance.p_reg,
+			      AUDIO_RTC_TIMER_CURR_TIME_CAPTURE,
+			      dppi_channel_curr_time_capture);
+
+	nrf_timer_subscribe_set(audio_sync_timer_instance.p_reg,
+				AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE,
+				dppi_channel_curr_time_capture);
+
+	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED0, dppi_channel_curr_time_capture);
+
+	ret = nrfx_dppi_channel_enable(dppi_channel_curr_time_capture);
+	if (ret - NRFX_ERROR_BASE_NUM) {
+		LOG_ERR("nrfx DPPI channel enable error (I2S frame start) - Return value: %d", ret);
 		return ret;
 	}
 
