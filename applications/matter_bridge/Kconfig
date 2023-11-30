@@ -36,6 +36,28 @@ choice BRIDGED_DEVICE_IMPLEMENTATION
 
 endchoice
 
+if BRIDGED_DEVICE_SIMULATED
+
+choice BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION
+	prompt "Simulated bridged onoff device implementation"
+	default BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+
+	config BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
+		bool "Automatically simulated bridged onoff device"
+		help
+		  Enables using simulated bridged onoff device that
+		  automatically changes its state periodically.
+
+	config BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+		bool "Shell controlled simulated bridged onoff device"
+		help
+		  Enables using simulated bridged onoff device that is
+		  controlled by shell commands.
+
+endchoice
+
+endif
+
 if BRIDGED_DEVICE_BT
 
 config BT_CENTRAL

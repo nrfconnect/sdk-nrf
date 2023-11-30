@@ -10,20 +10,26 @@
 
 class SimulatedOnOffLightDataProvider : public BridgedDeviceDataProvider {
 public:
-	static constexpr uint16_t kOnOffIntervalMs = 30000;
-
 	SimulatedOnOffLightDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
-	~SimulatedOnOffLightDataProvider() { k_timer_stop(&mTimer); }
+	~SimulatedOnOffLightDataProvider()
+	{
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
+		k_timer_stop(&mTimer);
+#endif
+	}
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 			       size_t dataSize) override;
 	CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
 
-	static void TimerTimeoutCallback(k_timer *timer);
+private:
 	static void NotifyAttributeChange(intptr_t context);
 
-private:
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
+	static void TimerTimeoutCallback(k_timer *timer);
+	static constexpr uint16_t kOnOffIntervalMs = 30000;
 	k_timer mTimer;
+#endif
 	bool mOnOff = false;
 };

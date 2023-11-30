@@ -95,6 +95,15 @@ public:
 		return CHIP_NO_ERROR;
 	}
 
+	/**
+	 * @brief Get the data provider stored on the specified endpoint.
+	 *
+	 * @param endpoint endpoint on which the bridged device is stored
+	 * @param[out] deviceType a type of the bridged device
+	 * @return pointer to the data provider bridged with the device on the specified endpoint
+	 */
+	BridgedDeviceDataProvider *GetProvider(chip::EndpointId endpoint, MatterBridgedDevice::DeviceType &deviceType);
+
 	static CHIP_ERROR HandleRead(uint16_t index, chip::ClusterId clusterId,
 				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,
 				     uint16_t maxReadLength);
