@@ -276,9 +276,8 @@ config LTE_RAI_REQ_VALUE
 	  This Kconfig option is deprecated. Use CONFIG_LTE_RAI_REQ instead.
 
 config LTE_NETWORK_USE_FALLBACK
-	bool "Use fallback network mode if selected mode fails"
-	default y if !(LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS || \
-		       LTE_NETWORK_MODE_DEFAULT)
+	bool "Use fallback network mode if selected mode fails [DEPRECATED]"
+	select DEPRECATED
 	help
 	  When enabled, the network mode will be switched to the other
 	  available if the preferred fails to establish connection within
@@ -290,6 +289,10 @@ config LTE_NETWORK_USE_FALLBACK
 	  instruct the modem on which network to use. This is more efficient
 	  both in terms of time to connection establishment and energy
 	  consumption.
+	  This Kconfig option is deprecated. Use the CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT
+	  or CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS Kconfig option instead.
+	  In addition, you can control the priority between LTE-M and NB-IoT using the
+	  CONFIG_LTE_MODE_PREFERENCE Kconfig option.
 
 config LTE_NETWORK_TIMEOUT
 	int "Time period to attempt establishing connection"
