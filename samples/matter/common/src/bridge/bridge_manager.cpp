@@ -255,7 +255,7 @@ CHIP_ERROR BridgeManager::AddSingleDevice(MatterBridgedDevice *device, BridgedDe
 
 					return err;
 				} else {
-					/* Failing Insert metod means the BridgedDevicePair destructor will be called
+					/* Failing Insert method means the BridgedDevicePair destructor will be called
 					 * and pointers wiped out. It's not safe to iterate further. */
 					return CHIP_ERROR_INTERNAL;
 				}
@@ -279,7 +279,8 @@ CHIP_ERROR BridgeManager::CreateEndpoint(uint8_t index, uint16_t endpointId)
 	EmberAfStatus ret = emberAfSetDynamicEndpoint(
 		index, endpointId, storedDevice->mEp,
 		Span<DataVersion>(storedDevice->mDataVersion, storedDevice->mDataVersionSize),
-		Span<const EmberAfDeviceType>(storedDevice->mDeviceTypeList, storedDevice->mDeviceTypeListSize), kAggregatorEndpointId);
+		Span<const EmberAfDeviceType>(storedDevice->mDeviceTypeList, storedDevice->mDeviceTypeListSize),
+		kAggregatorEndpointId);
 
 	if (ret == EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_INF("Added device to dynamic endpoint %d (index=%d)", endpointId, index);
@@ -396,6 +397,17 @@ void BridgeManager::HandleUpdate(BridgedDeviceDataProvider &dataProvider, Cluste
 			}
 		}
 	}
+}
+
+BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, MatterBridgedDevice::DeviceType &deviceType)
+{
+	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
+	if (Instance().mDevicesMap.Contains(endpointIndex)) {
+		BridgedDevicePair &bridgedDevices = Instance().mDevicesMap[endpointIndex];
+		deviceType = bridgedDevices.mDevice->GetDeviceType();
+		return bridgedDevices.mProvider;
+	}
+	return nullptr;
 }
 
 EmberAfStatus emberAfExternalAttributeReadCallback(EndpointId endpoint, ClusterId clusterId,

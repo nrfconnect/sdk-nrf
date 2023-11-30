@@ -220,6 +220,28 @@ Adding a simulated bridged device to the Matter bridge
 
       uart:~$ matter_bridge add 256 "Kitchen Light"
 
+Controlling a simulated OnOff Light bridged device
+   Use the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      matter_bridge onoff *<new_state>* *<endpoint>*
+
+   In this command:
+
+   * *<new_state>*  is the new state (``0`` - off and ``1`` - on) that will be set on the simulated OnOff Light device.
+   * *<endpoint>*  is the endpoint on which the bridged OnOff Light device is implemented
+
+   Example command:
+
+   .. code-block:: console
+
+      uart:~$ matter_bridge onoff 1 3
+
+   Note that the above command will only work if the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` option is selected in the build configuration.
+   If the Kconfig option is not selected, the simulated device changes its state periodically in autonomous manner and can not be controlled by using shell commands.
+
 Adding a Bluetooth LE bridged device to the Matter bridge
    Use the following command:
 
@@ -279,6 +301,14 @@ You can enable the :ref:`matter_bridge_app_bridged_support` by using the followi
 
 * :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED` - For the simulated bridged device.
 * :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` - For the Bluetooth LE bridged device.
+
+The simulated OnOff Light bridged device can operate in the following modes:
+
+* Autonomous - The simulated device periodically changes its state.
+  To build the simulated OnOff Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC` Kconfig option.
+* Controllable - The user can explicitly control the On/Off state by using shell commands.
+  To build the simulated OnOff Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` Kconfig option.
+  This is enabled by default.
 
 Additionally, you can decide how many bridged devices the bridge application will support.
 The decision will make an impact on the flash and RAM memory usage, and is verified in the compilation stage.

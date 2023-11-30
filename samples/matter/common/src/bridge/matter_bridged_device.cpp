@@ -68,7 +68,7 @@ CHIP_ERROR MatterBridgedDevice::HandleWriteIdentify(chip::AttributeId attributeI
 	switch (attributeId) {
 	case Clusters::Identify::Attributes::IdentifyTime::Id:
 		if (data && dataSize == sizeof(mIdentifyTime)) {
-			mIdentifyTime = (*reinterpret_cast<decltype(mIdentifyTime) *>(data));
+			memcpy(&mIdentifyTime, data, sizeof(mIdentifyTime));
 			/* Externally stored attribute was updated, now we need to notify identify-server to
 			   leverage the Identify cluster implementation */
 			app::ConcreteAttributePath attributePath{ mEndpointId, Clusters::Identify::Id, attributeId };

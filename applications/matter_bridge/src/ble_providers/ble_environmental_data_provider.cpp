@@ -270,7 +270,8 @@ uint8_t BleEnvironmentalDataProvider::HumidityGATTReadCallback(bt_conn *conn, ui
 	VerifyOrReturnValue(provider, BT_GATT_ITER_STOP, LOG_ERR("Invalid provider object"));
 
 	if (!att_err && (read_len == sizeof(provider->mHumidityValue))) {
-		const uint16_t newValue = *(static_cast<const uint16_t *>(data));
+		uint16_t newValue{};
+		memcpy(&newValue, data, sizeof(newValue));
 		if (newValue != provider->mHumidityValue) {
 			provider->mHumidityValue = newValue;
 			DeviceLayer::PlatformMgr().ScheduleWork(NotifyHumidityAttributeChange,

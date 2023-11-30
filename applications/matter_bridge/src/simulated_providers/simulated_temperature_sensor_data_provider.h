@@ -12,10 +12,6 @@
 
 class SimulatedTemperatureSensorDataProvider : public BridgedDeviceDataProvider {
 public:
-	static constexpr uint16_t kMeasurementsIntervalMs = 10000;
-	static constexpr int16_t kMinRandomTemperature = -10;
-	static constexpr int16_t kMaxRandomTemperature = 10;
-
 	SimulatedTemperatureSensorDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback)
 	{
 	}
@@ -26,10 +22,15 @@ public:
 			       size_t dataSize) override;
 	CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
 
-	static void TimerTimeoutCallback(k_timer *timer);
+private:
 	static void NotifyAttributeChange(intptr_t context);
 
-private:
+	static constexpr uint16_t kMeasurementsIntervalMs = 10000;
+	static constexpr int16_t kMinRandomTemperature = -10;
+	static constexpr int16_t kMaxRandomTemperature = 10;
+
+	static void TimerTimeoutCallback(k_timer *timer);
+
 	k_timer mTimer;
 	int16_t mTemperature = 0;
 };

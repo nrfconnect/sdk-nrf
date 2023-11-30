@@ -83,6 +83,38 @@ static int RemoveBridgedDeviceHandler(const struct shell *shell, size_t argc, ch
 	return 0;
 }
 
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+static int SimulatedBridgedDeviceOnOffWriteHandler(const struct shell *shell, size_t argc, char **argv)
+{
+	using DeviceType = MatterBridgedDevice::DeviceType;
+	const char *command = argv[0];
+	uint8_t value = strtoul(argv[1], nullptr, 0);
+	chip::EndpointId endpointId = strtoul(argv[2], nullptr, 0);
+
+	DeviceType deviceType{};
+	auto *provider = BridgeManager().Instance().GetProvider(endpointId, deviceType);
+
+	if (provider) {
+		if ((0 == strcmp(command, "onoff") && deviceType != DeviceType::OnOffLight)) {
+			shell_fprintf(shell, SHELL_ERROR, "Error: Unsupported device\n");
+			return 0;
+		}
+		CHIP_ERROR err = provider->UpdateState(chip::app::Clusters::OnOff::Id,
+						       chip::app::Clusters::OnOff::Attributes::OnOff::Id, &value);
+		if (err != CHIP_NO_ERROR) {
+			shell_fprintf(shell, SHELL_ERROR, "Cannot update OnOff device state\n");
+			return 0;
+		}
+		shell_fprintf(shell, SHELL_INFO, "Done\n");
+
+	} else {
+		shell_fprintf(shell, SHELL_ERROR, "Error: Device inaccessible\n");
+	}
+
+	return 0;
+}
+#endif
+
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 static void BluetoothScanResult(BLEConnectivityManager::ScannedDevice *devices, uint8_t count, void *context)
 {
@@ -138,6 +170,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		"Usage: remove <bridged_device_endpoint_id>\n"
 		"* bridged_device_endpoint_id - the bridged device's endpoint on which it was previously created\n",
 		RemoveBridgedDeviceHandler, 2, 0),
+#ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+	SHELL_CMD_ARG(
+		onoff, NULL,
+		"Changes the current state of the simulated onoff device. \n"
+		"Usage: onoff <new_state> <bridged_device_endpoint_id>\n"
+		"* new_state - new state of the simulated onoff device\n"
+		"* bridged_device_endpoint_id - the bridged device's endpoint on which it was previously created\n",
+		SimulatedBridgedDeviceOnOffWriteHandler, 3, 0),
+#endif
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 	SHELL_CMD_ARG(scan, NULL,
 		      "Scan for Bluetooth LE devices to bridge. \n"
