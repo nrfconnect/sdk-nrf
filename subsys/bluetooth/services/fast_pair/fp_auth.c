@@ -11,6 +11,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
+#include <bluetooth/services/fast_pair.h>
+#include "fp_activation.h"
 #include "fp_auth.h"
 #include "fp_keys.h"
 
@@ -18,6 +20,7 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #define USED_PASSKEY	0xfffffffe
 
 static uint32_t bt_auth_peer_passkeys[CONFIG_BT_MAX_CONN];
+static bool is_enabled;
 
 #if (CONFIG_BT_MAX_CONN <= 8)
 static uint8_t handled_conn_bm;
@@ -70,6 +73,10 @@ static int send_auth_cancel(struct bt_conn *conn)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
+	if (!bt_fast_pair_is_ready()) {
+		return;
+	}
+
 	update_conn_handling(conn, false);
 }
 
@@ -80,6 +87,11 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 static enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
 						const struct bt_conn_pairing_feat *const feat)
 {
+	if (!bt_fast_pair_is_ready()) {
+		LOG_WRN("Fast Pair not enabled");
+		return BT_SECURITY_ERR_UNSPECIFIED;
+	}
+
 	if (!is_conn_handled(conn)) {
 		LOG_ERR("Invalid conn (pairing accept): %p", (void *)conn);
 		return BT_SECURITY_ERR_UNSPECIFIED;
@@ -97,6 +109,12 @@ static enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
 
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
+	if (!bt_fast_pair_is_ready()) {
+		LOG_WRN("Fast Pair not enabled");
+		(void)send_auth_cancel(conn);
+		return;
+	}
+
 	ARG_UNUSED(passkey);
 
 	if (is_conn_handled(conn)) {
@@ -110,6 +128,12 @@ static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 
 static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 {
+	if (!bt_fast_pair_is_ready()) {
+		LOG_WRN("Fast Pair not enabled");
+		(void)send_auth_cancel(conn);
+		return;
+	}
+
 	size_t conn_idx = bt_conn_index(conn);
 	bool auth_reject = false;
 
@@ -134,6 +158,11 @@ static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 
 static void auth_cancel(struct bt_conn *conn)
 {
+	if (!bt_fast_pair_is_ready()) {
+		LOG_WRN("Fast Pair not enabled");
+		return;
+	}
+
 	if (!is_conn_handled(conn)) {
 		LOG_ERR("Invalid conn (authentication cancel): %p", (void *)conn);
 		return;
@@ -145,6 +174,10 @@ static void auth_cancel(struct bt_conn *conn)
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
+	if (!bt_fast_pair_is_ready()) {
+		return;
+	}
+
 	if (!is_conn_handled(conn)) {
 		return;
 	}
@@ -166,6 +199,10 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
+	if (!bt_fast_pair_is_ready()) {
+		return;
+	}
+
 	if (!is_conn_handled(conn)) {
 		return;
 	}
@@ -202,9 +239,10 @@ static int fp_auth_send_pairing_req(struct bt_conn *conn)
 
 int fp_auth_start(struct bt_conn *conn, bool send_pairing_req)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	int err = 0;
 	size_t conn_idx = bt_conn_index(conn);
-	static bool auth_info_cb_registered;
 
 	if (is_conn_handled(conn)) {
 		LOG_ERR("Auth started twice for connection %p", (void *)conn);
@@ -214,15 +252,6 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req)
 	err = bt_conn_auth_cb_overlay(conn, &conn_auth_callbacks);
 	if (err) {
 		return err;
-	}
-
-	if (!auth_info_cb_registered) {
-		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
-		if (err) {
-			return err;
-		}
-
-		auth_info_cb_registered = true;
 	}
 
 	if (send_pairing_req) {
@@ -239,6 +268,8 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req)
 
 int fp_auth_cmp_passkey(struct bt_conn *conn, uint32_t gatt_passkey, uint32_t *bt_auth_passkey)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	int err = 0;
 	size_t conn_idx = bt_conn_index(conn);
 
@@ -266,3 +297,64 @@ int fp_auth_cmp_passkey(struct bt_conn *conn, uint32_t gatt_passkey, uint32_t *b
 
 	return err;
 }
+
+static int fp_auth_init(void)
+{
+	if (is_enabled) {
+		LOG_WRN("fp_auth module already initialized");
+		return 0;
+	}
+
+	int err;
+
+	memset(bt_auth_peer_passkeys, 0, sizeof(bt_auth_peer_passkeys));
+	handled_conn_bm = 0;
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		return err;
+	}
+
+	is_enabled = true;
+
+	return 0;
+}
+
+static void handled_conn_disconnect(struct bt_conn *conn, void *data)
+{
+	if (is_conn_handled(conn)) {
+		int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+
+		if (!err) {
+			LOG_DBG("Disconnected handled connection");
+		} else if (err == -ENOTCONN) {
+			LOG_DBG("Handled connection already disconnected");
+		} else {
+			LOG_ERR("Failed to disconnect handled conn: err=%d", err);
+		}
+	}
+}
+
+static int fp_auth_uninit(void)
+{
+	if (!is_enabled) {
+		LOG_WRN("fp_auth module already uninitialized");
+		return 0;
+	}
+
+	int err;
+
+	is_enabled = false;
+
+	err = bt_conn_auth_info_cb_unregister(&conn_auth_info_callbacks);
+	if (err) {
+		return err;
+	}
+
+	bt_conn_foreach(BT_CONN_TYPE_LE, handled_conn_disconnect, NULL);
+
+	return 0;
+}
+
+FP_ACTIVATION_MODULE_REGISTER(fp_auth, FP_ACTIVATION_INIT_PRIORITY_DEFAULT, fp_auth_init,
+			      fp_auth_uninit);

@@ -16,7 +16,8 @@
  *
  * Fast Pair authentication subsystem handles Bluetooth authentication described by Fast Pair
  * Procedure. Fast Pair Provider uses passkey confirmation relying on data written over GATT to
- * achieve MITM protection.
+ * achieve MITM protection. The module must be initialized with @ref bt_fast_pair_enable before
+ * using API functions.
  *
  * @{
  */

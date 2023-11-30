@@ -17,7 +17,8 @@
  *
  * Fast Pair Keys subsystem handles Fast Pair key generation and message encryption/decryption.
  * The implementation also ensures that keys used for a given connection are invalidated according
- * to rules defined by the Fast Pair specification.
+ * to rules defined by the Fast Pair specification. The module must be initialized with
+ * @ref bt_fast_pair_enable before using API functions.
  *
  * @{
  */

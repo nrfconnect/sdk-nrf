@@ -12,6 +12,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
+#include <bluetooth/services/fast_pair.h>
+#include "fp_activation.h"
 #include "fp_registration_data.h"
 #include "fp_keys.h"
 #include "fp_crypto.h"
@@ -56,10 +58,13 @@ struct fp_key_gen_account_key_check_context {
 };
 
 static uint8_t key_gen_failure_cnt;
-static struct k_work_delayable key_gen_failure_cnt_reset;
+static void key_gen_failure_cnt_reset_fn(struct k_work *w);
+K_WORK_DELAYABLE_DEFINE(key_gen_failure_cnt_reset, key_gen_failure_cnt_reset_fn);
 
 static bool user_pairing_mode = true;
 static struct fp_procedure fp_procedures[CONFIG_BT_MAX_CONN];
+
+static bool is_enabled;
 
 
 void bt_fast_pair_set_pairing_mode(bool pairing_mode)
@@ -89,6 +94,10 @@ static void invalidate_key(struct fp_procedure *proc)
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
+	if (!bt_fast_pair_is_ready()) {
+		return;
+	}
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
 	if (!err) {
@@ -98,6 +107,10 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
+	if (!bt_fast_pair_is_ready()) {
+		return;
+	}
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
 	invalidate_key(proc);
@@ -123,6 +136,8 @@ static inline bool is_key_generated(enum fp_state state)
 
 int fp_keys_encrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
@@ -139,6 +154,8 @@ int fp_keys_encrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 
 int fp_keys_decrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
@@ -156,6 +173,8 @@ int fp_keys_decrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 int fp_keys_additional_data_encode(const struct bt_conn *conn, uint8_t *out, const uint8_t *data,
 				   size_t data_len, const uint8_t *nonce)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
@@ -173,6 +192,8 @@ int fp_keys_additional_data_encode(const struct bt_conn *conn, uint8_t *out, con
 int fp_keys_additional_data_decode(const struct bt_conn *conn, uint8_t *out_data,
 				   const uint8_t *in_packet, size_t packet_len)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
@@ -260,6 +281,8 @@ static int key_gen_account_key(const struct bt_conn *conn,
 
 int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
@@ -318,6 +341,8 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 
 int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_account_key *account_key)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
@@ -352,6 +377,8 @@ int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_accoun
 
 int fp_keys_store_personalized_name(const struct bt_conn *conn, const char *pn)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
@@ -376,6 +403,8 @@ int fp_keys_store_personalized_name(const struct bt_conn *conn, const char *pn)
 
 int fp_keys_wait_for_personalized_name(const struct bt_conn *conn)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
 	/* The function is meant to be used only if we expect a Personalized Name write after
@@ -400,6 +429,8 @@ int fp_keys_wait_for_personalized_name(const struct bt_conn *conn)
 
 void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
 	if (is_key_generated(proc->state)) {
@@ -423,6 +454,8 @@ void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated)
 
 void fp_keys_drop_key(const struct bt_conn *conn)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	invalidate_key(&fp_procedures[bt_conn_index(conn)]);
 }
 
@@ -434,6 +467,8 @@ static void key_gen_failure_cnt_reset_fn(struct k_work *w)
 
 static void timeout_fn(struct k_work *w)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	struct fp_procedure *proc = CONTAINER_OF(w, struct fp_procedure, timeout.work);
 
 	__ASSERT_NO_MSG(is_key_generated(proc->state));
@@ -444,18 +479,54 @@ static void timeout_fn(struct k_work *w)
 
 static int fp_keys_init(void)
 {
+	if (is_enabled) {
+		LOG_WRN("fp_keys module already initialized");
+		return 0;
+	}
+
+	static bool timeout_works_initialized;
 
 	for (size_t i = 0; i < ARRAY_SIZE(fp_procedures); i++) {
 		struct fp_procedure *proc = &fp_procedures[i];
 
 		proc->state = FP_STATE_INITIAL;
 		memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
-		k_work_init_delayable(&proc->timeout, timeout_fn);
+		if (!timeout_works_initialized) {
+			k_work_init_delayable(&proc->timeout, timeout_fn);
+		}
+		proc->wait_for_mask = 0;
+		proc->pairing_mode = false;
 	}
 
-	k_work_init_delayable(&key_gen_failure_cnt_reset, key_gen_failure_cnt_reset_fn);
+	if (!timeout_works_initialized) {
+		timeout_works_initialized = true;
+	}
+
+	is_enabled = true;
 
 	return 0;
 }
 
-SYS_INIT(fp_keys_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+static int fp_keys_uninit(void)
+{
+	if (!is_enabled) {
+		LOG_WRN("fp_auth module already uninitialized");
+		return 0;
+	}
+
+	is_enabled = false;
+
+	for (size_t i = 0; i < ARRAY_SIZE(fp_procedures); i++) {
+		struct fp_procedure *proc = &fp_procedures[i];
+		int ret;
+
+		ret = k_work_cancel_delayable(&proc->timeout);
+		__ASSERT_NO_MSG(ret == 0);
+		ARG_UNUSED(ret);
+	}
+
+	return 0;
+}
+
+FP_ACTIVATION_MODULE_REGISTER(fp_keys, FP_ACTIVATION_INIT_PRIORITY_DEFAULT, fp_keys_init,
+			      fp_keys_uninit);

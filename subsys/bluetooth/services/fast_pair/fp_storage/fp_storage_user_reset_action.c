@@ -21,4 +21,5 @@ __weak void bt_fast_pair_factory_reset_user_action_prepare(void)
 
 FP_STORAGE_MANAGER_MODULE_REGISTER(bt_fast_pair_factory_reset_user_action,
 				   bt_fast_pair_factory_reset_user_action_perform,
-				   bt_fast_pair_factory_reset_user_action_prepare);
+				   bt_fast_pair_factory_reset_user_action_prepare,
+				   NULL, NULL);

@@ -261,6 +261,13 @@ static ssize_t read_model_id(struct bt_conn *conn,
 	uint8_t model_id[FP_REG_DATA_MODEL_ID_LEN];
 	ssize_t res;
 
+	if (!bt_fast_pair_is_ready()) {
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		LOG_INF("Model ID read: res=%d conn=%p, "
+			"Return error because Fast Pair is not enabled",  res, (void *)conn);
+		return res;
+	}
+
 	if (!fp_reg_data_get_model_id(model_id, sizeof(model_id))) {
 		res = bt_gatt_attr_read(conn, attr, buf, len, offset, model_id, sizeof(model_id));
 	} else {
@@ -504,6 +511,13 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 
 	NET_BUF_SIMPLE_DEFINE(rsp, FP_CRYPTO_AES128_BLOCK_LEN);
 
+	if (!bt_fast_pair_is_ready()) {
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		LOG_INF("Key-based Pairing write: res=%d conn=%p, "
+			"Return error because Fast Pair is not enabled", res, (void *)conn);
+		return res;
+	}
+
 	if (offset != 0) {
 		LOG_WRN("Invalid offset: off=%" PRIu16 " (Key-based Pairing)", offset);
 		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
@@ -621,6 +635,13 @@ static ssize_t write_passkey(struct bt_conn *conn,
 	NET_BUF_SIMPLE_DEFINE(req, FP_CRYPTO_AES128_BLOCK_LEN);
 	NET_BUF_SIMPLE_DEFINE(rsp, FP_CRYPTO_AES128_BLOCK_LEN);
 
+	if (!bt_fast_pair_is_ready()) {
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		LOG_INF("Passkey write: res=%d conn=%p, "
+			"Return error because Fast Pair is not enabled", res, (void *)conn);
+		return res;
+	}
+
 	if (offset != 0) {
 		LOG_WRN("Invalid offset: off=%" PRIu16 " (Passkey)", offset);
 		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
@@ -679,6 +700,13 @@ static ssize_t write_account_key(struct bt_conn *conn,
 	int err = 0;
 	ssize_t res = len;
 
+	if (!bt_fast_pair_is_ready()) {
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		LOG_INF("Account Key write: res=%d conn=%p, "
+			"Return error because Fast Pair is not enabled", res, (void *)conn);
+		return res;
+	}
+
 	if (offset != 0) {
 		LOG_WRN("Invalid offset: off=%" PRIu16 " (Account Key)", offset);
 		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
@@ -728,6 +756,13 @@ static ssize_t write_additional_data(struct bt_conn *conn,
 	uint8_t decoded_data[data_len + sizeof(char)];
 	int err = 0;
 	ssize_t res = len;
+
+	if (!bt_fast_pair_is_ready()) {
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		LOG_INF("Additional Data write: res=%d conn=%p, "
+			"Return error because Fast Pair is not enabled", res, (void *)conn);
+		return res;
+	}
 
 	if (offset != 0) {
 		LOG_WRN("Invalid offset: off=%" PRIu16 " (Additional Data)", offset);

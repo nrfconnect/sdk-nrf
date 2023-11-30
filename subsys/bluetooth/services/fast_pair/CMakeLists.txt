@@ -18,7 +18,10 @@ zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_GATT_SERVICE	   fp_gatt_service
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_KEYS		   fp_keys.c)
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_REGISTRATION_DATA fp_registration_data.c)
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_BATTERY	   fp_battery.c)
-zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_FACTORY_RESET	   fp_factory_reset.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_STORAGE_INTEGRATION fp_storage_integration.c)
+
+zephyr_linker_sources_ifdef(CONFIG_BT_FAST_PAIR_ACTIVATION SECTIONS fp_activation.ld)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_ACTIVATION	    fp_activation.c)
 
 if(CONFIG_BT_FAST_PAIR_CRYPTO)
   add_subdirectory(fp_crypto)

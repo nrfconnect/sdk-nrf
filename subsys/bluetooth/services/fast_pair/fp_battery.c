@@ -50,5 +50,7 @@ int bt_fast_pair_battery_set(enum bt_fast_pair_battery_comp battery_comp,
 
 struct bt_fast_pair_battery_data fp_battery_get_battery_data(void)
 {
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
 	return fp_battery_data;
 }
