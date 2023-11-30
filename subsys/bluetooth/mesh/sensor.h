@@ -151,8 +151,8 @@ typedef struct bt_mesh_sensor_value sensor_value_type;
 		  (_value)->val2 <= (_end)->val2)))
 #else
 #define SENSOR_VALUE_IN_RANGE(_value, _start, _end) (                          \
-		(_value)->format->compare((_value), (_start)) >= 0 &&          \
-		(_value)->format->compare((_end), (_value)) >= 0)
+		(_value)->format->cb->compare((_value), (_start)) >= 0 &&      \
+		(_value)->format->cb->compare((_end), (_value)) >= 0)
 
 /** @brief Check if a value change breaks the delta threshold.
  *

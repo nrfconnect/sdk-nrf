@@ -51,12 +51,12 @@ sensor_cadence(const struct bt_mesh_sensor_threshold *threshold,
 	const struct bt_mesh_sensor_value *high, *low;
 	const struct bt_mesh_sensor_format *fmt = curr->format;
 
-	if (fmt->compare(&threshold->range.high,
-			 &threshold->range.low) >= 0) {
+	if (fmt->cb->compare(&threshold->range.high,
+			     &threshold->range.low) >= 0) {
 		low = &threshold->range.low;
 		high = &threshold->range.high;
-	} else if (fmt->compare(&threshold->range.low,
-				&threshold->range.high) >= 0) {
+	} else if (fmt->cb->compare(&threshold->range.low,
+				    &threshold->range.high) >= 0) {
 		low = &threshold->range.high;
 		high = &threshold->range.low;
 	} else {
@@ -118,8 +118,8 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 				    const struct bt_mesh_sensor_value *curr)
 {
-	return curr->format->delta_check(curr, &sensor->state.prev,
-					 &sensor->state.threshold.deltas);
+	return curr->format->cb->delta_check(curr, &sensor->state.prev,
+					     &sensor->state.threshold.deltas);
 }
 #endif /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 
@@ -688,8 +688,8 @@ int sensor_cadence_decode(struct net_buf_simple *buf,
 		threshold->range.high = threshold->range.low;
 		threshold->range.low = temp;
 #else
-	if (threshold->range.high.format->compare(&threshold->range.low,
-						  &threshold->range.high) > 0) {
+	if (threshold->range.high.format->cb->compare(&threshold->range.low,
+						      &threshold->range.high) > 0) {
 		uint8_t temp[CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX];
 
 		memcpy(temp, &threshold->range.high.raw,
@@ -763,8 +763,153 @@ const char *bt_mesh_sensor_ch_str(const struct bt_mesh_sensor_value *ch)
 	static char str[BT_MESH_SENSOR_CH_STR_LEN];
 
 	if (bt_mesh_sensor_ch_to_str(ch, str, BT_MESH_SENSOR_CH_STR_LEN) <= 0) {
-		strcpy(str, "Unknown format");
+		strcpy(str, "<unprintable value>");
 	}
 
 	return str;
 }
+
+#ifndef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
+int bt_mesh_sensor_ch_to_str(const struct bt_mesh_sensor_value *ch, char *str,
+			     size_t len)
+{
+	enum bt_mesh_sensor_value_status status;
+	float float_val;
+
+	if (ch->format->cb->to_string) {
+		return ch->format->cb->to_string(ch, str, len);
+	}
+
+	status = ch->format->cb->to_float(ch, &float_val);
+
+	switch (status) {
+	case BT_MESH_SENSOR_VALUE_NUMBER:
+		return snprintk(str, len, "%g", float_val);
+	case BT_MESH_SENSOR_VALUE_MAX_OR_GREATER:
+		return snprintk(str, len, ">=%g", float_val);
+	case BT_MESH_SENSOR_VALUE_MIN_OR_LESS:
+		return snprintk(str, len, "<=%g", float_val);
+	case BT_MESH_SENSOR_VALUE_UNKNOWN:
+		return snprintk(str, len, "%s", "<value is not known>");
+	case BT_MESH_SENSOR_VALUE_INVALID:
+		return snprintk(str, len, "%s", "<value is invalid>");
+	case BT_MESH_SENSOR_VALUE_TOTAL_DEVICE_LIFE:
+		return snprintk(str, len, "%s", "<total life of device>");
+	default:
+		return snprintk(str, len, "%s", "<unprintable value>");
+	}
+}
+
+int bt_mesh_sensor_value_compare(const struct bt_mesh_sensor_value *a,
+				 const struct bt_mesh_sensor_value *b)
+{
+	if (a->format == b->format) {
+		return a->format->cb->compare(a, b);
+	}
+
+	/* Fall back to comparing floats. */
+	float a_float, b_float;
+	enum bt_mesh_sensor_value_status status;
+
+	status = bt_mesh_sensor_value_to_float(a, &a_float);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return -1;
+	}
+
+	status = bt_mesh_sensor_value_to_float(b, &b_float);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		return -1;
+	}
+
+	return a_float == b_float ? 0 : (a_float > b_float ? 1 : -1);
+}
+
+enum bt_mesh_sensor_value_status
+bt_mesh_sensor_value_to_float(const struct bt_mesh_sensor_value *sensor_val,
+			      float *val)
+{
+	return sensor_val->format->cb->to_float(sensor_val, val);
+}
+
+int bt_mesh_sensor_value_from_float(const struct bt_mesh_sensor_format *format,
+				    float val,
+				    struct bt_mesh_sensor_value *sensor_val)
+{
+	return format->cb->from_float(format, val, sensor_val);
+}
+
+enum bt_mesh_sensor_value_status
+bt_mesh_sensor_value_to_micro(
+	const struct bt_mesh_sensor_value *sensor_val,
+	int64_t *val)
+{
+	if (sensor_val->format->cb->to_micro) {
+		return sensor_val->format->cb->to_micro(sensor_val, val);
+	}
+
+	enum bt_mesh_sensor_value_status status;
+	float f;
+
+	status = sensor_val->format->cb->to_float(sensor_val, &f);
+	if (bt_mesh_sensor_value_status_is_numeric(status)) {
+		*val = f * 1000000.0f;
+	}
+	return status;
+}
+
+int bt_mesh_sensor_value_from_micro(
+	const struct bt_mesh_sensor_format *format,
+	int64_t val,
+	struct bt_mesh_sensor_value *sensor_val)
+{
+	if (sensor_val->format->cb->from_micro) {
+		return format->cb->from_micro(format, val, sensor_val);
+	}
+
+	return format->cb->from_float(format, val / 1000000.0f, sensor_val);
+}
+
+enum bt_mesh_sensor_value_status
+bt_mesh_sensor_value_to_sensor_value(
+	const struct bt_mesh_sensor_value *sensor_val,
+	struct sensor_value *val)
+{
+	enum bt_mesh_sensor_value_status status;
+	int64_t micro;
+
+	status = bt_mesh_sensor_value_to_micro(sensor_val, &micro);
+	if (bt_mesh_sensor_value_status_is_numeric(status)) {
+		val->val1 = micro / 1000000;
+		val->val2 = micro % 1000000;
+	}
+	return status;
+}
+
+int bt_mesh_sensor_value_from_sensor_value(
+	const struct bt_mesh_sensor_format *format,
+	const struct sensor_value *val,
+	struct bt_mesh_sensor_value *sensor_val)
+{
+	return bt_mesh_sensor_value_from_micro(
+		format, sensor_value_to_micro(val), sensor_val);
+}
+
+enum bt_mesh_sensor_value_status
+bt_mesh_sensor_value_get_status(const struct bt_mesh_sensor_value *sensor_val)
+{
+	return sensor_val->format->cb->to_float(sensor_val, NULL);
+}
+
+int bt_mesh_sensor_value_from_special_status(
+	const struct bt_mesh_sensor_format *format,
+	enum bt_mesh_sensor_value_status status,
+	struct bt_mesh_sensor_value *sensor_val)
+{
+	if (status == BT_MESH_SENSOR_VALUE_NUMBER ||
+	    status == BT_MESH_SENSOR_VALUE_CONVERSION_ERROR ||
+	    !format->cb->from_special_status) {
+		return -EINVAL;
+	}
+	return format->cb->from_special_status(format, status, sensor_val);
+}
+#endif /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */

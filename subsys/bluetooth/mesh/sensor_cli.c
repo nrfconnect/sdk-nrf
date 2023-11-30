@@ -243,7 +243,7 @@ yield_ack:
 			(rsp->col->start.val1 != entry.column.start.val1 ||
 			 rsp->col->start.val2 != entry.column.start.val2)) {
 #else
-			col_format->compare(rsp->col_start, &entry.column.start) != 0) {
+			col_format->cb->compare(rsp->col_start, &entry.column.start) != 0) {
 #endif
 			return 0;
 		}
