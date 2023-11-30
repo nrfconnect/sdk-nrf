@@ -322,7 +322,7 @@ static int uart_init(void)
 		return err;
 	}
 
-	err = uart_rx_enable(uart, rx->data, sizeof(rx->data), 50);
+	err = uart_rx_enable(uart, rx->data, sizeof(rx->data), UART_WAIT_FOR_RX);
 	if (err) {
 		LOG_ERR("Cannot enable uart reception (err: %d)", err);
 		/* Free the rx buffer only because the tx buffer will be handled in the callback */
