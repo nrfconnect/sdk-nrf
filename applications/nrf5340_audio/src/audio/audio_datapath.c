@@ -79,8 +79,8 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define DRIFT_ERR_THRESH_UNLOCK 32
 
 /* 3000 us to allow BLE transmission and (host -> HCI -> controller) */
-#define JUST_IN_TIME_US		  (CONFIG_AUDIO_FRAME_DURATION_US - 3000)
-#define JUST_IN_TIME_THRESHOLD_US 1500
+#define JUST_IN_TIME_US		  (CONFIG_AUDIO_FRAME_DURATION_US - 4000)
+#define JUST_IN_TIME_THRESHOLD_US 2000
 
 /* How often to print underrun warning */
 #define UNDERRUN_LOG_INTERVAL_BLKS 5000
@@ -270,6 +270,13 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 		}
 
 		int32_t err_us = err_us_calculate(ctrl_blk.previous_sdu_ref_us, frame_start_ts);
+
+		LOG_DBG("Adjusting: %d", err_us);
+
+		/* TODO: Figure out why err_us jumps from positive to negative suddenly */
+		if (err_us < 0 && (CONFIG_AUDIO_DEV != GATEWAY)) {
+			return;
+		}
 
 		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
 
@@ -770,8 +777,13 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us)
 		LOG_DBG("Time from last anchor: %d", diff);
 	}
 
-	if (diff < JUST_IN_TIME_US - JUST_IN_TIME_THRESHOLD_US ||
-	    diff > JUST_IN_TIME_US + JUST_IN_TIME_THRESHOLD_US) {
+	if (diff > CONFIG_AUDIO_FRAME_DURATION_US && !IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+		return;
+	}
+
+	if ((diff < (JUST_IN_TIME_US - JUST_IN_TIME_THRESHOLD_US)) ||
+	    (diff > (JUST_IN_TIME_US + JUST_IN_TIME_THRESHOLD_US))) {
+		LOG_DBG("Adjusting, diff: %d", diff);
 		ret = audio_system_fifo_rx_block_drop();
 		if (ret) {
 			LOG_WRN("Not able to drop FIFO RX block");
@@ -802,13 +814,15 @@ static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 		sdu_ref_us = msg->timestamp;
 		adjust = msg->adjust;
 
+		if (!IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
+			sdu_ref_us -= CONFIG_AUDIO_FRAME_DURATION_US;
+		}
+
 		if (ctrl_blk.stream_started) {
 			ctrl_blk.previous_sdu_ref_us = sdu_ref_us;
 
-			if (adjust) {
-				if (IS_ENABLED(CONFIG_BT_LL_ACS_NRF53)) {
-					audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
-				}
+			if (adjust && sdu_ref_us != 0) {
+				audio_datapath_just_in_time_check_and_adjust(sdu_ref_us);
 			}
 		} else {
 			LOG_WRN("Stream not startet - Can not update sdu_ref_us");
