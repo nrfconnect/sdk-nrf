@@ -230,7 +230,7 @@ column_get(const struct bt_mesh_sensor_series *series,
 		if (series->columns[i].start.val1 == val->val1 &&
 		    series->columns[i].start.val2 == val->val2) {
 #else
-		if (val->format->compare(&series->columns[i].start, val) == 0) {
+		if (val->format->cb->compare(&series->columns[i].start, val) == 0) {
 #endif
 			return &series->columns[i];
 		}

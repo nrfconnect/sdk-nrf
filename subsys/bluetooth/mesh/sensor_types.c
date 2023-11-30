@@ -12,6 +12,11 @@
 #include <bluetooth/mesh/properties.h>
 #include <bluetooth/mesh/sensor_types.h>
 
+/* Constants: */
+
+/* logf(1.1f) */
+#define LOG_1_1 (0.095310203f)
+
 /* Various shorthand macros to improve readability and maintainability of this
  * file:
  */
@@ -101,7 +106,7 @@ UNIT(unitless) = { "Unitless" };
 #ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 #define SCALAR_CALLBACKS .encode = scalar_encode, .decode = scalar_decode
 #else
-#define SCALAR_CALLBACKS .compare = scalar_compare, .delta_check = scalar_delta_check
+#define SCALAR_CALLBACKS .cb = &scalar_cb
 #endif
 
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
@@ -163,22 +168,34 @@ UNIT(unitless) = { "Unitless" };
 	}
 #endif
 
+#define MUL_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
+				 ((_val) / (_repr)->value) :                   \
+				 ((_val) * (_repr)->value))
+
+#define DIV_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
+				 ((_val) * (_repr)->value) :                   \
+				 ((_val) / (_repr)->value))
+
 enum scalar_repr_flags {
 	UNSIGNED = 0,
 	SIGNED = BIT(1),
 	DIVIDE = BIT(2),
-	/** The highest encoded value represents "undefined" */
+	/** The type maximum represents "value is not known" */
 	HAS_UNDEFINED = BIT(3),
-	/**
-	 * The highest encoded value represents
-	 * the maximum value or higher.
-	 */
+	/** The maximum value represents the maximum value or higher. */
 	HAS_HIGHER_THAN = (BIT(4)),
-	/** The second highest encoded value represents "value is invalid" */
+	/** The highest encoded value which doesn't represent "value is not
+	 *  known" represents "value is invalid".
+	 */
 	HAS_INVALID = (BIT(5)),
 	HAS_MAX = BIT(6),
 	HAS_MIN = BIT(7),
+	/** The type minimum represents "value is not known" */
 	HAS_UNDEFINED_MIN = BIT(8),
+	/** The type maximum minus 1 represents "value is not known" */
+	HAS_UNDEFINED_MAX_MINUS_1 = BIT(9),
+	/** The minimum value represents the minimum value or lower. */
+	HAS_LOWER_THAN = BIT(10),
 };
 
 struct scalar_repr {
@@ -187,6 +204,56 @@ struct scalar_repr {
 	uint32_t max; /**< Highest encoded value */
 	int64_t value;
 };
+
+static uint32_t scalar_type_max(const struct bt_mesh_sensor_format *format)
+{
+	const struct scalar_repr *repr = format->user_data;
+
+	return (repr->flags & SIGNED) ?
+		BIT64(8 * format->size - 1) - 1 :
+		BIT64(8 * format->size) - 1;
+}
+
+static int32_t scalar_type_min(const struct bt_mesh_sensor_format *format)
+{
+	const struct scalar_repr *repr = format->user_data;
+
+	return (repr->flags & SIGNED) ? -BIT64(8 * format->size - 1) : 0;
+}
+
+static int64_t scalar_max(const struct bt_mesh_sensor_format *format)
+{
+	const struct scalar_repr *repr = format->user_data;
+
+	if (repr->flags & HAS_MAX) {
+		return repr->max;
+	}
+
+	uint32_t max_value = scalar_type_max(format);
+
+	if (repr->flags & HAS_INVALID) {
+		max_value -= 2;
+	} else if (repr->flags & HAS_UNDEFINED) {
+		max_value -= 1;
+	}
+
+	return max_value;
+}
+
+static int32_t scalar_min(const struct bt_mesh_sensor_format *format)
+{
+	const struct scalar_repr *repr = format->user_data;
+
+	if (repr->flags & HAS_MIN) {
+		return repr->min;
+	}
+
+	if (repr->flags & HAS_UNDEFINED_MIN) {
+		return scalar_type_min(format) + 1;
+	}
+
+	return scalar_type_min(format);
+}
 
 static int scalar_decode_raw(const struct bt_mesh_sensor_format *format,
 			     const uint8_t *src, int64_t *raw)
@@ -225,60 +292,30 @@ static int scalar_decode_raw(const struct bt_mesh_sensor_format *format,
 	return 0;
 }
 
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-static int64_t mul_scalar(int64_t val, const struct scalar_repr *repr)
+static int scalar_encode_raw(const struct bt_mesh_sensor_format *format,
+			     int64_t raw, uint8_t *dst)
 {
-	return (repr->flags & DIVIDE) ? (val / repr->value) :
-	       (val * repr->value);
-}
-
-static int64_t div_scalar(int64_t val, const struct scalar_repr *repr)
-{
-	return (repr->flags & DIVIDE) ? (val * repr->value) :
-	       (val / repr->value);
-}
-
-static int64_t scalar_max(const struct bt_mesh_sensor_format *format)
-{
-	const struct scalar_repr *repr = format->user_data;
-
-	if (repr->flags & HAS_MAX) {
-		return repr->max;
-	}
-
-	int64_t max_value = BIT64(8 * format->size) - 1;
-
-	if (repr->flags & SIGNED) {
-		max_value = BIT64(8 * format->size - 1) - 1;
-	}
-
-	if (repr->flags & HAS_INVALID) {
-		max_value -= 2;
-	} else if (repr->flags & HAS_UNDEFINED) {
-		max_value -= 1;
-	}
-
-	return max_value;
-}
-
-static int32_t scalar_min(const struct bt_mesh_sensor_format *format)
-{
-	const struct scalar_repr *repr = format->user_data;
-
-	if (repr->flags & HAS_MIN) {
-		return repr->min;
-	}
-
-	if (repr->flags & SIGNED) {
-		if (repr->flags & HAS_UNDEFINED_MIN) {
-			return -BIT64(8 * format->size - 1) + 1;
-		}
-		return -BIT64(8 * format->size - 1);
+	switch (format->size) {
+	case 1:
+		*dst = raw;
+		break;
+	case 2:
+		sys_put_le16(raw, dst);
+		break;
+	case 3:
+		sys_put_le24(raw, dst);
+		break;
+	case 4:
+		sys_put_le32(raw, dst);
+		break;
+	default:
+		return -EIO;
 	}
 
 	return 0;
 }
 
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 static int scalar_encode(const struct bt_mesh_sensor_format *format,
 			 const struct sensor_value *val,
 			 struct net_buf_simple *buf)
@@ -289,8 +326,8 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	int64_t raw = div_scalar(val->val1, repr) +
-		    div_scalar(val->val2, repr) / 1000000LL;
+	int64_t raw = DIV_SCALAR(val->val1, repr) +
+		    DIV_SCALAR(val->val2, repr) / 1000000LL;
 
 	int64_t max_value = scalar_max(format);
 	int32_t min_value = scalar_min(format);
@@ -315,24 +352,7 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 		}
 	}
 
-	switch (format->size) {
-	case 1:
-		net_buf_simple_add_u8(buf, raw);
-		break;
-	case 2:
-		net_buf_simple_add_le16(buf, raw);
-		break;
-	case 3:
-		net_buf_simple_add_le24(buf, raw);
-		break;
-	case 4:
-		net_buf_simple_add_le32(buf, raw);
-		break;
-	default:
-		return -EIO;
-	}
-
-	return 0;
+	return scalar_encode_raw(format, raw, net_buf_simple_add(buf, format->size));
 }
 
 static int scalar_decode(const struct bt_mesh_sensor_format *format,
@@ -380,7 +400,7 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 		return 0;
 	}
 
-	int64_t million = mul_scalar(raw * 1000000LL, repr);
+	int64_t million = MUL_SCALAR(raw * 1000000LL, repr);
 
 	val->val1 = million / 1000000LL;
 	val->val2 = million % 1000000LL;
@@ -521,13 +541,111 @@ static bool percentage_delta_check(const struct bt_mesh_sensor_value *delta,
 	return (diff / prev) > (percentage_float);
 }
 
+static bool scalar_unknown_raw(const struct bt_mesh_sensor_format *format,
+			       int64_t *val)
+{
+	const struct scalar_repr *repr = format->user_data;
+
+	if (repr->flags & HAS_UNDEFINED) {
+		*val = scalar_type_max(format);
+	} else if (repr->flags & HAS_UNDEFINED_MIN) {
+		*val = scalar_type_min(format);
+	} else if (repr->flags & HAS_UNDEFINED_MAX_MINUS_1) {
+		*val = scalar_type_max(format) - 1;
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+static bool scalar_invalid_raw(const struct bt_mesh_sensor_format *format,
+			       int64_t *val)
+{
+	const struct scalar_repr *repr = format->user_data;
+
+	if (repr->flags & HAS_INVALID) {
+		*val = scalar_type_max(format) - 1;
+		if (repr->flags & HAS_UNDEFINED_MAX_MINUS_1) {
+			*val += 1;
+		}
+		return true;
+	}
+
+	return false;
+}
+
+static enum bt_mesh_sensor_value_status
+scalar_to_raw(const struct bt_mesh_sensor_value *sensor_val, int64_t *val)
+{
+	if (scalar_decode_raw(sensor_val->format, sensor_val->raw, val) != 0) {
+		return BT_MESH_SENSOR_VALUE_CONVERSION_ERROR;
+	}
+
+	const struct scalar_repr *repr = sensor_val->format->user_data;
+	int64_t max = scalar_max(sensor_val->format);
+	int32_t min = scalar_min(sensor_val->format);
+
+	if (*val == max && (repr->flags & HAS_HIGHER_THAN)) {
+		return BT_MESH_SENSOR_VALUE_MAX_OR_GREATER;
+	}
+
+	if (*val == min && (repr->flags & HAS_LOWER_THAN)) {
+		return BT_MESH_SENSOR_VALUE_MIN_OR_LESS;
+	}
+
+	if (IN_RANGE(*val, min, max)) {
+		return BT_MESH_SENSOR_VALUE_NUMBER;
+	}
+
+	int64_t raw_nonnumeric;
+
+	if (scalar_unknown_raw(sensor_val->format, &raw_nonnumeric) &&
+	    *val == raw_nonnumeric) {
+		return BT_MESH_SENSOR_VALUE_UNKNOWN;
+	}
+
+	if (scalar_invalid_raw(sensor_val->format, &raw_nonnumeric) &&
+	    *val == raw_nonnumeric) {
+		return BT_MESH_SENSOR_VALUE_INVALID;
+	}
+
+	return BT_MESH_SENSOR_VALUE_CONVERSION_ERROR;
+}
+
+static int scalar_from_raw(const struct bt_mesh_sensor_format *format,
+			   int64_t val,
+			   struct bt_mesh_sensor_value *sensor_val)
+{
+	int64_t max = scalar_max(format);
+	int32_t min = scalar_min(format);
+	int64_t clamped = CLAMP(val, min, max);
+
+	if (scalar_encode_raw(format, clamped, sensor_val->raw) != 0) {
+		return -EIO;
+	}
+
+	sensor_val->format = format;
+
+	return clamped != val ? -ERANGE : 0;
+}
+
 static int scalar_compare(const struct bt_mesh_sensor_value *op1,
 			  const struct bt_mesh_sensor_value *op2)
 {
+	enum bt_mesh_sensor_value_status status;
 	int64_t op1_raw, op2_raw;
 
-	(void)scalar_decode_raw(op1->format, op1->raw, &op1_raw);
-	(void)scalar_decode_raw(op2->format, op2->raw, &op2_raw);
+	status = scalar_to_raw(op1, &op1_raw);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		/* Not comparable, return -1. */
+		return -1;
+	}
+	status = scalar_to_raw(op2, &op2_raw);
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
+		/* Not comparable, return -1. */
+		return -1;
+	}
 
 	if (op1_raw > op2_raw) {
 		return 1;
@@ -542,14 +660,18 @@ static bool scalar_delta_check(const struct bt_mesh_sensor_value *current,
 			       const struct bt_mesh_sensor_value *previous,
 			       const struct bt_mesh_sensor_deltas *deltas)
 {
-	const struct bt_mesh_sensor_value *delta;
 	int64_t current_raw, previous_raw, delta_raw;
+	const struct bt_mesh_sensor_value *delta;
+	enum bt_mesh_sensor_value_status curr_status, prev_status;
 
-	if (scalar_decode_raw(current->format, current->raw, &current_raw) != 0) {
-		return false;
-	}
-	if (scalar_decode_raw(previous->format, previous->raw, &previous_raw) != 0) {
-		return false;
+	curr_status = scalar_to_raw(current, &current_raw);
+	prev_status = scalar_to_raw(previous, &previous_raw);
+
+	if (!bt_mesh_sensor_value_status_is_numeric(curr_status) ||
+	    !bt_mesh_sensor_value_status_is_numeric(prev_status)) {
+		/* Always return true for changes involving non-numeric values.
+		 */
+		return curr_status != prev_status;
 	}
 
 	int64_t diff = current_raw - previous_raw;
@@ -565,12 +687,112 @@ static bool scalar_delta_check(const struct bt_mesh_sensor_value *current,
 		return percentage_delta_check(delta, diff, previous_raw);
 	}
 
-	if (scalar_decode_raw(delta->format, delta->raw, &delta_raw) != 0) {
+	enum bt_mesh_sensor_value_status status = scalar_to_raw(delta, &delta_raw);
+
+	if (!bt_mesh_sensor_value_status_is_numeric(status)) {
 		return false;
 	}
 
 	return diff > delta_raw;
 }
+
+static enum bt_mesh_sensor_value_status
+scalar_to_float(const struct bt_mesh_sensor_value *sensor_val, float *val)
+{
+	int64_t raw;
+	enum bt_mesh_sensor_value_status status = scalar_to_raw(sensor_val, &raw);
+
+	if (val && bt_mesh_sensor_value_status_is_numeric(status)) {
+		const struct scalar_repr *repr = sensor_val->format->user_data;
+
+		*val = MUL_SCALAR((float)raw, repr);
+	}
+
+	return status;
+}
+
+static int scalar_from_float(const struct bt_mesh_sensor_format *format,
+			     float val, struct bt_mesh_sensor_value *sensor_val)
+{
+	const struct scalar_repr *repr = sensor_val->format->user_data;
+	float raw = DIV_SCALAR(val, repr);
+
+	return scalar_from_raw(format, CLAMP(raw, INT64_MIN, INT64_MAX), sensor_val);
+}
+
+static enum bt_mesh_sensor_value_status
+scalar_to_micro(const struct bt_mesh_sensor_value *sensor_val, int64_t *val)
+{
+	int64_t raw;
+	enum bt_mesh_sensor_value_status status = scalar_to_raw(sensor_val, &raw);
+
+	if (val && bt_mesh_sensor_value_status_is_numeric(status)) {
+		const struct scalar_repr *repr = sensor_val->format->user_data;
+
+		return MUL_SCALAR(raw * 1000000LL, repr);
+	}
+
+	return status;
+}
+
+static int scalar_from_micro(const struct bt_mesh_sensor_format *format,
+			     int64_t val,
+			     struct bt_mesh_sensor_value *sensor_val)
+{
+	const struct scalar_repr *repr = sensor_val->format->user_data;
+	int64_t raw = DIV_SCALAR(val / 1000000, repr) +
+		      DIV_SCALAR(val % 1000000, repr) / 1000000LL;
+
+	return scalar_from_raw(format, raw, sensor_val);
+}
+
+static int scalar_from_special_status(
+	const struct bt_mesh_sensor_format *format,
+	enum bt_mesh_sensor_value_status status,
+	struct bt_mesh_sensor_value *sensor_val)
+{
+	const struct scalar_repr *repr = sensor_val->format->user_data;
+	int64_t raw;
+
+	switch (status) {
+	case BT_MESH_SENSOR_VALUE_UNKNOWN:
+		if (!scalar_unknown_raw(format, &raw)) {
+			return -ERANGE;
+		}
+		break;
+	case BT_MESH_SENSOR_VALUE_INVALID:
+		if (!scalar_invalid_raw(format, &raw)) {
+			return -ERANGE;
+		}
+		break;
+	case BT_MESH_SENSOR_VALUE_MAX_OR_GREATER:
+		if (!(repr->flags & HAS_HIGHER_THAN)) {
+			return -ERANGE;
+		}
+		raw = scalar_max(format);
+		break;
+	case BT_MESH_SENSOR_VALUE_MIN_OR_LESS:
+		if (!(repr->flags & HAS_LOWER_THAN)) {
+			return -ERANGE;
+		}
+		raw = scalar_min(format);
+		break;
+	default:
+		return -ERANGE;
+	}
+
+	return scalar_from_raw(format, raw, sensor_val);
+}
+
+static struct bt_mesh_sensor_format_cb scalar_cb = {
+	.compare = scalar_compare,
+	.delta_check = scalar_delta_check,
+	.to_float = scalar_to_float,
+	.from_float = scalar_from_float,
+	.to_micro = scalar_to_micro,
+	.from_micro = scalar_from_micro,
+	.from_special_status = scalar_from_special_status
+};
 
 static int boolean_compare(const struct bt_mesh_sensor_value *op1,
 			   const struct bt_mesh_sensor_value *op2)
@@ -609,6 +831,71 @@ static bool boolean_delta_check(const struct bt_mesh_sensor_value *current,
 
 	return diff > *(delta->raw);
 }
+
+static enum bt_mesh_sensor_value_status
+boolean_to_float(const struct bt_mesh_sensor_value *sensor_val, float *val)
+{
+	if (val) {
+		*val = !!*(sensor_val->raw);
+	}
+	return BT_MESH_SENSOR_VALUE_NUMBER;
+}
+
+static int boolean_from_float(const struct bt_mesh_sensor_format *format,
+			      float val, struct bt_mesh_sensor_value *sensor_val)
+{
+	sensor_val->format = format;
+	*(sensor_val->raw) = !!val;
+
+	if (val > 1.0f || val < 0.0f) {
+		return -ERANGE;
+	}
+
+	return 0;
+}
+
+static enum bt_mesh_sensor_value_status
+boolean_to_micro(const struct bt_mesh_sensor_value *sensor_val,
+		 int64_t *val)
+{
+	if (val) {
+		*val = (!!*(sensor_val->raw)) ? 1000000 : 0;
+	}
+	return BT_MESH_SENSOR_VALUE_NUMBER;
+}
+
+static int boolean_from_micro(const struct bt_mesh_sensor_format *format,
+			      int64_t val,
+			      struct bt_mesh_sensor_value *sensor_val)
+{
+	sensor_val->format = format;
+	*(sensor_val->raw) = !!val;
+
+	if (val != 0 && val != 1000000) {
+		return -ERANGE;
+	}
+
+	return 0;
+}
+
+static int boolean_to_string(const struct bt_mesh_sensor_value *sensor_val,
+			     char *str, size_t len)
+{
+	if (*(sensor_val->raw) == 0) {
+		return snprintk(str, len, "%s", "False");
+	}
+	return snprintk(str, len, "%s", "True");
+}
+
+static struct bt_mesh_sensor_format_cb boolean_cb = {
+	.compare = boolean_compare,
+	.delta_check = boolean_delta_check,
+	.to_float = boolean_to_float,
+	.from_float = boolean_from_float,
+	.to_micro = boolean_to_micro,
+	.from_micro = boolean_from_micro,
+	.to_string = boolean_to_string,
+};
 
 /* This is the negative of the ceiling of the function d_1.1(-(i+1)), where d_1.1
  * is the Gaussian logarithm difference function d_b(z) = log_b(|1 - b^z|).
@@ -710,17 +997,103 @@ static bool exp_1_1_delta_check(const struct bt_mesh_sensor_value *current,
 	return exp_1_1_ceil_abs_diff(prev_raw, curr_raw) > *(delta->raw);
 }
 
-static float float32_to_float(const struct bt_mesh_sensor_value *sensor_val)
+static enum bt_mesh_sensor_value_status
+exp_1_1_to_float(const struct bt_mesh_sensor_value *sensor_val, float *val)
 {
-	uint32_t raw = sys_get_le32(sensor_val->raw);
+	uint8_t raw = *(sensor_val->raw);
 
-	return *(float *)(&raw);
+	if (raw == 0xff) {
+		return BT_MESH_SENSOR_VALUE_UNKNOWN;
+	}
+
+	if (raw == 0xfe) {
+		return BT_MESH_SENSOR_VALUE_TOTAL_DEVICE_LIFE;
+	}
+
+	if (val) {
+		*val = exp_1_1_decode_float(raw);
+	}
+	return BT_MESH_SENSOR_VALUE_NUMBER;
+}
+
+static int exp_1_1_from_float(const struct bt_mesh_sensor_format *format,
+			      float val, struct bt_mesh_sensor_value *sensor_val)
+{
+	sensor_val->format = format;
+	if (val == 0.0f) {
+		*(sensor_val->raw) = 0x00;
+		return 0;
+	}
+
+	float result = roundf(logf(val)/LOG_1_1);
+
+	*(sensor_val->raw) = CLAMP(result, 0x01, 0xfd);
+
+	if (result < 1 || result > 253) {
+		return -ERANGE;
+	}
+
+	return 0;
+}
+
+static int exp_1_1_from_special_status(
+	const struct bt_mesh_sensor_format *format,
+	enum bt_mesh_sensor_value_status status,
+	struct bt_mesh_sensor_value *sensor_val)
+{
+	switch (status) {
+	case BT_MESH_SENSOR_VALUE_UNKNOWN:
+		*(sensor_val->raw) = 0xff;
+		break;
+	case BT_MESH_SENSOR_VALUE_TOTAL_DEVICE_LIFE:
+		*(sensor_val->raw) = 0xfe;
+		break;
+	default:
+		return -ERANGE;
+	}
+
+	return 0;
+}
+
+static struct bt_mesh_sensor_format_cb exp_1_1_cb = {
+	.compare = exp_1_1_compare,
+	.delta_check = exp_1_1_delta_check,
+	.to_float = exp_1_1_to_float,
+	.from_float = exp_1_1_from_float,
+	.from_special_status = exp_1_1_from_special_status,
+};
+
+static enum bt_mesh_sensor_value_status
+float32_to_float(const struct bt_mesh_sensor_value *sensor_val, float *val)
+{
+	if (val) {
+		uint32_t raw = sys_get_le32(sensor_val->raw);
+
+		*val = *(float *)(&raw);
+	}
+	return BT_MESH_SENSOR_VALUE_NUMBER;
+}
+
+static int float32_from_float(const struct bt_mesh_sensor_format *format,
+			      float val, struct bt_mesh_sensor_value *sensor_val)
+{
+	uint32_t raw = *(uint32_t *)(&val);
+
+	sensor_val->format = format;
+	sys_put_le32(raw, sensor_val->raw);
+
+	return 0;
 }
 
 static int float32_compare(const struct bt_mesh_sensor_value *op1,
 			  const struct bt_mesh_sensor_value *op2)
 {
-	float diff = float32_to_float(op1) - float32_to_float(op2);
+	float op1_float, op2_float;
+
+	(void)float32_to_float(op1, &op1_float);
+	(void)float32_to_float(op2, &op2_float);
+
+	float diff = op1_float - op2_float;
 
 	if (diff > 0.0f) {
 		return 1;
@@ -737,8 +1110,12 @@ static bool float32_delta_check(const struct bt_mesh_sensor_value *current,
 {
 	const struct bt_mesh_sensor_value *delta;
 
-	float prev_float = float32_to_float(previous);
-	float diff = float32_to_float(current) - prev_float;
+	float prev_float, curr_float;
+
+	(void)float32_to_float(previous, &prev_float);
+	(void)float32_to_float(current, &curr_float);
+
+	float diff = curr_float - prev_float;
 
 	if (diff < 0.0f) {
 		diff = -diff;
@@ -751,10 +1128,19 @@ static bool float32_delta_check(const struct bt_mesh_sensor_value *current,
 		return percentage_delta_check(delta, diff, prev_float);
 	}
 
-	float delta_float = float32_to_float(delta);
+	float delta_float;
+
+	(void)float32_to_float(delta, &delta_float);
 
 	return diff > delta_float;
 }
+
+static struct bt_mesh_sensor_format_cb float32_cb = {
+	.compare = float32_compare,
+	.delta_check = float32_delta_check,
+	.to_float = float32_to_float,
+	.from_float = float32_from_float,
+};
 #endif /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 
 /*******************************************************************************
@@ -781,7 +1167,7 @@ FORMAT(percentage_16) = SCALAR_FORMAT_MAX(2,
 					  SCALAR(1e-2, 0),
 					  10000);
 FORMAT(percentage_delta_trigger) = SCALAR_FORMAT(2,
-					  (UNSIGNED | HAS_UNDEFINED),
+					  UNSIGNED,
 					  percent,
 					  SCALAR(1e-2, 0));
 
@@ -878,8 +1264,7 @@ FORMAT(time_exp_8)	    = {
 	.encode = exp_1_1_encode,
 	.decode = exp_1_1_decode,
 #else
-	.compare = exp_1_1_compare,
-	.delta_check = exp_1_1_delta_check,
+	.cb = &exp_1_1_cb,
 #endif
 };
 
@@ -894,7 +1279,8 @@ FORMAT(electric_current) = SCALAR_FORMAT_MAX(2,
 FORMAT(voltage)		 = SCALAR_FORMAT_MAX(2,
 					 (UNSIGNED |
 					 HAS_UNDEFINED |
-					 HAS_HIGHER_THAN),
+					 HAS_HIGHER_THAN |
+					 HAS_LOWER_THAN),
 					 volt,
 					 SCALAR(1, -6),
 					 65408);
@@ -922,12 +1308,21 @@ FORMAT(energy)           = SCALAR_FORMAT(3,
 /*******************************************************************************
  * Lighting formats
  ******************************************************************************/
+#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 FORMAT(chromatic_distance)      = SCALAR_FORMAT_MIN_MAX(2,
 							(SIGNED |
 							HAS_INVALID |
 							HAS_UNDEFINED),
 							unitless, SCALAR(1e-5, 0),
 							-5000, 5000);
+#else
+FORMAT(chromatic_distance)      = SCALAR_FORMAT_MIN_MAX(2,
+							(SIGNED |
+							HAS_INVALID |
+							HAS_UNDEFINED_MAX_MINUS_1),
+							unitless, SCALAR(1e-5, 0),
+							-5000, 5000);
+#endif
 FORMAT(chromaticity_coordinate) = SCALAR_FORMAT(2,
 						UNSIGNED,
 						unitless,
@@ -989,8 +1384,7 @@ FORMAT(boolean) = {
 	.encode = boolean_encode,
 	.decode = boolean_decode,
 #else
-	.compare = boolean_compare,
-	.delta_check = boolean_delta_check,
+	.cb = &boolean_cb,
 #endif
 	.size	= 1,
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
@@ -1002,8 +1396,7 @@ FORMAT(coefficient) = {
 	.encode = float32_encode,
 	.decode = float32_decode,
 #else
-	.compare = float32_compare,
-	.delta_check = float32_delta_check,
+	.cb = &float32_cb,
 #endif
 	.size	= 4,
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
