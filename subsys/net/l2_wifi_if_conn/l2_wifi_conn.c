@@ -83,8 +83,7 @@ static void net_l2_wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 		break;
 	case NET_EVENT_WIFI_DISCONNECT_RESULT:
 		if (conn_mgr_if_get_flag(wifi_iface, CONN_MGR_IF_PERSISTENT)) {
-			k_work_reschedule_for_queue(&wifi_conn_wq, &wifi_conn_work,
-							K_SECONDS(conn_mgr_if_get_timeout(iface)));
+			wifi_conn_timeout_schedule();
 		} else {
 			/* For disconnection that may have been prompted by AP */
 			net_l2_wifi_disconnect(NULL);
