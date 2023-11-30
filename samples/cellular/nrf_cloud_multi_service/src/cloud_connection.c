@@ -18,6 +18,7 @@
 #endif
 
 #include "cloud_connection.h"
+#include "provisioning_support.h"
 #include "fota_support.h"
 #include "location_tracking.h"
 #include "led_control.h"
@@ -249,7 +250,7 @@ static bool connect_cloud(void)
  * The conn_mgr subsystem is responsible for seeking / maintaining network connectivity and
  * firing these events.
  */
-struct net_mgmt_event_callback l4_callback;
+static struct net_mgmt_event_callback l4_callback;
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
 			     uint32_t event, struct net_if *iface)
 {
@@ -532,6 +533,19 @@ static int setup_cloud(void)
 	return 0;
 }
 
+/* Check whether nRF Cloud credentials are installed. If not, sleep forever. */
+static void check_credentials(void)
+{
+	int status = nrf_cloud_credentials_configured_check();
+
+	if (status == -ENOTSUP) {
+		LOG_WRN("nRF Cloud credentials are not installed. Please install and reboot.");
+		k_sleep(K_FOREVER);
+	} else if (status) {
+		LOG_ERR("Error while checking for credentials: %d. Proceeding anyway.", status);
+	}
+}
+
 void cloud_connection_thread_fn(void)
 {
 	long_led_pattern(LED_WAITING);
@@ -546,6 +560,11 @@ void cloud_connection_thread_fn(void)
 		return;
 	}
 
+	/* Check for credentials, if the feature is enabled. */
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)) {
+		check_credentials();
+	}
+
 	/* Indefinitely maintain a connection to nRF Cloud whenever the network is reachable. */
 	while (true) {
 		LOG_INF("Waiting for network ready...");
@@ -557,6 +576,12 @@ void cloud_connection_thread_fn(void)
 		(void)await_network_ready(K_FOREVER);
 
 		LOG_INF("Network is ready");
+
+		/* Wait for provisioning to complete, if the provisioning library is enabled. */
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
+			LOG_DBG("Awaiting provisioning idle");
+			(void)await_provisioning_idle(K_FOREVER);
+		}
 
 		/* Attempt to connect to nRF Cloud. */
 		if (connect_cloud()) {

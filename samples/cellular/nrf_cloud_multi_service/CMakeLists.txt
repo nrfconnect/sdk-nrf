@@ -35,6 +35,10 @@ if(CONFIG_COAP_FOTA)
 target_sources(app PRIVATE src/fota_support_coap.c)
 endif()
 
+if(CONFIG_NRF_PROVISIONING)
+target_sources(app PRIVATE src/provisioning_support.c)
+endif()
+
 # Include modem-specific features if supported
 if(CONFIG_NRF_MODEM_LIB)
 	target_sources(app PRIVATE src/at_commands.c)
