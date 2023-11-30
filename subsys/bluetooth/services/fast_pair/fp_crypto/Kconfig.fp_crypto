@@ -32,6 +32,7 @@ config BT_FAST_PAIR_CRYPTO_MBEDTLS
 	bool "Fast Pair with MbedTLS cryptographic backend"
 	select NORDIC_SECURITY_BACKEND
 	select MBEDTLS_ENABLE_HEAP
+	select ENTROPY_GENERATOR
 	help
 	  Select MbedTLS cryptographic backend for Fast Pair.
 
