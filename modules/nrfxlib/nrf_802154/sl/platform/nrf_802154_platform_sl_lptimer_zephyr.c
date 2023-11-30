@@ -19,7 +19,7 @@
 #include "nrf_802154_sl_utils.h"
 
 #define RTC_CHAN_INVALID (-1)
-#if defined(CONFIG_SOC_NRF5340_CPUNET)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 
 BUILD_ASSERT(CONFIG_MPSL);
 
@@ -114,7 +114,7 @@ static void timer_start_at(struct timer_desc *timer, uint64_t target_time)
 	nrf_802154_sl_mcu_critical_exit(state);
 }
 
-#if defined(CONFIG_SOC_NRF5340_CPUNET)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 static inline uint32_t rtc_counter_diff(uint32_t a, uint32_t b)
 {
 	return (a - b) & RTC_COUNTER_MAX;
@@ -129,7 +129,7 @@ static bool hw_task_state_set(enum hw_task_state_type expected_state,
 
 static inline uint32_t hw_task_rtc_get_compare_evt_address(int32_t cc_num)
 {
-#if defined(CONFIG_SOC_NRF5340_CPUNET)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 	return nrf_rtc_event_address_get(HW_TASK_RTC, nrf_rtc_compare_event_get(cc_num));
 #else
 	return z_nrf_rtc_timer_compare_evt_address_get(cc_num);
@@ -161,7 +161,7 @@ static bool hw_task_rtc_cc_event_check(int32_t cc_num)
 
 static void hw_task_rtc_timer_abort(void)
 {
-#if defined(CONFIG_SOC_NRF5340_CPUNET)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 	/* No interrupt disabling/clearing is needed, as HW task does not use interrupts*/
 	nrf_rtc_event_disable(HW_TASK_RTC, NRF_RTC_CHANNEL_INT_MASK(m_hw_task.chan));
 	nrf_rtc_event_clear(HW_TASK_RTC, NRF_RTC_CHANNEL_EVENT_ADDR(m_hw_task.chan));
@@ -170,7 +170,7 @@ static void hw_task_rtc_timer_abort(void)
 #endif
 }
 
-#if defined(CONFIG_SOC_NRF5340_CPUNET)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 static uint32_t zephyr_rtc_ticks_to_hw_task_rtc_counter(uint64_t ticks)
 {
 	uint64_t zephyr_rtc_counter_now = 0;
@@ -238,7 +238,7 @@ static int hw_task_rtc_counter_compare_set(uint32_t cc_value)
 
 static int hw_task_rtc_timer_set(uint64_t fire_lpticks)
 {
-#if defined(CONFIG_SOC_NRF5340_CPUNET)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 	uint32_t hw_task_rtc_counter_ticks = zephyr_rtc_ticks_to_hw_task_rtc_counter(fire_lpticks);
 
 	return hw_task_rtc_counter_compare_set(hw_task_rtc_counter_ticks);
@@ -251,7 +251,7 @@ void nrf_802154_platform_sl_lp_timer_init(void)
 {
 	m_in_critical_section = false;
 	m_hw_task.state = HW_TASK_STATE_IDLE;
-#if defined(CONFIG_SOC_NRF5340_CPUNET)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 	m_hw_task.chan = HW_TASK_RTC_CHAN;
 #else
 	m_hw_task.chan = z_nrf_rtc_timer_chan_alloc();
@@ -287,7 +287,7 @@ void nrf_802154_platform_sl_lp_timer_deinit(void)
 	z_nrf_rtc_timer_chan_free(m_sync_timer.chan);
 
 	if (m_hw_task.chan != RTC_CHAN_INVALID) {
-#if !defined(CONFIG_SOC_NRF5340_CPUNET)
+#if !defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 		z_nrf_rtc_timer_chan_free(m_hw_task.chan);
 #endif
 		m_hw_task.chan = RTC_CHAN_INVALID;
