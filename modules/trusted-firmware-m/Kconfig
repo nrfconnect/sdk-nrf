@@ -284,11 +284,11 @@ rsource "Kconfig.peripheral_secure"
 
 choice TFM_PROFILE_TYPE
 config TFM_PROFILE_TYPE_MINIMAL
-	bool "Use minimal TF-M build"
+	bool "TF-M build profile: minimal"
 	select PSA_DEFAULT_OFF
 	select PSA_WANT_GENERATE_RANDOM
 	help
-	  Use minimal TF-M build. This will make the TF-M image fit within 32kB.
+	  Minimal TF-M build profile. This will make the TF-M image fit within 32kB.
 	  No configuration of the size of the partition nor the features of the
 	  TF-M image can be done when this option is selected. If your application
 	  needs a different TF-M configuration you have to disable this option
