@@ -21,7 +21,7 @@
 #include <mpsl/mpsl_lib.h>
 #endif
 
-#define EMDS_DEV_IRQ 24
+#define EMDS_DEV_IRQ 26
 #define EMDS_DEV_PRIO 0
 #define EMDS_ISR_ARG 0
 #define EMDS_IRQ_FLAGS 0
