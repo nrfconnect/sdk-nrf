@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -eu
+
+# Check sudo access
+sudo -v
+
+# Remove interface upon exit
+function cleanup {
+  ip link set dev mon0 down
+  airmon-ng stop mon0
+}
+
+# Run cleanup upon exit
+trap cleanup EXIT
+
+# Make new network interface in monitor mode
+rfkill unblock all
+nmcli radio wifi off
+iw phy phy0 interface add mon0 type monitor || true
+
+# Make sure interface is up
+ip link set dev mon0 down
+ip link set dev mon0 up
+
+iw dev mon0 set freq $1
+
+# Start wireshark capture in monitor mode
+wireshark -i mon0 -k
