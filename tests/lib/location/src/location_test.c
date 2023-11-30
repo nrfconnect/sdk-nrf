@@ -544,7 +544,7 @@ void test_location_request_default(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)cgact_resp_active, sizeof(cgact_resp_active));
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,15", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,5", 0);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,4", 0);
 

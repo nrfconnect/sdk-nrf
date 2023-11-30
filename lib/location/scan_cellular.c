@@ -120,6 +120,7 @@ void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 		.gci_count = 0
 	};
 	int err;
+	uint8_t ncellmeas3_cell_count;
 
 	running = true;
 	timeout_occurred = false;
@@ -134,7 +135,10 @@ void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 		k_work_schedule(&scan_cellular_timeout_work, K_MSEC(timeout));
 	}
 
-	/***** 1st: Normal neighbor search to get current cell *****/
+	/*****
+	 * 1st: Normal neighbor search to get current cell.
+	 *      In addition neighbor cells are received.
+	 */
 	LOG_DBG("Normal neighbor search (NCELLMEAS=1)");
 	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 	if (err) {
@@ -158,12 +162,16 @@ void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 		goto end;
 	}
 
-	/***** 2nd: GCI history search to get GCI cells we can quickly search and measure *****/
-	LOG_DBG("GCI history search (NCELLMEAS=3,15)");
+	/*****
+	 * 2nd: GCI history search to get GCI cells we can quickly search and measure.
+	 *      Because history search is quick and very power efficient, we request
+	 *      minimum of 5 cells even if less has been requested.
+	 */
+	ncellmeas3_cell_count = MAX(5, cell_count);
+	LOG_DBG("GCI history search (NCELLMEAS=3,%d)", ncellmeas3_cell_count);
 
 	ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT;
-	/* Use maximum number of GCI cells to get all that we have in the history information */
-	ncellmeas_params.gci_count = 15;
+	ncellmeas_params.gci_count = ncellmeas3_cell_count;
 
 	err = lte_lc_neighbor_cell_measurement(&ncellmeas_params);
 	if (err) {
@@ -190,8 +198,11 @@ void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 		goto end;
 	}
 
-	/***** 3rd: GCI regional search to get GCI cells we can quickly measure *****/
-
+	/*****
+	 * 3rd: GCI regional search to try and get requested number of GCI cells.
+	 *      This search can be time and power consuming especially in rural areas
+	 *      depending on the available bands in the region.
+	 */
 	LOG_DBG("GCI regional search (NCELLMEAS=4,%d)", cell_count);
 	ncellmeas_params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT;
 	ncellmeas_params.gci_count = cell_count;
