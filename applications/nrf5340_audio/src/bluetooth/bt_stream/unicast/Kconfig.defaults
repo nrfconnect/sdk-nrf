@@ -97,13 +97,6 @@ config BT_PAC_SNK_NOTIFIABLE
 	# For fixing compatibility issue with Android 14
 	default y
 
-config BT_PACS_SNK_CONTEXT
-	default 0x0007 if STREAM_BIDIRECTIONAL
-	default 0x0005
-
-config BT_PACS_SRC_CONTEXT
-	default 0x0007 if STREAM_BIDIRECTIONAL
-
 config BT_CSIP_SET_MEMBER
 	default y
 
