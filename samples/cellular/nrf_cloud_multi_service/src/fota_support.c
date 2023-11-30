@@ -5,32 +5,16 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/sys/reboot.h>
-#include <zephyr/logging/log_ctrl.h>
-#include <modem/lte_lc.h>
 #include <net/nrf_cloud.h>
 
 #include "fota_support.h"
+#include "sample_reboot.h"
 
 LOG_MODULE_REGISTER(fota_support, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
-/* Called from nRF Cloud event handler in connection.c */
-void fota_reboot(const unsigned int delay_s, const bool error)
-{
-#if defined(CONFIG_LTE_LINK_CONTROL)
-	if (error) {
-		(void)lte_lc_power_off();
-	}
-#endif
-
-	LOG_PANIC();
-	k_sleep(K_SECONDS(delay_s));
-	sys_reboot(SYS_REBOOT_COLD);
-}
-
 void on_fota_downloaded(void)
 {
-	fota_reboot(FOTA_REBOOT_DELAY_S, false);
+	sample_reboot_normal();
 }
 
 struct dfu_target_fmfu_fdev * get_full_modem_fota_fdev(void)
