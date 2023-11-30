@@ -15,14 +15,6 @@
 #define FOTA_REBOOT_S		10
 
 /**
- * @brief De-init LTE if error is true.
- *
- * Reboot after specified delay.
- *
- */
-void fota_reboot(const unsigned int delay_s, const bool error);
-
-/**
  * @brief Notify fota_support that a FOTA download has finished.
  *
  * Besides updating the device shadow (handled in connection.c), this is the only additional

@@ -9,53 +9,41 @@
 #include <nrf_modem_at.h>
 #include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
-#include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/logging/log_ctrl.h>
 #include <net/fota_download.h>
 #include <net/nrf_cloud_coap.h>
 #include "cloud_connection.h"
 #include "fota_support.h"
 #include "fota_support_coap.h"
+#include "sample_reboot.h"
 
 LOG_MODULE_REGISTER(fota_support_coap, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 #define FOTA_THREAD_DELAY_S 10
 
-static void sample_reboot(enum nrf_cloud_fota_reboot_status status);
+static void fota_reboot(enum nrf_cloud_fota_reboot_status status);
 
 /* FOTA support context */
 static struct nrf_cloud_fota_poll_ctx ctx = {
-	.reboot_fn = sample_reboot
+	.reboot_fn = fota_reboot
 };
 
-void sample_reboot(enum nrf_cloud_fota_reboot_status status)
+void fota_reboot(enum nrf_cloud_fota_reboot_status status)
 {
-	int seconds = 0;
-	bool error = false;
-
 	switch (status) {
 	case FOTA_REBOOT_REQUIRED:
-		LOG_INF("Rebooting...");
-		seconds = PENDING_REBOOT_S;
+		sample_reboot_normal();
 		break;
 	case FOTA_REBOOT_SUCCESS:
-		seconds = FOTA_REBOOT_S;
-		LOG_INF("Rebooting in %ds to complete FOTA update...", seconds);
+		LOG_INF("Rebooting to complete FOTA update...");
+		sample_reboot_normal();
 		break;
 	case FOTA_REBOOT_FAIL:
-		seconds = ERROR_REBOOT_S;
-		LOG_INF("Rebooting in %ds...", seconds);
-		error = true;
-		break;
 	case FOTA_REBOOT_SYS_ERROR:
 	default:
-		seconds = ERROR_REBOOT_S;
-		LOG_INF("Rebooting in %ds...", seconds);
-		error = true;
+		sample_reboot_error();
 		break;
 	}
-	fota_reboot(seconds, error);
 }
 
 int coap_fota_init(void)

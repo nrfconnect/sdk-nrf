@@ -317,6 +317,7 @@ Cellular samples
     * The sample now enables the Kconfig options :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA` and :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI`.
       It no longer sends a device status update on initial connection; this is now handled by the :ref:`lib_nrf_cloud` library.
     * Increased the :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` and :kconfig:option:`CONFIG_AT_MONITOR_HEAP_SIZE` Kconfig options to 2048 bytes since nRF Cloud credentials are sometimes longer than 1024 bytes.
+    * The sample reboot logic is now in a dedicated file so that it can be used in multiple locations.
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
