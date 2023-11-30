@@ -16,6 +16,8 @@
  * @defgroup fp_storage_ak Fast Pair storage of Account Keys module
  * @brief Internal API for Fast Pair storage of Account Keys
  *
+ * The module must be initialized before using API functions.
+ *
  * @{
  */
 

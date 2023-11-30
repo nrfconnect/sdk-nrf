@@ -14,6 +14,8 @@
  * @defgroup fp_registration_data Fast Pair registration data
  * @brief Internal API for Fast Pair registration data
  *
+ * The module must be initialized with @ref bt_fast_pair_enable before using API functions.
+ *
  * @{
  */
 

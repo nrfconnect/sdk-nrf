@@ -147,7 +147,39 @@ struct bt_fast_pair_info_cb {
 	void (*account_key_written)(struct bt_conn *conn);
 };
 
+/** Enable Fast Pair.
+ *
+ * This function shall only be used after calling the bt_enable and the settings_load
+ * functions. The Fast Pair operations require the enabled Bluetooth subsystem
+ * (see the bt_is_ready function) and the load operation of the settings subsystem.
+ *
+ * This function must be called in the cooperative thread context.
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int bt_fast_pair_enable(void);
+
+/** Disable Fast Pair.
+ *
+ * This function can only be called if Fast Pair was previously enabled with the
+ * @ref bt_fast_pair_enable API. After the device boot-up, Fast Pair is disabled.
+ *
+ * This function must be called in the cooperative thread context.
+ *
+ *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int bt_fast_pair_disable(void);
+
+/** @brief Check if Fast Pair is ready.
+ *
+ *  @return true when Fast Pair is ready, false otherwise.
+ */
+bool bt_fast_pair_is_ready(void);
+
 /** Get Fast Pair advertising data buffer size.
+ *
+ * This function can only be called if Fast Pair was previously enabled with the
+ * @ref bt_fast_pair_enable API.
  *
  * @param[in] fp_adv_config	Fast Pair advertising config.
  *
@@ -165,6 +197,9 @@ size_t bt_fast_pair_adv_data_size(struct bt_fast_pair_adv_config fp_adv_config);
  * that Account Key write from a connected Fast Pair Seeker would not preempt generating Fast Pair
  * not discoverable advertising data. To achieve this, this function and
  * @ref bt_fast_pair_adv_data_size should be called from context with cooperative priority.
+ *
+ * This function can only be called if Fast Pair was previously enabled with the
+ * @ref bt_fast_pair_enable API.
  *
  * @param[out] adv_data		Pointer to the Bluetooth advertising data structure to be filled.
  * @param[out] buf		Pointer to the buffer used to store Fast Pair advertising data.
@@ -193,7 +228,8 @@ void bt_fast_pair_set_pairing_mode(bool pairing_mode);
  * Caller shall make sure that Account Key write from a connected Fast Pair Seeker would not preempt
  * this function call. Otherwise invalid value may be returned.
  *
- * The function always returns false if called before Zephyr settings are loaded.
+ * The function always returns false if Fast Pair was not previously enabled with the
+ * @ref bt_fast_pair_enable API.
  *
  * @return True if device already has an Account Key, false otherwise.
  */

@@ -37,6 +37,12 @@ config BT_DIS_FW_REV_STR
 	default MCUBOOT_IMGTOOL_SIGN_VERSION if BOOTLOADER_MCUBOOT
 	default "0.0.0+0"
 
+config BT_FAST_PAIR_ACTIVATION
+	bool
+	default y
+	help
+	  Add Fast Pair activation source files.
+
 config BT_FAST_PAIR_KEYS
 	bool
 	default y
@@ -117,11 +123,23 @@ config BT_FAST_PAIR_BATTERY
 	help
 	  Add Fast Pair battery module source files.
 
-config BT_FAST_PAIR_FACTORY_RESET
+config BT_FAST_PAIR_STORAGE_INTEGRATION
 	bool
 	default y
 	help
-	  Add Fast Pair factory reset source files.
+	  Add Fast Pair storage integration source files.
+
+if BT_FAST_PAIR_STORAGE_INTEGRATION
+
+config BT_FAST_PAIR_STORAGE_INTEGRATION_INIT_PRIORITY
+	int
+	range 0 9
+	default 4
+	help
+	  Fast Pair storage integration module initialization priority.
+	  Used when registering to Fast Pair activation module.
+
+endif # BT_FAST_PAIR_STORAGE_INTEGRATION
 
 module = BT_FAST_PAIR
 module-str = Fast Pair Service

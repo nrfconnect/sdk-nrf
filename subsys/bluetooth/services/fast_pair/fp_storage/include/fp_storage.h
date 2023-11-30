@@ -30,6 +30,26 @@ extern "C" {
  */
 int fp_storage_factory_reset(void);
 
+/** @brief Check if Fast Pair related Settings are loaded.
+ *
+ *  @return true when Fast Pair related Settings are loaded, false otherwise.
+ */
+bool fp_storage_settings_loaded(void);
+
+/** Initialize all registered storage modules.
+ *
+ * This function shall only be used after calling the settings_load function.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_storage_init(void);
+
+/** Uninitialize all registered storage modules.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_storage_uninit(void);
+
 #ifdef __cplusplus
 }
 #endif

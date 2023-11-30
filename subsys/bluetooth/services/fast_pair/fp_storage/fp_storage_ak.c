@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <zephyr/sys/__assert.h>
-#include <zephyr/sys/atomic.h>
 #include <zephyr/settings/settings.h>
 #include <bluetooth/services/fast_pair.h>
 
@@ -29,8 +28,7 @@ static uint8_t account_key_count;
 static uint8_t account_key_order[ACCOUNT_KEY_CNT];
 
 static int settings_set_err;
-static bool reset_prepare;
-static atomic_t settings_loaded = ATOMIC_INIT(false);
+static bool is_enabled;
 
 static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
@@ -120,14 +118,13 @@ static int fp_settings_set(const char *name, size_t len, settings_read_cb read_c
 	}
 
 	/* The first reported settings set error will be remembered by the module.
-	 * The error will then be propagated by the commit callback.
-	 * Errors returned in the settings set callback are not propagated further.
+	 * The error will then be returned when calling fp_storage_ak_init.
 	 */
 	if (err && !settings_set_err) {
 		settings_set_err = err;
 	}
 
-	return err;
+	return 0;
 }
 
 static uint8_t bump_ak_id(uint8_t id)
@@ -180,7 +177,7 @@ static void ak_order_update_ram(uint8_t used_id)
 	account_key_order[0] = used_id;
 }
 
-static int commit_ak_order(void)
+static int validate_ak_order(void)
 {
 	int err;
 	size_t ak_order_update_count = 0;
@@ -227,16 +224,11 @@ static int commit_ak_order(void)
 	return 0;
 }
 
-static int fp_settings_commit(void)
+static int fp_settings_validate(void)
 {
 	uint8_t id;
 	int first_zero_idx = -1;
 	int err;
-
-	if (reset_prepare) {
-		/* The module expects to be reset by Fast Pair storage manager. */
-		return 0;
-	}
 
 	if (settings_set_err) {
 		return settings_set_err;
@@ -274,20 +266,18 @@ static int fp_settings_commit(void)
 		account_key_count = ACCOUNT_KEY_CNT;
 	}
 
-	err = commit_ak_order();
+	err = validate_ak_order();
 	if (err) {
 		return err;
 	}
-
-	atomic_set(&settings_loaded, true);
 
 	return 0;
 }
 
 int fp_storage_ak_count(void)
 {
-	if (!atomic_get(&settings_loaded)) {
-		return -ENODATA;
+	if (!is_enabled) {
+		return -EACCES;
 	}
 
 	return account_key_count;
@@ -295,8 +285,8 @@ int fp_storage_ak_count(void)
 
 int fp_storage_ak_get(struct fp_account_key *buf, size_t *key_count)
 {
-	if (!atomic_get(&settings_loaded)) {
-		return -ENODATA;
+	if (!is_enabled) {
+		return -EACCES;
 	}
 
 	if (*key_count < account_key_count) {
@@ -312,8 +302,8 @@ int fp_storage_ak_get(struct fp_account_key *buf, size_t *key_count)
 int fp_storage_ak_find(struct fp_account_key *account_key,
 		       fp_storage_ak_check_cb account_key_check_cb, void *context)
 {
-	if (!atomic_get(&settings_loaded)) {
-		return -ENODATA;
+	if (!is_enabled) {
+		return -EACCES;
 	}
 
 	if (!account_key_check_cb) {
@@ -361,8 +351,8 @@ static int ak_name_gen(char *name, uint8_t index)
 
 int fp_storage_ak_save(const struct fp_account_key *account_key)
 {
-	if (!atomic_get(&settings_loaded)) {
-		return -ENODATA;
+	if (!is_enabled) {
+		return -EACCES;
 	}
 
 	uint8_t id;
@@ -427,8 +417,8 @@ void fp_storage_ak_ram_clear(void)
 	memset(account_key_order, 0, sizeof(account_key_order));
 
 	settings_set_err = 0;
-	atomic_set(&settings_loaded, false);
-	reset_prepare = false;
+
+	is_enabled = false;
 }
 
 bool bt_fast_pair_has_account_key(void)
@@ -436,9 +426,29 @@ bool bt_fast_pair_has_account_key(void)
 	return (fp_storage_ak_count() > 0);
 }
 
-static void fp_storage_ak_empty_init(void)
+static int fp_storage_ak_init(void)
 {
-	atomic_set(&settings_loaded, true);
+	int err;
+
+	if (is_enabled) {
+		LOG_WRN("fp_storage_ak module already initialized");
+		return 0;
+	}
+
+	err = fp_settings_validate();
+	if (err) {
+		return err;
+	}
+
+	is_enabled = true;
+
+	return 0;
+}
+
+static int fp_storage_ak_uninit(void)
+{
+	is_enabled = false;
+	return 0;
 }
 
 static int fp_storage_ak_delete(uint8_t index)
@@ -462,6 +472,7 @@ static int fp_storage_ak_delete(uint8_t index)
 static int fp_storage_ak_reset(void)
 {
 	int err;
+	bool was_enabled = is_enabled;
 
 	for (uint8_t index = 0; index < ACCOUNT_KEY_CNT; index++) {
 		err = fp_storage_ak_delete(index);
@@ -476,19 +487,23 @@ static int fp_storage_ak_reset(void)
 	}
 
 	fp_storage_ak_ram_clear();
-
-	fp_storage_ak_empty_init();
+	if (was_enabled) {
+		err = fp_storage_ak_init();
+		if (err) {
+			return err;
+		}
+	}
 
 	return 0;
 }
 
-static void reset_prepare_set(void)
+static void reset_prepare(void)
 {
-	atomic_set(&settings_loaded, false);
-	reset_prepare = true;
+	/* intentionally left empty */
 }
 
 SETTINGS_STATIC_HANDLER_DEFINE(fp_storage_ak, SETTINGS_AK_SUBTREE_NAME, NULL, fp_settings_set,
-			       fp_settings_commit, NULL);
+			       NULL, NULL);
 
-FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_ak, fp_storage_ak_reset, reset_prepare_set);
+FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_ak, fp_storage_ak_reset, reset_prepare,
+				   fp_storage_ak_init, fp_storage_ak_uninit);

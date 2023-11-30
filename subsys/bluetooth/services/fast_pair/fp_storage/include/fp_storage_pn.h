@@ -13,6 +13,8 @@
  * @defgroup fp_storage_pn Fast Pair Personalized Name storage
  * @brief Internal API of Fast Pair Personalized Name storage
  *
+ * The module must be initialized before using API functions.
+ *
  * @{
  */
 

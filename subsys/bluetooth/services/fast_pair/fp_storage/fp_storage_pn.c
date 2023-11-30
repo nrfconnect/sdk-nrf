@@ -6,8 +6,10 @@
 
 #include <errno.h>
 #include <string.h>
-#include <zephyr/sys/atomic.h>
 #include <zephyr/settings/settings.h>
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(fp_storage, CONFIG_FP_STORAGE_LOG_LEVEL);
 
 #include "fp_storage_pn.h"
 #include "fp_storage_pn_priv.h"
@@ -16,8 +18,7 @@
 static char personalized_name[FP_STORAGE_PN_BUF_LEN];
 
 static int settings_set_err;
-static bool reset_prepare;
-static atomic_t settings_loaded = ATOMIC_INIT(false);
+static bool is_enabled;
 
 
 static int fp_settings_load_pn(size_t len, settings_read_cb read_cb, void *cb_arg)
@@ -56,36 +57,19 @@ static int fp_settings_set(const char *name, size_t len, settings_read_cb read_c
 	}
 
 	/* The first reported settings set error will be remembered by the module.
-	 * The error will then be propagated by the commit callback.
-	 * Errors returned in the settings set callback are not propagated further.
+	 * The error will then be returned when calling fp_storage_pn_init.
 	 */
 	if (err && !settings_set_err) {
 		settings_set_err = err;
 	}
-
-	return err;
-}
-
-static int fp_settings_commit(void)
-{
-	if (reset_prepare) {
-		/* The module expects to be reset by Fast Pair storage manager. */
-		return 0;
-	}
-
-	if (settings_set_err) {
-		return settings_set_err;
-	}
-
-	atomic_set(&settings_loaded, true);
 
 	return 0;
 }
 
 int fp_storage_pn_get(char *buf)
 {
-	if (!atomic_get(&settings_loaded)) {
-		return -ENODATA;
+	if (!is_enabled) {
+		return -EACCES;
 	}
 
 	strcpy(buf, personalized_name);
@@ -98,8 +82,8 @@ int fp_storage_pn_save(const char *pn_to_save)
 	int err;
 	size_t str_len;
 
-	if (!atomic_get(&settings_loaded)) {
-		return -ENODATA;
+	if (!is_enabled) {
+		return -EACCES;
 	}
 
 	str_len = strnlen(pn_to_save, FP_STORAGE_PN_BUF_LEN);
@@ -117,24 +101,41 @@ int fp_storage_pn_save(const char *pn_to_save)
 	return 0;
 }
 
+static int fp_storage_pn_init(void)
+{
+	if (is_enabled) {
+		LOG_WRN("fp_storage_pn module already initialized");
+		return 0;
+	}
+
+	if (settings_set_err) {
+		return settings_set_err;
+	}
+
+	is_enabled = true;
+
+	return 0;
+}
+
+static int fp_storage_pn_uninit(void)
+{
+	is_enabled = false;
+	return 0;
+}
+
 void fp_storage_pn_ram_clear(void)
 {
 	memset(personalized_name, 0, sizeof(personalized_name));
 
 	settings_set_err = 0;
-	atomic_set(&settings_loaded, false);
 
-	reset_prepare = false;
-}
-
-static void fp_storage_pn_empty_init(void)
-{
-	atomic_set(&settings_loaded, true);
+	is_enabled = false;
 }
 
 static int fp_storage_pn_reset(void)
 {
 	int err;
+	bool was_enabled = is_enabled;
 
 	err = settings_delete(SETTINGS_PN_FULL_NAME);
 	if (err) {
@@ -142,19 +143,23 @@ static int fp_storage_pn_reset(void)
 	}
 
 	fp_storage_pn_ram_clear();
-
-	fp_storage_pn_empty_init();
+	if (was_enabled) {
+		err = fp_storage_pn_init();
+		if (err) {
+			return err;
+		}
+	}
 
 	return 0;
 }
 
-static void reset_prepare_set(void)
+static void reset_prepare(void)
 {
-	atomic_set(&settings_loaded, false);
-	reset_prepare = true;
+	/* intentionally left empty */
 }
 
 SETTINGS_STATIC_HANDLER_DEFINE(fp_storage_pn, SETTINGS_PN_SUBTREE_NAME, NULL, fp_settings_set,
-			       fp_settings_commit, NULL);
+			       NULL, NULL);
 
-FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_pn, fp_storage_pn_reset, reset_prepare_set);
+FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_pn, fp_storage_pn_reset, reset_prepare,
+				   fp_storage_pn_init, fp_storage_pn_uninit);
