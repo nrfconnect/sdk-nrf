@@ -659,6 +659,10 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
 	cmds->allow_parallel_connection_establishments = 1;
 #endif
+
+#if defined(CONFIG_BT_CONN)
+	cmds->min_val_of_max_acl_tx_payload_set = 1;
+#endif
 }
 #endif	/* CONFIG_BT_HCI_VS */
 
@@ -1593,6 +1597,10 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
 	case SDC_HCI_OPCODE_CMD_VS_ALLOW_PARALLEL_CONNECTION_ESTABLISHMENTS:
 		return sdc_hci_cmd_vs_allow_parallel_connection_establishments((void *)cmd_params);
+#endif
+#if defined(CONFIG_BT_CONN)
+	case SDC_HCI_OPCODE_CMD_VS_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_SET:
+		return sdc_hci_cmd_vs_min_val_of_max_acl_tx_payload_set((void *)cmd_params);
 #endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
