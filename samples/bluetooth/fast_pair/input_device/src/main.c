@@ -36,6 +36,8 @@ LOG_MODULE_REGISTER(fp_sample, LOG_LEVEL_INF);
 
 #define FP_DISC_ADV_TIMEOUT_MINUTES				(10)
 
+#define INIT_SEM_TIMEOUT_SECONDS				(60)
+
 static enum bt_fast_pair_adv_mode fp_adv_mode = BT_FAST_PAIR_ADV_MODE_DISC;
 static bool show_ui_pairing = true;
 static bool new_adv_session = true;
@@ -44,6 +46,11 @@ static struct bt_conn *peer;
 static struct k_work bt_adv_restart;
 static struct k_work_delayable fp_adv_mode_status_led_handle;
 static struct k_work_delayable fp_disc_adv_timeout;
+
+static void init_work_handle(struct k_work *w);
+
+static K_SEM_DEFINE(init_work_sem, 0, 1);
+static K_WORK_DEFINE(init_work, init_work_handle);
 
 
 static void bond_cnt_cb(const struct bt_bond_info *info, void *user_data)
@@ -401,9 +408,8 @@ static void fp_account_key_written(struct bt_conn *conn)
 	LOG_INF("Fast Pair Account Key has been written");
 }
 
-int main(void)
+static void init_work_handle(struct k_work *w)
 {
-	bool run_led_on = true;
 	int err;
 	static const struct bt_conn_auth_cb conn_auth_callbacks = {
 		.pairing_accept = pairing_accept,
@@ -415,36 +421,38 @@ int main(void)
 		.account_key_written = fp_account_key_written,
 	};
 
-	LOG_INF("Starting Bluetooth Fast Pair example");
+	/* It is assumed that this function executes in the cooperative thread context. */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	__ASSERT_NO_MSG(!k_is_in_isr());
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		LOG_ERR("Registering authentication callbacks failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	err = bt_conn_auth_info_cb_register(&auth_info_cb);
 	if (err) {
 		LOG_ERR("Registering authentication info callbacks failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	err = bt_fast_pair_info_cb_register(&fp_info_callbacks);
 	if (err) {
 		LOG_ERR("Registering Fast Pair info callbacks failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	err = hids_helper_init();
 	if (err) {
 		LOG_ERR("HIDS init failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	LOG_INF("Bluetooth initialized");
@@ -452,27 +460,33 @@ int main(void)
 	err = settings_load();
 	if (err) {
 		LOG_ERR("Settings load failed (err: %d)", err);
-		return 0;
+		return;
 	}
 
 	LOG_INF("Settings loaded");
 
+	err = bt_fast_pair_enable();
+	if (err) {
+		LOG_ERR("Fast Pair enable failed (err: %d)", err);
+		return;
+	}
+
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("LEDs init failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	err = battery_module_init();
 	if (err) {
 		LOG_ERR("Battery module init failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	err = bt_le_adv_prov_fast_pair_set_battery_mode(BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND);
 	if (err) {
 		LOG_ERR("Setting advertising battery mode failed (err %d)", err);
-		return 0;
+		return;
 	}
 
 	k_work_init(&bt_adv_restart, bt_adv_restart_fn);
@@ -489,8 +503,30 @@ int main(void)
 	err = dk_buttons_init(button_changed);
 	if (err) {
 		LOG_ERR("Buttons init failed (err %d)", err);
+		return;
+	}
+
+	k_sem_give(&init_work_sem);
+}
+
+int main(void)
+{
+	bool run_led_on = true;
+	int err;
+
+	LOG_INF("Starting Bluetooth Fast Pair input device example");
+
+	/* Switch to the cooperative thread context before interaction
+	 * with the Fast Pair API.
+	 */
+	(void) k_work_submit(&init_work);
+	err = k_sem_take(&init_work_sem, K_SECONDS(INIT_SEM_TIMEOUT_SECONDS));
+	if (err) {
+		k_panic();
 		return 0;
 	}
+
+	LOG_INF("Sample has started");
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, run_led_on);
