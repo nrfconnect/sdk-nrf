@@ -88,6 +88,11 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 		return -ENOENT;
 	}
 
+	if (!bt_fast_pair_is_ready()) {
+		LOG_WRN("Fast Pair is not ready");
+		return -ENOENT;
+	}
+
 	adv_config.mode = state->pairing_mode ? BT_FAST_PAIR_ADV_MODE_DISC :
 						BT_FAST_PAIR_ADV_MODE_NOT_DISC;
 	if (adv_config.mode == BT_FAST_PAIR_ADV_MODE_NOT_DISC) {
