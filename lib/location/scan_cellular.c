@@ -22,6 +22,13 @@ BUILD_ASSERT(CONFIG_AT_MONITOR_HEAP_SIZE >= 1024,
 	    "and other notifications at the same time");
 #endif
 
+/**
+ * Waiting time (in seconds) of RRC connection going into idle mode. Because GCI search
+ * cannot scan GCI cells during RRC connected mode, we will wait for the RRC idle mode before
+ * initiating GCI search.
+ */
+#define SCAN_CELLULAR_RRC_IDLE_WAIT_TIME 10
+
 static struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cell gci_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 static struct lte_lc_cells_info scan_cellular_info = {
@@ -39,6 +46,9 @@ static void scan_cellular_timeout_work_fn(struct k_work *work);
 
 /** Work item for timeout handler. */
 K_WORK_DELAYABLE_DEFINE(scan_cellular_timeout_work, scan_cellular_timeout_work_fn);
+
+/** Semaphore for waiting for RRC idle mode. */
+static K_SEM_DEFINE(entered_rrc_idle, 1, 1);
 
 /**
  * Handler for backup timeout, which ensures we won't be waiting for LTE_LC_EVT_NEIGHBOR_CELL_MEAS
@@ -61,12 +71,11 @@ struct lte_lc_cells_info *scan_cellular_results_get(void)
 
 void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 {
-	if (!running) {
-		return;
-	}
-
 	switch (evt->type) {
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
+		if (!running) {
+			return;
+		}
 		k_work_cancel_delayable(&scan_cellular_timeout_backup_work);
 
 		LOG_DBG("Cell measurements results received: "
@@ -80,8 +89,8 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 			 * search sometimes but we have it for the previous normal neighbor search.
 			 */
 			memcpy(&scan_cellular_info.current_cell,
-			&evt->cells_info.current_cell,
-			sizeof(struct lte_lc_cell));
+			       &evt->cells_info.current_cell,
+			       sizeof(struct lte_lc_cell));
 		}
 
 		/* Copy neighbor cell information if present */
@@ -108,6 +117,15 @@ void scan_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 
 		k_sem_give(&scan_cellular_sem_ncellmeas_evt);
 	} break;
+	case LTE_LC_EVT_RRC_UPDATE:
+		if (evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED) {
+			/* Prevent GCI search while RRC is in connected mode. */
+			k_sem_reset(&entered_rrc_idle);
+		} else if (evt->rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+			/* Allow GCI search operation once RRC is in idle mode. */
+			k_sem_give(&entered_rrc_idle);
+		}
+		break;
 	default:
 		break;
 	}
@@ -161,6 +179,25 @@ void scan_cellular_execute(int32_t timeout, uint8_t cell_count)
 	if (cell_count <= 1) {
 		goto end;
 	}
+
+	/* GCI searches are not done when in RRC connected mode. We are waiting for
+	 * device to enter RRC idle mode unless it's there already.
+	 */
+	LOG_DBG("%s", k_sem_count_get(&entered_rrc_idle) == 0 ?
+		"Waiting for the RRC connection release..." :
+		"RRC already in idle mode");
+
+	if (k_sem_take(&entered_rrc_idle, K_SECONDS(SCAN_CELLULAR_RRC_IDLE_WAIT_TIME)) != 0) {
+		/* If semaphore is reset while waiting, the position request was canceled */
+		if (!running) {
+			goto end;
+		}
+		/* The wait for RRC idle timed out */
+		LOG_WRN("RRC connection was not released in %d seconds.",
+			SCAN_CELLULAR_RRC_IDLE_WAIT_TIME);
+		goto end;
+	}
+	k_sem_give(&entered_rrc_idle);
 
 	/*****
 	 * 2nd: GCI history search to get GCI cells we can quickly search and measure.
@@ -225,6 +262,8 @@ end:
 
 int scan_cellular_cancel(void)
 {
+	int rrc_idling;
+
 	if (running) {
 		/* Cancel/stopping might trigger a NCELLMEAS notification */
 		(void)lte_lc_neighbor_cell_measurement_cancel();
@@ -234,6 +273,16 @@ int scan_cellular_cancel(void)
 	}
 
 	running = false;
+
+	/* If we are currently in RRC connected mode, reset the semaphore to unblock
+	 * scan_cellular_execute() and allow the ongoing location request to terminate.
+	 * Otherwise, don't reset the semaphore in order not to lose information about the current
+	 * RRC state.
+	 */
+	rrc_idling = k_sem_count_get(&entered_rrc_idle);
+	if (!rrc_idling) {
+		k_sem_reset(&entered_rrc_idle);
+	}
 
 	return 0;
 }
