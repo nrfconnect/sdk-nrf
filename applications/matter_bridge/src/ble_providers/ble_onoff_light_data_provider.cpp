@@ -32,9 +32,8 @@ uint8_t BleOnOffLightDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_sub
 	VerifyOrExit(length == sizeof(mOnOff), );
 	VerifyOrExit(provider, );
 
-	/* Save data received in notification. */
-	memcpy(&provider->mOnOff, data, length);
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
+	/* TODO: Implement invoking command through the binding for OnOff light switch or update state of generic
+	 * switch. */
 
 exit:
 
@@ -134,14 +133,22 @@ bt_uuid *BleOnOffLightDataProvider::GetServiceUuid()
 
 void BleOnOffLightDataProvider::Subscribe()
 {
+	VerifyOrReturn(mDevice.mConn, LOG_ERR("Invalid connection object"));
+
 	/* Configure subscription for the button characteristic */
 	mGattSubscribeParams.ccc_handle = mCccHandle;
 	mGattSubscribeParams.value_handle = mButtonCharacteristicHandle;
 	mGattSubscribeParams.value = BT_GATT_CCC_NOTIFY;
 	mGattSubscribeParams.notify = BleOnOffLightDataProvider::GattNotifyCallback;
 
-	/* TODO: Start GATT subscription to Button characteristic once the Matter Switch device type support will be in
-	 * place. */
+	if (CheckSubscriptionParameters(&mGattSubscribeParams)) {
+		int err = bt_gatt_subscribe(mDevice.mConn, &mGattSubscribeParams);
+		if (err) {
+			LOG_ERR("Subscribe to button characteristic failed with error %d", err);
+		}
+	} else {
+		LOG_ERR("Invalid button subscription parameters provided");
+	}
 }
 
 int BleOnOffLightDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
@@ -194,4 +201,14 @@ void BleOnOffLightDataProvider::NotifyAttributeChange(intptr_t context)
 
 	provider->NotifyUpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id, &provider->mOnOff,
 				    sizeof(provider->mOnOff));
+}
+
+bool BleOnOffLightDataProvider::CheckSubscriptionParameters(bt_gatt_subscribe_params *params)
+{
+	/* If any of these is not met, the bt_gatt_subscribe() generates an assert at runtime */
+	VerifyOrReturnValue(params && params->notify, false);
+	VerifyOrReturnValue(params->value, false);
+	VerifyOrReturnValue(params->ccc_handle, false);
+
+	return true;
 }
