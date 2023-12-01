@@ -23,8 +23,12 @@ static int hw_cc3xx_init_internal(void)
 	int res;
 
 	/* Initialize the cc3xx HW with or without RNG support */
-#if CONFIG_ENTROPY_CC3XX
+
+	/* Using same configurations as the users of entropy, see NCSDK-24914. */
+#if CONFIG_ENTROPY_CC3XX || defined(CONFIG_PSA_NEED_CC3XX_CTR_DRBG_DRIVER)
 	res = nrf_cc3xx_platform_init();
+#elif defined(CONFIG_PSA_NEED_CC3XX_HMAC_DRBG_DRIVER)
+	res = nrf_cc3xx_platform_init_hmac_drbg();
 #else
 	res = nrf_cc3xx_platform_init_no_rng();
 #endif
