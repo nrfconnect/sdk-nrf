@@ -931,7 +931,7 @@ static bool find_appearance(const uint8_t *data,
 		return false;
 	}
 
-	uint16_t decoded_appearance = sys_get_be16(data);
+	uint16_t decoded_appearance = sys_get_le16(data);
 
 	if (decoded_appearance == *appearance) {
 		return true;
