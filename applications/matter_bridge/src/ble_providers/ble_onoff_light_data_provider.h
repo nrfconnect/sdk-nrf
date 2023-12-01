@@ -31,6 +31,7 @@ public:
 
 private:
 	void Subscribe();
+	bool CheckSubscriptionParameters(bt_gatt_subscribe_params *params);
 
 	bool mOnOff = false;
 	uint16_t mLedCharacteristicHandle;
