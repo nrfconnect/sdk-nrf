@@ -437,6 +437,10 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 		.utf8 = conn_params->user_name.ptr,
 		.size = conn_params->user_name.size,
 	};
+	struct mqtt_utf8 password = {
+		.utf8 = conn_params->password.ptr,
+		.size = conn_params->password.size,
+	};
 
 	mqtt_client_init(&mqtt_client);
 
@@ -449,7 +453,6 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 	mqtt_client.evt_cb	        = mqtt_evt_handler;
 	mqtt_client.client_id.utf8      = conn_params->device_id.ptr;
 	mqtt_client.client_id.size      = conn_params->device_id.size;
-	mqtt_client.password	        = NULL;
 	mqtt_client.protocol_version    = MQTT_VERSION_3_1_1;
 	mqtt_client.rx_buf	        = rx_buffer;
 	mqtt_client.rx_buf_size	        = sizeof(rx_buffer);
@@ -478,6 +481,7 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 	mqtt_client.transport.type	= MQTT_TRANSPORT_NON_SECURE;
 #endif /* CONFIG_MQTT_LIB_TLS */
 	mqtt_client.user_name	        = conn_params->user_name.size > 0 ? &user_name : NULL;
+	mqtt_client.password	        = conn_params->password.size > 0 ? &password : NULL;
 
 #if defined(CONFIG_MQTT_LIB_TLS)
 	struct mqtt_sec_config *tls_cfg = &(mqtt_client.transport).tls.config;

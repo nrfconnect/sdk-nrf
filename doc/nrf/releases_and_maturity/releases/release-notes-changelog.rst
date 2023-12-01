@@ -582,6 +582,10 @@ Libraries for networking
 
   * Added the :file:`nrf_cloud_fota_poll.c` file to consolidate the FOTA polling code from the :ref:`nrf_cloud_multi_service` and :ref:`nrf_cloud_rest_fota` samples.
 
+* :ref:`lib_mqtt_helper` library:
+
+  * Added support for using a password when connecting to a broker.
+
 Libraries for NFC
 -----------------
 
