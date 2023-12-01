@@ -222,6 +222,7 @@
   - "samples/cellular/udp/**/*"
   - "samples/net/aws_iot/**/*"
   - "samples/net/azure_iot_hub/**/*"
+  - "samples/net/udp/**/*"
 
 "CI-apps-test":
   - "applications/machine_learning/**/*"
