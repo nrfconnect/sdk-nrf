@@ -24,7 +24,7 @@ Syntax
 
 ::
 
-   AT#XHTTPCCON=<op>[,<host>,<port>[,<sec_tag>]]
+   AT#XHTTPCCON=<op>[,<host>,<port>[,<sec_tag>[,peer_verify[,hostname_verify]]]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -38,6 +38,21 @@ Syntax
   It represents the HTTP server port.
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
+* The ``<peer_verify>`` parameter accepts the following values:
+
+  * ``0`` - None.
+    Do not authenticate the peer.
+  * ``1`` - Optional.
+    Optionally authenticate the peer.
+  * ``2`` - Required (default).
+    Authenticate the peer.
+
+* The ``<hostname_verify>`` parameter accepts the following values:
+
+  * ``0`` - Do not verify the hostname against the received certificate.
+  * ``1`` - Verify the hostname against the received certificate (default).
+
+See `nRF socket options`_ ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
 
 
 Response syntax
@@ -100,7 +115,7 @@ Example
 ::
 
    AT#XHTTPCCON=?
-   #XHTTPCCON: (0,1),<host>,<port>,<sec_tag>
+   #XHTTPCCON: (0,1),<host>,<port>,<sec_tag>,<peer_verify>,<hostname_verify>
    OK
 
 HTTP request #XHTTPCREQ

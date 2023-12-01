@@ -48,6 +48,8 @@ static struct slm_httpc_ctx {
 	int fd;				/* HTTPC socket */
 	int family;			/* Socket address family */
 	uint32_t sec_tag;		/* security tag to be used */
+	int peer_verify;		/* Peer verification level for TLS connection. */
+	bool hostname_verify;		/* Verify hostname against the certificate. */
 	char host[SLM_MAX_URL];		/* HTTP server address */
 	uint16_t port;			/* HTTP server port */
 	char *method_str;		/* request method */
@@ -253,7 +255,6 @@ static int do_http_connect(void)
 	}
 	if (httpc.sec_tag != INVALID_SEC_TAG) {
 		sec_tag_t sec_tag_list[] = { httpc.sec_tag };
-		int peer_verify = TLS_PEER_VERIFY_REQUIRED;
 
 		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 				 sizeof(sec_tag_t));
@@ -262,15 +263,19 @@ static int do_http_connect(void)
 			ret = -errno;
 			goto exit_cli;
 		}
-		ret = setsockopt(httpc.fd, SOL_TLS, TLS_PEER_VERIFY, &peer_verify,
-				 sizeof(peer_verify));
+		ret = setsockopt(httpc.fd, SOL_TLS, TLS_PEER_VERIFY, &httpc.peer_verify,
+				 sizeof(httpc.peer_verify));
 		if (ret) {
 			LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", -errno);
 			ret = -errno;
 			goto exit_cli;
 		}
-		ret = setsockopt(httpc.fd, SOL_TLS, TLS_HOSTNAME, httpc.host,
-				 strlen(httpc.host));
+		if (httpc.hostname_verify) {
+			ret = setsockopt(httpc.fd, SOL_TLS, TLS_HOSTNAME, httpc.host,
+					 strlen(httpc.host));
+		} else {
+			ret = setsockopt(httpc.fd, SOL_TLS, TLS_HOSTNAME, NULL, 0);
+		}
 		if (ret) {
 			LOG_ERR("setsockopt(TLS_HOSTNAME) error: %d", -errno);
 			ret = -errno;
@@ -327,21 +332,25 @@ exit_cli:
 static int do_http_disconnect(void)
 {
 	/* Close socket if it is connected. */
-	if (httpc.fd != INVALID_SOCKET) {
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		if (httpc.sec_tag != INVALID_SEC_TAG) {
-			(void)slm_tls_unloadcrdl(httpc.sec_tag);
-			httpc.sec_tag = INVALID_SEC_TAG;
-		}
-#endif
-		close(httpc.fd);
-		httpc.fd = INVALID_SOCKET;
-	} else {
-		return -ENOTCONN;
+	if (httpc.fd == INVALID_SOCKET) {
+		return 0;
 	}
-	rsp_send("\r\n#XHTTPCCON: 0\r\n");
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	if (httpc.sec_tag != INVALID_SEC_TAG) {
+		(void)slm_tls_unloadcrdl(httpc.sec_tag);
+		httpc.sec_tag = INVALID_SEC_TAG;
+	}
+#endif
+	int ret = close(httpc.fd);
 
-	return 0;
+	if (ret) {
+		LOG_WRN("close() failed: %d", -errno);
+		ret = -errno;
+	}
+	httpc.fd = INVALID_SOCKET;
+	rsp_send("\r\n#XHTTPCCON: %d\r\n", ret);
+
+	return ret;
 }
 
 static int http_method_str_enum(uint8_t *method_str)
@@ -430,17 +439,38 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &httpc.port);
-			if (err) {
-				return err;
+			if (at_params_unsigned_short_get(&slm_at_param_list, 3, &httpc.port)) {
+				return -EINVAL;
 			}
+			const int param_count = at_params_valid_count_get(&slm_at_param_list);
+
 			httpc.sec_tag = INVALID_SEC_TAG;
-			if (at_params_valid_count_get(&slm_at_param_list) > 4) {
-				err = at_params_unsigned_int_get(&slm_at_param_list, 4,
-							&httpc.sec_tag);
-				if (err) {
-					return err;
+			if (param_count > 4) {
+				if (at_params_unsigned_int_get(&slm_at_param_list, 4,
+							       &httpc.sec_tag)) {
+					return -EINVAL;
 				}
+			}
+			httpc.peer_verify = TLS_PEER_VERIFY_REQUIRED;
+			if (param_count > 5) {
+				if (at_params_unsigned_int_get(&slm_at_param_list, 5,
+							       &httpc.peer_verify) ||
+				    (httpc.peer_verify != TLS_PEER_VERIFY_NONE &&
+				     httpc.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
+				     httpc.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
+					return -EINVAL;
+				}
+			}
+			httpc.hostname_verify = true;
+			if (param_count > 6) {
+				uint16_t hostname_verify;
+
+				if (at_params_unsigned_short_get(&slm_at_param_list, 6,
+								 &hostname_verify) ||
+				    (hostname_verify != 0 && hostname_verify != 1)) {
+					return -EINVAL;
+				}
+				httpc.hostname_verify = (bool)hostname_verify;
 			}
 			httpc.family = (op == HTTPC_CONNECT) ? AF_INET : AF_INET6;
 			err = do_http_connect();
@@ -449,7 +479,8 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 			err = do_http_disconnect();
 		} else {
 			err = -EINVAL;
-		} break;
+		}
+		break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (httpc.sec_tag != INVALID_SEC_TAG) {
@@ -465,8 +496,9 @@ int handle_at_httpc_connect(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XHTTPCCON: (%d,%d,%d),<host>,<port>,<sec_tag>\r\n",
-			HTTPC_DISCONNECT, HTTPC_CONNECT, HTTPC_CONNECT6);
+		rsp_send("\r\n#XHTTPCCON: (%d,%d,%d),<host>,<port>,"
+			 "<sec_tag>,<peer_verify>,<hostname_verify>\r\n",
+			 HTTPC_DISCONNECT, HTTPC_CONNECT, HTTPC_CONNECT6);
 		err = 0;
 		break;
 

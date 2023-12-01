@@ -174,7 +174,7 @@ Syntax
 
 ::
 
-   #XTCPCLI=<op>[,<url>,<port>[,[sec_tag]]
+   #XTCPCLI=<op>[,<url>,<port>[,sec_tag[,peer_verify[,hostname_verify]]]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -191,6 +191,21 @@ Syntax
 * The ``<sec_tag>`` parameter is an integer.
   If it is given, a TLS client will be started.
   It indicates to the modem the credential of the security tag used for establishing a secure connection.
+* The ``<peer_verify>`` parameter accepts the following values:
+
+  * ``0`` - None.
+    Do not authenticate the peer.
+  * ``1`` - Optional.
+    Optionally authenticate the peer.
+  * ``2`` - Required (default).
+    Authenticate the peer.
+
+* The ``<hostname_verify>`` parameter accepts the following values:
+
+  * ``0`` - Do not verify the hostname against the received certificate.
+  * ``1`` - Verify the hostname against the received certificate (default).
+
+See `nRF socket options`_ ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -260,7 +275,7 @@ Response syntax
 
 ::
 
-   #XTCPCLI: <list of ops>,<url>,<port>,<sec_tag>
+   #XTCPCLI: <list of ops>,<url>,<port>,<sec_tag>,<peer_verify>,<hostname_verify>
 
 Examples
 ~~~~~~~~
@@ -268,7 +283,7 @@ Examples
 ::
 
    AT#XTCPCLI=?
-   #XTCPCLI: (0,1,2),<url>,<port>,<sec_tag>
+   #XTCPCLI: (0,1,2),<url>,<port>,<sec_tag>,<peer_verify>,<hostname_verify>
    OK
 
 TCP send data #XTCPSEND
@@ -532,7 +547,7 @@ Syntax
 
 ::
 
-   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<use_dtls_cid>]]]
+   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<use_dtls_cid>[,peer_verify[,hostname_verify]]]]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -554,6 +569,21 @@ Syntax
   This parameter is only supported with modem firmware 1.3.5 and newer.
   See :ref:`SLM_AT_SSOCKETOPT` for more details regarding the allowed values.
   The command will fail (with ``<error>`` equal to ``-134`` (``-ENOTSUP``) if the requested connection identifier is not accepted by the server.
+* The ``<peer_verify>`` parameter accepts the following values:
+
+  * ``0`` - None.
+    Do not authenticate the peer.
+  * ``1`` - Optional.
+    Optionally authenticate the peer.
+  * ``2`` - Required (default).
+    Authenticate the peer.
+
+* The ``<hostname_verify>`` parameter accepts the following values:
+
+  * ``0`` - Do not verify the hostname against the received certificate.
+  * ``1`` - Verify the hostname against the received certificate (default).
+
+See `nRF socket options`_ ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -616,7 +646,7 @@ Syntax
 
 ::
 
-   #XUDPCLI: <list of ops>,<url>,<port>,<sec_tag>,<use_dtls_cid>
+   #XUDPCLI: <list of ops>,<url>,<port>,<sec_tag>,<use_dtls_cid>,<peer_verify>,<hostname_verify>
 
 Examples
 ~~~~~~~~
@@ -624,7 +654,7 @@ Examples
 ::
 
    AT#XUDPCLI=?
-   #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>,<use_dtls_cid>
+   #XUDPCLI: (0,1,2),<url>,<port>,<sec_tag>,<use_dtls_cid>,<peer_verify>,<tls_hostname_verify>
    OK
 
 UDP send data #XUDPSEND

@@ -183,6 +183,11 @@ Serial LTE modem
 
   * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
   * ``#XSLMVER`` AT command to report CONFIG_SLM_CUSTOMER_VERSION if it is defined.
+  * The ``#XTCPCLI``, ``#XUDPCLI`` and ``#XHTTPCCON`` AT commands with options to:
+
+    * Set the ``PEER_VERIFY`` socket option.
+      Set to ``TLS_PEER_VERIFY_REQUIRED`` by default.
+    * Set the ``TLS_HOSTNAME`` socket option to ``NULL`` to disable the hostname verification.
 
 * Removed Kconfig options ``CONFIG_SLM_CUSTOMIZED`` and ``CONFIG_SLM_SOCKET_RX_MAX``.
 
