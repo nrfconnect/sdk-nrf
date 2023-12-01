@@ -5,7 +5,7 @@
  */
 
 #if defined(TFM_PARTITION_CRYPTO)
-#include "common.h"
+#include <autoconf.h>
 #include <nrf_cc3xx_platform.h>
 #include <nrf_cc3xx_platform_ctr_drbg.h>
 #endif
@@ -33,9 +33,9 @@ static enum tfm_hal_status_t crypto_platform_init(void)
 #if !CRYPTO_RNG_MODULE_ENABLED
 	err = nrf_cc3xx_platform_init_no_rng();
 #else
-#if defined(PSA_WANT_ALG_CTR_DRBG)
+#if defined(CONFIG_PSA_NEED_CC3XX_CTR_DRBG_DRIVER)
 	err = nrf_cc3xx_platform_init();
-#elif defined (PSA_WANT_ALG_HMAC_DRBG)
+#elif defined(CONFIG_PSA_NEED_CC3XX_HMAC_DRBG_DRIVER)
 	err = nrf_cc3xx_platform_init_hmac_drbg();
 #else
 	#error "Please enable either PSA_WANT_ALG_CTR_DRBG or PSA_WANT_ALG_HMAC_DRBG"
