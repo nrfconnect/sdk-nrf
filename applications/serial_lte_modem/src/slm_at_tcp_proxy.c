@@ -47,6 +47,8 @@ static struct tcp_proxy {
 	sec_tag_t sec_tag;	/* Security tag of the credential */
 	int sock_peer;		/* Socket descriptor for peer. */
 	enum slm_tcp_role role;	/* Client or Server proxy */
+	int peer_verify;	/* Peer verification level for TLS connection. */
+	bool hostname_verify;	/* Verify hostname against the certificate. */
 } proxy;
 
 /** forward declaration of thread function **/
@@ -271,8 +273,6 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
 		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
-		int peer_verify = TLS_PEER_VERIFY_REQUIRED;
-
 #if defined(CONFIG_SLM_NATIVE_TLS)
 		ret = slm_tls_loadcrdl(proxy.sec_tag);
 		if (ret < 0) {
@@ -287,10 +287,20 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 			ret = -errno;
 			goto exit_cli;
 		}
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_PEER_VERIFY, &peer_verify,
-				 sizeof(peer_verify));
+		ret = setsockopt(proxy.sock, SOL_TLS, TLS_PEER_VERIFY, &proxy.peer_verify,
+				 sizeof(proxy.peer_verify));
 		if (ret) {
 			LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", errno);
+			ret = -errno;
+			goto exit_cli;
+		}
+		if (proxy.hostname_verify) {
+			ret = setsockopt(proxy.sock, SOL_TLS, TLS_HOSTNAME, url, strlen(url));
+		} else {
+			ret = setsockopt(proxy.sock, SOL_TLS, TLS_HOSTNAME, NULL, 0);
+		}
+		if (ret) {
+			LOG_ERR("setsockopt(TLS_HOSTNAME) error: %d", errno);
 			ret = -errno;
 			goto exit_cli;
 		}
@@ -749,17 +759,36 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&slm_at_param_list, 3, &port);
-			if (err) {
-				return err;
+			if (at_params_unsigned_short_get(&slm_at_param_list, 3, &port)) {
+				return -EINVAL;
 			}
 			proxy.sec_tag = INVALID_SEC_TAG;
 			if (param_count > 4) {
-				err = at_params_int_get(&slm_at_param_list, 4, &proxy.sec_tag);
-				if (err) {
-					return err;
+				if (at_params_int_get(&slm_at_param_list, 4, &proxy.sec_tag)) {
+					return -EINVAL;
 				}
 			}
+			proxy.peer_verify = TLS_PEER_VERIFY_REQUIRED;
+			if (param_count > 5) {
+				if (at_params_int_get(&slm_at_param_list, 5, &proxy.peer_verify) ||
+				    (proxy.peer_verify != TLS_PEER_VERIFY_NONE &&
+				     proxy.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
+				     proxy.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
+					return -EINVAL;
+				}
+			}
+			proxy.hostname_verify = true;
+			if (param_count > 6) {
+				uint16_t hostname_verify;
+
+				if (at_params_unsigned_short_get(&slm_at_param_list, 6,
+								 &hostname_verify) ||
+				    (hostname_verify != 0 && hostname_verify != 1)) {
+					return -EINVAL;
+				}
+				proxy.hostname_verify = (bool)hostname_verify;
+			}
+
 			proxy.family = (op == CLIENT_CONNECT) ? AF_INET : AF_INET6;
 			err = do_tcp_client_connect(url, port);
 		} else if (op == CLIENT_DISCONNECT) {
@@ -772,8 +801,9 @@ int handle_at_tcp_client(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		rsp_send("\r\n#XTCPCLI: (%d,%d,%d),<url>,<port>,<sec_tag>\r\n",
-			CLIENT_DISCONNECT, CLIENT_CONNECT, CLIENT_CONNECT6);
+		rsp_send("\r\n#XTCPCLI: (%d,%d,%d),<url>,<port>,"
+			 "<sec_tag>,<peer_verify>,<hostname_verify>\r\n",
+			 CLIENT_DISCONNECT, CLIENT_CONNECT, CLIENT_CONNECT6);
 		err = 0;
 		break;
 
