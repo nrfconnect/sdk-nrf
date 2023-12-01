@@ -1,4 +1,4 @@
-.. _asset_tracker_v2_internal_modules:
+.. _asset_tracker_v2_architecture:
 
 Firmware architecture
 #####################
@@ -21,21 +21,10 @@ It also shows the modules with thread and the modules without thread.
 
     Relationship between modules and the Application Event Manager
 
-Internal modules
-****************
+Application modules
+*******************
 
-The application comprises of the following modules:
-
-* :ref:`asset_tracker_v2_app_module`
-* :ref:`asset_tracker_v2_data_module`
-* :ref:`asset_tracker_v2_cloud_module`
-* :ref:`asset_tracker_v2_sensor_module`
-* :ref:`asset_tracker_v2_location_module`
-* :ref:`asset_tracker_v2_ui_module`
-* :ref:`asset_tracker_v2_util_module`
-* :ref:`asset_tracker_v2_debug_module`
-* :ref:`asset_tracker_v2_modem_module`
-
+The application consists of a set of modules.
 Each module documentation contains information about its API, dependencies, states, and state transitions.
 
 The application has two types of modules:
@@ -59,7 +48,7 @@ The messages are then queued in the case of the cloud module or processed direct
 
     Event handling in modules
 
-For more information about each module and its configuration, see the respective :ref:`module documentation <asset_tracker_v2_subpages>`.
+For more information about the modules and their configuration, see the :ref:`asset_tracker_v2_modules`.
 
 Thread usage
 ************
