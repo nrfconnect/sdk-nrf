@@ -147,6 +147,26 @@ To build Trusted Firmware-M with debug symbols, set the :kconfig:option:`CONFIG_
 
 nRF Debug in the |nRFVSC| automatically loads the Trusted Firmware-M debug symbols.
 
+Enabling non-halting debugging with Cortex-M Debug Monitor
+==========================================================
+
+The debugging process can run in two modes.
+The halt-mode debugging stops the CPU when a debug request occurs.
+The monitor-mode debugging lets a CPU debug parts of an application while crucial functions continue.
+Unlike halt-mode, the monitor-mode is useful for scenarios like PWM motor control or Bluetooth, where halting the entire application is risky.
+The CPU takes debug interrupts, running a monitor code for J-Link communication and user-defined functions.
+
+Use the following steps to enable monitor-mode debugging in the |NCS|:
+
+1. In the application configuration file, set the Kconfig options :kconfig:option:`CONFIG_CORTEX_M_DEBUG_MONITOR_HOOK` and :kconfig:option:`CONFIG_SEGGER_DEBUGMON`.
+2. Attach the debugger to the application.
+3. Depending on debugger you are using, enable monitor-mode debugging:
+
+  * For nRF Debug in |nRFVSC|, enter ``-exec monitor exec SetMonModeDebug=1`` in the debug console.
+  * For debugging using Ozone, enter ``Exec.Command("SetMonModeDebug = 1");`` in the console.
+
+For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
+
 Debug configuration
 ===================
 

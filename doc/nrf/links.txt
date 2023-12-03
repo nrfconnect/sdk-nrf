@@ -701,6 +701,8 @@
 
 .. _`SEGGER SystemView`: https://www.segger.com/products/development-tools/systemview/
 
+.. _`Monitor-mode Debugging`: https://www.segger.com/products/debug-probes/j-link/technology/monitor-mode-debugging/
+
 .. ### Source: bluetooth.org and bluetooth.com
 
 .. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/specs/
