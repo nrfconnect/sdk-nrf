@@ -147,11 +147,10 @@ void process_psa_tls(void)
 			ret = psa_tls_send_buffer(sock, recv_buffer, received);
 			if (ret != 0) {
 				LOG_ERR("DTLS Failed to send. Err: %d", errno);
-				break;
+			} else {
+				LOG_INF("DTLS replied with %d bytes", received);
+				LOG_INF("Closing DTLS connection");
 			}
-
-			LOG_INF("DTLS replied with %d bytes", received);
-			LOG_INF("Closing DTLS connection");
 		}
 
 		(void)close(sock);
