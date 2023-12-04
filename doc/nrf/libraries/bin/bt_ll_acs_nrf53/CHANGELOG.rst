@@ -9,6 +9,21 @@ Changelog
 
 Notable changes to this controller are documented in this file.
 
+Controller v3424
+****************
+
+The following changes have been introduced in the v3424 of the controller:
+
+Changes
+=======
+
+* Improved robustness of the timestamps (the SDU references) received together with the ISO data.
+* Changed offset of the timestamps (the SDU references) received together with the ISO data to get correct presentation delay.
+* Freed more pins for front-end module (FEM) control.
+* Improved ACL and BIS coexistence on the same device.
+* Fixed an issue where the peripheral did not always accept timing values from the same central.
+* Fixed an issue where the PA sync skip parameter was not used.
+* Fixed an issue where it was not possible to create BIG sync after terminating a pending BIG sync.
 
 Controller v3393
 ****************
