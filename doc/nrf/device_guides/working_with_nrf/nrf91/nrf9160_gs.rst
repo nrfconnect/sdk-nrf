@@ -157,7 +157,7 @@ Make sure you are logged in to the `nRF Cloud`_ portal and have an activated SIM
 
       nRF Cloud - Add LTE Device
 
-   * **Device ID:** The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your nRF9160 DK.
+   * **Device ID:** The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your |DK|.
      For example, *nrf-123456789012345*.
      It is case sensitive, so make sure all the letters are lower-case.
    * **PIN/HWID:** The ownership code is the PIN or the hardware ID of your device, and it is found on the label of your |DK|.

@@ -158,7 +158,7 @@ To update the firmware on the Thingy:91, complete the following steps:
 
 #. Click :guilabel:`Continue` to move to the next step.
 
-   The **Program Mode Firmware (Optional)** changes to the **Program Asset Tracker V2** window.
+   The **Program Mode Firmware (Optional)** window changes to the **Program Asset Tracker V2** window.
 
 #. Switch off the Thingy:91.
 #. Press **SW3** while switching **SW1** to the **ON** position to enable MCUboot mode.
@@ -178,6 +178,9 @@ To update the firmware on the Thingy:91, complete the following steps:
    a. Click :guilabel:`Start` to begin the modem trace.
       The button changes to :guilabel:`Stop` and is greyed out.
    #. Click :guilabel:`Refresh dashboard` to refresh the information.
+
+      If the information does not load, switch the Thingy:91 off and on, select the device from the :guilabel:`SELECT DEVICE` drop-down, and click :guilabel:`Start` to begin the modem trace again.
+
    #. Copy the ICCID by clicking on the **ICCID** label or the displayed ICCID number in the **Sim** section.
 
       .. figure:: images/cellularmonitor_iccid.png
@@ -238,6 +241,8 @@ Make sure you are logged in to the portal.
 
       nRF Cloud - Add SIM
 
+   The **Add SIM** page opens in the **Verify SIM Card** view.
+
 #. Complete the following steps on the **Add SIM** page to activate your iBasis SIM card:
 
    .. figure:: images/nrfcloud_activating_sim.png
@@ -258,6 +263,11 @@ Make sure you are logged in to the portal.
       Reveal the PUK by scratching off the area on the back of the SIM card.
    #. Accept the Terms and the Privacy Policy.
    #. Click the :guilabel:`Activate SIM` button.
+
+      The **Add SIM** page changes to the **Activate SIM Card** view.
+
+   #. Fill in the required information.
+   #. Click :guilabel:`Save` to complete the activation.
 
 After the SIM card is activated, you can add your |DK| to nRF Cloud.
 
