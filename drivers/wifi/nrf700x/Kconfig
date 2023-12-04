@@ -448,6 +448,13 @@ config WIFI_MGMT_SCAN_SSID_FILT_MAX
 	default 2
 endif
 
+config NRF_WIFI_SCAN_MAX_BSS_CNT
+	int "Maximum number of scan results to return."
+	default 0
+	range 0 65535
+	help
+	  Maximum number of scan results to return. 0 represents unlimited number of BSSes.
+
 config NRF_WIFI_BEAMFORMING
 	bool "Enable Wi-Fi beamforming. Enabling beamforming can provide slight improvement in performance where as disabling it can provide better power saving in low network activity applications"
 	default y

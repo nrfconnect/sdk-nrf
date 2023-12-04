@@ -278,7 +278,8 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 		return;
 	}
 
-	max_bss_cnt = vif_ctx_zep->max_bss_cnt;
+	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
+		vif_ctx_zep->max_bss_cnt : CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT;
 
 	for (i = 0; i < scan_res->event_bss_count; i++) {
 		/* Limit the scan results to the configured maximum */
