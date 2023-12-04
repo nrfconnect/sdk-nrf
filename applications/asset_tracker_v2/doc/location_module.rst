@@ -98,7 +98,7 @@ Wi-Fi positioning has the following limitations:
 
    The Wi-Fi configuration uses both flash and SRAM extensively.
    You can configure the number of scan results with the :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT` Kconfig option to reduce SRAM consumption.
-   Align the :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT` Kconfig option with :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT`.
+   Align the :kconfig:option:`CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT` Kconfig option with :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT`.
    You can also change the value of the :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option.
 
 Module internals
