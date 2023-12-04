@@ -279,7 +279,7 @@ static int wifi_scan(void)
 
 	if (sizeof(CONFIG_WIFI_SCAN_CHAN_LIST) - 1) {
 		if (wifi_utils_parse_scan_chan(CONFIG_WIFI_SCAN_CHAN_LIST,
-						params.chan)) {
+						params.band_chan, ARRAY_SIZE(params.band_chan))) {
 			LOG_ERR("Incorrect value(s) in CONFIG_WIFI_SCAN_CHAN_LIST: %s",
 					CONFIG_WIFI_SCAN_CHAN_LIST);
 			return -ENOEXEC;

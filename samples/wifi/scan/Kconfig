@@ -46,6 +46,20 @@ config WIFI_SCAN_CHAN_LIST
 	help
 	  Specifies the list of channels used to perform scan.
 
+config WIFI_SCAN_DWELL_TIME_ACTIVE
+	int "Active scan dwell time"
+	default 50
+	range 5 1000
+	help
+	  Active scan dwell time (in ms) per channel.
+
+config WIFI_SCAN_DWELL_TIME_PASSIVE
+	int "Passive scan dwell time"
+	default 130
+	range 10 1000
+	help
+	  Passive scan dwell time (in ms) per channel.
+
 choice
 	prompt "Choose a WiFi Scan Profile"
 
