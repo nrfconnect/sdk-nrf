@@ -12,16 +12,18 @@
 
 #include <bluetooth/services/lbs.h>
 
-class BleOnOffLightDataProvider : public BLEBridgedDeviceProvider {
+class BleLBSDataProvider : public BLEBridgedDeviceProvider {
 public:
-	explicit BleOnOffLightDataProvider(UpdateAttributeCallback callback) : BLEBridgedDeviceProvider(callback) {}
+	explicit BleLBSDataProvider(UpdateAttributeCallback callback) : BLEBridgedDeviceProvider(callback) {}
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 			       size_t dataSize) override;
 	CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
 
-	static void NotifyAttributeChange(intptr_t context);
+	static void NotifyOnOffAttributeChange(intptr_t context);
+	static void NotifySwitchCurrentPositionAttributeChange(intptr_t context);
+
 	static void GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_write_params *params);
 	static uint8_t GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
 					  uint16_t length);
@@ -34,6 +36,7 @@ private:
 	bool CheckSubscriptionParameters(bt_gatt_subscribe_params *params);
 
 	bool mOnOff = false;
+	uint8_t mCurrentSwitchPosition = false;
 	uint16_t mLedCharacteristicHandle;
 	bt_gatt_write_params mGattWriteParams;
 	uint16_t mButtonCharacteristicHandle;

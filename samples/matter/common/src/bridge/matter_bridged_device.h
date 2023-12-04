@@ -74,7 +74,8 @@ public:
 		BridgedNode = 0x0013,
 		OnOffLight = 0x0100,
 		TemperatureSensor = 0x0302,
-		HumiditySensor = 0x0307
+		HumiditySensor = 0x0307,
+		GenericSwitch = 0x000F
 	};
 	using IdentifyType = chip::app::Clusters::Identify::IdentifyTypeEnum;
 	static constexpr uint8_t kDefaultDynamicEndpointVersion = 1;

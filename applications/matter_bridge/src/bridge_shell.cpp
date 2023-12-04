@@ -160,7 +160,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		add, NULL,
 		"Adds bridged device. \n"
 		"Usage: add <bridged_device_type> [node_label]\n"
-		"* bridged_device_type - the bridged device's type, e.g. 256 - OnOff Light, 770 - TemperatureSensor, 775 - HumiditySensor\n"
+		"* bridged_device_type - the bridged device's type, e.g. 15 - Generic Switch, 256 - OnOff Light, 770 - TemperatureSensor, 775 - HumiditySensor, \n"
 		"* node_label - the optional bridged device's node label\n",
 		AddBridgedDeviceHandler, 2, 1),
 #endif /* CONFIG_BRIDGED_DEVICE_BT */

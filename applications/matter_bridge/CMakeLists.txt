@@ -60,12 +60,13 @@ if(CONFIG_BRIDGED_DEVICE_BT)
     )
     target_include_directories(app PRIVATE src/ble_providers)
 
-if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
+if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/onoff_light.cpp
-        src/ble_providers/ble_onoff_light_data_provider.cpp
+        src/bridged_device_types/generic_switch.cpp
+        src/ble_providers/ble_lbs_data_provider.cpp
     )
-endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
     target_sources(app PRIVATE
@@ -92,12 +93,14 @@ else()
     )
     target_include_directories(app PRIVATE src/simulated_providers)
 
-if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE)
+if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
     target_sources(app PRIVATE
         src/bridged_device_types/onoff_light.cpp
+        src/bridged_device_types/generic_switch.cpp
         src/simulated_providers/simulated_onoff_light_data_provider.cpp
+        src/simulated_providers/simulated_generic_switch_data_provider.cpp
     )
-endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
     target_sources(app PRIVATE

@@ -17,6 +17,10 @@ config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 	bool "Support for Humidity Sensor bridged device"
 	default y
 
+config BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+	bool "Support for Generic Switch bridged device"
+	default y
+
 choice BRIDGED_DEVICE_IMPLEMENTATION
 	prompt "Bridged Device implementation"
 	default BRIDGED_DEVICE_SIMULATED

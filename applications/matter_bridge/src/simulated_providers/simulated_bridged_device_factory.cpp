@@ -66,15 +66,6 @@ SimulatedBridgedDeviceFactory::BridgedDeviceFactory &SimulatedBridgedDeviceFacto
 	};
 
 	static BridgedDeviceFactory sBridgedDeviceFactory{
-#ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-		{ DeviceType::HumiditySensor,
-		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
-				  return nullptr;
-			  }
-			  return chip::Platform::New<HumiditySensorDevice>(nodeLabel);
-		  } },
-#endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ DeviceType::OnOffLight,
 		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
@@ -82,6 +73,15 @@ SimulatedBridgedDeviceFactory::BridgedDeviceFactory &SimulatedBridgedDeviceFacto
 				  return nullptr;
 			  }
 			  return chip::Platform::New<OnOffLightDevice>(nodeLabel);
+		  } },
+#endif
+#ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+		{ DeviceType::GenericSwitch,
+		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
+			  if (!checkLabel(nodeLabel)) {
+				  return nullptr;
+			  }
+			  return chip::Platform::New<GenericSwitchDevice>(nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
@@ -93,6 +93,15 @@ SimulatedBridgedDeviceFactory::BridgedDeviceFactory &SimulatedBridgedDeviceFacto
 			  return chip::Platform::New<TemperatureSensorDevice>(nodeLabel);
 		  } },
 #endif
+#ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+		{ DeviceType::HumiditySensor,
+		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
+			  if (!checkLabel(nodeLabel)) {
+				  return nullptr;
+			  }
+			  return chip::Platform::New<HumiditySensorDevice>(nodeLabel);
+		  } },
+#endif
 	};
 	return sBridgedDeviceFactory;
 }
@@ -100,22 +109,28 @@ SimulatedBridgedDeviceFactory::BridgedDeviceFactory &SimulatedBridgedDeviceFacto
 SimulatedBridgedDeviceFactory::SimulatedDataProviderFactory &SimulatedBridgedDeviceFactory::GetDataProviderFactory()
 {
 	static SimulatedDataProviderFactory sDeviceDataProvider{
-#ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-		{ DeviceType::HumiditySensor,
-		  [](UpdateAttributeCallback clb) {
-			  return chip::Platform::New<SimulatedHumiditySensorDataProvider>(clb);
-		  } },
-#endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ DeviceType::OnOffLight,
 		  [](UpdateAttributeCallback clb) {
 			  return chip::Platform::New<SimulatedOnOffLightDataProvider>(clb);
 		  } },
 #endif
+#ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+		{ DeviceType::GenericSwitch,
+		  [](UpdateAttributeCallback clb) {
+			  return chip::Platform::New<SimulatedGenericSwitchDataProvider>(clb);
+		  } },
+#endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ DeviceType::TemperatureSensor,
 		  [](UpdateAttributeCallback clb) {
 			  return chip::Platform::New<SimulatedTemperatureSensorDataProvider>(clb);
+		  } },
+#endif
+#ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+		{ DeviceType::HumiditySensor,
+		  [](UpdateAttributeCallback clb) {
+			  return chip::Platform::New<SimulatedHumiditySensorDataProvider>(clb);
 		  } },
 #endif
 	};
