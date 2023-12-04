@@ -30,6 +30,18 @@ The following changes are mandatory to make your application work in the same wa
       * The ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
       * The ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
 
+* For samples using Wi-Fi features:
+
+  * A few Kconfig options related to scan operations have been removed in the current release. If your application uses them,
+    they will need to be updated to remove the dependency on these:
+
+      * ``CONFIG_WIFI_MGMT_SCAN_BANDS``
+      * ``CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_ACTIVE``
+      * ``CONFIG_WIFI_MGMT_SCAN_DWELL_TIME_PASSIVE``
+      * ``CONFIG_WIFI_MGMT_SCAN_SSID_FILT``
+      * ``CONFIG_WIFI_MGMT_SCAN_MAX_BSS_CNT``
+      * ``CONFIG_WIFI_MGMT_SCAN_CHAN``
+
 Recommended changes
 *******************
 
