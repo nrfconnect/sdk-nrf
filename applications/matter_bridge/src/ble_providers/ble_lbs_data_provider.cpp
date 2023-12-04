@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "ble_onoff_light_data_provider.h"
+#include "ble_lbs_data_provider.h"
 
 #include <bluetooth/gatt_dm.h>
 #include <zephyr/bluetooth/conn.h>
@@ -22,31 +22,32 @@ static bt_uuid *sUuidLED = BT_UUID_LBS_LED;
 static bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
 static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 
-uint8_t BleOnOffLightDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
-						      uint16_t length)
+uint8_t BleLBSDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
+					       uint16_t length)
 {
-	BleOnOffLightDataProvider *provider = static_cast<BleOnOffLightDataProvider *>(
+	BleLBSDataProvider *provider = static_cast<BleLBSDataProvider *>(
 		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
 
 	VerifyOrExit(data, );
-	VerifyOrExit(length == sizeof(mOnOff), );
+	VerifyOrExit(length == sizeof(mCurrentSwitchPosition), );
 	VerifyOrExit(provider, );
 
-	/* TODO: Implement invoking command through the binding for OnOff light switch or update state of generic
-	 * switch. */
+	/* Save data received in the notification. */
+	memcpy(&provider->mCurrentSwitchPosition, data, length);
+	DeviceLayer::PlatformMgr().ScheduleWork(NotifySwitchCurrentPositionAttributeChange,
+						reinterpret_cast<intptr_t>(provider));
 
 exit:
-
 	return BT_GATT_ITER_CONTINUE;
 }
 
-void BleOnOffLightDataProvider::Init()
+void BleLBSDataProvider::Init()
 {
 	/* Do nothing in this case */
 }
 
-void BleOnOffLightDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
-						  size_t dataSize)
+void BleLBSDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
+					   size_t dataSize)
 {
 	if (mUpdateAttributeCallback) {
 		mUpdateAttributeCallback(*this, clusterId, attributeId, data, dataSize);
@@ -64,7 +65,7 @@ void BleOnOffLightDataProvider::NotifyUpdateState(chip::ClusterId clusterId, chi
 	}
 }
 
-void BleOnOffLightDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_write_params *params)
+void BleLBSDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_write_params *params)
 {
 	if (!params) {
 		return;
@@ -74,7 +75,7 @@ void BleOnOffLightDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt
 		return;
 	}
 
-	BleOnOffLightDataProvider *provider = static_cast<BleOnOffLightDataProvider *>(
+	BleLBSDataProvider *provider = static_cast<BleLBSDataProvider *>(
 		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
 
 	if (!provider) {
@@ -84,11 +85,10 @@ void BleOnOffLightDataProvider::GattWriteCallback(bt_conn *conn, uint8_t err, bt
 	/* Save data received in GATT write response. */
 	memcpy(&provider->mOnOff, params->data, params->length);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
+	DeviceLayer::PlatformMgr().ScheduleWork(NotifyOnOffAttributeChange, reinterpret_cast<intptr_t>(provider));
 }
 
-CHIP_ERROR BleOnOffLightDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId,
-						  uint8_t *buffer)
+CHIP_ERROR BleLBSDataProvider::UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer)
 {
 	if (clusterId != Clusters::OnOff::Id) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
@@ -98,8 +98,7 @@ CHIP_ERROR BleOnOffLightDataProvider::UpdateState(chip::ClusterId clusterId, chi
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
 
-	LOG_INF("Updating state of the BleOnOffLightDataProvider, cluster ID: %u, attribute ID: %u.", clusterId,
-		attributeId);
+	LOG_INF("Updating state of the BleLBSDataProvider, cluster ID: %u, attribute ID: %u.", clusterId, attributeId);
 
 	switch (attributeId) {
 	case Clusters::OnOff::Attributes::OnOff::Id: {
@@ -109,7 +108,7 @@ CHIP_ERROR BleOnOffLightDataProvider::UpdateState(chip::ClusterId clusterId, chi
 		mGattWriteParams.offset = 0;
 		mGattWriteParams.length = sizeof(mOnOff);
 		mGattWriteParams.handle = mLedCharacteristicHandle;
-		mGattWriteParams.func = BleOnOffLightDataProvider::GattWriteCallback;
+		mGattWriteParams.func = BleLBSDataProvider::GattWriteCallback;
 
 		int err = bt_gatt_write(mDevice.mConn, &mGattWriteParams);
 		if (err) {
@@ -126,12 +125,12 @@ CHIP_ERROR BleOnOffLightDataProvider::UpdateState(chip::ClusterId clusterId, chi
 	return CHIP_NO_ERROR;
 }
 
-bt_uuid *BleOnOffLightDataProvider::GetServiceUuid()
+bt_uuid *BleLBSDataProvider::GetServiceUuid()
 {
 	return sServiceUuid;
 }
 
-void BleOnOffLightDataProvider::Subscribe()
+void BleLBSDataProvider::Subscribe()
 {
 	VerifyOrReturn(mDevice.mConn, LOG_ERR("Invalid connection object"));
 
@@ -139,7 +138,7 @@ void BleOnOffLightDataProvider::Subscribe()
 	mGattSubscribeParams.ccc_handle = mCccHandle;
 	mGattSubscribeParams.value_handle = mButtonCharacteristicHandle;
 	mGattSubscribeParams.value = BT_GATT_CCC_NOTIFY;
-	mGattSubscribeParams.notify = BleOnOffLightDataProvider::GattNotifyCallback;
+	mGattSubscribeParams.notify = BleLBSDataProvider::GattNotifyCallback;
 
 	if (CheckSubscriptionParameters(&mGattSubscribeParams)) {
 		int err = bt_gatt_subscribe(mDevice.mConn, &mGattSubscribeParams);
@@ -151,7 +150,7 @@ void BleOnOffLightDataProvider::Subscribe()
 	}
 }
 
-int BleOnOffLightDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
+int BleLBSDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
 {
 	const bt_gatt_dm_attr *gatt_chrc;
 	const bt_gatt_dm_attr *gatt_desc;
@@ -195,15 +194,23 @@ int BleOnOffLightDataProvider::ParseDiscoveredData(bt_gatt_dm *discoveredData)
 	return 0;
 }
 
-void BleOnOffLightDataProvider::NotifyAttributeChange(intptr_t context)
+void BleLBSDataProvider::NotifyOnOffAttributeChange(intptr_t context)
 {
-	BleOnOffLightDataProvider *provider = reinterpret_cast<BleOnOffLightDataProvider *>(context);
+	BleLBSDataProvider *provider = reinterpret_cast<BleLBSDataProvider *>(context);
 
 	provider->NotifyUpdateState(Clusters::OnOff::Id, Clusters::OnOff::Attributes::OnOff::Id, &provider->mOnOff,
 				    sizeof(provider->mOnOff));
 }
 
-bool BleOnOffLightDataProvider::CheckSubscriptionParameters(bt_gatt_subscribe_params *params)
+void BleLBSDataProvider::NotifySwitchCurrentPositionAttributeChange(intptr_t context)
+{
+	BleLBSDataProvider *provider = reinterpret_cast<BleLBSDataProvider *>(context);
+
+	provider->NotifyUpdateState(Clusters::Switch::Id, Clusters::Switch::Attributes::CurrentPosition::Id,
+				    &provider->mCurrentSwitchPosition, sizeof(provider->mCurrentSwitchPosition));
+}
+
+bool BleLBSDataProvider::CheckSubscriptionParameters(bt_gatt_subscribe_params *params)
 {
 	/* If any of these is not met, the bt_gatt_subscribe() generates an assert at runtime */
 	VerifyOrReturnValue(params && params->notify, false);

@@ -46,6 +46,7 @@ The Matter bridge has capability of representing non-Matter bridged devices as d
 The application supports bridging the following Matter device types:
 
 * On/Off Light
+* Generic Switch
 * Temperature Sensor
 * Humidity Sensor
 
@@ -99,7 +100,7 @@ The application supports two bridged device configurations that are mutually exc
 * Bluetooth LE bridged device - This configuration allows to connect a real peripheral Bluetooth LE device to the Matter bridge and represent its functionalities using :ref:`Matter Data Model <ug_matter_overview_data_model>`.
   The application supports the following Bluetooth LE services:
 
-  * Nordic Semiconductor's :ref:`LED Button Service <lbs_readme>` - represented by the Matter On/Off Light device type.
+  * Nordic Semiconductor's :ref:`LED Button Service <lbs_readme>` - represented by the Matter On/Off Light and Generic Switch device types.
   * Zephyr's :ref:`Environmental Sensing Service <peripheral_esp>` - represented by the Matter Temperature Sensor and Humidity Sensor device types.
 
 Depending on the bridged device you want to support in your application, :ref:`enable it using the appropriate Kconfig option <matter_bridge_app_bridged_support_configs>`.
@@ -207,6 +208,7 @@ Adding a simulated bridged device to the Matter bridge
    * *<device_type>* is the Matter device type to use for the bridged device.
      The argument is mandatory and accepts the following values:
 
+      * ``15`` - Generic Switch.
       * ``256`` - On/Off Light.
       * ``770`` - Temperature Sensor.
       * ``775`` - Humidity Sensor.
@@ -220,7 +222,7 @@ Adding a simulated bridged device to the Matter bridge
 
       uart:~$ matter_bridge add 256 "Kitchen Light"
 
-Controlling a simulated OnOff Light bridged device
+Controlling a simulated On/Off Light bridged device
    Use the following command:
 
    .. parsed-literal::
@@ -230,8 +232,8 @@ Controlling a simulated OnOff Light bridged device
 
    In this command:
 
-   * *<new_state>*  is the new state (``0`` - off and ``1`` - on) that will be set on the simulated OnOff Light device.
-   * *<endpoint>*  is the endpoint on which the bridged OnOff Light device is implemented
+   * *<new_state>*  is the new state (``0`` - off and ``1`` - on) that will be set on the simulated On/Off Light device.
+   * *<endpoint>*  is the endpoint on which the bridged On/Off Light device is implemented
 
    Example command:
 
@@ -269,7 +271,10 @@ Adding a Bluetooth LE bridged device to the Matter bridge
    .. code-block:: console
 
       I: Added device to dynamic endpoint 3 (index=0)
+      I: Added device to dynamic endpoint 4 (index=1)
       I: Created 0x100 device type on the endpoint 3
+      I: Created 0xf device type on the endpoint 4
+
 
 Removing a bridged device from the Matter bridge
    Use the following command:
@@ -302,12 +307,12 @@ You can enable the :ref:`matter_bridge_app_bridged_support` by using the followi
 * :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED` - For the simulated bridged device.
 * :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` - For the Bluetooth LE bridged device.
 
-The simulated OnOff Light bridged device can operate in the following modes:
+The simulated On/Off Light bridged device can operate in the following modes:
 
 * Autonomous - The simulated device periodically changes its state.
-  To build the simulated OnOff Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC` Kconfig option.
+  To build the simulated On/Off Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC` Kconfig option.
 * Controllable - The user can explicitly control the On/Off state by using shell commands.
-  To build the simulated OnOff Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` Kconfig option.
+  To build the simulated On/Off Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` Kconfig option.
   This is enabled by default.
 
 Additionally, you can decide how many bridged devices the bridge application will support.
@@ -479,9 +484,14 @@ After building the sample and programming it to your development kit, complete t
                :class: highlight
 
                I: Added device to dynamic endpoint 3 (index=0)
+               I: Added device to dynamic endpoint 4 (index=1)
                I: Created 0x100 device type on the endpoint 3
+               I: Created 0xf device type on the endpoint 4
 
-            For the Environmental Sensor, two endpoints are created: one implements the Temperature Sensor, and the other implements the Humidity Sensor.
+            For the LED Button Service and the Environmental Sensor, two endpoints are created:
+
+            * For the LED Button Service, one implements the On/Off Light Device and the other implements the Generic Switch Device.
+            * For the Environmental Sensor, one implements the Temperature Sensor and the other implements the Humidity Sensor.
 
          #. Write down the value for the bridged device dynamic endpoint ID.
             This is going to be used in the next steps (*<bridged_device_endpoint_ID>*).
@@ -492,6 +502,17 @@ After building the sample and programming it to your development kit, complete t
                :class: highlight
 
                ./chip-tool onoff read on-off *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
+
+            Read the value of the *current-position* attribute from the *switch* cluster using the following command:
+
+            .. parsed-literal::
+               :class: highlight
+
+               ./chip-tool switch read current-position *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
+            Note that the Generic Switch is implemented as a momentary switch.
+            This means that, in contrast to the latching switch, it remains switched on only as long as the physical button is pressed.
 
             In case of the Environmental Sensor, the current temperature and humidity measurements forwarded by the Bluetooth LE Environmental Sensor can be read as follows:
 

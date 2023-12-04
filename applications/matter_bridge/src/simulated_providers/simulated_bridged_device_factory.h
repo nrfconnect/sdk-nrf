@@ -11,19 +11,25 @@
 #include "matter_bridged_device.h"
 #include <lib/support/CHIPMem.h>
 
-#ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-#include "humidity_sensor.h"
-#include "simulated_humidity_sensor_data_provider.h"
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+#include "onoff_light.h"
+#include "simulated_generic_switch_data_provider.h"
+#include "simulated_onoff_light_data_provider.h"
 #endif
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-#include "onoff_light.h"
-#include "simulated_onoff_light_data_provider.h"
+#include "generic_switch.h"
+#include "simulated_generic_switch_data_provider.h"
 #endif
 
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 #include "simulated_temperature_sensor_data_provider.h"
 #include "temperature_sensor.h"
+#endif
+
+#ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+#include "humidity_sensor.h"
+#include "simulated_humidity_sensor_data_provider.h"
 #endif
 
 namespace SimulatedBridgedDeviceFactory
