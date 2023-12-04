@@ -122,34 +122,36 @@ When developing with your Thingy:91, it is recommended to use an external debug 
    The external debug probe must support Arm Cortex-M33, such as the nRF9160 DK.
    You need a 10-pin 2x5 socket-socket 1.27 mm IDC (:term:`Serial Wire Debug (SWD)`) JTAG cable to connect to the external debug probe.
 
-Download and extract the latest application and modem firmware from the `Thingy:91 Downloads <Thingy:91 product website (downloads)_>`_ page.
+Download and extract the latest application and modem firmware from the `Thingy:91 Downloads`_ page.
 
 The downloaded ZIP archive contains the following firmware:
 
 Application firmware
   The :file:`img_app_bl` folder contains full firmware images for different applications.
-  The guides in this section use the images for the :ref:`connectivity_bridge` and :ref:`asset_tracker_v2` applications.
-  Connectivity bridge provides bridge functionality for the hardware, and Asset Tracker v2 simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
-
-  The data is transmitted using either LTE-M or NB-IoT.
-  Asset Tracker v2 first attempts to use LTE-M, then NB-IoT.
-  Check with your SIM card provider for the mode they support at your location.
-  For the iBasis SIM card provided with the nRF9160 DK, see `iBasis IoT network coverage`_.
+  The guides for programming through an external debug probe in this section use the images in this folder.
 
 Application firmware for Device Firmware Update (DFU)
   The images in the :file:`img_fota_dfu_bin` and :file:`img_fota_dfu_hex` folders contain firmware images for DFU.
-  These images are not used in the guides in this section.
+  The guides for programming through USB in this section use the images in the :file:`img_fota_dfu_hex` folder.
 
 Modem firmware
   The modem firmware is in a ZIP archive instead of a folder.
   The archive is named :file:`mfw_nrf9160_` followed by the firmware version number.
   Do not unzip this file.
 
+The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
+
+The instructions in this section show you how to program the :ref:`connectivity_bridge` and :ref:`asset_tracker_v2` applications, as well as the modem firmware.
+Connectivity bridge provides bridge functionality for the hardware, and Asset Tracker v2 simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
+
+The data is transmitted using either LTE-M or NB-IoT.
+Asset Tracker v2 first attempts to use LTE-M, then NB-IoT.
+Check with your SIM card provider for the mode they support at your location.
+For the iBasis SIM card provided with the Thingy:91, see `iBasis IoT network coverage`_.
+
 .. tip::
    For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
    See the :ref:`building_pgming` section for more information.
-
-The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
 
 .. note::
    To update the Thingy:91 through USB, the nRF9160 SiP and nRF52840 SoC bootloaders must be factory-compatible.
