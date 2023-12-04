@@ -558,7 +558,7 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_attr_next(
 	const struct bt_gatt_dm_attr *prev)
 {
 	if (!prev) {
-		prev = dm->attrs;
+		return dm->attrs;
 	}
 
 	if (dm->attrs <= prev) {

@@ -151,7 +151,7 @@ ZTEST(gatt_tests, test_gatt_DIS_simple_next_attr)
 		      bt_gatt_dm_attr_cnt(dm));
 
 	attr = NULL;
-	for (int i = 13; i <= 16; ++i) {
+	for (int i = 12; i <= 16; ++i) {
 		attr = bt_gatt_dm_attr_next(dm, attr);
 		zassert_not_null(attr, "Attr handle: %d", i);
 		zassert_equal(i, attr->handle, "Attr handle: %d", i);
@@ -194,7 +194,7 @@ ZTEST(gatt_tests, test_gatt_HIDS_simple_next_attr)
 	zassert_not_null(dm, "Device Manager pointer not set");
 
 	attr = NULL;
-	for (int i = 2; i <= 11; ++i) {
+	for (int i = 1; i <= 11; ++i) {
 		attr = bt_gatt_dm_attr_next(dm, attr);
 		zassert_not_null(attr, "Attr handle: %d", i);
 		zassert_equal(i, attr->handle, "Attr handle: %d", i);
