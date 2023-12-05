@@ -373,15 +373,6 @@ config MBEDTLS_CIPHER_PADDING_ZEROS
 	  Enable support for zeros padding for CBC cipher functions in mbedTLS.
 	  That is, fill buffer with 00 .. 00.
 
-config MBEDTLS_AES_FEWER_TABLES
-	bool
-	prompt "Use fewer tables for AES"
-	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
-
-config MBEDTLS_AES_ROM_TABLES
-	bool
-	prompt "Use AES tables in ROM"
-	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
 
 endmenu # CBC cipher padding modes
 
@@ -675,11 +666,6 @@ config MBEDTLS_SHA256_C
 	help
 	  SHA-256 hash functionality.
 
-config MBEDTLS_SHA256_SMALLER
-	bool
-	prompt "Use smaller SHA-256 implementation"
-	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
-	depends on MBEDTLS_SHA256_C
 
 config MBEDTLS_SHA384_C
 	bool
@@ -696,13 +682,104 @@ config MBEDTLS_SHA512_C
 	help
 	  SHA-512 hash functionality.
 
-config MBEDTLS_512_SMALLER
-	bool
-	prompt "Use smaller SHA-256 implementation"
-	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
-	depends on MBEDTLS_SHA512_C
-
 endmenu # SHA - Secure Hash Algorithm
+
+menu "Mbed TLS optimization"
+
+config MBEDTLS_AES_FEWER_TABLES
+	bool
+	prompt "Use fewer tables for AES"
+	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
+	depends on MBEDTLS_AES_C
+	help
+	  Enable use of fewer tables for AES. This omits 75% of RAM/ROM usage.
+	  Enabling this reduces ~6kb but gives a higher computational cost.
+	# Only applicable for legacy Mbed TLS without _ALT, so likely not needed ever
+	# Consider removing builtin legacy Mbed TLS
+
+config MBEDTLS_AES_ROM_TABLES
+	bool
+	prompt "Use AES tables in ROM"
+	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
+	depends on MBEDTLS_AES_C
+	default y
+	help
+	  Use precomputed AES tables stored in ROM.
+	  Using precomputed ROM tables reduces RAM usage by ~8kb
+	  (or ~2kb if \c MBEDTLS_AES_FEWER_TABLES is used) and reduces the
+	  initialization time before the first AES operation can be performed.
+	  It comes at the cost of additional ~8kb ROM use (resp. ~2kb if \c
+	  MBEDTLS_AES_FEWER_TABLES below is used), and potentially degraded
+	  performance if ROM access is slower than RAM access.
+	  This configuration is independent of MBEDTLS_AES_FEWER_TABLES.
+
+config MBEDTLS_ECP_NIST_OPTIM
+	bool
+	prompt "Enable NIST curve optimizations"
+	depends on MBEDTLS_ECP_C			&& \
+		   (MBEDTLS_ECP_DP_SECP192R1_ENABLED	&& \
+		    MBEDTLS_ECP_DP_SECP224R1_ENABLED	&& \
+		    MBEDTLS_ECP_DP_SECP256R1_ENABLED	&& \
+		    MBEDTLS_ECP_DP_SECP384R1_ENABLED	&& \
+		    MBEDTLS_ECP_DP_SECP521R1_ENABLED)
+	default y
+	help
+	  Enable NIST curve optimizations.
+
+config MBEDTLS_ECP_FIXED_POINT_OPTIM
+	int
+	default 1
+	range 0 1
+	depends on MBEDTLS_ECP_C
+	help
+	  By default this gives faster repeated ECP multiplications (for ECDSA
+	  signatures). Setting this to 0 reduces code-size, but decreases performance.
+
+config MBEDTLS_ECP_WINDOW_SIZE
+	int
+	range 2 7
+	default 4
+	help
+	  The higher the number, the faster point multiplication executes, but
+	  this yield is diminishing for the highest numbers.
+
+config MBEDTLS_MPI_WINDOW_SIZE
+	int
+	default 6
+	range 1 6
+	help
+	  Maximum window size used for modular exponentiation.
+	  The default value of 6 is set to match with the configuration used
+	  when building the CryptoCell runtime libraries.
+
+config MBEDTLS_MPI_MAX_SIZE
+	int
+	default 256 if CRYPTOCELL_CC310_USABLE
+	default 384 if CRYPTOCELL_CC312_USABLE
+	default 512 if MBEDTLS_RSA_C
+	default 64 if MBEDTLS_ECP_C
+	help
+	   Maximum number of bytes for usable MPIs
+
+config MBEDTLS_SHA256_SMALLER
+	bool
+	prompt "Enable smaller SHA-256 implementation"
+	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
+	depends on MBEDTLS_SHA256_C
+	help
+	  Enable an implementation of SHA-256 that has lower ROM footprint but also
+	  lower performance.
+
+config MBEDTLS_SHA512_SMALLER
+	bool
+	prompt "Enable smaller SHA-512 implementation"
+	depends on !OBERON_BACKEND
+	depends on MBEDTLS_SHA512_C
+	help
+	  Enable an implementation of SHA-512 that has lower ROM footprint but also
+	  lower performance.
+
+endmenu # "Mbed TLS Optimization"
 
 endif #MBEDTLS_LEGACY_CRYPTO_C
 
