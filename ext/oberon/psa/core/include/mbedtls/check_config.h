@@ -344,6 +344,11 @@
 #error "!MBEDTLS_SSL_KEEP_PEER_CERTIFICATE requires MBEDTLS_SHA512_C, MBEDTLS_SHA256_C or MBEDTLS_SHA1_C"
 #endif
 
+
+/*
+
+Work in progress: MD not settable without legacy support
+Missing: MD_LIGHT
 #if defined(MBEDTLS_MD_C) && !( \
     defined(MBEDTLS_MD5_C) || \
     defined(MBEDTLS_RIPEMD160_C) || \
@@ -355,6 +360,7 @@
 #error "MBEDTLS_MD_C defined, but not all prerequisites"
 #endif
 
+End Work in progress: MD not settable without legacy support
 */
 
 #if defined(MBEDTLS_LMS_C) &&                                          \
