@@ -233,6 +233,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       mcuboot
       ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/fih_low_enable.conf
     )
+
   endif()
 
   if (CONFIG_NRF53_UPGRADE_NETWORK_CORE AND CONFIG_ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS)
@@ -263,6 +264,27 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     )
 
     set(imgtool_security_counter --security-counter ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
+  endif()
+
+
+  # The current version of MCUboot does not support PSA Crypto APIs when
+  # nrf_security is enabled. This overlay must be added to disable PSA crypto APIs
+  # and to enable legacy configurations for proper support.
+  # This only applies to cases when NRF_SECURITY is enabled
+  if (CONFIG_NRF_SECURITY)
+    add_overlay_config(
+      mcuboot
+      ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/no_psa.conf
+    )
+  endif()
+
+  # We need to enable CC3xx support for devices that supports this
+  # in case Mbed TLS is required
+  if (CONFIG_NRF_SECURITY AND CONFIG_HAS_HW_NRF_CC3XX)
+    add_overlay_config(
+      mcuboot
+      ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/use_cc3xx.conf
+    )
   endif()
 
   add_child_image(

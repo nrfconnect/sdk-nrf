@@ -25,6 +25,17 @@ target_compile_definitions(mbedcrypto_common
     -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
 )
 
+# MCUboot currently doesn't support PSA crypto APIs, but relies on nrf_security
+# for include folders to Mbed TLS
+if(CONFIG_MCUBOOT)
+  zephyr_include_directories(
+      # Nordic PSA headers
+      ${NRF_SECURITY_ROOT}/include
+      # Mbed TLS (mbedcrypto) PSA headers
+      ${ARM_MBEDTLS_PATH}/include
+      ${ARM_MBEDTLS_PATH}/library
+  )
+endif()
 if (CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   # Building as part of the TF-M build system.
   # In order to support FPU in TF-M the following is documented by the TF-M
@@ -111,6 +122,17 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   version.c
   constant_time.c
 )
+
+# Special case: If PSA Core is not used, we need platform for legacy usage
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
+
+  append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library/
+    platform.c
+    platform_util.c
+  )
+
+endif()
+
 
 # Add base library with files required by all drivers/backends.
 add_library(mbedcrypto_base
