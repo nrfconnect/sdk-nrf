@@ -39,6 +39,9 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    # Private repos
+    - name: frkv
+      url-base: https://github.com/frkv
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -128,7 +131,8 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: adab597a0eb0eb9c030a7b797748a49ca89988c2
+      revision: psa-combined-config
+      remote: frkv
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -137,7 +141,8 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.3.0-ncs2
+      revision: psa-combined-config
+      remote: frkv
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
@@ -145,11 +150,13 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 4c908f47646ac082848771d3e066bd709e251dfc
+      revision: psa-combined-config
+      remote: frkv
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 3c7f9a68c05916c799429bf726fdf6e0c9439a06
+      revision: psa-combined-config
+      remote: frkv
       submodules:
         - name: nlio
           path: third_party/nlio/repo
