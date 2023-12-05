@@ -3266,4 +3266,8 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
 
 /* \} name SECTION: Customisation configuration options */
 
+/* Turn of key enrollment wrapping */
+#define MBEDTLS_REMOVE_KEY_ENROLLMENT_WRAP
+
+
 #endif /* LEGACY_CRYPTO_CONFIG_H */

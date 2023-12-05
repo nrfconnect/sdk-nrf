@@ -50,6 +50,8 @@ extern "C" {
  * @{
  */
 
+#if !defined(MBEDTLS_REMOVE_KEY_ENROLLMENT_WRAP)
+
 /** \brief Declare the enrollment algorithm for a key.
  *
  * An operation on a key may indifferently use the algorithm set with
@@ -87,6 +89,8 @@ static inline psa_algorithm_t psa_get_key_enrollment_algorithm(
 {
     return( attributes->MBEDTLS_PRIVATE(core).MBEDTLS_PRIVATE(policy).MBEDTLS_PRIVATE(alg2) );
 }
+
+#endif /* !defined(MBEDTLS_REMOVE_KEY_ENROLLMENT_WRAP) */
 
 #if defined(MBEDTLS_PSA_CRYPTO_SE_C)
 
