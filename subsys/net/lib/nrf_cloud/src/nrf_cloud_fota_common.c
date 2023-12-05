@@ -51,35 +51,59 @@ LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 /* Pending job info used with the settings library */
 static struct nrf_cloud_settings_fota_job *pending_job;
+static K_MUTEX_DEFINE(pending_job_mutex);
 
 static int fota_settings_set(const char *key, size_t len_rd,
 			    settings_read_cb read_cb, void *cb_arg);
 
-SETTINGS_STATIC_HANDLER_DEFINE(fota, FOTA_SETTINGS_NAME, NULL,
-			       fota_settings_set, NULL, NULL);
+SETTINGS_STATIC_HANDLER_DEFINE(fota, FOTA_SETTINGS_NAME, NULL, fota_settings_set, NULL, NULL);
 
-int nrf_cloud_fota_settings_load(struct nrf_cloud_settings_fota_job *job)
+static int settings_init(void)
 {
-	__ASSERT_NO_MSG(job != NULL);
-	static bool settings_loaded;
+	static bool initd;
 	int ret = 0;
 
-	pending_job = job;
-
-	if (!settings_loaded) {
+	if (!initd) {
 		ret = settings_subsys_init();
-
 		if (ret) {
 			LOG_ERR("Settings init failed: %d", ret);
 			return ret;
 		}
+		initd = true;
+	}
 
-		ret = settings_load_subtree(settings_handler_fota.name);
-		if (ret) {
-			LOG_ERR("Cannot load settings: %d", ret);
-		} else {
-			settings_loaded = true;
-		}
+	return 0;
+}
+
+int nrf_cloud_fota_settings_load(struct nrf_cloud_settings_fota_job *job)
+{
+	__ASSERT_NO_MSG(job != NULL);
+
+	int ret = settings_init();
+
+	if (ret) {
+		return ret;
+	}
+
+	/* Set the job pointer, which will be used in the settings callback
+	 * to receive the stored data
+	 */
+	k_mutex_lock(&pending_job_mutex, K_FOREVER);
+	pending_job = job;
+
+	/* Clear the job info and set to invalid type */
+	memset(pending_job, 0, sizeof(*pending_job));
+	pending_job->type = NRF_CLOUD_FOTA_TYPE__INVALID;
+
+	/* Load FOTA settings */
+	ret = settings_load_subtree(settings_handler_fota.name);
+
+	/* Done with the pointer */
+	pending_job = NULL;
+	k_mutex_unlock(&pending_job_mutex);
+
+	if (ret) {
+		LOG_ERR("Cannot load settings: %d", ret);
 	}
 
 	return ret;
@@ -88,7 +112,13 @@ int nrf_cloud_fota_settings_load(struct nrf_cloud_settings_fota_job *job)
 static int fota_settings_set(const char *key, size_t len_rd, settings_read_cb read_cb,
 				  void *cb_arg)
 {
-	__ASSERT_NO_MSG(pending_job != NULL);
+	/* Ignore if the pending job has not been set. This can occur when the
+	 * base nRF Cloud settings are loaded.
+	 */
+	if (!pending_job) {
+		return 0;
+	}
+
 	ssize_t sz;
 
 	if (!key) {
@@ -104,7 +134,7 @@ static int fota_settings_set(const char *key, size_t len_rd, settings_read_cb re
 
 	if (len_rd > sizeof(*pending_job)) {
 		LOG_INF("FOTA settings size larger than expected");
-		len_rd = sizeof(pending_job);
+		len_rd = sizeof(*pending_job);
 	}
 
 	sz = read_cb(cb_arg, (void *)pending_job, len_rd);
@@ -130,13 +160,10 @@ static int fota_settings_set(const char *key, size_t len_rd, settings_read_cb re
 int nrf_cloud_fota_settings_save(struct nrf_cloud_settings_fota_job *job)
 {
 	__ASSERT_NO_MSG(job != NULL);
-	int ret;
 
-	pending_job = job;
+	int ret = settings_init();
 
-	ret = settings_subsys_init();
 	if (ret) {
-		LOG_ERR("Settings init failed: %d", ret);
 		return ret;
 	}
 
