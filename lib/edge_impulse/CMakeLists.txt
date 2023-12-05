@@ -68,6 +68,9 @@ ExternalProject_Add(edge_impulse_project
     USES_TERMINAL_BUILD True
 )
 add_dependencies(edge_impulse_project zephyr_generated_headers)
+add_library(edge_impulse_imported STATIC IMPORTED)
+set_target_properties(edge_impulse_imported PROPERTIES IMPORTED_LOCATION ${EDGE_IMPULSE_LIBRARY})
+target_link_libraries(edge_impulse_imported INTERFACE kernel)
 
 # This targets remove the `edge_impulse_project-download` stamp file, which
 # causes the Edge impulse library to be fetched on each build invocation.
@@ -106,7 +109,7 @@ target_include_directories(edge_impulse INTERFACE
                            ${EDGE_IMPULSE_SOURCE_DIR}/edge-impulse-sdk/CMSIS/Core/Include
 )
 
-target_link_libraries(edge_impulse INTERFACE ${EDGE_IMPULSE_LIBRARY})
+target_link_libraries(edge_impulse INTERFACE edge_impulse_imported)
 
 add_dependencies(edge_impulse
                  zephyr_interface
