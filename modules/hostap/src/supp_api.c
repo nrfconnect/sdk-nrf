@@ -373,9 +373,6 @@ int z_wpa_supplicant_connect(const struct device *dev,
 		}
 	}
 
-	/* enable and select network */
-	_wpa_cli_cmd_v("enable_network %d", resp.network_id);
-
 	if (params->channel != WIFI_CHANNEL_ANY) {
 		int freq;
 
@@ -397,6 +394,8 @@ int z_wpa_supplicant_connect(const struct device *dev,
 			resp.network_id, freq);
 	}
 
+	/* enable and select network */
+	_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 	_wpa_cli_cmd_v("select_network %d", resp.network_id);
 
 	wpa_supp_api_ctrl.dev = dev;
