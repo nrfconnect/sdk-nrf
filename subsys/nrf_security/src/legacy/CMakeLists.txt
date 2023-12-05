@@ -165,3 +165,18 @@ target_include_directories(${mbedcrypto_target}
 INTERFACE
   $<$<TARGET_EXISTS:nrf_cc3xx_platform>:$<TARGET_PROPERTY:nrf_cc3xx_platform,INTERFACE_INCLUDE_DIRECTORIES>>
 )
+
+# Special case: Includes comes with Oberon PSA core, if Oberon PSA core isn't used, we provide this here instead
+
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
+
+target_include_directories(mbedcrypto_common
+  INTERFACE
+    # nrf_security headers
+    ${NRF_SECURITY_ROOT}/include
+    # Mbed TLS (mbedcrypto) headers
+    ${ARM_MBEDTLS_PATH}/include
+    ${ARM_MBEDTLS_PATH}/library
+)
+
+endif()
