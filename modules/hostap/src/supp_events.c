@@ -9,8 +9,6 @@
 #include "includes.h"
 #include "common.h"
 
-#define MAC_STR_FORMAT "%2hhx:%2hhx:%2hhx:%2hhx:%2hhx:%2hhx"
-
 static char *wpa_supp_event_map[] = {
 	"CTRL-EVENT-CONNECTED",
 	"CTRL-EVENT-DISCONNECTED",
@@ -35,7 +33,6 @@ static int wpa_supp_process_status(struct supp_int_event_data *event_data, char 
 	int ret = 1; /* For cases where parsing is not being done*/
 	int event = -1;
 	int i;
-	unsigned char *mac;
 	union supp_event_data *data;
 
 	data = (union supp_event_data *)event_data->data;
@@ -57,26 +54,23 @@ static int wpa_supp_process_status(struct supp_int_event_data *event_data, char 
 
 	switch (event_data->event) {
 	case WPA_SUPP_EVENT_CONNECTED:
-		mac = data->connected.bssid;
 		ret = sscanf(wpa_supp_status + strlen("CTRL-EVENT-CONNECTED - Connection to"),
-			MAC_STR_FORMAT, &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
+			MACSTR, MAC2STR(data->connected.bssid));
 		event_data->data_len = sizeof(data->connected);
 		break;
 	case WPA_SUPP_EVENT_DISCONNECTED:
-		mac = data->disconnected.bssid;
 		ret = sscanf(wpa_supp_status + strlen("CTRL-EVENT-DISCONNECTED bssid="),
-			MAC_STR_FORMAT" reason=%d", &mac[0], &mac[1], &mac[2],
-			 &mac[3], &mac[4], &mac[5], &data->disconnected.reason_code);
+			MACSTR" reason=%d", MAC2STR(data->disconnected.bssid),
+			&data->disconnected.reason_code);
 		event_data->data_len = sizeof(data->disconnected);
 		break;
 	case WPA_SUPP_EVENT_ASSOC_REJECT:
 		/* TODO */
 		break;
 	case WPA_SUPP_EVENT_AUTH_REJECT:
-		mac = data->auth_reject.bssid;
-		ret = sscanf(wpa_supp_status + strlen("CTRL-EVENT-AUTH-REJECT "), MAC_STR_FORMAT
+		ret = sscanf(wpa_supp_status + strlen("CTRL-EVENT-AUTH-REJECT "), MACSTR
 			" auth_type=%u auth_transaction=%u status_code=%u",
-			&mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5],
+			MAC2STR(data->auth_reject.bssid),
 			&data->auth_reject.auth_type,
 			&data->auth_reject.auth_transaction,
 			&data->auth_reject.status_code);
@@ -98,18 +92,16 @@ static int wpa_supp_process_status(struct supp_int_event_data *event_data, char 
 		event_data->data_len = sizeof(data->reenabled);
 		break;
 	case WPA_SUPP_EVENT_BSS_ADDED:
-		mac = data->bss_added.bssid;
-		ret = sscanf(wpa_supp_status + strlen("CTRL-EVENT-BSS-ADDED "), "%u "MAC_STR_FORMAT,
+		ret = sscanf(wpa_supp_status + strlen("CTRL-EVENT-BSS-ADDED "), "%u "MACSTR,
 			&data->bss_added.id,
-			&mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
+			MAC2STR(data->bss_added.bssid));
 		event_data->data_len = sizeof(data->bss_added);
 		break;
 	case WPA_SUPP_EVENT_BSS_REMOVED:
-		mac = data->bss_removed.bssid;
 		ret = sscanf(wpa_supp_status + strlen("CTRL-EVENT-BSS-REMOVED "),
-			"%u "MAC_STR_FORMAT,
+			"%u "MACSTR,
 			&data->bss_removed.id,
-			&mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
+			MAC2STR(data->bss_removed.bssid));
 		event_data->data_len = sizeof(data->bss_removed);
 		break;
 	case WPA_SUPP_EVENT_TERMINATING:
