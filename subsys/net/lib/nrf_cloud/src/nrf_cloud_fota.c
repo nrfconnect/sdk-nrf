@@ -198,11 +198,6 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		return 0;
 	}
 
-	ret = nrf_cloud_fota_settings_load(&saved_job);
-	if (ret != 0) {
-		return ret;
-	}
-
 	/* Ensure the codec is initialized */
 	(void)nrf_cloud_codec_init(NULL);
 
@@ -215,6 +210,7 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		fota_dl_initialized = true;
 	}
 
+	/* Load FOTA settings and validate any pending job */
 	ret = nrf_cloud_fota_pending_job_validate(NULL);
 
 	/* This function returns 0 on success.
