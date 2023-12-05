@@ -47,6 +47,9 @@ import_kconfig(CONFIG_ ${ZEPHYR_DOTCONFIG})
 # prefixed names for mbedcrypto symbols (mbedcrypto__)
 set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM                   True)
 
+# Additional TF-m build only setting
+# Set the MBEDTLS_PSA_CRYPTO_CLIENT to off for TF-M secure image build
+set(CONFIG_MBEDTLS_PSA_CRYPTO_CLIENT                False)
 # Additional TF-M settings when application has enabled legacy MBedTLS APIs.
 # TF-M should not be configured using these settings so force them off.
 set(CONFIG_MBEDTLS_LEGACY_CRYPTO_C                  False)
