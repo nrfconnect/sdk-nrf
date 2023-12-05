@@ -435,6 +435,4 @@ cJSON
 Documentation
 =============
 
-* Updated:
-
-  * The :ref:`ug_nrf70_developing_powersave_power_save_mode` section in the :ref:`ug_nrf70_developing_powersave` user guide.
+|no_changes_yet_note|
