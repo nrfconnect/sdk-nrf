@@ -144,20 +144,6 @@ config MBEDTLS_SHA384_ALT
 config MBEDTLS_SHA512_ALT
 	bool
 
-# Legacy configurations required for RNG in Legacy and PSA scope
-
-config MBEDTLS_ENTROPY_FORCE_SHA256
-	bool
-	default y
-	help
-	  Enforcing usage of SHA-256 for concatenating entropy from multiple sources
-	  by default.
-
-config MBEDTLS_ENTROPY_MAX_SOURCES
-	int
-	default 1
-	help
-	  Max entropy sources (Defaults to 1)
 
 # End items required for non CryptoCell RNG in PSA scope
 
@@ -242,6 +228,32 @@ config MBEDTLS_LEGACY_CRYPTO_C
 
 if MBEDTLS_LEGACY_CRYPTO_C
 
+# Legacy configurations required for RNG in Legacy scope
+config MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
+	bool
+	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+	default y if HAS_HW_NRF_CC310
+	help
+	  Use 128 bit AES instead of 256 bit for CTR_DRBG.
+	# Candidate MBEDTLS_HAS_PLATFORM_RNG
+
+config MBEDTLS_ENTROPY_FORCE_SHA256
+	bool
+	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+	default y if MBEDTLS_LEGACY_CRYPTO_C && !BUILD_WITH_TFM
+	help
+	  Enforcing usage of SHA-256 for concatenating entropy from multiple sources
+	  by default.
+	# Candidate MBEDTLS_HAS_PLATFORM_RNG
+
+config MBEDTLS_ENTROPY_MAX_SOURCES
+	int
+	default 1
+	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+	help
+	  Max entropy sources (Defaults to 1)
+	# No effect configuration
+
 config CC310_BACKEND
 	bool
 	depends on HAS_HW_NRF_CC310 && !BUILD_WITH_TFM && \
@@ -291,12 +303,6 @@ config MBEDTLS_CTR_DRBG_C
 	help
 	  This setting will enable CTR_DRBG APIs in mbed TLS.
 	  Corresponds to MBEDTLS_CTR_DRBG_C setting in mbed TLS config file.
-
-config MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
-	bool
-	default y if HAS_HW_NRF_CC310
-	help
-	  Use 128 bit AES instead of 256 bit for CTR_DRBG.
 
 config MBEDTLS_HMAC_DRBG_C
 	bool
