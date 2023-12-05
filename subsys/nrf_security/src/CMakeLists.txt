@@ -21,8 +21,7 @@ add_library(mbedcrypto_common INTERFACE)
 # Add the config-file entry point
 target_compile_definitions(mbedcrypto_common
   INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
-    -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
+    -DMBEDTLS_CONFIG_FILE=\"${CONFIG_MBEDTLS_CFG_FILE}\"
 )
 
 # MCUboot currently doesn't support PSA crypto APIs, but relies on nrf_security
@@ -60,20 +59,8 @@ set(generated_include_path ${CMAKE_CURRENT_BINARY_DIR}/include/generated)
 # Empty out previous versions of config-files
 file(REMOVE_RECURSE ${generated_include_path})
 
-# Generate mbed TLS configurations
-if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS)
-  include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
-else()
-  include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_config.cmake)
-endif()
-
-if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
-  # Add the generated CONFIG_MBEDTLS_CFG_FILE file to the include path
-  target_include_directories(mbedcrypto_common
-    INTERFACE
-    ${generated_include_path} # From cmake/*_crypto_config.cmake
-)
-endif()
+# Generate Mbed TLS configurations
+include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_config.cmake)
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
   if (CONFIG_BUILD_WITH_TFM)

@@ -8,7 +8,6 @@
 #ifndef PSA_CRYPTO_CONFIG_H
 #define PSA_CRYPTO_CONFIG_H
 
-/* PSA Core implementation */
 #cmakedefine PSA_CORE_OBERON                                    @PSA_CORE_OBERON@
 
 /* RNG */
@@ -163,6 +162,8 @@
 
 #cmakedefine PSA_MAX_RSA_KEY_BITS @PSA_MAX_RSA_KEY_BITS@
 
+#if defined(MBEDTLS_PSA_CRYPTO_C)
+
 /*
  * nrf_cc3xx_platform driver configurations
  */
@@ -272,18 +273,34 @@
 
 #cmakedefine PSA_NEED_NRF_RNG_ENTROPY_DRIVER                    @PSA_NEED_NRF_RNG_ENTROPY_DRIVER@
 
+#endif /* MBEDTLS_PSA_CRYPTO_C */
+
 /* Nordic specific */
 #cmakedefine PSA_CRYPTO_DRIVER_ALG_PRNG_TEST                    @PSA_CRYPTO_DRIVER_ALG_PRNG_TEST@
 
-/* PSA and drivers */
+/*
+ * Generic PSA crypto configurations
+ * Note: Uses the legacy scheme with naked #defines
+ */
+#cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
 #cmakedefine MBEDTLS_PSA_CRYPTO_C
 #cmakedefine MBEDTLS_USE_PSA_CRYPTO
+#cmakedefine MBEDTLS_PSA_CRYPTO_SPM
 #cmakedefine MBEDTLS_PSA_CRYPTO_STORAGE_C
+#cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
+
+/*
+ * Guarded config since it is set as a compile option in TF-M
+ */
+#ifndef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+#cmakedefine MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+#endif
+
+/* Turn of key enrollment wrapping */
+#define MBEDTLS_REMOVE_KEY_ENROLLMENT_WRAP
+
 /* MBEDTLS_PSA_CRYPTO_DRIVERS is defined to 1 by TF-M's build system. */
 #cmakedefine MBEDTLS_PSA_CRYPTO_DRIVERS                         @MBEDTLS_PSA_CRYPTO_DRIVERS@
-#cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
-#cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
-#cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
 
 /* TF-M */
 #cmakedefine MBEDTLS_PSA_CRYPTO_SPM
@@ -293,42 +310,65 @@
 #endif
 
 /* Platform */
+/*
+ * Mbed TLS platform configurations
+ */
 #cmakedefine MBEDTLS_PLATFORM_C
+#cmakedefine MBEDTLS_PLATFORM_NO_STD_FUNCTIONS
 #cmakedefine MBEDTLS_PLATFORM_MEMORY
-#cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
 #cmakedefine MBEDTLS_MEMORY_BUFFER_ALLOC_C
+#cmakedefine MBEDTLS_ENABLE_HEAP
+#cmakedefine MBEDTLS_HEAP_SIZE
+#cmakedefine MBEDTLS_MEMORY_DEBUG
+#cmakedefine MBEDTLS_MEMORY_BACKTRACE
+#cmakedefine MBEDTLS_VERSION_FEATURES
+#cmakedefine MBEDTLS_THREADING_C
 
-/* Platform configurations for _ALT defines */
+#cmakedefine MBEDTLS_SHELL
+#cmakedefine MBEDTLS_TEST
+#cmakedefine MBEDTLS_VERSION_C
+#cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+#cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
+/*
+ * Platform configurations for _ALT defines
+ */
 #cmakedefine MBEDTLS_PLATFORM_EXIT_ALT
+#cmakedefine MBEDTLS_PLATFORM_TIME_ALT
 #cmakedefine MBEDTLS_PLATFORM_FPRINTF_ALT
 #cmakedefine MBEDTLS_PLATFORM_PRINTF_ALT
 #cmakedefine MBEDTLS_PLATFORM_SNPRINTF_ALT
+#cmakedefine MBEDTLS_PLATFORM_VSNPRINTF_ALT
+#cmakedefine MBEDTLS_PLATFORM_NV_SEED_ALT
 #cmakedefine MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
 #cmakedefine MBEDTLS_ENTROPY_HARDWARE_ALT
-#cmakedefine MBEDTLS_THREADING_C
-#cmakedefine MBEDTLS_THREADING_ALT
 #cmakedefine MBEDTLS_PLATFORM_ZEROIZE_ALT
+#cmakedefine MBEDTLS_THREADING_ALT
+#cmakedefine MBEDTLS_TIMING_ALT
 
-/* Legacy configurations for _ALT defines */
+#ifndef MBEDTLS_PSA_CRYPTO_SPM
+
+/*
+ * Legacy configurations for _ALT defines
+ */
 #cmakedefine MBEDTLS_AES_SETKEY_ENC_ALT
 #cmakedefine MBEDTLS_AES_SETKEY_DEC_ALT
 #cmakedefine MBEDTLS_AES_ENCRYPT_ALT
 #cmakedefine MBEDTLS_AES_DECRYPT_ALT
 #cmakedefine MBEDTLS_AES_ALT
-#cmakedefine MBEDTLS_CMAC_ALT
 #cmakedefine MBEDTLS_CCM_ALT
-#cmakedefine MBEDTLS_GCM_ALT
 #cmakedefine MBEDTLS_CHACHA20_ALT
-#cmakedefine MBEDTLS_POLY1305_ALT
 #cmakedefine MBEDTLS_CHACHAPOLY_ALT
+#cmakedefine MBEDTLS_CMAC_ALT
 #cmakedefine MBEDTLS_DHM_ALT
+#cmakedefine MBEDTLS_ECJPAKE_ALT
 #cmakedefine MBEDTLS_ECP_ALT
 #cmakedefine MBEDTLS_ECDH_GEN_PUBLIC_ALT
 #cmakedefine MBEDTLS_ECDH_COMPUTE_SHARED_ALT
 #cmakedefine MBEDTLS_ECDSA_GENKEY_ALT
 #cmakedefine MBEDTLS_ECDSA_SIGN_ALT
 #cmakedefine MBEDTLS_ECDSA_VERIFY_ALT
-#cmakedefine MBEDTLS_ECJPAKE_ALT
+#cmakedefine MBEDTLS_GCM_ALT
+#cmakedefine MBEDTLS_POLY1305_ALT
 #cmakedefine MBEDTLS_RSA_ALT
 #cmakedefine MBEDTLS_SHA1_ALT
 #cmakedefine MBEDTLS_SHA224_ALT
@@ -336,38 +376,335 @@
 #cmakedefine MBEDTLS_SHA384_ALT
 #cmakedefine MBEDTLS_SHA512_ALT
 
-/* Legacy configuration for RNG */
+/*
+ * Legacy configuration for RNG
+ */
+#cmakedefine MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
 #cmakedefine MBEDTLS_ENTROPY_FORCE_SHA256
 #cmakedefine MBEDTLS_ENTROPY_MAX_SOURCES                        @MBEDTLS_ENTROPY_MAX_SOURCES@
-#cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
 
-/* Legacy configurations for mbed TLS APIs */
+/*
+ * Legacy Crypto API configurations
+ */
+#cmakedefine MBEDTLS_LEGACY_CRYPTO_C
+#cmakedefine MBEDTLS_CTR_DRBG_C
+#cmakedefine MBEDTLS_HMAC_DRBG_C
+#cmakedefine MBEDTLS_ENTROPY_C
+#cmakedefine MBEDTLS_AES_C
+#cmakedefine MBEDTLS_CIPHER_MODE_CBC
+#cmakedefine MBEDTLS_CIPHER_PADDING_PKCS7
+#cmakedefine MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS
+#cmakedefine MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN
+#cmakedefine MBEDTLS_CIPHER_PADDING_ZEROS
+#cmakedefine MBEDTLS_CIPHER_MODE_CTR
+#cmakedefine MBEDTLS_CIPHER_MODE_CFB
+#cmakedefine MBEDTLS_CIPHER_MODE_OFB
+#cmakedefine MBEDTLS_CIPHER_MODE_XTS
+#cmakedefine MBEDTLS_CMAC_C
+#cmakedefine MBEDTLS_CCM_C
+#cmakedefine MBEDTLS_GCM_C
+#cmakedefine MBEDTLS_CHACHA20_C
+#cmakedefine MBEDTLS_POLY1305_C
+#cmakedefine MBEDTLS_CHACHAPOLY_C
+#cmakedefine MBEDTLS_DHM_C
+#cmakedefine MBEDTLS_ECP_C
+#cmakedefine MBEDTLS_ECDH_C
+#cmakedefine MBEDTLS_ECDSA_C
+#cmakedefine MBEDTLS_ECDSA_DETERMINISTIC
+#cmakedefine MBEDTLS_ECJPAKE_C
+#cmakedefine MBEDTLS_ECP_DP_SECP192R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_SECP224R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_SECP256R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_SECP384R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_SECP521R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_SECP192K1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_SECP224K1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_SECP256K1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_BP256R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_BP384R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_BP512R1_ENABLED
+#cmakedefine MBEDTLS_ECP_DP_CURVE25519_ENABLED
+#cmakedefine MBEDTLS_HKDF_C
+#cmakedefine MBEDTLS_RSA_C
+#cmakedefine MBEDTLS_GENPRIME
+#cmakedefine MBEDTLS_PKCS1_V15
+#cmakedefine MBEDTLS_PKCS1_V21
+#cmakedefine MBEDTLS_MD5_C
+#cmakedefine MBEDTLS_SHA1_C
+#cmakedefine MBEDTLS_SHA224_C
+#cmakedefine MBEDTLS_SHA256_C
+#cmakedefine MBEDTLS_SHA384_C
+#cmakedefine MBEDTLS_SHA512_C
+
+/*
+ * Mbed TLS optimization configurations
+ */
+#cmakedefine MBEDTLS_AES_FEWER_TABLES
+#cmakedefine MBEDTLS_AES_ROM_TABLES
+#cmakedefine MBEDTLS_ECP_NIST_OPTIM
+#cmakedefine MBEDTLS_ECP_FIXED_POINT_OPTIM @MBEDTLS_ECP_FIXED_POINT_OPTIM@ /**< Enable fixed-point speed-up */
+#cmakedefine MBEDTLS_ECP_WINDOW_SIZE       @MBEDTLS_ECP_WINDOW_SIZE@ /**< Maximum window size used */
+#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@
+#cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
+#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
+#cmakedefine MBEDTLS_SHA256_SMALLER
+#cmakedefine MBEDTLS_SHA512_SMALLER
+
+/*
+ * Configurations that are default enabled
+ */
+#define MBEDTLS_HAVE_ASM
+#define MBEDTLS_ERROR_STRERROR_DUMMY
+#define MBEDTLS_CTR_DRBG_RESEED_INTERVAL            0xFFF0 /**< Interval before reseed is performed by default */
+#define MBEDTLS_ENTROPY_MAX_GATHER                   144 /**< Maximum amount requested from entropy sources */
+#define MBEDTLS_SSL_EXPORT_KEYS                    /* NOTE: Removed in Mbed TLS, but still required for OpenThread */
+
+#define MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
+
+/*
+ * Legacy crypto wrappers API configurations
+ */
 #cmakedefine MBEDTLS_CIPHER_C
-//#define MBEDTLS_PK_C                                       @MBEDTLS_PK_C@
-//#define MBEDTLS_PK_WRITE_C                                 @MBEDTLS_PK_WRITE_C@
 #cmakedefine MBEDTLS_MD_C
+#cmakedefine MBEDTLS_PK_C
+#cmakedefine MBEDTLS_PK_WRITE_C
+#cmakedefine MBEDTLS_PK_PARSE_C
+#cmakedefine MBEDTLS_PK_PARSE_EC_EXTENDED
 
-/* TLS/DTLS configurations */
-#cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
-#cmakedefine MBEDTLS_SSL_DTLS_CONNECTION_ID
-#cmakedefine MBEDTLS_SSL_CONTEXT_SERIALIZATION
-#cmakedefine MBEDTLS_SSL_DEBUG_ALL
+/*
+ * Legacy additional API configurations
+ */
+#cmakedefine MBEDTLS_ASN1_PARSE_C
+#cmakedefine MBEDTLS_ASN1_WRITE_C
+#cmakedefine MBEDTLS_BASE64_C
+#cmakedefine MBEDTLS_BIGNUM_C
+#cmakedefine MBEDTLS_ERROR_C
+#cmakedefine MBEDTLS_OID_C
+#cmakedefine MBEDTLS_NIST_KW_C
+#cmakedefine MBEDTLS_PEM_PARSE_C
+#cmakedefine MBEDTLS_PEM_WRITE_C
+#cmakedefine MBEDTLS_PK_PARSE_C
+#cmakedefine MBEDTLS_PK_WRITE_C
+#cmakedefine MBEDTLS_PKCS5_C
+#cmakedefine MBEDTLS_PKCS12_C
+
+/* Max curve bits for PSA APIs */
+#cmakedefine PSA_VENDOR_ECC_MAX_CURVE_BITS                      @PSA_VENDOR_ECC_MAX_CURVE_BITS@
+
+#endif /* #ifndef MBEDTLS_PSA_CRYPTO_SPM */
+
+/*
+ * x509 configurations
+ */
+#cmakedefine MBEDTLS_X509_LIBRARY
+#cmakedefine MBEDTLS_X509_RSASSA_PSS_SUPPORT
+#cmakedefine MBEDTLS_X509_USE_C
+#cmakedefine MBEDTLS_X509_CREATE_C
+#cmakedefine MBEDTLS_X509_CHECK_KEY_USAGE
+#cmakedefine MBEDTLS_X509_CHECK_EXTENDED_KEY_USAGE
+#cmakedefine MBEDTLS_X509_CRL_PARSE_C
+#cmakedefine MBEDTLS_X509_CSR_PARSE_C
+#cmakedefine MBEDTLS_X509_CRT_PARSE_C
+#cmakedefine MBEDTLS_X509_CSR_WRITE_C
+#cmakedefine MBEDTLS_X509_CRT_WRITE_C
+#cmakedefine MBEDTLS_X509_REMOVE_INFO
+
+/*
+ * TLS/DTLS configurations
+ */
+#cmakedefine MBEDTLS_SSL_CLI_C
+#cmakedefine MBEDTLS_SSL_SRV_C
+#cmakedefine MBEDTLS_SSL_TLS_C
+#cmakedefine MBEDTLS_SSL_PROTO_TLS1_2
 #cmakedefine MBEDTLS_SSL_ENCRYPT_THEN_MAC
 #cmakedefine MBEDTLS_SSL_EXTENDED_MASTER_SECRET
-#cmakedefine MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
-#cmakedefine MBEDTLS_SSL_RENEGOTIATION
-#cmakedefine MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
-#cmakedefine MBEDTLS_SSL_PROTO_TLS1_2
+#cmakedefine MBEDTLS_SSL_COOKIE_C
+#cmakedefine MBEDTLS_DEBUG_C
+#cmakedefine MBEDTLS_DEBUG_LEVEL                                @MBEDTLS_DEBUG_LEVEL@
 #cmakedefine MBEDTLS_SSL_PROTO_DTLS
-#cmakedefine MBEDTLS_SSL_ALPN
 #cmakedefine MBEDTLS_SSL_DTLS_ANTI_REPLAY
 #cmakedefine MBEDTLS_SSL_DTLS_HELLO_VERIFY
 #cmakedefine MBEDTLS_SSL_DTLS_SRTP
+#cmakedefine MBEDTLS_SSL_DTLS_CONNECTION_ID
+#cmakedefine MBEDTLS_SSL_DTLS_BADMAC_LIMIT
+#cmakedefine MBEDTLS_SSL_CID_IN_LEN_MAX                         @MBEDTLS_SSL_CID_IN_LEN_MAX@
+#cmakedefine MBEDTLS_SSL_CID_OUT_LEN_MAX                        @MBEDTLS_SSL_CID_OUT_LEN_MAX@
+#cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
+#cmakedefine MBEDTLS_SSL_CONTEXT_SERIALIZATION
+#cmakedefine MBEDTLS_SSL_DEBUG_ALL
+#cmakedefine MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+#cmakedefine MBEDTLS_SSL_RENEGOTIATION
 #cmakedefine MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE
 #cmakedefine MBEDTLS_SSL_SESSION_TICKETS
-#cmakedefine MBEDTLS_SSL_EXPORT_KEYS
 #cmakedefine MBEDTLS_SSL_SERVER_NAME_INDICATION
-#cmakedefine MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH
+#cmakedefine MBEDTLS_SSL_CACHE_C
+#cmakedefine MBEDTLS_SSL_TICKET_C
+#cmakedefine MBEDTLS_SSL_SESSION_TICKETS
+#cmakedefine MBEDTLS_SSL_OUT_CONTENT_LEN                        @MBEDTLS_SSL_OUT_CONTENT_LEN@
+#cmakedefine MBEDTLS_SSL_IN_CONTENT_LEN                         @MBEDTLS_SSL_IN_CONTENT_LEN@
+#cmakedefine MBEDTLS_SSL_ALPN
+#cmakedefine MBEDTLS_PSK_MAX_LEN                                @MBEDTLS_PSK_MAX_LEN@
+#cmakedefine MBEDTLS_SSL_CIPHERSUITES                           @MBEDTLS_SSL_CIPHERSUITES@
+
+/*
+ * TLS/DTLS configurations that are always enabled
+ */
+
+#ifndef MBEDTLS_PSA_CRYPTO_SPM
+#define MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
+#endif /* MBEDTLS_PSA_CRYPTO_SPM */
+
+
+
+/*
+ * TLS/DTLS cipher suites
+ */
+#cmakedefine MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_RSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED
+
+/*
+ * Legacy configurations without Kconfigs (for refrerence)
+ */
+//#define MBEDTLS_NO_UDBL_DIVISION
+//#define MBEDTLS_NO_64BIT_MULTIPLICATION
+//#define MBEDTLS_HAVE_SSE2
+//#define MBEDTLS_HAVE_TIME
+//#define MBEDTLS_HAVE_TIME_DATE
+//#define MBEDTLS_DEPRECATED_WARNING
+//#define MBEDTLS_DEPRECATED_REMOVED
+//#define MBEDTLS_ARIA_ALT
+//#define MBEDTLS_CAMELLIA_ALT
+//#define MBEDTLS_NIST_KW_ALT
+//#define MBEDTLS_MD5_ALT
+//#define MBEDTLS_RIPEMD160_ALT
+//#define MBEDTLS_MD5_PROCESS_ALT
+//#define MBEDTLS_RIPEMD160_PROCESS_ALT
+//#define MBEDTLS_SHA1_PROCESS_ALT
+//#define MBEDTLS_SHA256_PROCESS_ALT
+//#define MBEDTLS_SHA512_PROCESS_ALT
+//#define MBEDTLS_ECP_INTERNAL_ALT
+//#define MBEDTLS_ECP_NO_FALLBACK
+//#define MBEDTLS_ECP_RANDOMIZE_JAC_ALT
+//#define MBEDTLS_ECP_ADD_MIXED_ALT
+//#define MBEDTLS_ECP_DOUBLE_JAC_ALT
+//#define MBEDTLS_ECP_NORMALIZE_JAC_MANY_ALT
+//#define MBEDTLS_ECP_NORMALIZE_JAC_ALT
+//#define MBEDTLS_ECP_DOUBLE_ADD_MXZ_ALT
+//#define MBEDTLS_ECP_RANDOMIZE_MXZ_ALT
+//#define MBEDTLS_ECP_NORMALIZE_MXZ_ALT
+//#define MBEDTLS_CAMELLIA_SMALL_MEMORY
+//#define MBEDTLS_CHECK_RETURN_WARNING
+//#define MBEDTLS_CIPHER_NULL_CIPHER
+//#define MBEDTLS_ECP_DP_CURVE448_ENABLED
+//#define MBEDTLS_ECP_RESTARTABLE
+//#define MBEDTLS_FS_IO
+//#define MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES
+//#define MBEDTLS_ENTROPY_NV_SEED
+//#define MBEDTLS_MEMORY_BACKTRACE
+//#define MBEDTLS_PK_RSA_ALT_SUPPORT
+//#define MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
+//#define MBEDTLS_PSA_INJECT_ENTROPY
+//#define MBEDTLS_RSA_NO_CRT # Could be a Kconfig
+//#define MBEDTLS_SELF_TEST
+//#define MBEDTLS_SSL_ASYNC_PRIVATE
+//#define MBEDTLS_SSL_PROTO_TLS1_3
+//#define MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
+//#define MBEDTLS_TEST_CONSTANT_FLOW_MEMSAN
+//#define MBEDTLS_TEST_CONSTANT_FLOW_VALGRIND
+//#define MBEDTLS_TEST_HOOKS
+//#define MBEDTLS_THREADING_PTHREAD
+//#define MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK
+//#define MBEDTLS_AESNI_C
+//#define MBEDTLS_CAMELLIA_C
+//#define MBEDTLS_ARIA_C
+//#define MBEDTLS_NET_C
+//#define MBEDTLS_PADLOCK_C
+//#define MBEDTLS_PSA_ITS_FILE_C
+//#define MBEDTLS_RIPEMD160_C
+//#define MBEDTLS_TIMING_C
+//#define MBEDTLS_CTR_DRBG_ENTROPY_LEN
+//#define MBEDTLS_CTR_DRBG_MAX_INPUT                256 /**< Maximum number of additional input bytes */
+//#define MBEDTLS_CTR_DRBG_MAX_REQUEST             1024 /**< Maximum number of requested bytes per call */
+//#define MBEDTLS_CTR_DRBG_MAX_SEED_INPUT           384 /**< Maximum size of (re)seed buffer */
+//#define MBEDTLS_HMAC_DRBG_RESEED_INTERVAL   10000 /**< Interval before reseed is performed by default */
+//#define MBEDTLS_HMAC_DRBG_MAX_INPUT           256 /**< Maximum number of additional input bytes */
+//#define MBEDTLS_HMAC_DRBG_MAX_REQUEST        1024 /**< Maximum number of requested bytes per call */
+//#define MBEDTLS_HMAC_DRBG_MAX_SEED_INPUT      384 /**< Maximum size of (re)seed buffer */
+//#define MBEDTLS_ENTROPY_MIN_HARDWARE               32 /**< Default minimum number of bytes required for the hardware entropy source mbedtls_hardware_poll() before entropy is released */
+//#define MBEDTLS_MEMORY_ALIGN_MULTIPLE      4 /**< Align on multiples of this value */
+//#define MBEDTLS_PLATFORM_STD_MEM_HDR   <stdlib.h> /**< Header to include if MBEDTLS_PLATFORM_NO_STD_FUNCTIONS is defined. Don't define if no header is needed. */
+//#define MBEDTLS_PLATFORM_STD_CALLOC        calloc /**< Default allocator to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_FREE            free /**< Default free to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_EXIT            exit /**< Default exit to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_TIME            time /**< Default time to use, can be undefined. MBEDTLS_HAVE_TIME must be enabled */
+//#define MBEDTLS_PLATFORM_STD_FPRINTF      fprintf /**< Default fprintf to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_PRINTF        printf /**< Default printf to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_SNPRINTF    snprintf /**< Default snprintf to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_EXIT_SUCCESS       0 /**< Default exit value to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_EXIT_FAILURE       1 /**< Default exit value to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_NV_SEED_READ   mbedtls_platform_std_nv_seed_read /**< Default nv_seed_read function to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_NV_SEED_WRITE  mbedtls_platform_std_nv_seed_write /**< Default nv_seed_write function to use, can be undefined */
+//#define MBEDTLS_PLATFORM_STD_NV_SEED_FILE  "seedfile" /**< Seed file to read/write with default implementation */
+//#define MBEDTLS_PLATFORM_CALLOC_MACRO        calloc /**< Default allocator macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_FREE_MACRO            free /**< Default free macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_EXIT_MACRO            exit /**< Default exit macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_TIME_MACRO            time /**< Default time macro to use, can be undefined. MBEDTLS_HAVE_TIME must be enabled */
+//#define MBEDTLS_PLATFORM_TIME_TYPE_MACRO       time_t /**< Default time macro to use, can be undefined. MBEDTLS_HAVE_TIME must be enabled */
+//#define MBEDTLS_PLATFORM_FPRINTF_MACRO      fprintf /**< Default fprintf macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_PRINTF_MACRO        printf /**< Default printf macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_SNPRINTF_MACRO    snprintf /**< Default snprintf macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_VSNPRINTF_MACRO    vsnprintf /**< Default vsnprintf macro to use, can be undefined */
+//#define MBEDTLS_PLATFORM_NV_SEED_READ_MACRO   mbedtls_platform_std_nv_seed_read /**< Default nv_seed_read function to use, can be undefined */
+//#define MBEDTLS_PSA_HMAC_DRBG_MD_TYPE MBEDTLS_MD_SHA256
+//#define MBEDTLS_SSL_CACHE_DEFAULT_TIMEOUT       86400 /**< 1 day  */
+//#define MBEDTLS_SSL_CACHE_DEFAULT_MAX_ENTRIES      50 /**< Maximum entries in cache */
+//#define MBEDTLS_SSL_CID_TLS1_3_PADDING_GRANULARITY 16
+//#define MBEDTLS_SSL_DTLS_MAX_BUFFERING             32768
+//#define MBEDTLS_SSL_COOKIE_TIMEOUT        60 /**< Default expiration delay of DTLS cookies, in seconds if HAVE_TIME, or in number of cookies issued */
+//#define MBEDTLS_X509_MAX_INTERMEDIATE_CA   8   /**< Maximum number of intermediate CAs in a verification chain. */
+//#define MBEDTLS_X509_MAX_FILE_PATH_LEN     512 /**< Maximum length of a path/filename string in bytes including the null terminator character ('\0'). */
+//#define MBEDTLS_PLATFORM_GMTIME_R_ALT
+//#define MBEDTLS_ECDH_VARIANT_EVEREST_ENABLED
+
+/*
+ * TLS/DTLS configurations
+ */
+#cmakedefine MBEDTLS_TLS_LIBRARY
+#cmakedefine MBEDTLS_SSL_CLI_C
+#cmakedefine MBEDTLS_SSL_SRV_C
+#cmakedefine MBEDTLS_SSL_TLS_C
+#cmakedefine MBEDTLS_SSL_PROTO_TLS1_2
+#cmakedefine MBEDTLS_SSL_ENCRYPT_THEN_MAC
+#cmakedefine MBEDTLS_SSL_EXTENDED_MASTER_SECRET
+#cmakedefine MBEDTLS_SSL_COOKIE_C
+#cmakedefine MBEDTLS_DEBUG_C
+#cmakedefine MBEDTLS_DEBUG_LEVEL                                @MBEDTLS_DEBUG_LEVEL@
+#cmakedefine MBEDTLS_SSL_PROTO_DTLS
+#cmakedefine MBEDTLS_SSL_DTLS_ANTI_REPLAY
+#cmakedefine MBEDTLS_SSL_DTLS_HELLO_VERIFY
+#cmakedefine MBEDTLS_SSL_DTLS_SRTP
+#cmakedefine MBEDTLS_SSL_DTLS_CONNECTION_ID
+#cmakedefine MBEDTLS_SSL_DTLS_BADMAC_LIMIT
+#cmakedefine MBEDTLS_SSL_CID_IN_LEN_MAX                         @MBEDTLS_SSL_CID_IN_LEN_MAX@
+#cmakedefine MBEDTLS_SSL_CID_OUT_LEN_MAX                        @MBEDTLS_SSL_CID_OUT_LEN_MAX@
+#cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
+#cmakedefine MBEDTLS_SSL_CONTEXT_SERIALIZATION
+#cmakedefine MBEDTLS_SSL_DEBUG_ALL
+#cmakedefine MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+#cmakedefine MBEDTLS_SSL_RENEGOTIATION
+#cmakedefine MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE
+#cmakedefine MBEDTLS_SSL_SESSION_TICKETS
+#cmakedefine MBEDTLS_SSL_SERVER_NAME_INDICATION
 #cmakedefine MBEDTLS_SSL_CACHE_C
 #cmakedefine MBEDTLS_SSL_TICKET_C
 #cmakedefine MBEDTLS_SSL_CLI_C
@@ -375,34 +712,44 @@
 #cmakedefine MBEDTLS_SSL_SRV_C
 #cmakedefine MBEDTLS_SSL_TLS_C
 #cmakedefine MBEDTLS_SSL_IN_CONTENT_LEN                         @MBEDTLS_SSL_IN_CONTENT_LEN@
+#cmakedefine MBEDTLS_SSL_SESSION_TICKETS # New
 #cmakedefine MBEDTLS_SSL_OUT_CONTENT_LEN                        @MBEDTLS_SSL_OUT_CONTENT_LEN@
+#cmakedefine MBEDTLS_SSL_IN_CONTENT_LEN                         @MBEDTLS_SSL_IN_CONTENT_LEN@
+#cmakedefine MBEDTLS_SSL_ALPN
+#cmakedefine MBEDTLS_PSK_MAX_LEN                                @MBEDTLS_PSK_MAX_LEN@
 #cmakedefine MBEDTLS_SSL_CIPHERSUITES                           @MBEDTLS_SSL_CIPHERSUITES@
 
+/*
+ * x509 configurations
+ */
+#cmakedefine MBEDTLS_X509_LIBRARY
 #cmakedefine MBEDTLS_X509_RSASSA_PSS_SUPPORT
 #cmakedefine MBEDTLS_X509_USE_C
-#cmakedefine MBEDTLS_X509_CRT_PARSE_C
+#cmakedefine MBEDTLS_X509_CREATE_C
+#cmakedefine MBEDTLS_X509_CHECK_KEY_USAGE
+#cmakedefine MBEDTLS_X509_CHECK_EXTENDED_KEY_USAGE
 #cmakedefine MBEDTLS_X509_CRL_PARSE_C
 #cmakedefine MBEDTLS_X509_CSR_PARSE_C
-#cmakedefine MBEDTLS_X509_CREATE_C
-#cmakedefine MBEDTLS_X509_CRT_WRITE_C
+#cmakedefine MBEDTLS_X509_CRT_PARSE_C
 #cmakedefine MBEDTLS_X509_CSR_WRITE_C
+#cmakedefine MBEDTLS_X509_CRT_WRITE_C
 #cmakedefine MBEDTLS_X509_REMOVE_INFO
 
+/*
+ * TLS/DTLS cipher suites
+ */
 #cmakedefine MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED
-#cmakedefine MBEDTLS_KEY_EXCHANGE_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
-
-/* Controlling some MPI sizes */
-#cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
-#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
+#cmakedefine MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED
 
 #include <psa/core_unsupported_ciphers_check.h>
 
