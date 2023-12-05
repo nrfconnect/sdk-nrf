@@ -318,6 +318,7 @@ config MBEDTLS_ENTROPY_C
 	prompt "Entropy gathering"
 	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 	default y if !HAS_HW_NRF_CC3XX
+	depends on MBEDTLS_LEGACY_CRYPTO_C
 	help
 	  Enable this setting to build entropy APIs usable to gather entropy
 	  form external sources. Only in use for devices that doesn't have
@@ -327,6 +328,8 @@ menuconfig MBEDTLS_AES_C
 	bool
 	prompt "AES - Advanced Encryption Standard"
 	default y
+	depends on MBEDTLS_TLS_LIBRARY || OPENTHREAD_NRF_SECURITY || \
+		   OPENTHREAD_NRF_SECURITY_PSA || MBEDTLS_LEGACY_CRYPTO_C
 	help
 	  This setting will enable AES block cipher, including ECB - Electronic Code Book.
 	  Enabling AES will provide a sub-menu which allows for fine grained
@@ -479,6 +482,8 @@ menuconfig MBEDTLS_ECP_C
 	bool
 	prompt "ECC - Eliptic Curve Cryptography"
 	default y
+	depends on MBEDTLS_TLS_LIBRARY || OPENTHREAD_NRF_SECURITY || \
+		   WPA_SUPP_CRYPTO_LEGACY
 	help
 	  Enable low level APIs for elliptic curves for
 	  additional functionality (besides ECDH and ECDSA)
