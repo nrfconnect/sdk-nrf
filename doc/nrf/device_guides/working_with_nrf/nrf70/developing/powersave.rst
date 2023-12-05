@@ -29,7 +29,7 @@ The nRF70 Series device can be in one of the following power states:
   In this state, the device consumes very low power (~2 µA) and does not retain any state information (apart from the values in the OTP memory).
   The device will only respond to a BUCKEN assertion to wake from the Shutdown state.
 
-The nRF70 Series transition to and from the Shutdown state is automatically managed by the Wi-Fi driver.
+The nRF70 Series transition to and from the Shutdown state is automatically managed by the Wi-Fi® driver.
 When the network interface is brought down, the Wi-Fi driver puts the nRF70 Series device in Shutdown state.
 When the network interface is brought up, the Wi-Fi driver puts the nRF70 Series device in Active state.
 
@@ -56,48 +56,65 @@ The two functional states are described as follows:
 Power Save mode
 ***************
 
-The nRF70 Series device can operate in Active mode or Power Save mode.
-When the device changes from Active mode to Power Save mode, it informs the AP through a successful frame exchange.
+The nRF70 Series device can be configured in one of the following Power Save modes:
 
-Once the frame exchange completes, the AP buffers all the frames (multicast and broadcast) that are addressed to the device.
-The device wakes up to receive buffered traffic for every Delivery Traffic Indication Message (DTIM) beacon and goes back to the sleep state for the remaining period.
+* **Delivery Traffic Indication Message (DTIM) Power Save:** DTIM-based Power Save mode.
+  DTIM-based Power Save mode is the default configuration and is enabled by the application based on the traffic profile.
+  The sleep interval is controlled by the AP.
+* **Extended Power Save:** Listen interval-based Power Save mode.
+  The Listen interval-based Power Save mode is supported to enable devices to sleep longer than the DTIM period.
+  The sleep interval is controlled by the :abbr:`STA (Station)`.
+* **Deep sleep:** Target Wake Time (TWT) Power Save mode.
+  TWT can be enabled if the connected AP is Wi-Fi 6 capable.
+  The sleep interval is negotiated between the STA and AP.
 
-The following Power Save modes are supported and can be configured by the user or application:
+The device informs the AP through a successful frame exchange about the mode change.
+Once the device switches to Power Save mode, the AP buffers all the frames (including multicast and broadcast) that are addressed to the device.
+The device wakes up to check buffered packets for a configured interval (DTIM, listen interval, or TWT wake interval).
 
-* **Dynamic Power Save:** The device switches between Active and Power Save mode depending on the activity.
-  It enters the Power Save mode due to inactivity (timer expiry) and returns to the Active mode due to application traffic.
-  The nRF70 Series devices operate in this mode by default with several additional submodes (see :ref:`ug_nrf70_developing_powersave_dynamic_power_save`).
-* **Permanent Active:** The device is always in the Active mode.
-  The power consumption is high, but the performance is best in this mode.
-* **Static Power Save:** The device is in the Power Save mode.
-  This mode saves the most power but provides the lowest throughput.
-  This mode is not supported in the current release.
+Dynamic power save feature
+==========================
+
+When the device is in one of the Power Save modes and an application transmits a packet, the device transitions to Active mode for the packet transmission.
+Depending on the :ref:`inactivity timer <ug_nrf70_developing_powersave_inactivity_tomer>` value, it switches back to Power Save modes.
+This dynamic switching in and out of Power Save modes is called the dynamic power save feature.
+
+.. _ug_nrf70_developing_powersave_inactivity_tomer:
+
+Inactivity timer
+================
+
+The application can configure the inactivity timer based on the traffic profile.
+After transmissions are completed and if the Medium Access Control (MAC) layer is idle for a period that is equal to the inactivity timer, the MAC switches to the Power Save mode.
+
+You must keep the following in mind while choosing the inactivity timer:
+
+* The default value for the nRF70 Series device is 100 ms.
+* Configuring a lower value will add switching overheads, whereas configuring a higher value will consume more power.
+* Programming a value of ``0`` in the inactivity timer is valid, which basically disables the dynamic power save feature.
+  Therefore, the device stays in Power Save mode even during the transmission.
+  This avoids switching overhead, as the device needs to inform the AP of the mode switch.
+
+  However, configuring the device to always be in Power Save mode forces it to use either PS-Poll or QOS null frames for all downlink traffic.
+  This will add a lot of overhead for cases where the application expects higher data traffic.
+  There is no effect on uplink traffic.
+  The device can wake up and schedule uplink traffic, irrespective of the inactivity timer value.
 
 .. note::
 
-  Even when the device is in the Dynamic Power Save mode, you or the application can set the device to the Permanent Active mode using the ``NET_REQUEST_WIFI_PS`` network management API.
+  The inactivity timer can be configured using the ``NET_REQUEST_WIFI_PS_TIMEOUT`` network management API.
+  The nRF70 Series device consumes less power in Power Save mode, that is, when the inactivity timer value is ``0``, in low traffic scenarios.
 
-.. _ug_nrf70_developing_powersave_dynamic_power_save:
-
-Dynamic Power Save mode
-=======================
-
-Additionally, the Wi-Fi® interface can be configured in one of the following Dynamic Power Save modes:
-
-* **Normal Power Save:** DTIM-based power save.
-  This is the default configuration and enabled by the application based on the traffic profile.
-* **Extended Power Save:** Listen interval-based Power Save mode.
-  The Listen interval-based Power Save mode is supported to enable devices to sleep longer than the DTIM period.
-* **Deep sleep:** Target Wake Time (TWT) power save.
-  TWT can be enabled if the connected AP is Wi-Fi 6 capable.
+  However, the downlink throughput is significantly lower in this mode.
+  The application only needs to enable this in cases where the downlink traffic rate is relatively low, such as a few packets per second.
 
 .. _ug_nrf70_developing_powersave_dtim:
 
 Delivery Traffic Indication Message (DTIM)
 ******************************************
 
-The nRF70 Series devices use DTIM-based power save by default.
-Devices in DTIM-based power save (Normal Power Save) can wake at any time to transmit uplink traffic.
+The nRF70 Series devices use DTIM-based Power Save mode by default.
+Devices in DTIM-based Power Save mode can wake at any time to transmit uplink traffic.
 However, they can only receive downlink traffic (broadcast, multicast, or unicast) immediately after receiving a DTIM beacon.
 To make the device in Power Save mode aware that the AP has buffered downlink traffic, the AP uses the Traffic Indication Map (TIM) element present in the beacon frames.
 The device then wakes up to receive the DTIM beacon and checks the status of the TIM element.
@@ -112,7 +129,7 @@ Group addressed frames are directed to all connected devices.
 When there is at least one device in Power Save mode in the Basic Service Set (BSS), the AP buffers the broadcast and multicast traffic and transmits at a specific time to ensure that all associated devices can receive it.
 
 The buffered group traffic is delivered immediately after a DTIM beacon.
-The following figure illustrates the group frame data retrieval mechanism in DTIM-based Power Save (Normal Power Save) mode:
+The following figure illustrates the group frame data retrieval mechanism in DTIM-based Power Save mode:
 
 .. figure:: images/nRF70_ug_group_frames.svg
    :alt: Group frames
@@ -233,7 +250,7 @@ The following figure illustrates the change in wakeup mode from the Listen inter
 Target Wake Time (TWT)
 **********************
 
-TWT is a feature in Wi-Fi 6 that allows the device to be configured to the :ref:`Deep sleep <ug_nrf70_developing_powersave_dynamic_power_save>` Power Save mode.
+TWT is a feature in Wi-Fi 6 that allows the device to be configured to the Deep sleep Power Save mode.
 It allows devices to wake up at the negotiated times to transmit and receive data.
 The AP and devices reach a TWT agreement that defines when a station is active, and ready to receive and transmit data.
 
@@ -370,7 +387,7 @@ The following figure illustrates the two key parameters of TWT:
 Usage
 *****
 
-DTIM-based power save (:ref:`Normal Power Save <ug_nrf70_developing_powersave_dynamic_power_save>` mode) is the default configuration of the device after connection to an AP.
+DTIM-based Power Save mode is the default configuration of the device after connection to an AP.
 The wake-up and sleep period of the device is aligned to the DTIM period advertised in the AP beacon.
 The AP is in control of the DTIM period and can be configured while setting up the network.
 Stations connected to the AP cannot set or request a change in this value.
