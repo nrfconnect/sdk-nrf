@@ -144,7 +144,6 @@ config MBEDTLS_SHA384_ALT
 config MBEDTLS_SHA512_ALT
 	bool
 
-
 # End items required for non CryptoCell RNG in PSA scope
 
 config NRF_SECURITY_ADVANCED
@@ -218,7 +217,7 @@ config MBEDTLS_MPI_MAX_SIZE
 config MBEDTLS_LEGACY_CRYPTO_C
 	bool
 	prompt "Enable (legacy) mbed TLS crypto APIs"
-	default y if BUILD_WITH_TFM
+	default y if (MBEDTLS_TLS_LIBRARY || MBEDTLS_X509_LIBRARY)
 	help
 	  Enable support for legacy mbed TLS APIs.
 	  Note that this is a configuration that may be removed at some point.
@@ -290,6 +289,7 @@ config OBERON_BACKEND
 	prompt "Configuration to enable nrf_oberon for legacy mbed TLS APIs"
 	select NRF_OBERON
 	depends on !(CC3XX_BACKEND_FORCED || CC3XX_BACKEND)
+	default y if BUILD_WITH_TFM
 	help
 	  This configuration enables legacy mbed TLS APIs using nrf_oberon.
 	  PSA_CRYPTO_DRIVER_OBERON should be used instead and will replace this once
@@ -300,6 +300,7 @@ config MBEDTLS_CTR_DRBG_C
 	prompt "PRNG using CTR_DRBG"
 	select MBEDTLS_AES_C
 	default y if !HAS_HW_NRF_CC3XX
+	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG || MBEDTLS_LEGACY_CRYPTO_C
 	help
 	  This setting will enable CTR_DRBG APIs in mbed TLS.
 	  Corresponds to MBEDTLS_CTR_DRBG_C setting in mbed TLS config file.
@@ -382,7 +383,6 @@ config MBEDTLS_CIPHER_PADDING_ZEROS
 	  Enable support for zeros padding for CBC cipher functions in mbedTLS.
 	  That is, fill buffer with 00 .. 00.
 
-
 endmenu # CBC cipher padding modes
 
 config MBEDTLS_CIPHER_MODE_CTR
@@ -403,7 +403,7 @@ config MBEDTLS_CIPHER_MODE_CFB
 config MBEDTLS_CIPHER_MODE_OFB
 	bool "AES-OFB - AES Output Feedback mode"
 	depends on OBERON_BACKEND
-	default y
+	default y if MBEDTLS_LEGACY_CRYPTO_C
 	help
 	  Enable the AES Output Feedback mode (OFB) mode,
 	  MBEDTLS_CIPHER_MODE_OFB setting in mbed TLS config file.
@@ -438,6 +438,7 @@ config MBEDTLS_CCM_C
 config MBEDTLS_GCM_C
 	bool
 	prompt "AES-GCM - AES Galois/Counter Mode support"
+	depends on MBEDTLS_AES_C
 	default y if !NET_L2_OPENTHREAD
 	help
 	  Enable the GCM module.
@@ -624,6 +625,7 @@ config MBEDTLS_HKDF_C
 	bool
 	prompt "HKDF support"
 	default y
+	depends on MBEDTLS_TLS_LIBRARY || BUILD_WITH_TFM
 	help
 	  Enable HKDF support.
 	  MBEDTLS_HKDF_C setting in mbed TLS config file.
@@ -631,6 +633,7 @@ config MBEDTLS_HKDF_C
 config MBEDTLS_RSA_C
 	bool
 	prompt "RSA - Rivest-Shamir-Adleman cryptosystem"
+	depends on MBEDTLS_TLS_LIBRARY || BOOT_SIGNATURE_TYPE_RSA
 	help
 	  Enable RSA cryptosystem support.
 	  MBEDTLS_RSA_C setting in mbed TLS config file.
@@ -655,7 +658,6 @@ endif # MBEDTLS_RSA_C
 
 menu "SHA - Secure Hash Algorithm"
 
-
 config MBEDTLS_SHA1_C
 	bool
 	prompt "SHA-1 hash functionality"
@@ -666,7 +668,7 @@ config MBEDTLS_SHA1_C
 config MBEDTLS_SHA224_C
 	bool
 	prompt "SHA-224 hash functionality"
-	default y if !NET_L2_OPENTHREAD
+	default y if MBEDTLS_SHA256_C
 	help
 	  SHA-224 hash functionality.
 
@@ -676,7 +678,6 @@ config MBEDTLS_SHA256_C
 	default y
 	help
 	  SHA-256 hash functionality.
-
 
 config MBEDTLS_SHA384_C
 	bool

@@ -18,11 +18,9 @@ config NORDIC_SECURITY_BACKEND
 	bool
 	prompt "Use nRF Security with Mbed TLS legacy crypto APIs support" \
 		if !NORDIC_SECURITY_PROMPTLESS
-	default y if BUILD_WITH_TFM
 	depends on SOC_FAMILY_NRF
 	select NRF_SECURITY
 	select MBEDTLS_LEGACY_CRYPTO_C
-	select OBERON_BACKEND if BUILD_WITH_TFM
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	help
 	  Using this configuration enables legacy support for mbed TLS APIs
@@ -34,8 +32,6 @@ config NRF_SECURITY
 	bool
 	prompt "Enable nRF Security" if !PSA_PROMPTLESS
 	depends on SOC_FAMILY_NRF
-	default y if BUILD_WITH_TFM
-	select ENTROPY_GENERATOR
 	default y if !IS_SECURE_BOOTLOADER
 	select ENTROPY_GENERATOR if !MCUBOOT
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
@@ -66,7 +62,6 @@ config GENERATE_MBEDTLS_CFG_FILE
 	  adjustments, this setting can be used to disable generating the
 	  mbed TLS configuration file. Only disable this setting if you know
 	  what you are doing.
-
 
 # Include TLS/DTLS and x509 configurations
 rsource "Kconfig.tls"
