@@ -279,7 +279,6 @@ config MBEDTLS_SSL_TICKET_C
 	help
 	  Enable an implementation of TLS server-side callbacks for session tickets.
 
-
 config MBEDTLS_SSL_OUT_CONTENT_LEN
 	int
 	prompt "Max length for TLS outgoing fragments"
@@ -437,7 +436,7 @@ config MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED
 config MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
 	bool
 	prompt "ECJPAKE"
-	default y
+	default y if OPENTHREAD_NRF_SECURITY || OPENTHREAD_NRF_SECURITY_PSA
 	depends on MBEDTLS_HAS_ECJPAKE_CIPHERSUITE_REQUIREMENTS
 
 endmenu

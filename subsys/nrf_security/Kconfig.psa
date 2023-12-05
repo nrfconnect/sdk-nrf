@@ -7,7 +7,7 @@
 config MBEDTLS_PSA_CRYPTO_C
 	bool
 	prompt "Enable PSA crypto APIs"
-	default y
+	default y if !(MCUBOOT || OPENTHREAD_NRF_SECURITY)
 	help
 	  Enable the Platform Security Architecture cryptography API.
 	  Corresponds to setting in mbed TLS config file.
@@ -39,8 +39,6 @@ config MBEDTLS_PSA_CRYPTO_CLIENT
 	default y
 
 rsource "src/drivers/Kconfig"
-
-
 
 menu "PSA API support"
 
