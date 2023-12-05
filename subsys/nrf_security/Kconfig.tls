@@ -8,7 +8,6 @@ menuconfig MBEDTLS_X509_LIBRARY
 	bool
 	prompt "Create mbed TLS x509 library"
 	select MBEDTLS_PK_C
-	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	help
 	  Create the mbed x509 library for handling of certificates.
 
@@ -75,7 +74,6 @@ menuconfig MBEDTLS_TLS_LIBRARY
 	select MBEDTLS_X509_LIBRARY
 	imply PSA_WANT_ALG_TLS12_PRF
 	imply PSA_WANT_ALG_TLS12_PSK_TO_MS
-	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	help
 	  Create the mbed SSL/TLS library in addition to the mbed crypto
 	  library.
@@ -281,12 +279,6 @@ config MBEDTLS_SSL_TICKET_C
 	help
 	  Enable an implementation of TLS server-side callbacks for session tickets.
 
-config MBEDTLS_SSL_EXPORT_KEYS
-	bool
-	prompt "Enable support for exporting keys"
-	default y
-	help
-	  Enables support for exporting key block and master secret.
 
 config MBEDTLS_SSL_OUT_CONTENT_LEN
 	int
@@ -302,6 +294,13 @@ config MBEDTLS_SSL_IN_CONTENT_LEN
 	default 900 if OPENTHREAD_NRF_SECURITY || OPENTHREAD_NRF_SECURITY_PSA
 	default 16380
 
+config MBEDTLS_SSL_ALPN
+	bool
+	prompt "Application Layer Protocols support"
+
+config MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH
+	bool
+	prompt "Variable buffer length for TLS/DTLS"
 
 config MBEDTLS_SSL_CIPHERSUITES
 	string "SSL - Cipher suites tuning"
