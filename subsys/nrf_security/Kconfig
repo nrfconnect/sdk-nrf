@@ -192,6 +192,7 @@ endmenu # Zephyr legacy configurations
 #
 choice MBEDTLS_IMPLEMENTATION
 	default MBEDTLS_LIBRARY_NRF_SECURITY
+	depends on MBEDTLS
 
 config MBEDTLS_LIBRARY_NRF_SECURITY
 	bool "Use nRF Security mbedTLS version"
