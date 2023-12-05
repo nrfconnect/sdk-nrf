@@ -16,23 +16,9 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <dk_buttons_and_leds.h>
 
 LOG_MODULE_REGISTER(esb_ptx, CONFIG_ESB_PTX_APP_LOG_LEVEL);
-
-static const struct gpio_dt_spec leds[] = {
-	GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios),
-	GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios),
-	GPIO_DT_SPEC_GET(DT_ALIAS(led2), gpios),
-	GPIO_DT_SPEC_GET(DT_ALIAS(led3), gpios),
-};
-
-BUILD_ASSERT(DT_SAME_NODE(DT_GPIO_CTLR(DT_ALIAS(led0), gpios),
-			  DT_GPIO_CTLR(DT_ALIAS(led1), gpios)) &&
-	     DT_SAME_NODE(DT_GPIO_CTLR(DT_ALIAS(led0), gpios),
-			  DT_GPIO_CTLR(DT_ALIAS(led2), gpios)) &&
-	     DT_SAME_NODE(DT_GPIO_CTLR(DT_ALIAS(led0), gpios),
-			  DT_GPIO_CTLR(DT_ALIAS(led3), gpios)),
-	     "All LEDs must be on the same port");
 
 static bool ready = true;
 static struct esb_payload rx_payload;
@@ -148,41 +134,15 @@ int esb_initialize(void)
 	return 0;
 }
 
-static int leds_init(void)
-{
-	if (!device_is_ready(leds[0].port)) {
-		LOG_ERR("LEDs port not ready");
-		return -ENODEV;
-	}
-
-	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
-		int err = gpio_pin_configure_dt(&leds[i], GPIO_OUTPUT);
-
-		if (err) {
-			LOG_ERR("Unable to configure LED%u, err %d.", i, err);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
 static void leds_update(uint8_t value)
 {
-	bool led0_status = !(value % 8 > 0 && value % 8 <= 4);
-	bool led1_status = !(value % 8 > 1 && value % 8 <= 5);
-	bool led2_status = !(value % 8 > 2 && value % 8 <= 6);
-	bool led3_status = !(value % 8 > 3);
+	uint32_t leds_mask =
+		(!(value % 8 > 0 && value % 8 <= 4) ? DK_LED1_MSK : 0) |
+		(!(value % 8 > 1 && value % 8 <= 5) ? DK_LED2_MSK : 0) |
+		(!(value % 8 > 2 && value % 8 <= 6) ? DK_LED3_MSK : 0) |
+		(!(value % 8 > 3) ? DK_LED4_MSK : 0);
 
-	gpio_port_pins_t mask = BIT(leds[0].pin) | BIT(leds[1].pin) |
-				BIT(leds[2].pin) | BIT(leds[3].pin);
-
-	gpio_port_value_t val = led0_status << leds[0].pin |
-				led1_status << leds[1].pin |
-				led2_status << leds[2].pin |
-				led3_status << leds[3].pin;
-
-	(void)gpio_port_set_masked_raw(leds[0].port, mask, val);
+	dk_set_leds(leds_mask);
 }
 
 int main(void)
@@ -198,8 +158,9 @@ int main(void)
 	}
 #endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
 
-	err = leds_init();
+	err = dk_leds_init();
 	if (err) {
+		LOG_ERR("LEDs initialization failed, err %d", err);
 		return 0;
 	}
 
