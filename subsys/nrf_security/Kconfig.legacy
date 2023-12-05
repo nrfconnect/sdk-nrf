@@ -788,35 +788,190 @@ config MBEDTLS_SHA512_SMALLER
 endmenu # "Mbed TLS Optimization"
 
 endif #MBEDTLS_LEGACY_CRYPTO_C
+comment "Crypto wrapper APIs"
+
+# The wrapper APIs are currently required in legacy crypto impl. (builtin) or by
+# TLS/DTLS or X.509.
 
 config MBEDTLS_CIPHER_C
 	bool
-	prompt "Enable Cipher support"
-	default y if MBEDTLS_PSA_CRYPTO_C || MBEDTLS_USE_PSA_CRYPTO || MBEDTLS_LEGACY_CRYPTO_C
+	prompt "cipher module support"
+	default y if MBEDTLS_TLS_LIBRARY			|| \
+		     MBEDTLS_X509_LIBRARY			|| \
+		     MBEDTLS_CCM_C				|| \
+		     MBEDTLS_CMAC_C				|| \
+		     MBEDTLS_GCM_C				|| \
+		     MBEDTLS_NIST_KW_C				|| \
+		     MBEDTLS_PKCS5_C				|| \
+		     MBEDTLS_PKCS12_C
+	help
+	  Enable legacy cipher module support.
+	  This is currently required for TLS/DTLS support.
 
 config MBEDTLS_MD_C
 	bool
-	prompt "Enable MD support"
-	default y if MBEDTLS_LEGACY_CRYPTO_C || MBEDTLS_TLS_LIBRARY
+	prompt "message digest module support"
+	default y if MBEDTLS_TLS_LIBRARY			|| \
+		     MBEDTLS_X509_LIBRARY			|| \
+		     MBEDTLS_ECDSA_C				|| \
+		     MBEDTLS_ECDSA_DETERMINISTIC		|| \
+		     MBEDTLS_ECJPAKE_C				|| \
+		     MBEDTLS_HMAC_C				|| \
+		     MBEDTLS_HMAC_DRBG_C			|| \
+		     MBEDTLS_HKDF_C				|| \
+		     MBEDTLS_OID_C				|| \
+		     MBEDTLS_PK_C				|| \
+		     MBEDTLS_PK_PARSE_C				|| \
+		     MBEDTLS_PK_WRITE_C				|| \
+		     MBEDTLS_RSA_C				|| \
+		     MBEDTLS_PKCS5_C				|| \
+		     MBEDTLS_PKCS12_C
+	help
+	  Enable message digest module support.
+	  This is currently required for TLS/DTLS support.
 
 config MBEDTLS_PK_C
 	bool
-	prompt "Enable PK support"
+	prompt "PKI module support"
+	depends on MBEDTLS_RSA_C || MBEDTLS_ECP_C
+	default y if MBEDTLS_TLS_LIBRARY			|| \
+		     MBEDTLS_X509_LIBRARY			|| \
+		     (MBEDTLS_DEBUG_C				&& \
+		      MBEDTLS_X509_CRT_PARSE_C 			&& \
+		     !MBEDTLS_X509_REMOVE_INFO)
+	help
+	  Enable Public Key Interface (PKI) module support.
+	  Required for TLS/DTLS support.
 
-config MBEDTLS_PKCS5_C
-	bool
-	prompt "Enable PKCS5 support"
-	default y
-	depends on MBEDTLS_MD_C
+if MBEDTLS_PK_C
 
 config MBEDTLS_PK_WRITE_C
 	bool
-	prompt "Enable PK write support"
-	# default y if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_PSA_CRYPTO_SPM
+	prompt "PK write support"
+	default y if MBEDTLS_X509_CREATE_C
+	help
+	  Enable public key writer support.
 
 config MBEDTLS_PK_PARSE_C
 	bool
-	prompt "Enable PK parse support"
-	default y if MBEDTLS_TLS_LIBRARY
+	prompt "PK parse support"
+	default y if MBEDTLS_X509_USE_C
+	help
+	  Enable public key parser support.
+
+
+config MBEDTLS_PK_PARSE_EC_EXTENDED
+	bool
+	prompt "Parse extended EC key types"
+	depends on MBEDTLS_ECP_C || PSA_HAS_ECC_SUPPORT
+	help
+	  Enable parsing of SEC1 key variants not allowed by RFC 5915 and %480.
+
+endif # MBEDTLS_PK_C
+
+comment "Additional APIs"
+
+config MBEDTLS_ASN1_PARSE_C
+	bool
+	prompt "Generic ASN.1 parsing support"
+	default y if MBEDTLS_DHM_C					|| \
+		     MBEDTLS_PKCS5_C					|| \
+		     MBEDTLS_PKCS12_C					|| \
+		     MBEDTLS_PK_PARSE_C					|| \
+		     MBEDTLS_X509_USE_C					|| \
+		     MBEDTLS_ECP_C 					|| \
+		     MBEDTLS_RSA_C
+	help
+	  Enable generic ASN.1 parsing support.
+
+config MBEDTLS_ASN1_WRITE_C
+	bool
+	prompt "Generic ASN.1 write support"
+	default y if MBEDTLS_ECP_C					|| \
+		     MBEDTLS_PK_WRITE_C					|| \
+		     MBEDTLS_X509_CREATE_C
+	help
+	  Enable generic ASN.1 write support.
+
+config MBEDTLS_BASE64_C
+	bool
+	prompt "Base64 support"
+	default y if MBEDTLS_PEM_C		|| \
+		     MBEDTLS_PEM_PARSE_C	|| \
+		     MBEDTLS_PEM_WRITE_C
+	help
+	  Enable Base64 support.
+
+config MBEDTLS_BIGNUM_C
+	bool
+	prompt "Bignum support"
+	default y if MBEDTLS_DHM_C					|| \
+		     MBEDTLS_ECP_C					|| \
+		     MBEDTLS_RSA_C					|| \
+		     MBEDTLS_X509_CREATE_C				|| \
+		     MBEDTLS_X509_USE_C					|| \
+		     MBEDTLS_ASN1_PARSE_C				|| \
+		     MBEDTLS_ASN1_WRITE_C				|| \
+		     MBEDTLS_PK_PARSE_C					|| \
+		     MBEDTLS_PK_WRITE_C
+	help
+	  Enable multi-precision integer (MPI) support.
+
+config MBEDTLS_ERROR_C
+	bool
+	prompt "Error"
+	help
+	  Enable support for error reporting
+
+config MBEDTLS_NIST_KW_C
+	bool
+	prompt "NIST key wrap"
+	#depends on MBEDTLS_AES_C
+	help
+	  Enable support for NIST key wrap functionality
+
+config MBEDTLS_OID_C
+	bool
+	prompt "OID database"
+	default y if MBEDTLS_X509_CREATE_C				|| \
+		     MBEDTLS_X509_USE_C					|| \
+		     MBEDTLS_ASN1_WRITE_C				|| \
+		     MBEDTLS_PKCS5_C					|| \
+		     MBEDTLS_PK_PARSE_C					|| \
+		     MBEDTLS_PK_WRITE_C
+	help
+	  Enable the OID database.
+
+config MBEDTLS_PKCS5_C
+	bool
+	prompt "PKCS#5 support"
+	#depends on MBEDTLS_MD_C
+	help
+	  Enable PKCS#5 functions.
+
+config MBEDTLS_PKCS12_C
+	bool "PKCS#12 PBE functions"
+	help
+	  Enable PKCS#12 PBE functions
+
+config MBEDTLS_PEM_PARSE_C
+	bool "PEM decoding / parsing"
+	#depends on MBEDTLS_BASE64_C
+	default y if MBEDTLS_DHM_C		|| \
+		     MBEDTLS_PK_PARSE_C 	|| \
+		     MBEDTLS_X509_CRL_PARSE_C 	|| \
+		     MBEDTLS_X509_CRT_PARSE_C	|| \
+		     MBEDTLS_X509_CSR_PARSE_C
+	help
+	  Enable PEM decoding / parsing
+
+config MBEDTLS_PEM_WRITE_C
+	bool "PEM encoding / writing"
+	#depends on MBEDTLS_BASE64_C
+	default y if MBEDTLS_PK_WRITE_C 	|| \
+		     MBEDTLS_X509_CRT_WRITE_C	|| \
+		     MBEDTLS_X509_CSR_WRITE_C
+	help
+	  Enable PEM encoding / writing
 
 endmenu # Legacy mbed TLS crypto APIs
