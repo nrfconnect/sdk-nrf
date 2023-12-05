@@ -36,6 +36,8 @@ config NRF_SECURITY
 	depends on SOC_FAMILY_NRF
 	default y if BUILD_WITH_TFM
 	select ENTROPY_GENERATOR
+	default y if !IS_SECURE_BOOTLOADER
+	select ENTROPY_GENERATOR if !MCUBOOT
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	help
 	  Set this configuration to enable nRF Security. This provides
