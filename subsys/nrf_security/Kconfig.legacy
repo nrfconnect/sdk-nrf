@@ -4,54 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config MBEDTLS_PLATFORM_MEMORY
-	bool
-	default y
-
-config MBEDTLS_PLATFORM_C
-	bool
-	default y
-
-config MBEDTLS_MEMORY_C
-	bool
-	default y
-
-config MBEDTLS_MEMORY_BUFFER_ALLOC_C
-	bool
-	default y
-
-config MBEDTLS_THREADING_C
-	bool
-	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-
-# Platform configurations for _ALT defines
-config MBEDTLS_PLATFORM_EXIT_ALT
-	bool
-
-config MBEDTLS_PLATFORM_FPRINTF_ALT
-	bool
-
-config MBEDTLS_PLATFORM_PRINTF_ALT
-	bool
-
-config MBEDTLS_PLATFORM_SNPRINTF_ALT
-	bool
-
-config MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
-	bool
-	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
 
 config MBEDTLS_ENTROPY_HARDWARE_ALT
 	bool
 	default y
 
-config MBEDTLS_THREADING_ALT
-	bool
-	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
-
-config MBEDTLS_PLATFORM_ZEROIZE_ALT
-	bool
-	default y if NRF_CC3XX_PLATFORM
 
 # Legacy configurations for _ALT defines
 config MBEDTLS_AES_SETKEY_ENC_ALT
@@ -202,10 +159,6 @@ config MBEDTLS_ENTROPY_MAX_SOURCES
 	help
 	  Max entropy sources (Defaults to 1)
 
-config MBEDTLS_NO_PLATFORM_ENTROPY
-	bool
-	default y
-
 # End items required for non CryptoCell RNG in PSA scope
 
 config NRF_SECURITY_ADVANCED
@@ -346,10 +299,6 @@ config MBEDTLS_HMAC_DRBG_C
 	help
 	  This setting will enable HMAC_DRBG APIs in mbed TLS.
 	  Corresponds to MBEDTLS_HMAC_DRBG_C setting in mbed TLS config file.
-
-config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
-	bool
-	default y
 
 config MBEDTLS_ENTROPY_C
 	bool

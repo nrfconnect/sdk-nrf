@@ -73,27 +73,6 @@ config GENERATE_MBEDTLS_CFG_FILE
 	  mbed TLS configuration file. Only disable this setting if you know
 	  what you are doing.
 
-config MBEDTLS_ENABLE_HEAP
-	bool "Enable global heap for mbed TLS"
-	default y if BUILD_WITH_TFM
-	help
-	  This option enables the mbedtls to use the heap. This setting must
-	  be global so that various applications and libraries in Zephyr do not
-	  try to do this themselves as there can be only one heap defined
-	  in mbedtls. If this is enabled, then the Zephyr will, during the device
-	  startup, initialize the heap automatically.
-
-config MBEDTLS_HEAP_SIZE
-	int "Heap size for mbed TLS"
-	default 15360 if OPENTHREAD_NRF_SECURITY
-	default 512
-	depends on MBEDTLS_ENABLE_HEAP
-	help
-	  Heap size for mbed TLS in bytes.
-	  For streaming communication with arbitrary (HTTPS) servers on the
-	  Internet, 32KB + overheads (up to another 20KB) may be needed.
-	  Ensure to adjust the heap size according to the need of the
-	  application.
 
 # Include TLS/DTLS and x509 configurations
 rsource "Kconfig.tls"
@@ -103,6 +82,9 @@ rsource "Kconfig.psa"
 
 # Include Legacy mbed TLS configurations
 rsource "Kconfig.legacy"
+
+# Include Mbed TLS platform configurations
+rsource "Kconfig.platform"
 
 endif # NRF_SECURITY
 

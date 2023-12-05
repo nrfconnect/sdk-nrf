@@ -1,0 +1,160 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Mbed TLS platform configurations"
+
+config MBEDTLS_MEMORY_C
+	bool
+	default y
+
+config MBEDTLS_PLATFORM_C
+	bool
+	prompt "Mbed TLS platform abstraction"
+	default y
+	help
+	  Enable Mbed TLS platform abstraction to allow re-assignment of functions like
+	  calloc(), free(), snprintf(), printf(), fprintf(), exit().
+
+config MBEDTLS_PLATFORM_MEMORY
+	bool
+	prompt "Mbed TLS memory allocation layer"
+	depends on MBEDTLS_PLATFORM_C
+	default y
+	help
+	  Enable Mbed TLS memory allocation layer. Enabling this allows different
+	  allocators (self-implemented or provided).
+	  If MBEDTLS_{FREE,CALLOC}_MACROS is not set, then the API
+	  mbedtls_platform_set_calloc_free() to provide alternative calloc() and
+	  free() function pointer at runtime.
+	  if MBEDTLS_{FREE,CALLOC}_MACROs is set, the alterative functions for
+	  calloc() and free() is set at compile time.
+
+config MBEDTLS_MEMORY_BUFFER_ALLOC_C
+	bool
+	prompt "Mbed TLS memory buffer allocation"
+	default y
+	depends on MBEDTLS_PLATFORM_MEMORY || MBEDTLS_PLATFORM_C
+	help
+	  Enable Mbed TLS buffer memory allocator
+
+config MBEDTLS_ENABLE_HEAP
+	bool "Enable global heap for mbed TLS"
+	default y if BUILD_WITH_TFM
+	help
+	  This option enables the mbedtls to use the heap. This setting must
+	  be global so that various applications and libraries in Zephyr do not
+	  try to do this themselves as there can be only one heap defined
+	  in mbedtls. If this is enabled, then the Zephyr will, during the device
+	  startup, initialize the heap automatically.
+
+config MBEDTLS_HEAP_SIZE
+	int "Heap size for mbed TLS"
+	default 15360 if OPENTHREAD_NRF_SECURITY
+	default 512
+	depends on MBEDTLS_ENABLE_HEAP
+	help
+	  Heap size for mbed TLS in bytes.
+	  For streaming communication with arbitrary (HTTPS) servers on the
+	  Internet, 32KB + overheads (up to another 20KB) may be needed.
+	  Ensure to adjust the heap size according to the need of the
+	  application.
+
+config MBEDTLS_MEMORY_DEBUG
+	bool
+	prompt "Mbed TLS memory debugging"
+	depends on MBEDTLS_MEMORY_BUFFER_ALLOC_C
+	help
+	  Enable debugging of buffer allocator memory issues. Automatically
+	  prints (to stderr) all (fatal) messages on memory allocation
+	  issues. Enables function for 'debug output' of allocated memory.
+
+config MBEDTLS_MEMORY_BACKTRACE
+	bool
+	prompt "Mbed TLS memory backtrace"
+	depends on MBEDTLS_MEMORY_BUFFER_ALLOC_C
+	help
+	  Enable logging of backtrace information with each allocated block.
+
+comment "Threading configurations"
+
+config MBEDTLS_THREADING_ALT
+	bool
+	default y if CC3XX_BACKEND
+	depends on MBEDTLS_THREADING_C
+	help
+	  Prompt-less configuration to enable alternate Threading support if
+	  CryptoCell is used.
+
+config MBEDTLS_THREADING_C
+	bool
+	prompt "Mbed TLS threading abstraction layer"
+	default y if MBEDTLS_TLS_LIBRARY && CC3XX_BACKEND
+	help
+	  Enable Mbed TLS threading abstraction layer.
+
+config MBEDTLS_VERSION_C
+	bool
+	prompt "Enable run-time version checks"
+	help
+	  Enable reporting of Mbed TLS version information in runtime.
+
+config MBEDTLS_VERSION_FEATURES
+	bool
+	depends on MBEDTLS_VERSION_C
+	prompt "Enable run-time version feature checks"
+	help
+	  Enable reporting of Mbed TLS version feature information in runtime.
+
+# RNG configurations
+
+config MBEDTLS_NO_PLATFORM_ENTROPY
+	bool
+	prompt "No platform entropy"
+	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX || NRF_CC3XX_PLATFORM
+	help
+	  Disable built-in platform entropy functions
+	# Should be checked against new RNG usage (by PSA driver)
+	# Candidate MBEDTLS_HAS_PLATFORM_RNG
+
+config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+	bool
+	default y
+	depends on MBEDTLS_PSA_CRYPTO_C
+
+# Platform configurations for _ALT defines
+
+config MBEDTLS_PLATFORM_EXIT_ALT
+	bool
+	help
+	  Enable custom exit() function.
+
+config MBEDTLS_PLATFORM_FPRINTF_ALT
+	bool
+	help
+	  Enable custom fprintf() function.
+
+config MBEDTLS_PLATFORM_PRINTF_ALT
+	bool
+	help
+	  Enable custom printf() function.
+
+config MBEDTLS_PLATFORM_SNPRINTF_ALT
+	bool
+	help
+	  Enable custom sprintf() function.
+
+config MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
+	bool
+	help
+	  Enable custom setup/teardown functions.
+
+config MBEDTLS_PLATFORM_ZEROIZE_ALT
+	bool
+	default y if NRF_CC3XX_PLATFORM
+	help
+	  Enable custom Mbed TLS Zeroize function
+
+endmenu # "Mbed TLS platform configurations"
