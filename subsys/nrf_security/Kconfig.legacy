@@ -206,6 +206,13 @@ config OBERON_ONLY_ENABLED
 
 menu "Legacy mbed TLS crypto APIs"
 
+config MBEDTLS_MD5_C
+	bool
+	default y if NET_TCP
+	help
+	  MD5 hash functionality.
+	  MD5 is not recommended for general use as a secure hash algorithm.
+
 config MBEDTLS_MPI_WINDOW_SIZE
 	int
 	default 6
@@ -646,12 +653,6 @@ endif # MBEDTLS_RSA_C
 
 menu "SHA - Secure Hash Algorithm"
 
-config MBEDTLS_MD5_C
-	bool
-	default y if NET_TCP
-	help
-	  MD5 hash functionality.
-	  MD5 is not recommended for general use as a secure hash algorithm.
 
 config MBEDTLS_SHA1_C
 	bool
