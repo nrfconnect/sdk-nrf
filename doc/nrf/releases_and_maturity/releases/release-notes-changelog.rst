@@ -651,13 +651,11 @@ cJSON
 
 Documentation
 =============
-* Added:
-
-  * A page on :ref:`ug_nrf70_developing_fw_patch_ext_flash` in the :ref:`ug_nrf70_developing` user guide.
 
 * Added
 
   * A page on :ref:`ug_nrf70_developing_debugging` in the :ref:`ug_nrf70_developing` user guide.
+  * A page on :ref:`ug_nrf70_developing_fw_patch_ext_flash` in the :ref:`ug_nrf70_developing` user guide.
 
   * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` in the :ref:`ug_nrf70_developing` user guide.
 
@@ -672,6 +670,7 @@ Documentation
   * The :ref:`tfm_enable_share_uart` section on :ref:`ug_nrf9160`.
   * Integration steps in the :ref:`ug_bt_fast_pair` guide.
     Reorganized extension-specific content into dedicated subsections.
+  * The :ref:`ug_nrf70_developing_powersave_power_save_mode` section in the :ref:`ug_nrf70_developing_powersave` user guide.
 
 * Removed the Welcome to the |NCS| page.
   This page is replaced with existing :ref:`ncs_introduction` page.
