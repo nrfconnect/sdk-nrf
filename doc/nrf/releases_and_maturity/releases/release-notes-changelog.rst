@@ -525,6 +525,7 @@ Modem libraries
       Previously, 1-2 searches were performed and now 1-3 will be done depending on the requested number of cells and the number of found cells.
       Also, only GCI cells are counted towards the requested number of cells, and normal neighbors are ignored from this perspective.
     * Cellular positioning not to use GCI search when the device is in RRC connected mode, because the modem cannot search for GCI cells in that mode.
+    * GNSS is not started at all if the device does not enter RRC idle mode within two minutes.
 
 * :ref:`lte_lc_readme` library:
 

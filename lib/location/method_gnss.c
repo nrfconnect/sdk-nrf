@@ -41,11 +41,11 @@ BUILD_ASSERT(
 	"CONFIG_LOCATION_SERVICE_EXTERNAL must be enabled");
 #endif
 
-/* Maximum waiting time before GNSS is started regardless of RRC or PSM state [min]. This prevents
+/* Maximum waiting time before proceeding regardless of RRC or PSM state [min]. This prevents
  * Location library from getting stuck indefinitely if the application keeps LTE connection
  * constantly active.
  */
-#define SLEEP_WAIT_BACKSTOP 5
+#define SLEEP_WAIT_BACKSTOP 2
 #if !defined(CONFIG_NRF_CLOUD_AGNSS)
 /* range 10240-3456000000 ms, see AT command %XMODEMSLEEP */
 #define MIN_SLEEP_DURATION_FOR_STARTING_GNSS 10240
@@ -713,8 +713,7 @@ static bool method_gnss_entered_psm(void)
 	/* Wait for the PSM to start. If semaphore is reset during the waiting
 	 * period, the position request was canceled.
 	 */
-	if (k_sem_take(&entered_psm_mode, K_MINUTES(SLEEP_WAIT_BACKSTOP))
-		== -EAGAIN) {
+	if (k_sem_take(&entered_psm_mode, K_MINUTES(SLEEP_WAIT_BACKSTOP)) == -EAGAIN) {
 		if (!running) { /* Location request was cancelled */
 			return false;
 		}
@@ -755,18 +754,15 @@ static bool method_gnss_allowed_to_start(void)
 	}
 
 	LOG_DBG("%s", k_sem_count_get(&entered_rrc_idle) == 0 ?
-		"Waiting for the RRC connection release..." :
+		"Waiting for the RRC connection release for " STRINGIFY(SLEEP_WAIT_BACKSTOP)
+			" minutes..." :
 		"RRC already in idle mode");
 
-	/* If semaphore is reset during the waiting period, the position request was canceled.*/
 	if (k_sem_take(&entered_rrc_idle, K_MINUTES(SLEEP_WAIT_BACKSTOP)) == -EAGAIN) {
-		if (!running) { /* Location request was cancelled */
-			return false;
-		}
-		/* We're still running, i.e., the wait for RRC idle timed out */
-		LOG_WRN("RRC connection was not released in %d minutes. Starting GNSS anyway.",
-			SLEEP_WAIT_BACKSTOP);
-		return true;
+		/* Semaphore was reset during the waiting period, the position request was canceled.
+		 * Alternatively, timeout occurred and we didn't get to RRC idle mode.
+		 */
+		return false;
 	}
 	k_sem_give(&entered_rrc_idle);
 
@@ -1195,7 +1191,16 @@ static void method_gnss_start_work_fn(struct k_work *work)
 	}
 
 	if (!method_gnss_allowed_to_start()) {
-		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
+		/* Location request was cancelled while waiting for RRC idle or PSM.
+		 * Alternatively, RRC idle waiting time expired and we will not try to get
+		 * GNSS fix as it will not succeed and we can still do a fallback to other
+		 * methods.
+		 */
+		if (running) {
+			LOG_WRN("GNSS not allowed to start");
+			location_core_event_cb_error();
+			running = false;
+		}
 		return;
 	}
 
