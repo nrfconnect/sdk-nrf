@@ -282,6 +282,53 @@ int sd_card_open(char const *const filename, struct fs_file_t *f_seg_read_entry)
 	return 0;
 }
 
+int sd_card_open_for_write(char const *const filename, struct fs_file_t *f_seg_write_entry)
+{
+	int ret;
+	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+	size_t avilable_path_space = PATH_MAX_LEN - strlen(SD_ROOT_PATH);
+
+	ret = k_sem_take(&m_sem_sd_oper_ongoing, K_MSEC(K_SEM_OPER_TIMEOUT_MS));
+	if (ret) {
+		LOG_ERR("Sem take failed. Ret: %d", ret);
+		return ret;
+	}
+
+	if (!sd_init_success) {
+		k_sem_give(&m_sem_sd_oper_ongoing);
+		return -ENODEV;
+	}
+
+	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+		LOG_ERR("Filename is too long");
+		k_sem_give(&m_sem_sd_oper_ongoing);
+		return -ENAMETOOLONG;
+	}
+
+	if ((strlen(abs_path_name) + strlen(filename)) > PATH_MAX_LEN) {
+		LOG_ERR("Filepath is too long");
+		k_sem_give(&m_sem_sd_oper_ongoing);
+		return -EINVAL;
+	}
+
+	strncat(abs_path_name, filename, avilable_path_space);
+
+	LOG_INF("abs path name:\t%s", abs_path_name);
+
+	fs_file_t_init(f_seg_write_entry);
+
+	fs_unlink(abs_path_name);
+
+	ret = fs_open(f_seg_write_entry, abs_path_name, FS_O_WRITE | FS_O_CREATE | FS_O_APPEND);
+	if (ret) {
+		LOG_ERR("Open file failed: %d", ret);
+		k_sem_give(&m_sem_sd_oper_ongoing);
+		return ret;
+	}
+
+	return 0;
+}
+
 int sd_card_read(char *buf, size_t *size, struct fs_file_t *f_seg_read_entry)
 {
 	int ret;
@@ -299,6 +346,25 @@ int sd_card_read(char *buf, size_t *size, struct fs_file_t *f_seg_read_entry)
 	}
 
 	*size = ret;
+
+	return 0;
+}
+
+int sd_card_write(const char *buf, size_t size, struct fs_file_t *f_seg_write_entry)
+{
+	int ret;
+
+	if (!(k_sem_count_get(&m_sem_sd_oper_ongoing) <= 0)) {
+		LOG_ERR("SD operation not ongoing");
+		return -EPERM;
+	}
+
+	ret = fs_write(f_seg_write_entry, buf, size);
+	if (ret < 0) {
+		LOG_ERR("Write file failed: %d", ret);
+		k_sem_give(&m_sem_sd_oper_ongoing);
+		return ret;
+	}
 
 	return 0;
 }

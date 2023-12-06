@@ -13,6 +13,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
 #include <nrfx_clock.h>
+#include <contin_array.h>
+#include <pcm_mix.h>
 
 #include "nrf5340_audio_common.h"
 #include "macros_common.h"
@@ -21,9 +23,9 @@
 #include "sw_codec_select.h"
 #include "audio_system.h"
 #include "tone.h"
-#include "contin_array.h"
-#include "pcm_mix.h"
 #include "streamctrl.h"
+#include "sd_card.h"
+#include "wav_file.h"
 #include "audio_sync_timer.h"
 #include "sd_card_playback.h"
 
@@ -857,6 +859,139 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 	*delay_us = ctrl_blk.pres_comp.pres_delay_us;
 }
 
+static char pcm_data1[CONFIG_AUDIO_SAMPLE_RATE_HZ *
+		      CONFIG_AUDIO_BIT_DEPTH_OCTETS]; // 96kb can hold one second.
+static char pcm_data2[CONFIG_AUDIO_SAMPLE_RATE_HZ *
+		      CONFIG_AUDIO_BIT_DEPTH_OCTETS]; // 96kb can hold one second.
+static char *pcm_data = NULL;
+static size_t pcm_data_used = 0;
+static size_t pcm_data_duration = 0;
+static size_t wav_file_bytes = 0;
+static struct fs_file_t wav_file;
+static bool wav_file_open = false;
+static bool save_busy = false;
+
+struct save_wave_msg {
+	const char *buffer;
+	uint32_t size;
+};
+
+ZBUS_CHAN_DEFINE(save_wav_channel,	       /* Name */
+		 struct save_wave_msg,	       /* Message type */
+		 NULL,			       /* Validator */
+		 NULL,			       /* User data */
+		 ZBUS_OBSERVERS(save_wav_sub), /* observers */
+		 ZBUS_MSG_INIT(0));	       /* Initial value */
+
+ZBUS_SUBSCRIBER_DEFINE(save_wav_sub, 1);
+
+static void save_wav_task(void)
+{
+	const struct zbus_channel *chan;
+	struct save_wave_msg msg;
+
+	while (!zbus_sub_wait(&save_wav_sub, &chan, K_FOREVER)) {
+		if (&save_wav_channel == chan) {
+			zbus_chan_read(&save_wav_channel, &msg, K_MSEC(500));
+			if (wav_file_open) {
+				save_busy = true;
+				int ret = write_wav_data(&wav_file, msg.buffer, msg.size);
+				save_busy = false;
+				if (ret != 0) {
+					LOG_ERR("Failed to write to file, rc=%d", ret);
+					return;
+				}
+
+				if (pcm_data_duration == 0) {
+					// close the file!
+					// bugbug: I would prefer to do this to fix up the wav
+					// header now that we know the size of the file but seek is
+					// not working. write_wav_header(wav_file_bytes);
+					sd_card_close(&wav_file);
+					wav_file_open = false;
+					LOG_INF("Saved %d bytes to wav file.", wav_file_bytes);
+				}
+			}
+		}
+	}
+}
+
+#ifdef CONFIG_AUDIO_SAVE_WAV
+K_THREAD_DEFINE(subscriber_task_id, CONFIG_MAIN_STACK_SIZE, save_wav_task, NULL, NULL, NULL, 3, 0,
+		0);
+#endif
+
+void audio_datapath_pcm_save_data(const char *pcm_buffer, size_t size)
+{
+	struct save_wave_msg msg;
+	const size_t pcm_data_size = sizeof(pcm_data1);
+	if (pcm_data_used + size > pcm_data_size) {
+		if (save_busy) {
+			LOG_ERR("sd save is not keeping up");
+			return;
+		}
+		msg.buffer = pcm_data;
+		msg.size = pcm_data_used;
+
+		// toggle buffers so sd card write can happen in parallel with collecting
+		// the next buffer.
+		if (pcm_data == pcm_data1) {
+			pcm_data = pcm_data2;
+		} else {
+			pcm_data = pcm_data1;
+		}
+
+		if (pcm_data_used >= pcm_data_duration) {
+			pcm_data_duration = 0; // done!
+		} else {
+			pcm_data_duration -= pcm_data_used;
+		}
+		wav_file_bytes += pcm_data_used;
+
+		// do the save on a separate thread so it doesn't block our PDM read thread.
+		int ret = zbus_chan_pub(&save_wav_channel, &msg, K_NO_WAIT);
+		if (ret) {
+			LOG_ERR("Failed to publish save wav msg, ret: %d", ret);
+		}
+
+		pcm_data_used = 0;
+	}
+	memcpy(&pcm_data[pcm_data_used], pcm_buffer, size);
+	pcm_data_used += size;
+}
+
+int audio_datapath_save_wav(const char *filename, uint32_t duration_seconds)
+{
+	pcm_data_used = 0;
+	pcm_data = pcm_data1;
+	pcm_data_duration =
+		duration_seconds * CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS;
+	wav_file_bytes = 0;
+
+	if (wav_file_open) {
+		sd_card_close(&wav_file);
+		wav_file_open = false;
+	}
+
+	int err = sd_card_open_for_write(filename, &wav_file);
+	if (err != 0) {
+		pcm_data_duration = 0;
+		LOG_ERR("Failed to open file, rc=%d", err);
+		return err;
+	} else {
+		wav_file_open = true;
+		write_wav_header(
+			&wav_file,
+			320000, // hard coded header because fs_seek doesn't seem to be working.
+			CONFIG_AUDIO_SAMPLE_RATE_HZ * 2, // bugbug: somehow the lc3 decoded data is
+			// returning twice as much data as expected...?
+			CONFIG_AUDIO_BIT_DEPTH_OCTETS,
+			1 // 1 channel
+		);
+	}
+	return 0;
+}
+
 void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame,
 			       uint32_t recv_frame_ts_us)
 {
@@ -936,6 +1071,10 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		LOG_WRN("Decoded audio has wrong size");
 		/* Discard frame */
 		return;
+	}
+
+	if (pcm_data_duration > 0) {
+		audio_datapath_pcm_save_data(ctrl_blk.decoded_data, pcm_size);
 	}
 
 	/*** Add audio data to FIFO buffer ***/

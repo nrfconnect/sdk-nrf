@@ -87,4 +87,14 @@ int audio_datapath_stop(void);
  */
 int audio_datapath_init(void);
 
+/**
+ * @brief Save received PCM audio to sd card.
+ *
+ * @param[in]	filename	        Name of wav file to create on sd card.
+ * @param[in]	duration_seconds	Length of recording in seconds.
+ *
+ * @return 0 on success, error otherwise.
+ */
+int audio_datapath_save_wav(const char* filename, uint32_t duration_seconds);
+
 #endif /* _AUDIO_DATAPATH_H_ */

@@ -13,6 +13,7 @@
 #include "button_assignments.h"
 #include "macros_common.h"
 #include "audio_system.h"
+#include "audio_datapath.h"
 #include "button_handler.h"
 #include "le_audio.h"
 #include "bt_mgmt.h"
@@ -179,7 +180,10 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_5:
-			if (IS_ENABLED(CONFIG_AUDIO_MUTE)) {
+			if (IS_ENABLED(CONFIG_AUDIO_SAVE_WAV)) {
+				audio_datapath_save_wav("test.wav", 10);
+			}
+			else if (IS_ENABLED(CONFIG_AUDIO_MUTE)) {
 				ret = bt_rend_volume_mute(false);
 				if (ret) {
 					LOG_WRN("Failed to mute, ret: %d", ret);

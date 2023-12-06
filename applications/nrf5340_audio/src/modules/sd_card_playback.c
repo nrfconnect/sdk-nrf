@@ -16,6 +16,7 @@
 #include "sw_codec_select.h"
 #include "pcm_mix.h"
 #include "audio_system.h"
+#include "wav_file.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sd_card_playback, CONFIG_MODULE_SD_CARD_PLAYBACK_LOG_LEVEL);
@@ -24,30 +25,7 @@ LOG_MODULE_REGISTER(sd_card_playback, CONFIG_MODULE_SD_CARD_PLAYBACK_LOG_LEVEL);
 #define LIST_FILES_BUF_SIZE 512
 #define FRAME_DURATION_MS   (CONFIG_AUDIO_FRAME_DURATION_US / 1000)
 
-#define WAV_FORMAT_PCM	    1
 #define WAV_SAMPLE_RATE_48K 48000
-
-/* WAV header */
-struct wav_header {
-	/* RIFF Header */
-	char riff_header[4];
-	uint32_t wav_size;  /* File size excluding first eight bytes */
-	char wav_header[4]; /* Contains "WAVE" */
-
-	/* Format Header */
-	char fmt_header[4];
-	uint32_t wav_chunk_size; /* Should be 16 for PCM */
-	short audio_format;	 /* Should be 1 for PCM */
-	short num_channels;
-	uint32_t sample_rate;
-	uint32_t byte_rate;
-	short block_alignment; /* num_channels * Bytes Per Sample */
-	short bit_depth;
-
-	/* Data */
-	char data_header[4];
-	uint32_t data_bytes; /* Number of bytes in data */
-} __packed;
 
 /* LC3 header */
 struct lc3_header {
@@ -202,7 +180,7 @@ static int sd_card_playback_play_wav(void)
 		return ret;
 	}
 
-	ret = sd_card_read((char *)&wav_file_header, &wav_file_header_size, &f_seg_read_entry);
+	ret = read_wav_header(&f_seg_read_entry, &wav_file_header);
 	if (ret) {
 		LOG_ERR("Read SD card err: %d", ret);
 		ret_sd_card_close = sd_card_close(&f_seg_read_entry);

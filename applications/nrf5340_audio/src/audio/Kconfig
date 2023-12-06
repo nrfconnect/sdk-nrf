@@ -170,6 +170,12 @@ config AUDIO_MUTE
 	  Use button 5 to mute audio instead of
 	  doing a user defined action.
 
+config AUDIO_SAVE_WAV
+	bool "Save a 10 second wav file instead of mute"
+	default n
+	help
+	  Use button 5 to save a wav file.
+
 if AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 
 config AUDIO_HEADSET_CHANNEL
@@ -295,6 +301,10 @@ source "subsys/logging/Kconfig.template.log_config"
 
 module = LE_AUDIO_RX
 module-str = le-audio-rx
+source "subsys/logging/Kconfig.template.log_config"
+
+module = WAV_FILE
+module-str = audio-system
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels
