@@ -191,7 +191,7 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: 170afc47222eef68af56b470e2c799afc9880b5f
+      revision: acfedde4ea0786295a5063f3f5d00e6e16dff544
       submodules: true
       groups:
         - sidewalk
