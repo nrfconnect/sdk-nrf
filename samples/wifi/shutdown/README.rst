@@ -61,7 +61,7 @@ Disable auto-start of the Wi-Fi driver
 --------------------------------------
 
 The Wi-Fi network interface is automatically brought up when the Wi-Fi driver is initialized by default.
-You can disable it by setting the :kconfig:option:`CONFIG_WIFI_INIT_AUTO_START` Kconfig option to ``n``.
+You can disable it by setting the :kconfig:option:`CONFIG_NRF_WIFI_IF_AUTO_START` Kconfig option to ``n``.
 
 .. code-block:: console
 
