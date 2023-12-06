@@ -9,7 +9,10 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf91_sockets_test)
 
-target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
+target_include_directories(app PRIVATE
+                           ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/
+                           ${ZEPHYR_BASE}/subsys/net/lib/sockets
+                          )
 
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_socket.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_os.h)
