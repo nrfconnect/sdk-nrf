@@ -185,7 +185,7 @@ static struct bt_audio_source {
 
 static void print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir)
 {
-	if (codec->id == BT_AUDIO_CODEC_LC3_ID) {
+	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
 		/* LC3 uses the generic LTV format - other codecs might do as well */
 		enum bt_audio_location chan_allocation;
 
