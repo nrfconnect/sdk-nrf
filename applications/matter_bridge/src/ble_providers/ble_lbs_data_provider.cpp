@@ -139,6 +139,8 @@ void BleLBSDataProvider::Subscribe()
 	mGattSubscribeParams.value_handle = mButtonCharacteristicHandle;
 	mGattSubscribeParams.value = BT_GATT_CCC_NOTIFY;
 	mGattSubscribeParams.notify = BleLBSDataProvider::GattNotifyCallback;
+	mGattSubscribeParams.subscribe = nullptr;
+	mGattSubscribeParams.write = nullptr;
 
 	if (CheckSubscriptionParameters(&mGattSubscribeParams)) {
 		int err = bt_gatt_subscribe(mDevice.mConn, &mGattSubscribeParams);
