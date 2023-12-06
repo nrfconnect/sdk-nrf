@@ -3825,6 +3825,11 @@ The issues in this section are related to the TF-M implementation in the |NCS|.
 
 .. rst-class:: v2-5-0
 
+NCSDK-24986: TF-M does not configure PDM and I2S as non-secure peripherals on nRF91 Series devices
+  The peripherals cannot be accessed by the non-secure application without triggering a security violation.
+
+.. rst-class:: v2-5-0
+
 NCSDK-24804: TF-M does not compile without the ``gpio0`` node enabled in devicetree
   This fails with the error message ``'TFM_PERIPHERAL_GPIO0_PIN_MASK_SECURE' undeclared.``
 
