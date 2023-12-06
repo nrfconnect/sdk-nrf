@@ -64,6 +64,10 @@ config AT_HOST_THREAD_PRIO
 	default 0 if !MULTITHREADING
 	default 10
 
+config AT_HOST_STACK_SIZE
+	int "AT host workqueue thread stack size (in bytes)"
+	default 1024
+
 module = AT_HOST
 module-str = AT host
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
