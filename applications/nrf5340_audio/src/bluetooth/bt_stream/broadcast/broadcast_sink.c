@@ -129,7 +129,7 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 
 static void print_codec(const struct audio_codec_info *codec)
 {
-	if (codec->id == BT_AUDIO_CODEC_LC3_ID) {
+	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
 		LOG_INF("Codec config for LC3:");
 		LOG_INF("\tFrequency: %d Hz", codec->frequency);
 		LOG_INF("\tFrame Duration: %d us", codec->frame_duration_us);
@@ -146,7 +146,7 @@ static void print_codec(const struct audio_codec_info *codec)
 static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 			   struct audio_codec_info *codec_info)
 {
-	if (codec->id == BT_AUDIO_CODEC_LC3_ID) {
+	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
 		/* LC3 uses the generic LTV format - other codecs might do as well */
 		LOG_DBG("Retrieve the codec configuration for LC3");
 		codec_info->id = codec->id;

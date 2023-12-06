@@ -558,7 +558,7 @@ static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 		return;
 	}
 
-	if (codec->id != BT_AUDIO_CODEC_LC3_ID) {
+	if (codec->id != BT_HCI_CODING_FORMAT_LC3) {
 		LOG_DBG("Only the LC3 codec is supported");
 		return;
 	}
