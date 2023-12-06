@@ -22,4 +22,10 @@ module = DK_LIBRARY
 module-str = DK library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
+config DK_LIBRARY_SHELL
+	bool "DK_LIBRARY SHELL"
+	depends on SHELL
+	help
+	  DK_LIBRARY shell allows to simulate button press
+
 endif # DK_LIBRARY
