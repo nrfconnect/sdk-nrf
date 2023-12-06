@@ -157,9 +157,9 @@ For more information on how to collect traces using Cellular Monitor, see the `C
 To enable the modem traces in the modem and to forward them to the :ref:`modem_trace_module` over UART, include the ``nrf91-modem-trace-uart`` snippet while building your application as described in :ref:`nrf91_modem_trace_uart_snippet`.
 
 .. note::
-   For the :ref:`serial_lte_modem` application and the :ref:`at_client_sample` sample, you must also run ``AT%xmodemtrace=1,2`` to manually activate the predefined trace set.
+   For the :ref:`serial_lte_modem` application and the :ref:`at_client_sample` sample, you must also run ``AT%XMODEMTRACE=1,2`` to manually activate the predefined trace set.
 
-You can set the trace level using the AT command ``%XMODEMTRACE``.
+You can set the trace level using the AT command ``AT%XMODEMTRACE``.
 See `modem trace AT command documentation`_ for more information.
 
 See :ref:`modem_trace_module` for other backend options.
@@ -362,39 +362,15 @@ Following is a list of the samples and applications with some information about 
 * The :ref:`gnss_sample` sample does not use assistance by default but can be configured to use nRF Cloud A-GNSS, P-GPS, or a combination of both.
   The sample displays tracking and fix information as well as NMEA strings in the serial console.
 
-.. _nrf9160_gps_lte:
-
-Concurrent GNSS and LTE
-=======================
-
-An nRF9160-based device supports GNSS in LTE-M and NB-IoT.
-Concurrent operation of GNSS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported, and recommended.
-
-The following figure shows how the data transfer occurs in an nRF9160-based device with power-saving in place.
-
-.. figure:: images/power_consumption.png
-   :alt: Power consumption
-
-See `Energy efficiency`_ for more information.
-
-Asset Tracker enables the concurrent working of GNSS and LTE in eDRX and PSM modes when the device is in `RRC idle mode <Radio Resource Control_>`_.
-The time between the transition of a device from RRC connected mode (data transfer mode) to RRC idle mode is dependent on the network.
-Typically, the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
-Sensor and GNSS data are sent to the cloud only during the data transfer phase.
-
 .. _nrf9160_ug_band_lock:
 
 Band lock
 *********
 
-The band lock is a functionality of the application that lets you send an AT command to the modem instructing it to operate only on specific bands.
-The band lock is handled by the LTE Link Control driver.
-By default, the functionality is disabled in the driver's Kconfig file.
+The modem can operate on a number of LTE bands.
+To check which bands are supported by a particular modem firmware version, see the `nRF9160 product website (compatible downloads)`_.
 
-The modem can operate in the following E-UTRA Bands: 1, 2, 3, 4, 5, 8, 12, 13, 17, 18, 19, 20, 25, 26, 28, and 66.
-To check which bands are supported for a particular modem firmware version, see the `nRF9160 product website (compatible downloads)`_.
-
-You can use the band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
+You can use band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
 To check which bands are certified in your region, visit `nRF9160 Certifications`_.
 
 To set the LTE band lock, enable the :ref:`lte_lc_readme` library in your project configuration file :file:`prj.conf`, by setting the Kconfig option :kconfig:option:`CONFIG_LTE_LINK_CONTROL`  to ``y``.
@@ -408,40 +384,19 @@ The band lock mask allows you to set the bands on which you want the modem to op
 Each bit in the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
 The maximum length of the string is 88 characters (bit string, 88 bits).
 
-The band lock is a non-volatile setting that must be set before activating the modem.
-It disappears when the modem is reset.
-To prevent this, you can set the modem in *power off* mode, by either:
-
-* Sending the AT command ``AT+CFUN=0`` directly.
-* Calling the :c:func:`lte_lc_power_off` function while the *LTE Link Control Library* is enabled.
-
-Both these options save the configurations and historical data in the Non-Volatile Storage before powering off the modem.
-
-As a recommendation, turn off the band lock after the connection is established and let the modem use the historical connection data to optimize the network search, in case the device is disconnected or moved.
-
 For more detailed information, see the `band lock section in the AT Commands reference document`_.
 
 .. _nrf9160_ug_network_mode:
 
-Network mode
-************
+System mode
+***********
 
-The modem supports LTE-M (Cat-M1) and Narrowband Internet of Things (NB-IoT or LTE Cat-NB).
-By default, the modem starts in LTE-M mode.
-However, this is highly configurable.
+The modem system mode configuration is used to select which of the supported systems, :term:`LTE-M`, :term:`NB-IoT<Narrowband Internet of Things (NB-IoT)>` and :term:`GNSS<Global Navigation Satellite System (GNSS)>`, are enabled.
 
-When using the LTE Link Control driver, you can select LTE-M with :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
+When using the LTE link control library, by default all supported systems are enabled and modem selects the used LTE system based on the LTE system mode preference.
+You can change the enabled systems using the :kconfig:option:`CONFIG_LTE_NETWORK_MODE` Kconfig option and the LTE system mode preference using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
 
-To start in NB-IoT mode without the driver, send the following command before starting the modem protocols (by using ``AT+CFUN=1``)::
-
-   AT%XSYSTEMMODE=0,1,0,0
-
-To change the mode at runtime, set the modem to LTE RF OFF state before reconfiguring the mode, then set it back to normal operating mode::
-
-   AT+CFUN=4
-   AT%XSYSTEMMODE=0,1,0,0
-   AT+CFUN=1
-
-If the modem is shut down gracefully before the next boot (by using ``AT+CFUN=0``), it keeps the current setting.
+When LTE link control library is not used, the modem starts in LTE-M mode.
+You can change the system mode and the LTE system mode preference using the ``AT%XSYSTEMMODE`` AT command.
 
 For more detailed information, see the `system mode section in the AT Commands reference document`_.
