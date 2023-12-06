@@ -23,9 +23,3 @@
   - "samples/bluetooth/mesh/*"
   - "doc/nrf/libraries/bluetooth_services/mesh/*"
   - "doc/nrf/ug_bt_mesh*"
-
-"wifi-qa-required":
-  - "drivers/wifi/**/*"
-  - "samples/wifi/**/*"
-  - "modules/hostap/**/*"
-  - "modules/lib/hostap/**/*"
