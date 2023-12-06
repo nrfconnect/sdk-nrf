@@ -368,6 +368,15 @@ Building and running
    The Remote IPC shell sample is built and programmed automatically by default.
    If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
 
+Disabling Direction Finding feature
+===================================
+
+To build the sample without support for the Direction Finding feature, use the following command:
+
+.. code-block:: console
+
+   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_DTC_OVERLAY_FILE=no-dfe.overlay
+
 Experimental HCI interface
 ==========================
 
@@ -375,13 +384,13 @@ To build the sample with an HCI interface, use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b board_name -- --DEXTRA_CONF_FILE=overlay-hci.conf
+   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_CONF_FILE=overlay-hci.conf
 
 On the |nRF5340DKnoref| the sample with HCI interface can also be built with the `remote_hci` image using the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b board_name -- --DEXTRA_CONF_FILE=overlay-hci-nrf53.conf
+   west build samples/bluetooth/direct_test_mode -b board_name -- -DEXTRA_CONF_FILE=overlay-hci-nrf53.conf
 
 USB CDC ACM transport variant
 =============================

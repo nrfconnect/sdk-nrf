@@ -234,6 +234,10 @@ Bluetooth samples
   * Enabled encryption in the sample.
     The measured throughput is calculated over the encrypted data, which is how most of the Bluetooth products use this protocol.
 
+* :ref:`direct_test_mode` sample:
+
+  * Added the configuration option to disable the Direction Finding feature.
+
 Bluetooth Mesh samples
 ----------------------
 
