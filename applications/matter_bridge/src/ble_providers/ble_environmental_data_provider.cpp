@@ -155,12 +155,16 @@ void BleEnvironmentalDataProvider::Subscribe()
 	mGattTemperatureSubscribeParams.value_handle = mTemperatureCharacteristicHandle;
 	mGattTemperatureSubscribeParams.value = BT_GATT_CCC_NOTIFY;
 	mGattTemperatureSubscribeParams.notify = BleEnvironmentalDataProvider::GattTemperatureNotifyCallback;
+	mGattTemperatureSubscribeParams.subscribe = nullptr;
+	mGattTemperatureSubscribeParams.write = nullptr;
 
 	/* Configure subscription for the humidity characteristic */
 	mGattHumiditySubscribeParams.ccc_handle = mCccHumidityHandle;
 	mGattHumiditySubscribeParams.value_handle = mHumidityCharacteristicHandle;
 	mGattHumiditySubscribeParams.value = BT_GATT_CCC_NOTIFY;
 	mGattHumiditySubscribeParams.notify = BleEnvironmentalDataProvider::GattHumidityNotifyCallback;
+	mGattHumiditySubscribeParams.subscribe = nullptr;
+	mGattHumiditySubscribeParams.write = nullptr;
 
 	if (CheckSubscriptionParameters(&mGattTemperatureSubscribeParams)) {
 		int err = bt_gatt_subscribe(mDevice.mConn, &mGattTemperatureSubscribeParams);

@@ -38,10 +38,10 @@ private:
 	bool mOnOff = false;
 	uint8_t mCurrentSwitchPosition = false;
 	uint16_t mLedCharacteristicHandle;
-	bt_gatt_write_params mGattWriteParams;
+	bt_gatt_write_params mGattWriteParams{};
 	uint16_t mButtonCharacteristicHandle;
 	uint16_t mCccHandle;
-	bt_gatt_subscribe_params mGattSubscribeParams;
+	bt_gatt_subscribe_params mGattSubscribeParams{};
 
 	uint8_t mGattWriteDataBuffer[sizeof(mOnOff)];
 };
