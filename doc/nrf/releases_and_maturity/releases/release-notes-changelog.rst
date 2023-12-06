@@ -316,6 +316,7 @@ Cellular samples
     * The sample to use the FOTA support functions in the :file:`nrf_cloud_fota_poll.c` and :file:`nrf_cloud_fota_common.c` files.
     * The sample now enables the Kconfig options :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA` and :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI`.
       It no longer sends a device status update on initial connection; this is now handled by the :ref:`lib_nrf_cloud` library.
+    * Increased the :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` and :kconfig:option:`CONFIG_AT_MONITOR_HEAP_SIZE` Kconfig options to 2048 bytes since nRF Cloud credentials are sometimes longer than 1024 bytes.
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
@@ -612,6 +613,11 @@ Modem libraries
    * Added the :c:func:`pdn_dynamic_params_get` function to retrieve dynamic parameters of an active PDN connection.
    * Fixed a potential issue where the library tries to free the PDN context twice, causing the application to crash.
    * Updated the library to add PDP auto configuration to the :c:enumerator:`LTE_LC_FUNC_MODE_POWER_OFF` event.
+
+* :ref:`lib_at_host` library:
+
+  * Added the :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` Kconfig option.
+    This option allows the stack size of the AT host workqueue thread to be adjusted.
 
 Libraries for networking
 ------------------------

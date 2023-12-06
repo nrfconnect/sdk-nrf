@@ -18,9 +18,7 @@
 LOG_MODULE_REGISTER(at_host, CONFIG_AT_HOST_LOG_LEVEL);
 
 /* Stack definition for AT host workqueue */
-#define AT_HOST_STACK_SIZE 1024
-
-K_THREAD_STACK_DEFINE(at_host_stack_area, AT_HOST_STACK_SIZE);
+K_THREAD_STACK_DEFINE(at_host_stack_area, CONFIG_AT_HOST_STACK_SIZE);
 
 #define AT_BUF_SIZE CONFIG_AT_HOST_CMD_MAX_LEN
 
