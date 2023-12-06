@@ -1,11 +1,11 @@
 python:
-  version: 3.8.2
+  version: 3.8.10
 git:
   version: 2.37.3.windows.1
 cmake:
-  version: 3.20.5
+  version: 3.20.6
 ninja:
-  version: 1.9.0
+  version: 1.10.2
 gperf:
   version: 3.1
 dtc:
