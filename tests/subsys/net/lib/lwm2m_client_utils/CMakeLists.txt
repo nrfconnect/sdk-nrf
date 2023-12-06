@@ -12,7 +12,7 @@ FILE(GLOB app_sources src/*.c)
 target_sources(app
   PRIVATE
     ${app_sources}
-    $ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_util.c
+    ${ZEPHYR_BASE}/subsys/net/lib/lwm2m/lwm2m_util.c
 )
 
 set(options
@@ -55,11 +55,11 @@ target_compile_options(..__nrf__subsys__net__lib__lwm2m_client_utils
 )
 
 set(includes
-"$ENV{ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
-"$ENV{ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
-"$ENV{ZEPHYR_BASE}/../modules/lib/cjson/"
-"$ENV{ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/include/"
-"$ENV{ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/include/"
+"${ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
+"${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
+"${ZEPHYR_BASE}/../modules/lib/cjson/"
+"${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/include/"
+"${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/include/"
 "src/"
 )
 
