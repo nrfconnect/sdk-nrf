@@ -13,6 +13,11 @@
 #include <nrfx.h>
 #include <dk_buttons_and_leds.h>
 
+#if CONFIG_DK_LIBRARY_SHELL
+#include <zephyr/shell/shell.h>
+#include <stdlib.h>
+#endif
+
 LOG_MODULE_REGISTER(dk_buttons_and_leds, CONFIG_DK_LIBRARY_LOG_LEVEL);
 
 #define BUTTONS_NODE DT_PATH(buttons)
@@ -389,3 +394,40 @@ int dk_set_led_off(uint8_t led_idx)
 {
 	return dk_set_led(led_idx, 0);
 }
+
+#if CONFIG_DK_LIBRARY_SHELL
+int button_press(const struct shell *shell, int32_t argc, const char **argv)
+{
+	char *end = NULL;
+	long button_id = 0;
+	long hold_time_ms = 10;
+
+	button_id = strtol(argv[1], &end, 0);
+	if (end == argv[1] || !IN_RANGE(button_id, 0, (long)ARRAY_SIZE(buttons))) {
+		shell_error(shell, "Invalid argument, button_id must be <0, %d>",
+			ARRAY_SIZE(buttons));
+	}
+	if (argc >= 3) {
+		hold_time_ms = strtol(argv[2], &end, 0);
+		if (end == argv[2] || !IN_RANGE(hold_time_ms, 0, INT32_MAX)) {
+			shell_error(shell, "Invalid argument, hold_time_ms must be <0, INT32_MAX>");
+		}
+	}
+	button_handlers_call(1 << button_id, 1 << button_id);
+	k_sleep(K_MSEC(hold_time_ms));
+	button_handlers_call(0, 1 << button_id);
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_services,
+	SHELL_CMD_ARG(button_press, NULL,
+		"ButtonID [hold_time_ms]\n"
+		"   simulate button press, default hold_time_ms is 10ms\n"
+		"   note:\n"
+		"   Shell is blocked for the duration of button press",
+		button_press, 2, 1),
+	SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(dk_library, &sub_services, "control DK buttons and leds from CLI", NULL);
+#endif
