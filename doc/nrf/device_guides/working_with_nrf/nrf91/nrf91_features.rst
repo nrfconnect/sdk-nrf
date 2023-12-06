@@ -7,9 +7,6 @@ Features of nRF91 Series
    :local:
    :depth: 2
 
-Introduction
-************
-
 The nRF9160 SiP integrates an application MCU, a full LTE modem, an RF front end, and power management.
 With built-in GNSS support, it is a great choice for asset tracking applications.
 
@@ -23,7 +20,7 @@ The following figure illustrates the conceptual layout when targeting an nRF9160
    Overview of nRF91 application architecture
 
 Supported boards
-================
+****************
 
 Devices in the nRF91 Series are supported by the following boards in the `Zephyr`_ open source project and in |NCS|.
 
@@ -48,7 +45,7 @@ Devices in the nRF91 Series are supported by the following boards in the `Zephyr
        | `User Guide <Nordic Thingy:91 User Guide_>`_
 
 Application MCU
-===============
+***************
 
 The application core is a full-featured Arm Cortex-M33 processor including DSP instructions and FPU.
 Use this core for tasks that require high performance and for application-level logic.
@@ -60,7 +57,7 @@ The secure bootloader chain starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`
 For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 Secure bootloader chain
------------------------
+=======================
 
 A secure bootloader chain protects your application against running unauthorized code, and it enables you to do device firmware updates (DFU).
 See :ref:`ug_bootloader` for more information.
@@ -69,7 +66,7 @@ A bootloader chain is optional.
 Not all of the nRF9160 samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`mcuboot:index-ncs`.
 
 Trusted Firmware-M (TF-M)
--------------------------
+=========================
 
 Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
 It has replaced Secure Partition Manager as the solution used by |NCS| applications and samples.
@@ -80,7 +77,7 @@ For more information about the TF-M, see :ref:`ug_tfm`.
 See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
 
 Application
------------
+===========
 
 The user application runs in NSPE.
 Therefore, it must be built for the ``nrf9160dk_nrf9160_ns`` or ``thingy91_nrf9160_ns`` build target.
@@ -92,7 +89,7 @@ Depending on the configuration, all these images can be built at the same time i
 .. _lte_modem:
 
 LTE modem
-=========
+*********
 
 The LTE modem handles LTE communication.
 It is controlled through AT commands.
@@ -142,7 +139,7 @@ Delta patches
 
 
 Modem library
-=============
+*************
 
 The |NCS| applications for the nRF9160-based devices that communicate with the nRF9160 modem firmware must include the :ref:`nrfxlib:nrf_modem`.
 The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in the :ref:`nrfxlib` repository and it is integrated into |NCS| through an integration layer, ``nrf_modem_lib``.
@@ -153,7 +150,7 @@ For more information on the integration, see :ref:`nrf_modem_lib_readme`.
 .. _modem_trace:
 
 Modem trace
------------
+===========
 
 The modem traces of the nRF9160 modem can be captured using the Cellular Monitor.
 For more information on how to collect traces using Cellular Monitor, see the `Cellular Monitor`_ documentation.
@@ -172,7 +169,7 @@ For more information on the implementation of a custom trace backend, see :ref:`
 .. _nrf9160_fota:
 
 FOTA upgrades
-=============
+*************
 
 |fota_upgrades_def|
 FOTA upgrades can be used to apply delta patches to the :ref:`lte_modem` firmware, full :ref:`lte_modem` firmware upgrades, and to replace the upgradable bootloader or the application.
@@ -214,7 +211,7 @@ To perform a FOTA upgrade, complete the following steps:
 The full FOTA procedure depends on where the binary files are hosted for download.
 
 FOTA upgrades using nRF Cloud
------------------------------
+=============================
 
 FOTA upgrades can be managed through a comprehensive management portal on `nRF Cloud`_, either fully hosted on nRF Cloud or accessible from a customer cloud using the `nRF Cloud REST API`_.
 If you are using nRF Cloud, see the `nRF Cloud Getting Started FOTA documentation`_ for instructions.
@@ -227,7 +224,7 @@ You can upload custom application binaries to nRF Cloud for application FOTA upd
 After :ref:`nrf9160_gs_connecting_dk_to_cloud`, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
 
 FOTA upgrades using other cloud services
-----------------------------------------
+========================================
 
 FOTA upgrades can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
 If you are uploading the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket, see the :ref:`lib_aws_fota` documentation for instructions.
@@ -238,7 +235,7 @@ See the :ref:`lib_fota_download` library documentation for information about the
 You can hardcode the information in the application, or you can use a functionality like AWS jobs to provide the URL dynamically.
 
 Samples and applications implementing FOTA
-------------------------------------------
+==========================================
 
 * :ref:`http_modem_full_update_sample` sample - performs a full firmware OTA update of the modem.
 * :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
