@@ -225,6 +225,8 @@ Matter Bridge
   * Support for groupcast communication to the On/Off Light device implementation.
   * Support for controlling the OnOff Light simulated data provider by using shell commands.
   * Support for Matter Generic Switch bridged device type.
+  * Support for On/Off Light Switch bridged device type.
+  * Support for bindings to the On/Off Light Switch device implementation.
 
 Samples
 =======

@@ -21,6 +21,7 @@ CHIP_ERROR MatterDeviceTypeToBleService(MatterBridgedDevice::DeviceType deviceTy
 	switch (deviceType) {
 	case MatterBridgedDevice::DeviceType::OnOffLight:
 	case MatterBridgedDevice::DeviceType::GenericSwitch:
+	case MatterBridgedDevice::DeviceType::OnOffLightSwitch:
 		serviceUUid = BleBridgedDeviceFactory::ServiceUuid::LedButtonService;
 		break;
 	case MatterBridgedDevice::DeviceType::TemperatureSensor:
@@ -43,8 +44,15 @@ CHIP_ERROR BleServiceToMatterDeviceType(BleBridgedDeviceFactory::ServiceUuid ser
 			return CHIP_ERROR_BUFFER_TOO_SMALL;
 		}
 		deviceType[0] = MatterBridgedDevice::DeviceType::OnOffLight;
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+		deviceType[1] = MatterBridgedDevice::DeviceType::OnOffLightSwitch;
+		count = 2;
+#elif defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
 		deviceType[1] = MatterBridgedDevice::DeviceType::GenericSwitch;
 		count = 2;
+#else
+		count = 1;
+#endif
 	} break;
 	case BleBridgedDeviceFactory::ServiceUuid::EnvironmentalSensorService: {
 		if (maxCount < 2) {
@@ -256,6 +264,15 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 			  return chip::Platform::New<GenericSwitchDevice>(nodeLabel);
 		  } },
 #endif
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+		{ DeviceType::OnOffLightSwitch,
+		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
+			  if (!checkLabel(nodeLabel)) {
+				  return nullptr;
+			  }
+			  return chip::Platform::New<OnOffLightSwitchDevice>(nodeLabel);
+		  } },
+#endif
 	};
 	return sBridgedDeviceFactory;
 }
@@ -264,13 +281,13 @@ BleBridgedDeviceFactory::BleDataProviderFactory &BleBridgedDeviceFactory::GetDat
 {
 	static BleDataProviderFactory sDeviceDataProvider
 	{
-#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
+#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && (defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE) || defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
 		{ ServiceUuid::LedButtonService,
-		  [](UpdateAttributeCallback clb) { return chip::Platform::New<BleLBSDataProvider>(clb); } },
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) { return chip::Platform::New<BleLBSDataProvider>(updateClb, commandClb); } },
 #endif
 #if defined(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
-			{ ServiceUuid::EnvironmentalSensorService, [](UpdateAttributeCallback clb) {
-				 return chip::Platform::New<BleEnvironmentalDataProvider>(clb);
+			{ ServiceUuid::EnvironmentalSensorService, [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+				 return chip::Platform::New<BleEnvironmentalDataProvider>(updateClb, commandClb);
 			 } },
 #endif
 	};
@@ -297,7 +314,7 @@ CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(int deviceType, bt_addr_le_t bt
 	VerifyOrExit(err == CHIP_NO_ERROR, );
 
 	provider = static_cast<BLEBridgedDeviceProvider *>(
-		BleBridgedDeviceFactory::GetDataProviderFactory().Create(providerType, BridgeManager::HandleUpdate));
+		BleBridgedDeviceFactory::GetDataProviderFactory().Create(providerType, BridgeManager::HandleUpdate, BridgeManager::HandleCommand));
 	if (!provider) {
 		return CHIP_ERROR_NO_MEMORY;
 	}
@@ -325,7 +342,7 @@ CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btA
 {
 	BLEBridgedDeviceProvider *provider =
 		static_cast<BLEBridgedDeviceProvider *>(BleBridgedDeviceFactory::GetDataProviderFactory().Create(
-			static_cast<ServiceUuid>(uuid), BridgeManager::HandleUpdate));
+			static_cast<ServiceUuid>(uuid), BridgeManager::HandleUpdate, BridgeManager::HandleCommand));
 	if (!provider) {
 		return CHIP_ERROR_NO_MEMORY;
 	}

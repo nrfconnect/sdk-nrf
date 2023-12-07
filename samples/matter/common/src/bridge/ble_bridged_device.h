@@ -28,7 +28,7 @@ struct BLEBridgedDevice {
 
 class BLEBridgedDeviceProvider : public BridgedDeviceDataProvider {
 public:
-	explicit BLEBridgedDeviceProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	explicit BLEBridgedDeviceProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
 	~BLEBridgedDeviceProvider() { BLEConnectivityManager::Instance().RemoveBLEProvider(GetBtAddress()); }
 
 	virtual bt_uuid *GetServiceUuid() = 0;

@@ -10,7 +10,7 @@
 
 class SimulatedOnOffLightDataProvider : public BridgedDeviceDataProvider {
 public:
-	SimulatedOnOffLightDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	SimulatedOnOffLightDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
 	~SimulatedOnOffLightDataProvider()
 	{
 #ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC

@@ -12,7 +12,7 @@
 
 class SimulatedTemperatureSensorDataProvider : public BridgedDeviceDataProvider {
 public:
-	SimulatedTemperatureSensorDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback)
+	SimulatedTemperatureSensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback)
 	{
 	}
 	~SimulatedTemperatureSensorDataProvider() { k_timer_stop(&mTimer); }

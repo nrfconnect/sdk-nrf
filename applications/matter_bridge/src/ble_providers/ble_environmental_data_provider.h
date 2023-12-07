@@ -14,7 +14,7 @@
 
 class BleEnvironmentalDataProvider : public BLEBridgedDeviceProvider {
 public:
-	explicit BleEnvironmentalDataProvider(UpdateAttributeCallback callback) : BLEBridgedDeviceProvider(callback) {}
+	explicit BleEnvironmentalDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BLEBridgedDeviceProvider(updateCallback, commandCallback) {}
 	~BleEnvironmentalDataProvider() { Unsubscribe(); }
 
 	void Init() override;

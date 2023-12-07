@@ -115,6 +115,38 @@ static int SimulatedBridgedDeviceOnOffWriteHandler(const struct shell *shell, si
 }
 #endif
 
+#if defined(CONFIG_BRIDGED_DEVICE_SIMULATED) && defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
+static int SimulatedBridgedDeviceOnOffLightSwitchWriteHandler(const struct shell *shell, size_t argc, char **argv)
+{
+	using DeviceType = MatterBridgedDevice::DeviceType;
+	const char *command = argv[0];
+	uint8_t value = strtoul(argv[1], nullptr, 0);
+	chip::EndpointId endpointId = strtoul(argv[2], nullptr, 0);
+
+	DeviceType deviceType{};
+	auto *provider = BridgeManager().Instance().GetProvider(endpointId, deviceType);
+
+	if (provider) {
+		if ((0 == strcmp(command, "onoff_switch") && deviceType != DeviceType::OnOffLightSwitch)) {
+			shell_fprintf(shell, SHELL_ERROR, "Error: Unsupported device\n");
+			return 0;
+		}
+		CHIP_ERROR err = provider->UpdateState(chip::app::Clusters::OnOff::Id,
+						       chip::app::Clusters::OnOff::Attributes::OnOff::Id, &value);
+		if (err != CHIP_NO_ERROR) {
+			shell_fprintf(shell, SHELL_ERROR, "Cannot update OnOff Light Switch device state\n");
+			return 0;
+		}
+		shell_fprintf(shell, SHELL_INFO, "Done\n");
+
+	} else {
+		shell_fprintf(shell, SHELL_ERROR, "Error: Device inaccessible\n");
+	}
+
+	return 0;
+}
+#endif
+
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 static void BluetoothScanResult(BLEConnectivityManager::ScannedDevice *devices, uint8_t count, void *context)
 {
@@ -160,7 +192,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		add, NULL,
 		"Adds bridged device. \n"
 		"Usage: add <bridged_device_type> [node_label]\n"
-		"* bridged_device_type - the bridged device's type, e.g. 15 - Generic Switch, 256 - OnOff Light, 770 - TemperatureSensor, 775 - HumiditySensor, \n"
+		"* bridged_device_type - the bridged device's type, e.g. 15 - Generic Switch, 256 - OnOff Light, 259 - OnOff Light Switch, 770 - TemperatureSensor, 775 - HumiditySensor, \n"
 		"* node_label - the optional bridged device's node label\n",
 		AddBridgedDeviceHandler, 2, 1),
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
@@ -178,6 +210,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		"* new_state - new state of the simulated onoff device\n"
 		"* bridged_device_endpoint_id - the bridged device's endpoint on which it was previously created\n",
 		SimulatedBridgedDeviceOnOffWriteHandler, 3, 0),
+#endif
+#if defined(CONFIG_BRIDGED_DEVICE_SIMULATED) && defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
+	SHELL_CMD_ARG(
+		onoff_switch, NULL,
+		"Changes the current state of the simulated onoff light switch device. \n"
+		"Usage: onoff_switch <new_state> <bridged_device_endpoint_id>\n"
+		"* new_state - new state of the simulated onoff light switch device\n"
+		"* bridged_device_endpoint_id - the bridged device's endpoint on which it was previously created\n",
+		SimulatedBridgedDeviceOnOffLightSwitchWriteHandler, 3, 0),
 #endif
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 	SHELL_CMD_ARG(scan, NULL,
