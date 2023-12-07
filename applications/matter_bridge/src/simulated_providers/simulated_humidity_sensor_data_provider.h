@@ -10,7 +10,7 @@
 
 class SimulatedHumiditySensorDataProvider : public BridgedDeviceDataProvider {
 public:
-	SimulatedHumiditySensorDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	SimulatedHumiditySensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
 	~SimulatedHumiditySensorDataProvider() { k_timer_stop(&mTimer); }
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,

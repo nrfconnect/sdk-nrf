@@ -14,7 +14,10 @@
 
 class BleLBSDataProvider : public BLEBridgedDeviceProvider {
 public:
-	explicit BleLBSDataProvider(UpdateAttributeCallback callback) : BLEBridgedDeviceProvider(callback) {}
+	explicit BleLBSDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback)
+		: BLEBridgedDeviceProvider(updateCallback, commandCallback)
+	{
+	}
 
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
@@ -22,7 +25,9 @@ public:
 	CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
 
 	static void NotifyOnOffAttributeChange(intptr_t context);
+#ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 	static void NotifySwitchCurrentPositionAttributeChange(intptr_t context);
+#endif
 
 	static void GattWriteCallback(bt_conn *conn, uint8_t err, bt_gatt_write_params *params);
 	static uint8_t GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
@@ -36,7 +41,9 @@ private:
 	bool CheckSubscriptionParameters(bt_gatt_subscribe_params *params);
 
 	bool mOnOff = false;
+#ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 	uint8_t mCurrentSwitchPosition = false;
+#endif
 	uint16_t mLedCharacteristicHandle;
 	bt_gatt_write_params mGattWriteParams{};
 	uint16_t mButtonCharacteristicHandle;

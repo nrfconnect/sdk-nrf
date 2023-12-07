@@ -84,6 +84,15 @@ SimulatedBridgedDeviceFactory::BridgedDeviceFactory &SimulatedBridgedDeviceFacto
 			  return chip::Platform::New<GenericSwitchDevice>(nodeLabel);
 		  } },
 #endif
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+		{ DeviceType::OnOffLightSwitch,
+		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
+			  if (!checkLabel(nodeLabel)) {
+				  return nullptr;
+			  }
+			  return chip::Platform::New<OnOffLightSwitchDevice>(nodeLabel);
+		  } },
+#endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ MatterBridgedDevice::DeviceType::TemperatureSensor,
 		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
@@ -111,26 +120,32 @@ SimulatedBridgedDeviceFactory::SimulatedDataProviderFactory &SimulatedBridgedDev
 	static SimulatedDataProviderFactory sDeviceDataProvider{
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ DeviceType::OnOffLight,
-		  [](UpdateAttributeCallback clb) {
-			  return chip::Platform::New<SimulatedOnOffLightDataProvider>(clb);
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+			  return chip::Platform::New<SimulatedOnOffLightDataProvider>(updateClb, commandClb);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 		{ DeviceType::GenericSwitch,
-		  [](UpdateAttributeCallback clb) {
-			  return chip::Platform::New<SimulatedGenericSwitchDataProvider>(clb);
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+			  return chip::Platform::New<SimulatedGenericSwitchDataProvider>(updateClb, commandClb);
+		  } },
+#endif
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+		{ DeviceType::OnOffLightSwitch,
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+			  return chip::Platform::New<SimulatedOnOffLightSwitchDataProvider>(updateClb, commandClb);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ DeviceType::TemperatureSensor,
-		  [](UpdateAttributeCallback clb) {
-			  return chip::Platform::New<SimulatedTemperatureSensorDataProvider>(clb);
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+			  return chip::Platform::New<SimulatedTemperatureSensorDataProvider>(updateClb, commandClb);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 		{ DeviceType::HumiditySensor,
-		  [](UpdateAttributeCallback clb) {
-			  return chip::Platform::New<SimulatedHumiditySensorDataProvider>(clb);
+		  [](UpdateAttributeCallback updateClb, InvokeCommandCallback commandClb) {
+			  return chip::Platform::New<SimulatedHumiditySensorDataProvider>(updateClb, commandClb);
 		  } },
 #endif
 	};
@@ -144,7 +159,7 @@ CHIP_ERROR SimulatedBridgedDeviceFactory::CreateDevice(int deviceType, const cha
 	CHIP_ERROR err;
 
 	BridgedDeviceDataProvider *provider = GetDataProviderFactory().Create(
-		static_cast<MatterBridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate);
+		static_cast<MatterBridgedDevice::DeviceType>(deviceType), BridgeManager::HandleUpdate, BridgeManager::HandleCommand);
 
 	VerifyOrReturnError(provider != nullptr, CHIP_ERROR_INVALID_ARGUMENT, LOG_ERR("No valid data provider!"));
 

@@ -13,13 +13,17 @@
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 #include "onoff_light.h"
-#include "simulated_generic_switch_data_provider.h"
 #include "simulated_onoff_light_data_provider.h"
 #endif
 
-#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+#ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 #include "generic_switch.h"
 #include "simulated_generic_switch_data_provider.h"
+#endif
+
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+#include "onoff_light_switch.h"
+#include "simulated_onoff_light_switch_data_provider.h"
 #endif
 
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
@@ -35,9 +39,10 @@
 namespace SimulatedBridgedDeviceFactory
 {
 using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
+using InvokeCommandCallback = BridgedDeviceDataProvider::InvokeCommandCallback;
 using DeviceType = MatterBridgedDevice::DeviceType;
 using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, DeviceType, const char *>;
-using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, DeviceType, UpdateAttributeCallback>;
+using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, DeviceType, UpdateAttributeCallback, InvokeCommandCallback>;
 
 BridgedDeviceFactory &GetBridgedDeviceFactory();
 SimulatedDataProviderFactory &GetDataProviderFactory();

@@ -6,6 +6,8 @@
 
 #include "bridge_manager.h"
 
+#include "binding_handler.h"
+
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/reporting/reporting.h>
 #include <app/util/generic-callbacks.h>
@@ -38,6 +40,8 @@ CHIP_ERROR BridgeManager::Init(LoadStoredBridgedDevicesCallback loadStoredBridge
 	/* Disable the placeholder endpoint */
 	emberAfEndpointEnableDisable(emberAfEndpointFromIndex(static_cast<uint16_t>(emberAfFixedEndpointCount() - 1)),
 				     false);
+
+	BindingHandler::GetInstance().Init();
 
 	/* Invoke the callback to load stored devices in a proper moment. */
 	CHIP_ERROR err = loadStoredBridgedDevicesCb();
@@ -397,6 +401,32 @@ void BridgeManager::HandleUpdate(BridgedDeviceDataProvider &dataProvider, Cluste
 			}
 		}
 	}
+}
+
+void BridgeManager::HandleCommand(BridgedDeviceDataProvider &dataProvider, ClusterId clusterId, CommandId commandId, BindingHandler::InvokeCommand invokeCommand)
+{
+	BindingHandler::BindingData *bindingData = Platform::New<BindingHandler::BindingData>();
+
+	if (!bindingData) {
+		return;
+	}
+
+	bindingData->CommandId = commandId;
+	bindingData->ClusterId = clusterId;
+	bindingData->InvokeCommandFunc = invokeCommand;
+
+	for (auto &item : Instance().mDevicesMap.mMap) {
+		if (item.value.mProvider == &dataProvider) {
+			auto *device = item.value.mDevice;
+
+			if (emberAfContainsClient(device->GetEndpointId(), clusterId)) {
+				bindingData->EndpointId = device->GetEndpointId();
+			}
+		}
+	}
+
+	DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
+						reinterpret_cast<intptr_t>(bindingData));
 }
 
 BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, MatterBridgedDevice::DeviceType &deviceType)

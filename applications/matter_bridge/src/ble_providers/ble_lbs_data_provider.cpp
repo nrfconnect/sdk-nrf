@@ -6,6 +6,10 @@
 
 #include "ble_lbs_data_provider.h"
 
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+#include "binding_handler.h"
+#endif
+
 #include <bluetooth/gatt_dm.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
@@ -22,6 +26,48 @@ static bt_uuid *sUuidLED = BT_UUID_LBS_LED;
 static bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
 static bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+void ProcessCommand(CommandId aCommandId, const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice, void *aContext)
+{
+	CHIP_ERROR ret = CHIP_NO_ERROR;
+	BindingHandler::BindingData *data = reinterpret_cast<BindingHandler::BindingData *>(aContext);
+
+	auto onSuccess = [dataRef = data](const ConcreteCommandPath &commandPath, const StatusIB &status, const auto &dataResponse) {
+		LOG_DBG("Binding command applied successfully!");
+
+		/* If session was recovered and communication works, reset flag to the initial state. */
+		if (dataRef->CaseSessionRecovered) {
+			dataRef->CaseSessionRecovered = false;
+		}
+	};
+
+	auto onFailure = [dataRef = *data](CHIP_ERROR aError) mutable {
+		BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+	};
+
+	if (aDevice) {
+		/* We are validating connection is ready once here instead of multiple times in each case statement
+		 * below. */
+		VerifyOrDie(aDevice->ConnectionReady());
+	}
+
+	Clusters::OnOff::Commands::Toggle::Type toggleCommand;
+	if (aDevice) {
+		ret = Controller::InvokeCommandRequest(aDevice->GetExchangeManager(),
+						       aDevice->GetSecureSession().Value(), aBinding.remote,
+						       toggleCommand, onSuccess, onFailure);
+	} else {
+		Messaging::ExchangeManager &exchangeMgr = Server::GetInstance().GetExchangeManager();
+		ret = Controller::InvokeGroupCommandRequest(&exchangeMgr, aBinding.fabricIndex, aBinding.groupId,
+							    toggleCommand);
+	}
+
+	if (CHIP_NO_ERROR != ret) {
+		LOG_ERR("Invoke command request ERROR: %s", ErrorStr(ret));
+	}
+}
+#endif
+
 uint8_t BleLBSDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
 					       uint16_t length)
 {
@@ -29,13 +75,23 @@ uint8_t BleLBSDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_
 		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
 
 	VerifyOrExit(data, );
-	VerifyOrExit(length == sizeof(mCurrentSwitchPosition), );
 	VerifyOrExit(provider, );
+
+#ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+	VerifyOrExit(length == sizeof(mCurrentSwitchPosition), );
 
 	/* Save data received in the notification. */
 	memcpy(&provider->mCurrentSwitchPosition, data, length);
 	DeviceLayer::PlatformMgr().ScheduleWork(NotifySwitchCurrentPositionAttributeChange,
 						reinterpret_cast<intptr_t>(provider));
+#endif
+
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+	if (provider->mInvokeCommandCallback) {
+		provider->mInvokeCommandCallback(*provider, Clusters::OnOff::Id, Clusters::OnOff::Commands::Toggle::Id,
+						 ProcessCommand);
+	}
+#endif
 
 exit:
 	return BT_GATT_ITER_CONTINUE;
@@ -204,6 +260,7 @@ void BleLBSDataProvider::NotifyOnOffAttributeChange(intptr_t context)
 				    sizeof(provider->mOnOff));
 }
 
+#ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 void BleLBSDataProvider::NotifySwitchCurrentPositionAttributeChange(intptr_t context)
 {
 	BleLBSDataProvider *provider = reinterpret_cast<BleLBSDataProvider *>(context);
@@ -211,6 +268,7 @@ void BleLBSDataProvider::NotifySwitchCurrentPositionAttributeChange(intptr_t con
 	provider->NotifyUpdateState(Clusters::Switch::Id, Clusters::Switch::Attributes::CurrentPosition::Id,
 				    &provider->mCurrentSwitchPosition, sizeof(provider->mCurrentSwitchPosition));
 }
+#endif
 
 bool BleLBSDataProvider::CheckSubscriptionParameters(bt_gatt_subscribe_params *params)
 {

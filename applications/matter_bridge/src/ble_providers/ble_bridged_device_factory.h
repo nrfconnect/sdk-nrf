@@ -11,7 +11,7 @@
 #include "matter_bridged_device.h"
 #include <lib/support/CHIPMem.h>
 
-#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
+#if defined(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE) && (defined(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE) || defined(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
 #include "ble_lbs_data_provider.h"
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
@@ -20,6 +20,10 @@
 
 #ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 #include "generic_switch.h"
+#endif
+
+#ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+#include "onoff_light_switch.h"
 #endif
 
 #endif
@@ -43,9 +47,10 @@ namespace BleBridgedDeviceFactory
 enum ServiceUuid : uint16_t { LedButtonService = 0xbcd1, EnvironmentalSensorService = 0x181a };
 
 using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
+using InvokeCommandCallback = BridgedDeviceDataProvider::InvokeCommandCallback;
 using DeviceType = MatterBridgedDevice::DeviceType;
 using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, DeviceType, const char *>;
-using BleDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, ServiceUuid, UpdateAttributeCallback>;
+using BleDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, ServiceUuid, UpdateAttributeCallback, InvokeCommandCallback>;
 
 BridgedDeviceFactory &GetBridgedDeviceFactory();
 BleDataProviderFactory &GetDataProviderFactory();

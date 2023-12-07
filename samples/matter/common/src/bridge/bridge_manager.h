@@ -9,6 +9,7 @@
 #include "bridge_util.h"
 #include "bridged_device_data_provider.h"
 #include "matter_bridged_device.h"
+#include "binding_handler.h"
 
 class BridgeManager {
 public:
@@ -111,6 +112,8 @@ public:
 				      const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer);
 	static void HandleUpdate(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
 				 chip::AttributeId attributeId, void *data, size_t dataSize);
+	static void HandleCommand(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
+				  chip::CommandId commandId, BindingHandler::InvokeCommand invokeCommand);
 
 	static BridgeManager &Instance()
 	{

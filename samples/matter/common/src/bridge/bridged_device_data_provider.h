@@ -9,13 +9,22 @@
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/util/attribute-storage.h>
+#include "binding_handler.h"
 
 class BridgedDeviceDataProvider {
 public:
 	using UpdateAttributeCallback = void (*)(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
 						 chip::AttributeId attributeId, void *data, size_t dataSize);
 
-	explicit BridgedDeviceDataProvider(UpdateAttributeCallback callback) { mUpdateAttributeCallback = callback; }
+	using InvokeCommandCallback = void (*)(BridgedDeviceDataProvider &dataProvider, chip::ClusterId clusterId,
+					       chip::CommandId commandId, BindingHandler::InvokeCommand invokeCommand);
+
+	explicit BridgedDeviceDataProvider(UpdateAttributeCallback updateCallback,
+					   InvokeCommandCallback commandCallback = nullptr)
+	{
+		mUpdateAttributeCallback = updateCallback;
+		mInvokeCommandCallback = commandCallback;
+	}
 	virtual ~BridgedDeviceDataProvider() = default;
 
 	virtual void Init() = 0;
@@ -27,6 +36,7 @@ public:
 
 protected:
 	UpdateAttributeCallback mUpdateAttributeCallback;
+	InvokeCommandCallback mInvokeCommandCallback;
 
 private:
 	struct ReachableContext {

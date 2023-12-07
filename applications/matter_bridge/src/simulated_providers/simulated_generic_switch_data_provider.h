@@ -10,7 +10,7 @@
 
 class SimulatedGenericSwitchDataProvider : public BridgedDeviceDataProvider {
 public:
-	SimulatedGenericSwitchDataProvider(UpdateAttributeCallback callback) : BridgedDeviceDataProvider(callback) {}
+	SimulatedGenericSwitchDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
 	~SimulatedGenericSwitchDataProvider() { k_timer_stop(&mTimer); }
 
 	void Init() override;
