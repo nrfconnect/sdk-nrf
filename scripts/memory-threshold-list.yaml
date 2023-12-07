@@ -5,6 +5,9 @@
     - nrf52840dk_nrf52840
   ram_size: 241664
   rom_size: 778240
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
 
 - scenarios:
     - sample.matter.lock.debug
@@ -13,6 +16,9 @@
     - nrf52840dk_nrf52840
   ram_size: 241664
   rom_size: 931840
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
 
 - scenarios:
     - sample.matter.lock.release
@@ -20,6 +26,9 @@
     - nrf7002dk_nrf5340_cpuapp
   ram_size: 503808
   rom_size: 778240
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
 
 - scenarios:
     - sample.matter.lock.debug
@@ -27,6 +36,9 @@
     - nrf7002dk_nrf5340_cpuapp
   ram_size: 503808
   rom_size: 942080
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
 
 - scenarios:
     - applications.nrf_desktop.z.*
@@ -34,3 +46,5 @@
     - all
   rom_related_usage: 512
   ram_related_usage: 256
+  codeowners:
+    - MarekPieta
