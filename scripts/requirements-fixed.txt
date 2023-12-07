@@ -24,7 +24,7 @@ click==8.0.3              # via -r bootloader/mcuboot/scripts/requirements.txt, 
 cmsis-pack-manager==0.5.2  # via pyocd
 colorama==0.4.6           # via -r zephyr/scripts/requirements-build-test.txt, pyocd, west
 coverage==7.3.1           # via -r zephyr/scripts/requirements-build-test.txt
-cryptography==41.0.4      # via -r bootloader/mcuboot/scripts/requirements.txt, -r nrf/scripts/requirements-build.txt, imgtool, pyjwt
+cryptography==41.0.6      # via -r bootloader/mcuboot/scripts/requirements.txt, -r nrf/scripts/requirements-build.txt, imgtool, pyjwt
 deprecated==1.2.14        # via pygithub
 dill==0.3.7               # via pylint
 docopt==0.6.2             # via pykwalify
@@ -122,7 +122,7 @@ typed-ast==1.5.5          # via -r nrf/scripts/requirements-ci.txt
 typing-extensions==4.8.0  # via astroid, mypy, pylint, pyocd, python-can, qrcode
 urllib3==2.0.7            # via requests
 wcwidth==0.2.6            # via prettytable
-west==1.1.0               # via -r nrf/scripts/requirements-base.txt, -r zephyr/scripts/requirements-base.txt
+west==1.2.0               # via -r nrf/scripts/requirements-base.txt, -r zephyr/scripts/requirements-base.txt
 wget==3.2                 # via -r nrf/scripts/requirements-ci.txt
 wrapt==1.15.0             # via astroid, deprecated, python-can
 yamllint==1.32.0          # via -r zephyr/scripts/requirements-compliance.txt
