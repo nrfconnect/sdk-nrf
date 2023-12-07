@@ -198,14 +198,14 @@ static void print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_di
 		}
 
 		LOG_INF("\tFrequency: %d Hz", bt_audio_codec_cfg_get_freq(codec));
-		LOG_INF("\tFrame Duration: %d us", bt_audio_codec_cfg_get_frame_duration_us(codec));
-		if (bt_audio_codec_cfg_get_chan_allocation_val(codec, &chan_allocation) == 0) {
+		LOG_INF("\tFrame Duration: %d us", bt_audio_codec_cfg_get_frame_dur(codec));
+		if (bt_audio_codec_cfg_get_chan_allocation(codec, &chan_allocation) == 0) {
 			LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
 		}
 
 		uint32_t octets_per_sdu = bt_audio_codec_cfg_get_octets_per_frame(codec);
 		uint32_t bitrate = octets_per_sdu * 8 *
-				   (1000000 / bt_audio_codec_cfg_get_frame_duration_us(codec));
+				   (1000000 / bt_audio_codec_cfg_get_frame_dur(codec));
 
 		LOG_INF("\tOctets per frame: %d (%d bps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d",
@@ -467,7 +467,7 @@ int unicast_server_config_get(uint32_t *bitrate, uint32_t *sampling_rate_hz,
 
 	if (bitrate != NULL) {
 		/* Get the configuration for the sink stream */
-		int frames_per_sec = 1000000 / bt_audio_codec_cfg_get_frame_duration_us(
+		int frames_per_sec = 1000000 / bt_audio_codec_cfg_get_frame_dur(
 						       audio_streams[0].codec_cfg);
 		int bits_per_frame =
 			bt_audio_codec_cfg_get_octets_per_frame(audio_streams[0].codec_cfg) * 8;
