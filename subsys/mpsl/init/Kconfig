@@ -56,6 +56,14 @@ config MPSL_TRIGGER_IPC_TASK_ON_RTC_START_CHANNEL
 	  The application core part of the code needs to be aware of
 	  which channel is used.
 
+config MPSL_LOW_PRIO_IRQN
+	int
+	default 25 if SOC_COMPATIBLE_NRF52X # SWI5
+	default 26 if SOC_COMPATIBLE_NRF53X # SWI0
+	help
+	  This option sets the low priority interrupt that MPSL will use.
+	  Check the interrupt number in the MDK
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

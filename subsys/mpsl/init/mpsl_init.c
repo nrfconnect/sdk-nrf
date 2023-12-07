@@ -35,11 +35,6 @@ static K_WORK_DELAYABLE_DEFINE(calibration_work, mpsl_calibration_work_handler);
 
 extern void rtc_pretick_rtc0_isr_hook(void);
 
-#if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X)
-	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
-#elif IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF53X)
-	#define MPSL_LOW_PRIO_IRQn SWI0_IRQn
-#endif
 #define MPSL_LOW_PRIO (4)
 
 #if IS_ENABLED(CONFIG_ZERO_LATENCY_IRQS)
@@ -267,7 +262,7 @@ static int32_t mpsl_lib_init_internal(void)
 	clock_cfg.rc_temp_ctiv = 0;
 #endif
 
-	err = mpsl_init(&clock_cfg, MPSL_LOW_PRIO_IRQn, m_assert_handler);
+	err = mpsl_init(&clock_cfg, CONFIG_MPSL_LOW_PRIO_IRQN, m_assert_handler);
 	if (err) {
 		return err;
 	}
@@ -331,7 +326,7 @@ static int mpsl_low_prio_init(void)
 	k_thread_name_set(&mpsl_work_q.thread, "MPSL Work");
 	k_work_init(&mpsl_low_prio_work, mpsl_low_prio_work_handler);
 
-	IRQ_CONNECT(MPSL_LOW_PRIO_IRQn, MPSL_LOW_PRIO,
+	IRQ_CONNECT(CONFIG_MPSL_LOW_PRIO_IRQN, MPSL_LOW_PRIO,
 		    mpsl_low_prio_irq_handler, NULL, 0);
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
