@@ -9,7 +9,7 @@ zephyr_library_sources(wifi_credentials.c)
 
 if (CONFIG_WIFI_CREDENTIALS_BACKEND_PSA)
 zephyr_library_include_directories(
-	$<TARGET_PROPERTY:tfm,TFM_BINARY_DIR>/install/interface/include
+	$<TARGET_PROPERTY:tfm,TFM_BINARY_DIR>/api_ns/interface/include
 )
 endif()
 
