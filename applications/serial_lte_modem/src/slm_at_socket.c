@@ -520,10 +520,10 @@ static int do_bind(uint16_t port)
 	int ret;
 
 	if (sock.family == AF_INET) {
-		char ipv4_addr[INET_ADDRSTRLEN] = {0};
+		char ipv4_addr[INET_ADDRSTRLEN];
 
 		util_get_ip_addr(0, ipv4_addr, NULL);
-		if (strlen(ipv4_addr) == 0) {
+		if (!*ipv4_addr) {
 			LOG_ERR("Get local IPv4 address failed");
 			return -EINVAL;
 		}
@@ -545,10 +545,10 @@ static int do_bind(uint16_t port)
 		}
 		LOG_DBG("bind to %s", ipv4_addr);
 	} else if (sock.family == AF_INET6) {
-		char ipv6_addr[INET6_ADDRSTRLEN] = {0};
+		char ipv6_addr[INET6_ADDRSTRLEN];
 
 		util_get_ip_addr(0, NULL, ipv6_addr);
-		if (strlen(ipv6_addr) == 0) {
+		if (!*ipv6_addr == 0) {
 			LOG_ERR("Get local IPv6 address failed");
 			return -EINVAL;
 		}
@@ -878,7 +878,7 @@ static int do_recvfrom(int timeout, int flags)
 	if (ret == 0) {
 		LOG_WRN("recvfrom() return 0");
 	} else {
-		char peer_addr[NET_IPV6_ADDR_LEN] = {0};
+		char peer_addr[INET6_ADDRSTRLEN] = {0};
 		uint16_t peer_port = 0;
 
 		if (remote.sa_family == AF_INET) {

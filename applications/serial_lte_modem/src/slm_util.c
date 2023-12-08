@@ -247,14 +247,20 @@ int util_string_to_double_get(const struct at_param_list *list, size_t index, do
 	return 0;
 }
 
-void util_get_ip_addr(int cid, char *addr4, char *addr6)
+void util_get_ip_addr(int cid, char addr4[INET_ADDRSTRLEN], char addr6[INET6_ADDRSTRLEN])
 {
 	int ret;
-	char cmd[128];
+	char cmd[32];
 	char tmp[sizeof(struct in6_addr)];
-	char addr1[NET_IPV6_ADDR_LEN] = { 0 };
-	char addr2[NET_IPV6_ADDR_LEN] = { 0 };
+	char addr1[INET6_ADDRSTRLEN];
+	char addr2[INET6_ADDRSTRLEN];
 
+	if (addr4) {
+		addr4[0] = '\0';
+	}
+	if (addr6) {
+		addr6[0] = '\0';
+	}
 	sprintf(cmd, "AT+CGPADDR=%d", cid);
 	/** parse +CGPADDR: <cid>,<PDP_addr_1>,<PDP_addr_2>
 	 * PDN type "IP": PDP_addr_1 is <IPv4>, max 16(INET_ADDRSTRLEN), '.' and digits
