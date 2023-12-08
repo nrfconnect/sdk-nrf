@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -93,32 +94,71 @@ int slm_util_at_scanf(const char *cmd, const char *fmt, ...)
 	return ret;
 }
 
-int slm_util_at_cmd_fwd_from_cb(char *buf, size_t len, char *at_cmd)
+static int terminate_at_response(char *buf, size_t len,
+				 const char *termination_str, int success_ret)
 {
-/* This gets called by interception callbacks invoked by nrf_modem_at_cmd().
+	len -= strlen(buf);
+	const int printf_ret = snprintf(buf + strlen(buf), len, "%s", termination_str);
+
+	if (printf_ret >= len) {
+		LOG_ERR("%u bytes of the AT response were truncated."
+			" The buffer needs to be made bigger.", printf_ret - len + 1);
+		return -NRF_E2BIG;
+	}
+	return success_ret;
+}
+
+int slm_util_at_cmd_no_intercept(char *buf, size_t len, const char *at_cmd)
+{
+	int ret;
+	char second_line[strlen("+CMx ERROR: xxxx")];
+	char format_str[24];
+
+	/* Construct the format string to read two response lines (into buf and second_line).
+	 * The buffer sizes are put in the format string to prevent overflows.
+	 * Negated scansets are used to read whole lines (everything up to '\r').
+	 * See the scanf() format specifer documentation for more information.
+	 */
+	ret = snprintf(format_str, sizeof(format_str),
+		       "%%%u[^\r]\r\n%%%u[^\r]", len - 1, sizeof(second_line) - 1);
+	assert(ret < sizeof(format_str));
+
+	LOG_DBG("Forwarding \"%s\" to the modem.", at_cmd);
+
+/* This function gets called by interception callbacks invoked by nrf_modem_at_cmd().
  * Here nrf_modem_at_cmd() must be bypassed because it would otherwise call
  * the same interception callbacks and infinite recursion would happen.
  */
-#undef nrf_modem_at_printf
-	const int ret = nrf_modem_at_printf("%s", at_cmd);
+#undef nrf_modem_at_scanf
+	const int line_count = nrf_modem_at_scanf(at_cmd, format_str, buf, second_line);
 
 /* Restore the trap macro after the only place where this function is
  * allowed to be used so that other code does not accidentally use it.
  */
-#define nrf_modem_at_printf nrf_modem_at_scanf
+#define nrf_modem_at_scanf nrf_modem_at_printf
 
-	if (ret < 0) {
-		LOG_ERR("Forwarding of \"%s\" failed (%d).", at_cmd, ret);
-		return ret;
+	if (line_count < 1) {
+		LOG_ERR("Forwarding of \"%s\" failed (%d).", at_cmd, line_count);
+		return line_count;
 	}
 
-	const int err = nrf_modem_at_err_type(ret);
+	/* The line that is expected to contain the response code. */
+	const char *const resp_str = (line_count == 1) ? buf : second_line;
 
-	if (!ret || err == NRF_MODEM_AT_ERROR) {
-		snprintf(buf, len, "%s\r\n", ret ? "ERROR" : "OK");
+#define AT_ERROR (NRF_MODEM_AT_ERROR << 16)
+	assert(nrf_modem_at_err_type(AT_ERROR) == NRF_MODEM_AT_ERROR);
+
+	/* Reconstruct the response string and code from the parsed response line(s). */
+	if (!strcmp(resp_str, "OK")) {
+		/* The command succeeded and its response is no longer than two lines. */
+		ret = terminate_at_response(buf, len, (line_count == 1) ? "\r\n" : "\r\nOK\r\n", 0);
 	} else {
-		snprintf(buf, len, "+CM%c ERROR: %d\r\n",
-			err == NRF_MODEM_AT_CME_ERROR ? 'E' : 'S', nrf_modem_at_err(ret));
+		/* Is there an error in the first response line? */
+		if (!(line_count == 1 && strstr(resp_str, "ERROR"))) {
+			/* No. Overwrite the whole response with "ERROR". */
+			buf[0] = '\0';
+		}
+		ret = terminate_at_response(buf, len, buf[0] ? "\r\n" : "ERROR\r\n", AT_ERROR);
 	}
 	return ret;
 }
