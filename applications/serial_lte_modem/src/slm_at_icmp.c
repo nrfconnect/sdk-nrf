@@ -470,11 +470,11 @@ static int ping_test_handler(const char *target)
 
 	/* Use the first result to decide which address family to use */
 	if (res->ai_family == AF_INET) {
-		char ipv4_addr[NET_IPV4_ADDR_LEN] = {0};
+		char ipv4_addr[INET_ADDRSTRLEN];
 
 		LOG_INF("Ping target's IPv4 address");
 		util_get_ip_addr(ping_argv.pdn, ipv4_addr, NULL);
-		if (strlen(ipv4_addr) == 0) {
+		if (!*ipv4_addr) {
 			LOG_ERR("Unable to obtain local IPv4 address");
 			freeaddrinfo(res);
 			return -1;
@@ -490,11 +490,11 @@ static int ping_test_handler(const char *target)
 		}
 		ping_argv.src = res;
 	} else if (res->ai_family == AF_INET6) {
-		char ipv6_addr[NET_IPV6_ADDR_LEN] = {0};
+		char ipv6_addr[INET6_ADDRSTRLEN];
 
 		LOG_INF("Ping target's IPv6 address");
 		util_get_ip_addr(ping_argv.pdn, NULL, ipv6_addr);
-		if (strlen(ipv6_addr) == 0) {
+		if (!*ipv6_addr) {
 			LOG_ERR("Unable to obtain local IPv6 address");
 			freeaddrinfo(res);
 			return -1;

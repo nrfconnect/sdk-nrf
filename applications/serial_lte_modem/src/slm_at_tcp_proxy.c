@@ -133,10 +133,10 @@ static int do_tcp_server_start(uint16_t port)
 
 	/* Bind to local port */
 	if (proxy.family == AF_INET) {
-		char ipv4_addr[NET_IPV4_ADDR_LEN] = {0};
+		char ipv4_addr[INET_ADDRSTRLEN];
 
 		util_get_ip_addr(0, ipv4_addr, NULL);
-		if (strlen(ipv4_addr) == 0) {
+		if (!*ipv4_addr) {
 			LOG_ERR("Unable to obtain local IPv4 address");
 			ret = -ENETUNREACH;
 			goto exit_svr;
@@ -154,10 +154,10 @@ static int do_tcp_server_start(uint16_t port)
 		}
 		ret = bind(proxy.sock, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
 	} else {
-		char ipv6_addr[NET_IPV6_ADDR_LEN] = {0};
+		char ipv6_addr[INET6_ADDRSTRLEN];
 
 		util_get_ip_addr(0, NULL, ipv6_addr);
-		if (strlen(ipv6_addr) == 0) {
+		if (!*ipv6_addr) {
 			LOG_ERR("Unable to obtain local IPv6 address");
 			ret = -ENETUNREACH;
 			goto exit_svr;

@@ -134,10 +134,10 @@ int util_string_to_double_get(const struct at_param_list *list, size_t index, do
  * @brief use AT command to get IPv4 and IPv6 addresses for specified PDN
  *
  * @param[in] cid PDP Context ID as defined in "+CGDCONT" command (0~10).
- * @param[out] addr4 Buffer to hold the IPv4 address, size NET_IPV4_ADDR_LEN.
- * @param[out] addr6 Buffer to hold the IPv6 address, size NET_IPV6_ADDR_LEN.
+ * @param[out] addr4 Buffer to hold the IPv4 address. May be NULL.
+ * @param[out] addr6 Buffer to hold the IPv6 address. May be NULL.
  */
-void util_get_ip_addr(int cid, char *addr4, char *addr6);
+void util_get_ip_addr(int cid, char addr4[INET_ADDRSTRLEN], char addr6[INET6_ADDRSTRLEN]);
 
 /**
  * @brief convert string to integer
