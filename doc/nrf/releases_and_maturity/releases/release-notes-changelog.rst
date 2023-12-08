@@ -723,6 +723,7 @@ Documentation
   * Integration steps in the :ref:`ug_bt_fast_pair` guide.
     Reorganized extension-specific content into dedicated subsections.
   * The :ref:`ug_nrf70_developing_powersave_power_save_mode` section in the :ref:`ug_nrf70_developing_powersave` user guide.
+  * The :ref:`nrf7002dk_nrf5340` page with a link to the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
 
 * Removed the Welcome to the |NCS| page.
   This page is replaced with existing :ref:`ncs_introduction` page.

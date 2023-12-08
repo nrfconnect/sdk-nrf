@@ -9,13 +9,15 @@ Getting started with nRF70 Series
 
 This page gets you started with your nRF70 Series devices using the |NCS|.
 
+If you want to go through an online training course to familiarize yourself with Wi-Fi® and the development of Wi-Fi applications, enroll in the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
+
 Supported development boards
 ****************************
 
 nRF7002 DK
 ==========
 
-The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the nRF7002, a Wi-Fi® companion :term:`Integrated Circuit (IC)` to Nordic Semiconductor's nRF5340 System-on-Chip (SoC) host processor.
+The nRF7002 DK (PCA10143) is a single-board development kit for evaluation and development on the nRF7002, a Wi-Fi companion :term:`Integrated Circuit (IC)` to Nordic Semiconductor's nRF5340 System-on-Chip (SoC) host processor.
 
 Overview
 --------
