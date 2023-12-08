@@ -12,6 +12,7 @@
 #include <limits.h>
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
+#include <zephyr/net/socket.h>
 #include <zephyr/sys/slist.h>
 #include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
@@ -596,6 +597,35 @@ int pdn_id_get(uint8_t cid)
 	}
 
 	return strtoul(p + 1, NULL, 10);
+}
+
+int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
+			   struct in_addr *dns4_sec, unsigned int *ipv4_mtu)
+{
+	int ret;
+	char resp[256];
+	const char *fmt;
+	char dns4_pri_str[INET_ADDRSTRLEN];
+	char dns4_sec_str[INET_ADDRSTRLEN];
+
+	ret = nrf_modem_at_cmd(resp, sizeof(resp), "AT+CGCONTRDP=%u", cid);
+	if (ret) {
+		LOG_ERR("Failed to read dynamic params for CID %u, err %d", cid, ret);
+		return ret;
+	}
+	   /* "+CGCONTRDP: 0,,"example.com","","","198.276.154.230","12.34.56.78",,,,,1464" */
+	fmt = "+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%15[0-9.]\",\"%15[0-9.]\",,,,,%u";
+
+	/* If IPv4 is enabled, it will be the first response line. */
+	if (sscanf(resp, fmt, &dns4_pri_str, &dns4_sec_str, ipv4_mtu) != 3) {
+		return -EBADMSG;
+	}
+
+	if (zsock_inet_pton(AF_INET, dns4_pri_str, dns4_pri) != 1
+	 || zsock_inet_pton(AF_INET, dns4_sec_str, dns4_sec) != 1) {
+		return -EFAULT;
+	}
+	return 0;
 }
 
 int pdn_default_apn_get(char *buf, size_t len)
