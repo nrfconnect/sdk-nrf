@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: b3979ec709df026fc655286f1a58be30b0f688e0
+      revision: pull/1422/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -111,7 +111,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 006334c73645bacf4d2ce940fe1e9a0bc5337b15
+      revision: pull/132/head
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: adab597a0eb0eb9c030a7b797748a49ca89988c2
+      revision: pull/290/head
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -141,7 +141,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: a1cfe142b6060b8976201d959f6db5c8f6f989ca
+      revision: pull/1107/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -149,7 +149,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 3b8ba59f1f43d84754de4facfac23f46f8d7cc71
+      revision: pull/345/head
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -191,13 +191,13 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: acfedde4ea0786295a5063f3f5d00e6e16dff544
+      revision: pull/467/head
       submodules: true
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 65684f818fd0bc07fe8dec4f9aa6b2d9736109f9
+      revision: pull/176/head
       groups:
         - find-my
     - name: azure-sdk-for-c
