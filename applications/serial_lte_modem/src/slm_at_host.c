@@ -469,7 +469,7 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 		rsp_send_ok();
 		return;
 	} else if (err != UNKNOWN_AT_COMMAND_RET) {
-		LOG_ERR("AT command error: %d", err);
+		LOG_ERR("AT command error: %d (%s)", err, strerror(-err));
 		rsp_send_error();
 		return;
 	}
