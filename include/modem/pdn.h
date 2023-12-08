@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <zephyr/net/net_ip.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -166,6 +167,19 @@ int pdn_deactivate(uint8_t cid);
  * @return int A non-negative PDN ID on success, or a negative errno otherwise.
  */
 int pdn_id_get(uint8_t cid);
+
+/**
+ * @brief Retrieves dynamic parameters of a given PDP context.
+ *
+ * @param cid The PDP context ID.
+ * @param[out] dns4_pri The address of the primary IPv4 DNS server.
+ * @param[out] dns4_sec The address of the secondary IPv4 DNS server.
+ * @param[out] ipv4_mtu The IPv4 MTU.
+ *
+ * @return Zero on success or an error code on failure.
+ */
+int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
+			   struct in_addr *dns4_sec, unsigned int *ipv4_mtu);
 
 /**
  * @brief Retrieve the default Access Point Name (APN).
