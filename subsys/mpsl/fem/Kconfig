@@ -74,6 +74,7 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 	select GPIO if ($(dt_node_has_prop,nrf_radio_fem,mode_gpios) || $(dt_node_has_prop,nrf_radio_fem,ant_sel_gpios))
 	select NRFX_PPI if SOC_SERIES_NRF52X
 	select NRFX_DPPI if SOC_SERIES_NRF53X
+	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
 	bool "nRF21540 front-end module in GPIO + SPI mode"
