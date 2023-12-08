@@ -62,20 +62,6 @@ int at_cmd_custom_respond(char *buf, size_t buf_size,
 		.callback = _callback,                                                             \
 	}
 
-/**
- * @brief Pause a custom AT command.
- *
- * @param entry Pointer to the custom AT command to pause.
- */
-void at_cmd_custom_pause(struct nrf_modem_at_cmd_custom *entry);
-
-/**
- * @brief Resume a custom AT command.
- *
- * @param entry Pointer to the custom AT command to resume.
- */
-void at_cmd_custom_resume(struct nrf_modem_at_cmd_custom *entry);
-
 /** @} */
 
 #ifdef __cplusplus
