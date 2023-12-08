@@ -91,6 +91,11 @@ Glossary
       The different sources can include source files such as :file:`main.c` and configuration input files such as :ref:`Devicetree <configure_application_hw>` and :ref:`Kconfig <configure_application_sw>` files.
       The build scripts are then used during the :ref:`configuration_system_overview_build` to create the application firmware.
 
+   Build type
+      A build type is a feature that defines the way in which the configuration files are to be handled.
+      The |NCS| provides support for :ref:`app_build_additions_build_types`.
+      Selecting a specific build type can result in a different structure of the :term:`build configuration`.
+
    Carrier-sense Multiple Access with Collision Avoidance (CSMA/CA)
       A network multiple access method in which carrier sensing is used, but nodes attempt to avoid collisions by beginning transmission only after the channel is sensed to be idle.
 

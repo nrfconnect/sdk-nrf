@@ -127,36 +127,40 @@ Matter weather station build types
 ==================================
 
 The Matter weather station application does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types and they are located in the :file:`configuration/thingy53_nrf5340_cpuapp` directory.
+Configuration files are provided for different build types, and they are located in the :file:`configuration/thingy53_nrf5340_cpuapp` directory.
+Before you start testing the application, you can select one of the build types supported by the application, depending on the building method.
 
-The :file:`prj.conf` file represents a ``debug`` build type.
-Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
-For example, the ``release`` build type file name is :file:`prj_release.conf`.
-If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
 
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_overview_start
-   :end-before: build_types_overview_end
+The application supports the following build types:
 
-Before you start testing the application, you can select one of the build types supported by Matter weather station application, depending on the building method.
-This application supports the following build types:
+.. list-table:: Matter weather station build types
+   :widths: auto
+   :header-rows: 1
 
-* ``debug`` - Debug version of the application.
-  You can use this version to enable additional features for verifying the application behavior, such as logs or command-line shell.
-* ``release`` - Release version of the application.
-  You can use this version to enable only the necessary application functionalities to optimize its performance.
-
-.. note::
-    Currently, this application supports only the ``release`` build type when `Building for the nRF7002 Wi-Fi expansion board`_.
-
-.. note::
-    `Selecting a build type`_ is optional.
-    The ``debug`` build type is used by default if no build type is explicitly selected.
+   * - Build type
+     - File name
+     - Supported board
+     - Description
+   * - Debug
+     - :file:`prj.conf`
+     - All from `Requirements`_
+     - | Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
+       | Used by default if no build type is explicitly selected.
+   * - Release
+     - :file:`prj_release.conf`
+     - All from `Requirements`_
+     - | Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
+       |
+       | .. note::
+       |     Currently, this application supports only the ``release`` build type when `Building for the nRF7002 Wi-Fi expansion board`_.
 
 .. _matter_weather_station_app_build_configuration_overlays:
 
 Matter weather station build configuration overlays
 ===================================================
+
+The application comes with the following overlays:
 
 * ``overlay-factory_data`` - factory data storage support enabled.
   You can use this optional configuration overlay to enable reading necessary factory data from a separate partition in the device non-volatile memory.
@@ -179,37 +183,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`matter_weather_station_app_build_types`, depending on your building method.
-
-Selecting a build type in |VSC|
--------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_vsc_start
-   :end-before: build_types_selection_vsc_end
-
-Selecting a build type from command line
-----------------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_cmd_start
-   :end-before: For example, you can replace the
-
-For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``thingy53_nrf5340_cpuapp`` by running the following command in the project directory:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b thingy53_nrf5340_cpuapp -d build_thingy53_nrf5340_cpuapp -- -DCONF_FILE=prj_release.conf
-
-The ``build_thingy53_nrf5340_cpuapp`` parameter specifies the output directory for the build files.
-
-.. note::
-   If the selected board does not support the selected build type, the build is interrupted.
-   For example, if the ``shell`` build type is not supported by the selected board, the following notification appears:
-
-   .. code-block:: console
-
-      File not found: ./ncs/nrf/applications/matter_weather_station/configuration/thingy53_nrf5340_cpuapp/prj_shell.conf
+See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 Building for the nRF7002 Wi-Fi expansion board
 ==============================================

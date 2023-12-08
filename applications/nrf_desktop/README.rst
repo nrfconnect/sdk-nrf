@@ -316,7 +316,6 @@ Requirements
 The nRF Desktop application supports several development kits related to the following hardware reference designs.
 Depending on what development kit you use, you need to select the respective configuration file and :ref:`build type <nrf_desktop_requirements_build_types>`.
 
-
 .. tabs::
 
    .. tab:: Gaming mouse
@@ -377,41 +376,76 @@ Check :ref:`nrf_desktop_porting_guide` for details.
 nRF Desktop build types
 =======================
 
-The nRF Desktop does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types for each supported board.
+The nRF Desktop application does not use a single :file:`prj.conf` file.
+Before you start testing the application, you can select one of the build types supported by the application, depending on your development kit and the building method.
+Not every board supports all of the mentioned build types.
 
-Each board has its own :file:`prj.conf` file, which represents a ``debug`` build type.
-Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
-For example, the ``release`` build type file name is :file:`prj_release.conf`.
-If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
 
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_overview_start
-   :end-before: build_types_overview_end
+The application supports the following build types:
+
+.. list-table:: nRF Desktop build types
+   :widths: auto
+   :header-rows: 1
+
+   * - Build type
+     - File name
+     - Supported board
+     - Description
+   * - Debug
+     - :file:`prj.conf`
+     - All from `Requirements`_
+     - | Debug version of the application; the same as the release build type, but with debug options enabled.
+       | Used by default if no build type is explicitly selected.
+   * - Release
+     - :file:`prj_release.conf`
+     - All from `Requirements`_
+     - Release version of the application with no debugging features.
+   * - Debug Fast Pair
+     - :file:`prj_fast_pair.conf`
+     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse_nrf52840``
+     - Debug version of the application with `Fast Pair`_ support.
+   * - Release Fast Pair
+     - :file:`prj_release_fast_pair.conf`
+     - ``nrf52kbd_nrf52832``, ``nrf52840gmouse_nrf52840``
+     - Release version of the application with `Fast Pair`_ support.
+   * - Dongle
+     - :file:`prj_dongle.conf`
+     - ``nrf52840dk_nrf52840``
+     - Debug version of the application that lets you generate the application with the dongle role.
+   * - Keyboard
+     - :file:`prj_keyboard.conf`
+     - ``nrf52840dk_nrf52840``
+     - Debug version of the application that lets you generate the application with the keyboard role.
+   * - MCUboot QSPI
+     - :file:`prj_mcuboot_qspi.conf`
+     - ``nrf52840dk_nrf52840``
+     - Debug version of the application that uses MCUboot with the secondary slot in the external QSPI FLASH.
+   * - MCUboot SMP
+     - :file:`prj_mcuboot_smp.conf`
+     - ``nrf52840dk_nrf52840``, ``nrf52840gmouse_nrf52840``
+     - | Debug version of the application that enables MCUmgr with DFU support and offers support for the MCUboot DFU procedure over SMP.
+       | See the :ref:`nrf_desktop_bootloader_background_dfu` section for more information.
+   * - WWCB
+     - :file:`prj_wwcb.conf`
+     - ``nrf52840dk_nrf52840``
+     - Debug version of the application with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
+   * - Triple Bluetooth® LE connection
+     - :file:`prj_3bleconn.conf`
+     - ``nrf52840dongle_nrf52840``
+     - Debug version of the application with the support for up to three simultaneous Bluetooth® LE connections.
+   * - Quadruple LLPM connection
+     - :file:`prj_4llpmconn.conf`
+     - ``nrf52840dongle_nrf52840``
+     - Debug version of the application with the support for up to four simultaneous Bluetooth® LE connections, in Low Latency Packet Mode.
+   * - Release quadruple LLPM connection
+     - :file:`prj_release_4llpmconn.conf`
+     - ``nrf52840dongle_nrf52840``
+     - Release version of the application with the support for up to four simultaneous Bluetooth® LE connections, in Low Latency Packet Mode.
 
 .. note::
-    `Selecting a build type`_ is optional.
-    The ``debug`` build type is used by default in nRF Desktop if no build type is explicitly selected.
-
-The following build types are available for various boards in the nRF Desktop:
-
-* Bootloader-enabled configurations with support for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` are set as default if they fit in non-volatile memory.
-  See :ref:`nrf_desktop_board_configuration_files` for details about which boards have bootloader included in their default configuration.
-* ``release`` - Release version of the application with no debugging features.
-* ``debug`` - Debug version of the application; the same as the ``release`` build type, but with debug options enabled.
-* ``wwcb`` - ``debug`` build type with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
-
-In nRF Desktop, not every development kit can support every build type mentioned above.
-If the given build type is not supported on the selected DK, an error message will appear when `Building and running`_.
-For example, if the ``wwcb`` build type is not supported on the selected DK, the following notification appears:
-
-.. code-block:: console
-
-   File not found: ./ncs/nrf/applications/nrf_desktop/configuration/nrf52dmouse_nrf52832/prj_wwcb.conf
-
-|nrf_desktop_build_type_conf|
-For example, the nRF52840 Development Kit supports the ``keyboard`` configuration, which is defined in the :file:`prj_keyboard.conf` file in the :file:`configuration/nrf52840dk_nrf52840` directory.
-This configuration lets you generate the application with the keyboard role.
+    Bootloader-enabled configurations with support for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` are set as default if they fit in non-volatile memory.
+    See :ref:`nrf_desktop_board_configuration_files` for details about which boards have bootloader included in their default configuration.
 
 See :ref:`nrf_desktop_porting_guide` for detailed information about the application configuration and how to create build type files for your hardware.
 
@@ -866,20 +900,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`nrf_desktop_requirements_build_types`, depending on your development kit and building method.
-
-Selecting a build type in |VSC|
--------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_vsc_start
-   :end-before: build_types_selection_vsc_end
-
-Selecting a build type from command line
-----------------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_cmd_start
-   :end-before: build_types_selection_cmd_end
+See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 .. note::
    If nRF Desktop is built with `Fast Pair`_ support, you must provide Fast Pair Model ID and Anti Spoofing private key as CMake options.
@@ -1208,7 +1229,7 @@ The application configuration files define both a set of options with which the 
 Include the following files in this directory:
 
 Mandatory configuration files
-    * Application configuration file for the ``debug`` (:file:`prj.conf`) :ref:`build type <nrf_desktop_requirements_build_types>`.
+    * Application configuration file for the :ref:`debug build type <nrf_desktop_requirements_build_types>` (:file:`prj.conf`).
     * Configuration files for the selected modules.
 
 Optional configuration files
@@ -1299,7 +1320,7 @@ Adding a new board
 ==================
 
 When adding a new board for the first time, focus on a single configuration.
-Moreover, keep the default ``debug`` build type that the application is built with, and do not add any additional build type parameters.
+Moreover, keep the default debug build type that the application is built with, and do not add any additional build type parameters.
 The following procedure uses the gaming mouse configuration as an example.
 
 Zephyr support for a board
@@ -1610,7 +1631,7 @@ When the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` Kconfig option is en
 The nRF Desktop configurations use static configurations of partitions to ensure that the partition layout will not change between builds.
 
 Add the :file:`pm_static_${BUILD_TYPE}.yml` file to the project's board configuration directory to define the static Partition Manager configuration for given board and build type.
-For example, to define the static partition layout for the nrf52840dk_nrf52840 board and ``release`` build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applicatons/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
+For example, to define the static partition layout for the nrf52840dk_nrf52840 board and release build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applicatons/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
 
 Take into account the following points:
 

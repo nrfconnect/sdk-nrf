@@ -180,37 +180,6 @@ Check the sample Requirements section for the list of supported development kits
 The sample is used to receive data over NUS and forward it to the host computer over UART.
 See `Testing with Thingy:53`_ for how to test this solution.
 
-.. _nrf_machine_learning_app_requirements_build_types:
-
-nRF Machine Learning build types
-================================
-
-The nRF Machine Learning application does not use a single :file:`prj.conf` file.
-Configuration files are provided for different build types for each supported board.
-
-Each board has its own :file:`prj.conf` file, which represents a ``debug`` build type.
-Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
-For example, the ``release`` build type file name is :file:`prj_release.conf`.
-If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_overview_start
-   :end-before: build_types_overview_end
-
-Before you start testing the application, you can select one of the build types supported by nRF Machine Learning application, depending on your development kit and the building method.
-The application supports the following build types:
-
-* ``debug`` -- Debug version of the application - can be used to verify if the application works correctly.
-* ``release`` -- Release version of the application - can be used to achieve better performance and reduce memory consumption.
-
-Not every board supports both mentioned build types.
-The given board can also support some additional configurations of the nRF Machine Learning application.
-For example, the nRF52840 Development Kit supports ``nus`` configuration that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
-
-.. note::
-    `Selecting a build type`_ is optional.
-    The ``debug`` build type is used by default if no build type is explicitly selected.
-
 User interface
 **************
 
@@ -318,8 +287,7 @@ The following configuration files can be defined for any supported board:
 
 * :file:`prj_build_type.conf` - Kconfig configuration file for a build type.
   To support a given build type for the selected board, you must define the configuration file with a proper name.
-  For example, the :file:`prj_release.conf` defines configuration for ``release`` build type.
-  The :file:`prj.conf` without any suffix defines the ``debug`` build type.
+  See :ref:`nrf_machine_learning_app_configuration_build_types` for more information.
 * :file:`app.overlay` - DTS overlay file specific for the board.
   Defining the DTS overlay file for a given board is optional.
 * :file:`_def` files - These files are defined separately for modules used by the application.
@@ -347,7 +315,45 @@ The Kconfig configuration file should be located in subdirectory :file:`child_im
 For example, the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_rpmsg/prj.conf` file defines configuration of Bluetooth HCI RPMsg for ``debug`` build type on ``thingy53_nrf5340_cpuapp`` board, while the :file:`applications/machine_learning/configuration/thingy53_nrf5340_cpuapp/child_image/hci_rpmsg/prj_release.conf` file defines configuration of Bluetooth HCI RPMsg for ``release`` build type.
 See :ref:`ug_multi_image` for detailed information about multi-image builds and child image configuration.
 
+.. _nrf_machine_learning_app_requirements_build_types:
 .. _nrf_machine_learning_app_configuration_build_types:
+
+nRF Machine Learning build types
+================================
+
+The nRF Machine Learning application does not use a single :file:`prj.conf` file.
+Before you start testing the application, you can select one of the build types supported by the application, depending on your development kit and the building method.
+Not every board supports both mentioned build types.
+
+See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
+
+The application supports the following build types:
+
+.. list-table:: nRF Machine Learning build types
+   :widths: auto
+   :header-rows: 1
+
+   * - Build type
+     - File name
+     - Supported board
+     - Description
+   * - Debug
+     - :file:`prj.conf`
+     - All from `Requirements`_
+     - | Debug version of the application; can be used to verify if the application works correctly.
+       | Used by default if no build type is explicitly selected.
+   * - Release
+     - :file:`prj_release.conf`
+     - ``nrf52840dk_nrf52840``
+     - Release version of the application; can be used to achieve better performance and reduce memory consumption.
+   * - NUS
+     - :file:`prj_nus.conf`
+     - ``nrf52840dk_nrf52840``
+     - Debug version of the application that uses :ref:`nus_service_readme` instead of :ref:`zephyr:uart_api` for data forwarding.
+   * - RTT
+     - :file:`prj_rtt.conf`
+     - ``thingy53_nrf5340_cpuapp`` and ``thingy53_nrf5340_cpuapp_ns``
+     - Debug version of the application that uses RTT for printing logs instead of USB CDC.
 
 Building and running
 ********************
@@ -363,28 +369,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`nrf_machine_learning_app_requirements_build_types`, depending on your development kit and building method.
-
-Selecting a build type in |VSC|
--------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_vsc_start
-   :end-before: build_types_selection_vsc_end
-
-Selecting a build type from command line
-----------------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_cmd_start
-   :end-before: build_types_selection_cmd_end
-
-.. note::
-   If the selected board does not support the selected build type, the build is interrupted.
-   For example, if the ``nus`` build type is not supported by the selected board, the following notification appears:
-
-   .. code-block:: console
-
-      Configuration file for build type ``nus`` is missing.
+See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 Providing API key
 =================

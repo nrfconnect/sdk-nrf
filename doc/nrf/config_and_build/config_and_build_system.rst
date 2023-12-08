@@ -59,7 +59,7 @@ When you start building, a CMake build is executed in two stages: configuration 
 Configuration phase
 ===================
 
-During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources to generate the final build scripts and create a model of the build for the specified build target.
+During this phase, CMake executes build scripts from :file:`CMakeLists.txt` and gathers configuration from different sources, for example :ref:`app_build_additions_build_types`, to generate the final build scripts and create a model of the build for the specified build target.
 The result of this process is a :term:`build configuration`, a set of files that will drive the build process.
 
 For more information about this phase, see the respective sections on Zephyr's :ref:`zephyr:cmake-details` page, which describes in-depth the usage of CMake for Zephyr-based applications.
@@ -118,9 +118,10 @@ For more information, see :ref:`configure_application` and Zephyr's :ref:`zephyr
 Memory layout configuration
 ---------------------------
 
-The Partition Manager is specific to the |NCS|.
-If enabled, it provides the memory layout configuration.
-The layout is impacted by various elements, such as Kconfig configuration options or the presence of child images.
+The memory layout configuration is provided by the :ref:`partition_manager` script, specific to the |NCS|.
+
+The script must be enabled to provide the memory layout configuration.
+It is impacted by various elements, such as Kconfig configuration options or the presence of child images.
 Partition Manager ensures that all required partitions are in the correct place and have the correct size.
 
 If enabled, the memory layout can be controlled in the following ways:
@@ -132,8 +133,6 @@ If enabled, the memory layout can be controlled in the following ways:
 
 After CMake has run, a :file:`partitions.yml` file with the memory layout will have been created in the :file:`build` directory.
 This process also creates a set of header files that provides defines, which can be used to refer to memory layout elements.
-
-For more information, see :ref:`partition_manager`.
 
 Child images
 ------------
@@ -169,22 +168,73 @@ Those additions are automatically included into the Zephyr build system using a 
 
 You must be aware of these additions when you start writing your own applications based on this SDK.
 
-* The Kconfig option :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` is enabled by default.
-  It gives warnings at CMake configure time if any experimental feature is enabled.
+.. _app_build_additions_experimental:
 
-  For example, when building a sample that enables :kconfig:option:`CONFIG_BT_EXT_ADV`, the following warning is printed at CMake configure time:
+Experimental option enabled by default
+======================================
 
-  .. code-block:: shell
+Unlike in Zephyr, the Kconfig option :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` is enabled by default in the |NCS|.
+It gives warnings at CMake configure time if any :ref:`experimental <software_maturity>` feature is enabled.
 
-     warning: Experimental symbol BT_EXT_ADV is enabled.
+For example, when building a sample that enables :kconfig:option:`CONFIG_BT_EXT_ADV`, the following warning is printed at CMake configure time:
 
-  For more information, see :ref:`software_maturity`.
-* The |NCS| provides an additional :file:`boilerplate.cmake` file that is automatically included when using the Zephyr CMake package in the :file:`CMakeLists.txt` file of your application::
+.. code-block:: shell
 
-    find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
+   warning: Experimental symbol BT_EXT_ADV is enabled.
 
-* The |NCS| allows you to :ref:`create custom build type files <modifying_build_types>` instead of using a single :file:`prj.conf` file.
-* The |NCS| build system extends Zephyr's with support for multi-image builds.
-  You can find out more about these in the :ref:`ug_multi_image` section.
-* The |NCS| adds a :ref:`partition_manager`, responsible for partitioning the available flash memory.
-* The |NCS| build system generates zip files containing binary images and a manifest for use with nRF Cloud FOTA.
+To disable these warnings, disable the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` Kconfig option.
+
+.. _app_build_additions_build_types:
+
+Custom build types
+==================
+
+A build type is a feature that defines the way in which the configuration files are to be handled.
+For example, selecting a build type lets you generate different build configurations for *release* and *debug* versions of the application.
+
+In the |NCS|, the build type is controlled using the configuration files, whose names can be suffixed to define specific build types.
+When you select a build type for the :ref:`configuration phase <configuration_system_overview_config>`, the compiler will use a specific set of files to create a specific build configuration for the application.
+
+The :file:`prj.conf` file is the application-specific default, but many applications and samples include source files for generating the build configuration differently, for example :file:`prj_release.conf` or :file:`prj_debug.conf`.
+Similarly, the build type can be included in file names for board configuration, Partition Manager's static configuration, child image Kconfig configuration, and others.
+In this way, these files are made dependent on the build type and will only be used when the corresponding build type is invoked.
+For example, if an application uses :file:`pm_static_release.yml` to define Partition Manager's static configuration, this file will only be used when the application's :file:`prj_release.conf` file is used to select the release build type.
+
+Many applications and samples in the |NCS| use build types to define more detailed build configurations.
+The most common build types are ``release`` and ``debug``, which correspond to CMake defaults, but other names can be defined as well.
+For example, nRF Desktop features a ``wwcb`` build type, while Matter weather station features the ``factory_data`` build type.
+See the application's Configuration section for information if it includes any build types.
+
+For more information about how to invoke and create build types, see :ref:`modifying_build_types`.
+
+.. _app_build_additions_multi_image:
+
+Multi-image builds
+==================
+
+The |NCS| build system extends Zephyr's with support for multi-image builds.
+You can find out more about these in the :ref:`ug_multi_image` section.
+
+The |NCS| allows you to :ref:`create custom build type files <modifying_build_types>` instead of using a single :file:`prj.conf` file.
+
+Boilerplate CMake file
+======================
+
+The |NCS| provides an additional :file:`boilerplate.cmake` file that is automatically included when using the Zephyr CMake package in the :file:`CMakeLists.txt` file of your application:
+
+.. code-block::
+
+   find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
+
+This file checks if the selected board is supported and, when available, if the selected :ref:`build type <app_build_additions_build_types>` is supported.
+
+Partition Manager
+=================
+
+The |NCS| adds the :ref:`partition_manager` script, responsible for partitioning the available flash memory and creating the `Memory layout configuration`_.
+
+Binaries and images for nRF Cloud FOTA
+======================================
+
+The |NCS| build system generates :ref:`output zip files <app_build_output_files>` containing binary images and a manifest for use with `nRF Cloud FOTA`_.
+An example of such a file is :file:`dfu_mcuboot.zip`.
