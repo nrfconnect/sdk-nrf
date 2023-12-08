@@ -31,12 +31,14 @@ int slm_util_at_printf(const char *fmt, ...);
  */
 int slm_util_at_scanf(const char *cmd, const char *fmt, ...);
 
-/** Forwards an intercepted AT command to the modem library.
- *  @warning This must and can only be called from interception callbacks.
- *  @note As of now this only returns the AT response code from the modem.
- *  @return The AT response code as an integer and its string representation in @c buf.
+/** Forwards an AT command to the modem while bypassing interception.
+ *  @warning This must only be called from code that needs to bypass
+ *  AT command interception, such as from interception callbacks themselves.
+ *  @note This is only capable of handling AT responses that are
+ *  at most two lines long (including the line that holds the result code).
+ *  @return Like @c nrf_modem_at_cmd().
  */
-int slm_util_at_cmd_fwd_from_cb(char *buf, size_t len, char *at_cmd);
+int slm_util_at_cmd_no_intercept(char *buf, size_t len, const char *at_cmd);
 
 /**
  * @brief Compare string ignoring case
