@@ -99,7 +99,14 @@ config MBEDTLS_ENTROPY_POLL
 	default y
 	depends on !NRF_CC3XX_PLATFORM
 	depends on !BUILD_WITH_TFM
-	select ENTROPY_GENERATOR
+	depends on ENTROPY_GENERATOR
+	help
+	  Add entropy_poll only if NRF_CC3XX_PLATFORM is not added.
+	  This is because the nrf_cc3xx_platform library contains an
+	  implementation of mbedtls_hardware_poll function.
+	  This file is not useful for TF-M build where entropy should come
+	  from SPE image, using psa_generate_random
+
 
 # Include TLS/DTLS and x509 configurations
 rsource "Kconfig.tls"
