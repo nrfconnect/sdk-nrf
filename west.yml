@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f59385bdd3af03f3d825e60089a6ec3fcf8c40a2
+      revision: 883c3709f9c8fd845a8dfa39d2583d5c665a915b
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -111,7 +111,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: a6eb01d932fbfb26d9dbb84ee6e5c80b05b57ada
+      revision: 54964593bf724bac503217915f9b1f20c77d7d45
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: adab597a0eb0eb9c030a7b797748a49ca89988c2
+      revision: beebb23f8e2d744ef89819e584928377ef6c444a
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR.git
@@ -141,7 +141,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d736ae146727d437e74b77691f253290ecdeea11
+      revision: ba22034a7ce2fe6efaccb6dc61e3f9a5e0e149b2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -149,7 +149,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 496275a1cd657f31a4943fdf77acbdacd957a818
+      revision: 1a15f4cdb4d6c1f431a12064625df06fe45e660a
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -191,13 +191,13 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: 16dc7e611e03b3549d2e694c8e077c16246bf98a
+      revision: cc49dd2edd793bb77d5c0ea725012b1540f7fa68
       submodules: true
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 103345872da1b5b0e36d2ef7f8a1208c84612d8e
+      revision: de25273096aa6ab735121cb849ad10a9b46a67fd
       groups:
         - find-my
     - name: azure-sdk-for-c
