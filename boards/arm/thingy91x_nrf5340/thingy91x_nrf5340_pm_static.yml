@@ -1,0 +1,4 @@
+sram_retained_mem:
+  region: sram_primary
+  address: 0x2007FC00
+  size: 0x400
