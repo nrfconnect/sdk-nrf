@@ -249,6 +249,10 @@ nRF Desktop
     The ``CONFIG_USB_HID_BOOT_PROTOCOL`` Kconfig option was removed and dedicated API needs to be used instead.
   * Disabled MCUboot's logs over RTT (:kconfig:option:`CONFIG_LOG_BACKEND_RTT` and :kconfig:option:`CONFIG_USE_SEGGER_RTT`) on ``nrf52840dk_nrf52840`` in :file:`prj_mcuboot_qspi.conf` configuration to reduce MCUboot memory footprint and avoid flash overflows.
     Explicitly enabled the UART log backend (:kconfig:option:`CONFIG_LOG_BACKEND_UART`) together with its dependencies in the configuration file to ensure log visibility.
+  * The MCUboot, B0, and HCI RPMsg child images debug configurations to disable the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option.
+    Disabling this Kconfig option improves the debugging experience.
+  * The MCUboot, B0, and HCI RPMsg child images release configurations to explicitly enable the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option.
+    Enabling this Kconfig option improves the reliability of the firmware.
 
 Thingy:53: Matter weather station
 ---------------------------------
