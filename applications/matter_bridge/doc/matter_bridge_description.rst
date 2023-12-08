@@ -131,35 +131,6 @@ If the Bluetooth LE advertising times out, you can re-enable it manually by pres
 Additionally, the controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.
 
-.. _matter_bridge_app_build_types:
-
-Matter bridge build types
-=========================
-
-The bridge application uses different configuration files depending on the supported features.
-Configuration files are provided for different build types and they are located in the application root directory.
-
-The :file:`prj.conf` file represents a ``debug`` build type.
-Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
-For example, the ``release`` build type file name is :file:`prj_release.conf`.
-If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_overview_start
-   :end-before: build_types_overview_end
-
-Before you start testing the application, you can select one of the build types supported by the sample.
-This sample supports the following build types:
-
-* ``debug`` -- Debug version of the application.
-  You can use this version to enable additional features for verifying the application behavior, such as logs.
-* ``release`` -- Release version of the application.
-  You can use this version to enable only the necessary application functionalities to optimize its performance.
-
-.. note::
-    `Selecting a build type`_ is optional.
-    The ``debug`` build type is used by default if no build type is explicitly selected.
-
 User interface
 **************
 
@@ -382,6 +353,37 @@ Build the target using the following command in the project directory to enable 
 
 Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
 
+.. _matter_bridge_app_build_types:
+
+Matter bridge build types
+=========================
+
+The Matter bridge application does not use a single :file:`prj.conf` file.
+Before you start testing the application, you can select one of the build types supported by the application, depending on your development kit and the building method.
+Not every board supports both mentioned build types.
+
+See :ref:`app_build_additions_build_types` and :ref:`modifying_build_types` for more information about this feature of the |NCS|.
+
+The application supports the following build types:
+
+.. list-table:: Matter bridge build types
+   :widths: auto
+   :header-rows: 1
+
+   * - Build type
+     - File name
+     - Supported board
+     - Description
+   * - Debug
+     - :file:`prj.conf`
+     - All from `Requirements`_
+     - | Debug version of the application; can be used to enable additional features for verifying the application behavior, such as logs.
+       | Used by default if no build type is explicitly selected.
+   * - Release
+     - :file:`prj_release.conf`
+     - All from `Requirements`_
+     - Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
+
 Building and running
 ********************
 
@@ -393,37 +395,7 @@ Selecting a build type
 ======================
 
 Before you start testing the application, you can select one of the :ref:`matter_bridge_app_build_types`, depending on your building method.
-
-Selecting a build type in |VSC|
--------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_vsc_start
-   :end-before: build_types_selection_vsc_end
-
-Selecting a build type from command line
-----------------------------------------
-
-.. include:: /config_and_build/modifying.rst
-   :start-after: build_types_selection_cmd_start
-   :end-before: For example, you can replace the
-
-For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf7002dk_nrf5340_cpuapp`` by running the following command in the project directory:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf7002dk_nrf5340_cpuapp -d build_nrf7002dk_nrf5340_cpuapp -- -DCONF_FILE=prj_release.conf
-
-The ``build_nrf7002dk_nrf5340_cpuapp`` parameter specifies the output directory for the build files.
-
-.. note::
-   If the selected board does not support the selected build type, the build is interrupted.
-   For example, if the ``shell`` build type is not supported by the selected board, the following notification appears:
-
-   .. code-block:: console
-
-      File not found: ./ncs/nrf/applications/matter_bridge/configuration/nrf7002dk_nrf5340_cpuapp/prj_shell.conf
+See :ref:`modifying_build_types` for detailed steps how to select a build type.
 
 .. _matter_bridge_testing:
 

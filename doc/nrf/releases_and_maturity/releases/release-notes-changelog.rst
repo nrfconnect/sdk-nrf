@@ -789,6 +789,7 @@ Documentation
   * The :ref:`configuration_and_build` section:
 
     * :ref:`app_build_system` gathers conceptual information about the build and configuration system previously listed on several other pages.
+      The :ref:`app_build_additions` section on this page now provides more information about :ref:`app_build_additions_build_types` specific to the |NCS|.
     * New reference page :ref:`app_build_output_files` gathers information previously listed on several other pages.
     * :ref:`app_dfu` and :ref:`app_bootloaders` are now separate sections, with the DFU section summarizing the available DFU methods in a table.
 

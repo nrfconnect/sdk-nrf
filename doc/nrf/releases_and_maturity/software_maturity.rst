@@ -25,12 +25,7 @@ Experimental
    The feature can be used for development, but it is not recommended for production.
    This means that the feature is incomplete in functionality or verification and can be expected to change in future releases.
    The feature is made available in its current state, but the design and interfaces can change between release tags.
-   The feature is also labeled as ``EXPERIMENTAL`` in Kconfig files to indicate this status.
-
-   .. note::
-      By default, the build system generates build warnings to indicate when features labeled ``EXPERIMENTAL`` are included in builds.
-      To disable these warnings, disable the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` Kconfig option.
-      See :ref:`app_build_additions` for details.
+   The feature is also labeled as :ref:`experimental in Kconfig files <app_build_additions_experimental>` and a build warning is generated to indicate this status.
 
 See the following table for more details:
 

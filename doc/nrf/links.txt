@@ -961,6 +961,7 @@
 .. _`CMake documentation`: https://cmake.org/cmake/help/latest/
 .. _`VERBOSE`: https://cmake.org/cmake/help/latest/envvar/VERBOSE.html
 .. _`CMAKE_BUILD_PARALLEL_LEVEL`: https://cmake.org/cmake/help/latest/envvar/CMAKE_BUILD_PARALLEL_LEVEL.html
+.. _`CMAKE_BUILD_TYPE`: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
 
 .. _`generator expressions`: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html
 
