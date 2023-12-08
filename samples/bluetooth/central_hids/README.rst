@@ -85,8 +85,8 @@ Testing with another development kit
 #. Press **Button 1** and **Button 2** one after another on the kit that runs the keyboard sample and observe the notification values in the terminal window.
    See :ref:`peripheral_hids_keyboard` for the expected values::
 
-      Notification, id: 1, size: 8, data: 0x0 0x0 0xb 0x0 0x0 0x0 0x0 0x0
-      Notification, id: 1, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
+      Notification, id: 0, size: 8, data: 0x0 0x0 0xb 0x0 0x0 0x0 0x0 0x0
+      Notification, id: 0, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
 
 #. Press **Button 2** on the kit that runs the Central HIDS sample and observe that the protocol mode is updated into boot mode::
 
