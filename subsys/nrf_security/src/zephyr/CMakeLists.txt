@@ -38,7 +38,7 @@ if(CONFIG_BUILD_WITH_TFM)
 
   # Add the TF-M interface to zephyr includes
   zephyr_include_directories(
-    ${TFM_BINARY_DIR}/install/interface/include
+    ${TFM_BINARY_DIR}/api_ns/interface/include
   )
 endif()
 
