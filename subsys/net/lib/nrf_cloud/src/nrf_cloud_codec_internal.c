@@ -448,7 +448,12 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 {
 	__ASSERT_NO_MSG(output != NULL);
 
-	char *buffer;
+	/* The state only needs to be reported on initial association/connection */
+	if ((reported_state != STATE_UA_PIN_WAIT) && (reported_state != STATE_UA_PIN_COMPLETE)) {
+		return -ENOTSUP;
+	}
+
+	char *buffer = NULL;
 	int ret = 0;
 	cJSON *root_obj = cJSON_CreateObject();
 	cJSON *state_obj = cJSON_AddObjectToObjectCS(root_obj, NRF_CLOUD_JSON_KEY_STATE);
@@ -461,45 +466,46 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 		return -ENOMEM;
 	}
 
-	switch (reported_state) {
-	case STATE_UA_PIN_WAIT: {
+	if (reported_state == STATE_UA_PIN_WAIT) {
+		/* This is a state used during JITP
+		 * or if the user exercises the deprecated DissociateDevice API.
+		 * The device exists in nRF Cloud but is not associated to an account.
+		 */
 		ret += json_add_str_cs(pairing_obj, NRF_CLOUD_JSON_KEY_STATE,
 				       NRF_CLOUD_JSON_VAL_NOT_ASSOC);
+		/* Clear the topics */
 		ret += json_add_null_cs(pairing_obj, NRF_CLOUD_JSON_KEY_TOPICS);
-		ret += json_add_null_cs(pairing_obj, NRF_CLOUD_JSON_KEY_CFG);
-		ret += json_add_null_cs(reported_obj, NRF_CLOUD_JSON_KEY_STAGE);
+		/* Clear topic prefix */
 		ret += json_add_null_cs(reported_obj, NRF_CLOUD_JSON_KEY_TOPIC_PRFX);
+		/* Clear the keepalive value */
 		ret += json_add_null_cs(connection_obj, NRF_CLOUD_JSON_KEY_KEEPALIVE);
-		if (ret != 0) {
-			cJSON_Delete(root_obj);
-			return -ENOMEM;
-		}
-		break;
-	}
-	case STATE_UA_PIN_COMPLETE: {
+
+		/* Clear deprecated fields */
+		ret += json_add_null_cs(pairing_obj, NRF_CLOUD_JSON_KEY_CFG);
+		ret += json_add_null_cs(reported_obj, NRF_CLOUD_JSON_KEY_PAIR_STAT);
+		ret += json_add_null_cs(reported_obj, NRF_CLOUD_JSON_KEY_STAGE);
+
+	} else if (reported_state == STATE_UA_PIN_COMPLETE) {
 		struct nrf_cloud_data rx_endp;
 		struct nrf_cloud_data tx_endp;
 		struct nrf_cloud_data m_endp;
 		struct nrf_cloud_ctrl_data device_ctrl = {0};
 
-		/* Get the endpoint information. */
-		nct_dc_endpoint_get(&tx_endp, &rx_endp, NULL, NULL, &m_endp);
-		ret += json_add_str_cs(reported_obj, NRF_CLOUD_JSON_KEY_TOPIC_PRFX, m_endp.ptr);
-
-		/* Clear pairing config and pairingStatus fields. */
+		/* Associated */
 		ret += json_add_str_cs(pairing_obj, NRF_CLOUD_JSON_KEY_STATE,
 				       NRF_CLOUD_JSON_VAL_PAIRED);
-		ret += json_add_null_cs(pairing_obj, NRF_CLOUD_JSON_KEY_CFG);
-		ret += json_add_null_cs(reported_obj, NRF_CLOUD_JSON_KEY_PAIR_STAT);
 
 		/* Report keepalive value. */
 		ret += json_add_num_cs(connection_obj, NRF_CLOUD_JSON_KEY_KEEPALIVE,
 				       CONFIG_NRF_CLOUD_MQTT_KEEPALIVE);
 
-		/* Report pairing topics. */
+		/* Create the topics object. */
 		cJSON *topics_obj = cJSON_AddObjectToObjectCS(pairing_obj,
 							      NRF_CLOUD_JSON_KEY_TOPICS);
 
+		/* Get the endpoint information and add topics */
+		nct_dc_endpoint_get(&tx_endp, &rx_endp, NULL, NULL, &m_endp);
+		ret += json_add_str_cs(reported_obj, NRF_CLOUD_JSON_KEY_TOPIC_PRFX, m_endp.ptr);
 		ret += json_add_str_cs(topics_obj, NRF_CLOUD_JSON_KEY_DEVICE_TO_CLOUD,
 				       tx_endp.ptr);
 		ret += json_add_str_cs(topics_obj, NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE,
@@ -525,20 +531,12 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 		if (add_dev_status) {
 			ret += device_status_encode(reported_obj);
 		}
-
-		if (ret != 0) {
-			cJSON_Delete(root_obj);
-			return -ENOMEM;
-		}
-		break;
-	}
-	default: {
-		cJSON_Delete(root_obj);
-		return -ENOTSUP;
-	}
 	}
 
-	buffer = cJSON_PrintUnformatted(root_obj);
+	if (ret == 0) {
+		buffer = cJSON_PrintUnformatted(root_obj);
+	}
+
 	cJSON_Delete(root_obj);
 
 	if (buffer == NULL) {
