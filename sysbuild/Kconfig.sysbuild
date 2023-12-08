@@ -9,6 +9,7 @@
 menuconfig PARTITION_MANAGER
 	bool "Partition Manager"
 	default y if ($(BOARD) != "qemu_cortex_m0" && $(BOARD) != "qemu_cortex_m3" && $(BOARD) != "native_posix" && $(BOARD) != "native_posix_64" && $(BOARD) != "mps2_an521" && $(BOARD) != "qemu_x86" && $(BOARD) != "nrf52_bsim" && $(BOARD) != "nrf5340bsim_nrf5340_cpuapp" && $(BOARD) != "nrf5340bsim_nrf5340_cpunet")
+	depends on !EXTERNAL_CONFIGURED_NETCORE
 
 config PM_MCUBOOT_PAD
 	hex "Memory reserved for MCUBOOT_PAD"
