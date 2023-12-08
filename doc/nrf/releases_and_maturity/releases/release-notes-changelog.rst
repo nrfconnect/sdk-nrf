@@ -219,7 +219,12 @@ nRF5340 Audio
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The MCUboot and HCI RPMsg child images debug configurations to disable the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option.
+    Disabling this Kconfig option improves the debugging experience.
+  * The MCUboot and HCI RPMsg child images release configurations to explicitly enable the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option.
+    Enabling this Kconfig option improves the reliability of the firmware.
 
 nRF Desktop
 -----------
