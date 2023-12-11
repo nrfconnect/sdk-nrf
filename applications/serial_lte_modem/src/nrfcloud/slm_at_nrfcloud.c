@@ -261,7 +261,7 @@ static void loc_req_wk(struct k_work *work)
 	if (!err) {
 		err = nrf_cloud_location_request(
 			nrfcloud_cell_pos ? &nrfcloud_cell_data : NULL,
-			nrfcloud_wifi_pos ? &nrfcloud_wifi_data : NULL, true, NULL);
+			nrfcloud_wifi_pos ? &nrfcloud_wifi_data : NULL, NULL, NULL);
 		if (err) {
 			LOG_ERR("Failed to request nRF Cloud location (%d).", err);
 		} else {

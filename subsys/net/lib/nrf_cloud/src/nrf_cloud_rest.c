@@ -69,7 +69,6 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 
 #define API_LOCATION			"/location"
 #define API_GET_LOCATION		API_VER API_LOCATION "/ground-fix"
-#define API_GET_LOCATION_NO_REPLY	API_VER API_LOCATION "/ground-fix?doReply=0"
 #define API_GET_AGNSS_BASE		API_VER API_LOCATION "/agnss"
 #define API_GET_PGPS_BASE		API_VER API_LOCATION "/pgps"
 
@@ -517,7 +516,17 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	memset(&resp, 0, sizeof(resp));
 	init_rest_client_request(rest_ctx, &req, HTTP_POST);
 
-	req.url = request->disable_response ? API_GET_LOCATION_NO_REPLY : API_GET_LOCATION;
+	bool do_reply = request->config ?
+				request->config->do_reply :
+				NRF_CLOUD_LOCATION_DOREPLY_DEFAULT;
+	size_t url_size = nrf_cloud_ground_fix_url_encode(NULL, 0, API_GET_LOCATION,
+							  request->config);
+
+	__ASSERT_NO_MSG(url_size > 0);
+	char url[url_size + 1];
+
+	(void)nrf_cloud_ground_fix_url_encode(url, url_size, API_GET_LOCATION, request->config);
+	req.url = url;
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -561,16 +570,16 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.body = payload_obj.encoded_data.ptr;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp, true, !request->disable_response);
+	ret = do_rest_client_request(rest_ctx, &req, &resp, true, do_reply);
 
 	if (ret) {
 		goto clean_up;
 	}
 
-	if (result && request->disable_response) {
+	if (result && !do_reply) {
 		LOG_WRN("A result struct is provided but location response is disabled");
 		result->type = LOCATION_TYPE__INVALID;
-	} else if (result && !request->disable_response) {
+	} else if (result && do_reply) {
 		ret = nrf_cloud_location_response_decode(rest_ctx->response, result);
 		if (ret != 0) {
 			if (ret > 0) {

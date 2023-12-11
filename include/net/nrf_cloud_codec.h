@@ -20,6 +20,7 @@
 #include <cJSON.h>
 #include <modem/lte_lc.h>
 #include <net/wifi_location_common.h>
+#include <net/nrf_cloud_location.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -473,7 +474,6 @@ int nrf_cloud_obj_null_add(struct nrf_cloud_obj *const obj, const char *const ke
  *
  * @details If successful, obj_to_add will be reset with @ref nrf_cloud_obj_reset
  *          since its data has been moved to obj.
-
  *
  * @param[out] obj Object to contain key and object.
  * @param[in] key Key string; must be valid and constant for the life of the object.
@@ -590,7 +590,7 @@ int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
  * @param[out] obj Uninitialzed object to contain the Location message.
  * @param[in] cells_inf Cellular network data, can be NULL if wifi_inf is provided.
  * @param[in] wifi_inf Wi-Fi network data, can be NULL if cells_inf is provided.
- * @param[in] request_loc If true, nRF Cloud will send the location data to the device.
+ * @param[in] config Optional configuration of request. If NULL, use cloud defaults.
  *
  * @retval -EINVAL Invalid parameter.
  * @retval -EDOM Too few Wi-Fi networks, see NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
@@ -602,7 +602,7 @@ int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
 int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 					  const struct lte_lc_cells_info *const cells_inf,
 					  const struct wifi_scan_info *const wifi_inf,
-					  const bool request_loc);
+					  const struct nrf_cloud_location_config *const config);
 
 /**
  * @brief Add PVT data to the provided object.

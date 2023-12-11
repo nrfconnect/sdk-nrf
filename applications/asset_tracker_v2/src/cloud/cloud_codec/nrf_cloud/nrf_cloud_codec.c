@@ -736,7 +736,7 @@ int cloud_codec_encode_cloud_location(
 #else
 		NULL,
 #endif
-		true);
+		NULL);
 	if (err) {
 		LOG_ERR("nrf_cloud_location_request_msg_json_encode, error: %d", err);
 		goto exit;

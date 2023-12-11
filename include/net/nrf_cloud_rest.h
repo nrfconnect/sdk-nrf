@@ -125,10 +125,8 @@ struct nrf_cloud_rest_location_request {
 	 * a local MAC address will not be included in the request.
 	 */
 	struct wifi_scan_info *wifi_info;
-	/** If true, nRF Cloud will not send the location data to the device
-	 * in the REST response body. The location will still be recorded in the cloud.
-	 */
-	bool disable_response;
+	/** Optionally specify do_reply, hi_conf, and fallback */
+	const struct nrf_cloud_location_config *config;
 };
 
 /** @brief Data required for nRF Cloud Assisted GNSS (A-GNSS) request */
