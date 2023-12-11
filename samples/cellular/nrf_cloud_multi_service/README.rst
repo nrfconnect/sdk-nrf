@@ -421,203 +421,6 @@ To monitor the GNSS module (for instance, to see whether A-GNSS or P-GPS assista
 
 See also the :ref:`nrf_cloud_multi_service_test_counter`.
 
-
-.. _nrf_cloud_multi_service_hardcoded_certs:
-
-Provisioning with hard-coded CA and device certificates
-=======================================================
-
-The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option allows you to use hard-coded CA and device certificates stored in unprotected program memory for connecting to nRF Cloud.
-
-.. important::
-   The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is not secure, and should be used only for demonstration purposes!
-   Because this setting stores your device's private key in unprotected program memory, using it makes your device vulnerable to impersonation.
-
-If you are certain you understand the inherent security risks, you can provision your device with :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` as follows:
-
-First, generate a self-managed CA certificate:
-
-1. Download and install the `nRF Cloud Utilities <nRF Cloud Utilities documentation_>`_ repo.
-#. Use the nRF Cloud Utilities :file:`create_ca_cert.py` Python script to generate the certificate:
-
-   .. code-block:: console
-
-      python3 create_ca_cert.py -c US -f self_ca_
-
-   Remember to set ``-c`` to your two-letter country code.
-   See the `Create CA Cert <nRF Cloud Utilities Create CA Cert_>`_ section in the nRF Cloud Utilities documentation for more details.
-
-   You should now have three files:
-
-     * :file:`self_ca_<certificate_serial>_ca.pem`
-     * :file:`self_ca_<certificate_serial>_prv.pem`
-     * :file:`self_ca_<certificate_serial>_pub.pem`
-
-   Where ``<certificate_serial>`` is your certificate's serial number in hex.
-   You will use these files to sign device certificates.
-
-   You only need to generate these three files once.
-   They can be used to sign as many device certificates as you need.
-
-Next, complete the following steps for each device you wish to provision:
-
-1. Create a globally unique `device ID <nRF Cloud Device ID_>`_ for the device.
-
-   The ID can be anything you want, as long as it is not prefixed with ``nrf-`` and is globally unique.
-
-   Each device should have its own device ID, and you must use this device ID exactly in all of the remaining steps for that device, otherwise provisioning will fail.
-
-#. Use the :file:`create_device_credentials.py` Python script to generate a self-signed certificate for the device:
-
-   .. code-block:: console
-
-      python3 create_device_credentials.py -ca "self_ca_<certificate_serial>_ca.pem" -ca_key "self_ca_<certificate_serial>_prv.pem" -c US -cn "<device_uuid>" -f cred_
-
-   Where ``<device_uuid>`` is the device ID you created, and :file:`self_ca_<certificate_serial>_ca.pem`, and :file:`self_ca_<certificate_serial>_prv.pem` are the corresponding file names from the previous step.
-
-   Remember to set ``-c`` to your two-letter country code.
-   See the `Create Device Credentials <nRF Cloud Utilities Create Device Credentials_>`_ section in the nRF Cloud Utilities documentation for more details.
-
-   You should now have an additional three files:
-
-     * :file:`cred_<device_uuid>_crt.pem`
-     * :file:`cred_<device_uuid>_pub.pem`
-     * :file:`cred_<device_uuid>_prv.pem`
-
-   These three files can only be used by a single device.
-
-   .. important::
-
-      If an attacker obtains the private key contained in :file:`cred_<device_uuid>_prv.pem`, they will be able to impersonate your device.
-      Since using hard-coded certificates does not protect this private key from extraction, this option should not be used in production!
-
-#. Create a CSV file named :file:`<device_uuid>_cred.csv` and give it the following contents:
-
-   .. code-block:: none
-
-      <device_uuid>,,,,"<device_cert>"
-
-   Where ``<device_uuid>`` is replaced by the device ID you created, and ``<device_cert>`` is replaced by the exact contents of :file:`<device_uuid>_crt.pem`.
-
-   For example, if the device ID you created is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
-
-   .. code-block:: none
-
-      698d4c11-0ccc-4f04-89cd-6882724e3f6f,,,,"-----BEGIN CERTIFICATE-----
-      sCC8AtbNQhzbp4y01FEzXaf5Fko3Qdq0o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
-      RnwzoA2dF4wR0rMP5vR6dqBblaGAA5hN7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
-      eeadE1HdVnUj8nb+7CGm39vJ4fuNk9vogH0nMdxjCnXAinoOMRx8EklQsR747+Gz
-      sxcdVYuNEb/E2vWBHTDNZGJ6tZC1JC9d6/RC3Vb1JC4tWnK9mk/Jw984ZuYugpMc
-      1t9umoGFYCz0nMdxjCnXAbnoOMC5A0RxcWPzxfC5A0RH+j+mwoMxwhgfFY4EhVxp
-      oCC8labNQhzRC3Vc1JC4tWnK9mpVA7k/o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
-      RXwcoAndF4wPzxfC5A0RHponmwBHTDoM7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
-      eefdE1HcVnULbuNpVA7S6AKAkjxjCnt1gH0nMdxjCnXAinoOMRx8EklQsR747+Fz
-      srm/VYaNEb/E2vPBHTDNZGJ6tZc1JC9d6/RC3Vc1JC4tWnK9mk/Jr984ZuYugpMc
-      nt9uZTGFYCzZD0FFAA5NAC4i1PARStFycWPzxfC5A0RqodhswoMxwhgfFY4EhVx=
-      -----END CERTIFICATE-----
-      "
-
-   Do not attempt to use this example directly, it has been filled with dummy data.
-   See `nRF Cloud REST API ProvisionDevices`_ for more details.
-
-#. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left and proceed as follows:
-
-  a. Click :guilabel:`Add Devices`.
-  #. Select **Bulk Onboard**.
-
-     The `Bulk Onboard Devices`_ page opens.
-
-  #. Upload the :file:`<device_uuid>_cred.csv` file you created.
-
-   You should see a message stating that the file was uploaded successfully, and a device with the device ID you created should appear in the **Devices** page.
-
-#. Download `Amazon Root CA 1`_ and save it as :file:`AmazonRootCA1.pem`.
-
-   See `CA certificates for server authentication in AWS IoT Core`_ for more details.
-   Do not confuse this CA cert with your self-managed CA cert.
-
-#. Prepare the :file:`cred_<device_uuid>_crt.pem`, :file:`cred_<device_uuid>_prv.pem`, and :file:`AmazonRootCA1.pem` files for use by the device.
-
-   Your device needs these files in order to connect to nRF Cloud.
-   To be usable by your device, they need to be reformatted as C strings and given specific names (:file:`client-cert.pem`, :file:`private-key.pem` and :file:`ca-cert.pem` respectively).
-
-   You can perform the reformatting and renaming as follows:
-
-   .. tabs::
-
-      .. group-tab:: Bash
-
-         .. code-block:: console
-
-           awk 'NF { print "\""$0"\\n\""}' "cred_<device_uuid>_crt.pem" > client-cert.pem
-           awk 'NF { print "\""$0"\\n\""}' "cred_<device_uuid>_prv.pem" > private-key.pem
-           awk 'NF { print "\""$0"\\n\""}' AmazonrootCA1.pem > ca-cert.pem
-
-         Where ``<device_uuid>`` is replaced with the device ID you created.
-
-      .. group-tab:: PowerShell
-
-         .. code-block:: console
-
-            gc ".\cred_<device_uuid>_crt.pem" | %{"""$_\n"""} | out-file -encoding utf8 client-cert.pem
-            gc ".\cred_<device_uuid>_prv.pem" | %{"""$_\n"""} | out-file -encoding utf8 private-key.pem
-            gc .\AmazonrootCA1.pem | %{"""$_\n"""} | out-file -encoding utf8 ca-cert.pem
-
-         Where ``<device_uuid>`` is replaced with the device ID you created.
-
-   You should now have the following three files:
-
-     * :file:`client-cert.pem`
-     * :file:`private-key.pem`
-     * :file:`ca-cert.pem`
-
-   And the contents of each file should be similar to the following:
-
-   .. code-block:: C
-
-      "-----BEGIN CERTIFICATE-----\n"
-      "sCC8AtbNQhzbp4y01FEzXaf5Fko3Qdq0o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh\n"
-      "RnwzoA2dF4wR0rMP5vR6dqBblaGAA5hN7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds\n"
-      "eeadE1HdVnUj8nb+7CGm39vJ4fuNk9vogH0nMdxjCnXAinoOMRx8EklQsR747+Gz\n"
-      "sxcdVYuNEb/E2vWBHTDNZGJ6tZC1JC9d6/RC3Vb1JC4tWnK9mk/Jw984ZuYugpMc\n"
-      "1t9umoGFYCz0nMdxjCnXAbnoOMC5A0RxcWPzxfC5A0RH+j+mwoMxwhgfFY4EhVxp\n"
-      "oCC8labNQhzRC3Vc1JC4tWnK9mpVA7k/o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh\n"
-      "RXwcoAndF4wPzxfC5A0RHponmwBHTDoM7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds\n"
-      "eefdE1HcVnULbuNpVA7S6AKAkjxjCnt1gH0nMdxjCnXAinoOMRx8EklQsR747+Fz\n"
-      "srm/VYaNEb/E2vPBHTDNZGJ6tZc1JC9d6/RC3Vc1JC4tWnK9mk/Jr984ZuYugpMc\n"
-      "nt9uZTGFYCzZD0FFAA5NAC4i1PARStFycWPzxfC5A0RqodhswoMxwhgfFY4EhVx=\n"
-      "-----END CERTIFICATE-----\n"
-
-   Do not attempt to use this example directly, it has been filled with dummy data.
-
-#. Create a :file:`certs` folder directly in the :file:`nrf_cloud_multi_service` folder, and copy :file:`client-cert.pem`, :file:`private-key.pem` and :file:`ca-cert.pem` into it.
-
-   Be sure not to place the new folder in the :file:`nrf_cloud_multi_service/src` folder by accident.
-
-   Now these certs are automatically used if the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is enabled.
-
-#. Build the sample with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option enabled and the device ID you created configured.
-
-   This is required for provisioning to succeed.
-
-   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` Kconfig option to the device ID.
-
-   For example, if the device ID is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
-
-   .. tabs::
-
-      .. group-tab:: Bash
-
-         .. code-block:: console
-
-           west build --board your_board -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
-
-      .. group-tab:: PowerShell
-
-         .. code-block:: console
-
-            west build --board your_board -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
-
 Configuration options
 =====================
 
@@ -869,57 +672,6 @@ CONFIG_COAP_FOTA_THREAD_STACK_SIZE - CoAP FOTA Thread Stack Size (bytes)
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
-.. _nrf_cloud_multi_service_coap_provisioning:
-
-Provisioning a CoAP device on nRF Cloud
-***************************************
-
-For more information, see `nRF Cloud Utilities documentation`_.
-A device that connects to nRF Cloud using CoAP requires chained root CA certificates in the :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG` security tag (``sec_tag``).
-CoAP connectivity uses one root CA certificate, and HTTPS download for P-GPS and FOTA use the other.
-The :file:`device_credentials_installer.py` script installs the chained root CA certificates when given the ``--coap`` option.
-See below.
-
-First, create a self-signed CA certificate using the following command:
-
-.. code-block:: console
-
-   python3 create_ca_cert.py -c US -st OR -l Portland -o "My Company" -ou "RD" -cn example.com -e admin@example.com -f CA
-
-Remember to set all the variables with your own information.
-
-You should now have three files:
-
-* :file:`<certificate_serial>_ca.pem`
-* :file:`<certificate_serial>_prv.pem`
-* :file:`<certificate_serial>_pub.pem`
-
-Where ``<certificate_serial>`` is your certificate's serial number in hex.
-You will use these files to sign device certificates.
-
-You only need to generate these three files once.
-They can be used to sign as many device certificates as you need.
-
-Next, for each device you wish to provision, execute the following command in the same folder as the above command:
-
-.. note::
-   The options used below assume that the sample is built with the default :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
-   See :ref:`configuration_device_id` to use other device ID formats.
-
-.. code-block:: console
-
-   python3 device_credentials_installer.py --ca <certificate_serial>_ca.pem \
-   --ca_key <certificate_serial>_prv.pem --id_str nrf- --id_imei -s -d --coap
-   ...
-   <- OK
-   Saving provisioning endpoint CSV file provision.csv...
-   Provisioning CSV file saved
-
-Where ``<certificate_serial>`` is your certificate's serial number in hex.
-
-Once the script creates the :file:`provision.csv` file, visit the `Bulk Onboard Devices`_ page in the nRF Cloud portal to onboard the device.
-Onboarding registers the device with nRF Cloud, allowing it to use any nRF Cloud services through CoAP, MQTT, or REST connectivity.
-
 .. _nrf_cloud_multi_service_building_and_running:
 
 Building and running
@@ -1057,6 +809,259 @@ or
 ``-DOVERLAY_CONFIG=overlay_min_coap.conf``
 
 These overlays show all the Kconfig settings changes needed to properly disable all but a single sensor.
+
+.. _nrf_cloud_multi_service_provisioning:
+
+Provisioning
+************
+
+In order for your device to successfuly connect to nRF Cloud, it must be provisioned.
+The following sections outline the various provisioning methods that this sample supports.
+
+.. _nrf_cloud_multi_service_coap_provisioning:
+
+Provisioning a CoAP device on nRF Cloud
+=======================================
+
+For more information, see `nRF Cloud Utilities documentation`_.
+A device that connects to nRF Cloud using CoAP requires chained root CA certificates in the :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG` security tag (``sec_tag``).
+CoAP connectivity uses one root CA certificate, and HTTPS download for P-GPS and FOTA use the other.
+The :file:`device_credentials_installer.py` script installs the chained root CA certificates when given the ``--coap`` option.
+See below.
+
+First, create a self-signed CA certificate using the following command:
+
+.. code-block:: console
+
+   python3 create_ca_cert.py -c US -st OR -l Portland -o "My Company" -ou "RD" -cn example.com -e admin@example.com -f CA
+
+Remember to set all the variables with your own information.
+
+You should now have three files:
+
+* :file:`<certificate_serial>_ca.pem`
+* :file:`<certificate_serial>_prv.pem`
+* :file:`<certificate_serial>_pub.pem`
+
+Where ``<certificate_serial>`` is your certificate's serial number in hex.
+You will use these files to sign device certificates.
+
+You only need to generate these three files once.
+They can be used to sign as many device certificates as you need.
+
+Next, for each device you wish to provision, execute the following command in the same folder as the above command:
+
+.. note::
+   The options used below assume that the sample is built with the default :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` option enabled and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX` option set to ``nrf-``.
+   See :ref:`configuration_device_id` to use other device ID formats.
+
+.. code-block:: console
+
+   python3 device_credentials_installer.py --ca <certificate_serial>_ca.pem \
+   --ca_key <certificate_serial>_prv.pem --id_str nrf- --id_imei -s -d --coap
+   ...
+   <- OK
+   Saving provisioning endpoint CSV file provision.csv...
+   Provisioning CSV file saved
+
+Where ``<certificate_serial>`` is your certificate's serial number in hex.
+
+Once the script creates the :file:`provision.csv` file, visit the `Bulk Onboard Devices`_ page in the nRF Cloud portal to onboard the device.
+Onboarding registers the device with nRF Cloud, allowing it to use any nRF Cloud services through CoAP, MQTT, or REST connectivity.
+
+Provisioning with hard-coded CA and device certificates
+=======================================================
+
+The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option allows you to use hard-coded CA and device certificates stored in unprotected program memory for connecting to nRF Cloud.
+
+.. important::
+   The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is not secure, and should be used only for demonstration purposes!
+   Because this setting stores your device's private key in unprotected program memory, using it makes your device vulnerable to impersonation.
+
+If you are certain you understand the inherent security risks, you can provision your device with :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` as follows:
+
+First, generate a self-managed CA certificate:
+
+1. Download and install the `nRF Cloud Utilities <nRF Cloud Utilities documentation_>`_ repo.
+#. Use the nRF Cloud Utilities :file:`create_ca_cert.py` Python script to generate the certificate:
+
+   .. code-block:: console
+
+      python3 create_ca_cert.py -c US -f self_ca_
+
+   Remember to set ``-c`` to your two-letter country code.
+   See the `Create CA Cert <nRF Cloud Utilities Create CA Cert_>`_ section in the nRF Cloud Utilities documentation for more details.
+
+   You should now have three files:
+
+     * :file:`self_ca_<certificate_serial>_ca.pem`
+     * :file:`self_ca_<certificate_serial>_prv.pem`
+     * :file:`self_ca_<certificate_serial>_pub.pem`
+
+   Where ``<certificate_serial>`` is your certificate's serial number in hex.
+   You will use these files to sign device certificates.
+
+   You only need to generate these three files once.
+   They can be used to sign as many device certificates as you need.
+
+Next, complete the following steps for each device you wish to provision:
+
+1. Create a globally unique `device ID <nRF Cloud Device ID_>`_ for the device.
+
+   The ID can be anything you want, as long as it is not prefixed with ``nrf-`` and is globally unique.
+
+   Each device should have its own device ID, and you must use this device ID exactly in all of the remaining steps for that device, otherwise provisioning will fail.
+
+#. Use the :file:`create_device_credentials.py` Python script to generate a self-signed certificate for the device:
+
+   .. code-block:: console
+
+      python3 create_device_credentials.py -ca "self_ca_<certificate_serial>_ca.pem" -ca_key "self_ca_<certificate_serial>_prv.pem" -c US -cn "<device_uuid>" -f cred_
+
+   Where ``<device_uuid>`` is the device ID you created, and :file:`self_ca_<certificate_serial>_ca.pem`, and :file:`self_ca_<certificate_serial>_prv.pem` are the corresponding file names from the previous step.
+
+   Remember to set ``-c`` to your two-letter country code.
+   See the `Create Device Credentials <nRF Cloud Utilities Create Device Credentials_>`_ section in the nRF Cloud Utilities documentation for more details.
+
+   You should now have an additional three files:
+
+     * :file:`cred_<device_uuid>_crt.pem`
+     * :file:`cred_<device_uuid>_pub.pem`
+     * :file:`cred_<device_uuid>_prv.pem`
+
+   These three files can only be used by a single device.
+
+   .. important::
+
+      If an attacker obtains the private key contained in :file:`cred_<device_uuid>_prv.pem`, they will be able to impersonate your device.
+      Since using hard-coded certificates does not protect this private key from extraction, this option should not be used in production!
+
+#. Create a CSV file named :file:`<device_uuid>_cred.csv` and give it the following contents:
+
+   .. code-block:: none
+
+      <device_uuid>,,,,"<device_cert>"
+
+   Where ``<device_uuid>`` is replaced by the device ID you created, and ``<device_cert>`` is replaced by the exact contents of :file:`<device_uuid>_crt.pem`.
+
+   For example, if the device ID you created is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
+
+   .. code-block:: none
+
+      698d4c11-0ccc-4f04-89cd-6882724e3f6f,,,,"-----BEGIN CERTIFICATE-----
+      sCC8AtbNQhzbp4y01FEzXaf5Fko3Qdq0o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
+      RnwzoA2dF4wR0rMP5vR6dqBblaGAA5hN7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
+      eeadE1HdVnUj8nb+7CGm39vJ4fuNk9vogH0nMdxjCnXAinoOMRx8EklQsR747+Gz
+      sxcdVYuNEb/E2vWBHTDNZGJ6tZC1JC9d6/RC3Vb1JC4tWnK9mk/Jw984ZuYugpMc
+      1t9umoGFYCz0nMdxjCnXAbnoOMC5A0RxcWPzxfC5A0RH+j+mwoMxwhgfFY4EhVxp
+      oCC8labNQhzRC3Vc1JC4tWnK9mpVA7k/o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
+      RXwcoAndF4wPzxfC5A0RHponmwBHTDoM7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
+      eefdE1HcVnULbuNpVA7S6AKAkjxjCnt1gH0nMdxjCnXAinoOMRx8EklQsR747+Fz
+      srm/VYaNEb/E2vPBHTDNZGJ6tZc1JC9d6/RC3Vc1JC4tWnK9mk/Jr984ZuYugpMc
+      nt9uZTGFYCzZD0FFAA5NAC4i1PARStFycWPzxfC5A0RqodhswoMxwhgfFY4EhVx=
+      -----END CERTIFICATE-----
+      "
+
+   Do not attempt to use this example directly, it has been filled with dummy data.
+   See `nRF Cloud REST API ProvisionDevices`_ for more details.
+
+#. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left and proceed as follows:
+
+   a. Click :guilabel:`Add Devices`.
+   #. Select **Bulk Onboard**.
+
+      The `Bulk Onboard Devices`_ page opens.
+
+   #. Upload the :file:`<device_uuid>_cred.csv` file you created.
+
+   You should see a message stating that the file was uploaded successfully, and a device with the device ID you created should appear in the **Devices** page.
+
+#. Download `Amazon Root CA 1`_ and save it as :file:`AmazonRootCA1.pem`.
+
+   See `CA certificates for server authentication in AWS IoT Core`_ for more details.
+   Do not confuse this CA cert with your self-managed CA cert.
+
+#. Prepare the :file:`cred_<device_uuid>_crt.pem`, :file:`cred_<device_uuid>_prv.pem`, and :file:`AmazonRootCA1.pem` files for use by the device.
+
+   Your device needs these files in order to connect to nRF Cloud.
+   To be usable by your device, they need to be reformatted as C strings and given specific names (:file:`client-cert.pem`, :file:`private-key.pem` and :file:`ca-cert.pem` respectively).
+
+   You can perform the reformatting and renaming as follows:
+
+   .. tabs::
+
+      .. group-tab:: Bash
+
+         .. code-block:: console
+
+           awk 'NF { print "\""$0"\\n\""}' "cred_<device_uuid>_crt.pem" > client-cert.pem
+           awk 'NF { print "\""$0"\\n\""}' "cred_<device_uuid>_prv.pem" > private-key.pem
+           awk 'NF { print "\""$0"\\n\""}' AmazonrootCA1.pem > ca-cert.pem
+
+         Where ``<device_uuid>`` is replaced with the device ID you created.
+
+      .. group-tab:: PowerShell
+
+         .. code-block:: console
+
+            gc ".\cred_<device_uuid>_crt.pem" | %{"""$_\n"""} | out-file -encoding utf8 client-cert.pem
+            gc ".\cred_<device_uuid>_prv.pem" | %{"""$_\n"""} | out-file -encoding utf8 private-key.pem
+            gc .\AmazonrootCA1.pem | %{"""$_\n"""} | out-file -encoding utf8 ca-cert.pem
+
+         Where ``<device_uuid>`` is replaced with the device ID you created.
+
+   You should now have the following three files:
+
+     * :file:`client-cert.pem`
+     * :file:`private-key.pem`
+     * :file:`ca-cert.pem`
+
+   And the contents of each file should be similar to the following:
+
+   .. code-block:: C
+
+      "-----BEGIN CERTIFICATE-----\n"
+      "sCC8AtbNQhzbp4y01FEzXaf5Fko3Qdq0o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh\n"
+      "RnwzoA2dF4wR0rMP5vR6dqBblaGAA5hN7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds\n"
+      "eeadE1HdVnUj8nb+7CGm39vJ4fuNk9vogH0nMdxjCnXAinoOMRx8EklQsR747+Gz\n"
+      "sxcdVYuNEb/E2vWBHTDNZGJ6tZC1JC9d6/RC3Vb1JC4tWnK9mk/Jw984ZuYugpMc\n"
+      "1t9umoGFYCz0nMdxjCnXAbnoOMC5A0RxcWPzxfC5A0RH+j+mwoMxwhgfFY4EhVxp\n"
+      "oCC8labNQhzRC3Vc1JC4tWnK9mpVA7k/o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh\n"
+      "RXwcoAndF4wPzxfC5A0RHponmwBHTDoM7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds\n"
+      "eefdE1HcVnULbuNpVA7S6AKAkjxjCnt1gH0nMdxjCnXAinoOMRx8EklQsR747+Fz\n"
+      "srm/VYaNEb/E2vPBHTDNZGJ6tZc1JC9d6/RC3Vc1JC4tWnK9mk/Jr984ZuYugpMc\n"
+      "nt9uZTGFYCzZD0FFAA5NAC4i1PARStFycWPzxfC5A0RqodhswoMxwhgfFY4EhVx=\n"
+      "-----END CERTIFICATE-----\n"
+
+   Do not attempt to use this example directly, it has been filled with dummy data.
+
+#. Create a :file:`certs` folder directly in the :file:`nrf_cloud_multi_service` folder, and copy :file:`client-cert.pem`, :file:`private-key.pem` and :file:`ca-cert.pem` into it.
+
+   Be sure not to place the new folder in the :file:`nrf_cloud_multi_service/src` folder by accident.
+
+   Now these certs are automatically used if the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is enabled.
+
+#. Build the sample with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option enabled and the device ID you created configured.
+
+   This is required for provisioning to succeed.
+
+   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` Kconfig option to the device ID.
+
+   For example, if the device ID is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
+
+   .. tabs::
+
+      .. group-tab:: Bash
+
+         .. code-block:: console
+
+           west build --board your_board -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
+
+      .. group-tab:: PowerShell
+
+         .. code-block:: console
+
+            west build --board your_board -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
 
 .. _nrf_cloud_multi_service_dependencies:
 
