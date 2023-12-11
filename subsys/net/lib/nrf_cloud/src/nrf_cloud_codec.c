@@ -952,7 +952,7 @@ int nrf_cloud_obj_modem_pvt_add(struct nrf_cloud_obj *const obj,
 int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 					  const struct lte_lc_cells_info *const cells_inf,
 					  const struct wifi_scan_info *const wifi_inf,
-					  const bool request_loc)
+					  const struct nrf_cloud_location_config *const config)
 {
 	if ((!cells_inf && !wifi_inf) || !obj) {
 		return -EINVAL;
@@ -963,10 +963,14 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 	if (!NRF_CLOUD_OBJ_TYPE_VALID(obj)) {
 		return -EBADF;
 	}
+	if (obj->type != NRF_CLOUD_OBJ_TYPE_JSON) {
+		return -ENOTSUP;
+	}
 
 	int err;
 
 	NRF_CLOUD_OBJ_DEFINE(data_obj, obj->type);
+	NRF_CLOUD_OBJ_DEFINE(config_obj, obj->type);
 
 	/* Init obj with the appId and msgType */
 	err = nrf_cloud_obj_msg_init(obj, NRF_CLOUD_JSON_APPID_VAL_LOCATION,
@@ -980,40 +984,66 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 		goto cleanup;
 	}
 
-	/* By default, nRF Cloud will send the location to the device */
-	if (!request_loc &&
-	    nrf_cloud_obj_num_add(&data_obj, NRF_CLOUD_LOCATION_KEY_DOREPLY, 0, false)) {
-		err = -ENOMEM;
-		goto cleanup;
-	}
-
-	switch (obj->type) {
-	case NRF_CLOUD_OBJ_TYPE_JSON:
-	{
-		/* Add cell/wifi info */
-		err = nrf_cloud_obj_location_request_payload_add(&data_obj, cells_inf, wifi_inf);
+	if (config &&
+	    ((config->do_reply != NRF_CLOUD_LOCATION_DOREPLY_DEFAULT) ||
+	     (config->hi_conf != NRF_CLOUD_LOCATION_HICONF_DEFAULT) ||
+	     (config->fallback != NRF_CLOUD_LOCATION_FALLBACK_DEFAULT))) {
+		err = nrf_cloud_obj_init(&config_obj);
 		if (err) {
 			goto cleanup;
 		}
 
-		/* Add data object to the location request object */
-		err = nrf_cloud_obj_object_add(obj, NRF_CLOUD_JSON_DATA_KEY, &data_obj, false);
+		if (config->do_reply != NRF_CLOUD_LOCATION_DOREPLY_DEFAULT) {
+			err = nrf_cloud_obj_bool_add(&config_obj,
+						     NRF_CLOUD_LOCATION_JSON_KEY_DOREPLY,
+						     config->do_reply, false);
+			if (err) {
+				goto cleanup;
+			}
+		}
+		if (config->hi_conf != NRF_CLOUD_LOCATION_HICONF_DEFAULT) {
+			err = nrf_cloud_obj_bool_add(&config_obj,
+						     NRF_CLOUD_LOCATION_JSON_KEY_HICONF,
+						     config->hi_conf, false);
+			if (err) {
+				goto cleanup;
+			}
+		}
+		if (config->fallback != NRF_CLOUD_LOCATION_FALLBACK_DEFAULT) {
+			err = nrf_cloud_obj_bool_add(&config_obj,
+						     NRF_CLOUD_LOCATION_JSON_KEY_FALLBACK,
+						     config->fallback, false);
+			if (err) {
+				goto cleanup;
+			}
+		}
+
+		/* At least one entry differed from defaults, so add it to the obj. */
+		err = nrf_cloud_obj_object_add(obj, NRF_CLOUD_LOCATION_JSON_KEY_CONFIG,
+					       &config_obj, false);
 		if (err) {
 			goto cleanup;
 		}
-
-		/* The data object now belongs to the location request object */
-
-		break;
+		/* The config object now belongs to the location request object */
 	}
-	default:
-		err = -ENOTSUP;
+
+	/* Add cell/wifi info */
+	err = nrf_cloud_obj_location_request_payload_add(&data_obj, cells_inf, wifi_inf);
+	if (err) {
 		goto cleanup;
 	}
+
+	/* Add data object to the location request object */
+	err = nrf_cloud_obj_object_add(obj, NRF_CLOUD_JSON_DATA_KEY, &data_obj, false);
+	if (err) {
+		goto cleanup;
+	}
+	/* The data object now belongs to the location request object */
 
 	return 0;
 
 cleanup:
+	(void)nrf_cloud_obj_free(&config_obj);
 	(void)nrf_cloud_obj_free(&data_obj);
 	(void)nrf_cloud_obj_free(obj);
 	return err;

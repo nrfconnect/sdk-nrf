@@ -37,6 +37,15 @@ config NON_RESP_RETRIES
 	  result in up to this number of retransmissions of the request followed
 	  by waits for a response.
 
+config NRF_CLOUD_COAP_GF_CONF
+	bool "Enable configuration options for ground-fix requests"
+	help
+	  The initial release of CoAP for nRF Cloud did not provide a way to
+	  configure the response; it defaulted to always returning the location
+	  and method used to acquire the location. The cloud will soon support
+	  configuration values do_reply, fallback, and hi_conf. When the cloud
+	  support is ready, NRF_CLOUD_COAP_GF_CONF can be set true.
+
 if WIFI
 
 config NRF_CLOUD_COAP_SEND_SSIDS

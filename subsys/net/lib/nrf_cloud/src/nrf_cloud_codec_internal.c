@@ -3713,6 +3713,68 @@ int nrf_cloud_json_to_url_params_convert(char *const buf, const size_t buf_size,
 	return 0;
 }
 
+int nrf_cloud_ground_fix_url_encode(char *buf, size_t size, const char *base,
+				    const struct nrf_cloud_location_config *config)
+{
+	/* Adjust the size sz of buffer remaining by the length of the string at ptr.
+	 * If out of room, error out. Otherwise, adjust ptr to the end so another
+	 * string can be appended there.
+	 */
+	#define ADJ(ptr, sz) do { \
+		size_t len = strlen(ptr); \
+		(sz) -= len; \
+		if ((sz) < 0) { \
+			return -ENOMEM; \
+		} \
+		(ptr) += len; \
+	} while (0)
+	__ASSERT_NO_MSG(base != NULL);
+	/* Calculate space for longest possible string.
+	 * For example: loc/ground_fix?doReply=false&fallback=false&hiConf=false
+	 */
+	size_t max_size = strlen(base) + 1 +
+			  sizeof(NRF_CLOUD_LOCATION_JSON_KEY_DOREPLY "=false&") +
+			  sizeof(NRF_CLOUD_LOCATION_JSON_KEY_FALLBACK "=false&") +
+			  sizeof(NRF_CLOUD_LOCATION_JSON_KEY_HICONF "=false") + 1;
+
+	if (buf == NULL) {
+		LOG_DBG("URL buf size=%zd", max_size);
+		return max_size;
+	}
+	__ASSERT_NO_MSG(size >= max_size);
+
+	char *p = buf;
+
+	strncpy(p, base, size);
+	if (config == NULL) {
+		LOG_DBG("URL=%s", buf);
+		return 0;
+	}
+
+	ADJ(p, size);
+	char sep = '?';
+
+	if (config->do_reply != NRF_CLOUD_LOCATION_DOREPLY_DEFAULT) {
+		snprintk(p, size, "%c%s=%s", sep, NRF_CLOUD_LOCATION_JSON_KEY_DOREPLY,
+			 config->do_reply ? "true" : "false");
+		ADJ(p, size);
+		sep = '&';
+	}
+	if (config->fallback != NRF_CLOUD_LOCATION_FALLBACK_DEFAULT) {
+		snprintk(p, size, "%c%s=%s", sep, NRF_CLOUD_LOCATION_JSON_KEY_FALLBACK,
+			 config->fallback ? "true" : "false");
+		ADJ(p, size);
+		sep = '&';
+	}
+	if (config->hi_conf != NRF_CLOUD_LOCATION_HICONF_DEFAULT) {
+		snprintk(p, size, "%c%s=%s", sep, NRF_CLOUD_LOCATION_JSON_KEY_HICONF,
+			 config->hi_conf ? "true" : "false");
+		ADJ(p, size);
+	}
+	LOG_DBG("URL=%s", buf);
+	return 0;
+}
+
 static int encode_json_log(struct nrf_cloud_log_context *ctx, uint8_t *buf, size_t size,
 			   struct nrf_cloud_data *output)
 {

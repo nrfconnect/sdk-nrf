@@ -415,9 +415,14 @@ static void get_location_callback(int16_t result_code,
 		if (len) {
 			LOG_ERR("Unexpected response: %*s", len, payload);
 		}
-	} else {
+	} else if (len) {
 		loc_err = coap_codec_ground_fix_resp_decode(user, payload, len,
 							    COAP_CONTENT_FORMAT_APP_CBOR);
+	} else {
+		struct nrf_cloud_location_result *result = user;
+
+		loc_err = 0;
+		result->type = LOCATION_TYPE__INVALID;
 	}
 }
 
@@ -433,21 +438,39 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 	static uint8_t buffer[LOCATION_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
 	int err;
+	const struct nrf_cloud_location_config *conf = IS_ENABLED(CONFIG_NRF_CLOUD_COAP_GF_CONF) ?
+						       request->config : NULL;
+	size_t url_size = nrf_cloud_ground_fix_url_encode(NULL, 0, COAP_GND_FIX_RSC, conf);
 
-	err = coap_codec_ground_fix_req_encode(request->cell_info, request->wifi_info, buffer, &len,
+	__ASSERT_NO_MSG(url_size > 0);
+	char url[url_size + 1];
+
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_COAP_GF_CONF) && (request->config != NULL)) {
+		LOG_WRN("Use of location configuration parameters not enabled; ignored.");
+	}
+	(void)nrf_cloud_ground_fix_url_encode(url, url_size, COAP_GND_FIX_RSC, conf);
+
+	err = coap_codec_ground_fix_req_encode(request->cell_info,
+					       request->wifi_info,
+					       buffer, &len,
 					       COAP_CONTENT_FORMAT_APP_CBOR);
 	if (err) {
 		LOG_ERR("Unable to encode location data: %d", err);
 		return err;
 	}
-	err = nrf_cloud_coap_fetch(COAP_GND_FIX_RSC, NULL, buffer, len,
+
+	err = nrf_cloud_coap_fetch(url, NULL, buffer, len,
 				   COAP_CONTENT_FORMAT_APP_CBOR,
 				   COAP_CONTENT_FORMAT_APP_CBOR, true,
 				   get_location_callback, result);
 
 	if (!err && !loc_err) {
-		LOG_DBG("Location: %d, %.12g, %.12g, %d", result->type,
-			result->lat, result->lon, result->unc);
+		if (result->type != LOCATION_TYPE__INVALID) {
+			LOG_DBG("Location: %d, %.12g, %.12g, %d", result->type,
+				result->lat, result->lon, result->unc);
+		} else {
+			LOG_DBG("No location returned");
+		}
 	} else if (err == -EAGAIN) {
 		LOG_ERR("Timeout waiting for location");
 	} else {

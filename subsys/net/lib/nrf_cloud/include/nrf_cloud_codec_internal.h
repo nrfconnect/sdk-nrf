@@ -395,6 +395,14 @@ int nrf_cloud_pgps_req_data_json_encode(const struct gps_pgps_request *const req
 int nrf_cloud_json_to_url_params_convert(char *const buf, const size_t buf_size,
 					 const cJSON * const obj);
 
+/** @brief Generate URL for ground-fix request.
+ *  Return size of required buffer if buf = NULL, otherwise generate and store
+ *  URL into buf based on config, and return 0 on no error or negative error code.
+ *  The base parameter must not be NULL. The config parameter may be NULL.
+ */
+int nrf_cloud_ground_fix_url_encode(char *buf, size_t size, const char *base,
+				    const struct nrf_cloud_location_config *config);
+
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);
 
