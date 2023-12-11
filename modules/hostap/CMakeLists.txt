@@ -179,6 +179,9 @@ zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_AP
 	${COMMON_SRC_BASE}/eap_server/eap_server_identity.c
 	${COMMON_SRC_BASE}/eap_server/eap_server_methods.c
 	${COMMON_SRC_BASE}/eapol_auth/eapol_auth_sm.c
+	${COMMON_SRC_BASE}/ap/mbo_ap.c
+	${COMMON_SRC_BASE}/ap/ctrl_iface_ap.c
+	${COMMON_SRC_BASE}/utils/crc32.c
 )
 
 zephyr_library_compile_definitions_ifdef(CONFIG_WPA_SUPP_AP
