@@ -8,7 +8,9 @@
 #include <zephyr/settings/settings.h>
 
 #include "fp_storage_ak.h"
+#include "fp_storage.h"
 #include "fp_storage_ak_priv.h"
+#include "fp_storage_manager_priv.h"
 #include "fp_common.h"
 
 #include "storage_mock.h"
@@ -22,10 +24,13 @@ static void reload_keys_from_storage(void)
 	int err;
 
 	fp_storage_ak_ram_clear();
-	cu_account_keys_validate_unloaded();
+	fp_storage_manager_ram_clear();
+	cu_account_keys_validate_uninitialized();
 	err = settings_load();
-
 	zassert_ok(err, "Failed to load settings");
+
+	err = fp_storage_init();
+	zassert_ok(err, "Failed to initialize module");
 }
 
 static void before_fn(void *f)
@@ -34,12 +39,14 @@ static void before_fn(void *f)
 
 	int err;
 
-	cu_account_keys_validate_unloaded();
+	cu_account_keys_validate_uninitialized();
 
 	/* Load empty settings before the test to initialize fp_storage. */
 	err = settings_load();
-
 	zassert_ok(err, "Settings load failed");
+
+	err = fp_storage_init();
+	zassert_ok(err, "Failed to initialize module");
 }
 
 static void after_fn(void *f)
@@ -47,40 +54,37 @@ static void after_fn(void *f)
 	ARG_UNUSED(f);
 
 	fp_storage_ak_ram_clear();
+	fp_storage_manager_ram_clear();
 	storage_mock_clear();
-	cu_account_keys_validate_unloaded();
+	cu_account_keys_validate_uninitialized();
 }
 
-static bool unloaded_ak_check_cb(const struct fp_account_key *account_key, void *context)
+ZTEST(suite_fast_pair_storage, test_settings_unloaded)
 {
-	zassert_unreachable("Callback should never be called");
-	return false;
-}
-
-ZTEST(suite_fast_pair_storage, test_unloaded)
-{
-	static const uint8_t seed = 0;
-
 	int err;
-	struct fp_account_key account_key;
-	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
-	size_t read_cnt = ACCOUNT_KEY_MAX_CNT;
 
 	/* Check that Account Key storage operations fail when settings are unloaded. */
 	after_fn(NULL);
 
-	cu_generate_account_key(seed, &account_key);
-	err = fp_storage_ak_save(&account_key);
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+	cu_account_keys_validate_uninitialized();
 
-	err = fp_storage_ak_count();
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+	err = fp_storage_init();
+	zassert_not_equal(err, 0, "Expected error before settings load");
 
-	err = fp_storage_ak_get(read_keys, &read_cnt);
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+	cu_account_keys_validate_uninitialized();
+}
 
-	err = fp_storage_ak_find(NULL, unloaded_ak_check_cb, NULL);
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+ZTEST(suite_fast_pair_storage, test_uninitialized)
+{
+	int err;
+
+	/* Check that Account Key storage operations fail when fp_storage is uninitialized */
+	after_fn(NULL);
+
+	err = settings_load();
+	zassert_ok(err, "Settings load failed");
+
+	cu_account_keys_validate_uninitialized();
 }
 
 ZTEST(suite_fast_pair_storage, test_one_key)
@@ -113,6 +117,24 @@ ZTEST(suite_fast_pair_storage, test_one_key)
 	zassert_ok(err, "Getting Account Keys failed");
 	zassert_equal(read_cnt, 1, "Invalid Account Key count");
 	zassert_true(cu_check_account_key_seed(seed, &read_keys[0]), "Invalid key on read");
+}
+
+ZTEST(suite_fast_pair_storage, test_reinitialization)
+{
+	static const uint8_t first_seed;
+	static const size_t test_key_cnt = 5;
+	int err;
+
+	cu_account_keys_generate_and_store(first_seed, test_key_cnt);
+	cu_account_keys_validate_loaded(first_seed, test_key_cnt);
+
+	err = fp_storage_uninit();
+	zassert_ok(err, "Uninitialization failed");
+	cu_account_keys_validate_uninitialized();
+
+	err = fp_storage_init();
+	zassert_ok(err, "Initialization failed");
+	cu_account_keys_validate_loaded(first_seed, test_key_cnt);
 }
 
 ZTEST(suite_fast_pair_storage, test_duplicate)

@@ -129,7 +129,7 @@ static void test_fp_storage_reset_prepare(void) {}
  * entries by name) and its callbacks would be call before other's modules callbacks.
  */
 FP_STORAGE_MANAGER_MODULE_REGISTER(_0_test_reset, test_fp_storage_reset_perform,
-				   test_fp_storage_reset_prepare);
+				   test_fp_storage_reset_prepare, NULL, NULL);
 
 static void *setup_fn(void)
 {
@@ -197,10 +197,10 @@ static void fp_storage_validate_unloaded(void)
 	int err;
 	char read_name[FP_STORAGE_PN_BUF_LEN];
 
-	cu_account_keys_validate_unloaded();
+	cu_account_keys_validate_uninitialized();
 
 	err = fp_storage_pn_get(read_name);
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+	zassert_equal(err, -EACCES, "Expected error before settings load");
 }
 
 static void before_fn(void *f)
@@ -216,6 +216,9 @@ static void before_fn(void *f)
 
 	err = settings_load();
 	zassert_ok(err, "Unexpected error in settings load");
+
+	err = fp_storage_init();
+	zassert_ok(err, "Unexpected error in modules init");
 }
 
 static int settings_get_name_cb(const char *key, size_t len, settings_read_cb read_cb, void *cb_arg,
@@ -342,6 +345,8 @@ static void fp_storage_self_test_run(void)
 	fp_storage_validate_unloaded();
 	err = settings_load();
 	zassert_ok(err, "Unexpected error in settings load");
+	err = fp_storage_init();
+	zassert_ok(err, "Unexpected error in modules init");
 
 	cu_account_keys_validate_loaded(seed, key_count);
 	personalized_name_validate_loaded(name);
@@ -398,6 +403,8 @@ static void before_continue_fn(void *f)
 
 	err = settings_load();
 	zassert_ok(err, "Unexpected error in settings load");
+	err = fp_storage_init();
+	zassert_ok(err, "Unexpected error in modules init");
 }
 
 ZTEST(suite_fast_pair_storage_factory_reset_03, test_interrupted_reset_finish)
