@@ -47,27 +47,34 @@ bool cu_check_account_key_seed(uint8_t seed, const struct fp_account_key *accoun
 	return true;
 }
 
-static bool unloaded_account_key_find_cb(const struct fp_account_key *account_key, void *context)
+static bool invalid_account_key_find_cb(const struct fp_account_key *account_key, void *context)
 {
-	zassert_true(false, "Callback should not be called before settings are loaded");
+	zassert_true(false, "Callback should never be called when settings are not initialized");
 
 	return false;
 }
 
-void cu_account_keys_validate_unloaded(void)
+void cu_account_keys_validate_uninitialized(void)
 {
+	static const uint8_t seed;
+
 	int err;
-	struct fp_account_key all_keys[ACCOUNT_KEY_MAX_CNT];
-	size_t key_count = ACCOUNT_KEY_MAX_CNT;
+	struct fp_account_key account_key;
+	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
+	size_t read_cnt = ACCOUNT_KEY_MAX_CNT;
+
+	cu_generate_account_key(seed, &account_key);
+	err = fp_storage_ak_save(&account_key);
+	zassert_equal(err, -EACCES, "Expected error before initialization");
 
 	err = fp_storage_ak_count();
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+	zassert_equal(err, -EACCES, "Expected error before initialization");
 
-	err = fp_storage_ak_get(all_keys, &key_count);
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+	err = fp_storage_ak_get(read_keys, &read_cnt);
+	zassert_equal(err, -EACCES, "Expected error before initialization");
 
-	err = fp_storage_ak_find(&all_keys[0], unloaded_account_key_find_cb, NULL);
-	zassert_equal(err, -ENODATA, "Expected error before settings load");
+	err = fp_storage_ak_find(NULL, invalid_account_key_find_cb, NULL);
+	zassert_equal(err, -EACCES, "Expected error before initialization");
 }
 
 void cu_account_keys_validate_loaded(uint8_t seed_first, uint8_t stored_cnt)

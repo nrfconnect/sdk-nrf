@@ -46,12 +46,12 @@ void cu_account_keys_generate_and_store(uint8_t first_seed, uint8_t gen_count);
  */
 bool cu_check_account_key_seed(uint8_t seed, const struct fp_account_key *account_key);
 
-/** Validate that Account Keys are not loaded.
+/** Validate that Account Key storage module is not initialized.
  *
- * The function uses Fast Pair Account Key storage API to validate that the data is not loaded from
- * settings. Ztest asserts are used to signalize error.
+ * The function uses Fast Pair Account Key storage API to validate that the module is not
+ * initialized. Ztest asserts are used to signalize error.
  */
-void cu_account_keys_validate_unloaded(void);
+void cu_account_keys_validate_uninitialized(void);
 
 /** Validate the loaded Account Keys.
  *
