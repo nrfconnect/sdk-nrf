@@ -91,7 +91,8 @@ static int wpa_supp_process_status(struct supp_int_event_data *event_data, char 
 	}
 
 	if (i >= ARRAY_SIZE(wpa_supp_event_map)) {
-		wpa_printf(MSG_ERROR, "Event not supported: %s\n", wpa_supp_status);
+		/* This is not a bug but rather implementation gap (intentional or not) */
+		wpa_printf(MSG_DEBUG, "Event not supported: %s\n", wpa_supp_status);
 		return -ENOTSUP;
 	}
 
