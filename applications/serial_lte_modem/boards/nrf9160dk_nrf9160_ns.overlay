@@ -53,10 +53,3 @@
 		};
 	};
 };
-
-/* Enable external flash */
-&spi3 {
-	mx25r64: mx25r6435f@1 {
-		status = "okay";
-	};
-};
