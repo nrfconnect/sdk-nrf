@@ -6,7 +6,6 @@
 
 #include <psa/crypto.h>
 #include <stdint.h>
-#include "tfm_api.h"
 
 #include "tfm_sp_log.h"
 
