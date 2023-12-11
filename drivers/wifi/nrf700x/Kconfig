@@ -62,6 +62,7 @@ config NRF700X_STA_MODE
 
 config NRF700X_AP_MODE
 	bool "Enable Access point mode"
+	depends on WPA_SUPP_AP
 
 config NRF700X_P2P_MODE
 	bool "Enable P2P support in driver"
