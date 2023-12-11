@@ -281,30 +281,12 @@ static inline enum wifi_security_type wpas_key_mgmt_to_zephyr(int key_mgmt, int 
 	}
 }
 
-/* Public API */
-int z_wpa_supplicant_connect(const struct device *dev,
-						struct wifi_connect_req_params *params)
+static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
+			struct wifi_connect_req_params *params, bool mode_ap)
 {
-	struct wpa_supplicant *wpa_s;
-	int ret = 0;
+	int ret;
 	struct add_network_resp resp = {0};
 	char *chan_list = NULL;
-
-	if (!net_if_is_admin_up(net_if_lookup_by_dev(dev))) {
-		wpa_printf(MSG_ERROR,
-			   "Interface %s is down, dropping connect",
-			   dev->name);
-		return -1;
-	}
-
-	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
-
-	wpa_s = get_wpa_s_handle(dev);
-	if (!wpa_s) {
-		ret = -1;
-		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
-		goto out;
-	}
 
 	_wpa_cli_cmd_v("remove_network all");
 	ret = z_wpa_ctrl_add_network(&resp);
@@ -398,14 +380,47 @@ int z_wpa_supplicant_connect(const struct device *dev,
 	_wpa_cli_cmd_v("enable_network %d", resp.network_id);
 	_wpa_cli_cmd_v("select_network %d", resp.network_id);
 
+	return 0;
+rem_net:
+	_wpa_cli_cmd_v("remove_network %d", resp.network_id);
+out:
+	return ret;
+}
+
+/* Public API */
+int z_wpa_supplicant_connect(const struct device *dev,
+						struct wifi_connect_req_params *params)
+{
+	struct wpa_supplicant *wpa_s;
+	int ret = 0;
+
+	if (!net_if_is_admin_up(net_if_lookup_by_dev(dev))) {
+		wpa_printf(MSG_ERROR,
+			   "Interface %s is down, dropping connect",
+			   dev->name);
+		return -1;
+	}
+
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
+
+	wpa_s = get_wpa_s_handle(dev);
+	if (!wpa_s) {
+		ret = -1;
+		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
+		goto out;
+	}
+
+	ret = wpas_add_and_config_network(wpa_s, params, false);
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Failed to add and configure network for STA mode: %d", ret);
+		goto out;
+	}
+
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = CONNECT;
 	wpa_supp_api_ctrl.connection_timeout = params->timeout;
 
 	goto out;
-
-rem_net:
-	_wpa_cli_cmd_v("remove_network %d", resp.network_id);
 out:
 	k_mutex_unlock(&wpa_supplicant_mutex);
 
