@@ -297,6 +297,10 @@ static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
 
 	wpa_printf(MSG_DEBUG, "NET added: %d\n", resp.network_id);
 
+	if (mode_ap) {
+		_wpa_cli_cmd_v("set_network %d mode 2", resp.network_id);
+	}
+
 	_wpa_cli_cmd_v("set_network %d ssid \"%s\"", resp.network_id, params->ssid);
 	_wpa_cli_cmd_v("set_network %d scan_ssid 1", resp.network_id);
 	_wpa_cli_cmd_v("set_network %d key_mgmt NONE", resp.network_id);
@@ -372,8 +376,13 @@ static int wpas_add_and_config_network(struct wpa_supplicant *wpa_s,
 				goto rem_net;
 			}
 		}
-		_wpa_cli_cmd_v("set_network %d scan_freq %d",
-			resp.network_id, freq);
+		if (mode_ap) {
+			_wpa_cli_cmd_v("set_network %d frequency %d",
+				resp.network_id, freq);
+		} else {
+			_wpa_cli_cmd_v("set_network %d scan_freq %d",
+				resp.network_id, freq);
+		}
 	}
 
 	/* enable and select network */
@@ -710,3 +719,44 @@ int z_wpa_supplicant_channel(const struct device *dev,
 
 	return wifi_mgmt_api->channel(dev, channel);
 }
+
+#ifdef CONFIG_AP
+int z_wpa_supplicant_ap_enable(const struct device *dev,
+			       struct wifi_connect_req_params *params)
+{
+	struct wpa_supplicant *wpa_s;
+	int ret = 0;
+
+	if (!net_if_is_admin_up(net_if_lookup_by_dev(dev))) {
+		wpa_printf(MSG_ERROR,
+			   "Interface %s is down, dropping connect",
+			   dev->name);
+		return -1;
+	}
+
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
+
+	wpa_s = get_wpa_s_handle(dev);
+	if (!wpa_s) {
+		ret = -1;
+		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
+		goto out;
+	}
+
+	ret = wpas_add_and_config_network(wpa_s, params, true);
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Failed to add and configure network for AP mode: %d", ret);
+		goto out;
+	}
+
+out:
+	k_mutex_unlock(&wpa_supplicant_mutex);
+
+	return ret;
+}
+
+int z_wpa_supplicant_ap_disable(const struct device *dev)
+{
+	return wpas_disconnect_network(dev);
+}
+#endif /* CONFIG_AP */
