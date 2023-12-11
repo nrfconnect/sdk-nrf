@@ -1783,7 +1783,7 @@ int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cf
  *
  * @retval 0 if a configuration was found and populated to the provided pointer.
  * @retval -EINVAL if input parameter was @c NULL.
- * @retval -ENOENT if no periodic search was not configured.
+ * @retval -ENOENT if periodic search configuration was not set.
  * @retval -EFAULT if an AT command failed.
  * @retval -EBADMSG if the modem responded with an error to an AT command or the
  *         response could not be parsed.
