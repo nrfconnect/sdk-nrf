@@ -2169,7 +2169,10 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 	if (operation == LINK_OPERATION_READ) {
 
 		ret = lte_lc_periodic_search_get(&search_cfg);
-		if (ret) {
+		if (ret == -ENOENT) {
+			mosh_error("Reading search configuration failed: no configuration set");
+			return ret;
+		} else if (ret) {
 			mosh_error("Reading search configuration failed: %d", ret);
 			return ret;
 		}
