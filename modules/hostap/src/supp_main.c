@@ -87,6 +87,10 @@ static const struct wifi_mgmt_ops wpa_supp_ops = {
 	.mode = z_wpa_supplicant_mode,
 	.filter = z_wpa_supplicant_filter,
 	.channel = z_wpa_supplicant_channel,
+#ifdef CONFIG_AP
+	.ap_enable = z_wpa_supplicant_ap_enable,
+	.ap_disable = z_wpa_supplicant_ap_disable,
+#endif /* CONFIG_AP */
 };
 
 DEFINE_WIFI_NM_INSTANCE(wpa_supplicant, &wpa_supp_ops);
