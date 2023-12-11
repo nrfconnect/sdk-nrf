@@ -387,6 +387,41 @@ out:
 	return ret;
 }
 
+static int wpas_disconnect_network(const struct device *dev)
+{
+	int ret = 0;
+	struct net_if *iface = net_if_lookup_by_dev(dev);
+
+	if (!iface) {
+		ret = -EINVAL;
+		wpa_printf(MSG_ERROR, "Device %s not found", dev->name);
+		goto out;
+	}
+
+	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
+
+	wpa_supp_api_ctrl.dev = dev;
+	wpa_supp_api_ctrl.requested_op = DISCONNECT;
+	_wpa_cli_cmd_v("disconnect");
+
+out:
+	k_mutex_unlock(&wpa_supplicant_mutex);
+
+	if (ret) {
+		wpa_printf(MSG_ERROR, "Disconnect failed: %s",
+			   strerror(-ret));
+		return ret;
+	}
+
+	wpa_supp_restart_status_work();
+
+	ret = wait_for_disconnect_complete(dev);
+
+	wifi_mgmt_raise_disconnect_complete_event(iface, ret);
+
+	return ret;
+}
+
 /* Public API */
 int z_wpa_supplicant_connect(const struct device *dev,
 						struct wifi_connect_req_params *params)
@@ -433,44 +468,7 @@ out:
 
 int z_wpa_supplicant_disconnect(const struct device *dev)
 {
-	struct wpa_supplicant *wpa_s;
-	int ret = 0;
-	struct net_if *iface = net_if_lookup_by_dev(dev);
-
-	if (!iface) {
-		ret = -EINVAL;
-		wpa_printf(MSG_ERROR, "Device %s not found", dev->name);
-		goto out;
-	}
-
-	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
-
-	wpa_s = get_wpa_s_handle(dev);
-	if (!wpa_s) {
-		ret = -EINVAL;
-		wpa_printf(MSG_ERROR, "Interface %s not found", dev->name);
-		goto out;
-	}
-	wpa_supp_api_ctrl.dev = dev;
-	wpa_supp_api_ctrl.requested_op = DISCONNECT;
-	_wpa_cli_cmd_v("disconnect");
-
-out:
-	k_mutex_unlock(&wpa_supplicant_mutex);
-
-	if (ret) {
-		wpa_printf(MSG_ERROR, "Disconnect failed: %s",
-			   strerror(-ret));
-		return ret;
-	}
-
-	wpa_supp_restart_status_work();
-
-	ret = wait_for_disconnect_complete(dev);
-
-	wifi_mgmt_raise_disconnect_complete_event(iface, ret);
-
-	return ret;
+	return wpas_disconnect_network(dev);
 }
 
 int z_wpa_supplicant_status(const struct device *dev,
