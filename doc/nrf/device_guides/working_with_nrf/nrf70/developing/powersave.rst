@@ -75,17 +75,18 @@ The device wakes up to check buffered packets for a configured interval (DTIM, l
 Dynamic power save feature
 ==========================
 
-When the device is in one of the Power Save modes and an application transmits a packet, the device transitions to Active mode for the packet transmission.
-Depending on the :ref:`inactivity timer <ug_nrf70_developing_powersave_inactivity_tomer>` value, it switches back to Power Save modes.
+When the device is in Active mode due to packet transmission or packet reception, an inactivity timer is started with an :ref:`inactivity timer <ug_nrf70_developing_powersave_inactivity_timer>` value, and the device switches to Power Save mode when the timer expires and the Medium Access Control (MAC) layer is idle.
 This dynamic switching in and out of Power Save modes is called the dynamic power save feature.
+This feature is enabled by default.
+It helps the device to save power in low traffic scenarios and protects against intermittent traffic bursts.
 
-.. _ug_nrf70_developing_powersave_inactivity_tomer:
+.. _ug_nrf70_developing_powersave_inactivity_timer:
 
 Inactivity timer
 ================
 
 The application can configure the inactivity timer based on the traffic profile.
-After transmissions are completed and if the Medium Access Control (MAC) layer is idle for a period that is equal to the inactivity timer, the MAC switches to the Power Save mode.
+After transmissions or receptions are completed and if the MAC layer is idle for a period that is equal to the inactivity timer, MAC switches to the Power Save mode.
 
 You must keep the following in mind while choosing the inactivity timer:
 
