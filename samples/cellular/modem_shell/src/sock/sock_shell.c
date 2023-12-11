@@ -638,6 +638,7 @@ static int cmd_sock_rai(const struct shell *shell, size_t argc, char **argv)
 	bool arg_rai_one_resp = false;
 	bool arg_rai_ongoing = false;
 	bool arg_rai_wait_more = false;
+	int rai_option_count = 0;
 
 	optreset = 1;
 	optind = 1;
@@ -652,18 +653,23 @@ static int cmd_sock_rai(const struct shell *shell, size_t argc, char **argv)
 
 		case SOCK_SHELL_OPT_RAI_LAST:
 			arg_rai_last = true;
+			rai_option_count++;
 			break;
 		case SOCK_SHELL_OPT_RAI_NO_DATA:
 			arg_rai_no_data = true;
+			rai_option_count++;
 			break;
 		case SOCK_SHELL_OPT_RAI_ONE_RESP:
 			arg_rai_one_resp = true;
+			rai_option_count++;
 			break;
 		case SOCK_SHELL_OPT_RAI_ONGOING:
 			arg_rai_ongoing = true;
+			rai_option_count++;
 			break;
 		case SOCK_SHELL_OPT_RAI_WAIT_MORE:
 			arg_rai_wait_more = true;
+			rai_option_count++;
 			break;
 
 		case 'h':
@@ -691,6 +697,12 @@ static int cmd_sock_rai(const struct shell *shell, size_t argc, char **argv)
 		mosh_warn(
 			"RAI is requested but RAI is disabled.\n"
 			"Use 'link rai' command to enable it for socket usage.");
+	}
+
+	if (rai_option_count > 1) {
+		mosh_warn(
+			"%d RAI options set while normally just one should be used at a time. "
+			"Hope you know what you are doing.", rai_option_count);
 	}
 
 	err = sock_rai(
