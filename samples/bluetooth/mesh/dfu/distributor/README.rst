@@ -153,7 +153,7 @@ Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform th
 The commands can be executed in two ways:
 
 * Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application or :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>`).
-* By accessing the :ref:`zephyr:shell_api` module over UART.
+* By accessing the :ref:`zephyr:shell_api` module over RTT.
 
 .. _ble_mesh_dfu_distributor_fw_image_upload:
 
@@ -167,7 +167,7 @@ A firmware image can be uploaded to the device in two ways:
 
 For out-of-band upload, the sample uses the image management subsystem of the :ref:`zephyr:mcu_mgr`.
 The management subsystem uses the Simple Management Protocol (SMP), provided by the Mcumgr library, to exchange commands and data between the SMP server (the sample device) and the SMP client.
-This sample supports Bluetooth Low Energy as the SMP transport.
+This sample supports Bluetooth Low Energy and UART as the SMP transport.
 See :ref:`zephyr:device_mgmt` for more information about Mcumgr and SMP.
 
 In this sample, the device flash is split into fixed partitions using devicetree as defined in :zephyr_file:`nrf52840dk_nrf52840.dts<boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts>`.
