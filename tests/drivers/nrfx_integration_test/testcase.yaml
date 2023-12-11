@@ -3,6 +3,13 @@ tests:
     build_only: true
     filter: CONFIG_HAS_NRFX
     tags: drivers ci_build
+    platform_allow:
+      - nrf52840dk_nrf52840
+      - nrf9160dk_nrf9160
+      - nrf9160dk_nrf9160_ns
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf5340dk_nrf5340_cpunet
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf9160dk_nrf9160
@@ -16,6 +23,9 @@ tests:
     tags: drivers ci_build
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SOFTDEVICE=y
+    platform_allow:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpunet
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpunet
@@ -25,6 +35,9 @@ tests:
     tags: drivers ci_build
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SW_SPLIT=y
+    platform_allow:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpunet
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpunet
