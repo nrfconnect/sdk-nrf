@@ -299,7 +299,10 @@ Bluetooth Mesh samples
 
     * Support for pairing with display capability and the :ref:`bt_mesh_le_pair_resp_readme`.
 
-|no_changes_yet_note|
+  * Fixed:
+
+    * An issue where the shell interface was not accessible over UART because UART was used as a transport for MCUmgr SMP protocol.
+      Shell is now accessible over RTT.
 
 Cellular samples
 ----------------
