@@ -31,6 +31,7 @@ if ((CONFIG_AUDIO_DFU EQUAL 1) OR (CONFIG_AUDIO_DFU EQUAL 2))
     list(APPEND empty_net_core_OVERLAY_CONFIG
         "${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-empty_net_core.conf"
     )
+    list(APPEND empty_net_core_b0n_CONFIG_SYS_CLOCK_EXISTS n)
     if (CONFIG_B0N_MINIMAL)
         set(min_b0n_flag "-m")
         list(APPEND empty_net_core_b0n_OVERLAY_CONFIG overlay-minimal-size.conf)
