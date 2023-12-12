@@ -671,6 +671,7 @@ Libraries for networking
 
     * Automatic selection of proprietary PSM mode when building for the SOC_NRF9161_LACA.
     * Support for bulk transfers to the :c:func:`nrf_cloud_coap_json_message_send` function.
+    * Support for raw transfers to the :c:func:`nrf_cloud_coap_bytes_send` function.
 
   * Updated:
 

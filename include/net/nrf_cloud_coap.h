@@ -298,6 +298,16 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
 					struct nrf_cloud_obj *const delta_out);
 
 /**
+ * @brief Send raw bytes to nRF Cloud.
+ *
+ * @param[in]     buf buffer with binary string.
+ * @param[in]     buf_len  length of buf in bytes.
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len);
+
+/**
  * @brief Send an nRF Cloud object
  *
  * This only supports sending of the CoAP CBOR or JSON type objects or a pre-encoded CBOR buffer.
