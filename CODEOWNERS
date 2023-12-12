@@ -65,6 +65,12 @@ Kconfig*                                  @tejlmand
 /doc/custom.properties                    @gmarull
 /doc/tags.yml                             @gmarull
 /doc/requirements.txt                     @gmarull
+# General top-level docs
+/doc/nrf/config_and_build/                @greg-fer
+/doc/nrf/installation/                    @greg-fer
+/doc/nrf/security/                        @greg-fer
+/doc/nrf/test_and_optimize/               @greg-fer
+/doc/nrf/*.rst                            @greg-fer
 # All subfolders
 /drivers/                                 @anangl
 /drivers/serial/                          @nordic-krch @anangl
