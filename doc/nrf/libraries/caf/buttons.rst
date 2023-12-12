@@ -60,6 +60,28 @@ The following Kconfig options are available for this module:
 By default, a button press is indicated by a pin switch from the low to the high state.
 You can change this with :kconfig:option:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`, which will cause the application to react to an opposite pin change (from the high to the low state).
 
+Pull resistor configuration
+===========================
+
+By default, the module will set up every pin with a pull-down resistor, or a pull-up resistor if :kconfig:option:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED` is set.
+However, it is possible to set this for each pin, by assigning a valid value to :c:member:`gpio_pin.pull_resistor`.
+If left unspecified, the module will fallback to the default behaviour.
+
+.. code-block:: c
+
+	#include <caf/gpio_pins.h>
+
+	static const struct gpio_pin col[] = {
+		{ .port = 0, .pin = 31 },
+		{ .port = 0, .pin = 24 },
+	};
+
+	static const struct gpio_pin row[] = {
+		{ .port = 0, .pin = 9, .pull_resistor = PIN_PULL_UP },
+		{ .port = 0, .pin = 8, .pull_resistor = PIN_PULL DOWN },
+		{ .port = 1, .pin = 15, .pull_resistor = PIN_NO_PULL },
+	};
+
 .. _caf_buttons_pm_configuration:
 
 Power management configuration

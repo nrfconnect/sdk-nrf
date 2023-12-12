@@ -67,6 +67,28 @@ static uint32_t get_wakeup_mask(const struct gpio_pin *pins, size_t cnt)
 	return mask;
 }
 
+static gpio_flags_t get_pin_flags(enum pull_resistor pin_pull)
+{
+	gpio_flags_t flags = GPIO_INPUT;
+
+	switch (pin_pull) {
+	case PIN_PULL_UP:
+		flags |= GPIO_PULL_UP;
+		break;
+	case PIN_PULL_DOWN:
+		flags |= GPIO_PULL_DOWN;
+		break;
+	case PIN_NO_PULL:
+		break;
+	default:
+		flags |= (IS_ENABLED(CONFIG_CAF_BUTTONS_POLARITY_INVERSED) ?
+			 (GPIO_PULL_UP) : (GPIO_PULL_DOWN));
+		break;
+	}
+
+	return flags;
+}
+
 static int set_cols(uint32_t mask)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
@@ -85,16 +107,12 @@ static int set_cols(uint32_t mask)
 						       col[i].pin, val);
 			}
 		} else {
-			gpio_flags_t flags = GPIO_INPUT;
-			gpio_flags_t pull = (IS_ENABLED(CONFIG_CAF_BUTTONS_POLARITY_INVERSED) ?
-					    (GPIO_PULL_UP) : (GPIO_PULL_DOWN));
 
 			/* The pull is necessary to ensure pin state and prevent unexpected
 			 * behaviour that could be triggered by accumulating charge.
 			 */
-			flags |= pull;
-
-			err = gpio_pin_configure(gpio_devs[col[i].port], col[i].pin, flags);
+			err = gpio_pin_configure(gpio_devs[col[i].port], col[i].pin,
+						 get_pin_flags(col[i].pull_resistor));
 		}
 
 		if (err) {
@@ -128,10 +146,6 @@ static int get_rows(uint32_t *mask)
 
 static int set_trig_mode(void)
 {
-	gpio_flags_t flags = (IS_ENABLED(CONFIG_CAF_BUTTONS_POLARITY_INVERSED) ?
-			      (GPIO_PULL_UP) : (GPIO_PULL_DOWN));
-	flags |= GPIO_INPUT;
-
 	int err = 0;
 
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
@@ -139,7 +153,7 @@ static int set_trig_mode(void)
 		__ASSERT_NO_MSG(gpio_devs[row[i].port] != NULL);
 
 		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin,
-					 flags);
+					 get_pin_flags(row[i].pull_resistor));
 	}
 
 	return err;
