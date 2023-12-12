@@ -12,7 +12,7 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
 	default 0x18000 if SOC_SERIES_NRF91X && TFM_REGRESSION_S
 	default 0x16000 if SOC_SERIES_NRF91X
-	default 0x40000 if SOC_NRF5340_CPUAPP
+	default 0x30000 if SOC_NRF5340_CPUAPP
 	help
 	  Memory set aside for the TFM_SRAM partition.
 
