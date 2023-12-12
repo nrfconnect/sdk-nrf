@@ -25,6 +25,7 @@
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
+#include <fota_download_util.h>
 
 #define TLS_SEC_TAG 42
 
@@ -41,7 +42,6 @@ static char modem_version[MAX_MODEM_VERSION_LEN];
 enum fota_state { IDLE, CONNECTED, UPDATE_DOWNLOAD, UPDATE_PENDING, UPDATE_APPLY, ERROR };
 static enum fota_state state = IDLE;
 
-static const struct device *flash_dev = DEVICE_DT_GET_ONE(jedec_spi_nor);
 static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static const struct gpio_dt_spec led1 = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 static const struct gpio_dt_spec sw0 = GPIO_DT_SPEC_GET(DT_ALIAS(sw0), gpios);
@@ -53,12 +53,6 @@ static struct k_work fota_work;
 static void fota_work_cb(struct k_work *work);
 static int apply_state(enum fota_state new_state);
 static int modem_configure_and_connect(void);
-
-/* Buffer used as temporary storage when downloading the modem firmware, and
- * when loading the modem firmware from external flash to the modem.
- */
-#define FMFU_BUF_SIZE (0x1000)
-static uint8_t fmfu_buf[FMFU_BUF_SIZE];
 
 BUILD_ASSERT(strlen(CONFIG_DOWNLOAD_MODEM_0_VERSION), "CONFIG_DOWNLOAD_MODEM_0_VERSION not set");
 BUILD_ASSERT(strlen(CONFIG_DOWNLOAD_MODEM_0_FILE), "CONFIG_DOWNLOAD_MODEM_0_FILE not set");
@@ -277,59 +271,6 @@ static int apply_state(enum fota_state new_state)
 	return 0;
 }
 
-static int apply_fmfu_from_ext_flash(bool valid_init)
-{
-	int err;
-
-	printk("Applying full modem firmware update from external flash\n");
-
-	if (valid_init) {
-		err = nrf_modem_lib_shutdown();
-		if (err != 0) {
-			printk("nrf_modem_lib_shutdown() failed: %d\n", err);
-			return err;
-		}
-	}
-
-	err = nrf_modem_lib_bootloader_init();
-	if (err != 0) {
-		printk("nrf_modem_lib_bootloader_init() failed: %d\n", err);
-		return err;
-	}
-
-	err = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), flash_dev, 0);
-	if (err != 0) {
-		printk("fmfu_fdev_load failed: %d\n", err);
-		return err;
-	}
-
-	err = nrf_modem_lib_shutdown();
-	if (err != 0) {
-		printk("nrf_modem_lib_shutdown() failed: %d\n", err);
-		return err;
-	}
-
-	err = nrf_modem_lib_init();
-	if (err) {
-		printk("Modem library initialization failed, err %d\n", err);
-		switch (err) {
-		case -NRF_EPERM:
-			printk("Modem is already initialized");
-			break;
-		default:
-			printk("Reprogram the full modem firmware to recover\n");
-			apply_state(UPDATE_PENDING);
-			return err;
-		}
-	}
-
-	printk("Modem firmware update completed.\n");
-
-	current_version_display();
-
-	return 0;
-}
-
 #if defined(CONFIG_USE_HTTPS)
 static int cert_provision(void)
 {
@@ -427,19 +368,9 @@ static int update_download(void)
 		return err;
 	}
 
-	const struct dfu_target_full_modem_params params = {
-		.buf = fmfu_buf,
-		.len = sizeof(fmfu_buf),
-		.dev = &(struct dfu_target_fmfu_fdev){
-			.dev = flash_dev,
-			.offset = 0,
-			.size = 0
-		}
-	};
-
-	err = dfu_target_full_modem_cfg(&params);
+	err = fota_download_util_dfu_target_init(DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
 	if (err != 0) {
-		printk("dfu_target_full_modem_cfg failed: %d\n", err);
+		printk("fota_download_util_dfu_target_init failed: %d\n", err);
 		return err;
 	}
 
@@ -517,12 +448,18 @@ static void fota_work_cb(struct k_work *work)
 		}
 		break;
 	case UPDATE_APPLY:
-		err = apply_fmfu_from_ext_flash(true);
+		printk("Applying full modem firmware update from external flash\n");
+		lte_lc_power_off();
+		err = fota_download_util_apply_update(DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
 		if (err) {
-			printk("FMFU failed, err %d\n", err);
+			printk("Modem apply update failed\n");
+			apply_state(ERROR);
+		} else {
+			printk("Modem firmware update completed.\n");
+			apply_state(IDLE);
 		}
 
-		apply_state(IDLE);
+		current_version_display();
 		break;
 	default:
 		break;
@@ -534,11 +471,6 @@ int main(void)
 	int err;
 
 	printk("HTTP full modem update sample started\n");
-
-	if (!device_is_ready(flash_dev)) {
-		printk("Flash device %s not ready\n", flash_dev->name);
-		return -ENODEV;
-	}
 
 	k_work_init(&fota_work, fota_work_cb);
 

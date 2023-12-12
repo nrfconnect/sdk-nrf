@@ -22,6 +22,7 @@
 #include <modem/modem_info.h>
 #include <modem/nrf_modem_lib.h>
 #include <net/fota_download.h>
+#include <fota_download_util.h>
 
 #define FOTA_TEST "FOTA-TEST"
 
@@ -306,6 +307,12 @@ static int update_download(void)
 		return err;
 	}
 
+	err = fota_download_util_dfu_target_init(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
+	if (err != 0) {
+		printk("fota_download_util_dfu_target_init failed: %d\n", err);
+		return err;
+	}
+
 	/* Functions for getting the host and file */
 	err = fota_download_start(CONFIG_DOWNLOAD_HOST, file, SEC_TAG, 0, 0);
 	if (err) {
@@ -400,33 +407,16 @@ static void fota_work_cb(struct k_work *work)
 	case UPDATE_APPLY:
 		printk("Applying firmware update. This can take a while.\n");
 		lte_lc_power_off();
-		/* Re-initialize the modem to apply the update. */
-		err = nrf_modem_lib_shutdown();
+		err = fota_download_util_apply_update(DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
 		if (err) {
-			printk("Failed to shutdown modem, err %d\n", err);
-		}
-
-		err = nrf_modem_lib_init();
-		if (err) {
-			printk("Modem initialization failed, err %d\n", err);
-			switch (err) {
-			case -NRF_EPERM:
-				printk("Modem is already initialized");
-				break;
-			case -NRF_EAGAIN:
-				printk("Modem update failed due to low voltage. Try again later\n");
-				apply_state(UPDATE_PENDING);
-				return;
-			default:
-				printk("Reprogram the full modem firmware to recover\n");
-				apply_state(ERROR);
-				return;
-			}
+			printk("Modem apply update failed\n");
+			apply_state(ERROR);
+		} else {
+			printk("Modem firmware update completed.\n");
+			apply_state(IDLE);
 		}
 
 		current_version_display();
-
-		apply_state(IDLE);
 		break;
 	default:
 		break;
