@@ -68,6 +68,13 @@ config NRF700X_P2P_MODE
 
 endif # NRF700X_SYSTEM_MODE
 
+config NRF700X_DATA_TX
+	bool "Enable TX data path in the driver"
+	default y if NRF700X_SYSTEM_MODE
+
+config NRF700X_RAW_DATA_TX
+	bool "Enable RAW TX data path in the driver"
+
 config NRF_WIFI_IF_AUTO_START
 	bool "Enable Wi-Fi interface auto start on boot"
 	default y
@@ -205,13 +212,6 @@ config NRF700X_WORKQ_MAX_ITEMS
 config NRF700X_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
 	default 18
-
-config NRF700X_DATA_TX
-	bool "Enable TX data path in the driver"
-	default y if NRF700X_SYSTEM_MODE
-
-config NRF700X_RAW_DATA_TX
-	bool "Enable RAW TX data path in the driver"
 
 config NRF700X_UTIL
 	depends on SHELL
