@@ -13,6 +13,14 @@
 #include <caf/events/power_manager_event.h>
 #include <caf/events/keep_alive_event.h>
 
+#if CONFIG_CAF_BLE_STATE_PM_MIN_LEVEL_SUSPENDED
+	#define PM_MIN_LEVEL POWER_MANAGER_LEVEL_SUSPENDED
+#elif CONFIG_CAF_BLE_STATE_PM_MIN_LEVEL_ALIVE
+	#define PM_MIN_LEVEL POWER_MANAGER_LEVEL_ALIVE
+#else
+	#error "Power level is not defined"
+#endif
+
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
@@ -26,7 +34,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		connection_count++;
 		__ASSERT_NO_MSG(connection_count < UINT_MAX);
 		keep_alive();
-		power_manager_restrict(MODULE_IDX(MODULE), POWER_MANAGER_LEVEL_SUSPENDED);
+		power_manager_restrict(MODULE_IDX(MODULE), PM_MIN_LEVEL);
 		break;
 	case PEER_STATE_DISCONNECTED:
 		__ASSERT_NO_MSG(connection_count > 0);

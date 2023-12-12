@@ -45,8 +45,32 @@ config CAF_BLE_STATE_PM
 	default y
 	help
 	  This enables small module that keeps track on active connections.
-	  If there is any active connection the power down modes would be limited to SUSPENDED.
+	  If there is any active connection the power down modes would be limited to
+	  the predefined level, which can be SUSPENDED or ALIVE.
 	  Full POWER OFF mode would be only allowed if we have no active connection.
+
+if CAF_BLE_STATE_PM
+
+choice
+	prompt "Select power level to restrict to when there are active connections"
+	default CAF_BLE_STATE_PM_MIN_LEVEL_SUSPENDED
+	help
+	  Power can be restricted to either SUSPENDED or ALIVE when there are
+	  any active connections.
+
+config CAF_BLE_STATE_PM_MIN_LEVEL_SUSPENDED
+	bool "Suspended"
+	help
+	  Power is restricted to SUSPENDED
+
+config CAF_BLE_STATE_PM_MIN_LEVEL_ALIVE
+	bool "Alive"
+	help
+	  Power is restricted to ALIVE
+
+endchoice
+
+endif # CAF_BLE_STATE_PM
 
 config CAF_BLE_STATE_EXCHANGE_MTU
 	bool "Exchange MTU"

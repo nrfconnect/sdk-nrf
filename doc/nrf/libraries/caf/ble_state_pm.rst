@@ -15,6 +15,9 @@ Configuration
 The module is enabled by selecting :kconfig:option:`CONFIG_CAF_BLE_STATE_PM`.
 It depends on :kconfig:option:`CONFIG_CAF_BLE_STATE` and :kconfig:option:`CONFIG_CAF_POWER_MANAGER`.
 
+The minimum power level is :c:enumerator:`POWER_MANAGER_LEVEL_SUSPENDED` by default, but can be
+instead set to :c:enumerator:`POWER_MANAGER_LEVEL_ALIVE`.
+
 Implementation details
 **********************
 
@@ -24,7 +27,11 @@ It then counts the active connections.
 
 Depending on the count result:
 
-* If there is at least one active connection, the power level is limited to :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
-* If there is no active connection, the limitation on power level is removed.
+* If there is at least one active connection, the power level is limited to one of the following, as selected:
+
+   * :kconfig:option:`CONFIG_CAF_BLE_STATE_PM_MIN_LEVEL_SUSPENDED` - :c:enumerator:`POWER_MANAGER_LEVEL_SUSPENDED`,
+   * :kconfig:option:`CONFIG_CAF_BLE_STATE_PM_MIN_LEVEL_ALIVE` - :c:enumerator:`POWER_MANAGER_LEVEL_ALIVE`,
+
+* If there is no active connection, the limitation on power level is removed (:c:enumerator:`POWER_MANAGER_LEVEL_MAX`).
 
 For more information about the CAF power levels, see the :ref:`caf_power_manager` documentation page.
