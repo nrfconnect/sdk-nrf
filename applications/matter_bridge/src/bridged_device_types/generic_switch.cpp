@@ -36,9 +36,11 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::Switch::Id, switchAttr, nullptr, nullptr),
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedGenericSwitchEndpoint, genericSwitchClusters);
 
+static constexpr uint8_t kBridgedGenericSwitchEndpointVersion = 2;
+
 static constexpr EmberAfDeviceType kBridgedGenericSwitchDeviceTypes[] = {
 	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::GenericSwitch),
-	  MatterBridgedDevice::kDefaultDynamicEndpointVersion },
+	  kBridgedGenericSwitchEndpointVersion },
 	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::BridgedNode),
 	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };
@@ -55,7 +57,7 @@ GenericSwitchDevice::GenericSwitchDevice(const char *nodeLabel) : MatterBridgedD
 }
 
 CHIP_ERROR GenericSwitchDevice::HandleRead(ClusterId clusterId, AttributeId attributeId, uint8_t *buffer,
-				     uint16_t maxReadLength)
+					   uint16_t maxReadLength)
 {
 	switch (clusterId) {
 	case Clusters::Switch::Id:
@@ -90,8 +92,8 @@ CHIP_ERROR GenericSwitchDevice::HandleReadSwitch(AttributeId attributeId, uint8_
 	}
 }
 
-CHIP_ERROR GenericSwitchDevice::HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
-						size_t dataSize)
+CHIP_ERROR GenericSwitchDevice::HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId,
+						      void *data, size_t dataSize)
 {
 	VerifyOrReturnError(data, CHIP_ERROR_INVALID_ARGUMENT);
 
