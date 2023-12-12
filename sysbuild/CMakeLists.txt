@@ -68,6 +68,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   cmake_parse_arguments(PRE_CMAKE "" "" "IMAGES" ${ARGN})
   restore_ncs_vars()
 
+  if(NOT SB_CONFIG_PARTITION_MANAGER)
+    # Disable any Kconfigs for child images in the main application
+    foreach(config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE NCS_INCLUDE_RPMSG_CHILD_IMAGE NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE
+            NCS_SAMPLE_DTM_REMOTE_HCI_CHILD_IMAGE NCS_SAMPLE_PERIPHERAL_RADIO_TEST_CHILD_IMAGE PM_SINGLE_IMAGE)
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_${config} n)
+    endforeach()
+  endif()
+
   foreach(image ${PRE_CMAKE_IMAGES})
     if(SB_CONFIG_PARTITION_MANAGER)
       set_config_bool(${image} CONFIG_PARTITION_MANAGER_ENABLED y)
