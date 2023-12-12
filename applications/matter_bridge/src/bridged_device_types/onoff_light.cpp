@@ -56,9 +56,10 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffAttrs, onOffIncomingCommands, 
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedLightEndpoint, bridgedLightClusters);
 
+static constexpr uint8_t kBridgedOnOffEndpointVersion = 2;
+
 static constexpr EmberAfDeviceType kBridgedOnOffDeviceTypes[] = {
-	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::OnOffLight),
-	  MatterBridgedDevice::kDefaultDynamicEndpointVersion },
+	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::OnOffLight), kBridgedOnOffEndpointVersion },
 	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::BridgedNode),
 	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };
