@@ -60,7 +60,7 @@
 
 &uart1 {
 	current-speed = <1000000>;
-	status = "okay";
+	status = "disabled";
 	pinctrl-0 = <&uart1_default>;
 	pinctrl-1 = <&uart1_sleep>;
 	pinctrl-names = "default", "sleep";
