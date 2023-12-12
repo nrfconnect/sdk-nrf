@@ -1979,17 +1979,6 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 
 	generate_sta_config(w, req);
 
-	memset(buffer, 0, sizeof(buffer));
-	sprintf(buffer, "ENABLE_NETWORK 0");
-	memset(response, 0, sizeof(response));
-	resp_len = sizeof(response) - 1;
-	wpa_ctrl_request(w, buffer, strlen(buffer), response, &resp_len, NULL);
-	if (strncmp(response, WPA_CTRL_OK, strlen(WPA_CTRL_OK)) != 0) {
-		indigo_logger(LOG_LEVEL_ERROR,
-			      "Failed to execute the command. Response: %s", response);
-		goto done;
-	}
-
 done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
@@ -2022,6 +2011,17 @@ static int associate_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 		indigo_logger(LOG_LEVEL_ERROR, "Failed to connect to wpa_supplicant");
 		status = TLV_VALUE_STATUS_NOT_OK;
 		message = TLV_VALUE_WPA_S_START_UP_NOT_OK;
+		goto done;
+	}
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf(buffer, "ENABLE_NETWORK 0");
+	memset(response, 0, sizeof(response));
+	resp_len = sizeof(response) - 1;
+	wpa_ctrl_request(w, buffer, strlen(buffer), response, &resp_len, NULL);
+	if (strncmp(response, WPA_CTRL_OK, strlen(WPA_CTRL_OK)) != 0) {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "Failed to execute the command. Response: %s", response);
 		goto done;
 	}
 
