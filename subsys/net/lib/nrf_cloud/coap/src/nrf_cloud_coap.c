@@ -32,6 +32,7 @@ LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define COAP_D2C_RSC "msg/d2c"
 #define COAP_D2C_BULK_RSC "msg/d/%s/d2c/bulk"
 #define COAP_D2C_RSC_MAX_LEN MAX(sizeof(COAP_D2C_RSC), sizeof(COAP_D2C_BULK_RSC))
+#define COAP_D2C_RAW_RSC "/msg/d2c/raw"
 
 #define MAX_COAP_PAYLOAD_SIZE (CONFIG_COAP_CLIENT_BLOCK_SIZE - \
 			       CONFIG_COAP_CLIENT_MESSAGE_HEADER_SIZE)
@@ -211,6 +212,24 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */
+
+
+int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len)
+{
+	int err = 0;
+
+	if (!nrf_cloud_coap_is_connected()) {
+		return -EACCES;
+	}
+
+	err = nrf_cloud_coap_post(COAP_D2C_RAW_RSC, NULL, buf, buf_len,
+				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, false, NULL, NULL);
+	if (err) {
+		LOG_ERR("Failed to send POST request: %d", err);
+	}
+	return err;
+}
+
 
 int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj)
 {
