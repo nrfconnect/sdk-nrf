@@ -39,7 +39,10 @@ target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if/lte_ip_addr_helper.c)
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf91_sockets.c)
 
-target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if)
+target_include_directories(app PRIVATE
+                           ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if
+                           ${ZEPHYR_BASE}/subsys/net/lib/sockets
+                          )
 
 add_compile_definitions(CONFIG_NRF_MODEM_LIB_MEM_DIAG)
 add_compile_definitions(CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS=30)
