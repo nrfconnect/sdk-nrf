@@ -310,7 +310,6 @@ if TFM_SECURE_UART
 config TFM_SECURE_UART_SHARE_INSTANCE
 	bool
 	prompt "Share TF-M's UART instance with the non-secure application"
-	depends on !TFM_REGRESSION_S # Secure regressen tests require UART output after boot.
 	help
 	  Configure the UART instance in TF-M to be shared between TF-M secure
 	  firmware and the non-secure application.
