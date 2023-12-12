@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/random/rand32.h>
+#include <zephyr/random/random.h>
 
 #include <zephyr/bluetooth/conn.h>
 #include <bluetooth/mesh/vnd/le_pair_resp.h>
@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(bt_mesh_le_pair_resp);
 
 static uint32_t predefined_passkey = BT_PASSKEY_INVALID;
 
-static int handle_reset(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_reset(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
 	uint32_t passkey;
@@ -63,7 +63,7 @@ static int handle_reset(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	return 0;
 }
 
-static int handle_op(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
+static int handle_op(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		     struct net_buf_simple *buf)
 {
 	uint8_t op;
@@ -84,14 +84,14 @@ const struct bt_mesh_model_op _bt_mesh_le_pair_resp_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static int bt_mesh_le_pair_resp_init(struct bt_mesh_model *model)
+static int bt_mesh_le_pair_resp_init(const struct bt_mesh_model *model)
 {
 	bt_mesh_le_pair_resp_passkey_invalidate();
 
 	return 0;
 }
 
-static void bt_mesh_le_pair_resp_reset(struct bt_mesh_model *model)
+static void bt_mesh_le_pair_resp_reset(const struct bt_mesh_model *model)
 {
 	bt_mesh_le_pair_resp_passkey_invalidate();
 }
