@@ -178,49 +178,93 @@ Syntax
 The ``<cmd>`` command is a string, and can be used as follows:
 
 * ``AT#XCARRIERCFG="apn"[,<apn>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` Kconfig option.
+
 * ``AT#XCARRIERCFG="auto_startup"[,<0|1>]``
-  * Set flag to automatically apply the enabled settings to the library configuration and connect to the device management server.
+
+  Set flag to automatically apply the enabled settings to the library configuration and connect to the device management server.
+
 * ``AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` Kconfig option.
+
 * ``AT#XCARRIERCFG="carriers"[,"all"|<carrier1>[<carrier2>[,...[,<carrier6>]]]]``
-  * Choose the networks in which the LwM2M carrier library will apply (see the :ref:`general_options_lwm2m` section of the library's documentation).
+
+  Choose the networks in which the LwM2M carrier library will apply (see the :ref:`general_options_lwm2m` section of the library's documentation).
+
 * ``AT#XCARRIERCFG="coap_con_interval"[,<interval>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL` Kconfig option.
+
 * ``AT#XCARRIERCFG="config_enable"[,<0|1>]``
-  * Set flag to apply the stored settings to the general Kconfig options (see the :ref:`general_options_lwm2m` section of the library's documentation).
+
+  Set flag to apply the stored settings to the general Kconfig options (see the :ref:`general_options_lwm2m` section of the library's documentation).
+
 * ``AT#XCARRIERCFG="device_enable"[,<0|1>]``
-  * Set flag to apply the stored settings to the device Kconfig options (see the :ref:`device_options_lwm2m` section of the library's documentation).
+
+  Set flag to apply the stored settings to the device Kconfig options (see the :ref:`device_options_lwm2m` section of the library's documentation).
+
 * ``AT#XCARRIERCFG="device_type"[,<device_type>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE` Kconfig option.
+
 * ``AT#XCARRIERCFG="hardware_version"[,<version>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_HARDWARE_VERSION` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_HARDWARE_VERSION` Kconfig option.
+
 * ``AT#XCARRIERCFG="manufacturer"[,<manufacturer>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MANUFACTURER` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MANUFACTURER` Kconfig option.
+
 * ``AT#XCARRIERCFG="model_number"[,<model_number>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MODEL_NUMBER` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MODEL_NUMBER` Kconfig option.
+
 * ``AT#XCARRIERCFG="software_version"[,<version>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION` Kconfig option.
+
 * ``AT#XCARRIERCFG="device_serial_no_type"[,<device_serial_no_type>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER` Kconfig option.
+
 * ``AT#XCARRIERCFG="service_code"[,<service_code>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE` Kconfig option.
+
 * ``AT#XCARRIERCFG="pdn_type"[,<pdn_type>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE` Kconfig option.
+
 * ``AT#XCARRIERCFG="binding"[,<binding>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option.
+
 * ``AT#XCARRIERCFG="server_enable"[,<0|1>]``
-  * Set flag to apply the stored settings to the server Kconfig options (see the :ref:`server_options_lwm2m` section of the library's documentation).
+
+  Set flag to apply the stored settings to the server Kconfig options (see the :ref:`server_options_lwm2m` section of the library's documentation).
+
 * ``AT#XCARRIERCFG="is_bootstrap"[,<0|1>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER` Kconfig option.
+
 * ``AT#XCARRIERCFG="lifetime"[,<lifetime>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` Kconfig option.
+
 * ``AT#XCARRIERCFG="sec_tag"[,<sec_tag>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig option.
+
 * ``AT#XCARRIERCFG="uri"[,<uri>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI` Kconfig option.
+
 * ``AT#XCARRIERCFG="session_idle_timeout"[,<session_idle_timeout>]``
-  * For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT` Kconfig option.
+
+  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT` Kconfig option.
+
 
 The values of the parameters depend on the command string used.
 If a valid command string is used without any parameter, the current value of the corresponding configuration will be returned in the response, as in the examples shown below.
