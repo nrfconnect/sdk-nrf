@@ -236,32 +236,25 @@ static bool strings_compare(const char *s1, const char *s2, uint32_t s1_len,
 	return (strncmp(s1, s2, MIN(s1_len, s2_len))) ? false : true;
 }
 
-/* Verify if the topic is a control channel topic or not. */
-static bool control_channel_topic_match(uint32_t list_id,
-					const struct mqtt_topic *topic,
-					enum nct_cc_opcode *opcode)
+/* Verify if the RX topic is a control channel topic or not. */
+static bool nrf_cloud_cc_rx_topic_decode(const struct mqtt_topic *topic, enum nct_cc_opcode *opcode)
 {
-	struct mqtt_topic *topic_list;
-	uint32_t list_size;
+	const uint32_t list_size = ARRAY_SIZE(nct_cc_rx_list);
+	const char *const topic_str = topic->topic.utf8;
+	const uint32_t topic_sz = topic->topic.size;
 
-	if (list_id == NCT_RX_LIST) {
-		topic_list = (struct mqtt_topic *)nct_cc_rx_list;
-		list_size = ARRAY_SIZE(nct_cc_rx_list);
-	} else if (list_id == NCT_TX_LIST) {
-		topic_list = (struct mqtt_topic *)nct_cc_tx_list;
-		list_size = ARRAY_SIZE(nct_cc_tx_list);
-	} else {
-		return false;
-	}
+	for (uint32_t index = 0; index < list_size; ++index) {
+		const char *list_topic = (const char *)nct_cc_rx_list[index].topic.utf8;
+		uint32_t list_topic_sz = nct_cc_rx_list[index].topic.size;
 
-	for (uint32_t index = 0; index < list_size; index++) {
-		if (strings_compare(
-			    topic->topic.utf8, topic_list[index].topic.utf8,
-			    topic->topic.size, topic_list[index].topic.size)) {
+		/* Compare incoming topic with the entry in the RX topic list */
+		if (strings_compare(topic_str, list_topic, topic_sz, list_topic_sz)) {
 			*opcode = nct_cc_rx_opcode_map[index];
 			return true;
 		}
 	}
+
+	/* Not a control channel topic */
 	return false;
 }
 
@@ -931,11 +924,8 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			break;
 		}
 
-		/* If the data arrives on one of the subscribed control channel
-		 * topic. Then we notify the same.
-		 */
-		if (control_channel_topic_match(NCT_RX_LIST, &p->message.topic,
-						&cc.opcode)) {
+		/* Determine if this is a control channel or data channel topic event */
+		if (nrf_cloud_cc_rx_topic_decode(&p->message.topic, &cc.opcode)) {
 			cc.message_id = p->message_id;
 			cc.data.ptr = nct.payload_buf;
 			cc.data.len = p->message.payload.len;
