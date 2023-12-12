@@ -74,6 +74,7 @@ config NRF700X_DATA_TX
 
 config NRF700X_RAW_DATA_TX
 	bool "Enable RAW TX data path in the driver"
+	depends on NRF700X_SYSTEM_MODE
 
 config NRF_WIFI_IF_AUTO_START
 	bool "Enable Wi-Fi interface auto start on boot"
