@@ -59,6 +59,7 @@
 		led1-blue  = &led1_blue;
 		mcuboot-button0 = &button0;
 		mcuboot-led0 = &led1_blue;
+		watchdog0 = &wdt0;
 	};
 };
 

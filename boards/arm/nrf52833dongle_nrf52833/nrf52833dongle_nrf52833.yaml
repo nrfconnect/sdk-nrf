@@ -10,4 +10,5 @@ toolchain:
   - xtools
 supported:
   - gpio
+  - watchdog
   - netif:openthread

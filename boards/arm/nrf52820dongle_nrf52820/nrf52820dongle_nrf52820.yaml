@@ -11,3 +11,4 @@ toolchain:
   - netif:openthread
 supported:
   - gpio
+  - watchdog
