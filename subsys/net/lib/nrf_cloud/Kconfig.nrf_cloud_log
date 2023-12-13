@@ -71,6 +71,19 @@ config NRF_CLOUD_LOG_BUF_SIZE
 	help
 	  Set size in bytes for buffer for log output system before it flushes.
 
+config NRF_CLOUD_LOG_TEXT_LOGGING_ENABLED
+	bool
+	default y if (NRF_CLOUD_LOG_BACKEND && LOG_BACKEND_NRF_CLOUD_OUTPUT_TEXT) || \
+		     (NRF_CLOUD_LOG_DIRECT && !LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY)
+	help
+	  This symbol is y when nRF Cloud text-based logging is enabled in the configuration.
+
+config NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED
+	bool
+	default y if (NRF_CLOUD_LOG_BACKEND && LOG_BACKEND_NRF_CLOUD_OUTPUT_DICTIONARY)
+	help
+	  This symbol is y when nRF Cloud dictionary-based (binary) logging is enabled in the configuration.
+
 module = NRF_CLOUD_LOG
 module-str = nRF Cloud Log
 source "subsys/logging/Kconfig.template.log_config"

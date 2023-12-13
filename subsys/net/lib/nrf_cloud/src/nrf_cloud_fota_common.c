@@ -470,25 +470,17 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 
 bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type)
 {
-	if (!IS_ENABLED(CONFIG_NRF_CLOUD_FOTA) &&
-	    !IS_ENABLED(CONFIG_NRF_CLOUD_REST) &&
-	    !IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
-		return false;
-	}
-
 	switch (type) {
 	case NRF_CLOUD_FOTA_APPLICATION:
-		return IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT);
+		return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_APP_SUPPORTED);
 	case NRF_CLOUD_FOTA_BOOTLOADER:
-		return IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&
-		       IS_ENABLED(CONFIG_BUILD_S1_VARIANT) &&
-		       IS_ENABLED(CONFIG_SECURE_BOOT);
+		return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_BOOT_SUPPORTED);
 	case NRF_CLOUD_FOTA_MODEM_DELTA:
-		return IS_ENABLED(CONFIG_NRF_MODEM);
+		return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED);
 	case NRF_CLOUD_FOTA_MODEM_FULL:
-		return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE) &&
-		       IS_ENABLED(CONFIG_NRF_MODEM);
+		return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED);
 	default:
+		LOG_WRN("Unhandled FOTA type: %d", type);
 		return false;
 	}
 }
