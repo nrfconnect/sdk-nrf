@@ -141,7 +141,7 @@ To create a source file for the event type you defined in the header file:
 1. Include the header file for the new event type in your source file.
 #. Define the event type with the :c:macro:`APP_EVENT_TYPE_DEFINE` macro.
    Pass the name of the event type as declared in the header along with additional parameters.
-   For example, you can provide a function that logs a string version of the event data by using the :c:macro:APP_EVENT_MANAGER_LOG macro.
+   For example, you can provide a function that logs a string version of the event data by using the :c:macro:`APP_EVENT_MANAGER_LOG` macro.
    The :c:macro:`APP_EVENT_TYPE_DEFINE` macro adds flags as a last parameter.
    These flags are constant and can only be set using :c:macro:`APP_EVENT_FLAGS_CREATE` on :c:macro:`APP_EVENT_TYPE_DEFINE` macro.
    To not set any flag, use the :c:macro:`APP_EVENT_FLAGS_CREATE` macro without any argument.
