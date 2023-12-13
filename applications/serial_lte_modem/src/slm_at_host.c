@@ -13,7 +13,9 @@
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 #include "slm_uart_handler.h"
-
+#if defined(CONFIG_SLM_PPP)
+#include "slm_ppp.h"
+#endif
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
@@ -803,6 +805,14 @@ int slm_at_host_init(void)
 	if (err) {
 		return -EFAULT;
 	}
+
+#if defined(CONFIG_SLM_PPP)
+	err = slm_ppp_init();
+	if (err) {
+		LOG_ERR("PPP initialization failed (%d).", err);
+		return err;
+	}
+#endif
 
 	k_work_init(&raw_send_scheduled_work, raw_send_scheduled);
 

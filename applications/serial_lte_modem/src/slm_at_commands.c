@@ -61,6 +61,9 @@
 #if defined(CONFIG_LWM2M_CARRIER_SETTINGS)
 #include "slm_at_carrier_cfg.h"
 #endif
+#if defined(CONFIG_SLM_PPP)
+#include "slm_ppp.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 
@@ -503,6 +506,9 @@ static struct slm_at_cmd {
 	{"AT#XCARRIERCFG", handle_at_carrier_cfg},
 #endif
 
+#if defined(CONFIG_SLM_PPP)
+	{"AT#XPPP", handle_at_ppp},
+#endif
 };
 
 /* Handles AT#XCLAC command. */

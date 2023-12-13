@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	chosen {
+		zephyr,ppp-uart = &uart1;
+	};
+};
+
+/* PPP UART. Baud rates other than 115200/230400/1000000 didn't work on uart1. */
+&uart1 {
+	status = "okay";
+	hw-flow-control;
+	current-speed = <1000000>;
+};

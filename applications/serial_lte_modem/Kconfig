@@ -160,6 +160,9 @@ config SLM_FULL_FOTA
 	default n
 	depends on !BOARD_THINGY91_NRF9160_NS
 
+config SLM_PPP
+	bool "PPP support in SLM"
+
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"
