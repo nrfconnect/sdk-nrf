@@ -260,7 +260,7 @@ Kconfig*                                  @tejlmand
 /subsys/secure_storage/                   @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
 /subsys/net_core_monitor/                 @maje-emb
 /subsys/zigbee/                           @tomchy @sebastiandraus
-/tests/                                   @gopiotr
+/tests/                                   @PerMac @katgiadla
 /tests/bluetooth/tester/                  @carlescufi @ludvigsj
 /tests/bluetooth/iso/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey @Frodevan
 /tests/crypto/                            @stephen-nordic @magnev
