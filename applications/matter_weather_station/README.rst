@@ -153,7 +153,7 @@ The application supports the following build types:
      - | Release version of the application; can be used to enable only the necessary application functionalities to optimize its performance.
        |
        | .. note::
-       |     Currently, this application supports only the ``release`` build type when `Building for the nRF7002 Wi-Fi expansion board`_.
+       |     Currently, this application supports only the release build type when `Building for the nRF7002 Wi-Fi expansion board`_.
 
 .. _matter_weather_station_app_build_configuration_overlays:
 
