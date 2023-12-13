@@ -59,7 +59,7 @@ target_link_libraries(tfm_partitions
         tfm_app_rot_partition_spp
 )
 
-target_compile_definitions(tfm_partition_defs
+target_compile_definitions(tfm_config
     INTERFACE
         TFM_PARTITION_SECURE_PERIPHERAL_PARTITION
 )
