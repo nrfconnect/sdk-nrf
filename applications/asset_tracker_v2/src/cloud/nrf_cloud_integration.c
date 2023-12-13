@@ -115,47 +115,6 @@ static void user_association_work_fn(struct k_work *work)
 	cloud_wrapper_notify_event(&cloud_wrap_evt);
 }
 
-static int send_service_info(void)
-{
-	int err;
-	struct nrf_cloud_svc_info_fota fota_info = {
-		.application = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
-		.bootloader = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_BOOTLOADER),
-		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA),
-		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
-	};
-	struct nrf_cloud_svc_info_ui ui_info = {
-		.gnss = true,
-#if defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
-		.humidity = true,
-		.air_pressure = true,
-		.air_quality = true,
-		.temperature = true,
-#endif
-		.rsrp = true,
-		.button = true
-	};
-	struct nrf_cloud_svc_info service_info = {
-		.fota = &fota_info,
-		.ui = &ui_info
-	};
-	struct nrf_cloud_device_status device_status = {
-		.modem = NULL,
-		.svc = &service_info
-
-	};
-
-	err = nrf_cloud_shadow_device_status_update(&device_status);
-	if (err) {
-		LOG_ERR("nrf_cloud_shadow_device_status_update, error: %d", err);
-		return err;
-	}
-
-	LOG_DBG("nRF Cloud service info sent");
-
-	return 0;
-}
-
 static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
 	struct cloud_wrap_event cloud_wrap_evt = { 0 };
@@ -178,12 +137,6 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		LOG_DBG("NRF_CLOUD_EVT_READY");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_CONNECTED;
 		notify = true;
-
-		err = send_service_info();
-		if (err) {
-			LOG_ERR("Failed to send nRF Cloud service information");
-			cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
-		}
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
