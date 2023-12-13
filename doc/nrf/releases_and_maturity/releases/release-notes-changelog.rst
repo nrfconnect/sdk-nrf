@@ -618,6 +618,8 @@ Libraries for networking
     * The :c:func:`nrf_cloud_obj_object_detach` function to get an object from an object.
     * The :c:func:`nrf_cloud_obj_shadow_update` function to update the device's shadow with the data from an :c:struct:`nrf_cloud_obj` structure.
     * An :c:struct:`nrf_cloud_obj_shadow_data` structure to the :c:struct:`nrf_cloud_evt` structure to be used during shadow update events.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA` Kconfig option to enable sending configured FOTA service info on the device's initial connection to nRF Cloud.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI` Kconfig option to enable sending configured UI service info on the device's initial connection to nRF Cloud.
 
   * Updated:
 

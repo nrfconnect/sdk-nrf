@@ -1,0 +1,106 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Select the info sections that will be automatically added to the device's
+# shadow when connecting to nRF Cloud with MQTT or CoAP.
+menu "Send shadow info sections on initial connect (MQTT/CoAP)"
+
+if NRF_CLOUD_MQTT || NRF_CLOUD_COAP
+
+config NRF_CLOUD_SEND_DEVICE_STATUS
+	bool "Send device status on initial connection"
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_DEVICE
+	default y if NRF_CLOUD_FOTA
+	help
+	  Add "deviceInfo" section containing hardware and firmware version information.
+
+config NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK
+	bool "Send network status information on initial connection"
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_NETWORK
+	help
+	  Add "networkInfo" section containing network connection information.
+
+config NRF_CLOUD_SEND_DEVICE_STATUS_SIM
+	bool "Send SIM card information on initial connection"
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_SIM
+	help
+	  Add "simInfo" section containing SIM card information.
+
+config NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF
+	bool "Send connection information on initial connection"
+	default y
+	help
+	  Add "connectionInfo" section indication how the device is connecting to nRF Cloud.
+
+config NRF_CLOUD_SEND_SERVICE_INFO_FOTA
+	bool "Send FOTA service info on initial connection"
+	help
+	  Add supported FOTA types to the "serviceInfo" section.
+	  If your application does not support certain FOTA types, this option should be disabled and the application should set its supported FOTA types in the shadow.
+	  Supported types are based on Kconfig values:
+	    NRF_CLOUD_FOTA_TYPE_APP_SUPPORTED
+	    NRF_CLOUD_FOTA_TYPE_BOOT_SUPPORTED
+	    NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED
+	    NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED
+
+menuconfig NRF_CLOUD_SEND_SERVICE_INFO_UI
+	bool "Send UI service info initial connection"
+	help
+	  Add supported UI types to the "serviceInfo" section.
+	  The UI types control which cards are displayed on nRF Cloud in the device page.
+	  Common types are enabled by default.
+
+if NRF_CLOUD_SEND_SERVICE_INFO_UI
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_MAP
+	bool "Enable map card on nRF Cloud"
+	default y
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_RSRP
+	bool "Enable RSRP card on nRF Cloud"
+	default y if NRF_MODEM_LIB
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_LOGS
+	bool "Enable log card on nRF Cloud"
+	default y if NRF_CLOUD_LOG_TEXT_LOGGING_ENABLED
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_BIN_LOGS
+	bool "Enable binary (dictionary-based) log card on nRF Cloud"
+	default y if NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_TEMP
+	bool "Enable temperature card on nRF Cloud"
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_HUMID
+	bool "Enable humidity card on nRF Cloud"
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_PRESSURE
+	bool "Enable air pressure card on nRF Cloud"
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_QUALITY
+	bool "Enable air quality card on nRF Cloud"
+
+config NRF_CLOUD_ENABLE_SVC_INF_UI_ORIENTATION
+	bool "Enable orientation (flip) card on nRF Cloud"
+
+endif # NRF_CLOUD_SEND_SERVICE_INFO_UI
+
+endif # NRF_CLOUD_MQTT || NRF_CLOUD_COAP
+
+config NRF_CLOUD_SEND_SHADOW_INFO
+	bool
+	default y if (NRF_CLOUD_SEND_DEVICE_STATUS || \
+		      NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK || \
+		      NRF_CLOUD_SEND_DEVICE_STATUS_SIM || \
+		      NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF || \
+		      NRF_CLOUD_SEND_SERVICE_INFO_FOTA || \
+		      NRF_CLOUD_SEND_SERVICE_INFO_UI)
+	help
+	  This symbol is y when at least one option to send an info section is enabled.
+
+endmenu

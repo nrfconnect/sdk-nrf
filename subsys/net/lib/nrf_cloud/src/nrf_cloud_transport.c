@@ -183,7 +183,6 @@ static uint16_t get_message_id(const uint16_t requested_id)
  */
 static void dc_endpoint_free(void)
 {
-
 	nrf_cloud_free((void *)nct.dc_rx_endp.utf8);
 	nrf_cloud_free((void *)nct.dc_tx_endp.utf8);
 	nrf_cloud_free((void *)nct.dc_m_endp.utf8);
