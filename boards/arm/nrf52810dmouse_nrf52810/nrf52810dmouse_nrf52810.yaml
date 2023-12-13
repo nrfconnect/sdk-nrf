@@ -9,5 +9,6 @@ toolchain:
 supported:
   - ble
   - gpio
+  - watchdog
 ram: 24
 flash: 192

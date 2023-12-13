@@ -10,3 +10,4 @@ flash: 512
 supported:
   - ble
   - gpio
+  - watchdog

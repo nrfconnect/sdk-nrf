@@ -18,6 +18,11 @@
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
 	};
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		watchdog0 = &wdt0;
+	};
 };
 
 &adc {
