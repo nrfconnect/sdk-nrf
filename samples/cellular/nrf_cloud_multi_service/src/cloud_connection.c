@@ -37,8 +37,6 @@ static K_EVENT_DEFINE(cloud_events);
 /* Atomic status flag tracking whether an initial association is in progress. */
 atomic_t initial_association;
 
-static void update_shadow(void);
-
 /* Helper functions for pending on pendable events. */
 bool await_network_ready(k_timeout_t timeout)
 {
@@ -215,7 +213,6 @@ static bool connect_cloud(void)
 	if (!err) {
 		cloud_connected();
 		cloud_ready();
-		update_shadow();
 		return true;
 	}
 #endif
@@ -243,59 +240,6 @@ static bool connect_cloud(void)
 	 */
 	start_readiness_timeout();
 	return true;
-}
-
-/**
- * @brief Updates the nRF Cloud shadow with information about supported capabilities, current
- *  firmware running, FOTA support, and so on.
- */
-static void update_shadow(void)
-{
-#if !defined(CONFIG_NRF_CLOUD_COAP) || defined(CONFIG_COAP_SHADOW)
-	static bool updated;
-	int err;
-	struct nrf_cloud_svc_info_fota fota_info = {
-		.application = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
-		.bootloader = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_BOOTLOADER),
-		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA),
-		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
-	};
-	struct nrf_cloud_svc_info_ui ui_info = {
-		.gnss = location_tracking_enabled(),
-		.temperature = IS_ENABLED(CONFIG_TEMP_TRACKING),
-		.log = nrf_cloud_is_text_logging_enabled(),
-		.dictionary_log = nrf_cloud_is_dict_logging_enabled()
-	};
-	struct nrf_cloud_svc_info service_info = {
-		.fota = &fota_info,
-		.ui = &ui_info
-	};
-	struct nrf_cloud_device_status device_status = {
-		/* Modem info is sent automatically since CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS
-		 * is enabled, so it can be skipped here.
-		 */
-		.modem = NULL,
-		.svc = &service_info,
-		.conn_inf = NRF_CLOUD_INFO_NO_CHANGE
-	};
-
-	if (updated) {
-		return; /* It is not necessary to do this more than once per boot. */
-	}
-	LOG_DBG("Updating shadow");
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-	err = nrf_cloud_shadow_device_status_update(&device_status);
-#elif defined(CONFIG_NRF_CLOUD_COAP)
-	err = nrf_cloud_coap_shadow_device_status_update(&device_status);
-#endif
-
-	if (err) {
-		LOG_ERR("Failed to update device shadow, error: %d", err);
-	} else {
-		LOG_DBG("Updated shadow");
-		updated = true;
-	}
-#endif /* !defined(CONFIG_NRF_CLOUD_COAP) || defined(CONFIG_COAP_SHADOW) */
 }
 
 /* External event handlers */
@@ -446,8 +390,10 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		/* Handle achievement of readiness */
 		cloud_ready();
 
-		/* Update the device shadow */
-		update_shadow();
+		/* The nRF Cloud library will automatically update the
+		 * device's shadow based on the build configuration.
+		 * See config NRF_CLOUD_SEND_SHADOW_INFO for details.
+		 */
 
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
