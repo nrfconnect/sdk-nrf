@@ -24,9 +24,6 @@ static bool encode_repeated_agnss_req_filtered(zcbor_state_t *state,
 					       const struct agnss_req_filtered *input);
 static bool encode_repeated_agnss_req_mask(zcbor_state_t *state,
 					   const struct agnss_req_mask *input);
-static bool encode_type(zcbor_state_t *state, const struct type_ *input);
-static bool encode_repeated_agnss_req_requestType(zcbor_state_t *state,
-						  const struct agnss_req_requestType *input);
 static bool encode_repeated_agnss_req_rsrp(zcbor_state_t *state,
 					   const struct agnss_req_rsrp *input);
 static bool encode_agnss_req(zcbor_state_t *state, const struct agnss_req *input);
@@ -38,12 +35,12 @@ static bool encode_repeated_agnss_req_types(zcbor_state_t *state,
 
 	bool tmp_result = ((
 		((zcbor_uint32_put(state, (1)))) &&
-		(zcbor_list_start_encode(state, 14) &&
-		 ((zcbor_multi_encode_minmax(1, 14, &(*input)._agnss_req_types_int_count,
+		(zcbor_list_start_encode(state, 13) &&
+		 ((zcbor_multi_encode_minmax(1, 13, &(*input)._agnss_req_types_int_count,
 					     (zcbor_encoder_t *)zcbor_int32_encode, state,
 					     (&(*input)._agnss_req_types_int), sizeof(int32_t))) ||
 		  (zcbor_list_map_end_force_encode(state), false)) &&
-		 zcbor_list_end_encode(state, 14))));
+		 zcbor_list_end_encode(state, 13))));
 
 	if (!tmp_result) {
 		zcbor_trace();
@@ -81,43 +78,11 @@ static bool encode_repeated_agnss_req_mask(zcbor_state_t *state, const struct ag
 	return tmp_result;
 }
 
-static bool encode_type(zcbor_state_t *state, const struct type_ *input)
-{
-	zcbor_print("%s\r\n", __func__);
-
-	bool tmp_result = (((((*input)._type_choice == _type__rtAssistance)
-				     ? ((zcbor_uint32_put(state, (10))))
-				     : (((*input)._type_choice == _type__custom)
-						? ((zcbor_uint32_put(state, (11))))
-						: false))));
-
-	if (!tmp_result) {
-		zcbor_trace();
-	}
-
-	return tmp_result;
-}
-
-static bool encode_repeated_agnss_req_requestType(zcbor_state_t *state,
-						  const struct agnss_req_requestType *input)
-{
-	zcbor_print("%s\r\n", __func__);
-
-	bool tmp_result = ((((zcbor_uint32_put(state, (7)))) &&
-			    (encode_type(state, (&(*input)._agnss_req_requestType)))));
-
-	if (!tmp_result) {
-		zcbor_trace();
-	}
-
-	return tmp_result;
-}
-
 static bool encode_repeated_agnss_req_rsrp(zcbor_state_t *state, const struct agnss_req_rsrp *input)
 {
 	zcbor_print("%s\r\n", __func__);
 
-	bool tmp_result = ((((zcbor_uint32_put(state, (8)))) &&
+	bool tmp_result = ((((zcbor_uint32_put(state, (7)))) &&
 			    (zcbor_int32_encode(state, (&(*input)._agnss_req_rsrp)))));
 
 	if (!tmp_result) {
@@ -132,7 +97,7 @@ static bool encode_agnss_req(zcbor_state_t *state, const struct agnss_req *input
 	zcbor_print("%s\r\n", __func__);
 
 	bool tmp_result =
-		(((zcbor_map_start_encode(state, 9) &&
+		(((zcbor_map_start_encode(state, 8) &&
 		   ((zcbor_present_encode(&((*input)._agnss_req_types_present),
 					  (zcbor_encoder_t *)encode_repeated_agnss_req_types, state,
 					  (&(*input)._agnss_req_types)) &&
@@ -148,16 +113,13 @@ static bool encode_agnss_req(zcbor_state_t *state, const struct agnss_req *input
 		      (zcbor_uint32_encode(state, (&(*input)._agnss_req_mcc)))) &&
 		     (((zcbor_uint32_put(state, (6)))) &&
 		      (zcbor_uint32_encode(state, (&(*input)._agnss_req_mnc)))) &&
-		     zcbor_present_encode(&((*input)._agnss_req_requestType_present),
-					  (zcbor_encoder_t *)encode_repeated_agnss_req_requestType,
-					  state, (&(*input)._agnss_req_requestType)) &&
 		     zcbor_present_encode(&((*input)._agnss_req_rsrp_present),
 					  (zcbor_encoder_t *)encode_repeated_agnss_req_rsrp, state,
 					  (&(*input)._agnss_req_rsrp)) &&
-		     (((zcbor_uint32_put(state, (9)))) &&
+		     (((zcbor_uint32_put(state, (8)))) &&
 		      (zcbor_uint32_encode(state, (&(*input)._agnss_req_tac))))) ||
 		    (zcbor_list_map_end_force_encode(state), false)) &&
-		   zcbor_map_end_encode(state, 9))));
+		   zcbor_map_end_encode(state, 8))));
 
 	if (!tmp_result) {
 		zcbor_trace();

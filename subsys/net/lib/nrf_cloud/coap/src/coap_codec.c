@@ -426,9 +426,8 @@ int coap_codec_agnss_encode(struct nrf_cloud_rest_agnss_request const *const req
 			t->_agnss_req_types_int[i] = (int)types[i];
 		}
 	} else {
-		input._agnss_req_requestType._agnss_req_requestType._type_choice =
-			_type__rtAssistance;
-		input._agnss_req_requestType_present = true;
+		LOG_ERR("Invalid request type: %d", request->type);
+		return -ENOTSUP;
 	}
 	if (request->filtered) {
 		input._agnss_req_filtered_present = true;
@@ -464,7 +463,7 @@ int coap_codec_agnss_resp_decode(struct nrf_cloud_rest_agnss_result *result,
 		int err;
 
 		/* Check for a potential A-GNSS JSON error message from nRF Cloud */
-		err = nrf_cloud_error_msg_decode(buf, NRF_CLOUD_JSON_APPID_VAL_AGPS,
+		err = nrf_cloud_error_msg_decode(buf, NRF_CLOUD_JSON_APPID_VAL_AGNSS,
 						 NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
 		if (!err) {
 			LOG_ERR("nRF Cloud returned A-GNSS error: %d", nrf_err);

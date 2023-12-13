@@ -28,7 +28,7 @@ extern "C" {
 #define DEFAULT_MAX_QTY 10
 
 struct agnss_req_types_ {
-	int32_t _agnss_req_types_int[14];
+	int32_t _agnss_req_types_int[13];
 	size_t _agnss_req_types_int_count;
 };
 
@@ -38,17 +38,6 @@ struct agnss_req_filtered {
 
 struct agnss_req_mask {
 	uint32_t _agnss_req_mask;
-};
-
-struct type_ {
-	enum {
-		_type__rtAssistance = 10,
-		_type__custom = 11,
-	} _type_choice;
-};
-
-struct agnss_req_requestType {
-	struct type_ _agnss_req_requestType;
 };
 
 struct agnss_req_rsrp {
@@ -65,8 +54,6 @@ struct agnss_req {
 	bool _agnss_req_mask_present;
 	uint32_t _agnss_req_mcc;
 	uint32_t _agnss_req_mnc;
-	struct agnss_req_requestType _agnss_req_requestType;
-	bool _agnss_req_requestType_present;
 	struct agnss_req_rsrp _agnss_req_rsrp;
 	bool _agnss_req_rsrp_present;
 	uint32_t _agnss_req_tac;

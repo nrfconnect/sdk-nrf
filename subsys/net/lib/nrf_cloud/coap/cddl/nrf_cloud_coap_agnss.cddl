@@ -8,16 +8,13 @@
 ; AGNSS Request
 ; ************
 
-type = rtAssistance/custom
-
 agnss_req = {
-	? types => [1*14 int],
+	? types => [1*13 int],
 	eci => uint,
 	? filtered => bool,
 	? mask => uint,
 	mcc => uint,
 	mnc => uint,
-	? requestType => type,
 	? rsrp => int,
 	tac => uint
 }
@@ -28,11 +25,8 @@ filtered = 3
 mask = 4
 mcc = 5
 mnc = 6
-requestType = 7
-rsrp = 8
-tac = 9
-rtAssistance = 10
-custom = 11
+rsrp = 7
+tac = 8
 
 ; ***********************
 ; AGNSS Response is binary
