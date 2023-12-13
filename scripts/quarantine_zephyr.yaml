@@ -118,9 +118,3 @@
     - nrf5340dk_nrf5340_cpuapp_ns
     - nrf9160dk_nrf9160_ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-22771"
-
-- scenarios:
-    - zephyr_get.sysbuild
-  platforms:
-    - native_posix
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24930"
