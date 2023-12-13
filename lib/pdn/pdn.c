@@ -603,27 +603,26 @@ int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
 			   struct in_addr *dns4_sec, unsigned int *ipv4_mtu)
 {
 	int ret;
-	char resp[256];
 	const char *fmt;
 	char dns4_pri_str[INET_ADDRSTRLEN];
 	char dns4_sec_str[INET_ADDRSTRLEN];
+	char at_cmd[sizeof("AT+CGCONTRDP=10")];
 
-	ret = nrf_modem_at_cmd(resp, sizeof(resp), "AT+CGCONTRDP=%u", cid);
-	if (ret) {
-		LOG_ERR("Failed to read dynamic params for CID %u, err %d", cid, ret);
-		return ret;
+	if (snprintf(at_cmd, sizeof(at_cmd), "AT+CGCONTRDP=%u", cid) >= sizeof(at_cmd)) {
+		return -E2BIG;
 	}
 	   /* "+CGCONTRDP: 0,,"example.com","","","198.276.154.230","12.34.56.78",,,,,1464" */
 	fmt = "+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%15[0-9.]\",\"%15[0-9.]\",,,,,%u";
 
 	/* If IPv4 is enabled, it will be the first response line. */
-	if (sscanf(resp, fmt, &dns4_pri_str, &dns4_sec_str, ipv4_mtu) != 3) {
+	ret = nrf_modem_at_scanf(at_cmd, fmt, &dns4_pri_str, &dns4_sec_str, ipv4_mtu);
+	if (ret != 3) {
 		return -EBADMSG;
 	}
 
 	if (zsock_inet_pton(AF_INET, dns4_pri_str, dns4_pri) != 1
 	 || zsock_inet_pton(AF_INET, dns4_sec_str, dns4_sec) != 1) {
-		return -EFAULT;
+		return -EADDRNOTAVAIL;
 	}
 	return 0;
 }
