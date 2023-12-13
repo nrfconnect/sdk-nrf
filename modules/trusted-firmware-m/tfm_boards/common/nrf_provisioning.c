@@ -20,79 +20,93 @@
 
 static enum tfm_plat_err_t disable_debugging(void)
 {
-    /* Configure the UICR such that upon the next reset, APPROTECT will be enabled */
-    bool approt_writable = nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR_S->APPROTECT, UICR_APPROTECT_PALL_Protected);
-    approt_writable &= nrfx_nvmc_word_writable_check((uint32_t)&NRF_UICR_S->SECUREAPPROTECT, UICR_SECUREAPPROTECT_PALL_Protected);
+	/* Configure the UICR such that upon the next reset, APPROTECT will be enabled */
+	bool approt_writable;
 
-    if (approt_writable) {
-        nrfx_nvmc_word_write((uint32_t)&NRF_UICR_S->APPROTECT, UICR_APPROTECT_PALL_Protected);
-        nrfx_nvmc_word_write((uint32_t)&NRF_UICR_S->SECUREAPPROTECT, UICR_SECUREAPPROTECT_PALL_Protected);
-    } else {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
+	approt_writable = nrfx_nvmc_word_writable_check(
+		(uint32_t)&NRF_UICR_S->APPROTECT,
+		UICR_APPROTECT_PALL_Protected);
+	approt_writable &= nrfx_nvmc_word_writable_check(
+		(uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
+		UICR_SECUREAPPROTECT_PALL_Protected);
 
-    return TFM_PLAT_ERR_SUCCESS;
+	if (approt_writable) {
+		nrfx_nvmc_word_write(
+			(uint32_t)&NRF_UICR_S->APPROTECT,
+			UICR_APPROTECT_PALL_Protected);
+		nrfx_nvmc_word_write(
+			(uint32_t)&NRF_UICR_S->SECUREAPPROTECT,
+			UICR_SECUREAPPROTECT_PALL_Protected);
+	} else {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
+	return TFM_PLAT_ERR_SUCCESS;
 }
 
 int tfm_plat_provisioning_is_required(void)
 {
-    enum tfm_security_lifecycle_t lcs = tfm_attest_hal_get_security_lifecycle();
+	enum tfm_security_lifecycle_t lcs;
 
-    return lcs == TFM_SLC_PSA_ROT_PROVISIONING;
+	lcs = tfm_attest_hal_get_security_lifecycle();
+
+	return lcs == TFM_SLC_PSA_ROT_PROVISIONING;
 }
 
 enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 {
-    enum tfm_security_lifecycle_t lcs = tfm_attest_hal_get_security_lifecycle();
+	enum tfm_security_lifecycle_t lcs;
 
-    /*
-     * Provisioning in NRF defines has two steps, the first step is to execute
-     * the provisioning_image sample. When this sample is executed it will
-     * always set the lifecycle state to PROVISIONING. This is a requirement for
-     * the TF-M provisioning to be completed so we don't accept any other
-     * lifecycle state here.
-     */
+	lcs = tfm_attest_hal_get_security_lifecycle();
 
-    /* The Hardware Unique Keys should be already written */
-    if (!hw_unique_key_are_any_written()) {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
+	/*
+	 * Provisioning in NRF defines has two steps, the first step is to execute
+	 * the provisioning_image sample. When this sample is executed it will
+	 * always set the lifecycle state to PROVISIONING. This is a requirement for
+	 * the TF-M provisioning to be completed so we don't accept any other
+	 * lifecycle state here.
+	 */
 
-    /* The Initial Attestation key should be already written */
-    if (!nrf_cc3xx_platform_identity_key_is_stored(NRF_KMU_SLOT_KIDENT)) {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
+	/* The Hardware Unique Keys should be already written */
+	if (!hw_unique_key_are_any_written()) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
 
-    /*
-     * We don't need to make sure that the validation key is written here since we assume
-     * that secure boot is already enabled at this stage
-     */
+	/* The Initial Attestation key should be already written */
+	if (!nrf_cc3xx_platform_identity_key_is_stored(NRF_KMU_SLOT_KIDENT)) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
 
-    /* Disable debugging in UICR */
-    if (disable_debugging() != TFM_PLAT_ERR_SUCCESS) {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
+	/*
+	 * We don't need to make sure that the validation key is written here since we assume
+	 * that secure boot is already enabled at this stage
+	 */
+
+	/* Disable debugging in UICR */
+	if (disable_debugging() != TFM_PLAT_ERR_SUCCESS) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
 
 
-    /* Transition to the SECURED lifecycle state */
-    if (tfm_attest_update_security_lifecycle_otp(TFM_SLC_SECURED) != 0) {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
+	/* Transition to the SECURED lifecycle state */
+	if (tfm_attest_update_security_lifecycle_otp(TFM_SLC_SECURED) != 0) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
 
-    lcs = tfm_attest_hal_get_security_lifecycle();
-    if (lcs != TFM_SLC_SECURED) {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
+	lcs = tfm_attest_hal_get_security_lifecycle();
+	if (lcs != TFM_SLC_SECURED) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
 
-    /* Perform a mandatory reset since we switch to an attestable LCS state */
-    tfm_platform_hal_system_reset();
+	/* Perform a mandatory reset since we switch to an attestable LCS state */
+	tfm_platform_hal_system_reset();
 
-    /*
-     * We should never return from this function, a reset should be triggered
-     * before we reach this point. Returning an error to signal that something
-     * is wrong if we reached here.
-     */
-    return TFM_PLAT_ERR_SYSTEM_ERR;
+	/*
+	 * We should never return from this function, a reset should be triggered
+	 * before we reach this point. Returning an error to signal that something
+	 * is wrong if we reached here.
+	 */
+	return TFM_PLAT_ERR_SYSTEM_ERR;
 }
 
 static bool dummy_key_is_present(void)
