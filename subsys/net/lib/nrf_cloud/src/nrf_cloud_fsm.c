@@ -700,7 +700,7 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 	};
 
 	switch (nrf_cloud_dc_rx_topic_decode(cloud_evt.topic.ptr)) {
-	case NRF_CLOUD_RCV_TOPIC_AGPS:
+	case NRF_CLOUD_RCV_TOPIC_AGNSS:
 		agnss_process(cloud_evt.data.ptr, cloud_evt.data.len);
 		return 0;
 	case NRF_CLOUD_RCV_TOPIC_PGPS:
