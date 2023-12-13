@@ -186,8 +186,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       )
     endif()
 
-    # Use NCS signing script with support for PM
-    set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+    if(SB_CONFIG_PARTITION_MANAGER)
+      # Use NCS signing script with support for PM
+      set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+    endif()
 
     set(imgtool_extra)
     if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
