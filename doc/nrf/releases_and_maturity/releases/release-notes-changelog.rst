@@ -216,6 +216,8 @@ nRF Desktop
   * Changed the term *flash memory* to *non-volatile memory* for generalization purposes.
   * The :ref:`nrf_desktop_usb_state` to use the :c:func:`usb_hid_set_proto_code` function to set the HID Boot Interface protocol code.
     The ``CONFIG_USB_HID_PROTOCOL_CODE`` Kconfig option is deprecated and a dedicated API needs to be used instead.
+  * The :ref:`nrf_desktop_watchdog` to use ``watchdog0`` DTS alias instead of ``wdt`` DTS node label.
+    Using the alias makes the configuration of the module more flexible.
 
 Thingy:53: Matter weather station
 ---------------------------------

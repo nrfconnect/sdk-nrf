@@ -23,7 +23,7 @@ struct wdt_data_storage {
 };
 
 static struct wdt_data_storage wdt_data = {
-	.wdt = DEVICE_DT_GET(DT_NODELABEL(wdt)),
+	.wdt = DEVICE_DT_GET(DT_ALIAS(watchdog0)),
 };
 
 static void watchdog_feed_worker(struct k_work *work_desc)
