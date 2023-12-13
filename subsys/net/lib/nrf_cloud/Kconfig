@@ -25,6 +25,8 @@ rsource "Kconfig.nrf_cloud_log"
 
 rsource "Kconfig.nrf_cloud_coap"
 
+rsource "Kconfig.nrf_cloud_shadow_info"
+
 config NRF_CLOUD_GATEWAY
 	bool "nRF Cloud Gateway"
 	help
@@ -46,31 +48,6 @@ config NRF_CLOUD_SEC_TAG
 config NRF_CLOUD_CHECK_CREDENTIALS
 	bool "Enable the ability to check if nRF Cloud credentials are present"
 	select MODEM_KEY_MGMT if NRF_MODEM_LIB
-
-config NRF_CLOUD_SEND_DEVICE_STATUS
-	bool "Send device status on initial connection"
-	depends on NRF_CLOUD_MQTT || NRF_CLOUD_COAP
-	depends on MODEM_INFO
-	depends on MODEM_INFO_ADD_DEVICE
-	default y if NRF_CLOUD_FOTA
-	help
-	  Send device status, containing hardware and firmware version information,
-	  to nRF Cloud on initial connection after library initialization.
-
-config NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK
-	bool "Include network status information with device status"
-	depends on NRF_CLOUD_SEND_DEVICE_STATUS
-	depends on MODEM_INFO_ADD_NETWORK
-
-config NRF_CLOUD_SEND_DEVICE_STATUS_SIM
-	bool "Include SIM card information with device status"
-	depends on NRF_CLOUD_SEND_DEVICE_STATUS
-	depends on MODEM_INFO_ADD_SIM
-
-config NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF
-	bool "Include connection information with device status"
-	depends on NRF_CLOUD_SEND_DEVICE_STATUS
-	default y
 
 config NRF_CLOUD_DEVICE_STATUS_ENCODE_VOLTAGE
 	bool "Include the (battery) voltage when encoding device status"

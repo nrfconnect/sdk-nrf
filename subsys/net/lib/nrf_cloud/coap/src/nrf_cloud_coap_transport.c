@@ -173,36 +173,43 @@ int nrf_cloud_coap_init(void)
 	return 0;
 }
 
-static int update_device_status(const char * const app_ver)
+static int update_configured_info_sections(const char * const app_ver)
 {
-	int err;
+	static bool updated;
 
-#if defined(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS)
+	if (updated) {
+		return -EALREADY;
+	}
+
+	struct nrf_cloud_svc_info_fota fota = {0};
+	struct nrf_cloud_svc_info_ui ui = {0};
+	struct nrf_cloud_svc_info svc_inf = {
+		.ui = &ui,
+		.fota = &fota
+	};
 	struct nrf_cloud_modem_info mdm_inf = {
-		.device = NRF_CLOUD_INFO_SET,
-		.application_version = app_ver,
-		.mpi = NULL
+		.application_version = app_ver
 	};
 	struct nrf_cloud_device_status dev_status = {
 		.modem = &mdm_inf,
-		.svc = NULL
+		.svc = &svc_inf,
 	};
+	int err = nrf_cloud_shadow_info_enabled_sections_get(&dev_status);
 
-	mdm_inf.network = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK) ?
-					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+	if (err == -ENODEV) {
+		/* Nothing to send */
+		err = 0;
+	} else {
+		err = nrf_cloud_coap_shadow_device_status_update(&dev_status);
+	}
 
-	mdm_inf.sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
-					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+	if (err) {
+		LOG_ERR("Failed to update info sections in shadow, error: %d", err);
+		return -EIO;
+	}
 
-	dev_status.conn_inf = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF) ?
-					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
-
-	err = nrf_cloud_coap_shadow_device_status_update(&dev_status);
-#else
-	ARG_UNUSED(app_ver);
-	err = 0;
-#endif
-	return err;
+	updated = true;
+	return 0;
 }
 
 static void update_control_section(void)
@@ -282,8 +289,11 @@ int nrf_cloud_coap_connect(const char * const app_ver)
 	/* On initial connect, set the control section in the shadow */
 	update_control_section();
 
-	/* On each connect, update the device status in the shadow */
-	return update_device_status(app_ver);
+	/* On initial connect, update the configured info sections in the shadow */
+	err = update_configured_info_sections(app_ver);
+	if (err != -EIO) {
+		return 0;
+	}
 
 fail:
 	(void)nrf_cloud_coap_disconnect();

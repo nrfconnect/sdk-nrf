@@ -266,21 +266,22 @@ static int get_error_code_value(cJSON *const obj, enum nrf_cloud_error * const e
 	return 0;
 }
 
-static int info_encode(cJSON * const root_obj, const struct nrf_cloud_modem_info * const mdm_inf,
-	const struct nrf_cloud_svc_info * const svc_inf, const enum nrf_cloud_shadow_info conn_inf)
+static int info_encode(cJSON * const root_obj, const struct nrf_cloud_device_status * const ds)
 {
+	__ASSERT_NO_MSG(ds != NULL);
+
 	int ret = 0;
 
 #ifdef CONFIG_MODEM_INFO
-	if (mdm_inf) {
-		ret = nrf_cloud_modem_info_json_encode(mdm_inf, root_obj);
+	if (ds->modem) {
+		ret = nrf_cloud_modem_info_json_encode(ds->modem, root_obj);
 		if (ret) {
 			return -ENOMEM;
 		}
 	}
 #endif
 
-	if (svc_inf) {
+	if (ds->svc) {
 		cJSON *svc_inf_obj = cJSON_AddObjectToObjectCS(root_obj,
 							       NRF_CLOUD_JSON_KEY_SRVC_INFO);
 
@@ -288,15 +289,15 @@ static int info_encode(cJSON * const root_obj, const struct nrf_cloud_modem_info
 			return -ENOMEM;
 		}
 
-		ret = nrf_cloud_service_info_json_encode(svc_inf, svc_inf_obj);
+		ret = nrf_cloud_service_info_json_encode(ds->svc, svc_inf_obj);
 		if (ret) {
 			return -ENOMEM;
 		}
 	}
 
-	if (conn_inf == NRF_CLOUD_INFO_SET) {
+	if (ds->conn_inf == NRF_CLOUD_INFO_SET) {
 		ret = shadow_connection_info_update(root_obj);
-	} else if (conn_inf == NRF_CLOUD_INFO_CLEAR) {
+	} else if (ds->conn_inf == NRF_CLOUD_INFO_CLEAR) {
 		ret = json_add_null_cs(root_obj, NRF_CLOUD_JSON_KEY_CONN_INFO);
 	}
 
@@ -336,6 +337,61 @@ static int device_control_encode(cJSON * const obj, struct nrf_cloud_ctrl_data c
 	LOG_ERR("Failed to encode device control");
 	cJSON_Delete(ctrl_obj);
 	return -ENOMEM;
+}
+
+int nrf_cloud_shadow_info_enabled_sections_get(struct nrf_cloud_device_status *const ds)
+{
+	__ASSERT_NO_MSG(ds != NULL);
+
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SHADOW_INFO)) {
+		/* No info sections are enabled to send */
+		return -ENODEV;
+	}
+
+	struct nrf_cloud_modem_info *modem =	ds->modem;
+	struct nrf_cloud_svc_info_fota *fota =	ds->svc ? ds->svc->fota : NULL;
+	struct nrf_cloud_svc_info_ui *ui =	ds->svc ? ds->svc->ui : NULL;
+
+	/* Modem info */
+	if (modem) {
+		/* Device info */
+		modem->device = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS) ?
+					   NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+		/* Network info */
+		modem->network = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK) ?
+					    NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+		/* SIM info */
+		modem->sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+	}
+
+	/* Connection info */
+	ds->conn_inf = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF) ?
+				  NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+
+
+	/* Service info: FOTA */
+	if (fota && IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA)) {
+		fota->bootloader =  IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_BOOT_SUPPORTED);
+		fota->application = IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_APP_SUPPORTED);
+		fota->modem =	    IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED);
+		fota->modem_full =  IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED);
+	}
+
+	/* Service info: UI */
+	if (ui && IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI)) {
+		ui->temperature =    IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_TEMP);
+		ui->gnss =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_MAP);
+		ui->flip =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_ORIENTATION);
+		ui->humidity =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_HUMID);
+		ui->air_pressure =   IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_PRESSURE);
+		ui->rsrp =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_RSRP);
+		ui->log =	     IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_LOGS);
+		ui->dictionary_log = IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_BIN_LOGS);
+		ui->air_quality =    IS_ENABLED(CONFIG_NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_QUALITY);
+	}
+
+	return 0;
 }
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
@@ -418,33 +474,40 @@ void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler)
 }
 #endif
 
-static int device_status_encode(cJSON * const reported_obj)
+/* Encode the info sections selected in the CONFIG_NRF_CLOUD_SEND_SHADOW_INFO menu config */
+static int configured_info_sections_encode(cJSON * const reported_obj)
 {
-	enum nrf_cloud_shadow_info conn_inf;
+	struct nrf_cloud_svc_info_fota fota = {0};
+	struct nrf_cloud_svc_info_ui ui = {0};
+	struct nrf_cloud_svc_info svc_inf = {
+		.ui = &ui,
+		.fota = &fota
+	};
 	struct nrf_cloud_modem_info mdm_inf = {
-		.device = NRF_CLOUD_INFO_SET,
 		.application_version = application_version
 	};
-	cJSON *device_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_DEVICE);
+	struct nrf_cloud_device_status ds = {
+		.modem = &mdm_inf,
+		.svc = &svc_inf,
+	};
+	cJSON *device_obj = NULL;
+	int ret = nrf_cloud_shadow_info_enabled_sections_get(&ds);
 
+	if (ret == -ENODEV) {
+		/* Nothing to send */
+		return 0;
+	}
+
+	device_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_DEVICE);
 	if (!device_obj) {
 		return -ENOMEM;
 	}
 
-	mdm_inf.network = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK) ?
-					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
-
-	mdm_inf.sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
-					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
-
-	conn_inf = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF) ?
-					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
-
-	return info_encode(device_obj, &mdm_inf, NULL, conn_inf);
+	return info_encode(device_obj, &ds);
 }
 
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
-			   const bool add_dev_status, struct nrf_cloud_data *output)
+			   const bool add_info_sections, struct nrf_cloud_data *output)
 {
 	__ASSERT_NO_MSG(output != NULL);
 
@@ -528,8 +591,8 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 		nrf_cloud_device_control_get(&device_ctrl);
 		device_control_encode(reported_obj, &device_ctrl);
 
-		if (add_dev_status) {
-			ret += device_status_encode(reported_obj);
+		if (add_info_sections) {
+			ret += configured_info_sections_encode(reported_obj);
 		}
 	}
 
@@ -1022,46 +1085,41 @@ static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fo
 		return -EINVAL;
 	}
 
-	if (fota == NULL ||
-	    (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) && !IS_ENABLED(CONFIG_NRF_CLOUD_FOTA))) {
-		if (fota && (fota->application || fota->modem || fota->bootloader)) {
-			LOG_WRN("CONFIG_NRF_CLOUD_FOTA not enabled, setting FOTA array to 'null'");
-		}
+	/* Add a null FOTA item to the serviceInfo object */
+	if (fota == NULL) {
+		return json_add_null_cs(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA);
+	}
 
-		if (json_add_null_cs(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA) != 0) {
-			return -ENOMEM;
-		}
-	} else if (fota) {
-		int item_cnt = 0;
-		cJSON *array = cJSON_AddArrayToObjectCS(svc_inf_obj,
-							NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA);
+	/* Add the FOTA array to the serviceInfo object */
+	int item_cnt = 0;
+	cJSON *array = cJSON_AddArrayToObjectCS(svc_inf_obj,
+						NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA);
 
-		if (!array) {
-			return -ENOMEM;
-		}
-		if (fota->bootloader) {
-			cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_BOOT));
-			++item_cnt;
-		}
-		if (fota->modem) {
-			cJSON_AddItemToArray(array,
-					     cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_DELTA));
-			++item_cnt;
-		}
-		if (fota->application) {
-			cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_APP));
-			++item_cnt;
-		}
-		if (fota->modem_full) {
-			cJSON_AddItemToArray(array,
-					     cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_FULL));
-			++item_cnt;
-		}
+	if (!array) {
+		return -ENOMEM;
+	}
+	if (fota->bootloader) {
+		cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_BOOT));
+		++item_cnt;
+	}
+	if (fota->modem) {
+		cJSON_AddItemToArray(array,
+					cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_DELTA));
+		++item_cnt;
+	}
+	if (fota->application) {
+		cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_APP));
+		++item_cnt;
+	}
+	if (fota->modem_full) {
+		cJSON_AddItemToArray(array,
+					cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_FULL));
+		++item_cnt;
+	}
 
-		if (cJSON_GetArraySize(array) != item_cnt) {
-			cJSON_DeleteItemFromObject(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA);
-			return -ENOMEM;
-		}
+	if (cJSON_GetArraySize(array) != item_cnt) {
+		cJSON_DeleteItemFromObject(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA);
+		return -ENOMEM;
 	}
 
 	return 0;
@@ -1683,7 +1741,7 @@ int nrf_cloud_shadow_dev_status_encode(const struct nrf_cloud_device_status *con
 		goto cleanup;
 	}
 
-	err = info_encode(device_obj, dev_status->modem, dev_status->svc, dev_status->conn_inf);
+	err = info_encode(device_obj, dev_status);
 	if (err) {
 		goto cleanup;
 	}
@@ -1769,7 +1827,7 @@ int nrf_cloud_dev_status_json_encode(const struct nrf_cloud_device_status *const
 		}
 	}
 
-	err = info_encode(data_obj, dev_status->modem, dev_status->svc, dev_status->conn_inf);
+	err = info_encode(data_obj, dev_status);
 
 	return err;
 }

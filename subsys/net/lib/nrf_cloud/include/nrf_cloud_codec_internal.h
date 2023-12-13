@@ -113,7 +113,7 @@ int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
 
 /** @brief Encode state information. */
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
-			   const bool add_dev_status, struct nrf_cloud_data *output);
+			   const bool add_info_sections, struct nrf_cloud_data *output);
 
 /** @brief Decode the shadow data and get the requested FSM state. */
 int nrf_cloud_shadow_data_state_decode(const struct nrf_cloud_obj_shadow_data *const input,
@@ -170,6 +170,15 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
  */
 int nrf_cloud_coap_shadow_default_process(struct nrf_cloud_obj_shadow_data *const input,
 					  struct nrf_cloud_data *const response_out);
+
+/** @brief Get the info sections that are enabled to be sent to the device's shadow on
+ * initial connection. The sections are enabled based on the configuration options that
+ * set the Kconfig @kconfig{CONFIG_NRF_CLOUD_SEND_SHADOW_INFO} symbol.
+ *
+ * @retval 0		Success.
+ * @retval -ENODEV	CONFIG_NRF_CLOUD_SEND_SHADOW_INFO is disabled.
+ */
+int nrf_cloud_shadow_info_enabled_sections_get(struct nrf_cloud_device_status *const ds);
 
 /** @brief Encode the device status data into a JSON formatted buffer to be saved to
  * the device shadow.
@@ -275,7 +284,7 @@ int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
  *
  * @retval 0 Success.
  * @retval -ENODATA Access point (non-local) count less than NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
- * @return -ENOMEM Out of memory.
+ * @retval -ENOMEM Out of memory.
  */
 int nrf_cloud_wifi_req_json_encode(struct wifi_scan_info const *const wifi,
 				   cJSON *const req_obj_out);
