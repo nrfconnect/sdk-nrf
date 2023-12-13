@@ -68,6 +68,10 @@
 
 - scenarios:
     - sample.display.lvgl.gui
+    - sample.modules.lvgl.accelerometer_chart
+    - sample.modules.lvgl.demo_music
+    - sample.modules.lvgl.demo_benchmark
+    - sample.modules.lvgl.demo_stress
   platforms:
     - native_posix
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
