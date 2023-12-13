@@ -179,7 +179,7 @@ Kconfig*                                  @tejlmand
 /samples/cellular/modem_trace_flash/      @eivindj-nordic
 /samples/cellular/slm_shell/              @MarkusLassila @tomi-font
 /samples/cellular/sms/                    @trantanen @tokangas
-/samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos
+/samples/openthread/                      @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
