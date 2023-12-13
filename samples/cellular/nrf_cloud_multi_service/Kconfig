@@ -139,6 +139,7 @@ config TEMP_DATA_USE_SENSOR
 config TEMP_TRACKING
 	bool "Track temperature"
 	default y
+	select NRF_CLOUD_ENABLE_SVC_INF_UI_TEMP
 	help
 	  Sets whether to take temperature measurements.
 
