@@ -1,0 +1,12 @@
+sample:
+  name: IPC Service example integration (icmsg backend)
+tests:
+  sample.ipc.icmsg:
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ipc
+    sysbuild: true
+    harness: remote
+    extra_args:
+      - SB_CONFIG_PARTITION_MANAGER=n
