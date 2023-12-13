@@ -113,6 +113,38 @@ config NRF_CLOUD_FOTA_FULL_MODEM_UPDATE_BUF_SIZE
 	default 4096
 endif # NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
 
+config NRF_CLOUD_FOTA_TRANSPORT_ENABLED
+	bool
+	default y if (NRF_CLOUD_REST || NRF_CLOUD_COAP || NRF_CLOUD_FOTA)
+	help
+	  This symbol is y when a FOTA transport type is enabled in the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_APP_SUPPORTED
+	bool
+	default y if (BOOTLOADER_MCUBOOT && NRF_CLOUD_FOTA_TRANSPORT_ENABLED) 
+	help
+	  This symbol is y when application FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_BOOT_SUPPORTED
+	bool
+	default y if (BOOTLOADER_MCUBOOT && BUILD_S1_VARIANT && SECURE_BOOT && \
+		      NRF_CLOUD_FOTA_TRANSPORT_ENABLED)
+	help
+	  This symbol is y when bootloader FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED
+	bool
+	default y if (NRF_MODEM && NRF_CLOUD_FOTA_TRANSPORT_ENABLED)
+	help
+	  This symbol is y when modem delta FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED
+	bool
+	default y if (NRF_MODEM && NRF_CLOUD_FOTA_FULL_MODEM_UPDATE && \
+		      NRF_CLOUD_FOTA_TRANSPORT_ENABLED)
+	help
+	  This symbol is y when full modem FOTA is supported by the configuration.
+
 config NRF_CLOUD_FOTA_POLL
 	bool "Enable FOTA job polling helpers"
 	help
