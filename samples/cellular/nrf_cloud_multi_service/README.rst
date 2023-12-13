@@ -520,9 +520,16 @@ Next, complete the following steps for each device you wish to provision:
    Do not attempt to use this example directly, it has been filled with dummy data.
    See `nRF Cloud REST API ProvisionDevices`_ for more details.
 
-#. Navigate to the `Provision Devices <nRF Cloud Portal Provision Devices_>`_ page of the nRF Cloud portal and upload the :file:`<device_uuid>_cred.csv` file you created.
+#. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left and proceed as follows:
 
-   You should see a message stating that the file was uploaded successfully, and a device with the device ID you created should appear in the `Devices <nRF Cloud Portal Devices_>`_ page.
+  a. Click :guilabel:`Add Devices`.
+  #. Select **Bulk Onboard**.
+
+     The `Bulk Onboard Devices`_ page opens.
+
+  #. Upload the :file:`<device_uuid>_cred.csv` file you created.
+
+   You should see a message stating that the file was uploaded successfully, and a device with the device ID you created should appear in the **Devices** page.
 
 #. Download `Amazon Root CA 1`_ and save it as :file:`AmazonRootCA1.pem`.
 
@@ -910,8 +917,8 @@ Next, for each device you wish to provision, execute the following command in th
 
 Where ``<certificate_serial>`` is your certificate's serial number in hex.
 
-Once the script creates the :file:`provision.csv` file, visit the `Provision Devices`_ page in the nRF Cloud portal to provision the device.
-Provisioning registers the device with nRF Cloud, allowing it to use any nRF Cloud services through CoAP, MQTT, or REST connectivity.
+Once the script creates the :file:`provision.csv` file, visit the `Bulk Onboard Devices`_ page in the nRF Cloud portal to onboard the device.
+Onboarding registers the device with nRF Cloud, allowing it to use any nRF Cloud services through CoAP, MQTT, or REST connectivity.
 
 .. _nrf_cloud_multi_service_building_and_running:
 
