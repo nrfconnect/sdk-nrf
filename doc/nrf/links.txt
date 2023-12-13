@@ -1046,9 +1046,7 @@
 .. _`nRF Cloud REST API ProvisionDevices`: https://api.nrfcloud.com/v1#tag/IP-Devices/operation/ProvisionDevices
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
 
-.. _`nRF Cloud Portal Provision Devices`: https://nrfcloud.com/#/provision-devices
-.. _`nRF Cloud Portal Devices`: https://nrfcloud.com/#/devices
-
+.. _`Bulk Onboard Devices`: https://nrfcloud.com/#/add-device/bulk
 
 .. ### Source: zigbeealliance.org & csa-iot.org
 
