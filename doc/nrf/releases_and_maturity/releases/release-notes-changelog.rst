@@ -377,7 +377,9 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* :ref:`npm1300_fuel_gauge` sample:
+
+  * Updated to accommodate API changes in the :ref:`nrfxlib:nrf_fuel_gauge`.
 
 Sensor samples
 --------------

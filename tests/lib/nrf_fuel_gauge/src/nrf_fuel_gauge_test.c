@@ -31,6 +31,7 @@ void test_nrf_fuel_gauge_init(void)
 		.i0 = 0.0f,
 		.t0 = 25.0f,
 		.model = &battery,
+		.opt_params = NULL,
 	};
 	float v0;
 	int err;
@@ -90,7 +91,7 @@ void test_nrf_fuel_gauge_sanity(void)
 		}
 
 		/* Don't expect time-to-full to be valid when discharging */
-		ttf = nrf_fuel_gauge_ttf_get(0.4f, 0.04f);
+		ttf = nrf_fuel_gauge_ttf_get(false, 0.04f);
 		TEST_ASSERT_TRUE(isnan(ttf));
 	}
 
@@ -134,8 +135,13 @@ void test_nrf_fuel_gauge_linking(void)
 	(void) nrf_fuel_gauge_process(4.2f, 0.07f, 25.0f, 60.0f, NULL);
 	(void) nrf_fuel_gauge_idle_set(4.2f, 25.0f, 0.0f);
 	(void) nrf_fuel_gauge_tte_get();
-	(void) nrf_fuel_gauge_ttf_get(0.0f, 0.0f);
-	(void) nrf_fuel_gauge_param_adjust(0.0f, 0.0f, 0.0f, 0.0f);
+	(void) nrf_fuel_gauge_ttf_get(false, 0.0f);
+	(void) nrf_fuel_gauge_param_adjust(&(struct nrf_fuel_gauge_runtime_parameters) {
+		.a = 0.0f,
+		.b = 0.0f,
+		.c = 0.0f,
+		.d = 0.0f,
+	});
 }
 
 extern int unity_main(void);
