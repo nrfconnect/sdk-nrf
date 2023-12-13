@@ -38,7 +38,7 @@ extern "C" {
 
 enum nrf_cloud_rcv_topic {
 	NRF_CLOUD_RCV_TOPIC_GENERAL,
-	NRF_CLOUD_RCV_TOPIC_AGPS,
+	NRF_CLOUD_RCV_TOPIC_AGNSS,
 	NRF_CLOUD_RCV_TOPIC_PGPS,
 	NRF_CLOUD_RCV_TOPIC_LOCATION,
 	/* Unknown/unhandled topic */

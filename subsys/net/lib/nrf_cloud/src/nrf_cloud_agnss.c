@@ -572,7 +572,7 @@ int nrf_cloud_agnss_process(const char *buf, size_t buf_len)
 	/* Check for a potential A-GNSS JSON error message from nRF Cloud */
 	enum nrf_cloud_error nrf_err;
 
-	err = nrf_cloud_error_msg_decode(buf, NRF_CLOUD_JSON_APPID_VAL_AGPS,
+	err = nrf_cloud_error_msg_decode(buf, NRF_CLOUD_JSON_APPID_VAL_AGNSS,
 		NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
 	if (!err) {
 		LOG_ERR("nRF Cloud returned A-GNSS error: %d", nrf_err);

@@ -75,7 +75,7 @@ static const char *const sensor_type_str[] = {
 #define STRLEN_TOPIC_VAL_C2D	(sizeof(NRF_CLOUD_JSON_VAL_TOPIC_C2D) - 1)
 
 #define TOPIC_VAL_RCV_WILDCARD	(NRF_CLOUD_JSON_VAL_TOPIC_WILDCARD NRF_CLOUD_JSON_VAL_TOPIC_RCV)
-#define TOPIC_VAL_RCV_AGPS	(NRF_CLOUD_JSON_VAL_TOPIC_AGPS     NRF_CLOUD_JSON_VAL_TOPIC_RCV)
+#define TOPIC_VAL_RCV_AGNSS	(NRF_CLOUD_JSON_VAL_TOPIC_AGNSS    NRF_CLOUD_JSON_VAL_TOPIC_RCV)
 #define TOPIC_VAL_RCV_PGPS	(NRF_CLOUD_JSON_VAL_TOPIC_PGPS     NRF_CLOUD_JSON_VAL_TOPIC_RCV)
 #define TOPIC_VAL_RCV_C2D	(NRF_CLOUD_JSON_VAL_TOPIC_C2D      NRF_CLOUD_JSON_VAL_TOPIC_RCV)
 #define TOPIC_VAL_RCV_GND_FIX	(NRF_CLOUD_JSON_VAL_TOPIC_GND_FIX  NRF_CLOUD_JSON_VAL_TOPIC_RCV)
@@ -615,8 +615,8 @@ enum nrf_cloud_rcv_topic nrf_cloud_dc_rx_topic_decode(const char * const topic)
 		return NRF_CLOUD_RCV_TOPIC_UNKNOWN;
 	}
 
-	if (strstr(topic, TOPIC_VAL_RCV_AGPS)) {
-		return NRF_CLOUD_RCV_TOPIC_AGPS;
+	if (strstr(topic, TOPIC_VAL_RCV_AGNSS)) {
+		return NRF_CLOUD_RCV_TOPIC_AGNSS;
 	} else if (strstr(topic, TOPIC_VAL_RCV_PGPS)) {
 		return NRF_CLOUD_RCV_TOPIC_PGPS;
 	} else if (strstr(topic, TOPIC_VAL_RCV_GND_FIX)) {
@@ -3246,7 +3246,8 @@ static int agnss_types_array_json_encode(cJSON * const obj,
 	}
 
 	if (!err) {
-		err = cJSON_AddItemToObjectCS(obj, NRF_CLOUD_JSON_KEY_AGPS_TYPES, array) ? 0 : -EIO;
+		err = cJSON_AddItemToObjectCS(obj, NRF_CLOUD_JSON_KEY_AGNSS_TYPES, array) ?
+			0 : -EIO;
 	}
 
 	if (err) {
@@ -3353,7 +3354,7 @@ int nrf_cloud_agnss_req_json_encode(const struct nrf_modem_gnss_agnss_data_frame
 	/* Create request JSON containing a data object */
 	if (json_add_str_cs(agnss_req_obj_out,
 			    NRF_CLOUD_JSON_APPID_KEY,
-			    NRF_CLOUD_JSON_APPID_VAL_AGPS) ||
+			    NRF_CLOUD_JSON_APPID_VAL_AGNSS) ||
 	    json_add_str_cs(agnss_req_obj_out,
 			    NRF_CLOUD_JSON_MSG_TYPE_KEY,
 			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA)) {
