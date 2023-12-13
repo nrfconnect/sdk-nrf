@@ -22,6 +22,12 @@ static uint32_t poll_period;
 
 static bool is_connected;
 
+#define COAP_CLIENT_WORKQ_STACK_SIZE 2048
+#define COAP_CLIENT_WORKQ_PRIORITY 5
+
+K_THREAD_STACK_DEFINE(coap_client_workq_stack_area, COAP_CLIENT_WORKQ_STACK_SIZE);
+static struct k_work_q coap_client_workq;
+
 static struct k_work unicast_light_work;
 static struct k_work multicast_light_work;
 static struct k_work toggle_MTD_SED_work;
@@ -221,14 +227,14 @@ static void on_thread_state_changed(otChangedFlags flags, struct openthread_cont
 		case OT_DEVICE_ROLE_CHILD:
 		case OT_DEVICE_ROLE_ROUTER:
 		case OT_DEVICE_ROLE_LEADER:
-			k_work_submit(&on_connect_work);
+			k_work_submit_to_queue(&coap_client_workq, &on_connect_work);
 			is_connected = true;
 			break;
 
 		case OT_DEVICE_ROLE_DISABLED:
 		case OT_DEVICE_ROLE_DETACHED:
 		default:
-			k_work_submit(&on_disconnect_work);
+			k_work_submit_to_queue(&coap_client_workq, &on_disconnect_work);
 			is_connected = false;
 			break;
 		}
@@ -241,7 +247,7 @@ static struct openthread_state_changed_cb ot_state_chaged_cb = {
 static void submit_work_if_connected(struct k_work *work)
 {
 	if (is_connected) {
-		k_work_submit(work);
+		k_work_submit_to_queue(&coap_client_workq, work);
 	} else {
 		LOG_INF("Connection is broken");
 	}
@@ -254,6 +260,13 @@ void coap_client_utils_init(ot_connection_cb_t on_connect,
 	on_mtd_mode_toggle = on_toggle;
 
 	coap_init(AF_INET6, NULL);
+
+
+	k_work_queue_init(&coap_client_workq);
+
+	k_work_queue_start(&coap_client_workq, coap_client_workq_stack_area,
+					K_THREAD_STACK_SIZEOF(coap_client_workq_stack_area),
+					COAP_CLIENT_WORKQ_PRIORITY, NULL);
 
 	k_work_init(&on_connect_work, on_connect);
 	k_work_init(&on_disconnect_work, on_disconnect);
@@ -289,6 +302,6 @@ void coap_client_send_provisioning_request(void)
 void coap_client_toggle_minimal_sleepy_end_device(void)
 {
 	if (IS_ENABLED(CONFIG_OPENTHREAD_MTD_SED)) {
-		k_work_submit(&toggle_MTD_SED_work);
+		k_work_submit_to_queue(&coap_client_workq, &toggle_MTD_SED_work);
 	}
 }
