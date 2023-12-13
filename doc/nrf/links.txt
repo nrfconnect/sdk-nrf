@@ -146,6 +146,7 @@
 .. _`nrf_cloud_provision.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#nrf-cloud-device-provisioning
 .. _`nRF Cloud Utilities Create CA Cert`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#create-ca-cert
 .. _`nRF Cloud Utilities Create Device Credentials`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#create-device-credentials
+.. _`nRF Cloud Utilities Prerequisites`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#prerequisites
 .. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md
 
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
@@ -1031,6 +1032,7 @@
 .. _`nRF Cloud Security`: https://docs.nrfcloud.com/Devices/Security/Security.html
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#preconnect-provisioning
 .. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html#just-in-time-provisioning
+.. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/Devices/Associations/Provisioning.html
 .. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html
 .. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/Devices/FirmwareUpdate/FOTAOverview.html#mqtt-job-execution-notifications
@@ -1052,7 +1054,9 @@
 .. _`nRF Cloud REST API ProvisionDevices`: https://api.nrfcloud.com/v1#tag/IP-Devices/operation/ProvisionDevices
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
 
-.. _`Bulk Onboard Devices`: https://nrfcloud.com/#/add-device/bulk
+.. _`Bulk Onboard Devices`:
+.. _`nRF Cloud Portal Bulk Onboard Devices`: https://nrfcloud.com/#/add-device/bulk
+.. _`nRF Cloud Portal Devices`: https://nrfcloud.com/#/devices
 
 .. ### Source: zigbeealliance.org & csa-iot.org
 
