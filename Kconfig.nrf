@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018-2023 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -27,6 +27,12 @@ rsource "modules/trusted-firmware-m/Kconfig.psa.defconfig"
 endif # BUILD_WITH_TFM
 
 menu "Nordic nRF Connect"
+
+# Hides child parent configuration options
+config HIDE_CHILD_PARENT_CONFIG
+	bool
+	default y if "$(HIDE_CHILD_PARENT_CONFIG)" = "True"
+	default n
 
 # Override boot banner
 config BOOT_BANNER_STRING
