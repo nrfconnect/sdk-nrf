@@ -27,6 +27,7 @@ Configuration
 
 The module uses Zephyr's :ref:`zephyr:watchdog_api` driver.
 For this reason, it automatically selects the :kconfig:option:`CONFIG_WATCHDOG` option.
+The ``watchdog0`` DTS alias determines the watchdog instance used by the module.
 
 The module is enabled by the :ref:`CONFIG_DESKTOP_WATCHDOG_ENABLE <config_desktop_app_options>` option.
 
