@@ -24,7 +24,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
-#define COAP_AGPS_RSC "loc/agps"
+#define COAP_AGNSS_RSC "loc/agnss"
 #define COAP_PGPS_RSC "loc/pgps"
 #define COAP_GND_FIX_RSC "loc/ground-fix"
 #define COAP_FOTA_GET_RSC "fota/exec/current"
@@ -131,7 +131,7 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
 	}
 
 	result->agnss_sz = 0;
-	err = nrf_cloud_coap_fetch(COAP_AGPS_RSC, NULL,
+	err = nrf_cloud_coap_fetch(COAP_AGNSS_RSC, NULL,
 				   buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
 				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_agnss_callback,
 				   result);
