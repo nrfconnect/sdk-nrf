@@ -580,6 +580,10 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	       dev->name,
 	       strlen(dev->name));
 
+	memcpy(vif_ctx_zep->ifname,
+	       dev->name,
+	       strlen(dev->name));
+
 	status = nrf_wifi_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
 					     vif_ctx_zep->vif_idx,
 					     &vif_info);
