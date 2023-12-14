@@ -545,14 +545,18 @@ int z_wpa_supplicant_status(const struct device *dev,
 				status->link_mode = WIFI_LINK_MODE_UNKNOWN;
 			}
 		}
-		ret = z_wpa_ctrl_signal_poll(&signal_poll);
-		if (!ret) {
-			status->rssi = signal_poll.rssi;
+		if (IS_ENABLED(CONFIG_AP) && status->iface_mode == WIFI_MODE_INFRA) {
+			ret = z_wpa_ctrl_signal_poll(&signal_poll);
+			if (!ret) {
+				status->rssi = signal_poll.rssi;
+			} else {
+				wpa_printf(MSG_WARNING, "%s:Failed to read RSSI\n",
+					__func__);
+				status->rssi = -WPA_INVALID_NOISE;
+				ret = 0;
+			}
 		} else {
-			wpa_printf(MSG_WARNING, "%s:Failed to read RSSI\n",
-				__func__);
 			status->rssi = -WPA_INVALID_NOISE;
-			ret = 0;
 		}
 
 		conn_info = os_zalloc(sizeof(struct wpa_conn_info));
