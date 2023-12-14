@@ -716,7 +716,7 @@ void test_codec_helpers_set_neighbor_cell_data(void)
 	__cmock_lwm2m_update_signal_meas_objects_ExpectAndReturn(
 		(const struct lte_lc_cells_info *)cells, 0);
 
-	__cmock_lwm2m_set_s8_ExpectAndReturn(
+	__cmock_lwm2m_set_s16_ExpectAndReturn(
 		&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RSS),
 		ncell.cell_data.current_cell.rsrp, 0);
 
