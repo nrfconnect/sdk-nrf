@@ -53,7 +53,6 @@ The configuration files are in the |sample path| directory.
 
 The following files are available:
 
-* :file:`nrf91xxdk_with_nrf7002ek.overlay` - DTC overlay for nRF7002 EK Wi-Fi chip support.
 * :file:`nrf7002ek-wifi-scan-only.conf` - Config overlay for nRF7002 EK Wi-Fi chip support.
 * :file:`esp_8266_nrf9160ns.overlay` - DTC overlay for ESP8266 Wi-Fi chip support.
 * :file:`overlay-esp-wifi.conf` - Config overlay for ESP8266 Wi-Fi chip support.
@@ -73,7 +72,7 @@ Building and running
 nRF91 Series DK with nRF7002 EK Wi-Fi support
 =============================================
 
-To build the sample with nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the sample with nRF91 Series DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
 For example:
 
 .. tabs::
@@ -82,13 +81,13 @@ For example:
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
 
    .. group-tab:: nRF9160 DK
 
       .. code-block:: console
 
-         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DDTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
+         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 

@@ -385,7 +385,6 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns
     extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
-                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   applications.asset_tracker_v2.nrf7002ek_wifi.nrf9160dk.sysbuild:
     build_only: true
@@ -394,7 +393,6 @@ tests:
       - nrf9160dk_nrf9160_ns
     platform_allow: nrf9160dk_nrf9160_ns
     extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
-                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build sysbuild
   applications.asset_tracker_v2.nrf7002ek_wifi.nrf9161dk:
     build_only: true
@@ -402,7 +400,6 @@ tests:
       - nrf9161dk_nrf9161_ns
     platform_allow: nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
-                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   applications.asset_tracker_v2.nrf7002ek_wifi-debug:
     build_only: true
@@ -412,7 +409,6 @@ tests:
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek
                 EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf;overlay-debug.conf"
-                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   applications.asset_tracker_v2.nrf7002ek_wifi-debug.sysbuild:
     build_only: true
@@ -422,5 +418,4 @@ tests:
     platform_allow: nrf9160dk_nrf9160_ns
     extra_args: SHIELD=nrf7002ek
                 EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf;overlay-debug.conf"
-                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build sysbuild

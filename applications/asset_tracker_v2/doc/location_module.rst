@@ -66,7 +66,7 @@ Wi-Fi positioning
 =================
 
 Wi-Fi positioning is supported with an nRF7002 EK on the nRF91 Series DK.
-To enable Wi-Fi positioning and especially nRF7002 functionality, use a special DTC overlay with the compiler option ``-DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay`` and a configuration overlay ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf``.
+To enable Wi-Fi positioning and especially nRF7002 functionality, use the ``-DSHIELD=nrf7002ek`` and ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
 
 .. tabs::
 
@@ -77,7 +77,7 @@ To enable Wi-Fi positioning and especially nRF7002 functionality, use a special 
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
    .. group-tab:: nRF9160 DK
 
@@ -86,7 +86,7 @@ To enable Wi-Fi positioning and especially nRF7002 functionality, use a special 
 
       .. code-block:: console
 
-         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
+         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf
 
 Wi-Fi positioning has the following limitations:
 

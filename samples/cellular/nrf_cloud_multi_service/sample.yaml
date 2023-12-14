@@ -47,7 +47,6 @@ tests:
       - nrf9161dk_nrf9161_ns
     platform_allow: nrf9160dk_nrf9160_ns nrf9161dk_nrf9161_ns
     extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
-                EXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay"
     tags: ci_build
   sample.cellular.nrf7002ek_wifi.conn:
     build_only: true
