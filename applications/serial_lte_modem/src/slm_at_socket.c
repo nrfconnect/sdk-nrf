@@ -548,7 +548,7 @@ static int do_bind(uint16_t port)
 		char ipv6_addr[INET6_ADDRSTRLEN];
 
 		util_get_ip_addr(0, NULL, ipv6_addr);
-		if (!*ipv6_addr == 0) {
+		if (!*ipv6_addr) {
 			LOG_ERR("Get local IPv6 address failed");
 			return -EINVAL;
 		}
