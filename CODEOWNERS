@@ -250,6 +250,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/nrf_provisioning/         @SeppoTakalo @juhaylinen
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/net/lib/wifi_credentials/         @nrfconnect/ncs-cia
+/subsys/net/openthread/                   @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
