@@ -4,13 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-/* Configure partition manager to use gd25wb256 as the external flash */
-	chosen {
-		nordic,pm-ext-flash = &gd25wb256;
-	};
-};
-
 &gd25wb256 {
 	status = "okay";
 };
