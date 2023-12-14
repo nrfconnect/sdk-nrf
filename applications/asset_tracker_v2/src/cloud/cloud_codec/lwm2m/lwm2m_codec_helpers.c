@@ -924,8 +924,8 @@ int lwm2m_codec_helpers_set_neighbor_cell_data(struct cloud_data_neighbor_cells 
 		return err;
 	}
 
-	err = lwm2m_set_s8(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RSS),
-			   (int8_t)neighbor_cells->cell_data.current_cell.rsrp);
+	err = lwm2m_set_s16(&LWM2M_OBJ(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0, RSS),
+			    neighbor_cells->cell_data.current_cell.rsrp);
 	if (err) {
 		return err;
 	}
