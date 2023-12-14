@@ -38,6 +38,35 @@ static struct net_mgmt_event_callback ip_maddr4_cb;
 static struct net_mgmt_event_callback ip_maddr6_cb;
 #endif /* CONFIG_NRF700X_STA_MODE */
 
+void nrf_wifi_set_iface_event_handler(void *os_vif_ctx,
+						struct nrf_wifi_umac_event_set_interface *event,
+						unsigned int event_len)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	if (!os_vif_ctx) {
+		LOG_ERR("%s: Invalid parameters",
+			__func__);
+		goto out;
+	}
+
+	if (!event) {
+		LOG_ERR("%s: event is NULL",
+			__func__);
+		goto out;
+	}
+
+	(void)event_len;
+
+	vif_ctx_zep = os_vif_ctx;
+
+	vif_ctx_zep->set_if_event_received = true;
+	vif_ctx_zep->set_if_status = event->return_value;
+
+out:
+	return;
+}
+
 #ifdef CONFIG_NRF700X_DATA_TX
 static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 {

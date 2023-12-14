@@ -52,6 +52,8 @@ struct nrf_wifi_vif_ctx_zep {
 	struct net_eth_addr mac_addr;
 	int if_type;
 	enum nrf_wifi_fmac_if_op_state if_op_state;
+	bool set_if_event_received;
+	int set_if_status;
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
