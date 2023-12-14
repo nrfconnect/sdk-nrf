@@ -14,6 +14,7 @@
 #include <zephyr/logging/log.h>
 
 #include "fmac_main.h"
+#include "fmac_util.h"
 #include "wifi_mgmt.h"
 #include "wpa_supp_if.h"
 
@@ -23,6 +24,8 @@ K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 K_SEM_DEFINE(wait_for_scan_resp_sem, 0, 1);
 
 #define ACTION_FRAME_RESP_TIMEOUT_MS 5000
+#define SET_IFACE_EVENT_TIMEOUT_MS 5000
+#define CARR_ON_TIMEOUT_MS 5000
 
 static int get_nrf_wifi_auth_type(int wpa_auth_alg)
 {
@@ -1621,6 +1624,9 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 	capa->flags |= WPA_DRIVER_FLAGS_SET_KEYS_AFTER_ASSOC_DONE;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_RRM;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_BEACON_REPORT;
+	if (IS_ENABLED(CONFIG_NRF700X_AP_MODE)) {
+		capa->flags |= WPA_DRIVER_FLAGS_AP;
+	}
 
 	capa->enc |= WPA_DRIVER_CAPA_ENC_WEP40 |
 			WPA_DRIVER_CAPA_ENC_WEP104 |
@@ -1718,3 +1724,353 @@ void nrf_wifi_supp_event_proc_get_conn_info(void *if_priv,
 	conn_info->twt_capable = info->twt_capable;
 	k_sem_give(&wait_for_event_sem);
 }
+
+#ifdef CONFIG_NRF700X_AP_MODE
+static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
+	enum nrf_wifi_fmac_if_op_state state)
+{
+	struct nrf_wifi_umac_chg_vif_state_info vif_state_info = {0};
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	unsigned int timeout = 0;
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx_def *def_dev_ctx = NULL;
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	def_dev_ctx = wifi_dev_priv(rpu_ctx_zep->rpu_ctx);
+	vif_ctx = def_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx];
+
+	vif_state_info.state = state;
+	memcpy(vif_state_info.ifacename,
+	       vif_ctx_zep->ifname,
+	       strlen(vif_ctx_zep->ifname));
+	vif_ctx->ifflags = false;
+	status = nrf_wifi_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
+					     vif_ctx_zep->vif_idx,
+					     &vif_state_info);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_chg_vif_state failed",
+			__func__);
+		goto out;
+	}
+
+	while (!vif_ctx->ifflags && timeout++ < SET_IFACE_EVENT_TIMEOUT_MS) {
+		k_sleep(K_MSEC(1));
+	}
+
+	if (!vif_ctx->ifflags) {
+		LOG_ERR("%s: set interface state event not received (%dms)", __func__, timeout);
+		goto out;
+	}
+	return 0;
+out:
+	return -1;
+}
+
+static int nrf_wifi_iftype_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep, int iftype)
+{
+	struct nrf_wifi_umac_chg_vif_attr_info chg_vif_info = {0};
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	int ret = -1;
+	unsigned int timeout = 0;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+
+	ret = nrf_wifi_vif_state_change(vif_ctx_zep, NRF_WIFI_FMAC_IF_OP_STATE_DOWN);
+	if (ret) {
+		LOG_ERR("%s: Failed to set interface down", __func__);
+		goto out;
+	}
+
+	chg_vif_info.iftype = iftype;
+	vif_ctx_zep->set_if_event_received = false;
+	vif_ctx_zep->set_if_status = 0;
+	status = nrf_wifi_fmac_chg_vif(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_vif_info);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_chg_vif failed", __func__);
+		goto out;
+	}
+
+	while (!vif_ctx_zep->set_if_event_received &&
+		  timeout++ < SET_IFACE_EVENT_TIMEOUT_MS) {
+		k_sleep(K_MSEC(1));
+	}
+
+	if (!vif_ctx_zep->set_if_event_received) {
+		LOG_ERR("%s: set interface event not received (%dms)", __func__, timeout);
+		goto out;
+	}
+
+	if (vif_ctx_zep->set_if_status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: set interface failed: %d", __func__, vif_ctx_zep->set_if_status);
+		goto out;
+	}
+
+	ret = nrf_wifi_vif_state_change(vif_ctx_zep, NRF_WIFI_FMAC_IF_OP_STATE_UP);
+	if (ret) {
+		LOG_ERR("%s: Failed to set interface up", __func__);
+		goto out;
+	}
+	return 0;
+out:
+	return ret;
+}
+
+int nrf_wifi_wpa_supp_init_ap(void *if_priv, struct wpa_driver_associate_params *params)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+
+	int ret = -1;
+
+	if (!if_priv || !params) {
+		LOG_ERR("%s: Invalid params", __func__);
+		goto out;
+	}
+
+	if (params->mode != IEEE80211_MODE_AP) {
+		LOG_ERR("%s: Invalid mode", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	ret = nrf_wifi_iftype_change(vif_ctx_zep, NRF_WIFI_IFTYPE_AP);
+	if (ret) {
+		LOG_ERR("%s: Failed to set interface type to AP: %d", __func__, ret);
+		goto out;
+	}
+
+out:
+	return ret;
+}
+
+static int wpas_cipher_to_nrf(int cipher)
+{
+	switch (cipher) {
+	case WPA_CIPHER_NONE:
+		return 0;
+	case WPA_CIPHER_WEP40:
+		return NRF_WIFI_FMAC_CIPHER_SUITE_WEP40;
+	case WPA_CIPHER_WEP104:
+		return NRF_WIFI_FMAC_CIPHER_SUITE_WEP104;
+	case WPA_CIPHER_TKIP:
+		return NRF_WIFI_FMAC_CIPHER_SUITE_TKIP;
+	case WPA_CIPHER_CCMP:
+		return NRF_WIFI_FMAC_CIPHER_SUITE_CCMP;
+	case WPA_CIPHER_CCMP_256:
+		return NRF_WIFI_FMAC_CIPHER_SUITE_CCMP_256;
+	default:
+		return -1;
+	}
+}
+
+static int nrf_wifi_set_beacon_data(const struct wpa_driver_ap_params *params,
+		struct nrf_wifi_beacon_data *beacon_data)
+{
+	int ret = -1;
+
+	if (params->head_len > ARRAY_SIZE(beacon_data->head)) {
+		LOG_ERR("%s: head_len too big", __func__);
+		goto out;
+	}
+
+	if (params->tail_len > ARRAY_SIZE(beacon_data->tail)) {
+		LOG_ERR("%s: tail_len too big", __func__);
+		goto out;
+	}
+
+	if (params->proberesp_len > ARRAY_SIZE(beacon_data->probe_resp)) {
+		LOG_ERR("%s: proberesp_len too big", __func__);
+		goto out;
+	}
+
+	beacon_data->head_len = params->head_len;
+	beacon_data->tail_len = params->tail_len;
+	beacon_data->probe_resp_len = params->proberesp_len;
+
+	if (params->head_len) {
+		memcpy(&beacon_data->head, params->head,
+		       params->head_len);
+	}
+
+	if (params->tail_len) {
+		memcpy(&beacon_data->tail, params->tail,
+		       params->tail_len);
+	}
+
+	if (params->proberesp_len) {
+		memcpy(&beacon_data->probe_resp, params->proberesp_ies,
+		       params->proberesp_len);
+	}
+
+	ret = 0;
+out:
+	return ret;
+}
+
+int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *params)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	int ret = -1;
+	struct nrf_wifi_umac_start_ap_info start_ap_info = {0};
+	unsigned int timeout = 0;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+
+	if (!if_priv || !params) {
+		LOG_ERR("%s: Invalid params", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	nrf_wifi_set_beacon_data(params, &start_ap_info.beacon_data);
+
+	start_ap_info.beacon_interval = params->beacon_int;
+	start_ap_info.dtim_period = params->dtim_period;
+	start_ap_info.ssid.nrf_wifi_ssid_len = params->ssid_len;
+	memcpy(start_ap_info.ssid.nrf_wifi_ssid, params->ssid, params->ssid_len);
+	for (int i = 0; i < 32; i++) {
+		if ((params->pairwise_ciphers & BIT(i)) &&
+		    start_ap_info.connect_common_info.num_cipher_suites_pairwise < 7) {
+			if (wpas_cipher_to_nrf(i) < 0) {
+				LOG_DBG("%s: Unsupported cipher %d ignored", __func__, i);
+				continue;
+			}
+			start_ap_info.connect_common_info.cipher_suites_pairwise[i] =
+				wpas_cipher_to_nrf(i);
+			start_ap_info.connect_common_info.num_cipher_suites_pairwise++;
+		}
+	}
+
+	start_ap_info.freq_params.frequency = params->freq->freq;
+	start_ap_info.freq_params.channel_width = params->freq->bandwidth;
+	start_ap_info.freq_params.center_frequency1 = params->freq->center_freq1;
+	start_ap_info.freq_params.center_frequency2 = params->freq->center_freq2;
+	start_ap_info.freq_params.channel_type = params->freq->ht_enabled ? NRF_WIFI_CHAN_HT20 :
+						NRF_WIFI_CHAN_NO_HT;
+	start_ap_info.freq_params.valid_fields = NRF_WIFI_SET_FREQ_PARAMS_FREQ_VALID |
+		NRF_WIFI_SET_FREQ_PARAMS_CHANNEL_WIDTH_VALID |
+		NRF_WIFI_SET_FREQ_PARAMS_CENTER_FREQ1_VALID |
+		NRF_WIFI_SET_FREQ_PARAMS_CENTER_FREQ2_VALID |
+		NRF_WIFI_SET_FREQ_PARAMS_CHANNEL_TYPE_VALID;
+
+	vif_ctx_zep->if_carr_state = NRF_WIFI_FMAC_IF_CARR_STATE_OFF;
+	status = nrf_wifi_fmac_start_ap(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &start_ap_info);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_start_ap failed", __func__);
+		goto out;
+	}
+
+	while (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON &&
+	       timeout++ < CARR_ON_TIMEOUT_MS) {
+		k_sleep(K_MSEC(1));
+	}
+
+	if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
+		LOG_ERR("%s: Carrier on event not received (%dms)", __func__, timeout);
+		goto out;
+	}
+
+	ret = 0;
+out:
+	return ret;
+}
+
+int nrf_wifi_wpa_supp_change_beacon(void *if_priv, struct wpa_driver_ap_params *params)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	int ret = -1;
+	struct nrf_wifi_umac_set_beacon_info chg_bcn_info = {0};
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+
+	if (!if_priv || !params) {
+		LOG_ERR("%s: Invalid params", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	nrf_wifi_set_beacon_data(params, &chg_bcn_info.beacon_data);
+
+	status = nrf_wifi_fmac_chg_bcn(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_bcn_info);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_chg_bcn failed", __func__);
+		goto out;
+	}
+
+	ret = 0;
+out:
+	return ret;
+}
+
+int nrf_wifi_wpa_supp_stop_ap(void *if_priv)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	int ret = -1;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Invalid params", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	status = nrf_wifi_fmac_stop_ap(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: nrf_wifi_fmac_stop_ap failed", __func__);
+		goto out;
+	}
+
+	ret = 0;
+out:
+	return ret;
+}
+
+int nrf_wifi_wpa_supp_deinit_ap(void *if_priv)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	int ret = -1;
+
+	if (!if_priv) {
+		LOG_ERR("%s: Invalid params", __func__);
+		goto out;
+	}
+
+	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	status = nrf_wifi_wpa_supp_stop_ap(if_priv);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to stop AP", __func__);
+		goto out;
+	}
+
+	/* TODO: This is needed only if the interface is not dynamically added,
+	 * so, need to figure out a way to detect and skip this check.
+	 */
+	ret = nrf_wifi_iftype_change(vif_ctx_zep, NRF_WIFI_IFTYPE_STATION);
+	if (ret) {
+		LOG_ERR("%s: Failed to set interface type to STATION: %d", __func__, ret);
+		goto out;
+	}
+
+	ret = 0;
+out:
+	return ret;
+}
+#endif /* CONFIG_NRF700X_AP_MODE */

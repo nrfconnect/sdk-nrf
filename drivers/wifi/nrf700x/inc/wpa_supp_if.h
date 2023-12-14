@@ -124,4 +124,11 @@ void nrf_wifi_supp_event_proc_get_conn_info(void *os_vif_ctx,
 					    unsigned int event_len);
 
 #endif /* CONFIG_NRF700X_STA_MODE */
+#ifdef CONFIG_NRF700X_AP_MODE
+int nrf_wifi_wpa_supp_init_ap(void *if_priv, struct wpa_driver_associate_params *params);
+int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *params);
+int nrf_wifi_wpa_supp_change_beacon(void *if_priv, struct wpa_driver_ap_params *params);
+int nrf_wifi_wpa_supp_stop_ap(void *if_priv);
+int nrf_wifi_wpa_supp_deinit_ap(void *if_priv);
+#endif /* CONFIG_NRF700X_AP_MODE */
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */
