@@ -18,15 +18,12 @@
 #include "aead_nonce.h"
 
 /*
- * Nonce is a 128 bits counter.
+ * Nonce is a 96 bits counter.
  */
-
-#define NONCE_MAX_LENGTH 16
-
 static struct aead_ctr_nonce {
 	uint64_t low;
-	uint64_t high;
-} g_nonce;
+	uint32_t high;
+} __packed g_nonce;
 
 /* Return an incrementing nonce */
 psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
@@ -35,7 +32,7 @@ psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (nonce_len > NONCE_MAX_LENGTH) {
+	if (nonce_len != sizeof(g_nonce)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -43,7 +40,7 @@ psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 		return PSA_SUCCESS;
 	}
 
-	/* Incrementing is implemented by using 2 64bit numbers */
+	/* Incrementing is implemented by using a 64-bit and a 32-bit number */
 	g_nonce.low++;
 
 	/* On overflow */
@@ -51,8 +48,7 @@ psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 		++g_nonce.high;
 	}
 
-	/* Copy low first */
-	memcpy(nonce, &g_nonce.low, sizeof(g_nonce));
+	memcpy(nonce, &g_nonce, nonce_len);
 
 	return PSA_SUCCESS;
 }
