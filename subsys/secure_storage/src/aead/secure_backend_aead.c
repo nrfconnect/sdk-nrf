@@ -91,9 +91,9 @@ psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t 
 	struct aead_additional_data additional_data;
 	uint8_t key_buf[AEAD_KEY_SIZE + 1];
 	uint8_t nonce[AEAD_NONCE_SIZE];
-	size_t object_data_size;
+	size_t encrypted_data_size;
+	size_t plaintext_data_size;
 	size_t aead_out_size;
-	size_t data_size;
 
 	if (data_length == 0 || p_data == NULL || p_data_length == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -111,15 +111,15 @@ psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t 
 	}
 
 	status = storage_get_object(uid, prefix, SECURE_STORAGE_BACKEND_AEAD_FILENAME_SUFFIX_SIZE,
-				    (void *)&data_size, sizeof(data_size));
+				    (void *)&plaintext_data_size, sizeof(plaintext_data_size));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
 	/* Calculate the exact output size of encrypted buffer */
-	object_data_size = secure_storage_aead_get_encrypted_size(data_size);
+	encrypted_data_size = secure_storage_aead_get_encrypted_size(plaintext_data_size);
 
-	if (object_data_size > AEAD_MAX_BUF_SIZE) {
+	if (encrypted_data_size > AEAD_MAX_BUF_SIZE) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -130,7 +130,7 @@ psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t 
 	}
 
 	status = storage_get_object(uid, prefix, SECURE_STORAGE_BACKEND_AEAD_FILENAME_SUFFIX_DATA,
-				    aead_buf, object_data_size);
+				    aead_buf, encrypted_data_size);
 	if (status != PSA_SUCCESS) {
 		goto clean_up;
 	}
@@ -142,11 +142,11 @@ psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t 
 
 	additional_data.uid = uid;
 	additional_data.flags = data_flags;
-	additional_data.size = data_length;
+	additional_data.size = plaintext_data_size;
 
 	status = secure_storage_aead_decrypt(key_buf, AEAD_KEY_SIZE, nonce, AEAD_NONCE_SIZE,
 					     (void *)&additional_data, sizeof(additional_data),
-					     aead_buf, object_data_size, data_buf,
+					     aead_buf, encrypted_data_size, data_buf,
 					     SECURE_STORAGE_MAX_ASSET_SIZE, &aead_out_size);
 
 	if (status != PSA_SUCCESS) {
@@ -157,6 +157,7 @@ psa_status_t secure_get(const psa_storage_uid_t uid, const char *prefix, size_t 
 		status = PSA_ERROR_INVALID_SIGNATURE;
 	} else {
 		memcpy(p_data, data_buf + data_offset, data_length);
+		*p_data_length = data_length;
 	}
 
 clean_up:
