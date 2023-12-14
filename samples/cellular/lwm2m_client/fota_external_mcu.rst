@@ -56,7 +56,7 @@ The following steps use generic MCUmgr client mode and Coiote without bootstrap.
    .. code-block:: console
 
       cd samples/cellular/smp_svr/
-      west build --pristine -b nrf9160dk_nrf52840 -- -DOVERLAY_CONFIG="overlay-serial.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_srv.overlay"
+      west build --pristine -b nrf9160dk_nrf52840 -- -DEXTRA_CONF_FILE="overlay-serial.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_srv.overlay"
       west flash --erase
 
 #. Open the :file:`prj.conf` file.
@@ -94,7 +94,7 @@ The following steps use generic MCUmgr client mode and Coiote without bootstrap.
    .. code-block:: console
 
       cd lwm2m_client/
-      west build  --pristine -b nrf9160dk_nrf9160_ns --  -DOVERLAY_CONFIG="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
+      west build  --pristine -b nrf9160dk_nrf9160_ns --  -DEXTRA_CONF_FILE="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
       west flash --erase
 
 #. Wait for the device registration to complete.
