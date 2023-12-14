@@ -144,8 +144,9 @@ The MCUboot target will then use the :ref:`zephyr:settings_api` subsystem in Zep
 Using a dedicated partition for full modem upgrades
 ===================================================
 
-Enable the :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` Kconfig option to use :ref:`partition_manager` for creating a dedicated partition for full modem upgrades.
-External flash partitions require ``nordic,pm-ext-flash`` to be set in the devicetree; see :ref:`partition_manager` for details.
+External flash partitions require the chosen node ``nordic,pm-ext-flash`` to be set to the external flash device in devicetree, see :ref:`partition_manager` for details.
+When ``nordic,pm-ext-flash`` is set, the :ref:`partition_manager` will add the partition ``fmfu_storage`` to the external flash region.
+
 
 API documentation
 *****************

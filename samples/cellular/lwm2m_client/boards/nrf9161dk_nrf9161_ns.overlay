@@ -4,12 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		nordic,pm-ext-flash = &gd25wb256;
-	};
-};
-
 /* External flash device is disabled by default */
 &gd25wb256 {
 	status = "okay";

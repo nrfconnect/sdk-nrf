@@ -481,7 +481,12 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* :ref:`lib_dfu_target` library:
+
+  * Updated:
+
+    * The :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` Kconfig option to be automatically enabled when ``nordic,pm-ext-flash`` is chosen in the devicetree.
+      See :ref:`partition_manager` for details.
 
 Modem libraries
 ---------------

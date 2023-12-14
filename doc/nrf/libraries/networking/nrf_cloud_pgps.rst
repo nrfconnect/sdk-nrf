@@ -89,22 +89,6 @@ There are three ways to define this storage location:
   * :kconfig:option:`CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL`
   * :kconfig:option:`CONFIG_SPI_NOR_FLASH_LAYOUT_PAGE_SIZE` set to 4096
 
-  If you are using the P-GPS external flash partition and full modem FOTA, ensure the FMFU partition is also enabled:
-
-  * :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION`
-
-  Also, specify your development kit version by appending it to the board name.
-  For example, if your development kit version is 1.0.1, use the board name ``nrf9160dk_nrf9160_ns@1_0_1`` in your build command.
-
-  .. note::
-     If you fail to specify the version, the build system selects a baseline board version which does not include external flash.
-     This results in a build failure:
-
-     .. parsed-literal::
-        :class: highlight
-
-        devicetree error: /chosen: undefined node label 'mx25r64'
-
   Finally, add the following to a device tree overlay for your board.
 
   .. code-block:: console
