@@ -71,7 +71,7 @@ Joining CSA allows you to meet the following certification requirements:
   You can apply to `CSA's Certification Team`_ to obtain VID.
   The VID codes are valid immediately upon assignment.
 
-If you created your Matter product application using :ref:`matter_samples` as a reference, make sure you have read the `ug_matter_device_certification_matter_samples`_ section before proceeding with the following certification steps.
+If you created your Matter product application using :ref:`matter_samples` as a reference, make sure you have read the :ref:`ug_matter_device_certification_matter_samples` section before proceeding with the following certification steps.
 
 .. _ug_matter_device_certification_testing:
 
@@ -356,7 +356,7 @@ Especially, make sure that:
 
 See the :ref:`ug_matter_creating_accessory` page for how to configure your application using the ZAP Tool.
 
-Before you request the official product `ug_matter_device_certification_testing`_ from ATL, it is recommended to perform in-house certification testing of the product.
+Before you request the official product :ref:`ug_matter_device_certification_testing` from ATL, it is recommended to perform in-house certification testing of the product.
 This testing can help you detect problems that could lead to certification failure, meaning it saves time and money that would be spent on official certification in ATL laboratory.
 You can find the instruction how to execute in-house certification tests using a Matter Test Harness on the `CSA Matter Resource Kit`_ page.
 Open the **Test Tool User Guide** link in the **Testing** section under the **Testing and Certification** section of the page.
