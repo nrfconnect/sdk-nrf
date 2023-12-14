@@ -955,7 +955,7 @@ To build the sample to use CoAP instead of MQTT, use the ``-DOVERLAY_CONFIG=over
 Building with nRF7002 EK Wi-Fi scanning support (for nRF91 Series DK)
 =====================================================================
 
-To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek``, ``-DEXTRA_DTC_OVERLAY_FILE=nrf91xxdk_with_nrf7002ek.overlay`` and  ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek`` and  ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only.conf`` options.
 
 This enables the Wi-Fi location tracking method automatically.
 
@@ -965,13 +965,13 @@ This enables the Wi-Fi location tracking method automatically.
 
       .. code-block:: console
 
-         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+         west build -p -b nrf9161dk_nrf9161_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
    .. group-tab:: nRF9160 DK
 
       .. code-block:: console
 
-         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_DTC_OVERLAY_FILE="nrf91xxdk_with_nrf7002ek.overlay" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+         west build -p -b nrf9160dk_nrf9160_ns -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 
