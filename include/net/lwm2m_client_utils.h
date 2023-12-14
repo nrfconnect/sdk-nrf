@@ -48,7 +48,7 @@ typedef int (*modem_mode_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
  * @brief Callback used for querying permission from the app to proceed when modem's state changes
  *
  * @param cb        The callback function
- * @param user_data App specific data to be fed to the callback once it's called
+ * @param user_data App-specific data to be fed to the callback once it is called
  */
 struct modem_mode_change {
 	modem_mode_cb_t cb;
@@ -155,7 +155,7 @@ enum lwm2m_fota_event_id {
 	LWM2M_FOTA_UPDATE_IMAGE_REQ,
 	/** Request to reconnect the modem and LwM2M client*/
 	LWM2M_FOTA_UPDATE_MODEM_RECONNECT_REQ,
-	/** Fota process fail or cancelled  */
+	/** FOTA process fail or cancelled  */
 	LWM2M_FOTA_UPDATE_ERROR
 };
 
@@ -196,7 +196,7 @@ struct lwm2m_fota_update_failure {
 };
 
 struct lwm2m_fota_event {
-	/** Fota event ID and indicate used Data structure */
+	/** FOTA event ID and indicate used Data structure */
 	enum lwm2m_fota_event_id id;
 	union {
 		/** LWM2M_FOTA_DOWNLOAD_START */

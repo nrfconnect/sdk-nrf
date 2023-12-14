@@ -521,7 +521,7 @@ int nfc_ndef_ch_cr_rec_payload_encode(const struct nfc_ndef_ch_cr_rec *nfc_rec_c
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
- *        for an Collision Resolution record.
+ *        for a Collision Resolution record.
  *
  * This macro creates and initializes an instance of type
  * @ref nfc_ndef_record_desc and an instance of type

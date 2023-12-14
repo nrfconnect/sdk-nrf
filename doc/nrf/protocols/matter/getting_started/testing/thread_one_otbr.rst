@@ -31,8 +31,8 @@ To use this setup, you need the following hardware:
   * 1x Raspberry Pi Model 3B+ or newer with Ubuntu (20.04 or newer) instead of Raspbian OS
 
 * 1x Bluetooth LE dongle (can be embedded inside the PC, like it is on Raspberry Pi)
-* 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
-* 1x nRF52840 DK or nRF5340 DK - for the Matter accessory device (programmed with one of :ref:`matter_samples`)
+* 1x nRF52840 DK or nRF52840 Dongle - For the Radio Co-Processor (RCP) device
+* 1x nRF52840 DK or nRF5340 DK - For the Matter accessory device (programmed with one of :ref:`matter_samples`)
 
 Configuring the environment
 ***************************

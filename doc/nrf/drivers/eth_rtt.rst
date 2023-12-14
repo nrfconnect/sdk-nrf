@@ -42,7 +42,7 @@ The content of this frame is constant and it is available in the driver source c
 Initialization
 **************
 
-You need to define one instance of the device in Devicetree like this:
+You need to define one instance of the device in devicetree like this:
 
 .. code-block:: devicetree
 

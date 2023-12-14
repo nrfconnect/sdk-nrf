@@ -118,7 +118,7 @@ To test with a Microsoft Windows computer that has a Bluetooth® radio, complete
 #. Press **Button 2** and hold it while pressing **Button 1**.
    Observe that the next letter of the "hello" message appears as capital letter.
    This is because **Button 2** simulates the Shift key.
-#. Turn Caps Lock on on the computer.
+#. Turn on Caps Lock on the computer.
    Observe that **LED 3** turns on.
    This confirms that the output report characteristic has been written successfully on the HID device.
 #. Turn Caps Lock off on the computer.
@@ -208,7 +208,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`nfc_ndef` (if the `NFC_OOB_PAIRING` option is enabled)
 * :ref:`nfc_ndef_le_oob` (if the `NFC_OOB_PAIRING` option is enabled)
 
-When the `NFC_OOB_PAIRING` feature is enabled, it also uses the Type 2 Tag library from nrfxlib:
+When the `NFC_OOB_PAIRING` feature is enabled, it also uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 * :ref:`nrfxlib:nfc_api_type2`
 * :ref:`dk_buttons_and_leds_readme`

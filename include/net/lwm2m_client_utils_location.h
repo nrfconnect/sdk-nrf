@@ -57,7 +57,7 @@
 typedef void (*location_assistance_result_code_cb_t)(uint16_t object_id, int32_t result_code);
 
 /**
- * @brief Set the location assistance result code calback
+ * @brief Set the location assistance result code callback
  *
  * @param cb callback function to call when there is a new result from location assistance.
  */

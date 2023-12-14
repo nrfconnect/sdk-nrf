@@ -56,7 +56,7 @@ A :file:`VERSION` file is responsible for assigning values in the following form
 * Matter OTA: in the 32-bit integer where each variable is 8 bits long.
   The above example would be formatted as ``0x02056300``.
 
-Using KConfig options
+Using Kconfig options
 *********************
 
 Depending on how you transfer the updated images to the device, you need to use different Kconfig options.

@@ -141,8 +141,8 @@ int nfc_t4t_hl_procedure_ndef_file_select(uint16_t id);
  * @param[in,out] cc Pointer to Capability Containers descriptor.
  * @param[out] ndef_buff Pointer to buffer where the NDEF file will be stored.
  *                       The NDEF Read procedure is an asynchronous operation,
- *                       the data buffer have to be keep until this procedure
- *                       will be finished.
+ *                       the data buffer have to be kept until this procedure
+ *                       has completed.
  * @param[in] ndef_len Length of NDEF file buffer.
  *
  * @retval 0 If the operation was successful.
@@ -156,8 +156,8 @@ int nfc_t4t_hl_procedure_ndef_read(struct nfc_t4t_cc_file *cc,
  * @param[in] cc Pointer to Capability Containers descriptor.
  * @param[in] ndef_data Pointer to the NDEF file data. The NDEF Read
  *                      procedure is an asynchronous operation, the data
- *                      buffer have to be keep until this procedure
- *                      will be finished.
+ *                      buffer have to be kept until this procedure
+ *                      has completed.
  * @param[in] ndef_len Length of NDEF file.
  *
  * @retval 0 If the operation was successful.

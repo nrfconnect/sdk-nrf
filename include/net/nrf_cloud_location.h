@@ -141,7 +141,7 @@ int nrf_cloud_location_process(const char *buf, struct nrf_cloud_location_result
  *
  * @param cell_inf Cellular information obtained from the modem.
  *
- * @retval 0 If cellular informat was obtained successfully.
+ * @retval 0 If cellular information was obtained successfully.
  * @return A negative value indicates an error.
  */
 int nrf_cloud_location_scell_data_get(struct lte_lc_cell *const cell_inf);

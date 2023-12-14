@@ -163,7 +163,7 @@ After exporting the settings from Online Power Profiler, use the settings while 
 To measure current on an nRF9160 DK using the Power Profiler Kit II, while it is connected to a live network, complete the following steps:
 
 1. Connect Power Profiler Kit II to an nRF9160 DK as described in `Power Profiler Kit II user guide <Power Profiler Kit II (PPK2)_>`_.
-#. Navigate to the :ref:`udp` sample in |NCS| and copy the contents of the :file:`opp.conf` file that you exported from Online Power Profiler into the :file:`prj.conf` file in the UDP sample folder (``samples\\cellular\\udp``).
+#. Navigate to the :ref:`udp` sample in |NCS| and copy the contents of the :file:`opp.conf` file that you exported from Online Power Profiler into the :file:`prj.conf` file in the UDP sample folder (:file:`samples\cellular\udp`).
 #. :ref:`Build and program the sample onto the nRF9160 DK <programming>`.
 #. If PSM is available in your network, the power measurement using Power Profiler Kit II produces the following results:
 

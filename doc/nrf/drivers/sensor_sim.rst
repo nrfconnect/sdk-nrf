@@ -13,7 +13,7 @@ The sensor provides readouts for predefined set of sensor channels and supports 
 Configuration
 *************
 
-You can define instances of the sensor simulator on Devicetree like this:
+You can define instances of the sensor simulator in devicetree as shown in the following code snippet:
 
 .. code-block:: devicetree
 
@@ -22,7 +22,7 @@ You can define instances of the sensor simulator on Devicetree like this:
                 acc-signal = "toggle";
         };
 
-The sensor driver will automatically be built if ``CONFIG_SENSOR=y`` and any of its instances in Devicetree have status set to ``okay``.
+The sensor driver will automatically be built if ``CONFIG_SENSOR=y`` and any of its instances in devicetree have status set to ``okay``.
 
 Configuration of generated readouts
 ===================================
@@ -30,11 +30,11 @@ Configuration of generated readouts
 The algorithms used to generate simulated sensor readouts are configurable.
 The following sensor channels and configuration options are available:
 
-* Ambient temperature (:c:enum:`SENSOR_CHAN_AMBIENT_TEMP`) - The value is generated as the sum of the value of the Devicetree property ``base-temperature`` a pseudo-random number between ``-1`` and ``1``.
-* Humidity (:c:enum:`SENSOR_CHAN_HUMIDITY`) - The value is generated as the sum of the value of the Devicetree property ``base-humidity`` and a pseudo-random number between ``-1`` and ``1``.
-* Pressure (:c:enum:`SENSOR_CHAN_PRESS`) - The value is generated as the sum of the value of the Devicetree property ``base-pressure`` and a pseudo-random number between ``-1`` and ``1``.
+* Ambient temperature (:c:enum:`SENSOR_CHAN_AMBIENT_TEMP`) - The value is generated as the sum of the value of the devicetree property ``base-temperature`` and a pseudo-random number between ``-1`` and ``1``.
+* Humidity (:c:enum:`SENSOR_CHAN_HUMIDITY`) - The value is generated as the sum of the value of the devicetree property ``base-humidity`` and a pseudo-random number between ``-1`` and ``1``.
+* Pressure (:c:enum:`SENSOR_CHAN_PRESS`) - The value is generated as the sum of the value of the devicetree property ``base-pressure`` and a pseudo-random number between ``-1`` and ``1``.
 * Acceleration in X, Y, and Z axes (:c:enum:`SENSOR_CHAN_ACCEL_X`, :c:enum:`SENSOR_CHAN_ACCEL_Y`, :c:enum:`SENSOR_CHAN_ACCEL_Z`, for each axis respectively, and :c:enum:`SENSOR_CHAN_ACCEL_XYZ` for all axes at once).
-  The acceleration is generated depending on the selected Devicetree ``acc-signal`` property:
+  The acceleration is generated depending on the selected devicetree ``acc-signal`` property:
 
   * ``toggle`` - With this choice, the acceleration is toggled on fetch between statically defined values.
   * ``wave`` - With this choice, the acceleration is generated as value of a periodic wave signal.
@@ -48,7 +48,7 @@ Configuration of sensor triggers
 Use :kconfig:option:`CONFIG_SENSOR_SIM_TRIGGER` to enable the sensor trigger.
 The simulated sensor supports the :c:enum:`SENSOR_TRIG_DATA_READY` trigger.
 
-You can configure the event that generates the trigger in Devicetree by using the ``trigger-gpios`` or ``trigger-timeout`` options.
+You can configure the event that generates the trigger in devicetree by using the ``trigger-gpios`` or ``trigger-timeout`` options.
 
 For both triggers, the handler function is called by a dedicated thread.
 The thread has the following configuration options:

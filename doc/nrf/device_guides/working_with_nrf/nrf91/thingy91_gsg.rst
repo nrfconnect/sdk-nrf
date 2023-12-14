@@ -277,7 +277,7 @@ Adding the Thingy:91 to nRF Cloud
 =================================
 
 .. |led_cloud_association| replace:: the RGB LED double pulse blinks as white
-.. |led_publishing_data| replace:: the RGB LED blinking green
+.. |led_publishing_data| replace:: RGB LED blinking green
 .. |activate_sim_section| replace:: :ref:`thingy91_cloud_activate_sim`
 
 .. include:: nrf9160_gs.rst

@@ -160,7 +160,7 @@ Button 1:
     :end-before: matter_door_lock_sample_led1_end
 
 LED 2:
-   If the :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
+   If the :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` Kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
    The following states are possible:
 
    * Turned Off - The Bridge device is in the idle state and has no Bluetooth LE devices paired.

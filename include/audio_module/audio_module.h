@@ -268,7 +268,7 @@ struct audio_module_handle {
 	/* Thread data. */
 	struct k_thread thread_data;
 
-	/* Flag to indicate if the module should put it's output audio data onto it's TX FIFO. */
+	/* Flag to indicate if the module should put its output audio data onto its TX FIFO. */
 	bool use_tx_queue;
 
 	/* List node (pointer to next audio module). */
@@ -363,8 +363,8 @@ int audio_module_configuration_get(struct audio_module_handle const *const handl
  * @param handle_from       [in/out]  The handle for the module for output.
  * @param handle_to         [in/out]  The handle of the module for input, should be NULL if
  *                                    connect_external flag is true.
- * @param connect_external  [in]      Flag to indicate if the from module should put it's output
- *                                    audio data items onto it's TX FIFO for access via an external
+ * @param connect_external  [in]      Flag to indicate if the from module should put its output
+ *                                    audio data items onto its TX FIFO for access via an external
  *                                    system.
  *
  * @return 0 if successful, error otherwise.

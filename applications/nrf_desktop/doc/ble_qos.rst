@@ -33,7 +33,7 @@ Enable the module using the :ref:`CONFIG_DESKTOP_BLE_QOS_ENABLE <config_desktop_
 The option selects :kconfig:option:`CONFIG_BT_HCI_VS_EVT_USER`, because the module uses vendor-specific HCI events.
 
 You can use the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` option to enable real-time QoS information printouts through a UART (e.g. a virtual COM port).
-The chosen UART needs to be specified in Devicetree using ``ncs,ble-qos-uart``.
+The chosen UART needs to be specified in devicetree using ``ncs,ble-qos-uart``.
 This option also enables and configures the COM port (USB CDC ACM).
 For this reason, the :kconfig:option:`CONFIG_USB_DEVICE_STACK` must be enabled.
 

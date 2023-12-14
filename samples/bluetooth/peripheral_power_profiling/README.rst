@@ -252,7 +252,7 @@ It uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file`include/zephyr/sys/kernel.h`
+* :file:`include/zephyr/sys/kernel.h`
 * :file:`include/zephyr/sys/atomic.h`
 * :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:

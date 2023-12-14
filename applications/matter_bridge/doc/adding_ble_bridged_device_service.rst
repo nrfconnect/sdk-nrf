@@ -240,7 +240,7 @@ The following steps show how to add support for a new Bluetooth LE service calle
                return bt_gatt_subscribe(mDevice.mConn, &mGattSubscribeParams);
             }
 
-#. Add the ``MyBtServiceDataProvider`` implementation created in a previous steps to the compilation process.
+#. Add the ``MyBtServiceDataProvider`` implementation created in a previous step to the compilation process.
    To do that, edit the :file:`CMakeLists.txt` file as follows:
 
    .. code-block:: cmake

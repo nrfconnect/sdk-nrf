@@ -131,7 +131,7 @@ The following code snippet shows how this is typically carried out throughout th
 | LED         | Network          | Listener              | Listens to changes in the network status received on the network channel. Displays LED pattern accordingly.                                                                              |
 |             |                  |                       | If network is connected, LED 1 on the board will light up. On Thingy:91, the LED turns green                                                                                             |
 +-------------+------------------+-----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Error       | Fatal error      | Listener              | Listens to messages sent on the fatal error channel. If a message is received on the fatal error channel, the default behaviour is to reboot the device.                                 |
+| Error       | Fatal error      | Listener              | Listens to messages sent on the fatal error channel. If a message is received on the fatal error channel, the default behavior is to reboot the device.                                  |
 +-------------+------------------+-----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Channels

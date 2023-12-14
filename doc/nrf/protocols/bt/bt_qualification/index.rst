@@ -119,7 +119,7 @@ Use the listing search in the following cases:
 Matter certification by inheritance
 ***********************************
 
-Bluetooth QDIDs may be further used to obtain the Matter certification by inheritence.
+Bluetooth QDIDs may be further used to obtain the Matter certification by inheritance.
 See the :ref:`ug_matter_device_certification_reqs_dependent` section for details.
 
 Support

@@ -105,7 +105,7 @@ KRKNWK-17035: Sensor monitor uplink messages are lost when the notification peri
 
 KRKNWK-14583: Bus fault after flash, before the :file:`Nordic_MFG.hex` data flash
   For sub-GHz samples, when the :file:`Nordic_MFG.hex` file is missing, the device throws a hard fault during initializing the Sidewalk stack.
-  Proper error handling will be implemented, but the temporary solution is to write a manufacturing hex to the device and reset it.
+  Proper error handling will be implemented, but the temporary solution is to write a manufacturing hexadecimal code to the device and reset it.
 
 .. rst-class:: v2-5-2 v2-5-1 v2-5-0
 
@@ -380,7 +380,7 @@ KRKNWK-17360: Groupcast communication does not work for multiple endpoints that 
 
 .. rst-class:: v2-5-0
 
-KRKNWK-17864: When using Wi-Fi low power mode, the communication with the device might not work after it re-connects to the newly respawned Wi-Fi network
+KRKNWK-17864: When using Wi-Fi® low power mode, the communication with the device might not work after it re-connects to the newly respawned Wi-Fi network
   The communication with Matter over a Wi-Fi device sometimes does not work after it re-connects to the Wi-Fi network.
   The issue is only visible in cases of re-connection to the newly respawned Wi-Fi network that are triggered by rebooting the Wi-Fi access point.
   The root cause of the issue is not known but can be related to the usage of Wi-Fi in low power mode.
@@ -1732,7 +1732,7 @@ OCX-168: Issues with reestablishing streams
 .. rst-class:: v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0
 
 OCX-178: Transport latency does not affect flush timeout
-  Setting transport latency higher than 10 ms and higher restransmission time setting do not have an effect on the flush timeout setting.
+  Setting transport latency higher than 10 ms and higher retransmission time setting do not have an effect on the flush timeout setting.
   The flush timeout is always 1.
 
 .. rst-class:: v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0
@@ -1967,7 +1967,7 @@ Unstable samples
 .. rst-class:: v1-0-0
 
 :ref:`bluetooth_central_hids` loses UART connectivity
-  After programming a HEX file to the nrf52_pca10040 board, UART connectivity is lost when using the Bluetooth LE Controller.
+  After programming a HEX file to the ``nrf52_pca10040`` board, UART connectivity is lost when using the Bluetooth LE Controller.
   The board must be reset to get UART output.
 
   **Affected platforms:** nRF52832

@@ -342,7 +342,7 @@ The |NCS| includes several :ref:`matter_samples` that are example implementation
 The samples are maintained to fulfill Matter certification requirements as closely as possible, but they do not have official Matter compliance certificates.
 You can use them as a reference for creating your own application, but this does not guarantee that your application will pass the Matter certification.
 
-The Matter certification program currently does not provide any form of platform certification, so the product maker is solely reponsible for ensuring that the application used fulfills all Matter certification requirements.
+Currently, the Matter certification program does not provide any form of platform certification, so the product maker is solely responsible for ensuring that the application used fulfills all Matter certification requirements.
 Before you start the application process for the Matter certification, make sure that the application configuration generated using :file:`.zap` file is compatible with the PICS generated for the certification purpose.
 You can find the information about the specification and the valid PICS for specific Matter stack version that should be used for your product on the `CSA Matter Resource Kit`_ page, in the `Specification` section.
 Especially, make sure that:

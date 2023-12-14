@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 /**
- * @brief Background provisioning service - assumed to run in it's own thread.
+ * @brief Background provisioning service - assumed to run in its own thread.
  *
  * Revealed only to be able to test the functionality.
  */

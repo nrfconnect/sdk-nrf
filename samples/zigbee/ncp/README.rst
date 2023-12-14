@@ -74,7 +74,7 @@ See :ref:`ug_zigbee_configuring_eui64` for information about how to configure th
 Serial communication setup
 ==========================
 
-The communication channel uses Zephyr's :ref:`zephyr:uart_api` API. The serial device is selected in Devicetree like this:
+The communication channel uses Zephyr's :ref:`zephyr:uart_api` API. The serial device is selected in devicetree like this:
 
 .. code-block:: devicetree
 
@@ -86,7 +86,7 @@ By default, Zephyr's logger uses ``uart0`` and the NCP sample communicates throu
 The DTS overlay file configures ``uart1`` to be connected to the on-board J-Link instead of ``uart0``.
 As the result, Zephyr's logger ``uart0`` is available only through GPIO pins (**P1.00** and **P1.01**).
 
-The ``uart0`` pins are configured by Devicetree overlay files for each supported development kit in the :file:`boards` directory.
+The ``uart0`` pins are configured by devicetree overlay files for each supported development kit in the :file:`boards` directory.
 
 Communication through USB
 -------------------------

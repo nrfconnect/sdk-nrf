@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 /* Determine if _Generic is supported.
- * In general it's a C11 feature but it was added also in:
+ * In general it is a C11 feature but it was added also in:
  * - GCC 4.9.0 https://gcc.gnu.org/gcc-4.9/changes.html
  * - Clang 3.0 https://releases.llvm.org/3.0/docs/ClangReleaseNotes.html
  *

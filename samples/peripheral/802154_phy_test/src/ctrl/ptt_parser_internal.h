@@ -14,7 +14,7 @@
 /** @brief Converts string to integer and checks upper and lower boundaries
  *
  *  Works with decimal values and hexadecimal values with '0x' or 0X' prefix.
- *  Will return error if converted value fails boundary check or can not be
+ *  Will return error if converted value fails boundary check or cannot be
  *  stored in long type.
  *
  *  @param[IN]  str       - pointer to NULL terminated string

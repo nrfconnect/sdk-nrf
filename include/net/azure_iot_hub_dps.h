@@ -46,13 +46,13 @@ struct azure_iot_hub_dps_config {
 
 	/** ID scope to use in the provisioning request.
 	 *  If the pointer is NULL or the length is zero, the compile-time option
-	 *  :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` is used.
+	 *  ``CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`` is used.
 	 */
 	struct azure_iot_hub_buf id_scope;
 
 	/** Registration ID to use in the provisioning request.
 	 *  If the pointer is NULL or the length is zero, the compile-time option
-	 *  :kconfig:option:`CONFIG_AZURE_IOT_HUB_REG_ID` is used.
+	 *  ``CONFIG_AZURE_IOT_HUB_REG_ID`` is used.
 	 */
 	struct azure_iot_hub_buf reg_id;
 };
@@ -65,7 +65,7 @@ struct azure_iot_hub_dps_config {
  *	  attempt has been completed. If the content of the buffers is changed while provisioning
  *	  is ongoing, the behavior is undefined.
  *
- *  @retval 0 if successul.
+ *  @retval 0 if successful.
  *  @retval -EINVAL if configuration or event handler was NULL.
  */
 int azure_iot_hub_dps_init(struct azure_iot_hub_dps_config *cfg);
@@ -79,7 +79,7 @@ int azure_iot_hub_dps_init(struct azure_iot_hub_dps_config *cfg);
  */
 int azure_iot_hub_dps_start(void);
 
-/** @brief Get the hostname of the currently assigned Azure IoT Hub as a temrinated string.
+/** @brief Get the hostname of the currently assigned Azure IoT Hub as a terminated string.
  *
  *  @param[in, out] buf Pointer to buffer where the hostname will be stored.
  *			The buffer will upon success be populated to point to the assigned IoT Hub

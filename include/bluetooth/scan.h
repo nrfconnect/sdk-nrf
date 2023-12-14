@@ -394,7 +394,7 @@ struct cb_data {
  *
  *  This structure is used for tracking the state of a scanning.
  *  It is registered with the help of the @ref bt_scan_cb_register() API.
- *  It's permissible to register multiple instances of this @ref bt_scan_cb
+ *  It is permissible to register multiple instances of this @ref bt_scan_cb
  *  type, in case different modules of an application are interested in
  *  tracking the scanning state. If a callback is not of interest for
  *  an instance, it may be set to NULL and will as a consequence not be

@@ -258,12 +258,13 @@ You can hardcode the information in the application, or you can use a functional
 Samples and applications implementing FOTA
 ==========================================
 
-* :ref:`http_modem_full_update_sample` sample - performs a full firmware OTA update of the modem.
-* :ref:`http_modem_delta_update_sample` sample - performs a delta OTA update of the modem firmware.
-* :ref:`http_application_update_sample` sample - performs a basic application FOTA update.
-* :ref:`aws_iot` sample - performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
-* :ref:`azure_iot_hub` sample - performs a FOTA update from the Azure IoT Hub.
-* :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled). It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
+* :ref:`http_modem_full_update_sample` sample - Performs a full firmware OTA update of the modem.
+* :ref:`http_modem_delta_update_sample` sample - Performs a delta OTA update of the modem firmware.
+* :ref:`http_application_update_sample` sample - Performs a basic application FOTA update.
+* :ref:`aws_iot` sample - Performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
+* :ref:`azure_iot_hub` sample - Performs a FOTA update from the Azure IoT Hub.
+* :ref:`asset_tracker_v2` application - Performs FOTA updates of the application, modem (delta), and boot (if enabled).
+  It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
 
 .. _nrf91_ug_gnss:
 .. _nrf9160_ug_gnss:

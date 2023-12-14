@@ -15,7 +15,7 @@ The kit can be used to provide Wi-Fi® connectivity and Wi-Fi-based locationing 
 The nRF7002 EK features the nRF7002 companion IC.
 In addition, the shield may be used to emulate the nRF7001 and nRF7000 companion IC variants.
 
-If this is your first time developing with a Nordic DK, read the appropriate getting started tutorial first:
+If this is your first time developing with a Nordic Semiconductor DK, read the appropriate getting started tutorial first:
 
 * :ref:`ug_nrf7002_gs`
 * :ref:`ug_nrf52_gs`

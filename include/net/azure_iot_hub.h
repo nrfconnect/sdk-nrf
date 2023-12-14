@@ -131,7 +131,7 @@ enum azure_iot_hub_evt_type {
 	 */
 	AZURE_IOT_HUB_EVT_FOTA_ERROR,
 
-	/** A received message is too large for the payload buffer and can not be processed.
+	/** A received message is too large for the payload buffer and cannot be processed.
 	 *  The event has no associated data.
 	 */
 	AZURE_IOT_HUB_EVT_ERROR_MSG_SIZE,
@@ -189,8 +189,8 @@ struct azure_iot_hub_buf {
  *	   IoT Hub documentation, the key must be defined, while the
  *	   value can be a string or empty.
  *
- *  @note If value is provided as a string, it's the equivalent to "key=value".
- *	  If the value is empty, it's the equivalent of "key=" or "key".
+ *  @note If the value is provided as a string, it is the equivalent to "key=value".
+ *	  If the value is empty, it is the equivalent of "key=" or "key".
  */
 struct azure_iot_hub_property {
 	/** Property key. */
@@ -223,7 +223,7 @@ struct azure_iot_hub_msg {
 	/** Pointer to the payload sent/received from Azure IoT Hub. */
 	struct azure_iot_hub_buf payload;
 
-	/** Request ID that can be populated if relevcant for the message type. */
+	/** Request ID that can be populated if it is relevant for the message type. */
 	struct azure_iot_hub_buf request_id;
 
 	/** Quality of Service for the message. */
@@ -315,7 +315,7 @@ struct azure_iot_hub_config {
 	 *  will be used. To re-run DPS, the DPS information must be reset first.
 	 *  Note that using this option will use the device ID as DPS registration ID and the
 	 *  ID cope from @kconfig{CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE}.
-	 *  For more fine-grained control over DPS, use the azure_iot_hub_dps APIs directly insted.
+	 *  For more fine-grained control over DPS, use the azure_iot_hub_dps APIs directly instead.
 	 */
 	bool use_dps;
 };
@@ -344,7 +344,7 @@ int azure_iot_hub_init(azure_iot_hub_evt_handler_t event_handler);
  *
  *  @retval 0 If successful.
  *  @retval -EALREADY if the device is already connected to an IoT Hub.
- *  @retval -EINPROGRESS if an connection attempt is already in progress.
+ *  @retval -EINPROGRESS if a connection attempt is already in progress.
  *  @retval -ENOENT if the library is not in disconnected state.
  *  @retval -EINVAL if the provided configuration is invalid.
  *  @retval -EMSGSIZE if the provided device ID is larger than the internal buffer size.

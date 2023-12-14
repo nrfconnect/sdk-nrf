@@ -270,7 +270,7 @@ For example, for :ref:`ble_mesh_dfu_target` sample, which has only one element c
   mesh models dfu metadata comp-elem-add 1 4 0 0x0000 0x0002 0xBF42 0xBF44
 
 .. note::
-   In case of any mistakes being done during the enconding of the Composition Data, use the ``mesh models dfu metadata comp-clear`` command to clear the cached value, then start composing the metadata from the beginning.
+   In case of any mistakes during the encoding of the Composition Data, use the ``mesh models dfu metadata comp-clear`` command to clear the cached value, then start composing the metadata from the beginning.
 
 When all elements are added, generate a hash of the Composition Data using the ``mesh models dfu metadata comp-hash-get`` shell command.
 For example, using the inputs from the commands above, the output of this command should be the following::

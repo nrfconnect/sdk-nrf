@@ -247,7 +247,7 @@ int nfc_tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg,
 				size_t records_cnt);
 
 /**
- * @brief Waiting for a signals to execute protocol logic.
+ * @brief Waiting for a signal to execute protocol logic.
  *
  * This function must be called periodically from
  * thread to process the TNEP Tag Device.
