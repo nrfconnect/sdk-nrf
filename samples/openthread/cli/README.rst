@@ -101,7 +101,7 @@ The following snippets are available:
 * ``ci`` - Disables boot banner and shell prompt.
 * ``multiprotocol`` - Enables Bluetooth LE support in this sample.
   Not compatible with the ``tcat`` snippet.
-* ``tcat`` - Enables support for Thread comissioning over authenticated TLS.
+* ``tcat`` - Enables support for Thread commissioning over authenticated TLS.
   Not compatible with the ``multiprotocol`` snippet.
 * ``tcp`` - Enables experimental TCP support in this sample.
 * ``low_power`` - Enables low power consumption mode in this sample.

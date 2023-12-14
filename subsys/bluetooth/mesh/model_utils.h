@@ -32,7 +32,7 @@
 #define ROUNDED_DIV(A, B) (((A) + ((B) / 2)) / (B))
 
 /** @brief Compare the TID of an incoming message with the previous
- * transaction, and update it if it's new.
+ * transaction, and update it, if it is new.
  *
  * @param prev_transaction Previous transaction.
  * @param tid Transaction ID of the incoming message.

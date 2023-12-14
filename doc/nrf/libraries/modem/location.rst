@@ -233,7 +233,7 @@ Configure the following Kconfig options to enable Wi-Fi interface:
 
 * :kconfig:option:`CONFIG_WIFI` - Enable Wi-Fi for Zephyr.
 
-The chosen Wi-Fi device needs to be set in Devicetree:
+The chosen Wi-Fi device needs to be set in devicetree:
 
 .. code-block:: devicetree
 

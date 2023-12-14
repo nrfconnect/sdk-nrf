@@ -23,7 +23,7 @@ bool location_utils_is_lte_available(void);
 /**
  * @brief Generate JWT buffer to be used for nRF Cloud REST API use.
  *
- * @details Return JWT buffer memory shouldn't be freed by the caller and it's valid until
+ * @details Return JWT buffer memory should not be freed by the caller and it is valid until
  * the next call to this function.
  *
  * @return JWT buffer if generation was successful. NULL if generation failed.

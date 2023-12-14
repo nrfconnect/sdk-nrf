@@ -159,7 +159,7 @@ int date_time_update_async(date_time_evt_handler_t evt_handler);
  */
 void date_time_clear(void);
 
-/** @brief Clear a timestamp in unix time ms.
+/** @brief Clear a timestamp in UNIX time ms.
  *
  *  @param[in, out] unix_timestamp Pointer to a unix timestamp.
  *

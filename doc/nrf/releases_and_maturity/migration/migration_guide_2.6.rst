@@ -129,8 +129,8 @@ The following changes are mandatory to make your application work in the same wa
     This also breaks the configuration if using the RSA keys without explicitly enabling an RSA key size.
     Enable the required key size to fix the configuration, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
 
-  * The PSA config is now validated by ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h.
-    Users with invalid configurations must update their PSA configuration according to the error messages that check_crypto_config.h provides.
+  * The PSA config is now validated by the :file:`ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h` file.
+    Users with invalid configurations must update their PSA configuration according to the error messages that the :file:`check_crypto_config.h` file provides.
 
 * For :ref:`lib_wifi_credentials` library and Wi-Fi samples:
 
@@ -166,7 +166,7 @@ The following changes are recommended for your application to work optimally aft
 
     * Replace the code used for initialization and handling of the board's components, like LEDs or buttons, with the common ``board`` module.
       The ``board`` module handles buttons and LEDs in a way consistent with Matter samples UI.
-      It uses the ``task_executor`` common module for posting a board related events.
+      It uses the ``task_executor`` common module for posting a board-related event.
       You can also use the ``task_executor`` module for posting and dispatching events in your application.
 
       To replace the |NCS| v2.5.0 compliant implementation with the ``board`` module, complete the following steps:

@@ -33,7 +33,7 @@ enum ncm_event_type {
 /** @brief Event handler that is called by the Network core monitor library when an event occurs.
  *
  * @note This function should be defined by the application.
- *       Otherwise, `__weak` definition will called and it prints information about the event.
+ *       Otherwise, `__weak` definition will be called and it prints information about the event.
  *
  * @param[out] event       Event occurring.
  * @param[out] reset_reas  Reason for network core reset.

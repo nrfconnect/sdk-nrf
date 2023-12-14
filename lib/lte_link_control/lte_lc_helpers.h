@@ -182,8 +182,8 @@ int parse_rrc_mode(const char *at_response,
 
 /* @brief Parses an AT command response and returns the current eDRX configuration.
  *
- * @note It's assumed that the network only reports valid eDRX values when
- *	 in each mode (LTE-M and NB1). There's no sanity-check of these values.
+ * @note It is assumed that the network only reports valid eDRX values when
+ *	 in each mode (LTE-M and NB1). There is no sanity check of these values.
  *
  * @param at_response Pointer to buffer with AT response.
  * @param cfg Pointer to where the eDRX configuration is stored.

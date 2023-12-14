@@ -84,7 +84,7 @@ CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_SIZE - Buffer space reserved for loading
 
 CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT - Number of buffers for loading credentials
    The number of buffers available for loading ``sec_tag`` credentials for Mbed TLS.
-   TLS client only needs the buffer when connecting, while TLS server needs the buffer as long as it running.
+   TLS client only needs the buffer when connecting, while TLS server needs the buffer as long as it is running.
    Increase the value if you need both TLS client and server running simultaneously with different ``sec_tags``.
    The default value is ``1``.
 
@@ -246,7 +246,7 @@ CONFIG_SLM_TWI - TWI support in SLM
 .. _CONFIG_SLM_UART_RX_BUF_COUNT:
 
 CONFIG_SLM_UART_RX_BUF_COUNT - Receive buffers for UART.
-   This option defines the amount of buffers for receiving (RX) UART traffic.
+   This option defines the number of buffers for receiving (RX) UART traffic.
    The default value is 3.
 
 .. _CONFIG_SLM_UART_RX_BUF_SIZE:

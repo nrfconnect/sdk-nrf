@@ -127,7 +127,7 @@ static void gnss_status_set(enum gnss_status status)
 	/* A notification is sent when the GNSS status is updated.
 	 * However this gets called in interrupt context (from gnss_event_handler()),
 	 * from which UART messages cannot be sent. This task is thus delegated
-	 * to a worker, to which the the new GNSS status is passed.
+	 * to a worker, to which the new GNSS status is passed.
 	 * A FIFO rather than a single variable is used to not miss GNSS status changes
 	 * in case they happen twice (or more) before the worker had the time to process them.
 	 */

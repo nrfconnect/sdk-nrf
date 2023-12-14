@@ -153,7 +153,7 @@ If you build this application for the nRF53 DK, it enables additional features s
 See :ref:`ug_thingy53` for detailed information about the mentioned features.
 
 The nRF53 DK has a J-Link debug IC that can be used to program the firmware.
-Alternatively, firmware can be updated over MCUBoot serial recovery or DFU over-the-air using Simple Management Protocol over Bluetooth.
+Alternatively, firmware can be updated over MCUboot serial recovery or DFU over-the-air using Simple Management Protocol over Bluetooth.
 Keep in mind that if you use bootloader to update firmware, the new firmware must be compatible with used bootloader and partition map.
 
 The nRF53 Development Kit uses RTT as logger's backend.

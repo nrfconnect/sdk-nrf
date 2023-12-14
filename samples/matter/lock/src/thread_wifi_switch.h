@@ -9,7 +9,7 @@
 namespace ThreadWifiSwitch
 {
 /**
- * Returns whether it's Thread and not Wi-Fi that is currently used as a Matter transport.
+ * Returns whether it is Thread and not Wi-Fi that is currently used as a Matter transport.
  */
 bool IsThreadActive();
 

@@ -93,7 +93,7 @@ nRF repositories
   * Usually licensed for use on Nordic products only.
 
   nRF repositories are stand-alone and have no upstreams, since they are unique to the |NCS|.
-  Some examples of repositories of this type are:
+  Following are some examples of this type of repositories:
 
   * `sdk-nrf`_: The main repository for Nordic-developed software.
   * `sdk-nrfxlib`_: A repository containing linkable libraries developed by Nordic.

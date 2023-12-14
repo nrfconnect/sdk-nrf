@@ -585,7 +585,7 @@ Legacy installation with Toolchain Manager
    Toolchain Manager is a tool available from `nRF Connect for Desktop`_, a cross-platform tool that provides different applications that simplify installing the |NCS|.
    Both the tool and the application are available for Windows, Linux, and macOS.
 
-   To install the toolchain and the SDK using the the Toolchain Manager app, complete the following steps:
+   To install the toolchain and the SDK using the Toolchain Manager app, complete the following steps:
 
    1. Install Toolchain Manager:
 

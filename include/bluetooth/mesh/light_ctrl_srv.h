@@ -220,7 +220,7 @@ struct bt_mesh_light_ctrl_srv {
  *
  *  Instructs the controlled Lightness Server to turn the light on. If the light
  *  was already on, the dimming timeout is reset. If the light was in the
- *  Prolong state, it's moved back into the On state.
+ *  Prolong state, it is moved back into the On state.
  *
  *  @param[in] srv        Light Lightness Control Server instance.
  *

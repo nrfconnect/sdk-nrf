@@ -32,7 +32,7 @@ extern "C" {
 
 /** NFC NDEF Connection Handover message structure.
  *  This structure contains all needed records needed to
- *  create the Connection Handover message. It can contains
+ *  create the Connection Handover message. It can contain
  *  one or more the Alternative Carrier Records and the Carrier Records.
  */
 struct nfc_ndef_ch_msg_records {

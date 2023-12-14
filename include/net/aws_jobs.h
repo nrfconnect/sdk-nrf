@@ -263,7 +263,7 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
  * @param[in]  client Initialized and connected MQTT Client instance.
  * @param[in]  job_id The ID of the job you are fetching use "$next" for
  *                    fetching the next IN_PROGRESS. or QUEUED job. It will
- *                    fetch the first created job if multiple exsists.
+ *                    fetch the first created job if multiple exists.
  * @param[out] topic_buf Buffer to store the topic in.
  *
  * @retval 0       If the update is published successfully, otherwise return

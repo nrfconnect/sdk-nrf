@@ -123,7 +123,7 @@ Matter Bluetooth LE with Nordic UART Service
 .. matter_door_lock_sample_lock_nus_desc_start
 
 The Matter implementation in the |NCS| lets you extend Bluetooth LE an additional Bluetooth LE service and use it in any Matter application, even when the device is not connected to a Matter network.
-The Matter door lock sample provides a basic implementation of this feature, which integrates Bluetooth LE with with :ref:`Nordic UART Service (NUS) <nus_service_readme>`.
+The Matter door lock sample provides a basic implementation of this feature, which integrates Bluetooth LE with the :ref:`Nordic UART Service (NUS) <nus_service_readme>`.
 Using NUS, you can declare commands specific to a Matter sample and use them to control the device remotely through Bluetooth LE.
 The connection between the device and the Bluetooth controller is secured and requires providing a passcode to pair the devices.
 

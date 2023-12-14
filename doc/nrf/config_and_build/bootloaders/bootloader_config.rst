@@ -20,7 +20,7 @@ However, there are other ways to customize your application using Kconfig option
 Using custom project configurations
 ***********************************
 
-You can use custom project configuration options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`, either temporarily until you clean the build pristinely or permamently.
+You can use custom project configuration options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`, either temporarily until you clean the build pristinely or permanently.
 
 For example, you can temporarily assign custom project configurations for both the bootloaders and a sample application as follows:
 

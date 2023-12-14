@@ -992,8 +992,8 @@ Measuring HID report rate
 You can measure a HID report rate of your application to assess the performance of your HID device.
 This measurement allows you to check how often the host computer can get user's input from the HID device.
 
-Prerequsites
-~~~~~~~~~~~~
+Prerequisites
+~~~~~~~~~~~~~
 
 The HID report rate can be measured by using either browser-based or platform-specific tools.
 You can use any preferred HID report rate tool.

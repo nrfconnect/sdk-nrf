@@ -95,7 +95,7 @@ struct bt_mesh_light_hue_srv_handlers {
 	 *  When reaching the border values for the state, the value should wrap
 	 *  around. While the server is executing a move command, it should
 	 *  report its @c target value as @ref BT_MESH_LIGHT_HSL_MIN or
-	 *  @ref BT_MESH_LIGHT_HSL_MAX, depending on whether it's moving up or
+	 *  @ref BT_MESH_LIGHT_HSL_MAX, depending on whether it is moving up or
 	 *  down.
 	 *
 	 *  @note This handler is mandatory.

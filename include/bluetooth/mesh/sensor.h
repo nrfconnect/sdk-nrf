@@ -251,8 +251,8 @@ struct bt_mesh_sensor_threshold {
 		/** Cadence when the sensor value is inside the range.
 		 *
 		 *  If the cadence is fast when the value is inside the range,
-		 *  it's normal when it's outside the range. If the cadence is
-		 *  normal when the value is inside the range, it's fast outside
+		 *  it is normal when it is outside the range. If the cadence is
+		 *  normal when the value is inside the range, it is fast outside
 		 *  the range.
 		 */
 		enum bt_mesh_sensor_cadence cadence;

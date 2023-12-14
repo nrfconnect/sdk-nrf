@@ -131,7 +131,7 @@ Button 1:
 
 Button 2:
    Simulates different ambient light sensor values.
-   These dummy values represent a raw values coming from an ambient light sensor.
+   These dummy values represent raw values coming from an ambient light sensor.
 
 Configuration
 *************

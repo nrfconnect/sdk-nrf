@@ -58,7 +58,7 @@ You must implement these functions in the following manner:
 Setting the :kconfig:option:`CONFIG_ZIGBEE_SCENES` option allows you to configure the following library-specific Kconfig options:
 
 * :kconfig:option:`CONFIG_ZIGBEE_SCENES_ENDPOINT` - This option sets the endpoint number on which the device implements the ZCL scene cluster.
-* :kconfig:option:`CONFIG_ZIGBEE_SCENE_TABLE_SIZE` - This options sets the value for the amount of scenes that can be configured.
+* :kconfig:option:`CONFIG_ZIGBEE_SCENE_TABLE_SIZE` - This option sets the value for the number of scenes that can be configured.
 
 To configure the logging level of the library, use the :kconfig:option:`CONFIG_ZIGBEE_SCENES_LOG_LEVEL` Kconfig option.
 

@@ -34,7 +34,7 @@ enum app_module_event_type {
 	APP_EVT_LTE_DISCONNECT,
 
 	/** Signal other modules to start sampling and report the data when
-	 *  it's ready.
+	 *  it is ready.
 	 *  The event must also contain a list with requested data types,
 	 *  @ref app_module_data_type.
 	 */

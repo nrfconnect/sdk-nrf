@@ -179,7 +179,7 @@ Thread
 ------
 
 * The default cryptography backend for Thread is now Arm PSA Crypto API instead of Mbed TLS, which was used in earlier versions.
-  You can still build all examples with deprecated Mbed TLS support by setting the :kconfig:option:`OPENTHREAD_NRF_SECURITY_CHOICE` Kconfig option to ``y``, but you must build the Thread libraries from sources.
+  You can still build all examples with deprecated Mbed TLS support by setting the :kconfig:option:`CONFIG_OPENTHREAD_NRF_SECURITY_CHOICE` Kconfig option to ``y``, but you must build the Thread libraries from sources.
   To :ref:`inherit Thread certification <ug_thread_cert_inheritance_without_modifications>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
 
 * nRF5340 SoC targets that don't include :ref:`Trusted Firmware-M <ug_tfm>` now use Hardware Unique Key (HUK, see the :ref:`lib_hw_unique_key` library) for PSA Internal Trusted Storage (ITS).
@@ -295,7 +295,7 @@ Serial LTE modem
       Set to ``TLS_PEER_VERIFY_REQUIRED`` by default.
     * Set the ``TLS_HOSTNAME`` socket option to ``NULL`` to disable the hostname verification.
 
-  * Allow building the application for nRF9160 DK board revision older than 0.14.0.
+  * You can now build the application on nRF9160 DK boards with revisions older than 0.14.0.
   * ``#XCMNG`` AT command to store credentials in Zephyr settings storage.
     The command is activated with the :file:`overlay-native_tls.conf` overlay file.
   * The documentation for the ``#XCARRIER`` and ``#XCARRIERCFG`` commands by adding more detailed information.
@@ -504,8 +504,8 @@ Cellular samples
 
   * Updated:
 
-    * The format of the :file:`.pem` file to the pem format.
-    * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
+    * The format of the :file:`.pem` file to the PEM format.
+    * The sample to automatically convert the :file:`.pem` file to HEX format so it can be included.
 
 * :ref:`location_sample` sample:
 
@@ -609,8 +609,8 @@ Cellular samples
 
   * Updated:
 
-    * The format of the :file:`.pem` files to the pem format.
-    * The sample to automatically convert the :file:`.pem` files to hex format so they can be included.
+    * The format of the :file:`.pem` files to the PEM format.
+    * The sample to automatically convert the :file:`.pem` files to HEX format so they can be included.
 
 * :ref:`lwm2m_client` sample:
 
@@ -695,7 +695,7 @@ Matter samples
 * Disabled:
 
   * :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
-  * WPA Supplicant advanced features in all Matter samples using the :kconfig:option:`WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
+  * WPA supplicant advanced features in all Matter samples using the :kconfig:option:`CONFIG_WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
     This saves roughly 25 KB of FLASH memory for firmware images with Wi-Fi support.
 
 * Added ``matter_shell`` shell commands set to gather the current information about the NVS settings backend such as current usage, free space, and peak usage value.
@@ -732,8 +732,8 @@ Networking samples
   * Updated:
 
     * The :file:`.pem` certificate for example.com.
-    * The format of the :file:`.pem` file to the pem format.
-    * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
+    * The format of the :file:`.pem` file to the PEM format.
+    * The sample to automatically convert the :file:`.pem` file to HEX format so it can be included.
     * The sample to gracefully bring down the network interfaces.
     * Renamed :file:`overlay-pdn_ipv4.conf` to :file:`overlay-pdn-nrf91-ipv4.conf` and :file:`overlay-tfm_mbedtls.conf` to :file:`overlay-tfm-nrf91.conf`.
 
@@ -741,8 +741,8 @@ Networking samples
 
   * Updated:
 
-    * The format of the :file:`.pem` file to the pem format.
-    * The sample to automatically convert the :file:`.pem` file to hex format so it can be included.
+    * The format of the :file:`.pem` file to the PEM format.
+    * The sample to automatically convert the :file:`.pem` file to HEX format so it can be included.
     * The sample to gracefully bring down the network interfaces.
 
 NFC samples
@@ -810,7 +810,12 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-* Added the :ref:`wifi_throughput_sample` sample that demonstrates how to measure the network throughput of a Nordic Wi-Fi enabled platform under the different Wi-Fi stack configuration profiles.
+* Added:
+
+  * The :ref:`wifi_throughput_sample` sample that demonstrates how to measure the network throughput of a Nordic Wi-Fi enabled platform under the different Wi-Fi stack configuration profiles.
+  * The :ref:`wifi_softap_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
+  * The :ref:`wifi_raw_tx_packet_sample` sample that demonstrates how to transmit raw TX packets.
+  * The :ref:`wifi_monitor_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Monitor` mode.
 
 * :ref:`wifi_shell_sample` sample:
 
@@ -821,11 +826,6 @@ Wi-Fi samples
 
     * Added ``promiscuous_set`` extension to the Wi-Fi command line.
       It adds the subcommand to configure Promiscuous mode.
-
-* Added the :ref:`wifi_softap_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
-* Added the :ref:`wifi_raw_tx_packet_sample` sample that demonstrates how to transmit raw TX packets.
-
-* Added the :ref:`wifi_monitor_sample` sample that demonstrates how to start a nRF70 Series device in :term:`Monitor` mode.
 
 Other samples
 -------------
@@ -935,13 +935,11 @@ Modem libraries
 
   * Added:
 
-    * The :c:enumerator:`LOCATION_EVT_STARTED` event to indicate that a location request has been started and
-      the :c:enumerator:`LOCATION_EVT_FALLBACK` event to indicate that a fallback from one location method to another has occurred.
+    * The :c:enumerator:`LOCATION_EVT_STARTED` event to indicate that a location request has been started and the :c:enumerator:`LOCATION_EVT_FALLBACK` event to indicate that a fallback from one location method to another has occurred.
       These are for metrics collection purposes and sent only if the :kconfig:option:`CONFIG_LOCATION_DATA_DETAILS` Kconfig option is set.
     * Support for multiple event handlers.
     * Additional location data details into the :c:struct:`location_data_details` structure hierarchy.
-    * The :c:enumerator:`LOCATION_METHOD_WIFI_CELLULAR` method that cannot be added into the location configuration passed to the :c:func:`location_request()` function,
-      but may occur within the :c:struct:`location_event_data` structure.
+    * The :c:enumerator:`LOCATION_METHOD_WIFI_CELLULAR` method that cannot be added into the location configuration passed to the :c:func:`location_request` function, but may occur within the :c:struct:`location_event_data` structure.
 
   * Updated:
 
@@ -1071,15 +1069,13 @@ Libraries for networking
     * The ``family`` parameter to the :c:struct:`download_client_cfg` structure.
       This is used to optimize the download sequence when the device only support IPv4 or IPv6.
 
-  * Changed:
+  * Updated:
 
     * IPv6 support changed from compile time to runtime, and is default enabled.
     * IPv6 to IPv4 fallback is done when both DNS request and TCP/TLS connect fails.
     * HTTP downloads forward data fragments to a callback only when the buffer is full.
 
-  * Removed:
-
-    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_IPV6` Kconfig option is removed.
+  * Removed the ``CONFIG_DOWNLOAD_CLIENT_IPV6`` Kconfig option.
 
 * :ref:`lib_nrf_cloud_coap` library:
 
@@ -1215,8 +1211,8 @@ nRF Security
   This will also break the configuration for those using the RSA keys without explicitly enabling an RSA key size.
   Enable the required key size to fix the configuration, for example by setting the Kconfig option :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` if 2048-bit RSA keys are required.
 
-* The PSA config is now validated by ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h.
-  Users with invalid configurations must update their PSA configuration according to the error messages that check_crypto_config.h provides.
+* The PSA config is now validated by the :file:`ncs/nrf/ext/oberon/psa/core/library/check_crypto_config.h` file.
+  Users with invalid configurations must update their PSA configuration according to the error messages that the :file:`check_crypto_config.h` file provides.
 
 
 Other libraries
@@ -1233,7 +1229,7 @@ Other libraries
 
 * :ref:`lib_date_time` library:
 
-  * Added the :c:func:`date_time_now_local()` function to the API.
+  * Added the :c:func:`date_time_now_local` function to the API.
 
 Common Application Framework (CAF)
 ----------------------------------
@@ -1345,7 +1341,7 @@ cJSON
 Documentation
 =============
 
-* Added
+* Added:
 
   * :ref:`ug_nrf9161` user guide.
   * :ref:`ug_nrf70_developing_fw_patch_ext_flash` and :ref:`ug_nrf70_stack partitioning` pages in the :ref:`ug_nrf70_developing` user guide.
@@ -1361,6 +1357,7 @@ Documentation
     * :ref:`ug_nrf70_developing_promiscuous_packet_reception`
 
   * :ref:`qspi_xip` user guide under :ref:`ug_nrf53`.
+  * A section on :ref:`tfm_enable_share_uart` in :ref:`ug_nrf9160`.
 
 * Updated:
 
@@ -1380,7 +1377,6 @@ Documentation
   * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages so that instructions in the :ref:`nrf9160_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
   * The :ref:`ug_nrf9160_gs` by replacing the Updating the DK firmware section with a new :ref:`nrf9160_gs_installing_software` section.
     This new section includes steps for using Quick Start, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF91 Series DKs.
-  * The :ref:`tfm_enable_share_uart` section on :ref:`ug_nrf9160`.
   * Integration steps in the :ref:`ug_bt_fast_pair` guide.
     Reorganized extension-specific content into dedicated subsections.
   * The :ref:`nrf7002dk_nrf5340` page with a link to the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.

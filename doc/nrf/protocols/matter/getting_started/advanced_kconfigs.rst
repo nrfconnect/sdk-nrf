@@ -100,7 +100,7 @@ To enable the FFS support, set the following configuration options to meet the A
 * :kconfig:option:`CONFIG_CHIP_DEVICE_TYPE` to the appropriate value, depending on the device used.
   The value must be compliant with the Matter Device Type Identifier.
 
-Every Matter device must use an unique device identifier for rotating device identifier calculation purpose.
+Every Matter device must use a unique device identifier for rotating device identifier calculation purpose.
 By default, the identifier is set to a random value and stored in the factory data partition.
 You can choose your own unique identifier value instead by setting the :kconfig:option:`CONFIG_CHIP_DEVICE_GENERATE_ROTATING_DEVICE_UID` Kconfig option to ``n`` and using the :kconfig:option:`CONFIG_CHIP_DEVICE_ROTATING_DEVICE_UID` Kconfig option.
 When using your own identifier, the value can be stored in either firmware or factory data.

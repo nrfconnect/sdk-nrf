@@ -106,8 +106,7 @@ To configure this set of functions, use the following options:
 * :kconfig:option:`CONFIG_ZIGBEE_UART_RX_BUF_LEN` - This option enables and configures the size of internal RX and TX buffer.
 * :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING` - This option enables logging ZBOSS traces in binary format with Zigbee async serial.
 
-The Zigbee ZBOSS OSIF layer serial device needs to be provided in Devicetree
-like this:
+The Zigbee ZBOSS OSIF layer serial device needs to be provided in devicetree as follows:
 
 .. code-block:: devicetree
 

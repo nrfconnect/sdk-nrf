@@ -32,19 +32,19 @@ extern "C" {
  * with state set to MODULE_STATE_OFF or MODULE_STATE_STANDBY. The MODULE_STATE_STANDBY should
  * be submitted by a module that is capable of submitting @ref wake_up_event to wake up the system
  * on external event. Otherwise MODULE_STATE_OFF should be reported. If the module is unable to
- * suspend at the moment, it should consume the received power down events until it's ready to
- * suspend itself. The module should also delay submitting the @ref module_state_event until it's
+ * suspend at the moment, it should consume the received power down events until it is ready to
+ * suspend itself. The module should also delay submitting the @ref module_state_event until it is
  * ready to suspend itself.
  *
- * The module may handle the power down event differently if it's related to fatal error.
+ * The module may handle the power down event differently if it is related to fatal error.
  * In general, an application module should suspend itself, but some of the modules may still need
- * to be active after the fatal error. For example, module that controls hardware LEDs may be used
+ * to be active after the fatal error. For example, a module that controls hardware LEDs may be used
  * to display LED effect related to the fatal error.
  *
  * Only the module that controls the power management in the application can submit the power down
  * event. It is also the final subscriber for the power down event. When it receives the power down
- * event, it's ensured that all other application modules that handle power down event are already
- * suspended. Then it can continue the power down procedure.
+ * event, it is ensured that all other application modules that handle the power down event are
+ * already suspended. Then it can continue the power down procedure.
  *
  * @note An application module that handles power down event must also handle @ref wake_up_event.
  *       Otherwise the module will never be woken up after suspending.

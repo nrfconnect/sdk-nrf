@@ -49,7 +49,7 @@ int at_cmd_custom_respond(char *buf, size_t buf_size,
 		const char *response, ...);
 
 /**
- * @brief Define an custom AT command callback.
+ * @brief Define a custom AT command callback.
  *
  * @param entry The entry name.
  * @param _filter The (partial) AT command on which the callback should trigger.

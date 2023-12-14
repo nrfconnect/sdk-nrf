@@ -128,7 +128,7 @@ This repository showcases the following features of both the |NCS| and Zephyr:
 * Custom :ref:`devicetree bindings <zephyr:dt-bindings>`
 * Out-of-tree :ref:`drivers <zephyr:device_model_api>`
 * Out-of-tree libraries
-* Example CI configuration (using Github Actions)
+* Example CI configuration (using GitHub Actions)
 * Custom :ref:`west extension <zephyr:west-extensions>`
 
 .. example_app_end

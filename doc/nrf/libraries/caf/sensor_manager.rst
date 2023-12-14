@@ -31,7 +31,7 @@ The following Kconfig options are also available for the module:
 To use the module, you must complete the following requirements:
 
 1. Physically connect the sensor.
-#. Add and enable the sensor in the Devicetree file.
+#. Add and enable the sensor in the devicetree file.
    For example, in the :file:`BOARD.dts` file.
    For more information about adding sensor device to devicetree, refer to :ref:`zephyr:use-dt-overlays`.
 #. Enable the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER` and :kconfig:option:`CONFIG_SENSOR` Kconfig options.

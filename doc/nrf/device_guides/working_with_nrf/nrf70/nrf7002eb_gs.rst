@@ -14,7 +14,7 @@ The nRF7002 EB can be used to provide Wi-Fi® connectivity to compatible develop
 The nRF7002 EB has a :term:`Printed Circuit Board (PCB)` edge connector that can be used with a compatible development board such as the Nordic Thingy:53, an IoT prototyping platform from Nordic Semiconductor.
 There are also castellated holes on the side of the board that allow the EB to be used as a breakout board that can be soldered to other PCB assemblies.
 
-If this is your first time developing with a Nordic DK, read the appropriate getting started tutorial first:
+If this is your first time developing with a Nordic Semiconductor DK, read the appropriate getting started tutorial first:
 
 * :ref:`ug_nrf7002_gs`
 * :ref:`ug_thingy53_gs`

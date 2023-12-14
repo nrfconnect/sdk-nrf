@@ -14,7 +14,7 @@ Dedicated host tools like :doc:`mcuboot:imgtool` can be used to sign application
 When you use |NSIB|, a private/public key pair is by default generated during the build when you are :ref:`ug_bootloader_adding_immutable_keys`.
 You can use the methods described in the following sections to explicitly define how the key pair is to be generated.
 
-When you use MCUboot or you are :ref:`ug_bootloader_adding_upgradable_mcuboot`, MCUBoot uses keys that were generated once and are stored in the public MCUboot Git repository be default.
+When you use MCUboot or you are :ref:`ug_bootloader_adding_upgradable_mcuboot`, MCUboot uses keys that were generated once and are stored in the public MCUboot Git repository by default.
 
 .. note::
     These key pairs should only be used during development.

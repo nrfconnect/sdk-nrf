@@ -90,7 +90,7 @@ struct bt_mesh_lvl_srv_handlers {
 	 *
 	 * If @c delta_set::new_transaction is false, the state transition
 	 * should use the same start point as the previous delta_set message,
-	 * effectively overriding the previous message. If it's true, the level
+	 * effectively overriding the previous message. If it is true, the level
 	 * transition should start from the current level, stopping any
 	 * ongoing transitions.
 	 *
@@ -119,7 +119,7 @@ struct bt_mesh_lvl_srv_handlers {
 	 * behavior is application specific. While the server is executing a
 	 * move command, it should report its @c target value as
 	 * @ref BT_MESH_LVL_MIN or @ref BT_MESH_LVL_MAX, depending on whether
-	 * it's moving up or down.
+	 * it is moving up or down.
 	 *
 	 * @note This handler is mandatory.
 	 *

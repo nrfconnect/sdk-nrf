@@ -75,7 +75,7 @@ The following table lists libraries enabled by default for each available Zigbee
 Read the table symbols in the following manner:
 
 * ``✔`` - The library is enabled by default for the given Zigbee sample.
-* ``**`` - The library support is available through the :file:`prj_fota.conf` for the given Zigbee sample.
+* ``**`` - The library support is available through the :file:`prj_fota.conf` file for the given Zigbee sample.
 * No symbol - The library is not enabled for the given sample, but you can enable support by following the instructions on the :ref:`ug_zigbee_configuring_libraries`.
 
 .. toctree::

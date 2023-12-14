@@ -169,7 +169,7 @@ typedef void (*sms_callback_t)(struct sms_data *const data, void *context);
 /**
  * @brief Register a new listener to SMS library.
  *
- * @details Also registers to modem's SMS service if it's not already subscribed.
+ * @details Also registers to modem's SMS service if it is not already subscribed.
  *
  * A listener is identified by a unique handle value. This handle should be used
  * to unregister the listener. A listener can be registered multiple times with

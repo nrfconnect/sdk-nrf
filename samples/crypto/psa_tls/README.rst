@@ -137,7 +137,7 @@ After programming the sample to your development kit, complete the following ste
       1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
          See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
-      #. Start the ``eth_rtt_link`` executable as superuser with your development kit's segger-id and the following IPv4 address as parameters:
+      #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:
 
          .. code-block:: console
 

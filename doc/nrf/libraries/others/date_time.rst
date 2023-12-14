@@ -50,7 +50,7 @@ See the API documentation for more information on these functions.
 .. note::
 
    It is recommended to set the :kconfig:option:`CONFIG_DATE_TIME_AUTO_UPDATE` option to trigger a time update when the device has connected to LTE.
-   If an application has time-dependent operations immediately after connecting to LTE network, it should wait for a confirmation telling that time has been updated.
+   If an application has time-dependent operations immediately after connecting to the LTE network, it should wait for a confirmation indicating that time has been updated.
    If the :kconfig:option:`CONFIG_DATE_TIME_AUTO_UPDATE` option is not set, the first date-time update cycle (after boot) does not occur until the time set by the :kconfig:option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` option has elapsed.
 
 Configuration

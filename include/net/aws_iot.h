@@ -37,7 +37,7 @@ enum aws_iot_shadow_topic_received_type {
 	/** This topic type corresponds to
 	 *  $aws/things/<thing-name>/shadow/get/accepted.
 	 *  When requesting the shadow document and the request is accepted,
-	 *  the response is publishes to this topic.
+	 *  the response is published to this topic.
 	 */
 	AWS_IOT_SHADOW_TOPIC_GET_ACCEPTED,
 

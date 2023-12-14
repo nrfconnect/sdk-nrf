@@ -10,6 +10,8 @@ HTTPS Client
 The HTTPS Client sample demonstrates a minimal implementation of HTTP communication.
 It shows how to set up a TLS session towards an HTTPS server and how to send an HTTP request.
 
+.. |wifi| replace:: Wi-Fi®
+
 .. include:: /includes/net_connection_manager.txt
 
 Requirements

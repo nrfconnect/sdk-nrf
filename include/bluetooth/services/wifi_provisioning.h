@@ -54,7 +54,7 @@ extern "C" {
 /**
  * @brief Get provisioning state.
  *
- * @return true if device is provsioned, false otherwise.
+ * @return true if device is provisioned, false otherwise.
  */
 bool bt_wifi_prov_state_get(void);
 
