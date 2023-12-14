@@ -326,3 +326,6 @@ Kconfig*                                  @tejlmand
 /tests/tfm/                               @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi
+
+# CI test alt config
+/alt-test-config/                         @nordicjm
