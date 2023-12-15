@@ -64,6 +64,13 @@ config OPENTHREAD_NRF_SECURITY_PSA
 	select SETTINGS
 	depends on !BUILD_WITH_TFM
 
+choice SECURE_STORAGE_BACKEND_AEAD_KEY
+# Temporarily use hash of UID as AEAD Key implementation
+# until Hardware Unique Key provisioning (more secure) is implemented
+	default SECURE_STORAGE_BACKEND_AEAD_KEY_HASH_UID if OPENTHREAD_NRF_SECURITY_PSA
+
+endchoice # SECURE_STORAGE_BACKEND_AEAD_KEY
+
 config OPENTHREAD_NRF_SECURITY
 	bool
 	select MBEDTLS_AES_C
