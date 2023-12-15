@@ -228,10 +228,12 @@ Tracking state of transports
 
 The |hid_state| refers collectively to all transports as _subscribers_.
 
-The module tracks the state of the connected Bluetooth® LE peers and the state of USB by listening to ``ble_peer_event`` and ``usb_state_event``, respectively.
-When the connection to the host is indicated by any of these events, the |hid_state| will create a subscriber associated with the transport.
+The module tracks the state of the connected Bluetooth® LE peers and the state of USB by listening to :c:struct:`hid_report_subscriber_event`.
+When the connection to the host is indicated by this event, the |hid_state| will create a subscriber associated with the transport.
 
-The subscriber that is associated with USB has priority over any Bluetooth LE peer subscriber.
+Each subscriber reports its priority as part of the :c:struct:`hid_report_subscriber_event`.
+The subscriber priority must be unique, that mean two or more subscriber cannot share the same priority value.
+By default, the subscriber that is associated with USB has priority over any Bluetooth LE peer subscriber.
 As a result, when the device connects to the host through USB, all HID reports will be routed to USB.
 
 Tracking state of HID report notifications
@@ -242,7 +244,7 @@ These are tracked in the subscriber's structure :c:struct:`subscriber`.
 This structure's member ``state`` is an array of :c:struct:`report_state` structures.
 Each element corresponds to one available HID report.
 
-The subscriber connects to the HID reports by submitting ``hid_report_subscription_event``.
+The subscriber connects to the HID reports by submitting :c:struct:`hid_report_subscription_event`.
 Depending on the connection method, this event can be submitted:
 
 * For Bluetooth, when the notification is enabled for a given HID report.
