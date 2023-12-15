@@ -658,6 +658,14 @@ AT_MONITOR(at_notify, ANY, notification_handler);
 static void notification_handler(const char *notification)
 {
 	if (get_slm_mode() == SLM_AT_COMMAND_MODE) {
+
+#if defined(CONFIG_SLM_PPP)
+		if (!slm_fwd_cgev_notifs
+		 && !strncmp(notification, "+CGEV: ", strlen("+CGEV: "))) {
+			/* CGEV notifications are silenced. Do not forward them. */
+			return;
+		}
+#endif
 		(void)slm_uart_tx_write(CRLF_STR, strlen(CRLF_STR), true, true);
 		(void)slm_uart_tx_write(notification, strlen(notification), true, false);
 	}

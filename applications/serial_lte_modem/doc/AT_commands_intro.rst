@@ -48,3 +48,4 @@ The modem-specific AT commands are documented in the `nRF91x1 AT Commands Refere
    GPIO_AT_commands
    CARRIER_AT_commands
    NRFCLOUD_AT_commands
+   PPP_AT_commands

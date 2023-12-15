@@ -162,6 +162,10 @@ config SLM_FULL_FOTA
 
 config SLM_PPP
 	bool "PPP support in SLM"
+	help
+	  When enabled, SLM automatically brings up/down the PPP link
+	  when the LTE link (default PDN) is connected/disconnected,
+	  regardless of what is done with AT#XPPP.
 
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
