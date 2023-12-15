@@ -46,4 +46,5 @@ endif # NET_L2_OPENTHREAD
 
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
+source "${ZEPHYR_BASE}/../nrf/samples/matter/common/src/Kconfig"
 source "Kconfig.zephyr"

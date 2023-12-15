@@ -47,6 +47,8 @@ target_sources(app PRIVATE
     src/zap-generated/callback-stub.cpp
     src/binding_handler.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
+    ${COMMON_ROOT}/src/task_executor.cpp
+    ${COMMON_ROOT}/src/board.cpp
 )
 
 

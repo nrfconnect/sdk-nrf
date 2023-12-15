@@ -13,7 +13,7 @@
 
 #include <cstdint>
 
-class AppEvent;
+struct BoltLockManagerEvent;
 
 class BoltLockManager {
 public:
@@ -68,7 +68,7 @@ private:
 	void SetState(State state, OperationSource source);
 
 	static void ActuatorTimerEventHandler(k_timer *timer);
-	static void ActuatorAppEventHandler(const AppEvent &aEvent);
+	static void ActuatorAppEventHandler(const BoltLockManagerEvent &event);
 	friend BoltLockManager &BoltLockMgr();
 
 	State mState = State::kLockingCompleted;
@@ -89,3 +89,7 @@ inline BoltLockManager &BoltLockMgr()
 {
 	return BoltLockManager::sLock;
 }
+
+struct BoltLockManagerEvent {
+	BoltLockManager *manager;
+};

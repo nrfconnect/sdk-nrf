@@ -6,6 +6,7 @@
 
 #include "temp_sensor_manager.h"
 #include "app_task.h"
+#include "task_executor.h"
 #include "temperature_measurement/sensor.h"
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
@@ -26,11 +27,7 @@ CHIP_ERROR TempSensorManager::Init()
 
 void TempSensorManager::TimerEventHandler(k_timer *timer)
 {
-	AppEvent event;
-	event.Type = AppEventType::Timer;
-	event.TimerEvent.Context = k_timer_user_data_get(timer);
-	event.Handler = TempSensorManager::SensorTimerEventHandler;
-	AppTask::Instance().PostEvent(event);
+	TaskExecutor::PostTask([] { TempSensorManager::SensorTimerEventHandler(); });
 }
 
 /*
@@ -39,7 +36,7 @@ void TempSensorManager::TimerEventHandler(k_timer *timer)
  *	values
  */
 
-void TempSensorManager::SensorTimerEventHandler(const AppEvent &Event)
+void TempSensorManager::SensorTimerEventHandler()
 {
 #ifdef CONFIG_THERMOSTAT_EXTERNAL_SENSOR
 	GetMeasurement(RealSensor::Instance());

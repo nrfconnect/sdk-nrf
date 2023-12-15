@@ -43,6 +43,8 @@ target_sources(app PRIVATE
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
+    ${COMMON_ROOT}/src/task_executor.cpp
+    ${COMMON_ROOT}/src/board.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR)

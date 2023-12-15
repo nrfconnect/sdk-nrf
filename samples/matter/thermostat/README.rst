@@ -158,24 +158,12 @@ User interface
     :start-after: matter_door_lock_sample_led1_start
     :end-before: matter_door_lock_sample_led1_end
 
-Button 1:
-    Depending on how long you press the button:
-
-    * If pressed for less than three seconds, it initiates the SMP server (Simple Management Protocol).
-      After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
-      (See `Upgrading the device firmware`_.)
-    * If pressed for more than three seconds, it initiates the factory reset of the device.
-      Releasing the button within the 3-second window cancels the factory reset procedure.
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_button1_start
+    :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
-    * On nRF52840 DK and nRF5340 DK: Prints the most recent thermostat data to terminal.
-    * On nRF7002 DK:
-
-      * If pressed for less than three seconds, it prints the most recent thermostat data to terminal.
-      * If pressed for more than three seconds, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-
-Button 4:
-    * On nRF52840 DK and nRF5340 DK: Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+    * Prints the most recent thermostat data to terminal.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start

@@ -6,14 +6,13 @@
 
 #include "app_task.h"
 
-#include "app_config.h"
 #include "fabric_table_delegate.h"
-#include "led_util.h"
 #include "light_switch.h"
+#include "task_executor.h"
 
 #include <platform/CHIPDeviceLayer.h>
 
-#include "board_util.h"
+#include "board.h"
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
@@ -34,7 +33,6 @@
 #include "ota_util.h"
 #endif
 
-#include <dk_buttons_and_leds.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -47,54 +45,20 @@ using namespace ::chip::DeviceLayer;
 
 namespace
 {
-constexpr uint32_t kFactoryResetTriggerTimeout = 3000;
-constexpr uint32_t kFactoryResetCancelWindowTimeout = 3000;
 constexpr uint32_t kDimmerTriggeredTimeout = 500;
 constexpr uint32_t kDimmerInterval = 300;
-constexpr size_t kAppEventQueueSize = 10;
 constexpr EndpointId kLightSwitchEndpointId = 1;
 constexpr EndpointId kLightEndpointId = 1;
 
-K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
-k_timer sFunctionTimer;
 k_timer sDimmerPressKeyTimer;
 k_timer sDimmerTimer;
 
 Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
 		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
-
-LEDWidget sStatusLED;
-LEDWidget sIdentifyLED;
-#if NUMBER_OF_LEDS == 4
-FactoryResetLEDsWrapper<2> sFactoryResetLEDs{ { FACTORY_RESET_SIGNAL_LED, FACTORY_RESET_SIGNAL_LED1 } };
-#endif
-
-bool sIsNetworkProvisioned = false;
-bool sIsNetworkEnabled = false;
-bool sHaveBLEConnections = false;
 bool sWasDimmerTriggered = false;
+
+#define APPLICATION_BUTTON_MASK DK_BTN2_MSK
 } /* namespace */
-
-namespace LedConsts
-{
-constexpr uint32_t kBlinkRate_ms{ 500 };
-constexpr uint32_t kIdentifyBlinkRate_ms{ 500 };
-
-namespace StatusLed
-{
-	namespace Unprovisioned
-	{
-		constexpr uint32_t kOn_ms{ 100 };
-		constexpr uint32_t kOff_ms{ kOn_ms };
-	} /* namespace Unprovisioned */
-	namespace Provisioned
-	{
-		constexpr uint32_t kOn_ms{ 50 };
-		constexpr uint32_t kOff_ms{ 950 };
-	} /* namespace Provisioned */
-
-} /* namespace StatusLed */
-} /* namespace LedConsts */
 
 #ifdef CONFIG_CHIP_WIFI
 app::Clusters::NetworkCommissioning::Instance
@@ -143,29 +107,13 @@ CHIP_ERROR AppTask::Init()
 
 	LightSwitch::GetInstance().Init(kLightSwitchEndpointId);
 
-	/* Initialize LEDs */
-	LEDWidget::InitGpio();
-	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
-
-	sStatusLED.Init(SYSTEM_STATE_LED);
-	sIdentifyLED.Init(IDENTIFY_LED);
-
-	UpdateStatusLED();
-
-	/* Initialize buttons */
-	int ret = dk_buttons_init(ButtonEventHandler);
-	if (ret) {
-		LOG_ERR("dk_buttons_init() failed");
-		return chip::System::MapErrorZephyr(ret);
+	if (!GetBoard().Init(ButtonEventHandler)) {
+		LOG_ERR("User interface initialization failed.");
+		return CHIP_ERROR_INCORRECT_STATE;
 	}
-
-	/* Initialize timers */
-	k_timer_init(&sFunctionTimer, AppTask::FunctionTimerTimeoutCallback, nullptr);
-	k_timer_init(&sDimmerPressKeyTimer, AppTask::FunctionTimerTimeoutCallback, nullptr);
-	k_timer_init(&sDimmerTimer, AppTask::FunctionTimerTimeoutCallback, nullptr);
-	k_timer_user_data_set(&sDimmerTimer, this);
-	k_timer_user_data_set(&sDimmerPressKeyTimer, this);
-	k_timer_user_data_set(&sFunctionTimer, this);
+	/* Initialize application timers */
+	k_timer_init(&sDimmerPressKeyTimer, AppTask::UserTimerTimeoutCallback, nullptr);
+	k_timer_init(&sDimmerTimer, AppTask::UserTimerTimeoutCallback, nullptr);
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 	/* OTA image confirmation must be done before the factory data init. */
@@ -217,179 +165,58 @@ CHIP_ERROR AppTask::StartApp()
 {
 	ReturnErrorOnFailure(Init());
 
-	AppEvent event = {};
-
 	while (true) {
-		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
-		DispatchEvent(event);
+		TaskExecutor::DispatchNextTask();
 	}
 
 	return CHIP_NO_ERROR;
 }
 
-void AppTask::ButtonPushHandler(const AppEvent &event)
+void AppTask::DimmerTriggerEventHandler()
 {
-	if (event.Type == AppEventType::Button) {
-		switch (event.ButtonEvent.PinNo) {
-		case FUNCTION_BUTTON:
-			Instance().StartTimer(Timer::Function, kFactoryResetTriggerTimeout);
-			Instance().mFunction = FunctionEvent::SoftwareUpdate;
-			break;
-		case
-#if NUMBER_OF_BUTTONS == 2
-			BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON:
-			if (!ConnectivityMgr().IsBLEAdvertisingEnabled() &&
-			    Server::GetInstance().GetFabricTable().FabricCount() == 0) {
-				break;
-			}
-#else
-			SWITCH_BUTTON:
-#endif
-			LOG_INF("Button has been pressed, keep in this state for at least 500 ms to change light sensitivity of binded lighting devices.");
-			Instance().StartTimer(Timer::DimmerTrigger, kDimmerTriggeredTimeout);
-			break;
-		default:
-			break;
-		}
+	if (!sWasDimmerTriggered) {
+		LightSwitch::GetInstance().InitiateActionSwitch(LightSwitch::Action::Toggle);
 	}
+
+	Instance().CancelTimer(Timer::Dimmer);
+	Instance().CancelTimer(Timer::DimmerTrigger);
+	sWasDimmerTriggered = false;
 }
 
-void AppTask::ButtonReleaseHandler(const AppEvent &event)
+void AppTask::TimerEventHandler(const Timer &timerType)
 {
-	if (event.Type == AppEventType::Button) {
-		switch (event.ButtonEvent.PinNo) {
-		case FUNCTION_BUTTON:
-			if (Instance().mFunction == FunctionEvent::SoftwareUpdate) {
-				Instance().CancelTimer(Timer::Function);
-				Instance().mFunction = FunctionEvent::NoneSelected;
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-				GetDFUOverSMP().StartServer();
-				UpdateStatusLED();
-#else
-				LOG_INF("Software update is disabled");
-#endif
-			} else if (Instance().mFunction == FunctionEvent::FactoryReset) {
-				UpdateStatusLED();
-
-				Instance().CancelTimer(Timer::Function);
-				Instance().mFunction = FunctionEvent::NoneSelected;
-				LOG_INF("Factory Reset has been canceled");
-			}
-			break;
-#if NUMBER_OF_BUTTONS == 4
-		case SWITCH_BUTTON:
-#else
-		case BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON:
-			if (!ConnectivityMgr().IsBLEAdvertisingEnabled() &&
-			    Server::GetInstance().GetFabricTable().FabricCount() == 0) {
-				AppEvent buttonEvent;
-				buttonEvent.Type = AppEventType::Button;
-				buttonEvent.ButtonEvent.PinNo = BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON;
-				buttonEvent.ButtonEvent.Action = static_cast<uint8_t>(AppEventType::ButtonPushed);
-				buttonEvent.Handler = StartBLEAdvertisementHandler;
-				PostEvent(buttonEvent);
-				break;
-			}
-#endif
-			if (!sWasDimmerTriggered) {
-				LightSwitch::GetInstance().InitiateActionSwitch(LightSwitch::Action::Toggle);
-			}
-			Instance().CancelTimer(Timer::Dimmer);
-			Instance().CancelTimer(Timer::DimmerTrigger);
-			sWasDimmerTriggered = false;
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-void AppTask::TimerEventHandler(const AppEvent &event)
-{
-	if (event.Type == AppEventType::Timer) {
-		switch (static_cast<Timer>(event.TimerEvent.TimerType)) {
-		case Timer::Function:
-			if (Instance().mFunction == FunctionEvent::SoftwareUpdate) {
-				LOG_INF("Factory Reset has been triggered. Release button within %u ms to cancel.",
-					kFactoryResetCancelWindowTimeout);
-				Instance().StartTimer(Timer::Function, kFactoryResetCancelWindowTimeout);
-				Instance().mFunction = FunctionEvent::FactoryReset;
-
-#ifdef CONFIG_STATE_LEDS
-				/* reset all LEDs to synchronize factory reset blinking */
-				sStatusLED.Set(false);
-				sIdentifyLED.Set(false);
-#if NUMBER_OF_LEDS == 4
-				sFactoryResetLEDs.Set(false);
-#endif
-
-				sStatusLED.Blink(LedConsts::kBlinkRate_ms);
-				sIdentifyLED.Blink(LedConsts::kBlinkRate_ms);
-#if NUMBER_OF_LEDS == 4
-				sFactoryResetLEDs.Blink(LedConsts::kBlinkRate_ms);
-#endif
-#endif
-			} else if (Instance().mFunction == FunctionEvent::FactoryReset) {
-				Instance().mFunction = FunctionEvent::NoneSelected;
-				LOG_INF("Factory Reset triggered");
-				chip::Server::GetInstance().ScheduleFactoryReset();
-			}
-			break;
-		case Timer::DimmerTrigger:
-			LOG_INF("Dimming started...");
-			sWasDimmerTriggered = true;
-			LightSwitch::GetInstance().InitiateActionSwitch(LightSwitch::Action::On);
-			Instance().StartTimer(Timer::Dimmer, kDimmerInterval);
-			Instance().CancelTimer(Timer::DimmerTrigger);
-			break;
-		case Timer::Dimmer:
-			LightSwitch::GetInstance().DimmerChangeBrightness();
-			break;
-		default:
-			break;
-		}
+	switch (timerType) {
+	case Timer::DimmerTrigger:
+		LOG_INF("Dimming started...");
+		sWasDimmerTriggered = true;
+		LightSwitch::GetInstance().InitiateActionSwitch(LightSwitch::Action::On);
+		Instance().StartTimer(Timer::Dimmer, kDimmerInterval);
+		Instance().CancelTimer(Timer::DimmerTrigger);
+		break;
+	case Timer::Dimmer:
+		LightSwitch::GetInstance().DimmerChangeBrightness();
+		break;
+	default:
+		break;
 	}
 }
 
 void AppTask::IdentifyStartHandler(Identify *)
 {
-	AppEvent event;
-	event.Type = AppEventType::IdentifyStart;
-	event.Handler = [](const AppEvent &) { sIdentifyLED.Blink(LedConsts::kIdentifyBlinkRate_ms); };
-	PostEvent(event);
+	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Blink(LedConsts::kIdentifyBlinkRate_ms); });
 }
 
 void AppTask::IdentifyStopHandler(Identify *)
 {
-	AppEvent event;
-	event.Type = AppEventType::IdentifyStop;
-	event.Handler = [](const AppEvent &) { sIdentifyLED.Set(false); };
-	PostEvent(event);
-}
-
-void AppTask::StartBLEAdvertisementHandler(const AppEvent &)
-{
-	if (Server::GetInstance().GetFabricTable().FabricCount() != 0) {
-		LOG_INF("Matter service BLE advertising not started - device is already commissioned");
-		return;
-	}
-
-	if (ConnectivityMgr().IsBLEAdvertisingEnabled()) {
-		LOG_INF("BLE advertising is already enabled");
-		return;
-	}
-
-	if (Server::GetInstance().GetCommissioningWindowManager().OpenBasicCommissioningWindow() != CHIP_NO_ERROR) {
-		LOG_ERR("OpenBasicCommissioningWindow() failed");
-	}
+	TaskExecutor::PostTask([] { GetBoard().GetLED(DeviceLeds::LED2).Set(false); });
 }
 
 void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 {
+	bool isNetworkProvisioned = false;
+
 	switch (event->Type) {
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
-		UpdateStatusLED();
 #ifdef CONFIG_CHIP_NFC_COMMISSIONING
 		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
 			if (NFCMgr().IsTagEmulationStarted()) {
@@ -402,8 +229,10 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 			NFCMgr().StopTagEmulation();
 		}
 #endif
-		sHaveBLEConnections = ConnectivityMgr().NumBLEConnections() != 0;
-		UpdateStatusLED();
+		if (ConnectivityMgr().NumBLEConnections() != 0) {
+			GetBoard().UpdateDeviceState(DeviceState::DeviceConnectedBLE);
+		}
+
 		break;
 #if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kDnssdInitialized:
@@ -412,102 +241,41 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 		break;
 	case DeviceEventType::kThreadStateChange:
-		sIsNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned();
-		sIsNetworkEnabled = ConnectivityMgr().IsThreadEnabled();
+		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
 #elif defined(CONFIG_CHIP_WIFI)
 	case DeviceEventType::kWiFiConnectivityChange:
-		sIsNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned();
-		sIsNetworkEnabled = ConnectivityMgr().IsWiFiStationEnabled();
+		isNetworkProvisioned =
+			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
 			InitBasicOTARequestor();
 		}
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 #endif
-		UpdateStatusLED();
+		if (isNetworkProvisioned) {
+			GetBoard().UpdateDeviceState(DeviceState::DeviceProvisioned);
+		} else {
+			GetBoard().UpdateDeviceState(DeviceState::DeviceDisconnected);
+		}
 		break;
 	default:
 		break;
 	}
 }
 
-void AppTask::UpdateStatusLED()
+void AppTask::ButtonEventHandler(ButtonState state, ButtonMask hasChanged)
 {
-#ifdef CONFIG_STATE_LEDS
-#if NUMBER_OF_LEDS == 4
-	sFactoryResetLEDs.Set(false);
-#endif
-
-	/* Update the status LED.
-	 *
-	 * If IPv6 network and service provisioned, keep the LED on constantly.
-	 *
-	 * If the system has BLE connection(s) up till the stage above, THEN blink the LED at an even
-	 * rate of 100ms.
-	 *
-	 * Otherwise, blink the LED for a very short time. */
-	if (sIsNetworkProvisioned && sIsNetworkEnabled) {
-		sStatusLED.Set(true);
-	} else if (sHaveBLEConnections) {
-		sStatusLED.Blink(LedConsts::StatusLed::Unprovisioned::kOn_ms,
-				 LedConsts::StatusLed::Unprovisioned::kOff_ms);
-	} else {
-		sStatusLED.Blink(LedConsts::StatusLed::Provisioned::kOn_ms, LedConsts::StatusLed::Provisioned::kOff_ms);
+	if ((APPLICATION_BUTTON_MASK & state & hasChanged)) {
+		LOG_INF("Button has been pressed, keep in this state for at least 500 ms to change light sensitivity of bound lighting devices.");
+		Instance().StartTimer(Timer::DimmerTrigger, kDimmerTriggeredTimeout);
+	} else if ((APPLICATION_BUTTON_MASK & hasChanged)) {
+		TaskExecutor::PostTask([] { DimmerTriggerEventHandler(); });
 	}
-#endif
-}
-
-void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
-{
-	AppEvent buttonEvent;
-	buttonEvent.Type = AppEventType::Button;
-
-	if (FUNCTION_BUTTON_MASK & buttonState & hasChanged) {
-		buttonEvent.ButtonEvent.PinNo = FUNCTION_BUTTON;
-		buttonEvent.ButtonEvent.Action = static_cast<uint8_t>(AppEventType::ButtonPushed);
-		buttonEvent.Handler = ButtonPushHandler;
-		PostEvent(buttonEvent);
-	} else if (FUNCTION_BUTTON_MASK & hasChanged) {
-		buttonEvent.ButtonEvent.PinNo = FUNCTION_BUTTON;
-		buttonEvent.ButtonEvent.Action = static_cast<uint8_t>(AppEventType::ButtonReleased);
-		buttonEvent.Handler = ButtonReleaseHandler;
-		PostEvent(buttonEvent);
-	}
-
-#if NUMBER_OF_BUTTONS == 2
-	uint32_t buttonMask = BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON_MASK;
-	buttonEvent.ButtonEvent.PinNo = BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON;
-#else
-	uint32_t buttonMask = SWITCH_BUTTON_MASK;
-	buttonEvent.ButtonEvent.PinNo = SWITCH_BUTTON;
-#endif
-
-	if (buttonMask & buttonState & hasChanged) {
-		buttonEvent.ButtonEvent.Action = static_cast<uint8_t>(AppEventType::ButtonPushed);
-		buttonEvent.Handler = ButtonPushHandler;
-		PostEvent(buttonEvent);
-	} else if (buttonMask & hasChanged) {
-		buttonEvent.ButtonEvent.Action = static_cast<uint8_t>(AppEventType::ButtonReleased);
-		buttonEvent.Handler = ButtonReleaseHandler;
-		PostEvent(buttonEvent);
-	}
-
-#if NUMBER_OF_BUTTONS == 4
-	if (BLE_ADVERTISEMENT_START_BUTTON_MASK & hasChanged & buttonState) {
-		buttonEvent.ButtonEvent.PinNo = BLE_ADVERTISEMENT_START_BUTTON;
-		buttonEvent.ButtonEvent.Action = static_cast<uint8_t>(AppEventType::ButtonPushed);
-		buttonEvent.Handler = StartBLEAdvertisementHandler;
-		PostEvent(buttonEvent);
-	}
-#endif
 }
 
 void AppTask::StartTimer(Timer timer, uint32_t timeoutMs)
 {
 	switch (timer) {
-	case Timer::Function:
-		k_timer_start(&sFunctionTimer, K_MSEC(timeoutMs), K_NO_WAIT);
-		break;
 	case Timer::DimmerTrigger:
 		k_timer_start(&sDimmerPressKeyTimer, K_MSEC(timeoutMs), K_NO_WAIT);
 		break;
@@ -522,9 +290,6 @@ void AppTask::StartTimer(Timer timer, uint32_t timeoutMs)
 void AppTask::CancelTimer(Timer timer)
 {
 	switch (timer) {
-	case Timer::Function:
-		k_timer_stop(&sFunctionTimer);
-		break;
 	case Timer::DimmerTrigger:
 		k_timer_stop(&sDimmerPressKeyTimer);
 		break;
@@ -536,64 +301,20 @@ void AppTask::CancelTimer(Timer timer)
 	}
 }
 
-void AppTask::UpdateLedStateEventHandler(const AppEvent &event)
-{
-	if (event.Type == AppEventType::UpdateLedState) {
-		event.UpdateLedStateEvent.LedWidget->UpdateState();
-	}
-}
-
-void AppTask::LEDStateUpdateHandler(LEDWidget &aLedWidget)
-{
-	AppEvent event;
-	event.Type = AppEventType::UpdateLedState;
-	event.Handler = UpdateLedStateEventHandler;
-	event.UpdateLedStateEvent.LedWidget = &aLedWidget;
-	PostEvent(event);
-}
-
-void AppTask::FunctionTimerTimeoutCallback(k_timer *timer)
+void AppTask::UserTimerTimeoutCallback(k_timer *timer)
 {
 	if (!timer) {
 		return;
 	}
+	Timer timerType;
 
-	AppEvent event;
-	if (timer == &sFunctionTimer) {
-		event.Type = AppEventType::Timer;
-		event.TimerEvent.TimerType = (uint8_t)Timer::Function;
-		event.TimerEvent.Context = k_timer_user_data_get(timer);
-		event.Handler = TimerEventHandler;
-		PostEvent(event);
-	}
 	if (timer == &sDimmerPressKeyTimer) {
-		event.Type = AppEventType::Timer;
-		event.TimerEvent.TimerType = (uint8_t)Timer::DimmerTrigger;
-		event.TimerEvent.Context = k_timer_user_data_get(timer);
-		event.Handler = TimerEventHandler;
-		PostEvent(event);
-	}
-	if (timer == &sDimmerTimer) {
-		event.Type = AppEventType::Timer;
-		event.TimerEvent.TimerType = (uint8_t)Timer::Dimmer;
-		event.TimerEvent.Context = k_timer_user_data_get(timer);
-		event.Handler = TimerEventHandler;
-		PostEvent(event);
-	}
-}
-
-void AppTask::PostEvent(const AppEvent &event)
-{
-	if (k_msgq_put(&sAppEventQueue, &event, K_NO_WAIT) != 0) {
-		LOG_INF("Failed to post event to app task event queue");
-	}
-}
-
-void AppTask::DispatchEvent(const AppEvent &event)
-{
-	if (event.Handler) {
-		event.Handler(event);
+		timerType = Timer::DimmerTrigger;
+	} else if (timer == &sDimmerTimer) {
+		timerType = Timer::Dimmer;
 	} else {
-		LOG_INF("Event received with no handler. Dropping event.");
+		return;
 	}
+
+	TaskExecutor::PostTask([timerType]() { TimerEventHandler(timerType); });
 }

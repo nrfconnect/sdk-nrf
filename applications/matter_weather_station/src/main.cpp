@@ -26,7 +26,7 @@ int main()
 #endif
 
 	if (err == CHIP_NO_ERROR) {
-		err = GetAppTask().StartApp();
+		err = AppTask::Instance().StartApp();
 	}
 
 	LOG_ERR("Exited with code %" CHIP_ERROR_FORMAT, err.Format());

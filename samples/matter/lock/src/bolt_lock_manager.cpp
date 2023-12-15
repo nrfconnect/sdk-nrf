@@ -5,8 +5,8 @@
  */
 
 #include "bolt_lock_manager.h"
+#include "task_executor.h"
 
-#include "app_event.h"
 #include "app_task.h"
 
 using namespace chip;
@@ -19,6 +19,9 @@ void BoltLockManager::Init(StateChangeCallback callback)
 
 	k_timer_init(&mActuatorTimer, &BoltLockManager::ActuatorTimerEventHandler, nullptr);
 	k_timer_user_data_set(&mActuatorTimer, this);
+
+	/* Set the default state */
+	GetBoard().GetLED(DeviceLeds::LED2).Set(IsLocked());
 }
 
 bool BoltLockManager::GetUser(uint16_t userIndex, EmberAfPluginDoorLockUserInfo &user) const
@@ -157,20 +160,14 @@ void BoltLockManager::ActuatorTimerEventHandler(k_timer *timer)
 	 * context of the application thread.
 	 */
 
-	AppEvent event;
-	event.Type = AppEventType::Timer;
-	event.TimerEvent.Context = static_cast<BoltLockManager *>(k_timer_user_data_get(timer));
-	event.Handler = BoltLockManager::ActuatorAppEventHandler;
-	AppTask::Instance().PostEvent(event);
+	BoltLockManagerEvent event;
+	event.manager = static_cast<BoltLockManager *>(k_timer_user_data_get(timer));
+	TaskExecutor::PostTask([event] { ActuatorAppEventHandler(event); });
 }
 
-void BoltLockManager::ActuatorAppEventHandler(const AppEvent &event)
+void BoltLockManager::ActuatorAppEventHandler(const BoltLockManagerEvent &event)
 {
-	BoltLockManager *lock = static_cast<BoltLockManager *>(event.TimerEvent.Context);
-
-	if (!lock) {
-		return;
-	}
+	BoltLockManager *lock = reinterpret_cast<BoltLockManager *>(event.manager);
 
 	switch (lock->mState) {
 	case State::kLockingInitiated:

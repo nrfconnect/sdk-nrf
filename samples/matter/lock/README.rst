@@ -284,20 +284,18 @@ LED 2:
 Button 1:
     Depending on how long you press the button:
 
-    * If pressed for less than three seconds, it initiates the SMP server (Simple Management Protocol).
+    * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
       After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
       (See `Upgrading the device firmware`_.)
-    * If pressed for more than three seconds, it initiates the factory reset of the device.
-      Releasing the button within the 3-second window cancels the factory reset procedure.
+      Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (15 minutes by default).
+    * If the device is already provisioned to the Matter network it re-enables the SMP server.
+      After that, the DFU over Bluetooth Low Energy can be started.
+      (See `Upgrading the device firmware`_.)
 
 .. matter_door_lock_sample_button1_end
 
 Button 2:
-    * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Changes the lock state to the opposite one.
-    * On nRF7002 DK:
-
-      * If pressed for less than three seconds, it changes the lock state to the opposite one.
-      * If pressed for more than three seconds, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+    * Changes the lock state to the opposite one.
 
 Button 3:
     * On the nRF5340 DK when using the ``thread_wifi_switched`` build type: If pressed for more than ten seconds, it switches the Matter transport protocol from Thread or Wi-Fi to the other and factory resets the device.

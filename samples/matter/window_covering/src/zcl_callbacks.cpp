@@ -10,7 +10,6 @@
  */
 
 #include "window_covering.h"
-#include <app_config.h>
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/callback.h>

@@ -22,6 +22,7 @@ public:
 	void Blink(uint32_t changeRateMS);
 	void Blink(uint32_t onTimeMS, uint32_t offTimeMS);
 	void UpdateState();
+	bool GetState() { return mState; }
 
 private:
 	uint32_t mBlinkOnTimeMS;

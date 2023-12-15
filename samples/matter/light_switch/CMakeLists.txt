@@ -45,9 +45,11 @@ target_sources(app PRIVATE
     src/main.cpp
     src/binding_handler.cpp
     src/shell_commands.cpp
-    ${COMMON_ROOT}/src/led_widget.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
+    ${COMMON_ROOT}/src/led_widget.cpp
+    ${COMMON_ROOT}/src/board.cpp
+    ${COMMON_ROOT}/src/task_executor.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)

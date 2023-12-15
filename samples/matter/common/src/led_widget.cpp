@@ -6,14 +6,18 @@
 
 #include "led_widget.h"
 
+#ifdef CONFIG_DK_LIBRARY
 #include <dk_buttons_and_leds.h>
+#endif
 #include <zephyr/kernel.h>
 
 static LEDWidget::LEDWidgetStateUpdateHandler sStateUpdateCallback;
 
 void LEDWidget::InitGpio()
 {
+#ifdef CONFIG_DK_LIBRARY
 	dk_leds_init();
+#endif
 }
 
 void LEDWidget::SetStateUpdateCallback(LEDWidgetStateUpdateHandler stateUpdateCb)
@@ -24,6 +28,7 @@ void LEDWidget::SetStateUpdateCallback(LEDWidgetStateUpdateHandler stateUpdateCb
 
 void LEDWidget::Init(uint32_t gpioNum)
 {
+#ifdef CONFIG_DK_LIBRARY
 	mBlinkOnTimeMS = 0;
 	mBlinkOffTimeMS = 0;
 	mGPIONum = gpioNum;
@@ -33,6 +38,7 @@ void LEDWidget::Init(uint32_t gpioNum)
 	k_timer_user_data_set(&mLedTimer, this);
 
 	Set(false);
+#endif
 }
 
 void LEDWidget::Invert()
@@ -42,9 +48,11 @@ void LEDWidget::Invert()
 
 void LEDWidget::Set(bool state)
 {
+#ifdef CONFIG_DK_LIBRARY
 	k_timer_stop(&mLedTimer);
 	mBlinkOnTimeMS = mBlinkOffTimeMS = 0;
 	DoSet(state);
+#endif
 }
 
 void LEDWidget::Blink(uint32_t changeRateMS)
@@ -54,6 +62,7 @@ void LEDWidget::Blink(uint32_t changeRateMS)
 
 void LEDWidget::Blink(uint32_t onTimeMS, uint32_t offTimeMS)
 {
+#ifdef CONFIG_DK_LIBRARY
 	k_timer_stop(&mLedTimer);
 
 	mBlinkOnTimeMS = onTimeMS;
@@ -63,17 +72,22 @@ void LEDWidget::Blink(uint32_t onTimeMS, uint32_t offTimeMS)
 		DoSet(!mState);
 		ScheduleStateChange();
 	}
+#endif
 }
 
 void LEDWidget::ScheduleStateChange()
 {
+#ifdef CONFIG_DK_LIBRARY
 	k_timer_start(&mLedTimer, K_MSEC(mState ? mBlinkOnTimeMS : mBlinkOffTimeMS), K_NO_WAIT);
+#endif
 }
 
 void LEDWidget::DoSet(bool state)
 {
+#ifdef CONFIG_DK_LIBRARY
 	mState = state;
 	dk_set_led(mGPIONum, state);
+#endif
 }
 
 void LEDWidget::UpdateState()

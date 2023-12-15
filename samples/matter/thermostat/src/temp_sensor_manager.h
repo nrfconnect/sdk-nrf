@@ -7,8 +7,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "app_event.h"
-
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <lib/core/CHIPError.h>
 
@@ -31,5 +29,5 @@ public:
 private:
 	template <typename T> static void GetMeasurement(T const &sensor);
 	static void TimerEventHandler(k_timer *timer);
-	static void SensorTimerEventHandler(const AppEvent &Event);
+	static void SensorTimerEventHandler();
 };

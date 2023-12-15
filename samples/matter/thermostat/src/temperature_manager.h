@@ -7,8 +7,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "app_event.h"
-
 #include <app-common/zap-generated/attributes/Accessors.h>
 
 #include <lib/core/CHIPError.h>

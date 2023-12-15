@@ -5,7 +5,6 @@
  */
 
 #include "light_switch.h"
-#include "app_event.h"
 #include "binding_handler.h"
 
 #include <app/server/Server.h>

@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "led_widget.h"
 #include "pwm_device.h"
+#include "board.h"
 
 #include <app/clusters/window-covering-server/window-covering-server.h>
 
@@ -58,8 +58,6 @@ private:
 	static void DoPostAttributeChange(intptr_t aArg);
 
 	MoveType mCurrentUIMoveType;
-	LEDWidget mLiftLED;
-	LEDWidget mTiltLED;
 	PWMDevice mLiftIndicator;
 	PWMDevice mTiltIndicator;
 	bool mInLiftMove{ false };
