@@ -459,7 +459,7 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 	}
 
 	if (cmd_grammar_check(at_cmd, cmd_length) != 0) {
-		LOG_ERR("AT command invalid");
+		LOG_ERR("AT command syntax invalid: %s", at_cmd);
 		rsp_send_error();
 		return;
 	}

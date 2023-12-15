@@ -7,7 +7,7 @@ MQTT client AT commands
    :local:
    :depth: 2
 
-The following commands list contains the AT commands used to operate the MQTT client.
+This page describes the AT commands used to operate the MQTT client.
 
 MQTT event #XMQTTEVT
 ====================

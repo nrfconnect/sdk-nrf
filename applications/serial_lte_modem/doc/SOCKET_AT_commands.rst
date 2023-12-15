@@ -7,7 +7,7 @@ Socket AT commands
    :local:
    :depth: 2
 
-The following commands list contains socket-related AT commands.
+This page describes socket-related AT commands.
 The application can open up to 8 sockets and select the active one among them.
 
 For more information on the networking services, see the `Zephyr Network APIs`_.

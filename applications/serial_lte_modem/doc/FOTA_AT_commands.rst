@@ -7,7 +7,7 @@ FOTA AT commands
    :local:
    :depth: 2
 
-The following commands list contains AT commands related to firmware-over-the-air updates (FOTA) requests.
+This page describes AT commands related to Firmware Over-The-Air (FOTA) updates.
 
 FOTA request #XFOTA
 ===================

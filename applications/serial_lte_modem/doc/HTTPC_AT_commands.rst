@@ -7,7 +7,7 @@ HTTP client AT commands
    :local:
    :depth: 2
 
-The following commands list contains the HTTP client AT commands.
+This page describes the HTTP client AT commands.
 
 HTTP client connection #XHTTPCCON
 =================================
