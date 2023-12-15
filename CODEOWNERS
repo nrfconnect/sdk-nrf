@@ -81,7 +81,7 @@ Kconfig*                                  @tejlmand
 /drivers/wifi/nrf700x/                    @krish2718 @sachinthegreen @rado17 @rlubos
 /dts/                                     @anangl
 /ext/                                     @carlescufi
-/ext/oberon/                              @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/ext/oberon/                              @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /include/                                 @anangl @rlubos
 /include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
@@ -127,8 +127,8 @@ Kconfig*                                  @tejlmand
 /lib/date_time/                           @trantanen @tokangas
 /lib/hw_id/                               @nrfconnect/ncs-cia
 /lib/wave_gen/                            @MarekPieta
-/lib/hw_unique_key/                       @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
-/lib/identity_key/                        @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/lib/hw_unique_key/                       @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
+/lib/identity_key/                        @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_slm/                           @SeppoTakalo @MarkusLassila @tomi-font
 /lib/modem_attest_token/                  @jayteemo
@@ -142,7 +142,7 @@ Kconfig*                                  @tejlmand
 /modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @nrfconnect/ncs-cia @plskeggs @sigvartmh
-/modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/                             @nrfconnect/ncs-cia @lemrey
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
@@ -154,7 +154,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/fast_pair/input_device/ @MarekPieta @kapi-no @KAGA164
 /samples/bootloader/                      @hakonfam @oyvindronningstad
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
-/samples/crypto/                          @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/samples/crypto/                          @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /samples/debug/memfault/                  @nrfconnect/ncs-cia
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/hw_id/                           @nrfconnect/ncs-cia
@@ -163,7 +163,7 @@ Kconfig*                                  @tejlmand
 /samples/app_event_manager/               @pdunaj @MarekPieta
 /samples/event_manager_proxy/             @rakons
 /samples/gazell/                          @leewkb4567
-/samples/keys/                            @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/samples/keys/                            @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
@@ -185,7 +185,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @ankuns @jciupis @ahasztag
 /samples/peripheral/802154_sniffer/       @e-rk
-/samples/tfm/                             @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/samples/tfm/                             @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /samples/zigbee/                          @tomchy @sebastiandraus
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
@@ -257,8 +257,8 @@ Kconfig*                                  @tejlmand
 /subsys/pcd/                              @hakonfam
 /subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
-/subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
-/subsys/secure_storage/                   @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
+/subsys/secure_storage/                   @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /subsys/net_core_monitor/                 @maje-emb
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @PerMac @katgiadla
@@ -275,7 +275,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/nrf_fuel_gauge/                @nordic-auko @aasinclair
 /tests/lib/gcf_sms/                       @eivindj-nordic
-/tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky
+/tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /tests/lib/hw_id/                         @nrfconnect/ncs-cia
 /tests/lib/location/                      @trantanen @tokangas
 /tests/lib/lte_lc/                        @trantanen @tokangas
@@ -324,6 +324,6 @@ Kconfig*                                  @tejlmand
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
-/tests/tfm/                               @frkv @Vge0rge @vili-nordic @joerchan @SebastianBoe @mswarowsky @stephen-nordic @magnev
+/tests/tfm/                               @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi
