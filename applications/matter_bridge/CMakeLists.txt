@@ -52,6 +52,8 @@ target_sources(app PRIVATE
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/persistent_storage_util.cpp
+    ${COMMON_ROOT}/src/task_executor.cpp
+    ${COMMON_ROOT}/src/board.cpp
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)

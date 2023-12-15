@@ -21,4 +21,5 @@ config OPENTHREAD_DEFAULT_TX_POWER
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
+source "${ZEPHYR_BASE}/../nrf/samples/matter/common/src/Kconfig"
 source "Kconfig.zephyr"

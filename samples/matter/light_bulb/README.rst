@@ -141,17 +141,7 @@ LED 2:
     :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
-    * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Changes the light bulb state to the opposite one.
-    * On nRF7002 DK:
-
-      * If pressed for less than three seconds, it changes the lock state to the opposite one.
-      * If pressed for more than three seconds, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-
-Button 4:
-    * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-      This button is used during the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
-
-    * On nRF7002 DK: Not available.
+    * Changes the light bulb state to the opposite one.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start

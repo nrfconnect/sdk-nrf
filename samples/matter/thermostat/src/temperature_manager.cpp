@@ -5,7 +5,6 @@
  */
 
 #include "temperature_manager.h"
-#include "app_config.h"
 #include "app_task.h"
 #include <zephyr/logging/log.h>
 
@@ -88,7 +87,7 @@ void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, Attribute
 	} break;
 
 	case Thermostat::Attributes::SystemMode::Id: {
-		uint8_t mThermMode = (*value);
+		mThermMode = (*value);
 	} break;
 
 	default: {

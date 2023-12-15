@@ -155,32 +155,12 @@ All LEDs:
    :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
-   * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
+   * Controls the light on the bound lighting device.
+     Depending on how long you press the button:
 
-     * Controls the light on the bound lighting device.
-       Depending on how long you press the button:
-
-       * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
-       * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
-         The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
-
-   * On nRF7002 DK:
-
-     * If the device is not commissioned to a Matter network, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-       This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
-     * If the device is commissioned to a Matter network, it controls the light on the bound lighting device.
-       Depending on how long you press the button:
-
-       * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
-       * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
-         The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
-
-Button 4:
-   * On nRF52840 DK, nRF5340 DK and nRF21540 DK:
-     Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-     This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
-
-   * On nRF7002 DK: Not available.
+      * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+      * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+        The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start

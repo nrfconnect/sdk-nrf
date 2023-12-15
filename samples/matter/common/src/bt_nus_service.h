@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include "app_event.h"
-
 #include <platform/Zephyr/BLEAdvertisingArbiter.h>
 
 #include <bluetooth/services/nus.h>

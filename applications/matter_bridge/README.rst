@@ -168,14 +168,19 @@ User interface
 Button 1:
     Depending on how long you press the button:
 
-    * If pressed for less than three seconds, it initiates the SMP server (Simple Management Protocol).
-      After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
-      (See `Updating the device firmware`_.)
+    * If pressed for less than three seconds:
+
+      * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
+        After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
+        (See `Updating the device firmware`_.)
+        Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (15 minutes by default).
+
+      * If the device is already provisioned to the Matter network it re-enables the SMP server.
+        After that, the DFU over Bluetooth Low Energy can be started.
+        (See `Updating the device firmware`_.)
+
     * If pressed for more than three seconds, it initiates the factory reset of the device.
       Releasing the button within a 3-second window of the initiation cancels the factory reset procedure.
-
-Button 2:
-     Enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
 
 .. include:: ../../samples/matter/lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start

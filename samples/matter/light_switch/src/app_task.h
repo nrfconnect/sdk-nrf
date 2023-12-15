@@ -6,8 +6,7 @@
 
 #pragma once
 
-#include "app_event.h"
-#include "led_widget.h"
+#include "board.h"
 
 #include <platform/CHIPDeviceLayer.h>
 
@@ -26,7 +25,6 @@ struct Identify;
 
 class AppTask {
 public:
-
 	static AppTask &Instance()
 	{
 		static AppTask sAppTask;
@@ -41,32 +39,19 @@ public:
 	static void IdentifyStopHandler(Identify *);
 
 private:
-	enum class Timer : uint8_t { Function, DimmerTrigger, Dimmer };
-	enum class Button : uint8_t {
-		Function,
-		Dimmer,
-	};
+	enum Timer : uint8_t { DimmerTrigger, Dimmer };
 
 	CHIP_ERROR Init();
 
-	static void PostEvent(const AppEvent &event);
-	static void DispatchEvent(const AppEvent &event);
-	static void ButtonPushHandler(const AppEvent &event);
-	static void ButtonReleaseHandler(const AppEvent &event);
-	static void TimerEventHandler(const AppEvent &event);
-	static void StartBLEAdvertisementHandler(const AppEvent &event);
-	static void UpdateLedStateEventHandler(const AppEvent &event);
-
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
-	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
-	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
-	static void FunctionTimerTimeoutCallback(k_timer *timer);
-	static void UpdateStatusLED();
+	static void DimmerTriggerEventHandler();
+	static void TimerEventHandler(const Timer &event);
+	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
 
 	static void StartTimer(Timer, uint32_t);
 	static void CancelTimer(Timer);
+	static void UserTimerTimeoutCallback(k_timer *timer);
 
-	FunctionEvent mFunction = FunctionEvent::NoneSelected;
+	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 
 #if CONFIG_CHIP_FACTORY_DATA
 	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;

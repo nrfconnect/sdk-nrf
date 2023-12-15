@@ -132,9 +132,9 @@ User interface
     :start-after: matter_door_lock_sample_led1_start
     :end-before: matter_door_lock_sample_led1_end
 
-Button 1:
-     If pressed for six seconds, it initiates the factory reset of the device.
-     Releasing the button within the six-second window cancels the factory reset procedure.
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_button1_start
+    :end-before: matter_door_lock_sample_button1_end
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start

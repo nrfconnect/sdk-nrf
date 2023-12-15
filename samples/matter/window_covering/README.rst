@@ -150,10 +150,6 @@ Button 2 and Button 3:
     The cover position and the LED brightness values are stored in non-volatile memory and are restored after every device reset.
     After the firmware update or factory reset both LEDs are switched off by default, which corresponds to the cover being fully open, both lift-wise and tilt-wise.
 
-Button 4:
-    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-    This button is used during the :ref:`commissioning procedure <matter_window_cover_sample_remote_control_commissioning>`.
-
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
     :end-before: matter_door_lock_sample_jlink_end

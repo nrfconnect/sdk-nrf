@@ -340,6 +340,14 @@ Keys samples
 Matter samples
 --------------
 
+* Unified common code for buttons, LEDs and events in all Matter samples:
+
+  * Created the task executor module which is responsible for posting and dispatching tasks.
+  * Moved common methods for managing buttons and LEDs that are located on the DK to the board module.
+  * Divided events to application and system events.
+  * Defined common LED and button constants in the dedicated board configuration files.
+  * Created the Kconfig file for the Matter common directory.
+
 * :ref:`matter_lock_sample` sample:
 
   * Fixed an issue that prevented nRF Toolbox for iOS in version 5.0.9 from controlling the sample using :ref:`nus_service_readme`.

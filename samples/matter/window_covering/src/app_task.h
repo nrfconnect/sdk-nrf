@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "app_event.h"
 #include "led_widget.h"
 #include "window_covering.h"
 
@@ -22,8 +21,9 @@
 #include "dfu_over_smp.h"
 #endif
 
-struct k_timer;
 struct Identify;
+
+enum class WindowButtonAction : uint8_t { Pressed, Released };
 
 class AppTask {
 public:
@@ -42,30 +42,13 @@ private:
 	CHIP_ERROR Init();
 	void ToggleMoveType();
 
-	static void CancelTimer();
-	static void StartTimer(uint32_t timeoutMs);
-
-	static void PostEvent(const AppEvent &event);
-	static void DispatchEvent(const AppEvent &event);
-	static void FunctionTimerEventHandler(const AppEvent &event);
-	static void FunctionHandler(const AppEvent &event);
-	static void UpdateLedStateEventHandler(const AppEvent &event);
-	static void StartBLEAdvertisementHandler(const AppEvent &event);
-	static void MovementTimerEventHandler(const AppEvent &event);
-	static void OpenHandler(const AppEvent &event);
-	static void CloseHandler(const AppEvent &event);
-
-	static void TimerTimeoutCallback(k_timer *timer);
-	static void FunctionTimerTimeoutCallback(k_timer *timer);
-	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
+	static void OpenHandler(const WindowButtonAction &action);
+	static void CloseHandler(const WindowButtonAction &action);
 
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
-	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
-	static void UpdateStatusLED();
+	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
 
-	FunctionEvent mFunction{ FunctionEvent::NoneSelected };
 	OperationalState mMoveType{ OperationalState::MovingUpOrOpen };
-	bool mFunctionTimerActive{ false };
 	bool mMovementTimerActive{ false };
 	bool mOpenButtonIsPressed{ false };
 	bool mCloseButtonIsPressed{ false };

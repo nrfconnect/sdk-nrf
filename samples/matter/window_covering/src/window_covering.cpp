@@ -5,7 +5,6 @@
  */
 
 #include "window_covering.h"
-#include "app_config.h"
 #include "pwm_device.h"
 
 #include <dk_buttons_and_leds.h>
@@ -29,9 +28,6 @@ static constexpr uint32_t sMoveTimeoutMs{ 200 };
 
 WindowCovering::WindowCovering()
 {
-	mLiftLED.Init(LIFT_STATE_LED);
-	mTiltLED.Init(TILT_STATE_LED);
-
 	if (mLiftIndicator.Init(&sLiftPwmDevice, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the lift indicator");
 	}
