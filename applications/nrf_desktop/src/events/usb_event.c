@@ -36,18 +36,3 @@ APP_EVENT_TYPE_DEFINE(usb_state_event,
 		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_STATE_EVENT,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
-
-static void log_usb_hid_event(const struct app_event_header *aeh)
-{
-	const struct usb_hid_event *event = cast_usb_hid_event(aeh);
-
-	APP_EVENT_MANAGER_LOG(aeh, "id:%p %sabled", event->id,
-			(event->enabled)?("en"):("dis"));
-}
-
-APP_EVENT_TYPE_DEFINE(usb_hid_event,
-		  log_usb_hid_event,
-		  NULL,
-		  APP_EVENT_FLAGS_CREATE(
-			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_HID_EVENT,
-				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

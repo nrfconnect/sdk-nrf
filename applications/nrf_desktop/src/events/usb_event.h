@@ -55,18 +55,6 @@ struct usb_state_event {
 };
 APP_EVENT_TYPE_DECLARE(usb_state_event);
 
-/** @brief USB HID event. */
-struct usb_hid_event {
-	/** Event header. */
-	struct app_event_header header;
-
-	/** USB HID device id. */
-	const void *id;
-	/** USB HID device enabled state. */
-	bool enabled;
-};
-APP_EVENT_TYPE_DECLARE(usb_hid_event);
-
 /**
  * @}
  */

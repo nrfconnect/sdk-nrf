@@ -31,6 +31,15 @@ config DESKTOP_HIDS_FIRST_REPORT_DELAY
 	  By default, nRF Desktop keyboard uses a delay of 500 ms to prevent
 	  dropping HID reports right after reconnection.
 
+config DESKTOP_HIDS_SUBSCRIBER_PRIORITY
+	int "HID service reports subscriber priority"
+	default 1
+	range 1 255
+	help
+	  HID Service over GATT reports subscriber priority. The lower value means the lower
+	  priority in subscribtion to HID reports. By default, the HID service uses the lowest
+	  possible priority.
+
 choice BT_HIDS_DEFAULT_PERM
 	default BT_HIDS_DEFAULT_PERM_RW_ENCRYPT
 	help

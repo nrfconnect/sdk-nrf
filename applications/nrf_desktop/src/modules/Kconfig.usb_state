@@ -23,6 +23,15 @@ config DESKTOP_USB_REMOTE_WAKEUP
 	  Enable USB remote wakeup functionality. The USB wakeup request is
 	  triggered on wake_up_event.
 
+config DESKTOP_USB_SUBSCRIBER_REPORT_PRIORITY
+	int "USB HID reports subscriber priority"
+	default 255
+	range 1 255
+	help
+	  USB reports subscriber priority. The lower value means the lower
+	  priority in subscribtion to HID reports. By default, the USB uses the highest
+	  possible priority.
+
 config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
 	bool "Subscribe only for predefined subset of HID reports"
 	depends on DESKTOP_HID_STATE_ENABLE

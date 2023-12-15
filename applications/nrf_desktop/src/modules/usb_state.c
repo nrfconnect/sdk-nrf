@@ -40,6 +40,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #define REPORT_TYPE_OUTPUT	0x02
 #define REPORT_TYPE_FEATURE	0x03
 
+#define USB_SUBSCRIBER_PRIORITY      CONFIG_DESKTOP_USB_SUBSCRIBER_REPORT_PRIORITY
+#define USB_SUBSCRIBER_PIPELINE_SIZE 0x01
+#define USB_SUBSCRIBER_REPORT_MAX    0x01
+
 #if DT_PROP(DT_NODELABEL(usbd), num_in_endpoints) < (CONFIG_USB_HID_DEVICE_COUNT + 1)
   #error Too few USB IN Endpoints enabled. Modify dts.overlay file.
 #endif
@@ -330,10 +334,13 @@ static void broadcast_usb_hid(struct usb_hid_device *usb_hid, bool enabled)
 	if (usb_hid->enabled != enabled) {
 		usb_hid->enabled = enabled;
 
-		struct usb_hid_event *event = new_usb_hid_event();
+		struct hid_report_subscriber_event *event = new_hid_report_subscriber_event();
 
-		event->id = usb_hid;
-		event->enabled = enabled;
+		event->subscriber = usb_hid;
+		event->params.pipeline_size = USB_SUBSCRIBER_PIPELINE_SIZE;
+		event->params.priority = USB_SUBSCRIBER_PRIORITY;
+		event->params.report_max = USB_SUBSCRIBER_REPORT_MAX;
+		event->connected = enabled;
 
 		APP_EVENT_SUBMIT(event);
 	}
