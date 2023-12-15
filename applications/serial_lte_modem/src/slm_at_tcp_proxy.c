@@ -22,9 +22,6 @@ LOG_MODULE_REGISTER(slm_tcp, CONFIG_SLM_LOG_LEVEL);
 #define THREAD_STACK_SIZE	KB(4)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
 
-/* Some features need future modem firmware support */
-#define SLM_TCP_PROXY_FUTURE_FEATURE	0
-
 /**@brief Proxy operations. */
 enum slm_tcp_proxy_operation {
 	SERVER_STOP,
@@ -63,34 +60,27 @@ static int do_tcp_server_start(uint16_t port)
 {
 	int ret;
 	int reuseaddr = 1;
+	int type = SOCK_STREAM;
+	int proto = IPPROTO_TCP;
 
-#if defined(CONFIG_SLM_NATIVE_TLS)
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
+#if defined(CONFIG_SLM_NATIVE_TLS)
 		ret = slm_native_tls_load_credentials(proxy.sec_tag);
 		if (ret < 0) {
 			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
 			return ret;
 		}
-	}
+
+		type |= SOCK_NATIVE_TLS;
+		proto = IPPROTO_TLS_1_2;
+
 #else
-#if !SLM_TCP_PROXY_FUTURE_FEATURE
-/* TLS server not officially supported by modem yet */
-	if (proxy.sec_tag != INVALID_SEC_TAG) {
 		LOG_ERR("Not supported");
 		return -ENOTSUP;
+#endif
 	}
-#endif
-#endif
 	/* Open socket */
-	if (proxy.sec_tag == INVALID_SEC_TAG) {
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
-	} else {
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = socket(proxy.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-#else
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-#endif
-	}
+	ret = socket(proxy.family, type, proto);
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
 		ret = -errno;
@@ -109,25 +99,6 @@ static int do_tcp_server_start(uint16_t port)
 			ret = -errno;
 			goto exit_svr;
 		}
-#if SLM_TCP_PROXY_FUTURE_FEATURE
-/* TLS server not officially supported by modem yet */
-		int tls_role = TLS_DTLS_ROLE_SERVER;
-		int peer_verify = TLS_PEER_VERIFY_NONE;
-
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_DTLS_ROLE, &tls_role, sizeof(int));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_DTLS_ROLE) error: %d", -errno);
-			ret = -errno;
-			goto exit_svr;
-		}
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_PEER_VERIFY, &peer_verify,
-				 sizeof(peer_verify));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", errno);
-			ret = -errno;
-			goto exit_svr;
-		}
-#endif
 	}
 
 	ret = setsockopt(proxy.sock, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(int));
@@ -151,11 +122,12 @@ static int do_tcp_server_start(uint16_t port)
 		goto exit_svr;
 	}
 
+	proxy.role = TCP_ROLE_SERVER;
 	k_thread_create(&tcp_thread, tcp_thread_stack,
 			K_THREAD_STACK_SIZEOF(tcp_thread_stack),
 			tcpsvr_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
-	proxy.role = TCP_ROLE_SERVER;
+
 	rsp_send("\r\n#XTCPSVR: %d,\"started\"\r\n", proxy.sock);
 
 	return 0;
@@ -202,17 +174,23 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 {
 	int ret;
 	struct sockaddr sa;
+	int type = SOCK_STREAM;
+	int proto = IPPROTO_TCP;
 
-	/* Open socket */
-	if (proxy.sec_tag == INVALID_SEC_TAG) {
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
-	} else {
+	if (proxy.sec_tag != INVALID_SEC_TAG) {
 #if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = socket(proxy.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-#else
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
+		ret = slm_native_tls_load_credentials(proxy.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
+			return ret;
+		}
+
+		type |= SOCK_NATIVE_TLS;
 #endif
+		proto = IPPROTO_TLS_1_2;
 	}
+
+	ret = socket(proxy.family, type, proto);
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
 		return ret;
@@ -221,13 +199,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 
 	if (proxy.sec_tag != INVALID_SEC_TAG) {
 		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
-#if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = slm_native_tls_load_credentials(proxy.sec_tag);
-		if (ret < 0) {
-			LOG_ERR("Failed to load sec tag: %d (%d)", proxy.sec_tag, ret);
-			goto exit_cli;
-		}
-#endif
+
 		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 				 sizeof(sec_tag_t));
 		if (ret) {
@@ -270,12 +242,12 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 		goto exit_cli;
 	}
 
+	proxy.role = TCP_ROLE_CLIENT;
 	k_thread_create(&tcp_thread, tcp_thread_stack,
 			K_THREAD_STACK_SIZEOF(tcp_thread_stack),
 			tcpcli_thread_func, NULL, NULL, NULL,
 			THREAD_PRIORITY, K_USER, K_NO_WAIT);
 
-	proxy.role = TCP_ROLE_CLIENT;
 	rsp_send("\r\n#XTCPCLI: %d,\"connected\"\r\n", proxy.sock);
 
 	return 0;

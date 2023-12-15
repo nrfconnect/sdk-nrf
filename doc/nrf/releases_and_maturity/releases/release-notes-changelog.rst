@@ -233,6 +233,7 @@ Serial LTE modem
   * Allow building the application for nRF9160 DK board revision older than 0.14.0.
   * ``#XCMNG`` AT command to store credentials in Zephyr settings storage.
     The command is activated with the :file:`overlay-native_tls.conf` overlay file.
+  * ``#XUDPCLI``, ``#XUDPSVR`` and ``#XSSOCKET`` (UDP) AT commands to use Zephyr's Mbed TLS when ``<sec_tag>`` is provided and the :file:`overlay-native_tls.conf` overlay file is used.
 
 * Removed Kconfig options ``CONFIG_SLM_CUSTOMIZED`` and ``CONFIG_SLM_SOCKET_RX_MAX``.
 
