@@ -34,7 +34,6 @@ Sink modules for ble_peer_event
 * :ref:`nrf_desktop_ble_state_pm`
 * :ref:`nrf_desktop_dfu`
 * :ref:`nrf_desktop_hid_forward`
-* :ref:`nrf_desktop_hid_state`
 * :ref:`nrf_desktop_led_state`
 * :ref:`nrf_desktop_ble_state`
 
