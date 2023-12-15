@@ -6,6 +6,7 @@
 
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
+#include "psa_crypto_driver_wrappers.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -32,7 +33,6 @@ static psa_status_t secure_storage_aead_psa_crypt(psa_key_usage_t key_usage, con
 						  size_t output_size, size_t *output_len)
 {
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
-	psa_key_id_t key_handle;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (key_len < CHACHA20_KEY_SIZE) {
@@ -45,22 +45,22 @@ static psa_status_t secure_storage_aead_psa_crypt(psa_key_usage_t key_usage, con
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_CHACHA20);
 	psa_set_key_bits(&key_attributes, PSA_BYTES_TO_BITS(CHACHA20_KEY_SIZE));
 
-	status = psa_import_key(&key_attributes, key_buf, CHACHA20_KEY_SIZE, &key_handle);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
+	/* Here we cannot use the PSA APIs since this storage solution provides implementation
+	 * of the PSA ITS APIs. Since the PSA crypto is using the PSA ITS APIs for persistent keys
+	 * if we use the PSA APIs here they will corrupt the PSA keystore (psa_global_data_t) which
+	 * holds all the active keys in the PSA core.
+	 */
 	if (key_usage == PSA_KEY_USAGE_ENCRYPT) {
-		status = psa_aead_encrypt(key_handle, PSA_ALG_CHACHA20_POLY1305, nonce_buf,
-					  nonce_len, add_buf, add_len, input_buf, input_len,
-					  output_buf, output_size, output_len);
+		status = psa_driver_wrapper_aead_encrypt(
+			&key_attributes, key_buf, key_len, PSA_ALG_CHACHA20_POLY1305, nonce_buf,
+			nonce_len, add_buf, add_len, input_buf, input_len, output_buf, output_size,
+			output_len);
 	} else {
-		status = psa_aead_decrypt(key_handle, PSA_ALG_CHACHA20_POLY1305, nonce_buf,
-					  nonce_len, add_buf, add_len, input_buf, input_len,
-					  output_buf, output_size, output_len);
+		status = psa_driver_wrapper_aead_decrypt(
+			&key_attributes, key_buf, key_len, PSA_ALG_CHACHA20_POLY1305, nonce_buf,
+			nonce_len, add_buf, add_len, input_buf, input_len, output_buf, output_size,
+			output_len);
 	}
-
-	psa_destroy_key(key_handle);
 
 	return status;
 }
