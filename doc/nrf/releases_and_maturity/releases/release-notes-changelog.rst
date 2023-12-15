@@ -518,6 +518,10 @@ Bluetooth libraries and services
 
     * The :ref:`bt_mesh_le_pair_resp_readme` model to allow passing a passkey used in LE pairing over a mesh network.
 
+ :ref:`nrf_bt_scan_readme`:
+
+  * Added the :c:func:`bt_scan_update_connect_if_match` function to update the autoconnect flag after a filter match.
+
 Bootloader libraries
 --------------------
 

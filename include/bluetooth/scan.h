@@ -562,6 +562,15 @@ int bt_scan_blocklist_device_add(const bt_addr_le_t *addr);
  */
 void bt_scan_blocklist_clear(void);
 
+/**@brief Function to update the autoconnect flag after a filter match.
+ *
+ * @note The function should not be used when scanning is active.
+ *
+ * @param[in] connect_if_match If set to true, the module automatically
+ *			       connects after a filter match.
+ */
+void bt_scan_update_connect_if_match(bool connect_if_match);
+
 #ifdef __cplusplus
 }
 #endif
