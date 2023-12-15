@@ -17,9 +17,6 @@ config SLM_AT_MAX_PARAM
 	int "Maximum number of parameters in AT command"
 	default 42
 
-config SLM_NATIVE_TLS
-	bool "Use Zephyr mbedTLS"
-
 #
 # external XTAL for UART
 #
@@ -177,6 +174,7 @@ rsource "src/twi/Kconfig"
 rsource "src/gpio/Kconfig"
 rsource "src/lwm2m_carrier/Kconfig"
 rsource "src/gnss/Kconfig"
+rsource "src/nativetls/Kconfig"
 
 module = SLM
 module-str = serial modem

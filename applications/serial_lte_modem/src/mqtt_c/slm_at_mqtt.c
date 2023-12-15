@@ -9,10 +9,10 @@
 #include <stdio.h>
 #include <zephyr/net/mqtt.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/net/tls_credentials.h>
 #include <zephyr/random/random.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
-#include "slm_native_tls.h"
 #include "slm_at_mqtt.h"
 
 LOG_MODULE_REGISTER(slm_mqtt, CONFIG_SLM_LOG_LEVEL);

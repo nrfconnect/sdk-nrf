@@ -13,7 +13,9 @@
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_socket.h"
+#if defined(CONFIG_SLM_NATIVE_TLS)
 #include "slm_native_tls.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 
@@ -194,9 +196,9 @@ static int do_secure_socket_open(int peer_verify)
 	sec_tag_t sec_tag_list[1] = { sock.sec_tag };
 #if defined(CONFIG_SLM_NATIVE_TLS)
 	if (sock.type == SOCK_STREAM) {
-		ret = slm_tls_loadcrdl(sock.sec_tag);
+		ret = slm_native_tls_load_credentials(sock.sec_tag);
 		if (ret < 0) {
-			LOG_ERR("Fail to load credential: %d", ret);
+			LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
 			goto error_exit;
 		}
 	}
@@ -238,12 +240,6 @@ static int do_secure_socket_open(int peer_verify)
 	return 0;
 
 error_exit:
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.type == SOCK_STREAM && sock.sec_tag != INVALID_SEC_TAG) {
-		(void)slm_tls_unloadcrdl(sock.sec_tag);
-		sock.sec_tag = INVALID_SEC_TAG;
-	}
-#endif
 	close(sock.fd);
 	INIT_SOCKET(sock);
 	return ret;
@@ -257,15 +253,6 @@ static int do_socket_close(void)
 		return 0;
 	}
 
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.type == SOCK_STREAM && sock.sec_tag != INVALID_SEC_TAG) {
-		ret = slm_tls_unloadcrdl(sock.sec_tag);
-		if (ret < 0) {
-			LOG_WRN("Fail to unload credential: %d", ret);
-		}
-		sock.sec_tag = INVALID_SEC_TAG;
-	}
-#endif
 	if (sock.fd_peer != INVALID_SOCKET) {
 		ret = close(sock.fd_peer);
 		if (ret) {
@@ -1042,7 +1029,7 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 	return err;
 }
 
-/* Handles AT#XSOCKET commands. */
+/* Handles AT#XSSOCKET commands. */
 int handle_at_secure_socket(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
@@ -1084,6 +1071,7 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 			} else {
 				return -EINVAL;
 			}
+			sock.sec_tag = INVALID_SEC_TAG;
 			err = at_params_unsigned_int_get(&slm_at_param_list, 4, &sock.sec_tag);
 			if (err) {
 				return err;
