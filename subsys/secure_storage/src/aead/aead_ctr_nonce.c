@@ -25,9 +25,33 @@ static struct aead_ctr_nonce {
 	uint32_t high;
 } __packed g_nonce;
 
+static bool is_ctr_initialized;
+
+static psa_status_t secure_storage_nonce_init(void)
+{
+	psa_status_t status;
+
+	status = psa_crypto_init();
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	/* Initialize nonce to a random value. */
+	status = psa_generate_random((void *)&g_nonce, sizeof(g_nonce));
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	is_ctr_initialized = true;
+
+	return status;
+}
+
 /* Return an incrementing nonce */
 psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 {
+	psa_status_t status;
+
 	if (nonce == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
@@ -38,6 +62,14 @@ psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 
 	if (nonce_len == 0) {
 		return PSA_SUCCESS;
+	}
+
+	if (!is_ctr_initialized) {
+		status = secure_storage_nonce_init();
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
 	}
 
 	/* Incrementing is implemented by using a 64-bit and a 32-bit number */
@@ -52,23 +84,3 @@ psa_status_t secure_storage_get_nonce(uint8_t *nonce, size_t nonce_len)
 
 	return PSA_SUCCESS;
 }
-
-static int secure_storage_nonce_init(void)
-{
-	psa_status_t status;
-
-	status = psa_crypto_init();
-	if (status != PSA_SUCCESS) {
-		return -EIO;
-	}
-
-	/* Initialize nonce to a random value. */
-	status = psa_generate_random((void *)&g_nonce, sizeof(g_nonce));
-	if (status != PSA_SUCCESS) {
-		return -EIO;
-	}
-
-	return 0;
-}
-
-SYS_INIT(secure_storage_nonce_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
