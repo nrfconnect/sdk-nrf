@@ -562,7 +562,6 @@ Libraries for networking
 
     * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to include a parameter for application-specific shadow data.
     * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to process default shadow data added by nRF Cloud, which is not used by CoAP.
-    * To use new AGNSS endpoint that adds support for the QZSS constellation.
 
 * :ref:`lib_nrf_cloud_log` library:
 

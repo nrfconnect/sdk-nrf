@@ -24,7 +24,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
-#define COAP_AGPS_RSC "loc/agnss"
+#define COAP_AGPS_RSC "loc/agps"
 #define COAP_PGPS_RSC "loc/pgps"
 #define COAP_GND_FIX_RSC "loc/ground-fix"
 #define COAP_FOTA_GET_RSC "fota/exec/current"
@@ -117,6 +117,11 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
 	static uint8_t buffer[AGNSS_GET_CBOR_MAX_SIZE];
 	size_t len = sizeof(buffer);
 	int err;
+
+	/* QZSS assistance is not yet supported with CoAP, make sure we only ask for GPS. */
+	if (request->type == NRF_CLOUD_REST_AGNSS_REQ_CUSTOM) {
+		request->agnss_req->system_count = 1;
+	}
 
 	err = coap_codec_agnss_encode(request, buffer, &len,
 				     COAP_CONTENT_FORMAT_APP_CBOR);
