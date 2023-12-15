@@ -220,21 +220,23 @@ static int do_http_connect(void)
 		return -EINVAL;
 	}
 
+	int type = SOCK_STREAM;
+	int proto = IPPROTO_TCP;
+
 	/* Open socket */
-	if (httpc.sec_tag == INVALID_SEC_TAG) {
-		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TCP);
-	} else {
+	if (httpc.sec_tag != INVALID_SEC_TAG) {
 #if defined(CONFIG_SLM_NATIVE_TLS)
 		ret = slm_native_tls_load_credentials(httpc.sec_tag);
 		if (ret < 0) {
 			LOG_ERR("Failed to load sec tag: %d (%d)", httpc.sec_tag, ret);
 			return ret;
 		}
-		ret = socket(httpc.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-#else
-		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TLS_1_2);
+
+		type |= SOCK_NATIVE_TLS;
 #endif
+		proto = IPPROTO_TLS_1_2;
 	}
+	ret = socket(httpc.family, type, proto);
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
 		return ret;
@@ -283,17 +285,17 @@ static int do_http_connect(void)
 			ret = -errno;
 			goto exit_cli;
 		}
-#if !defined(CONFIG_SLM_NATIVE_TLS)
-		int session_cache = TLS_SESSION_CACHE_ENABLED;
+		if (!IS_ENABLED(CONFIG_SLM_NATIVE_TLS)) {
+			int session_cache = TLS_SESSION_CACHE_ENABLED;
 
-		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SESSION_CACHE, &session_cache,
-				 sizeof(session_cache));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_SESSION_CACHE) error: %d", -errno);
-			ret = -errno;
-			goto exit_cli;
+			ret = setsockopt(httpc.fd, SOL_TLS, TLS_SESSION_CACHE, &session_cache,
+					 sizeof(session_cache));
+			if (ret) {
+				LOG_ERR("setsockopt(TLS_SESSION_CACHE) error: %d", -errno);
+				ret = -errno;
+				goto exit_cli;
+			}
 		}
-#endif
 	}
 
 	/* Connect to HTTP server */

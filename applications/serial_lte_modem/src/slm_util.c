@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <nrf_errno.h>
+#include <zephyr/net/net_ip.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 
@@ -386,4 +387,26 @@ int util_resolve_host(int cid, const char *host, uint16_t port, int family,
 		LOG_INST_ERR(log_inst, "getaddrinfo() error (%d): %s", err, errstr);
 	}
 	return err;
+}
+
+int util_get_peer_addr(struct sockaddr *peer, char addr[static INET6_ADDRSTRLEN], uint16_t *port)
+{
+	const char *ret = NULL;
+
+	if (peer->sa_family == AF_INET) {
+		ret = inet_ntop(AF_INET, &((struct sockaddr_in *)peer)->sin_addr,
+				addr, INET6_ADDRSTRLEN);
+		*port = ntohs(((struct sockaddr_in *)peer)->sin_port);
+	} else {
+		ret = inet_ntop(AF_INET6, &((struct sockaddr_in6 *)peer)->sin6_addr,
+				addr, INET6_ADDRSTRLEN);
+		*port = ntohs(((struct sockaddr_in6 *)peer)->sin6_port);
+	}
+
+	if (ret == NULL) {
+		LOG_ERR("inet_ntop error (%d)", -errno);
+		return -errno;
+	}
+
+	return 0;
 }
