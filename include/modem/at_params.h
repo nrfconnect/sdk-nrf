@@ -278,6 +278,24 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
 			 char *value, size_t *len);
 
 /**
+ * @brief Get a pointer to the string parameter value.
+ *
+ * The parameter type must be a string, or an error is returned.
+ * Allows for custom copying of the value. at_params_list_clear will invalidate the pointer.
+ * String parameter is not null-terminated.
+ *
+ * @param[in]     list       Parameter list.
+ * @param[in]     index      Parameter index in the list.
+ * @param[out]    at_param   Pointer to the address of the string.
+ * @param[out]    len        Length of the parameter value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int at_params_string_ptr_get(const struct at_param_list *list, size_t index, const char **at_param,
+			     size_t *len);
+
+/**
  * @brief Get a parameter value as an array.
  *
  * The parameter type must be an array, or an error is returned.

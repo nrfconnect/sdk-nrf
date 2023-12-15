@@ -14,7 +14,9 @@
 #include "slm_at_host.h"
 #include "slm_at_httpc.h"
 #include "slm_util.h"
+#if defined(CONFIG_SLM_NATIVE_TLS)
 #include "slm_native_tls.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_httpc, CONFIG_SLM_LOG_LEVEL);
 
@@ -223,10 +225,10 @@ static int do_http_connect(void)
 		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
 #if defined(CONFIG_SLM_NATIVE_TLS)
-		ret = slm_tls_loadcrdl(httpc.sec_tag);
+		ret = slm_native_tls_load_credentials(httpc.sec_tag);
 		if (ret < 0) {
-			LOG_ERR("Fail to load credential: %d", ret);
-			return -EAGAIN;
+			LOG_ERR("Failed to load sec tag: %d (%d)", httpc.sec_tag, ret);
+			return ret;
 		}
 		ret = socket(httpc.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
 #else
@@ -316,12 +318,6 @@ static int do_http_connect(void)
 	return 0;
 
 exit_cli:
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	if (httpc.sec_tag != INVALID_SEC_TAG) {
-		(void)slm_tls_unloadcrdl(httpc.sec_tag);
-		httpc.sec_tag = INVALID_SEC_TAG;
-	}
-#endif
 	close(httpc.fd);
 	httpc.fd = INVALID_SOCKET;
 	rsp_send("\r\n#XHTTPCCON: 0\r\n");
@@ -335,12 +331,6 @@ static int do_http_disconnect(void)
 	if (httpc.fd == INVALID_SOCKET) {
 		return 0;
 	}
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	if (httpc.sec_tag != INVALID_SEC_TAG) {
-		(void)slm_tls_unloadcrdl(httpc.sec_tag);
-		httpc.sec_tag = INVALID_SEC_TAG;
-	}
-#endif
 	int ret = close(httpc.fd);
 
 	if (ret) {

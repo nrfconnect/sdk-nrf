@@ -587,13 +587,6 @@ int slm_at_init(void)
 		LOG_ERR("TCPIP could not be initialized: %d", err);
 		return -EFAULT;
 	}
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	err = slm_at_cmng_init();
-	if (err) {
-		LOG_ERR("TLS could not be initialized: %d", err);
-		return -EFAULT;
-	}
-#endif
 	err = slm_at_icmp_init();
 	if (err) {
 		LOG_ERR("ICMP could not be initialized: %d", err);
@@ -687,12 +680,6 @@ void slm_at_uninit(void)
 	if (err) {
 		LOG_WRN("TCPIP could not be uninitialized: %d", err);
 	}
-#if defined(CONFIG_SLM_NATIVE_TLS)
-	err = slm_at_cmng_uninit();
-	if (err) {
-		LOG_WRN("TLS could not be uninitialized: %d", err);
-	}
-#endif
 	err = slm_at_icmp_uninit();
 	if (err) {
 		LOG_WRN("ICMP could not be uninitialized: %d", err);

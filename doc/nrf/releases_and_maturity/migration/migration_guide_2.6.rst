@@ -19,6 +19,9 @@ The following changes are mandatory to make your application work in the same wa
     The setting controls whether the SLM connects automatically to the network on startup.
     You can read and write it using the ``AT#XCARRIER="auto_connect"`` command.
 
+  * The ``AT#XCMNG`` AT command, which is activated with the :file:`overlay-native_tls.conf` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
+    You need to use the ``AT#XCMNG`` command to store previously stored credentials again.
+
 * For the Matter samples and applications using Intermittently Connected Devices configuration (formerly called Sleepy End Devices):
 
   * The naming convention for the energy-optimized devices has been changed from Sleepy End Devices (SED) to Intermittently Connected Devices (ICD).

@@ -220,6 +220,8 @@ Serial LTE modem
     * Set the ``TLS_HOSTNAME`` socket option to ``NULL`` to disable the hostname verification.
 
   * Allow building the application for nRF9160 DK board revision older than 0.14.0.
+  * ``#XCMNG`` AT command to store credentials in Zephyr settings storage.
+    The command is activated with the :file:`overlay-native_tls.conf` overlay file.
 
 * Removed Kconfig options ``CONFIG_SLM_CUSTOMIZED`` and ``CONFIG_SLM_SOCKET_RX_MAX``.
 

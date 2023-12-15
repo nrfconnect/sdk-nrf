@@ -375,6 +375,25 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
 	return 0;
 }
 
+int at_params_string_ptr_get(const struct at_param_list *list, size_t index, const char **at_param,
+			     size_t *len)
+{
+	if (list == NULL || list->params == NULL || at_param == NULL || len == NULL) {
+		return -EINVAL;
+	}
+
+	struct at_param *param = at_params_get(list, index);
+
+	if (param == NULL || param->type != AT_PARAM_TYPE_STRING) {
+		return -EINVAL;
+	}
+
+	*at_param = param->value.str_val;
+	*len = at_param_size(param);
+
+	return 0;
+}
+
 int at_params_array_get(const struct at_param_list *list, size_t index,
 			uint32_t *array, size_t *len)
 {
