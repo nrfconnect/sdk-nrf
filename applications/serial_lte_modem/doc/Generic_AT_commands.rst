@@ -7,7 +7,7 @@ Generic AT commands
    :local:
    :depth: 2
 
-The following commands list contains generic AT commands.
+This page describes generic AT commands.
 
 SLM version #XSLMVER
 ====================
@@ -143,7 +143,6 @@ Syntax
 
 The ``<sleep_mode>`` parameter accepts only the following integer values:
 
-* ``0`` - Deprecated.
 * ``1`` - Enter Sleep.
   In this mode, both the SLM service and the LTE connection are terminated.
 
@@ -159,9 +158,8 @@ The ``<sleep_mode>`` parameter accepts only the following integer values:
 
 .. note::
 
-   * This parameter does not accept ``0`` anymore.
-   * If the modem is on, entering Sleep mode sends a ``+CFUN=0`` command to the modem, which causes a non-volatile memory (NVM) write.
-     Take the NVM wear into account, or put the modem in flight mode by issuing a ``AT+CFUN=4`` before Sleep mode.
+   * If the modem is on, entering Sleep mode (by issuing ``AT#XSLEEP=1`` ) sends a ``+CFUN=0`` command to the modem, which causes a write to non-volatile memory (NVM).
+     Take the NVM wear into account, or put the modem in flight mode by issuing ``AT+CFUN=4`` before Sleep mode.
 
 Examples
 ~~~~~~~~

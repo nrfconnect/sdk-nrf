@@ -5,7 +5,7 @@ nRF Cloud AT commands
    :local:
    :depth: 2
 
-The following list contains nRF Cloud-related AT commands.
+The page describes nRF Cloud-related AT commands.
 
 .. _SLM_AT_NRFCLOUD:
 

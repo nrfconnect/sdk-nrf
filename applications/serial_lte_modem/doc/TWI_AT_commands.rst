@@ -7,7 +7,7 @@ TWI AT commands
    :local:
    :depth: 2
 
-The following commands list contains AT commands related to the two-wire interface (TWI).
+This page describes AT commands related to the Two-Wire Interface (TWI).
 
 List TWI instances #XTWILS
 ==========================

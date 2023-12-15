@@ -7,7 +7,7 @@ TCP and UDP AT commands
    :local:
    :depth: 2
 
-The following commands list contains TCP-related and UDP-related AT commands.
+This page describes TCP- and UDP-related AT commands.
 When native TLS is used, you must store the credentials using the ``AT#XCMNG`` AT command.
 
 For more information on the networking services, see the `Zephyr Network APIs`_.

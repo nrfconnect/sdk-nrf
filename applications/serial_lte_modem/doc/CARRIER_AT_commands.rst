@@ -7,7 +7,7 @@ LwM2M carrier library AT commands
    :local:
    :depth: 2
 
-The following commands list contains AT commands related to the LwM2M carrier library.
+This page describes AT commands related to the LwM2M carrier library.
 
 Carrier event #XCARRIEREVT
 ==========================

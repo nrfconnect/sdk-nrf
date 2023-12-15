@@ -7,7 +7,7 @@ FTP AT commands
    :local:
    :depth: 2
 
-The following commands list contains FTP related AT commands.
+This page describes FTP-related AT commands.
 
 FTP client #XFTP
 ================

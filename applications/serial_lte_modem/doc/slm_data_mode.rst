@@ -147,7 +147,7 @@ CONFIG_SLM_DATAMODE_BUF_SIZE - Buffer size for data mode
 Data mode AT commands
 *********************
 
-The following commands list contains data-mode related AT commands.
+The following command list describes data mode-related AT commands.
 
 Data mode control #XDATACTRL
 ============================

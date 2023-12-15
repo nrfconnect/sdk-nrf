@@ -7,7 +7,7 @@ GNSS AT commands
    :local:
    :depth: 2
 
-The following list contains GNSS-related AT commands.
+This page describes GNSS-related AT commands.
 
 Control GNSS
 ============
@@ -299,6 +299,7 @@ Example
   AT#XGPS=?
 
   #XGPS: (0,1),(0,1),<interval>,<timeout>
+
   OK
 
 Delete GNSS data
