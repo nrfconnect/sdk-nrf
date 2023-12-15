@@ -6,22 +6,20 @@ jobs:
     runs-on: ubuntu-latest
     name: Check OSS history
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
+      - name: Checkout sources
+        uses: nordicbuilder/action-checkout-west-update@main
         with:
-          path: ncs/nrf
-          fetch-depth: 0
+          git-fetch-depth: 0
+          west-update-args: ''
 
       - name: Install extra python dependencies
         run: |
           pip3 install west
           pip3 install -r ncs/nrf/scripts/requirements-extra.txt
 
-      - name: Set up the workspace
+      - name: Set upsteam
+        working-directory: ncs
         run: |
-          west init -l ncs/nrf
-          cd ncs
-          west update
           git -C zephyr remote add upstream https://github.com/zephyrproject-rtos/zephyr
 
       - name: Check manifest userdata

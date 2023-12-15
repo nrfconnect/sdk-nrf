@@ -11,12 +11,11 @@ jobs:
       run: |
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    - name: Checkout the code
-      uses: actions/checkout@v3
+    - name: Checkout sources
+      uses: nordicbuilder/action-checkout-west-update@main
       with:
-        path: ncs/nrf
-        ref: ${{ github.event.pull_request.head.sha }}
-        fetch-depth: 0
+        git-fetch-depth: 0
+        git-ref: ${{ github.event.pull_request.head.sha }}
 
     - name: cache-pip
       uses: actions/cache@v3
@@ -34,13 +33,11 @@ jobs:
         grep -E "^west" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
         pip3 show -f west
 
-    - name: West init and update
+    - name: Run merge commits test
       env:
         BASE_REF: ${{ github.base_ref }}
       working-directory: ncs/nrf
       run: |
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
         git remote -v
         # Ensure there's no merge commits in the PR
         [[ "$(git rev-list --merges --count origin/${BASE_REF}..)" == "0" ]] || \
@@ -49,8 +46,6 @@ jobs:
         git rebase origin/${BASE_REF}
         # debug
         git log  --pretty=oneline | head -n 10
-        west init -l .
-        west update --narrow -o=--depth=1
 
     - name: Run CODEOWNERS test
       id: codeowners

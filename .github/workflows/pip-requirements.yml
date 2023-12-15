@@ -16,13 +16,11 @@ jobs:
   check-requirements:
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout PR target branch
-        uses: actions/checkout@v4
+      - name: Checkout sources
+        uses: nordicbuilder/action-checkout-west-update@main
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          path: ncs/nrf
-          fetch-depth: 1
-          persist-credentials: false
+          git-ref: ${{ github.event.pull_request.head.sha }}
+          west-update-args: '--narrow mcuboot zephyr'
 
       - name: Get python version
         id: pyv
@@ -39,9 +37,7 @@ jobs:
       - name: Setup environment
         working-directory: ncs
         run: |
-          pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper west
-          west init -l nrf
-          west update --narrow mcuboot zephyr
+          pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
 
       - name: Execute script diff action
         uses: nordicbuilder/action-script-diff@v0.1

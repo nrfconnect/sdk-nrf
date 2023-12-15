@@ -18,7 +18,6 @@ name: Reusable License Check
 on:
   workflow_call:
     inputs:
-
       path:
         # Required path to your module relative to west workspace.
         type: string
@@ -32,28 +31,18 @@ on:
         type: string
         default: nrf/scripts/ci/license_allow_list.yaml
 
-      nrf_repo:
-        # Optional URL of the custom "sdk-nrf" repository that contains license check
-        # script and the west manifest. By default official "sdk-nrf" repository is used.
-        type: string
-        default: https://github.com/nrfconnect/sdk-nrf
-
-      nrf_rev:
-        # Optional revision of the "sdk-nrf" repository. By default, "main" is used.
-        type: string
-        default: main
-
 jobs:
   license_job:
     runs-on: ubuntu-latest
     name: Run license checks on patch series (PR)
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v3
+    - name: Checkout sources
+      uses: nordicbuilder/action-checkout-west-update@main
       with:
+        git-fetch-depth: 0
+        git-ref: ${{ github.event.pull_request.head.sha }}
         path: ncs/${{ inputs.path }}
-        ref: ${{ github.event.pull_request.head.sha }}
-        fetch-depth: 0
+        west-update-args: '-n zephyr bsim'
 
     - name: cache-pip
       uses: actions/cache@v3
@@ -70,32 +59,24 @@ jobs:
         pip3 install --user -U west
         pip3 show -f west
 
-    - name: Git config and rebase
+    - name: Git rebase
       env:
         BASE_REF: ${{ github.base_ref }}
       working-directory: ncs/${{ inputs.path }}
       run: |
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
         git remote -v
         git branch
         git rebase origin/${BASE_REF}
         # debug
         git log --pretty=oneline | head -n 10
 
-    - name: West init and update
+    - name: West zephyr-export
       working-directory: ncs
       env:
         PR_REF: ${{ github.event.pull_request.head.sha }}
       run: |
         export PATH="$HOME/.local/bin:$PATH"
         export PATH="$HOME/bin:$PATH"
-        if [ "${{ inputs.path }}" = "nrf" ]; then
-            west init -l nrf
-        else
-            west init -m ${{ inputs.nrf_repo }} --mr ${{ inputs.nrf_rev }}
-        fi
-        west update -n zephyr bsim
         west zephyr-export
         echo "ZEPHYR_BASE=$(pwd)/zephyr" >> $GITHUB_ENV
         # debug

@@ -16,11 +16,11 @@ jobs:
     if: github.repository == 'nrfconnect/sdk-nrf'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
+      - name: Checkout sources
+        uses: nordicbuilder/action-checkout-west-update@main
         with:
-          path: ncs/nrf
-          fetch-depth: 0
+          git-fetch-depth: 0
+          west-update-args: 'zephyr bsim mcuboot'
 
       - name: Install base dependencies
         working-directory: ncs
@@ -28,13 +28,9 @@ jobs:
           pip3 install -r nrf/scripts/requirements-base.txt
           pip3 install -r nrf/scripts/requirements-extra.txt
 
-      - name: West init and update
+      - name: Get repo urls
         working-directory: ncs
         run: |
-          west init -l nrf
-          west update zephyr bsim mcuboot
-          git config --global user.email "noreply@nordicsemi.no"
-          git config --global user.name "Nordic Builder"
           echo "SDK_ZEPHYR=$(west list zephyr -f {url} | awk -F// '{print $NF}')" >> $GITHUB_ENV
           echo "SDK_MCUBOOT=$(west list mcuboot -f {url} | awk -F// '{print $NF}')" >> $GITHUB_ENV
 
