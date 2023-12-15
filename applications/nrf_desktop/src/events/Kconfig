@@ -103,13 +103,6 @@ config DESKTOP_INIT_LOG_USB_STATE_EVENT
 	help
 	  Log USB state events in nRF Desktop application.
 
-config DESKTOP_INIT_LOG_USB_HID_EVENT
-	bool "Log USB HID events"
-	depends on DESKTOP_USB_ENABLE
-	default y
-	help
-	  Log USB HID events in nRF Desktop application.
-
 config DESKTOP_INIT_LOG_WHEEL_EVENT
 	bool "Log wheel events"
 	default y

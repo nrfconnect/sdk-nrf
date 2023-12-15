@@ -45,6 +45,18 @@ struct hid_report_subscriber_event {
 	struct app_event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
+	struct {
+		uint8_t priority; /**< Subscriber priority. The bigger value means the
+				    * higher priority. The subscriber priority must be unique.
+				    * Two or more subscriber must not use the same priority value.
+				    */
+		uint8_t pipeline_size; /**< Pipeline size. */
+		uint8_t report_max; /**< Maximum number of reports with different ID, which can be
+				      * processed.
+				      */
+	} params; /**< Subscriber parameters. Only needed when a subscriber is connecting.
+		    * Ignored when disconnecting.
+		    */
 	bool connected; /**< True if subscriber is connected to the system. */
 };
 

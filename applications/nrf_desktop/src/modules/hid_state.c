@@ -23,8 +23,6 @@
 #include "motion_event.h"
 #include "wheel_event.h"
 #include "hid_event.h"
-#include <caf/events/ble_common_event.h>
-#include "usb_event.h"
 
 #include CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
 #include "hid_keymap.h"
@@ -129,7 +127,8 @@ struct output_report_state {
 
 struct subscriber {
 	const void *id;
-	bool is_usb;
+	uint8_t priority;
+	uint8_t pipeline_size;
 	uint8_t report_max;
 	uint8_t report_cnt;
 	struct output_report_state output_reports[OUTPUT_REPORT_STATE_COUNT];
@@ -869,14 +868,11 @@ static bool report_send(struct report_state *rs,
 	}
 
 	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
-		unsigned int pipeline_depth;
+		unsigned int pipeline_depth = rs->subscriber->pipeline_size;
 
-		if ((rs->subscriber->is_usb) ||
-		    (rs->report_id == REPORT_ID_CONSUMER_CTRL) ||
+		if ((rs->report_id == REPORT_ID_CONSUMER_CTRL) ||
 		    (rs->report_id == REPORT_ID_SYSTEM_CTRL))  {
 			pipeline_depth = 1;
-		} else {
-			pipeline_depth = 2;
 		}
 
 		while ((rs->cnt < pipeline_depth) &&
@@ -1008,11 +1004,6 @@ static void report_issued(const void *subscriber_id, uint8_t report_id, bool err
 	}
 }
 
-static int8_t get_subscriber_priority(const struct subscriber *sub)
-{
-	return (sub->is_usb) ? (1) : (0);
-}
-
 static struct report_data *get_used_rd(uint8_t report_id)
 {
 	/* Connect with appropriate report data. */
@@ -1036,7 +1027,7 @@ static struct report_state *find_next_report_state(const struct report_data *rd,
 						   struct report_state *former_rs)
 {
 	struct report_state *rs_result = NULL;
-	int8_t sub_prio_result = -1;
+	uint8_t sub_prio_result = 0;
 
 	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
 		if (!state.subscriber[i].id) {
@@ -1044,7 +1035,7 @@ static struct report_state *find_next_report_state(const struct report_data *rd,
 		}
 
 		struct subscriber *sub = &state.subscriber[i];
-		int8_t sub_prio = get_subscriber_priority(sub);
+		uint8_t sub_prio = sub->priority;
 
 		for (size_t j = 0; j < ARRAY_SIZE(sub->state); j++) {
 			struct report_state *rs = &sub->state[j];
@@ -1131,8 +1122,8 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 	if (rd->linked_rs) {
 		__ASSERT_NO_MSG(rd->linked_rs != rs);
 
-		int8_t cur_sub_prio = get_subscriber_priority(rd->linked_rs->subscriber);
-		int8_t new_sub_prio = get_subscriber_priority(subscriber);
+		uint8_t cur_sub_prio = rd->linked_rs->subscriber->priority;
+		uint8_t new_sub_prio = subscriber->priority;
 
 		if (cur_sub_prio < new_sub_prio) {
 			LOG_WRN("Force report data unlink");
@@ -1201,12 +1192,18 @@ static void disconnect(const void *subscriber_id, uint8_t report_id)
 	update_output_report_state();
 }
 
-static void connect_subscriber(const void *subscriber_id, bool is_usb, uint8_t report_max)
+static void connect_subscriber(const void *subscriber_id, uint8_t priority,
+			       uint8_t pipeline_size, uint8_t report_max)
 {
+	__ASSERT_NO_MSG(priority > 0);
+	__ASSERT_NO_MSG(pipeline_size > 0);
+	__ASSERT_NO_MSG(report_max > 0);
+
 	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
 		if (!state.subscriber[i].id) {
 			state.subscriber[i].id = subscriber_id;
-			state.subscriber[i].is_usb = is_usb;
+			state.subscriber[i].priority = priority;
+			state.subscriber[i].pipeline_size = pipeline_size;
 			state.subscriber[i].report_max = report_max;
 			state.subscriber[i].report_cnt = 0;
 			update_output_report_state();
@@ -1524,6 +1521,18 @@ static bool handle_hid_report_event(const struct hid_report_event *event)
 	return false;
 }
 
+static bool handle_hid_report_subscriber_event(const struct hid_report_subscriber_event *event)
+{
+	if (event->connected) {
+		connect_subscriber(event->subscriber, event->params.priority,
+				   event->params.pipeline_size, event->params.report_max);
+	} else {
+		disconnect_subscriber(event->subscriber);
+	}
+
+	return false;
+}
+
 static bool handle_hid_report_subscription_event(
 		const struct hid_report_subscription_event *event)
 {
@@ -1531,42 +1540,6 @@ static bool handle_hid_report_subscription_event(
 		connect(event->subscriber, event->report_id);
 	} else {
 		disconnect(event->subscriber, event->report_id);
-	}
-
-	return false;
-}
-
-static bool handle_ble_peer_event(const struct ble_peer_event *event)
-{
-	switch (event->state) {
-	case PEER_STATE_CONNECTED:
-		connect_subscriber(event->id, false, UINT8_MAX);
-		break;
-
-	case PEER_STATE_DISCONNECTING:
-	case PEER_STATE_DISCONNECTED:
-		disconnect_subscriber(event->id);
-		break;
-
-	case PEER_STATE_SECURED:
-	case PEER_STATE_CONN_FAILED:
-		/* Ignore */
-		break;
-
-	default:
-		__ASSERT_NO_MSG(false);
-		break;
-	}
-
-	return false;
-}
-
-static bool handle_usb_hid_event(const struct usb_hid_event *event)
-{
-	if (event->enabled) {
-		connect_subscriber(event->id, true, 1);
-	} else {
-		disconnect_subscriber(event->id);
 	}
 
 	return false;
@@ -1614,18 +1587,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_hid_report_event(cast_hid_report_event(aeh));
 	}
 
+	if (is_hid_report_subscriber_event(aeh)) {
+		return handle_hid_report_subscriber_event(cast_hid_report_subscriber_event(aeh));
+	}
+
 	if (is_hid_report_subscription_event(aeh)) {
 		return handle_hid_report_subscription_event(
 				cast_hid_report_subscription_event(aeh));
-	}
-
-	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_event(aeh)) {
-		return handle_ble_peer_event(cast_ble_peer_event(aeh));
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) &&
-	    is_usb_hid_event(aeh)) {
-		return handle_usb_hid_event(cast_usb_hid_event(aeh));
 	}
 
 	if (is_module_state_event(aeh)) {
@@ -1639,15 +1607,12 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
-#ifdef CONFIG_CAF_BLE_COMMON_EVENTS
-APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-#endif /* CONFIG_CAF_BLE_COMMON_EVENTS */
-APP_EVENT_SUBSCRIBE(MODULE, usb_hid_event);
 #ifdef CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #endif /* CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT */
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscriber_event);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE_FINAL(MODULE, button_event);
 APP_EVENT_SUBSCRIBE(MODULE, motion_event);

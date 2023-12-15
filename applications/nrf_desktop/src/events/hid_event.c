@@ -75,8 +75,15 @@ static void log_hid_report_subscriber_event(const struct app_event_header *aeh)
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(aeh);
 
-	APP_EVENT_MANAGER_LOG(aeh, "report subscriber %p was %sconnected",
-			event->subscriber, (event->connected)?(""):("dis"));
+	if (event->connected) {
+		APP_EVENT_MANAGER_LOG(aeh, "report subscriber %p was connected, priority: 0x%x "
+			      "pipeline size: %u, max report count: %u",
+			event->subscriber, event->params.priority,
+			event->params.pipeline_size, event->params.report_max);
+	} else {
+		APP_EVENT_MANAGER_LOG(aeh, "report subscriber %p was disconnected",
+				      event->subscriber);
+	}
 }
 
 static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
@@ -87,11 +94,16 @@ static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
 
 	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
 	nrf_profiler_log_encode_uint8(buf, event->connected);
+
+	nrf_profiler_log_encode_uint8(buf, event->params.priority);
+	nrf_profiler_log_encode_uint8(buf, event->params.pipeline_size);
+	nrf_profiler_log_encode_uint8(buf, event->params.report_max);
 }
 
 APP_EVENT_INFO_DEFINE(hid_report_subscriber_event,
-		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8),
-		  ENCODE("subscriber", "connected"),
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8,
+			 NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8),
+		  ENCODE("subscriber", "connected", "priority", "pipeline size", " report max"),
 		  profile_hid_report_subscriber_event);
 
 APP_EVENT_TYPE_DEFINE(hid_report_subscriber_event,
