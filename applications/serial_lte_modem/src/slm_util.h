@@ -186,6 +186,18 @@ int util_str_to_int(const char *str, int base, int *output);
  *           (defined in `zephyr/net/dns_resolve.h`).
  */
 int util_resolve_host(int cid, const char *host, uint16_t port, int family, struct sockaddr *sa);
+
+/**
+ * @brief Get peer IP address and port in printable format.
+ *
+ * @param[in] peer Peer address structure.
+ * @param[out] addr IP address of the peer.
+ * @param[out] port Port of the peer.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+
+int util_get_peer_addr(struct sockaddr *peer, char addr[static INET6_ADDRSTRLEN], uint16_t *port);
 /** @} */
 
 #endif /* SLM_UTIL_ */

@@ -179,13 +179,6 @@ Asset Tracker v2
 
 |no_changes_yet_note|
 
-Serial LTE modem
-----------------
-
-* Updated:
-
-  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
-
 Connectivity Bridge
 -------------------
 
@@ -237,7 +230,14 @@ Protocols serialization
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Added:
+
+  * DTLS support for the ``#XUDPSVR`` and ``#XSSOCKET`` (UDP server sockets) AT commands when the :file:`overlay-native_tls.conf` configuration file is used.
+
+* Updated:
+
+  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * The ``#XUDPCLI`` and ``#XSSOCKET`` (UDP client sockets) AT commands to use Zephyr's Mbed TLS with DTLS when the :file:`overlay-native_tls.conf` configuration file is used.
 
 Thingy:53: Matter weather station
 ---------------------------------

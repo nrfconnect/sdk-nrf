@@ -995,7 +995,7 @@ The TLS server role is currently only supported when using the :file:`overlay-na
 DTLS server
 ===========
 
-The DTLS server role is currently not supported (modem limitation).
+The DTLS server role is currently only supported when using the :file:`overlay-native_tls.conf` configuration file.
 
 DNS lookup
 ==========

@@ -52,7 +52,7 @@ static char udp_url[SLM_MAX_URL];
 static uint16_t udp_port;
 
 static struct slm_socket {
-	uint16_t type;     /* SOCK_STREAM or SOCK_DGRAM */
+	int type;          /* SOCK_STREAM or SOCK_DGRAM */
 	uint16_t role;     /* Client or Server */
 	sec_tag_t sec_tag; /* Security tag of the credential */
 	int family;        /* Socket address family */
@@ -198,19 +198,17 @@ static int do_secure_socket_open(int peer_verify)
 	sock.fd = ret;
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.type == SOCK_STREAM) {
-		ret = slm_native_tls_load_credentials(sock.sec_tag);
-		if (ret < 0) {
-			LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
-			goto error;
-		}
-		int tls_native = 1;
+	ret = slm_native_tls_load_credentials(sock.sec_tag);
+	if (ret < 0) {
+		LOG_ERR("Failed to load sec tag: %d (%d)", sock.sec_tag, ret);
+		goto error;
+	}
+	int tls_native = 1;
 
-		/* Must be the first socket option to set. */
-		ret = setsockopt(sock.fd, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
-		if (ret) {
-			goto error;
-		}
+	/* Must be the first socket option to set. */
+	ret = setsockopt(sock.fd, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
+	if (ret) {
+		goto error;
 	}
 #endif
 	struct timeval tmo = {.tv_sec = SOCKET_SEND_TMO_SEC};
@@ -912,17 +910,7 @@ static int do_recvfrom(int timeout, int flags)
 		char peer_addr[INET6_ADDRSTRLEN] = {0};
 		uint16_t peer_port = 0;
 
-		if (remote.sa_family == AF_INET) {
-			(void)inet_ntop(AF_INET, &((struct sockaddr_in *)&remote)->sin_addr,
-					peer_addr, sizeof(peer_addr));
-			peer_port = ntohs(((struct sockaddr_in *)&remote)->sin_port);
-
-		} else if (remote.sa_family == AF_INET6) {
-			(void)inet_ntop(AF_INET6, &((struct sockaddr_in6 *)&remote)->sin6_addr,
-					peer_addr, sizeof(peer_addr));
-			peer_port = ntohs(((struct sockaddr_in6 *)&remote)->sin6_port);
-		}
-
+		util_get_peer_addr(&remote, peer_addr, &peer_port);
 		rsp_send("\r\n#XRECVFROM: %d,\"%s\",%d\r\n", ret, peer_addr, peer_port);
 		data_send(slm_data_buf, ret);
 	}
