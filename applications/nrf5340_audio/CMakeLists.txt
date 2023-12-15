@@ -31,6 +31,12 @@ if ((CONFIG_AUDIO_DFU EQUAL 1) OR (CONFIG_AUDIO_DFU EQUAL 2))
     list(APPEND empty_net_core_OVERLAY_CONFIG
         "${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-empty_net_core.conf"
     )
+
+    # Disable pretick anomaly workaround. The workaround causes a resource conflict between B0N and
+    # the controller, and as the controller does not use RTC to wake up from sleep it is not
+    # affected by the anomaly.
+    list(APPEND empty_net_core_b0n_CONFIG_SOC_NRF53_RTC_PRETICK n)
+
     if (CONFIG_B0N_MINIMAL)
         set(min_b0n_flag "-m")
         list(APPEND empty_net_core_b0n_OVERLAY_CONFIG overlay-minimal-size.conf)
