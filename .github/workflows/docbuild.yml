@@ -29,18 +29,16 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
-
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
-        with:
-          path: ncs/nrf
-          fetch-depth: 0
+      - name: Checkout sources
+        uses: nordicbuilder/action-checkout-west-update@main
+
       - name: cache-pip
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-doc-pip
+
       - name: Install packages
         run: |
           sudo apt update
@@ -57,11 +55,9 @@ jobs:
           sudo pip3 install -U setuptools wheel pip
           pip3 install -r nrf/doc/requirements.txt
 
-      - name: West init and update
+      - name: West zephyr-export
         working-directory: ncs
         run: |
-          west init -l nrf
-          west update
           west zephyr-export
 
       - name: Build documentation
