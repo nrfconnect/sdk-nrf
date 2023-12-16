@@ -1040,8 +1040,13 @@
 .. _`Securely generating credentials`: https://docs.nrfcloud.com/Devices/Security/Credentials.html
 .. _`nRF Cloud provisioning configuration`: https://docs.nrfcloud.com/SecurityServices/ProvisioningService/ProvisioningConfiguration/ProvisioningConfigurationPortal.html
 .. _`nRF Cloud Provisioning Service`: https://docs.nrfcloud.com/SecurityServices/ProvisioningService/ProvisioningOverview.html
+.. _`nRF Cloud Verifying device authenticity`: https://docs.nrfcloud.com/SecurityServices/IdentityService/VerifyAttestationToken.html
+.. _`nRF Cloud Generating attestation tokens`: https://docs.nrfcloud.com/SecurityServices/IdentityService/VerifyAttestationToken.html#generating-attestation-tokens
+
+
 .. _`nRF Cloud REST API`:
 .. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/APIs/REST/RESTOverview.html
+.. _`nRF Cloud REST API key`: https://docs.nrfcloud.com/APIs/REST/RESTOverview.html#api-key
 .. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/LocationServices/LSOverview.html
 .. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/APIs/MQTT/MQTTOverview.html
 .. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/APIs/MQTT/Topics.html
