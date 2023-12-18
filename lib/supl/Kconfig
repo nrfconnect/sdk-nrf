@@ -6,5 +6,6 @@
 
 config SUPL_CLIENT_LIB
 	bool "SUPL Client library"
+	depends on NEWLIB_LIBC
 	help
 	  A library for accessing A-GNSS data using the SUPL protocol.
