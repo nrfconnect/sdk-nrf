@@ -775,6 +775,12 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.change_beacon = nrf_wifi_wpa_supp_change_beacon,
 	.stop_ap = nrf_wifi_wpa_supp_stop_ap,
 	.deinit_ap = nrf_wifi_wpa_supp_deinit_ap,
+	.sta_add = nrf_wifi_wpa_supp_sta_add,
+	.sta_remove = nrf_wifi_wpa_supp_sta_remove,
+	.sta_deauth = nrf_wifi_wpa_supp_sta_deauth,
+	.sta_disassoc = nrf_wifi_wpa_supp_sta_disassoc,
+	.register_mgmt_frame = nrf_wifi_supp_register_mgmt_frame,
+	.sta_set_flags = nrf_wifi_wpa_supp_sta_set_flags,
 #endif /* CONFIG_NRF700X_AP_MODE */
 };
 #endif /* CONFIG_NRF700X_STA_MODE */
