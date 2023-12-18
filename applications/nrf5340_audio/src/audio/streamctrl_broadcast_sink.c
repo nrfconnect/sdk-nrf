@@ -82,7 +82,7 @@ static void button_msg_sub_thread(void)
 
 		if (msg.button_action != BUTTON_PRESS) {
 			LOG_WRN("Unhandled button action");
-			return;
+			continue;
 		}
 
 		switch (msg.button_pin) {
