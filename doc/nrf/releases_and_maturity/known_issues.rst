@@ -323,6 +323,14 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0
+
+KRKNWK-18221: Memory leak in the deferred attribute persister
+  The ``DeferredAttributePersister`` helper class is used to limit the flash wear for applications that include fast-changing, persistent cluster attributes.
+  This class leaks a small heap memory buffer for each deferred attribute write, which can eventually lead to running out of heap memory until the device is rebooted.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``e79b0cf44c86ce35dabcf69b50903ac706c67465``).
+
 .. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2
 
 KRKNWK-17360: Groupcast communication does not work for multiple endpoints that are part of the same group on a single Matter node
