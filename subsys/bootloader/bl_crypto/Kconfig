@@ -47,7 +47,8 @@ choice SB_CRYPTO_SIG
 
 	config SB_CRYPTO_CC310_ECDSA_SECP256R1
 		bool "Hardware ECDSA secp256r1" if HAS_HW_NRF_CC310
-		select NRF_CC310_BL
+		select NRF_CC310_BL if (IS_SECURE_BOOTLOADER || MCUBOOT) && \
+				       !(NORDIC_SECURITY_BACKEND || NRF_SECURITY)
 		select SB_ECDSA_SECP256R1
 		help
 		  Hardware implementation of ECDSA with NIST curve secp256r1.
