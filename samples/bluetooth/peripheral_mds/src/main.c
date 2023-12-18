@@ -173,14 +173,12 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		time_measure_start = !time_measure_start;
 
 		if (time_measure_start) {
-			err = memfault_metrics_heartbeat_timer_start(
-						MEMFAULT_METRICS_KEY(Button1TimeMeasure));
+			err = MEMFAULT_METRIC_TIMER_START(Button1TimeMeasure);
 			if (err) {
 				printk("Failed to start memfault metrics timer: %d\n", err);
 			}
 		} else {
-			err = memfault_metrics_heartbeat_timer_stop(
-						MEMFAULT_METRICS_KEY(Button1TimeMeasure));
+			err = MEMFAULT_METRIC_TIMER_STOP(Button1TimeMeasure);
 			if (err) {
 				printk("Failed to stop memfault metrics: %d\n", err);
 			}
@@ -226,7 +224,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	}
 
 	if (buttons & DK_BTN3_MSK) {
-		err = memfault_metrics_heartbeat_add(MEMFAULT_METRICS_KEY(Button3PressCount), 1);
+		err = MEMFAULT_METRIC_ADD(Button3PressCount, 1);
 		if (err) {
 			printk("Failed to increase button press count metrics: %d\n", err);
 		} else {
@@ -259,8 +257,7 @@ static void bas_notify(void)
 		battery_level = 100U;
 	}
 
-	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(BatteryLvl),
-						      battery_level);
+	err = MEMFAULT_METRIC_SET_UNSIGNED(BatteryLvl, battery_level);
 	if (err) {
 		printk("Failed to set battery lvl memfault metrics (err %d)\n", err);
 	}

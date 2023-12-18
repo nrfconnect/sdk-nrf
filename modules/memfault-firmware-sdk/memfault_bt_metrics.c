@@ -40,8 +40,7 @@ void connected(struct bt_conn *conn, uint8_t conn_err)
 
 	if (conn_err == 0) {
 		if (count == 0) {
-			err = memfault_metrics_heartbeat_timer_start(
-					MEMFAULT_METRICS_KEY(Ncs_BtConnectionTime));
+			err = MEMFAULT_METRIC_TIMER_START(Ncs_BtConnectionTime);
 			if (err) {
 				LOG_WRN("Failed to start memfault Ncs_BtConnectionTime timer, "
 				"err: %d", err);
@@ -60,8 +59,7 @@ void disconnected(struct bt_conn *conn, uint8_t reason)
 	__ASSERT_NO_MSG(count > 0);
 
 	if (count == 1) {
-		err = memfault_metrics_heartbeat_timer_stop(
-				MEMFAULT_METRICS_KEY(Ncs_BtConnectionTime));
+		err = MEMFAULT_METRIC_TIMER_STOP(Ncs_BtConnectionTime);
 		if (err) {
 			LOG_WRN("Failed to stop memfault Ncs_BtConnectionTime timer, err: %d", err);
 		}
@@ -117,14 +115,12 @@ void memfault_bt_metrics_update(void)
 
 	LOG_DBG("Current bond count: %u", bond_count);
 
-	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(Ncs_BtBondCount),
-						      bond_count);
+	err = MEMFAULT_METRIC_SET_UNSIGNED(Ncs_BtBondCount, bond_count);
 	if (err) {
 		LOG_WRN("Failed to set the Ncs_BtBondCount metric, err: %d", err);
 	}
 
-	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(Ncs_BtConnectionCount),
-						      atomic_get(&connection_count));
+	err = MEMFAULT_METRIC_SET_UNSIGNED(Ncs_BtConnectionCount, atomic_get(&connection_count));
 	if (err) {
 		LOG_WRN("Failed to set Ncs_BtConnectionCount metrics, err: %d", err);
 	}
