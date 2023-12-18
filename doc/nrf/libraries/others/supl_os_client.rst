@@ -100,6 +100,11 @@ Configuration
 To enable the SUPL client library, set :kconfig:option:`CONFIG_SUPL_CLIENT_LIB` to ``y``.
 See :ref:`configure_application` for information on how to change configuration options.
 
+.. note::
+
+   The SUPL client library requires that the newlib C library is used.
+   You can enable it using the :kconfig:option:`CONFIG_NEWLIB_LIBC` Kconfig option.
+
 Resource initialization and ownership
 =====================================
 
