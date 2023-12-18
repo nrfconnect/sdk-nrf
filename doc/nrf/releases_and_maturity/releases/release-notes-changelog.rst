@@ -312,6 +312,10 @@ Cellular samples
 
   * Added event handling for events from device mode callback.
 
+* :ref:`gnss_sample` sample:
+
+  * Added the configuration overlay file :file:`overlay-supl.conf` for building the sample with SUPL assistance support.
+
 Cryptography samples
 --------------------
 
