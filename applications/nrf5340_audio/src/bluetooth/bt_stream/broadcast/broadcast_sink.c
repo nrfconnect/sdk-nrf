@@ -153,7 +153,7 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 		codec_info->cid = codec->cid;
 		codec_info->vid = codec->vid;
 		codec_info->frequency = bt_audio_codec_cfg_get_freq(codec);
-		codec_info->frame_duration_us = bt_audio_codec_cfg_get_frame_duration_us(codec);
+		codec_info->frame_duration_us = bt_audio_codec_cfg_get_frame_dur(codec);
 		bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation);
 		codec_info->octets_per_sdu = bt_audio_codec_cfg_get_octets_per_frame(codec);
 		codec_info->bitrate =
