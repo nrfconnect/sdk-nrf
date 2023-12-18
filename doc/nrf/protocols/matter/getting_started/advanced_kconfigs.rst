@@ -141,3 +141,12 @@ By default this Kconfig option is set to 1 second.
 .. note::
   The :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option is set to ``y`` by default.
   To disable removing application-specific non-volatile data when the :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT` Kconfig option is selected, set the :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option to ``n``.
+
+.. _ug_matter_configuring_read_client:
+
+Read Client functionality
+=========================
+
+The Read Client functionality is used for reading attributes from another device in the Matter network.
+This functionality is disabled by default for Matter samples in the |NCS|, except for ones that need to read attributes from the bound devices, such as the :ref:`matter_light_switch_sample` and :ref:`matter_thermostat_sample` samples, and the :ref:`matter_bridge_app` application.
+Enable the feature if your device needs to be able to access attributes from a different device within the Matter network using, for example, bindings.

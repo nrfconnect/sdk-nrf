@@ -131,6 +131,10 @@ endif
 config EXPERIMENTAL
 	default y
 
+# Enable Read Client functionality for all build configurations.
+config CHIP_ENABLE_READ_CLIENT
+	default y
+
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
 source "${ZEPHYR_BASE}/../nrf/samples/matter/common/src/bridge/Kconfig"

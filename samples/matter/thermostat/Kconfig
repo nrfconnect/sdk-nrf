@@ -30,6 +30,9 @@ config THERMOSTAT_SIMULATED_TEMPERATURE_CHANGE
 	help
 	  If set to true, the simulated temperature is rising. If set to false, the simulated temperature is falling.
 
+# Enable Read Client functionality for all build configurations.
+config CHIP_ENABLE_READ_CLIENT
+	default y
 
 # Sample configuration used for Thread networking
 if NET_L2_OPENTHREAD

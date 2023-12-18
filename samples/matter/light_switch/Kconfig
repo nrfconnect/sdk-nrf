@@ -41,6 +41,10 @@ config NRF_WIFI_LOW_POWER
 
 endif # CHIP_WIFI
 
+# Enable Read Client functionality for all build configurations.
+config CHIP_ENABLE_READ_CLIENT
+	default y
+
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
 source "${ZEPHYR_BASE}/../nrf/samples/matter/common/src/Kconfig"

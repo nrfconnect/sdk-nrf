@@ -93,6 +93,7 @@ Matter
 ------
 
 * Updated the page about :ref:`ug_matter_device_low_power_configuration` with the information about Intermittently Connected Devices (ICD) configuration.
+* Added a Kconfig option for disabling or enabling :ref:`ug_matter_configuring_read_client`.
 
 Matter fork
 +++++++++++
@@ -365,6 +366,8 @@ Matter samples
   * Divided events to application and system events.
   * Defined common LED and button constants in the dedicated board configuration files.
   * Created the Kconfig file for the Matter common directory.
+
+* Disabled :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
 
 * :ref:`matter_lock_sample` sample:
 
