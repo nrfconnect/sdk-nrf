@@ -143,3 +143,13 @@ config MCUBOOT_USE_ALL_AVAILABLE_RAM
 	  RAM partition.
 
 endmenu
+
+config XIP_SPLIT_IMAGE
+	bool "Split XIP image"
+	depends on SOC_NRF5340_CPUAPP
+	depends on !MCUBOOT
+	help
+	  Allows for an image to be split into 2 parts where there is code executing from internal
+	  flash and code from QSPI via XIP. Requires specific project setup for projects to use
+	  this feature: project's cmake which supports code dispatching, linker script for describe QSPI
+	  linking area and dedicated partition manager configuration.
