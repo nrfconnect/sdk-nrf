@@ -74,7 +74,7 @@ int sms_register(void)
 	}
 
 	handle = sms_register_listener(sms_callback, NULL);
-	if (handle) {
+	if (handle < 0) {
 		mosh_error("sms_register_listener returned err: %d\n", handle);
 		return handle;
 	}
