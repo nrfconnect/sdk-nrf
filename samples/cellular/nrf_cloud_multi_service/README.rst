@@ -866,13 +866,13 @@ If you are certain you understand the inherent security risks, you can use this 
 
          .. code-block:: console
 
-           west build --board your_board -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
+           west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID="698d4c11-0ccc-4f04-89cd-6882724e3f6f"
 
       .. group-tab:: PowerShell
 
          .. code-block:: console
 
-            west build --board your_board -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
+            west build --board *your_board* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID=\`"698d4c11-0ccc-4f04-89cd-6882724e3f6f\`""
 
 Configuring Wi-Fi access point credentials
 ==========================================
@@ -882,11 +882,12 @@ Before the sample can connect to a Wi-Fi network, you must configure at least on
 
 Once your device has been flashed with this sample, you can add a credential by connecting to your device's UART interface and then entering the following command:
 
-.. code-block:: console
+.. parsed-literal::
+      :class: highlight
 
-      wifi_cred add <NetworkSSID> WPA2-PSK <NetworkPassword>
+      wifi_cred add *NetworkSSID* WPA2-PSK *NetworkPassword*
 
-Where ``<NetworkSSID>`` is replaced with the SSID of the Wi-Fi access point you want your device to connect to, and ``<NetworkPassword>`` is its password.
+Where *NetworkSSID* is replaced with the SSID of the Wi-Fi access point you want your device to connect to, and *NetworkPassword* is its password.
 Then either reboot the device or use the ``wifi_cred auto_connect`` command to manually trigger a connection attempt.
 
 From now on, these credentials will automatically be used when the configured network is reachable.
@@ -967,17 +968,19 @@ Then, complete the following steps for each device you wish to onboard:
 
       .. group-tab:: MQTT
 
-            .. code-block:: console
+            .. parsed-literal::
+               :class: highlight
 
-               python3 device_credentials_installer.py --ca self_<self_cert_serial>_ca.pem --ca_key self_<self_cert_serial>_prv.pem --id_str nrf- --id_imei -s -d
+               python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str nrf- --id_imei -s -d
 
             Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
 
       .. group-tab:: CoAP
 
-            .. code-block:: console
+            .. parsed-literal::
+               :class: highlight
 
-               python3 device_credentials_installer.py --ca self_<self_cert_serial>_ca.pem --ca_key self_<self_cert_serial>_prv.pem --id_str nrf- --id_imei -s -d --coap
+               python3 device_credentials_installer.py --ca self\_\ *self_cert_serial*\ \_ca.pem --ca_key self\_\ *self_cert_serial*\ \_prv.pem --id_str nrf- --id_imei -s -d --coap
 
             Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`.
             The ``--coap`` option indicates that the device needs the CoAP root CA installed.
@@ -1030,19 +1033,21 @@ Then, complete the following steps for each device you wish to onboard:
 
       .. group-tab:: MQTT
 
-            .. code-block:: console
+            .. parsed-literal::
+               :class: highlight
 
-               python3 claim_and_provision_device.py --api_key "<your_api_key>" --ca="self_<self_cert_serial>_ca.pem" --ca_key="self_<self_cert_serial>_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-"
+               python3 claim_and_provision_device.py --api_key "\ *your_api_key*\ " --ca="self\_\ *self_cert_serial*\ \_ca.pem" --ca_key="self\_\ *self_cert_serial*\ \_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-"
 
-            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and ``<your_api_key>`` is your `nRF Cloud REST API key`_.
+            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and *your_api_key* is your `nRF Cloud REST API key`_.
 
       .. group-tab:: CoAP
 
-            .. code-block:: console
+            .. parsed-literal::
+               :class: highlight
 
-               python3 claim_and_provision_device.py --api_key "<your_api_key>" --ca="self_<self_cert_serial>_ca.pem" --ca_key="self_<self_cert_serial>_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-" --coap
+               python3 claim_and_provision_device.py --api_key "\ *your_api_key*\ " --ca="self\_\ *self_cert_serial*\ \_ca.pem" --ca_key="self\_\ *self_cert_serial*\ \_prv.pem" --install_ca --unclaim --id_imei --id_str "nrf-" --coap
 
-            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and ``<your_api_key>`` is your `nRF Cloud REST API key`_.
+            Where the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>` and *your_api_key* is your `nRF Cloud REST API key`_.
             The ``--coap`` option indicates that the device needs the CoAP root CA installed.
             See below for more details.
 
@@ -1067,13 +1072,14 @@ Then, complete the following steps for each device you wish to onboard:
    This script may take a few minutes.
    When it succeeds, you should see several provisioning commands be issued and succeed, and some additional final output:
 
-   .. code-block:: console
+   .. parsed-literal::
+      :class: highlight
 
-      Adding device 'nrf-<IMEI>' to cloud account...
+      Adding device 'nrf-\ *IMEI*\ ' to cloud account...
       ProvisionDevices API call response: 202 - Accepted
       Done.
 
-   Where ``<IMEI>`` is the IMEI of your device.
+   Where *IMEI* is the IMEI of your device.
 
    The device should also appear in the devices list in the nRF Cloud portal.
 
@@ -1100,9 +1106,10 @@ Next, complete the following steps for each device you wish to onboard:
 
    In addition to the arguments prescribed in that section, also include the ``-embed_save`` argument when running the :file:`create_device_credentials.py` Python script:
 
-   .. code-block:: console
+   .. parsed-literal::
+      :class: highlight
 
-      python3 create_device_credentials.py -ca "self_<self_cert_serial>_ca.pem" -ca_key "self_<self_cert_serial>_prv.pem" -c US -cn "<device_id>" -f cred_ -embed_save
+      python3 create_device_credentials.py -ca "self\_\ *self_cert_serial*\ \_ca.pem" -ca_key "self\_\ *self_cert_serial*\ \_prv.pem" -c US -cn "\ *device_id*\ " -f cred\_ -embed_save
 
    This automatically generates the following three files that are needed for the next step:
 
@@ -1170,15 +1177,16 @@ To generate and sign a device credential locally using your :ref:`self-signed CA
    See `nRF Cloud Device ID`_ for details.
 
    Each device should have its own device ID, and you must use it exactly for all other actions involving that device, otherwise onboarding will fail.
-   This ID is referred to in other steps using the term ``<device_id>``.
+   This ID is referred to in other steps using the term *device_id*.
 
 #. Navigate to the folder where you :ref:`created your self-signed CA certificate <nrf_cloud_multi_service_create_self_signed_ca>`, and use the :file:`create_device_credentials.py` Python script :ref:`you installed <nrf_cloud_multi_service_install_nrf_utils>` to generate a self-signed certificate for the device:
 
-   .. code-block:: console
+   .. parsed-literal::
+      :class: highlight
 
-      python3 create_device_credentials.py -ca "self_<self_cert_serial>_ca.pem" -ca_key "self_<self_cert_serial>_prv.pem" -c US -cn "<device_id>" -f cred_
+      python3 create_device_credentials.py -ca "self\_\ *self_cert_serial*\ \_ca.pem" -ca_key "self\_\ *self_cert_serial*\ \_prv.pem" -c US -cn "\ *device_id*\ " -f cred\_
 
-   Where ``<device_id>`` is the device ID you created, and the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_self_signed_ca>`.
+   Where *device_id* is the device ID you created, and the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <nrf_cloud_multi_service_create_self_signed_ca>`.
 
    Remember to set ``-c`` to your two-letter country code.
    See the `Create Device Credentials <nRF Cloud Utilities Create Device Credentials_>`_ section in the nRF Cloud Utilities documentation for more details.
@@ -1208,11 +1216,12 @@ To onboard devices manually, you can use the `Bulk Onboard Devices <nRF Cloud Po
 
 1. Create an onboarding CSV file named :file:`<device_id>_onboard.csv` and give it the following contents:
 
-   .. code-block:: none
+   .. parsed-literal::
+      :class: highlight
 
-      <device_id>,,,,"<device_cert>"
+      *device_id*\ ,,,,"\ *device_cert*\ "
 
-   Where ``<device_id>`` is replaced by the device ID :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`, and ``<device_cert>`` is replaced by the exact contents of :file:`<device_id>_crt.pem`.
+   Where *device_id* is replaced by the device ID :ref:`you created <nrf_cloud_multi_service_create_device_cred_locally>`, and *device_cert* is replaced by the exact contents of :file:`<device_id>_crt.pem`.
 
    For example, if the device ID you created is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
 
