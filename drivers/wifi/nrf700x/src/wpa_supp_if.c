@@ -2015,12 +2015,6 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	ret = nrf_wifi_set_bss(vif_ctx_zep, params);
-	if (ret) {
-		LOG_ERR("%s: Failed to set BSS", __func__);
-		goto out;
-	}
-
 	nrf_wifi_set_beacon_data(params, &start_ap_info.beacon_data);
 	start_ap_info.beacon_interval = params->beacon_int;
 	start_ap_info.dtim_period = params->dtim_period;
@@ -2065,6 +2059,12 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 
 	if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
 		LOG_ERR("%s: Carrier on event not received (%dms)", __func__, timeout);
+		goto out;
+	}
+
+	ret = nrf_wifi_set_bss(vif_ctx_zep, params);
+	if (ret) {
+		LOG_ERR("%s: Failed to set BSS", __func__);
 		goto out;
 	}
 
