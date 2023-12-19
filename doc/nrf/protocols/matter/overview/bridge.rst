@@ -43,6 +43,8 @@ Unlike native Matter nodes, the bridged device has a dedicated Bridged Device Ba
 
 Since bridged devices can be added to the bridge or removed from it at runtime, the list of endpoints exposed by the bridge can be dynamically updated.
 
+.. _ug_matter_overview_bridge_ncs_implementation:
+
 Implementation in the |NCS|
 ***************************
 

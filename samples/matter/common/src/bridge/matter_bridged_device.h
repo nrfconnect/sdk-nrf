@@ -101,7 +101,7 @@ public:
 	}
 	chip::EndpointId GetEndpointId() const { return mEndpointId; }
 
-	virtual DeviceType GetDeviceType() const = 0;
+	virtual uint16_t GetDeviceType() const = 0;
 	virtual CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,
 				      uint16_t maxReadLength) = 0;
 	virtual CHIP_ERROR HandleWrite(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) = 0;

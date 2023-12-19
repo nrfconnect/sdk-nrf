@@ -21,7 +21,7 @@ public:
 	uint16_t GetRelativeHumidityMeasurementClusterRevision() { return kRelativeHumidityMeasurementClusterRevision; }
 	uint32_t GetRelativeHumidityMeasurementFeatureMap() { return kRelativeHumidityMeasurementFeatureMap; }
 
-	MatterBridgedDevice::DeviceType GetDeviceType() const override
+	uint16_t GetDeviceType() const override
 	{
 		return MatterBridgedDevice::DeviceType::HumiditySensor;
 	}

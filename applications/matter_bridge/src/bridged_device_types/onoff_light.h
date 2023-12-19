@@ -25,7 +25,7 @@ public:
 	uint32_t GetGroupsFeatureMap() { return kGroupsFeatureMap; }
 	uint8_t GetGroupsNameSupportMap() { return kGroupsNameSupportMap; }
 
-	MatterBridgedDevice::DeviceType GetDeviceType() const override
+	uint16_t GetDeviceType() const override
 	{
 		return MatterBridgedDevice::DeviceType::OnOffLight;
 	}

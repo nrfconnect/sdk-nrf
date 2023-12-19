@@ -429,7 +429,7 @@ void BridgeManager::HandleCommand(BridgedDeviceDataProvider &dataProvider, Clust
 						reinterpret_cast<intptr_t>(bindingData));
 }
 
-BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, MatterBridgedDevice::DeviceType &deviceType)
+BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, uint16_t &deviceType)
 {
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 	if (Instance().mDevicesMap.Contains(endpointIndex)) {

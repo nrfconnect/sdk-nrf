@@ -103,7 +103,7 @@ public:
 	 * @param[out] deviceType a type of the bridged device
 	 * @return pointer to the data provider bridged with the device on the specified endpoint
 	 */
-	BridgedDeviceDataProvider *GetProvider(chip::EndpointId endpoint, MatterBridgedDevice::DeviceType &deviceType);
+	BridgedDeviceDataProvider *GetProvider(chip::EndpointId endpoint, uint16_t &deviceType);
 
 	static CHIP_ERROR HandleRead(uint16_t index, chip::ClusterId clusterId,
 				     const EmberAfAttributeMetadata *attributeMetadata, uint8_t *buffer,

@@ -58,8 +58,6 @@ CHIP_ERROR TemperatureSensorDevice::HandleRead(ClusterId clusterId, AttributeId 
 	switch (clusterId) {
 	case Clusters::TemperatureMeasurement::Id:
 		return HandleReadTemperatureMeasurement(attributeId, buffer, maxReadLength);
-	case Clusters::Identify::Id:
-		return HandleReadIdentify(attributeId, buffer, maxReadLength);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}

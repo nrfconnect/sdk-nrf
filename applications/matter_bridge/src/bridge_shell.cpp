@@ -91,7 +91,7 @@ static int SimulatedBridgedDeviceOnOffWriteHandler(const struct shell *shell, si
 	uint8_t value = strtoul(argv[1], nullptr, 0);
 	chip::EndpointId endpointId = strtoul(argv[2], nullptr, 0);
 
-	DeviceType deviceType{};
+	uint16_t deviceType{};
 	auto *provider = BridgeManager().Instance().GetProvider(endpointId, deviceType);
 
 	if (provider) {
