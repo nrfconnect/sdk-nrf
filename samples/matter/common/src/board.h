@@ -103,17 +103,23 @@ private:
 	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
 	static void UpdateLedStateEventHandler(const LEDEvent &event);
 	void ResetAllLeds();
+	void RestoreAllLedsState();
 
 	LEDWidget mLED1;
 	LEDWidget mLED2;
+	bool mLED1SavedState;
+	bool mLED2SavedState;
 	k_timer mFunctionTimer;
 	DeviceState mState = DeviceState::DeviceDisconnected;
 	LedStateHandler mLedStateHandler = UpdateStatusLED;
 #if NUMBER_OF_LEDS == 3
 	LEDWidget mLED3;
+	bool mLED3SavedState;
 #elif NUMBER_OF_LEDS == 4
 	LEDWidget mLED3;
 	LEDWidget mLED4;
+	bool mLED3SavedState;
+	bool mLED4SavedState;
 #endif
 
 	/* Function Timer */

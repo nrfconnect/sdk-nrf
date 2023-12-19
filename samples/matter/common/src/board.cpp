@@ -67,20 +67,36 @@ void Board::UpdateDeviceState(DeviceState state)
 {
 	if (mState != state) {
 		mState = state;
-		ResetAllLeds();
 		mLedStateHandler();
 	}
 }
 
 void Board::ResetAllLeds()
 {
-	sInstance.mLED1.Set(false);
-	sInstance.mLED2.Set(false);
+	mLED1SavedState = mLED1.GetState();
+	mLED2SavedState = mLED2.GetState();
+	mLED1.Set(false);
+	mLED2.Set(false);
 #if NUMBER_OF_LEDS == 3
-	sInstance.mLED3.Set(false);
+	mLED3SavedState = mLED3.GetState();
+	mLED3.Set(false);
 #elif NUMBER_OF_LEDS == 4
-	sInstance.mLED3.Set(false);
-	sInstance.mLED4.Set(false);
+	mLED3SavedState = mLED3.GetState();
+	mLED4SavedState = mLED4.GetState();
+	mLED3.Set(false);
+	mLED4.Set(false);
+#endif
+}
+
+void Board::RestoreAllLedsState()
+{
+	mLED1.Set(mLED1SavedState);
+	mLED2.Set(mLED2SavedState);
+#if NUMBER_OF_LEDS == 3
+	mLED3.Set(mLED3SavedState);
+#elif NUMBER_OF_LEDS == 4
+	mLED3.Set(mLED3SavedState);
+	mLED4.Set(mLED4SavedState);
 #endif
 }
 
@@ -106,6 +122,8 @@ void Board::UpdateStatusLED()
 	 * rate of 100ms.
 	 *
 	 * Otherwise, blink the LED for a very short time. */
+	sInstance.mLED1.Set(false);
+
 	switch (sInstance.mState) {
 	case DeviceState::DeviceDisconnected:
 		sInstance.mLED1.Blink(LedConsts::StatusLed::Disconnected::kOn_ms,
@@ -219,8 +237,8 @@ void Board::FunctionHandler(const ButtonAction &action)
 			sInstance.CancelTimer();
 			sInstance.mFunction = BoardFunctions::None;
 		} else if (sInstance.mFunctionTimerActive && sInstance.mFunction == BoardFunctions::FactoryReset) {
-			sInstance.ResetAllLeds();
 			sInstance.CancelTimer();
+			sInstance.RestoreAllLedsState();
 			sInstance.mLedStateHandler();
 			sInstance.mFunction = BoardFunctions::None;
 			LOG_INF("Factory reset has been canceled");
