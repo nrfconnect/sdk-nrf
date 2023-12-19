@@ -169,6 +169,14 @@ config DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT
 	  data in sample requests sent to other modules. This configuration can be overwritten by
 	  changing the application's real-time configuration using the cloud-side state.
 
+config DATA_SAMPLE_WIFI_DEFAULT
+	bool "Include Wi-Fi APs in sample requests"
+	default y
+	help
+	  If this configuration is enabled the application will by default include Wi-Fi AP data in
+	  sample requests sent to other modules. This configuration can be overwritten by changing
+	  the application's real-time configuration using the cloud-side state.
+
 config DATA_GRANT_SEND_ON_CONNECTION_QUALITY
 	bool "Grant or deny encoding and sending of data based on LTE connection quality"
 	select EXPERIMENTAL
