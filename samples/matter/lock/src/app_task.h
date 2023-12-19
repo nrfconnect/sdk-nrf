@@ -10,14 +10,6 @@
 #include "bolt_lock_manager.h"
 #include "led_widget.h"
 
-#include <platform/CHIPDeviceLayer.h>
-
-#if CONFIG_CHIP_FACTORY_DATA
-#include <platform/nrfconnect/FactoryDataProvider.h>
-#else
-#include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
-#endif
-
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
 #include "dfu_over_smp.h"
 #endif
@@ -48,7 +40,7 @@ private:
 
 	static void LockActionEventHandler();
 	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
+	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
@@ -60,9 +52,5 @@ private:
 #ifdef CONFIG_CHIP_NUS
 	static void NUSLockCallback(void *context);
 	static void NUSUnlockCallback(void *context);
-#endif
-
-#if CONFIG_CHIP_FACTORY_DATA
-	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
 #endif
 };

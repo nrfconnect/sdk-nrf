@@ -52,6 +52,7 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/task_executor.cpp
     ${COMMON_ROOT}/src/board.cpp
+    ${COMMON_ROOT}/src/matter_init.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)

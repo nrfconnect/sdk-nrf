@@ -6,27 +6,15 @@
 
 #include "app_task.h"
 
-#include "fabric_table_delegate.h"
+#include "matter_init.h"
 #include "pwm_device.h"
 #include "task_executor.h"
-
-#include <platform/CHIPDeviceLayer.h>
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/DeferredAttributePersistenceProvider.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
-#include <credentials/DeviceAttestationCredsProvider.h>
-#include <credentials/examples/DeviceAttestationCredsExample.h>
-#include <lib/support/CHIPMem.h>
-#include <lib/support/CodeUtils.h>
-#include <system/SystemError.h>
-
-#ifdef CONFIG_CHIP_WIFI
-#include <app/clusters/network-commissioning/network-commissioning.h>
-#include <platform/nrfconnect/wifi/NrfWiFiDriver.h>
-#endif
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "ota_util.h"
@@ -36,15 +24,12 @@
 #include "aws_iot_integration.h"
 #endif
 
-#include <dk_buttons_and_leds.h>
-#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::app;
-using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
 namespace
@@ -77,137 +62,6 @@ DeferredAttributePersistenceProvider gDeferredAttributePersister(Server::GetInst
 
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
 } /* namespace */
-
-#ifdef CONFIG_CHIP_WIFI
-app::Clusters::NetworkCommissioning::Instance
-	sWiFiCommissioningInstance(0, &(NetworkCommissioning::NrfWiFiDriver::Instance()));
-#endif
-
-CHIP_ERROR AppTask::Init()
-{
-	/* Initialize CHIP stack */
-	LOG_INF("Init CHIP stack");
-
-	int ret;
-
-	CHIP_ERROR err = chip::Platform::MemoryInit();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Platform::MemoryInit() failed");
-		return err;
-	}
-
-	err = PlatformMgr().InitChipStack();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("PlatformMgr().InitChipStack() failed");
-		return err;
-	}
-
-#if defined(CONFIG_NET_L2_OPENTHREAD)
-	err = ThreadStackMgr().InitThreadStack();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("ThreadStackMgr().InitThreadStack() failed: %s", ErrorStr(err));
-		return err;
-	}
-
-	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_Router);
-
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("ThreadStackMgr().InitThreadStack() failed: %s", ErrorStr(err));
-		return err;
-	}
-
-#elif defined(CONFIG_CHIP_WIFI)
-	sWiFiCommissioningInstance.Init();
-#else
-	return CHIP_ERROR_INTERNAL;
-#endif /* CONFIG_NET_L2_OPENTHREAD */
-
-	if (!GetBoard().Init(ButtonEventHandler)) {
-		LOG_ERR("User interface initialization failed.");
-		return CHIP_ERROR_INCORRECT_STATE;
-	}
-
-#ifdef CONFIG_AWS_IOT_INTEGRATION
-	ret = aws_iot_integration_register_callback(AWSIntegrationCallback);
-	if (ret) {
-		LOG_ERR("aws_iot_integration_register_callback() failed");
-		return chip::System::MapErrorZephyr(ret);
-	}
-#endif
-
-	/* Initialize trigger effect timer */
-	k_timer_init(&sTriggerEffectTimer, &AppTask::TriggerEffectTimerTimeoutCallback, nullptr);
-
-	/* Initialize lighting device (PWM) */
-	uint8_t minLightLevel = kDefaultMinLevel;
-	Clusters::LevelControl::Attributes::MinLevel::Get(kLightEndpointId, &minLightLevel);
-
-	uint8_t maxLightLevel = kDefaultMaxLevel;
-	Clusters::LevelControl::Attributes::MaxLevel::Get(kLightEndpointId, &maxLightLevel);
-
-	ret = mPWMDevice.Init(&sLightPwmDevice, minLightLevel, maxLightLevel, maxLightLevel);
-	if (ret != 0) {
-		return chip::System::MapErrorZephyr(ret);
-	}
-	mPWMDevice.SetCallbacks(ActionInitiated, ActionCompleted);
-
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-	/* OTA image confirmation must be done before the factory data init. */
-	OtaConfirmNewImage();
-#endif
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init();
-	GetDFUOverSMP().ConfirmNewImage();
-#endif
-
-	/* Initialize CHIP server */
-#if CONFIG_CHIP_FACTORY_DATA
-	ReturnErrorOnFailure(mFactoryDataProvider.Init());
-	SetDeviceInstanceInfoProvider(&mFactoryDataProvider);
-	SetDeviceAttestationCredentialsProvider(&mFactoryDataProvider);
-	SetCommissionableDataProvider(&mFactoryDataProvider);
-#else
-	SetDeviceInstanceInfoProvider(&DeviceInstanceInfoProviderMgrImpl());
-	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
-#endif
-
-	static CommonCaseDeviceServerInitParams initParams;
-	(void)initParams.InitializeStaticResourcesBeforeServerInit();
-
-	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
-	app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
-	ConfigurationMgr().LogDeviceConfig();
-	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-	AppFabricTableDelegate::Init();
-
-	/*
-	 * Add CHIP event handler and start CHIP thread.
-	 * Note that all the initialization code should happen prior to this point to avoid data races
-	 * between the main and the CHIP threads.
-	 */
-	PlatformMgr().AddEventHandler(ChipEventHandler, 0);
-
-	err = PlatformMgr().StartEventLoopTask();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
-		return err;
-	}
-
-	return CHIP_NO_ERROR;
-}
-
-CHIP_ERROR AppTask::StartApp()
-{
-	ReturnErrorOnFailure(Init());
-
-	while (true) {
-		TaskExecutor::DispatchNextTask();
-	}
-
-	return CHIP_NO_ERROR;
-}
 
 void AppTask::IdentifyStartHandler(Identify *)
 {
@@ -312,16 +166,14 @@ bool AppTask::AWSIntegrationCallback(struct aws_iot_integration_cb_data *data)
 
 	if (data->attribute_id == ATTRIBUTE_ID_ONOFF) {
 		/* write the new on/off value */
-		status = Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId,
-								 data->value);
+		status = Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId, data->value);
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating on/off cluster failed: %x", status);
 			return false;
 		}
 	} else if (data->attribute_id == ATTRIBUTE_ID_LEVEL_CONTROL) {
 		/* write the current level */
-		status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId,
-									       data->value);
+		status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, data->value);
 
 		if (status != EMBER_ZCL_STATUS_SUCCESS) {
 			LOG_ERR("Updating level cluster failed: %x", status);
@@ -333,7 +185,7 @@ bool AppTask::AWSIntegrationCallback(struct aws_iot_integration_cb_data *data)
 }
 #endif /* CONFIG_AWS_IOT_INTEGRATION */
 
-void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
+void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 {
 	bool isNetworkProvisioned = false;
 
@@ -365,7 +217,8 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
 #elif defined(CONFIG_CHIP_WIFI)
 	case DeviceEventType::kWiFiConnectivityChange:
-		isNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
+		isNetworkProvisioned =
+			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
 			InitBasicOTARequestor();
@@ -427,4 +280,57 @@ void AppTask::UpdateClusterState()
 			LOG_ERR("Updating level cluster failed: %x", status);
 		}
 	});
+}
+
+CHIP_ERROR AppTask::Init()
+{
+	/* Initialize Matter stack */
+	ReturnErrorOnFailure(
+		Nordic::Matter::PrepareServer(MatterEventHandler, Nordic::Matter::InitData{ .mPostServerInitClbk = [] {
+						   app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
+						   return CHIP_NO_ERROR;
+					   } }));
+
+	if (!GetBoard().Init(ButtonEventHandler)) {
+		LOG_ERR("User interface initialization failed.");
+		return CHIP_ERROR_INCORRECT_STATE;
+	}
+
+	int ret{};
+#ifdef CONFIG_AWS_IOT_INTEGRATION
+	ret = aws_iot_integration_register_callback(AWSIntegrationCallback);
+	if (ret) {
+		LOG_ERR("aws_iot_integration_register_callback() failed");
+		return chip::System::MapErrorZephyr(ret);
+	}
+#endif
+
+	/* Initialize trigger effect timer */
+	k_timer_init(&sTriggerEffectTimer, &AppTask::TriggerEffectTimerTimeoutCallback, nullptr);
+
+	/* Initialize lighting device (PWM) */
+	uint8_t minLightLevel = kDefaultMinLevel;
+	Clusters::LevelControl::Attributes::MinLevel::Get(kLightEndpointId, &minLightLevel);
+
+	uint8_t maxLightLevel = kDefaultMaxLevel;
+	Clusters::LevelControl::Attributes::MaxLevel::Get(kLightEndpointId, &maxLightLevel);
+
+	ret = mPWMDevice.Init(&sLightPwmDevice, minLightLevel, maxLightLevel, maxLightLevel);
+	if (ret != 0) {
+		return chip::System::MapErrorZephyr(ret);
+	}
+	mPWMDevice.SetCallbacks(ActionInitiated, ActionCompleted);
+
+	return Nordic::Matter::StartServer();
+}
+
+CHIP_ERROR AppTask::StartApp()
+{
+	ReturnErrorOnFailure(Init());
+
+	while (true) {
+		TaskExecutor::DispatchNextTask();
+	}
+
+	return CHIP_NO_ERROR;
 }

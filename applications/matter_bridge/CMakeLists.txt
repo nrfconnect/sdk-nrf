@@ -54,6 +54,7 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/persistent_storage_util.cpp
     ${COMMON_ROOT}/src/task_executor.cpp
     ${COMMON_ROOT}/src/board.cpp
+    ${COMMON_ROOT}/src/matter_init.cpp
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)

@@ -10,16 +10,6 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
-#if CONFIG_CHIP_FACTORY_DATA
-#include <platform/nrfconnect/FactoryDataProvider.h>
-#else
-#include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
-#endif
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-#include "dfu_over_smp.h"
-#endif
-
 struct k_timer;
 struct Identify;
 
@@ -51,9 +41,5 @@ private:
 	static void CancelTimer(Timer);
 	static void UserTimerTimeoutCallback(k_timer *timer);
 
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
-
-#if CONFIG_CHIP_FACTORY_DATA
-	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
-#endif
+	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 };
