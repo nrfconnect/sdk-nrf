@@ -1,6 +1,7 @@
 sample:
   description: Zigbee application that includes all Zigbee shell commands
   name: Zigbee application with Zigbee shell
+
 tests:
   sample.zigbee.shell:
     build_only: true
