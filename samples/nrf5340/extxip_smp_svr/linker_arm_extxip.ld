@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2022 Carlo Caione <ccaione@baylibre.com>
+ * Copyrigt# Copyright (c) 2024 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/**
+ * @file
+ * @brief External QSPI flash Linker command/script file
+ *
+ * Linker script for moving desired .text and and .data to the external
+ * memory space.
+ */
+
+#include <zephyr/linker/sections.h>
+#include <zephyr/devicetree.h>
+
+#include <zephyr/linker/linker-defs.h>
+#include <zephyr/linker/linker-tool.h>
+
+/*
+ * nRF5340dk and thingy53 are shipping QSPI external flashes.
+ * These memories are mapped beginning from 0x1000_0000 internal SoC memory
+ * address. This addressing space can be used for XIP and direct data access.
+ */
+MEMORY
+{
+     /* This maps in mcuboot_primary_2 partition defined in pm_static.yaml
+      * components for ORIGIN calculation:
+      *  - 0x10000000: offset of QSPI external memory in SoC memory mapping.
+      *  - 0x120000: mcuboot_primary_2 offset in QSPI external memory
+      *  - 0x200: image header size.
+      * The size of this region is size of mcuboot_primary_2 reduced by the
+      * image header size.
+      */
+     EXTFLASH (wx) : ORIGIN = 0x10120200, LENGTH = 0x3FE00
+}
+
+#include <zephyr/arch/arm/cortex_m/scripts/linker.ld>
