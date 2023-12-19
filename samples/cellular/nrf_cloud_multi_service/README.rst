@@ -185,7 +185,7 @@ To enable full modem FOTA, add the following parameter to your build command:
 Also, specify your development kit version by appending it to the board name.
 For example, if you are using an nRF9160 DK version 1.0.1, use the following board name in your build command:
 
-``nrf9160dk_nrf9160_ns@1_0_1``
+``nrf9160dk_nrf9160_ns@1.0.1``
 
 This sample also supports placement of the MCUboot secondary partition in external flash for the nRF9161 DK, and for nRF9160 DK version 0.14.0 and higher.
 To enable this, add the following parameter to your build command:
@@ -242,7 +242,7 @@ To enable this, add the following parameter to your build command:
 Also, specify your development kit version by appending it to the board name.
 For example, if you are using an nRF9160 development kit version 1.0.1, use the following board name in your build command:
 
-``nrf9160dk_nrf9160_ns@1_0_1``
+``nrf9160dk_nrf9160_ns@1.0.1``
 
 .. _nrf_cloud_multi_service_remote_at:
 
