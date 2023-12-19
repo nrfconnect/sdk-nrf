@@ -338,7 +338,7 @@ exit:
 	return err;
 }
 
-CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel)
+CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel, BLEConnectivityManager::ConnectionSecurityRequest * request)
 {
 	BLEBridgedDeviceProvider *provider =
 		static_cast<BLEBridgedDeviceProvider *>(BleBridgedDeviceFactory::GetDataProviderFactory().Create(
@@ -375,7 +375,7 @@ CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btA
 	contextPtr->address = btAddress;
 
 	provider->InitializeBridgedDevice(btAddress, BluetoothDeviceConnected, contextPtr.get());
-	err = BLEConnectivityManager::Instance().Connect(provider);
+	err = BLEConnectivityManager::Instance().Connect(provider, request);
 
 	if (err == CHIP_NO_ERROR) {
 		contextPtr.release();

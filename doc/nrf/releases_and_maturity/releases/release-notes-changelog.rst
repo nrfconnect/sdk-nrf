@@ -259,6 +259,7 @@ Matter Bridge
   * Support for On/Off Light Switch bridged device type.
   * Support for bindings to the On/Off Light Switch device implementation.
   * Guide about extending the application by adding support for a new Matter device type, a new Bluetooth LE service or a new protocol.
+  * Support for Bluetooth LE Security Manager Protocol that allows to establish secure session with bridged Bluetooth LE devices.
 
 Samples
 =======

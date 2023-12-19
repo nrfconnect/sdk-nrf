@@ -280,11 +280,45 @@ Adding a Bluetooth LE bridged device to the Matter bridge
 
    .. code-block:: console
 
+      ---------------------------------------------------------------------
+      | Bridged Bluetooth LE device authentication                        |
+      |                                                                   |
+      | Insert pin code displayed by the Bluetooth LE peripheral device   |
+      | to authenticate the pairing operation.                            |
+      |                                                                   |
+      | To do that, use matter_bridge pincode <pincode> shell command.    |
+      ---------------------------------------------------------------------
+
+   To complete the adding process, you must use the ``pincode`` command to insert the authentication pincode displayed by the bridged device.
+
+Inserting a Bluetooth LE authentication pincode
+   Use the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      matter_bridge pincode *<ble_pincode>*
+
+   In this command, *<ble_pincode>* is the Bluetooth LE authentication pincode of the bridged device to be paired.
+
+   Example command:
+
+   .. code-block:: console
+
+      uart:~$ matter_bridge pincode 305051
+
+   The terminal output is similar to the following one:
+
+   .. code-block:: console
+
+      I: Pairing completed: E3:9D:5E:51:AD:14 (random), bonded: 1
+
+      I: Security changed: level 4
+      I: The GATT discovery completed
       I: Added device to dynamic endpoint 3 (index=0)
       I: Added device to dynamic endpoint 4 (index=1)
       I: Created 0x100 device type on the endpoint 3
       I: Created 0xf device type on the endpoint 4
-
 
 Removing a bridged device from the Matter bridge
    Use the following command:
@@ -352,6 +386,33 @@ Build the target using the following command in the project directory to enable 
    west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DOVERLAY_CONFIG="overlay-bt_max_connections_app.conf" -Dhci_ipc_OVERLAY_CONFIG="*absoule_path*/overlay-bt_max_connections_net.conf"
 
 Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
+
+Configuring the Bluetooth LE security
+-------------------------------------
+
+The application uses Bluetooth LE Security Manager Protocol (SMP) to provide secure connection between the Matter bridge and Bluetooth LE bridged devices.
+
+.. note::
+   Do not confuse the Bluetooth LE Security Manager Protocol (SMP) abbreviation with the Bluetooth LE Simple Management Protocol that has the same abbreviation and is used for the Device Firmware Upgrade process.
+
+The following security levels are defined by the Bluetooth LE specification:
+
+* Security Level 1 - supports communication without security.
+* Security Level 2 - supports AES-CMAC communication encryption, but does not require device authentication.
+* Security Level 3 - supports AES-CMAC communication encryption, requires device authentication and pairing.
+* Security Level 4 - supports ECDHE communication encryption, requires authentication and pairing.
+
+To read more about the Bluetooth LE security implementation in Zephyr, see the Security section of the :ref:`bluetooth-arch` page.
+By default, the Matter bridge application has SMP enabled and supports security levels 2, 3 and 4.
+
+You can disable the Bluetooth LE security mechanisms by setting the :kconfig:option:`CONFIG_BT_SMP` Kconfig option to ``n``.
+This is strongly not recommended, as it leads to unencrypted communication with bridged devices, which makes them vulnerable to the security attacks.
+
+You can select the minimum security level required by the application.
+When selected, the Matter bridge will require setting the selected minimum level from the connected Bluetooth LE bridged device.
+If the bridged device supports also levels higher than the selected minimum, the devices may negotiate using the highest shared security level.
+In case the bridged device does not support the minimum required level, the connection will be terminated.
+To select the minimum security level, set the :kconfig:option:`CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL` Kconfig option to ``2``, ``3`` or ``4``.
 
 .. _matter_bridge_app_build_types:
 
@@ -458,6 +519,7 @@ After building the sample and programming it to your development kit, complete t
             * :ref:`peripheral_esp`
 
          #. Connect the development kit that is running the Bluetooth LE sample to the PC.
+         #. |connect_terminal_ANSI|
          #. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to scan for available Bluetooth LE devices:
 
             .. code-block:: console
@@ -496,6 +558,49 @@ After building the sample and programming it to your development kit, complete t
             .. parsed-literal::
                :class: highlight
 
+               I: Connected: C7:44:0F:3E:BB:F0 (random)
+               ---------------------------------------------------------------------
+               | Bridged Bluetooth LE device authentication                        |
+               |                                                                   |
+               | Insert pin code displayed by the Bluetooth LE peripheral device   |
+               | to authenticate the pairing operation.                            |
+               |                                                                   |
+               | To do that, use matter_bridge pincode <pincode> shell command.    |
+               ---------------------------------------------------------------------
+
+         #. Write down the authentication pincode value from the Bluetooth LE bridged device terminal.
+            The terminal output is similar to the following one:
+
+            .. parsed-literal::
+               :class: highlight
+
+               Passkey for FD:D6:53:EB:92:3A (random): 350501
+
+            In the above example output, the displayed pincode value is  ``350501``.
+            It will be used in the next steps as *<bluetooth_authentication_pincode>*.
+         #. Insert the authentication pincode of the bridged device in the Matter bridge terminal.
+            To insert the pincode, run the following :ref:`Matter CLI command <matter_bridge_cli>` with *<bluetooth_authentication_pincode>* replaced by the value read in the previous step:
+
+            .. parsed-literal::
+               :class: highlight
+
+               uart:~$ matter_bridge pincode *<bluetooth_authentication_pincode>*
+
+            For example, if you want to add a new Bluetooth LE bridged device with pincode ``350501``, use the following command:
+
+            .. code-block:: console
+
+               uart:~$ matter_bridge pincode 350501
+
+            The terminal output is similar to the following one:
+
+            .. parsed-literal::
+               :class: highlight
+
+               I: Pairing completed: E3:9D:5E:51:AD:14 (random), bonded: 1
+
+               I: Security changed: level 4
+               I: The GATT discovery completed
                I: Added device to dynamic endpoint 3 (index=0)
                I: Added device to dynamic endpoint 4 (index=1)
                I: Created 0x100 device type on the endpoint 3

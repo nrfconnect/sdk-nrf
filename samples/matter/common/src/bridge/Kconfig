@@ -30,4 +30,14 @@ config BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS
 	int "Time (in ms) within which the Bridge will try to re-establish a connection to the lost BT LE device"
 	default 2000
 
+config BRIDGE_BT_MINIMUM_SECURITY_LEVEL
+	int "Minimum Bluetooth security level of bridged devices that will be accepted by the bridge device"
+	default 2
+	range 2 4
+	depends on BT_SMP
+	help
+	   The minimum Bluetooth security level means that the bridged devices using this or a higher level will be
+	   allowed to connect to the bridge. The level cannot be set to a value smaller than 2, as it would mean that
+	   the communication with the connected devices will not be encrypted, what is not considered to be secure.
+
 endif

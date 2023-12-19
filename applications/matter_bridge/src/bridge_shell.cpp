@@ -15,6 +15,26 @@
 
 #include <zephyr/shell/shell.h>
 
+#if defined(CONFIG_BRIDGED_DEVICE_BT) && defined(CONFIG_BT_SMP)
+static void BluetoothConnectionSecurityRequest(void *context)
+{
+	if (!context) {
+		return;
+	}
+
+	const struct shell *shell = reinterpret_cast<struct shell *>(context);
+
+	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
+	shell_fprintf(shell, SHELL_INFO, "| Bridged Bluetooth LE device authentication                        |\n");
+	shell_fprintf(shell, SHELL_INFO, "|                                                                   |\n");
+	shell_fprintf(shell, SHELL_INFO, "| Insert pin code displayed by the Bluetooth LE peripheral device   |\n");
+	shell_fprintf(shell, SHELL_INFO, "| to authenticate the pairing operation.                            |\n");
+	shell_fprintf(shell, SHELL_INFO, "|                                                                   |\n");
+	shell_fprintf(shell, SHELL_INFO, "| To do that, use matter_bridge pincode <pincode> shell command.    |\n");
+	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
+}
+#endif /* CONFIG_BRIDGED_DEVICE_BT && CONFIG_BT_SMP */
+
 static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char **argv)
 {
 	char *nodeLabel = nullptr;
@@ -39,7 +59,14 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
 	}
 
+#ifdef CONFIG_BT_SMP
+	BLEConnectivityManager::ConnectionSecurityRequest request;
+	request.mCallback = BluetoothConnectionSecurityRequest;
+	request.mContext = const_cast<struct shell *>(shell);
+	result = BleBridgedDeviceFactory::CreateDevice(uuid, address, nodeLabel, &request);
+#else
 	result = BleBridgedDeviceFactory::CreateDevice(uuid, address, nodeLabel);
+#endif /* CONFIG_BT_SMP */
 
 #elif defined(CONFIG_BRIDGED_DEVICE_SIMULATED)
 	int deviceType = strtoul(argv[1], NULL, 0);
@@ -168,6 +195,24 @@ static void BluetoothScanResult(BLEConnectivityManager::ScannedDevice *devices, 
 	}
 }
 
+#ifdef CONFIG_BT_SMP
+static int InsertBridgedDevicePincodeHandler(const struct shell *shell, size_t argc, char **argv)
+{
+	int bleDeviceIndex = strtoul(argv[0], NULL, 0);
+	unsigned int pincode = strtoul(argv[1], NULL, 0);
+
+	bt_addr_le_t address;
+	if (BLEConnectivityManager::Instance().GetScannedDeviceAddress(&address, bleDeviceIndex) != CHIP_NO_ERROR) {
+		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
+	} else {
+		shell_fprintf(shell, SHELL_ERROR, "Found device address\n");
+	}
+
+	BLEConnectivityManager::Instance().SetPincode(address, pincode);
+	return 0;
+}
+#endif /* CONFIG_BT_SMP */
+
 static int ScanBridgedDeviceHandler(const struct shell *shell, size_t argc, char **argv)
 {
 	shell_fprintf(shell, SHELL_INFO, "Scanning for 10 s ...\n");
@@ -225,6 +270,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Scan for Bluetooth LE devices to bridge. \n"
 		      "Usage: scan\n",
 		      ScanBridgedDeviceHandler, 1, 0),
+#ifdef CONFIG_BT_SMP
+	SHELL_CMD_ARG(pincode, NULL,
+		      "Insert pincode for Bluetooth LE device pairing. \n"
+		      "Usage: pincode <pincode>\n"
+		      "* pincode - is a pin required for Bluetooth LE pairing authentication\n",
+		      InsertBridgedDevicePincodeHandler, 2, 0),
+#endif /* CONFIG_BT_SMP */
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 	SHELL_SUBCMD_SET_END);
 

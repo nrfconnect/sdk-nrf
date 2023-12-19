@@ -76,10 +76,12 @@ CHIP_ERROR CreateDevice(int deviceType, bt_addr_le_t btAddress, const char *node
  * @param uuid the Bluetooth LE service UUID of a bridged device provider that will be paired with bridged device
  * @param btAddress the Bluetooth LE address of a device to be bridged with created Matter device
  * @param nodeLabel node label of a Matter device to be created
+ * @param request address of connection request object for handling additional security information requiered by the connection.
+ *				  Can be nullptr, if connection does not use security.
  * @return CHIP_NO_ERROR on success
  * @return other error code on failure
  */
-CHIP_ERROR CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel);
+CHIP_ERROR CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel, BLEConnectivityManager::ConnectionSecurityRequest * request = nullptr);
 
 /**
  * @brief Remove bridged device.
