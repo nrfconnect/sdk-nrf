@@ -47,7 +47,7 @@ static void lte_trace_cb(enum lte_lc_trace_type type)
 
 		err = MEMFAULT_METRIC_TIMER_START(ncs_lte_time_to_connect_ms);
 		if (err) {
-			LOG_WRN("LTE connection time tracking was not started, error: %d", err);
+			LOG_ERR("LTE connection time tracking was not started, error: %d", err);
 		} else {
 			connect_timer_started = true;
 		}
@@ -113,7 +113,6 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		err = MEMFAULT_METRIC_SET_STRING(ncs_lte_operator, operator_name);
 		if (err) {
 			LOG_ERR("Failed to set ncs_lte_operator");
-			LOG_ERR("Failed to set ncs_lte_band");
 		}
 	}
 #endif
@@ -170,7 +169,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 
 				err = MEMFAULT_METRIC_TIMER_START(ncs_lte_time_to_connect_ms);
 				if (err) {
-					LOG_WRN("Failed to start LTE connection timer, error: %d",
+					LOG_ERR("Failed to start LTE connection timer, error: %d",
 						err);
 				} else {
 					LOG_DBG("ncs_lte_time_to_connect_ms started");
@@ -243,7 +242,7 @@ void memfault_lte_metrics_init(void)
 
 	int err = modem_info_connectivity_stats_init();
 	if (err) {
-		LOG_ERR("Failed to init connectivity stats, err: %d", err);
+		LOG_WRN("Failed to init connectivity stats, error: %d", err);
 	}
 #endif
 
@@ -263,7 +262,7 @@ void memfault_lte_metrics_update(void)
 	int rx_kybtes;
 	int err = modem_info_get_connectivity_stats(&tx_kbytes, &rx_kybtes);
 	if (err) {
-		LOG_WRN("LTE connectivity stats collections failed, error: %d", err);
+		LOG_WRN("Failed to collect connectivity stats, error: %d", err);
 	} else {
 		err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_lte_tx_kilobytes, tx_kbytes);
 		if (err) {

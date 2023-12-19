@@ -117,11 +117,11 @@ void memfault_bt_metrics_update(void)
 
 	err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_bt_bond_count, bond_count);
 	if (err) {
-		LOG_WRN("Failed to set the ncs_bt_bond_count metric, err: %d", err);
+		LOG_ERR("Failed to set the ncs_bt_bond_count metric, err: %d", err);
 	}
 
 	err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_bt_connection_count, atomic_get(&connection_count));
 	if (err) {
-		LOG_WRN("Failed to set ncs_bt_connection_count metrics, err: %d", err);
+		LOG_ERR("Failed to set ncs_bt_connection_count metrics, err: %d", err);
 	}
 }

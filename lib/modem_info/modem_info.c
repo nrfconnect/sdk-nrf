@@ -935,6 +935,7 @@ int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes)
 				     tx_kbytes, rx_kbytes);
 
 	if (ret != 2) {
+		LOG_ERR("Could not get connectivity stats, error: %d", ret);
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 
@@ -950,10 +951,12 @@ int modem_info_get_current_band(uint8_t *band)
 	int ret = nrf_modem_at_scanf("AT%XCBAND", "%%XCBAND: %u", band);
 
 	if (ret != 1) {
+		LOG_ERR("Could not get band, error: %d", ret);
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 
 	if (*band == BAND_UNAVAILABLE) {
+		LOG_WRN("No valid band");
 		return -ENOENT;
 	}
 
@@ -970,12 +973,15 @@ int modem_info_get_operator(char *buf, size_t len)
 	int ret = nrf_modem_at_cmd(response, sizeof(response), AT_CMD_XMONITOR);
 
 	if (ret) {
+		LOG_ERR("Could not get modem parameters, error: %d", ret);
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 	int result =
 		sscanf(response, "%%XMONITOR: %*[^,],%*[^,],\"%" STRINGIFY(MAX_SHORT_OP_NAME_SIZE_WITHOUT_NULL_TERM) "[^\"]\",", buf);
 
 	if (result != 1) {
+		// Warning instead of error because it is not always reported
+		LOG_WRN("Operator collection failed, error: %d", ret);
 		return -ENOMSG;
 	}
 
@@ -993,10 +999,12 @@ int modem_info_get_snr(int *snr)
 	int ret = nrf_modem_at_scanf("AT%XSNRSQ?", "%%XSNRSQ: %d,%*d,%*d", snr);
 
 	if (ret != 1) {
+		LOG_ERR("Could not get SNR, error: %d", ret);
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 
 	if (*snr == SNR_UNAVAILABLE) {
+		LOG_WRN("No valid SNR");
 		return -ENOENT;
 	}
 
