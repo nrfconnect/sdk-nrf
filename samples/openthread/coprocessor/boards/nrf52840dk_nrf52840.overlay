@@ -1,7 +1,11 @@
-/* Copyright (c) 2020 Nordic Semiconductor ASA
+/* Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+&mx25r64 {
+	status = "disabled";
+};
 
 &uart0 {
 	current-speed = <1000000>;
