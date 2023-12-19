@@ -36,9 +36,9 @@ Metrics
 The sample shows how to capture user-specific metrics.
 It defines the following metrics:
 
-* ``Button3PressCount`` - The number of **Button 3** presses.
-* ``BatteryLvl`` - The simulated battery level.
-* ``Button1TimeMeasure`` - The time measured between two **Button 1** presses.
+* ``button_3_press_count`` - The number of **Button 3** presses.
+* ``battery_soc_pct`` - The simulated battery level.
+* ``button_1_elapsed_time_ms`` - The time measured between two **Button 1** presses.
 
 These metrics are defined in the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_metrics_heartbeat_config.def` file.
 For more details about the metrics, see `Memfault: Collecting Device Metrics`_.
@@ -49,24 +49,24 @@ The following metrics are enabled by default in this sample:
 
 * Bluetooth metrics, enabled and disabled using the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` Kconfig option.
 
-  * ``Ncs_BtConnectionCount`` - Number of Bluetooth connections.
-  * ``Ncs_BtConnectionTime`` - Bluetooth connection time.
+  * ``ncs_bt_connection_count`` - Number of Bluetooth connections.
+  * ``ncs_bt_connection_time_ms`` - Bluetooth connection time.
 
     Time with at least one live Bluetooth connection.
-  * ``Ncs_BtBondCount`` - Number of Bluetooth bonds.
+  * ``ncs_bt_bond_count`` - Number of Bluetooth bonds.
 
 * Stack usage metrics shows the free stack space in bytes.
   Configurable by the :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS` Kconfig option.
 
-  * ``NcsBtRxUnusedStack`` - HCI RX thread stack.
-  * ``NcsBtTxUnusedStack`` - HCI TX thread stack.
+  * ``ncs_bt_rx_unused_stack`` - HCI RX thread stack.
+  * ``ncs_bt_tx_unused_stack`` - HCI TX thread stack.
 
 Error tracking with trace events
 ================================
 
 The sample implements the following user-defined trace reason for demonstration purposes:
 
-``Button2StateChanged`` - Collected every time when **Button 2** changes its state.
+``button_2_state_changed`` - Collected every time when **Button 2** changes its state.
 
 The trace events are defined in the file :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_trace_reason_user_config.def` file.
 See `Memfault: Error Tracking with Trace Events`_ for more details about trace events.
@@ -111,12 +111,12 @@ Button 1:
    During the pairing procedure, press this button to accept pairing.
 
 Button 2:
-   Triggers the ``Button2StateChanged`` trace event.
+   Triggers the ``button_2_state_changed`` trace event.
 
    During the pairing procedure, press this button to reject pairing.
 
 Button 3:
-   Every press of this button is counted under the ``Button3PressCount`` metric.
+   Every press of this button is counted under the ``button_3_press_count`` metric.
 
 Button 4:
    Simulate a development kit crash by triggering a hardfault exception by division by zero.

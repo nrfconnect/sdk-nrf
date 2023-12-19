@@ -2,6 +2,6 @@
  * Please refer to https://docs.memfault.com/docs/embedded/metrics-api for more details.
  */
 
-MEMFAULT_METRICS_KEY_DEFINE(Button3PressCount, kMemfaultMetricType_Unsigned)
-MEMFAULT_METRICS_KEY_DEFINE(Button1TimeMeasure, kMemfaultMetricType_Timer)
-MEMFAULT_METRICS_KEY_DEFINE(BatteryLvl, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(button_3_press_count, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(button_1_elapsed_time_ms, kMemfaultMetricType_Timer)
+MEMFAULT_METRICS_KEY_DEFINE(battery_soc_pct, kMemfaultMetricType_Unsigned)

@@ -76,7 +76,7 @@ entry:
 	 * Memfault SDKs internal HTTP transport is used.
 	 */
 #if !defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
-		memfault_zephyr_port_post_data();
+	memfault_zephyr_port_post_data();
 #else
 	uint8_t data[CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX];
 	size_t len = sizeof(data);
@@ -111,8 +111,7 @@ entry:
 }
 
 K_THREAD_DEFINE(mflt_send_thread, CONFIG_DEBUG_MODULE_MEMFAULT_THREAD_STACK_SIZE,
-		memfault_internal_send, NULL, NULL, NULL,
-		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
+		memfault_internal_send, NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
 #endif /* if defined(CONFIG_MEMFAULT) */
 
@@ -127,73 +126,56 @@ static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_modem_module_event(aeh)) {
 		struct modem_module_event *event = cast_modem_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.modem = *event
-		};
+		struct debug_msg_data debug_msg = {.module.modem = *event};
 
 		message_handler(&debug_msg);
 	}
 
 	if (is_cloud_module_event(aeh)) {
 		struct cloud_module_event *event = cast_cloud_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.cloud = *event
-		};
+		struct debug_msg_data debug_msg = {.module.cloud = *event};
 
 		message_handler(&debug_msg);
 	}
 
 	if (is_location_module_event(aeh)) {
 		struct location_module_event *event = cast_location_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.location = *event
-		};
+		struct debug_msg_data debug_msg = {.module.location = *event};
 
 		message_handler(&debug_msg);
 	}
 
 	if (is_sensor_module_event(aeh)) {
-		struct sensor_module_event *event =
-				cast_sensor_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.sensor = *event
-		};
+		struct sensor_module_event *event = cast_sensor_module_event(aeh);
+		struct debug_msg_data debug_msg = {.module.sensor = *event};
 
 		message_handler(&debug_msg);
 	}
 
 	if (is_ui_module_event(aeh)) {
 		struct ui_module_event *event = cast_ui_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.ui = *event
-		};
+		struct debug_msg_data debug_msg = {.module.ui = *event};
 
 		message_handler(&debug_msg);
 	}
 
 	if (is_app_module_event(aeh)) {
 		struct app_module_event *event = cast_app_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.app = *event
-		};
+		struct debug_msg_data debug_msg = {.module.app = *event};
 
 		message_handler(&debug_msg);
 	}
 
 	if (is_data_module_event(aeh)) {
 		struct data_module_event *event = cast_data_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.data = *event
-		};
+		struct debug_msg_data debug_msg = {.module.data = *event};
 
 		message_handler(&debug_msg);
 	}
 
 	if (is_util_module_event(aeh)) {
 		struct util_module_event *event = cast_util_module_event(aeh);
-		struct debug_msg_data debug_msg = {
-			.module.util = *event
-		};
+		struct debug_msg_data debug_msg = {.module.util = *event};
 
 		message_handler(&debug_msg);
 	}
@@ -232,8 +214,7 @@ static void watchdog_handler(const struct watchdog_evt *evt)
 			 "Installed watchdog timeout is too small");
 
 		err = memfault_software_watchdog_update_timeout(
-						evt->timeout -
-						CONFIG_DEBUG_MODULE_MEMFAULT_WATCHDOG_DELTA_MS);
+			evt->timeout - CONFIG_DEBUG_MODULE_MEMFAULT_WATCHDOG_DELTA_MS);
 		if (err) {
 			LOG_ERR("memfault_software_watchdog_update_timeout, error: %d", err);
 		}
@@ -264,15 +245,16 @@ static void add_location_metrics(uint8_t satellites, uint32_t search_time,
 
 	switch (event) {
 	case LOCATION_MODULE_EVT_GNSS_DATA_READY:
-		err = MEMFAULT_METRIC_SET_UNSIGNED(GnssTimeToFix, search_time);
+		err = MEMFAULT_METRIC_SET_UNSIGNED(gnss_time_to_fix_ms, search_time);
 		if (err) {
-			LOG_ERR("Failed updating GnssTimeToFix metric, error: %d", err);
+			LOG_ERR("Failed updating gnss_time_to_fix_ms metric, error: %d", err);
 		}
 		break;
 	case LOCATION_MODULE_EVT_TIMEOUT:
-		err = MEMFAULT_METRIC_SET_UNSIGNED(LocationTimeoutSearchTime, search_time);
+		err = MEMFAULT_METRIC_SET_UNSIGNED(location_timeout_search_time_ms, search_time);
 		if (err) {
-			LOG_ERR("Failed updating LocationTimeoutSearchTime metric, error: %d", err);
+			LOG_ERR("Failed updating ocation_timeout_search_time_ms metric, error: %d",
+				err);
 		}
 		break;
 	default:
@@ -280,9 +262,9 @@ static void add_location_metrics(uint8_t satellites, uint32_t search_time,
 		return;
 	}
 
-	err = MEMFAULT_METRIC_SET_UNSIGNED(GnssSatellitesTracked, satellites);
+	err = MEMFAULT_METRIC_SET_UNSIGNED(gnss_satellites_tracked_count, satellites);
 	if (err) {
-		LOG_ERR("Failed updating GnssSatellitesTracked metric, error: %d", err);
+		LOG_ERR("Failed updating gnss_satellites_tracked_count metric, error: %d", err);
 	}
 
 	memfault_metrics_heartbeat_debug_trigger();
@@ -352,8 +334,8 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 	if ((IS_EVENT(msg, location, LOCATION_MODULE_EVT_TIMEOUT)) ||
 	    (IS_EVENT(msg, location, LOCATION_MODULE_EVT_GNSS_DATA_READY))) {
 		add_location_metrics(msg->module.location.data.location.satellites_tracked,
-				msg->module.location.data.location.search_time,
-				msg->module.location.type);
+				     msg->module.location.data.location.search_time,
+				     msg->module.location.type);
 		return;
 	}
 }
@@ -373,7 +355,9 @@ static void message_handler(struct debug_msg_data *msg)
 		 * when building for PC.
 		 */
 		if (IS_ENABLED(CONFIG_BOARD_QEMU_X86) || IS_ENABLED(CONFIG_BOARD_NATIVE_POSIX)) {
-			{ SEND_EVENT(debug, DEBUG_EVT_EMULATOR_INITIALIZED); }
+			{
+				SEND_EVENT(debug, DEBUG_EVT_EMULATOR_INITIALIZED);
+			}
 			SEND_EVENT(debug, DEBUG_EVT_EMULATOR_NETWORK_CONNECTED);
 		}
 	}

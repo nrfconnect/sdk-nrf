@@ -114,11 +114,9 @@ void test_memfault_trigger_metric_sampling_on_gnss_fix(void)
 	setup_debug_module_in_init_state();
 
 	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
-						MEMFAULT_METRICS_KEY(GnssTimeToFix),
-						60000,
-						0);
+		MEMFAULT_METRICS_KEY(gnss_time_to_fix_ms), 60000, 0);
 	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
-						MEMFAULT_METRICS_KEY(GnssSatellitesTracked),
+						MEMFAULT_METRICS_KEY(gnss_satellites_tracked_count),
 						4,
 						0);
 	__cmock_memfault_metrics_heartbeat_debug_trigger_Expect();
@@ -144,11 +142,11 @@ void test_memfault_trigger_metric_sampling_on_location_timeout(void)
 
 	/* Update this function to expect the search time and number of satellites. */
 	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
-						MEMFAULT_METRICS_KEY(LocationTimeoutSearchTime),
+						MEMFAULT_METRICS_KEY(location_timeout_search_time_ms),
 						30000,
 						0);
 	__cmock_memfault_metrics_heartbeat_set_unsigned_ExpectAndReturn(
-						MEMFAULT_METRICS_KEY(GnssSatellitesTracked),
+						MEMFAULT_METRICS_KEY(gnss_satellites_tracked_count),
 						2,
 						0);
 	__cmock_memfault_metrics_heartbeat_debug_trigger_Ignore();

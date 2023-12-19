@@ -1450,9 +1450,9 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 
 #if defined(CONFIG_MEMFAULT_NCS_LTE_METRICS)
   if (mode == LTE_LC_FUNC_MODE_NORMAL || mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
-	  MEMFAULT_METRIC_TIMER_START(ncs_lte_on_time_msec);
+	  MEMFAULT_METRIC_TIMER_START(ncs_lte_on_time_ms);
   } else if(mode == LTE_LC_FUNC_MODE_POWER_OFF || mode == LTE_LC_FUNC_MODE_OFFLINE || mode == LTE_LC_FUNC_MODE_DEACTIVATE_LTE) {
-	  MEMFAULT_METRIC_TIMER_STOP(ncs_lte_on_time_msec);
+	  MEMFAULT_METRIC_TIMER_STOP(ncs_lte_on_time_ms);
   }
 #endif
 
