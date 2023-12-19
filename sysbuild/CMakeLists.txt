@@ -100,6 +100,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
   if(BOARD STREQUAL "nrf9160dk_nrf9160_ns")
     set(board_secure nrf9160dk_nrf9160)
+  elseif(BOARD STREQUAL "nrf9161dk_nrf9161_ns")
+    set(board_secure nrf9161dk_nrf9161)
   elseif(BOARD STREQUAL "thingy91_nrf9160_ns")
     set(board_secure thingy91_nrf9160)
   elseif(BOARD STREQUAL "thingy91x_nrf9151_ns")
