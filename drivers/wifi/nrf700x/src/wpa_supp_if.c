@@ -2224,7 +2224,7 @@ int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *para
 	memcpy(sta_info.mac_addr, params->addr, sizeof(sta_info.mac_addr));
 
 
-	if (!is_ap_dynamic_iface(vif_ctx_zep) || params->set) {
+	if (params->set) {
 		status = nrf_wifi_fmac_chg_sta(rpu_ctx_zep->rpu_ctx,
 					vif_ctx_zep->vif_idx,
 					(struct nrf_wifi_umac_chg_sta_info *)&sta_info);
