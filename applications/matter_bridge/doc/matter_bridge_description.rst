@@ -1,19 +1,19 @@
-.. _matter_bridge_application_guide:
+.. _matter_bridge_app_description:
 
-Matter bridge application guide
-*******************************
+Application guide
+#################
 
 .. contents::
    :local:
    :depth: 2
 
-The Matter bridge device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.11ax (Wi-Fi 6) network.
+The Matter bridge application demonstrates how to use the :ref:`Matter <ug_matter>` application layer to build a bridge device.
 You can use this application as a reference for creating your own application.
 
-See :ref:`ug_matter_overview_bridge` for more information about the Matter bridge specification and architecture.
+See the :ref:`ug_matter_overview_bridge` page for more information about the Matter bridge specification and architecture.
 
 Requirements
-============
+************
 
 The application supports the following development kits:
 
@@ -26,7 +26,7 @@ To test the Matter bridge application with the :ref:`Bluetooth LE bridged device
   * :ref:`peripheral_lbs`
   * :ref:`peripheral_esp`
 
-* A micro-USB cable to connect the development kit to the PC.
+* A micro-USB cable for every development kit to connect it to the PC.
 
 To commission the Matter bridge device and control it remotely through a Wi-Fi network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on your setup.
@@ -37,7 +37,7 @@ This requires additional hardware depending on your setup.
 .. _matter_bridge_app_overview:
 
 Overview
-========
+********
 
 The application uses buttons to control the device state and a single LED to show the state of a device.
 The Matter bridge has capability of representing non-Matter bridged devices as dynamic endpoints.
@@ -48,6 +48,9 @@ The application supports bridging the following Matter device types:
 * Generic Switch
 * Temperature Sensor
 * Humidity Sensor
+
+If the Matter device type required by your use case is not supported, you can extend the application.
+For information about how to add a new bridged Matter device type to the application, see the :ref:`matter_bridge_app_extending` section.
 
 Except for the On/Off Light Switch, all of the listed device types are enabled by default.
 To disable one of them, set any of the following configuration options:
@@ -83,12 +86,16 @@ When building on the command line, run the following command:
 
 .. parsed-literal::
    :class: highlight
+
    west build -b *build_target* -- *dfu_build_flag*
+
 Replace *build_target* with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* with the desired DFU build flag.
 For example:
 
 .. code-block:: console
+
    west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+
 For information about how to upgrade the device firmware using a PC or a smartphone, see the :ref:`matter_bridge_app_dfu` section.
 
 .. _matter_bridge_app_bridged_support:
@@ -105,6 +112,9 @@ The application supports two bridged device configurations that are mutually exc
   * Nordic Semiconductor's :ref:`LED Button Service <lbs_readme>` - represented by the Matter On/Off Light and Generic Switch device types.
     The service can be configured to use the On/Off Light Switch instead of the Generic Switch device type.
   * Zephyr's :ref:`Environmental Sensing Service <peripheral_esp>` - represented by the Matter Temperature Sensor and Humidity Sensor device types.
+
+If the Bluetooth LE service required by your use case is not supported, you can extend the application.
+For information about how to add a new Bluetooth LE service support to the application, see the :ref:`matter_bridge_app_extending_ble_service` section.
 
 Depending on the bridged device you want to support in your application, :ref:`enable it using the appropriate Kconfig option <matter_bridge_app_bridged_support_configs>`.
 The Matter bridge supports adding and removing bridged devices dynamically at application runtime using `Matter CLI commands`_ from a dedicated Matter bridge shell module.
@@ -151,25 +161,30 @@ This sample supports the following build types:
     The ``debug`` build type is used by default if no build type is explicitly selected.
 
 User interface
-==============
+**************
 
-.. include:: ../../samples/matter/lock/README.rst
+.. include:: ../../../samples/matter/lock/README.rst
     :start-after: matter_door_lock_sample_led1_start
     :end-before: matter_door_lock_sample_led1_end
 
 Button 1:
     Depending on how long you press the button:
 
-    * If pressed for less than three seconds, it initiates the SMP server (Simple Management Protocol).
-      After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
-      (See `Updating the device firmware`_.)
+    * If pressed for less than three seconds:
+
+      * If the device is not provisioned to the Matter network, it initiates the SMP server (Simple Management Protocol) and Bluetooth LE advertising for Matter commissioning.
+        After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
+        (See `Updating the device firmware`_.)
+        Bluetooth LE advertising makes the device discoverable over Bluetooth LE for the predefined period of time (15 minutes by default).
+
+      * If the device is already provisioned to the Matter network it re-enables the SMP server.
+        After that, the DFU over Bluetooth Low Energy can be started.
+        (See `Updating the device firmware`_.)
+
     * If pressed for more than three seconds, it initiates the factory reset of the device.
       Releasing the button within a 3-second window of the initiation cancels the factory reset procedure.
 
-Button 2:
-     Enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-
-.. include:: ../../samples/matter/lock/README.rst
+.. include:: ../../../samples/matter/lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
     :end-before: matter_door_lock_sample_jlink_end
 
@@ -184,22 +199,28 @@ Getting a list of Bluetooth LE devices available to be added
    Use the following command:
 
    .. code-block:: console
+
       matter_bridge scan
+
    The terminal output is similar to the following one:
 
    .. code-block:: console
+
       Scan result:
       ---------------------------------------------------------------------
       | Index |      Address      |                   UUID
       ---------------------------------------------------------------------
       | 0     | e6:11:40:96:a0:18 | 0x181a (Environmental Sensing Service)
       | 1     | c7:44:0f:3e:bb:f0 | 0xbcd1 (Led Button Service)
+
 Adding a simulated bridged device to the Matter bridge
    Use the following command:
 
    .. parsed-literal::
       :class: highlight
+
       matter_bridge add *<device_type>* *["node_label"]*
+
    In this command:
 
    * *<device_type>* is the Matter device type to use for the bridged device.
@@ -217,13 +238,17 @@ Adding a simulated bridged device to the Matter bridge
    Example command:
 
    .. code-block:: console
+
       uart:~$ matter_bridge add 256 "Kitchen Light"
+
 Controlling a simulated On/Off Light bridged device
    Use the following command:
 
    .. parsed-literal::
       :class: highlight
+
       matter_bridge onoff *<new_state>* *<endpoint>*
+
    In this command:
 
    * *<new_state>*  is the new state (``0`` - off and ``1`` - on) that will be set on the simulated On/Off Light device.
@@ -232,7 +257,9 @@ Controlling a simulated On/Off Light bridged device
    Example command:
 
    .. code-block:: console
+
       uart:~$ matter_bridge onoff 1 3
+
    Note that the above command will only work if the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` option is selected in the build configuration.
    If the Kconfig option is not selected, the simulated device changes its state periodically in autonomous manner and can not be controlled by using shell commands.
 
@@ -241,7 +268,9 @@ Controlling a simulated On/Off Light Switch bridged device
 
    .. parsed-literal::
       :class: highlight
+
       matter_bridge onoff_switch *<new_state>* *<endpoint>*
+
    In this command:
 
    * *<new_state>*  is the new state (``0`` - off and ``1`` - on) that will be set on the simulated On/Off Light Switch device.
@@ -250,13 +279,18 @@ Controlling a simulated On/Off Light Switch bridged device
    Example command:
 
    .. code-block:: console
+
       uart:~$ matter_bridge onoff_switch 1 3
+
+
 Adding a Bluetooth LE bridged device to the Matter bridge
    Use the following command:
 
    .. parsed-literal::
       :class: highlight
+
       matter_bridge add *<ble_device_index>* *["node label"]*
+
    In this command:
 
    * *<ble_device_index>* is the Bluetooth LE device index on the list returned by the ``scan`` command.
@@ -268,28 +302,37 @@ Adding a Bluetooth LE bridged device to the Matter bridge
    Example command:
 
    .. code-block:: console
+
       uart:~$ matter_bridge add 0 "Kitchen Light"
+
    The terminal output is similar to the following one:
 
    .. code-block:: console
+
       I: Added device to dynamic endpoint 3 (index=0)
       I: Added device to dynamic endpoint 4 (index=1)
       I: Created 0x100 device type on the endpoint 3
       I: Created 0xf device type on the endpoint 4
+
+
 Removing a bridged device from the Matter bridge
    Use the following command:
 
    .. parsed-literal::
       :class: highlight
+
       matter_bridge remove *<bridged_device_endpoint_id>*
+
    In this command, *<bridged_device_endpoint_id>* is the endpoint ID of the bridged device to be removed.
 
    Example command:
 
    .. code-block:: console
+
       uart:~$ matter_bridge remove 3
+
 Configuration
-=============
+*************
 
 |config|
 
@@ -334,11 +377,13 @@ Build the target using the following command in the project directory to enable 
 
 .. parsed-literal::
    :class: highlight
+
    west build -b nrf7002dk_nrf5340_cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DOVERLAY_CONFIG="overlay-bt_max_connections_app.conf" -Dhci_rpmsg_OVERLAY_CONFIG="*absoule_path*/overlay-bt_max_connections_net.conf"
+
 Replace *absolute_path* with the absolute path to the Matter bridge application on your local disk.
 
 Building and running
-====================
+********************
 
 .. |sample path| replace:: :file:`applications/matter_bridge`
 
@@ -367,7 +412,9 @@ For example, you can replace the *selected_build_type* variable to build the ``r
 
 .. parsed-literal::
    :class: highlight
+
    west build -b nrf7002dk_nrf5340_cpuapp -d build_nrf7002dk_nrf5340_cpuapp -- -DCONF_FILE=prj_release.conf
+
 The ``build_nrf7002dk_nrf5340_cpuapp`` parameter specifies the output directory for the build files.
 
 .. note::
@@ -375,7 +422,11 @@ The ``build_nrf7002dk_nrf5340_cpuapp`` parameter specifies the output directory 
    For example, if the ``shell`` build type is not supported by the selected board, the following notification appears:
 
    .. code-block:: console
+
       File not found: ./ncs/nrf/applications/matter_bridge/configuration/nrf7002dk_nrf5340_cpuapp/prj_shell.conf
+
+.. _matter_bridge_testing:
+
 Testing
 =======
 
@@ -399,18 +450,24 @@ After building the sample and programming it to your development kit, complete t
 
             .. parsed-literal::
                :class: highlight
+
                uart:~$ matter_bridge add *<device_type>*
+
             The *<device_type>* is the value of the Matter device type that will be used to represent a new bridged device in the Matter Data Model.
             See the description in :ref:`matter_bridge_cli` for the list of supported values.
             For example, if you want to add a new bridged device that will be exposed as an On/Off Light endpoint, use the following command:
 
             .. code-block:: console
+
                uart:~$ matter_bridge add 256
+
             The terminal output is similar to the following one:
 
             .. code-block:: console
+
                I: Adding OnOff Light bridged device
                I: Added device to dynamic endpoint 3 (index=0)
+
          #. Write down the value for the bridged device dynamic endpoint ID.
             This is going to be used in the next steps (*<bridged_device_endpoint_ID>*).
          #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` to read the value of an attribute from the bridged device endpoint.
@@ -418,7 +475,9 @@ After building the sample and programming it to your development kit, complete t
 
             .. parsed-literal::
                :class: highlight
+
                ./chip-tool onoff read on-off *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
       .. group-tab:: Testing with Bluetooth LE bridged devices
 
          a. Build and program the one of the following Bluetooth LE samples to an additional development kit compatible with the sample:
@@ -430,36 +489,46 @@ After building the sample and programming it to your development kit, complete t
          #. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to scan for available Bluetooth LE devices:
 
             .. code-block:: console
+
                uart:~$ matter_bridge scan
+
             The terminal output is similar to the following one, with an entry for each connected Bluetooth LE device:
 
             .. code-block:: console
+
                Scan result:
                ---------------------------------------------------------------------
                | Index |      Address      |                   UUID
                ---------------------------------------------------------------------
                | 0     | e6:11:40:96:a0:18 | 0x181a (Environmental Sensing Service)
                | 1     | c7:44:0f:3e:bb:f0 | 0xbcd1 (Led Button Service)
+
          #. Write down the value for the desired Bluetooth LE device index.
             This is going to be used in the next steps (*<bluetooth_device_index>*).
          #. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to add a new bridged device:
 
             .. parsed-literal::
                :class: highlight
+
                uart:~$ matter_bridge add *<bluetooth_device_index>*
+
             The *<bluetooth_device_index>* is a Bluetooth LE device index that was scanned in the previous step.
             For example, if you want to add a new Bluetooth LE bridged device with index ``1``, use the following command:
 
             .. code-block:: console
+
                uart:~$ matter_bridge add 1
+
             The terminal output is similar to the following one:
 
             .. parsed-literal::
                :class: highlight
+
                I: Added device to dynamic endpoint 3 (index=0)
                I: Added device to dynamic endpoint 4 (index=1)
                I: Created 0x100 device type on the endpoint 3
                I: Created 0xf device type on the endpoint 4
+
             For the LED Button Service and the Environmental Sensor, two endpoints are created:
 
             * For the LED Button Service, one implements the On/Off Light device and the other implements the Generic Switch or On/Off Light Switch device.
@@ -472,12 +541,17 @@ After building the sample and programming it to your development kit, complete t
 
             .. parsed-literal::
                :class: highlight
+
                ./chip-tool onoff read on-off *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
+
             If you are using the Generic Switch implementation, read the value of the *current-position* attribute from the *switch* cluster using the following command:
 
             .. parsed-literal::
                :class: highlight
+
                ./chip-tool switch read current-position *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
             Note that the Generic Switch is implemented as a momentary switch.
             This means that, in contrast to the latching switch, it remains switched on only as long as the physical button is pressed.
 
@@ -487,12 +561,16 @@ After building the sample and programming it to your development kit, complete t
 
                 .. parsed-literal::
                    :class: highlight
+
                    ./chip-tool temperaturemeasurement read measured-value *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
               * humidity:
 
                 .. parsed-literal::
                    :class: highlight
+
                     ./chip-tool relativehumiditymeasurement read measured-value *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+
 Testing with bridged device working as a client
 -----------------------------------------------
 
@@ -519,12 +597,16 @@ After building this application and the :ref:`Matter Light Bulb <matter_light_bu
 
             .. parsed-literal::
                :class: highlight
+
                uart:~$ matter_bridge add 259
+
             The terminal output is similar to the following one:
 
             .. code-block:: console
+
                I: Adding OnOff Light Switch bridged device
                I: Added device to dynamic endpoint 3 (index=0)
+
          #. Write down the value for the bridged device dynamic endpoint ID.
             This is going to be used in the next steps (*<bridged_light_switch_endpoint_ID>*).
 
@@ -535,35 +617,45 @@ After building this application and the :ref:`Matter Light Bulb <matter_light_bu
          #. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to scan for available Bluetooth LE devices:
 
             .. code-block:: console
+
                uart:~$ matter_bridge scan
+
             The terminal output is similar to the following one, with an entry for each connected Bluetooth LE device:
 
             .. code-block:: console
+
                Scan result:
                ---------------------------------------------------------------------
                | Index |      Address      |                   UUID
                ---------------------------------------------------------------------
                | 0     | c7:44:0f:3e:bb:f0 | 0xbcd1 (Led Button Service)
+
          #. Write down the value for the desired Bluetooth LE device index.
             This is going to be used in the next steps (*<bluetooth_device_index>*).
          #. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to add a new bridged device:
 
             .. parsed-literal::
                :class: highlight
+
                uart:~$ matter_bridge add *<bluetooth_device_index>*
+
             The *<bluetooth_device_index>* is the Bluetooth LE device index that was scanned in the previous step.
             For example, if you want to add a new Bluetooth LE bridged device with index ``0``, use the following command:
 
             .. code-block:: console
+
                uart:~$ matter_bridge add 0
+
             The terminal output is similar to the following one:
 
             .. parsed-literal::
                :class: highlight
+
                I: Added device to dynamic endpoint 3 (index=0)
                I: Added device to dynamic endpoint 4 (index=1)
                I: Created 0x100 device type on the endpoint 3
                I: Created 0x103 device type on the endpoint 4
+
          #. Write down the value for the ``0x103`` bridged device dynamic endpoint ID.
             This is going to be used in the next steps (*<bridged_light_switch_endpoint_ID>*).
 
@@ -572,12 +664,16 @@ After building this application and the :ref:`Matter Light Bulb <matter_light_bu
 
    .. parsed-literal::
       :class: highlight
+
       chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [*<bridge_node_ID>*], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' *<light_bulb_node_ID>* 0
+
 #. Write a binding table to the bridge to inform the device about all endpoints by running the following command:
 
    .. parsed-literal::
       :class: highlight
+
       chip-tool binding write binding '[{"fabricIndex": 1, "node": *<light_bulb_node_ID>*, "endpoint": 1, "cluster": 6}]' *<bridge_node_ID>* *<bridged_light_switch_endpoint_ID>*
+
 #. Complete the following steps depending on your configuration:
 
    .. tabs::
@@ -588,12 +684,16 @@ After building this application and the :ref:`Matter Light Bulb <matter_light_bu
 
             .. parsed-literal::
                :class: highlight
+
                uart:~$ matter_bridge onoff_switch 1 *<bridged_light_switch_endpoint_ID>*
+
          #. Using the terminal emulator connected to the bridge, turn off the **LED 2** located on the bound light bulb device, by running the following :ref:`Matter CLI command <matter_bridge_cli>`:
 
             .. parsed-literal::
                :class: highlight
+
                uart:~$ matter_bridge onoff_switch 0 *<bridged_light_switch_endpoint_ID>*
+
       .. group-tab:: Testing with Bluetooth LE bridged light switch device
 
          a. On the Peripheral LBS device, press **Button 1** to turn on the **LED 2** located on the bound light bulb device.
@@ -653,7 +753,7 @@ Updating the device firmware
 To update the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
 
 Dependencies
-============
+************
 
 This application uses the Matter library, which includes the |NCS| platform integration layer:
 

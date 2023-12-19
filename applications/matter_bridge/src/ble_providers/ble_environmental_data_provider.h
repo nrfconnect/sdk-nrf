@@ -10,8 +10,6 @@
 #include "ble_connectivity_manager.h"
 #include "bridged_device_data_provider.h"
 
-#include <bluetooth/services/lbs.h>
-
 class BleEnvironmentalDataProvider : public BLEBridgedDeviceProvider {
 public:
 	explicit BleEnvironmentalDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BLEBridgedDeviceProvider(updateCallback, commandCallback) {}

@@ -21,7 +21,7 @@ public:
 	uint16_t GetTemperatureMeasurementClusterRevision() { return kTemperatureMeasurementClusterRevision; }
 	uint32_t GetTemperatureMeasurementFeatureMap() { return kTemperatureMeasurementFeatureMap; }
 
-	MatterBridgedDevice::DeviceType GetDeviceType() const override
+	uint16_t GetDeviceType() const override
 	{
 		return MatterBridgedDevice::DeviceType::TemperatureSensor;
 	}

@@ -12,7 +12,7 @@ class GenericSwitchDevice : public MatterBridgedDevice {
 public:
 	GenericSwitchDevice(const char *nodeLabel);
 
-	MatterBridgedDevice::DeviceType GetDeviceType() const override
+	uint16_t GetDeviceType() const override
 	{
 		return MatterBridgedDevice::DeviceType::GenericSwitch;
 	}

@@ -9,7 +9,6 @@
 
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
-#include <bluetooth/services/lbs.h>
 
 #include <platform/CHIPDeviceLayer.h>
 

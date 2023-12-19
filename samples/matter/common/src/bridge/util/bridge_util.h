@@ -14,10 +14,10 @@
 
 /*
    DeviceFactory template container allows to instantiate a map which
-   binds supported MatterBridgedDevice::DeviceType types with corresponding
+   binds supported Matter device type identifiers (uint16_t) with corresponding
    creation method (e.g. constructor invocation). DeviceFactory can
    only be constructed by passing a user-defined initialized list with
-   <MatterBridgedDevice::DeviceType, ConcreteDeviceCreator> pairs.
+   <uint16_t, ConcreteDeviceCreator> pairs.
    Then, Create() method can be used to obtain an instance of demanded
    device type with all passed arguments forwarded to the underlying
    ConcreteDeviceCreator.

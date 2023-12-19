@@ -40,7 +40,7 @@ namespace SimulatedBridgedDeviceFactory
 {
 using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
 using InvokeCommandCallback = BridgedDeviceDataProvider::InvokeCommandCallback;
-using DeviceType = MatterBridgedDevice::DeviceType;
+using DeviceType = uint16_t;
 using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, DeviceType, const char *>;
 using SimulatedDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, DeviceType, UpdateAttributeCallback, InvokeCommandCallback>;
 

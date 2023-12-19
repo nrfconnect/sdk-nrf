@@ -229,7 +229,7 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 
 	static BridgedDeviceFactory sBridgedDeviceFactory{
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-		{ DeviceType::HumiditySensor,
+		{ MatterBridgedDevice::DeviceType::HumiditySensor,
 		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
@@ -238,7 +238,7 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-		{ DeviceType::OnOffLight,
+		{ MatterBridgedDevice::DeviceType::OnOffLight,
 		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;
@@ -265,7 +265,7 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-		{ DeviceType::OnOffLightSwitch,
+		{ MatterBridgedDevice::DeviceType::OnOffLightSwitch,
 		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
 			  if (!checkLabel(nodeLabel)) {
 				  return nullptr;

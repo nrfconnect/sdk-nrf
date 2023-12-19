@@ -62,8 +62,6 @@ CHIP_ERROR GenericSwitchDevice::HandleRead(ClusterId clusterId, AttributeId attr
 	switch (clusterId) {
 	case Clusters::Switch::Id:
 		return HandleReadSwitch(attributeId, buffer, maxReadLength);
-	case Clusters::Identify::Id:
-		return HandleReadIdentify(attributeId, buffer, maxReadLength);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}

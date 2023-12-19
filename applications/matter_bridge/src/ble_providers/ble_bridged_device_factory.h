@@ -48,7 +48,7 @@ enum ServiceUuid : uint16_t { LedButtonService = 0xbcd1, EnvironmentalSensorServ
 
 using UpdateAttributeCallback = BridgedDeviceDataProvider::UpdateAttributeCallback;
 using InvokeCommandCallback = BridgedDeviceDataProvider::InvokeCommandCallback;
-using DeviceType = MatterBridgedDevice::DeviceType;
+using DeviceType = uint16_t;
 using BridgedDeviceFactory = DeviceFactory<MatterBridgedDevice, DeviceType, const char *>;
 using BleDataProviderFactory = DeviceFactory<BridgedDeviceDataProvider, ServiceUuid, UpdateAttributeCallback, InvokeCommandCallback>;
 

@@ -245,6 +245,7 @@ Matter Bridge
   * Support for Matter Generic Switch bridged device type.
   * Support for On/Off Light Switch bridged device type.
   * Support for bindings to the On/Off Light Switch device implementation.
+  * Guide about extending the application by adding support for a new Matter device type, a new Bluetooth LE service or a new protocol.
 
 Samples
 =======

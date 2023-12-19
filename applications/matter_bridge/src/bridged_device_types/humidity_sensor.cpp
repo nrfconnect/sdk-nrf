@@ -60,8 +60,6 @@ CHIP_ERROR HumiditySensorDevice::HandleRead(ClusterId clusterId, AttributeId att
 	switch (clusterId) {
 	case Clusters::RelativeHumidityMeasurement::Id:
 		return HandleReadRelativeHumidityMeasurement(attributeId, buffer, maxReadLength);
-	case Clusters::Identify::Id:
-		return HandleReadIdentify(attributeId, buffer, maxReadLength);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}

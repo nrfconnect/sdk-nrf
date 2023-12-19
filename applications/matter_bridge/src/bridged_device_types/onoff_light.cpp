@@ -83,8 +83,6 @@ CHIP_ERROR OnOffLightDevice::HandleRead(ClusterId clusterId, AttributeId attribu
 		return HandleReadOnOff(attributeId, buffer, maxReadLength);
 	case Clusters::Groups::Id:
 		return HandleReadGroups(attributeId, buffer, maxReadLength);
-	case Clusters::Identify::Id:
-		return HandleReadIdentify(attributeId, buffer, maxReadLength);
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
