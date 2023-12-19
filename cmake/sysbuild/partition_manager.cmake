@@ -485,10 +485,10 @@ foreach(d APP ${PM_DOMAINS})
   sysbuild_get(${image_name}_CONFIG_PM_SRAM_SIZE IMAGE ${image_name} VAR CONFIG_PM_SRAM_SIZE KCONFIG)
   sysbuild_get(${image_name}_CONFIG_PM_SRAM_BASE IMAGE ${image_name} VAR CONFIG_PM_SRAM_BASE KCONFIG)
 
-  sysbuild_get(${image_name}_CONFIG_SOC_NRF9160 IMAGE ${image_name} VAR CONFIG_SOC_NRF9160 KCONFIG)
+  sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF91X IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF91X KCONFIG)
   sysbuild_get(${image_name}_CONFIG_SOC_NRF5340_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF5340_CPUAPP KCONFIG)
 
-  if (${image_name}_CONFIG_SOC_NRF9160)
+  if (${image_name}_CONFIG_SOC_SERIES_NRF91X)
     # See nRF9160 Product Specification, chapter "UICR"
     set(otp_start_addr "0xff8108")
     set(otp_size 756) # 189 * 4
@@ -519,7 +519,7 @@ foreach(d APP ${PM_DOMAINS})
   sysbuild_get(${image_name}_CONFIG_FLASH_SIZE IMAGE ${image_name} VAR CONFIG_FLASH_SIZE KCONFIG)
   math(EXPR flash_size "${${image_name}_CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
-  if (${image_name}_CONFIG_SOC_NRF9160 OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP)
+  if (${image_name}_CONFIG_SOC_SERIES_NRF91X OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP)
     add_region(
       NAME otp
       SIZE ${otp_size}
