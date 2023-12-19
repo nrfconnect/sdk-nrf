@@ -67,6 +67,12 @@ private:
 public:
 	using DeviceConnectedCallback = void (*)(bool discoverySucceeded, void *context);
 	using ScanDoneCallback = void (*)(ScannedDevice *devices, uint8_t count, void *context);
+	using ConnectionSecurityRequestCallback = void (*)(void *context);
+
+	struct ConnectionSecurityRequest {
+		ConnectionSecurityRequestCallback mCallback;
+		void *mContext;
+	};
 
 	/**
 	 * @brief Initialize BLEConnectivityManager instance.
@@ -103,10 +109,12 @@ public:
 	 * necessary to first add the provider to the manager's list using @ref AddBLEProvider method.
 	 *
 	 * @param provider address of a valid provider object
+	 * @param request address of connection request object for handling additional security information requiered by the connection.
+	 *				  Can be nullptr, if connection does not use security.
 	 * @return CHIP_NO_ERROR on success
 	 * @return other error code on failure
 	 */
-	CHIP_ERROR Connect(BLEBridgedDeviceProvider *provider);
+	CHIP_ERROR Connect(BLEBridgedDeviceProvider *provider, ConnectionSecurityRequest * request = nullptr);
 
 	/**
 	 * @brief Create connection to the first Bluetooth LE device on the @ref mProvidersToRecover recovery list.
@@ -174,6 +182,7 @@ public:
 	CHIP_ERROR PrepareFilterForUuid();
 	CHIP_ERROR PrepareFilterForAddress(bt_addr_le_t *addr);
 
+	/* Public static callbacks for Bluetooth LE connection handling. */
 	static void FilterMatch(bt_scan_device_info *device_info, bt_scan_filter_match *filter_match, bool connectable);
 	static void ScanTimeoutCallback(k_timer *timer);
 	static void ScanTimeoutHandle(intptr_t context);
@@ -182,6 +191,23 @@ public:
 	static void DiscoveryCompletedHandler(bt_gatt_dm *dm, void *context);
 	static void DiscoveryNotFound(bt_conn *conn, void *context);
 	static void DiscoveryError(bt_conn *conn, int err, void *context);
+	static int StartGattDiscovery(bt_conn *conn, BLEBridgedDeviceProvider *provider);
+
+#ifdef CONFIG_BT_SMP
+	static void SecurityChangedHandler(struct bt_conn *conn, bt_security_t level, enum bt_security_err err);
+	static void AuthenticationCancel(struct bt_conn *conn);
+	static void PasskeyEntry(struct bt_conn *conn);
+	static void PairingComplete(struct bt_conn *conn, bool bonded);
+	static void PairingFailed(struct bt_conn *conn, enum bt_security_err reason);
+
+	/**
+	 * @brief Set authentication pincode to confirm the specific Bluetooth LE connection.
+	 *
+	 * @param addr Bluetooth LE address of a device used in the connection
+	 * @param pincode authentication pincode that fits in range of 0 - 999999
+	 */
+	void SetPincode(bt_addr_le_t addr, unsigned int pincode);
+#endif /* CONFIG_BT_SMP */
 
 	static BLEConnectivityManager &Instance()
 	{
@@ -203,5 +229,8 @@ private:
 	uint8_t mServicesUuidCount;
 	ScanDoneCallback mScanDoneCallback;
 	void *mScanDoneCallbackContext;
+#ifdef CONFIG_BT_SMP
+	ConnectionSecurityRequest mConnectionSecurityRequest;
+#endif /* CONFIG_BT_SMP */
 	Recovery mRecovery;
 };

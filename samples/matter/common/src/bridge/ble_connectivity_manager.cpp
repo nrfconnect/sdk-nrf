@@ -20,8 +20,23 @@ using namespace chip;
 
 BT_SCAN_CB_INIT(scan_cb, BLEConnectivityManager::FilterMatch, NULL, NULL, NULL);
 
-BT_CONN_CB_DEFINE(conn_callbacks) = { .connected = BLEConnectivityManager::ConnectionHandler,
-				      .disconnected = BLEConnectivityManager::DisconnectionHandler };
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.connected = BLEConnectivityManager::ConnectionHandler,
+	.disconnected = BLEConnectivityManager::DisconnectionHandler,
+#ifdef CONFIG_BT_SMP
+	.security_changed = BLEConnectivityManager::SecurityChangedHandler,
+#endif /* CONFIG_BT_SMP */
+};
+
+#ifdef CONFIG_BT_SMP
+static const bt_conn_auth_cb auth_callbacks = {
+	.passkey_entry = BLEConnectivityManager::PasskeyEntry,
+	.cancel = BLEConnectivityManager::AuthenticationCancel,
+};
+
+static bt_conn_auth_info_cb conn_auth_info_callbacks = { .pairing_complete = BLEConnectivityManager::PairingComplete,
+							 .pairing_failed = BLEConnectivityManager::PairingFailed };
+#endif /* CONFIG_BT_SMP */
 
 static const struct bt_gatt_dm_cb discovery_cb = { .completed = BLEConnectivityManager::DiscoveryCompletedHandler,
 						   .service_not_found = BLEConnectivityManager::DiscoveryNotFound,
@@ -71,10 +86,21 @@ void BLEConnectivityManager::FilterMatch(bt_scan_device_info *device_info, bt_sc
 	Instance().mScannedDevicesCounter++;
 }
 
+int BLEConnectivityManager::StartGattDiscovery(bt_conn *conn, BLEBridgedDeviceProvider *provider)
+{
+	/* Start GATT discovery for the device's service UUID. */
+	int err = bt_gatt_dm_start(conn, provider->GetServiceUuid(), &discovery_cb, provider);
+	if (err) {
+		LOG_ERR("Could not start the discovery procedure, error "
+			"code: %d",
+			err);
+	}
+	return err;
+}
+
 void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 {
 	const bt_addr_le_t *dstAddr = bt_conn_get_dst(conn);
-	int err;
 	BLEBridgedDeviceProvider *provider = nullptr;
 
 	/* Find the created device instance based on address. */
@@ -95,8 +121,6 @@ void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 		return;
 	}
 
-	/* TODO: Add security validation. */
-
 	if (conn_err && provider->IsInitiallyConnected()) {
 		/* There was an error during recovery, so put it back to the lost devices list */
 		Instance().mRecovery.NotifyProviderToRecover(provider);
@@ -110,13 +134,21 @@ void BLEConnectivityManager::ConnectionHandler(bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(dstAddr, addrStr, sizeof(addrStr));
 	LOG_INF("Connected: %s", addrStr);
 
-	/* Start GATT discovery for the device's service UUID. */
-	err = bt_gatt_dm_start(conn, provider->GetServiceUuid(), &discovery_cb, provider);
+#if defined(CONFIG_BT_SMP)
+	int err = bt_conn_set_security(conn, static_cast<bt_security_t>(CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL));
 	if (err) {
-		LOG_ERR("Could not start the discovery procedure, error "
-			"code: %d",
-			err);
+		LOG_ERR("Failed to set security (%d)", err);
+		return;
 	}
+
+	/* Start GATT discovery only if this specific device was successfully connected before. Otherwise, it will be
+	 * called after a successful pairing. */
+	if (provider->IsInitiallyConnected()) {
+		StartGattDiscovery(conn, provider);
+	}
+#else
+	StartGattDiscovery(conn, provider);
+#endif
 }
 
 void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
@@ -141,6 +173,98 @@ void BLEConnectivityManager::DisconnectionHandler(bt_conn *conn, uint8_t reason)
 		}
 	}
 }
+
+#if defined(CONFIG_BT_SMP)
+void BLEConnectivityManager::SecurityChangedHandler(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
+{
+	if (err) {
+		LOG_ERR("Security failed: level %d err %d", level, err);
+	} else {
+		LOG_INF("Security changed: level %d", level);
+	}
+}
+
+void BLEConnectivityManager::AuthenticationCancel(struct bt_conn *conn)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	LOG_ERR("Pairing cancelled: %s\n", addr);
+
+	Instance().RemoveBLEProvider(*bt_conn_get_dst(conn));
+}
+
+void BLEConnectivityManager::PasskeyEntry(struct bt_conn *conn)
+{
+	/* Invoke callback that will forward information to user that pincode has to be provided. */
+	if (Instance().mConnectionSecurityRequest.mCallback) {
+		Instance().mConnectionSecurityRequest.mCallback(Instance().mConnectionSecurityRequest.mContext);
+	}
+}
+
+void BLEConnectivityManager::PairingComplete(struct bt_conn *conn, bool bonded)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	LOG_INF("Pairing completed: %s, bonded: %d\n", addr, bonded);
+
+	BLEBridgedDeviceProvider *provider = nullptr;
+
+	/* Find the created device instance based on address. */
+	for (int i = 0; i < kMaxConnectedDevices; i++) {
+		if (Instance().mConnectedProviders[i] == nullptr) {
+			continue;
+		}
+
+		bt_addr_le_t addr = Instance().mConnectedProviders[i]->GetBtAddress();
+		if (memcmp(&addr, bt_conn_get_dst(conn), sizeof(addr)) == 0) {
+			provider = Instance().mConnectedProviders[i];
+			break;
+		}
+	}
+
+	/* The device with given address was not found.  */
+	if (!provider) {
+		LOG_ERR("The Bluetooth LE provider cannot be found for the paired device, GATT discovery will not be started");
+		return;
+	}
+
+	/* Once pairing completed successfully, start GATT discovery procedure. */
+	StartGattDiscovery(conn, provider);
+}
+
+void BLEConnectivityManager::PairingFailed(struct bt_conn *conn, enum bt_security_err reason)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	LOG_ERR("Pairing failed conn: %s, reason %d\n", addr, reason);
+
+	Instance().RemoveBLEProvider(*bt_conn_get_dst(conn));
+}
+
+void BLEConnectivityManager::SetPincode(bt_addr_le_t addr, unsigned int pincode)
+{
+	/* Iterate through the Bluetooth providers list to find the one matching given address and obtain its connection
+	 * object. */
+	for (auto i = 0; i < kMaxConnectedDevices; i++) {
+		if (mConnectedProviders[i]) {
+			bt_addr_le_t address = mConnectedProviders[i]->GetBtAddress();
+			if (memcmp(&address, &addr, sizeof(address)) == 0) {
+				int err = bt_conn_auth_passkey_entry(mConnectedProviders[i]->GetConnectionObject(),
+								     pincode);
+				if (err != 0) {
+					LOG_ERR("Failed to set authentication pincode, reason %d", err);
+				}
+			}
+		}
+	}
+}
+#endif /* CONFIG_BT_SMP */
 
 void BLEConnectivityManager::DiscoveryCompletedHandler(bt_gatt_dm *dm, void *context)
 {
@@ -212,6 +336,20 @@ CHIP_ERROR BLEConnectivityManager::Init(bt_uuid **serviceUuids, uint8_t serviceU
 
 	k_timer_init(&mScanTimer, BLEConnectivityManager::ScanTimeoutCallback, nullptr);
 	k_timer_user_data_set(&mScanTimer, this);
+
+#ifdef CONFIG_BT_SMP
+	int err = bt_conn_auth_cb_register(&auth_callbacks);
+	if (err) {
+		LOG_ERR("Failed to register Bluetooth LE authorization callbacks.");
+		return System::MapErrorZephyr(err);
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		LOG_ERR("Failed to register Bluetooth LE authorization info callbacks.");
+		return System::MapErrorZephyr(err);
+	}
+#endif /* CONFIG_BT_SMP */
 
 	bt_scan_init_param scan_init = {
 		.connect_if_match = 0,
@@ -388,11 +526,20 @@ CHIP_ERROR BLEConnectivityManager::Reconnect(BLEBridgedDeviceProvider *provider)
 	return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider)
+CHIP_ERROR BLEConnectivityManager::Connect(BLEBridgedDeviceProvider *provider, ConnectionSecurityRequest *request)
 {
 	if (!provider) {
 		return CHIP_ERROR_INVALID_ARGUMENT;
 	}
+
+#ifdef CONFIG_BT_SMP
+	if (!request) {
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+
+	mConnectionSecurityRequest.mCallback = request->mCallback;
+	mConnectionSecurityRequest.mContext = request->mContext;
+#endif /* CONFIG_BT_SMP */
 
 	mRecovery.CancelTimer();
 	StopScan();

@@ -28,7 +28,10 @@ struct BLEBridgedDevice {
 
 class BLEBridgedDeviceProvider : public BridgedDeviceDataProvider {
 public:
-	explicit BLEBridgedDeviceProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : BridgedDeviceDataProvider(updateCallback, commandCallback) {}
+	BLEBridgedDeviceProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback)
+		: BridgedDeviceDataProvider(updateCallback, commandCallback)
+	{
+	}
 	~BLEBridgedDeviceProvider() { BLEConnectivityManager::Instance().RemoveBLEProvider(GetBtAddress()); }
 
 	virtual bt_uuid *GetServiceUuid() = 0;
@@ -45,6 +48,7 @@ public:
 
 	BLEBridgedDevice &GetBLEBridgedDevice() { return mDevice; }
 	void SetConnectionObject(bt_conn *conn) { mDevice.mConn = conn; }
+	bt_conn *GetConnectionObject() { return mDevice.mConn; }
 	void RemoveConnectionObject() { mDevice.mConn = nullptr; }
 
 	/**
