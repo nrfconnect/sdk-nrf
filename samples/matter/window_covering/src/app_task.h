@@ -11,16 +11,6 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
-#if CONFIG_CHIP_FACTORY_DATA
-#include <platform/nrfconnect/FactoryDataProvider.h>
-#else
-#include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
-#endif
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-#include "dfu_over_smp.h"
-#endif
-
 struct Identify;
 
 enum class WindowButtonAction : uint8_t { Pressed, Released };
@@ -45,7 +35,7 @@ private:
 	static void OpenHandler(const WindowButtonAction &action);
 	static void CloseHandler(const WindowButtonAction &action);
 
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
+	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 	static void ButtonEventHandler(ButtonState state, ButtonMask hasChanged);
 
 	OperationalState mMoveType{ OperationalState::MovingUpOrOpen };
@@ -53,8 +43,4 @@ private:
 	bool mOpenButtonIsPressed{ false };
 	bool mCloseButtonIsPressed{ false };
 	bool mMoveTypeRecentlyChanged{ false };
-
-#if CONFIG_CHIP_FACTORY_DATA
-	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
-#endif
 };

@@ -8,12 +8,6 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
-#if CONFIG_CHIP_FACTORY_DATA
-#include <platform/nrfconnect/FactoryDataProvider.h>
-#else
-#include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
-#endif
-
 struct k_timer;
 
 class AppTask {
@@ -29,9 +23,5 @@ public:
 private:
 	CHIP_ERROR Init();
 
-	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
-
-#if CONFIG_CHIP_FACTORY_DATA
-	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
-#endif
+	static void MatterEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);
 };

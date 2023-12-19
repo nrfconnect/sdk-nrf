@@ -5,10 +5,11 @@
  */
 
 #include "app_task.h"
-#include "task_executor.h"
+
 #include "bridge_manager.h"
 #include "bridge_storage_manager.h"
-#include "fabric_table_delegate.h"
+#include "matter_init.h"
+#include "task_executor.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include "ble_bridged_device_factory.h"
@@ -17,33 +18,21 @@
 #else
 #include "simulated_bridged_device_factory.h"
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
-#include <platform/CHIPDeviceLayer.h>
 
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/server/OnboardingCodesUtil.h>
-#include <app/server/Server.h>
-#include <credentials/DeviceAttestationCredsProvider.h>
-#include <credentials/examples/DeviceAttestationCredsExample.h>
-#include <lib/support/CHIPMem.h>
-#include <lib/support/CodeUtils.h>
-#include <system/SystemError.h>
-
-#include <app/clusters/network-commissioning/network-commissioning.h>
-#include <platform/nrfconnect/wifi/NrfWiFiDriver.h>
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "ota_util.h"
 #endif
 
-#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::app;
-using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
 namespace
@@ -57,112 +46,7 @@ static constexpr uint8_t kUuidServicesNumber = ARRAY_SIZE(sUuidServices);
 
 } /* namespace */
 
-app::Clusters::NetworkCommissioning::Instance
-	sWiFiCommissioningInstance(0, &(NetworkCommissioning::NrfWiFiDriver::Instance()));
-
-CHIP_ERROR AppTask::Init()
-{
-	/* Initialize CHIP stack */
-	LOG_INF("Init CHIP stack");
-
-	CHIP_ERROR err = chip::Platform::MemoryInit();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Platform::MemoryInit() failed");
-		return err;
-	}
-
-	err = PlatformMgr().InitChipStack();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("PlatformMgr().InitChipStack() failed");
-		return err;
-	}
-
-#if defined(CONFIG_CHIP_WIFI)
-	sWiFiCommissioningInstance.Init();
-#else
-	return CHIP_ERROR_INTERNAL;
-#endif /* CONFIG_CHIP_WIFI */
-
-	if (!GetBoard().Init()) {
-		LOG_ERR("User interface initialization failed.");
-		return CHIP_ERROR_INCORRECT_STATE;
-	}
-
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-	/* OTA image confirmation must be done before the factory data init. */
-	OtaConfirmNewImage();
-#endif
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-	/* Initialize DFU over SMP */
-	GetDFUOverSMP().Init();
-	GetDFUOverSMP().ConfirmNewImage();
-#endif
-
-	/* Initialize CHIP server */
-#if CONFIG_CHIP_FACTORY_DATA
-	ReturnErrorOnFailure(mFactoryDataProvider.Init());
-	SetDeviceInstanceInfoProvider(&mFactoryDataProvider);
-	SetDeviceAttestationCredentialsProvider(&mFactoryDataProvider);
-	SetCommissionableDataProvider(&mFactoryDataProvider);
-#else
-	SetDeviceInstanceInfoProvider(&DeviceInstanceInfoProviderMgrImpl());
-	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
-#endif
-
-	static chip::CommonCaseDeviceServerInitParams initParams;
-	(void)initParams.InitializeStaticResourcesBeforeServerInit();
-
-	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
-	ConfigurationMgr().LogDeviceConfig();
-	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-	AppFabricTableDelegate::Init();
-
-#ifdef CONFIG_BRIDGED_DEVICE_BT
-	/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover devices loaded
-	 * from persistent storaged during the bridge init. */
-	err = BLEConnectivityManager::Instance().Init(sUuidServices, kUuidServicesNumber);
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("BLEConnectivityManager initialization failed");
-		return err;
-	}
-#endif
-
-	/* Initialize bridge manager */
-	err = BridgeManager::Instance().Init(RestoreBridgedDevices);
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("BridgeManager initialization failed");
-		return err;
-	}
-
-	/*
-	 * Add CHIP event handler and start CHIP thread.
-	 * Note that all the initialization code should happen prior to this point to avoid data races
-	 * between the main and the CHIP threads.
-	 */
-	PlatformMgr().AddEventHandler(ChipEventHandler, 0);
-
-	err = PlatformMgr().StartEventLoopTask();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
-		return err;
-	}
-
-	return CHIP_NO_ERROR;
-}
-
-CHIP_ERROR AppTask::StartApp()
-{
-	ReturnErrorOnFailure(Init());
-
-	while (true) {
-		TaskExecutor::DispatchNextTask();
-	}
-
-	return CHIP_NO_ERROR;
-}
-
-void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
+void AppTask::MatterEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 {
 	bool isNetworkProvisioned = false;
 
@@ -174,7 +58,8 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 		break;
 #if defined(CONFIG_CHIP_WIFI)
 	case DeviceEventType::kWiFiConnectivityChange:
-		isNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
+		isNetworkProvisioned =
+			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
 #if CONFIG_CHIP_OTA_REQUESTOR
 		if (event->WiFiConnectivityChange.Result == kConnectivity_Established) {
 			InitBasicOTARequestor();
@@ -242,5 +127,49 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 							    chip::Optional<uint16_t>(endpointId));
 #endif
 	}
+	return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR AppTask::Init()
+{
+	/* Initialize Matter stack */
+	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(
+		MatterEventHandler, Nordic::Matter::InitData{ .mPostServerInitClbk = [] {
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+			/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover
+			 * devices loaded from persistent storage during the bridge init. */
+			CHIP_ERROR bleInitError =
+				BLEConnectivityManager::Instance().Init(sUuidServices, kUuidServicesNumber);
+			if (bleInitError != CHIP_NO_ERROR) {
+				LOG_ERR("BLEConnectivityManager initialization failed");
+				return bleInitError;
+			}
+#endif
+
+			/* Initialize bridge manager */
+			CHIP_ERROR bridgeMgrInitError = BridgeManager::Instance().Init(RestoreBridgedDevices);
+			if (bridgeMgrInitError != CHIP_NO_ERROR) {
+				LOG_ERR("BridgeManager initialization failed");
+				return bridgeMgrInitError;
+			}
+			return CHIP_NO_ERROR;
+		} }));
+
+	if (!GetBoard().Init()) {
+		LOG_ERR("User interface initialization failed.");
+		return CHIP_ERROR_INCORRECT_STATE;
+	}
+
+	return Nordic::Matter::StartServer();
+}
+
+CHIP_ERROR AppTask::StartApp()
+{
+	ReturnErrorOnFailure(Init());
+
+	while (true) {
+		TaskExecutor::DispatchNextTask();
+	}
+
 	return CHIP_NO_ERROR;
 }
