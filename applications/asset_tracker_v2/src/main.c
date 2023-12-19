@@ -381,14 +381,17 @@ static void data_get(void)
 
 	/* Specify which data that is to be included in the transmission. */
 	app_module_event->data_list[count++] = APP_DATA_MODEM_DYNAMIC;
-	app_module_event->data_list[count++] = APP_DATA_BATTERY;
-	app_module_event->data_list[count++] = APP_DATA_ENVIRONMENTAL;
-
 	if (!modem_static_sampled) {
 		app_module_event->data_list[count++] = APP_DATA_MODEM_STATIC;
 	}
 
-	if (!app_cfg.no_data.neighbor_cell || !app_cfg.no_data.gnss || !app_cfg.no_data.wifi) {
+	if (IS_ENABLED(CONFIG_SENSOR_MODULE)) {
+		app_module_event->data_list[count++] = APP_DATA_BATTERY;
+		app_module_event->data_list[count++] = APP_DATA_ENVIRONMENTAL;
+	}
+
+	if (IS_ENABLED(CONFIG_LOCATION_MODULE) &&
+	    (!app_cfg.no_data.neighbor_cell || !app_cfg.no_data.gnss || !app_cfg.no_data.wifi)) {
 		app_module_event->data_list[count++] = APP_DATA_LOCATION;
 
 		/* Set application module timeout when location sampling is requested.

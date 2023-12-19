@@ -124,6 +124,12 @@ CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT
    This configuration includes neighbor cell measurements during sampling.
    Enabled by default.
 
+.. _CONFIG_DATA_SAMPLE_WIFI_DEFAULT:
+
+CONFIG_DATA_SAMPLE_WIFI_DEFAULT
+   This configuration includes Wi-Fi APs during sampling.
+   Enabled by default.
+
 Other options:
 
 .. _CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY:

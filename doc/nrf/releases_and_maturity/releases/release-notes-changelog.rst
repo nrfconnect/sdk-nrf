@@ -168,7 +168,9 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Asset Tracker v2
 ----------------
 
-  * Removed nRF7002 EK DTC overlay file ``nrf91xxdk_with_nrf7002ek.overlay`` because UART1 is disabled through the shield configuration.
+* Added the :kconfig:option:`CONFIG_DATA_SAMPLE_WIFI_DEFAULT` Kconfig option to configure whether Wi-Fi APs are included in sample requests by default.
+
+* Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
 Serial LTE modem
 ----------------
@@ -270,7 +272,7 @@ Cellular samples
 
 * :ref:`location_sample` sample:
 
-  * Removed nRF7002 EK DTC overlay file ``nrf91xxdk_with_nrf7002ek.overlay`` because UART1 is disabled through the shield configuration.
+  * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
 * :ref:`modem_shell_application` sample:
 
@@ -279,7 +281,7 @@ Cellular samples
     * Printing of the last reset reason when the sample starts.
     * Support for printing the sample version information using the ``version`` command.
 
-  * Removed nRF7002 EK DTC overlay file ``nrf91xxdk_with_nrf7002ek.overlay`` because UART1 is disabled through the shield configuration.
+  * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -297,7 +299,7 @@ Cellular samples
     * The sample now explicitly uses the :c:func:`conn_mgr_all_if_connect` function to start network connectivity, instead of the :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_START` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT` Kconfig options.
     * The sample to use the FOTA support functions in the :file:`nrf_cloud_fota_poll.c` and :file:`nrf_cloud_fota_common.c` files.
 
-  * Removed nRF7002 EK DTC overlay file ``nrf91xxdk_with_nrf7002ek.overlay`` because UART1 is disabled through the shield configuration.
+  * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 

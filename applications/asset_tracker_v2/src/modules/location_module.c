@@ -240,12 +240,6 @@ static void search_start(void)
 	int methods_count = 0;
 	struct location_method_config methods_updated[CONFIG_LOCATION_METHODS_LIST_SIZE] = { 0 };
 
-	if (copy_cfg.no_data.neighbor_cell && copy_cfg.no_data.gnss && copy_cfg.no_data.wifi) {
-		SEND_EVENT(location, LOCATION_MODULE_EVT_DATA_NOT_READY);
-		LOG_ERR("All GNSS, cellular and Wi-Fi are configured off");
-		return;
-	}
-
 	/* Set default location configuration configured at compile time */
 	location_config_defaults_set(&config, 0, NULL);
 
@@ -268,6 +262,12 @@ static void search_start(void)
 				       sizeof(struct location_method_config));
 				methods_count++;
 			}
+		}
+
+		if (methods_count == 0) {
+			SEND_EVENT(location, LOCATION_MODULE_EVT_DATA_NOT_READY);
+			LOG_INF("All location methods are disabled at run-time");
+			return;
 		}
 
 		config.methods_count = methods_count;
