@@ -1819,6 +1819,32 @@ out:
 	return ret;
 }
 
+static int nrf_wifi_wait_for_carrier_status(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
+	enum nrf_wifi_fmac_if_carr_state carrier_status)
+{
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	int ret = -1;
+	unsigned int timeout = 0;
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	while (vif_ctx_zep->if_carr_state != carrier_status &&
+	       timeout++ < CARR_ON_TIMEOUT_MS) {
+		k_sleep(K_MSEC(1));
+	}
+
+	if (vif_ctx_zep->if_carr_state != carrier_status) {
+		LOG_ERR("%s: Carrier %s event not received in %dms", __func__,
+			carrier_status == NRF_WIFI_FMAC_IF_CARR_STATE_ON ? "ON" : "OFF",
+			timeout);
+		goto out;
+	}
+
+	ret = 0;
+out:
+	return ret;
+}
+
 int nrf_wifi_wpa_supp_init_ap(void *if_priv, struct wpa_driver_associate_params *params)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -2004,7 +2030,6 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	int ret = -1;
 	struct nrf_wifi_umac_start_ap_info start_ap_info = {0};
-	unsigned int timeout = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	if (!if_priv || !params) {
@@ -2052,13 +2077,8 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 		goto out;
 	}
 
-	while (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON &&
-	       timeout++ < CARR_ON_TIMEOUT_MS) {
-		k_sleep(K_MSEC(1));
-	}
-
-	if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
-		LOG_ERR("%s: Carrier on event not received (%dms)", __func__, timeout);
+	ret = nrf_wifi_wait_for_carrier_status(vif_ctx_zep, NRF_WIFI_FMAC_IF_CARR_STATE_ON);
+	if (ret) {
 		goto out;
 	}
 
@@ -2121,6 +2141,11 @@ int nrf_wifi_wpa_supp_stop_ap(void *if_priv)
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_stop_ap failed", __func__);
+		goto out;
+	}
+
+	ret = nrf_wifi_wait_for_carrier_status(vif_ctx_zep, NRF_WIFI_FMAC_IF_CARR_STATE_OFF);
+	if (ret) {
 		goto out;
 	}
 
