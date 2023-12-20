@@ -3172,6 +3172,11 @@ In addition to the known issues listed here, see also :ref:`softdevice_controlle
 
 .. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0
 
+DRGN-21020: The continuous extended scanner sometimes stops generating advertising reports
+  This can happen when the controller is running an extended cooperative scanner together with other activities, such as advertising or connection, while receiving data in an extended advertising event that uses ``AUX_CHAIN_IND``.
+
+.. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0
+
 DRGN-20956: Rare assert when terminating the Periodic Sync with Responses.
   In rare cases, when a Periodic Sync with Responses is being is being terminated while it is waiting for a sync to a Periodic Advertiser with Responses, the controller can assert.
 
