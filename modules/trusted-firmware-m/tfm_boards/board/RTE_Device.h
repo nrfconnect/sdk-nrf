@@ -15,7 +15,7 @@
 
 #include <nrf-pinctrl.h>
 
-/* Configuration settings for Driver_FLASH.c and Driver_USART.c */
+#include <nrf.h>
 
 #define UART_PIN_INIT(node_id, prop, idx)		\
 	DT_PROP_BY_IDX(node_id, prop, idx),
@@ -30,17 +30,35 @@
 
 #define RTE_FLASH0 1
 
+#if DOMAIN_NS == 1U
+
+#ifdef NRF_UARTE0_S
+
+#define RTE_USART0 1
+
+#else /* NRF_UARTE0 */
+
+#define RTE_USART22 1
+
+#endif /* NRF_UARTE0 */
+
+#endif /* DOMAIN_NS == 1U */
+
 /*
  * The defines RTE_USART0, RTE_USART1, etc. determine if
  * Driver_USART.c instantiates UART instance 0, 1, etc..
  */
 
-#if defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U
+#if defined(CONFIG_TFM_SECURE_UART0)
 #define RTE_USART0 1
 #endif
 
 #if defined(CONFIG_TFM_SECURE_UART1)
 #define RTE_USART1 1
+#endif
+
+#if defined(CONFIG_TFM_SECURE_UART22)
+#define RTE_USART22 1
 #endif
 
 /*
