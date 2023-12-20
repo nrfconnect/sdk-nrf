@@ -262,6 +262,12 @@ config MBEDTLS_SSL_RENEGOTIATION
 	help
 	  Enable support for TLS renegotiation.
 
+config MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
+	bool
+	prompt "SSL - RFC 6066 max_fragment_legth extension"
+	help
+	  Enable support for RFC 6066 max_fragment_length extension in SSL.
+
 config MBEDTLS_SSL_SESSION_TICKETS
 	bool
 	prompt "SSL - RFC 5077 session tickets support"
