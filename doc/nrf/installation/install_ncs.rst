@@ -119,12 +119,12 @@ Depending on your preferred development environment, complete the following step
 
       The toolchain is installed by default at :file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains` on Linux, and :file:`/opt/nordic/ncs/toolchains` on macOS.
 
-      If you have received a custom URL for installing the toolchain, you can use the following command to set it as default, replacing the respective parameters:
+      If you have received a custom URL for installing the toolchain, you can use the following command to set it as default, replacing the respective parameter:
 
       .. parsed-literal::
          :class: highlight
 
-         nrfutil toolchain-manager config --set toolchain-index=*custom_toolchain_URL*
+         nrfutil toolchain-manager config --set toolchain-index=\ *custom_toolchain_URL*
 
       If you have received a custom bundle ID for installing a specific toolchain version, you can use the following commands to provide it, replacing the respective parameter:
 
@@ -241,7 +241,7 @@ For more information about the repository and development model, see the :ref:`d
 
            .. code-block:: console
 
-              west init -m https\://github.com/nrfconnect/sdk-nrf --mr v1.9.2-dev1
+              west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.9.2-dev1
 
          * **Branch**: To check out the ``main`` branch that includes the latest state of development, enter the following command:
 
@@ -387,7 +387,7 @@ To install the |NCS| system-wide, complete the following steps:
                      .. code-block:: bat
 
                         cd %HOMEPATH%
-                        python -m venv ncs\.venv
+                        python -m venv ncs/.venv
 
                   #. Activate the virtual environment:
 
@@ -529,9 +529,9 @@ To install the |NCS| system-wide, complete the following steps:
 
                .. code-block:: bash
 
-                  pip3 install -r zephyr\scripts\requirements.txt
-                  pip3 install -r nrf\scripts\requirements.txt
-                  pip3 install -r bootloader\mcuboot\scripts\requirements.txt
+                  pip3 install -r zephyr/scripts/requirements.txt
+                  pip3 install -r nrf/scripts/requirements.txt
+                  pip3 install -r bootloader/mcuboot/scripts/requirements.txt
 
          .. group-tab:: Linux
 
