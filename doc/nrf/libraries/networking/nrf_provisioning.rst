@@ -1,7 +1,7 @@
 .. _lib_nrf_provisioning:
 
-nRF Device provisioning
-#######################
+nRF Cloud device provisioning
+#############################
 
 .. contents::
    :local:

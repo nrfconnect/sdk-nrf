@@ -626,6 +626,7 @@ Libraries for networking
 
 * :ref:`lib_nrf_provisioning` library:
 
+  * Renamed nRF Device provisioning to :ref:`lib_nrf_provisioning`.
   * Updated the device mode callback to send an event when the provisioning state changes.
 
 * :ref:`lib_nrf_cloud_fota` library:
