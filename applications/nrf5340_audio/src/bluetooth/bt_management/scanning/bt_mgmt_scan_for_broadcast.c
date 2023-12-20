@@ -46,6 +46,11 @@ static void scan_restart_worker(struct k_work *work)
 {
 	int ret;
 
+	ret = bt_le_scan_stop();
+	if (ret && ret != -EALREADY) {
+		LOG_WRN("Stop scan failed: %d", ret);
+	}
+
 	/* Delete pending PA sync before restarting scan */
 	ret = bt_mgmt_pa_sync_delete(pa_sync);
 	if (ret) {
@@ -92,11 +97,6 @@ static void periodic_adv_sync(const struct bt_le_scan_recv_info *info, uint32_t 
 
 	bt_le_scan_cb_unregister(&scan_callback);
 	scan_cb_registered = false;
-
-	ret = bt_le_scan_stop();
-	if (ret) {
-		LOG_WRN("Stop scan failed: %d", ret);
-	}
 
 	bt_addr_le_copy(&param.addr, info->addr);
 	param.options = 0;
@@ -208,6 +208,11 @@ static void pa_synced_cb(struct bt_le_per_adv_sync *sync,
 
 	k_timer_stop(&pa_sync_timer);
 
+	ret = bt_le_scan_stop();
+	if (ret && ret != -EALREADY) {
+		LOG_WRN("Stop scan failed: %d", ret);
+	}
+
 	msg.event = BT_MGMT_PA_SYNCED;
 	msg.pa_sync = sync;
 	msg.broadcast_id = broadcaster_broadcast_id;
@@ -254,9 +259,11 @@ int bt_mgmt_scan_for_broadcast_start(struct bt_le_scan_param *scan_param, char c
 		if (name == srch_name) {
 			return -EALREADY;
 		}
-		/* Already scanning, stop current scan to update param in case it has changed */
+		/* Might already be scanning, stop current scan to update param in case it has
+		 * changed.
+		 */
 		ret = bt_le_scan_stop();
-		if (ret) {
+		if (ret && ret != -EALREADY) {
 			LOG_ERR("Failed to stop scan: %d", ret);
 			return ret;
 		}
