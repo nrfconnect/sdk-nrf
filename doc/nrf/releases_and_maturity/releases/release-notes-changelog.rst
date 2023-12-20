@@ -310,7 +310,9 @@ Cellular samples
 
 * :ref:`nrf_cloud_multi_service` sample:
 
-  * Added a generic processing example for application-specific shadow data.
+  * Added:
+    * A generic processing example for application-specific shadow data.
+    * Configuration and overlay files to enable MCUboot to use the external flash on the nRF1961 DK.
 
   * Fixed:
 
