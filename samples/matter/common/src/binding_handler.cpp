@@ -21,6 +21,7 @@ void BindingHandler::Init()
 void BindingHandler::RunBoundClusterAction(BindingData *bindingData)
 {
 	VerifyOrReturn(bindingData != nullptr, LOG_ERR("Invalid binding data"));
+	VerifyOrReturn(bindingData->InvokeCommandFunc != nullptr, LOG_ERR("No valid InvokeCommandFunc assigned"););
 
 	DeviceLayer::PlatformMgr().ScheduleWork(DeviceWorkerHandler, reinterpret_cast<intptr_t>(bindingData));
 }
