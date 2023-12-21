@@ -135,7 +135,7 @@ static int rx_enable(void)
 	return 0;
 }
 
-static void rx_disable(void)
+int slm_uart_rx_disable(void)
 {
 	int err;
 
@@ -147,11 +147,13 @@ static void rx_disable(void)
 	err = uart_rx_disable(uart_dev);
 	if (err) {
 		LOG_ERR("UART RX disable failed: %d", err);
-		return;
+		return err;
 	}
 
 	/* Wait for disable to complete. */
 	k_sleep(K_MSEC(100));
+
+	return 0;
 }
 
 static void rx_recovery(void)
@@ -320,10 +322,16 @@ int slm_uart_power_off(void)
 {
 	int err;
 
-	rx_disable();
-	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
-	if (err && err != -EALREADY) {
-		LOG_ERR("Can't suspend UART: %d", err);
+	err = slm_uart_rx_disable();
+	if (!err) {
+		err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
+		if (err == -EALREADY) {
+			err = 0;
+		}
+		if (err) {
+			LOG_ERR("Can't suspend UART: %d", err);
+			slm_uart_power_on();
+		}
 	}
 
 	/* Write sync str to buffer, so it is send first when we power UART.*/
@@ -455,7 +463,7 @@ void slm_uart_handler_uninit(void)
 	int err;
 
 	/* Power off UART module */
-	rx_disable();
+	slm_uart_rx_disable();
 	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
 		LOG_WRN("Can't suspend UART: %d", err);
