@@ -17,6 +17,13 @@
  * marked with comment.
  */
 
+/* The Kconfig symbol CONFIG_FLASH_SIZE is used to define the TF-M
+ * symbol FLASH_TOTAL_SIZE.
+ */
+#ifndef CONFIG_FLASH_SIZE
+#error "CONFIG_FLASH_SIZE not defined"
+#endif
+
 /* Size of a Secure and of a Non-secure image */
 #define FLASH_S_PARTITION_SIZE          (PM_TFM_SECURE_SIZE)
 #define FLASH_NS_PARTITION_SIZE         (PM_TFM_NONSECURE_SIZE)
@@ -31,8 +38,10 @@
  */
 #define FLASH_AREA_IMAGE_SECTOR_SIZE        (0x1000)      /* 4 kB */
 
-/* FLASH size */
-#define FLASH_TOTAL_SIZE                    (0x100000)    /* 1024 kB. */
+/* Note that CONFIG_FLASH_SIZE has a unit of kB and
+ * FLASH_TOTAL_SIZE has a unit of bytes
+ */
+#define FLASH_TOTAL_SIZE                    (CONFIG_FLASH_SIZE * 1024)
 
 /* Flash layout info for BL2 bootloader */
 #define FLASH_BASE_ADDRESS                  (0x00000000)
