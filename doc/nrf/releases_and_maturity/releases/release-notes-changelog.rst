@@ -371,12 +371,16 @@ Matter samples
   * Defined common LED and button constants in the dedicated board configuration files.
   * Created the Kconfig file for the Matter common directory.
 
-* Disabled :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
-
 * :ref:`matter_lock_sample` sample:
 
   * Fixed an issue that prevented nRF Toolbox for iOS in version 5.0.9 from controlling the sample using :ref:`nus_service_readme`.
   * Changed the design of the :ref:`matter_lock_sample_wifi_thread_switching` feature so that support for both Matter over Thread and Matter over Wi-Fi is included in a single firmware image.
+
+* Disabled:
+
+  * :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
+  * WPA Supplicant advanced features in all Matter samples using the :kconfig:option:`WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
+    This saves roughly 25 KB of FLASH memory for firmware images with Wi-Fi support.
 
 Multicore samples
 -----------------
