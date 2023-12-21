@@ -43,6 +43,9 @@ int slm_uart_power_on(void);
  */
 int slm_uart_power_off(void);
 
+/** @retval 0 on successful UART RX disabling. */
+int slm_uart_rx_disable(void);
+
 /** @return Whether a UART message can be sent from the current context. */
 bool slm_uart_can_context_send(const uint8_t *data, size_t len);
 

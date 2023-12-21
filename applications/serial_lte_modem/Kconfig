@@ -167,6 +167,9 @@ config SLM_PPP
 	  when the LTE link (default PDN) is connected/disconnected,
 	  regardless of what is done with AT#XPPP.
 
+config SLM_CMUX
+	bool "CMUX support in SLM"
+
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"
 rsource "src/http_c/Kconfig"

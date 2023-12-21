@@ -64,6 +64,9 @@
 #if defined(CONFIG_SLM_PPP)
 #include "slm_ppp.h"
 #endif
+#if defined(CONFIG_SLM_CMUX)
+#include "slm_cmux.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 
@@ -508,6 +511,10 @@ static struct slm_at_cmd {
 
 #if defined(CONFIG_SLM_PPP)
 	{"AT#XPPP", handle_at_ppp},
+#endif
+
+#if defined(CONFIG_SLM_CMUX)
+	{"AT#XCMUX", handle_at_cmux},
 #endif
 };
 
