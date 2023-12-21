@@ -202,7 +202,7 @@ int hw_codec_volume_adjust(int8_t adjustment_db)
 		if (new_volume_reg_val <= 0) {
 			LOG_WRN("Volume at MIN (-64dB)");
 			new_volume_reg_val = 0;
-		} else if (volume_reg_val >= MAX_VOLUME_REG_VAL) {
+		} else if (new_volume_reg_val >= MAX_VOLUME_REG_VAL) {
 			LOG_WRN("Volume at MAX (0dB)");
 			new_volume_reg_val = MAX_VOLUME_REG_VAL;
 		}
