@@ -69,6 +69,7 @@ namespace Unicast
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
+		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 
 		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -80,6 +81,7 @@ namespace Unicast
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
+		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 
 		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -91,6 +93,7 @@ namespace Unicast
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
+		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 
 		BindingHandler::RunBoundClusterAction(data);
 		return CHIP_NO_ERROR;
@@ -135,6 +138,7 @@ namespace Group
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::On::Id;
 		data->ClusterId = Clusters::OnOff::Id;
+		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 		data->IsGroup = true;
 
 		BindingHandler::RunBoundClusterAction(data);
@@ -147,6 +151,7 @@ namespace Group
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Off::Id;
 		data->ClusterId = Clusters::OnOff::Id;
+		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 		data->IsGroup = true;
 
 		BindingHandler::RunBoundClusterAction(data);
@@ -159,6 +164,7 @@ namespace Group
 		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
 		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
 		data->ClusterId = Clusters::OnOff::Id;
+		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
 		data->IsGroup = true;
 
 		BindingHandler::RunBoundClusterAction(data);

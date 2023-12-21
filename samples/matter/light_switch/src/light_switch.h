@@ -31,6 +31,9 @@ public:
 	void InitiateActionSwitch(Action action);
 	void DimmerChangeBrightness();
 	chip::EndpointId GetLightSwitchEndpointId() { return mLightSwitchEndpoint; }
+	static void SwitchChangedHandler(const EmberBindingTableEntry &binding,
+					 chip::OperationalDeviceProxy *deviceProxy,
+					 BindingHandler::BindingData &bindingData);
 
 	static LightSwitch &GetInstance()
 	{
@@ -39,9 +42,6 @@ public:
 	}
 
 private:
-	static void SwitchChangedHandler(const EmberBindingTableEntry &binding,
-					 chip::OperationalDeviceProxy *deviceProxy,
-					 BindingHandler::BindingData &bindingData);
 	static void OnOffProcessCommand(chip::CommandId commandId, const EmberBindingTableEntry &binding,
 					chip::OperationalDeviceProxy *device, BindingHandler::BindingData &bindingData);
 	static void LevelControlProcessCommand(chip::CommandId commandId, const EmberBindingTableEntry &binding,
