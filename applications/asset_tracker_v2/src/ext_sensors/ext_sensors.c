@@ -341,7 +341,13 @@ int ext_sensors_pressure_get(double *ext_press)
 	}
 
 	k_spinlock_key_t key = k_spin_lock(&(press_sensor.lock));
-	*ext_press = sensor_value_to_double(&data) / 1000.0f;
+#if defined(CONFIG_BME680)
+	/* Pressure is in kPascals */
+	*ext_press = sensor_value_to_double(&data) * 1000.0f;
+#else
+	/* Pressure is in Pascals */
+	*ext_press = sensor_value_to_double(&data);
+#endif
 	k_spin_unlock(&(press_sensor.lock), key);
 
 	return 0;
