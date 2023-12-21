@@ -14,3 +14,5 @@ The following subpages cover topics related to developing applications with the 
 
    constrained
    fw_patches_ext_flash
+   raw_tx_operation
+   sniffer_rx_operation.rst

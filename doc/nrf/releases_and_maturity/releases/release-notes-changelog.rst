@@ -612,6 +612,8 @@ Wi-Fi drivers
 
 * Added TX injection feature to the nRF70 Series device.
 
+* Added Monitor mode feature to the nRF70 Series device.
+
 Libraries
 =========
 
@@ -974,6 +976,7 @@ Documentation
   * A page on :ref:`ug_nrf70_developing_fw_patch_ext_flash` in the :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` in the :ref:`ug_nrf70_developing` user guide.
   * :ref:`contributions_ncs` page in a new :ref:`contributions` section that also includes the development model pages, previously listed under :ref:`releases_and_maturity`.
+  * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_reception_using_monitor_mode` in the :ref:`ug_nrf70_developing` user guide.
 
 * Updated:
 
