@@ -3172,6 +3172,11 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v2-5-1 v2-5-0 v2-4-2 v2-4-1 v2-4-0
+
+DRGN-20956: Rare assert when terminating the Periodic Sync with Responses.
+  In rare cases, when a Periodic Sync with Responses is being is being terminated while it is waiting for a sync to a Periodic Advertiser with Responses, the controller can assert.
+
 .. rst-class:: v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 DRGN-19460: The continuous extended scanner cannot receive the ``AUX_ADV_IND`` packet
