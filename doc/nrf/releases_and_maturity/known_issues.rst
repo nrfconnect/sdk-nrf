@@ -36,8 +36,6 @@ A known issue can list one or both of the following entries:
    When adding a new version, set it as the default value of the version-filter directive.
    Once the version is updated, only issues that are valid for the new version will be displayed when entering the page.
 
-   Known issues process is described at https://nordicsemi.atlassian.net/wiki/spaces/NCS/pages/108237688/Known+Issues+process
-
    When updating this file, add entries in the following format:
 
    .. rst-class:: wontfix vXXX vYYY
