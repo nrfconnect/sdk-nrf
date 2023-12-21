@@ -11,8 +11,11 @@
 
 #include <nrf_gzll_glue.h>
 #include <gzll_glue.h>
+#if defined(PPI_PRESENT)
 #include <nrfx_ppi.h>
-
+#else
+#include <nrfx_dppi.h>
+#endif
 
 #if defined(CONFIG_GAZELL_ZERO_LATENCY_IRQS)
 #define GAZELL_HIGH_IRQ_FLAGS IRQ_ZERO_LATENCY
@@ -57,6 +60,7 @@ IRQn_Type        const nrf_gzll_timer_irqn = GAZELL_TIMER_IRQN;
 #endif
 IRQn_Type        const nrf_gzll_swi_irqn   = GAZELL_SWI_IRQN;
 
+#if defined(PPI_PRESENT)
 __IOM uint32_t *nrf_gzll_ppi_eep0;
 __IOM uint32_t *nrf_gzll_ppi_tep0;
 __IOM uint32_t *nrf_gzll_ppi_eep1;
@@ -66,7 +70,14 @@ __IOM uint32_t *nrf_gzll_ppi_tep2;
 
 uint32_t nrf_gzll_ppi_chen_msk_0_and_1;
 uint32_t nrf_gzll_ppi_chen_msk_2;
+#else
+uint8_t nrf_gzll_dppi_ch0;
+uint8_t nrf_gzll_dppi_ch1;
+uint8_t nrf_gzll_dppi_ch2;
 
+uint32_t nrf_gzll_dppi_chen_msk_0_and_1;
+uint32_t nrf_gzll_dppi_chen_msk_2;
+#endif
 
 ISR_DIRECT_DECLARE(gazell_radio_irq_handler)
 {
@@ -94,9 +105,12 @@ bool gzll_glue_init(void)
 	bool is_ok = true;
 	const struct device *clkctrl = DEVICE_DT_GET_ONE(nordic_nrf_clock);
 	nrfx_err_t err_code;
+#if defined(PPI_PRESENT)
 	nrf_ppi_channel_t ppi_channel[3];
+#else
+	uint8_t nrf_dppi_channels[3];
+#endif
 	uint8_t i;
-
 	irq_disable(RADIO_IRQn);
 	irq_disable(GAZELL_TIMER_IRQN);
 	irq_disable(GAZELL_SWI_IRQN);
@@ -127,7 +141,11 @@ bool gzll_glue_init(void)
 	}
 
 	for (i = 0; i < 3; i++) {
+#if defined(PPI_PRESENT)
 		err_code = nrfx_ppi_channel_alloc(&ppi_channel[i]);
+#else
+		err_code = nrfx_dppi_channel_alloc(&nrf_dppi_channels[i]);
+#endif
 		if (err_code != NRFX_SUCCESS) {
 			is_ok = false;
 			break;
@@ -135,6 +153,7 @@ bool gzll_glue_init(void)
 	}
 
 	if (is_ok) {
+#if defined(PPI_PRESENT)
 		nrf_gzll_ppi_eep0 = &NRF_PPI->CH[ppi_channel[0]].EEP;
 		nrf_gzll_ppi_tep0 = &NRF_PPI->CH[ppi_channel[0]].TEP;
 		nrf_gzll_ppi_eep1 = &NRF_PPI->CH[ppi_channel[1]].EEP;
@@ -145,6 +164,14 @@ bool gzll_glue_init(void)
 		nrf_gzll_ppi_chen_msk_0_and_1 = ((1 << ppi_channel[0]) |
 						 (1 << ppi_channel[1]));
 		nrf_gzll_ppi_chen_msk_2 = (1 << ppi_channel[2]);
+#else
+		nrf_gzll_dppi_ch0 = nrf_dppi_channels[0];
+		nrf_gzll_dppi_ch1 = nrf_dppi_channels[1];
+		nrf_gzll_dppi_ch2 = nrf_dppi_channels[2];
+		nrf_gzll_dppi_chen_msk_0_and_1 =
+			((1 << nrf_dppi_channels[0]) | (1 << nrf_dppi_channels[1]));
+		nrf_gzll_dppi_chen_msk_2 = (1 << nrf_dppi_channels[2]);
+#endif
 	}
 
 	return is_ok;
