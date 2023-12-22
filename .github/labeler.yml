@@ -8,18 +8,26 @@
 # first branch.
 
 "manifest":
-  - "west.yml"
+- changed-files:
+  - any-glob-to-any-file:
+    - "west.yml"
 
 "doc-required":
-  - "doc/**/*"
-  - "**/*.rst"
+- changed-files:
+  - any-glob-to-any-file:
+    - "doc/**/*"
+    - "**/*.rst"
 
 "changelog-entry-required":
-  - all: ["!doc/nrf/releases_and_maturity/releases/release-notes-changelog.rst"]
+- all:
+  - changed-files:
+    - all-globs-to-all-files: ["!doc/nrf/releases_and_maturity/releases/release-notes-changelog.rst"]
 
 "ble mesh":
-  - "subsys/bluetooth/mesh/*"
-  - "include/bluetooth/mesh/*"
-  - "samples/bluetooth/mesh/*"
-  - "doc/nrf/libraries/bluetooth_services/mesh/*"
-  - "doc/nrf/ug_bt_mesh*"
+- changed-files:
+  - any-glob-to-any-file:
+    - "subsys/bluetooth/mesh/*"
+    - "include/bluetooth/mesh/*"
+    - "samples/bluetooth/mesh/*"
+    - "doc/nrf/libraries/bluetooth_services/mesh/*"
+    - "doc/nrf/ug_bt_mesh*"
