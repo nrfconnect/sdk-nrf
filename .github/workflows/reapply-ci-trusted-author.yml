@@ -5,20 +5,19 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  remove_label:
+  reapply_label:
+    name: Reapply label
     if: ${{ contains(github.event.*.labels.*.name, 'CI-trusted-author') }}
     runs-on: ubuntu-latest
-    name: Remove label
     steps:
       - name: Remove CI-trusted-author label
-        uses: buildsville/add-remove-label@v2.0.0
-        with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
-          labels: CI-trusted-author
-          type: remove
+        run: gh pr edit ${{ github.event.pull_request.number }} --remove-label "CI-trusted-author"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
       - name: Add CI-trusted-author label
-        uses: buildsville/add-remove-label@v2.0.0
-        with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
-          labels: CI-trusted-author
-          type: add
+        run: gh pr edit ${{ github.event.pull_request.number }} --add-label "CI-trusted-author"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
