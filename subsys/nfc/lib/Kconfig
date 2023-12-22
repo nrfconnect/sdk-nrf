@@ -51,6 +51,7 @@ config NFC_RING_SIZE
 config NFC_LIB_CTX_MAX_SIZE
 	int "Maximum size of NFC library context in bytes"
 	default 16
+	range 16 255
 	help
 	  Maximum size of the NFC library context in bytes.
 	  The specified size should be divisible by 4.

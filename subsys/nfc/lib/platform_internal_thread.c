@@ -24,8 +24,11 @@ LOG_MODULE_DECLARE(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 
 #define NFC_LIB_CTX_SIZE CONFIG_NFC_LIB_CTX_MAX_SIZE
 
+#define NFC_HDR_FLAG_COPY BIT(0)
+
 struct nfc_item_header {
-	uint16_t ctx_size;
+	uint8_t ctx_size;
+	uint8_t flags;
 	uint16_t data_size;
 };
 
@@ -118,7 +121,7 @@ static void cb_work(struct k_work *work)
 		goto error;
 	}
 
-	if (header.data_size == 0) {
+	if (!(header.flags & NFC_HDR_FLAG_COPY)) {
 		size = ring_buf_get(&nfc_cb_ring, (uint8_t *)&data, sizeof(data));
 		if (size != sizeof(data)) {
 			LOG_ERR("Tried to read data pointer: %d bytes, read %d.", sizeof(data),
@@ -136,7 +139,7 @@ static void cb_work(struct k_work *work)
 	__ASSERT(nfc_cb_resolve != NULL, "nfc_cb_resolve is not set");
 	nfc_cb_resolve(ctx, data);
 
-	if (header.data_size == 0) {
+	if (!(header.flags & NFC_HDR_FLAG_COPY)) {
 		work_resubmit(work, &nfc_cb_ring);
 		return;
 	}
@@ -224,7 +227,8 @@ void nfc_platform_cb_request(const void *ctx,
 	uint32_t exp_size;
 
 	header.ctx_size = ctx_len;
-	header.data_size = copy_data ? data_len : 0;
+	header.flags = copy_data ? NFC_HDR_FLAG_COPY : 0;
+	header.data_size = data_len;
 
 	size = ring_buf_put(&nfc_cb_ring, (uint8_t *)&header, sizeof(header));
 	if (size != sizeof(header)) {
