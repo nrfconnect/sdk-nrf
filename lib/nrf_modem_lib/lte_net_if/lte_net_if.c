@@ -302,29 +302,33 @@ static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 
 static void lte_reg_handler(const struct lte_lc_evt *const evt)
 {
-	if (evt->type != LTE_LC_EVT_NW_REG_STATUS) {
-		return;
-	}
+	if (evt->type == LTE_LC_EVT_MODEM_EVENT && evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP) {
+		LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
+			"restricted for the next 30 minutes.");
 
-	switch (evt->nw_reg_status) {
-	case LTE_LC_NW_REG_REGISTERED_HOME:
-		__fallthrough;
-	case LTE_LC_NW_REG_REGISTERED_ROAMING:
-		/* Mark serving cell as available. */
-		LOG_DBG("Registered to serving cell");
-		update_has_cell(true);
-		break;
-	case LTE_LC_NW_REG_SEARCHING:
-		/* Searching for a new cell, do not consider this cell loss unless it
-		 * fails (which will generate a new LTE_LC_EVT_NW_REG_STATUS event with
-		 * an unregistered status).
-		 */
-		break;
-	default:
-		LOG_DBG("Not registered to serving cell");
-		/* Mark the serving cell as lost. */
-		update_has_cell(false);
-		break;
+		LOG_DBG("For more information, see the AT command documentation "
+			"for the %%MDMEV notification");
+	} else if (evt->type == LTE_LC_EVT_NW_REG_STATUS) {
+		switch (evt->nw_reg_status) {
+		case LTE_LC_NW_REG_REGISTERED_HOME:
+			__fallthrough;
+		case LTE_LC_NW_REG_REGISTERED_ROAMING:
+			/* Mark serving cell as available. */
+			LOG_DBG("Registered to serving cell");
+			update_has_cell(true);
+			break;
+		case LTE_LC_NW_REG_SEARCHING:
+			/* Searching for a new cell, do not consider this cell loss unless it
+			 * fails (which will generate a new LTE_LC_EVT_NW_REG_STATUS event with
+			 * an unregistered status).
+			 */
+			break;
+		default:
+			LOG_DBG("Not registered to serving cell");
+			/* Mark the serving cell as lost. */
+			update_has_cell(false);
+			break;
+		}
 	}
 }
 
