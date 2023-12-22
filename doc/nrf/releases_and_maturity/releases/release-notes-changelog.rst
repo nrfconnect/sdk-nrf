@@ -696,7 +696,7 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+* Fixed an issue with handling zero size data (when receiving empty I-blocks from poller) in the :file:`platform_internal_thread` file.
 
 nRF Security
 ------------
