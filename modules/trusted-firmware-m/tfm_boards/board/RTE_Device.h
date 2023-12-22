@@ -39,7 +39,7 @@
 #define RTE_USART0 1
 #endif
 
-#if defined(CONFIG_TFM_SECURE_UART1) && DOMAIN_NS != 1U
+#if defined(CONFIG_TFM_SECURE_UART1)
 #define RTE_USART1 1
 #endif
 
