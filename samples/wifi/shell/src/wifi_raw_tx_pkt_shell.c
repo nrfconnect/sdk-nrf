@@ -11,19 +11,68 @@
 #include <stdlib.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/posix/unistd.h>
+#include <zephyr/net/socket.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(raw_tx_pkt, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include "net_private.h"
 #include <nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h>
 
+#define BEACON_PAYLOAD_LENGTH 256
+#define IEEE80211_SEQ_CTRL_SEQ_NUM_MASK 0xFFF0
+#define IEEE80211_SEQ_NUMBER_INC BIT(4) /* 0-3 is fragment number */
+
 struct raw_tx_pkt_header raw_tx_pkt;
+
+struct beacon {
+	uint16_t frame_control;
+	uint16_t duration;
+	uint8_t da[6];
+	uint8_t sa[6];
+	uint8_t bssid[6];
+	uint16_t seq_ctrl;
+	uint8_t payload[BEACON_PAYLOAD_LENGTH];
+} __packed;
+
+static struct beacon test_beacon_frame = {
+	.frame_control = htons(0X8000),
+	.duration = 0X0000,
+	.da = {0XFF, 0XFF, 0XFF, 0XFF, 0XFF, 0XFF},
+	/* Transmitter Address: A0:69:60:E3:52:15 */
+	.sa = {0XA0, 0X69, 0X60, 0XE3, 0X52, 0X15},
+	.bssid = {0XA0, 0X69, 0X60, 0XE3, 0X52, 0X15},
+	.seq_ctrl = 0X0001,
+	/* SSID: NRF_RAW_TX_PACKET_APP */
+	.payload = {
+		0X0C, 0XA2, 0X28, 0X00, 0X00, 0X00, 0X00, 0X00, 0X64, 0X00,
+		0X11, 0X04, 0X00, 0X15, 0X4E, 0X52, 0X46, 0X5F, 0X52, 0X41,
+		0X57, 0X5F, 0X54, 0X58, 0X5F, 0X50, 0X41, 0X43, 0X4B, 0X45,
+		0X54, 0X5F, 0X41, 0X50, 0X50, 0X01, 0X08, 0X82, 0X84, 0X8B,
+		0X96, 0X0C, 0X12, 0X18, 0X24, 0X03, 0X01, 0X06, 0X05, 0X04,
+		0X00, 0X02, 0X00, 0X00, 0X2A, 0X01, 0X04, 0X32, 0X04, 0X30,
+		0X48, 0X60, 0X6C, 0X30, 0X14, 0X01, 0X00, 0X00, 0X0F, 0XAC,
+		0X04, 0X01, 0X00, 0X00, 0X0F, 0XAC, 0X04, 0X01, 0X00, 0X00,
+		0X0F, 0XAC, 0X02, 0X0C, 0X00, 0X3B, 0X02, 0X51, 0X00, 0X2D,
+		0X1A, 0X0C, 0X00, 0X17, 0XFF, 0XFF, 0X00, 0X00, 0X00, 0X00,
+		0X00, 0X00, 0X00, 0X2C, 0X01, 0X01, 0X00, 0X00, 0X00, 0X00,
+		0X00, 0X00, 0X00, 0X00, 0X00, 0X3D, 0X16, 0X06, 0X00, 0X00,
+		0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00,
+		0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X7F, 0X08, 0X04, 0X00,
+		0X00, 0X02, 0X00, 0X00, 0X00, 0X40, 0XFF, 0X1A, 0X23, 0X01,
+		0X78, 0X10, 0X1A, 0X00, 0X00, 0X00, 0X20, 0X0E, 0X09, 0X00,
+		0X09, 0X80, 0X04, 0X01, 0XC4, 0X00, 0XFA, 0XFF, 0XFA, 0XFF,
+		0X61, 0X1C, 0XC7, 0X71, 0XFF, 0X07, 0X24, 0XF0, 0X3F, 0X00,
+		0X81, 0XFC, 0XFF, 0XDD, 0X18, 0X00, 0X50, 0XF2, 0X02, 0X01,
+		0X01, 0X01, 0X00, 0X03, 0XA4, 0X00, 0X00, 0X27, 0XA4, 0X00,
+		0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00
+	}
+};
 
 void fill_raw_tx_pkt_hdr(int rate_flags, int data_rate, int queue_num)
 {
 	raw_tx_pkt.magic_num = NRF_WIFI_MAGIC_NUM_RAWTX;
 	raw_tx_pkt.data_rate = data_rate;
-	raw_tx_pkt.packet_length = 0;
+	raw_tx_pkt.packet_length = sizeof(test_beacon_frame);
 	raw_tx_pkt.tx_mode = rate_flags;
 	raw_tx_pkt.queue = queue_num;
 	raw_tx_pkt.raw_tx_flag = 0;
@@ -61,6 +110,91 @@ int validate_rate(int data_rate, int flag)
 
 	LOG_ERR("Invalid Data rate");
 	return 0;
+}
+
+static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
+{
+	struct net_if *iface;
+	int ret;
+
+	*sockfd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
+	if (*sockfd < 0) {
+		LOG_ERR("Unable to create a socket %d", errno);
+		return -1;
+	}
+
+	iface = net_if_get_default();
+	if (!iface) {
+		LOG_ERR("Unable to get default interface");
+		return -1;
+	}
+
+	sa->sll_family = AF_PACKET;
+	sa->sll_ifindex = net_if_get_by_iface(iface);
+
+	/* Bind the socket */
+	ret = bind(*sockfd, (struct sockaddr *)sa, sizeof(struct sockaddr_ll));
+	if (ret < 0) {
+		LOG_ERR("Error: Unable to bind socket to the network interface:%d", errno);
+		close(*sockfd);
+		return -1;
+	}
+
+	return 0;
+}
+
+static void increment_seq_control(void)
+{
+	test_beacon_frame.seq_ctrl = (test_beacon_frame.seq_ctrl +
+				      IEEE80211_SEQ_NUMBER_INC) &
+				      IEEE80211_SEQ_CTRL_SEQ_NUM_MASK;
+	if (test_beacon_frame.seq_ctrl > IEEE80211_SEQ_CTRL_SEQ_NUM_MASK) {
+		test_beacon_frame.seq_ctrl = 0X0010;
+	}
+}
+
+static void send_packet(const char *transmission_mode,
+			unsigned int num_pkts, unsigned int delay)
+{
+	struct sockaddr_ll sa;
+	int sockfd, ret;
+	char *test_frame = NULL;
+	int buf_length, num_failures = 0;
+
+	ret = setup_raw_pkt_socket(&sockfd, &sa);
+	if (ret < 0) {
+		LOG_ERR("Setting socket for raw pkt transmission failed %d", errno);
+		return;
+	}
+
+	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
+	if (!test_frame) {
+		LOG_ERR("Malloc failed for send buffer %d", errno);
+		return;
+	}
+
+	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
+	memcpy(test_frame, &raw_tx_pkt, sizeof(struct raw_tx_pkt_header));
+
+	for (int i = 0; i < num_pkts; i++) {
+		memcpy(test_frame + sizeof(struct raw_tx_pkt_header),
+		       &test_beacon_frame, sizeof(test_beacon_frame));
+
+		ret = sendto(sockfd, test_frame, buf_length, 0,
+			     (struct sockaddr *)&sa, sizeof(sa));
+		if (ret < 0) {
+			LOG_ERR("Unable to send beacon frame: %s", strerror(errno));
+			num_failures++;
+		}
+
+		increment_seq_control();
+
+		k_msleep(delay);
+	}
+
+	LOG_INF("Sent %d packets with %d failures", num_pkts, num_failures);
+	close(sockfd);
+	free(test_frame);
 }
 
 static int parse_raw_tx_configure_args(const struct shell *sh,
@@ -144,6 +278,99 @@ static int cmd_configure_raw_tx_pkt(
 	return 0;
 }
 
+static int parse_raw_tx_send_args(const struct shell *sh,
+				  size_t argc, char *argv[],
+				  char **tx_mode, int *pkt_num, int *time_delay)
+{
+	struct getopt_state *state;
+	int opt;
+	static struct option long_options[] = {{"mode", required_argument, 0, 'm'},
+					       {"num-pkts", required_argument, 0, 'n'},
+					       {"inter-frame-delay", required_argument, 0, 't'},
+					       {"help", no_argument, 0, 'h'},
+					       {0, 0, 0, 0}};
+	int opt_index = 0;
+	int opt_num = 0;
+
+	while ((opt = getopt_long(argc, argv, "m:n:t:h", long_options, &opt_index)) != -1) {
+		state = getopt_state_get();
+		switch (opt) {
+		case 'm':
+			if (!((strcmp(optarg, "fixed") == 0) ||
+			    (strcmp(optarg, "continuous") == 0))) {
+				LOG_ERR("Invalid mode %s", optarg);
+				return -ENOEXEC;
+			}
+			*tx_mode = optarg;
+			opt_num++;
+			break;
+		case 't':
+			*time_delay = atoi(optarg);
+			if (*time_delay < 0) {
+				LOG_ERR("Invalid delay %d", atoi(optarg));
+				return -ENOEXEC;
+			}
+			opt_num++;
+			break;
+		case 'n':
+			*pkt_num = (strcmp(*tx_mode, "continuous") == 0) ? INT_MAX : atoi(optarg);
+			if (*pkt_num <= 0) {
+				LOG_ERR("Invalid num of packets %d", atoi(optarg));
+				return -ENOEXEC;
+			}
+			opt_num++;
+			break;
+		case'h':
+			shell_help(sh);
+			opt_num++;
+			break;
+		case '?':
+		default:
+			LOG_ERR("Invalid option or option usage: %s", argv[opt_index + 1]);
+			return -ENOEXEC;
+		}
+	}
+
+	if (strcmp(*tx_mode, "continuous") == 0) {
+		*pkt_num = INT_MAX;
+	} else if ((strcmp(*tx_mode, "fixed") == 0) && (*pkt_num == 0)) {
+		LOG_ERR("Please provide number of packets to be transmitted");
+		return -ENOEXEC;
+	}
+
+	return opt_num;
+}
+
+static int cmd_send_raw_tx_pkt(
+		const struct shell *sh,
+		size_t argc, char *argv[])
+{
+	int opt_num;
+	char *mode = NULL;
+	int num_packets = 0, delay = 0;
+
+	if (argc < 5 || argc > 7) {
+		shell_help(sh);
+		return -ENOEXEC;
+	}
+
+	LOG_INF("argument count: %d", argc);
+	opt_num = parse_raw_tx_send_args(sh, argc, argv, &mode,
+					 &num_packets, &delay);
+	if (opt_num < 0) {
+		shell_help(sh);
+		return -ENOEXEC;
+	} else if (!opt_num) {
+		LOG_ERR("No valid option(s) found");
+		return -ENOEXEC;
+	}
+
+	LOG_INF("Selected Mode: %s Num-Packets:%u Delay:%d", mode, num_packets, delay);
+	send_packet(mode, num_packets, delay);
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	raw_tx_cmds,
 	SHELL_CMD_ARG(configure, NULL,
@@ -157,6 +384,19 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Usage: raw_tx configure -f 1 -d 9 -q 1\n",
 		      cmd_configure_raw_tx_pkt,
 		      7, 0),
+	SHELL_CMD_ARG(send, NULL,
+		      "Send raw TX packet\n"
+		      "This command may be used to send raw TX packets\n"
+		      "parameters:\n"
+		      "[-m, --mode] : Mode of transmission (either continuous or fixed).\n"
+		      "[-n, --number-of-pkts] : Number of packets to be transmitted.\n"
+		      "[-t, --inter-frame-delay] : Delay between frames or packets in ms.\n"
+		      "[-h, --help] : Print out the help for the send command\n"
+		      "Usage:\n"
+		      "raw_tx send -m fixed -n 9 -t 10 (For fixed mode)\n"
+		      "raw_tx send -m continuous -t 10 (For continuous mode)\n",
+		      cmd_send_raw_tx_pkt,
+		      5, 2),
 	SHELL_SUBCMD_SET_END
 );
 
