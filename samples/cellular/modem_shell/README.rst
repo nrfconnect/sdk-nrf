@@ -71,7 +71,7 @@ Examples
 
   .. code-block:: console
 
-     link edrx -e -m --edrx_value 0010 --ptw 0010
+     link edrx -e --ltem_edrx 0010 --nbiot_edrx 0010
 
 * Subscribe for modem TAU and sleep notifications, enable and configure PSM:
 
@@ -470,7 +470,7 @@ See :ref:`modem_trace_module` for more information on how to configure modem tra
 You need a trace backend that can store modem traces if you want to upload modem traces to the cloud.
 The flash backend can store modem traces to the external flash on the nRF91 Series DK and can be retrieved for uploading.
 
-To enable modem traces with a flash backend, use the :file:`overlay-modem-trace-flash.conf` configuration file.
+To enable modem traces with the flash backend, use the :file:`overlay-modem-trace-flash.conf` configuration file.
 This also requires a devicetree overlay for the external flash (:file:`nrf9160dk_ext_flash.overlay` for the nRF9160 DK or :file:`nrf9161dk_ext_flash.overlay` for the nRF9161 DK, depending on the DK you are using).
 
 Send to Memfault
@@ -503,7 +503,7 @@ See the following figure, which shows how to download the modem trace data in th
 .. note::
    The conversion of modem trace file to a Wireshark-compatible format is available in the `Cellular Monitor`_ tool of the nRF Connect for Desktop.
 
-To build the MoSh sample with the nRF91 Series DK and modem traces with a flash backend, see :ref:`modem_shell_trace_support`.
+To build the MoSh sample for an nRF91 Series DK with modem trace flash backend support, see :ref:`modem_shell_trace_flash_support`.
 
 Examples
 --------
@@ -1081,7 +1081,7 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 nRF91 Series DK with nRF7002 EK Wi-Fi support
 =============================================
 
-To build the MoSh sample with nRF9160 DK and nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
+To build the MoSh sample for an nRF91 Series DK with nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek`` and  ``-DOVERLAY_CONFIG=overlay-nrf7002ek-wifi-scan-only.conf`` options.
 For example:
 
 .. tabs::
@@ -1199,12 +1199,31 @@ For example:
 
          west build -p -b nrf9161dk_nrf9161_ns -d build -- -DOVERLAY_CONFIG=overlay-app_fota.conf
 
-
    .. group-tab:: nRF9160 DK
 
       .. code-block:: console
 
          west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-app_fota.conf
+
+nRF91 Series DK with full modem FOTA support
+============================================
+
+To build the MoSh sample for an nRF91 Series DK with full modem FOTA support, use the devicetree overlay for external flash corresponding to your device and the ``-DOVERLAY_CONFIG=overlay-modem_fota_full.conf`` option.
+For example:
+
+.. tabs::
+
+   .. group-tab:: nRF9161 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9161dk_nrf9161_ns -d build -- -DOVERLAY_CONFIG=overlay-modem_fota_full.conf -DDTC_OVERLAY_FILE=nrf9161dk_ext_flash.overlay
+
+   .. group-tab:: nRF9160 DK
+
+      .. code-block:: console
+
+         west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-modem_fota_full.conf -DDTC_OVERLAY_FILE=nrf9160dk_ext_flash.overlay
 
 LwM2M carrier library support
 =============================
@@ -1332,11 +1351,11 @@ Remote control using nRF Cloud over MQTT
 
 To enable the remote control feature, you need to build the sample with cloud connectivity, see :ref:`cloud_build`.
 
-Zephyr native TCP/IP stack usage over nRF91 Series DK LTE connection
-====================================================================
+nRF91 Series DK with Zephyr native TCP/IP stack
+===============================================
 
-To build the MoSh sample with the nRF91 device driver that is not offloading the TCP/IP stack to modem, use the ``-DOVERLAY_CONFIG=overlay-non-offloading.conf`` option.
-When running this configuration, the configured MoSh commands, for example iperf3, are using Zephyr native TCP/IP stack over nRF91 Series DK LTE connection in default PDN context.
+To build the MoSh sample for an nRF91 Series DK with the nRF91 device driver that does not offload the TCP/IP stack to modem, use the ``-DOVERLAY_CONFIG=overlay-non-offloading.conf`` option.
+With this configuration, the configured MoSh commands, for example ``iperf3``, use the Zephyr native TCP/IP stack over the default LTE PDN context.
 For example:
 
 .. tabs::
@@ -1504,12 +1523,12 @@ Use the following command to disconnect from the LwM2M server:
 
 When connected, the ``location`` and ``gnss`` commands use the LwM2M cloud connection for fetching GNSS assistance data and for cellular positioning.
 
-.. _modem_shell_trace_support:
+.. _modem_shell_trace_flash_support:
 
-nRF91 Series DK and modem trace support
-=======================================
+nRF91 Series DK with modem trace flash backend support
+======================================================
 
-To build the MoSh sample with an nRF91 Series DK and modem traces with flash backend, use the devicetree overlay for external flash corresponding to your device and the ``-DOVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf"`` option.
+To build the MoSh sample for an nRF91 Series DK with modem trace flash backend support, use the devicetree overlay for external flash corresponding to your device and the ``-DOVERLAY_CONFIG="overlay-modem-trace-flash.conf;overlay-memfault.conf"`` option.
 
 For example:
 

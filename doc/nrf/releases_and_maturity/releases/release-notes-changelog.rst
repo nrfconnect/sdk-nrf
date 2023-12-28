@@ -286,6 +286,7 @@ Cellular samples
 
   * Added:
 
+    * Support for full modem FOTA.
     * Printing of the last reset reason when the sample starts.
     * Support for printing the sample version information using the ``version`` command.
 
