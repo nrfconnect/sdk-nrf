@@ -11,6 +11,7 @@
 #include <zephyr/sys/reboot.h>
 #include <modem/nrf_modem_lib.h>
 #include <net/fota_download.h>
+#include <fota_download_util.h>
 
 #include "fota.h"
 #include "link.h"
@@ -20,7 +21,6 @@ static void on_modem_lib_dfu(int dfu_res, void *ctx)
 {
 	switch (dfu_res) {
 	case NRF_MODEM_DFU_RESULT_OK:
-		mosh_print("FOTA: Modem firmware update successful!");
 		break;
 	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
 	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
@@ -45,25 +45,30 @@ static void on_modem_lib_dfu(int dfu_res, void *ctx)
 
 NRF_MODEM_LIB_ON_DFU_RES(fota_dfu_hook, on_modem_lib_dfu, NULL);
 
-static void modem_update_apply(void)
+static void fota_update_apply(void)
 {
 	int err;
+	int target;
 
 	link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE, true);
 
-	mosh_print("FOTA: Shutting down modem to trigger DFU update...");
+	target = fota_download_target();
+	if (target == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+		mosh_print("FOTA: Rebooting device to run new application firmware");
 
-	err = nrf_modem_lib_shutdown();
-	if (err) {
-		mosh_warn("FOTA: Failed to shut down modem, err: %d", err);
+		sys_reboot(SYS_REBOOT_COLD);
+	} else {
+		mosh_print("FOTA: Applying modem firmware update...");
+
+		err = fota_download_util_apply_update(target);
+		if (err) {
+			mosh_error("FOTA: Failed to apply modem firmware update, error: %d", err);
+		} else {
+			mosh_print("FOTA: Modem firmware update successful!");
+		}
+
+		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL, true);
 	}
-
-	err = nrf_modem_lib_init();
-	if (err) {
-		__ASSERT(false, "Modem initialization failed, err: %d", err);
-	}
-
-	link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL, true);
 }
 
 static const char *get_error_cause(enum fota_download_error_cause cause)
@@ -86,7 +91,7 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		mosh_print("FOTA: Download finished");
-		modem_update_apply();
+		fota_update_apply();
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_TIMEOUT:
 		mosh_print("FOTA: Erasing reached timeout");
@@ -108,6 +113,13 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 
 int fota_init(void)
 {
+	int err;
+
+	err = fota_download_util_stream_init();
+	if (err) {
+		return err;
+	}
+
 	return fota_download_init(&fota_download_callback);
 }
 
