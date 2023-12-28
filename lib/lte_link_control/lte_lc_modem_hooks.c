@@ -122,5 +122,8 @@ static void on_modem_init(int err, void *ctx)
 
 static void on_modem_shutdown(void *ctx)
 {
-	(void)lte_lc_power_off();
+	/* Make sure the Modem library was in normal mode and not in bootloader mode. */
+	if (nrf_modem_is_initialized()) {
+		(void)lte_lc_power_off();
+	}
 }
