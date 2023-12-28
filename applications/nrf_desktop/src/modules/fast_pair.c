@@ -129,15 +129,24 @@ static int register_app_auth_cbs(void)
 
 static bool handle_module_state_event(const struct module_state_event *event)
 {
-	if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-		int err = register_app_auth_cbs();
+	if (check_state(event, MODULE_ID(settings_loader), MODULE_STATE_READY)) {
+		int err;
 
-		if (!err) {
-			module_set_state(MODULE_STATE_READY);
-		} else {
+		err = register_app_auth_cbs();
+		if (err) {
 			LOG_ERR("Cannot register authentication callbacks (err %d)", err);
 			module_set_state(MODULE_STATE_ERROR);
+			return false;
 		}
+
+		err = bt_fast_pair_enable();
+		if (err) {
+			LOG_ERR("Fast Pair enable failed (err: %d)", err);
+			module_set_state(MODULE_STATE_ERROR);
+			return false;
+		}
+
+		module_set_state(MODULE_STATE_READY);
 	}
 
 	return false;
