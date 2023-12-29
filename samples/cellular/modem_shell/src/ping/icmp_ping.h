@@ -16,12 +16,12 @@
 #include <zephyr/types.h>
 #include "mosh_defines.h"
 
-#define ICMP_IPV4_HDR_LEN        20
-#define ICMP_IPV6_HDR_LEN        40
+#define ICMP_IPV4_HDR_LEN	20
+#define ICMP_IPV6_HDR_LEN	40
 
-#define ICMP_MAX_URL	128
+#define ICMP_MAX_ADDR		128
 #define ICMP_DEFAULT_LINK_MTU	1500
-#define ICMP_HDR_LEN    8
+#define ICMP_HDR_LEN		8
 
 /* Max payload lengths: */
 #define ICMP_IPV4_MAX_LEN	(ICMP_DEFAULT_LINK_MTU - ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN)
@@ -38,7 +38,7 @@ struct icmp_ping_shell_cmd_argv {
 	char *print_buf;
 	int print_buf_len;
 
-	char target_name[ICMP_MAX_URL + 1];
+	char target_name[ICMP_MAX_ADDR + 1];
 	struct addrinfo *src;
 	struct addrinfo *dest;
 	struct in_addr current_addr4;

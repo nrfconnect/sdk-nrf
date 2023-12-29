@@ -90,7 +90,7 @@ int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
 		switch (opt) {
 		case 'd': /* destination */
 			dest_len = strlen(optarg);
-			if (dest_len > ICMP_MAX_URL) {
+			if (dest_len > ICMP_MAX_ADDR) {
 				ping_error(&ping_args, "too long destination name");
 				goto show_usage;
 			}
