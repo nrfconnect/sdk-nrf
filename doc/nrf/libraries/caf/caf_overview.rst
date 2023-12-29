@@ -130,6 +130,16 @@ CAF Bluetooth LE common events
    :project: nrf
    :members:
 
+CAF Bluetooth LE SMP events
+===========================
+
+| Header file: :file:`include/caf/events/ble_smp_event.h`
+| Source file: :file:`subsys/caf/events/ble_smp_event.c`
+
+.. doxygengroup:: ble_smp_event
+   :project: nrf
+   :members:
+
 CAF button events
 =================
 
@@ -187,6 +197,16 @@ CAF module state events
 | Source file: :file:`subsys/caf/events/module_state_event.c`
 
 .. doxygengroup:: caf_module_state_event
+   :project: nrf
+   :members:
+
+CAF net state events
+====================
+
+| Header file: :file:`include/caf/events/net_state_event.h`
+| Source file: :file:`subsys/caf/events/net_state_event.c`
+
+.. doxygengroup:: net_state_event
    :project: nrf
    :members:
 

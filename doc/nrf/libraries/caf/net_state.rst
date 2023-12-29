@@ -29,9 +29,9 @@ The module generates the :c:struct:`net_state_event`.
 The event reports the current network state using :c:enum:`net_state`.
 The following network states are available:
 
-* :c:enum:`NET_STATE_DISABLED` - Network interface is disabled.
-* :c:enum:`NET_STATE_DISCONNECTED` - Network interface is ready to connect but waiting for connection.
-* :c:enum:`NET_STATE_CONNECTED` - Network interface is connected.
+* :c:enumerator:`NET_STATE_DISABLED` - Network interface is disabled.
+* :c:enumerator:`NET_STATE_DISCONNECTED` - Network interface is ready to connect but waiting for connection.
+* :c:enumerator:`NET_STATE_CONNECTED` - Network interface is connected.
 
-:c:enum:`NET_STATE_CONNECTED` means that IP packets can be transmitted.
+:c:enumerator:`NET_STATE_CONNECTED` means that IP packets can be transmitted.
 For example, in case of a Thread network, this means not only that the connection to the mesh network is established, but also that the Border Router is working and it is possible to transfer data.
