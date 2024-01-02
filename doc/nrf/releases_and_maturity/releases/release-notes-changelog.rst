@@ -750,6 +750,10 @@ Libraries for networking
     * The AGNSS handling to use the AGNSS app ID string and corresponding MQTT topic instead of the older AGPS app ID string and topic.
     * The :c:func:`nrf_cloud_obj_location_request_create` and :c:func:`nrf_cloud_location_request` functions to accept the :c:struct:`nrf_cloud_location_config` structure in place of the ``bool request_loc`` parameter.
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Fixed a bug in prediction set update when the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig option was set to non-zero value.
+
 * :ref:`lib_nrf_provisioning` library:
 
   * Renamed nRF Device provisioning to :ref:`lib_nrf_provisioning`.

@@ -328,18 +328,21 @@ void npgps_free_block(int block)
 	pool.block_used[block] = false;
 }
 
-int npgps_get_block_extent(int block)
+int npgps_get_block_extent(int store_block)
 {
-	int i;
-	int len = 0;
+	/* Start counting from 1, because the first block has already been marked as being used. */
+	int len = 1;
 
-	for (i = 0; i < num_blocks; i++) {
-		if (pool.block_used[block]) {
+	store_block++;
+	while (store_block < num_blocks) {
+		if (pool.block_used[store_block]) {
 			break;
 		}
-		block = (block + 1) % num_blocks;
+
 		len++;
+		store_block++;
 	}
+
 	return len;
 }
 
