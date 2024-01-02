@@ -87,7 +87,7 @@ Kconfig*                                  @tejlmand
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @jori-nordic @KAGA164
-/include/bluetooth/services/fast_pair.h   @MarekPieta @kapi-no @KAGA164
+/include/bluetooth/services/fast_pair.h   @alstrzebonski @MarekPieta @kapi-no @KAGA164
 /include/bluetooth/adv_prov.h             @MarekPieta @kapi-no @KAGA164
 /include/bluetooth/mesh/                  @ludvigsj
 /include/caf/                             @pdunaj
@@ -151,7 +151,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/mesh/                  @ludvigsj
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic
-/samples/bluetooth/fast_pair/input_device/ @MarekPieta @kapi-no @KAGA164
+/samples/bluetooth/fast_pair/input_device/ @alstrzebonski @MarekPieta @kapi-no @KAGA164
 /samples/bootloader/                      @hakonfam @oyvindronningstad
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
@@ -219,7 +219,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/mesh/                   @ludvigsj
 /subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
-/subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
+/subsys/bluetooth/services/fast_pair/     @alstrzebonski @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bootloader/                       @hakonfam @sigvartmh
 /subsys/caf/                              @pdunaj
@@ -302,7 +302,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/audio_module/               @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @ludvigsj
-/tests/subsys/bluetooth/fast_pair/        @MarekPieta @kapi-no @KAGA164
+/tests/subsys/bluetooth/fast_pair/        @alstrzebonski @MarekPieta @kapi-no @KAGA164
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/caf/                        @zycz
 /tests/subsys/debug/cpu_load/             @nordic-krch
