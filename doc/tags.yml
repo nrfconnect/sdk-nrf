@@ -134,6 +134,7 @@ mapping_topics:
   - nrf/protocols/gazell/index.html: ["gazell"]
   - nrf/protocols/gazell/*.html: ["gazell"]
   - nrf/protocols/gazell/gzll.html: ["kconfig"]
+  - nrf/protocols/lte/*.html: ["kconfig", "nrf91-series", "nrf9160", "thingy91", "nrf9161", "lte"]
   - nrf/protocols/matter/index.html: ["matter"]
   - nrf/protocols/matter/*.html: ["matter"]
   - nrf/protocols/matter/getting_started/kconfig.html: ["kconfig"]
