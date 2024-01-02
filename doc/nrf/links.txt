@@ -417,7 +417,10 @@
 
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 .. _`nRF9161 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9161-Global-and-regulatory?lang=en#infotabs
+.. _`nRF91 Series certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications?lang=en#infotabs
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
+.. _`Cellular IoT unique features`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Unique-Features?lang=en#infotabs
+.. _`Cellular IoT SiPs`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Products?lang=en#infotabs
 
 .. _`nRF9161 Objective Product Specification`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/SiP/nRF91x1-SiP/nRF9161_OPS_v0.7.pdf
 
@@ -527,6 +530,9 @@
 .. _`nRF9160 SiP pin configuration`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
 
 .. _`nRF9160 DK GPS`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/gps.html
+
+.. _`nWP044 - Best practices for cellular IoT development`: https://infocenter.nordicsemi.com/topic/nwp_044/WP/nwp_044/lte_technology.html
+.. _`Security protocol for cellular IoT`: https://infocenter.nordicsemi.com/topic/nwp_044/WP/nwp_044/security_protocols.html
 
 .. _`nRF9160 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
@@ -695,6 +701,7 @@
 
 .. _`nRF Connect SDK Fundamentals course`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/
 .. _`Cellular IoT Fundamentals course`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/
+.. _`Power saving techniques`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/lessons/lesson-1-cellular-fundamentals/topic/lesson-1-power-saving-techniques/
 .. _`Bluetooth LE Fundamentals course`: https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/
 .. _`Wi-Fi Fundamentals course`: https://academy.nordicsemi.com/courses/wi-fi-fundamentals/
 
@@ -1241,13 +1248,17 @@
 .. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
 .. _`Python's Path.glob`: https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
 
+.. ### youtube.com
+
+.. _`Developing Matter 1.0 products with nRF Connect SDK`: https://www.youtube.com/watch?v=9Ar13rMxGIk
+.. _`Accelerate cellular product development`: https://youtu.be/b1YW1J4aUps
+.. _`How nRF9160 enables cellular IoT asset tracking`: https://webinars.nordicsemi.com/how-nrf9160-enables-cellular-iot-4
+
 .. ### Source: other (2 links or less from the same URL)
 
 .. _`MQTT getting started`: https://mqtt.org/getting-started/
 
 .. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
-
-.. _`Developing Matter 1.0 products with nRF Connect SDK`: https://www.youtube.com/watch?v=9Ar13rMxGIk
 
 .. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
 
@@ -1393,6 +1404,12 @@
 .. _`HTTPie`: https://httpie.io/
 
 .. _`Devicetree Specification`: https://www.devicetree.org/
+
+.. _`Mobile IoT deployment map`: https://www.gsma.com/iot/deployment-map/
+
+.. _`Onomondo SoftSIM integration with the nRF91 Series`: https://help.onomondo.com/en/how-to-integrate-the-onomondo-softsim-with-the-nrf9160-from-nordic-semiconductor
+
+.. _`Certifying a cellular IoT device`: https://blog.nordicsemi.com/getconnected/certifying-a-cellular-iot-device/
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 

@@ -194,6 +194,9 @@ Glossary
       Most prominently, it translates domain names, which can be easily memorized by humans, to the numerical IP addresses needed for computer services and devices worldwide.
       The Domain Name System is an essential component of the functionality of most Internet services because it is the Internet's primary directory service.
 
+   Downlink (DL)
+     A signal coming from the :term:`Evolved Node B (eNB)` to the :term:`User equipment (UE)`.
+
    Downstream fork
       A :term:`repository <Repository>` located downstream, relative to another repository, in the flow of information.
       See :ref:`dm_repo_types`.
@@ -235,6 +238,9 @@ Glossary
 
    Forward Error Correction (FEC)
       A technique that adds redundant data to the original message, which is used to detect and correct errors that occur during transmission over a network improving the overall performance by reducing the number of errors and retransmissions.
+
+   Frequency Division Duplex (FDD)
+      A method used in wireless communication that uses different frequencies for uplink and downlink, which allows the user to transmit and receive simultaneously.
 
    GitHub fork
       A `GitHub fork`_ is a copy of a repository inside GitHub, that allows the user to create a :term:`Pull Request`.
@@ -728,6 +734,9 @@ Glossary
    Temporal Key Integrity Protocol (TKIP)
       A security protocol used in the IEEE 802.11 wireless networking standard.
 
+   Time Division Duplex (TDD)
+     A method used in wireless communication that uses same frequencies for uplink and downlink, but in a different timeslots.
+
    Time to First Fix (TTFF)
       The time needed by a :term:`Global Navigation Satellite System (GNSS)` module to estimate its position.
 
@@ -760,6 +769,9 @@ Glossary
 
    Universal Serial Bus (USB)
       An industry standard that establishes specifications for cables and connectors and protocols for connection, communication, and power supply between computers, peripheral devices, and other computers.
+
+   Uplink (UL)
+     A signal sent from the :term:`User equipment (UE)` to the :term:`Evolved Node B (eNB)`.
 
    Upmerge
       In the |NCS|, the act of updating (synchronizing) a downstream :term:`repository <Repository>` with a newer revision of its :term:`upstream <Upstream repository>` OSS repository.

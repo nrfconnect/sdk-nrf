@@ -193,11 +193,15 @@ For more detailed information, see the `system mode section in the AT Commands r
 Modem library
 *************
 
+.. nrf91_modem_lib_start
+
 The |NCS| applications for the nRF91 Series devices that communicate with the nRF91 Series modem firmware must include the :ref:`nrfxlib:nrf_modem`.
 The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in the :ref:`nrfxlib` repository and it is integrated into |NCS| through an integration layer, ``nrf_modem_lib``.
 
 The Modem library integration layer fulfills the integration requirements of the Modem library in |NCS|.
 For more information on the integration, see :ref:`nrf_modem_lib_readme`.
+
+.. nrf91_modem_lib_end
 
 .. _modem_trace:
 
