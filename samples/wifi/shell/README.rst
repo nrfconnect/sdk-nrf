@@ -51,6 +51,13 @@ The following is an example of the CLI command:
 
    west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek
 
+To build with ``raw_tx`` shell support for the nRF7002 DK, use the ``nrf7002dk_nrf5340_cpuapp`` build target and raw TX overlay configuration.
+The following is an example of the CLI command:
+
+.. code-block:: console
+
+   west build -b nrf7002dk_nrf5340_cpuapp -- -DOVERLAY_CONFIG=overlay-raw-tx.conf
+
 .. tabs::
 
    .. group-tab:: nRF9161 DK
@@ -199,7 +206,7 @@ Supported CLI commands
        | wifi -i1 -c5
 
 ``wifi_cred`` is an extension to the Wi-Fi command line.
-It adds the following commands to interact with the :ref:`lib_wifi_credentials` library:
+It adds the following subcommands to interact with the :ref:`lib_wifi_credentials` library:
 
 .. list-table:: Wi-Fi credentials shell subcommands
    :header-rows: 1
@@ -219,6 +226,49 @@ It adds the following commands to interact with the :ref:`lib_wifi_credentials` 
      - Lists networks in credential storage.
    * - auto_connect
      - Automatically connects to any stored network.
+
+``raw_tx`` is an extension to the Wi-Fi command line.
+It adds the following subcommands to configure and send raw TX packets:
+
+.. list-table:: raw TX shell subcommands
+   :header-rows: 1
+
+   * - Subcommands
+     - Description
+     - Valid values
+   * - configure
+     - | Configure the raw TX packet header with the following parameters:
+       | [-f, --rate-flags]: Rate flag value
+       | [-d, --data-rate]: Data rate value
+       | [-q, --queue-number]: Queue number
+       | [-h, --help]: Print out the help for the configure command
+     - | Valid Rate flag values:
+       | 0 - Legacy
+       | 1 - HT mode
+       | 2 - VHT mode
+       | 3 - HE (SU) mode
+       | 4 - HE (ERSU) mode
+       |
+       | Valid Data rate values:
+       | Legacy: 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54
+       | Non-Legacy: MCS index need to be used (0 - 7)
+       |
+       | Valid Queue numbers:
+       | 0 - Background
+       | 1 - Best effort
+       | 2 - Video
+       | 3 - Voice
+       | 4 - Beacon
+   * - send
+     - | Send raw TX packets
+       | parameters:
+       | [-m, --mode]: Mode of transmission (either continuous or fixed)
+       | [-n, --number-of-pkts]: Number of packets to be transmitted
+       | [-t, --inter-frame-delay]: Delay between frames or packets in milliseconds
+       | [-h, --help]: Print out the help for the send command
+     - | N/A
+
+For more information, see :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`.
 
 Testing STA mode
 ================
