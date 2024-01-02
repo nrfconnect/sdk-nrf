@@ -78,7 +78,7 @@ struct pgps_index {
 	uint8_t cur_pnum;
 	bool partial_request;
 	bool stale_server_data;
-	uint32_t storage_extent;
+	int32_t storage_extent;
 	int store_block;
 
 	/* Array of memory offsets to predictions, in sorted time order.
@@ -1500,8 +1500,12 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 
 			index.loading_count++;
 			finished = (index.loading_count == index.expected_count);
-			store_prediction(prediction_ptr, buf_len, (uint32_t)gps_sec,
-					 finished || (index.storage_extent == 1));
+			err = store_prediction(prediction_ptr, buf_len, (uint32_t)gps_sec,
+					       finished || (index.storage_extent == 1));
+			if (err) {
+				LOG_ERR("Error storing prediction:%d", err);
+				goto fail;
+			}
 			index.predictions[pnum] = npgps_block_to_pointer(index.store_block);
 
 			if (!finished) {
@@ -1557,6 +1561,10 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 					LOG_ERR("Error opening storage again:%d", err);
 					goto fail;
 				}
+			} else if (index.storage_extent < 0) {
+				LOG_ERR("Unexpected storage extent:%d", index.storage_extent);
+				err = -ENOMEM;
+				goto fail;
 			}
 		}
 	} else {

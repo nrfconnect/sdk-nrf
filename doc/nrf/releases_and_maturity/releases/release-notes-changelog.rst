@@ -671,6 +671,10 @@ Libraries for networking
     * The :c:func:`nrf_cloud_obj_object_add` function to reset the added object on success.
     * Custom shadow data is now passed to the application during shadow update events.
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Fixed a bug in prediction set update when the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` Kconfig option was set to non-zero value.
+
 * :ref:`lib_nrf_provisioning` library:
 
   * Renamed nRF Device provisioning to :ref:`lib_nrf_provisioning`.
