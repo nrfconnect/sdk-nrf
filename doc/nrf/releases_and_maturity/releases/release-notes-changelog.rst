@@ -656,6 +656,7 @@ Libraries for networking
 
     * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to include a parameter for application-specific shadow data.
     * The :c:func:`nrf_cloud_coap_shadow_delta_process` function to process default shadow data added by nRF Cloud, which is not used by CoAP.
+    * The CDDL file for AGNSS to align with cloud changes and regenerated the AGNSS encoder accordingly.
 
 * :ref:`lib_nrf_cloud_log` library:
 
@@ -679,6 +680,7 @@ Libraries for networking
 
     * The :c:func:`nrf_cloud_obj_object_add` function to reset the added object on success.
     * Custom shadow data is now passed to the application during shadow update events.
+    * The AGNSS handling to use the AGNSS app ID string and corresponding MQTT topic instead of the older AGPS app ID string and topic.
 
 * :ref:`lib_nrf_provisioning` library:
 
