@@ -34,12 +34,14 @@ static uint64_t poll_period; /* [ms] */
 static bool initialized;
 static uint64_t pause_start_time; /* [ms] */
 static bool engine_paused;
+static bool resumed;
 static struct at_param_list at_list;
 
 static void pause_engine_work(struct k_work *work)
 {
 	lwm2m_engine_pause();
 	engine_paused = true;
+	resumed = false;
 }
 
 static int read_energy_estimate(uint16_t *energy_estimate)
@@ -96,6 +98,7 @@ static void estimate_work(struct k_work *work)
 
 	if ((estimate >= energy_estimate) ||
 	    ((k_uptime_get() - pause_start_time) / 1000 >= maximum_delay)) {
+		resumed = true;
 		lwm2m_engine_resume();
 		engine_paused = false;
 	}
@@ -112,6 +115,7 @@ static void conneval_update_work(struct k_work *work)
 
 	if ((estimate >= energy_estimate) ||
 	    ((k_uptime_get() - pause_start_time) / 1000 >= maximum_delay)) {
+		resumed = true;
 		lwm2m_engine_resume();
 		engine_paused = false;
 		return;
@@ -125,6 +129,7 @@ static void conneval_update_work(struct k_work *work)
 	ret = k_work_reschedule(&conneval_work_delayable, K_MSEC(poll_period));
 	if (ret < 0) {
 		LOG_ERR("Work item was not submitted to system queue, error %d", ret);
+		resumed = true;
 		lwm2m_engine_resume();
 		engine_paused = false;
 	}
@@ -176,7 +181,7 @@ int lwm2m_utils_conneval(struct lwm2m_ctx *client, enum lwm2m_rd_client_event *c
 		return -EINVAL;
 	}
 
-	if (maximum_delay && *client_event == LWM2M_RD_CLIENT_EVENT_REG_UPDATE) {
+	if (!resumed && maximum_delay && *client_event == LWM2M_RD_CLIENT_EVENT_REG_UPDATE) {
 		ret = lte_lc_conn_eval_params_get(&params);
 		if (ret < 0) {
 			LOG_ERR("Get connection evaluation parameters failed, error: %d", ret);
@@ -201,6 +206,7 @@ int lwm2m_utils_conneval(struct lwm2m_ctx *client, enum lwm2m_rd_client_event *c
 			*client_event = LWM2M_RD_CLIENT_EVENT_NONE;
 		}
 	}
+	resumed = false;
 
 	return 0;
 }

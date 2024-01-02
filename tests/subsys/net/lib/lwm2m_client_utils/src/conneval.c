@@ -102,6 +102,7 @@ int at_params_unsigned_short_get_increased_energy(const struct at_param_list *li
 
 ZTEST_SUITE(lwm2m_client_utils_conneval, NULL, NULL, setup, NULL, NULL);
 
+
 ZTEST(lwm2m_client_utils_conneval, test_enable)
 {
 	int rc;
@@ -176,6 +177,9 @@ ZTEST(lwm2m_client_utils_conneval, test_max_delay)
 		      "Incorrect number of lte_lc_conn_eval_params_get() calls");
 	zassert_equal(nrf_modem_at_cmd_async_fake.call_count, 9,
 		      "Incorrect number of nrf_modem_at_cmd_async() calls");
+
+	rc = lwm2m_utils_conneval(&ctx, &client_event);
+	zassert_equal(rc, 0, "Wrong return value");
 }
 
 ZTEST(lwm2m_client_utils_conneval, test_energy_change)
@@ -205,6 +209,9 @@ ZTEST(lwm2m_client_utils_conneval, test_energy_change)
 		      "Incorrect number of lte_lc_conn_eval_params_get() calls");
 	zassert_equal(nrf_modem_at_cmd_async_fake.call_count, 4,
 		      "Incorrect number of nrf_modem_at_cmd_async() calls");
+
+	rc = lwm2m_utils_conneval(&ctx, &client_event);
+	zassert_equal(rc, 0, "Wrong return value");
 }
 
 ZTEST(lwm2m_client_utils_conneval, test_evaluation_failed)
