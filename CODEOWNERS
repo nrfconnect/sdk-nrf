@@ -151,7 +151,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/mesh/                  @ludvigsj
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic
-/samples/bluetooth/fast_pair/input_device/ @alstrzebonski @MarekPieta @kapi-no @KAGA164
+/samples/bluetooth/fast_pair/             @alstrzebonski @MarekPieta @kapi-no @KAGA164
 /samples/bootloader/                      @hakonfam @oyvindronningstad
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
