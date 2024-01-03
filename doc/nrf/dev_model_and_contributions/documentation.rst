@@ -1,7 +1,7 @@
 .. _documentation:
 
-About this documentation
-########################
+|NCS| documentation
+###################
 
 The |NCS| documentation is written using the reStructuredText markup language (:file:`.rst` file extension) with Sphinx extensions and processed using Sphinx.
 It contains all information that is specific to the |NCS| and describes our libraries, samples, and applications.
@@ -13,9 +13,8 @@ The documentation follows specific conventions and templates proper to the |NCS|
    :maxdepth: 2
    :caption: Subpages:
 
-   documentation/glossary
    documentation/structure
-   documentation/build_process
+   documentation/doc_build_process
    documentation/build
    documentation/styleguide
    documentation/templates
