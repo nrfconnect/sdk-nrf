@@ -36,7 +36,7 @@
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @koffes @alexsven @erikrobstad @rick1082 @gWacey
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
-/applications/zigbee_weather_station/     @adsz-nordic @tomchy
+/applications/zigbee_weather_station/     @milewr
 # Boards
 /boards/                                  @anangl
 # All cmake related files
@@ -186,7 +186,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/802154_phy_test/      @ankuns @jciupis @ahasztag
 /samples/peripheral/802154_sniffer/       @e-rk
 /samples/tfm/                             @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
-/samples/zigbee/                          @tomchy @sebastiandraus
+/samples/zigbee/                          @milewr
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
@@ -260,7 +260,7 @@ Kconfig*                                  @tejlmand
 /subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /subsys/secure_storage/                   @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky
 /subsys/net_core_monitor/                 @maje-emb
-/subsys/zigbee/                           @tomchy @sebastiandraus
+/subsys/zigbee/                           @milewr
 /tests/                                   @PerMac @katgiadla
 /tests/bluetooth/tester/                  @carlescufi @ludvigsj
 /tests/bluetooth/iso/                     @koffes @alexsven @erikrobstad @rick1082 @gWacey @Frodevan
@@ -323,7 +323,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
-/tests/subsys/zigbee/                     @tomchy @sebastiandraus
+/tests/subsys/zigbee/                     @milewr
 /tests/tfm/                               @frkv @Vge0rge @vili-nordic @SebastianBoe @mswarowsky @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi
