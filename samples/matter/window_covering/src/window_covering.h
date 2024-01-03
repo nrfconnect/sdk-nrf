@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "pwm_device.h"
-#include "board.h"
+#include "pwm/pwm_device.h"
+#include "board/board.h"
 
 #include <app/clusters/window-covering-server/window-covering-server.h>
 

@@ -6,8 +6,9 @@
 
 #pragma once
 
-#include "led_widget.h"
 #include "window_covering.h"
+
+#include "led/led_widget.h"
 
 #include <platform/CHIPDeviceLayer.h>
 

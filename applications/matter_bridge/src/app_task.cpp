@@ -6,27 +6,33 @@
 
 #include "app_task.h"
 
-#include "bridge_manager.h"
-#include "bridge_storage_manager.h"
-#include "matter_init.h"
-#include "task_executor.h"
-
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include "ble_bridged_device_factory.h"
-#include "ble_connectivity_manager.h"
-#include <bluetooth/services/lbs.h>
 #else
 #include "simulated_bridged_device_factory.h"
+#endif /* CONFIG_BRIDGED_DEVICE_BT */
+
+#include "board/board.h"
+#include "bridge/bridge_manager.h"
+#include "bridge/bridge_storage_manager.h"
+#include "init/matter_init.h"
+#include "tasks/task_executor.h"
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+#include "bridge/ble_connectivity_manager.h"
+#endif
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+#include "dfu/ota/ota_util.h"
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/server/OnboardingCodesUtil.h>
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "ota_util.h"
-#endif
-
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+#include <bluetooth/services/lbs.h>
+#endif /* CONFIG_BRIDGED_DEVICE_BT */
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);

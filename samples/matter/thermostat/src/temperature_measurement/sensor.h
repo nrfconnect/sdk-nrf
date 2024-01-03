@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 
 #include <platform/CHIPDeviceLayer.h>
 

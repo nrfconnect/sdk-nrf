@@ -6,15 +6,15 @@
 
 #include "app_task.h"
 
-#include "board.h"
-#include "matter_init.h"
-#include "task_executor.h"
-
-#include <app/server/OnboardingCodesUtil.h>
+#include "board/board.h"
+#include "init/matter_init.h"
+#include "tasks/task_executor.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "ota_util.h"
+#include "dfu/ota/ota_util.h"
 #endif
+
+#include <app/server/OnboardingCodesUtil.h>
 
 #include <zephyr/logging/log.h>
 

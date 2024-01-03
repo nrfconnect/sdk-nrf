@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "board_config.h"
-#include "board_consts.h"
-#include "led_util.h"
-#include "led_widget.h"
+#include "board/board_config.h"
+#include "board/board_consts.h"
+#include "led/led_util.h"
+#include "led/led_widget.h"
 
 enum class DeviceState : uint8_t { DeviceDisconnected, DeviceAdvertisingBLE, DeviceConnectedBLE, DeviceProvisioned };
 enum class DeviceLeds : uint8_t { LED1, LED2, LED3, LED4 };

@@ -5,7 +5,7 @@
  */
 
 #include "shell_commands.h"
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 #include "light_switch.h"
 
 #include <platform/CHIPDeviceLayer.h>

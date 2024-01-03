@@ -7,7 +7,7 @@
 #pragma once
 
 #include "matter_bridged_device.h"
-#include "persistent_storage_util.h"
+#include "ps_storage/persistent_storage_util.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include <zephyr/bluetooth/addr.h>

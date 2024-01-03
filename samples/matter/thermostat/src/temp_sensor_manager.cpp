@@ -6,7 +6,7 @@
 
 #include "temp_sensor_manager.h"
 #include "app_task.h"
-#include "task_executor.h"
+#include "tasks/task_executor.h"
 #include "temperature_measurement/sensor.h"
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
