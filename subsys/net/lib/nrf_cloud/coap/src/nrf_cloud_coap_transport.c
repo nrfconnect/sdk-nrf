@@ -25,6 +25,7 @@
 #include <nrf_modem_at.h>
 #include <date_time.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_coap.h>
 #include <cJSON.h>
 #include <version.h>
@@ -181,27 +182,42 @@ static int update_configured_info_sections(const char * const app_ver)
 		return -EALREADY;
 	}
 
-	struct nrf_cloud_svc_info_fota fota = {0};
-	struct nrf_cloud_svc_info_ui ui = {0};
-	struct nrf_cloud_svc_info svc_inf = {
-		.ui = &ui,
-		.fota = &fota
-	};
-	struct nrf_cloud_modem_info mdm_inf = {
-		.application_version = app_ver
-	};
-	struct nrf_cloud_device_status dev_status = {
-		.modem = &mdm_inf,
-		.svc = &svc_inf,
-	};
-	int err = nrf_cloud_shadow_info_enabled_sections_get(&dev_status);
+	/* Create a JSON object to contain shadow info sections */
+	NRF_CLOUD_OBJ_JSON_DEFINE(info_obj);
+	int err = nrf_cloud_obj_init(&info_obj);
 
-	if (err == -ENODEV) {
-		/* Nothing to send */
-		err = 0;
-	} else {
-		err = nrf_cloud_coap_shadow_device_status_update(&dev_status);
+	if (err) {
+		LOG_ERR("Failed to initialize object: %d", err);
+		return err;
 	}
+
+	/* Encode the enabled info sections */
+	err = nrf_cloud_enabled_info_sections_json_encode(info_obj.json, app_ver);
+	if (err) {
+		(void)nrf_cloud_obj_free(&info_obj);
+		if (err == -ENODEV) {
+			/* No info sections are enabled */
+			err = 0;
+		} else {
+			LOG_ERR("Error encoding info sections: %d", err);
+		}
+		return err;
+	}
+
+	/* Encode the object for the cloud */
+	err = nrf_cloud_obj_cloud_encode(&info_obj);
+	/* Free the JSON object; the encoded data remains */
+	(void)nrf_cloud_obj_free(&info_obj);
+
+	if (err) {
+		LOG_ERR("Error encoding data for the cloud: %d", err);
+		return err;
+	}
+
+	/* Send the shadow update */
+	err = nrf_cloud_coap_shadow_state_update((const char *)info_obj.encoded_data.ptr);
+	/* Free the encoded data */
+	nrf_cloud_obj_cloud_encoded_free(&info_obj);
 
 	if (err) {
 		LOG_ERR("Failed to update info sections in shadow, error: %d", err);

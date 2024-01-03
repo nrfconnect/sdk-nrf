@@ -39,6 +39,7 @@ config NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF
 
 config NRF_CLOUD_SEND_SERVICE_INFO_FOTA
 	bool "Send FOTA service info on initial connection"
+	default y if NRF_CLOUD_FOTA
 	help
 	  Add supported FOTA types to the "serviceInfo" section.
 	  If your application does not support certain FOTA types, this option should be disabled and the application should set its supported FOTA types in the shadow.

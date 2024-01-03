@@ -339,7 +339,7 @@ static int device_control_encode(cJSON * const obj, struct nrf_cloud_ctrl_data c
 	return -ENOMEM;
 }
 
-int nrf_cloud_shadow_info_enabled_sections_get(struct nrf_cloud_device_status *const ds)
+static int enabled_info_sections_get(struct nrf_cloud_device_status *const ds)
 {
 	__ASSERT_NO_MSG(ds != NULL);
 
@@ -356,18 +356,18 @@ int nrf_cloud_shadow_info_enabled_sections_get(struct nrf_cloud_device_status *c
 	if (modem) {
 		/* Device info */
 		modem->device = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS) ?
-					   NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+					   NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_NO_CHANGE;
 		/* Network info */
 		modem->network = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK) ?
-					    NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+					    NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_NO_CHANGE;
 		/* SIM info */
 		modem->sim = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_SIM) ?
-					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+					NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_NO_CHANGE;
 	}
 
 	/* Connection info */
 	ds->conn_inf = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_CONN_INF) ?
-				  NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_CLEAR;
+				  NRF_CLOUD_INFO_SET : NRF_CLOUD_INFO_NO_CHANGE;
 
 
 	/* Service info: FOTA */
@@ -474,38 +474,6 @@ void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler)
 }
 #endif
 
-/* Encode the info sections selected in the CONFIG_NRF_CLOUD_SEND_SHADOW_INFO menu config */
-static int configured_info_sections_encode(cJSON * const reported_obj)
-{
-	struct nrf_cloud_svc_info_fota fota = {0};
-	struct nrf_cloud_svc_info_ui ui = {0};
-	struct nrf_cloud_svc_info svc_inf = {
-		.ui = &ui,
-		.fota = &fota
-	};
-	struct nrf_cloud_modem_info mdm_inf = {
-		.application_version = application_version
-	};
-	struct nrf_cloud_device_status ds = {
-		.modem = &mdm_inf,
-		.svc = &svc_inf,
-	};
-	cJSON *device_obj = NULL;
-	int ret = nrf_cloud_shadow_info_enabled_sections_get(&ds);
-
-	if (ret == -ENODEV) {
-		/* Nothing to send */
-		return 0;
-	}
-
-	device_obj = cJSON_AddObjectToObjectCS(reported_obj, NRF_CLOUD_JSON_KEY_DEVICE);
-	if (!device_obj) {
-		return -ENOMEM;
-	}
-
-	return info_encode(device_obj, &ds);
-}
-
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
 			   const bool add_info_sections, struct nrf_cloud_data *output)
 {
@@ -592,7 +560,13 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 		device_control_encode(reported_obj, &device_ctrl);
 
 		if (add_info_sections) {
-			ret += configured_info_sections_encode(reported_obj);
+			int err;
+
+			err = nrf_cloud_enabled_info_sections_json_encode(reported_obj,
+									  application_version);
+			if ((err != 0) && (err != -ENODEV)) {
+				ret = err;
+			}
 		}
 	}
 
@@ -1687,6 +1661,79 @@ int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info *const mo
 	return 0;
 }
 #endif /* CONFIG_MODEM_INFO */
+
+/* Encode the info sections selected in the CONFIG_NRF_CLOUD_SEND_SHADOW_INFO menu config */
+int nrf_cloud_enabled_info_sections_json_encode(cJSON * const obj, const char * const app_ver)
+{
+	struct nrf_cloud_svc_info_fota fota = {0};
+	struct nrf_cloud_svc_info_ui ui = {0};
+	/* Only set service info items if they are enabled */
+	struct nrf_cloud_svc_info svc_inf = {
+		.ui = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI) ? &ui : NULL,
+		.fota = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA) ? &fota : NULL
+	};
+	struct nrf_cloud_modem_info mdm_inf = {
+		.application_version = app_ver
+	};
+	struct nrf_cloud_device_status ds = {
+		.modem = &mdm_inf,
+		.svc = &svc_inf,
+	};
+	cJSON *device_obj = NULL;
+	int ret = enabled_info_sections_get(&ds);
+
+	if (ret == -ENODEV) {
+		/* No info sections enabled */
+		return ret;
+	}
+
+	device_obj = cJSON_AddObjectToObjectCS(obj, NRF_CLOUD_JSON_KEY_DEVICE);
+	if (!device_obj) {
+		return -ENOMEM;
+	}
+
+	/* Only encode if an item is needs to be set */
+	if ((ds.modem->device == NRF_CLOUD_INFO_SET) ||
+	    (ds.modem->network == NRF_CLOUD_INFO_SET) ||
+	    (ds.modem->sim == NRF_CLOUD_INFO_SET)) {
+#if defined(CONFIG_MODEM_INFO)
+		ret = nrf_cloud_modem_info_json_encode(ds.modem, device_obj);
+		if (ret) {
+			return -ENOMEM;
+		}
+#endif
+	}
+
+	if (ds.conn_inf == NRF_CLOUD_INFO_SET) {
+		ret = shadow_connection_info_update(device_obj);
+	}
+
+	/* Encode FOTA/UI service info if set */
+	if ((ds.svc->fota || ds.svc->ui)) {
+		cJSON *svc_inf_obj = cJSON_AddObjectToObjectCS(device_obj,
+							       NRF_CLOUD_JSON_KEY_SRVC_INFO);
+
+		if (svc_inf_obj == NULL) {
+			return -ENOMEM;
+		}
+
+		if (ds.svc->fota) {
+			ret = nrf_cloud_encode_service_info_fota(ds.svc->fota, svc_inf_obj);
+		}
+		if (ret) {
+			return -ENOMEM;
+		}
+
+		if (ds.svc->ui) {
+			ret = nrf_cloud_encode_service_info_ui(ds.svc->ui, svc_inf_obj);
+		}
+		if (ret) {
+			return -ENOMEM;
+		}
+	}
+
+	return ret;
+}
 
 int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info *const svc_inf,
 	cJSON *const svc_inf_obj)
