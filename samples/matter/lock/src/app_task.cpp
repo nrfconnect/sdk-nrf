@@ -200,7 +200,7 @@ CHIP_ERROR AppTask::Init()
 	}
 	GetNUSService().RegisterCommand("Lock", sizeof("Lock"), NUSLockCallback, nullptr);
 	GetNUSService().RegisterCommand("Unlock", sizeof("Unlock"), NUSUnlockCallback, nullptr);
-	if (!GetNUSService().StartServer()) {
+	if(!GetNUSService().StartServer()){
 		LOG_ERR("GetNUSService().StartServer() failed");
 	}
 #endif

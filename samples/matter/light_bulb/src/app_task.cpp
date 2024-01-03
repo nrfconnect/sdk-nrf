@@ -44,8 +44,6 @@ using namespace ::chip::app;
 using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
-const static uint8_t x[78000] = {};
-
 namespace
 {
 constexpr uint32_t kFactoryResetTriggerTimeout = 3000;
