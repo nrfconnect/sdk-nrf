@@ -15,4 +15,4 @@ This folder also contains an RST :file:`cheat sheet` to help you getting started
    :glob:
    :caption: Subpages:
 
-   ../templates/*_README
+   ../../templates/*_README

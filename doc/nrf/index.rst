@@ -53,6 +53,6 @@ Varied reference designs
    integrations
    dev_model_and_contributions
    releases_and_maturity
-   documentation
+   glossary
 
 ..  templates/cheat_sheet

@@ -823,5 +823,8 @@ Documentation
   * The :ref:`ug_nrf70_developing_powersave_power_save_mode` section in the :ref:`ug_nrf70_developing_powersave` user guide.
   * The :ref:`nrf7002dk_nrf5340` page with a link to the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
 
+  * The :ref:`dev-model` section with the :ref:`documentation` pages, previously listed separately.
+  * The :ref:`glossary` page by moving it back to the main hierarchy level.
+
 * Removed the Welcome to the |NCS| page.
   This page is replaced with existing :ref:`ncs_introduction` page.
