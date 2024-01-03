@@ -397,7 +397,7 @@ out:
 	return ret;
 }
 
-static int wpas_disconnect_network(const struct device *dev)
+static int wpas_disconnect_network(const struct device *dev, int cur_mode)
 {
 	int ret = 0;
 	struct net_if *iface = net_if_lookup_by_dev(dev);
@@ -419,9 +419,14 @@ static int wpas_disconnect_network(const struct device *dev)
 
 	k_mutex_lock(&wpa_supplicant_mutex, K_FOREVER);
 
-	if (wpa_s->current_ssid && wpa_s->current_ssid->mode == WPAS_MODE_AP) {
-		is_ap = true;
+	if (!wpa_s->current_ssid || wpa_s->current_ssid->mode != cur_mode) {
+		ret = -EBUSY;
+		wpa_printf(MSG_ERROR, "Interface %s is not in %s mode", dev->name,
+			   cur_mode == WPAS_MODE_INFRA ? "STA" : "AP");
+		goto out;
 	}
+
+	is_ap = (cur_mode == WPAS_MODE_AP);
 
 	wpa_supp_api_ctrl.dev = dev;
 	wpa_supp_api_ctrl.requested_op = DISCONNECT;
@@ -506,7 +511,7 @@ out:
 
 int z_wpa_supplicant_disconnect(const struct device *dev)
 {
-	return wpas_disconnect_network(dev);
+	return wpas_disconnect_network(dev, WPAS_MODE_INFRA);
 }
 
 int z_wpa_supplicant_status(const struct device *dev,
@@ -810,7 +815,7 @@ int z_wpa_supplicant_ap_disable(const struct device *dev)
 		goto out;
 	}
 
-	ret = wpas_disconnect_network(dev);
+	ret = wpas_disconnect_network(dev, WPAS_MODE_AP);
 	if (ret) {
 		wpa_printf(MSG_ERROR, "Failed to disconnect from network");
 		goto out;
