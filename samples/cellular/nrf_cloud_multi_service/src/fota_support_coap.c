@@ -73,6 +73,10 @@ int coap_fota_thread_fn(void)
 	int err;
 
 	while (1) {
+		/* Wait until we are able to communicate. */
+		LOG_DBG("Waiting for valid connection before processing FOTA");
+		(void)await_cloud_ready(K_FOREVER);
+
 		/* Query for any pending FOTA jobs. If one is found, download and install
 		 * it. This is a blocking operation which can take a long time.
 		 * This function is likely to reboot in order to complete the FOTA update.
