@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "led_widget.h"
+#include "led/led_widget.h"
 
 #include <app/clusters/identify-server/identify-server.h>
 #include <platform/CHIPDeviceLayer.h>

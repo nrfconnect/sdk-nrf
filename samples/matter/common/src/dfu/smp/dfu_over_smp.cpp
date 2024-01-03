@@ -10,7 +10,7 @@
 #error "DFUOverSMP requires MCUMGR module configs enabled"
 #endif
 
-#include "ota_util.h"
+#include "dfu/ota/ota_util.h"
 
 #include <platform/CHIPDeviceLayer.h>
 

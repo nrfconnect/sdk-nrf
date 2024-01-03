@@ -6,19 +6,19 @@
 
 #include "app_task.h"
 
-#include "matter_init.h"
-#include "task_executor.h"
-
 #include "temp_sensor_manager.h"
 #include "temperature_manager.h"
+
+#include "init/matter_init.h"
+#include "tasks/task_executor.h"
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+#include "dfu/ota/ota_util.h"
+#endif
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
-
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "ota_util.h"
-#endif
 
 #include <zephyr/logging/log.h>
 

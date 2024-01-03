@@ -6,13 +6,21 @@
 
 #include "app_task.h"
 
-#include "board.h"
-#include "task_executor.h"
-
 #include "battery.h"
 #include "buzzer.h"
-#include "led_widget.h"
-#include "matter_init.h"
+
+#include "board/board.h"
+#include "init/matter_init.h"
+#include "led/led_widget.h"
+#include "tasks/task_executor.h"
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+#include "dfu/ota/ota_util.h"
+#endif
+
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT
+#include "dfu/smp/dfu_over_smp.h"
+#endif
 
 #include <DeviceInfoProviderImpl.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
@@ -21,23 +29,14 @@
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "ota_util.h"
-#endif
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-#include "dfu_over_smp.h"
-#endif
-
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(app);
 
 using namespace ::chip;
 using namespace ::chip::DeviceLayer;
 using namespace ::chip::app;
-
-#include <zephyr/logging/log.h>
-
-LOG_MODULE_DECLARE(app);
 
 namespace
 {

@@ -9,11 +9,11 @@
 #include "fabric_table_delegate.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "ota_util.h"
+#include "dfu/ota/ota_util.h"
 #endif
 
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
-#include "dfu_over_smp.h"
+#include "dfu/smp/dfu_over_smp.h"
 #endif
 
 #include <app/clusters/network-commissioning/network-commissioning.h>

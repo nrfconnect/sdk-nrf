@@ -7,27 +7,27 @@
 #include "app_task.h"
 
 #include "bolt_lock_manager.h"
-#include "task_executor.h"
 
-#ifdef CONFIG_CHIP_NUS
-#include "bt_nus_service.h"
+#ifdef CONFIG_THREAD_WIFI_SWITCHING
+#include "thread_wifi_switch.h"
 #endif
 
-#include "matter_init.h"
+#include "init/matter_init.h"
+#include "tasks/task_executor.h"
+
+#ifdef CONFIG_CHIP_NUS
+#include "bt_nus/bt_nus_service.h"
+#endif
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+#include "dfu/ota/ota_util.h"
+#endif
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/clusters/door-lock-server/door-lock-server.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <platform/CHIPDeviceLayer.h>
-
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "ota_util.h"
-#endif
-
-#ifdef CONFIG_THREAD_WIFI_SWITCHING
-#include "thread_wifi_switch.h"
-#endif
 
 #include <zephyr/logging/log.h>
 

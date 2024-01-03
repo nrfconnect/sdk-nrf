@@ -6,13 +6,9 @@
 
 #pragma once
 
-#include "board.h"
+#include "board/board.h"
 #include "bolt_lock_manager.h"
-#include "led_widget.h"
-
-#ifdef CONFIG_MCUMGR_TRANSPORT_BT
-#include "dfu_over_smp.h"
-#endif
+#include "led/led_widget.h"
 
 struct k_timer;
 struct Identify;

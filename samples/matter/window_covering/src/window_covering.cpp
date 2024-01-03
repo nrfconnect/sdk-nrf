@@ -5,7 +5,7 @@
  */
 
 #include "window_covering.h"
-#include "pwm_device.h"
+#include "pwm/pwm_device.h"
 
 #include <dk_buttons_and_leds.h>
 

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "board.h"
+#include "board/board.h"
 
 #include <platform/CHIPDeviceLayer.h>
 

@@ -6,23 +6,23 @@
 
 #include "app_task.h"
 
-#include "matter_init.h"
-#include "pwm_device.h"
-#include "task_executor.h"
+#ifdef CONFIG_AWS_IOT_INTEGRATION
+#include "aws_iot_integration.h"
+#endif
+
+#include "init/matter_init.h"
+#include "pwm/pwm_device.h"
+#include "tasks/task_executor.h"
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+#include "dfu/ota/ota_util.h"
+#endif
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/DeferredAttributePersistenceProvider.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
-
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "ota_util.h"
-#endif
-
-#ifdef CONFIG_AWS_IOT_INTEGRATION
-#include "aws_iot_integration.h"
-#endif
 
 #include <zephyr/logging/log.h>
 
@@ -285,11 +285,11 @@ void AppTask::UpdateClusterState()
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	ReturnErrorOnFailure(
-		Nordic::Matter::PrepareServer(MatterEventHandler, Nordic::Matter::InitData{ .mPostServerInitClbk = [] {
-						   app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
-						   return CHIP_NO_ERROR;
-					   } }));
+	ReturnErrorOnFailure(Nordic::Matter::PrepareServer(
+		MatterEventHandler, Nordic::Matter::InitData{ .mPostServerInitClbk = [] {
+			app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
+			return CHIP_NO_ERROR;
+		} }));
 
 	if (!GetBoard().Init(ButtonEventHandler)) {
 		LOG_ERR("User interface initialization failed.");

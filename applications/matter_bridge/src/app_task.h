@@ -6,13 +6,10 @@
 
 #pragma once
 
-#include "board.h"
-
 #include <platform/CHIPDeviceLayer.h>
 
 class AppTask {
 public:
-
 	static AppTask &Instance()
 	{
 		static AppTask sAppTask;

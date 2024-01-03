@@ -5,7 +5,7 @@
  */
 
 #include "board.h"
-#include "task_executor.h"
+#include "tasks/task_executor.h"
 
 #include <app/server/Server.h>
 #include <platform/CHIPDeviceLayer.h>
@@ -13,7 +13,7 @@
 #include <zephyr/logging/log.h>
 
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
-#include "dfu_over_smp.h"
+#include "dfu/smp/dfu_over_smp.h"
 #endif
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);

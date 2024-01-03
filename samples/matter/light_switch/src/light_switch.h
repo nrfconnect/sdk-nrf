@@ -8,7 +8,7 @@
 #include <app/util/basic-types.h>
 #include <lib/core/CHIPError.h>
 
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 
 #include <atomic>
 

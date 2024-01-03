@@ -5,7 +5,7 @@
  */
 
 #include "light_switch.h"
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 
 #ifdef CONFIG_CHIP_LIB_SHELL
 #include "shell_commands.h"

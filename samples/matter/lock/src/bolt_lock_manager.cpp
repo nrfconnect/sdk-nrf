@@ -5,7 +5,7 @@
  */
 
 #include "bolt_lock_manager.h"
-#include "task_executor.h"
+#include "tasks/task_executor.h"
 
 #include "app_task.h"
 

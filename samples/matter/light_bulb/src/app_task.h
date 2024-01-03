@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "board.h"
-#include "pwm_device.h"
+#include "board/board.h"
+#include "pwm/pwm_device.h"
 
 #include <platform/CHIPDeviceLayer.h>
 

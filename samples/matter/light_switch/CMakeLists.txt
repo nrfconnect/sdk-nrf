@@ -46,20 +46,20 @@ target_sources(app PRIVATE
     src/shell_commands.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
-    ${COMMON_ROOT}/src/binding_handler.cpp
-    ${COMMON_ROOT}/src/led_widget.cpp
-    ${COMMON_ROOT}/src/task_executor.cpp
-    ${COMMON_ROOT}/src/board.cpp
-    ${COMMON_ROOT}/src/matter_init.cpp
+    ${COMMON_ROOT}/src/binding/binding_handler.cpp
+    ${COMMON_ROOT}/src/led/led_widget.cpp
+    ${COMMON_ROOT}/src/board/board.cpp
+    ${COMMON_ROOT}/src/tasks/task_executor.cpp
+    ${COMMON_ROOT}/src/init/matter_init.cpp
 )
 
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/ota_util.cpp)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu/ota/ota_util.cpp)
 endif()
 
 if(CONFIG_MCUMGR_TRANSPORT_BT)
     zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
-    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu/smp/dfu_over_smp.cpp)
 endif()
 
 chip_configure_data_model(app
