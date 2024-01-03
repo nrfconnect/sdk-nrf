@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-mainmenu "Matter weather station application"
+mainmenu "Matter  weather station application"
 
 config AVERAGE_CURRENT_CONSUMPTION
 	int "Average device current consumption in microamperes"
