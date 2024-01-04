@@ -787,7 +787,7 @@ To update the firmware, complete the following steps:
       .. group-tab:: Coiote Basic Firmware update
 
          1. Identify the firmware image file to be uploaded to the device.
-            See :ref:`lte_modem` and :ref:`nrf9160_fota` for more information.
+            See :ref:`lte_modem` and :ref:`nrf91_fota` for more information.
          #. Open `Coiote Device Management server`_ and click :guilabel:`Firmware update`.
          #. Click :guilabel:`Update Firmware`.
          #. Click :guilabel:`Basic Firmware update`.
@@ -806,7 +806,7 @@ To update the firmware, complete the following steps:
          Use the :file:`overlay-adv-firmware.conf` overlay file for multi component FOTA.
 
          1. Identify the firmware image file to be uploaded to the device.
-            See :ref:`lte_modem` and :ref:`nrf9160_fota` for more information.
+            See :ref:`lte_modem` and :ref:`nrf91_fota` for more information.
          #. Open `Coiote Device Management server`_ and click :guilabel:`Firmware update`.
          #. Click :guilabel:`Update Firmware`.
          #. Click :guilabel:`Multi-component Firmware update`.
@@ -826,7 +826,7 @@ To update the firmware, complete the following steps:
 
       .. group-tab:: Leshan Firmware update
 
-         1. Identify the firmware image file to be uploaded to the device. See :ref:`lte_modem` and :ref:`nrf9160_fota` for more information.
+         1. Identify the firmware image file to be uploaded to the device. See :ref:`lte_modem` and :ref:`nrf91_fota` for more information.
          #. Open `Coiote Device Management server`_ and click :guilabel:`LwM2M firmware`.
          #. Click :guilabel:`Schedule new firmware upgrade`.
          #. Click :guilabel:`Upload file` in the bottom left corner and upload the firmware image file.

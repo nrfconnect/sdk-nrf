@@ -33,7 +33,7 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    `TCP`_                     |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    |    :ref:`FOTA <nrf91_fota>`   |
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 |                                                                                    +-------------------------------+
@@ -45,7 +45,7 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    `TCP`_                     |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    |    :ref:`FOTA <nrf91_fota>`   |
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 |                                                                                    +-------------------------------+
@@ -57,7 +57,7 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    `TCP`_                     |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    |    :ref:`FOTA <nrf91_fota>`   |
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 |                                                                                    +-------------------------------+
@@ -71,7 +71,7 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 |                                                                                    +-------------------------------+
 |                                                                                    |    `UDP protocol`_            |
 |                                                                                    +-------------------------------+
-|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    |    :ref:`FOTA <nrf91_fota>`   |
 |                                                                                    +-------------------------------+
 |                                                                                    |    :ref:`lib_nrf_cloud_agnss` |
 +------------------------------------------------------------------------------------+-------------------------------+
@@ -90,7 +90,7 @@ For more information, see `nRF Cloud Location Services <nRF Cloud Location Servi
 FOTA
 ====
 
-The client libraries supported by the cloud wrapper API all implement their own version of :ref:`FOTA <nrf9160_fota>`.
+The client libraries supported by the cloud wrapper API all implement their own version of :ref:`FOTA <nrf91_fota>`.
 This enables the cloud to issue FOTA updates and update the application and modem firmware while the device is in field.
 For additional documentation on the various FOTA implementations, refer to the respective client library documentation linked to in :ref:`Integration layers <integration_layers>`.
 

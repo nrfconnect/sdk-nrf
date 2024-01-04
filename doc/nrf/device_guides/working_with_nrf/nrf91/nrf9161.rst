@@ -1,0 +1,307 @@
+.. _ug_nrf9161:
+
+Developing with nRF9161 DK
+##########################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The nRF9161 DK is a hardware development platform used to design and develop application firmware on the nRF9161 :term:`System in Package (SiP)`.
+The nRF9161 SiP is a low power SiP with integrated DECT NR+ modem and 3GPP Release 14 LTE-M/NB-IoT with GNSS.
+
+See the `nRF9161 DK Hardware`_ guide for detailed information about the nRF9161 DK hardware.
+To get started with the nRF9161 DK, complete the steps in the Quick Start app in `nRF Connect for Desktop`_.
+If you are not familiar with the |NCS|, see :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
+
+.. _nrf9161_ug_intro:
+
+Board controller
+****************
+
+The nRF9161 DK contains an nRF5340 Interface MCU (IMCU), which acts both as an on-board debugger and board controller.
+The board controller controls signal switches on the nRF9161 DK and can be used to route the nRF9161 SiP pins to different components on the DK, such as pin headers, external memory, a SIM card or eSIM.
+For a complete list of configuration options available, see the nRF9161 DK board control section in the nRF9161 DK User Guide.
+
+The nRF5340 IMCU comes preprogrammed with J-Link Segger OB and board controller firmware.
+
+.. _nrf9161_ug_updating_cloud_certificate:
+
+Updating the nRF Cloud certificate
+**********************************
+
+.. |DK| replace:: nRF9161 DK
+
+.. include:: nrf9160.rst
+   :start-after: dk_update_cloud_cer_start
+   :end-before: dk_update_cloud_cer_end
+
+.. _downloading_cloud_certificate_nRF9161:
+
+Downloading the nRF Cloud certificate for the |DK|
+==================================================
+
+.. include:: nrf9160.rst
+   :start-after: dk_cloud_cer_download_start
+   :end-before: dk_cloud_cer_download_end
+
+Provisioning the nRF Cloud certificate
+======================================
+
+After downloading the certificate, you must provision it to your nRF9161 DK.
+
+Complete the following steps to provision the certificate:
+
+1. Start nRF Connect for Desktop and install the `Cellular Monitor`_ app.
+#. Open the Cellular Monitor app.
+#. Connect the DK to the computer with a USB-C cable, and turn it on.
+#. Click :guilabel:`Select device` and select the DK from the drop-down list.
+
+   .. figure:: images/cellularmonitor_selectdevice_nrf9161.png
+      :alt: Cellular Monitor - Select device
+
+      Cellular Monitor - Select device
+
+   The drop-down text changes to the type of the selected device, with the SEGGER ID below the name.
+
+#. Click the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
+
+   .. figure:: images/cellularmonitor_open_serial_terminal_nrf9161.png
+      :alt: Cellular Monitor - Open Serial Terminal
+
+      Cellular Monitor - Open Serial Terminal
+
+#. Enter ``AT+CFUN=4`` in the text field for AT commands and click :guilabel:`Send`.
+   This AT command puts the modem to offline state.
+#. Enter ``AT+CFUN?`` in the text field for AT commands and click :guilabel:`Send`.
+   This AT command returns the state of the modem.
+
+   The command must return ``+CFUN: 4``, which indicates that the modem is in offline state.
+   If it returns a different value, repeat the previous step.
+#. Open the Cellular Monitor app.
+#. Click :guilabel:`CERTIFICATE MANAGER` in the navigation bar to switch to the certificate manager view.
+
+   .. figure:: images/cellularmonitor_navigationcertificatemanager_nrf9161.png
+      :alt: Cellular Monitor - Certificate Manager
+
+      Cellular Monitor - Certificate Manager
+
+#. Click :guilabel:`Load from JSON` and select the :file:`*.cert.json` file that you downloaded from nRF Cloud.
+   Alternatively, you can drag and drop the file onto the GUI.
+#. Ensure that the **Security tag** is set to ``16842753``, which is the security tag for nRF Cloud credentials.
+#. Click :guilabel:`Update certificate`.
+
+   The log message "Certificate update completed" indicates that the certificate was provisioned successfully.
+   If you encounter any errors, switch to the terminal view and check the output of the AT commands that were sent to the nRF9161 DK modem.
+
+   .. note::
+
+      If you have connected your nRF9161 DK to nRF Cloud before, you must delete the device there after provisioning the certificate.
+      Open the entry for your device from the **Devices** view, then click the gear icon to the right of the device's name, and select :guilabel:`Delete Device`.
+      Then, add the nRF9161 DK again to the nRF cloud.
+
+
+Build targets
+*************
+
+Make sure to select a suitable build target when building your application.
+
+In Zephyr, the firmware for the application core of :ref:`zephyr:nrf9161dk_nrf9161` is divided into two different build targets:
+
+* ``nrf9161dk_nrf9161`` for build targets that have Cortex-M Security Extensions (CMSE) disabled.
+* ``nrf9161dk_nrf9161_ns`` for build targets that have CMSE enabled and have the Secure Processing Environment (SPE) firmware alongside the Non-Secure Processing Environment (NSPE) firmware.
+
+For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
+
+.. _nrf9161_ug_updating_fw_programmer:
+
+Updating the DK firmware using Programmer
+*****************************************
+
+.. |sim_card| replace:: For the Onomondo SIM card, check the `Onomondo LTE-M coverage`_ and `Onomondo NB-IoT coverage`_ to see the network coverage for different countries.
+
+.. |firmware_filename| replace:: :file:`mfw_nrf91x1_`
+
+Download and extract the latest application and modem firmware from the `nRF9161 DK Downloads`_ page.
+
+.. include:: nrf9160.rst
+   :start-after: dk_update_firware_start
+   :end-before: dk_update_firware_end
+
+.. _nrf9161_updating_fw_modem:
+
+Updating the modem firmware
+===========================
+
+To update the modem firmware, complete the following steps.
+If you experience any problems during the process, press ``Ctrl+R`` (``command+R`` on macOS) to restart the Programmer app and try again.
+
+1. Open the Programmer app.
+#. Connect the nRF9161 DK to the computer with a USB-C cable, and then turn the DK on.
+#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
+
+   .. figure:: images/programmer_select_device_nrf9161.png
+      :alt: Programmer - Select device
+
+      Programmer - Select device
+
+   If the DK is not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+
+   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+   The **Device memory layout** section also changes its name to the device name, and indicates that the device is connected.
+   If the :guilabel:`Auto read memory` option is selected in the **JLINK SETTINGS** section of the side panel, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section of the side panel.
+
+#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
+#. Navigate to where you extracted the firmware, and select the :file:`mfw_nrf91x1_<version-number>.zip` file.
+#. Click :guilabel:`Write` in the **DEVICE** section of the side panel.
+
+   .. figure:: images/programmer_hex_write_nrf9161.png
+      :alt: Programmer - Write
+
+      Programmer - Write
+
+   The **Modem DFU** window appears.
+
+   .. figure:: images/programmerapp_modemdfu_nrf9161.png
+      :alt: Modem DFU window
+
+      The Modem DFU window
+
+#. Ignore the warning message and click the :guilabel:`Write` button in the **Modem DFU** window to update the firmware.
+   Do not unplug or turn off the device during this process.
+
+When the update is complete, you see a success message.
+If you update the application firmware now, you can go directly to Step 4 of :ref:`nrf9161_updating_fw_application`.
+
+.. note::
+
+   If you experience problems updating the modem firmware, click :guilabel:`Erase all` in the **DEVICE** section of the side panel and try updating again.
+
+.. _nrf9161_updating_fw_application:
+
+Updating the application firmware
+=================================
+
+To update the application firmware using the Programmer app, complete the following steps.
+If you experience any problems during the process, press ``Ctrl+R`` (``command+R`` in macOS) to restart the Programmer app and try again.
+
+1. Open the Programmer app.
+#. Connect the nRF9161 DK to the computer with a USB-C cable, and then turn the DK on.
+#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
+
+   .. figure:: images/programmer_select_device_nrf9161.png
+      :alt: Programmer - Select device
+
+      Programmer - Select device
+
+   If the DK is not visible, press ``Ctrl+R`` in Windows (``command+R`` in macOS) to restart the Programmer application.
+
+   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+   The **Device memory layout** section also changes its name to the device name, and indicates that the device is connected.
+   If the :guilabel:`Auto read memory` option is selected in the **JLINK SETTINGS** section, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section.
+
+#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
+#. Navigate to where you extracted the firmware, and then to the :file:`img_app_bl` folder there.
+#. Select the :file:`.hex` file for the application you are programming.
+
+   For Asset Tracker v2, select the :file:`nrf9161dk_asset_tracker_v2_<version-number>.hex` HEX file.
+
+   For NB-IoT, there is a second variant of the Asset Tracker v2 firmware in the :file:`nrf9161dk_asset_tracker_v2_nbiot_legacy_pco_<version-number>.hex` file.
+   Only use this legacy variant if your network does not support ePCO.
+
+#. Click the :guilabel:`Erase & write` button in the **DEVICE** section to program the DK.
+   Do not unplug or turn off the DK during this process.
+
+.. _build_pgm_nrf9161:
+
+Building and programming
+************************
+
+You can program applications and samples on the nRF9161 DK after obtaining the corresponding firmware images.
+
+.. note::
+   When you update the application firmware on an nRF9161 DK, make sure the modem firmware and application firmware are compatible versions.
+
+To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instructions in :ref:`nrf9161_updating_fw_application`.
+
+.. _build_pgm_nrf9161_vsc:
+
+Building and programming using |VSC|
+====================================
+
+Complete the following steps to build and program using the |nRFVSC|:
+
+.. |sample_path_vsc| replace:: :file:`ncs/nrf/applications/asset_tracker_v2`
+
+.. |vsc_sample_board_target_line| replace:: you must use the build target ``nrf9161dk_nrf9161_ns`` when building the application code for the nRF9161 DK
+
+.. include:: ../../../includes/vsc_build_and_run.txt
+
+3. Program the application:
+
+.. prog_nrf9161_start
+..
+
+   a. Connect the |DK| to your PC using a USB cable.
+   #. Power on the |DK|.
+
+.. prog_nrf9161_end
+..
+
+   c. In |nRFVSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions View`.
+
+      If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
+
+      A small notification banner appears in the bottom-right corner of |VSC| to display the progress and confirm when the flashing is complete.
+
+.. _build_pgm_nrf9161_cmdline:
+
+Building and programming on the command line
+============================================
+
+.. |cmd_folder_path| replace:: on the nRF9161 DK
+
+.. |cmd_build_target| replace:: ``nrf9161dk_nrf9161_ns`` when building the application code for the nRF9161 DK
+
+
+.. include:: ../../../includes/cmd_build_and_run.txt
+
+6. Program the application:
+
+.. include:: nrf9161.rst
+   :start-after: prog_nrf9161_start
+   :end-before: prog_nrf9161_end
+..
+
+   d. Program the sample or application to the device using the following command:
+
+      .. code-block:: console
+
+         west flash
+
+      .. note::
+         When programming with the :ref:`asset_tracker_v2` application, use the ``west flash --erase`` command.
+         The application has secure boot enabled by default that includes data in the :ref:`One-Time Programmable region (OTP)<bootloader_provisioning_otp>`.
+         This means that everything must be erased before flashing.
+
+      The device resets and runs the programmed sample or application.
+
+.. _nrf9161_gs_testing_cellular:
+
+Testing the cellular connection with the AT Client sample
+*********************************************************
+
+.. |firmware_update| replace:: :ref:`nrf9161_updating_fw_application`
+
+.. |firmware_file| replace:: :file:`nrf9161dk_at_client_<version-number>.hex`
+
+.. include:: nrf9160.rst
+   :start-after: at_client_test_start
+   :end-before: at_client_test_end
+
+Available drivers, libraries, and samples
+*****************************************
+
+See the :ref:`drivers`, :ref:`libraries`, and :ref:`samples <cellular_samples>` sections and the respective repository folders for up-to-date information.
