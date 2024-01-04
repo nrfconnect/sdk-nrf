@@ -6,7 +6,7 @@
 
 #include "bridge_manager.h"
 
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/reporting/reporting.h>
@@ -41,7 +41,7 @@ CHIP_ERROR BridgeManager::Init(LoadStoredBridgedDevicesCallback loadStoredBridge
 	emberAfEndpointEnableDisable(emberAfEndpointFromIndex(static_cast<uint16_t>(emberAfFixedEndpointCount() - 1)),
 				     false);
 
-	BindingHandler::GetInstance().Init();
+	BindingHandler::Init();
 
 	/* Invoke the callback to load stored devices in a proper moment. */
 	CHIP_ERROR err = loadStoredBridgedDevicesCb();
@@ -425,8 +425,7 @@ void BridgeManager::HandleCommand(BridgedDeviceDataProvider &dataProvider, Clust
 		}
 	}
 
-	DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::DeviceWorkerHandler,
-						reinterpret_cast<intptr_t>(bindingData));
+	BindingHandler::RunBoundClusterAction(bindingData);
 }
 
 BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, uint16_t &deviceType)

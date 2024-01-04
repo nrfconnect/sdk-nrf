@@ -9,7 +9,7 @@
 #include "bridge_util.h"
 #include "bridged_device_data_provider.h"
 #include "matter_bridged_device.h"
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 
 class BridgeManager {
 public:
