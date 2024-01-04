@@ -108,6 +108,10 @@ Matter
 
     The DAC private key can be removed from the factory data set after the migration.
     You can enable this experimental functionality by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.
+  * Redefinition of thermostat sample measurement process, deleted :kconfig:option:`CONFIG_THERMOSTAT_EXTERNAL_SENSOR`.
+    By default, the thermostat sample generates simulated temperature measurements.
+    The generated measurements simulate local temperature changes.
+    Additionally, you can enable periodic outdoor temperature measurements by binding the thermostat with an external temperature sensor device.
 
 Matter fork
 +++++++++++

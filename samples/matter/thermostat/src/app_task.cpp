@@ -69,7 +69,12 @@ CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
 	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
-		CHIP_ERROR err = TemperatureManager::Instance().Init();
+		CHIP_ERROR err = TempSensorManager::Instance().Init();
+		if (err != CHIP_NO_ERROR) {
+			LOG_ERR("TempSensorManager Init fail");
+			return err;
+		}
+		err = TemperatureManager::Instance().Init();
 		if (err != CHIP_NO_ERROR) {
 			LOG_ERR("TempMgr Init fail");
 		}
@@ -85,11 +90,6 @@ CHIP_ERROR AppTask::Init()
 	 * state. */
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
 
-	CHIP_ERROR err = TempSensorManager::Instance().Init();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("TempSensorManager Init fail");
-		return err;
-	}
 	return Nrf::Matter::StartServer();
 }
 

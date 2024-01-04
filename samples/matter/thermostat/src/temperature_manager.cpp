@@ -38,18 +38,13 @@ uint8_t ReturnRemainderValue(int16_t Value)
 
 CHIP_ERROR TemperatureManager::Init()
 {
-	app::DataModel::Nullable<int16_t> temp;
-
 	PlatformMgr().LockChipStack();
-	Thermostat::Attributes::LocalTemperature::Get(kThermostatEndpoint, temp);
+	Thermostat::Attributes::LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius);
+	Thermostat::Attributes::OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius);
 	Thermostat::Attributes::OccupiedCoolingSetpoint::Get(kThermostatEndpoint, &mCoolingCelsiusSetPoint);
 	Thermostat::Attributes::OccupiedHeatingSetpoint::Get(kThermostatEndpoint, &mHeatingCelsiusSetPoint);
 	Thermostat::Attributes::SystemMode::Get(kThermostatEndpoint, &mThermMode);
 	PlatformMgr().UnlockChipStack();
-
-	mCurrentTempCelsius = temp.Value();
-
-	LogThermostatStatus();
 
 	return CHIP_NO_ERROR;
 }
@@ -57,12 +52,25 @@ CHIP_ERROR TemperatureManager::Init()
 void TemperatureManager::LogThermostatStatus()
 {
 	LOG_INF("Thermostat:");
-	LOG_INF("Mode - %d", GetMode());
-	LOG_INF("Temperature - %d,%d'C", ReturnCompleteValue(GetCurrentTemp()), ReturnRemainderValue(GetCurrentTemp()));
-	LOG_INF("HeatingSetpoint - %d,%d'C", ReturnCompleteValue(GetHeatingSetPoint()),
-		ReturnRemainderValue(GetHeatingSetPoint()));
-	LOG_INF("CoolingSetpoint - %d,%d'C \n", ReturnCompleteValue(GetCoolingSetPoint()),
-		ReturnRemainderValue(GetCoolingSetPoint()));
+	LOG_INF("	Mode - %d", mThermMode);
+	if (!(GetLocalTemp().IsNull())) {
+		int16_t tempValue = GetLocalTemp().Value();
+		LOG_INF("	LocalTemperature - %d,%d'C", ReturnCompleteValue(tempValue),
+			ReturnRemainderValue(tempValue));
+	} else {
+		LOG_INF("	LocalTemperature - No Value");
+	}
+	if (!(GetOutdoorTemp().IsNull())) {
+		int16_t tempValue = GetOutdoorTemp().Value();
+		LOG_INF("	OutdoorTemperature - %d,%d'C", ReturnCompleteValue(tempValue),
+			ReturnRemainderValue(tempValue));
+	} else {
+		LOG_INF("	OutdoorTemperature - No Value");
+	}
+	LOG_INF("	HeatingSetpoint - %d,%d'C", ReturnCompleteValue(mHeatingCelsiusSetPoint),
+		ReturnRemainderValue(mHeatingCelsiusSetPoint));
+	LOG_INF("	CoolingSetpoint - %d,%d'C \n", ReturnCompleteValue(mCoolingCelsiusSetPoint),
+		ReturnRemainderValue(mCoolingCelsiusSetPoint));
 }
 
 void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, AttributeId attributeId, uint8_t *value,
@@ -70,19 +78,20 @@ void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, Attribute
 {
 	switch (attributeId) {
 	case Thermostat::Attributes::LocalTemperature::Id: {
-		int16_t temp = *reinterpret_cast<int16_t *>(value);
-		mCurrentTempCelsius = temp;
+		Thermostat::Attributes::LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius);
+	} break;
+
+	case Thermostat::Attributes::OutdoorTemperature::Id: {
+		Thermostat::Attributes::OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius);
 	} break;
 
 	case Thermostat::Attributes::OccupiedCoolingSetpoint::Id: {
-		int16_t coolingTemp = *reinterpret_cast<int16_t *>(value);
-		mCoolingCelsiusSetPoint = coolingTemp;
+		mCoolingCelsiusSetPoint = *reinterpret_cast<int16_t *>(value);
 		LOG_INF("Cooling TEMP: %d", mCoolingCelsiusSetPoint);
 	} break;
 
 	case Thermostat::Attributes::OccupiedHeatingSetpoint::Id: {
-		int16_t heatingTemp = *reinterpret_cast<int16_t *>(value);
-		mHeatingCelsiusSetPoint = heatingTemp;
+		mHeatingCelsiusSetPoint = *reinterpret_cast<int16_t *>(value);
 		LOG_INF("Heating TEMP %d", mHeatingCelsiusSetPoint);
 	} break;
 
@@ -99,21 +108,12 @@ void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, Attribute
 	LogThermostatStatus();
 }
 
-const uint8_t TemperatureManager::GetMode()
+app::DataModel::Nullable<int16_t> TemperatureManager::GetLocalTemp()
 {
-	return mThermMode;
+	return mLocalTempCelsius;
 }
 
-const uint16_t TemperatureManager::GetCurrentTemp()
+app::DataModel::Nullable<int16_t> TemperatureManager::GetOutdoorTemp()
 {
-	return mCurrentTempCelsius;
-}
-const uint16_t TemperatureManager::GetHeatingSetPoint()
-{
-	return mHeatingCelsiusSetPoint;
-}
-
-const uint16_t TemperatureManager::GetCoolingSetPoint()
-{
-	return mCoolingCelsiusSetPoint;
+	return mOutdoorTempCelsius;
 }

@@ -42,6 +42,7 @@ target_sources(app PRIVATE
     src/main.cpp
     src/temp_sensor_manager.cpp
     src/temperature_manager.cpp
+    src/temperature_measurement/sensor.cpp
     src/zcl_callbacks.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
@@ -61,13 +62,6 @@ if(CONFIG_MCUMGR_TRANSPORT_BT)
     zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu/smp/dfu_over_smp.cpp)
 endif()
-
-if(CONFIG_THERMOSTAT_EXTERNAL_SENSOR)
-    target_sources(app PRIVATE src/temperature_measurement/real_temp.cpp)
-else()
-    target_sources(app PRIVATE src/temperature_measurement/simulated_temp.cpp)
-endif()
-
 
 chip_configure_data_model(app
     INCLUDE_SERVER

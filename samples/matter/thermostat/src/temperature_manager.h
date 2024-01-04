@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -21,17 +22,16 @@ public:
 		return sTemperatureManager;
 	};
 
-	CHIP_ERROR Init(void);
+	CHIP_ERROR Init();
 	void AttributeChangeHandler(EndpointId endpointId, AttributeId attributeId, uint8_t *value, uint16_t size);
-	const uint8_t GetMode(void);
-	const uint16_t GetCurrentTemp(void);
-	const uint16_t GetHeatingSetPoint(void);
-	const uint16_t GetCoolingSetPoint(void);
+	app::DataModel::Nullable<int16_t> GetLocalTemp();
+	app::DataModel::Nullable<int16_t> GetOutdoorTemp();
 
-	void LogThermostatStatus(void);
+	void LogThermostatStatus();
 
 private:
-	int16_t mCurrentTempCelsius;
+	app::DataModel::Nullable<int16_t> mLocalTempCelsius;
+	app::DataModel::Nullable<int16_t> mOutdoorTempCelsius;
 	int16_t mCoolingCelsiusSetPoint;
 	int16_t mHeatingCelsiusSetPoint;
 	uint8_t mThermMode;
