@@ -30,6 +30,16 @@ The following changes are mandatory to make your application work in the same wa
       * The ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
       * The ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` Kconfig option was renamed to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
 
+* For Matter over Thread samples, starting from this release, the cryptography backend enabled by default is PSA Crypto API instead of mbedTLS.
+  Be aware of the change and consider the following when migrating to |NCS| v2.6.0:
+
+  * You can keep using mbedTLS API as the cryptography backend by disabling PSA Crypto API.
+    You can disable it by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``.
+  * When the Device Attestation Certificate (DAC) private key exists in the factory data set, it can migrate to the PSA ITS secure storage.
+
+    You can also have the DAC private key replaced by zeros in the factory data partition by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.
+    This functionality is experimental.
+
 * For samples using Wi-Fi features:
 
   * A few Kconfig options related to scan operations have been removed in the current release.

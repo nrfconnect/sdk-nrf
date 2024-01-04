@@ -93,9 +93,16 @@ Matter
 ------
 
 * Updated the page about :ref:`ug_matter_device_low_power_configuration` with the information about Intermittently Connected Devices (ICD) configuration.
-* Added a Kconfig option for disabling or enabling :ref:`ug_matter_configuring_read_client`.
-* Added support for PSA Crypto API for devices that use Matter over Thread.
-  It is enabled by default and can be disabled by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``.
+
+* Added:
+
+  * A Kconfig option for disabling or enabling :ref:`ug_matter_configuring_read_client`.
+  * Support for PSA Crypto API for devices that use Matter over Thread.
+    It is enabled by default and can be disabled by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``.
+  * Migration of the Device Attestation Certificate (DAC) private key from the factory data set to the PSA ITS secure storage.
+
+    The DAC private key can be removed from the factory data set after the migration.
+    You can enable this experimental functionality by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.
 
 Matter fork
 +++++++++++
