@@ -264,6 +264,7 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
 	/* Manufacturer independent */
 	lwm2m_init_device();
+	lwm2m_update_device_service_period(0);
 #endif
 
 	/* Manufacturer dependent */
@@ -322,9 +323,6 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT)
 	lwm2m_init_cellular_connectivity_object();
 #endif
-	if (IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_RAI)) {
-		lwm2m_init_rai();
-	}
 	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS) ||
 	    IS_ENABLED(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)) {
 		lwm2m_ncell_handler_register();
