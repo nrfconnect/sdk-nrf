@@ -9,7 +9,7 @@
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/util/attribute-storage.h>
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 
 class BridgedDeviceDataProvider {
 public:

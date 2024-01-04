@@ -47,7 +47,7 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/bridge/matter_bridged_device.cpp
     ${COMMON_ROOT}/src/bridge/bridge_storage_manager.cpp
     ${COMMON_ROOT}/src/bridge/bridged_device_data_provider.cpp
-    ${COMMON_ROOT}/src/bridge/binding_handler.cpp
+    ${COMMON_ROOT}/src/binding/binding_handler.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led/led_widget.cpp

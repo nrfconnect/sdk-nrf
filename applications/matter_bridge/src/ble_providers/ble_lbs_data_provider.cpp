@@ -7,7 +7,7 @@
 #include "ble_lbs_data_provider.h"
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 #endif
 
 #include <bluetooth/gatt_dm.h>

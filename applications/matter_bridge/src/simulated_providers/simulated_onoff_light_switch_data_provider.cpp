@@ -5,7 +5,7 @@
  */
 
 #include "simulated_onoff_light_switch_data_provider.h"
-#include "binding_handler.h"
+#include "binding/binding_handler.h"
 
 #include <zephyr/logging/log.h>
 
