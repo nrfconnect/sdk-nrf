@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor
+# Copyright (c) 2024 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -23,7 +23,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 # General configuration --------------------------------------------------------
 
 project = "Kconfig reference"
-copyright = "2019-2023, Nordic Semiconductor"
+copyright = "2019-2024, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 # NOTE: use blank space as version to preserve space
 version = "&nbsp;"

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor
+# Copyright (c) 2024 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -21,7 +21,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 # General configuration --------------------------------------------------------
 
 project = "Matter SDK"
-copyright = "2020-2023, Matter Contributors"
+copyright = "2020-2024, Matter Contributors"
 author = "Matter Contributors"
 version = "1.1.0"
 
