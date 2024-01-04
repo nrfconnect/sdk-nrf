@@ -392,19 +392,23 @@
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
 
-.. _`Nordic nRF9161 DK`: https://www.nordicsemi.com/Products/nRF9161
-.. _`nRF9161 DK Downloads`: https://www.nordicsemi.com/Products/nRF9161/Download?lang=en#infotabs
+.. _`Nordic nRF9161 DK`:
+.. _`nRF9161 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK
+.. _`nRF9161 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#infotabs
 
 .. _`Nordic nRF9160 DK`:
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
 .. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
 
+.. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
 
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
+.. _`nRF9161 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9161/Download#infotabs
 
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
+.. _`nRF9161 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9161-Global-and-regulatory?lang=en#infotabs
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
 
 .. _`nRF9161 Objective Product Specification`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/SiP/nRF91x1-SiP/nRF9161_OPS_v0.7.pdf
@@ -439,6 +443,10 @@
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
 
 .. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
+
+.. _`Onomondo LTE-M coverage`: https://onomondo.com/product/coverage/lte-m-networks/
+
+.. _`Onomondo NB-IoT coverage`: https://onomondo.com/product/coverage/nb-iot-networks/
 
 .. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
 
@@ -511,8 +519,12 @@
 .. _`Device programming section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/mcu_device_programming.html
 .. _`VDD supply rail section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/power_sources_vdd.html
 
+.. _`nRF9161 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
+
+.. _`nRF9161 DK Hardware`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/intro.html
+
 .. _`AT Commands Reference Guide`:
-.. _`nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/intro.html
+.. _`nRF9160 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/intro_nrf9160.html
 .. _`band lock section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
 .. _`system mode section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
 .. _`Credential storage management %CMNG`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/security/cmng.html
@@ -525,7 +537,7 @@
 .. _`Battery voltage low level %XVBATLOWLVL`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xvbatlowlvl.html
 .. _`Debugging nRF5340 with SES`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/debug.html?cp=1_1_0_7
 
-.. _`nRF91x1 AT Commands Reference Guide`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/SiP/nRF91x1-SiP/v0.8-nRF91x1_CIoT_and_Positioning-AT-Commands-reference-guide.pdf
+.. _`nRF91x1 AT Commands Reference Guide`: https://infocenter.nordicsemi.com/topic/ref_at_commands_nrf91x1/REF/at_commands/intro_nrf91x1.html
 
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 .. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html

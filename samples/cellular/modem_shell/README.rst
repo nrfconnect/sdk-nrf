@@ -1023,7 +1023,7 @@ To program the certificates and connect to nRF Cloud, complete the following ste
             $ west build -p -b nrf9160dk_nrf9160_ns -d build
             $ west flash -d build
 
-#. Get certificates from nRF Cloud as explained in :ref:`downloading_cloud_certificate`.
+#. Get certificates from nRF Cloud as explained in the documentation for the :ref:`nRF9161 DK <downloading_cloud_certificate_nRF9161>` or the :ref:`nRF9160 DK <downloading_cloud_certificate_nRF9160>`, depending on the DK you are using.
 #. In the MoSH terminal, power off the modem and start the AT command mode:
 
    .. code-block:: console

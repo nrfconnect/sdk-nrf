@@ -7,14 +7,17 @@ Features of nRF91 Series
    :local:
    :depth: 2
 
-The nRF9160 SiP integrates an application MCU, a full LTE modem, an RF front end, and power management.
+The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF front end, and power management.
 With built-in GNSS support, it is a great choice for asset tracking applications.
 
-For more details on the SiP, see the `nRF9160 product website`_ and the `nRF9160 Product Specification`_.
+For more details on the SiPs, see the following guides:
 
-The following figure illustrates the conceptual layout when targeting an nRF9160 Cortex-M33 application MCU with TrustZone:
+* nRF9161 - `nRF9161 product website`_ and the `nRF9161 Product Specification`_
+* nRF9160 - `nRF9160 product website`_ and the `nRF9160 Product Specification`_
 
-.. figure:: images/nrf9160_ug_overview.svg
+The following figure illustrates the conceptual layout when targeting an nRF91 Series Cortex-M33 application MCU with TrustZone:
+
+.. figure:: images/nrf91_ug_overview.svg
    :alt: Overview of nRF91 application architecture
 
    Overview of nRF91 application architecture
@@ -32,6 +35,11 @@ Devices in the nRF91 Series are supported by the following boards in the `Zephyr
      - PCA number
      - Build target
      - Documentation
+   * - :ref:`zephyr:nrf9161dk_nrf9161`
+     - PCA10153
+     - ``nrf9161dk_nrf9161_ns``
+     - | `Product Specification <nRF9161 Product Specification_>`_
+       | `User Guide <nRF9161 DK Hardware_>`_
    * - :ref:`zephyr:nrf9160dk_nrf9160`
      - PCA10090
      - ``nrf9160dk_nrf9160_ns``
@@ -63,7 +71,7 @@ A secure bootloader chain protects your application against running unauthorized
 See :ref:`ug_bootloader` for more information.
 
 A bootloader chain is optional.
-Not all of the nRF9160 samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`mcuboot:index-ncs`.
+Not all of the nRF91 Series samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`MCUboot <mcuboot:index-ncs>`.
 
 Trusted Firmware-M (TF-M)
 =========================
@@ -80,7 +88,7 @@ Application
 ===========
 
 The user application runs in NSPE.
-Therefore, it must be built for the ``nrf9160dk_nrf9160_ns`` or ``thingy91_nrf9160_ns`` build target.
+Therefore, it must be built for the ``nrf9161dk_nrf9161_ns``, ``nrf9160dk_nrf9160_ns``, or ``thingy91_nrf9160_ns`` build target.
 
 The application image might require other images to be present.
 Some samples include the :ref:`bootloader` sample (:kconfig:option:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index-ncs` (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`).
@@ -93,10 +101,10 @@ LTE modem
 
 The LTE modem handles LTE communication.
 It is controlled through AT commands.
-The AT commands are documented in the `nRF9160 AT Commands Reference Guide`_.
+The AT commands are documented in the `nRF91x1 AT Commands Reference Guide`_  and `nRF9160 AT Commands Reference Guide`_.
 
 The firmware for the modem is available as a precompiled binary.
-You can download the firmware from the `nRF9160 product website (compatible downloads)`_.
+You can download the firmware from the `nRF9161 product website (compatible downloads)`_ or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
 The zip file contains the release notes, and both the full firmware and patches to upgrade from one version to another.
 A delta patch can only upgrade the modem firmware from one specific version to another version (for example, v1.2.1 to v1.2.2).
 If you need to perform a major version update (for example, v1.2.x to v1.3.x), you need an external flash with a minimum size of 4 MB.
@@ -107,8 +115,9 @@ See the `Mobile network operator certifications`_ for more information.
 .. note::
 
    Most operators do not require certifications other than GCF or PTCRB.
-   For the current status of GCF and PTCRB certifications, see `nRF9160 certifications`_.
+   For the current status of GCF and PTCRB certifications, see `nRF9161 certifications`_ or `nRF9160 certifications`_, depending on the SiP you are using.
 
+.. _nrf91_update_modem_fw:
 .. _nrf9160_update_modem_fw:
 
 Modem firmware upgrade
@@ -129,7 +138,7 @@ Full upgrade
       See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.
 
   * When using a wireless connection, the upgrade is applied over-the-air (OTA).
-    See :ref:`nrf9160_fota` for more information.
+    See :ref:`nrf91_fota` for more information.
 
  See :ref:`nrfxlib:nrf_modem_bootloader` for more information on the full firmware updates of modem using :ref:`nrfxlib:nrf_modem`.
 
@@ -138,8 +147,9 @@ Delta patches
   See :ref:`nrfxlib:nrf_modem_delta_dfu` for more information on delta firmware updates of modem using :ref:`nrfxlib:nrf_modem`.
   When applying a delta patch, you must therefore ensure that this patch works with the current firmware version on your device.
   Delta patches are applied as firmware over-the-air (FOTA) upgrades.
-  See :ref:`nrf9160_fota` for more information.
+  See :ref:`nrf91_fota` for more information.
 
+.. _nrf91_ug_band_lock:
 .. _nrf9160_ug_band_lock:
 
 Band lock
@@ -149,7 +159,7 @@ The modem can operate on a number of LTE bands.
 To check which bands are supported by a particular modem firmware version, see the release notes for that version.
 
 You can use band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
-To check which bands are certified in your region, visit `nRF9160 Certifications`_.
+To check which bands are certified in your region, visit `nRF9161 certifications`_ or `nRF9160 certifications`_, depending on the SiP you are using.
 
 To set the LTE band lock, enable the :ref:`lte_lc_readme` library by setting the Kconfig option :kconfig:option:`CONFIG_LTE_LINK_CONTROL`  to ``y`` in your :file:`prj.conf` project configuration file.
 
@@ -164,6 +174,7 @@ The maximum length of the string is 88 characters (bit string, 88 bits).
 
 For more detailed information, see the `band lock section in the AT Commands reference document`_.
 
+.. _nrf91_ug_network_mode:
 .. _nrf9160_ug_network_mode:
 
 System mode
@@ -182,7 +193,7 @@ For more detailed information, see the `system mode section in the AT Commands r
 Modem library
 *************
 
-The |NCS| applications for the nRF9160-based devices that communicate with the nRF9160 modem firmware must include the :ref:`nrfxlib:nrf_modem`.
+The |NCS| applications for the nRF91 Series devices that communicate with the nRF91 Series modem firmware must include the :ref:`nrfxlib:nrf_modem`.
 The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in the :ref:`nrfxlib` repository and it is integrated into |NCS| through an integration layer, ``nrf_modem_lib``.
 
 The Modem library integration layer fulfills the integration requirements of the Modem library in |NCS|.
@@ -193,7 +204,7 @@ For more information on the integration, see :ref:`nrf_modem_lib_readme`.
 Modem trace
 ===========
 
-The modem traces of the nRF9160 modem can be captured using the Cellular Monitor.
+The modem traces of the nRF91 Series modem can be captured using the Cellular Monitor.
 For more information on how to collect traces using Cellular Monitor, see the `Cellular Monitor`_ documentation.
 To enable the modem traces in the modem and to forward them to the :ref:`modem_trace_module` over UART, include the ``nrf91-modem-trace-uart`` snippet while building your application as described in :ref:`nrf91_modem_trace_uart_snippet`.
 
@@ -207,6 +218,7 @@ See :ref:`modem_trace_module` for other backend options.
 If the existing trace backends are not sufficient, it is possible to implement custom trace backends.
 For more information on the implementation of a custom trace backend, see :ref:`adding_custom_modem_trace_backends`.
 
+.. _nrf91_fota:
 .. _nrf9160_fota:
 
 FOTA upgrades
@@ -237,7 +249,7 @@ To perform a FOTA upgrade, complete the following steps:
 
    .. note::
       This step does not apply for upgrades of the modem firmware.
-      You can download delta patches and full binaries of the modem firmware from the `nRF9160 product website (compatible downloads)`_.
+      You can download delta patches and full binaries of the modem firmware from the `nRF9161 product website (compatible downloads)`_ or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
 
    |fota_upgrades_building|
    The :file:`app_update.bin` file is the file that should be uploaded to the server.
@@ -284,17 +296,18 @@ Samples and applications implementing FOTA
 * :ref:`azure_iot_hub` sample - performs a FOTA update from the Azure IoT Hub.
 * :ref:`asset_tracker_v2` application - performs FOTA updates of the application, modem (delta), and boot (if enabled). It also supports nRF Cloud FOTA as well as AWS or Azure FOTA. Only one must be configured at a time.
 
+.. _nrf91_ug_gnss:
 .. _nrf9160_ug_gnss:
 
 GNSS
 ****
 
-An nRF9160-based device is a highly versatile device that integrates both cellular and GNSS functionality.
+An nRF91 Series device is a highly versatile device that integrates both cellular and GNSS functionality.
 Note that GNSS functionality is only available on the SICA variant and not on the SIAA or SIBA variants.
-See `nRF9160 SiP revisions and variants`_ for more information.
+For an nRF9160 SiP, see `nRF9160 SiP revisions and variants`_ for more information.
 
 There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS) available but GPS is the most mature technology.
-An nRF9160-based device supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
+An nRF91 Series device supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
 This frequency band is ideal for penetrating through layers of the atmosphere (troposphere and ionosphere) and suitable for various weather conditions.
 GNSS is designed to be used with a line of sight to the sky.
 Therefore, the performance is not ideal when there are obstructions overhead or if the receiver is indoors.
@@ -330,14 +343,15 @@ The orbital data can be received faster using A-GNSS.
 Due to the clock bias on the receiver, there are four unknowns when looking for a GNSS fix - latitude, longitude, altitude, and clock bias.
 This results in solving an equation system with four unknowns, and therefore a minimum of four satellites must be tracked to acquire a fix.
 
+.. _nrf91_gps_lte:
 .. _nrf9160_gps_lte:
 
 Concurrent GNSS and LTE
 =======================
 
-The GNSS operation in an nRF9160-based device is time-multiplexed with the LTE modem.
+The GNSS operation in an nRF91 Series device is time-multiplexed with the LTE modem.
 Therefore, the LTE modem must either be completely deactivated or in `RRC idle mode <Radio Resource Control_>`_ or `Power Saving Mode (PSM)`_ when using the GNSS receiver.
-See the `nRF9160 GPS receiver Specification`_ for more information.
+For an nRF9160 SiP, see the `nRF9160 GPS receiver Specification`_ for more information.
 
 Enhancements to GNSS
 ====================

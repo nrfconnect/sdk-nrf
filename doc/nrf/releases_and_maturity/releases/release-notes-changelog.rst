@@ -807,6 +807,7 @@ Documentation
 
 * Added
 
+  * :ref:`ug_nrf9161` user guide.
   * A page on :ref:`ug_nrf70_developing_debugging` in the :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_developing_fw_patch_ext_flash` in the :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission` in the :ref:`ug_nrf70_developing` user guide.

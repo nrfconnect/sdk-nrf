@@ -35,16 +35,24 @@ See :ref:`zephyr:nrf9160dk_board_controller_firmware` for detailed information.
 Updating the nRF Cloud certificate
 **********************************
 
+.. |DK| replace:: nRF9160 DK
+
+.. dk_update_cloud_cer_start
+
 When you wish to use nRF Cloud's REST Application Programming Interface (API), the DK requires a valid security certificate.
 This means that you need to update the certificate stored on the DK.
 To do so, you need to download a new certificate and then provision it to your DK.
 
-.. _downloading_cloud_certificate:
+.. dk_update_cloud_cer_end
 
-Downloading the nRF Cloud certificate
-=====================================
+.. _downloading_cloud_certificate_nRF9160:
 
-To download the nRF Cloud certificate for your nRF9160 DK, complete the following steps.
+Downloading the nRF Cloud certificate for the |DK|
+==================================================
+
+.. dk_cloud_cer_download_start
+
+To download the nRF Cloud certificate for your |DK|, complete the following steps.
 Make sure you are logged in to the `nRF Cloud`_ portal.
 
 1. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
@@ -81,9 +89,9 @@ Make sure you are logged in to the `nRF Cloud`_ portal.
 
 #. Enter the following information:
 
-   * **Device ID:** the device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your nRF9160 DK.
+   * **Device ID:** the device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your |DK|.
      For example, *nrf-123456789012345*.
-   * **Ownership code:** the ownership code is the PIN or the hardware ID of your DK, and it is found on the label of your nRF9160 DK.
+   * **Ownership code:** the ownership code is the PIN or the hardware ID of your DK, and it is found on the label of your |DK|.
 
      If the label contains a PIN in addition to the IMEI number, enter this pin.
      If it does not contain a PIN, enter the Hardware ID (HWID) HEX code, with or without colons.
@@ -91,17 +99,19 @@ Make sure you are logged in to the `nRF Cloud`_ portal.
 
      .. note::
 
-        The ownership code serves as a password and proves that you own the specific nRF9160 DK.
+        The ownership code serves as a password and proves that you own the specific |DK|.
         Therefore, do not share it with anyone.
 
 #. Click :guilabel:`Download Certificate` and save the :file:`.cert.json` file to a folder of your choice.
 
    .. note::
 
-      The certificate contains all the information that is needed to connect your nRF9160 DK to nRF Cloud.
+      The certificate contains all the information that is needed to connect your |DK| to nRF Cloud.
       Therefore, do not share it with anyone.
 
 #. Close the **Create JITP Certificates** dialog box.
+
+.. dk_cloud_cer_download_end
 
 .. _provisioning_cloud_certificate:
 
@@ -189,7 +199,13 @@ For information about CMSE and the difference between the two environments, see 
 Updating the DK firmware using Programmer
 *****************************************
 
+.. |sim_card| replace:: For the iBasis SIM card provided with the nRF9160 DK, see `iBasis IoT network coverage`_.
+
+.. |firmware_filename| replace:: :file:`mfw_nrf9160_`
+
 Download and extract the latest application and modem firmware from the `nRF9160 DK Downloads`_ page.
+
+.. dk_update_firware_start
 
 The downloaded ZIP archive contains the following firmware:
 
@@ -201,7 +217,7 @@ Application firmware
   The data is transmitted using either LTE-M or NB-IoT.
   Asset Tracker v2 first attempts to use LTE-M, then NB-IoT.
   Check with your SIM card provider for the mode they support at your location.
-  For the iBasis SIM card provided with the nRF9160 DK, see `iBasis IoT network coverage`_.
+  |sim_card|
 
 Application firmware for Device Firmware Update (DFU)
   The images in the :file:`img_fota_dfu_bin` and :file:`img_fota_dfu_hex` folders contain firmware images for DFU.
@@ -209,7 +225,7 @@ Application firmware for Device Firmware Update (DFU)
 
 Modem firmware
   The modem firmware is in a ZIP archive instead of a folder.
-  The archive is named :file:`mfw_nrf9160_` followed by the firmware version number.
+  The archive is named |firmware_filename| followed by the firmware version number.
   Do not unzip this file.
 
 .. tip::
@@ -219,6 +235,8 @@ Modem firmware
 The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
 
 Complete the following steps to program applications using the Programmer app from `nRF Connect for Desktop`_.
+
+.. dk_update_firware_end
 
 .. _nrf9160_updating_fw_modem:
 .. _nrf9160_gs_updating_fw_modem:
@@ -244,7 +262,7 @@ If you experience any problems during the process, press ``Ctrl+R`` (``command+R
 
    The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
    The **Device memory layout** section also changes its name to the device name, and indicates that the device is connected.
-   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section of the side panel, the memory layout will update.
+   If the :guilabel:`Auto read memory` option is selected in the **JLINK SETTINGS** section of the side panel, the memory layout will update.
    If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section of the side panel.
 
 #. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
@@ -306,7 +324,7 @@ If you experience any problems during the process, press ``Ctrl+R`` (``command+R
 
    The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
    The **Device memory layout** section also changes its name to the device name, and indicates that the device is connected.
-   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section, the memory layout will update.
+   If the :guilabel:`Auto read memory` option is selected in the **JLINK SETTINGS** section, the memory layout will update.
    If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section.
 
 #. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
@@ -408,67 +426,27 @@ Building and programming on the command line
 
       The device resets and runs the programmed sample or application.
 
-.. _nrf91_modem_trace_uart_snippet:
-
-nRF91 modem tracing with UART backend using snippets
-====================================================
-
-:ref:`snippets` are tailored for tracing on the nRF91 Series devices but can work with other boards as well.
-It enables the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option and chooses the Zephyr UART driver for the backend, with the necessary Kconfig options.
-The snippet also enables the UART1 peripheral with a baud rate of 1 Mbd and hardware flow control enabled.
-If this configuration does not match your requirements, you can add a snippet or Kconfig and devicetree overlays to your application with the desired setup.
-To enable modem tracing with the UART trace backend on a nRF91 device, add the ``nrf91-modem-trace-uart`` snippet to the :term:`build configuration`.
-This can be done in one of the following ways:
-
-With west
----------
-
-To add the modem trace UART snippet when building an application with west, use the following command:
-
-.. code-block:: console
-
-   west build --board <your_board> -S nrf91-modem-trace-uart
-
-With CMake
-----------
-
-To add the modem trace UART snippet when building an application with CMake, add the following command to the CMake arguments:
-
-.. code-block:: console
-
-   -DSNIPPET="nrf91-modem-trace-uart" [...]
-
-To build with the |nRFVSC|, specify ``-DSNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
-
-See :ref:`cmake_options` for more details.
-
-.. _tfm_enable_share_uart:
-
-Shared UART for application and TF-M logging
-============================================
-
-If you want to activate TF-M logging while having modem traces enabled, it can be useful to direct the TF-M logs to the UART (**UART0**) used by the application.
-To activate both modem traces and TF-M logs, use the following command:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build --board *build target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart
-
 .. _nrf9160_gs_testing_cellular:
 
 Testing the cellular connection with the AT Client sample
 *********************************************************
 
-The :ref:`at_client_sample` sample enables you to send AT commands to the modem of your nRF9160 DK to test and monitor the cellular connection.
+.. |firmware_update| replace:: :ref:`nrf9160_gs_updating_fw_application`
+
+.. |firmware_file| replace:: :file:`nrf9160dk_at_client_<version-number>.hex`
+
+.. at_client_test_start
+
+The :ref:`at_client_sample` sample enables you to send AT commands to the modem of your |DK| to test and monitor the cellular connection.
 You can use it to troubleshoot and debug any connection problems.
 
 Complete the following steps to test the cellular connection using the AT Client sample:
 
-1. Follow the steps in :ref:`nrf9160_gs_updating_fw_application` to program the sample to the DK.
-   When selecting the HEX file, select :file:`nrf9160dk_at_client_<version-number>.hex` instead of the one for Asset Tracker v2.
+1. Follow the steps in |firmware_update| to program the sample to the DK.
+   When selecting the HEX file, select |firmware_file| instead of the one for Asset Tracker v2.
 #. Test the AT Client sample as described in the Testing section of the :ref:`at_client_sample` documentation.
 
+.. at_client_test_end
 
 .. _nrf9160_board_revisions:
 
