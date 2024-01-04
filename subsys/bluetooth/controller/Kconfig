@@ -136,7 +136,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
-	default 10000 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
+	default 0 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	default 7500 if !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	range 0 4000000
 	help
@@ -150,6 +150,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 
 config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	int "Default central ACL event spacing [us]"
+	default 30000 if BT_ISO
 	default BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	help
 	  On the central, sets the time ACL connections are spaced apart assuming that
