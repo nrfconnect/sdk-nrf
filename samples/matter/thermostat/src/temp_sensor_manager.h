@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -25,9 +26,11 @@ public:
 	};
 
 	static void SetLocalTemperature(int16_t temperature);
+	static void ClearLocalTemperature();
+	static void SetOutdoorTemperature(int16_t temperature);
+	static void ClearOutdoorTemperature();
 
 private:
-	template <typename T> static void GetMeasurement(T const &sensor);
 	static void TimerEventHandler(k_timer *timer);
 	static void SensorTimerEventHandler();
 };

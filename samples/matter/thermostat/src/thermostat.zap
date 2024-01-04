@@ -19,6 +19,14 @@
   "package": [
     {
       "pathRelativity": "relativeToZap",
+      "path": "../../../../../../../zap/zap-linux-x64/resources/app.asar/zcl-builtin/silabs/zcl.json",
+      "type": "zcl-properties",
+      "category": "zigbee",
+      "version": 1,
+      "description": "ZigbeePro test data"
+    },
+    {
+      "pathRelativity": "relativeToZap",
       "path": "../../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
       "type": "gen-templates-json",
       "version": "chip-v1"
@@ -4559,7 +4567,23 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": null,
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "OutdoorTemperature",
+              "code": 1,
+              "mfgCode": null,
+              "side": "server",
+              "type": "int16s",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,

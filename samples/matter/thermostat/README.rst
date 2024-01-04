@@ -84,11 +84,12 @@ You can read more about ACLs on the :doc:`matter:access-control-guide` in the Ma
 External sensor integration
 ===========================
 
-The thermsotat sample lets you connect to an external temperature sensor, for example :ref:`Matter weather station application on Nordic Thingy:53 <matter_weather_station_app>`.
+The thermostat sample lets you connect to an external temperature sensor, for example :ref:`Matter weather station application on Nordic Thingy:53 <matter_weather_station_app>`.
 This establishes the :ref:`matter_thermostat_sample_binding` to Matter's temperature measurement cluster.
 
-To enable this feature, set :kconfig:option:`CONFIG_THERMOSTAT_EXTERNAL_SENSOR` to ``y`` in the configuration files or use the ``-DCONFIG_THERMOSTAT_EXTERNAL_SENSOR=y`` :ref:`CMake option <cmake_options>` when building the sample.
-You can then follow steps listed in :ref:`matter_thermostat_sensor_testing`.
+By default, the thermostat sample generates simulated temperature measurements that simulate local temperature changes.
+Additionally, you can enable periodic outdoor temperature measurements by binding the thermostat with an external temperature sensor device.
+To test this feature, follow the steps listed in the :ref:`matter_thermostat_sensor_testing` section.
 
 .. _matter_thermostat_sample_binding:
 
@@ -244,9 +245,6 @@ The device reboots after all its settings are erased.
 
 Testing with external sensor
 ----------------------------
-
-.. note::
-   To enable the external sensor option, set the :kconfig:option:`CONFIG_THERMOSTAT_EXTERNAL_SENSOR` Kconfig option to ``y`` in the configuration files or use the ``-DCONFIG_THERMOSTAT_EXTERNAL_SENSOR=y`` :ref:`CMake option <cmake_options>` when building the sample.
 
 After building this sample and the :ref:`Matter weather station <matter_weather_station_app>` application and programming each to the respective development kit and Nordic Thingy:53, complete the following steps to test communication between both devices:
 

@@ -5,11 +5,6 @@
 #
 mainmenu "Matter Thermostat sample application"
 
-config THERMOSTAT_EXTERNAL_SENSOR
-	bool "Select if the temperature measurement is provided directly from an external sensor"
-	help
-	 Set to true to enable the temperature measurement from a physical external sensor. Set to false to simulate the temperature measurement.
-
 config THERMOSTAT_TEMPERATURE_STEP
 	int "Defines a simulated temperature step. Use 0 for random"
 	default 0
