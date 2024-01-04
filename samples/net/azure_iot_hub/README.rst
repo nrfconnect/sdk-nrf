@@ -57,7 +57,7 @@ See :ref:`lib_azure_fota` for more details on the content of the firmware inform
 
 .. note::
    This sample requires a file server instance that hosts the new firmware image.
-   The :ref:`lib_azure_fota` library does not require a specific host, but it has been tested using `Azure Blob Storage`_ that shares the same root certificate as the Azure IoT Hub instance.
+   The :ref:`lib_azure_fota` library does not require a specific host, but it has been tested using `Azure Blob Storage`_.
 
 Configuration
 *************
@@ -68,10 +68,10 @@ Setup
 =====
 
 For the sample to work as intended, you must set up and configure an Azure IoT Hub instance.
-See :ref:`configure_options_azure_iot` for information on the configuration options that you can use to create an Azure IoT Hub instance.
-Also, for a successful TLS connection to the Azure IoT Hub instance, the device needs to have certificates provisioned.
+See :ref:`prereq_connect_to_azure_iot_hub` for information on creating an Azure IoT Hub instance and :ref:`configure_options_azure_iot` for additional information on the configuration options that are available.
+Also, for a successful TLS connection to the Azure IoT Hub instance, the device needs to have credentials provisioned.
 If you want to test FOTA, ensure that also the required credentials for the file server are provisioned and the :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG` Kconfig option is set accordingly.
-See :ref:`prereq_connect_to_azure_iot_hub` for information on provisioning the certificates.
+See :ref:`prereq_connect_to_azure_iot_hub` for information on provisioning the credentials.
 
 .. include:: /includes/wifi_credentials_shell.txt
 
