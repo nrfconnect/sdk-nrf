@@ -420,13 +420,6 @@ static int update_download(void)
 {
 	int err;
 	const char *file;
-
-	err = fota_download_init(fota_dl_handler);
-	if (err != 0) {
-		printk("fota_download_init() failed, err %d\n", err);
-		return err;
-	}
-
 	const struct dfu_target_full_modem_params params = {
 		.buf = fmfu_buf,
 		.len = sizeof(fmfu_buf),
@@ -437,8 +430,14 @@ static int update_download(void)
 		}
 	};
 
-	err = dfu_target_full_modem_cfg(&params);
+	err = fota_download_init(fota_dl_handler);
 	if (err != 0) {
+		printk("fota_download_init() failed, err %d\n", err);
+		return err;
+	}
+
+	err = dfu_target_full_modem_cfg(&params);
+	if (err != 0 && err != -EALREADY) {
 		printk("dfu_target_full_modem_cfg failed: %d\n", err);
 		return err;
 	}
