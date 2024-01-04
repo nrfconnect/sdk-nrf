@@ -43,6 +43,7 @@ Apache-2.0: |
   ^nrf/ext/
   /src/zap-generated/
   ^nrf/tests/bluetooth/tester/src/main.c$
+  ^nrf/tests/bluetooth/tester/src/bttester.c$
   ^nrf/subsys/nrf_security/src/legacy
   ^nrf/modules/trusted-firmware-m/fault.c
 curl: "^nrf/ext/"
