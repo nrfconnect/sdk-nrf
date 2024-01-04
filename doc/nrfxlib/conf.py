@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor
+# Copyright (c) 2024 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -24,7 +24,7 @@ NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 # General configuration --------------------------------------------------------
 
 project = "nrfxlib"
-copyright = "2019-2023, Nordic Semiconductor"
+copyright = "2019-2024, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 version = release = "2.5.99"
 
