@@ -2,7 +2,7 @@
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 # To have an empty list use:
+# - scenarios:
+#     - None
 - scenarios:
-    - net.lib.aws_iot
-  platforms:
-    - native_posix
+    - None

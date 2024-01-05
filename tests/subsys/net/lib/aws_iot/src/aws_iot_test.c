@@ -431,9 +431,12 @@ void test_on_error_should_notify_error(void)
 void test_on_publish_should_data_received(void)
 {
 	mqtt_helper_handlers_register(event_handler);
+	char *topic_name = "some-topic";
 
 	struct mqtt_helper_buf topic;
 	struct mqtt_helper_buf payload;
+
+	topic.ptr = topic_name;
 
 	event_type_expected = AWS_IOT_EVT_DATA_RECEIVED;
 
