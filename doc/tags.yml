@@ -36,6 +36,16 @@ mapping_topics:
                                   "thingy53", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
                                   "nrf52811", "nrf52810", "nrf52805", "nrf21540", "npm1100",
                                   "npm1300", "npm6001"]
+  - nrf/config_and_build/configuring_app/*.html: ["applications", "samples", "development-kits",
+                                                  "evaluation-kits", "prototyping-platforms"]
+  - nrf/config_and_build/board_support/*.html: ["nrf91-series", "nrf70-series", "nrf53-series",
+                                                "nrf52-series", "nrf7002", "nrf7001", "nrf7000",
+                                                "nrf9160", "thingy91", "nrf5340", "thingy53",
+                                                "nrf52840", "nrf52833", "nrf52832", "nrf52820",
+                                                "nrf52811", "nrf52810", "nrf52805", "nrf21540",
+                                                "npm1100", "npm1300", "npm6001"]
+  - nrf/config_and_build/configuring_app/hardware/*.html: ["applications", "samples",
+                                                           "nrf-connect-vsc"]
   - nrf/config_and_build/programming.html: ["applications", "samples", "development-kits",
                                             "evaluation-kits", "prototyping-platforms"]
   - nrf/config_and_build/modifying.html: ["applications", "samples", "kconfig", "nrf-connect-vsc"]

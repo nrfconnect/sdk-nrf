@@ -94,7 +94,7 @@ The preprocessed devicetree sources are parsed by the :file:`zephyr/scripts/dts/
 The :file:`zephyr.dts` file contains the entire hardware-related configuration of the system in the devicetree format.
 The header file contains the same kind of information, but with defines usable by source code.
 
-For more information, see :ref:`configure_application` and Zephyr's :ref:`zephyr:dt-guide`.
+For more information, see :ref:`configuring_devicetree` and Zephyr's :ref:`zephyr:dt-guide`.
 In particular, :ref:`zephyr:set-devicetree-overlays` explains how to use devicetree and its overlays to customize an application's devicetree.
 
 .. _configure_application_sw:

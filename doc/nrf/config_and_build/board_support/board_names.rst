@@ -1,20 +1,12 @@
-.. _app_boards:
-
-Board support
-#############
-
-.. contents::
-   :local:
-   :depth: 2
-
-The |NCS| provides board definitions for all Nordic Semiconductor devices.
-In addition, you can define custom boards.
-
 .. _app_boards_names:
 .. _programming_board_names:
 
 Board names
-***********
+###########
+
+.. contents::
+   :local:
+   :depth: 2
 
 The following tables list all boards and build targets for Nordic Semiconductor's hardware platforms.
 
@@ -32,12 +24,12 @@ The build target column uses several entries for multi-core hardware platforms:
     The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
     By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 
-Read more about separation of processing environments in the :ref:`app_boards_spe_nspe` section.
+Read more about separation of processing environments on the :ref:`app_boards_spe_nspe` page.
 
 .. _app_boards_names_zephyr:
 
 Boards included in sdk-zephyr
-=============================
+*****************************
 
 The following boards are defined in the :file:`zephyr/boards/arm/` folder.
 Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
@@ -101,7 +93,7 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 .. _app_boards_names_nrf:
 
 Boards included in sdk-nrf
-==========================
+**************************
 
 The following boards are defined in the :file:`nrf/boards/arm/` folder.
 
@@ -140,71 +132,3 @@ The following boards are defined in the :file:`nrf/boards/arm/` folder.
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 
 The :ref:`nRF21540 EK shield <ug_radio_fem_nrf21540ek>` is defined in the :file:`nrf/boards/shields` folder.
-
-Custom boards
-*************
-
-Defining your own board is a very common step in application development, because applications are typically designed to run on boards that are not directly supported by the |NCS|, and are often custom designs not available publicly.
-To define your own board, you can use the following Zephyr guides as reference, since boards are defined in the |NCS| just as they are in Zephyr:
-
-* :ref:`custom_board_definition` is a guide to adding your own custom board to the Zephyr build system.
-* :ref:`board_porting_guide` is a complete guide to porting Zephyr to your own board.
-
-One of the |NCS| applications that lets you add custom boards is :ref:`nrf_desktop`.
-See :ref:`nrf_desktop_porting_guide` in the application documentation for details.
-
-.. _app_boards_spe_nspe:
-
-Processing environments
-***********************
-
-The build target column in the tables above separates entries according to the CPU to target (for multi-core SoCs) and whether Cortex-M Security Extensions (CMSE) are used or not (addition of ``_ns`` if they are used).
-
-When CMSE is used, the firmware is split in accordance with the security by separation architecture principle to better protect sensitive assets and code.
-With CMSE, the firmware is stored in one of two security environments (flash partitions), either Secure Processing Environment (SPE) or Non-Secure Processing Environment (NSPE).
-This isolation of firmware is only possible if the underlying hardware supports `ARM TrustZone`_.
-
-.. figure:: images/spe_nspe.svg
-   :alt: Processing environments in the |NCS|
-
-   Processing environments in the |NCS|
-
-In Zephyr and the |NCS|, SPE and NSPE are used exclusively in the context of the application core of a multi-core SoC.
-Building follows the security by separation principle and depends on the build target.
-
-.. _app_boards_spe_nspe_cpuapp:
-
-Building for ``cpuapp`` (CMSE disabled)
-=======================================
-
-When you build for ``cpuapp``, you build the firmware for the application core without CMSE.
-Because CMSE is disabled, TF-M is not used and there is no separation of firmware.
-
-.. _app_boards_spe_nspe_cpuapp_ns:
-
-Building for ``*_ns`` (CMSE enabled)
-====================================
-
-When you build for ``*_ns``, you build firmware with CMSE.
-Firmware is separated in the following way:
-
-* SPE implements security-critical functionality and data (including bootloaders) and isolates them from the application software in NSPE.
-  It also contains secure firmware running in the secure state.
-* NSPE typically implements the user application and communication firmware, among other major components.
-
-The application is built as a non-secure image and :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is built as the secure image.
-The build system merges both images to form a combined image that will be used for programming or updating the device.
-
-TF-M enables hardware-supported separation of firmware.
-It also implements `Platform Security Architecture (PSA)`_ API, which provides security features for the system, including roots of trust for protecting secrets, platform state, and cryptographic keys.
-The API coordinates the communication with the components in NSPE.
-
-More information about SPE and NSPE
------------------------------------
-
-Read the following pages for a better understanding of security by separation in the |NCS|:
-
-* :ref:`ug_tfm`
-* :ref:`debugging_spe_nspe`
-* `An Introduction to Trusted Firmware-M (TF-M)`_ on DevZone
-* `TF-M documentation`_

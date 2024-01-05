@@ -31,9 +31,8 @@ Make sure to consider :ref:`app_bootloaders` and :ref:`app_dfu` already at this 
    :caption: Subpages:
 
    config_and_build/config_and_build_system
-   config_and_build/board_support
-   config_and_build/pin_control
-   config_and_build/use_gpio_pin_directly
+   config_and_build/board_support/index
+   config_and_build/configuring_app/hardware/index
    config_and_build/programming
    config_and_build/output_build_files
    config_and_build/modifying
