@@ -126,8 +126,11 @@ static K_SEM_DEFINE(subs_acked_sem, 0, 1);
  * not included by default.
  */
 extern void *memmem(const void *haystack, size_t hs_len, const void *needle, size_t ne_len);
-char *strnstr(const char *haystack, const char *needle, size_t haystack_len)
+static char *strnstr(const char *haystack, const char *needle, size_t haystack_len)
 {
+	if (!haystack || !needle) {
+		return NULL;
+	}
 	size_t needle_len = strnlen(needle, haystack_len);
 
 	if (needle_len < haystack_len || !needle[needle_len]) {
