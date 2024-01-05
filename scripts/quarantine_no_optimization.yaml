@@ -1,0 +1,8 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+# To have an empty list use:
+- scenarios:
+    - net.lib.aws_iot
+  platforms:
+    - native_posix
