@@ -325,10 +325,12 @@ Cellular samples
 
   * Added credential check before connecting to network.
   * Changed the sample use the functions in the :file:`nrf_cloud_fota_poll.c` and :file:`nrf_cloud_fota_common.c` files.
+  * Increased the :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` Kconfig option to 2048 bytes since nRF Cloud credentials are sometimes longer than 1024 bytes.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
   * Added credential check before connecting to network.
+  * Increased the :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` and :kconfig:option:`CONFIG_AT_MONITOR_HEAP_SIZE` Kconfig options to 2048 bytes since nRF Cloud credentials are sometimes longer than 1024 bytes.
 
 * :ref:`nrf_provisioning_sample` sample:
 
