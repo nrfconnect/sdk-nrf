@@ -19,17 +19,23 @@ config LOCATION_METHOD_CELLULAR
 	bool "Allow cellular positioning to be used for obtaining the location"
 	depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
-	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	default y
 
 config LOCATION_METHOD_WIFI
 	bool "Allow Wi-Fi positioning to be used for obtaining the location"
 	depends on WIFI
-	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
-	select NET_MGMT
-	select NET_MGMT_EVENT
-	select NET_MGMT_EVENT_INFO
-	select NET_L2_WIFI_MGMT
+	select NET_MGMT if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_MGMT_EVENT if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_MGMT_EVENT_INFO if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_L2_WIFI_MGMT if LOCATION_METHOD_WIFI_NET_MGMT
+
+config LOCATION_METHOD_WIFI_NET_MGMT
+	bool
+	default y
+	help
+	  Use the Network Management APIs for Wi-Fi functionality. This is
+	  separated here from other dependencies to allow disabling of
+	  Network Management APIs in tests for mocking purposes.
 
 config LOCATION_METHODS_LIST_SIZE
 	int "Maximum number of location methods in configuration"
@@ -98,6 +104,7 @@ config LOCATION_SERVICE_CLOUD_RECV_BUF_SIZE
 
 config LOCATION_SERVICE_HERE
 	bool "HERE location service"
+	select CJSON_LIB
 	help
 	  Use HERE location service.
 

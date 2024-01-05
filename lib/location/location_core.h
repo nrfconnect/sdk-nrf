@@ -82,7 +82,6 @@ void location_core_cloud_location_ext_result_set(
 
 void location_core_config_log(const struct location_config *config);
 void location_core_timer_start(int32_t timeout);
-void location_core_timer_stop(void);
 struct k_work_q *location_core_work_queue_get(void);
 
 #endif /* LOCATION_CORE_H */

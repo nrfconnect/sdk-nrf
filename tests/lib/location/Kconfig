@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config LOCATION_TEST_AGNSS
+	bool "USe A-GNSS configuration for Location library tests"
+	default y
+
 config LOCATION_METHOD_GNSS
 	bool "Internal"
 	#depends on NRF_MODEM_LIB
@@ -16,10 +20,25 @@ config LOCATION_METHOD_CELLULAR
 	bool "Internal"
 	#depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
-	select CJSON_LIB if !LOCATION_SERVICE_EXTERNAL
 	default y
 	help
 	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config LOCATION_METHOD_WIFI
+	bool "Internal"
+	#depends on WIFI
+	select NET_MGMT if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_MGMT_EVENT if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_MGMT_EVENT_INFO if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_L2_WIFI_MGMT if LOCATION_METHOD_WIFI_NET_MGMT
+	help
+	  Redefinition to disable Wi-Fi requirement from the tests as we want to mock it.
+
+config LOCATION_METHOD_WIFI_NET_MGMT
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of Wi-Fi.
 
 config LOCATION_REST_CLIENT
 	bool

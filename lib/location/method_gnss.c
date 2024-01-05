@@ -451,6 +451,7 @@ static bool method_gnss_agnss_required(void)
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_LOG)
 static const char *get_system_string(uint8_t system_id)
 {
 	switch (system_id) {
@@ -467,6 +468,7 @@ static const char *get_system_string(uint8_t system_id)
 		return "unknown";
 	}
 }
+#endif /* CONFIG_LOG */
 
 /* Triggers A-GNSS data request and/or injection of a P-GPS prediction.
  *
@@ -567,6 +569,7 @@ static void method_gnss_assistance_request(void)
 		}
 	}
 
+#if defined(CONFIG_LOG) /* Flagged to get get_system_string() out of coverage metrics */
 	LOG_DBG("A-GNSS request: data_flags: 0x%02x", agnss_request.data_flags);
 	for (int i = 0; i < agnss_request.system_count; i++) {
 		LOG_DBG("A-GNSS request: %s sv_mask_ephe: 0x%llx, sv_mask_alm: 0x%llx",
@@ -574,6 +577,7 @@ static void method_gnss_assistance_request(void)
 			agnss_request.system[i].sv_mask_ephe,
 			agnss_request.system[i].sv_mask_alm);
 	}
+#endif
 
 	/* Check if A-GNSS data should be requested. If A-GNSS request is not needed, jump to
 	 * P-GPS (if enabled).
@@ -1090,6 +1094,7 @@ static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_e
 		agnss_request.system[1].sv_mask_alm = expired_qzss_alm_mask;
 	}
 
+#if defined(CONFIG_LOG) /* Flagged to get get_system_string() out of coverage metrics */
 	LOG_DBG("GPS: Expired ephemerides: %d, almanacs: %d", expired_gps_ephes, expired_gps_alms);
 
 	LOG_DBG("A-GNSS data need: data_flags: 0x%02x", agnss_request.data_flags);
@@ -1099,6 +1104,7 @@ static void method_gnss_agnss_expiry_process(const struct nrf_modem_gnss_agnss_e
 			agnss_request.system[i].sv_mask_ephe,
 			agnss_request.system[i].sv_mask_alm);
 	}
+#endif
 }
 
 /* Queries assistance data need from GNSS. */
