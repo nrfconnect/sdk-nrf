@@ -17,11 +17,55 @@
 #include "cmock_nrf_modem_gnss.h"
 #include "cmock_modem_key_mgmt.h"
 #include "cmock_rest_client.h"
+#include "cmock_nrf_cloud.h"
+#include "cmock_nrf_cloud_rest.h"
+#include "cmock_nrf_cloud_agnss.h"
+#include "cmock_device.h"
+#include "cmock_net_if.h"
+#include "cmock_net_mgmt.h"
+#include "cmock_wifi_mgmt.h"
 
 /* NOTE: Sleep, e.g. k_sleep(K_MSEC(1)), is used after many location library API
  *       function calls because otherwise some of the threaded work in location library
  *       may not run.
  */
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+
+/* Custom mock for WiFi scan request net_mgmt_NET_REQUEST_WIFI_SCAN(). */
+static struct net_if wifi_iface;
+static int net_mgmt_NET_REQUEST_WIFI_SCAN_retval;
+static bool net_mgmt_NET_REQUEST_WIFI_SCAN_expected;
+static bool net_mgmt_NET_REQUEST_WIFI_SCAN_occurred;
+
+/* CMock doesn't support parsing of syntax used in net_mgmt requests:
+ *     extern int net_mgmt_##_mgmt_request(
+ *         uint32_t mgmt_request, struct net_if *iface, void *data, size_t len)
+ */
+void __cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(int retval)
+{
+	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = retval;
+}
+
+int net_mgmt_NET_REQUEST_WIFI_SCAN(
+	uint32_t mgmt_request,
+	struct net_if *iface,
+	void *data,
+	size_t len)
+{
+	TEST_ASSERT_EQUAL(false, net_mgmt_NET_REQUEST_WIFI_SCAN_occurred);
+
+	TEST_ASSERT_EQUAL(NET_REQUEST_WIFI_SCAN, mgmt_request);
+	TEST_ASSERT_EQUAL_PTR(&wifi_iface, iface);
+	TEST_ASSERT_NULL(data);
+	TEST_ASSERT_EQUAL(0, len);
+
+	net_mgmt_NET_REQUEST_WIFI_SCAN_occurred = true;
+
+	return net_mgmt_NET_REQUEST_WIFI_SCAN_retval;
+}
+
+#endif /* defined(CONFIG_LOCATION_METHOD_WIFI) */
 
 #define HTTPS_PORT 443
 
@@ -29,24 +73,35 @@ static struct location_event_data test_location_event_data = {0};
 static struct nrf_modem_gnss_pvt_data_frame test_pvt_data = {0};
 static struct rest_client_req_context rest_req_ctx = { 0 };
 static struct rest_client_resp_context rest_resp_ctx = { 0 };
-static bool location_callback_called_occurred;
-static bool location_callback_called_expected;
+static int location_callback_called_occurred;
+static int location_callback_called_expected;
 
 K_SEM_DEFINE(event_handler_called_sem, 0, 1);
 
 /* Strings for GNSS positioning */
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 static const char xmonitor_resp[] =
 	"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"0140\",7,20,\"001F8414\","
 	"334,6200,66,44,\"\","
 	"\"11100000\",\"00010011\",\"01001001\"";
 
+static const char xmonitor_resp_psm_on[] =
+	"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"0140\",7,20,\"001F8414\","
+	"334,6200,66,44,\"\","
+	"\"00100001\",\"00101001\",\"01001001\"";
+#endif
+
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 /* PDN active response */
 static const char cgact_resp_active[] = "+CGACT: 0,1";
+#endif
 
 /* Strings for cellular positioning */
 static const char ncellmeas_resp_pci1[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",2300,7,63,31,"
 	"150344527,2300,8,60,29,0,2400,11,55,26,184\r\n";
+
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
 
 static const char ncellmeas_resp_gci1[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",10512,9034,2300,7,63,31,150344527,1,0,"
@@ -59,6 +114,7 @@ static const char ncellmeas_resp_gci5[] =
 	"\"00103425\",\"26244\",\"0056\",65535,0,6400,6,71,30,150345527,0,0,"
 	"\"00076543\",\"26256\",\"00C3\",65535,0,620000,6,71,30,150345527,0,0,"
 	"\"00011B08\",\"26295\",\"00B7\",65535,0,2300,9,62,30,150345527,0,0\r\n";
+#endif
 
 char http_resp[512];
 
@@ -94,6 +150,14 @@ extern void at_monitor_dispatch(const char *at_notif);
  */
 extern void method_gnss_event_handler(int event);
 
+/* scan_wifi_net_mgmt_event_handler() is implemented in the library and we'll call it directly
+ * to fake received Wi-Fi scan results.
+ */
+extern void scan_wifi_net_mgmt_event_handler(
+	struct net_mgmt_event_callback *cb,
+	uint32_t mgmt_event,
+	struct net_if *iface);
+
 static void helper_location_data_clear(void)
 {
 	memset(&test_location_event_data, 0, sizeof(test_location_event_data));
@@ -124,10 +188,15 @@ static void helper_location_data_clear(void)
 void setUp(void)
 {
 	helper_location_data_clear();
-	location_callback_called_occurred = false;
-	location_callback_called_expected = false;
+	location_callback_called_occurred = 0;
+	location_callback_called_expected = 0;
 	k_sem_reset(&event_handler_called_sem);
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = -1;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = false;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_occurred = false;
+#endif
 	mock_nrf_modem_at_Init();
 }
 
@@ -135,7 +204,7 @@ void tearDown(void)
 {
 	int err;
 
-	if (location_callback_called_expected) {
+	if (location_callback_called_expected != location_callback_called_occurred) {
 		/* Wait for location_event_handler call for 3 seconds.
 		 * If it doesn't happen, next assert will fail the test.
 		 */
@@ -143,45 +212,64 @@ void tearDown(void)
 		TEST_ASSERT_EQUAL(0, err);
 	}
 	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_ASSERT_EQUAL(net_mgmt_NET_REQUEST_WIFI_SCAN_expected,
+		net_mgmt_NET_REQUEST_WIFI_SCAN_occurred);
+#endif
+	k_sleep(K_MSEC(1));
 
 	mock_nrf_modem_at_Verify();
 }
 
 static void location_event_handler(const struct location_event_data *event_data)
 {
-	TEST_ASSERT_EQUAL(false, location_callback_called_occurred);
-	location_callback_called_occurred = true;
+	location_callback_called_occurred++;
 
 	TEST_ASSERT_EQUAL(test_location_event_data.id, event_data->id);
-	TEST_ASSERT_EQUAL(test_location_event_data.location.latitude,
-		event_data->location.latitude);
-	TEST_ASSERT_EQUAL(test_location_event_data.location.longitude,
-		event_data->location.longitude);
-	TEST_ASSERT_EQUAL(test_location_event_data.location.accuracy,
-		event_data->location.accuracy);
-	TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.valid,
-		event_data->location.datetime.valid);
 
-	/* Datetime verification is skipped if it's not valid.
-	 * Cellular timestamps will be set but it's marked invalid because CONFIG_DATE_TIME=n.
-	 * We cannot verify it anyway because it's read at runtime.
-	 */
-	if (event_data->location.datetime.valid) {
-		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.year,
-			event_data->location.datetime.year);
-		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.month,
-			event_data->location.datetime.month);
-		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.day,
-			event_data->location.datetime.day);
-		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.hour,
-			event_data->location.datetime.hour);
-		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.minute,
-			event_data->location.datetime.minute);
-		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.second,
-			event_data->location.datetime.second);
-		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.ms,
-			event_data->location.datetime.ms);
+	switch (event_data->id) {
+	case LOCATION_EVT_LOCATION:
+		TEST_ASSERT_EQUAL(test_location_event_data.location.latitude,
+			event_data->location.latitude);
+		TEST_ASSERT_EQUAL(test_location_event_data.location.longitude,
+			event_data->location.longitude);
+		TEST_ASSERT_EQUAL(test_location_event_data.location.accuracy,
+			event_data->location.accuracy);
+		TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.valid,
+			event_data->location.datetime.valid);
+
+		/* Datetime verification is skipped if it's not valid.
+		 * Cellular timestamps will be set but it's marked invalid because
+		 * CONFIG_DATE_TIME=n. We cannot verify it anyway because it's read at runtime.
+		 */
+		if (event_data->location.datetime.valid) {
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.year,
+				event_data->location.datetime.year);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.month,
+				event_data->location.datetime.month);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.day,
+				event_data->location.datetime.day);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.hour,
+				event_data->location.datetime.hour);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.minute,
+				event_data->location.datetime.minute);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.second,
+				event_data->location.datetime.second);
+			TEST_ASSERT_EQUAL(test_location_event_data.location.datetime.ms,
+				event_data->location.datetime.ms);
+		}
+		break;
+	case LOCATION_EVT_GNSS_ASSISTANCE_REQUEST:
+		/* TODO: Verify data: event_data->agnss_request */
+		break;
+	case LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST:
+		/* TODO: Verify data: event_data->cloud_location_request*/
+		break;
+	default:
+		break;
 	}
+
+	k_sleep(K_MSEC(1));
 	k_sem_give(&event_handler_called_sem);
 }
 
@@ -238,8 +326,20 @@ void test_location_init(void)
 	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
 	__cmock_modem_key_mgmt_write_IgnoreAndReturn(0);
 
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,0,10240", 0);
+#endif
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	/* __cmock_device_get_binding_ExpectAndReturn is not called for an unknown reason.
+	 * __syscall in the function declaration may have something to do with it.
+	 */
+	__cmock_z_device_is_ready_ExpectAndReturn(0, true);
+	__cmock_net_if_lookup_by_dev_ExpectAndReturn(0, &wifi_iface);
+	__cmock_net_mgmt_init_event_callback_Ignore();
+	__cmock_net_mgmt_add_event_callback_Ignore();
+
+#endif
 	ret = location_init(location_event_handler);
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -260,9 +360,76 @@ void test_location_method_str(void)
 
 	method = location_method_str(99);
 	TEST_ASSERT_EQUAL_STRING("Unknown", method);
+
+	/* 100 is a hidden internally used LOCATION_METHOD_INTERNAL_WIFI_CELLULAR constant */
+	method = location_method_str(100);
+	TEST_ASSERT_EQUAL_STRING("Wi-Fi + Cellular", method);
+
 }
 
 /********* GNSS POSITIONING TESTS ***********************/
+
+char test_agnss_data[] = "test agnss data";
+
+int nrf_cloud_rest_agnss_data_get_Stub(
+	struct nrf_cloud_rest_context *const rest_ctx,
+	struct nrf_cloud_rest_agnss_request const *const request,
+	struct nrf_cloud_rest_agnss_result *const result,
+	int NumCalls)
+{
+	struct nrf_modem_gnss_agnss_data_frame test_agnss_request = {
+		.data_flags = 0x3f,
+		.system_count = 2,
+		.system = {
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.sv_mask_ephe = 0xffffffff,
+				.sv_mask_alm = 0xffffffff
+			},
+			{
+				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
+				.sv_mask_ephe = 0x3ff,
+				.sv_mask_alm = 0x3ff
+			}
+		}
+	};
+
+	TEST_ASSERT_EQUAL(-1, rest_ctx->connect_socket);
+	TEST_ASSERT_EQUAL(false, rest_ctx->keep_alive);
+	TEST_ASSERT_EQUAL(NRF_CLOUD_REST_TIMEOUT_NONE, rest_ctx->timeout_ms);
+	TEST_ASSERT_EQUAL(0, rest_ctx->fragment_size);
+
+	TEST_ASSERT_EQUAL(NRF_CLOUD_REST_AGNSS_REQ_CUSTOM, request->type);
+	TEST_ASSERT_EQUAL(false, request->filtered);
+	TEST_ASSERT_EQUAL(0, request->mask_angle);
+	/* TODO: request->net_info not checked at the moment but could be done */
+
+	TEST_ASSERT_EQUAL(test_agnss_request.data_flags, request->agnss_req->data_flags);
+	TEST_ASSERT_EQUAL(test_agnss_request.system_count, request->agnss_req->system_count);
+	TEST_ASSERT_EQUAL(
+		test_agnss_request.system[0].system_id,
+		request->agnss_req->system[0].system_id);
+	TEST_ASSERT_EQUAL(
+		test_agnss_request.system[0].sv_mask_ephe,
+		request->agnss_req->system[0].sv_mask_ephe);
+	TEST_ASSERT_EQUAL(
+		test_agnss_request.system[0].sv_mask_alm,
+		request->agnss_req->system[0].sv_mask_alm);
+	TEST_ASSERT_EQUAL(
+		test_agnss_request.system[1].system_id,
+		request->agnss_req->system[1].system_id);
+	TEST_ASSERT_EQUAL(
+		test_agnss_request.system[1].sv_mask_ephe,
+		request->agnss_req->system[1].sv_mask_ephe);
+	TEST_ASSERT_EQUAL(
+		test_agnss_request.system[1].sv_mask_alm,
+		request->agnss_req->system[1].sv_mask_alm);
+
+	result->buf = test_agnss_data;
+	result->agnss_sz = sizeof(test_agnss_data);
+
+	return 0;
+}
 
 /* Test successful GNSS location request. */
 void test_location_gnss(void)
@@ -274,6 +441,122 @@ void test_location_gnss(void)
 	location_config_defaults_set(&config, 1, methods);
 	config.methods[0].gnss.timeout = 120 * MSEC_PER_SEC;
 	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_NORMAL;
+
+	location_callback_called_expected = 1;
+
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	location_callback_called_expected++;
+
+	test_location_event_data.id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;
+#else
+	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.location.latitude = 61.005;
+	test_location_event_data.location.longitude = -45.997;
+	test_location_event_data.location.accuracy = 15.83;
+	test_location_event_data.location.datetime.valid = true;
+	test_location_event_data.location.datetime.year = 2021;
+	test_location_event_data.location.datetime.month = 8;
+	test_location_event_data.location.datetime.day = 13;
+	test_location_event_data.location.datetime.hour = 12;
+	test_location_event_data.location.datetime.minute = 34;
+	test_location_event_data.location.datetime.second = 56;
+	test_location_event_data.location.datetime.ms = 789;
+#endif
+
+	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
+	test_pvt_data.latitude = 61.005;
+	test_pvt_data.longitude = -45.997;
+	test_pvt_data.accuracy = 15.83;
+	test_pvt_data.datetime.year = 2021;
+	test_pvt_data.datetime.month = 8;
+	test_pvt_data.datetime.day = 13;
+	test_pvt_data.datetime.hour = 12;
+	test_pvt_data.datetime.minute = 34;
+	test_pvt_data.datetime.seconds = 56;
+	test_pvt_data.datetime.ms = 789;
+
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	/* Zero triggers new AGNSS data request */
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.data_flags = NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST,
+		.utc_expiry = 1,
+		.klob_expiry = 2,
+		.neq_expiry = 3,
+		.integrity_expiry = 4,
+		.position_expiry = 5,
+		.sv_count = 6,
+		.sv = {
+			{
+				.sv_id = 1,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 1,
+				.alm_expiry = 4
+			},
+			{
+				.sv_id = 2,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 100,
+				.alm_expiry = 4
+			},
+			{
+				.sv_id = 3,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 0,
+				.alm_expiry = 101
+			},
+			{
+				.sv_id = 4,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
+				.ephe_expiry = 6,
+				.alm_expiry = 1
+			},
+			{
+				.sv_id = 193,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
+				.ephe_expiry = 0,
+				.alm_expiry = 100
+			},
+			{
+				.sv_id = 202,
+				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
+				.ephe_expiry = 100,
+				.alm_expiry = 4
+			},
+		}
+	};
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+#endif
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CEREG?", "+CEREG: %*u,%hu,%*[^,],\"%x\",", 2);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(LTE_LC_NW_REG_REGISTERED_HOME); /* Status */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0x10012002); /* Cell ID */
+
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	__cmock_nrf_cloud_jwt_generate_ExpectAnyArgsAndReturn(0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
+#endif
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
 	test_location_event_data.location.latitude = 61.005;
@@ -288,21 +571,109 @@ void test_location_gnss(void)
 	test_location_event_data.location.datetime.second = 56;
 	test_location_event_data.location.datetime.ms = 789;
 
-	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
-	test_pvt_data.latitude = 61.005;
-	test_pvt_data.longitude = -45.997;
-	test_pvt_data.accuracy = 15.83;
-	test_pvt_data.datetime.year = 2021;
-	test_pvt_data.datetime.month = 8;
-	test_pvt_data.datetime.day = 13;
-	test_pvt_data.datetime.hour = 12;
-	test_pvt_data.datetime.minute = 34;
-	test_pvt_data.datetime.seconds = 56;
-	test_pvt_data.datetime.ms = 789;
+	__cmock_nrf_cloud_agnss_process_ExpectAndReturn(
+		test_agnss_data, sizeof(test_agnss_data), 0);
 
-	location_callback_called_expected = true;
+	location_agnss_data_process(test_agnss_data, sizeof(test_agnss_data));
+#else
+
+	__cmock_nrf_cloud_rest_agnss_data_get_Stub(nrf_cloud_rest_agnss_data_get_Stub);
+	__cmock_nrf_cloud_agnss_process_ExpectAndReturn(
+		test_agnss_data, sizeof(test_agnss_data), 0);
+#endif
+#endif
+	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+
+	/* A-GNSS gets updated current cell info using NCELLMEAS */
+	at_monitor_dispatch(ncellmeas_resp_pci1);
+	k_sleep(K_MSEC(1));
+
+#else
+	/* PSM is configured */
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp_psm_on, sizeof(xmonitor_resp_psm_on));
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+	/* Use CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS value to trigger
+	 * LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING that causes no actions
+	 */
+	at_monitor_dispatch("%XMODEMSLEEP: 1, 5000");
+	k_sleep(K_MSEC(1));
+
+	/* Enter PSM */
+	at_monitor_dispatch("%XMODEMSLEEP: 1, 10");
+	k_sleep(K_MSEC(1));
+#endif
+	/* An event other than NRF_MODEM_GNSS_EVT_PVT to see that no actions are done */
+	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_FIX);
+	k_sleep(K_MSEC(1));
+
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
+		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
+	k_sleep(K_MSEC(1));
+}
+
+/* Test timeout for the entire location request during GNSS.
+ * A-GNSS request is skipped because it was just done (in the previous test) and
+ * an hour hasn't passed.
+ *
+ * Note: Depends on previous test and that A-GNSS data is retrieved there.
+ */
+void test_location_gnss_location_request_timeout(void)
+{
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_GNSS};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.timeout = 20;
+	config.methods[0].gnss.timeout = 120 * MSEC_PER_SEC;
+	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_NORMAL;
+
+	location_callback_called_expected = 1;
+
+	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
+	test_location_event_data.location.latitude = 61.005;
+	test_location_event_data.location.longitude = -45.997;
+	test_location_event_data.location.accuracy = 15.83;
+	test_location_event_data.location.datetime.valid = true;
+	test_location_event_data.location.datetime.year = 2021;
+	test_location_event_data.location.datetime.month = 8;
+	test_location_event_data.location.datetime.day = 13;
+	test_location_event_data.location.datetime.hour = 12;
+	test_location_event_data.location.datetime.minute = 34;
+	test_location_event_data.location.datetime.second = 56;
+	test_location_event_data.location.datetime.ms = 789;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	/* Zero triggers new AGNSS data request */
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = { 0 };
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+#endif
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -319,20 +690,16 @@ void test_location_gnss(void)
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
-	at_monitor_dispatch("+CSCON: 0");
-	k_sleep(K_MSEC(1));
-
-	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
-		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
-	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
-	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+#endif
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
-	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
+
+	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
 }
 
@@ -374,15 +741,223 @@ void test_location_cellular(void)
 
 	config.methods[0].cellular.cell_count = 1;
 
+	location_callback_called_expected = 1;
+
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	location_callback_called_expected++;
+	test_location_event_data.id = LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST;
+#else
+	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.location.latitude = 61.50375;
+	test_location_event_data.location.longitude = 23.896979;
+	test_location_event_data.location.accuracy = 750.0;
+	test_location_event_data.location.datetime.valid = false;
+#endif
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
+
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
+
+	cellular_rest_req_resp_handle();
+
+	/* Select cellular service to be used */
+	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
+	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
+	rest_req_ctx.port = HTTPS_PORT;
+	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+#endif
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(-EBUSY, err);
+	k_sleep(K_MSEC(1));
+
+	/* Send NCELLMEAS response which further triggers the rest of the location calculation */
+	at_monitor_dispatch(ncellmeas_resp_pci1);
+	k_sleep(K_MSEC(1));
+
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
 	test_location_event_data.location.latitude = 61.50375;
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
 	test_location_event_data.location.datetime.valid = false;
 
-	location_callback_called_expected = true;
+	struct location_data location_data = {
+		.latitude = 61.50375,
+		.longitude = 23.896979,
+		.accuracy = 750.0,
+		.datetime.valid = false
+	};
+
+	location_cloud_location_ext_result_set(LOCATION_EXT_RESULT_SUCCESS, &location_data);
+	k_sleep(K_MSEC(1));
+#endif
+}
+
+/* Test cancelling cellular location request during NCELLMEAS. */
+void test_location_cellular_cancel_during_ncellmeas(void)
+{
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].cellular.cell_count = 2;
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
+
+	err = location_request_cancel();
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+}
+
+/* Test cellular timeout during the 1st NCELLMEAS. */
+void test_location_cellular_timeout_during_1st_ncellmeas(void)
+{
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
+
+	location_config_defaults_set(&config, 1, methods);
+
+	config.methods[0].cellular.cell_count = 1;
+	config.methods[0].cellular.timeout = 1;
+
+	location_callback_called_expected = 1;
+
+	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.location.latitude = 61.50375;
+	test_location_event_data.location.longitude = 23.896979;
+	test_location_event_data.location.accuracy = 750.0;
+	test_location_event_data.location.datetime.valid = false;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
+
+	cellular_rest_req_resp_handle();
+
+	/* Select cellular service to be used */
+	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
+	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
+	rest_req_ctx.port = HTTPS_PORT;
+	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	/* Wait enough that cellular timeout occurs */
+	k_sleep(K_MSEC(10));
+
+	/* Send NCELLMEAS response which further triggers the rest of the location calculation */
+	at_monitor_dispatch(ncellmeas_resp_pci1);
+	k_sleep(K_MSEC(1));
+#endif
+}
+
+/* Test cellular timeout during the 2nd NCELLMEAS for which indication is not sent
+ * causing backup timer to expire.
+ */
+void test_location_cellular_timeout_during_2nd_ncellmeas_backup_timeout(void)
+{
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
+
+	location_config_defaults_set(&config, 1, methods);
+
+	config.methods[0].cellular.cell_count = 2;
+	config.methods[0].cellular.timeout = 100;
+
+	location_callback_called_expected = 1;
+
+	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.location.latitude = 61.50375;
+	test_location_event_data.location.longitude = 23.896979;
+	test_location_event_data.location.accuracy = 750.0;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,5", 0);
+
+	/* Select cellular service to be used */
+	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
+	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
+	rest_req_ctx.port = HTTPS_PORT;
+	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+
+	/* Wait a bit so that NCELLMEAS is sent from location lib before we send a response.
+	 * Otherwise, lte_lc would ignore NCELLMEAS notification because no NCELLMEAS on going
+	 * from lte_lc point of view.
+	 */
+	k_sleep(K_MSEC(1));
+
+	at_monitor_dispatch(ncellmeas_resp_pci1);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
+
+	cellular_rest_req_resp_handle();
+
+	/* scan_cellular.c has a backup timer of 2s which we need to wait */
+	k_sleep(K_MSEC(2200));
+#endif
+}
+
+/********* WIFI POSITIONING TESTS ***********************/
+
+/* Test successful Wi-Fi location request utilizing HERE service. */
+void test_location_wifi(void)
+{
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+
+	test_location_event_data.id = LOCATION_EVT_LOCATION;
+	test_location_event_data.location.latitude = 51.98765;
+	test_location_event_data.location.longitude = 13.12345;
+	test_location_event_data.location.accuracy = 50.0;
+	test_location_event_data.location.datetime.valid = false;
+
+	location_callback_called_expected = 1;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = true;
+
+	__cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(0);
+
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
@@ -401,37 +976,103 @@ void test_location_cellular(void)
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
 
-	err = location_request(&config);
-	TEST_ASSERT_EQUAL(-EBUSY, err);
+	struct net_mgmt_event_callback cb;
+	const struct wifi_status status = {
+		.status = WIFI_STATUS_CONN_SUCCESS
+	};
+	const struct wifi_scan_result scan_result1 = {
+		.ssid = "TestAP1",
+		.ssid_length = 7,
+		.channel = 36,
+		.mac = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB},
+		.mac_length = 6
+	};
+	const struct wifi_scan_result scan_result2 = {
+		.ssid = "TestAP2",
+		.ssid_length = 7,
+		.channel = 36,
+		.mac = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66},
+		.mac_length = 6
+	};
+
+	/* Send Wi-Fi scan response which further triggers the rest of the location calculation */
+	cb.info = &scan_result1;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_RESULT, NULL);
 	k_sleep(K_MSEC(1));
 
-	/* Trigger NCELLMEAS response which further triggers the rest of the location calculation */
-	at_monitor_dispatch(ncellmeas_resp_pci1);
+	/* Unknown event to make sure it's ignored */
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_IFACE_STATUS, NULL);
 	k_sleep(K_MSEC(1));
+
+	cb.info = &scan_result2;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_RESULT, NULL);
+	k_sleep(K_MSEC(1));
+
+	cb.info = &status;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_DONE, NULL);
+	k_sleep(K_MSEC(1));
+#endif
+#endif
 }
 
-/* Test cancelling cellular location request. */
-void test_location_cellular_cancel_during_ncellmeas(void)
+/* Test timeout during Wi-Fi scan. Only one scan result is received before the timeout and
+ * hence position cannot be retrieved from the cloud.
+ */
+void test_location_wifi_timeout(void)
 {
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	int err;
 	struct location_config config = { 0 };
-	enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
 
 	location_config_defaults_set(&config, 1, methods);
-	config.methods[0].cellular.cell_count = 2;
-	location_callback_called_expected = false;
+	config.methods[0].wifi.timeout = 1;
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
+	test_location_event_data.id = LOCATION_EVT_ERROR;
+
+	location_callback_called_expected = 1;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = true;
+
+	__cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(0);
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", 0);
+	struct net_mgmt_event_callback cb;
+	const struct wifi_status status = {
+		.status = WIFI_STATUS_CONN_SUCCESS
+	};
+	const struct wifi_scan_result scan_result1 = {
+		.ssid = "TestAP1",
+		.ssid_length = 7,
+		.channel = 36,
+		.mac = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB},
+		.mac_length = 6
+	};
+	const struct wifi_scan_result scan_result2 = {
+		.ssid = "TestAP2",
+		.ssid_length = 7,
+		.channel = 36,
+		.mac = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66},
+		.mac_length = 6
+	};
 
-	err = location_request_cancel();
-	TEST_ASSERT_EQUAL(0, err);
+	/* Send Wi-Fi scan response which further triggers the rest of the location calculation */
+	cb.info = &scan_result1;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_RESULT, NULL);
+	k_sleep(K_MSEC(100));
+
+	/* The following events are coming too late so they are ignored */
+	cb.info = &scan_result2;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_RESULT, NULL);
 	k_sleep(K_MSEC(1));
+	cb.info = &status;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_DONE, NULL);
+	k_sleep(K_MSEC(1));
+#endif
+#endif
 }
 
 /********* GENERAL ERROR TESTS ***********************/
@@ -488,11 +1129,22 @@ void test_error_cancel_no_operation(void)
 	TEST_ASSERT_EQUAL(0, err);
 }
 
+/* Test PGPS data processing not supported. */
+void test_location_pgps_data_process_fail_notsup(void)
+{
+	int err;
+
+	err = location_pgps_data_process("testi", 6);
+	TEST_ASSERT_EQUAL(-ENOTSUP, err);
+}
+
 /********* TESTS WITH SEVERAL POSITIONING METHODS ***********************/
 
 /* Test default location request where fallback from GNSS to cellular occurs. */
 void test_location_request_default(void)
 {
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	int err;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
@@ -500,11 +1152,27 @@ void test_location_request_default(void)
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
 
-	location_callback_called_expected = true;
+	location_callback_called_expected = 1;
 
 	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	/* Setting values which doesn't require new A-GNSS request */
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.data_flags = 0,
+		.utc_expiry = 0xffff,
+		.klob_expiry = 0xffff,
+		.neq_expiry = 0xffff,
+		.integrity_expiry = 0xffff,
+		.position_expiry = 0xffff };
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+#endif
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -521,11 +1189,13 @@ void test_location_request_default(void)
 	err = location_request(NULL);
 	TEST_ASSERT_EQUAL(0, err);
 
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+#endif
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
 
@@ -571,6 +1241,8 @@ void test_location_request_default(void)
 
 	at_monitor_dispatch(ncellmeas_resp_gci5);
 	k_sleep(K_MSEC(1));
+#endif
+#endif
 }
 
 /* Test location request with:
@@ -580,6 +1252,7 @@ void test_location_request_default(void)
  */
 void test_location_request_mode_all_cellular_gnss(void)
 {
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	int err;
 
 	struct location_config config = { 0 };
@@ -596,7 +1269,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	test_location_event_data.location.longitude = 23.896979;
 	test_location_event_data.location.accuracy = 750.0;
 
-	location_callback_called_expected = true;
+	location_callback_called_expected = 2;
 
 	/***** First cellular positioning *****/
 
@@ -629,9 +1302,6 @@ void test_location_request_mode_all_cellular_gnss(void)
 	 */
 	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
-	location_callback_called_occurred = false;
-	k_sem_reset(&event_handler_called_sem);
 
 	/***** Then GNSS positioning *****/
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
@@ -661,6 +1331,21 @@ void test_location_request_mode_all_cellular_gnss(void)
 	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.data_flags = 0,
+		.utc_expiry = 0xffff,
+		.klob_expiry = 0xffff,
+		.neq_expiry = 0xffff,
+		.integrity_expiry = 0xffff,
+		.position_expiry = 0xffff };
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+#endif
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -674,11 +1359,13 @@ void test_location_request_mode_all_cellular_gnss(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+#endif
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
 
@@ -689,6 +1376,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 	k_sleep(K_MSEC(1));
+#endif
 }
 
 /* Test location request error/timeout with :
@@ -710,7 +1398,7 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 
 	test_location_event_data.id = LOCATION_EVT_ERROR;
 
-	location_callback_called_expected = true;
+	location_callback_called_expected = 2;
 
 	/***** First cellular positioning *****/
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", -EFAULT);
@@ -723,14 +1411,26 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	 */
 	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
-	location_callback_called_occurred = false;
-	k_sem_reset(&event_handler_called_sem);
 
 	/***** Then GNSS positioning *****/
 	test_location_event_data.id = LOCATION_EVT_TIMEOUT;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.data_flags = 0,
+		.utc_expiry = 0xffff,
+		.klob_expiry = 0xffff,
+		.neq_expiry = 0xffff,
+		.integrity_expiry = 0xffff,
+		.position_expiry = 0xffff };
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+#endif
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -744,12 +1444,13 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
-
+#endif
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 
 	at_monitor_dispatch("+CSCON: 0");
@@ -795,9 +1496,24 @@ void test_location_gnss_periodic(void)
 	test_pvt_data.datetime.seconds = 56;
 	test_pvt_data.datetime.ms = 789;
 
-	location_callback_called_expected = true;
+	location_callback_called_expected = 2;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		.data_flags = 0,
+		.utc_expiry = 0xffff,
+		.klob_expiry = 0xffff,
+		.neq_expiry = 0xffff,
+		.integrity_expiry = 0xffff,
+		.position_expiry = 0xffff };
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+#endif
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -814,11 +1530,13 @@ void test_location_gnss_periodic(void)
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
 
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+#endif
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
 
@@ -835,9 +1553,7 @@ void test_location_gnss_periodic(void)
 	 */
 	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
-	location_callback_called_occurred = false;
-	k_sem_reset(&event_handler_called_sem);
+	k_sleep(K_MSEC(1));
 
 	/* 2nd GNSS fix */
 
@@ -867,6 +1583,13 @@ void test_location_gnss_periodic(void)
 	test_pvt_data.datetime.ms = 789;
 
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+#if defined(CONFIG_LOCATION_TEST_AGNSS)
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+#endif
 	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
 	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
@@ -880,12 +1603,13 @@ void test_location_gnss_periodic(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
 		(char *)xmonitor_resp, sizeof(xmonitor_resp));
-
+#endif
 	k_sleep(K_MSEC(1500));
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
@@ -902,21 +1626,23 @@ void test_location_gnss_periodic(void)
 	 */
 	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
-	location_callback_called_occurred = false;
-	k_sem_reset(&event_handler_called_sem);
+	k_sleep(K_MSEC(1));
 
 	/* Stop periodic by cancelling location request */
-	location_callback_called_expected = false;
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+	/* Check that no actions are taken if GNSS event is sent after cancelling */
+	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
 	k_sleep(K_MSEC(1));
 }
 
 /* Test periodic location request and cancel it once some iterations are done. */
 void test_location_cellular_periodic(void)
 {
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	int err;
 	struct location_config config = { 0 };
 	enum location_method methods[] = {LOCATION_METHOD_CELLULAR};
@@ -931,7 +1657,7 @@ void test_location_cellular_periodic(void)
 	test_location_event_data.location.accuracy = 750.0;
 	test_location_event_data.location.datetime.valid = false;
 
-	location_callback_called_expected = true;
+	location_callback_called_expected = 2;
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
@@ -960,9 +1686,7 @@ void test_location_cellular_periodic(void)
 	 */
 	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
-	location_callback_called_occurred = false;
-	k_sem_reset(&event_handler_called_sem);
+	k_sleep(K_MSEC(1));
 
 	/* TODO: Set different values to first iteration */
 	test_location_event_data.id = LOCATION_EVT_LOCATION;
@@ -998,15 +1722,13 @@ void test_location_cellular_periodic(void)
 	 */
 	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(location_callback_called_expected, location_callback_called_occurred);
-	location_callback_called_occurred = false;
-	k_sem_reset(&event_handler_called_sem);
+	k_sleep(K_MSEC(1));
 
 	/* Stop periodic by cancelling location request */
-	location_callback_called_expected = false;
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
 	k_sleep(K_MSEC(1));
+#endif
 }
 
 /* This is needed because AT Monitor library is initialized in SYS_INIT. */

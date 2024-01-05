@@ -4,3 +4,33 @@ tests:
     platform_allow: native_posix
     integration_platforms:
       - native_posix
+  unity.location_test.no_agnss:
+    tags: location_no_agnss
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_TEST_AGNSS=n
+  unity.location_test.no_wifi:
+    tags: location_no_wifi
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_METHOD_WIFI=n
+  unity.location_test.service_external:
+    tags: location_service_external
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_SERVICE_EXTERNAL=y
+      - CONFIG_LOCATION_SERVICE_HERE=n
+      - CONFIG_LOCATION_SERVICE_HERE_API_KEY=""
+  unity.location_test.data_details:
+    tags: location_data_details
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    extra_configs:
+      - CONFIG_LOCATION_DATA_DETAILS=y

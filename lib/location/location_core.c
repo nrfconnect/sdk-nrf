@@ -179,6 +179,8 @@ static const struct location_method_api *location_method_api_get(enum location_m
 	return method_api;
 }
 
+#if defined(CONFIG_LOG)
+
 static const char LOCATION_ACCURACY_LOW_STR[] = "low";
 static const char LOCATION_ACCURACY_NORMAL_STR[] = "normal";
 static const char LOCATION_ACCURACY_HIGH_STR[] = "high";
@@ -228,6 +230,8 @@ static const char *location_core_service_str(enum location_service service)
 	}
 	return service_str;
 }
+
+#endif
 
 int location_core_event_handler_set(location_event_handler_t handler)
 {
@@ -302,6 +306,7 @@ int location_core_validate_params(const struct location_config *config)
 
 void location_core_config_log(const struct location_config *config)
 {
+#if defined(CONFIG_LOG)
 	enum location_method type;
 	const struct location_method_api *method_api;
 
@@ -345,6 +350,7 @@ void location_core_config_log(const struct location_config *config)
 #endif
 		}
 	}
+#endif
 }
 
 static void location_core_current_config_set(const struct location_config *config)
@@ -840,11 +846,6 @@ void location_core_timer_start(int32_t timeout)
 		 */
 		k_work_schedule(&location_core_method_timeout_work, K_MSEC(timeout));
 	}
-}
-
-void location_core_timer_stop(void)
-{
-	k_work_cancel_delayable(&location_core_method_timeout_work);
 }
 
 int location_core_cancel(void)
