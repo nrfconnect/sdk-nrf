@@ -493,6 +493,8 @@ To start forwarding data to Edge Impulse studio:
 
          Sampling example
 
+.. _nrf_machine_learning_app_porting_guide:
+
 Porting guide
 *************
 

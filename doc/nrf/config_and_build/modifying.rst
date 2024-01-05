@@ -68,18 +68,7 @@ There are different ways of doing this, but not all will store your configuratio
 Changing the hardware configuration
 ===================================
 
-To correctly edit the :file:`.dts` and :file:`.overlay` files for your project, you need to be familiar with the :ref:`Devicetree language and syntax <zephyr:dt-guide>`.
-
-.. tabs::
-
-   .. group-tab:: nRF Connect for VS Code
-
-      The |nRFVSC| offers several layers of `Devicetree integration <Devicetree support overview_>`_, ranging from summarizing devicetree settings in a menu and providing devicetree language support in the editor, to the Devicetree Visual Editor, a GUI tool for editing devicetree files.
-      Follow the steps in `How to create devicetree files`_ and use one of the following options to edit the :file:`.dts` and :file:`.overlay` files:
-
-      * `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_
-      * `Devicetree language support`_
-
+See :ref:`configuring_devicetree`.
 
 Changing the software configuration
 ===================================
