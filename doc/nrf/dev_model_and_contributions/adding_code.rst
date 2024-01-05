@@ -124,7 +124,7 @@ This repository showcases the following features of both the |NCS| and Zephyr:
 * Basic :ref:`Zephyr application <zephyr:application>` skeleton
 * :ref:`Zephyr workspace applications <zephyr:zephyr-workspace-app>`
 * :ref:`West T2 topology <zephyr:west-t2>`
-* :ref:`Custom boards <zephyr:board_porting_guide>`
+* :ref:`Custom boards <defining_custom_board>`
 * Custom :ref:`devicetree bindings <zephyr:dt-bindings>`
 * Out-of-tree :ref:`drivers <zephyr:device_model_api>`
 * Out-of-tree libraries
