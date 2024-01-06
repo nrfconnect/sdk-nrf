@@ -2823,6 +2823,7 @@ static int nrf_cloud_parse_location_json(const cJSON *const loc_obj,
 	}
 
 	cJSON *lat, *lon, *unc;
+	bool anchor = false;
 	char *type;
 
 	lat = cJSON_GetObjectItem(loc_obj,
@@ -2849,11 +2850,39 @@ static int nrf_cloud_parse_location_json(const cJSON *const loc_obj,
 			location_out->type = LOCATION_TYPE_SINGLE_CELL;
 		} else if (!strcmp(type, NRF_CLOUD_LOCATION_TYPE_VAL_WIFI)) {
 			location_out->type = LOCATION_TYPE_WIFI;
+		} else if (!strcmp(type, NRF_CLOUD_LOCATION_TYPE_VAL_ANCHOR)) {
+			location_out->type = LOCATION_TYPE_WIFI;
+			anchor = true;
 		} else {
 			LOG_WRN("Unhandled location type: %s", type);
 		}
 	} else {
 		LOG_WRN("Location type not found in message");
+	}
+
+	/* Print anchor info */
+	if (anchor) {
+		cJSON *anchors, *mac, *name;
+		int anc_cnt;
+
+		/* Anchor info is provided in an array of objects */
+		anchors	= cJSON_GetObjectItem(loc_obj, NRF_CLOUD_LOCATION_JSON_KEY_ANCHORS);
+		anc_cnt = cJSON_GetArraySize(anchors);
+
+		for (int idx = 0; idx < anc_cnt; ++idx) {
+			cJSON *anc = cJSON_GetArrayItem(anchors, idx);
+
+			mac	= cJSON_GetObjectItem(anc, NRF_CLOUD_LOCATION_JSON_KEY_ANC_MAC);
+			name	= cJSON_GetObjectItem(anc, NRF_CLOUD_LOCATION_JSON_KEY_ANC_NAME);
+
+			if (cJSON_IsString(mac)) {
+				LOG_DBG("Wi-Fi anchor MAC: %s", mac->valuestring);
+			}
+
+			if (cJSON_IsString(name)) {
+				LOG_INF("Wi-Fi anchor name: %s", name->valuestring);
+			}
+		}
 	}
 
 	return 0;
