@@ -680,6 +680,7 @@ Libraries for networking
     * An :c:struct:`nrf_cloud_obj_shadow_data` structure to the :c:struct:`nrf_cloud_evt` structure to be used during shadow update events.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA` Kconfig option to enable sending configured FOTA service info on the device's initial connection to nRF Cloud.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI` Kconfig option to enable sending configured UI service info on the device's initial connection to nRF Cloud.
+    * Support for handling location request responses fulfilled by a Wi-Fi anchor.
 
   * Updated:
 
