@@ -32,7 +32,8 @@ int nrf_cloud_credentials_configured_check(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
+	/* A client certificate is required for MQTT for the mutual-TLS connection */
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
 		if (!cs.client_cert) {
 			LOG_ERR("Client Certificate not found in sec tag %d", cs.sec_tag);
 			ret = -ENOTSUP;
