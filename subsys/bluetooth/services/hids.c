@@ -121,6 +121,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 					void const *buf, uint16_t len,
 					uint16_t offset, uint8_t flags)
 {
+	ssize_t ret = len;
 	LOG_DBG("Writing to Protocol Mode characteristic.");
 
 	struct bt_hids_pm_data *pm = attr->user_data;
@@ -138,11 +139,13 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 	uint8_t *cur_pm = &conn_data->pm_ctx_value;
 
 	if (offset > 0) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		ret = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		goto release_ctx;
 	}
 
 	if (len > sizeof(uint8_t)) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
+		ret = BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
+		goto release_ctx;
 	}
 
 	switch (*new_pm) {
@@ -159,14 +162,15 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 		}
 		break;
 	default:
-		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
+		ret = BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
+		goto release_ctx;
 	}
 
 	memcpy(cur_pm + offset, new_pm, len);
-
+release_ctx:
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
-	return len;
+	return ret;
 }
 
 static ssize_t hids_protocol_mode_read(struct bt_conn *conn,
@@ -301,6 +305,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 				   void const *buf, uint16_t len, uint16_t offset,
 				   uint8_t flags)
 {
+	ssize_t ret = len;
 	LOG_DBG("Writing to Output Report characteristic.");
 
 	struct bt_hids_outp_feat_rep *rep = attr->user_data;
@@ -321,7 +326,8 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 	rep_data = conn_data->outp_rep_ctx + rep->offset;
 
 	if (offset + len > rep->size) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		ret = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		goto release_ctx;
 	}
 	memcpy(rep_data + offset, buf, len);
 
@@ -332,10 +338,10 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 		};
 		rep->handler(&report, conn, true);
 	}
-
+release_ctx:
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
-	return len;
+	return ret;
 }
 
 static ssize_t hids_outp_rep_ref_read(struct bt_conn *conn,
@@ -398,6 +404,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 				   void const *buf, uint16_t len, uint16_t offset,
 				   uint8_t flags)
 {
+	ssize_t ret = len;
 	/* Write command operation is not allowed for this characteristic. */
 	if (flags & BT_GATT_WRITE_FLAG_CMD) {
 		LOG_DBG("Feature Report write command received. Ignore received data.");
@@ -424,7 +431,8 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 	rep_data = conn_data->feat_rep_ctx + rep->offset;
 
 	if (offset + len > rep->size) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		ret = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		goto release_ctx;
 	}
 	memcpy(rep_data + offset, buf, len);
 
@@ -435,10 +443,10 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 		};
 		rep->handler(&report, conn, true);
 	}
-
+release_ctx:
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
-	return len;
+	return ret;
 }
 
 static ssize_t hids_feat_rep_ref_read(struct bt_conn *conn,
@@ -636,6 +644,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 					      void const *buf, uint16_t len,
 					      uint16_t offset, uint8_t flags)
 {
+	ssize_t ret = len;
 	LOG_DBG("Writing to Boot Keyboard Output Report characteristic.");
 
 	struct bt_hids_boot_kb_outp_rep *rep = attr->user_data;
@@ -654,7 +663,8 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 	rep_data = conn_data->hids_boot_kb_outp_rep_ctx;
 
 	if (offset + len > sizeof(uint8_t)) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		ret = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		goto release_ctx;
 	}
 	memcpy(rep_data + offset, buf, len);
 
@@ -666,10 +676,10 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 
 		rep->handler(&report, conn, true);
 	}
-
+release_ctx:
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
-	return len;
+	return ret;
 }
 
 static ssize_t hids_info_read(struct bt_conn *conn,
