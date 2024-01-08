@@ -30,6 +30,11 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #define GROUND_FIX_MAX_ID			5
 
+#define LOCATION_LATITUDE_ID			0
+#define LOCATION_LONGITUDE_ID			1
+#define LOCATION_RADIUS_ID			3
+
+
 static bool send_location_back;
 
 static int32_t result;
@@ -84,23 +89,56 @@ static int ground_fix_result_code_cb(uint16_t obj_inst_id, uint16_t res_id,
 	return 0;
 }
 
+static int forward_to_location_obj(uint16_t obj_inst_id,
+					  uint16_t res_id, uint16_t res_inst_id,
+					  uint8_t *data, uint16_t data_len,
+					  bool last_block, size_t total_size)
+{
+	struct lwm2m_obj_path path;
+
+	switch (res_id) {
+	case GROUND_FIX_LATITUDE:
+		path = LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_LATITUDE_ID);
+		break;
+	case GROUND_FIX_LONGITUDE:
+		path = LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_LONGITUDE_ID);
+		break;
+	case GROUND_FIX_ACCURACY:
+		path = LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_RADIUS_ID);
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	if (data_len != sizeof(double)) {
+		return -EINVAL;
+	}
+
+	double val = *(double *)data;
+
+	return lwm2m_set_f64(&path, val);
+}
+
 static struct lwm2m_engine_obj_inst *ground_fix_create(uint16_t obj_inst_id)
 {
 	int i = 0, j = 0;
 
 	init_res_instance(res_inst, ARRAY_SIZE(res_inst));
 
+	lwm2m_engine_set_data_cb_t forward_cb =
+		IS_ENABLED(CONFIG_LWM2M_LOCATION_OBJ_SUPPORT) ? forward_to_location_obj : NULL;
+
 	/* initialize instance resource data */
 	INIT_OBJ_RES_DATA(GROUND_FIX_SEND_LOCATION_BACK, res, i, res_inst, j,
 			  &send_location_back, sizeof(send_location_back));
 	INIT_OBJ_RES(GROUND_FIX_RESULT_CODE, res, i, res_inst, j, 1, false, true, &result,
 		     sizeof(result), NULL, NULL, NULL, ground_fix_result_code_cb, NULL);
-	INIT_OBJ_RES_DATA(GROUND_FIX_LATITUDE, res, i, res_inst, j,
-			  &latitude, sizeof(latitude));
-	INIT_OBJ_RES_DATA(GROUND_FIX_LONGITUDE, res, i, res_inst, j,
-			  &longitude, sizeof(longitude));
-	INIT_OBJ_RES_DATA(GROUND_FIX_ACCURACY, res, i, res_inst, j,
-			  &accuracy, sizeof(accuracy));
+	INIT_OBJ_RES(GROUND_FIX_LATITUDE, res, i, res_inst, j, 1, false, true, &latitude,
+		     sizeof(latitude), NULL, NULL, NULL, forward_cb, NULL);
+	INIT_OBJ_RES(GROUND_FIX_LONGITUDE, res, i, res_inst, j, 1, false, true, &longitude,
+		     sizeof(longitude), NULL, NULL, NULL, forward_cb, NULL);
+	INIT_OBJ_RES(GROUND_FIX_ACCURACY, res, i, res_inst, j, 1, false, true, &accuracy,
+		     sizeof(accuracy), NULL, NULL, NULL, forward_cb, NULL);
 
 	inst.resources = res;
 	inst.resource_count = i;
