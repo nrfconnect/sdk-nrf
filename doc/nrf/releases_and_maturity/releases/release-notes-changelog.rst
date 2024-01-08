@@ -738,6 +738,10 @@ Libraries for networking
 
   * Added support for using a password when connecting to a broker.
 
+* :ref:`lib_lwm2m_location_assistance` library:
+
+  * Updated the Ground Fix object to copy received coordinates to the LwM2M Location object.
+
 * :ref:`lib_fota_download` library:
 
   * Added:

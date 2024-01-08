@@ -63,7 +63,7 @@ To populate the objects, call the :c:func:`lwm2m_ncell_handler_register` functio
 
 The Ground Fix Location object needs to address the ``report_back`` resource before sending a location request.
 Back reporting tells the server whether it needs to send the acquired location back to the device.
-If the location is sent back to the device, the location is stored only in the Ground Fix Location object.
+If the location is sent back to the device, the location is stored in the Ground Fix Location object and copied in the LwM2M Location object.
 
 To send the location request for the cell-based location, call the :c:func:`location_assistance_ground_fix_request_send` function.
 
