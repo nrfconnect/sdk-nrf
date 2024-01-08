@@ -139,7 +139,7 @@ static int periodic_coap_request_loop(void)
 		wait_for_network();
 
 		/* Send request */
-		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, -1);
+		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, NULL);
 		if (err) {
 			LOG_ERR("Failed to send request: %d", err);
 			return err;

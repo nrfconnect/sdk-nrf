@@ -257,8 +257,12 @@ int coap_request_send(struct download_client *client)
 	}
 
 	if (!has_pending(client)) {
+		struct coap_transmission_parameters params = coap_get_transmission_parameters();
+
+		params.max_retransmission =
+			CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT;
 		err = coap_pending_init(&client->coap.pending, &request, &client->remote_addr,
-					CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT);
+					&params);
 		if (err < 0) {
 			return -EINVAL;
 		}
