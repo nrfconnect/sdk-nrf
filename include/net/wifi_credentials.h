@@ -29,7 +29,10 @@ extern "C" {
 #define WIFI_CREDENTIALS_FLAG_2_4GHz		BIT(2)
 /* this entry can use the 5 GHz band */
 #define WIFI_CREDENTIALS_FLAG_5GHz		BIT(3)
-
+/* this entry requires management frame protection */
+#define WIFI_CREDENTIALS_FLAG_MFP_REQUIRED	BIT(4)
+/* this entry disables management frame protection */
+#define WIFI_CREDENTIALS_FLAG_MFP_DISABLED	BIT(5)
 
 #define WIFI_CREDENTIALS_MAX_PASSWORD_LEN\
 	MAX(WIFI_PSK_MAX_LEN, CONFIG_WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH)

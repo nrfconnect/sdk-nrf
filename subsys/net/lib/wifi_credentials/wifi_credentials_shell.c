@@ -69,6 +69,14 @@ static void print_network_info(void *cb_arg, const char *ssid, size_t ssid_len)
 	if (creds.header.flags & WIFI_CREDENTIALS_FLAG_FAVORITE) {
 		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", favorite");
 	}
+
+	if (creds.header.flags & WIFI_CREDENTIALS_FLAG_MFP_REQUIRED) {
+		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", MFP_REQUIRED");
+	} else if (creds.header.flags & WIFI_CREDENTIALS_FLAG_MFP_DISABLED) {
+		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", MFP_DISABLED");
+	} else {
+		shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, ", MFP_OPTIONAL");
+	}
 	shell_fprintf(shell, SHELL_VT100_COLOR_DEFAULT, "\n");
 }
 
@@ -180,8 +188,19 @@ static int cmd_add_network(const struct shell *shell, size_t argc, char *argv[])
 
 	if (arg_idx < argc) {
 		/* look for favorite flag */
-		if (strcmp("favorite", argv[arg_idx]) == 0) {
+		if (strncmp("favorite", argv[arg_idx], strlen("favorite")) == 0) {
 			creds.header.flags |= WIFI_CREDENTIALS_FLAG_FAVORITE;
+			++arg_idx;
+		}
+	}
+
+	if (arg_idx < argc) {
+		/* look for mfp_disabled flag */
+		if (strncmp("mfp_disabled", argv[arg_idx], strlen("mfp_disabled")) == 0) {
+			creds.header.flags |= WIFI_CREDENTIALS_FLAG_MFP_DISABLED;
+			++arg_idx;
+		} else if (strncmp("mfp_required", argv[arg_idx], strlen("mfp_required")) == 0) {
+			creds.header.flags |= WIFI_CREDENTIALS_FLAG_MFP_REQUIRED;
 			++arg_idx;
 		}
 	}
@@ -199,7 +218,8 @@ help:
 		    " [psk/password]"
 		    " [bssid]"
 		    " [{2.4GHz, 5GHz}]"
-		    " [favorite]");
+		    " [favorite]"
+		    " [mfp_disabled|mfp_required]");
 	return -EINVAL;
 }
 
