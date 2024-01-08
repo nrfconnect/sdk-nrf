@@ -263,6 +263,8 @@ Shields and expansion boards
 
 Shields and expansion boards are add-on hardware that can be attached to a development kit or prototyping platform to extend their features and functionalities.
 
+.. _nrf70_gs_shields_evaluation_kit_nrf7002ek:
+
 nRF7002 EK
 ==========
 
@@ -364,6 +366,8 @@ For example, you can use the following command when building on the command line
    west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf7002ek
 
 To build for the nRF7002 EK and the nRF7001 or nRF7000 ICs, you can use the corresponding shield name in the above command.
+
+.. _nrf70_gs_shields_expansion_boards_nrf7002eb:
 
 nRF7002 EB
 ==========
