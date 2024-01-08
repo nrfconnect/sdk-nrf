@@ -98,6 +98,7 @@ static const unsigned int rx3_buf_sz = 1000;
 #endif
 
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+static K_MUTEX_DEFINE(reg_lock);
 
 const char *nrf_wifi_get_drv_version(void)
 {
@@ -282,9 +283,21 @@ void nrf_wifi_event_get_reg_zep(void *vif_ctx,
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
+	if (fmac_dev_ctx->alpha2_valid) {
+		LOG_ERR("%s: Unsolicited regulatory get!", __func__);
+		return;
+	}
+
 	memcpy(&fmac_dev_ctx->alpha2,
 		   &get_reg_event->nrf_wifi_alpha2,
 		   sizeof(get_reg_event->nrf_wifi_alpha2));
+
+	fmac_dev_ctx->reg_chan_count = get_reg_event->num_channels;
+	memcpy(fmac_dev_ctx->reg_chan_info,
+	       &get_reg_event->chn_info,
+	       fmac_dev_ctx->reg_chan_count *
+		   sizeof(struct nrf_wifi_get_reg_chn_info));
+
 	fmac_dev_ctx->alpha2_valid = true;
 }
 
@@ -294,7 +307,12 @@ int nrf_wifi_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_fmac_reg_info reg_domain_info = {0};
+	struct wifi_reg_chan_info *chan_info = NULL;
+	struct nrf_wifi_get_reg_chn_info *reg_domain_chan_info = NULL;
 	int ret = -1;
+	int chan_idx = 0;
+
+	k_mutex_lock(&reg_lock, K_FOREVER);
 
 	if (!dev || !reg_domain) {
 		goto err;
@@ -325,12 +343,30 @@ int nrf_wifi_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 			goto err;
 		}
 	} else if (reg_domain->oper == WIFI_MGMT_GET) {
+
+		if (!reg_domain->chan_info)	{
+			LOG_ERR("%s: Invalid regulatory info (NULL)\n", __func__);
+			goto err;
+		}
+
 		status = nrf_wifi_fmac_get_reg(rpu_ctx_zep->rpu_ctx, &reg_domain_info);
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: Failed to get regulatory domain", __func__);
 			goto err;
 		}
+
 		memcpy(reg_domain->country_code, reg_domain_info.alpha2, WIFI_COUNTRY_CODE_LEN);
+		reg_domain->num_channels = reg_domain_info.reg_chan_count;
+
+		for (chan_idx = 0; chan_idx < reg_domain_info.reg_chan_count; chan_idx++) {
+			chan_info = &(reg_domain->chan_info[chan_idx]);
+			reg_domain_chan_info = &(reg_domain_info.reg_chan_info[chan_idx]);
+			chan_info->center_frequency = reg_domain_chan_info->center_frequency;
+			chan_info->dfs = !!reg_domain_chan_info->dfs;
+			chan_info->max_power = !!reg_domain_chan_info->max_power;
+			chan_info->passive_only = !!reg_domain_chan_info->passive_channel;
+			chan_info->supported = !!reg_domain_chan_info->supported;
+		}
 	} else {
 		LOG_ERR("%s: Invalid operation: %d", __func__, reg_domain->oper);
 		goto err;
@@ -338,6 +374,7 @@ int nrf_wifi_reg_domain(const struct device *dev, struct wifi_reg_domain *reg_do
 
 	ret = 0;
 err:
+	k_mutex_unlock(&reg_lock);
 	return ret;
 }
 #ifdef CONFIG_NRF700X_STA_MODE
