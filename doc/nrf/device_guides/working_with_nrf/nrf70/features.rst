@@ -80,8 +80,8 @@ Devices in the nRF70 Series are supported by the following boards in the `Zephyr
 Supported Wi-Fi standards and modes
 ***********************************
 
-The nRF70 series wireless companion ICs add Wi-Fi 6 support to a host device that includes IP-based networking support.
+The nRF70 Series wireless companion ICs add Wi-Fi 6 support to a host device that includes IP-based networking support.
 Wi-Fi 6 aligns with IEEE 802.11ax and all earlier versions of the IEEE 802.11 suite of wireless LAN standards.
 
-Currently only Station (STA) support is included.
-Access Point (AP) and peer-to-peer support in the form of Wi-Fi Direct will be available in the future.
+Currently, :term:`Station mode (STA)` and :term:`Software-enabled Access Point (SoftAP or SAP)` mode are supported.
+Peer-to-peer support in the form of Wi-Fi Direct will be available in the future.
