@@ -400,6 +400,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 	lwm2m_utils_connection_manage(client, &client_event);
 
 	switch (client_event) {
+	case LWM2M_RD_CLIENT_EVENT_SERVER_DISABLED:
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER:
 	case LWM2M_RD_CLIENT_EVENT_NONE:
 		/* do nothing */
