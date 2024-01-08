@@ -681,6 +681,9 @@ Glossary
    Simple Network Time Protocol (SNTP)
       A less complex implementation of :term:`Network Time Protocol (NTP)`, using the same protocol but without requiring the storage of state over extended periods of time.
 
+   Software-enabled Access Point (SoftAP or SAP)
+      A network device operating as an IEEE 802.11 access point using software with limited functionality.
+
    Soft fork
       A :term:`fork <Fork>` that contains a very small set of changes when compared to its upstream.
 

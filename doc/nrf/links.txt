@@ -19,6 +19,7 @@
 .. _`Zephyr Application Configuration`: https://docs.zephyrproject.org/latest/develop/application/index.html#application-configuration
 .. _`Zephyr Bluetooth LE Security`: https://docs.zephyrproject.org/latest/connectivity/bluetooth/bluetooth-arch.html#security
 .. _`Pinctrl Migration Utility Script documentation`: https://github.com/zephyrproject-rtos/zephyr/blob/main/scripts/utils/pinctrl_nrf_migrate.py
+.. _`Zephyr Wi-Fi management API`: https://docs.zephyrproject.org/apidoc/latest/group__wifi__mgmt.html
 
 .. ### Source: github.com
 
