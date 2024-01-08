@@ -376,6 +376,11 @@ Cellular samples
 
   * Added the :ref:`CONFIG_UDP_DATA_UPLOAD_ITERATIONS <CONFIG_UDP_DATA_UPLOAD_ITERATIONS>` Kconfig option for configuring the number of data transmissions to the server.
 
+* :ref:`lwm2m_client` sample:
+
+  * Added a workaround for ground fix location assistance queries in AVSystem Coiote by using fixed Connectivity Monitor object version.
+    This is enabled in the :file:`overlay-assist-cell.conf` configuration overlay.
+
 Cryptography samples
 --------------------
 
