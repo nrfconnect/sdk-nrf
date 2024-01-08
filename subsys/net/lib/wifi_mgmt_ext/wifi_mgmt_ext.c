@@ -70,7 +70,6 @@ static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
 
 	/* Defaults */
 	params->security = creds->header.type;
-	params->mfp = WIFI_MFP_OPTIONAL;
 	params->channel = WIFI_CHANNEL_ANY;
 	params->timeout = CONFIG_WIFI_MGMT_EXT_CONNECTION_TIMEOUT;
 
@@ -85,6 +84,15 @@ static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
 		params->band = WIFI_FREQ_BAND_5_GHZ;
 	} else {
 		params->band = WIFI_FREQ_BAND_UNKNOWN;
+	}
+
+	/* MFP setting (default: optional) */
+	if (creds->header.flags & WIFI_CREDENTIALS_FLAG_MFP_DISABLED) {
+		params->mfp = WIFI_MFP_DISABLE;
+	} else if (creds->header.flags & WIFI_CREDENTIALS_FLAG_MFP_REQUIRED) {
+		params->mfp = WIFI_MFP_REQUIRED;
+	} else {
+		params->mfp = WIFI_MFP_OPTIONAL;
 	}
 
 	return 0;
