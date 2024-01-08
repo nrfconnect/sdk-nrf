@@ -542,6 +542,14 @@ int z_wpa_supplicant_status(const struct device *dev,
 		struct wpa_ssid *ssid = wpa_s->current_ssid;
 		u8 channel;
 		struct signal_poll_resp signal_poll;
+		u8 *_ssid = ssid->ssid;
+		size_t ssid_len = ssid->ssid_len;
+		struct status_resp cli_status;
+
+		if (!ssid) {
+			wpa_printf(MSG_ERROR, "Failed to get current ssid");
+			goto out;
+		}
 
 		os_memcpy(status->bssid, wpa_s->bssid, WIFI_MAC_ADDR_LEN);
 		status->band = wpas_band_to_zephyr(wpas_freq_to_band(wpa_s->assoc_freq));
@@ -550,34 +558,28 @@ int z_wpa_supplicant_status(const struct device *dev,
 		ieee80211_freq_to_chan(wpa_s->assoc_freq, &channel);
 		status->channel = channel;
 
-		if (ssid) {
-			u8 *_ssid = ssid->ssid;
-			size_t ssid_len = ssid->ssid_len;
-			struct status_resp cli_status;
+		if (ssid_len == 0) {
+			int _res = z_wpa_ctrl_status(&cli_status);
 
-			if (ssid_len == 0) {
-				int _res = z_wpa_ctrl_status(&cli_status);
-
-				if (_res < 0)
-					ssid_len = 0;
-				else
-					ssid_len = cli_status.ssid_len;
-				_ssid = cli_status.ssid;
-			}
-			os_memcpy(status->ssid, _ssid, ssid_len);
-			status->ssid_len = ssid_len;
-			status->iface_mode = ssid->mode;
-			if (wpa_s->connection_set == 1) {
-				status->link_mode = wpa_s->connection_he ? WIFI_6 :
-								wpa_s->connection_vht ? WIFI_5 :
-								wpa_s->connection_ht ? WIFI_4 :
-								wpa_s->connection_g ? WIFI_3 :
-								wpa_s->connection_a ? WIFI_2 :
-								wpa_s->connection_b ? WIFI_1 :
-								WIFI_0;
-			} else {
-				status->link_mode = WIFI_LINK_MODE_UNKNOWN;
-			}
+			if (_res < 0)
+				ssid_len = 0;
+			else
+				ssid_len = cli_status.ssid_len;
+			_ssid = cli_status.ssid;
+		}
+		os_memcpy(status->ssid, _ssid, ssid_len);
+		status->ssid_len = ssid_len;
+		status->iface_mode = ssid->mode;
+		if (wpa_s->connection_set == 1) {
+			status->link_mode = wpa_s->connection_he ? WIFI_6 :
+							wpa_s->connection_vht ? WIFI_5 :
+							wpa_s->connection_ht ? WIFI_4 :
+							wpa_s->connection_g ? WIFI_3 :
+							wpa_s->connection_a ? WIFI_2 :
+							wpa_s->connection_b ? WIFI_1 :
+							WIFI_0;
+		} else {
+			status->link_mode = WIFI_LINK_MODE_UNKNOWN;
 		}
 
 		status->rssi = -WPA_INVALID_NOISE;
