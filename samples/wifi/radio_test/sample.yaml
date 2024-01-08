@@ -39,6 +39,13 @@ tests:
       - nrf52840dk_nrf52840
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
     tags: ci_build
+  sample.nrf7000_eks.radio_test:
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7000
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
+    tags: ci_build
   sample.nrf7002_eb.thingy53.radio_test:
     build_only: true
     extra_args: SHIELD=nrf7002eb
