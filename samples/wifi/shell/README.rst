@@ -220,8 +220,8 @@ It adds the following commands to interact with the :ref:`lib_wifi_credentials` 
    * - auto_connect
      - Automatically connects to any stored network.
 
-Testing
-=======
+Testing STA mode
+================
 
 |test_sample|
 
@@ -297,6 +297,106 @@ Testing
        28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=0 ttl=113 time=191 ms
        28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=1 ttl=113 time=190 ms
        28 bytes from 142.250.74.46 to 192.168.50.199: icmp_seq=2 ttl=113 time=190 ms
+
+Testing SAP mode
+================
+
+To test the SAP mode, the sample must be built using the configuration overlay :file:`overlay-sap.conf` file.
+
+|test_sample|
+
+#. |connect_kit|
+#. |connect_terminal|
+
+#. Set the appropriate regulatory domain using the following command:
+
+   .. code-block:: console
+
+      wifi reg_domain <ISO/IEC 3166-1 alpha2>
+
+   For example, to set the regulatory domain to US, use the following command:
+
+   .. code-block:: console
+
+      wifi reg_domain IN
+#. Set an IP address for the SAP interface using the following command:
+
+   .. code-block:: console
+
+      net ipv4 add 1 192.168.1.1 255.255.255.0
+
+#. Enable the Access Point mode using the following command:
+
+   .. code-block:: console
+
+      wifi ap enable <SSID> <channel> <psk>
+
+   ``<SSID>`` is the SSID of the network you want to connect to, and ``<psk>`` is its passphrase.
+
+#. Check the SAP status after a while, using the following command:
+
+   .. code-block:: console
+
+        wifi status
+
+   If the SAP is established, you should see an output similar to the following:
+
+   .. code-block:: console
+
+        Status: successful
+        ==================
+        State: COMPLETED
+        Interface Mode: ACCESS POINT
+        Link Mode: UNKNOWN
+        SSID: testing
+        BSSID: F4:CE:36:00:22:C6
+        Band: 2.4GHz
+        Channel: 1
+        Security: OPEN
+        MFP: Disable
+        Beacon Interval: 0
+        DTIM: 2
+        TWT: Not supported
+
+#. Connect a station to the SAP using a static IP address and verify the connection using the following command:
+
+   .. code-block:: console
+
+        wifi ap stations
+
+   If the station is connected, you should see an output similar to the following:
+
+   .. code-block:: console
+
+        AP stations:
+        ============
+        Station 1:
+        ==========
+        MAC: 62:26:54:D9:1C:6E
+        Link mode: WIFI 4 (802.11n/HT)
+        TWT: Not supported
+
+#. Verify connectivity by pinging the Station from the SAP using the following command:
+
+   .. code-block:: console
+
+      net ping <station IP address>
+
+   See the following example:
+
+   .. code-block:: console
+
+      net ping 192.168.1.88
+        PING 192.168.1.88
+        28 bytes from 192.168.1.88 to 192.168.1.1: icmp_seq=1 ttl=64 time=5 ms
+        28 bytes from 192.168.1.88 to 192.168.1.1: icmp_seq=2 ttl=64 time=5 ms
+        28 bytes from 192.168.1.88 to 192.168.1.1: icmp_seq=3 ttl=64 time=5 ms
+
+#. Disable the Access Point mode using the following command:
+
+   .. code-block:: console
+
+      wifi ap disable
 
 Dependencies
 ************
