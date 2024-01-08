@@ -83,7 +83,6 @@ Testing
 After programming the sample and board controller firmware (as mentioned in Requirements section) to your development kit, test it by performing the following steps:
 
 #. |connect_kit|
-#. |connect_terminal|
 #. Open the `Cellular Monitor`_ desktop application and connect the DK.
 #. Select :guilabel:`Autoselect` from the **Modem trace database** drop-down menu, or a modem firmware version that is programmed on the DK.
 #. Select :guilabel:`Reset device on start`.
