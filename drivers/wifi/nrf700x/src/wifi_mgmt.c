@@ -509,6 +509,7 @@ int nrf_wifi_set_twt(const struct device *dev,
 		twt_info.twt_target_wake_interval_exponent = twt_interval_float.exponent;
 
 		twt_info.dialog_token = twt_params->dialog_token;
+		twt_info.twt_wake_ahead_duration = twt_params->setup.twt_wake_ahead_duration;
 
 		status = nrf_wifi_fmac_twt_setup(rpu_ctx_zep->rpu_ctx,
 					   vif_ctx_zep->vif_idx,
