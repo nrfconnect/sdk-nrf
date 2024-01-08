@@ -539,8 +539,7 @@ static int client_transfer(enum coap_method method,
 
 	retry = 0;
 	k_sem_reset(&cb_sem);
-	while ((err = coap_client_req(&coap_client, sock, NULL, &request,
-				      reliable ? -1 : CONFIG_NON_RESP_RETRIES)) == -EAGAIN) {
+	while ((err = coap_client_req(&coap_client, sock, NULL, &request, NULL)) == -EAGAIN) {
 		/* -EAGAIN means the CoAP client is currently waiting for a response
 		 * to a previous request (likely started in a separate thread).
 		 */

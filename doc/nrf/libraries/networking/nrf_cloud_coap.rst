@@ -68,7 +68,6 @@ Additionally, the following Kconfig options are available:
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME`
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SEC_TAG`
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_RESPONSE_TIMEOUT_MS`
-* :kconfig:option:`CONFIG_NON_RESP_RETRIES`
 * :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SEND_SSIDS`
 * :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS`
 * :kconfig:option:`CONFIG_NRF_CLOUD_SEND_DEVICE_STATUS_NETWORK`

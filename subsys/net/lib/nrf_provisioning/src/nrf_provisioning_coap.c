@@ -303,7 +303,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 		client_request.len = len;
 	}
 
-	while (coap_client_req(client, coap_ctx->connect_socket, NULL, &client_request, -1) ==
+	while (coap_client_req(client, coap_ctx->connect_socket, NULL, &client_request, NULL) ==
 	       -EAGAIN) {
 		if (retries > RETRY_AMOUNT) {
 			break;

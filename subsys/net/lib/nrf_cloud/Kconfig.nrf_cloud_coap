@@ -27,16 +27,6 @@ config NRF_CLOUD_COAP_SERVER_PORT
 	int "CoAP server port"
 	default 5684
 
-config NON_RESP_RETRIES
-	int "Number of times to retry waiting for a response to a NON request"
-	default 0
-	help
-	  Non confirmable requests are usually used to send data to the cloud
-	  for which it is OK if it is sometimes lost. A value of 0 means it is
-	  acceptable if no response is received from the cloud. Non-zero values
-	  result in up to this number of retransmissions of the request followed
-	  by waits for a response.
-
 config NRF_CLOUD_COAP_GF_CONF
 	bool "Enable configuration options for ground-fix requests"
 	help
