@@ -2187,6 +2187,33 @@ out:
 	return ret;
 }
 
+int nrf_wifi_sta_flags_to_nrf(int wpas_sta_flags)
+{
+	int nrf_sta_flags = 0;
+
+	if (wpas_sta_flags & WPA_STA_AUTHORIZED) {
+		nrf_sta_flags |= NRF_WIFI_STA_FLAG_AUTHORIZED;
+	}
+	if (wpas_sta_flags & WPA_STA_WMM) {
+		nrf_sta_flags |= NRF_WIFI_STA_FLAG_WME;
+	}
+	if (wpas_sta_flags & WPA_STA_SHORT_PREAMBLE) {
+		nrf_sta_flags |= NRF_WIFI_STA_FLAG_SHORT_PREAMBLE;
+	}
+	if (wpas_sta_flags & WPA_STA_MFP) {
+		nrf_sta_flags |= NRF_WIFI_STA_FLAG_MFP;
+	}
+	if (wpas_sta_flags & WPA_STA_TDLS_PEER) {
+		nrf_sta_flags |= NRF_WIFI_STA_FLAG_TDLS_PEER;
+	}
+	/* Note: Do not set flags > NRF_WIFI_STA_FLAG_TDLS_PEER, else
+	 * nrf_wifi_fmac_chg_sta will fail. This is equivalent to not
+	 * setting WPA_DRIVER_FLAGS_FULL_AP_CLIENT_STATE flag.
+	 */
+
+	return nrf_sta_flags;
+}
+
 int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *params)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -2240,14 +2267,17 @@ int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *para
 	memcpy(sta_info.supported_oper_classes.supported_oper_classes, params->supp_oper_classes,
 	       params->supp_oper_classes_len);
 
-	sta_info.sta_flags2.nrf_wifi_mask = params->flags_mask;
-	sta_info.sta_flags2.nrf_wifi_set = params->flags;
+	sta_info.sta_flags2.nrf_wifi_set = nrf_wifi_sta_flags_to_nrf(params->flags);
+	sta_info.sta_flags2.nrf_wifi_mask = sta_info.sta_flags2.nrf_wifi_set |
+		nrf_wifi_sta_flags_to_nrf(params->flags_mask);
 
 	memcpy(sta_info.ht_capability, params->ht_capabilities, sizeof(sta_info.ht_capability));
 	memcpy(sta_info.vht_capability, params->vht_capabilities, sizeof(sta_info.vht_capability));
 
 	memcpy(sta_info.mac_addr, params->addr, sizeof(sta_info.mac_addr));
 
+	LOG_DBG("nrf_wifi_wpa_supp_sta_add: %x, %x",
+		sta_info.sta_flags2.nrf_wifi_set, sta_info.sta_flags2.nrf_wifi_mask);
 
 	if (params->set) {
 		status = nrf_wifi_fmac_chg_sta(rpu_ctx_zep->rpu_ctx,
@@ -2378,8 +2408,11 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	memcpy(chg_sta.mac_addr, addr, sizeof(chg_sta.mac_addr));
 
-	chg_sta.sta_flags2.nrf_wifi_mask = flags_or | ~flags_and;
-	chg_sta.sta_flags2.nrf_wifi_set = flags_or;
+	chg_sta.sta_flags2.nrf_wifi_mask = nrf_wifi_sta_flags_to_nrf(flags_or | ~flags_and);
+	chg_sta.sta_flags2.nrf_wifi_set = nrf_wifi_sta_flags_to_nrf(flags_or);
+
+	LOG_DBG("nrf_wifi_wpa_supp_sta_set_flags %x, %x",
+		chg_sta.sta_flags2.nrf_wifi_set, chg_sta.sta_flags2.nrf_wifi_mask);
 
 	status = nrf_wifi_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
