@@ -48,3 +48,14 @@
   ram_related_usage: 256
   codeowners:
     - MarekPieta
+
+- scenarios:
+    - sample.nrf5340.multiprotocol_rpmsg
+  platforms:
+    - nrf5340dk_nrf5340_cpunet
+  ram_size: 55296
+  rom_size: 235929
+  codeowners:
+    - ankuns
+    - dawidprzybylo
+    - jciupis
