@@ -102,6 +102,7 @@ struct download_client_evt {
 struct download_client_cfg {
 	/** TLS security tag list.
 	 *  Pass NULL to disable TLS.
+	 * The list must be kept in scope while download is going on.
 	 */
 	const int *sec_tag_list;
 	/** Number of TLS security tags in list.
@@ -160,9 +161,13 @@ struct download_client {
 	/** Download progress, number of bytes downloaded. */
 	size_t progress;
 
-	/** Server hosting the file, null-terminated. */
+	/** Server hosting the file, null-terminated.
+	 *  The host name must be kept in scope while download is going on.
+	 */
 	const char *host;
-	/** File name, null-terminated. */
+	/** File name, null-terminated.
+	 *  The file name must be kept in scope while download is going on.
+	 */
 	const char *file;
 	/** Configuration options. */
 	struct download_client_cfg config;
