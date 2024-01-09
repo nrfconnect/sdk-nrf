@@ -349,17 +349,32 @@ Configuration
 Disabling key features
 ======================
 
-The following key features of this sample may be independently disabled:
+You can independently disable the following key features of this sample by setting their respective Kconfig option disabled:
 
-* GNSS-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_GNSS <CONFIG_LOCATION_TRACKING_GNSS>` option to disabled.
-* Cellular-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>` option to disabled.
-* Wi-Fi-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_WIFI <CONFIG_LOCATION_TRACKING_WIFI>` option to disabled.
-* Temperature tracking - by setting the :ref:`CONFIG_TEMP_TRACKING <CONFIG_TEMP_TRACKING>` option to disabled.
-* GNSS assistance (A-GNSS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS` option to disabled.
-* Predictive GNSS assistance (P-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` option to disabled.
-* FOTA when using MQTT - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option to disabled.
-* FOTA when using CoAP - by setting the :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>` option to disabled.
-* Shadow handling when using CoAP - by setting the :ref:`CONFIG_COAP_SHADOW <CONFIG_COAP_SHADOW>` option to disabled.
+.. list-table::
+   :widths: 50 50
+   :header-rows: 1
+
+   * - Feature
+     - Kconfig option
+   * - GNSS-based location tracking
+     - :ref:`CONFIG_LOCATION_TRACKING_GNSS <CONFIG_LOCATION_TRACKING_GNSS>`
+   * - Cellular-based location tracking
+     - :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>`
+   * - Wi-Fi-based location tracking
+     - :ref:`CONFIG_LOCATION_TRACKING_WIFI <CONFIG_LOCATION_TRACKING_WIFI>`
+   * - Temperature tracking
+     - :ref:`CONFIG_TEMP_TRACKING <CONFIG_TEMP_TRACKING>`
+   * - GNSS assistance (A-GNSS)
+     - :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS`
+   * - Predictive GNSS assistance (P-GPS)
+     - :kconfig:option:`CONFIG_NRF_CLOUD_PGPS`
+   * - FOTA when using MQTT
+     - :kconfig:option:`CONFIG_NRF_CLOUD_FOTA`
+   * - FOTA when using CoAP
+     - :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>`
+   * - Shadow handling when using CoAP
+     - :ref:`CONFIG_COAP_SHADOW <CONFIG_COAP_SHADOW>`
 
 If you disable GNSS, Wi-Fi-based, and cellular-based location tracking, location tracking is completely disabled.
 In that case, also set the :ref:`CONFIG_LOCATION_TRACKING <CONFIG_LOCATION_TRACKING>` option to disabled.
@@ -367,9 +382,9 @@ In that case, also set the :ref:`CONFIG_LOCATION_TRACKING <CONFIG_LOCATION_TRACK
 For examples, see the related minimal overlays in the :ref:`nrf_cloud_multi_service_minimal` section.
 
 .. note::
-  MQTT should only be used with applications that need to stay connected constantly or transfer data frequently.
-  While this sample does allow its core features to be slowed or completely disabled, in real-world applications, you should carefully consider your data throughput and whether MQTT is an appropriate solution.
-  If you want to disable or excessively slow all of these features for a real-world application, other solutions, such as the `nRF Cloud Rest API`_, may be more appropriate.
+   MQTT should only be used with applications that need to stay connected constantly or transfer data frequently.
+   While this sample does allow its core features to be slowed or completely disabled, in real-world applications, you should carefully consider your data throughput and whether MQTT is an appropriate solution.
+   If you want to disable or excessively slow all of these features for a real-world application, other solutions, such as the `nRF Cloud Rest API`_, may be more appropriate.
 
 Customizing GNSS antenna configuration
 ======================================
