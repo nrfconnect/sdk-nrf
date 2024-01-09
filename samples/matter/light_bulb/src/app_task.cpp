@@ -158,7 +158,7 @@ void AppTask::ButtonEventHandler(ButtonState state, ButtonMask hasChanged)
 #ifdef CONFIG_AWS_IOT_INTEGRATION
 bool AppTask::AWSIntegrationCallback(struct aws_iot_integration_cb_data *data)
 {
-	LOG_INF("Attribute cha1nge requested from AWS IoT: %d", data->value);
+	LOG_INF("Attribute change requested from AWS IoT: %d", data->value);
 
 	EmberAfStatus status;
 
