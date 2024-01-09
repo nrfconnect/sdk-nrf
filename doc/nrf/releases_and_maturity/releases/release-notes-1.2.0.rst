@@ -555,7 +555,7 @@ Bluetooth Low Energy
   NFC requires this API to work correctly.
 * When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth LE Controller, directed advertising does not time out and the regular advertising cannot be started.
 * The :ref:`bluetooth_central_hids` sample cannot connect to a peripheral that uses directed advertising.
-* When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
+* When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:zephyr:code-sample:`smp-svr`).
   However, security is not enabled by default in the Zephyr sample.
 * The central samples (:ref:`central_uart`, :ref:`bluetooth_central_hids`) do not support any pairing methods with MITM protection.
 * On some operating systems, the nrf_desktop application is unable to reconnect to a host.

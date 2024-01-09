@@ -263,7 +263,7 @@ Synchronization module flow
 The received audio data in the I2S-based firmware devices follows the following path:
 
 1. The LE Audio Controller Subsystem for nRF53 running on the network core receives the compressed audio data.
-#. The controller subsystem sends the audio data to the Zephyr Bluetooth LE host similarly to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
+#. The controller subsystem sends the audio data to the Zephyr Bluetooth LE host similarly to the :ref:`zephyr:bluetooth-hci-ipc-sample` sample.
 #. The host sends the data to the stream control module.
 #. The data is sent to a FIFO buffer.
 #. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.

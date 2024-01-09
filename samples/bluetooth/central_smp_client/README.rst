@@ -23,7 +23,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a device running `mcumgr`_ with transport protocol over Bluetooth® Low Energy, for example, another development kit running the :ref:`smp_svr_sample`.
+The sample also requires a device running `mcumgr`_ with transport protocol over Bluetooth® Low Energy, for example, another development kit running the :zephyr:code-sample:`smp-svr`.
 
 .. note::
    This sample does not program the device using DFU.
@@ -64,9 +64,9 @@ Testing
 #. |connect_terminal|
 #. Reset the kit.
 #. Observe that the text "Starting Bluetooth Central SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
-#. Program the :ref:`smp_svr_sample` to another development kit.
+#. Program the :zephyr:code-sample:`smp-svr` to another development kit.
    See the documentation for that sample only in the section "Building the sample application".
-   When you have built the :ref:`smp_svr_sample`, call the following command to program it to the development kit::
+   When you have built the :zephyr:code-sample:`smp-svr`, call the following command to program it to the development kit::
 
       west flash
 

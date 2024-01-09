@@ -201,7 +201,7 @@ See :ref:`mcuboot_ncs` for more information about this and other automatically g
 
 After every reset, the sample first boots to MCUboot and then, after a couple of seconds, the NCP sample is booted.
 When booted to MCUboot, you can upload the new image with the `dfu-util tool`_.
-See the Testing section of the :ref:`USB DFU sample documentation <zephyr:usb_dfu>` for the list of required dfu-util commands.
+See the Testing section of the :zephyr:code-sample:`usb-dfu` for the list of required dfu-util commands.
 
 To learn more about configuring bootloader for an application in |NCS|, see the :ref:`ug_bootloader` page.
 

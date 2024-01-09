@@ -47,7 +47,7 @@ Testing
 To test the sample, complete the following steps:
 
 1. Program the sample to the application core.
-#. Program Zephyr's :ref:`zephyr:blinky-sample` sample to the network core.
+#. Program Zephyr's :zephyr:code-sample:`blinky` sample to the network core.
 #. Observe the LEDs on the kit.
 
 Dependencies

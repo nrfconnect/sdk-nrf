@@ -213,7 +213,7 @@ Only secure applications can use Bluetooth® LE
 .. rst-class:: v1-2-1 v1-2-0 v1-1-0
 
 :kconfig:option:`CONFIG_BT_SMP` alignment requirement
-  When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
+  When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:zephyr:code-sample:`smp-svr`).
   However, security is not enabled by default in the Zephyr sample.
 
 
@@ -1796,8 +1796,8 @@ NCSDK-21709: :ref:`peripheral_uart` sample does not work on nRF52810 and nRF5281
 
 .. rst-class:: v2-3-0 v2-2-0
 
-NCSDK-18112: :ref:`bluetooth_central_dfu_smp` sample cannot do discovery on the :ref:`smp_svr_sample`
-  The :ref:`bluetooth_central_dfu_smp` sample cannot perform the GATT discovery on a DK with the :ref:`smp_svr_sample`.
+NCSDK-18112: :ref:`bluetooth_central_dfu_smp` sample cannot do discovery on the :zephyr:code-sample:`smp-svr`
+  The :ref:`bluetooth_central_dfu_smp` sample cannot perform the GATT discovery on a DK with the :zephyr:code-sample:`smp-svr`.
 
   **Workaround:** Enable the legacy LLCP mechanism (:kconfig:option:`CONFIG_BT_LL_SW_LLCP_LEGACY`).
 
@@ -4109,22 +4109,22 @@ The time returned by clock_gettime() API becomes incorrect after one week of upt
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6330: USB Mass Storage Sample Application fails MSC Tests from USB3CV test tool
-  :ref:`zephyr:usb_mass` fails the USB3CV compliance Command Set Test from the MSC Tests suite.
+  :zephyr:code-sample:`usb-mass` fails the USB3CV compliance Command Set Test from the MSC Tests suite.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6328: USB CDC ACM Composite Sample Application fails Chapter 9 Tests from USB3CV test tool
-  :ref:`zephyr:usb_cdc-acm_composite` fails the USB3CV compliance TD 9.1: Device Descriptor Test from the Chapter 9 Test suite.
+  :zephyr:code-sample:`usb-cdc-acm-composite` fails the USB3CV compliance TD 9.1: Device Descriptor Test from the Chapter 9 Test suite.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6331: WebUSB sample application fails Chapter 9 Tests from USB3CV test tool
-  :ref:`zephyr:webusb-sample` fails the USB3CV compliance TD 9.21: LPM L1 Suspend Resume Test from the Chapter 9 Test suite.
+  :zephyr:code-sample:`webusb` fails the USB3CV compliance TD 9.21: LPM L1 Suspend Resume Test from the Chapter 9 Test suite.
 
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0
 
 FOTA does not work
-  FOTA with the :ref:`zephyr:smp_svr_sample` does not work.
+  FOTA with the :zephyr:code-sample:`smp-svr` does not work.
 
   **Affected platforms:** nRF5340
 
@@ -4137,18 +4137,18 @@ NCSIDB-108: Thread context switch might lead to a kernel fault
 .. rst-class:: v1-0-0
 
 Counter Alarm sample does not work
-  The :ref:`zephyr:alarm_sample` does not work.
+  The :zephyr:code-sample:`alarm` does not work.
   A fix can be found in `Pull Request #16736 <https://github.com/zephyrproject-rtos/zephyr/pull/16736>`_.
 
 .. rst-class:: v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 USB Mass Storage Sample Application compilation issues
-  :ref:`zephyr:usb_mass` does not compile.
+  :zephyr:code-sample:`usb-mass` does not compile.
 
 .. rst-class:: v1-7-1 v1-7-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6832: SMP Server sample fails upon initialization
-  The :ref:`zephyr:smp_svr_sample` will fail upon initialization when using the :file:`bt-overlay.conf` Kconfig overlay file.
+  The :zephyr:code-sample:`smp-svr` will fail upon initialization when using the :file:`bt-overlay.conf` Kconfig overlay file.
   This happens because of a stack overflow.
 
   **Workaround:** Set :kconfig:option:`CONFIG_MAIN_STACK_SIZE` to ``2048``.

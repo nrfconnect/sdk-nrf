@@ -10,7 +10,7 @@ Thread: Co-processor
 The :ref:`Thread <ug_thread>` Co-processor sample demonstrates how to implement OpenThread's :ref:`thread_architectures_designs_cp` inside the Zephyr environment.
 The sample uses the :ref:`thread_architectures_designs_cp_rcp` architecture.
 
-The sample is based on Zephyr's :ref:`zephyr:coprocessor-sample` sample.
+The sample is based on Zephyr's :zephyr:code-sample:`coprocessor` sample.
 However, it customizes Zephyr's sample to fulfill the |NCS| requirements (for example, by increasing the stack size dedicated for the user application), and also extends it with features such as:
 
 * Increased Mbed TLS heap size.

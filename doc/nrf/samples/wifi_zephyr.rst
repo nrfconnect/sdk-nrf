@@ -10,22 +10,22 @@ Wi-Fi: Zephyr networking samples
 In addition to |NCS| samples, it is possible to run selected networking samples with Wi-Fi®, provided and maintained as part of the upstream Zephyr project.
 The following list specifies samples that are currently supported with the Wi-Fi driver:
 
-* :ref:`dhcpv4-client-sample`
-* :ref:`dns-resolve-sample`
-* :ref:`ipv4-autoconf-sample`
-* :ref:`mdns-responder-sample`
-* :ref:`mqtt-publisher-sample`
-* :ref:`mqtt-sn-publisher-sample`
-* :ref:`coap-client-sample`
-* :ref:`coap-server-sample`
-* :ref:`sockets-echo-sample`
-* :ref:`async-sockets-echo-sample`
-* :ref:`sockets-echo-client-sample`
-* :ref:`sockets-echo-server-sample`
-* :ref:`sockets-http-get`
-* :ref:`sntp-client-sample`
-* :ref:`syslog-net-sample`
-* :ref:`telnet-console-sample`
+* :zephyr:code-sample:`dhcpv4-client`
+* :zephyr:code-sample:`dns-resolve`
+* :zephyr:code-sample:`ipv4-autoconf`
+* :zephyr:code-sample:`mdns-responder`
+* :zephyr:code-sample:`mqtt-publisher`
+* :zephyr:code-sample:`mqtt-sn-publisher`
+* :zephyr:code-sample:`coap-client`
+* :zephyr:code-sample:`coap-server`
+* :zephyr:code-sample:`sockets-echo`
+* :zephyr:code-sample:`async-sockets-echo`
+* :zephyr:code-sample:`sockets-echo-client`
+* :zephyr:code-sample:`sockets-echo-server`
+* :zephyr:code-sample:`sockets-http-get`
+* :zephyr:code-sample:`sntp-client`
+* :zephyr:code-sample:`syslog-net`
+* :zephyr:code-sample:`telnet-console`
 
 Configuration
 *************

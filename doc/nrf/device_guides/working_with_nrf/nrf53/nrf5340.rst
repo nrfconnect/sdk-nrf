@@ -161,7 +161,7 @@ Bluetooth Low Energy
 
    * - Network core
      - Application core
-   * - :ref:`zephyr:bluetooth-hci-rpmsg-sample`
+   * - :ref:`zephyr:bluetooth-hci-ipc-sample`
      - | :ref:`Bluetooth Low Energy samples <ble_samples>`
        | :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`
    * - :ref:`ble_rpc_host` (supported for development)
@@ -177,7 +177,7 @@ Split Controller and Host
 
 When splitting the Bluetooth LE Controller and the Host, run the Bluetooth LE Controller on the network core and the host part of the Bluetooth LE stack and the application logic on the application core.
 
-For the network core, the |NCS| provides the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
+For the network core, the |NCS| provides the :ref:`zephyr:bluetooth-hci-ipc-sample` sample.
 This Zephyr sample is designed specifically to enable the Bluetooth LE Controller functionality on a remote MCU using the `RPMsg Messaging Protocol`_ as a transport for Bluetooth HCI.
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with a Bluetooth Host stack that runs on a separate core (in this case, the nRF5340 application core).
 
@@ -257,7 +257,7 @@ When using Thread or Zigbee in parallel with Bluetooth LE, run the low-level rad
    Bluetooth LE and IEEE 802.15.4 multiprotocol architecture in multicore SoC
 
 For the network core, the |NCS| provides the :ref:`multiprotocol-rpmsg-sample` sample.
-It is a combination of the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample (for Bluetooth LE) and the :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample (for IEEE 802.15.4).
+It is a combination of the :ref:`zephyr:bluetooth-hci-ipc-sample` sample (for Bluetooth LE) and the :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample (for IEEE 802.15.4).
 This means that it enables both the Bluetooth LE Controller and the nRF IEEE 802.15.4 radio driver and simultaneously exposes the functionality of both stacks to the application core using the `RPMsg Messaging Protocol`_.
 Separate RPMsg endpoints are used to obtain independent inter-core connections for each stack.
 
@@ -354,7 +354,7 @@ The combination of these options determines which (if any) sample is included in
      - Child image sample for the network core
      - Child image sample for the application core
    * - :kconfig:option:`CONFIG_BT_HCI_IPC`
-     - :ref:`zephyr:bluetooth-hci-rpmsg-sample`
+     - :ref:`zephyr:bluetooth-hci-ipc-sample`
      - ---
    * - :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`zephyr:nrf-ieee802154-rpmsg-sample`

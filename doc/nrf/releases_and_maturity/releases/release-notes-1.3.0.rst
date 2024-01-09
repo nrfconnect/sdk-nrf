@@ -168,7 +168,7 @@ nRF5340 SoC
 -----------
 
 * Added :ref:`nrf5340_empty_app_core` for samples running purely on the nRF5340 network core.
-* When building a Bluetooth sample for nRF5340, the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample is now automatically built as child image.
+* When building a Bluetooth sample for nRF5340, the :ref:`zephyr:bluetooth-hci-ipc-sample` sample is now automatically built as child image.
 
 Multiprotocol Service Layer (MPSL)
 -----------------------------------
@@ -476,7 +476,7 @@ nRF5
 nRF5340
 -------
 
-* FOTA with the :ref:`zephyr:smp_svr_sample` does not work.
+* FOTA with the :zephyr:code-sample:`smp-svr` does not work.
 
 nRF52820
 --------
@@ -588,7 +588,7 @@ Bluetooth Low Energy
   NFC requires this API to work correctly. (fixed)
 * When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth LE Controller, directed advertising does not time out and the regular advertising cannot be started. (fixed)
 * The :ref:`bluetooth_central_hids` sample cannot connect to a peripheral that uses directed advertising. (fixed)
-* When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
+* When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:zephyr:code-sample:`smp-svr`).
   However, security is not enabled by default in the Zephyr sample. (fixed)
 * On some operating systems, the nrf_desktop application is unable to reconnect to a host. (fixed)
 

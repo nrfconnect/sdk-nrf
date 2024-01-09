@@ -147,7 +147,7 @@ Update the ``prj.conf`` file to set the private signing key for NSIB:
 See :ref:`ug_fw_update_keys` for more information on how to generate and use keys for a project.
 
 The bootloader and the application can be updated using the :file:`mcumgr` command-line tool.
-See :ref:`smp_svr_sample` for installation and usage instructions.
+See :zephyr:code-sample:`smp-svr` for installation and usage instructions.
 
 Application and TF-M firmware update
 ====================================
