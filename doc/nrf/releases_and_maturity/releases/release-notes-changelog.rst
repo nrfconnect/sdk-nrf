@@ -728,6 +728,10 @@ Libraries for networking
 
   * Added support for using a password when connecting to a broker.
 
+* :ref:`lib_fota_download` library:
+
+  * Added the functions :c:func:`fota_download` and :c:func:`fota_download_any` that can accept a security tag list and security tag count as arguments instead of a single security tag.
+
 Libraries for NFC
 -----------------
 
